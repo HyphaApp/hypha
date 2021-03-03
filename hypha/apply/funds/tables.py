@@ -14,7 +14,8 @@ from django.utils.translation import gettext_lazy as _
 from django_tables2.utils import A
 from wagtail.core.models import Page
 
-from hypha.apply.categories.models import MetaTerm
+from hypha.apply.categories.blocks import CategoryQuestionBlock
+from hypha.apply.categories.models import MetaTerm, Option
 from hypha.apply.review.models import Review
 from hypha.apply.users.groups import STAFF_GROUP_NAME
 from hypha.apply.utils.image import generate_image_tag
@@ -257,13 +258,18 @@ class SubmissionFilter(filters.FilterSet):
         (50, '50'),
         (100, '100'),
     )
+
     round = Select2ModelMultipleChoiceFilter(queryset=get_used_rounds, label='Rounds')
     fund = Select2ModelMultipleChoiceFilter(field_name='page', queryset=get_used_funds, label='Funds')
     lead = Select2ModelMultipleChoiceFilter(queryset=get_round_leads, label='Leads')
     reviewers = Select2ModelMultipleChoiceFilter(queryset=get_reviewers, label='Reviewers')
     screening_statuses = Select2ModelMultipleChoiceFilter(queryset=get_screening_statuses, label='Screening', null_label='No Status')
+    category_options = Select2MultipleChoiceFilter(
+        choices=[], label='Category',
+        method='filter_category_options'
+    )
     meta_terms = Select2ModelMultipleChoiceFilter(queryset=get_meta_terms, label='Terms')
-    per_page = filters.ChoiceFilter(choices=PAGE_CHOICES, empty_label=_('Items per page'), label='Per page', method='per_page_handler')
+    per_page = filters.ChoiceFilter(choices=PAGE_CHOICES, empty_label=_('Items'), label='Items per page', method='per_page_handler')
 
     class Meta:
         model = ApplicationSubmission
@@ -273,12 +279,45 @@ class SubmissionFilter(filters.FilterSet):
         super().__init__(*args, **kwargs)
 
         self.filters['status'] = StatusMultipleChoiceFilter(limit_to=limit_statuses)
-
+        self.filters['category_options'].extra['choices'] = [
+            (option.id, option.value)
+            for option in Option.objects.filter(category__filter_on_dashboard=True)
+        ]
         self.filters = {
             field: filter
             for field, filter in self.filters.items()
             if field not in exclude
         }
+
+    def filter_category_options(self, queryset, name, value):
+        """
+        Filter submissions based on the category options selected.
+
+        In order to do that we need to first get all the category fields used in the submission.
+
+        And then use those category fields to filter submissions with their form_data.
+        """
+        query = Q()
+        submission_data = queryset.values('form_fields', 'form_data').distinct()
+        for submission in submission_data:
+            for field in submission['form_fields']:
+                if isinstance(field.block, CategoryQuestionBlock):
+                    try:
+                        category_options = category_ids = submission['form_data'][field.id]
+                    except KeyError:
+                        include_in_filter = False
+                    else:
+                        if isinstance(category_options, str):
+                            category_options = [category_options]
+                        include_in_filter = set(list(category_options)) & set(value)
+                    # Check if filter options has any value in category options
+                    # If yes then those submissions should be filtered in the list
+                    if include_in_filter:
+                        kwargs = {
+                            '{0}__{1}'.format('form_data', field.id): category_ids
+                        }
+                        query |= Q(**kwargs)
+        return queryset.filter(query)
 
     def per_page_handler(self, queryset, name, value):
         # Pagination is already implemented in view. We only need to add per_page query parameter.

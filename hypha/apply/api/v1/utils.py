@@ -6,6 +6,7 @@ from django.db.models import Q
 from tinymce.widgets import TinyMCE
 from wagtail.core.models import Page
 
+from hypha.apply.categories.models import Option
 from hypha.apply.funds.models import ApplicationSubmission, Round, ScreeningStatus
 from hypha.apply.review.fields import ScoredAnswerField, ScoredAnswerWidget
 from hypha.apply.stream_forms.forms import BlockFieldWrapper
@@ -109,3 +110,9 @@ def get_used_rounds():
 def get_used_funds():
     # Use page to pick up on both Labs and Funds
     return Page.objects.filter(applicationsubmission__isnull=False).distinct()
+
+
+def get_category_options():
+    return Option.objects.filter(
+        category__filter_on_dashboard=True
+    )
