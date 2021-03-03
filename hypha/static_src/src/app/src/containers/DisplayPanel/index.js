@@ -102,12 +102,8 @@ const DisplayPanel = props => {
         <div className="display-panel">
 
             { !isMobile && (
-                <div className="display-panel__column">
-                    <div className="display-panel__header display-panel__header--spacer"></div>
-                    <div className="display-panel__body display-panel__body--center">
-                        
-                         <CurrentSubmissionDisplay /> 
-                    </div>
+                <div className="display-panel__body display-panel__body--center">
+                    <CurrentSubmissionDisplay /> 
                 </div>
             )}
 

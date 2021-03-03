@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import Listing from '@components/Listing';
 import ListingGroup from '@components/ListingGroup';
 import ListingItem from '@components/ListingItem';
-import ListingDropdown from '@components/ListingDropdown';
 
 import './styles.scss'
 
@@ -42,8 +41,6 @@ export default class GroupedListing extends React.Component {
 
     componentDidMount() {
         this.orderItems();
-        // get the height of the dropdown container
-        this.dropdownContainerHeight = this.dropdownContainer.offsetHeight;
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -125,15 +122,6 @@ export default class GroupedListing extends React.Component {
         }
         return  (
             <div className="grouped-listing">
-                <div className="grouped-listing__dropdown" ref={(ref) => this.dropdownContainer = ref}>
-                    {!isErrored && !isLoading &&
-                        <ListingDropdown
-                            listRef={this.listRef}
-                            groups={this.state.orderedItems}
-                            scrollOffset={this.dropdownContainerHeight}
-                        />
-                    }
-                </div>
                 <Listing {...passProps} listRef={this.listRef} column="applications" />
             </div>
         );
