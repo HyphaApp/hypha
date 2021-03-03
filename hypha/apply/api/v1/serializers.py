@@ -178,7 +178,7 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
 
     def get_is_user_staff(self, obj):
         request = self.context['request']
-        return request.user.is_staff
+        return request.user.is_apply_staff
 
     def get_meta_questions(self, obj):
         meta_questions = {
