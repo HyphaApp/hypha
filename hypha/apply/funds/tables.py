@@ -253,12 +253,6 @@ class StatusMultipleChoiceFilter(Select2MultipleChoiceFilter):
 
 
 class SubmissionFilter(filters.FilterSet):
-    PAGE_CHOICES = (
-        (25, '25'),
-        (50, '50'),
-        (100, '100'),
-    )
-
     round = Select2ModelMultipleChoiceFilter(queryset=get_used_rounds, label='Rounds')
     fund = Select2ModelMultipleChoiceFilter(field_name='page', queryset=get_used_funds, label='Funds')
     lead = Select2ModelMultipleChoiceFilter(queryset=get_round_leads, label='Leads')
@@ -269,7 +263,6 @@ class SubmissionFilter(filters.FilterSet):
         method='filter_category_options'
     )
     meta_terms = Select2ModelMultipleChoiceFilter(queryset=get_meta_terms, label='Terms')
-    per_page = filters.ChoiceFilter(choices=PAGE_CHOICES, empty_label=_('Items'), label='Items per page', method='per_page_handler')
 
     class Meta:
         model = ApplicationSubmission
