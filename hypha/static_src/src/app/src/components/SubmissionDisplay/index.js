@@ -46,7 +46,6 @@ export default class SubmissionDisplay extends Component {
     }
 
     render() {
-        console.log(this.props.submission);
         const { metaQuestions = [], questions = [], title } = this.props.submission || {};
         if (this.props.isError) {
             return (
