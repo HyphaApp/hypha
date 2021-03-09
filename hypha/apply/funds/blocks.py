@@ -97,7 +97,7 @@ class FullNameBlock(ApplicationMustIncludeFieldBlock):
         icon = 'user'
 
 
-class DurationBlock(ApplicationMustIncludeFieldBlock):
+class DurationBlock(ApplicationSingleIncludeFieldBlock):
     name = 'duration'
     description = 'Duration'
 
