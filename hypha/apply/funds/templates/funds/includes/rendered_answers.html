@@ -8,10 +8,12 @@
     </div>
     {% endif %}
 
+    {% if object.get_duration_display != "-" %}
     <div>
         <h5>Project Duration</h5>
         {{ object.get_duration_display }}
     </div>
+    {% endif %}
 
     <div>
         <h5>Legal Name</h5>
