@@ -48,6 +48,7 @@ describe("Test submission filter Container", () => {
                 doNotRender={doNotRender}
                 deleteSelectedFilters={deleteSelectedFilters}
                 classes={classes}
+                getFiltersToBeRendered={[{filterKey : "key1", label : "label1", options: [{key : 1, label: "label2"}]}]}
                 />
         );
 

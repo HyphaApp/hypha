@@ -38,6 +38,9 @@ const getGroupedIconStatus = state => state.submissions.showGroupedIcon
 const getCurrentRoundSubmissions = createSelector(
     [ getCurrentRoundSubmissionIDs, getSubmissions],
     (submissionIDs, submissions) => {
+        if(!Object.keys(submissions).length) {
+            return []
+        }
         return submissionIDs.map(submissionID => submissions[submissionID]);
     }
 );
@@ -52,7 +55,6 @@ const getCurrentStatusesSubmissions = createSelector(
         return submissionIDs.map(submissionID => submissions[submissionID]);
     }
 );
-
 
 const getCurrentSubmission = createSelector(
     [ getCurrentSubmissionID, getSubmissions ],
@@ -93,5 +95,5 @@ export {
     getCurrentStatusesSubmissions,
     getSubmissionFilters,
     getSummaryEditorStatus,
-    getGroupedIconStatus
+    getGroupedIconStatus,
 };

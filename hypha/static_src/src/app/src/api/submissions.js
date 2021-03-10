@@ -2,7 +2,6 @@ export function fetchSubmissionsByRound(id, filters) {
     const params = new URLSearchParams
     params.append('page_size', 1000) 
     params.append('round', id) 
-
     if(filters){
         filters.forEach(filter => 
             {   
@@ -46,7 +45,6 @@ export function fetchSubmissionsByStatuses(statuses, filters) {
     const params = new URLSearchParams
     params.append('page_size', 1000)
     statuses.forEach(v => params.append('status', v));
-    
     if(filters){
         filters.forEach(filter => 
             {   
@@ -61,6 +59,7 @@ export function fetchSubmissionsByStatuses(statuses, filters) {
             }
             )
     }
+    
     return {
         path:'/v1/submissions/',
         params,

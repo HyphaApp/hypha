@@ -32,7 +32,7 @@ class FilterDropDown extends React.PureComponent {
                 <Select
                   multiple
                   name={filter.filterKey}
-                  value={value}
+                  value={value} 
                   onChange={handleChange}
                   input={<Input />}
                   renderValue={(selected) => renderValues(selected, filter)}

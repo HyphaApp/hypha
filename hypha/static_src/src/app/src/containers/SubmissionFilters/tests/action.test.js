@@ -4,8 +4,12 @@ import Reducer from "../reducer";
 
 describe("Test actions of submission filters", () => {
   it("should return the intialize action type", () => {
+    const searchParams = null
+    const filterAction = null
     const expectedResult = {
       type: ActionTypes.INITIALIZE,
+      searchParams,
+      filterAction
     };
     const action = actions.initializeAction();
     expect(action).toEqual(expectedResult);

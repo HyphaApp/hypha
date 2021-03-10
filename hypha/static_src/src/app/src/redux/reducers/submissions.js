@@ -231,7 +231,7 @@ const submissions = combineReducers({
     showDeterminationForm: toggleDeterminationForm,
     currentDetermination,
     isDeterminationDraftExist,
-    showGroupedIcon
+    showGroupedIcon,
 });
 
 export default submissions;

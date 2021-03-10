@@ -18,8 +18,13 @@ import { withStyles } from '@material-ui/core/styles';
 import Tooltip from '@material-ui/core/Tooltip';
 import FilterDropDown from '@common/components/FilterDropDown'
 import { getGroupedIconStatus, getSubmissions } from '@selectors/submissions';
-import ShareIcon from '@material-ui/icons/Share';
+import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import { getScreeningLoading } from '@containers/ScreeningStatus/selectors'
+import { MESSAGE_TYPES, addMessage } from '@actions/messages';
 
 const styles = {
   filterButton: {
@@ -37,9 +42,24 @@ const styles = {
 
 export class SubmissionFiltersContainer extends React.PureComponent {
 
+  state = {
+    options : ["Applications summary list", "Share this filter"],
+    anchorEl : null,
+  }
+
   componentDidMount(){
     this.props.initializeAction()
   }
+
+  componentDidUpdate(prevProps, prevState){
+    if(this.props.getScreeningLoading == false 
+      && !this.props.isGroupedIconShown 
+      && this.props.history.location.search.includes("&") 
+      && !this.props.submissionFilters.loading){
+      this.props.initializeAction(this.props.history.location.search, this.onFilter)
+    }
+  }
+
 
   onFilter = () => {
     const options = this.props.submissionFilters.selectedFilters
@@ -52,18 +72,30 @@ export class SubmissionFiltersContainer extends React.PureComponent {
   }
 
   onFilterDelete = () => {
+    this.props.history.push(window.location.pathname)
     this.props.deleteSelectedFilters()
     this.onFilter()
     this.props.updateFilterQuery([])
   }
   
   getValue  = filterKey => {
-    if(this.props.submissionFilters.selectedFilters && 
+    if(Object.keys(this.props.submissionFilters.selectedFilters).length && 
       this.props.submissionFilters.selectedFilters.hasOwnProperty(filterKey)) {
+        if(filterKey == "status"){
+          return this.props.submissionFilters.selectedFilters[filterKey].map(val =>  val.asMutable().sort().join(",")).asMutable()
+        }
         return this.props.submissionFilters.selectedFilters[filterKey].asMutable()
     }
     return []
   }
+
+  handleClick = (event) => {
+    this.setState({anchorEl: event.currentTarget});
+  };
+
+  handleClose = () => {
+    this.setState({anchorEl: null});
+  };
 
   renderValues = (selected, filter) => {
     return filter.options
@@ -72,13 +104,19 @@ export class SubmissionFiltersContainer extends React.PureComponent {
       .join(", ")
   }
 
-  handleChange = event => this.props.updateSelectedFilter(event.target.name, event.target.value);
+  handleChange = event => {
+    let name = event.target.name;
+    let values = event.target.value;
+    if (name === 'status') {
+      values = values.map(value => value.split(",").sort())
+    }
+    this.props.updateSelectedFilter(name, values)
+  }
   
   render() {
       const { classes } = this.props;
       return !this.props.submissionFilters.loading ? <div className={"filter-container"}> 
-          {this.props.submissionFilters.filters
-          .filter(filter => this.props.doNotRender.indexOf(filter.filterKey) === -1 )
+          {this.props.getFiltersToBeRendered.filter(filter => this.props.doNotRender.indexOf(filter.filterKey) === -1 )
           .map(filter => 
             {
               return <FilterDropDown 
@@ -100,22 +138,43 @@ export class SubmissionFiltersContainer extends React.PureComponent {
           </Button>
           
           {this.props.isGroupedIconShown && Object.keys(this.props.submissions).length != 0 &&
-           <Tooltip 
-           title={<span 
-             style={{ fontSize : '15px'}}>
-               share
-             </span>} 
-             placement="bottom-end">
-          <IconButton
-            variant="outlined" 
-            color="primary"
-            classes={{  root : classes.share }} 
-            target="_blank"
-            href={"/apply/submissions/grouped-applications/?id="+ Object.keys(this.props.submissions).toString()}
-          >
-            <ShareIcon fontSize="large" style={{color : "#0c72a0"}}/>
-          </IconButton>
-          </Tooltip>
+          <>
+               <IconButton
+                  aria-label="more"
+                  aria-controls="long-menu"
+                  aria-haspopup="true"
+                  onClick={this.handleClick}
+                  classes={{  root : classes.share }} 
+                >
+                  <MoreVertIcon fontSize="large"/>
+                </IconButton>
+                <Menu
+                  id="long-menu"
+                  anchorEl={this.state.anchorEl}
+                  keepMounted
+                  open={Boolean(this.state.anchorEl)}
+                  onClose={this.handleClose}
+                  PaperProps={{
+                    style: {
+                      maxHeight: 48 * 4.5,
+                      width: '20ch',
+                    },
+                  }}
+                >
+                  {this.state.options.map((option) => (
+                    <MenuItem key={option} selected={this.state.options.indexOf(option) == 0} onClick={this.handleClose} style={{whiteSpace: 'normal'}}>
+                      <Typography variant="inherit">
+                      <a 
+                      style={{color: "black"}}
+                      target="_blank" rel="noreferrer" 
+                      href={"/apply/submissions/grouped-applications/?id="+ Object.keys(this.props.submissions).toString()}
+                      onClick={this.state.options.indexOf(option) == 1 ? (e) => {navigator.clipboard.writeText((window.location.href)); this.props.addMessage("URL copied to clipboard", MESSAGE_TYPES.INFO); e.preventDefault();} : () => {return true}}
+                    >
+                        {option}</a></Typography>
+                    </MenuItem>
+                ))}
+              </Menu>
+          </>
           }
 
           <Tooltip 
@@ -149,13 +208,19 @@ SubmissionFiltersContainer.propTypes = {
   classes: PropTypes.object,
   isGroupedIconShown: PropTypes.bool,
   submissions: PropTypes.object,
+  addMessage: PropTypes.func,
+  getFiltersToBeRendered: PropTypes.array,
+  getScreeningLoading: PropTypes.bool,
+  history: PropTypes.object
 }
 
 
 const mapStateToProps = state =>  ({
     submissionFilters: Selectors.SelectSubmissionFiltersInfo(state),
     isGroupedIconShown : getGroupedIconStatus(state),
-    submissions: getSubmissions(state)
+    submissions: getSubmissions(state),
+    getScreeningLoading: getScreeningLoading(state),
+    getFiltersToBeRendered: Selectors.SelectFiltersToBeRendered(state)
 });
 
 
@@ -167,6 +232,7 @@ function mapDispatchToProps(dispatch) {
       clearAllSubmissions : clearAllSubmissionsAction,
       updateFilterQuery: Actions.updateFiltersQueryAction,
       deleteSelectedFilters: Actions.deleteSelectedFiltersAction,
+      addMessage: addMessage
     },
     dispatch,
   );

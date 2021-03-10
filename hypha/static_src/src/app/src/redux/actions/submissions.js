@@ -165,7 +165,6 @@ export const setCurrentSubmissionRound = (id) => (dispatch) => {
     dispatch(clearAllStatusesAction())
     dispatch(clearAllSubmissionsAction())
     dispatch(clearAllRoundsAction())
-
     return dispatch(loadCurrentRoundSubmissions());
 };
 
@@ -195,19 +194,41 @@ export const clearCurrentSubmissionParam = () => (dispatch, getState) => {
 export const setSubmissionParam = (id) => (dispatch, getState) => {
     const state = getState();
     const submissionID = getCurrentSubmissionID(state);
+    const filters = SelectSelectedFilters(state)
 
     const urlParams = new URLSearchParams(state.router.location.search);
     const urlID = Number(urlParams.get('submission'));
 
+    // check whether filters available & create searchParams accordingly
+    let searchParams = ""
+    if(filters && filters.length){
+        filters.forEach(filter => {
+            if(filter.key == "status"){
+            searchParams = searchParams + `&f_${filter.key}=${JSON.stringify(filter.value)}`
+            }else searchParams = searchParams + `&f_${filter.key}=${filter.value.join()}`
+        })
+    }
+
     const shouldSet = !urlID && !!id;
-    const shouldUpdate = id !== null  && submissionID !== id && urlID !== id;
-    if (shouldSet || shouldUpdate) {
-        dispatch(push({search: `?submission=${id}`}));
-    } else if (id === null) {
+
+    const shouldUpdate = id !== null  && submissionID !== id && urlID !== id 
+    && !(submissionID == null && urlParams.toString().includes("&")); // if url contains filter query & it is shared, don't update id
+
+    // check both url query parmas & filters are equal
+    const queryUpdate = (filters && 
+        filters.filter(filter => urlParams.get(filter.key) === null || 
+        filter.value.length !== urlParams.get(filter.key).split(',').length).length) ||
+        urlParams.toString().includes("&") && filters != null && !filters.length ||
+        urlParams.toString().includes("&") && filters != null && filters.length 
+        && searchParams.split("&").length != urlParams.toString().split("&").length
+
+    if (shouldSet || shouldUpdate || queryUpdate) {
+        dispatch(push({search: `?submission=${id}${searchParams}`}));
+    }else if (id === null ) {
         dispatch(clearCurrentSubmissionParam());
     }
 
-};
+}; 
 
 
 export const setCurrentSubmissionParam = () => (dispatch, getState) => {
@@ -307,7 +328,7 @@ export const setCurrentStatuses = (statuses) => (dispatch) => {
     });
     dispatch(clearAllRoundsAction())
     dispatch(clearAllStatusesAction())
-    dispatch(clearAllSubmissionsAction())
+    dispatch(clearAllSubmissionsAction()) 
     return dispatch(loadSubmissionsForCurrentStatus());
 };
 
@@ -332,7 +353,6 @@ export const loadSubmissionsForCurrentStatus = () => (dispatch, getState) => {
 
     return dispatch(fetchSubmissionsByStatuses(getCurrentStatuses(state), filters)).
     then(res => {
-        // debugger
         if(filters && filters.length){
             return dispatch(toggleGroupedIcon(true))
         }
