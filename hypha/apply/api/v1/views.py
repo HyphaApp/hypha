@@ -66,13 +66,13 @@ class SubmissionViewSet(viewsets.ReadOnlyModelViewSet, viewsets.GenericViewSet):
     @action(detail=True, methods=['put'])
     def set_summary(self, request, pk=None):
         submission = self.get_object()
-        ser = SubmissionSummarySerializer(data=request.data)
-        ser.is_valid(raise_exception=True)
-        summary = ser.validated_data['summary']
+        serializer = SubmissionSummarySerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        summary = serializer.validated_data['summary']
         submission.summary = summary
-        submission.save()
-        ser = self.get_serializer(submission)
-        return Response(ser.data)
+        submission.save(update_fields=['summary'])
+        serializer = self.get_serializer(submission)
+        return Response(serializer.data)
 
 
 class SubmissionFilters(APIView):

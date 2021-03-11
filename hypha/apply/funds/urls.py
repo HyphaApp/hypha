@@ -42,7 +42,7 @@ app_name = 'funds'
 submission_urls = ([
     path('', SubmissionOverviewView.as_view(), name="overview"),
     path('all/', SubmissionListView.as_view(), name="list"),
-    path('grouped-applications/', GroupingApplicationsListView.as_view(), name="grouped"),
+    path('summary/', GroupingApplicationsListView.as_view(), name="summary"),
     path('result/', SubmissionResultView.as_view(), name="result"),
     path('flagged/', include([
         path('', SubmissionUserFlaggedView.as_view(), name="flagged"),

@@ -9,8 +9,6 @@ const GroupedApplicationsReducer = (state = initialState, action) => {
       return state.set("loading", true);
     case ActionTypes.HIDE_LOADING:
       return state.set("loading", false);
-    // case ActionTypes.UPDATE_FILTERS_QUERY:
-    //   return state.set("filterQuery", action.data)
     default:
       return state;
   }

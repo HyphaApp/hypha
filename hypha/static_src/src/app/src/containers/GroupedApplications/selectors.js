@@ -5,5 +5,3 @@ export const selectFieldsRenderer = state =>
   state.GroupedApplications ? state.GroupedApplications : initialState;
 
 export const SelectGroupedApplicationsInfo = createSelector(selectFieldsRenderer, domain => domain);
-
-// export const SelectSelectedFilters = createSelector(selectFieldsRenderer, domain => domain.filterQuery)

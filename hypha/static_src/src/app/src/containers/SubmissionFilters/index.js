@@ -41,7 +41,7 @@ const styles = {
 export class SubmissionFiltersContainer extends React.PureComponent {
 
   state = {
-    options : ["Create Grouped Applications Link"],
+    options : ["Applications summary list"],
     anchorEl : null,
   }
 
@@ -140,10 +140,10 @@ export class SubmissionFiltersContainer extends React.PureComponent {
                   }}
                 >
                   {this.state.options.map((option) => (
-                    <MenuItem key={option} selected={option === 'Create Grouped Applications Link'} onClick={this.handleClose} style={{whiteSpace: 'normal'}}>
+                    <MenuItem key={option} selected={option === 'Applications summary list'} onClick={this.handleClose} style={{whiteSpace: 'normal'}}>
                       <Typography variant="inherit">
-                      <a style={{color : "black"}} target="_blank" rel="noreferrer" href={option == "Create Grouped Applications Link" 
-                      ? "/apply/submissions/grouped-applications/?id="+ Object.keys(this.props.submissions).toString()
+                      <a style={{color : "black"}} target="_blank" rel="noreferrer" href={option == "Applications summary list" 
+                      ? "/apply/submissions/summary/?id="+ Object.keys(this.props.submissions).toString()
                     : ""}>
                         {option}</a></Typography>
                     </MenuItem>
