@@ -26,9 +26,7 @@ body {
     }
 
     &.app-open {
-        @supports(overflow-y: overlay) {
-            overflow-y: overlay;
-        }
+        overflow: hidden;
     }
 }
 

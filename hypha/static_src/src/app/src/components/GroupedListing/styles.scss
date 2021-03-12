@@ -7,7 +7,7 @@
     }
 
     @include media-query(laptop-short) {
-        height: 100vh;
+        height: calc(100vh - 244px);
     }
 
     &__dropdown {
