@@ -1,13 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import SwitcherApp from './SwitcherApp';
-import { hot } from 'react-hot-loader';
+import { hot, setConfig } from 'react-hot-loader';
 import { connect } from 'react-redux'
 
 import GroupByRoundDetailView from '@containers/GroupByRoundDetailView';
 import { setCurrentStatuses } from '@actions/submissions';
 import { getCurrentStatusesSubmissions } from '@selectors/submissions';
 
+setConfig({showReactDomPatchNotification: false})
 
 export class SubmissionsByStatusApp extends React.Component {
     static propTypes = {

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { hot } from 'react-hot-loader';
+import { hot, setConfig } from 'react-hot-loader';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import injectReducer from '@utils/injectReducer'
@@ -13,6 +13,7 @@ import * as Selectors from './selectors';
 import "./styles.scss";
 import LoadingPanel from '@components/LoadingPanel';
 
+setConfig({showReactDomPatchNotification: false})
 
 class GroupedApplications extends React.Component {
     static propTypes = {
