@@ -26,7 +26,7 @@
             enter one of these backup tokens to login to your account.{% endblocktrans %}</p>
     {% endif %}
 
-    <form class="form form--with-p-tags" method="post">
+    <form class="form form--with-p-tags form--user-login" method="post">
       {% csrf_token %}
       {{ wizard.management_form }}
 
@@ -34,6 +34,7 @@
         {% for field in form %}
             {% include "forms/includes/field.html" %}
         {% endfor %}
+        {{ form.extra_text | safe }}
         <p><a class="link link--small" href="{% url 'users:password_reset' %}">Forgot your password?</a></p>
         <button class="link link--button-secondary" type="submit">Login</button>
       {% else %}

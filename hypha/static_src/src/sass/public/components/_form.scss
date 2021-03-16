@@ -20,6 +20,18 @@
         }
     }
 
+    &--user-login {
+        ul {
+            @extend %ul-straight-left;
+            margin-bottom:  20px;
+        }
+
+        ol {
+            @extend %ol-straight-left;
+            margin-bottom:  20px;
+        }
+    }
+
     &__group {
         position: relative;
         margin: 1rem 0;

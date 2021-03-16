@@ -16,6 +16,7 @@ class CustomAuthenticationForm(AuthenticationForm):
         super().__init__(*args, **kwargs)
         self.site = Site.find_for_request(self.request)
         self.user_settings = UserSettings.for_site(site=self.site)
+        self.extra_text = self.user_settings.extra_text
         if self.user_settings.consent_show:
             self.fields['consent'] = forms.BooleanField(
                 label=self.user_settings.consent_text,
