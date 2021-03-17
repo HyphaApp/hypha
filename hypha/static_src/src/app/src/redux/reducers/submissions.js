@@ -20,7 +20,9 @@ import {
     CLEAR_CURRENT_DETERMINATION,
     FETCH_DETERMINATION_DRAFT,
     CLEAR_DETERMINATION_DRAFT,
-    CLEAR_ALL_SUBMISSIONS
+    CLEAR_ALL_SUBMISSIONS,
+    UPDATE_SUMMARY_EDITOR,
+    SHOW_GROUPED_ICON
 } from '@actions/submissions';
 
 import { CREATE_NOTE, UPDATE_NOTES, UPDATE_NOTE } from '@actions/notes'
@@ -41,6 +43,7 @@ export function submission(state={comments: []}, action) {
                 isErrored: true,
             };
         case UPDATE_SUBMISSION:
+        case UPDATE_SUMMARY_EDITOR:
             return {
                 ...state,
                 ...action.data,
@@ -100,6 +103,7 @@ export function submissionsByID(state = {}, action) {
         case START_LOADING_SUBMISSION:
         case FAIL_LOADING_SUBMISSION:
         case UPDATE_SUBMISSION:
+        case UPDATE_SUMMARY_EDITOR:
         case CREATE_NOTE:
         case UPDATE_NOTE:
         case UPDATE_NOTES:
@@ -207,6 +211,15 @@ export function isDeterminationDraftExist(state = false, action) {
     }
 }
 
+function showGroupedIcon(state= false, action){
+    switch(action.type){
+        case SHOW_GROUPED_ICON:
+            return action.status
+        default:
+            return state
+    }
+}
+
 
 
 const submissions = combineReducers({
@@ -218,6 +231,7 @@ const submissions = combineReducers({
     showDeterminationForm: toggleDeterminationForm,
     currentDetermination,
     isDeterminationDraftExist,
+    showGroupedIcon
 });
 
 export default submissions;

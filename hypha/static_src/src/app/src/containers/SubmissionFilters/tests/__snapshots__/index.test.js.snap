@@ -35,7 +35,7 @@ exports[`Test submission filter Container Should render submission filter with l
     Filter
   </WithStyles(ForwardRef(Button))>
   <WithStyles(ForwardRef(Tooltip))
-    placement="right"
+    placement="bottom"
     title={
       <span
         style={

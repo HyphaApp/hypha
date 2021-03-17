@@ -416,6 +416,7 @@ class ApplicationSubmission(
 ):
     form_data = JSONField(encoder=StreamFieldDataEncoder)
     form_fields = StreamField(ApplicationCustomFormFieldsBlock())
+    summary = models.TextField(default='', null=True, blank=True)
     page = models.ForeignKey('wagtailcore.Page', on_delete=models.PROTECT)
     round = models.ForeignKey('wagtailcore.Page', on_delete=models.PROTECT, related_name='submissions', null=True)
     lead = models.ForeignKey(

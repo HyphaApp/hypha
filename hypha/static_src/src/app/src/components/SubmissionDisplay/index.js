@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import Answer, { answerPropTypes } from './answers'
 import LoadingPanel from '@components/LoadingPanel';
 import InlineLoading from '@components/InlineLoading';
-
+import HoverEditor from '@components/HoverEditor';
 import './styles.scss'
 
 
@@ -43,6 +43,7 @@ export default class SubmissionDisplay extends Component {
         isLoading: PropTypes.bool,
         isError: PropTypes.bool,
         submission: PropTypes.object,
+        updateSummaryEditor: PropTypes.func
     }
 
     componentDidUpdate(){
@@ -80,7 +81,13 @@ export default class SubmissionDisplay extends Component {
                     }
 
                     <h3>{title}</h3>
-
+                    <HoverEditor 
+                        onChange={(value) => this.props.updateSummaryEditor(this.props.submission.id, value)}
+                        value={this.props.submission.summary}
+                        charLimit={0}
+                        readOnly={!this.props.submission.isUserStaff}
+                        label={"Add Summary"}
+                    />
                     <div className="grid grid--proposal-info">
                         {metaQuestions.map((response, index) => (
                             <MetaResponse key={index} {...response} />

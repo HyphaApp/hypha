@@ -26,6 +26,7 @@ from django.views.generic import (
     ListView,
     UpdateView,
 )
+from django.views.generic.base import TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from django_file_form.models import PlaceholderUploadedFile
 from django_filters.views import FilterView
@@ -435,6 +436,14 @@ class SubmissionAdminListView(BaseAdminSubmissionsTable, DelegateableListView):
         BatchProgressSubmissionView,
         BatchDeleteSubmissionView,
     ]
+
+
+@method_decorator(staff_required, name='dispatch')
+class GroupingApplicationsListView(TemplateView):
+    '''
+    Template view for grouped submissions
+    '''
+    template_name = 'funds/grouped_application_list.html'
 
 
 class SubmissionReviewerListView(BaseReviewerSubmissionsTable):

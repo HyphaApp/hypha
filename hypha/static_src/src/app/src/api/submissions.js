@@ -17,6 +17,7 @@ export function fetchSubmissionsByRound(id, filters) {
             }
             )
     }
+
     return {
         path:'/v1/submissions/',
         params
@@ -73,6 +74,18 @@ export function executeSubmissionAction(submissionID, action) {
         options: {
             body: {
                 action,
+            }
+        }
+    }
+}
+
+export function updateSummaryEditor(submissionID, summary) {
+    return {
+        path: `/v1/submissions/${submissionID}/set_summary/`,
+        method: 'PUT',
+        options: {
+            body: {
+                summary,
             }
         }
     }

@@ -24,7 +24,7 @@ class SwitcherApp extends React.Component {
         setParams: PropTypes.func.isRequired,
         clearParams: PropTypes.func.isRequired,
         onFilter: PropTypes.func,
-        doNotRenderFilter: PropTypes.array
+        doNotRenderFilter: PropTypes.array,
     };
 
     state = {
@@ -86,11 +86,17 @@ class SwitcherApp extends React.Component {
         if ( this.state.mounting ) {
             return null
         }
+        
         return (
             <>
                 <GeneralInfoContainer />
                 <MessagesContainer />
-                <Switcher selector={this.props.switcherSelector} open={this.state.detailOpened} handleOpen={this.openDetail} handleClose={this.closeDetail} />
+                <Switcher 
+                    selector={this.props.switcherSelector} 
+                    open={this.state.detailOpened} 
+                    handleOpen={this.openDetail} 
+                    handleClose={this.closeDetail} 
+                />
 
                 <div style={this.state.style} ref={this.setOriginalContentRef} dangerouslySetInnerHTML={{ __html: this.props.pageContent }} />
                 {this.state.detailOpened && <SubmissionFiltersContainer onFilter={this.props.onFilter} doNotRender={this.props.doNotRenderFilter}/>}
@@ -101,7 +107,7 @@ class SwitcherApp extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-    searchParam: state.router.location.search
+    searchParam: state.router.location.search,
 })
 
 const mapDispatchToProps = dispatch => ({

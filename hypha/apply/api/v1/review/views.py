@@ -18,6 +18,7 @@ from .permissions import (
     HasReviewCreatePermission,
     HasReviewDeletePermission,
     HasReviewDetailPermission,
+    HasReviewDraftPermission,
     HasReviewEditPermission,
     HasReviewOpinionPermission,
 )
@@ -45,7 +46,7 @@ class SubmissionReviewViewSet(
         'delete': [permissions.IsAuthenticated, HasReviewDeletePermission, IsApplyStaffUser, ],
         'opinions': [permissions.IsAuthenticated, HasReviewOpinionPermission, IsApplyStaffUser, ],
         'fields': [permissions.IsAuthenticated, HasReviewCreatePermission, IsApplyStaffUser, ],
-        'draft': [permissions.IsAuthenticated, HasReviewCreatePermission, IsApplyStaffUser, ],
+        'draft': [permissions.IsAuthenticated, HasReviewDraftPermission, IsApplyStaffUser, ],
     }
     serializer_class = SubmissionReviewSerializer
 

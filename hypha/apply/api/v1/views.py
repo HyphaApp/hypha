@@ -30,6 +30,7 @@ from .serializers import (
     SubmissionActionSerializer,
     SubmissionDetailSerializer,
     SubmissionListSerializer,
+    SubmissionSummarySerializer,
     UserSerializer,
 )
 from .utils import (
@@ -42,7 +43,7 @@ from .utils import (
 )
 
 
-class SubmissionViewSet(viewsets.ReadOnlyModelViewSet):
+class SubmissionViewSet(viewsets.ReadOnlyModelViewSet, viewsets.GenericViewSet):
     permission_classes = (
         HasAPIKey | permissions.IsAuthenticated, HasAPIKey | IsApplyStaffUser,
     )
@@ -61,6 +62,17 @@ class SubmissionViewSet(viewsets.ReadOnlyModelViewSet):
         return ApplicationSubmission.objects.all().prefetch_related(
             Prefetch('reviews', Review.objects.submitted()),
         )
+
+    @action(detail=True, methods=['put'])
+    def set_summary(self, request, pk=None):
+        submission = self.get_object()
+        serializer = SubmissionSummarySerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        summary = serializer.validated_data['summary']
+        submission.summary = summary
+        submission.save(update_fields=['summary'])
+        serializer = self.get_serializer(submission)
+        return Response(serializer.data)
 
 
 class SubmissionFilters(APIView):

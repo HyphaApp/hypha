@@ -50,10 +50,15 @@ class SubmissionsFilter(filters.FilterSet):
         choices=[], label='Category',
         method='filter_category_options'
     )
+    id = filters.ModelMultipleChoiceFilter(
+        field_name='id',
+        queryset=ApplicationSubmission.objects.current().with_latest_update(),
+        method='filter_id'
+    )
 
     class Meta:
         model = ApplicationSubmission
-        fields = ('status', 'round', 'active', 'submit_date', 'fund', 'screening_statuses', 'reviewers', 'lead')
+        fields = ('id', 'status', 'round', 'active', 'submit_date', 'fund', 'screening_statuses', 'reviewers', 'lead')
 
     def __init__(self, *args, exclude=list(), limit_statuses=None, **kwargs):
         super().__init__(*args, **kwargs)
@@ -100,6 +105,11 @@ class SubmissionsFilter(filters.FilterSet):
                         }
                         query |= Q(**kwargs)
         return queryset.filter(query)
+
+    def filter_id(self, qs, name, value):
+        if not value:
+            return qs
+        return qs.filter(id__in=map(lambda x: x.id, value))
 
 
 class NewerThanFilter(filters.ModelChoiceFilter):

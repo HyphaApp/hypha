@@ -1,5 +1,6 @@
 import {
     executeSubmissionAction,
+    updateSummaryEditor,
     fetchSubmission,
     fetchSubmissionsByRound,
     fetchSubmissionsByStatuses,
@@ -11,7 +12,7 @@ import { createNoteForSubmission, fetchNotesForSubmission, fetchNewNotesForSubmi
 
 export default {
     executeSubmissionAction,
-
+    updateSummaryEditor,
     fetchSubmissionsByRound,
     fetchSubmissionsByStatuses,
     fetchSubmission,

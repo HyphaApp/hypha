@@ -79,3 +79,15 @@ class HasReviewOpinionPermission(permissions.BasePermission):
             return True
 
         return False
+
+
+class HasReviewDraftPermission(permissions.BasePermission):
+    """
+    Custom permission that user should have to access draft review.
+    """
+    def has_object_permission(self, request, view, obj):
+        try:
+            submission = view.get_submission_object()
+        except KeyError:
+            return True
+        return submission.can_review(user) and submission.assigned.draft_reviewed().filter(reviewer=request.user).exists()
