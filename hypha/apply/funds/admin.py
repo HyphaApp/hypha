@@ -120,7 +120,7 @@ class ScreeningStatusAdmin(ModelAdmin):
 
 class SealedRoundAdmin(BaseRoundAdmin):
     model = SealedRound
-    menu_icon = 'locked'
+    menu_icon = 'lock'
     menu_label = 'Sealed Rounds'
     list_display = ('title', 'fund', 'start_date', 'end_date')
 

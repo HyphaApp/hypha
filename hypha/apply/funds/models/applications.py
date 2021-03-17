@@ -31,6 +31,8 @@ from wagtail.admin.edit_handlers import (
     ObjectList,
     TabbedInterface,
 )
+from wagtail.contrib.settings.models import BaseSetting, register_setting
+from wagtail.core.fields import RichTextField
 from wagtail.core.models import Page, PageManager, PageQuerySet
 
 from ..admin_forms import RoundBasePageAdminForm, WorkflowFormAdminForm
@@ -574,3 +576,19 @@ class RoundsAndLabs(Page):
 
     def save(self, *args, **kwargs):
         raise NotImplementedError('Do not save through this model')
+
+
+@register_setting
+class ApplicationSettings(BaseSetting):
+    class Meta:
+        verbose_name = 'application settings'
+
+    extra_text_round = RichTextField(blank=True)
+    extra_text_lab = RichTextField(blank=True)
+
+    panels = [
+        MultiFieldPanel([
+            FieldPanel('extra_text_round'),
+            FieldPanel('extra_text_lab'),
+        ], 'extra text on application landing page'),
+    ]
