@@ -165,20 +165,26 @@ class UserSettings(BaseSetting):
         verbose_name = 'user settings'
 
     consent_show = models.BooleanField(
-        "Show consent checkbox in login form",
+        'Show consent checkbox',
         default=False,
     )
 
     consent_text = models.CharField(
         max_length=255,
+        blank=True,
     )
 
-    consent_help = RichTextField()
+    consent_help = RichTextField(blank=True)
+
+    extra_text = RichTextField(blank=True)
 
     panels = [
         MultiFieldPanel([
             FieldPanel('consent_show'),
             FieldPanel('consent_text'),
             FieldPanel('consent_help'),
-        ], 'consent checkbox'),
+        ], 'consent checkbox on login form'),
+        MultiFieldPanel([
+            FieldPanel('extra_text'),
+        ], 'extra text on login form'),
     ]
