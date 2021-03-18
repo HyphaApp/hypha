@@ -49,7 +49,7 @@ class ByStatusListing extends React.Component {
     componentDidUpdate(prevProps) {
         const { roundID } = this.props;
         // Update entries if round ID is changed or is not null.
-      if (roundID && prevProps.roundID !== roundID || this.props.filters != prevProps.filters) {
+      if (roundID && prevProps.roundID !== roundID || this.props.filters != prevProps.filters || !this.props.round) {
             loadData(this.props)
         }
     }
@@ -77,7 +77,7 @@ class ByStatusListing extends React.Component {
         return <GroupedListing
                     isLoading={isLoading}
                     errorMessage={errorMessage}
-                    items={submissions}
+                    items={submissions || []}
                     activeItem={activeSubmission}
                     onItemSelection={setCurrentItem}
                     shouldSelectFirst={shouldSelectFirst}

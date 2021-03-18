@@ -1,7 +1,9 @@
 import * as ActionTypes from './constants';
 
-export const initializeAction = () => ({
+export const initializeAction = (searchParams=null, filterAction=null) => ({
   type: ActionTypes.INITIALIZE,
+  searchParams,
+  filterAction
 });
 
 export const getFiltersSuccessAction = (data) => ({

@@ -54,7 +54,7 @@ class ByRoundListing extends React.Component {
 
     componentDidUpdate(prevProps) {
         const { statuses} = this.props;
-        if (!statuses.every(v => prevProps.statuses.includes(v)) || this.props.filters != prevProps.filters) {
+        if (!statuses.every(v => prevProps.statuses.includes(v)) || !Object.keys(this.props.rounds).length || this.props.filters != prevProps.filters) {
             loadData(this.props)
         }
     }

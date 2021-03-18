@@ -50,7 +50,7 @@ export class ScreeningStatusContainer extends React.PureComponent {
         <div className="screening-status-box" style={{ padding: '1rem'}}>
           <div className="screening-default-options" >
             <div 
-              className={
+              className={screeningInfo.defaultSelectedValue &&
                 screeningInfo.defaultSelectedValue.id == defaultOptions.yes.id ? 
                 "screening-status-yes-disabled": 
                 "screening-status-yes-enabled"
@@ -58,7 +58,7 @@ export class ScreeningStatusContainer extends React.PureComponent {
               onClick={this.updateDefaultValue(submissionID, defaultOptions.yes)} 
             >
                 <SvgIcon
-                  className = { screeningInfo.defaultSelectedValue.id == defaultOptions.yes.id ? "thumbs-up-color" : ""}
+                  className = { screeningInfo.defaultSelectedValue && screeningInfo.defaultSelectedValue.id == defaultOptions.yes.id ? "thumbs-up-color" : ""}
                   style={{ alignSelf: 'center'}}
                 >
                   <path d="m1.75 23h2.5c.965 0 1.75-.785 1.75-1.75v-11.5c0-.965-.785-1.75-1.75-1.75h-2.5c-.965 0-1.75.785-1.75 1.75v11.5c0 .965.785 1.75 1.75 1.75z"></path><path d="m12.781.75c-1 0-1.5.5-1.5 3 0 2.376-2.301 4.288-3.781 5.273v12.388c1.601.741 4.806 1.839 9.781 1.839h1.6c1.95 0 3.61-1.4 3.94-3.32l1.12-6.5c.42-2.45-1.46-4.68-3.94-4.68h-4.72s.75-1.5.75-4c0-3-2.25-4-3.25-4z"></path>
@@ -66,7 +66,7 @@ export class ScreeningStatusContainer extends React.PureComponent {
                 <div>{defaultOptions.yes.title}</div>
             </div>
             <div 
-              className={
+              className={screeningInfo.defaultSelectedValue &&
                 screeningInfo.defaultSelectedValue.id == defaultOptions.no.id ? 
                 "screening-status-no-disabled" :
                 "screening-status-no-enabled"
@@ -74,7 +74,7 @@ export class ScreeningStatusContainer extends React.PureComponent {
               onClick={this.updateDefaultValue(submissionID, defaultOptions.no)} 
             >
                 <SvgIcon 
-                className = { screeningInfo.defaultSelectedValue.id == defaultOptions.no.id ? "thumbs-down-color" : ""}
+                className = { screeningInfo.defaultSelectedValue && screeningInfo.defaultSelectedValue.id == defaultOptions.no.id ? "thumbs-down-color" : ""}
                 style={{ alignSelf: 'center'}}
                 >
                   <path d="m22.25 1h-2.5c-.965 0-1.75.785-1.75 1.75v11.5c0 .965.785 1.75 1.75 1.75h2.5c.965 0 1.75-.785 1.75-1.75v-11.5c0-.965-.785-1.75-1.75-1.75z"></path><path d="m5.119.75c-1.95 0-3.61 1.4-3.94 3.32l-1.12 6.5c-.42 2.45 1.46 4.68 3.94 4.68h4.72s-.75 1.5-.75 4c0 3 2.25 4 3.25 4s1.5-.5 1.5-3c0-2.376 2.301-4.288 3.781-5.273v-12.388c-1.601-.741-4.806-1.839-9.781-1.839z"></path>
@@ -82,8 +82,8 @@ export class ScreeningStatusContainer extends React.PureComponent {
                 <div>{defaultOptions.no.title}</div>
             </div>
           </div>
-          {visibleOptions.length > 0 && 
-            <div className="screening-visible-options">
+          {visibleOptions && visibleOptions.length > 0 && 
+            <div className="screening-visible-options" >
               <h6 style={{ fontWeight: '550', width : '100%'}}>Screening reasons</h6>
               {visibleOptions.map(option => 
                 <Chip 
