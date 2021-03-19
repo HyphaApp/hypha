@@ -18,7 +18,6 @@ import { withStyles } from '@material-ui/core/styles';
 import Tooltip from '@material-ui/core/Tooltip';
 import FilterDropDown from '@common/components/FilterDropDown'
 import { getGroupedIconStatus, getSubmissions } from '@selectors/submissions';
-import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -43,7 +42,7 @@ const styles = {
 export class SubmissionFiltersContainer extends React.PureComponent {
 
   state = {
-    options : ["Applications summary list", "Share this filter"],
+    options : [{key:"applications-summary-list", value : "Applications summary list"},{ key:"share-this-filter", value: "Share this filter"}],
     anchorEl : null,
   }
 
@@ -112,11 +111,23 @@ export class SubmissionFiltersContainer extends React.PureComponent {
     }
     this.props.updateSelectedFilter(name, values)
   }
+
+  handleMenuitemClick = option => e => {
+    this.handleClose();
+    if(option.key == "share-this-filter") {
+      navigator.clipboard.writeText((window.location.href));
+      this.props.addMessage("URL copied to clipboard", MESSAGE_TYPES.INFO);
+      e.preventDefault();
+      return false;
+    }
+    return true;
+  }
   
   render() {
       const { classes } = this.props;
-      return !this.props.submissionFilters.loading ? <div className={"filter-container"}> 
-          {this.props.getFiltersToBeRendered.filter(filter => this.props.doNotRender.indexOf(filter.filterKey) === -1 )
+      return !this.props.submissionFilters.loading ? <div className={"filter-container"}>
+          {this.props.getFiltersToBeRendered
+          .filter(filter => this.props.doNotRender.indexOf(filter.filterKey) === -1 )
           .map(filter => 
             {
               return <FilterDropDown 
@@ -162,15 +173,19 @@ export class SubmissionFiltersContainer extends React.PureComponent {
                   }}
                 >
                   {this.state.options.map((option) => (
-                    <MenuItem key={option} selected={this.state.options.indexOf(option) == 0} onClick={this.handleClose} style={{whiteSpace: 'normal'}}>
-                      <Typography variant="inherit">
-                      <a 
-                      style={{color: "black"}}
-                      target="_blank" rel="noreferrer" 
-                      href={"/apply/submissions/grouped-applications/?id="+ Object.keys(this.props.submissions).toString()}
-                      onClick={this.state.options.indexOf(option) == 1 ? (e) => {navigator.clipboard.writeText((window.location.href)); this.props.addMessage("URL copied to clipboard", MESSAGE_TYPES.INFO); e.preventDefault();} : () => {return true}}
+                    <MenuItem 
+                      key={option.key} 
+                      selected={option.key === "applications-summary-list"} 
+                      style={{whiteSpace: 'normal'}}
                     >
-                        {option}</a></Typography>
+                        <a 
+                          style={{color: "black"}}
+                          target="_blank" rel="noreferrer" 
+                          href={"/apply/submissions/summary/?id="+ Object.keys(this.props.submissions).join(",")}
+                          onClick={this.handleMenuitemClick(option)}
+                        >
+                          {option.value}
+                        </a>
                     </MenuItem>
                 ))}
               </Menu>
