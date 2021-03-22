@@ -43,7 +43,8 @@ class ByRoundListing extends React.Component {
         rounds: PropTypes.object,
         isLoading: PropTypes.bool,
         errorMessage: PropTypes.string,
-        filters: PropTypes.array
+        filters: PropTypes.array,
+        groupBy: PropTypes.string
     };
 
     componentDidMount() {
@@ -53,8 +54,11 @@ class ByRoundListing extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
-        const { statuses} = this.props;
-        if (!statuses.every(v => prevProps.statuses.includes(v)) || !Object.keys(this.props.rounds).length || this.props.filters != prevProps.filters) {
+        const { statuses, groupBy } = this.props;
+        
+        if (!statuses.every(v => prevProps.statuses.includes(v)) 
+            || !groupBy && !Object.keys(this.props.rounds).length 
+            || this.props.filters != prevProps.filters) {
             loadData(this.props)
         }
     }

@@ -13,6 +13,7 @@
     "dependencies": {
         "@material-ui/core": "^4.11.1",
         "@material-ui/icons": "^4.9.1",
+        "@material-ui/lab": "^4.0.0-alpha.57",
         "@rooks/use-interval": "^3.0.1",
         "@svgr/webpack": "^4.2.0",
         "@tinymce/tinymce-react": "^3.6.0",

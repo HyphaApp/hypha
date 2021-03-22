@@ -23,7 +23,19 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { getScreeningLoading } from '@containers/ScreeningStatus/selectors'
-import { MESSAGE_TYPES, addMessage } from '@actions/messages';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
+import Slide from '@material-ui/core/Slide';
+
+
+const Alert = React.forwardRef((props, ref) => 
+<MuiAlert elevation={6} variant="filled" {...props} ref={ref} />);
+
+Alert.displayName = 'AlertComponent';
+
+function TransitionRight(props) {
+  return <Slide {...props} direction="left" />;
+}
 
 const styles = {
   filterButton: {
@@ -44,6 +56,9 @@ export class SubmissionFiltersContainer extends React.PureComponent {
   state = {
     options : [{key:"applications-summary-list", value : "Applications summary list"},{ key:"share-this-filter", value: "Share this filter"}],
     anchorEl : null,
+    openSnackbar: false,
+    vertical: 'bottom',
+    horizontal: 'center',
   }
 
   componentDidMount(){
@@ -64,7 +79,7 @@ export class SubmissionFiltersContainer extends React.PureComponent {
     const options = this.props.submissionFilters.selectedFilters
     let filterQuery = [];
     Object.keys(options).forEach(key => options[key] && 
-      filterQuery.push({"key": key, "value": options[key]})
+      filterQuery.push({"key": "f_"+key, "value": options[key]})
     )
     this.props.updateFilterQuery(filterQuery)
     this.props.onFilter()
@@ -88,11 +103,11 @@ export class SubmissionFiltersContainer extends React.PureComponent {
     return []
   }
 
-  handleClick = (event) => {
+  handleMenuClick = (event) => {
     this.setState({anchorEl: event.currentTarget});
   };
 
-  handleClose = () => {
+  handleMenuClose = () => {
     this.setState({anchorEl: null});
   };
 
@@ -112,19 +127,21 @@ export class SubmissionFiltersContainer extends React.PureComponent {
     this.props.updateSelectedFilter(name, values)
   }
 
-  handleMenuitemClick = option => e => {
-    this.handleClose();
+  handleMenuitemClick = (option) => e => {
     if(option.key == "share-this-filter") {
+      this.setState({ openSnackbar: true })
       navigator.clipboard.writeText((window.location.href));
-      this.props.addMessage("URL copied to clipboard", MESSAGE_TYPES.INFO);
       e.preventDefault();
+      this.handleMenuClose();
       return false;
     }
+    this.handleMenuClose();
     return true;
   }
   
   render() {
       const { classes } = this.props;
+      const { vertical, horizontal, openSnackbar } = this.state;
       return !this.props.submissionFilters.loading ? <div className={"filter-container"}>
           {this.props.getFiltersToBeRendered
           .filter(filter => this.props.doNotRender.indexOf(filter.filterKey) === -1 )
@@ -154,7 +171,7 @@ export class SubmissionFiltersContainer extends React.PureComponent {
                   aria-label="more"
                   aria-controls="long-menu"
                   aria-haspopup="true"
-                  onClick={this.handleClick}
+                  onClick={this.handleMenuClick}
                   classes={{  root : classes.share }} 
                 >
                   <MoreVertIcon fontSize="large"/>
@@ -164,7 +181,7 @@ export class SubmissionFiltersContainer extends React.PureComponent {
                   anchorEl={this.state.anchorEl}
                   keepMounted
                   open={Boolean(this.state.anchorEl)}
-                  onClose={this.handleClose}
+                  onClose={this.handleMenuClose}
                   PaperProps={{
                     style: {
                       maxHeight: 48 * 4.5,
@@ -179,7 +196,7 @@ export class SubmissionFiltersContainer extends React.PureComponent {
                       style={{whiteSpace: 'normal'}}
                     >
                         <a 
-                          style={{color: "black"}}
+                          style={{color: "black", width: "inherit"}}
                           target="_blank" rel="noreferrer" 
                           href={"/apply/submissions/summary/?id="+ Object.keys(this.props.submissions).join(",")}
                           onClick={this.handleMenuitemClick(option)}
@@ -191,6 +208,19 @@ export class SubmissionFiltersContainer extends React.PureComponent {
               </Menu>
           </>
           }
+
+          <Snackbar
+            anchorOrigin={{ vertical, horizontal }}
+            autoHideDuration={6000} 
+            open={openSnackbar}
+            onClose={() => this.setState({openSnackbar: false})}
+            key={vertical + horizontal}
+            TransitionComponent={TransitionRight}
+          >
+            <Alert onClose={() => this.setState({openSnackbar: false})} severity="success">
+              URL copied to Clipboard!
+            </Alert>
+          </Snackbar>
 
           <Tooltip 
             title={<span 
@@ -223,7 +253,6 @@ SubmissionFiltersContainer.propTypes = {
   classes: PropTypes.object,
   isGroupedIconShown: PropTypes.bool,
   submissions: PropTypes.object,
-  addMessage: PropTypes.func,
   getFiltersToBeRendered: PropTypes.array,
   getScreeningLoading: PropTypes.bool,
   history: PropTypes.object
@@ -247,7 +276,6 @@ function mapDispatchToProps(dispatch) {
       clearAllSubmissions : clearAllSubmissionsAction,
       updateFilterQuery: Actions.updateFiltersQueryAction,
       deleteSelectedFilters: Actions.deleteSelectedFiltersAction,
-      addMessage: addMessage
     },
     dispatch,
   );

@@ -6,13 +6,13 @@ export function fetchSubmissionsByRound(id, filters) {
     if(filters){
         filters.forEach(filter => 
             {   
-                if(filter.key == 'status'){
+                if(filter.key == 'f_status'){
                     filter.value.map(values =>
                         values.map(value =>
-                            params.append(filter.key, value)))
+                            params.append(filter.key.slice(2), value)))
                 }else{
                     filter.value.forEach(filterValue => 
-                    params.append(filter.key,filterValue))
+                    params.append(filter.key.slice(2),filterValue))
                 }
             }
             )
@@ -50,13 +50,13 @@ export function fetchSubmissionsByStatuses(statuses, filters) {
     if(filters){
         filters.forEach(filter => 
             {   
-                if(filter.key == 'status'){
+                if(filter.key == 'f_status'){
                     filter.value.map(values =>
                         values.map(value =>
-                            params.append(filter.key, value)))
+                            params.append(filter.key.slice(2), value)))
                 }else{
                     filter.value.forEach(filterValue => 
-                    params.append(filter.key,filterValue))
+                    params.append(filter.key.slice(2),filterValue))
                 }
             }
             )

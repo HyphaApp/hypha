@@ -203,9 +203,9 @@ export const setSubmissionParam = (id) => (dispatch, getState) => {
     let searchParams = ""
     if(filters && filters.length){
         filters.forEach(filter => {
-            if(filter.key == "status"){
-            searchParams = searchParams + `&f_${filter.key}=${JSON.stringify(filter.value)}`
-            }else searchParams = searchParams + `&f_${filter.key}=${filter.value.join()}`
+            if(filter.key == "f_status"){
+            searchParams = searchParams + `&${filter.key}=${JSON.stringify(filter.value)}`
+            }else searchParams = searchParams + `&${filter.key}=${filter.value.join()}`
         })
     }
 
