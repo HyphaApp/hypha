@@ -792,12 +792,10 @@ class ReviewerSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Del
             queryset = ApplicationSubmission.objects.for_reviewer_settings(
                 request.user, reviewer_settings
             )
-        else:
-            queryset = ApplicationSubmission.objects.reviewed_by(request.user)
+            # Reviewer can't view submission which is not listed in ReviewerSubmissionsTable
+            if not queryset.filter(id=submission.id).exists():
+                raise PermissionDenied
 
-        # Reviewer can't view submission which is not listed in ReviewerSubmissionsTable
-        if not queryset.filter(id=submission.id).exists():
-            raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
 
