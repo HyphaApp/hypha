@@ -1,4 +1,6 @@
 {% extends "base.html" %}
+{% load wagtailcore_tags wagtailsettings_tags %}
+
 {% block header_modifier %}header--light-bg{% endblock %}
 {% block content %}
 <div class="wrapper wrapper--small">
@@ -16,6 +18,8 @@
         <p>If you do not receive an e-mail within 15 minutes please check your
 spam folder and contact {{ ORG_EMAIL|urlize }} for further assistance.</p>
         {% with email_context=page.specific %}<p>{{ email_context.confirmation_text_extra|urlize }}</p>{% endwith %}
+
+        {% block extra_text %}{{ settings.funds.ApplicationSettings.extra_text_round|richtext }}{% endblock %}
     </div>
 </div>
 {% endblock %}
