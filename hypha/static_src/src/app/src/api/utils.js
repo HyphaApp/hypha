@@ -7,10 +7,13 @@ const getBaseUrl = () => {
 export function apiFetch({path, method = 'GET', params = new URLSearchParams, options = {}}) {
     const url = new URL(getBaseUrl());
     url.pathname = url.pathname + path;
-
+    
     for (const [paramKey, paramValue] of getIteratorForParams(params)) {
         url.searchParams.append(paramKey, paramValue);
     }
+
+    options.headers = options.headers ? options.headers : {};
+    options.headers['Accept'] = 'application/json';
 
     if (['post', 'put', 'patch', 'delete'].includes(method.toLowerCase())) {
         options.headers = {
@@ -20,14 +23,21 @@ export function apiFetch({path, method = 'GET', params = new URLSearchParams, op
         };
     }
 
+    if(path.includes("apply")){
+        url.pathname = path
+        delete options.headers['Content-Type'];
+        delete options.headers['Accept'];
+        options.headers['Accept'] = '*/*';
+        options.headers['X-Requested-With']= 'XMLHttpRequest';
+    }
+
     return fetch(url, {
         ...options,
         headers: {
             ...options.headers,
-            'Accept': 'application/json',
         },
         method,
-        mode: 'same-origin',
+        mode: path.includes("apply") ? 'cors' :'same-origin',
         credentials: 'include'
     });
 }
