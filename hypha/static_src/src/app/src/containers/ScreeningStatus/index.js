@@ -22,6 +22,7 @@ export class ScreeningStatusContainer extends React.PureComponent {
     if(this.props.submissionID){
       this.props.initializeAction(this.props.submissionID)
     }
+    document.addEventListener("keydown", this.keydownHandler);
   }
 
   componentDidUpdate(prevProps){
@@ -29,12 +30,30 @@ export class ScreeningStatusContainer extends React.PureComponent {
       this.props.initializeAction(this.props.submissionID)
     }
   }
+
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.keydownHandler);
+  }
+
   updateDefaultValue = (submissionID, defaultOption) => () => {
     if(this.props.screeningInfo.defaultSelectedValue.id != defaultOption.id) 
           {
             this.props.selectDefautValue(submissionID, defaultOption)
           }
+  }
+
+  keydownHandler = (event) => {
+    if(event.ctrlKey && event.keyCode == 85){
+      event.preventDefault();
+      this.props.screeningStatuses &&
+      this.updateDefaultValue(this.props.submissionID, this.props.defaultOptions.yes)()
     }
+    if(event.ctrlKey && event.keyCode == 68){
+      event.preventDefault();
+      this.props.screeningStatuses &&
+      this.updateDefaultValue(this.props.submissionID, this.props.defaultOptions.no)()
+    }
+  }
 
   render(){
     const {

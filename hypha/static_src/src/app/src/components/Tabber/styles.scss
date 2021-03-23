@@ -62,6 +62,6 @@
     }
 
     @include media-query(laptop-short) {
-        height: calc(100vh - #{$listing-header-height});
+        height: calc(100vh - 314px);
     }
 }

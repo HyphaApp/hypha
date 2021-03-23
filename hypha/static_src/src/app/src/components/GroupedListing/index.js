@@ -41,6 +41,11 @@ export default class GroupedListing extends React.Component {
 
     componentDidMount() {
         this.orderItems();
+        document.addEventListener("keydown", this.keydownHandler);
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener('keydown', this.keydownHandler);
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -60,6 +65,30 @@ export default class GroupedListing extends React.Component {
                 }
             }
         }
+    }
+
+    keydownHandler = (e) => {
+        let orderedItems = []
+        let selected
+
+        // get ordered Ids
+        this.state.orderedItems
+            .map(group => group.items)
+            .map(items => items.map(item => item.id))
+            .map(orderedID => orderedItems = orderedItems.concat(orderedID))
+        
+        if(e.keyCode===38 && e.ctrlKey){
+            selected = orderedItems[orderedItems.indexOf(this.props.activeItem)-1]
+        }else if(e.keyCode===40 && e.ctrlKey){
+            selected = orderedItems[orderedItems.indexOf(this.props.activeItem)+1]
+        }
+
+        if(selected == undefined) return
+        this.listRef.current.scrollTo({
+            top: document.getElementById(selected).offsetTop
+        })
+        this.props.onItemSelection(selected)
+        e.preventDefault()
     }
 
     getGroupedItems() {
