@@ -6,7 +6,8 @@ import { withWindowSizeListener } from 'react-window-size-listener';
 import { clearCurrentSubmission } from '@actions/submissions';
 import DisplayPanel from '@containers/DisplayPanel';
 import SlideInRight from '@components/Transitions/SlideInRight'
-import SlideOutLeft from '@components/Transitions/SlideOutLeft'
+import SlideOutLeft from '@components/Transitions/SlideOutLeft';
+import ResizablePanels from '@components/ResizablePanels'
 
 import FullScreenLoadingPanel from '@components/FullScreenLoadingPanel';
 
@@ -56,9 +57,11 @@ const DetailView = props => {
         }
     } else {
         activeDisplay = (
-            <>
-                {listing}
-                {renderDisplay()}
+            <>  
+            <ResizablePanels panels={[25, 75]} panelType={"lsb-main"}>
+                    {listing}
+                    {renderDisplay()}
+            </ResizablePanels>
             </>
         )
     }

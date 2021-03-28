@@ -81,7 +81,7 @@ export class ReviewFormContainer extends React.PureComponent {
 
   render() {
       return <div 
-      className={"container"}> 
+      className={"review-form-container"}> 
       {this.props.reviewId ? <h3>Update Review</h3> : <h3>Create Review</h3> }
       {this.props.formData.loading ? <LoadingPanel /> : <> 
         <FormContainer metadata={this.getMetaFields()} formId={"myIntialForm"} />

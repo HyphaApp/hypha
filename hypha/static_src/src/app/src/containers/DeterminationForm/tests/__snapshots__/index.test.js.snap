@@ -2,7 +2,7 @@
 
 exports[`Test Determination Container Should render determination with loading false & currentDetermination exists 1`] = `
 <div
-  className="container"
+  className="determination-form-container"
 >
   <h3>
     Update Determination
@@ -42,7 +42,7 @@ exports[`Test Determination Container Should render determination with loading f
 
 exports[`Test Determination Container Should render determination with loading false 1`] = `
 <div
-  className="container"
+  className="determination-form-container"
 >
   <h3>
     Update Determination
@@ -96,7 +96,7 @@ exports[`Test Determination Container Should render determination without issues
   submissionID={1}
 >
   <div
-    className="container"
+    className="determination-form-container"
   >
     <h3>
       Create Determination

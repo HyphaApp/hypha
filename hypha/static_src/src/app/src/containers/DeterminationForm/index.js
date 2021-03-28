@@ -74,7 +74,7 @@ export class DeterminationFormContainer extends React.PureComponent {
 
   render() {
       return <div 
-      className={"container"}> 
+      className={"determination-form-container"}> 
       {this.props.determinationId ? <h3>Update Determination</h3> : <h3>Create Determination</h3> }
       {this.props.formData.loading ? <LoadingPanel /> : <> 
         <FormContainer metadata={this.getMetaFields()} formId={"myIntialForm"} />

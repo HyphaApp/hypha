@@ -36,13 +36,13 @@ class DeterminationContainer extends React.PureComponent {
                 }
                 {this.props.submission.actionButtons.showDeterminationButton && this.props.determinationDraftStatus && 
                 <div className="status-actions">
-                    <button onClick = {() =>  this.props.toggleDeterminationForm(true)} className="button button--primary button--half-width">
+                    <button onClick = {() =>  this.props.toggleDeterminationForm(true)} className="button button--primary button--half-width" style={{padding: '10px'}}>
                         Update draft
                     </button>
                 </div>}
                 { this.props.submission.actionButtons.showDeterminationButton && !this.props.determinationDraftStatus &&
                 <div className="status-actions">
-                    <button onClick = {() =>  this.props.toggleDeterminationForm(true)} className="button button--primary button--full-width">
+                    <button onClick = {() =>  this.props.toggleDeterminationForm(true)} className="button button--primary button--full-width" style={{padding: '10px'}}>
                         Add determination
                     </button>
                 </div>}
