@@ -682,7 +682,7 @@ class EmailAdapter(AdapterBase):
         MESSAGES.BATCH_TRANSITION: 'handle_batch_transition',
         MESSAGES.DETERMINATION_OUTCOME: 'handle_determination',
         MESSAGES.BATCH_DETERMINATION_OUTCOME: 'handle_batch_determination',
-        MESSAGES.INVITED_TO_PROPOSAL: 'messages/email/invited_to_proposal.html',
+        MESSAGES.INVITED_TO_PROPOSAL: 'handle_invited_to_proposal',
         MESSAGES.BATCH_READY_FOR_REVIEW: 'handle_batch_ready_for_review',
         MESSAGES.READY_FOR_REVIEW: 'handle_ready_for_review',
         MESSAGES.PARTNERS_UPDATED: 'partners_updated_applicant',
@@ -767,6 +767,16 @@ class EmailAdapter(AdapterBase):
                 'messages/email/determination.html',
                 source=submission,
                 determination=determination,
+                **kwargs
+            )
+
+    def handle_invited_to_proposal(self, request, user, source, **kwargs):
+        if settings.SEND_INVITED_TO_PROPOSAL:
+            return self.render_message(
+                'messages/email/invited_to_proposal.html',
+                source=source,
+                user=user,
+                request=request,
                 **kwargs
             )
 
