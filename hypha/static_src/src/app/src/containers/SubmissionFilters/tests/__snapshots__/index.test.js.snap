@@ -34,6 +34,26 @@ exports[`Test submission filter Container Should render submission filter with l
   >
     Filter
   </WithStyles(ForwardRef(Button))>
+  <WithStyles(ForwardRef(Snackbar))
+    TransitionComponent={[Function]}
+    anchorOrigin={
+      Object {
+        "horizontal": "center",
+        "vertical": "bottom",
+      }
+    }
+    autoHideDuration={6000}
+    key="bottomcenter"
+    onClose={[Function]}
+    open={false}
+  >
+    <AlertComponent
+      onClose={[Function]}
+      severity="success"
+    >
+      URL copied to Clipboard!
+    </AlertComponent>
+  </WithStyles(ForwardRef(Snackbar))>
   <WithStyles(ForwardRef(Tooltip))
     placement="bottom"
     title={

@@ -2,8 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Modal from 'react-modal';
 import { Provider } from 'react-redux';
-// import { ConnectedRouter } from 'connected-react-router';
-// import { Router } from 'react-router';
 import GroupedApplications from '@containers/GroupedApplications';
 import createStore, { history } from '@redux/store';
 import { ConnectedRouter } from 'connected-react-router';

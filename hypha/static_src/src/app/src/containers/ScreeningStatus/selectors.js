@@ -6,6 +6,8 @@ export const selectFieldsRenderer = state =>
 
 export const selectScreeningInfo = createSelector(selectFieldsRenderer, domain => domain)
 
+export const getScreeningLoading = createSelector(selectFieldsRenderer, domain => domain.loading)
+
 export const selectScreeningStatuses = createSelector(selectFieldsRenderer, domain => domain.screeningStatuses
 )
 

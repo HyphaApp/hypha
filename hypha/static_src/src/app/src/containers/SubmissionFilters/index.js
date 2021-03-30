@@ -18,11 +18,24 @@ import { withStyles } from '@material-ui/core/styles';
 import Tooltip from '@material-ui/core/Tooltip';
 import FilterDropDown from '@common/components/FilterDropDown'
 import { getGroupedIconStatus, getSubmissions } from '@selectors/submissions';
-import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import { getScreeningLoading } from '@containers/ScreeningStatus/selectors'
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
+import Slide from '@material-ui/core/Slide';
+
+
+const Alert = React.forwardRef((props, ref) => 
+<MuiAlert elevation={6} variant="filled" {...props} ref={ref} />);
+
+Alert.displayName = 'AlertComponent';
+
+function TransitionRight(props) {
+  return <Slide {...props} direction="left" />;
+}
 
 const styles = {
   filterButton: {
@@ -41,43 +54,60 @@ const styles = {
 export class SubmissionFiltersContainer extends React.PureComponent {
 
   state = {
-    options : ["Applications summary list"],
+    options : [{key:"applications-summary-list", value : "Applications summary list"},{ key:"share-this-filter", value: "Share this filter"}],
     anchorEl : null,
+    openSnackbar: false,
+    vertical: 'bottom',
+    horizontal: 'center',
   }
 
   componentDidMount(){
     this.props.initializeAction()
   }
 
+  componentDidUpdate(prevProps, prevState){
+    if(this.props.getScreeningLoading == false 
+      && !this.props.isGroupedIconShown 
+      && this.props.history.location.search.includes("&") 
+      && !this.props.submissionFilters.loading){
+      this.props.initializeAction(this.props.history.location.search, this.onFilter)
+    }
+  }
+
+
   onFilter = () => {
     const options = this.props.submissionFilters.selectedFilters
     let filterQuery = [];
     Object.keys(options).forEach(key => options[key] && 
-      filterQuery.push({"key": key, "value": options[key]})
+      filterQuery.push({"key": "f_"+key, "value": options[key]})
     )
     this.props.updateFilterQuery(filterQuery)
     this.props.onFilter()
   }
 
   onFilterDelete = () => {
+    this.props.history.push(window.location.pathname)
     this.props.deleteSelectedFilters()
     this.onFilter()
     this.props.updateFilterQuery([])
   }
   
   getValue  = filterKey => {
-    if(this.props.submissionFilters.selectedFilters && 
+    if(Object.keys(this.props.submissionFilters.selectedFilters).length && 
       this.props.submissionFilters.selectedFilters.hasOwnProperty(filterKey)) {
+        if(filterKey == "status"){
+          return this.props.submissionFilters.selectedFilters[filterKey].map(val =>  val.asMutable().sort().join(",")).asMutable()
+        }
         return this.props.submissionFilters.selectedFilters[filterKey].asMutable()
     }
     return []
   }
 
-  handleClick = (event) => {
+  handleMenuClick = (event) => {
     this.setState({anchorEl: event.currentTarget});
   };
 
-  handleClose = () => {
+  handleMenuClose = () => {
     this.setState({anchorEl: null});
   };
 
@@ -88,12 +118,32 @@ export class SubmissionFiltersContainer extends React.PureComponent {
       .join(", ")
   }
 
-  handleChange = event => this.props.updateSelectedFilter(event.target.name, event.target.value);
+  handleChange = event => {
+    let name = event.target.name;
+    let values = event.target.value;
+    if (name === 'status') {
+      values = values.map(value => value.split(",").sort())
+    }
+    this.props.updateSelectedFilter(name, values)
+  }
+
+  handleMenuitemClick = (option) => e => {
+    if(option.key == "share-this-filter") {
+      this.setState({ openSnackbar: true })
+      navigator.clipboard.writeText((window.location.href));
+      e.preventDefault();
+      this.handleMenuClose();
+      return false;
+    }
+    this.handleMenuClose();
+    return true;
+  }
   
   render() {
       const { classes } = this.props;
-      return !this.props.submissionFilters.loading ? <div className={"filter-container"}> 
-          {this.props.submissionFilters.filters
+      const { vertical, horizontal, openSnackbar } = this.state;
+      return !this.props.submissionFilters.loading ? <div className={"filter-container"}>
+          {this.props.getFiltersToBeRendered
           .filter(filter => this.props.doNotRender.indexOf(filter.filterKey) === -1 )
           .map(filter => 
             {
@@ -121,7 +171,7 @@ export class SubmissionFiltersContainer extends React.PureComponent {
                   aria-label="more"
                   aria-controls="long-menu"
                   aria-haspopup="true"
-                  onClick={this.handleClick}
+                  onClick={this.handleMenuClick}
                   classes={{  root : classes.share }} 
                 >
                   <MoreVertIcon fontSize="large"/>
@@ -131,7 +181,7 @@ export class SubmissionFiltersContainer extends React.PureComponent {
                   anchorEl={this.state.anchorEl}
                   keepMounted
                   open={Boolean(this.state.anchorEl)}
-                  onClose={this.handleClose}
+                  onClose={this.handleMenuClose}
                   PaperProps={{
                     style: {
                       maxHeight: 48 * 4.5,
@@ -140,17 +190,37 @@ export class SubmissionFiltersContainer extends React.PureComponent {
                   }}
                 >
                   {this.state.options.map((option) => (
-                    <MenuItem key={option} selected={option === 'Applications summary list'} onClick={this.handleClose} style={{whiteSpace: 'normal'}}>
-                      <Typography variant="inherit">
-                      <a style={{color : "black"}} target="_blank" rel="noreferrer" href={option == "Applications summary list" 
-                      ? "/apply/submissions/summary/?id="+ Object.keys(this.props.submissions).toString()
-                    : ""}>
-                        {option}</a></Typography>
+                    <MenuItem 
+                      key={option.key} 
+                      selected={option.key === "applications-summary-list"} 
+                      style={{whiteSpace: 'normal'}}
+                    >
+                        <a 
+                          style={{color: "black", width: "inherit"}}
+                          target="_blank" rel="noreferrer" 
+                          href={"/apply/submissions/summary/?id="+ Object.keys(this.props.submissions).join(",")}
+                          onClick={this.handleMenuitemClick(option)}
+                        >
+                          {option.value}
+                        </a>
                     </MenuItem>
                 ))}
               </Menu>
           </>
           }
+
+          <Snackbar
+            anchorOrigin={{ vertical, horizontal }}
+            autoHideDuration={6000} 
+            open={openSnackbar}
+            onClose={() => this.setState({openSnackbar: false})}
+            key={vertical + horizontal}
+            TransitionComponent={TransitionRight}
+          >
+            <Alert onClose={() => this.setState({openSnackbar: false})} severity="success">
+              URL copied to Clipboard!
+            </Alert>
+          </Snackbar>
 
           <Tooltip 
             title={<span 
@@ -183,13 +253,18 @@ SubmissionFiltersContainer.propTypes = {
   classes: PropTypes.object,
   isGroupedIconShown: PropTypes.bool,
   submissions: PropTypes.object,
+  getFiltersToBeRendered: PropTypes.array,
+  getScreeningLoading: PropTypes.bool,
+  history: PropTypes.object
 }
 
 
 const mapStateToProps = state =>  ({
     submissionFilters: Selectors.SelectSubmissionFiltersInfo(state),
     isGroupedIconShown : getGroupedIconStatus(state),
-    submissions: getSubmissions(state)
+    submissions: getSubmissions(state),
+    getScreeningLoading: getScreeningLoading(state),
+    getFiltersToBeRendered: Selectors.SelectFiltersToBeRendered(state)
 });
 
 
