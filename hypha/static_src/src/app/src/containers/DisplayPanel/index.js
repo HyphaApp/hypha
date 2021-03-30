@@ -72,13 +72,13 @@ const DisplayPanel = props => {
 
     let tabs = [
         <Tab button="Status" key="status">
-            <UserFlagContainer />
-            <StaffFlagContainer />
            { submission ? submission.isDeterminationFormAttached &&
             <Determination submissionID={submissionID} submission={submission}/> : null}
             {/* <ScreeningOutcome submissionID={submissionID} /> */}
             <StatusActions submissionID={submissionID} />
             <ScreeningStatusContainer submissionID={submissionID} />
+            <UserFlagContainer />
+            <StaffFlagContainer />
             <ReviewInformation submissionID={submissionID} />
             <SubmissionLink submissionID={submissionID} />
         </Tab>,
@@ -94,7 +94,7 @@ const DisplayPanel = props => {
         tabs = [
             <Tab button="Back" key="back" handleClick={ clearSubmission } />,
             <Tab button="Application" key="application">
-                {!showReviewForm ? showDeterminationForm ? <DeterminationFormContainer submissionID={submissionID} determinationId={currentDetermination}/> :<CurrentSubmissionDisplay /> : <ReviewFormContainer submissionID={submissionID} reviewId={currentReview}/>}  
+                {!showReviewForm ? showDeterminationForm ? <DeterminationFormContainer submissionID={submissionID} determinationId={currentDetermination}/> :<CurrentSubmissionDisplay /> : <ReviewFormContainer submissionID={submissionID} reviewId={currentReview}/>}
             </Tab>,
             ...tabs
         ]
@@ -106,21 +106,21 @@ const DisplayPanel = props => {
 
             { !isMobile && (
                 <div className="display-panel__body display-panel__body--center">
-                    <CurrentSubmissionDisplay /> 
+                    <CurrentSubmissionDisplay />
                 </div>
             )}
 
             <div className="display-panel__column">
                 <div className="display-panel__body">
-                
+
                     <Tabber>
                         { tabs }
                     </Tabber>
-             
+
                 </div>
             </div>
         </div>
-    
+
 
     )
 }
