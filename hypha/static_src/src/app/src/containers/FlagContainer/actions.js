@@ -13,6 +13,12 @@ export const showLoadingAction = (flagType) => ({
   flagType
 })
 
+export const setFlagClicked = (flagType, data) => ({
+  type: ActionTypes.FLAG_CLICKED,
+  flagType,
+  data
+})
+
 export const hideLoadingAction = (flagType) => ({
   type: ActionTypes.HIDE_LOADING,
   flagType

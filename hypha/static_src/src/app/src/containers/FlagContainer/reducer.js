@@ -9,8 +9,11 @@ const flagContainerReducer = (state = initialState, action) => {
         "title" : action.title,
         "APIPath": action.APIPath,
         "loading" : false,
-        "isFlagged": false
+        "isFlagged": false,
+        "isFlagClicked":  false
     })
+    case ActionTypes.FLAG_CLICKED:
+      return state.setIn([action.flagType, "isFlagClicked"], action.data)
     case ActionTypes.SHOW_LOADING:
       return state.setIn([action.flagType, "loading"], true);
     case ActionTypes.HIDE_LOADING:

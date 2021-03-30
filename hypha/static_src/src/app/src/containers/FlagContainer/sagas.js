@@ -25,16 +25,16 @@ export function* initialize(action) {
 
 export function* setFlag(action){
   try{
-    yield put(Actions.showLoadingAction(action.flagType))
+    yield put(Actions.setFlagClicked(action.flagType, true))
     yield call(apiFetch,
     {
     path : action.APIPath,
     method : "POST",
   })
-  yield put(Actions.hideLoadingAction(action.flagType))
+  yield put(Actions.setFlagClicked(action.flagType, false))
   }catch(e){
     console.log("error", e)
-    yield put(Actions.hideLoadingAction(action.flagType))
+    yield put(Actions.setFlagClicked(action.flagType, false))
   }
 }
 

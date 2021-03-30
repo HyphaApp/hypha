@@ -35,7 +35,11 @@ class FlagContainer extends React.PureComponent {
                     <div className="status-actions">
                         <button 
                             className="button button--primary button--full-width flag-button"
-                            onClick={() => this.props.setFlag(this.props.type, this.props.APIPath)}
+                            onClick={() => this.props.flagInfo[this.props.type] && 
+                                !this.props.flagInfo[this.props.type].isFlagClicked && this.props.setFlag(this.props.type, this.props.APIPath)}
+                            style={ this.props.flagInfo[this.props.type] && 
+                                this.props.flagInfo[this.props.type].isFlagClicked 
+                                ? { opacity: '0.6', cursor: 'not-allowed'} : {opacity : '1'}}
                         >
                             <>
                                 <span>{this.props.type === "staff" ? "Staff flag" : "Flag"}</span>
