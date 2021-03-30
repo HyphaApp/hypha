@@ -23,20 +23,21 @@ import NoteListing from '@containers/NoteListing'
 import StatusActions from '@containers/StatusActions'
 import Tabber, {Tab} from '@components/Tabber'
 import SubmissionLink from '@components/SubmissionLink';
+import WithFlagType from '@containers/FlagContainer/WithFlagType'
 import ReviewFormContainer from '@containers/ReviewForm';
 import Determination from '../Determination';
 import DeterminationFormContainer from '@containers/DeterminationForm'
-
+import FlagContainer from '@containers/FlagContainer'
 import ScreeningStatusContainer from '@containers/ScreeningStatus';
-
 import './style.scss'
-// {!showReviewForm ? <CurrentSubmissionDisplay /> : <ReviewFormContainer submissionID={submissionID}/> }
 
 
 const DisplayPanel = props => {
     const { submissionID, submission, addMessage, showReviewForm, currentReview, showDeterminationForm, currentDetermination} = props
     const [ currentStatus, setCurrentStatus ] = useState(undefined)
     const [ localSubmissionID, setLocalSubmissionID ] = useState(submissionID)
+    const UserFlagContainer = WithFlagType(FlagContainer, 'user', submissionID)
+    const StaffFlagContainer = WithFlagType(FlagContainer, 'staff', submissionID)
 
     useEffect(() => {
         setCurrentStatus(undefined)
@@ -76,6 +77,8 @@ const DisplayPanel = props => {
             {/* <ScreeningOutcome submissionID={submissionID} /> */}
             <StatusActions submissionID={submissionID} />
             <ScreeningStatusContainer submissionID={submissionID} />
+            <UserFlagContainer />
+            <StaffFlagContainer />
             <ReviewInformation submissionID={submissionID} />
             <SubmissionLink submissionID={submissionID} />
         </Tab>,
@@ -91,7 +94,7 @@ const DisplayPanel = props => {
         tabs = [
             <Tab button="Back" key="back" handleClick={ clearSubmission } />,
             <Tab button="Application" key="application">
-                {!showReviewForm ? showDeterminationForm ? <DeterminationFormContainer submissionID={submissionID} determinationId={currentDetermination}/> :<CurrentSubmissionDisplay /> : <ReviewFormContainer submissionID={submissionID} reviewId={currentReview}/>}  
+                {!showReviewForm ? showDeterminationForm ? <DeterminationFormContainer submissionID={submissionID} determinationId={currentDetermination}/> :<CurrentSubmissionDisplay /> : <ReviewFormContainer submissionID={submissionID} reviewId={currentReview}/>}
             </Tab>,
             ...tabs
         ]
@@ -103,21 +106,21 @@ const DisplayPanel = props => {
 
             { !isMobile && (
                 <div className="display-panel__body display-panel__body--center">
-                    <CurrentSubmissionDisplay /> 
+                    <CurrentSubmissionDisplay />
                 </div>
             )}
 
             <div className="display-panel__column">
                 <div className="display-panel__body">
-                
+
                     <Tabber>
                         { tabs }
                     </Tabber>
-             
+
                 </div>
             </div>
         </div>
-    
+
 
     )
 }
