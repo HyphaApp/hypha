@@ -1,6 +1,7 @@
 {% extends "funds/base_submissions_table.html" %}
-{% load render_bundle from webpack_loader %}
-
+{% if can_render_bundle %}
+    {% load render_bundle from webpack_loader %}
+{% endif %}
 {% block title %}{{ status }}{% endblock %}
 
 {% block content %}
@@ -20,6 +21,8 @@
             {% endblock %}
         </div>
     </div>
-{% render_bundle 'submissionsByStatus' %}
+{% if can_render_bundle %}
+    {% render_bundle 'submissionsByStatus' %}
+{% endif %}
 
 {% endblock %}

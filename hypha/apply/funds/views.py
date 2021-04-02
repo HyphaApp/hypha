@@ -1,3 +1,4 @@
+import os
 from copy import copy
 from datetime import timedelta
 
@@ -428,6 +429,12 @@ class SubmissionOverviewView(BaseAdminSubmissionsTable):
         }
 
 
+def is_file_exist(file_name):
+    if os.path.isdir(os.path.abspath(os.path.join(os.getcwd(), 'hypha/static_compiled'))):
+        return any(file.startswith(file_name) for file in os.listdir(os.path.abspath(os.path.join(os.getcwd(), 'hypha/static_compiled/app'))))
+    return False
+
+
 class SubmissionAdminListView(BaseAdminSubmissionsTable, DelegateableListView):
     template_name = 'funds/submissions.html'
     form_views = [
@@ -437,6 +444,12 @@ class SubmissionAdminListView(BaseAdminSubmissionsTable, DelegateableListView):
         BatchDeleteSubmissionView,
     ]
 
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(
+            can_render_bundle=is_file_exist("allSubmissions"),
+            **kwargs,
+        )
+
 
 @method_decorator(staff_required, name='dispatch')
 class GroupingApplicationsListView(TemplateView):
@@ -445,9 +458,21 @@ class GroupingApplicationsListView(TemplateView):
     '''
     template_name = 'funds/grouped_application_list.html'
 
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(
+            can_render_bundle=is_file_exist("groupedApplications"),
+            **kwargs,
+        )
+
 
 class SubmissionReviewerListView(BaseReviewerSubmissionsTable):
     template_name = 'funds/submissions.html'
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(
+            can_render_bundle=is_file_exist("allSubmissions"),
+            **kwargs,
+        )
 
 
 class SubmissionListView(ViewDispatcher):
@@ -503,7 +528,11 @@ class SubmissionsByRound(BaseAdminSubmissionsTable, DelegateableListView):
         return super().get_queryset().filter(Q(round=self.obj) | Q(page=self.obj))
 
     def get_context_data(self, **kwargs):
-        return super().get_context_data(object=self.obj, **kwargs)
+        return super().get_context_data(
+            object=self.obj,
+            can_render_bundle=is_file_exist("submissionsByRound"),
+            **kwargs
+        )
 
 
 @method_decorator(staff_required, name='dispatch')
@@ -537,6 +566,7 @@ class SubmissionsByStatus(BaseAdminSubmissionsTable, DelegateableListView):
         return super().get_context_data(
             status=self.status_name,
             statuses=self.statuses,
+            can_render_bundle=is_file_exist("submissionsByStatus"),
             **kwargs,
         )
 

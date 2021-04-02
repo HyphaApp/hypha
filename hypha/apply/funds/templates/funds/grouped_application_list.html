@@ -1,6 +1,9 @@
 {% extends "base-apply.html" %}
 {% load static %}
-{% load render_bundle from webpack_loader %}
+
+{% if can_render_bundle %}
+    {% load render_bundle from webpack_loader %}
+{% endif %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/apply/fancybox.css' %}">
@@ -19,7 +22,9 @@
 </div>
 <div id="grouped-applications-list"></div>
 
-{% render_bundle 'groupedApplications' %}
+{% if can_render_bundle %}
+    {% render_bundle 'groupedApplications' %}
+{% endif %}
 
 {% endblock %}
 
@@ -36,6 +41,3 @@
     <script src="{% static 'js/apply/batch-actions.js' %}"></script>
     <script src="{% static 'js/apply/flag.js' %}"></script>
 {% endblock %}
-
-
-{% load render_bundle from webpack_loader %}

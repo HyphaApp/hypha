@@ -1,6 +1,9 @@
 {% extends "funds/base_submissions_table.html" %}
 {% load static %}
-{% load render_bundle from webpack_loader %}
+
+{% if can_render_bundle %}
+    {% load render_bundle from webpack_loader %}
+{% endif %}
 
 {% block title %}Submissions{% endblock %}
 {% block content %}
@@ -22,5 +25,7 @@
         {% endblock %}
     </div>
 </div>
-{% render_bundle 'allSubmissions' %}
+{% if can_render_bundle %}
+    {% render_bundle 'allSubmissions' %}
+{% endif %}
 {% endblock %}
