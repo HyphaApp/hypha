@@ -1,0 +1,88 @@
+#!/usr/bin/env python3
+
+""" Wrapper for docker-compose.  Just run it with the same args you
+would use for docker-compose.
+
+This wrapper only has a couple jobs, and they only kick in when you do
+`wrapper up`.
+
+ * Make sure salesforce.env exists (because docker-compose.yaml
+   references it)
+
+ * Set SALESFORCE_INTEGRATION to true/false based on whether
+   salesforce.env has settings
+
+"""
+
+import os
+import shlex
+import sys
+from pathlib import Path
+from typing import Callable, List
+
+import yaml
+
+
+def cut(string: str, cutter: Callable[[str], bool]) -> List[str]:
+    """Cut string on lines that satisfy cutter predicate
+
+    Pass lines of string to cutter, cut lines when cutter returns
+    True, return the parts in a list"""
+
+    ret = []
+    curr = ""
+    for line in string.split("\n"):
+        if not cutter(line):
+            curr += line + "\n"
+        else:
+            ret.append(curr)
+            curr = ""
+
+    ret.append(curr)
+    return ret
+
+
+def handle_args(args: List[str]) -> List[str]:
+    """Adjust docker files based on args.
+
+    This func might change the args before returning them.  It doesn't
+    right now, but a future version might.
+
+    """
+
+    if not args:
+        print(
+            "wrapper is a drop-in replacement for docker-compose. It adjust args and docker"
+            "\nfiles, then runs docker-compose.\n\nDocker Compose:\n "
+        )
+
+        return []
+
+    if args[0] == "up":
+        # docker-compose references this file, but it doesn't always exist and
+        # we can't check in an empty one to the repo because it's on the
+        # gitignore list.
+        if not os.path.exists("salesforce.env"):
+            Path("salesforce.env").write_text("")
+
+        # Do we want to enable salesforce integration?
+        want_salesforce = Path("salesforce.env").read_text() != ""
+
+        # Slice up our dockerfile
+        parts = cut(
+            Path("Dockerfile.dev").read_text(),
+            lambda x: x.startswith("ENV SALESFORCE_INTEGRATION"),
+        )
+
+        # Reassemble it, setting the SALESFORCE_ITEGRATION based on
+        # whether we want it or not
+        parts.insert(1, "ENV SALESFORCE_INTEGRATION " + str(want_salesforce).lower() + "\n")
+        df = "".join(parts).strip() + "\n"
+        Path("Dockerfile.dev").write_text(df)
+
+    return args
+
+
+# Munge args, take action, and pass the whole mess to docker-compose
+args = handle_args(sys.argv[1:])
+os.system("docker-compose " + shlex.join(args))
