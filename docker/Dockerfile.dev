@@ -17,9 +17,9 @@ ENV SALESFORCE_INTEGRATION true
 RUN sudo chown -R circleci:circleci /usr/local
 
 # Install node dependencies.
-COPY package.json package-lock.json /usr/local/hypha/
-RUN npm install  --quiet --global gulp-cli
-RUN npm install  --quiet
+RUN sudo apt-get install -y yarn
+COPY package.json /usr/local/hypha/
+RUN yarn install --ignore-engines
 
 # Install python dependencies.
 COPY requirements.txt requirements-dev.txt /usr/local/hypha/
