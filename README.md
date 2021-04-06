@@ -1,11 +1,11 @@
 # Hypha
 
-[![<OpenTechFund>](https://circleci.com/gh/OpenTechFund/hypha.svg?style=shield)](https://circleci.com/gh/OpenTechFund/hypha)
-![GitHub top language](https://img.shields.io/github/languages/top/OpenTechFund/hypha)
-![Lines of code](https://img.shields.io/tokei/lines/github/OpenTechFund/hypha)
-![GitHub commit activity](https://img.shields.io/github/commit-activity/m/OpenTechFund/hypha)
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/OpenTechFund/hypha)
-[![GitHub license](https://img.shields.io/github/license/OpenTechFund/hypha)](https://github.com/OpenTechFund/hypha/blob/main/LICENSE)
+[![<HyphaApp>](https://circleci.com/gh/HyphaApp/hypha.svg?style=shield)](https://circleci.com/gh/HyphaApp/hypha)
+![GitHub top language](https://img.shields.io/github/languages/top/HyphaApp/hypha)
+![Lines of code](https://img.shields.io/tokei/lines/github/HyphaApp/hypha)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/HyphaApp/hypha)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/HyphaApp/hypha)
+[![GitHub license](https://img.shields.io/github/license/HyphaApp/hypha)](https://github.com/HyphaApp/hypha/blob/main/LICENSE)
 [![Gitter chat](https://img.shields.io/gitter/room/nwjs/nw.js.svg?style=flat-square)](https://gitter.im/HyphaApp/community)
 [![Website](https://img.shields.io/badge/website-hypha.app-lightgrey)](https://hypha.app)
 
@@ -15,11 +15,11 @@ Features
 - Customize all aspects of the process, forms, workflows, review options, and more.
 - Automate workflows and integrate with other services (Slack, Mailgun, etc).
 - Regularly audited software with many privacy and security features.
-- View our [Roadmap](https://github.com/OpenTechFund/hypha/wiki/Roadmap) for upcoming features and enhancements.
+- View our [Roadmap](https://github.com/HyphaApp/hypha/wiki/Roadmap) for upcoming features and enhancements.
 
 Technology
 - Built with [Django](https://www.djangoproject.com/), [Wagtail](https://wagtail.io/), and [React](https://reactjs.org/)
-- Deploy with [Heroku](https://github.com/OpenTechFund/hypha/wiki/Deployment:-Heroku), [Docker](https://github.com/OpenTechFund/hypha/wiki/Deployment:-Docker), or [your own server](https://github.com/OpenTechFund/hypha/wiki/Deployment:-Standalone-App).
+- Deploy with [Heroku](https://github.com/HyphaApp/hypha/wiki/Deployment:-Heroku), [Docker](https://github.com/HyphaApp/hypha/wiki/Deployment:-Docker), or [your own server](https://github.com/HyphaApp/hypha/wiki/Deployment:-Standalone-App).
 
 ## Maintainers
 
@@ -63,7 +63,7 @@ Hypha is an open source project made possible thanks to the support of sponsors.
 ## More information
 
 * Website: https://hypha.app
-* Docs: https://github.com/OpenTechFund/hypha/wiki
+* Docs: https://github.com/HyphaApp/hypha/wiki
 * Gitter/Chat: https://gitter.im/HyphaApp/community
 * Why Hypha? **[Hyphae](https://en.wikipedia.org/wiki/Mycorrhizal_network):** long, branching ecosystem enriching organisms that form interconnected networks to collectively exchange resources. Hopefully, Hypha helps it's users do the same.
 * Copyright (C) 2021 - Open Technology Fund
