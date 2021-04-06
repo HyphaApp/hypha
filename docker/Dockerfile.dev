@@ -10,9 +10,6 @@ ENV DJANGO_SETTINGS_MODULE hypha.settings.dev
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-# Salesforce Integration
-ENV SALESFORCE_INTEGRATION true
-
 # Set owner on /usr/local.
 RUN sudo chown -R circleci:circleci /usr/local
 
