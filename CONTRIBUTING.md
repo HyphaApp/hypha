@@ -22,4 +22,4 @@ Found a bug and know how to fix it or built a new feature you want to add? Great
  request.
 - One feature or fix per pull request.
 
-You find more information in the wiki page [Submitting changes](https://github.com/OpenTechFund/hypha/wiki/Submitting-changes)
+You find more information in the wiki page [Submitting changes](https://github.com/HyphaApp/hypha/wiki/Submitting-changes)
