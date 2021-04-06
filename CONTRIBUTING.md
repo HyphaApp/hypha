@@ -18,7 +18,7 @@ All changes in Hypha starts as an issue.
 Found a bug and know how to fix it or built a new feature you want to add? Great! Please read on.
 
 - Each pull request need to be linked to an issue. If non exist, create one first.
-- Rebase your topic branch on top of the master branch before creating the pull
+- Rebase your topic branch on top of the main branch before creating the pull
  request.
 - One feature or fix per pull request.
 
