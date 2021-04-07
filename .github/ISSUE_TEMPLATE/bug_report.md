@@ -2,7 +2,11 @@
 name: Bug report
 about: Report on something that's broken :-/
 title: ''
-labels: bug
+labels:
+  - 'Type: Bug'
+  - 'fix'
+  - 'bugfix'
+  - 'bug'
 assignees: ''
 
 ---

@@ -3,7 +3,9 @@ name: Feature request
 about: Suggest an new idea, something that doesn't exist, or isn't happening but you
   thing should.
 title: ''
-labels: feature
+labels:
+  - 'Type: Feature'
+  - 'feature'
 assignees: ''
 
 ---
