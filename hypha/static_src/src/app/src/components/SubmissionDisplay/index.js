@@ -46,8 +46,10 @@ export default class SubmissionDisplay extends Component {
         updateSummaryEditor: PropTypes.func
     }
 
-    componentDidUpdate(){
-        document.getElementById("middle-panel").scrollTo(0, 0);
+    componentDidUpdate(prevProps){
+        if(this.props.submission.id != prevProps.submission.id){
+            document.getElementById("middle-panel").scrollTo(0, 0);
+        }
     }
 
     render() {
