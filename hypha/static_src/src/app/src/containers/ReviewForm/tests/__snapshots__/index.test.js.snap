@@ -19,7 +19,7 @@ exports[`Test Review form Container Should render review form with loading true 
   }
 >
   <div
-    className="container"
+    className="review-form-container"
   >
     <h3>
       Create Review
@@ -171,7 +171,7 @@ exports[`Test Review form Container Should render review form with loading true 
 
 exports[`Test Review form Container Should render review with loading false & saveAsDraft false & review id exists 1`] = `
 <div
-  className="container"
+  className="review-form-container"
 >
   <h3>
     Update Review
@@ -207,7 +207,7 @@ exports[`Test Review form Container Should render review with loading false & sa
 
 exports[`Test Review form Container Should render review with loading false & saveAsDraft false 1`] = `
 <div
-  className="container"
+  className="review-form-container"
 >
   <h3>
     Create Review
@@ -250,7 +250,7 @@ exports[`Test Review form Container Should render review with loading false & sa
 
 exports[`Test Review form Container Should render review with loading false 1`] = `
 <div
-  className="container"
+  className="review-form-container"
 >
   <h3>
     Update Review

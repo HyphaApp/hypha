@@ -17,7 +17,7 @@ describe("Test Determination Container", () => {
                 initializeAction={initializeAction}
                 submissionID={1}/>
         );
-        expect(wrapper.find('.container').length).toEqual(1)
+        expect(wrapper.find('.determination-form-container').length).toEqual(1)
         expect(wrapper.find('h3').text()).toBe("Create Determination")
         expect(initializeAction).toHaveBeenCalled()
         expect(initializeAction).toHaveBeenCalledWith(1,null)
@@ -47,7 +47,7 @@ describe("Test Determination Container", () => {
                 updateDetermination={updateDetermination}
                 />
         );
-        expect(wrapper.find('.container').length).toEqual(1)
+        expect(wrapper.find('.determination-form-container').length).toEqual(1)
         expect(wrapper.find('h3').text()).toBe("Update Determination")
         expect(initializeAction).toHaveBeenCalled()
         expect(initializeAction).toHaveBeenCalledWith(1,2)
@@ -82,7 +82,7 @@ describe("Test Determination Container", () => {
                 updateDetermination={updateDetermination}
                 />
         );
-        expect(wrapper.find('.container').length).toEqual(1)
+        expect(wrapper.find('.determination-form-container').length).toEqual(1)
         expect(wrapper.find('h3').text()).toBe("Update Determination")
         expect(initializeAction).toHaveBeenCalled()
         expect(initializeAction).toHaveBeenCalledWith(1,2)

@@ -18,7 +18,7 @@ describe("Test Review form Container", () => {
                 formData={{loading : true}} 
                 initializeAction={initializeAction}/>
         );
-        expect(wrapper.find('.container').length).toEqual(1)
+        expect(wrapper.find('.review-form-container').length).toEqual(1)
         expect(wrapper.find('h3').text()).toBe("Create Review")
         expect(initializeAction).toHaveBeenCalled()
         expect(wrapper.containsMatchingElement(<LoadingPanel />)).toBe(true)
@@ -47,7 +47,7 @@ describe("Test Review form Container", () => {
                 updateReview={updateReview}
                 />
         );
-        expect(wrapper.find('.container').length).toEqual(1)
+        expect(wrapper.find('.review-form-container').length).toEqual(1)
         expect(wrapper.find('h3').text()).toBe("Update Review")
         expect(initializeAction).toHaveBeenCalled()
         expect(initializeAction).toHaveBeenCalledWith(1,2)
@@ -81,7 +81,7 @@ describe("Test Review form Container", () => {
                 updateReview={updateReview}
                 />
         );
-        expect(wrapper.find('.container').length).toEqual(1)
+        expect(wrapper.find('.review-form-container').length).toEqual(1)
         expect(wrapper.find('h3').text()).toBe("Create Review")
         expect(initializeAction).toHaveBeenCalled()
         expect(initializeAction).toHaveBeenCalledWith(1,null)
@@ -111,7 +111,7 @@ describe("Test Review form Container", () => {
                 updateReview={updateReview}
                 />
         );
-        expect(wrapper.find('.container').length).toEqual(1)
+        expect(wrapper.find('.review-form-container').length).toEqual(1)
         expect(wrapper.find('h3').text()).toBe("Update Review")
         expect(initializeAction).toHaveBeenCalled()
         expect(initializeAction).toHaveBeenCalledWith(1,2)

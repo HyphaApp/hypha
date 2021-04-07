@@ -1,12 +1,6 @@
 .display-panel {
     background-color: $color--white;
 
-    @include media-query(tablet-landscape) {
-        display: grid;
-        grid-template-columns: 1fr 390px;
-        grid-template-rows: 75px 1fr;
-    }
-
     &__column {
         border-bottom: 2px solid $color--light-mid-grey;
     }
@@ -18,6 +12,8 @@
     &__body {
         &--center {
             border-right: 2px solid $color--light-mid-grey;
+            float: left;
+            width: 100%
         }
     }
 

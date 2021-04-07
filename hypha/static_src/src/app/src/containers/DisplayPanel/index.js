@@ -28,6 +28,8 @@ import ReviewFormContainer from '@containers/ReviewForm';
 import Determination from '../Determination';
 import DeterminationFormContainer from '@containers/DeterminationForm'
 import FlagContainer from '@containers/FlagContainer'
+import ResizablePanels from '@components/ResizablePanels'
+
 import ScreeningStatusContainer from '@containers/ScreeningStatus';
 import './style.scss'
 
@@ -102,8 +104,9 @@ const DisplayPanel = props => {
     return (
         showReviewForm ? <ReviewFormContainer submissionID={submissionID} reviewId={currentReview}/>  :
         showDeterminationForm ? <DeterminationFormContainer submissionID={submissionID} determinationId={currentDetermination}/> :
-        <div className="display-panel">
-
+        <>
+        <div className="display-panel"> 
+            <ResizablePanels panels={[65, 35]} panelType={"main-rsb"}>
             { !isMobile && (
                 <div className="display-panel__body display-panel__body--center">
                     <CurrentSubmissionDisplay />
@@ -119,9 +122,9 @@ const DisplayPanel = props => {
 
                 </div>
             </div>
-        </div>
-
-
+            </ResizablePanels>
+        </div> 
+        </>
     )
 }
 
