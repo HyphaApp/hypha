@@ -36,7 +36,7 @@ export class ScreeningStatusContainer extends React.PureComponent {
   }
 
   updateDefaultValue = (submissionID, defaultOption) => () => {
-    if(this.props.screeningInfo.defaultSelectedValue.id != defaultOption.id) 
+    if(this.props.screeningInfo.defaultSelectedValue.id != defaultOption.id)
           {
             this.props.selectDefautValue(submissionID, defaultOption)
           }
@@ -57,24 +57,24 @@ export class ScreeningStatusContainer extends React.PureComponent {
 
   render(){
     const {
-      screeningStatuses, 
-      submissionID, 
-      defaultOptions, 
-      screeningInfo, 
-      visibleOptions, 
+      screeningStatuses,
+      submissionID,
+      defaultOptions,
+      screeningInfo,
+      visibleOptions,
       selectVisibleOption } = this.props
-    
-    return !screeningInfo.loading ? 
-        screeningStatuses && defaultOptions.yes && defaultOptions.no ? <SidebarBlock title="Screening Status" >
+
+    return !screeningInfo.loading ?
+        screeningStatuses && defaultOptions.yes && defaultOptions.no ? <SidebarBlock title="Screening decision" >
         <div className="screening-status-box" style={{ padding: '1rem'}}>
           <div className="screening-default-options" >
-            <div 
+            <div
               className={screeningInfo.defaultSelectedValue &&
-                screeningInfo.defaultSelectedValue.id == defaultOptions.yes.id ? 
-                "screening-status-yes-disabled": 
+                screeningInfo.defaultSelectedValue.id == defaultOptions.yes.id ?
+                "screening-status-yes-disabled":
                 "screening-status-yes-enabled"
-              } 
-              onClick={this.updateDefaultValue(submissionID, defaultOptions.yes)} 
+              }
+              onClick={this.updateDefaultValue(submissionID, defaultOptions.yes)}
             >
                 <SvgIcon
                   className = { screeningInfo.defaultSelectedValue && screeningInfo.defaultSelectedValue.id == defaultOptions.yes.id ? "thumbs-up-color" : ""}
@@ -84,15 +84,15 @@ export class ScreeningStatusContainer extends React.PureComponent {
                 </SvgIcon>
                 <div>{defaultOptions.yes.title}</div>
             </div>
-            <div 
+            <div
               className={screeningInfo.defaultSelectedValue &&
-                screeningInfo.defaultSelectedValue.id == defaultOptions.no.id ? 
+                screeningInfo.defaultSelectedValue.id == defaultOptions.no.id ?
                 "screening-status-no-disabled" :
                 "screening-status-no-enabled"
-              }  
-              onClick={this.updateDefaultValue(submissionID, defaultOptions.no)} 
+              }
+              onClick={this.updateDefaultValue(submissionID, defaultOptions.no)}
             >
-                <SvgIcon 
+                <SvgIcon
                 className = { screeningInfo.defaultSelectedValue && screeningInfo.defaultSelectedValue.id == defaultOptions.no.id ? "thumbs-down-color" : ""}
                 style={{ alignSelf: 'center'}}
                 >
@@ -101,22 +101,22 @@ export class ScreeningStatusContainer extends React.PureComponent {
                 <div>{defaultOptions.no.title}</div>
             </div>
           </div>
-          {visibleOptions && visibleOptions.length > 0 && 
+          {visibleOptions && visibleOptions.length > 0 &&
             <div className="screening-visible-options" >
               <h6 style={{ fontWeight: '550', width : '100%'}}>Screening reasons</h6>
-              {visibleOptions.map(option => 
-                <Chip 
+              {visibleOptions.map(option =>
+                <Chip
                 style={{ margin : '0.3em'}}
-                label={option.title} 
-                variant={!option.selected ? "outlined" : "default"} 
-                key={option.id}  
+                label={option.title}
+                variant={!option.selected ? "outlined" : "default"}
+                key={option.id}
                 icon={option.selected ? <DoneIcon /> : null}
                 onClick={() => selectVisibleOption(submissionID, option)}>
                 </Chip>)
               }
             </div>
           }
-          
+
         </div>
       </SidebarBlock> : null
     : <LoadingPanel />

@@ -8,22 +8,22 @@ import homePageSaga from '../sagas';
 import * as ActionTypes from '../constants';
 
 
-describe("Test setDefaultValue in Screening status module", () => {
+describe("Test setDefaultValue in screening decision module", () => {
 
     it("Should trigger correct action for SUCCESS status", () => {
       const id = 1
       const data = "data"
       const action = Actions.selectDefaultValueAction(id, data);
       const generator = Sagas.setDefaultValue(action);
-  
+
       expect(
         generator.next().value
       ).toEqual(
         put(Actions.showLoadingAction())
       );
-  
+
       expect(generator.next().value).toEqual(call(
-          apiFetch, 
+          apiFetch,
           {
               path : `/v1/submissions/${id}/screening_statuses/default/`,
               method : "POST",
@@ -46,7 +46,7 @@ describe("Test setDefaultValue in Screening status module", () => {
       expect(generator.next().value).toEqual(put(Actions.hideLoadingAction()))
       expect(generator.next().done).toBeTruthy();
     });
-    
+
     it("Should return false for id null", () => {
       const id = null
       const data = "data"
@@ -54,7 +54,7 @@ describe("Test setDefaultValue in Screening status module", () => {
       const generator = Sagas.setDefaultValue(action);
       expect(generator.next().done).toBeTruthy();
     });
-  
+
     it("Should tirgger correct action incase of error", () => {
       const id = 1
       const data = "data"
@@ -66,10 +66,10 @@ describe("Test setDefaultValue in Screening status module", () => {
       );
       expect(generator.next().done).toBeTruthy();
     });
-  
+
   });
 
-describe("Test initial fetch in Screening status module", () => {
+describe("Test initial fetch in screening decision module", () => {
 
 it("Should trigger correct action for SUCCESS status", () => {
     const id = 1
@@ -83,7 +83,7 @@ it("Should trigger correct action for SUCCESS status", () => {
     );
 
     expect(generator.next().value).toEqual(call(
-        apiFetch, 
+        apiFetch,
         {path : `/v1/screening_statuses/`}
         )
     );
@@ -96,7 +96,7 @@ it("Should trigger correct action for SUCCESS status", () => {
     );
     expect(generator.next().value)
     .toEqual(call(
-        apiFetch, 
+        apiFetch,
         {path : `/v1/submissions/${id}/screening_statuses/`}
         )
     );
@@ -120,7 +120,7 @@ it("Should trigger correct action for SUCCESS status with default null in setDef
   );
 
   expect(generator.next().value).toEqual(call(
-      apiFetch, 
+      apiFetch,
       {path : `/v1/screening_statuses/`}
       )
   );
@@ -133,7 +133,7 @@ it("Should trigger correct action for SUCCESS status with default null in setDef
   );
   expect(generator.next().value)
   .toEqual(call(
-      apiFetch, 
+      apiFetch,
       {path : `/v1/submissions/${id}/screening_statuses/`}
       )
   );
@@ -165,7 +165,7 @@ it("Should tirgger correct action incase of error", () => {
 
 })
 
-describe("Test setVisibleOption in Screening status module", () => {
+describe("Test setVisibleOption in screening decision module", () => {
 
   it("Should trigger correct action for SUCCESS status", () => {
     const id = 1
@@ -189,12 +189,12 @@ describe("Test setVisibleOption in Screening status module", () => {
     ).toEqual(
       select(Selectors.selectScreeningInfo)
     );
-    
+
     const screening = {
       selectedValues : [{id:1, title : 'one'}, {id:2, title : 'second'}]
     }
     expect(generator.next(screening).value).toEqual(call(
-        apiFetch, 
+        apiFetch,
         {
             path : `/v1/submissions/${id}/screening_statuses/${data.id}`,
             method : "DELETE"
@@ -235,12 +235,12 @@ describe("Test setVisibleOption in Screening status module", () => {
     ).toEqual(
       select(Selectors.selectScreeningInfo)
     );
-    
+
     const screening = {
       selectedValues : [{id:1, title : 'one', default : false}, {id:3, title : 'second', default : true}]
     }
     expect(generator.next(screening).value).toEqual(call(
-        apiFetch, 
+        apiFetch,
         {
             path : `/v1/submissions/${id}/screening_statuses/`,
             method : "POST",
@@ -272,10 +272,10 @@ describe("Test setVisibleOption in Screening status module", () => {
 
 });
 
-describe("Test takeEvery in Screening status module", () => {
+describe("Test takeEvery in screening decision module", () => {
 
   const genObject = homePageSaga();
-  
+
   it('should wait for every INITIALIZE action and call initialize', () => {
     expect(genObject.next().value)
       .toEqual(takeEvery(ActionTypes.INITIALIZE,

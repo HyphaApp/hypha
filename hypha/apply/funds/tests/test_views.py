@@ -220,16 +220,16 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         screening_outcome2.save()
         self.submission.screening_statuses.clear()
         response = self.get_page(self.submission)
-        self.assertContains(response, 'Screening Status')
+        self.assertContains(response, 'Screening decision')
 
     def test_cant_view_submission_screening_block(self):
         """
-        If defaults are not set screening status block is not visible
+        If defaults are not set Screening decision block is not visible
         """
         ScreeningStatus.objects.all().delete()
         self.submission.screening_statuses.clear()
         response = self.get_page(self.submission)
-        self.assertNotContains(response, 'Screening Status')
+        self.assertNotContains(response, 'Screening decision')
 
     def test_can_create_project(self):
         # check submission doesn't already have a Project
@@ -936,8 +936,8 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
 
     def test_cant_screen_submission(self):
         """
-        Test that an applicant cannot set the screening status
-        and that they don't see the screening status form.
+        Test that an applicant cannot set the Screening decision
+        and that they don't see the Screening decision form.
         """
         screening_outcome = ScreeningStatusFactory()
         response = self.post_page(self.submission, {'form-submitted-screening_form': '', 'screening_statuses': [screening_outcome.id]})
@@ -947,7 +947,7 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
 
     def test_cant_see_screening_status_block(self):
         response = self.get_page(self.submission)
-        self.assertNotContains(response, 'Screening Status')
+        self.assertNotContains(response, 'Screening decision')
 
     def test_cant_see_add_determination_primary_action(self):
         def assert_add_determination_not_displayed(submission, button_text):
@@ -1279,7 +1279,7 @@ class TestSuperUserSubmissionView(BaseSubmissionViewTestCase):
         self.assertEqual(submission.screening_statuses.count(), 2)
 
         # Check that an activity was created that should only be viewable internally
-        activity = Activity.objects.filter(message__contains='Screening status').first()
+        activity = Activity.objects.filter(message__contains='Screening decision').first()
         self.assertEqual(activity.visibility, TEAM)
 
 

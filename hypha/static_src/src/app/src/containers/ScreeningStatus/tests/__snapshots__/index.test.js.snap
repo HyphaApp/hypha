@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Test screening status Container Should render review form with Sidebarblock 1`] = `
+exports[`Test screening decision Container Should render review form with Sidebarblock 1`] = `
 <ScreeningStatusContainer
   defaultOptions={
     Object {
@@ -51,13 +51,13 @@ exports[`Test screening status Container Should render review form with Sidebarb
   }
 >
   <SidebarBlock
-    title="Screening Status"
+    title="Screening decision"
   >
     <div
       className="sidebar-block"
     >
       <h5>
-        Screening Status
+        Screening decision
       </h5>
       <div
         className="screening-status-box"
@@ -514,7 +514,7 @@ exports[`Test screening status Container Should render review form with Sidebarb
 </ScreeningStatusContainer>
 `;
 
-exports[`Test screening status Container Should render review form with loading 1`] = `
+exports[`Test screening decision Container Should render review form with loading 1`] = `
 <ScreeningStatusContainer
   initializeAction={
     [MockFunction] {
@@ -676,7 +676,7 @@ exports[`Test screening status Container Should render review form with loading 
 </ScreeningStatusContainer>
 `;
 
-exports[`Test screening status Container Should render review form with loading false & defaultoptions empty 1`] = `
+exports[`Test screening decision Container Should render review form with loading false & defaultoptions empty 1`] = `
 <ScreeningStatusContainer
   defaultOptions={Object {}}
   initializeAction={

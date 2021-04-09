@@ -1,6 +1,6 @@
 <div class="sidebar__inner">
 
-    <h5>Screening Status</h5>
+    <h5>Screening decision</h5>
     {% if object.supports_default_screening %}
         <div class="sidebar__screening-thumbs screening-status-box">
             <div class="sidebar__screening-status-yes">
@@ -42,7 +42,7 @@
                             <span class="sidebar__screening-option">{{ status }}</span>
                     {% endfor%}
                 </div>
-            </p>                
+            </p>
         {% endif %}
     </div>
 </div>

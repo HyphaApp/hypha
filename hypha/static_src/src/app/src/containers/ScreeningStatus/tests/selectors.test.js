@@ -2,11 +2,11 @@ import { selectScreeningInfo, selectScreeningStatuses, selectDefaultOptions, sel
 import initialState from "../models";
 
 
-describe("Test the selector of screening status", () => {
+describe("Test the selector of screening decision", () => {
     it("select screening state", () => {
         expect(selectScreeningInfo(initialState)).toEqual(initialState)
     });
-    it("select screening Statuses", () => {
+    it("select screening decisions", () => {
         expect(selectScreeningStatuses(initialState)).toEqual(initialState.screeningStatuses)
     });
     it("select default options", () => {

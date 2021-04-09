@@ -2,7 +2,7 @@ import * as actions from "../actions";
 import * as ActionTypes from "../constants";
 import Reducer from "../reducer";
 
-describe("Test actions of screening status", () => {
+describe("Test actions of screening decision", () => {
   it("should return the intialize action type", () => {
     const id = 1
     const expectedResult = {
@@ -12,7 +12,7 @@ describe("Test actions of screening status", () => {
     const action = actions.initializeAction(id);
     expect(action).toEqual(expectedResult);
   });
-  it("should return the screening statuses success action type", () => {
+  it("should return the screening decisions success action type", () => {
     const data = Reducer(undefined, {}).screeningStatuses
     const expectedResult = {
       type: ActionTypes.GET_SCREENING_STATUSES,
@@ -22,7 +22,7 @@ describe("Test actions of screening status", () => {
     expect(action).toEqual(expectedResult);
   });
   it("should return the screening values success action type", () => {
-    const data = {is_draft: true} 
+    const data = {is_draft: true}
     const id = 1
     const expectedResult = {
       type: ActionTypes.SELECT_DEFAULT_VALUE,
@@ -33,7 +33,7 @@ describe("Test actions of screening status", () => {
     expect(action).toEqual(expectedResult);
   });
   it("should return the select visible screening option action type", () => {
-    const data = {is_draft: true} 
+    const data = {is_draft: true}
     const id = 1
     const expectedResult = {
       type: ActionTypes.SELECT_VISIBLE_OPTION,

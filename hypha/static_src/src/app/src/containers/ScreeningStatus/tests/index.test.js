@@ -7,7 +7,7 @@ import { SidebarBlock } from '@components/SidebarBlock'
 import LoadingPanel from '@components/LoadingPanel'
 enzyme.configure({adapter: new Adapter()});
 
-describe("Test screening status Container", () => {
+describe("Test screening decision container", () => {
     it("Should render review form with loading", () => {
         const initializeAction = jest.fn()
         const wrapper = mount(
@@ -23,9 +23,9 @@ describe("Test screening status Container", () => {
         const initializeAction = jest.fn()
         const defaultOptions ={}
         const wrapper = mount(
-                <ScreeningStatusContainer 
-                screeningInfo={{loading : false}} 
-                initializeAction={initializeAction} 
+                <ScreeningStatusContainer
+                screeningInfo={{loading : false}}
+                initializeAction={initializeAction}
                 submissionID={1}
                 defaultOptions={defaultOptions}
                 />
@@ -63,10 +63,10 @@ describe("Test screening status Container", () => {
             yes : true
         }]
         const wrapper = mount(
-                <ScreeningStatusContainer 
+                <ScreeningStatusContainer
                 screeningStatuses={[1,2]}
-                screeningInfo={screeningInfo} 
-                initializeAction={initializeAction} 
+                screeningInfo={screeningInfo}
+                initializeAction={initializeAction}
                 defaultOptions={defaultOptions}
                 visibleOptions={visibleOptions}
                 selectVisibleOption={selectVisibleOption}

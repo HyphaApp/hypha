@@ -121,7 +121,7 @@ class ScreeningSubmissionForm(ApplicationSubmissionModelForm):
         instance = self.instance
         default_status = instance.screening_statuses.get(default=True)
         if default_status not in cleaned_data['screening_statuses']:
-            self.add_error('screening_statuses', 'Can\'t remove default screening status.')
+            self.add_error('screening_statuses', 'Can\'t remove default Screening decision.')
         return cleaned_data
 
 
