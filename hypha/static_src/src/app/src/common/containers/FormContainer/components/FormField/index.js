@@ -8,6 +8,7 @@ import ScoredAnswerWidget from "@common/components/ScoredAnswerWidget";
 import LoadHTML from "@common/components/LoadHTML";
 import Textarea from "@common/components/Textarea";
 import CheckBox from "@common/components/CheckBox";
+import DateTime from "@common/components/DateTime";
 import PageDownWidget from "@common/components/PageDownWidget";
 import PropTypes from 'prop-types';
 
@@ -55,6 +56,7 @@ class FormField extends React.Component {
               onChange={this.onChange}
               id={fieldProps.name}
               helperProps={this.getHelperprops()}
+              maxLength={kwargs.max_length}
             />;
 
           case "TinyMCE":
@@ -153,6 +155,17 @@ class FormField extends React.Component {
               helperProps={this.getHelperprops()}
           />
       
+        case "DateTime":
+          return <DateTime
+              value={value}
+              help_text={kwargs.help_text}
+              label={kwargs.label}
+              name={fieldProps.name}
+              onChange={this.onChange}
+              required={kwargs.required}
+              helperProps={this.getHelperprops()}
+          />
+
         default:
           return <div>Unknown field type {this.getType()}</div>
         }

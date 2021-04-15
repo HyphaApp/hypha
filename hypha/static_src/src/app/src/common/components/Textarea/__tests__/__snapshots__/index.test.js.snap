@@ -77,6 +77,11 @@ exports[`Test textarea component render a TextArea component 1`] = `
           id="test name"
           onChange={[Function]}
           rows="c"
+          style={
+            Object {
+              "maxWidth": "90%",
+            }
+          }
           value="1"
         />
       </div>
@@ -158,6 +163,11 @@ exports[`Test textarea component with required render a TextArea component with 
           id="test name"
           onChange={[Function]}
           rows="c"
+          style={
+            Object {
+              "maxWidth": "90%",
+            }
+          }
           value="1"
         />
       </div>

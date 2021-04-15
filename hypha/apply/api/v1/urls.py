@@ -2,6 +2,7 @@ from django.urls import path
 from rest_framework_nested import routers
 
 from hypha.apply.api.v1.determination.views import SubmissionDeterminationViewSet
+from hypha.apply.api.v1.reminder.views import SubmissionReminderViewSet
 from hypha.apply.api.v1.review.views import SubmissionReviewViewSet
 from hypha.apply.api.v1.screening.views import (
     ScreeningStatusViewSet,
@@ -33,6 +34,7 @@ submission_router.register(r'comments', SubmissionCommentViewSet, basename='subm
 submission_router.register(r'reviews', SubmissionReviewViewSet, basename='reviews')
 submission_router.register(r'determinations', SubmissionDeterminationViewSet, basename='determinations')
 submission_router.register(r'screening_statuses', SubmissionScreeningStatusViewSet, basename='submission-screening_statuses')
+submission_router.register(r'reminders', SubmissionReminderViewSet, basename='submission-reminder')
 
 urlpatterns = [
     path('user/', CurrentUser.as_view(), name='user'),
