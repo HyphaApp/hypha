@@ -14,6 +14,7 @@ const Textarea = props => {
       <HelperComponent {...props.helperProps}/>
       <div className="form__item">
         <textarea 
+          style={{maxWidth: '90%'}}
           cols={props.widget.attrs.cols}
           rows={props.widget.attrs.rows}
           id={props.name}

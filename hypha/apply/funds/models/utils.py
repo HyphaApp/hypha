@@ -1,3 +1,5 @@
+from enum import Enum
+
 from django.db import models
 from django.urls import reverse
 from wagtail.admin.edit_handlers import (
@@ -30,6 +32,18 @@ LIMIT_TO_REVIEWERS = {'groups__name': REVIEWER_GROUP_NAME}
 LIMIT_TO_PARTNERS = {'groups__name': PARTNER_GROUP_NAME}
 LIMIT_TO_COMMUNITY_REVIEWERS = {'groups__name': COMMUNITY_REVIEWER_GROUP_NAME}
 LIMIT_TO_REVIEWER_GROUPS = {'groups__name__in': REVIEW_GROUPS}
+
+
+class CustomerTypes(Enum):
+    APPLICANT = 'Applicant'
+    PARTNERS = 'Partners'
+    LEAD = 'Lead'
+    REVIEWERS = 'Reviewers'
+    TEAM = 'Team'
+
+    @classmethod
+    def choices(cls):
+        return [(choice.value, choice.name) for choice in cls]
 
 
 def admin_url(page):

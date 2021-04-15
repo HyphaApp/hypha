@@ -28,6 +28,7 @@ import ReviewFormContainer from '@containers/ReviewForm';
 import Determination from '../Determination';
 import DeterminationFormContainer from '@containers/DeterminationForm'
 import FlagContainer from '@containers/FlagContainer'
+import ReminderContainer from '@containers/ReminderContainer'
 import ResizablePanels from '@components/ResizablePanels'
 
 import ScreeningStatusContainer from '@containers/ScreeningStatus';
@@ -78,6 +79,7 @@ const DisplayPanel = props => {
             <Determination submissionID={submissionID} submission={submission}/> : null}
             {/* <ScreeningOutcome submissionID={submissionID} /> */}
             <StatusActions submissionID={submissionID} />
+            <ReminderContainer submissionID={submissionID}/>
             <ScreeningStatusContainer submissionID={submissionID} />
             <UserFlagContainer />
             <StaffFlagContainer />
