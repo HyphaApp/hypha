@@ -6,18 +6,23 @@
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/HyphaApp/hypha)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/HyphaApp/hypha)
 [![GitHub license](https://img.shields.io/github/license/HyphaApp/hypha)](https://github.com/HyphaApp/hypha/blob/main/LICENSE)
-[![Gitter chat](https://img.shields.io/gitter/room/nwjs/nw.js.svg?style=flat-square)](https://gitter.im/HyphaApp/community)
-[![Website](https://img.shields.io/badge/website-hypha.app-lightgrey)](https://hypha.app)
+[![Zulip chat](https://img.shields.io/badge/chat-chat.hypha.app-brightgreen)](https://chat.hypha.app/)
+[![Discource forum](https://img.shields.io/badge/forum-we.hypha.app-orange)](https://we.hypha.app/)
+
+[![Website](https://img.shields.io/badge/website-hypha.app-blue)](https://www.hypha.app/)
 
 ## Submission management software for open calls
-Features
+
+### Features
+
 - Manage the collection and review of applications or submissions openly and efficiently.
 - Customize all aspects of the process, forms, workflows, review options, and more.
 - Automate workflows and integrate with other services (Slack, Mailgun, etc).
 - Regularly audited software with many privacy and security features.
 - View our [Roadmap](https://github.com/HyphaApp/hypha/wiki/Roadmap) for upcoming features and enhancements.
 
-Technology
+### Technology
+
 - Built with [Django](https://www.djangoproject.com/), [Wagtail](https://wagtail.io/), and [React](https://reactjs.org/)
 - Deploy with [Heroku](https://github.com/HyphaApp/hypha/wiki/Deployment:-Heroku), [Docker](https://github.com/HyphaApp/hypha/wiki/Deployment:-Docker), or [your own server](https://github.com/HyphaApp/hypha/wiki/Deployment:-Standalone-App).
 
@@ -30,21 +35,25 @@ Technology
 ## Community
 
 ### Contributors
-Thank you to all the people who have contributed code to Hypha <3
 
-- [Torchbox](https://www.torchbox.com/)
-- [Remote Inning](https://www.remoteinning.com/)
+With thanks to all the people who have contributed code & UX design to Hypha: <3
+
 - [Maxwell Pearl](https://maxwellpearl.com/)
-- [Throneless Technology](https://throneless.tech/)
 - [Psycle](https://psycle.com/)
+- [Remote Inning](https://www.remoteinning.com/)
+- [Simply Secure](https://simplysecure.org/)
+- [Throneless Technology](https://throneless.tech/)
+- [Torchbox](https://www.torchbox.com/)
 
 ### Implementers
+
 Thank you brave folks who choose to use Hypha <3
 
 - [Open Technology Fund](https://www.opentech.fund)
 - [Reset](https://www.reset.tech)
 
 ### Sponsors
+
 Thank you for your generosity <3
 
 - [Open Technology Fund](https://www.opentech.fund)
@@ -62,8 +71,9 @@ Hypha is an open source project made possible thanks to the support of sponsors.
 
 ## More information
 
-* Website: https://hypha.app
+* Website: https://www.hypha.app/
 * Docs: https://github.com/HyphaApp/hypha/wiki
-* Gitter/Chat: https://gitter.im/HyphaApp/community
+* Community forum (Discourse): https://we.hypha.app/
+* Chat (Zulip): https://chat.hypha.app/
 * Why Hypha? **[Hyphae](https://en.wikipedia.org/wiki/Mycorrhizal_network):** long, branching ecosystem enriching organisms that form interconnected networks to collectively exchange resources. Hopefully, Hypha helps it's users do the same.
 * Copyright (C) 2021 - Open Technology Fund
