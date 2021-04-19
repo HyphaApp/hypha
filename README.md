@@ -8,7 +8,6 @@
 [![GitHub license](https://img.shields.io/github/license/HyphaApp/hypha)](https://github.com/HyphaApp/hypha/blob/main/LICENSE)
 [![Zulip chat](https://img.shields.io/badge/chat-chat.hypha.app-brightgreen)](https://chat.hypha.app/)
 [![Discource forum](https://img.shields.io/badge/forum-we.hypha.app-orange)](https://we.hypha.app/)
-
 [![Website](https://img.shields.io/badge/website-hypha.app-blue)](https://www.hypha.app/)
 
 ## Submission management software for open calls
