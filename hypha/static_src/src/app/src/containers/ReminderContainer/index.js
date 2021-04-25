@@ -67,13 +67,16 @@ class ReminderContainer extends React.PureComponent {
                             />
                             </>
                         </Modal>
-                        {this.props.reminderInfo.reminders && this.props.reminderInfo.reminders.length
+                        {this.props.reminders && this.props.reminders.length
                         ?
-                        <ReminderList 
-                            reminders={this.props.reminderInfo.reminders} 
+                        this.props.reminders.map(reminders =>
+                        <ReminderList
+                            key={reminders.grouper}
+                            title={reminders.grouper}
+                            reminders={reminders.list} 
                             submissionID={this.props.submissionID} 
                             deleteReminder={this.props.deleteReminder}
-                        />
+                        />)
                         :
                         <div>No reminders yet.</div>}
                     </div>
@@ -88,11 +91,13 @@ ReminderContainer.propTypes = {
     initAction: PropTypes.func,
     deleteReminder: PropTypes.func,
     classes: PropTypes.object,
-    submissionID: PropTypes.number
+    submissionID: PropTypes.number,
+    reminders: PropTypes.array
 }
 
 const mapStateToProps = state =>  ({
     reminderInfo : Selectors.selectReminderContainer(state),
+    reminders: Selectors.selectReminders(state)
 });
   
   

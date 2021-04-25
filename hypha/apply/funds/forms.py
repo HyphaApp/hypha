@@ -464,10 +464,12 @@ class CreateReminderForm(forms.ModelForm):
 
     def save(self, *args, **kwargs):
         return Reminder.objects.create(
+            title=self.cleaned_data['title'],
+            description=self.cleaned_data['description'],
             time=self.cleaned_data['time'],
             submission=self.cleaned_data['submission'],
             user=self.user)
 
     class Meta:
         model = Reminder
-        fields = ['time', 'action']
+        fields = ['title', 'description', 'time', 'action']

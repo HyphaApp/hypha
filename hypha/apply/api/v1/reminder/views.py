@@ -4,7 +4,6 @@ from rest_framework.response import Response
 from rest_framework_api_key.permissions import HasAPIKey
 
 from hypha.apply.funds.models import Reminder
-from hypha.apply.funds.models.utils import CustomerTypes
 
 from ..mixin import SubmissionNestedMixin
 from ..permissions import IsApplyStaffUser
@@ -64,9 +63,9 @@ class SubmissionReminderViewSet(
                 "type": "DateTime"
             },
             {
-                "id": "assign",
-                "kwargs": {"label": "Assign", "required": True, "choices": CustomerTypes.choices()},
+                "id": "action",
+                "kwargs": {"label": "Action", "required": True, "choices": getattr(Reminder, 'ACTIONS').items(), "initial": getattr(Reminder, 'REVIEW')},
                 "type": "Select"
-            },
+            }
         ]
         return Response(fields)

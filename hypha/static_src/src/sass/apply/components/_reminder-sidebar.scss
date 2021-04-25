@@ -1,3 +1,23 @@
 .expired-reminder {
     color: $color--mid-dark-grey;
 }
+
+.reminder-list {
+    padding: 3px 3px 0;
+}
+
+.reminder-title {
+    width: 80%;
+    display: inline-block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.reminder-delete {
+    float: right;
+}
+
+.form__reminder {
+    padding-left: 70px;
+}

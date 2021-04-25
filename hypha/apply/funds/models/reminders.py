@@ -1,10 +1,9 @@
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 
 from hypha.apply.activity.messaging import MESSAGES
-
-from .utils import CustomerTypes
 
 
 class Reminder(models.Model):
@@ -35,9 +34,8 @@ class Reminder(models.Model):
         max_length=50,
     )
     sent = models.BooleanField(default=False)
-    title = models.CharField(max_length=60, blank=True, null=True)
-    assign = models.CharField(choices=CustomerTypes.choices(), default="none", max_length=50, blank=True, null=True)
-    description = models.TextField(blank=True, null=True)
+    title = models.CharField(max_length=60, blank=False, default='')
+    description = models.TextField(blank=True)
 
     def __str__(self):
         return '{} at {}'.format(
@@ -47,6 +45,10 @@ class Reminder(models.Model):
 
     class Meta:
         ordering = ['-time']
+
+    def clean(self):
+        if self.title == '':
+            raise ValidationError('Title is Empty')
 
     @property
     def is_expired(self):

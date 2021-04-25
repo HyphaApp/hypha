@@ -29,6 +29,7 @@ const DateTime = props => {
                     name={props.name}
                     id={props.name} 
                     value={selectedDate}
+                    format={'Y-MM-d H:mm'}
                 />
             </MuiPickersUtilsProvider>
        </div>

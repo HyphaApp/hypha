@@ -79,8 +79,8 @@ const DisplayPanel = props => {
             <Determination submissionID={submissionID} submission={submission}/> : null}
             {/* <ScreeningOutcome submissionID={submissionID} /> */}
             <StatusActions submissionID={submissionID} />
-            <ReminderContainer submissionID={submissionID}/>
             <ScreeningStatusContainer submissionID={submissionID} />
+            <ReminderContainer submissionID={submissionID}/>
             <UserFlagContainer />
             <StaffFlagContainer />
             <ReviewInformation submissionID={submissionID} />
