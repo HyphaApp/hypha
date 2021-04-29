@@ -216,7 +216,7 @@ SingleStageDefinition = [
                 'accepted': 'Accept',
                 'rejected': 'Dismiss',
             },
-            'display': 'Screening',
+            'display': 'Need screening',
             'public': 'Application Received',
             'stage': Request,
             'permissions': default_permissions,
@@ -242,7 +242,7 @@ SingleStageDefinition = [
         'internal_review': {
             'transitions': {
                 'post_review_discussion': 'Close Review',
-                INITIAL_STATE: 'Screening (back)',
+                INITIAL_STATE: 'Need screening (back)',
             },
             'display': 'Internal Review',
             'public': f'{settings.ORG_SHORT_NAME} Review',
@@ -341,7 +341,7 @@ SingleStageExternalDefinition = [
                 'ext_determination': 'Ready For Determination',
                 'ext_rejected': 'Dismiss',
             },
-            'display': 'Screening',
+            'display': 'Need screening',
             'public': 'Application Received',
             'stage': RequestExt,
             'permissions': default_permissions,
@@ -363,7 +363,7 @@ SingleStageExternalDefinition = [
         'ext_internal_review': {
             'transitions': {
                 'ext_post_review_discussion': 'Close Review',
-                INITIAL_STATE: 'Screening (back)',
+                INITIAL_STATE: 'Need screening (back)',
             },
             'display': 'Internal Review',
             'public': f'{settings.ORG_SHORT_NAME} Review',
@@ -498,7 +498,7 @@ SingleStageCommunityDefinition = [
                 'com_determination': 'Ready For Determination',
                 'com_rejected': 'Dismiss',
             },
-            'display': 'Screening',
+            'display': 'Need screening',
             'public': 'Application Received',
             'stage': RequestCom,
             'permissions': default_permissions,
@@ -517,7 +517,7 @@ SingleStageCommunityDefinition = [
         },
         'com_open_call': {
             'transitions': {
-                INITIAL_STATE: 'Screening (back)',
+                INITIAL_STATE: 'Need screening (back)',
                 'com_rejected': 'Dismiss',
             },
             'display': 'Open Call (public)',
@@ -530,7 +530,7 @@ SingleStageCommunityDefinition = [
             'transitions': {
                 'com_community_review': 'Open Community Review',
                 'com_post_review_discussion': 'Close Review',
-                INITIAL_STATE: 'Screening (back)',
+                INITIAL_STATE: 'Need screening (back)',
                 'com_rejected': 'Dismiss',
             },
             'display': 'Internal Review',
@@ -676,7 +676,7 @@ DoubleStageDefinition = [
                 'invited_to_proposal': 'Invite to Proposal',
                 'concept_rejected': 'Dismiss',
             },
-            'display': 'Screening',
+            'display': 'Need screening',
             'public': 'Concept Note Received',
             'stage': Concept,
             'permissions': default_permissions,
@@ -701,7 +701,7 @@ DoubleStageDefinition = [
         'concept_internal_review': {
             'transitions': {
                 'concept_review_discussion': 'Close Review',
-                INITIAL_STATE: 'Screening (back)',
+                INITIAL_STATE: 'Need screening (back)',
                 'invited_to_proposal': 'Invite to Proposal',
             },
             'display': 'Internal Review',
