@@ -312,10 +312,6 @@ class SubmissionFilter(filters.FilterSet):
                         query |= Q(**kwargs)
         return queryset.filter(query)
 
-    def per_page_handler(self, queryset, name, value):
-        # Pagination is already implemented in view. We only need to add per_page query parameter.
-        return queryset
-
 
 class SubmissionFilterAndSearch(SubmissionFilter):
     query = filters.CharFilter(field_name='search_data', lookup_expr="icontains", widget=forms.HiddenInput)
