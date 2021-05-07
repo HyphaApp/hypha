@@ -52,7 +52,7 @@
         "reselect": "^4.0.0",
         "seamless-immutable": "^7.1.4",
         "smoothscroll-polyfill": "^0.4.4",
-        "underscore": "^1.11.0",
+        "underscore": "^1.12.1",
         "uuid": "^3.3.2",
         "validate.js": "^0.13.1"
     },
