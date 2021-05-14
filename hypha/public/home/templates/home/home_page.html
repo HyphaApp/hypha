@@ -108,6 +108,7 @@
         </div>
     </div>
     {% endif %}
+    {% comment %}
     <div class="wrapper wrapper--inner-space-large">
         <h2 class="heading heading--center heading--focus-areas">{{ page.our_work_title }}</h2>
         <div class="grid grid--focus-areas">
@@ -124,6 +125,7 @@
             </h5>
         </div>
     </div>
+    {% endcomment %}
 
     {% include "home/includes/list_block.html" with bg_color="dark" arrow_color="white" title=page.funds_title intro=page.funds_intro link=page.funds_link link_text=page.funds_link_text listing=fund_list %}
 
