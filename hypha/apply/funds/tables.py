@@ -25,6 +25,8 @@ from .models import ApplicationSubmission, Round, ScreeningStatus
 from .widgets import Select2MultiCheckboxesWidget
 from .workflow import STATUSES, get_review_active_statuses
 
+from collections import OrderedDict
+
 User = get_user_model()
 
 
@@ -266,7 +268,7 @@ class SubmissionFilter(filters.FilterSet):
 
     class Meta:
         model = ApplicationSubmission
-        fields = ('fund', 'round', 'status')
+        fields = ('status', 'fund', 'round', 'lead', 'screening_statuses', 'reviewers', 'category_options', 'meta_terms')
 
     def __init__(self, *args, exclude=list(), limit_statuses=None, **kwargs):
         super().__init__(*args, **kwargs)
@@ -276,11 +278,11 @@ class SubmissionFilter(filters.FilterSet):
             (option.id, option.value)
             for option in Option.objects.filter(category__filter_on_dashboard=True)
         ]
-        self.filters = {
+        self.filters = OrderedDict({
             field: filter
             for field, filter in self.filters.items()
             if field not in exclude
-        }
+        })
 
     def filter_category_options(self, queryset, name, value):
         """
