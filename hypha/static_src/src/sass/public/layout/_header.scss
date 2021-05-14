@@ -90,17 +90,6 @@
             max-width: 750px;
             line-height: 1.1;
             text-shadow: 0 2px 15px $color--black-25;
-
-            &::after {
-                display: inline-block;
-                width: 15px;
-                height: 15px;
-                margin-left: 5px;
-                background: $color--primary;
-                border-radius: 50%;
-                content: '';
-                transition: height, width, 10s ease;
-            }
         }
     }
 
