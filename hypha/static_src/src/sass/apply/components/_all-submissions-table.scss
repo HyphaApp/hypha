@@ -6,6 +6,7 @@
 
     thead {
         display: none;
+        vertical-align: bottom;
 
         @include media-query($table-breakpoint) {
             display: table-header-group;
@@ -17,6 +18,15 @@
 
                 div {
                     font-size: 13px;
+                }
+            }
+
+            // This is a little, er, janky. It doesn't quite
+            // line up the way that it should. It's okay; not great.
+            &.desc,
+            &.asc {
+                &::after {
+                    top: unset;
                 }
             }
 
