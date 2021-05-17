@@ -78,6 +78,14 @@ export const CLEAR_DETERMINATION_DRAFT = 'CLEAR_DETERMINATION_DRAFT';
 export const UPDATE_SUMMARY_EDITOR = 'UPDATE_SUMMARY_EDITOR';
 export const SHOW_GROUPED_ICON = 'SHOW_GROUPED_ICON'
 export const UPDATE_SUBMISSION_REMINDER = 'UPDATE_SUBMISSION_REMINDER'
+export const UPDATE_SUBMISSION_META_TERMS = 'UPDATE_SUBMISSION_META_TERMS'
+
+
+export const updateSubmissionMetaTerms = (submissionID, data) => ({
+    type: UPDATE_SUBMISSION_META_TERMS,
+    submissionID,
+    data
+})
 
 export const toggleGroupedIcon = (status) => ({
     type: SHOW_GROUPED_ICON,

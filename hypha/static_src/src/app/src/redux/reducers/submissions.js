@@ -23,7 +23,8 @@ import {
     CLEAR_ALL_SUBMISSIONS,
     UPDATE_SUMMARY_EDITOR,
     SHOW_GROUPED_ICON,
-    UPDATE_SUBMISSION_REMINDER
+    UPDATE_SUBMISSION_REMINDER,
+    UPDATE_SUBMISSION_META_TERMS
 } from '@actions/submissions';
 
 import { CREATE_NOTE, UPDATE_NOTES, UPDATE_NOTE } from '@actions/notes'
@@ -68,6 +69,11 @@ export function submission(state={comments: []}, action) {
                     .filter(id => !state.comments.includes(id))
                     .concat(state.comments)
             };
+        case UPDATE_SUBMISSION_META_TERMS:
+            return {
+                ...state,
+                metaTerms: action.data
+            }
         case START_EXECUTING_SUBMISSION_ACTION:
             return {
                 ...state,
@@ -114,6 +120,7 @@ export function submissionsByID(state = {}, action) {
         case UPDATE_NOTE:
         case UPDATE_NOTES:
         case UPDATE_SUBMISSION_REMINDER:
+        case UPDATE_SUBMISSION_META_TERMS:
         case START_EXECUTING_SUBMISSION_ACTION:
         case FAIL_EXECUTING_SUBMISSION_ACTION:
             return {

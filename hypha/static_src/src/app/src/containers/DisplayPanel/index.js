@@ -13,7 +13,8 @@ import {
     getDeterminationButtonStatus,
     getCurrentDetermination,
     getScreeningStatuses,
-    getSubmissionScreening
+    getSubmissionScreening,
+    getSubmissionMetaTerms
 } from '@selectors/submissions'
 import { getDraftNoteForSubmission } from '@selectors/notes';
 
@@ -31,6 +32,8 @@ import DeterminationFormContainer from '@containers/DeterminationForm'
 import FlagContainer from '@containers/FlagContainer'
 import ReminderContainer from '@containers/ReminderContainer'
 import ResizablePanels from '@components/ResizablePanels'
+import SubmissionMetaTerms from '@components/SubmissionMetaTerms'
+import MetaTerm from '@containers/MetaTerm'
 
 import ScreeningStatusContainer from '@containers/ScreeningStatus';
 import './style.scss'
@@ -45,7 +48,8 @@ const DisplayPanel = props => {
             showDeterminationForm, 
             currentDetermination, 
             screeningStatuses,
-            submissionScreening
+            submissionScreening,
+            metaTerms
         } = props
     const [ currentStatus, setCurrentStatus ] = useState(undefined)
     const [ localSubmissionID, setLocalSubmissionID ] = useState(submissionID)
@@ -104,6 +108,7 @@ const DisplayPanel = props => {
         <Tab button="Status" key="status">
             {renderDetermination()}
             <StatusActions submissionID={submissionID} />
+            <MetaTerm submissionID={submissionID}/>
             <ScreeningStatusContainer 
                 submissionID={submissionID} 
                 submissionScreening={submissionScreening} 
@@ -111,6 +116,7 @@ const DisplayPanel = props => {
             />
             <ReminderContainer submissionID={submissionID}/>
             {renderFlagContainer()}
+            <SubmissionMetaTerms metaTerms={metaTerms}/>
             <ReviewInformation submissionID={submissionID} />
             <SubmissionLink submissionID={submissionID} />
         </Tab>,
@@ -183,7 +189,8 @@ const mapStateToProps = (state, ownProps) => ({
     currentDetermination: getCurrentDetermination(state),
     draftNote: getDraftNoteForSubmission(getCurrentSubmissionID(state))(state),
     screeningStatuses: getScreeningStatuses(state),
-    submissionScreening: getSubmissionScreening(state)
+    submissionScreening: getSubmissionScreening(state),
+    metaTerms: getSubmissionMetaTerms(state)
 })
 
 const mapDispatchToProps = {
