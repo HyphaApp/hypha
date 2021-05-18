@@ -48,16 +48,15 @@
     &__info {
         font-size: 13px;
         color: $color--dark-blue;
-
-        @include media-query(tablet-landscape) {
-            margin-top: auto;
-        }
     }
 
     &__title {
         font-weight: $weight--semibold;
         width: 100%;
         hyphens: auto;
+        @include media-query(tablet-landscape) {
+            margin-top: auto;
+        }
     }
 
     &__link {
