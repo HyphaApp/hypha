@@ -124,7 +124,8 @@ MetaTermTreeView.propTypes = {
     selectedMetaTerms: PropTypes.array,
     closeForm: PropTypes.func,
     setSelectedMetaTerms: PropTypes.func,
-    updateMetaTerms: PropTypes.func
+    updateMetaTerms: PropTypes.func,
+    classes: PropTypes.object
 }
 
 export default withStyles(styles)(MetaTermTreeView);

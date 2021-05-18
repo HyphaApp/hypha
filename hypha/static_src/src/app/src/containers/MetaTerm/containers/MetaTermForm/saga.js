@@ -5,7 +5,7 @@ import {
   } from 'redux-saga/effects';
   import * as ActionTypes from './constants';
   import * as Actions from './actions';
-  // import { updateSubmissionMetaTerms } from '@actions/submissions'
+  import { updateSubmissionMetaTerms } from '@actions/submissions'
   import { apiFetch } from '@api/utils'
   
   export function* initialFetch() {
