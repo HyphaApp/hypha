@@ -13,9 +13,18 @@
         }
 
         th {
-            &.reviews_stats { // sass-lint:disable-line class-name-format
-                color: $color--black-60;
+            // By default, all table headings should be colored "light"
+	    // because they are not the ones that are defining the current
+	    // sort. The ones defining the current sort will have their color
+	    // changed to "dark" because they have the "asc" or "desc" class
+	    // set on them. Those classes change the values of the font color
+	    // (see table-ordering-styles mixin). Note that this color
+	    // attribute will be overridden when the th text is a link.
+	    // (again, see table-ordering-styles mixin). Fortunately, it is
+	    // the same value so the user does not notice the difference.
+            color: $color--black-60;
 
+            &.reviews_stats { // sass-lint:disable-line class-name-format
                 div {
                     font-size: 13px;
                 }
