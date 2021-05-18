@@ -2,7 +2,7 @@ import * as React from "react";
 import PropTypes from 'prop-types';
 import HelperComponent from "@common/components/HelperComponent";
 import { withStyles } from '@material-ui/core/styles';
-import { DateTimePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
+import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 
 const styles = {
@@ -23,13 +23,13 @@ const DateTime = props => {
         </label>
        <div className="form__item">
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                <DateTimePicker
+                <DatePicker
                     className={props.classes.textField} 
                     onChange={e => {handleDateChange(e);props.onChange(props.name, new Date(e).toISOString())}}
                     name={props.name}
                     id={props.name} 
                     value={selectedDate}
-                    format={'Y-MM-d H:mm'}
+                    format={'d/MM/Y'}
                 />
             </MuiPickersUtilsProvider>
        </div>
