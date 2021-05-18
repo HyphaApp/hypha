@@ -49,7 +49,7 @@ class ReminderForm extends React.PureComponent {
             ? <LoadingPanel /> :
             <div className="reminder-form">
                 {this.props.reminderForm.metaStructure && this.props.reminderForm.metaStructure.length != 0 && 
-                <FormContainer metadata={this.getMetaFields()} formId={"myReminderForm"} />
+                <FormContainer metadata={this.getMetaFields()} formId={"ReminderForm"} />
                 }
             </div>
         )

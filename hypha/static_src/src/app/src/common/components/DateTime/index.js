@@ -15,7 +15,7 @@ const DateTime = props => {
     const [selectedDate, handleDateChange] = React.useState(new Date());
 
     return <div className="form__group  form__group--datetime form__group--wrap">
-        <label 
+        <label
             htmlFor={props.name}
             className="form__question form__question--boolean_field datetime_input">
             <span>{props.label}</span>
@@ -24,12 +24,12 @@ const DateTime = props => {
        <div className="form__item">
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
                 <DatePicker
-                    className={props.classes.textField} 
+                    className={props.classes.textField}
                     onChange={e => {handleDateChange(e);props.onChange(props.name, new Date(e).toISOString())}}
                     name={props.name}
-                    id={props.name} 
+                    id={props.name}
                     value={selectedDate}
-                    format={'d/MM/Y'}
+                    format={'Y-MM-d'}
                 />
             </MuiPickersUtilsProvider>
        </div>

@@ -19,7 +19,6 @@ export function* fetchFields(action) {
       );
       yield put(Actions.hideLoadingAction())
     } catch (e) {
-      console.log("error", e)
       yield put(Actions.hideLoadingAction())
     }
 }
@@ -42,7 +41,6 @@ export function* createReminder(action) {
     );
     yield put(Actions.hideLoadingAction())
   } catch (e) {
-    console.log("error", e)
     yield put(Actions.hideLoadingAction())
   }
 }
