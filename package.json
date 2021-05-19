@@ -52,7 +52,7 @@
         "reselect": "^4.0.0",
         "seamless-immutable": "^7.1.4",
         "smoothscroll-polyfill": "^0.4.4",
-        "underscore": "^1.11.0",
+        "underscore": "^1.13.1",
         "uuid": "^3.3.2",
         "validate.js": "^0.13.1"
     },
@@ -82,11 +82,11 @@
         "sass-loader": "^7.1.0",
         "sinon": "^5.0.7",
         "style-loader": "^0.23.1",
-        "webpack": "^4.31.0",
-        "webpack-bundle-analyzer": "^3.3.2",
-        "webpack-bundle-tracker": "^0.4.2-beta",
-        "webpack-cli": "^3.3.2",
-        "webpack-dev-server": "^3.11.0",
+        "webpack": "^4.46.0",
+        "webpack-bundle-analyzer": "^3.9.0",
+        "webpack-bundle-tracker": "^0.4.3",
+        "webpack-cli": "^3.3.12",
+        "webpack-dev-server": "^3.11.2",
         "webpack-stream": "^5.2.1"
     },
     "scripts": {

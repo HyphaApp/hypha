@@ -93,6 +93,7 @@ INSTALLED_APPS = [
     'hypha.public.standardpages',
     'hypha.public.forms',
     'hypha.public.utils',
+    'hypha.public.partner',
 
     'social_django',
 

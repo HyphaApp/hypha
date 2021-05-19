@@ -249,7 +249,7 @@ class StatusMultipleChoiceFilter(Select2MultipleChoiceFilter):
         return any(item in second for item in first)
 
     def get_filter_predicate(self, v):
-        return {f'{ self.field_name }__in': self.status_map[v]}
+        return {f'{ self.field_name }__in': v}
 
 
 class SubmissionFilter(filters.FilterSet):
@@ -311,10 +311,6 @@ class SubmissionFilter(filters.FilterSet):
                         }
                         query |= Q(**kwargs)
         return queryset.filter(query)
-
-    def per_page_handler(self, queryset, name, value):
-        # Pagination is already implemented in view. We only need to add per_page query parameter.
-        return queryset
 
 
 class SubmissionFilterAndSearch(SubmissionFilter):

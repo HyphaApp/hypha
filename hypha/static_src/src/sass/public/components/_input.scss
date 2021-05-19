@@ -8,4 +8,12 @@
     &--bottom-space {
         margin-bottom: 10px;
     }
+
+    &--search {
+        width: 100%;
+        padding: 10px;
+        color: $color--dark-grey;
+        background: transparent;
+        border: 1px solid $color--mid-dark-grey;
+    }
 }
