@@ -44,9 +44,8 @@ class ReminderForm extends React.PureComponent {
     }   
 
     render(){
+        if(this.props.reminderForm.loading) return <LoadingPanel />
         return (
-            this.props.reminderForm.loading 
-            ? <LoadingPanel /> :
             <div className="reminder-form">
                 {this.props.reminderForm.metaStructure && this.props.reminderForm.metaStructure.length != 0 && 
                 <FormContainer metadata={this.getMetaFields()} formId={"ReminderForm"} />

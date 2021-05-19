@@ -44,9 +44,8 @@ class ReminderContainer extends React.PureComponent {
 
     render(){
         const { classes } = this.props;
+        if(this.props.reminderInfo.loading) return <LoadingPanel /> 
         return (
-            this.props.reminderInfo.loading 
-            ? <LoadingPanel /> :
             <div className="reminder-container">
                 <SidebarBlock title={"Reminders"}>
                     <div className="status-actions">
@@ -61,13 +60,13 @@ class ReminderContainer extends React.PureComponent {
                             open={this.state.open}
                         >
                             <>
-                            <ReminderForm 
-                                submissionID={this.props.submissionID} 
-                                closeForm={() => this.setState({open: false})}
-                            />
+                                <ReminderForm
+                                    submissionID={this.props.submissionID} 
+                                    closeForm={() => this.setState({open: false})}
+                                />
                             </>
                         </Modal>
-                        {this.props.reminders && this.props.reminders.length
+                        {this.props.reminders.length
                         ?
                         this.props.reminders.map(reminders =>
                         <ReminderList
@@ -120,9 +119,9 @@ const withSaga = injectSaga({ key: 'ReminderContainer', saga });
   
   
 export default compose(
-withSaga,
-withReducer,
-withConnect,
-withRouter,
-withStyles(styles)
+    withSaga,
+    withReducer,
+    withConnect,
+    withRouter,
+    withStyles(styles)
 )(ReminderContainer);

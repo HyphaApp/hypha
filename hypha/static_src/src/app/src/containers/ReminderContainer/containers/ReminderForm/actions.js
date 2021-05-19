@@ -18,9 +18,9 @@ export const createReminderAction = (values, submissionID) => ({
 })
 
 export const showLoadingAction = () => ({
-	type: ActionTypes.SHOW_LOADING,
+  type: ActionTypes.SHOW_LOADING,
 })
 
 export const hideLoadingAction = () => ({
-	type: ActionTypes.HIDE_LOADING,
+  type: ActionTypes.HIDE_LOADING,
 })
