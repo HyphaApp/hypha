@@ -42,11 +42,11 @@
             // set column widths
             &.title {
                 @include media-query($table-breakpoint) {
-                    width: 130px;
+                    width: 115px;
                 }
 
                 @include media-query(desktop) {
-                    width: 260px;
+                    width: 230px;
                 }
             }
 
@@ -66,6 +66,18 @@
             }
 
             &.comments {
+                @include media-query($table-breakpoint) {
+                    width: 110px;
+                }
+            }
+
+	    &.submit_time {
+                @include media-query($table-breakpoint) {
+                    width: 110px;
+                }
+            }
+
+	    &.screening_status {
                 @include media-query($table-breakpoint) {
                     width: 110px;
                 }
