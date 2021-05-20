@@ -1,3 +1,5 @@
+import logging
+
 from django.conf import settings
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.template.loader import render_to_string
@@ -49,4 +51,7 @@ def send_activation_email(user, site=None):
     # Force subject to a single line to avoid header-injection issues.
     subject = ''.join(subject.splitlines())
     message = render_to_string('users/activation/email.txt', context)
-    user.email_user(subject, message, settings.DEFAULT_FROM_EMAIL)
+    try:
+        user.email_user(subject, message, settings.DEFAULT_FROM_EMAIL)
+    except ConnectionRefusedError as cre:
+        logging.error('Could not send a user activation email: ' + repr(cre))
