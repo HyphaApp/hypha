@@ -5,7 +5,7 @@
 
 {% block more_info %}
 {% trans "Link to your application" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
-{% trans "If you have any questions, please submit them here" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}#communications
+{% trans "If you have any questions, please submit them here" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}#comments
 
 {% trans "Link to our guide" %}: {{ ORG_GUIDE_URL }}
 

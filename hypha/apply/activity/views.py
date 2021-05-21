@@ -50,7 +50,7 @@ class CommentFormView(DelegatedViewMixin, CreateView):
         return response
 
     def get_success_url(self):
-        return self.object.source.get_absolute_url() + '#communications'
+        return self.object.source.get_absolute_url() + '#comments'
 
     def get_form_kwargs(self):
         # We dont want to pass the submission as the instance
