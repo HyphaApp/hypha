@@ -19,6 +19,7 @@ const TextBox = props => {
         value={props.value ? props.value : ""}
         onChange={e => props.onChange(props.name, e.currentTarget.value)}
         id={props.id}
+        maxLength={props.maxLength}
       />
     </div>
   </div>
@@ -32,6 +33,7 @@ TextBox.propTypes = {
   value: PropTypes.node,
   helperProps: PropTypes.object,
   name: PropTypes.string,
+  maxLength: PropTypes.number
 }
 
 TextBox.displayName = 'TextBox';

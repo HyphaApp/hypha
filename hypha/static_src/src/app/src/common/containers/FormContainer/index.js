@@ -64,7 +64,7 @@ class FormContainer extends React.Component {
         const formFields = this.props.metadata.fields;
         const actions = this.props.metadata.actions;
         const {errors, values} = this.formInfo;
-        return <div>
+        return <div style={this.props.metadata.style}>
             {this.props.metadata.title && <h3> {this.props.metadata.title} </h3>}
             <div style={{ width: `${this.props.metadata.width}px` }}>
             <form className="form form--with-p-tags form--scoreable">

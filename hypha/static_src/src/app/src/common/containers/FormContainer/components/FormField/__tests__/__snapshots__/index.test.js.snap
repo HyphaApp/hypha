@@ -893,6 +893,11 @@ exports[`Test form field component should render Textarea render a form field co
               cols={1}
               onChange={[Function]}
               rows={1}
+              style={
+                Object {
+                  "maxWidth": "90%",
+                }
+              }
               value="value"
             />
           </div>
