@@ -1,10 +1,9 @@
 import * as ActionTypes from './constants';
 
-
 export const fetchFieldsSuccessAction = (fields) => ({
-    type: ActionTypes.FETCH_FIELDS_SUCCESS,
-    fields
-  })
+  type: ActionTypes.FETCH_FIELDS_SUCCESS,
+  fields
+})
   
 export const fetchFieldsAction = (submissionID) => ({
   type: ActionTypes.FETCH_FIELDS,

@@ -70,7 +70,7 @@ class ByRoundListing extends React.Component {
         }
         return submissions.sort((a, b) => a.id - b.id )
                           .map(submission => submission.round)
-                          .filter((round, index, arr) => arr.indexOf(round) === index)
+                          .filter((round, index, arr) => round && arr.indexOf(round) === index)
                           .map((round, i) => ({
                               display: rounds[parseInt(round)].title,
                               key: `round-${round}`,

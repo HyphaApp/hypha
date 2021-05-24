@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Test screening status Container Should render review form with Sidebarblock 1`] = `
+exports[`Test screening status Container Should render screening statuses with Sidebarblock 1`] = `
 <ScreeningStatusContainer
   defaultOptions={
     Object {
@@ -14,7 +14,6 @@ exports[`Test screening status Container Should render review form with Sidebarb
       },
     }
   }
-  initializeAction={[MockFunction]}
   screeningInfo={
     Object {
       "defaultSelectedValue": Object {
@@ -514,23 +513,16 @@ exports[`Test screening status Container Should render review form with Sidebarb
 </ScreeningStatusContainer>
 `;
 
-exports[`Test screening status Container Should render review form with loading 1`] = `
+exports[`Test screening status Container Should render screening statuses with loading 1`] = `
 <ScreeningStatusContainer
-  initializeAction={
-    [MockFunction] {
-      "calls": Array [
-        Array [
-          1,
-        ],
-      ],
-    }
-  }
+  allScreeningStatuses={null}
   screeningInfo={
     Object {
       "loading": true,
     }
   }
   submissionID={1}
+  submissionScreening={null}
 >
   <LoadingPanel>
     <div
@@ -676,18 +668,9 @@ exports[`Test screening status Container Should render review form with loading 
 </ScreeningStatusContainer>
 `;
 
-exports[`Test screening status Container Should render review form with loading false & defaultoptions empty 1`] = `
+exports[`Test screening status Container Should render screening statuses with loading false & defaultoptions empty 1`] = `
 <ScreeningStatusContainer
   defaultOptions={Object {}}
-  initializeAction={
-    [MockFunction] {
-      "calls": Array [
-        Array [
-          1,
-        ],
-      ],
-    }
-  }
   screeningInfo={
     Object {
       "loading": false,

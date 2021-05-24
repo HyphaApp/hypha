@@ -33,7 +33,8 @@ const getSubmissionFilters = state => SelectSelectedFilters(state)
 
 const getSummaryEditorStatus = state => state.submissions.isSummaryEditorOpened;
 
-const getGroupedIconStatus = state => state.submissions.showGroupedIcon
+const getGroupedIconStatus = state => state.submissions.showGroupedIcon;
+
 
 const getCurrentRoundSubmissions = createSelector(
     [ getCurrentRoundSubmissionIDs, getSubmissions],
@@ -44,7 +45,6 @@ const getCurrentRoundSubmissions = createSelector(
         return submissionIDs.map(submissionID => submissions[submissionID]);
     }
 );
-
 
 const getCurrentStatusesSubmissions = createSelector(
     [ getSubmissionIDsForCurrentStatuses, getSubmissions],
@@ -62,6 +62,19 @@ const getCurrentSubmission = createSelector(
         return submissions[id];
     }
 );
+
+const getScreeningStatuses = createSelector(getCurrentSubmission, submission => {
+    return submission && submission.screening && submission.screening[2].allScreening || []
+});
+
+const getSubmissionScreening = createSelector(getCurrentSubmission, submission => {
+    return submission && submission.screening  || []
+});
+
+const getSubmissionReminders = createSelector(getCurrentSubmission, submission => {
+    return submission && submission.reminders || []
+})
+
 
 const getSubmissionOfID = (submissionID) => createSelector(
     [getSubmissions], submissions => submissions[submissionID]
@@ -96,4 +109,7 @@ export {
     getSubmissionFilters,
     getSummaryEditorStatus,
     getGroupedIconStatus,
+    getScreeningStatuses,
+    getSubmissionScreening,
+    getSubmissionReminders
 };

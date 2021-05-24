@@ -5,43 +5,32 @@ import {
 } from 'redux-saga/effects';
 import * as ActionTypes from './constants';
 import * as Actions from './actions';
-import { apiFetch } from '@api/utils'
-
-export function* remindersFetch(action) {
-  
-  try {
-    yield put(Actions.showLoadingAction())
-    let response = yield call(apiFetch, {path : `/v1/submissions/${action.submissionID}/reminders/`});
-    let data = yield response.json()
-    yield put(
-      Actions.getRemindersSuccessAction(data),
-    );
-    yield put(Actions.hideLoadingAction())
-  } catch (e) {
-    yield put(Actions.hideLoadingAction())
-  }
-}
-
+import { apiFetch } from '@api/utils';
+import { updateSubmissionReminderAction } from '@redux/actions/submissions'
+import { camelizeKeys } from 'humps'
 
 export function* deleteReminder(action) {
   try {
     yield put(Actions.showLoadingAction())
-    let response = yield call(apiFetch,
+    yield call(apiFetch,
       {
-      path : `/v1/submissions/${action.submissionID}/reminders/${action.reminderID}/`,
-      method : "DELETE"
-    })
-    let data = yield response.json()
+        path : `/v1/submissions/${action.submissionID}/reminders/${action.reminderID}/`,
+        method : "DELETE"
+      })
+    let response = yield call(apiFetch, {
+        path: `/v1/submissions/${action.submissionID}/`
+      })
+    response = yield response.json()
+    let data = yield camelizeKeys(response)
     yield put(
-      Actions.getRemindersSuccessAction(data),
+      updateSubmissionReminderAction(action.submissionID, data.reminders)
     );
     yield put(Actions.hideLoadingAction())
-  }catch (e) {
+  }catch(e) {
     yield put(Actions.hideLoadingAction())
   }
 }
 
 export default function* reminderContainerSaga() {
-  yield takeLatest(ActionTypes.INITIALIZE, remindersFetch);
   yield takeLatest(ActionTypes.DELETE_REMINDER, deleteReminder)
 }

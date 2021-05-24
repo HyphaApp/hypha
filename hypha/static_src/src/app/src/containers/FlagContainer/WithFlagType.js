@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
 
-const WithFlagType = (WrappedComponent, type, submissionID) => {
+const WithFlagType = (WrappedComponent, type, flagInfo, submissionID) => {
     
     return class Wrapper extends Component{
         render() {
@@ -15,7 +15,7 @@ const WithFlagType = (WrappedComponent, type, submissionID) => {
                 APIPath = `apply/submissions/${submissionID}/staff/flag/`
             }
             return (
-                <WrappedComponent type={type} title={title} APIPath={APIPath} submissionID={submissionID}/>
+                <WrappedComponent type={type} title={title} APIPath={APIPath} selected={flagInfo.selected}/>
             );
         }
     }

@@ -29,7 +29,7 @@ class ReminderForm extends React.PureComponent {
             {
                 text: "Create",
                 type: "primary",
-                callback: (values) => {this.props.createReminderAction(values, this.props.submissionID); this.props.closeForm()}
+                callback: (values) => {this.props.createReminderAction(values, this.props.submissionID)}
             }
         
         ];

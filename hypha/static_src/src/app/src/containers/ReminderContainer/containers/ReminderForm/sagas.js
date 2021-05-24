@@ -3,10 +3,12 @@ import {
     put,
     takeLatest,
   } from 'redux-saga/effects';
-  import * as ActionTypes from './constants';
-  import * as Actions from './actions';
-  import { apiFetch } from '@api/utils';
-  import { initializeAction } from '../../actions'
+import * as ActionTypes from './constants';
+import * as Actions from './actions';
+import { apiFetch } from '@api/utils';
+import { updateSubmissionReminderAction } from '@redux/actions/submissions'
+import { camelizeKeys } from 'humps'
+import { toggleModalAction } from '@containers/ReminderContainer/actions'
 
 
 export function* fetchFields(action) {
@@ -36,11 +38,17 @@ export function* createReminder(action) {
         }
       }
       )
+    let response = yield call(apiFetch, {
+        path: `/v1/submissions/${action.submissionID}/`
+      })
+    response = yield response.json()
+    let data = yield camelizeKeys(response)
     yield put(
-      initializeAction(action.submissionID),
+      updateSubmissionReminderAction(action.submissionID, data.reminders)
     );
+    yield put(toggleModalAction(false));
     yield put(Actions.hideLoadingAction())
-  } catch (e) {
+  }catch(e) {
     yield put(Actions.hideLoadingAction())
   }
 }

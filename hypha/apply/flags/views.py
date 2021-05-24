@@ -32,18 +32,5 @@ class FlagSubmissionCreateView(UserPassesTestMixin, View):
 
         return JsonResponse({"result": created})
 
-    def get(self, request, type, submission_pk):
-        if not request.is_ajax():
-            return HttpResponseNotAllowed()
-
-        submission_type = ContentType.objects.get_for_model(ApplicationSubmission)
-        # Trying to get a flag from the table
-        try:
-            self.model.objects.get(user=request.user, target_object_id=submission_pk, target_content_type=submission_type, type=type)
-        except self.model.DoesNotExist:
-            return JsonResponse({"result": False})
-
-        return JsonResponse({"result": True})
-
     def test_func(self):
         return self.request.user.is_apply_staff or self.request.user.is_reviewer
