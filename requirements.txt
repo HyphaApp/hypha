@@ -46,3 +46,4 @@ wagtail-cache==1.0.1
 wagtail-purge==0.1
 wagtail==2.11.7
 whitenoise==5.2.0
+Unidecode==1.2.0
