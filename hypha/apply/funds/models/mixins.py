@@ -109,7 +109,7 @@ class AccessFormData:
         # PERFORMANCE NOTE:
         # Do not attempt to iterate over form_fields - that will fully instantiate the form_fields
         # including any sub queries that they do
-        for i, field_data in enumerate(form_fields.stream_data):
+        for i, field_data in enumerate(form_fields.raw_data):
             block = form_fields.stream_block.child_blocks[field_data['type']]
             if isinstance(block, UploadableMediaBlock):
                 field_id = field_data.get('id')

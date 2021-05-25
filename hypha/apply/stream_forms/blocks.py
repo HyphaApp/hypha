@@ -1,5 +1,6 @@
 # Credit to https://github.com/BertrandBordage for initial implementation
 import bleach
+from anyascii import anyascii
 from dateutil.parser import isoparse, parse
 from django import forms
 from django.conf import settings
@@ -11,7 +12,6 @@ from django.utils.html import conditional_escape
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from django_bleach.templatetags.bleach_tags import bleach_value
-from unidecode import unidecode
 from wagtail.core.blocks import (
     BooleanBlock,
     CharBlock,
@@ -44,7 +44,7 @@ class FormFieldBlock(StructBlock):
         template = 'stream_forms/render_field.html'
 
     def get_slug(self, struct_value):
-        return force_str(slugify(unidecode(struct_value['field_label'])))
+        return force_str(slugify(anyascii(struct_value['field_label'])))
 
     def get_field_class(self, struct_value):
         return self.field_class

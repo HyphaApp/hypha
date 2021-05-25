@@ -13,7 +13,7 @@ class LinkBlock(blocks.StructBlock):
         template = 'navigation/blocks/menu_item.html',
 
 
-@register_setting(icon='list-ul')
+@register_setting(icon='', classnames='icon icon-list-ul')
 class NavigationSettings(BaseSetting, ClusterableModel):
     primary_navigation = StreamField(
         [('link', LinkBlock()), ],
