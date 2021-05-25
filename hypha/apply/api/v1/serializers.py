@@ -218,17 +218,11 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
         for screening in ScreeningStatus.objects.values():
             all_screening.append(screening)
 
-        screening = [
-            {
-                "selected_reasons": selected_reasons
-            },
-            {
-                "selected_default": selected_default
-            },
-            {
-                "all_screening": all_screening
-            }
-        ]
+        screening = {
+            "selected_reasons": selected_reasons,
+            "selected_default": selected_default,
+            "all_screening": all_screening
+        }
         return screening
 
     def get_flags(self, obj):

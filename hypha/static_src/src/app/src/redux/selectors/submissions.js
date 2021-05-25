@@ -64,11 +64,11 @@ const getCurrentSubmission = createSelector(
 );
 
 const getScreeningStatuses = createSelector(getCurrentSubmission, submission => {
-    return submission && submission.screening && submission.screening[2].allScreening || []
+    return submission && submission.screening && submission.screening.allScreening || []
 });
 
 const getSubmissionScreening = createSelector(getCurrentSubmission, submission => {
-    return submission && submission.screening  || []
+    return submission && submission.screening  || {}
 });
 
 const getSubmissionReminders = createSelector(getCurrentSubmission, submission => {
