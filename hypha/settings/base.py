@@ -660,7 +660,9 @@ REFERRER_POLICY = env.get('SECURE_REFERRER_POLICY',
 
 # Webpack bundle loader
 # When disabled, all included bundles are silently ignored.
-ENABLE_WEBPACK_BUNDLES = True
+if env.get('ENABLE_WEBPACK_BUNDLES', 'true').lower().strip() == 'true':
+    ENABLE_WEBPACK_BUNDLES = True
+
 WEBPACK_LOADER = {
     'DEFAULT': {
         'BUNDLE_DIR_NAME': 'app/',
