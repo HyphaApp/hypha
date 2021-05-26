@@ -1,6 +1,6 @@
 {% extends "base-apply.html" %}
 {% load static %}
-{% load render_bundle from webpack_loader %}
+{% load render_bundle from webpack_tags %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/apply/fancybox.css' %}">
@@ -36,6 +36,3 @@
     <script src="{% static 'js/apply/batch-actions.js' %}"></script>
     <script src="{% static 'js/apply/flag.js' %}"></script>
 {% endblock %}
-
-
-{% load render_bundle from webpack_loader %}

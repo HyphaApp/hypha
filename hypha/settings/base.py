@@ -139,7 +139,6 @@ INSTALLED_APPS = [
     'hijack',
     'compat',
     'pagedown',
-    'webpack_loader',
 
     'salesforce',
 
@@ -658,6 +657,11 @@ if env.get('COOKIE_SECURE', 'false').lower().strip() == 'true':
 
 REFERRER_POLICY = env.get('SECURE_REFERRER_POLICY',
                           'no-referrer-when-downgrade').strip()
+
+# Webpack bundle loader
+# When disabled, all included bundles are silently ignored.
+if env.get('ENABLE_WEBPACK_BUNDLES', 'true').lower().strip() == 'true':
+    ENABLE_WEBPACK_BUNDLES = True
 
 WEBPACK_LOADER = {
     'DEFAULT': {
