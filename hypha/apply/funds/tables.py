@@ -234,7 +234,7 @@ class StatusMultipleChoiceFilter(Select2MultipleChoiceFilter):
             if not limit_to or self.has_any(statuses, limit_to)
         ]
         self.status_map = {
-            slugify(name): status
+            slugify(name): list(status)
             for name, status in STATUSES.items()
         }
         super().__init__(
@@ -249,7 +249,7 @@ class StatusMultipleChoiceFilter(Select2MultipleChoiceFilter):
         return any(item in second for item in first)
 
     def get_filter_predicate(self, v):
-        return {f'{ self.field_name }__in': v}
+        return {f'{ self.field_name }__in': self.status_map.get(v, [])}
 
 
 class SubmissionFilter(filters.FilterSet):
