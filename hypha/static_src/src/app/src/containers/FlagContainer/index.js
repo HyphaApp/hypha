@@ -21,8 +21,9 @@ class FlagContainer extends React.PureComponent {
         this.props.initAction(
             this.props.type, 
             this.props.title, 
-            this.props.APIPath, 
-            this.props.submissionID)
+            this.props.APIPath
+        )
+        this.props.getSelectedFlag(this.props.type, this.props.selected)
     }
 
     render(){
@@ -64,7 +65,9 @@ FlagContainer.propTypes = {
     type: PropTypes.string,
     title: PropTypes.string,
     APIPath: PropTypes.string,
-    submissionID: PropTypes.number
+    submissionID: PropTypes.number,
+    getSelectedFlag: PropTypes.func,
+    selected: PropTypes.bool
 }
 
 const mapStateToProps = state =>  ({
@@ -76,6 +79,7 @@ function mapDispatchToProps(dispatch) {
     return bindActionCreators({
         initAction: Actions.initAction,
         setFlag: Actions.setFlagAction,
+        getSelectedFlag: Actions.getSelectedFlagAction
     },
     dispatch,
     );

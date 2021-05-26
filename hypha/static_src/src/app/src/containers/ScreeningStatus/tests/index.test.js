@@ -8,38 +8,35 @@ import LoadingPanel from '@components/LoadingPanel'
 enzyme.configure({adapter: new Adapter()});
 
 describe("Test screening status Container", () => {
-    it("Should render review form with loading", () => {
-        const initializeAction = jest.fn()
+    it("Should render screening statuses with loading", () => {
         const wrapper = mount(
-                <ScreeningStatusContainer screeningInfo={{loading : true}} initializeAction={initializeAction} submissionID={1}/>
+                <ScreeningStatusContainer 
+                    screeningInfo={{loading : true}}
+                    submissionID={1}
+                    allScreeningStatuses={null}
+                    submissionScreening={null}/>
         );
         expect(wrapper.find('.screening-status-box').length).toEqual(0)
-        expect(initializeAction).toHaveBeenCalled()
         expect(wrapper.containsMatchingElement(<LoadingPanel />)).toBe(true)
         expect(wrapper).toMatchSnapshot();
     });
 
-    it("Should render review form with loading false & defaultoptions empty", () => {
-        const initializeAction = jest.fn()
+    it("Should render screening statuses with loading false & defaultoptions empty", () => {
         const defaultOptions ={}
         const wrapper = mount(
                 <ScreeningStatusContainer 
                 screeningInfo={{loading : false}} 
-                initializeAction={initializeAction} 
                 submissionID={1}
                 defaultOptions={defaultOptions}
                 />
         );
         expect(wrapper.find('.screening-status-box').length).toEqual(0)
-        expect(initializeAction).toHaveBeenCalled()
-        expect(initializeAction).toHaveBeenCalledWith(1)
         expect(wrapper.containsMatchingElement(<SidebarBlock />)).toBe(false)
         expect(wrapper).toMatchObject({})
         expect(wrapper).toMatchSnapshot();
     });
 
-    it("Should render review form with Sidebarblock", () => {
-        const initializeAction = jest.fn()
+    it("Should render screening statuses with Sidebarblock", () => {
         const selectVisibleOption = jest.fn()
         const defaultOptions ={
             yes : { id : 1, title : "a"},
@@ -66,14 +63,12 @@ describe("Test screening status Container", () => {
                 <ScreeningStatusContainer 
                 screeningStatuses={[1,2]}
                 screeningInfo={screeningInfo} 
-                initializeAction={initializeAction} 
                 defaultOptions={defaultOptions}
                 visibleOptions={visibleOptions}
                 selectVisibleOption={selectVisibleOption}
                 />
         );
         expect(wrapper.find('.screening-status-box').length).toEqual(1)
-        expect(initializeAction).not.toHaveBeenCalled()
         expect(wrapper).toMatchObject({})
         expect(wrapper).toMatchSnapshot();
     });

@@ -2,7 +2,7 @@ import * as Immutable from 'seamless-immutable';
 
 const initialState = Immutable.from({
   loading : false,
-  reminders: null,
+  isModalOpened: false
 });
 
 export default initialState;

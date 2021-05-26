@@ -19,7 +19,7 @@ describe("test reducer of screening status", () => {
   it("on screening statuses success", () => {
     const data = { id : 1}
     const expected = initialState.set("screeningStatuses", data)
-    const action = Actions.getScreeningSuccessAction(data);
+    const action = Actions.setScreeningSuccessAction(data);
     expect(Reducer(initialState, action)).toEqual(expected);
   });
   it("on default selected", () => {

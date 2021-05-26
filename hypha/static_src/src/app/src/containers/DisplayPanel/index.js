@@ -11,13 +11,14 @@ import {
     getReviewButtonStatus,
     getCurrentReview,
     getDeterminationButtonStatus,
-    getCurrentDetermination
+    getCurrentDetermination,
+    getScreeningStatuses,
+    getSubmissionScreening
 } from '@selectors/submissions'
 import { getDraftNoteForSubmission } from '@selectors/notes';
 
 import CurrentSubmissionDisplay from '@containers/CurrentSubmissionDisplay'
 import ReviewInformation from '@containers/ReviewInformation'
-// import ScreeningOutcome from '@containers/ScreeningOutcome'
 import AddNoteForm from '@containers/AddNoteForm'
 import NoteListing from '@containers/NoteListing'
 import StatusActions from '@containers/StatusActions'
@@ -36,11 +37,37 @@ import './style.scss'
 
 
 const DisplayPanel = props => {
-    const { submissionID, submission, addMessage, showReviewForm, currentReview, showDeterminationForm, currentDetermination} = props
+    const { submissionID, 
+            submission, 
+            addMessage, 
+            showReviewForm, 
+            currentReview, 
+            showDeterminationForm, 
+            currentDetermination, 
+            screeningStatuses,
+            submissionScreening
+        } = props
     const [ currentStatus, setCurrentStatus ] = useState(undefined)
     const [ localSubmissionID, setLocalSubmissionID ] = useState(submissionID)
-    const UserFlagContainer = WithFlagType(FlagContainer, 'user', submissionID)
-    const StaffFlagContainer = WithFlagType(FlagContainer, 'staff', submissionID)
+
+    const renderFlagContainer = () => {
+        if(submission && submission.flags) {
+            const UserFlagContainer =  WithFlagType(FlagContainer, 'user', submission.flags.find(flag => flag.type == 'user'), submissionID)
+            const StaffFlagContainer = WithFlagType(FlagContainer, 'staff',  submission.flags.find(flag => flag.type == 'staff'), submissionID)
+            return (
+            <>
+                <UserFlagContainer />
+                <StaffFlagContainer />
+            </>
+            )
+        }
+    }
+
+    const renderDetermination = () => {
+        if(submission && submission.isDeterminationFormAttached) {
+            return <Determination submissionID={submissionID} submission={submission}/>
+        }
+    }
 
     useEffect(() => {
         setCurrentStatus(undefined)
@@ -75,14 +102,15 @@ const DisplayPanel = props => {
 
     let tabs = [
         <Tab button="Status" key="status">
-           { submission ? submission.isDeterminationFormAttached &&
-            <Determination submissionID={submissionID} submission={submission}/> : null}
-            {/* <ScreeningOutcome submissionID={submissionID} /> */}
+            {renderDetermination()}
             <StatusActions submissionID={submissionID} />
-            <ScreeningStatusContainer submissionID={submissionID} />
+            <ScreeningStatusContainer 
+                submissionID={submissionID} 
+                submissionScreening={submissionScreening} 
+                allScreeningStatuses={screeningStatuses}
+            />
             <ReminderContainer submissionID={submissionID}/>
-            <UserFlagContainer />
-            <StaffFlagContainer />
+            {renderFlagContainer()}
             <ReviewInformation submissionID={submissionID} />
             <SubmissionLink submissionID={submissionID} />
         </Tab>,
@@ -141,7 +169,9 @@ DisplayPanel.propTypes = {
     showReviewForm: PropTypes.bool,
     currentReview: PropTypes.number,
     currentDetermination: PropTypes.number,
-    showDeterminationForm: PropTypes.bool
+    showDeterminationForm: PropTypes.bool,
+    screeningStatuses: PropTypes.array,
+    submissionScreening: PropTypes.object
 }
 
 const mapStateToProps = (state, ownProps) => ({
@@ -152,6 +182,8 @@ const mapStateToProps = (state, ownProps) => ({
     currentReview: getCurrentReview(state),
     currentDetermination: getCurrentDetermination(state),
     draftNote: getDraftNoteForSubmission(getCurrentSubmissionID(state))(state),
+    screeningStatuses: getScreeningStatuses(state),
+    submissionScreening: getSubmissionScreening(state)
 })
 
 const mapDispatchToProps = {

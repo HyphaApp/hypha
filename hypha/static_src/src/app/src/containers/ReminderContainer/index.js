@@ -15,7 +15,7 @@ import LoadingPanel from '@components/LoadingPanel';
 import Modal from '@material-ui/core/Modal';
 import { withStyles } from '@material-ui/core/styles';
 import ReminderList from './components/ReminderList';
-import ReminderForm from './containers/ReminderForm' 
+import ReminderForm from './containers/ReminderForm';
 
 
 const styles = {
@@ -28,56 +28,44 @@ const styles = {
 
 class ReminderContainer extends React.PureComponent {
 
-    state = {
-        open : false
-    }
+    renderSubmissionReminders = () => {
+        if(this.props.remindersLoading) return <LoadingPanel/> 
 
-    componentDidUpdate(prevProps) {
-        if(this.props.submissionID != prevProps.submissionID) {
-            this.props.initAction(this.props.submissionID)
-        }
-    }
-
-    handleModalClose = () => {
-        this.setState({open : false})
+        if(this.props.reminders.length) {
+            return this.props.reminders.map(reminder =>
+                <ReminderList
+                    key={reminder.grouper}
+                    title={reminder.grouper}
+                    reminders={reminder.list} 
+                    deleteReminder={this.props.deleteReminder}
+                />)
+        }else return <div>No reminders yet.</div>
     }
 
     render(){
         const { classes } = this.props;
-        if(this.props.reminderInfo.loading) return <LoadingPanel /> 
         return (
             <div className="reminder-container">
                 <SidebarBlock title={"Reminders"}>
                     <div className="status-actions">
                         <button 
                             className="button button--primary button--half-width button--bottom-space reminder-button" 
-                            onClick={() => this.setState({open : true})}
+                            onClick={() => this.props.toggleModal(true)}
                         >
                             Create Reminder
                         </button>
                         <Modal
                             className={classes.modal} 
-                            open={this.state.open}
+                            open={this.props.reminderInfo.isModalOpened}
                         >
                             <>
                                 <ReminderForm
                                     submissionID={this.props.submissionID} 
-                                    closeForm={() => this.setState({open: false})}
+                                    closeForm={() => this.props.toggleModal(false)}
                                 />
                             </>
                         </Modal>
-                        {this.props.reminders.length
-                        ?
-                        this.props.reminders.map(reminders =>
-                        <ReminderList
-                            key={reminders.grouper}
-                            title={reminders.grouper}
-                            reminders={reminders.list} 
-                            submissionID={this.props.submissionID} 
-                            deleteReminder={this.props.deleteReminder}
-                        />)
-                        :
-                        <div>No reminders yet.</div>}
+                        {this.renderSubmissionReminders()}
                     </div>
                 </SidebarBlock>
             </div>
@@ -87,23 +75,25 @@ class ReminderContainer extends React.PureComponent {
 
 ReminderContainer.propTypes = {
     reminderInfo: PropTypes.object,
-    initAction: PropTypes.func,
+    reminders: PropTypes.array,
+    remindersLoading: PropTypes.bool,
     deleteReminder: PropTypes.func,
+    toggleModal: PropTypes.func,
     classes: PropTypes.object,
     submissionID: PropTypes.number,
-    reminders: PropTypes.array
 }
 
 const mapStateToProps = state =>  ({
     reminderInfo : Selectors.selectReminderContainer(state),
-    reminders: Selectors.selectReminders(state)
+    reminders: Selectors.selectReminders(state),
+    remindersLoading: Selectors.selectRemindersLoading(state)
 });
   
   
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({
-        initAction: Actions.initializeAction,
         deleteReminder: Actions.deleteReminderAction,
+        toggleModal: Actions.toggleModalAction
     },
     dispatch,
     );

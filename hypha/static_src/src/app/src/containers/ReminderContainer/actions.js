@@ -1,10 +1,5 @@
 import * as ActionTypes from './constants';
 
-export const initializeAction = (submissionID) => ({
-  type: ActionTypes.INITIALIZE,
-  submissionID
-});
-
 export const deleteReminderAction = (submissionID, reminderID) => ({
   type: ActionTypes.DELETE_REMINDER,
   submissionID,
@@ -22,4 +17,9 @@ export const showLoadingAction = () => ({
 
 export const hideLoadingAction = () => ({
   type: ActionTypes.HIDE_LOADING,
+})
+
+export const toggleModalAction = (data) => ({
+  type: ActionTypes.TOGGLE_MODAL,
+  data
 })

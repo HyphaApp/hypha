@@ -77,10 +77,17 @@ export const CLEAR_DETERMINATION_DRAFT = 'CLEAR_DETERMINATION_DRAFT';
 
 export const UPDATE_SUMMARY_EDITOR = 'UPDATE_SUMMARY_EDITOR';
 export const SHOW_GROUPED_ICON = 'SHOW_GROUPED_ICON'
+export const UPDATE_SUBMISSION_REMINDER = 'UPDATE_SUBMISSION_REMINDER'
 
 export const toggleGroupedIcon = (status) => ({
     type: SHOW_GROUPED_ICON,
     status
+})
+
+export const updateSubmissionReminderAction = (submissionID, data) => ({
+    type: UPDATE_SUBMISSION_REMINDER,
+    submissionID,
+    data
 })
 
 export const updateSummaryEditor = (submissionID, summary) => ({

@@ -1,11 +1,10 @@
 import * as ActionTypes from './constants';
 
-export const initAction = (flagType, title, APIPath, submissionID) => ({
+export const initAction = (flagType, title, APIPath) => ({
   type: ActionTypes.INIT,
   flagType,
   title,
-  APIPath,
-  submissionID
+  APIPath
 })
 
 export const showLoadingAction = (flagType) => ({

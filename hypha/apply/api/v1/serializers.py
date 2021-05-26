@@ -4,13 +4,16 @@ from django_bleach.templatetags.bleach_tags import bleach_value
 from rest_framework import serializers
 
 from hypha.apply.activity.models import Activity
-from hypha.apply.api.v1.screening.serializers import ScreeningStatusSerializer
 from hypha.apply.determinations.models import Determination
 from hypha.apply.determinations.templatetags.determination_tags import (
     show_determination_button,
 )
 from hypha.apply.determinations.views import DeterminationCreateOrUpdateView
-from hypha.apply.funds.models import ApplicationSubmission, RoundsAndLabs
+from hypha.apply.funds.models import (
+    ApplicationSubmission,
+    RoundsAndLabs,
+    ScreeningStatus,
+)
 from hypha.apply.review.models import Review, ReviewOpinion
 from hypha.apply.review.options import RECOMMENDATION_CHOICES
 from hypha.apply.users.groups import PARTNER_GROUP_NAME, STAFF_GROUP_NAME
@@ -163,14 +166,16 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
     review = ReviewSummarySerializer(source='*')
     determination = DeterminationSummarySerializer(source='*')
     phase = serializers.CharField()
-    screening = ScreeningStatusSerializer(source='screening_statuses.all', many=True)
+    screening = serializers.SerializerMethodField()
     action_buttons = serializers.SerializerMethodField()
     is_determination_form_attached = serializers.BooleanField(read_only=True)
     is_user_staff = serializers.SerializerMethodField()
+    flags = serializers.SerializerMethodField()
+    reminders = serializers.SerializerMethodField()
 
     class Meta:
         model = ApplicationSubmission
-        fields = ('id', 'summary', 'title', 'stage', 'status', 'phase', 'meta_questions', 'questions', 'actions', 'review', 'screening', 'action_buttons', 'determination', 'is_determination_form_attached', 'is_user_staff')
+        fields = ('id', 'summary', 'title', 'stage', 'status', 'phase', 'meta_questions', 'questions', 'actions', 'review', 'screening', 'action_buttons', 'determination', 'is_determination_form_attached', 'is_user_staff', 'screening', 'flags', 'reminders')
 
     def serialize_questions(self, obj, fields):
         for field_id in fields:
@@ -199,8 +204,55 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
         ]
         return data
 
+    def get_screening(self, obj):
+        selected_default = {}
+        selected_reasons = []
+        all_screening = []
+
+        for screening in obj.screening_statuses.values():
+            if screening['default']:
+                selected_default = screening
+            else:
+                selected_reasons.append(screening)
+
+        for screening in ScreeningStatus.objects.values():
+            all_screening.append(screening)
+
+        screening = {
+            "selected_reasons": selected_reasons,
+            "selected_default": selected_default,
+            "all_screening": all_screening
+        }
+        return screening
+
+    def get_flags(self, obj):
+        flags = [
+            {
+                "type": 'user',
+                "selected": obj.flagged_by(self.context['request'].user)
+            },
+            {
+                "type": 'staff',
+                "selected": obj.flagged_staff
+            }
+        ]
+
+        return flags
+
     def get_questions(self, obj):
         return self.serialize_questions(obj, obj.normal_blocks)
+
+    def get_reminders(self, obj):
+        reminders = []
+        for reminder in obj.reminders.all():
+            reminders.append({
+                "id": reminder.id,
+                "submission_id": reminder.submission_id,
+                "title": reminder.title,
+                "action_type": reminder.action_type,
+                "is_expired": reminder.is_expired
+            })
+        return reminders
 
     def get_action_buttons(self, obj):
         request = self.context['request']

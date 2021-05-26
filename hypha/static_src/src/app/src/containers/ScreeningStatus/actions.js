@@ -1,9 +1,5 @@
 import * as ActionTypes from './constants';
 
-export const initializeAction = (id) => ({
-  type: ActionTypes.INITIALIZE,
-  id
-});
 
 export const showLoadingAction = () => ({
 	type: ActionTypes.SHOW_LOADING,
@@ -13,7 +9,7 @@ export const hideLoadingAction = () => ({
 	type: ActionTypes.HIDE_LOADING,
 })
 
-export const getScreeningSuccessAction = (data) => ({
+export const setScreeningSuccessAction = (data) => ({
   type: ActionTypes.GET_SCREENING_STATUSES,
   data
 })
