@@ -158,7 +158,7 @@
                     {% user_can_upload_contract object request.user as can_upload_contract %}
                     {% if can_upload_contract %}
                     <div class="modal" id="upload-contract">
-                        {% if not user.is_staff %}
+                        {% if not user.is_apply_staff %}
                             <h4 class="modal__header-bar">Upload Signed Contract</h4>
                         {% else %}
                             <h4 class="modal__header-bar">Upload Contract</h4>
