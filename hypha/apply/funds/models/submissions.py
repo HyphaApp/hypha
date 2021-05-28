@@ -1008,7 +1008,7 @@ class AssignedReviewersQuerySet(models.QuerySet):
             else:
                 groups = {REVIEWER_GROUP_NAME}
         elif not groups:
-            if reviewer.is_apply_staff:
+            if reviewer.is_staff or reviewer.is_superuser:
                 groups = {STAFF_GROUP_NAME}
             else:
                 groups = {REVIEWER_GROUP_NAME}
