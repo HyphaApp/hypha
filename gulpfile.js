@@ -73,6 +73,7 @@ sass.compiler = require('sass');
 
 // Load webpack config
 var webpackDev = () => require(options.theme.app + 'webpack.dev.config.js');
+var webpackStaticDev = () => require(options.theme.app + 'webpack.static.dev.config.js');
 var webpackProd = () => require(options.theme.app + 'webpack.prod.config.js');
 var webpackAnalyze = () => require(options.theme.app + 'webpack.analyze.config.js');
 
@@ -178,7 +179,7 @@ gulp.task('scripts:production', gulp.series('clean:js', function js () {
 // Build App.
 gulp.task('app', function() {
     return gulp.src(options.theme.app + 'src/')
-        .pipe(webpackStrm( webpackDev() ))
+        .pipe(webpackStrm( webpackStaticDev() ))
         .pipe(gulp.dest(options.theme.app_dest));
 })
 
