@@ -10,7 +10,7 @@ def user_has_approved(project, user):
 
 @register.simple_tag
 def can_send_for_approval(project, user):
-    return user.is_staff and project.can_send_for_approval
+    return user.is_apply_staff and project.can_send_for_approval
 
 
 @register.simple_tag
