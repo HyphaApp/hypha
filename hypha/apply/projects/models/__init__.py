@@ -9,6 +9,7 @@ from .project import (
     ProjectSettings,
 )
 from .report import Report, ReportConfig, ReportPrivateFiles, ReportVersion
+from .vendor import Vendor, BankInformation
 
 __all__ = [
     'Project',
@@ -25,4 +26,6 @@ __all__ = [
     'ReportVersion',
     'ReportPrivateFiles',
     'ReportConfig',
+    'Vendor',
+    'BankInformation',
 ]
