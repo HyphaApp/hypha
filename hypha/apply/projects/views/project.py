@@ -54,17 +54,17 @@ from ..forms import (
     UploadContractForm,
     UploadDocumentForm,
 )
-from ..models import (
+from ..models.payment import PaymentRequest
+from ..models.project import (
     CONTRACTING,
     IN_PROGRESS,
     PROJECT_STATUS_CHOICES,
     Approval,
     Contract,
     PacketFile,
-    PaymentRequest,
     Project,
-    Report,
 )
+from ..models.report import Report
 from ..tables import PaymentRequestsListTable, ProjectsListTable, ReportListTable
 from .report import ReportFrequencyUpdate, ReportingMixin
 

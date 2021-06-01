@@ -16,25 +16,18 @@ from hypha.apply.stream_forms.fields import MultiFileField
 from hypha.apply.users.groups import STAFF_GROUP_NAME
 from hypha.apply.utils.fields import RichTextField
 
-from .models import (
+from .models.payment import (
     CHANGES_REQUESTED,
-    COMMITTED,
     DECLINED,
     PAID,
     REQUEST_STATUS_CHOICES,
     SUBMITTED,
     UNDER_REVIEW,
-    Approval,
-    Contract,
-    PacketFile,
     PaymentReceipt,
     PaymentRequest,
-    Project,
-    Report,
-    ReportConfig,
-    ReportPrivateFiles,
-    ReportVersion,
 )
+from .models.project import COMMITTED, Approval, Contract, PacketFile, Project
+from .models.report import Report, ReportConfig, ReportPrivateFiles, ReportVersion
 
 User = get_user_model()
 
