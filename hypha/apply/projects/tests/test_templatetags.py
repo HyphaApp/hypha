@@ -2,18 +2,8 @@ from django.test import TestCase
 
 from hypha.apply.users.tests.factories import ApplicantFactory, StaffFactory
 
-from ..models import (
-    CHANGES_REQUESTED,
-    CLOSING,
-    COMMITTED,
-    COMPLETE,
-    CONTRACTING,
-    DECLINED,
-    IN_PROGRESS,
-    PAID,
-    SUBMITTED,
-    UNDER_REVIEW,
-)
+from ..models.payment import CHANGES_REQUESTED, DECLINED, PAID, SUBMITTED, UNDER_REVIEW
+from ..models.project import CLOSING, COMMITTED, COMPLETE, CONTRACTING, IN_PROGRESS
 from ..templatetags.contract_tools import user_can_upload_contract
 from ..templatetags.payment_request_tools import can_change_status, can_delete, can_edit
 from .factories import ContractFactory, PaymentRequestFactory, ProjectFactory

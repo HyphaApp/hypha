@@ -17,7 +17,7 @@ from ..forms import (
     filter_choices,
     filter_request_choices,
 )
-from ..models import CHANGES_REQUESTED, DECLINED, PAID, SUBMITTED, UNDER_REVIEW
+from ..models.payment import CHANGES_REQUESTED, DECLINED, PAID, SUBMITTED, UNDER_REVIEW
 from .factories import (
     DocumentCategoryFactory,
     PaymentRequestFactory,
