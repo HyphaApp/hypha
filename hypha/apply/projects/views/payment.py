@@ -19,7 +19,8 @@ from ..forms import (
     CreatePaymentRequestForm,
     EditPaymentRequestForm,
 )
-from ..models import PaymentRequest, Project
+from ..models.payment import PaymentRequest
+from ..models.project import Project
 from ..tables import PaymentRequestsListTable
 
 

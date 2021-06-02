@@ -7,17 +7,16 @@ from django.utils import timezone
 from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
 from hypha.apply.users.tests.factories import ApplicantFactory, StaffFactory
 
-from ..models import (
+from ..models.payment import (
     CHANGES_REQUESTED,
     DECLINED,
     PAID,
     SUBMITTED,
     UNDER_REVIEW,
     PaymentRequest,
-    Project,
-    Report,
-    ReportConfig,
 )
+from ..models.project import Project
+from ..models.report import Report, ReportConfig
 from .factories import (
     DocumentCategoryFactory,
     PacketFileFactory,

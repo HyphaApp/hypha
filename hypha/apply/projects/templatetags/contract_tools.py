@@ -1,6 +1,6 @@
 from django import template
 
-from ..models import COMMITTED
+from ..models.project import COMMITTED
 
 register = template.Library()
 

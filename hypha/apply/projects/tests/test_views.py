@@ -21,7 +21,8 @@ from hypha.apply.utils.testing.tests import BaseViewTestCase
 
 from ..files import get_files
 from ..forms import SetPendingForm
-from ..models import CHANGES_REQUESTED, COMMITTED, CONTRACTING, IN_PROGRESS, SUBMITTED
+from ..models.payment import CHANGES_REQUESTED, SUBMITTED
+from ..models.project import COMMITTED, CONTRACTING, IN_PROGRESS
 from ..views import ContractsMixin, ProjectDetailSimplifiedView
 from .factories import (
     ContractFactory,

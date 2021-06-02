@@ -7,25 +7,23 @@ from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 
 from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
-from hypha.apply.projects.models import (
-    COMPLETE,
-    IN_PROGRESS,
-    Contract,
-    DocumentCategory,
-    PacketFile,
-    PaymentReceipt,
-    PaymentRequest,
-    Project,
-    ProjectApprovalForm,
-    Report,
-    ReportConfig,
-    ReportVersion,
-)
 from hypha.apply.stream_forms.testing.factories import (
     FormDataFactory,
     FormFieldsBlockFactory,
 )
 from hypha.apply.users.tests.factories import StaffFactory, UserFactory
+
+from ..models.payment import PaymentReceipt, PaymentRequest
+from ..models.project import (
+    COMPLETE,
+    IN_PROGRESS,
+    Contract,
+    DocumentCategory,
+    PacketFile,
+    Project,
+    ProjectApprovalForm,
+)
+from ..models.report import Report, ReportConfig, ReportVersion
 
 ADDRESS = {
     'country': 'GB',
