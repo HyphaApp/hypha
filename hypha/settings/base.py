@@ -357,6 +357,10 @@ DATETIME_INPUT_FORMATS = [
     '%m/%d/%y',              # '10/25/06'
 ]
 
+LOCALE_PATHS = (
+    PROJECT_DIR + '/locale',
+)
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/stable/howto/static-files/
