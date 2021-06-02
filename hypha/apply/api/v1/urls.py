@@ -12,6 +12,7 @@ from hypha.apply.api.v1.screening.views import (
 from .views import (
     CommentViewSet,
     CurrentUser,
+    MetaTermsViewSet,
     RoundViewSet,
     SubmissionActionViewSet,
     SubmissionCommentViewSet,
@@ -27,6 +28,7 @@ router.register(r'submissions', SubmissionViewSet, basename='submissions')
 router.register(r'comments', CommentViewSet, basename='comments')
 router.register(r'rounds', RoundViewSet, basename='rounds')
 router.register(r'screening_statuses', ScreeningStatusViewSet, basename='screenings')
+router.register(r'meta_terms', MetaTermsViewSet, basename="meta-terms")
 
 submission_router = routers.NestedSimpleRouter(router, r'submissions', lookup='submission')
 submission_router.register(r'actions', SubmissionActionViewSet, basename='submission-actions')

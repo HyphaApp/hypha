@@ -15,6 +15,7 @@ from hypha.apply.funds.models import (
     ScreeningStatus,
 )
 from hypha.apply.review.models import Review, ReviewOpinion
+from hypha.apply.categories.models import MetaTerm
 from hypha.apply.review.options import RECOMMENDATION_CHOICES
 from hypha.apply.users.groups import PARTNER_GROUP_NAME, STAFF_GROUP_NAME
 
@@ -343,3 +344,17 @@ class CommentEditSerializer(CommentCreateSerializer):
 class UserSerializer(serializers.Serializer):
     id = serializers.CharField(read_only=True)
     email = serializers.CharField(read_only=True)
+
+
+class MetaTermsSerializer(serializers.ModelSerializer):
+    name = serializers.StringRelatedField()
+    children = serializers.SerializerMethodField(
+        read_only=True, method_name="get_children_nodes"
+    )
+    class Meta:
+        model = MetaTerm
+        fields = ("name", "id", "children")
+
+    def get_children_nodes(self, obj):
+        child_queryset = obj.get_children()
+        return MetaTermsSerializer(child_queryset, many=True).data
