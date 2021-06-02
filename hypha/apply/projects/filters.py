@@ -43,9 +43,9 @@ class ProjectListFilter(filters.FilterSet):
         (1, 'Behind schedule'),
     )
 
-    fund = Select2ModelMultipleChoiceFilter(label='Funds', queryset=get_used_funds)
-    lead = Select2ModelMultipleChoiceFilter(label='Lead', queryset=get_project_leads)
-    status = Select2MultipleChoiceFilter(label='Status', choices=PROJECT_STATUS_CHOICES)
+    project_fund = Select2ModelMultipleChoiceFilter(field_name="submission__page", label='Funds', queryset=get_used_funds)
+    project_lead = Select2ModelMultipleChoiceFilter(field_name="lead", label='Lead', queryset=get_project_leads)
+    project_status = Select2MultipleChoiceFilter(field_name="status", label='Status', choices=PROJECT_STATUS_CHOICES)
     query = filters.CharFilter(field_name='title', lookup_expr="icontains", widget=forms.HiddenInput)
     reporting = filters.ChoiceFilter(
         choices=REPORTING_CHOICES,
@@ -57,7 +57,7 @@ class ProjectListFilter(filters.FilterSet):
     )
 
     class Meta:
-        fields = ['status', 'lead', 'fund']
+        fields = ['project_status', 'project_lead', 'project_fund']
         model = Project
 
     def filter_reporting(self, queryset, name, value):
