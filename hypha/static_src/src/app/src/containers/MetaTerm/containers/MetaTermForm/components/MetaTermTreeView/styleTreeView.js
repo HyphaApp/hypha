@@ -1,6 +1,9 @@
 export default theme => ({
     root: {
+        height: 440,
+        flexGrow: 1,
         maxWidth: 400,
+        overflowY: "auto",
     },
     treeItemRoot: {
       "& > .MuiTreeItem-content > .MuiTreeItem-label": {

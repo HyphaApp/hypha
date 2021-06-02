@@ -18,7 +18,7 @@ class MetaTermTreeView extends React.PureComponent {
     createTreeItemList = (node) => {
         if("children" in node && node.children.length){
         return <TreeItem 
-                nodeId={node.id} 
+                nodeId={node.id.toString()} 
                 label={node.name} 
                 key={node.id} 
                 classes= {{ 
@@ -32,7 +32,7 @@ class MetaTermTreeView extends React.PureComponent {
         }
         else {
             return <TreeItem 
-                      nodeId={node.id} 
+                      nodeId={node.id.toString()} 
                       label={node.name} 
                       key={node.id} 
                       classes= {{ 
@@ -47,26 +47,24 @@ class MetaTermTreeView extends React.PureComponent {
 
     checkIfNodeSelectable = (selectedNodeId, node) => {
       // check selected node doesn't have children
-        if(node.id == selectedNodeId && !node.children.length){
-          return true
-        }
-        if(node.children.length){
+        if(node.id == selectedNodeId && !node.children.length) return true
+        if(node.children.length && node.id !== selectedNodeId){
           for(let child of node.children){
-            if(this.checkIfNodeSelectable(selectedNodeId, child)) {
-              return true
-            }
+            if(this.checkIfNodeSelectable(selectedNodeId, child)) return true
           }
         }
         return false
     }
 
     handleSelect = (event, nodeIds) => {
-      if (event.target.nodeName === "svg") {
-        return;
-      }
-      const first = nodeIds[0];
+
+      // ignore if collapse icon selected
+      if (event.target.nodeName === "svg") return;
+      
+      const first = Number(nodeIds[0]);
       let isSelectable;
 
+      // selected node shouldn't have children
       for(let node of this.props.metaTermsStructure){
         isSelectable = this.checkIfNodeSelectable(first, node)
         if(isSelectable) break
@@ -82,9 +80,9 @@ class MetaTermTreeView extends React.PureComponent {
     };
 
     handleToggle = (event, nodeIds) => {
-      if (event.target.nodeName !== "svg") {
-        return;
-      }
+      //ignore if anything except collapse icon selected
+      if (event.target.nodeName !== "svg") return;
+
       this.setState({expanded : nodeIds})
     };
 
@@ -101,7 +99,7 @@ class MetaTermTreeView extends React.PureComponent {
                             className={this.props.classes.root}
                             defaultCollapseIcon={<ExpandMoreIcon />}
                             defaultExpandIcon={<ChevronRightIcon />}
-                            selected={this.props.selectedMetaTerms}
+                            selected={this.props.selectedMetaTerms.map(id => id.toString())}
                             onNodeSelect={this.handleSelect}
                             expanded={this.state.expanded}
                             onNodeToggle={this.handleToggle}

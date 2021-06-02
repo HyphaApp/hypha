@@ -177,7 +177,8 @@ DisplayPanel.propTypes = {
     currentDetermination: PropTypes.number,
     showDeterminationForm: PropTypes.bool,
     screeningStatuses: PropTypes.array,
-    submissionScreening: PropTypes.object
+    submissionScreening: PropTypes.object,
+    metaTerms: PropTypes.array
 }
 
 const mapStateToProps = (state, ownProps) => ({

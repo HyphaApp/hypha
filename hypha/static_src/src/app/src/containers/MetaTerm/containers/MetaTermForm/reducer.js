@@ -5,7 +5,7 @@ import initialState from './models';
 const metaFormReducer = (state = initialState, action) => {
   switch (action.type) {
     case ActionTypes.GET_META_TERMS_SUCCESS:
-      return state.set("metaTermsStructure", action.data).set("initialValues", null);
+      return state.set("metaTermsStructure", action.data);
     case ActionTypes.SHOW_LOADING:
       return state.set("loading", true);
     case ActionTypes.HIDE_LOADING:

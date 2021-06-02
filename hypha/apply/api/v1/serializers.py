@@ -4,11 +4,8 @@ from django_bleach.templatetags.bleach_tags import bleach_value
 from rest_framework import serializers
 
 from hypha.apply.activity.models import Activity
-<<<<<<< 44d17049428a1f67169a8eb29fc5cf5c0b909fa6
-=======
 from hypha.apply.api.v1.screening.serializers import ScreeningStatusSerializer
 from hypha.apply.categories.models import MetaTerm
->>>>>>> feat: Add update submission meta-terms API and add meta-terms to submission details API
 from hypha.apply.determinations.models import Determination
 from hypha.apply.determinations.templatetags.determination_tags import (
     show_determination_button,

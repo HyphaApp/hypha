@@ -20,10 +20,6 @@ class MetaTerm extends React.PureComponent {
         open : false
     }
 
-    handleModalClose = () => {
-        this.setState({open : false})
-    }
-
     render(){
         const { classes } = this.props;
         return (
@@ -56,6 +52,7 @@ class MetaTerm extends React.PureComponent {
 
 MetaTerm.propTypes = {
     submissionID: PropTypes.number,
+    classes: PropTypes.object
 }
 
 export default withStyles(styles)(MetaTerm);

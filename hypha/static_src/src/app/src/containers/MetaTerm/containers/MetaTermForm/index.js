@@ -17,22 +17,22 @@ import MetaTermTreeView from './components/MetaTermTreeView'
 class MetaTermForm extends React.PureComponent {
 
     componentDidMount(){
-        this.props.initialize() // fetch all meta terms fields
+        this.props.initialize() // fetch all meta terms
         if("metaTerms" in this.props.submission) {
-            this.props.setSelectedMetaTerms(this.props.submission.metaTerms.map(metaTerm => ''+metaTerm.id))
+            this.props.setSelectedMetaTerms(this.props.submission.metaTerms.map(metaTerm => metaTerm.id))
         }
     }
 
     render(){
-        console.log(this.props.metaTermsInfo.selectedMetaTerms)
+        if(this.props.metaTermsInfo.loading) return <LoadingPanel />
+        
         return (
-            this.props.metaTermsInfo.loading ? <LoadingPanel /> :
             <MetaTermTreeView 
               closeForm={this.props.closeForm}
               selectedMetaTerms={this.props.metaTermsInfo.selectedMetaTerms}
               metaTermsStructure={this.props.metaTermsInfo.metaTermsStructure}
               setSelectedMetaTerms={this.props.setSelectedMetaTerms}
-              updateMetaTerms={() => this.props.updateMetaTerms(this.props.metaTermsInfo.selectedMetaTerms, this.props.submissionID)}
+              updateMetaTerms={() => {this.props.updateMetaTerms(this.props.metaTermsInfo.selectedMetaTerms, this.props.submissionID); this.props.closeForm()}}
             />
         )
     }

@@ -77,12 +77,12 @@ const getSubmissionReminders = createSelector(getCurrentSubmission, submission =
 
 const getSubmissionMetaTerms = createSelector(
     [getCurrentSubmission], submission => {
+        let metaTerms = []
         if(submission && "metaTerms" in submission){
-            let metaTerms = []
             submission.metaTerms.map(metaTerm => {
-                if(metaTerms.find(mt => mt.parentId == metaTerm.parentId)){
-                    const index = metaTerms.indexOf(metaTerms.find(mt => mt.parentId == metaTerm.parentId))
-                    metaTerms[index].children.push({'id': metaTerm.id, 'name': metaTerm.name})
+                const existingMetaTermIndex = metaTerms.findIndex(mt => mt.parentId == metaTerm.parentId);
+                if (existingMetaTermIndex != -1) {
+                    metaTerms[existingMetaTermIndex].children.push({'id': metaTerm.id, 'name': metaTerm.name})
                 }
                 else {
                     metaTerms.push({
@@ -92,9 +92,8 @@ const getSubmissionMetaTerms = createSelector(
                     })
                 }
             })
-            return metaTerms
         }
-        return []
+        return metaTerms
     }
 )
 
