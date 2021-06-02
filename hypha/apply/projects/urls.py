@@ -1,3 +1,4 @@
+from os import name
 from django.urls import include, path
 
 from .views import (
@@ -20,6 +21,7 @@ from .views import (
     ReportPrivateMedia,
     ReportSkipView,
     ReportUpdateView,
+    # CreateVendorView,
 )
 
 app_name = 'projects'
@@ -35,6 +37,7 @@ urlpatterns = [
         path('download/', ProjectDetailPDFView.as_view(), name='download'),
         path('simplified/', ProjectDetailSimplifiedView.as_view(), name='simplified'),
         path('request/', CreatePaymentRequestView.as_view(), name='request'),
+        # path('vendor/', CreateVendorView.as_view(), name='vendor'),
     ])),
     path('payment-requests/', include(([
         path('', PaymentRequestListView.as_view(), name='all'),
@@ -47,6 +50,15 @@ urlpatterns = [
         ])),
     ], 'payments'))),
     path('reports/', include(([
+        path('', ReportListView.as_view(), name='all'),
+        path('<int:pk>/', include([
+            path('', ReportDetailView.as_view(), name='detail'),
+            path('skip/', ReportSkipView.as_view(), name='skip'),
+            path('edit/', ReportUpdateView.as_view(), name='edit'),
+            path('documents/<int:file_pk>/', ReportPrivateMedia.as_view(), name="document"),
+        ])),
+    ], 'reports'))),
+    path('venor/', include(([
         path('', ReportListView.as_view(), name='all'),
         path('<int:pk>/', include([
             path('', ReportDetailView.as_view(), name='detail'),
