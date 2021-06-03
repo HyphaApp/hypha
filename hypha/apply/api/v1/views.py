@@ -32,6 +32,7 @@ from .serializers import (
     SubmissionActionSerializer,
     SubmissionDetailSerializer,
     SubmissionListSerializer,
+    SubmissionMetaTermsSerializer,
     SubmissionSummarySerializer,
     UserSerializer,
 )
@@ -73,6 +74,16 @@ class SubmissionViewSet(viewsets.ReadOnlyModelViewSet, viewsets.GenericViewSet):
         summary = serializer.validated_data['summary']
         submission.summary = summary
         submission.save(update_fields=['summary'])
+        serializer = self.get_serializer(submission)
+        return Response(serializer.data)
+
+    @action(detail=True, methods=['post'])
+    def meta_terms(self, request, pk=None):
+        submission = self.get_object()
+        serializer = SubmissionMetaTermsSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        meta_terms_ids = serializer.validated_data['meta_terms']
+        submission.meta_terms.set(meta_terms_ids)
         serializer = self.get_serializer(submission)
         return Response(serializer.data)
 

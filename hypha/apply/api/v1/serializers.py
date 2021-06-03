@@ -4,6 +4,11 @@ from django_bleach.templatetags.bleach_tags import bleach_value
 from rest_framework import serializers
 
 from hypha.apply.activity.models import Activity
+<<<<<<< 44d17049428a1f67169a8eb29fc5cf5c0b909fa6
+=======
+from hypha.apply.api.v1.screening.serializers import ScreeningStatusSerializer
+from hypha.apply.categories.models import MetaTerm
+>>>>>>> feat: Add update submission meta-terms API and add meta-terms to submission details API
 from hypha.apply.determinations.models import Determination
 from hypha.apply.determinations.templatetags.determination_tags import (
     show_determination_button,
@@ -15,7 +20,7 @@ from hypha.apply.funds.models import (
     ScreeningStatus,
 )
 from hypha.apply.review.models import Review, ReviewOpinion
-from hypha.apply.categories.models import MetaTerm
+
 from hypha.apply.review.options import RECOMMENDATION_CHOICES
 from hypha.apply.users.groups import PARTNER_GROUP_NAME, STAFF_GROUP_NAME
 
@@ -155,13 +160,36 @@ class SubmissionListSerializer(serializers.ModelSerializer):
         return obj.round_id or obj.page_id
 
 
+class MetaTermsDetailSerializer(serializers.ModelSerializer):
+    parent = serializers.SerializerMethodField()
+    parent_id = serializers.SerializerMethodField()
+    class Meta:
+        model = MetaTerm
+        fields = ("id", "name", "parent", "parent_id")
+
+    def get_parent(self, obj):
+        parent = obj.get_parent()
+        if parent:
+            return parent.name
+
+    def get_parent_id(self, obj):
+        parent = obj.get_parent()
+        if parent:
+            return parent.id
+
+
 class SubmissionSummarySerializer(serializers.Serializer):
     summary = serializers.CharField(write_only=True)
+
+
+class SubmissionMetaTermsSerializer(serializers.Serializer):
+    meta_terms = serializers.PrimaryKeyRelatedField(many=True, queryset=MetaTerm.objects.all())
 
 
 class SubmissionDetailSerializer(serializers.ModelSerializer):
     questions = serializers.SerializerMethodField()
     meta_questions = serializers.SerializerMethodField()
+    meta_terms = MetaTermsDetailSerializer(many=True)
     stage = serializers.CharField(source='stage.name')
     actions = ActionSerializer(source='*')
     review = ReviewSummarySerializer(source='*')
@@ -176,7 +204,7 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ApplicationSubmission
-        fields = ('id', 'summary', 'title', 'stage', 'status', 'phase', 'meta_questions', 'questions', 'actions', 'review', 'screening', 'action_buttons', 'determination', 'is_determination_form_attached', 'is_user_staff', 'screening', 'flags', 'reminders')
+        fields = ('id', 'summary', 'title', 'stage', 'status', 'phase', 'meta_questions', 'meta_terms', 'questions', 'actions', 'review', 'screening', 'action_buttons', 'determination', 'is_determination_form_attached', 'is_user_staff', 'screening', 'flags', 'reminders')
 
     def serialize_questions(self, obj, fields):
         for field_id in fields:
