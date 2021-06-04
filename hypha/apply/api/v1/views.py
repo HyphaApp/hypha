@@ -332,4 +332,3 @@ class MetaTermsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     permission_classes = (
         permissions.IsAuthenticated, IsApplyStaffUser,
     )
-

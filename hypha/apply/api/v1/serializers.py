@@ -4,7 +4,6 @@ from django_bleach.templatetags.bleach_tags import bleach_value
 from rest_framework import serializers
 
 from hypha.apply.activity.models import Activity
-from hypha.apply.api.v1.screening.serializers import ScreeningStatusSerializer
 from hypha.apply.categories.models import MetaTerm
 from hypha.apply.determinations.models import Determination
 from hypha.apply.determinations.templatetags.determination_tags import (
@@ -17,7 +16,6 @@ from hypha.apply.funds.models import (
     ScreeningStatus,
 )
 from hypha.apply.review.models import Review, ReviewOpinion
-
 from hypha.apply.review.options import RECOMMENDATION_CHOICES
 from hypha.apply.users.groups import PARTNER_GROUP_NAME, STAFF_GROUP_NAME
 
@@ -160,6 +158,7 @@ class SubmissionListSerializer(serializers.ModelSerializer):
 class MetaTermsDetailSerializer(serializers.ModelSerializer):
     parent = serializers.SerializerMethodField()
     parent_id = serializers.SerializerMethodField()
+
     class Meta:
         model = MetaTerm
         fields = ("id", "name", "parent", "parent_id")
@@ -376,6 +375,7 @@ class MetaTermsSerializer(serializers.ModelSerializer):
     children = serializers.SerializerMethodField(
         read_only=True, method_name="get_children_nodes"
     )
+
     class Meta:
         model = MetaTerm
         fields = ("name", "id", "children")
