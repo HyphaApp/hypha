@@ -1,6 +1,28 @@
+from django.contrib import messages
+from django.db.models.deletion import ProtectedError
+from django.http import HttpResponseRedirect
 from wagtail.core.models import Site
 
 from .home.models import ApplyHomePage
+
+
+class HandleProtectionErrorMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def process_exception(self, request, exception):
+        if isinstance(exception, ProtectedError):
+            messages.error(
+                request,
+                "The object you are trying to delete is used somewhere. Please remove any usages and try again!.",
+            )
+            return HttpResponseRedirect(request.path)
+
+        return None
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        return response
 
 
 def apply_url_conf_middleware(get_response):

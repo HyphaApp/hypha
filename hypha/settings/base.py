@@ -171,6 +171,7 @@ MIDDLEWARE = [
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
 
     'hypha.apply.middleware.apply_url_conf_middleware',
+    'hypha.apply.middleware.HandleProtectionErrorMiddleware',
 ]
 
 ROOT_URLCONF = 'hypha.urls'
