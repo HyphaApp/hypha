@@ -371,7 +371,6 @@ class UserSerializer(serializers.Serializer):
 
 
 class MetaTermsSerializer(serializers.ModelSerializer):
-    name = serializers.StringRelatedField()
     children = serializers.SerializerMethodField(
         read_only=True, method_name="get_children_nodes"
     )
