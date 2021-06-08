@@ -35,7 +35,7 @@
                 fill: $color--white;
             }
 
-            @include media-query(tablet-landscape) {
+            @include media-query(tablet-portrait) {
                 display: none;
             }
         }
@@ -43,7 +43,7 @@
         &--desktop {
             display: none;
 
-            @include media-query(tablet-landscape) {
+            @include media-query(tablet-portrait) {
                 display: block;
                 width: 160px;
                 height: 40px;
