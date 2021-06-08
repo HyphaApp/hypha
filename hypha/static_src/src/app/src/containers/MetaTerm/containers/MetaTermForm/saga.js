@@ -36,11 +36,11 @@ import {
           path : url,
           method : "POST",
           options : {
-            body : JSON.stringify({"meta_terms" : action.data}),
+            body : JSON.stringify({meta_terms : action.data}),
             }
           }
         )
-      let response = yield call(apiFetch, {path : `/v1/submissions/${action.submissionId}`});
+      let response = yield call(apiFetch, {path : `/v1/submissions/${action.submissionId}/`});
       response = yield response.json()
       const data = yield camelizeKeys(response)
       yield put(updateSubmissionMetaTerms(action.submissionId, data.metaTerms))

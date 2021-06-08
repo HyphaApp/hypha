@@ -15,33 +15,33 @@ class MetaTermTreeView extends React.PureComponent {
         expanded : []
     }
 
-    createTreeItemList = (node) => {
-        if("children" in node && node.children.length){
-        return <TreeItem 
-                nodeId={node.id.toString()} 
-                label={node.name} 
-                key={node.id} 
-                classes= {{ 
-                    root: this.props.classes.treeItemRoot, 
-                    selected: this.props.classes.selected,
-                    iconContainer: this.props.classes.iconContainer,
-                  }}
-              >
-                {node.children.map(node => this.createTreeItemList(node))}
-              </TreeItem>
+    renderTreeItem = (node) => {
+        if("children" in node && node.children.length) {
+          return <TreeItem 
+                  nodeId={node.id.toString()} 
+                  label={node.name} 
+                  key={node.id} 
+                  classes= {{ 
+                      root: this.props.classes.treeItemRoot, 
+                      selected: this.props.classes.selected,
+                      iconContainer: this.props.classes.iconContainer,
+                    }}
+                >
+                  {node.children.map(node => this.renderTreeItem(node))}
+                </TreeItem>
         }
         else {
-            return <TreeItem 
-                      nodeId={node.id.toString()} 
-                      label={node.name} 
-                      key={node.id} 
-                      classes= {{ 
-                        root: this.props.classes.treeItemRoot, 
-                        selected: this.props.classes.selected,
-                        iconContainer: this.props.classes.iconContainer2,
-                      }}
-                      className="without-child-node"
-                    />
+          return <TreeItem 
+                  nodeId={node.id.toString()} 
+                  label={node.name} 
+                  key={node.id} 
+                  classes= {{ 
+                    root: this.props.classes.treeItemRoot, 
+                    selected: this.props.classes.selected,
+                    iconContainer: this.props.classes.iconContainer2,
+                  }}
+                  className="without-child-node"
+                  />
         }
     }
 
@@ -106,7 +106,7 @@ class MetaTermTreeView extends React.PureComponent {
                             multiSelect
                         >
                             {this.props.metaTermsStructure.map(node => {
-                                return this.createTreeItemList(node)
+                                return this.renderTreeItem(node)
                             })}
                         </TreeView>
                         <button className="button button--primary button--top-space" onClick={this.props.updateMetaTerms}>Update</button>

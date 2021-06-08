@@ -80,15 +80,15 @@ const getSubmissionMetaTerms = createSelector(
         let metaTerms = []
         if(submission && "metaTerms" in submission){
             submission.metaTerms.map(metaTerm => {
-                const existingMetaTermIndex = metaTerms.findIndex(mt => mt.parentId == metaTerm.parentId);
+                const existingMetaTermIndex = metaTerms.findIndex(mt => mt.parentId == metaTerm.parent.id);
                 if (existingMetaTermIndex != -1) {
-                    metaTerms[existingMetaTermIndex].children.push({'id': metaTerm.id, 'name': metaTerm.name})
+                    metaTerms[existingMetaTermIndex].children.push({id: metaTerm.id, name: metaTerm.name})
                 }
                 else {
                     metaTerms.push({
-                        parentId : metaTerm.parentId,
-                        parent: metaTerm.parent,
-                        children: [{'id': metaTerm.id, 'name': metaTerm.name}]
+                        parentId : metaTerm.parent.id,
+                        parent: metaTerm.parent.name,
+                        children: [{id: metaTerm.id, name: metaTerm.name}]
                     })
                 }
             })
