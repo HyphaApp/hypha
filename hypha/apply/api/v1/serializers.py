@@ -157,21 +157,19 @@ class SubmissionListSerializer(serializers.ModelSerializer):
 
 class MetaTermsDetailSerializer(serializers.ModelSerializer):
     parent = serializers.SerializerMethodField()
-    parent_id = serializers.SerializerMethodField()
 
     class Meta:
         model = MetaTerm
-        fields = ("id", "name", "parent", "parent_id")
+        fields = ("id", "name", "parent")
 
     def get_parent(self, obj):
         parent = obj.get_parent()
         if parent:
-            return parent.name
-
-    def get_parent_id(self, obj):
-        parent = obj.get_parent()
-        if parent:
-            return parent.id
+            parent_data = {
+                'id': parent.id,
+                'name': parent.name
+            }
+            return parent_data
 
 
 class SubmissionSummarySerializer(serializers.Serializer):
