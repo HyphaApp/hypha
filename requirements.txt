@@ -37,7 +37,7 @@ mailchimp3==3.0.14
 mistune==0.8.4
 more-itertools==8.6.0
 phonenumberslite==8.12.16
-Pillow==8.1.1
+Pillow==8.2.0
 psycopg2==2.8.6
 reportlab==3.5.59
 social_auth_app_django==4.0.0
