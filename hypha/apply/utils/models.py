@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import gettext as _
 from wagtail.admin.edit_handlers import FieldPanel
 from wagtail.contrib.settings.models import BaseSetting, register_setting
 
@@ -21,7 +22,7 @@ class PDFPageSettings(BaseSetting):
         choices=PAGE_SIZES,
         default=LEGAL,
         max_length=6,
-        help_text='Page size of downloadable Project and Submission PDFs'
+        help_text=_('Page size of downloadable Project and Submission PDFs')
     )
 
     panels = [

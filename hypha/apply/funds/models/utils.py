@@ -130,7 +130,7 @@ class EmailForm(AbstractEmailForm):
     class Meta:
         abstract = True
 
-    confirmation_text_extra = models.TextField(blank=True, help_text="Additional text for the application confirmation message.")
+    confirmation_text_extra = models.TextField(blank=True, help_text=_('Additional text for the application confirmation message.'))
 
     def send_mail(self, submission):
         # Make sure we don't send emails to users here. Messaging handles that

@@ -435,7 +435,7 @@ class UpdateMetaTermsForm(ApplicationSubmissionModelForm):
         label=_('Meta terms'),
         choices_groupby='get_parent',
         required=False,
-        help_text='Meta terms are hierarchical in nature.',
+        help_text=_('Meta terms are hierarchical in nature.'),
     )
 
     class Meta:

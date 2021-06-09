@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import gettext as _
 from wagtail.admin.edit_handlers import FieldPanel
 from wagtail.contrib.settings.models import BaseSetting, register_setting
 
@@ -12,7 +13,7 @@ class NewsletterSettings(BaseSetting):
         "Newsletter title",
         max_length=255,
         default='Get the latest internet freedom news',
-        help_text='The title of the newsletter signup form.',
+        help_text=_('The title of the newsletter signup form.'),
     )
 
     panels = [

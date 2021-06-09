@@ -29,7 +29,7 @@ class Category(ClusterableModel):
     """
     name = models.CharField(max_length=255)
     filter_on_dashboard = models.BooleanField(
-        default=False, help_text='Make available to filter on dashboard'
+        default=False, help_text=_('Make available to filter on dashboard')
     )
     help_text = models.CharField(max_length=255, blank=True)
 
@@ -50,17 +50,17 @@ class Category(ClusterableModel):
 class MetaTerm(index.Indexed, MP_Node):
     """ Hierarchal "Meta" terms """
     name = models.CharField(
-        max_length=50, unique=True, help_text='Keep the name short, ideally one word.'
+        max_length=50, unique=True, help_text=_('Keep the name short, ideally one word.')
     )
     is_archived = models.BooleanField(
-        default=False, verbose_name=_("Archived"),
-        help_text='Archived terms can be viewed but not set on content.'
+        default=False, verbose_name=_('Archived'),
+        help_text=_('Archived terms can be viewed but not set on content.')
     )
     filter_on_dashboard = models.BooleanField(
-        default=True, help_text='Make available to filter on dashboard'
+        default=True, help_text=_('Make available to filter on dashboard')
     )
     available_to_applicants = models.BooleanField(
-        default=False, help_text='Make available to applicants'
+        default=False, help_text=_('Make available to applicants')
     )
     help_text = RichTextField(features=[
         'h2', 'h3', 'bold', 'italic', 'link', 'hr', 'ol', 'ul'], blank=True)

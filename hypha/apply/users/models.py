@@ -92,7 +92,7 @@ class User(AbstractUser):
     slack = models.CharField(
         verbose_name='Slack name',
         blank=True,
-        help_text='This is the name we should "@mention" when sending notifications',
+        help_text=_('This is the name we should "@mention" when sending notifications'),
         max_length=50,
     )
 

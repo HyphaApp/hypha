@@ -95,7 +95,7 @@ class NewsPage(BasePage):
     # It's datetime for easy comparison with first_published_at
     publication_date = models.DateTimeField(
         null=True, blank=True,
-        help_text="Use this field to override the date that the "
+        help_text=_('Use this field to override the date that the ')
         "news item appears to have been published."
     )
     introduction = models.TextField(blank=True)
@@ -171,10 +171,10 @@ class NewsIndex(BasePage):
 
 @register_setting
 class NewsFeedSettings(BaseSetting):
-    news_title = models.CharField(max_length=255, help_text='The title of the main news feed.')
-    news_description = models.CharField(max_length=255, help_text='The description of the main news feed.')
+    news_title = models.CharField(max_length=255, help_text=_('The title of the main news feed.'))
+    news_description = models.CharField(max_length=255, help_text=_('The description of the main news feed.'))
 
     news_per_type_title = models.CharField(
-        max_length=255, help_text='The title of the news feed by type. Use {news_type} to insert the type name.')
+        max_length=255, help_text=_('The title of the news feed by type. Use {news_type} to insert the type name.'))
     news_per_type_description = models.CharField(
-        max_length=255, help_text='The description of the news feed by type. Use {news_type} to insert the type name.')
+        max_length=255, help_text=_('The description of the news feed by type. Use {news_type} to insert the type name.'))

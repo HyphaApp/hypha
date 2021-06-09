@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import gettext as _
 from wagtail.admin.edit_handlers import FieldPanel
 from wagtail.contrib.settings.models import BaseSetting, register_setting
 from wagtail.images.edit_handlers import ImageChooserPanel
@@ -16,7 +17,7 @@ class ReviewerRole(models.Model):
         on_delete=models.SET_NULL
     )
     order = models.IntegerField(
-        help_text='The order this role should appear in the Update Reviewers form.',
+        help_text=_('The order this role should appear in the Update Reviewers form.'),
         null=True,
         blank=True,
     )
@@ -59,27 +60,27 @@ class ReviewerSettings(BaseSetting):
         choices=SUBMISSIONS,
         default='all',
         max_length=10,
-        help_text='Submissions for which reviewers should have access to'
+        help_text=_('Submissions for which reviewers should have access to')
     )
     state = models.CharField(
         choices=STATES,
         default='all',
         max_length=20,
-        help_text='Submissions states for which reviewers should have access to'
+        help_text=_('Submissions states for which reviewers should have access to')
     )
     outcome = models.CharField(
         choices=OUTCOMES,
         default='all',
         max_length=20,
-        help_text='Submissions outcomes for which reviewers should have access to'
+        help_text=_('Submissions outcomes for which reviewers should have access to')
     )
     assigned = models.BooleanField(
         default=False,
-        help_text='Submissions for which reviewer is assigned to'
+        help_text=_('Submissions for which reviewer is assigned to')
     )
     use_settings = models.BooleanField(
         default=False,
-        help_text='Use the above configured variables to filter out submissions'
+        help_text=_('Use the above configured variables to filter out submissions')
     )
 
     panels = [

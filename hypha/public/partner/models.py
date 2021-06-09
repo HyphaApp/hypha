@@ -5,6 +5,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.http import Http404
 from django.shortcuts import redirect
+from django.utils.translation import gettext as _
 from pagedown.widgets import PagedownWidget
 from wagtail.admin.edit_handlers import FieldPanel
 from wagtail.admin.forms import WagtailAdminModelForm
@@ -119,7 +120,7 @@ class InvestmentCategorySettings(BaseSetting):
 
     categories = models.ManyToManyField(
         Category,
-        help_text='Select the categories that should be used in investments.'
+        help_text=_('Select the categories that should be used in investments.')
     )
 
     panels = [
@@ -192,7 +193,7 @@ class Investment(models.Model):
     year = models.IntegerField(
         default=current_year,
         validators=[MinValueValidator(1984), max_value_current_year],
-        help_text='Use format: <YYYY>'
+        help_text=_('Use format: <YYYY>')
     )
     amount_committed = models.DecimalField(
         decimal_places=2,
