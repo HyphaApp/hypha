@@ -91,10 +91,10 @@ def make_row_class(record):
 
 class InvestmentTable(tables.Table):
     """Table for listing investments."""
-    partner = tables.Column(verbose_name='Partner', linkify=True, attrs={'td': {'data-title-tooltip': lambda record: record.partner, 'class': 'js-title title'}})
-    year = tables.Column(verbose_name='Year')
-    status = tables.Column(accessor='partner__status', verbose_name='Status')
-    amount_committed = tables.Column(verbose_name='Amount committed (US$)')
+    partner = tables.Column(verbose_name=_('Partner'), linkify=True, attrs={'td': {'data-title-tooltip': lambda record: record.partner, 'class': 'js-title title'}})
+    year = tables.Column(verbose_name=_('Year'))
+    status = tables.Column(accessor='partner__status', verbose_name=_('Status'))
+    amount_committed = tables.Column(verbose_name=_('Amount committed (US$)'))
     description = tables.Column(visible=False)
 
     class Meta:

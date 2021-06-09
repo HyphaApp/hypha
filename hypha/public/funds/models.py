@@ -148,7 +148,7 @@ class LabPage(BasePage):
         on_delete=models.SET_NULL,
         related_name='lab_public',
     )
-    lab_link = models.CharField(blank=True, max_length=255, verbose_name='External link', validators=[MailToAndURLValidator()])
+    lab_link = models.CharField(blank=True, max_length=255, verbose_name=_('External link'), validators=[MailToAndURLValidator()])
     link_text = models.CharField(max_length=255, help_text=_('Text to display on the button for external links'), blank=True)
     body = StreamField(LabBlock())
 

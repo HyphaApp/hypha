@@ -125,7 +125,7 @@ class ListingFields(models.Model):
         help_text=_('Choose the image you wish to be displayed when this page appears in listings')
     )
     listing_title = models.CharField(max_length=255, blank=True, help_text=_('Override the page title used when this page appears in listings'))
-    listing_summary = models.CharField(max_length=255, blank=True, help_text=_("The text summary used when this page appears in listings. It is also used as the description for search engines if the 'Search description' field above is not defined."))
+    listing_summary = models.CharField(max_length=255, blank=True, help_text=_("The text summary used when this page appears in listings. It's also used as the description for search engines if the 'Search description' field above is not defined."))
 
     class Meta:
         abstract = True

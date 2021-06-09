@@ -199,7 +199,7 @@ class Investment(models.Model):
         decimal_places=2,
         default=0,
         max_digits=11,
-        verbose_name='Ammount Commited US$'
+        verbose_name=_('Ammount Commited US$')
     )
     description = models.TextField()
     application = models.OneToOneField(

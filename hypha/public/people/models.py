@@ -94,7 +94,7 @@ class PersonContactInfomation(Orderable):
     )
     page = ParentalKey('PersonPage', related_name='contact_details')
     contact_method = models.CharField(max_length=255, choices=methods, blank=True)
-    other_method = models.CharField(max_length=255, blank=True, verbose_name='Other')
+    other_method = models.CharField(max_length=255, blank=True, verbose_name=_('Other'))
     contact_detail = models.CharField(max_length=255)
 
     panels = [

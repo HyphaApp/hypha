@@ -49,7 +49,7 @@ class WorkflowHelpers(models.Model):
         for name, workflow in WORKFLOWS.items()
     }
 
-    workflow_name = models.CharField(choices=WORKFLOW_CHOICES.items(), max_length=100, default='single', verbose_name="Workflow")
+    workflow_name = models.CharField(choices=WORKFLOW_CHOICES.items(), max_length=100, default='single', verbose_name=_('Workflow'))
 
     @property
     def workflow(self):

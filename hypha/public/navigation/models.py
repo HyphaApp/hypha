@@ -8,7 +8,7 @@ from wagtail.core.fields import StreamField
 
 class LinkBlock(blocks.StructBlock):
     page = blocks.PageChooserBlock()
-    title = blocks.CharBlock(help_text=_("Leave blank to use the page's own title."), required=False)
+    title = blocks.CharBlock(help_text=_("Leave blank to use the page's own title"), required=False)
 
     class Meta:
         template = 'navigation/blocks/menu_item.html',

@@ -4,6 +4,7 @@ import django_tables2 as tables
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.db.models import F, Sum
 from django.utils.safestring import mark_safe
+from django.utils.translation import gettext_lazy as _
 
 from .models import PaymentRequest, Project, Report
 
@@ -15,15 +16,15 @@ class BasePaymentRequestsTable(tables.Table):
         args=[tables.utils.A('pk')],
     )
     status = tables.Column()
-    requested_at = tables.DateColumn(verbose_name='Submitted')
+    requested_at = tables.DateColumn(verbose_name=_('Submitted'))
 
     def render_value(self, value):
         return f'${value}'
 
 
 class PaymentRequestsDashboardTable(BasePaymentRequestsTable):
-    date_from = tables.DateColumn(verbose_name='Period Start')
-    date_to = tables.DateColumn(verbose_name='Period End')
+    date_from = tables.DateColumn(verbose_name=_('Period Start'))
+    date_to = tables.DateColumn(verbose_name=_('Period End'))
 
     class Meta:
         fields = [
@@ -40,8 +41,8 @@ class PaymentRequestsDashboardTable(BasePaymentRequestsTable):
 
 
 class PaymentRequestsListTable(BasePaymentRequestsTable):
-    fund = tables.Column(verbose_name="Fund", accessor='project.submission.page')
-    lead = tables.Column(verbose_name="Lead", accessor='project.lead')
+    fund = tables.Column(verbose_name=_('Fund'), accessor='project.submission.page')
+    lead = tables.Column(verbose_name=_('Lead'), accessor='project.lead')
 
     class Meta:
         fields = [
@@ -70,12 +71,12 @@ class BaseProjectsTable(tables.Table):
         text=lambda r: textwrap.shorten(r.title, width=30, placeholder="..."),
         args=[tables.utils.A('pk')],
     )
-    status = tables.Column(verbose_name='Status', accessor='get_status_display', order_by=('status',))
-    fund = tables.Column(verbose_name='Fund', accessor='submission.page')
-    reporting = tables.Column(verbose_name='Reporting', accessor='pk')
+    status = tables.Column(verbose_name=_('Status'), accessor='get_status_display', order_by=('status',))
+    fund = tables.Column(verbose_name=_('Fund'), accessor='submission.page')
+    reporting = tables.Column(verbose_name=_('Reporting'), accessor='pk')
     last_payment_request = tables.DateColumn()
-    end_date = tables.DateColumn(verbose_name='End Date', accessor='proposed_end')
-    fund_allocation = tables.Column(verbose_name='Fund Allocation', accessor='value')
+    end_date = tables.DateColumn(verbose_name=_('End Date'), accessor='proposed_end')
+    fund_allocation = tables.Column(verbose_name=_('Fund Allocation'), accessor='value')
 
     def order_reporting(self, qs, is_descending):
         direction = '-' if is_descending else ''
