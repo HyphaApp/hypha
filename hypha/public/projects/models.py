@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.core.validators import URLValidator
 from django.db import models
+from django.utils.translation import gettext as _
 from modelcluster.fields import ParentalKey
 from pagedown.widgets import PagedownWidget
 from wagtail.admin.edit_handlers import (
@@ -125,9 +126,9 @@ class ProjectPage(FundingMixin, BasePage):
         FieldPanel('status'),
         FieldPanel('introduction'),
         StreamFieldPanel('body'),
-        InlinePanel('contact_details', label="Contact Details"),
+        InlinePanel('contact_details', label=_('Contact Details')),
     ] + FundingMixin.content_panels + [
-        InlinePanel('related_pages', label="Related Projects"),
+        InlinePanel('related_pages', label=_('Related Projects')),
         MultiFieldPanel(
             [FieldPanel('categories', widget=CategoriesWidget)],
             heading="Categories",

@@ -3,6 +3,7 @@ import django_tables2 as tables
 from django import forms
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext as _
 
 from hypha.apply.funds.tables import Select2MultipleChoiceFilter
 
@@ -17,7 +18,7 @@ class YearMultipleChoiceFilter(Select2MultipleChoiceFilter):
             *args,
             field_name='year',
             choices=choices,
-            label='Years',
+            label=_('Years'),
             **kwargs,
         )
 
@@ -43,16 +44,16 @@ class InvestmentFilter(filters.FilterSet):
 
     amount_committed = Select2MultipleChoiceFilter(
         choices=AMOUNT_COMMITTED_CHOICES,
-        label='Amount Committed(US$)',
+        label=_('Amount Committed(US$)'),
         method='filter_amount_committed'
     )
     partner__status = Select2MultipleChoiceFilter(
-        choices=PartnerPage.STATUS, label='Status'
+        choices=PartnerPage.STATUS, label=_('Status')
     )
     per_page = filters.ChoiceFilter(
         choices=PAGE_CHOICES,
         empty_label=_('Items per page'),
-        label='Per page',
+        label=_('Per page'),
         method='per_page_handler'
     )
 

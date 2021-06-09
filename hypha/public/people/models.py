@@ -2,6 +2,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import models
+from django.utils.translation import gettext as _
 from modelcluster.fields import ParentalKey
 from pagedown.widgets import PagedownWidget
 from wagtail.admin.edit_handlers import (
@@ -180,16 +181,16 @@ class PersonPage(FundingMixin, BasePage):
         FieldPanel('active'),
         ImageChooserPanel('photo'),
         FieldPanel('job_title'),
-        InlinePanel('social_media_profile', label='Social accounts'),
+        InlinePanel('social_media_profile', label=_('Social accounts')),
         FieldPanel('website'),
         MultiFieldPanel([
             FieldPanel('email'),
-            InlinePanel('contact_details', label='Other Contact Methods'),
+            InlinePanel('contact_details', label=_('Other Contact Methods')),
         ], heading='Contact information'),
-        InlinePanel('person_types', label='Person types'),
+        InlinePanel('person_types', label=_('Person types')),
         FieldPanel('introduction'),
         StreamFieldPanel('biography'),
-        InlinePanel('funds_reviewed', label='Funds Reviewed'),
+        InlinePanel('funds_reviewed', label=_('Funds Reviewed')),
     ] + FundingMixin.content_panels
 
 

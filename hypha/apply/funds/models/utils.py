@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from django.utils.translation import gettext as _
 from wagtail.admin.edit_handlers import (
     FieldPanel,
     FieldRowPanel,
@@ -114,9 +115,9 @@ class WorkflowStreamForm(WorkflowHelpers, AbstractStreamForm):  # type: ignore
 
     content_panels = AbstractStreamForm.content_panels + [
         FieldPanel('workflow_name'),
-        InlinePanel('forms', label="Forms"),
-        InlinePanel('review_forms', label="Review Forms"),
-        InlinePanel('determination_forms', label="Determination Forms")
+        InlinePanel('forms', label=_('Forms')),
+        InlinePanel('review_forms', label=_('Review Forms')),
+        InlinePanel('determination_forms', label=_('Determination Forms'))
     ]
 
 

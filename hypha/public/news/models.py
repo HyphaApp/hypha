@@ -2,6 +2,7 @@ from django.conf import settings
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import models
 from django.db.models.functions import Coalesce
+from django.utils.translation import gettext as _
 from modelcluster.fields import ParentalKey
 from pagedown.widgets import PagedownWidget
 from wagtail.admin.edit_handlers import (
@@ -107,12 +108,12 @@ class NewsPage(BasePage):
 
     content_panels = BasePage.content_panels + [
         FieldPanel('publication_date'),
-        InlinePanel('authors', label="Authors"),
+        InlinePanel('authors', label=_('Authors')),
         FieldPanel('introduction'),
         StreamFieldPanel('body'),
-        InlinePanel('news_types', label="News types"),
-        InlinePanel('related_projects', label="Mentioned project"),
-        InlinePanel('related_pages', label="Related pages"),
+        InlinePanel('news_types', label=_('News types')),
+        InlinePanel('related_projects', label=_('Mentioned project')),
+        InlinePanel('related_pages', label=_('Related pages')),
     ]
 
     @property

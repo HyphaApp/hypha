@@ -1,5 +1,6 @@
 from django import template
 from django.utils.safestring import mark_safe
+from django.utils.translation import gettext as _
 
 from ..models import MAYBE, NO, YES
 
@@ -21,7 +22,7 @@ TRAFFIC_LIGHT_COLORS = {
     }
 }
 
-TRAFFIC_LIGHT_TEMPLATE = '<span aria-label="Traffic light score" class="traffic-light traffic-light--{color}">{value}</span>'
+TRAFFIC_LIGHT_TEMPLATE = '<span aria-label=_('Traffic light score') class="traffic-light traffic-light--{color}">{value}</span>'
 
 
 @register.filter()

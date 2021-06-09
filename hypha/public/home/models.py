@@ -1,6 +1,7 @@
 import datetime
 
 from django.db import models
+from django.utils.translation import gettext as _
 from modelcluster.fields import ParentalKey
 from wagtail.admin.edit_handlers import (
     FieldPanel,
@@ -118,21 +119,21 @@ class HomePage(BasePage):
         MultiFieldPanel([
             FieldPanel('funds_title'),
             FieldPanel('funds_intro'),
-            InlinePanel('promoted_funds', label='Promoted Funds', max_num=NUM_RELATED),
+            InlinePanel('promoted_funds', label=_('Promoted Funds'), max_num=NUM_RELATED),
             PageChooserPanel('funds_link'),
             FieldPanel('funds_link_text'),
         ], heading='Funds'),
         MultiFieldPanel([
             FieldPanel('labs_title'),
             FieldPanel('labs_intro'),
-            InlinePanel('promoted_labs', label='Promoted Labs', max_num=NUM_RELATED),
+            InlinePanel('promoted_labs', label=_('Promoted Labs'), max_num=NUM_RELATED),
             PageChooserPanel('labs_link'),
             FieldPanel('labs_link_text'),
         ], heading='Labs'),
         MultiFieldPanel([
             FieldPanel('rfps_title'),
             FieldPanel('rfps_intro'),
-            InlinePanel('promoted_rfps', label='Promoted RFPs', max_num=NUM_RELATED),
+            InlinePanel('promoted_rfps', label=_('Promoted RFPs'), max_num=NUM_RELATED),
         ], heading='Labs'),
     ]
 

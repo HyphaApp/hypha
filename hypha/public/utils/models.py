@@ -2,6 +2,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.decorators import method_decorator
+from django.utils.translation import gettext as _
 from wagtail.admin.edit_handlers import (
     FieldPanel,
     FieldRowPanel,
@@ -338,7 +339,7 @@ class FundingMixin(models.Model):
 
     You still need to include the content panel in the child class
     '''
-    content_panels = [InlinePanel('funding', label="Funding")]
+    content_panels = [InlinePanel('funding', label=_('Funding'))]
 
     class Meta:
         abstract = True

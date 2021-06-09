@@ -1,10 +1,11 @@
 from django import forms
+from django.utils.translation import gettext as _
 
 
 class NewsletterForm(forms.Form):
-    email = forms.EmailField(label='Email Address')
-    fname = forms.CharField(label='First Name', required=False)
-    lname = forms.CharField(label='Last Name', required=False)
+    email = forms.EmailField(label=_('Email Address'))
+    fname = forms.CharField(label=_('First Name'), required=False)
+    lname = forms.CharField(label=_('Last Name'), required=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

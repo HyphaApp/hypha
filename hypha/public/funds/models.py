@@ -5,6 +5,7 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import models
 from django.utils.deconstruct import deconstructible
 from django.utils.translation import gettext as _
+from django.utils.translation import gettext as _
 from modelcluster.fields import ParentalKey
 from pagedown.widgets import PagedownWidget
 from wagtail.admin.edit_handlers import (
@@ -54,7 +55,7 @@ class BaseApplicationPage(BasePage):
     content_panels = BasePage.content_panels + [
         FieldPanel('introduction', widget=PagedownWidget()),
         StreamFieldPanel('body'),
-        InlinePanel('related_pages', label="Related pages"),
+        InlinePanel('related_pages', label=_('Related pages')),
     ]
 
     def get_template(self, request, *args, **kwargs):
@@ -168,7 +169,7 @@ class LabPage(BasePage):
             ]),
         ], heading=_('Link for lab application')),
         StreamFieldPanel('body'),
-        InlinePanel('related_pages', label="Related pages"),
+        InlinePanel('related_pages', label=_('Related pages')),
     ]
 
     def get_context(self, request):

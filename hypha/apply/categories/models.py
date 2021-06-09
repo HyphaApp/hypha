@@ -37,7 +37,7 @@ class Category(ClusterableModel):
         FieldPanel('name'),
         FieldPanel('filter_on_dashboard'),
         FieldPanel('help_text'),
-        InlinePanel('options', label='Options'),
+        InlinePanel('options', label=_('Options')),
     ]
 
     def __str__(self):

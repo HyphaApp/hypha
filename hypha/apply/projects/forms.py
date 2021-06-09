@@ -248,7 +248,7 @@ class EditPaymentRequestForm(FileFormMixin, PaymentRequestBaseForm):
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'delete'}),
         queryset=PaymentReceipt.objects.all(),
         required=False,
-        label='Receipts'
+        label=_('Receipts')
     )
     receipts = MultiFileField(label='', required=False)
 
@@ -278,7 +278,7 @@ class EditPaymentRequestForm(FileFormMixin, PaymentRequestBaseForm):
 
 class SelectDocumentForm(forms.ModelForm):
     document = forms.ChoiceField(
-        label="Document",
+        label=_('Document'),
         widget=forms.Select(attrs={'id': 'from_submission'})
     )
 
@@ -385,7 +385,7 @@ class ReportEditForm(FileFormMixin, forms.ModelForm):
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'delete'}),
         queryset=ReportPrivateFiles.objects.all(),
         required=False,
-        label='Files'
+        label=_('Files')
     )
     files = MultiFileField(required=False, label='')
 
@@ -460,7 +460,7 @@ class ReportEditForm(FileFormMixin, forms.ModelForm):
 
 
 class ReportFrequencyForm(forms.ModelForm):
-    start = forms.DateField(label='Starting on:')
+    start = forms.DateField(label=_('Starting on:'))
 
     class Meta:
         model = ReportConfig

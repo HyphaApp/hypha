@@ -241,7 +241,7 @@ class StatusMultipleChoiceFilter(Select2MultipleChoiceFilter):
             *args,
             field_name='status',
             choices=choices,
-            label='Statuses',
+            label=_('Statuses'),
             **kwargs,
         )
 
@@ -253,16 +253,16 @@ class StatusMultipleChoiceFilter(Select2MultipleChoiceFilter):
 
 
 class SubmissionFilter(filters.FilterSet):
-    round = Select2ModelMultipleChoiceFilter(queryset=get_used_rounds, label='Rounds')
-    fund = Select2ModelMultipleChoiceFilter(field_name='page', queryset=get_used_funds, label='Funds')
-    lead = Select2ModelMultipleChoiceFilter(queryset=get_round_leads, label='Leads')
-    reviewers = Select2ModelMultipleChoiceFilter(queryset=get_reviewers, label='Reviewers')
-    screening_statuses = Select2ModelMultipleChoiceFilter(queryset=get_screening_statuses, label='Screening', null_label='No Status')
+    round = Select2ModelMultipleChoiceFilter(queryset=get_used_rounds, label=_('Rounds'))
+    fund = Select2ModelMultipleChoiceFilter(field_name='page', queryset=get_used_funds, label=_('Funds'))
+    lead = Select2ModelMultipleChoiceFilter(queryset=get_round_leads, label=_('Leads'))
+    reviewers = Select2ModelMultipleChoiceFilter(queryset=get_reviewers, label=_('Reviewers'))
+    screening_statuses = Select2ModelMultipleChoiceFilter(queryset=get_screening_statuses, label=_('Screening'), null_label=_('No Status'))
     category_options = Select2MultipleChoiceFilter(
-        choices=[], label='Category',
+        choices=[], label=_('Category'),
         method='filter_category_options'
     )
-    meta_terms = Select2ModelMultipleChoiceFilter(queryset=get_meta_terms, label='Terms')
+    meta_terms = Select2ModelMultipleChoiceFilter(queryset=get_meta_terms, label=_('Terms'))
 
     class Meta:
         model = ApplicationSubmission
@@ -318,8 +318,8 @@ class SubmissionFilterAndSearch(SubmissionFilter):
 
 
 class SubmissionDashboardFilter(filters.FilterSet):
-    round = Select2ModelMultipleChoiceFilter(queryset=get_used_rounds, label='Rounds')
-    fund = Select2ModelMultipleChoiceFilter(field_name='page', queryset=get_used_funds, label='Funds')
+    round = Select2ModelMultipleChoiceFilter(queryset=get_used_rounds, label=_('Rounds'))
+    fund = Select2ModelMultipleChoiceFilter(field_name='page', queryset=get_used_funds, label=_('Funds'))
 
     class Meta:
         model = ApplicationSubmission
@@ -411,10 +411,10 @@ class OpenRoundFilter(Select2MultipleChoiceFilter):
 
 
 class RoundsFilter(filters.FilterSet):
-    fund = Select2ModelMultipleChoiceFilter(queryset=get_used_funds, label='Funds')
-    lead = Select2ModelMultipleChoiceFilter(queryset=get_round_leads, label='Leads')
-    active = ActiveRoundFilter(label='Active')
-    round_state = OpenRoundFilter(label='Open')
+    fund = Select2ModelMultipleChoiceFilter(queryset=get_used_funds, label=_('Funds'))
+    lead = Select2ModelMultipleChoiceFilter(queryset=get_round_leads, label=_('Leads'))
+    active = ActiveRoundFilter(label=_('Active'))
+    round_state = OpenRoundFilter(label=_('Open'))
 
 
 class ReviewerLeaderboardFilterForm(forms.ModelForm):
@@ -440,17 +440,17 @@ class ReviewerLeaderboardFilter(filters.FilterSet):
 
     reviewer = Select2ModelMultipleChoiceFilter(
         field_name='pk',
-        label='Reviewers',
+        label=_('Reviewers'),
         queryset=get_reviewers,
     )
     funds = Select2ModelMultipleChoiceFilter(
         field_name='submission__page',
-        label='Funds',
+        label=_('Funds'),
         queryset=get_used_funds,
     )
     rounds = Select2ModelMultipleChoiceFilter(
         field_name='submission__round',
-        label='Rounds',
+        label=_('Rounds'),
         queryset=get_used_rounds,
     )
 
