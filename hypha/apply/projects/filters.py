@@ -2,7 +2,7 @@ import django_filters as filters
 from django import forms
 from django.contrib.auth import get_user_model
 from django.db.models import Q
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2Widget
 
 from hypha.apply.funds.tables import (

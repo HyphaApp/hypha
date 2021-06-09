@@ -1,5 +1,5 @@
+from django.utils.translation import gettext_lazy as _
 from wagtail.core import blocks
-from django.utils.translation import gettext as _
 
 from hypha.public.utils.blocks import StoryBlock
 

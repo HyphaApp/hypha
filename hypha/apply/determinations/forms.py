@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth import get_user_model
 from django.core.exceptions import NON_FIELD_ERRORS
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 from hypha.apply.funds.models import ApplicationSubmission
 from hypha.apply.stream_forms.forms import StreamBaseForm
@@ -293,7 +293,7 @@ class BaseProposalDeterminationForm(forms.Form):
     technical = RichTextField(label=_('Technical feasibility questions and comments'))
     technical.group = 3
 
-    alternative = RichTextField(label=_('Alternative analysis - ')red teaming" questions and comments')
+    alternative = RichTextField(label=_('Alternative analysis - "red teaming" questions and comments'))
     alternative.group = 3
 
     usability = RichTextField(label=_('Usability questions and comments'))

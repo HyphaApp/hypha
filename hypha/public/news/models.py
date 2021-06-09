@@ -2,7 +2,7 @@ from django.conf import settings
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import models
 from django.db.models.functions import Coalesce
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
 from pagedown.widgets import PagedownWidget
 from wagtail.admin.edit_handlers import (
@@ -95,8 +95,7 @@ class NewsPage(BasePage):
     # It's datetime for easy comparison with first_published_at
     publication_date = models.DateTimeField(
         null=True, blank=True,
-        help_text=_('Use this field to override the date that the ')
-        "news item appears to have been published."
+        help_text=_('Use this field to override the date that the news item appears to have been published.')
     )
     introduction = models.TextField(blank=True)
     body = StreamField(NewsStoryBlock(block_counts={'awesome_table_widget': {'max_num': 1}}))

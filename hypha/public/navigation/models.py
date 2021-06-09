@@ -1,4 +1,4 @@
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 from modelcluster.models import ClusterableModel
 from wagtail.admin.edit_handlers import StreamFieldPanel
 from wagtail.contrib.settings.models import BaseSetting, register_setting

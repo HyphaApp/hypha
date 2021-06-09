@@ -3,7 +3,6 @@ import django_tables2 as tables
 from django import forms
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
-from django.utils.translation import gettext as _
 
 from hypha.apply.funds.tables import Select2MultipleChoiceFilter
 
