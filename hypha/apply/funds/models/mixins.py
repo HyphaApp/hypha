@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from django.core.files import File
 from django.utils.safestring import mark_safe
 from django_file_form.models import PlaceholderUploadedFile
@@ -58,7 +56,6 @@ class AccessFormData:
         if isinstance(file, cls.stream_file_class):
             return file
         if isinstance(file, File):
-            file.name = datetime.now().strftime("%y%m%d") + "-" + file.name
             return cls.stream_file_class(instance, field, file, name=file.name, storage=cls.storage_class())
 
         if isinstance(file, PlaceholderUploadedFile):
