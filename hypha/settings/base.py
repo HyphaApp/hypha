@@ -323,7 +323,9 @@ PASSWORD_RESET_TIMEOUT_DAYS = 8
 # Internationalization
 # https://docs.djangoproject.com/en/stable/topics/i18n/
 
-LANGUAGE_CODE = 'en-gb'
+# Language code in standard language id format: en, en-gb, en-us
+# The corrosponding locale dir is named: en, en_GB, en_US
+LANGUAGE_CODE = env.get('LANGUAGE_CODE', 'en')
 
 TIME_ZONE = 'UTC'
 
