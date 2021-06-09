@@ -1,9 +1,14 @@
 from django.db import models
+from django.conf import settings
+from django.db.models.fields import Field
 from django.utils.translation import gettext_lazy as _
-from babel.numbers import list_currencies, get_currency_name
-
+from wagtail.contrib.settings.models import BaseSetting, register_setting
+from wagtail.core.fields import RichTextField
+from wagtail.admin.edit_handlers import (
+    FieldPanel,
+    MultiFieldPanel,
+)
 from hypha.apply.utils.storage import PrivateStorage
-from hypha.apply.users.models import User
 
 
 def due_diligence_documents(instance, filename):
@@ -11,16 +16,10 @@ def due_diligence_documents(instance, filename):
 
 
 class BankInformation(models.Model):
-    CURRENCY_CHOICES = [
-        (currency, f'{get_currency_name(currency)} - {currency}')
-        for currency in list_currencies()
-    ]
-
     account_holder_name = models.CharField(max_length=150)
     account_routing_number = models.CharField(max_length=10)
     account_number = models.CharField(max_length=20)
     account_currency = models.CharField(
-        choices=CURRENCY_CHOICES,
         max_length=10
     )
     need_extra_info = models.BooleanField(default=False)
@@ -39,20 +38,26 @@ class BankInformation(models.Model):
     )
     nid_number = models.CharField(
         max_length=20,
-        blank=True
+        blank=True,
+        verbose_name='National Identity Document Number'
     )
 
     def __str__(self):
         return self.account_holder_name
 
 
-class Vendor(User):
+class Vendor(models.Model):
 
     TYPE_CHOICES = [
-        ('organization', 'Organization'),
-        ('personal', 'Personal'),
+        ('organization', 'Yes, the account belongs to the organisation above'),
+        ('personal', 'No, it is a personal bank account'),
     ]
 
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, on_delete=models.PROTECT,
+        related_name='vendor'
+    )
+    name = models.CharField(max_length=150, blank=True)
     contractor_name = models.CharField(max_length=150, blank=True)
     address = models.TextField(_('Address'), blank=True)
     type = models.CharField(max_length=15, choices=TYPE_CHOICES, blank=True)
@@ -65,7 +70,7 @@ class Vendor(User):
     other_info = models.TextField(blank=True)
 
     def __str__(self):
-        return self.full_name
+        return self.name
 
 
 class DueDiligenceDocument(models.Model):
@@ -74,8 +79,235 @@ class DueDiligenceDocument(models.Model):
     )
     vendor = models.ForeignKey(
         Vendor,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='due_diligence_documents',
     )
 
     def __str__(self):
         return self.vendor.full_name + ' -> ' + self.document.name
+
+
+@register_setting
+class VendorFormSettings(BaseSetting):
+    name_label = models.TextField(
+        'label',
+        default='1. What is the name of the person/organisation on the contract?'
+    )
+    name_help_text = RichTextField(
+        'help text', blank=True,
+        default='This is the party name in the contract.'
+    )
+    contractor_name_label = models.TextField(
+        'label',
+        default="2. What is the individual's name who is signing the contract?"
+    )
+    contractor_name_help_text = RichTextField(
+        'help text', blank=True,
+        default="This person is is authorised to sign contract on behalf of the person or organization named above."
+    )
+    type_label = models.TextField(
+        'label',
+        default='3. Is the bank account owned by the person or organisation in the Question 1 above?'
+    )
+    type_help_text = RichTextField(
+        'help_text',
+        default='The name of the bank account must be the same as on the contract.'
+    )
+    required_to_pay_taxes_label = models.TextField(
+        'label',
+        default='Is the organisation required to pay US taxes?'
+    )
+    required_to_pay_taxes_help_text = RichTextField(
+        'help_text',
+        default='', blank=True,
+    )
+    due_diligence_documents_label = models.TextField(
+        'label',
+        default='Due Diligence Documents'
+    )
+    due_diligence_documents_help_text = RichTextField(
+        'help_text',
+        default='Upload Due Diligence Documents. E.g. w8/w9 forms.'
+    )
+    account_holder_name_label = models.TextField(
+        'label',
+        default='Bank Account Holder name'
+    )
+    account_holder_name_help_text = RichTextField(
+        'help_text',
+        default='This name must be same as the person or organisation that signed the contract. '
+        'This person is authorised to sign contracts on behalf of the person or organisation named above.'
+    )
+    account_routing_number_label = models.TextField(
+        'label',
+        default='Bank Account Routing number'
+    )
+    account_routing_number_help_text = RichTextField(
+        'help_text',
+        default='Depending on your country, this might be called the ACH, SWIFT, BIC or ABA number.'
+    )
+    account_number_label = models.TextField(
+        'label',
+        default='Bank Account Number'
+    )
+    account_number_help_text = RichTextField(
+        'help_text',
+        default='Depending on your country, this might be called the account number, IBAN, or BBAN number.'
+    )
+    account_currency = models.TextField(
+        'label',
+        default='Bank Account Currency'
+    )
+    account_currency_help_text = RichTextField(
+        'label',
+        default='This is the currency of this bank account.'
+    )
+    need_extra_info_label = models.TextField(
+        'label',
+        default='Do you need to provide us with extra information?'
+    )
+    need_extra_info_help_text = RichTextField(
+        'help_text',
+        default=''
+    )
+    branch_address_label = models.TextField(
+        'label',
+        default='Bank Account Branch Address'
+    )
+    branch_address_help_text = models.TextField(
+        'help_text',
+        default='The address of the bank branch where you have the bank account '
+        'located(not the bank account holder address)'
+    )
+    ib_account_routing_number_label = models.TextField(
+        'label',
+        default='Bank Account Routing Number'
+    )
+    ib_account_routing_number_help_text = RichTextField(
+        'help_text',
+        default='Depending on your country, this might be called ACH, SWIFT, BIC or ABA number'
+    )
+    ib_account_number_label = models.TextField(
+        'label',
+        default='Bank Account Number'
+    )
+    ib_account_number_help_text = RichTextField(
+        'help_text',
+        default='Depending on your country, this might be called the account number, IBAN, or BBAN number'
+    )
+    ib_account_currency_label = models.TextField(
+        'label',
+        default='Bank Account Currency'
+    )
+    ib_account_currency_help_text = RichTextField(
+        'help_text',
+        default='This is the currency of this bank account'
+    )
+    ib_branch_address_label = models.TextField(
+        'label',
+        default='Intermediary Bank Branch Address'
+    )
+    ib_branch_address_help_text = RichTextField(
+        'help_text',
+        default='Bank branch address(not the bank account holder address)'
+    )
+    nid_type_label = models.TextField(
+        'label',
+        default='National Identity Document Type'
+    )
+    nid_type_help_text = RichTextField(
+        'help_text',
+        default='This could be a passport, a National Identity number, '
+        'or other national identity document.'
+    )
+    nid_number_label = models.TextField(
+        'label',
+        default='National Identity Document Number'
+    )
+    nid_number_help_text = RichTextField(
+        'help_text',
+        default=''
+    )
+    other_info_label = models.TextField(
+        'label',
+        default='Other Information'
+    )
+    other_info_help_text = RichTextField(
+        'help_text',
+        default='If you need to include other information not listed above, provide it here.'
+    )
+
+    panels = [
+        MultiFieldPanel([
+            FieldPanel('full_name_label'),
+            FieldPanel('full_name_help_text'),
+        ], 'Name'),
+        MultiFieldPanel([
+            FieldPanel('full_name_label'),
+            FieldPanel('full_name_help_text'),
+        ], 'Contractor Name'),
+        MultiFieldPanel([
+            FieldPanel('type_label'),
+            FieldPanel('type_help_text'),
+        ], 'Type'),
+        MultiFieldPanel([
+            FieldPanel('required_to_pay_taxes_label'),
+            FieldPanel('required_to_pay_taxes_help_text'),
+        ], 'Required to pay taxes'),
+        MultiFieldPanel([
+            FieldPanel('due_diligence_documents_label'),
+            FieldPanel('due_diligence_documents_help_text'),
+        ], 'Due Diligence Documents'),
+        MultiFieldPanel([
+            FieldPanel('account_holder_name_label'),
+            FieldPanel('account_holder_name_help_text'),
+        ], 'Account Holder Name'),
+        MultiFieldPanel([
+            FieldPanel('account_routing_number_label'),
+            FieldPanel('account_routing_number_help_text'),
+        ], 'Account Routing Number'),
+        MultiFieldPanel([
+            FieldPanel('account_number_label'),
+            FieldPanel('account_number_help_text'),
+        ], 'Account Number'),
+        MultiFieldPanel([
+            FieldPanel('account_currency_label'),
+            FieldPanel('account_currency_label'),
+        ], 'Account Currency'),
+        MultiFieldPanel([
+            FieldPanel('need_extra_info_label'),
+            FieldPanel('need_extra_info_help_text'),
+        ], 'Need Extra Info'),
+        MultiFieldPanel([
+            FieldPanel('branch_address_label'),
+            FieldPanel('branch_address_help_text'),
+        ], 'Account Branch Address'),
+        MultiFieldPanel([
+            FieldPanel('ib_account_routing_number_label'),
+            FieldPanel('ib_account_routing_number_help_text'),
+        ], 'Intermediary Account Routing Number'),
+        MultiFieldPanel([
+            FieldPanel('ib_account_number_label'),
+            FieldPanel('ib_account_number_help_text'),
+        ], 'Intermediary Account Number'),
+        MultiFieldPanel([
+            FieldPanel('ib_account_currency_label'),
+            FieldPanel('ib_account_currency_help_text'),
+        ], 'Intermediary Account Currency'),
+        MultiFieldPanel([
+            FieldPanel('ib_branch_address_label'),
+            FieldPanel('ib_branch_address_help_text'),
+        ], 'Intermediary Account Branch Address'),
+        MultiFieldPanel([
+            FieldPanel('nid_type_label'),
+            FieldPanel('nid_type_help_text'),
+        ], 'National Identity Document Type'),
+        MultiFieldPanel([
+            FieldPanel('nid_number_label'),
+            FieldPanel('nid_number_help_text'),
+        ], 'National Identity Document Number'),
+        MultiFieldPanel([
+            FieldPanel('other_info_label'),
+            FieldPanel('other_info_help_text'),
+        ], 'Other Information'),
+    ]

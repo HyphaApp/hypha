@@ -29,6 +29,8 @@ from hypha.apply.stream_forms.files import StreamFieldDataEncoder
 from hypha.apply.stream_forms.models import BaseStreamForm
 from hypha.apply.utils.storage import PrivateStorage
 
+from .vendor import Vendor
+
 logger = logging.getLogger(__name__)
 
 
@@ -131,11 +133,11 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name='owned_projects')
 
     title = models.TextField()
-
-    contact_legal_name = models.TextField(_('Person or Organisation name'), default='')
-    contact_email = models.TextField(_('Email'), default='')
-    contact_address = models.TextField(_('Address'), default='')
-    contact_phone = models.TextField(_('Phone'), default='')
+    vendor = models.ForeignKey(
+        "application_projects.Vendor",
+        on_delete=models.SET_NULL,
+        null=True, blank=True, related_name='projects'
+    )
     value = models.DecimalField(
         default=0,
         max_digits=10,
@@ -177,8 +179,8 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
 
     def get_address_display(self):
         try:
-            address = json.loads(self.contact_address)
-        except json.JSONDecodeError:
+            address = json.loads(self.vendor.address)
+        except (json.JSONDecodeError, AttributeError):
             return ''
         else:
             return ', '.join(
@@ -207,14 +209,18 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
 
         # See if there is a form field named "legal name", if not use user name.
         legal_name = submission.get_answer_from_label('legal name') or submission.user.full_name
-
+        # import ipdb; ipdb.set_trace()
+        vendor, _ = Vendor.objects.get_or_create(
+            user=submission.user
+        )
+        vendor.name = legal_name
+        vendor.address = submission.form_data.get('address', '')
+        vendor.save()
         return Project.objects.create(
             submission=submission,
-            title=submission.title,
             user=submission.user,
-            contact_email=submission.user.email,
-            contact_legal_name=legal_name,
-            contact_address=submission.form_data.get('address', ''),
+            title=submission.title,
+            vendor=vendor,
             value=submission.form_data.get('value', 0),
         )
 

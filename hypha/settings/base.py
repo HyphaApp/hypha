@@ -152,6 +152,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sitemaps',
     'django.forms',
+    'formtools',
 ]
 
 MIDDLEWARE = [

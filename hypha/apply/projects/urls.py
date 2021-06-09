@@ -21,7 +21,8 @@ from .views import (
     ReportPrivateMedia,
     ReportSkipView,
     ReportUpdateView,
-    # CreateVendorView,
+    CreateVendorView,
+    VendorFormSuccess,
 )
 
 app_name = 'projects'
@@ -37,7 +38,8 @@ urlpatterns = [
         path('download/', ProjectDetailPDFView.as_view(), name='download'),
         path('simplified/', ProjectDetailSimplifiedView.as_view(), name='simplified'),
         path('request/', CreatePaymentRequestView.as_view(), name='request'),
-        # path('vendor/', CreateVendorView.as_view(), name='vendor'),
+        path('vendor/', CreateVendorView.as_view(), name='vendor'),
+        path('vendor/success/', VendorFormSuccess.as_view(), name='vendor-success'),
     ])),
     path('payment-requests/', include(([
         path('', PaymentRequestListView.as_view(), name='all'),

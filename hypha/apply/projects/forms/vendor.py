@@ -1,0 +1,124 @@
+from django import forms
+from django.db import models
+
+from babel.numbers import list_currencies, get_currency_name
+
+from addressfield.fields import AddressField
+from ..models.vendor import Vendor, VendorFormSettings
+
+
+class BaseVendorForm:
+    def __init__(self, site=None, *args, **kwargs):
+        if site:
+            self.form_settings = VendorFormSettings.for_site(site)
+        super().__init__(*args, **kwargs)
+
+    def apply_form_settings(self, fields):
+        for field in fields:
+            try:
+                self.fields[field].label = getattr(self.form_settings, f'{field}_label')
+            except AttributeError:
+                pass
+            try:
+                self.fields[field].help_text = getattr(self.form_settings, f'{field}_help_text')
+            except AttributeError:
+                pass
+        return fields
+
+
+class CreateVendorFormStep1(BaseVendorForm, forms.ModelForm):
+    class Meta:
+        fields = [
+            'name',
+            'contractor_name',
+            'type',
+        ]
+        model = Vendor
+        widgets = {
+            'type': forms.RadioSelect,
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(CreateVendorFormStep1, self).__init__(*args, **kwargs)
+        self.fields = self.apply_form_settings(self.fields)
+        self.fields['type'].choices = self.fields['type'].choices[1:]
+
+
+class CreateVendorFormStep2(BaseVendorForm, forms.ModelForm):
+    required_to_pay_taxes = forms.ChoiceField(
+        choices=((False, 'No'), (True, 'Yes')),
+        widget=forms.RadioSelect
+    )
+
+    class Meta:
+        fields = [
+            'required_to_pay_taxes',
+        ]
+        model = Vendor
+
+    def __init__(self, *args, **kwargs):
+        super(CreateVendorFormStep2, self).__init__(*args, **kwargs)
+        self.fields = self.apply_form_settings(self.fields)
+
+
+class CreateVendorFormStep3(BaseVendorForm, forms.Form):
+    due_diligence_documents = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
+
+    def __init__(self, *args, **kwargs):
+        super(CreateVendorFormStep3, self).__init__(*args, **kwargs)
+        self.fields = self.apply_form_settings(self.fields)
+
+
+class CreateVendorFormStep4(BaseVendorForm, forms.Form):
+    CURRENCY_CHOICES = [
+        (currency, f'{get_currency_name(currency)} - {currency}')
+        for currency in list_currencies()
+    ]
+
+    account_holder_name = forms.CharField(required=False)
+    account_routing_number = forms.CharField(required=False)
+    account_number = forms.CharField(required=False)
+    account_currency = forms.ChoiceField(
+        choices=CURRENCY_CHOICES,
+        required=False,
+        initial='USD'
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(CreateVendorFormStep4, self).__init__(*args, **kwargs)
+        self.fields = self.apply_form_settings(self.fields)
+
+
+class CreateVendorFormStep5(BaseVendorForm, forms.Form):
+    need_extra_info = forms.ChoiceField(
+        choices=((False, 'No'), (True, 'Yes')),
+        widget=forms.RadioSelect
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(CreateVendorFormStep5, self).__init__(*args, **kwargs)
+        self.fields = self.apply_form_settings(self.fields)
+
+
+class CreateVendorFormStep6(BaseVendorForm, forms.Form):
+    CURRENCY_CHOICES = [
+        (currency, f'{get_currency_name(currency)} - {currency}')
+        for currency in list_currencies()
+    ]
+
+    branch_address = AddressField(required=False)
+    ib_account_routing_number = forms.CharField(required=False)
+    ib_account_number = forms.CharField(required=False)
+    ib_account_currency = forms.ChoiceField(
+        choices=CURRENCY_CHOICES,
+        required=False,
+        initial='USD'
+    )
+    ib_branch_address = AddressField(required=False)
+    nid_type = forms.CharField(required=False)
+    nid_number = forms.CharField(required=False)
+    other_info = forms.CharField(required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(CreateVendorFormStep6, self).__init__(*args, **kwargs)
+        self.fields = self.apply_form_settings(self.fields)

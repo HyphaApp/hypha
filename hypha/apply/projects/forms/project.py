@@ -82,10 +82,6 @@ class ProjectEditForm(forms.ModelForm):
     class Meta:
         fields = [
             'title',
-            'contact_legal_name',
-            'contact_email',
-            'contact_address',
-            'contact_phone',
             'value',
             'proposed_start',
             'proposed_end',
@@ -93,9 +89,6 @@ class ProjectEditForm(forms.ModelForm):
         model = Project
         widgets = {
             'title': forms.TextInput,
-            'contact_legal_name': forms.TextInput,
-            'contact_email': forms.TextInput,
-            'contact_phone': forms.TextInput,
             'proposed_end': forms.DateInput,
             'proposed_start': forms.DateInput,
         }
