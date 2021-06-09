@@ -131,7 +131,7 @@ class ProjectPage(FundingMixin, BasePage):
         InlinePanel('related_pages', label=_('Related Projects')),
         MultiFieldPanel(
             [FieldPanel('categories', widget=CategoriesWidget)],
-            heading="Categories",
+            heading=_('Categories'),
             classname="collapsible collapsed",
         ),
     ]

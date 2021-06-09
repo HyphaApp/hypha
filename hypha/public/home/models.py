@@ -104,37 +104,37 @@ class HomePage(BasePage):
             FieldPanel('strapline'),
             PageChooserPanel('strapline_link'),
             FieldPanel('strapline_link_text'),
-        ], heading='Introduction'),
+        ], heading=_('Introduction')),
         MultiFieldPanel([
             FieldPanel('news_title'),
             PageChooserPanel('news_link'),
             FieldPanel('news_link_text'),
-        ], heading='News'),
+        ], heading=_('News')),
         MultiFieldPanel([
             FieldPanel('our_work_title'),
             StreamFieldPanel('our_work'),
             PageChooserPanel('our_work_link'),
             FieldPanel('our_work_link_text'),
-        ], heading='Our Work'),
+        ], heading=_('Our Work')),
         MultiFieldPanel([
             FieldPanel('funds_title'),
             FieldPanel('funds_intro'),
             InlinePanel('promoted_funds', label=_('Promoted Funds'), max_num=NUM_RELATED),
             PageChooserPanel('funds_link'),
             FieldPanel('funds_link_text'),
-        ], heading='Funds'),
+        ], heading=_('Funds')),
         MultiFieldPanel([
             FieldPanel('labs_title'),
             FieldPanel('labs_intro'),
             InlinePanel('promoted_labs', label=_('Promoted Labs'), max_num=NUM_RELATED),
             PageChooserPanel('labs_link'),
             FieldPanel('labs_link_text'),
-        ], heading='Labs'),
+        ], heading=_('Labs')),
         MultiFieldPanel([
             FieldPanel('rfps_title'),
             FieldPanel('rfps_intro'),
             InlinePanel('promoted_rfps', label=_('Promoted RFPs'), max_num=NUM_RELATED),
-        ], heading='Labs'),
+        ], heading=_('Labs')),
     ]
 
     def get_related(self, page_type, base_list):

@@ -177,7 +177,7 @@ class PersonPage(FundingMixin, BasePage):
         MultiFieldPanel([
             FieldPanel('first_name'),
             FieldPanel('last_name'),
-        ], heading="Name"),
+        ], heading=_('Name')),
         FieldPanel('active'),
         ImageChooserPanel('photo'),
         FieldPanel('job_title'),
@@ -186,7 +186,7 @@ class PersonPage(FundingMixin, BasePage):
         MultiFieldPanel([
             FieldPanel('email'),
             InlinePanel('contact_details', label=_('Other Contact Methods')),
-        ], heading='Contact information'),
+        ], heading=_('Contact information')),
         InlinePanel('person_types', label=_('Person types')),
         FieldPanel('introduction'),
         StreamFieldPanel('biography'),

@@ -146,8 +146,8 @@ class EmailForm(AbstractEmailForm):
                 FieldPanel('subject'),
                 FieldPanel('confirmation_text_extra'),
             ],
-            heading="Confirmation email",
+            heading=_('Confirmation email'),
         )
     ]
 
-    email_tab = ObjectList(email_confirmation_panels, heading='Confirmation email')
+    email_tab = ObjectList(email_confirmation_panels, heading=_('Confirmation email'))

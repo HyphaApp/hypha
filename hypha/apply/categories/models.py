@@ -82,7 +82,7 @@ class MetaTerm(index.Indexed, MP_Node):
                 FieldPanel('available_to_applicants'),
                 FieldPanel('help_text'),
             ],
-            heading="Options",
+            heading=_('Options'),
         ),
     ]
 
