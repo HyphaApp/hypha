@@ -131,9 +131,11 @@ class StatusActions extends React.Component {
             return null;
         } else if (submission.actions.length === 0) {
             return (
-                <div className="status-actions">
-                    <button className="button button--primary button--full-width is-disabled" disabled={true}>Update status</button>
-                </div>
+                <SidebarBlock>
+                    <div className="status-actions">
+                        <button className="button button--primary button--full-width is-disabled" disabled={true}>Update status</button>
+                    </div>
+                </SidebarBlock>
             )
         }
 
