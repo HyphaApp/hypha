@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import models
 from django.utils.deconstruct import deconstructible
+from django.utils.translation import gettext as _
 from modelcluster.fields import ParentalKey
 from pagedown.widgets import PagedownWidget
 from wagtail.admin.edit_handlers import (
@@ -148,7 +149,7 @@ class LabPage(BasePage):
         related_name='lab_public',
     )
     lab_link = models.CharField(blank=True, max_length=255, verbose_name='External link', validators=[MailToAndURLValidator()])
-    link_text = models.CharField(max_length=255, help_text='Text to display on the button for external links', blank=True)
+    link_text = models.CharField(max_length=255, help_text=_('Text to display on the button for external links'), blank=True)
     body = StreamField(LabBlock())
 
     search_fields = BasePage.search_fields + [
@@ -165,7 +166,7 @@ class LabPage(BasePage):
                 FieldPanel('lab_link'),
                 FieldPanel('link_text'),
             ]),
-        ], heading='Link for lab application'),
+        ], heading=_('Link for lab application')),
         StreamFieldPanel('body'),
         InlinePanel('related_pages', label="Related pages"),
     ]
@@ -187,24 +188,24 @@ class LabPage(BasePage):
     def clean(self):
         if self.lab_type and self.lab_link:
             raise ValidationError({
-                'lab_type': 'Cannot link to both a Lab page and external link',
-                'lab_link': 'Cannot link to both a Lab page and external link',
+                'lab_type': _('Cannot link to both a Lab page and external link'),
+                'lab_link': _('Cannot link to both a Lab page and external link'),
             })
 
         if not self.lab_type and not self.lab_link:
             raise ValidationError({
-                'lab_type': 'Please provide a way for applicants to apply',
-                'lab_link': 'Please provide a way for applicants to apply',
+                'lab_type': _('Please provide a way for applicants to apply'),
+                'lab_link': _('Please provide a way for applicants to apply'),
             })
 
         if self.lab_type and self.link_text:
             raise ValidationError({
-                'link_text': 'Cannot customise the text for internal lab pages, leave blank',
+                'link_text': _('Cannot customise the text for internal lab pages, leave blank'),
             })
 
         if self.lab_link and not self.link_text:
             raise ValidationError({
-                'link_text': 'Please provide some text for the link button',
+                'link_text': _('Please provide some text for the link button'),
             })
 
 
