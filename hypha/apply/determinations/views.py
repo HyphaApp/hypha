@@ -353,9 +353,9 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
                     for index, form in enumerate(second_stage_forms)
                 ]
                 fields['proposal_form'] = forms.ChoiceField(
-                    label='Proposal Form',
+                    label=_('Proposal Form'),
                     choices=proposal_form_choices,
-                    help_text='Select the proposal form to use for proposal stage.',
+                    help_text=_('Select the proposal form to use for proposal stage.'),
                 )
                 fields.move_to_end('proposal_form', last=False)
         return fields

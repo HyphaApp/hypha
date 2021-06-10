@@ -40,7 +40,7 @@ class CategoryQuestionBlock(OptionalFormFieldBlock):
         label=_('Leave blank to use the default Category help text'),
     )
     category = ModelChooserBlock('categories.Category')
-    multi = BooleanBlock(label='Multi select', required=False)
+    multi = BooleanBlock(label=_('Multi select'), required=False)
 
     def get_field_class(self, struct_value):
         if struct_value['multi']:

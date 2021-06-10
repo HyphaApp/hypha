@@ -75,7 +75,7 @@ class ProfileForm(forms.ModelForm):
 class BecomeUserForm(forms.Form):
     user = forms.ModelChoiceField(
         widget=Select2Widget,
-        help_text="Only includes active, non-superusers",
+        help_text=_('Only includes active, non-superusers'),
         queryset=User.objects.filter(is_active=True, is_superuser=False),
         label='',
         required=False,

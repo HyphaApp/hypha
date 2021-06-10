@@ -222,9 +222,9 @@ class DeterminationMessageSettings(BaseSetting):
     ]
 
     edit_handler = TabbedInterface([
-        ObjectList(request_tab_panels, heading='Request'),
-        ObjectList(concept_tab_panels, heading='Concept note'),
-        ObjectList(proposal_tab_panels, heading='Proposal'),
+        ObjectList(request_tab_panels, heading=_('Request')),
+        ObjectList(concept_tab_panels, heading=_('Concept note')),
+        ObjectList(proposal_tab_panels, heading=_('Proposal')),
     ])
 
 
@@ -344,6 +344,6 @@ class DeterminationFormSettings(BaseSetting):
     ]
 
     edit_handler = TabbedInterface([
-        ObjectList(concept_help_text_tab_panels, heading='Concept form'),
-        ObjectList(proposal_help_text_tab_panels, heading='Proposal form'),
+        ObjectList(concept_help_text_tab_panels, heading=_('Concept form')),
+        ObjectList(proposal_help_text_tab_panels, heading=_('Proposal form')),
     ])

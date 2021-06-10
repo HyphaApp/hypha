@@ -2,6 +2,7 @@ import django_filters as filters
 from django import forms
 from django.contrib.auth import get_user_model
 from django.db.models import Q
+from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2Widget
 
 from hypha.apply.funds.tables import (
@@ -22,9 +23,9 @@ def get_project_leads(request):
 
 
 class PaymentRequestListFilter(filters.FilterSet):
-    fund = Select2ModelMultipleChoiceFilter(label='Funds', queryset=get_used_funds, field_name='project__submission__page')
-    status = Select2MultipleChoiceFilter(label='Status', choices=REQUEST_STATUS_CHOICES)
-    lead = Select2ModelMultipleChoiceFilter(label='Lead', queryset=get_project_leads, field_name='project__lead')
+    fund = Select2ModelMultipleChoiceFilter(label=_('Funds'), queryset=get_used_funds, field_name='project__submission__page')
+    status = Select2MultipleChoiceFilter(label=_('Status'), choices=REQUEST_STATUS_CHOICES)
+    lead = Select2ModelMultipleChoiceFilter(label=_('Lead'), queryset=get_project_leads, field_name='project__lead')
 
     class Meta:
         fields = ['lead', 'fund', 'status']
@@ -37,9 +38,9 @@ class ProjectListFilter(filters.FilterSet):
         (1, 'Behind schedule'),
     )
 
-    project_fund = Select2ModelMultipleChoiceFilter(field_name="submission__page", label='Funds', queryset=get_used_funds)
-    project_lead = Select2ModelMultipleChoiceFilter(field_name="lead", label='Lead', queryset=get_project_leads)
-    project_status = Select2MultipleChoiceFilter(field_name="status", label='Status', choices=PROJECT_STATUS_CHOICES)
+    project_fund = Select2ModelMultipleChoiceFilter(field_name="submission__page", label=_('Funds'), queryset=get_used_funds)
+    project_lead = Select2ModelMultipleChoiceFilter(field_name="lead", label=_('Lead'), queryset=get_project_leads)
+    project_status = Select2MultipleChoiceFilter(field_name="status", label=_('Status'), choices=PROJECT_STATUS_CHOICES)
     query = filters.CharFilter(field_name='title', lookup_expr="icontains", widget=forms.HiddenInput)
     reporting = filters.ChoiceFilter(
         choices=REPORTING_CHOICES,
@@ -79,7 +80,7 @@ class DateRangeInputWidget(filters.widgets.SuffixedMultiWidget):
 
 class ReportListFilter(filters.FilterSet):
     reporting_period = filters.DateFromToRangeFilter(
-        label="Reporting Period",
+        label=_('Reporting Period'),
         method="filter_reporting_period",
         widget=DateRangeInputWidget,
     )

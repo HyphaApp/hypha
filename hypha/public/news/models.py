@@ -2,6 +2,7 @@ from django.conf import settings
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import models
 from django.db.models.functions import Coalesce
+from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
 from pagedown.widgets import PagedownWidget
 from wagtail.admin.edit_handlers import (
@@ -94,8 +95,7 @@ class NewsPage(BasePage):
     # It's datetime for easy comparison with first_published_at
     publication_date = models.DateTimeField(
         null=True, blank=True,
-        help_text="Use this field to override the date that the "
-        "news item appears to have been published."
+        help_text=_('Use this field to override the date that the news item appears to have been published.')
     )
     introduction = models.TextField(blank=True)
     body = StreamField(NewsStoryBlock(block_counts={'awesome_table_widget': {'max_num': 1}}))
@@ -107,12 +107,12 @@ class NewsPage(BasePage):
 
     content_panels = BasePage.content_panels + [
         FieldPanel('publication_date'),
-        InlinePanel('authors', label="Authors"),
+        InlinePanel('authors', label=_('Authors')),
         FieldPanel('introduction'),
         StreamFieldPanel('body'),
-        InlinePanel('news_types', label="News types"),
-        InlinePanel('related_projects', label="Mentioned project"),
-        InlinePanel('related_pages', label="Related pages"),
+        InlinePanel('news_types', label=_('News types')),
+        InlinePanel('related_projects', label=_('Mentioned project')),
+        InlinePanel('related_pages', label=_('Related pages')),
     ]
 
     @property
@@ -170,10 +170,10 @@ class NewsIndex(BasePage):
 
 @register_setting
 class NewsFeedSettings(BaseSetting):
-    news_title = models.CharField(max_length=255, help_text='The title of the main news feed.')
-    news_description = models.CharField(max_length=255, help_text='The description of the main news feed.')
+    news_title = models.CharField(max_length=255, help_text=_('The title of the main news feed.'))
+    news_description = models.CharField(max_length=255, help_text=_('The description of the main news feed.'))
 
     news_per_type_title = models.CharField(
-        max_length=255, help_text='The title of the news feed by type. Use {news_type} to insert the type name.')
+        max_length=255, help_text=_('The title of the news feed by type. Use {news_type} to insert the type name.'))
     news_per_type_description = models.CharField(
-        max_length=255, help_text='The description of the news feed by type. Use {news_type} to insert the type name.')
+        max_length=255, help_text=_('The description of the news feed by type. Use {news_type} to insert the type name.'))

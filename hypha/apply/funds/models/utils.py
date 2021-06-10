@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 from wagtail.admin.edit_handlers import (
     FieldPanel,
     FieldRowPanel,
@@ -48,7 +49,7 @@ class WorkflowHelpers(models.Model):
         for name, workflow in WORKFLOWS.items()
     }
 
-    workflow_name = models.CharField(choices=WORKFLOW_CHOICES.items(), max_length=100, default='single', verbose_name="Workflow")
+    workflow_name = models.CharField(choices=WORKFLOW_CHOICES.items(), max_length=100, default='single', verbose_name=_('Workflow'))
 
     @property
     def workflow(self):
@@ -114,9 +115,9 @@ class WorkflowStreamForm(WorkflowHelpers, AbstractStreamForm):  # type: ignore
 
     content_panels = AbstractStreamForm.content_panels + [
         FieldPanel('workflow_name'),
-        InlinePanel('forms', label="Forms"),
-        InlinePanel('review_forms', label="Review Forms"),
-        InlinePanel('determination_forms', label="Determination Forms")
+        InlinePanel('forms', label=_('Forms')),
+        InlinePanel('review_forms', label=_('Review Forms')),
+        InlinePanel('determination_forms', label=_('Determination Forms'))
     ]
 
 
@@ -129,7 +130,7 @@ class EmailForm(AbstractEmailForm):
     class Meta:
         abstract = True
 
-    confirmation_text_extra = models.TextField(blank=True, help_text="Additional text for the application confirmation message.")
+    confirmation_text_extra = models.TextField(blank=True, help_text=_('Additional text for the application confirmation message.'))
 
     def send_mail(self, submission):
         # Make sure we don't send emails to users here. Messaging handles that
@@ -145,8 +146,8 @@ class EmailForm(AbstractEmailForm):
                 FieldPanel('subject'),
                 FieldPanel('confirmation_text_extra'),
             ],
-            heading="Confirmation email",
+            heading=_('Confirmation email'),
         )
     ]
 
-    email_tab = ObjectList(email_confirmation_panels, heading='Confirmation email')
+    email_tab = ObjectList(email_confirmation_panels, heading=_('Confirmation email'))

@@ -17,7 +17,7 @@ class YearMultipleChoiceFilter(Select2MultipleChoiceFilter):
             *args,
             field_name='year',
             choices=choices,
-            label='Years',
+            label=_('Years'),
             **kwargs,
         )
 
@@ -43,16 +43,16 @@ class InvestmentFilter(filters.FilterSet):
 
     amount_committed = Select2MultipleChoiceFilter(
         choices=AMOUNT_COMMITTED_CHOICES,
-        label='Amount Committed(US$)',
+        label=_('Amount Committed(US$)'),
         method='filter_amount_committed'
     )
     partner__status = Select2MultipleChoiceFilter(
-        choices=PartnerPage.STATUS, label='Status'
+        choices=PartnerPage.STATUS, label=_('Status')
     )
     per_page = filters.ChoiceFilter(
         choices=PAGE_CHOICES,
         empty_label=_('Items per page'),
-        label='Per page',
+        label=_('Per page'),
         method='per_page_handler'
     )
 
@@ -91,10 +91,10 @@ def make_row_class(record):
 
 class InvestmentTable(tables.Table):
     """Table for listing investments."""
-    partner = tables.Column(verbose_name='Partner', linkify=True, attrs={'td': {'data-title-tooltip': lambda record: record.partner, 'class': 'js-title title'}})
-    year = tables.Column(verbose_name='Year')
-    status = tables.Column(accessor='partner__status', verbose_name='Status')
-    amount_committed = tables.Column(verbose_name='Amount committed (US$)')
+    partner = tables.Column(verbose_name=_('Partner'), linkify=True, attrs={'td': {'data-title-tooltip': lambda record: record.partner, 'class': 'js-title title'}})
+    year = tables.Column(verbose_name=_('Year'))
+    status = tables.Column(accessor='partner__status', verbose_name=_('Status'))
+    amount_committed = tables.Column(verbose_name=_('Amount committed (US$)'))
     description = tables.Column(visible=False)
 
     class Meta:

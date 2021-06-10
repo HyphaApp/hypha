@@ -56,7 +56,7 @@ class ApplicationSubmissionModelForm(forms.ModelForm):
 
 
 class ProgressSubmissionForm(ApplicationSubmissionModelForm):
-    action = forms.ChoiceField(label='Take action')
+    action = forms.ChoiceField(label=_('Take action'))
 
     class Meta:
         model = ApplicationSubmission
@@ -75,7 +75,7 @@ class ProgressSubmissionForm(ApplicationSubmissionModelForm):
 
 
 class BatchProgressSubmissionForm(forms.Form):
-    action = forms.ChoiceField(label='Take action')
+    action = forms.ChoiceField(label=_('Take action'))
     submissions = forms.CharField(widget=forms.HiddenInput(attrs={'class': 'js-submissions-id'}))
 
     def __init__(self, *args, round=None, **kwargs):
@@ -140,7 +140,7 @@ class UpdateSubmissionLeadForm(ApplicationSubmissionModelForm):
 
 
 class BatchUpdateSubmissionLeadForm(forms.Form):
-    lead = forms.ChoiceField(label='Lead')
+    lead = forms.ChoiceField(label=_('Lead'))
     submissions = forms.CharField(widget=forms.HiddenInput(attrs={'class': 'js-submissions-id'}))
 
     def __init__(self, *args, round=None, **kwargs):
@@ -192,7 +192,7 @@ class UpdateReviewersForm(ApplicationSubmissionModelForm):
     reviewer_reviewers = forms.ModelMultipleChoiceField(
         queryset=User.objects.reviewers().only('pk', 'full_name'),
         widget=Select2MultiCheckboxesWidget(attrs={'data-placeholder': 'Reviewers'}),
-        label='Reviewers',
+        label=_('Reviewers'),
         required=False,
     )
 
@@ -371,7 +371,7 @@ class UpdatePartnersForm(ApplicationSubmissionModelForm):
     partner_reviewers = forms.ModelMultipleChoiceField(
         queryset=User.objects.partners(),
         widget=Select2MultiCheckboxesWidget(attrs={'data-placeholder': 'Partners'}),
-        label='Partners',
+        label=_('Partners'),
         required=False,
     )
 
@@ -432,10 +432,10 @@ class UpdateMetaTermsForm(ApplicationSubmissionModelForm):
     meta_terms = GroupedModelMultipleChoiceField(
         queryset=None,  # updated in init method
         widget=MetaTermSelect2Widget(attrs={'data-placeholder': 'Meta terms'}),
-        label='Meta terms',
+        label=_('Meta terms'),
         choices_groupby='get_parent',
         required=False,
-        help_text='Meta terms are hierarchical in nature.',
+        help_text=_('Meta terms are hierarchical in nature.'),
     )
 
     class Meta:

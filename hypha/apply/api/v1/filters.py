@@ -1,4 +1,5 @@
 from django.db.models import Q
+from django.utils.translation import gettext_lazy as _
 from django_filters import rest_framework as filters
 from wagtail.core.models import Page
 
@@ -27,16 +28,16 @@ class RoundLabFilter(filters.ModelChoiceFilter):
 class SubmissionsFilter(filters.FilterSet):
     round = RoundLabFilter(queryset=RoundsAndLabs.objects.all())
     status = filters.MultipleChoiceFilter(choices=PHASES)
-    active = filters.BooleanFilter(method='filter_active', label='Active')
-    submit_date = filters.DateFromToRangeFilter(field_name='submit_time', label='Submit date')
+    active = filters.BooleanFilter(method='filter_active', label=_('Active'))
+    submit_date = filters.DateFromToRangeFilter(field_name='submit_time', label=_('Submit date'))
     fund = filters.ModelMultipleChoiceFilter(
-        field_name='page', label='fund',
+        field_name='page', label=_('fund'),
         queryset=Page.objects.type(FundType) | Page.objects.type(LabType)
     )
     screening_statuses = filters.ModelMultipleChoiceFilter(
         field_name='screening_statuses',
         queryset=get_screening_statuses(),
-        null_label="No Screening"
+        null_label=_('No Screening')
     )
     reviewers = filters.ModelMultipleChoiceFilter(
         field_name='reviewers',
@@ -47,7 +48,7 @@ class SubmissionsFilter(filters.FilterSet):
         queryset=get_round_leads(),
     )
     category_options = filters.MultipleChoiceFilter(
-        choices=[], label='Category',
+        choices=[], label=_('Category'),
         method='filter_category_options'
     )
     id = filters.ModelMultipleChoiceFilter(

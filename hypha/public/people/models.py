@@ -2,6 +2,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
 from pagedown.widgets import PagedownWidget
 from wagtail.admin.edit_handlers import (
@@ -93,7 +94,7 @@ class PersonContactInfomation(Orderable):
     )
     page = ParentalKey('PersonPage', related_name='contact_details')
     contact_method = models.CharField(max_length=255, choices=methods, blank=True)
-    other_method = models.CharField(max_length=255, blank=True, verbose_name='Other')
+    other_method = models.CharField(max_length=255, blank=True, verbose_name=_('Other'))
     contact_detail = models.CharField(max_length=255)
 
     panels = [
@@ -176,20 +177,20 @@ class PersonPage(FundingMixin, BasePage):
         MultiFieldPanel([
             FieldPanel('first_name'),
             FieldPanel('last_name'),
-        ], heading="Name"),
+        ], heading=_('Name')),
         FieldPanel('active'),
         ImageChooserPanel('photo'),
         FieldPanel('job_title'),
-        InlinePanel('social_media_profile', label='Social accounts'),
+        InlinePanel('social_media_profile', label=_('Social accounts')),
         FieldPanel('website'),
         MultiFieldPanel([
             FieldPanel('email'),
-            InlinePanel('contact_details', label='Other Contact Methods'),
-        ], heading='Contact information'),
-        InlinePanel('person_types', label='Person types'),
+            InlinePanel('contact_details', label=_('Other Contact Methods')),
+        ], heading=_('Contact information')),
+        InlinePanel('person_types', label=_('Person types')),
         FieldPanel('introduction'),
         StreamFieldPanel('biography'),
-        InlinePanel('funds_reviewed', label='Funds Reviewed'),
+        InlinePanel('funds_reviewed', label=_('Funds Reviewed')),
     ] + FundingMixin.content_panels
 
 

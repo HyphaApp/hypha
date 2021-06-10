@@ -88,11 +88,11 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
 
 class User(AbstractUser):
     email = models.EmailField(_('email address'), unique=True)
-    full_name = models.CharField(verbose_name='Full name', max_length=255, blank=True)
+    full_name = models.CharField(verbose_name=_('Full name'), max_length=255, blank=True)
     slack = models.CharField(
-        verbose_name='Slack name',
+        verbose_name=_('Slack name'),
         blank=True,
-        help_text='This is the name we should "@mention" when sending notifications',
+        help_text=_('This is the name we should "@mention" when sending notifications'),
         max_length=50,
     )
 

@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
 from pagedown.widgets import PagedownWidget
 from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, StreamFieldPanel
@@ -27,7 +28,7 @@ class InformationPage(BasePage):
     content_panels = BasePage.content_panels + [
         FieldPanel('introduction'),
         StreamFieldPanel('body'),
-        InlinePanel('related_pages', label="Related pages"),
+        InlinePanel('related_pages', label=_('Related pages')),
     ]
 
 

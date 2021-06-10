@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth import get_user_model
 from django.core.exceptions import NON_FIELD_ERRORS
+from django.utils.translation import gettext_lazy as _
 
 from hypha.apply.funds.models import ApplicationSubmission
 from hypha.apply.stream_forms.forms import StreamBaseForm
@@ -167,20 +168,20 @@ class BaseConceptDeterminationForm(forms.Form):
     }
     outcome = forms.ChoiceField(
         choices=DETERMINATION_CHOICES,
-        label='Determination',
+        label=_('Determination'),
         help_text='Do you recommend requesting a proposal based on this concept note?',
     )
     outcome.group = 1
 
     message = RichTextField(
-        label='Determination message',
+        label=_('Determination message'),
         help_text='This text will be e-mailed to the applicant. '
         'Ones when text is first added and then every time the text is changed.'
     )
     message.group = 1
 
     principles = RichTextField(
-        label='Goals and principles',
+        label=_('Goals and principles'),
         help_text='Does the project contribute and/or have relevance to OTF goals and principles?'
         'Are the goals and objectives of the project clear? Is it a technology research, development, or deployment '
         'project? Can project’s effort be explained to external audiences and non-technical people? What problem are '
@@ -200,7 +201,7 @@ class BaseConceptDeterminationForm(forms.Form):
     principles.group = 1
 
     technical = RichTextField(
-        label='Technical merit',
+        label=_('Technical merit'),
         help_text='Does the project clearly articulate the technical problem, solution, and approach? '
         'Is the problem clearly justifiable? Does the project clearly articulate the technological objectives? '
         'Is it an open or closed development project? I.e. Open source like Android or open source like Firefox OS '
@@ -215,7 +216,7 @@ class BaseConceptDeterminationForm(forms.Form):
     technical.group = 1
 
     sustainable = RichTextField(
-        label='Reasonable, realistic and sustainable',
+        label=_('Reasonable, realistic and sustainable'),
         help_text='Is the requested amount reasonable, realistic, and justified? If OTF doesn’t support the project, '
         'is it likely to be realized? Does the project provide a detailed and realistic description of effort and '
         'schedule? I.e. is the project capable of creating a work plan including objectives, activities, and '
@@ -229,7 +230,7 @@ class BaseConceptDeterminationForm(forms.Form):
     sustainable.group = 1
 
     comments = RichTextField(
-        label='Other comments',
+        label=_('Other comments'),
         help_text=''
     )
     comments.group = 1
@@ -248,13 +249,13 @@ class BaseProposalDeterminationForm(forms.Form):
 
     outcome = forms.ChoiceField(
         choices=DETERMINATION_CHOICES,
-        label='Determination',
+        label=_('Determination'),
         help_text='Do you recommend requesting a proposal based on this concept note?'
     )
     outcome.group = 1
 
     message = RichTextField(
-        label='Determination message',
+        label=_('Determination message'),
         help_text='This text will be e-mailed to the applicant. '
         'Ones when text is first added and then every time the text is changed.'
     )
@@ -262,59 +263,59 @@ class BaseProposalDeterminationForm(forms.Form):
 
     # B. General thoughts
     liked = RichTextField(
-        label='Positive aspects',
+        label=_('Positive aspects'),
         help_text='Any general or specific aspects that got you really excited or that you like about this proposal.'
     )
     liked.group = 2
 
     concerns = RichTextField(
-        label='Concerns',
+        label=_('Concerns'),
         help_text='Any general or specific aspects that concern you or leave you feeling uneasy about this proposal.'
     )
     concerns.group = 2
 
     red_flags = RichTextField(
-        label='Items that must be addressed',
+        label=_('Items that must be addressed'),
         help_text='Anything you think should be flagged for our attention.'
     )
     red_flags.group = 2
 
     # C. Specific aspects
-    overview = RichTextField(label='Project overview questions and comments')
+    overview = RichTextField(label=_('Project overview questions and comments'))
     overview.group = 3
 
-    objectives = RichTextField(label='Objectives questions and comments')
+    objectives = RichTextField(label=_('Objectives questions and comments'))
     objectives.group = 3
 
-    strategy = RichTextField(label='Methods and strategy questions and comments')
+    strategy = RichTextField(label=_('Methods and strategy questions and comments'))
     strategy.group = 3
 
-    technical = RichTextField(label='Technical feasibility questions and comments')
+    technical = RichTextField(label=_('Technical feasibility questions and comments'))
     technical.group = 3
 
-    alternative = RichTextField(label='Alternative analysis - "red teaming" questions and comments')
+    alternative = RichTextField(label=_('Alternative analysis - "red teaming" questions and comments'))
     alternative.group = 3
 
-    usability = RichTextField(label='Usability questions and comments')
+    usability = RichTextField(label=_('Usability questions and comments'))
     usability.group = 3
 
-    sustainability = RichTextField(label='Sustainability questions and comments')
+    sustainability = RichTextField(label=_('Sustainability questions and comments'))
     sustainability.group = 3
 
-    collaboration = RichTextField(label='Collaboration questions and comments')
+    collaboration = RichTextField(label=_('Collaboration questions and comments'))
     collaboration.group = 3
 
-    realism = RichTextField(label='Cost realism questions and comments')
+    realism = RichTextField(label=_('Cost realism questions and comments'))
     realism.group = 3
 
-    qualifications = RichTextField(label='Qualifications questions and comments')
+    qualifications = RichTextField(label=_('Qualifications questions and comments'))
     qualifications.group = 3
 
-    evaluation = RichTextField(label='Evaluation questions and comments')
+    evaluation = RichTextField(label=_('Evaluation questions and comments'))
     evaluation.group = 3
 
     # D. Rationale and appropriateness consideration
-    rationale = RichTextField(label='Rationale and appropriateness questions and comments')
+    rationale = RichTextField(label=_('Rationale and appropriateness questions and comments'))
     rationale.group = 4
 
 
@@ -352,7 +353,7 @@ class ConceptDeterminationForm(BaseConceptDeterminationForm, BaseNormalDetermina
                     for index, form in enumerate(second_stage_forms)
                 ]
                 self.fields['proposal_form'] = forms.ChoiceField(
-                    label='Proposal Form',
+                    label=_('Proposal Form'),
                     choices=proposal_form_choices,
                     help_text='Select the proposal form to use for proposal stage.',
                 )
@@ -503,7 +504,7 @@ class BatchDeterminationForm(StreamBaseForm, forms.Form, metaclass=FormMixedMeta
     )
     outcome = forms.ChoiceField(
         choices=DETERMINATION_CHOICES,
-        label='Determination',
+        label=_('Determination'),
         help_text='Do you recommend requesting a proposal based on this concept note?',
         widget=forms.HiddenInput()
     )

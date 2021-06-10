@@ -123,9 +123,9 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
     ]
 
     edit_handler = TabbedInterface([
-        ObjectList(content_panels, heading='Content'),
+        ObjectList(content_panels, heading=_('Content')),
         EmailForm.email_tab,
-        ObjectList(WorkflowStreamForm.promote_panels, heading='Promote'),
+        ObjectList(WorkflowStreamForm.promote_panels, heading=_('Promote')),
     ])
 
 
@@ -172,7 +172,7 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
         blank=True,
         null=True,
         default=date.today,
-        help_text='When no end date is provided the round will remain open indefinitely.'
+        help_text=_('When no end date is provided the round will remain open indefinitely.')
     )
     sealed = models.BooleanField(default=False)
 
@@ -183,18 +183,18 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
                 FieldPanel('start_date'),
                 FieldPanel('end_date'),
             ]),
-        ], heading="Dates"),
+        ], heading=_('Dates')),
         FieldPanel('reviewers', widget=forms.SelectMultiple(attrs={'size': '16'})),
-        ReadOnlyPanel('get_workflow_name_display', heading="Workflow", help_text="Copied from the fund."),
+        ReadOnlyPanel('get_workflow_name_display', heading=_('Workflow'), help_text=_('Copied from the fund.')),
         # Forms comes from parental key in models/forms.py
-        ReadOnlyInlinePanel('forms', help_text="Copied from the fund."),
-        ReadOnlyInlinePanel('review_forms', help_text="Copied from the fund."),
-        ReadOnlyInlinePanel('determination_forms', help_text="Copied from the fund."),
+        ReadOnlyInlinePanel('forms', help_text=_('Copied from the fund.')),
+        ReadOnlyInlinePanel('review_forms', help_text=_('Copied from the fund.')),
+        ReadOnlyInlinePanel('determination_forms', help_text=_('Copied from the fund.')),
     ]
 
     edit_handler = TabbedInterface([
-        ObjectList(content_panels, heading='Content'),
-        ObjectList(SubmittableStreamForm.promote_panels, heading='Promote'),
+        ObjectList(content_panels, heading=_('Content')),
+        ObjectList(SubmittableStreamForm.promote_panels, heading=_('Promote')),
     ])
 
     def get_template(self, request, *args, **kwargs):
@@ -431,9 +431,9 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
     ]
 
     edit_handler = TabbedInterface([
-        ObjectList(content_panels, heading='Content'),
+        ObjectList(content_panels, heading=_('Content')),
         EmailForm.email_tab,
-        ObjectList(WorkflowStreamForm.promote_panels, heading='Promote'),
+        ObjectList(WorkflowStreamForm.promote_panels, heading=_('Promote')),
     ])
 
     def detail(self):

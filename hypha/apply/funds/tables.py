@@ -68,12 +68,12 @@ def render_reviewer_link(record):
 class SubmissionsTable(tables.Table):
     """Base table for listing submissions, do not include admin data to this table"""
     title = tables.LinkColumn('funds:submissions:detail', text=render_title, args=[A('pk')], orderable=True, attrs={'td': {'data-title-tooltip': lambda record: record.title, 'class': 'js-title'}})
-    submit_time = tables.DateColumn(verbose_name="Submitted")
-    phase = tables.Column(verbose_name="Status", order_by=('status',), attrs={'td': {'data-actions': render_actions, 'class': 'js-actions'}})
-    stage = tables.Column(verbose_name="Type", order_by=('status',))
-    fund = tables.Column(verbose_name="Fund", accessor='page')
-    comments = tables.Column(accessor='comment_count', verbose_name="Comments")
-    last_update = tables.DateColumn(accessor="last_update", verbose_name="Last updated")
+    submit_time = tables.DateColumn(verbose_name=_('Submitted'))
+    phase = tables.Column(verbose_name=_('Status'), order_by=('status',), attrs={'td': {'data-actions': render_actions, 'class': 'js-actions'}})
+    stage = tables.Column(verbose_name=_('Type'), order_by=('status',))
+    fund = tables.Column(verbose_name=_('Fund'), accessor='page')
+    comments = tables.Column(accessor='comment_count', verbose_name=_('Comments'))
+    last_update = tables.DateColumn(accessor="last_update", verbose_name=_('Last updated'))
 
     class Meta:
         model = ApplicationSubmission
@@ -132,7 +132,7 @@ class LabeledCheckboxColumn(tables.CheckBoxColumn):
 class BaseAdminSubmissionsTable(SubmissionsTable):
     lead = tables.Column(order_by=('lead.full_name',))
     reviews_stats = tables.TemplateColumn(template_name='funds/tables/column_reviews.html', verbose_name=mark_safe("Reviews<div>Assgn.\tComp.</div>"), orderable=False)
-    screening_status = tables.Column(verbose_name="Screening", accessor='screening_statuses')
+    screening_status = tables.Column(verbose_name=_('Screening'), accessor='screening_statuses')
 
     class Meta(SubmissionsTable.Meta):
         fields = ('title', 'phase', 'stage', 'fund', 'round', 'lead', 'submit_time', 'last_update', 'screening_status', 'reviews_stats')  # type: ignore
@@ -166,7 +166,7 @@ class SummarySubmissionsTable(BaseAdminSubmissionsTable):
 
 class SummarySubmissionsTableWithRole(BaseAdminSubmissionsTable):
     """ Adds Role Assigned to the 'Waiting for My Review' table """
-    role_icon = tables.Column(verbose_name="Role")
+    role_icon = tables.Column(verbose_name=_('Role'))
 
     class Meta(BaseAdminSubmissionsTable.Meta):
         sequence = ('...', 'role_icon', 'comments')
@@ -241,7 +241,7 @@ class StatusMultipleChoiceFilter(Select2MultipleChoiceFilter):
             *args,
             field_name='status',
             choices=choices,
-            label='Statuses',
+            label=_('Statuses'),
             **kwargs,
         )
 
@@ -253,16 +253,16 @@ class StatusMultipleChoiceFilter(Select2MultipleChoiceFilter):
 
 
 class SubmissionFilter(filters.FilterSet):
-    round = Select2ModelMultipleChoiceFilter(queryset=get_used_rounds, label='Rounds')
-    fund = Select2ModelMultipleChoiceFilter(field_name='page', queryset=get_used_funds, label='Funds')
-    lead = Select2ModelMultipleChoiceFilter(queryset=get_round_leads, label='Leads')
-    reviewers = Select2ModelMultipleChoiceFilter(queryset=get_reviewers, label='Reviewers')
-    screening_statuses = Select2ModelMultipleChoiceFilter(queryset=get_screening_statuses, label='Screening', null_label='No Status')
+    round = Select2ModelMultipleChoiceFilter(queryset=get_used_rounds, label=_('Rounds'))
+    fund = Select2ModelMultipleChoiceFilter(field_name='page', queryset=get_used_funds, label=_('Funds'))
+    lead = Select2ModelMultipleChoiceFilter(queryset=get_round_leads, label=_('Leads'))
+    reviewers = Select2ModelMultipleChoiceFilter(queryset=get_reviewers, label=_('Reviewers'))
+    screening_statuses = Select2ModelMultipleChoiceFilter(queryset=get_screening_statuses, label=_('Screening'), null_label=_('No Status'))
     category_options = Select2MultipleChoiceFilter(
-        choices=[], label='Category',
+        choices=[], label=_('Category'),
         method='filter_category_options'
     )
-    meta_terms = Select2ModelMultipleChoiceFilter(queryset=get_meta_terms, label='Terms')
+    meta_terms = Select2ModelMultipleChoiceFilter(queryset=get_meta_terms, label=_('Terms'))
 
     class Meta:
         model = ApplicationSubmission
@@ -318,8 +318,8 @@ class SubmissionFilterAndSearch(SubmissionFilter):
 
 
 class SubmissionDashboardFilter(filters.FilterSet):
-    round = Select2ModelMultipleChoiceFilter(queryset=get_used_rounds, label='Rounds')
-    fund = Select2ModelMultipleChoiceFilter(field_name='page', queryset=get_used_funds, label='Funds')
+    round = Select2ModelMultipleChoiceFilter(queryset=get_used_rounds, label=_('Rounds'))
+    fund = Select2ModelMultipleChoiceFilter(field_name='page', queryset=get_used_funds, label=_('Funds'))
 
     class Meta:
         model = ApplicationSubmission
@@ -345,7 +345,7 @@ class RoundsTable(tables.Table):
     lead = tables.Column()
     start_date = tables.Column()
     end_date = tables.Column()
-    progress = tables.Column(verbose_name="Determined")
+    progress = tables.Column(verbose_name=_('Determined'))
 
     class Meta:
         fields = ('title', 'fund', 'lead', 'start_date', 'end_date', 'progress')
@@ -411,10 +411,10 @@ class OpenRoundFilter(Select2MultipleChoiceFilter):
 
 
 class RoundsFilter(filters.FilterSet):
-    fund = Select2ModelMultipleChoiceFilter(queryset=get_used_funds, label='Funds')
-    lead = Select2ModelMultipleChoiceFilter(queryset=get_round_leads, label='Leads')
-    active = ActiveRoundFilter(label='Active')
-    round_state = OpenRoundFilter(label='Open')
+    fund = Select2ModelMultipleChoiceFilter(queryset=get_used_funds, label=_('Funds'))
+    lead = Select2ModelMultipleChoiceFilter(queryset=get_round_leads, label=_('Leads'))
+    active = ActiveRoundFilter(label=_('Active'))
+    round_state = OpenRoundFilter(label=_('Open'))
 
 
 class ReviewerLeaderboardFilterForm(forms.ModelForm):
@@ -440,17 +440,17 @@ class ReviewerLeaderboardFilter(filters.FilterSet):
 
     reviewer = Select2ModelMultipleChoiceFilter(
         field_name='pk',
-        label='Reviewers',
+        label=_('Reviewers'),
         queryset=get_reviewers,
     )
     funds = Select2ModelMultipleChoiceFilter(
         field_name='submission__page',
-        label='Funds',
+        label=_('Funds'),
         queryset=get_used_funds,
     )
     rounds = Select2ModelMultipleChoiceFilter(
         field_name='submission__round',
-        label='Rounds',
+        label=_('Rounds'),
         queryset=get_used_rounds,
     )
 
@@ -465,7 +465,7 @@ class ReviewerLeaderboardFilter(filters.FilterSet):
 
 
 class ReviewerLeaderboardTable(tables.Table):
-    full_name = tables.LinkColumn('funds:submissions:reviewer_leaderboard_detail', args=[A('pk')], orderable=True, verbose_name="Reviewer", attrs={'td': {'class': 'title'}})
+    full_name = tables.LinkColumn('funds:submissions:reviewer_leaderboard_detail', args=[A('pk')], orderable=True, verbose_name=_('Reviewer'), attrs={'td': {'class': 'title'}})
 
     class Meta:
         model = User
@@ -482,7 +482,7 @@ class ReviewerLeaderboardTable(tables.Table):
 
 
 class ReviewerLeaderboardDetailTable(tables.Table):
-    title = tables.LinkColumn('funds:submissions:reviews:review', text=render_title, args=[A('submission_id'), A('pk')], orderable=True, verbose_name="Submission", attrs={'td': {'data-title-tooltip': lambda record: record.submission.title, 'class': 'title js-title'}})
+    title = tables.LinkColumn('funds:submissions:reviews:review', text=render_title, args=[A('submission_id'), A('pk')], orderable=True, verbose_name=_('Submission'), attrs={'td': {'data-title-tooltip': lambda record: record.submission.title, 'class': 'title js-title'}})
 
     class Meta:
         model = Review
@@ -497,7 +497,7 @@ class ReviewerLeaderboardDetailTable(tables.Table):
 
 
 class StaffAssignmentsTable(tables.Table):
-    full_name = tables.Column(linkify=render_reviewer_link, orderable=True, verbose_name="Staff", attrs={'td': {'class': 'title'}})
+    full_name = tables.Column(linkify=render_reviewer_link, orderable=True, verbose_name=_('Staff'), attrs={'td': {'class': 'title'}})
 
     class Meta:
         model = User

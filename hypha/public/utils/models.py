@@ -2,6 +2,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.decorators import method_decorator
+from django.utils.translation import gettext_lazy as _
 from wagtail.admin.edit_handlers import (
     FieldPanel,
     FieldRowPanel,
@@ -121,10 +122,10 @@ class ListingFields(models.Model):
         blank=True,
         on_delete=models.SET_NULL,
         related_name='+',
-        help_text="Choose the image you wish to be displayed when this page appears in listings"
+        help_text=_('Choose the image you wish to be displayed when this page appears in listings')
     )
-    listing_title = models.CharField(max_length=255, blank=True, help_text="Override the page title used when this page appears in listings")
-    listing_summary = models.CharField(max_length=255, blank=True, help_text="The text summary used when this page appears in listings. It's also used as the description for search engines if the 'Search description' field above is not defined.")
+    listing_title = models.CharField(max_length=255, blank=True, help_text=_('Override the page title used when this page appears in listings'))
+    listing_summary = models.CharField(max_length=255, blank=True, help_text=_("The text summary used when this page appears in listings. It's also used as the description for search engines if the 'Search description' field above is not defined."))
 
     class Meta:
         abstract = True
@@ -201,23 +202,23 @@ class SocialMediaSettings(BaseSetting):
     twitter_handle = models.CharField(
         max_length=255,
         blank=True,
-        help_text='Your Twitter username without the @, e.g. katyperry',
+        help_text=_('Your Twitter username without the @, e.g. katyperry'),
     )
     facebook_app_id = models.CharField(
         max_length=255,
         blank=True,
-        help_text='Your Facebook app ID.',
+        help_text=_('Your Facebook app ID.'),
     )
     default_sharing_text = models.CharField(
         max_length=255,
         blank=True,
-        help_text='Default sharing text to use if social text has not been set on a page.',
+        help_text=_('Default sharing text to use if social text has not been set on a page.'),
     )
     site_name = models.CharField(
         max_length=255,
         blank=True,
         default='hypha',
-        help_text='Site name, used by Open Graph.',
+        help_text=_('Site name, used by Open Graph.'),
     )
 
 
@@ -232,7 +233,7 @@ class SystemMessagesSettings(BaseSetting):
         blank=True,
         on_delete=models.SET_NULL,
         related_name='+',
-        help_text='Default site logo',
+        help_text=_('Default site logo'),
     )
 
     site_logo_mobile = models.ForeignKey(
@@ -241,19 +242,19 @@ class SystemMessagesSettings(BaseSetting):
         blank=True,
         on_delete=models.SET_NULL,
         related_name='+',
-        help_text='Mobil site logo (if not set default will be used)',
+        help_text=_('Mobil site logo (if not set default will be used)'),
     )
 
     site_logo_link = models.URLField(
         default='',
         blank=True,
-        help_text='Link for the site logo, e.g. "https://www.example.org/". If not set, defaults to page with slug set to "home".',
+        help_text=_('Link for the site logo, e.g. "https://www.example.org/". If not set, defaults to page with slug set to "home".'),
     )
 
     footer_content = models.TextField(
         "Footer content",
         default='<p>Configure this text in Wagtail admin -> Settings -> System settings.</p>',
-        help_text='This will be added to the footer, html tags is allowed.',
+        help_text=_('This will be added to the footer, html tags is allowed.'),
     )
 
     title_404 = models.CharField(
@@ -312,7 +313,7 @@ class BasePage(WagtailCacheMixin, SocialFields, ListingFields, Page):
 class BaseFunding(Orderable):
     value = models.PositiveIntegerField()
     year = models.PositiveIntegerField()
-    duration = models.PositiveIntegerField(help_text='In months')
+    duration = models.PositiveIntegerField(help_text=_('In months'))
     source = models.ForeignKey(
         'wagtailcore.Page',
         on_delete=models.PROTECT,
@@ -338,7 +339,7 @@ class FundingMixin(models.Model):
 
     You still need to include the content panel in the child class
     '''
-    content_panels = [InlinePanel('funding', label="Funding")]
+    content_panels = [InlinePanel('funding', label=_('Funding'))]
 
     class Meta:
         abstract = True

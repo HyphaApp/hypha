@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import models
 from django.utils.deconstruct import deconstructible
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
 from pagedown.widgets import PagedownWidget
 from wagtail.admin.edit_handlers import (
@@ -54,7 +54,7 @@ class BaseApplicationPage(BasePage):
     content_panels = BasePage.content_panels + [
         FieldPanel('introduction', widget=PagedownWidget()),
         StreamFieldPanel('body'),
-        InlinePanel('related_pages', label="Related pages"),
+        InlinePanel('related_pages', label=_('Related pages')),
     ]
 
     def get_template(self, request, *args, **kwargs):
@@ -148,7 +148,7 @@ class LabPage(BasePage):
         on_delete=models.SET_NULL,
         related_name='lab_public',
     )
-    lab_link = models.CharField(blank=True, max_length=255, verbose_name='External link', validators=[MailToAndURLValidator()])
+    lab_link = models.CharField(blank=True, max_length=255, verbose_name=_('External link'), validators=[MailToAndURLValidator()])
     link_text = models.CharField(max_length=255, help_text=_('Text to display on the button for external links'), blank=True)
     body = StreamField(LabBlock())
 
@@ -168,7 +168,7 @@ class LabPage(BasePage):
             ]),
         ], heading=_('Link for lab application')),
         StreamFieldPanel('body'),
-        InlinePanel('related_pages', label="Related pages"),
+        InlinePanel('related_pages', label=_('Related pages')),
     ]
 
     def get_context(self, request):
