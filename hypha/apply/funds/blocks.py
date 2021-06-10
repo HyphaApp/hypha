@@ -1,6 +1,7 @@
 import json
 
 from django import forms
+from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from wagtail.core import blocks
 
@@ -41,7 +42,7 @@ class ValueBlock(ApplicationSingleIncludeFieldBlock):
         label = _('Requested amount')
 
     def prepare_data(self, value, data, serialize):
-        return '$' + str(data)
+        return settings.CURRENCY_SYMBOL + str(data)
 
 
 class EmailBlock(ApplicationMustIncludeFieldBlock):

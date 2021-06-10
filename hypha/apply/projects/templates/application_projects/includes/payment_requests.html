@@ -22,7 +22,7 @@
             <tbody>
                 {% for payment_request in object.payment_requests.not_rejected %}
                 <tr>
-                    <td><span class="data-block__mobile-label">Amount: </span>${{ payment_request.value|intcomma }}</td>
+                    <td><span class="data-block__mobile-label">Amount: </span>{{ CURRENCY_SYMBOL }}{{ payment_request.value|intcomma }}</td>
                     <td><span class="data-block__mobile-label">Status: </span>{{ payment_request.get_status_display }}</td>
                     <td><span class="data-block__mobile-label">From: </span>{{ payment_request.date_from.date }}</td>
                     <td><span class="data-block__mobile-label">To: </span>{{ payment_request.date_to.date }}</td>
@@ -67,7 +67,7 @@
                 <tbody>
                     {% for payment_request in object.payment_requests.rejected %}
                     <tr>
-                        <td><span class="data-block__mobile-label">Amount: </span>${{ payment_request.value }}</td>
+                        <td><span class="data-block__mobile-label">Amount: </span>{{ CURRENCY_SYMBOL }}{{ payment_request.value }}</td>
                         <td><span class="data-block__mobile-label">Status: </span>{{ payment_request.get_status_display }}</td>
                         <td><a href="{{ payment_request.get_absolute_url }}">View</a></td>
                     </tr>
@@ -85,7 +85,7 @@
         <p>Current status: <b>{{ form.instance.get_status_display }}</b></p>
 
         {% if not form.instance.has_changes_requested %}
-        <p>Requested value: <b>${{ form.instance.requested_value }}</b></p>
+        <p>Requested value: <b>{{ CURRENCY_SYMBOL }}{{ form.instance.requested_value }}</b></p>
         {% endif %}
 
         {% url 'apply:projects:change-payment-status' pk=object.pk payment_request_id=form.instance.pk as change_payment_status_action %}

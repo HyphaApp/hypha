@@ -1,6 +1,7 @@
 import functools
 
 from django import forms
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
@@ -50,14 +51,14 @@ class ApproveContractForm(forms.Form):
 
     def clean_id(self):
         if self.has_changed():
-            raise forms.ValidationError('Something changed before your approval please re-review')
+            raise forms.ValidationError(_('Something changed before your approval please re-review'))
 
     def clean(self):
         if not self.instance:
-            raise forms.ValidationError('The contract you were trying to approve has already been approved')
+            raise forms.ValidationError(_('The contract you were trying to approve has already been approved'))
 
         if not self.instance.is_signed:
-            raise forms.ValidationError('You can only approve a signed contract')
+            raise forms.ValidationError(_('You can only approve a signed contract'))
 
         super().clean()
 
@@ -96,7 +97,7 @@ class ChangePaymentRequestStatusForm(forms.ModelForm):
         paid_value = cleaned_data.get('paid_value')
 
         if paid_value and status != PAID:
-            self.add_error('paid_value', 'You can only set a value when moving to the Paid status.')
+            self.add_error('paid_value', _('You can only set a value when moving to the Paid status.'))
         return cleaned_data
 
 
@@ -134,7 +135,7 @@ class CreateApprovalForm(forms.ModelForm):
     def clean_by(self):
         by = self.cleaned_data['by']
         if by != self.user:
-            raise forms.ValidationError('Cannot approve for a different user')
+            raise forms.ValidationError(_('Cannot approve for a different user'))
         return by
 
 
@@ -209,7 +210,7 @@ class PaymentRequestBaseForm(forms.ModelForm):
             'date_to': forms.DateInput,
         }
         labels = {
-            'requested_value': 'Requested Value ($)'
+            'requested_value': _('Requested Value ({currency})').format(currency=settings.CURRENCY_SYMBOL.strip())
         }
 
     def __init__(self, user=None, *args, **kwargs):
@@ -222,7 +223,7 @@ class PaymentRequestBaseForm(forms.ModelForm):
         date_to = cleaned_data['date_to']
 
         if date_from > date_to:
-            self.add_error('date_from', 'Date From must be before Date To')
+            self.add_error('date_from', _('Date From must be before Date To'))
 
         return cleaned_data
 
@@ -302,7 +303,7 @@ class SelectDocumentForm(forms.ModelForm):
                 new_file = ContentFile(file.read())
                 new_file.name = file.filename
                 return new_file
-        raise forms.ValidationError("File not found on submission")
+        raise forms.ValidationError(_('File not found on submission'))
 
     @transaction.atomic()
     def save(self, *args, **kwargs):
@@ -320,10 +321,10 @@ class SetPendingForm(forms.ModelForm):
 
     def clean(self):
         if self.instance.status != COMMITTED:
-            raise forms.ValidationError('A Project can only be sent for Approval when Committed.')
+            raise forms.ValidationError(_('A Project can only be sent for Approval when Committed.'))
 
         if self.instance.is_locked:
-            raise forms.ValidationError('A Project can only be sent for Approval once')
+            raise forms.ValidationError(_('A Project can only be sent for Approval once'))
 
         super().clean()
 
@@ -366,7 +367,7 @@ class UpdateProjectLeadForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         lead_field = self.fields['lead']
-        lead_field.label = f'Update lead from {self.instance.lead} to'
+        lead_field.label = _('Update lead from {lead} to').format(lead=self.instance.lead)
 
         qwargs = Q(groups__name=STAFF_GROUP_NAME) | Q(is_superuser=True)
         lead_field.queryset = (lead_field.queryset.exclude(pk=self.instance.lead_id)
@@ -412,7 +413,7 @@ class ReportEditForm(FileFormMixin, forms.ModelForm):
         public = cleaned_data['public_content']
         private = cleaned_data['private_content']
         if not private and not public:
-            missing_content = 'Must include either public or private content when submitting a report.'
+            missing_content = _('Must include either public or private content when submitting a report.')
             self.add_error('public_content', missing_content)
             self.add_error('private_content', missing_content)
         return cleaned_data

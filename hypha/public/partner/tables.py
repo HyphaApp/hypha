@@ -1,6 +1,7 @@
 import django_filters as filters
 import django_tables2 as tables
 from django import forms
+from django.conf import settings
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
@@ -36,14 +37,14 @@ class InvestmentFilter(filters.FilterSet):
     )
 
     AMOUNT_COMMITTED_CHOICES = (
-        ('0_250k', '$0 > $250k'),
-        ('250k_1m', '$250k > $1m'),
-        ('1m+', '$1m+'),
+        ('0_250k', '0 > 250k'),
+        ('250k_1m', '250k > 1m'),
+        ('1m+', '1m+'),
     )
 
     amount_committed = Select2MultipleChoiceFilter(
         choices=AMOUNT_COMMITTED_CHOICES,
-        label=_('Amount Committed(US$)'),
+        label=_('Amount Committed ({currency})').format(currency=settings.CURRENCY_SYMBOL.strip()),
         method='filter_amount_committed'
     )
     partner__status = Select2MultipleChoiceFilter(
@@ -94,7 +95,7 @@ class InvestmentTable(tables.Table):
     partner = tables.Column(verbose_name=_('Partner'), linkify=True, attrs={'td': {'data-title-tooltip': lambda record: record.partner, 'class': 'js-title title'}})
     year = tables.Column(verbose_name=_('Year'))
     status = tables.Column(accessor='partner__status', verbose_name=_('Status'))
-    amount_committed = tables.Column(verbose_name=_('Amount committed (US$)'))
+    amount_committed = tables.Column(verbose_name=_('Amount Committed'))
     description = tables.Column(visible=False)
 
     class Meta:

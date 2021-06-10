@@ -18,7 +18,7 @@
             <p class="list list--contact"><span>{{ key }}</span><br>{{ value|join:', ' }}</p><br>
         {% endfor %}
 
-        <p class="list list--contact"><span>Total Investments: </span>US$ {{ total_investments }}</p>
+        <p class="list list--contact"><span>Total Investments: </span>{{ CURRENCY_SYMBOL }}{{ total_investments }}</p>
     </div>
 
     <div>

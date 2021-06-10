@@ -1,6 +1,7 @@
 import textwrap
 
 import django_tables2 as tables
+from django.conf import settings
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.db.models import F, Sum
 from django.utils.safestring import mark_safe
@@ -19,7 +20,7 @@ class BasePaymentRequestsTable(tables.Table):
     requested_at = tables.DateColumn(verbose_name=_('Submitted'))
 
     def render_value(self, value):
-        return f'${value}'
+        return f'{settings.CURRENCY_SYMBOL}{value}'
 
 
 class PaymentRequestsDashboardTable(BasePaymentRequestsTable):
@@ -86,7 +87,7 @@ class BaseProjectsTable(tables.Table):
         return qs, True
 
     def render_fund_allocation(self, record):
-        return f'${intcomma(record.amount_paid)} / ${intcomma(record.value)}'
+        return f'{settings.CURRENCY_SYMBOL}{intcomma(record.amount_paid)} / {settings.CURRENCY_SYMBOL}{intcomma(record.value)}'
 
     def render_reporting(self, record):
         if not hasattr(record, 'report_config'):

@@ -20,7 +20,7 @@
             <p class="card__text"><b>Name of Vendor:</b> {{ object.project.contact_legal_name }}</p>
             <p class="card__text"><b>Invoice Number:</b> {{ object.pk }}</p>
             <p class="card__text"><b>Period of Performance:</b> {{ object.date_from.date }} | {{ object.date_to.date }}</p>
-            <p class="card__text"><b>Total:</b> ${{ object.value|intcomma }}</p>
+            <p class="card__text"><b>Total:</b> {{ CURRENCY_SYMBOL }}{{ object.value|intcomma }}</p>
         </div>
 
         <div class="card card--solid">
