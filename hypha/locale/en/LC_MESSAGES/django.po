@@ -1,0 +1,1525 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-06-10 06:21+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: hypha/apply/api/v1/filters.py:31 hypha/apply/funds/tables.py:416
+#: hypha/apply/users/templates/wagtailusers/users/list.html:46
+msgid "Active"
+msgstr ""
+
+#: hypha/apply/api/v1/filters.py:32
+msgid "Submit date"
+msgstr ""
+
+#: hypha/apply/api/v1/filters.py:34
+msgid "fund"
+msgstr ""
+
+#: hypha/apply/api/v1/filters.py:40
+msgid "No Screening"
+msgstr ""
+
+#: hypha/apply/api/v1/filters.py:51 hypha/apply/funds/tables.py:262
+msgid "Category"
+msgstr ""
+
+#: hypha/apply/categories/blocks.py:34 hypha/apply/stream_forms/blocks.py:36
+msgid "Label"
+msgstr ""
+
+#: hypha/apply/categories/blocks.py:36
+msgid "Leave blank to use the default Category label"
+msgstr ""
+
+#: hypha/apply/categories/blocks.py:40
+msgid "Leave blank to use the default Category help text"
+msgstr ""
+
+#: hypha/apply/categories/blocks.py:43
+msgid "Multi select"
+msgstr ""
+
+#: hypha/apply/categories/models.py:32 hypha/apply/categories/models.py:60
+msgid "Make available to filter on dashboard"
+msgstr ""
+
+#: hypha/apply/categories/models.py:40 hypha/apply/categories/models.py:85
+msgid "Options"
+msgstr ""
+
+#: hypha/apply/categories/models.py:53
+msgid "Keep the name short, ideally one word."
+msgstr ""
+
+#: hypha/apply/categories/models.py:56
+msgid "Archived"
+msgstr ""
+
+#: hypha/apply/categories/models.py:57
+msgid "Archived terms can be viewed but not set on content."
+msgstr ""
+
+#: hypha/apply/categories/models.py:63
+msgid "Make available to applicants"
+msgstr ""
+
+#: hypha/apply/determinations/blocks.py:59
+msgid "Send Notice"
+msgstr ""
+
+#: hypha/apply/determinations/blocks.py:63
+#: hypha/apply/determinations/blocks.py:64
+#: hypha/apply/determinations/blocks.py:65
+#: hypha/apply/determinations/blocks.py:66
+#: hypha/apply/determinations/blocks.py:67
+#: hypha/apply/determinations/blocks.py:68 hypha/apply/funds/blocks.py:183
+#: hypha/apply/review/blocks.py:160 hypha/apply/review/blocks.py:161
+#: hypha/apply/review/blocks.py:162 hypha/apply/review/blocks.py:163
+#: hypha/apply/review/blocks.py:164 hypha/apply/review/blocks.py:165
+#: hypha/apply/review/blocks.py:166 hypha/apply/stream_forms/blocks.py:467
+#: hypha/apply/stream_forms/blocks.py:468
+#: hypha/apply/stream_forms/blocks.py:469
+#: hypha/apply/stream_forms/blocks.py:470
+#: hypha/apply/stream_forms/blocks.py:471
+#: hypha/apply/stream_forms/blocks.py:472
+#: hypha/apply/stream_forms/blocks.py:473
+#: hypha/apply/stream_forms/blocks.py:474
+#: hypha/apply/stream_forms/blocks.py:475
+#: hypha/apply/stream_forms/blocks.py:476
+#: hypha/apply/stream_forms/blocks.py:477
+#: hypha/apply/stream_forms/blocks.py:478
+#: hypha/apply/stream_forms/blocks.py:479
+#: hypha/apply/stream_forms/blocks.py:480 hypha/apply/utils/blocks.py:66
+#: hypha/apply/utils/blocks.py:67
+msgid "Fields"
+msgstr ""
+
+#: hypha/apply/determinations/blocks.py:65
+msgid "Section text/header"
+msgstr ""
+
+#: hypha/apply/determinations/forms.py:171
+#: hypha/apply/determinations/forms.py:252
+#: hypha/apply/determinations/forms.py:507
+#: hypha/apply/determinations/models.py:98
+msgid "Determination"
+msgstr ""
+
+#: hypha/apply/determinations/forms.py:177
+#: hypha/apply/determinations/forms.py:258
+#: hypha/apply/determinations/models.py:99
+msgid "Determination message"
+msgstr ""
+
+#: hypha/apply/determinations/forms.py:184
+msgid "Goals and principles"
+msgstr ""
+
+#: hypha/apply/determinations/forms.py:204
+msgid "Technical merit"
+msgstr ""
+
+#: hypha/apply/determinations/forms.py:219
+msgid "Reasonable, realistic and sustainable"
+msgstr ""
+
+#: hypha/apply/determinations/forms.py:233
+msgid "Other comments"
+msgstr ""
+
+#: hypha/apply/determinations/forms.py:266
+msgid "Positive aspects"
+msgstr ""
+
+#: hypha/apply/determinations/forms.py:272
+msgid "Concerns"
+msgstr ""
+
+#: hypha/apply/determinations/forms.py:278
+msgid "Items that must be addressed"
+msgstr ""
+
+#: hypha/apply/determinations/forms.py:284
+msgid "Project overview questions and comments"
+msgstr ""
+
+#: hypha/apply/determinations/forms.py:287
+msgid "Objectives questions and comments"
+msgstr ""
+
+#: hypha/apply/determinations/forms.py:290
+msgid "Methods and strategy questions and comments"
+msgstr ""
+
+#: hypha/apply/determinations/forms.py:293
+msgid "Technical feasibility questions and comments"
+msgstr ""
+
+#: hypha/apply/determinations/forms.py:296
+msgid "Alternative analysis - \"red teaming\" questions and comments"
+msgstr ""
+
+#: hypha/apply/determinations/forms.py:299
+msgid "Usability questions and comments"
+msgstr ""
+
+#: hypha/apply/determinations/forms.py:302
+msgid "Sustainability questions and comments"
+msgstr ""
+
+#: hypha/apply/determinations/forms.py:305
+msgid "Collaboration questions and comments"
+msgstr ""
+
+#: hypha/apply/determinations/forms.py:308
+msgid "Cost realism questions and comments"
+msgstr ""
+
+#: hypha/apply/determinations/forms.py:311
+msgid "Qualifications questions and comments"
+msgstr ""
+
+#: hypha/apply/determinations/forms.py:314
+msgid "Evaluation questions and comments"
+msgstr ""
+
+#: hypha/apply/determinations/forms.py:318
+msgid "Rationale and appropriateness questions and comments"
+msgstr ""
+
+#: hypha/apply/determinations/forms.py:356
+#: hypha/apply/determinations/views.py:356
+msgid "Proposal Form"
+msgstr ""
+
+#: hypha/apply/determinations/models.py:106 hypha/apply/review/models.py:162
+msgid "Draft"
+msgstr ""
+
+#: hypha/apply/determinations/models.py:107 hypha/apply/review/models.py:163
+msgid "Creation time"
+msgstr ""
+
+#: hypha/apply/determinations/models.py:108 hypha/apply/review/models.py:164
+msgid "Update time"
+msgstr ""
+
+#: hypha/apply/determinations/models.py:109
+msgid "Send message to applicant"
+msgstr ""
+
+#: hypha/apply/determinations/models.py:225
+msgid "Request"
+msgstr ""
+
+#: hypha/apply/determinations/models.py:226
+msgid "Concept note"
+msgstr ""
+
+#: hypha/apply/determinations/models.py:227
+msgid "Proposal"
+msgstr ""
+
+#: hypha/apply/determinations/models.py:347
+msgid "Concept form"
+msgstr ""
+
+#: hypha/apply/determinations/models.py:348
+msgid "Proposal form"
+msgstr ""
+
+#: hypha/apply/determinations/options.py:10
+msgid "Dismissed"
+msgstr ""
+
+#: hypha/apply/determinations/options.py:11
+msgid "More information requested"
+msgstr ""
+
+#: hypha/apply/determinations/options.py:12
+msgid "Approved"
+msgstr ""
+
+#: hypha/apply/determinations/views.py:249
+#, python-brace-format
+msgid ""
+"A determination already exists for the following submissions and they have "
+"been excluded: {submissions}"
+msgstr ""
+
+#: hypha/apply/determinations/views.py:285
+msgid "You do not have permission to create that determination."
+msgstr ""
+
+#: hypha/apply/determinations/views.py:288
+msgid "A final determination has already been submitted."
+msgstr ""
+
+#: hypha/apply/determinations/views.py:296
+msgid "There is a draft determination you do not have permission to edit."
+msgstr ""
+
+#: hypha/apply/determinations/views.py:358
+msgid "Select the proposal form to use for proposal stage."
+msgstr ""
+
+#: hypha/apply/determinations/views.py:435
+#, python-brace-format
+msgid ""
+"A determination of \"{current}\" exists but you tried to progress as "
+"\"{target}\""
+msgstr ""
+
+#: hypha/apply/funds/admin_helpers.py:26
+msgid "Fund or RFP"
+msgstr ""
+
+#: hypha/apply/funds/admin_helpers.py:67
+msgid "Funds & RFP"
+msgstr ""
+
+#: hypha/apply/funds/admin_helpers.py:68
+msgid "Rounds and Sealed Rounds"
+msgstr ""
+
+#: hypha/apply/funds/admin_helpers.py:69 hypha/public/home/models.py:132
+#: hypha/public/home/models.py:137
+msgid "Labs"
+msgstr ""
+
+#: hypha/apply/funds/admin_helpers.py:86 hypha/apply/funds/tables.py:417
+msgid "Open"
+msgstr ""
+
+#: hypha/apply/funds/admin_helpers.py:87
+msgid "Closed"
+msgstr ""
+
+#: hypha/apply/funds/admin_views.py:65
+#, python-brace-format
+msgid "Page '{0}' and {1} subpages copied."
+msgstr ""
+
+#: hypha/apply/funds/admin_views.py:70
+#, python-brace-format
+msgid "Page '{0}' copied."
+msgstr ""
+
+#: hypha/apply/funds/blocks.py:31
+msgid "Application title"
+msgstr ""
+
+#: hypha/apply/funds/blocks.py:41
+msgid "Requested amount"
+msgstr ""
+
+#: hypha/apply/funds/blocks.py:64 hypha/apply/projects/models/project.py:137
+msgid "Address"
+msgstr ""
+
+#: hypha/apply/funds/blocks.py:182 hypha/apply/stream_forms/blocks.py:465
+#: hypha/apply/stream_forms/blocks.py:466
+#: hypha/apply/stream_forms/blocks.py:481
+#: hypha/apply/stream_forms/blocks.py:482 hypha/apply/utils/blocks.py:74
+msgid "Custom"
+msgstr ""
+
+#: hypha/apply/funds/forms.py:59 hypha/apply/funds/forms.py:78
+msgid "Take action"
+msgstr ""
+
+#: hypha/apply/funds/forms.py:143 hypha/apply/projects/filters.py:28
+#: hypha/apply/projects/filters.py:42 hypha/apply/projects/tables.py:45
+msgid "Lead"
+msgstr ""
+
+#: hypha/apply/funds/forms.py:195 hypha/apply/funds/tables.py:259
+#: hypha/apply/funds/tables.py:443
+msgid "Reviewers"
+msgstr ""
+
+#: hypha/apply/funds/forms.py:259 hypha/apply/funds/forms.py:330
+msgid "Users cannot be assigned to multiple roles."
+msgstr ""
+
+#: hypha/apply/funds/forms.py:374
+msgid "Partners"
+msgstr ""
+
+#: hypha/apply/funds/forms.py:435
+msgid "Meta terms"
+msgstr ""
+
+#: hypha/apply/funds/forms.py:438
+msgid "Meta terms are hierarchical in nature."
+msgstr ""
+
+#: hypha/apply/funds/models/__init__.py:17 hypha/apply/funds/tables.py:74
+#: hypha/apply/projects/tables.py:44 hypha/apply/projects/tables.py:75
+msgid "Fund"
+msgstr ""
+
+#: hypha/apply/funds/models/__init__.py:24
+msgid "RFP"
+msgstr ""
+
+#: hypha/apply/funds/models/__init__.py:41
+msgid "Lab"
+msgstr ""
+
+#: hypha/apply/funds/models/applications.py:82
+#: hypha/apply/funds/models/applications.py:418
+msgid "Link to the apply guide."
+msgstr ""
+
+#: hypha/apply/funds/models/applications.py:84
+msgid ""
+"The slack #channel for notifications. If left empty, notifications will go "
+"to the default channel."
+msgstr ""
+
+#: hypha/apply/funds/models/applications.py:126
+#: hypha/apply/funds/models/applications.py:196
+#: hypha/apply/funds/models/applications.py:434
+msgid "Content"
+msgstr ""
+
+#: hypha/apply/funds/models/applications.py:128
+#: hypha/apply/funds/models/applications.py:197
+#: hypha/apply/funds/models/applications.py:436
+msgid "Promote"
+msgstr ""
+
+#: hypha/apply/funds/models/applications.py:175
+msgid "When no end date is provided the round will remain open indefinitely."
+msgstr ""
+
+#: hypha/apply/funds/models/applications.py:186
+msgid "Dates"
+msgstr ""
+
+#: hypha/apply/funds/models/applications.py:188
+#: hypha/apply/funds/models/utils.py:52
+msgid "Workflow"
+msgstr ""
+
+#: hypha/apply/funds/models/applications.py:188
+#: hypha/apply/funds/models/applications.py:190
+#: hypha/apply/funds/models/applications.py:191
+#: hypha/apply/funds/models/applications.py:192
+msgid "Copied from the fund."
+msgstr ""
+
+#: hypha/apply/funds/models/applications.py:420
+msgid "The slack #channel for notifications."
+msgstr ""
+
+#: hypha/apply/funds/models/reviewer_role.py:20
+msgid "The order this role should appear in the Update Reviewers form."
+msgstr ""
+
+#: hypha/apply/funds/models/reviewer_role.py:63
+msgid "Submissions for which reviewers should have access to"
+msgstr ""
+
+#: hypha/apply/funds/models/reviewer_role.py:69
+msgid "Submissions states for which reviewers should have access to"
+msgstr ""
+
+#: hypha/apply/funds/models/reviewer_role.py:75
+msgid "Submissions outcomes for which reviewers should have access to"
+msgstr ""
+
+#: hypha/apply/funds/models/reviewer_role.py:79
+msgid "Submissions for which reviewer is assigned to"
+msgstr ""
+
+#: hypha/apply/funds/models/reviewer_role.py:83
+msgid "Use the above configured variables to filter out submissions"
+msgstr ""
+
+#: hypha/apply/funds/models/screening.py:10
+msgid "Yes/No"
+msgstr ""
+
+#: hypha/apply/funds/models/screening.py:11
+msgid "Tick mark for Yes otherwise No."
+msgstr ""
+
+#: hypha/apply/funds/models/screening.py:14
+msgid "Default Yes/No"
+msgstr ""
+
+#: hypha/apply/funds/models/screening.py:15
+msgid "Only one Yes and No screening status can be set as default."
+msgstr ""
+
+#: hypha/apply/funds/models/utils.py:118
+msgid "Forms"
+msgstr ""
+
+#: hypha/apply/funds/models/utils.py:119
+msgid "Review Forms"
+msgstr ""
+
+#: hypha/apply/funds/models/utils.py:120
+msgid "Determination Forms"
+msgstr ""
+
+#: hypha/apply/funds/models/utils.py:133
+msgid "Additional text for the application confirmation message."
+msgstr ""
+
+#: hypha/apply/funds/models/utils.py:149 hypha/apply/funds/models/utils.py:153
+msgid "Confirmation email"
+msgstr ""
+
+#: hypha/apply/funds/tables.py:71 hypha/apply/projects/tables.py:19
+msgid "Submitted"
+msgstr ""
+
+#: hypha/apply/funds/tables.py:72 hypha/apply/projects/filters.py:27
+#: hypha/apply/projects/filters.py:43 hypha/apply/projects/tables.py:74
+#: hypha/apply/users/templates/wagtailusers/users/list.html:23
+#: hypha/public/partner/tables.py:50 hypha/public/partner/tables.py:96
+msgid "Status"
+msgstr ""
+
+#: hypha/apply/funds/tables.py:73
+msgid "Type"
+msgstr ""
+
+#: hypha/apply/funds/tables.py:75
+msgid "Comments"
+msgstr ""
+
+#: hypha/apply/funds/tables.py:76
+msgid "Last updated"
+msgstr ""
+
+#: hypha/apply/funds/tables.py:89
+msgid "No submissions available"
+msgstr ""
+
+#: hypha/apply/funds/tables.py:135 hypha/apply/funds/tables.py:260
+msgid "Screening"
+msgstr ""
+
+#: hypha/apply/funds/tables.py:169
+#: hypha/apply/users/templates/wagtailusers/users/list.html:21
+msgid "Role"
+msgstr ""
+
+#: hypha/apply/funds/tables.py:244
+msgid "Statuses"
+msgstr ""
+
+#: hypha/apply/funds/tables.py:256 hypha/apply/funds/tables.py:321
+#: hypha/apply/funds/tables.py:453
+msgid "Rounds"
+msgstr ""
+
+#: hypha/apply/funds/tables.py:257 hypha/apply/funds/tables.py:322
+#: hypha/apply/funds/tables.py:414 hypha/apply/funds/tables.py:448
+#: hypha/apply/projects/filters.py:26 hypha/apply/projects/filters.py:41
+#: hypha/public/home/models.py:125
+msgid "Funds"
+msgstr ""
+
+#: hypha/apply/funds/tables.py:258 hypha/apply/funds/tables.py:415
+msgid "Leads"
+msgstr ""
+
+#: hypha/apply/funds/tables.py:260
+msgid "No Status"
+msgstr ""
+
+#: hypha/apply/funds/tables.py:265
+msgid "Terms"
+msgstr ""
+
+#: hypha/apply/funds/tables.py:348
+#: hypha/apply/funds/templates/funds/includes/round-block-listing.html:20
+msgid "Determined"
+msgstr ""
+
+#: hypha/apply/funds/tables.py:468
+msgid "Reviewer"
+msgstr ""
+
+#: hypha/apply/funds/tables.py:481 hypha/apply/funds/tables.py:496
+msgid "No reviews available"
+msgstr ""
+
+#: hypha/apply/funds/tables.py:485
+msgid "Submission"
+msgstr ""
+
+#: hypha/apply/funds/tables.py:500
+msgid "Staff"
+msgstr ""
+
+#: hypha/apply/funds/tables.py:508
+msgid "No staff available"
+msgstr ""
+
+#: hypha/apply/funds/templates/funds/admin/parent_chooser.html:11
+msgid "Choose a Fund"
+msgstr ""
+
+#: hypha/apply/funds/templates/funds/admin/parent_chooser.html:12
+msgid ""
+"Rounds must be associated with a Fund or RFP. What are you creating a new "
+"Round for?"
+msgstr ""
+
+#: hypha/apply/funds/templates/funds/admin/parent_chooser.html:20
+msgid "Continue"
+msgstr ""
+
+#: hypha/apply/funds/templates/funds/application_base.html:32
+#, python-format
+msgid ""
+"Sorry this %(page|verbose_name)s is not accepting applications at the moment"
+msgstr ""
+
+#: hypha/apply/funds/templates/funds/application_base.html:36
+#: hypha/public/funds/templates/public_funds/includes/fund_apply_cta.html:20
+msgid "Application guide"
+msgstr ""
+
+#: hypha/apply/funds/templates/funds/includes/round-block-listing.html:23
+msgid "View"
+msgstr ""
+
+#: hypha/apply/funds/templates/funds/includes/round-block-listing.html:27
+msgid "Show all"
+msgstr ""
+
+#: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:8
+msgid "Show"
+msgstr ""
+
+#: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:8
+msgid "items"
+msgstr ""
+
+#: hypha/apply/funds/templates/funds/tables/table.html:128
+#: hypha/public/partner/templates/partner/table.html:42
+msgid "previous"
+msgstr ""
+
+#: hypha/apply/funds/templates/funds/tables/table.html:142
+#: hypha/public/partner/templates/partner/table.html:56
+msgid "next"
+msgstr ""
+
+#: hypha/apply/funds/views.py:230 hypha/apply/funds/views.py:262
+#: hypha/apply/funds/views.py:283 hypha/apply/projects/views/project.py:315
+msgid "Sorry something went wrong"
+msgstr ""
+
+#: hypha/apply/funds/views.py:326
+msgid "Failed to update: "
+msgstr ""
+
+#: hypha/apply/funds/views.py:499 hypha/apply/funds/views.py:502
+msgid "No Round or Lab found matching the query"
+msgstr ""
+
+#: hypha/apply/funds/views.py:525
+msgid "No statuses match the requested value"
+msgstr ""
+
+#: hypha/apply/funds/views.py:1023
+msgid "Submission saved successfully"
+msgstr ""
+
+#: hypha/apply/middleware.py:18
+msgid ""
+"The object you are trying to delete is used somewhere. Please remove any "
+"usages and try again!."
+msgstr ""
+
+#: hypha/apply/projects/filters.py:83
+msgid "Reporting Period"
+msgstr ""
+
+#: hypha/apply/projects/forms.py:251
+msgid "Receipts"
+msgstr ""
+
+#: hypha/apply/projects/forms.py:281
+msgid "Document"
+msgstr ""
+
+#: hypha/apply/projects/forms.py:379
+msgid "This section of the report will be shared with the broader community."
+msgstr ""
+
+#: hypha/apply/projects/forms.py:382
+msgid "This section of the report will be shared with staff only."
+msgstr ""
+
+#: hypha/apply/projects/forms.py:388
+msgid "Files"
+msgstr ""
+
+#: hypha/apply/projects/forms.py:463
+msgid "Starting on:"
+msgstr ""
+
+#: hypha/apply/projects/forms.py:490
+msgid "Cannot start a schedule before the current reporting period"
+msgstr ""
+
+#: hypha/apply/projects/forms.py:496
+msgid "Cannot start a schedule in the past"
+msgstr ""
+
+#: hypha/apply/projects/forms.py:502
+msgid "Cannot start a schedule beyond the end date"
+msgstr ""
+
+#: hypha/apply/projects/models/project.py:135
+msgid "Person or Organisation name"
+msgstr ""
+
+#: hypha/apply/projects/models/project.py:136
+#: hypha/apply/stream_forms/blocks.py:119
+msgid "Email"
+msgstr ""
+
+#: hypha/apply/projects/models/project.py:138
+msgid "Phone"
+msgstr ""
+
+#: hypha/apply/projects/models/project.py:145
+msgid "Proposed Start Date"
+msgstr ""
+
+#: hypha/apply/projects/models/project.py:146
+msgid "Proposed End Date"
+msgstr ""
+
+#: hypha/apply/projects/models/project.py:253
+msgid "Proposed End Date must be after Proposed Start Date"
+msgstr ""
+
+#: hypha/apply/projects/tables.py:26
+msgid "Period Start"
+msgstr ""
+
+#: hypha/apply/projects/tables.py:27
+msgid "Period End"
+msgstr ""
+
+#: hypha/apply/projects/tables.py:76
+msgid "Reporting"
+msgstr ""
+
+#: hypha/apply/projects/tables.py:78
+msgid "End Date"
+msgstr ""
+
+#: hypha/apply/projects/tables.py:79
+msgid "Fund Allocation"
+msgstr ""
+
+#: hypha/apply/projects/views/project.py:584
+#: hypha/apply/projects/views/project.py:631
+msgid "You are not allowed to edit the project at this time"
+msgstr ""
+
+#: hypha/apply/review/blocks.py:34
+msgid "Score"
+msgstr ""
+
+#: hypha/apply/review/blocks.py:162
+msgid "Paragraph"
+msgstr ""
+
+#: hypha/apply/review/models.py:160
+msgid "Recommendation"
+msgstr ""
+
+#: hypha/apply/review/models.py:165
+msgid "Visibility"
+msgstr ""
+
+#: hypha/apply/stream_forms/blocks.py:37
+msgid "Help text"
+msgstr ""
+
+#: hypha/apply/stream_forms/blocks.py:38
+msgid "Help link"
+msgstr ""
+
+#: hypha/apply/stream_forms/blocks.py:115
+#: hypha/apply/stream_forms/blocks.py:216
+msgid "Required"
+msgstr ""
+
+#: hypha/apply/stream_forms/blocks.py:120
+msgid "URL"
+msgstr ""
+
+#: hypha/apply/stream_forms/blocks.py:125
+msgid "Format"
+msgstr ""
+
+#: hypha/apply/stream_forms/blocks.py:126
+#: hypha/apply/stream_forms/blocks.py:155
+#: hypha/apply/stream_forms/blocks.py:169
+msgid "Default value"
+msgstr ""
+
+#: hypha/apply/stream_forms/blocks.py:129
+msgid "Text field (single line)"
+msgstr ""
+
+#: hypha/apply/stream_forms/blocks.py:147
+msgid "Max number of inputs"
+msgstr ""
+
+#: hypha/apply/stream_forms/blocks.py:148
+msgid "Add new item"
+msgstr ""
+
+#: hypha/apply/stream_forms/blocks.py:151
+msgid "Text field (single line) (multiple inputs)"
+msgstr ""
+
+#: hypha/apply/stream_forms/blocks.py:156
+msgid "Word limit"
+msgstr ""
+
+#: hypha/apply/stream_forms/blocks.py:161
+msgid "Text field (multi line)"
+msgstr ""
+
+#: hypha/apply/stream_forms/blocks.py:174
+msgid "Number field"
+msgstr ""
+
+#: hypha/apply/stream_forms/blocks.py:186
+msgid "Checkbox field"
+msgstr ""
+
+#: hypha/apply/stream_forms/blocks.py:197
+#: hypha/apply/stream_forms/blocks.py:218
+msgid "Choice"
+msgstr ""
+
+#: hypha/apply/stream_forms/blocks.py:203
+msgid "Radio buttons"
+msgstr ""
+
+#: hypha/apply/stream_forms/blocks.py:230
+msgid "Group fields"
+msgstr ""
+
+#: hypha/apply/stream_forms/blocks.py:264
+msgid "Dropdown field"
+msgstr ""
+
+#: hypha/apply/stream_forms/blocks.py:274
+msgid "Checkbox"
+msgstr ""
+
+#: hypha/apply/stream_forms/blocks.py:280
+msgid "Multiple checkboxes field"
+msgstr ""
+
+#: hypha/apply/stream_forms/blocks.py:320
+msgid "Date field"
+msgstr ""
+
+#: hypha/apply/stream_forms/blocks.py:342
+msgid "Time field"
+msgstr ""
+
+#: hypha/apply/stream_forms/blocks.py:375
+msgid "Date+time field"
+msgstr ""
+
+#: hypha/apply/stream_forms/blocks.py:407
+msgid "Image field"
+msgstr ""
+
+#: hypha/apply/stream_forms/blocks.py:419
+msgid "File field"
+msgstr ""
+
+#: hypha/apply/stream_forms/blocks.py:432
+msgid "Multiple File field"
+msgstr ""
+
+#: hypha/apply/stream_forms/blocks.py:465
+msgid "Section text"
+msgstr ""
+
+#: hypha/apply/stream_forms/blocks.py:466
+msgid "Section header"
+msgstr ""
+
+#: hypha/apply/stream_forms/blocks.py:485 hypha/public/forms/models.py:62
+msgid "Form fields"
+msgstr ""
+
+#: hypha/apply/users/admin_views.py:34 hypha/apply/users/admin_views.py:59
+msgid "Search users"
+msgstr ""
+
+#: hypha/apply/users/forms.py:60
+msgid ""
+"You are registered using OAuth, please contact an admin if you need to "
+"change your email address."
+msgstr ""
+
+#: hypha/apply/users/forms.py:78
+msgid "Only includes active, non-superusers"
+msgstr ""
+
+#: hypha/apply/users/models.py:90
+msgid "email address"
+msgstr ""
+
+#: hypha/apply/users/models.py:91
+msgid "Full name"
+msgstr ""
+
+#: hypha/apply/users/models.py:93
+msgid "Slack name"
+msgstr ""
+
+#: hypha/apply/users/models.py:95
+msgid "This is the name we should \"@mention\" when sending notifications"
+msgstr ""
+
+#: hypha/apply/users/templates/two_factor/_wizard_actions.html:3
+msgid "Next"
+msgstr ""
+
+#: hypha/apply/users/templates/two_factor/_wizard_actions.html:7
+msgid "Cancel"
+msgstr ""
+
+#: hypha/apply/users/templates/two_factor/core/backup_tokens.html:6
+#: hypha/apply/users/templates/two_factor/profile/disable.html:6
+msgid "Back"
+msgstr ""
+
+#: hypha/apply/users/templates/two_factor/core/backup_tokens.html:7
+#: hypha/apply/users/templates/two_factor/profile/profile.html:41
+msgid "Backup Tokens"
+msgstr ""
+
+#: hypha/apply/users/templates/two_factor/core/backup_tokens.html:8
+msgid ""
+"Backup tokens can be used when your primary and backup\n"
+"      phone numbers aren't available. The backup tokens below can be used\n"
+"      for login verification. If you've used up all your backup tokens, you\n"
+"      can generate a new set of backup tokens. Only the backup tokens shown\n"
+"      below will be valid."
+msgstr ""
+
+#: hypha/apply/users/templates/two_factor/core/backup_tokens.html:20
+msgid "Print these tokens and keep them somewhere safe."
+msgstr ""
+
+#: hypha/apply/users/templates/two_factor/core/backup_tokens.html:22
+msgid "You don't have any backup codes yet."
+msgstr ""
+
+#: hypha/apply/users/templates/two_factor/core/backup_tokens.html:26
+msgid "Generate Tokens"
+msgstr ""
+
+#: hypha/apply/users/templates/two_factor/profile/disable.html:7
+msgid "Disable Two-factor Authentication"
+msgstr ""
+
+#: hypha/apply/users/templates/two_factor/profile/disable.html:8
+msgid ""
+"You are about to disable two-factor authentication. This\n"
+"    weakens your account security, are you sure?"
+msgstr ""
+
+#: hypha/apply/users/templates/two_factor/profile/disable.html:14
+msgid "Disable"
+msgstr ""
+
+#: hypha/apply/users/templates/two_factor/profile/profile.html:6
+msgid "Back to account"
+msgstr ""
+
+#: hypha/apply/users/templates/two_factor/profile/profile.html:9
+msgid "Two-Factor Authentication"
+msgstr ""
+
+#: hypha/apply/users/templates/two_factor/profile/profile.html:13
+msgid "Tokens will be generated by your token generator."
+msgstr ""
+
+#: hypha/apply/users/templates/two_factor/profile/profile.html:15
+#, python-format
+msgid "Primary method: %(primary)s"
+msgstr ""
+
+#: hypha/apply/users/templates/two_factor/profile/profile.html:17
+msgid "Tokens will be generated by your YubiKey."
+msgstr ""
+
+#: hypha/apply/users/templates/two_factor/profile/profile.html:21
+msgid "Backup Phone Numbers"
+msgstr ""
+
+#: hypha/apply/users/templates/two_factor/profile/profile.html:22
+msgid ""
+"If your primary method is not available, we are able to\n"
+"        send backup tokens to the phone numbers listed below."
+msgstr ""
+
+#: hypha/apply/users/templates/two_factor/profile/profile.html:32
+msgid "Unregister"
+msgstr ""
+
+#: hypha/apply/users/templates/two_factor/profile/profile.html:38
+msgid "Add Phone Number"
+msgstr ""
+
+#: hypha/apply/users/templates/two_factor/profile/profile.html:43
+msgid ""
+"If you don't have any device with you, you can access\n"
+"        your account using backup tokens."
+msgstr ""
+
+#: hypha/apply/users/templates/two_factor/profile/profile.html:45
+#, python-format
+msgid ""
+"\n"
+"        You have only one backup token remaining.\n"
+"      "
+msgid_plural ""
+"\n"
+"        You have %(counter)s backup tokens remaining.\n"
+"      "
+msgstr[0] ""
+msgstr[1] ""
+
+#: hypha/apply/users/templates/two_factor/profile/profile.html:52
+msgid "Show Codes"
+msgstr ""
+
+#: hypha/apply/users/templates/two_factor/profile/profile.html:54
+#: hypha/apply/users/templates/two_factor/profile/profile.html:58
+msgid "Disable Two-Factor Authentication"
+msgstr ""
+
+#: hypha/apply/users/templates/two_factor/profile/profile.html:55
+msgid ""
+"However we strongly discourage you to do so, you can\n"
+"      also disable two-factor authentication for your account."
+msgstr ""
+
+#: hypha/apply/users/templates/two_factor/profile/profile.html:60
+msgid ""
+"Two-factor authentication is not enabled for your\n"
+"      account. Enable two-factor authentication for enhanced account\n"
+"      security."
+msgstr ""
+
+#: hypha/apply/users/templates/two_factor/profile/profile.html:64
+msgid "Enable Two-Factor Authentication"
+msgstr ""
+
+#: hypha/apply/users/templates/users/account.html:25
+msgid "Update Profile"
+msgstr ""
+
+#: hypha/apply/users/templates/users/account.html:32
+msgid "Update password"
+msgstr ""
+
+#: hypha/apply/users/templates/users/activation/invalid.html:4
+msgid "Invalid activation"
+msgstr ""
+
+#: hypha/apply/users/templates/users/activation/invalid.html:5
+msgid "Invalid activation URL"
+msgstr ""
+
+#: hypha/apply/users/templates/users/change_password.html:5
+msgid "Set a password"
+msgstr ""
+
+#: hypha/apply/users/templates/users/change_password.html:20
+#: hypha/apply/users/templates/users/password_reset/confirm.html:20
+msgid ""
+"\n"
+"                <li>Please correct the error below.</li>\n"
+"                "
+msgid_plural ""
+"\n"
+"                <li>Please correct the errors below.</li>\n"
+"                "
+msgstr[0] ""
+msgstr[1] ""
+
+#: hypha/apply/users/templates/users/change_password.html:34
+#: hypha/apply/users/templates/users/password_reset/complete.html:4
+#: hypha/apply/users/templates/users/password_reset/confirm.html:34
+#: hypha/apply/users/templates/users/password_reset/done.html:5
+#: hypha/apply/users/templates/users/password_reset/form.html:6
+#: hypha/apply/users/templates/users/password_reset/form.html:25
+msgid "Reset password"
+msgstr ""
+
+#: hypha/apply/users/templates/users/login.html:11
+msgid "Enter your credentials."
+msgstr ""
+
+#: hypha/apply/users/templates/users/login.html:14
+msgid ""
+"We are calling your phone right now, please enter the\n"
+"                digits you hear."
+msgstr ""
+
+#: hypha/apply/users/templates/users/login.html:17
+msgid ""
+"We sent you a text message, please enter the tokens we\n"
+"                sent."
+msgstr ""
+
+#: hypha/apply/users/templates/users/login.html:20
+msgid ""
+"Please enter the tokens generated by your token\n"
+"                generator."
+msgstr ""
+
+#: hypha/apply/users/templates/users/login.html:24
+msgid ""
+"Use this form for entering backup tokens for logging in.\n"
+"            These tokens have been generated for you to print and keep safe. "
+"Please\n"
+"            enter one of these backup tokens to login to your account."
+msgstr ""
+
+#: hypha/apply/users/templates/users/login.html:47
+msgid "Or, alternatively, use one of your backup phones:"
+msgstr ""
+
+#: hypha/apply/users/templates/users/login.html:57
+msgid "As a last resort, you can use a backup token:"
+msgstr ""
+
+#: hypha/apply/users/templates/users/login.html:60
+msgid "Use Backup Token"
+msgstr ""
+
+#: hypha/apply/users/templates/users/password_reset/complete.html:5
+msgid "Password change successful"
+msgstr ""
+
+#: hypha/apply/users/templates/users/password_reset/complete.html:10
+msgid "Log in"
+msgstr ""
+
+#: hypha/apply/users/templates/users/password_reset/confirm.html:8
+msgid ""
+"Please enter your new password twice so we can verify you typed it in "
+"correctly."
+msgstr ""
+
+#: hypha/apply/users/templates/users/password_reset/confirm.html:37
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used.  Please request a new password reset."
+msgstr ""
+
+#: hypha/apply/users/templates/users/password_reset/done.html:9
+msgid "A link to reset your password has been emailed to you."
+msgstr ""
+
+#: hypha/apply/users/templates/users/password_reset/email.txt:2
+msgid "Please follow the link below to reset your password:"
+msgstr ""
+
+#: hypha/apply/users/templates/users/password_reset/email.txt:6
+msgid "Your username (in case you've forgotten):"
+msgstr ""
+
+#: hypha/apply/users/templates/wagtailusers/users/list.html:6
+#: hypha/public/people/models.py:180
+msgid "Name"
+msgstr ""
+
+#: hypha/apply/users/templates/wagtailusers/users/list.html:14
+msgid "Username"
+msgstr ""
+
+#: hypha/apply/users/templates/wagtailusers/users/list.html:45
+msgid "Admin"
+msgstr ""
+
+#: hypha/apply/users/templates/wagtailusers/users/list.html:46
+msgid "Inactive"
+msgstr ""
+
+#: hypha/apply/utils/blocks.py:39
+msgid "Rich text field"
+msgstr ""
+
+#: hypha/apply/utils/blocks.py:54
+msgid "Markdown text field"
+msgstr ""
+
+#: hypha/apply/utils/blocks.py:73
+msgid " Required"
+msgstr ""
+
+#: hypha/apply/utils/models.py:25
+msgid "Page size of downloadable Project and Submission PDFs"
+msgstr ""
+
+#: hypha/apply/utils/views.py:248
+#, python-brace-format
+msgid "Page '{0}' can't be deleted because is in use in '{1}'."
+msgstr ""
+
+#: hypha/cookieconsent/templates/includes/banner.html:11
+msgid "Decline tracking cookies."
+msgstr ""
+
+#: hypha/cookieconsent/templates/includes/banner.html:11
+msgid "Decline"
+msgstr ""
+
+#: hypha/cookieconsent/templates/includes/banner.html:12
+msgid "Accept tracking cookies."
+msgstr ""
+
+#: hypha/cookieconsent/templates/includes/banner.html:12
+msgid "Accept"
+msgstr ""
+
+#: hypha/public/forms/models.py:36
+msgid "field type"
+msgstr ""
+
+#: hypha/public/funds/models.py:57 hypha/public/funds/models.py:171
+#: hypha/public/news/models.py:115 hypha/public/standardpages/models.py:31
+msgid "Related pages"
+msgstr ""
+
+#: hypha/public/funds/models.py:151
+msgid "External link"
+msgstr ""
+
+#: hypha/public/funds/models.py:152
+msgid "Text to display on the button for external links"
+msgstr ""
+
+#: hypha/public/funds/models.py:169
+msgid "Link for lab application"
+msgstr ""
+
+#: hypha/public/funds/models.py:191 hypha/public/funds/models.py:192
+msgid "Cannot link to both a Lab page and external link"
+msgstr ""
+
+#: hypha/public/funds/models.py:197 hypha/public/funds/models.py:198
+msgid "Please provide a way for applicants to apply"
+msgstr ""
+
+#: hypha/public/funds/models.py:203
+msgid "Cannot customise the text for internal lab pages, leave blank"
+msgstr ""
+
+#: hypha/public/funds/models.py:208
+msgid "Please provide some text for the link button"
+msgstr ""
+
+#: hypha/public/funds/templates/public_funds/includes/fund_apply_cta.html:8
+msgid "Next deadline"
+msgstr ""
+
+#: hypha/public/funds/templates/public_funds/includes/fund_apply_cta.html:16
+msgid "Apply for this"
+msgstr ""
+
+#: hypha/public/funds/templates/public_funds/includes/fund_apply_cta.html:25
+msgid "CLOSED"
+msgstr ""
+
+#: hypha/public/home/blocks.py:8
+msgid "The first word will be bold"
+msgstr ""
+
+#: hypha/public/home/models.py:107
+msgid "Introduction"
+msgstr ""
+
+#: hypha/public/home/models.py:112
+msgid "News"
+msgstr ""
+
+#: hypha/public/home/models.py:118
+msgid "Our Work"
+msgstr ""
+
+#: hypha/public/home/models.py:122
+msgid "Promoted Funds"
+msgstr ""
+
+#: hypha/public/home/models.py:129
+msgid "Promoted Labs"
+msgstr ""
+
+#: hypha/public/home/models.py:136
+msgid "Promoted RFPs"
+msgstr ""
+
+#: hypha/public/mailchimp/forms.py:6
+msgid "Email Address"
+msgstr ""
+
+#: hypha/public/mailchimp/forms.py:7
+msgid "First Name"
+msgstr ""
+
+#: hypha/public/mailchimp/forms.py:8
+msgid "Last Name"
+msgstr ""
+
+#: hypha/public/mailchimp/models.py:16
+msgid "The title of the newsletter signup form."
+msgstr ""
+
+#: hypha/public/mailchimp/templates/mailchimp/newsletter_signup.html:17
+msgid "Sign up"
+msgstr ""
+
+#: hypha/public/mailchimp/views.py:69
+msgid "Sorry, there were errors with your form."
+msgstr ""
+
+#: hypha/public/mailchimp/views.py:72
+msgid "Sorry, there has been an problem. Please try again later."
+msgstr ""
+
+#: hypha/public/mailchimp/views.py:78
+msgid "Thank you for subscribing"
+msgstr ""
+
+#: hypha/public/navigation/models.py:11
+msgid "Leave blank to use the page's own title"
+msgstr ""
+
+#: hypha/public/navigation/models.py:22
+msgid "Main site navigation"
+msgstr ""
+
+#: hypha/public/news/blocks.py:10
+msgid ""
+"Please enter only table id from embed code. Table widget code creates "
+"automatically."
+msgstr ""
+
+#: hypha/public/news/models.py:98
+msgid ""
+"Use this field to override the date that the news item appears to have been "
+"published."
+msgstr ""
+
+#: hypha/public/news/models.py:110
+msgid "Authors"
+msgstr ""
+
+#: hypha/public/news/models.py:113
+msgid "News types"
+msgstr ""
+
+#: hypha/public/news/models.py:114
+msgid "Mentioned project"
+msgstr ""
+
+#: hypha/public/news/models.py:173
+msgid "The title of the main news feed."
+msgstr ""
+
+#: hypha/public/news/models.py:174
+msgid "The description of the main news feed."
+msgstr ""
+
+#: hypha/public/news/models.py:177
+#, python-brace-format
+msgid ""
+"The title of the news feed by type. Use {news_type} to insert the type name."
+msgstr ""
+
+#: hypha/public/news/models.py:179
+#, python-brace-format
+msgid ""
+"The description of the news feed by type. Use {news_type} to insert the type "
+"name."
+msgstr ""
+
+#: hypha/public/partner/models.py:123
+msgid "Select the categories that should be used in investments."
+msgstr ""
+
+#: hypha/public/partner/models.py:196
+msgid "Use format: <YYYY>"
+msgstr ""
+
+#: hypha/public/partner/models.py:202
+msgid "Ammount Commited US$"
+msgstr ""
+
+#: hypha/public/partner/tables.py:20
+msgid "Years"
+msgstr ""
+
+#: hypha/public/partner/tables.py:46
+msgid "Amount Committed(US$)"
+msgstr ""
+
+#: hypha/public/partner/tables.py:54
+msgid "Items per page"
+msgstr ""
+
+#: hypha/public/partner/tables.py:55
+msgid "Per page"
+msgstr ""
+
+#: hypha/public/partner/tables.py:94
+msgid "Partner"
+msgstr ""
+
+#: hypha/public/partner/tables.py:95
+msgid "Year"
+msgstr ""
+
+#: hypha/public/partner/tables.py:97
+msgid "Amount committed (US$)"
+msgstr ""
+
+#: hypha/public/partner/tables.py:110
+msgid "No investments available"
+msgstr ""
+
+#: hypha/public/people/models.py:97
+msgid "Other"
+msgstr ""
+
+#: hypha/public/people/models.py:184
+msgid "Social accounts"
+msgstr ""
+
+#: hypha/public/people/models.py:188
+msgid "Other Contact Methods"
+msgstr ""
+
+#: hypha/public/people/models.py:189
+msgid "Contact information"
+msgstr ""
+
+#: hypha/public/people/models.py:190
+msgid "Person types"
+msgstr ""
+
+#: hypha/public/people/models.py:193
+msgid "Funds Reviewed"
+msgstr ""
+
+#: hypha/public/projects/models.py:129
+msgid "Contact Details"
+msgstr ""
+
+#: hypha/public/projects/models.py:131
+msgid "Related Projects"
+msgstr ""
+
+#: hypha/public/projects/models.py:134
+msgid "Categories"
+msgstr ""
+
+#: hypha/public/utils/models.py:125
+msgid ""
+"Choose the image you wish to be displayed when this page appears in listings"
+msgstr ""
+
+#: hypha/public/utils/models.py:127
+msgid "Override the page title used when this page appears in listings"
+msgstr ""
+
+#: hypha/public/utils/models.py:128
+msgid ""
+"The text summary used when this page appears in listings. It's also used as "
+"the description for search engines if the 'Search description' field above "
+"is not defined."
+msgstr ""
+
+#: hypha/public/utils/models.py:205
+msgid "Your Twitter username without the @, e.g. katyperry"
+msgstr ""
+
+#: hypha/public/utils/models.py:210
+msgid "Your Facebook app ID."
+msgstr ""
+
+#: hypha/public/utils/models.py:215
+msgid "Default sharing text to use if social text has not been set on a page."
+msgstr ""
+
+#: hypha/public/utils/models.py:221
+msgid "Site name, used by Open Graph."
+msgstr ""
+
+#: hypha/public/utils/models.py:236
+msgid "Default site logo"
+msgstr ""
+
+#: hypha/public/utils/models.py:245
+msgid "Mobil site logo (if not set default will be used)"
+msgstr ""
+
+#: hypha/public/utils/models.py:251
+msgid ""
+"Link for the site logo, e.g. \"https://www.example.org/\". If not set, "
+"defaults to page with slug set to \"home\"."
+msgstr ""
+
+#: hypha/public/utils/models.py:257
+msgid "This will be added to the footer, html tags is allowed."
+msgstr ""
+
+#: hypha/public/utils/models.py:316
+msgid "In months"
+msgstr ""
+
+#: hypha/public/utils/models.py:342
+msgid "Funding"
+msgstr ""
+
+#: hypha/templates/blocks/apply_link_block.html:4
+msgid "Apply for the"
+msgstr ""
