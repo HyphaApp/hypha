@@ -11,8 +11,28 @@ import { withStyles } from '@material-ui/core/styles';
 
 class MetaTermTreeView extends React.PureComponent {
 
+    getExpandedNodeIds = () => {
+      let parentIds = []
+      for(let node of this.props.metaTermsStructure) {
+        parentIds = this.getParentIds(parentIds, node)
+      }
+      return parentIds
+    }
+
+    getParentIds = (parentIds, node) => {
+
+      // check whether the node is parent or not
+      if (node.children.length) {
+        parentIds.push(node.id.toString());
+        for(let node of node.children) {
+          parentIds = this.getParentIds(parentIds, node)
+        }
+      }
+      return parentIds
+    }
+
     state = {
-        expanded : []
+        expanded : this.getExpandedNodeIds()  // Initially parent nodes are expanded
     }
 
     renderTreeItem = (node) => {
