@@ -16,4 +16,5 @@ def global_vars(request):
         'ORG_EMAIL': settings.ORG_EMAIL,
         'MATOMO_URL': settings.MATOMO_URL,
         'MATOMO_SITEID': settings.MATOMO_SITEID,
+        'CURRENCY_SYMBOL': settings.CURRENCY_SYMBOL,
     }

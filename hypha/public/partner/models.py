@@ -1,6 +1,7 @@
 import datetime
 
 from django import forms
+from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.http import Http404
@@ -45,7 +46,7 @@ class PartnerPage(BasePage):
     ]
 
     class Meta:
-        verbose_name = "Partner Page"
+        verbose_name = _('Partner Page')
 
     parent_page_types = ['partner.PartnerIndexPage']
     subpage_types = []
@@ -116,7 +117,7 @@ def max_value_current_year(value):
 @register_setting
 class InvestmentCategorySettings(BaseSetting):
     class Meta:
-        verbose_name = 'Investment Category Settings'
+        verbose_name = _('Investment Category Settings')
 
     categories = models.ManyToManyField(
         Category,
@@ -130,7 +131,8 @@ class InvestmentCategorySettings(BaseSetting):
 
 class InvestmentCategory(models.Model):
     investment = models.ForeignKey(
-        'Investment', on_delete=models.CASCADE,
+        'Investment',
+        on_delete=models.CASCADE,
         related_name='categories'
     )
     name = models.CharField(max_length=255, null=True, blank=True)
@@ -199,7 +201,7 @@ class Investment(models.Model):
         decimal_places=2,
         default=0,
         max_digits=11,
-        verbose_name=_('Ammount Commited US$')
+        verbose_name=_('Amount Committed ({currency})').format(currency=settings.CURRENCY_SYMBOL.strip())
     )
     description = models.TextField()
     application = models.OneToOneField(

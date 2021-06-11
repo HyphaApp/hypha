@@ -5,7 +5,7 @@
         {% for funding in page.funding.all %}
             <div class="fund-box__row">
                 <span>{{ funding.year }}</span>
-                <span>${{ funding.value|intcomma }}</span>
+                <span>{{ CURRENCY_SYMBOL }}{{ funding.value|intcomma }}</span>
                 {% if funding.duration %}
                     <span>{{ funding.duration }} months</span>
                 {% endif %}
@@ -14,6 +14,6 @@
             <a class="fund-box__link" href="{% pageurl funding.source %}">{{ funding.source }}</a>
             {% endif %}
         {% endfor %}
-        <h4 class="heading heading--top-space heading--total-funding">Total Funding: <span>${{ page.total_funding|intcomma }}</span></h4>
+        <h4 class="heading heading--top-space heading--total-funding">Total Funding: <span>{{ CURRENCY_SYMBOL }}{{ page.total_funding|intcomma }}</span></h4>
     </div>
 {% endif %}
