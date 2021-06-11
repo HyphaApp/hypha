@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-10 12:00+0000\n"
+"POT-Creation-Date: 2021-06-11 08:24+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -208,7 +208,9 @@ msgstr ""
 msgid "Proposal Form"
 msgstr ""
 
-#: hypha/apply/determinations/models.py:106 hypha/apply/review/models.py:162
+#: hypha/apply/determinations/models.py:106 hypha/apply/funds/workflow.py:205
+#: hypha/apply/funds/workflow.py:332 hypha/apply/funds/workflow.py:487
+#: hypha/apply/funds/workflow.py:666 hypha/apply/review/models.py:162
 msgid "Draft"
 msgstr ""
 
@@ -244,7 +246,10 @@ msgstr ""
 msgid "Proposal form"
 msgstr ""
 
-#: hypha/apply/determinations/options.py:10
+#: hypha/apply/determinations/options.py:10 hypha/apply/funds/workflow.py:315
+#: hypha/apply/funds/workflow.py:469 hypha/apply/funds/workflow.py:648
+#: hypha/apply/funds/workflow.py:769 hypha/apply/funds/workflow.py:923
+#: hypha/apply/funds/workflow.py:1145
 msgid "Dismissed"
 msgstr ""
 
@@ -649,6 +654,226 @@ msgstr ""
 
 #: hypha/apply/funds/views.py:1023
 msgid "Submission saved successfully"
+msgstr ""
+
+#: hypha/apply/funds/workflow.py:200 hypha/apply/funds/workflow.py:228
+#: hypha/apply/funds/workflow.py:271 hypha/apply/funds/workflow.py:327
+#: hypha/apply/funds/workflow.py:353 hypha/apply/funds/workflow.py:391
+#: hypha/apply/funds/workflow.py:429 hypha/apply/funds/workflow.py:482
+#: hypha/apply/funds/workflow.py:510 hypha/apply/funds/workflow.py:570
+#: hypha/apply/funds/workflow.py:608 hypha/apply/funds/workflow.py:661
+#: hypha/apply/funds/workflow.py:688 hypha/apply/funds/workflow.py:730
+#: hypha/apply/funds/workflow.py:777 hypha/apply/funds/workflow.py:803
+#: hypha/apply/funds/workflow.py:844 hypha/apply/funds/workflow.py:883
+msgid "Submit"
+msgstr ""
+
+#: hypha/apply/funds/workflow.py:213 hypha/apply/funds/workflow.py:257
+#: hypha/apply/funds/workflow.py:340 hypha/apply/funds/workflow.py:378
+#: hypha/apply/funds/workflow.py:415 hypha/apply/funds/workflow.py:495
+#: hypha/apply/funds/workflow.py:557 hypha/apply/funds/workflow.py:594
+#: hypha/apply/funds/workflow.py:674 hypha/apply/funds/workflow.py:717
+#: hypha/apply/funds/workflow.py:790 hypha/apply/funds/workflow.py:831
+#: hypha/apply/funds/workflow.py:869
+msgid "Request More Information"
+msgstr ""
+
+#: hypha/apply/funds/workflow.py:214 hypha/apply/funds/workflow.py:341
+#: hypha/apply/funds/workflow.py:497 hypha/apply/funds/workflow.py:675
+#: hypha/apply/funds/workflow.py:791
+msgid "Open Review"
+msgstr ""
+
+#: hypha/apply/funds/workflow.py:215 hypha/apply/funds/workflow.py:232
+#: hypha/apply/funds/workflow.py:258 hypha/apply/funds/workflow.py:275
+#: hypha/apply/funds/workflow.py:342 hypha/apply/funds/workflow.py:380
+#: hypha/apply/funds/workflow.py:416 hypha/apply/funds/workflow.py:499
+#: hypha/apply/funds/workflow.py:559 hypha/apply/funds/workflow.py:595
+msgid "Ready For Determination"
+msgstr ""
+
+#: hypha/apply/funds/workflow.py:216 hypha/apply/funds/workflow.py:233
+#: hypha/apply/funds/workflow.py:260 hypha/apply/funds/workflow.py:276
+#: hypha/apply/funds/workflow.py:289 hypha/apply/funds/workflow.py:418
+#: hypha/apply/funds/workflow.py:443 hypha/apply/funds/workflow.py:597
+#: hypha/apply/funds/workflow.py:622 hypha/apply/funds/workflow.py:872
+#: hypha/apply/funds/workflow.py:897
+msgid "Accept but additional info required"
+msgstr ""
+
+#: hypha/apply/funds/workflow.py:217 hypha/apply/funds/workflow.py:234
+#: hypha/apply/funds/workflow.py:261 hypha/apply/funds/workflow.py:277
+#: hypha/apply/funds/workflow.py:290 hypha/apply/funds/workflow.py:301
+#: hypha/apply/funds/workflow.py:419 hypha/apply/funds/workflow.py:444
+#: hypha/apply/funds/workflow.py:455 hypha/apply/funds/workflow.py:598
+#: hypha/apply/funds/workflow.py:623 hypha/apply/funds/workflow.py:634
+#: hypha/apply/funds/workflow.py:873 hypha/apply/funds/workflow.py:898
+#: hypha/apply/funds/workflow.py:909
+#: hypha/cookieconsent/templates/includes/banner.html:12
+msgid "Accept"
+msgstr ""
+
+#: hypha/apply/funds/workflow.py:218 hypha/apply/funds/workflow.py:235
+#: hypha/apply/funds/workflow.py:262 hypha/apply/funds/workflow.py:278
+#: hypha/apply/funds/workflow.py:291 hypha/apply/funds/workflow.py:343
+#: hypha/apply/funds/workflow.py:382 hypha/apply/funds/workflow.py:420
+#: hypha/apply/funds/workflow.py:445 hypha/apply/funds/workflow.py:500
+#: hypha/apply/funds/workflow.py:522 hypha/apply/funds/workflow.py:535
+#: hypha/apply/funds/workflow.py:546 hypha/apply/funds/workflow.py:561
+#: hypha/apply/funds/workflow.py:599 hypha/apply/funds/workflow.py:624
+#: hypha/apply/funds/workflow.py:678 hypha/apply/funds/workflow.py:692
+#: hypha/apply/funds/workflow.py:721 hypha/apply/funds/workflow.py:746
+#: hypha/apply/funds/workflow.py:780 hypha/apply/funds/workflow.py:794
+#: hypha/apply/funds/workflow.py:809 hypha/apply/funds/workflow.py:835
+#: hypha/apply/funds/workflow.py:874 hypha/apply/funds/workflow.py:899
+msgid "Dismiss"
+msgstr ""
+
+#: hypha/apply/funds/workflow.py:220 hypha/apply/funds/workflow.py:345
+#: hypha/apply/funds/workflow.py:502 hypha/apply/funds/workflow.py:680
+msgid "Need screening"
+msgstr ""
+
+#: hypha/apply/funds/workflow.py:221 hypha/apply/funds/workflow.py:346
+#: hypha/apply/funds/workflow.py:503
+msgid "Application Received"
+msgstr ""
+
+#: hypha/apply/funds/workflow.py:237 hypha/apply/funds/workflow.py:280
+#: hypha/apply/funds/workflow.py:358 hypha/apply/funds/workflow.py:396
+#: hypha/apply/funds/workflow.py:434 hypha/apply/funds/workflow.py:515
+#: hypha/apply/funds/workflow.py:575 hypha/apply/funds/workflow.py:613
+#: hypha/apply/funds/workflow.py:696 hypha/apply/funds/workflow.py:736
+#: hypha/apply/funds/workflow.py:811 hypha/apply/funds/workflow.py:850
+#: hypha/apply/funds/workflow.py:888
+msgid "More information required"
+msgstr ""
+
+#: hypha/apply/funds/workflow.py:245 hypha/apply/funds/workflow.py:366
+#: hypha/apply/funds/workflow.py:404 hypha/apply/funds/workflow.py:533
+#: hypha/apply/funds/workflow.py:544 hypha/apply/funds/workflow.py:583
+#: hypha/apply/funds/workflow.py:704 hypha/apply/funds/workflow.py:819
+#: hypha/apply/funds/workflow.py:858
+msgid "Close Review"
+msgstr ""
+
+#: hypha/apply/funds/workflow.py:248 hypha/apply/funds/workflow.py:369
+#: hypha/apply/funds/workflow.py:537 hypha/apply/funds/workflow.py:708
+#: hypha/apply/funds/workflow.py:822 hypha/apply/funds/workflow.py:1117
+msgid "Internal Review"
+msgstr ""
+
+#: hypha/apply/funds/workflow.py:264 hypha/apply/funds/workflow.py:384
+#: hypha/apply/funds/workflow.py:422 hypha/apply/funds/workflow.py:563
+#: hypha/apply/funds/workflow.py:601 hypha/apply/funds/workflow.py:723
+#: hypha/apply/funds/workflow.py:837 hypha/apply/funds/workflow.py:876
+msgid "Ready For Discussion"
+msgstr ""
+
+#: hypha/apply/funds/workflow.py:293 hypha/apply/funds/workflow.py:447
+#: hypha/apply/funds/workflow.py:626 hypha/apply/funds/workflow.py:1137
+msgid "Ready for Determination"
+msgstr ""
+
+#: hypha/apply/funds/workflow.py:304 hypha/apply/funds/workflow.py:458
+#: hypha/apply/funds/workflow.py:637 hypha/apply/funds/workflow.py:912
+msgid "Accepted but additional info required"
+msgstr ""
+
+#: hypha/apply/funds/workflow.py:309 hypha/apply/funds/workflow.py:463
+#: hypha/apply/funds/workflow.py:642 hypha/apply/funds/workflow.py:917
+#: hypha/apply/funds/workflow.py:1141
+msgid "Accepted"
+msgstr ""
+
+#: hypha/apply/funds/workflow.py:310 hypha/apply/funds/workflow.py:464
+#: hypha/apply/funds/workflow.py:643
+msgid "Application Outcome"
+msgstr ""
+
+#: hypha/apply/funds/workflow.py:379 hypha/apply/funds/workflow.py:558
+#: hypha/apply/funds/workflow.py:778 hypha/apply/funds/workflow.py:792
+#: hypha/apply/funds/workflow.py:807 hypha/apply/funds/workflow.py:832
+#: hypha/apply/funds/workflow.py:848
+msgid "Open External Review"
+msgstr ""
+
+#: hypha/apply/funds/workflow.py:407 hypha/apply/funds/workflow.py:586
+#: hypha/apply/funds/workflow.py:861 hypha/apply/funds/workflow.py:1133
+msgid "External Review"
+msgstr ""
+
+#: hypha/apply/funds/workflow.py:498 hypha/apply/funds/workflow.py:532
+msgid "Open Community Review"
+msgstr ""
+
+#: hypha/apply/funds/workflow.py:548
+msgid "Community Review"
+msgstr ""
+
+#: hypha/apply/funds/workflow.py:676 hypha/apply/funds/workflow.py:694
+#: hypha/apply/funds/workflow.py:718
+msgid "Ready For Preliminary Determination"
+msgstr ""
+
+#: hypha/apply/funds/workflow.py:677 hypha/apply/funds/workflow.py:693
+#: hypha/apply/funds/workflow.py:706 hypha/apply/funds/workflow.py:720
+#: hypha/apply/funds/workflow.py:734 hypha/apply/funds/workflow.py:745
+msgid "Invite to Proposal"
+msgstr ""
+
+#: hypha/apply/funds/workflow.py:681
+msgid "Concept Note Received"
+msgstr ""
+
+#: hypha/apply/funds/workflow.py:748
+msgid "Ready for Preliminary Determination"
+msgstr ""
+
+#: hypha/apply/funds/workflow.py:755
+msgid "Concept Accepted"
+msgstr ""
+
+#: hypha/apply/funds/workflow.py:756
+msgid "Preliminary Determination"
+msgstr ""
+
+#: hypha/apply/funds/workflow.py:759
+msgid "Progress"
+msgstr ""
+
+#: hypha/apply/funds/workflow.py:779 hypha/apply/funds/workflow.py:793
+#: hypha/apply/funds/workflow.py:808 hypha/apply/funds/workflow.py:833
+#: hypha/apply/funds/workflow.py:870
+msgid "Ready For Final Determination"
+msgstr ""
+
+#: hypha/apply/funds/workflow.py:782 hypha/apply/funds/workflow.py:1129
+msgid "Invited for Proposal"
+msgstr ""
+
+#: hypha/apply/funds/workflow.py:796
+msgid "Proposal Received"
+msgstr ""
+
+#: hypha/apply/funds/workflow.py:901
+msgid "Ready for Final Determination"
+msgstr ""
+
+#: hypha/apply/funds/workflow.py:918
+msgid "Final Determination"
+msgstr ""
+
+#: hypha/apply/funds/workflow.py:1113
+msgid "Received"
+msgstr ""
+
+#: hypha/apply/funds/workflow.py:1121
+msgid "Ready for Discussion"
+msgstr ""
+
+#: hypha/apply/funds/workflow.py:1125
+msgid "More Information Requested"
 msgstr ""
 
 #: hypha/apply/middleware.py:18
@@ -1264,10 +1489,6 @@ msgstr ""
 
 #: hypha/cookieconsent/templates/includes/banner.html:12
 msgid "Accept tracking cookies."
-msgstr ""
-
-#: hypha/cookieconsent/templates/includes/banner.html:12
-msgid "Accept"
 msgstr ""
 
 #: hypha/public/forms/models.py:36

@@ -4,6 +4,7 @@ from enum import Enum
 
 from django.conf import settings
 from django.utils.text import slugify
+from django.utils.translation import gettext as _
 
 """
 This file defines classes which allow you to compose workflows based on the following structure:
@@ -196,12 +197,12 @@ SingleStageDefinition = [
         DRAFT_STATE: {
             'transitions': {
                 INITIAL_STATE: {
-                    'display': 'Submit',
+                    'display': _('Submit'),
                     'permissions': {UserPermissions.APPLICANT},
                     'method': 'create_revision',
                 },
             },
-            'display': 'Draft',
+            'display': _('Draft'),
             'stage': Request,
             'permissions': applicant_edit_permissions,
         }
@@ -209,31 +210,31 @@ SingleStageDefinition = [
     {
         INITIAL_STATE: {
             'transitions': {
-                'more_info': 'Request More Information',
-                'internal_review': 'Open Review',
-                'determination': 'Ready For Determination',
-                'almost': 'Accept but additional info required',
-                'accepted': 'Accept',
-                'rejected': 'Dismiss',
+                'more_info': _('Request More Information'),
+                'internal_review': _('Open Review'),
+                'determination': _('Ready For Determination'),
+                'almost': _('Accept but additional info required'),
+                'accepted': _('Accept'),
+                'rejected': _('Dismiss'),
             },
-            'display': 'Need screening',
-            'public': 'Application Received',
+            'display': _('Need screening'),
+            'public': _('Application Received'),
             'stage': Request,
             'permissions': default_permissions,
         },
         'more_info': {
             'transitions': {
                 INITIAL_STATE: {
-                    'display': 'Submit',
+                    'display': _('Submit'),
                     'permissions': {UserPermissions.APPLICANT, UserPermissions.STAFF, UserPermissions.LEAD, UserPermissions.ADMIN},
                     'method': 'create_revision',
                 },
-                'determination': 'Ready For Determination',
-                'almost': 'Accept but additional info required',
-                'accepted': 'Accept',
-                'rejected': 'Dismiss',
+                'determination': _('Ready For Determination'),
+                'almost': _('Accept but additional info required'),
+                'accepted': _('Accept'),
+                'rejected': _('Dismiss'),
             },
-            'display': 'More information required',
+            'display': _('More information required'),
             'stage': Request,
             'permissions': applicant_edit_permissions,
         },
@@ -241,10 +242,10 @@ SingleStageDefinition = [
     {
         'internal_review': {
             'transitions': {
-                'post_review_discussion': 'Close Review',
+                'post_review_discussion': _('Close Review'),
                 INITIAL_STATE: 'Need screening (back)',
             },
-            'display': 'Internal Review',
+            'display': _('Internal Review'),
             'public': f'{settings.ORG_SHORT_NAME} Review',
             'stage': Request,
             'permissions': default_permissions,
@@ -253,30 +254,30 @@ SingleStageDefinition = [
     {
         'post_review_discussion': {
             'transitions': {
-                'post_review_more_info': 'Request More Information',
-                'determination': 'Ready For Determination',
+                'post_review_more_info': _('Request More Information'),
+                'determination': _('Ready For Determination'),
                 'internal_review': 'Open Review (back)',
-                'almost': 'Accept but additional info required',
-                'accepted': 'Accept',
-                'rejected': 'Dismiss',
+                'almost': _('Accept but additional info required'),
+                'accepted': _('Accept'),
+                'rejected': _('Dismiss'),
             },
-            'display': 'Ready For Discussion',
+            'display': _('Ready For Discussion'),
             'stage': Request,
             'permissions': hidden_from_applicant_permissions,
         },
         'post_review_more_info': {
             'transitions': {
                 'post_review_discussion': {
-                    'display': 'Submit',
+                    'display': _('Submit'),
                     'permissions': {UserPermissions.APPLICANT, UserPermissions.STAFF, UserPermissions.LEAD, UserPermissions.ADMIN},
                     'method': 'create_revision',
                 },
-                'determination': 'Ready For Determination',
-                'almost': 'Accept but additional info required',
-                'accepted': 'Accept',
-                'rejected': 'Dismiss',
+                'determination': _('Ready For Determination'),
+                'almost': _('Accept but additional info required'),
+                'accepted': _('Accept'),
+                'rejected': _('Dismiss'),
             },
-            'display': 'More information required',
+            'display': _('More information required'),
             'stage': Request,
             'permissions': applicant_edit_permissions,
         },
@@ -285,11 +286,11 @@ SingleStageDefinition = [
         'determination': {
             'transitions': {
                 'post_review_discussion': 'Ready For Discussion (back)',
-                'almost': 'Accept but additional info required',
-                'accepted': 'Accept',
-                'rejected': 'Dismiss',
+                'almost': _('Accept but additional info required'),
+                'accepted': _('Accept'),
+                'rejected': _('Dismiss'),
             },
-            'display': 'Ready for Determination',
+            'display': _('Ready for Determination'),
             'permissions': hidden_from_applicant_permissions,
             'stage': Request,
         },
@@ -297,21 +298,21 @@ SingleStageDefinition = [
     {
         'almost': {
             'transitions': {
-                'accepted': 'Accept',
+                'accepted': _('Accept'),
                 'post_review_discussion': 'Ready For Discussion (back)',
             },
-            'display': 'Accepted but additional info required',
+            'display': _('Accepted but additional info required'),
             'stage': Request,
             'permissions': applicant_edit_permissions,
         },
         'accepted': {
-            'display': 'Accepted',
-            'future': 'Application Outcome',
+            'display': _('Accepted'),
+            'future': _('Application Outcome'),
             'stage': Request,
             'permissions': staff_edit_permissions,
         },
         'rejected': {
-            'display': 'Dismissed',
+            'display': _('Dismissed'),
             'stage': Request,
             'permissions': no_permissions,
         },
@@ -323,12 +324,12 @@ SingleStageExternalDefinition = [
         DRAFT_STATE: {
             'transitions': {
                 INITIAL_STATE: {
-                    'display': 'Submit',
+                    'display': _('Submit'),
                     'permissions': {UserPermissions.APPLICANT},
                     'method': 'create_revision',
                 },
             },
-            'display': 'Draft',
+            'display': _('Draft'),
             'stage': RequestExt,
             'permissions': applicant_edit_permissions,
         }
@@ -336,25 +337,25 @@ SingleStageExternalDefinition = [
     {
         INITIAL_STATE: {
             'transitions': {
-                'ext_more_info': 'Request More Information',
-                'ext_internal_review': 'Open Review',
-                'ext_determination': 'Ready For Determination',
-                'ext_rejected': 'Dismiss',
+                'ext_more_info': _('Request More Information'),
+                'ext_internal_review': _('Open Review'),
+                'ext_determination': _('Ready For Determination'),
+                'ext_rejected': _('Dismiss'),
             },
-            'display': 'Need screening',
-            'public': 'Application Received',
+            'display': _('Need screening'),
+            'public': _('Application Received'),
             'stage': RequestExt,
             'permissions': default_permissions,
         },
         'ext_more_info': {
             'transitions': {
                 INITIAL_STATE: {
-                    'display': 'Submit',
+                    'display': _('Submit'),
                     'permissions': {UserPermissions.APPLICANT, UserPermissions.STAFF, UserPermissions.LEAD, UserPermissions.ADMIN},
                     'method': 'create_revision',
                 },
             },
-            'display': 'More information required',
+            'display': _('More information required'),
             'stage': RequestExt,
             'permissions': applicant_edit_permissions,
         },
@@ -362,10 +363,10 @@ SingleStageExternalDefinition = [
     {
         'ext_internal_review': {
             'transitions': {
-                'ext_post_review_discussion': 'Close Review',
+                'ext_post_review_discussion': _('Close Review'),
                 INITIAL_STATE: 'Need screening (back)',
             },
-            'display': 'Internal Review',
+            'display': _('Internal Review'),
             'public': f'{settings.ORG_SHORT_NAME} Review',
             'stage': RequestExt,
             'permissions': default_permissions,
@@ -374,25 +375,25 @@ SingleStageExternalDefinition = [
     {
         'ext_post_review_discussion': {
             'transitions': {
-                'ext_post_review_more_info': 'Request More Information',
-                'ext_external_review': 'Open External Review',
-                'ext_determination': 'Ready For Determination',
+                'ext_post_review_more_info': _('Request More Information'),
+                'ext_external_review': _('Open External Review'),
+                'ext_determination': _('Ready For Determination'),
                 'ext_internal_review': 'Open Internal Review (back)',
-                'ext_rejected': 'Dismiss',
+                'ext_rejected': _('Dismiss'),
             },
-            'display': 'Ready For Discussion',
+            'display': _('Ready For Discussion'),
             'stage': RequestExt,
             'permissions': hidden_from_applicant_permissions,
         },
         'ext_post_review_more_info': {
             'transitions': {
                 'ext_post_review_discussion': {
-                    'display': 'Submit',
+                    'display': _('Submit'),
                     'permissions': {UserPermissions.APPLICANT, UserPermissions.STAFF, UserPermissions.LEAD, UserPermissions.ADMIN},
                     'method': 'create_revision',
                 },
             },
-            'display': 'More information required',
+            'display': _('More information required'),
             'stage': RequestExt,
             'permissions': applicant_edit_permissions,
         },
@@ -400,10 +401,10 @@ SingleStageExternalDefinition = [
     {
         'ext_external_review': {
             'transitions': {
-                'ext_post_external_review_discussion': 'Close Review',
+                'ext_post_external_review_discussion': _('Close Review'),
                 'ext_post_review_discussion': 'Ready For Discussion (back)',
             },
-            'display': 'External Review',
+            'display': _('External Review'),
             'stage': RequestExt,
             'permissions': reviewer_review_permissions,
         },
@@ -411,26 +412,26 @@ SingleStageExternalDefinition = [
     {
         'ext_post_external_review_discussion': {
             'transitions': {
-                'ext_post_external_review_more_info': 'Request More Information',
-                'ext_determination': 'Ready For Determination',
+                'ext_post_external_review_more_info': _('Request More Information'),
+                'ext_determination': _('Ready For Determination'),
                 'ext_external_review': 'Open External Review (back)',
-                'ext_almost': 'Accept but additional info required',
-                'ext_accepted': 'Accept',
-                'ext_rejected': 'Dismiss',
+                'ext_almost': _('Accept but additional info required'),
+                'ext_accepted': _('Accept'),
+                'ext_rejected': _('Dismiss'),
             },
-            'display': 'Ready For Discussion',
+            'display': _('Ready For Discussion'),
             'stage': RequestExt,
             'permissions': hidden_from_applicant_permissions,
         },
         'ext_post_external_review_more_info': {
             'transitions': {
                 'ext_post_external_review_discussion': {
-                    'display': 'Submit',
+                    'display': _('Submit'),
                     'permissions': {UserPermissions.APPLICANT, UserPermissions.STAFF, UserPermissions.LEAD, UserPermissions.ADMIN},
                     'method': 'create_revision',
                 },
             },
-            'display': 'More information required',
+            'display': _('More information required'),
             'stage': RequestExt,
             'permissions': applicant_edit_permissions,
         },
@@ -439,11 +440,11 @@ SingleStageExternalDefinition = [
         'ext_determination': {
             'transitions': {
                 'ext_post_external_review_discussion': 'Ready For Discussion (back)',
-                'ext_almost': 'Accept but additional info required',
-                'ext_accepted': 'Accept',
-                'ext_rejected': 'Dismiss',
+                'ext_almost': _('Accept but additional info required'),
+                'ext_accepted': _('Accept'),
+                'ext_rejected': _('Dismiss'),
             },
-            'display': 'Ready for Determination',
+            'display': _('Ready for Determination'),
             'permissions': hidden_from_applicant_permissions,
             'stage': RequestExt,
         },
@@ -451,21 +452,21 @@ SingleStageExternalDefinition = [
     {
         'ext_almost': {
             'transitions': {
-                'ext_accepted': 'Accept',
+                'ext_accepted': _('Accept'),
                 'ext_post_external_review_discussion': 'Ready For Discussion (back)',
             },
-            'display': 'Accepted but additional info required',
+            'display': _('Accepted but additional info required'),
             'stage': RequestExt,
             'permissions': applicant_edit_permissions,
         },
         'ext_accepted': {
-            'display': 'Accepted',
-            'future': 'Application Outcome',
+            'display': _('Accepted'),
+            'future': _('Application Outcome'),
             'stage': RequestExt,
             'permissions': staff_edit_permissions,
         },
         'ext_rejected': {
-            'display': 'Dismissed',
+            'display': _('Dismissed'),
             'stage': RequestExt,
             'permissions': no_permissions,
         },
@@ -478,12 +479,12 @@ SingleStageCommunityDefinition = [
         DRAFT_STATE: {
             'transitions': {
                 INITIAL_STATE: {
-                    'display': 'Submit',
+                    'display': _('Submit'),
                     'permissions': {UserPermissions.APPLICANT},
                     'method': 'create_revision',
                 },
             },
-            'display': 'Draft',
+            'display': _('Draft'),
             'stage': RequestCom,
             'permissions': applicant_edit_permissions,
         }
@@ -491,34 +492,34 @@ SingleStageCommunityDefinition = [
     {
         INITIAL_STATE: {
             'transitions': {
-                'com_more_info': 'Request More Information',
+                'com_more_info': _('Request More Information'),
                 'com_open_call': 'Open Call (public)',
-                'com_internal_review': 'Open Review',
-                'com_community_review': 'Open Community Review',
-                'com_determination': 'Ready For Determination',
-                'com_rejected': 'Dismiss',
+                'com_internal_review': _('Open Review'),
+                'com_community_review': _('Open Community Review'),
+                'com_determination': _('Ready For Determination'),
+                'com_rejected': _('Dismiss'),
             },
-            'display': 'Need screening',
-            'public': 'Application Received',
+            'display': _('Need screening'),
+            'public': _('Application Received'),
             'stage': RequestCom,
             'permissions': default_permissions,
         },
         'com_more_info': {
             'transitions': {
                 INITIAL_STATE: {
-                    'display': 'Submit',
+                    'display': _('Submit'),
                     'permissions': {UserPermissions.APPLICANT, UserPermissions.STAFF, UserPermissions.LEAD, UserPermissions.ADMIN},
                     'method': 'create_revision',
                 },
             },
-            'display': 'More information required',
+            'display': _('More information required'),
             'stage': RequestCom,
             'permissions': applicant_edit_permissions,
         },
         'com_open_call': {
             'transitions': {
                 INITIAL_STATE: 'Need screening (back)',
-                'com_rejected': 'Dismiss',
+                'com_rejected': _('Dismiss'),
             },
             'display': 'Open Call (public)',
             'stage': RequestCom,
@@ -528,23 +529,23 @@ SingleStageCommunityDefinition = [
     {
         'com_internal_review': {
             'transitions': {
-                'com_community_review': 'Open Community Review',
-                'com_post_review_discussion': 'Close Review',
+                'com_community_review': _('Open Community Review'),
+                'com_post_review_discussion': _('Close Review'),
                 INITIAL_STATE: 'Need screening (back)',
-                'com_rejected': 'Dismiss',
+                'com_rejected': _('Dismiss'),
             },
-            'display': 'Internal Review',
+            'display': _('Internal Review'),
             'public': f'{settings.ORG_SHORT_NAME} Review',
             'stage': RequestCom,
             'permissions': default_permissions,
         },
         'com_community_review': {
             'transitions': {
-                'com_post_review_discussion': 'Close Review',
+                'com_post_review_discussion': _('Close Review'),
                 'com_internal_review': 'Open Internal Review (back)',
-                'com_rejected': 'Dismiss',
+                'com_rejected': _('Dismiss'),
             },
-            'display': 'Community Review',
+            'display': _('Community Review'),
             'public': f'{settings.ORG_SHORT_NAME} Review',
             'stage': RequestCom,
             'permissions': community_review_permissions,
@@ -553,25 +554,25 @@ SingleStageCommunityDefinition = [
     {
         'com_post_review_discussion': {
             'transitions': {
-                'com_post_review_more_info': 'Request More Information',
-                'com_external_review': 'Open External Review',
-                'com_determination': 'Ready For Determination',
+                'com_post_review_more_info': _('Request More Information'),
+                'com_external_review': _('Open External Review'),
+                'com_determination': _('Ready For Determination'),
                 'com_internal_review': 'Open Internal Review (back)',
-                'com_rejected': 'Dismiss',
+                'com_rejected': _('Dismiss'),
             },
-            'display': 'Ready For Discussion',
+            'display': _('Ready For Discussion'),
             'stage': RequestCom,
             'permissions': hidden_from_applicant_permissions,
         },
         'com_post_review_more_info': {
             'transitions': {
                 'com_post_review_discussion': {
-                    'display': 'Submit',
+                    'display': _('Submit'),
                     'permissions': {UserPermissions.APPLICANT, UserPermissions.STAFF, UserPermissions.LEAD, UserPermissions.ADMIN},
                     'method': 'create_revision',
                 },
             },
-            'display': 'More information required',
+            'display': _('More information required'),
             'stage': RequestCom,
             'permissions': applicant_edit_permissions,
         },
@@ -579,10 +580,10 @@ SingleStageCommunityDefinition = [
     {
         'com_external_review': {
             'transitions': {
-                'com_post_external_review_discussion': 'Close Review',
+                'com_post_external_review_discussion': _('Close Review'),
                 'com_post_review_discussion': 'Ready For Discussion (back)',
             },
-            'display': 'External Review',
+            'display': _('External Review'),
             'stage': RequestCom,
             'permissions': reviewer_review_permissions,
         },
@@ -590,26 +591,26 @@ SingleStageCommunityDefinition = [
     {
         'com_post_external_review_discussion': {
             'transitions': {
-                'com_post_external_review_more_info': 'Request More Information',
-                'com_determination': 'Ready For Determination',
+                'com_post_external_review_more_info': _('Request More Information'),
+                'com_determination': _('Ready For Determination'),
                 'com_external_review': 'Open External Review (back)',
-                'com_almost': 'Accept but additional info required',
-                'com_accepted': 'Accept',
-                'com_rejected': 'Dismiss',
+                'com_almost': _('Accept but additional info required'),
+                'com_accepted': _('Accept'),
+                'com_rejected': _('Dismiss'),
             },
-            'display': 'Ready For Discussion',
+            'display': _('Ready For Discussion'),
             'stage': RequestCom,
             'permissions': hidden_from_applicant_permissions,
         },
         'com_post_external_review_more_info': {
             'transitions': {
                 'com_post_external_review_discussion': {
-                    'display': 'Submit',
+                    'display': _('Submit'),
                     'permissions': {UserPermissions.APPLICANT, UserPermissions.STAFF, UserPermissions.LEAD, UserPermissions.ADMIN},
                     'method': 'create_revision',
                 },
             },
-            'display': 'More information required',
+            'display': _('More information required'),
             'stage': RequestCom,
             'permissions': applicant_edit_permissions,
         },
@@ -618,11 +619,11 @@ SingleStageCommunityDefinition = [
         'com_determination': {
             'transitions': {
                 'com_post_external_review_discussion': 'Ready For Discussion (back)',
-                'com_almost': 'Accept but additional info required',
-                'com_accepted': 'Accept',
-                'com_rejected': 'Dismiss',
+                'com_almost': _('Accept but additional info required'),
+                'com_accepted': _('Accept'),
+                'com_rejected': _('Dismiss'),
             },
-            'display': 'Ready for Determination',
+            'display': _('Ready for Determination'),
             'permissions': hidden_from_applicant_permissions,
             'stage': RequestCom,
         },
@@ -630,21 +631,21 @@ SingleStageCommunityDefinition = [
     {
         'com_almost': {
             'transitions': {
-                'com_accepted': 'Accept',
+                'com_accepted': _('Accept'),
                 'com_post_external_review_discussion': 'Ready For Discussion (back)',
             },
-            'display': 'Accepted but additional info required',
+            'display': _('Accepted but additional info required'),
             'stage': RequestCom,
             'permissions': applicant_edit_permissions,
         },
         'com_accepted': {
-            'display': 'Accepted',
-            'future': 'Application Outcome',
+            'display': _('Accepted'),
+            'future': _('Application Outcome'),
             'stage': RequestCom,
             'permissions': staff_edit_permissions,
         },
         'com_rejected': {
-            'display': 'Dismissed',
+            'display': _('Dismissed'),
             'stage': RequestCom,
             'permissions': no_permissions,
         },
@@ -657,12 +658,12 @@ DoubleStageDefinition = [
         DRAFT_STATE: {
             'transitions': {
                 INITIAL_STATE: {
-                    'display': 'Submit',
+                    'display': _('Submit'),
                     'permissions': {UserPermissions.APPLICANT},
                     'method': 'create_revision',
                 },
             },
-            'display': 'Draft',
+            'display': _('Draft'),
             'stage': Concept,
             'permissions': applicant_edit_permissions,
         }
@@ -670,29 +671,29 @@ DoubleStageDefinition = [
     {
         INITIAL_STATE: {
             'transitions': {
-                'concept_more_info': 'Request More Information',
-                'concept_internal_review': 'Open Review',
-                'concept_determination': 'Ready For Preliminary Determination',
-                'invited_to_proposal': 'Invite to Proposal',
-                'concept_rejected': 'Dismiss',
+                'concept_more_info': _('Request More Information'),
+                'concept_internal_review': _('Open Review'),
+                'concept_determination': _('Ready For Preliminary Determination'),
+                'invited_to_proposal': _('Invite to Proposal'),
+                'concept_rejected': _('Dismiss'),
             },
-            'display': 'Need screening',
-            'public': 'Concept Note Received',
+            'display': _('Need screening'),
+            'public': _('Concept Note Received'),
             'stage': Concept,
             'permissions': default_permissions,
         },
         'concept_more_info': {
             'transitions': {
                 INITIAL_STATE: {
-                    'display': 'Submit',
+                    'display': _('Submit'),
                     'permissions': {UserPermissions.APPLICANT, UserPermissions.STAFF, UserPermissions.LEAD, UserPermissions.ADMIN},
                     'method': 'create_revision',
                 },
-                'concept_rejected': 'Dismiss',
-                'invited_to_proposal': 'Invite to Proposal',
-                'concept_determination': 'Ready For Preliminary Determination',
+                'concept_rejected': _('Dismiss'),
+                'invited_to_proposal': _('Invite to Proposal'),
+                'concept_determination': _('Ready For Preliminary Determination'),
             },
-            'display': 'More information required',
+            'display': _('More information required'),
             'stage': Concept,
             'permissions': applicant_edit_permissions,
         },
@@ -700,11 +701,11 @@ DoubleStageDefinition = [
     {
         'concept_internal_review': {
             'transitions': {
-                'concept_review_discussion': 'Close Review',
+                'concept_review_discussion': _('Close Review'),
                 INITIAL_STATE: 'Need screening (back)',
-                'invited_to_proposal': 'Invite to Proposal',
+                'invited_to_proposal': _('Invite to Proposal'),
             },
-            'display': 'Internal Review',
+            'display': _('Internal Review'),
             'public': f'{settings.ORG_SHORT_NAME} Review',
             'stage': Concept,
             'permissions': default_permissions,
@@ -713,26 +714,26 @@ DoubleStageDefinition = [
     {
         'concept_review_discussion': {
             'transitions': {
-                'concept_review_more_info': 'Request More Information',
-                'concept_determination': 'Ready For Preliminary Determination',
+                'concept_review_more_info': _('Request More Information'),
+                'concept_determination': _('Ready For Preliminary Determination'),
                 'concept_internal_review': 'Open Review (back)',
-                'invited_to_proposal': 'Invite to Proposal',
-                'concept_rejected': 'Dismiss',
+                'invited_to_proposal': _('Invite to Proposal'),
+                'concept_rejected': _('Dismiss'),
             },
-            'display': 'Ready For Discussion',
+            'display': _('Ready For Discussion'),
             'stage': Concept,
             'permissions': hidden_from_applicant_permissions,
         },
         'concept_review_more_info': {
             'transitions': {
                 'concept_review_discussion': {
-                    'display': 'Submit',
+                    'display': _('Submit'),
                     'permissions': {UserPermissions.APPLICANT, UserPermissions.STAFF, UserPermissions.LEAD, UserPermissions.ADMIN},
                     'method': 'create_revision',
                 },
-                'invited_to_proposal': 'Invite to Proposal',
+                'invited_to_proposal': _('Invite to Proposal'),
             },
-            'display': 'More information required',
+            'display': _('More information required'),
             'stage': Concept,
             'permissions': applicant_edit_permissions,
         },
@@ -741,21 +742,21 @@ DoubleStageDefinition = [
         'concept_determination': {
             'transitions': {
                 'concept_review_discussion': 'Ready For Discussion (back)',
-                'invited_to_proposal': 'Invite to Proposal',
-                'concept_rejected': 'Dismiss',
+                'invited_to_proposal': _('Invite to Proposal'),
+                'concept_rejected': _('Dismiss'),
             },
-            'display': 'Ready for Preliminary Determination',
+            'display': _('Ready for Preliminary Determination'),
             'permissions': hidden_from_applicant_permissions,
             'stage': Concept,
         },
     },
     {
         'invited_to_proposal': {
-            'display': 'Concept Accepted',
-            'future': 'Preliminary Determination',
+            'display': _('Concept Accepted'),
+            'future': _('Preliminary Determination'),
             'transitions': {
                 'draft_proposal': {
-                    'display': 'Progress',
+                    'display': _('Progress'),
                     'method': 'progress_application',
                     'permissions': {UserPermissions.STAFF, UserPermissions.LEAD, UserPermissions.ADMIN},
                     'conditions': 'not_progressed',
@@ -765,7 +766,7 @@ DoubleStageDefinition = [
             'permissions': no_permissions,
         },
         'concept_rejected': {
-            'display': 'Dismissed',
+            'display': _('Dismissed'),
             'stage': Concept,
             'permissions': no_permissions,
         },
@@ -773,12 +774,12 @@ DoubleStageDefinition = [
     {
         'draft_proposal': {
             'transitions': {
-                'proposal_discussion': {'display': 'Submit', 'permissions': {UserPermissions.APPLICANT}, 'method': 'create_revision'},
-                'external_review': 'Open External Review',
-                'proposal_determination': 'Ready For Final Determination',
-                'proposal_rejected': 'Dismiss',
+                'proposal_discussion': {'display': _('Submit'), 'permissions': {UserPermissions.APPLICANT}, 'method': 'create_revision'},
+                'external_review': _('Open External Review'),
+                'proposal_determination': _('Ready For Final Determination'),
+                'proposal_rejected': _('Dismiss'),
             },
-            'display': 'Invited for Proposal',
+            'display': _('Invited for Proposal'),
             'stage': Proposal,
             'permissions': applicant_edit_permissions,
         },
@@ -786,28 +787,28 @@ DoubleStageDefinition = [
     {
         'proposal_discussion': {
             'transitions': {
-                'proposal_more_info': 'Request More Information',
-                'proposal_internal_review': 'Open Review',
-                'external_review': 'Open External Review',
-                'proposal_determination': 'Ready For Final Determination',
-                'proposal_rejected': 'Dismiss',
+                'proposal_more_info': _('Request More Information'),
+                'proposal_internal_review': _('Open Review'),
+                'external_review': _('Open External Review'),
+                'proposal_determination': _('Ready For Final Determination'),
+                'proposal_rejected': _('Dismiss'),
             },
-            'display': 'Proposal Received',
+            'display': _('Proposal Received'),
             'stage': Proposal,
             'permissions': default_permissions,
         },
         'proposal_more_info': {
             'transitions': {
                 'proposal_discussion': {
-                    'display': 'Submit',
+                    'display': _('Submit'),
                     'permissions': {UserPermissions.APPLICANT, UserPermissions.STAFF, UserPermissions.LEAD, UserPermissions.ADMIN},
                     'method': 'create_revision',
                 },
-                'external_review': 'Open External Review',
-                'proposal_determination': 'Ready For Final Determination',
-                'proposal_rejected': 'Dismiss',
+                'external_review': _('Open External Review'),
+                'proposal_determination': _('Ready For Final Determination'),
+                'proposal_rejected': _('Dismiss'),
             },
-            'display': 'More information required',
+            'display': _('More information required'),
             'stage': Proposal,
             'permissions': applicant_edit_permissions,
         },
@@ -815,10 +816,10 @@ DoubleStageDefinition = [
     {
         'proposal_internal_review': {
             'transitions': {
-                'post_proposal_review_discussion': 'Close Review',
+                'post_proposal_review_discussion': _('Close Review'),
                 'proposal_discussion': 'Proposal Received (back)',
             },
-            'display': 'Internal Review',
+            'display': _('Internal Review'),
             'public': f'{settings.ORG_SHORT_NAME} Review',
             'stage': Proposal,
             'permissions': default_permissions,
@@ -827,26 +828,26 @@ DoubleStageDefinition = [
     {
         'post_proposal_review_discussion': {
             'transitions': {
-                'post_proposal_review_more_info': 'Request More Information',
-                'external_review': 'Open External Review',
-                'proposal_determination': 'Ready For Final Determination',
+                'post_proposal_review_more_info': _('Request More Information'),
+                'external_review': _('Open External Review'),
+                'proposal_determination': _('Ready For Final Determination'),
                 'proposal_internal_review': 'Open Internal Review (back)',
-                'proposal_rejected': 'Dismiss',
+                'proposal_rejected': _('Dismiss'),
             },
-            'display': 'Ready For Discussion',
+            'display': _('Ready For Discussion'),
             'stage': Proposal,
             'permissions': hidden_from_applicant_permissions,
         },
         'post_proposal_review_more_info': {
             'transitions': {
                 'post_proposal_review_discussion': {
-                    'display': 'Submit',
+                    'display': _('Submit'),
                     'permissions': {UserPermissions.APPLICANT, UserPermissions.STAFF, UserPermissions.LEAD, UserPermissions.ADMIN},
                     'method': 'create_revision',
                 },
-                'external_review': 'Open External Review',
+                'external_review': _('Open External Review'),
             },
-            'display': 'More information required',
+            'display': _('More information required'),
             'stage': Proposal,
             'permissions': applicant_edit_permissions,
         },
@@ -854,10 +855,10 @@ DoubleStageDefinition = [
     {
         'external_review': {
             'transitions': {
-                'post_external_review_discussion': 'Close Review',
+                'post_external_review_discussion': _('Close Review'),
                 'post_proposal_review_discussion': 'Ready For Discussion (back)',
             },
-            'display': 'External Review',
+            'display': _('External Review'),
             'stage': Proposal,
             'permissions': reviewer_review_permissions,
         },
@@ -865,26 +866,26 @@ DoubleStageDefinition = [
     {
         'post_external_review_discussion': {
             'transitions': {
-                'post_external_review_more_info': 'Request More Information',
-                'proposal_determination': 'Ready For Final Determination',
+                'post_external_review_more_info': _('Request More Information'),
+                'proposal_determination': _('Ready For Final Determination'),
                 'external_review': 'Open External Review (back)',
-                'proposal_almost': 'Accept but additional info required',
-                'proposal_accepted': 'Accept',
-                'proposal_rejected': 'Dismiss',
+                'proposal_almost': _('Accept but additional info required'),
+                'proposal_accepted': _('Accept'),
+                'proposal_rejected': _('Dismiss'),
             },
-            'display': 'Ready For Discussion',
+            'display': _('Ready For Discussion'),
             'stage': Proposal,
             'permissions': hidden_from_applicant_permissions,
         },
         'post_external_review_more_info': {
             'transitions': {
                 'post_external_review_discussion': {
-                    'display': 'Submit',
+                    'display': _('Submit'),
                     'permissions': {UserPermissions.APPLICANT, UserPermissions.STAFF, UserPermissions.LEAD, UserPermissions.ADMIN},
                     'method': 'create_revision',
                 },
             },
-            'display': 'More information required',
+            'display': _('More information required'),
             'stage': Proposal,
             'permissions': applicant_edit_permissions,
         },
@@ -893,11 +894,11 @@ DoubleStageDefinition = [
         'proposal_determination': {
             'transitions': {
                 'post_external_review_discussion': 'Ready For Discussion (back)',
-                'proposal_almost': 'Accept but additional info required',
-                'proposal_accepted': 'Accept',
-                'proposal_rejected': 'Dismiss',
+                'proposal_almost': _('Accept but additional info required'),
+                'proposal_accepted': _('Accept'),
+                'proposal_rejected': _('Dismiss'),
             },
-            'display': 'Ready for Final Determination',
+            'display': _('Ready for Final Determination'),
             'permissions': hidden_from_applicant_permissions,
             'stage': Proposal,
         },
@@ -905,21 +906,21 @@ DoubleStageDefinition = [
     {
         'proposal_almost': {
             'transitions': {
-                'proposal_accepted': 'Accept',
+                'proposal_accepted': _('Accept'),
                 'post_external_review_discussion': 'Ready For Discussion (back)',
             },
-            'display': 'Accepted but additional info required',
+            'display': _('Accepted but additional info required'),
             'stage': Proposal,
             'permissions': applicant_edit_permissions,
         },
         'proposal_accepted': {
-            'display': 'Accepted',
-            'future': 'Final Determination',
+            'display': _('Accepted'),
+            'future': _('Final Determination'),
             'stage': Proposal,
             'permissions': staff_edit_permissions,
         },
         'proposal_rejected': {
-            'display': 'Dismissed',
+            'display': _('Dismissed'),
             'stage': Proposal,
             'permissions': no_permissions,
         },
@@ -1109,39 +1110,39 @@ def phases_matching(phrase, exclude=list()):
 
 PHASES_MAPPING = {
     'received': {
-        'name': 'Received',
+        'name': _('Received'),
         'statuses': [INITIAL_STATE, 'proposal_discussion'],
     },
     'internal-review': {
-        'name': 'Internal Review',
+        'name': _('Internal Review'),
         'statuses': phases_matching('internal_review'),
     },
     'in-discussion': {
-        'name': 'Ready for Discussion',
+        'name': _('Ready for Discussion'),
         'statuses': phases_matching('discussion', exclude=[INITIAL_STATE, 'proposal_discussion']),
     },
     'more-information': {
-        'name': 'More Information Requested',
+        'name': _('More Information Requested'),
         'statuses': phases_matching('more_info'),
     },
     'invited-for-proposal': {
-        'name': 'Invited for Proposal',
+        'name': _('Invited for Proposal'),
         'statuses': ['draft_proposal'],
     },
     'external-review': {
-        'name': 'External Review',
+        'name': _('External Review'),
         'statuses': phases_matching('external_review'),
     },
     'ready-for-determination': {
-        'name': 'Ready for Determination',
+        'name': _('Ready for Determination'),
         'statuses': phases_matching('determination'),
     },
     'accepted': {
-        'name': 'Accepted',
+        'name': _('Accepted'),
         'statuses': phases_matching('accepted'),
     },
     'dismissed': {
-        'name': 'Dismissed',
+        'name': _('Dismissed'),
         'statuses': phases_matching('rejected'),
     },
 }
