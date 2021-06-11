@@ -1,6 +1,7 @@
 <a class="link link--download" href="{{ file.url }}" target="_blank" rel="noopener noreferrer">
     <div>
         <svg><use xlink:href="#file"></use></svg>
+        <span>{{ file.modification_time }}</span>
         <span>{{ file.filename }}</span>
     </div>
     <svg><use xlink:href="#download"></use></svg>

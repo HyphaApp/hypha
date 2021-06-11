@@ -79,6 +79,10 @@ class StreamFieldFile(File):
             return self.file.size
         return self.storage.size(self.name)
 
+    @property
+    def modification_time(self):
+        return self.storage.get_modified_time(self.name).date()
+
     def serialize(self):
         return {
             'url': self.url,
