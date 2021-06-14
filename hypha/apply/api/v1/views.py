@@ -12,6 +12,7 @@ from rest_framework_api_key.permissions import HasAPIKey
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import COMMENT, Activity
+from hypha.apply.categories.models import MetaTerm
 from hypha.apply.determinations.views import DeterminationCreateOrUpdateView
 from hypha.apply.funds.models import ApplicationSubmission, RoundsAndLabs
 from hypha.apply.funds.workflow import STATUSES
@@ -25,11 +26,13 @@ from .serializers import (
     CommentCreateSerializer,
     CommentEditSerializer,
     CommentSerializer,
+    MetaTermsSerializer,
     RoundLabDetailSerializer,
     RoundLabSerializer,
     SubmissionActionSerializer,
     SubmissionDetailSerializer,
     SubmissionListSerializer,
+    SubmissionMetaTermsSerializer,
     SubmissionSummarySerializer,
     UserSerializer,
 )
@@ -71,6 +74,16 @@ class SubmissionViewSet(viewsets.ReadOnlyModelViewSet, viewsets.GenericViewSet):
         summary = serializer.validated_data['summary']
         submission.summary = summary
         submission.save(update_fields=['summary'])
+        serializer = self.get_serializer(submission)
+        return Response(serializer.data)
+
+    @action(detail=True, methods=['post'])
+    def meta_terms(self, request, pk=None):
+        submission = self.get_object()
+        serializer = SubmissionMetaTermsSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        meta_terms_ids = serializer.validated_data['meta_terms']
+        submission.meta_terms.set(meta_terms_ids)
         serializer = self.get_serializer(submission)
         return Response(serializer.data)
 
@@ -308,3 +321,14 @@ class CurrentUser(APIView):
     def get(self, request, format=None):
         ser = UserSerializer(request.user)
         return Response(ser.data)
+
+
+class MetaTermsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    """
+    List all the Meta Terms
+    """
+    queryset = MetaTerm.get_root_nodes()
+    serializer_class = MetaTermsSerializer
+    permission_classes = (
+        permissions.IsAuthenticated, IsApplyStaffUser,
+    )

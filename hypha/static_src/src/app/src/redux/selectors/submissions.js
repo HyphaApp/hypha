@@ -75,6 +75,27 @@ const getSubmissionReminders = createSelector(getCurrentSubmission, submission =
     return submission && submission.reminders || []
 })
 
+const getSubmissionMetaTerms = createSelector(
+    [getCurrentSubmission], submission => {
+        let metaTerms = []
+        if(submission && "metaTerms" in submission){
+            submission.metaTerms.map(metaTerm => {
+                const existingMetaTermIndex = metaTerms.findIndex(mt => mt.parentId == metaTerm.parent.id);
+                if (existingMetaTermIndex != -1) {
+                    metaTerms[existingMetaTermIndex].children.push({id: metaTerm.id, name: metaTerm.name})
+                }
+                else {
+                    metaTerms.push({
+                        parentId : metaTerm.parent.id,
+                        parent: metaTerm.parent.name,
+                        children: [{id: metaTerm.id, name: metaTerm.name}]
+                    })
+                }
+            })
+        }
+        return metaTerms
+    }
+)
 
 const getSubmissionOfID = (submissionID) => createSelector(
     [getSubmissions], submissions => submissions[submissionID]
@@ -111,5 +132,6 @@ export {
     getGroupedIconStatus,
     getScreeningStatuses,
     getSubmissionScreening,
-    getSubmissionReminders
+    getSubmissionReminders,
+    getSubmissionMetaTerms
 };
