@@ -1,11 +1,11 @@
 {% extends "base-apply.html" %}
 {% load static %}
 
-{% block title %}{% if object %}Edit{% else %}Setup{% endif %} Contractor{% if object %}{{ object.project.title }}{% else %}{{ project.title }}{% endif %}{% endblock %}
+{% block title %}{% if object %}Edit{% else %}Update{% endif %} Contractor{% if object %}{{ object.project.title }}{% else %}{{ project.title }}{% endif %}{% endblock %}
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
-        <h2 class="heading heading--no-margin">{% if object %}Editing{% else %}Setup{% endif %} Contractor Information</h2>
+        <h2 class="heading heading--no-margin">Update Contractor Information</h2>
     </div>
 </div>
 

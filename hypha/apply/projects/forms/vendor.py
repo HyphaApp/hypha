@@ -1,9 +1,9 @@
-from addressfield.fields import AddressField
+from babel.numbers import get_currency_name, list_currencies
 from django import forms
-
-from babel.numbers import list_currencies, get_currency_name
-from hypha.apply.stream_forms.fields import MultiFileField
 from django_file_form.forms import FileFormMixin
+
+from addressfield.fields import AddressField
+from hypha.apply.stream_forms.fields import MultiFileField
 
 # from addressfield.fields import AddressField
 from ..models.vendor import VendorFormSettings

@@ -6,23 +6,19 @@ from .payment import (
 )
 from .project import (
     ApproveContractForm,
+    CreateApprovalForm,
     CreateProjectForm,
-    CreateApprovalForm,
-    CreateApprovalForm,
-    ProjectEditForm,
     ProjectApprovalForm,
+    ProjectEditForm,
     RejectionForm,
     RemoveDocumentForm,
     SetPendingForm,
-    UploadContractForm,
     StaffUploadContractForm,
-    UploadDocumentForm,
     UpdateProjectLeadForm,
+    UploadContractForm,
+    UploadDocumentForm,
 )
-from .report import (
-    ReportEditForm,
-    ReportFrequencyForm,
-)
+from .report import ReportEditForm, ReportFrequencyForm
 from .vendor import (
     CreateVendorFormStep1,
     CreateVendorFormStep2,

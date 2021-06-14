@@ -1,9 +1,9 @@
-from os import name
 from django.urls import include, path
 
 from .views import (
     ContractPrivateMediaView,
     CreatePaymentRequestView,
+    CreateVendorView,
     DeletePaymentRequestView,
     EditPaymentRequestView,
     PaymentRequestListView,
@@ -21,7 +21,6 @@ from .views import (
     ReportPrivateMedia,
     ReportSkipView,
     ReportUpdateView,
-    CreateVendorView,
 )
 
 app_name = 'projects'

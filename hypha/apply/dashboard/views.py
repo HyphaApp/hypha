@@ -15,7 +15,7 @@ from hypha.apply.funds.tables import (
     review_filter_for_user,
 )
 from hypha.apply.projects.filters import ProjectListFilter
-from hypha.apply.projects.models import PaymentRequest, Project, vendor
+from hypha.apply.projects.models import PaymentRequest, Project
 from hypha.apply.projects.tables import (
     PaymentRequestsDashboardTable,
     ProjectsDashboardTable,

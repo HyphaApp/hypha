@@ -1,13 +1,10 @@
-from django.db import models
 from django.conf import settings
-from django.db.models.fields import Field
+from django.db import models
 from django.utils.translation import gettext_lazy as _
+from wagtail.admin.edit_handlers import FieldPanel, MultiFieldPanel
 from wagtail.contrib.settings.models import BaseSetting, register_setting
 from wagtail.core.fields import RichTextField
-from wagtail.admin.edit_handlers import (
-    FieldPanel,
-    MultiFieldPanel,
-)
+
 from hypha.apply.utils.storage import PrivateStorage
 
 

@@ -1,13 +1,13 @@
 import json
-from django.shortcuts import get_object_or_404, render
+
 from django.core.exceptions import PermissionDenied
 from django.db.models.fields.files import FieldFile
-
-from wagtail.core.models import Site
+from django.shortcuts import get_object_or_404, render
 from formtools.wizard.views import SessionWizardView
+from wagtail.core.models import Site
+
 from hypha.apply.utils.storage import PrivateStorage
 
-from ..models import Project, DueDiligenceDocument, BankInformation
 from ..forms import (
     CreateVendorFormStep1,
     CreateVendorFormStep2,
@@ -16,6 +16,7 @@ from ..forms import (
     CreateVendorFormStep5,
     CreateVendorFormStep6,
 )
+from ..models import BankInformation, DueDiligenceDocument, Project
 
 
 def show_extra_info_form(wizard):
