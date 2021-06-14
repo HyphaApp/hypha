@@ -22,7 +22,6 @@ from .views import (
     ReportSkipView,
     ReportUpdateView,
     CreateVendorView,
-    VendorFormSuccess,
 )
 
 app_name = 'projects'
@@ -39,7 +38,6 @@ urlpatterns = [
         path('simplified/', ProjectDetailSimplifiedView.as_view(), name='simplified'),
         path('request/', CreatePaymentRequestView.as_view(), name='request'),
         path('vendor/', CreateVendorView.as_view(), name='vendor'),
-        path('vendor/success/', VendorFormSuccess.as_view(), name='vendor-success'),
     ])),
     path('payment-requests/', include(([
         path('', PaymentRequestListView.as_view(), name='all'),

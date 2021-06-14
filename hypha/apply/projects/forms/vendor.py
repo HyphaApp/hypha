@@ -1,9 +1,11 @@
+from addressfield.fields import AddressField
 from django import forms
-from django.db import models
 
 from babel.numbers import list_currencies, get_currency_name
+from hypha.apply.stream_forms.fields import MultiFileField
+from django_file_form.forms import FileFormMixin
 
-from addressfield.fields import AddressField
+# from addressfield.fields import AddressField
 from ..models.vendor import Vendor, VendorFormSettings
 
 
@@ -44,25 +46,21 @@ class CreateVendorFormStep1(BaseVendorForm, forms.ModelForm):
         self.fields['type'].choices = self.fields['type'].choices[1:]
 
 
-class CreateVendorFormStep2(BaseVendorForm, forms.ModelForm):
-    required_to_pay_taxes = forms.ChoiceField(
+class CreateVendorFormStep2(BaseVendorForm, forms.Form):
+    required_to_pay_taxes = forms.TypedChoiceField(
         choices=((False, 'No'), (True, 'Yes')),
-        widget=forms.RadioSelect
+        coerce=lambda x: x == 'True',
+        widget=forms.RadioSelect,
+        required=True
     )
-
-    class Meta:
-        fields = [
-            'required_to_pay_taxes',
-        ]
-        model = Vendor
 
     def __init__(self, *args, **kwargs):
         super(CreateVendorFormStep2, self).__init__(*args, **kwargs)
         self.fields = self.apply_form_settings(self.fields)
 
 
-class CreateVendorFormStep3(BaseVendorForm, forms.Form):
-    due_diligence_documents = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
+class CreateVendorFormStep3(FileFormMixin, BaseVendorForm, forms.Form):
+    due_diligence_documents = MultiFileField(required=False)
 
     def __init__(self, *args, **kwargs):
         super(CreateVendorFormStep3, self).__init__(*args, **kwargs)
@@ -90,9 +88,11 @@ class CreateVendorFormStep4(BaseVendorForm, forms.Form):
 
 
 class CreateVendorFormStep5(BaseVendorForm, forms.Form):
-    need_extra_info = forms.ChoiceField(
+    need_extra_info = forms.TypedChoiceField(
         choices=((False, 'No'), (True, 'Yes')),
-        widget=forms.RadioSelect
+        coerce=lambda x: x == 'True',
+        widget=forms.RadioSelect,
+        required=True
     )
 
     def __init__(self, *args, **kwargs):
@@ -105,8 +105,7 @@ class CreateVendorFormStep6(BaseVendorForm, forms.Form):
         (currency, f'{get_currency_name(currency)} - {currency}')
         for currency in list_currencies()
     ]
-
-    branch_address = AddressField(required=False)
+    branch_address = AddressField()
     ib_account_routing_number = forms.CharField(required=False)
     ib_account_number = forms.CharField(required=False)
     ib_account_currency = forms.ChoiceField(
@@ -114,7 +113,7 @@ class CreateVendorFormStep6(BaseVendorForm, forms.Form):
         required=False,
         initial='USD'
     )
-    ib_branch_address = AddressField(required=False)
+    # ib_branch_address = AddressField()
     nid_type = forms.CharField(required=False)
     nid_number = forms.CharField(required=False)
     other_info = forms.CharField(required=False)

@@ -84,7 +84,7 @@ class DueDiligenceDocument(models.Model):
     )
 
     def __str__(self):
-        return self.vendor.full_name + ' -> ' + self.document.name
+        return self.vendor.name + ' -> ' + self.document.name
 
 
 @register_setting
@@ -154,7 +154,7 @@ class VendorFormSettings(BaseSetting):
         'help_text',
         default='Depending on your country, this might be called the account number, IBAN, or BBAN number.'
     )
-    account_currency = models.TextField(
+    account_currency_label = models.TextField(
         'label',
         default='Bank Account Currency'
     )
@@ -239,12 +239,12 @@ class VendorFormSettings(BaseSetting):
 
     panels = [
         MultiFieldPanel([
-            FieldPanel('full_name_label'),
-            FieldPanel('full_name_help_text'),
+            FieldPanel('name_label'),
+            FieldPanel('name_help_text'),
         ], 'Name'),
         MultiFieldPanel([
-            FieldPanel('full_name_label'),
-            FieldPanel('full_name_help_text'),
+            FieldPanel('contractor_name_label'),
+            FieldPanel('contractor_name_help_text'),
         ], 'Contractor Name'),
         MultiFieldPanel([
             FieldPanel('type_label'),

@@ -43,7 +43,6 @@ from .report import (
 )
 from .vendor import (
     CreateVendorView,
-    VendorFormSuccess,
 )
 
 __all__ = [
@@ -85,5 +84,4 @@ __all__ = [
     'ReportFrequencyUpdate',
     'ReportListView',
     'CreateVendorView',
-    'VendorFormSuccess',
 ]
