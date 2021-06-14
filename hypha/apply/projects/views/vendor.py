@@ -7,7 +7,7 @@ from wagtail.core.models import Site
 from formtools.wizard.views import SessionWizardView
 from hypha.apply.utils.storage import PrivateStorage
 
-from ..models import Project, Vendor, DueDiligenceDocument, BankInformation
+from ..models import Project, DueDiligenceDocument, BankInformation
 from ..forms import (
     CreateVendorFormStep1,
     CreateVendorFormStep2,
@@ -56,28 +56,50 @@ class CreateVendorView(VendorAccessMixin, SessionWizardView):
         cleaned_data = self.get_all_cleaned_data()
         vendor = vendor_project.vendor
         need_extra_info = cleaned_data['need_extra_info']
-        bank_information = BankInformation.objects.create(
-            account_holder_name=cleaned_data['account_holder_name'],
-            account_routing_number=cleaned_data['account_routing_number'],
-            account_number=cleaned_data['account_number'],
-            account_currency=cleaned_data['account_currency'],
-            need_extra_info=need_extra_info,
-        )
-        if need_extra_info:
-            intermediary_bank_information = BankInformation.objects.create(
-                account_routing_number=cleaned_data['ib_account_routing_number'],
-                account_number=cleaned_data['ib_account_number'],
-                account_currency=cleaned_data['ib_account_currency'],
-                # branch_address=cleaned_data['ib_branch_address']
+        bank_info = vendor.bank_info
+        account_holder_name = cleaned_data['account_holder_name']
+        account_routing_number = cleaned_data['account_routing_number']
+        account_number = cleaned_data['account_number']
+        account_currency = cleaned_data['account_currency']
+        if not bank_info:
+            bank_info = BankInformation.objects.create(
+                account_holder_name=account_holder_name,
+                account_number=account_number,
+                account_routing_number=account_routing_number,
+                account_currency=account_currency,
+                need_extra_info=need_extra_info,
             )
-            bank_information.branch_address = cleaned_data['branch_address']
-            bank_information.nid_type = cleaned_data['nid_type']
-            bank_information.nid_number = cleaned_data['nid_number']
-            bank_information.iba_info = intermediary_bank_information
-            bank_information.save()
+        else:
+            bank_info.account_holder_name = account_holder_name
+            bank_info.account_number = account_number
+            bank_info.account_currency = account_currency
+            bank_info.need_extra_info = need_extra_info
+        if need_extra_info:
+            ib_account_routing_number = cleaned_data['ib_account_routing_number']
+            ib_account_number = cleaned_data['ib_account_number']
+            ib_account_currency = cleaned_data['ib_account_currency']
+            # branch_address=cleaned_data['ib_branch_address']
+            iba_info = bank_info.iba_info
+            if not iba_info:
+                iba_info = BankInformation.objects.create(
+                    account_routing_number=ib_account_routing_number,
+                    account_number=ib_account_number,
+                    account_currency=ib_account_currency,
+                )
+            else:
+                iba_info.account_routing_number = ib_account_routing_number
+                iba_info.account_number = ib_account_number
+                iba_info.account_currency = ib_account_currency
 
-        vendor.bank_info = bank_information
-        vendor.other_info = cleaned_data['other_info']
+            bank_info.branch_address = cleaned_data['branch_address']
+            bank_info.nid_type = cleaned_data['nid_type']
+            bank_info.nid_number = cleaned_data['nid_number']
+            bank_info.iba_info = iba_info
+            vendor.other_info = cleaned_data['other_info']
+
+        bank_info.save()
+
+        vendor.bank_info = bank_info
         vendor.name = cleaned_data['name']
         vendor.contractor_name = cleaned_data['contractor_name']
         vendor.type = cleaned_data['type']

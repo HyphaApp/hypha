@@ -185,7 +185,7 @@ class VendorFormSettings(BaseSetting):
     )
     ib_account_routing_number_label = models.TextField(
         'label',
-        default='Bank Account Routing Number'
+        default='Intermediary Bank Account Routing Number'
     )
     ib_account_routing_number_help_text = RichTextField(
         'help_text',
@@ -194,7 +194,7 @@ class VendorFormSettings(BaseSetting):
     )
     ib_account_number_label = models.TextField(
         'label',
-        default='Bank Account Number'
+        default='Intermediary Bank Account Number'
     )
     ib_account_number_help_text = RichTextField(
         'help_text',
@@ -203,7 +203,7 @@ class VendorFormSettings(BaseSetting):
     )
     ib_account_currency_label = models.TextField(
         'label',
-        default='Bank Account Currency'
+        default='Intermediary Bank Account Currency'
     )
     ib_account_currency_help_text = RichTextField(
         'help_text',
@@ -221,7 +221,7 @@ class VendorFormSettings(BaseSetting):
     )
     nid_type_label = models.TextField(
         'label',
-        default='National Identity Document Type'
+        default='Account Holder National Identity Document Type'
     )
     nid_type_help_text = RichTextField(
         'help_text',
@@ -231,7 +231,7 @@ class VendorFormSettings(BaseSetting):
     )
     nid_number_label = models.TextField(
         'label',
-        default='National Identity Document Number'
+        default='Account Holder National Identity Document Number'
     )
     nid_number_help_text = RichTextField(
         'help_text',
