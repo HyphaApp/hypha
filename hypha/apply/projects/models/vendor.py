@@ -11,10 +11,6 @@ from wagtail.admin.edit_handlers import (
 from hypha.apply.utils.storage import PrivateStorage
 
 
-def due_diligence_documents(instance, filename):
-    return f'vendor/{instance.vendor_id}/due_diligence_documents/{filename}'
-
-
 class BankInformation(models.Model):
     account_holder_name = models.CharField(max_length=150)
     account_routing_number = models.CharField(max_length=10)
@@ -75,7 +71,7 @@ class Vendor(models.Model):
 
 class DueDiligenceDocument(models.Model):
     document = models.FileField(
-        upload_to=due_diligence_documents, storage=PrivateStorage()
+        upload_to="due_diligence_documents", storage=PrivateStorage()
     )
     vendor = models.ForeignKey(
         Vendor,

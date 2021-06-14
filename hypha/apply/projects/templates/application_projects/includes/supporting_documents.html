@@ -22,6 +22,16 @@
 
         <li class="docs-block__row">
             <div class="docs-block__row-inner">
+                <svg class="icon docs-block__icon"><use xlink:href="#tick"></use></svg>
+                <p class="docs-block__title">Contractor Setup Form</p>
+            </div>
+            <div class="docs-block__row-inner">
+                <a class="docs-block__link" href="{% url 'apply:projects:vendor' pk=project.pk %}">Complete Contractor Setup</a>
+            </div>
+        </li>
+
+        <li class="docs-block__row">
+            <div class="docs-block__row-inner">
                 <svg class="icon docs-block__icon{% if object.user_has_updated_details %} is-complete{% endif %}">
                     <use xlink:href="#tick"></use>
                 </svg>

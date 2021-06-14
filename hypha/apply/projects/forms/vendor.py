@@ -28,7 +28,7 @@ class BaseVendorForm:
         return fields
 
 
-class CreateVendorFormStep1(BaseVendorForm, forms.ModelForm):
+class CreateVendorFormStep1(BaseVendorForm, forms.Form):
     class Meta:
         fields = [
             'name',
@@ -116,7 +116,7 @@ class CreateVendorFormStep6(BaseVendorForm, forms.Form):
     # ib_branch_address = AddressField()
     nid_type = forms.CharField(required=False)
     nid_number = forms.CharField(required=False)
-    other_info = forms.CharField(required=False)
+    other_info = forms.CharField(required=False, widget=forms.Textarea)
 
     def __init__(self, *args, **kwargs):
         super(CreateVendorFormStep6, self).__init__(*args, **kwargs)
