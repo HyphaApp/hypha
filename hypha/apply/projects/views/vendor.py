@@ -28,14 +28,14 @@ def show_extra_info_form(wizard):
 class VendorAccessMixin:
     def dispatch(self, request, *args, **kwargs):
         is_admin = request.user.is_apply_staff
-        is_owner = request.user == self.get_object().project.user
+        is_owner = request.user == self.get_project().user
         if not (is_owner or is_admin):
             raise PermissionDenied
 
         return super().dispatch(request, *args, **kwargs)
 
 
-class CreateVendorView(SessionWizardView):
+class CreateVendorView(VendorAccessMixin, SessionWizardView):
     file_storage = PrivateStorage()
     form_list = [
         ('basic', CreateVendorFormStep1),
@@ -54,12 +54,7 @@ class CreateVendorView(SessionWizardView):
     def done(self, form_list, **kwargs):
         vendor_project = self.get_project()
         cleaned_data = self.get_all_cleaned_data()
-        vendor, create = Vendor.objects.get_or_create(
-            user=vendor_project.user
-        )
-        if create:
-            vendor_project.vendor = vendor
-            vendor_project.save()
+        vendor = vendor_project.vendor
         need_extra_info = cleaned_data['need_extra_info']
         bank_information = BankInformation.objects.create(
             account_holder_name=cleaned_data['account_holder_name'],

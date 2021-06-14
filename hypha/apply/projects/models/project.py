@@ -209,7 +209,6 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
 
         # See if there is a form field named "legal name", if not use user name.
         legal_name = submission.get_answer_from_label('legal name') or submission.user.full_name
-        # import ipdb; ipdb.set_trace()
         vendor, _ = Vendor.objects.get_or_create(
             user=submission.user
         )

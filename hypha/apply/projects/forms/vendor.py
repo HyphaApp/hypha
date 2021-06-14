@@ -6,7 +6,7 @@ from hypha.apply.stream_forms.fields import MultiFileField
 from django_file_form.forms import FileFormMixin
 
 # from addressfield.fields import AddressField
-from ..models.vendor import Vendor, VendorFormSettings
+from ..models.vendor import VendorFormSettings
 
 
 class BaseVendorForm:
@@ -29,21 +29,18 @@ class BaseVendorForm:
 
 
 class CreateVendorFormStep1(BaseVendorForm, forms.Form):
-    class Meta:
-        fields = [
-            'name',
-            'contractor_name',
-            'type',
-        ]
-        model = Vendor
-        widgets = {
-            'type': forms.RadioSelect,
-        }
+    TYPE_CHOICES = [
+        ('organization', 'Yes, the account belongs to the organisation above'),
+        ('personal', 'No, it is a personal bank account'),
+    ]
+
+    name = forms.CharField(required=True)
+    contractor_name = forms.CharField(required=True)
+    type = forms.ChoiceField(choices=TYPE_CHOICES, required=True, widget=forms.RadioSelect)
 
     def __init__(self, *args, **kwargs):
         super(CreateVendorFormStep1, self).__init__(*args, **kwargs)
         self.fields = self.apply_form_settings(self.fields)
-        self.fields['type'].choices = self.fields['type'].choices[1:]
 
 
 class CreateVendorFormStep2(BaseVendorForm, forms.Form):
@@ -60,7 +57,7 @@ class CreateVendorFormStep2(BaseVendorForm, forms.Form):
 
 
 class CreateVendorFormStep3(FileFormMixin, BaseVendorForm, forms.Form):
-    due_diligence_documents = MultiFileField(required=False)
+    due_diligence_documents = MultiFileField(required=True)
 
     def __init__(self, *args, **kwargs):
         super(CreateVendorFormStep3, self).__init__(*args, **kwargs)
@@ -73,12 +70,12 @@ class CreateVendorFormStep4(BaseVendorForm, forms.Form):
         for currency in list_currencies()
     ]
 
-    account_holder_name = forms.CharField(required=False)
-    account_routing_number = forms.CharField(required=False)
-    account_number = forms.CharField(required=False)
+    account_holder_name = forms.CharField(required=True)
+    account_routing_number = forms.CharField(required=True)
+    account_number = forms.CharField(required=True)
     account_currency = forms.ChoiceField(
         choices=CURRENCY_CHOICES,
-        required=False,
+        required=True,
         initial='USD'
     )
 

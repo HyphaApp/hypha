@@ -24,8 +24,8 @@ jQuery(function ($) {
 
     // Initilise multi-step wizard forms
     function initWizard(form) {
-        const step = form.querySelector('[name=create_vendor_view-current_step]').value
-        if (step === "documents"){
+        const step = form.querySelector('[name=create_vendor_view-current_step]').value;
+        if (step === 'documents') {
             window.initUploadFields(
                 form,
                 {

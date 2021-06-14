@@ -107,6 +107,7 @@ class VendorFormSettings(BaseSetting):
     )
     type_help_text = RichTextField(
         'help_text',
+        blank=True,
         default='The name of the bank account must be the same as on the contract.'
     )
     required_to_pay_taxes_label = models.TextField(
@@ -123,6 +124,7 @@ class VendorFormSettings(BaseSetting):
     )
     due_diligence_documents_help_text = RichTextField(
         'help_text',
+        blank=True,
         default='Upload Due Diligence Documents. E.g. w8/w9 forms.'
     )
     account_holder_name_label = models.TextField(
@@ -131,6 +133,7 @@ class VendorFormSettings(BaseSetting):
     )
     account_holder_name_help_text = RichTextField(
         'help_text',
+        blank=True,
         default='This name must be same as the person or organisation that signed the contract. '
         'This person is authorised to sign contracts on behalf of the person or organisation named above.'
     )
@@ -140,6 +143,7 @@ class VendorFormSettings(BaseSetting):
     )
     account_routing_number_help_text = RichTextField(
         'help_text',
+        blank=True,
         default='Depending on your country, this might be called the ACH, SWIFT, BIC or ABA number.'
     )
     account_number_label = models.TextField(
@@ -148,6 +152,7 @@ class VendorFormSettings(BaseSetting):
     )
     account_number_help_text = RichTextField(
         'help_text',
+        blank=True,
         default='Depending on your country, this might be called the account number, IBAN, or BBAN number.'
     )
     account_currency_label = models.TextField(
@@ -156,6 +161,7 @@ class VendorFormSettings(BaseSetting):
     )
     account_currency_help_text = RichTextField(
         'label',
+        blank=True,
         default='This is the currency of this bank account.'
     )
     need_extra_info_label = models.TextField(
@@ -164,6 +170,7 @@ class VendorFormSettings(BaseSetting):
     )
     need_extra_info_help_text = RichTextField(
         'help_text',
+        blank=True,
         default=''
     )
     branch_address_label = models.TextField(
@@ -172,6 +179,7 @@ class VendorFormSettings(BaseSetting):
     )
     branch_address_help_text = models.TextField(
         'help_text',
+        blank=True,
         default='The address of the bank branch where you have the bank account '
         'located(not the bank account holder address)'
     )
@@ -181,6 +189,7 @@ class VendorFormSettings(BaseSetting):
     )
     ib_account_routing_number_help_text = RichTextField(
         'help_text',
+        blank=True,
         default='Depending on your country, this might be called ACH, SWIFT, BIC or ABA number'
     )
     ib_account_number_label = models.TextField(
@@ -189,6 +198,7 @@ class VendorFormSettings(BaseSetting):
     )
     ib_account_number_help_text = RichTextField(
         'help_text',
+        blank=True,
         default='Depending on your country, this might be called the account number, IBAN, or BBAN number'
     )
     ib_account_currency_label = models.TextField(
@@ -197,6 +207,7 @@ class VendorFormSettings(BaseSetting):
     )
     ib_account_currency_help_text = RichTextField(
         'help_text',
+        blank=True,
         default='This is the currency of this bank account'
     )
     ib_branch_address_label = models.TextField(
@@ -205,6 +216,7 @@ class VendorFormSettings(BaseSetting):
     )
     ib_branch_address_help_text = RichTextField(
         'help_text',
+        blank=True,
         default='Bank branch address(not the bank account holder address)'
     )
     nid_type_label = models.TextField(
@@ -213,6 +225,7 @@ class VendorFormSettings(BaseSetting):
     )
     nid_type_help_text = RichTextField(
         'help_text',
+        blank=True,
         default='This could be a passport, a National Identity number, '
         'or other national identity document.'
     )
@@ -222,7 +235,8 @@ class VendorFormSettings(BaseSetting):
     )
     nid_number_help_text = RichTextField(
         'help_text',
-        default=''
+        default='',
+        blank=True,
     )
     other_info_label = models.TextField(
         'label',
@@ -230,6 +244,7 @@ class VendorFormSettings(BaseSetting):
     )
     other_info_help_text = RichTextField(
         'help_text',
+        blank=True,
         default='If you need to include other information not listed above, provide it here.'
     )
 
@@ -268,7 +283,7 @@ class VendorFormSettings(BaseSetting):
         ], 'Account Number'),
         MultiFieldPanel([
             FieldPanel('account_currency_label'),
-            FieldPanel('account_currency_label'),
+            FieldPanel('account_currency_help_text'),
         ], 'Account Currency'),
         MultiFieldPanel([
             FieldPanel('need_extra_info_label'),
