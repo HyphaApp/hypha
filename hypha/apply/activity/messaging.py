@@ -9,6 +9,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.template.loader import render_to_string
 from django.utils import timezone
+from django.utils.translation import gettext as _
 
 from .models import ALL, TEAM
 from .options import MESSAGES
@@ -35,7 +36,7 @@ def reviewers_message(reviewers):
     for role, reviewers in group_reviewers(reviewers).items():
         message = ', '.join(str(reviewer) for reviewer in reviewers)
         if role:
-            message += ' as ' + str(role)
+            message += _(' as {role}').format(role=str(role))
         message += '.'
         messages.append(message)
     return messages
@@ -220,32 +221,32 @@ class ActivityAdapter(AdapterBase):
     messages = {
         MESSAGES.TRANSITION: 'handle_transition',
         MESSAGES.BATCH_TRANSITION: 'handle_batch_transition',
-        MESSAGES.NEW_SUBMISSION: 'Submitted {source.title} for {source.page.title}',
-        MESSAGES.EDIT: 'Edited',
-        MESSAGES.APPLICANT_EDIT: 'Edited',
-        MESSAGES.UPDATE_LEAD: 'Lead changed from {old_lead} to {source.lead}',
-        MESSAGES.BATCH_UPDATE_LEAD: 'Batch Lead changed to {new_lead}',
-        MESSAGES.DETERMINATION_OUTCOME: 'Sent a determination. Outcome: {determination.clean_outcome}',
+        MESSAGES.NEW_SUBMISSION: _('Submitted {source.title} for {source.page.title}'),
+        MESSAGES.EDIT: _('Edited'),
+        MESSAGES.APPLICANT_EDIT: _('Edited'),
+        MESSAGES.UPDATE_LEAD: _('Lead changed from {old_lead} to {source.lead}'),
+        MESSAGES.BATCH_UPDATE_LEAD: _('Batch Lead changed to {new_lead}'),
+        MESSAGES.DETERMINATION_OUTCOME: _('Sent a determination. Outcome: {determination.clean_outcome}'),
         MESSAGES.BATCH_DETERMINATION_OUTCOME: 'batch_determination',
-        MESSAGES.INVITED_TO_PROPOSAL: 'Invited to submit a proposal',
+        MESSAGES.INVITED_TO_PROPOSAL: _('Invited to submit a proposal'),
         MESSAGES.REVIEWERS_UPDATED: 'reviewers_updated',
         MESSAGES.BATCH_REVIEWERS_UPDATED: 'batch_reviewers_updated',
         MESSAGES.PARTNERS_UPDATED: 'partners_updated',
-        MESSAGES.NEW_REVIEW: 'Submitted a review',
-        MESSAGES.OPENED_SEALED: 'Opened the submission while still sealed',
+        MESSAGES.NEW_REVIEW: _('Submitted a review'),
+        MESSAGES.OPENED_SEALED: _('Opened the submission while still sealed'),
         MESSAGES.SCREENING: 'handle_screening_statuses',
-        MESSAGES.REVIEW_OPINION: '{user} {opinion.opinion_display}s with {opinion.review.author}''s review of {source}',
-        MESSAGES.CREATED_PROJECT: 'Created',
-        MESSAGES.PROJECT_TRANSITION: 'Progressed from {old_stage} to {source.status_display}',
-        MESSAGES.UPDATE_PROJECT_LEAD: 'Lead changed from {old_lead} to {source.lead}',
-        MESSAGES.SEND_FOR_APPROVAL: 'Requested approval',
-        MESSAGES.APPROVE_PROJECT: 'Approved',
-        MESSAGES.REQUEST_PROJECT_CHANGE: 'Requested changes for acceptance: "{comment}"',
-        MESSAGES.UPLOAD_CONTRACT: 'Uploaded a {contract.state} contract',
-        MESSAGES.APPROVE_CONTRACT: 'Approved contract',
-        MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS: 'Updated Payment Request status to: {payment_request.status_display}',
-        MESSAGES.REQUEST_PAYMENT: 'Payment Request submitted',
-        MESSAGES.SUBMIT_REPORT: 'Submitted a report',
+        MESSAGES.REVIEW_OPINION: _('{user} {opinion.opinion_display}s with {opinion.review.author}''s review of {source}'),
+        MESSAGES.CREATED_PROJECT: _('Created'),
+        MESSAGES.PROJECT_TRANSITION: _('Progressed from {old_stage} to {source.status_display}'),
+        MESSAGES.UPDATE_PROJECT_LEAD: _('Lead changed from {old_lead} to {source.lead}'),
+        MESSAGES.SEND_FOR_APPROVAL: _('Requested approval'),
+        MESSAGES.APPROVE_PROJECT: _('Approved'),
+        MESSAGES.REQUEST_PROJECT_CHANGE: _('Requested changes for acceptance: "{comment}"'),
+        MESSAGES.UPLOAD_CONTRACT: _('Uploaded a {contract.state} contract'),
+        MESSAGES.APPROVE_CONTRACT: _('Approved contract'),
+        MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS: _('Updated Payment Request status to: {payment_request.status_display}'),
+        MESSAGES.REQUEST_PAYMENT: _('Payment Request submitted'),
+        MESSAGES.SUBMIT_REPORT: _('Submitted a report'),
         MESSAGES.SKIPPED_REPORT: 'handle_skipped_report',
         MESSAGES.REPORT_FREQUENCY_CHANGED: 'handle_report_frequency',
         MESSAGES.BATCH_DELETE_SUBMISSION: 'handle_batch_delete_submission'
@@ -275,21 +276,21 @@ class ActivityAdapter(AdapterBase):
         return {}
 
     def reviewers_updated(self, added=list(), removed=list(), **kwargs):
-        message = ['Reviewers updated.']
+        message = [_('Reviewers updated.')]
         if added:
-            message.append('Added:')
+            message.append(_('Added:'))
             message.extend(reviewers_message(added))
 
         if removed:
-            message.append('Removed:')
+            message.append(_('Removed:'))
             message.extend(reviewers_message(removed))
 
         return ' '.join(message)
 
     def batch_reviewers_updated(self, added, **kwargs):
-        base = ['Batch Reviewers Updated.']
+        base = [_('Batch Reviewers Updated.')]
         base.extend([
-            f'{str(user)} as {role.name}.'
+            _('{user} as {name}.').format(user=str(user), name=role.name)
             for role, user in added
             if user
         ])
@@ -307,11 +308,11 @@ class ActivityAdapter(AdapterBase):
         submissions_text = ', '.join(
             [submission.title for submission in submissions]
         )
-        return f'Successfully deleted submissions: {submissions_text}'
+        return _('Successfully deleted submissions: {title}').format(title=submissions_text)
 
     def handle_transition(self, old_phase, source, **kwargs):
         submission = source
-        base_message = 'Progressed from {old_display} to {new_display}'
+        base_message = _('Progressed from {old_display} to {new_display}')
 
         new_phase = submission.phase
 
@@ -345,20 +346,20 @@ class ActivityAdapter(AdapterBase):
             return self.handle_transition(old_phase=old_phase, source=submission, **kwargs)
 
     def partners_updated(self, added, removed, **kwargs):
-        message = ['Partners updated.']
+        message = [_('Partners updated.')]
         if added:
-            message.append('Added:')
+            message.append(_('Added:'))
             message.append(', '.join([str(user) for user in added]) + '.')
 
         if removed:
-            message.append('Removed:')
+            message.append(_('Removed:'))
             message.append(', '.join([str(user) for user in removed]) + '.')
 
         return ' '.join(message)
 
     def handle_report_frequency(self, config, **kwargs):
         new_schedule = config.get_frequency_display()
-        return f"Updated reporting frequency. New schedule is: {new_schedule} starting on {config.schedule_start}"
+        return _('Updated reporting frequency. New schedule is: {new_schedule} starting on {schedule_start}').format(new_schedule=new_schedule, schedule_start=config.schedule_start)
 
     def handle_skipped_report(self, report, **kwargs):
         if report.skipped:
@@ -396,48 +397,48 @@ class ActivityAdapter(AdapterBase):
 
     def handle_screening_statuses(self, source, old_status, **kwargs):
         new_status = ', '.join([s.title for s in source.screening_statuses.all()])
-        return f'Screening status from {old_status} to {new_status}'
+        return _('Screening status from {old_status} to {new_status}').format(old_status=old_status, new_status=new_status)
 
 
 class SlackAdapter(AdapterBase):
     adapter_type = "Slack"
     always_send = True
     messages = {
-        MESSAGES.NEW_SUBMISSION: 'A new submission has been submitted for {source.page.title}: <{link}|{source.title}>',
-        MESSAGES.UPDATE_LEAD: 'The lead of <{link}|{source.title}> has been updated from {old_lead} to {source.lead} by {user}',
+        MESSAGES.NEW_SUBMISSION: _('A new submission has been submitted for {source.page.title}: <{link}|{source.title}>'),
+        MESSAGES.UPDATE_LEAD: _('The lead of <{link}|{source.title}> has been updated from {old_lead} to {source.lead} by {user}'),
         MESSAGES.BATCH_UPDATE_LEAD: 'handle_batch_lead',
-        MESSAGES.COMMENT: 'A new {comment.visibility} comment has been posted on <{link}|{source.title}> by {user}',
-        MESSAGES.EDIT: '{user} has edited <{link}|{source.title}>',
-        MESSAGES.APPLICANT_EDIT: '{user} has edited <{link}|{source.title}>',
+        MESSAGES.COMMENT: _('A new {comment.visibility} comment has been posted on <{link}|{source.title}> by {user}'),
+        MESSAGES.EDIT: _('{user} has edited <{link}|{source.title}>'),
+        MESSAGES.APPLICANT_EDIT: _('{user} has edited <{link}|{source.title}>'),
         MESSAGES.REVIEWERS_UPDATED: 'reviewers_updated',
         MESSAGES.BATCH_REVIEWERS_UPDATED: 'handle_batch_reviewers',
-        MESSAGES.PARTNERS_UPDATED: '{user} has updated the partners on <{link}|{source.title}>',
-        MESSAGES.TRANSITION: '{user} has updated the status of <{link}|{source.title}>: {old_phase.display_name} → {source.phase}',
+        MESSAGES.PARTNERS_UPDATED: _('{user} has updated the partners on <{link}|{source.title}>'),
+        MESSAGES.TRANSITION: _('{user} has updated the status of <{link}|{source.title}>: {old_phase.display_name} → {source.phase}'),
         MESSAGES.BATCH_TRANSITION: 'handle_batch_transition',
-        MESSAGES.DETERMINATION_OUTCOME: 'A determination for <{link}|{source.title}> was sent by email. Outcome: {determination.clean_outcome}',
+        MESSAGES.DETERMINATION_OUTCOME: _('A determination for <{link}|{source.title}> was sent by email. Outcome: {determination.clean_outcome}'),
         MESSAGES.BATCH_DETERMINATION_OUTCOME: 'handle_batch_determination',
-        MESSAGES.PROPOSAL_SUBMITTED: 'A proposal has been submitted for review: <{link}|{source.title}>',
-        MESSAGES.INVITED_TO_PROPOSAL: '<{link}|{source.title}> by {source.user} has been invited to submit a proposal',
-        MESSAGES.NEW_REVIEW: '{user} has submitted a review for <{link}|{source.title}>. Outcome: {review.outcome},  Score: {review.get_score_display}',
+        MESSAGES.PROPOSAL_SUBMITTED: _('A proposal has been submitted for review: <{link}|{source.title}>'),
+        MESSAGES.INVITED_TO_PROPOSAL: _('<{link}|{source.title}> by {source.user} has been invited to submit a proposal'),
+        MESSAGES.NEW_REVIEW: _('{user} has submitted a review for <{link}|{source.title}>. Outcome: {review.outcome},  Score: {review.get_score_display}'),
         MESSAGES.READY_FOR_REVIEW: 'notify_reviewers',
-        MESSAGES.OPENED_SEALED: '{user} has opened the sealed submission: <{link}|{source.title}>',
-        MESSAGES.REVIEW_OPINION: '{user} {opinion.opinion_display}s with {opinion.review.author}''s review of {source.title}',
+        MESSAGES.OPENED_SEALED: _('{user} has opened the sealed submission: <{link}|{source.title}>'),
+        MESSAGES.REVIEW_OPINION: _('{user} {opinion.opinion_display}s with {opinion.review.author}''s review of {source.title}'),
         MESSAGES.BATCH_READY_FOR_REVIEW: 'batch_notify_reviewers',
-        MESSAGES.DELETE_SUBMISSION: '{user} has deleted {source.title}',
-        MESSAGES.DELETE_REVIEW: '{user} has deleted {review.author} review for <{link}|{source.title}>.',
-        MESSAGES.CREATED_PROJECT: '{user} has created a Project: <{link}|{source.title}>.',
-        MESSAGES.UPDATE_PROJECT_LEAD: 'The lead of project <{link}|{source.title}> has been updated from {old_lead} to {source.lead} by {user}',
-        MESSAGES.EDIT_REVIEW: '{user} has edited {review.author} review for <{link}|{source.title}>.',
-        MESSAGES.SEND_FOR_APPROVAL: '{user} has requested approval on project <{link}|{source.title}>.',
-        MESSAGES.APPROVE_PROJECT: '{user} has approved project <{link}|{source.title}>.',
-        MESSAGES.REQUEST_PROJECT_CHANGE: '{user} has requested changes for project acceptance on <{link}|{source.title}>.',
-        MESSAGES.UPLOAD_CONTRACT: '{user} has uploaded a contract for <{link}|{source.title}>.',
-        MESSAGES.APPROVE_CONTRACT: '{user} has approved contract for <{link}|{source.title}>.',
-        MESSAGES.REQUEST_PAYMENT: '{user} has requested payment for <{link}|{source.title}>.',
-        MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS: '{user} has changed the status of <{link_related}|payment request> on <{link}|{source.title}> to {payment_request.status_display}.',
-        MESSAGES.DELETE_PAYMENT_REQUEST: '{user} has deleted payment request from <{link}|{source.title}>.',
-        MESSAGES.UPDATE_PAYMENT_REQUEST: '{user} has updated payment request for <{link}|{source.title}>.',
-        MESSAGES.SUBMIT_REPORT: '{user} has submitted a report for <{link}|{source.title}>.',
+        MESSAGES.DELETE_SUBMISSION: _('{user} has deleted {source.title}'),
+        MESSAGES.DELETE_REVIEW: _('{user} has deleted {review.author} review for <{link}|{source.title}>.'),
+        MESSAGES.CREATED_PROJECT: _('{user} has created a Project: <{link}|{source.title}>.'),
+        MESSAGES.UPDATE_PROJECT_LEAD: _('The lead of project <{link}|{source.title}> has been updated from {old_lead} to {source.lead} by {user}'),
+        MESSAGES.EDIT_REVIEW: _('{user} has edited {review.author} review for <{link}|{source.title}>.'),
+        MESSAGES.SEND_FOR_APPROVAL: _('{user} has requested approval on project <{link}|{source.title}>.'),
+        MESSAGES.APPROVE_PROJECT: _('{user} has approved project <{link}|{source.title}>.'),
+        MESSAGES.REQUEST_PROJECT_CHANGE: _('{user} has requested changes for project acceptance on <{link}|{source.title}>.'),
+        MESSAGES.UPLOAD_CONTRACT: _('{user} has uploaded a contract for <{link}|{source.title}>.'),
+        MESSAGES.APPROVE_CONTRACT: _('{user} has approved contract for <{link}|{source.title}>.'),
+        MESSAGES.REQUEST_PAYMENT: _('{user} has requested payment for <{link}|{source.title}>.'),
+        MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS: _('{user} has changed the status of <{link_related}|payment request> on <{link}|{source.title}> to {payment_request.status_display}.'),
+        MESSAGES.DELETE_PAYMENT_REQUEST: _('{user} has deleted payment request from <{link}|{source.title}>.'),
+        MESSAGES.UPDATE_PAYMENT_REQUEST: _('{user} has updated payment request for <{link}|{source.title}>.'),
+        MESSAGES.SUBMIT_REPORT: _('{user} has submitted a report for <{link}|{source.title}>.'),
         MESSAGES.BATCH_DELETE_SUBMISSION: 'handle_batch_delete_submission'
     }
 
@@ -501,14 +502,14 @@ class SlackAdapter(AdapterBase):
 
     def reviewers_updated(self, source, link, user, added=list(), removed=list(), **kwargs):
         submission = source
-        message = [f'{user} has updated the reviewers on <{link}|{submission.title}>.']
+        message = [_('{user} has updated the reviewers on <{link}|{title}>.').format(user=user, link=link, title=submission.title)]
 
         if added:
-            message.append('Added:')
+            message.append(_('Added:'))
             message.extend(reviewers_message(added))
 
         if removed:
-            message.append('Removed:')
+            message.append(_('Removed:'))
             message.extend(reviewers_message(removed))
 
         return ' '.join(message)
@@ -517,7 +518,7 @@ class SlackAdapter(AdapterBase):
         submissions = sources
         submissions_text = self.slack_links(links, submissions)
         return (
-            '{user} has batch changed lead to {new_lead} on: {submissions_text}'.format(
+            _('{user} has batch changed lead to {new_lead} on: {submissions_text}').format(
                 user=user,
                 submissions_text=submissions_text,
                 new_lead=new_lead,
@@ -528,12 +529,12 @@ class SlackAdapter(AdapterBase):
         submissions = sources
         submissions_text = self.slack_links(links, submissions)
         reviewers_text = ' '.join([
-            f'{str(user)} as {role.name},'
+            _('{user} as {name},').format(user=str(user), name=role.name)
             for role, user in added
             if user
         ])
         return (
-            '{user} has batch added {reviewers_text} as reviewers on: {submissions_text}'.format(
+            _('{user} has batch added {reviewers_text} as reviewers on: {submissions_text}').format(
                 user=user,
                 submissions_text=submissions_text,
                 reviewers_text=reviewers_text,
@@ -551,7 +552,7 @@ class SlackAdapter(AdapterBase):
         ]
         submissions_links = ','.join(submissions_text)
         return (
-            '{user} has transitioned the following submissions: {submissions_links}'.format(
+            _('{user} has transitioned the following submissions: {submissions_links}').format(
                 user=user,
                 submissions_links=submissions_links,
             )
@@ -567,7 +568,7 @@ class SlackAdapter(AdapterBase):
         outcome = determinations[submissions[0].id].clean_outcome
 
         return (
-            'Determinations of {outcome} was sent for: {submissions_links}'.format(
+            _('Determinations of {outcome} was sent for: {submissions_links}').format(
                 outcome=outcome,
                 submissions_links=submissions_links,
             )
@@ -576,7 +577,7 @@ class SlackAdapter(AdapterBase):
     def handle_batch_delete_submission(self, sources, links, user, **kwargs):
         submissions = sources
         submissions_text = ', '.join([submission.title for submission in submissions])
-        return f'{user} has deleted submissions: {submissions_text}'
+        return _('{user} has deleted submissions: {title}').format(user=user, title=submissions_text)
 
     def notify_reviewers(self, source, link, **kwargs):
         submission = source
@@ -590,10 +591,10 @@ class SlackAdapter(AdapterBase):
         )
 
         return (
-            '<{link}|{submission.title}> is ready for review. The following are assigned as reviewers: {reviewers}'.format(
+            _('<{link}|{title}> is ready for review. The following are assigned as reviewers: {reviewers}').format(
                 link=link,
                 reviewers=reviewers,
-                submission=submission,
+                title=submission.title,
             )
         )
 
@@ -701,16 +702,16 @@ class EmailAdapter(AdapterBase):
     def get_subject(self, message_type, source):
         if source:
             if is_ready_for_review(message_type):
-                subject = 'Application ready to review: {source.title}'.format(source=source)
+                subject = _('Application ready to review: {source.title}').format(source=source)
                 if message_type in {MESSAGES.BATCH_READY_FOR_REVIEW}:
-                    subject = 'Multiple applications are now ready for your review'
+                    subject = _('Multiple applications are now ready for your review')
             elif message_type in {MESSAGES.REVIEW_REMINDER}:
-                subject = 'Reminder: Application ready to review: {source.title}'.format(source=source)
+                subject = _('Reminder: Application ready to review: {source.title}').format(source=source)
             else:
                 try:
-                    subject = source.page.specific.subject or 'Your application to {org_long_name}: {source.title}'.format(org_long_name=settings.ORG_LONG_NAME, source=source)
+                    subject = source.page.specific.subject or _('Your application to {org_long_name}: {source.title}').format(org_long_name=settings.ORG_LONG_NAME, source=source)
                 except AttributeError:
-                    subject = 'Your {org_long_name} Project: {source.title}'.format(org_long_name=settings.ORG_LONG_NAME, source=source)
+                    subject = _('Your {org_long_name} Project: {source.title}').format(org_long_name=settings.ORG_LONG_NAME, source=source)
             return subject
 
     def extra_kwargs(self, message_type, source, sources, **kwargs):
@@ -895,37 +896,34 @@ class DjangoMessagesAdapter(AdapterBase):
         MESSAGES.BATCH_REVIEWERS_UPDATED: 'batch_reviewers_updated',
         MESSAGES.BATCH_TRANSITION: 'batch_transition',
         MESSAGES.BATCH_DETERMINATION_OUTCOME: 'batch_determinations',
-        MESSAGES.UPLOAD_DOCUMENT: 'Successfully uploaded document',
-        MESSAGES.REMOVE_DOCUMENT: 'Successfully removed document',
+        MESSAGES.UPLOAD_DOCUMENT: _('Successfully uploaded document'),
+        MESSAGES.REMOVE_DOCUMENT: _('Successfully removed document'),
         MESSAGES.SKIPPED_REPORT: 'handle_skipped_report',
         MESSAGES.REPORT_FREQUENCY_CHANGED: 'handle_report_frequency',
-        MESSAGES.CREATE_REMINDER: 'Reminder created',
-        MESSAGES.DELETE_REMINDER: 'Reminder deleted',
+        MESSAGES.CREATE_REMINDER: _('Reminder created'),
+        MESSAGES.DELETE_REMINDER: _('Reminder deleted'),
     }
 
     def batch_reviewers_updated(self, added, sources, **kwargs):
         reviewers_text = ' '.join([
-            f'{str(user)} as {role.name},'
+            _('{user} as {name},').format(user=str(user), name=role.name)
             for role, user in added
             if user
         ])
 
         return (
-            'Batch reviewers added: ' +
-            reviewers_text +
-            ' to ' +
-            ', '.join(['"{}"'.format(source.title) for source in sources])
+            _('Batch reviewers added: {reviewers_text} to ').format(reviewers_text=reviewers_text) + ', '.join(['"{title}"'.format(title=source.title) for source in sources])
         )
 
     def handle_report_frequency(self, config, **kwargs):
         new_schedule = config.get_frequency_display()
-        return f"Successfully updated reporting frequency. They will now report {new_schedule} starting on {config.schedule_start}"
+        return _('Successfully updated reporting frequency. They will now report {new_schedule} starting on {schedule_start}').format(new_schedule=new_schedule, schedule_start=config.schedule_start)
 
     def handle_skipped_report(self, report, **kwargs):
         if report.skipped:
-            return f"Successfully skipped a Report for {report.start_date} to {report.end_date}"
+            return _('Successfully skipped a Report for {start_date} to {end_date}').format(start_date=report.start_date, end_date=report.end_date)
         else:
-            return f"Successfully unskipped a Report for {report.start_date} to {report.end_date}"
+            return _('Successfully unskipped a Report for {start_date} to {end_date}').format(start_date=report.start_date, end_date=report.end_date)
 
     def batch_transition(self, sources, transitions, **kwargs):
         base_message = 'Successfully updated:'
@@ -944,7 +942,7 @@ class DjangoMessagesAdapter(AdapterBase):
         submissions = sources
         outcome = determinations[submissions[0].id].clean_outcome
 
-        base_message = f'Successfully determined as {outcome}: '
+        base_message = _('Successfully determined as {outcome}: ').format(outcome=outcome)
         submissions_text = [
             str(submission.title) for submission in submissions
         ]

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-11 08:24+0000\n"
+"POT-Creation-Date: 2021-06-15 11:42+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,415 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: hypha/apply/activity/messaging.py:39
+#, python-brace-format
+msgid " as {role}"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:224
+#, python-brace-format
+msgid "Submitted {source.title} for {source.page.title}"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:225 hypha/apply/activity/messaging.py:226
+msgid "Edited"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:227 hypha/apply/activity/messaging.py:241
+#, python-brace-format
+msgid "Lead changed from {old_lead} to {source.lead}"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:228
+#, python-brace-format
+msgid "Batch Lead changed to {new_lead}"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:229
+#, python-brace-format
+msgid "Sent a determination. Outcome: {determination.clean_outcome}"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:231
+msgid "Invited to submit a proposal"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:235
+msgid "Submitted a review"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:236
+msgid "Opened the submission while still sealed"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:238
+#, python-brace-format
+msgid ""
+"{user} {opinion.opinion_display}s with {opinion.review.author}s review of "
+"{source}"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:239
+msgid "Created"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:240
+#, python-brace-format
+msgid "Progressed from {old_stage} to {source.status_display}"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:242
+msgid "Requested approval"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:243
+#: hypha/apply/determinations/options.py:12
+msgid "Approved"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:244
+#, python-brace-format
+msgid "Requested changes for acceptance: \"{comment}\""
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:245
+#, python-brace-format
+msgid "Uploaded a {contract.state} contract"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:246
+msgid "Approved contract"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:247
+#, python-brace-format
+msgid "Updated Payment Request status to: {payment_request.status_display}"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:248
+msgid "Payment Request submitted"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:249
+msgid "Submitted a report"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:279
+msgid "Reviewers updated."
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:281 hypha/apply/activity/messaging.py:351
+#: hypha/apply/activity/messaging.py:508
+msgid "Added:"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:285 hypha/apply/activity/messaging.py:355
+#: hypha/apply/activity/messaging.py:512
+msgid "Removed:"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:291
+msgid "Batch Reviewers Updated."
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:293
+#, python-brace-format
+msgid "{user} as {name}."
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:311
+#, python-brace-format
+msgid "Successfully deleted submissions: {title}"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:315
+#, python-brace-format
+msgid "Progressed from {old_display} to {new_display}"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:349
+msgid "Partners updated."
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:362
+#, python-brace-format
+msgid ""
+"Updated reporting frequency. New schedule is: {new_schedule} starting on "
+"{schedule_start}"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:400
+#, python-brace-format
+msgid "Screening status from {old_status} to {new_status}"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:407
+#, python-brace-format
+msgid ""
+"A new submission has been submitted for {source.page.title}: <{link}|{source."
+"title}>"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:408
+#, python-brace-format
+msgid ""
+"The lead of <{link}|{source.title}> has been updated from {old_lead} to "
+"{source.lead} by {user}"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:410
+#, python-brace-format
+msgid ""
+"A new {comment.visibility} comment has been posted on <{link}|{source.title}"
+"> by {user}"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:411 hypha/apply/activity/messaging.py:412
+#, python-brace-format
+msgid "{user} has edited <{link}|{source.title}>"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:415
+#, python-brace-format
+msgid "{user} has updated the partners on <{link}|{source.title}>"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:416
+#, python-brace-format
+msgid ""
+"{user} has updated the status of <{link}|{source.title}>: {old_phase."
+"display_name} → {source.phase}"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:418
+#, python-brace-format
+msgid ""
+"A determination for <{link}|{source.title}> was sent by email. Outcome: "
+"{determination.clean_outcome}"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:420
+#, python-brace-format
+msgid "A proposal has been submitted for review: <{link}|{source.title}>"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:421
+#, python-brace-format
+msgid ""
+"<{link}|{source.title}> by {source.user} has been invited to submit a "
+"proposal"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:422
+#, python-brace-format
+msgid ""
+"{user} has submitted a review for <{link}|{source.title}>. Outcome: {review."
+"outcome},  Score: {review.get_score_display}"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:424
+#, python-brace-format
+msgid "{user} has opened the sealed submission: <{link}|{source.title}>"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:425
+#, python-brace-format
+msgid ""
+"{user} {opinion.opinion_display}s with {opinion.review.author}s review of "
+"{source.title}"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:427
+#, python-brace-format
+msgid "{user} has deleted {source.title}"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:428
+#, python-brace-format
+msgid "{user} has deleted {review.author} review for <{link}|{source.title}>."
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:429
+#, python-brace-format
+msgid "{user} has created a Project: <{link}|{source.title}>."
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:430
+#, python-brace-format
+msgid ""
+"The lead of project <{link}|{source.title}> has been updated from {old_lead} "
+"to {source.lead} by {user}"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:431
+#, python-brace-format
+msgid "{user} has edited {review.author} review for <{link}|{source.title}>."
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:432
+#, python-brace-format
+msgid "{user} has requested approval on project <{link}|{source.title}>."
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:433
+#, python-brace-format
+msgid "{user} has approved project <{link}|{source.title}>."
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:434
+#, python-brace-format
+msgid ""
+"{user} has requested changes for project acceptance on <{link}|{source.title}"
+">."
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:435
+#, python-brace-format
+msgid "{user} has uploaded a contract for <{link}|{source.title}>."
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:436
+#, python-brace-format
+msgid "{user} has approved contract for <{link}|{source.title}>."
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:437
+#, python-brace-format
+msgid "{user} has requested payment for <{link}|{source.title}>."
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:438
+#, python-brace-format
+msgid ""
+"{user} has changed the status of <{link_related}|payment request> on <{link}|"
+"{source.title}> to {payment_request.status_display}."
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:439
+#, python-brace-format
+msgid "{user} has deleted payment request from <{link}|{source.title}>."
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:440
+#, python-brace-format
+msgid "{user} has updated payment request for <{link}|{source.title}>."
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:441
+#, python-brace-format
+msgid "{user} has submitted a report for <{link}|{source.title}>."
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:505
+#, python-brace-format
+msgid "{user} has updated the reviewers on <{link}|{title}>."
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:521
+#, python-brace-format
+msgid "{user} has batch changed lead to {new_lead} on: {submissions_text}"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:532 hypha/apply/activity/messaging.py:909
+#, python-brace-format
+msgid "{user} as {name},"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:537
+#, python-brace-format
+msgid ""
+"{user} has batch added {reviewers_text} as reviewers on: {submissions_text}"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:555
+#, python-brace-format
+msgid "{user} has transitioned the following submissions: {submissions_links}"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:571
+#, python-brace-format
+msgid "Determinations of {outcome} was sent for: {submissions_links}"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:580
+#, python-brace-format
+msgid "{user} has deleted submissions: {title}"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:594
+#, python-brace-format
+msgid ""
+"<{link}|{title}> is ready for review. The following are assigned as "
+"reviewers: {reviewers}"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:705
+#, python-brace-format
+msgid "Application ready to review: {source.title}"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:707
+msgid "Multiple applications are now ready for your review"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:709
+#, python-brace-format
+msgid "Reminder: Application ready to review: {source.title}"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:712
+#, python-brace-format
+msgid "Your application to {org_long_name}: {source.title}"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:714
+#, python-brace-format
+msgid "Your {org_long_name} Project: {source.title}"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:899
+msgid "Successfully uploaded document"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:900
+msgid "Successfully removed document"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:903
+msgid "Reminder created"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:904
+msgid "Reminder deleted"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:915
+#, python-brace-format
+msgid "Batch reviewers added: {reviewers_text} to "
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:920
+#, python-brace-format
+msgid ""
+"Successfully updated reporting frequency. They will now report "
+"{new_schedule} starting on {schedule_start}"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:924
+#, python-brace-format
+msgid "Successfully skipped a Report for {start_date} to {end_date}"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:926
+#, python-brace-format
+msgid "Successfully unskipped a Report for {start_date} to {end_date}"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:945
+#, python-brace-format
+msgid "Successfully determined as {outcome}: "
+msgstr ""
 
 #: hypha/apply/api/v1/filters.py:31 hypha/apply/funds/tables.py:416
 #: hypha/apply/users/templates/wagtailusers/users/list.html:46
@@ -255,10 +664,6 @@ msgstr ""
 
 #: hypha/apply/determinations/options.py:11
 msgid "More information requested"
-msgstr ""
-
-#: hypha/apply/determinations/options.py:12
-msgid "Approved"
 msgstr ""
 
 #: hypha/apply/determinations/views.py:249
