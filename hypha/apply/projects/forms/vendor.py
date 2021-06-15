@@ -110,7 +110,7 @@ class CreateVendorFormStep6(BaseVendorForm, forms.Form):
         required=False,
         initial='USD'
     )
-    # ib_branch_address = AddressField()
+    ib_branch_address = AddressField()
     nid_type = forms.CharField(required=False)
     nid_number = forms.CharField(required=False)
     other_info = forms.CharField(required=False, widget=forms.Textarea)

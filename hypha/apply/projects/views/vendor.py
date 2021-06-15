@@ -29,10 +29,12 @@ def show_extra_info_form(wizard):
 class VendorAccessMixin:
     def dispatch(self, request, *args, **kwargs):
         is_admin = request.user.is_apply_staff
-        is_owner = request.user == self.get_project().user
+        project = self.get_project()
+        is_owner = request.user == project.user
         if not (is_owner or is_admin):
             raise PermissionDenied
-
+        if not project.vendor:
+            raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
 
@@ -79,19 +81,21 @@ class CreateVendorView(VendorAccessMixin, SessionWizardView):
             ib_account_routing_number = cleaned_data['ib_account_routing_number']
             ib_account_number = cleaned_data['ib_account_number']
             ib_account_currency = cleaned_data['ib_account_currency']
-            # branch_address=cleaned_data['ib_branch_address']
+            ib_branch_address = cleaned_data['ib_branch_address']
             iba_info = bank_info.iba_info
             if not iba_info:
                 iba_info = BankInformation.objects.create(
                     account_routing_number=ib_account_routing_number,
                     account_number=ib_account_number,
                     account_currency=ib_account_currency,
+                    branch_address=ib_branch_address
                 )
             else:
+                iba_info.branch_address = ib_branch_address
                 iba_info.account_routing_number = ib_account_routing_number
                 iba_info.account_number = ib_account_number
                 iba_info.account_currency = ib_account_currency
-
+            iba_info.save()
             bank_info.branch_address = cleaned_data['branch_address']
             bank_info.nid_type = cleaned_data['nid_type']
             bank_info.nid_number = cleaned_data['nid_number']
