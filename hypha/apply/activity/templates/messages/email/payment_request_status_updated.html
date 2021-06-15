@@ -1,15 +1,16 @@
 {% extends "messages/email/applicant_base.html" %}
 
+{% load i18n %}
 {% block content %}
-An {{ ORG_SHORT_NAME }} staff member has updated your payment request for {{ source.title }} for period {{ payment_request.date_from }} to {{ payment_request.date_to }}.
-It is now {{ payment_request.get_status_display }}.
+{% blocktrans %}An {{ ORG_SHORT_NAME }} staff member has updated your payment request for {{ source.title }} for period {{ payment_request.date_from }} to {{ payment_request.date_to }}.{% endblocktrans %}
+{% blocktrans %}It is now {{ payment_request.get_status_display }}.{% endblocktrans %}
 
 {% if has_changes_requested %}
-The staff member left this comment:
+{% trans "The staff member left this comment" %}:
 
 {{ payment_request.comment }}
 {% endif %}
 
-Title: {{ source.title }}
-Link: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
+{% trans "Title" %}: {{ source.title }}
+{% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
 {% endblock %}

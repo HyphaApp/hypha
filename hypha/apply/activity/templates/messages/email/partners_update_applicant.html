@@ -1,9 +1,11 @@
 {% extends "messages/email/applicant_base.html" %}
+
+{% load i18n %}
 {% block content %}
-New partner(s) has been added to your submission.
+{% trans "New partner(s) has been added to your submission." %}
 {% for partner in added %}
 * {{ partner }}
 {% endfor %}
-Title: {{ submission.title }}
-Link: {{ request.scheme }}://{{ request.get_host }}{{ submission.get_absolute_url }}
+{% trans "Title" %}: {{ submission.title }}
+{% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ submission.get_absolute_url }}
 {% endblock %}

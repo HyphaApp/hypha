@@ -1,13 +1,14 @@
 {% extends "messages/email/applicant_base.html" %}
 
+{% load i18n %}
 {% block content %}
 
-An {{ ORG_SHORT_NAME }} staff member has marked a report as {% if report.skipped %}no longer required{% else %}required{% endif %} for {{ source.title }} for period {{ report.end_date }} to {{ report.end_date }}.
+{% blocktrans %}An {{ ORG_SHORT_NAME }} staff member has marked a report as {% endblocktrans %}{% if report.skipped %}{% trans "no longer required" %}{% else %}{% trans "required" %}{% endif %}{% blocktrans %} for {{ source.title }} for period {{ report.end_date }} to {{ report.end_date }}.{% endblocktrans %}
 
 {% if not report.skipped %}
-This report was previously not required. Please ensure you now complete the report.
+{% trans "This report was previously not required. Please ensure you now complete the report." %}
 {% endif %}
 
-Title: {{ source.title }}
-Link: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
+{% trans "Title" %}: {{ source.title }}
+{% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
 {% endblock %}

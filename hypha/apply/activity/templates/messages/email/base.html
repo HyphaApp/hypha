@@ -1,9 +1,11 @@
-{% block salutation %}Dear {{ user }},{% endblock %}
+{% load i18n %}
+{% block salutation %}{% blocktrans %}Dear {{ user }},{% endblocktrans %}{% endblock %}
 
+{% load i18n %}
 {% block content %}{% endblock %}
 {% block more_info %}{% endblock %}
-Kind Regards,
-The {{ ORG_SHORT_NAME }} Team
+{% trans "Kind Regards," %}
+{% blocktrans %}The {{ ORG_SHORT_NAME }} Team{% endblocktrans %}
 
 -- 
 {{ ORG_LONG_NAME }}

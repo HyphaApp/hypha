@@ -1,11 +1,13 @@
 {% extends "messages/email/base.html" %}
-{% block salutation %}Dear {{ source.user.get_full_name|default:"applicant" }},{% endblock %}
+
+{% load i18n %}
+{% block salutation %}{% blocktrans %}Dear {{ source.user.get_full_name|default:"applicant" }},{% endblocktrans %}{% endblock %}
 
 {% block more_info %}
-Link to your application: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
-If you have any questions, please submit them here: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}#communications
+{% trans "Link to your application" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
+{% trans "If you have any questions, please submit them here" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}#communications
 
-Link to our guide: {{ ORG_GUIDE_URL }}
+{% trans "Link to our guide" %}: {{ ORG_GUIDE_URL }}
 
-If you have any issues accessing the submission system or other general inquiries, please email us at {{ ORG_EMAIL }}
+{% blocktrans %}If you have any issues accessing the submission system or other general inquiries, please email us at {{ ORG_EMAIL }}{% endblocktrans %}
 {% endblock %}

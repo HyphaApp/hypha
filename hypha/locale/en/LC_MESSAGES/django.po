@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-15 11:42+0000\n"
+"POT-Creation-Date: 2021-06-15 12:20+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -425,6 +425,267 @@ msgstr ""
 #: hypha/apply/activity/messaging.py:945
 #, python-brace-format
 msgid "Successfully determined as {outcome}: "
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/applicant_base.html:4
+#, python-format
+msgid "Dear %(source.user.get_full_name|default:\"applicant\")s,"
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/applicant_base.html:7
+msgid "Link to your application"
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/applicant_base.html:8
+#: hypha/apply/activity/templates/messages/email/invited_to_proposal.html:10
+msgid "If you have any questions, please submit them here"
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/applicant_base.html:10
+#: hypha/apply/activity/templates/messages/email/invited_to_proposal.html:12
+msgid "Link to our guide"
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/applicant_base.html:12
+#: hypha/apply/activity/templates/messages/email/comment.html:9
+#: hypha/apply/activity/templates/messages/email/invited_to_proposal.html:14
+#, python-format
+msgid ""
+"If you have any issues accessing the submission system or other general "
+"inquiries, please email us at %(ORG_EMAIL)s"
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/base.html:6
+msgid "Kind Regards,"
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/base.html:7
+#, python-format
+msgid "The %(ORG_SHORT_NAME)s Team"
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/batch_ready_to_review.html:4
+#: hypha/apply/activity/templates/messages/email/ready_to_review.html:4
+msgid "Dear Reviewer,"
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/batch_ready_to_review.html:7
+msgid "New applications have been added to your review list."
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/batch_ready_to_review.html:10
+#: hypha/apply/activity/templates/messages/email/contract_uploaded.html:7
+#: hypha/apply/activity/templates/messages/email/partners_update_applicant.html:9
+#: hypha/apply/activity/templates/messages/email/partners_update_partner.html:9
+#: hypha/apply/activity/templates/messages/email/payment_request_status_updated.html:14
+#: hypha/apply/activity/templates/messages/email/payment_request_updated.html:8
+#: hypha/apply/activity/templates/messages/email/ready_to_review.html:8
+#: hypha/apply/activity/templates/messages/email/report_frequency.html:12
+#: hypha/apply/activity/templates/messages/email/report_skipped.html:12
+#: hypha/apply/activity/templates/messages/email/sent_to_compliance.html:9
+msgid "Title"
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/batch_ready_to_review.html:11
+#: hypha/apply/activity/templates/messages/email/contract_uploaded.html:8
+#: hypha/apply/activity/templates/messages/email/partners_update_applicant.html:10
+#: hypha/apply/activity/templates/messages/email/partners_update_partner.html:10
+#: hypha/apply/activity/templates/messages/email/payment_request_status_updated.html:15
+#: hypha/apply/activity/templates/messages/email/payment_request_updated.html:9
+#: hypha/apply/activity/templates/messages/email/ready_to_review.html:15
+#: hypha/apply/activity/templates/messages/email/report_frequency.html:13
+#: hypha/apply/activity/templates/messages/email/report_skipped.html:13
+#: hypha/apply/activity/templates/messages/email/report_submitted.html:10
+#: hypha/apply/activity/templates/messages/email/sent_to_compliance.html:10
+msgid "Link"
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/comment.html:4
+#, python-format
+msgid ""
+"There has been a new comment on \"%(source.title)s\" by %(comment.user)s."
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/comment.html:6
+msgid "Read the full comment here"
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/contract_uploaded.html:5
+msgid "A new contract has been added to your Project"
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/contract_uploaded.html:11
+msgid ""
+"This contract has already been signed and there is no action for you to take."
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/contract_uploaded.html:13
+#, python-format
+msgid ""
+"Please review the contract and sign it before reuploading it to your Project "
+"page for the %(ORG_SHORT_NAME)s Team to approve."
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/determination.html:4
+msgid "Your application has been reviewed and the outcome is"
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/determination.html:8
+msgid "Read the full determination here"
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/edit.html:5
+msgid "Your submission has been edited by a member of staff."
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/invited_to_proposal.html:4
+#, python-format
+msgid ""
+"We’ve reviewed your concept note and think it could be a good fit for "
+"%(ORG_SHORT_NAME)s funding. We would like to invite you to submit a proposal "
+"with more details about your project. You will receive a second email "
+"linking to a determination message with detailed feedback."
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/invited_to_proposal.html:6
+msgid ""
+"The system will allow you to save a draft of your proposal as you work on "
+"it. When you feel it is ready for our review, please click the “Submit” "
+"button and we’ll know to take a look at it. We’ll reply to you with feedback "
+"on your Proposal as quickly as possible."
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/invited_to_proposal.html:9
+msgid "Here is the link to start creating your proposal"
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/partners_update_applicant.html:5
+msgid "New partner(s) has been added to your submission."
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/partners_update_partner.html:4
+msgid "Dear Partner,"
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/partners_update_partner.html:7
+msgid "You have been added as a partner the following submission."
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/payment_request_status_updated.html:5
+#: hypha/apply/activity/templates/messages/email/payment_request_updated.html:5
+#, python-format
+msgid ""
+"An %(ORG_SHORT_NAME)s staff member has updated your payment request for "
+"%(source.title)s for period %(payment_request.date_from)s to "
+"%(payment_request.date_to)s."
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/payment_request_status_updated.html:6
+#: hypha/apply/activity/templates/messages/email/payment_request_updated.html:6
+#, python-format
+msgid "It is now %(payment_request.get_status_display)s."
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/payment_request_status_updated.html:9
+msgid "The staff member left this comment"
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/ready_to_review.html:6
+msgid "This application is awaiting your review."
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/ready_to_review.html:10
+msgid "Reminder Title"
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/ready_to_review.html:13
+msgid "Reminder Description"
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/report_frequency.html:6
+#, python-format
+msgid ""
+"An %(ORG_SHORT_NAME)s staff member has changed the reporting frequency of "
+"%(source.title)s."
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/report_frequency.html:8
+msgid "The new schedule is"
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/report_frequency.html:10
+msgid "The next report is due"
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/report_notify.html:6
+#, python-format
+msgid "A report is due for %(source.title)s on %(report.end_date)s."
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/report_notify.html:8
+msgid "More information can be found on the project page:"
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/report_skipped.html:6
+#, python-format
+msgid "An %(ORG_SHORT_NAME)s staff member has marked a report as "
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/report_skipped.html:6
+msgid "no longer required"
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/report_skipped.html:6
+msgid "required"
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/report_skipped.html:6
+#, python-format
+msgid ""
+" for %(source.title)s for period %(report.end_date)s to %(report.end_date)s."
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/report_skipped.html:9
+msgid ""
+"This report was previously not required. Please ensure you now complete the "
+"report."
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/report_submitted.html:5
+#, python-format
+msgid ""
+"An %(ORG_SHORT_NAME)s staff member has submitted a report for "
+"%(source.title)s for period %(report.end_date)s to %(report.end_date)s."
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/report_submitted.html:7
+msgid "You can review the report here"
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/report_submitted.html:9
+msgid "Project"
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/sent_to_compliance.html:7
+msgid "A Project is awaiting your review."
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/sent_to_compliance.html:11
+msgid "Original Submission"
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/sent_to_compliance.html:13
+#, python-format
+msgid ""
+"Please contact %(source.lead)s - %(source.lead.email)s if you have any "
+"questions."
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/transition.html:4
+#, python-format
+msgid ""
+"Your application has been progressed from %(old_phase.public_name)s to "
+"%(source.phase.public_name)s."
 msgstr ""
 
 #: hypha/apply/api/v1/filters.py:31 hypha/apply/funds/tables.py:416

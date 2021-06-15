@@ -1,14 +1,15 @@
 {% extends "messages/email/applicant_base.html" %}
 
-{% block content %}We’ve reviewed your concept note and think it could be a good fit for {{ ORG_SHORT_NAME }} funding. We would like to invite you to submit a proposal with more details about your project. You will receive a second email linking to a determination message with detailed feedback.
+{% load i18n %}
+{% block content %}{% blocktrans %}We’ve reviewed your concept note and think it could be a good fit for {{ ORG_SHORT_NAME }} funding. We would like to invite you to submit a proposal with more details about your project. You will receive a second email linking to a determination message with detailed feedback.{% endblocktrans %}
 
-The system will allow you to save a draft of your proposal as you work on it. When you feel it is ready for our review, please click the “Submit” button and we’ll know to take a look at it. We’ll reply to you with feedback on your Proposal as quickly as possible.{% endblock %}
+{% blocktrans %}The system will allow you to save a draft of your proposal as you work on it. When you feel it is ready for our review, please click the “Submit” button and we’ll know to take a look at it. We’ll reply to you with feedback on your Proposal as quickly as possible.{% endblocktrans %}{% endblock %}
 
 {% block more_info %}
-Here is the link to start creating your proposal: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
-If you have any questions, please submit them here: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}#communications
+{% trans "Here is the link to start creating your proposal" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
+{% trans "If you have any questions, please submit them here" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}#communications
 
-Link to our guide: {{ ORG_GUIDE_URL }}
+{% trans "Link to our guide" %}: {{ ORG_GUIDE_URL }}
 
-If you have any issues accessing the submission system or other general inquiries, please email us at {{ ORG_EMAIL }}
+{% blocktrans %}If you have any issues accessing the submission system or other general inquiries, please email us at {{ ORG_EMAIL }}{% endblocktrans %}
 {% endblock %}
