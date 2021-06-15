@@ -7,6 +7,11 @@
 
 {% block content %}
   <div class="wrapper wrapper--small">
+
+    {% if form.errors %}
+        <div class="wrapper wrapper--error">{{ form.non_field_errors|striptags }}</div>
+    {% endif %}
+
     {% if wizard.steps.current == 'auth' %}
         <p>{% blocktrans %}Enter your credentials.{% endblocktrans %}</p>
     {% elif wizard.steps.current == 'token' %}
