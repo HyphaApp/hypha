@@ -12,7 +12,7 @@
         <table class="data-block__table">
             <thead>
                 <tr>
-                    <th class="data-block__table-amount">Amount</th>
+                    <th class="data-block__table-amount">Amount ({{ CURRENCY_SYMBOL }})</th>
                     <th class="data-block__table-status">Status</th>
                     <th class="data-block__table-date">From</th>
                     <th class="data-block__table-date">To</th>
@@ -22,7 +22,7 @@
             <tbody>
                 {% for payment_request in object.payment_requests.not_rejected %}
                 <tr>
-                    <td><span class="data-block__mobile-label">Amount: </span>{{ CURRENCY_SYMBOL }}{{ payment_request.value|intcomma }}</td>
+                    <td><span class="data-block__mobile-label">Amount: </span>{{ payment_request.value|intcomma }}</td>
                     <td><span class="data-block__mobile-label">Status: </span>{{ payment_request.get_status_display }}</td>
                     <td><span class="data-block__mobile-label">From: </span>{{ payment_request.date_from.date }}</td>
                     <td><span class="data-block__mobile-label">To: </span>{{ payment_request.date_to.date }}</td>
