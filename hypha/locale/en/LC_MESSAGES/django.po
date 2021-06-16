@@ -694,6 +694,7 @@ msgid ""
 msgstr ""
 
 #: hypha/apply/api/v1/filters.py:31 hypha/apply/funds/tables.py:416
+
 #: hypha/apply/users/templates/wagtailusers/users/list.html:46
 msgid "Active"
 msgstr ""
@@ -710,7 +711,7 @@ msgstr ""
 msgid "No Screening"
 msgstr ""
 
-#: hypha/apply/api/v1/filters.py:51 hypha/apply/funds/tables.py:262
+#: hypha/apply/api/v1/filters.py:51 hypha/apply/funds/tables.py:264
 msgid "Category"
 msgstr ""
 
@@ -979,7 +980,7 @@ msgstr ""
 msgid "Labs"
 msgstr ""
 
-#: hypha/apply/funds/admin_helpers.py:86 hypha/apply/funds/tables.py:417
+#: hypha/apply/funds/admin_helpers.py:86 hypha/apply/funds/tables.py:419
 msgid "Open"
 msgstr ""
 
@@ -1025,8 +1026,8 @@ msgstr ""
 msgid "Lead"
 msgstr ""
 
-#: hypha/apply/funds/forms.py:195 hypha/apply/funds/tables.py:259
-#: hypha/apply/funds/tables.py:443
+#: hypha/apply/funds/forms.py:195 hypha/apply/funds/tables.py:261
+#: hypha/apply/funds/tables.py:445
 msgid "Reviewers"
 msgstr ""
 
@@ -1046,7 +1047,7 @@ msgstr ""
 msgid "Meta terms are hierarchical in nature."
 msgstr ""
 
-#: hypha/apply/funds/models/__init__.py:17 hypha/apply/funds/tables.py:74
+#: hypha/apply/funds/models/__init__.py:17 hypha/apply/funds/tables.py:76
 #: hypha/apply/projects/tables.py:45 hypha/apply/projects/tables.py:76
 msgid "Fund"
 msgstr ""
@@ -1166,92 +1167,92 @@ msgstr ""
 msgid "Confirmation email"
 msgstr ""
 
-#: hypha/apply/funds/tables.py:71 hypha/apply/projects/tables.py:20
+#: hypha/apply/funds/tables.py:73 hypha/apply/projects/tables.py:20
 msgid "Submitted"
 msgstr ""
 
-#: hypha/apply/funds/tables.py:72 hypha/apply/projects/filters.py:27
+#: hypha/apply/funds/tables.py:74 hypha/apply/projects/filters.py:27
 #: hypha/apply/projects/filters.py:43 hypha/apply/projects/tables.py:75
 #: hypha/apply/users/templates/wagtailusers/users/list.html:23
 #: hypha/public/partner/tables.py:51 hypha/public/partner/tables.py:97
 msgid "Status"
 msgstr ""
 
-#: hypha/apply/funds/tables.py:73
+#: hypha/apply/funds/tables.py:75
 msgid "Type"
 msgstr ""
 
-#: hypha/apply/funds/tables.py:75
+#: hypha/apply/funds/tables.py:77
 msgid "Comments"
 msgstr ""
 
-#: hypha/apply/funds/tables.py:76
+#: hypha/apply/funds/tables.py:78
 msgid "Last updated"
 msgstr ""
 
-#: hypha/apply/funds/tables.py:89
+#: hypha/apply/funds/tables.py:91
 msgid "No submissions available"
 msgstr ""
 
-#: hypha/apply/funds/tables.py:135 hypha/apply/funds/tables.py:260
+#: hypha/apply/funds/tables.py:137 hypha/apply/funds/tables.py:262
 msgid "Screening"
 msgstr ""
 
-#: hypha/apply/funds/tables.py:169
+#: hypha/apply/funds/tables.py:171
 #: hypha/apply/users/templates/wagtailusers/users/list.html:21
 msgid "Role"
 msgstr ""
 
-#: hypha/apply/funds/tables.py:244
+#: hypha/apply/funds/tables.py:246
 msgid "Statuses"
 msgstr ""
 
-#: hypha/apply/funds/tables.py:256 hypha/apply/funds/tables.py:321
-#: hypha/apply/funds/tables.py:453
+#: hypha/apply/funds/tables.py:258 hypha/apply/funds/tables.py:323
+#: hypha/apply/funds/tables.py:455
 msgid "Rounds"
 msgstr ""
 
-#: hypha/apply/funds/tables.py:257 hypha/apply/funds/tables.py:322
-#: hypha/apply/funds/tables.py:414 hypha/apply/funds/tables.py:448
+#: hypha/apply/funds/tables.py:259 hypha/apply/funds/tables.py:324
+#: hypha/apply/funds/tables.py:416 hypha/apply/funds/tables.py:450
 #: hypha/apply/projects/filters.py:26 hypha/apply/projects/filters.py:41
 #: hypha/public/home/models.py:125
 msgid "Funds"
 msgstr ""
 
-#: hypha/apply/funds/tables.py:258 hypha/apply/funds/tables.py:415
+#: hypha/apply/funds/tables.py:260 hypha/apply/funds/tables.py:417
 msgid "Leads"
 msgstr ""
 
-#: hypha/apply/funds/tables.py:260
+#: hypha/apply/funds/tables.py:262
 msgid "No Status"
 msgstr ""
 
-#: hypha/apply/funds/tables.py:265
+#: hypha/apply/funds/tables.py:267
 msgid "Terms"
 msgstr ""
 
-#: hypha/apply/funds/tables.py:348
+#: hypha/apply/funds/tables.py:350
 #: hypha/apply/funds/templates/funds/includes/round-block-listing.html:20
 msgid "Determined"
 msgstr ""
 
-#: hypha/apply/funds/tables.py:468
+#: hypha/apply/funds/tables.py:470
 msgid "Reviewer"
 msgstr ""
 
-#: hypha/apply/funds/tables.py:481 hypha/apply/funds/tables.py:496
+#: hypha/apply/funds/tables.py:483 hypha/apply/funds/tables.py:498
 msgid "No reviews available"
 msgstr ""
 
-#: hypha/apply/funds/tables.py:485
+#: hypha/apply/funds/tables.py:487
 msgid "Submission"
 msgstr ""
 
-#: hypha/apply/funds/tables.py:500
+#: hypha/apply/funds/tables.py:502
 msgid "Staff"
 msgstr ""
 
-#: hypha/apply/funds/tables.py:508
+#: hypha/apply/funds/tables.py:510
 msgid "No staff available"
 msgstr ""
 
@@ -1709,6 +1710,34 @@ msgstr ""
 msgid "Visibility"
 msgstr ""
 
+#: hypha/apply/review/options.py:6
+msgid "0. Need more info"
+msgstr ""
+
+#: hypha/apply/review/options.py:7
+msgid "1. Poor"
+msgstr "1. Reject"
+
+#: hypha/apply/review/options.py:8
+msgid "2. Not so good"
+msgstr "2. Weak Reject"
+
+#: hypha/apply/review/options.py:9
+msgid "3. Is o.k."
+msgstr "3. Weak Accept"
+
+#: hypha/apply/review/options.py:10
+msgid "4. Good"
+msgstr "4. Accept"
+
+#: hypha/apply/review/options.py:11
+msgid "5. Excellent"
+msgstr "5. Strong Accept"
+
+#: hypha/apply/review/options.py:12
+msgid "n/a - choose not to answer"
+msgstr ""
+
 #: hypha/apply/stream_forms/blocks.py:37
 msgid "Help text"
 msgstr ""
@@ -2038,29 +2067,29 @@ msgstr[1] ""
 msgid "Reset password"
 msgstr ""
 
-#: hypha/apply/users/templates/users/login.html:11
+#: hypha/apply/users/templates/users/login.html:16
 msgid "Enter your credentials."
 msgstr ""
 
-#: hypha/apply/users/templates/users/login.html:14
+#: hypha/apply/users/templates/users/login.html:19
 msgid ""
 "We are calling your phone right now, please enter the\n"
 "                digits you hear."
 msgstr ""
 
-#: hypha/apply/users/templates/users/login.html:17
+#: hypha/apply/users/templates/users/login.html:22
 msgid ""
 "We sent you a text message, please enter the tokens we\n"
 "                sent."
 msgstr ""
 
-#: hypha/apply/users/templates/users/login.html:20
+#: hypha/apply/users/templates/users/login.html:25
 msgid ""
 "Please enter the tokens generated by your token\n"
 "                generator."
 msgstr ""
 
-#: hypha/apply/users/templates/users/login.html:24
+#: hypha/apply/users/templates/users/login.html:29
 msgid ""
 "Use this form for entering backup tokens for logging in.\n"
 "            These tokens have been generated for you to print and keep safe. "
@@ -2068,15 +2097,15 @@ msgid ""
 "            enter one of these backup tokens to login to your account."
 msgstr ""
 
-#: hypha/apply/users/templates/users/login.html:47
+#: hypha/apply/users/templates/users/login.html:52
 msgid "Or, alternatively, use one of your backup phones:"
 msgstr ""
 
-#: hypha/apply/users/templates/users/login.html:57
+#: hypha/apply/users/templates/users/login.html:62
 msgid "As a last resort, you can use a backup token:"
 msgstr ""
 
-#: hypha/apply/users/templates/users/login.html:60
+#: hypha/apply/users/templates/users/login.html:65
 msgid "Use Backup Token"
 msgstr ""
 
