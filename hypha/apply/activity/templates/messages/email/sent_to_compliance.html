@@ -1,13 +1,14 @@
 {% extends "messages/email/base.html" %}
 
+{% load i18n %}
 {% block salutation %}{% endblock %}
 
 {% block content %}
-A Project is awaiting your review.
+{% trans "A Project is awaiting your review." %}
 
-Title: {{ source.title }}
-Link: {{ request.scheme }}://{{ request.get_host }}{% url 'apply:projects:simplified' pk=source.pk %}
-Original Submission: {{ request.scheme }}://{{ request.get_host }}{% url 'apply:submissions:simplified' pk=source.submission.pk %}
+{% trans "Title" %}: {{ source.title }}
+{% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{% url 'apply:projects:simplified' pk=source.pk %}
+{% trans "Original Submission" %}: {{ request.scheme }}://{{ request.get_host }}{% url 'apply:submissions:simplified' pk=source.submission.pk %}
 
-Please contact {{ source.lead }} - {{ source.lead.email }} if you have any questions.
+{% blocktrans %}Please contact {{ source.lead }} - {{ source.lead.email }} if you have any questions.{% endblocktrans %}
 {% endblock %}

@@ -1,13 +1,14 @@
 {% extends "messages/email/applicant_base.html" %}
 
+{% load i18n %}
 {% block content %}
 
-An {{ ORG_SHORT_NAME }} staff member has changed the reporting frequency of {{ source.title }}.
+{% blocktrans %}An {{ ORG_SHORT_NAME }} staff member has changed the reporting frequency of {{ source.title }}.{% endblocktrans %}
 
-The new schedule is: {{ config.get_frequency_display }}
+{% trans "The new schedule is" %}: {{ config.get_frequency_display }}
 
-The next report is due: {{ config.current_due_report.end_date }}
+{% trans "The next report is due" %}: {{ config.current_due_report.end_date }}
 
-Title: {{ source.title }}
-Link: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
+{% trans "Title" %}: {{ source.title }}
+{% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
 {% endblock %}

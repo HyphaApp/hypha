@@ -1,9 +1,11 @@
 {% extends "messages/email/base.html" %}
-{% block salutation %}Dear Partner,{% endblock %}
+
+{% load i18n %}
+{% block salutation %}{% trans "Dear Partner," %}{% endblock %}
 
 {% block content %}
-You have been added as a partner the following submission.
+{% trans "You have been added as a partner the following submission." %}
 
-Title: {{ submission.title }}
-Link: {{ request.scheme }}://{{ request.get_host }}{{ submission.get_absolute_url }}
+{% trans "Title" %}: {{ submission.title }}
+{% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ submission.get_absolute_url }}
 {% endblock %}

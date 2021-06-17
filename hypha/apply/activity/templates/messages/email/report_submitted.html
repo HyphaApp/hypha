@@ -1,10 +1,11 @@
 {% extends "messages/email/applicant_base.html" %}
 
+{% load i18n %}
 {% block content %}
-An {{ ORG_SHORT_NAME }} staff member has submitted a report for {{ source.title }} for period {{ report.end_date }} to {{ report.end_date }}.
+{% blocktrans %}An {{ ORG_SHORT_NAME }} staff member has submitted a report for {{ source.title }} for period {{ report.end_date }} to {{ report.end_date }}.{% endblocktrans %}
 
-You can review the report here: {{ request.scheme }}://{{ request.get_host }}{{ report.get_absolute_url }}
+{% trans "You can review the report here" %}: {{ request.scheme }}://{{ request.get_host }}{{ report.get_absolute_url }}
 
-Project: {{ source.title }}
-Link: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
+{% trans "Project" %}: {{ source.title }}
+{% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
 {% endblock %}

@@ -1,14 +1,16 @@
 {% extends "messages/email/base.html" %}
-{% block salutation %}Dear Reviewer,{% endblock %}
-{% block content %}
-This application is awaiting your review.
 
-Title: {{ source.title }}
+{% load i18n %}
+{% block salutation %}{% trans "Dear Reviewer," %}{% endblock %}
+{% block content %}
+{% trans "This application is awaiting your review." %}
+
+{% trans "Title" %}: {{ source.title }}
 {% if related.title %}
-Reminder Title: {{ related.title }}
+{% trans "Reminder Title" %}: {{ related.title }}
 {% endif %}
 {% if related.description %}
-Reminder Description: {{ related.description }}
+{% trans "Reminder Description" %}: {{ related.description }}
 {% endif %}
-Link: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
+{% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
 {% endblock %}
