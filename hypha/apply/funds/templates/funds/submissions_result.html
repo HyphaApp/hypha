@@ -27,8 +27,8 @@
     {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term use_search=True filter_action=filter_action use_batch_actions=False filter_classes="filters-open" %}
     <div class="grid">
         <div><strong>Number of submission:</strong> {{ count_values }}{% if not count_values == object_list.count %} ({{ object_list.count }}){% endif %}</div>
-        <div><strong>Average value:</strong> ${{ average_value }}</div>
-        <div><strong>Total value:</strong> ${{ total_value }}</div>
+        <div><strong>Average value:</strong> {{ CURRENCY_SYMBOL }}{{ average_value }}</div>
+        <div><strong>Total value:</strong> {{ CURRENCY_SYMBOL }}{{ total_value }}</div>
     </div>
     {% if not count_values == object_list.count %}
         <p>Some submissions lack values and are not included.</p>

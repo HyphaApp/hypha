@@ -2,8 +2,8 @@
     <div class="stat-block__item">
         <h5>Amounts</h5>
         <table>
-            <tr><th>Applied</th><th>Accepted</th></tr>
-            <tr><td>{{ CURRENCY_SYMBOL }}{{ submission_sum|default:"0" }}</td><td>{{ CURRENCY_SYMBOL }}{{ submission_accepted_sum|default:"0" }}</td></tr>
+            <tr><th>Applied ({{ CURRENCY_SYMBOL }})</th><th>Accepted  ({{ CURRENCY_SYMBOL }})</th></tr>
+            <tr><td>{{ submission_sum|default:"0" }}</td><td>{{ submission_accepted_sum|default:"0" }}</td></tr>
         </table>
     </div>
     <div class="stat-block__item">
