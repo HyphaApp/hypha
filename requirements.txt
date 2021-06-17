@@ -44,5 +44,5 @@ social_auth_app_django==4.0.0
 tomd==0.1.3
 wagtail-cache==1.0.2
 wagtail-purge==0.1
-wagtail==2.13.1
+wagtail==2.13.2
 whitenoise==5.2.0
