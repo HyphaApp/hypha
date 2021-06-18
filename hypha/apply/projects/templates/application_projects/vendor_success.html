@@ -1,16 +1,16 @@
 {% extends "base-apply.html" %}
-{% load static %}
+{% load static i18n %}
 
-{% block title %}Contractor Setup Completed{% endblock %}
+{% block title %}{% trans "Contractor Setup Completed" %}{% endblock %}
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
-        <h2 class="heading heading--no-margin">Contractor Setup Completed</h2>
+        <h2 class="heading heading--no-margin">{% trans "Contractor Setup Completed" %}</h2>
     </div>
 </div>
 <div class="wrapper wrapper--small">
     <h3>Thank you for submitting your information.</h3>
-    <p>Your OTF Programme Manager will be in touch with you if there are any issues.</p>
+    <p>Your {{ ORG_SHORT_NAME }} Programme Manager will be in touch with you if there are any issues.</p>
     <h3>What will happen next?</h3>
     <p>We will use this information to create the contract for your project.</p>
     <p>Once this has happened, we will send you a message with your contract.</p>

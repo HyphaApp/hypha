@@ -1,11 +1,11 @@
 {% extends "base-apply.html" %}
-{% load static %}
+{% load static i18n %}
 
-{% block title %}{% if object %}Edit{% else %}Update{% endif %} Contractor{% if object %}{{ object.project.title }}{% else %}{{ project.title }}{% endif %}{% endblock %}
+{% block title %}{% trans "Update Contractor Information" %}{% endblock %}
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
-        <h2 class="heading heading--no-margin">Update Contractor Information</h2>
+        <h2 class="heading heading--no-margin">{% trans "Update Contractor Information" %}</h2>
     </div>
 </div>
 

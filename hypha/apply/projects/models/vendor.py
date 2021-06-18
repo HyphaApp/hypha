@@ -42,8 +42,8 @@ class BankInformation(models.Model):
 class Vendor(models.Model):
 
     TYPE_CHOICES = [
-        ('organization', 'Yes, the account belongs to the organisation above'),
-        ('personal', 'No, it is a personal bank account'),
+        ('organization', _('Yes, the account belongs to the organisation above')),
+        ('personal', _('No, it is a personal bank account')),
     ]
 
     user = models.OneToOneField(
@@ -103,7 +103,7 @@ class VendorFormSettings(BaseSetting):
         default='3. Is the bank account owned by the person or organisation in the Question 1 above?'
     )
     type_help_text = RichTextField(
-        'help_text',
+        'help text',
         blank=True,
         default='The name of the bank account must be the same as on the contract.'
     )
@@ -112,7 +112,7 @@ class VendorFormSettings(BaseSetting):
         default='Is the organisation required to pay US taxes?'
     )
     required_to_pay_taxes_help_text = RichTextField(
-        'help_text',
+        'help text',
         default='', blank=True,
     )
     due_diligence_documents_label = models.TextField(
@@ -120,7 +120,7 @@ class VendorFormSettings(BaseSetting):
         default='Due Diligence Documents'
     )
     due_diligence_documents_help_text = RichTextField(
-        'help_text',
+        'help text',
         blank=True,
         default='Upload Due Diligence Documents. E.g. w8/w9 forms.'
     )
@@ -129,7 +129,7 @@ class VendorFormSettings(BaseSetting):
         default='Bank Account Holder name'
     )
     account_holder_name_help_text = RichTextField(
-        'help_text',
+        'help text',
         blank=True,
         default='This name must be same as the person or organisation that signed the contract. '
         'This person is authorised to sign contracts on behalf of the person or organisation named above.'
@@ -139,7 +139,7 @@ class VendorFormSettings(BaseSetting):
         default='Bank Account Routing number'
     )
     account_routing_number_help_text = RichTextField(
-        'help_text',
+        'help text',
         blank=True,
         default='Depending on your country, this might be called the ACH, SWIFT, BIC or ABA number.'
     )
@@ -148,7 +148,7 @@ class VendorFormSettings(BaseSetting):
         default='Bank Account Number'
     )
     account_number_help_text = RichTextField(
-        'help_text',
+        'help text',
         blank=True,
         default='Depending on your country, this might be called the account number, IBAN, or BBAN number.'
     )
@@ -157,7 +157,7 @@ class VendorFormSettings(BaseSetting):
         default='Bank Account Currency'
     )
     account_currency_help_text = RichTextField(
-        'label',
+        'help text',
         blank=True,
         default='This is the currency of this bank account.'
     )
@@ -166,7 +166,7 @@ class VendorFormSettings(BaseSetting):
         default='Do you need to provide us with extra information?'
     )
     need_extra_info_help_text = RichTextField(
-        'help_text',
+        'help text',
         blank=True,
         default=''
     )
@@ -175,7 +175,7 @@ class VendorFormSettings(BaseSetting):
         default='Bank Account Branch Address'
     )
     branch_address_help_text = models.TextField(
-        'help_text',
+        'help text',
         blank=True,
         default='The address of the bank branch where you have the bank account '
         'located(not the bank account holder address)'
@@ -185,7 +185,7 @@ class VendorFormSettings(BaseSetting):
         default='Intermediary Bank Account Routing Number'
     )
     ib_account_routing_number_help_text = RichTextField(
-        'help_text',
+        'help text',
         blank=True,
         default='Depending on your country, this might be called ACH, SWIFT, BIC or ABA number'
     )
@@ -194,7 +194,7 @@ class VendorFormSettings(BaseSetting):
         default='Intermediary Bank Account Number'
     )
     ib_account_number_help_text = RichTextField(
-        'help_text',
+        'help text',
         blank=True,
         default='Depending on your country, this might be called the account number, IBAN, or BBAN number'
     )
@@ -203,7 +203,7 @@ class VendorFormSettings(BaseSetting):
         default='Intermediary Bank Account Currency'
     )
     ib_account_currency_help_text = RichTextField(
-        'help_text',
+        'help text',
         blank=True,
         default='This is the currency of this bank account'
     )
@@ -212,7 +212,7 @@ class VendorFormSettings(BaseSetting):
         default='Intermediary Bank Branch Address'
     )
     ib_branch_address_help_text = RichTextField(
-        'help_text',
+        'help text',
         blank=True,
         default='Bank branch address(not the bank account holder address)'
     )
@@ -221,7 +221,7 @@ class VendorFormSettings(BaseSetting):
         default='Account Holder National Identity Document Type'
     )
     nid_type_help_text = RichTextField(
-        'help_text',
+        'help text',
         blank=True,
         default='This could be a passport, a National Identity number, '
         'or other national identity document.'
@@ -231,7 +231,7 @@ class VendorFormSettings(BaseSetting):
         default='Account Holder National Identity Document Number'
     )
     nid_number_help_text = RichTextField(
-        'help_text',
+        'help text',
         default='',
         blank=True,
     )
@@ -240,7 +240,7 @@ class VendorFormSettings(BaseSetting):
         default='Other Information'
     )
     other_info_help_text = RichTextField(
-        'help_text',
+        'help text',
         blank=True,
         default='If you need to include other information not listed above, provide it here.'
     )

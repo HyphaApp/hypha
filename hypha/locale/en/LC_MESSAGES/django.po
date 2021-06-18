@@ -2470,3 +2470,19 @@ msgstr ""
 #: hypha/templates/blocks/apply_link_block.html:4
 msgid "Apply for the"
 msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/vendor_form.html:4,8
+msgid "Update Contractor Information"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/vendor_success.html:4,8
+msgid "Contractor Setup Completed"
+msgstr ""
+
+#: hypha/apply/projects/models/vendor.py:45
+msgid "Yes, the account belongs to the organisation above"
+msgstr ""
+
+#: hypha/apply/projects/models/vendor.py:46
+msgid "No, it is a personal bank account"
+msgstr ""

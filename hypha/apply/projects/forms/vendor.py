@@ -1,12 +1,27 @@
-from babel.numbers import get_currency_name, list_currencies
+import datetime
+from operator import itemgetter
+
+from babel.core import get_global
+from babel.numbers import get_currency_name, get_territory_currencies
 from django import forms
 from django_file_form.forms import FileFormMixin
 
 from addressfield.fields import AddressField
 from hypha.apply.stream_forms.fields import MultiFileField
 
-# from addressfield.fields import AddressField
 from ..models.vendor import VendorFormSettings
+
+
+def get_active_currencies():
+    active_currencies = []
+    territories = get_global('territory_currencies').keys()
+    for territory in territories:
+        currencies = get_territory_currencies(territory, datetime.date.today())
+        if currencies:
+            for currency in currencies:
+                if currency not in active_currencies:
+                    active_currencies.append(currencies[0])
+    return active_currencies
 
 
 class BaseVendorForm:
@@ -67,14 +82,14 @@ class CreateVendorFormStep3(FileFormMixin, BaseVendorForm, forms.Form):
 class CreateVendorFormStep4(BaseVendorForm, forms.Form):
     CURRENCY_CHOICES = [
         (currency, f'{get_currency_name(currency)} - {currency}')
-        for currency in list_currencies()
+        for currency in get_active_currencies()
     ]
 
     account_holder_name = forms.CharField(required=True)
     account_routing_number = forms.CharField(required=True)
     account_number = forms.CharField(required=True)
     account_currency = forms.ChoiceField(
-        choices=CURRENCY_CHOICES,
+        choices=sorted(CURRENCY_CHOICES, key=itemgetter(1)),
         required=True,
         initial='USD'
     )
@@ -100,13 +115,13 @@ class CreateVendorFormStep5(BaseVendorForm, forms.Form):
 class CreateVendorFormStep6(BaseVendorForm, forms.Form):
     CURRENCY_CHOICES = [
         (currency, f'{get_currency_name(currency)} - {currency}')
-        for currency in list_currencies()
+        for currency in get_active_currencies()
     ]
     branch_address = AddressField()
     ib_account_routing_number = forms.CharField(required=False)
     ib_account_number = forms.CharField(required=False)
     ib_account_currency = forms.ChoiceField(
-        choices=CURRENCY_CHOICES,
+        choices=sorted(CURRENCY_CHOICES, key=itemgetter(1)),
         required=False,
         initial='USD'
     )
