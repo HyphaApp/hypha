@@ -164,6 +164,7 @@
             padding: 10px 0 30px;
             opacity: 0;
             transition: opacity $transition;
+            overflow: auto;
 
             .filters-open & {
                 opacity: 1;
