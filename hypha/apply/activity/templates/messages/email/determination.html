@@ -6,3 +6,5 @@
 {{ determination.message|bleach|striptags }}
 
 {% trans "Read the full determination here" %}: {{ request.scheme }}://{{ request.get_host }}{{ determination.get_absolute_url }}{% endblock %}
+
+{% block more_info %}If you have any questions about the determination, please contact giving@ampr.org.{% endblock %}
