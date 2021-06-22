@@ -39,6 +39,7 @@ class FormFieldBlock(StructBlock):
 
     field_class = forms.CharField
     widget = None
+    canonical_name = ""
 
     class Meta:
         template = 'stream_forms/render_field.html'

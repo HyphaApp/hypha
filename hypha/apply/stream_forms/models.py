@@ -59,6 +59,7 @@ class BaseStreamForm:
             struct_value = struct_child.value
             if isinstance(block, FormFieldBlock):
                 field_from_block = block.get_field(struct_value)
+                field_from_block.canonical_name = block.name
                 if draft and not issubclass(block.__class__, ApplicationMustIncludeFieldBlock):
                     field_from_block.required = False
                 field_from_block.help_link = struct_value.get('help_link')
@@ -100,6 +101,7 @@ class BaseStreamForm:
                 is_in_group = False
             else:
                 field_wrapper = BlockFieldWrapper(struct_child)
+                field_wrapper.canonical_name = block.name
                 field_wrapper.group_number = group_counter if is_in_group else 1
                 form_fields[struct_child.id] = field_wrapper
 

@@ -42,7 +42,16 @@
             {% else %}
                 {{ field }}
             {% endif %}
+
         {% endfor %}
+
+        {# Set up some hidden fields that we can use to map #}
+        {# between (seemingly) random field ids and canonical names #}
+        {# that our javascript can use. #}
+        {% for k, v in form_field_id_to_name.items %}
+            <input type=hidden id="id_{{v}}" name="id_{{v}}" value="{{k}}"/>
+        {% endfor %}
+
         {% block form_buttons %}
             {% if form.draft_button_name %}
                 <button class="button button--submit button--top-space button--white" type="submit" name="{{ form.draft_button_name }}" formnovalidate>Save Draft</button>
@@ -52,7 +61,6 @@
     </form>
     {% for type, message in message_templates.items %}
         <div class="is-hidden" data-type="{{ type }}" id="determination-message-{{ type }}">
-            <h1>message</h1>
             {{ message|bleach }}
         </div>
     {% endfor %}
@@ -61,5 +69,5 @@
 {% endblock %}
 
 {% block extra_js %}
-    {# Skip this until the script is improved. <script src="{% static 'js/apply/determination-template.js' %}"></script> #}
+    <script src="{% static 'js/apply/determination-template.js' %}"></script>
 {% endblock %}
