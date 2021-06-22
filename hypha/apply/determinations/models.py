@@ -197,6 +197,9 @@ class DeterminationMessageSettings(BaseSetting):
         message_templates = {}
         prefix = f"{stage_name.lower()}_"
 
+        # requests and external requests use the same messages.
+        prefix = prefix.replace("ext", "")
+
         for field in self._meta.get_fields():
             if prefix in field.name:
                 key = field.name.replace(prefix, '')

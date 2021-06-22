@@ -279,6 +279,7 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
         return self.model.objects.get(submission=self.submission, is_draft=True)
 
     def dispatch(self, request, *args, **kwargs):
+
         self.submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
 
         if not can_create_determination(request.user, self.submission):
@@ -309,9 +310,18 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
         site = Site.find_for_request(self.request)
         determination_messages = DeterminationMessageSettings.for_site(site)
 
+        # Create a dict that maps between opaque field ids
+        # and canonical names for use in the template.
+        # TODO: Put this functionality higher in the class hierarchy.
+        determination_form_class = self.get_form_class()
+        form_field_id_to_name={}
+        for field_id in determination_form_class.display:
+            form_field_id_to_name[field_id] = determination_form_class.display[field_id].canonical_name
+
         return super().get_context_data(
             submission=self.submission,
             message_templates=determination_messages.get_for_stage(self.submission.stage.name),
+            form_field_id_to_name=form_field_id_to_name,
             **kwargs
         )
 
