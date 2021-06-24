@@ -1,0 +1,35 @@
+{% extends "base-apply.html" %}
+{% load render_table from django_tables2 %}
+{% load static %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="admin-bar">
+    <div class="admin-bar__inner admin-bar__inner--with-button">
+        {% block page_header %}
+            <h1 class="gamma heading heading--no-margin heading--bold">Dashboard</h1>
+        {% endblock %}
+        <a href="{% url 'wagtailadmin_home' %}" class="button button--primary button--arrow-pixels-white">
+            Apply admin
+            <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
+        </a>
+    </div>
+</div>
+<div class="wrapper wrapper--large wrapper--inner-space-medium">
+    {% if active_payment_requests.count %}
+    <div id="active-payment-requests" class="wrapper wrapper--bottom-space">
+        <h4 class="heading heading--normal">Active requests for payment</h4>
+        {% render_table active_payment_requests.table %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+    {{ my_reviewed.filterset.form.media.js }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/url-search-params/1.1.0/url-search-params.js"></script>
+    <script src="{% static 'js/apply/submission-filters.js' %}"></script>
+    <script src="{% static 'js/apply/submission-tooltips.js' %}"></script>
+    <script src="{% static 'js/apply/tabs.js' %}"></script>
+{% endblock %}

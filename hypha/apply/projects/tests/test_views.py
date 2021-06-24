@@ -12,6 +12,7 @@ from hypha.apply.funds.tests.factories import LabSubmissionFactory
 from hypha.apply.users.tests.factories import (
     ApplicantFactory,
     ApproverFactory,
+    FinanceFactory,
     ReviewerFactory,
     StaffFactory,
     SuperUserFactory,
@@ -111,6 +112,20 @@ class BaseProjectDetailTestCase(BaseViewTestCase):
 
 class TestStaffProjectDetailView(BaseProjectDetailTestCase):
     user_factory = StaffFactory
+
+    def test_has_access(self):
+        project = ProjectFactory()
+        response = self.get_page(project)
+        self.assertEqual(response.status_code, 200)
+
+    def test_lab_project_renders(self):
+        project = ProjectFactory(submission=LabSubmissionFactory())
+        response = self.get_page(project)
+        self.assertEqual(response.status_code, 200)
+
+
+class TestFinanceProjectDetailView(BaseProjectDetailTestCase):
+    user_factory = FinanceFactory
 
     def test_has_access(self):
         project = ProjectFactory()
@@ -923,6 +938,28 @@ class TestStaffDetailPaymentRequestStatus(BaseViewTestCase):
         self.assertEqual(response.status_code, 404)
 
 
+class TestFinanceDetailPaymentRequestStatus(BaseViewTestCase):
+    base_view_name = 'detail'
+    url_name = 'funds:projects:payments:{}'
+    user_factory = FinanceFactory
+
+    def get_kwargs(self, instance):
+        return {
+            'pk': instance.pk,
+        }
+
+    def test_can(self):
+        payment_request = PaymentRequestFactory()
+        response = self.get_page(payment_request)
+        self.assertEqual(response.status_code, 200)
+
+    def test_wrong_project_cant(self):
+        other_project = ProjectFactory()
+        payment_request = PaymentRequestFactory()
+        response = self.get_page(payment_request, url_kwargs={'pk': other_project.pk})
+        self.assertEqual(response.status_code, 404)
+
+
 class TestApplicantDetailPaymentRequestStatus(BaseViewTestCase):
     base_view_name = 'detail'
     url_name = 'funds:projects:payments:{}'
@@ -1334,7 +1371,7 @@ class TestStaffSubmitReport(BaseViewTestCase):
             project=submitted_report.project,
         )
         response = self.post_page(future_report, {'public_content': 'Some text'})
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 403)
 
 
 class TestApplicantSubmitReport(BaseViewTestCase):
@@ -1406,7 +1443,7 @@ class TestApplicantSubmitReport(BaseViewTestCase):
         report = ReportFactory(is_submitted=True, project__user=self.user)
         self.assertEqual(report.versions.first(), report.current)
         response = self.post_page(report, {'public_content': 'Some text', 'save': ' Save'})
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 403)
 
     def test_cant_submit_other_report(self):
         report = ReportFactory()
@@ -1432,17 +1469,17 @@ class TestStaffReportDetail(BaseViewTestCase):
     def test_cant_access_skipped_report(self):
         report = ReportFactory(skipped=True)
         response = self.get_page(report)
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 403)
 
     def test_cant_access_draft_report(self):
         report = ReportFactory(is_draft=True)
         response = self.get_page(report)
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 403)
 
     def test_cant_access_future_report(self):
         report = ReportFactory(end_date=timezone.now() + relativedelta(days=1))
         response = self.get_page(report)
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 403)
 
 
 class TestApplicantReportDetail(BaseViewTestCase):
@@ -1463,12 +1500,12 @@ class TestApplicantReportDetail(BaseViewTestCase):
     def test_cant_access_own_draft_report(self):
         report = ReportFactory(is_draft=True, project__user=self.user)
         response = self.get_page(report)
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 403)
 
     def test_cant_access_own_future_report(self):
         report = ReportFactory(end_date=timezone.now() + relativedelta(days=1), project__user=self.user)
         response = self.get_page(report)
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 403)
 
     def test_cant_access_other_submitted_report(self):
         report = ReportFactory(is_submitted=True)
@@ -1478,12 +1515,12 @@ class TestApplicantReportDetail(BaseViewTestCase):
     def test_cant_access_other_draft_report(self):
         report = ReportFactory(is_draft=True)
         response = self.get_page(report)
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 403)
 
     def test_cant_access_other_future_report(self):
         report = ReportFactory(end_date=timezone.now() + relativedelta(days=1))
         response = self.get_page(report)
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 403)
 
 
 class TestSkipReport(BaseViewTestCase):

@@ -28,7 +28,11 @@ from django_tables2 import SingleTableMixin
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.views import ActivityContextMixin, CommentFormView
-from hypha.apply.users.decorators import approver_required, staff_required
+from hypha.apply.users.decorators import (
+    approver_required,
+    staff_or_finace_required,
+    staff_required,
+)
 from hypha.apply.utils.models import PDFPageSettings
 from hypha.apply.utils.pdfs import (
     draw_project_content,
@@ -465,6 +469,7 @@ class ApplicantProjectDetailView(
 
 class ProjectDetailView(ViewDispatcher):
     admin_view = AdminProjectDetailView
+    finance_view = AdminProjectDetailView
     applicant_view = ApplicantProjectDetailView
 
 
@@ -520,7 +525,7 @@ class ContractPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
 
 # PROJECT EDIT
 
-@method_decorator(staff_required, name='dispatch')
+@method_decorator(staff_or_finace_required, name='dispatch')
 class ProjectDetailSimplifiedView(DetailView):
     model = Project
     template_name_suffix = '_simplified_detail'
@@ -639,7 +644,7 @@ class ProjectEditView(ViewDispatcher):
     applicant_view = ApplicantProjectEditView
 
 
-@method_decorator(staff_required, name='dispatch')
+@method_decorator(staff_or_finace_required, name='dispatch')
 class ProjectListView(SingleTableMixin, FilterView):
     filterset_class = ProjectListFilter
     queryset = Project.objects.for_table()
@@ -647,7 +652,7 @@ class ProjectListView(SingleTableMixin, FilterView):
     template_name = 'application_projects/project_list.html'
 
 
-@method_decorator(staff_required, name='dispatch')
+@method_decorator(staff_or_finace_required, name='dispatch')
 class ProjectOverviewView(TemplateView):
     template_name = 'application_projects/overview.html'
 

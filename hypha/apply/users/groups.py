@@ -5,6 +5,7 @@ TEAMADMIN_GROUP_NAME = 'Team Admin'
 PARTNER_GROUP_NAME = 'Partner'
 COMMUNITY_REVIEWER_GROUP_NAME = 'Community reviewer'
 APPROVER_GROUP_NAME = 'Approver'
+FINANCE_GROUP_NAME = 'Finance'
 
 GROUPS = [
     {
@@ -33,6 +34,10 @@ GROUPS = [
     },
     {
         'name': APPROVER_GROUP_NAME,
+        'permissions': [],
+    },
+    {
+        'name': FINANCE_GROUP_NAME,
         'permissions': [],
     }
 ]

@@ -12,6 +12,7 @@ from .groups import (
     APPLICANT_GROUP_NAME,
     APPROVER_GROUP_NAME,
     COMMUNITY_REVIEWER_GROUP_NAME,
+    FINANCE_GROUP_NAME,
     PARTNER_GROUP_NAME,
     REVIEWER_GROUP_NAME,
     STAFF_GROUP_NAME,
@@ -39,6 +40,9 @@ class UserQuerySet(models.QuerySet):
 
     def approvers(self):
         return self.filter(groups__name=APPROVER_GROUP_NAME)
+
+    def finances(self):
+        return self.filter(groups__name=FINANCE_GROUP_NAME)
 
 
 class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
@@ -151,6 +155,10 @@ class User(AbstractUser):
     @cached_property
     def is_approver(self):
         return self.groups.filter(name=APPROVER_GROUP_NAME).exists()
+
+    @cached_property
+    def is_finance(self):
+        return self.groups.filter(name=FINANCE_GROUP_NAME).exists()
 
     class Meta:
         ordering = ('full_name', 'email')

@@ -1,7 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
-from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.decorators import method_decorator
 from django.views import View
@@ -11,7 +10,7 @@ from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
-from hypha.apply.users.decorators import staff_required
+from hypha.apply.users.decorators import staff_or_finace_required, staff_required
 from hypha.apply.utils.storage import PrivateMediaView
 from hypha.apply.utils.views import DelegatedViewMixin
 
@@ -31,28 +30,33 @@ class ReportingMixin:
         return super().dispatch(*args, **kwargs)
 
 
-class ReportAccessMixin:
-    def dispatch(self, request, *args, **kwargs):
-        is_admin = request.user.is_apply_staff
-        is_owner = request.user == self.get_object().project.user
-        if not (is_owner or is_admin):
-            raise PermissionDenied
-
-        return super().dispatch(request, *args, **kwargs)
-
-
 @method_decorator(login_required, name='dispatch')
+class ReportAccessMixin(UserPassesTestMixin):
+    model = Report
+
+    def test_func(self):
+        if self.request.user.is_apply_staff:
+            return True
+
+        if self.request.user.is_finance:
+            return True
+
+        if self.request.user == self.get_object().project.user:
+            return True
+
+        return False
+
+
 class ReportDetailView(ReportAccessMixin, DetailView):
     model = Report
 
     def dispatch(self, *args, **kwargs):
         report = self.get_object()
         if not report.current or report.skipped:
-            raise Http404
+            raise PermissionDenied
         return super().dispatch(*args, **kwargs)
 
 
-@method_decorator(login_required, name='dispatch')
 class ReportUpdateView(ReportAccessMixin, UpdateView):
     form_class = ReportEditForm
     model = Report
@@ -60,9 +64,9 @@ class ReportUpdateView(ReportAccessMixin, UpdateView):
     def dispatch(self, *args, **kwargs):
         report = self.get_object()
         if not report.can_submit:
-            raise Http404
+            raise PermissionDenied
         if report.current and self.request.user.is_applicant:
-            raise Http404
+            raise PermissionDenied
         return super().dispatch(*args, **kwargs)
 
     def get_initial(self):
@@ -116,9 +120,7 @@ class ReportUpdateView(ReportAccessMixin, UpdateView):
         return response
 
 
-@method_decorator(login_required, name='dispatch')
-class ReportPrivateMedia(UserPassesTestMixin, PrivateMediaView):
-    raise_exception = True
+class ReportPrivateMedia(ReportAccessMixin, PrivateMediaView):
 
     def dispatch(self, *args, **kwargs):
         report_pk = self.kwargs['pk']
@@ -139,15 +141,6 @@ class ReportPrivateMedia(UserPassesTestMixin, PrivateMediaView):
 
     def get_media(self, *args, **kwargs):
         return self.document.document
-
-    def test_func(self):
-        if self.request.user.is_apply_staff:
-            return True
-
-        if self.request.user == self.report.project.user:
-            return True
-
-        return False
 
 
 @method_decorator(staff_required, name='dispatch')
@@ -206,7 +199,7 @@ class ReportFrequencyUpdate(DelegatedViewMixin, UpdateView):
         return response
 
 
-@method_decorator(staff_required, name='dispatch')
+@method_decorator(staff_or_finace_required, name='dispatch')
 class ReportListView(SingleTableMixin, FilterView):
     queryset = Report.objects.submitted().for_table()
     filterset_class = ReportListFilter

@@ -9,7 +9,7 @@ from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
-from hypha.apply.users.decorators import staff_required
+from hypha.apply.users.decorators import staff_or_finace_required
 from hypha.apply.utils.storage import PrivateMediaView
 from hypha.apply.utils.views import DelegateableView, DelegatedViewMixin, ViewDispatcher
 
@@ -25,19 +25,23 @@ from ..tables import PaymentRequestsListTable
 
 
 @method_decorator(login_required, name='dispatch')
-class PaymentRequestAccessMixin:
+class PaymentRequestAccessMixin(UserPassesTestMixin):
     model = PaymentRequest
 
-    def dispatch(self, request, *args, **kwargs):
-        is_admin = request.user.is_apply_staff
-        is_owner = request.user == self.get_object().project.user
-        if not (is_owner or is_admin):
-            raise PermissionDenied
+    def test_func(self):
+        if self.request.user.is_apply_staff:
+            return True
 
-        return super().dispatch(request, *args, **kwargs)
+        if self.request.user.is_finance:
+            return True
+
+        if self.request.user == self.get_object().project.user:
+            return True
+
+        return False
 
 
-@method_decorator(staff_required, name='dispatch')
+@method_decorator(staff_or_finace_required, name='dispatch')
 class ChangePaymentRequestStatusView(DelegatedViewMixin, PaymentRequestAccessMixin, UpdateView):
     form_class = ChangePaymentRequestStatusForm
     context_name = 'change_payment_status'
@@ -102,6 +106,7 @@ class PaymentRequestApplicantView(PaymentRequestAccessMixin, DelegateableView, D
 
 class PaymentRequestView(ViewDispatcher):
     admin_view = PaymentRequestAdminView
+    finance_view = PaymentRequestAdminView
     applicant_view = PaymentRequestApplicantView
 
 
@@ -186,13 +191,16 @@ class PaymentRequestPrivateMedia(UserPassesTestMixin, PrivateMediaView):
         if self.request.user.is_apply_staff:
             return True
 
+        if self.request.user.is_finance:
+            return True
+
         if self.request.user == self.payment_request.project.user:
             return True
 
         return False
 
 
-@method_decorator(staff_required, name='dispatch')
+@method_decorator(staff_or_finace_required, name='dispatch')
 class PaymentRequestListView(SingleTableMixin, FilterView):
     filterset_class = PaymentRequestListFilter
     model = PaymentRequest
