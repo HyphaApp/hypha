@@ -415,7 +415,7 @@ class SlackAdapter(AdapterBase):
         MESSAGES.PARTNERS_UPDATED: _('{user} has updated the partners on <{link}|{source.title}>'),
         MESSAGES.TRANSITION: _('{user} has updated the status of <{link}|{source.title}>: {old_phase.display_name} → {source.phase}'),
         MESSAGES.BATCH_TRANSITION: 'handle_batch_transition',
-        MESSAGES.DETERMINATION_OUTCOME: _('A determination for <{link}|{source.title}> was sent by email. Outcome: {determination.clean_outcome}'),
+        MESSAGES.DETERMINATION_OUTCOME: 'handle_determination',
         MESSAGES.BATCH_DETERMINATION_OUTCOME: 'handle_batch_determination',
         MESSAGES.PROPOSAL_SUBMITTED: _('A proposal has been submitted for review: <{link}|{source.title}>'),
         MESSAGES.INVITED_TO_PROPOSAL: _('<{link}|{source.title}> by {source.user} has been invited to submit a proposal'),
@@ -555,6 +555,24 @@ class SlackAdapter(AdapterBase):
             _('{user} has transitioned the following submissions: {submissions_links}').format(
                 user=user,
                 submissions_links=submissions_links,
+            )
+        )
+
+    def handle_determination(self, source, link, determination, **kwargs):
+        submission = source
+        if determination.send_notice:
+            return(
+                _('A determination for <{link}|{submission_title}> was sent by email. Outcome: {determination_outcome}').format(
+                    link=link,
+                    submission_title=submission.title,
+                    determination_outcome=determination.clean_outcome
+                )
+            )
+        return (
+            _('A determination for <{link}|{submission_title}> was saved without sending an email. Outcome: {determination_outcome}').format(
+                link=link,
+                submission_title=submission.title,
+                determination_outcome=determination.clean_outcome
             )
         )
 

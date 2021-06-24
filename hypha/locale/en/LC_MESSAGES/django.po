@@ -198,13 +198,6 @@ msgid ""
 "display_name} → {source.phase}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:418
-#, python-brace-format
-msgid ""
-"A determination for <{link}|{source.title}> was sent by email. Outcome: "
-"{determination.clean_outcome}"
-msgstr ""
-
 #: hypha/apply/activity/messaging.py:420
 #, python-brace-format
 msgid "A proposal has been submitted for review: <{link}|{source.title}>"
@@ -343,86 +336,98 @@ msgstr ""
 msgid "{user} has transitioned the following submissions: {submissions_links}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:571
+#: hypha/apply/activity/messaging.py:565
+#, python-brace-format
+msgid "A determination for <{link}|{submission_title}> was sent by email. "
+"Outcome: {determination_outcome}"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:572
+#, python-brace-format
+msgid "A determination for <{link}|{submission_title}> was saved without sending an email. "
+"Outcome: {determination_outcome}"
+msgstr ""
+
+#: hypha/apply/activity/messaging.py:589
 #, python-brace-format
 msgid "Determinations of {outcome} was sent for: {submissions_links}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:580
+#: hypha/apply/activity/messaging.py:598
 #, python-brace-format
 msgid "{user} has deleted submissions: {title}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:594
+#: hypha/apply/activity/messaging.py:612
 #, python-brace-format
 msgid ""
 "<{link}|{title}> is ready for review. The following are assigned as "
 "reviewers: {reviewers}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:705
+#: hypha/apply/activity/messaging.py:723
 #, python-brace-format
 msgid "Application ready to review: {source.title}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:707
+#: hypha/apply/activity/messaging.py:725
 msgid "Multiple applications are now ready for your review"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:709
+#: hypha/apply/activity/messaging.py:727
 #, python-brace-format
 msgid "Reminder: Application ready to review: {source.title}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:712
+#: hypha/apply/activity/messaging.py:730
 #, python-brace-format
 msgid "Your application to {org_long_name}: {source.title}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:714
+#: hypha/apply/activity/messaging.py:732
 #, python-brace-format
 msgid "Your {org_long_name} Project: {source.title}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:899
+#: hypha/apply/activity/messaging.py:917
 msgid "Successfully uploaded document"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:900
+#: hypha/apply/activity/messaging.py:918
 msgid "Successfully removed document"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:903
+#: hypha/apply/activity/messaging.py:921
 msgid "Reminder created"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:904
+#: hypha/apply/activity/messaging.py:922
 msgid "Reminder deleted"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:915
+#: hypha/apply/activity/messaging.py:933
 #, python-brace-format
 msgid "Batch reviewers added: {reviewers_text} to "
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:920
+#: hypha/apply/activity/messaging.py:938
 #, python-brace-format
 msgid ""
 "Successfully updated reporting frequency. They will now report "
 "{new_schedule} starting on {schedule_start}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:924
+#: hypha/apply/activity/messaging.py:942
 #, python-brace-format
 msgid "Successfully skipped a Report for {start_date} to {end_date}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:926
+#: hypha/apply/activity/messaging.py:944
 #, python-brace-format
 msgid "Successfully unskipped a Report for {start_date} to {end_date}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:945
+#: hypha/apply/activity/messaging.py:963
 #, python-brace-format
 msgid "Successfully determined as {outcome}: "
 msgstr ""
