@@ -10,7 +10,7 @@ from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
-from hypha.apply.users.decorators import staff_or_finace_required, staff_required
+from hypha.apply.users.decorators import staff_or_finance_required, staff_required
 from hypha.apply.utils.storage import PrivateMediaView
 from hypha.apply.utils.views import DelegatedViewMixin
 
@@ -199,7 +199,7 @@ class ReportFrequencyUpdate(DelegatedViewMixin, UpdateView):
         return response
 
 
-@method_decorator(staff_or_finace_required, name='dispatch')
+@method_decorator(staff_or_finance_required, name='dispatch')
 class ReportListView(SingleTableMixin, FilterView):
     queryset = Report.objects.submitted().for_table()
     filterset_class = ReportListFilter

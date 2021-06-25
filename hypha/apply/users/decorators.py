@@ -41,7 +41,7 @@ staff_required = [login_required, user_passes_test(is_apply_staff)]
 
 finance_required = [login_required, user_passes_test(is_finance)]
 
-staff_or_finace_required = [login_required, user_passes_test(is_apply_staff_or_finance)]
+staff_or_finance_required = [login_required, user_passes_test(is_apply_staff_or_finance)]
 
 approver_required = [login_required, user_passes_test(is_approver)]
 

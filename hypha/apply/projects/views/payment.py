@@ -9,7 +9,7 @@ from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
-from hypha.apply.users.decorators import staff_or_finace_required
+from hypha.apply.users.decorators import staff_or_finance_required
 from hypha.apply.utils.storage import PrivateMediaView
 from hypha.apply.utils.views import DelegateableView, DelegatedViewMixin, ViewDispatcher
 
@@ -41,7 +41,7 @@ class PaymentRequestAccessMixin(UserPassesTestMixin):
         return False
 
 
-@method_decorator(staff_or_finace_required, name='dispatch')
+@method_decorator(staff_or_finance_required, name='dispatch')
 class ChangePaymentRequestStatusView(DelegatedViewMixin, PaymentRequestAccessMixin, UpdateView):
     form_class = ChangePaymentRequestStatusForm
     context_name = 'change_payment_status'
@@ -200,7 +200,7 @@ class PaymentRequestPrivateMedia(UserPassesTestMixin, PrivateMediaView):
         return False
 
 
-@method_decorator(staff_or_finace_required, name='dispatch')
+@method_decorator(staff_or_finance_required, name='dispatch')
 class PaymentRequestListView(SingleTableMixin, FilterView):
     filterset_class = PaymentRequestListFilter
     model = PaymentRequest
