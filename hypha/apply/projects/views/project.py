@@ -384,9 +384,6 @@ class UploadContractView(DelegatedViewMixin, CreateView):
 
         form.instance.project = project
 
-        if self.request.user == project.user:
-            form.instance.is_signed = True
-
         response = super().form_valid(form)
 
         messenger(
