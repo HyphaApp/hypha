@@ -17,12 +17,14 @@
     </div>
 </div>
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
-    {% if active_payment_requests.count %}
     <div id="active-payment-requests" class="wrapper wrapper--bottom-space">
         <h4 class="heading heading--normal">Active requests for payment</h4>
-        {% render_table active_payment_requests.table %}
+        {% if active_payment_requests.count %}
+            {% render_table active_payment_requests.table %}
+        {% else %}
+            No active Payment Requests.
+        {% endif %}
     </div>
-    {% endif %}
 </div>
 {% endblock %}
 
