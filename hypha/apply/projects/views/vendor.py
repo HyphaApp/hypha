@@ -1,12 +1,20 @@
+from django.contrib.auth.models import User
+from hypha.apply.projects.models.vendor import VendorFormSettings
 import json
-
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import UserPassesTestMixin
+from django.views.generic.detail import DetailView
+from django.utils import timezone
+from django.http import Http404
 from django.core.exceptions import PermissionDenied
+from django.utils.decorators import method_decorator
 from django.db.models.fields.files import FieldFile
 from django.shortcuts import get_object_or_404, render
 from formtools.wizard.views import SessionWizardView
 from wagtail.core.models import Site
-
+from addressfield.fields import ADDRESS_FIELDS_ORDER
 from hypha.apply.utils.storage import PrivateStorage
+from hypha.apply.utils.storage import PrivateMediaView
 
 from ..forms import (
     CreateVendorFormStep1,
@@ -16,7 +24,7 @@ from ..forms import (
     CreateVendorFormStep5,
     CreateVendorFormStep6,
 )
-from ..models import BankInformation, DueDiligenceDocument, Project
+from ..models import BankInformation, DueDiligenceDocument, Project, ProjectSettings, Vendor
 
 
 def show_extra_info_form(wizard):
@@ -28,13 +36,16 @@ def show_extra_info_form(wizard):
 
 class VendorAccessMixin:
     def dispatch(self, request, *args, **kwargs):
+        project_settings = ProjectSettings.for_request(request)
+        if not project_settings.vendor_setup_required:
+            raise PermissionDenied
         is_admin = request.user.is_apply_staff
         project = self.get_project()
         is_owner = request.user == project.user
         if not (is_owner or is_admin):
             raise PermissionDenied
         if not project.vendor:
-            raise PermissionDenied
+            raise Http404
         return super().dispatch(request, *args, **kwargs)
 
 
@@ -109,6 +120,7 @@ class CreateVendorView(VendorAccessMixin, SessionWizardView):
         vendor.contractor_name = cleaned_data['contractor_name']
         vendor.type = cleaned_data['type']
         vendor.required_to_pay_taxes = cleaned_data['required_to_pay_taxes']
+        vendor.updated_at = timezone.now()
         vendor.save()
 
         not_deleted_original_filenames = [
@@ -176,3 +188,110 @@ class CreateVendorView(VendorAccessMixin, SessionWizardView):
         kwargs = super(CreateVendorView, self).get_form_kwargs(step)
         kwargs['site'] = Site.find_for_request(self.request)
         return kwargs
+
+
+class VendorDetailView(VendorAccessMixin, DetailView):
+    model = Vendor
+    template_name = 'application_projects/vendor_detail.html'
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(self.model, id=self.kwargs['vendor_pk'])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['vendor_detailed_response'] = self.get_detailed_response()
+        context['project'] = self.get_project()
+        vendor = self.get_object()
+        context['due_diligence_documents'] = vendor.due_diligence_documents.all()
+        return context
+
+    def get_project(self):
+        return get_object_or_404(Project, pk=self.kwargs['pk'])
+
+    def get_detailed_response(self):
+        vendor = self.get_object()
+        vendor_form_settings = VendorFormSettings.for_request(self.request)
+        data = {}
+        group = 0
+        data.setdefault(group, {'title': 'Vendor Information', 'questions': list()})
+        data[group]['questions'] = [
+            (getattr(vendor_form_settings, 'name_label'), vendor.name),
+            (getattr(vendor_form_settings, 'contractor_name_label'), vendor.contractor_name),
+            (getattr(vendor_form_settings, 'type_label'), vendor.type),
+            (getattr(vendor_form_settings, 'required_to_pay_taxes_label'), vendor.required_to_pay_taxes),
+            ('Due Diligence Documents', ''),
+        ]
+        group = group + 1
+        data.setdefault(group, {'title': 'Bank Account Information', 'questions': list()})
+        bank_info = vendor.bank_info
+        data[group]['questions'] = [
+            (getattr(vendor_form_settings, 'account_holder_name_label'), bank_info.account_holder_name if bank_info else ''),
+            (getattr(vendor_form_settings, 'account_routing_number_label'), bank_info.account_routing_number if bank_info else ''),
+            (getattr(vendor_form_settings, 'account_number_label'), bank_info.account_number if bank_info else ''),
+            (getattr(vendor_form_settings, 'account_currency_label'), bank_info.account_currency if bank_info else ''),
+        ]
+        group = group + 1
+        data.setdefault(group, {'title': '(Optional) Extra Information for Accepting Payments', 'questions': list()})
+        data[group]['questions'] = [
+            (getattr(vendor_form_settings, 'branch_address_label'), self.get_address_display(bank_info.branch_address) if bank_info else ''),
+        ]
+        group = group + 1
+        data.setdefault(group, {'title': 'Intermediary Bank Account Information', 'questions': list()})
+        iba_info = bank_info.iba_info if bank_info else None
+        data[group]['questions'] = [
+            (getattr(vendor_form_settings, 'ib_account_routing_number_label'), iba_info.account_routing_number if iba_info else ''),
+            (getattr(vendor_form_settings, 'ib_account_number_label'), iba_info.account_number if iba_info else ''),
+            (getattr(vendor_form_settings, 'ib_account_currency_label'), iba_info.account_currency if iba_info else ''),
+            (getattr(vendor_form_settings, 'ib_branch_address_label'), self.get_address_display(iba_info.branch_address) if iba_info else ''),
+        ]
+        group = group + 1
+        data.setdefault(group, {'title': 'Account Holder National Identity Document Information', 'questions': list()})
+        data[group]['questions'] = [
+            (getattr(vendor_form_settings, 'nid_type_label'), bank_info.nid_type if bank_info else ''),
+            (getattr(vendor_form_settings, 'nid_number_label'), bank_info.nid_number if bank_info else ''),
+        ]
+        group = group + 1
+        data.setdefault(group, {'title': None, 'questions': list()})
+        data[group]['questions'] = [
+            (getattr(vendor_form_settings, 'other_info_label'), vendor.other_info),
+        ]
+        return data
+
+    def get_address_display(self, address):
+        try:
+            address = json.loads(address)
+        except (json.JSONDecodeError, AttributeError):
+            return ''
+        else:
+            return ', '.join(
+                address.get(field)
+                for field in ADDRESS_FIELDS_ORDER
+                if address.get(field)
+            )
+
+
+@method_decorator(login_required, name='dispatch')
+class VendorPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
+    raise_exception = True
+
+    def dispatch(self, *args, **kwargs):
+        pk = self.kwargs['pk']
+        vendor_pk = self.kwargs['vendor_pk']
+        self.vendor = get_object_or_404(Vendor, pk=vendor_pk)
+        self.project = get_object_or_404(Project, pk=pk)
+
+        return super().dispatch(*args, **kwargs)
+
+    def get_media(self, *args, **kwargs):
+        file_pk = kwargs.get('file_pk')
+        document = get_object_or_404(self.vendor.due_diligence_documents, pk=file_pk)
+        return document.document
+
+    def test_func(self):
+        if self.request.user.is_apply_staff:
+            return True
+
+        if self.request.user == self.project.user:
+            return True
+
+        return False

@@ -1,0 +1,47 @@
+{% extends "base-apply.html" %}
+{% load bleach_tags %}
+
+{% block title %}Vendor Info for {{ project.title }} {% endblock %}
+
+{% block content %}
+<div class="admin-bar">
+    <div class="admin-bar__inner">
+        <h2 class="heading heading--no-margin">Vendor Information for {{ project.title }}</h2>
+    </div>
+</div>
+
+<div class="grid">
+    <div>
+        <h5 class="vendor-info">Last Updated: {{ vendor.updated_at|date:'F d, Y' }}</h5>
+    </div>
+    <div>
+        <a class="link link--edit-vendor is-active" href="{% url 'apply:projects:vendor' pk=project.pk %}">
+            Edit
+        <svg class="icon icon--pen"><use xlink:href="#pen"></use></svg>
+        </a>
+    </div>
+</div>
+
+<div class="rich-text rich-text--answers">
+    {% for group in vendor_detailed_response.values %}
+        {% if group.title %}
+            <h1>{{ group.title|bleach }}</h4>
+        {% endif %}
+        {% for question, answer in group.questions %}
+            <h5>{{ question }}</h5>
+            {% if question == 'Due Diligence Documents' %}
+                <div class="card card--solid">
+                    <div class="card__inner">
+                        <!-- <h5 class="card__heading">Reciepts</h5> -->
+                        {% for document in due_diligence_documents %}
+                            <p class="card__text"><a href="{% url "apply:projects:vendor-documents" pk=project.pk vendor_pk=project.vendor.pk file_pk=document.pk %}">{{ document.document.name }}</a></p>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% else %}
+                <p>{% if answer %}{% if answer == True %}{{ answer|yesno:"Yes,No" }}{% else %}{{ answer|bleach }}{% endif %}{% else %}-{% endif %}</p>
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+</div>
+{% endblock %}

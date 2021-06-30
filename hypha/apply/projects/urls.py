@@ -21,6 +21,8 @@ from .views import (
     ReportPrivateMedia,
     ReportSkipView,
     ReportUpdateView,
+    VendorDetailView,
+    VendorPrivateMediaView,
 )
 
 app_name = 'projects'
@@ -37,6 +39,8 @@ urlpatterns = [
         path('simplified/', ProjectDetailSimplifiedView.as_view(), name='simplified'),
         path('request/', CreatePaymentRequestView.as_view(), name='request'),
         path('vendor/', CreateVendorView.as_view(), name='vendor'),
+        path('vendor/<int:vendor_pk>/', VendorDetailView.as_view(), name='vendor-detail'),
+        path('vendor/<int:vendor_pk>/documents/<int:file_pk>/', VendorPrivateMediaView.as_view(), name='vendor-documents'),
     ])),
     path('payment-requests/', include(([
         path('', PaymentRequestListView.as_view(), name='all'),

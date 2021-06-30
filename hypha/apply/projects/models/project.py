@@ -372,6 +372,7 @@ class ProjectApprovalForm(BaseStreamForm, models.Model):
 @register_setting
 class ProjectSettings(BaseSetting):
     compliance_email = models.TextField("Compliance Email")
+    vendor_setup_required = models.BooleanField(default=True)
 
 
 class Approval(models.Model):

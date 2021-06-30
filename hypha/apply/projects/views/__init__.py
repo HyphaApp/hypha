@@ -41,7 +41,7 @@ from .report import (
     ReportSkipView,
     ReportUpdateView,
 )
-from .vendor import CreateVendorView
+from .vendor import CreateVendorView, VendorDetailView, VendorPrivateMediaView
 
 __all__ = [
     'ChangePaymentRequestStatusView',
@@ -82,4 +82,6 @@ __all__ = [
     'ReportFrequencyUpdate',
     'ReportListView',
     'CreateVendorView',
+    'VendorDetailView',
+    'VendorPrivateMediaView',
 ]

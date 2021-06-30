@@ -45,7 +45,8 @@ class Vendor(models.Model):
         ('organization', _('Yes, the account belongs to the organisation above')),
         ('personal', _('No, it is a personal bank account')),
     ]
-
+    created_at = models.DateTimeField(verbose_name=_('Creation time'), auto_now_add=True)
+    updated_at = models.DateTimeField(verbose_name=_('Update time'), auto_now=True)
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL, on_delete=models.PROTECT,
         related_name='vendor'
