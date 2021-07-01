@@ -1,20 +1,21 @@
-from django.contrib.auth.models import User
-from hypha.apply.projects.models.vendor import VendorFormSettings
 import json
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
-from django.views.generic.detail import DetailView
-from django.utils import timezone
-from django.http import Http404
 from django.core.exceptions import PermissionDenied
-from django.utils.decorators import method_decorator
 from django.db.models.fields.files import FieldFile
+from django.http import Http404
 from django.shortcuts import get_object_or_404, render
+from django.utils import timezone
+from django.utils.decorators import method_decorator
+from django.utils.translation import gettext_lazy as _
+from django.views.generic.detail import DetailView
 from formtools.wizard.views import SessionWizardView
 from wagtail.core.models import Site
+
 from addressfield.fields import ADDRESS_FIELDS_ORDER
-from hypha.apply.utils.storage import PrivateStorage
-from hypha.apply.utils.storage import PrivateMediaView
+from hypha.apply.projects.models.vendor import VendorFormSettings
+from hypha.apply.utils.storage import PrivateMediaView, PrivateStorage
 
 from ..forms import (
     CreateVendorFormStep1,
@@ -24,7 +25,13 @@ from ..forms import (
     CreateVendorFormStep5,
     CreateVendorFormStep6,
 )
-from ..models import BankInformation, DueDiligenceDocument, Project, ProjectSettings, Vendor
+from ..models import (
+    BankInformation,
+    DueDiligenceDocument,
+    Project,
+    ProjectSettings,
+    Vendor,
+)
 
 
 def show_extra_info_form(wizard):
@@ -139,7 +146,7 @@ class CreateVendorView(VendorAccessMixin, SessionWizardView):
                     f.close()
         form = self.get_form('documents')
         form.delete_temporary_files()
-        return render(self.request, 'application_projects/vendor_success.html')
+        return render(self.request, 'application_projects/vendor_success.html', {'project': vendor_project})
 
     def get_form_initial(self, step):
         vendor_project = self.get_project()
@@ -213,7 +220,7 @@ class VendorDetailView(VendorAccessMixin, DetailView):
         vendor_form_settings = VendorFormSettings.for_request(self.request)
         data = {}
         group = 0
-        data.setdefault(group, {'title': 'Vendor Information', 'questions': list()})
+        data.setdefault(group, {'title': str(_('Vendor Information')), 'questions': list()})
         data[group]['questions'] = [
             (getattr(vendor_form_settings, 'name_label'), vendor.name),
             (getattr(vendor_form_settings, 'contractor_name_label'), vendor.contractor_name),
@@ -222,7 +229,7 @@ class VendorDetailView(VendorAccessMixin, DetailView):
             ('Due Diligence Documents', ''),
         ]
         group = group + 1
-        data.setdefault(group, {'title': 'Bank Account Information', 'questions': list()})
+        data.setdefault(group, {'title': str(_('Bank Account Information')), 'questions': list()})
         bank_info = vendor.bank_info
         data[group]['questions'] = [
             (getattr(vendor_form_settings, 'account_holder_name_label'), bank_info.account_holder_name if bank_info else ''),
@@ -231,12 +238,12 @@ class VendorDetailView(VendorAccessMixin, DetailView):
             (getattr(vendor_form_settings, 'account_currency_label'), bank_info.account_currency if bank_info else ''),
         ]
         group = group + 1
-        data.setdefault(group, {'title': '(Optional) Extra Information for Accepting Payments', 'questions': list()})
+        data.setdefault(group, {'title': str(_('(Optional) Extra Information for Accepting Payments')), 'questions': list()})
         data[group]['questions'] = [
             (getattr(vendor_form_settings, 'branch_address_label'), self.get_address_display(bank_info.branch_address) if bank_info else ''),
         ]
         group = group + 1
-        data.setdefault(group, {'title': 'Intermediary Bank Account Information', 'questions': list()})
+        data.setdefault(group, {'title': str(_('Intermediary Bank Account Information')), 'questions': list()})
         iba_info = bank_info.iba_info if bank_info else None
         data[group]['questions'] = [
             (getattr(vendor_form_settings, 'ib_account_routing_number_label'), iba_info.account_routing_number if iba_info else ''),
@@ -245,7 +252,7 @@ class VendorDetailView(VendorAccessMixin, DetailView):
             (getattr(vendor_form_settings, 'ib_branch_address_label'), self.get_address_display(iba_info.branch_address) if iba_info else ''),
         ]
         group = group + 1
-        data.setdefault(group, {'title': 'Account Holder National Identity Document Information', 'questions': list()})
+        data.setdefault(group, {'title': str(_('Account Holder National Identity Document Information')), 'questions': list()})
         data[group]['questions'] = [
             (getattr(vendor_form_settings, 'nid_type_label'), bank_info.nid_type if bank_info else ''),
             (getattr(vendor_form_settings, 'nid_number_label'), bank_info.nid_number if bank_info else ''),

@@ -1,12 +1,12 @@
 {% extends "base-apply.html" %}
-{% load bleach_tags %}
+{% load bleach_tags i18n %}
 
-{% block title %}Vendor Info for {{ project.title }} {% endblock %}
+{% block title %}{% trans "Vendor Information for" %} {{ project.title }} {% endblock %}
 
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
-        <h2 class="heading heading--no-margin">Vendor Information for {{ project.title }}</h2>
+        <h2 class="heading heading--no-margin">{% trans "Vendor Information for" %} {{ project.title }}</h2>
     </div>
 </div>
 
@@ -32,7 +32,6 @@
             {% if question == 'Due Diligence Documents' %}
                 <div class="card card--solid">
                     <div class="card__inner">
-                        <!-- <h5 class="card__heading">Reciepts</h5> -->
                         {% for document in due_diligence_documents %}
                             <p class="card__text"><a href="{% url "apply:projects:vendor-documents" pk=project.pk vendor_pk=project.vendor.pk file_pk=document.pk %}">{{ document.document.name }}</a></p>
                         {% endfor %}
