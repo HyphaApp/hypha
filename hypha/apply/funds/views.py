@@ -942,7 +942,7 @@ class BaseSubmissionEditView(UpdateView):
         instance = kwargs.pop('instance').from_draft()
         initial = instance.raw_data
         for field_id in instance.file_field_ids:
-            initial.pop(field_id + '-placeholder', False)
+            initial.pop(field_id + '-uploads', False)
             initial[field_id] = self.get_placeholder_file(
                 instance.raw_data.get(field_id)
             )
