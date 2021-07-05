@@ -151,6 +151,27 @@ class AdminDashboardView(MyFlaggedMixin, TemplateView):
         }
 
 
+class FinanceDashboardView(MyFlaggedMixin, TemplateView):
+    template_name = 'dashboard/finance_dashboard.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context.update({
+            'active_payment_requests': self.active_payment_requests(),
+        })
+
+        return context
+
+    def active_payment_requests(self):
+        payment_requests = PaymentRequest.objects.in_progress()
+
+        return {
+            'count': payment_requests.count(),
+            'table': PaymentRequestsDashboardTable(payment_requests),
+        }
+
+
 class ReviewerDashboardView(MyFlaggedMixin, MySubmissionContextMixin, TemplateView):
     template_name = 'dashboard/reviewer_dashboard.html'
 
@@ -306,3 +327,4 @@ class DashboardView(ViewDispatcher):
     partner_view = PartnerDashboardView
     community_view = CommunityDashboardView
     applicant_view = ApplicantDashboardView
+    finance_view = FinanceDashboardView

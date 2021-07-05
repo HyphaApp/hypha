@@ -13,6 +13,7 @@ from .models import PaymentRequest, Project, Report
 class BasePaymentRequestsTable(tables.Table):
     project = tables.LinkColumn(
         'funds:projects:payments:detail',
+        verbose_name=_('Invoice reference'),
         text=lambda r: textwrap.shorten(r.project.title, width=30, placeholder="..."),
         args=[tables.utils.A('pk')],
     )
@@ -30,16 +31,17 @@ class PaymentRequestsDashboardTable(BasePaymentRequestsTable):
 
     class Meta:
         fields = [
-            'project',
-            'status',
             'requested_at',
+            'project',
+            'value',
+            'status',
             'date_from',
             'date_to',
-            'value',
         ]
         model = PaymentRequest
         orderable = False
         order_by = ['-requested_at']
+        attrs = {'class': 'payment-requests-table'}
 
 
 class PaymentRequestsListTable(BasePaymentRequestsTable):
@@ -48,16 +50,17 @@ class PaymentRequestsListTable(BasePaymentRequestsTable):
 
     class Meta:
         fields = [
-            'project',
-            'fund',
-            'lead',
-            'status',
             'requested_at',
+            'project',
             'value',
+            'status',
+            'lead',
+            'fund',
         ]
         model = PaymentRequest
         orderable = True
         order_by = ['-requested_at']
+        attrs = {'class': 'payment-requests-table'}
 
     def order_value(self, qs, is_descending):
         direction = '-' if is_descending else ''

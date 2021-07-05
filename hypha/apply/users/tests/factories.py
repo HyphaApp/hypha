@@ -9,6 +9,7 @@ from ..groups import (
     APPLICANT_GROUP_NAME,
     APPROVER_GROUP_NAME,
     COMMUNITY_REVIEWER_GROUP_NAME,
+    FINANCE_GROUP_NAME,
     PARTNER_GROUP_NAME,
     REVIEWER_GROUP_NAME,
     STAFF_GROUP_NAME,
@@ -64,6 +65,22 @@ class StaffFactory(OAuthUserFactory):
     def groups(self, create, extracted, **kwargs):
         if create:
             self.groups.add(GroupFactory(name=STAFF_GROUP_NAME))
+
+
+class FinanceFactory(OAuthUserFactory):
+    class Meta:
+        exclude = ('slack_temp', )
+    is_staff = True
+
+    # Required to generate the fake data add pass to LazyAttribute
+    slack_temp = factory.Faker('word')
+
+    slack = factory.LazyAttribute(lambda p: '@{}'.format(p.slack_temp))
+
+    @factory.post_generation
+    def groups(self, create, extracted, **kwargs):
+        if create:
+            self.groups.add(GroupFactory(name=FINANCE_GROUP_NAME))
 
 
 class ApproverFactory(StaffFactory):

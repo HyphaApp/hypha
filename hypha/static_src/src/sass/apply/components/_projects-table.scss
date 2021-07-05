@@ -1,4 +1,6 @@
 .projects-table {
+    @include table-ordering-styles;
+
     .reporting {
         .icon {
             margin-right: .3rem;
@@ -7,4 +9,8 @@
             fill: $color--tomato;
         }
     }
+}
+
+.payment-requests-table {
+    @include table-ordering-styles;
 }
