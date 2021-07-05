@@ -62,6 +62,8 @@ class Vendor(models.Model):
         null=True, blank=True,
     )
     other_info = models.TextField(blank=True)
+    # tracks updates to the Vendor fields via the Vendor Setup Form.
+    user_has_updated_details = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name

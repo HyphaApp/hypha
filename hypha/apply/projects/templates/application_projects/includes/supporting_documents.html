@@ -22,7 +22,7 @@
         {% if settings.application_projects.ProjectSettings.vendor_setup_required and project.vendor %}
             <li class="docs-block__row">
                 <div class="docs-block__row-inner">
-                    <svg class="icon docs-block__icon"><use xlink:href="#tick"></use></svg>
+                    <svg class="icon docs-block__icon{% if project.vendor.user_has_updated_details %} is-complete{% endif %}"><use xlink:href="#tick"></use></svg>
                     <p class="docs-block__title">Contractor Setup Form</p>
                 </div>
                 <div class="docs-block__row-inner">

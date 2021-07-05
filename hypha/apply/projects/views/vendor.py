@@ -128,6 +128,7 @@ class CreateVendorView(VendorAccessMixin, SessionWizardView):
         vendor.type = cleaned_data['type']
         vendor.required_to_pay_taxes = cleaned_data['required_to_pay_taxes']
         vendor.updated_at = timezone.now()
+        vendor.user_has_updated_details = True
         vendor.save()
 
         not_deleted_original_filenames = [

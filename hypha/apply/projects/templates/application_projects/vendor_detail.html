@@ -38,7 +38,7 @@
                     </div>
                 </div>
             {% else %}
-                <p>{% if answer %}{% if answer == True %}{{ answer|yesno:"Yes,No" }}{% else %}{{ answer|bleach }}{% endif %}{% else %}-{% endif %}</p>
+                <p>{% if answer == True or answer == False %}{{ answer|yesno:"Yes,No" }}{% else %}{% if answer %}{{ answer|bleach }}{% else %}-{% endif %}{% endif %}</p>
             {% endif %}
         {% endfor %}
     {% endfor %}
