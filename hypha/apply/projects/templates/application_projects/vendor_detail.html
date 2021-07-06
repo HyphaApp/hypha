@@ -1,6 +1,6 @@
 {% extends "base-apply.html" %}
-{% load bleach_tags i18n %}
-
+{% load bleach_tags i18n approval_tools %}
+{% user_can_edit_project object request.user as editable %}
 {% block title %}{% trans "Vendor Information for" %} {{ project.title }} {% endblock %}
 
 {% block content %}
@@ -14,12 +14,14 @@
     <div>
         <h5 class="vendor-info">Last Updated: {{ vendor.updated_at|date:'F d, Y' }}</h5>
     </div>
-    <div>
-        <a class="link link--edit-vendor is-active" href="{% url 'apply:projects:vendor' pk=project.pk %}">
-            Edit
-        <svg class="icon icon--pen"><use xlink:href="#pen"></use></svg>
-        </a>
-    </div>
+    {% if editable %}
+        <div>
+            <a class="link link--edit-vendor is-active" href="{% url 'apply:projects:vendor' pk=project.pk %}">
+                Edit
+            <svg class="icon icon--pen"><use xlink:href="#pen"></use></svg>
+            </a>
+        </div>
+    {% endif %}
 </div>
 
 <div class="rich-text rich-text--answers">

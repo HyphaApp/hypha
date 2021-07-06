@@ -42,7 +42,7 @@ def show_extra_info_form(wizard):
     return cleaned_data.get('need_extra_info', True)
 
 
-class VendorAccessMixin:
+class CreateVendorAccessMixin:
     def dispatch(self, request, *args, **kwargs):
         project_settings = ProjectSettings.for_request(request)
         if not project_settings.vendor_setup_required:
@@ -59,7 +59,22 @@ class VendorAccessMixin:
         return super().dispatch(request, *args, **kwargs)
 
 
-class CreateVendorView(VendorAccessMixin, SessionWizardView):
+class DetailVendorAccessMixin:
+    def dispatch(self, request, *args, **kwargs):
+        project_settings = ProjectSettings.for_request(request)
+        if not project_settings.vendor_setup_required:
+            raise PermissionDenied
+        is_admin = request.user.is_apply_staff
+        project = self.get_project()
+        is_owner = request.user == project.user
+        if not (is_owner or is_admin):
+            raise PermissionDenied
+        if not project.vendor:
+            raise Http404
+        return super().dispatch(request, *args, **kwargs)
+
+
+class CreateVendorView(CreateVendorAccessMixin, SessionWizardView):
     file_storage = PrivateStorage()
     form_list = [
         ('basic', CreateVendorFormStep1),
@@ -209,7 +224,7 @@ class CreateVendorView(VendorAccessMixin, SessionWizardView):
         return kwargs
 
 
-class VendorDetailView(VendorAccessMixin, DetailView):
+class VendorDetailView(DetailVendorAccessMixin, DetailView):
     model = Vendor
     template_name = 'application_projects/vendor_detail.html'
 
