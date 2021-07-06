@@ -14,6 +14,7 @@ from formtools.wizard.views import SessionWizardView
 from wagtail.core.models import Site
 
 from addressfield.fields import ADDRESS_FIELDS_ORDER
+from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.projects.models.vendor import VendorFormSettings
 from hypha.apply.utils.storage import PrivateMediaView, PrivateStorage
 
@@ -50,6 +51,8 @@ class VendorAccessMixin:
         project = self.get_project()
         is_owner = request.user == project.user
         if not (is_owner or is_admin):
+            raise PermissionDenied
+        if not project.editable_by(request.user):
             raise PermissionDenied
         if not project.vendor:
             raise Http404
@@ -147,6 +150,14 @@ class CreateVendorView(VendorAccessMixin, SessionWizardView):
                     f.close()
         form = self.get_form('documents')
         form.delete_temporary_files()
+
+        messenger(
+            MESSAGES.UPDATED_VENDOR,
+            request=self.request,
+            user=vendor_project.lead,
+            source=vendor_project
+        )
+
         return render(self.request, 'application_projects/vendor_success.html', {'project': vendor_project})
 
     def get_form_initial(self, step):

@@ -26,8 +26,18 @@
                     <p class="docs-block__title">Contractor Setup Form</p>
                 </div>
                 <div class="docs-block__row-inner">
-                    <a class="docs-block__link" href="{% url 'apply:projects:vendor-detail' pk=project.pk vendor_pk=project.vendor.pk %}">View</a>
-                    <a class="docs-block__link" href="{% url 'apply:projects:vendor' pk=project.pk %}">Update info</a>
+                    {% if editable %}
+                        <a class="docs-block__link" href="{% url 'apply:projects:vendor' pk=project.pk %}">
+                            {% if project.vendor.user_has_updated_details %}
+                            Edit
+                            {% else %}
+                            Create
+                            {% endif %}
+                        </a>
+                    {% endif %}
+                    {% if project.vendor.user_has_updated_details %}
+                        <a class="docs-block__link" href="{% url 'apply:projects:vendor-detail' pk=project.pk vendor_pk=project.vendor.pk %}">View</a>
+                    {% endif %}
                 </div>
             </li>
         {% endif %}

@@ -2,7 +2,6 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 
-from addressfield.fields import AddressField
 from hypha.apply.funds.models import ApplicationSubmission
 from hypha.apply.users.groups import STAFF_GROUP_NAME
 
@@ -77,8 +76,6 @@ class CreateApprovalForm(forms.ModelForm):
 
 
 class ProjectEditForm(forms.ModelForm):
-    contact_address = AddressField()
-
     class Meta:
         fields = [
             'title',
