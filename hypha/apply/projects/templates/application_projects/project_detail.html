@@ -92,13 +92,13 @@
 
                     <div>
                         <h5>Legal name</h5>
-                        <p>{{ object.contact_legal_name|default:"-" }}</p>
+                        <p>{{ object.vendor.name |default:"-" }}</p>
                     </div>
 
                     <div>
                         <h5>Email</h5>
-                        {% if object.contact_email %}
-                        <a href="mailto:{{ object.contact_email }}">{{ object.contact_email }}</a>
+                        {% if object.vendor.user.email %}
+                        <a href="mailto:{{ object.vendor.user.email }}">{{ object.vendor.user.email }}</a>
                         {% else %}
                         -
                         {% endif %}
@@ -110,12 +110,12 @@
                 <div class="rich-text--hidden js-rich-text-hidden">
                     <div>
                         <h5>Address</h5>
-                        <p>{{ object.get_address_display|default:"-"}}</p>
+                        <p>{{ object.vendor.get_address_display|default:"-"}}</p>
                     </div>
 
                     <div>
                         <h5>Phone</h5>
-                        <p>{{ object.phone|default:"-" }}</p>
+                        <p>{{ object.vendor.phone|default:"-" }}</p>
                     </div>
 
                     <div>
