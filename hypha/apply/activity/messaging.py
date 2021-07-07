@@ -62,9 +62,13 @@ neat_related = {
     MESSAGES.APPROVE_CONTRACT: 'contract',
     MESSAGES.UPLOAD_CONTRACT: 'contract',
     MESSAGES.REQUEST_PAYMENT: 'payment_request',
+    MESSAGES.CREATE_INVOICE: 'create_invoice',
     MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS: 'payment_request',
+    MESSAGES.UPDATE_INVOICE_STATUS: 'invoice',
     MESSAGES.DELETE_PAYMENT_REQUEST: 'payment_request',
+    MESSAGES.DELETE_INVOICE: 'invoice',
     MESSAGES.UPDATE_PAYMENT_REQUEST: 'payment_request',
+    MESSAGES.UPDATE_INVOICE: 'invoice',
     MESSAGES.SUBMIT_REPORT: 'report',
     MESSAGES.SKIPPED_REPORT: 'report',
     MESSAGES.REPORT_FREQUENCY_CHANGED: 'config',
@@ -245,7 +249,9 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.UPLOAD_CONTRACT: _('Uploaded a {contract.state} contract'),
         MESSAGES.APPROVE_CONTRACT: _('Approved contract'),
         MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS: _('Updated Payment Request status to: {payment_request.status_display}'),
+        MESSAGES.UPDATE_INVOICE_STATUS: _('Updated Invoice status to: {invoice.status_display}'),
         MESSAGES.REQUEST_PAYMENT: _('Payment Request submitted'),
+        MESSAGES.CREATE_INVOICE: _('Invoice created'),
         MESSAGES.SUBMIT_REPORT: _('Submitted a report'),
         MESSAGES.SKIPPED_REPORT: 'handle_skipped_report',
         MESSAGES.REPORT_FREQUENCY_CHANGED: 'handle_report_frequency',
@@ -435,9 +441,13 @@ class SlackAdapter(AdapterBase):
         MESSAGES.UPLOAD_CONTRACT: _('{user} has uploaded a contract for <{link}|{source.title}>.'),
         MESSAGES.APPROVE_CONTRACT: _('{user} has approved contract for <{link}|{source.title}>.'),
         MESSAGES.REQUEST_PAYMENT: _('{user} has requested payment for <{link}|{source.title}>.'),
+        MESSAGES.CREATE_INVOICE: _('{user} has created invoice for <{link}|{source.title}>.'),
         MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS: _('{user} has changed the status of <{link_related}|payment request> on <{link}|{source.title}> to {payment_request.status_display}.'),
+        MESSAGES.UPDATE_INVOICE_STATUS: _('{user} has changed the status of <{link_related}|invoice> on <{link}|{source.title}> to {invoice.status_display}.'),
         MESSAGES.DELETE_PAYMENT_REQUEST: _('{user} has deleted payment request from <{link}|{source.title}>.'),
+        MESSAGES.DELETE_INVOICE: _('{user} has deleted invoice from <{link}|{source.title}>.'),
         MESSAGES.UPDATE_PAYMENT_REQUEST: _('{user} has updated payment request for <{link}|{source.title}>.'),
+        MESSAGES.UPDATE_INVOICE: _('{user} has updated invoice for <{link}|{source.title}>.'),
         MESSAGES.SUBMIT_REPORT: _('{user} has submitted a report for <{link}|{source.title}>.'),
         MESSAGES.BATCH_DELETE_SUBMISSION: 'handle_batch_delete_submission'
     }
@@ -711,7 +721,9 @@ class EmailAdapter(AdapterBase):
         MESSAGES.UPDATED_VENDOR: 'handle_vendor_updated',
         MESSAGES.SENT_TO_COMPLIANCE: 'messages/email/sent_to_compliance.html',
         MESSAGES.UPDATE_PAYMENT_REQUEST: 'messages/email/payment_request_updated.html',
+        MESSAGES.UPDATE_INVOICE: 'handle_invoice_updated',
         MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS: 'handle_payment_status_updated',
+        MESSAGES.UPDATE_INVOICE_STATUS: 'handle_invoice_status_updated',
         MESSAGES.SUBMIT_REPORT: 'messages/email/report_submitted.html',
         MESSAGES.SKIPPED_REPORT: 'messages/email/report_skipped.html',
         MESSAGES.REPORT_FREQUENCY_CHANGED: 'messages/email/report_frequency.html',
@@ -766,6 +778,19 @@ class EmailAdapter(AdapterBase):
         return self.render_message(
             'messages/email/payment_request_status_updated.html',
             has_changes_requested=related.has_changes_requested,
+            **kwargs,
+        )
+
+    def handle_invoice_status_updated(self, related, **kwargs):
+        return self.render_message(
+            'messages/email/invoice_status_updated.html',
+            has_changes_requested=related.has_changes_requested,
+            **kwargs,
+        )
+
+    def handle_invoice_updated(self, **kwargs):
+        return self.render_message(
+            'messages/email/invoice_updated.html',
             **kwargs,
         )
 
@@ -856,7 +881,7 @@ class EmailAdapter(AdapterBase):
 
             return [project_settings.compliance_email]
 
-        if message_type in {MESSAGES.SUBMIT_REPORT, MESSAGES.UPDATE_PAYMENT_REQUEST}:
+        if message_type in {MESSAGES.SUBMIT_REPORT, MESSAGES.UPDATE_PAYMENT_REQUEST, MESSAGES.UPDATE_INVOICE}:
             # Don't tell the user if they did these activities
             if user.is_applicant:
                 return []
