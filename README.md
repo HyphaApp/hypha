@@ -48,6 +48,7 @@ With thanks to all the people who have contributed code & UX design to Hypha: <3
 
 Thank you brave folks who choose to use Hypha <3
 
+- [Digital Freedom Fund](https://digitalfreedomfund.org/)
 - [Open Technology Fund](https://www.opentech.fund)
 - [Reset](https://www.reset.tech)
 
