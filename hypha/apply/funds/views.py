@@ -387,6 +387,8 @@ class SubmissionOverviewView(BaseAdminSubmissionsTable):
         open_query = '?round_state=open'
         closed_rounds = base_query.closed()[:limit]
         closed_query = '?round_state=closed'
+        future_rounds = base_query.future()[:limit]
+        future_query = '?round_state=future'
         rounds_title = 'All Rounds and Labs'
 
         status_counts = dict(
@@ -411,6 +413,8 @@ class SubmissionOverviewView(BaseAdminSubmissionsTable):
             open_query=open_query,
             closed_rounds=closed_rounds,
             closed_query=closed_query,
+            future_rounds=future_rounds,
+            future_query=future_query,
             rounds_title=rounds_title,
             status_counts=grouped_statuses,
             staff_flagged=staff_flagged,

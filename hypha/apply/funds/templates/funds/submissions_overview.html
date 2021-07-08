@@ -35,7 +35,7 @@
 
     {% include "funds/includes/status-block.html" with type="Applications" %}
 
-    {% if closed_rounds or open_rounds %}
+    {% if open_rounds or closed_rounds or future_rounds %}
         {% include "funds/includes/round-block.html" with closed_rounds=closed_rounds open_rounds=open_rounds title=rounds_title%}
     {% endif %}
 

@@ -2,21 +2,28 @@
     <section class="section section--with-options">
         <h4 class="heading heading--normal heading--no-margin">{{ title }}</h4>
         <div class="js-tabs">
-            <a class="tab__item tab__item--alt" href="#closed-rounds" data-tab="tab-1">Closed</a>
-            <a class="tab__item tab__item--alt" href="#open-rounds" data-tab="tab-2">Open</a>
+            <a class="tab__item tab__item--alt" href="#open-rounds" data-tab="tab-1">Open</a>
+            <a class="tab__item tab__item--alt" href="#closed-rounds" data-tab="tab-2">Closed</a>
+            <a class="tab__item tab__item--alt" href="#future-rounds" data-tab="tab-3">Future</a>
         </div>
     </section>
 
-    {# Closed rounds/labs tab #}
     <div class="js-tabs-content">
+        {# Open rounds/labs tab #}
         <div class="tabs__content" id="tab-1">
-            {% include "funds/includes/round-block-listing.html" with rounds=closed_rounds display_text="Closed" query=closed_query %}
+            {% include "funds/includes/round-block-listing.html" with rounds=open_rounds round_type_name="Open" round_type_preposition="until" query=open_query %}
         </div>
 
-        {# Open rounds/labs tab #}
+        {# Closed rounds/labs tab #}
         <div class="tabs__content" id="tab-2">
-            {% include "funds/includes/round-block-listing.html" with rounds=open_rounds display_text="Open until" query=open_query %}
+            {% include "funds/includes/round-block-listing.html" with rounds=closed_rounds round_type_name="Closed" round_type_preposition="as of" query=closed_query %}
         </div>
+
+        {# Future rounds/labs tab #}
+        <div class="tabs__content" id="tab-3">
+            {% include "funds/includes/round-block-listing.html" with rounds=future_rounds round_type_name="Future" round_type_preposition="opens" query=future_query %}
+        </div>
+
     </div>
 
 </div>

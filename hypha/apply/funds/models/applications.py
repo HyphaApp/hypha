@@ -474,7 +474,21 @@ class RoundsAndLabsQueryset(PageQuerySet):
         return self.filter(start_date__gt=date.today())
 
     def open(self):
-        return self.filter(Q(end_date__gte=date.today(), start_date__lte=date.today()) | Q(end_date__isnull=True))
+        # 1. The start date is before today, and
+        # 2. Either
+        #    a. The end date is later than today, or
+        #    b. The end date is null.
+        return self.filter(\
+                # (1) \
+                Q(start_date__lte=date.today()) & \
+                # (2a) \
+                (Q(end_date__gte=date.today()) | \
+                # (2b) \
+                Q(end_date__isnull=True)))
+
+    def future(self):
+        # The start date is after today!
+        return self.filter(Q(start_date__gt=date.today()))
 
     def closed(self):
         return self.filter(end_date__lt=date.today())
@@ -543,6 +557,9 @@ class RoundsAndLabsManager(PageManager):
 
     def closed(self):
         return self.get_queryset().closed()
+
+    def future(self):
+        return self.get_queryset().future()
 
     def new(self):
         return self.get_queryset().new()
