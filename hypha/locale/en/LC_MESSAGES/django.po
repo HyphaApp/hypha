@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-15 12:20+0000\n"
+"POT-Creation-Date: 2021-07-08 06:43+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -320,7 +320,7 @@ msgstr ""
 msgid "{user} has batch changed lead to {new_lead} on: {submissions_text}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:532 hypha/apply/activity/messaging.py:909
+#: hypha/apply/activity/messaging.py:532 hypha/apply/activity/messaging.py:947
 #, python-brace-format
 msgid "{user} as {name},"
 msgstr ""
@@ -338,14 +338,16 @@ msgstr ""
 
 #: hypha/apply/activity/messaging.py:565
 #, python-brace-format
-msgid "A determination for <{link}|{submission_title}> was sent by email. "
-"Outcome: {determination_outcome}"
+msgid ""
+"A determination for <{link}|{submission_title}> was sent by email. Outcome: "
+"{determination_outcome}"
 msgstr ""
 
 #: hypha/apply/activity/messaging.py:572
 #, python-brace-format
-msgid "A determination for <{link}|{submission_title}> was saved without sending an email. "
-"Outcome: {determination_outcome}"
+msgid ""
+"A determination for <{link}|{submission_title}> was saved without sending an "
+"email. Outcome: {determination_outcome}"
 msgstr ""
 
 #: hypha/apply/activity/messaging.py:589
@@ -365,69 +367,69 @@ msgid ""
 "reviewers: {reviewers}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:723
+#: hypha/apply/activity/messaging.py:725
 #, python-brace-format
 msgid "Application ready to review: {source.title}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:725
+#: hypha/apply/activity/messaging.py:727
 msgid "Multiple applications are now ready for your review"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:727
+#: hypha/apply/activity/messaging.py:729
 #, python-brace-format
 msgid "Reminder: Application ready to review: {source.title}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:730
+#: hypha/apply/activity/messaging.py:732
 #, python-brace-format
 msgid "Your application to {org_long_name}: {source.title}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:732
+#: hypha/apply/activity/messaging.py:734
 #, python-brace-format
 msgid "Your {org_long_name} Project: {source.title}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:917
+#: hypha/apply/activity/messaging.py:937
 msgid "Successfully uploaded document"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:918
+#: hypha/apply/activity/messaging.py:938
 msgid "Successfully removed document"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:921
+#: hypha/apply/activity/messaging.py:941
 msgid "Reminder created"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:922
+#: hypha/apply/activity/messaging.py:942
 msgid "Reminder deleted"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:933
+#: hypha/apply/activity/messaging.py:953
 #, python-brace-format
 msgid "Batch reviewers added: {reviewers_text} to "
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:938
+#: hypha/apply/activity/messaging.py:958
 #, python-brace-format
 msgid ""
 "Successfully updated reporting frequency. They will now report "
 "{new_schedule} starting on {schedule_start}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:942
+#: hypha/apply/activity/messaging.py:962
 #, python-brace-format
 msgid "Successfully skipped a Report for {start_date} to {end_date}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:944
+#: hypha/apply/activity/messaging.py:964
 #, python-brace-format
 msgid "Successfully unskipped a Report for {start_date} to {end_date}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:963
+#: hypha/apply/activity/messaging.py:983
 #, python-brace-format
 msgid "Successfully determined as {outcome}: "
 msgstr ""
@@ -460,11 +462,16 @@ msgid ""
 "inquiries, please email us at %(ORG_EMAIL)s"
 msgstr ""
 
-#: hypha/apply/activity/templates/messages/email/base.html:6
-msgid "Kind Regards,"
+#: hypha/apply/activity/templates/messages/email/base.html:2
+#, python-format
+msgid "Dear %(user)s,"
 msgstr ""
 
 #: hypha/apply/activity/templates/messages/email/base.html:7
+msgid "Kind Regards,"
+msgstr ""
+
+#: hypha/apply/activity/templates/messages/email/base.html:8
 #, python-format
 msgid "The %(ORG_SHORT_NAME)s Team"
 msgstr ""
@@ -889,11 +896,13 @@ msgstr ""
 msgid "Draft"
 msgstr ""
 
-#: hypha/apply/determinations/models.py:107 hypha/apply/review/models.py:163
+#: hypha/apply/determinations/models.py:107
+#: hypha/apply/projects/models/vendor.py:48 hypha/apply/review/models.py:163
 msgid "Creation time"
 msgstr ""
 
-#: hypha/apply/determinations/models.py:108 hypha/apply/review/models.py:164
+#: hypha/apply/determinations/models.py:108
+#: hypha/apply/projects/models/vendor.py:49 hypha/apply/review/models.py:164
 msgid "Update time"
 msgstr ""
 
@@ -1005,7 +1014,8 @@ msgstr ""
 msgid "Requested amount"
 msgstr ""
 
-#: hypha/apply/funds/blocks.py:65 hypha/apply/projects/models/project.py:137
+#: hypha/apply/funds/blocks.py:65 hypha/apply/projects/models/vendor.py:19
+#: hypha/apply/projects/models/vendor.py:56
 msgid "Address"
 msgstr ""
 
@@ -1021,7 +1031,7 @@ msgid "Take action"
 msgstr ""
 
 #: hypha/apply/funds/forms.py:143 hypha/apply/projects/filters.py:28
-#: hypha/apply/projects/filters.py:42 hypha/apply/projects/tables.py:46
+#: hypha/apply/projects/filters.py:42 hypha/apply/projects/tables.py:49
 msgid "Lead"
 msgstr ""
 
@@ -1047,7 +1057,7 @@ msgid "Meta terms are hierarchical in nature."
 msgstr ""
 
 #: hypha/apply/funds/models/__init__.py:17 hypha/apply/funds/tables.py:74
-#: hypha/apply/projects/tables.py:45 hypha/apply/projects/tables.py:76
+#: hypha/apply/projects/tables.py:48 hypha/apply/projects/tables.py:80
 msgid "Fund"
 msgstr ""
 
@@ -1166,12 +1176,12 @@ msgstr ""
 msgid "Confirmation email"
 msgstr ""
 
-#: hypha/apply/funds/tables.py:71 hypha/apply/projects/tables.py:20
+#: hypha/apply/funds/tables.py:71 hypha/apply/projects/tables.py:21
 msgid "Submitted"
 msgstr ""
 
 #: hypha/apply/funds/tables.py:72 hypha/apply/projects/filters.py:27
-#: hypha/apply/projects/filters.py:43 hypha/apply/projects/tables.py:75
+#: hypha/apply/projects/filters.py:43 hypha/apply/projects/tables.py:79
 #: hypha/apply/users/templates/wagtailusers/users/list.html:23
 #: hypha/public/partner/tables.py:51 hypha/public/partner/tables.py:97
 msgid "Status"
@@ -1307,7 +1317,7 @@ msgid "next"
 msgstr ""
 
 #: hypha/apply/funds/views.py:230 hypha/apply/funds/views.py:262
-#: hypha/apply/funds/views.py:283 hypha/apply/projects/views/project.py:315
+#: hypha/apply/funds/views.py:283 hypha/apply/projects/views/project.py:319
 msgid "Sorry something went wrong"
 msgstr ""
 
@@ -1557,140 +1567,110 @@ msgstr ""
 msgid "Reporting Period"
 msgstr ""
 
-#: hypha/apply/projects/forms.py:54
-msgid "Something changed before your approval please re-review"
-msgstr ""
-
-#: hypha/apply/projects/forms.py:58
-msgid "The contract you were trying to approve has already been approved"
-msgstr ""
-
-#: hypha/apply/projects/forms.py:61
-msgid "You can only approve a signed contract"
-msgstr ""
-
-#: hypha/apply/projects/forms.py:100
-msgid "You can only set a value when moving to the Paid status."
-msgstr ""
-
-#: hypha/apply/projects/forms.py:138
-msgid "Cannot approve for a different user"
-msgstr ""
-
-#: hypha/apply/projects/forms.py:213
-#, python-brace-format
-msgid "Requested Value ({currency})"
-msgstr ""
-
-#: hypha/apply/projects/forms.py:226
-msgid "Date From must be before Date To"
-msgstr ""
-
-#: hypha/apply/projects/forms.py:252
-msgid "Receipts"
-msgstr ""
-
-#: hypha/apply/projects/forms.py:282
-msgid "Document"
-msgstr ""
-
-#: hypha/apply/projects/forms.py:306
-msgid "File not found on submission"
-msgstr ""
-
-#: hypha/apply/projects/forms.py:324
-msgid "A Project can only be sent for Approval when Committed."
-msgstr ""
-
-#: hypha/apply/projects/forms.py:327
-msgid "A Project can only be sent for Approval once"
-msgstr ""
-
-#: hypha/apply/projects/forms.py:370
-#, python-brace-format
-msgid "Update lead from {lead} to"
-msgstr ""
-
-#: hypha/apply/projects/forms.py:380
-msgid "This section of the report will be shared with the broader community."
-msgstr ""
-
-#: hypha/apply/projects/forms.py:383
-msgid "This section of the report will be shared with staff only."
-msgstr ""
-
-#: hypha/apply/projects/forms.py:389
-msgid "Files"
-msgstr ""
-
-#: hypha/apply/projects/forms.py:416
-msgid "Must include either public or private content when submitting a report."
-msgstr ""
-
-#: hypha/apply/projects/forms.py:464
-msgid "Starting on:"
-msgstr ""
-
-#: hypha/apply/projects/forms.py:491
+#: hypha/apply/projects/forms/report.py:127
 msgid "Cannot start a schedule before the current reporting period"
 msgstr ""
 
-#: hypha/apply/projects/forms.py:497
+#: hypha/apply/projects/forms/report.py:133
 msgid "Cannot start a schedule in the past"
 msgstr ""
 
-#: hypha/apply/projects/forms.py:503
+#: hypha/apply/projects/forms/report.py:139
 msgid "Cannot start a schedule beyond the end date"
 msgstr ""
 
-#: hypha/apply/projects/models/project.py:135
-msgid "Person or Organisation name"
-msgstr ""
-
-#: hypha/apply/projects/models/project.py:136
-#: hypha/apply/stream_forms/blocks.py:119
-msgid "Email"
-msgstr ""
-
-#: hypha/apply/projects/models/project.py:138
-msgid "Phone"
-msgstr ""
-
-#: hypha/apply/projects/models/project.py:145
+#: hypha/apply/projects/models/project.py:147
 msgid "Proposed Start Date"
 msgstr ""
 
-#: hypha/apply/projects/models/project.py:146
+#: hypha/apply/projects/models/project.py:148
 msgid "Proposed End Date"
 msgstr ""
 
-#: hypha/apply/projects/models/project.py:253
+#: hypha/apply/projects/models/project.py:258
 msgid "Proposed End Date must be after Proposed Start Date"
 msgstr ""
 
-#: hypha/apply/projects/tables.py:27
+#: hypha/apply/projects/models/vendor.py:45
+msgid "Yes, the account belongs to the organisation above"
+msgstr ""
+
+#: hypha/apply/projects/models/vendor.py:46
+msgid "No, it is a personal bank account"
+msgstr ""
+
+#: hypha/apply/projects/tables.py:16
+msgid "Invoice reference"
+msgstr ""
+
+#: hypha/apply/projects/tables.py:22
+#, python-brace-format
+msgid "Value ({currency})"
+msgstr ""
+
+#: hypha/apply/projects/tables.py:29
 msgid "Period Start"
 msgstr ""
 
-#: hypha/apply/projects/tables.py:28
+#: hypha/apply/projects/tables.py:30
 msgid "Period End"
 msgstr ""
 
-#: hypha/apply/projects/tables.py:77
+#: hypha/apply/projects/tables.py:81
 msgid "Reporting"
 msgstr ""
 
-#: hypha/apply/projects/tables.py:79
+#: hypha/apply/projects/tables.py:83
 msgid "End Date"
 msgstr ""
 
-#: hypha/apply/projects/tables.py:80
-msgid "Fund Allocation"
+#: hypha/apply/projects/tables.py:84
+#, python-brace-format
+msgid "Fund Allocation ({currency})"
 msgstr ""
 
-#: hypha/apply/projects/views/project.py:584
-#: hypha/apply/projects/views/project.py:631
+#: hypha/apply/projects/templates/application_projects/vendor_detail.html:4
+#: hypha/apply/projects/templates/application_projects/vendor_detail.html:9
+msgid "Vendor Information for"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/vendor_form.html:4
+#: hypha/apply/projects/templates/application_projects/vendor_form.html:8
+msgid "Update Contractor Information"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/vendor_success.html:4
+#: hypha/apply/projects/templates/application_projects/vendor_success.html:8
+msgid "Contractor Setup Completed"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/vendor_success.html:18
+msgid "Visit Project Detail Page"
+msgstr ""
+
+#: hypha/apply/projects/views/project.py:589
+#: hypha/apply/projects/views/project.py:636
 msgid "You are not allowed to edit the project at this time"
+msgstr ""
+
+#: hypha/apply/projects/views/vendor.py:250
+msgid "Vendor Information"
+msgstr ""
+
+#: hypha/apply/projects/views/vendor.py:259
+msgid "Bank Account Information"
+msgstr ""
+
+#: hypha/apply/projects/views/vendor.py:268
+msgid "(Optional) Extra Information for Accepting Payments"
+msgstr ""
+
+#: hypha/apply/projects/views/vendor.py:273
+msgid "Intermediary Bank Account Information"
+msgstr ""
+
+#: hypha/apply/projects/views/vendor.py:282
+msgid "Account Holder National Identity Document Information"
 msgstr ""
 
 #: hypha/apply/review/blocks.py:34
@@ -1720,6 +1700,10 @@ msgstr ""
 #: hypha/apply/stream_forms/blocks.py:115
 #: hypha/apply/stream_forms/blocks.py:216
 msgid "Required"
+msgstr ""
+
+#: hypha/apply/stream_forms/blocks.py:119
+msgid "Email"
 msgstr ""
 
 #: hypha/apply/stream_forms/blocks.py:120
@@ -1843,19 +1827,19 @@ msgstr ""
 msgid "Only includes active, non-superusers"
 msgstr ""
 
-#: hypha/apply/users/models.py:90
+#: hypha/apply/users/models.py:94
 msgid "email address"
 msgstr ""
 
-#: hypha/apply/users/models.py:91
+#: hypha/apply/users/models.py:95
 msgid "Full name"
 msgstr ""
 
-#: hypha/apply/users/models.py:93
+#: hypha/apply/users/models.py:97
 msgid "Slack name"
 msgstr ""
 
-#: hypha/apply/users/models.py:95
+#: hypha/apply/users/models.py:99
 msgid "This is the name we should \"@mention\" when sending notifications"
 msgstr ""
 
@@ -2145,7 +2129,7 @@ msgstr ""
 msgid "Page size of downloadable Project and Submission PDFs"
 msgstr ""
 
-#: hypha/apply/utils/views.py:248
+#: hypha/apply/utils/views.py:254
 #, python-brace-format
 msgid "Page '{0}' can't be deleted because is in use in '{1}'."
 msgstr ""
@@ -2469,48 +2453,4 @@ msgstr ""
 
 #: hypha/templates/blocks/apply_link_block.html:4
 msgid "Apply for the"
-msgstr ""
-
-#: hypha/apply/projects/templates/application_projects/vendor_form.html:4,8
-msgid "Update Contractor Information"
-msgstr ""
-
-#: hypha/apply/projects/templates/application_projects/vendor_success.html:4,8
-msgid "Contractor Setup Completed"
-msgstr ""
-
-#: hypha/apply/projects/templates/application_projects/vendor_success.html:18
-msgid "Visit Project Detail Page"
-msgstr ""
-
-#: hypha/apply/projects/models/vendor.py:45
-msgid "Yes, the account belongs to the organisation above"
-msgstr ""
-
-#: hypha/apply/projects/models/vendor.py:46
-msgid "No, it is a personal bank account"
-msgstr ""
-
-#: hypha/apply/projects/views/vendor.py:223
-msgid "Vendor Information"
-msgstr ""
-
-#: hypha/apply/projects/views/vendor.py:232
-msgid "Bank Account Information"
-msgstr ""
-
-#: hypha/apply/projects/views/vendor.py:241
-msgid "(Optional) Extra Information for Accepting Payments"
-msgstr ""
-
-#: hypha/apply/projects/views/vendor.py:246
-msgid "Intermediary Bank Account Information"
-msgstr ""
-
-#: hypha/apply/projects/views/vendor.py:255
-msgid "Account Holder National Identity Document Information"
-msgstr ""
-
-#: hypha/apply/projects/templates/application_projects/vendor_detail.html:4,9
-msgid "Vendor Information for"
 msgstr ""
