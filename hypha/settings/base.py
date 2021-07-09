@@ -28,7 +28,8 @@ if 'ALLOWED_HOSTS' in env:
 
 ORG_LONG_NAME = env.get('ORG_LONG_NAME', 'Acme Corporation')
 ORG_SHORT_NAME = env.get('ORG_SHORT_NAME', 'ACME')
-ORG_EMAIL = env.get('ORG_EMAIL', 'info@example.org')
+ORG_STAFF_EMAIL = env.get('ORG_STAFF_EMAIL', 'info@example.org')
+ORG_TECH_EMAIL = env.get('ORG_TECH_EMAIL', 'info@example.org')
 ORG_GUIDE_URL = env.get('ORG_GUIDE_URL', 'https://guide.example.org/')
 
 

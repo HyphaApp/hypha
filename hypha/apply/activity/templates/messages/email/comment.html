@@ -1,10 +1,10 @@
 {% extends "messages/email/applicant_base.html" %}
 
 {% load i18n %}
-{% block content %}{% blocktrans %}There has been a new comment on "{{ source.title }}" by {{ comment.user }}.{% endblocktrans %}
+{% block content %}{% blocktrans on=source.title by=comment.user %}There has been a new comment on "{{ on }}" by {{ by }}.{% endblocktrans %}
 
 {% trans "Read the full comment here" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}#comments{% endblock %}
 
 {% block more_info %}
-{% blocktrans %}If you have any issues accessing the submission system or other general inquiries, please email us at {{ ORG_EMAIL }}{% endblocktrans %}
+{% blocktrans %}If you have any issues accessing the submission system or other general inquiries, please email us at {{ ORG_STAFF_EMAIL }}{% endblocktrans %}
 {% endblock %}
