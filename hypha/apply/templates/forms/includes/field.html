@@ -21,7 +21,7 @@
     {% endif %}
 
     {% if field.help_text %}
-        <p class="form__help">{{ field.help_text|safe }}</p>
+        <p class="form__help"> {% autoescape off %} {{ field.help_text }} {% endautoescape %} </p>
     {% endif %}
 
     {% if field.field.help_link %}

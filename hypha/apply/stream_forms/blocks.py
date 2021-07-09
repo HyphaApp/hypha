@@ -56,7 +56,7 @@ class FormFieldBlock(StructBlock):
     def get_field_kwargs(self, struct_value):
         kwargs = {
             'label': struct_value['field_label'],
-            'help_text': conditional_escape(struct_value['help_text']),
+            'help_text': struct_value['help_text'],
             'required': struct_value.get('required', False)
         }
         if 'default_value' in struct_value:
