@@ -9,6 +9,7 @@
 [![Zulip chat](https://img.shields.io/badge/chat-chat.hypha.app-brightgreen)](https://chat.hypha.app/)
 [![Discource forum](https://img.shields.io/badge/forum-we.hypha.app-orange)](https://we.hypha.app/)
 [![Website](https://img.shields.io/badge/website-hypha.app-blue)](https://www.hypha.app/)
+[![Documentation](https://img.shields.io/badge/docs-hypha.app-purple)](https://docs.hypha.app/)
 
 ## Submission management software for open calls
 
@@ -23,7 +24,7 @@
 ### Technology
 
 - Built with [Django](https://www.djangoproject.com/), [Wagtail](https://wagtail.io/), and [React](https://reactjs.org/)
-- Deploy with [Heroku](https://github.com/HyphaApp/hypha/wiki/Deployment:-Heroku), [Docker](https://github.com/HyphaApp/hypha/wiki/Deployment:-Docker), or [your own server](https://github.com/HyphaApp/hypha/wiki/Deployment:-Standalone-App).
+- Deploy with [Heroku](https://docs.hypha.app/deployment/heroku), [Docker](https://docs.hypha.app/deployment/docker), or [your own server](https://docs.hypha.app/deployment/stand-alone).
 
 ## Maintainers
 
@@ -72,7 +73,7 @@ Hypha is an open source project made possible thanks to the support of sponsors.
 ## More information
 
 * Website: https://www.hypha.app/
-* Docs: https://github.com/HyphaApp/hypha/wiki
+* Docs: https://docs.hypha.app/
 * Community forum (Discourse): https://we.hypha.app/
 * Chat (Zulip): https://chat.hypha.app/
 * Why Hypha? **[Hyphae](https://en.wikipedia.org/wiki/Mycorrhizal_network):** long, branching ecosystem enriching organisms that form interconnected networks to collectively exchange resources. Hopefully, Hypha helps it's users do the same.
