@@ -16,8 +16,7 @@ function getFilters(params) {
     if(urlParams.get(key)){
       if(key == "f_status"){
         filters[key.slice(2)] = JSON.parse(urlParams.get(key))
-      }
-      else filters[key.slice(2)] = urlParams.get(key).split(",").map(i=>Number(i))
+      }else filters[key.slice(2)] = urlParams.get(key).split(",").map(i => i !== 'null' ? Number(i) : null)
     }
   }
   return filters
