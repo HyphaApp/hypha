@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-30 07:18+0000\n"
+"POT-Creation-Date: 2021-07-30 07:19+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1276,6 +1276,33 @@ msgstr ""
 #: hypha/apply/funds/templates/funds/application_base.html:36
 #: hypha/public/funds/templates/public_funds/includes/fund_apply_cta.html:20
 msgid "Application guide"
+msgstr ""
+
+#: hypha/apply/funds/templates/funds/application_base_landing.html:10
+msgid "Your application is saved as a draft."
+msgstr ""
+
+#: hypha/apply/funds/templates/funds/application_base_landing.html:14
+#, python-format
+msgid "Thank you for your submission to the %(ORG_LONG_NAME)s."
+msgstr ""
+
+#: hypha/apply/funds/templates/funds/application_base_landing.html:19
+msgid ""
+"Please note that it is not submitted for review. You can complete your "
+"application by following the log-in details emailed to you."
+msgstr ""
+
+#: hypha/apply/funds/templates/funds/application_base_landing.html:21
+msgid ""
+"An e-mail with more information has been sent to the address you entered."
+msgstr ""
+
+#: hypha/apply/funds/templates/funds/application_base_landing.html:23
+#, python-format
+msgid ""
+" If you do not receive an e-mail within 15 minutes please check your spam "
+"folder and contact %(org_staff_email_urlized)s for further assistance. "
 msgstr ""
 
 #: hypha/apply/funds/templates/funds/includes/round-block-listing.html:23
