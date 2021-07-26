@@ -36,6 +36,10 @@ def is_approver(user):
         raise PermissionDenied
     return True
 
+def is_decision_maker(user):
+    if not user.is_decision_maker:
+        raise PermissionDenied
+    return True
 
 staff_required = [login_required, user_passes_test(is_apply_staff)]
 
@@ -44,6 +48,8 @@ finance_required = [login_required, user_passes_test(is_finance)]
 staff_or_finance_required = [login_required, user_passes_test(is_apply_staff_or_finance)]
 
 approver_required = [login_required, user_passes_test(is_approver)]
+
+decision_maker_required = [login_required, user_passes_test(is_decision_maker)]
 
 
 def superuser_decorator(fn):
