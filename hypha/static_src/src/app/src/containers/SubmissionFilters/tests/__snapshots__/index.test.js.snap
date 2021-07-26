@@ -68,7 +68,7 @@ exports[`Test submission filter Container Should render submission filter with l
       </span>
     }
   >
-    <HighlightOffIcon
+    <Memo(ForwardRef(HighlightOffIcon))
       className="delete-button"
       fontSize="large"
       onClick={[Function]}
