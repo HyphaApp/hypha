@@ -1,5 +1,4 @@
 import decimal
-import json
 
 import factory
 import pytz
@@ -77,10 +76,6 @@ class ProjectFactory(factory.DjangoModelFactory):
 
     title = factory.Sequence('name {}'.format)
     lead = factory.SubFactory(StaffFactory)
-    contact_legal_name = 'test'
-    contact_email = 'test@example.com'
-    contact_address = json.dumps(ADDRESS)
-    contact_phone = '555 1234'
     value = decimal.Decimal('100')
     proposed_start = factory.LazyFunction(timezone.now)
     proposed_end = factory.LazyFunction(timezone.now)

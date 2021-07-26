@@ -24,7 +24,7 @@ from ..files import get_files
 from ..forms import SetPendingForm
 from ..models.payment import CHANGES_REQUESTED, SUBMITTED
 from ..models.project import COMMITTED, CONTRACTING, IN_PROGRESS
-from ..views import ContractsMixin, ProjectDetailSimplifiedView
+from ..views.project import ContractsMixin, ProjectDetailSimplifiedView
 from .factories import (
     ContractFactory,
     DocumentCategoryFactory,

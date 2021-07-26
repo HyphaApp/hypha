@@ -7,15 +7,17 @@ from django.test import TestCase, override_settings
 from hypha.apply.users.tests.factories import UserFactory
 
 from ..files import get_files
-from ..forms import (
+from ..forms.payment import (
     ChangePaymentRequestStatusForm,
     CreatePaymentRequestForm,
-    ProjectApprovalForm,
     SelectDocumentForm,
-    StaffUploadContractForm,
-    UploadContractForm,
     filter_choices,
     filter_request_choices,
+)
+from ..forms.project import (
+    ProjectApprovalForm,
+    StaffUploadContractForm,
+    UploadContractForm,
 )
 from ..models.payment import CHANGES_REQUESTED, DECLINED, PAID, SUBMITTED, UNDER_REVIEW
 from .factories import (
@@ -85,9 +87,6 @@ class TestProjectApprovalForm(TestCase):
 
         data = {
             'title': f'{project.title} test',
-            'contact_legal_name': project.contact_legal_name,
-            'contact_email': project.contact_email,
-            'contact_phone': project.contact_phone,
             'value': project.value,
             'proposed_start': project.proposed_start,
             'proposed_end': project.proposed_end,

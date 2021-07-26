@@ -11,7 +11,6 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('wagtailcore', '0062_comment_models_and_pagesubscription'),
         ('application_projects', '0035_add_heading_block_to_form_fields_block'),
     ]
 
