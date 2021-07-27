@@ -214,13 +214,13 @@ export const setSubmissionParam = (id) => (dispatch, getState) => {
     const urlParams = new URLSearchParams(state.router.location.search);
     const urlID = Number(urlParams.get('submission'));
 
-    // check whether filters available & create searchParams accordingly
+    // check whether filters selected & create searchParams accordingly
     let searchParams = ""
     if(filters && filters.length){
         filters.forEach(filter => {
             if(filter.key == "f_status"){
-            searchParams = searchParams + `&${filter.key}=${JSON.stringify(filter.value)}`
-            }else searchParams = searchParams + `&${filter.key}=${filter.value.join()}`
+                searchParams = searchParams + `&${filter.key}=${JSON.stringify(filter.value)}`
+            }else searchParams = searchParams + `&${filter.key}=${filter.value.map(v => !v ? "null" : v).join()}`
         })
     }
 
@@ -229,15 +229,18 @@ export const setSubmissionParam = (id) => (dispatch, getState) => {
     const shouldUpdate = id !== null  && submissionID !== id && urlID !== id 
     && !(submissionID == null && urlParams.toString().includes("&")); // if url contains filter query & it is shared, don't update id
 
-    // check both url query parmas & filters are equal
-    const queryUpdate = (filters && 
-        filters.filter(filter => urlParams.get(filter.key) === null || 
-        filter.value.length !== urlParams.get(filter.key).split(',').length).length) ||
-        urlParams.toString().includes("&") && filters != null && !filters.length ||
-        urlParams.toString().includes("&") && filters != null && filters.length 
-        && searchParams.split("&").length != urlParams.toString().split("&").length
+    
+    function hasEqualFilters(filter) {
+        if(filter.key === "f_status") return urlParams.get(filter.key) !== JSON.stringify(filter.value)
+        else return urlParams.get(filter.key) !== filter.value.join(',')
+    } 
 
-    if (shouldSet || shouldUpdate || queryUpdate) {
+    const hasEqualNoOfFilters = searchParams.split("&").length == urlParams.toString().split("&").length
+    
+    // check url query parmas are same as filters selected
+    const shouldUpdateURLQuery = filters && (filters.filter(hasEqualFilters).length || !hasEqualNoOfFilters)
+    
+    if (shouldSet || shouldUpdate || Boolean(shouldUpdateURLQuery)) {
         dispatch(push({search: `?submission=${id}${searchParams}`}));
     }else if (id === null ) {
         dispatch(clearCurrentSubmissionParam());

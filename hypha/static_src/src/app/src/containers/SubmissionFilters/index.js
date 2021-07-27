@@ -66,9 +66,9 @@ export class SubmissionFiltersContainer extends React.PureComponent {
   }
 
   componentDidUpdate(prevProps, prevState){
-    if(this.props.getScreeningLoading == false 
-      && !this.props.isGroupedIconShown 
-      && this.props.history.location.search.includes("&") 
+    if(
+      !this.props.isGroupedIconShown &&
+     this.props.history.location.search.includes("&") 
       && !this.props.submissionFilters.loading){
       this.props.initializeAction(this.props.history.location.search, this.onFilter)
     }
@@ -82,6 +82,7 @@ export class SubmissionFiltersContainer extends React.PureComponent {
       filterQuery.push({"key": "f_"+key, "value": options[key]})
     )
     this.props.updateFilterQuery(filterQuery)
+    if(!filterQuery.length) this.props.history.push(window.location.pathname)
     this.props.onFilter()
   }
 
