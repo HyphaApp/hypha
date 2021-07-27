@@ -314,7 +314,7 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
         # and canonical names for use in the template.
         # TODO: Put this functionality higher in the class hierarchy.
         determination_form_class = self.get_form_class()
-        form_field_id_to_name={}
+        form_field_id_to_name = {}
         for field_id in determination_form_class.display:
             form_field_id_to_name[field_id] = determination_form_class.display[field_id].canonical_name
 
