@@ -1,0 +1,40 @@
+{% extends "base-apply.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Update Contractor Information" %}{% endblock %}
+{% block content %}
+<div class="admin-bar">
+    <div class="admin-bar__inner">
+        <h2 class="heading heading--no-margin">{% trans "Update Contractor Information" %}</h2>
+    </div>
+</div>
+
+{% include "forms/includes/form_errors.html" with form=form %}
+
+<div class="wrapper wrapper--light-grey-bg wrapper--form wrapper--sidebar">
+    <div class="wrapper--sidebar--inner">
+        <form class="form" id="multi-step-vendor" action="" method="post" enctype="multipart/form-data">
+            {{ wizard.management_form }}
+            {% csrf_token %}
+            {{ form.media }}
+            {% for field in form %}
+                {% if field.field %}
+                    {% include "forms/includes/field.html" %}
+                {% else %}
+                    {{ field }}
+                {% endif %}
+            {% endfor %}
+            <button class="button button--submit button--top-space button--primary" type="submit" name="save">{% if wizard.steps.step1 == 6 %}Submit{% else %}Save and continue{% endif %}</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+    {{ form.media.css }}
+{% endblock %}
+
+{% block extra_js %}
+    {{ form.media.js }}
+    <script src="{% static 'js/apply/list-input-files.js' %}"></script>
+{% endblock %}

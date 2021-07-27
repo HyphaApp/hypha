@@ -27,6 +27,7 @@ class MESSAGES(Enum):
     DELETE_SUBMISSION = 'Delete Submission'
     DELETE_REVIEW = 'Delete Review'
     CREATED_PROJECT = 'Created Project'
+    UPDATED_VENDOR = 'Updated Vendor'
     UPDATE_PROJECT_LEAD = 'Update Project Lead'
     EDIT_REVIEW = 'Edit Review'
     SEND_FOR_APPROVAL = 'Send for Approval'

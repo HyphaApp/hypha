@@ -1,0 +1,11 @@
+{% extends "messages/email/applicant_base.html" %}
+
+{% block content %}
+A Project has been created for your submission on {{ ORG_SHORT_NAME }}.
+
+Next step is to complete vendor setup form by visiting project detail page.
+
+Project: {{ source.title }}
+Link: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
+Submission: {{ request.scheme }}://{{ request.get_host }}{% url 'apply:submissions:simplified' pk=source.submission.pk %}
+{% endblock %}
