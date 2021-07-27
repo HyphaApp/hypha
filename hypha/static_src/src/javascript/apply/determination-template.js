@@ -9,13 +9,14 @@
 
         bindEventListeners() {
 
-            const that = this
-            $( window ).on("load", function() {
-                const newContent = that.getMatchingCopy(that.node.value)
-                that.updateTextArea(newContent)
-            })
+            const that = this;
+            $(window).on('load', function () {
+                const newContent = that.getMatchingCopy(that.node.value);
+                that.updateTextArea(newContent);
+            });
 
             this.node.addEventListener('change', (e) => {
+
                 /*
                  * Every time there is a change to the value
                  * in the dropdown, update the message's code
@@ -36,7 +37,6 @@
             else {
                 return document.querySelector('div[data-type="accepted"]').innerHTML;
             }
-            return "";
         }
 
         updateTextArea(text) {
@@ -51,8 +51,9 @@
      * We use that mapping to grab the drop-down box of the
      * required determination field.
      */
-    const determination_id = $("#id_determination").val();
-    $("#id_" + determination_id).each((index, el) => {
+    const determination_id = $('#id_determination').val();
+    $('#id_' + determination_id).each((index, el) => {
+
         /*
          * Now that we have hold of that dropdown, we add some
          * event handlers that execute every time its value changes.
