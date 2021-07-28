@@ -192,9 +192,9 @@
                     <h5>Supporting Information</h5>
 
                     <p><a class="link link--bold" href="{{ object.submission.get_absolute_url }}">Proposal</a></p>
-
-                    <p><a class="link link--bold" href="{% url 'apply:projects:vendor-detail' pk=project.pk vendor_pk=project.vendor.pk %}">Contractor Setup Form</a></p>
-
+                    {% if project.vendor %}
+                        <p><a class="link link--bold" href="{% url 'apply:projects:vendor-detail' pk=project.pk vendor_pk=project.vendor.pk %}">Contractor Setup Form</a></p>
+                    {% endif %}
                     {% if request.user.is_apply_staff %}
                     <p><a class="link link--bold" href="{% url 'apply:projects:simplified' pk=project.pk %}">Approval form</a></p>
                     {% endif %}
