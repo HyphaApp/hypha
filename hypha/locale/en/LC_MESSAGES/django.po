@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-08 06:41+0000\n"
+"POT-Creation-Date: 2021-07-28 07:03+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -947,12 +947,12 @@ msgid "Draft"
 msgstr ""
 
 #: hypha/apply/determinations/models.py:107
-#: hypha/apply/projects/models/vendor.py:48 hypha/apply/review/models.py:163
+#: hypha/apply/projects/models/vendor.py:49 hypha/apply/review/models.py:163
 msgid "Creation time"
 msgstr ""
 
 #: hypha/apply/determinations/models.py:108
-#: hypha/apply/projects/models/vendor.py:49 hypha/apply/review/models.py:164
+#: hypha/apply/projects/models/vendor.py:50 hypha/apply/review/models.py:164
 msgid "Update time"
 msgstr ""
 
@@ -1064,8 +1064,8 @@ msgstr ""
 msgid "Requested amount"
 msgstr ""
 
-#: hypha/apply/funds/blocks.py:65 hypha/apply/projects/models/vendor.py:19
-#: hypha/apply/projects/models/vendor.py:56
+#: hypha/apply/funds/blocks.py:65 hypha/apply/projects/models/vendor.py:20
+#: hypha/apply/projects/models/vendor.py:57
 msgid "Address"
 msgstr ""
 
@@ -1645,11 +1645,11 @@ msgstr ""
 msgid "Proposed End Date must be after Proposed Start Date"
 msgstr ""
 
-#: hypha/apply/projects/models/vendor.py:45
+#: hypha/apply/projects/models/vendor.py:46
 msgid "Yes, the account belongs to the organisation above"
 msgstr ""
 
-#: hypha/apply/projects/models/vendor.py:46
+#: hypha/apply/projects/models/vendor.py:47
 msgid "No, it is a personal bank account"
 msgstr ""
 
