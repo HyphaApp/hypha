@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 .form {
     &--header-search-desktop {
         max-width: 300px;
@@ -424,7 +426,7 @@
         width: 100%;
         padding: .4em;
         border: 1px solid $color--mid-grey;
-        line-height: $base-line-height / $base-font-size;
+        line-height: math.div($base-line-height, $base-font-size);
     }
 
     // Radio + Checkbox
