@@ -28,7 +28,7 @@
 
 ## Maintainers
 
-- [Sarah Aoun](https://github.com/saoun) @ [Open Technology Fund](https://www.opentech.fund/)
+- [Di Luong](https://www.opentech.fund/about/people/di-luong/) @ [Open Technology Fund](https://www.opentech.fund/)
 - [Dan Blah](https://github.com/danblah) @ [Reset](https://www.reset.tech/)
 - [Fredrik Jonsson](https://github.com/frjo) @ [Combonetwork](https://www.combonet.se/)
 
