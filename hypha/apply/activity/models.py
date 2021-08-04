@@ -41,7 +41,7 @@ VISIBILITY = {
 
 class BaseActivityQuerySet(models.QuerySet):
     def visible_to(self, user):
-        # to hide reviews from applicant of existing data
+        # To hide reviews from the applicant's activity feed
         from .messaging import ActivityAdapter
         messages = ActivityAdapter.messages
         if user.is_applicant:
