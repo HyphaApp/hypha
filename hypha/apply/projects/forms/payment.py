@@ -231,7 +231,6 @@ class EditInvoiceForm(FileFormMixin, InvoiceBaseForm):
     @transaction.atomic
     def save(self, commit=True):
         invoice = super().save(commit=commit)
-
         not_deleted_original_filenames = [
             file['name'] for file in json.loads(self.cleaned_data['supporting_documents-uploads'])
         ]

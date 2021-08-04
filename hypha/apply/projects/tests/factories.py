@@ -12,7 +12,7 @@ from hypha.apply.stream_forms.testing.factories import (
 )
 from hypha.apply.users.tests.factories import StaffFactory, UserFactory
 
-from ..models.payment import PaymentReceipt, PaymentRequest
+from ..models.payment import Invoice, PaymentReceipt, PaymentRequest, SupportingDocument
 from ..models.project import (
     COMPLETE,
     IN_PROGRESS,
@@ -140,6 +140,20 @@ class PaymentRequestFactory(factory.DjangoModelFactory):
         model = PaymentRequest
 
 
+class InvoiceFactory(factory.DjangoModelFactory):
+    project = factory.SubFactory(ProjectFactory)
+    by = factory.SubFactory(UserFactory)
+    amount = factory.Faker('pydecimal', min_value=1, max_value=10000000, right_digits=2)
+
+    date_from = factory.Faker('date_time').generate({'tzinfo': pytz.utc})
+    date_to = factory.Faker('date_time').generate({'tzinfo': pytz.utc})
+
+    document = factory.django.FileField()
+
+    class Meta:
+        model = Invoice
+
+
 class PaymentReceiptFactory(factory.DjangoModelFactory):
     payment_request = factory.SubFactory(PaymentRequestFactory)
 
@@ -147,6 +161,15 @@ class PaymentReceiptFactory(factory.DjangoModelFactory):
 
     class Meta:
         model = PaymentReceipt
+
+
+class SupportingDocumentFactory(factory.DjangoModelFactory):
+    invoice = factory.SubFactory(InvoiceFactory)
+
+    document = factory.django.FileField()
+
+    class Meta:
+        model = SupportingDocument
 
 
 class ReportConfigFactory(factory.DjangoModelFactory):

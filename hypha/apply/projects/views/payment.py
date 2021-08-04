@@ -172,7 +172,7 @@ class PaymentRequestAdminView(PaymentRequestAccessMixin, DelegateableView, Detai
     template_name_suffix = '_admin_detail'
 
 
-class PaymentRequestApplicantView(InvoiceAccessMixin, DelegateableView, DetailView):
+class PaymentRequestApplicantView(PaymentRequestAccessMixin, DelegateableView, DetailView):
     form_views = []
 
 
@@ -189,7 +189,7 @@ class InvoiceAdminView(InvoiceAccessMixin, DelegateableView, DetailView):
     template_name_suffix = '_admin_detail'
 
 
-class InvoiceApplicantView(PaymentRequestAccessMixin, DelegateableView, DetailView):
+class InvoiceApplicantView(InvoiceAccessMixin, DelegateableView, DetailView):
     form_views = []
 
 

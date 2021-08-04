@@ -1,4 +1,5 @@
 from .payment import (
+    ChangeInvoiceStatusView,
     ChangePaymentRequestStatusView,
     CreateInvoiceView,
     CreatePaymentRequestView,
@@ -50,6 +51,7 @@ from .report import (
 from .vendor import CreateVendorView, VendorDetailView, VendorPrivateMediaView
 
 __all__ = [
+    'ChangeInvoiceStatusView',
     'ChangePaymentRequestStatusView',
     'DeletePaymentRequestView',
     'PaymentRequestAdminView',

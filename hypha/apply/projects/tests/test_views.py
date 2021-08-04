@@ -1,3 +1,4 @@
+import json
 from decimal import Decimal
 from io import BytesIO
 
@@ -28,12 +29,12 @@ from ..views.project import ContractsMixin, ProjectDetailSimplifiedView
 from .factories import (
     ContractFactory,
     DocumentCategoryFactory,
+    InvoiceFactory,
     PacketFileFactory,
-    PaymentReceiptFactory,
-    PaymentRequestFactory,
     ProjectFactory,
     ReportFactory,
     ReportVersionFactory,
+    SupportingDocumentFactory,
 )
 
 
@@ -916,9 +917,9 @@ class TestProjectDetailSimplifiedView(TestCase):
             ProjectDetailSimplifiedView.as_view()(request, pk=project.pk)
 
 
-class TestStaffDetailPaymentRequestStatus(BaseViewTestCase):
+class TestStaffDetailInvoiceStatus(BaseViewTestCase):
     base_view_name = 'detail'
-    url_name = 'funds:projects:payments:{}'
+    url_name = 'funds:projects:invoices:{}'
     user_factory = StaffFactory
 
     def get_kwargs(self, instance):
@@ -927,20 +928,20 @@ class TestStaffDetailPaymentRequestStatus(BaseViewTestCase):
         }
 
     def test_can(self):
-        payment_request = PaymentRequestFactory()
-        response = self.get_page(payment_request)
+        invoice = InvoiceFactory()
+        response = self.get_page(invoice)
         self.assertEqual(response.status_code, 200)
 
     def test_wrong_project_cant(self):
         other_project = ProjectFactory()
-        payment_request = PaymentRequestFactory()
-        response = self.get_page(payment_request, url_kwargs={'pk': other_project.pk})
+        invoice = InvoiceFactory()
+        response = self.get_page(invoice, url_kwargs={'pk': other_project.pk})
         self.assertEqual(response.status_code, 404)
 
 
-class TestFinanceDetailPaymentRequestStatus(BaseViewTestCase):
+class TestFinanceDetailInvoiceStatus(BaseViewTestCase):
     base_view_name = 'detail'
-    url_name = 'funds:projects:payments:{}'
+    url_name = 'funds:projects:invoices:{}'
     user_factory = FinanceFactory
 
     def get_kwargs(self, instance):
@@ -949,20 +950,20 @@ class TestFinanceDetailPaymentRequestStatus(BaseViewTestCase):
         }
 
     def test_can(self):
-        payment_request = PaymentRequestFactory()
-        response = self.get_page(payment_request)
+        invoice = InvoiceFactory()
+        response = self.get_page(invoice)
         self.assertEqual(response.status_code, 200)
 
     def test_wrong_project_cant(self):
         other_project = ProjectFactory()
-        payment_request = PaymentRequestFactory()
-        response = self.get_page(payment_request, url_kwargs={'pk': other_project.pk})
+        invoice = InvoiceFactory()
+        response = self.get_page(invoice, url_kwargs={'pk': other_project.pk})
         self.assertEqual(response.status_code, 404)
 
 
-class TestApplicantDetailPaymentRequestStatus(BaseViewTestCase):
+class TestApplicantDetailInvoiceStatus(BaseViewTestCase):
     base_view_name = 'detail'
-    url_name = 'funds:projects:payments:{}'
+    url_name = 'funds:projects:invoices:{}'
     user_factory = ApplicantFactory
 
     def get_kwargs(self, instance):
@@ -971,125 +972,127 @@ class TestApplicantDetailPaymentRequestStatus(BaseViewTestCase):
         }
 
     def test_can(self):
-        payment_request = PaymentRequestFactory(project__user=self.user)
-        response = self.get_page(payment_request)
+        invoice = InvoiceFactory(project__user=self.user)
+        response = self.get_page(invoice)
         self.assertEqual(response.status_code, 200)
 
     def test_other_cant(self):
-        payment_request = PaymentRequestFactory()
-        response = self.get_page(payment_request)
+        invoice = InvoiceFactory()
+        response = self.get_page(invoice)
         self.assertEqual(response.status_code, 403)
 
 
-class TestApplicantEditPaymentRequestView(BaseViewTestCase):
+class TestApplicantEditInvoiceView(BaseViewTestCase):
     base_view_name = 'edit'
-    url_name = 'funds:projects:payments:{}'
+    url_name = 'funds:projects:invoices:{}'
     user_factory = ApplicantFactory
 
     def get_kwargs(self, instance):
         return {'pk': instance.pk}
 
-    def test_editing_payment_remove_receipt(self):
-        payment_request = PaymentRequestFactory(project__user=self.user)
-        receipt = PaymentReceiptFactory(payment_request=payment_request)
+    def test_editing_invoice_remove_supporting_document(self):
+        invoice = InvoiceFactory(project__user=self.user)
+        SupportingDocumentFactory(invoice=invoice)
 
-        response = self.post_page(payment_request, {
-            'requested_value': payment_request.requested_value,
+        self.assertTrue(invoice.supporting_documents.exists())
+
+        response = self.post_page(invoice, {
+            'amount': invoice.amount,
             'date_from': '2018-08-15',
             'date_to': '2019-08-15',
             'comment': 'test comment',
             'invoice': '',
-            'receipt_list': [receipt.pk],
+            'supporting_documents-uploads': '[]',
         })
 
         self.assertEqual(response.status_code, 200)
-
-        self.assertFalse(payment_request.receipts.exists())
+        self.assertFalse(invoice.supporting_documents.exists())
 
     def test_editing_payment_keeps_receipts(self):
         project = ProjectFactory(user=self.user)
-        payment_request = PaymentRequestFactory(project=project)
-        receipt = PaymentReceiptFactory(payment_request=payment_request)
+        invoice = InvoiceFactory(project=project)
+        supporting_document = SupportingDocumentFactory(invoice=invoice)
 
-        requested_value = payment_request.requested_value
+        amount = invoice.amount
 
-        response = self.post_page(payment_request, {
-            'requested_value': requested_value + 1,
+        response = self.post_page(invoice, {
+            'amount': amount + 1,
             'date_from': '2018-08-15',
             'date_to': '2019-08-15',
             'comment': 'test comment',
             'invoice': '',
-            'receipt_list': [],
+            'supporting_documents-uploads': json.dumps([{"name": supporting_document.document.name, "size": supporting_document.document.size, "type": "existing"}]),
         })
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(project.payment_requests.count(), 1)
+        self.assertEqual(project.invoices.count(), 1)
 
-        payment_request.refresh_from_db()
+        invoice.refresh_from_db()
 
-        self.assertEqual(project.payment_requests.first().pk, payment_request.pk)
+        self.assertEqual(project.invoices.first().pk, invoice.pk)
 
-        self.assertEqual(requested_value + Decimal("1"), payment_request.requested_value)
-        self.assertEqual(payment_request.receipts.first().file, receipt.file)
+        self.assertEqual(amount + Decimal("1"), invoice.amount)
+        self.assertEqual(invoice.supporting_documents.first().document, supporting_document.document)
 
 
-class TestStaffEditPaymentRequestView(BaseViewTestCase):
+class TestStaffEditInvoiceView(BaseViewTestCase):
     base_view_name = 'edit'
-    url_name = 'funds:projects:payments:{}'
+    url_name = 'funds:projects:invoices:{}'
     user_factory = StaffFactory
 
     def get_kwargs(self, instance):
         return {'pk': instance.pk}
 
-    def test_editing_payment_remove_receipt(self):
-        payment_request = PaymentRequestFactory()
-        receipt = PaymentReceiptFactory(payment_request=payment_request)
+    def test_editing_invoice_remove_supporting_document(self):
+        invoice = InvoiceFactory()
+        SupportingDocumentFactory(invoice=invoice)
 
-        response = self.post_page(payment_request, {
-            'requested_value': payment_request.requested_value,
+        response = self.post_page(invoice, {
+            'amount': invoice.amount,
             'date_from': '2018-08-15',
             'date_to': '2019-08-15',
             'comment': 'test comment',
             'invoice': '',
-            'receipt_list': [receipt.pk],
+            'supporting_documents-uploads': '[]',
         })
 
         self.assertEqual(response.status_code, 200)
 
-        self.assertFalse(payment_request.receipts.exists())
+        self.assertFalse(invoice.supporting_documents.exists())
 
-    def test_editing_payment_keeps_receipts(self):
+    def test_editing_invoice_keeps_supprting_document(self):
         project = ProjectFactory()
-        payment_request = PaymentRequestFactory(project=project)
-        receipt = PaymentReceiptFactory(payment_request=payment_request)
+        invoice = InvoiceFactory(project=project)
+        supporting_document = SupportingDocumentFactory(invoice=invoice)
 
-        requested_value = payment_request.requested_value
+        amount = invoice.amount
 
-        invoice = BytesIO(b'somebinarydata')
-        invoice.name = 'invoice.pdf'
+        document = BytesIO(b'somebinarydata')
+        document.name = 'invoice.pdf'
 
-        response = self.post_page(payment_request, {
-            'requested_value': requested_value + 1,
+        response = self.post_page(invoice, {
+            'amount': amount + 1,
             'date_from': '2018-08-15',
             'date_to': '2019-08-15',
             'comment': 'test comment',
-            'invoice': invoice,
-            'receipt_list': [receipt.pk],
+            'document': document,
+            'supporting_documents-uploads': json.dumps([{"name": supporting_document.document.name, "size": supporting_document.document.size, "type": "existing"}]),
         })
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(project.payment_requests.count(), 1)
+        self.assertEqual(project.invoices.count(), 1)
 
-        payment_request.refresh_from_db()
+        invoice.refresh_from_db()
 
-        self.assertEqual(project.payment_requests.first().pk, payment_request.pk)
+        self.assertEqual(project.invoices.first().pk, invoice.pk)
 
-        self.assertEqual(requested_value + Decimal("1"), payment_request.requested_value)
+        self.assertEqual(amount + Decimal("1"), invoice.amount)
+        self.assertEqual(invoice.supporting_documents.first().document, supporting_document.document)
 
 
-class TestStaffChangePaymentRequestStatus(BaseViewTestCase):
+class TestStaffChangeInvoiceStatus(BaseViewTestCase):
     base_view_name = 'detail'
-    url_name = 'funds:projects:payments:{}'
+    url_name = 'funds:projects:invoices:{}'
     user_factory = StaffFactory
 
     def get_kwargs(self, instance):
@@ -1098,20 +1101,20 @@ class TestStaffChangePaymentRequestStatus(BaseViewTestCase):
         }
 
     def test_can(self):
-        payment_request = PaymentRequestFactory()
-        response = self.post_page(payment_request, {
-            'form-submitted-change_payment_status': '',
+        invoice = InvoiceFactory()
+        response = self.post_page(invoice, {
+            'form-submitted-change_invoice_status': '',
             'status': CHANGES_REQUESTED,
             'comment': 'this is a comment',
         })
         self.assertEqual(response.status_code, 200)
-        payment_request.refresh_from_db()
-        self.assertEqual(payment_request.status, CHANGES_REQUESTED)
+        invoice.refresh_from_db()
+        self.assertEqual(invoice.status, CHANGES_REQUESTED)
 
 
-class TestApplicantChangePaymentRequestStatus(BaseViewTestCase):
+class TestApplicantChangeInoviceStatus(BaseViewTestCase):
     base_view_name = 'detail'
-    url_name = 'funds:projects:payments:{}'
+    url_name = 'funds:projects:invoices:{}'
     user_factory = ApplicantFactory
 
     def get_kwargs(self, instance):
@@ -1120,29 +1123,29 @@ class TestApplicantChangePaymentRequestStatus(BaseViewTestCase):
         }
 
     def test_can(self):
-        payment_request = PaymentRequestFactory(project__user=self.user)
-        response = self.post_page(payment_request, {
-            'form-submitted-change_payment_status': '',
+        invoice = InvoiceFactory(project__user=self.user)
+        response = self.post_page(invoice, {
+            'form-submitted-change_invoice_status': '',
             'status': CHANGES_REQUESTED,
         })
         self.assertEqual(response.status_code, 200)
-        payment_request.refresh_from_db()
-        self.assertEqual(payment_request.status, SUBMITTED)
+        invoice.refresh_from_db()
+        self.assertEqual(invoice.status, SUBMITTED)
 
     def test_other_cant(self):
-        payment_request = PaymentRequestFactory()
-        response = self.post_page(payment_request, {
-            'form-submitted-change_payment_status': '',
+        invoice = InvoiceFactory()
+        response = self.post_page(invoice, {
+            'form-submitted-change_invoice_status': '',
             'status': CHANGES_REQUESTED,
         })
         self.assertEqual(response.status_code, 403)
-        payment_request.refresh_from_db()
-        self.assertEqual(payment_request.status, SUBMITTED)
+        invoice.refresh_from_db()
+        self.assertEqual(invoice.status, SUBMITTED)
 
 
-class TestStaffPaymentRequestInvoicePrivateMedia(BaseViewTestCase):
-    base_view_name = 'invoice'
-    url_name = 'funds:projects:payments:{}'
+class TestStaffInoviceDocumentPrivateMedia(BaseViewTestCase):
+    base_view_name = 'invoice-document'
+    url_name = 'funds:projects:invoices:{}'
     user_factory = StaffFactory
 
     def get_kwargs(self, instance):
@@ -1151,20 +1154,20 @@ class TestStaffPaymentRequestInvoicePrivateMedia(BaseViewTestCase):
         }
 
     def test_can_access(self):
-        payment_request = PaymentRequestFactory()
-        response = self.get_page(payment_request)
-        self.assertContains(response, payment_request.invoice.read())
+        invoice = InvoiceFactory()
+        response = self.get_page(invoice)
+        self.assertContains(response, invoice.document.read())
 
     def test_cant_access_if_project_wrong(self):
         other_project = ProjectFactory()
-        payment_request = PaymentRequestFactory()
-        response = self.get_page(payment_request, url_kwargs={'pk': other_project.pk})
+        invoice = InvoiceFactory()
+        response = self.get_page(invoice, url_kwargs={'pk': other_project.pk})
         self.assertEqual(response.status_code, 404)
 
 
-class TestApplicantPaymentRequestInvoicePrivateMedia(BaseViewTestCase):
-    base_view_name = 'invoice'
-    url_name = 'funds:projects:payments:{}'
+class TestApplicantInvoiceDocumentPrivateMedia(BaseViewTestCase):
+    base_view_name = 'invoice-document'
+    url_name = 'funds:projects:invoices:{}'
     user_factory = ApplicantFactory
 
     def get_kwargs(self, instance):
@@ -1173,52 +1176,52 @@ class TestApplicantPaymentRequestInvoicePrivateMedia(BaseViewTestCase):
         }
 
     def test_can_access_own(self):
-        payment_request = PaymentRequestFactory(project__user=self.user)
-        response = self.get_page(payment_request)
-        self.assertContains(response, payment_request.invoice.read())
+        invoice = InvoiceFactory(project__user=self.user)
+        response = self.get_page(invoice)
+        self.assertContains(response, invoice.document.read())
 
     def test_cant_access_other(self):
-        payment_request = PaymentRequestFactory()
-        response = self.get_page(payment_request)
+        invoice = InvoiceFactory()
+        response = self.get_page(invoice)
         self.assertEqual(response.status_code, 403)
 
 
-class TestStaffPaymentRequestReceiptPrivateMedia(BaseViewTestCase):
-    base_view_name = 'receipt'
-    url_name = 'funds:projects:payments:{}'
+class TestStaffInvoiceSupportingDocumentPrivateMedia(BaseViewTestCase):
+    base_view_name = 'supporting-document'
+    url_name = 'funds:projects:invoices:{}'
     user_factory = StaffFactory
 
     def get_kwargs(self, instance):
         return {
-            'pk': instance.payment_request.pk,
+            'pk': instance.invoice.pk,
             'file_pk': instance.pk,
         }
 
     def test_can_access(self):
-        payment_receipt = PaymentReceiptFactory()
-        response = self.get_page(payment_receipt)
-        self.assertContains(response, payment_receipt.file.read())
+        supporting_document = SupportingDocumentFactory()
+        response = self.get_page(supporting_document)
+        self.assertContains(response, supporting_document.document.read())
 
 
-class TestApplicantPaymentRequestReceiptPrivateMedia(BaseViewTestCase):
-    base_view_name = 'receipt'
-    url_name = 'funds:projects:payments:{}'
+class TestApplicantSupportingDocumentPrivateMedia(BaseViewTestCase):
+    base_view_name = 'supporting-document'
+    url_name = 'funds:projects:invoices:{}'
     user_factory = ApplicantFactory
 
     def get_kwargs(self, instance):
         return {
-            'pk': instance.payment_request.pk,
+            'pk': instance.invoice.pk,
             'file_pk': instance.pk,
         }
 
     def test_can_access_own(self):
-        payment_receipt = PaymentReceiptFactory(payment_request__project__user=self.user)
-        response = self.get_page(payment_receipt)
-        self.assertContains(response, payment_receipt.file.read())
+        supporting_document = SupportingDocumentFactory(invoice__project__user=self.user)
+        response = self.get_page(supporting_document)
+        self.assertContains(response, supporting_document.document.read())
 
     def test_cant_access_other(self):
-        payment_receipt = PaymentReceiptFactory()
-        response = self.get_page(payment_receipt)
+        supporting_document = SupportingDocumentFactory()
+        response = self.get_page(supporting_document)
         self.assertEqual(response.status_code, 403)
 
 
