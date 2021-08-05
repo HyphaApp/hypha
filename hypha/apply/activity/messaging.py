@@ -11,7 +11,7 @@ from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.translation import gettext as _
 
-from .models import ALL, TEAM
+from .models import ALL, TEAM, REVIEWER
 from .options import MESSAGES
 from .tasks import send_mail
 
@@ -273,6 +273,15 @@ class ActivityAdapter(AdapterBase):
         if is_transition(message_type) and not source.phase.permissions.can_view(source.user):
             # User's shouldn't see status activity changes for stages that aren't visible to the them
             return {'visibility': TEAM}
+
+        # To fix visibility issue of review
+        if message_type in [
+            MESSAGES.NEW_REVIEW,
+            MESSAGES.EDIT_REVIEW,
+            MESSAGES.DELETE_REVIEW,
+        ]:
+            return {'visibility': REVIEWER}
+
         return {}
 
     def reviewers_updated(self, added=list(), removed=list(), **kwargs):
