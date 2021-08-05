@@ -11,7 +11,7 @@ from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.translation import gettext as _
 
-from .models import ALL, TEAM, REVIEWER
+from .models import ALL, REVIEWER, TEAM
 from .options import MESSAGES
 from .tasks import send_mail
 
