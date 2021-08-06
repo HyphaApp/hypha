@@ -47,7 +47,7 @@ class BaseActivityQuerySet(models.QuerySet):
         messages = ActivityAdapter.messages
         if user.is_applicant:
             return self.exclude(
-                message__in=[messages.get(MESSAGES.NEW_REVIEW), messages.get(MESSAGES.REVIEW_OPINION)]
+                message=messages.get(MESSAGES.NEW_REVIEW)
             ).filter(visibility__in=self.model.visibility_for(user))
 
         return self.filter(visibility__in=self.model.visibility_for(user))

@@ -266,6 +266,7 @@ class ActivityAdapter(AdapterBase):
                 MESSAGES.APPROVE_PROJECT,
                 MESSAGES.REQUEST_PROJECT_CHANGE,
                 MESSAGES.SEND_FOR_APPROVAL,
+                MESSAGES.NEW_REVIEW,
         ]:
             return {'visibility': TEAM}
 
@@ -273,15 +274,6 @@ class ActivityAdapter(AdapterBase):
         if is_transition(message_type) and not source.phase.permissions.can_view(source.user):
             # User's shouldn't see status activity changes for stages that aren't visible to the them
             return {'visibility': TEAM}
-
-        # To fix visibility issue of review
-        if message_type in [
-            MESSAGES.NEW_REVIEW,
-            MESSAGES.EDIT_REVIEW,
-            MESSAGES.DELETE_REVIEW,
-        ]:
-            return {'visibility': REVIEWER}
-
         return {}
 
     def reviewers_updated(self, added=list(), removed=list(), **kwargs):
