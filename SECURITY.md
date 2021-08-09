@@ -1,3 +1,8 @@
+# Archived
+This page has been replaced by the docs.hypha.app page: https://docs.hypha.app/contributing/contributing/security
+
+***
+
 ## Security
 
 We take security very seriously. We welcome any peer review of our 100% open source code to ensure the information submitted through this platform or other who rely upon it is not compromised or that hacked.
