@@ -5,6 +5,7 @@
 ![Lines of code](https://img.shields.io/tokei/lines/github/HyphaApp/hypha)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/HyphaApp/hypha)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/HyphaApp/hypha)
+[![Translation status](https://hosted.weblate.org/widgets/hypha/-/svg-badge.svg)](https://hosted.weblate.org/engage/hypha/)
 [![GitHub license](https://img.shields.io/github/license/HyphaApp/hypha)](https://github.com/HyphaApp/hypha/blob/main/LICENSE)
 [![Zulip chat](https://img.shields.io/badge/chat-chat.hypha.app-brightgreen)](https://chat.hypha.app/)
 [![Discource forum](https://img.shields.io/badge/forum-we.hypha.app-orange)](https://we.hypha.app/)
