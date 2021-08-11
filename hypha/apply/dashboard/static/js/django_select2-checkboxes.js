@@ -20,7 +20,7 @@
                 } else if (data.selected.length == data.all.length) {
                   return 'All ' + filterType + ' selected';
                 }
-                return data.selected.length + ' of ' + data.all.length + ' ' + filterType + ' selected';
+                return data.selected.length + ' of ' + data.all.length + ' ' + filterType;
               },
               selectionAdapter: SelectionAdapter,
               returnesultsAdapter: ResultsAdapter
