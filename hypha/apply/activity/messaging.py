@@ -266,6 +266,7 @@ class ActivityAdapter(AdapterBase):
                 MESSAGES.APPROVE_PROJECT,
                 MESSAGES.REQUEST_PROJECT_CHANGE,
                 MESSAGES.SEND_FOR_APPROVAL,
+                MESSAGES.NEW_REVIEW,
         ]:
             return {'visibility': TEAM}
 
