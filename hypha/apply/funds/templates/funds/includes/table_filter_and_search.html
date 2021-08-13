@@ -47,7 +47,9 @@
 
         {# Right #}
         <div class="actions-bar__inner actions-bar__inner--right">
-            <button class="button button--filters js-toggle-filters">Filters</button>
+            {% if filter_classes != 'filters-open' %}
+                <button class="button button--filters js-toggle-filters">Filters</button>
+            {% endif %}
 
             {% if use_search|default:False %}
             <form action="{{ search_action }}" method="get" role="search" class="form form--search-desktop">
