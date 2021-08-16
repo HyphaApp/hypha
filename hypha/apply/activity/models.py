@@ -23,7 +23,7 @@ ALL = 'all'
 
 VISIBILITY = {
     APPLICANT: 'Applicant(s)',
-    TEAM: 'Team',
+    TEAM: 'Staff',
     REVIEWER: 'Reviewers',
     PARTNER: 'Partners',
     ALL: 'All',
