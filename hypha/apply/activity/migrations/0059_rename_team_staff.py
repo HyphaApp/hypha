@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('activity', '0056_add_updated_vendor'),
+        ('activity', '0058_add_project_invoicing'),
     ]
 
     operations = [
