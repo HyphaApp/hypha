@@ -1,4 +1,4 @@
-{% load determination_tags %}
+{% load humanize determination_tags %}
 <div class="sidebar__inner">
     <h5>Determination</h5>
     {% for determination in object.determinations.all %}
@@ -6,7 +6,7 @@
             <a class="link link--bold" href="{% url 'apply:submissions:determinations:detail' submission_pk=object.id pk=determination.id %}">
                 {% if determination.is_draft %}[Draft] {% endif %}{{ determination.get_outcome_display }}
             </a>
-            - {{ determination.updated_at|date:"Y-m-d" }} by {{ determination.author }}
+            - <time datetime="{{ determination.updated_at|date:"c" }}" title="{{ determination.updated_at|date:"SHORT_DATETIME_FORMAT" }}">{{ determination.updated_at|naturaltime }}</time> by {{ determination.author }}
         </p>
     {% empty %}
         <p>Awaiting determination</p>
