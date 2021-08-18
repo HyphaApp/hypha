@@ -127,7 +127,7 @@
                 {% if object.can_request_funding %}
                 <div class="wrapper wrapper--outer-space-large">
                     {% include "application_projects/includes/funding_block.html" %}
-                    {% include "application_projects/includes/payment_requests.html" %}
+                    {% include "application_projects/includes/invoices.html" %}
                 </div>
                 {% endif %}
 
@@ -176,8 +176,8 @@
 
                     {% if object.can_request_funding %}
                     <a class="button button--primary button--bottom-space button--full-width"
-                       href="{% url "apply:projects:request" pk=object.pk %}">
-                        Add payment request
+                       href="{% url "apply:projects:invoice" pk=object.pk %}">
+                        Add Invoice
                     </a>
                     {% endif %}
 
@@ -192,7 +192,9 @@
                     <h5>Supporting Information</h5>
 
                     <p><a class="link link--bold" href="{{ object.submission.get_absolute_url }}">Proposal</a></p>
-
+                    {% if project.vendor %}
+                        <p><a class="link link--bold" href="{% url 'apply:projects:vendor-detail' pk=project.pk vendor_pk=project.vendor.pk %}">Contractor Setup Form</a></p>
+                    {% endif %}
                     {% if request.user.is_apply_staff %}
                     <p><a class="link link--bold" href="{% url 'apply:projects:simplified' pk=project.pk %}">Approval form</a></p>
                     {% endif %}

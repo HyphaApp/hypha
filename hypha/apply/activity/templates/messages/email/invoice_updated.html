@@ -1,0 +1,11 @@
+{% extends "messages/email/applicant_base.html" %}
+
+{% load i18n %}
+{% block content %}
+
+{% blocktrans %}An {{ ORG_SHORT_NAME }} staff member has updated your invoice for {{ source.title }} for period {{ invoice.date_from }} to {{ invoice.date_to }}.{% endblocktrans %}
+{% blocktrans %}It is now {{ invoice.get_status_display }}.{% endblocktrans %}
+
+{% trans "Title" %}: {{ source.title }}
+{% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
+{% endblock %}

@@ -1,4 +1,10 @@
-from .payment import PaymentApproval, PaymentReceipt, PaymentRequest
+from .payment import (
+    Invoice,
+    PaymentApproval,
+    PaymentReceipt,
+    PaymentRequest,
+    SupportingDocument,
+)
 from .project import (
     Approval,
     Contract,
@@ -29,4 +35,6 @@ __all__ = [
     'Vendor',
     'BankInformation',
     'DueDiligenceDocument',
+    'Invoice',
+    'SupportingDocument',
 ]

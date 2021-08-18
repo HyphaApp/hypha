@@ -7,7 +7,7 @@ from django.db.models import F, Sum
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
-from .models import PaymentRequest, Project, Report
+from .models import Invoice, PaymentRequest, Project, Report
 
 
 class BasePaymentRequestsTable(tables.Table):
@@ -66,6 +66,47 @@ class PaymentRequestsListTable(BasePaymentRequestsTable):
         direction = '-' if is_descending else ''
 
         qs = qs.order_by(f'{direction}paid_value', f'{direction}requested_value')
+
+        return qs, True
+
+
+class BaseInvoiceTable(tables.Table):
+    project = tables.LinkColumn(
+        'funds:projects:invoices:detail',
+        verbose_name=_('Invoice reference'),
+        text=lambda r: textwrap.shorten(r.project.title, width=30, placeholder="..."),
+        args=[tables.utils.A('pk')],
+    )
+    status = tables.Column()
+    requested_at = tables.DateColumn(verbose_name=_('Submitted'))
+    amount = tables.Column(verbose_name=_('Value ({currency})').format(currency=settings.CURRENCY_SYMBOL))
+
+    def render_amount(self, value):
+        return intcomma(value)
+
+
+class InvoiceListTable(BaseInvoiceTable):
+    fund = tables.Column(verbose_name=_('Fund'), accessor='project.submission.page')
+    lead = tables.Column(verbose_name=_('Lead'), accessor='project.lead')
+
+    class Meta:
+        fields = [
+            'requested_at',
+            'project',
+            'amount',
+            'status',
+            'lead',
+            'fund',
+        ]
+        model = Invoice
+        orderable = True
+        order_by = ['-requested_at']
+        attrs = {'class': 'payment-requests-table'}
+
+    def order_value(self, qs, is_descending):
+        direction = '-' if is_descending else ''
+
+        qs = qs.order_by(f'{direction}paid_value', f'{direction}amount')
 
         return qs, True
 

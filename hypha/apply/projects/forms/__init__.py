@@ -1,6 +1,9 @@
 from .payment import (
+    ChangeInvoiceStatusForm,
     ChangePaymentRequestStatusForm,
+    CreateInvoiceForm,
     CreatePaymentRequestForm,
+    EditInvoiceForm,
     EditPaymentRequestForm,
     SelectDocumentForm,
 )
@@ -53,4 +56,7 @@ __all__ = [
     'CreateVendorFormStep4',
     'CreateVendorFormStep5',
     'CreateVendorFormStep6',
+    'CreateInvoiceForm',
+    'ChangeInvoiceStatusForm',
+    'EditInvoiceForm',
 ]
