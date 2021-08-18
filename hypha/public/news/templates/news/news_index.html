@@ -36,7 +36,7 @@
                             <h6 class="listing__teaser">{{ n.listing_summary|default:n.introduction }}</h6>
                         {% endif %}
                         <span class="listing__meta">
-                            {{ n.display_date|date:"Y-m-d" }}
+                            {{ n.display_date|date:"SHORT_DATE_FORMAT" }}
                             {% if n.authors.all %}
                                 | By:
                                 {% for author in n.authors.all %}
