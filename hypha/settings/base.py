@@ -319,7 +319,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # Number of days that password reset and account activation links are valid (default 3).
-PASSWORD_RESET_TIMEOUT_DAYS = 8
+if 'PASSWORD_RESET_TIMEOUT_DAYS' in env:
+    PASSWORD_RESET_TIMEOUT_DAYS = int(env['PASSWORD_RESET_TIMEOUT_DAYS'])
 
 # Internationalization
 # https://docs.djangoproject.com/en/stable/topics/i18n/
