@@ -1,6 +1,6 @@
 {% load humanize %}
 <div class="sidebar__inner">
-    <h5>Determination</h5>
+    <h5>Determinations</h5>
     {% for determination in object.determinations.submitted %}
         <p>
             <a class="link link--bold" href="{% url 'apply:submissions:determinations:detail' submission_pk=object.id pk=determination.id %}">
