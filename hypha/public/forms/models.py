@@ -5,7 +5,7 @@ from django.conf import settings
 from django.core.files.storage import get_storage_class
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
-from django.forms import FileField
+from django.forms import FileField, FileInput
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import never_cache
@@ -42,7 +42,7 @@ class FormField(AbstractFormField):
 
 class ExtendedFormBuilder(FormBuilder):
     def create_document_field(self, field, options):
-        return FileField(**options)
+        return FileField(widget=FileInput(attrs={'accept': settings.FILE_ALLOWED_EXTENSIONS}), **options)
 
 
 @method_decorator(never_cache, name='serve')
