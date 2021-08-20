@@ -1,7 +1,7 @@
 {% load humanize determination_tags %}
 <div class="sidebar__inner">
     <h5>Determinations</h5>
-    {% for determination in object.determinations.all %}
+    {% for determination in object.determinations.staff %}
         <p>
             <a class="link link--bold" href="{% url 'apply:submissions:determinations:detail' submission_pk=object.id pk=determination.id %}">
                 {% if determination.is_draft %}[Draft] {% endif %}{{ determination.get_outcome_display }}
