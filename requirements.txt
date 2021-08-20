@@ -24,7 +24,7 @@ django-salesforce==3.1
 django-select2==7.6.1
 django-storages==1.11.1
 django-tables2==2.3.4
-django-tinymce4-lite==1.8.0
+django-tinymce==3.3.0
 django-two-factor-auth==1.13
 django-webpack-loader==0.7.0
 django==2.2.24
