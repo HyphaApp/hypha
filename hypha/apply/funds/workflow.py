@@ -243,10 +243,10 @@ SingleStageDefinition = [
         'internal_review': {
             'transitions': {
                 'post_review_discussion': _('Close Review'),
-                INITIAL_STATE: 'Need screening (back)',
+                INITIAL_STATE: _('Need screening (revert)'),
             },
             'display': _('Internal Review'),
-            'public': f'{settings.ORG_SHORT_NAME} Review',
+            'public': _('{org_short_name} Review').format(org_short_name=settings.ORG_SHORT_NAME),
             'stage': Request,
             'permissions': default_permissions,
         },
@@ -256,7 +256,7 @@ SingleStageDefinition = [
             'transitions': {
                 'post_review_more_info': _('Request More Information'),
                 'determination': _('Ready For Determination'),
-                'internal_review': 'Open Review (back)',
+                'internal_review': _('Open Review (revert)'),
                 'almost': _('Accept but additional info required'),
                 'accepted': _('Accept'),
                 'rejected': _('Dismiss'),
@@ -285,7 +285,7 @@ SingleStageDefinition = [
     {
         'determination': {
             'transitions': {
-                'post_review_discussion': 'Ready For Discussion (back)',
+                'post_review_discussion': _('Ready For Discussion (revert)'),
                 'almost': _('Accept but additional info required'),
                 'accepted': _('Accept'),
                 'rejected': _('Dismiss'),
@@ -299,7 +299,7 @@ SingleStageDefinition = [
         'almost': {
             'transitions': {
                 'accepted': _('Accept'),
-                'post_review_discussion': 'Ready For Discussion (back)',
+                'post_review_discussion': _('Ready For Discussion (revert)'),
             },
             'display': _('Accepted but additional info required'),
             'stage': Request,
@@ -364,10 +364,10 @@ SingleStageExternalDefinition = [
         'ext_internal_review': {
             'transitions': {
                 'ext_post_review_discussion': _('Close Review'),
-                INITIAL_STATE: 'Need screening (back)',
+                INITIAL_STATE: _('Need screening (revert)'),
             },
             'display': _('Internal Review'),
-            'public': f'{settings.ORG_SHORT_NAME} Review',
+            'public': _('{org_short_name} Review').format(org_short_name=settings.ORG_SHORT_NAME),
             'stage': RequestExt,
             'permissions': default_permissions,
         },
@@ -378,7 +378,7 @@ SingleStageExternalDefinition = [
                 'ext_post_review_more_info': _('Request More Information'),
                 'ext_external_review': _('Open External Review'),
                 'ext_determination': _('Ready For Determination'),
-                'ext_internal_review': 'Open Internal Review (back)',
+                'ext_internal_review': _('Open Internal Review (revert)'),
                 'ext_rejected': _('Dismiss'),
             },
             'display': _('Ready For Discussion'),
@@ -402,7 +402,7 @@ SingleStageExternalDefinition = [
         'ext_external_review': {
             'transitions': {
                 'ext_post_external_review_discussion': _('Close Review'),
-                'ext_post_review_discussion': 'Ready For Discussion (back)',
+                'ext_post_review_discussion': _('Ready For Discussion (revert)'),
             },
             'display': _('External Review'),
             'stage': RequestExt,
@@ -414,7 +414,7 @@ SingleStageExternalDefinition = [
             'transitions': {
                 'ext_post_external_review_more_info': _('Request More Information'),
                 'ext_determination': _('Ready For Determination'),
-                'ext_external_review': 'Open External Review (back)',
+                'ext_external_review': _('Open External Review (revert)'),
                 'ext_almost': _('Accept but additional info required'),
                 'ext_accepted': _('Accept'),
                 'ext_rejected': _('Dismiss'),
@@ -439,7 +439,7 @@ SingleStageExternalDefinition = [
     {
         'ext_determination': {
             'transitions': {
-                'ext_post_external_review_discussion': 'Ready For Discussion (back)',
+                'ext_post_external_review_discussion': _('Ready For Discussion (revert)'),
                 'ext_almost': _('Accept but additional info required'),
                 'ext_accepted': _('Accept'),
                 'ext_rejected': _('Dismiss'),
@@ -453,7 +453,7 @@ SingleStageExternalDefinition = [
         'ext_almost': {
             'transitions': {
                 'ext_accepted': _('Accept'),
-                'ext_post_external_review_discussion': 'Ready For Discussion (back)',
+                'ext_post_external_review_discussion': _('Ready For Discussion (revert)'),
             },
             'display': _('Accepted but additional info required'),
             'stage': RequestExt,
@@ -518,7 +518,7 @@ SingleStageCommunityDefinition = [
         },
         'com_open_call': {
             'transitions': {
-                INITIAL_STATE: 'Need screening (back)',
+                INITIAL_STATE: _('Need screening (revert)'),
                 'com_rejected': _('Dismiss'),
             },
             'display': 'Open Call (public)',
@@ -531,22 +531,22 @@ SingleStageCommunityDefinition = [
             'transitions': {
                 'com_community_review': _('Open Community Review'),
                 'com_post_review_discussion': _('Close Review'),
-                INITIAL_STATE: 'Need screening (back)',
+                INITIAL_STATE: _('Need screening (revert)'),
                 'com_rejected': _('Dismiss'),
             },
             'display': _('Internal Review'),
-            'public': f'{settings.ORG_SHORT_NAME} Review',
+            'public': _('{org_short_name} Review').format(org_short_name=settings.ORG_SHORT_NAME),
             'stage': RequestCom,
             'permissions': default_permissions,
         },
         'com_community_review': {
             'transitions': {
                 'com_post_review_discussion': _('Close Review'),
-                'com_internal_review': 'Open Internal Review (back)',
+                'com_internal_review': _('Open Internal Review (revert)'),
                 'com_rejected': _('Dismiss'),
             },
             'display': _('Community Review'),
-            'public': f'{settings.ORG_SHORT_NAME} Review',
+            'public': _('{org_short_name} Review').format(org_short_name=settings.ORG_SHORT_NAME),
             'stage': RequestCom,
             'permissions': community_review_permissions,
         },
@@ -557,7 +557,7 @@ SingleStageCommunityDefinition = [
                 'com_post_review_more_info': _('Request More Information'),
                 'com_external_review': _('Open External Review'),
                 'com_determination': _('Ready For Determination'),
-                'com_internal_review': 'Open Internal Review (back)',
+                'com_internal_review': _('Open Internal Review (revert)'),
                 'com_rejected': _('Dismiss'),
             },
             'display': _('Ready For Discussion'),
@@ -581,7 +581,7 @@ SingleStageCommunityDefinition = [
         'com_external_review': {
             'transitions': {
                 'com_post_external_review_discussion': _('Close Review'),
-                'com_post_review_discussion': 'Ready For Discussion (back)',
+                'com_post_review_discussion': _('Ready For Discussion (revert)'),
             },
             'display': _('External Review'),
             'stage': RequestCom,
@@ -593,7 +593,7 @@ SingleStageCommunityDefinition = [
             'transitions': {
                 'com_post_external_review_more_info': _('Request More Information'),
                 'com_determination': _('Ready For Determination'),
-                'com_external_review': 'Open External Review (back)',
+                'com_external_review': _('Open External Review (revert)'),
                 'com_almost': _('Accept but additional info required'),
                 'com_accepted': _('Accept'),
                 'com_rejected': _('Dismiss'),
@@ -618,7 +618,7 @@ SingleStageCommunityDefinition = [
     {
         'com_determination': {
             'transitions': {
-                'com_post_external_review_discussion': 'Ready For Discussion (back)',
+                'com_post_external_review_discussion': _('Ready For Discussion (revert)'),
                 'com_almost': _('Accept but additional info required'),
                 'com_accepted': _('Accept'),
                 'com_rejected': _('Dismiss'),
@@ -632,7 +632,7 @@ SingleStageCommunityDefinition = [
         'com_almost': {
             'transitions': {
                 'com_accepted': _('Accept'),
-                'com_post_external_review_discussion': 'Ready For Discussion (back)',
+                'com_post_external_review_discussion': _('Ready For Discussion (revert)'),
             },
             'display': _('Accepted but additional info required'),
             'stage': RequestCom,
@@ -702,11 +702,11 @@ DoubleStageDefinition = [
         'concept_internal_review': {
             'transitions': {
                 'concept_review_discussion': _('Close Review'),
-                INITIAL_STATE: 'Need screening (back)',
+                INITIAL_STATE: _('Need screening (revert)'),
                 'invited_to_proposal': _('Invite to Proposal'),
             },
             'display': _('Internal Review'),
-            'public': f'{settings.ORG_SHORT_NAME} Review',
+            'public': _('{org_short_name} Review').format(org_short_name=settings.ORG_SHORT_NAME),
             'stage': Concept,
             'permissions': default_permissions,
         },
@@ -716,7 +716,7 @@ DoubleStageDefinition = [
             'transitions': {
                 'concept_review_more_info': _('Request More Information'),
                 'concept_determination': _('Ready For Preliminary Determination'),
-                'concept_internal_review': 'Open Review (back)',
+                'concept_internal_review': _('Open Review (revert)'),
                 'invited_to_proposal': _('Invite to Proposal'),
                 'concept_rejected': _('Dismiss'),
             },
@@ -741,7 +741,7 @@ DoubleStageDefinition = [
     {
         'concept_determination': {
             'transitions': {
-                'concept_review_discussion': 'Ready For Discussion (back)',
+                'concept_review_discussion': _('Ready For Discussion (revert)'),
                 'invited_to_proposal': _('Invite to Proposal'),
                 'concept_rejected': _('Dismiss'),
             },
@@ -817,10 +817,10 @@ DoubleStageDefinition = [
         'proposal_internal_review': {
             'transitions': {
                 'post_proposal_review_discussion': _('Close Review'),
-                'proposal_discussion': 'Proposal Received (back)',
+                'proposal_discussion': _('Proposal Received (revert)'),
             },
             'display': _('Internal Review'),
-            'public': f'{settings.ORG_SHORT_NAME} Review',
+            'public': _('{org_short_name} Review').format(org_short_name=settings.ORG_SHORT_NAME),
             'stage': Proposal,
             'permissions': default_permissions,
         },
@@ -831,7 +831,7 @@ DoubleStageDefinition = [
                 'post_proposal_review_more_info': _('Request More Information'),
                 'external_review': _('Open External Review'),
                 'proposal_determination': _('Ready For Final Determination'),
-                'proposal_internal_review': 'Open Internal Review (back)',
+                'proposal_internal_review': _('Open Internal Review (revert)'),
                 'proposal_rejected': _('Dismiss'),
             },
             'display': _('Ready For Discussion'),
@@ -856,7 +856,7 @@ DoubleStageDefinition = [
         'external_review': {
             'transitions': {
                 'post_external_review_discussion': _('Close Review'),
-                'post_proposal_review_discussion': 'Ready For Discussion (back)',
+                'post_proposal_review_discussion': _('Ready For Discussion (revert)'),
             },
             'display': _('External Review'),
             'stage': Proposal,
@@ -868,7 +868,7 @@ DoubleStageDefinition = [
             'transitions': {
                 'post_external_review_more_info': _('Request More Information'),
                 'proposal_determination': _('Ready For Final Determination'),
-                'external_review': 'Open External Review (back)',
+                'external_review': _('Open External Review (revert)'),
                 'proposal_almost': _('Accept but additional info required'),
                 'proposal_accepted': _('Accept'),
                 'proposal_rejected': _('Dismiss'),
@@ -893,7 +893,7 @@ DoubleStageDefinition = [
     {
         'proposal_determination': {
             'transitions': {
-                'post_external_review_discussion': 'Ready For Discussion (back)',
+                'post_external_review_discussion': _('Ready For Discussion (revert)'),
                 'proposal_almost': _('Accept but additional info required'),
                 'proposal_accepted': _('Accept'),
                 'proposal_rejected': _('Dismiss'),
@@ -907,7 +907,7 @@ DoubleStageDefinition = [
         'proposal_almost': {
             'transitions': {
                 'proposal_accepted': _('Accept'),
-                'post_external_review_discussion': 'Ready For Discussion (back)',
+                'post_external_review_discussion': _('Ready For Discussion (revert)'),
             },
             'display': _('Accepted but additional info required'),
             'stage': Proposal,
