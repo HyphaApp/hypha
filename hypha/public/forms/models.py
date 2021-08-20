@@ -5,7 +5,6 @@ from django.conf import settings
 from django.core.files.storage import get_storage_class
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
-from django.core.exceptions import ValidationError
 from django.forms import FileField, FileInput
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
