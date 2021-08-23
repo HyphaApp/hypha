@@ -6,7 +6,7 @@
     <div class="feed__content js-feed-content">
         <div class="feed__meta js-feed-meta">
             <p class="feed__label feed__label--{{ activity.type }} feed__label--mobile">{{ activity.type|capfirst }}</p>
-            <p class="feed__meta-item"><span>{{ activity|display_author:request.user }}</span> – {{ activity.timestamp|date:"Y-m-d H:i" }}</p>
+            <p class="feed__meta-item"><span>{{ activity|display_author:request.user }}</span> – {{ activity.timestamp|date:"SHORT_DATETIME_FORMAT" }}</p>
 
             {% if editable %}
                 {% if activity.user == request.user %}
@@ -18,7 +18,7 @@
                     </p>
                 {% endif %}
                 <p class="feed__meta-item feed__meta-item--last-edited" {% if not activity.edited %} hidden {% endif %}>
-                    (Last edited: <span class="js-last-edited">{{ activity.edited|date:"Y-m-d H:i" }}</span>)
+                    (Last edited: <span class="js-last-edited">{{ activity.edited|date:"SHORT_DATETIME_FORMAT" }}</span>)
                 </p>
             {% endif %}
 

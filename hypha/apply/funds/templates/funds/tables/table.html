@@ -28,7 +28,7 @@
                         <td>
                             {% if submission.last_update %}
                                 <strong>by {{ submission.last_user_update }}</strong><br/>
-                                {{ submission.last_update|date:"Y-m-d \a\t H:i" }}
+                                {{ submission.last_update|date:"SHORT_DATETIME_FORMAT" }}
                             {% else %}
                                 &mdash;
                             {% endif %}

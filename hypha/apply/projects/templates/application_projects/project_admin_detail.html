@@ -112,7 +112,7 @@
     <h5>Approved By:</h5>
 
     {% for approval in approvals %}
-    <p>{{ approval.by }} - {{ approval.created_at|date:"Y-m-d" }}</p>
+    <p>{{ approval.by }} - {{ approval.created_at|date:"SHORT_DATE_FORMAT" }}</p>
     {% endfor %}
 </div>
 {% endblock %}
