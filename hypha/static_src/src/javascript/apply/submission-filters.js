@@ -33,7 +33,7 @@
         // find the matching dropdown
         let match = $(`.select2-selection[aria-owns="${selectId}"]`);
 
-        if (match.length !== 0){
+        if (match.length !== 0) {
             // if the dropdown contains a clear class, the filters are active
             if ($(match[0]).find('span.select2-selection__clear').length !== 0) {
                 match[0].classList.add(filterActiveClass);

@@ -335,6 +335,40 @@
         }
     }
 
+    &__comments {
+        display: grid;
+        grid-template-areas: 'message' 'visibility' 'actions';
+        grid-template-rows: auto auto auto;
+        grid-template-columns: 1fr;
+
+
+        @include media-query(tablet-landscape) {
+            grid-template-areas: 'message visibility' 'actions actions';
+            grid-template-rows: auto auto;
+            grid-template-columns: 2fr 1fr;
+            column-gap: 2rem;
+
+            .wmd-input {
+                max-width: 100%;
+                margin-bottom:  0;
+            }
+        }
+
+        .id_message {
+            grid-area: message;
+        }
+
+        .id_visibility_0 {
+            grid-area: visibility;
+        }
+
+        .button {
+            grid-area: actions;
+            max-width: 210px;
+            text-align: center;
+        }
+    }
+
     select,
     input[type='url'],
     input[type='text']:not(.input--secondary),

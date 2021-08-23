@@ -21,18 +21,9 @@ REVIEWER = 'reviewers'
 PARTNER = 'partners'
 ALL = 'all'
 
-VISIBILILTY_HELP_TEXT = {
-    APPLICANT: 'Visible to applicant and team.',
-    TEAM: 'Visible only to team.',
-    REVIEWER: 'Visible to reviewers and team.',
-    PARTNER: 'Visible to partners and team.',
-    ALL: 'Visible to any user who has access to the submission.',
-}
-
-
 VISIBILITY = {
     APPLICANT: 'Applicant(s)',
-    TEAM: 'Team',
+    TEAM: 'Staff',
     REVIEWER: 'Reviewers',
     PARTNER: 'Partners',
     ALL: 'All',

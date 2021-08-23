@@ -1,9 +1,8 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from django.utils.safestring import mark_safe
 from pagedown.widgets import PagedownWidget
 
-from .models import VISIBILILTY_HELP_TEXT, VISIBILITY, Activity
+from .models import Activity
 
 
 class CommentForm(forms.ModelForm):
@@ -28,9 +27,6 @@ class CommentForm(forms.ModelForm):
         visibility.initial = self.visibility_choices[1] if user.is_apply_staff else self.visibility_choices[0]
         if len(self.visibility_choices) > 1:
             visibility.choices = self.visibility_choices
-            visibility.help_text = mark_safe('<br>'.join(
-                [VISIBILITY[choice] + ': ' + VISIBILILTY_HELP_TEXT[choice] for choice in self.allowed_visibility]
-            ))
         else:
             visibility.widget = forms.HiddenInput()
 
