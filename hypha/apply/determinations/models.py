@@ -34,7 +34,7 @@ class DeterminationQuerySet(models.QuerySet):
 
     def active(self):
         # Designed to be used with a queryset related to submissions
-        return self.get(is_draft=True).order_by('-updated_at')
+        return self.get(is_draft=True)
 
     def submitted(self):
         return self.filter(is_draft=False).order_by('-updated_at')
