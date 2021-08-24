@@ -1,3 +1,5 @@
+import bleach
+
 from functools import partial
 from itertools import groupby
 from operator import methodcaller
@@ -349,14 +351,15 @@ def make_role_reviewer_fields():
     staff_reviewers = User.objects.staff().only('full_name', 'pk')
 
     for role in ReviewerRole.objects.all().order_by('order'):
-        field_name = 'role_reviewer_' + slugify(str(role))
+        role_name = bleach.clean(role.name, strip=True)
+        field_name = 'role_reviewer_' + slugify(role_name)
         field = forms.ModelChoiceField(
             queryset=staff_reviewers,
             widget=Select2Widget(attrs={
-                'data-placeholder': 'Select a reviewer',
+                'data-placeholder': _('Select a reviewer'),
             }),
             required=False,
-            label=mark_safe(render_icon(role.icon) + f'{role.name} Reviewer'),
+            label=mark_safe(render_icon(role.icon) + _('{role_name} Reviewer').format(role_name=role_name)),
         )
         role_fields.append({
             'role': role,
