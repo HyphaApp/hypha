@@ -1,9 +1,8 @@
-import bleach
-
 from functools import partial
 from itertools import groupby
 from operator import methodcaller
 
+import bleach
 from django import forms
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
