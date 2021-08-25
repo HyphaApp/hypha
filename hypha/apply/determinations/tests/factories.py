@@ -34,7 +34,7 @@ class DeterminationDataFactory(factory.DictFactory):
         return super()._build(model_class, *args, **form_fields)
 
 
-class DeterminationFactory(factory.DjangoModelFactory):
+class DeterminationFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Determination
 
@@ -84,7 +84,7 @@ DeterminationFormFieldsFactory = StreamFieldUUIDFactory({
 })
 
 
-class DeterminationFormFactory(factory.DjangoModelFactory):
+class DeterminationFormFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = DeterminationForm
 

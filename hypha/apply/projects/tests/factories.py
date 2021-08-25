@@ -50,7 +50,7 @@ def address_to_form_data():
     }
 
 
-class DocumentCategoryFactory(factory.DjangoModelFactory):
+class DocumentCategoryFactory(factory.django.DjangoModelFactory):
     name = factory.Sequence('name {}'.format)
     recommended_minimum = 1
 
@@ -58,7 +58,7 @@ class DocumentCategoryFactory(factory.DjangoModelFactory):
         model = DocumentCategory
 
 
-class ProjectApprovalFormFactory(factory.DjangoModelFactory):
+class ProjectApprovalFormFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = ProjectApprovalForm
 
@@ -70,7 +70,7 @@ class ProjectApprovalFormDataFactory(FormDataFactory):
     field_factory = FormFieldsBlockFactory
 
 
-class ProjectFactory(factory.DjangoModelFactory):
+class ProjectFactory(factory.django.DjangoModelFactory):
     submission = factory.SubFactory(ApplicationSubmissionFactory)
     user = factory.SubFactory(UserFactory)
 
@@ -103,7 +103,7 @@ class ProjectFactory(factory.DjangoModelFactory):
         )
 
 
-class ContractFactory(factory.DjangoModelFactory):
+class ContractFactory(factory.django.DjangoModelFactory):
     approver = factory.SubFactory(StaffFactory)
     project = factory.SubFactory(ProjectFactory)
     approved_at = factory.LazyFunction(timezone.now)
@@ -115,7 +115,7 @@ class ContractFactory(factory.DjangoModelFactory):
         model = Contract
 
 
-class PacketFileFactory(factory.DjangoModelFactory):
+class PacketFileFactory(factory.django.DjangoModelFactory):
     category = factory.SubFactory(DocumentCategoryFactory)
     project = factory.SubFactory(ProjectFactory)
 
@@ -126,7 +126,7 @@ class PacketFileFactory(factory.DjangoModelFactory):
         model = PacketFile
 
 
-class PaymentRequestFactory(factory.DjangoModelFactory):
+class PaymentRequestFactory(factory.django.DjangoModelFactory):
     project = factory.SubFactory(ProjectFactory)
     by = factory.SubFactory(UserFactory)
     requested_value = factory.Faker('pydecimal', min_value=1, max_value=10000000, right_digits=2)
@@ -140,7 +140,7 @@ class PaymentRequestFactory(factory.DjangoModelFactory):
         model = PaymentRequest
 
 
-class InvoiceFactory(factory.DjangoModelFactory):
+class InvoiceFactory(factory.django.DjangoModelFactory):
     project = factory.SubFactory(ProjectFactory)
     by = factory.SubFactory(UserFactory)
     amount = factory.Faker('pydecimal', min_value=1, max_value=10000000, right_digits=2)
@@ -154,7 +154,7 @@ class InvoiceFactory(factory.DjangoModelFactory):
         model = Invoice
 
 
-class PaymentReceiptFactory(factory.DjangoModelFactory):
+class PaymentReceiptFactory(factory.django.DjangoModelFactory):
     payment_request = factory.SubFactory(PaymentRequestFactory)
 
     file = factory.django.FileField()
@@ -163,7 +163,7 @@ class PaymentReceiptFactory(factory.DjangoModelFactory):
         model = PaymentReceipt
 
 
-class SupportingDocumentFactory(factory.DjangoModelFactory):
+class SupportingDocumentFactory(factory.django.DjangoModelFactory):
     invoice = factory.SubFactory(InvoiceFactory)
 
     document = factory.django.FileField()
@@ -172,7 +172,7 @@ class SupportingDocumentFactory(factory.DjangoModelFactory):
         model = SupportingDocument
 
 
-class ReportConfigFactory(factory.DjangoModelFactory):
+class ReportConfigFactory(factory.django.DjangoModelFactory):
     project = factory.SubFactory(
         "hypha.apply.projects.tests.factories.ApprovedProjectFactory",
         report_config=None,
@@ -188,7 +188,7 @@ class ReportConfigFactory(factory.DjangoModelFactory):
         )
 
 
-class ReportVersionFactory(factory.DjangoModelFactory):
+class ReportVersionFactory(factory.django.DjangoModelFactory):
     report = factory.SubFactory("hypha.apply.projects.tests.factories.ReportFactory")
     submitted = factory.LazyFunction(timezone.now)
     public_content = factory.Faker('paragraph')
@@ -212,7 +212,7 @@ class ReportVersionFactory(factory.DjangoModelFactory):
             obj.report.save()
 
 
-class ReportFactory(factory.DjangoModelFactory):
+class ReportFactory(factory.django.DjangoModelFactory):
     project = factory.SubFactory("hypha.apply.projects.tests.factories.ApprovedProjectFactory")
     end_date = factory.LazyFunction(timezone.now)
 
