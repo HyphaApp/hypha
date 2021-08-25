@@ -1,7 +1,7 @@
 -r requirements.txt
 
 django-debug-toolbar==3.2.1
-factory_boy==2.12.0
+factory_boy==3.2.0
 flake8==3.8.4
 isort==5.7.0
 model-bakery==1.2.1
