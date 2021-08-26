@@ -13,7 +13,7 @@ const TinyMCE = props => {
     </label>
     <HelperComponent {...props.helperProps} />
     <Editor
-      initialValue={props.value}
+      value={props.value}
       init={{
         ...(props.init),
         menubar: false
