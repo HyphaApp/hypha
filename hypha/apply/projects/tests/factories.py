@@ -26,11 +26,11 @@ from ..models.report import Report, ReportConfig, ReportVersion
 
 ADDRESS = {
     'country': 'GB',
-    'thoroughfare': factory.Faker('street_name').generate({}),
-    'premise': factory.Faker('building_number').generate({}),
+    'thoroughfare': factory.Faker('street_name').evaluate(None, None, {'locale': None}),
+    'premise': factory.Faker('building_number').evaluate(None, None, {'locale': None}),
     'locality': {
-        'localityname': factory.Faker('city').generate({}),
-        'administrativearea': factory.Faker('city').generate({}),
+        'localityname': factory.Faker('city').evaluate(None, None, {'locale': None}),
+        'administrativearea': factory.Faker('city').evaluate(None, None, {'locale': None}),
         'postal_code': 'SW1 4AQ',
     }
 }
@@ -131,8 +131,8 @@ class PaymentRequestFactory(factory.django.DjangoModelFactory):
     by = factory.SubFactory(UserFactory)
     requested_value = factory.Faker('pydecimal', min_value=1, max_value=10000000, right_digits=2)
 
-    date_from = factory.Faker('date_time').generate({'tzinfo': pytz.utc})
-    date_to = factory.Faker('date_time').generate({'tzinfo': pytz.utc})
+    date_from = factory.Faker('date_time').evaluate(None, None, {'tzinfo': pytz.utc, 'locale': None})
+    date_to = factory.Faker('date_time').evaluate(None, None, {'tzinfo': pytz.utc, 'locale': None})
 
     invoice = factory.django.FileField()
 
@@ -145,8 +145,8 @@ class InvoiceFactory(factory.django.DjangoModelFactory):
     by = factory.SubFactory(UserFactory)
     amount = factory.Faker('pydecimal', min_value=1, max_value=10000000, right_digits=2)
 
-    date_from = factory.Faker('date_time').generate({'tzinfo': pytz.utc})
-    date_to = factory.Faker('date_time').generate({'tzinfo': pytz.utc})
+    date_from = factory.Faker('date_time').evaluate(None, None, {'tzinfo': pytz.utc, 'locale': None})
+    date_to = factory.Faker('date_time').evaluate(None, None, {'tzinfo': pytz.utc, 'locale': None})
 
     document = factory.django.FileField()
 
