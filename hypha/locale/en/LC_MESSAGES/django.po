@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-25 16:26+0000\n"
+"POT-Creation-Date: 2021-08-26 07:10+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1076,34 +1076,43 @@ msgstr ""
 msgid "Custom"
 msgstr ""
 
-#: hypha/apply/funds/forms.py:59 hypha/apply/funds/forms.py:78
+#: hypha/apply/funds/forms.py:60 hypha/apply/funds/forms.py:79
 msgid "Take action"
 msgstr ""
 
-#: hypha/apply/funds/forms.py:143 hypha/apply/projects/filters.py:28
+#: hypha/apply/funds/forms.py:144 hypha/apply/projects/filters.py:28
 #: hypha/apply/projects/filters.py:38 hypha/apply/projects/filters.py:52
 #: hypha/apply/projects/tables.py:49 hypha/apply/projects/tables.py:90
 msgid "Lead"
 msgstr ""
 
-#: hypha/apply/funds/forms.py:195 hypha/apply/funds/tables.py:259
+#: hypha/apply/funds/forms.py:196 hypha/apply/funds/tables.py:259
 #: hypha/apply/funds/tables.py:443
 msgid "Reviewers"
 msgstr ""
 
-#: hypha/apply/funds/forms.py:259 hypha/apply/funds/forms.py:330
+#: hypha/apply/funds/forms.py:260 hypha/apply/funds/forms.py:331
 msgid "Users cannot be assigned to multiple roles."
 msgstr ""
 
-#: hypha/apply/funds/forms.py:374
+#: hypha/apply/funds/forms.py:358
+msgid "Select a reviewer"
+msgstr ""
+
+#: hypha/apply/funds/forms.py:361
+#, python-brace-format
+msgid "{role_name} Reviewer"
+msgstr ""
+
+#: hypha/apply/funds/forms.py:376
 msgid "Partners"
 msgstr ""
 
-#: hypha/apply/funds/forms.py:435
+#: hypha/apply/funds/forms.py:437
 msgid "Meta terms"
 msgstr ""
 
-#: hypha/apply/funds/forms.py:438
+#: hypha/apply/funds/forms.py:440
 msgid "Meta terms are hierarchical in nature."
 msgstr ""
 

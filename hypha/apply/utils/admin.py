@@ -1,6 +1,3 @@
-from django.utils.safestring import mark_safe
-
-
 class ListRelatedMixin:
     """Provides a used_by column which can  be found by defining related models in the
     following format:
@@ -11,6 +8,7 @@ class ListRelatedMixin:
 
     e.g. This would be object.<related_name>_set.field
     """
+
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         related = [f'{form}_set__{field}' for form, field in self.related_models]
@@ -25,4 +23,4 @@ class ListRelatedMixin:
             related = self._list_related(obj, form, field)
             if related:
                 rows.append(related)
-        return mark_safe('<br>'.join(rows))
+        return ', '.join(rows)
