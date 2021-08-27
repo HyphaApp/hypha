@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-26 07:10+0000\n"
+"POT-Creation-Date: 2021-08-26 07:41+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1501,10 +1501,27 @@ msgstr ""
 msgid "Close Review"
 msgstr ""
 
+#: hypha/apply/funds/workflow.py:246 hypha/apply/funds/workflow.py:367
+#: hypha/apply/funds/workflow.py:521 hypha/apply/funds/workflow.py:534
+#: hypha/apply/funds/workflow.py:705
+msgid "Need screening (revert)"
+msgstr ""
+
 #: hypha/apply/funds/workflow.py:248 hypha/apply/funds/workflow.py:369
 #: hypha/apply/funds/workflow.py:537 hypha/apply/funds/workflow.py:708
 #: hypha/apply/funds/workflow.py:822 hypha/apply/funds/workflow.py:1117
 msgid "Internal Review"
+msgstr ""
+
+#: hypha/apply/funds/workflow.py:249 hypha/apply/funds/workflow.py:370
+#: hypha/apply/funds/workflow.py:538 hypha/apply/funds/workflow.py:549
+#: hypha/apply/funds/workflow.py:709 hypha/apply/funds/workflow.py:823
+#, python-brace-format
+msgid "{org_short_name} Review"
+msgstr ""
+
+#: hypha/apply/funds/workflow.py:259 hypha/apply/funds/workflow.py:719
+msgid "Open Review (revert)"
 msgstr ""
 
 #: hypha/apply/funds/workflow.py:264 hypha/apply/funds/workflow.py:384
@@ -1512,6 +1529,15 @@ msgstr ""
 #: hypha/apply/funds/workflow.py:601 hypha/apply/funds/workflow.py:723
 #: hypha/apply/funds/workflow.py:837 hypha/apply/funds/workflow.py:876
 msgid "Ready For Discussion"
+msgstr ""
+
+#: hypha/apply/funds/workflow.py:288 hypha/apply/funds/workflow.py:302
+#: hypha/apply/funds/workflow.py:405 hypha/apply/funds/workflow.py:442
+#: hypha/apply/funds/workflow.py:456 hypha/apply/funds/workflow.py:584
+#: hypha/apply/funds/workflow.py:621 hypha/apply/funds/workflow.py:635
+#: hypha/apply/funds/workflow.py:744 hypha/apply/funds/workflow.py:859
+#: hypha/apply/funds/workflow.py:896 hypha/apply/funds/workflow.py:910
+msgid "Ready For Discussion (revert)"
 msgstr ""
 
 #: hypha/apply/funds/workflow.py:293 hypha/apply/funds/workflow.py:447
@@ -1542,9 +1568,19 @@ msgstr ""
 msgid "Open External Review"
 msgstr ""
 
+#: hypha/apply/funds/workflow.py:381 hypha/apply/funds/workflow.py:545
+#: hypha/apply/funds/workflow.py:560 hypha/apply/funds/workflow.py:834
+msgid "Open Internal Review (revert)"
+msgstr ""
+
 #: hypha/apply/funds/workflow.py:407 hypha/apply/funds/workflow.py:586
 #: hypha/apply/funds/workflow.py:861 hypha/apply/funds/workflow.py:1133
 msgid "External Review"
+msgstr ""
+
+#: hypha/apply/funds/workflow.py:417 hypha/apply/funds/workflow.py:596
+#: hypha/apply/funds/workflow.py:871
+msgid "Open External Review (revert)"
 msgstr ""
 
 #: hypha/apply/funds/workflow.py:498 hypha/apply/funds/workflow.py:532
@@ -1598,6 +1634,10 @@ msgstr ""
 
 #: hypha/apply/funds/workflow.py:796
 msgid "Proposal Received"
+msgstr ""
+
+#: hypha/apply/funds/workflow.py:820
+msgid "Proposal Received (revert)"
 msgstr ""
 
 #: hypha/apply/funds/workflow.py:901
