@@ -29,10 +29,6 @@ msgstr ""
 msgid "Submitted {source.title} for {source.page.title}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:229 hypha/apply/activity/messaging.py:230
-msgid "Edited"
-msgstr "Editado"
-
 #: hypha/apply/activity/messaging.py:231 hypha/apply/activity/messaging.py:245
 #, python-brace-format
 msgid "Lead changed from {old_lead} to {source.lead}"
