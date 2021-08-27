@@ -60,15 +60,15 @@ class AddressFieldBlockFactory(FormFieldBlockFactory):
         model = blocks.AddressFieldBlock
 
     @classmethod
-    def make_answer(cls, params):
+    def make_answer(cls, params=dict()):
         if not params:
             params = {}
         return json.dumps({
             'country': 'GB',
-            'thoroughfare': factory.Faker('street_name').generate(params),
-            'premise': factory.Faker('building_number').generate(params),
-            'localityname': factory.Faker('city').generate(params),
-            'administrativearea': factory.Faker('city').generate(params),
+            'thoroughfare': factory.Faker('street_name').evaluate(None, None, dict(params, locale=None)),
+            'premise': factory.Faker('building_number').evaluate(None, None, dict(params, locale=None)),
+            'localityname': factory.Faker('city').evaluate(None, None, dict(params, locale=None)),
+            'administrativearea': factory.Faker('city').evaluate(None, None, dict(params, locale=None)),
             'postalcode': 'SW1 4AQ',
         })
 
@@ -81,11 +81,11 @@ class AddressFieldBlockFactory(FormFieldBlockFactory):
                 params = {}
             return {
                 'country': 'GB',
-                'thoroughfare': factory.Faker('street_name').generate(params),
-                'premise': factory.Faker('building_number').generate(params),
+                'thoroughfare': factory.Faker('street_name').evaluate(None, None, dict(params, locale=None)),
+                'premise': factory.Faker('building_number').evaluate(None, None, dict(params, locale=None)),
                 'locality': {
-                    'localityname': factory.Faker('city').generate(params),
-                    'administrativearea': factory.Faker('city').generate(params),
+                    'localityname': factory.Faker('city').evaluate(None, None, dict(params, locale=None)),
+                    'administrativearea': factory.Faker('city').evaluate(None, None, dict(params, locale=None)),
                     'postal_code': 'SW1 4AQ',
                 }
             }

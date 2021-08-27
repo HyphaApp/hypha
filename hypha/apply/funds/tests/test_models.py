@@ -158,7 +158,7 @@ class TestRoundModelWorkflowAndForms(TestCase):
         self.fund = FundTypeFactory(parent=None)
 
         # Must create lead, adding child complains about "built" user with no id
-        lead = RoundFactory.lead.get_factory()(**RoundFactory.lead.defaults)
+        lead = RoundFactory.lead.get_factory()(**RoundFactory.lead._defaults)
         self.round = RoundFactory.build(lead=lead, parent=None)
 
         # Assign parent_page like the init does

@@ -110,7 +110,7 @@ class RequestForPartnersFactory(AbstractApplicationFactory):
         model = RequestForPartners
 
 
-class AbstractRelatedFormFactory(factory.DjangoModelFactory):
+class AbstractRelatedFormFactory(factory.django.DjangoModelFactory):
     class Meta:
         abstract = True
     form = factory.SubFactory('hypha.apply.funds.tests.factories.ApplicationFormFactory')
@@ -122,7 +122,7 @@ class ApplicationBaseFormFactory(AbstractRelatedFormFactory):
     application = factory.SubFactory(FundTypeFactory)
 
 
-class ApplicationFormFactory(factory.DjangoModelFactory):
+class ApplicationFormFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = ApplicationForm
 
@@ -214,7 +214,7 @@ class ApplicationFormDataFactory(FormDataFactory):
     field_factory = blocks.CustomFormFieldsFactory
 
 
-class ApplicationSubmissionFactory(factory.DjangoModelFactory):
+class ApplicationSubmissionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = ApplicationSubmission
 
@@ -258,7 +258,7 @@ class ApplicationSubmissionFactory(factory.DjangoModelFactory):
                 )
 
 
-class ReviewerRoleFactory(factory.DjangoModelFactory):
+class ReviewerRoleFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = ReviewerRole
 
@@ -266,7 +266,7 @@ class ReviewerRoleFactory(factory.DjangoModelFactory):
     order = factory.Sequence(lambda n: n)
 
 
-class AssignedReviewersFactory(factory.DjangoModelFactory):
+class AssignedReviewersFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = AssignedReviewers
         django_get_or_create = ('submission', 'reviewer')
@@ -316,7 +316,7 @@ class LabSubmissionFactory(ApplicationSubmissionFactory):
     page = factory.SubFactory(LabFactory)
 
 
-class ApplicationRevisionFactory(factory.DjangoModelFactory):
+class ApplicationRevisionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = ApplicationRevision
 
@@ -329,7 +329,7 @@ class ApplicationRevisionFactory(factory.DjangoModelFactory):
     )
 
 
-class AbstractReviewFormFactory(factory.DjangoModelFactory):
+class AbstractReviewFormFactory(factory.django.DjangoModelFactory):
     class Meta:
         abstract = True
     form = factory.SubFactory('hypha.apply.review.tests.factories.ReviewFormFactory')
@@ -356,7 +356,7 @@ class LabBaseReviewFormFactory(AbstractReviewFormFactory):
     lab = factory.SubFactory(LabFactory)
 
 
-class ScreeningStatusFactory(factory.DjangoModelFactory):
+class ScreeningStatusFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = ScreeningStatus
 
@@ -364,7 +364,7 @@ class ScreeningStatusFactory(factory.DjangoModelFactory):
     yes = factory.Iterator([True, False])
 
 
-class ReminderFactory(factory.DjangoModelFactory):
+class ReminderFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Reminder
 
