@@ -1,4 +1,5 @@
 from django.db.models import Q
+from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django_filters import rest_framework as filters
 from wagtail.core.models import Page
@@ -67,6 +68,14 @@ class SubmissionsFilter(filters.FilterSet):
             (option.id, option.value)
             for option in Option.objects.filter(category__filter_on_dashboard=True)
         ]
+
+    def filter_queryset(self, queryset):
+        # to use OR operator instead of AND for different fields
+        qs = ApplicationSubmission.objects.none()
+        for name, value in self.form.cleaned_data.items():
+            if value:
+                qs = qs.union(self.filters[name].filter(queryset, value))
+        return qs.order_by('id')
 
     def filter_active(self, qs, name, value):
         if value is None:
