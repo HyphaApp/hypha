@@ -1,5 +1,4 @@
 from django.db.models import Q
-from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django_filters import rest_framework as filters
 from wagtail.core.models import Page
