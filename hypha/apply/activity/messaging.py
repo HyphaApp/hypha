@@ -87,6 +87,10 @@ def is_ready_for_review(message_type):
     return message_type in [MESSAGES.READY_FOR_REVIEW, MESSAGES.BATCH_READY_FOR_REVIEW]
 
 
+def is_reviewer_update(message_type):
+    return message_type in [MESSAGES.REVIEWERS_UPDATED, MESSAGES.BATCH_REVIEWERS_UPDATED]
+
+
 class AdapterBase:
     messages = {}
     always_send = False
@@ -715,6 +719,8 @@ class EmailAdapter(AdapterBase):
         MESSAGES.INVITED_TO_PROPOSAL: 'messages/email/invited_to_proposal.html',
         MESSAGES.BATCH_READY_FOR_REVIEW: 'handle_batch_ready_for_review',
         MESSAGES.READY_FOR_REVIEW: 'handle_ready_for_review',
+        MESSAGES.REVIEWERS_UPDATED: 'handle_ready_for_review',
+        MESSAGES.BATCH_REVIEWERS_UPDATED: 'handle_batch_ready_for_review',
         MESSAGES.PARTNERS_UPDATED: 'partners_updated_applicant',
         MESSAGES.PARTNERS_UPDATED_PARTNER: 'partners_updated_partner',
         MESSAGES.UPLOAD_CONTRACT: 'messages/email/contract_uploaded.html',
@@ -734,9 +740,9 @@ class EmailAdapter(AdapterBase):
 
     def get_subject(self, message_type, source):
         if source:
-            if is_ready_for_review(message_type):
+            if is_ready_for_review(message_type) or is_reviewer_update(message_type):
                 subject = _('Application ready to review: {source.title}').format(source=source)
-                if message_type in {MESSAGES.BATCH_READY_FOR_REVIEW}:
+                if message_type in {MESSAGES.BATCH_READY_FOR_REVIEW,MESSAGES.BATCH_REVIEWERS_UPDATED}:
                     subject = _('Multiple applications are now ready for your review')
             elif message_type in {MESSAGES.REVIEW_REMINDER}:
                 subject = _('Reminder: Application ready to review: {source.title}').format(source=source)
@@ -863,6 +869,16 @@ class EmailAdapter(AdapterBase):
         if is_ready_for_review(message_type):
             return self.reviewers(source)
 
+        if is_reviewer_update(message_type):
+            # Notify newly added reviewers only if they can review in the current phase
+            reviewers = self.reviewers(source)
+            added = kwargs.get("added", [])
+            return [
+                assigned_reviewer.reviewer.email
+                for assigned_reviewer in added
+                if assigned_reviewer.reviewer.email in reviewers
+            ]
+
         if is_transition(message_type):
             # Only notify the applicant if the new phase can be seen within the workflow
             if not source.phase.permissions.can_view(source.user):
@@ -893,14 +909,17 @@ class EmailAdapter(AdapterBase):
         return [source.user.email]
 
     def batch_recipients(self, message_type, sources, **kwargs):
-        if not is_ready_for_review(message_type):
+        if not (is_ready_for_review(message_type) or is_reviewer_update(message_type)):
             return super().batch_recipients(message_type, sources, **kwargs)
+
+        added = [reviewer.email for _, reviewer in kwargs.get("added", []) if reviewer]
 
         reviewers_to_message = defaultdict(list)
         for source in sources:
             reviewers = self.reviewers(source)
             for reviewer in reviewers:
-                reviewers_to_message[reviewer].append(source)
+                if not is_reviewer_update(message_type) or reviewer in added:
+                    reviewers_to_message[reviewer].append(source)
 
         return [
             {
