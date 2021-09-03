@@ -320,7 +320,10 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Number of days that password reset and account activation links are valid (default 3).
 if 'PASSWORD_RESET_TIMEOUT_DAYS' in env:
-    PASSWORD_RESET_TIMEOUT_DAYS = int(env['PASSWORD_RESET_TIMEOUT_DAYS'])
+    try:
+        PASSWORD_RESET_TIMEOUT_DAYS = int(env['PASSWORD_RESET_TIMEOUT_DAYS'])
+    except ValueError:
+        pass
 
 # Internationalization
 # https://docs.djangoproject.com/en/stable/topics/i18n/
@@ -563,6 +566,15 @@ if 'SLACK_TYPE_COMMENTS' in env:
     SLACK_TYPE_COMMENTS = env['SLACK_TYPE_COMMENTS'].split(',')
 else:
     SLACK_TYPE_COMMENTS = []
+
+
+# Automatic transition settings
+TRANSITION_AFTER_REVIEWS = False
+if 'TRANSITION_AFTER_REVIEWS' in env:
+    try:
+        TRANSITION_AFTER_REVIEWS = int(env['TRANSITION_AFTER_REVIEWS'])
+    except ValueError:
+        pass
 
 
 # Celery config
