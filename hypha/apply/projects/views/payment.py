@@ -10,7 +10,7 @@ from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
-from hypha.apply.activity.models import Activity, PAYMENT_TEAM
+from hypha.apply.activity.models import PAYMENT_TEAM, Activity
 from hypha.apply.users.decorators import staff_or_finance_required
 from hypha.apply.utils.storage import PrivateMediaView
 from hypha.apply.utils.views import DelegateableView, DelegatedViewMixin, ViewDispatcher
