@@ -3,12 +3,14 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
 from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
+from hypha.apply.activity.models import Activity, PAYMENT_TEAM
 from hypha.apply.users.decorators import staff_or_finance_required
 from hypha.apply.utils.storage import PrivateMediaView
 from hypha.apply.utils.views import DelegateableView, DelegatedViewMixin, ViewDispatcher
@@ -73,7 +75,16 @@ class ChangePaymentRequestStatusView(DelegatedViewMixin, PaymentRequestAccessMix
 
     def form_valid(self, form):
         response = super().form_valid(form)
-
+        comment = form.cleaned_data.get('comment', '')
+        if comment:
+            Activity.comments.create(
+                message=comment,
+                timestamp=timezone.now(),
+                user=self.request.user,
+                source=self.object.project,
+                related_object=self.object,
+                visibility=PAYMENT_TEAM
+            )
         messenger(
             MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS,
             request=self.request,

@@ -47,13 +47,20 @@
             {% endif %}
 
             {% if not submission_title and activity|user_can_see_related:request.user %}
-                {% with url=activity.related_object.get_absolute_url %}
-                    {% if url %}
-                    <a href="{{ url }}" class="feed__related-item">
-                        {{ activity.related_object|model_verbose_name }} <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
+<!--        todo: we have to make it more efficient-->
+                {% if activity.show_communication %}
+                    <a href="#communications" class="feed__related-item" target="_blank">
+                        View message in communication tab <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
                     </a>
-                    {% endif %}
-                {% endwith %}
+                {% else %}
+                    {% with url=activity.related_object.get_absolute_url %}
+                        {% if url %}
+                        <a href="{{ url }}" class="feed__related-item">
+                            {{ activity.related_object|model_verbose_name }} <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
+                        </a>
+                        {% endif %}
+                    {% endwith %}
+                {% endif %}
             {% endif %}
         </p>
     </div>

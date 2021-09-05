@@ -19,6 +19,8 @@ APPLICANT = 'applicant'
 TEAM = 'team'
 REVIEWER = 'reviewers'
 PARTNER = 'partners'
+FINANCE = 'finance'
+PAYMENT_TEAM = 'payment_team'
 ALL = 'all'
 
 VISIBILITY = {
@@ -26,6 +28,8 @@ VISIBILITY = {
     TEAM: 'Staff',
     REVIEWER: 'Reviewers',
     PARTNER: 'Partners',
+    FINANCE: 'Finance(s)',
+    PAYMENT_TEAM: 'Payment Team',
     ALL: 'All',
 }
 
@@ -123,6 +127,13 @@ class Activity(models.Model):
         # not visible to all
         return self.visibility not in [ALL]
 
+    @property
+    def show_communication(self):
+        # to show communication url for messages
+        if self.source_content_type.name == 'project' and 'changes_requested' in self.message:
+            return True
+        return False
+
     def __str__(self):
         return '{}: for "{}"'.format(self.get_type_display(), self.source)
 
@@ -133,7 +144,9 @@ class Activity(models.Model):
         if user.is_reviewer:
             return [REVIEWER, ALL]
         if user.is_partner:
-            return [PARTNER, ALL]
+            return [PARTNER, PAYMENT_TEAM, ALL]
+        if user.is_finance:
+            return [FINANCE, PAYMENT_TEAM, ALL]
 
         return [APPLICANT, ALL]
 

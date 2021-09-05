@@ -11,7 +11,7 @@ from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.translation import gettext as _
 
-from .models import ALL, TEAM
+from .models import ALL, TEAM, PAYMENT_TEAM
 from .options import MESSAGES
 from .tasks import send_mail
 
@@ -280,6 +280,10 @@ class ActivityAdapter(AdapterBase):
         if is_transition(message_type) and not source.phase.permissions.can_view(source.user):
             # User's shouldn't see status activity changes for stages that aren't visible to the them
             return {'visibility': TEAM}
+        if message_type in [
+            MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS,
+        ]:
+            return {'visibility': PAYMENT_TEAM}
         return {}
 
     def reviewers_updated(self, added=list(), removed=list(), **kwargs):
@@ -373,6 +377,15 @@ class ActivityAdapter(AdapterBase):
             return "Skipped a Report"
         else:
             return "Marked a Report as required"
+
+    # # if we think to add Payment request status change's comment in Activity message
+    # def handle_project_status_comment(self, status, comment, **kwargs):
+    #     print(comment, status)
+    #     if comment:
+    #         message = _("""Updated Payment Request status to: {status}\n
+    #         {comment}""".format(status=status, comment=comment))
+    #         return message
+    #     return _('Updated Payment Request status to: {status}'.format(status=status))
 
     def send_message(self, message, user, source, sources, **kwargs):
         from .models import Activity
