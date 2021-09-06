@@ -137,9 +137,7 @@ INSTALLED_APPS = [
     'django_file_form',
 
     'hijack',
-    'compat',
     'pagedown',
-
     'salesforce',
 
     'django.contrib.admin',
