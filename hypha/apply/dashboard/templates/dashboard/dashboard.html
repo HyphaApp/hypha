@@ -69,7 +69,7 @@
     {% endif %}
 
     {% if rounds.closed or rounds.open %}
-        {% include "funds/includes/round-block.html" with closed_rounds=rounds.closed open_rounds=rounds.open title="Your rounds and labs" %}
+        {% include "funds/includes/round-block.html" with closed_rounds=rounds.closed open_rounds=rounds.open title="Your rounds and labs" page_type='dashboard' %}
     {% endif %}
 
     {% if projects.table.data %}
