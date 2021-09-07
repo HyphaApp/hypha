@@ -76,14 +76,12 @@
     }
 }
 
-.mce-widget {
-    &.mce-wordcount {
-        padding-left: 10px;
-        padding-right: 10px;
+.tox-statusbar__wordcount {
+    padding-left: 10px;
+    padding-right: 10px;
 
-        &::after {
-            content: attr(data-after-word-count);
-        }
+    &::after {
+        content: attr(data-after-word-count);
     }
 
     &.word-count-warning,
