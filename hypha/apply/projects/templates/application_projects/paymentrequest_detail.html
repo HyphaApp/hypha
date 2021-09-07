@@ -35,6 +35,9 @@
                 {% endfor %}
             </div>
         </div>
+        <div class="wrapper--embed wrapper--embed--pdf">
+            <object class= type="application/pdf" data="{% url "apply:projects:payments:invoice" pk=object.pk %}"></object>
+        </div>
     </div>
     <aside class="sidebar">
         <div class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions">
