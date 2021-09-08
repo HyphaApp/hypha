@@ -48,21 +48,21 @@ IN_PROGRESS = 'in_progress'
 CLOSING = 'closing'
 COMPLETE = 'complete'
 PROJECT_STATUS_CHOICES = [
-    (COMMITTED, 'Committed'),
-    (CONTRACTING, 'Contracting'),
-    (IN_PROGRESS, 'In Progress'),
-    (CLOSING, 'Closing'),
-    (COMPLETE, 'Complete'),
+    (COMMITTED, _('Committed')),
+    (CONTRACTING, _('Contracting')),
+    (IN_PROGRESS, _('In Progress')),
+    (CLOSING, _('Closing')),
+    (COMPLETE, _('Complete')),
 ]
 
 
 class ProjectQuerySet(models.QuerySet):
     def active(self):
-        "Projects that are not finished"
+        # Projects that are not finished.
         return self.exclude(status=COMPLETE)
 
     def in_progress(self):
-        "Projects that users need to interact with, submitting reports or payment request"
+        # Projects that users need to interact with, submitting reports or payment request.
         return self.filter(
             status__in=(IN_PROGRESS, CLOSING,)
         )
@@ -385,7 +385,7 @@ class Approval(models.Model):
         unique_together = ['project', 'by']
 
     def __str__(self):
-        return f'Approval of "{self.project.title}" by {self.by}'
+        return _('Approval of {project} by {user}').format(project=self.project, user=self.by)
 
 
 class ContractQuerySet(models.QuerySet):
@@ -407,10 +407,10 @@ class Contract(models.Model):
 
     @property
     def state(self):
-        return 'Signed' if self.is_signed else 'Unsigned'
+        return _('Signed') if self.is_signed else _('Unsigned')
 
     def __str__(self):
-        return f'Contract for {self.project} ({self.state})'
+        return _('Contract for {project} ({state})').format(project=self.project, state=self.state)
 
     def get_absolute_url(self):
         return reverse('apply:projects:contract', args=[self.project.pk, self.pk])
@@ -424,7 +424,7 @@ class PacketFile(models.Model):
     document = models.FileField(upload_to=document_path, storage=PrivateStorage())
 
     def __str__(self):
-        return f'Project file: {self.title}'
+        return _('Project file: {title}').format(title=self.title)
 
     def get_remove_form(self):
         """
@@ -454,4 +454,4 @@ class DocumentCategory(models.Model):
 
     class Meta:
         ordering = ('name',)
-        verbose_name_plural = 'Document Categories'
+        verbose_name_plural = _('Document Categories')

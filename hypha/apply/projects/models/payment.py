@@ -7,6 +7,7 @@ from django.db import models
 from django.db.models import Sum, Value
 from django.db.models.functions import Coalesce
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 
 from hypha.apply.utils.storage import PrivateStorage
 
@@ -16,11 +17,11 @@ UNDER_REVIEW = 'under_review'
 PAID = 'paid'
 DECLINED = 'declined'
 REQUEST_STATUS_CHOICES = [
-    (SUBMITTED, 'Submitted'),
-    (CHANGES_REQUESTED, 'Changes Requested'),
-    (UNDER_REVIEW, 'Under Review'),
-    (PAID, 'Paid'),
-    (DECLINED, 'Declined'),
+    (SUBMITTED, _('Submitted')),
+    (CHANGES_REQUESTED, _('Changes Requested')),
+    (UNDER_REVIEW, _('Under Review')),
+    (PAID, _('Paid')),
+    (DECLINED, _('Declined')),
 ]
 
 
@@ -39,7 +40,7 @@ class PaymentApproval(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'Approval for {self.request} by {self.by}'
+        return _('Approval for {request} by {user}').format(request=self.request, user=self.by)
 
 
 class PaymentReceipt(models.Model):
@@ -110,14 +111,14 @@ class Invoice(models.Model):
     )
     document = models.FileField(upload_to=invoice_path, storage=PrivateStorage())
     requested_at = models.DateTimeField(auto_now_add=True)
-    message_for_pm = models.TextField(blank=True)
+    message_for_pm = models.TextField(blank=True, verbose_name=_('Message'))
     comment = models.TextField(blank=True)
     status = models.TextField(choices=REQUEST_STATUS_CHOICES, default=SUBMITTED)
 
     objects = InvoiceQueryset.as_manager()
 
     def __str__(self):
-        return f'Invoice requested for {self.project}'
+        return _('Invoice requested for {project}').format(project=self.project)
 
     @property
     def has_changes_requested(self):
@@ -207,7 +208,7 @@ class PaymentRequest(models.Model):
     objects = PaymentRequestQueryset.as_manager()
 
     def __str__(self):
-        return f'Payment requested for {self.project}'
+        return _('Payment requested for {project}').format(project=self.project)
 
     @property
     def has_changes_requested(self):

@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth import get_user_model
 from django.db.models import Q
+from django.utils.translation import gettext_lazy as _
 
 from hypha.apply.funds.models import ApplicationSubmission
 from hypha.apply.users.groups import STAFF_GROUP_NAME
@@ -21,14 +22,14 @@ class ApproveContractForm(forms.Form):
 
     def clean_id(self):
         if self.has_changed():
-            raise forms.ValidationError('Something changed before your approval please re-review')
+            raise forms.ValidationError(_('Something changed before your approval please re-review'))
 
     def clean(self):
         if not self.instance:
-            raise forms.ValidationError('The contract you were trying to approve has already been approved')
+            raise forms.ValidationError(_('The contract you were trying to approve has already been approved'))
 
         if not self.instance.is_signed:
-            raise forms.ValidationError('You can only approve a signed contract')
+            raise forms.ValidationError(_('You can only approve a signed contract'))
 
         super().clean()
 
@@ -71,7 +72,7 @@ class CreateApprovalForm(forms.ModelForm):
     def clean_by(self):
         by = self.cleaned_data['by']
         if by != self.user:
-            raise forms.ValidationError('Cannot approve for a different user')
+            raise forms.ValidationError(_('Cannot approve for a different user'))
         return by
 
 
@@ -139,10 +140,10 @@ class SetPendingForm(forms.ModelForm):
 
     def clean(self):
         if self.instance.status != COMMITTED:
-            raise forms.ValidationError('A Project can only be sent for Approval when Committed.')
+            raise forms.ValidationError(_('A Project can only be sent for Approval when Committed.'))
 
         if self.instance.is_locked:
-            raise forms.ValidationError('A Project can only be sent for Approval once')
+            raise forms.ValidationError(_('A Project can only be sent for Approval once'))
 
         super().clean()
 
@@ -169,7 +170,7 @@ class UploadDocumentForm(forms.ModelForm):
         model = PacketFile
         widgets = {'title': forms.TextInput()}
         labels = {
-            "title": "File Name",
+            "title": _('File Name'),
         }
 
     def __init__(self, user=None, instance=None, *args, **kwargs):
@@ -185,7 +186,7 @@ class UpdateProjectLeadForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         lead_field = self.fields['lead']
-        lead_field.label = f'Update lead from {self.instance.lead} to'
+        lead_field.label = _('Update lead from {lead} to').format(lead=self.instance.lead)
 
         qwargs = Q(groups__name=STAFF_GROUP_NAME) | Q(is_superuser=True)
         lead_field.queryset = (lead_field.queryset.exclude(pk=self.instance.lead_id)
