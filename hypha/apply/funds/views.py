@@ -484,7 +484,7 @@ class SubmissionsByRound(BaseAdminSubmissionsTable, DelegateableListView):
         BatchDeleteSubmissionView,
     ]
 
-    excluded_fields = ('round', 'lead', 'fund')
+    excluded_fields = ('round', 'fund')
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
