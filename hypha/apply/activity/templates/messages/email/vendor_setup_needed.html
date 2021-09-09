@@ -1,11 +1,12 @@
 {% extends "messages/email/applicant_base.html" %}
 
+{% load i18n %}
 {% block content %}
-A Project has been created for your submission on {{ ORG_SHORT_NAME }}.
+{% blocktrans %}A Project has been created for your submission on {{ ORG_SHORT_NAME }}.{% endblocktrans %}
 
-Next step is to complete vendor setup form by visiting project detail page.
+{% trans "Next step is to complete vendor setup form by visiting project detail page." %}
 
-Project: {{ source.title }}
-Link: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
-Submission: {{ request.scheme }}://{{ request.get_host }}{% url 'apply:submissions:simplified' pk=source.submission.pk %}
+{% trans "Project" %}: {{ source.title }}
+{% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
+{% trans "Submission" %}: {{ request.scheme }}://{{ request.get_host }}{% url 'apply:submissions:simplified' pk=source.submission.pk %}
 {% endblock %}
