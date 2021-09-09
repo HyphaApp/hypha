@@ -1,7 +1,8 @@
 {% load render_table from django_tables2 %}
+{% load i18n %}
 
 <h4 class="heading heading--normal">
-    Waiting for your review <span class="heading heading--submission-count">{{ in_review_count }}</span>
+    {% trans "Waiting for your review" %} <span class="heading heading--submission-count">{{ in_review_count }}</span>
 </h4>
 
 {% if my_review.data %}
@@ -9,14 +10,14 @@
 
     {% if display_more %}
         <div class="all-submissions-table__more">
-            <a href="{% url 'apply:submissions:list' %}?reviewers={{ request.user.pk }}{{ active_statuses_filter }}">Show all</a>
+            <a href="{% url 'apply:submissions:list' %}?reviewers={{ request.user.pk }}{{ active_statuses_filter }}">{% trans "Show all" %}</a>
         </div>
     {% endif %}
 
 {% else %}
     <div class="reviewer-dash-box">
-        <h5 class="reviewer-dash-box__title">Nice! You're all caught up.</h5>
-        <a class="button button--primary" href="{% url 'apply:submissions:list' %}">Find new applications to review</a>
+        <h5 class="reviewer-dash-box__title">{% trans "Nice! You're all caught up." %}</h5>
+        <a class="button button--primary" href="{% url 'apply:submissions:list' %}">{% trans "Find new applications to review" %}</a>
     </div>
     {# TODO Fill in data and update styles in future ticket #}
     <div>{# Since you last logged in #}</div>

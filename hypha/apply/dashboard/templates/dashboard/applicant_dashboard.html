@@ -1,67 +1,67 @@
 {% extends "base-apply.html" %}
 {% load render_table from django_tables2 %}
-{% load static wagtailcore_tags workflow_tags statusbar_tags %}
+{% load i18n static wagtailcore_tags workflow_tags statusbar_tags %}
 
-{% block title %}Dashboard{% endblock %}
+{% block title %}{% trans "Dashboard" %}{% endblock %}
 
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner wrapper--applicant-dashboard">
         <div>
-            <h3 class="heading heading--no-margin">Dashboard</h3>
-            <h5>An overview of active and past submissions and projects</h5>
+            <h3 class="heading heading--no-margin">{% trans "Dashboard" %}</h3>
+            <h5>{% trans "An overview of active and past submissions and projects" %}</h5>
         </div>
         <div class="wrapper wrapper--cta-box">
-            <h4 class="heading heading--no-margin">Submit a new application</h4>
-            <h5 class="heading heading--normal">Apply now for our open rounds</h5>
-            <a class="button button--primary" href="{% pageurl APPLY_SITE.root_page %}" class="button">Apply</a>
+            <h4 class="heading heading--no-margin">{% trans "Submit a new application" %}</h4>
+            <h5 class="heading heading--normal">{% trans "Apply now for our open rounds" %}</h5>
+            <a class="button button--primary" href="{% pageurl APPLY_SITE.root_page %}" class="button">{% trans "Apply" %}</a>
         </div>
     </div>
 </div>
 
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
-    <h3>Your active submissions</h3>
+    <h3>{% trans "Your active submissions" %}</h3>
     {% for submission in my_active_submissions %}
         <div class="wrapper wrapper--status-bar-outer">
             <div class="wrapper wrapper--status-bar-inner">
                 <div>
                     <h5 class="heading heading--no-margin"><a class="link link--underlined" href="{% url 'funds:submissions:detail' submission.id %}">{{ submission.title }}</a></h5>
-                    <h6 class="heading heading--no-margin heading--submission-meta"><span>Submitted:</span> {{ submission.submit_time.date }} by {{ submission.user.get_full_name }}</h6>
+                    <h6 class="heading heading--no-margin heading--submission-meta"><span>{% trans "Submitted" %}:</span> {{ submission.submit_time.date }} {% trans "by" %} {{ submission.user.get_full_name }}</h6>
                 </div>
                 {% status_bar submission.workflow submission.phase request.user css_class="status-bar--small" %}
             </div>
             {% if request.user|has_edit_perm:submission %}
                 <a class="button button--primary" href="{% url 'funds:submissions:edit' submission.id %}">
                     {% if submission.status == 'draft_proposal' %}
-                        Start your {{ submission.stage }} application
+                        {% trans "Start your" %} {{ submission.stage }} {% trans "application" %}
                     {% else %}
-                        Edit
+                        {% trans "Edit" %}
                     {% endif %}
                 </a>
             {% endif %}
         </div>
     {% empty %}
-        No active submissions
+        {% trans "No active submissions" %}
     {% endfor %}
 </div>
 
 {% if tables.0.data %}
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
-    <h3>Your active projects</h3>
+    <h3>{% trans "Your active projects" %}</h3>
     {% render_table tables.0 %}
 </div>
 {% endif %}
 
 {% if tables.1.data %}
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
-    <h3>Submission history</h3>
+    <h3>{% trans "Submission history" %}</h3>
     {% render_table tables.1 %}
 </div>
 {% endif %}
 
 {% if tables.2.data %}
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
-    <h3>Project history</h3>
+    <h3>{% trans "Project history" %}</h3>
     {% render_table tables.2 %}
 </div>
 {% endif %}

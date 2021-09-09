@@ -1,21 +1,21 @@
 {% extends "base-apply.html" %}
 {% load render_table from django_tables2 %}
-{% load static %}
+{% load i18n static %}
 
 {% block extra_css %}
     {{ my_reviewed.filterset.form.media.css }}
 {% endblock %}
 
-{% block title %}Dashboard{% endblock %}
+{% block title %}{% trans "Dashboard" %}{% endblock %}
 
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner admin-bar__inner--with-button">
         {% block page_header %}
-            <h1 class="gamma heading heading--no-margin heading--bold">Dashboard</h1>
+            <h1 class="gamma heading heading--no-margin heading--bold">{% trans "Dashboard" %}</h1>
         {% endblock %}
         <a href="{% url 'wagtailadmin_home' %}" class="button button--primary button--arrow-pixels-white">
-            Apply admin
+            {% trans "Apply admin" %}
             <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
         </a>
     </div>
@@ -27,32 +27,32 @@
         <div class="stat-block">
             <a href="#submissions-awaiting-review" class="stat-block__item">
                 <p class="stat-block__number">{{ awaiting_reviews.count }}</p>
-                <p class="stat-block__text">Submissions waiting for your review</p>
+                <p class="stat-block__text">{% trans "Submissions waiting for your review" %}</p>
                 {% if awaiting_reviews.count %}
-                    <div class="stat-block__view">View</div>
+                    <div class="stat-block__view">{% trans "View" %}</div>
                 {% endif %}
             </a>
             <a href="#active-projects" class="stat-block__item">
                 <p class="stat-block__number">{{ projects.count }}</p>
-                <p class="stat-block__text">Live projects under your management</p>
+                <p class="stat-block__text">{% trans "Live projects under your management" %}</p>
                 {% if projects.count %}
-                    <div class="stat-block__view">View</div>
+                    <div class="stat-block__view">{% trans "View" %}</div>
                 {% endif %}
             </a>
             {% if not projects_to_approve.count is None%}
             <a href="#projects-awaiting-approval" class="stat-block__item">
                 <p class="stat-block__number">{{ projects_to_approve.count }}</p>
-                <p class="stat-block__text">Projects awaiting approval</p>
+                <p class="stat-block__text">{% trans "Projects awaiting approval" %}</p>
                 {% if projects_to_approve.count %}
-                    <div class="stat-block__view">View</div>
+                    <div class="stat-block__view">{% trans "View" %}</div>
                 {% endif %}
             </a>
             {% endif %}
             <a href="#active-payment-requests" class="stat-block__item">
                 <p class="stat-block__number">{{ active_payment_requests.count }}</p>
-                <p class="stat-block__text">Requests for payment requiring your attention</p>
+                <p class="stat-block__text">{% trans "Requests for payment requiring your attention" %}</p>
                 {% if active_payment_requests.count %}
-                    <div class="stat-block__view">View</div>
+                    <div class="stat-block__view">{% trans "View" %}</div>
                 {% endif %}
             </a>
         </div>
@@ -74,12 +74,13 @@
 
     {% if projects.table.data %}
     <div id="active-projects" class="wrapper wrapper--bottom-space">
+        {% trans "Your projects" as project_heading %}
         {% include "funds/includes/table_filter_and_search.html" with filter=projects.filterset filter_action=projects.url search_term=search_term search_action=projects.url search_placeholder="projects" use_search=True use_batch_actions=False heading="Your projects" %}
         {% render_table projects.table %}
 
         {% if projects.display_more %}
         <div class="all-submissions-table__more">
-            <a href="{{ projects.url }}?lead={{ request.user.pk }}">Show all</a>
+            <a href="{{ projects.url }}?lead={{ request.user.pk }}">{% trans "Show all" %}</a>
         </div>
         {% endif %}
 
@@ -88,27 +89,27 @@
 
     {% if projects_to_approve.count %}
     <div id="projects-awaiting-approval" class="wrapper wrapper--bottom-space">
-        <h4 class="heading heading--normal">Projects awaiting approval</h4>
+        <h4 class="heading heading--normal">{% trans "Projects awaiting approval" %}</h4>
         {% render_table projects_to_approve.table %}
     </div>
     {% endif %}
 
     {% if active_payment_requests.count %}
     <div id="active-payment-requests" class="wrapper wrapper--bottom-space">
-        <h4 class="heading heading--normal">Active requests for payment</h4>
+        <h4 class="heading heading--normal">{% trans "Active requests for payment" %}</h4>
         {% render_table active_payment_requests.table %}
     </div>
     {% endif %}
 
     {% if my_reviewed.table.data %}
         <div class="wrapper wrapper--bottom-space">
-
-            {% include "funds/includes/table_filter_and_search.html" with filter=my_reviewed.filterset filter_action=my_reviewed.url search_term=search_term search_action=my_reviewed.url use_search=True use_batch_actions=False heading="Your previous reviews" %}
+            {% trans "Your previous reviews" as review_heading %}
+            {% include "funds/includes/table_filter_and_search.html" with filter=my_reviewed.filterset filter_action=my_reviewed.url search_term=search_term search_action=my_reviewed.url use_search=True use_batch_actions=False heading=review_heading %}
             {% render_table my_reviewed.table %}
 
             {% if my_reviewed.display_more %}
                 <div class="all-submissions-table__more">
-                    <a href="{{ my_reviewed.url }}?reviewers={{ request.user.pk }}">Show all</a>
+                    <a href="{{ my_reviewed.url }}?reviewers={{ request.user.pk }}">{% trans "Show all" %}</a>
                 </div>
             {% endif %}
         </div>

@@ -1,14 +1,15 @@
 {% load render_table from django_tables2 %}
+{% load i18n %}
 
 <h4 class="heading heading--normal">
-    Your Flagged Submissions
+    {% trans "Your Flagged Submissions" %}
 </h4>
 
 {% if my_flagged.data %}
     {% render_table my_flagged %}
     {% if display_more %}
         <div class="all-submissions-table__more">
-            <a href="{% url 'apply:submissions:flagged' %}">Show all</a>
+            <a href="{% url 'apply:submissions:flagged' %}">{% trans "Show all" %}</a>
         </div>
     {% endif %}
 {% endif %}
