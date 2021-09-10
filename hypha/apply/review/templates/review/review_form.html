@@ -1,10 +1,11 @@
 {% extends "base-apply.html" %}
-{% block title %}Create a review{% endblock %}
+{% load i18n %}
+{% block title %}{{ title }}{% endblock %}
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
-        <h1 class="beta heading heading--no-margin heading--bold">{{ title|default:"Create Review" }}</h1>
-        <h5>For <a href="{% url "funds:submissions:detail" submission.id %}">{{ submission.title }}</a></h5>
+        <h1 class="beta heading heading--no-margin heading--bold">{{ title }}</h1>
+        <h5>{% trans "For" %} <a href="{% url "funds:submissions:detail" submission.id %}">{{ submission.title }}</a></h5>
     </div>
 </div>
 
@@ -37,12 +38,12 @@
             {% endif %}
         {% endfor %}
         {% if not object.id or object.is_draft %}
-            <input class="button button--submit button--top-space button--white" type="submit" value="Save Draft" name="{{ form.draft_button_name }}" formnovalidate/>
+            <button class="button button--submit button--top-space button--white" type="submit" name="{{ form.draft_button_name }}" formnovalidate>{% trans "Save Draft" %}</button>
         {% endif %}
-        <input class="button button--submit button--top-space button--primary" type="submit" value="Submit" name="submit" />
+        <button class="button button--submit button--top-space button--primary" type="submit" name="submit">{% trans "Submit" %}</button>
     </form>
 {% else %}
-    <p>You have already posted a review for this submission</p>
+    <p>{% trans "You have already posted a review for this submission" %}</p>
 {% endif %}
 </div>
 {% endblock %}

@@ -1,11 +1,11 @@
 {% extends "base-apply.html" %}
-{% load bleach_tags submission_tags %}
-{% block title %}Review for {{ review.submission.title }}{% endblock %}
+{% load i18n bleach_tags submission_tags %}
+{% block title %}{% trans "Review for" %} {{ review.submission.title }}{% endblock %}
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
         <h1 class="beta heading heading--no-margin heading--bold">Review</h1>
-        <h5>For <a href="{% url "funds:submissions:detail" review.submission.id %}">{{ review.submission.title }}</a> by {{ review.author }} at {{ review.created_at|date:"SHORT_DATE_FORMAT" }} {% if review.is_updated %}<small>(Last updated: {{ review.updated_at|date:"SHORT_DATE_FORMAT" }})</small>{% endif %}</h5>
+        <h5>{% trans "For" %} <a href="{% url "funds:submissions:detail" review.submission.id %}">{{ review.submission.title }}</a> {% trans "by" %} {{ review.author }} {% trans "at" %} {{ review.created_at|date:"SHORT_DATE_FORMAT" }} {% if review.is_updated %}<small>({% trans "Last updated" %}: {{ review.updated_at|date:"SHORT_DATE_FORMAT" }})</small>{% endif %}</h5>
 
         {% include 'review/includes/review_opinions_list.html' with opinions=review.opinions.all %}
     </div>
@@ -13,11 +13,11 @@
 
 <div class="grid">
     <div>
-        <h5>Recommendation</h5>
+        <h5>{% trans "Recommendation" %}</h5>
         <p>{{ review.get_recommendation_display }}</p>
     </div>
     <div>
-        <h5>Score</h5>
+        <h5>{% trans "Score" %}</h5>
         <p>{{ review.get_score_display }}</p>
     </div>
     <div>
@@ -27,7 +27,7 @@
     {% if perms.funds.delete_review or request.user == review.author.reviewer %}
         <div>
             <a class="link link--delete-review is-active" href="{% url 'apply:submissions:reviews:delete' submission_pk=object.submission.id pk=object.id %}">
-                Delete
+                {% trans "Delete" %}
                 <svg class="icon icon--delete"><use xlink:href="#delete"></use></svg>
             </a>
         </div>
@@ -35,16 +35,16 @@
     {% if perms.funds.change_review or request.user == review.author.reviewer %}
         <div>
             <a class="link link--edit-review is-active" href="{% url 'apply:submissions:reviews:edit' submission_pk=object.submission.id pk=object.id %}">
-                Edit
+                {% trans "Edit" %}
                 <svg class="icon icon--pen"><use xlink:href="#pen"></use></svg>
             </a>
         </div>
     {% endif %}
     {% if not review.for_latest %}
         <div>
-            <h5>Review was not against the latest version:</h5>
+            <h5>{% trans "Review was not against the latest version" %}:</h5>
             <p>
-                <a class="button button--primary" href="{{ review.get_compare_url }}">Compare</a>
+                <a class="button button--primary" href="{{ review.get_compare_url }}">{% trans "Compare" %}</a>
             </p>
         </div>
     {% endif %}

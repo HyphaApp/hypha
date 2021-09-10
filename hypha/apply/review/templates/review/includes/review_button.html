@@ -1,11 +1,11 @@
-{% load review_tags workflow_tags %}
+{% load i18n review_tags workflow_tags %}
 {% if request.user|has_review_perm:submission %}
     {% if request.user|has_draft:submission or request.user|can_review:submission %}
         <a target="_blank" href="{% url 'apply:submissions:reviews:form' submission_pk=submission.id %}" class="button button--primary {{ class }}">
             {% if request.user|has_draft:submission %}
                 {{ draft_text|default:"Update draft" }}
             {% elif request.user|can_review:submission %}
-                Add a review
+                {% trans "Add a review" %}
             {% endif %}
         </a>
     {% endif %}

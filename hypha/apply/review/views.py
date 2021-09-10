@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404
 from django.template.loader import get_template
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
+from django.utils.translation import gettext as _
 from django.views.generic import (
     CreateView,
     DeleteView,
@@ -74,7 +75,7 @@ class ReviewEditView(UserPassesTestMixin, BaseStreamForm, UpdateView):
         review = self.get_object()
         return super().get_context_data(
             submission=review.submission,
-            title="Edit Review",
+            title=_('Edit Review'),
             **kwargs
         )
 
@@ -139,7 +140,7 @@ class ReviewCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
         return super().get_context_data(
             submission=self.submission,
             has_submitted_review=has_submitted_review,
-            title="Update Review draft" if self.object else 'Create Review',
+            title=_('Update Review draft') if self.object else _('Create Review'),
             **kwargs
         )
 
