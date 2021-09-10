@@ -1,11 +1,12 @@
+{% load i18n %}
 <div class="modal" id="batch-send-determination">
-<h4 class="modal__header-bar modal__header-bar--no-bottom-space">Send determination</h4>
+<h4 class="modal__header-bar modal__header-bar--no-bottom-space">{% trans "Send determination" %}</h4>
 <div class="modal__copy">
-    <p>This determination message will be emailed to {{ count }} applicants and <strong>cannot be undone.</strong></p>
-    <p>Do you wish to contiune?</p>
+    <p>{% blocktrans %}This determination message will be emailed to {{ count }} applicants and <strong>cannot be undone.</strong>{% endblocktrans %}</p>
+    <p>{% trans "Do you wish to contiune?" %}</p>
     </div>
     <div class="modal__buttons">
-    <button class="button button--primary button--submit js-batch-determine-confirm" type="submit" name="submit">Send determination</button>
-    <button data-fancybox-close class="button button--submit button--white">Not yet</button>
+    <button class="button button--primary button--submit js-batch-determine-confirm" type="submit" name="submit">{% trans "Send determination" %}</button>
+    <button data-fancybox-close class="button button--submit button--white">{% trans "Not yet" %}</button>
     </div>
 </div>

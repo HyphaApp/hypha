@@ -1,11 +1,12 @@
 {% extends "base-apply.html" %}
+{% load i18n %}
 
-{% block title %}Deleting: {{ object }}{% endblock %}
+{% block title %}{% trans "Deleting" %}: {{ object }}{% endblock %}
 
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
-        <h2 class="heading heading--no-margin">Deleting: {{ object }}</h2>
+        <h2 class="heading heading--no-margin">{% trans "Deleting" %}: {{ object }}</h2>
     </div>
 </div>
 
@@ -13,8 +14,8 @@
     <div class="wrapper--sidebar--inner">
         <form class="form" action="" method="post">
             {% csrf_token %}
-            <p><strong>Are you sure you want to delete "{{ object }}"?</strong></p>
-            <button class="button button--warning button--submit button--top-space" type="submit">Confirm</button>
+            <p><strong>{% trans "Are you sure you want to delete" %} "{{ object }}"?</strong></p>
+            <button class="button button--warning button--submit button--top-space" type="submit">{% trans "Confirm" %}</button>
         </form>
     </div>
 </div>

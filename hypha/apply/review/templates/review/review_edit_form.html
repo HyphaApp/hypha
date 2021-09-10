@@ -1,9 +1,10 @@
 {% extends "base-apply.html" %}
-{% block title %}Edit a review{% endblock %}
+{% load i18n %}
+{% block title %}{{ title }}{% endblock %}
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
-        <h1 class="beta heading heading--no-margin heading--bold">{{ title|default:"Edit Review" }}</h1>
+        <h1 class="beta heading heading--no-margin heading--bold">{{ title }}</h1>
         <h5>For <a href="{% url "funds:submissions:detail" submission.id %}">{{ submission.title }}</a></h5>
     </div>
 </div>
@@ -36,9 +37,9 @@
         {% endif %}
     {% endfor %}
     {% if not object.id or object.is_draft %}
-        <button class="button button--submit button--top-space button--white" type="submit" name="{{ form.draft_button_name }}">Save Draft</button>
+        <button class="button button--submit button--top-space button--white" type="submit" name="{{ form.draft_button_name }}">{% trans "Save Draft" %}</button>
     {% endif %}
-    <button class="button button--submit button--top-space button--primary" type="submit" name="submit">Submit</button>
+    <button class="button button--submit button--top-space button--primary" type="submit" name="submit">{% trans "Submit" %}</button>
 </form>
 </div>
 {% endblock %}

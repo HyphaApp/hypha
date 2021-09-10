@@ -1,10 +1,9 @@
 {% extends "messages/email/base.html" %}
 
+{% load i18n %}
 {% block content %}
+{% blocktrans %}Vendor Information has been updated on {{ source.title }}.{% endblocktrans %}
 
-Vendor Information has been updated on {{ source.title }}.
-
-Project: {{ source.title }}
-Link: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
-
+{% trans "Project" %}: {{ source.title }}
+{% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
 {% endblock %}

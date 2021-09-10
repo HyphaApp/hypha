@@ -1,4 +1,4 @@
-{% load activity_tags bleach_tags markdown_tags submission_tags apply_tags %}
+{% load i18n activity_tags bleach_tags markdown_tags submission_tags apply_tags %}
 <div class="feed__item feed__item--{{ activity.type }}">
     <div class="feed__pre-content">
         <p class="feed__label feed__label--{{ activity.type }}">{{ activity.type|capfirst }}</p>
@@ -18,7 +18,7 @@
                     </p>
                 {% endif %}
                 <p class="feed__meta-item feed__meta-item--last-edited" {% if not activity.edited %} hidden {% endif %}>
-                    (Last edited: <span class="js-last-edited">{{ activity.edited|date:"SHORT_DATETIME_FORMAT" }}</span>)
+                    ({% trans "Last edited" %}: <span class="js-last-edited">{{ activity.edited|date:"SHORT_DATETIME_FORMAT" }}</span>)
                 </p>
             {% endif %}
 
@@ -30,7 +30,7 @@
 
         <p class="feed__heading">
             {% if submission_title %}
-                updated <a href="{{ activity.source.get_absolute_url }}">{{ activity.source.title }}</a>
+                {% trans "updated" %} <a href="{{ activity.source.get_absolute_url }}">{{ activity.source.title }}</a>
             {% endif %}
 
             {% if editable %}

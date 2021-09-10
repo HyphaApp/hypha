@@ -1,13 +1,13 @@
 {% extends "base-apply.html" %}
-{% load static bleach_tags %}
-{% block title %}{% if object %}Edit a Determination {% if object.is_draft %}draft{% endif %}{% else %}Create a Determination{% endif %}{% endblock %}
+{% load i18n static bleach_tags %}
+{% block title %}{% if object %}{% trans "Edit a Determination" %} {% if object.is_draft %}{% trans "draft" %}{% endif %}{% else %}{% trans "Create a Determination" %}{% endif %}{% endblock %}
 {% block content %}
 
 {% block header %}
     <div class="admin-bar">
         <div class="admin-bar__inner">
-            <h2 class="heading heading--no-margin">{% if object %}Update Determination draft{% else %}Create Determination{% endif %}</h2>
-            <h5>For <a href="{% url "funds:submissions:detail" submission.id %}">{{ submission.title }}</a></h5>
+            <h2 class="heading heading--no-margin">{% if object %}{% trans "Update Determination draft" %}{% else %}{% trans "Create Determination" %}{% endif %}</h2>
+            <h5>{% trans "For" %} <a href="{% url "funds:submissions:detail" submission.id %}">{{ submission.title }}</a></h5>
         </div>
     </div>
 {% endblock %}
@@ -45,9 +45,9 @@
         {% endfor %}
         {% block form_buttons %}
             {% if form.draft_button_name %}
-                <button class="button button--submit button--top-space button--white" type="submit" name="{{ form.draft_button_name }}" formnovalidate>Save Draft</button>
+                <button class="button button--submit button--top-space button--white" type="submit" name="{{ form.draft_button_name }}" formnovalidate>{% trans "Save Draft" %}</button>
             {% endif %}
-            <button class="button button--submit button--top-space button--primary" type="submit" name="submit">Submit</button>
+            <button class="button button--submit button--top-space button--primary" type="submit" name="submit">{% trans "Submit" %}</button>
         {% endblock %}
     </form>
     {% for type, message in message_templates.items %}

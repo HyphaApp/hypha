@@ -1,5 +1,5 @@
 {% extends "determinations/base_determination_form.html" %}
-{% load static %}
+{% load i18n static %}
 
 {% block extra_css %}
 {{ block.super }}
@@ -9,7 +9,7 @@
 {% block header %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
-        <h2 class="heading heading--no-margin">Add Batch Determination - {{ action_name }}</h2>
+        <h2 class="heading heading--no-margin">{% trans "Add Batch Determination" %} - {{ action_name }}</h2>
     </div>
 </div>
 {% endblock %}
@@ -17,8 +17,8 @@
 {% block determination_information %}
 <div class="list-reveal list-reveal--determination">
     <div class="list-reveal__item list-reveal__item--meta list-reveal__item--determination" aria-live="polite">
-        <span>Determining {{ submissions.count }} submission{{ submissions.count|pluralize }} as "{{ action_name }}"</span>
-        <a href="#" class="list-reveal__link js-toggle-batch-list">Show</a>
+        <span>{% trans "Determining" %} {{ submissions.count }} {% trans "submission" %}{{ submissions.count|pluralize }} {% trans "as" %} "{{ action_name }}"</span>
+        <a href="#" class="list-reveal__link js-toggle-batch-list">{% trans "Show" %}</a>
     </div>
     <div class="list-reveal__list list-reveal__list--determination js-batch-titles is-closed" aria-live="polite">
         {% for submission in submissions %}
@@ -34,7 +34,7 @@
 {% endblock %}
 
 {% block form_buttons %}
-<button data-fancybox data-src="#batch-send-determination" class="button button--submit button--top-space button--primary js-batch-determine-send" type="button">Send</button>
+<button data-fancybox data-src="#batch-send-determination" class="button button--submit button--top-space button--primary js-batch-determine-send" type="button">{% trans "Send" %}</button>
 {% include "determinations/includes/batch_determination_confirmation.html" with count=submissions.count %}
 <input type="submit" value="Submit" name="submit" class="is-hidden" />
 {% endblock %}
