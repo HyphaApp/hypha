@@ -11,6 +11,7 @@ from django.db.models.functions import Cast
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
+from django.utils.translation import gettext_lazy as _
 
 from hypha.apply.utils.storage import PrivateStorage
 
@@ -179,11 +180,11 @@ class ReportPrivateFiles(models.Model):
 class ReportConfig(models.Model):
     """Persists configuration about the reporting schedule etc"""
 
-    WEEK = "week"
-    MONTH = "month"
+    WEEK = _('week')
+    MONTH = _('month')
     FREQUENCY_CHOICES = [
-        (WEEK, "Weeks"),
-        (MONTH, "Months"),
+        (WEEK, _('Weeks')),
+        (MONTH, _('Months')),
     ]
 
     project = models.OneToOneField("Project", on_delete=models.CASCADE, related_name="report_config")
@@ -196,18 +197,18 @@ class ReportConfig(models.Model):
 
         if self.frequency == self.MONTH:
             if self.schedule_start and self.schedule_start.day == 31:
-                day_of_month = 'last day'
+                day_of_month = _('last day')
             else:
                 day_of_month = ordinal(next_report.end_date.day)
             if self.occurrence == 1:
-                return f"Monthly on the { day_of_month } of the month"
-            return f"Every { self.occurrence } months on the { day_of_month } of the month"
+                return _('Monthly on the {day} of the month').format(day=day_of_month)
+            return _('Every {occurrence} months on the {day} of the month').format(occurrence=self.occurrence, day=day_of_month)
 
         weekday = next_report.end_date.strftime('%A')
 
         if self.occurrence == 1:
-            return f"Every week on { weekday }"
-        return f"Every {self.occurrence} weeks on { weekday }"
+            return _('Every week on {weekday}').format(weekday=weekday)
+        return _('Every {occurrence} weeks on {weekday}').format(occurrence=self.occurrence, weekday=weekday)
 
     def is_up_to_date(self):
         return len(self.project.reports.to_do()) == 0

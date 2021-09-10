@@ -2,9 +2,11 @@ import functools
 import json
 
 from django import forms
+from django.conf import settings
 from django.core.files.base import ContentFile
 from django.db import transaction
 from django.db.models.fields.files import FieldFile
+from django.utils.translation import gettext_lazy as _
 from django_file_form.forms import FileFormMixin
 
 from hypha.apply.stream_forms.fields import MultiFileField, SingleFileField
@@ -61,7 +63,7 @@ class ChangePaymentRequestStatusForm(forms.ModelForm):
         paid_value = cleaned_data.get('paid_value')
 
         if paid_value and status != PAID:
-            self.add_error('paid_value', 'You can only set a value when moving to the Paid status.')
+            self.add_error('paid_value', _('You can only set a value when moving to the Paid status.'))
         return cleaned_data
 
 
@@ -95,7 +97,7 @@ class ChangeInvoiceStatusForm(forms.ModelForm):
         paid_value = cleaned_data.get('paid_value')
 
         if paid_value and status != PAID:
-            self.add_error('paid_value', 'You can only set a value when moving to the Paid status.')
+            self.add_error('paid_value', _('You can only set a value when moving to the Paid status.'))
         return cleaned_data
 
 
@@ -108,7 +110,7 @@ class PaymentRequestBaseForm(forms.ModelForm):
             'date_to': forms.DateInput,
         }
         labels = {
-            'requested_value': 'Requested Value ($)'
+            'requested_value': _('Requested Value ({currency})').format(currency=settings.CURRENCY_SYMBOL)
         }
 
     def __init__(self, user=None, *args, **kwargs):
@@ -121,7 +123,7 @@ class PaymentRequestBaseForm(forms.ModelForm):
         date_to = cleaned_data['date_to']
 
         if date_from > date_to:
-            self.add_error('date_from', 'Date From must be before Date To')
+            self.add_error('date_from', _('Date From must be before Date To'))
 
         return cleaned_data
 
@@ -161,7 +163,7 @@ class InvoiceBaseForm(forms.ModelForm):
         date_to = cleaned_data['date_to']
 
         if date_from > date_to:
-            self.add_error('date_from', 'Date From must be before Date To')
+            self.add_error('date_from', _('Date From must be before Date To'))
 
         return cleaned_data
 
@@ -170,8 +172,7 @@ class CreateInvoiceForm(FileFormMixin, InvoiceBaseForm):
     document = SingleFileField(label='Invoice File', required=True)
     supporting_documents = MultiFileField(
         required=False,
-        help_text='Files that are related to the invoice. '
-                  'They could be xls, microsoft office documents, open office documents, pdfs, txt files.'
+        help_text=_('Files that are related to the invoice. They could be xls, microsoft office documents, open office documents, pdfs, txt files.')
     )
 
     field_order = ['date_from', 'date_to', 'amount', 'document', 'supporting_documents', 'message_for_pm']
@@ -194,7 +195,7 @@ class EditPaymentRequestForm(FileFormMixin, PaymentRequestBaseForm):
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'delete'}),
         queryset=PaymentReceipt.objects.all(),
         required=False,
-        label='Receipts'
+        label=_('Receipts')
     )
     receipts = MultiFileField(label='', required=False)
 
@@ -223,7 +224,7 @@ class EditPaymentRequestForm(FileFormMixin, PaymentRequestBaseForm):
 
 
 class EditInvoiceForm(FileFormMixin, InvoiceBaseForm):
-    document = SingleFileField(label='Invoice File', required=True)
+    document = SingleFileField(label=_('Invoice File'), required=True)
     supporting_documents = MultiFileField(required=False)
 
     field_order = ['date_from', 'date_to', 'amount', 'document', 'supporting_documents', 'message_for_pm']
@@ -274,7 +275,7 @@ class SelectDocumentForm(forms.ModelForm):
                 new_file = ContentFile(file.read())
                 new_file.name = file.filename
                 return new_file
-        raise forms.ValidationError("File not found on submission")
+        raise forms.ValidationError(_('File not found on submission'))
 
     @transaction.atomic()
     def save(self, *args, **kwargs):

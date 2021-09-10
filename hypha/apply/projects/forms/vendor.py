@@ -4,6 +4,7 @@ from operator import itemgetter
 from babel.core import get_global
 from babel.numbers import get_currency_name, get_territory_currencies
 from django import forms
+from django.utils.translation import gettext_lazy as _
 from django_file_form.forms import FileFormMixin
 
 from addressfield.fields import AddressField
@@ -45,8 +46,8 @@ class BaseVendorForm:
 
 class CreateVendorFormStep1(BaseVendorForm, forms.Form):
     TYPE_CHOICES = [
-        ('organization', 'Yes, the account belongs to the organisation above'),
-        ('personal', 'No, it is a personal bank account'),
+        ('organization', _('Yes, the account belongs to the organisation above')),
+        ('personal', _('No, it is a personal bank account')),
     ]
 
     name = forms.CharField(required=True)
@@ -101,7 +102,7 @@ class CreateVendorFormStep4(BaseVendorForm, forms.Form):
 
 class CreateVendorFormStep5(BaseVendorForm, forms.Form):
     need_extra_info = forms.TypedChoiceField(
-        choices=((False, 'No'), (True, 'Yes')),
+        choices=((False, _('No')), (True, _('Yes'))),
         coerce=lambda x: x == 'True',
         widget=forms.RadioSelect,
         required=True
