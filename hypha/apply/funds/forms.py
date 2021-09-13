@@ -278,7 +278,7 @@ class UpdateReviewersForm(ApplicationSubmissionModelForm):
             if reviewer:
                 AssignedReviewers.objects.update_role(role, reviewer, instance)
             else:
-                AssignedReviewers.objects.filter(role=role, submission=instance).delete()
+                AssignedReviewers.objects.filter(role=role, submission=instance, review__isnull=True).delete()
 
         # 2. Update non-role reviewers
         # 2a. Remove those not on form
