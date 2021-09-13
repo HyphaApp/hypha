@@ -28,8 +28,10 @@
             </li>
         {% endif %}
     {% empty %}
-        <p class="round-block__not-found">
-            There are no {% if round.end_date %} {{ display_text|lower }} {% else %} open {% endif %} rounds
-        </p>
+            {% block empty_round %}
+                <p class="round-block__not-found">
+                    There are no {% if round.end_date %} {{ display_text|lower }} {% else %} {{ type|lower }} {% endif %} rounds
+                </p>
+            {% endblock %}
     {% endfor %}
 </ul>

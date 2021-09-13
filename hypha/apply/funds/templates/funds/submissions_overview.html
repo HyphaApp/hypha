@@ -36,7 +36,7 @@
     {% include "funds/includes/status-block.html" with type="Applications" %}
 
     {% if closed_rounds or open_rounds %}
-        {% include "funds/includes/round-block.html" with closed_rounds=closed_rounds open_rounds=open_rounds title=rounds_title%}
+        {% include "funds/includes/round-block.html" with closed_rounds=closed_rounds open_rounds=open_rounds title=rounds_title page_type='submission' %}
     {% endif %}
 
     {% block table %}

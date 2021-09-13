@@ -10,12 +10,20 @@
     {# Closed rounds/labs tab #}
     <div class="js-tabs-content">
         <div class="tabs__content" id="tab-1">
-            {% include "funds/includes/round-block-listing.html" with rounds=closed_rounds display_text="Closed" query=closed_query %}
+            {% if page_type == 'dashboard' %}
+                {% include "funds/includes/no_round_block_dashboard.html" with rounds=closed_rounds display_text="Closed" query=closed_query type="Closed" %}
+            {% else %}
+                {% include "funds/includes/round-block-listing.html" with rounds=closed_rounds display_text="Closed" query=closed_query type="Closed" %}
+            {% endif %}
         </div>
 
         {# Open rounds/labs tab #}
         <div class="tabs__content" id="tab-2">
-            {% include "funds/includes/round-block-listing.html" with rounds=open_rounds display_text="Open until" query=open_query %}
+            {% if page_type == 'dashboard' %}
+                {% include "funds/includes/no_round_block_dashboard.html" with rounds=open_rounds display_text="Open until" query=open_query type="Open" %}
+            {% else %}
+                {% include "funds/includes/round-block-listing.html" with rounds=open_rounds display_text="Open until" query=open_query type="Open" %}
+            {% endif %}
         </div>
     </div>
 
