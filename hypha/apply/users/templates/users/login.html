@@ -35,8 +35,8 @@
             {% include "forms/includes/field.html" %}
         {% endfor %}
         {{ form.extra_text|richtext }}
-        <p><a class="link link--small" href="{% url 'users:password_reset' %}">Forgot your password?</a></p>
-        <button class="link link--button-secondary" type="submit">Login</button>
+        <p><a class="link link--small" href="{% url 'users:password_reset' %}">{% trans "Forgot your password?" %}</a></p>
+        <button class="link link--button-secondary" type="submit">{% trans "Login" %}</button>
       {% else %}
         {{ wizard.form }}
 
@@ -69,7 +69,7 @@
 
     {% if wizard.steps.current == 'auth' %}
         <div class="wrapper wrapper--inner-space-large">
-          <a class="link link--button link--button-long-text" href="{% url "social:begin" "google-oauth2" %}{% if next %}?next={{ next }}{% endif %}">Log in with your {{ ORG_SHORT_NAME }} email</a>
+          <a class="link link--button link--button-long-text" href="{% url "social:begin" "google-oauth2" %}{% if next %}?next={{ next }}{% endif %}">{% blocktrans %}Log in with your {{ ORG_SHORT_NAME }} email{% endblocktrans %}</a>
         </div>
     {% endif %}
   </div>
