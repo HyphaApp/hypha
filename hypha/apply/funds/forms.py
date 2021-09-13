@@ -7,7 +7,6 @@ from django import forms
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
-from django_select2.forms import Select2Widget
 
 from hypha.apply.categories.models import MetaTerm
 from hypha.apply.users.models import User
