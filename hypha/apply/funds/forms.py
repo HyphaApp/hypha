@@ -278,6 +278,8 @@ class UpdateReviewersForm(ApplicationSubmissionModelForm):
         for role, reviewer in assigned_roles.items():
             if reviewer:
                 AssignedReviewers.objects.update_role(role, reviewer, instance)
+            else:
+                AssignedReviewers.objects.filter(role=role, submission=instance).delete()
 
         # 2. Update non-role reviewers
         # 2a. Remove those not on form
@@ -354,9 +356,7 @@ def make_role_reviewer_fields():
         field_name = 'role_reviewer_' + slugify(role_name)
         field = forms.ModelChoiceField(
             queryset=staff_reviewers,
-            widget=Select2Widget(attrs={
-                'data-placeholder': _('Select a reviewer'),
-            }),
+            empty_label=_("Select a reviewer"),
             required=False,
             label=mark_safe(render_icon(role.icon) + _('{role_name} Reviewer').format(role_name=role_name)),
         )
