@@ -1,11 +1,13 @@
+{% load i18n %}
 <div class="modal" id="batch-update-lead">
-    <h4 class="modal__header-bar modal__header-bar--no-bottom-space">Update Lead</h4>
+    <h4 class="modal__header-bar modal__header-bar--no-bottom-space">{% trans "Update Lead" %}</h4>
     <div class="list-reveal">
         <div class="list-reveal__item list-reveal__item--meta" aria-live="polite">
             <span class="js-batch-title-count"></span>
-            <a href="#" class="list-reveal__link js-toggle-batch-list">Show</a>
+            <a href="#" class="list-reveal__link js-toggle-batch-list">{% trans "Show" %}</a>
         </div>
         <div class="list-reveal__list js-batch-titles is-closed" aria-live="polite"></div>
     </div>
-    {% include 'funds/includes/delegated_form_base.html' with form=batch_lead_form value='Update'%}
+    {% trans "Update" as update %}
+    {% include 'funds/includes/delegated_form_base.html' with form=batch_lead_form value=update %}
 </div>

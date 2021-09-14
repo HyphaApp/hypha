@@ -1,9 +1,11 @@
+{% load i18n %}
 <div class="modal" id="batch-progress">
-    <h4 class="modal__header-bar modal__header-bar--no-bottom-space">Update Status</h4>
+    <h4 class="modal__header-bar modal__header-bar--no-bottom-space">{% trans "Update Status" %}</h4>
     <div class="modal__list-item modal__list-item--meta" aria-live="polite">
         <span class="js-batch-title-count"></span>
-        <a href="#" class="modal__hide-link js-toggle-batch-list">Show</a>
+        <a href="#" class="modal__hide-link js-toggle-batch-list">{% trans "Show" %}</a>
     </div>
     <div class="modal__list js-batch-titles is-closed" aria-live="polite"></div>
-    {% include 'funds/includes/delegated_form_base.html' with form=batch_progress_form value='Update'%}
+    {% trans "Update" as update %}
+    {% include 'funds/includes/delegated_form_base.html' with form=batch_progress_form value=update %}
 </div>

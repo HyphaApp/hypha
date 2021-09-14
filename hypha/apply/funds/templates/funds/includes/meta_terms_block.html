@@ -1,11 +1,12 @@
+{% load i18n %}
 <div class="sidebar__inner">
-    <h5>Meta Terms</h5>
+    <h5>{% trans "Meta Terms" %}</h5>
     <ul>
         {% for meta_term in object.meta_terms.all %}
             <h6 class="heading--no-margin">{{ meta_term.get_parent }}</h6>
             <li>{{ meta_term.name }}</li>
         {% empty %}
-            None. Meta terms can be added to a submission using Meta terms button at top.
+            {% trans "None. Meta terms can be added to a submission using Meta terms button at top." %}
         {% endfor %}
     </ul>
 </div>

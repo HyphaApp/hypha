@@ -1,4 +1,6 @@
+{% load i18n %}
 <div class="modal" id="create-reminder">
-    <h4 class="modal__header-bar">Create Reminder</h4>
-    {% include 'funds/includes/delegated_form_base.html' with form=reminder_form value='Create' extra_classes='form__reminder'%}
+    <h4 class="modal__header-bar">{% trans "Create Reminder" %}</h4>
+    {% trans "Create" as create %}
+    {% include 'funds/includes/delegated_form_base.html' with form=reminder_form value=create extra_classes='form__reminder' %}
 </div>

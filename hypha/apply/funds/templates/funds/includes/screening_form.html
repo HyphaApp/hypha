@@ -1,7 +1,9 @@
+{% load i18n %}
 {% if screening_form.should_show %}
 <div class="modal" id="screen-application" data-yes-statuses="{{ submission.yes_screening_statuses }}" data-no-statuses="{{ submission.no_screening_statuses }}" data-default-yes="{{ default_yes }}" data-default-no="{{ default_no }}">
-    <h4 class="modal__header-bar">Screen application</h4>
-    <p id="current-status">Current statuses: {{ submission.screening_statuses.all|join:', ' }}</p>
-    {% include 'funds/includes/delegated_form_base.html' with form=screening_form value='Screen'%}
+    <h4 class="modal__header-bar">{% trans "Screen application" %}</h4>
+    <p id="current-status">{% trans "Current statuses" %}: {{ submission.screening_statuses.all|join:', ' }}</p>
+    {% trans "Screen" as screen %}
+    {% include 'funds/includes/delegated_form_base.html' with form=screening_form value=screen %}
 </div>
 {% endif %}

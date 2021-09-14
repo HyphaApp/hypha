@@ -1,17 +1,18 @@
-{% load primaryactions_tags %}
+{% load i18n primaryactions_tags %}
 
 {% if request.user|should_display_primary_actions_block:object %}
     <div class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
-        <h5>Actions to take</h5>
+        <h5>{% trans "Actions to take" %}</h5>
 
         {% if object.in_internal_review_phase or object.in_external_review_phase %}
-            {% include 'review/includes/review_button.html' with submission=object class="button--full-width button--bottom-space" draft_text="Complete draft review" %}
+            {% trans "Complete draft review" as review_draft %}
+            {% include 'review/includes/review_button.html' with submission=object class="button--full-width button--bottom-space" draft_text=review_draft %}
         {% endif %}
 
         {% if object.is_finished %}
             {% with determination=object.determinations.last %}
             {% if determination %}
-                <a class="button button--primary button--full-width button--bottom-space" href="{% url 'apply:submissions:determinations:detail' submission_pk=object.id pk=determination.id %}">View determination</a>
+                <a class="button button--primary button--full-width button--bottom-space" href="{% url 'apply:submissions:determinations:detail' submission_pk=object.id pk=determination.id %}">{% trans "View determination" %}</a>
             {% endif %}
             {% endwith %}
         {% endif %}

@@ -1,4 +1,6 @@
+{% load i18n %}
 <div class="modal" id="assign-lead">
-    <h4 class="modal__header-bar">Assign Lead</h4>
-    {% include 'funds/includes/delegated_form_base.html' with form=lead_form value='Update'%}
+    <h4 class="modal__header-bar">{% trans "Assign Lead" %}</h4>
+    {% trans "Update" as update %}
+    {% include 'funds/includes/delegated_form_base.html' with form=lead_form value=update %}
 </div>

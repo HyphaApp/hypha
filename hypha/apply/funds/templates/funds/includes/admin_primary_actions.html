@@ -1,4 +1,5 @@
-<h5>Actions to take</h5>
+{% load i18n %}
+<h5>{% trans "Actions to take" %}</h5>
 
 
 {% if PROJECTS_ENABLED %}
@@ -7,48 +8,51 @@
         data-src="#create-project"
         class="button button--bottom-space button--primary button--full-width"
         href="#">
-        Create Project
+        {% trans "Create Project" %}
     </a>
 {% endif %}
 {% endif %}
 
 {% if object.has_default_screening_status_set and not object.can_not_edit_default %}
-    <a data-fancybox data-src="#screen-application" class="button button--bottom-space button--primary button--full-width is-not-disabled" href="#">Screen application</a>
+    <a data-fancybox data-src="#screen-application" class="button button--bottom-space button--primary button--full-width is-not-disabled" href="#">{% trans "Screen application" %}</a>
 {% endif %}
 
 {% if object.ready_for_determination %}
-    {% include 'determinations/includes/determination_button.html' with submission=object class="button--bottom-space" draft_text="Complete draft determination" %}
+    {% trans "Complete draft determination" as determination_draft %}
+    {% include 'determinations/includes/determination_button.html' with submission=object class="button--bottom-space" draft_text=determination_draft %}
+    }
 {% endif %}
 
 {% if object.in_internal_review_phase or object.in_external_review_phase %}
-    {% include 'review/includes/review_button.html' with submission=object class="button--full-width button--bottom-space" draft_text="Complete draft review" %}
+    {% trans "Complete draft review" as review_draft %}
+    {% include 'review/includes/review_button.html' with submission=object class="button--full-width button--bottom-space" draft_text=review_draft %}
 
     {% if object.in_external_review_phase or not object.has_all_reviewer_roles_assigned %}
-        <a data-fancybox data-src="#update-reviewers" class="button button--bottom-space button--primary button--full-width" href="#">Assign reviewers</a>
+        <a data-fancybox data-src="#update-reviewers" class="button button--bottom-space button--primary button--full-width" href="#">{% trans "Assign reviewers" %}</a>
     {% endif %}
 {% endif %}
 
 {% if object.is_finished %}
     {% with determination=object.determinations.last %}
     {% if determination %}
-        <a class="button button--primary button--full-width button--bottom-space" href="{% url 'apply:submissions:determinations:detail' submission_pk=object.id pk=determination.id %}">View determination</a>
+        <a class="button button--primary button--full-width button--bottom-space" href="{% url 'apply:submissions:determinations:detail' submission_pk=object.id pk=determination.id %}">{% trans "View determination" %}</a>
     {% endif %}
     {% endwith %}
 {% endif %}
 
-<a data-fancybox data-src="#update-status" class="button button--primary button--full-width {% if progress_form.should_show %}is-not-disabled{% else %}is-disabled{% endif %}" href="#">Update status</a>
+<a data-fancybox data-src="#update-status" class="button button--primary button--full-width {% if progress_form.should_show %}is-not-disabled{% else %}is-disabled{% endif %}" href="#">{% trans "Update status" %}</a>
 
 
-<p class="sidebar__separator">Assign</p>
+<p class="sidebar__separator">{% trans "Assign" %}</p>
 
 <div class="wrapper wrapper--sidebar-buttons">
-    <a data-fancybox data-src="#update-reviewers" class="button button--half-width button--white" href="#">Reviewers</a>
-    <a data-fancybox data-src="#update-partners" class="button button--half-width button--white" href="#">Partners</a>
-    <a data-fancybox data-src="#assign-lead" class="button button--half-width button--white" href="#">Lead</a>
+    <a data-fancybox data-src="#update-reviewers" class="button button--half-width button--white" href="#">{% trans "Reviewers" %}</a>
+    <a data-fancybox data-src="#update-partners" class="button button--half-width button--white" href="#">{% trans "Partners" %}</a>
+    <a data-fancybox data-src="#assign-lead" class="button button--half-width button--white" href="#">{% trans "Lead" %}</a>
 </div>
 
-<a class="button button--white button--full-width button--bottom-space" href="{% url 'funds:submissions:revisions:list' submission_pk=object.id %}">Revisions</a>
+<a class="button button--white button--full-width button--bottom-space" href="{% url 'funds:submissions:revisions:list' submission_pk=object.id %}">{% trans "Revisions" %}</a>
 
-<a data-fancybox data-src="#update-meta-terms" class="button button--white button--full-width button--bottom-space" href="#">Meta Terms</a>
+<a data-fancybox data-src="#update-meta-terms" class="button button--white button--full-width button--bottom-space" href="#">{% trans "Meta Terms" %}</a>
 
-<a data-fancybox data-src="#create-reminder" class="button button--white button--full-width button--bottom-space" href="#">Create Reminder</a>
+<a data-fancybox data-src="#create-reminder" class="button button--white button--full-width button--bottom-space" href="#">{% trans "Create Reminder" %}</a>

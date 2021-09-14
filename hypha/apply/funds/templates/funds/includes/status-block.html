@@ -1,12 +1,13 @@
+{% load i18n %}
 <div class="wrapper wrapper--bottom-space">
     <section class="section">
-        <h4 class="heading heading--normal">By Status</h4>
+        <h4 class="heading heading--normal">{% trans "By status" %}</h4>
         <ul class="status-block">
             {% for status, data in status_counts.items %}
                 <li class="status-block__item">
                     <h5 class="status-block__title">{{ data.name }}</h5>
                     <p class="status-block__info">{{ data.count }} {{ type }}</p>
-                    <a class="status-block__link" href="{{ data.url }}">View</a>
+                    <a class="status-block__link" href="{{ data.url }}">{% trans "View" %}</a>
                 </li>
             {% endfor %}
         </ul>

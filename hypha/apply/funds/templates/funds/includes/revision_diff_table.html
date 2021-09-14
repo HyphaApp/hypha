@@ -1,19 +1,20 @@
+{% load i18n %}
 <table class="revision-diff-table">
-<tr><td><h3>Proposal Information</h3></td><td><h3>Proposal Information</h3></td></tr>
-<tr><td><h5>Submitted</h5>{{ timestamps.0|date:"DATETIME_FORMAT"}}</td><td><h5>Submitted</h5>{{ timestamps.1|date:"DATETIME_FORMAT"}}</td></tr>
+<tr><td><h3>{% trans "Proposal Information" %}</h3></td><td><h3>{% trans "Proposal Information" %}</h3></td></tr>
+<tr><td><h5>{% trans "Submitted" %}</h5>{{ timestamps.0|date:"DATETIME_FORMAT"}}</td><td><h5>{% trans "Submitted" %}</h5>{{ timestamps.1|date:"DATETIME_FORMAT"}}</td></tr>
 {% for from_field, to_field in required_fields %}
     {% if forloop.first %}
-        <tr><td><h4>Title</h4>{{ from_field }}</td><td><h4>Title</h4>{{ to_field }}</td></tr>
+        <tr><td><h4>{% trans "Title" %}</h4>{{ from_field }}</td><td><h4>{% trans "Title" %}</h4>{{ to_field }}</td></tr>
     {% elif forloop.counter == 2 %}
-        <tr><td><h5>Legal Name</h5>{{ from_field }}</td><td><h5>Legal Name</h5>{{ to_field }}</td></tr>
+        <tr><td><h5>Legal Name</h5>{{ from_field }}</td><td><h5>{% trans "Legal Name" %}</h5>{{ to_field }}</td></tr>
     {% elif forloop.counter == 3 %}
-        <tr><td><h5>Email</h5>{{ from_field }}</td><td><h5>Email</h5>{{ to_field }}</td></tr>
+        <tr><td><h5>{% trans "E-mail" %}</h5>{{ from_field }}</td><td><h5>{% trans "E-mail" %}</h5>{{ to_field }}</td></tr>
     {% elif forloop.counter == 4 %}
-        <tr><td><h5>Requested Funding</h5>{{ from_field }}</td><td><h5>Requested Funding</h5>{{ to_field }}</td></tr>
+        <tr><td><h5>{% trans "Requested Funding" %}</h5>{{ from_field }}</td><td><h5>{% trans "Requested Funding" %}</h5>{{ to_field }}</td></tr>
     {% elif forloop.counter == 5 %}
-        <tr><td><h5>Project Duration</h5>{{ from_field }}</td><td><h5>Project Duration</h5>{{ to_field }}</td></tr>
+        <tr><td><h5>{% trans "Project Duration" %}</h5>{{ from_field }}</td><td><h5>{% trans "Project Duration" %}</h5>{{ to_field }}</td></tr>
     {% elif forloop.counter == 6 %}
-        <tr><td><h5>Address</h5>{{ from_field }}</td><td><h5>Address</h5>{{ to_field }}</td></tr>
+        <tr><td><h5>{% trans "Address" %}</h5>{{ from_field }}</td><td><h5>{% trans "Address" %}</h5>{{ to_field }}</td></tr>
     {% else %}
         <tr><td>{{ from_field }}</td><td>{{ to_field }}</td></tr>
     {% endif %}
