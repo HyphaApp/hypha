@@ -1,7 +1,7 @@
 {% extends "base-apply.html" %}
-{% load statusbar_tags %}
+{% load i18n statusbar_tags %}
 
-{% block title %}Sealed: {{ object.title }}{% endblock %}
+{% block title %}{% trans "Sealed" %}: {{ object.title }}{% endblock %}
 
 {% block content %}
 <div class="admin-bar">
@@ -11,20 +11,20 @@
             <span>{{ object.stage }}</span>
             <span>{{ object.page }}</span>
             <span>{{ object.round }}</span>
-            <span>Lead: {{ object.lead }}</span>
+            <span>{% trans "Lead" %}: {{ object.lead }}</span>
         </h5>
         {% status_bar object.workflow object.phase request.user same_stage=True %}
     </div>
 </div>
 <div class="wrapper wrapper--medium">
-    <h2 class="heading">This application is sealed until the round is closed</h2>
-    <h3>The round ends on: {{ object.round.specific.end_date }}</h3>
-    <a class="button button--primary" href="{% url 'apply:submissions:overview' %}">Go back</a>
+    <h2 class="heading">{% trans "This application is sealed until the round is closed" %}</h2>
+    <h3>{% trans "The round ends on" %}: {{ object.round.specific.end_date }}</h3>
+    <a class="button button--primary" href="{% url 'apply:submissions:overview' %}">{% trans "Go back" %}</a>
     {% if can_view_sealed %}
-        <p>As an admin you are allowed to access the application. However, this action will be recorded.</p>
+        <p>{% trans "As an admin you are allowed to access the application. However, this action will be recorded." %}</p>
         <form method="post">
             {% csrf_token %}
-            <button class="button button--warning" type="submit">View application</button>
+            <button class="button button--warning" type="submit">{% trans "View application" %}</button>
         </form>
     {% endif %}
 </div>

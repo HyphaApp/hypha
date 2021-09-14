@@ -1,14 +1,14 @@
 {% extends "funds/submissions_overview.html" %}
-{% load static %}
-{% block title %}Submissions results{% endblock %}
+{% load i18n static %}
+{% block title %}{% trans "Submissions results" %}{% endblock %}
 
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner wrapper--search">
         {% block page_header %}
             <div>
-                <h1 class="gamma heading heading--no-margin heading--bold">Submissions results</h1>
-                <h5>Track and explore the results</h5>
+                <h1 class="gamma heading heading--no-margin heading--bold">{% trans "Submissions results" %}</h1>
+                <h5>{% trans "Track and explore the results" %}</h5>
             </div>
         {% endblock %}
         {% block page_header_tabs %}
@@ -19,19 +19,19 @@
 
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
     <div class="wrapper wrapper--bottom-space">
-        <h4 class="heading heading--normal">Summery</h4>
+        <h4 class="heading heading--normal">{% trans "Summery" %}</h4>
         {% include "funds/includes/submission_stats.html" %}
     </div>
 
-    <h4 class="heading heading--normal">Filter submissions to calculate values</h4>
+    <h4 class="heading heading--normal">{% trans "Filter submissions to calculate values" %}</h4>
     {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term use_search=True filter_action=filter_action use_batch_actions=False filter_classes="filters-open" %}
     <div class="grid">
-        <div><strong>Number of submission:</strong> {{ count_values }}{% if not count_values == object_list.count %} ({{ object_list.count }}){% endif %}</div>
-        <div><strong>Average value:</strong> {{ CURRENCY_SYMBOL }}{{ average_value }}</div>
-        <div><strong>Total value:</strong> {{ CURRENCY_SYMBOL }}{{ total_value }}</div>
+        <div><strong>{% trans "Number of submission" %}:</strong> {{ count_values }}{% if not count_values == object_list.count %} ({{ object_list.count }}){% endif %}</div>
+        <div><strong>{% trans "Average value" %}:</strong> {{ CURRENCY_SYMBOL }}{{ average_value }}</div>
+        <div><strong>{% trans "Total value" %}:</strong> {{ CURRENCY_SYMBOL }}{{ total_value }}</div>
     </div>
     {% if not count_values == object_list.count %}
-        <p>Some submissions lack values and are not included.</p>
+        <p>{% trans "Some submissions lack values and are not included." %}</p>
     {% endif %}
 </div>
 {% endblock %}

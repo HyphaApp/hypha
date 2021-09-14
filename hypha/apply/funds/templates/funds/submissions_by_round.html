@@ -1,5 +1,5 @@
 {% extends "funds/base_submissions_table.html" %}
-{% load static %}
+{% load i18n static %}
 {% load render_bundle from webpack_tags %}
 
 {% block title %}{{ object }}{% endblock %}
@@ -9,7 +9,7 @@
         <div class="admin-bar__inner admin-bar__inner--with-button">
             <div>
                 <h1 class="gamma heading heading--no-margin heading--bold">{{ object }}</h1>
-                <p class="admin-bar__meta">{% if object.fund %}{{ object.fund }} <span>|</span> {% endif %}Lead: {{ object.lead }}</p>
+                <p class="admin-bar__meta">{% if object.fund %}{{ object.fund }} <span>|</span> {% endif %}{% trans "Lead" %}: {{ object.lead }}</p>
             </div>
             <div id="submissions-by-round-app-react-switcher"></div>
         </div>

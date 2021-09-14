@@ -1,16 +1,16 @@
 {% extends "funds/submissions_overview.html" %}
-{% load static %}
+{% load i18n static %}
 {% load render_table from django_tables2 %}
 
-{% block title %}Staff assignments{% endblock %}
+{% block title %}{% trans "Staff assignments" %}{% endblock %}
 
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner wrapper--search">
         {% block page_header %}
             <div>
-                <h1 class="gamma heading heading--no-margin heading--bold">Staff assignments</h1>
-                <h5>Track and explore the staff assignments</h5>
+                <h1 class="gamma heading heading--no-margin heading--bold">{% trans "Staff assignments" %}</h1>
+                <h5>{% trans "Track and explore the staff assignments" %}</h5>
             </div>
         {% endblock %}
         {% block page_header_tabs %}

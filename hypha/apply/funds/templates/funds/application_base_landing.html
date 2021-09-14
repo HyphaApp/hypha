@@ -1,22 +1,22 @@
 {% extends "base.html" %}
-{% load wagtailcore_tags wagtailsettings_tags %}
+{% load i18n wagtailcore_tags wagtailsettings_tags %}
 
 {% block header_modifier %}header--light-bg{% endblock %}
 {% block content %}
 <div class="wrapper wrapper--small">
 	{% if form_submission.status == 'draft' %}
-		<h3>Your application is saved as a draft.</h3>
+		<h3>{% trans "Your application is saved as a draft." %}</h3>
 	{% else %}
-    	<h3>Thank you for your submission to the {{ ORG_LONG_NAME }}.</h3>
+    	<h3>{% blocktrans %}Thank you for your submission to the {{ ORG_LONG_NAME }}.{% endblocktrans %}</h3>
 	{% endif %}
     <div class="rich-text">
     	{% if form_submission.status == 'draft' %}
-    		<p>Please note that it is not submitted for review. You can complete your application by following the log-in details emailed to you.</p>
+    		<p>{% trans "Please note that it is not submitted for review. You can complete your application by following the log-in details emailed to you." %}</p>
     	{% else %}
-        	<p>An e-mail with more information has been sent to the address you entered.</p>
+        	<p>{% trans "An e-mail with more information has been sent to the address you entered." %}</p>
         {% endif %}
-        <p>If you do not receive an e-mail within 15 minutes please check your
-spam folder and contact {{ ORG_EMAIL|urlize }} for further assistance.</p>
+        <p>{% blocktrans %}If you do not receive an e-mail within 15 minutes please check your
+spam folder and contact {{ ORG_EMAIL|urlize }} for further assistance.{% endblocktrans %}</p>
         {% with email_context=page.specific %}<p>{{ email_context.confirmation_text_extra|urlize }}</p>{% endwith %}
 
         {% block extra_text %}{{ settings.funds.ApplicationSettings.extra_text_round|richtext }}{% endblock %}

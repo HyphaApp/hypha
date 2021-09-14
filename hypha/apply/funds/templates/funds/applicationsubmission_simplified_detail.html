@@ -1,5 +1,5 @@
 {% extends "base-apply.html" %}
-{% load static %}
+{% load i18n static %}
 
 {% block title %}{{ object.title }}{% endblock %}
 
@@ -10,31 +10,31 @@
     <div class="simplified__admin-bar">
         <div class="simplified__admin-bar-inner">
             <a class="simplified__projects-link" href="{{ object.project.get_absolute_url }}">
-                Project
+                {% trans "Project" %}
             </a>
             <h1 class="simplified__heading">{{ object.title }}</h1>
             <h5 class="simplified__subheading">
                 <span>{{ object.stage }}</span>
                 <span>{{ object.page }}</span>
                 <span>{{ object.round }}</span>
-                <span>Lead: {{ object.lead }}</span>
+                <span>{% trans "Lead" %}: {{ object.lead }}</span>
             </h5>
             <a
                 class="button button--primary simplified__button"
                 href="{% url "apply:submissions:download" pk=object.pk %}"
             >
-                Download PDF
+                {% trans "Download PDF" %}
             </a>
         </div>
     </div>
 
     <div class="simplified__wrapper">
         <header class="simplified__meta">
-            <span class="simplified__meta-item">Submitted: <strong>{{ object.submit_time.date }} by {{ object.user.get_full_name }}</strong></span>
-            <span class="simplified__meta-item">Last edited: <strong>{{ object.live_revision.timestamp.date }} by {{ object.live_revision.author }}</strong></span>
+            <span class="simplified__meta-item">{% trans "Submitted" %}: <strong>{{ object.submit_time.date }} {% trans "by" %} {{ object.user.get_full_name }}</strong></span>
+            <span class="simplified__meta-item">{% trans "Last edited" %}: <strong>{{ object.live_revision.timestamp.date }} {% trans "by" %} {{ object.live_revision.author }}</strong></span>
         </header>
 
-        <h3>Proposal Information</h3>
+        <h3>{% trans "Proposal Information" %}</h3>
         <div class="simplified__rich-text">
             {{ object.output_text_answers }}
         </div>

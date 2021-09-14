@@ -934,8 +934,8 @@ class BaseSubmissionEditView(UpdateView):
         return super().dispatch(request, *args, **kwargs)
 
     def buttons(self):
-        yield ('submit', 'primary', 'Submit')
-        yield ('save', 'white', 'Save Draft')
+        yield ('submit', 'primary', _('Submit'))
+        yield ('save', 'white', _('Save draft'))
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()

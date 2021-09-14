@@ -1,14 +1,14 @@
 {% extends "funds/base_submissions_table.html" %}
-{% load static %}
+{% load i18n static %}
 {% load render_bundle from webpack_tags %}
 
-{% block title %}Submissions{% endblock %}
+{% block title %}{% trans "Submissions" %}{% endblock %}
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner wrapper--search">
         {% block page_header %}
             <div>
-                <h1 class="gamma heading heading--no-margin heading--bold">All Submissions<span class="submissions-count"> ({{ table.rows|length }})</span></h1>
+                <h1 class="gamma heading heading--no-margin heading--bold">{% trans "All Submissions" %}<span class="submissions-count"> ({{ table.rows|length }})</span></h1>
             </div>
             <div id="submissions-all-react-app-switcher"></div>
         {% endblock %}
