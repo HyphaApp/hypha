@@ -10,6 +10,8 @@ from django_file_form.forms import FileFormMixin
 from hypha.apply.stream_forms.fields import MultiFileField, SingleFileField
 
 from ..models.payment import (
+    APPROVE_1,
+    APPROVE_2,
     CHANGES_REQUESTED,
     DECLINED,
     PAID,
@@ -46,13 +48,15 @@ class ChangePaymentRequestStatusForm(forms.ModelForm):
         status_field = self.fields['status']
 
         possible_status_transitions_lut = {
-            CHANGES_REQUESTED: filter_request_choices([DECLINED]),
+            CHANGES_REQUESTED: filter_request_choices([DECLINED, UNDER_REVIEW]),
             SUBMITTED: filter_request_choices([CHANGES_REQUESTED, UNDER_REVIEW, DECLINED]),
-            UNDER_REVIEW: filter_request_choices([PAID]),
+            UNDER_REVIEW: filter_request_choices([APPROVE_1]),
+            APPROVE_1: filter_request_choices([APPROVE_2]),
+            APPROVE_2: filter_request_choices([PAID]),
         }
         status_field.choices = possible_status_transitions_lut.get(instance.status, [])
 
-        if instance.status != UNDER_REVIEW:
+        if instance.status != APPROVE_2:
             del self.fields['paid_value']
 
     def clean(self):

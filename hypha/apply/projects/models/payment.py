@@ -15,12 +15,16 @@ CHANGES_REQUESTED = 'changes_requested'
 UNDER_REVIEW = 'under_review'
 PAID = 'paid'
 DECLINED = 'declined'
+APPROVE_1 = 'approve_finance_level_1'
+APPROVE_2 = 'approve_finance_level_2'
 REQUEST_STATUS_CHOICES = [
     (SUBMITTED, 'Submitted'),
     (CHANGES_REQUESTED, 'Changes Requested'),
     (UNDER_REVIEW, 'Under Review'),
     (PAID, 'Paid'),
     (DECLINED, 'Declined'),
+    (APPROVE_1, 'Approve Finance Level 1'),
+    (APPROVE_2, 'Approve Finance Level 2'),
 ]
 
 
