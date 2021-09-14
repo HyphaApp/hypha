@@ -1,8 +1,9 @@
+{% load i18n %}
 {% if paginator_page.paginator.num_pages > 1 %}
 <nav role="navigation" aria-label="Pagination">
     <ul class="pagination">
         {% if paginator_page.has_previous %}
-            <li class="previous"><a href="?page={{ paginator_page.previous_page_number }}{% for param, value in request.GET.items %}{% if param != "page" %}&{{param}}={{value|urlencode}}{% endif %}{% endfor %}">previous</a></li>
+            <li class="previous"><a href="?page={{ paginator_page.previous_page_number }}{% for param, value in request.GET.items %}{% if param != "page" %}&{{param}}={{value|urlencode}}{% endif %}{% endfor %}">{% trans "previous" %}</a></li>
         {% endif %}
 
         <li class="cardinality">
@@ -10,7 +11,7 @@
         </li>
 
         {% if paginator_page.has_next %}
-            <li class="next"><a href="?page={{ paginator_page.next_page_number }}{% for param, value in request.GET.items %}{% if param != "page" %}&{{param}}={{value|urlencode}}{% endif %}{% endfor %}">next</a></li>
+            <li class="next"><a href="?page={{ paginator_page.next_page_number }}{% for param, value in request.GET.items %}{% if param != "page" %}&{{param}}={{value|urlencode}}{% endif %}{% endfor %}">{% trans "next" %}</a></li>
         {% endif %}
     </ul>
 </nav>{% endif %}

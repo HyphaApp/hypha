@@ -1,24 +1,24 @@
-{% load util_tags wagtailcore_tags wagtailimages_tags %}
+{% load i18n util_tags wagtailcore_tags wagtailimages_tags %}
 {% wagtail_site as current_site %}
 <section class="section section--share">
-    <h5>Share</h5>
+    <h5>{% trans "Share" %}</h5>
     {% image page.social_image fill-150x150 as social_img %}
     {% with settings.utils.SocialMediaSettings as social_media_settings %}
         <!-- see https://dev.twitter.com/web/tweet-button/web-intent -->
-        <a href="https://twitter.com/intent/tweet?text={{ page|social_text:current_site|urlencode }}&amp;url={{ page.full_url|urlencode }}&amp;via={{ social_media_settings.twitter_handle|urlencode }}" title="Share on Twitter">
+        <a href="https://twitter.com/intent/tweet?text={{ page|social_text:current_site|urlencode }}&amp;url={{ page.full_url|urlencode }}&amp;via={{ social_media_settings.twitter_handle|urlencode }}" title="{% trans "Share on Twitter" %}">
             <svg class="icon icon--social-share icon--twitter-share"><use xlink:href="#twitter"></use></svg>
         </a>
 
         <!-- see https://developer.linkedin.com/docs/share-on-linkedin -->
         <a href="https://www.linkedin.com/shareArticle?mini=true&amp;url={{ page.full_url|urlencode }}&amp;title={{ page.title|urlencode }}&amp;summary={{ page|social_text:current_site|urlencode }}&amp;source={{ social_media_settings.site_name|urlencode }}"
-            title="Share on LinkedIn">
+            title="{% trans "Share on LinkedIn" %}">
             <svg class="icon icon--social-share icon--linkedin-share"><use xlink:href="#linkedin"></use></svg>
         </a>
 
         <!-- see https://developers.facebook.com/docs/sharing/reference/feed-dialog/v2.5 -->
         <!-- Add a default image to use for social sharing here in case one is not provided on the page. -->
         {% if social_media_settings.facebook_app_id %}
-        <a href="https://www.facebook.com/dialog/feed?app_id={{ social_media_settings.facebook_app_id }}&amp;link={{ page.full_url|urlencode }}&amp;picture={% if social_img %}{{ 'http://'|add:current_site.hostname|add:social_img.url|urlencode }}{% endif %}&amp;name={{ page.title|urlencode }}&amp;description={{ page|social_text:current_site|urlencode }}&amp;redirect_uri={{ page.full_url|urlencode }}" title="Share on Facebook">
+        <a href="https://www.facebook.com/dialog/feed?app_id={{ social_media_settings.facebook_app_id }}&amp;link={{ page.full_url|urlencode }}&amp;picture={% if social_img %}{{ 'http://'|add:current_site.hostname|add:social_img.url|urlencode }}{% endif %}&amp;name={{ page.title|urlencode }}&amp;description={{ page|social_text:current_site|urlencode }}&amp;redirect_uri={{ page.full_url|urlencode }}" title="{% trans "Share on Facebook" %}">
             <svg class="icon icon--social-share icon--facebook-share"><use xlink:href="#facebook"></use></svg>
         </a>
         {% endif %}
