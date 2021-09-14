@@ -1,6 +1,6 @@
 {% load i18n wagtailadmin_tags %}
 {% base_url_setting as base_url %}
-{% name|default:username as user %}
+{% firstof name username as user %}
 
 {% blocktrans %}Dear {{ user }},{% endblocktrans %}
 
