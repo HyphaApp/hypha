@@ -12,12 +12,12 @@
 
 <div class="grid">
     <div>
-        <h5 class="vendor-info">Last Updated: {{ vendor.updated_at|date:'F d, Y' }}</h5>
+        <h5 class="vendor-info">{% trans "Last Updated" %}: {{ vendor.updated_at|date:'DATE_FORMAT' }}</h5>
     </div>
     {% if editable %}
         <div>
             <a class="link link--edit-vendor is-active" href="{% url 'apply:projects:vendor' pk=project.pk %}">
-                Edit
+                {% trans "Edit" %}
             <svg class="icon icon--pen"><use xlink:href="#pen"></use></svg>
             </a>
         </div>

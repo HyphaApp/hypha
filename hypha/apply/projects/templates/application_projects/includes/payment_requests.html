@@ -1,51 +1,51 @@
-{% load payment_request_tools humanize %}
+{% load i18n payment_request_tools humanize %}
 
 <div id="payment-requests" class="data-block">
     <div class="data-block__header">
-        <p class="data-block__title">Payment Requests</p>
+        <p class="data-block__title">{% trans "Payment Requests" %}</p>
         <a class="data-block__button button button--primary"
            href="{% url "apply:projects:request" pk=object.pk %}">
-            Add Request
+            {% trans "Add Request" %}
         </a>
     </div>
     <div class="data-block__body">
         <table class="data-block__table">
             <thead>
                 <tr>
-                    <th class="data-block__table-amount">Amount ({{ CURRENCY_SYMBOL }})</th>
-                    <th class="data-block__table-status">Status</th>
-                    <th class="data-block__table-date">From</th>
-                    <th class="data-block__table-date">To</th>
+                    <th class="data-block__table-amount">{% trans "Amount" %} ({{ CURRENCY_SYMBOL }})</th>
+                    <th class="data-block__table-status">{% trans "Status" %}</th>
+                    <th class="data-block__table-date">{% trans "From" %}</th>
+                    <th class="data-block__table-date">{% trans "To" %}</th>
                     <th class="data-block__table-update"></th>
                 </tr>
             </thead>
             <tbody>
                 {% for payment_request in object.payment_requests.not_rejected %}
                 <tr>
-                    <td><span class="data-block__mobile-label">Amount: </span>{{ payment_request.value|intcomma }}</td>
-                    <td><span class="data-block__mobile-label">Status: </span>{{ payment_request.get_status_display }}</td>
-                    <td><span class="data-block__mobile-label">From: </span>{{ payment_request.date_from.date }}</td>
-                    <td><span class="data-block__mobile-label">To: </span>{{ payment_request.date_to.date }}</td>
+                    <td><span class="data-block__mobile-label">{% trans "Amount" %}: </span>{{ payment_request.value|intcomma }}</td>
+                    <td><span class="data-block__mobile-label">{% trans "Status" %}: </span>{{ payment_request.get_status_display }}</td>
+                    <td><span class="data-block__mobile-label">{% trans "From" %}: </span>{{ payment_request.date_from.date }}</td>
+                    <td><span class="data-block__mobile-label">{% trans "To" %}: </span>{{ payment_request.date_to.date }}</td>
                     <td>
                         <a class="data-block__action-link" href="{{ payment_request.get_absolute_url }}">View</a>
                         {% can_edit payment_request user as user_can_edit_request %}
                         {% if user_can_edit_request %}
                         <a class="data-block__action-link" href="{% url "apply:projects:payments:edit" pk=payment_request.pk %}">
-                            Edit
+                            {% trans "Edit" %}
                         </a>
                         {% endif %}
 
                         {% can_delete payment_request user as user_can_delete_request %}
                         {% if user_can_delete_request %}
                         <a class="data-block__action-link" href="{% url 'apply:projects:payments:delete' pk=payment_request.pk %}">
-                            Delete
+                            {% trans "Delete" %}
                         </a>
                         {% endif %}
                     </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="5">No active Payment Requests.</td>
+                    <td colspan="5">{% trans "No active Payment Requests." %}</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -53,23 +53,23 @@
 
         {% if object.payment_requests.rejected %}
             <p class="data-block__rejected">
-                <a class="data-block__rejected-link js-payment-block-rejected-link" href="#">Show rejected</a>
+                <a class="data-block__rejected-link js-payment-block-rejected-link" href="#">{% trans "Show rejected" %}</a>
             </p>
 
             <table class="data-block__table is-hidden js-payment-block-rejected-table">
                 <thead>
                     <tr>
-                        <th class="data-block__table-amount">Amount</th>
-                        <th class="data-block__table-status">Status</th>
+                        <th class="data-block__table-amount">{% trans "Amount" %}</th>
+                        <th class="data-block__table-status">{% trans "Status" %}</th>
                         <th class="data-block__table-view"></th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for payment_request in object.payment_requests.rejected %}
                     <tr>
-                        <td><span class="data-block__mobile-label">Amount: </span>{{ CURRENCY_SYMBOL }}{{ payment_request.value }}</td>
-                        <td><span class="data-block__mobile-label">Status: </span>{{ payment_request.get_status_display }}</td>
-                        <td><a href="{{ payment_request.get_absolute_url }}">View</a></td>
+                        <td><span class="data-block__mobile-label">{% trans "Amount" %}: </span>{{ CURRENCY_SYMBOL }}{{ payment_request.value }}</td>
+                        <td><span class="data-block__mobile-label">{% trans "Status" %}: </span>{{ payment_request.get_status_display }}</td>
+                        <td><a href="{{ payment_request.get_absolute_url }}">{% trans "View" %}</a></td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -82,14 +82,15 @@
 <div class="modal" id="change-payment-status-{{ form.instance.pk }}">
     <h4 class="modal__header-bar">Change payment status</h4>
     <div class="wrapper--outer-space-medium">
-        <p>Current status: <b>{{ form.instance.get_status_display }}</b></p>
+        <p>{% trans "Current status" %}: <b>{{ form.instance.get_status_display }}</b></p>
 
         {% if not form.instance.has_changes_requested %}
-        <p>Requested value: <b>{{ CURRENCY_SYMBOL }}{{ form.instance.requested_value }}</b></p>
+        <p>{% trans "Requested value" %}: <b>{{ CURRENCY_SYMBOL }}{{ form.instance.requested_value }}</b></p>
         {% endif %}
 
         {% url 'apply:projects:change-payment-status' pk=object.pk payment_request_id=form.instance.pk as change_payment_status_action %}
-        {% include 'funds/includes/delegated_form_base.html' with form=form value='Update' action=change_payment_status_action %}
+        {% trans "Update" as update %}
+        {% include 'funds/includes/delegated_form_base.html' with form=form value=update action=change_payment_status_action %}
     </div>
 </div>
 {% endfor %}

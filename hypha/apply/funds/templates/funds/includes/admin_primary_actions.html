@@ -20,7 +20,6 @@
 {% if object.ready_for_determination %}
     {% trans "Complete draft determination" as determination_draft %}
     {% include 'determinations/includes/determination_button.html' with submission=object class="button--bottom-space" draft_text=determination_draft %}
-    }
 {% endif %}
 
 {% if object.in_internal_review_phase or object.in_external_review_phase %}

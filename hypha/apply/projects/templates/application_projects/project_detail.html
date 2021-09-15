@@ -1,8 +1,6 @@
 {% extends "base-apply.html" %}
 
-{% load contract_tools %}
-{% load static  %}
-{% load wagtailcore_tags %}
+{% load i18n contract_tools static wagtailcore_tags %}
 
 {% block title %}{{ object.title }}{% endblock %}
 
@@ -57,15 +55,15 @@
         <div class="tabs js-tabs">
             <div class="tabs__container">
                 <a class="tab__item" href="#details" data-tab="tab-1">
-                    Details
+                    {% trans "Details" %}
                 </a>
 
                 <a class="tab__item" href="#communications" data-tab="tab-2">
-                    Communications
+                    {% trans "Communications" %}
                 </a>
 
                 <a class="tab__item" href="#activity-feed" data-tab="tab-3">
-                    Activity Feed
+                    {% trans "Activity Feed" %}
                 </a>
             </div>
         </div>
@@ -78,25 +76,25 @@
         {% endblock %}
         <div class="wrapper wrapper--sidebar">
             <article class="wrapper--sidebar--inner">
-                <h3>Project Information</h3>
+                <h3>{% trans "Project Information" %}</h3>
                 <div class="grid grid--proposal-info">
                     <div>
-                        <h5>Proposed start date</h5>
-                        <p>{{ object.proposed_start|date:"j F Y"|default:"-" }}</p>
+                        <h5>{% trans "Proposed start date" %}</h5>
+                        <p>{{ object.proposed_start|date:"DATE_FORMAT"|default:"-" }}</p>
                     </div>
 
                     <div>
-                        <h5>Project Proposed end date</h5>
-                        <p>{{ object.proposed_end|date:"j F Y"|default:"-" }}</p>
+                        <h5>{% trans "Project Proposed end date" %}</h5>
+                        <p>{{ object.proposed_end|date:"DATE_FORMAT"|default:"-" }}</p>
                     </div>
 
                     <div>
-                        <h5>Legal name</h5>
+                        <h5>{% trans "Legal name" %}</h5>
                         <p>{{ object.vendor.name |default:"-" }}</p>
                     </div>
 
                     <div>
-                        <h5>Email</h5>
+                        <h5>{% trans "E-mail" %}</h5>
                         {% if object.vendor.user.email %}
                         <a href="mailto:{{ object.vendor.user.email }}">{{ object.vendor.user.email }}</a>
                         {% else %}
@@ -105,21 +103,21 @@
                     </div>
                 </div>
 
-                <a class="link--reveal-proposal js-toggle-propsoal-info" href="#">Show more</a>
+                <a class="link--reveal-proposal js-toggle-propsoal-info" href="#">{% trans "Show more" %}</a>
 
                 <div class="rich-text--hidden js-rich-text-hidden">
                     <div>
-                        <h5>Address</h5>
+                        <h5>{% trans "Address" %}</h5>
                         <p>{{ object.vendor.get_address_display|default:"-"}}</p>
                     </div>
 
                     <div>
-                        <h5>Phone</h5>
+                        <h5>{% trans "Phone" %}</h5>
                         <p>{{ object.vendor.phone|default:"-" }}</p>
                     </div>
 
                     <div>
-                        <h5>Value</h5>
+                        <h5>{% trans "Value" %}</h5>
                         <p>{{ CURRENCY_SYMBOL }}{{ object.value|default:"-" }}</p>
                     </div>
                 </div>
@@ -144,12 +142,12 @@
 
             <aside class="sidebar">
                 {% if mobile %}
-                <a class="js-actions-toggle button button--white button--full-width button--actions">Actions to take</a>
+                <a class="js-actions-toggle button button--white button--full-width button--actions">{% trans "Actions to take" %}</a>
                 {% endif %}
 
                 <div class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
 
-                    <h5>Actions to take</h5>
+                    <h5>{% trans "Actions to take" %}</h5>
 
                     {% if request.user.is_apply_staff %}
                     {% block admin_actions %}{% endblock %}
@@ -159,25 +157,26 @@
                     {% if can_upload_contract %}
                     <div class="modal" id="upload-contract">
                         {% if not user.is_apply_staff %}
-                            <h4 class="modal__header-bar">Upload Signed Contract</h4>
+                            <h4 class="modal__header-bar">{% trans "Upload Signed Contract" %}</h4>
                         {% else %}
-                            <h4 class="modal__header-bar">Upload Contract</h4>
+                            <h4 class="modal__header-bar">{% trans "Upload Contract" %}</h4>
                         {% endif %}
-                        {% include 'funds/includes/delegated_form_base.html' with form=contract_form value='Upload'%}
+                        {% trans "Upload" as upload %}
+                        {% include 'funds/includes/delegated_form_base.html' with form=contract_form value=upload %}
                     </div>
 
                     <a data-fancybox
                        data-src="#upload-contract"
                        class="button button--primary button--full-width button--bottom-space"
                        href="#">
-                        Upload contract
+                        {% trans "Upload contract" %}
                     </a>
                     {% endif %}
 
                     {% if object.can_request_funding %}
                     <a class="button button--primary button--bottom-space button--full-width"
                        href="{% url "apply:projects:invoice" pk=object.pk %}">
-                        Add Invoice
+                        {% trans "Add Invoice" %}
                     </a>
                     {% endif %}
 
@@ -189,14 +188,14 @@
 
                 {% if object.is_in_progress %}
                 <div class="sidebar__inner">
-                    <h5>Supporting Information</h5>
+                    <h5>{% trans "Supporting Information" %}</h5>
 
-                    <p><a class="link link--bold" href="{{ object.submission.get_absolute_url }}">Proposal</a></p>
+                    <p><a class="link link--bold" href="{{ object.submission.get_absolute_url }}">{% trans "Proposal" %}</a></p>
                     {% if project.vendor %}
-                        <p><a class="link link--bold" href="{% url 'apply:projects:vendor-detail' pk=project.pk vendor_pk=project.vendor.pk %}">Contractor Setup Form</a></p>
+                        <p><a class="link link--bold" href="{% url 'apply:projects:vendor-detail' pk=project.pk vendor_pk=project.vendor.pk %}">{% trans "Contractor Setup Form" %}</a></p>
                     {% endif %}
                     {% if request.user.is_apply_staff %}
-                    <p><a class="link link--bold" href="{% url 'apply:projects:simplified' pk=project.pk %}">Approval form</a></p>
+                    <p><a class="link link--bold" href="{% url 'apply:projects:simplified' pk=project.pk %}">{% trans "Approval form" %}</a></p>
                     {% endif %}
                 </div>
                 {% endif %}
@@ -207,15 +206,15 @@
 
                 {% if contracts or contract_to_sign or contract_to_approve %}
                 <div class="sidebar__inner">
-                    <h5>Contracts</h5>
+                    <h5>{% trans "Contracts" %}</h5>
 
                     {% block approve_contract %}
                         {% if contract_to_approve %}
                         <p>
                             <a href="{{ contract_to_approve.file.url }}" class="link link--bold">
-                                {{ contract_to_approve.created_at|date:"j F Y" }}
+                                {{ contract_to_approve.created_at|date:"DATE_FORMAT" }}
                             </a>
-                            (Signed)
+                            ({% trans "Signed" %})
                         </p>
                         {% endif %}
                     {% endblock %}
@@ -224,9 +223,9 @@
                         {% if contract_to_sign%}
                         <p>
                             <a href="{{ contract_to_sign.file.url }}" class="link link--bold">
-                                {{ contract_to_sign.created_at|date:"j F Y" }}
+                                {{ contract_to_sign.created_at|date:"DATE_FORMAT" }}
                             </a>
-                            (Unsigned)
+                            ({% trans "Unsigned" %})
                         </p>
                         {% endif %}
                     {% endblock %}
@@ -234,9 +233,9 @@
                     {% for contract in contracts %}
                     <p>
                         <a href="{{ contract.file.url }}" class="link link--bold">
-                            {{ contract.created_at|date:"j F Y" }}
+                            {{ contract.created_at|date:"DATE_FORMAT" }}
                         </a>
-                            - Approved by {{ contract.approver }}
+                            - {% trans "Approved by" %} {{ contract.approver }}
                     </p>
                     {% endfor %}
                 </div>

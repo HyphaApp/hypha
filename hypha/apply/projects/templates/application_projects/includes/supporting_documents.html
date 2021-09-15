@@ -1,21 +1,21 @@
-{% load approval_tools %}
+{% load i18n approval_tools %}
 {% user_can_edit_project object request.user as editable %}
 
 <div class="docs-block wrapper--outer-space-large">
     <div class="docs-block__header">
-        <h5 class="docs-block__heading">Supporting documents</h5>
+        <h5 class="docs-block__heading">{% trans "Supporting documents" %}</h5>
     </div>
     <ul class="docs-block__inner">
 
         <li class="docs-block__row">
             <div class="docs-block__row-inner">
                 <svg class="icon docs-block__icon is-complete"><use xlink:href="#tick"></use></svg>
-                <p class="docs-block__title">Proposal</p>
+                <p class="docs-block__title">{% trans "Proposal" %}</p>
             </div>
             <div class="docs-block__row-inner">
-                <a class="docs-block__link" href="{% url 'apply:submissions:simplified' pk=project.submission.pk %}">View</a>
+                <a class="docs-block__link" href="{% url 'apply:submissions:simplified' pk=project.submission.pk %}">{% trans "View" %}</a>
                 {% if not user.is_applicant %}
-                    <a class="docs-block__link" href="{% url "apply:submissions:download" pk=project.submission.pk %}">Download</a>
+                    <a class="docs-block__link" href="{% url "apply:submissions:download" pk=project.submission.pk %}">{% trans "Download" %}</a>
                 {% endif %}
             </div>
         </li>
@@ -23,20 +23,20 @@
             <li class="docs-block__row">
                 <div class="docs-block__row-inner">
                     <svg class="icon docs-block__icon{% if project.vendor.user_has_updated_details %} is-complete{% endif %}"><use xlink:href="#tick"></use></svg>
-                    <p class="docs-block__title">Contractor Setup Form</p>
+                    <p class="docs-block__title">{% trans "Contractor Setup Form" %}</p>
                 </div>
                 <div class="docs-block__row-inner">
                     {% if editable %}
                         <a class="docs-block__link" href="{% url 'apply:projects:vendor' pk=project.pk %}">
                             {% if project.vendor.user_has_updated_details %}
-                            Edit
+                            {% trans "Edit" %}
                             {% else %}
-                            Create
+                            {% trans "Create" %}
                             {% endif %}
                         </a>
                     {% endif %}
                     {% if project.vendor.user_has_updated_details %}
-                        <a class="docs-block__link" href="{% url 'apply:projects:vendor-detail' pk=project.pk vendor_pk=project.vendor.pk %}">View</a>
+                        <a class="docs-block__link" href="{% url 'apply:projects:vendor-detail' pk=project.pk vendor_pk=project.vendor.pk %}">{% trans "View" %}</a>
                     {% endif %}
                 </div>
             </li>
@@ -47,21 +47,21 @@
                 <svg class="icon docs-block__icon{% if object.user_has_updated_details %} is-complete{% endif %}">
                     <use xlink:href="#tick"></use>
                 </svg>
-                <p class="docs-block__title">Approval Form</p>
+                <p class="docs-block__title">{% trans "Approval Form" %}</p>
             </div>
             <div class="docs-block__row-inner">
                 {% if editable %}
                     <a class="docs-block__link" href="{% url 'apply:projects:edit' pk=object.pk %}">
                         {% if object.user_has_updated_details %}
-                        Edit
+                        {% trans "Edit" %}
                         {% else %}
-                        Create
+                        {% trans "Create" %}
                         {% endif %}
                     </a>
                 {% endif %}
                 {% if object.user_has_updated_details and not user.is_applicant %}
                     <a class="docs-block__link" href="{% url 'apply:projects:simplified' pk=project.pk %}">
-                        View
+                        {% trans "View" %}
                     </a>
                 {% endif %}
             </div>
@@ -72,7 +72,7 @@
                 <svg class="icon docs-block__icon{% if not remaining_document_categories %} is-complete{% endif %}">
                     <use xlink:href="#tick"></use>
                 </svg>
-                <p class="docs-block__title">Supporting documents</p>
+                <p class="docs-block__title">{% trans "Supporting documents" %}</p>
             </div>
             <div class="docs-block__row-inner">
                 {% if select_document_form.should_show %}
@@ -81,17 +81,17 @@
                         data-src="#copy-supporting-doc"
                         class="docs-block__link"
                         href="#">
-                        Choose file
+                        {% trans "Choose file" %}
                     </a>
                 {% else %}
-                    <span class="docs-block__link is-disabled" data-tooltip="No files on submission">Choose file</span>
+                    <span class="docs-block__link is-disabled" data-tooltip="No files on submission">{% trans "Choose file" %}</span>
                 {% endif %}
-                <a data-fancybox data-src="#upload-supporting-doc" class="docs-block__link" href="#">Upload new</a>
+                <a data-fancybox data-src="#upload-supporting-doc" class="docs-block__link" href="#">{% trans "Upload new" %}</a>
             </div>
             {% if remaining_document_categories %}
             <div class="docs-block__info-text">
                 <p>
-                    Every project should include the following documents:
+                    {% trans "Every project should include the following documents" %}:
                 </p>
                 <ul>
                     {% for missing in remaining_document_categories %}
@@ -110,7 +110,7 @@
                         <p class="docs-block__document-info">{{ document.category.name }}</p>
                     </div>
                     <div class="docs-block__document-inner">
-                        <a class="docs-block__document-link" href="{% url 'apply:projects:document' pk=object.pk file_pk=document.pk %}">Download</a>
+                        <a class="docs-block__document-link" href="{% url 'apply:projects:document' pk=object.pk file_pk=document.pk %}">{% trans "Download" %}</a>
                         <form method="POST" id="{{ remove_document_form.name }}" class="docs-block__document-form">
                             {% csrf_token %}
                             {{ document.get_remove_form }}
@@ -120,7 +120,7 @@
                                 name="{{ form_prefix }}{{ remove_document_form.name }}"
                                 type="submit"
                                 form="{{ remove_document_form.name }}"
-                                value="Remove" />
+                                value="{% trans "Remove" %}" />
                         </form>
                             </input>
                     </div>
@@ -138,20 +138,22 @@
             data-src="#send-for-approval"
             class="button button--primary"
             href="#">
-                Submit for Approval
+                {% trans "Submit for Approval" %}
             </a>
         {% endif %}
     </div>
 </div>
 
 <div class="modal" id="copy-supporting-doc">
-    <h4 class="modal__header-bar">Select a document</h4>
+    <h4 class="modal__header-bar">{% trans "Select a document" %}</h4>
     {% url 'apply:projects:copy-documents' pk=object.pk as select_document_url %}
-    {% include 'funds/includes/delegated_form_base.html' with form=select_document_form value='Copy' action=select_document_url %}
+    {% trans "Copy" as copy %}
+    {% include 'funds/includes/delegated_form_base.html' with form=select_document_form value=copy action=select_document_url %}
 </div>
 
 <div class="modal" id="upload-supporting-doc">
-    <h4 class="modal__header-bar">Upload a new document</h4>
+    <h4 class="modal__header-bar">{% trans "Upload a new document" %}</h4>
     <p></p>
-    {% include 'funds/includes/delegated_form_base.html' with form=document_form value='Upload'%}
+    {% trans "Upload" as upload %}
+    {% include 'funds/includes/delegated_form_base.html' with form=document_form value=upload %}
 </div>

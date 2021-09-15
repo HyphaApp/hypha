@@ -1,51 +1,51 @@
-{% load invoice_tools humanize %}
+{% load i18n invoice_tools humanize %}
 
 <div id="payment-requests" class="data-block">
     <div class="data-block__header">
-        <p class="data-block__title">Invoice Requests</p>
+        <p class="data-block__title">{% trans "Invoice requests" %}</p>
         <a class="data-block__button button button--primary"
            href="{% url "apply:projects:invoice" pk=object.pk %}">
-            Add Request
+            {% trans "Add Request" %}
         </a>
     </div>
     <div class="data-block__body">
         <table class="data-block__table">
             <thead>
                 <tr>
-                    <th class="data-block__table-amount">Amount ({{ CURRENCY_SYMBOL }})</th>
-                    <th class="data-block__table-status">Status</th>
-                    <th class="data-block__table-date">From</th>
-                    <th class="data-block__table-date">To</th>
+                    <th class="data-block__table-amount">{% trans "Amount" %} ({{ CURRENCY_SYMBOL }})</th>
+                    <th class="data-block__table-status">{% trans "Status" %}</th>
+                    <th class="data-block__table-date">{% trans "From" %}</th>
+                    <th class="data-block__table-date">{% trans "To" %}</th>
                     <th class="data-block__table-update"></th>
                 </tr>
             </thead>
             <tbody>
                 {% for invoice in object.invoices.not_rejected %}
                 <tr>
-                    <td><span class="data-block__mobile-label">Amount: </span>{{ invoice.amount|intcomma }}</td>
-                    <td><span class="data-block__mobile-label">Status: </span>{{ invoice.get_status_display }}</td>
-                    <td><span class="data-block__mobile-label">From: </span>{{ invoice.date_from.date }}</td>
-                    <td><span class="data-block__mobile-label">To: </span>{{ invoice.date_to.date }}</td>
+                    <td><span class="data-block__mobile-label">{% trans "Amount" %}: </span>{{ invoice.amount|intcomma }}</td>
+                    <td><span class="data-block__mobile-label">{% trans "Status" %}: </span>{{ invoice.get_status_display }}</td>
+                    <td><span class="data-block__mobile-label">{% trans "From" %}: </span>{{ invoice.date_from.date }}</td>
+                    <td><span class="data-block__mobile-label">{% trans "To" %}: </span>{{ invoice.date_to.date }}</td>
                     <td>
                         <a class="data-block__action-link" href="{{ invoice.get_absolute_url }}">View</a>
                         {% can_edit invoice user as user_can_edit_request %}
                         {% if user_can_edit_request %}
                         <a class="data-block__action-link" href="{% url "apply:projects:invoices:edit" pk=invoice.pk %}">
-                            Edit
+                            {% trans "Edit" %}
                         </a>
                         {% endif %}
 
                         {% can_delete invoice user as user_can_delete_request %}
                         {% if user_can_delete_request %}
                         <a class="data-block__action-link" href="{% url 'apply:projects:invoices:delete' pk=invoice.pk %}">
-                            Delete
+                            {% trans "Delete" %}
                         </a>
                         {% endif %}
                     </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="5">No active Invoices.</td>
+                    <td colspan="5">{% trans "No active Invoices." %}</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -53,23 +53,23 @@
 
         {% if object.invoices.rejected %}
             <p class="data-block__rejected">
-                <a class="data-block__rejected-link js-payment-block-rejected-link" href="#">Show rejected</a>
+                <a class="data-block__rejected-link js-payment-block-rejected-link" href="#">{% trans "Show rejected" %}</a>
             </p>
 
             <table class="data-block__table is-hidden js-payment-block-rejected-table">
                 <thead>
                     <tr>
-                        <th class="data-block__table-amount">Amount</th>
-                        <th class="data-block__table-status">Status</th>
+                        <th class="data-block__table-amount">{% trans "Amount" %}</th>
+                        <th class="data-block__table-status">{% trans "Status" %}</th>
                         <th class="data-block__table-view"></th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for invoice in object.invoices.rejected %}
                     <tr>
-                        <td><span class="data-block__mobile-label">Amount: </span>{{ CURRENCY_SYMBOL }}{{ invoice.value }}</td>
-                        <td><span class="data-block__mobile-label">Status: </span>{{ invoice.get_status_display }}</td>
-                        <td><a href="{{ invoice.get_absolute_url }}">View</a></td>
+                        <td><span class="data-block__mobile-label">{% trans "Amount" %}: </span>{{ CURRENCY_SYMBOL }}{{ invoice.value }}</td>
+                        <td><span class="data-block__mobile-label">{% trans "Status" %}: </span>{{ invoice.get_status_display }}</td>
+                        <td><a href="{{ invoice.get_absolute_url }}">{% trans "View" %}</a></td>
                     </tr>
                     {% endfor %}
                 </tbody>

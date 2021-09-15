@@ -1,16 +1,16 @@
 {% extends "base-apply.html" %}
 
 {% load render_table from django_tables2 %}
-{% load static %}
+{% load i18n static %}
 
-{% block title %}Invoice Request{% endblock %}
+{% block title %}{% trans "Invoice Request" %}{% endblock %}
 
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner wrapper--search">
         {% block page_header %}
             <div>
-                <h1 class="gamma heading heading--no-margin heading--bold">All Invoice Requests</h1>
+                <h1 class="gamma heading heading--no-margin heading--bold">{% trans "All Invoice Requests" %}</h1>
             </div>
         {% endblock %}
     </div>
@@ -18,10 +18,11 @@
 
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
     {% if table %}
-    {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term use_search=True filter_action=filter_action use_batch_actions=True search_placeholder="invoice requests" %}
+    {% trans "invoice requests" as search_placeholder %}
+    {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term use_search=True filter_action=filter_action use_batch_actions=True search_placeholder=search_placeholder %}
     {% render_table table %}
     {% else %}
-    <p>No Requests Available</p>
+    <p>{% trans "No Requests Available" %}</p>
     {% endif %}
 </div>
 
