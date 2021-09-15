@@ -28,7 +28,6 @@
         "gulp-babel": "^8.0.0",
         "gulp-clean-css": "^4.2.0",
         "gulp-dart-sass": "^1.0.2",
-        "gulp-load-plugins": "^1.6.0",
         "gulp-size": "^3.0.0",
         "gulp-touch-cmd": "0.0.1",
         "gulp-uglify": "^3.0.2",
