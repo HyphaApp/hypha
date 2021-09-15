@@ -220,7 +220,7 @@ class UpdateReviewersForm(ApplicationSubmissionModelForm):
             self.role_fields[field_name] = data['role']
             self.fields[field_name].initial = assigned_roles.get(data['role'])
 
-        submitted_reviewers = User.objects.filter(
+        self.submitted_reviewers = User.objects.filter(
             id__in=self.instance.assigned.reviewed().values('reviewer'),
         )
 
@@ -230,7 +230,7 @@ class UpdateReviewersForm(ApplicationSubmissionModelForm):
             self.prepare_field(
                 'reviewer_reviewers',
                 initial=reviewers,
-                excluded=submitted_reviewers
+                excluded=self.submitted_reviewers
             )
 
             # Move the non-role reviewers field to the end of the field list
@@ -253,6 +253,12 @@ class UpdateReviewersForm(ApplicationSubmissionModelForm):
             for field, user in self.cleaned_data.items()
             if field in self.role_fields
         ]
+
+        for field, role in self.role_fields.items():
+            assigned_reviewer = AssignedReviewers.objects.filter(role=role, submission=self.instance).last()
+            if assigned_reviewer and not cleaned_data[field] and assigned_reviewer.reviewer in self.submitted_reviewers:
+                self.add_error(field, _("Can't unassign, just change, because review already submitted"))
+                break
 
         # If any of the users match and are set to multiple roles, throw an error
         if len(role_reviewers) != len(set(role_reviewers)) and any(role_reviewers):
