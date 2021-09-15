@@ -37,7 +37,7 @@
         {% endif %}
     {% endfor %}
     {% if not object.id or object.is_draft %}
-        <button class="button button--submit button--top-space button--white" type="submit" name="{{ form.draft_button_name }}">{% trans "Save Draft" %}</button>
+        <button class="button button--submit button--top-space button--white" type="submit" name="{{ form.draft_button_name }}">{% trans "Save draft" %}</button>
     {% endif %}
     <button class="button button--submit button--top-space button--primary" type="submit" name="submit">{% trans "Submit" %}</button>
 </form>

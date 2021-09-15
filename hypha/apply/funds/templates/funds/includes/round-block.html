@@ -1,9 +1,10 @@
+{% load i18n %}
 <div class="wrapper wrapper--bottom-space">
     <section class="section section--with-options">
         <h4 class="heading heading--normal heading--no-margin">{{ title }}</h4>
         <div class="js-tabs">
-            <a class="tab__item tab__item--alt" href="#closed-rounds" data-tab="tab-1">Closed</a>
-            <a class="tab__item tab__item--alt" href="#open-rounds" data-tab="tab-2">Open</a>
+            <a class="tab__item tab__item--alt" href="#closed-rounds" data-tab="tab-1">{% trans "Closed" %}</a>
+            <a class="tab__item tab__item--alt" href="#open-rounds" data-tab="tab-2">{% trans "Open" %}</a>
         </div>
     </section>
 

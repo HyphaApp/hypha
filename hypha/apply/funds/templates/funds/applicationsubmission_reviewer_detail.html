@@ -1,5 +1,5 @@
 {% extends "funds/applicationsubmission_detail.html" %}
-{% load static workflow_tags review_tags determination_tags %}
+{% load i18n static workflow_tags review_tags determination_tags %}
 
 {% block flags %}
     {% include 'flags/flags.html' with submission=object user=request.user %}
@@ -7,7 +7,7 @@
 
 {% block reviews %}
     <div class="sidebar__inner">
-        <h5>Reviews &amp; assignees</h5>
+        <h5>{% trans "Reviews & assignees" %}</h5>
 
         {% include 'funds/includes/review_sidebar.html' %}
 

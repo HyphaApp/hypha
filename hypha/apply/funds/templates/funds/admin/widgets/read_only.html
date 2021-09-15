@@ -1,1 +1,2 @@
-<div class="col8">{{ widget.value }}</div>{% if widget.edit_link %}<div class="col4"><a class="button button-small" href="{{ widget.edit_link }}">Edit</a></div>{% endif %}
+{% load i18n %}
+<div class="col8">{{ widget.value }}</div>{% if widget.edit_link %}<div class="col4"><a class="button button-small" href="{{ widget.edit_link }}">{% trans "Edit" %}</a></div>{% endif %}

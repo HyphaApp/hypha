@@ -1,14 +1,15 @@
 {% extends "funds/base_submissions_table.html" %}
 {% load render_table from django_tables2 %}
-{% block title %}Submissions{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "Submissions" %}{% endblock %}
 
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner wrapper--search">
         {% block page_header %}
             <div>
-                <h1 class="gamma heading heading--no-margin heading--bold">Submissions</h1>
-                <h5>Track and explore recent submissions</h5>
+                <h1 class="gamma heading heading--no-margin heading--bold">{% trans "Submissions" %}</h1>
+                <h5>{% trans "Track and explore recent submissions" %}</h5>
             </div>
         {% endblock %}
         {% block page_header_tabs %}
@@ -16,13 +17,13 @@
             <div class="tabs">
                 <div class="tabs__container">
                     <a class="tab__item tab__item--right" href="{% url 'apply:submissions:staff_assignments' %}">
-                        Staff assignments
+                        {% trans "Staff assignments" %}
                     </a>
                     <a class="tab__item tab__item--right" href="{% url 'apply:submissions:reviewer_leaderboard' %}">
-                        Reviews
+                        {% trans "Reviews" %}
                     </a>
                     <a class="tab__item tab__item--right" href="{% url 'apply:submissions:result' %}">
-                        Results
+                        {% trans "Results" %}
                     </a>
                 </div>
             </div>
@@ -45,17 +46,17 @@
 
             {% render_table table %}
             <div class="all-submissions-table__more">
-                <a href="{% url 'apply:submissions:list' %}">Show all</a>
+                <a href="{% url 'apply:submissions:list' %}">{% trans "Show all" %}</a>
             </div>
         </div>
 
         {% if staff_flagged.table.data %}
         <div class="wrapper wrapper--bottom-space">
-            <h4 class="heading heading--normal">Staff Flagged Submissions</h4>
+            <h4 class="heading heading--normal">{% trans "Staff Flagged Submissions" %}</h4>
             {% render_table staff_flagged.table %}
             {% if staff_flagged.display_more %}
                 <div class="all-submissions-table__more">
-                    <a href="{% url 'apply:submissions:staff_flagged' %}">Show all</a>
+                    <a href="{% url 'apply:submissions:staff_flagged' %}">{% trans "Show all" %}</a>
                 </div>
             {% endif %}
         </div>

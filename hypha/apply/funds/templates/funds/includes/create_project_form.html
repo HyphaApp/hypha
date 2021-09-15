@@ -1,6 +1,8 @@
+{% load i18n %}
 <div class="modal" id="create-project">
-    <h4 class="modal__header-bar">Create Project</h4>
-    <p>This will create a new project and notify the Applicant.</p>
-    <p>This cannot be undone.</p>
-    {% include 'funds/includes/delegated_form_base.html' with form=project_form value='Confirm'%}
+    <h4 class="modal__header-bar">{% trans "Create Project" %}</h4>
+    <p>{% trans "This will create a new project and notify the Applicant." %}</p>
+    <p>{% trans "This cannot be undone." %}</p>
+    {% trans "Confirm" as confirm %}
+    {% include 'funds/includes/delegated_form_base.html' with form=project_form value=confirm %}
 </div>

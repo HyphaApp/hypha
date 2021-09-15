@@ -30,7 +30,7 @@
     {% empty %}
             {% block empty_round %}
                 <p class="round-block__not-found">
-                    There are no {% if round.end_date %} {{ display_text|lower }} {% else %} {{ type|lower }} {% endif %} rounds
+                    {% trans "There are no" %} {% if round.end_date %} {{ display_text|lower }} {% else %} {{ type|lower }} {% endif %} {% trans "rounds" %}
                 </p>
             {% endblock %}
     {% endfor %}

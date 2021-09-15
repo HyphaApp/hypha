@@ -220,7 +220,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         screening_outcome2.save()
         self.submission.screening_statuses.clear()
         response = self.get_page(self.submission)
-        self.assertContains(response, 'Screening Status')
+        self.assertContains(response, 'Screening status')
 
     def test_cant_view_submission_screening_block(self):
         """
@@ -229,7 +229,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         ScreeningStatus.objects.all().delete()
         self.submission.screening_statuses.clear()
         response = self.get_page(self.submission)
-        self.assertNotContains(response, 'Screening Status')
+        self.assertNotContains(response, 'Screening status')
 
     def test_can_create_project(self):
         # check submission doesn't already have a Project
@@ -947,7 +947,7 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
 
     def test_cant_see_screening_status_block(self):
         response = self.get_page(self.submission)
-        self.assertNotContains(response, 'Screening Status')
+        self.assertNotContains(response, 'Screening status')
 
     def test_cant_see_add_determination_primary_action(self):
         def assert_add_determination_not_displayed(submission, button_text):

@@ -1,9 +1,10 @@
+{% load i18n %}
 <li class="messages__text{% if tag %} messages__text--{{ tag }}{% endif %}{% if close %} js-message{% endif %}">
     <div class="messages__inner">
         <svg class="messages__icon"><use xlink:href="#exclamation-point"></use></svg>
         <p class="messages__copy">{{ message }}</p>
         {% if close %}
-            <a href="#" class="messages__button js-close-message">Ok</a>
+            <a href="#" class="messages__button js-close-message">{% trans "Ok" %}</a>
         {% endif %}
     </div>
 </li>
