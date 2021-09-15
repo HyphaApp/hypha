@@ -135,7 +135,7 @@ class UpdateSubmissionLeadForm(ApplicationSubmissionModelForm):
         kwargs.pop('user')
         super().__init__(*args, **kwargs)
         lead_field = self.fields['lead']
-        lead_field.label = f'Update lead from { self.instance.lead } to'
+        lead_field.label = _('Update lead from {lead} to').format(lead=self.instance.lead)
         lead_field.queryset = lead_field.queryset.exclude(id=self.instance.lead.id)
 
 
@@ -361,7 +361,7 @@ def make_role_reviewer_fields():
         field_name = 'role_reviewer_' + slugify(role_name)
         field = forms.ModelChoiceField(
             queryset=staff_reviewers,
-            empty_label=_("Select a reviewer"),
+            empty_label=_('-- No reviewer selected --'),
             required=False,
             label=mark_safe(render_icon(role.icon) + _('{role_name} Reviewer').format(role_name=role_name)),
         )
