@@ -9,12 +9,12 @@
     </div>
 </div>
 <div class="wrapper wrapper--small">
-    <h3>Thank you for submitting your information.</h3>
-    <p>Your {{ ORG_SHORT_NAME }} Programme Manager will be in touch with you if there are any issues.</p>
-    <h3>What will happen next?</h3>
-    <p>We will use this information to create the contract for your project.</p>
-    <p>Once this has happened, we will send you a message with your contract.</p>
-    <p>We'll ask you to read it, and if everything is OK, you can sign it.</p>
+    <h3>{% trans "Thank you for submitting your information." %}</h3>
+    <p>{% trans "Your {{ ORG_SHORT_NAME }} Programme Manager will be in touch with you if there are any issues." %}</p>
+    <h3>{% trans "What will happen next?" %}</h3>
+    <p>{% trans "We will use this information to create the contract for your project." %}</p>
+    <p>{% trans "Once this has happened, we will send you a message with your contract." %}</p>
+    <p>{% trans "We'll ask you to read it, and if everything is OK, you can sign it." %}</p>
     <a href="{% url 'apply:projects:detail' pk=project.pk %}">{% trans "Visit Project Detail Page" %}</a>
 </div>
 {% endblock %}

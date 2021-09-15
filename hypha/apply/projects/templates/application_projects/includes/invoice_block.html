@@ -1,14 +1,15 @@
+{% load i18n %}
 <ul class="invoice-block">
     <li class="invoice-block__item">
-        <p class="invoice-block__title">Contract number</p>
+        <p class="invoice-block__title">{% trans "Contract number" %}</p>
         <p class="invoice-block__meta">XXXXXX</p>
     </li>
     <li class="invoice-block__item">
-        <p class="invoice-block__title">Pay to</p>
+        <p class="invoice-block__title">{% trans "Pay to" %}</p>
         <p class="invoice-block__meta">XXXXXX</p>
     </li>
     <li class="invoice-block__item">
-        <p class="invoice-block__title">Some details</p>
+        <p class="invoice-block__title">{% trans "Some details" %}</p>
         <p class="invoice-block__meta">XXXXXX</p>
     </li>
 </ul>

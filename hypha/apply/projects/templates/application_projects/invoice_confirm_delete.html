@@ -1,16 +1,15 @@
-
 {% extends "base-apply.html" %}
-{% load humanize invoice_tools %}
+{% load i18n humanize invoice_tools %}
 
-{% block title %} Invoice: {{ object.project.title }}{% endblock %}
+{% block title %} {% trans "Invoice" %}: {{ object.project.title }}{% endblock %}
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
         <a class="simplified__projects-link" href="{{ object.project.get_absolute_url }}">
-            Project
+            {% trans "Project" %}
         </a>
-        <h2 class="heading heading--no-margin">Delete Invoice</h2>
-        <h5 class="heading heading--no-margin">For: {{ object.project.title }}</h5>
+        <h2 class="heading heading--no-margin">{% trans "Delete Invoice" %}</h2>
+        <h5 class="heading heading--no-margin">{% trans "For" %}: {{ object.project.title }}</h5>
     </div>
 </div>
 
@@ -18,17 +17,17 @@
     <div class="wrapper--sidebar--inner">
 
         <div class="card card--solid">
-            <p class="card__text"><b>Status:</b> {{ object.get_status_display }}</p>
-            <p class="card__text"><b>Vendor:</b> {{ object.project.vendor.name }}</p>
-            <p class="card__text"><b>Invoice Number:</b> {{ object.pk }}</p>
-            <p class="card__text"><b>Period of Performance:</b> {{ object.date_from.date }} | {{ object.date_to.date }}</p>
-            <p class="card__text"><b>Total:</b> {{ CURRENCY_SYMBOL }}{{ object.amount|intcomma }}</p>
+            <p class="card__text"><b>{% trans "Status" %}:</b> {{ object.get_status_display }}</p>
+            <p class="card__text"><b>{% trans "Vendor" %}:</b> {{ object.project.vendor.name }}</p>
+            <p class="card__text"><b>{% trans "Invoice Number" %}:</b> {{ object.pk }}</p>
+            <p class="card__text"><b>{% trans "Period of Performance" %}:</b> {{ object.date_from.date }} | {{ object.date_to.date }}</p>
+            <p class="card__text"><b>{% trans "Total" %}:</b> {{ CURRENCY_SYMBOL }}{{ object.amount|intcomma }}</p>
 
         </div>
         <div class="card card--solid">
             <form method="post">{% csrf_token %}
-                <p>Are you sure you want to delete this invoice for {{ object.project.title }}?</p>
-                <button class="button button--primary" type="submit">Confirm</button>
+                <p>{% trans "Are you sure you want to delete this invoice for" %} {{ object.project.title }}?</p>
+                <button class="button button--primary" type="submit">{% trans "Confirm" %}</button>
             </form>
 
         </div>

@@ -1,35 +1,35 @@
 {% extends "base-apply.html" %}
-{% load humanize invoice_tools %}
+{% load i18n humanize invoice_tools %}
 
-{% block title %}Invoice Request: {{ object.project.title }}{% endblock %}
+{% block title %}{% trans "Invoice Request" %}: {{ object.project.title }}{% endblock %}
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
         <a class="simplified__projects-link" href="{{ object.project.get_absolute_url }}">
             Project
         </a>
-        <h2 class="heading heading--no-margin">Invoice Request</h2>
-        <h5 class="heading heading--no-margin">For: {{ object.project.title }}</h5>
+        <h2 class="heading heading--no-margin">{% trans "Invoice Request" %}</h2>
+        <h5 class="heading heading--no-margin">{% trans "For" %}: {{ object.project.title }}</h5>
     </div>
 </div>
 
 <div class="wrapper wrapper--sidebar wrapper--outer-space-medium">
     <div class="wrapper--sidebar--inner">
         <div class="card card--solid">
-            <p class="card__text"><b>Status:</b> {{ object.get_status_display }}</p>
-            <p class="card__text"><b>Vendor:</b> {{ object.project.vendor.name }}</p>
-            <p class="card__text"><b>Invoice Number:</b> {{ object.pk }}</p>
-            <p class="card__text"><b>Period of Performance:</b> {{ object.date_from.date }} | {{ object.date_to.date }}</p>
-            <p class="card__text"><b>Total:</b> {{ CURRENCY_SYMBOL }}{{ object.amount|intcomma }}</p>
+            <p class="card__text"><b>{% trans "Status" %}:</b> {{ object.get_status_display }}</p>
+            <p class="card__text"><b>{% trans "Vendor" %}:</b> {{ object.project.vendor.name }}</p>
+            <p class="card__text"><b>{% trans "Invoice Number" %}:</b> {{ object.pk }}</p>
+            <p class="card__text"><b>{% trans "Period of Performance" %}:</b> {{ object.date_from.date }} | {{ object.date_to.date }}</p>
+            <p class="card__text"><b>{% trans "Total" %}:</b> {{ CURRENCY_SYMBOL }}{{ object.amount|intcomma }}</p>
         </div>
 
         <div class="card card--solid">
             <div class="card__inner">
-                <h5 class="card__heading">Invoice</h5>
+                <h5 class="card__heading">{% trans "Invoice" %}</h5>
                 <p class="card__text"><a href="{% url "apply:projects:invoices:invoice-document" pk=object.pk %}">{{invoice.document.name}}</a></p>
             </div>
             <div class="card__inner">
-                <h5 class="card__heading">Supporting Documents</h5>
+                <h5 class="card__heading">{% trans "Supporting Documents" %}</h5>
                 {% for document in object.supporting_documents.all %}
                     <p class="card__text"><a href="{% url "apply:projects:invoices:supporting-document" pk=object.pk file_pk=document.pk %}">{{document.document.name}}</a></p>
                 {% endfor %}
@@ -42,7 +42,7 @@
                 {% can_edit object user as user_can_edit_request %}
                 <a
                     {% if not user_can_edit_request %}
-                        data-tooltip="Only editable when 'Submitted' or you have been requested to make changes"
+                        data-tooltip="{% trans "Only editable when 'Submitted' or you have been requested to make changes" %}"
                     {% endif %}
                     class="button button--bottom-space button--primary button--full-width{% if not user_can_edit_request %} button--tooltip-disabled{% endif %}"
                     href={% if user_can_edit_request %}
@@ -51,13 +51,13 @@
                         "#"
                     {% endif %}
                 >
-                    Edit
+                    {% trans "Edit" %}
                 </a>
                 {% can_delete object user as user_can_delete_request %}
                 {% if user_can_delete_request %}
                 <a
                     class="button button--bottom-space button--primary button--full-width"
-                    href="{% url 'apply:projects:invoices:delete' pk=object.pk %}">Delete</a>
+                    href="{% url 'apply:projects:invoices:delete' pk=object.pk %}">{% trans "Delete" %}</a>
             {% endif %}
             {% endblock %}
         </div>

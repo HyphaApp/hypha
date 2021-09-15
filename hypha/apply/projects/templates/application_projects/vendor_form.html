@@ -24,7 +24,7 @@
                     {{ field }}
                 {% endif %}
             {% endfor %}
-            <button class="button button--submit button--top-space button--primary" type="submit" name="save">{% if wizard.steps.step1 == 6 %}Submit{% else %}Save and continue{% endif %}</button>
+            <button class="button button--submit button--top-space button--primary" type="submit" name="save">{% if wizard.steps.step1 == 6 %}{% trans "Submit" %}{% else %}{% trans "Save and continue" %}{% endif %}</button>
         </form>
     </div>
 </div>

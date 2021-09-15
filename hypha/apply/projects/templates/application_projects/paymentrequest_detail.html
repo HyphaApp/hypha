@@ -1,37 +1,37 @@
 {% extends "base-apply.html" %}
-{% load humanize payment_request_tools %}
+{% load i18n humanize payment_request_tools %}
 
-{% block title %}Payment Request: {{ object.project.title }}{% endblock %}
+{% block title %}{% trans "Payment Request" %}: {{ object.project.title }}{% endblock %}
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
         <a class="simplified__projects-link" href="{{ object.project.get_absolute_url }}">
-            Project
+            {% trans "Project" %}
         </a>
-        <h2 class="heading heading--no-margin">Payment Request</h2>
-        <h5 class="heading heading--no-margin">For: {{ object.project.title }}</h5>
+        <h2 class="heading heading--no-margin">{% trans "Payment Request" %}</h2>
+        <h5 class="heading heading--no-margin">{% trans "For" %}: {{ object.project.title }}</h5>
     </div>
 </div>
 
 <div class="wrapper wrapper--sidebar wrapper--outer-space-medium">
     <div class="wrapper--sidebar--inner">
         <div class="card card--solid">
-            <p class="card__text"><b>Status:</b> {{ object.get_status_display }}</p>
-            <p class="card__text"><b>Name of Vendor:</b> {{ object.project.contact_legal_name }}</p>
-            <p class="card__text"><b>Invoice Number:</b> {{ object.pk }}</p>
-            <p class="card__text"><b>Period of Performance:</b> {{ object.date_from.date }} | {{ object.date_to.date }}</p>
-            <p class="card__text"><b>Total:</b> {{ CURRENCY_SYMBOL }}{{ object.value|intcomma }}</p>
+            <p class="card__text"><b>{% trans "Status" %}:</b> {{ object.get_status_display }}</p>
+            <p class="card__text"><b>{% trans "Name of Vendor" %}:</b> {{ object.project.contact_legal_name }}</p>
+            <p class="card__text"><b>{% trans "Invoice Number" %}:</b> {{ object.pk }}</p>
+            <p class="card__text"><b>{% trans "Period of Performance" %}:</b> {{ object.date_from.date }} | {{ object.date_to.date }}</p>
+            <p class="card__text"><b>{% trans "Total" %}:</b> {{ CURRENCY_SYMBOL }}{{ object.value|intcomma }}</p>
         </div>
 
         <div class="card card--solid">
             <div class="card__inner">
-                <h5 class="card__heading">Invoice</h5>
-                <p class="card__text"><a href="{% url "apply:projects:payments:invoice" pk=object.pk %}">Download</a></p>
+                <h5 class="card__heading">{% trans "Invoice" %}</h5>
+                <p class="card__text"><a href="{% url "apply:projects:payments:invoice" pk=object.pk %}">{% trans "Download" %}</a></p>
             </div>
             <div class="card__inner">
-                <h5 class="card__heading">Reciepts</h5>
+                <h5 class="card__heading">{% trans "Reciepts" %}</h5>
                 {% for reciept in object.receipts.all %}
-                    <p class="card__text"><a href="{% url "apply:projects:payments:receipt" pk=object.pk file_pk=reciept.pk %}">Download</a></p>
+                    <p class="card__text"><a href="{% url "apply:projects:payments:receipt" pk=object.pk file_pk=reciept.pk %}">{% trans "Download" %}</a></p>
                 {% endfor %}
             </div>
         </div>
@@ -45,7 +45,7 @@
                 {% can_edit object user as user_can_edit_request %}
                 <a
                     {% if not user_can_edit_request %}
-                        data-tooltip="Only editable when 'Submitted' or you have been requested to make changes"
+                        data-tooltip="{% trans "Only editable when 'Submitted' or you have been requested to make changes" %}"
                     {% endif %}
                     class="button button--bottom-space button--primary button--full-width{% if not user_can_edit_request %} button--tooltip-disabled{% endif %}"
                     href={% if user_can_edit_request %}
@@ -54,13 +54,13 @@
                         "#"
                     {% endif %}
                 >
-                    Edit
+                    {% trans "Edit" %}
                 </a>
                 {% can_delete object user as user_can_delete_request %}
                 {% if user_can_delete_request %}
                 <a
                     class="button button--bottom-space button--primary button--full-width"
-                    href="{% url 'apply:projects:payments:delete' pk=object.pk %}">Delete</a>
+                    href="{% url 'apply:projects:payments:delete' pk=object.pk %}">{% trans "Delete" %}</a>
             {% endif %}
             {% endblock %}
         </div>

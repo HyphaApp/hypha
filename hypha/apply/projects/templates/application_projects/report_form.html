@@ -1,12 +1,12 @@
 {% extends "base-apply.html" %}
-{% load static %}
+{% load i18n static %}
 
 {% block extra_css %}
 {{ block.super }}
 <link rel="stylesheet" href="{% static 'css/apply/fancybox.css' %}">
 {% endblock %}
 
-{% block title %}Edit Report | {{ object.project.title }}{% endblock %}
+{% block title %}{% trans "Edit Report" %} | {{ object.project.title }}{% endblock %}
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
@@ -14,7 +14,7 @@
             Project
         </a>
         <h2 class="heading heading--no-margin">{{ object.project.title }}</h2>
-        <h5 class="heading heading--no-margin">Submit a report</h5>
+        <h5 class="heading heading--no-margin">{% trans "Submit a report" %}</h5>
     </div>
 </div>
 
@@ -25,7 +25,7 @@
 
         <div class="alert">
             <svg class="alert__icon"><use xlink:href="#exclamation-point"></use></svg>
-            <p class="alert__text">You are reporting for the period running from {{ report.start_date }} to {{ report.end_date }}</p>
+            <p class="alert__text">{% trans "You are reporting for the period running from" %} {{ report.start_date }} {% trans "to" %} {{ report.end_date }}</p>
         </div>
 
         <form class="form" action="" method="post" enctype="multipart/form-data" novalidate>
@@ -42,28 +42,28 @@
 
             <input type="submit" id="submit-report-form-submit" name="submit" class="is-hidden" />
             <input type="submit" id="submit-report-form-save" name="save" class="is-hidden" />
-            <button data-fancybox data-src="#save-report" class="button button--submit button--top-space button--white" type="button">Save</button>
-            <button data-fancybox data-src="#submit-report" class="button button--primary" type="button">Submit</button>
+            <button data-fancybox data-src="#save-report" class="button button--submit button--top-space button--white" type="button">{% trans "Save" %}</button>
+            <button data-fancybox data-src="#submit-report" class="button button--primary" type="button">{% trans "Submit" %}</button>
 
             <!-- Save report modal -->
             <div class="modal" id="save-report">
-                <h4 class="modal__header-bar">Save report</h4>
+                <h4 class="modal__header-bar">{% trans "Save report" %}</h4>
                 <div class="modal__copy">
-                    <p>Saving a draft means this report will be visible to you and staff from your project page.</p>
+                    <p>{% trans "Saving a draft means this report will be visible to you and staff from your project page." %}</p>
                 </div>
                 <div class="modal__buttons">
-                    <button data-fancybox-close class="button button--submit button--white">Cancel</button>
-                    <label class="button button--submit button--top-space button--primary" for="submit-report-form-save" tabindex="0">Save</label>
+                    <button data-fancybox-close class="button button--submit button--white">{% trans "Cancel" %}</button>
+                    <label class="button button--submit button--top-space button--primary" for="submit-report-form-save" tabindex="0">{% trans "Save" %}</label>
                 </div>
             </div>
 
             <!-- Submit report modal -->
             <div class="modal" id="submit-report">
-                <h4 class="modal__header-bar">Submit report</h4>
-                <p>Are you sure you want to submit your report?</p>
+                <h4 class="modal__header-bar">{% trans "Submit report" %}</h4>
+                <p>{% trans "Are you sure you want to submit your report?" %}</p>
                 <div class="modal__buttons">
-                    <button data-fancybox-close class="button button--submit button--white">Cancel</button>
-                    <label class="button button--submit button--top-space button--primary" for="submit-report-form-submit" tabindex="0">Submit</label>
+                    <button data-fancybox-close class="button button--submit button--white">{% trans "Cancel" %}</button>
+                    <label class="button button--submit button--top-space button--primary" for="submit-report-form-submit" tabindex="0">{% trans "Submit" %}</label>
                 </div>
             </div>
         </form>
