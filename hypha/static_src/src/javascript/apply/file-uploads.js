@@ -16,7 +16,7 @@ jQuery(function ($) {
     });
 
     function init(form) {
-        if ($('.form__group--file').length){
+        if ($('.form__group--file').length) {
             window.initUploadFields(form);
 
             // Hide wrapper elements for hidden inputs added by django-file-form
