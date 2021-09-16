@@ -575,6 +575,12 @@ if 'TRANSITION_AFTER_REVIEWS' in env:
         pass
 
 
+# Exclude Filters/columns from submission tables.
+if 'SUBMISSIONS_TABLE_EXCLUDED_FIELDS' in env:
+    SUBMISSIONS_TABLE_EXCLUDED_FIELDS = env['SUBMISSIONS_TABLE_EXCLUDED_FIELDS'].split(',')
+else:
+    SUBMISSIONS_TABLE_EXCLUDED_FIELDS = []
+
 # Celery config
 if 'REDIS_URL' in env:
     CELERY_BROKER_URL = env.get('REDIS_URL')

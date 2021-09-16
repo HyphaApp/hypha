@@ -2,6 +2,7 @@ from copy import copy
 from datetime import timedelta
 
 import django_tables2 as tables
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, permission_required
@@ -177,7 +178,7 @@ class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
     paginator_class = LazyPaginator
     table_pagination = {'per_page': 25}
 
-    excluded_fields = []
+    excluded_fields = settings.SUBMISSIONS_TABLE_EXCLUDED_FIELDS
 
     @property
     def excluded(self):
@@ -484,7 +485,7 @@ class SubmissionsByRound(BaseAdminSubmissionsTable, DelegateableListView):
         BatchDeleteSubmissionView,
     ]
 
-    excluded_fields = ('round', 'fund')
+    excluded_fields = ['round', 'fund'] + settings.SUBMISSIONS_TABLE_EXCLUDED_FIELDS
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -1255,7 +1256,7 @@ class SubmissionResultView(SubmissionStatsMixin, FilterView):
     filterset_class = SubmissionFilterAndSearch
     filter_action = ''
 
-    excluded_fields = []
+    excluded_fields = settings.SUBMISSIONS_TABLE_EXCLUDED_FIELDS
 
     @property
     def excluded(self):
