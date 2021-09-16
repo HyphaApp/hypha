@@ -16,10 +16,12 @@ jQuery(function ($) {
     });
 
     function init(form) {
-        window.initUploadFields(form);
+        if ($('.form__group--file').length){
+            window.initUploadFields(form);
 
-        // Hide wrapper elements for hidden inputs added by django-file-form
-        $('input[type=hidden]').closest('.form__group').hide();
+            // Hide wrapper elements for hidden inputs added by django-file-form
+            $('input[type=hidden]').closest('.form__group').hide();
+        }
     }
 
     // Initilise multi-step wizard forms
