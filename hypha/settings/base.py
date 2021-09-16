@@ -576,6 +576,7 @@ if 'TRANSITION_AFTER_REVIEWS' in env:
 
 
 # Exclude Filters/columns from submission tables.
+# Possible values are: fund, round, status, lead, reviewers, screening_statuses, category_options, meta_terms
 if 'SUBMISSIONS_TABLE_EXCLUDED_FIELDS' in env:
     SUBMISSIONS_TABLE_EXCLUDED_FIELDS = env['SUBMISSIONS_TABLE_EXCLUDED_FIELDS'].split(',')
 else:
