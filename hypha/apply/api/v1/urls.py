@@ -8,6 +8,9 @@ from hypha.apply.api.v1.screening.views import (
     ScreeningStatusViewSet,
     SubmissionScreeningStatusViewSet,
 )
+from hypha.apply.api.v1.projects.views import (
+    DeliverableViewSet
+)
 
 from .views import (
     CommentViewSet,
@@ -38,9 +41,12 @@ submission_router.register(r'determinations', SubmissionDeterminationViewSet, ba
 submission_router.register(r'screening_statuses', SubmissionScreeningStatusViewSet, basename='submission-screening_statuses')
 submission_router.register(r'reminders', SubmissionReminderViewSet, basename='submission-reminder')
 
+invoice_router = routers.NestedSimpleRouter(router, r'invoices', lookup='invoice')
+invoice_router.register(r'deliverables', DeliverableViewSet, basename='invoice-deliverables')
+
 urlpatterns = [
     path('user/', CurrentUser.as_view(), name='user'),
     path('submissions_filter/', SubmissionFilters.as_view(), name='submissions-filter')
 ]
 
-urlpatterns = router.urls + submission_router.urls + urlpatterns
+urlpatterns = router.urls + submission_router.urls + invoice_router.urls + urlpatterns

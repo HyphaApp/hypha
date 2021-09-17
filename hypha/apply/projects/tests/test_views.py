@@ -918,13 +918,14 @@ class TestProjectDetailSimplifiedView(TestCase):
 
 
 class TestStaffDetailInvoiceStatus(BaseViewTestCase):
-    base_view_name = 'detail'
-    url_name = 'funds:projects:invoices:{}'
+    base_view_name = 'invoice-detail'
+    url_name = 'funds:projects:{}'
     user_factory = StaffFactory
 
     def get_kwargs(self, instance):
         return {
-            'pk': instance.pk,
+            'pk': instance.project.pk,
+            'invoice_pk': instance.pk,
         }
 
     def test_can(self):
@@ -940,13 +941,14 @@ class TestStaffDetailInvoiceStatus(BaseViewTestCase):
 
 
 class TestFinanceDetailInvoiceStatus(BaseViewTestCase):
-    base_view_name = 'detail'
-    url_name = 'funds:projects:invoices:{}'
+    base_view_name = 'invoice-detail'
+    url_name = 'funds:projects:{}'
     user_factory = FinanceFactory
 
     def get_kwargs(self, instance):
         return {
-            'pk': instance.pk,
+            'pk': instance.project.pk,
+            'invoice_pk': instance.pk,
         }
 
     def test_can(self):
@@ -962,13 +964,14 @@ class TestFinanceDetailInvoiceStatus(BaseViewTestCase):
 
 
 class TestApplicantDetailInvoiceStatus(BaseViewTestCase):
-    base_view_name = 'detail'
-    url_name = 'funds:projects:invoices:{}'
+    base_view_name = 'invoice-detail'
+    url_name = 'funds:projects:{}'
     user_factory = ApplicantFactory
 
     def get_kwargs(self, instance):
         return {
-            'pk': instance.pk,
+            'pk': instance.project.pk,
+            'invoice_pk': instance.pk,
         }
 
     def test_can(self):
@@ -983,12 +986,15 @@ class TestApplicantDetailInvoiceStatus(BaseViewTestCase):
 
 
 class TestApplicantEditInvoiceView(BaseViewTestCase):
-    base_view_name = 'edit'
-    url_name = 'funds:projects:invoices:{}'
+    base_view_name = 'invoice-edit'
+    url_name = 'funds:projects:{}'
     user_factory = ApplicantFactory
 
     def get_kwargs(self, instance):
-        return {'pk': instance.pk}
+        return {
+            'pk': instance.project.pk,
+            'invoice_pk': instance.pk,
+        }
 
     def test_editing_invoice_remove_supporting_document(self):
         invoice = InvoiceFactory(project__user=self.user)
@@ -1036,12 +1042,15 @@ class TestApplicantEditInvoiceView(BaseViewTestCase):
 
 
 class TestStaffEditInvoiceView(BaseViewTestCase):
-    base_view_name = 'edit'
-    url_name = 'funds:projects:invoices:{}'
+    base_view_name = 'invoice-edit'
+    url_name = 'funds:projects:{}'
     user_factory = StaffFactory
 
     def get_kwargs(self, instance):
-        return {'pk': instance.pk}
+        return {
+            'pk': instance.project.pk,
+            'invoice_pk': instance.pk,
+        }
 
     def test_editing_invoice_remove_supporting_document(self):
         invoice = InvoiceFactory()
@@ -1091,13 +1100,14 @@ class TestStaffEditInvoiceView(BaseViewTestCase):
 
 
 class TestStaffChangeInvoiceStatus(BaseViewTestCase):
-    base_view_name = 'detail'
-    url_name = 'funds:projects:invoices:{}'
+    base_view_name = 'invoice-detail'
+    url_name = 'funds:projects:{}'
     user_factory = StaffFactory
 
     def get_kwargs(self, instance):
         return {
-            'pk': instance.pk,
+            'pk': instance.project.pk,
+            'invoice_pk': instance.pk,
         }
 
     def test_can(self):
@@ -1113,13 +1123,14 @@ class TestStaffChangeInvoiceStatus(BaseViewTestCase):
 
 
 class TestApplicantChangeInoviceStatus(BaseViewTestCase):
-    base_view_name = 'detail'
-    url_name = 'funds:projects:invoices:{}'
+    base_view_name = 'invoice-detail'
+    url_name = 'funds:projects:{}'
     user_factory = ApplicantFactory
 
     def get_kwargs(self, instance):
         return {
-            'pk': instance.pk,
+            'pk': instance.project.pk,
+            'invoice_pk': instance.pk,
         }
 
     def test_can(self):
@@ -1145,12 +1156,13 @@ class TestApplicantChangeInoviceStatus(BaseViewTestCase):
 
 class TestStaffInoviceDocumentPrivateMedia(BaseViewTestCase):
     base_view_name = 'invoice-document'
-    url_name = 'funds:projects:invoices:{}'
+    url_name = 'funds:projects:{}'
     user_factory = StaffFactory
 
     def get_kwargs(self, instance):
         return {
-            'pk': instance.pk,
+            'pk': instance.project.pk,
+            'invoice_pk': instance.pk,
         }
 
     def test_can_access(self):
@@ -1167,12 +1179,13 @@ class TestStaffInoviceDocumentPrivateMedia(BaseViewTestCase):
 
 class TestApplicantInvoiceDocumentPrivateMedia(BaseViewTestCase):
     base_view_name = 'invoice-document'
-    url_name = 'funds:projects:invoices:{}'
+    url_name = 'funds:projects:{}'
     user_factory = ApplicantFactory
 
     def get_kwargs(self, instance):
         return {
-            'pk': instance.pk,
+            'pk': instance.project.pk,
+            'invoice_pk': instance.pk,
         }
 
     def test_can_access_own(self):
@@ -1187,13 +1200,14 @@ class TestApplicantInvoiceDocumentPrivateMedia(BaseViewTestCase):
 
 
 class TestStaffInvoiceSupportingDocumentPrivateMedia(BaseViewTestCase):
-    base_view_name = 'supporting-document'
-    url_name = 'funds:projects:invoices:{}'
+    base_view_name = 'invoice-supporting-document'
+    url_name = 'funds:projects:{}'
     user_factory = StaffFactory
 
     def get_kwargs(self, instance):
         return {
             'pk': instance.invoice.pk,
+            'invoice_pk': instance.pk,
             'file_pk': instance.pk,
         }
 
@@ -1204,13 +1218,14 @@ class TestStaffInvoiceSupportingDocumentPrivateMedia(BaseViewTestCase):
 
 
 class TestApplicantSupportingDocumentPrivateMedia(BaseViewTestCase):
-    base_view_name = 'supporting-document'
-    url_name = 'funds:projects:invoices:{}'
+    base_view_name = 'invoice-supporting-document'
+    url_name = 'funds:projects:{}'
     user_factory = ApplicantFactory
 
     def get_kwargs(self, instance):
         return {
             'pk': instance.invoice.pk,
+            'invoice_pk': instance.pk,
             'file_pk': instance.pk,
         }
 

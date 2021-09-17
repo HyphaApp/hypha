@@ -454,4 +454,25 @@ class DocumentCategory(models.Model):
 
     class Meta:
         ordering = ('name',)
-        verbose_name_plural = _('Document Categories')
+        verbose_name_plural = 'Document Categories'
+
+
+class Deliverable(models.Model):
+    name = models.TextField()
+    available_to_invoice = models.IntegerField(default=1)
+    invoice_quantity = models.IntegerField(
+        help_text='Quantity Selected on an Invoice'
+    )
+    unit_price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(decimal.Decimal('0.01'))],
+    )
+    project = models.ForeignKey(
+        Project,
+        on_delete=models.CASCADE,
+        related_name='deliverables'
+    )
+
+    def __str__(self):
+        return self.name

@@ -13,6 +13,7 @@ from .project import (
     Project,
     ProjectApprovalForm,
     ProjectSettings,
+    Deliverable,
 )
 from .report import Report, ReportConfig, ReportPrivateFiles, ReportVersion
 from .vendor import BankInformation, DueDiligenceDocument, Vendor
@@ -37,4 +38,5 @@ __all__ = [
     'DueDiligenceDocument',
     'Invoice',
     'SupportingDocument',
+    'Deliverable',
 ]

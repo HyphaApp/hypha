@@ -5,6 +5,7 @@ from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import Sum, Value
+from django.db.models.fields.related import ManyToManyField
 from django.db.models.functions import Coalesce
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -114,7 +115,10 @@ class Invoice(models.Model):
     message_for_pm = models.TextField(blank=True, verbose_name=_('Message'))
     comment = models.TextField(blank=True)
     status = models.TextField(choices=REQUEST_STATUS_CHOICES, default=SUBMITTED)
-
+    deliverables = ManyToManyField(
+        'Deliverable',
+        related_name='invoices'
+    )
     objects = InvoiceQueryset.as_manager()
 
     def __str__(self):
@@ -164,7 +168,10 @@ class Invoice(models.Model):
         return self.paid_value or self.amount
 
     def get_absolute_url(self):
-        return reverse('apply:projects:invoices:detail', args=[self.pk])
+        return reverse(
+            'apply:projects:invoice-detail',
+            kwargs={'pk': self.project.pk, 'invoice_pk': self.pk}
+        )
 
 
 class SupportingDocument(models.Model):
