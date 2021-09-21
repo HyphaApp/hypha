@@ -42,7 +42,7 @@
                 <a class="tab__item" href="#activity-feed" data-tab="tab-3">
                     {% trans "Activity feed" %}
                 </a>
-                {% if request.user.is_apply_staff %}
+                {% if request.user.is_apply_staff_admin %}
                 <a class="tab__item tab__item--right js-tabs-off" href="{% url 'admin:activity_event_changelist' %}?submission__id={{ object.id }}">
                     {% trans "View message log" %}
                 </a>
