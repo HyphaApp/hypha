@@ -148,7 +148,7 @@ class User(AbstractUser):
 
     @cached_property
     def is_apply_staff_admin(self):
-        return self.groups.filter(name=TEAMADMIN_GROUP_NAME).exists()
+        return self.groups.filter(name=TEAMADMIN_GROUP_NAME).exists() or self.is_superuser
 
     @cached_property
     def is_reviewer(self):
