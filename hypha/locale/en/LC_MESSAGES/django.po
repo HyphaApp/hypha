@@ -2899,11 +2899,11 @@ msgstr ""
 msgid "No, it is a personal bank account"
 msgstr ""
 
-#: hypha/apply/projects/forms/vendor.py:105
+#: hypha/apply/projects/forms/vendor.py:105 hypha/apply/review/options.py:23
 msgid "No"
 msgstr ""
 
-#: hypha/apply/projects/forms/vendor.py:105
+#: hypha/apply/projects/forms/vendor.py:105 hypha/apply/review/options.py:25
 msgid "Yes"
 msgstr ""
 
@@ -3807,6 +3807,62 @@ msgstr ""
 
 #: hypha/apply/review/models.py:165
 msgid "Visibility"
+msgstr ""
+
+#: hypha/apply/review/options.py:6
+msgid "0. Need more info"
+msgstr ""
+
+#: hypha/apply/review/options.py:7
+msgid "1. Poor"
+msgstr ""
+
+#: hypha/apply/review/options.py:8
+msgid "2. Not so good"
+msgstr ""
+
+#: hypha/apply/review/options.py:9
+msgid "3. Is o.k."
+msgstr ""
+
+#: hypha/apply/review/options.py:10
+msgid "4. Good"
+msgstr ""
+
+#: hypha/apply/review/options.py:11
+msgid "5. Excellent"
+msgstr ""
+
+#: hypha/apply/review/options.py:12
+msgid "n/a - choose not to answer"
+msgstr ""
+
+#: hypha/apply/review/options.py:24
+msgid "Maybe"
+msgstr ""
+
+#: hypha/apply/review/options.py:32
+msgid "Agree"
+msgstr ""
+
+#: hypha/apply/review/options.py:33
+msgid "Disagree"
+msgstr ""
+
+#: hypha/apply/review/options.py:40
+msgid "Visible only to staff."
+msgstr ""
+
+#: hypha/apply/review/options.py:41
+msgid "Visible to other reviewers and staff."
+msgstr ""
+
+#: hypha/apply/review/options.py:45
+msgid "Private"
+msgstr ""
+
+#: hypha/apply/review/options.py:46
+msgid "Reviewers and Staff"
 msgstr ""
 
 #: hypha/apply/review/templates/review/includes/review_button.html:8
