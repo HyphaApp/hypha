@@ -1,3 +1,4 @@
+from hypha.apply.projects.models.payment import InvoiceDeliverable
 from hypha.apply.projects.models.project import Deliverable
 from django.shortcuts import get_object_or_404
 from rest_framework import mixins, permissions, status, viewsets
@@ -8,7 +9,7 @@ from rest_framework_api_key.permissions import HasAPIKey
 from ..mixin import InvoiceNestedMixin, ProjectNestedMixin
 from ..permissions import IsApplyStaffUser
 from .serializers import (
-    DeliverableListSerializer,
+    InvoiceDeliverableListSerializer,
     DeliverableSerializer
 )
 
@@ -23,7 +24,7 @@ class DeliverableViewSet(
     permission_classes = (
         HasAPIKey | permissions.IsAuthenticated, HasAPIKey | IsApplyStaffUser,
     )
-    serializer_class = DeliverableListSerializer
+    serializer_class = InvoiceDeliverableListSerializer
     pagination_class = None
 
     def get_queryset(self):
@@ -41,13 +42,27 @@ class DeliverableViewSet(
         deliverable = get_object_or_404(
             Deliverable, id=deliverable_id
         )
-        invoice.deliverables.add(deliverable)
+        if invoice.deliverables.filter(deliverable=deliverable).exists():
+            raise ValidationError({'detail': "Invoice Already has this deliverable"})
+        quantity = ser.validated_data['quantity']
+        if deliverable.available_to_invoice < quantity:
+            raise ValidationError({'detail': "Required quantity is not available for this invoice"})
+        invoice_deliverable = InvoiceDeliverable.objects.create(
+            deliverable=deliverable,
+            quantity=ser.validated_data['quantity']
+        )
+        invoice.deliverables.add(invoice_deliverable)
         ser = self.get_serializer(invoice.deliverables.all(), many=True)
-        return Response(ser.data, status=status.HTTP_201_CREATED)
+        return Response(
+            {'deliverables': ser.data, 'total': invoice.deliverables_total_amount['total']},
+            status=status.HTTP_201_CREATED
+        )
 
     def destroy(self, request, *args, **kwargs):
         deliverable = self.get_object()
         invoice = self.get_invoice_object()
-        invoice.deliverable.remove(deliverable)
+        invoice.deliverables.remove(deliverable)
         ser = self.get_serializer(invoice.deliverables.all(), many=True)
-        return Response(ser.data)
+        return Response(
+            {'deliverables': ser.data, 'total': invoice.deliverables_total_amount['total']},
+        )
