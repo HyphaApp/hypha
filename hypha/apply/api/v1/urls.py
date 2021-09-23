@@ -41,12 +41,11 @@ submission_router.register(r'determinations', SubmissionDeterminationViewSet, ba
 submission_router.register(r'screening_statuses', SubmissionScreeningStatusViewSet, basename='submission-screening_statuses')
 submission_router.register(r'reminders', SubmissionReminderViewSet, basename='submission-reminder')
 
-invoice_router = routers.NestedSimpleRouter(router, r'invoices', lookup='invoice')
-invoice_router.register(r'deliverables', DeliverableViewSet, basename='invoice-deliverables')
-
 urlpatterns = [
     path('user/', CurrentUser.as_view(), name='user'),
-    path('submissions_filter/', SubmissionFilters.as_view(), name='submissions-filter')
+    path('submissions_filter/', SubmissionFilters.as_view(), name='submissions-filter'),
+    path('projects/<int:project_pk>/invoices/<int:invoice_pk>/deliverables/', DeliverableViewSet.as_view({'post': 'create'}), name='set-deliverables'),
+    path('projects/<int:project_pk>/invoices/<int:invoice_pk>/deliverables/<int:pk>/', DeliverableViewSet.as_view({'delete': 'destroy'}), name='remove-deliverables')
 ]
 
-urlpatterns = router.urls + submission_router.urls + invoice_router.urls + urlpatterns
+urlpatterns = router.urls + submission_router.urls + urlpatterns

@@ -1,12 +1,12 @@
 <div class="sidebar__inner">
 
     <h5>Choose deliverables</h5>
-    <form id="add-deliverables", action="">
+    <form id="add-deliverables", action="" data-projectid="{{ project.id }}" data-invoiceid="{{ invoice.id }}">
         <div class="select-deliverables">
             <select name="deliverables" id="deliverables">
             <option value="deliverables">Invoice Covers Deliverables</option>
             {% for deliverable in deliverables %}
-                <option id="{{ deliverable.id }}" value="{{ deliverable.name }}" data-availabletoinvoice="{{ deliverable.available_to_invoice }}">{{ deliverable.name }} (${{ deliverable.unit_price }})</option>
+                <option id="{{ deliverable.id }}" value="{{ deliverable.id }}" data-deliverableid="{{ deliverable.id }}" data-availabletoinvoice="{{ deliverable.available_to_invoice }}">{{ deliverable.name }} (${{ deliverable.unit_price }})</option>
             {% endfor %}
             </select>
         </div>
@@ -24,11 +24,14 @@
     </form>
     <br>
     <div id="list-deliverables">
-        <p>
-            <b>Deliverable 1 (1 $5,000)</b><a href="remove"> Remove</a>
-            <b>Deliverable 1 (1 $5,000)</b><a href="remove"> Remove</a><br>
+        <div class="deliverables">
+            {% for deliverable in invoice.deliverables.all %}
+                <b>{{ deliverable.deliverable.name }} ({{ deliverable.quantity }} ${{deliverable.deliverable.unit_price}})</b><a href="{% url "api:v1:remove-deliverables" pk=deliverable.pk invoice_pk=invoice.pk project_pk=project.pk %}"> Remove</a>
+            {% endfor %}
+        </div>
+        <div class="total">
             <b>...</b><br>
-            <b>Total: $8,000</b>
-        </p>
+            <b>Total: ${{ invoice.deliverables_total_amount.total }}</b>
+        </div>
     </div>
 </div>

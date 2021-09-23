@@ -4,6 +4,7 @@ from .payment import (
     PaymentReceipt,
     PaymentRequest,
     SupportingDocument,
+    InvoiceDeliverable,
 )
 from .project import (
     Approval,
@@ -39,4 +40,5 @@ __all__ = [
     'Invoice',
     'SupportingDocument',
     'Deliverable',
+    'InvoiceDeliverable',
 ]

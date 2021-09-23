@@ -1,12 +1,13 @@
 from rest_framework import exceptions, serializers
 
-from hypha.apply.projects.models import Deliverable
+from hypha.apply.projects.models import InvoiceDeliverable, Deliverable
 
 
-class DeliverableListSerializer(serializers.ModelSerializer):
+class InvoiceDeliverableListSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Deliverable
-        fields = ('id', 'name', 'invoice_quantity', 'unity_price')
+        model = InvoiceDeliverable
+        fields = ('deliverable', 'quantity')
+        depth = 1
 
 
 class DeliverableSerializer(serializers.Serializer):

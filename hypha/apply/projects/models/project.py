@@ -461,7 +461,8 @@ class Deliverable(models.Model):
     name = models.TextField()
     available_to_invoice = models.IntegerField(default=1)
     invoice_quantity = models.IntegerField(
-        help_text='Quantity Selected on an Invoice'
+        help_text='Quantity Selected on an Invoice',
+        default=0
     )
     unit_price = models.DecimalField(
         max_digits=10,
@@ -470,6 +471,7 @@ class Deliverable(models.Model):
     )
     project = models.ForeignKey(
         Project,
+        null=True, blank=True,
         on_delete=models.CASCADE,
         related_name='deliverables'
     )
