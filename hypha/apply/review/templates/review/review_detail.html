@@ -61,6 +61,8 @@
         {% csrf_token %}
         {{ form }}
     </form>
+
+    <P>{% trans "OBS! Aggreing/Disagreeing is a substitute for writing a full review." %}</P>
 {% endif %}
 
 {% endblock %}
