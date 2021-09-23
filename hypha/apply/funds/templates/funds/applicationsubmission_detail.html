@@ -108,7 +108,9 @@
                 {% endif %}
 
                 {% block determination %}
-                    {% include 'determinations/includes/applicant_determination_block.html' with submission=object %}
+                    {% if object.determinations.submitted.count %}
+                        {% include 'determinations/includes/applicant_determination_block.html' with submission=object %}
+                    {% endif %}
                 {% endblock %}
 
                 {% block screening_status %}
