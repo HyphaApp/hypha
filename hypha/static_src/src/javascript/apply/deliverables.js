@@ -21,54 +21,62 @@
         var deliverableid = $('#deliverables').val();
         var quantity = $form.find('input[name="quantity"]').val();
         if (!quantity) {
-            quantity = 1
+            quantity = 1;
         }
         $.ajax({
             url: '/api/v1/projects/' + projectid + '/invoices/' + invoiceid + '/deliverables/',
             type: 'POST',
             data: {id: deliverableid, quantity: quantity},
             success: function (json) {
+                $('#add-deliverables').find('.error').remove();
                 $('#list-deliverables').find('.deliverables').remove();
                 $('#list-deliverables').find('.total').remove();
-                var deliverables = $('<div class="deliverables"></div>')
-                var deliverable_items = json.deliverables
-                $.each(deliverable_items, function(i) {
-                    console.log(deliverable_items[i]['deliverable']['name'], deliverable_items[i]['deliverable']['unit_price'], deliverable_items[i]['quantity']);
-                    var deliverable = $('<b>' + deliverable_items[i]['deliverable']['name'] + ' (' + deliverable_items[i]['quantity'] + ' $' + deliverable_items[i]['deliverable']['unit_price'] + ')</b><a href="remove"> Remove</a><br>');
+                var deliverables = $('<div class="deliverables"></div>');
+                var deliverable_items = json.deliverables;
+                $.each(deliverable_items, function (i) {
+                    var url = '/api/v1/projects/' + deliverable_items[i]['project_id'] + '/invoices/' + deliverable_items[i]['invoice_id'] + '/deliverables/';
+                    var deliverable = $('<b>' + deliverable_items[i]['deliverable']['name'] + ' (' + deliverable_items[i]['quantity'] + ' $' + deliverable_items[i]['deliverable']['unit_price'] + ')</b><a href="' + url + deliverable_items[i]['id'] + '/"> Remove</a><br>');
                     $(deliverables).append(deliverable);
-                    console.log('===');
                 });
                 $('#list-deliverables').append(deliverables);
-                console.log(json.total);
-                var total = $('<div class="total"><b>...</b><br><b>Total: $' + json.total + '</b></div>');
-                $('#list-deliverables').append(total);
+                if (json.total) {
+                    var total = $('<div class="total"><b>...</b><br><b>Total: $' + json.total + '</b></div>');
+                    $('#list-deliverables').append(total);
+                }
             },
             error: function (json) {
-                console.log('error');
-                console.log(json);
+                $('#add-deliverables').find('.error').remove();
+                var errorText = $('<p class="error" style="color:red">' + json.responseJSON.detail + '</p>');
+                $('#add-deliverables').append(errorText);
             }
         });
     });
-    $('#list-deliverables').on('click', 'a', function(event) { 
+    $('#list-deliverables').on('click', 'a', function (event) {
         event.preventDefault();
         $.ajax({
             url: $(this).attr('href'),
             type: 'DELETE',
-            success: function(json) {
+            success: function (json) {
+                $('#add-deliverables').find('.error').remove();
                 $('#list-deliverables').find('.deliverables').remove();
                 $('#list-deliverables').find('.total').remove();
-                var deliverables = $('<div class="deliverables"></div>')
-                var deliverable_items = json.deliverables
-                $.each(deliverable_items, function(i) {
-                    console.log(deliverable_items[i]['deliverable']['name'], deliverable_items[i]['deliverable']['unit_price'], deliverable_items[i]['quantity']);
-                    var deliverable = $('<b>' + deliverable_items[i]['deliverable']['name'] + ' (' + deliverable_items[i]['quantity'] + ' $' + deliverable_items[i]['deliverable']['unit_price'] + ')</b><a href="remove"> Remove</a><br>');
+                var deliverables = $('<div class="deliverables"></div>');
+                var deliverable_items = json.deliverables;
+                $.each(deliverable_items, function (i) {
+                    var url = '/api/v1/projects/' + deliverable_items[i]['project_id'] + '/invoices/' + deliverable_items[i]['invoice_id'] + '/deliverables/';
+                    var deliverable = $('<b>' + deliverable_items[i]['deliverable']['name'] + ' (' + deliverable_items[i]['quantity'] + ' $' + deliverable_items[i]['deliverable']['unit_price'] + ')</b><a href="' + url + deliverable_items[i]['id'] + '/"> Remove</a><br>');
                     $(deliverables).append(deliverable);
-                    console.log('===');
                 });
                 $('#list-deliverables').append(deliverables);
-                console.log(json.total);
-                var total = $('<div class="total"><b>...</b><br><b>Total: $' + json.total + '</b></div>');
-                $('#list-deliverables').append(total);
+                if (json.total) {
+                    var total = $('<div class="total"><b>...</b><br><b>Total: $' + json.total + '</b></div>');
+                    $('#list-deliverables').append(total);
+                }
+            },
+            error: function (json) {
+                $('#add-deliverables').find('.error').remove();
+                var errorText = $('<p class="error" style="color:red">' + json.responseJSON.detail + '</p>');
+                $('#add-deliverables').append(errorText);
             }
         });
     });

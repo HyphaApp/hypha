@@ -108,6 +108,12 @@ class InvoiceDeliverable(models.Model):
     def __str__(self):
         return self.deliverable.name
 
+    def get_absolute_api_url(self):
+        return reverse(
+            'api:v1:remove-deliverables',
+            kwargs={'pk': self.pk, 'invoice_pk': self.pk}
+        )
+
 
 class Invoice(models.Model):
     project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="invoices")

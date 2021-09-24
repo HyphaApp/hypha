@@ -46,7 +46,7 @@ class DeliverableViewSet(
             raise ValidationError({'detail': "Invoice Already has this deliverable"})
         quantity = ser.validated_data['quantity']
         if deliverable.available_to_invoice < quantity:
-            raise ValidationError({'detail': "Required quantity is not available for this invoice"})
+            raise ValidationError({'detail': "Required quantity is more than available"})
         invoice_deliverable = InvoiceDeliverable.objects.create(
             deliverable=deliverable,
             quantity=ser.validated_data['quantity']
@@ -57,6 +57,11 @@ class DeliverableViewSet(
             {'deliverables': ser.data, 'total': invoice.deliverables_total_amount['total']},
             status=status.HTTP_201_CREATED
         )
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["invoice"] = self.get_invoice_object()
+        return context
 
     def destroy(self, request, *args, **kwargs):
         deliverable = self.get_object()
