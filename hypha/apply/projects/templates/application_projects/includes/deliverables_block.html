@@ -29,9 +29,11 @@
                 <b>{{ deliverable.deliverable.name }} ({{ deliverable.quantity }} ${{deliverable.deliverable.unit_price}})</b><a href="{% url "api:v1:remove-deliverables" pk=deliverable.pk invoice_pk=invoice.pk project_pk=project.pk %}"> Remove</a>
             {% endfor %}
         </div>
-        <div class="total">
-            <b>...</b><br>
-            <b>Total: ${{ invoice.deliverables_total_amount.total }}</b>
-        </div>
+        {% if invoice.deliverables_total_amount.total %}
+            <div class="total">
+                <b>...</b><br>
+                <b>Total: ${{ invoice.deliverables_total_amount.total }}</b>
+            </div>
+        {% endif %}
     </div>
 </div>

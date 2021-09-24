@@ -4,10 +4,16 @@ from hypha.apply.projects.models import InvoiceDeliverable, Deliverable
 
 
 class InvoiceDeliverableListSerializer(serializers.ModelSerializer):
+    invoice_id = serializers.SerializerMethodField()
+    project_id = serializers.IntegerField(source='deliverable.project.id')
+
     class Meta:
         model = InvoiceDeliverable
-        fields = ('deliverable', 'quantity')
+        fields = ('id', 'deliverable', 'quantity', 'invoice_id', 'project_id')
         depth = 1
+
+    def get_invoice_id(self, obj):
+        return self.context['invoice'].id
 
 
 class DeliverableSerializer(serializers.Serializer):
