@@ -17,7 +17,7 @@
         "@material-ui/lab": "^4.0.0-alpha.58",
         "@material-ui/pickers": "^3.3.10",
         "@rooks/use-interval": "^3.0.1",
-        "@svgr/webpack": "^4.2.0",
+        "@svgr/webpack": "^5.5.0",
         "@tinymce/tinymce-react": "^3.12.6",
         "connected-react-router": "^6.9.1",
         "core-js": "^3.15.2",
