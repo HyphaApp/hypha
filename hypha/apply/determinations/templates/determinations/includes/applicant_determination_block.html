@@ -1,7 +1,7 @@
 {% load i18n humanize %}
 <div class="sidebar__inner">
     <h5>{% trans "Determinations" %}</h5>
-    {% for determination in object.determinations.submitted %}
+    {% for determination in submission.determinations.submitted %}
         <p>
             <a class="link link--bold" href="{% url 'apply:submissions:determinations:detail' submission_pk=object.id pk=determination.id %}">
                 {{ determination.get_outcome_display }}
