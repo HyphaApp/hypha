@@ -23,7 +23,7 @@ from ..models.payment import (
     PaymentRequest,
     SupportingDocument,
 )
-from ..models.project import Deliverable, PacketFile
+from ..models.project import PacketFile
 
 
 def filter_choices(available, choices):
@@ -98,40 +98,6 @@ class ChangeInvoiceStatusForm(forms.ModelForm):
 
         if paid_value and status != PAID:
             self.add_error('paid_value', _('You can only set a value when moving to the Paid status.'))
-        return cleaned_data
-
-
-class AddDeliverableForm(forms.ModelForm):
-    name_prefix = 'choose_deliverables_form'
-
-    class Meta:
-        fields = ['name']
-        model = Deliverable
-
-    def __init__(self, instance, *args, **kwargs):
-        super().__init__(instance=instance, *args, **kwargs)
-
-        # self.initial['paid_value'] = self.instance.amount
-
-        # status_field = self.fields['status']
-
-        # possible_status_transitions_lut = {
-        #     CHANGES_REQUESTED: filter_request_choices([DECLINED]),
-        #     SUBMITTED: filter_request_choices([CHANGES_REQUESTED, UNDER_REVIEW, DECLINED]),
-        #     UNDER_REVIEW: filter_request_choices([PAID]),
-        # }
-        # status_field.choices = possible_status_transitions_lut.get(instance.status, [])
-
-        # if instance.status != UNDER_REVIEW:
-        #     del self.fields['paid_value']
-
-    def clean(self):
-        cleaned_data = super().clean()
-        # status = cleaned_data['status']
-        # paid_value = cleaned_data.get('paid_value')
-
-        # if paid_value and status != PAID:
-        #     self.add_error('paid_value', 'You can only set a value when moving to the Paid status.')
         return cleaned_data
 
 

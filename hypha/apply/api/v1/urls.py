@@ -2,14 +2,12 @@ from django.urls import path
 from rest_framework_nested import routers
 
 from hypha.apply.api.v1.determination.views import SubmissionDeterminationViewSet
+from hypha.apply.api.v1.projects.views import DeliverableViewSet
 from hypha.apply.api.v1.reminder.views import SubmissionReminderViewSet
 from hypha.apply.api.v1.review.views import SubmissionReviewViewSet
 from hypha.apply.api.v1.screening.views import (
     ScreeningStatusViewSet,
     SubmissionScreeningStatusViewSet,
-)
-from hypha.apply.api.v1.projects.views import (
-    DeliverableViewSet
 )
 
 from .views import (

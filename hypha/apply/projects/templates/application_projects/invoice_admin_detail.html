@@ -2,7 +2,9 @@
 {% load i18n static invoice_tools %}
 
 {% block deliverables %}
-    {% include 'application_projects/includes/deliverables_block.html' with deliverables=deliverables invoice=object project=object.project %}
+    {% if object.project.has_deliverables %}
+        {% include 'application_projects/includes/deliverables_block.html' with deliverables=deliverables invoice=object project=object.project %}
+    {% endif %}
 {% endblock %}
 
 {% block actions %}

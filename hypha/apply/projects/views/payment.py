@@ -49,7 +49,8 @@ class InvoiceAccessMixin(UserPassesTestMixin):
     model = Invoice
 
     def get_object(self):
-        return get_object_or_404(Invoice, pk=self.kwargs['invoice_pk'])
+        project = get_object_or_404(Project, pk=self.kwargs['pk'])
+        return get_object_or_404(project.invoices.all(), pk=self.kwargs['invoice_pk'])
 
     def test_func(self):
         if self.request.user.is_apply_staff:
@@ -373,7 +374,9 @@ class InvoicePrivateMedia(UserPassesTestMixin, PrivateMediaView):
 
     def dispatch(self, *args, **kwargs):
         invoice_pk = self.kwargs['invoice_pk']
-        self.invoice = get_object_or_404(Invoice, pk=invoice_pk)
+        project_pk = self.kwargs['pk']
+        self.project = get_object_or_404(Project, pk=project_pk)
+        self.invoice = get_object_or_404(self.project.invoices.all(), pk=invoice_pk)
 
         return super().dispatch(*args, **kwargs)
 

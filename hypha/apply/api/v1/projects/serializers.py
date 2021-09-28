@@ -1,6 +1,6 @@
 from rest_framework import exceptions, serializers
 
-from hypha.apply.projects.models import InvoiceDeliverable, Deliverable
+from hypha.apply.projects.models import Deliverable, InvoiceDeliverable
 
 
 class InvoiceDeliverableListSerializer(serializers.ModelSerializer):
