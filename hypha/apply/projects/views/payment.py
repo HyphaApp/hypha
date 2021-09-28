@@ -372,7 +372,7 @@ class InvoicePrivateMedia(UserPassesTestMixin, PrivateMediaView):
     raise_exception = True
 
     def dispatch(self, *args, **kwargs):
-        invoice_pk = self.kwargs['pk']
+        invoice_pk = self.kwargs['invoice_pk']
         self.invoice = get_object_or_404(Invoice, pk=invoice_pk)
 
         return super().dispatch(*args, **kwargs)
