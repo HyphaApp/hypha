@@ -4,7 +4,7 @@ import os
 from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.db.models import Sum, Value, F
+from django.db.models import F, Sum, Value
 from django.db.models.fields import FloatField
 from django.db.models.fields.related import ManyToManyField
 from django.db.models.functions import Coalesce
@@ -197,7 +197,7 @@ class Invoice(models.Model):
 
     @property
     def deliverables_total_amount(self):
-        return self.deliverables.all().aggregate(total=Sum(F('deliverable__unit_price')*F('quantity'), output_field=FloatField()))
+        return self.deliverables.all().aggregate(total=Sum(F('deliverable__unit_price') * F('quantity'), output_field=FloatField()))
 
 
 class SupportingDocument(models.Model):

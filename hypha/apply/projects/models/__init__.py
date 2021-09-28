@@ -1,20 +1,20 @@
 from .payment import (
     Invoice,
+    InvoiceDeliverable,
     PaymentApproval,
     PaymentReceipt,
     PaymentRequest,
     SupportingDocument,
-    InvoiceDeliverable,
 )
 from .project import (
     Approval,
     Contract,
+    Deliverable,
     DocumentCategory,
     PacketFile,
     Project,
     ProjectApprovalForm,
     ProjectSettings,
-    Deliverable,
 )
 from .report import Report, ReportConfig, ReportPrivateFiles, ReportVersion
 from .vendor import BankInformation, DueDiligenceDocument, Vendor

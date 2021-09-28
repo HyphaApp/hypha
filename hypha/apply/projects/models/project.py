@@ -342,6 +342,10 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
     def is_in_progress(self):
         return self.status == IN_PROGRESS
 
+    @property
+    def has_deliverables(self):
+        return self.deliverables.exists()
+
     def send_to_compliance(self, request):
         """Notify Compliance about this Project."""
 

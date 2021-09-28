@@ -924,13 +924,12 @@ class TestStaffDetailInvoiceStatus(BaseViewTestCase):
 
     def get_kwargs(self, instance):
         return {
-            'pk': instance.project.pk,
             'invoice_pk': instance.pk,
         }
 
     def test_can(self):
         invoice = InvoiceFactory()
-        response = self.get_page(invoice)
+        response = self.get_page(invoice, url_kwargs={'pk': invoice.project.pk})
         self.assertEqual(response.status_code, 200)
 
     def test_wrong_project_cant(self):
@@ -947,13 +946,12 @@ class TestFinanceDetailInvoiceStatus(BaseViewTestCase):
 
     def get_kwargs(self, instance):
         return {
-            'pk': instance.project.pk,
             'invoice_pk': instance.pk,
         }
 
     def test_can(self):
         invoice = InvoiceFactory()
-        response = self.get_page(invoice)
+        response = self.get_page(invoice, url_kwargs={'pk': invoice.project.pk})
         self.assertEqual(response.status_code, 200)
 
     def test_wrong_project_cant(self):
@@ -1161,13 +1159,12 @@ class TestStaffInoviceDocumentPrivateMedia(BaseViewTestCase):
 
     def get_kwargs(self, instance):
         return {
-            'pk': instance.project.pk,
             'invoice_pk': instance.pk,
         }
 
     def test_can_access(self):
         invoice = InvoiceFactory()
-        response = self.get_page(invoice)
+        response = self.get_page(invoice, url_kwargs={'pk': invoice.project.pk})
         self.assertContains(response, invoice.document.read())
 
     def test_cant_access_if_project_wrong(self):
@@ -1206,8 +1203,8 @@ class TestStaffInvoiceSupportingDocumentPrivateMedia(BaseViewTestCase):
 
     def get_kwargs(self, instance):
         return {
-            'pk': instance.invoice.pk,
-            'invoice_pk': instance.pk,
+            'pk': instance.invoice.project.pk,
+            'invoice_pk': instance.invoice.pk,
             'file_pk': instance.pk,
         }
 
@@ -1224,8 +1221,8 @@ class TestApplicantSupportingDocumentPrivateMedia(BaseViewTestCase):
 
     def get_kwargs(self, instance):
         return {
-            'pk': instance.invoice.pk,
-            'invoice_pk': instance.pk,
+            'pk': instance.invoice.project.pk,
+            'invoice_pk': instance.invoice.pk,
             'file_pk': instance.pk,
         }
 
