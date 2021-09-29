@@ -30,6 +30,9 @@ class BaseDeterminationForm:
         return []
 
     def clean_outcome(self):
+        if not self.cleaned_data['outcome']:
+            self.add_error('outcome', 'Outcome is a required field')
+            return self.cleaned_data
         # Enforce outcome as an int
         return int(self.cleaned_data['outcome'])
 
@@ -113,7 +116,7 @@ class BaseNormalDeterminationForm(BaseDeterminationForm, forms.ModelForm):
                 pass
             else:
                 available_choices.add((determination_type, choices[determination_type]))
-
+        available_choices.add(('', '--No Determination Selected--'))
         return available_choices
 
     def save(self, commit=True):
@@ -471,6 +474,12 @@ class DeterminationModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMet
         }
 
         return cleaned_data
+
+    def clean_outcome(self):
+        if not self.cleaned_data['outcome']:
+            self.add_error('outcome', 'Outcome is a required field')
+            return self.cleaned_data
+        return int(self.cleaned_data['outcome'])
 
     def save(self, commit=True):
         self.instance.send_notice = (

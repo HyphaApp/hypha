@@ -99,7 +99,7 @@ class Determination(DeterminationFormFieldsMixin, AccessFormData, models.Model):
         on_delete=models.PROTECT,
     )
 
-    outcome = models.IntegerField(verbose_name=_("Determination"), choices=DETERMINATION_CHOICES, default=1)
+    outcome = models.IntegerField(verbose_name=_("Determination"), choices=DETERMINATION_CHOICES)
     message = models.TextField(verbose_name=_("Determination message"), blank=True)
 
     # Stores old determination forms data

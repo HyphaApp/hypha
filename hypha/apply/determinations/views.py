@@ -99,7 +99,7 @@ def outcome_choices_for_phase(submission, user):
             pass
         else:
             available_choices.add((determination_type, choices[determination_type]))
-
+    available_choices.add(('', '--No Determination Selected--'))
     return available_choices
 
 
