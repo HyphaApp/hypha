@@ -324,6 +324,15 @@ class RoundLabSerializer(serializers.ModelSerializer):
         fields = ('id', 'title')
 
 
+class OpenRoundLabSerializer(serializers.ModelSerializer):
+    start_date = serializers.DateField(read_only=True)
+    end_date = serializers.DateField(read_only=True)
+
+    class Meta:
+        model = RoundsAndLabs
+        fields = ('id', 'title', 'url_path', 'search_description', 'start_date', 'end_date')
+
+
 class CommentSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField()
     message = serializers.SerializerMethodField()

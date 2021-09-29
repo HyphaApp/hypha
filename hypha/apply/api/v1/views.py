@@ -27,6 +27,7 @@ from .serializers import (
     CommentEditSerializer,
     CommentSerializer,
     MetaTermsSerializer,
+    OpenRoundLabSerializer,
     RoundLabDetailSerializer,
     RoundLabSerializer,
     SubmissionActionSerializer,
@@ -215,8 +216,10 @@ class RoundViewSet(
     pagination_class = StandardResultsSetPagination
 
     def get_serializer_class(self):
-        if self.action == 'list' or self.action == 'open':
+        if self.action == 'list':
             return RoundLabSerializer
+        elif self.action == 'open':
+            return OpenRoundLabSerializer
         return RoundLabDetailSerializer
 
     def get_object(self):
