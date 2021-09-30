@@ -25,7 +25,7 @@
 
         <div class="card card--solid">
             <div class="card__inner">
-                <h5 class="card__heading">Invoice</h5>
+                <h5 class="card__heading">{% trans "Invoice" }</h5>
                 <p class="card__text"><a href="{% url "apply:projects:invoice-document" pk=object.project.pk invoice_pk=object.pk %}">{{object.document.name}}</a></p>
                 <embed src="{% url "apply:projects:invoice-document" pk=object.project.pk invoice_pk=object.pk %}" width="800px" height="800px" />
             </div>
@@ -60,7 +60,7 @@
                 {% if user_can_delete_request %}
                 <a
                     class="button button--bottom-space button--primary button--full-width"
-                    href="{% url 'apply:projects:invoice-delete' pk=object.project.pk invoice_pk=object.pk %}">Delete</a>
+                    href="{% url 'apply:projects:invoice-delete' pk=object.project.pk invoice_pk=object.pk %}">{% trans "Delete" %}</a>
             {% endif %}
             {% endblock %}
         </div>

@@ -1,10 +1,9 @@
 <div class="sidebar__inner">
-
-    <h5>Choose deliverables</h5>
+    <h5>{% trans "Choose deliverables" %}</h5>
     <form id="add-deliverables", action="" data-projectid="{{ project.id }}" data-invoiceid="{{ invoice.id }}">
         <div class="select-deliverables">
             <select name="deliverables" id="deliverables">
-            <option value="deliverables">Invoice Covers Deliverables</option>
+            <option value="deliverables">{% trans "Invoice Covers Deliverables" %}</option>
             {% for deliverable in deliverables %}
                 <option id="{{ deliverable.id }}" value="{{ deliverable.id }}" data-deliverableid="{{ deliverable.id }}" data-availabletoinvoice="{{ deliverable.available_to_invoice }}">{{ deliverable.name }} (${{ deliverable.unit_price }})</option>
             {% endfor %}
@@ -12,11 +11,11 @@
         </div>
         <br>
         <div class="available-to-invoice">
-            <b>Available to invoice: </b>
+            <b>{% trans "Available to invoice:" %} </b>
         </div>
         <br>
         <div class="quantity">
-            <b><label for="quantity">Quantity:</label></b>
+            <b><label for="quantity">{% trans "Quantity:" %}</label></b>
             <input type="number" id="quantity" name="quantity" min="1">
         </div>
         <br>
@@ -26,13 +25,13 @@
     <div id="list-deliverables">
         <div class="deliverables">
             {% for deliverable in invoice.deliverables.all %}
-                <b>{{ deliverable.deliverable.name }} ({{ deliverable.quantity }} ${{deliverable.deliverable.unit_price}})</b><a href="{% url "api:v1:remove-deliverables" pk=deliverable.pk invoice_pk=invoice.pk project_pk=project.pk %}"> Remove</a>
+                <b>{{ deliverable.deliverable.name }} ({{ deliverable.quantity }} {{ CURRENCY_SYMBOL }}{{deliverable.deliverable.unit_price}})</b><a href="{% url "api:v1:remove-deliverables" pk=deliverable.pk invoice_pk=invoice.pk project_pk=project.pk %}"> {% trans "Remove" %}</a>
             {% endfor %}
         </div>
         {% if invoice.deliverables_total_amount.total %}
             <div class="total">
                 <b>...</b><br>
-                <b>Total: ${{ invoice.deliverables_total_amount.total }}</b>
+                <b>{% "Total:" %} {{ CURRENCY_SYMBOL}}{{ invoice.deliverables_total_amount.total }}</b>
             </div>
         {% endif %}
     </div>

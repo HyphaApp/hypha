@@ -1,3 +1,4 @@
+from django.utils.translation import gettext_lazy as _
 from rest_framework import exceptions, serializers
 
 from hypha.apply.projects.models import Deliverable, InvoiceDeliverable
@@ -25,6 +26,6 @@ class DeliverableSerializer(serializers.Serializer):
             Deliverable.objects.get(id=value)
         except Deliverable.DoesNotExist:
             raise exceptions.ValidationError({
-                'detail': 'Not found'
+                'detail': _('Not found')
             })
         return value
