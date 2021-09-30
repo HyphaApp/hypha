@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404
+from django.utils.translation import gettext_lazy as _
 from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
@@ -35,16 +36,16 @@ class DeliverableViewSet(
         project = self.get_project_object()
         deliverable_id = ser.validated_data['id']
         if not project.deliverables.filter(id=deliverable_id).exists():
-            raise ValidationError({'detail': "Not Found"})
+            raise ValidationError({'detail': _("Not Found")})
         invoice = self.get_invoice_object()
         deliverable = get_object_or_404(
             Deliverable, id=deliverable_id
         )
         if invoice.deliverables.filter(deliverable=deliverable).exists():
-            raise ValidationError({'detail': "Invoice Already has this deliverable"})
+            raise ValidationError({'detail': _("Invoice Already has this deliverable")})
         quantity = ser.validated_data['quantity']
         if deliverable.available_to_invoice < quantity:
-            raise ValidationError({'detail': "Required quantity is more than available"})
+            raise ValidationError({'detail': _("Required quantity is more than available")})
         invoice_deliverable = InvoiceDeliverable.objects.create(
             deliverable=deliverable,
             quantity=ser.validated_data['quantity']

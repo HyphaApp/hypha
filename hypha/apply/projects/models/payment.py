@@ -101,7 +101,7 @@ class InvoiceDeliverable(models.Model):
         related_name='deliverables'
     )
     quantity = models.IntegerField(
-        help_text='Quantity Selected on an Invoice',
+        help_text=_('Quantity Selected on an Invoice'),
         default=0
     )
 
