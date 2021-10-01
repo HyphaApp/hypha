@@ -1,11 +1,12 @@
 APPLICANT_GROUP_NAME = 'Applicant'
 STAFF_GROUP_NAME = 'Staff'
 REVIEWER_GROUP_NAME = 'Reviewer'
-TEAMADMIN_GROUP_NAME = 'Team Admin'
+TEAMADMIN_GROUP_NAME = 'Staff Admin'
 PARTNER_GROUP_NAME = 'Partner'
 COMMUNITY_REVIEWER_GROUP_NAME = 'Community reviewer'
 APPROVER_GROUP_NAME = 'Approver'
 FINANCE_GROUP_NAME = 'Finance'
+CONTRACTING_GROUP_NAME = 'Contracting'
 
 GROUPS = [
     {
@@ -38,6 +39,10 @@ GROUPS = [
     },
     {
         'name': FINANCE_GROUP_NAME,
+        'permissions': [],
+    },
+    {
+        'name': CONTRACTING_GROUP_NAME,
         'permissions': [],
     }
 ]
