@@ -1,3 +1,4 @@
+{% load i18n %}
 <div class="sidebar__inner">
     <h5>{% trans "Choose deliverables" %}</h5>
     <form id="add-deliverables", action="" data-projectid="{{ project.id }}" data-invoiceid="{{ invoice.id }}">
@@ -31,7 +32,7 @@
         {% if invoice.deliverables_total_amount.total %}
             <div class="total">
                 <b>...</b><br>
-                <b>{% "Total:" %} {{ CURRENCY_SYMBOL}}{{ invoice.deliverables_total_amount.total }}</b>
+                <b>{% trans "Total:" %} {{ CURRENCY_SYMBOL}}{{ invoice.deliverables_total_amount.total }}</b>
             </div>
         {% endif %}
     </div>
