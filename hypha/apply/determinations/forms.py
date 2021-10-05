@@ -103,7 +103,7 @@ class BaseNormalDeterminationForm(BaseDeterminationForm, forms.ModelForm):
         We need to filter out non-matching choices.
         i.e. a transition to In Review is not a determination, while Needs more info or Rejected are.
         """
-        available_choices = set()
+        available_choices = [('', _('-- No determination selected -- '))]
         choices = dict(self.fields['outcome'].choices)
 
         for transition_name in determination_actions(user, submission):
@@ -112,8 +112,7 @@ class BaseNormalDeterminationForm(BaseDeterminationForm, forms.ModelForm):
             except KeyError:
                 pass
             else:
-                available_choices.add((determination_type, choices[determination_type]))
-        available_choices.add(('', '--No Determination Selected--'))
+                available_choices.append((determination_type, choices[determination_type]))
         return available_choices
 
     def save(self, commit=True):
@@ -352,10 +351,11 @@ class ConceptDeterminationForm(BaseConceptDeterminationForm, BaseNormalDetermina
                     (index, form.form.name)
                     for index, form in enumerate(second_stage_forms)
                 ]
+                proposal_form_choices.insert(0, ('', _('-- No proposal form selected -- ')))
                 self.fields['proposal_form'] = forms.ChoiceField(
                     label=_('Proposal Form'),
                     choices=proposal_form_choices,
-                    help_text='Select the proposal form to use for proposal stage.',
+                    help_text=_('Select the proposal form to use for proposal stage.'),
                 )
                 self.fields['proposal_form'].group = 1
                 self.fields.move_to_end('proposal_form', last=False)
