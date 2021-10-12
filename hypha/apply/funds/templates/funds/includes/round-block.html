@@ -30,7 +30,11 @@
 
         {# Future rounds/labs tab #}
         <div class="tabs__content" id="tab-3">
-            {% include "funds/includes/round-block-listing.html" with rounds=future_rounds display_text="Future opens" query=future_query type="Future" %}
+            {% if page_type == 'dashboard' %}
+                {% include "funds/includes/no_round_block_dashboard.html" with rounds=future_rounds display_text="Future opens" query=future_query type="Future" %}
+            {% else %}
+                {% include "funds/includes/round-block-listing.html" with rounds=future_rounds display_text="Future opens" query=future_query type="Future" %}
+            {% endif %}
         </div>
 
     </div>
