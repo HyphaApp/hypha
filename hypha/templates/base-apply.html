@@ -1,4 +1,4 @@
-{% load static wagtailuserbar wagtailcore_tags wagtailimages_tags navigation_tags util_tags hijack_tags cookieconsent_tags %}<!doctype html>
+{% load i18n static wagtailuserbar wagtailcore_tags wagtailimages_tags navigation_tags util_tags hijack_tags cookieconsent_tags %}<!doctype html>
 {% wagtail_site as current_site %}
 <html class="no-js" lang="en">
     <head>
@@ -103,7 +103,7 @@
                         <svg class="icon"><use xlink:href="#person-icon"></use></svg>
                         {{ request.user }}
                     </a>
-                    <a href="{% url 'users_public:logout' %}" class="link link--button-transparent link--mobile-standout">Logout</a>
+                    <a href="{% url 'users_public:logout' %}" class="link link--button-transparent link--mobile-standout">{% trans "Log out" %}</a>
                 </section>
 
                 <div class="header__button-container">
@@ -112,7 +112,7 @@
                         {{ request.user }}
                     </a>
                     <a href="{% url 'users_public:logout' %}" class="button button--transparent button--narrow">
-                        Log Out
+                        {% trans "Log out" %}
                     </a>
                 </div>
             </div>

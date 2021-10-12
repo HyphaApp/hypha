@@ -9,7 +9,7 @@
 {% if form.errors or form.non_field_errors %}
 <div class="wrapper wrapper--medium wrapper--error">
     <svg class="icon icon--error"><use xlink:href="#error"></use></svg>
-    <h5 class="heading heading--no-margin heading--regular">There were some errors with your form. Please amend the fields highlighted below</h5>
+    <h5 class="heading heading--no-margin heading--regular">{% trans "There were some errors with your form. Please amend the fields highlighted below" %}</h5>
     {% if form.non_field_errors %}
         <ul>
             {% for error in form.non_field_errors %}
@@ -24,7 +24,7 @@
     {% if page.end_date %}
         <p class="listing__deadline">
             <svg class="icon icon--calendar icon--small"><use xlink:href="#calendar"></use></svg>
-            <span>Next deadline: {{ page.end_date }}</span>
+            <span>{% trans "Next deadline" %}: {{ page.end_date }}</span>
         </p>
     {% endif %}
     {% if not page.open_round and not page.start_date and not request.is_preview %}
@@ -63,10 +63,10 @@
                 {{ hidden_field }}
             {% endfor %}
 
-            <button class="link link--button-secondary" type="submit" disabled>Submit for review</button>
-            <button class="link link--button-tertiary" type="submit" name="draft" value="Save Draft" formnovalidate>Save Draft</button>
+            <button class="link link--button-secondary" type="submit" disabled>{% trans "Submit for review" %}</button>
+            <button class="link link--button-tertiary" type="submit" name="draft" value="Save draft" formnovalidate>{% trans "Save draft" %}</button>
         </form>
-        <p class="wrapper--error message-no-js js-hidden">You must have Javascript enabled to use this form.</p>
+        <p class="wrapper--error message-no-js js-hidden">{% trans "You must have Javascript enabled to use this form." %}</p>
     {% endif %}
 </div>
 {% endblock %}

@@ -16,7 +16,7 @@ from ..groups import (
 )
 
 
-class GroupFactory(factory.DjangoModelFactory):
+class GroupFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Group
         django_get_or_create = ('name',)
@@ -24,7 +24,7 @@ class GroupFactory(factory.DjangoModelFactory):
     name = factory.Sequence('group name {}'.format)
 
 
-class UserFactory(factory.DjangoModelFactory):
+class UserFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = get_user_model()
 

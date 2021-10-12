@@ -1,0 +1,37 @@
+{% extends "application_projects/invoice_detail.html" %}
+{% load i18n static invoice_tools %}
+
+{% block actions %}
+    {{ block.super }}
+    {% can_change_status object user as user_can_change_status %}
+    <a
+        {% if user_can_change_status %}
+            data-fancybox
+            data-src="#change-status"
+        {% else %}
+            data-tooltip="{% trans "Cannot change from 'Paid' or 'Declined' state" %}"
+        {% endif %}
+        class="button button--bottom-space button--primary button--full-width{% if not user_can_change_status %} button--tooltip-disabled{% endif %}"
+        href="#"
+    >
+        {% trans "Change Status" %}
+    </a>
+    {% if user_can_change_status %}
+    <div class="modal" id="change-status">
+        <h4 class="modal__header-bar">{% trans "Change status" %}</h4>
+        <p>{% trans "Current status" %}: {{ object.get_status_display }}</p>
+        {% trans "Update" as update %}
+        {% include 'funds/includes/delegated_form_base.html' with form=change_invoice_status value=update %}
+    </div>
+    {% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/apply/fancybox.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.4.1/jquery.fancybox.min.js"></script>
+<script src="{% static 'js/apply/fancybox-global.js' %}"></script>
+{% endblock %}

@@ -23,8 +23,8 @@ exports[`Test tinymce component render a TinyMCE component 1`] = `
         "menubar": false,
       }
     }
-    initialValue="abc"
     onEditorChange={[Function]}
+    value="abc"
   />
 </div>
 `;
@@ -57,8 +57,8 @@ exports[`Test tinymce component with required render a TinyMCE component with re
         "menubar": false,
       }
     }
-    initialValue="abc"
     onEditorChange={[Function]}
+    value="abc"
   />
 </div>
 `;

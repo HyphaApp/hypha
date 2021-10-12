@@ -100,8 +100,8 @@ class FormFieldBlockFactory(wagtail_factories.StructBlockFactory):
         model = stream_blocks.FormFieldBlock
 
     @classmethod
-    def make_answer(cls, params=None):
-        return cls.default_value.generate(params or {})
+    def make_answer(cls, params=dict()):
+        return cls.default_value.evaluate(None, None, dict(params, locale=None))
 
     @classmethod
     def make_form_answer(cls, params=None):

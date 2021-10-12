@@ -1,4 +1,5 @@
 {% extends "application-projects/paymentrequest_detail.html" %}
+{% load i18n %}
 
 {% block actions %}
     {{ block.super }}
@@ -8,12 +9,13 @@
         class="button button--bottom-space button--primary button--full-width"
         href="#"
     >
-        Change Status
+        {% trans "Change status" %}
     </a>
     <div class="modal" id="change-status">
-        <h4 class="modal__header-bar">Change status</h4>
-        <p>Current status: {{ object.get_status_display }}</p>
-        {% include 'funds/includes/delegated_form_base.html' with form=change_payment_status value='Update'%}
+        <h4 class="modal__header-bar">{% trans "Change status" %}</h4>
+        <p>{% trans "Current status" %}: {{ object.get_status_display }}</p>
+        {% trans "Update" as update %}
+        {% include 'funds/includes/delegated_form_base.html' with form=change_payment_status value=update %}
     </div>
 {% endblock %}
 

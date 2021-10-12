@@ -1,5 +1,5 @@
 {% extends "base-apply.html" %}
-{% load static %}
+{% load i18n static %}
 {% load render_bundle from webpack_tags %}
 
 {% block extra_css %}
@@ -12,7 +12,7 @@
         <div class="admin-bar__inner wrapper--search">
                 {% block page_header %}
                     <div>
-                        <h1 class="gamma heading heading--no-margin heading--bold">List of Submissions summary</h1>
+                        <h1 class="gamma heading heading--no-margin heading--bold">{% trans "List of Submissions summary" %}</h1>
                     </div>
                 {% endblock %}
         </div>

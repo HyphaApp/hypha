@@ -1,16 +1,16 @@
 {% extends "base-apply.html" %}
-{% load static bleach_tags %}
+{% load i18n static bleach_tags %}
 
-{% block title %}Report | {{ object.project.title }}{% endblock %}
+{% block title %}{% trans "Report" %} | {{ object.project.title }}{% endblock %}
 {% block body_class %}{% endblock %}
 {% block content %}
     <div class="admin-bar">
         <div class="admin-bar__inner">
             <a class="admin-bar__back-link" href="{{ object.project.get_absolute_url }}">
-                Project
+                {% trans "Project" %}
             </a>
             <h2 class="heading heading--no-margin">{{ object.project.title }}</h2>
-            <h5 class="heading heading--no-margin">View report</h5>
+            <h5 class="heading heading--no-margin">{% trans "View report" %}</h5>
         </div>
     </div>
 
@@ -18,25 +18,25 @@
         <div class="wrapper--sidebar--inner">
             <div class="alert">
                 <svg class="alert__icon"><use xlink:href="#exclamation-point"></use></svg>
-                <p class="alert__text">This report is for the period {{ report.start_date }} to {{ report.end_date }}</p>
+                <p class="alert__text">{% trans "This report is for the period" %} {{ report.start_date }} {% trans "to" %} {{ report.end_date }}</p>
             </div>
 
             <div class="card card--solid">
                 {% if report.skipped %}
-                    <h2>Report Skipped</h2>
+                    <h2>{% trans "Report Skipped" %}</h2>
                 {% else %}
-                    <h4>Public Report</h4>
+                    <h4>{% trans "Public Report" %}</h4>
                     <div class="rich-text">
                         {{ object.current.public_content|bleach|safe }}
                     </div>
 
-                    <h4>Private Report</h4>
+                    <h4>{% trans "Private Report" %}</h4>
                     <div class="rich-text">
                         {{ object.current.private_content|bleach|safe }}
                     </div>
                     {% for file in object.current.files.all %}
                         {% if forloop.first %}
-                            <h4>Attachements</h4>
+                            <h4>{% trans "Attachements" %}</h4>
                             <ul>
                         {% endif %}
 
@@ -56,21 +56,21 @@
                     <a
                         class="button button--bottom-space button--primary button--full-width"
                         href="{% url "apply:projects:reports:edit" pk=report.pk %}">
-                        Edit
+                        {% trans "Edit" %}
                     </a>
                 {% endif %}
                 {% if report.previous %}
                     <a
                         class="button button--bottom-space button--primary button--full-width"
                         href="{% url "apply:projects:reports:detail" pk=report.previous.pk %}">
-                        View previous report
+                        {% trans "View previous report" %}
                     </a>
                 {% endif %}
                 {% if report.next %}
                     <a
                         class="button button--bottom-space button--primary button--full-width"
                         href="{% url "apply:projects:reports:detail" pk=report.next.pk %}">
-                        View next report
+                        {% trans "View next report" %}
                     </a>
                 {% endif %}
             </div>

@@ -1,11 +1,11 @@
-{% load wagtailcore_tags wagtailimages_tags %}
+{% load i18n wagtailcore_tags wagtailimages_tags %}
 
 {% with page=page.specific %}
 <a class="card" href="{% pageurl page %}">
     <h6 class="card__subheading">
         {% if page.is_open %}
             <svg class="icon icon--calendar apply-bar__icon"><use xlink:href="#calendar"></use></svg>
-            Next deadline: <span>{{ page.deadline|date:"M j, Y" }}</span>
+            {% trans "Next deadline" %}: <span>{{ page.deadline|date:"DATE_FORMAT" }}</span>
         {% elif page.can_open %}
             Closed
         {% endif %}

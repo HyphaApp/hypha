@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import widgets
 from django.utils.safestring import mark_safe
-from tinymce import TinyMCE
+from tinymce.widgets import TinyMCE
 
 from hypha.apply.review.options import NA, RATE_CHOICES
 from hypha.apply.utils.options import MCE_ATTRIBUTES_SHORT

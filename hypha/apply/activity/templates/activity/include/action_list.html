@@ -1,5 +1,6 @@
+{% load i18n %}
 {% for action in actions %}
     {% include "activity/include/listing_base.html" with activity=action %}
 {% empty %}
-There are no actions.
+{% trans "There are no actions." %}
 {% endfor %}

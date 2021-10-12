@@ -1,7 +1,8 @@
+{% load i18n %}
 {% for widget in widget.subwidgets %}
     {% include widget.template_name %}
     {% if forloop.last %}
-        <span>to:</span>
+        <span>{% trans "to" %}:</span>
     {% endif %}
 {% endfor %}
 

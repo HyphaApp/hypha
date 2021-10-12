@@ -1,4 +1,3 @@
-from django.utils.safestring import mark_safe
 from wagtail.contrib.modeladmin.options import ModelAdmin, ModelAdminGroup
 
 from .models import DocumentCategory, ProjectApprovalForm
@@ -21,7 +20,7 @@ class ProjectApprovalFormAdmin(ModelAdmin):
             related = ', '.join(getattr(obj, f'{field}').values_list('title', flat=True))
             if related:
                 rows.append(related)
-        return mark_safe('<br>'.join(rows))
+        return ', '.join(rows)
 
 
 class ManageAdminGoup(ModelAdminGroup):

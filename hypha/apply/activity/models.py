@@ -21,18 +21,9 @@ REVIEWER = 'reviewers'
 PARTNER = 'partners'
 ALL = 'all'
 
-VISIBILILTY_HELP_TEXT = {
-    APPLICANT: 'Visible to applicant and team.',
-    TEAM: 'Visible only to team.',
-    REVIEWER: 'Visible to reviewers and team.',
-    PARTNER: 'Visible to partners and team.',
-    ALL: 'Visible to any user who has access to the submission.',
-}
-
-
 VISIBILITY = {
     APPLICANT: 'Applicant(s)',
-    TEAM: 'Team',
+    TEAM: 'Staff',
     REVIEWER: 'Reviewers',
     PARTNER: 'Partners',
     ALL: 'All',
@@ -41,6 +32,15 @@ VISIBILITY = {
 
 class BaseActivityQuerySet(models.QuerySet):
     def visible_to(self, user):
+        # To hide reviews from the applicant's activity feed
+        # Todo: It is just for historic data and not be needed for new data after this.
+        from .messaging import ActivityAdapter
+        messages = ActivityAdapter.messages
+        if user.is_applicant:
+            return self.exclude(
+                message=messages.get(MESSAGES.NEW_REVIEW)
+            ).filter(visibility__in=self.model.visibility_for(user))
+
         return self.filter(visibility__in=self.model.visibility_for(user))
 
     def newer(self, activity):

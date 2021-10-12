@@ -20,28 +20,28 @@ MAYBE = 1
 YES = 2
 
 RECOMMENDATION_CHOICES = (
-    (NO, 'No'),
-    (MAYBE, 'Maybe'),
-    (YES, 'Yes'),
+    (NO, _('No')),
+    (MAYBE, _('Maybe')),
+    (YES, _('Yes')),
 )
 
 DISAGREE = 0
 AGREE = 1
 
 OPINION_CHOICES = (
-    (AGREE, 'Agree'),
-    (DISAGREE, 'Disagree'),
+    (AGREE, _('Agree')),
+    (DISAGREE, _('Disagree')),
 )
 
 PRIVATE = 'private'
 REVIEWER = 'reviewers'
 
 VISIBILILTY_HELP_TEXT = {
-    PRIVATE: 'Visible only to staff.',
-    REVIEWER: 'Visible to other reviewers and staff.',
+    PRIVATE: _('Visible only to staff.'),
+    REVIEWER: _('Visible to other reviewers and staff.'),
 }
 
 VISIBILITY = {
-    PRIVATE: 'Private',
-    REVIEWER: 'Reviewers and Staff',
+    PRIVATE: _('Private'),
+    REVIEWER: _('Reviewers and Staff'),
 }

@@ -71,6 +71,24 @@
         margin: 0 auto;
     }
 
+    &--embed {
+        width: 100%;
+        height: 100%;
+
+        iframe,
+        object,
+        embed {
+            width: 100%;
+            height: 100%;
+        }
+
+        &--pdf {
+            object {
+                height: 300mm;
+            }
+        }
+    }
+
     &--form {
         padding: 20px;
         margin: 20px auto;

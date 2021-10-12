@@ -1,5 +1,6 @@
+{% load i18n %}
 <div class="sidebar__inner">
-    <h5>Reminders</h5>
+    <h5>{% trans "Reminders" %}</h5>
     {% regroup object.reminders.all by get_action_display as action_list %}
     <ul>
         {% for action in action_list %}
@@ -11,7 +12,7 @@
                             {% if reminder.title %}
                                 {{ reminder.title }}
                             {% else %}
-                                untitled reminder
+                                {% trans "untitled reminder" %}
                             {% endif %}
                         </div>
                         <a class="link reminder-delete" href="{% url 'funds:submissions:reminders:delete' object.id reminder.id %}">
@@ -23,7 +24,7 @@
             </li>
             <br>
         {% empty %}
-        <li>No reminders yet.</li>
+        <li>{% trans "No reminders yet." %}</li>
     	{% endfor %}
     </ul>
 </div>

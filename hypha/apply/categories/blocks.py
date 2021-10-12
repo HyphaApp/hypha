@@ -78,11 +78,12 @@ class CategoryQuestionBlock(OptionalFormFieldBlock):
             return forms.RadioSelect
 
     def prepare_data(self, value, data, serialize):
+        if not data:
+            return data
         if isinstance(data, str):
             data = [data]
         category = value['category']
-        if data:
-            data = category.options.filter(id__in=data).values_list('value', flat=True)
+        data = category.options.filter(id__in=data).values_list('value', flat=True)
         return data
 
     def get_searchable_content(self, value, data):

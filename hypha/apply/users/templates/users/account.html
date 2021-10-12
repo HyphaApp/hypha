@@ -6,9 +6,9 @@
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner admin-bar__inner--with-button">
-        <h3 class="admin-bar__heading">Welcome {{ user }}</h3>
+        <h3 class="admin-bar__heading">{% trans "Welcome" %} {{ user }}</h3>
         <a href="{% url 'dashboard:dashboard' %}" class="button button--primary button--arrow-pixels-white">
-            Go to dashboard
+            {% trans "Go to dashboard" %}
             <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
         </a>
     </div>
@@ -28,24 +28,24 @@
 
     {% if show_change_password and user.has_usable_password and not backends.associated %}
         <div class="profile__column">
-            <h3>Change password</h3>
+            <h3>{% trans "Change password" %}</h3>
             <p><a class="button button--primary" href="{% url 'users:password_change' %}">{% trans "Update password" %}</a></p>
 
-            <h3>Account Security</h3>
-            <p><a class="link link--button link--button--narrow" href="{% url 'two_factor:profile' %}">Two-factor authentication settings</a></p>
+            <h3>{% trans "Account Security" %}</h3>
+            <p><a class="link link--button link--button--narrow" href="{% url 'two_factor:profile' %}">{% trans "Two-factor authentication settings" %}</a></p>
         </div>
     {% endif %}
 
     <div class="profile__column">
         {% if swappable_form %}
-            <h3>Become:</h3>
+            <h3>{% trans "Become" %}:</h3>
             <form action="{% url 'users:become' %}" method="post" class="form">
                 {{ swappable_form.media }}
                 {% csrf_token %}
                 {% for field in swappable_form %}
                     {% include "forms/includes/field.html" %}
                 {% endfor %}
-                <button class="button button--primary" type="submit">Become</button>
+                <button class="button button--primary" type="submit">{% trans "Become" %}</button>
             </form>
         {% endif %}
 

@@ -1,5 +1,6 @@
+{% load i18n %}
 <div class="sidebar__inner">
-    <h5>Project</h5>
+    <h5>{% trans "Project" %}</h5>
     <p>
         <a href="{% url 'apply:projects:detail' pk=object.project.id %}">{{ object.project.title }}</a>
     </p>

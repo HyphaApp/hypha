@@ -8,9 +8,9 @@
                 <p> {{ round.fund|default_if_none:"-" }} </p>
                 <p class="round-block__date">
                     {% if round.end_date %}
-                        {{ round_type_name }} {{round_type_preposition}} {{ round.end_date|date:"Y-m-d" }}
+                        {{ display_text }} {{ round.end_date|date:"SHORT_DATE_FORMAT" }}
                     {% else %}
-                        {{ round_type_name }}
+                        {{ type }}
                     {% endif %}
                     </p>
                     <p class="round-block__determination">
@@ -28,8 +28,10 @@
             </li>
         {% endif %}
     {% empty %}
-        <p class="round-block__not-found">
-            There are no {{ round_type_name|lower }} rounds.
-        </p>
+            {% block empty_round %}
+                <p class="round-block__not-found">
+                    {% trans "There are no" %} {% if round.end_date %} {{ display_text|lower }} {% else %} {{ type|lower }} {% endif %} {% trans "rounds" %}
+                </p>
+            {% endblock %}
     {% endfor %}
 </ul>

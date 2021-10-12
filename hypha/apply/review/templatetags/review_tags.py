@@ -21,7 +21,7 @@ TRAFFIC_LIGHT_COLORS = {
     }
 }
 
-TRAFFIC_LIGHT_TEMPLATE = '<span class="traffic-light traffic-light__{color}"></span>'
+TRAFFIC_LIGHT_TEMPLATE = '<span class="traffic-light traffic-light--{color}"></span>'
 
 
 @register.filter()

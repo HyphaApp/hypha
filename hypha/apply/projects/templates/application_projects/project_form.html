@@ -1,13 +1,13 @@
 {% extends "base-apply.html" %}
 
-{% load static %}
+{% load i18n static %}
 
-{% block title %}Editing: {{ object.title }}{% endblock %}
+{% block title %}{% trans "Editing" %}: {{ object.title }}{% endblock %}
 
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
-        <h2 class="heading heading--no-margin">Editing: {{ object.title}}</h2>
+        <h2 class="heading heading--no-margin">{% trans "Editing" %}: {{ object.title}}</h2>
     </div>
 </div>
 
@@ -27,11 +27,11 @@
             {% endfor %}
 
             <a class="button button--submit button--top-space button--white" href="{{ object.get_absolute_url }}">
-                Cancel
+                {% trans "Cancel" %}
             </a>
 
             <button class="button button--submit button--top-space button--primary" type="submit">
-                Save
+                {% trans "Save" %}
             </button>
 
         </form>

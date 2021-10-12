@@ -3,8 +3,9 @@ from tinymce.widgets import TinyMCE
 MCE_ATTRIBUTES = {
     'elementpath': False,
     'branding': False,
+    'contextmenu': False,
     'entity_encoding': 'raw',
-    'plugins': 'link image preview codesample table code lists wordcount',
+    'plugins': 'link table lists wordcount',
     'toolbar1': 'undo redo | styleselect | bold italic | bullist numlist | table | link',
     'style_formats': [
         {'title': 'Headers', 'items': [
@@ -21,6 +22,7 @@ MCE_ATTRIBUTES = {
     'relative_urls': False,
     'browser_spellcheck': True,
     'default_link_target': '_blank',
+    'invalid_elements': 'iframe,object,embed'
 }
 MCE_ATTRIBUTES_SHORT = {**MCE_ATTRIBUTES, **{'height': 180}}
 

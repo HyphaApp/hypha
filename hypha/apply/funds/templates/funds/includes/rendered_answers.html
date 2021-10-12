@@ -1,30 +1,30 @@
-{% load wagtailusers_tags workflow_tags %}
-<h3>Proposal Information</h3>
+{% load i18n wagtailusers_tags workflow_tags %}
+<h3>{% trans "Proposal Information" %}</h3>
 <div class="grid grid--proposal-info">
     {% if object.get_value_display != "-" %}
     <div>
-        <h5>Requested Funding</h5>
+        <h5>{% trans "Requested Funding" %}</h5>
         {{ object.get_value_display }}
     </div>
     {% endif %}
 
     <div>
-        <h5>Project Duration</h5>
+        <h5>{% trans "Project Duration" %}</h5>
         {{ object.get_duration_display }}
     </div>
 
     <div>
-        <h5>Legal Name</h5>
-        {{ object.get_full_name_display }}{% if request.user.is_apply_staff %} (<a href="{% url 'wagtailusers_users:edit' object.user_id %}">Edit account</a>){% endif %}
+        <h5>{% trans "Legal Name" %}</h5>
+        {{ object.get_full_name_display }}{% if request.user.is_apply_staff %} (<a href="{% url 'wagtailusers_users:edit' object.user_id %}">{% trans "Edit account" %}</a>){% endif %}
     </div>
 
     <div>
-        <h5>Email</h5>
+        <h5>{% trans "E-mail" %}</h5>
         {{ object.get_email_display }}
     </div>
     {% if object.get_address_display != "-" %}
     <div class="grid__cell--span-two">
-        <h5>Address</h5>
+        <h5>{% trans "Address" %}</h5>
         {{ object.get_address_display }}
     </div>
     {% endif %}

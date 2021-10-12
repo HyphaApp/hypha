@@ -1,11 +1,12 @@
 {% extends 'base-apply.html' %}
+{% load i18n %}
 
 {% block content_wrapper %}
     <div class="admin-bar">
         <div class="admin-bar__inner admin-bar__inner--with-button">
-            <h3 class="admin-bar__heading">Welcome {{ user }}</h3>
+            <h3 class="admin-bar__heading">{% trans "Welcome" %} {{ user }}</h3>
             <a href="{% url 'dashboard:dashboard' %}" class="button button--primary button--arrow-pixels-white">
-                Go to dashboard
+                {% trans "Go to dashboard" %}
                 <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
             </a>
         </div>

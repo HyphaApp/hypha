@@ -1,3 +1,4 @@
+{% load i18n %}
 <form
     class="form {{ extra_classes }}"
     method="post"
@@ -25,13 +26,14 @@
         type="button"
         data-fancybox-close=""
         class="button button--{% if invert %}primary{% else %}white{% endif %} button--top-space"
-        title="Close">
-        Cancel
+        title="{% trans "Close" %}">
+        {% trans "Cancel" %}
     </button>
     {% endif %}
 
+    {% trans "Delete" as delete %}
     <button
-        class="button button--{% if invert %}white{% elif value == 'Delete' %}warning{% else %}primary{% endif %} button--top-space"
+        class="button button--{% if invert %}white{% elif value == delete %}warning{% else %}primary{% endif %} button--top-space"
         id="{{ form.name }}-submit"
         name="{{ form_prefix }}{{ form.name }}"
         type="submit"

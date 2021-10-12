@@ -15,7 +15,7 @@ from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
 from hypha.apply.users.tests.factories import UserFactory
 
 
-class ActivityFactory(factory.DjangoModelFactory):
+class ActivityFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Activity
 
@@ -35,7 +35,7 @@ class CommentFactory(ActivityFactory):
         return model_class.comments
 
 
-class EventFactory(factory.DjangoModelFactory):
+class EventFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Event
 
@@ -44,7 +44,7 @@ class EventFactory(factory.DjangoModelFactory):
     source = factory.SubFactory(ApplicationSubmissionFactory)
 
 
-class MessageFactory(factory.DjangoModelFactory):
+class MessageFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Message
 

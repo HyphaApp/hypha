@@ -1,10 +1,11 @@
 {% extends "funds/submissions.html" %}
+{% load i18n %}
 
 {% block page_header %}
     <div class="wrapper wrapper--medium">
-        <h3>Search Results</h3>
+        <h3>{% trans "Search results" %}</h3>
         {% if search_term %}
-            <h5>There are {{ object_list.count }} results for: {{ search_term }}</h5>
+            <h5>{% blocktrans %}There are {{ object_list.count }} results for: {{ search_term }}{% endblocktrans %}</h5>
         {% endif %}
     </div>
 {% endblock %}

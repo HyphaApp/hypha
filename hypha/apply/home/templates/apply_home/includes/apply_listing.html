@@ -1,4 +1,4 @@
-{% load wagtailcore_tags %}
+{% load i18n wagtailcore_tags %}
 
 {% with details=page.detail %}
 {% if page.open_round %}
@@ -8,7 +8,7 @@
               {% if page.next_deadline %}
                   <p class="listing__deadline">
                       <svg class="icon icon--calendar icon--small"><use xlink:href="#calendar"></use></svg>
-                      <span>Next deadline: {{ page.next_deadline|date:"M j, Y" }}</span>
+                      <span>{% trans "Next deadline" %}: {{ page.next_deadline|date:"M j, Y" }}</span>
                   </p>
               {% endif %}
               {% if details %}
@@ -26,7 +26,7 @@
               <h6 class="listing__teaser">{{ details.listing_summary|default:details.introduction|truncatechars_html:120 }}</h6>
           {% endif %}
       </div>
-      <a class="listing__button" href="{% pageurl page %}">Apply</a>
+      <a class="listing__button" href="{% pageurl page %}">{% trans "Apply" %}</a>
   </div>
 {% endif %}
 {% endwith %}

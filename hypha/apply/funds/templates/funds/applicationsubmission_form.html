@@ -1,10 +1,10 @@
 {% extends "base-apply.html" %}
-{% load static %}
+{% load i18n static %}
 {% block title %}Editing: {{object.title }}{% endblock %}
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
-        <h2 class="heading heading--no-margin">Editing: {{ object.title }}</h2>
+        <h2 class="heading heading--no-margin">{% trans "Editing" %}: {{ object.title }}</h2>
     </div>
 </div>
 
@@ -33,8 +33,9 @@
                 {{ hidden_field }}
             {% endfor %}
 
+            {% trans "Save draft" as save_draft %}
             {% for button_name, button_type, button_value in buttons %}
-                <button class="button button--submit button--top-space button--{{ button_type }}" type="submit" name="{{ button_name }}" {% if button_value == 'Save Draft' %}formnovalidate{% endif %}>{{ button_value }}</button>
+                <button class="button button--submit button--top-space button--{{ button_type }}" type="submit" name="{{ button_name }}" {% if button_value == save_draft %}formnovalidate{% endif %}>{{ button_value }}</button>
             {% endfor %}
         </form>
     </div>

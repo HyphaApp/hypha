@@ -1,3 +1,5 @@
+from django.utils.translation import gettext as _
+
 from hypha.apply.determinations.options import (
     DETERMINATION_CHOICES,
     TRANSITION_DETERMINATION,
@@ -20,7 +22,7 @@ def outcome_choices_for_phase(submission, user):
     We need to filter out non-matching choices.
     i.e. a transition to In Review is not a determination, while Needs more info or Rejected are.
     """
-    available_choices = set()
+    available_choices = [('', _('-- No determination selected -- '))]
     choices = dict(DETERMINATION_CHOICES)
     for transition_name in determination_actions(user, submission):
         try:
@@ -28,6 +30,5 @@ def outcome_choices_for_phase(submission, user):
         except KeyError:
             pass
         else:
-            available_choices.add((determination_type, choices[determination_type]))
-
+            available_choices.append((determination_type, choices[determination_type]))
     return available_choices

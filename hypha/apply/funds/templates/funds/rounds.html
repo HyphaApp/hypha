@@ -1,8 +1,8 @@
 {% extends "base-apply.html" %}
-{% load static %}
+{% load i18n static %}
 {% load render_table from django_tables2 %}
 
-{% block title %}Rounds{% endblock %}
+{% block title %}{% trans "Rounds" %}{% endblock %}
 
 {% block extra_css %}
 {{ filter.form.media.css }}
@@ -13,8 +13,8 @@
 <div class="admin-bar">
     <div class="admin-bar__inner">
         <div>
-            <h1 class="gamma heading heading--no-margin heading--bold">Rounds</h1>
-            <h5>Explore current and past rounds</h5>
+            <h1 class="gamma heading heading--no-margin heading--bold">{% trans "Rounds" %}</h1>
+            <h5>{% trans "Explore current and past rounds" %}</h5>
         </div>
     </div>
 </div>

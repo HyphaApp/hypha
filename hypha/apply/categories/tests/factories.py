@@ -3,7 +3,7 @@ import factory
 from ..models import Category, Option
 
 
-class CategoryFactory(factory.DjangoModelFactory):
+class CategoryFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Category
 
@@ -11,7 +11,7 @@ class CategoryFactory(factory.DjangoModelFactory):
     help_text = factory.Faker('sentence')
 
 
-class OptionFactory(factory.DjangoModelFactory):
+class OptionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Option
 

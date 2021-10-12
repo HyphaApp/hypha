@@ -138,9 +138,7 @@ INSTALLED_APPS = [
     'django_file_form',
 
     'hijack',
-    'compat',
     'pagedown',
-
     'salesforce',
 
     'django.contrib.admin',
@@ -153,6 +151,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sitemaps',
     'django.forms',
+    'formtools',
 ]
 
 MIDDLEWARE = [
@@ -319,7 +318,11 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # Number of days that password reset and account activation links are valid (default 3).
-PASSWORD_RESET_TIMEOUT_DAYS = 8
+if 'PASSWORD_RESET_TIMEOUT_DAYS' in env:
+    try:
+        PASSWORD_RESET_TIMEOUT_DAYS = int(env['PASSWORD_RESET_TIMEOUT_DAYS'])
+    except ValueError:
+        pass
 
 # Internationalization
 # https://docs.djangoproject.com/en/stable/topics/i18n/
@@ -563,6 +566,22 @@ if 'SLACK_TYPE_COMMENTS' in env:
 else:
     SLACK_TYPE_COMMENTS = []
 
+
+# Automatic transition settings
+TRANSITION_AFTER_REVIEWS = False
+if 'TRANSITION_AFTER_REVIEWS' in env:
+    try:
+        TRANSITION_AFTER_REVIEWS = int(env['TRANSITION_AFTER_REVIEWS'])
+    except ValueError:
+        pass
+
+
+# Exclude Filters/columns from submission tables.
+# Possible values are: fund, round, status, lead, reviewers, screening_statuses, category_options, meta_terms
+if 'SUBMISSIONS_TABLE_EXCLUDED_FIELDS' in env:
+    SUBMISSIONS_TABLE_EXCLUDED_FIELDS = env['SUBMISSIONS_TABLE_EXCLUDED_FIELDS'].split(',')
+else:
+    SUBMISSIONS_TABLE_EXCLUDED_FIELDS = []
 
 # Celery config
 if 'REDIS_URL' in env:

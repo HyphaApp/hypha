@@ -62,9 +62,13 @@ neat_related = {
     MESSAGES.APPROVE_CONTRACT: 'contract',
     MESSAGES.UPLOAD_CONTRACT: 'contract',
     MESSAGES.REQUEST_PAYMENT: 'payment_request',
+    MESSAGES.CREATE_INVOICE: 'create_invoice',
     MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS: 'payment_request',
+    MESSAGES.UPDATE_INVOICE_STATUS: 'invoice',
     MESSAGES.DELETE_PAYMENT_REQUEST: 'payment_request',
+    MESSAGES.DELETE_INVOICE: 'invoice',
     MESSAGES.UPDATE_PAYMENT_REQUEST: 'payment_request',
+    MESSAGES.UPDATE_INVOICE: 'invoice',
     MESSAGES.SUBMIT_REPORT: 'report',
     MESSAGES.SKIPPED_REPORT: 'report',
     MESSAGES.REPORT_FREQUENCY_CHANGED: 'config',
@@ -81,6 +85,10 @@ def is_transition(message_type):
 
 def is_ready_for_review(message_type):
     return message_type in [MESSAGES.READY_FOR_REVIEW, MESSAGES.BATCH_READY_FOR_REVIEW]
+
+
+def is_reviewer_update(message_type):
+    return message_type in [MESSAGES.REVIEWERS_UPDATED, MESSAGES.BATCH_REVIEWERS_UPDATED]
 
 
 class AdapterBase:
@@ -245,7 +253,9 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.UPLOAD_CONTRACT: _('Uploaded a {contract.state} contract'),
         MESSAGES.APPROVE_CONTRACT: _('Approved contract'),
         MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS: _('Updated Payment Request status to: {payment_request.status_display}'),
+        MESSAGES.UPDATE_INVOICE_STATUS: _('Updated Invoice status to: {invoice.status_display}'),
         MESSAGES.REQUEST_PAYMENT: _('Payment Request submitted'),
+        MESSAGES.CREATE_INVOICE: _('Invoice created'),
         MESSAGES.SUBMIT_REPORT: _('Submitted a report'),
         MESSAGES.SKIPPED_REPORT: 'handle_skipped_report',
         MESSAGES.REPORT_FREQUENCY_CHANGED: 'handle_report_frequency',
@@ -266,6 +276,7 @@ class ActivityAdapter(AdapterBase):
                 MESSAGES.APPROVE_PROJECT,
                 MESSAGES.REQUEST_PROJECT_CHANGE,
                 MESSAGES.SEND_FOR_APPROVAL,
+                MESSAGES.NEW_REVIEW,
         ]:
             return {'visibility': TEAM}
 
@@ -435,9 +446,13 @@ class SlackAdapter(AdapterBase):
         MESSAGES.UPLOAD_CONTRACT: _('{user} has uploaded a contract for <{link}|{source.title}>.'),
         MESSAGES.APPROVE_CONTRACT: _('{user} has approved contract for <{link}|{source.title}>.'),
         MESSAGES.REQUEST_PAYMENT: _('{user} has requested payment for <{link}|{source.title}>.'),
+        MESSAGES.CREATE_INVOICE: _('{user} has created invoice for <{link}|{source.title}>.'),
         MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS: _('{user} has changed the status of <{link_related}|payment request> on <{link}|{source.title}> to {payment_request.status_display}.'),
+        MESSAGES.UPDATE_INVOICE_STATUS: _('{user} has changed the status of <{link_related}|invoice> on <{link}|{source.title}> to {invoice.status_display}.'),
         MESSAGES.DELETE_PAYMENT_REQUEST: _('{user} has deleted payment request from <{link}|{source.title}>.'),
+        MESSAGES.DELETE_INVOICE: _('{user} has deleted invoice from <{link}|{source.title}>.'),
         MESSAGES.UPDATE_PAYMENT_REQUEST: _('{user} has updated payment request for <{link}|{source.title}>.'),
+        MESSAGES.UPDATE_INVOICE: _('{user} has updated invoice for <{link}|{source.title}>.'),
         MESSAGES.SUBMIT_REPORT: _('{user} has submitted a report for <{link}|{source.title}>.'),
         MESSAGES.BATCH_DELETE_SUBMISSION: 'handle_batch_delete_submission'
     }
@@ -704,12 +719,18 @@ class EmailAdapter(AdapterBase):
         MESSAGES.INVITED_TO_PROPOSAL: 'messages/email/invited_to_proposal.html',
         MESSAGES.BATCH_READY_FOR_REVIEW: 'handle_batch_ready_for_review',
         MESSAGES.READY_FOR_REVIEW: 'handle_ready_for_review',
+        MESSAGES.REVIEWERS_UPDATED: 'handle_ready_for_review',
+        MESSAGES.BATCH_REVIEWERS_UPDATED: 'handle_batch_ready_for_review',
         MESSAGES.PARTNERS_UPDATED: 'partners_updated_applicant',
         MESSAGES.PARTNERS_UPDATED_PARTNER: 'partners_updated_partner',
         MESSAGES.UPLOAD_CONTRACT: 'messages/email/contract_uploaded.html',
+        MESSAGES.CREATED_PROJECT: 'handle_project_created',
+        MESSAGES.UPDATED_VENDOR: 'handle_vendor_updated',
         MESSAGES.SENT_TO_COMPLIANCE: 'messages/email/sent_to_compliance.html',
         MESSAGES.UPDATE_PAYMENT_REQUEST: 'messages/email/payment_request_updated.html',
+        MESSAGES.UPDATE_INVOICE: 'handle_invoice_updated',
         MESSAGES.UPDATE_PAYMENT_REQUEST_STATUS: 'handle_payment_status_updated',
+        MESSAGES.UPDATE_INVOICE_STATUS: 'handle_invoice_status_updated',
         MESSAGES.SUBMIT_REPORT: 'messages/email/report_submitted.html',
         MESSAGES.SKIPPED_REPORT: 'messages/email/report_skipped.html',
         MESSAGES.REPORT_FREQUENCY_CHANGED: 'messages/email/report_frequency.html',
@@ -719,9 +740,9 @@ class EmailAdapter(AdapterBase):
 
     def get_subject(self, message_type, source):
         if source:
-            if is_ready_for_review(message_type):
+            if is_ready_for_review(message_type) or is_reviewer_update(message_type):
                 subject = _('Application ready to review: {source.title}').format(source=source)
-                if message_type in {MESSAGES.BATCH_READY_FOR_REVIEW}:
+                if message_type in {MESSAGES.BATCH_READY_FOR_REVIEW, MESSAGES.BATCH_REVIEWERS_UPDATED}:
                     subject = _('Multiple applications are now ready for your review')
             elif message_type in {MESSAGES.REVIEW_REMINDER}:
                 subject = _('Reminder: Application ready to review: {source.title}').format(source=source)
@@ -764,6 +785,37 @@ class EmailAdapter(AdapterBase):
         return self.render_message(
             'messages/email/payment_request_status_updated.html',
             has_changes_requested=related.has_changes_requested,
+            **kwargs,
+        )
+
+    def handle_invoice_status_updated(self, related, **kwargs):
+        return self.render_message(
+            'messages/email/invoice_status_updated.html',
+            has_changes_requested=related.has_changes_requested,
+            **kwargs,
+        )
+
+    def handle_invoice_updated(self, **kwargs):
+        return self.render_message(
+            'messages/email/invoice_updated.html',
+            **kwargs,
+        )
+
+    def handle_project_created(self, source, **kwargs):
+        from hypha.apply.projects.models import ProjectSettings
+        request = kwargs.get('request')
+        project_settings = ProjectSettings.for_request(request)
+        if project_settings.vendor_setup_required:
+            return self.render_message(
+                'messages/email/vendor_setup_needed.html',
+                source=source,
+                **kwargs
+            )
+
+    def handle_vendor_updated(self, source, **kwargs):
+        return self.render_message(
+            'messages/email/vendor_updated.html',
+            source=source,
             **kwargs,
         )
 
@@ -817,6 +869,16 @@ class EmailAdapter(AdapterBase):
         if is_ready_for_review(message_type):
             return self.reviewers(source)
 
+        if is_reviewer_update(message_type):
+            # Notify newly added reviewers only if they can review in the current phase
+            reviewers = self.reviewers(source)
+            added = kwargs.get("added", [])
+            return [
+                assigned_reviewer.reviewer.email
+                for assigned_reviewer in added
+                if assigned_reviewer.reviewer.email in reviewers
+            ]
+
         if is_transition(message_type):
             # Only notify the applicant if the new phase can be seen within the workflow
             if not source.phase.permissions.can_view(source.user):
@@ -836,7 +898,7 @@ class EmailAdapter(AdapterBase):
 
             return [project_settings.compliance_email]
 
-        if message_type in {MESSAGES.SUBMIT_REPORT, MESSAGES.UPDATE_PAYMENT_REQUEST}:
+        if message_type in {MESSAGES.SUBMIT_REPORT, MESSAGES.UPDATE_PAYMENT_REQUEST, MESSAGES.UPDATE_INVOICE}:
             # Don't tell the user if they did these activities
             if user.is_applicant:
                 return []
@@ -847,14 +909,17 @@ class EmailAdapter(AdapterBase):
         return [source.user.email]
 
     def batch_recipients(self, message_type, sources, **kwargs):
-        if not is_ready_for_review(message_type):
+        if not (is_ready_for_review(message_type) or is_reviewer_update(message_type)):
             return super().batch_recipients(message_type, sources, **kwargs)
+
+        added = [reviewer.email for _, reviewer in kwargs.get("added", []) if reviewer]
 
         reviewers_to_message = defaultdict(list)
         for source in sources:
             reviewers = self.reviewers(source)
             for reviewer in reviewers:
-                reviewers_to_message[reviewer].append(source)
+                if not is_reviewer_update(message_type) or reviewer in added:
+                    reviewers_to_message[reviewer].append(source)
 
         return [
             {

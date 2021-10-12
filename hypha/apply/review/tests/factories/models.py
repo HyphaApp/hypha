@@ -17,7 +17,7 @@ class ReviewFormDataFactory(FormDataFactory):
     field_factory = blocks.ReviewFormFieldsFactory
 
 
-class ReviewFactory(factory.DjangoModelFactory):
+class ReviewFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Review
 
@@ -41,7 +41,7 @@ class ReviewFactory(factory.DjangoModelFactory):
     score = 0
 
 
-class ReviewOpinionFactory(factory.DjangoModelFactory):
+class ReviewOpinionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = ReviewOpinion
 
@@ -54,7 +54,7 @@ class ReviewOpinionFactory(factory.DjangoModelFactory):
     opinion = DISAGREE
 
 
-class ReviewFormFactory(factory.DjangoModelFactory):
+class ReviewFormFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = ReviewForm
 

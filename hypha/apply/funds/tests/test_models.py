@@ -158,7 +158,7 @@ class TestRoundModelWorkflowAndForms(TestCase):
         self.fund = FundTypeFactory(parent=None)
 
         # Must create lead, adding child complains about "built" user with no id
-        lead = RoundFactory.lead.get_factory()(**RoundFactory.lead.defaults)
+        lead = RoundFactory.lead.get_factory()(**RoundFactory.lead._defaults)
         self.round = RoundFactory.build(lead=lead, parent=None)
 
         # Assign parent_page like the init does
@@ -216,7 +216,7 @@ class TestFormSubmission(TestCase):
             if isinstance(field.block, FullNameBlock):
                 data[field.id] = self.name if name is None else name
             if draft:
-                data['draft'] = 'Save Draft'
+                data['draft'] = 'Save draft'
 
         request = make_request(user, data, method='post', site=self.site)
 

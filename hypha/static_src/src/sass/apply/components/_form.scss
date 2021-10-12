@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 .form {
     $root: &;
 
@@ -333,6 +335,40 @@
         }
     }
 
+    &__comments {
+        display: grid;
+        grid-template-areas: 'message' 'visibility' 'actions';
+        grid-template-rows: auto auto auto;
+        grid-template-columns: 1fr;
+
+
+        @include media-query(tablet-landscape) {
+            grid-template-areas: 'message visibility' 'actions actions';
+            grid-template-rows: auto auto;
+            grid-template-columns: 2fr 1fr;
+            column-gap: 2rem;
+
+            .wmd-input {
+                max-width: 100%;
+                margin-bottom:  0;
+            }
+        }
+
+        .id_message {
+            grid-area: message;
+        }
+
+        .id_visibility_0 {
+            grid-area: visibility;
+        }
+
+        .button {
+            grid-area: actions;
+            max-width: 210px;
+            text-align: center;
+        }
+    }
+
     select,
     input[type='url'],
     input[type='text']:not(.input--secondary),
@@ -418,7 +454,7 @@
         padding: .4em;
         margin-bottom: 1em;
         border: 1px solid $color--mid-grey;
-        line-height: $base-line-height / $base-font-size;
+        line-height: math.div($base-line-height, $base-font-size);
 
         @include media-query(tablet-portrait) {
             max-width: 70%;

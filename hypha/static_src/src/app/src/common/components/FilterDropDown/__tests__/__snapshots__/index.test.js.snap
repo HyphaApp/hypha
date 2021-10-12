@@ -972,6 +972,11 @@ exports[`Test Filter dropdown component render a Filter dropdown component 1`] =
                                     },
                                   }
                                 }
+                                TransitionProps={
+                                  Object {
+                                    "onEntering": [Function],
+                                  }
+                                }
                                 anchorEl={
                                   <div
                                     aria-haspopup="listbox"
@@ -995,7 +1000,6 @@ exports[`Test Filter dropdown component render a Filter dropdown component 1`] =
                                 getContentAnchorEl={[Function]}
                                 id="menu-filter-key"
                                 onClose={[Function]}
-                                onEntering={[Function]}
                                 open={false}
                                 transformOrigin={
                                   Object {
@@ -1014,6 +1018,11 @@ exports[`Test Filter dropdown component render a Filter dropdown component 1`] =
                                       "style": Object {
                                         "minWidth": undefined,
                                       },
+                                    }
+                                  }
+                                  TransitionProps={
+                                    Object {
+                                      "onEntering": [Function],
                                     }
                                   }
                                   anchorEl={
@@ -1045,7 +1054,6 @@ exports[`Test Filter dropdown component render a Filter dropdown component 1`] =
                                   getContentAnchorEl={[Function]}
                                   id="menu-filter-key"
                                   onClose={[Function]}
-                                  onEntering={[Function]}
                                   open={false}
                                   transformOrigin={
                                     Object {

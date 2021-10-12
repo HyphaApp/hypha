@@ -81,7 +81,13 @@ class StreamFieldFile(File):
 
     @property
     def modification_time(self):
-        return self.storage.get_modified_time(self.name).date()
+        # Wrap in a try for local developemnt where files might not always exist.
+        try:
+            modified_time = self.storage.get_modified_time(self.name).date()
+        except FileNotFoundError:
+            modified_time = '–'
+
+        return modified_time
 
     def serialize(self):
         return {

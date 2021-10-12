@@ -1,12 +1,12 @@
 {% extends "base-apply.html" %}
-{% load bleach_tags %}
+{% load i18n bleach_tags %}
 
-{% block title %}Determination for {{ determination.submission.title }}{% endblock %}
+{% block title %}{% trans "Determination for" %} {{ determination.submission.title }}{% endblock %}
 
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
-        <h2 class="heading heading--no-margin">Determination {% if determination.is_draft %}[DRAFT]{% endif %}
+        <h2 class="heading heading--no-margin">{% trans "Determination" %} {% if determination.is_draft %}[{% trans "DRAFT" %}]{% endif %}
         </h2>
         <h5>For <a href="{% url "funds:submissions:detail" determination.submission.id %}">{{ determination.submission.title }}</a></h5>
     </div>
@@ -14,12 +14,12 @@
 
 <div class="grid">
     <div>
-        <h5 class="determination-outcome">Determination: {{ determination.get_outcome_display }}</h5>
+        <h5 class="determination-outcome">{% trans "Determination" %}: {{ determination.get_outcome_display }}</h5>
     </div>
     {% if request.user.is_apply_staff %}
         <div>
             <a class="link link--edit-determination is-active" href="{% url 'apply:submissions:determinations:edit' submission_pk=determination.submission.id pk=determination.id %}">
-                Edit
+                {% trans "Edit" %}
             <svg class="icon icon--pen"><use xlink:href="#pen"></use></svg>
             </a>
         </div>

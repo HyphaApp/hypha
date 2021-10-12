@@ -493,6 +493,15 @@ class TestEmailAdapter(AdapterMixin, TestCase):
         self.assertEqual(len(mail.outbox), 4)
         self.assertTrue(mail.outbox[0].subject, 'ready to review')
 
+    def test_reviewer_update_email(self):
+        reviewers = ReviewerFactory.create_batch(4)
+        submission = ApplicationSubmissionFactory(status='external_review', reviewers=reviewers, workflow_stages=2)
+        added = [AssignedReviewersFactory(submission=submission, reviewer=reviewers[0])]
+        self.adapter_process(MESSAGES.REVIEWERS_UPDATED, source=submission, added=added)
+
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertTrue(mail.outbox[0].subject, 'ready to review')
+
     def test_email_sent(self):
         self.adapter_process(MESSAGES.NEW_SUBMISSION)
         self.assertEqual(Message.objects.count(), 1)

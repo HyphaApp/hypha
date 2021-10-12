@@ -56,10 +56,14 @@ options.gulpWatchOptions = {interval: 600};
 
 // Load Gulp and tools we will use.
 var gulp      = require('gulp'),
-  $           = require('gulp-load-plugins')(),
   del         = require('del'),
-  // gulp-load-plugins will report "undefined" error unless you load gulp-sass manually.
   sass        = require('gulp-dart-sass'),
+  eslint      = require('gulp-eslint'),
+  sassLint    = require('gulp-sass-lint'),
+  sourcemaps  = require('gulp-sourcemaps'),
+  size        = require('gulp-size'),
+  babel       = require('gulp-babel'),
+  uglify      = require('gulp-uglify'),
   cleanCSS    = require('gulp-clean-css'),
   touch       = require('gulp-touch-cmd'),
   webpack     = require('webpack'),
@@ -107,31 +111,31 @@ gulp.task('clean', gulp.parallel('clean:css', 'clean:js'));
 // Lint JavaScript.
 gulp.task('lint:js', function lint () {
   return gulp.src(options.eslint.files)
-    .pipe($.eslint())
-    .pipe($.eslint.format());
+    .pipe(eslint())
+    .pipe(eslint.format());
 });
 
 // Lint JavaScript and throw an error for a CI to catch.
 gulp.task('lint:js-with-fail', function lint () {
   return gulp.src(options.eslint.files)
-    .pipe($.eslint())
-    .pipe($.eslint.format())
-    .pipe($.eslint.failOnError());
+    .pipe(eslint())
+    .pipe(eslint.format())
+    .pipe(eslint.failOnError());
 });
 
 // Lint Sass.
 gulp.task('lint:sass', function lint () {
   return gulp.src(options.theme.sass + '**/*.scss')
-    .pipe($.sassLint())
-    .pipe($.sassLint.format());
+    .pipe(sassLint())
+    .pipe(sassLint.format());
 });
 
 // Lint Sass and throw an error for a CI to catch.
 gulp.task('lint:sass-with-fail', function lint () {
   return gulp.src(options.theme.sass + '**/*.scss')
-    .pipe($.sassLint())
-    .pipe($.sassLint.format())
-    .pipe($.sassLint.failOnError());
+    .pipe(sassLint())
+    .pipe(sassLint.format())
+    .pipe(sassLint.failOnError());
 });
 
 // Lint Sass and JavaScript.
@@ -140,10 +144,10 @@ gulp.task('lint', gulp.parallel('lint:sass', 'lint:js'));
 // Build CSS.
 gulp.task('styles', gulp.series('clean:css', function css () {
   return gulp.src(sassFiles)
-    .pipe($.sourcemaps.init())
+    .pipe(sourcemaps.init())
     .pipe(sass(options.sass).on('error', sass.logError))
-    .pipe($.size({showFiles: true}))
-    .pipe($.sourcemaps.write('./'))
+    .pipe(size({showFiles: true}))
+    .pipe(sourcemaps.write('./'))
     .pipe(gulp.dest(options.theme.css))
     .pipe(touch());
 }));
@@ -152,7 +156,7 @@ gulp.task('styles:production', gulp.series('clean:css', function css () {
   return gulp.src(sassFiles)
     .pipe(sass(options.sass).on('error', sass.logError))
     .pipe(cleanCSS({rebase: false}))
-    .pipe($.size({showFiles: true}))
+    .pipe(size({showFiles: true}))
     .pipe(gulp.dest(options.theme.css))
     .pipe(touch());
 }));
@@ -160,19 +164,19 @@ gulp.task('styles:production', gulp.series('clean:css', function css () {
 // Build JavaScript.
 gulp.task('scripts', gulp.series('clean:js', function js () {
   return gulp.src(options.theme.js + '**/*.js')
-    .pipe($.sourcemaps.init())
-    .pipe($.babel({presets: ['@babel/env']}))
-    .pipe($.size({showFiles: true}))
-    .pipe($.sourcemaps.write('./'))
+    .pipe(sourcemaps.init())
+    .pipe(babel({presets: ['@babel/env']}))
+    .pipe(size({showFiles: true}))
+    .pipe(sourcemaps.write('./'))
     .pipe(gulp.dest(options.theme.js_dest));
 }));
 
 // Build JavaScript.
 gulp.task('scripts:production', gulp.series('clean:js', function js () {
   return gulp.src(options.theme.js + '**/*.js')
-    .pipe($.babel({presets: ['@babel/env']}))
-    .pipe($.uglify())
-    .pipe($.size({showFiles: true}))
+    .pipe(babel({presets: ['@babel/env']}))
+    .pipe(uglify())
+    .pipe(size({showFiles: true}))
     .pipe(gulp.dest(options.theme.js_dest));
 }));
 

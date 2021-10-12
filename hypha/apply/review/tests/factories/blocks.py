@@ -53,12 +53,12 @@ class ScoreFieldBlockFactory(FormFieldBlockFactory):
 
     @classmethod
     def make_answer(cls, params=dict()):
-        return json.dumps([factory.Faker('paragraph').generate(params), random.randint(1, 5)])
+        return json.dumps([factory.Faker('paragraph').evaluate(None, None, dict(params, locale=None)), random.randint(1, 5)])
 
     @classmethod
     def make_form_answer(cls, params=dict()):
         defaults = {
-            'description': factory.Faker('paragraph').generate({}),
+            'description': factory.Faker('paragraph').evaluate(None, None, {'locale': None}),
             'score': random.randint(1, 5),
         }
         defaults.update(params)

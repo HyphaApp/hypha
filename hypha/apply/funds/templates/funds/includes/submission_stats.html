@@ -1,22 +1,23 @@
+{% load i18n %}
 <div class="stat-block">
     <div class="stat-block__item">
-        <h5>Amounts</h5>
+        <h5>{% trans "Amounts" %}</h5>
         <table>
-            <tr><th>Applied ({{ CURRENCY_SYMBOL }})</th><th>Accepted  ({{ CURRENCY_SYMBOL }})</th></tr>
+            <tr><th>{% trans "Applied" %} ({{ CURRENCY_SYMBOL }})</th><th>{% trans "Accepted" %}  ({{ CURRENCY_SYMBOL }})</th></tr>
             <tr><td>{{ submission_sum|default:"0" }}</td><td>{{ submission_accepted_sum|default:"0" }}</td></tr>
         </table>
     </div>
     <div class="stat-block__item">
-        <h5>Submissions</h5>
+        <h5>{% trans "Submissions" %}</h5>
         <table>
-            <tr><th>Applied</th><th>Accepted</th><th>Pending</th></tr>
+            <tr><th>{% trans "Applied" %}</th><th>{% trans "Accepted" %}</th><th>{% trans "Pending" %}</th></tr>
             <tr><td>{{ object_list.count }}</td><td>{{ submission_accepted_count|default:"0" }}</td><td>{{ submission_undetermined_count|default:"0" }}</td></tr>
         </table>
     </div>
     <div class="stat-block__item">
-        <h5>Reviews</h5>
+        <h5>{% trans "Reviews" %}</h5>
         <table>
-            <tr><th>All</th><th>You</th><th>Your avg. score</th></tr>
+            <tr><th>{% trans "All" %}</th><th>{% trans "You" %}</th><th>{% trans "Your avg. score" %}</th></tr>
             <tr><td>{{ review_count|default:"0" }}</td><td>{{ review_my_count|default:"0" }}</td><td>{{ review_my_score|floatformat:"0"|default:"0" }}</td></tr>
         </table>
     </div>

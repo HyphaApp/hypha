@@ -1,14 +1,15 @@
 {% extends "application_projects/project_detail.html" %}
+{% load i18n %}
 
 {% block notifications %}
 {% if not object.editable %}
     <div class="error-bar">
         <p class="error-bar__copy">
-            Your project is not editable at this point.
+            {% trans "Your project is not editable at this point." %}
             {% if not object.lead %}
-            We are awaiting a lead to be assigned.
+            {% trans "We are awaiting a lead to be assigned." %}
             {% else %}
-                It is currently under review by a staff member.
+                {% trans "It is currently under review by a staff member." %}
             {% endif %}
         </p>
     </div>
