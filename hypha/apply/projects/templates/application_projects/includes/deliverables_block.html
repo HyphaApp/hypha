@@ -1,0 +1,39 @@
+{% load i18n %}
+<div class="sidebar__inner">
+    <h5>{% trans "Choose deliverables" %}</h5>
+    <form id="add-deliverables", action="" data-projectid="{{ project.id }}" data-invoiceid="{{ invoice.id }}">
+        <div class="select-deliverables">
+            <select name="deliverables" id="deliverables">
+            <option value="deliverables">{% trans "Invoice Covers Deliverables" %}</option>
+            {% for deliverable in deliverables %}
+                <option id="{{ deliverable.id }}" value="{{ deliverable.id }}" data-deliverableid="{{ deliverable.id }}" data-availabletoinvoice="{{ deliverable.available_to_invoice }}">{{ deliverable.name }} (${{ deliverable.unit_price }})</option>
+            {% endfor %}
+            </select>
+        </div>
+        <br>
+        <div class="available-to-invoice">
+            <b>{% trans "Available to invoice:" %} </b>
+        </div>
+        <br>
+        <div class="quantity">
+            <b><label for="quantity">{% trans "Quantity:" %}</label></b>
+            <input type="number" id="quantity" name="quantity" min="1">
+        </div>
+        <br>
+        <input type="submit" value="Add Deliverable">
+    </form>
+    <br>
+    <div id="list-deliverables">
+        <div class="deliverables">
+            {% for deliverable in invoice.deliverables.all %}
+                <b>{{ deliverable.deliverable.name }} ({{ deliverable.quantity }} {{ CURRENCY_SYMBOL }}{{deliverable.deliverable.unit_price}})</b><a href="{% url "api:v1:remove-deliverables" pk=deliverable.pk invoice_pk=invoice.pk project_pk=project.pk %}"> {% trans "Remove" %}</a>
+            {% endfor %}
+        </div>
+        {% if invoice.deliverables_total_amount.total %}
+            <div class="total">
+                <b>...</b><br>
+                <b>{% trans "Total:" %} {{ CURRENCY_SYMBOL}}{{ invoice.deliverables_total_amount.total }}</b>
+            </div>
+        {% endif %}
+    </div>
+</div>

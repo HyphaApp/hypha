@@ -1,6 +1,12 @@
 {% extends "application_projects/invoice_detail.html" %}
 {% load i18n static invoice_tools %}
 
+{% block deliverables %}
+    {% if object.project.has_deliverables %}
+        {% include 'application_projects/includes/deliverables_block.html' with deliverables=deliverables invoice=object project=object.project %}
+    {% endif %}
+{% endblock %}
+
 {% block actions %}
     {{ block.super }}
     {% can_change_status object user as user_can_change_status %}
@@ -34,4 +40,5 @@
 {{ block.super }}
 <script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.4.1/jquery.fancybox.min.js"></script>
 <script src="{% static 'js/apply/fancybox-global.js' %}"></script>
+<script src="{% static 'js/apply/deliverables.js' %}"></script>
 {% endblock %}
