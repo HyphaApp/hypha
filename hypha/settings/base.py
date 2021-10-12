@@ -329,7 +329,7 @@ if 'PASSWORD_RESET_TIMEOUT_DAYS' in env:
 
 # Language code in standard language id format: en, en-gb, en-us
 # The corrosponding locale dir is named: en, en_GB, en_US
-LANGUAGE_CODE = env.get('LANGUAGE_CODE', 'en')
+LANGUAGE_CODE = env.get('LANGUAGE_CODE', 'en-us')
 
 CURRENCY_SYMBOL = env.get('CURRENCY_SYMBOL', '$')
 
