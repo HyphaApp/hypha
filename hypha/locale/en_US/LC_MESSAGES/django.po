@@ -1,0 +1,53 @@
+# Hypha ARDC US English translations
+# Copyright (C) 2021 Amateur Radio Digital Communications
+# This file is distributed under the same license as Hypha.
+# Chris Zubak-Skees <chriszs@opentechstrategies.com>, 2021.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-09-15 17:07+0000\n"
+"PO-Revision-Date: 2021-10-11 23:50-0005\n"
+"Last-Translator: Chris Zubak-Skees <chriszs@opentechstrategies.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:39
+#: hypha/apply/projects/templates/application_projects/project_detail.html:62
+msgid "Communications"
+msgstr "Comments"
+
+#: hypha/apply/users/templates/users/activation/invalid.html:16
+#, python-format
+msgid ""
+"First test to <a href=\"%(password_reset)s\">reset your password</a>. If "
+"that fails please contact %(ORG_SHORT_NAME)s at"
+msgstr ""
+"First try to <a href=\"%(password_reset)s\">reset your password</a>. If "
+"that fails please contact %(ORG_SHORT_NAME)s at"
+
+#: hypha/apply/review/options.py:7
+msgid "1. Poor"
+msgstr "1. Reject"
+
+#: hypha/apply/review/options.py:8
+msgid "2. Not so good"
+msgstr "2. Weak Reject"
+
+#: hypha/apply/review/options.py:9
+msgid "3. Is o.k."
+msgstr "3. Weak Accept"
+
+#: hypha/apply/review/options.py:10
+msgid "4. Good"
+msgstr "4. Accept"
+
+#: hypha/apply/review/options.py:11
+msgid "5. Excellent"
+msgstr "5. Strong Accept"
