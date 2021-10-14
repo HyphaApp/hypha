@@ -19,8 +19,8 @@
         {% trans "Submit anyway" as submit_anyway %}
         {% include 'funds/includes/delegated_form_base.html' with form=request_approval_form value='Submit anyway' cancel=True invert=True %}
     {% else %}
-        {% trans "Payment Requests" as heading %}
-        {% include 'funds/includes/delegated_form_base.html' with form=request_approval_form value=submit_anyway %}
+        {% trans "Request" as request %}
+        {% include 'funds/includes/delegated_form_base.html' with form=request_approval_form value=request %}
     {% endif %}
 </div>
 
