@@ -296,6 +296,12 @@ SingleStageDefinition = [
         },
     },
     {
+        'accepted': {
+            'display': _('Accepted'),
+            'future': _('Application Outcome'),
+            'stage': Request,
+            'permissions': staff_edit_permissions,
+        },
         'almost': {
             'transitions': {
                 'accepted': _('Accept'),
@@ -304,12 +310,6 @@ SingleStageDefinition = [
             'display': _('Accepted but additional info required'),
             'stage': Request,
             'permissions': applicant_edit_permissions,
-        },
-        'accepted': {
-            'display': _('Accepted'),
-            'future': _('Application Outcome'),
-            'stage': Request,
-            'permissions': staff_edit_permissions,
         },
         'rejected': {
             'display': _('Dismissed'),
@@ -450,6 +450,12 @@ SingleStageExternalDefinition = [
         },
     },
     {
+        'ext_accepted': {
+            'display': _('Accepted'),
+            'future': _('Application Outcome'),
+            'stage': RequestExt,
+            'permissions': staff_edit_permissions,
+        },
         'ext_almost': {
             'transitions': {
                 'ext_accepted': _('Accept'),
@@ -458,12 +464,6 @@ SingleStageExternalDefinition = [
             'display': _('Accepted but additional info required'),
             'stage': RequestExt,
             'permissions': applicant_edit_permissions,
-        },
-        'ext_accepted': {
-            'display': _('Accepted'),
-            'future': _('Application Outcome'),
-            'stage': RequestExt,
-            'permissions': staff_edit_permissions,
         },
         'ext_rejected': {
             'display': _('Dismissed'),
@@ -629,6 +629,12 @@ SingleStageCommunityDefinition = [
         },
     },
     {
+        'com_accepted': {
+            'display': _('Accepted'),
+            'future': _('Application Outcome'),
+            'stage': RequestCom,
+            'permissions': staff_edit_permissions,
+        },
         'com_almost': {
             'transitions': {
                 'com_accepted': _('Accept'),
@@ -637,12 +643,6 @@ SingleStageCommunityDefinition = [
             'display': _('Accepted but additional info required'),
             'stage': RequestCom,
             'permissions': applicant_edit_permissions,
-        },
-        'com_accepted': {
-            'display': _('Accepted'),
-            'future': _('Application Outcome'),
-            'stage': RequestCom,
-            'permissions': staff_edit_permissions,
         },
         'com_rejected': {
             'display': _('Dismissed'),
@@ -904,6 +904,12 @@ DoubleStageDefinition = [
         },
     },
     {
+        'proposal_accepted': {
+            'display': _('Accepted'),
+            'future': _('Final Determination'),
+            'stage': Proposal,
+            'permissions': staff_edit_permissions,
+        },
         'proposal_almost': {
             'transitions': {
                 'proposal_accepted': _('Accept'),
@@ -912,12 +918,6 @@ DoubleStageDefinition = [
             'display': _('Accepted but additional info required'),
             'stage': Proposal,
             'permissions': applicant_edit_permissions,
-        },
-        'proposal_accepted': {
-            'display': _('Accepted'),
-            'future': _('Final Determination'),
-            'stage': Proposal,
-            'permissions': staff_edit_permissions,
         },
         'proposal_rejected': {
             'display': _('Dismissed'),
