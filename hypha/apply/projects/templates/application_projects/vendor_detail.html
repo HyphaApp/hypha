@@ -1,12 +1,12 @@
 {% extends "base-apply.html" %}
 {% load bleach_tags i18n approval_tools %}
 {% user_can_edit_project object request.user as editable %}
-{% block title %}{% trans "Vendor Information for" %} {{ project.title }} {% endblock %}
+{% block title %}{% trans "Contracting Information for" %} {{ project.title }} {% endblock %}
 
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
-        <h2 class="heading heading--no-margin">{% trans "Vendor Information for" %} {{ project.title }}</h2>
+        <h2 class="heading heading--no-margin">{% trans "Contracting Information for" %} {{ project.title }}</h2>
     </div>
 </div>
 

@@ -192,7 +192,7 @@
 
                     <p><a class="link link--bold" href="{{ object.submission.get_absolute_url }}">{% trans "Proposal" %}</a></p>
                     {% if project.vendor %}
-                        <p><a class="link link--bold" href="{% url 'apply:projects:vendor-detail' pk=project.pk vendor_pk=project.vendor.pk %}">{% trans "Contractor Setup Form" %}</a></p>
+                        <p><a class="link link--bold" href="{% url 'apply:projects:vendor-detail' pk=project.pk vendor_pk=project.vendor.pk %}">{% trans "Contracting Information" %}</a></p>
                     {% endif %}
                     {% if request.user.is_apply_staff %}
                     <p><a class="link link--bold" href="{% url 'apply:projects:simplified' pk=project.pk %}">{% trans "Approval form" %}</a></p>

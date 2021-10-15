@@ -247,7 +247,7 @@ class VendorDetailView(DetailVendorAccessMixin, DetailView):
         vendor_form_settings = VendorFormSettings.for_request(self.request)
         data = {}
         group = 0
-        data.setdefault(group, {'title': str(_('Vendor Information')), 'questions': list()})
+        data.setdefault(group, {'title': str(_('Contracting Information')), 'questions': list()})
         data[group]['questions'] = [
             (getattr(vendor_form_settings, 'name_label'), vendor.name),
             (getattr(vendor_form_settings, 'contractor_name_label'), vendor.contractor_name),
