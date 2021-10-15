@@ -76,7 +76,7 @@
 {% endif %}
 
 {% if object.can_make_approval %}
-  {% user_can_approve_project object request.user as user_can_approve %}
+  {% user_can_approve_project object user as user_can_approve %}
   <a data-fancybox
       data-src="#approve"
       class="button button--bottom-space button--primary button--full-width {% if user_can_approve %}is-not-disabled{% else %}is-disabled{% endif %}"
