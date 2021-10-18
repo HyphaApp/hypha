@@ -421,7 +421,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
     def test_can_see_assign_reviewers_secondary_action(self):
         def assert_assign_reviewers_secondary_displayed(submission):
             response = self.get_page(submission)
-            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', class_='button--white', text='Reviewers')
+            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', class_='button--white', text='Update Reviewers')
             self.assertEqual(len(buttons), 1)
 
         submission = ApplicationSubmissionFactory()
@@ -722,7 +722,7 @@ class TestReviewerSubmissionView(BaseSubmissionViewTestCase):
     def test_cant_see_assign_reviewers_secondary_action(self):
         submission = ApplicationSubmissionFactory(status='internal_review', user=self.applicant, reviewers=[self.user])
         response = self.get_page(submission)
-        buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', class_='button--white', text='Reviewers')
+        buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', class_='button--white', text='Update Reviewers')
         self.assertEqual(len(buttons), 0)
 
     def test_can_see_view_determination_primary_action(self):
@@ -1003,7 +1003,7 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
         submission = ApplicationSubmissionFactory(status='internal_review', user=self.user)
         ReviewerRoleFactory()
         response = self.get_page(submission)
-        buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', class_='button--white', text='Reviewers')
+        buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', class_='button--white', text='Update Reviewers')
         self.assertEqual(len(buttons), 0)
 
     def test_can_see_view_determination_primary_action(self):
