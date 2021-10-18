@@ -45,9 +45,9 @@
 <p class="sidebar__separator">{% trans "Assign" %}</p>
 
 <div class="wrapper wrapper--sidebar-buttons">
-    <a data-fancybox data-src="#update-reviewers" class="button button--half-width button--white" href="#">{% trans "Reviewers" %}</a>
-    <a data-fancybox data-src="#update-partners" class="button button--half-width button--white" href="#">{% trans "Partners" %}</a>
-    <a data-fancybox data-src="#assign-lead" class="button button--half-width button--white" href="#">{% trans "Lead" %}</a>
+    <a data-fancybox data-src="#update-reviewers" class="button button--half-width button--white" href="#">{% trans "Update Reviewers" %}</a>
+    <a data-fancybox data-src="#update-partners" class="button button--half-width button--white" href="#">{% trans "Update Partners" %}</a>
+    <a data-fancybox data-src="#assign-lead" class="button button--half-width button--white" href="#">{% trans "Update Lead" %}</a>
 </div>
 
 <a class="button button--white button--full-width button--bottom-space" href="{% url 'funds:submissions:revisions:list' submission_pk=object.id %}">{% trans "Revisions" %}</a>
