@@ -1,7 +1,7 @@
 {% extends "base-apply.html" %}
-{% load bleach_tags review_tags workflow_tags %}
+{% load i18n bleach_tags review_tags workflow_tags %}
 
-{% block title %}Reviews{% endblock %}
+{% block title %}{% trans "Reviews" %}{% endblock %}
 
 {% block body_class %}light-grey-bg reviews-list__body{% endblock %}
 
@@ -9,8 +9,8 @@
 <div class="admin-bar">
     <div class="admin-bar__inner admin-bar__inner--with-button">
         <div>
-            <h1 class="beta heading heading--no-margin heading--bold">Reviews</h1>
-            <h5>For <a href="{% url "funds:submissions:detail" submission.id %}">{{ submission.title }}</a></h5>
+            <h1 class="beta heading heading--no-margin heading--bold">{% trans "Reviews" %}</h1>
+            <h5>{% trans "For" %} <a href="{% url "funds:submissions:detail" submission.id %}">{{ submission.title }}</a></h5>
         </div>
         {% if request.user|has_review_perm:submission %}
             {% if request.user|has_draft:submission or request.user|can_review:submission %}

@@ -1,4 +1,4 @@
-{% load review_tags %}
+{% load i18n review_tags %}
 <ul class="reviews-sidebar js-reviews-sidebar">
     <li class="reviews-sidebar__item reviews-sidebar__item--header">
         <div></div>
@@ -7,7 +7,7 @@
     </li>
 
     {% if not staff_reviewers_exist %}
-        <li class="reviews-sidebar__no-reviews">No staff reviewers yet</li>
+        <li class="reviews-sidebar__no-reviews">{% trans "No staff reviewers yet" %}</li>
         <hr class="reviews-sidebar__split">
     {% endif %}
 
@@ -24,7 +24,7 @@
             {% if reviewer_type.name in hidden_types %}
                 {% include 'funds/includes/review_sidebar_item.html' with reviewer=reviewer hidden=True %}
                 {% if forloop.last %}
-                    <li><a class="link link--bold link--underlined js-toggle-reviewers" href="#">All Assigned Advisors</a></li>
+                    <li><a class="link link--bold link--underlined js-toggle-reviewers" href="#">{% trans "All Assigned Advisors" %}</a></li>
                 {% endif %}
              {% else %}
                 {% include 'funds/includes/review_sidebar_item.html' with reviewer=reviewer %}

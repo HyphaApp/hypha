@@ -12,10 +12,12 @@ from .groups import (
     APPLICANT_GROUP_NAME,
     APPROVER_GROUP_NAME,
     COMMUNITY_REVIEWER_GROUP_NAME,
+    CONTRACTING_GROUP_NAME,
     FINANCE_GROUP_NAME,
     PARTNER_GROUP_NAME,
     REVIEWER_GROUP_NAME,
     STAFF_GROUP_NAME,
+    TEAMADMIN_GROUP_NAME,
 )
 from .utils import send_activation_email
 
@@ -25,6 +27,9 @@ class UserQuerySet(models.QuerySet):
         return self.filter(
             Q(groups__name=STAFF_GROUP_NAME) | Q(is_superuser=True)
         ).distinct()
+
+    def staff_admin(self):
+        return self.filter(groups__name=TEAMADMIN_GROUP_NAME)
 
     def reviewers(self):
         return self.filter(groups__name=REVIEWER_GROUP_NAME)
@@ -43,6 +48,9 @@ class UserQuerySet(models.QuerySet):
 
     def finances(self):
         return self.filter(groups__name=FINANCE_GROUP_NAME)
+
+    def contracting(self):
+        return self.filter(groups__name=CONTRACTING_GROUP_NAME)
 
 
 class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
@@ -126,7 +134,9 @@ class User(AbstractUser):
         is_apply_staff = f' ({STAFF_GROUP_NAME})' if self.is_apply_staff else ''
         is_reviewer = f' ({REVIEWER_GROUP_NAME})' if self.is_reviewer else ''
         is_applicant = f' ({APPLICANT_GROUP_NAME})' if self.is_applicant else ''
-        return f'{self.full_name.strip()}{is_apply_staff}{is_reviewer}{is_applicant}'
+        is_finance = f' ({FINANCE_GROUP_NAME})' if self.is_finance else ''
+        is_contracting = f' ({CONTRACTING_GROUP_NAME})' if self.is_contracting else ''
+        return f'{self.full_name.strip()}{is_apply_staff}{is_reviewer}{is_applicant}{is_finance}{is_contracting}'
 
     @cached_property
     def roles(self):
@@ -135,6 +145,10 @@ class User(AbstractUser):
     @cached_property
     def is_apply_staff(self):
         return self.groups.filter(name=STAFF_GROUP_NAME).exists() or self.is_superuser
+
+    @cached_property
+    def is_apply_staff_admin(self):
+        return self.groups.filter(name=TEAMADMIN_GROUP_NAME).exists() or self.is_superuser
 
     @cached_property
     def is_reviewer(self):
@@ -159,6 +173,10 @@ class User(AbstractUser):
     @cached_property
     def is_finance(self):
         return self.groups.filter(name=FINANCE_GROUP_NAME).exists()
+
+    @cached_property
+    def is_contracting(self):
+        return self.groups.filter(name=CONTRACTING_GROUP_NAME).exists()
 
     class Meta:
         ordering = ('full_name', 'email')

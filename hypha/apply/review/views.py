@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
@@ -6,6 +7,7 @@ from django.shortcuts import get_object_or_404
 from django.template.loader import get_template
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
+from django.utils.translation import gettext as _
 from django.views.generic import (
     CreateView,
     DeleteView,
@@ -73,7 +75,7 @@ class ReviewEditView(UserPassesTestMixin, BaseStreamForm, UpdateView):
         review = self.get_object()
         return super().get_context_data(
             submission=review.submission,
-            title="Edit Review",
+            title=_('Edit Review'),
             **kwargs
         )
 
@@ -138,7 +140,7 @@ class ReviewCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
         return super().get_context_data(
             submission=self.submission,
             has_submitted_review=has_submitted_review,
-            title="Update Review draft" if self.object else 'Create Review',
+            title=_('Update Review draft') if self.object else _('Create Review'),
             **kwargs
         )
 
@@ -184,6 +186,7 @@ class ReviewCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
 
 def review_workflow_actions(request, submission):
     submission_stepped_phases = submission.workflow.stepped_phases
+    transition_after = settings.TRANSITION_AFTER_REVIEWS
     action = None
     if submission.status == INITIAL_STATE:
         # Automatically transition the application to "Internal review".
@@ -191,16 +194,16 @@ def review_workflow_actions(request, submission):
     elif submission.status == 'proposal_discussion':
         # Automatically transition the proposal to "Internal review".
         action = 'proposal_internal_review'
-    elif submission.status == submission_stepped_phases[2][0].name and submission.reviews.count() > 1:
+    elif transition_after and submission.status == submission_stepped_phases[2][0].name and submission.reviews.count() >= transition_after:
         # Automatically transition the application to "Ready for discussion".
         action = submission_stepped_phases[3][0].name
-    elif submission.status == 'ext_external_review' and submission.reviews.by_reviewers().count() > 1:
+    elif transition_after and submission.status == 'ext_external_review' and submission.reviews.by_reviewers().count() >= transition_after:
         # Automatically transition the application to "Ready for discussion".
         action = 'ext_post_external_review_discussion'
-    elif submission.status == 'com_external_review' and submission.reviews.by_reviewers().count() > 1:
+    elif transition_after and submission.status == 'com_external_review' and submission.reviews.by_reviewers().count() >= transition_after:
         # Automatically transition the application to "Ready for discussion".
         action = 'com_post_external_review_discussion'
-    elif submission.status == 'external_review' and submission.reviews.by_reviewers().count() > 1:
+    elif transition_after and submission.status == 'external_review' and submission.reviews.by_reviewers().count() >= transition_after:
         # Automatically transition the proposal to "Ready for discussion".
         action = 'post_external_review_discussion'
 

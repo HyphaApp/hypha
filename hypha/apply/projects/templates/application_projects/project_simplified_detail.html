@@ -1,4 +1,5 @@
 {% extends "base-apply.html" %}
+{% load i18n %}
 
 {% block title %}{{ object.title }}{% endblock %}
 
@@ -9,66 +10,66 @@
     <div class="simplified__admin-bar">
         <div class="simplified__admin-bar-inner">
             <a class="simplified__projects-link" href="{{ object.get_absolute_url }}">
-                Project
+                {% trans "Project" %}
             </a>
             <h1 class="simplified__heading">{{ object.title }}</h1>
             <h5 class="simplified__subheading">
                 <span>{{ object.submission.page }}</span>
                 <span>{{ object.submission.round }}</span>
-                <span>Lead: {{ object.lead }}</span>
+                <span>{% trans "Lead" %}: {{ object.lead }}</span>
             </h5>
             <a
                 class="button button--primary simplified__button"
                 href="{% url "apply:projects:download" pk=object.pk %}"
             >
-                Download PDF
+                {% trans "Download PDF" %}
             </a>
         </div>
     </div>
 
     <div class="simplified__wrapper">
-        <h3>Project Information</h3>
+        <h3>{% trans "Project Information" %}</h3>
         <div class="card card--solid">
             <div class="grid grid--proposal-info">
                 <div>
-                    <h5>Proposed start date</h5>
-                    <p>{{ object.proposed_start|date:"j F Y"|default:"-" }}</p>
+                    <h5>{% trans "Proposed start date" %}</h5>
+                    <p>{{ object.proposed_start|date:"DATE_FORMAT"|default:"-" }}</p>
                 </div>
 
                 <div>
-                    <h5>Project Proposed end date</h5>
-                    <p>{{ object.proposed_end|date:"j F Y"|default:"-" }}</p>
+                    <h5>{% trans "Project Proposed end date" %}</h5>
+                    <p>{{ object.proposed_end|date:"DATE_FORMAT"|default:"-" }}</p>
                 </div>
 
                 <div>
-                    <h5>Legal name</h5>
+                    <h5>{% trans "Legal name" %}</h5>
                     <p>{{ object.contact_legal_name|default:"-" }}</p>
                 </div>
 
                 <div>
-                    <h5>Email</h5>
+                    <h5>{% trans "E-mail" %}</h5>
                     <p>{{ object.contact_email|default:"-" }}</p>
                 </div>
 
                 <div>
-                    <h5>Address</h5>
+                    <h5>{% trans "Address" %}</h5>
                     <p>{{ object.get_address_display|default:"-"}}</p>
                 </div>
 
                 <div>
-                    <h5>Phone</h5>
+                    <h5>{% trans "Phone" %}</h5>
                     <p>{{ object.phone|default:"-" }}</p>
                 </div>
 
                 <div>
-                    <h5>Value</h5>
+                    <h5>{% trans "Value" %}</h5>
                     <p>{{ CURRENCY_SYMBOL }}{{ object.value|default:"-" }}</p>
                 </div>
 
                 {% if object.sent_to_compliance_at %}
                 <div>
-                    <h5>Sent to Compliance</h5>
-                    <p>{{ object.sent_to_compliance_at|date:"j F Y" }}</p>
+                    <h5>{% trans "Sent to Compliance" %}</h5>
+                    <p>{{ object.sent_to_compliance_at|date:"DATE_FORMAT" }}</p>
                 </div>
                 {% endif %}
 
@@ -81,21 +82,21 @@
             {% endif %}
         </div>
 
-        <h3>Approvals</h3>
+        <h3>{% trans "Approvals" %}</h3>
         <div class="card card--solid">
-            <h4>Approver</h4>
+            <h4>{% trans "Approver" %}</h4>
             {% with approval=project.approvals.first %}
                 <p>{{ approval.by }} - {{ approval.created_at|date:"DATE_FORMAT" }}</p>
             {% endwith %}
         </div>
 
-        <h3>Review</h3>
+        <h3>{% trans "Review" %}</h3>
         <div class="card card--solid">
-            <h4>Submission lead</h4>
+            <h4>{% trans "Submission lead" %}</h4>
             <p>{{ project.submission.lead }}</p>
 
-            <h4>Reviews</h4>
-            <h5>Staff Reviewers</h5>
+            <h4>{% trans "Reviews" %}</h4>
+            <h5>{% trans "Staff Reviewers" %}</h5>
             {% for review in project.submission.reviews.by_staff %}
             <div class="card__reviewer-outcome">
                 <span class="card__reviewer">
@@ -107,9 +108,9 @@
                 </span>
             </div>
             {% empty %}
-                No reviews
+                {% trans "No reviews" %}
             {% endfor %}
-            <h5>External Reviewers</h5>
+            <h5>{% trans "External Reviewers" %}</h5>
             {% for review in project.submission.reviews.by_reviewers %}
                 <div class="card__reviewer-outcome">
                     <span class="card__reviewer">
@@ -117,13 +118,13 @@
                     </span>
                 </div>
             {% empty %}
-                No reviews
+                {% trans "No reviews" %}
             {% endfor %}
         </div>
 
-        <h3>Supporting Documents</h3>
+        <h3>{% trans "Supporting Documents" %}</h3>
         <div class="card card--solid">
-            <p><a href="{% url 'apply:submissions:simplified' pk=object.submission_id %}">Submission</a></p>
+            <p><a href="{% url 'apply:submissions:simplified' pk=object.submission_id %}">{% trans "Submission" %}</a></p>
             {% for packet_file in object.packet_files.all %}
                 <p><a href="{% url 'apply:projects:document' pk=object.pk file_pk=packet_file.pk %}">{{ packet_file.title }}</a></p>
             {% endfor %}

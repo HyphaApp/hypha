@@ -18,23 +18,25 @@
             <td colspan="{{ table.columns|length }}">
                 <table class="submission-meta">
                     <tr class="submission-meta__row">
-                        <th><h6 class="heading heading--normal heading--no-margin">Applicant</h6></th>
-                        <th><h6 class="heading heading--normal heading--no-margin">Last updated</h6></th>
-                        <th><h6 class="heading heading--normal heading--no-margin">Screening statuses</h6></th>
-                        <th><h6 class="heading heading--normal heading--no-margin">Review outcomes</h6></th>
+                        <th><h6 class="heading heading--normal heading--no-margin">{% trans "Applicant" %}</h6></th>
+                        <th><h6 class="heading heading--normal heading--no-margin">{% trans "Last updated" %}</h6></th>
+                        <th><h6 class="heading heading--normal heading--no-margin">{% trans "Screening statuses" %}</h6></th>
+                        <th><h6 class="heading heading--normal heading--no-margin">{% trans "Review outcomes" %}</h6></th>
                     </tr>
                     <tr class="submission-meta__row submission-meta__row--black">
                         <td><strong>{{ submission.full_name }}</strong></td>
                         <td>
                             {% if submission.last_update %}
-                                <strong>by {{ submission.last_user_update }}</strong><br/>
+                                <strong>{% trans "by" %} {{ submission.last_user_update }}</strong><br/>
                                 {{ submission.last_update|date:"SHORT_DATETIME_FORMAT" }}
                             {% else %}
                                 &mdash;
                             {% endif %}
                         </td>
                         <td>
-                            <strong>{{ submission.joined_screening_statuses|default:"Awaiting" }}</strong>
+                            {% trans "Awaiting" as awaiting %}
+                            <strong>{{ submission.joined_screening_statuses|default:awaiting }}</strong>
+                            }
                         </td>
 
                         <td>
@@ -91,7 +93,7 @@
                     {% for column in row.table.columns %}
                         {% if forloop.first %}
                         {% elif forloop.counter == 2 %}
-                            <th>Linked {{ row.record.previous.stage }}</th>
+                            <th>{% trans "Linked" %} {{ row.record.previous.stage }}</th>
                         {% else %}
                             <th class="th th--{{ column.header|lower }}">{{ column.header }}</th>
                         {% endif %}
@@ -132,7 +134,7 @@
         {% if table.page.has_previous or table.page.has_next %}
             <li class="cardinality">
                 <p>
-                    Page {{ table.page.number }}
+                    {% trans "Page" %} {{ table.page.number }}
                 </p>
             </li>
         {% endif %}

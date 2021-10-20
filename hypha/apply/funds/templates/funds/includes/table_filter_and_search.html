@@ -15,7 +15,7 @@
 
             {% if use_batch_actions %}
                 <div class="actions-bar__inner actions-bar__inner--batch-actions">
-                    <p class="actions-bar__total"><span class="js-total-actions">0</span> Selected</p>
+                    <p class="actions-bar__total"><span class="js-total-actions">0</span> {% trans "Selected" %}</p>
 
                     <button
                         data-fancybox
@@ -24,22 +24,22 @@
                         class="button button--action button--change-status js-batch-button js-batch-progress"
                     >
                         <svg><use xlink:href="#arrow-split"></use></svg>
-                        Status
+                        {% trans "Status" %}
                     </button>
 
                     <button data-fancybox data-src="#batch-update-lead" class="button button--action js-batch-button" type="button">
                         <svg><use xlink:href="#add-person"></use></svg>
-                        Lead
+                        {% trans "Lead" %}
                     </button>
 
                     <button data-fancybox data-src="#batch-update-reviewers" class="button button--action js-batch-button" type="button">
                         <svg><use xlink:href="#add-person"></use></svg>
-                        Reviewers
+                        {% trans "Reviewers" %}
                     </button>
 
                     <button data-fancybox data-src="#batch-delete-submission" class="button button--action js-batch-button" type="button">
                         <svg class="icon icon--delete"><use xlink:href="#delete-submissions"></use></svg>
-                        Delete
+                        {% trans "Delete" %}
                     </button>
                 </div>
             {% endif %}
@@ -48,15 +48,15 @@
         {# Right #}
         <div class="actions-bar__inner actions-bar__inner--right">
             {% if filter_classes != 'filters-open' %}
-                <button class="button button--filters js-toggle-filters">Filters</button>
+                <button class="button button--filters js-toggle-filters">{% trans "Filters" %}</button>
             {% endif %}
 
             {% if use_search|default:False %}
             <form action="{{ search_action }}" method="get" role="search" class="form form--search-desktop">
-                <button class="button button--search" type="submit" aria-label="Search">
+                <button class="button button--search" type="submit" aria-label="{% trans "Search" %}">
                     <svg class="icon icon--magnifying-glass icon--search"><use xlink:href="#magnifying-glass"></use></svg>
                 </button>
-                <input class="input input--search input--secondary" type="text" placeholder="Search {{ search_placeholder|default:"submissions" }}" name="query"{% if search_term %} value="{{ search_term }}"{% endif %} aria-label="Search input">
+                <input class="input input--search input--secondary" type="text" placeholder="Search {{ search_placeholder|default:"submissions" }}" name="query"{% if search_term %} value="{{ search_term }}"{% endif %} aria-label="{% trans "Search input" %}">
             </form>
             {% endif %}
         </div>
@@ -66,16 +66,16 @@
 
 <div class="filters {% if filter_classes %}{{filter_classes}}{% endif %}">
     <div class="filters__header">
-        <button class="filters__button js-clear-filters">Clear</button>
-        <div>Filter by</div>
-        <button class="filters__button js-close-filters">Close</button>
+        <button class="filters__button js-clear-filters">{% trans "Clear" %}</button>
+        <div>{% trans "Filter by" %}</div>
+        <button class="filters__button js-close-filters">{% trans "Close" %}</button>
     </div>
 
     <form action="{{ filter_action }}" method="get" class="form form--filters js-filter-form">
         <ul class="form__filters select2">
             {{ filter.form.as_ul }}
             <li>
-                <button class="button button--primary" type="submit" value="Filter">Filter</button>
+                <button class="button button--primary" type="submit" value="Filter">{% trans "Filter" %}</button>
             </li>
         </ul>
     </form>

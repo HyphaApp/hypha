@@ -1,11 +1,12 @@
 {% extends "base-apply.html" %}
-{% block title %}Revisions for {{ submission.title }}{% endblock %}
+{% load i18n %}
+{% block title %}{% blocktrans %}Revisions for {{ submission.title }}{% endblocktrans %}{% endblock %}
 
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
-        <h1 class="beta heading heading--no-margin heading--bold">Revisions</h1>
-        <h5>For <a href="{% url "funds:submissions:detail" submission.id %}">{{ submission.title }}</a></h5>
+        <h1 class="beta heading heading--no-margin heading--bold">{% trans "Revisions" %}</h1>
+        <h5>{% trans "For" %} <a href="{% url "funds:submissions:detail" submission.id %}">{{ submission.title }}</a></h5>
     </div>
 </div>
 
@@ -15,13 +16,13 @@
             <li class="revision__item">
                 <p class="revision__meta">
                     <span class="revision__date">{{ revision.timestamp|date:"Y-m-d H:i e"}} </span>
-                    by {{ revision.author }}
+                    {% trans "by" %} {{ revision.author }}
                     {% if forloop.first %}
-                        <span class="revision__current">- current</span>
+                        <span class="revision__current">- {% trans "current" %}</span>
                     {% endif %}
                 </p>
                 {% if not forloop.first %}
-                    <a class="button button--compare" href="{{ revision.get_compare_url_to_latest }}">Compare</a>
+                    <a class="button button--compare" href="{{ revision.get_compare_url_to_latest }}">{% trans "Compare" %}</a>
                 {% endif %}
             </li>
         {% endfor %}

@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
-{% load users_tags %}
+{% load i18n users_tags %}
 
 {% block title %}OAuth{% endblock %}
 
 {% block content %}
 <div class="social">
     {% if backends.associated %}
-        <h3>Providers</h3>
+        <h3>{% trans "Providers" %}</h3>
         <ul>
         {% for association in backends.associated %}
             <li>
@@ -15,7 +15,7 @@
                         method="post">
                         <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
                         <button class="btn btn-danger" name="{{ association.provider|backend_class }}">
-                            Disconnect {{ association.provider|backend_name }}
+                            {% trans "Disconnect" %} {{ association.provider|backend_name }}
                         </button>
                     </form>
                 {% else %}
@@ -26,7 +26,7 @@
         </ul>
     {% endif %}
     {% if backends.not_associated %}
-        <h3>Available providers</h3>
+        <h3>{% trans "Available providers" %}</h3>
         <ul>
         {% for backend in backends.not_associated %}
             <li>

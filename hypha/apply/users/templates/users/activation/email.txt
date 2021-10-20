@@ -1,23 +1,25 @@
-{% load wagtailadmin_tags %}
+{% load i18n wagtailadmin_tags %}
 {% base_url_setting as base_url %}
-Dear {{ name|default:username }},
+{% firstof name username as user %}
 
-An account on the {{ ORG_LONG_NAME }} web site has been created. Activate your account by clicking this link or copying and pasting it to your browser:
+{% blocktrans %}Dear {{ user }},{% endblocktrans %}
+
+{% blocktrans %}An account on the {{ ORG_LONG_NAME }} web site has been created. Activate your account by clicking this link or copying and pasting it to your browser:{% endblocktrans %}
 
 {% if site %}{{ site.root_url }}{% else %}{{ base_url }}{% endif %}{{ activation_path }}
 
-This link can be used only once and will lead you to a page where you can set your password. It will remain active for {{ timeout_days }} days, so do it now.
+{% blocktrans %}This link can be used only once and will lead you to a page where you can set your password. It will remain active for {{ timeout_days }} days, so do it now.{% endblocktrans %}
 
-After setting your password, you will be able to log in at {% if site %}{{ site.root_url }}{% else %}{{ base_url }}{% endif %} in the future using:
+{% trans "After setting your password, you will be able to log in at" %}: {% if site %}{{ site.root_url }}{% else %}{{ base_url }}{% endif %} {% trans "in the future using" %}:
 
-username: {{ username }}
-password: Your chosen password
+{% trans "Username" %}: {{ username }}
+{% trans "Password" %}: {% trans "Your chosen password" %}
 
-If you do not complete the activation process within {{ timeout_days }} days you can use the password reset form at: {% if site %}{{ site.root_url }}{% else %}{{ base_url }}{% endif %}{% url 'users:password_reset' %}
+{% blocktrans %}If you do not complete the activation process within {{ timeout_days }} days you can use the password reset form at{% endblocktrans %}: {% if site %}{{ site.root_url }}{% else %}{{ base_url }}{% endif %}{% url 'users:password_reset' %}
 
-Thanks,
+{% blocktrans %}Kind Regards,
 The {{ ORG_SHORT_NAME }} Team
 
 -- 
 {{ ORG_LONG_NAME }}
-{{ PUBLIC_SITE.root_url }}
+{{ PUBLIC_SITE.root_url }}{% endblocktrans %}

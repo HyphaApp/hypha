@@ -1,11 +1,12 @@
+{% load i18n %}
 <li class="data-block__list-item">
     <div class="data-block__info">
         {% if current %}
-            The {% if report.can_submit %}current{% else %}next{% endif %} reporting period is
+            {% trans "The" %} {% if report.can_submit %}current{% else %}{% trans "next" %}{% endif %} {% trans "reporting period is" %}
         {% else %}
-            A report is due for the period
+            {% trans "A report is due for the period" %}
         {% endif %}
-            <b>{{ report.start_date }}</b> to <b>{{ report.end_date }}</b>
+            <b>{{ report.start_date }}</b> {% trans "to" %} <b>{{ report.end_date }}</b>
         {% if report.is_very_late %}
             <svg class="icon data-block__icon"><use xlink:href="#exclamation-point"></use></svg>
         {% endif %}
@@ -17,27 +18,27 @@
                 class="data-block__button button button--primary"
                 href="{% url "apply:projects:reports:edit" pk=report.pk %}"
             >
-            {% if report.draft %}Continue Editing{% else %}Add Report{% endif %}
+            {% if report.draft %}{% trans "Continue Editing" %}{% else %}{% trans "Add Report" %}{% endif %}
             </a>
         {% endif %}
 
         {% if request.user.is_apply_staff and report.can_submit %}
 
-            <input data-fancybox data-src="#skip-report-{{report.id}}" type="button" value="Skip" class="btn data-block__action-link"></input>
+            <input data-fancybox data-src="#skip-report-{{report.id}}" type="button" value="{% trans "Skip" %}" class="btn data-block__action-link"></input>
 
             <!-- Skip report confirmation modal -->
             <div class="modal" id="skip-report-{{report.id}}">
-                <h4 class="modal__header-bar modal__header-bar--no-bottom-space">Skip report</h4>
+                <h4 class="modal__header-bar modal__header-bar--no-bottom-space">{% trans "Skip report" %}</h4>
                 <div class="modal__copy">
-                    <p>You're skipping the report for <b>{{report.start_date}}</b> &ndash; <b>{{report.end_date}}</b></p>
-                    <p>This will result in a gap in reporting for the project. You can undo this at any time.</p>
+                    <p>{% trans "You're skipping the report for" %} <b>{{report.start_date}}</b> &ndash; <b>{{report.end_date}}</b></p>
+                    <p>{% trans "This will result in a gap in reporting for the project. You can undo this at any time." %}</p>
                 </div>
                 {% if not current %}
                 <form action="{% url "apply:projects:reports:skip" pk=report.pk %}" method="post">
                     {% csrf_token %}
                     <div class="modal__buttons">
-                        <button type="submit" class="button button--primary button--submit">Continue</button>
-                        <button data-fancybox-close class="button button--submit button--white">Cancel</button>
+                        <button type="submit" class="button button--primary button--submit">{% trans "Continue" %}</button>
+                        <button data-fancybox-close class="button button--submit button--white">{% trans "Cancel" %}</button>
                     </div>
                 </form>
                 {% endif %}

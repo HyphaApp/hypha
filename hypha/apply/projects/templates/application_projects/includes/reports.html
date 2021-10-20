@@ -1,37 +1,39 @@
+{% load i18n %}
 <div class="wrapper wrapper--outer-space-large">
     <div class="data-block">
         <div class="data-block__header">
-            <p class="data-block__title">Reporting</p>
+            <p class="data-block__title">{% trans "Reporting" %}</p>
         </div>
         <div class="data-block__body">
             <div class="data-block__card">
-                <p class="data-block__card-title">Report frequency</p>
+                <p class="data-block__card-title">{% trans "Report frequency" %}</p>
                 <p class="data-block__card-copy">{{ object.report_config.get_frequency_display }}</p>
                 {% if request.user.is_apply_staff %}
                     <p class="data-block__card-copy">
-                        <a data-fancybox data-src="#change-frequency" href="#" class="data-block__action-link">Change</a>
+                        <a data-fancybox data-src="#change-frequency" href="#" class="data-block__action-link">{% trans "Change" %}</a>
                     </p>
                     <!-- Change report frequency modal -->
                     <div class="modal" id="change-frequency">
                         {{ report_data|json_script:"reportData" }}
-                        <h4 class="modal__header-bar">Change reporting frequency</h4>
+                        <h4 class="modal__header-bar">{% trans "Change reporting frequency" %}</h4>
                         <div class="form__info-box">
                             <p>
-                                Next report will be due in
+                                {% trans "Next report will be due in" %}
                                 <b class="js-next-report-due-slot"></b>
-                                and the report period will be
+                                {% trans "and the report period will be" %}
                                 <b class="js-report-period-start"></b>
-                                to
+                                {% trans "to" %}
                                 <b class="js-report-period-end"></b>
-                                and then every
+                                {% trans "and then every" %}
                                 <b class="js-frequency-number-slot"></b>
                                 <b class="js-frequency-period-slot"></b>
-                                after until the project end date:
+                                {% trans "after until the project end date" %}:
                                 <span class="js-project-end-slot"></span>.
                             </p>
                         </div>
-                        <p>Schedule reports every:</p>
-                        {% include 'funds/includes/delegated_form_base.html' with form=update_frequency_form value='Continue' extra_classes="form--report-frequency" %}
+                        <p>{% trans "Schedule reports every" %}:</p>
+                        {% trans "Continue" as continue %}
+                        {% include 'funds/includes/delegated_form_base.html' with form=update_frequency_form value=continue extra_classes="form--report-frequency" %}
                     </div>
                 {% endif %}
             </div>
@@ -51,14 +53,14 @@
 <div class="wrapper wrapper--outer-space-large">
     <div class="data-block">
         <div class="data-block__header">
-            <p class="data-block__title">Past reports</p>
+            <p class="data-block__title">{% trans "Past reports" %}</p>
         </div>
         <div class="data-block__body">
             <table class="data-block__table js-past-reports-table">
                 <thead>
                     <tr>
-                        <th class="data-block__table-date">Period End</th>
-                        <th class="data-block__table-date">Submitted</th>
+                        <th class="data-block__table-date">{% trans "Period End" %}</th>
+                        <th class="data-block__table-date">{% trans "Submitted" %}</th>
                         <th class="data-block__table-update"></th>
                     </tr>
                 </thead>
@@ -66,23 +68,23 @@
                     {% for report in object.reports.done %}
                         <tr {% if forloop.counter > 8 %}class="is-hidden"{% endif %}>
                             <td>
-                                <span class="data-block__mobile-label">Period End: </span>{{ report.end_date }}
+                                <span class="data-block__mobile-label">{% trans "Period End" %}: </span>{{ report.end_date }}
                             </td>
                             <td>
-                                <span class="data-block__mobile-label">Submitted: </span>{{ report.submitted_date|default:"Skipped" }}
+                                <span class="data-block__mobile-label">{% trans "Submitted" %}: </span>{{ report.submitted_date|default:"Skipped" }}
                             </td>
                             <td class="data-block__links">
                                 {% if not report.skipped %}
-                                    <a class="data-block__action-link" href="{% url "apply:projects:reports:detail" pk=report.pk %}">View</a>
+                                    <a class="data-block__action-link" href="{% url "apply:projects:reports:detail" pk=report.pk %}">{% trans "View" %}</a>
 
                                     {% if request.user.is_apply_staff %}
-                                        <a class="data-block__action-link" href="{% url "apply:projects:reports:edit" pk=report.pk %}">Edit</a>
+                                        <a class="data-block__action-link" href="{% url "apply:projects:reports:edit" pk=report.pk %}">{% trans "Edit" %}</a>
                                     {% endif %}
                                 {% else %}
                                     {% if request.user.is_apply_staff %}
                                         <form action="{% url "apply:projects:reports:skip" pk=report.pk %}" method="post">
                                             {% csrf_token %}
-                                            <button type="submit" class="btn data-block__action-link">Unskip</button>
+                                            <button type="submit" class="btn data-block__action-link">{% trans "Unskip" %}</button>
                                         </form>
                                     {% endif %}
                                 {% endif %}
@@ -90,14 +92,14 @@
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="3">No reports submitted</td>
+                            <td colspan="3">{% trans "No reports submitted" %}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
             {% if object.reports.done.count > 8 %}
                 <p class="data-block__pagination">
-                    <a class="data-block__pagination-link js-data-block-pagination" href="#">Show more</a>
+                    <a class="data-block__pagination-link js-data-block-pagination" href="#">{% trans "Show more" %}</a>
                 </p>
             {% endif %}
         </div>

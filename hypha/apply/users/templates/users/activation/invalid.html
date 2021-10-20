@@ -5,13 +5,14 @@
 {% block page_title %}{% trans "Invalid activation URL" %}{% endblock %}
 
 {% block content %}
+{% url 'users:password_reset' as password_reset %}
 <div class="wrapper wrapper--small wrapper--bottom-space">
-    <p><strong>Two possible reasons:</strong></p>
+    <p><strong>{% trans "Two possible reasons:" %}</strong></p>
     <ul>
-        <li>The activation link has expired.</li>
-        <li>The account has already been activated.</li>
+        <li>{% trans "The activation link has expired." %}</li>
+        <li>{% trans "The account has already been activated." %}</li>
     </ul>
 
-    <p>First test to <a href="{% url 'users:password_reset' %}">reset your password</a>. If that fails please contact {{ ORG_SHORT_NAME }} at <a href="mailto:{{ ORG_EMAIL }}">{{ ORG_EMAIL }}</a></p>
+    <p>{% blocktrans %}First test to <a href="{{ password_reset }}">reset your password</a>. If that fails please contact {{ ORG_SHORT_NAME }} at{% endblocktrans %} <a href="mailto:{{ ORG_EMAIL }}">{{ ORG_EMAIL }}</a></p>
 </div>
 {% endblock %}

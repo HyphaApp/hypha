@@ -1,11 +1,12 @@
 {% extends "messages/email/base.html" %}
+{% load i18n %}
 
-{% block content %}{% with email_context=source.page.specific %}We appreciate your {{ email_context.title }} application submission to the {{ ORG_LONG_NAME }}. We will review and reply to your submission as quickly as possible.
+{% block content %}{% with email_context=source.page.specific %}{% blocktrans %}We appreciate your {{ email_context.title }} application submission to the {{ ORG_LONG_NAME }}. We will review and reply to your submission as quickly as possible.
 
-Our reply will have the next steps for your {{ email_context.title }} application. You can find more information about our support options, review process and selection criteria on our website.
+Our reply will have the next steps for your {{ email_context.title }} application. You can find more information about our support options, review process and selection criteria on our website.{% endblocktrans %}
 
 {{ email_context.confirmation_text_extra }}{% endwith %}
 
-Project name: {{ source.title }}
-Contact name: {{ source.user.get_full_name }}
-Contact email: {{ source.user.email }}{% endblock %}
+{% trans "Project name" %}: {{ source.title }}
+{% trans "Contact name" %}: {{ source.user.get_full_name }}
+{% trans "Contact email" %}: {{ source.user.email }}{% endblock %}

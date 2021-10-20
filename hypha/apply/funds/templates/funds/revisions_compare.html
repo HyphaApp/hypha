@@ -1,11 +1,12 @@
 {% extends "base-apply.html" %}
-{% block title %}Compare: {{ object.title }}{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "Compare" %}: {{ object.title }}{% endblock %}
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
-        <h2 class="heading heading--no-margin">Comparing Revisions</h2>
+        <h2 class="heading heading--no-margin">{% trans "Comparing revisions" %}</h2>
         <h5>For <a href="{% url "funds:submissions:detail" object.id %}">{{ object.title }}</a></h5>
-        <h5><a href="{% url "funds:submissions:revisions:list" object.id %}">Back to revisions</a></h5>
+        <h5><a href="{% url "funds:submissions:revisions:list" object.id %}">{% trans "Back to revisions" %}</a></h5>
     </div>
 </div>
 

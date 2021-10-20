@@ -1,5 +1,5 @@
 {% extends "funds/applicationsubmission_detail.html" %}
-{% load static workflow_tags review_tags determination_tags %}
+{% load i18n static workflow_tags review_tags determination_tags %}
 
 {% block extra_css %}
         <link rel="stylesheet" href="{% static 'css/apply/fancybox.css' %}">
@@ -37,14 +37,14 @@
 
 {% block reviews %}
     <div class="sidebar__inner">
-        <h5>Reviews &amp; assignees</h5>
+        <h5>{% trans "Reviews & assignees" %}</h5>
 
         {% include 'funds/includes/review_sidebar.html' %}
 
         <div class="wrapper wrapper--sidebar-buttons">
             {% include 'review/includes/review_button.html' with submission=object class="button--half-width" %}
             {% if request.user.is_apply_staff and object.reviews.exists %}
-                <a href="{% url 'apply:submissions:reviews:list' submission_pk=object.id %}" class="button button--white button--half-width">View all</a>
+                <a href="{% url 'apply:submissions:reviews:list' submission_pk=object.id %}" class="button button--white button--half-width">{% trans "View all" %}</a>
             {% endif %}
         </div>
     </div>

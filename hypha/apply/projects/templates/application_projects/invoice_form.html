@@ -1,12 +1,12 @@
 {% extends "base-apply.html" %}
-{% load static %}
+{% load i18n static %}
 
-{% block title %}{% if object %}Edit{% else %}Create{% endif %} Invoice: {% if object %}{{ object.project.title }}{% else %}{{ project.title }}{% endif %}{% endblock %}
+{% block title %}{% if object %}{% trans "Edit" %}{% else %}{% trans "Create" %}{% endif %} {% trans "Invoice" %}: {% if object %}{{ object.project.title }}{% else %}{{ project.title }}{% endif %}{% endblock %}
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
-        <h2 class="heading heading--no-margin">{% if object %}Editing{% else %}Create{% endif %} Invoice</h2>
-        <h5 class="heading heading--no-margin">{% if object %}{{ object.project.title }}{% else %}For: {{ project.title }}{% endif %}</h5>
+        <h2 class="heading heading--no-margin">{% if object %}Editing{% else %}Create{% endif %} {% trans "Invoice" %}</h2>
+        <h5 class="heading heading--no-margin">{% if object %}{{ object.project.title }}{% else %}{% trans "For" %}: {{ project.title }}{% endif %}</h5>
     </div>
 </div>
 
@@ -25,7 +25,7 @@
                     {{ field }}
                 {% endif %}
             {% endfor %}
-            <button class="button button--submit button--top-space button--primary" type="submit" name="save">Save</button>
+            <button class="button button--submit button--top-space button--primary" type="submit" name="save">{% trans "Save" %}</button>
         </form>
     </div>
 </div>

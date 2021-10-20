@@ -1,5 +1,5 @@
 {% extends "application_projects/invoice_detail.html" %}
-{% load static invoice_tools %}
+{% load i18n static invoice_tools %}
 
 {% block actions %}
     {{ block.super }}
@@ -9,18 +9,19 @@
             data-fancybox
             data-src="#change-status"
         {% else %}
-            data-tooltip="Cannot change from 'Paid' or 'Declined' state"
+            data-tooltip="{% trans "Cannot change from 'Paid' or 'Declined' state" %}"
         {% endif %}
         class="button button--bottom-space button--primary button--full-width{% if not user_can_change_status %} button--tooltip-disabled{% endif %}"
         href="#"
     >
-        Change Status
+        {% trans "Change Status" %}
     </a>
     {% if user_can_change_status %}
     <div class="modal" id="change-status">
-        <h4 class="modal__header-bar">Change status</h4>
-        <p>Current status: {{ object.get_status_display }}</p>
-        {% include 'funds/includes/delegated_form_base.html' with form=change_invoice_status value='Update'%}
+        <h4 class="modal__header-bar">{% trans "Change status" %}</h4>
+        <p>{% trans "Current status" %}: {{ object.get_status_display }}</p>
+        {% trans "Update" as update %}
+        {% include 'funds/includes/delegated_form_base.html' with form=change_invoice_status value=update %}
     </div>
     {% endif %}
 {% endblock %}

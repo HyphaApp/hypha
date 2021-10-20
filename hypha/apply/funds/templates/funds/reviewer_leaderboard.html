@@ -1,16 +1,16 @@
 {% extends "funds/submissions_overview.html" %}
-{% load static %}
+{% load i18n static %}
 {% load render_table from django_tables2 %}
 
-{% block title %}Reviews{% endblock %}
+{% block title %}{% trans "Reviews" %}{% endblock %}
 
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner wrapper--search">
         {% block page_header %}
             <div>
-                <h1 class="gamma heading heading--no-margin heading--bold">Reviewer Leaderboard</h1>
-                <h5>Track and explore the reviews</h5>
+                <h1 class="gamma heading heading--no-margin heading--bold">{% trans "Reviewer leaderboard" %}</h1>
+                <h5>{% trans "Track and explore the reviews" %}</h5>
             </div>
         {% endblock %}
         {% block page_header_tabs %}

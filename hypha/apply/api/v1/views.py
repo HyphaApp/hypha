@@ -27,6 +27,7 @@ from .serializers import (
     CommentEditSerializer,
     CommentSerializer,
     MetaTermsSerializer,
+    OpenRoundLabSerializer,
     RoundLabDetailSerializer,
     RoundLabSerializer,
     SubmissionActionSerializer,
@@ -217,11 +218,23 @@ class RoundViewSet(
     def get_serializer_class(self):
         if self.action == 'list':
             return RoundLabSerializer
+        elif self.action == 'open':
+            return OpenRoundLabSerializer
         return RoundLabDetailSerializer
 
     def get_object(self):
         obj = super(RoundViewSet, self).get_object()
         return obj.specific
+
+    @action(methods=['get'], detail=False)
+    def open(self, request):
+        queryset = RoundsAndLabs.objects.open()
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 class SubmissionCommentViewSet(

@@ -1,16 +1,16 @@
-{% load humanize payment_request_tools %}
+{% load i18n humanize payment_request_tools %}
 <ul class="funding-block">
     <li class="funding-block__item">
-        <p class="funding-block__title">Fund total</p>
+        <p class="funding-block__title">{% trans "Fund total" %}</p>
         <p class="funding-block__standout">{{ CURRENCY_SYMBOL }}{{ object.value|intcomma }}</p>
     </li>
     <li class="funding-block__item">
-        <p class="funding-block__title">Total paid</p>
+        <p class="funding-block__title">{% trans "Total paid" %}</p>
         <p class="funding-block__standout">{{ CURRENCY_SYMBOL }}{{ object.paid_value|intcomma }}</p>
         <p class="funding-block__meta">({% percentage object.paid_value object.value %}%)</p>
     </li>
     <li class="funding-block__item">
-        <p class="funding-block__title">Awaiting payment</p>
+        <p class="funding-block__title">{% trans "Awaiting payment" %}</p>
         <p class="funding-block__standout">{{ CURRENCY_SYMBOL }}{{ object.unpaid_value|intcomma}}</p>
         <p class="funding-block__meta">({% percentage object.unpaid_value object.value %}%)</p>
     </li>

@@ -7,7 +7,6 @@ from django import forms
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
-from django_select2.forms import Select2Widget
 
 from hypha.apply.categories.models import MetaTerm
 from hypha.apply.users.models import User
@@ -136,7 +135,7 @@ class UpdateSubmissionLeadForm(ApplicationSubmissionModelForm):
         kwargs.pop('user')
         super().__init__(*args, **kwargs)
         lead_field = self.fields['lead']
-        lead_field.label = f'Update lead from { self.instance.lead } to'
+        lead_field.label = _('Update lead from {lead} to').format(lead=self.instance.lead)
         lead_field.queryset = lead_field.queryset.exclude(id=self.instance.lead.id)
 
 
@@ -221,7 +220,7 @@ class UpdateReviewersForm(ApplicationSubmissionModelForm):
             self.role_fields[field_name] = data['role']
             self.fields[field_name].initial = assigned_roles.get(data['role'])
 
-        submitted_reviewers = User.objects.filter(
+        self.submitted_reviewers = User.objects.filter(
             id__in=self.instance.assigned.reviewed().values('reviewer'),
         )
 
@@ -231,7 +230,7 @@ class UpdateReviewersForm(ApplicationSubmissionModelForm):
             self.prepare_field(
                 'reviewer_reviewers',
                 initial=reviewers,
-                excluded=submitted_reviewers
+                excluded=self.submitted_reviewers
             )
 
             # Move the non-role reviewers field to the end of the field list
@@ -254,6 +253,12 @@ class UpdateReviewersForm(ApplicationSubmissionModelForm):
             for field, user in self.cleaned_data.items()
             if field in self.role_fields
         ]
+
+        for field, role in self.role_fields.items():
+            assigned_reviewer = AssignedReviewers.objects.filter(role=role, submission=self.instance).last()
+            if assigned_reviewer and not cleaned_data[field] and assigned_reviewer.reviewer in self.submitted_reviewers:
+                self.add_error(field, _("Can't unassign, just change, because review already submitted"))
+                break
 
         # If any of the users match and are set to multiple roles, throw an error
         if len(role_reviewers) != len(set(role_reviewers)) and any(role_reviewers):
@@ -278,6 +283,8 @@ class UpdateReviewersForm(ApplicationSubmissionModelForm):
         for role, reviewer in assigned_roles.items():
             if reviewer:
                 AssignedReviewers.objects.update_role(role, reviewer, instance)
+            else:
+                AssignedReviewers.objects.filter(role=role, submission=instance, review__isnull=True).delete()
 
         # 2. Update non-role reviewers
         # 2a. Remove those not on form
@@ -354,9 +361,7 @@ def make_role_reviewer_fields():
         field_name = 'role_reviewer_' + slugify(role_name)
         field = forms.ModelChoiceField(
             queryset=staff_reviewers,
-            widget=Select2Widget(attrs={
-                'data-placeholder': _('Select a reviewer'),
-            }),
+            empty_label=_('-- No reviewer selected --'),
             required=False,
             label=mark_safe(render_icon(role.icon) + _('{role_name} Reviewer').format(role_name=role_name)),
         )

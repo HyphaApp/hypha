@@ -1,9 +1,9 @@
 {% extends "base-apply.html" %}
 
 {% load render_table from django_tables2 %}
-{% load static %}
+{% load i18n static %}
 
-{% block title %}Projects{% endblock %}
+{% block title %}{% trans "Projects" %}{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/apply/fancybox.css' %}">
@@ -15,8 +15,8 @@
     <div class="admin-bar__inner wrapper--search">
         {% block page_header %}
             <div>
-                <h1 class="gamma heading heading--no-margin heading--bold">Projects</h1>
-                <h5>Track and explore recent projects</h5>
+                <h1 class="gamma heading heading--no-margin heading--bold">{% trans "Projects" %}</h1>
+                <h5>{% trans "Track and explore recent projects" %}</h5>
             </div>
         {% endblock %}
     </div>
@@ -29,12 +29,13 @@
     {% if projects.table.data %}
     <div class="wrapper wrapper--bottom-space">
 
-        {% include "funds/includes/table_filter_and_search.html" with filter=projects.filterset filter_action=projects.url search_term=search_term search_placeholder="projects" search_action=projects.url use_search=True use_batch_actions=False heading="Projects" %}
+        {% trans "Projects" as heading %}
+        {% include "funds/includes/table_filter_and_search.html" with filter=projects.filterset filter_action=projects.url search_term=search_term search_placeholder=heading search_action=projects.url use_search=True use_batch_actions=False heading=heading %}
 
         {% render_table projects.table %}
 
         <div class="all-submissions-table__more">
-            <a href="{{ projects.url }}">Show all</a>
+            <a href="{{ projects.url }}">{% trans "Show all" %}</a>
         </div>
 
     </div>
@@ -43,12 +44,13 @@
     {% if payment_requests.table.data %}
     <div class="wrapper wrapper--bottom-space">
 
-        {% include "funds/includes/table_filter_and_search.html" with filter=payment_requests.filterset filter_action=payment_requests.url search_term=search_term search_placeholder="payment requests" search_action=payment_requests.url use_search=True use_batch_actions=False heading="Payment Requests" %}
+        {% trans "Payment Requests" as heading %}
+        {% include "funds/includes/table_filter_and_search.html" with filter=payment_requests.filterset filter_action=payment_requests.url search_term=search_term search_placeholder=heading search_action=payment_requests.url use_search=True use_batch_actions=False heading=heading %}
 
         {% render_table payment_requests.table %}
 
         <div class="all-submissions-table__more">
-            <a href="{{ payment_requests.url }}">Show all</a>
+            <a href="{{ payment_requests.url }}">{% trans "Show all" %}</a>
         </div>
 
     </div>
@@ -57,12 +59,13 @@
     {% if reports.table.data %}
     <div class="wrapper wrapper--bottom-space">
 
-        {% include "funds/includes/table_filter_and_search.html" with filter=reports.filterset filter_action=reports.url heading="Reports" filter_classes="filters--dates" %}
+        {% trans "Reports" as heading %}
+        {% include "funds/includes/table_filter_and_search.html" with filter=reports.filterset filter_action=reports.url heading=heading filter_classes="filters--dates" %}
 
         {% render_table reports.table %}
 
         <div class="all-submissions-table__more">
-            <a href="{{ reports.url }}">Show all</a>
+            <a href="{{ reports.url }}">{% trans "Show all" %}</a>
         </div>
 
     </div>

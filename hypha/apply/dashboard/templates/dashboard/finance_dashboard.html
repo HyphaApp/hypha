@@ -1,28 +1,28 @@
 {% extends "base-apply.html" %}
 {% load render_table from django_tables2 %}
-{% load static %}
+{% load i18n static %}
 
-{% block title %}Dashboard{% endblock %}
+{% block title %}{% trans "Dashboard" %}{% endblock %}
 
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner admin-bar__inner--with-button">
         {% block page_header %}
-            <h1 class="gamma heading heading--no-margin heading--bold">Dashboard</h1>
+            <h1 class="gamma heading heading--no-margin heading--bold">{% trans "Dashboard" %}</h1>
         {% endblock %}
         <a href="{% url 'wagtailadmin_home' %}" class="button button--primary button--arrow-pixels-white">
-            Apply admin
+            {% trans "Apply admin" %}
             <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
         </a>
     </div>
 </div>
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
     <div id="active-payment-requests" class="wrapper wrapper--bottom-space">
-        <h4 class="heading heading--normal">Active requests for payment</h4>
+        <h4 class="heading heading--normal">{% trans "Active requests for payment" %}</h4>
         {% if active_payment_requests.count %}
             {% render_table active_payment_requests.table %}
         {% else %}
-            No active Payment Requests.
+            {% trans "No active Payment Requests." %}
         {% endif %}
     </div>
 </div>

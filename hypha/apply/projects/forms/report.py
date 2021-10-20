@@ -13,10 +13,10 @@ from ..models.report import Report, ReportConfig, ReportPrivateFiles, ReportVers
 
 class ReportEditForm(FileFormMixin, forms.ModelForm):
     public_content = RichTextField(
-        help_text="This section of the report will be shared with the broader community."
+        help_text=_('This section of the report will be shared with the broader community.')
     )
     private_content = RichTextField(
-        help_text="This section of the report will be shared with staff only."
+        help_text=_('This section of the report will be shared with staff only.')
     )
     file_list = forms.ModelMultipleChoiceField(
         widget=forms.CheckboxSelectMultiple(attrs={'class': 'delete'}),
@@ -49,7 +49,7 @@ class ReportEditForm(FileFormMixin, forms.ModelForm):
         public = cleaned_data['public_content']
         private = cleaned_data['private_content']
         if not private and not public:
-            missing_content = 'Must include either public or private content when submitting a report.'
+            missing_content = _('Must include either public or private content when submitting a report.')
             self.add_error('public_content', missing_content)
             self.add_error('private_content', missing_content)
         return cleaned_data
@@ -103,7 +103,7 @@ class ReportFrequencyForm(forms.ModelForm):
         model = ReportConfig
         fields = ('occurrence', 'frequency', 'start')
         labels = {
-            'occurrence': 'No.',
+            'occurrence': _('No.'),
         }
 
     def __init__(self, *args, **kwargs):
@@ -124,19 +124,19 @@ class ReportFrequencyForm(forms.ModelForm):
         last_report = self.instance.last_report()
         if last_report and start_date <= last_report.end_date:
             raise ValidationError(
-                _("Cannot start a schedule before the current reporting period"),
+                _('Cannot start a schedule before the current reporting period'),
                 code="bad_start"
             )
 
         if start_date < timezone.now().date():
             raise ValidationError(
-                _("Cannot start a schedule in the past"),
+                _('Cannot start a schedule in the past'),
                 code="bad_start"
             )
 
         if start_date > self.instance.project.end_date:
             raise ValidationError(
-                _("Cannot start a schedule beyond the end date"),
+                _('Cannot start a schedule beyond the end date'),
                 code="bad_start"
             )
         return start_date

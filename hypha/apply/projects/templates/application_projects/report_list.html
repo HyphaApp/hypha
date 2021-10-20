@@ -1,15 +1,15 @@
 {% extends "base-apply.html" %}
 
 {% load render_table from django_tables2 %}
-{% load static %}
+{% load i18n static %}
 
-{% block title %}Reports{% endblock %}
+{% block title %}{% trans "Reports" %}{% endblock %}
 
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner wrapper--search">
         {% block page_header %}
-            <h1 class="gamma heading heading--no-margin heading--bold">Submitted Reports</h1>
+            <h1 class="gamma heading heading--no-margin heading--bold">{% trans "Submitted Reports" %}</h1>
         {% endblock %}
     </div>
 </div>
@@ -19,7 +19,7 @@
     {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form use_search=False filter_action=filter_action filter_classes="filters--dates" %}
     {% render_table table %}
     {% else %}
-    <p>No Reports Available</p>
+    <p>{% trans "No Reports Available." %}</p>
     {% endif %}
 </div>
 

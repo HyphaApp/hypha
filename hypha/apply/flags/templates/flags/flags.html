@@ -1,12 +1,11 @@
-{% load flag_tags %}
+{% load i18n flag_tags %}
 <div class="sidebar__inner">
-    <h5>Add to your flagged list</h5>
-    <button class="button button--primary button--full-width button--flag{% if submission|flagged_by:user %} flagged{% endif %}" data-id="{{ submission.id }}" data-type="user">Flag</button>
-</div>
+    <h5>{% trans "Flags" %}</h5>
+    <div class="wrapper wrapper--sidebar-buttons">
+        <button class="button button--primary button--half-width button--flag{% if submission|flagged_by:user %} flagged{% endif %}" data-id="{{ submission.id }}" data-type="user">{% trans "Flag" %}</button>
 
-{% if request.user.is_apply_staff %}
-<div class="sidebar__inner">
-    <h5>Add to staff flagged list</h5>
-    <button class="button button--primary button--full-width button--flag{% if submission|flagged_staff %} flagged{% endif %}" data-id="{{ submission.id }}" data-type="staff">Staff flag</button>
+        {% if request.user.is_apply_staff %}
+        <button class="button button--primary button--half-width button--flag{% if submission|flagged_staff %} flagged{% endif %}" data-id="{{ submission.id }}" data-type="staff">{% trans "Staff flag" %}</button>
+        {% endif %}
+    </div>
 </div>
-{% endif %}

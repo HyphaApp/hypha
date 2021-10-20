@@ -1,7 +1,9 @@
+{% load i18n %}
 {% if progress_form.should_show %}
 <div class="modal" id="update-status">
-    <h4 class="modal__header-bar">Update status</h4>
-    <p>Current status: {{ object.phase }}</p>
-    {% include 'funds/includes/delegated_form_base.html' with form=progress_form value='Progress'%}
+    <h4 class="modal__header-bar">{% trans "Update status" %}</h4>
+    <p>{% trans "Current status" %}: {{ object.phase }}</p>
+    {% trans "Progress" as progress %}
+    {% include 'funds/includes/delegated_form_base.html' with form=progress_form value=progress %}
 </div>
 {% endif %}

@@ -1,18 +1,18 @@
 {% extends "base-apply.html" %}
 {% load render_table from django_tables2 %}
-{% load static statusbar_tags workflow_tags %}
+{% load i18n static statusbar_tags workflow_tags %}
 
 {% block extra_css %}
     {{ filter.form.media.css }}
 {% endblock %}
 
-{% block title %}Dashboard{% endblock %}
+{% block title %}{% trans "Dashboard" %}{% endblock %}
 
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
         {% block page_header %}
-            <h1 class="gamma heading heading--no-margin heading--bold">Dashboard</h1>
+            <h1 class="gamma heading heading--no-margin heading--bold">{% trans "Dashboard" %}</h1>
         {% endblock %}
     </div>
 </div>
@@ -32,12 +32,13 @@
     {% if my_reviewed.table.data %}
         <div class="wrapper wrapper--bottom-space">
 
-            {% include "funds/includes/table_filter_and_search.html" with filter=my_reviewed.filterset filter_action=my_reviewed.url search_term=search_term search_action=my_reviewed.url use_search=True use_batch_actions=False heading="Your previous reviews" %}
+            {% trans "Your previous reviews" as review_heading %}
+            {% include "funds/includes/table_filter_and_search.html" with filter=my_reviewed.filterset filter_action=my_reviewed.url search_term=search_term search_action=my_reviewed.url use_search=True use_batch_actions=False heading=review_heading %}
             {% render_table my_reviewed.table %}
 
             {% if my_reviewed.display_more %}
                 <div class="all-submissions-table__more">
-                    <a href="{{ my_reviewed.url }}?reviewers={{ request.user.pk }}">Show all</a>
+                    <a href="{{ my_reviewed.url }}?reviewers={{ request.user.pk }}">{% trans "Show all" %}</a>
                 </div>
             {% endif %}
         </div>
@@ -45,22 +46,22 @@
 
     {% if my_submissions %}
     <div class="wrapper wrapper--bottom-space">
-        <h4 class="heading heading--normal">Your active submissions</h4>
+        <h4 class="heading heading--normal">{% trans "Your active submissions" %}</h4>
         {% for submission in my_submissions %}
             <div class="wrapper wrapper--status-bar-outer">
                 <div class="wrapper wrapper--status-bar-inner">
                     <div>
                         <h5 class="heading heading--no-margin"><a class="link link--underlined" href="{% url 'funds:submissions:detail' submission.id %}">{{ submission.title }}</a></h5>
-                        <h6 class="heading heading--no-margin heading--submission-meta"><span>Submitted:</span> {{ submission.submit_time.date }} by {{ submission.user.get_full_name }}</h6>
+                        <h6 class="heading heading--no-margin heading--submission-meta"><span>{% trans "Submitted" %}:</span> {{ submission.submit_time.date }} {% trans "by" %} {{ submission.user.get_full_name }}</h6>
                     </div>
                     {% status_bar submission.workflow submission.phase request.user css_class="status-bar--small" %}
                 </div>
                 {% if request.user|has_edit_perm:submission %}
                     <a class="button button--primary" href="{% url 'funds:submissions:edit' submission.id %}">
                         {% if submission.status == 'draft_proposal' %}
-                            Start your {{ submission.stage }} application
+                            {% trans "Start your" %} {{ submission.stage }} {% trans "application" %}
                         {% else %}
-                            Edit
+                            {% trans "Edit" %}
                         {% endif %}
                     </a>
                 {% endif %}
@@ -71,7 +72,7 @@
 
     {% if my_inactive_submissions.data %}
         <div class="wrapper wrapper--bottom-space">
-            <h4 class="heading heading--normal">Submission history</h4>
+            <h4 class="heading heading--normal">{% trans "Submission history" %}</h4>
             {% render_table my_inactive_submissions %}
         </div>
     {% endif %}

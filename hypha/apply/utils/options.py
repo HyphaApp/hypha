@@ -3,6 +3,7 @@ from tinymce.widgets import TinyMCE
 MCE_ATTRIBUTES = {
     'elementpath': False,
     'branding': False,
+    'contextmenu': False,
     'entity_encoding': 'raw',
     'plugins': 'link table lists wordcount',
     'toolbar1': 'undo redo | styleselect | bold italic | bullist numlist | table | link',

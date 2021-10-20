@@ -1,0 +1,7 @@
+{% extends 'funds/includes/round-block-listing.html' %}
+
+{% block empty_round %}
+    <p class="round-block__not-found">
+        You have no {{ type|lower }} rounds or labs assigned to you.
+    </p>
+{% endblock %}

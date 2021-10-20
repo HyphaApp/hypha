@@ -1,7 +1,8 @@
+{% load i18n %}
 {% if form.errors or form.non_field_errors %}
 <div class="wrapper wrapper--medium wrapper--error">
     <svg class="icon icon--error"><use xlink:href="#error"></use></svg>
-    <h5 class="heading heading--no-margin heading--regular">There were some errors with your form. Please amend the fields highlighted below</h5>
+    <h5 class="heading heading--no-margin heading--regular">{% trans "There were some errors with your form. Please amend the fields highlighted below." %}</h5>
     {% if form.non_field_errors %}
         <ul>
             {% for error in form.non_field_errors %}

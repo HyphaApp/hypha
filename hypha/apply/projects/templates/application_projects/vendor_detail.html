@@ -1,23 +1,23 @@
 {% extends "base-apply.html" %}
 {% load bleach_tags i18n approval_tools %}
 {% user_can_edit_project object request.user as editable %}
-{% block title %}{% trans "Vendor Information for" %} {{ project.title }} {% endblock %}
+{% block title %}{% trans "Contracting Information for" %} {{ project.title }} {% endblock %}
 
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
-        <h2 class="heading heading--no-margin">{% trans "Vendor Information for" %} {{ project.title }}</h2>
+        <h2 class="heading heading--no-margin">{% trans "Contracting Information for" %} {{ project.title }}</h2>
     </div>
 </div>
 
 <div class="grid">
     <div>
-        <h5 class="vendor-info">Last Updated: {{ vendor.updated_at|date:'F d, Y' }}</h5>
+        <h5 class="vendor-info">{% trans "Last Updated" %}: {{ vendor.updated_at|date:'DATE_FORMAT' }}</h5>
     </div>
     {% if editable %}
         <div>
             <a class="link link--edit-vendor is-active" href="{% url 'apply:projects:vendor' pk=project.pk %}">
-                Edit
+                {% trans "Edit" %}
             <svg class="icon icon--pen"><use xlink:href="#pen"></use></svg>
             </a>
         </div>
