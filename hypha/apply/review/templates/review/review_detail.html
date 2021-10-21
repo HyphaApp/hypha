@@ -61,6 +61,8 @@
         {% csrf_token %}
         {{ form }}
     </form>
+
+    <P>{% trans "An opinion is a replacement for a review. You will no longer be able to submit a review for this application." %}</P>
 {% endif %}
 
 {% endblock %}
