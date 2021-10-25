@@ -6,27 +6,19 @@ from wagtail.core.models import Page
 from hypha.apply.activity.models import Activity
 from hypha.apply.categories.blocks import CategoryQuestionBlock
 from hypha.apply.categories.models import Option
-from hypha.apply.funds.models import (
-    ApplicationSubmission,
-    FundType,
-    LabType,
-    RoundsAndLabs,
-)
+from hypha.apply.funds.models import ApplicationSubmission, FundType, LabType
 from hypha.apply.funds.workflow import PHASES
 
-from .utils import get_reviewers, get_round_leads, get_screening_statuses
-
-
-class RoundLabFilter(filters.ModelChoiceFilter):
-    def filter(self, qs, value):
-        if not value:
-            return qs
-
-        return qs.filter(Q(round=value) | Q(page=value))
+from .utils import (
+    get_reviewers,
+    get_round_leads,
+    get_screening_statuses,
+    get_used_rounds,
+)
 
 
 class SubmissionsFilter(filters.FilterSet):
-    round = RoundLabFilter(queryset=RoundsAndLabs.objects.all())
+    round = filters.ModelMultipleChoiceFilter(field_name='round', queryset=get_used_rounds())
     status = filters.MultipleChoiceFilter(choices=PHASES)
     active = filters.BooleanFilter(method='filter_active', label=_('Active'))
     submit_date = filters.DateFromToRangeFilter(field_name='submit_time', label=_('Submit date'))
