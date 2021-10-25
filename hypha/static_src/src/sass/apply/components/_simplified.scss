@@ -30,6 +30,19 @@
         }
     }
 
+    &__submissions-link {
+        display: inline-flex;
+        align-items: center;
+        color: $color--lightest-blue;
+        font-weight: $weight--bold;
+
+        &::before {
+            @include triangle(top, currentColor, 5px);
+            margin-right: .5rem;
+            transform: rotate(-90deg);
+        }
+    }
+
     &__heading {
         @include responsive-font-sizes(30px, map-get($font-sizes, beta));
         letter-spacing: -.02rem;
