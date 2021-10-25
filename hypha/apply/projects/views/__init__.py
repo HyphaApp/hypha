@@ -1,20 +1,11 @@
 from .payment import (
     ChangeInvoiceStatusView,
-    ChangePaymentRequestStatusView,
     CreateInvoiceView,
-    CreatePaymentRequestView,
     DeleteInvoiceView,
-    DeletePaymentRequestView,
     EditInvoiceView,
-    EditPaymentRequestView,
     InvoiceListView,
     InvoicePrivateMedia,
     InvoiceView,
-    PaymentRequestAdminView,
-    PaymentRequestApplicantView,
-    PaymentRequestListView,
-    PaymentRequestPrivateMedia,
-    PaymentRequestView,
 )
 from .project import (
     AdminProjectDetailView,
@@ -52,15 +43,6 @@ from .vendor import CreateVendorView, VendorDetailView, VendorPrivateMediaView
 
 __all__ = [
     'ChangeInvoiceStatusView',
-    'ChangePaymentRequestStatusView',
-    'DeletePaymentRequestView',
-    'PaymentRequestAdminView',
-    'PaymentRequestApplicantView',
-    'PaymentRequestView',
-    'CreatePaymentRequestView',
-    'EditPaymentRequestView',
-    'PaymentRequestPrivateMedia',
-    'PaymentRequestListView',
     'SendForApprovalView',
     'CreateApprovalView',
     'RejectionView',

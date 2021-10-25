@@ -143,7 +143,7 @@ DEBUG_TOOLBAR_CONFIG = {
 }
 
 WEBPACK_LOADER['DEFAULT'].update({
-    'STATS_FILE': os.path.join(BASE_DIR, './hypha/static_compiled/app/webpack-stats.json'),
+    'STATS_FILE': os.path.join(BASE_DIR, 'hypha/static_compiled/app/webpack-stats.json'),
 })
 
 # Required for testing the apis from postman

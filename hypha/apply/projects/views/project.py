@@ -43,7 +43,7 @@ from hypha.apply.utils.storage import PrivateMediaView
 from hypha.apply.utils.views import DelegateableView, DelegatedViewMixin, ViewDispatcher
 
 from ..files import get_files
-from ..filters import PaymentRequestListFilter, ProjectListFilter, ReportListFilter
+from ..filters import ProjectListFilter, ReportListFilter, InvoiceListFilter
 from ..forms import (
     ApproveContractForm,
     CreateApprovalForm,
@@ -58,7 +58,7 @@ from ..forms import (
     UploadContractForm,
     UploadDocumentForm,
 )
-from ..models.payment import PaymentRequest
+from ..models.payment import Invoice
 from ..models.project import (
     CONTRACTING,
     IN_PROGRESS,
@@ -69,7 +69,7 @@ from ..models.project import (
     Project,
 )
 from ..models.report import Report
-from ..tables import PaymentRequestsListTable, ProjectsListTable, ReportListTable
+from ..tables import InvoiceListTable, ProjectsListTable, ReportListTable
 from .report import ReportFrequencyUpdate, ReportingMixin
 
 
@@ -659,7 +659,7 @@ class ProjectOverviewView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['projects'] = self.get_projects(self.request)
-        context['payment_requests'] = self.get_payment_requests(self.request)
+        context['invoices'] = self.get_invoices(self.request)
         context['reports'] = self.get_reports(self.request)
         context['status_counts'] = self.get_status_counts()
         return context
@@ -672,15 +672,6 @@ class ProjectOverviewView(TemplateView):
             'url': reverse('apply:projects:reports:all'),
         }
 
-    def get_payment_requests(self, request):
-        payment_requests = PaymentRequest.objects.order_by('date_to')[:10]
-
-        return {
-            'filterset': PaymentRequestListFilter(request.GET or None, request=request, queryset=payment_requests),
-            'table': PaymentRequestsListTable(payment_requests, order_by=()),
-            'url': reverse('apply:projects:payments:all'),
-        }
-
     def get_projects(self, request):
         projects = Project.objects.for_table()[:10]
 
@@ -688,6 +679,15 @@ class ProjectOverviewView(TemplateView):
             'filterset': ProjectListFilter(request.GET or None, request=request, queryset=projects),
             'table': ProjectsListTable(projects, order_by=()),
             'url': reverse('apply:projects:all'),
+        }
+
+    def get_invoices(self, request):
+        invoices = Invoice.objects.order_by('date_to')[:10]
+
+        return {
+            'filterset': InvoiceListFilter(request.GET or None, request=request, queryset=invoices),
+            'table': InvoiceListTable(invoices, order_by=()),
+            'url': reverse('apply:projects:invoices'),
         }
 
     def get_status_counts(self):
