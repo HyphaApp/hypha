@@ -51,3 +51,34 @@ msgstr "4. Accept"
 #: hypha/apply/review/options.py:11
 msgid "5. Excellent"
 msgstr "5. Strong Accept"
+
+msgid "Open Review"
+msgstr "Open GAC Review"
+
+msgid "Internal Review"
+msgstr "GAC Review"
+
+#, python-brace-format
+msgid "{org_short_name} Review"
+msgstr "{org_short_name} Committee Review"
+
+msgid "Open External Review"
+msgstr "Open Board Review"
+
+msgid "Open Internal Review (revert)"
+msgstr "Open GAC Review (revert)"
+
+msgid "External Review"
+msgstr "Board Review"
+
+msgid "Open External Review (revert)"
+msgstr "Open Board Review (revert)"
+
+msgid "External Reviewers"
+msgstr "Board Reviewers"
+
+msgid "Request with external review"
+msgstr "Request with board review"
+
+msgid "Request with external review (compact)"
+msgstr "Request with board review (compact)"
