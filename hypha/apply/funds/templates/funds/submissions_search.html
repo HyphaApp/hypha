@@ -5,7 +5,7 @@
     <div class="wrapper wrapper--medium">
         <h3>{% trans "Search results" %}</h3>
         {% if search_term %}
-            <h5>{% blocktrans %}There are {{ object_list.count }} results for: {{ search_term }}{% endblocktrans %}</h5>
+            <h5>{% blocktrans with count=object_list.count %}There are {{ count }} results for: {{ search_term }}{% endblocktrans %}</h5>
         {% endif %}
     </div>
 {% endblock %}

@@ -61,8 +61,8 @@
             {% if request.user|has_edit_perm:object and object.status == 'draft_proposal' and not request.user.is_apply_staff %}
                 <div class="wrapper--sidebar--inner">
                     <h4>{% trans "Congratulations!" %}</h4>
-                    <h5>{% blocktrans %}Your {{ object.previous.stage }} application has been accepted.{% endblocktrans %}</h5>
-                    <a class="button button--primary" href="{% url 'funds:submissions:edit' object.id %}">{% blocktrans %}Start your {{ object.stage }} application{% endblocktrans %}</a>
+                    <h5>{% blocktrans with stage=object.previous.stage %}Your {{ stage }} application has been accepted.{% endblocktrans %}</h5>
+                    <a class="button button--primary" href="{% url 'funds:submissions:edit' object.id %}">{% blocktrans with stage=object.stage %}Start your {{ stage }} application.{% endblocktrans %}</a>
                 </div>
             {% else %}
                 <article class="wrapper--sidebar--inner">
