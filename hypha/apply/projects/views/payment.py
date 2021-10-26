@@ -48,6 +48,10 @@ class PaymentRequestAccessMixin(UserPassesTestMixin):
 class InvoiceAccessMixin(UserPassesTestMixin):
     model = Invoice
 
+    def get_object(self):
+        project = get_object_or_404(Project, pk=self.kwargs['pk'])
+        return get_object_or_404(project.invoices.all(), pk=self.kwargs['invoice_pk'])
+
     def test_func(self):
         if self.request.user.is_apply_staff:
             return True
@@ -187,6 +191,14 @@ class InvoiceAdminView(InvoiceAccessMixin, DelegateableView, DetailView):
         ChangeInvoiceStatusView
     ]
     template_name_suffix = '_admin_detail'
+
+    def get_context_data(self, **kwargs):
+        object = self.get_object()
+        deliverables = object.project.deliverables.all()
+        return super().get_context_data(
+            **kwargs,
+            deliverables=deliverables
+        )
 
 
 class InvoiceApplicantView(InvoiceAccessMixin, DelegateableView, DetailView):
@@ -361,8 +373,10 @@ class InvoicePrivateMedia(UserPassesTestMixin, PrivateMediaView):
     raise_exception = True
 
     def dispatch(self, *args, **kwargs):
-        invoice_pk = self.kwargs['pk']
-        self.invoice = get_object_or_404(Invoice, pk=invoice_pk)
+        invoice_pk = self.kwargs['invoice_pk']
+        project_pk = self.kwargs['pk']
+        self.project = get_object_or_404(Project, pk=project_pk)
+        self.invoice = get_object_or_404(self.project.invoices.all(), pk=invoice_pk)
 
         return super().dispatch(*args, **kwargs)
 

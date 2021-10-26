@@ -48,6 +48,14 @@ urlpatterns = [
         path('vendor/', CreateVendorView.as_view(), name='vendor'),
         path('vendor/<int:vendor_pk>/', VendorDetailView.as_view(), name='vendor-detail'),
         path('vendor/<int:vendor_pk>/documents/<int:file_pk>/', VendorPrivateMediaView.as_view(), name='vendor-documents'),
+        path('invoices/', InvoiceListView.as_view(), name='invoices'),
+        path('invoices/<int:invoice_pk>/', include([
+            path('', InvoiceView.as_view(), name='invoice-detail'),
+            path('edit/', EditInvoiceView.as_view(), name='invoice-edit'),
+            path('delete/', DeleteInvoiceView.as_view(), name='invoice-delete'),
+            path('documents/invoice/', InvoicePrivateMedia.as_view(), name="invoice-document"),
+            path('documents/supporting/<int:file_pk>/', InvoicePrivateMedia.as_view(), name="invoice-supporting-document"),
+        ])),
     ])),
     path('payment-requests/', include(([
         path('', PaymentRequestListView.as_view(), name='all'),
@@ -59,16 +67,6 @@ urlpatterns = [
             path('documents/receipt/<int:file_pk>/', PaymentRequestPrivateMedia.as_view(), name="receipt"),
         ])),
     ], 'payments'))),
-    path('invoices/', include(([
-        path('', InvoiceListView.as_view(), name='all'),
-        path('<int:pk>/', include([
-            path('', InvoiceView.as_view(), name='detail'),
-            path('edit/', EditInvoiceView.as_view(), name='edit'),
-            path('delete/', DeleteInvoiceView.as_view(), name='delete'),
-            path('documents/invoice/', InvoicePrivateMedia.as_view(), name="invoice-document"),
-            path('documents/supporting/<int:file_pk>/', InvoicePrivateMedia.as_view(), name="supporting-document"),
-        ])),
-    ], 'invoices'))),
     path('reports/', include(([
         path('', ReportListView.as_view(), name='all'),
         path('<int:pk>/', include([

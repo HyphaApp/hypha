@@ -342,6 +342,10 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
     def is_in_progress(self):
         return self.status == IN_PROGRESS
 
+    @property
+    def has_deliverables(self):
+        return self.deliverables.exists()
+
     def send_to_compliance(self, request):
         """Notify Compliance about this Project."""
 
@@ -454,4 +458,23 @@ class DocumentCategory(models.Model):
 
     class Meta:
         ordering = ('name',)
-        verbose_name_plural = _('Document Categories')
+        verbose_name_plural = 'Document Categories'
+
+
+class Deliverable(models.Model):
+    name = models.TextField()
+    available_to_invoice = models.IntegerField(default=1)
+    unit_price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(decimal.Decimal('0.01'))],
+    )
+    project = models.ForeignKey(
+        Project,
+        null=True, blank=True,
+        on_delete=models.CASCADE,
+        related_name='deliverables'
+    )
+
+    def __str__(self):
+        return self.name

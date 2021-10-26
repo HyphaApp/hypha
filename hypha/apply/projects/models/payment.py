@@ -4,7 +4,9 @@ import os
 from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.db.models import Sum, Value
+from django.db.models import F, Sum, Value
+from django.db.models.fields import FloatField
+from django.db.models.fields.related import ManyToManyField
 from django.db.models.functions import Coalesce
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -92,6 +94,27 @@ class InvoiceQueryset(models.QuerySet):
         return self.filter(status__in=[SUBMITTED, UNDER_REVIEW]).total_value('requested_value')
 
 
+class InvoiceDeliverable(models.Model):
+    deliverable = models.ForeignKey(
+        'Deliverable',
+        on_delete=models.CASCADE,
+        related_name='deliverables'
+    )
+    quantity = models.IntegerField(
+        help_text=_('Quantity Selected on an Invoice'),
+        default=0
+    )
+
+    def __str__(self):
+        return self.deliverable.name
+
+    def get_absolute_api_url(self):
+        return reverse(
+            'api:v1:remove-deliverables',
+            kwargs={'pk': self.pk, 'invoice_pk': self.pk}
+        )
+
+
 class Invoice(models.Model):
     project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="invoices")
     by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="invoices")
@@ -114,7 +137,10 @@ class Invoice(models.Model):
     message_for_pm = models.TextField(blank=True, verbose_name=_('Message'))
     comment = models.TextField(blank=True)
     status = models.TextField(choices=REQUEST_STATUS_CHOICES, default=SUBMITTED)
-
+    deliverables = ManyToManyField(
+        'InvoiceDeliverable',
+        related_name='invoices'
+    )
     objects = InvoiceQueryset.as_manager()
 
     def __str__(self):
@@ -164,7 +190,14 @@ class Invoice(models.Model):
         return self.paid_value or self.amount
 
     def get_absolute_url(self):
-        return reverse('apply:projects:invoices:detail', args=[self.pk])
+        return reverse(
+            'apply:projects:invoice-detail',
+            kwargs={'pk': self.project.pk, 'invoice_pk': self.pk}
+        )
+
+    @property
+    def deliverables_total_amount(self):
+        return self.deliverables.all().aggregate(total=Sum(F('deliverable__unit_price') * F('quantity'), output_field=FloatField()))
 
 
 class SupportingDocument(models.Model):

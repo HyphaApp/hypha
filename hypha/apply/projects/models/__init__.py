@@ -1,5 +1,6 @@
 from .payment import (
     Invoice,
+    InvoiceDeliverable,
     PaymentApproval,
     PaymentReceipt,
     PaymentRequest,
@@ -8,6 +9,7 @@ from .payment import (
 from .project import (
     Approval,
     Contract,
+    Deliverable,
     DocumentCategory,
     PacketFile,
     Project,
@@ -37,4 +39,6 @@ __all__ = [
     'DueDiligenceDocument',
     'Invoice',
     'SupportingDocument',
+    'Deliverable',
+    'InvoiceDeliverable',
 ]
