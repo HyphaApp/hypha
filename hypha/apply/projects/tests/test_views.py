@@ -1118,7 +1118,7 @@ class TestApplicantInvoiceDocumentPrivateMedia(BaseViewTestCase):
     def get_kwargs(self, instance):
         return {
             'pk': instance.project.pk,
-            'invoice_pk': instance.pk
+            'invoice_pk': instance.pk,
         }
 
     def test_can_access_own(self):

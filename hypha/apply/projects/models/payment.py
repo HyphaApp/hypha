@@ -75,6 +75,27 @@ class InvoiceDeliverable(models.Model):
         )
 
 
+class InvoiceDeliverable(models.Model):
+    deliverable = models.ForeignKey(
+        'Deliverable',
+        on_delete=models.CASCADE,
+        related_name='deliverables'
+    )
+    quantity = models.IntegerField(
+        help_text=_('Quantity Selected on an Invoice'),
+        default=0
+    )
+
+    def __str__(self):
+        return self.deliverable.name
+
+    def get_absolute_api_url(self):
+        return reverse(
+            'api:v1:remove-deliverables',
+            kwargs={'pk': self.pk, 'invoice_pk': self.pk}
+        )
+
+
 class Invoice(models.Model):
     project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="invoices")
     by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="invoices")
