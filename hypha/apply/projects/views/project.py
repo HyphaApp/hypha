@@ -47,7 +47,6 @@ from ..filters import PaymentRequestListFilter, ProjectListFilter, ReportListFil
 from ..forms import (
     ApproveContractForm,
     CreateApprovalForm,
-    ProjectApprovalForm,
     ProjectEditForm,
     RejectionForm,
     RemoveDocumentForm,
@@ -577,49 +576,6 @@ class ProjectDetailPDFView(SingleObjectMixin, View):
             as_attachment=True,
             filename=self.object.title + '.pdf',
         )
-
-
-class ProjectApprovalEditView(UpdateView):
-    form_class = ProjectApprovalForm
-    model = Project
-
-    def dispatch(self, request, *args, **kwargs):
-        project = self.get_object()
-        if not project.editable_by(request.user):
-            messages.info(self.request, _('You are not allowed to edit the project at this time'))
-            return redirect(project)
-        return super().dispatch(request, *args, **kwargs)
-
-    @cached_property
-    def approval_form(self):
-        if self.object.get_defined_fields():
-            approval_form = self.object
-        else:
-            approval_form = self.object.submission.page.specific.approval_form
-
-        return approval_form
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-
-        if self.approval_form:
-            fields = self.approval_form.get_form_fields()
-        else:
-            fields = {}
-
-        kwargs['extra_fields'] = fields
-        kwargs['initial'].update(self.object.raw_data)
-        return kwargs
-
-    def form_valid(self, form):
-        try:
-            form_fields = self.approval_form.form_fields
-        except AttributeError:
-            form_fields = []
-
-        form.instance.form_fields = form_fields
-
-        return super().form_valid(form)
 
 
 class ApplicantProjectEditView(UpdateView):

@@ -148,3 +148,16 @@ WEBPACK_LOADER['DEFAULT'].update({
 
 # Required for testing the apis from postman
 REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'] = REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'] + ('rest_framework.authentication.BasicAuthentication', )
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'hypha',
+        'USER': 'postgres',
+        'PASSWORD': 'root',
+        'CONN_MAX_AGE': 600,
+    }
+}
+WEBPACK_LOADER['DEFAULT'].update({
+    'STATS_FILE': os.path.join(BASE_DIR, 'hypha/static_compiled/app/webpack-stats.json'),
+})

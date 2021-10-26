@@ -360,19 +360,6 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         self.save(update_fields=['sent_to_compliance_at'])
 
 
-class ProjectApprovalForm(BaseStreamForm, models.Model):
-    name = models.CharField(max_length=255)
-    form_fields = StreamField(FormFieldsBlock())
-
-    panels = [
-        FieldPanel('name'),
-        StreamFieldPanel('form_fields'),
-    ]
-
-    def __str__(self):
-        return self.name
-
-
 @register_setting
 class ProjectSettings(BaseSetting):
     compliance_email = models.TextField("Compliance Email")

@@ -19,3 +19,7 @@ STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.MD5PasswordHasher',
 ]
+
+WEBPACK_LOADER['DEFAULT'].update({
+    'STATS_FILE': os.path.join(BASE_DIR, 'hypha/static_compiled/app/webpack-stats.json'),
+})

@@ -20,7 +20,6 @@ from ..models.project import (
     DocumentCategory,
     PacketFile,
     Project,
-    ProjectApprovalForm,
 )
 from ..models.report import Report, ReportConfig, ReportVersion
 
@@ -58,18 +57,6 @@ class DocumentCategoryFactory(factory.django.DjangoModelFactory):
         model = DocumentCategory
 
 
-class ProjectApprovalFormFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = ProjectApprovalForm
-
-    name = factory.Faker('word')
-    form_fields = FormFieldsBlockFactory
-
-
-class ProjectApprovalFormDataFactory(FormDataFactory):
-    field_factory = FormFieldsBlockFactory
-
-
 class ProjectFactory(factory.django.DjangoModelFactory):
     submission = factory.SubFactory(ApplicationSubmissionFactory)
     user = factory.SubFactory(UserFactory)
@@ -84,7 +71,6 @@ class ProjectFactory(factory.django.DjangoModelFactory):
 
     form_fields = FormFieldsBlockFactory
     form_data = factory.SubFactory(
-        ProjectApprovalFormDataFactory,
         form_fields=factory.SelfAttribute('..form_fields'),
     )
 

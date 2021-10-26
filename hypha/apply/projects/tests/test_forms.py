@@ -15,7 +15,6 @@ from ..forms.payment import (
     filter_request_choices,
 )
 from ..forms.project import (
-    ProjectApprovalForm,
     StaffUploadContractForm,
     UploadContractForm,
 )
@@ -77,27 +76,6 @@ class TestChangePaymentRequestStatusForm(TestCase):
 
         output = filter_choices(choices, [TWO])
         self.assertTrue(output, [(TWO, 'Two')])
-
-
-class TestProjectApprovalForm(TestCase):
-    def test_updating_fields_sets_changed_flag(self):
-        project = ProjectFactory()
-
-        self.assertFalse(project.user_has_updated_details)
-
-        data = {
-            'title': f'{project.title} test',
-            'value': project.value,
-            'proposed_start': project.proposed_start,
-            'proposed_end': project.proposed_end,
-        }
-        data.update(address_to_form_data())
-        form = ProjectApprovalForm(instance=project, data=data)
-        self.assertTrue(form.is_valid(), form.errors.as_text())
-
-        form.save()
-
-        self.assertTrue(project.user_has_updated_details)
 
 
 class TestCreatePaymentRequestForm(TestCase):
