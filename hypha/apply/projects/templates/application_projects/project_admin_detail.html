@@ -19,8 +19,8 @@
         {% trans "Submit anyway" as submit_anyway %}
         {% include 'funds/includes/delegated_form_base.html' with form=request_approval_form value='Submit anyway' cancel=True invert=True %}
     {% else %}
-        {% trans "Payment Requests" as heading %}
-        {% include 'funds/includes/delegated_form_base.html' with form=request_approval_form value=submit_anyway %}
+        {% trans "Request" as request %}
+        {% include 'funds/includes/delegated_form_base.html' with form=request_approval_form value=request %}
     {% endif %}
 </div>
 
@@ -76,7 +76,7 @@
 {% endif %}
 
 {% if object.can_make_approval %}
-  {% user_can_approve_project object request.user as user_can_approve %}
+  {% user_can_approve_project object user as user_can_approve %}
   <a data-fancybox
       data-src="#approve"
       class="button button--bottom-space button--primary button--full-width {% if user_can_approve %}is-not-disabled{% else %}is-disabled{% endif %}"

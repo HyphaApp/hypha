@@ -6,9 +6,12 @@
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
+        <a class="simplified__submissions-link" href="{{ determination.submission.get_absolute_url }}">
+            {% trans "Back to submission" %}
+        </a>
         <h2 class="heading heading--no-margin">{% trans "Determination" %} {% if determination.is_draft %}[{% trans "DRAFT" %}]{% endif %}
         </h2>
-        <h5>For <a href="{% url "funds:submissions:detail" determination.submission.id %}">{{ determination.submission.title }}</a></h5>
+        <h5>For: {{ determination.submission.title }}</h5>
     </div>
 </div>
 

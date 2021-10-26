@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-15 17:07+0000\n"
+"POT-Creation-Date: 2021-10-18 07:18+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -729,13 +729,8 @@ msgstr ""
 #: hypha/apply/activity/templates/messages/email/report_submitted.html:9
 #: hypha/apply/activity/templates/messages/email/vendor_setup_needed.html:9
 #: hypha/apply/activity/templates/messages/email/vendor_updated.html:7
-#: hypha/apply/funds/templates/funds/applicationsubmission_simplified_detail.html:13
 #: hypha/apply/funds/templates/funds/includes/project_block.html:3
-#: hypha/apply/projects/templates/application_projects/invoice_confirm_delete.html:9
-#: hypha/apply/projects/templates/application_projects/paymentrequest_confirm_delete.html:10
-#: hypha/apply/projects/templates/application_projects/paymentrequest_detail.html:9
 #: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:13
-#: hypha/apply/projects/templates/application_projects/report_detail.html:10
 msgid "Project"
 msgstr ""
 
@@ -768,7 +763,8 @@ msgstr ""
 
 #: hypha/apply/activity/templates/messages/email/vendor_setup_needed.html:7
 msgid ""
-"Next step is to complete vendor setup form by visiting project detail page."
+"Next step is to complete Contracting Information by visiting project detail "
+"page."
 msgstr ""
 
 #: hypha/apply/activity/templates/messages/email/vendor_setup_needed.html:11
@@ -779,7 +775,13 @@ msgstr ""
 
 #: hypha/apply/activity/templates/messages/email/vendor_updated.html:5
 #, python-format
-msgid "Vendor Information has been updated on %(source.title)s."
+msgid "Contracting Information has been updated on %(source.title)s."
+msgstr ""
+
+#: hypha/apply/api/v1/determination/utils.py:25
+#: hypha/apply/determinations/forms.py:106
+#: hypha/apply/determinations/views.py:93
+msgid "-- No determination selected -- "
 msgstr ""
 
 #: hypha/apply/api/v1/filters.py:31 hypha/apply/funds/tables.py:416
@@ -1116,8 +1118,8 @@ msgstr ""
 msgid "Section text/header"
 msgstr ""
 
-#: hypha/apply/determinations/forms.py:171
-#: hypha/apply/determinations/forms.py:252
+#: hypha/apply/determinations/forms.py:170
+#: hypha/apply/determinations/forms.py:251
 #: hypha/apply/determinations/forms.py:507
 #: hypha/apply/determinations/models.py:102
 #: hypha/apply/determinations/templates/determinations/determination_detail.html:9
@@ -1125,91 +1127,101 @@ msgstr ""
 msgid "Determination"
 msgstr ""
 
-#: hypha/apply/determinations/forms.py:177
-#: hypha/apply/determinations/forms.py:258
+#: hypha/apply/determinations/forms.py:176
+#: hypha/apply/determinations/forms.py:257
 #: hypha/apply/determinations/models.py:103
 msgid "Determination message"
 msgstr ""
 
-#: hypha/apply/determinations/forms.py:184
+#: hypha/apply/determinations/forms.py:183
 msgid "Goals and principles"
 msgstr ""
 
-#: hypha/apply/determinations/forms.py:204
+#: hypha/apply/determinations/forms.py:203
 msgid "Technical merit"
 msgstr ""
 
-#: hypha/apply/determinations/forms.py:219
+#: hypha/apply/determinations/forms.py:218
 msgid "Reasonable, realistic and sustainable"
 msgstr ""
 
-#: hypha/apply/determinations/forms.py:233
+#: hypha/apply/determinations/forms.py:232
 msgid "Other comments"
 msgstr ""
 
-#: hypha/apply/determinations/forms.py:266
+#: hypha/apply/determinations/forms.py:265
 msgid "Positive aspects"
 msgstr ""
 
-#: hypha/apply/determinations/forms.py:272
+#: hypha/apply/determinations/forms.py:271
 msgid "Concerns"
 msgstr ""
 
-#: hypha/apply/determinations/forms.py:278
+#: hypha/apply/determinations/forms.py:277
 msgid "Items that must be addressed"
 msgstr ""
 
-#: hypha/apply/determinations/forms.py:284
+#: hypha/apply/determinations/forms.py:283
 msgid "Project overview questions and comments"
 msgstr ""
 
-#: hypha/apply/determinations/forms.py:287
+#: hypha/apply/determinations/forms.py:286
 msgid "Objectives questions and comments"
 msgstr ""
 
-#: hypha/apply/determinations/forms.py:290
+#: hypha/apply/determinations/forms.py:289
 msgid "Methods and strategy questions and comments"
 msgstr ""
 
-#: hypha/apply/determinations/forms.py:293
+#: hypha/apply/determinations/forms.py:292
 msgid "Technical feasibility questions and comments"
 msgstr ""
 
-#: hypha/apply/determinations/forms.py:296
+#: hypha/apply/determinations/forms.py:295
 msgid "Alternative analysis - \"red teaming\" questions and comments"
 msgstr ""
 
-#: hypha/apply/determinations/forms.py:299
+#: hypha/apply/determinations/forms.py:298
 msgid "Usability questions and comments"
 msgstr ""
 
-#: hypha/apply/determinations/forms.py:302
+#: hypha/apply/determinations/forms.py:301
 msgid "Sustainability questions and comments"
 msgstr ""
 
-#: hypha/apply/determinations/forms.py:305
+#: hypha/apply/determinations/forms.py:304
 msgid "Collaboration questions and comments"
 msgstr ""
 
-#: hypha/apply/determinations/forms.py:308
+#: hypha/apply/determinations/forms.py:307
 msgid "Cost realism questions and comments"
 msgstr ""
 
-#: hypha/apply/determinations/forms.py:311
+#: hypha/apply/determinations/forms.py:310
 msgid "Qualifications questions and comments"
 msgstr ""
 
-#: hypha/apply/determinations/forms.py:314
+#: hypha/apply/determinations/forms.py:313
 msgid "Evaluation questions and comments"
 msgstr ""
 
-#: hypha/apply/determinations/forms.py:318
+#: hypha/apply/determinations/forms.py:317
 msgid "Rationale and appropriateness questions and comments"
+msgstr ""
+
+#: hypha/apply/determinations/forms.py:354
+#: hypha/apply/determinations/views.py:354
+msgid "-- No proposal form selected -- "
 msgstr ""
 
 #: hypha/apply/determinations/forms.py:356
 #: hypha/apply/determinations/views.py:356
 msgid "Proposal Form"
+msgstr ""
+
+#: hypha/apply/determinations/forms.py:358
+#: hypha/apply/determinations/views.py:358
+msgid "Select the proposal form to use for proposal stage."
 msgstr ""
 
 #: hypha/apply/determinations/models.py:110
@@ -1235,6 +1247,7 @@ msgid "Send message to applicant"
 msgstr ""
 
 #: hypha/apply/determinations/models.py:229
+#: hypha/apply/projects/templates/application_projects/project_admin_detail.html:22
 msgid "Request"
 msgstr ""
 
@@ -1304,14 +1317,14 @@ msgstr ""
 #: hypha/apply/determinations/templates/determinations/base_determination_form.html:48
 #: hypha/apply/funds/templates/funds/application_base.html:67
 #: hypha/apply/funds/templates/funds/applicationsubmission_form.html:36
-#: hypha/apply/funds/views.py:938
+#: hypha/apply/funds/views.py:939
 #: hypha/apply/review/templates/review/review_edit_form.html:40
 #: hypha/apply/review/templates/review/review_form.html:41
 msgid "Save draft"
 msgstr ""
 
 #: hypha/apply/determinations/templates/determinations/base_determination_form.html:50
-#: hypha/apply/funds/views.py:937 hypha/apply/funds/workflow.py:200
+#: hypha/apply/funds/views.py:938 hypha/apply/funds/workflow.py:200
 #: hypha/apply/funds/workflow.py:228 hypha/apply/funds/workflow.py:271
 #: hypha/apply/funds/workflow.py:327 hypha/apply/funds/workflow.py:353
 #: hypha/apply/funds/workflow.py:391 hypha/apply/funds/workflow.py:429
@@ -1408,27 +1421,23 @@ msgstr ""
 msgid "Add determination"
 msgstr ""
 
-#: hypha/apply/determinations/views.py:249
+#: hypha/apply/determinations/views.py:248
 #, python-brace-format
 msgid ""
 "A determination already exists for the following submissions and they have "
 "been excluded: {submissions}"
 msgstr ""
 
-#: hypha/apply/determinations/views.py:285
+#: hypha/apply/determinations/views.py:284
 msgid "You do not have permission to create that determination."
 msgstr ""
 
-#: hypha/apply/determinations/views.py:288
+#: hypha/apply/determinations/views.py:287
 msgid "A final determination has already been submitted."
 msgstr ""
 
-#: hypha/apply/determinations/views.py:296
+#: hypha/apply/determinations/views.py:295
 msgid "There is a draft determination you do not have permission to edit."
-msgstr ""
-
-#: hypha/apply/determinations/views.py:358
-msgid "Select the proposal form to use for proposal stage."
 msgstr ""
 
 #: hypha/apply/determinations/views.py:435
@@ -1512,11 +1521,16 @@ msgstr ""
 msgid "Custom"
 msgstr ""
 
-#: hypha/apply/funds/forms.py:60 hypha/apply/funds/forms.py:79
+#: hypha/apply/funds/forms.py:59 hypha/apply/funds/forms.py:78
 msgid "Take action"
 msgstr ""
 
-#: hypha/apply/funds/forms.py:144
+#: hypha/apply/funds/forms.py:138 hypha/apply/projects/forms/project.py:189
+#, python-brace-format
+msgid "Update lead from {lead} to"
+msgstr ""
+
+#: hypha/apply/funds/forms.py:143
 #: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:25
 #: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:27
 #: hypha/apply/funds/templates/funds/applicationsubmission_simplified_detail.html:20
@@ -1532,36 +1546,40 @@ msgstr ""
 msgid "Lead"
 msgstr ""
 
-#: hypha/apply/funds/forms.py:196 hypha/apply/funds/tables.py:259
+#: hypha/apply/funds/forms.py:195 hypha/apply/funds/tables.py:259
 #: hypha/apply/funds/tables.py:443
 #: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:48
 #: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:37
 msgid "Reviewers"
 msgstr ""
 
-#: hypha/apply/funds/forms.py:260 hypha/apply/funds/forms.py:331
+#: hypha/apply/funds/forms.py:260
+msgid "Can't unassign, just change, because review already submitted"
+msgstr ""
+
+#: hypha/apply/funds/forms.py:265 hypha/apply/funds/forms.py:338
 msgid "Users cannot be assigned to multiple roles."
 msgstr ""
 
-#: hypha/apply/funds/forms.py:358
-msgid "Select a reviewer"
+#: hypha/apply/funds/forms.py:364
+msgid "-- No reviewer selected --"
 msgstr ""
 
-#: hypha/apply/funds/forms.py:361
+#: hypha/apply/funds/forms.py:366
 #, python-brace-format
 msgid "{role_name} Reviewer"
 msgstr ""
 
-#: hypha/apply/funds/forms.py:376
+#: hypha/apply/funds/forms.py:381
 #: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:49
 msgid "Partners"
 msgstr ""
 
-#: hypha/apply/funds/forms.py:437
+#: hypha/apply/funds/forms.py:442
 msgid "Meta terms"
 msgstr ""
 
-#: hypha/apply/funds/forms.py:440
+#: hypha/apply/funds/forms.py:445
 msgid "Meta terms are hierarchical in nature."
 msgstr ""
 
@@ -1966,12 +1984,12 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:129
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:131
 msgid "Related submissions"
 msgstr ""
 
-#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:131
-#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:135
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:133
+#: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:137
 msgid "View linked"
 msgstr ""
 
@@ -1980,6 +1998,16 @@ msgstr ""
 #: hypha/apply/projects/templates/application_projects/project_form.html:5
 #: hypha/apply/projects/templates/application_projects/project_form.html:10
 msgid "Editing"
+msgstr ""
+
+#: hypha/apply/funds/templates/funds/applicationsubmission_simplified_detail.html:13
+#: hypha/apply/projects/templates/application_projects/invoice_confirm_delete.html:9
+#: hypha/apply/projects/templates/application_projects/invoice_detail.html:9
+#: hypha/apply/projects/templates/application_projects/paymentrequest_confirm_delete.html:10
+#: hypha/apply/projects/templates/application_projects/paymentrequest_detail.html:9
+#: hypha/apply/projects/templates/application_projects/report_detail.html:10
+#: hypha/apply/projects/templates/application_projects/report_form.html:14
+msgid "Back to project"
 msgstr ""
 
 #: hypha/apply/funds/templates/funds/applicationsubmission_simplified_detail.html:26
@@ -2127,8 +2155,6 @@ msgid "This cannot be undone."
 msgstr ""
 
 #: hypha/apply/funds/templates/funds/includes/create_reminder_form.html:4
-#: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:34
-#: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:58
 #: hypha/apply/projects/templates/application_projects/invoice_form.html:4
 #: hypha/apply/projects/templates/application_projects/paymentrequest_form.html:4
 #: hypha/apply/projects/templates/application_projects/paymentrequest_form.html:8
@@ -2251,8 +2277,8 @@ msgstr ""
 
 #: hypha/apply/funds/templates/funds/includes/submission_stats.html:6
 #: hypha/apply/funds/templates/funds/includes/submission_stats.html:13
-#: hypha/apply/funds/workflow.py:309 hypha/apply/funds/workflow.py:463
-#: hypha/apply/funds/workflow.py:642 hypha/apply/funds/workflow.py:917
+#: hypha/apply/funds/workflow.py:300 hypha/apply/funds/workflow.py:454
+#: hypha/apply/funds/workflow.py:633 hypha/apply/funds/workflow.py:908
 #: hypha/apply/funds/workflow.py:1141
 msgid "Accepted"
 msgstr ""
@@ -2502,24 +2528,24 @@ msgstr ""
 msgid "next"
 msgstr ""
 
-#: hypha/apply/funds/views.py:230 hypha/apply/funds/views.py:262
-#: hypha/apply/funds/views.py:283 hypha/apply/projects/views/project.py:319
+#: hypha/apply/funds/views.py:231 hypha/apply/funds/views.py:263
+#: hypha/apply/funds/views.py:284 hypha/apply/projects/views/project.py:319
 msgid "Sorry something went wrong"
 msgstr ""
 
-#: hypha/apply/funds/views.py:326
+#: hypha/apply/funds/views.py:327
 msgid "Failed to update: "
 msgstr ""
 
-#: hypha/apply/funds/views.py:499 hypha/apply/funds/views.py:502
+#: hypha/apply/funds/views.py:500 hypha/apply/funds/views.py:503
 msgid "No Round or Lab found matching the query"
 msgstr ""
 
-#: hypha/apply/funds/views.py:525
+#: hypha/apply/funds/views.py:526
 msgid "No statuses match the requested value"
 msgstr ""
 
-#: hypha/apply/funds/views.py:1023
+#: hypha/apply/funds/views.py:1024
 msgid "Submission saved successfully"
 msgstr ""
 
@@ -2558,12 +2584,12 @@ msgstr ""
 
 #: hypha/apply/funds/workflow.py:217 hypha/apply/funds/workflow.py:234
 #: hypha/apply/funds/workflow.py:261 hypha/apply/funds/workflow.py:277
-#: hypha/apply/funds/workflow.py:290 hypha/apply/funds/workflow.py:301
+#: hypha/apply/funds/workflow.py:290 hypha/apply/funds/workflow.py:307
 #: hypha/apply/funds/workflow.py:419 hypha/apply/funds/workflow.py:444
-#: hypha/apply/funds/workflow.py:455 hypha/apply/funds/workflow.py:598
-#: hypha/apply/funds/workflow.py:623 hypha/apply/funds/workflow.py:634
+#: hypha/apply/funds/workflow.py:461 hypha/apply/funds/workflow.py:598
+#: hypha/apply/funds/workflow.py:623 hypha/apply/funds/workflow.py:640
 #: hypha/apply/funds/workflow.py:873 hypha/apply/funds/workflow.py:898
-#: hypha/apply/funds/workflow.py:909
+#: hypha/apply/funds/workflow.py:915
 #: hypha/cookieconsent/templates/includes/banner.html:12
 msgid "Accept"
 msgstr ""
@@ -2642,12 +2668,12 @@ msgstr ""
 msgid "Ready For Discussion"
 msgstr ""
 
-#: hypha/apply/funds/workflow.py:288 hypha/apply/funds/workflow.py:302
+#: hypha/apply/funds/workflow.py:288 hypha/apply/funds/workflow.py:308
 #: hypha/apply/funds/workflow.py:405 hypha/apply/funds/workflow.py:442
-#: hypha/apply/funds/workflow.py:456 hypha/apply/funds/workflow.py:584
-#: hypha/apply/funds/workflow.py:621 hypha/apply/funds/workflow.py:635
+#: hypha/apply/funds/workflow.py:462 hypha/apply/funds/workflow.py:584
+#: hypha/apply/funds/workflow.py:621 hypha/apply/funds/workflow.py:641
 #: hypha/apply/funds/workflow.py:744 hypha/apply/funds/workflow.py:859
-#: hypha/apply/funds/workflow.py:896 hypha/apply/funds/workflow.py:910
+#: hypha/apply/funds/workflow.py:896 hypha/apply/funds/workflow.py:916
 msgid "Ready For Discussion (revert)"
 msgstr ""
 
@@ -2656,14 +2682,14 @@ msgstr ""
 msgid "Ready for Determination"
 msgstr ""
 
-#: hypha/apply/funds/workflow.py:304 hypha/apply/funds/workflow.py:458
-#: hypha/apply/funds/workflow.py:637 hypha/apply/funds/workflow.py:912
-msgid "Accepted but additional info required"
+#: hypha/apply/funds/workflow.py:301 hypha/apply/funds/workflow.py:455
+#: hypha/apply/funds/workflow.py:634
+msgid "Application Outcome"
 msgstr ""
 
 #: hypha/apply/funds/workflow.py:310 hypha/apply/funds/workflow.py:464
-#: hypha/apply/funds/workflow.py:643
-msgid "Application Outcome"
+#: hypha/apply/funds/workflow.py:643 hypha/apply/funds/workflow.py:918
+msgid "Accepted but additional info required"
 msgstr ""
 
 #: hypha/apply/funds/workflow.py:379 hypha/apply/funds/workflow.py:558
@@ -2745,7 +2771,7 @@ msgstr ""
 msgid "Ready for Final Determination"
 msgstr ""
 
-#: hypha/apply/funds/workflow.py:918
+#: hypha/apply/funds/workflow.py:909
 msgid "Final Determination"
 msgstr ""
 
@@ -2830,11 +2856,6 @@ msgstr ""
 
 #: hypha/apply/projects/forms/project.py:173
 msgid "File Name"
-msgstr ""
-
-#: hypha/apply/projects/forms/project.py:189
-#, python-brace-format
-msgid "Update lead from {lead} to"
 msgstr ""
 
 #: hypha/apply/projects/forms/report.py:16
@@ -3085,11 +3106,13 @@ msgid "Some details"
 msgstr ""
 
 #: hypha/apply/projects/templates/application_projects/includes/invoices.html:5
-msgid "Invoice requests"
+#: hypha/apply/projects/templates/application_projects/invoice_list.html:6
+msgid "Invoices"
 msgstr ""
 
 #: hypha/apply/projects/templates/application_projects/includes/invoices.html:8
-msgid "Add Request"
+#: hypha/apply/projects/templates/application_projects/project_detail.html:179
+msgid "Add Invoice"
 msgstr ""
 
 #: hypha/apply/projects/templates/application_projects/includes/invoices.html:15
@@ -3121,6 +3144,10 @@ msgstr ""
 #: hypha/apply/projects/templates/application_projects/payment_request_list.html:6
 #: hypha/apply/projects/templates/application_projects/project_admin_detail.html:22
 msgid "Project Invoices"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/includes/invoices.html:8
+msgid "Add Invoice"
 msgstr ""
 
 #: hypha/apply/projects/templates/application_projects/includes/paymentrequest_admin_detail.html:12
@@ -3231,7 +3258,13 @@ msgstr ""
 
 #: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:26
 #: hypha/apply/projects/templates/application_projects/project_detail.html:195
-msgid "Contractor Setup Form"
+#: hypha/apply/projects/views/vendor.py:250
+msgid "Contracting Information"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:34
+#: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:58
+msgid "Fill in"
 msgstr ""
 
 #: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:50
@@ -3287,6 +3320,8 @@ msgid "Change Status"
 msgstr ""
 
 #: hypha/apply/projects/templates/application_projects/invoice_confirm_delete.html:4
+#: hypha/apply/projects/templates/application_projects/invoice_detail.html:4
+#: hypha/apply/projects/templates/application_projects/invoice_detail.html:11
 #: hypha/apply/projects/templates/application_projects/invoice_detail.html:28
 #: hypha/apply/projects/templates/application_projects/invoice_form.html:4
 #: hypha/apply/projects/templates/application_projects/invoice_form.html:8
@@ -3328,12 +3363,6 @@ msgstr ""
 msgid "Are you sure you want to delete this invoice for"
 msgstr ""
 
-#: hypha/apply/projects/templates/application_projects/invoice_detail.html:4
-#: hypha/apply/projects/templates/application_projects/invoice_detail.html:11
-#: hypha/apply/projects/templates/application_projects/invoice_list.html:6
-msgid "Invoice Request"
-msgstr ""
-
 #: hypha/apply/projects/templates/application_projects/invoice_detail.html:32
 #: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:125
 msgid "Supporting Documents"
@@ -3354,16 +3383,15 @@ msgid "Save"
 msgstr ""
 
 #: hypha/apply/projects/templates/application_projects/invoice_list.html:13
-msgid "All Invoice Requests"
+msgid "All Invoices"
 msgstr ""
 
 #: hypha/apply/projects/templates/application_projects/invoice_list.html:21
-msgid "invoice requests"
+msgid "invoices"
 msgstr ""
 
 #: hypha/apply/projects/templates/application_projects/invoice_list.html:25
-#: hypha/apply/projects/templates/application_projects/payment_request_list.html:25
-msgid "No Requests Available"
+msgid "No Invoices available"
 msgstr ""
 
 #: hypha/apply/projects/templates/application_projects/overview.html:6
@@ -3384,6 +3412,10 @@ msgstr ""
 
 #: hypha/apply/projects/templates/application_projects/payment_request_list.html:14
 msgid "All Payment Requests"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/payment_request_list.html:25
+msgid "No Requests Available"
 msgstr ""
 
 #: hypha/apply/projects/templates/application_projects/paymentrequest_confirm_delete.html:5
@@ -3539,10 +3571,6 @@ msgstr ""
 msgid "Upload contract"
 msgstr ""
 
-#: hypha/apply/projects/templates/application_projects/project_detail.html:179
-msgid "Add Invoice"
-msgstr ""
-
 #: hypha/apply/projects/templates/application_projects/project_detail.html:191
 msgid "Supporting Information"
 msgstr ""
@@ -3676,7 +3704,7 @@ msgstr ""
 
 #: hypha/apply/projects/templates/application_projects/vendor_detail.html:4
 #: hypha/apply/projects/templates/application_projects/vendor_detail.html:9
-msgid "Vendor Information for"
+msgid "Contracting Information for"
 msgstr ""
 
 #: hypha/apply/projects/templates/application_projects/vendor_detail.html:15
@@ -3685,7 +3713,7 @@ msgstr ""
 
 #: hypha/apply/projects/templates/application_projects/vendor_form.html:4
 #: hypha/apply/projects/templates/application_projects/vendor_form.html:8
-msgid "Update Contractor Information"
+msgid "Update Contracting Information"
 msgstr ""
 
 #: hypha/apply/projects/templates/application_projects/vendor_form.html:27
@@ -3730,10 +3758,6 @@ msgstr ""
 #: hypha/apply/projects/views/project.py:589
 #: hypha/apply/projects/views/project.py:636
 msgid "You are not allowed to edit the project at this time"
-msgstr ""
-
-#: hypha/apply/projects/views/vendor.py:250
-msgid "Vendor Information"
 msgstr ""
 
 #: hypha/apply/projects/views/vendor.py:259
@@ -3844,6 +3868,10 @@ msgstr ""
 
 #: hypha/apply/review/templates/review/review_detail.html:45
 msgid "Review was not against the latest version"
+msgstr ""
+
+#: hypha/apply/review/templates/review/review_detail.html:65
+msgid "OBS! Aggreing/Disagreeing is a substitute for writing a full review."
 msgstr ""
 
 #: hypha/apply/review/templates/review/review_form.html:46
@@ -4006,19 +4034,19 @@ msgstr ""
 msgid "Only includes active, non-superusers"
 msgstr ""
 
-#: hypha/apply/users/models.py:94
+#: hypha/apply/users/models.py:102
 msgid "email address"
 msgstr ""
 
-#: hypha/apply/users/models.py:95
+#: hypha/apply/users/models.py:103
 msgid "Full name"
 msgstr ""
 
-#: hypha/apply/users/models.py:97
+#: hypha/apply/users/models.py:105
 msgid "Slack name"
 msgstr ""
 
-#: hypha/apply/users/models.py:99
+#: hypha/apply/users/models.py:107
 msgid "This is the name we should \"@mention\" when sending notifications"
 msgstr ""
 
@@ -4031,7 +4059,7 @@ msgstr ""
 #: hypha/apply/users/templates/two_factor/_base.html:9
 #: hypha/apply/users/templates/two_factor/_base_focus.html:9
 #: hypha/apply/users/templates/users/account.html:11
-msgid "Go to dashboard"
+msgid "Go to my dashboard"
 msgstr ""
 
 #: hypha/apply/users/templates/two_factor/_wizard_actions.html:3
@@ -4180,7 +4208,7 @@ msgid "Update password"
 msgstr ""
 
 #: hypha/apply/users/templates/users/account.html:34
-msgid "Account Security"
+msgid "Account security"
 msgstr ""
 
 #: hypha/apply/users/templates/users/account.html:35
