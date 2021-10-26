@@ -4,9 +4,6 @@ from .base import *  # noqa
 
 logging.disable(logging.CRITICAL)
 
-WEBPACK_LOADER['DEFAULT'].update({
-    'STATS_FILE': os.path.join(BASE_DIR, 'hypha/static_compiled/app/webpack-stats.json'),
-})
 
 # Should only include explicit testing settings
 

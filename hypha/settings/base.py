@@ -208,23 +208,12 @@ WSGI_APPLICATION = 'hypha.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/stable/ref/settings/#databases
 
-# DATABASES = {
-#     'default': dj_database_url.config(
-#         conn_max_age=600,
-#         default=f"postgres:///{APP_NAME}"
-#     )
-# }
-
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'hypha',
-        'USER': 'postgres',
-        'PASSWORD': 'root',
-        'CONN_MAX_AGE': 600,
-    }
+    'default': dj_database_url.config(
+        conn_max_age=600,
+        default=f"postgres:///{APP_NAME}"
+    )
 }
-
 
 # Cache
 
