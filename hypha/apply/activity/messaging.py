@@ -372,6 +372,15 @@ class ActivityAdapter(AdapterBase):
         else:
             return "Marked a Report as required"
 
+    def handle_update_invoice_status(self, invoice, **kwargs):
+        invoice_status_change = _(f'Updated Invoice status to: {invoice.status_display}.')
+        if invoice.comment:
+            sent_message = _(' Sent message: ')
+            comment = invoice.comment
+            message = invoice_status_change + sent_message + comment
+            return message
+        return invoice_status_change
+
     def send_message(self, message, user, source, sources, **kwargs):
         from .models import Activity
         visibility = kwargs.get('visibility', ALL)
