@@ -596,7 +596,6 @@ class ApplicantProjectEditView(UpdateView):
 
 
 class ProjectEditView(ViewDispatcher):
-    admin_view = ProjectApprovalEditView
     applicant_view = ApplicantProjectEditView
 
 
