@@ -15,7 +15,6 @@ from ..forms.payment import (
     filter_request_choices,
 )
 from ..forms.project import StaffUploadContractForm, UploadContractForm
-
 from ..models.payment import CHANGES_REQUESTED, DECLINED, PAID, SUBMITTED, UNDER_REVIEW
 from .factories import DocumentCategoryFactory, PaymentRequestFactory, ProjectFactory
 
