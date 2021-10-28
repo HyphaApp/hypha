@@ -64,6 +64,9 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
     # Adds validation around forms & workflows. Isn't on Workflow class due to not displaying workflow field on Round
     base_form_class = WorkflowFormAdminForm
 
+    description = RichTextField(blank=True)
+    image = models.ImageField(blank=True)
+
     reviewers = ParentalManyToManyField(
         settings.AUTH_USER_MODEL,
         related_name='%(class)s_reviewers',
@@ -119,6 +122,8 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
         FieldPanel('approval_form'),
         FieldPanel('reviewers', widget=forms.SelectMultiple(attrs={'size': '16'})),
         FieldPanel('guide_link'),
+        FieldPanel('description'),
+        FieldPanel('image'),
         FieldPanel('slack_channel'),
     ]
 
@@ -393,7 +398,8 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
 
     # Adds validation around forms & workflows.
     base_form_class = WorkflowFormAdminForm
-
+    description = RichTextField(blank=True)
+    image = models.ImageField(blank=True)
     lead = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         limit_choices_to=LIMIT_TO_STAFF,
@@ -427,6 +433,8 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
         FieldPanel('lead'),
         FieldPanel('reviewers', widget=forms.SelectMultiple(attrs={'size': '16'})),
         FieldPanel('guide_link'),
+        FieldPanel('description'),
+        FieldPanel('image'),
         FieldPanel('slack_channel'),
     ]
 

@@ -2,9 +2,9 @@
 
 {% with details=page.detail %}
 {% if page.open_round %}
-  <div class="listing listing--not-a-link">
+  <div class="listing">
       <div>
-          <h4 class="listing__title listing__title--link">
+          <div class="listing__title listing__title--link">
               {% if page.next_deadline %}
                   <p class="listing__deadline">
                       <svg class="icon icon--calendar icon--small"><use xlink:href="#calendar"></use></svg>
@@ -15,18 +15,21 @@
                   <a href="{% pageurl details %}">
               {% endif %}
 
-              {{ page.title }}
-
+              <h3>{{ page.title }}</h3>
+              <div class="listing__details">
+                <img src="/media/{{ page.image }}" alt="{{page.title}}" />
+                <div>{{ page.description|safe }}</div>
+              </div>
               {% if details %}
                   </a>
               {% endif %}
-          </h4>
 
-          {% if details.listing_summary or details.introduction %}
+              {% if details.listing_summary or details.introduction %}
               <h6 class="listing__teaser">{{ details.listing_summary|default:details.introduction|truncatechars_html:120 }}</h6>
-          {% endif %}
+              {% endif %}
+              <a class="listing__button" href="{% pageurl page %}">{% trans "Apply" %}</a>
+          </div>
       </div>
-      <a class="listing__button" href="{% pageurl page %}">{% trans "Apply" %}</a>
   </div>
 {% endif %}
 {% endwith %}
