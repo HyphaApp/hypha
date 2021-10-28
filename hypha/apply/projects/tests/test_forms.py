@@ -14,17 +14,10 @@ from ..forms.payment import (
     filter_choices,
     filter_request_choices,
 )
-from ..forms.project import (
-    StaffUploadContractForm,
-    UploadContractForm,
-)
+from ..forms.project import StaffUploadContractForm, UploadContractForm
+
 from ..models.payment import CHANGES_REQUESTED, DECLINED, PAID, SUBMITTED, UNDER_REVIEW
-from .factories import (
-    DocumentCategoryFactory,
-    PaymentRequestFactory,
-    ProjectFactory,
-    address_to_form_data,
-)
+from .factories import DocumentCategoryFactory, PaymentRequestFactory, ProjectFactory
 
 
 class TestChangePaymentRequestStatusForm(TestCase):
