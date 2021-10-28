@@ -834,73 +834,6 @@ class TestAnonPacketView(BasePacketFileViewTestCase):
             self.assertIn(reverse('users_public:login'), path)
 
 
-class TestRequestPaymentViewAsApplicant(BaseViewTestCase):
-    base_view_name = 'request'
-    url_name = 'funds:projects:{}'
-    user_factory = ApplicantFactory
-
-    def get_kwargs(self, instance):
-        return {'pk': instance.id}
-
-    def test_creating_a_payment_request(self):
-        project = ProjectFactory(user=self.user)
-        self.assertEqual(project.payment_requests.count(), 0)
-
-        invoice = BytesIO(b'somebinarydata')
-        invoice.name = 'invoice.pdf'
-
-        receipts = BytesIO(b'someotherbinarydata')
-        receipts.name = 'receipts.pdf'
-
-        response = self.post_page(project, {
-            'form-submitted-request_payment_form': '',
-            'requested_value': '10',
-            'date_from': '2018-08-15',
-            'date_to': '2019-08-15',
-            'invoice': invoice,
-            'receipts': receipts,
-        })
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(project.payment_requests.count(), 1)
-
-        self.assertEqual(project.payment_requests.first().by, self.user)
-
-
-class TestRequestPaymentViewAsStaff(BaseViewTestCase):
-    base_view_name = 'request'
-    url_name = 'funds:projects:{}'
-    user_factory = StaffFactory
-
-    def get_kwargs(self, instance):
-        return {'pk': instance.id}
-
-    def test_creating_a_payment_request(self):
-        project = ProjectFactory()
-        self.assertEqual(project.payment_requests.count(), 0)
-
-        invoice = BytesIO(b'somebinarydata')
-        invoice.name = 'invoice.pdf'
-
-        receipts = BytesIO(b'someotherbinarydata')
-        receipts.name = 'receipts.pdf'
-
-        response = self.post_page(project, {
-            'form-submitted-request_payment_form': '',
-            'requested_value': '10',
-            'date_from': '2018-08-15',
-            'date_to': '2019-08-15',
-            'comment': 'test comment',
-            'invoice': invoice,
-            'receipts': receipts,
-        })
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(project.payment_requests.count(), 1)
-
-        self.assertEqual(project.payment_requests.first().by, self.user)
-
-
 class TestProjectDetailSimplifiedView(TestCase):
     def test_staff_only(self):
         factory = RequestFactory()
@@ -924,6 +857,7 @@ class TestStaffDetailInvoiceStatus(BaseViewTestCase):
 
     def get_kwargs(self, instance):
         return {
+            'pk': instance.project.pk,
             'invoice_pk': instance.pk,
         }
 
@@ -946,6 +880,7 @@ class TestFinanceDetailInvoiceStatus(BaseViewTestCase):
 
     def get_kwargs(self, instance):
         return {
+            'pk': instance.project.pk,
             'invoice_pk': instance.pk,
         }
 
@@ -1128,7 +1063,7 @@ class TestApplicantChangeInoviceStatus(BaseViewTestCase):
     def get_kwargs(self, instance):
         return {
             'pk': instance.project.pk,
-            'invoice_pk': instance.pk,
+            'invoice_pk': instance.pk
         }
 
     def test_can(self):
@@ -1159,7 +1094,8 @@ class TestStaffInoviceDocumentPrivateMedia(BaseViewTestCase):
 
     def get_kwargs(self, instance):
         return {
-            'invoice_pk': instance.pk,
+            'pk': instance.project.pk,
+            'invoice_pk': instance.pk
         }
 
     def test_can_access(self):
@@ -1182,7 +1118,7 @@ class TestApplicantInvoiceDocumentPrivateMedia(BaseViewTestCase):
     def get_kwargs(self, instance):
         return {
             'pk': instance.project.pk,
-            'invoice_pk': instance.pk,
+            'invoice_pk': instance.pk
         }
 
     def test_can_access_own(self):

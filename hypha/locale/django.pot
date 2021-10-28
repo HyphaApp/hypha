@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-28 05:30+0000\n"
+"POT-Creation-Date: 2021-10-27 10:52+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,444 +23,413 @@ msgstr ""
 msgid " as {role}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:232
+#: hypha/apply/activity/messaging.py:228
 #, python-brace-format
 msgid "Submitted {source.title} for {source.page.title}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:233 hypha/apply/activity/messaging.py:234
+#: hypha/apply/activity/messaging.py:229 hypha/apply/activity/messaging.py:230
 msgid "Edited"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:235 hypha/apply/activity/messaging.py:249
+#: hypha/apply/activity/messaging.py:231 hypha/apply/activity/messaging.py:245
 #, python-brace-format
 msgid "Lead changed from {old_lead} to {source.lead}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:236
+#: hypha/apply/activity/messaging.py:232
 #, python-brace-format
 msgid "Batch Lead changed to {new_lead}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:237
+#: hypha/apply/activity/messaging.py:233
 #, python-brace-format
 msgid "Sent a determination. Outcome: {determination.clean_outcome}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:239
+#: hypha/apply/activity/messaging.py:235
 msgid "Invited to submit a proposal"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:243
+#: hypha/apply/activity/messaging.py:239
 msgid "Submitted a review"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:244
+#: hypha/apply/activity/messaging.py:240
 msgid "Opened the submission while still sealed"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:246
+#: hypha/apply/activity/messaging.py:242
 #, python-brace-format
 msgid ""
 "{user} {opinion.opinion_display}s with {opinion.review.author}s review of "
 "{source}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:247
+#: hypha/apply/activity/messaging.py:243
 msgid "Created"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:248
+#: hypha/apply/activity/messaging.py:244
 #, python-brace-format
 msgid "Progressed from {old_stage} to {source.status_display}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:250
+#: hypha/apply/activity/messaging.py:246
 msgid "Requested approval"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:251
+#: hypha/apply/activity/messaging.py:247
 #: hypha/apply/determinations/options.py:12
 msgid "Approved"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:252
+#: hypha/apply/activity/messaging.py:248
 #, python-brace-format
 msgid "Requested changes for acceptance: \"{comment}\""
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:253
+#: hypha/apply/activity/messaging.py:249
 #, python-brace-format
 msgid "Uploaded a {contract.state} contract"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:254
+#: hypha/apply/activity/messaging.py:250
 msgid "Approved contract"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:255
-#, python-brace-format
-msgid "Updated Payment Request status to: {payment_request.status_display}"
-msgstr ""
-
-#: hypha/apply/activity/messaging.py:256
+#: hypha/apply/activity/messaging.py:251
 #, python-brace-format
 msgid "Updated Invoice status to: {invoice.status_display}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:257
-msgid "Payment Request submitted"
-msgstr ""
-
-#: hypha/apply/activity/messaging.py:258
+#: hypha/apply/activity/messaging.py:252
 msgid "Invoice created"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:259
+#: hypha/apply/activity/messaging.py:253
 msgid "Submitted a report"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:290
+#: hypha/apply/activity/messaging.py:284
 msgid "Reviewers updated."
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:292 hypha/apply/activity/messaging.py:362
-#: hypha/apply/activity/messaging.py:523
+#: hypha/apply/activity/messaging.py:286 hypha/apply/activity/messaging.py:356
+#: hypha/apply/activity/messaging.py:513
 msgid "Added:"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:296 hypha/apply/activity/messaging.py:366
-#: hypha/apply/activity/messaging.py:527
+#: hypha/apply/activity/messaging.py:290 hypha/apply/activity/messaging.py:360
+#: hypha/apply/activity/messaging.py:517
 msgid "Removed:"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:302
+#: hypha/apply/activity/messaging.py:296
 msgid "Batch Reviewers Updated."
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:304
+#: hypha/apply/activity/messaging.py:298
 #, python-brace-format
 msgid "{user} as {name}."
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:322
+#: hypha/apply/activity/messaging.py:316
 #, python-brace-format
 msgid "Successfully deleted submissions: {title}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:326
+#: hypha/apply/activity/messaging.py:320
 #, python-brace-format
 msgid "Progressed from {old_display} to {new_display}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:360
+#: hypha/apply/activity/messaging.py:354
 msgid "Partners updated."
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:373
+#: hypha/apply/activity/messaging.py:367
 #, python-brace-format
 msgid ""
 "Updated reporting frequency. New schedule is: {new_schedule} starting on "
 "{schedule_start}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:411
+#: hypha/apply/activity/messaging.py:405
 #, python-brace-format
 msgid "Screening status from {old_status} to {new_status}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:418
+#: hypha/apply/activity/messaging.py:412
 #, python-brace-format
 msgid ""
 "A new submission has been submitted for {source.page.title}: <{link}|{source."
 "title}>"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:419
+#: hypha/apply/activity/messaging.py:413
 #, python-brace-format
 msgid ""
 "The lead of <{link}|{source.title}> has been updated from {old_lead} to "
 "{source.lead} by {user}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:421
+#: hypha/apply/activity/messaging.py:415
 #, python-brace-format
 msgid ""
 "A new {comment.visibility} comment has been posted on <{link}|{source.title}"
 "> by {user}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:422 hypha/apply/activity/messaging.py:423
+#: hypha/apply/activity/messaging.py:416 hypha/apply/activity/messaging.py:417
 #, python-brace-format
 msgid "{user} has edited <{link}|{source.title}>"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:426
+#: hypha/apply/activity/messaging.py:420
 #, python-brace-format
 msgid "{user} has updated the partners on <{link}|{source.title}>"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:427
+#: hypha/apply/activity/messaging.py:421
 #, python-brace-format
 msgid ""
 "{user} has updated the status of <{link}|{source.title}>: {old_phase."
 "display_name} → {source.phase}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:431
+#: hypha/apply/activity/messaging.py:425
 #, python-brace-format
 msgid "A proposal has been submitted for review: <{link}|{source.title}>"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:432
+#: hypha/apply/activity/messaging.py:426
 #, python-brace-format
 msgid ""
 "<{link}|{source.title}> by {source.user} has been invited to submit a "
 "proposal"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:433
+#: hypha/apply/activity/messaging.py:427
 #, python-brace-format
 msgid ""
 "{user} has submitted a review for <{link}|{source.title}>. Outcome: {review."
 "outcome},  Score: {review.get_score_display}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:435
+#: hypha/apply/activity/messaging.py:429
 #, python-brace-format
 msgid "{user} has opened the sealed submission: <{link}|{source.title}>"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:436
+#: hypha/apply/activity/messaging.py:430
 #, python-brace-format
 msgid ""
 "{user} {opinion.opinion_display}s with {opinion.review.author}s review of "
 "{source.title}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:438
+#: hypha/apply/activity/messaging.py:432
 #, python-brace-format
 msgid "{user} has deleted {source.title}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:439
+#: hypha/apply/activity/messaging.py:433
 #, python-brace-format
 msgid "{user} has deleted {review.author} review for <{link}|{source.title}>."
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:440
+#: hypha/apply/activity/messaging.py:434
 #, python-brace-format
 msgid "{user} has created a Project: <{link}|{source.title}>."
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:441
+#: hypha/apply/activity/messaging.py:435
 #, python-brace-format
 msgid ""
 "The lead of project <{link}|{source.title}> has been updated from {old_lead} "
 "to {source.lead} by {user}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:442
+#: hypha/apply/activity/messaging.py:436
 #, python-brace-format
 msgid "{user} has edited {review.author} review for <{link}|{source.title}>."
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:443
+#: hypha/apply/activity/messaging.py:437
 #, python-brace-format
 msgid "{user} has requested approval on project <{link}|{source.title}>."
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:444
+#: hypha/apply/activity/messaging.py:438
 #, python-brace-format
 msgid "{user} has approved project <{link}|{source.title}>."
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:445
+#: hypha/apply/activity/messaging.py:439
 #, python-brace-format
 msgid ""
 "{user} has requested changes for project acceptance on <{link}|{source.title}"
 ">."
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:446
+#: hypha/apply/activity/messaging.py:440
 #, python-brace-format
 msgid "{user} has uploaded a contract for <{link}|{source.title}>."
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:447
+#: hypha/apply/activity/messaging.py:441
 #, python-brace-format
 msgid "{user} has approved contract for <{link}|{source.title}>."
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:448
-#, python-brace-format
-msgid "{user} has requested payment for <{link}|{source.title}>."
-msgstr ""
-
-#: hypha/apply/activity/messaging.py:449
+#: hypha/apply/activity/messaging.py:442
 #, python-brace-format
 msgid "{user} has created invoice for <{link}|{source.title}>."
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:450
-#, python-brace-format
-msgid ""
-"{user} has changed the status of <{link_related}|payment request> on <{link}|"
-"{source.title}> to {payment_request.status_display}."
-msgstr ""
-
-#: hypha/apply/activity/messaging.py:451
+#: hypha/apply/activity/messaging.py:443
 #, python-brace-format
 msgid ""
 "{user} has changed the status of <{link_related}|invoice> on <{link}|{source."
 "title}> to {invoice.status_display}."
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:452
-#, python-brace-format
-msgid "{user} has deleted payment request from <{link}|{source.title}>."
-msgstr ""
-
-#: hypha/apply/activity/messaging.py:453
+#: hypha/apply/activity/messaging.py:444
 #, python-brace-format
 msgid "{user} has deleted invoice from <{link}|{source.title}>."
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:454
-#, python-brace-format
-msgid "{user} has updated payment request for <{link}|{source.title}>."
-msgstr ""
-
-#: hypha/apply/activity/messaging.py:455
+#: hypha/apply/activity/messaging.py:445
 #, python-brace-format
 msgid "{user} has updated invoice for <{link}|{source.title}>."
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:456
+#: hypha/apply/activity/messaging.py:446
 #, python-brace-format
 msgid "{user} has submitted a report for <{link}|{source.title}>."
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:520
+#: hypha/apply/activity/messaging.py:510
 #, python-brace-format
 msgid "{user} has updated the reviewers on <{link}|{title}>."
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:536
+#: hypha/apply/activity/messaging.py:526
 #, python-brace-format
 msgid "{user} has batch changed lead to {new_lead} on: {submissions_text}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:547 hypha/apply/activity/messaging.py:992
+#: hypha/apply/activity/messaging.py:537 hypha/apply/activity/messaging.py:973
 #, python-brace-format
 msgid "{user} as {name},"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:552
+#: hypha/apply/activity/messaging.py:542
 #, python-brace-format
 msgid ""
 "{user} has batch added {reviewers_text} as reviewers on: {submissions_text}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:570
+#: hypha/apply/activity/messaging.py:560
 #, python-brace-format
 msgid "{user} has transitioned the following submissions: {submissions_links}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:580
+#: hypha/apply/activity/messaging.py:570
 #, python-brace-format
 msgid ""
 "A determination for <{link}|{submission_title}> was sent by email. Outcome: "
 "{determination_outcome}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:587
+#: hypha/apply/activity/messaging.py:577
 #, python-brace-format
 msgid ""
 "A determination for <{link}|{submission_title}> was saved without sending an "
 "email. Outcome: {determination_outcome}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:604
+#: hypha/apply/activity/messaging.py:594
 #, python-brace-format
 msgid "Determinations of {outcome} was sent for: {submissions_links}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:613
+#: hypha/apply/activity/messaging.py:603
 #, python-brace-format
 msgid "{user} has deleted submissions: {title}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:627
+#: hypha/apply/activity/messaging.py:617
 #, python-brace-format
 msgid ""
 "<{link}|{title}> is ready for review. The following are assigned as "
 "reviewers: {reviewers}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:744
+#: hypha/apply/activity/messaging.py:732
 #, python-brace-format
 msgid "Application ready to review: {source.title}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:746
+#: hypha/apply/activity/messaging.py:734
 msgid "Multiple applications are now ready for your review"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:748
+#: hypha/apply/activity/messaging.py:736
 #, python-brace-format
 msgid "Reminder: Application ready to review: {source.title}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:751
+#: hypha/apply/activity/messaging.py:739
 #, python-brace-format
 msgid "Your application to {org_long_name}: {source.title}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:753
+#: hypha/apply/activity/messaging.py:741
 #, python-brace-format
 msgid "Your {org_long_name} Project: {source.title}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:982
+#: hypha/apply/activity/messaging.py:963
 msgid "Successfully uploaded document"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:983
+#: hypha/apply/activity/messaging.py:964
 msgid "Successfully removed document"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:986
+#: hypha/apply/activity/messaging.py:967
 msgid "Reminder created"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:987
+#: hypha/apply/activity/messaging.py:968
 msgid "Reminder deleted"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:998
+#: hypha/apply/activity/messaging.py:979
 #, python-brace-format
 msgid "Batch reviewers added: {reviewers_text} to "
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:1003
+#: hypha/apply/activity/messaging.py:984
 #, python-brace-format
 msgid ""
 "Successfully updated reporting frequency. They will now report "
 "{new_schedule} starting on {schedule_start}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:1007
+#: hypha/apply/activity/messaging.py:988
 #, python-brace-format
 msgid "Successfully skipped a Report for {start_date} to {end_date}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:1009
+#: hypha/apply/activity/messaging.py:990
 #, python-brace-format
 msgid "Successfully unskipped a Report for {start_date} to {end_date}"
 msgstr ""
 
-#: hypha/apply/activity/messaging.py:1028
+#: hypha/apply/activity/messaging.py:1009
 #, python-brace-format
 msgid "Successfully determined as {outcome}: "
 msgstr ""
@@ -481,7 +450,7 @@ msgstr ""
 
 #: hypha/apply/activity/templates/messages/email/applicant_base.html:4
 #, python-format
-msgid "Dear %(name)s,"
+msgid "Dear %(source.user.get_full_name|default:\"applicant\")s,"
 msgstr ""
 
 #: hypha/apply/activity/templates/messages/email/applicant_base.html:7
@@ -514,6 +483,7 @@ msgid "Dear %(user)s,"
 msgstr ""
 
 #: hypha/apply/activity/templates/messages/email/base.html:7
+#: hypha/apply/users/templates/users/activation/email.txt:20
 #, python-format
 msgid ""
 "Kind Regards,\n"
@@ -539,8 +509,6 @@ msgstr ""
 #: hypha/apply/activity/templates/messages/email/invoice_updated.html:9
 #: hypha/apply/activity/templates/messages/email/partners_update_applicant.html:9
 #: hypha/apply/activity/templates/messages/email/partners_update_partner.html:9
-#: hypha/apply/activity/templates/messages/email/payment_request_status_updated.html:14
-#: hypha/apply/activity/templates/messages/email/payment_request_updated.html:8
 #: hypha/apply/activity/templates/messages/email/ready_to_review.html:8
 #: hypha/apply/activity/templates/messages/email/report_frequency.html:12
 #: hypha/apply/activity/templates/messages/email/report_skipped.html:12
@@ -555,8 +523,6 @@ msgstr ""
 #: hypha/apply/activity/templates/messages/email/invoice_updated.html:10
 #: hypha/apply/activity/templates/messages/email/partners_update_applicant.html:10
 #: hypha/apply/activity/templates/messages/email/partners_update_partner.html:10
-#: hypha/apply/activity/templates/messages/email/payment_request_status_updated.html:15
-#: hypha/apply/activity/templates/messages/email/payment_request_updated.html:9
 #: hypha/apply/activity/templates/messages/email/ready_to_review.html:15
 #: hypha/apply/activity/templates/messages/email/report_frequency.html:13
 #: hypha/apply/activity/templates/messages/email/report_skipped.html:13
@@ -569,7 +535,8 @@ msgstr ""
 
 #: hypha/apply/activity/templates/messages/email/comment.html:4
 #, python-format
-msgid "There has been a new comment on \"%(title)s\" by %(user)s."
+msgid ""
+"There has been a new comment on \"%(source.title)s\" by %(comment.user)s."
 msgstr ""
 
 #: hypha/apply/activity/templates/messages/email/comment.html:6
@@ -629,20 +596,17 @@ msgstr ""
 #: hypha/apply/activity/templates/messages/email/invoice_updated.html:6
 #, python-format
 msgid ""
-"An %(ORG_SHORT_NAME)s staff member has updated your invoice for %(title)s "
-"for period %(date_from)s to %(date_to)s."
+"An %(ORG_SHORT_NAME)s staff member has updated your invoice for "
+"%(source.title)s for period %(invoice.date_from)s to %(invoice.date_to)s."
 msgstr ""
 
 #: hypha/apply/activity/templates/messages/email/invoice_status_updated.html:6
 #: hypha/apply/activity/templates/messages/email/invoice_updated.html:7
-#: hypha/apply/activity/templates/messages/email/payment_request_status_updated.html:6
-#: hypha/apply/activity/templates/messages/email/payment_request_updated.html:6
 #, python-format
-msgid "It is now %(status)s."
+msgid "It is now %(invoice.get_status_display)s."
 msgstr ""
 
 #: hypha/apply/activity/templates/messages/email/invoice_status_updated.html:9
-#: hypha/apply/activity/templates/messages/email/payment_request_status_updated.html:9
 msgid "The staff member left this comment"
 msgstr ""
 
@@ -656,14 +620,6 @@ msgstr ""
 
 #: hypha/apply/activity/templates/messages/email/partners_update_partner.html:7
 msgid "You have been added as a partner the following submission."
-msgstr ""
-
-#: hypha/apply/activity/templates/messages/email/payment_request_status_updated.html:5
-#: hypha/apply/activity/templates/messages/email/payment_request_updated.html:5
-#, python-format
-msgid ""
-"An %(ORG_SHORT_NAME)s staff member has updated your payment request for "
-"%(title)s for period %(date_from)s to %(date_to)s."
 msgstr ""
 
 #: hypha/apply/activity/templates/messages/email/ready_to_review.html:6
@@ -682,7 +638,7 @@ msgstr ""
 #, python-format
 msgid ""
 "An %(ORG_SHORT_NAME)s staff member has changed the reporting frequency of "
-"%(title)s."
+"%(source.title)s."
 msgstr ""
 
 #: hypha/apply/activity/templates/messages/email/report_frequency.html:8
@@ -695,7 +651,7 @@ msgstr ""
 
 #: hypha/apply/activity/templates/messages/email/report_notify.html:6
 #, python-format
-msgid "A report is due for %(title)s on %(end_date)s."
+msgid "A report is due for %(source.title)s on %(report.end_date)s."
 msgstr ""
 
 #: hypha/apply/activity/templates/messages/email/report_notify.html:8
@@ -717,7 +673,8 @@ msgstr ""
 
 #: hypha/apply/activity/templates/messages/email/report_skipped.html:6
 #, python-format
-msgid " for %(title)s for period %(start_date)s to %(end_date)s."
+msgid ""
+" for %(source.title)s for period %(report.end_date)s to %(report.end_date)s."
 msgstr ""
 
 #: hypha/apply/activity/templates/messages/email/report_skipped.html:9
@@ -729,8 +686,8 @@ msgstr ""
 #: hypha/apply/activity/templates/messages/email/report_submitted.html:5
 #, python-format
 msgid ""
-"An %(ORG_SHORT_NAME)s staff member has submitted a report for %(title)s for "
-"period %(start_date)s to %(end_date)s."
+"An %(ORG_SHORT_NAME)s staff member has submitted a report for "
+"%(source.title)s for period %(report.end_date)s to %(report.end_date)s."
 msgstr ""
 
 #: hypha/apply/activity/templates/messages/email/report_submitted.html:7
@@ -754,13 +711,16 @@ msgstr ""
 
 #: hypha/apply/activity/templates/messages/email/sent_to_compliance.html:13
 #, python-format
-msgid "Please contact %(lead)s - %(email)s if you have any questions."
+msgid ""
+"Please contact %(source.lead)s - %(source.lead.email)s if you have any "
+"questions."
 msgstr ""
 
 #: hypha/apply/activity/templates/messages/email/transition.html:4
 #, python-format
 msgid ""
-"Your application has been progressed from %(old_status)s to %(new_status)s."
+"Your application has been progressed from %(old_phase.public_name)s to "
+"%(source.phase.public_name)s."
 msgstr ""
 
 #: hypha/apply/activity/templates/messages/email/vendor_setup_needed.html:5
@@ -782,7 +742,7 @@ msgstr ""
 
 #: hypha/apply/activity/templates/messages/email/vendor_updated.html:5
 #, python-format
-msgid "Contracting Information has been updated on %(title)s."
+msgid "Contracting Information has been updated on %(source.title)s."
 msgstr ""
 
 #: hypha/apply/api/v1/determination/utils.py:25
@@ -923,8 +883,7 @@ msgstr ""
 #: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:70
 #: hypha/apply/funds/templates/funds/applicationsubmission_simplified_detail.html:33
 #: hypha/apply/funds/templates/funds/includes/revision_diff_table.html:4
-#: hypha/apply/projects/models/payment.py:22 hypha/apply/projects/tables.py:21
-#: hypha/apply/projects/tables.py:81
+#: hypha/apply/projects/models/payment.py:21 hypha/apply/projects/tables.py:21
 #: hypha/apply/projects/templates/application_projects/includes/reports.html:63
 #: hypha/apply/projects/templates/application_projects/includes/reports.html:74
 msgid "Submitted"
@@ -967,14 +926,12 @@ msgstr ""
 #: hypha/apply/funds/templates/funds/admin/widgets/read_only.html:2
 #: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:81
 #: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:86
-#: hypha/apply/projects/templates/application_projects/includes/payment_requests.html:34
 #: hypha/apply/projects/templates/application_projects/includes/reports.html:81
 #: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:32
 #: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:56
 #: hypha/apply/projects/templates/application_projects/invoice_detail.html:57
 #: hypha/apply/projects/templates/application_projects/invoice_form.html:4
 #: hypha/apply/projects/templates/application_projects/paymentrequest_detail.html:57
-#: hypha/apply/projects/templates/application_projects/paymentrequest_form.html:4
 #: hypha/apply/projects/templates/application_projects/report_detail.html:59
 #: hypha/apply/projects/templates/application_projects/vendor_detail.html:23
 #: hypha/apply/review/templates/review/review_detail.html:41
@@ -1037,7 +994,6 @@ msgstr ""
 #: hypha/apply/funds/templates/funds/includes/round-block-listing.html:23
 #: hypha/apply/funds/templates/funds/includes/status-block.html:10
 #: hypha/apply/projects/templates/application_projects/includes/invoices.html:72
-#: hypha/apply/projects/templates/application_projects/includes/payment_requests.html:72
 #: hypha/apply/projects/templates/application_projects/includes/reports.html:78
 #: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:16
 #: hypha/apply/projects/templates/application_projects/includes/supporting_documents.html:39
@@ -1055,7 +1011,7 @@ msgid "Projects awaiting approval"
 msgstr ""
 
 #: hypha/apply/dashboard/templates/dashboard/dashboard.html:53
-msgid "Requests for payment requiring your attention"
+msgid "Requests for invoices requiring your attention"
 msgstr ""
 
 #: hypha/apply/dashboard/templates/dashboard/dashboard.html:77
@@ -1071,19 +1027,18 @@ msgstr ""
 #: hypha/apply/funds/templates/funds/submissions_overview.html:49
 #: hypha/apply/funds/templates/funds/submissions_overview.html:59
 #: hypha/apply/projects/templates/application_projects/overview.html:38
-#: hypha/apply/projects/templates/application_projects/overview.html:53
-#: hypha/apply/projects/templates/application_projects/overview.html:68
+#: hypha/apply/projects/templates/application_projects/overview.html:52
+#: hypha/apply/projects/templates/application_projects/overview.html:67
 msgid "Show all"
 msgstr ""
 
 #: hypha/apply/dashboard/templates/dashboard/dashboard.html:99
 #: hypha/apply/dashboard/templates/dashboard/finance_dashboard.html:21
-msgid "Active requests for payment"
+msgid "Active Invoices"
 msgstr ""
 
 #: hypha/apply/dashboard/templates/dashboard/finance_dashboard.html:25
-#: hypha/apply/projects/templates/application_projects/includes/payment_requests.html:48
-msgid "No active Payment Requests."
+msgid "No Active Invoices"
 msgstr ""
 
 #: hypha/apply/dashboard/templates/dashboard/includes/flagged.html:5
@@ -1567,9 +1522,8 @@ msgstr ""
 #: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:32
 #: hypha/apply/funds/templates/funds/submission_sealed.html:14
 #: hypha/apply/funds/templates/funds/submissions_by_round.html:12
-#: hypha/apply/projects/filters.py:28 hypha/apply/projects/filters.py:38
-#: hypha/apply/projects/filters.py:52 hypha/apply/projects/tables.py:49
-#: hypha/apply/projects/tables.py:90
+#: hypha/apply/projects/filters.py:28 hypha/apply/projects/filters.py:42
+#: hypha/apply/projects/tables.py:49
 #: hypha/apply/projects/templates/application_projects/project_admin_detail.html:104
 #: hypha/apply/projects/templates/application_projects/project_simplified_detail.html:19
 msgid "Lead"
@@ -1613,8 +1567,7 @@ msgid "Meta terms are hierarchical in nature."
 msgstr ""
 
 #: hypha/apply/funds/models/__init__.py:17 hypha/apply/funds/tables.py:74
-#: hypha/apply/projects/tables.py:48 hypha/apply/projects/tables.py:89
-#: hypha/apply/projects/tables.py:121
+#: hypha/apply/projects/tables.py:48 hypha/apply/projects/tables.py:80
 msgid "Fund"
 msgstr ""
 
@@ -1735,16 +1688,12 @@ msgstr ""
 
 #: hypha/apply/funds/tables.py:72
 #: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:27
-#: hypha/apply/projects/filters.py:27 hypha/apply/projects/filters.py:37
-#: hypha/apply/projects/filters.py:53 hypha/apply/projects/tables.py:120
+#: hypha/apply/projects/filters.py:27 hypha/apply/projects/filters.py:43
+#: hypha/apply/projects/tables.py:79
 #: hypha/apply/projects/templates/application_projects/includes/invoices.html:16
 #: hypha/apply/projects/templates/application_projects/includes/invoices.html:26
 #: hypha/apply/projects/templates/application_projects/includes/invoices.html:63
 #: hypha/apply/projects/templates/application_projects/includes/invoices.html:71
-#: hypha/apply/projects/templates/application_projects/includes/payment_requests.html:16
-#: hypha/apply/projects/templates/application_projects/includes/payment_requests.html:26
-#: hypha/apply/projects/templates/application_projects/includes/payment_requests.html:63
-#: hypha/apply/projects/templates/application_projects/includes/payment_requests.html:71
 #: hypha/apply/projects/templates/application_projects/invoice_confirm_delete.html:20
 #: hypha/apply/projects/templates/application_projects/invoice_detail.html:19
 #: hypha/apply/projects/templates/application_projects/paymentrequest_confirm_delete.html:21
@@ -1794,8 +1743,8 @@ msgstr ""
 
 #: hypha/apply/funds/tables.py:257 hypha/apply/funds/tables.py:322
 #: hypha/apply/funds/tables.py:414 hypha/apply/funds/tables.py:448
-#: hypha/apply/projects/filters.py:26 hypha/apply/projects/filters.py:36
-#: hypha/apply/projects/filters.py:51 hypha/public/home/models.py:125
+#: hypha/apply/projects/filters.py:26 hypha/apply/projects/filters.py:41
+#: hypha/public/home/models.py:125
 msgid "Funds"
 msgstr ""
 
@@ -1905,12 +1854,12 @@ msgstr ""
 #, python-format
 msgid ""
 "If you do not receive an e-mail within 15 minutes please check your\n"
-"spam folder and contact %(email)s for further assistance."
+"spam folder and contact %(ORG_EMAIL|urlize)s for further assistance."
 msgstr ""
 
 #: hypha/apply/funds/templates/funds/applicationrevision_list.html:3
 #, python-format
-msgid "Revisions for %(title)s"
+msgid "Revisions for %(submission.title)s"
 msgstr ""
 
 #: hypha/apply/funds/templates/funds/applicationrevision_list.html:8
@@ -1994,19 +1943,18 @@ msgstr ""
 
 #: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:64
 #, python-format
-msgid "Your %(stage)s application has been accepted."
+msgid "Your %(object.previous.stage)s application has been accepted."
 msgstr ""
 
 #: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:65
 #, python-format
-msgid "Start your %(stage)s application."
+msgid "Start your %(object.stage)s application"
 msgstr ""
 
 #: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:75
 #: hypha/apply/funds/templates/funds/includes/batch_delete_submission_form.html:14
 #: hypha/apply/funds/templates/funds/includes/delegated_form_base.html:34
 #: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:42
-#: hypha/apply/projects/templates/application_projects/includes/payment_requests.html:41
 #: hypha/apply/projects/templates/application_projects/invoice_detail.html:63
 #: hypha/apply/projects/templates/application_projects/paymentrequest_detail.html:63
 #: hypha/apply/review/templates/review/review_detail.html:33
@@ -2023,7 +1971,6 @@ msgid "View linked"
 msgstr ""
 
 #: hypha/apply/funds/templates/funds/applicationsubmission_form.html:7
-#: hypha/apply/projects/templates/application_projects/paymentrequest_form.html:8
 #: hypha/apply/projects/templates/application_projects/project_form.html:5
 #: hypha/apply/projects/templates/application_projects/project_form.html:10
 msgid "Editing"
@@ -2055,13 +2002,13 @@ msgstr ""
 #: hypha/apply/funds/templates/funds/email/confirmation.html:4
 #, python-format
 msgid ""
-"We appreciate your %(title)s application submission to the "
+"We appreciate your %(email_context.title)s application submission to the "
 "%(ORG_LONG_NAME)s. We will review and reply to your submission as quickly as "
 "possible.\n"
 "\n"
-"Our reply will have the next steps for your %(title)s application. You can "
-"find more information about our support options, review process and "
-"selection criteria on our website."
+"Our reply will have the next steps for your %(email_context.title)s "
+"application. You can find more information about our support options, review "
+"process and selection criteria on our website."
 msgstr ""
 
 #: hypha/apply/funds/templates/funds/email/confirmation.html:10
@@ -2160,10 +2107,8 @@ msgstr ""
 #: hypha/apply/funds/templates/funds/includes/update_meta_terms_form.html:4
 #: hypha/apply/funds/templates/funds/includes/update_partner_form.html:4
 #: hypha/apply/funds/templates/funds/includes/update_reviewer_form.html:4
-#: hypha/apply/projects/templates/application_projects/includes/payment_requests.html:92
 #: hypha/apply/projects/templates/application_projects/includes/paymentrequest_admin_detail.html:17
 #: hypha/apply/projects/templates/application_projects/invoice_admin_detail.html:29
-#: hypha/apply/projects/templates/application_projects/paymentrequest_admin_detail.html:23
 #: hypha/apply/projects/templates/application_projects/project_admin_detail.html:29
 msgid "Update"
 msgstr ""
@@ -2188,8 +2133,6 @@ msgstr ""
 
 #: hypha/apply/funds/templates/funds/includes/create_reminder_form.html:4
 #: hypha/apply/projects/templates/application_projects/invoice_form.html:4
-#: hypha/apply/projects/templates/application_projects/paymentrequest_form.html:4
-#: hypha/apply/projects/templates/application_projects/paymentrequest_form.html:8
 msgid "Create"
 msgstr ""
 
@@ -2213,10 +2156,8 @@ msgid ""
 msgstr ""
 
 #: hypha/apply/funds/templates/funds/includes/progress_form.html:5
-#: hypha/apply/projects/templates/application_projects/includes/payment_requests.html:85
 #: hypha/apply/projects/templates/application_projects/includes/paymentrequest_admin_detail.html:16
 #: hypha/apply/projects/templates/application_projects/invoice_admin_detail.html:28
-#: hypha/apply/projects/templates/application_projects/paymentrequest_admin_detail.html:22
 msgid "Current status"
 msgstr ""
 
@@ -2521,7 +2462,7 @@ msgstr ""
 
 #: hypha/apply/funds/templates/funds/submissions_search.html:8
 #, python-format
-msgid "There are %(count)s results for: %(search_term)s"
+msgid "There are %(object_list.count)s results for: %(search_term)s"
 msgstr ""
 
 #: hypha/apply/funds/templates/funds/tables/table.html:21
@@ -2826,40 +2767,29 @@ msgid ""
 "usages and try again!."
 msgstr ""
 
-#: hypha/apply/projects/filters.py:93
+#: hypha/apply/projects/filters.py:83
 msgid "Reporting Period"
 msgstr ""
 
-#: hypha/apply/projects/forms/payment.py:66
-#: hypha/apply/projects/forms/payment.py:100
+#: hypha/apply/projects/forms/payment.py:63
 msgid "You can only set a value when moving to the Paid status."
 msgstr ""
 
-#: hypha/apply/projects/forms/payment.py:113
-#, python-brace-format
-msgid "Requested Value ({currency})"
-msgstr ""
-
-#: hypha/apply/projects/forms/payment.py:126
-#: hypha/apply/projects/forms/payment.py:166
+#: hypha/apply/projects/forms/payment.py:86
 msgid "Date From must be before Date To"
 msgstr ""
 
-#: hypha/apply/projects/forms/payment.py:175
+#: hypha/apply/projects/forms/payment.py:95
 msgid ""
 "Files that are related to the invoice. They could be xls, microsoft office "
 "documents, open office documents, pdfs, txt files."
 msgstr ""
 
-#: hypha/apply/projects/forms/payment.py:198
-msgid "Receipts"
-msgstr ""
-
-#: hypha/apply/projects/forms/payment.py:227
+#: hypha/apply/projects/forms/payment.py:114
 msgid "Invoice File"
 msgstr ""
 
-#: hypha/apply/projects/forms/payment.py:278
+#: hypha/apply/projects/forms/payment.py:165
 msgid "File not found on submission"
 msgstr ""
 
@@ -2937,43 +2867,33 @@ msgstr ""
 msgid "Yes"
 msgstr ""
 
-#: hypha/apply/projects/models/payment.py:23
+#: hypha/apply/projects/models/payment.py:22
 msgid "Changes Requested"
 msgstr ""
 
-#: hypha/apply/projects/models/payment.py:24
+#: hypha/apply/projects/models/payment.py:23
 msgid "Under Review"
 msgstr ""
 
-#: hypha/apply/projects/models/payment.py:25
+#: hypha/apply/projects/models/payment.py:24
 msgid "Paid"
 msgstr ""
 
-#: hypha/apply/projects/models/payment.py:26
+#: hypha/apply/projects/models/payment.py:25
 msgid "Declined"
 msgstr ""
 
-#: hypha/apply/projects/models/payment.py:45
-#, python-brace-format
-msgid "Approval for {request} by {user}"
-msgstr ""
-
-#: hypha/apply/projects/models/payment.py:104
+#: hypha/apply/projects/models/payment.py:64
 msgid "Quantity Selected on an Invoice"
 msgstr ""
 
-#: hypha/apply/projects/models/payment.py:137
+#: hypha/apply/projects/models/payment.py:97
 msgid "Message"
 msgstr ""
 
-#: hypha/apply/projects/models/payment.py:147
+#: hypha/apply/projects/models/payment.py:107
 #, python-brace-format
 msgid "Invoice requested for {project}"
-msgstr ""
-
-#: hypha/apply/projects/models/payment.py:244
-#, python-brace-format
-msgid "Payment requested for {project}"
 msgstr ""
 
 #: hypha/apply/projects/models/project.py:51
@@ -3073,11 +2993,11 @@ msgstr ""
 msgid "Every {occurrence} weeks on {weekday}"
 msgstr ""
 
-#: hypha/apply/projects/tables.py:16 hypha/apply/projects/tables.py:76
+#: hypha/apply/projects/tables.py:16
 msgid "Invoice reference"
 msgstr ""
 
-#: hypha/apply/projects/tables.py:22 hypha/apply/projects/tables.py:82
+#: hypha/apply/projects/tables.py:22
 #, python-brace-format
 msgid "Value ({currency})"
 msgstr ""
@@ -3092,16 +3012,16 @@ msgstr ""
 msgid "Period End"
 msgstr ""
 
-#: hypha/apply/projects/tables.py:122
+#: hypha/apply/projects/tables.py:81
 #: hypha/apply/projects/templates/application_projects/includes/reports.html:5
 msgid "Reporting"
 msgstr ""
 
-#: hypha/apply/projects/tables.py:124
+#: hypha/apply/projects/tables.py:83
 msgid "End Date"
 msgstr ""
 
-#: hypha/apply/projects/tables.py:125
+#: hypha/apply/projects/tables.py:84
 #, python-brace-format
 msgid "Fund Allocation ({currency})"
 msgstr ""
@@ -3177,24 +3097,16 @@ msgstr ""
 #: hypha/apply/projects/templates/application_projects/includes/invoices.html:25
 #: hypha/apply/projects/templates/application_projects/includes/invoices.html:62
 #: hypha/apply/projects/templates/application_projects/includes/invoices.html:70
-#: hypha/apply/projects/templates/application_projects/includes/payment_requests.html:15
-#: hypha/apply/projects/templates/application_projects/includes/payment_requests.html:25
-#: hypha/apply/projects/templates/application_projects/includes/payment_requests.html:62
-#: hypha/apply/projects/templates/application_projects/includes/payment_requests.html:70
 msgid "Amount"
 msgstr ""
 
 #: hypha/apply/projects/templates/application_projects/includes/invoices.html:17
 #: hypha/apply/projects/templates/application_projects/includes/invoices.html:27
-#: hypha/apply/projects/templates/application_projects/includes/payment_requests.html:17
-#: hypha/apply/projects/templates/application_projects/includes/payment_requests.html:27
 msgid "From"
 msgstr ""
 
 #: hypha/apply/projects/templates/application_projects/includes/invoices.html:18
 #: hypha/apply/projects/templates/application_projects/includes/invoices.html:28
-#: hypha/apply/projects/templates/application_projects/includes/payment_requests.html:18
-#: hypha/apply/projects/templates/application_projects/includes/payment_requests.html:28
 msgid "To"
 msgstr ""
 
@@ -3203,28 +3115,12 @@ msgid "No active Invoices."
 msgstr ""
 
 #: hypha/apply/projects/templates/application_projects/includes/invoices.html:56
-#: hypha/apply/projects/templates/application_projects/includes/payment_requests.html:56
 msgid "Show rejected"
-msgstr ""
-
-#: hypha/apply/projects/templates/application_projects/includes/payment_requests.html:5
-#: hypha/apply/projects/templates/application_projects/overview.html:47
-#: hypha/apply/projects/templates/application_projects/payment_request_list.html:6
-msgid "Payment Requests"
-msgstr ""
-
-#: hypha/apply/projects/templates/application_projects/includes/payment_requests.html:8
-msgid "Add Request"
-msgstr ""
-
-#: hypha/apply/projects/templates/application_projects/includes/payment_requests.html:88
-msgid "Requested value"
 msgstr ""
 
 #: hypha/apply/projects/templates/application_projects/includes/paymentrequest_admin_detail.html:12
 #: hypha/apply/projects/templates/application_projects/includes/paymentrequest_admin_detail.html:15
 #: hypha/apply/projects/templates/application_projects/invoice_admin_detail.html:27
-#: hypha/apply/projects/templates/application_projects/paymentrequest_admin_detail.html:21
 msgid "Change status"
 msgstr ""
 
@@ -3382,7 +3278,6 @@ msgid "Cannot change from 'Paid' or 'Declined' state"
 msgstr ""
 
 #: hypha/apply/projects/templates/application_projects/invoice_admin_detail.html:23
-#: hypha/apply/projects/templates/application_projects/paymentrequest_admin_detail.html:17
 msgid "Change Status"
 msgstr ""
 
@@ -3442,7 +3337,6 @@ msgid ""
 msgstr ""
 
 #: hypha/apply/projects/templates/application_projects/invoice_form.html:28
-#: hypha/apply/projects/templates/application_projects/paymentrequest_form.html:28
 #: hypha/apply/projects/templates/application_projects/project_form.html:34
 #: hypha/apply/projects/templates/application_projects/report_form.html:45
 #: hypha/apply/projects/templates/application_projects/report_form.html:56
@@ -3472,24 +3366,18 @@ msgstr ""
 msgid "Track and explore recent projects"
 msgstr ""
 
-#: hypha/apply/projects/templates/application_projects/overview.html:62
+#: hypha/apply/projects/templates/application_projects/overview.html:46
+msgid "Project Invoices"
+msgstr ""
+
+#: hypha/apply/projects/templates/application_projects/overview.html:61
 #: hypha/apply/projects/templates/application_projects/report_list.html:6
 msgid "Reports"
-msgstr ""
-
-#: hypha/apply/projects/templates/application_projects/payment_request_list.html:14
-msgid "All Payment Requests"
-msgstr ""
-
-#: hypha/apply/projects/templates/application_projects/payment_request_list.html:25
-msgid "No Requests Available"
 msgstr ""
 
 #: hypha/apply/projects/templates/application_projects/paymentrequest_confirm_delete.html:5
 #: hypha/apply/projects/templates/application_projects/paymentrequest_detail.html:4
 #: hypha/apply/projects/templates/application_projects/paymentrequest_detail.html:11
-#: hypha/apply/projects/templates/application_projects/paymentrequest_form.html:4
-#: hypha/apply/projects/templates/application_projects/paymentrequest_form.html:8
 msgid "Payment Request"
 msgstr ""
 
@@ -4330,17 +4218,6 @@ msgstr ""
 msgid ""
 "If you do not complete the activation process within %(timeout_days)s days "
 "you can use the password reset form at"
-msgstr ""
-
-#: hypha/apply/users/templates/users/activation/email.txt:20
-#, python-format
-msgid ""
-"Kind Regards,\n"
-"The %(ORG_SHORT_NAME)s Team\n"
-"\n"
-"-- \n"
-"%(ORG_LONG_NAME)s\n"
-"%(root_url)s"
 msgstr ""
 
 #: hypha/apply/users/templates/users/activation/invalid.html:4
