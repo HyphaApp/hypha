@@ -2,8 +2,8 @@
 
 {% load i18n %}
 {% block content %}
-{% blocktrans %}An {{ ORG_SHORT_NAME }} staff member has updated your payment request for {{ source.title }} for period {{ payment_request.date_from }} to {{ payment_request.date_to }}.{% endblocktrans %}
-{% blocktrans %}It is now {{ payment_request.get_status_display }}.{% endblocktrans %}
+{% blocktrans with title=source.title date_from=payment_request.date_from date_to=payment_request.date_to %}An {{ ORG_SHORT_NAME }} staff member has updated your payment request for {{ title }} for period {{ date_from }} to {{ date_to }}.{% endblocktrans %}
+{% blocktrans with status=payment_request.get_status_display %}It is now {{ status }}.{% endblocktrans %}
 
 {% if has_changes_requested %}
 {% trans "The staff member left this comment" %}:

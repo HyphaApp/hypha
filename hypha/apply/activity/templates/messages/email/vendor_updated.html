@@ -2,7 +2,7 @@
 
 {% load i18n %}
 {% block content %}
-{% blocktrans %}Contracting Information has been updated on {{ source.title }}.{% endblocktrans %}
+{% blocktrans with title=source.title %}Contracting Information has been updated on {{ title }}.{% endblocktrans %}
 
 {% trans "Project" %}: {{ source.title }}
 {% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
