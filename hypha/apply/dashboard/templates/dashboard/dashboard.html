@@ -48,7 +48,7 @@
                 {% endif %}
             </a>
             {% endif %}
-            <a href="#active-payment-requests" class="stat-block__item">
+            <a href="#active-invoices" class="stat-block__item">
                 <p class="stat-block__number">{{ active_invoices.count }}</p>
                 <p class="stat-block__text">{% trans "Requests for invoices requiring your attention" %}</p>
                 {% if active_invoices.count %}
@@ -95,7 +95,7 @@
     {% endif %}
 
     {% if active_invoices.count %}
-    <div id="active-payment-requests" class="wrapper wrapper--bottom-space">
+    <div id="active-invoices" class="wrapper wrapper--bottom-space">
         <h4 class="heading heading--normal">{% trans "Active Invoices" %}</h4>
         {% render_table active_invoices.table %}
     </div>

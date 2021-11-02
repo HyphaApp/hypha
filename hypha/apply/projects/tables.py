@@ -41,7 +41,7 @@ class InvoiceDashboardTable(BaseInvoiceTable):
         model = Invoice
         orderable = False
         order_by = ['-requested_at']
-        attrs = {'class': 'payment-requests-table'}
+        attrs = {'class': 'invoices-table'}
 
 
 class InvoiceListTable(BaseInvoiceTable):
@@ -60,7 +60,7 @@ class InvoiceListTable(BaseInvoiceTable):
         model = Invoice
         orderable = True
         order_by = ['-requested_at']
-        attrs = {'class': 'payment-requests-table'}
+        attrs = {'class': 'invoices-table'}
 
     def order_value(self, qs, is_descending):
         direction = '-' if is_descending else ''

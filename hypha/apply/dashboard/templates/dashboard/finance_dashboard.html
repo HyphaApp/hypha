@@ -17,7 +17,7 @@
     </div>
 </div>
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
-    <div id="active-payment-requests" class="wrapper wrapper--bottom-space">
+    <div id="active-invoices" class="wrapper wrapper--bottom-space">
         <h4 class="heading heading--normal">{% trans "Active Invoices" %}</h4>
         {% if active_invoices.count %}
             {% render_table active_invoices.table %}
