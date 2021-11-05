@@ -3,7 +3,7 @@
 {% load i18n %}
 {% block content %}
 
-{% blocktrans %}An {{ ORG_SHORT_NAME }} staff member has changed the reporting frequency of {{ source.title }}.{% endblocktrans %}
+{% blocktrans with title=source.title %}An {{ ORG_SHORT_NAME }} staff member has changed the reporting frequency of {{ title }}.{% endblocktrans %}
 
 {% trans "The new schedule is" %}: {{ config.get_frequency_display }}
 

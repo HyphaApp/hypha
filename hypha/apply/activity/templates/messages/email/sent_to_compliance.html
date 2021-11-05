@@ -10,5 +10,5 @@
 {% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{% url 'apply:projects:simplified' pk=source.pk %}
 {% trans "Original Submission" %}: {{ request.scheme }}://{{ request.get_host }}{% url 'apply:submissions:simplified' pk=source.submission.pk %}
 
-{% blocktrans %}Please contact {{ source.lead }} - {{ source.lead.email }} if you have any questions.{% endblocktrans %}
+{% blocktrans with lead=source.lead email=source.lead.email %}Please contact {{ lead }} - {{ email }} if you have any questions.{% endblocktrans %}
 {% endblock %}

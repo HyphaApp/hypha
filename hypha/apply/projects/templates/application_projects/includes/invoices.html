@@ -30,15 +30,15 @@
                         <a class="data-block__action-link" href="{{ invoice.get_absolute_url }}">View</a>
                         {% can_edit invoice user as user_can_edit_request %}
                         {% if user_can_edit_request %}
-                        <a class="data-block__action-link" href="{% url "apply:projects:invoices:edit" pk=invoice.pk %}">
-                            {% trans "Edit" %}
+                        <a class="data-block__action-link" href="{% url "apply:projects:invoice-edit" pk=invoice.project.pk invoice_pk=invoice.pk %}">
+                            Edit
                         </a>
                         {% endif %}
 
                         {% can_delete invoice user as user_can_delete_request %}
                         {% if user_can_delete_request %}
-                        <a class="data-block__action-link" href="{% url 'apply:projects:invoices:delete' pk=invoice.pk %}">
-                            {% trans "Delete" %}
+                        <a class="data-block__action-link" href="{% url 'apply:projects:invoice-delete' pk=invoice.project.pk invoice_pk=invoice.pk %}">
+                            Delete
                         </a>
                         {% endif %}
                     </td>
