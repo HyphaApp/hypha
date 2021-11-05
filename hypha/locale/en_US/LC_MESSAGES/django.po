@@ -82,3 +82,6 @@ msgstr "Request with board review"
 
 msgid "Request with external review (compact)"
 msgstr "Request with board review (compact)"
+
+msgid "Your application has been progressed from %(old_status)s to %(new_status)s."
+msgstr "Your application has progressed from %(old_status)s to %(new_status)s."
