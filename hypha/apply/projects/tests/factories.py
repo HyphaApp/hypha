@@ -12,7 +12,7 @@ from hypha.apply.stream_forms.testing.factories import (
 )
 from hypha.apply.users.tests.factories import StaffFactory, UserFactory
 
-from ..models.payment import Invoice, PaymentReceipt, PaymentRequest, SupportingDocument
+from ..models.payment import Invoice, SupportingDocument
 from ..models.project import (
     COMPLETE,
     IN_PROGRESS,
@@ -126,20 +126,6 @@ class PacketFileFactory(factory.django.DjangoModelFactory):
         model = PacketFile
 
 
-class PaymentRequestFactory(factory.django.DjangoModelFactory):
-    project = factory.SubFactory(ProjectFactory)
-    by = factory.SubFactory(UserFactory)
-    requested_value = factory.Faker('pydecimal', min_value=1, max_value=10000000, right_digits=2)
-
-    date_from = factory.Faker('date_time').evaluate(None, None, {'tzinfo': pytz.utc, 'locale': None})
-    date_to = factory.Faker('date_time').evaluate(None, None, {'tzinfo': pytz.utc, 'locale': None})
-
-    invoice = factory.django.FileField()
-
-    class Meta:
-        model = PaymentRequest
-
-
 class InvoiceFactory(factory.django.DjangoModelFactory):
     project = factory.SubFactory(ProjectFactory)
     by = factory.SubFactory(UserFactory)
@@ -152,15 +138,6 @@ class InvoiceFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Invoice
-
-
-class PaymentReceiptFactory(factory.django.DjangoModelFactory):
-    payment_request = factory.SubFactory(PaymentRequestFactory)
-
-    file = factory.django.FileField()
-
-    class Meta:
-        model = PaymentReceipt
 
 
 class SupportingDocumentFactory(factory.django.DjangoModelFactory):

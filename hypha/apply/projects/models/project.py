@@ -84,12 +84,12 @@ class ProjectQuerySet(models.QuerySet):
 
     def with_amount_paid(self):
         return self.annotate(
-            amount_paid=Coalesce(Sum('payment_requests__paid_value'), Value(0)),
+            amount_paid=Coalesce(Sum('invoices__paid_value'), Value(0)),
         )
 
     def with_last_payment(self):
         return self.annotate(
-            last_payment_request=Max('payment_requests__requested_at'),
+            last_payment_request=Max('invoices__requested_at'),
         )
 
     def with_outstanding_reports(self):
@@ -242,10 +242,10 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         )
 
     def paid_value(self):
-        return self.payment_requests.paid_value()
+        return self.invoices.paid_value()
 
     def unpaid_value(self):
-        return self.payment_requests.unpaid_value()
+        return self.invoices.unpaid_value()
 
     def clean(self):
         if self.proposed_start is None:

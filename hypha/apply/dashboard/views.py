@@ -15,11 +15,8 @@ from hypha.apply.funds.tables import (
     review_filter_for_user,
 )
 from hypha.apply.projects.filters import ProjectListFilter
-from hypha.apply.projects.models import PaymentRequest, Project
-from hypha.apply.projects.tables import (
-    PaymentRequestsDashboardTable,
-    ProjectsDashboardTable,
-)
+from hypha.apply.projects.models import Invoice, Project
+from hypha.apply.projects.tables import InvoiceDashboardTable, ProjectsDashboardTable
 from hypha.apply.utils.views import ViewDispatcher
 
 
@@ -65,7 +62,7 @@ class AdminDashboardView(MyFlaggedMixin, TemplateView):
         submissions = ApplicationSubmission.objects.all().for_table(self.request.user)
 
         context.update({
-            'active_payment_requests': self.active_payment_requests(),
+            'active_invoices': self.active_invoices(),
             'awaiting_reviews': self.awaiting_reviews(submissions),
             'my_reviewed': self.my_reviewed(submissions),
             'projects': self.projects(),
@@ -88,14 +85,14 @@ class AdminDashboardView(MyFlaggedMixin, TemplateView):
             'table': SummarySubmissionsTableWithRole(submissions[:limit], prefix='my-review-'),
         }
 
-    def active_payment_requests(self):
-        payment_requests = PaymentRequest.objects.filter(
+    def active_invoices(self):
+        invoices = Invoice.objects.filter(
             project__lead=self.request.user,
         ).in_progress()
 
         return {
-            'count': payment_requests.count(),
-            'table': PaymentRequestsDashboardTable(payment_requests),
+            'count': invoices.count(),
+            'table': InvoiceDashboardTable(invoices),
         }
 
     def projects(self):
@@ -158,17 +155,17 @@ class FinanceDashboardView(MyFlaggedMixin, TemplateView):
         context = super().get_context_data(**kwargs)
 
         context.update({
-            'active_payment_requests': self.active_payment_requests(),
+            'active_invoices': self.active_invoices(),
         })
 
         return context
 
-    def active_payment_requests(self):
-        payment_requests = PaymentRequest.objects.in_progress()
+    def active_invoices(self):
+        invoices = Invoice.objects.in_progress()
 
         return {
-            'count': payment_requests.count(),
-            'table': PaymentRequestsDashboardTable(payment_requests),
+            'count': invoices.count(),
+            'table': InvoiceDashboardTable(invoices),
         }
 
 

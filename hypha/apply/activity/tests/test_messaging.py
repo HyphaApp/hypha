@@ -13,7 +13,7 @@ from hypha.apply.funds.tests.factories import (
     AssignedReviewersFactory,
     AssignedWithRoleReviewersFactory,
 )
-from hypha.apply.projects.tests.factories import PaymentRequestFactory, ProjectFactory
+from hypha.apply.projects.tests.factories import InvoiceFactory, ProjectFactory
 from hypha.apply.review.tests.factories import ReviewFactory
 from hypha.apply.users.tests.factories import (
     ApplicantFactory,
@@ -681,19 +681,19 @@ class TestAdaptersForProject(AdapterMixin, TestCase):
         SLACK_DESTINATION_ROOM=target_room,
     )
     @responses.activate
-    def test_slack_applicant_update_payment_request(self):
+    def test_slack_applicant_update_invoice(self):
         responses.add(responses.POST, self.target_url, status=200, body='OK')
 
         project = self.source_factory()
-        payment_request = PaymentRequestFactory(project=project)
+        invoice = InvoiceFactory(project=project)
         applicant = ApplicantFactory()
 
         self.adapter_process(
-            MESSAGES.UPDATE_PAYMENT_REQUEST,
+            MESSAGES.UPDATE_INVOICE,
             adapter=self.slack(),
             user=applicant,
             source=project,
-            related=payment_request,
+            related=invoice,
         )
 
         self.assertEqual(len(responses.calls), 1)
@@ -707,35 +707,35 @@ class TestAdaptersForProject(AdapterMixin, TestCase):
         SLACK_DESTINATION_ROOM=target_room,
     )
     @responses.activate
-    def test_slack_staff_update_payment_request(self):
+    def test_slack_staff_update_invoice(self):
         responses.add(responses.POST, self.target_url, status=200, body='OK')
 
         project = self.source_factory()
-        payment_request = PaymentRequestFactory(project=project)
+        invoice = InvoiceFactory(project=project)
         staff = StaffFactory()
 
         self.adapter_process(
-            MESSAGES.UPDATE_PAYMENT_REQUEST,
+            MESSAGES.UPDATE_INVOICE,
             adapter=self.slack(),
             user=staff,
             source=project,
-            related=payment_request,
+            related=invoice,
         )
 
         self.assertEqual(len(responses.calls), 1)
 
     @override_settings(SEND_MESSAGES=True)
-    def test_email_staff_update_payment_request(self):
+    def test_email_staff_update_invoice(self):
         project = self.source_factory()
-        payment_request = PaymentRequestFactory(project=project)
+        invoice = InvoiceFactory(project=project)
         staff = StaffFactory()
 
         self.adapter_process(
-            MESSAGES.UPDATE_PAYMENT_REQUEST,
+            MESSAGES.UPDATE_INVOICE,
             adapter=EmailAdapter(),
             user=staff,
             source=project,
-            related=payment_request,
+            related=invoice,
         )
 
         self.assertEqual(len(mail.outbox), 1)

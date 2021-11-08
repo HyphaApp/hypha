@@ -1,11 +1,4 @@
-from .payment import (
-    Invoice,
-    InvoiceDeliverable,
-    PaymentApproval,
-    PaymentReceipt,
-    PaymentRequest,
-    SupportingDocument,
-)
+from .payment import Invoice, InvoiceDeliverable, SupportingDocument
 from .project import (
     Approval,
     Contract,
@@ -27,9 +20,6 @@ __all__ = [
     'Contract',
     'PacketFile',
     'DocumentCategory',
-    'PaymentApproval',
-    'PaymentReceipt',
-    'PaymentRequest',
     'Report',
     'ReportVersion',
     'ReportPrivateFiles',

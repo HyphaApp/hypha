@@ -6,18 +6,18 @@ register = template.Library()
 
 
 @register.simple_tag
-def can_change_status(payment_request, user):
-    return payment_request.can_user_change_status(user)
+def can_change_status(invoice, user):
+    return invoice.can_user_change_status(user)
 
 
 @register.simple_tag
-def can_delete(payment_request, user):
-    return payment_request.can_user_delete(user)
+def can_delete(invoice, user):
+    return invoice.can_user_delete(user)
 
 
 @register.simple_tag
-def can_edit(payment_request, user):
-    return payment_request.can_user_edit(user)
+def can_edit(invoice, user):
+    return invoice.can_user_edit(user)
 
 
 @register.simple_tag
