@@ -1,6 +1,6 @@
 {% extends "base-apply.html" %}
 
-{% load i18n contract_tools static wagtailcore_tags %}
+{% load i18n contract_tools static wagtailcore_tags approval_tools %}
 
 {% block title %}{{ object.title }}{% endblock %}
 
@@ -151,6 +151,11 @@
 
                     {% if request.user.is_apply_staff %}
                     {% block admin_actions %}{% endblock %}
+                    {% endif %}
+
+                    {% user_can_edit_project object request.user as editable %}
+                    {% if editable and settings.application_projects.ProjectSettings.vendor_setup_required and not project.vendor.user_has_updated_details %}
+                        <a class="button button--bottom-space button--primary button--full-width" href="{% url 'apply:projects:vendor' pk=project.pk %}">{% trans "Fill in Contracting Info" %}</a>
                     {% endif %}
 
                     {% user_can_upload_contract object request.user as can_upload_contract %}
