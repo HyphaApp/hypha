@@ -11,7 +11,7 @@ from hypha.apply.projects.models.payment import (
     UNDER_REVIEW,
 )
 from hypha.apply.projects.models.project import COMMITTED
-from hypha.apply.projects.tests.factories import PaymentRequestFactory, ProjectFactory
+from hypha.apply.projects.tests.factories import InvoiceFactory, ProjectFactory
 from hypha.apply.review.tests.factories import ReviewFactory, ReviewOpinionFactory
 from hypha.apply.users.groups import APPROVER_GROUP_NAME
 from hypha.apply.users.tests.factories import (
@@ -95,41 +95,41 @@ class TestStaffDashboard(BaseViewTestCase):
         self.assertContains(response, "Nice! You're all caught up.")
         self.assertEquals(response.context['awaiting_reviews']['count'], 0)
 
-    def test_active_payment_requests_with_no_project(self):
+    def test_active_invoices_with_no_project(self):
         response = self.get_page()
-        self.assertNotContains(response, "Active requests for payment")
+        self.assertNotContains(response, "Active Invoices")
 
-    def test_doesnt_show_active_payment_requests_with_none(self):
+    def test_doesnt_show_active_invoices_with_none(self):
         ProjectFactory(lead=self.user)
 
         response = self.get_page()
-        self.assertNotContains(response, "Active requests for payment")
+        self.assertNotContains(response, "Active Invoices")
 
-    def test_doest_show_active_payment_requests_when_paid_or_declined(self):
+    def test_doest_show_active_invoices_when_paid_or_declined(self):
         project = ProjectFactory(lead=self.user)
-        PaymentRequestFactory(project=project, status=PAID)
-        PaymentRequestFactory(project=project, status=DECLINED)
+        InvoiceFactory(project=project, status=PAID)
+        InvoiceFactory(project=project, status=DECLINED)
 
         response = self.get_page()
-        self.assertNotContains(response, "Active requests for payment")
+        self.assertNotContains(response, "Active Invoices")
 
-    def test_active_payment_requests_with_payment_requests_in_correct_state(self):
+    def test_active_invoices_with_invoices_in_correct_state(self):
         project = ProjectFactory(lead=self.user)
-        PaymentRequestFactory(project=project, status=SUBMITTED)
-        PaymentRequestFactory(project=project, status=CHANGES_REQUESTED)
-        PaymentRequestFactory(project=project, status=UNDER_REVIEW)
+        InvoiceFactory(project=project, status=SUBMITTED)
+        InvoiceFactory(project=project, status=CHANGES_REQUESTED)
+        InvoiceFactory(project=project, status=UNDER_REVIEW)
 
         response = self.get_page()
-        self.assertContains(response, "Active requests for payment")
+        self.assertContains(response, "Active Invoices")
 
-    def test_doesnt_show_active_payment_requests_when_not_mine(self):
+    def test_doesnt_show_active_invoices_when_not_mine(self):
         project = ProjectFactory()
-        PaymentRequestFactory(project=project, status=SUBMITTED)
-        PaymentRequestFactory(project=project, status=CHANGES_REQUESTED)
-        PaymentRequestFactory(project=project, status=UNDER_REVIEW)
+        InvoiceFactory(project=project, status=SUBMITTED)
+        InvoiceFactory(project=project, status=CHANGES_REQUESTED)
+        InvoiceFactory(project=project, status=UNDER_REVIEW)
 
         response = self.get_page()
-        self.assertNotContains(response, "Active requests for payment")
+        self.assertNotContains(response, "Active Invoices")
 
     def test_non_project_approver_cannot_see_projects_awaiting_review_stats_or_table(self):
         ProjectFactory(is_locked=True, status=COMMITTED)

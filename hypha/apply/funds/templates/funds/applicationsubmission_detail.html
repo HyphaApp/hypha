@@ -81,11 +81,6 @@
                                     {% trans "Edit" %}
                                     <svg class="icon icon--pen"><use xlink:href="#pen"></use></svg>
                                 </a>
-                            {% else %}
-                                <span class="link link--edit-submission">
-                                    {% trans "Edit" %}
-                                    <svg class="icon icon--padlock"><use xlink:href="#padlock"></use></svg>
-                                </span>
                             {% endif %}
                         </div>
                     </header>
@@ -100,12 +95,12 @@
                     {% include "funds/includes/generic_primary_actions.html" %}
                 {% endblock %}
 
-                {% block flags %}
-                {% endblock %}
-
                 {% if object.project and PROJECTS_ENABLED %}
                     {% include 'funds/includes/project_block.html' %}
                 {% endif %}
+
+                {% block screening_status %}
+                {% endblock %}
 
                 {% block determination %}
                     {% if object.determinations.submitted.count %}
@@ -113,16 +108,16 @@
                     {% endif %}
                 {% endblock %}
 
-                {% block screening_status %}
+                {% block reviews %}
                 {% endblock %}
 
-                {% block reminders %}
+                {% block flags %}
                 {% endblock %}
 
                 {% block meta_terms %}
                 {% endblock %}
 
-                {% block reviews %}
+                {% block reminders %}
                 {% endblock %}
 
                 {% block related %}

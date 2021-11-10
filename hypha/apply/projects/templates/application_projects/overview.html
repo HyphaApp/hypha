@@ -40,17 +40,16 @@
 
     </div>
     {% endif %}
-
-    {% if payment_requests.table.data %}
+    {% if invoices.table.data %}
     <div class="wrapper wrapper--bottom-space">
 
-        {% trans "Payment Requests" as heading %}
-        {% include "funds/includes/table_filter_and_search.html" with filter=payment_requests.filterset filter_action=payment_requests.url search_term=search_term search_placeholder=heading search_action=payment_requests.url use_search=True use_batch_actions=False heading=heading %}
+        {% trans "Project Invoices" as heading %}
+        {% include "funds/includes/table_filter_and_search.html" with filter=invoices.filterset filter_action=invoices.url heading=heading filter_classes="filters--dates" %}
 
-        {% render_table payment_requests.table %}
+        {% render_table invoices.table %}
 
         <div class="all-submissions-table__more">
-            <a href="{{ payment_requests.url }}">{% trans "Show all" %}</a>
+            <a href="{{ invoices.url }}">{% trans "Show all" %}</a>
         </div>
 
     </div>

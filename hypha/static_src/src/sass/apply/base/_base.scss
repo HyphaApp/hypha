@@ -64,6 +64,15 @@ ol {
     list-style: none;
 }
 
+details > summary {
+    cursor: pointer;
+    margin-bottom:  10px;
+
+    &:focus {
+        outline:  none;
+    }
+}
+
 .is-invisible,
 %is-invisible {
     z-index: -1;

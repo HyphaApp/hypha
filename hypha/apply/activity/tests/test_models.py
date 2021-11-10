@@ -2,7 +2,7 @@ from django.test import TestCase
 
 from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
 from hypha.apply.projects.tests.factories import (
-    PaymentRequestFactory,
+    InvoiceFactory,
     ProjectFactory,
     ReportFactory,
 )
@@ -31,8 +31,8 @@ class TestActivityModel(TestCase):
         self.assertEqual(other, activity.source)
         self.assertTrue(str(activity))
 
-    def test_can_save_related_paymentRequest(self):
-        other = PaymentRequestFactory()
+    def test_can_save_related_invoice(self):
+        other = InvoiceFactory()
         activity = ActivityFactory(related_object=other)
         self.assertEqual(other, activity.related_object)
 
