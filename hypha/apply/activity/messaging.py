@@ -160,6 +160,11 @@ class AdapterBase:
         recipients = self.recipients(message_type, source=source, related=related, user=user, **kwargs)
         self.process_send(message_type, recipients, [event], request, user, source, related=related, **kwargs)
 
+    def should_send(self, message_type, *events, **kwargs):
+        if settings.SEND_MESSAGE_TYPES != 'ALL' and message_type.name not in settings.SEND_MESSAGE_TYPES:
+            return False
+        return settings.SEND_MESSAGES or self.always_send
+
     def process_send(self, message_type, recipients, events, request, user, source, sources=list(), related=None, **kwargs):
         try:
             # If this was a batch action we want to pull out the submission
@@ -185,14 +190,14 @@ class AdapterBase:
         for recipient in recipients:
             message_logs = self.create_logs(message, recipient, *events)
 
-            if settings.SEND_MESSAGES or self.always_send:
+            if self.should_send(message_type, *events):
                 status = self.send_message(message, recipient=recipient, logs=message_logs, **kwargs)
             else:
-                status = 'Message not sent as SEND_MESSAGES==FALSE'
+                status = 'Message not sent'
 
             message_logs.update_status(status)
 
-            if not settings.SEND_MESSAGES:
+            if not self.should_send(message_type, *events):
                 if recipient:
                     debug_message = '{} [to: {}]: {}'.format(self.adapter_type, recipient, message)
                 else:
