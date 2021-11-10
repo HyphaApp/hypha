@@ -157,7 +157,11 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         related_query_name='project',
     )
     created_at = models.DateTimeField(auto_now_add=True)
-
+    external_projectid = models.CharField(
+        max_length=30,
+        blank=True,
+        help_text='ID of this project at integrated payment service.'
+    )
     sent_to_compliance_at = models.DateTimeField(null=True)
 
     objects = ProjectQuerySet.as_manager()

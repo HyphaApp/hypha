@@ -3,8 +3,8 @@ dimensions_fields_mapping = {
         'ITEMID',
         'ITEMNAME',
         'ITEMDESC',
-        'QUANTITY',
+        'QTY_REMAINING',
         'UNIT',
-        'DEPARTMENTID',
+        'PRICE',
     ],
 }
