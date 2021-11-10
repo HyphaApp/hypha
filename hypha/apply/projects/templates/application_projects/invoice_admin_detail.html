@@ -20,13 +20,13 @@
         class="button button--bottom-space button--primary button--full-width{% if not user_can_change_status %} button--tooltip-disabled{% endif %}"
         href="#"
     >
-        {% trans "Change Status" %}
+        {% trans "Update Invoice Status" %}
     </a>
     {% if user_can_change_status %}
     <div class="modal" id="change-status">
-        <h4 class="modal__header-bar">{% trans "Change status" %}</h4>
+        <h4 class="modal__header-bar">{% trans "Update Invoice status" %}</h4>
         <p>{% trans "Current status" %}: {{ object.get_status_display }}</p>
-        {% trans "Update" as update %}
+        {% trans "Update Status" as update %}
         {% include 'funds/includes/delegated_form_base.html' with form=change_invoice_status value=update %}
     </div>
     {% endif %}
