@@ -1,8 +1,9 @@
 from django.conf import settings
+
 from .sageintacctsdk import SageIntacctSDK
 
 
-def fetch_deliverable(program_project_id=''):
+def fetch_deliverables(program_project_id=''):
     if not program_project_id:
         return []
     formatted_filter = {

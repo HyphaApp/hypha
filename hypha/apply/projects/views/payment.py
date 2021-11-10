@@ -21,6 +21,7 @@ from ..forms import ChangeInvoiceStatusForm, CreateInvoiceForm, EditInvoiceForm
 from ..models.payment import INVOICE_TRANISTION_TO_RESUBMITTED, Invoice
 from ..models.project import Project
 from ..tables import InvoiceListTable
+from ..utils import fetch_and_save_deliverables
 
 
 @method_decorator(login_required, name='dispatch')
@@ -113,8 +114,12 @@ class InvoiceAdminView(InvoiceAccessMixin, DelegateableView, DetailView):
     template_name_suffix = '_admin_detail'
 
     def get_context_data(self, **kwargs):
-        object = self.get_object()
-        deliverables = object.project.deliverables.all()
+        invoice = self.get_object()
+        project = invoice.project
+        external_projectid = project.external_projectid
+        if external_projectid:
+            deliverables = fetch_and_save_deliverables(project.id, external_projectid)
+        deliverables = project.deliverables.all()
         return super().get_context_data(
             **kwargs,
             deliverables=deliverables
