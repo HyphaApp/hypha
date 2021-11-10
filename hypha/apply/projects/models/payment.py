@@ -1,4 +1,5 @@
 import decimal
+import os
 
 from django.conf import settings
 from django.core.validators import MinValueValidator
@@ -159,6 +160,10 @@ class Invoice(models.Model):
     def deliverables_total_amount(self):
         return self.deliverables.all().aggregate(total=Sum(F('deliverable__unit_price') * F('quantity'), output_field=FloatField()))
 
+    @property
+    def filename(self):
+        return os.path.basename(self.document.name)
+
 
 class SupportingDocument(models.Model):
     document = models.FileField(
@@ -172,3 +177,7 @@ class SupportingDocument(models.Model):
 
     def __str__(self):
         return self.invoice.name + ' -> ' + self.document.name
+
+    @property
+    def filename(self):
+        return os.path.basename(self.document.name)

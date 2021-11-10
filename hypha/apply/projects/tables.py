@@ -33,7 +33,6 @@ class InvoiceDashboardTable(BaseInvoiceTable):
         fields = [
             'requested_at',
             'project',
-            'value',
             'status',
             'date_from',
             'date_to',
