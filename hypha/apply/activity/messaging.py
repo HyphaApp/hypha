@@ -248,7 +248,7 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.REQUEST_PROJECT_CHANGE: _('Requested changes for acceptance: "{comment}"'),
         MESSAGES.UPLOAD_CONTRACT: _('Uploaded a {contract.state} contract'),
         MESSAGES.APPROVE_CONTRACT: _('Approved contract'),
-        MESSAGES.UPDATE_INVOICE_STATUS: _('Updated Invoice status to: {invoice.status_display}'),
+        MESSAGES.UPDATE_INVOICE_STATUS: 'handle_update_invoice_status',
         MESSAGES.CREATE_INVOICE: _('Invoice created'),
         MESSAGES.SUBMIT_REPORT: _('Submitted a report'),
         MESSAGES.SKIPPED_REPORT: 'handle_skipped_report',
