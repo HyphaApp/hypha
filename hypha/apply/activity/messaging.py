@@ -161,9 +161,11 @@ class AdapterBase:
         self.process_send(message_type, recipients, [event], request, user, source, related=related, **kwargs)
 
     def should_send(self, message_type, *events, **kwargs):
+        if self.always_send:
+            return True
         if settings.SEND_MESSAGE_TYPES != 'ALL' and message_type.name not in settings.SEND_MESSAGE_TYPES:
             return False
-        return settings.SEND_MESSAGES or self.always_send
+        return settings.SEND_MESSAGES
 
     def process_send(self, message_type, recipients, events, request, user, source, sources=list(), related=None, **kwargs):
         try:
