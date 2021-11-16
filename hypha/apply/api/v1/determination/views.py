@@ -239,15 +239,7 @@ class SubmissionDeterminationViewSet(
             )
 
             if submission.accepted_for_funding and settings.PROJECTS_AUTO_CREATE:
-                project = Project.create_from_submission(submission)
-                if project:
-                    messenger(
-                        MESSAGES.CREATED_PROJECT,
-                        request=self.request,
-                        user=self.request.user,
-                        source=project,
-                        related=project.submission,
-                    )
+                Project.create_from_submission(submission)
 
         messenger(
             MESSAGES.DETERMINATION_OUTCOME,

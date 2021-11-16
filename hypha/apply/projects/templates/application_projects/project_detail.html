@@ -103,9 +103,8 @@
                     </div>
                 </div>
 
-                <a class="link--reveal-proposal js-toggle-propsoal-info" href="#">{% trans "Show more" %}</a>
-
-                <div class="rich-text--hidden js-rich-text-hidden">
+                <details>
+                    <summary>{% trans "Show more" %}</summary>
                     <div>
                         <h5>{% trans "Address" %}</h5>
                         <p>{{ object.vendor.get_address_display|default:"-"}}</p>
@@ -120,7 +119,7 @@
                         <h5>{% trans "Value" %}</h5>
                         <p>{{ CURRENCY_SYMBOL }}{{ object.value|default:"-" }}</p>
                     </div>
-                </div>
+                </details>
 
                 {% if object.can_request_funding %}
                 <div class="wrapper wrapper--outer-space-large">
@@ -273,7 +272,6 @@
 {% block extra_js %}
     <script src="{% static 'js/apply/tabs.js' %}"></script>
     <script src="{% static 'js/apply/toggle-payment-block.js' %}"></script>
-    <script src="{% static 'js/apply/toggle-proposal-info.js' %}"></script>
     <script src="{% static 'js/apply/past-reports-pagination.js' %}"></script>
     <script src="{% static 'js/apply/report-calculator.js' %}"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.4.1/jquery.fancybox.min.js"></script>
