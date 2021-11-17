@@ -116,12 +116,8 @@ class Invoice(models.Model):
         return self.get_status_display()
 
     def can_user_delete(self, user):
-        if user.is_applicant:
-            if self.status in (SUBMITTED, CHANGES_REQUESTED):
-                return True
-
-        if user.is_apply_staff:
-            if self.status in {SUBMITTED}:
+        if user.is_applicant or user.is_apply_staff or user.is_finance or user.is_finance_level2 or user.is_contracting:
+            if self.status in (SUBMITTED):
                 return True
 
         return False
