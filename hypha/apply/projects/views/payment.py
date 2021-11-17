@@ -58,12 +58,11 @@ class ChangeInvoiceStatusView(DelegatedViewMixin, InvoiceAccessMixin, UpdateView
         response = super().form_valid(form)
         if form.cleaned_data['comment']:
             invoice_status_change = _(f'<p>Invoice status updated to : {self.object.status_display}. </p>')
-            sent_message = _(f'<p> {self.request.user} left this comment. <p>')
             comment = '<p>{}</p>'.format(form.cleaned_data['comment'])
 
-            message = invoice_status_change + sent_message + comment
+            message = invoice_status_change + comment
 
-            activity = Activity.actions.create(
+            Activity.objects.create(
                 user=self.request.user,
                 type=COMMENT,
                 source=self.object.project,
@@ -71,14 +70,6 @@ class ChangeInvoiceStatusView(DelegatedViewMixin, InvoiceAccessMixin, UpdateView
                 message=message,
                 visibility=ALL,
                 related_object=self.object,
-            )
-
-            messenger(
-                MESSAGES.COMMENT,
-                request=self.request,
-                user=self.request.user,
-                source=self.object.project,
-                related=activity,
             )
 
         messenger(

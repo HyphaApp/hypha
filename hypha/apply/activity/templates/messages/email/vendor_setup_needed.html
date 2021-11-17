@@ -8,5 +8,5 @@
 
 {% trans "Project" %}: {{ source.title }}
 {% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
-{% trans "Submission" %}: {{ request.scheme }}://{{ request.get_host }}{% url 'apply:submissions:simplified' pk=source.submission.pk %}
+{% trans "Submission" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.submission.get_absolute_url }}
 {% endblock %}
