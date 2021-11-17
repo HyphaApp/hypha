@@ -256,12 +256,23 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
         old_lead = copy(self.get_object().lead)
 
         response = super().form_valid(form)
+        project = form.instance
+
+        # Only send created_project mail first time lead is set.
+        if not old_lead:
+            messenger(
+                MESSAGES.CREATED_PROJECT,
+                request=self.request,
+                user=self.request.user,
+                source=project,
+                related=project.submission,
+            )
 
         messenger(
             MESSAGES.UPDATE_PROJECT_LEAD,
             request=self.request,
             user=self.request.user,
-            source=form.instance,
+            source=project,
             related=old_lead or 'Unassigned',
         )
 
