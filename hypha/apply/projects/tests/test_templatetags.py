@@ -184,7 +184,7 @@ class TestInvoiceTools(TestCase):
         invoice = InvoiceFactory(status=CHANGES_REQUESTED)
         user = ApplicantFactory()
 
-        self.assertTrue(can_delete(invoice, user))
+        self.assertFalse(can_delete(invoice, user))
 
     def test_user_cant_delete_from_paid(self):
         invoice = InvoiceFactory(status=PAID)
