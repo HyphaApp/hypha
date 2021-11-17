@@ -370,7 +370,7 @@ SingleStageExternalDefinition = [
             'display': _('Internal Review'),
             'public': _('{org_short_name} Review').format(org_short_name=settings.ORG_SHORT_NAME),
             'stage': RequestExt,
-            'permissions': default_permissions,
+            'permissions': reviewer_review_permissions,
         },
         'ext_review_more_info': {
             'transitions': {
