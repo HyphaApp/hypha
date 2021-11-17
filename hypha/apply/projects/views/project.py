@@ -48,7 +48,6 @@ from ..forms import (
     ApproveContractForm,
     CreateApprovalForm,
     ProjectApprovalForm,
-    ProjectEditForm,
     RejectionForm,
     RemoveDocumentForm,
     SelectDocumentForm,
@@ -590,6 +589,7 @@ class ProjectDetailPDFView(SingleObjectMixin, View):
         )
 
 
+@method_decorator(staff_required, name='dispatch')
 class ProjectApprovalEditView(UpdateView):
     form_class = ProjectApprovalForm
     model = Project
@@ -631,28 +631,6 @@ class ProjectApprovalEditView(UpdateView):
         form.instance.form_fields = form_fields
 
         return super().form_valid(form)
-
-
-class ApplicantProjectEditView(UpdateView):
-    form_class = ProjectEditForm
-    model = Project
-
-    def dispatch(self, request, *args, **kwargs):
-        project = self.get_object()
-        # This view is only for applicants.
-        if project.user != request.user:
-            raise PermissionDenied
-
-        if not project.editable_by(request.user):
-            messages.info(self.request, _('You are not allowed to edit the project at this time'))
-            return redirect(project)
-
-        return super().dispatch(request, *args, **kwargs)
-
-
-class ProjectEditView(ViewDispatcher):
-    admin_view = ProjectApprovalEditView
-    applicant_view = ApplicantProjectEditView
 
 
 @method_decorator(staff_or_finance_required, name='dispatch')

@@ -13,8 +13,10 @@
                 <p class="docs-block__title">{% trans "Proposal" %}</p>
             </div>
             <div class="docs-block__row-inner">
-                <a class="docs-block__link" href="{% url 'apply:submissions:simplified' pk=project.submission.pk %}">{% trans "View" %}</a>
-                {% if not user.is_applicant %}
+                {% if user.is_applicant %}
+                    <a class="docs-block__link" href="{{ project.submission.get_absolute_url }}">{% trans "View" %}</a>
+                {% else %}
+                    <a class="docs-block__link" href="{% url 'apply:submissions:simplified' pk=project.submission.pk %}">{% trans "View" %}</a>
                     <a class="docs-block__link" href="{% url "apply:submissions:download" pk=project.submission.pk %}">{% trans "Download" %}</a>
                 {% endif %}
             </div>
@@ -50,7 +52,7 @@
                 <p class="docs-block__title">{% trans "Approval Form" %}</p>
             </div>
             <div class="docs-block__row-inner">
-                {% if editable %}
+                {% if editable and not user.is_applicant %}
                     <a class="docs-block__link" href="{% url 'apply:projects:edit' pk=object.pk %}">
                         {% if object.user_has_updated_details %}
                         {% trans "Edit" %}
