@@ -63,7 +63,7 @@ class ChangeInvoiceStatusView(DelegatedViewMixin, InvoiceAccessMixin, UpdateView
 
             message = invoice_status_change + sent_message + comment
 
-            activity = Activity.actions.create(
+            Activity.objects.create(
                 user=self.request.user,
                 type=COMMENT,
                 source=self.object.project,
@@ -71,14 +71,6 @@ class ChangeInvoiceStatusView(DelegatedViewMixin, InvoiceAccessMixin, UpdateView
                 message=message,
                 visibility=ALL,
                 related_object=self.object,
-            )
-
-            messenger(
-                MESSAGES.COMMENT,
-                request=self.request,
-                user=self.request.user,
-                source=self.object.project,
-                related=activity,
             )
 
         messenger(
