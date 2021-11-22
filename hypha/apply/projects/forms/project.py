@@ -76,7 +76,7 @@ class CreateApprovalForm(forms.ModelForm):
         return by
 
 
-class ProjectEditForm(forms.ModelForm):
+class ProjectApprovalForm(forms.ModelForm):
     class Meta:
         fields = [
             'title',
@@ -91,8 +91,6 @@ class ProjectEditForm(forms.ModelForm):
             'proposed_start': forms.DateInput,
         }
 
-
-class ProjectApprovalForm(ProjectEditForm):
     def __init__(self, *args, extra_fields=None, **kwargs):
         super().__init__(*args, **kwargs)
         if extra_fields:
