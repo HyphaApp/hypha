@@ -19,6 +19,7 @@ from wagtail.admin.views.account import password_management_enabled
 from wagtail.core.models import Site
 
 from hypha.apply.home.models import ApplyHomePage
+
 from .decorators import require_oauth_whitelist
 from .forms import BecomeUserForm, CustomAuthenticationForm, ProfileForm
 
