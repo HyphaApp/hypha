@@ -9,6 +9,10 @@ class Migration(migrations.Migration):
         ('funds', '0088_auto_20210423_1257'),
     ]
 
+    run_before = [
+        ('application_projects', '0043_remove_project_approval_form'),
+    ]
+
     operations = [
         migrations.RemoveField(
             model_name='applicationbase',
