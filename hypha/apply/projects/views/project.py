@@ -693,7 +693,7 @@ class ProjectOverviewView(TemplateView):
             key: {
                 'name': display,
                 'count': status_counts.get(key, 0),
-                'url': reverse_lazy("funds:projects:all") + '?status=' + key,
+                'url': reverse_lazy("funds:projects:all") + '?project_status=' + key,
             }
             for key, display in PROJECT_STATUS_CHOICES
         }
