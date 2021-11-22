@@ -6,7 +6,6 @@ from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 
 from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
-from hypha.apply.stream_forms.testing.factories import FormFieldsBlockFactory
 from hypha.apply.users.tests.factories import StaffFactory, UserFactory
 
 from ..models.payment import Invoice, SupportingDocument
@@ -65,11 +64,6 @@ class ProjectFactory(factory.django.DjangoModelFactory):
     proposed_end = factory.LazyFunction(timezone.now)
 
     is_locked = False
-
-    form_fields = FormFieldsBlockFactory
-    form_data = factory.SubFactory(
-        form_fields=factory.SelfAttribute('..form_fields'),
-    )
 
     class Meta:
         model = Project
