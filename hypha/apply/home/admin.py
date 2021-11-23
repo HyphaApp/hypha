@@ -1,3 +1,8 @@
-# from django.contrib import admin
+from django.contrib import admin
+from rest_framework_api_key.admin import APIKeyModelAdmin
+from .models import ApplyAPIKey
 
-# Register your models here.
+
+@admin.register(ApplyAPIKey)
+class ApplyAPIKeyModelAdmin(APIKeyModelAdmin):
+    pass

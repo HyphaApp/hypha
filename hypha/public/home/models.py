@@ -3,6 +3,7 @@ import datetime
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
+from rest_framework_api_key.models import AbstractAPIKey
 from wagtail.admin.edit_handlers import (
     FieldPanel,
     InlinePanel,
@@ -171,3 +172,15 @@ class HomePage(BasePage):
         context['fund_list'] = list(self.get_related(FundPage, self.promoted_funds))
         context['rfps_list'] = list(self.get_related(RFPPage, self.promoted_rfps))
         return context
+
+
+class PublicAPIKey(AbstractAPIKey):
+    home_page = models.ForeignKey(
+        "home.HomePage",
+        on_delete=models.CASCADE,
+        related_name="api_keys",
+    )
+
+    class Meta(AbstractAPIKey.Meta):
+        verbose_name = "Public HomePage API key"
+        verbose_name_plural = "Public HomePage API keys"

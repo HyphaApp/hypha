@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.db import models
 from django.utils.decorators import method_decorator
+from rest_framework_api_key.models import AbstractAPIKey
 from wagtail.admin.edit_handlers import FieldPanel
 from wagtail.core.models import Page
 from wagtail.search import index
@@ -37,3 +38,15 @@ class ApplyHomePage(WagtailCacheMixin, Page):
             'lab_public'
         ).specific()
         return context
+
+
+class ApplyAPIKey(AbstractAPIKey):
+    home_page = models.ForeignKey(
+        "apply_home.ApplyHomePage",
+        on_delete=models.CASCADE,
+        related_name="api_keys",
+    )
+
+    class Meta(AbstractAPIKey.Meta):
+        verbose_name = "Apply HomePage API key"
+        verbose_name_plural = "Apply HomePage API keys"
