@@ -57,8 +57,8 @@ class ChangeInvoiceStatusView(DelegatedViewMixin, InvoiceAccessMixin, UpdateView
     def form_valid(self, form):
         response = super().form_valid(form)
         if form.cleaned_data['comment']:
-            invoice_status_change = _(f'<p>Invoice status updated to : {self.object.status_display}. </p>')
-            comment = '<p>{}</p>'.format(form.cleaned_data['comment'])
+            invoice_status_change = _('<p>Invoice status updated to : {status}. </p>').format(status=self.object.status_display)
+            comment = f'<p>{self.object.comment}. </p>'
 
             message = invoice_status_change + comment
 
