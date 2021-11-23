@@ -85,3 +85,6 @@ msgstr "Request with board review (compact)"
 
 msgid "Your application has been progressed from %(old_status)s to %(new_status)s."
 msgstr "Your application has progressed from %(old_status)s to %(new_status)s."
+
+msgid "Thank you for your submission to the %(ORG_LONG_NAME)s."
+msgstr "Thank you for your submission to %(ORG_LONG_NAME)s."
