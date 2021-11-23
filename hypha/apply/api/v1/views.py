@@ -49,7 +49,7 @@ from .utils import (
 
 class SubmissionViewSet(viewsets.ReadOnlyModelViewSet, viewsets.GenericViewSet):
     permission_classes = (
-        HasAPIKey | permissions.IsAuthenticated, HasAPIKey | IsApplyStaffUser,
+        permissions.IsAuthenticated, IsApplyStaffUser,
     )
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = SubmissionsFilter
@@ -213,6 +213,9 @@ class RoundViewSet(
     permission_classes = (
         permissions.IsAuthenticated, IsApplyStaffUser,
     )
+    permission_classes_by_action = {
+        'open': [HasAPIKey | permissions.IsAuthenticated, HasAPIKey | IsApplyStaffUser, ],
+    }
     pagination_class = StandardResultsSetPagination
 
     def get_serializer_class(self):
@@ -225,6 +228,14 @@ class RoundViewSet(
     def get_object(self):
         obj = super(RoundViewSet, self).get_object()
         return obj.specific
+
+    def get_permissions(self):
+        try:
+            # return permission_classes depending on `action`
+            return [permission() for permission in self.permission_classes_by_action[self.action]]
+        except KeyError:
+            # action is not set return default permission_classes
+            return [permission() for permission in self.permission_classes]
 
     @action(methods=['get'], detail=False)
     def open(self, request):
