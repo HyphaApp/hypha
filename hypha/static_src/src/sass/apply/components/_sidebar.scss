@@ -77,5 +77,11 @@
             background-color: $color--black-20;
             content: '';
         }
+
+        &--medium {
+            &::after {
+                width: calc(100% - 120px);
+            }
+        }
     }
 }

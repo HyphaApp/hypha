@@ -3,7 +3,6 @@ from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
-from rest_framework_api_key.permissions import HasAPIKey
 from wagtail.core.blocks.field_block import RichTextBlock
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
@@ -37,7 +36,7 @@ class SubmissionReviewViewSet(
     viewsets.GenericViewSet
 ):
     permission_classes = (
-        HasAPIKey | permissions.IsAuthenticated, HasAPIKey | IsApplyStaffUser,
+        permissions.IsAuthenticated, IsApplyStaffUser,
     )
     permission_classes_by_action = {
         'create': [permissions.IsAuthenticated, HasReviewCreatePermission, IsApplyStaffUser, ],

@@ -410,15 +410,7 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
             )
 
             if self.submission.accepted_for_funding and settings.PROJECTS_AUTO_CREATE:
-                project = Project.create_from_submission(self.submission)
-                if project:
-                    messenger(
-                        MESSAGES.CREATED_PROJECT,
-                        request=self.request,
-                        user=self.request.user,
-                        source=project,
-                        related=project.submission,
-                    )
+                Project.create_from_submission(self.submission)
 
         messenger(
             MESSAGES.DETERMINATION_OUTCOME,

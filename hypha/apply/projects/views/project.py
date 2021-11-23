@@ -43,12 +43,11 @@ from hypha.apply.utils.storage import PrivateMediaView
 from hypha.apply.utils.views import DelegateableView, DelegatedViewMixin, ViewDispatcher
 
 from ..files import get_files
-from ..filters import PaymentRequestListFilter, ProjectListFilter, ReportListFilter
+from ..filters import InvoiceListFilter, ProjectListFilter, ReportListFilter
 from ..forms import (
     ApproveContractForm,
     CreateApprovalForm,
     ProjectApprovalForm,
-    ProjectEditForm,
     RejectionForm,
     RemoveDocumentForm,
     SelectDocumentForm,
@@ -58,7 +57,7 @@ from ..forms import (
     UploadContractForm,
     UploadDocumentForm,
 )
-from ..models.payment import PaymentRequest
+from ..models.payment import Invoice
 from ..models.project import (
     CONTRACTING,
     IN_PROGRESS,
@@ -69,7 +68,7 @@ from ..models.project import (
     Project,
 )
 from ..models.report import Report
-from ..tables import PaymentRequestsListTable, ProjectsListTable, ReportListTable
+from ..tables import InvoiceListTable, ProjectsListTable, ReportListTable
 from .report import ReportFrequencyUpdate, ReportingMixin
 
 
@@ -256,12 +255,23 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
         old_lead = copy(self.get_object().lead)
 
         response = super().form_valid(form)
+        project = form.instance
+
+        # Only send created_project mail first time lead is set.
+        if not old_lead:
+            messenger(
+                MESSAGES.CREATED_PROJECT,
+                request=self.request,
+                user=self.request.user,
+                source=project,
+                related=project.submission,
+            )
 
         messenger(
             MESSAGES.UPDATE_PROJECT_LEAD,
             request=self.request,
             user=self.request.user,
-            source=form.instance,
+            source=project,
             related=old_lead or 'Unassigned',
         )
 
@@ -576,6 +586,7 @@ class ProjectDetailPDFView(SingleObjectMixin, View):
         )
 
 
+@method_decorator(staff_required, name='dispatch')
 class ProjectApprovalEditView(UpdateView):
     form_class = ProjectApprovalForm
     model = Project
@@ -619,28 +630,6 @@ class ProjectApprovalEditView(UpdateView):
         return super().form_valid(form)
 
 
-class ApplicantProjectEditView(UpdateView):
-    form_class = ProjectEditForm
-    model = Project
-
-    def dispatch(self, request, *args, **kwargs):
-        project = self.get_object()
-        # This view is only for applicants.
-        if project.user != request.user:
-            raise PermissionDenied
-
-        if not project.editable_by(request.user):
-            messages.info(self.request, _('You are not allowed to edit the project at this time'))
-            return redirect(project)
-
-        return super().dispatch(request, *args, **kwargs)
-
-
-class ProjectEditView(ViewDispatcher):
-    admin_view = ProjectApprovalEditView
-    applicant_view = ApplicantProjectEditView
-
-
 @method_decorator(staff_or_finance_required, name='dispatch')
 class ProjectListView(SingleTableMixin, FilterView):
     filterset_class = ProjectListFilter
@@ -656,7 +645,7 @@ class ProjectOverviewView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['projects'] = self.get_projects(self.request)
-        context['payment_requests'] = self.get_payment_requests(self.request)
+        context['invoices'] = self.get_invoices(self.request)
         context['reports'] = self.get_reports(self.request)
         context['status_counts'] = self.get_status_counts()
         return context
@@ -669,15 +658,6 @@ class ProjectOverviewView(TemplateView):
             'url': reverse('apply:projects:reports:all'),
         }
 
-    def get_payment_requests(self, request):
-        payment_requests = PaymentRequest.objects.order_by('date_to')[:10]
-
-        return {
-            'filterset': PaymentRequestListFilter(request.GET or None, request=request, queryset=payment_requests),
-            'table': PaymentRequestsListTable(payment_requests, order_by=()),
-            'url': reverse('apply:projects:payments:all'),
-        }
-
     def get_projects(self, request):
         projects = Project.objects.for_table()[:10]
 
@@ -685,6 +665,15 @@ class ProjectOverviewView(TemplateView):
             'filterset': ProjectListFilter(request.GET or None, request=request, queryset=projects),
             'table': ProjectsListTable(projects, order_by=()),
             'url': reverse('apply:projects:all'),
+        }
+
+    def get_invoices(self, request):
+        invoices = Invoice.objects.order_by('date_to')[:10]
+
+        return {
+            'filterset': InvoiceListFilter(request.GET or None, request=request, queryset=invoices),
+            'table': InvoiceListTable(invoices, order_by=()),
+            'url': reverse('apply:projects:invoices'),
         }
 
     def get_status_counts(self):
@@ -701,7 +690,7 @@ class ProjectOverviewView(TemplateView):
             key: {
                 'name': display,
                 'count': status_counts.get(key, 0),
-                'url': reverse_lazy("funds:projects:all") + '?status=' + key,
+                'url': reverse_lazy("funds:projects:all") + '?project_status=' + key,
             }
             for key, display in PROJECT_STATUS_CHOICES
         }

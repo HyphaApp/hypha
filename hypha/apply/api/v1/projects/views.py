@@ -3,7 +3,6 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
-from rest_framework_api_key.permissions import HasAPIKey
 
 from hypha.apply.projects.models.payment import InvoiceDeliverable
 from hypha.apply.projects.models.project import Deliverable
@@ -21,7 +20,7 @@ class DeliverableViewSet(
     viewsets.GenericViewSet
 ):
     permission_classes = (
-        HasAPIKey | permissions.IsAuthenticated, HasAPIKey | IsApplyStaffUser,
+        permissions.IsAuthenticated, IsApplyStaffUser,
     )
     serializer_class = InvoiceDeliverableListSerializer
     pagination_class = None

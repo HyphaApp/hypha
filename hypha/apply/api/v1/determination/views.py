@@ -7,7 +7,6 @@ from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
-from rest_framework_api_key.permissions import HasAPIKey
 from wagtail.core.blocks.field_block import RichTextBlock
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
@@ -41,7 +40,7 @@ class SubmissionDeterminationViewSet(
     viewsets.GenericViewSet
 ):
     permission_classes = (
-        HasAPIKey | permissions.IsAuthenticated, HasAPIKey | IsApplyStaffUser,
+        permissions.IsAuthenticated, IsApplyStaffUser,
     )
     permission_classes_by_action = {
         'create': [permissions.IsAuthenticated, HasDeterminationCreatePermission, IsApplyStaffUser, ],
@@ -239,15 +238,7 @@ class SubmissionDeterminationViewSet(
             )
 
             if submission.accepted_for_funding and settings.PROJECTS_AUTO_CREATE:
-                project = Project.create_from_submission(submission)
-                if project:
-                    messenger(
-                        MESSAGES.CREATED_PROJECT,
-                        request=self.request,
-                        user=self.request.user,
-                        source=project,
-                        related=project.submission,
-                    )
+                Project.create_from_submission(submission)
 
         messenger(
             MESSAGES.DETERMINATION_OUTCOME,

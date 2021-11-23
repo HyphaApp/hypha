@@ -458,128 +458,6 @@ class TestUploadDocumentView(BaseViewTestCase):
         self.assertEqual(project.packet_files.count(), 1)
 
 
-class BaseProjectEditTestCase(BaseViewTestCase):
-    url_name = 'funds:projects:{}'
-    base_view_name = 'edit'
-
-    def get_kwargs(self, instance):
-        return {'pk': instance.id}
-
-
-class TestUserProjectEditView(BaseProjectEditTestCase):
-    user_factory = UserFactory
-
-    def test_does_not_have_access(self):
-        project = ProjectFactory()
-        response = self.get_page(project)
-
-        self.assertEqual(response.status_code, 403)
-
-    def test_owner_has_access(self):
-        project = ProjectFactory(user=self.user)
-        response = self.get_page(project)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.redirect_chain, [])
-
-    def test_no_lead_redirects(self):
-        project = ProjectFactory(user=self.user, lead=None)
-        response = self.get_page(project)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertRedirects(response, self.url(project, 'detail'))
-
-    def test_locked_redirects(self):
-        project = ProjectFactory(user=self.user, is_locked=True)
-        response = self.get_page(project)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertRedirects(response, self.url(project, 'detail'))
-
-
-class TestStaffProjectEditView(BaseProjectEditTestCase):
-    user_factory = StaffFactory
-
-    def test_staff_user_has_access(self):
-        project = ProjectFactory()
-        response = self.get_page(project)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.redirect_chain, [])
-
-    def test_no_lead_redirects(self):
-        project = ProjectFactory(user=self.user, lead=None)
-        response = self.get_page(project)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertRedirects(response, self.url(project, 'detail'))
-
-    def test_locked_redirects(self):
-        project = ProjectFactory(user=self.user, is_locked=True)
-        response = self.get_page(project)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertRedirects(response, self.url(project, 'detail'))
-
-    def test_no_paf_form_renders(self):
-        project = ProjectFactory(
-            submission__round__parent__approval_form=None,
-            form_fields=None,
-            form_data={},
-        )
-        response = self.get_page(project)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.redirect_chain, [])
-
-    def test_pulls_paf_from_fund(self):
-        project = ProjectFactory(form_fields=None, form_data={})
-        response = self.get_page(project)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.redirect_chain, [])
-
-    def test_edited_form_renders(self):
-        project = ProjectFactory()
-        response = self.get_page(project)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.redirect_chain, [])
-
-
-class TestApproverProjectEditView(BaseProjectEditTestCase):
-    user_factory = ApproverFactory
-
-    def test_approver_has_access_locked(self):
-        project = ProjectFactory(is_locked=True)
-        response = self.get_page(project)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.redirect_chain, [])
-
-
-class TestSuperProjectEditView(BaseProjectEditTestCase):
-    user_factory = StaffFactory
-
-    def test_has_access(self):
-        project = ProjectFactory()
-        response = self.get_page(project)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.redirect_chain, [])
-
-
-class TestReviewerProjectEditView(BaseProjectEditTestCase):
-    user_factory = ReviewerFactory
-
-    def test_does_not_have_access(self):
-        project = ProjectFactory()
-        response = self.get_page(project)
-
-        self.assertEqual(response.status_code, 403)
-        self.assertEqual(response.redirect_chain, [])
-
-
 class TestContractsMixin(TestCase):
     class DummyView:
         def get_context_data(self):
@@ -834,73 +712,6 @@ class TestAnonPacketView(BasePacketFileViewTestCase):
             self.assertIn(reverse('users_public:login'), path)
 
 
-class TestRequestPaymentViewAsApplicant(BaseViewTestCase):
-    base_view_name = 'request'
-    url_name = 'funds:projects:{}'
-    user_factory = ApplicantFactory
-
-    def get_kwargs(self, instance):
-        return {'pk': instance.id}
-
-    def test_creating_a_payment_request(self):
-        project = ProjectFactory(user=self.user)
-        self.assertEqual(project.payment_requests.count(), 0)
-
-        invoice = BytesIO(b'somebinarydata')
-        invoice.name = 'invoice.pdf'
-
-        receipts = BytesIO(b'someotherbinarydata')
-        receipts.name = 'receipts.pdf'
-
-        response = self.post_page(project, {
-            'form-submitted-request_payment_form': '',
-            'requested_value': '10',
-            'date_from': '2018-08-15',
-            'date_to': '2019-08-15',
-            'invoice': invoice,
-            'receipts': receipts,
-        })
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(project.payment_requests.count(), 1)
-
-        self.assertEqual(project.payment_requests.first().by, self.user)
-
-
-class TestRequestPaymentViewAsStaff(BaseViewTestCase):
-    base_view_name = 'request'
-    url_name = 'funds:projects:{}'
-    user_factory = StaffFactory
-
-    def get_kwargs(self, instance):
-        return {'pk': instance.id}
-
-    def test_creating_a_payment_request(self):
-        project = ProjectFactory()
-        self.assertEqual(project.payment_requests.count(), 0)
-
-        invoice = BytesIO(b'somebinarydata')
-        invoice.name = 'invoice.pdf'
-
-        receipts = BytesIO(b'someotherbinarydata')
-        receipts.name = 'receipts.pdf'
-
-        response = self.post_page(project, {
-            'form-submitted-request_payment_form': '',
-            'requested_value': '10',
-            'date_from': '2018-08-15',
-            'date_to': '2019-08-15',
-            'comment': 'test comment',
-            'invoice': invoice,
-            'receipts': receipts,
-        })
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(project.payment_requests.count(), 1)
-
-        self.assertEqual(project.payment_requests.first().by, self.user)
-
-
 class TestProjectDetailSimplifiedView(TestCase):
     def test_staff_only(self):
         factory = RequestFactory()
@@ -924,6 +735,7 @@ class TestStaffDetailInvoiceStatus(BaseViewTestCase):
 
     def get_kwargs(self, instance):
         return {
+            'pk': instance.project.pk,
             'invoice_pk': instance.pk,
         }
 
@@ -946,6 +758,7 @@ class TestFinanceDetailInvoiceStatus(BaseViewTestCase):
 
     def get_kwargs(self, instance):
         return {
+            'pk': instance.project.pk,
             'invoice_pk': instance.pk,
         }
 
@@ -1128,7 +941,7 @@ class TestApplicantChangeInoviceStatus(BaseViewTestCase):
     def get_kwargs(self, instance):
         return {
             'pk': instance.project.pk,
-            'invoice_pk': instance.pk,
+            'invoice_pk': instance.pk
         }
 
     def test_can(self):
@@ -1159,7 +972,8 @@ class TestStaffInoviceDocumentPrivateMedia(BaseViewTestCase):
 
     def get_kwargs(self, instance):
         return {
-            'invoice_pk': instance.pk,
+            'pk': instance.project.pk,
+            'invoice_pk': instance.pk
         }
 
     def test_can_access(self):
@@ -1182,7 +996,7 @@ class TestApplicantInvoiceDocumentPrivateMedia(BaseViewTestCase):
     def get_kwargs(self, instance):
         return {
             'pk': instance.project.pk,
-            'invoice_pk': instance.pk,
+            'invoice_pk': instance.pk
         }
 
     def test_can_access_own(self):

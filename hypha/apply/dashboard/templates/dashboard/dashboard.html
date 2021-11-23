@@ -48,10 +48,10 @@
                 {% endif %}
             </a>
             {% endif %}
-            <a href="#active-payment-requests" class="stat-block__item">
-                <p class="stat-block__number">{{ active_payment_requests.count }}</p>
-                <p class="stat-block__text">{% trans "Requests for payment requiring your attention" %}</p>
-                {% if active_payment_requests.count %}
+            <a href="#active-invoices" class="stat-block__item">
+                <p class="stat-block__number">{{ active_invoices.count }}</p>
+                <p class="stat-block__text">{% trans "Requests for invoices requiring your attention" %}</p>
+                {% if active_invoices.count %}
                     <div class="stat-block__view">{% trans "View" %}</div>
                 {% endif %}
             </a>
@@ -94,10 +94,10 @@
     </div>
     {% endif %}
 
-    {% if active_payment_requests.count %}
-    <div id="active-payment-requests" class="wrapper wrapper--bottom-space">
-        <h4 class="heading heading--normal">{% trans "Active requests for payment" %}</h4>
-        {% render_table active_payment_requests.table %}
+    {% if active_invoices.count %}
+    <div id="active-invoices" class="wrapper wrapper--bottom-space">
+        <h4 class="heading heading--normal">{% trans "Active Invoices" %}</h4>
+        {% render_table active_invoices.table %}
     </div>
     {% endif %}
 
