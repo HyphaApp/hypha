@@ -1,9 +1,9 @@
 from rest_framework import mixins, permissions, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework_api_key.permissions import HasAPIKey
 
 from hypha.apply.funds.models import Reminder
+from hypha.apply.users.permissions import HasApplyAPIKey
 
 from ..mixin import SubmissionNestedMixin
 from ..permissions import IsApplyStaffUser
@@ -17,7 +17,7 @@ class SubmissionReminderViewSet(
     viewsets.GenericViewSet
 ):
     permission_classes = (
-        HasAPIKey | permissions.IsAuthenticated, HasAPIKey | IsApplyStaffUser,
+        HasApplyAPIKey | permissions.IsAuthenticated, HasApplyAPIKey | IsApplyStaffUser,
     )
     serializer_class = SubmissionReminderSerializer
     pagination_class = None

@@ -8,7 +8,6 @@ from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_api_key.permissions import HasAPIKey
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import COMMENT, Activity
@@ -17,6 +16,7 @@ from hypha.apply.determinations.views import DeterminationCreateOrUpdateView
 from hypha.apply.funds.models import ApplicationSubmission, RoundsAndLabs
 from hypha.apply.funds.workflow import STATUSES
 from hypha.apply.review.models import Review
+from hypha.apply.users.permissions import HasPublicAPIKey, HasApplyAPIKey
 
 from .filters import CommentFilter, SubmissionsFilter
 from .mixin import SubmissionNestedMixin
@@ -49,7 +49,7 @@ from .utils import (
 
 class SubmissionViewSet(viewsets.ReadOnlyModelViewSet, viewsets.GenericViewSet):
     permission_classes = (
-        HasAPIKey | permissions.IsAuthenticated, HasAPIKey | IsApplyStaffUser,
+        HasApplyAPIKey | permissions.IsAuthenticated, HasApplyAPIKey | IsApplyStaffUser,
     )
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = SubmissionsFilter
@@ -225,6 +225,14 @@ class RoundViewSet(
     def get_object(self):
         obj = super(RoundViewSet, self).get_object()
         return obj.specific
+
+    def get_permissions(self):
+        if self.action == "open":
+            self.permission_classes = (
+                HasPublicAPIKey | permissions.IsAuthenticated,
+                HasPublicAPIKey | IsApplyStaffUser,
+            )
+        return [permission() for permission in self.permission_classes]
 
     @action(methods=['get'], detail=False)
     def open(self, request):
