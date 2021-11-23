@@ -16,7 +16,7 @@ from hypha.apply.determinations.views import DeterminationCreateOrUpdateView
 from hypha.apply.funds.models import ApplicationSubmission, RoundsAndLabs
 from hypha.apply.funds.workflow import STATUSES
 from hypha.apply.review.models import Review
-from hypha.apply.users.permissions import HasPublicAPIKey, HasApplyAPIKey
+from hypha.apply.users.permissions import HasApplyAPIKey, HasPublicAPIKey
 
 from .filters import CommentFilter, SubmissionsFilter
 from .mixin import SubmissionNestedMixin
