@@ -373,7 +373,7 @@ class ActivityAdapter(AdapterBase):
             return "Marked a Report as required"
 
     def handle_update_invoice_status(self, invoice, **kwargs):
-        invoice_status_change = _(f'Updated Invoice status to: {invoice.status_display}.')
+        invoice_status_change = _('Updated Invoice status to: {status}.').format(status=invoice.status_display)
         return invoice_status_change
 
     def send_message(self, message, user, source, sources, **kwargs):
