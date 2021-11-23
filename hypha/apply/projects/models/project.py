@@ -445,6 +445,11 @@ class DocumentCategory(models.Model):
 
 
 class Deliverable(models.Model):
+    external_id = models.CharField(
+        max_length=30,
+        blank=True,
+        help_text='ID of this deliverable at integrated payment service.'
+    )
     name = models.TextField()
     available_to_invoice = models.IntegerField(default=1)
     unit_price = models.DecimalField(
