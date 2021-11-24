@@ -2417,7 +2417,7 @@ msgid "Track and explore the results"
 msgstr ""
 
 #: hypha/apply/funds/templates/funds/submissions_result.html:22
-msgid "Summery"
+msgid "Summary"
 msgstr ""
 
 #: hypha/apply/funds/templates/funds/submissions_result.html:26
