@@ -1,6 +1,6 @@
 from wagtail.contrib.modeladmin.options import ModelAdmin, ModelAdminGroup
 
-from .models import DocumentCategory, ProjectApprovalForm
+from .models import DocumentCategory
 
 
 class DocumentCategoryAdmin(ModelAdmin):
@@ -9,24 +9,9 @@ class DocumentCategoryAdmin(ModelAdmin):
     list_display = ('name', 'recommended_minimum',)
 
 
-class ProjectApprovalFormAdmin(ModelAdmin):
-    model = ProjectApprovalForm
-    menu_icon = 'form'
-    list_display = ('name', 'used_by',)
-
-    def used_by(self, obj):
-        rows = list()
-        for field in ('funds', 'labs',):
-            related = ', '.join(getattr(obj, f'{field}').values_list('title', flat=True))
-            if related:
-                rows.append(related)
-        return ', '.join(rows)
-
-
 class ManageAdminGoup(ModelAdminGroup):
     menu_label = 'Manage'
     menu_icon = 'folder-open-inverse'
     items = (
         DocumentCategoryAdmin,
-        ProjectApprovalFormAdmin,
     )
