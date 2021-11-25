@@ -16,6 +16,9 @@ from hijack.views import login_with_id
 from two_factor.forms import AuthenticationTokenForm, BackupTokenForm
 from two_factor.views import LoginView as TwoFactorLoginView
 from wagtail.admin.views.account import password_management_enabled
+from wagtail.core.models import Site
+
+from hypha.apply.home.models import ApplyHomePage
 
 from .decorators import require_oauth_whitelist
 from .forms import BecomeUserForm, CustomAuthenticationForm, ProfileForm
@@ -29,6 +32,13 @@ class LoginView(TwoFactorLoginView):
         ('token', AuthenticationTokenForm),
         ('backup', BackupTokenForm),
     )
+
+    def get_context_data(self, form, **kwargs):
+        context_data = super(LoginView, self).get_context_data(form, **kwargs)
+        context_data["is_public_site"] = True
+        if Site.find_for_request(self.request) == ApplyHomePage.objects.first().get_site():
+            context_data["is_public_site"] = False
+        return context_data
 
 
 @method_decorator(login_required, name='dispatch')

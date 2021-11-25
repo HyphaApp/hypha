@@ -451,6 +451,7 @@ LOGGING = {
 
 
 # Wagtail settings
+WAGTAIL_FRONTEND_LOGIN_URL = '/login/'
 
 WAGTAIL_SITE_NAME = 'hypha'
 
