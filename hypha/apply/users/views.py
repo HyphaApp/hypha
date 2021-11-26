@@ -1,3 +1,5 @@
+from urllib.parse import urlencode
+
 from django.contrib import messages
 from django.contrib.auth import get_user_model, login, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
@@ -17,11 +19,10 @@ from django.views.generic.edit import FormView
 from hijack.views import login_with_id
 from two_factor.forms import AuthenticationTokenForm, BackupTokenForm
 from two_factor.views import LoginView as TwoFactorLoginView
-from urllib.parse import urlencode
 from wagtail.admin.views.account import password_management_enabled
 
 from .decorators import require_oauth_whitelist
-from .forms import BecomeUserForm, CustomAuthenticationForm, ProfileForm, PasswordForm
+from .forms import BecomeUserForm, CustomAuthenticationForm, PasswordForm, ProfileForm
 
 User = get_user_model()
 
@@ -88,7 +89,7 @@ class PasswordConfirmView(FormView):
         kwargs['name'] = self.request.GET.get('name')
         kwargs['slack'] = self.request.GET.get('slack')
         return kwargs
-    
+
     def form_valid(self, form):
         form.save()  # Update the email and other details
         return super(PasswordConfirmView, self).form_valid(form)
