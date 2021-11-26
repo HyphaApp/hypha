@@ -4,21 +4,24 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AdminPasswordChangeForm
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.template.response import TemplateResponse
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
+from django.utils.translation import gettext_lazy as _
 from django.views.generic import UpdateView
 from django.views.generic.base import TemplateView
+from django.views.generic.edit import FormView
 from hijack.views import login_with_id
 from two_factor.forms import AuthenticationTokenForm, BackupTokenForm
 from two_factor.views import LoginView as TwoFactorLoginView
+from urllib.parse import urlencode
 from wagtail.admin.views.account import password_management_enabled
 
 from .decorators import require_oauth_whitelist
-from .forms import BecomeUserForm, CustomAuthenticationForm, ProfileForm
+from .forms import BecomeUserForm, CustomAuthenticationForm, ProfileForm, PasswordForm
 
 User = get_user_model()
 
@@ -39,6 +42,21 @@ class AccountView(UpdateView):
     def get_object(self):
         return self.request.user
 
+    def form_valid(self, form):
+        updated_email = form.cleaned_data['email']
+        name = form.cleaned_data['full_name']
+        slack = form.cleaned_data['slack']
+        user = get_object_or_404(User, id=self.request.user.id)
+        if updated_email and updated_email != user.email:
+            base_url = reverse('users:confirm_password')
+            query_string = urlencode({
+                'updated_email': updated_email,
+                'name': name,
+                'slack': slack
+            })
+            return redirect('{}?{}'.format(base_url, query_string))
+        return super(AccountView, self).form_valid(form)
+
     def get_success_url(self,):
         return reverse_lazy('users:account')
 
@@ -55,6 +73,25 @@ class AccountView(UpdateView):
             show_change_password=show_change_password,
             **kwargs,
         )
+
+
+class PasswordConfirmView(FormView):
+    form_class = PasswordForm
+    template_name = 'users/confirm_password.html'
+    success_url = reverse_lazy('users:account')
+    title = _('Enter Password')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        kwargs['email'] = self.request.GET.get('updated_email')
+        kwargs['name'] = self.request.GET.get('name')
+        kwargs['slack'] = self.request.GET.get('slack')
+        return kwargs
+    
+    def form_valid(self, form):
+        form.save()  # Update the email and other details
+        return super(PasswordConfirmView, self).form_valid(form)
 
 
 @login_required()

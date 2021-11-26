@@ -5,6 +5,7 @@ from .views import (
     AccountView,
     ActivationView,
     LoginView,
+    PasswordConfirmView,
     become,
     create_password,
     oauth,
@@ -33,6 +34,7 @@ urlpatterns = [
         path('', AccountView.as_view(), name='account'),
         path('become/', become, name='become'),
         path('password/', include([
+            path('', PasswordConfirmView.as_view(), name='confirm_password'),
             path(
                 'change/',
                 auth_views.PasswordChangeView.as_view(

@@ -80,3 +80,35 @@ class BecomeUserForm(forms.Form):
         label='',
         required=False,
     )
+
+
+class PasswordForm(forms.Form):
+    password = forms.CharField(
+        label=_("Password"),
+        strip=False,
+        widget=forms.PasswordInput(attrs={'autofocus': True}),
+    )
+
+    def __init__(self, user, email, name, slack, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.user = user
+        self.name = name
+        self.slack = slack
+        self.updated_email = email
+
+    def clean_password(self):
+        password = self.cleaned_data["password"]
+        if not self.user.check_password(password):
+            raise forms.ValidationError(
+                _("Your password was entered incorrectly. Please enter it again."),
+                code='password_incorrect',
+            )
+        return password
+
+    def save(self, commit=True):
+        self.user.email = self.updated_email
+        self.user.full_name = self.name
+        self.user.slack = self.slack
+        if commit:
+            self.user.save()
+        return self.user
