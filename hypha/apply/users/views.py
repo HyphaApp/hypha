@@ -5,8 +5,10 @@ from django.contrib.auth import get_user_model, login, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AdminPasswordChangeForm
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.contrib import messages
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import get_object_or_404, redirect, render
+from django.core.signing import dumps, loads, TimestampSigner
+from django.shortcuts import get_object_or_404, redirect, render, Http404
 from django.template.response import TemplateResponse
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
@@ -50,12 +52,18 @@ class AccountView(UpdateView):
         user = get_object_or_404(User, id=self.request.user.id)
         if updated_email and updated_email != user.email:
             base_url = reverse('users:confirm_password')
-            query_string = urlencode({
+            query_dict = {
                 'updated_email': updated_email,
                 'name': name,
                 'slack': slack
-            })
-            return redirect('{}?{}'.format(base_url, query_string))
+            }
+
+            signer = TimestampSigner()
+            signed_value = signer.sign(dumps(query_dict))
+
+            self.request.session['pp_account'] = True  # Using session variables for redirect validation
+            self.request.session['form_filled'] = False
+            return redirect('{}?{}'.format(base_url, urlencode({'value': signed_value})))
         return super(AccountView, self).form_valid(form)
 
     def get_success_url(self,):
@@ -82,16 +90,33 @@ class PasswordConfirmView(FormView):
     success_url = reverse_lazy('users:account')
     title = _('Enter Password')
 
+    def get_initial(self):
+        """
+        Validating the redirection from account via session variable
+        """
+        if 'form_filled' not in self.request.session and 'pp_account' not in self.request.session:
+            raise Http404
+        elif 'pp_account' in self.request.session:
+            del self.request.session['pp_account']
+
+        return super(PasswordConfirmView, self).get_initial()
+
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
-        kwargs['email'] = self.request.GET.get('updated_email')
-        kwargs['name'] = self.request.GET.get('name')
-        kwargs['slack'] = self.request.GET.get('slack')
         return kwargs
 
     def form_valid(self, form):
-        form.save()  # Update the email and other details
+        if 'form_filled' in self.request.session:
+            del self.request.session['form_filled']  # remove session variables to make url inaccessible
+        signer = TimestampSigner()
+        try:
+            unsigned_value = signer.unsign(self.request.GET.get('value'), max_age=60)
+        except Exception:
+            messages.error(self.request, _("Password Page TimeOut"))
+            return redirect('users:account')
+        value = loads(unsigned_value)
+        form.save(**value)  # Update the email and other details
         return super(PasswordConfirmView, self).form_valid(form)
 
 

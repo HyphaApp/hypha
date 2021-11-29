@@ -89,12 +89,9 @@ class PasswordForm(forms.Form):
         widget=forms.PasswordInput(attrs={'autofocus': True}),
     )
 
-    def __init__(self, user, email, name, slack, *args, **kwargs):
+    def __init__(self, user, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.user = user
-        self.name = name
-        self.slack = slack
-        self.updated_email = email
 
     def clean_password(self):
         password = self.cleaned_data["password"]
@@ -105,10 +102,10 @@ class PasswordForm(forms.Form):
             )
         return password
 
-    def save(self, commit=True):
-        self.user.email = self.updated_email
-        self.user.full_name = self.name
-        self.user.slack = self.slack
+    def save(self, updated_email, name, slack, commit=True):
+        self.user.email = updated_email
+        self.user.full_name = name
+        self.user.slack = slack
         if commit:
             self.user.save()
         return self.user
