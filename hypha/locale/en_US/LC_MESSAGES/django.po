@@ -88,3 +88,12 @@ msgstr "Your application has progressed from %(old_status)s to %(new_status)s."
 
 msgid "Thank you for your submission to the %(ORG_LONG_NAME)s."
 msgstr "Thank you for your submission to %(ORG_LONG_NAME)s."
+
+msgid "Application ready to review: {source.title}"
+msgstr "Ready for your review: {source.title}"
+
+msgid "Reminder: Application ready to review: {source.title}"
+msgstr "Reminder: Ready for your review: {source.title}"
+
+msgid "New applications have been added to your review list."
+msgstr "New applications are now eligible for your review:"

@@ -3,14 +3,13 @@
 {% load i18n %}
 {% block salutation %}{% trans "Dear Reviewer," %}{% endblock %}
 {% block content %}
-{% trans "This application is awaiting your review." %}
+{% blocktrans with name=source.user.get_full_name %}A proposal from {{ name }} is now eligible for your review{% endblocktrans %}: {{ source.title }}
 
-{% trans "Title" %}: {{ source.title }}
 {% if related.title %}
 {% trans "Reminder Title" %}: {{ related.title }}
 {% endif %}
 {% if related.description %}
 {% trans "Reminder Description" %}: {{ related.description }}
 {% endif %}
-{% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
+{% trans "You can review the proposal here" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
 {% endblock %}
