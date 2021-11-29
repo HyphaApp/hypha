@@ -5,10 +5,9 @@ from django.contrib.auth import get_user_model, login, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AdminPasswordChangeForm
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.contrib import messages
 from django.core.exceptions import PermissionDenied
-from django.core.signing import dumps, loads, TimestampSigner
-from django.shortcuts import get_object_or_404, redirect, render, Http404
+from django.core.signing import TimestampSigner, dumps, loads
+from django.shortcuts import Http404, get_object_or_404, redirect, render
 from django.template.response import TemplateResponse
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
