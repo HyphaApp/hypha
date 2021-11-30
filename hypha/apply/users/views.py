@@ -167,7 +167,7 @@ class EmailConfirmationView(TemplateView):
                 messages.success(request, "Email Confirmed and Changed!!")
             return redirect('users:account')
 
-        return render(request, 'users/activation/invalid.html')
+        return render(request, 'users/email_change/invalid_link.html')
 
     def unsigned(self, token):
         signer = TimestampSigner()
