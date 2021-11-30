@@ -248,7 +248,7 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.REQUEST_PROJECT_CHANGE: _('Requested changes for acceptance: "{comment}"'),
         MESSAGES.UPLOAD_CONTRACT: _('Uploaded a {contract.state} contract'),
         MESSAGES.APPROVE_CONTRACT: _('Approved contract'),
-        MESSAGES.UPDATE_INVOICE_STATUS: _('Updated Invoice status to: {invoice.status_display}'),
+        MESSAGES.UPDATE_INVOICE_STATUS: 'handle_update_invoice_status',
         MESSAGES.CREATE_INVOICE: _('Invoice created'),
         MESSAGES.SUBMIT_REPORT: _('Submitted a report'),
         MESSAGES.SKIPPED_REPORT: 'handle_skipped_report',
@@ -371,6 +371,10 @@ class ActivityAdapter(AdapterBase):
             return "Skipped a Report"
         else:
             return "Marked a Report as required"
+
+    def handle_update_invoice_status(self, invoice, **kwargs):
+        invoice_status_change = _('Updated Invoice status to: {status}.').format(status=invoice.status_display)
+        return invoice_status_change
 
     def send_message(self, message, user, source, sources, **kwargs):
         from .models import Activity

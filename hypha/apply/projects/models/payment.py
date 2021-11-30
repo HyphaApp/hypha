@@ -1,4 +1,5 @@
 import decimal
+import os
 
 from django.conf import settings
 from django.core.validators import MinValueValidator
@@ -115,12 +116,8 @@ class Invoice(models.Model):
         return self.get_status_display()
 
     def can_user_delete(self, user):
-        if user.is_applicant:
-            if self.status in (SUBMITTED, CHANGES_REQUESTED):
-                return True
-
-        if user.is_apply_staff:
-            if self.status in {SUBMITTED}:
+        if user.is_applicant or user.is_apply_staff or user.is_finance or user.is_finance_level2 or user.is_contracting:
+            if self.status in (SUBMITTED):
                 return True
 
         return False
@@ -159,6 +156,10 @@ class Invoice(models.Model):
     def deliverables_total_amount(self):
         return self.deliverables.all().aggregate(total=Sum(F('deliverable__unit_price') * F('quantity'), output_field=FloatField()))
 
+    @property
+    def filename(self):
+        return os.path.basename(self.document.name)
+
 
 class SupportingDocument(models.Model):
     document = models.FileField(
@@ -172,3 +173,7 @@ class SupportingDocument(models.Model):
 
     def __str__(self):
         return self.invoice.name + ' -> ' + self.document.name
+
+    @property
+    def filename(self):
+        return os.path.basename(self.document.name)
