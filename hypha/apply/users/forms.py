@@ -103,7 +103,6 @@ class PasswordForm(forms.Form):
         return password
 
     def save(self, updated_email, name, slack, commit=True):
-        self.user.email = updated_email
         self.user.full_name = name
         self.user.slack = slack
         if commit:

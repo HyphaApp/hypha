@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.encoding import force_bytes
@@ -50,3 +51,36 @@ def send_activation_email(user, site=None):
     subject = ''.join(subject.splitlines())
     message = render_to_string('users/activation/email.txt', context)
     user.email_user(subject, message, settings.DEFAULT_FROM_EMAIL)
+
+
+def send_confirmation_email(user, token, updated_email=None, site=None):
+    """
+    Send the confirmation email. The confirmation token is the update email,
+    signed using TimestampSigner.
+    """
+
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
+
+    activation_path = reverse('users:confirm_email', kwargs={'uidb64': uid, 'token': token})
+
+    context = {
+        'user': user,
+        'name': user.get_full_name(),
+        'username': user.get_username(),
+        'unverified_email': updated_email,
+        'activation_path': activation_path,
+        'timeout_days': 1,
+        'org_long_name': settings.ORG_LONG_NAME,
+    }
+
+    if site:
+        context.update(site=site)
+
+    subject = 'Confirmation email for {unverified_email} at {org_long_name}'.format(**context)
+    # Force subject to a single line to avoid header-injection issues.
+    subject = ''.join(subject.splitlines())
+    message = render_to_string('users/email_change/confirm_email.txt', context)
+    if updated_email:
+        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [updated_email])
+    else:
+        user.email_user(subject, message, settings.DEFAULT_FROM_EMAIL)

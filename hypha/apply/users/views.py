@@ -1,3 +1,4 @@
+import datetime
 from urllib.parse import urlencode
 
 from django.contrib import messages
@@ -21,9 +22,11 @@ from hijack.views import login_with_id
 from two_factor.forms import AuthenticationTokenForm, BackupTokenForm
 from two_factor.views import LoginView as TwoFactorLoginView
 from wagtail.admin.views.account import password_management_enabled
+from wagtail.core.models import Site
 
 from .decorators import require_oauth_whitelist
 from .forms import BecomeUserForm, CustomAuthenticationForm, PasswordForm, ProfileForm
+from .utils import send_confirmation_email
 
 User = get_user_model()
 
@@ -85,8 +88,8 @@ class AccountView(UpdateView):
 
 class PasswordConfirmView(FormView):
     form_class = PasswordForm
-    template_name = 'users/confirm_password.html'
-    success_url = reverse_lazy('users:account')
+    template_name = 'users/email_change/confirm_password.html'
+    success_url = reverse_lazy('users:confirm_link_sent')
     title = _('Enter Password')
 
     def get_initial(self):
@@ -116,7 +119,17 @@ class PasswordConfirmView(FormView):
             return redirect('users:account')
         value = loads(unsigned_value)
         form.save(**value)  # Update the email and other details
+        send_confirmation_email(
+            self.request.user,
+            signer.sign(dumps(value['updated_email'])),
+            updated_email=value['updated_email'],
+            site=Site.find_for_request(self.request))
         return super(PasswordConfirmView, self).form_valid(form)
+
+
+class ChangeEmailDoneView(TemplateView):
+    template_name = 'users/email_change/done.html'
+    title = _('Confirm Email')
 
 
 @login_required()
@@ -140,6 +153,43 @@ def oauth(request):
     """Generic, empty view for the OAuth associations."""
 
     return TemplateResponse(request, 'users/oauth.html', {})
+
+
+class EmailConfirmationView(TemplateView):
+    def get(self, request, *args, **kwargs):
+        user = self.get_user(kwargs.get('uidb64'))
+        email = self.unsigned(kwargs.get('token'))
+
+        if user and email:
+            if user.email != email:
+                user.email = email
+                user.save()
+                messages.success(request, "Email Confirmed and Changed!!")
+            return redirect('users:account')
+
+        return render(request, 'users/activation/invalid.html')
+
+    def unsigned(self, token):
+        signer = TimestampSigner()
+        try:
+            unsigned_value = signer.unsign(token, max_age=datetime.timedelta(days=1))
+        except Exception:
+            return False
+        return loads(unsigned_value)
+
+    def get_user(self, uidb64):
+        """
+        Given the verified uid, look up and return the
+        corresponding user account if it exists, or ``None`` if it
+        doesn't.
+        """
+        try:
+            user = User.objects.get(**{
+                'pk': force_str(urlsafe_base64_decode(uidb64))
+            })
+            return user
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            return None
 
 
 class ActivationView(TemplateView):
