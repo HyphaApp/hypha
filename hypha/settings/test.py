@@ -13,6 +13,7 @@ PROJECTS_ENABLED = True
 PROJECTS_AUTO_CREATE = True
 
 TRANSITION_AFTER_REVIEWS = 2
+TRANSITION_AFTER_ASSIGNED = True
 
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
