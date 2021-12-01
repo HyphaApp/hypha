@@ -1,6 +1,7 @@
 import datetime
 from urllib.parse import urlencode
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model, login, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
@@ -124,7 +125,7 @@ class PasswordConfirmView(FormView):
         try:
             unsigned_value = signer.unsign(self.request.GET.get('value'), max_age=60)
         except Exception:
-            messages.error(self.request, _("Password Page TimeOut"))
+            messages.error(self.request, _("Password Page TimeOut. Try changing the email again."))
             return redirect('users:account')
         value = loads(unsigned_value)
         form.save(**value)  # Update the email and other details
@@ -168,12 +169,11 @@ class EmailConfirmationView(TemplateView):
     def get(self, request, *args, **kwargs):
         user = self.get_user(kwargs.get('uidb64'))
         email = self.unsigned(kwargs.get('token'))
-
         if user and email:
             if user.email != email:
                 user.email = email
                 user.save()
-                messages.success(request, "Email Confirmed and Changed!!")
+                messages.success(request, _(f"Your email has been successfully updated to {email}!"))
             return redirect('users:account')
 
         return render(request, 'users/email_change/invalid_link.html')
@@ -181,7 +181,10 @@ class EmailConfirmationView(TemplateView):
     def unsigned(self, token):
         signer = TimestampSigner()
         try:
-            unsigned_value = signer.unsign(token, max_age=datetime.timedelta(days=1))
+            unsigned_value = signer.unsign(
+                token,
+                max_age=datetime.timedelta(hours=settings.EMAIL_CHANGE_CONFIRMATION_HOURS)
+            )
         except Exception:
             return False
         return loads(unsigned_value)

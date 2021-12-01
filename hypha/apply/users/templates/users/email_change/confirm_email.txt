@@ -8,7 +8,7 @@
 
 {% if site %}{{ site.root_url }}{% else %}{{ base_url }}{% endif %}{{ activation_path }}
 
-{% blocktrans %}This link can be used only once and will lead you to the profile page. It will remain active for {{ timeout_days }} days, so do it now.{% endblocktrans %}
+{% blocktrans %}This link will only remain active for {{ timeout_days }} days and will lead you to profile page after verification.{% endblocktrans %}
 
 
 {% blocktrans with root_url=PUBLIC_SITE.root_url %}Kind Regards,
