@@ -188,10 +188,10 @@ def review_workflow_actions(request, submission):
     submission_stepped_phases = submission.workflow.stepped_phases
     transition_after = settings.TRANSITION_AFTER_REVIEWS
     action = None
-    if submission.status == INITIAL_STATE:
+    if transition_after and submission.status == INITIAL_STATE:
         # Automatically transition the application to "Internal review".
         action = submission_stepped_phases[2][0].name
-    elif submission.status == 'proposal_discussion':
+    elif transition_after and submission.status == 'proposal_discussion':
         # Automatically transition the proposal to "Internal review".
         action = 'proposal_internal_review'
     elif transition_after and submission.status == submission_stepped_phases[2][0].name and submission.reviews.count() >= transition_after:
