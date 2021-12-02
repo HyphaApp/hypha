@@ -322,8 +322,8 @@ if 'PASSWORD_RESET_TIMEOUT_DAYS' in env:
     except ValueError:
         pass
 
-# Number of hours that email change confirmation links are valid (default 24).
-EMAIL_CHANGE_CONFIRMATION_HOURS = int(env.get('EMAIL_CHANGE_CONFIRMATION_HOURS', 24))
+# Seconds to enter password on password page while email change/2FA change (default 120).
+PASSWORD_PAGE_TIMEOUT_SECONDS = int(env.get('PASSWORD_PAGE_TIMEOUT_SECONDS', 120))
 
 # Internationalization
 # https://docs.djangoproject.com/en/stable/topics/i18n/

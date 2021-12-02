@@ -4,10 +4,10 @@ from django.urls import include, path, reverse_lazy
 from .views import (
     AccountView,
     ActivationView,
-    ChangeEmailDoneView,
-    EmailConfirmationView,
+    EmailChangeConfirmationView,
+    EmailChangeDoneView,
+    EmailChangePasswordView,
     LoginView,
-    PasswordConfirmView,
     become,
     create_password,
     oauth,
@@ -36,7 +36,7 @@ urlpatterns = [
         path('', AccountView.as_view(), name='account'),
         path('become/', become, name='become'),
         path('password/', include([
-            path('', PasswordConfirmView.as_view(), name='confirm_password'),
+            path('', EmailChangePasswordView.as_view(), name='email_change_confirm_password'),
             path(
                 'change/',
                 auth_views.PasswordChangeView.as_view(
@@ -80,8 +80,8 @@ urlpatterns = [
             ActivationView.as_view(),
             name='activate'
         ),
-        path('confirmation/done/', ChangeEmailDoneView.as_view(), name="confirm_link_sent"),
-        path('confirmation/<uidb64>/<token>/', EmailConfirmationView.as_view(), name="confirm_email"),
+        path('confirmation/done/', EmailChangeDoneView.as_view(), name="confirm_link_sent"),
+        path('confirmation/<uidb64>/<token>/', EmailChangeConfirmationView.as_view(), name="confirm_email"),
         path('activate/', create_password, name="activate_password"),
         path('oauth', oauth, name='oauth'),
     ])),

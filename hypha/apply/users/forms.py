@@ -82,7 +82,7 @@ class BecomeUserForm(forms.Form):
     )
 
 
-class PasswordForm(forms.Form):
+class EmailChangePasswordForm(forms.Form):
     password = forms.CharField(
         label=_("Password"),
         strip=False,
@@ -97,7 +97,7 @@ class PasswordForm(forms.Form):
         password = self.cleaned_data["password"]
         if not self.user.check_password(password):
             raise forms.ValidationError(
-                _("Your password was entered incorrectly. Please enter it again."),
+                _("Incorrect password. Please try again."),
                 code='password_incorrect',
             )
         return password

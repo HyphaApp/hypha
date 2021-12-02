@@ -28,7 +28,12 @@ from wagtail.core.models import Site
 from hypha.apply.home.models import ApplyHomePage
 
 from .decorators import require_oauth_whitelist
-from .forms import BecomeUserForm, CustomAuthenticationForm, PasswordForm, ProfileForm
+from .forms import (
+    BecomeUserForm,
+    CustomAuthenticationForm,
+    EmailChangePasswordForm,
+    ProfileForm,
+)
 from .utils import send_confirmation_email
 
 User = get_user_model()
@@ -63,7 +68,7 @@ class AccountView(UpdateView):
         slack = form.cleaned_data['slack']
         user = get_object_or_404(User, id=self.request.user.id)
         if updated_email and updated_email != user.email:
-            base_url = reverse('users:confirm_password')
+            base_url = reverse('users:email_change_confirm_password')
             query_dict = {
                 'updated_email': updated_email,
                 'name': name,
@@ -96,8 +101,8 @@ class AccountView(UpdateView):
         )
 
 
-class PasswordConfirmView(FormView):
-    form_class = PasswordForm
+class EmailChangePasswordView(FormView):
+    form_class = EmailChangePasswordForm
     template_name = 'users/email_change/confirm_password.html'
     success_url = reverse_lazy('users:confirm_link_sent')
     title = _('Enter Password')
@@ -111,7 +116,7 @@ class PasswordConfirmView(FormView):
         elif 'pp_account' in self.request.session:
             del self.request.session['pp_account']
 
-        return super(PasswordConfirmView, self).get_initial()
+        return super(EmailChangePasswordView, self).get_initial()
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -123,9 +128,12 @@ class PasswordConfirmView(FormView):
             del self.request.session['form_filled']  # remove session variables to make url inaccessible
         signer = TimestampSigner()
         try:
-            unsigned_value = signer.unsign(self.request.GET.get('value'), max_age=60)
+            unsigned_value = signer.unsign(
+                self.request.GET.get('value'),
+                max_age=settings.PASSWORD_PAGE_TIMEOUT_SECONDS
+            )
         except Exception:
-            messages.error(self.request, _("Password Page TimeOut. Try changing the email again."))
+            messages.error(self.request, _("Password Page timed out. Try changing the email again."))
             return redirect('users:account')
         value = loads(unsigned_value)
         form.save(**value)  # Update the email and other details
@@ -134,12 +142,12 @@ class PasswordConfirmView(FormView):
             signer.sign(dumps(value['updated_email'])),
             updated_email=value['updated_email'],
             site=Site.find_for_request(self.request))
-        return super(PasswordConfirmView, self).form_valid(form)
+        return super(EmailChangePasswordView, self).form_valid(form)
 
 
-class ChangeEmailDoneView(TemplateView):
+class EmailChangeDoneView(TemplateView):
     template_name = 'users/email_change/done.html'
-    title = _('Confirm Email')
+    title = _('Verify Email')
 
 
 @login_required()
@@ -165,7 +173,7 @@ def oauth(request):
     return TemplateResponse(request, 'users/oauth.html', {})
 
 
-class EmailConfirmationView(TemplateView):
+class EmailChangeConfirmationView(TemplateView):
     def get(self, request, *args, **kwargs):
         user = self.get_user(kwargs.get('uidb64'))
         email = self.unsigned(kwargs.get('token'))
@@ -183,7 +191,7 @@ class EmailConfirmationView(TemplateView):
         try:
             unsigned_value = signer.unsign(
                 token,
-                max_age=datetime.timedelta(hours=settings.EMAIL_CHANGE_CONFIRMATION_HOURS)
+                max_age=datetime.timedelta(days=settings.PASSWORD_RESET_TIMEOUT_DAYS)
             )
         except Exception:
             return False

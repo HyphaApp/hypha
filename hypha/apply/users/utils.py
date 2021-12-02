@@ -69,7 +69,7 @@ def send_confirmation_email(user, token, updated_email=None, site=None):
         'username': user.get_username(),
         'unverified_email': updated_email,
         'activation_path': activation_path,
-        'timeout_days': settings.EMAIL_CHANGE_CONFIRMATION_HOURS,
+        'timeout_days': settings.PASSWORD_RESET_TIMEOUT_DAYS,
         'org_long_name': settings.ORG_LONG_NAME,
     }
 
