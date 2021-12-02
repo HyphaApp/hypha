@@ -85,6 +85,7 @@ class BecomeUserForm(forms.Form):
 class EmailChangePasswordForm(forms.Form):
     password = forms.CharField(
         label=_("Password"),
+        help_text=_("Email change requires you to put password."),
         strip=False,
         widget=forms.PasswordInput(attrs={'autofocus': True}),
     )

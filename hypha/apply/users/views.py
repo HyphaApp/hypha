@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AdminPasswordChangeForm
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.exceptions import PermissionDenied
-from django.core.signing import TimestampSigner, dumps, loads
+from django.core.signing import BadSignature, Signer, TimestampSigner, dumps, loads
 from django.shortcuts import Http404, get_object_or_404, redirect, render
 from django.template.response import TemplateResponse
 from django.urls import reverse, reverse_lazy
@@ -77,9 +77,9 @@ class AccountView(UpdateView):
 
             signer = TimestampSigner()
             signed_value = signer.sign(dumps(query_dict))
-
-            self.request.session['pp_account'] = True  # Using session variables for redirect validation
-            self.request.session['form_filled'] = False
+            # Using session variables for redirect validation
+            token_signer = Signer()
+            self.request.session['signed_token'] = token_signer.sign(user.email)
             return redirect('{}?{}'.format(base_url, urlencode({'value': signed_value})))
         return super(AccountView, self).form_valid(form)
 
@@ -101,6 +101,7 @@ class AccountView(UpdateView):
         )
 
 
+@method_decorator(login_required, name='dispatch')
 class EmailChangePasswordView(FormView):
     form_class = EmailChangePasswordForm
     template_name = 'users/email_change/confirm_password.html'
@@ -111,11 +112,13 @@ class EmailChangePasswordView(FormView):
         """
         Validating the redirection from account via session variable
         """
-        if 'form_filled' not in self.request.session and 'pp_account' not in self.request.session:
+        if 'signed_token' not in self.request.session:
             raise Http404
-        elif 'pp_account' in self.request.session:
-            del self.request.session['pp_account']
-
+        signer = Signer()
+        try:
+            signer.unsign(self.request.session['signed_token'])
+        except BadSignature:
+            raise Http404
         return super(EmailChangePasswordView, self).get_initial()
 
     def get_form_kwargs(self):
@@ -124,8 +127,9 @@ class EmailChangePasswordView(FormView):
         return kwargs
 
     def form_valid(self, form):
-        if 'form_filled' in self.request.session:
-            del self.request.session['form_filled']  # remove session variables to make url inaccessible
+        # Make sure redirection url is inaccessible after email is sent
+        if 'signed_token' in self.request.session:
+            del self.request.session['signed_token']
         signer = TimestampSigner()
         try:
             unsigned_value = signer.unsign(
@@ -136,7 +140,7 @@ class EmailChangePasswordView(FormView):
             messages.error(self.request, _("Password Page timed out. Try changing the email again."))
             return redirect('users:account')
         value = loads(unsigned_value)
-        form.save(**value)  # Update the email and other details
+        form.save(**value)
         send_confirmation_email(
             self.request.user,
             signer.sign(dumps(value['updated_email'])),
@@ -145,6 +149,7 @@ class EmailChangePasswordView(FormView):
         return super(EmailChangePasswordView, self).form_valid(form)
 
 
+@method_decorator(login_required, name='dispatch')
 class EmailChangeDoneView(TemplateView):
     template_name = 'users/email_change/done.html'
     title = _('Verify Email')
@@ -173,6 +178,7 @@ def oauth(request):
     return TemplateResponse(request, 'users/oauth.html', {})
 
 
+@method_decorator(login_required, name='dispatch')
 class EmailChangeConfirmationView(TemplateView):
     def get(self, request, *args, **kwargs):
         user = self.get_user(kwargs.get('uidb64'))
