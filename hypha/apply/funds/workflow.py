@@ -339,7 +339,7 @@ SingleStageExternalDefinition = [
             'transitions': {
                 'ext_more_info': _('Request More Information'),
                 'ext_internal_review': _('Open Review'),
-                'ext_rejected': _('Dismiss'),
+                'ext_screening_rejected': _('Dismiss'),
             },
             'display': _('Need screening'),
             'public': _('Application Received'),
@@ -358,12 +358,17 @@ SingleStageExternalDefinition = [
             'stage': RequestExt,
             'permissions': applicant_edit_permissions,
         },
+        'ext_screening_rejected': {
+            'display': _('Dismissed'),
+            'stage': RequestExt,
+            'permissions': no_permissions,
+        },
     },
     {
         'ext_internal_review': {
             'transitions': {
                 'ext_review_more_info': _('Request More Information'),
-                'ext_rejected': _('Dismiss'),
+                'ext_review_rejected': _('Dismiss'),
                 'ext_external_review': _('Open External Review'),
                 INITIAL_STATE: _('Need screening (revert)'),
             },
@@ -384,6 +389,11 @@ SingleStageExternalDefinition = [
             'stage': RequestExt,
             'permissions': applicant_edit_permissions,
         },
+        'ext_review_rejected': {
+            'display': _('Dismissed'),
+            'stage': RequestExt,
+            'permissions': no_permissions,
+        },
     },
     {
         'ext_external_review': {
@@ -391,7 +401,7 @@ SingleStageExternalDefinition = [
                'ext_external_review_more_info': _('Request More Information'),
                 'ext_almost': _('Accept but additional info required'),
                 'ext_accepted': _('Accept'),
-                'ext_rejected': _('Dismiss'),
+                'ext_external_review_rejected': _('Dismiss'),
                 'ext_internal_review': _('Open Internal Review (revert)'),
             },
             'display': _('External Review'),
@@ -409,6 +419,11 @@ SingleStageExternalDefinition = [
             'display': _('More information required'),
             'stage': RequestExt,
             'permissions': applicant_edit_permissions,
+        },
+        'ext_external_review_rejected': {
+            'display': _('Dismissed'),
+            'stage': RequestExt,
+            'permissions': no_permissions,
         },
     },
     {
