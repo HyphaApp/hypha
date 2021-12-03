@@ -925,7 +925,7 @@ class EmailAdapter(AdapterBase):
         return [
             reviewer.email
             for reviewer in source.missing_reviewers.all()
-            if source.phase.permissions.can_review(reviewer) and not reviewer.is_apply_staff
+            if source.phase.permissions.can_review(reviewer) and not reviewer.is_board_member
         ]
 
     def partners_updated_applicant(self, added, removed, **kwargs):
