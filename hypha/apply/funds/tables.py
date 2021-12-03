@@ -74,14 +74,14 @@ class SubmissionsTable(tables.Table):
     phase = tables.Column(verbose_name=_('Status'), order_by=('status',), attrs={'td': {'data-actions': render_actions, 'class': 'js-actions'}})
     stage = tables.Column(verbose_name=_('Type'), order_by=('status',))
     fund = tables.Column(verbose_name=_('Fund'), accessor='page')
-    comments = tables.Column(accessor='comment_count', verbose_name=_('Comments'))
+    # comments = tables.Column(accessor='comment_count', verbose_name=_('Comments'))
     last_update = tables.DateColumn(accessor="last_update", verbose_name=_('Last updated'))
 
     class Meta:
         model = ApplicationSubmission
         order_by = ('-last_update',)
         fields = ('title', 'phase', 'stage', 'fund', 'round', 'submit_time', 'last_update')
-        sequence = fields + ('comments',)
+        sequence = fields # + ('comments',)
         template_name = 'funds/tables/table.html'
         row_attrs = {
             'class': make_row_class,
@@ -138,7 +138,7 @@ class BaseAdminSubmissionsTable(SubmissionsTable):
 
     class Meta(SubmissionsTable.Meta):
         fields = ('title', 'phase', 'stage', 'fund', 'round', 'lead', 'submit_time', 'last_update', 'screening_status', 'reviews_stats')  # type: ignore
-        sequence = fields + ('comments',)
+        sequence = fields # + ('comments',)
 
     def render_lead(self, value):
         return format_html('<span>{}</span>', value)
@@ -171,7 +171,7 @@ class SummarySubmissionsTableWithRole(BaseAdminSubmissionsTable):
     role_icon = tables.Column(verbose_name=_('Role'))
 
     class Meta(BaseAdminSubmissionsTable.Meta):
-        sequence = ('...', 'role_icon', 'comments')
+        sequence = ('...', 'role_icon') #, 'comments')
         orderable = False
 
     def render_role_icon(self, value):
