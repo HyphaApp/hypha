@@ -621,6 +621,12 @@ class SlackAdapter(AdapterBase):
             str(reviewer) for reviewer in reviewers_to_notify
         )
 
+        if len(reviewers_to_notify) == 0:
+            return _('<{link}|{title}> is ready for review. No reviewers are assigned.').format(
+                link=link,
+                title=submission.title,
+            )
+
         return (
             _('<{link}|{title}> is ready for review. The following are assigned as reviewers: {reviewers}').format(
                 link=link,
