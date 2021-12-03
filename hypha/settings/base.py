@@ -574,6 +574,10 @@ if 'TRANSITION_AFTER_REVIEWS' in env:
     except ValueError:
         pass
 
+TRANSITION_AFTER_ASSIGNED = False
+if env.get('TRANSITION_AFTER_ASSIGNED', 'false').strip().lower() == 'true':
+    TRANSITION_AFTER_ASSIGNED = True
+
 
 # Exclude Filters/columns from submission tables.
 # Possible values are: fund, round, status, lead, reviewers, screening_statuses, category_options, meta_terms
