@@ -97,3 +97,6 @@ msgstr "Reminder: Ready for your review: {source.title}"
 
 msgid "New applications have been added to your review list."
 msgstr "New applications are now eligible for your review:"
+
+msgid "Apply admin"
+msgstr "Admin"
