@@ -709,6 +709,7 @@ class EmailAdapter(AdapterBase):
         MESSAGES.NEW_SUBMISSION: 'funds/email/confirmation.html',
         MESSAGES.COMMENT: 'notify_comment',
         MESSAGES.EDIT: 'messages/email/edit.html',
+        MESSAGES.APPLICANT_EDIT: 'messages/email/applicant_edit.html',
         MESSAGES.TRANSITION: 'handle_transition',
         MESSAGES.BATCH_TRANSITION: 'handle_batch_transition',
         MESSAGES.DETERMINATION_OUTCOME: 'handle_determination',
@@ -893,6 +894,10 @@ class EmailAdapter(AdapterBase):
 
         if message_type in {MESSAGES.REVIEW_REMINDER}:
             return self.reviewers(source)
+
+        if message_type == MESSAGES.APPLICANT_EDIT:
+            print(source.__dict__)
+            return [source.lead.email]
 
         return [source.user.email]
 

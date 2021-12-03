@@ -1,0 +1,11 @@
+{% load i18n %}
+{% block salutation %}{% blocktrans %}Dear {{ ORG_SHORT_NAME }} Staff,{% endblocktrans %}{% endblock %}
+{% block content %}
+{% blocktrans with name=source.user.get_full_name %}{{ name }} has updated their proposal:{% endblocktrans %} {{ source.title }}.
+
+{% trans "You can view these changes here:" %} {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
+{% endblock %}
+
+{% block sigature_content %}
+{% trans "- Hypha" %}
+{% endblock %}
