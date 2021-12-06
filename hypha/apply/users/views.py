@@ -34,7 +34,6 @@ from .forms import (
     CustomAuthenticationForm,
     EmailChangePasswordForm,
     ProfileForm,
-    DisableForm,
 )
 from .utils import send_confirmation_email
 
@@ -276,13 +275,27 @@ def create_password(request):
     })
 
 
+class BackupTokensPasswordView(FormView):
+    """
+    Require password to see backup codes
+    """
+    form_class = PasswordForm
+    success_url = reverse_lazy('two_factor:backup_tokens')
+    template_name = 'users/codes_password.html'
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+
 class DisableView(TwoFactorDisableView):
     """
     View for disabling two-factor for a user's account.
     """
     template_name = 'two_factor/profile/disable.html'
     success_url = reverse_lazy('users:account')
-    form_class = DisableForm
+    form_class = PasswordForm
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
