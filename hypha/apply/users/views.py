@@ -275,13 +275,14 @@ def create_password(request):
     })
 
 
-class BackupTokensPasswordView(FormView):
+@method_decorator(login_required, name='dispatch')
+class TWOFABackupTokensPasswordView(FormView):
     """
     Require password to see backup codes
     """
-    form_class = PasswordForm
+    form_class = TWOFAPasswordForm
     success_url = reverse_lazy('two_factor:backup_tokens')
-    template_name = 'users/codes_password.html'
+    template_name = 'two_factor/core/backup_tokens_password.html'
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -289,13 +290,14 @@ class BackupTokensPasswordView(FormView):
         return kwargs
 
 
-class DisableView(TwoFactorDisableView):
+@method_decorator(login_required, name='dispatch')
+class TWOFADisableView(TwoFactorDisableView):
     """
     View for disabling two-factor for a user's account.
     """
     template_name = 'two_factor/profile/disable.html'
     success_url = reverse_lazy('users:account')
-    form_class = PasswordForm
+    form_class = TWOFAPasswordForm
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()

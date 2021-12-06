@@ -8,6 +8,8 @@ from .views import (
     EmailChangeDoneView,
     EmailChangePasswordView,
     LoginView,
+    TWOFABackupTokensPasswordView,
+    TWOFADisableView,
     become,
     create_password,
     oauth,
