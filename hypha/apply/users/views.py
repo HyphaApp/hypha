@@ -34,6 +34,7 @@ from .forms import (
     CustomAuthenticationForm,
     EmailChangePasswordForm,
     ProfileForm,
+    TWOFAPasswordForm,
 )
 from .utils import send_confirmation_email
 

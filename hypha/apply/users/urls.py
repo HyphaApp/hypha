@@ -83,6 +83,8 @@ urlpatterns = [
             ActivationView.as_view(),
             name='activate'
         ),
+        path('two_factor/backup_tokens/password/', TWOFABackupTokensPasswordView.as_view(), name='backup_tokens_password'),
+        path('two_factor/disable/', TWOFADisableView.as_view(), name='disable'),
         path('confirmation/done/', EmailChangeDoneView.as_view(), name="confirm_link_sent"),
         path('confirmation/<uidb64>/<token>/', EmailChangeConfirmationView.as_view(), name="confirm_email"),
         path('activate/', create_password, name="activate_password"),
