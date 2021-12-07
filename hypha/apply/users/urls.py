@@ -4,6 +4,9 @@ from django.urls import include, path, reverse_lazy
 from .views import (
     AccountView,
     ActivationView,
+    EmailChangeConfirmationView,
+    EmailChangeDoneView,
+    EmailChangePasswordView,
     LoginView,
     become,
     create_password,
@@ -33,6 +36,7 @@ urlpatterns = [
         path('', AccountView.as_view(), name='account'),
         path('become/', become, name='become'),
         path('password/', include([
+            path('', EmailChangePasswordView.as_view(), name='email_change_confirm_password'),
             path(
                 'change/',
                 auth_views.PasswordChangeView.as_view(
@@ -76,6 +80,8 @@ urlpatterns = [
             ActivationView.as_view(),
             name='activate'
         ),
+        path('confirmation/done/', EmailChangeDoneView.as_view(), name="confirm_link_sent"),
+        path('confirmation/<uidb64>/<token>/', EmailChangeConfirmationView.as_view(), name="confirm_email"),
         path('activate/', create_password, name="activate_password"),
         path('oauth', oauth, name='oauth'),
     ])),

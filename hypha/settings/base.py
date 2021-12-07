@@ -322,6 +322,9 @@ if 'PASSWORD_RESET_TIMEOUT_DAYS' in env:
     except ValueError:
         pass
 
+# Seconds to enter password on password page while email change/2FA change (default 120).
+PASSWORD_PAGE_TIMEOUT_SECONDS = int(env.get('PASSWORD_PAGE_TIMEOUT_SECONDS', 120))
+
 # Internationalization
 # https://docs.djangoproject.com/en/stable/topics/i18n/
 

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block header_modifier %}header--light-bg{% endblock %}
+{% block page_title %}{% trans "Check your email" %}{% endblock %}
+{% block title %}{% trans "Verify Email" %}{% endblock %}
+
+{% block content %}
+<div class="wrapper wrapper--small wrapper--bottom-space">
+    <p>{% trans "To start using the new email, please click on the confirmation link that has been sent to you on your new email." %}</p>
+</div>
+{% endblock %}
