@@ -5,6 +5,7 @@ from django.conf import settings
 from django.core.files.storage import get_storage_class
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
+from django.core.exceptions import ValidationError
 from django.forms import FileField, FileInput
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
@@ -44,6 +45,19 @@ class ExtendedFormBuilder(FormBuilder):
     def create_document_field(self, field, options):
         return FileField(widget=FileInput(attrs={'accept': settings.FILE_ALLOWED_EXTENSIONS}), **options)
 
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        for name, field in self.fields.items():
+            if isinstance(field, FileField):
+                file_data = cleaned_data[name]
+                if file_data:
+                    file_name = file_data.name
+                    file_extension = file_name.split('.')[-1]
+                    if file_extension not in settings.FILE_ALLOWED_EXTENSIONS:
+                        self.add_error(name, f"File extension '{file_extension}' is not allowed. "
+                                             f"Allowed extensions are: '{', '.join(settings.FILE_ALLOWED_EXTENSIONS)}'")
+        return self.cleaned_data
+
 
 @method_decorator(never_cache, name='serve')
 class FormPage(AbstractEmailForm, BasePage):
@@ -69,6 +83,11 @@ class FormPage(AbstractEmailForm, BasePage):
             FieldPanel('subject'),
         ], "Email"),
     ]
+
+    def get_form(self, *args, **kwargs):
+        form = super(FormPage, self).get_form(*args, **kwargs)
+        form.clean = self.form_builder.clean.__get__(form)
+        return form
 
     def process_form_submission(self, form):
         cleaned_data = form.cleaned_data
