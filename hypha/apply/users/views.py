@@ -21,6 +21,7 @@ from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 from hijack.views import login_with_id
 from two_factor.forms import AuthenticationTokenForm, BackupTokenForm
+from two_factor.views import DisableView as TwoFactorDisableView
 from two_factor.views import LoginView as TwoFactorLoginView
 from wagtail.admin.views.account import password_management_enabled
 from wagtail.core.models import Site
@@ -33,6 +34,7 @@ from .forms import (
     CustomAuthenticationForm,
     EmailChangePasswordForm,
     ProfileForm,
+    TWOFAPasswordForm,
 )
 from .utils import send_confirmation_email
 
@@ -272,3 +274,33 @@ def create_password(request):
     return render(request, 'users/change_password.html', {
         'form': form
     })
+
+
+@method_decorator(login_required, name='dispatch')
+class TWOFABackupTokensPasswordView(FormView):
+    """
+    Require password to see backup codes
+    """
+    form_class = TWOFAPasswordForm
+    success_url = reverse_lazy('two_factor:backup_tokens')
+    template_name = 'two_factor/core/backup_tokens_password.html'
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+
+@method_decorator(login_required, name='dispatch')
+class TWOFADisableView(TwoFactorDisableView):
+    """
+    View for disabling two-factor for a user's account.
+    """
+    template_name = 'two_factor/profile/disable.html'
+    success_url = reverse_lazy('users:account')
+    form_class = TWOFAPasswordForm
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
