@@ -7,8 +7,8 @@ from hypha.apply.projects.models.payment import (
     CHANGES_REQUESTED,
     DECLINED,
     PAID,
+    RESUBMITTED,
     SUBMITTED,
-    UNDER_REVIEW,
 )
 from hypha.apply.projects.models.project import COMMITTED
 from hypha.apply.projects.tests.factories import InvoiceFactory, ProjectFactory
@@ -117,7 +117,7 @@ class TestStaffDashboard(BaseViewTestCase):
         project = ProjectFactory(lead=self.user)
         InvoiceFactory(project=project, status=SUBMITTED)
         InvoiceFactory(project=project, status=CHANGES_REQUESTED)
-        InvoiceFactory(project=project, status=UNDER_REVIEW)
+        InvoiceFactory(project=project, status=RESUBMITTED)
 
         response = self.get_page()
         self.assertContains(response, "Active Invoices")
@@ -126,7 +126,7 @@ class TestStaffDashboard(BaseViewTestCase):
         project = ProjectFactory()
         InvoiceFactory(project=project, status=SUBMITTED)
         InvoiceFactory(project=project, status=CHANGES_REQUESTED)
-        InvoiceFactory(project=project, status=UNDER_REVIEW)
+        InvoiceFactory(project=project, status=RESUBMITTED)
 
         response = self.get_page()
         self.assertNotContains(response, "Active Invoices")

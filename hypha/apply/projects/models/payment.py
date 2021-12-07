@@ -4,7 +4,7 @@ import os
 from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.db.models import F, Sum, Value
+from django.db.models import F, Q, Sum, Value
 from django.db.models.fields import FloatField
 from django.db.models.fields.related import ManyToManyField
 from django.db.models.functions import Coalesce
@@ -15,13 +15,20 @@ from hypha.apply.utils.storage import PrivateStorage
 
 SUBMITTED = 'submitted'
 CHANGES_REQUESTED = 'changes_requested'
-UNDER_REVIEW = 'under_review'
+APPROVED_BY_STAFF = 'approved_by_staff'
+APPROVED_BY_FINANCE1 = 'approved_by_finance1'
+APPROVED_BY_FINANCE2 = 'approved_by_finance2'
 PAID = 'paid'
 DECLINED = 'declined'
+RESUBMITTED = 'resubmitted'
+
 REQUEST_STATUS_CHOICES = [
     (SUBMITTED, _('Submitted')),
     (CHANGES_REQUESTED, _('Changes Requested')),
-    (UNDER_REVIEW, _('Under Review')),
+    (APPROVED_BY_STAFF, _('Approved by staff')),
+    (APPROVED_BY_FINANCE1, _('Approved By Finance 1')),
+    (APPROVED_BY_FINANCE2, _('Approved By Finance 2')),
+    (RESUBMITTED, _('Resubmitted')),
     (PAID, _('Paid')),
     (DECLINED, _('Declined')),
 ]
@@ -52,7 +59,7 @@ class InvoiceQueryset(models.QuerySet):
         return self.filter(status=PAID).total_value('paid_value')
 
     def unpaid_value(self):
-        return self.filter(status__in=[SUBMITTED, UNDER_REVIEW]).total_value('paid_value')
+        return self.filter(~Q(status=PAID)).total_value('paid_value')
 
 
 class InvoiceDeliverable(models.Model):
@@ -124,11 +131,11 @@ class Invoice(models.Model):
 
     def can_user_edit(self, user):
         if user.is_applicant:
-            if self.status in {SUBMITTED, CHANGES_REQUESTED}:
+            if self.status in {SUBMITTED, CHANGES_REQUESTED, RESUBMITTED}:
                 return True
 
         if user.is_apply_staff:
-            if self.status in {SUBMITTED}:
+            if self.status in {SUBMITTED, RESUBMITTED}:
                 return True
 
         return False
