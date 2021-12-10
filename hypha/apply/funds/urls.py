@@ -3,6 +3,7 @@ from django.urls import include, path
 from hypha.apply.projects import urls as projects_urls
 
 from .views import (
+    AwaitingReviewSubmissionsListView,
     GroupingApplicationsListView,
     ReminderDeleteView,
     ReviewerLeaderboard,
@@ -52,6 +53,7 @@ submission_urls = ([
         path('', ReviewerLeaderboard.as_view(), name="reviewer_leaderboard"),
         path('<int:pk>/', ReviewerLeaderboardDetail.as_view(), name="reviewer_leaderboard_detail"),
     ])),
+    path('awaiting_review/', AwaitingReviewSubmissionsListView.as_view(), name="awaiting_review"),
     path('assignments/', include([
         path('staff/', StaffAssignments.as_view(), name="staff_assignments"),
     ])),
