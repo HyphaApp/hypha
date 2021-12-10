@@ -1,10 +1,75 @@
-{% extends "messages/email/applicant_base.html" %}
 {% load bleach_tags i18n %}
 
-{% block content %}{% trans "Your application has been reviewed and the outcome is" %}: {{ determination.clean_outcome }}
+{% block content %}
+    {% with source.get_answers_dict as answers %}
+        {% if determination.clean_outcome == 'Approved' %}
+            Hi {{ answers.name }},
 
-{{ determination.message|bleach|striptags }}
+            I’m pleased to share that your grant proposal to {{ ORG_SHORT_NAME }} for {{ answers.organization_name }}’s {{ source.title }} project has been accepted!
 
-{% trans "Read the full determination here" %}: {{ request.scheme }}://{{ request.get_host }}{{ determination.get_absolute_url }}{% endblock %}
+            {{ determination.message|bleach|striptags }}
 
-{% block more_info %}If you have any questions about the determination, please contact giving@ampr.org.{% endblock %}
+            You will receive formal notice with our grant terms in the mail, along with a check for the full grant amount of {{ answers.requested_funding }} in the next few weeks. To help this process, we'd like to confirm some of your information. Please respond to this email to let us know if any of this needs to be updated:
+            
+            Check will be mailed to: 	 	
+            {{ answers.organization_name }}
+            c/o {{ answers.name }}
+            {{ answers.address.thoroughfare }}
+            {{ answers.address.premise }}
+            {{ answers.address.localityname }}, {{ answers.address.administrativearea }} {{ answers.address.postalcode }}
+
+            Check will be made out to: {{ answers.organization_name }}
+            EIN: {{ answers.ein }}
+
+            Link to view your proposal: {{ request.scheme }}://{{ request.get_host }}{{ determination.get_absolute_url }}
+
+            If you have any questions, you may contact Chelsea Parraga, Grants Manager at +1-858-477-9900 or {{ ORG_STAFF_EMAIL }}.
+
+            Congratulations!
+
+            Rosy Schechter
+            Executive Director
+            {{ ORG_LONG_NAME }} ({{ ORG_SHORT_NAME }})
+            +1-858-477-9900
+            {{ ORG_STAFF_EMAIL }}
+        {% endif %}
+        {% if determination.clean_outcome == 'Dismissed' %}
+            Dear {{ answers.name }},
+
+            Your grant proposal to {{ ORG_SHORT_NAME }} for the {{source.title}} for {{ answers.organization_name }} has been declined. We regret to let you know that your project was not a fit for our funding at this time because:
+            {{ determination.message|bleach|striptags }}
+            
+            If you would like to discuss this outcome, you may contact Chelsea Parraga, Grants Manager at +1-858-477-9900 or {{ ORG_STAFF_EMAIL }}. We appreciate any feedback you would like to share with us about our process. 
+            Thank you for the time you invested in your application. We are happy to work with you in the future on a proposal that better fits our goals.
+
+            Sincerely,
+            Rosy
+
+            Rosy Schechter
+            Executive Director
+            {{ ORG_LONG_NAME }} ({{ ORG_SHORT_NAME }})
+            +1-858-477-9900
+            {{ ORG_STAFF_EMAIL }}
+        {% endif %}
+        {% if determination.clean_outcome == 'More information requested' %}
+            Hi {{ answers.name }},
+
+            {{ ORG_SHORT_NAME }} needs more information from you to complete its review of your grant proposal for the {{ answers.organization_name }} {{ source.title }}.
+
+            Would you please revise your proposal to include the following information:
+            {{ determination.message|bleach|striptags }}
+
+            You may update your proposal here:  {{ request.scheme }}://{{ request.get_host }}{{ determination.get_absolute_url }}
+
+            If you would like to discuss these requested changes, please call me at +1-858-477-9900.
+
+            Warmly,
+            Chelsea
+
+            Chelsea Párraga
+            Grants Manager
+            +1-858-477-9900
+            {{ ORG_STAFF_EMAIL }}
+        {% endif %}
+    {% endwith %}
+{% endblock %}
