@@ -23,6 +23,7 @@ from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 from django_otp import devices_for_user
 from hijack.views import AcquireUserView
+from ratelimit.decorators import ratelimit
 from two_factor.forms import AuthenticationTokenForm, BackupTokenForm
 from two_factor.utils import default_device, get_otpauth_url, totp_digits
 from two_factor.views import BackupTokensView as TwoFactorBackupTokensView
@@ -48,6 +49,8 @@ from .utils import send_confirmation_email
 User = get_user_model()
 
 
+@method_decorator(ratelimit(key='ip', rate=settings.DEFAULT_RATE_LIMIT, method='POST', block=True), name='dispatch')
+@method_decorator(ratelimit(key='post:email', rate=settings.DEFAULT_RATE_LIMIT, method='POST', block=True), name='dispatch')
 class LoginView(TwoFactorLoginView):
     form_list = (
         ('auth', CustomAuthenticationForm),
@@ -74,7 +77,7 @@ class AccountView(UpdateView):
     def form_valid(self, form):
         updated_email = form.cleaned_data['email']
         name = form.cleaned_data['full_name']
-        slack = form.cleaned_data.get('slack')
+        slack = form.cleaned_data.get('slack', '')
         user = get_object_or_404(User, id=self.request.user.id)
         if updated_email and updated_email != user.email:
             base_url = reverse('users:email_change_confirm_password')
@@ -288,6 +291,7 @@ def create_password(request):
 
 
 @method_decorator(never_cache, name='dispatch')
+@method_decorator(ratelimit(key='user', rate=settings.DEFAULT_RATE_LIMIT, method='POST', block=True), name='dispatch')
 @method_decorator(login_required, name='dispatch')
 class TWOFASetupView(TwoFactorSetupView):
     def get_issuer(self):
@@ -327,6 +331,7 @@ class TWOFABackupTokensPasswordView(TwoFactorBackupTokensView):
         return kwargs
 
 
+@method_decorator(ratelimit(key='user', rate=settings.DEFAULT_RATE_LIMIT, method='POST', block=True), name='dispatch')
 @method_decorator(login_required, name='dispatch')
 class TWOFADisableView(TwoFactorDisableView):
     """

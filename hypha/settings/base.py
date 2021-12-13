@@ -25,6 +25,10 @@ CURRENCY_SYMBOL = env.str('CURRENCY_SYMBOL', '$')
 # Default page pagination value.
 DEFAULT_PER_PAGE = 20
 
+# Form Rate-Limit Configuration
+# DEFAULT_RATE_LIMIT is used by all the forms unless which is set 5 requests/minute by default
+DEFAULT_RATE_LIMIT = env.get('DEFAULT_RATE_LIMIT', '5/m')
+
 # IF Hypha should enforce 2FA for all users.
 ENFORCE_TWO_FACTOR = env.bool('ENFORCE_TWO_FACTOR', False)
 
