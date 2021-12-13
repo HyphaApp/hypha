@@ -50,7 +50,7 @@ from hypha.apply.projects.models import Project
 from hypha.apply.review.models import Review
 from hypha.apply.review.views import ReviewContextMixin
 from hypha.apply.stream_forms.blocks import GroupToggleBlock
-from hypha.apply.users.decorators import staff_required
+from hypha.apply.users.decorators import staff_or_finance_required, staff_required
 from hypha.apply.utils.models import PDFPageSettings
 from hypha.apply.utils.pdfs import draw_submission_content, make_pdf
 from hypha.apply.utils.storage import PrivateMediaView
@@ -1205,7 +1205,7 @@ class SubmissionPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
         return is_user_has_access_to_view_submission(self.request.user, self.submission)
 
 
-@method_decorator(staff_required, name='dispatch')
+@method_decorator(staff_or_finance_required, name='dispatch')
 class SubmissionDetailSimplifiedView(DetailView):
     model = ApplicationSubmission
     template_name_suffix = '_simplified_detail'
@@ -1219,7 +1219,7 @@ class SubmissionDetailSimplifiedView(DetailView):
         return obj
 
 
-@method_decorator(staff_required, name='dispatch')
+@method_decorator(staff_or_finance_required, name='dispatch')
 class SubmissionDetailPDFView(SingleObjectMixin, View):
     model = ApplicationSubmission
 
