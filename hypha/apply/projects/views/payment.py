@@ -18,7 +18,7 @@ from hypha.apply.utils.views import DelegateableView, DelegatedViewMixin, ViewDi
 
 from ..filters import InvoiceListFilter
 from ..forms import ChangeInvoiceStatusForm, CreateInvoiceForm, EditInvoiceForm
-from ..models.payment import Invoice
+from ..models.payment import CHANGES_REQUESTED, RESUBMITTED, Invoice
 from ..models.project import Project
 from ..tables import InvoiceListTable
 
@@ -57,8 +57,8 @@ class ChangeInvoiceStatusView(DelegatedViewMixin, InvoiceAccessMixin, UpdateView
     def form_valid(self, form):
         response = super().form_valid(form)
         if form.cleaned_data['comment']:
-            invoice_status_change = _('<p>Invoice status updated to : {status}. </p>').format(status=self.object.status_display)
-            comment = f'<p>{self.object.comment}. </p>'
+            invoice_status_change = _('<p>Invoice status updated to: {status}.</p>').format(status=self.object.status_display)
+            comment = f'<p>{self.object.comment}.</p>'
 
             message = invoice_status_change + comment
 
@@ -155,6 +155,23 @@ class CreateInvoiceView(CreateView):
 
         response = super().form_valid(form)
 
+        if form.cleaned_data['message_for_pm']:
+            invoice_status_change = _('<p>Invoice created.</p>')
+
+            message_for_pm = f'<p>{form.cleaned_data["message_for_pm"]}</p>'
+
+            message = invoice_status_change + message_for_pm
+
+            Activity.objects.create(
+                user=self.request.user,
+                type=COMMENT,
+                source=self.project,
+                timestamp=timezone.now(),
+                message=message,
+                visibility=ALL,
+                related_object=self.object,
+            )
+
         messenger(
             MESSAGES.CREATE_INVOICE,
             request=self.request,
@@ -180,7 +197,6 @@ class EditInvoiceView(InvoiceAccessMixin, UpdateView):
 
     def get_initial(self):
         initial = super().get_initial()
-
         initial["supporting_documents"] = [
             document.document for document in self.object.supporting_documents.all()
         ]
@@ -188,9 +204,28 @@ class EditInvoiceView(InvoiceAccessMixin, UpdateView):
 
     def form_valid(self, form):
         response = super().form_valid(form)
+        if form.cleaned_data:
+            if self.object.status in [CHANGES_REQUESTED, RESUBMITTED]:
+                self.object.status = RESUBMITTED
+                self.object.save()
+
+            if form.cleaned_data['message_for_pm']:
+                invoice_status_change = _('<p>Invoice status updated to: {status}.</p>').format(status=self.object.status_display)
+                message_for_pm = f'<p>{form.cleaned_data["message_for_pm"]}</p>'
+                message = invoice_status_change + message_for_pm
+
+                Activity.objects.create(
+                    user=self.request.user,
+                    type=COMMENT,
+                    source=self.object.project,
+                    timestamp=timezone.now(),
+                    message=message,
+                    visibility=ALL,
+                    related_object=self.object,
+                )
 
         messenger(
-            MESSAGES.UPDATE_INVOICE,
+            MESSAGES.UPDATE_INVOICE_STATUS,
             request=self.request,
             user=self.request.user,
             source=self.object.project,

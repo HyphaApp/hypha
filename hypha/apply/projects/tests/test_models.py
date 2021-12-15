@@ -11,8 +11,8 @@ from ..models.payment import (
     CHANGES_REQUESTED,
     DECLINED,
     PAID,
+    RESUBMITTED,
     SUBMITTED,
-    UNDER_REVIEW,
     Invoice,
 )
 from ..models.project import Project
@@ -88,8 +88,8 @@ class TestInvoiceModel(TestCase):
 
         self.assertTrue(invoice.can_user_delete(staff))
 
-    def test_staff_cant_delete_from_under_review(self):
-        invoice = InvoiceFactory(status=UNDER_REVIEW)
+    def test_staff_cant_delete_from_resubmitted(self):
+        invoice = InvoiceFactory(status=RESUBMITTED)
         staff = StaffFactory()
 
         self.assertFalse(invoice.can_user_delete(staff))
@@ -118,8 +118,8 @@ class TestInvoiceModel(TestCase):
 
         self.assertTrue(invoice.can_user_delete(user))
 
-    def test_user_cant_delete_from_under_review(self):
-        invoice = InvoiceFactory(status=UNDER_REVIEW)
+    def test_user_cant_delete_from_resubmitted(self):
+        invoice = InvoiceFactory(status=RESUBMITTED)
         user = ApplicantFactory()
 
         self.assertFalse(invoice.can_user_delete(user))
