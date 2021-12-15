@@ -892,11 +892,11 @@ class EmailAdapter(AdapterBase):
             return self.reviewers(source)
 
         if message_type in {MESSAGES.UPDATE_INVOICE_STATUS}:
-            if related.status in  ['changes_requested_by_finance1', 'approved_by_finance1']:
+            if related.status in ['changes_requested_by_finance1', 'approved_by_finance1']:
                 return [related.project.lead.email]
-            if related.status in  ['changes_requested', 'approved_by_staff']:
+            if related.status in ['changes_requested', 'approved_by_staff']:
                 return [related.by.email]
-            if related.status in  ['submitted', 'Resubmitted']:
+            if related.status in ['submitted', 'Resubmitted']:
                 return [related.project.lead.email]
             return [user.email]
 

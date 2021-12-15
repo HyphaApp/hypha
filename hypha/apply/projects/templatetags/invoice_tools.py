@@ -9,9 +9,11 @@ register = template.Library()
 def can_change_status(invoice, user):
     return invoice.can_user_change_status(user)
 
+
 @register.simple_tag
 def can_complete_required_checks(invoice, user):
     return invoice.can_user_complete_required_checks(user)
+
 
 @register.simple_tag
 def can_delete(invoice, user):

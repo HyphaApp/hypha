@@ -28,3 +28,4 @@ class IsInvoiceUser(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         return request.user.is_apply_staff or request.user.is_finance or request.user.is_finance_level2 or request.user.is_contracting
+        
