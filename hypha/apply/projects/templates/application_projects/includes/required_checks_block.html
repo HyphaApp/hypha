@@ -1,0 +1,19 @@
+{% load i18n %}
+<div class="sidebar__inner">
+    <h5>{% trans "Required Checks" %}</h5>
+    <form id="required_checks", action="" data-projectid="{{ project.id }}" data-invoiceid="{{ invoice.id }}">
+        <div class="select-deliverables">
+            <input type="radio" name="valid_checks" id="valid_checks" /> Valid OFAC, SAM, W8/W9 on file
+        </div>
+        <br>
+        <div class="available-to-invoice">
+            <b>{% trans "Make sure valid OFAC and SAM check, and W8/W9 are on file" %} </b>
+        </div>
+        <br>
+        <div class="quantity">
+            <b><label for="quantity">{% trans "Link to SAM/OFAC/W8/W9:" %}</label></b>
+            <textarea name="link" id="link" rows=5 cols=30></textarea> 
+        </div>
+    </form>
+    <br>
+</div>

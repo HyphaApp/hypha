@@ -5,7 +5,7 @@ from hypha.apply.users.tests.factories import ApplicantFactory, StaffFactory
 from ..models.payment import CHANGES_REQUESTED, DECLINED, PAID, RESUBMITTED, SUBMITTED
 from ..models.project import CLOSING, COMMITTED, COMPLETE, CONTRACTING, IN_PROGRESS
 from ..templatetags.contract_tools import user_can_upload_contract
-from ..templatetags.payment_request_tools import can_change_status, can_delete, can_edit
+from ..templatetags.invoice_tools import can_change_status, can_delete, can_edit
 from .factories import ContractFactory, InvoiceFactory, ProjectFactory
 
 

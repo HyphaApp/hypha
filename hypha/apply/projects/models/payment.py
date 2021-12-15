@@ -15,16 +15,20 @@ from hypha.apply.utils.storage import PrivateStorage
 
 SUBMITTED = 'submitted'
 CHANGES_REQUESTED = 'changes_requested'
+CHANGES_REQUESTED_BY_FINANCE1 = 'changes_requested_by_finance1'
+CHANGES_REQUESTED_BY_FINANCE2 = 'changes_requested_by_finance2'
 APPROVED_BY_STAFF = 'approved_by_staff'
 APPROVED_BY_FINANCE1 = 'approved_by_finance1'
 APPROVED_BY_FINANCE2 = 'approved_by_finance2'
 PAID = 'paid'
 DECLINED = 'declined'
-RESUBMITTED = 'resubmitted'
+RESUBMITTED = 'Resubmitted'
 
 REQUEST_STATUS_CHOICES = [
     (SUBMITTED, _('Submitted')),
-    (CHANGES_REQUESTED, _('Changes Requested')),
+    (CHANGES_REQUESTED, _('Changes Requested By PM')),
+    (CHANGES_REQUESTED_BY_FINANCE1, _('Changes Requested By Finance1')),
+    (CHANGES_REQUESTED_BY_FINANCE2, _('Changes Requested By Finance2')),
     (APPROVED_BY_STAFF, _('Approved by staff')),
     (APPROVED_BY_FINANCE1, _('Approved By Finance 1')),
     (APPROVED_BY_FINANCE2, _('Approved By Finance 2')),
@@ -141,13 +145,52 @@ class Invoice(models.Model):
         return False
 
     def can_user_change_status(self, user):
-        if not user.is_apply_staff:
+        print(self.status, user.is_apply_staff)
+        if not (user.is_contracting or user.is_apply_staff or user.is_finance or user.is_finance_level2):
+            print("hello11")
             return False  # Users can't change status
 
         if self.status in {PAID, DECLINED}:
+            print("hello11")
             return False
 
-        return True
+        if user.is_contracting:
+            if self.status in {SUBMITTED, CHANGES_REQUESTED, RESUBMITTED}:
+                return True
+
+        if user.is_apply_staff:
+            if self.status in {SUBMITTED, RESUBMITTED, APPROVED_BY_STAFF, CHANGES_REQUESTED, CHANGES_REQUESTED_BY_FINANCE1}:
+                return True
+
+        if user.is_finance:
+            if self.status in {APPROVED_BY_STAFF, APPROVED_BY_FINANCE1}:
+                return True
+
+        if user.is_finance_level2:
+            if self.status in {CHANGES_REQUESTED_BY_FINANCE2, APPROVED_BY_FINANCE1, APPROVED_BY_FINANCE2}:
+                return True
+
+        return False
+
+    def can_user_complete_required_checks(self, user):
+        if not (user.is_apply_staff or user.is_finance or is_finance_level2):
+            return False  # Users can't complete required checks
+
+        if self.status in {SUBMITTED, RESUBMITTED, DECLINED, CHANGES_REQUESTED}:
+            return False
+
+        if user.is_apply_staff:
+            if self.status in {APPROVED_BY_STAFF}:
+                return False
+
+        if user.is_finance:
+            if self.status in {APPROVED_BY_STAFF}:
+                return True
+
+        if user.is_finance_level2:
+            if self.status in {APPROVED_BY_FINANCE1}:
+                return True
+        return False
 
     @property
     def value(self):

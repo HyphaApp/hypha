@@ -850,7 +850,7 @@ class EmailAdapter(AdapterBase):
         if not comment.priviledged and not comment.user == source.user:
             return self.render_message('messages/email/comment.html', **kwargs)
 
-    def recipients(self, message_type, source, user, **kwargs):
+    def recipients(self, message_type, source, related, user, **kwargs):
         if is_ready_for_review(message_type):
             return self.reviewers(source)
 
@@ -890,6 +890,15 @@ class EmailAdapter(AdapterBase):
 
         if message_type in {MESSAGES.REVIEW_REMINDER}:
             return self.reviewers(source)
+
+        if message_type in {MESSAGES.UPDATE_INVOICE_STATUS}:
+            if related.status in  ['changes_requested_by_finance1', 'approved_by_finance1']:
+                return [related.project.lead.email]
+            if related.status in  ['changes_requested', 'approved_by_staff']:
+                return [related.by.email]
+            if related.status in  ['submitted', 'Resubmitted']:
+                return [related.project.lead.email]
+            return [user.email]
 
         return [source.user.email]
 

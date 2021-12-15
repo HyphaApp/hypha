@@ -1,7 +1,7 @@
 {% extends "messages/email/base.html" %}
 
 {% load i18n %}
-{% block salutation %}{% blocktrans with name=source.user.get_full_name|default:"applicant" %}Dear {{ name }},{% endblocktrans %}{% endblock %}
+{% block salutation %}{% blocktrans with name="User" %}Dear {{ name }},{% endblocktrans %}{% endblock %}
 
 {% block more_info %}
 {% trans "Link to your application" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}

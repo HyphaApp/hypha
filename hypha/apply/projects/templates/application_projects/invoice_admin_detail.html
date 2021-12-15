@@ -7,6 +7,13 @@
     {% endif %}
 {% endblock %}
 
+{% block required_checks %}
+    {% can_complete_required_checks object user as user_can_complete_required_checks %}
+    {% if user_can_complete_required_checks %}
+        {% include 'application_projects/includes/required_checks_block.html' with invoice=object project=object.project %}
+    {% endif %}
+{% endblock %}
+
 {% block actions %}
     {{ block.super }}
     {% can_change_status object user as user_can_change_status %}
@@ -17,6 +24,7 @@
         {% else %}
             data-tooltip="{% trans "Cannot change from 'Paid' or 'Declined' state" %}"
         {% endif %}
+        id="update_invoice_status"
         class="button button--bottom-space button--primary button--full-width{% if not user_can_change_status %} button--tooltip-disabled{% endif %}"
         href="#"
     >
@@ -41,4 +49,9 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.4.1/jquery.fancybox.min.js"></script>
 <script src="{% static 'js/apply/fancybox-global.js' %}"></script>
 <script src="{% static 'js/apply/deliverables.js' %}"></script>
+{% can_complete_required_checks object user as user_can_complete_required_checks %}
+
+{% if user_can_complete_required_checks %}
+<script src="{% static 'js/apply/invoice-detail.js' %}"></script>
+{% endif %}
 {% endblock %}

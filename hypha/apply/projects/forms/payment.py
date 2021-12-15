@@ -11,8 +11,12 @@ from django_file_form.forms import FileFormMixin
 from hypha.apply.stream_forms.fields import MultiFileField, SingleFileField
 
 from ..models.payment import (
+    APPROVED_BY_FINANCE1,
+    APPROVED_BY_FINANCE2,
     APPROVED_BY_STAFF,
     CHANGES_REQUESTED,
+    CHANGES_REQUESTED_BY_FINANCE1,
+    CHANGES_REQUESTED_BY_FINANCE2,
     DECLINED,
     PAID,
     REQUEST_STATUS_CHOICES,
@@ -42,18 +46,21 @@ class ChangeInvoiceStatusForm(forms.ModelForm):
         super().__init__(instance=instance, *args, **kwargs)
 
         self.initial['paid_value'] = self.instance.amount
+        self.initial['comment'] = ''
 
         status_field = self.fields['status']
 
         possible_status_transitions_lut = {
             CHANGES_REQUESTED: filter_request_choices([DECLINED]),
+            CHANGES_REQUESTED_BY_FINANCE1: filter_request_choices([CHANGES_REQUESTED, DECLINED]),
             SUBMITTED: filter_request_choices([CHANGES_REQUESTED, APPROVED_BY_STAFF, DECLINED]),
             RESUBMITTED: filter_request_choices([CHANGES_REQUESTED, APPROVED_BY_STAFF, DECLINED]),
-            APPROVED_BY_STAFF: filter_request_choices([PAID]),
+            APPROVED_BY_FINANCE1: filter_request_choices([CHANGES_REQUESTED, APPROVED_BY_FINANCE2, DECLINED]),
+            APPROVED_BY_STAFF: filter_request_choices([CHANGES_REQUESTED_BY_FINANCE1, APPROVED_BY_FINANCE1, DECLINED]),
         }
         status_field.choices = possible_status_transitions_lut.get(instance.status, [])
 
-        if instance.status != APPROVED_BY_STAFF:
+        if instance.status != APPROVED_BY_FINANCE2:
             del self.fields['paid_value']
 
     def clean(self):
@@ -78,6 +85,7 @@ class InvoiceBaseForm(forms.ModelForm):
     def __init__(self, user=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['amount'].widget.attrs['min'] = 0
+        self.initial['message_for_pm'] = ''
 
     def clean(self):
         cleaned_data = super().clean()

@@ -8,19 +8,22 @@
         <a class="simplified__projects-link" href="{{ object.project.get_absolute_url }}">
             {% trans "Back to project" %}
         </a>
-        <h2 class="heading heading--no-margin">{% trans "Invoice" %}</h2>
-        <h5 class="heading heading--no-margin">{% trans "For" %}: {{ object.project.title }}</h5>
+        <h2 class="heading heading--no-margin">{% trans "Invoice submission" %}</h2>
+        <h5 class="heading heading--no-margin">{% trans "For" %} {{ object.project.title }}</h5>
     </div>
 </div>
 
 <div class="wrapper wrapper--sidebar wrapper--outer-space-medium">
     <div class="wrapper--sidebar--inner">
         <div class="card card--solid">
-            <p class="card__text"><b>{% trans "Status" %}:</b> {{ object.get_status_display }}</p>
-            <p class="card__text"><b>{% trans "Vendor" %}:</b> {{ object.project.vendor.name }}</p>
+            <p class="card__text"><b>{% trans "Name of contractor" %}:</b> {{ object.project.vendor.name }}</p>
             <p class="card__text"><b>{% trans "Invoice Number" %}:</b> {{ object.pk }}</p>
             <p class="card__text"><b>{% trans "Period of Performance" %}:</b> {{ object.date_from.date }} | {{ object.date_to.date }}</p>
             <p class="card__text"><b>{% trans "Total" %}:</b> {{ CURRENCY_SYMBOL }}{{ object.amount|intcomma }}</p>
+
+            <p class="card__text"><b>{% trans "Status" %}:</b> {{ object.get_status_display }}</p>
+            <p class="card__text"><b>{% trans "OTF Lead" %}:</b> {{ object.project.lead.full_name }}</p>
+
         </div>
 
         <div class="card card--solid">
@@ -39,6 +42,8 @@
     </div>
     <aside class="sidebar">
         {% block deliverables %}
+        {% endblock %}
+        {% block required_checks %}
         {% endblock %}
         <div class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions">
             {% block actions %}

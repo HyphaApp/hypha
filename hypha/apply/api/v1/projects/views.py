@@ -8,7 +8,7 @@ from hypha.apply.projects.models.payment import InvoiceDeliverable
 from hypha.apply.projects.models.project import Deliverable
 
 from ..mixin import InvoiceNestedMixin, ProjectNestedMixin
-from ..permissions import IsApplyStaffUser
+from ..permissions import IsInvoiceUser
 from .serializers import DeliverableSerializer, InvoiceDeliverableListSerializer
 
 
@@ -20,7 +20,7 @@ class DeliverableViewSet(
     viewsets.GenericViewSet
 ):
     permission_classes = (
-        permissions.IsAuthenticated, IsApplyStaffUser,
+        permissions.IsAuthenticated, IsInvoiceUser
     )
     serializer_class = InvoiceDeliverableListSerializer
     pagination_class = None
