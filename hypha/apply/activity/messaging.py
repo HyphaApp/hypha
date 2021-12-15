@@ -130,12 +130,12 @@ class AdapterBase:
     def recipients(self, message_type, **kwargs):
         raise NotImplementedError()
 
-    def batch_recipients(self, message_type, sources, **kwargs):
+    def batch_recipients(self, message_type, sources, related, **kwargs):
         # Default batch recipients is to send a message to each of the recipients that would
         # receive a message under normal conditions
         return [
             {
-                'recipients': self.recipients(message_type, source=source, **kwargs),
+                'recipients': self.recipients(message_type, source=source, related=related, **kwargs),
                 'sources': [source]
             }
             for source in sources
@@ -146,7 +146,7 @@ class AdapterBase:
             event.source.id: event
             for event in events
         }
-        for recipient in self.batch_recipients(message_type, sources, user=user, **kwargs):
+        for recipient in self.batch_recipients(message_type, sources, user=user, related=related, **kwargs):
             recipients = recipient['recipients']
             sources = recipient['sources']
             events = [events_by_source[source.id] for source in sources]

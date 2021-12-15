@@ -23,8 +23,6 @@
 
     $("input[name='valid_checks']").change((e) => {
         e.preventDefault();
-        console.log("radio button")
-        console.log()
         if($("input[name='valid_checks']").prop('checked')){
             $(update_invoice_status).removeClass('button--tooltip-disabled');  
             $(update_invoice_status).attr('data-tooltip', "Change Invoice Status");  
