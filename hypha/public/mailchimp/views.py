@@ -1,5 +1,6 @@
 import logging
 import uuid
+from urllib.parse import urlparse
 
 from django.conf import settings
 from django.contrib import messages
@@ -79,7 +80,11 @@ class MailchimpSubscribeView(FormMixin, RedirectView):
 
     def get_success_url(self):
         # Go back to where you came from, default to front page.
-        origin = self.request.META.get('HTTP_ORIGIN') or self.request.META.get('HTTP_REFERER') or '/'
+        origin = '/'
+        if urlparse(self.request.META.get('HTTP_ORIGIN')).hostname in settings.ALLOWED_HOSTS:
+            origin = self.request.META.get('HTTP_ORIGIN')
+        elif urlparse(self.request.META.get('HTTP_REFERER')).hostname in settings.ALLOWED_HOSTS:
+            origin = self.request.META.get('HTTP_REFERER')
 
         # Add cache busting query string.
         return origin + '?newsletter-' + uuid.uuid4().hex
