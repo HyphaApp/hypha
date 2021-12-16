@@ -145,13 +145,10 @@ class Invoice(models.Model):
         return False
 
     def can_user_change_status(self, user):
-        print(self.status, user.is_apply_staff)
         if not (user.is_contracting or user.is_apply_staff or user.is_finance or user.is_finance_level2):
-            print("hello11")
             return False  # Users can't change status
 
         if self.status in {PAID, DECLINED}:
-            print("hello11")
             return False
 
         if user.is_contracting:
