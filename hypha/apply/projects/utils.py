@@ -7,7 +7,7 @@ def fetch_and_save_deliverables(project_id, program_project_id=''):
     """
     Get deliverables from various third party integrations.
     """
-    if settings.INITIALISE_INTACCT:
+    if settings.INTACCT_ENABLED:
         from hypha.apply.projects.services.sageintacct.utils import fetch_deliverables
         deliverables = fetch_deliverables(program_project_id)
         save_deliverables(project_id, deliverables)
