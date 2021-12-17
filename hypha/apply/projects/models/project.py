@@ -17,7 +17,6 @@ from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel
 from wagtail.contrib.settings.models import BaseSetting, register_setting
 from wagtail.core.fields import StreamField
 
@@ -84,12 +83,12 @@ class ProjectQuerySet(models.QuerySet):
 
     def with_amount_paid(self):
         return self.annotate(
-            amount_paid=Coalesce(Sum('payment_requests__paid_value'), Value(0)),
+            amount_paid=Coalesce(Sum('invoices__paid_value'), Value(0)),
         )
 
     def with_last_payment(self):
         return self.annotate(
-            last_payment_request=Max('payment_requests__requested_at'),
+            last_payment_request=Max('invoices__requested_at'),
         )
 
     def with_outstanding_reports(self):
@@ -242,10 +241,10 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         )
 
     def paid_value(self):
-        return self.payment_requests.paid_value()
+        return self.invoices.paid_value()
 
     def unpaid_value(self):
-        return self.payment_requests.unpaid_value()
+        return self.invoices.unpaid_value()
 
     def clean(self):
         if self.proposed_start is None:
@@ -342,6 +341,10 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
     def is_in_progress(self):
         return self.status == IN_PROGRESS
 
+    @property
+    def has_deliverables(self):
+        return self.deliverables.exists()
+
     def send_to_compliance(self, request):
         """Notify Compliance about this Project."""
 
@@ -354,19 +357,6 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
 
         self.sent_to_compliance_at = timezone.now()
         self.save(update_fields=['sent_to_compliance_at'])
-
-
-class ProjectApprovalForm(BaseStreamForm, models.Model):
-    name = models.CharField(max_length=255)
-    form_fields = StreamField(FormFieldsBlock())
-
-    panels = [
-        FieldPanel('name'),
-        StreamFieldPanel('form_fields'),
-    ]
-
-    def __str__(self):
-        return self.name
 
 
 @register_setting
@@ -454,4 +444,23 @@ class DocumentCategory(models.Model):
 
     class Meta:
         ordering = ('name',)
-        verbose_name_plural = _('Document Categories')
+        verbose_name_plural = 'Document Categories'
+
+
+class Deliverable(models.Model):
+    name = models.TextField()
+    available_to_invoice = models.IntegerField(default=1)
+    unit_price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(decimal.Decimal('0.01'))],
+    )
+    project = models.ForeignKey(
+        Project,
+        null=True, blank=True,
+        on_delete=models.CASCADE,
+        related_name='deliverables'
+    )
+
+    def __str__(self):
+        return self.name

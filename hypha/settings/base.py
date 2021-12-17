@@ -215,7 +215,6 @@ DATABASES = {
     )
 }
 
-
 # Cache
 
 # Set max-age header.
@@ -322,6 +321,9 @@ if 'PASSWORD_RESET_TIMEOUT_DAYS' in env:
         PASSWORD_RESET_TIMEOUT_DAYS = int(env['PASSWORD_RESET_TIMEOUT_DAYS'])
     except ValueError:
         pass
+
+# Seconds to enter password on password page while email change/2FA change (default 120).
+PASSWORD_PAGE_TIMEOUT_SECONDS = int(env.get('PASSWORD_PAGE_TIMEOUT_SECONDS', 120))
 
 # Internationalization
 # https://docs.djangoproject.com/en/stable/topics/i18n/
@@ -452,6 +454,7 @@ LOGGING = {
 
 
 # Wagtail settings
+WAGTAIL_FRONTEND_LOGIN_URL = '/login/'
 
 WAGTAIL_SITE_NAME = 'hypha'
 
@@ -573,6 +576,10 @@ if 'TRANSITION_AFTER_REVIEWS' in env:
         TRANSITION_AFTER_REVIEWS = int(env['TRANSITION_AFTER_REVIEWS'])
     except ValueError:
         pass
+
+TRANSITION_AFTER_ASSIGNED = False
+if env.get('TRANSITION_AFTER_ASSIGNED', 'false').strip().lower() == 'true':
+    TRANSITION_AFTER_ASSIGNED = True
 
 
 # Exclude Filters/columns from submission tables.

@@ -4,7 +4,6 @@ from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
-from rest_framework_api_key.permissions import HasAPIKey
 
 from hypha.apply.funds.models import ScreeningStatus
 
@@ -20,7 +19,7 @@ from .serializers import (
 
 class ScreeningStatusViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = (
-        HasAPIKey | permissions.IsAuthenticated, HasAPIKey | IsApplyStaffUser,
+        permissions.IsAuthenticated, IsApplyStaffUser,
     )
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = ScreeningStatusFilter
@@ -36,7 +35,7 @@ class SubmissionScreeningStatusViewSet(
     viewsets.GenericViewSet
 ):
     permission_classes = (
-        HasAPIKey | permissions.IsAuthenticated, HasAPIKey | IsApplyStaffUser,
+        permissions.IsAuthenticated, IsApplyStaffUser,
     )
     serializer_class = ScreeningStatusListSerializer
     pagination_class = None

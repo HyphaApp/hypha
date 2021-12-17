@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Invalid Confirmation" %}{% endblock %}
+{% block page_title %}{% trans "Invalid Confirmation URL" %}{% endblock %}
+
+{% block content %}
+<div class="wrapper wrapper--small wrapper--bottom-space">
+    <p><strong>{% trans "Possible reason:" %}</strong></p>
+    <ul>
+        <li>{% trans "The confirmation link has expired." %}</li>
+    </ul>
+
+    <p>{% blocktrans %}Try again to change email from accounts page. If that fails please contact {{ ORG_SHORT_NAME }} at{% endblocktrans %} <a href="mailto:{{ ORG_EMAIL }}">{{ ORG_EMAIL }}</a></p>
+</div>
+{% endblock %}

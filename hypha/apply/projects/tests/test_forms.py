@@ -8,8 +8,8 @@ from hypha.apply.users.tests.factories import UserFactory
 
 from ..files import get_files
 from ..forms.payment import (
-    ChangePaymentRequestStatusForm,
-    CreatePaymentRequestForm,
+    ChangeInvoiceStatusForm,
+    CreateInvoiceForm,
     SelectDocumentForm,
     filter_choices,
     filter_request_choices,
@@ -19,39 +19,44 @@ from ..forms.project import (
     StaffUploadContractForm,
     UploadContractForm,
 )
-from ..models.payment import CHANGES_REQUESTED, DECLINED, PAID, SUBMITTED, UNDER_REVIEW
+from ..models.payment import (
+    APPROVED_BY_STAFF,
+    CHANGES_REQUESTED,
+    DECLINED,
+    RESUBMITTED,
+    SUBMITTED,
+)
 from .factories import (
     DocumentCategoryFactory,
-    PaymentRequestFactory,
+    InvoiceFactory,
     ProjectFactory,
     address_to_form_data,
 )
 
 
-class TestChangePaymentRequestStatusForm(TestCase):
+class TestChangeInvoiceStatusFormForm(TestCase):
     def test_choices_with_submitted_status(self):
-        request = PaymentRequestFactory(status=SUBMITTED)
-        form = ChangePaymentRequestStatusForm(instance=request)
+        request = InvoiceFactory(status=SUBMITTED)
+        form = ChangeInvoiceStatusForm(instance=request)
 
-        expected = set(filter_request_choices([UNDER_REVIEW, CHANGES_REQUESTED, DECLINED]))
+        expected = set(filter_request_choices([APPROVED_BY_STAFF, CHANGES_REQUESTED, DECLINED]))
         actual = set(form.fields['status'].choices)
-
         self.assertEqual(expected, actual)
 
     def test_choices_with_changes_requested_status(self):
-        request = PaymentRequestFactory(status=CHANGES_REQUESTED)
-        form = ChangePaymentRequestStatusForm(instance=request)
+        request = InvoiceFactory(status=CHANGES_REQUESTED)
+        form = ChangeInvoiceStatusForm(instance=request)
 
         expected = set(filter_request_choices([DECLINED]))
         actual = set(form.fields['status'].choices)
 
         self.assertEqual(expected, actual)
 
-    def test_choices_with_under_review_status(self):
-        request = PaymentRequestFactory(status=UNDER_REVIEW)
-        form = ChangePaymentRequestStatusForm(instance=request)
+    def test_choices_with_resubmitted_status(self):
+        request = InvoiceFactory(status=RESUBMITTED)
+        form = ChangeInvoiceStatusForm(instance=request)
 
-        expected = set(filter_request_choices([PAID]))
+        expected = set(filter_request_choices([APPROVED_BY_STAFF, CHANGES_REQUESTED, DECLINED]))
         actual = set(form.fields['status'].choices)
 
         self.assertEqual(expected, actual)
@@ -100,80 +105,82 @@ class TestProjectApprovalForm(TestCase):
         self.assertTrue(project.user_has_updated_details)
 
 
-class TestCreatePaymentRequestForm(TestCase):
-    def test_adding_payment_request(self):
+class TestCreateInvoiceForm(TestCase):
+    def test_adding_invoice(self):
         data = {
-            'requested_value': '10',
+            'paid_value': '10',
             'date_from': '2018-08-15',
             'date_to': '2019-08-15',
             'comment': 'test comment',
+            'amount': 100.0
         }
 
         invoice = SimpleUploadedFile('invoice.pdf', BytesIO(b'somebinarydata').read())
-        receipts = [SimpleUploadedFile('receipts.pdf', BytesIO(b'someotherbinarydata').read())]
         files = {
-            'invoice': invoice,
-            'receipts': receipts,
+            'document': invoice,
         }
 
-        form = CreatePaymentRequestForm(data=data, files=files)
+        form = CreateInvoiceForm(data=data, files=files)
         self.assertTrue(form.is_valid(), msg=form.errors)
 
         form.instance.by = UserFactory()
         form.instance.project = ProjectFactory()
-        payment_request = form.save()
+        invoice = form.save()
 
-        self.assertEqual(payment_request.receipts.count(), 1)
+        # self.assertEqual(invoice.receipts.count(), 1)
 
     def test_receipt_not_required(self):
         data = {
-            'requested_value': '10',
+            'paid_value': '10',
             'date_from': '2018-08-15',
             'date_to': '2019-08-15',
             'comment': 'test comment',
+            'amount': 100
+
         }
 
         invoice = SimpleUploadedFile('invoice.pdf', BytesIO(b'somebinarydata').read())
         files = {
-            'invoice': invoice,
-            'receipts': [],
+            'document': invoice,
         }
 
-        form = CreatePaymentRequestForm(data=data, files=files)
+        form = CreateInvoiceForm(data=data, files=files)
         self.assertTrue(form.is_valid(), msg=form.errors)
 
         form.instance.by = UserFactory()
         form.instance.project = ProjectFactory()
-        payment_request = form.save()
+        invoice = form.save()
 
-        self.assertEqual(payment_request.receipts.count(), 0)
+        # self.assertEqual(invoice.receipts.count(), 0)
 
-    def test_payment_request_dates_are_correct(self):
+    def test_invoice_dates_are_correct(self):
         invoice = SimpleUploadedFile('invoice.pdf', BytesIO(b'somebinarydata').read())
-        receipts = [SimpleUploadedFile('receipts.pdf', BytesIO(b'someotherbinarydata').read())]
         files = {
-            'invoice': invoice,
-            'receipts': receipts,
+            'document': invoice,
         }
 
-        form = CreatePaymentRequestForm(
+        form = CreateInvoiceForm(
             files=files,
             data={
-                'requested_value': '10',
+                'paid_value': '10',
                 'date_from': '2018-08-15',
                 'date_to': '2019-08-15',
                 'comment': 'test comment',
+                'amount': 100
+
             }
         )
         self.assertTrue(form.is_valid(), msg=form.errors)
 
-        form = CreatePaymentRequestForm(
+        form = CreateInvoiceForm(
             files=files,
             data={
-                'requested_value': '10',
+                'paid_value': '10',
                 'date_from': '2019-08-15',
                 'date_to': '2018-08-15',
                 'comment': 'test comment',
+                'amount': 100
+
             }
         )
         self.assertFalse(form.is_valid())

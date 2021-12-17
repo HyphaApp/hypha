@@ -26,17 +26,20 @@
         <div class="card card--solid">
             <div class="card__inner">
                 <h5 class="card__heading">{% trans "Invoice" %}</h5>
-                <p class="card__text"><a href="{% url "apply:projects:invoices:invoice-document" pk=object.pk %}">{{invoice.document.name}}</a></p>
+                <p class="card__text"><a target="_blank" href="{% url "apply:projects:invoice-document" pk=object.project.pk invoice_pk=object.pk %}">{{object.filename}}</a></p>
+                <embed src="{% url "apply:projects:invoice-document" pk=object.project.pk invoice_pk=object.pk %}" width="800px" height="800px" />
             </div>
             <div class="card__inner">
                 <h5 class="card__heading">{% trans "Supporting Documents" %}</h5>
                 {% for document in object.supporting_documents.all %}
-                    <p class="card__text"><a href="{% url "apply:projects:invoices:supporting-document" pk=object.pk file_pk=document.pk %}">{{document.document.name}}</a></p>
+                    <p class="card__text"><a href="{% url "apply:projects:invoice-supporting-document" pk=object.project.pk invoice_pk=object.pk file_pk=document.pk %}">{{document.filename}}</a></p>
                 {% endfor %}
             </div>
         </div>
     </div>
     <aside class="sidebar">
+        {% block deliverables %}
+        {% endblock %}
         <div class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions">
             {% block actions %}
                 {% can_edit object user as user_can_edit_request %}
@@ -46,7 +49,7 @@
                     {% endif %}
                     class="button button--bottom-space button--primary button--full-width{% if not user_can_edit_request %} button--tooltip-disabled{% endif %}"
                     href={% if user_can_edit_request %}
-                        "{% url "apply:projects:invoices:edit" pk=object.pk %}"
+                        "{% url "apply:projects:invoice-edit" pk=object.project.pk invoice_pk=object.pk %}"
                     {% else %}
                         "#"
                     {% endif %}
@@ -57,7 +60,7 @@
                 {% if user_can_delete_request %}
                 <a
                     class="button button--bottom-space button--primary button--full-width"
-                    href="{% url 'apply:projects:invoices:delete' pk=object.pk %}">{% trans "Delete" %}</a>
+                    href="{% url 'apply:projects:invoice-delete' pk=object.project.pk invoice_pk=object.pk %}">{% trans "Delete" %}</a>
             {% endif %}
             {% endblock %}
         </div>

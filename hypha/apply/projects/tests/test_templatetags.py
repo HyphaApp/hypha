@@ -2,11 +2,11 @@ from django.test import TestCase
 
 from hypha.apply.users.tests.factories import ApplicantFactory, StaffFactory
 
-from ..models.payment import CHANGES_REQUESTED, DECLINED, PAID, SUBMITTED, UNDER_REVIEW
+from ..models.payment import CHANGES_REQUESTED, DECLINED, PAID, RESUBMITTED, SUBMITTED
 from ..models.project import CLOSING, COMMITTED, COMPLETE, CONTRACTING, IN_PROGRESS
 from ..templatetags.contract_tools import user_can_upload_contract
 from ..templatetags.payment_request_tools import can_change_status, can_delete, can_edit
-from .factories import ContractFactory, PaymentRequestFactory, ProjectFactory
+from .factories import ContractFactory, InvoiceFactory, ProjectFactory
 
 
 class TestContractTools(TestCase):
@@ -77,167 +77,167 @@ class TestContractTools(TestCase):
         self.assertTrue(user_can_upload_contract(project, applicant))
 
 
-class TestPaymentRequestTools(TestCase):
+class TestInvoiceTools(TestCase):
     def test_staff_can_change_status_from_submitted(self):
-        payment_request = PaymentRequestFactory(status=SUBMITTED)
+        invoice = InvoiceFactory(status=SUBMITTED)
         staff = StaffFactory()
 
-        self.assertTrue(can_change_status(payment_request, staff))
+        self.assertTrue(can_change_status(invoice, staff))
 
-    def test_staff_can_change_status_from_under_review(self):
-        payment_request = PaymentRequestFactory(status=UNDER_REVIEW)
+    def test_staff_can_change_status_from_resubmitted(self):
+        invoice = InvoiceFactory(status=RESUBMITTED)
         staff = StaffFactory()
 
-        self.assertTrue(can_change_status(payment_request, staff))
+        self.assertTrue(can_change_status(invoice, staff))
 
     def test_staff_can_change_status_from_changes_requested(self):
-        payment_request = PaymentRequestFactory(status=CHANGES_REQUESTED)
+        invoice = InvoiceFactory(status=CHANGES_REQUESTED)
         staff = StaffFactory()
 
-        self.assertTrue(can_change_status(payment_request, staff))
+        self.assertTrue(can_change_status(invoice, staff))
 
     def test_staff_cant_change_status_from_paid(self):
-        payment_request = PaymentRequestFactory(status=PAID)
+        invoice = InvoiceFactory(status=PAID)
         staff = StaffFactory()
 
-        self.assertFalse(can_change_status(payment_request, staff))
+        self.assertFalse(can_change_status(invoice, staff))
 
     def test_staff_cant_change_status_from_declined(self):
-        payment_request = PaymentRequestFactory(status=DECLINED)
+        invoice = InvoiceFactory(status=DECLINED)
         staff = StaffFactory()
 
-        self.assertFalse(can_change_status(payment_request, staff))
+        self.assertFalse(can_change_status(invoice, staff))
 
     def test_user_cant_change_status_from_submitted(self):
-        payment_request = PaymentRequestFactory(status=SUBMITTED)
+        invoice = InvoiceFactory(status=SUBMITTED)
         user = ApplicantFactory()
 
-        self.assertFalse(can_change_status(payment_request, user))
+        self.assertFalse(can_change_status(invoice, user))
 
-    def test_user_cant_change_status_from_under_review(self):
-        payment_request = PaymentRequestFactory(status=UNDER_REVIEW)
+    def test_user_cant_change_status_from_resubmitted(self):
+        invoice = InvoiceFactory(status=RESUBMITTED)
         user = ApplicantFactory()
 
-        self.assertFalse(can_change_status(payment_request, user))
+        self.assertFalse(can_change_status(invoice, user))
 
     def test_user_cant_change_status_from_changes_requested(self):
-        payment_request = PaymentRequestFactory(status=CHANGES_REQUESTED)
+        invoice = InvoiceFactory(status=CHANGES_REQUESTED)
         user = ApplicantFactory()
 
-        self.assertFalse(can_change_status(payment_request, user))
+        self.assertFalse(can_change_status(invoice, user))
 
     def test_user_cant_change_status_from_paid(self):
-        payment_request = PaymentRequestFactory(status=PAID)
+        invoice = InvoiceFactory(status=PAID)
         user = ApplicantFactory()
 
-        self.assertFalse(can_change_status(payment_request, user))
+        self.assertFalse(can_change_status(invoice, user))
 
     def test_user_cant_change_status_from_declined(self):
-        payment_request = PaymentRequestFactory(status=DECLINED)
+        invoice = InvoiceFactory(status=DECLINED)
         user = ApplicantFactory()
 
-        self.assertFalse(can_change_status(payment_request, user))
+        self.assertFalse(can_change_status(invoice, user))
 
     def test_staff_can_delete_from_submitted(self):
-        payment_request = PaymentRequestFactory(status=SUBMITTED)
+        invoice = InvoiceFactory(status=SUBMITTED)
         staff = StaffFactory()
 
-        self.assertTrue(can_delete(payment_request, staff))
+        self.assertTrue(can_delete(invoice, staff))
 
-    def test_staff_cant_delete_from_under_review(self):
-        payment_request = PaymentRequestFactory(status=UNDER_REVIEW)
+    def test_staff_cant_delete_from_resubmitted(self):
+        invoice = InvoiceFactory(status=RESUBMITTED)
         staff = StaffFactory()
 
-        self.assertFalse(can_delete(payment_request, staff))
+        self.assertFalse(can_delete(invoice, staff))
 
     def test_staff_cant_delete_from_changes_requested(self):
-        payment_request = PaymentRequestFactory(status=CHANGES_REQUESTED)
+        invoice = InvoiceFactory(status=CHANGES_REQUESTED)
         staff = StaffFactory()
 
-        self.assertFalse(can_delete(payment_request, staff))
+        self.assertFalse(can_delete(invoice, staff))
 
     def test_staff_cant_delete_from_paid(self):
-        payment_request = PaymentRequestFactory(status=PAID)
+        invoice = InvoiceFactory(status=PAID)
         staff = StaffFactory()
 
-        self.assertFalse(can_delete(payment_request, staff))
+        self.assertFalse(can_delete(invoice, staff))
 
     def test_staff_cant_delete_from_declined(self):
-        payment_request = PaymentRequestFactory(status=DECLINED)
+        invoice = InvoiceFactory(status=DECLINED)
         staff = StaffFactory()
 
-        self.assertFalse(can_delete(payment_request, staff))
+        self.assertFalse(can_delete(invoice, staff))
 
     def test_user_can_delete_from_submitted(self):
-        payment_request = PaymentRequestFactory(status=SUBMITTED)
+        invoice = InvoiceFactory(status=SUBMITTED)
         user = ApplicantFactory()
 
-        self.assertTrue(can_delete(payment_request, user))
+        self.assertTrue(can_delete(invoice, user))
 
-    def test_user_cant_delete_from_under_review(self):
-        payment_request = PaymentRequestFactory(status=UNDER_REVIEW)
+    def test_user_cant_delete_from_resubmitted(self):
+        invoice = InvoiceFactory(status=RESUBMITTED)
         user = ApplicantFactory()
 
-        self.assertFalse(can_delete(payment_request, user))
+        self.assertFalse(can_delete(invoice, user))
 
     def test_user_can_delete_from_changes_requested(self):
-        payment_request = PaymentRequestFactory(status=CHANGES_REQUESTED)
+        invoice = InvoiceFactory(status=CHANGES_REQUESTED)
         user = ApplicantFactory()
 
-        self.assertTrue(can_delete(payment_request, user))
+        self.assertFalse(can_delete(invoice, user))
 
     def test_user_cant_delete_from_paid(self):
-        payment_request = PaymentRequestFactory(status=PAID)
+        invoice = InvoiceFactory(status=PAID)
         user = ApplicantFactory()
 
-        self.assertFalse(can_delete(payment_request, user))
+        self.assertFalse(can_delete(invoice, user))
 
     def test_user_cant_delete_from_declined(self):
-        payment_request = PaymentRequestFactory(status=DECLINED)
+        invoice = InvoiceFactory(status=DECLINED)
         user = ApplicantFactory()
 
-        self.assertFalse(can_delete(payment_request, user))
+        self.assertFalse(can_delete(invoice, user))
 
     def test_applicant_and_staff_can_edit_in_submitted(self):
-        payment_request = PaymentRequestFactory(status=SUBMITTED)
+        invoice = InvoiceFactory(status=SUBMITTED)
         applicant = ApplicantFactory()
         staff = StaffFactory()
 
-        self.assertTrue(can_edit(payment_request, applicant))
-        self.assertTrue(can_edit(payment_request, staff))
+        self.assertTrue(can_edit(invoice, applicant))
+        self.assertTrue(can_edit(invoice, staff))
 
     def test_applicant_can_edit_in_changes_requested(self):
-        payment_request = PaymentRequestFactory(status=CHANGES_REQUESTED)
+        invoice = InvoiceFactory(status=CHANGES_REQUESTED)
         applicant = ApplicantFactory()
 
-        self.assertTrue(can_edit(payment_request, applicant))
+        self.assertTrue(can_edit(invoice, applicant))
 
     def test_staff_cant_edit_in_changes_requested(self):
-        payment_request = PaymentRequestFactory(status=CHANGES_REQUESTED)
+        invoice = InvoiceFactory(status=CHANGES_REQUESTED)
         staff = StaffFactory()
 
-        self.assertFalse(can_edit(payment_request, staff))
+        self.assertFalse(can_edit(invoice, staff))
 
-    def test_applicant_and_staff_cant_edit_in_under_review(self):
-        payment_request = PaymentRequestFactory(status=UNDER_REVIEW)
+    def test_applicant_and_staff_can_edit_in_resubmitted(self):
+        invoice = InvoiceFactory(status=RESUBMITTED)
         applicant = ApplicantFactory()
         staff = StaffFactory()
 
-        self.assertFalse(can_edit(payment_request, applicant))
-        self.assertFalse(can_edit(payment_request, staff))
+        self.assertTrue(can_edit(invoice, applicant))
+        self.assertTrue(can_edit(invoice, staff))
 
     def test_applicant_and_staff_cant_edit_in_paid(self):
-        payment_request = PaymentRequestFactory(status=PAID)
+        invoice = InvoiceFactory(status=PAID)
         applicant = ApplicantFactory()
         staff = StaffFactory()
 
-        self.assertFalse(can_edit(payment_request, applicant))
-        self.assertFalse(can_edit(payment_request, staff))
+        self.assertFalse(can_edit(invoice, applicant))
+        self.assertFalse(can_edit(invoice, staff))
 
     def test_applicant_and_staff_cant_edit_in_decline(self):
-        payment_request = PaymentRequestFactory(status=DECLINED)
+        invoice = InvoiceFactory(status=DECLINED)
         applicant = ApplicantFactory()
         staff = StaffFactory()
 
-        self.assertFalse(can_edit(payment_request, applicant))
-        self.assertFalse(can_edit(payment_request, staff))
+        self.assertFalse(can_edit(invoice, applicant))
+        self.assertFalse(can_edit(invoice, staff))

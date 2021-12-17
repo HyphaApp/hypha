@@ -15,11 +15,11 @@
 {% trans "Username" %}: {{ username }}
 {% trans "Password" %}: {% trans "Your chosen password" %}
 
-{% blocktrans %}If you do not complete the activation process within {{ timeout_days }} days you can use the password reset form at{% endblocktrans %}: {% if site %}{{ site.root_url }}{% else %}{{ base_url }}{% endif %}{% url 'users:password_reset' %}
+{% blocktrans with root_url=site.root_url %}If you do not complete the activation process within {{ timeout_days }} days you can use the password reset form at{% endblocktrans %}: {% if site %}{{ root_url }}{% else %}{{ base_url }}{% endif %}{% url 'users:password_reset' %}
 
-{% blocktrans %}Kind Regards,
+{% blocktrans with root_url=PUBLIC_SITE.root_url %}Kind Regards,
 The {{ ORG_SHORT_NAME }} Team
 
 -- 
 {{ ORG_LONG_NAME }}
-{{ PUBLIC_SITE.root_url }}{% endblocktrans %}
+{{ root_url }}{% endblocktrans %}

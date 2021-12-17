@@ -1,0 +1,22 @@
+{% extends "funds/base_submissions_table.html" %}
+{% load i18n static %}
+{% load render_table from django_tables2 %}
+
+{% block title %}{% trans "Awaiting Review" %}{% endblock %}
+{% block content %}
+<div class="admin-bar">
+    <div class="admin-bar__inner wrapper--search">
+        {% block page_header %}
+            <div>
+                <h1 class="gamma heading heading--no-margin heading--bold">{% trans "Waiting for your Review" %}<span class="submissions-count"> ({{ table.rows|length }})</span></h1>
+            </div>
+        {% endblock %}
+    </div>
+</div>
+
+<div class="wrapper wrapper--large wrapper--inner-space-medium">
+    {% block table %}
+        {% render_table table %}
+    {% endblock %}
+</div>
+{% endblock %}

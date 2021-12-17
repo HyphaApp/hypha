@@ -61,8 +61,8 @@
             {% if request.user|has_edit_perm:object and object.status == 'draft_proposal' and not request.user.is_apply_staff %}
                 <div class="wrapper--sidebar--inner">
                     <h4>{% trans "Congratulations!" %}</h4>
-                    <h5>{% blocktrans %}Your {{ object.previous.stage }} application has been accepted.{% endblocktrans %}</h5>
-                    <a class="button button--primary" href="{% url 'funds:submissions:edit' object.id %}">{% blocktrans %}Start your {{ object.stage }} application{% endblocktrans %}</a>
+                    <h5>{% blocktrans with stage=object.previous.stage %}Your {{ stage }} application has been accepted.{% endblocktrans %}</h5>
+                    <a class="button button--primary" href="{% url 'funds:submissions:edit' object.id %}">{% blocktrans with stage=object.stage %}Start your {{ stage }} application.{% endblocktrans %}</a>
                 </div>
             {% else %}
                 <article class="wrapper--sidebar--inner">
@@ -81,11 +81,6 @@
                                     {% trans "Edit" %}
                                     <svg class="icon icon--pen"><use xlink:href="#pen"></use></svg>
                                 </a>
-                            {% else %}
-                                <span class="link link--edit-submission">
-                                    {% trans "Edit" %}
-                                    <svg class="icon icon--padlock"><use xlink:href="#padlock"></use></svg>
-                                </span>
                             {% endif %}
                         </div>
                     </header>
@@ -100,12 +95,12 @@
                     {% include "funds/includes/generic_primary_actions.html" %}
                 {% endblock %}
 
-                {% block flags %}
-                {% endblock %}
-
                 {% if object.project and PROJECTS_ENABLED %}
                     {% include 'funds/includes/project_block.html' %}
                 {% endif %}
+
+                {% block screening_status %}
+                {% endblock %}
 
                 {% block determination %}
                     {% if object.determinations.submitted.count %}
@@ -113,16 +108,16 @@
                     {% endif %}
                 {% endblock %}
 
-                {% block screening_status %}
+                {% block reviews %}
                 {% endblock %}
 
-                {% block reminders %}
+                {% block flags %}
                 {% endblock %}
 
                 {% block meta_terms %}
                 {% endblock %}
 
-                {% block reviews %}
+                {% block reminders %}
                 {% endblock %}
 
                 {% block related %}

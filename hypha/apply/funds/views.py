@@ -147,8 +147,9 @@ class SubmissionStatsMixin:
 
 class UpdateReviewersMixin:
     def set_status_after_reviewers_assigned(self, submission):
+        transition_after = settings.TRANSITION_AFTER_ASSIGNED
         # Check if all internal reviewers have been selected.
-        if submission.has_all_reviewer_roles_assigned:
+        if transition_after and submission.has_all_reviewer_roles_assigned:
             # Automatic workflow actions.
             action = None
             if submission.status == INITIAL_STATE:
@@ -370,6 +371,29 @@ class BaseReviewerSubmissionsTable(BaseAdminSubmissionsTable):
         return super().get_queryset().reviewed_by(self.request.user)
 
 
+class AwaitingReviewSubmissionsListView(SingleTableMixin, ListView):
+    model = ApplicationSubmission
+    table_class = AdminSubmissionsTable
+    template_name = 'funds/submissions_awaiting_review.html'
+    paginator_class = LazyPaginator
+    table_pagination = {'per_page': 25}
+
+    excluded_fields = settings.SUBMISSIONS_TABLE_EXCLUDED_FIELDS
+
+    @property
+    def excluded(self):
+        return {
+            'exclude': self.excluded_fields
+        }
+
+    def get_table_kwargs(self, **kwargs):
+        return {**self.excluded, **kwargs}
+
+    def get_queryset(self):
+        submissions = ApplicationSubmission.objects.in_review_for(self.request.user).order_by('-submit_time')
+        return submissions.for_table(self.request.user)
+
+
 @method_decorator(staff_required, name='dispatch')
 class SubmissionOverviewView(BaseAdminSubmissionsTable):
     template_name = 'funds/submissions_overview.html'
@@ -564,19 +588,6 @@ class CreateProjectView(DelegatedViewMixin, CreateView):
     context_name = 'project_form'
     form_class = CreateProjectForm
     model = Project
-
-    def form_valid(self, form):
-        response = super().form_valid(form)
-
-        messenger(
-            MESSAGES.CREATED_PROJECT,
-            request=self.request,
-            user=self.request.user,
-            source=self.object,
-            related=self.object.submission,
-        )
-
-        return response
 
     def get_success_url(self):
         return self.object.get_absolute_url()

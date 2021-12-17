@@ -80,3 +80,53 @@ class BecomeUserForm(forms.Form):
         label='',
         required=False,
     )
+
+
+class EmailChangePasswordForm(forms.Form):
+    password = forms.CharField(
+        label=_("Password"),
+        help_text=_("Email change requires you to put password."),
+        strip=False,
+        widget=forms.PasswordInput(attrs={'autofocus': True}),
+    )
+
+    def __init__(self, user, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.user = user
+
+    def clean_password(self):
+        password = self.cleaned_data["password"]
+        if not self.user.check_password(password):
+            raise forms.ValidationError(
+                _("Incorrect password. Please try again."),
+                code='password_incorrect',
+            )
+        return password
+
+    def save(self, updated_email, name, slack, commit=True):
+        self.user.full_name = name
+        self.user.slack = slack
+        if commit:
+            self.user.save()
+        return self.user
+
+
+class TWOFAPasswordForm(forms.Form):
+    password = forms.CharField(
+        label=_("Please type your password to confirm"),
+        strip=False,
+        widget=forms.PasswordInput(attrs={'autofocus': True}),
+    )
+
+    def __init__(self, user, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.user = user
+
+    def clean_password(self):
+        password = self.cleaned_data["password"]
+        if not self.user.check_password(password):
+            raise forms.ValidationError(
+                _("Incorrect password. Please try again."),
+                code='password_incorrect',
+            )
+        return password

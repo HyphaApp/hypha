@@ -6,13 +6,9 @@ from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 
 from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
-from hypha.apply.stream_forms.testing.factories import (
-    FormDataFactory,
-    FormFieldsBlockFactory,
-)
 from hypha.apply.users.tests.factories import StaffFactory, UserFactory
 
-from ..models.payment import Invoice, PaymentReceipt, PaymentRequest, SupportingDocument
+from ..models.payment import Invoice, SupportingDocument
 from ..models.project import (
     COMPLETE,
     IN_PROGRESS,
@@ -20,7 +16,6 @@ from ..models.project import (
     DocumentCategory,
     PacketFile,
     Project,
-    ProjectApprovalForm,
 )
 from ..models.report import Report, ReportConfig, ReportVersion
 
@@ -58,18 +53,6 @@ class DocumentCategoryFactory(factory.django.DjangoModelFactory):
         model = DocumentCategory
 
 
-class ProjectApprovalFormFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = ProjectApprovalForm
-
-    name = factory.Faker('word')
-    form_fields = FormFieldsBlockFactory
-
-
-class ProjectApprovalFormDataFactory(FormDataFactory):
-    field_factory = FormFieldsBlockFactory
-
-
 class ProjectFactory(factory.django.DjangoModelFactory):
     submission = factory.SubFactory(ApplicationSubmissionFactory)
     user = factory.SubFactory(UserFactory)
@@ -81,12 +64,6 @@ class ProjectFactory(factory.django.DjangoModelFactory):
     proposed_end = factory.LazyFunction(timezone.now)
 
     is_locked = False
-
-    form_fields = FormFieldsBlockFactory
-    form_data = factory.SubFactory(
-        ProjectApprovalFormDataFactory,
-        form_fields=factory.SelfAttribute('..form_fields'),
-    )
 
     class Meta:
         model = Project
@@ -126,20 +103,6 @@ class PacketFileFactory(factory.django.DjangoModelFactory):
         model = PacketFile
 
 
-class PaymentRequestFactory(factory.django.DjangoModelFactory):
-    project = factory.SubFactory(ProjectFactory)
-    by = factory.SubFactory(UserFactory)
-    requested_value = factory.Faker('pydecimal', min_value=1, max_value=10000000, right_digits=2)
-
-    date_from = factory.Faker('date_time').evaluate(None, None, {'tzinfo': pytz.utc, 'locale': None})
-    date_to = factory.Faker('date_time').evaluate(None, None, {'tzinfo': pytz.utc, 'locale': None})
-
-    invoice = factory.django.FileField()
-
-    class Meta:
-        model = PaymentRequest
-
-
 class InvoiceFactory(factory.django.DjangoModelFactory):
     project = factory.SubFactory(ProjectFactory)
     by = factory.SubFactory(UserFactory)
@@ -152,15 +115,6 @@ class InvoiceFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Invoice
-
-
-class PaymentReceiptFactory(factory.django.DjangoModelFactory):
-    payment_request = factory.SubFactory(PaymentRequestFactory)
-
-    file = factory.django.FileField()
-
-    class Meta:
-        model = PaymentReceipt
 
 
 class SupportingDocumentFactory(factory.django.DjangoModelFactory):

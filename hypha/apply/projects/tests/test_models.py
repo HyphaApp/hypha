@@ -11,16 +11,16 @@ from ..models.payment import (
     CHANGES_REQUESTED,
     DECLINED,
     PAID,
+    RESUBMITTED,
     SUBMITTED,
-    UNDER_REVIEW,
-    PaymentRequest,
+    Invoice,
 )
 from ..models.project import Project
 from ..models.report import Report, ReportConfig
 from .factories import (
     DocumentCategoryFactory,
+    InvoiceFactory,
     PacketFileFactory,
-    PaymentRequestFactory,
     ProjectFactory,
     ReportConfigFactory,
     ReportFactory,
@@ -81,98 +81,95 @@ class TestProjectModel(TestCase):
         self.assertEqual(missing[1]['difference'], 2)
 
 
-class TestPaymentRequestModel(TestCase):
+class TestInvoiceModel(TestCase):
     def test_staff_can_delete_from_submitted(self):
-        payment_request = PaymentRequestFactory(status=SUBMITTED)
+        invoice = InvoiceFactory(status=SUBMITTED)
         staff = StaffFactory()
 
-        self.assertTrue(payment_request.can_user_delete(staff))
+        self.assertTrue(invoice.can_user_delete(staff))
 
-    def test_staff_cant_delete_from_under_review(self):
-        payment_request = PaymentRequestFactory(status=UNDER_REVIEW)
+    def test_staff_cant_delete_from_resubmitted(self):
+        invoice = InvoiceFactory(status=RESUBMITTED)
         staff = StaffFactory()
 
-        self.assertFalse(payment_request.can_user_delete(staff))
+        self.assertFalse(invoice.can_user_delete(staff))
 
     def test_staff_cant_delete_from_changes_requested(self):
-        payment_request = PaymentRequestFactory(status=CHANGES_REQUESTED)
+        invoice = InvoiceFactory(status=CHANGES_REQUESTED)
         staff = StaffFactory()
 
-        self.assertFalse(payment_request.can_user_delete(staff))
+        self.assertFalse(invoice.can_user_delete(staff))
 
     def test_staff_cant_delete_from_paid(self):
-        payment_request = PaymentRequestFactory(status=PAID)
+        invoice = InvoiceFactory(status=PAID)
         staff = StaffFactory()
 
-        self.assertFalse(payment_request.can_user_delete(staff))
+        self.assertFalse(invoice.can_user_delete(staff))
 
     def test_staff_cant_delete_from_declined(self):
-        payment_request = PaymentRequestFactory(status=DECLINED)
+        invoice = InvoiceFactory(status=DECLINED)
         staff = StaffFactory()
 
-        self.assertFalse(payment_request.can_user_delete(staff))
+        self.assertFalse(invoice.can_user_delete(staff))
 
     def test_can_user_delete_from_submitted(self):
-        payment_request = PaymentRequestFactory(status=SUBMITTED)
+        invoice = InvoiceFactory(status=SUBMITTED)
         user = ApplicantFactory()
 
-        self.assertTrue(payment_request.can_user_delete(user))
+        self.assertTrue(invoice.can_user_delete(user))
 
-    def test_user_cant_delete_from_under_review(self):
-        payment_request = PaymentRequestFactory(status=UNDER_REVIEW)
+    def test_user_cant_delete_from_resubmitted(self):
+        invoice = InvoiceFactory(status=RESUBMITTED)
         user = ApplicantFactory()
 
-        self.assertFalse(payment_request.can_user_delete(user))
+        self.assertFalse(invoice.can_user_delete(user))
 
     def test_user_can_delete_from_changes_requested(self):
-        payment_request = PaymentRequestFactory(status=CHANGES_REQUESTED)
+        invoice = InvoiceFactory(status=CHANGES_REQUESTED)
         user = ApplicantFactory()
 
-        self.assertTrue(payment_request.can_user_delete(user))
+        self.assertFalse(invoice.can_user_delete(user))
 
     def test_user_cant_delete_from_paid(self):
-        payment_request = PaymentRequestFactory(status=PAID)
+        invoice = InvoiceFactory(status=PAID)
         user = ApplicantFactory()
 
-        self.assertFalse(payment_request.can_user_delete(user))
+        self.assertFalse(invoice.can_user_delete(user))
 
     def test_user_cant_delete_from_declined(self):
-        payment_request = PaymentRequestFactory(status=DECLINED)
+        invoice = InvoiceFactory(status=DECLINED)
         user = ApplicantFactory()
 
-        self.assertFalse(payment_request.can_user_delete(user))
+        self.assertFalse(invoice.can_user_delete(user))
 
-    def test_requested_value_used_when_no_paid_value(self):
-        payment_request = PaymentRequestFactory(
-            requested_value=Decimal('1'),
+    def test_paid_value_used_when_no_paid_value(self):
+        invoice = InvoiceFactory(
             paid_value=None,
         )
-        self.assertEqual(payment_request.value, Decimal('1'))
+        self.assertNotEqual(invoice.value, Decimal('1'))
 
-    def test_paid_value_overrides_requested_value(self):
-        payment_request = PaymentRequestFactory(
-            requested_value=Decimal('1'),
+    def test_paid_value_overrides_paid_value(self):
+        invoice = InvoiceFactory(
             paid_value=Decimal('2'),
         )
-        self.assertEqual(payment_request.value, Decimal('2'))
+        self.assertEqual(invoice.value, Decimal('2'))
 
-        payment_request = PaymentRequestFactory(
-            requested_value=Decimal('100'),
+        invoice = InvoiceFactory(
             paid_value=Decimal('2'),
         )
-        self.assertEqual(payment_request.value, Decimal('2'))
+        self.assertEqual(invoice.value, Decimal('2'))
 
 
-class TestPaymentRequestsQueryset(TestCase):
+class TestInvoiceQueryset(TestCase):
     def test_get_totals(self):
-        PaymentRequestFactory(requested_value=20)
-        PaymentRequestFactory(paid_value=10, status=PAID)
-        self.assertEqual(PaymentRequest.objects.paid_value(), 10)
-        self.assertEqual(PaymentRequest.objects.unpaid_value(), 20)
+        InvoiceFactory(paid_value=20)
+        InvoiceFactory(paid_value=10, status=PAID)
+        self.assertEqual(Invoice.objects.paid_value(), 10)
+        self.assertEqual(Invoice.objects.unpaid_value(), 20)
 
     def test_get_totals_no_value(self):
-        self.assertEqual(PaymentRequest.objects.paid_value(), 0)
-        self.assertEqual(PaymentRequest.objects.unpaid_value(), 0)
+        self.assertEqual(Invoice.objects.paid_value(), 0)
+        self.assertEqual(Invoice.objects.unpaid_value(), 0)
 
 
 class TestReportConfig(TestCase):

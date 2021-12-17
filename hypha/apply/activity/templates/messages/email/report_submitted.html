@@ -2,7 +2,7 @@
 
 {% load i18n %}
 {% block content %}
-{% blocktrans %}An {{ ORG_SHORT_NAME }} staff member has submitted a report for {{ source.title }} for period {{ report.end_date }} to {{ report.end_date }}.{% endblocktrans %}
+{% blocktrans with title=source.title start_date=report.start_date end_date=report.end_date %}An {{ ORG_SHORT_NAME }} staff member has submitted a report for {{ title }} for period {{ start_date }} to {{ end_date }}.{% endblocktrans %}
 
 {% trans "You can review the report here" %}: {{ request.scheme }}://{{ request.get_host }}{{ report.get_absolute_url }}
 
