@@ -1,3 +1,5 @@
+import logging
+
 from django.conf import settings
 
 from .sageintacctsdk import SageIntacctSDK
@@ -16,14 +18,17 @@ def fetch_deliverables(program_project_id=''):
         }
     }
 
-    connection = SageIntacctSDK(
-        sender_id=settings.INTACCT_SENDER_ID,
-        sender_password=settings.INTACCT_SENDER_PASSWORD,
-        user_id=settings.INTACCT_USER_ID,
-        company_id=settings.INTACCT_COMPANY_ID,
-        user_password=settings.INTACCT_USER_PASSWORD
-    )
+    try:
+        connection = SageIntacctSDK(
+            sender_id=settings.INTACCT_SENDER_ID,
+            sender_password=settings.INTACCT_SENDER_PASSWORD,
+            user_id=settings.INTACCT_USER_ID,
+            company_id=settings.INTACCT_COMPANY_ID,
+            user_password=settings.INTACCT_USER_PASSWORD
+        )
+    except Exception as e:
+        logging.error(e)
+        return []
 
     deliverables = connection.purchasing.get_by_query(filter_payload=formatted_filter)
-
     return deliverables
