@@ -1,4 +1,4 @@
-from django.contrib.staticfiles.templatetags.staticfiles import static
+from django.templatetags.static import static
 from django_select2.forms import Select2MultipleWidget
 
 
