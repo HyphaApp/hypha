@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.contrib.staticfiles.templatetags.staticfiles import static
+from django.templatetags.static import static
 from django.core.validators import FileExtensionValidator
 from django.forms import FileField, Media
 from django.utils.functional import cached_property
