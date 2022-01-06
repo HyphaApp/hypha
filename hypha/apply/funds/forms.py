@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from functools import partial
 from itertools import groupby
 from operator import methodcaller
@@ -203,6 +204,9 @@ class UpdateReviewersForm(ApplicationSubmissionModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
+
+        # convert a python dict to orderedDict, to use move_to_end method
+        self.fields = OrderedDict(self.fields)
 
         assigned_roles = {
             assigned.role: assigned.reviewer

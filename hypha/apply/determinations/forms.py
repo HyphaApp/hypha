@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 from django import forms
 from django.contrib.auth import get_user_model
 from django.core.exceptions import NON_FIELD_ERRORS
@@ -329,6 +331,9 @@ class ConceptDeterminationForm(BaseConceptDeterminationForm, BaseNormalDetermina
 
         super(BaseNormalDeterminationForm, self).__init__(*args, initial=initial, user=user, instance=instance, edit=edit, **kwargs)
 
+        # convert a python dict to orderedDict, to use move_to_end method
+        self.fields = OrderedDict(self.fields)
+
         for field in self._meta.widgets:
             self.fields[field].disabled = True
 
@@ -375,6 +380,9 @@ class ProposalDeterminationForm(BaseProposalDeterminationForm, BaseNormalDetermi
                     initial[key] = value
 
         super(BaseNormalDeterminationForm, self).__init__(*args, initial=initial, user=user, instance=instance, edit=edit, **kwargs)
+
+        # convert a python dict to orderedDict, to use move_to_end method
+        self.fields = OrderedDict(self.fields)
 
         for field in self._meta.widgets:
             self.fields[field].disabled = True
