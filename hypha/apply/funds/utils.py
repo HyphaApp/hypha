@@ -1,3 +1,5 @@
+from itertools import chain
+
 from hypha.apply.utils.image import generate_image_tag
 
 from .models.screening import ScreeningStatus
@@ -38,3 +40,31 @@ def get_default_screening_statues():
             default_no.default = True
             default_no.save()
     return [default_yes, default_no]
+
+
+def model_form_initial(instance, fields=None, exclude=None):
+    """
+    This is a copy of django.forms.models.model_to_dict from the django version 2.2.x.
+    It helps to provide initial to BaseModelForm with fields as empty list[].
+
+    Return a dict containing the data in ``instance`` suitable for passing as
+    a Model Form's ``initial`` keyword argument.
+
+    ``fields`` is an optional list of field names. If provided, return only the
+    named.
+
+    ``exclude`` is an optional list of field names. If provided, exclude the
+    named from the returned dict, even if they are listed in the ``fields``
+    argument.
+    """
+    opts = instance._meta
+    data = {}
+    for f in chain(opts.concrete_fields, opts.private_fields, opts.many_to_many):
+        if not getattr(f, 'editable', False):
+            continue
+        if fields and f.name not in fields:
+            continue
+        if exclude and f.name in exclude:
+            continue
+        data[f.name] = f.value_from_object(instance)
+    return data
