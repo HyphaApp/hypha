@@ -1,4 +1,4 @@
-from django.conf.urls import url
+from django.urls import re_path
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from wagtail.contrib.modeladmin.helpers import PermissionHelper
@@ -185,7 +185,7 @@ class ApplicationFormAdmin(ListRelatedMixin, ModelAdmin):
     def get_admin_urls_for_registration(self):
         """Add the url for creating form copy."""
         urls = super().get_admin_urls_for_registration()
-        copy_form_url = url(
+        copy_form_url = re_path(
             self.url_helper.get_action_url_pattern('copy_form'),
             self.copy_form_view,
             name=self.url_helper.get_action_url_name('copy_form')

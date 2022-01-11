@@ -199,7 +199,7 @@ class EmailChangeConfirmationView(TemplateView):
         try:
             unsigned_value = signer.unsign(
                 token,
-                max_age=datetime.timedelta(days=settings.PASSWORD_RESET_TIMEOUT_DAYS)
+                max_age=datetime.timedelta(days=settings.PASSWORD_RESET_TIMEOUT)
             )
         except Exception:
             return False
