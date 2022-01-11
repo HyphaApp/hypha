@@ -1,4 +1,4 @@
-from django.conf.urls import url
+from django.urls import re_path
 from wagtail.contrib.modeladmin.options import ModelAdmin
 
 from .admin_helpers import MetaTermButtonHelper
@@ -34,7 +34,7 @@ class MetaTermAdmin(ModelAdmin):
     def get_admin_urls_for_registration(self):
         """Add the new url for add child page to the registered URLs."""
         urls = super().get_admin_urls_for_registration()
-        add_child_url = url(
+        add_child_url = re_path(
             self.url_helper.get_action_url_pattern('add_child'),
             self.add_child_view,
             name=self.url_helper.get_action_url_name('add_child')

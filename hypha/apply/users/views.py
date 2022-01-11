@@ -136,7 +136,7 @@ class EmailChangePasswordView(FormView):
         try:
             unsigned_value = signer.unsign(
                 self.request.GET.get('value'),
-                max_age=settings.PASSWORD_PAGE_TIMEOUT_SECONDS
+                max_age=settings.PASSWORD_PAGE_TIMEOUT
             )
         except Exception:
             messages.error(self.request, _("Password Page timed out. Try changing the email again."))
@@ -199,7 +199,7 @@ class EmailChangeConfirmationView(TemplateView):
         try:
             unsigned_value = signer.unsign(
                 token,
-                max_age=datetime.timedelta(days=settings.PASSWORD_RESET_TIMEOUT_DAYS)
+                max_age=datetime.timedelta(days=settings.PASSWORD_RESET_TIMEOUT)
             )
         except Exception:
             return False

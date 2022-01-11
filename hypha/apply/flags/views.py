@@ -15,7 +15,7 @@ class FlagSubmissionCreateView(UserPassesTestMixin, View):
     model = Flag
 
     def post(self, request, type, submission_pk):
-        if not request.is_ajax():
+        if request.headers.get('x-requested-with') != 'XMLHttpRequest':
             return HttpResponseNotAllowed()
 
         # Only staff can create staff flags.
