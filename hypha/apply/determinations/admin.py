@@ -1,4 +1,4 @@
-from django.conf.urls import url
+from django.urls import re_path
 from wagtail.contrib.modeladmin.options import ModelAdmin
 from wagtail.contrib.modeladmin.views import CreateView, InstanceSpecificView
 
@@ -30,7 +30,7 @@ class DeterminationFormAdmin(ListRelatedMixin, ModelAdmin):
         urls = super().get_admin_urls_for_registration()
 
         urls += (
-            url(
+            re_path(
                 self.url_helper.get_action_url_pattern('clone'),
                 self.clone_view,
                 name=self.url_helper.get_action_url_name('clone')

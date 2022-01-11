@@ -1,6 +1,5 @@
 import bleach
 from django.conf import settings
-from django.contrib.postgres.fields import JSONField
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.urls import reverse
@@ -103,10 +102,10 @@ class Determination(DeterminationFormFieldsMixin, AccessFormData, models.Model):
     message = models.TextField(verbose_name=_("Determination message"), blank=True)
 
     # Stores old determination forms data
-    data = JSONField(blank=True, null=True)
+    data = models.JSONField(blank=True, null=True)
 
     # Stores data submitted via streamfield determination forms
-    form_data = JSONField(default=dict, encoder=DjangoJSONEncoder)
+    form_data = models.JSONField(default=dict, encoder=DjangoJSONEncoder)
     is_draft = models.BooleanField(default=False, verbose_name=_("Draft"))
     created_at = models.DateTimeField(verbose_name=_('Creation time'), auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name=_('Update time'), auto_now=True)

@@ -39,7 +39,7 @@ def send_activation_email(user, site=None):
         'name': user.get_full_name(),
         'username': user.get_username(),
         'activation_path': activation_path,
-        'timeout_days': settings.PASSWORD_RESET_TIMEOUT_DAYS,
+        'timeout_days': settings.PASSWORD_RESET_TIMEOUT,
         'org_long_name': settings.ORG_LONG_NAME,
     }
 
@@ -69,7 +69,7 @@ def send_confirmation_email(user, token, updated_email=None, site=None):
         'username': user.get_username(),
         'unverified_email': updated_email,
         'activation_path': activation_path,
-        'timeout_days': settings.PASSWORD_RESET_TIMEOUT_DAYS,
+        'timeout_days': settings.PASSWORD_RESET_TIMEOUT,
         'org_long_name': settings.ORG_LONG_NAME,
     }
 

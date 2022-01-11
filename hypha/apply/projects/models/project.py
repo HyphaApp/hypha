@@ -6,7 +6,6 @@ import logging
 from django.apps import apps
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
-from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
@@ -148,7 +147,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
 
     status = models.TextField(choices=PROJECT_STATUS_CHOICES, default=COMMITTED)
 
-    form_data = JSONField(encoder=StreamFieldDataEncoder, default=dict)
+    form_data = models.JSONField(encoder=StreamFieldDataEncoder, default=dict)
     form_fields = StreamField(FormFieldsBlock(), null=True)
 
     # tracks read/write state of the Project

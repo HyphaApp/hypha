@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.conf.urls import url
+from django.urls import re_path
 from django.contrib import admin
 from django.urls import include, path
 from django.views.generic import TemplateView
@@ -60,7 +60,7 @@ if settings.DEBUG or settings.ENABLE_STYLEGUIDE:
     ]
 
 urlpatterns += [
-    url(r'^images/([^/]*)/(\d*)/([^/]*)/[^/]*$', ServeView.as_view(), name='wagtailimages_serve'),
+    re_path(r'^images/([^/]*)/(\d*)/([^/]*)/[^/]*$', ServeView.as_view(), name='wagtailimages_serve'),
 ]
 
 urlpatterns += [

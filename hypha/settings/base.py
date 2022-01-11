@@ -320,7 +320,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Number of days that password reset and account activation links are valid (default 3).
 if 'PASSWORD_RESET_TIMEOUT_DAYS' in env:
     try:
-        PASSWORD_RESET_TIMEOUT_DAYS = int(env['PASSWORD_RESET_TIMEOUT_DAYS'])
+        PASSWORD_RESET_TIMEOUT = int(env['PASSWORD_RESET_TIMEOUT_DAYS'])
     except ValueError:
         pass
 
