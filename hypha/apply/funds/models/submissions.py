@@ -6,7 +6,6 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.fields import GenericRelation
-from django.db.models.fields.json import KeyTextTransform
 from django.core.exceptions import PermissionDenied
 from django.db import models
 from django.db.models import (
@@ -24,6 +23,7 @@ from django.db.models import (
     When,
 )
 from django.db.models.expressions import OrderBy, RawSQL
+from django.db.models.fields.json import KeyTextTransform
 from django.db.models.functions import Cast, Coalesce
 from django.dispatch import receiver
 from django.urls import reverse

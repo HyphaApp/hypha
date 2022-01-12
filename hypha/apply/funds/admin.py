@@ -1,5 +1,4 @@
-from django.urls import re_path
-from django.urls import reverse
+from django.urls import re_path, reverse
 from django.utils.safestring import mark_safe
 from wagtail.contrib.modeladmin.helpers import PermissionHelper
 from wagtail.contrib.modeladmin.options import ModelAdmin, ModelAdminGroup
