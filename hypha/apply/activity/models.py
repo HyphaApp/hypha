@@ -162,8 +162,9 @@ class MessagesQueryset(models.QuerySet):
             return self.update(
                 status=Case(
                     When(status='', then=Value(status)),
-                    default=Concat('status', Value('<br />' + status))
-                )
+                    default=Concat('status', Value('<br />' + status)),
+                    output_field = models.TextField()
+                ),
             )
 
     update_status.queryset_only = True
@@ -185,6 +186,7 @@ class Message(models.Model):
         if status:
             self.status = Case(
                 When(status='', then=Value(status)),
-                default=Concat('status', Value('<br />' + status))
+                default=Concat('status', Value('<br />' + status)),
+                output_field=models.TextField()
             )
             self.save()

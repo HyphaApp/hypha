@@ -992,7 +992,7 @@ class AssignedReviewersQuerySet(models.QuerySet):
         return self.filter(
             review__isnull=True,
             opinions__isnull=True,
-        ).distinct()
+        )
 
     def staff(self):
         return self.filter(type__name=STAFF_GROUP_NAME)
