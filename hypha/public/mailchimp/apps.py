@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class MailchimpConfig(AppConfig):
-    name = 'mailchimp'
+    name = 'hypha.public.mailchimp'

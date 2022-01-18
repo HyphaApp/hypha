@@ -82,12 +82,12 @@ class ProjectQuerySet(models.QuerySet):
 
     def with_amount_paid(self):
         return self.annotate(
-            amount_paid=Coalesce(Sum('invoices__paid_value'), Value(0)),
+            amount_paid=Coalesce(Sum('invoices__paid_value'), Value(0), output_field=models.DecimalField()),
         )
 
     def with_last_payment(self):
         return self.annotate(
-            last_payment_request=Max('invoices__requested_at'),
+            last_payment_request=Max('invoices__requested_at', output_field=models.DateTimeField()),
         )
 
     def with_outstanding_reports(self):

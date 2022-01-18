@@ -53,7 +53,7 @@ class InvoiceQueryset(models.QuerySet):
         return self.exclude(status=DECLINED)
 
     def total_value(self, field):
-        return self.aggregate(total=Coalesce(Sum(field), Value(0)))['total']
+        return self.aggregate(total=Coalesce(Sum(field), Value(0), output_field=models.DecimalField()))['total']
 
     def paid_value(self):
         return self.filter(status=PAID).total_value('paid_value')
