@@ -163,7 +163,7 @@ class MessagesQueryset(models.QuerySet):
                 status=Case(
                     When(status='', then=Value(status)),
                     default=Concat('status', Value('<br />' + status)),
-                    output_field = models.TextField()
+                    output_field=models.TextField()
                 ),
             )
 
