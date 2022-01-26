@@ -25,7 +25,7 @@ executors:
 
 
 jobs:
-  test-fe:
+  build-fe:
     executor: node
     working_directory: ~/repo
     steps:
@@ -39,20 +39,24 @@ jobs:
             - v3-npm-{{ .Branch }}-
             - v3-npm-
       - run:
-          name: Run functional unit test cases [REACT.JS]
+          name: builds static assets
           command: |
             npm install --quiet
-            npm run test:ci
+            npm install -g gulp-cli
+            gulp deploy
       - save_cache:
           paths:
             - ./node_modules
+            - /usr/local/lib/node_modules
+            - /usr/local/bin
           key: v3-npm-{{ .Branch }}-{{ checksum "package-lock.json" }}
       - persist_to_workspace:
           root: ~/repo
           paths:
+            - hypha/static_compiled
             - node_modules
 
-  build-fe:
+  lint-fe:
     executor: node
     working_directory: ~/repo
     steps:
@@ -60,17 +64,19 @@ jobs:
       - attach_workspace:
           at: ~/repo
       - run:
-          name: set owner on /usr/local
-          command: sudo chown -R circleci:circleci /usr/local
+          name: run linting
+          command: npm run lint
+
+  test-fe:
+    executor: node
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/repo
       - run:
-          name: builds static assets
-          command: |
-            npm install -g gulp-cli
-            gulp deploy
-      - persist_to_workspace:
-          root: ~/repo
-          paths:
-            - hypha/static_compiled
+          name: Run functional unit test cases [REACT.JS]
+          command: npm run test:ci
 
   build-be:
     executor: python
@@ -101,6 +107,20 @@ jobs:
           paths:
             - venv
 
+  lint-be:
+    executor: python
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          name: run linting
+          command: |
+            . venv/bin/activate
+            flake8 ./hypha
+            make sort
+
   test-be:
     executor: with-database
     working_directory: ~/repo
@@ -117,34 +137,23 @@ jobs:
             coverage run --source='hypha' manage.py test
             codecov
 
-  lint:
-    executor: python
-    working_directory: ~/repo
-    steps:
-      - checkout
-      - attach_workspace:
-          at: ~/repo
-      - run:
-          name: run tests
-          command: |
-            . venv/bin/activate
-            flake8 ./hypha
-            make sort
-
 
 workflows:
     version: 2.1
     process:
       jobs:
-        - test-fe
-        - build-fe:
+        - build-fe
+        - lint-fe:
             requires:
-            - test-fe
+            - build-fe
+        - test-fe:
+            requires:
+            - build-fe
         - build-be
+        - lint-be:
+            requires:
+              - build-be
         - test-be:
             requires:
             - build-fe
             - build-be
-        - lint:
-            requires:
-              - build-be
