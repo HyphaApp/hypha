@@ -16,7 +16,7 @@ django-file-form==3.3.0
 django-filter==2.4.0
 django-fsm==2.8.0
 django-heroku==0.3.1
-django-hijack==2.3.0
+django-hijack==3.0.0
 django-pagedown==2.2.1
 django-pwned-passwords==4.1.0
 django-redis==5.1.0

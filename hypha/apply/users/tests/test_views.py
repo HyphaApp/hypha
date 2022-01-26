@@ -71,7 +71,7 @@ class TestBecome(TestCase):
     def become_request(self, user, target):
         self.client.force_login(user)
         url = reverse('users:become')
-        response = self.client.post(url, {'user': target.pk}, follow=True, secure=True)
+        response = self.client.post(url, {'user_pk': target.pk}, follow=True, secure=True)
         return response
 
     def test_staff_can_become_user(self):
