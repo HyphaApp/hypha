@@ -6,60 +6,67 @@ version: 2.1
 executors:
   python:
     docker:
-      - image: circleci/python:3.8.9
+      - image: cimg/python:3.9
   node:
     docker:
-      - image: circleci/node:12
+      - image: cimg/node:12.22
   with-database:
     docker:
-      - image: circleci/python:3.8.9
+      - image: cimg/python:3.9
         environment:
           DATABASE_URL: postgresql://hypha:hypha@localhost/hypha?sslmode=disable
           DJANGO_SETTINGS_MODULE: hypha.settings.test
           SEND_MESSAGES: false
-      - image: circleci/postgres:12
+      - image: cimg/postgres:12.9
         environment:
           POSTGRES_USER: hypha
           POSTGRES_PASSWORD: hypha
           POSTGRES_DB: hypha
 
+
 jobs:
-  build-fe:
+  test-fe:
     executor: node
     working_directory: ~/repo
-
     steps:
       - checkout
-
       - run:
           name: set owner on /usr/local
           command: sudo chown -R circleci:circleci /usr/local
-
       - restore_cache:
           keys:
-            - v2-npm-{{ .Branch }}-{{ checksum "package-lock.json" }}
-            - v2-npm-{{ .Branch }}-
-            - v2-npm-
-
+            - v3-npm-{{ .Branch }}-{{ checksum "package-lock.json" }}
+            - v3-npm-{{ .Branch }}-
+            - v3-npm-
       - run:
-          name: install node dependencies
+          name: Run functional unit test cases [REACT.JS]
           command: |
             npm install --quiet
-            npm install -g gulp-cli
-
-
-
+            npm run test:ci
       - save_cache:
           paths:
             - ./node_modules
-            - /usr/local/lib/node_modules
-            - /usr/local/bin
-          key: v2-npm-{{ .Branch }}-{{ checksum "package-lock.json" }}
+          key: v3-npm-{{ .Branch }}-{{ checksum "package-lock.json" }}
+      - persist_to_workspace:
+          root: ~/repo
+          paths:
+            - node_modules
 
+  build-fe:
+    executor: node
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          name: set owner on /usr/local
+          command: sudo chown -R circleci:circleci /usr/local
       - run:
           name: builds static assets
-          command: gulp deploy
-
+          command: |
+            npm install -g gulp-cli
+            gulp deploy
       - persist_to_workspace:
           root: ~/repo
           paths:
@@ -68,20 +75,16 @@ jobs:
   build-be:
     executor: python
     working_directory: ~/repo
-
     steps:
       - checkout
-
       - run:
           name: set owner on /usr/local
           command: sudo chown -R circleci:circleci /usr/local
-
       - restore_cache:
           keys:
-            - v2-python-{{ .Branch }}-{{ checksum "requirements-dev.txt" }}
-            - v2-python-{{ .Branch }}-
-            - v2-python-
-
+            - v3-python-{{ .Branch }}-{{ checksum "requirements-dev.txt" }}
+            - v3-python-{{ .Branch }}-
+            - v3-python-
       - run:
           name: install python dependencies
           command: |
@@ -89,34 +92,14 @@ jobs:
             . venv/bin/activate
             pip install coverage codecov
             pip install -r requirements-dev.txt
-
       - save_cache:
           paths:
             - ./venv
-          key: v2-python-{{ .Branch }}-{{ checksum "requirements-dev.txt" }}
-
+          key: v3-python-{{ .Branch }}-{{ checksum "requirements-dev.txt" }}
       - persist_to_workspace:
           root: ~/repo
           paths:
             - venv
-
-  test-fe:
-    executor: node
-    working_directory: ~/repo
-
-    steps:
-      - checkout
-
-      - run:
-          name: set owner on /usr/local
-          command: sudo chown -R circleci:circleci /usr/local
-
-      - run:
-          name: Run functional unit test cases [REACT.JS]
-          command: |
-            npm install --quiet
-            npm install -g gulp-cli
-            npm run test
 
   test-be:
     executor: with-database
@@ -147,6 +130,7 @@ jobs:
             . venv/bin/activate
             flake8 ./hypha
             make sort
+
 
 workflows:
     version: 2.1
