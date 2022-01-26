@@ -1,11 +1,11 @@
-import { createStore, applyMiddleware } from 'redux'
-import ReduxThunk from 'redux-thunk'
-import { composeWithDevTools } from 'redux-devtools-extension/developmentOnly'
-import { routerMiddleware } from 'connected-react-router';
-import { createBrowserHistory } from 'history';
+import {createStore, applyMiddleware} from 'redux';
+import ReduxThunk from 'redux-thunk';
+import {composeWithDevTools} from 'redux-devtools-extension/developmentOnly';
+import {routerMiddleware} from 'connected-react-router';
+import {createBrowserHistory} from 'history';
 import createSagaMiddleware from 'redux-saga';
 import createRootReducer from '@reducers';
-import api from '@middleware/api'
+import api from '@middleware/api';
 
 const sagaMiddleware = createSagaMiddleware();
 export const history = createBrowserHistory();
@@ -25,11 +25,11 @@ export default initialState => {
         composeWithDevTools(
             applyMiddleware(...MIDDLEWARE)
         )
-    )
+    );
 
 
-  store.runSaga = sagaMiddleware.run;
-  store.injectedReducers = {}; // Reducer registry
-  store.injectedSagas = {}; // Saga registry
+    store.runSaga = sagaMiddleware.run;
+    store.injectedReducers = {}; // Reducer registry
+    store.injectedSagas = {}; // Saga registry
     return store;
 };

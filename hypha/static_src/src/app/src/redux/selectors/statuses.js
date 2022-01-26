@@ -1,4 +1,4 @@
-import { createSelector } from 'reselect';
+import {createSelector} from 'reselect';
 
 
 const getCurrentStatuses = state => state.statuses.current;
@@ -9,26 +9,26 @@ const getSubmissionsByStatuses = state => state.statuses.byStatuses;
 
 
 const getSubmissionIDsForCurrentStatuses = createSelector(
-    [ getSubmissionsByStatuses, getCurrentStatuses ],
+    [getSubmissionsByStatuses, getCurrentStatuses],
     (grouped, current) => {
-        if (!current.length){
-            let acc = []
-            for (let status in grouped){
-              acc = acc.concat(grouped[status])   
+        if (!current.length) {
+            let acc = [];
+            for (let status in grouped) {
+                acc = acc.concat(grouped[status]);
             }
-            return acc
+            return acc;
         }
-        return current.reduce((acc, status) => acc.concat(grouped[status] || []), [])
+        return current.reduce((acc, status) => acc.concat(grouped[status] || []), []);
     }
 );
 
 const getByStatusesError = createSelector(
-    [ getStatusesFetchingState ],
+    [getStatusesFetchingState],
     state => state.isErrored === true
 );
 
 const getByStatusesLoading = createSelector(
-    [ getStatusesFetchingState ],
+    [getStatusesFetchingState],
     state => state.isFetching === true
 );
 
@@ -38,5 +38,5 @@ export {
     getSubmissionsByStatuses,
     getByStatusesLoading,
     getByStatusesError,
-    getSubmissionIDsForCurrentStatuses,
-}
+    getSubmissionIDsForCurrentStatuses
+};

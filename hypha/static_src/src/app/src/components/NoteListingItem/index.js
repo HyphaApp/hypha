@@ -11,21 +11,22 @@ export default class NoteListingItem extends React.Component {
         handleEditNote: PropTypes.func.isRequired,
         disabled: PropTypes.bool,
         editable: PropTypes.bool,
-        edited: PropTypes.string,
+        edited: PropTypes.string
     };
 
     parseUser() {
-        const { author } = this.props;
+        const {author} = this.props;
 
         if (author.length > 16) {
-            return `${author.substring(0, 16)}...`
-        } else {
+            return `${author.substring(0, 16)}...`;
+        }
+        else {
             return author;
         }
     }
 
     render() {
-        const { timestamp, message, handleEditNote, disabled, editable, edited} = this.props;
+        const {timestamp, message, handleEditNote, disabled, editable, edited} = this.props;
 
         return (
             <li className={`note ${disabled ? 'disabled' : ''}`}>

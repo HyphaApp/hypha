@@ -1,40 +1,40 @@
-import React from 'react'
-import injectReducer from '@utils/injectReducer'
-import injectSaga from '@utils/injectSaga'
-import { withRouter } from 'react-router-dom';
-import { connect } from 'react-redux';
-import { bindActionCreators, compose } from 'redux';
+import React from 'react';
+import injectReducer from '@utils/injectReducer';
+import injectSaga from '@utils/injectSaga';
+import {withRouter} from 'react-router-dom';
+import {connect} from 'react-redux';
+import {bindActionCreators, compose} from 'redux';
 import PropTypes from 'prop-types';
 import * as Actions from './actions';
 import reducer from './reducer';
 import saga from './saga';
 import * as Selectors from './selectors';
-import { getCurrentSubmission } from '@selectors/submissions'
-import LoadingPanel from '@components/LoadingPanel'
-import MetaTermTreeView from './components/MetaTermTreeView'
+import {getCurrentSubmission} from '@selectors/submissions';
+import LoadingPanel from '@components/LoadingPanel';
+import MetaTermTreeView from './components/MetaTermTreeView';
 
 
 class MetaTermForm extends React.PureComponent {
 
-    componentDidMount(){
-        this.props.initialize() // fetch all meta terms
-        if("metaTerms" in this.props.submission) {
-            this.props.setSelectedMetaTerms(this.props.submission.metaTerms.map(metaTerm => metaTerm.id))
+    componentDidMount() {
+        this.props.initialize(); // fetch all meta terms
+        if ('metaTerms' in this.props.submission) {
+            this.props.setSelectedMetaTerms(this.props.submission.metaTerms.map(metaTerm => metaTerm.id));
         }
     }
 
-    render(){
-        if(this.props.metaTermsInfo.loading) return <LoadingPanel />
-        
+    render() {
+        if (this.props.metaTermsInfo.loading) {return <LoadingPanel />;}
+
         return (
-            <MetaTermTreeView 
-              closeForm={this.props.closeForm}
-              selectedMetaTerms={this.props.metaTermsInfo.selectedMetaTerms}
-              metaTermsStructure={this.props.metaTermsInfo.metaTermsStructure}
-              setSelectedMetaTerms={this.props.setSelectedMetaTerms}
-              updateMetaTerms={() => {this.props.updateMetaTerms(this.props.metaTermsInfo.selectedMetaTerms, this.props.submissionID); this.props.closeForm()}}
+            <MetaTermTreeView
+                closeForm={this.props.closeForm}
+                selectedMetaTerms={this.props.metaTermsInfo.selectedMetaTerms}
+                metaTermsStructure={this.props.metaTermsInfo.metaTermsStructure}
+                setSelectedMetaTerms={this.props.setSelectedMetaTerms}
+                updateMetaTerms={() => {this.props.updateMetaTerms(this.props.metaTermsInfo.selectedMetaTerms, this.props.submissionID); this.props.closeForm();}}
             />
-        )
+        );
     }
 }
 
@@ -46,10 +46,10 @@ MetaTermForm.propTypes = {
     submission: PropTypes.object,
     setSelectedMetaTerms: PropTypes.func,
     updateMetaTerms: PropTypes.func
-}
+};
 
-const mapStateToProps = state =>  ({
-    metaTermsInfo : Selectors.selectMetaTermsInfo(state),
+const mapStateToProps = state => ({
+    metaTermsInfo: Selectors.selectMetaTermsInfo(state),
     submission: getCurrentSubmission(state)
 });
 
@@ -61,7 +61,7 @@ function mapDispatchToProps(dispatch) {
         updateMetaTerms: Actions.updateMetaTermsAction
     },
     dispatch,
-);
+    );
 }
 
 const withConnect = connect(
@@ -69,8 +69,8 @@ const withConnect = connect(
     mapDispatchToProps,
 );
 
-const withReducer = injectReducer({ key: 'MetaTermForm', reducer });
-const withSaga = injectSaga({ key: 'MetaTermForm', saga });
+const withReducer = injectReducer({key: 'MetaTermForm', reducer});
+const withSaga = injectSaga({key: 'MetaTermForm', saga});
 
 
 export default compose(

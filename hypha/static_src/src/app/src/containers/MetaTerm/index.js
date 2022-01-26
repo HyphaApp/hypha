@@ -1,58 +1,58 @@
-import React from 'react'
+import React from 'react';
 import PropTypes from 'prop-types';
-import { SidebarBlock } from '@components/SidebarBlock'
+import {SidebarBlock} from '@components/SidebarBlock';
 import Modal from '@material-ui/core/Modal';
-import { withStyles } from '@material-ui/core/styles';
-import MetaTermForm from './containers/MetaTermForm' 
+import {withStyles} from '@material-ui/core/styles';
+import MetaTermForm from './containers/MetaTermForm';
 
 
 const styles = {
     modal: {
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center',
-    },
-  };
+        justifyContent: 'center'
+    }
+};
 
 class MetaTerm extends React.PureComponent {
 
     state = {
-        open : false
-    }
+        open: false
+    };
 
-    render(){
-        const { classes } = this.props;
+    render() {
+        const {classes} = this.props;
         return (
             <div className="metaterm-container">
-                <SidebarBlock title={""}>
+                <SidebarBlock title={''}>
                     <div className="status-actions">
-                        <button 
-                            className="button button--primary button--full-width button--bottom-space metaterm-button" 
-                            onClick={() => this.setState({open : true})}
+                        <button
+                            className="button button--primary button--full-width button--bottom-space metaterm-button"
+                            onClick={() => this.setState({open: true})}
                         >
                             Meta Terms
                         </button>
                         <Modal
-                            className={classes.modal} 
+                            className={classes.modal}
                             open={this.state.open}
                         >
                             <>
-                            <MetaTermForm 
-                                submissionID={this.props.submissionID} 
-                                closeForm={() => this.setState({open: false})}
-                            />
+                                <MetaTermForm
+                                    submissionID={this.props.submissionID}
+                                    closeForm={() => this.setState({open: false})}
+                                />
                             </>
                         </Modal>
                     </div>
                 </SidebarBlock>
             </div>
-        )
+        );
     }
 }
 
 MetaTerm.propTypes = {
     submissionID: PropTypes.number,
     classes: PropTypes.object
-}
+};
 
 export default withStyles(styles)(MetaTerm);

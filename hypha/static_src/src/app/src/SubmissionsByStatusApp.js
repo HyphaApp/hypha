@@ -1,14 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import SwitcherApp from './SwitcherApp';
-import { hot, setConfig } from 'react-hot-loader';
-import { connect } from 'react-redux'
+import {hot, setConfig} from 'react-hot-loader';
+import {connect} from 'react-redux';
 
 import GroupByRoundDetailView from '@containers/GroupByRoundDetailView';
-import { setCurrentStatuses } from '@actions/submissions';
-import { getCurrentStatusesSubmissions } from '@selectors/submissions';
+import {setCurrentStatuses} from '@actions/submissions';
+import {getCurrentStatusesSubmissions} from '@selectors/submissions';
 
-setConfig({showReactDomPatchNotification: false})
+setConfig({showReactDomPatchNotification: false});
 
 export class SubmissionsByStatusApp extends React.Component {
     static propTypes = {
@@ -22,30 +22,30 @@ export class SubmissionsByStatusApp extends React.Component {
         this.props.setStatuses(this.props.statuses);
     }
 
-    onfilter = () => { 
+    onfilter = () => {
         this.props.setStatuses(this.props.statuses);
-    }
+    };
 
     render() {
         return <SwitcherApp
-                detailComponent={<GroupByRoundDetailView submissions= {this.props.submissions}/>}
-                switcherSelector={'submissions-by-status-app-react-switcher'}
-                pageContent={this.props.pageContent}
-                doNotRenderFilter={['status']}
-                onFilter={this.onfilter} />;
+            detailComponent={<GroupByRoundDetailView submissions= {this.props.submissions}/>}
+            switcherSelector={'submissions-by-status-app-react-switcher'}
+            pageContent={this.props.pageContent}
+            doNotRenderFilter={['status']}
+            onFilter={this.onfilter} />;
     }
 }
 
 const mapStateToProps = (state, ownProps) => ({
-    submissions: getCurrentStatusesSubmissions(state),
-})
+    submissions: getCurrentStatusesSubmissions(state)
+});
 
 const mapDispatchToProps = dispatch => {
     return {
         setStatuses: (statuses) => {
-          dispatch(setCurrentStatuses(statuses));
-        },
-    }
+            dispatch(setCurrentStatuses(statuses));
+        }
+    };
 };
 
 

@@ -4,10 +4,10 @@ const getBaseUrl = () => {
     return process.env.API_BASE_URL;
 };
 
-export function apiFetch({path, method = 'GET', params = new URLSearchParams, options = {}}) {
+export function apiFetch({path, method = 'GET', params = new URLSearchParams(), options = {}}) {
     const url = new URL(getBaseUrl());
     url.pathname = url.pathname + path;
-    
+
     for (const [paramKey, paramValue] of getIteratorForParams(params)) {
         url.searchParams.append(paramKey, paramValue);
     }
@@ -19,25 +19,25 @@ export function apiFetch({path, method = 'GET', params = new URLSearchParams, op
         options.headers = {
             ...options.headers,
             'Content-Type': 'application/json',
-            'X-CSRFToken': getCSRFToken(),
+            'X-CSRFToken': getCSRFToken()
         };
     }
 
-    if(path.includes("apply")){
-        url.pathname = path
+    if (path.includes('apply')) {
+        url.pathname = path;
         delete options.headers['Content-Type'];
         delete options.headers['Accept'];
         options.headers['Accept'] = '*/*';
-        options.headers['X-Requested-With']= 'XMLHttpRequest';
+        options.headers['X-Requested-With'] = 'XMLHttpRequest';
     }
 
     return fetch(url, {
         ...options,
         headers: {
-            ...options.headers,
+            ...options.headers
         },
         method,
-        mode: path.includes("apply") ? 'cors' :'same-origin',
+        mode: path.includes('apply') ? 'cors' : 'same-origin',
         credentials: 'include'
     });
 }

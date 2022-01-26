@@ -1,6 +1,6 @@
-import { combineReducers } from 'redux'
+import {combineReducers} from 'redux';
 
-import { ADD_MESSAGE, DISMISS_MESSAGE } from '@actions/messages';
+import {ADD_MESSAGE, DISMISS_MESSAGE} from '@actions/messages';
 
 export const message = (state, action) => {
     switch (action.type) {
@@ -9,34 +9,34 @@ export const message = (state, action) => {
                 ...state,
                 id: action.messageID,
                 messageType: action.messageType,
-                message: action.message,
-            }
+                message: action.message
+            };
         default:
-            return state
+            return state;
     }
-}
+};
 
 export const messages = (state = {}, action) => {
-    switch(action.type) {
+    switch (action.type) {
         case ADD_MESSAGE:
             return {
                 ...state,
                 [action.messageID]: message(
                     state[action.messageID], action
-                ),
-            }
+                )
+            };
         case DISMISS_MESSAGE:
             return Object.entries(state).reduce((obj, [messageID, message]) => {
-                if(messageID !== action.messageID) {
-                    obj[messageID] = message
+                if (messageID !== action.messageID) {
+                    obj[messageID] = message;
                 }
-                return obj
-            }, {})
+                return obj;
+            }, {});
         default:
-            return state
+            return state;
     }
-}
+};
 
 export default combineReducers({
-    messages,
-})
+    messages
+});

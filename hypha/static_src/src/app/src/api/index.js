@@ -5,10 +5,10 @@ import {
     fetchSubmissionsByRound,
     fetchSubmissionsByStatuses,
     fetchReviewDraft,
-    fetchDeterminationDraft,
+    fetchDeterminationDraft
 } from '@api/submissions';
-import { fetchRound, fetchRounds } from '@api/rounds';
-import { createNoteForSubmission, fetchNotesForSubmission, fetchNewNotesForSubmission, editNoteForSubmission } from '@api/notes';
+import {fetchRound, fetchRounds} from '@api/rounds';
+import {createNoteForSubmission, fetchNotesForSubmission, fetchNewNotesForSubmission, editNoteForSubmission} from '@api/notes';
 
 export default {
     executeSubmissionAction,
@@ -25,5 +25,5 @@ export default {
     fetchNotesForSubmission,
     fetchNewNotesForSubmission,
     createNoteForSubmission,
-    editNoteForSubmission,
+    editNoteForSubmission
 };

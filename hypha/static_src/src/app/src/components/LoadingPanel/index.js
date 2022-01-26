@@ -1,6 +1,6 @@
-import React from 'react'
+import React from 'react';
 
-import OTFLoadingIcon from '@components/OTFLoadingIcon'
+import OTFLoadingIcon from '@components/OTFLoadingIcon';
 
 import './styles.scss';
 
@@ -14,7 +14,7 @@ const LoadingPanel = () => {
                 <OTFLoadingIcon />
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default LoadingPanel
+export default LoadingPanel;

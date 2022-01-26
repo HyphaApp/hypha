@@ -1,36 +1,36 @@
-import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
+import React, {useEffect, useState} from 'react';
+import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 
 import {
     removedStoredNote,
-    writingNote,
+    writingNote
 } from '@actions/notes';
-import { getDraftNoteForSubmission } from '@selectors/notes';
-import { createNoteForSubmission } from '@actions/notes';
+import {getDraftNoteForSubmission} from '@selectors/notes';
+import {createNoteForSubmission} from '@actions/notes';
 import RichTextForm from '@components/RichTextForm';
 
 import {
     getNoteCreatingErrorForSubmission,
-    getNoteCreatingStateForSubmission,
+    getNoteCreatingStateForSubmission
 } from '@selectors/notes';
 
 import './AddNoteForm.scss';
 
 
 const AddNoteForm = ({error, isCreating, draftNote, submitNote, storeNote, clearNote, submissionID}) => {
-    const [initialValue, updateInitialValue] = useState()
+    const [initialValue, updateInitialValue] = useState();
 
     useEffect(() => {
-        updateInitialValue(draftNote && draftNote.message || '')
-    }, [submissionID])
+        updateInitialValue(draftNote && draftNote.message || '');
+    }, [submissionID]);
 
     const onSubmit = (message, resetEditor) => {
         submitNote(submissionID, {
             message,
-            visibility: 'team',
+            visibility: 'team'
         }).then(() => resetEditor());
-    }
+    };
 
     return (
         <>
@@ -45,7 +45,7 @@ const AddNoteForm = ({error, isCreating, draftNote, submitNote, storeNote, clear
             />
         </>
     );
-}
+};
 
 
 AddNoteForm.propTypes = {
@@ -56,7 +56,7 @@ AddNoteForm.propTypes = {
     error: PropTypes.any,
     draftNote: PropTypes.object,
     isCreating: PropTypes.bool,
-    removeEditedNote: PropTypes.func,
+    removeEditedNote: PropTypes.func
 };
 
 
@@ -64,13 +64,13 @@ AddNoteForm.propTypes = {
 const mapStateToProps = (state, ownProps) => ({
     error: getNoteCreatingErrorForSubmission(ownProps.submissionID)(state),
     isCreating: getNoteCreatingStateForSubmission(ownProps.submissionID)(state),
-    draftNote: getDraftNoteForSubmission(ownProps.submissionID)(state),
+    draftNote: getDraftNoteForSubmission(ownProps.submissionID)(state)
 });
 
 const mapDispatchToProps = dispatch => ({
     submitNote: (submissionID, note) => dispatch(createNoteForSubmission(submissionID, note)),
     storeNote: (submissionID, message) => dispatch(writingNote(submissionID, message)),
-    clearNote: (submissionID) => dispatch(removedStoredNote(submissionID)),
+    clearNote: (submissionID) => dispatch(removedStoredNote(submissionID))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddNoteForm);

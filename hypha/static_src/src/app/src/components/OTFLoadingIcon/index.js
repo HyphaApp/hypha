@@ -1,6 +1,6 @@
-import React from 'react'
+import React from 'react';
 
-import './styles.scss'
+import './styles.scss';
 
 
 const OTFLoadingIcon = () => (
@@ -24,6 +24,6 @@ const OTFLoadingIcon = () => (
             <rect className="logo-part logo-part-16" fill="#25AAE1" width='5' height='5' transform='translate(30 35)' />
         </g>
     </svg>
-)
+);
 
 export default OTFLoadingIcon;

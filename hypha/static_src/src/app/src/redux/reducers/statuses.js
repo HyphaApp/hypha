@@ -1,4 +1,4 @@
-import { combineReducers } from 'redux';
+import {combineReducers} from 'redux';
 
 import {
     SET_CURRENT_STATUSES,
@@ -13,9 +13,9 @@ import {
 export function current(state = [], action) {
     switch (action.type) {
         case SET_CURRENT_STATUSES:
-            return [...action.statuses]
+            return [...action.statuses];
         default:
-            return state
+            return state;
     }
 }
 
@@ -25,11 +25,11 @@ export function submissionsByStatuses(state = {}, action) {
             return {
                 ...state,
                 ...action.data.results.reduce((accumulator, submission) => {
-                    const submissions = accumulator[submission.status] || []
-                    if ( !submissions.includes(submission.id) ) {
-                        accumulator[submission.status] = [...submissions, submission.id]
+                    const submissions = accumulator[submission.status] || [];
+                    if (!submissions.includes(submission.id)) {
+                        accumulator[submission.status] = [...submissions, submission.id];
                     }
-                    return accumulator
+                    return accumulator;
                 }, state)
             };
         case UPDATE_SUBMISSION:
@@ -40,12 +40,12 @@ export function submissionsByStatuses(state = {}, action) {
                 }, {});
             return {
                 ...state,
-                [action.data.status]: [...(state[action.data.status] || []), action.data.id],
+                [action.data.status]: [...(state[action.data.status] || []), action.data.id]
             };
         case CLEAR_ALL_STATUSES:
-            return {}
+            return {};
         default:
-            return state
+            return state;
     }
 }
 
@@ -55,27 +55,27 @@ export function statusFetchingState(state = {isFetching: false, isError: false},
         case FAIL_LOADING_BY_STATUSES:
             return {
                 isFetching: false,
-                isErrored: true,
+                isErrored: true
             };
         case START_LOADING_BY_STATUSES:
             return {
                 isFetching: true,
-                isErrored: false,
+                isErrored: false
             };
         case UPDATE_BY_STATUSES:
             return {
                 isFetching: false,
-                isErrored: false,
+                isErrored: false
             };
         default:
-            return state
+            return state;
     }
 }
 
 const statuses = combineReducers({
     current,
     byStatuses: submissionsByStatuses,
-    fetchingState: statusFetchingState,
+    fetchingState: statusFetchingState
 });
 
 export default statuses;

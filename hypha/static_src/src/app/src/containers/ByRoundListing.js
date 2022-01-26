@@ -1,35 +1,35 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux'
+import {connect} from 'react-redux';
 
 import GroupedListing from '@components/GroupedListing';
 import {
     loadRounds,
     loadSubmissionsForCurrentStatus,
-    setCurrentSubmission,
+    setCurrentSubmission
 } from '@actions/submissions';
 import {
     getRounds,
     getRoundsFetching,
-    getRoundsErrored,
+    getRoundsErrored
 } from '@selectors/rounds';
 import {
     getCurrentSubmissionID,
     getCurrentStatusesSubmissions,
-    getSubmissionsForListing,
+    getSubmissionsForListing
 } from '@selectors/submissions';
 import {
     getCurrentStatuses,
     getByStatusesLoading,
-    getByStatusesError,
+    getByStatusesError
 } from '@selectors/statuses';
 
-import { SelectSelectedFilters } from '@containers/SubmissionFilters/selectors'
+import {SelectSelectedFilters} from '@containers/SubmissionFilters/selectors';
 
 const loadData = props => {
-    props.loadRounds()
-    props.loadSubmissions()
-}
+    props.loadRounds();
+    props.loadSubmissions();
+};
 
 class ByRoundListing extends React.Component {
     static propTypes = {
@@ -49,52 +49,52 @@ class ByRoundListing extends React.Component {
     };
 
     componentDidMount() {
-        if ( this.props.statuses || this.props.filters) {
-            loadData(this.props)
+        if (this.props.statuses || this.props.filters) {
+            loadData(this.props);
         }
     }
 
     componentDidUpdate(prevProps) {
-        const { statuses } = this.props;
-        
-        if (!statuses.every(v => prevProps.statuses.includes(v)) 
+        const {statuses} = this.props;
+
+        if (!statuses.every(v => prevProps.statuses.includes(v))
             || this.props.filters != prevProps.filters) {
-            loadData(this.props)
+            loadData(this.props);
         }
 
-        if(!Object.keys(this.props.rounds).length) this.props.loadRounds()
+        if (!Object.keys(this.props.rounds).length) {this.props.loadRounds();}
     }
 
     prepareOrder = () => {
-        const { isLoading, rounds, submissions } = this.props;
+        const {isLoading, rounds, submissions} = this.props;
         if (isLoading || Object.entries(rounds).length === 0) {
-            return []
+            return [];
         }
-        return submissions.sort((a, b) => a.id - b.id )
-                          .map(submission => submission.round)
-                          .filter((round, index, arr) => round && arr.indexOf(round) === index)
-                          .map((round, i) => ({
-                              display: rounds[parseInt(round)].title,
-                              key: `round-${round}`,
-                              position: i,
-                              values: [parseInt(round)],
-                          }));
-    }
+        return submissions.sort((a, b) => a.id - b.id)
+            .map(submission => submission.round)
+            .filter((round, index, arr) => round && arr.indexOf(round) === index)
+            .map((round, i) => ({
+                display: rounds[parseInt(round)].title,
+                key: `round-${round}`,
+                position: i,
+                values: [parseInt(round)]
+            }));
+    };
 
     render() {
-        const { isLoading, isErrored, submissions, setCurrentItem, activeSubmission, shouldSelectFirst, errorMessage } = this.props;
+        const {isLoading, isErrored, submissions, setCurrentItem, activeSubmission, shouldSelectFirst, errorMessage} = this.props;
         const order = this.prepareOrder();
         return <GroupedListing
-                isLoading={isLoading}
-                isErrored={isErrored}
-                errorMessage={errorMessage || 'Fetching failed.'}
-                items={submissions || []}
-                activeItem={activeSubmission}
-                onItemSelection={setCurrentItem}
-                shouldSelectFirst={shouldSelectFirst}
-                groupBy={'round'}
-                order={order}
-            />;
+            isLoading={isLoading}
+            isErrored={isErrored}
+            errorMessage={errorMessage || 'Fetching failed.'}
+            items={submissions || []}
+            activeItem={activeSubmission}
+            onItemSelection={setCurrentItem}
+            shouldSelectFirst={shouldSelectFirst}
+            groupBy={'round'}
+            order={order}
+        />;
     }
 }
 
@@ -108,13 +108,13 @@ const mapStateToProps = (state, ownProps) => ({
     ),
     activeSubmission: getCurrentSubmissionID(state),
     rounds: getRounds(state),
-    filters : SelectSelectedFilters(state)
-})
+    filters: SelectSelectedFilters(state)
+});
 
 const mapDispatchToProps = (dispatch) => ({
     loadSubmissions: () => dispatch(loadSubmissionsForCurrentStatus()),
     loadRounds: () => dispatch(loadRounds()),
-    setCurrentItem: id => dispatch(setCurrentSubmission(id)),
+    setCurrentItem: id => dispatch(setCurrentSubmission(id))
 });
 
 export default connect(

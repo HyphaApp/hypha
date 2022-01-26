@@ -1,29 +1,29 @@
-import { v4 as uuidv4 } from 'uuid';
+import {v4 as uuidv4} from 'uuid';
 
 export const MESSAGE_TYPES = {
     SUCCESS: 'success',
     ERROR: 'error',
     WARNING: 'warning',
-    INFO: 'info',
-}
+    INFO: 'info'
+};
 
-export const ADD_MESSAGE = 'ADD_MESSAGE'
-export const DISMISS_MESSAGE = 'DISMISS_MESSAGE'
+export const ADD_MESSAGE = 'ADD_MESSAGE';
+export const DISMISS_MESSAGE = 'DISMISS_MESSAGE';
 
 export const addMessage = (message, type) => {
     if (!Object.values(MESSAGE_TYPES).includes(type)) {
-        throw "Invalid message type"
+        throw 'Invalid message type';
     }
 
-    return{
+    return {
         type: ADD_MESSAGE,
         messageType: type,
         messageID: uuidv4(),
-        message,
-    }
+        message
+    };
 };
 
 export const dismissMessage = messageID => ({
     type: DISMISS_MESSAGE,
-    messageID,
+    messageID
 });

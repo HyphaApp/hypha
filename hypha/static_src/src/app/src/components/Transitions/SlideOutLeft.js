@@ -1,9 +1,9 @@
-import React from 'react'
+import React from 'react';
 import PropTypes from 'prop-types';
 import Transition from 'react-transition-group/Transition';
 
 
-const SlideOutLeft = ({ children, in: inProp }) => {
+const SlideOutLeft = ({children, in: inProp}) => {
     const duration = 250;
 
     const defaultStyle = {
@@ -11,29 +11,29 @@ const SlideOutLeft = ({ children, in: inProp }) => {
         transform: 'translate3d(0, 0, 0)',
         position: 'absolute',
         width: '100%'
-    }
+    };
 
     const transitionStyles = {
-        entering: { transform: 'translate3d(0, 0, 0)' },
-        entered: { transform: 'translate3d(-100%, 0, 0)' },
-        exiting: { transform: 'translate3d(-100%, 0, 0)' },
-        exited: { transform: 'translate3d(0, 0, 0)' }
+        entering: {transform: 'translate3d(0, 0, 0)'},
+        entered: {transform: 'translate3d(-100%, 0, 0)'},
+        exiting: {transform: 'translate3d(-100%, 0, 0)'},
+        exited: {transform: 'translate3d(0, 0, 0)'}
     };
 
     return (
         <Transition in={inProp} timeout={duration}>
             {(state) => (
-                <div style={{ ...defaultStyle, ...transitionStyles[state] }}>
+                <div style={{...defaultStyle, ...transitionStyles[state]}}>
                     {children}
                 </div>
             )}
         </Transition>
-    )
-}
+    );
+};
 
 SlideOutLeft.propTypes = {
     children: PropTypes.node,
-    in: PropTypes.bool,
-}
+    in: PropTypes.bool
+};
 
-export default SlideOutLeft
+export default SlideOutLeft;

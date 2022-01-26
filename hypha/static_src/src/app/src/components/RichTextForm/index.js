@@ -8,13 +8,13 @@ const toolbarConfig = {
         {label: 'Bold', style: 'BOLD', className: 'custom-css-class'},
         {label: 'Italic', style: 'ITALIC'},
         {label: 'Underline', style: 'UNDERLINE'},
-        {label: 'Blockquote', style: 'blockquote'},
+        {label: 'Blockquote', style: 'blockquote'}
 
     ],
     BLOCK_TYPE_DROPDOWN: [
         {label: 'Normal', style: 'unstyled'},
         {label: 'H1', style: 'header-four'},
-        {label: 'H2', style: 'header-five'},
+        {label: 'H2', style: 'header-five'}
     ],
     BLOCK_TYPE_BUTTONS: [
         {label: 'UL', style: 'unordered-list-item'},
@@ -23,40 +23,40 @@ const toolbarConfig = {
 };
 
 
-const emptyState = RichTextEditor.createEmptyValue().toString('html')
+const emptyState = RichTextEditor.createEmptyValue().toString('html');
 
 
 const RichTextForm = ({initialValue, onChange, onCancel, onSubmit, instance, disabled}) => {
-    const [value, updateValue] = useState(RichTextEditor.createValueFromString(initialValue, 'html'))
+    const [value, updateValue] = useState(RichTextEditor.createValueFromString(initialValue, 'html'));
 
     useEffect(() => {
-        updateValue(RichTextEditor.createValueFromString(initialValue, 'html'))
-    }, [initialValue])
+        updateValue(RichTextEditor.createValueFromString(initialValue, 'html'));
+    }, [initialValue]);
 
     const resetEditor = () => {
-        updateValue(RichTextEditor.createEmptyValue())
-    }
+        updateValue(RichTextEditor.createEmptyValue());
+    };
 
     const isEmpty = () => {
         return !value.getEditorState().getCurrentContent().hasText();
-    }
+    };
 
     const handleValueChange = (newValue) => {
-        const html = newValue.toString('html')
-        if ( html !== emptyState || value.toString('html') !== emptyState ) {
-            onChange && onChange(html)
+        const html = newValue.toString('html');
+        if (html !== emptyState || value.toString('html') !== emptyState) {
+            onChange && onChange(html);
         }
-        updateValue(newValue)
-    }
+        updateValue(newValue);
+    };
 
     const handleCancel = () => {
         onCancel();
-        resetEditor()
-    }
+        resetEditor();
+    };
 
     const handleSubmit = () => {
         onSubmit(value.toString('html'), resetEditor);
-    }
+    };
 
     return (
         <div className={ instance } >
@@ -88,11 +88,11 @@ const RichTextForm = ({initialValue, onChange, onCancel, onSubmit, instance, dis
         </div>
     );
 
-}
+};
 
 RichTextForm.defaultProps = {
     disabled: false,
-    initialValue: '',
+    initialValue: ''
 };
 
 RichTextForm.propTypes = {
@@ -103,7 +103,7 @@ RichTextForm.propTypes = {
     onSubmit: PropTypes.func,
     onChange: PropTypes.func,
     onCancel: PropTypes.func,
-    initialValue: PropTypes.string,
+    initialValue: PropTypes.string
 };
 
 

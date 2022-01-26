@@ -6,21 +6,21 @@ export const FormReducer = (
     state = formInitialState,
     action
 ) => {
-    switch(action.type) {
+    switch (action.type) {
         case ActionTypes.UPDATE_FIELD_VALUE:
             return state
                 .set('readyToSubmit', false)
                 .setIn(
-                    ['values', action.fieldName], 
+                    ['values', action.fieldName],
                     action.fieldValue);
         case ActionTypes.ADD_VALIDATION_ERROR:
-            if (action.errorMessage){
+            if (action.errorMessage) {
                 return state.setIn(
                     ['errors', action.fieldName],
                     action.errorMessage);
             }
             else {
-                return state.set('errors', state.errors.without(action.fieldName))
+                return state.set('errors', state.errors.without(action.fieldName));
             }
         case ActionTypes.CLEAR_VALIDATION_ERRORS:
             return state.set('errors', {});
@@ -29,7 +29,7 @@ export const FormReducer = (
         default:
             return state;
     }
-}
+};
 
 const FormContainerReducer = (
     state = initialState,
@@ -51,7 +51,7 @@ const FormContainerReducer = (
         default:
             return state;
     }
-}
+};
 
 
 export default FormContainerReducer;

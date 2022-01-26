@@ -1,9 +1,9 @@
-import React from 'react'
+import React from 'react';
 import PropTypes from 'prop-types';
 import Transition from 'react-transition-group/Transition';
 
 
-const SlideInRight = ({ children, in: inProp }) => {
+const SlideInRight = ({children, in: inProp}) => {
     const duration = 250;
 
     const defaultStyle = {
@@ -12,28 +12,28 @@ const SlideInRight = ({ children, in: inProp }) => {
         position: 'absolute',
         zIndex: 2,
         width: '100%'
-    }
+    };
 
     const transitionStyles = {
-        entering: { transform: 'translate3d(0, 0, 0)' },
-        entered: { transform: 'translate3d(100%, 0, 0)' },
-        exiting: { transform: 'translate3d(100%, 0, 0)' },
-        exited: { transform: 'translate3d(0, 0, 0)' }
+        entering: {transform: 'translate3d(0, 0, 0)'},
+        entered: {transform: 'translate3d(100%, 0, 0)'},
+        exiting: {transform: 'translate3d(100%, 0, 0)'},
+        exited: {transform: 'translate3d(0, 0, 0)'}
     };
     return (
         <Transition in={inProp} timeout={duration}>
             {(state) => (
-                <div style={{ ...defaultStyle, ...transitionStyles[state] }}>
+                <div style={{...defaultStyle, ...transitionStyles[state]}}>
                     {children}
                 </div>
             )}
         </Transition>
-    )
-}
+    );
+};
 
 SlideInRight.propTypes = {
     children: PropTypes.node,
-    in: PropTypes.bool,
-}
+    in: PropTypes.bool
+};
 
-export default SlideInRight
+export default SlideInRight;
