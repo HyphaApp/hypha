@@ -40,8 +40,8 @@ options.sass = {
   outputStyle: 'expanded'
 };
 
-// Define the paths to the JS files to lint.
-options.eslint = {
+// Define the paths to the JS files.
+options.js = {
   files  : [
     options.theme.js + '**/*.js',
     '!' + options.theme.js + '**/*.min.js'
@@ -58,8 +58,6 @@ options.gulpWatchOptions = {interval: 600};
 var gulp      = require('gulp'),
   del         = require('del'),
   sass        = require('gulp-dart-sass'),
-  eslint      = require('gulp-eslint'),
-  sassLint    = require('gulp-sass-lint'),
   sourcemaps  = require('gulp-sourcemaps'),
   size        = require('gulp-size'),
   babel       = require('gulp-babel'),
@@ -107,39 +105,6 @@ gulp.task('clean:js', function clean () {
 
 // Clean all directories.
 gulp.task('clean', gulp.parallel('clean:css', 'clean:js'));
-
-// Lint JavaScript.
-gulp.task('lint:js', function lint () {
-  return gulp.src(options.eslint.files)
-    .pipe(eslint())
-    .pipe(eslint.format());
-});
-
-// Lint JavaScript and throw an error for a CI to catch.
-gulp.task('lint:js-with-fail', function lint () {
-  return gulp.src(options.eslint.files)
-    .pipe(eslint())
-    .pipe(eslint.format())
-    .pipe(eslint.failOnError());
-});
-
-// Lint Sass.
-gulp.task('lint:sass', function lint () {
-  return gulp.src(options.theme.sass + '**/*.scss')
-    .pipe(sassLint())
-    .pipe(sassLint.format());
-});
-
-// Lint Sass and throw an error for a CI to catch.
-gulp.task('lint:sass-with-fail', function lint () {
-  return gulp.src(options.theme.sass + '**/*.scss')
-    .pipe(sassLint())
-    .pipe(sassLint.format())
-    .pipe(sassLint.failOnError());
-});
-
-// Lint Sass and JavaScript.
-gulp.task('lint', gulp.parallel('lint:sass', 'lint:js'));
 
 // Build CSS.
 gulp.task('styles', gulp.series('clean:css', function css () {
@@ -226,16 +191,8 @@ gulp.task('watch:css', gulp.series('styles', function watch () {
   return gulp.watch(options.theme.sass + '**/*.scss', options.gulpWatchOptions, gulp.series('styles'));
 }));
 
-gulp.task('watch:lint:sass', gulp.series('lint:sass', function watch () {
-  return gulp.watch(options.theme.sass + '**/*.scss', options.gulpWatchOptions, gulp.series('lint:sass'));
-}));
-
-gulp.task('watch:lint:js', gulp.series('lint:js', function watch () {
-  return gulp.watch(options.eslint.files, options.gulpWatchOptions, gulp.series('lint:js'));
-}));
-
 gulp.task('watch:js', gulp.series('scripts', function watch () {
-  return gulp.watch(options.eslint.files, options.gulpWatchOptions, gulp.series('scripts'));
+  return gulp.watch(options.js.files, options.gulpWatchOptions, gulp.series('scripts'));
 }));
 
 gulp.task('watch:images', gulp.series('images', function watch () {
@@ -284,10 +241,10 @@ gulp.task('watch:app', function watch (callback) {
     });
 })
 
-gulp.task('watch', gulp.parallel('watch:css', 'watch:lint:sass', 'watch:js', 'watch:lint:js', 'watch:images', 'watch:fonts', 'watch:static'));
+gulp.task('watch', gulp.parallel('watch:css', 'watch:js', 'watch:images', 'watch:fonts', 'watch:static'));
 
 // Build everything.
-gulp.task('build', gulp.series(gulp.parallel(gulp.series('styles:production', 'scripts:production', 'app:production'), 'images', 'fonts', 'lint'), 'collectstatic'));
+gulp.task('build', gulp.series(gulp.parallel(gulp.series('styles:production', 'scripts:production', 'app:production'), 'images', 'fonts'), 'collectstatic'));
 
 // Deploy everything.
 gulp.task('deploy', gulp.parallel(gulp.series('styles:production', 'scripts:production', 'app:production'), 'images', 'fonts'));
