@@ -1,7 +1,7 @@
 .wmd-preview {
     background-color: $color--sky-blue;
     padding: 0 10px;
-    width:  100%;
+    width: 100%;
     overflow: hidden; /* prevent collapsing margins */
 
     ul {
@@ -14,11 +14,10 @@
     }
 }
 
-
 .wmd-button-row {
-    display:  flex;
+    display: flex;
     background-color: $color--white;
-    padding:  4px;
+    padding: 4px;
 }
 
 .wmd-spacer {
@@ -52,6 +51,6 @@
 
 .wmd-prompt-dialog {
     background-color: $color--light-grey;
-    padding:  .5em;
+    padding: .5em;
     border: 4px solid $color--primary;
 }

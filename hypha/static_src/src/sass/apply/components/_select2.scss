@@ -1,3 +1,5 @@
+// stylelint-disable selector-max-compound-selectors, selector-class-pattern
+
 .select2 {
     &-container {
         z-index: 99995; // to override any modals
@@ -5,7 +7,7 @@
 
     .select2-container--default,
     &.select2-container--default {
-        width: 100% !important; // sass-lint:disable-line no-important
+        width: 100% !important; // stylelint-disable-line declaration-no-important
 
         .select2-selection--single {
             height: $dropdown-height;
@@ -47,11 +49,11 @@
     }
 }
 
-.select2-container {
+.select2-container { // stylelint-disable-line no-duplicate-selectors
     &--default {
         .select2-results__option--highlighted[aria-selected] {
-            color: $color--default !important; // sass-lint:disable-line no-important
-            background-color: transparentize($color--primary, .9) !important; // sass-lint:disable-line no-important
+            color: $color--default !important; // stylelint-disable-line declaration-no-important
+            background-color: transparentize($color--primary, .9) !important; // stylelint-disable-line declaration-no-important, max-line-length
         }
     }
 

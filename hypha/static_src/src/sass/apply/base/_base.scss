@@ -1,6 +1,4 @@
-/*------------------------------------*\
-	$BASE DEFAULTS
-\*------------------------------------*/
+// stylelint-disable property-no-vendor-prefix
 
 // Box Sizing
 *,
@@ -10,7 +8,6 @@
 }
 
 // Prevent text size change on orientation change.
-// sass-lint:disable no-vendor-prefixes
 html {
     font-family: $font--primary;
     -webkit-text-size-adjust: 100%;
@@ -42,11 +39,12 @@ img {
     max-width: 100%;
 }
 
-// sass-lint:disable single-line-per-selector
-button, input, select, textarea {
+button,
+input,
+select,
+textarea {
     font-family: inherit;
 }
-// sass-lint:enddisable
 
 a {
     color: $color--primary;
@@ -54,7 +52,7 @@ a {
 
     &:hover {
         cursor: pointer;
-  }
+    }
 }
 
 ul,
@@ -66,10 +64,10 @@ ol {
 
 details > summary {
     cursor: pointer;
-    margin-bottom:  10px;
+    margin-bottom: 10px;
 
     &:focus {
-        outline:  none;
+        outline: none;
     }
 }
 

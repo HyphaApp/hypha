@@ -41,7 +41,7 @@
 }
 
 // Add transition to React Modal
-// sass-lint:disable-all
+// stylelint-disable
 .ReactModal__Overlay {
     opacity: 0;
     transition: opacity $transition;

@@ -1,3 +1,5 @@
+// stylelint-disable selector-max-compound-selectors
+
 // base table styles - specific ones in their own scss partial
 table {
     width: 100%;
@@ -43,8 +45,10 @@ table {
                 box-shadow: 0 6px 35px -13px $color--black-50;
             }
 
-            &.reviews-summary__tr {
-                box-shadow: none;
+            &.reviews-summary {
+                &__tr {
+                    box-shadow: none;
+                }
             }
         }
 

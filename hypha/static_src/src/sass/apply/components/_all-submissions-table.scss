@@ -1,8 +1,10 @@
+// stylelint-disable selector-max-compound-selectors
+
 .all-submissions-table {
     @include table-ordering-styles;
+
     $root: &;
     font-size: 14px;
-
 
     thead {
         display: none;
@@ -12,7 +14,7 @@
         }
 
         th {
-            &.reviews_stats { // sass-lint:disable-line class-name-format
+            &.reviews_stats { // stylelint-disable-line selector-class-pattern
                 color: $color--black-60;
 
                 div {
@@ -145,7 +147,7 @@
                 }
             }
 
-            &.reviews_stats { // sass-lint:disable-line class-name-format
+            &.reviews_stats { // stylelint-disable-line selector-class-pattern
                 display: none;
 
                 @include media-query($table-breakpoint) {
@@ -166,9 +168,9 @@
 
             &.fund,
             &.round,
-            &.screening_status { // sass-lint:disable-line class-name-format
-                -webkit-hyphens: auto; // sass-lint:disable-line no-vendor-prefixes
-                -ms-hyphens: auto; // sass-lint:disable-line no-vendor-prefixes
+            &.screening_status { // stylelint-disable-line selector-class-pattern
+                -webkit-hyphens: auto; // stylelint-disable-line property-no-vendor-prefix
+                -ms-hyphens: auto; // stylelint-disable-line property-no-vendor-prefix
                 hyphens: auto;
             }
 
@@ -188,7 +190,7 @@
                 }
             }
 
-            > span.mobile-label { // sass-lint:disable-line force-element-nesting
+            > span.mobile-label { // stylelint-disable-line force-element-nesting
                 display: inline-block;
                 width: 90px;
 

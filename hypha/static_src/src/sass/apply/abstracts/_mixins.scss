@@ -1,3 +1,5 @@
+// stylelint-disable
+
 @use 'sass:math';
 
 // Media queries
@@ -18,13 +20,11 @@
 
 //   Placeholder text
 @mixin placeholder-text {
-    // sass-lint:disable no-vendor-prefixes
     &.placeholder { @content; }
     &:-moz-placeholder { @content; }
     &::-moz-placeholder { @content; }
     &:-ms-input-placeholder { @content; }
     &::-webkit-input-placeholder { @content; }
-    // sass-lint:enddisable
 }
 
 // Hide text
@@ -40,7 +40,7 @@
 @mixin native-vertical-scroll {
     overflow-x: hidden;
     overflow-y: scroll;
-    -webkit-overflow-scrolling: touch; // sass-lint:disable-line no-misspelled-properties
+    -webkit-overflow-scrolling: touch;
 }
 
 // Output a rem value for the given property
@@ -158,11 +158,11 @@
     $perpendicular-borders: $size solid transparent;
 
     @if $direction == top or $direction == bottom {
-        border-right:  $perpendicular-borders;
-        border-left:   $perpendicular-borders;
+        border-right: $perpendicular-borders;
+        border-left: $perpendicular-borders;
     }
     @else if $direction == right or $direction == left {
-        border-top:    $perpendicular-borders;
+        border-top: $perpendicular-borders;
         border-bottom: $perpendicular-borders;
     }
   }
@@ -227,8 +227,8 @@
         width: 20px;
         height: 20px;
         border: 1px solid $color--mid-grey;
-        -webkit-appearance: none; // sass-lint:disable-line no-vendor-prefixes
-        -moz-appearance: none; // sass-lint:disable-line no-vendor-prefixes
+        -webkit-appearance: none;
+        -moz-appearance: none;
         appearance: none;
         background-color: $color--white;
 

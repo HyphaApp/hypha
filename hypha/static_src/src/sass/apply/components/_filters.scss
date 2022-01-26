@@ -55,7 +55,7 @@
 
     &__button {
         appearance: none;
-        -webkit-appearance: none; // sass-lint:disable-line no-vendor-prefixes
+        -webkit-appearance: none; // stylelint-disable-line property-no-vendor-prefix
         border: 0;
         color: $color--primary;
         background: transparent;

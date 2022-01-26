@@ -214,7 +214,7 @@
         font-weight: $weight--bold;
         text-align: center;
         text-transform: uppercase;
-        border: 1px solid currentColor;
+        border: 1px solid currentcolor;
         transition: background-color, color, border, $quick-transition;
 
         @include media-query(tablet-portrait) {
@@ -346,9 +346,9 @@
 
             &::after {
                 content: '\2691';
-                color:  $color--tomato;
+                color: $color--tomato;
                 position: absolute;
-                top:  4px;
+                top: 4px;
                 padding-left: 5px;
                 font-size: map-get($font-sizes, delta);
                 line-height: 1;
@@ -367,7 +367,7 @@
 
         &.flagged {
             &::after {
-                top:  2px;
+                top: 2px;
                 padding-left: 3px;
                 font-size: map-get($font-sizes, zeta);
             }
@@ -376,8 +376,8 @@
 
     &--float {
         position: absolute;
-        top:  2px;
-        right:  2px;
+        top: 2px;
+        right: 2px;
     }
 
     // Two-factor

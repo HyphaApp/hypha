@@ -18,6 +18,8 @@
     float: right;
 }
 
-.form__reminder {
-    padding-left: 70px;
+.form {
+    &__reminder {
+        padding-left: 70px;
+    }
 }

@@ -3,7 +3,7 @@
 
     &__back {
         position: absolute;
-        top:  .5rem;
+        top: .5rem;
     }
 
     h1,
@@ -18,7 +18,7 @@
 }
 
 // 2FA token field.
-// sass-lint:disable no-vendor-prefixes, no-ids, id-name-format
+// stylelint-disable property-no-vendor-prefix, selector-id-pattern, selector-max-id
 #id_generator-token {
     -moz-appearance: textfield;
 
@@ -28,4 +28,4 @@
         margin: 0;
     }
 }
-// sass-lint:enddisable
+// stylelint-enable
