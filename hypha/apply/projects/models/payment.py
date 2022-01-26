@@ -10,28 +10,51 @@ from django.db.models.fields.related import ManyToManyField
 from django.db.models.functions import Coalesce
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+from django_fsm import FSMField, transition
 
 from hypha.apply.utils.storage import PrivateStorage
 
 SUBMITTED = 'submitted'
-CHANGES_REQUESTED = 'changes_requested'
-APPROVED_BY_STAFF = 'approved_by_staff'
-APPROVED_BY_FINANCE1 = 'approved_by_finance1'
-APPROVED_BY_FINANCE2 = 'approved_by_finance2'
+RESUBMITTED = 'resubmitted'
+CHANGES_REQUESTED_BY_PM = 'changes_requested_pm'
+CHANGES_REQUESTED_BY_FINANCE_1 = 'changes_requested_finance_1'
+CHANGES_REQUESTED_BY_FINANCE_2 = 'changes_requested_finance_2'
+APPROVED_BY_PM = 'approved_by_pm'
+APPROVED_BY_FINANCE_1 = 'approved_by_finance_1'
+APPROVED_BY_FINANCE_2 = 'approved_by_finance_2'
 PAID = 'paid'
 DECLINED = 'declined'
-RESUBMITTED = 'resubmitted'
 
-REQUEST_STATUS_CHOICES = [
+INVOICE_STATUS_CHOICES = [
     (SUBMITTED, _('Submitted')),
-    (CHANGES_REQUESTED, _('Changes Requested')),
-    (APPROVED_BY_STAFF, _('Approved by staff')),
-    (APPROVED_BY_FINANCE1, _('Approved By Finance 1')),
-    (APPROVED_BY_FINANCE2, _('Approved By Finance 2')),
     (RESUBMITTED, _('Resubmitted')),
+    (CHANGES_REQUESTED_BY_PM, _('Changes Requested by PM')),
+    (CHANGES_REQUESTED_BY_FINANCE_1, _('Changes Requested by Finance 1')),
+    (CHANGES_REQUESTED_BY_FINANCE_2, _('Changes Requested by Finance 2')),
+    (APPROVED_BY_PM, _('Approved by PM')),
+    (APPROVED_BY_FINANCE_1, _('Approved by Finance 1')),
+    (APPROVED_BY_FINANCE_2, _('Approved by Finance 2')),
     (PAID, _('Paid')),
     (DECLINED, _('Declined')),
 ]
+
+INVOICE_TRANISTION_TO_RESUBMITTED = [
+    SUBMITTED, RESUBMITTED, CHANGES_REQUESTED_BY_PM,
+    CHANGES_REQUESTED_BY_FINANCE_1, CHANGES_REQUESTED_BY_FINANCE_2,
+]
+INVOICE_STATUS_PM_CHOICES = [CHANGES_REQUESTED_BY_PM, APPROVED_BY_PM, DECLINED]
+INVOICE_STATUS_FINANCE_1_CHOICES = [CHANGES_REQUESTED_BY_FINANCE_1, APPROVED_BY_FINANCE_1, DECLINED]
+INVOICE_STATUS_FINANCE_2_CHOICES = [CHANGES_REQUESTED_BY_FINANCE_2, APPROVED_BY_FINANCE_2, PAID, DECLINED]
+
+
+def invoice_status_user_choices(user):
+    if user.is_finance_level2:
+        return INVOICE_STATUS_FINANCE_2_CHOICES
+    if user.is_finance:
+        return INVOICE_STATUS_FINANCE_1_CHOICES
+    if user.is_apply_staff:
+        return INVOICE_STATUS_PM_CHOICES
+    return []
 
 
 def receipt_path(instance, filename):
@@ -104,7 +127,7 @@ class Invoice(models.Model):
     requested_at = models.DateTimeField(auto_now_add=True)
     message_for_pm = models.TextField(blank=True, verbose_name=_('Message'))
     comment = models.TextField(blank=True)
-    status = models.TextField(choices=REQUEST_STATUS_CHOICES, default=SUBMITTED)
+    status = FSMField(default=SUBMITTED, choices=INVOICE_STATUS_CHOICES)
     deliverables = ManyToManyField(
         'InvoiceDeliverable',
         related_name='invoices'
@@ -114,9 +137,13 @@ class Invoice(models.Model):
     def __str__(self):
         return _('Invoice requested for {project}').format(project=self.project)
 
+    @transition(field=status, source=INVOICE_TRANISTION_TO_RESUBMITTED, target=RESUBMITTED)
+    def transition_invoice_to_resubmitted(self):
+        pass
+
     @property
     def has_changes_requested(self):
-        return self.status == CHANGES_REQUESTED
+        return self.status == CHANGES_REQUESTED_BY_PM
 
     @property
     def status_display(self):
@@ -131,23 +158,39 @@ class Invoice(models.Model):
 
     def can_user_edit(self, user):
         if user.is_applicant:
-            if self.status in {SUBMITTED, CHANGES_REQUESTED, RESUBMITTED}:
+            if self.status in {SUBMITTED, CHANGES_REQUESTED_BY_PM, RESUBMITTED}:
                 return True
 
         if user.is_apply_staff:
-            if self.status in {SUBMITTED, RESUBMITTED}:
+            if self.status in {SUBMITTED, RESUBMITTED, CHANGES_REQUESTED_BY_FINANCE_1, CHANGES_REQUESTED_BY_FINANCE_2}:
                 return True
 
         return False
 
     def can_user_change_status(self, user):
-        if not user.is_apply_staff:
+        if not (user.is_contracting or user.is_apply_staff or user.is_finance or user.is_finance_level2):
             return False  # Users can't change status
 
         if self.status in {PAID, DECLINED}:
             return False
 
-        return True
+        if user.is_contracting:
+            if self.status in {SUBMITTED, CHANGES_REQUESTED_BY_PM, RESUBMITTED}:
+                return True
+
+        if user.is_apply_staff:
+            if self.status in {SUBMITTED, RESUBMITTED, APPROVED_BY_PM, CHANGES_REQUESTED_BY_PM, CHANGES_REQUESTED_BY_FINANCE_1}:
+                return True
+
+        if user.is_finance:
+            if self.status in {APPROVED_BY_PM, APPROVED_BY_FINANCE_1, CHANGES_REQUESTED_BY_FINANCE_1}:
+                return True
+
+        if user.is_finance_level2:
+            if self.status in {CHANGES_REQUESTED_BY_FINANCE_2, APPROVED_BY_FINANCE_1, APPROVED_BY_FINANCE_2}:
+                return True
+
+        return False
 
     @property
     def value(self):

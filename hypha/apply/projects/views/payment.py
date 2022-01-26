@@ -18,7 +18,7 @@ from hypha.apply.utils.views import DelegateableView, DelegatedViewMixin, ViewDi
 
 from ..filters import InvoiceListFilter
 from ..forms import ChangeInvoiceStatusForm, CreateInvoiceForm, EditInvoiceForm
-from ..models.payment import CHANGES_REQUESTED, RESUBMITTED, Invoice
+from ..models.payment import INVOICE_TRANISTION_TO_RESUBMITTED, Invoice
 from ..models.project import Project
 from ..tables import InvoiceListTable
 
@@ -48,11 +48,6 @@ class InvoiceAccessMixin(UserPassesTestMixin):
 class ChangeInvoiceStatusView(DelegatedViewMixin, InvoiceAccessMixin, UpdateView):
     form_class = ChangeInvoiceStatusForm
     context_name = 'change_invoice_status'
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs.pop('user')
-        return kwargs
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -205,8 +200,8 @@ class EditInvoiceView(InvoiceAccessMixin, UpdateView):
     def form_valid(self, form):
         response = super().form_valid(form)
         if form.cleaned_data:
-            if self.object.status in [CHANGES_REQUESTED, RESUBMITTED]:
-                self.object.status = RESUBMITTED
+            if self.object.status in INVOICE_TRANISTION_TO_RESUBMITTED:
+                self.object.transition_invoice_to_resubmitted()
                 self.object.save()
 
             if form.cleaned_data['message_for_pm']:

@@ -11,7 +11,7 @@ from hypha.apply.funds.tables import (
     get_used_funds,
 )
 
-from .models.payment import REQUEST_STATUS_CHOICES, Invoice
+from .models.payment import INVOICE_STATUS_CHOICES, Invoice
 from .models.project import CLOSING, IN_PROGRESS, PROJECT_STATUS_CHOICES, Project
 from .models.report import Report
 
@@ -24,7 +24,7 @@ def get_project_leads(request):
 
 class InvoiceListFilter(filters.FilterSet):
     fund = Select2ModelMultipleChoiceFilter(label=_('Funds'), queryset=get_used_funds, field_name='project__submission__page')
-    status = Select2MultipleChoiceFilter(label=_('Status'), choices=REQUEST_STATUS_CHOICES)
+    status = Select2MultipleChoiceFilter(label=_('Status'), choices=INVOICE_STATUS_CHOICES)
     lead = Select2ModelMultipleChoiceFilter(label=_('Lead'), queryset=get_project_leads, field_name='project__lead')
 
     class Meta:

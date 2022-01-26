@@ -1,4 +1,3 @@
-import functools
 import json
 
 from django import forms
@@ -11,59 +10,55 @@ from django_file_form.forms import FileFormMixin
 from hypha.apply.stream_forms.fields import MultiFileField, SingleFileField
 
 from ..models.payment import (
-    APPROVED_BY_STAFF,
-    CHANGES_REQUESTED,
+    APPROVED_BY_FINANCE_1,
+    APPROVED_BY_FINANCE_2,
+    APPROVED_BY_PM,
+    CHANGES_REQUESTED_BY_FINANCE_1,
+    CHANGES_REQUESTED_BY_FINANCE_2,
+    CHANGES_REQUESTED_BY_PM,
     DECLINED,
-    PAID,
-    REQUEST_STATUS_CHOICES,
+    INVOICE_STATUS_CHOICES,
     RESUBMITTED,
     SUBMITTED,
     Invoice,
     SupportingDocument,
+    invoice_status_user_choices,
 )
 from ..models.project import PacketFile
 
 
-def filter_choices(available, choices):
-    return [(k, v) for k, v in available if k in choices]
-
-
-filter_request_choices = functools.partial(filter_choices, REQUEST_STATUS_CHOICES)
+def filter_request_choices(choices, user_choices):
+    return [(k, v) for k, v in INVOICE_STATUS_CHOICES if k in choices and k in user_choices]
 
 
 class ChangeInvoiceStatusForm(forms.ModelForm):
     name_prefix = 'change_invoice_status_form'
 
     class Meta:
-        fields = ['status', 'comment', 'paid_value']
+        fields = ['status', 'comment']
         model = Invoice
 
-    def __init__(self, instance, *args, **kwargs):
+    def __init__(self, instance, user, *args, **kwargs):
         super().__init__(instance=instance, *args, **kwargs)
-
-        self.initial['paid_value'] = self.instance.amount
-
+        self.initial['comment'] = ''
         status_field = self.fields['status']
-
+        user_choices = invoice_status_user_choices(user)
         possible_status_transitions_lut = {
-            CHANGES_REQUESTED: filter_request_choices([DECLINED]),
-            SUBMITTED: filter_request_choices([CHANGES_REQUESTED, APPROVED_BY_STAFF, DECLINED]),
-            RESUBMITTED: filter_request_choices([CHANGES_REQUESTED, APPROVED_BY_STAFF, DECLINED]),
-            APPROVED_BY_STAFF: filter_request_choices([PAID]),
+            CHANGES_REQUESTED_BY_PM: filter_request_choices([DECLINED], user_choices),
+            CHANGES_REQUESTED_BY_FINANCE_1: filter_request_choices([CHANGES_REQUESTED_BY_PM, DECLINED], user_choices),
+            CHANGES_REQUESTED_BY_FINANCE_2: filter_request_choices([CHANGES_REQUESTED_BY_PM, DECLINED], user_choices),
+            SUBMITTED: filter_request_choices([CHANGES_REQUESTED_BY_PM, APPROVED_BY_PM, DECLINED], user_choices),
+            RESUBMITTED: filter_request_choices([CHANGES_REQUESTED_BY_PM, APPROVED_BY_PM, DECLINED], user_choices),
+            APPROVED_BY_PM: filter_request_choices(
+                [
+                    CHANGES_REQUESTED_BY_FINANCE_1, APPROVED_BY_FINANCE_1, DECLINED,
+                    CHANGES_REQUESTED_BY_FINANCE_2, APPROVED_BY_FINANCE_2
+                ],
+                user_choices
+            ),
+            APPROVED_BY_FINANCE_1: filter_request_choices([CHANGES_REQUESTED_BY_FINANCE_2, APPROVED_BY_FINANCE_2, DECLINED], user_choices),
         }
         status_field.choices = possible_status_transitions_lut.get(instance.status, [])
-
-        if instance.status != APPROVED_BY_STAFF:
-            del self.fields['paid_value']
-
-    def clean(self):
-        cleaned_data = super().clean()
-        status = cleaned_data['status']
-        paid_value = cleaned_data.get('paid_value')
-
-        if paid_value and status != PAID:
-            self.add_error('paid_value', _('You can only set a value when moving to the Paid status.'))
-        return cleaned_data
 
 
 class InvoiceBaseForm(forms.ModelForm):

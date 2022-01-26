@@ -20,8 +20,8 @@ from ..forms.project import (
     UploadContractForm,
 )
 from ..models.payment import (
-    APPROVED_BY_STAFF,
-    CHANGES_REQUESTED,
+    APPROVED_BY_PM,
+    CHANGES_REQUESTED_BY_PM,
     DECLINED,
     RESUBMITTED,
     SUBMITTED,
@@ -39,12 +39,12 @@ class TestChangeInvoiceStatusFormForm(TestCase):
         request = InvoiceFactory(status=SUBMITTED)
         form = ChangeInvoiceStatusForm(instance=request)
 
-        expected = set(filter_request_choices([APPROVED_BY_STAFF, CHANGES_REQUESTED, DECLINED]))
+        expected = set(filter_request_choices([APPROVED_BY_PM, CHANGES_REQUESTED_BY_PM, DECLINED]))
         actual = set(form.fields['status'].choices)
         self.assertEqual(expected, actual)
 
     def test_choices_with_changes_requested_status(self):
-        request = InvoiceFactory(status=CHANGES_REQUESTED)
+        request = InvoiceFactory(status=CHANGES_REQUESTED_BY_PM)
         form = ChangeInvoiceStatusForm(instance=request)
 
         expected = set(filter_request_choices([DECLINED]))
@@ -56,7 +56,7 @@ class TestChangeInvoiceStatusFormForm(TestCase):
         request = InvoiceFactory(status=RESUBMITTED)
         form = ChangeInvoiceStatusForm(instance=request)
 
-        expected = set(filter_request_choices([APPROVED_BY_STAFF, CHANGES_REQUESTED, DECLINED]))
+        expected = set(filter_request_choices([APPROVED_BY_PM, CHANGES_REQUESTED_BY_PM, DECLINED]))
         actual = set(form.fields['status'].choices)
 
         self.assertEqual(expected, actual)
