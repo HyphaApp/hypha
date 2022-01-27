@@ -38,10 +38,12 @@ INVOICE_STATUS_CHOICES = [
     (DECLINED, _('Declined')),
 ]
 
+# All invoice statuses that allows invoice to be transition directly to RESUBMITTED.
 INVOICE_TRANISTION_TO_RESUBMITTED = [
     SUBMITTED, RESUBMITTED, CHANGES_REQUESTED_BY_STAFF,
     CHANGES_REQUESTED_BY_FINANCE_1, CHANGES_REQUESTED_BY_FINANCE_2,
 ]
+
 INVOICE_STATUS_PM_CHOICES = [CHANGES_REQUESTED_BY_STAFF, APPROVED_BY_STAFF, DECLINED]
 INVOICE_STATUS_FINANCE_1_CHOICES = [CHANGES_REQUESTED_BY_FINANCE_1, APPROVED_BY_FINANCE_1, DECLINED]
 INVOICE_STATUS_FINANCE_2_CHOICES = [CHANGES_REQUESTED_BY_FINANCE_2, APPROVED_BY_FINANCE_2, PAID, DECLINED]
@@ -139,6 +141,10 @@ class Invoice(models.Model):
 
     @transition(field=status, source=INVOICE_TRANISTION_TO_RESUBMITTED, target=RESUBMITTED)
     def transition_invoice_to_resubmitted(self):
+        '''
+        Tranistion invoice to resubmitted status.
+        This method generally gets used on invoice edit.
+        '''
         pass
 
     @property
@@ -157,6 +163,10 @@ class Invoice(models.Model):
         return False
 
     def can_user_edit(self, user):
+        '''
+        Check when an user can edit an invoice.
+        Only applicant and staff have permission to edit invoice based on its current status.
+        '''
         if user.is_applicant:
             if self.status in {SUBMITTED, CHANGES_REQUESTED_BY_STAFF, RESUBMITTED}:
                 return True
@@ -168,6 +178,9 @@ class Invoice(models.Model):
         return False
 
     def can_user_change_status(self, user):
+        '''
+        Check user roles that can tranistion invoice status based on the current status.
+        '''
         if not (user.is_contracting or user.is_apply_staff or user.is_finance or user.is_finance_level2):
             return False  # Users can't change status
 
