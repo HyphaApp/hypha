@@ -16,10 +16,10 @@ from hypha.apply.utils.storage import PrivateStorage
 
 SUBMITTED = 'submitted'
 RESUBMITTED = 'resubmitted'
-CHANGES_REQUESTED_BY_PM = 'changes_requested_pm'
+CHANGES_REQUESTED_BY_STAFF = 'changes_requested_staff'
 CHANGES_REQUESTED_BY_FINANCE_1 = 'changes_requested_finance_1'
 CHANGES_REQUESTED_BY_FINANCE_2 = 'changes_requested_finance_2'
-APPROVED_BY_PM = 'approved_by_pm'
+APPROVED_BY_STAFF = 'approved_by_staff'
 APPROVED_BY_FINANCE_1 = 'approved_by_finance_1'
 APPROVED_BY_FINANCE_2 = 'approved_by_finance_2'
 PAID = 'paid'
@@ -28,10 +28,10 @@ DECLINED = 'declined'
 INVOICE_STATUS_CHOICES = [
     (SUBMITTED, _('Submitted')),
     (RESUBMITTED, _('Resubmitted')),
-    (CHANGES_REQUESTED_BY_PM, _('Changes Requested by PM')),
+    (CHANGES_REQUESTED_BY_STAFF, _('Changes Requested by Staff')),
     (CHANGES_REQUESTED_BY_FINANCE_1, _('Changes Requested by Finance 1')),
     (CHANGES_REQUESTED_BY_FINANCE_2, _('Changes Requested by Finance 2')),
-    (APPROVED_BY_PM, _('Approved by PM')),
+    (APPROVED_BY_STAFF, _('Approved by Staff')),
     (APPROVED_BY_FINANCE_1, _('Approved by Finance 1')),
     (APPROVED_BY_FINANCE_2, _('Approved by Finance 2')),
     (PAID, _('Paid')),
@@ -39,10 +39,10 @@ INVOICE_STATUS_CHOICES = [
 ]
 
 INVOICE_TRANISTION_TO_RESUBMITTED = [
-    SUBMITTED, RESUBMITTED, CHANGES_REQUESTED_BY_PM,
+    SUBMITTED, RESUBMITTED, CHANGES_REQUESTED_BY_STAFF,
     CHANGES_REQUESTED_BY_FINANCE_1, CHANGES_REQUESTED_BY_FINANCE_2,
 ]
-INVOICE_STATUS_PM_CHOICES = [CHANGES_REQUESTED_BY_PM, APPROVED_BY_PM, DECLINED]
+INVOICE_STATUS_PM_CHOICES = [CHANGES_REQUESTED_BY_STAFF, APPROVED_BY_STAFF, DECLINED]
 INVOICE_STATUS_FINANCE_1_CHOICES = [CHANGES_REQUESTED_BY_FINANCE_1, APPROVED_BY_FINANCE_1, DECLINED]
 INVOICE_STATUS_FINANCE_2_CHOICES = [CHANGES_REQUESTED_BY_FINANCE_2, APPROVED_BY_FINANCE_2, PAID, DECLINED]
 
@@ -143,7 +143,7 @@ class Invoice(models.Model):
 
     @property
     def has_changes_requested(self):
-        return self.status == CHANGES_REQUESTED_BY_PM
+        return self.status == CHANGES_REQUESTED_BY_STAFF
 
     @property
     def status_display(self):
@@ -158,7 +158,7 @@ class Invoice(models.Model):
 
     def can_user_edit(self, user):
         if user.is_applicant:
-            if self.status in {SUBMITTED, CHANGES_REQUESTED_BY_PM, RESUBMITTED}:
+            if self.status in {SUBMITTED, CHANGES_REQUESTED_BY_STAFF, RESUBMITTED}:
                 return True
 
         if user.is_apply_staff:
@@ -175,19 +175,19 @@ class Invoice(models.Model):
             return False
 
         if user.is_contracting:
-            if self.status in {SUBMITTED, CHANGES_REQUESTED_BY_PM, RESUBMITTED}:
+            if self.status in {SUBMITTED, CHANGES_REQUESTED_BY_STAFF, RESUBMITTED}:
                 return True
 
         if user.is_apply_staff:
-            if self.status in {SUBMITTED, RESUBMITTED, APPROVED_BY_PM, CHANGES_REQUESTED_BY_PM, CHANGES_REQUESTED_BY_FINANCE_1}:
+            if self.status in {SUBMITTED, RESUBMITTED, CHANGES_REQUESTED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_1}:
                 return True
 
         if user.is_finance:
-            if self.status in {APPROVED_BY_PM, APPROVED_BY_FINANCE_1, CHANGES_REQUESTED_BY_FINANCE_1}:
+            if self.status in {APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_1}:
                 return True
 
         if user.is_finance_level2:
-            if self.status in {CHANGES_REQUESTED_BY_FINANCE_2, APPROVED_BY_FINANCE_1, APPROVED_BY_FINANCE_2}:
+            if self.status in {CHANGES_REQUESTED_BY_FINANCE_2, APPROVED_BY_FINANCE_1}:
                 return True
 
         return False

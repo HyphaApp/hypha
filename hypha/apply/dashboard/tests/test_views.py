@@ -4,7 +4,7 @@ from hypha.apply.funds.tests.factories import (
     InvitedToProposalFactory,
 )
 from hypha.apply.projects.models.payment import (
-    CHANGES_REQUESTED_BY_PM,
+    CHANGES_REQUESTED_BY_STAFF,
     DECLINED,
     PAID,
     RESUBMITTED,
@@ -116,7 +116,7 @@ class TestStaffDashboard(BaseViewTestCase):
     def test_active_invoices_with_invoices_in_correct_state(self):
         project = ProjectFactory(lead=self.user)
         InvoiceFactory(project=project, status=SUBMITTED)
-        InvoiceFactory(project=project, status=CHANGES_REQUESTED_BY_PM)
+        InvoiceFactory(project=project, status=CHANGES_REQUESTED_BY_STAFF)
         InvoiceFactory(project=project, status=RESUBMITTED)
 
         response = self.get_page()
@@ -125,7 +125,7 @@ class TestStaffDashboard(BaseViewTestCase):
     def test_doesnt_show_active_invoices_when_not_mine(self):
         project = ProjectFactory()
         InvoiceFactory(project=project, status=SUBMITTED)
-        InvoiceFactory(project=project, status=CHANGES_REQUESTED_BY_PM)
+        InvoiceFactory(project=project, status=CHANGES_REQUESTED_BY_STAFF)
         InvoiceFactory(project=project, status=RESUBMITTED)
 
         response = self.get_page()

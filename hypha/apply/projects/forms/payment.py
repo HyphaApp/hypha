@@ -12,10 +12,10 @@ from hypha.apply.stream_forms.fields import MultiFileField, SingleFileField
 from ..models.payment import (
     APPROVED_BY_FINANCE_1,
     APPROVED_BY_FINANCE_2,
-    APPROVED_BY_PM,
+    APPROVED_BY_STAFF,
     CHANGES_REQUESTED_BY_FINANCE_1,
     CHANGES_REQUESTED_BY_FINANCE_2,
-    CHANGES_REQUESTED_BY_PM,
+    CHANGES_REQUESTED_BY_STAFF,
     DECLINED,
     INVOICE_STATUS_CHOICES,
     RESUBMITTED,
@@ -44,12 +44,12 @@ class ChangeInvoiceStatusForm(forms.ModelForm):
         status_field = self.fields['status']
         user_choices = invoice_status_user_choices(user)
         possible_status_transitions_lut = {
-            CHANGES_REQUESTED_BY_PM: filter_request_choices([DECLINED], user_choices),
-            CHANGES_REQUESTED_BY_FINANCE_1: filter_request_choices([CHANGES_REQUESTED_BY_PM, DECLINED], user_choices),
-            CHANGES_REQUESTED_BY_FINANCE_2: filter_request_choices([CHANGES_REQUESTED_BY_PM, DECLINED], user_choices),
-            SUBMITTED: filter_request_choices([CHANGES_REQUESTED_BY_PM, APPROVED_BY_PM, DECLINED], user_choices),
-            RESUBMITTED: filter_request_choices([CHANGES_REQUESTED_BY_PM, APPROVED_BY_PM, DECLINED], user_choices),
-            APPROVED_BY_PM: filter_request_choices(
+            CHANGES_REQUESTED_BY_STAFF: filter_request_choices([DECLINED], user_choices),
+            CHANGES_REQUESTED_BY_FINANCE_1: filter_request_choices([CHANGES_REQUESTED_BY_STAFF, DECLINED], user_choices),
+            CHANGES_REQUESTED_BY_FINANCE_2: filter_request_choices([CHANGES_REQUESTED_BY_STAFF, DECLINED], user_choices),
+            SUBMITTED: filter_request_choices([CHANGES_REQUESTED_BY_STAFF, APPROVED_BY_STAFF, DECLINED], user_choices),
+            RESUBMITTED: filter_request_choices([CHANGES_REQUESTED_BY_STAFF, APPROVED_BY_STAFF, DECLINED], user_choices),
+            APPROVED_BY_STAFF: filter_request_choices(
                 [
                     CHANGES_REQUESTED_BY_FINANCE_1, APPROVED_BY_FINANCE_1, DECLINED,
                     CHANGES_REQUESTED_BY_FINANCE_2, APPROVED_BY_FINANCE_2

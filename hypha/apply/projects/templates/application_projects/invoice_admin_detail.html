@@ -14,8 +14,6 @@
         {% if user_can_change_status %}
             data-fancybox
             data-src="#change-status"
-        {% else %}
-            data-tooltip="{% trans "Cannot change from 'Paid' or 'Declined' state" %}"
         {% endif %}
         class="button button--bottom-space button--primary button--full-width{% if not user_can_change_status %} button--tooltip-disabled{% endif %}"
         href="#"

@@ -3,7 +3,7 @@ from django.test import TestCase
 from hypha.apply.users.tests.factories import ApplicantFactory, StaffFactory
 
 from ..models.payment import (
-    CHANGES_REQUESTED_BY_PM,
+    CHANGES_REQUESTED_BY_STAFF,
     DECLINED,
     PAID,
     RESUBMITTED,
@@ -97,7 +97,7 @@ class TestInvoiceTools(TestCase):
         self.assertTrue(can_change_status(invoice, staff))
 
     def test_staff_can_change_status_from_changes_requested(self):
-        invoice = InvoiceFactory(status=CHANGES_REQUESTED_BY_PM)
+        invoice = InvoiceFactory(status=CHANGES_REQUESTED_BY_STAFF)
         staff = StaffFactory()
 
         self.assertTrue(can_change_status(invoice, staff))
@@ -127,7 +127,7 @@ class TestInvoiceTools(TestCase):
         self.assertFalse(can_change_status(invoice, user))
 
     def test_user_cant_change_status_from_changes_requested(self):
-        invoice = InvoiceFactory(status=CHANGES_REQUESTED_BY_PM)
+        invoice = InvoiceFactory(status=CHANGES_REQUESTED_BY_STAFF)
         user = ApplicantFactory()
 
         self.assertFalse(can_change_status(invoice, user))
@@ -157,7 +157,7 @@ class TestInvoiceTools(TestCase):
         self.assertFalse(can_delete(invoice, staff))
 
     def test_staff_cant_delete_from_changes_requested(self):
-        invoice = InvoiceFactory(status=CHANGES_REQUESTED_BY_PM)
+        invoice = InvoiceFactory(status=CHANGES_REQUESTED_BY_STAFF)
         staff = StaffFactory()
 
         self.assertFalse(can_delete(invoice, staff))
@@ -187,7 +187,7 @@ class TestInvoiceTools(TestCase):
         self.assertFalse(can_delete(invoice, user))
 
     def test_user_can_delete_from_changes_requested(self):
-        invoice = InvoiceFactory(status=CHANGES_REQUESTED_BY_PM)
+        invoice = InvoiceFactory(status=CHANGES_REQUESTED_BY_STAFF)
         user = ApplicantFactory()
 
         self.assertFalse(can_delete(invoice, user))
@@ -213,13 +213,13 @@ class TestInvoiceTools(TestCase):
         self.assertTrue(can_edit(invoice, staff))
 
     def test_applicant_can_edit_in_changes_requested(self):
-        invoice = InvoiceFactory(status=CHANGES_REQUESTED_BY_PM)
+        invoice = InvoiceFactory(status=CHANGES_REQUESTED_BY_STAFF)
         applicant = ApplicantFactory()
 
         self.assertTrue(can_edit(invoice, applicant))
 
     def test_staff_cant_edit_in_changes_requested(self):
-        invoice = InvoiceFactory(status=CHANGES_REQUESTED_BY_PM)
+        invoice = InvoiceFactory(status=CHANGES_REQUESTED_BY_STAFF)
         staff = StaffFactory()
 
         self.assertFalse(can_edit(invoice, staff))

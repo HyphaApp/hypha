@@ -23,7 +23,7 @@ from hypha.apply.utils.testing.tests import BaseViewTestCase
 
 from ..files import get_files
 from ..forms import SetPendingForm
-from ..models.payment import CHANGES_REQUESTED_BY_PM, SUBMITTED
+from ..models.payment import CHANGES_REQUESTED_BY_STAFF, SUBMITTED
 from ..models.project import COMMITTED, CONTRACTING, IN_PROGRESS
 from ..views.project import ContractsMixin, ProjectDetailSimplifiedView
 from .factories import (
@@ -925,12 +925,12 @@ class TestStaffChangeInvoiceStatus(BaseViewTestCase):
         invoice = InvoiceFactory()
         response = self.post_page(invoice, {
             'form-submitted-change_invoice_status': '',
-            'status': CHANGES_REQUESTED_BY_PM,
+            'status': CHANGES_REQUESTED_BY_STAFF,
             'comment': 'this is a comment',
         })
         self.assertEqual(response.status_code, 200)
         invoice.refresh_from_db()
-        self.assertEqual(invoice.status, CHANGES_REQUESTED_BY_PM)
+        self.assertEqual(invoice.status, CHANGES_REQUESTED_BY_STAFF)
 
 
 class TestApplicantChangeInoviceStatus(BaseViewTestCase):
@@ -948,7 +948,7 @@ class TestApplicantChangeInoviceStatus(BaseViewTestCase):
         invoice = InvoiceFactory(project__user=self.user)
         response = self.post_page(invoice, {
             'form-submitted-change_invoice_status': '',
-            'status': CHANGES_REQUESTED_BY_PM,
+            'status': CHANGES_REQUESTED_BY_STAFF,
         })
         self.assertEqual(response.status_code, 200)
         invoice.refresh_from_db()
@@ -958,7 +958,7 @@ class TestApplicantChangeInoviceStatus(BaseViewTestCase):
         invoice = InvoiceFactory()
         response = self.post_page(invoice, {
             'form-submitted-change_invoice_status': '',
-            'status': CHANGES_REQUESTED_BY_PM,
+            'status': CHANGES_REQUESTED_BY_STAFF,
         })
         self.assertEqual(response.status_code, 403)
         invoice.refresh_from_db()

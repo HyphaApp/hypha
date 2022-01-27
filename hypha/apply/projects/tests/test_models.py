@@ -8,7 +8,7 @@ from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
 from hypha.apply.users.tests.factories import ApplicantFactory, StaffFactory
 
 from ..models.payment import (
-    CHANGES_REQUESTED_BY_PM,
+    CHANGES_REQUESTED_BY_STAFF,
     DECLINED,
     PAID,
     RESUBMITTED,
@@ -95,7 +95,7 @@ class TestInvoiceModel(TestCase):
         self.assertFalse(invoice.can_user_delete(staff))
 
     def test_staff_cant_delete_from_changes_requested(self):
-        invoice = InvoiceFactory(status=CHANGES_REQUESTED_BY_PM)
+        invoice = InvoiceFactory(status=CHANGES_REQUESTED_BY_STAFF)
         staff = StaffFactory()
 
         self.assertFalse(invoice.can_user_delete(staff))
@@ -125,7 +125,7 @@ class TestInvoiceModel(TestCase):
         self.assertFalse(invoice.can_user_delete(user))
 
     def test_user_can_delete_from_changes_requested(self):
-        invoice = InvoiceFactory(status=CHANGES_REQUESTED_BY_PM)
+        invoice = InvoiceFactory(status=CHANGES_REQUESTED_BY_STAFF)
         user = ApplicantFactory()
 
         self.assertFalse(invoice.can_user_delete(user))
