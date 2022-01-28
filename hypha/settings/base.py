@@ -331,6 +331,9 @@ LOCALE_PATHS = (
     PROJECT_DIR + '/locale',
 )
 
+# Default Auto field configuration
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/stable/howto/static-files/
 
