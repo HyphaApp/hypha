@@ -10,11 +10,13 @@ ENV DJANGO_SETTINGS_MODULE hypha.settings.dev
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
+# Prepare for npm
+COPY package.json package-lock.json /usr/local/hypha/
+
 # Set owner on /usr/local.
 RUN sudo chown -R circleci:circleci /usr/local
 
 # Install node dependencies.
-COPY package.json package-lock.json /usr/local/hypha/
 RUN npm install  --quiet --global gulp-cli
 RUN npm install  --quiet
 
