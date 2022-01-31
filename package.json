@@ -108,7 +108,7 @@
         "lint": "npm run lint:css && npm run lint:js"
     },
     "engines": {
-        "node": "12.22.x"
+        "node": "16.13.x"
     },
     "private": true
 }
