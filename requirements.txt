@@ -27,7 +27,7 @@ django-storages==1.12.3
 django-tables2==2.4.1
 django-tinymce==3.4.0
 django-two-factor-auth==1.13.1
-django-webpack-loader==0.7.0
+django-webpack-loader==1.0.0
 django==2.2.26
 djangorestframework-api-key==2.1.0
 djangorestframework==3.12.4
