@@ -7,58 +7,49 @@ import os
 
 import dj_database_url
 
-env = os.environ.copy()
+from environs import Env
+
+env = Env()
+env.read_env()
+# env = os.environ.copy()
 
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
 
-APP_NAME = env.get('APP_NAME', 'hypha')
+APP_NAME = env.str('APP_NAME', 'hypha')
 
 DEBUG = False
 
+# SECRET_KEY is required
+SECRET_KEY = env.str("SECRET_KEY")
 
-if 'SECRET_KEY' in env:
-    SECRET_KEY = env['SECRET_KEY']
-
-if 'ALLOWED_HOSTS' in env:
-    ALLOWED_HOSTS = env['ALLOWED_HOSTS'].split(',')
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', [])
 
 
 # Organisation name and e-mail address, used in e-mail templates etc.
 
-ORG_LONG_NAME = env.get('ORG_LONG_NAME', 'Acme Corporation')
-ORG_SHORT_NAME = env.get('ORG_SHORT_NAME', 'ACME')
-ORG_EMAIL = env.get('ORG_EMAIL', 'info@example.org')
-ORG_GUIDE_URL = env.get('ORG_GUIDE_URL', 'https://guide.example.org/')
+ORG_LONG_NAME = env.str('ORG_LONG_NAME', 'Acme Corporation')
+ORG_SHORT_NAME = env.str('ORG_SHORT_NAME', 'ACME')
+ORG_EMAIL = env.str('ORG_EMAIL', 'info@example.org')
+ORG_GUIDE_URL = env.url('ORG_GUIDE_URL', 'https://guide.example.org/')
 
 
 # Email settings
-if 'EMAIL_HOST' in env:
-    EMAIL_HOST = env['EMAIL_HOST']
+EMAIL_HOST = env.str('EMAIL_HOST', None)
 
-if 'EMAIL_PORT' in env:
-    try:
-        EMAIL_PORT = int(env['EMAIL_PORT'])
-    except ValueError:
-        pass
+EMAIL_PORT = env.int('EMAIL_PORT', None)
 
-if 'EMAIL_HOST_USER' in env:
-    EMAIL_HOST_USER = env['EMAIL_HOST_USER']
+EMAIL_HOST_USER = env.str('EMAIL_HOST_USER', None)
 
-if 'EMAIL_HOST_PASSWORD' in env:
-    EMAIL_HOST_PASSWORD = env['EMAIL_HOST_PASSWORD']
+EMAIL_HOST_PASSWORD = env.str('EMAIL_HOST_PASSWORD', None)
 
-if env.get('EMAIL_USE_TLS', 'false').lower().strip() == 'true':
-    EMAIL_USE_TLS = True
+EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS', False)
 
-if env.get('EMAIL_USE_SSL', 'false').lower().strip() == 'true':
-    EMAIL_USE_SSL = True
+EMAIL_USE_SSL = env.bool('EMAIL_USE_SSL', False)
 
-if 'EMAIL_SUBJECT_PREFIX' in env:
-    EMAIL_SUBJECT_PREFIX = env['EMAIL_SUBJECT_PREFIX']
+EMAIL_SUBJECT_PREFIX = env.str('EMAIL_SUBJECT_PREFIX', None)
 
-if 'SERVER_EMAIL' in env:
-    SERVER_EMAIL = DEFAULT_FROM_EMAIL = env['SERVER_EMAIL']
+SERVER_EMAIL = DEFAULT_FROM_EMAIL = env.str('SERVER_EMAIL', None)
 
 
 # Application definition
@@ -220,16 +211,10 @@ DATABASES = {
 # Cache
 
 # Set max-age header.
-try:
-    CACHE_CONTROL_MAX_AGE = int(env.get('CACHE_CONTROL_MAX_AGE', 3600))
-except ValueError:
-    CACHE_CONTROL_MAX_AGE = 3600
+CACHE_CONTROL_MAX_AGE = env.int('CACHE_CONTROL_MAX_AGE', 3600)
 
 # Set s-max-age header that is used by reverse proxy/front end cache.
-try:
-    CACHE_CONTROL_S_MAXAGE = int(env.get('CACHE_CONTROL_S_MAXAGE', 3600))
-except ValueError:
-    CACHE_CONTROL_S_MAXAGE = 3600
+CACHE_CONTROL_S_MAXAGE = env.int('CACHE_CONTROL_S_MAXAGE', 3600)
 
 # Set wagtail cache timeout (automatic cache refresh).
 WAGTAIL_CACHE_TIMEOUT = CACHE_CONTROL_MAX_AGE
@@ -237,15 +222,15 @@ WAGTAIL_CACHE_TIMEOUT = CACHE_CONTROL_MAX_AGE
 # Set feed cache timeout (automatic cache refresh).
 FEED_CACHE_TIMEOUT = 600
 
-if 'REDIS_URL' in env:
+if env.str('REDIS_URL', None):
     CACHES = {
         'default': {
             'BACKEND': 'django_redis.cache.RedisCache',
-            'LOCATION': env['REDIS_URL'],
+            'LOCATION': env.dj_cache_url('REDIS_URL'),
         },
         'wagtailcache': {
             'BACKEND': 'wagtailcache.compat_backends.django_redis.RedisCache',
-            'LOCATION': env['REDIS_URL'],
+            'LOCATION': env.dj_cache_url('REDIS_URL'),
             'KEY_PREFIX': 'wagtailcache',
             'TIMEOUT': WAGTAIL_CACHE_TIMEOUT,
         }
@@ -279,13 +264,13 @@ WAGTAIL_CACHE_BACKEND = 'wagtailcache'
 
 # Cloudflare cache invalidation.
 # See https://docs.wagtail.io/en/v2.8/reference/contrib/frontendcache.html
-if 'CLOUDFLARE_BEARER_TOKEN' in env and 'CLOUDFLARE_API_ZONEID' in env:
+if env.str('CLOUDFLARE_BEARER_TOKEN', None) and env.str('CLOUDFLARE_API_ZONEID'):
     INSTALLED_APPS += ('wagtail.contrib.frontend_cache', )  # noqa
     WAGTAILFRONTENDCACHE = {
         'cloudflare': {
             'BACKEND': 'wagtail.contrib.frontend_cache.backends.CloudflareBackend',
-            'BEARER_TOKEN': env['CLOUDFLARE_BEARER_TOKEN'],
-            'ZONEID': env['CLOUDFLARE_API_ZONEID'],
+            'BEARER_TOKEN': env.str('CLOUDFLARE_BEARER_TOKEN'),
+            'ZONEID': env.str('CLOUDFLARE_API_ZONEID'),
         },
     }
 
@@ -318,23 +303,19 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # Number of days that password reset and account activation links are valid (default 3).
-if 'PASSWORD_RESET_TIMEOUT_DAYS' in env:
-    try:
-        PASSWORD_RESET_TIMEOUT_DAYS = int(env['PASSWORD_RESET_TIMEOUT_DAYS'])
-    except ValueError:
-        pass
+PASSWORD_RESET_TIMEOUT_DAYS = env.int('PASSWORD_RESET_TIMEOUT_DAYS', 3)
 
 # Seconds to enter password on password page while email change/2FA change (default 120).
-PASSWORD_PAGE_TIMEOUT_SECONDS = int(env.get('PASSWORD_PAGE_TIMEOUT_SECONDS', 120))
+PASSWORD_PAGE_TIMEOUT_SECONDS = env.int('PASSWORD_PAGE_TIMEOUT_SECONDS', 120)
 
 # Internationalization
 # https://docs.djangoproject.com/en/stable/topics/i18n/
 
 # Language code in standard language id format: en, en-gb, en-us
 # The corrosponding locale dir is named: en, en_GB, en_US
-LANGUAGE_CODE = env.get('LANGUAGE_CODE', 'en')
+LANGUAGE_CODE = env.str('LANGUAGE_CODE', 'en')
 
-CURRENCY_SYMBOL = env.get('CURRENCY_SYMBOL', '$')
+CURRENCY_SYMBOL = env.str('CURRENCY_SYMBOL', '$')
 
 TIME_ZONE = 'UTC'
 
@@ -383,11 +364,11 @@ STATICFILES_DIRS = [
     os.path.join(PROJECT_DIR, '../public'),
 ]
 
-STATIC_ROOT = env.get('STATIC_DIR', os.path.join(BASE_DIR, 'static'))
-STATIC_URL = env.get('STATIC_URL', '/static/')
+STATIC_ROOT = env.str('STATIC_DIR', os.path.join(BASE_DIR, 'static'))
+STATIC_URL = env.str('STATIC_URL', '/static/')
 
-MEDIA_ROOT = env.get('MEDIA_DIR', os.path.join(BASE_DIR, 'media'))
-MEDIA_URL = env.get('MEDIA_URL', '/media/')
+MEDIA_ROOT = env.str('MEDIA_DIR', os.path.join(BASE_DIR, 'media'))
+MEDIA_URL = env.str('MEDIA_URL', '/media/')
 
 
 AUTH_USER_MODEL = 'users.User'
@@ -492,10 +473,7 @@ DEBUGTOOLBAR = False
 
 # Staff e-mail domain
 
-if 'STAFF_EMAIL_DOMAINS' in env:
-    STAFF_EMAIL_DOMAINS = env['STAFF_EMAIL_DOMAINS'].split(',')
-else:
-    STAFF_EMAIL_DOMAINS = []
+STAFF_EMAIL_DOMAINS = env.list('STAFF_EMAIL_DOMAINS', [])
 
 # Social Auth
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
@@ -503,13 +481,10 @@ SOCIAL_AUTH_URL_NAMESPACE = 'social'
 # Set the Google OAuth2 credentials in ENV variables or local.py
 # To create a new set of credentials, go to https://console.developers.google.com/apis/credentials
 # Make sure the Google+ API is enabled for your API project
-if 'SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS' in env:
-    SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = env['SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS'].split(',')
-else:
-    SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = STAFF_EMAIL_DOMAINS
+SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS = env.list('SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS', STAFF_EMAIL_DOMAINS)
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env.get('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY', '')
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env.get('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET', '')
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env.str('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY', '')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env.str('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET', '')
 
 SOCIAL_AUTH_LOGIN_ERROR_URL = 'users_public:login'
 SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL = 'users:account'
@@ -554,80 +529,58 @@ HIJACK_PERMISSION_CHECK = 'hijack.permissions.superusers_and_staff'
 
 
 # Messaging Settings
-SEND_MESSAGES = env.get('SEND_MESSAGES', 'false').lower() == 'true'
+SEND_MESSAGES = env.bool('SEND_MESSAGES', False)
 
 if not SEND_MESSAGES:
     from django.contrib.messages import constants as message_constants
     MESSAGE_LEVEL = message_constants.DEBUG
 
 
-SEND_READY_FOR_REVIEW = env.get('SEND_READY_FOR_REVIEW', 'true').lower() == 'true'
+SEND_READY_FOR_REVIEW = env.bool('SEND_READY_FOR_REVIEW', True)
 
-SLACK_DESTINATION_URL = env.get('SLACK_DESTINATION_URL', None)
-SLACK_DESTINATION_ROOM = env.get('SLACK_DESTINATION_ROOM', None)
-SLACK_DESTINATION_ROOM_COMMENTS = env.get('SLACK_DESTINATION_ROOM_COMMENTS', None)
-if 'SLACK_TYPE_COMMENTS' in env:
-    SLACK_TYPE_COMMENTS = env['SLACK_TYPE_COMMENTS'].split(',')
-else:
-    SLACK_TYPE_COMMENTS = []
+SLACK_DESTINATION_URL = env.url('SLACK_DESTINATION_URL', None)
+SLACK_DESTINATION_ROOM = env.str('SLACK_DESTINATION_ROOM', None)
+SLACK_DESTINATION_ROOM_COMMENTS = env.str('SLACK_DESTINATION_ROOM_COMMENTS', None)
+SLACK_TYPE_COMMENTS = env.list('SLACK_TYPE_COMMENTS', [])
+
 
 
 # Automatic transition settings
-TRANSITION_AFTER_REVIEWS = False
-if 'TRANSITION_AFTER_REVIEWS' in env:
-    try:
-        TRANSITION_AFTER_REVIEWS = int(env['TRANSITION_AFTER_REVIEWS'])
-    except ValueError:
-        pass
+TRANSITION_AFTER_REVIEWS = env.bool('TRANSITION_AFTER_REVIEWS', False)
 
-TRANSITION_AFTER_ASSIGNED = False
-if env.get('TRANSITION_AFTER_ASSIGNED', 'false').strip().lower() == 'true':
-    TRANSITION_AFTER_ASSIGNED = True
+TRANSITION_AFTER_ASSIGNED = env.bool('TRANSITION_AFTER_ASSIGNED', False)
 
 
 # Exclude Filters/columns from submission tables.
 # Possible values are: fund, round, status, lead, reviewers, screening_statuses, category_options, meta_terms
-if 'SUBMISSIONS_TABLE_EXCLUDED_FIELDS' in env:
-    SUBMISSIONS_TABLE_EXCLUDED_FIELDS = env['SUBMISSIONS_TABLE_EXCLUDED_FIELDS'].split(',')
-else:
-    SUBMISSIONS_TABLE_EXCLUDED_FIELDS = []
+SUBMISSIONS_TABLE_EXCLUDED_FIELDS = env.list('SUBMISSIONS_TABLE_EXCLUDED_FIELDS', [])
 
 # Celery config
-if 'REDIS_URL' in env:
-    CELERY_BROKER_URL = env.get('REDIS_URL')
+if env.str('REDIS_URL', None):
+    CELERY_BROKER_URL = env.str('REDIS_URL')
 else:
     CELERY_TASK_ALWAYS_EAGER = True
 
 
 # S3 configuration
 
-if 'AWS_STORAGE_BUCKET_NAME' in env:
+if env.str('AWS_STORAGE_BUCKET_NAME', None):
     DEFAULT_FILE_STORAGE = 'hypha.storage_backends.PublicMediaStorage'
     PRIVATE_FILE_STORAGE = 'hypha.storage_backends.PrivateMediaStorage'
 
-    AWS_STORAGE_BUCKET_NAME = env['AWS_STORAGE_BUCKET_NAME']
+    AWS_STORAGE_BUCKET_NAME = env.str('AWS_STORAGE_BUCKET_NAME')
 
-    if 'AWS_PUBLIC_BUCKET_NAME' in env:
-        AWS_PUBLIC_BUCKET_NAME = env['AWS_PUBLIC_BUCKET_NAME']
-    else:
-        AWS_PUBLIC_BUCKET_NAME = env['AWS_STORAGE_BUCKET_NAME']
+    AWS_PUBLIC_BUCKET_NAME = env.str('AWS_PUBLIC_BUCKET_NAME', AWS_STORAGE_BUCKET_NAME)
 
-    if 'AWS_PRIVATE_BUCKET_NAME' in env:
-        AWS_PRIVATE_BUCKET_NAME = env['AWS_PRIVATE_BUCKET_NAME']
-    else:
-        AWS_PRIVATE_BUCKET_NAME = env['AWS_STORAGE_BUCKET_NAME']
+    AWS_PRIVATE_BUCKET_NAME = env.str('AWS_PRIVATE_BUCKET_NAME', AWS_STORAGE_BUCKET_NAME)
 
-    if 'AWS_S3_CUSTOM_DOMAIN' in env:
-        AWS_S3_CUSTOM_DOMAIN = env['AWS_S3_CUSTOM_DOMAIN']
+    AWS_S3_CUSTOM_DOMAIN = env.str('AWS_S3_CUSTOM_DOMAIN', None)
 
-    if 'AWS_PRIVATE_CUSTOM_DOMAIN' in env:
-        AWS_PRIVATE_CUSTOM_DOMAIN = env['AWS_PRIVATE_CUSTOM_DOMAIN']
+    AWS_PRIVATE_CUSTOM_DOMAIN = env.str('AWS_PRIVATE_CUSTOM_DOMAIN', None)
 
-    if 'AWS_QUERYSTRING_EXPIRE' in env:
-        AWS_QUERYSTRING_EXPIRE = env['AWS_QUERYSTRING_EXPIRE']
+    AWS_QUERYSTRING_EXPIRE = env.str('AWS_QUERYSTRING_EXPIRE', None)
 
-    if 'AWS_PUBLIC_CUSTOM_DOMAIN' in env:
-        AWS_PUBLIC_CUSTOM_DOMAIN = env['AWS_PUBLIC_CUSTOM_DOMAIN']
+    AWS_PUBLIC_CUSTOM_DOMAIN = env.str('AWS_PUBLIC_CUSTOM_DOMAIN', None)
 
     INSTALLED_APPS += (
         'storages',
@@ -635,57 +588,44 @@ if 'AWS_STORAGE_BUCKET_NAME' in env:
 
 
 # Settings to connect to the Bucket from which we are migrating data
-AWS_MIGRATION_BUCKET_NAME = env.get('AWS_MIGRATION_BUCKET_NAME', '')
-AWS_MIGRATION_ACCESS_KEY_ID = env.get('AWS_MIGRATION_ACCESS_KEY_ID', '')
-AWS_MIGRATION_SECRET_ACCESS_KEY = env.get('AWS_MIGRATION_SECRET_ACCESS_KEY', '')
+AWS_MIGRATION_BUCKET_NAME = env.str('AWS_MIGRATION_BUCKET_NAME', '')
+AWS_MIGRATION_ACCESS_KEY_ID = env.str('AWS_MIGRATION_ACCESS_KEY_ID', '')
+AWS_MIGRATION_SECRET_ACCESS_KEY = env.str('AWS_MIGRATION_SECRET_ACCESS_KEY', '')
 
 
-MAILCHIMP_API_KEY = env.get('MAILCHIMP_API_KEY')
-MAILCHIMP_LIST_ID = env.get('MAILCHIMP_LIST_ID')
+MAILCHIMP_API_KEY = env.str('MAILCHIMP_API_KEY', None)
+MAILCHIMP_LIST_ID = env.str('MAILCHIMP_LIST_ID', None)
 
 
 # Basic auth settings
-if env.get('BASIC_AUTH_ENABLED', 'false').lower().strip() == 'true':
+if env.bool('BASIC_AUTH_ENABLED', False):
     MIDDLEWARE.insert(0, 'baipw.middleware.BasicAuthIPWhitelistMiddleware')
-    BASIC_AUTH_LOGIN = env['BASIC_AUTH_LOGIN']
-    BASIC_AUTH_PASSWORD = env['BASIC_AUTH_PASSWORD']
-    if 'BASIC_AUTH_WHITELISTED_HTTP_HOSTS' in env:
-        BASIC_AUTH_WHITELISTED_HTTP_HOSTS = (
-            env['BASIC_AUTH_WHITELISTED_HTTP_HOSTS'].split(',')
-        )
-    if 'BASIC_AUTH_WHITELISTED_IP_NETWORKS' in env:
-        BASIC_AUTH_WHITELISTED_IP_NETWORKS = (
-            env['BASIC_AUTH_WHITELISTED_IP_NETWORKS'].split(',')
-        )
+    BASIC_AUTH_LOGIN = env.str('BASIC_AUTH_LOGIN')
+    BASIC_AUTH_PASSWORD = env.str('BASIC_AUTH_PASSWORD')
+    BASIC_AUTH_WHITELISTED_HTTP_HOSTS = env.list('BASIC_AUTH_WHITELISTED_HTTP_HOSTS', [])
+    BASIC_AUTH_WHITELISTED_IP_NETWORKS = env.list('BASIC_AUTH_WHITELISTED_IP_NETWORKS', [])
 
 
-if 'PRIMARY_HOST' in env:
+if env.str('PRIMARY_HOST', None):
     # This is used by Wagtail's email notifications for constructing absolute
     # URLs.
-    BASE_URL = 'https://{}'.format(env['PRIMARY_HOST'])
+    BASE_URL = 'https://{}'.format(env.str('PRIMARY_HOST'))
 
 
 # Security configuration
 # https://docs.djangoproject.com/en/stable/ref/middleware/#module-django.middleware.security
 
-if env.get('SECURE_SSL_REDIRECT', 'true').strip().lower() == 'true':
-    SECURE_SSL_REDIRECT = True
+SECURE_SSL_REDIRECT = env.bool('SECURE_SSL_REDIRECT', True)
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-if 'SECURE_HSTS_SECONDS' in env:
-    try:
-        SECURE_HSTS_SECONDS = int(env['SECURE_HSTS_SECONDS'])
-    except ValueError:
-        pass
+SECURE_HSTS_SECONDS = env.int('SECURE_HSTS_SECONDS', None)
 
-if env.get('SECURE_BROWSER_XSS_FILTER', 'true').lower().strip() == 'true':
-    SECURE_BROWSER_XSS_FILTER = True
+SECURE_BROWSER_XSS_FILTER = env.bool('SECURE_BROWSER_XSS_FILTER', True)
 
-if env.get('SECURE_CONTENT_TYPE_NOSNIFF', 'true').lower().strip() == 'true':
-    SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_CONTENT_TYPE_NOSNIFF = env.bool('SECURE_CONTENT_TYPE_NOSNIFF', True)
 
-if env.get('COOKIE_SECURE', 'false').lower().strip() == 'true':
+if env.bool('COOKIE_SECURE', False):
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
 
@@ -693,13 +633,12 @@ if env.get('COOKIE_SECURE', 'false').lower().strip() == 'true':
 # Referrer-policy header settings
 # https://django-referrer-policy.readthedocs.io/en/1.0/
 
-REFERRER_POLICY = env.get('SECURE_REFERRER_POLICY',
+REFERRER_POLICY = env.str('SECURE_REFERRER_POLICY',
                           'no-referrer-when-downgrade').strip()
 
 # Webpack bundle loader
 # When disabled, all included bundles are silently ignored.
-if env.get('ENABLE_WEBPACK_BUNDLES', 'true').lower().strip() == 'true':
-    ENABLE_WEBPACK_BUNDLES = True
+ENABLE_WEBPACK_BUNDLES = env.bool('ENABLE_WEBPACK_BUNDLES', True)
 
 WEBPACK_LOADER = {
     'DEFAULT': {
@@ -727,27 +666,23 @@ REST_FRAMEWORK = {
 
 
 # Projects Feature Flag
-PROJECTS_ENABLED = False
-if env.get('PROJECTS_ENABLED', 'false').lower().strip() == 'true':
-    PROJECTS_ENABLED = True
+PROJECTS_ENABLED = env.bool('PROJECTS_ENABLED', False)
 
-PROJECTS_AUTO_CREATE = False
-if env.get('PROJECTS_AUTO_CREATE', 'false').lower().strip() == 'true':
-    PROJECTS_AUTO_CREATE = True
+PROJECTS_AUTO_CREATE = env.bool('PROJECTS_AUTO_CREATE', False)
 
 
 # Salesforce integration
 
-if env.get('SALESFORCE_INTEGRATION', 'false').lower().strip() == 'true':
+if env.bool('SALESFORCE_INTEGRATION', False):
     DATABASES = {
         **DATABASES,
         'salesforce': {
             'ENGINE': 'salesforce.backend',
-            'CONSUMER_KEY': env.get('SALESFORCE_CONSUMER_KEY', ''),
-            'CONSUMER_SECRET': env.get('SALESFORCE_CONSUMER_SECRET', ''),
-            'USER': env.get('SALESFORCE_USER', ''),
-            'PASSWORD': env.get('SALESFORCE_PASSWORD', ''),
-            'HOST': env.get('SALESFORCE_LOGIN_URL', '')
+            'CONSUMER_KEY': env.str('SALESFORCE_CONSUMER_KEY', ''),
+            'CONSUMER_SECRET': env.str('SALESFORCE_CONSUMER_SECRET', ''),
+            'USER': env.str('SALESFORCE_USER', ''),
+            'PASSWORD': env.str('SALESFORCE_PASSWORD', ''),
+            'HOST': env.str('SALESFORCE_LOGIN_URL', '')
         }
     }
 
@@ -765,11 +700,11 @@ FILE_FORM_UPLOAD_DIR = 'temp_uploads'
 # Ensure FILE_FORM_UPLOAD_DIR exists:
 os.makedirs(os.path.join(MEDIA_ROOT, FILE_FORM_UPLOAD_DIR), exist_ok=True)
 # Store temporary files on S3 too (files are still uploaded to local filesystem first)
-if 'AWS_STORAGE_BUCKET_NAME' in env:
+if env.str('AWS_STORAGE_BUCKET_NAME', None):
     FILE_FORM_TEMP_STORAGE = PRIVATE_FILE_STORAGE
 
 
 # Matomo tracking
 
-MATOMO_URL = env.get('MATOMO_URL', False)
-MATOMO_SITEID = env.get('MATOMO_SITEID', False)
+MATOMO_URL = env.bool('MATOMO_URL', False)
+MATOMO_SITEID = env.bool('MATOMO_SITEID', False)
