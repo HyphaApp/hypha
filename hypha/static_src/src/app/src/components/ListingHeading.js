@@ -17,6 +17,6 @@ ListingHeading.propTypes = {
     title: PropTypes.string,
     count: PropTypes.oneOfType([
         PropTypes.string,
-        PropTypes.number,
-    ]),
+        PropTypes.number
+    ])
 };

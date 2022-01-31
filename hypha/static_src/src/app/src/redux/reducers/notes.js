@@ -1,4 +1,4 @@
-import { combineReducers } from 'redux';
+import {combineReducers} from 'redux';
 
 import {
     CREATE_NOTE,
@@ -11,7 +11,7 @@ import {
     STORE_NOTE,
     START_EDITING_NOTE_FOR_SUBMISSION,
     FAIL_EDITING_NOTE_FOR_SUBMISSION,
-    REMOVE_NOTE,
+    REMOVE_NOTE
 } from '@actions/notes';
 
 export function notesFetching(state = false, action) {
@@ -30,15 +30,15 @@ export function notesErrored(state = {errored: false, message: null}, action) {
     switch (action.type) {
         case UPDATE_NOTES:
         case START_FETCHING_NOTES:
-        return {
-            ...state,
-            errored: false,
-        };
+            return {
+                ...state,
+                errored: false
+            };
         case FAIL_FETCHING_NOTES:
             return {
                 ...state,
                 message: action.error,
-                errored: true,
+                errored: true
             };
         default:
             return state;
@@ -51,7 +51,7 @@ export function note(state, action) {
         case CREATE_NOTE:
             return {
                 ...state,
-                ...action.data,
+                ...action.data
             };
         default:
             return state;
@@ -64,7 +64,7 @@ export function notesCreating(state = [], action) {
         case START_EDITING_NOTE_FOR_SUBMISSION:
             return [
                 ...state,
-                action.submissionID,
+                action.submissionID
             ];
         case CREATE_NOTE:
         case UPDATE_NOTE:
@@ -72,7 +72,7 @@ export function notesCreating(state = [], action) {
         case FAIL_EDITING_NOTE_FOR_SUBMISSION:
             return state.filter(v => v !== action.submissionID);
         default:
-            return state
+            return state;
     }
 }
 
@@ -93,10 +93,10 @@ export function notesFailedCreating(state = {}, action) {
         case FAIL_CREATING_NOTE_FOR_SUBMISSION:
             return {
                 ...state,
-                [action.submissionID]: action.error,
+                [action.submissionID]: action.error
             };
         default:
-            return state
+            return state;
     }
 }
 
@@ -108,10 +108,10 @@ export function notesByID(state = {}, action) {
                 ...action.data.results.reduce((newNotesAccumulator, newNote) => {
                     newNotesAccumulator[newNote.id] = note(state[newNote.id], {
                         type: UPDATE_NOTE,
-                        data: newNote,
+                        data: newNote
                     });
                     return newNotesAccumulator;
-                }, {}),
+                }, {})
             };
         case CREATE_NOTE:
         case UPDATE_NOTE:
@@ -119,33 +119,33 @@ export function notesByID(state = {}, action) {
                 ...state,
                 [action.data.id]: note(state[action.data.id], {
                     type: UPDATE_NOTE,
-                    data: action.data,
-                }),
+                    data: action.data
+                })
             };
         default:
             return state;
     }
 }
 
-export function editingNote(state={}, action) {
+export function editingNote(state = {}, action) {
     switch (action.type) {
         case STORE_NOTE:
             return {
                 ...state,
-                [action.submissionID] : {
+                [action.submissionID]: {
                     id: action.messageID,
-                    message: action.message,
-                },
+                    message: action.message
+                }
             };
         case CREATE_NOTE:
         case UPDATE_NOTE:
         case REMOVE_NOTE:
             return Object.entries(state).reduce((result, [key, value]) => {
                 if (action.submissionID !== parseInt(key)) {
-                    result[key] = value
+                    result[key] = value;
                 }
                 return result;
-            },{})
+            }, {});
         default:
             return state;
     }
@@ -157,5 +157,5 @@ export default combineReducers({
     error: notesErrored,
     createError: notesFailedCreating,
     isCreating: notesCreating,
-    editing: editingNote,
+    editing: editingNote
 });

@@ -1,6 +1,6 @@
-import { createSelector } from 'reselect';
+import {createSelector} from 'reselect';
 
-import { getSubmissionOfID } from '@selectors/submissions';
+import {getSubmissionOfID} from '@selectors/submissions';
 
 export const getNotes = state => state.notes.byID;
 

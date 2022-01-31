@@ -1,26 +1,26 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
+import React from 'react';
+import PropTypes from 'prop-types';
+import {connect} from 'react-redux';
 
-import DetailView from '@components/DetailView'
-import ByRoundListing from '@containers/ByRoundListing'
+import DetailView from '@components/DetailView';
+import ByRoundListing from '@containers/ByRoundListing';
 import {
     getRoundsFetching,
-    getRoundsErrored,
-} from '@selectors/rounds'
+    getRoundsErrored
+} from '@selectors/rounds';
 import {
-    getCurrentSubmissionID,
+    getCurrentSubmissionID
 } from '@selectors/submissions';
 import {
     getByStatusesLoading,
-    getByStatusesError,
+    getByStatusesError
 } from '@selectors/statuses';
 
 const GroupByRoundDetailView = props => {
-    const listing = <ByRoundListing submissionStatuses={props.submissionStatuses} groupBy = {props.groupBy && props.groupBy}/>
-    const { isLoading, isErrored, submissions, submissionID, errorMessage } = props
-    const isEmpty = submissions.length === 0
-    const activeSubmission = !!submissionID
+    const listing = <ByRoundListing submissionStatuses={props.submissionStatuses} groupBy = {props.groupBy && props.groupBy}/>;
+    const {isLoading, isErrored, submissions, submissionID, errorMessage} = props;
+    const isEmpty = submissions.length === 0;
+    const activeSubmission = !!submissionID;
     return (
         <DetailView
             isEmpty={isEmpty}
@@ -30,8 +30,8 @@ const GroupByRoundDetailView = props => {
             isErrored={isErrored}
             errorMessage={errorMessage}
         />
-    )
-}
+    );
+};
 
 GroupByRoundDetailView.propTypes = {
     submissionStatuses: PropTypes.arrayOf(PropTypes.string),
@@ -41,15 +41,15 @@ GroupByRoundDetailView.propTypes = {
     isErrored: PropTypes.bool,
     errorMessage: PropTypes.string,
     groupBy: PropTypes.string
-}
+};
 
 const mapStateToProps = (state, ownProps) => ({
     isErrored: getRoundsErrored(state) || getByStatusesError(state),
     isLoading: (
         getByStatusesLoading(state) || getRoundsFetching(state)
     ),
-    submissionID: getCurrentSubmissionID(state),
-})
+    submissionID: getCurrentSubmissionID(state)
+});
 
 
-export default connect(mapStateToProps)(GroupByRoundDetailView)
+export default connect(mapStateToProps)(GroupByRoundDetailView);

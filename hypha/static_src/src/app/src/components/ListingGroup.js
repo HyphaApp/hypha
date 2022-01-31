@@ -8,16 +8,16 @@ export default class ListingGroup extends React.Component {
     static propTypes = {
         children: PropTypes.arrayOf(PropTypes.node),
         item: PropTypes.shape({
-            name: PropTypes.string,
+            name: PropTypes.string
         }),
-        id: PropTypes.string,
+        id: PropTypes.string
     };
 
     render() {
-        const {id, item, children} = this.props
+        const {id, item, children} = this.props;
         return (
             <li id={id}>
-                <ListingHeading  title={item.name} count={children.length} />
+                <ListingHeading title={item.name} count={children.length} />
                 <ul>
                     {children}
                 </ul>

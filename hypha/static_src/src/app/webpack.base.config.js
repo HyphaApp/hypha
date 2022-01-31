@@ -1,8 +1,13 @@
-const webpack = require('webpack')
+const webpack = require('webpack');
 const path = require('path');
+const ESLintPlugin = require('eslint-webpack-plugin');
 
-var COMMON_ENTRY = ['core-js/stable', 'regenerator-runtime/runtime']
+var COMMON_ENTRY = ['core-js/stable', 'regenerator-runtime/runtime'];
 
+var ESLINT_OPTIONS = {
+    overrideConfigFile: path.resolve(__dirname, './.eslintrc'),
+    files: path.resolve(__dirname, './src')
+};
 
 module.exports = (webpackEnv) => {
     const isProduction = webpackEnv === "production"
@@ -23,7 +28,7 @@ module.exports = (webpackEnv) => {
             filename: '[name]-[hash].js'
         },
 
-        plugins: [],
+        plugins: [new ESLintPlugin(ESLINT_OPTIONS)],
 
         module: {
             rules: [
@@ -37,15 +42,6 @@ module.exports = (webpackEnv) => {
                             'react-hot-loader/babel',
                             '@babel/plugin-proposal-class-properties'
                         ]
-                    },
-                },
-                {
-                    test: /\.js$/,
-                    exclude: /node_modules/,
-                    include: [path.resolve(__dirname, './src')],
-                    loader: 'eslint-loader',
-                    options: {
-                        configFile: path.resolve(__dirname, './.eslintrc'),
                     },
                 },
                 {

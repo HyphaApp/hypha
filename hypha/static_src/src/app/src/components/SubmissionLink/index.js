@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import './styles.scss';
 
-const SubmissionLink = ({ submissionID }) => {
+const SubmissionLink = ({submissionID}) => {
     const submissionLink = `/apply/submissions/${submissionID}/`;
 
     return (
@@ -13,11 +13,11 @@ const SubmissionLink = ({ submissionID }) => {
                 <svg><use xlinkHref="#open-in-new-tab"></use></svg>
             </a>
         </div>
-    )
-}
+    );
+};
 
 SubmissionLink.propTypes = {
-    submissionID: PropTypes.number,
-}
+    submissionID: PropTypes.number
+};
 
 export default SubmissionLink;

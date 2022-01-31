@@ -1,15 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { hot, setConfig } from 'react-hot-loader';
-import { connect } from 'react-redux'
+import {hot, setConfig} from 'react-hot-loader';
+import {connect} from 'react-redux';
 import SwitcherApp from './SwitcherApp';
 import GroupByRoundDetailView from '@containers/GroupByRoundDetailView';
-import { setCurrentStatuses } from '@actions/submissions';
+import {setCurrentStatuses} from '@actions/submissions';
 import {
-    getSubmissionsForListing,
+    getSubmissionsForListing
 } from '@selectors/submissions';
 
-setConfig({showReactDomPatchNotification: false})
+setConfig({showReactDomPatchNotification: false});
 
 class AllSubmissionsApp extends React.Component {
     static propTypes = {
@@ -25,8 +25,8 @@ class AllSubmissionsApp extends React.Component {
     }
 
     onfilter = () => {
-      this.props.setStatuses([])
-    }
+        this.props.setStatuses([]);
+    };
 
     render() {
         return (
@@ -36,18 +36,18 @@ class AllSubmissionsApp extends React.Component {
                 doNotRenderFilter={[]}
                 pageContent={this.props.pageContent}
                 onFilter={this.onfilter} />
-        )
+        );
     }
 }
 
 const mapStateToProps = (state, ownProps) => ({
-    submissions: getSubmissionsForListing(state),
-})
+    submissions: getSubmissionsForListing(state)
+});
 
 const mapDispatchToProps = dispatch => {
     return {
-        setStatuses: statuses => {dispatch(setCurrentStatuses(statuses));},
-    }
+        setStatuses: statuses => {dispatch(setCurrentStatuses(statuses));}
+    };
 };
 
 export default hot(module)(

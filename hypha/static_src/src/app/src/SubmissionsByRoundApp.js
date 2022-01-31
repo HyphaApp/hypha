@@ -1,19 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { hot, setConfig } from 'react-hot-loader';
-import { connect } from 'react-redux'
+import {hot, setConfig} from 'react-hot-loader';
+import {connect} from 'react-redux';
 
 import SwitcherApp from './SwitcherApp';
 import GroupByStatusDetailView from '@containers/GroupByStatusDetailView';
-import { setCurrentSubmissionRound } from '@actions/submissions';
+import {setCurrentSubmissionRound} from '@actions/submissions';
 
-setConfig({showReactDomPatchNotification: false})
+setConfig({showReactDomPatchNotification: false});
 
 class SubmissionsByRoundApp extends React.Component {
     static propTypes = {
         roundID: PropTypes.number,
         setSubmissionRound: PropTypes.func,
-        pageContent: PropTypes.node.isRequired,
+        pageContent: PropTypes.node.isRequired
     };
 
     componentDidMount() {
@@ -22,7 +22,7 @@ class SubmissionsByRoundApp extends React.Component {
 
     onfilter = () => {
         this.props.setSubmissionRound(this.props.roundID);
-    }
+    };
 
     render() {
         return (
@@ -32,14 +32,14 @@ class SubmissionsByRoundApp extends React.Component {
                 pageContent={this.props.pageContent}
                 doNotRenderFilter={['round', 'fund', 'lead']}
                 onFilter={this.onfilter} />
-        )
+        );
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        setSubmissionRound: id => {dispatch(setCurrentSubmissionRound(id));},
-    }
+        setSubmissionRound: id => {dispatch(setCurrentSubmissionRound(id));}
+    };
 };
 
 export default hot(module)(

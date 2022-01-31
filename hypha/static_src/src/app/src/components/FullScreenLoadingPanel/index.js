@@ -1,6 +1,6 @@
-import React from 'react'
+import React from 'react';
 
-import LoadingPanel from '@components/LoadingPanel'
+import LoadingPanel from '@components/LoadingPanel';
 
 import './styles.scss';
 

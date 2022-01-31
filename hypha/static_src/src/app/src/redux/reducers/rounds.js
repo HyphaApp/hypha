@@ -1,4 +1,4 @@
-import { combineReducers } from 'redux';
+import {combineReducers} from 'redux';
 
 import {
     FAIL_LOADING_SUBMISSIONS_BY_ROUND,
@@ -11,28 +11,28 @@ import {
     UPDATE_ROUNDS,
     CLEAR_ALL_ROUNDS,
     FAIL_LOADING_ROUNDS,
-    START_LOADING_ROUNDS,
+    START_LOADING_ROUNDS
 } from '@actions/submissions';
 
 const submissionsDefaultState = {ids: [], isFetching: false};
 
-export function submissions(state=submissionsDefaultState, action) {
+export function submissions(state = submissionsDefaultState, action) {
     switch (action.type) {
         case UPDATE_SUBMISSIONS_BY_ROUND:
             return {
                 ...state,
                 ids: action.data.results.map(submission => submission.id),
-                isFetching: false,
+                isFetching: false
             };
         case FAIL_LOADING_SUBMISSIONS_BY_ROUND:
             return {
                 ...state,
-                isFetching: false,
+                isFetching: false
             };
         case START_LOADING_SUBMISSIONS_BY_ROUND:
             return {
                 ...state,
-                isFetching: true,
+                isFetching: true
             };
         default:
             return state;
@@ -40,32 +40,32 @@ export function submissions(state=submissionsDefaultState, action) {
 }
 
 
-export function round(state={id: null, submissions: submissionsDefaultState, isFetching: false}, action) {
-    switch(action.type) {
+export function round(state = {id: null, submissions: submissionsDefaultState, isFetching: false}, action) {
+    switch (action.type) {
         case UPDATE_SUBMISSIONS_BY_ROUND:
         case FAIL_LOADING_SUBMISSIONS_BY_ROUND:
         case START_LOADING_SUBMISSIONS_BY_ROUND:
             return {
                 ...state,
                 id: action.roundID,
-                submissions: submissions(state.submissions, action),
+                submissions: submissions(state.submissions, action)
             };
         case UPDATE_ROUND:
             return {
                 ...state,
                 ...action.data,
-                isFetching: false,
+                isFetching: false
             };
         case FAIL_LOADING_ROUND:
             return {
                 ...state,
-                isFetching: false,
+                isFetching: false
             };
         case START_LOADING_ROUND:
             return {
                 ...state,
                 id: action.roundID,
-                isFetching: true,
+                isFetching: true
             };
         default:
             return state;
@@ -74,7 +74,7 @@ export function round(state={id: null, submissions: submissionsDefaultState, isF
 
 
 export function roundsByID(state = {}, action) {
-    switch(action.type) {
+    switch (action.type) {
         case UPDATE_SUBMISSIONS_BY_ROUND:
         case FAIL_LOADING_SUBMISSIONS_BY_ROUND:
         case START_LOADING_SUBMISSIONS_BY_ROUND:
@@ -86,7 +86,7 @@ export function roundsByID(state = {}, action) {
                 [action.roundID]: round(state[action.roundID], action)
             };
         case UPDATE_ROUNDS:
-            
+
             return {
                 ...state,
                 ...action.data.results.reduce((acc, value) => {
@@ -95,10 +95,10 @@ export function roundsByID(state = {}, action) {
                         data: value
                     });
                     return acc;
-                }, {}),
+                }, {})
             };
         case CLEAR_ALL_ROUNDS:
-            return {}
+            return {};
         default:
             return state;
     }
@@ -106,17 +106,17 @@ export function roundsByID(state = {}, action) {
 
 
 export function errorMessage(state = '', action) {
-    switch(action.type) {
-    case FAIL_LOADING_SUBMISSIONS_BY_ROUND:
-    case FAIL_LOADING_ROUND:
-        return action.message || '';
-    case UPDATE_SUBMISSIONS_BY_ROUND:
-    case START_LOADING_SUBMISSIONS_BY_ROUND:
-    case UPDATE_ROUND:
-    case START_LOADING_ROUND:
-        return '';
-    default:
-        return state;
+    switch (action.type) {
+        case FAIL_LOADING_SUBMISSIONS_BY_ROUND:
+        case FAIL_LOADING_ROUND:
+            return action.message || '';
+        case UPDATE_SUBMISSIONS_BY_ROUND:
+        case START_LOADING_SUBMISSIONS_BY_ROUND:
+        case UPDATE_ROUND:
+        case START_LOADING_ROUND:
+            return '';
+        default:
+            return state;
     }
 
 }
@@ -147,7 +147,7 @@ export function roundsFetching(state = false, action) {
 
 
 export function currentRound(state = null, action) {
-    switch(action.type) {
+    switch (action.type) {
         case SET_CURRENT_SUBMISSION_ROUND:
             return action.id;
         default:
@@ -161,7 +161,7 @@ const rounds = combineReducers({
     current: currentRound,
     error: errorMessage,
     isFetching: roundsFetching,
-    isErrored: roundsErrored,
+    isErrored: roundsErrored
 });
 
 export default rounds;

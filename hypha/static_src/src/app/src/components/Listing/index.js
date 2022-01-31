@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import LoadingPanel from '@components/LoadingPanel';
-import InlineLoading from '@components/InlineLoading'
+import InlineLoading from '@components/InlineLoading';
 import EmptyPanel from '@components/EmptyPanel';
 
 import SadNoteIcon from 'images/sad-note.svg';
@@ -21,14 +21,14 @@ export default class Listing extends React.Component {
         renderItem: PropTypes.func.isRequired,
         handleRetry: PropTypes.func,
         listRef: PropTypes.object,
-        column: PropTypes.string,
+        column: PropTypes.string
     };
 
     renderListItems() {
         const {
             isErrored,
             items,
-            renderItem,
+            renderItem
         } = this.props;
 
         return (
@@ -40,12 +40,12 @@ export default class Listing extends React.Component {
     }
 
     renderRetryButton = () => {
-        const { handleRetry } = this.props;
+        const {handleRetry} = this.props;
         return <a className="listing__help-link" onClick={handleRetry}>Refresh</a>;
-    }
+    };
 
     renderErrorItem = () => {
-        const { handleRetry, errorMessage } = this.props;
+        const {handleRetry, errorMessage} = this.props;
         return (
             <li className="listing__item listing__item--error">
                 <h5>Something went wrong!</h5>
@@ -53,11 +53,11 @@ export default class Listing extends React.Component {
                 { !navigator.onLine && <p>You appear to be offline.</p>}
                 { handleRetry && this.renderRetryButton() }
             </li>
-        )
-    }
+        );
+    };
 
     renderError = () => {
-        const { handleRetry, isErrored, errorMessage, column } = this.props;
+        const {handleRetry, isErrored, errorMessage, column} = this.props;
 
         return (
             <div className={`listing listing--${column} is-blank`}>
@@ -70,7 +70,7 @@ export default class Listing extends React.Component {
                 {handleRetry &&
                     <>
                         <div className="listing__blank-icon">
-                            <SadNoteIcon  />
+                            <SadNoteIcon />
                         </div>
                         <p className="listing__help-text listing__help-text--standout">Something went wrong!</p>
                         <p className="listing__help-text">Sorry we couldn&apos;t load the notes</p>
@@ -79,7 +79,7 @@ export default class Listing extends React.Component {
                 }
             </div>
         );
-    }
+    };
 
     render() {
         const {
@@ -87,17 +87,19 @@ export default class Listing extends React.Component {
             isLoading,
             items,
             column,
-            listRef,
+            listRef
         } = this.props;
 
-        if ( items.length === 0 ) {
+        if (items.length === 0) {
             if (isLoading) {
                 return (
                     <LoadingPanel />
                 );
-            } else if (isErrored) {
+            }
+            else if (isErrored) {
                 return this.renderError();
-            } else {
+            }
+            else {
                 return <EmptyPanel column={this.props.column} />;
             }
         }

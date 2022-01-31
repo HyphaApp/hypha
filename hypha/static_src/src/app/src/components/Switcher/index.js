@@ -1,8 +1,8 @@
-import React from 'react'
+import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 
-import ArrayIcon from 'images/icon-array.svg'
+import ArrayIcon from 'images/icon-array.svg';
 import GridIcon from 'images/icon-grid.svg';
 
 import './styles.scss';
@@ -12,8 +12,8 @@ class Switcher extends React.Component {
         handleOpen: PropTypes.func.isRequired,
         handleClose: PropTypes.func.isRequired,
         selector: PropTypes.string.isRequired,
-        open: PropTypes.bool,
-    }
+        open: PropTypes.bool
+    };
 
     constructor(props) {
         super(props);
@@ -21,8 +21,8 @@ class Switcher extends React.Component {
     }
 
     render() {
-        if(!this.el) { return null }
-        const { handleOpen, handleClose, open } = this.props;
+        if (!this.el) { return null; }
+        const {handleOpen, handleClose, open} = this.props;
 
         return ReactDOM.createPortal(
             <>
@@ -34,4 +34,4 @@ class Switcher extends React.Component {
     }
 }
 
-export default Switcher
+export default Switcher;

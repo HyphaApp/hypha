@@ -1,4 +1,4 @@
-import { combineReducers } from 'redux';
+import {combineReducers} from 'redux';
 
 import {
     CLEAR_CURRENT_SUBMISSION,
@@ -27,22 +27,22 @@ import {
     UPDATE_SUBMISSION_META_TERMS
 } from '@actions/submissions';
 
-import { CREATE_NOTE, UPDATE_NOTES, UPDATE_NOTE } from '@actions/notes'
+import {CREATE_NOTE, UPDATE_NOTES, UPDATE_NOTE} from '@actions/notes';
 
 
-export function submission(state={comments: []}, action) {
-    switch(action.type) {
+export function submission(state = {comments: []}, action) {
+    switch (action.type) {
         case START_LOADING_SUBMISSION:
             return {
                 ...state,
                 isFetching: true,
-                isErrored: false,
+                isErrored: false
             };
         case FAIL_LOADING_SUBMISSION:
             return {
                 ...state,
                 isFetching: false,
-                isErrored: true,
+                isErrored: true
             };
         case UPDATE_SUBMISSION:
         case UPDATE_SUMMARY_EDITOR:
@@ -60,7 +60,7 @@ export function submission(state={comments: []}, action) {
             return {
                 ...state,
                 reminders: action.data
-            }
+            };
         case UPDATE_NOTES:
             return {
                 ...state,
@@ -73,13 +73,13 @@ export function submission(state={comments: []}, action) {
             return {
                 ...state,
                 metaTerms: action.data
-            }
+            };
         case START_EXECUTING_SUBMISSION_ACTION:
             return {
                 ...state,
                 isExecutingAction: true,
                 isExecutingActionErrored: false,
-                executionActionError: undefined,
+                executionActionError: undefined
             };
         case FAIL_EXECUTING_SUBMISSION_ACTION:
             return {
@@ -93,7 +93,7 @@ export function submission(state={comments: []}, action) {
                 ...state,
                 comments: [
                     action.data.id,
-                    ...(state.comments.filter(comment => comment !== action.note.id) || []),
+                    ...(state.comments.filter(comment => comment !== action.note.id) || [])
                 ]
             };
         case CREATE_NOTE:
@@ -101,7 +101,7 @@ export function submission(state={comments: []}, action) {
                 ...state,
                 comments: [
                     action.data.id,
-                    ...(state.comments || []),
+                    ...(state.comments || [])
                 ]
             };
         default:
@@ -111,7 +111,7 @@ export function submission(state={comments: []}, action) {
 
 
 export function submissionsByID(state = {}, action) {
-    switch(action.type) {
+    switch (action.type) {
         case START_LOADING_SUBMISSION:
         case FAIL_LOADING_SUBMISSION:
         case UPDATE_SUBMISSION:
@@ -125,7 +125,7 @@ export function submissionsByID(state = {}, action) {
         case FAIL_EXECUTING_SUBMISSION_ACTION:
             return {
                 ...state,
-                [action.submissionID]: submission(state[action.submissionID], action),
+                [action.submissionID]: submission(state[action.submissionID], action)
             };
         case UPDATE_BY_STATUSES:
         case UPDATE_SUBMISSIONS_BY_ROUND:
@@ -136,14 +136,14 @@ export function submissionsByID(state = {}, action) {
                         state[newSubmission.id],
                         {
                             type: UPDATE_SUBMISSION,
-                            data: newSubmission,
+                            data: newSubmission
                         }
                     );
                     return newItems;
-                }, {}),
+                }, {})
             };
         case CLEAR_ALL_SUBMISSIONS:
-            return {}
+            return {};
         default:
             return state;
     }
@@ -151,29 +151,29 @@ export function submissionsByID(state = {}, action) {
 
 
 export function currentSubmission(state = null, action) {
-    switch(action.type) {
+    switch (action.type) {
         case SET_CURRENT_SUBMISSION:
             return action.id;
         case CLEAR_CURRENT_SUBMISSION:
             return null;
         case CLEAR_ALL_SUBMISSIONS:
-                return null;
+            return null;
         default:
             return state;
     }
 }
 
-export function toggleReviewForm(state= false, action){
-    switch(action.type){
+export function toggleReviewForm(state = false, action) {
+    switch (action.type) {
         case TOGGLE_REVIEW_FORM:
-            return action.status
+            return action.status;
         default:
-            return state
+            return state;
     }
 }
 
 export function currentReview(state = null, action) {
-    switch(action.type) {
+    switch (action.type) {
         case SET_CURRENT_REVIEW:
             return action.reviewId;
         case CLEAR_CURRENT_REVIEW:
@@ -184,7 +184,7 @@ export function currentReview(state = null, action) {
 }
 
 export function isReviewDraftExist(state = false, action) {
-    switch(action.type) {
+    switch (action.type) {
         case FETCH_REVIEW_DRAFT:
             return action.data.isDraft ? true : false;
         case CLEAR_REVIEW_DRAFT:
@@ -194,17 +194,17 @@ export function isReviewDraftExist(state = false, action) {
     }
 }
 
-export function toggleDeterminationForm(state= false, action){
-    switch(action.type){
+export function toggleDeterminationForm(state = false, action) {
+    switch (action.type) {
         case TOGGLE_DETERMINATION_FORM:
-            return action.status
+            return action.status;
         default:
-            return state
+            return state;
     }
 }
 
 export function currentDetermination(state = null, action) {
-    switch(action.type) {
+    switch (action.type) {
         case SET_CURRENT_DETERMINATION:
             return action.determinationId;
         case CLEAR_CURRENT_DETERMINATION:
@@ -215,7 +215,7 @@ export function currentDetermination(state = null, action) {
 }
 
 export function isDeterminationDraftExist(state = false, action) {
-    switch(action.type) {
+    switch (action.type) {
         case FETCH_DETERMINATION_DRAFT:
             return action.data.isDraft ? true : false;
         case CLEAR_DETERMINATION_DRAFT:
@@ -225,25 +225,25 @@ export function isDeterminationDraftExist(state = false, action) {
     }
 }
 
-function showGroupedIcon(state= false, action){
-    switch(action.type){
+function showGroupedIcon(state = false, action) {
+    switch (action.type) {
         case SHOW_GROUPED_ICON:
-            return action.status
+            return action.status;
         default:
-            return state
+            return state;
     }
 }
 
 const submissions = combineReducers({
     byID: submissionsByID,
     current: currentSubmission,
-    showReviewForm : toggleReviewForm,
+    showReviewForm: toggleReviewForm,
     currentReview,
     isReviewDraftExist,
     showDeterminationForm: toggleDeterminationForm,
     currentDetermination,
     isDeterminationDraftExist,
-    showGroupedIcon,
+    showGroupedIcon
 });
 
 export default submissions;

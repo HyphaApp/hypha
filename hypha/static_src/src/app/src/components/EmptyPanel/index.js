@@ -1,15 +1,15 @@
-import React from 'react'
+import React from 'react';
 import PropTypes from 'prop-types';
 
 import NoteIcon from 'images/note.svg';
 
 export default class EmptyPanel extends React.Component {
     static propTypes = {
-        column: PropTypes.string,
-    }
+        column: PropTypes.string
+    };
 
     render() {
-        const { column } = this.props;
+        const {column} = this.props;
 
         return (
             <div className={`listing listing__list--${column} is-blank`}>
@@ -28,6 +28,6 @@ export default class EmptyPanel extends React.Component {
                     <p>No results found.</p>
                 }
             </div>
-        )
+        );
     }
 }

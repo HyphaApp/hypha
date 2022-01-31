@@ -1,24 +1,24 @@
-import React from 'react'
-import { connect } from 'react-redux';
+import React from 'react';
+import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
-import { withWindowSizeListener } from 'react-window-size-listener';
+import {withWindowSizeListener} from 'react-window-size-listener';
 
-import { clearCurrentSubmission } from '@actions/submissions';
+import {clearCurrentSubmission} from '@actions/submissions';
 import DisplayPanel from '@containers/DisplayPanel';
-import SlideInRight from '@components/Transitions/SlideInRight'
+import SlideInRight from '@components/Transitions/SlideInRight';
 import SlideOutLeft from '@components/Transitions/SlideOutLeft';
-import ResizablePanels from '@components/ResizablePanels'
+import ResizablePanels from '@components/ResizablePanels';
 
 import FullScreenLoadingPanel from '@components/FullScreenLoadingPanel';
 
 import './style.scss';
 
 const DetailView = props => {
-    const isMobile = (width) => (width ? width : props.windowSize.windowWidth) < 1024
+    const isMobile = (width) => (width ? width : props.windowSize.windowWidth) < 1024;
 
-    const renderDisplay = () => <DisplayPanel />
+    const renderDisplay = () => <DisplayPanel />;
 
-    const { listing, isLoading, isErrored, isEmpty, showSubmision, errorMessage } = props
+    const {listing, isLoading, isErrored, isEmpty, showSubmision, errorMessage} = props;
 
     if (isErrored) {
         return (
@@ -26,44 +26,47 @@ const DetailView = props => {
                 <h5>Something went wrong!</h5>
                 <p>{errorMessage}</p>
             </div>
-        )
-    } else if (!isLoading && isEmpty) {
+        );
+    }
+    else if (!isLoading && isEmpty) {
         return (
             <div className="loading-panel">
                 <h5>No submissions available</h5>
             </div>
-        )
+        );
     }
 
     if (!props.windowSize.windowWidth) {
-        return null
+        return null;
     }
 
-    let activeDisplay
+    let activeDisplay;
 
     if (isMobile()) {
         if (showSubmision) {
             activeDisplay = (
-                <SlideInRight key={"display"}>
+                <SlideInRight key={'display'}>
                     { renderDisplay() }
                 </SlideInRight>
-            )
-        } else {
-            activeDisplay = (
-                <SlideOutLeft key={"listing"}>
-                    { React.cloneElement(listing, { shouldSelectFirst: false }) }
-                </SlideOutLeft>
-            )
+            );
         }
-    } else {
+        else {
+            activeDisplay = (
+                <SlideOutLeft key={'listing'}>
+                    { React.cloneElement(listing, {shouldSelectFirst: false}) }
+                </SlideOutLeft>
+            );
+        }
+    }
+    else {
         activeDisplay = (
-            <>  
-            <ResizablePanels panels={[25, 75]} panelType={"lsb-main"}>
+            <>
+                <ResizablePanels panels={[25, 75]} panelType={'lsb-main'}>
                     {listing}
                     {renderDisplay()}
-            </ResizablePanels>
+                </ResizablePanels>
             </>
-        )
+        );
     }
     return (
         <>
@@ -74,8 +77,8 @@ const DetailView = props => {
                 {activeDisplay}
             </div>
         </>
-    )
-}
+    );
+};
 
 DetailView.propTypes = {
     listing: PropTypes.element.isRequired,
@@ -85,11 +88,11 @@ DetailView.propTypes = {
     isLoading: PropTypes.bool,
     errorMessage: PropTypes.string,
     isEmpty: PropTypes.bool,
-    isErrored: PropTypes.bool,
-}
+    isErrored: PropTypes.bool
+};
 
 const mapDispatchToProps = {
     clearSubmission: clearCurrentSubmission
-}
+};
 
 export default connect(null, mapDispatchToProps)(withWindowSizeListener(DetailView));

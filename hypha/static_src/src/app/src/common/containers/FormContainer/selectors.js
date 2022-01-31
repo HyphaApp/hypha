@@ -8,5 +8,5 @@ export const selectActiveForm = createSelector(
 
 export const selectFormsInfo = createSelector(
     selectFormContainerDomain,
-    domain =>  domain.forms
+    domain => domain.forms
 );

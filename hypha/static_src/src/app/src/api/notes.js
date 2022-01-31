@@ -3,7 +3,7 @@ export function fetchNotesForSubmission(submissionID, visibility = 'team') {
         path: `/v1/submissions/${submissionID}/comments/`,
         params: {
             visibility,
-            page_size: 1000,
+            page_size: 1000
         }
     };
 }
@@ -15,7 +15,7 @@ export function fetchNewNotesForSubmission(submissionID, latestID, visibility = 
         params: {
             visibility,
             newer: latestID,
-            page_size: 1000,
+            page_size: 1000
         }
     };
 }
@@ -26,7 +26,7 @@ export function createNoteForSubmission(submissionID, note) {
         path: `/v1/submissions/${submissionID}/comments/`,
         method: 'POST',
         options: {
-            body: note,
+            body: note
         }
     };
 }
@@ -36,7 +36,7 @@ export function editNoteForSubmission(note) {
         path: `/v1/comments/${note.id}/edit/`,
         method: 'POST',
         options: {
-            body: JSON.stringify({ message: note.message }),
+            body: JSON.stringify({message: note.message})
         }
-    }
+    };
 }

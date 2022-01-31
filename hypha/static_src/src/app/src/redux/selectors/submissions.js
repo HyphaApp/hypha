@@ -1,14 +1,14 @@
-import { createSelector } from 'reselect';
+import {createSelector} from 'reselect';
 
 import {
-    getCurrentRoundSubmissionIDs,
+    getCurrentRoundSubmissionIDs
 } from '@selectors/rounds';
 
 import {
-    getSubmissionIDsForCurrentStatuses,
+    getSubmissionIDsForCurrentStatuses
 } from '@selectors/statuses';
 
-import { SelectSelectedFilters } from '@containers/SubmissionFilters/selectors'
+import {SelectSelectedFilters} from '@containers/SubmissionFilters/selectors';
 
 
 const getSubmissions = state => state.submissions.byID;
@@ -27,9 +27,9 @@ const getCurrentDetermination = state => state.submissions.currentDetermination;
 
 const getDeterminationDraftStatus = state => state.submissions.isDeterminationDraftExist;
 
-const getSubmissionsForListing = state => Object.values(state.submissions.byID)
+const getSubmissionsForListing = state => Object.values(state.submissions.byID);
 
-const getSubmissionFilters = state => SelectSelectedFilters(state)
+const getSubmissionFilters = state => SelectSelectedFilters(state);
 
 const getSummaryEditorStatus = state => state.submissions.isSummaryEditorOpened;
 
@@ -37,65 +37,65 @@ const getGroupedIconStatus = state => state.submissions.showGroupedIcon;
 
 
 const getCurrentRoundSubmissions = createSelector(
-    [ getCurrentRoundSubmissionIDs, getSubmissions],
+    [getCurrentRoundSubmissionIDs, getSubmissions],
     (submissionIDs, submissions) => {
-        if(!Object.keys(submissions).length) {
-            return []
+        if (!Object.keys(submissions).length) {
+            return [];
         }
         return submissionIDs.map(submissionID => submissions[submissionID]);
     }
 );
 
 const getCurrentStatusesSubmissions = createSelector(
-    [ getSubmissionIDsForCurrentStatuses, getSubmissions],
+    [getSubmissionIDsForCurrentStatuses, getSubmissions],
     (submissionIDs, submissions) => {
-        if(!Object.keys(submissions).length) {
-            return []
+        if (!Object.keys(submissions).length) {
+            return [];
         }
         return submissionIDs.map(submissionID => submissions[submissionID]);
     }
 );
 
 const getCurrentSubmission = createSelector(
-    [ getCurrentSubmissionID, getSubmissions ],
+    [getCurrentSubmissionID, getSubmissions],
     (id, submissions) => {
         return submissions[id];
     }
 );
 
 const getScreeningStatuses = createSelector(getCurrentSubmission, submission => {
-    return submission && submission.screening && submission.screening.allScreening || []
+    return submission && submission.screening && submission.screening.allScreening || [];
 });
 
 const getSubmissionScreening = createSelector(getCurrentSubmission, submission => {
-    return submission && submission.screening  || {}
+    return submission && submission.screening || {};
 });
 
 const getSubmissionReminders = createSelector(getCurrentSubmission, submission => {
-    return submission && submission.reminders || []
-})
+    return submission && submission.reminders || [];
+});
 
 const getSubmissionMetaTerms = createSelector(
     [getCurrentSubmission], submission => {
-        let metaTerms = []
-        if(submission && "metaTerms" in submission){
+        let metaTerms = [];
+        if (submission && 'metaTerms' in submission) {
             submission.metaTerms.map(metaTerm => {
                 const existingMetaTermIndex = metaTerms.findIndex(mt => mt.parentId == metaTerm.parent.id);
                 if (existingMetaTermIndex != -1) {
-                    metaTerms[existingMetaTermIndex].children.push({id: metaTerm.id, name: metaTerm.name})
+                    metaTerms[existingMetaTermIndex].children.push({id: metaTerm.id, name: metaTerm.name});
                 }
                 else {
                     metaTerms.push({
-                        parentId : metaTerm.parent.id,
+                        parentId: metaTerm.parent.id,
                         parent: metaTerm.parent.name,
                         children: [{id: metaTerm.id, name: metaTerm.name}]
-                    })
+                    });
                 }
-            })
+            });
         }
-        return metaTerms
+        return metaTerms;
     }
-)
+);
 
 const getSubmissionOfID = (submissionID) => createSelector(
     [getSubmissions], submissions => submissions[submissionID]

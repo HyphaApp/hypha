@@ -3,11 +3,11 @@ import validate from 'validate.js';
 
 
 export default class Validator {
-    constructor(values, constraints){
+    constructor(values, constraints) {
         this.values = values;
         this.constraints = constraints;
-        this.errors = {}
-        this.updateComparators()
+        this.errors = {};
+        this.updateComparators();
     }
     updateComparators() {
         for (const field_name in this.constraints) {
@@ -19,16 +19,16 @@ export default class Validator {
     }
 
     validate() {
-        validate.validators.scoredAnswerValidator = function(value) {
-        let tmp = document.createElement("DIV");
-        tmp.innerHTML = value[0];
-        if((tmp.textContent.length) == 0){
-            return "- comment field can't be blank"
-        }
-        if(value[1] == 99){
-            return "- score field can't be blank"
-        }
-        return
+        validate.validators.scoredAnswerValidator = function (value) {
+            let tmp = document.createElement('DIV');
+            tmp.innerHTML = value[0];
+            if ((tmp.textContent.length) == 0) {
+                return "- comment field can't be blank";
+            }
+            if (value[1] == 99) {
+                return "- score field can't be blank";
+            }
+            return;
         };
         this.errors = validate(this.values, this.constraints);
         return this.errors;
@@ -40,5 +40,5 @@ export default class Validator {
             [field_name]: errors[field_name]
         } : false;
     }
-    
+
 }

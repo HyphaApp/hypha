@@ -1,6 +1,6 @@
-import React from 'react'
+import React from 'react';
 
-import OTFLoadingIcon from '@components/OTFLoadingIcon'
+import OTFLoadingIcon from '@components/OTFLoadingIcon';
 
 import './styles.scss';
 
@@ -11,7 +11,7 @@ const InlineLoading = () => {
                 <OTFLoadingIcon />
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default InlineLoading
+export default InlineLoading;
