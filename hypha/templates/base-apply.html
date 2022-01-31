@@ -1,4 +1,4 @@
-{% load i18n static wagtailuserbar wagtailcore_tags wagtailimages_tags navigation_tags util_tags hijack_tags cookieconsent_tags %}<!doctype html>
+{% load i18n static wagtailuserbar wagtailcore_tags wagtailimages_tags navigation_tags util_tags hijack cookieconsent_tags %}<!doctype html>
 {% wagtail_site as current_site %}
 <html class="no-js" lang="en">
     <head>
@@ -46,7 +46,6 @@
     </head>
 
     <body class="{% block body_class %}light-grey-bg template-{{ page.get_verbose_name|slugify }}{% endblock %}">
-        {% hijack_notification %}
 
         {% include "includes/sprites.html" %}
 

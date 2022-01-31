@@ -165,6 +165,8 @@ MIDDLEWARE = [
     'django_referrer_policy.middleware.ReferrerPolicyMiddleware',
     'django_otp.middleware.OTPMiddleware',
 
+    'hijack.middleware.HijackUserMiddleware',
+
     'hypha.apply.users.middleware.SocialAuthExceptionMiddleware',
 
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
@@ -548,6 +550,7 @@ FILE_ACCEPT_ATTR_VALUE = ', '.join(['.' + ext for ext in FILE_ALLOWED_EXTENSIONS
 HIJACK_LOGIN_REDIRECT_URL = '/dashboard/'
 HIJACK_LOGOUT_REDIRECT_URL = '/account/'
 HIJACK_DECORATOR = 'hypha.apply.users.decorators.superuser_decorator'
+HIJACK_PERMISSION_CHECK = 'hijack.permissions.superusers_and_staff'
 
 
 # Messaging Settings

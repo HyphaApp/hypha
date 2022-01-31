@@ -19,7 +19,7 @@ from django.utils.translation import gettext_lazy as _
 from django.views.generic import UpdateView
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
-from hijack.views import login_with_id
+from hijack.views import AcquireUserView
 from two_factor.forms import AuthenticationTokenForm, BackupTokenForm
 from two_factor.views import DisableView as TwoFactorDisableView
 from two_factor.views import LoginView as TwoFactorLoginView
@@ -162,13 +162,13 @@ def become(request):
     if not request.user.is_apply_staff:
         raise PermissionDenied()
 
-    id = request.POST.get('user')
+    id = request.POST.get('user_pk')
     if request.POST and id:
         target_user = User.objects.get(pk=id)
         if target_user.is_superuser:
             raise PermissionDenied()
 
-        return login_with_id(request, id)
+        return AcquireUserView.as_view()(request)
     return redirect('users:account')
 
 
