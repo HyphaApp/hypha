@@ -2,7 +2,10 @@ from django.urls import path
 from rest_framework_nested import routers
 
 from hypha.apply.api.v1.determination.views import SubmissionDeterminationViewSet
-from hypha.apply.api.v1.projects.views import DeliverableViewSet
+from hypha.apply.api.v1.projects.views import (
+    DeliverableViewSet,
+    InvoiceRequiredChecksViewSet,
+)
 from hypha.apply.api.v1.reminder.views import SubmissionReminderViewSet
 from hypha.apply.api.v1.review.views import SubmissionReviewViewSet
 from hypha.apply.api.v1.screening.views import (
@@ -43,7 +46,9 @@ urlpatterns = [
     path('user/', CurrentUser.as_view(), name='user'),
     path('submissions_filter/', SubmissionFilters.as_view(), name='submissions-filter'),
     path('projects/<int:project_pk>/invoices/<int:invoice_pk>/deliverables/', DeliverableViewSet.as_view({'post': 'create'}), name='set-deliverables'),
-    path('projects/<int:project_pk>/invoices/<int:invoice_pk>/deliverables/<int:pk>/', DeliverableViewSet.as_view({'delete': 'destroy'}), name='remove-deliverables')
+    path('projects/<int:project_pk>/invoices/<int:invoice_pk>/deliverables/<int:pk>/', DeliverableViewSet.as_view({'delete': 'destroy'}), name='remove-deliverables'),
+    path('projects/<int:project_pk>/invoices/<int:invoice_pk>/', InvoiceRequiredChecksViewSet.as_view({'get': 'retrieve'}), name='get-required-checks'),
+    path('projects/<int:project_pk>/invoices/<int:pk>/set_required_checks/', InvoiceRequiredChecksViewSet.as_view({'post': 'set_required_checks'}), name='set-required-checks')
 ]
 
 urlpatterns = router.urls + submission_router.urls + urlpatterns

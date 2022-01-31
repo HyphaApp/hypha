@@ -46,8 +46,11 @@ class UserQuerySet(models.QuerySet):
     def approvers(self):
         return self.filter(groups__name=APPROVER_GROUP_NAME)
 
-    def finances(self):
-        return self.filter(groups__name=FINANCE_GROUP_NAME)
+    def finances_level_1(self):
+        return self.filter(groups__name=FINANCE_GROUP_NAME).exclude(groups__name=APPROVER_GROUP_NAME)
+
+    def finances_level_2(self):
+        return self.filter(groups__name=FINANCE_GROUP_NAME).filter(groups__name=APPROVER_GROUP_NAME)
 
     def contracting(self):
         return self.filter(groups__name=CONTRACTING_GROUP_NAME)

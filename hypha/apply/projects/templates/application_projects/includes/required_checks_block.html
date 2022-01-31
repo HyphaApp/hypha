@@ -1,0 +1,25 @@
+{% load i18n invoice_tools %}
+
+<div class="sidebar__inner">
+    {% can_complete_required_checks object user as user_can_complete_required_checks %}
+    <h5>{% trans "Required Checks" %}</h5>
+    <form id="required-checks", action="" data-projectid="{{ project.id }}" data-invoiceid="{{ invoice.id }}">
+        <div class="available-to-invoice">
+            <b>{% trans "Make sure valid OFAC and SAM check, and W8/W9 are on file" %} </b>
+        </div>
+        <br>
+        <div class="required-checks-checkbox">
+            <input type="checkbox" name="valid_checks" id="valid_checks" {% if invoice.valid_checks %}checked{% endif %} {% if not user_can_complete_required_checks %} disabled {% endif %}>
+            <span>Valid OFAC, SAM, W8/W9 on file</span>
+        </div>
+        <br>
+        <div class="required-checks-link">
+            <b><label>{% trans "Link to SAM/OFAC/W8/W9:" %}</label></b>
+            <textarea name="valid-checks-link" id="valid-checks-link" rows=3 cols=30 required {% if not user_can_complete_required_checks %} disabled {% endif %}>{{ invoice.valid_checks_link }}</textarea> 
+        </div>
+        {% if user_can_complete_required_checks %}
+            <input type="submit" value="Save">
+        {% endif %}
+    </form>
+    <br>
+</div>

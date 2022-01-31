@@ -71,6 +71,9 @@ class InvoiceQueryset(models.QuerySet):
     def in_progress(self):
         return self.exclude(status__in=[DECLINED, PAID])
 
+    def approved_by_staff(self):
+        return self.filter(status=APPROVED_BY_STAFF)
+
     def rejected(self):
         return self.filter(status=DECLINED)
 
@@ -133,6 +136,15 @@ class Invoice(models.Model):
     deliverables = ManyToManyField(
         'InvoiceDeliverable',
         related_name='invoices'
+    )
+    valid_checks = models.BooleanField(
+        default=False,
+        help_text='Valid OFAC, SAM, W8/W9 on file'
+    )
+    valid_checks_link = models.URLField(
+        max_length=200,
+        blank=True,
+        help_text='Link to SAM/OFAC/W8/W9'
     )
     objects = InvoiceQueryset.as_manager()
 
@@ -203,6 +215,17 @@ class Invoice(models.Model):
             if self.status in {CHANGES_REQUESTED_BY_FINANCE_2, APPROVED_BY_FINANCE_1}:
                 return True
 
+        return False
+
+    def can_user_complete_required_checks(self, user):
+        if user.is_finance or user.is_finance_level2:
+            if self.status in [APPROVED_BY_STAFF]:
+                return True
+        return False
+
+    def can_user_view_required_checks(self, user):
+        if user.is_finance or user.is_finance_level2:
+            return True
         return False
 
     @property

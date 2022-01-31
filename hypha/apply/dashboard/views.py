@@ -161,7 +161,7 @@ class FinanceDashboardView(MyFlaggedMixin, TemplateView):
         return context
 
     def active_invoices(self):
-        invoices = Invoice.objects.in_progress()
+        invoices = Invoice.objects.approved_by_staff()
 
         return {
             'count': invoices.count(),
