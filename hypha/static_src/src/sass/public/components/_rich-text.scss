@@ -31,7 +31,7 @@
 
         &:hover {
             border-bottom: 1px solid $color--primary;
-      }
+        }
     }
 
     ul {
@@ -52,23 +52,25 @@
     }
 }
 
-.tox-statusbar__wordcount {
-    padding-left: 10px;
-    padding-right: 10px;
+.tox-statusbar {
+    &__wordcount {
+        padding-left: 10px;
+        padding-right: 10px;
 
-    &::after {
-        content: attr(data-after-word-count);
-    }
+        &::after {
+            content: attr(data-after-word-count);
+        }
 
-    &.word-count-warning,
-    &.word-count-warning-2 {
-        background-color: $color--pastel-red;
-        font-weight: bold;
-        text-shadow: none;
-        color: $color--black;
-    }
+        &.word-count-warning,
+        &.word-count-warning-2 {
+            background-color: $color--pastel-red;
+            font-weight: bold;
+            text-shadow: none;
+            color: $color--black;
+        }
 
-    &.word-count-warning-2 {
-        background-color: $color--tomato;
+        &.word-count-warning-2 {
+            background-color: $color--tomato;
+        }
     }
 }

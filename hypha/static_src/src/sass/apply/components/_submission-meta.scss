@@ -4,7 +4,7 @@
     tbody {
         td {
             &.phase {
-                span {
+                span { // stylelint-disable-line selector-max-compound-selectors
                     display: inline-block;
                     padding: 10px;
                     font-size: 13px;

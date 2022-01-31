@@ -181,7 +181,7 @@
                 fill: $color--dark-grey;
             }
 
-            .header__menus--mobile.is-visible & { // sass-lint:disable-line force-element-nesting
+            .header__menus--mobile.is-visible & { // stylelint-disable-line selector-class-pattern
                 fill: $color--white;
             }
         }

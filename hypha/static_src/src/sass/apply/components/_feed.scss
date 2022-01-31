@@ -136,7 +136,7 @@
 
             span {
                 &:first-child {
-                    &::after {
+                    &::after { // stylelint-disable-line max-nesting-depth
                         @include triangle(right, $color--black-50, 4px);
                         display: inline-block;
                         margin: 0 5px 0 10px;
@@ -168,7 +168,6 @@
             width: 90%;
             font-size: 18px;
         }
-
     }
 
     &__heading-status {

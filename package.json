@@ -78,11 +78,15 @@
         "identity-obj-proxy": "^3.0.0",
         "istanbul-reports": "^3.0.2",
         "jest": "^22.4.4",
+        "postcss": "^8.4.5",
         "react-hot-loader": "^4.8.4",
         "redux-devtools-extension": "^2.13.9",
         "sass-loader": "^7.1.0",
         "sinon": "^5.0.7",
         "style-loader": "^0.23.1",
+        "stylelint": "^14.3.0",
+        "stylelint-config-standard-scss": "^3.0.0",
+        "stylelint-scss": "^4.1.0",
         "webpack": "^4.46.0",
         "webpack-bundle-analyzer": "^3.9.0",
         "webpack-bundle-tracker": "^0.4.3",
@@ -97,7 +101,11 @@
         "test:ci": "NODE_ENV=test jest --runInBand",
         "test:watch": "NODE_ENV=test jest --watch",
         "test:coverage": "NODE_ENV=test jest --coverage",
-        "updateSnapshot": "NODE_ENV=test jest --updateSnapshot"
+        "updateSnapshot": "NODE_ENV=test jest --updateSnapshot",
+        "lint-app:css": "stylelint \"hypha/static_src/src/app/src/**/*.scss\"",
+        "lint:css": "stylelint \"hypha/static_src/src/sass/**/*.scss\"",
+        "lint:js": "eslint \"hypha/static_src/src/javascript/**/*.js\"",
+        "lint": "npm run lint:css && npm run lint:js"
     },
     "engines": {
         "node": "12.22.x"

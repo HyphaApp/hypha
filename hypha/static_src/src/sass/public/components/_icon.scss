@@ -8,7 +8,7 @@
         fill: $color--dark-grey;
     }
 
-    .header__menus--mobile.is-visible & { // sass-lint:disable-line force-element-nesting
+    .header__menus--mobile.is-visible & { // stylelint-disable-line selector-class-pattern
         fill: $color--white;
     }
 
@@ -53,7 +53,7 @@
             fill: $color--white;
         }
 
-        .header--light-bg.search-open & { // sass-lint:disable-line force-element-nesting
+        .header--light-bg.search-open & { // stylelint-disable-line force-element-nesting
             fill: $color--dark-grey;
         }
     }
@@ -111,7 +111,7 @@
     }
 
     &--search {
-        .header--light-bg.search-open & { // sass-lint:disable-line force-element-nesting
+        .header--light-bg.search-open & { // stylelint-disable-line force-element-nesting
             fill: $color--white;
         }
     }
@@ -166,5 +166,4 @@
         margin-top: 15px;
         fill: $color--tomato;
     }
-
 }

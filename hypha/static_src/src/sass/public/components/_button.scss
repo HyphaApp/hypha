@@ -1,3 +1,5 @@
+// stylelint-disable max-nesting-depth
+
 .button {
     padding: 0;
     background-color: transparent;
@@ -122,6 +124,7 @@
     }
 
     // cannot conform to BEM here in order to be able to override google button styles
+    // stylelint-disable selector-max-compound-selectors
     &--google-translate {
         width: 160px;
         margin-left: 10px;
@@ -136,7 +139,7 @@
             padding: 5px;
             font-family: $font--primary;
             font-weight: $weight--bold;
-            transition: background, color,  $transition;
+            transition: background, color, $transition;
 
             .header--light-bg & {
                 @include button(transparent, $color--black);
@@ -147,10 +150,10 @@
             &:hover {
                 .goog-te-menu-value {
                     span {
-                        color: $color--dark-blue !important; // sass-lint:disable-line no-important
+                        color: $color--dark-blue !important; // stylelint-disable-line declaration-no-important
 
                         .header--light-bg & {
-                            color: $color--white !important; // sass-lint:disable-line no-important
+                            color: $color--white !important; // stylelint-disable-line declaration-no-important
                         }
                     }
                 }
@@ -160,16 +163,16 @@
                 color: $color--white;
 
                 .header--light-bg & {
-                    color: $color--black; // sass-lint:disable-line no-important
+                    color: $color--black;
                 }
 
                 span {
                     // color of the arrow is inlined hence !important
-                    color: $color--white !important; // sass-lint:disable-line no-important
+                    color: $color--white !important; // stylelint-disable-line declaration-no-important
                     transition: color  $transition;
 
                     .header--light-bg & {
-                        color: $color--black !important; // sass-lint:disable-line no-important
+                        color: $color--black !important; // stylelint-disable-line declaration-no-important
                     }
 
                     &:nth-of-type(2) {

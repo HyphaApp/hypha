@@ -1,3 +1,5 @@
+// stylelint-disable selector-max-compound-selectors
+
 @use 'sass:math';
 
 .form {
@@ -71,20 +73,22 @@
             align-items: center;
             margin: 20px 0;
 
-            .form__question {
-                margin: 0;
-            }
+            .form {
+                &__question {
+                    margin: 0;
+                }
 
-            .form__item {
-                position: relative;
-                top: -10px;
-                order: -1;
-                padding: 0;
-            }
+                &__item {
+                    position: relative;
+                    top: -10px;
+                    order: -1;
+                    padding: 0;
+                }
 
-            .form__help {
-                order: -2;
-                width: 100%;
+                &__help {
+                    order: -2;
+                    width: 100%;
+                }
             }
         }
 
@@ -98,7 +102,7 @@
         margin-bottom: .5em;
         font-weight: $weight--bold;
 
-        // sass-lint:disable class-name-format
+        // stylelint-disable selector-class-pattern
         &--image_field,
         &--multi_file_field,
         &--single_file_field,
@@ -125,12 +129,12 @@
         &--boolean_field {
             font-size: 17px;
         }
-        // sass-lint:enddisable
+        // stylelint-enable selector-class-pattern
     }
 
     &__file-list {
         ul {
-            margin:  .5rem 0;
+            margin: .5rem 0;
         }
     }
 
@@ -245,7 +249,7 @@
                 }
 
                 input {
-                    &:first-of-type {
+                    &:first-of-type { // stylelint-disable-line max-nesting-depth
                         @supports (display: grid) {
                             grid-column: 1;
                         }
@@ -306,11 +310,13 @@
             margin-top: 20px;
         }
 
-        .form__filters & {
-            max-width: 100%;
+        .form {
+            &__filters & {
+                max-width: 100%;
 
-            select {
-                height: $dropdown-height;
+                select {
+                    height: $dropdown-height;
+                }
             }
         }
 
@@ -322,8 +328,8 @@
             background: transparent;
             border-radius: 0;
             appearance: none;
-            -webkit-appearance: none; // sass-lint:disable-line no-vendor-prefixes
-            -moz-appearance: none; // sass-lint:disable-line no-vendor-prefixes
+            -webkit-appearance: none; // stylelint-disable-line property-no-vendor-prefix
+            -moz-appearance: none; // stylelint-disable-line property-no-vendor-prefix
 
             option {
                 background-color: $color--white;
@@ -341,7 +347,6 @@
         grid-template-rows: auto auto auto;
         grid-template-columns: 1fr;
 
-
         @include media-query(tablet-landscape) {
             grid-template-areas: 'message visibility' 'actions actions';
             grid-template-rows: auto auto;
@@ -350,15 +355,15 @@
 
             .wmd-input {
                 max-width: 100%;
-                margin-bottom:  0;
+                margin-bottom: 0;
             }
         }
 
-        .id_message {
+        .id_message { // stylelint-disable-line selector-class-pattern
             grid-area: message;
         }
 
-        .id_visibility_0 {
+        .id_visibility_0 { // stylelint-disable-line selector-class-pattern
             grid-area: visibility;
         }
 
@@ -470,26 +475,23 @@
         z-index: -1;
         width: 1px;
         height: 1px;
-    }
 
-    [type='radio'] + label,
-    [type='checkbox'] + label {
-        position: relative;
-        padding-left: 30px;
-        cursor: pointer;
-    }
+        & + label {
+            position: relative;
+            padding-left: 30px;
+            cursor: pointer;
 
-    [type='radio'] + label::before,
-    [type='checkbox'] + label::before {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 20px;
-        height: 20px;
-        background: $color--white;
-        border: 1px solid $color--mid-grey;
-        content: '';
-
+            &::before {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 20px;
+                height: 20px;
+                background: $color--white;
+                border: 1px solid $color--mid-grey;
+                content: '';
+            }
+        }
     }
 
     // Radio specific
@@ -570,8 +572,6 @@
                     height: auto;
                 }
             }
-
-
         }
     }
 

@@ -27,48 +27,64 @@ html {
     text-transform: inherit;
 }
 
-// sass-lint:disable single-line-per-selector
-h1, h2, h3, h4, h5, h6,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
 .heading-text {
     @include heading-text;
 }
-// sass-lint:enddisable
 
 .body-text {
     @include responsive-font-sizes($base-font-size, $base-font-size-large);
 }
 
 // Default sizes
-h1, %h1, .alpha   {
+h1,
+%h1,
+.alpha {
     @include responsive-font-sizes(40px, map-get($font-sizes, alpha));
     font-weight: $weight--black;
     letter-spacing: -.02rem;
 }
 
-h2, %h2, .beta    {
+h2,
+%h2,
+.beta {
     @include responsive-font-sizes(30px, map-get($font-sizes, beta));
     letter-spacing: -.02rem;
 }
 
-h3, %h3, .gamma   {
+h3,
+%h3,
+.gamma {
     @include responsive-font-sizes(20px, map-get($font-sizes, gamma));
     letter-spacing: -.02rem;
 }
 
-h4, %h4, .delta   {
+h4,
+%h4,
+.delta {
     @include responsive-font-sizes(18px, map-get($font-sizes, delta));
     letter-spacing: -.02rem;
 }
 
-h5, %h5, .epsilon {
+h5,
+%h5,
+.epsilon {
     @include responsive-font-sizes(15px, map-get($font-sizes, epsilon));
 }
 
-h6, %h6, .zeta    {
+h6,
+%h6,
+.zeta {
     @include font-size(zeta);
 }
 
-small, .milli {
+small,
+.milli {
     @include font-size(milli);
 }
 
@@ -78,7 +94,7 @@ small, .milli {
     font-style: normal;
     font-weight: 200;
     src: url('../../fonts/montserrat/Montserrat-Light.woff') format('woff');
-    text-rendering: optimizeLegibility;
+    text-rendering: optimizelegibility;
 }
 
 // regular
@@ -87,7 +103,7 @@ small, .milli {
     font-style: normal;
     font-weight: 400;
     src: url('../../fonts/montserrat/Montserrat-Regular.woff') format('woff');
-    text-rendering: optimizeLegibility;
+    text-rendering: optimizelegibility;
 }
 
 // semibold
@@ -96,7 +112,7 @@ small, .milli {
     font-style: normal;
     font-weight: 600;
     src: url('../../fonts/montserrat/Montserrat-SemiBold.woff') format('woff');
-    text-rendering: optimizeLegibility;
+    text-rendering: optimizelegibility;
 }
 
 // bold
@@ -105,7 +121,7 @@ small, .milli {
     font-style: normal;
     font-weight: 700;
     src: url('../../fonts/montserrat/Montserrat-Bold.woff') format('woff');
-    text-rendering: optimizeLegibility;
+    text-rendering: optimizelegibility;
 }
 
 // black
@@ -114,10 +130,8 @@ small, .milli {
     font-style: normal;
     font-weight: 800;
     src: url('../../fonts/montserrat/Montserrat-Black.woff') format('woff');
-    text-rendering: optimizeLegibility;
+    text-rendering: optimizelegibility;
 }
-
-
 
 // regular
 @font-face {
@@ -125,7 +139,7 @@ small, .milli {
     font-style: normal;
     font-weight: 400;
     src: url('../../fonts/noto-sans/NotoSans.woff') format('woff');
-    text-rendering: optimizeLegibility;
+    text-rendering: optimizelegibility;
 }
 
 // bold
@@ -134,5 +148,5 @@ small, .milli {
     font-style: normal;
     font-weight: 700;
     src: url('../../fonts/noto-sans/NotoSans-Bold.woff') format('woff');
-    text-rendering: optimizeLegibility;
+    text-rendering: optimizelegibility;
 }

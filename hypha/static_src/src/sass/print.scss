@@ -1,4 +1,5 @@
-// sass-lint:disable no-color-hex, no-color-literals, no-important, no-vendor-prefixes
+// stylelint-disable color-no-hex, no-color-literals, declaration-no-important
+// stylelint-disable property-no-vendor-prefix, selector-class-pattern
 * {
     background: transparent !important;
     color: #000 !important; // Black prints faster: h5bp.com/s
@@ -26,7 +27,6 @@ body {
     line-height: 1.3 !important;
     margin: 1cm !important;
 }
-
 
 // Underline all links.
 :link,

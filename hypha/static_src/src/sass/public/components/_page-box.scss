@@ -5,13 +5,13 @@
 
 .page-box {
     padding: 1rem;
-    margin-bottom:  1rem;
+    margin-bottom: 1rem;
     background-color: $color--white;
 
     @include media-query(tablet-portrait) {
         padding: 2rem;
-        margin-bottom:  2rem;
-        width:  48%;
+        margin-bottom: 2rem;
+        width: 48%;
     }
 
     & > .wrapper {
@@ -20,8 +20,8 @@
         &::before {
             content: '';
             position: absolute;
-            top:  0;
-            right:  0;
+            top: 0;
+            right: 0;
             width: 40px;
             height: 40px;
             background-repeat: no-repeat;
@@ -61,5 +61,4 @@
     h5 {
         color: $color--dark-blue;
     }
-
 }

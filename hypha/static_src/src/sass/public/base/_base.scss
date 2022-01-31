@@ -1,6 +1,4 @@
-/*------------------------------------*\
-	$BASE DEFAULTS
-\*------------------------------------*/
+// stylelint-disable property-no-vendor-prefix, alpha-value-notation
 
 // Box Sizing
 *,
@@ -10,7 +8,6 @@
 }
 
 // Prevent text size change on orientation change.
-// sass-lint:disable no-vendor-prefixes
 html {
     font-family: $font--primary;
     -webkit-text-size-adjust: 100%;
@@ -23,7 +20,7 @@ body {
 
     &.no-scroll {
         overflow-y: hidden;
-	}
+    }
 }
 
 // Prevent empty space below images appearing
@@ -38,11 +35,12 @@ img {
     max-width: 100%;
 }
 
-// sass-lint:disable single-line-per-selector
-button, input, select, textarea {
+button,
+input,
+select,
+textarea {
     font-family: inherit;
 }
-// sass-lint:enddisable
 
 a {
     color: $color--primary;
@@ -50,7 +48,7 @@ a {
 
     &:hover {
         cursor: pointer;
-  }
+    }
 }
 
 ul,
@@ -118,7 +116,8 @@ ol {
     left: 0;
     z-index: 5;
     width: 100%;
-    background-image: linear-gradient(-180deg, rgba(0, 0, 0, .72) 0%, rgba(116, 116, 118, 0) 96%); // sass-lint:disable-line no-color-literals
+    background-image: linear-gradient(-180deg, rgba(0, 0, 0, .72) 0%, rgba(116, 116, 118, 0) 96%); // stylelint-disable-line color-function-notation, max-line-length
+
     content: '';
     opacity: .5;
 }

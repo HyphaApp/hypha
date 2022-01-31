@@ -54,7 +54,7 @@
 
     &--with-button {
         .button {
-            float:  right;
+            float: right;
         }
 
         @include media-query(tablet-portrait) {
