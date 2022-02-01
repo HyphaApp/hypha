@@ -1,5 +1,3 @@
-import os
-
 from .base import *  # noqa
 
 # Disable debug mode
