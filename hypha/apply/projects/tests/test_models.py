@@ -82,21 +82,6 @@ class TestProjectModel(TestCase):
 
 
 class TestInvoiceModel(TestCase):
-    #:todo: user can change status from various statuses
-    # test_applicant_can_change_status: // to submitted or resubmitted
-    # test_applicant_cant_change_status:
-    # test_staff_can_change_status:
-    # test_staff_cant_change_status:
-    # test_finance1_can_change_status:
-    # test_finance1_cant_change_status:
-    # test_finance2_can_change_status:
-    # test_finance2_cant_change_status:
-
-    # test_applicant_can_edit_invoice:
-    # test_applicant_cant_edit_invoice:
-    # test_staff_can_edit_invoice:
-    # test_staff_cant_edit_invoice:
-
     def test_staff_can_delete_from_submitted(self):
         invoice = InvoiceFactory(status=SUBMITTED)
         staff = StaffFactory()
@@ -173,6 +158,43 @@ class TestInvoiceModel(TestCase):
             paid_value=Decimal('2'),
         )
         self.assertEqual(invoice.value, Decimal('2'))
+
+    # todo: add validation data in tests
+    def test_applicant_can_change_status(self):
+        pass
+
+    def test_applicant_cant_change_status(self):
+        pass
+
+    def test_staff_can_change_status(self):
+        pass
+
+    def test_staff_cant_change_status(self):
+        pass
+
+    def test_finance1_can_change_status(self):
+        pass
+
+    def test_finance1_cant_change_status(self):
+        pass
+
+    def test_finance2_can_change_status(self):
+        pass
+
+    def test_finance2_cant_change_status(self):
+        pass
+
+    def test_applicant_can_edit_invoice(self):
+        pass
+
+    def test_applicant_cant_edit_invoice(self):
+        pass
+
+    def test_staff_can_edit_invoice(self):
+        pass
+
+    def test_staff_cant_edit_invoice(self):
+        pass
 
 
 class TestInvoiceQueryset(TestCase):

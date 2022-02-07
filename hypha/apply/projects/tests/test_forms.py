@@ -24,42 +24,37 @@ from .factories import DocumentCategoryFactory, ProjectFactory, address_to_form_
 
 # TODO: Fix tests when the flow is complete!!!
 
-#Invoice state Tests
-# test_choices_with_submitted_status:
-# test_choices_with_resubmitted_status:
-# test_choices_with_changes_requested_by_staff:
-# test_choices_with_approved_by_staff:
-# test_choices_with_changes_requested_by_finance1:
-# test_choices_with_approved_by_finance1:
-# test_choices_with_changes_requested_by_finance2:
 
+class TestChangeInvoiceStatusFormForm(TestCase):
+    """
+    Invoice status tests
+    """
+    def test_choices_with_submitted_status(self):
+        """ request = InvoiceFactory(status=SUBMITTED)
+        form = ChangeInvoiceStatusForm(instance=request)
 
-# class TestChangeInvoiceStatusFormForm(TestCase):
-#     def test_choices_with_submitted_status(self):
-#         request = InvoiceFactory(status=SUBMITTED)
-#         form = ChangeInvoiceStatusForm(instance=request)
+        expected = set(filter_request_choices([APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_STAFF, DECLINED]))
+        actual = set(form.fields['status'].choices)
+        self.assertEqual(expected, actual)"""
+        pass
 
-#         expected = set(filter_request_choices([APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_STAFF, DECLINED]))
-#         actual = set(form.fields['status'].choices)
-#         self.assertEqual(expected, actual)
+    def test_choices_with_resubmitted_status(self):
+        pass
 
-#     def test_choices_with_changes_requested_status(self):
-#         request = InvoiceFactory(status=CHANGES_REQUESTED_BY_STAFF)
-#         form = ChangeInvoiceStatusForm(instance=request)
+    def test_choices_with_changes_requested_by_staff_status(self):
+        pass
 
-#         expected = set(filter_request_choices([DECLINED]))
-#         actual = set(form.fields['status'].choices)
+    def test_choices_with_approved_by_staff(self):
+        pass
 
-#         self.assertEqual(expected, actual)
+    def test_choices_with_changes_requested_by_finance1_status(self):
+        pass
 
-#     def test_choices_with_resubmitted_status(self):
-#         request = InvoiceFactory(status=RESUBMITTED)
-#         form = ChangeInvoiceStatusForm(instance=request)
+    def test_choices_with_approved_by_finance1_status(self):
+        pass
 
-#         expected = set(filter_request_choices([APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_STAFF, DECLINED]))
-#         actual = set(form.fields['status'].choices)
-
-#         self.assertEqual(expected, actual)
+    def test_choices_with_changes_requested_by_finance2_status(self):
+        pass
 
 
 class TestProjectApprovalForm(TestCase):
