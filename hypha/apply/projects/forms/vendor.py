@@ -4,6 +4,7 @@ from operator import itemgetter
 from babel.core import get_global
 from babel.numbers import get_currency_name, get_territory_currencies
 from django import forms
+from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from django_file_form.forms import FileFormMixin
 
@@ -82,7 +83,7 @@ class CreateVendorFormStep3(FileFormMixin, BaseVendorForm, forms.Form):
 
 class CreateVendorFormStep4(BaseVendorForm, forms.Form):
     CURRENCY_CHOICES = [
-        (currency, f'{get_currency_name(currency)} - {currency}')
+        (currency, f'{get_currency_name(currency, locale=settings.LANGUAGE_CODE)} - {currency}')
         for currency in get_active_currencies()
     ]
 
@@ -115,7 +116,7 @@ class CreateVendorFormStep5(BaseVendorForm, forms.Form):
 
 class CreateVendorFormStep6(BaseVendorForm, forms.Form):
     CURRENCY_CHOICES = [
-        (currency, f'{get_currency_name(currency)} - {currency}')
+        (currency, f'{get_currency_name(currency, locale=settings.LANGUAGE_CODE)} - {currency}')
         for currency in get_active_currencies()
     ]
     branch_address = AddressField()
