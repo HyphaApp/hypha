@@ -93,6 +93,16 @@ class ApproverFactory(StaffFactory):
             )
 
 
+class Finance2Factory(FinanceFactory):
+    @factory.post_generation
+    def groups(self, create, extracted, **kwargs):
+        if create:
+            self.groups.add(
+                GroupFactory(name=FINANCE_GROUP_NAME),
+                GroupFactory(name=APPROVER_GROUP_NAME)
+            )
+
+
 class SuperUserFactory(StaffFactory):
     is_superuser = True
 
