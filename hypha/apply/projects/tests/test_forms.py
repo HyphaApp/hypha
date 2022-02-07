@@ -24,6 +24,16 @@ from .factories import DocumentCategoryFactory, ProjectFactory, address_to_form_
 
 # TODO: Fix tests when the flow is complete!!!
 
+#Invoice state Tests
+# test_choices_with_submitted_status:
+# test_choices_with_resubmitted_status:
+# test_choices_with_changes_requested_by_staff:
+# test_choices_with_approved_by_staff:
+# test_choices_with_changes_requested_by_finance1:
+# test_choices_with_approved_by_finance1:
+# test_choices_with_changes_requested_by_finance2:
+
+
 # class TestChangeInvoiceStatusFormForm(TestCase):
 #     def test_choices_with_submitted_status(self):
 #         request = InvoiceFactory(status=SUBMITTED)

@@ -6,6 +6,8 @@ from hypha.apply.activity.tests.factories import CommentFactory
 from hypha.apply.users.tests.factories import UserFactory
 
 
+# todo: add tests for deliverables (create and destory)
+
 @override_settings(ROOT_URLCONF='hypha.apply.urls')
 class TestCommentEdit(TestCase):
     def post_to_edit(self, comment_pk, message='my message'):

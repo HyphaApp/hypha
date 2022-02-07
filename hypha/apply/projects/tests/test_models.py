@@ -82,6 +82,21 @@ class TestProjectModel(TestCase):
 
 
 class TestInvoiceModel(TestCase):
+    #:todo: user can change status from various statuses
+    # test_applicant_can_change_status: // to submitted or resubmitted
+    # test_applicant_cant_change_status:
+    # test_staff_can_change_status:
+    # test_staff_cant_change_status:
+    # test_finance1_can_change_status:
+    # test_finance1_cant_change_status:
+    # test_finance2_can_change_status:
+    # test_finance2_cant_change_status:
+
+    # test_applicant_can_edit_invoice:
+    # test_applicant_cant_edit_invoice:
+    # test_staff_can_edit_invoice:
+    # test_staff_cant_edit_invoice:
+
     def test_staff_can_delete_from_submitted(self):
         invoice = InvoiceFactory(status=SUBMITTED)
         staff = StaffFactory()
