@@ -133,10 +133,8 @@ class TestChangeInvoiceStatusFormForm(TestCase):
         user = StaffFactory()
         form = ChangeInvoiceStatusForm(instance=invoice, user=user)
 
-        expected = set(filter_request_choices([
-            CHANGES_REQUESTED_BY_FINANCE_1, APPROVED_BY_FINANCE_1, DECLINED,
-            CHANGES_REQUESTED_BY_FINANCE_2, APPROVED_BY_FINANCE_2
-        ], invoice_status_user_choices(user)))
+        expected = set(filter_request_choices([CHANGES_REQUESTED_BY_FINANCE_1, APPROVED_BY_FINANCE_1, DECLINED],
+                                              invoice_status_user_choices(user)))
         actual = set(form.fields['status'].choices)
         self.assertEqual(expected, actual)
 
@@ -145,10 +143,8 @@ class TestChangeInvoiceStatusFormForm(TestCase):
         user = FinanceFactory()
         form = ChangeInvoiceStatusForm(instance=invoice, user=user)
 
-        expected = set(filter_request_choices([
-            CHANGES_REQUESTED_BY_FINANCE_1, APPROVED_BY_FINANCE_1, DECLINED,
-            CHANGES_REQUESTED_BY_FINANCE_2, APPROVED_BY_FINANCE_2
-        ], invoice_status_user_choices(user)))
+        expected = set(filter_request_choices([CHANGES_REQUESTED_BY_FINANCE_1, APPROVED_BY_FINANCE_1, DECLINED],
+                                              invoice_status_user_choices(user)))
         actual = set(form.fields['status'].choices)
         self.assertEqual(expected, actual)
 
@@ -157,10 +153,8 @@ class TestChangeInvoiceStatusFormForm(TestCase):
         user = Finance2Factory()
         form = ChangeInvoiceStatusForm(instance=invoice, user=user)
 
-        expected = set(filter_request_choices([
-            CHANGES_REQUESTED_BY_FINANCE_1, APPROVED_BY_FINANCE_1, DECLINED,
-            CHANGES_REQUESTED_BY_FINANCE_2, APPROVED_BY_FINANCE_2
-        ], invoice_status_user_choices(user)))
+        expected = set(filter_request_choices([CHANGES_REQUESTED_BY_FINANCE_1, APPROVED_BY_FINANCE_1, DECLINED],
+                                              invoice_status_user_choices(user)))
         actual = set(form.fields['status'].choices)
         self.assertEqual(expected, actual)
 
@@ -229,7 +223,7 @@ class TestChangeInvoiceStatusFormForm(TestCase):
         user = StaffFactory()
         form = ChangeInvoiceStatusForm(instance=invoice, user=user)
 
-        expected = set(filter_request_choices([CHANGES_REQUESTED_BY_STAFF, DECLINED],
+        expected = set(filter_request_choices([CHANGES_REQUESTED_BY_FINANCE_1, APPROVED_BY_FINANCE_1, DECLINED],
                                               invoice_status_user_choices(user)))
         actual = set(form.fields['status'].choices)
         self.assertEqual(expected, actual)
@@ -239,7 +233,7 @@ class TestChangeInvoiceStatusFormForm(TestCase):
         user = FinanceFactory()
         form = ChangeInvoiceStatusForm(instance=invoice, user=user)
 
-        expected = set(filter_request_choices([CHANGES_REQUESTED_BY_STAFF, DECLINED],
+        expected = set(filter_request_choices([CHANGES_REQUESTED_BY_FINANCE_1, APPROVED_BY_FINANCE_1, DECLINED],
                                               invoice_status_user_choices(user)))
         actual = set(form.fields['status'].choices)
         self.assertEqual(expected, actual)
@@ -249,7 +243,7 @@ class TestChangeInvoiceStatusFormForm(TestCase):
         user = Finance2Factory()
         form = ChangeInvoiceStatusForm(instance=invoice, user=user)
 
-        expected = set(filter_request_choices([CHANGES_REQUESTED_BY_STAFF, DECLINED],
+        expected = set(filter_request_choices([CHANGES_REQUESTED_BY_FINANCE_1, APPROVED_BY_FINANCE_1, DECLINED],
                                               invoice_status_user_choices(user)))
         actual = set(form.fields['status'].choices)
         self.assertEqual(expected, actual)
