@@ -50,9 +50,9 @@ INVOICE_STATUS_FINANCE_2_CHOICES = [CHANGES_REQUESTED_BY_FINANCE_2, APPROVED_BY_
 
 
 def invoice_status_user_choices(user):
-    if user.is_finance_level2:
+    if user.is_finance_level_2:
         return INVOICE_STATUS_FINANCE_2_CHOICES
-    if user.is_finance:
+    if user.is_finance_level_1:
         return INVOICE_STATUS_FINANCE_1_CHOICES
     if user.is_apply_staff:
         return INVOICE_STATUS_PM_CHOICES
@@ -70,6 +70,12 @@ def invoice_path(instance, filename):
 class InvoiceQueryset(models.QuerySet):
     def in_progress(self):
         return self.exclude(status__in=[DECLINED, PAID])
+
+    def approved_by_staff(self):
+        return self.filter(status=APPROVED_BY_STAFF)
+
+    def approved_by_finance_1(self):
+        return self.filter(status=APPROVED_BY_FINANCE_1)
 
     def rejected(self):
         return self.filter(status=DECLINED)
@@ -134,6 +140,15 @@ class Invoice(models.Model):
         'InvoiceDeliverable',
         related_name='invoices'
     )
+    valid_checks = models.BooleanField(
+        default=False,
+        help_text='Valid OFAC, SAM, W8/W9 on file'
+    )
+    valid_checks_link = models.URLField(
+        max_length=200,
+        blank=True,
+        help_text='Link to SAM/OFAC/W8/W9'
+    )
     objects = InvoiceQueryset.as_manager()
 
     def __str__(self):
@@ -156,7 +171,7 @@ class Invoice(models.Model):
         return self.get_status_display()
 
     def can_user_delete(self, user):
-        if user.is_applicant or user.is_apply_staff or user.is_finance or user.is_finance_level2 or user.is_contracting:
+        if user.is_applicant or user.is_apply_staff or user.is_finance_level_1 or user.is_finance_level_2 or user.is_contracting:
             if self.status in (SUBMITTED):
                 return True
 
@@ -172,7 +187,7 @@ class Invoice(models.Model):
                 return True
 
         if user.is_apply_staff:
-            if self.status in {SUBMITTED, RESUBMITTED, CHANGES_REQUESTED_BY_FINANCE_1, CHANGES_REQUESTED_BY_FINANCE_2}:
+            if self.status in {SUBMITTED, RESUBMITTED, CHANGES_REQUESTED_BY_FINANCE_1}:
                 return True
 
         return False
@@ -181,7 +196,7 @@ class Invoice(models.Model):
         '''
         Check user roles that can tranistion invoice status based on the current status.
         '''
-        if not (user.is_contracting or user.is_apply_staff or user.is_finance or user.is_finance_level2):
+        if not (user.is_contracting or user.is_apply_staff or user.is_finance_level_1 or user.is_finance_level_2):
             return False  # Users can't change status
 
         if self.status in {PAID, DECLINED}:
@@ -195,14 +210,25 @@ class Invoice(models.Model):
             if self.status in {SUBMITTED, RESUBMITTED, CHANGES_REQUESTED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_1}:
                 return True
 
-        if user.is_finance:
-            if self.status in {APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_1}:
+        if user.is_finance_level_1:
+            if self.status in {APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_1, CHANGES_REQUESTED_BY_FINANCE_2}:
                 return True
 
-        if user.is_finance_level2:
+        if user.is_finance_level_2:
             if self.status in {CHANGES_REQUESTED_BY_FINANCE_2, APPROVED_BY_FINANCE_1}:
                 return True
 
+        return False
+
+    def can_user_complete_required_checks(self, user):
+        if user.is_finance_level_1:
+            if self.status in [APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_2]:
+                return True
+        return False
+
+    def can_user_view_required_checks(self, user):
+        if user.is_finance_level_1 or user.is_finance_level_2:
+            return True
         return False
 
     @property

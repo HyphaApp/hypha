@@ -38,7 +38,6 @@ class InvoiceDashboardTable(BaseInvoiceTable):
             'date_to',
         ]
         model = Invoice
-        orderable = False
         order_by = ['-requested_at']
         attrs = {'class': 'invoices-table'}
 

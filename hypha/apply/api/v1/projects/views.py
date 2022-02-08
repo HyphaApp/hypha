@@ -1,15 +1,20 @@
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 from rest_framework import mixins, permissions, status, viewsets
+from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
-from hypha.apply.projects.models.payment import InvoiceDeliverable
+from hypha.apply.projects.models.payment import Invoice, InvoiceDeliverable
 from hypha.apply.projects.models.project import Deliverable
 
 from ..mixin import InvoiceNestedMixin, ProjectNestedMixin
 from ..permissions import IsApplyStaffUser, IsFinance1User
-from .serializers import DeliverableSerializer, InvoiceDeliverableListSerializer
+from .serializers import (
+    DeliverableSerializer,
+    InvoiceDeliverableListSerializer,
+    InvoiceRequiredChecksSerializer,
+)
 
 
 class DeliverableViewSet(
@@ -69,3 +74,24 @@ class DeliverableViewSet(
         return Response(
             {'deliverables': ser.data, 'total': invoice.deliverables_total_amount['total']},
         )
+
+
+class InvoiceRequiredChecksViewSet(
+    mixins.RetrieveModelMixin,
+    viewsets.GenericViewSet,
+):
+    serializer_class = InvoiceRequiredChecksSerializer
+    permission_classes = [IsFinance1User]
+    queryset = Invoice.objects.all()
+
+    @action(detail=True, methods=['post'])
+    def set_required_checks(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        valid_checks = serializer.validated_data['valid_checks']
+        valid_checks_link = serializer.validated_data['valid_checks_link']
+        invoice = self.get_object()
+        invoice.valid_checks = valid_checks
+        invoice.valid_checks_link = valid_checks_link
+        invoice.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
