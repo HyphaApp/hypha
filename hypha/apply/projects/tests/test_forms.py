@@ -280,9 +280,11 @@ class TestCreateInvoiceForm(TestCase):
             'amount': 100.0
         }
 
-        invoice = SimpleUploadedFile('invoice.pdf', BytesIO(b'somebinarydata').read())
+        document = SimpleUploadedFile('invoice.pdf', BytesIO(b'somebinarydata').read())
+        supporting_documents = [SimpleUploadedFile('invoice.pdf', BytesIO(b'somebinarydata').read())]
         files = {
-            'document': invoice,
+            'document': document,
+            'supporting_documents': supporting_documents
         }
 
         form = CreateInvoiceForm(data=data, files=files)
@@ -292,9 +294,11 @@ class TestCreateInvoiceForm(TestCase):
         form.instance.project = ProjectFactory()
         invoice = form.save()
 
-        # self.assertEqual(invoice.receipts.count(), 1)
+        self.assertEqual(invoice.status, SUBMITTED)
+        self.assertIsNotNone(invoice.document)
+        self.assertEqual(invoice.supporting_documents.count(), 1)
 
-    def test_receipt_not_required(self):
+    def test_supporting_documents_not_required(self):
         data = {
             'paid_value': '10',
             'date_from': '2018-08-15',
@@ -304,9 +308,9 @@ class TestCreateInvoiceForm(TestCase):
 
         }
 
-        invoice = SimpleUploadedFile('invoice.pdf', BytesIO(b'somebinarydata').read())
+        document = SimpleUploadedFile('invoice.pdf', BytesIO(b'somebinarydata').read())
         files = {
-            'document': invoice,
+            'document': document,
         }
 
         form = CreateInvoiceForm(data=data, files=files)
@@ -316,7 +320,7 @@ class TestCreateInvoiceForm(TestCase):
         form.instance.project = ProjectFactory()
         invoice = form.save()
 
-        # self.assertEqual(invoice.receipts.count(), 0)
+        self.assertEqual(invoice.supporting_documents.count(), 0)
 
     def test_invoice_dates_are_correct(self):
         invoice = SimpleUploadedFile('invoice.pdf', BytesIO(b'somebinarydata').read())
