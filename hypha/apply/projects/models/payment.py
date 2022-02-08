@@ -231,6 +231,20 @@ class Invoice(models.Model):
             return True
         return False
 
+    def can_user_edit_deliverables(self, user):
+        if not (user.is_apply_staff or user.is_finance_level_1 or user.is_finance_level_2):
+            return False
+        if user.is_apply_staff:
+            if self.status in {SUBMITTED, RESUBMITTED, CHANGES_REQUESTED_BY_FINANCE_1}:
+                return True
+        if user.is_finance_level_1:
+            if self.status in {APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_2}:
+                return True
+        if user.is_finance_level_2:
+            if self.status in {APPROVED_BY_FINANCE_1}:
+                return True
+        return False
+
     @property
     def value(self):
         return self.paid_value or self.amount
