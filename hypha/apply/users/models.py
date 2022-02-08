@@ -178,7 +178,11 @@ class User(AbstractUser):
         return self.groups.filter(name=FINANCE_GROUP_NAME).exists()
 
     @cached_property
-    def is_finance_level2(self):
+    def is_finance_level_1(self):
+        return self.groups.filter(name=FINANCE_GROUP_NAME).exists() and not self.groups.filter(name=APPROVER_GROUP_NAME).exists()
+
+    @cached_property
+    def is_finance_level_2(self):
         return self.groups.filter(name=FINANCE_GROUP_NAME).exists() & self.groups.filter(name=APPROVER_GROUP_NAME).exists()
 
     @cached_property

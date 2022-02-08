@@ -50,9 +50,9 @@ INVOICE_STATUS_FINANCE_2_CHOICES = [CHANGES_REQUESTED_BY_FINANCE_2, APPROVED_BY_
 
 
 def invoice_status_user_choices(user):
-    if user.is_finance_level2:
+    if user.is_finance_level_2:
         return INVOICE_STATUS_FINANCE_2_CHOICES
-    if user.is_finance:
+    if user.is_finance_level_1:
         return INVOICE_STATUS_FINANCE_1_CHOICES
     if user.is_apply_staff:
         return INVOICE_STATUS_PM_CHOICES
@@ -171,7 +171,7 @@ class Invoice(models.Model):
         return self.get_status_display()
 
     def can_user_delete(self, user):
-        if user.is_applicant or user.is_apply_staff or user.is_finance or user.is_finance_level2 or user.is_contracting:
+        if user.is_applicant or user.is_apply_staff or user.is_finance_level_1 or user.is_finance_level_2 or user.is_contracting:
             if self.status in (SUBMITTED):
                 return True
 
@@ -196,7 +196,7 @@ class Invoice(models.Model):
         '''
         Check user roles that can tranistion invoice status based on the current status.
         '''
-        if not (user.is_contracting or user.is_apply_staff or user.is_finance or user.is_finance_level2):
+        if not (user.is_contracting or user.is_apply_staff or user.is_finance_level_1 or user.is_finance_level_2):
             return False  # Users can't change status
 
         if self.status in {PAID, DECLINED}:
@@ -210,24 +210,24 @@ class Invoice(models.Model):
             if self.status in {SUBMITTED, RESUBMITTED, CHANGES_REQUESTED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_1}:
                 return True
 
-        if user.is_finance:
+        if user.is_finance_level_1:
             if self.status in {APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_1}:
                 return True
 
-        if user.is_finance_level2:
+        if user.is_finance_level_2:
             if self.status in {CHANGES_REQUESTED_BY_FINANCE_2, APPROVED_BY_FINANCE_1}:
                 return True
 
         return False
 
     def can_user_complete_required_checks(self, user):
-        if user.is_finance or user.is_finance_level2:
+        if user.is_finance_level_1 or user.is_finance_level_2:
             if self.status in [APPROVED_BY_STAFF]:
                 return True
         return False
 
     def can_user_view_required_checks(self, user):
-        if user.is_finance or user.is_finance_level2:
+        if user.is_finance_level_1 or user.is_finance_level_2:
             return True
         return False
 
