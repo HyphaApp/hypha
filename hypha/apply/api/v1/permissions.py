@@ -25,6 +25,7 @@ class IsFinance1User(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         return request.user.is_finance_level_1
 
+
 class IsFinance2User(permissions.BasePermission):
     def has_permission(self, request, view):
         return request.user.is_finance_level_2

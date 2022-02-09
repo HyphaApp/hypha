@@ -10,10 +10,12 @@ from hypha.apply.projects.models.project import Deliverable
 
 from ..mixin import InvoiceNestedMixin, ProjectNestedMixin
 from ..permissions import (
-    IsApplyStaffUser, IsFinance1User, IsFinance2User,
-    HasDeliverableEditPermission, HasRequiredChecksPermission
+    HasDeliverableEditPermission,
+    HasRequiredChecksPermission,
+    IsApplyStaffUser,
+    IsFinance1User,
+    IsFinance2User,
 )
-
 from .serializers import (
     DeliverableSerializer,
     InvoiceDeliverableListSerializer,

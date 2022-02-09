@@ -10,18 +10,19 @@ from django.db import models
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.translation import gettext as _
+
 from hypha.apply.projects.models.payment import (
-    SUBMITTED,
-    RESUBMITTED,
-    CHANGES_REQUESTED_BY_STAFF,
-    CHANGES_REQUESTED_BY_FINANCE_1,
-    CHANGES_REQUESTED_BY_FINANCE_2,
-    APPROVED_BY_STAFF,
     APPROVED_BY_FINANCE_1,
     APPROVED_BY_FINANCE_2,
-    PAID,
+    APPROVED_BY_STAFF,
+    CHANGES_REQUESTED_BY_FINANCE_1,
+    CHANGES_REQUESTED_BY_FINANCE_2,
+    CHANGES_REQUESTED_BY_STAFF,
     DECLINED,
+    RESUBMITTED,
+    SUBMITTED,
 )
+
 from .models import ALL, TEAM
 from .options import MESSAGES
 from .tasks import send_mail
@@ -530,7 +531,6 @@ class SlackAdapter(AdapterBase):
 
     def batch_recipients(self, message_type, sources, **kwargs):
         # We group the messages by lead
-        import ipdb; ipdb.set_trace()
         leads = User.objects.filter(id__in=sources.values('lead'))
         return [
             {
@@ -921,6 +921,12 @@ class EmailAdapter(AdapterBase):
         if message_type in {MESSAGES.REVIEW_REMINDER}:
             return self.reviewers(source)
 
+        if message_type == MESSAGES.UPDATE_INVOICE_STATUS:
+            related = kwargs.get('related', None)
+            if related:
+                if related.status in {CHANGES_REQUESTED_BY_STAFF, DECLINED}:
+                    return [source.user.email]
+            return []
         return [source.user.email]
 
     def batch_recipients(self, message_type, sources, **kwargs):
