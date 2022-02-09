@@ -77,6 +77,9 @@ class InvoiceQueryset(models.QuerySet):
     def approved_by_finance_1(self):
         return self.filter(status=APPROVED_BY_FINANCE_1)
 
+    def for_finance_1(self):
+        return self.filter(status__in=[APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_2])
+
     def rejected(self):
         return self.filter(status=DECLINED)
 

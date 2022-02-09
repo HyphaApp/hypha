@@ -164,7 +164,7 @@ class FinanceDashboardView(MyFlaggedMixin, TemplateView):
         if self.request.user.is_finance_level_2:
             invoices = Invoice.objects.approved_by_finance_1()
         else:
-            invoices = Invoice.objects.approved_by_staff()
+            invoices = Invoice.objects.for_finance_1()
 
         return {
             'count': invoices.count(),
