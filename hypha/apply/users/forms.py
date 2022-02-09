@@ -49,7 +49,7 @@ class ProfileForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if not self.instance.is_apply_staff:
+        if not self.instance.is_apply_staff_or_finance:
             del self.fields['slack']
 
         if not self.instance.has_usable_password():
