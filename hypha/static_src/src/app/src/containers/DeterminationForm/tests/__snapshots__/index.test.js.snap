@@ -91,6 +91,12 @@ exports[`Test Determination Container Should render determination without issues
           null,
         ],
       ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
     }
   }
   submissionID={1}

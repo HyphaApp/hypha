@@ -12,6 +12,12 @@ exports[`Test Listing item component render a listing item component 1`] = `
       "calls": Array [
         Array [],
       ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
     }
   }
   selected={false}
@@ -25,6 +31,12 @@ exports[`Test Listing item component render a listing item component 1`] = `
         [MockFunction] {
           "calls": Array [
             Array [],
+          ],
+          "results": Array [
+            Object {
+              "type": "return",
+              "value": undefined,
+            },
           ],
         }
       }
@@ -47,6 +59,12 @@ exports[`Test Listing item component with selected render a listing item compone
       "calls": Array [
         Array [],
       ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
     }
   }
   selected={true}
@@ -60,6 +78,12 @@ exports[`Test Listing item component with selected render a listing item compone
         [MockFunction] {
           "calls": Array [
             Array [],
+          ],
+          "results": Array [
+            Object {
+              "type": "return",
+              "value": undefined,
+            },
           ],
         }
       }

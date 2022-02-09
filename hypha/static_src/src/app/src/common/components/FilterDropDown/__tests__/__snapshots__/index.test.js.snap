@@ -148,7 +148,7 @@ exports[`Test Filter dropdown component render a Filter dropdown component 1`] =
             </ForwardRef(InputLabel)>
           </WithStyles(ForwardRef(InputLabel))>
           <WithStyles(ForwardRef(Select))
-            input={<UNDEFINED />}
+            input={<WithStyles(ForwardRef(Input)) />}
             multiple={true}
             name="filter-key"
             renderValue={[Function]}
@@ -174,7 +174,7 @@ exports[`Test Filter dropdown component render a Filter dropdown component 1`] =
                   "selectMenu": "MuiSelect-selectMenu",
                 }
               }
-              input={<UNDEFINED />}
+              input={<WithStyles(ForwardRef(Input)) />}
               multiple={true}
               name="filter-key"
               renderValue={[Function]}
@@ -237,10 +237,10 @@ exports[`Test Filter dropdown component render a Filter dropdown component 1`] =
                     },
                     "autoWidth": false,
                     "children": Array [
-                      <UNDEFINED
+                      <WithStyles(ForwardRef(MenuItem))
                         value={1}
                       >
-                        <UNDEFINED
+                        <WithStyles(ForwardRef(Checkbox))
                           checked={false}
                           style={
                             Object {
@@ -248,14 +248,14 @@ exports[`Test Filter dropdown component render a Filter dropdown component 1`] =
                             }
                           }
                         />
-                        <UNDEFINED
+                        <WithStyles(ForwardRef(ListItemText))
                           primary="op1"
                         />
-                      </UNDEFINED>,
-                      <UNDEFINED
+                      </WithStyles(ForwardRef(MenuItem))>,
+                      <WithStyles(ForwardRef(MenuItem))
                         value={2}
                       >
-                        <UNDEFINED
+                        <WithStyles(ForwardRef(Checkbox))
                           checked={false}
                           style={
                             Object {
@@ -263,14 +263,14 @@ exports[`Test Filter dropdown component render a Filter dropdown component 1`] =
                             }
                           }
                         />
-                        <UNDEFINED
+                        <WithStyles(ForwardRef(ListItemText))
                           primary="op2"
                         />
-                      </UNDEFINED>,
-                      <UNDEFINED
+                      </WithStyles(ForwardRef(MenuItem))>,
+                      <WithStyles(ForwardRef(MenuItem))
                         value={3}
                       >
-                        <UNDEFINED
+                        <WithStyles(ForwardRef(Checkbox))
                           checked={false}
                           style={
                             Object {
@@ -278,10 +278,10 @@ exports[`Test Filter dropdown component render a Filter dropdown component 1`] =
                             }
                           }
                         />
-                        <UNDEFINED
+                        <WithStyles(ForwardRef(ListItemText))
                           primary="op3"
                         />
-                      </UNDEFINED>,
+                      </WithStyles(ForwardRef(MenuItem))>,
                     ],
                     "classes": Object {
                       "disabled": "Mui-disabled",
@@ -385,10 +385,10 @@ exports[`Test Filter dropdown component render a Filter dropdown component 1`] =
                       },
                       "autoWidth": false,
                       "children": Array [
-                        <UNDEFINED
+                        <WithStyles(ForwardRef(MenuItem))
                           value={1}
                         >
-                          <UNDEFINED
+                          <WithStyles(ForwardRef(Checkbox))
                             checked={false}
                             style={
                               Object {
@@ -396,14 +396,14 @@ exports[`Test Filter dropdown component render a Filter dropdown component 1`] =
                               }
                             }
                           />
-                          <UNDEFINED
+                          <WithStyles(ForwardRef(ListItemText))
                             primary="op1"
                           />
-                        </UNDEFINED>,
-                        <UNDEFINED
+                        </WithStyles(ForwardRef(MenuItem))>,
+                        <WithStyles(ForwardRef(MenuItem))
                           value={2}
                         >
-                          <UNDEFINED
+                          <WithStyles(ForwardRef(Checkbox))
                             checked={false}
                             style={
                               Object {
@@ -411,14 +411,14 @@ exports[`Test Filter dropdown component render a Filter dropdown component 1`] =
                               }
                             }
                           />
-                          <UNDEFINED
+                          <WithStyles(ForwardRef(ListItemText))
                             primary="op2"
                           />
-                        </UNDEFINED>,
-                        <UNDEFINED
+                        </WithStyles(ForwardRef(MenuItem))>,
+                        <WithStyles(ForwardRef(MenuItem))
                           value={3}
                         >
-                          <UNDEFINED
+                          <WithStyles(ForwardRef(Checkbox))
                             checked={false}
                             style={
                               Object {
@@ -426,10 +426,10 @@ exports[`Test Filter dropdown component render a Filter dropdown component 1`] =
                               }
                             }
                           />
-                          <UNDEFINED
+                          <WithStyles(ForwardRef(ListItemText))
                             primary="op3"
                           />
-                        </UNDEFINED>,
+                        </WithStyles(ForwardRef(MenuItem))>,
                       ],
                       "classes": Object {
                         "disabled": "Mui-disabled",
@@ -534,10 +534,10 @@ exports[`Test Filter dropdown component render a Filter dropdown component 1`] =
                         },
                         "autoWidth": false,
                         "children": Array [
-                          <UNDEFINED
+                          <WithStyles(ForwardRef(MenuItem))
                             value={1}
                           >
-                            <UNDEFINED
+                            <WithStyles(ForwardRef(Checkbox))
                               checked={false}
                               style={
                                 Object {
@@ -545,14 +545,14 @@ exports[`Test Filter dropdown component render a Filter dropdown component 1`] =
                                 }
                               }
                             />
-                            <UNDEFINED
+                            <WithStyles(ForwardRef(ListItemText))
                               primary="op1"
                             />
-                          </UNDEFINED>,
-                          <UNDEFINED
+                          </WithStyles(ForwardRef(MenuItem))>,
+                          <WithStyles(ForwardRef(MenuItem))
                             value={2}
                           >
-                            <UNDEFINED
+                            <WithStyles(ForwardRef(Checkbox))
                               checked={false}
                               style={
                                 Object {
@@ -560,14 +560,14 @@ exports[`Test Filter dropdown component render a Filter dropdown component 1`] =
                                 }
                               }
                             />
-                            <UNDEFINED
+                            <WithStyles(ForwardRef(ListItemText))
                               primary="op2"
                             />
-                          </UNDEFINED>,
-                          <UNDEFINED
+                          </WithStyles(ForwardRef(MenuItem))>,
+                          <WithStyles(ForwardRef(MenuItem))
                             value={3}
                           >
-                            <UNDEFINED
+                            <WithStyles(ForwardRef(Checkbox))
                               checked={false}
                               style={
                                 Object {
@@ -575,10 +575,10 @@ exports[`Test Filter dropdown component render a Filter dropdown component 1`] =
                                 }
                               }
                             />
-                            <UNDEFINED
+                            <WithStyles(ForwardRef(ListItemText))
                               primary="op3"
                             />
-                          </UNDEFINED>,
+                          </WithStyles(ForwardRef(MenuItem))>,
                         ],
                         "classes": Object {
                           "disabled": "Mui-disabled",
@@ -689,10 +689,10 @@ exports[`Test Filter dropdown component render a Filter dropdown component 1`] =
                           },
                           "autoWidth": false,
                           "children": Array [
-                            <UNDEFINED
+                            <WithStyles(ForwardRef(MenuItem))
                               value={1}
                             >
-                              <UNDEFINED
+                              <WithStyles(ForwardRef(Checkbox))
                                 checked={false}
                                 style={
                                   Object {
@@ -700,14 +700,14 @@ exports[`Test Filter dropdown component render a Filter dropdown component 1`] =
                                   }
                                 }
                               />
-                              <UNDEFINED
+                              <WithStyles(ForwardRef(ListItemText))
                                 primary="op1"
                               />
-                            </UNDEFINED>,
-                            <UNDEFINED
+                            </WithStyles(ForwardRef(MenuItem))>,
+                            <WithStyles(ForwardRef(MenuItem))
                               value={2}
                             >
-                              <UNDEFINED
+                              <WithStyles(ForwardRef(Checkbox))
                                 checked={false}
                                 style={
                                   Object {
@@ -715,14 +715,14 @@ exports[`Test Filter dropdown component render a Filter dropdown component 1`] =
                                   }
                                 }
                               />
-                              <UNDEFINED
+                              <WithStyles(ForwardRef(ListItemText))
                                 primary="op2"
                               />
-                            </UNDEFINED>,
-                            <UNDEFINED
+                            </WithStyles(ForwardRef(MenuItem))>,
+                            <WithStyles(ForwardRef(MenuItem))
                               value={3}
                             >
-                              <UNDEFINED
+                              <WithStyles(ForwardRef(Checkbox))
                                 checked={false}
                                 style={
                                   Object {
@@ -730,10 +730,10 @@ exports[`Test Filter dropdown component render a Filter dropdown component 1`] =
                                   }
                                 }
                               />
-                              <UNDEFINED
+                              <WithStyles(ForwardRef(ListItemText))
                                 primary="op3"
                               />
-                            </UNDEFINED>,
+                            </WithStyles(ForwardRef(MenuItem))>,
                           ],
                           "classes": Object {
                             "disabled": "Mui-disabled",

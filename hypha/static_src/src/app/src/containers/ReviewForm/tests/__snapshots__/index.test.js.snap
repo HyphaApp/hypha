@@ -15,6 +15,12 @@ exports[`Test Review form Container Should render review form with loading true 
           null,
         ],
       ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
     }
   }
 >

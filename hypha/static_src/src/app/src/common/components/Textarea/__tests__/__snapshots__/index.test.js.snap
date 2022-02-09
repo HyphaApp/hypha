@@ -40,6 +40,12 @@ exports[`Test textarea component render a TextArea component 1`] = `
           1,
         ],
       ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
     }
   }
   required={false}

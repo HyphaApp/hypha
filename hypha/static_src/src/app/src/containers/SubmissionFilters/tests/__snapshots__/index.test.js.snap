@@ -89,6 +89,12 @@ exports[`Test submission filter Container Should render submission filter with l
       "calls": Array [
         Array [],
       ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
     }
   }
   submissionFilters={

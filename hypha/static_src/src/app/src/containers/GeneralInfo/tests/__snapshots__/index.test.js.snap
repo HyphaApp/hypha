@@ -19,6 +19,12 @@ exports[`Test General info Container Should render General info without issues 1
         "calls": Array [
           Array [],
         ],
+        "results": Array [
+          Object {
+            "type": "return",
+            "value": undefined,
+          },
+        ],
       }
     }
   />
