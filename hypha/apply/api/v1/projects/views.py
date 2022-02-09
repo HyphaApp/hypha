@@ -84,6 +84,9 @@ class InvoiceRequiredChecksViewSet(
     permission_classes = [IsFinance1User]
     queryset = Invoice.objects.all()
 
+    def get_invoice_object(self):
+        return self.get_object()
+
     @action(detail=True, methods=['post'])
     def set_required_checks(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
