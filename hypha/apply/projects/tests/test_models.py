@@ -254,6 +254,54 @@ class TestInvoiceModel(TestCase):
             invoice = InvoiceFactory(status=status)
             self.assertFalse(invoice.can_user_edit(user))
 
+    def test_applicant_cant_complete_required_checks(self):
+        statuses = [APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_2]
+        user = ApplicantFactory()
+        for status in statuses:
+            invoice = InvoiceFactory(status=status)
+            self.assertFalse(invoice.can_user_complete_required_checks(user))
+
+    def test_staff_cant_complete_required_checks(self):
+        statuses = [APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_2]
+        user = StaffFactory()
+        for status in statuses:
+            invoice = InvoiceFactory(status=status)
+            self.assertFalse(invoice.can_user_complete_required_checks(user))
+
+    def test_finance1_can_complete_required_checks(self):
+        statuses = [APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_2]
+        user = FinanceFactory()
+        for status in statuses:
+            invoice = InvoiceFactory(status=status)
+            self.assertTrue(invoice.can_user_complete_required_checks(user))
+
+    def test_finance2_cant_complete_required_checks(self):
+        statuses = [APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_2]
+        user = Finance2Factory()
+        for status in statuses:
+            invoice = InvoiceFactory(status=status)
+            self.assertFalse(invoice.can_user_complete_required_checks(user))
+
+    def test_applicant_cant_view_required_checks(self):
+        user = ApplicantFactory()
+        invoice = InvoiceFactory(status=APPROVED_BY_FINANCE_1)
+        self.assertFalse(invoice.can_user_view_required_checks(user))
+
+    def test_staff_cant_view_required_checks(self):
+        user = StaffFactory()
+        invoice = InvoiceFactory(status=APPROVED_BY_FINANCE_1)
+        self.assertFalse(invoice.can_user_view_required_checks(user))
+
+    def test_finance1_can_view_required_checks(self):
+        user = FinanceFactory()
+        invoice = InvoiceFactory(status=APPROVED_BY_FINANCE_1)
+        self.assertTrue(invoice.can_user_view_required_checks(user))
+
+    def test_finance2_can_view_required_checks(self):
+        user = Finance2Factory()
+        invoice = InvoiceFactory(status=APPROVED_BY_FINANCE_1)
+        self.assertTrue(invoice.can_user_view_required_checks(user))
+
 
 class TestInvoiceQueryset(TestCase):
     def test_get_totals(self):
