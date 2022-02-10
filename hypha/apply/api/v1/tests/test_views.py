@@ -110,7 +110,7 @@ class TestCommentEdit(TestCase):
 
 
 @override_settings(ROOT_URLCONF='hypha.apply.urls')
-class TestDeliverableViewset(TestCase):
+class TestInvoiceDeliverableViewset(TestCase):
     def post_to_add(self, project_id, invoice_id, deliverable_id, quantity):
         return self.client.post(
             reverse_lazy('api:v1:set-deliverables', kwargs={'project_pk': project_id, 'invoice_pk': invoice_id}),

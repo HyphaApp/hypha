@@ -23,7 +23,7 @@ from .serializers import (
 )
 
 
-class DeliverableViewSet(
+class InvoiceDeliverableViewSet(
     InvoiceNestedMixin,
     ProjectNestedMixin,
     mixins.CreateModelMixin,
