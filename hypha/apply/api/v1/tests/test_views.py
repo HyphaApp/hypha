@@ -3,6 +3,11 @@ from django.urls import reverse_lazy
 
 from hypha.apply.activity.models import ALL, APPLICANT, Activity
 from hypha.apply.activity.tests.factories import CommentFactory
+from hypha.apply.projects.models.payment import (
+    APPROVED_BY_FINANCE_1,
+    APPROVED_BY_STAFF,
+    SUBMITTED,
+)
 from hypha.apply.projects.tests.factories import (
     DeliverableFactory,
     InvoiceDeliverableFactory,
@@ -126,9 +131,12 @@ class TestDeliverableViewset(TestCase):
         deliverable = DeliverableFactory(project=project)
 
         response = self.post_to_add(project.id, invoice.id, deliverable.id, quantity=1)
-        self.assertTrue(response.status_code, 403)
+        self.assertEqual(response.status_code, 403)
 
-    def test_applicant_cant_create_deliverables(self):
+        response = self.delete_to_remove(project.id, invoice.id, deliverable.id)
+        self.assertEqual(response.status_code, 403)
+
+    def test_applicant_cant_add_deliverables(self):
         user = ApplicantFactory()
         project = ProjectFactory()
         invoice = InvoiceFactory(project=project)
@@ -136,37 +144,37 @@ class TestDeliverableViewset(TestCase):
         self.client.force_login(user)
 
         response = self.post_to_add(project.id, invoice.id, deliverable.id, quantity=1)
-        self.assertTrue(response.status_code, 403)
+        self.assertEqual(response.status_code, 403)
 
     def test_staff_can_add_deliverables(self):
         user = StaffFactory()
         project = ProjectFactory()
-        invoice = InvoiceFactory(project=project)
+        invoice = InvoiceFactory(project=project, status=SUBMITTED)
         deliverable = DeliverableFactory(project=project)
         self.client.force_login(user)
 
         response = self.post_to_add(project.id, invoice.id, deliverable.id, quantity=1)
-        self.assertTrue(response.status_code, 201)
+        self.assertEqual(response.status_code, 201)
 
     def test_finance1_can_add_deliverables(self):
         user = FinanceFactory()
         project = ProjectFactory()
-        invoice = InvoiceFactory(project=project)
+        invoice = InvoiceFactory(project=project, status=APPROVED_BY_STAFF)
         deliverable = DeliverableFactory(project=project)
         self.client.force_login(user)
 
         response = self.post_to_add(project.id, invoice.id, deliverable.id, quantity=1)
-        self.assertTrue(response.status_code, 201)
+        self.assertEqual(response.status_code, 201)
 
-    def test_finance2_cant_add_deliverables(self):
+    def test_finance2_can_add_deliverables(self):
         user = Finance2Factory()
         project = ProjectFactory()
-        invoice = InvoiceFactory(project=project)
+        invoice = InvoiceFactory(project=project, status=APPROVED_BY_FINANCE_1)
         deliverable = DeliverableFactory(project=project)
         self.client.force_login(user)
 
         response = self.post_to_add(project.id, invoice.id, deliverable.id, quantity=1)
-        self.assertTrue(response.status_code, 403)
+        self.assertEqual(response.status_code, 201)
 
     def test_applicant_cant_remove_deliverables(self):
         user = ApplicantFactory()
@@ -178,84 +186,75 @@ class TestDeliverableViewset(TestCase):
         self.client.force_login(user)
 
         response = self.delete_to_remove(project.id, invoice.id, deliverable.id)
-        self.assertTrue(response.status_code, 403)
+        self.assertEqual(response.status_code, 403)
 
     def test_staff_can_remove_deliverables(self):
         user = StaffFactory()
         project = ProjectFactory()
-        invoice = InvoiceFactory(project=project)
+        invoice = InvoiceFactory(project=project, status=SUBMITTED)
         deliverable = DeliverableFactory(project=project)
         invoice_deliverable = InvoiceDeliverableFactory(deliverable=deliverable)
         invoice.deliverables.add(invoice_deliverable)
         self.client.force_login(user)
 
         response = self.delete_to_remove(project.id, invoice.id, deliverable.id)
-        self.assertTrue(response.status_code, 404)
+        self.assertEqual(response.status_code, 404)
 
     def test_finance1_can_remove_deliverables(self):
         user = FinanceFactory()
         project = ProjectFactory()
-        invoice = InvoiceFactory(project=project)
+        invoice = InvoiceFactory(project=project, status=APPROVED_BY_STAFF)
         deliverable = DeliverableFactory(project=project)
         invoice_deliverable = InvoiceDeliverableFactory(deliverable=deliverable)
         invoice.deliverables.add(invoice_deliverable)
         self.client.force_login(user)
 
         response = self.delete_to_remove(project.id, invoice.id, deliverable.id)
-        self.assertTrue(response.status_code, 404)
+        self.assertEqual(response.status_code, 404)
 
-    def test_finance2_cant_remove_deliverables(self):
+    def test_finance2_can_remove_deliverables(self):
         user = Finance2Factory()
         project = ProjectFactory()
-        invoice = InvoiceFactory(project=project)
+        invoice = InvoiceFactory(project=project, status=APPROVED_BY_FINANCE_1)
         deliverable = DeliverableFactory(project=project)
         invoice_deliverable = InvoiceDeliverableFactory(deliverable=deliverable)
         invoice.deliverables.add(invoice_deliverable)
         self.client.force_login(user)
 
         response = self.delete_to_remove(project.id, invoice.id, deliverable.id)
-        self.assertTrue(response.status_code, 403)
+        self.assertEqual(response.status_code, 404)
 
     def test_deliverable_dont_exists_in_project_deliverables(self):
-        user = FinanceFactory()
+        user = StaffFactory()
         project = ProjectFactory()
-        invoice = InvoiceFactory(project=project)
+        invoice = InvoiceFactory(project=project, status=SUBMITTED)
         deliverable = DeliverableFactory()
         self.client.force_login(user)
 
         response = self.post_to_add(project.id, invoice.id, deliverable.id, quantity=1)
-        self.assertTrue(response.status_code, 400)
-
-    def test_deliverable_dont_exists(self):
-        user = FinanceFactory()
-        project = ProjectFactory()
-        invoice = InvoiceFactory(project=project)
-        self.client.force_login(user)
-
-        response = self.post_to_add(project.id, invoice.id, deliverable_id=1, quantity=1)
-        self.assertTrue(response.status_code, 404)
+        self.assertEqual(response.status_code, 400)
 
     def test_deliverable_already_exists_in_invoice(self):
-        user = FinanceFactory()
+        user = StaffFactory()
         project = ProjectFactory()
-        invoice = InvoiceFactory(project=project)
+        invoice = InvoiceFactory(project=project, status=SUBMITTED)
         deliverable = DeliverableFactory(project=project)
         invoice_deliverable = InvoiceDeliverableFactory(deliverable=deliverable)
         invoice.deliverables.add(invoice_deliverable)
         self.client.force_login(user)
 
         response = self.post_to_add(project.id, invoice.id, deliverable.id, quantity=1)
-        self.assertTrue(response.status_code, 400)
+        self.assertEqual(response.status_code, 400)
 
     def test_deliverable_available_gte_quantity(self):
-        user = FinanceFactory()
+        user = StaffFactory()
         project = ProjectFactory()
-        invoice = InvoiceFactory(project=project)
+        invoice = InvoiceFactory(project=project, status=SUBMITTED)
         deliverable = DeliverableFactory(project=project)
         self.client.force_login(user)
 
         response = self.post_to_add(project.id, invoice.id, deliverable.id, quantity=3)
-        self.assertTrue(response.status_code, 400)
+        self.assertEqual(response.status_code, 400)
 
 
 @override_settings(ROOT_URLCONF='hypha.apply.urls')
