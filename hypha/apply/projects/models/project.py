@@ -21,7 +21,6 @@ from wagtail.contrib.settings.models import BaseSetting, register_setting
 from wagtail.core.fields import StreamField
 
 from addressfield.fields import ADDRESS_FIELDS_ORDER
-from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.funds.models.mixins import AccessFormData
 from hypha.apply.stream_forms.blocks import FormFieldsBlock
 from hypha.apply.stream_forms.files import StreamFieldDataEncoder
@@ -345,18 +344,18 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
     def has_deliverables(self):
         return self.deliverables.exists()
 
-    def send_to_compliance(self, request):
-        """Notify Compliance about this Project."""
+    # def send_to_compliance(self, request):
+    #     """Notify Compliance about this Project."""
 
-        messenger(
-            MESSAGES.SENT_TO_COMPLIANCE,
-            request=request,
-            user=request.user,
-            source=self,
-        )
+    #     messenger(
+    #         MESSAGES.SENT_TO_COMPLIANCE,
+    #         request=request,
+    #         user=request.user,
+    #         source=self,
+    #     )
 
-        self.sent_to_compliance_at = timezone.now()
-        self.save(update_fields=['sent_to_compliance_at'])
+    #     self.sent_to_compliance_at = timezone.now()
+    #     self.save(update_fields=['sent_to_compliance_at'])
 
 
 @register_setting

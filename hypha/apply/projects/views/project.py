@@ -119,7 +119,7 @@ class CreateApprovalView(DelegatedViewMixin, CreateView):
             source=project,
         )
 
-        project.send_to_compliance(self.request)
+        # project.send_to_compliance(self.request)
 
         project.is_locked = False
         project.status = CONTRACTING

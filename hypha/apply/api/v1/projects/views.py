@@ -9,7 +9,13 @@ from hypha.apply.projects.models.payment import Invoice, InvoiceDeliverable
 from hypha.apply.projects.models.project import Deliverable
 
 from ..mixin import InvoiceNestedMixin, ProjectNestedMixin
-from ..permissions import IsApplyStaffUser, IsFinance1User
+from ..permissions import (
+    HasDeliverableEditPermission,
+    HasRequiredChecksPermission,
+    IsApplyStaffUser,
+    IsFinance1User,
+    IsFinance2User,
+)
 from .serializers import (
     DeliverableSerializer,
     InvoiceDeliverableListSerializer,
@@ -25,7 +31,8 @@ class DeliverableViewSet(
     viewsets.GenericViewSet
 ):
     permission_classes = (
-        permissions.IsAuthenticated, IsApplyStaffUser | IsFinance1User,
+        permissions.IsAuthenticated, HasDeliverableEditPermission,
+        IsApplyStaffUser | IsFinance1User | IsFinance2User
     )
     serializer_class = InvoiceDeliverableListSerializer
     pagination_class = None
@@ -81,7 +88,7 @@ class InvoiceRequiredChecksViewSet(
     viewsets.GenericViewSet,
 ):
     serializer_class = InvoiceRequiredChecksSerializer
-    permission_classes = [IsFinance1User]
+    permission_classes = [IsFinance1User, HasRequiredChecksPermission]
     queryset = Invoice.objects.all()
 
     @action(detail=True, methods=['post'])

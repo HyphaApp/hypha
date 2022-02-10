@@ -49,18 +49,18 @@ class ChangeInvoiceStatusForm(forms.ModelForm):
             CHANGES_REQUESTED_BY_STAFF: filter_request_choices([DECLINED], user_choices),
             APPROVED_BY_STAFF: filter_request_choices(
                 [
-                    CHANGES_REQUESTED_BY_FINANCE_1, APPROVED_BY_FINANCE_1, DECLINED,
+                    CHANGES_REQUESTED_BY_FINANCE_1, APPROVED_BY_FINANCE_1,
                 ],
                 user_choices
             ),
             CHANGES_REQUESTED_BY_FINANCE_1: filter_request_choices([CHANGES_REQUESTED_BY_STAFF, DECLINED], user_choices),
             CHANGES_REQUESTED_BY_FINANCE_2: filter_request_choices(
                 [
-                    CHANGES_REQUESTED_BY_FINANCE_1, APPROVED_BY_FINANCE_1, DECLINED
+                    CHANGES_REQUESTED_BY_FINANCE_1, APPROVED_BY_FINANCE_1,
                 ],
                 user_choices
             ),
-            APPROVED_BY_FINANCE_1: filter_request_choices([CHANGES_REQUESTED_BY_FINANCE_2, APPROVED_BY_FINANCE_2, DECLINED], user_choices),
+            APPROVED_BY_FINANCE_1: filter_request_choices([CHANGES_REQUESTED_BY_FINANCE_2, APPROVED_BY_FINANCE_2], user_choices),
         }
         status_field.choices = possible_status_transitions_lut.get(instance.status, [])
 

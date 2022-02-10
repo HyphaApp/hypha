@@ -11,6 +11,18 @@ from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.translation import gettext as _
 
+from hypha.apply.projects.models.payment import (
+    APPROVED_BY_FINANCE_1,
+    APPROVED_BY_FINANCE_2,
+    APPROVED_BY_STAFF,
+    CHANGES_REQUESTED_BY_FINANCE_1,
+    CHANGES_REQUESTED_BY_FINANCE_2,
+    CHANGES_REQUESTED_BY_STAFF,
+    DECLINED,
+    RESUBMITTED,
+    SUBMITTED,
+)
+
 from .models import ALL, TEAM
 from .options import MESSAGES
 from .tasks import send_mail
@@ -490,13 +502,31 @@ class SlackAdapter(AdapterBase):
             ]
 
         recipients = [self.slack_id(source.lead)]
-
         # Notify second reviewer when first reviewer is done.
         if message_type == MESSAGES.NEW_REVIEW and related:
             submission = source
             if submission.assigned.with_roles().count() == 2 and related.author.reviewer == submission.assigned.with_roles().first().reviewer:
                 recipients.append(self.slack_id(submission.assigned.with_roles().last().reviewer))
 
+        if message_type == MESSAGES.UPDATE_INVOICE_STATUS:
+            if related.status in [SUBMITTED, RESUBMITTED, CHANGES_REQUESTED_BY_FINANCE_1, APPROVED_BY_FINANCE_2]:
+                # Notify project lead/staff
+                return recipients
+            if related.status in [APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_2]:
+                # Notify finance 1
+                return [
+                    self.slack_id(user)
+                    for user in User.objects.finances_level_1()
+                    if self.slack_id(user)
+                ]
+            if related.status in [APPROVED_BY_FINANCE_1]:
+                # Notify finance 2
+                return [
+                    self.slack_id(user)
+                    for user in User.objects.finances_level_2()
+                    if self.slack_id(user)
+                ]
+            return []
         return recipients
 
     def batch_recipients(self, message_type, sources, **kwargs):
@@ -891,6 +921,12 @@ class EmailAdapter(AdapterBase):
         if message_type in {MESSAGES.REVIEW_REMINDER}:
             return self.reviewers(source)
 
+        if message_type == MESSAGES.UPDATE_INVOICE_STATUS:
+            related = kwargs.get('related', None)
+            if related:
+                if related.status in {CHANGES_REQUESTED_BY_STAFF, DECLINED}:
+                    return [source.user.email]
+            return []
         return [source.user.email]
 
     def batch_recipients(self, message_type, sources, **kwargs):
