@@ -67,7 +67,7 @@ class AccountView(UpdateView):
     def form_valid(self, form):
         updated_email = form.cleaned_data['email']
         name = form.cleaned_data['full_name']
-        slack = form.cleaned_data['slack']
+        slack = form.cleaned_data.get('slack')
         user = get_object_or_404(User, id=self.request.user.id)
         if updated_email and updated_email != user.email:
             base_url = reverse('users:email_change_confirm_password')

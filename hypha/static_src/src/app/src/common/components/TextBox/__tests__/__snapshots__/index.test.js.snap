@@ -40,6 +40,12 @@ exports[`Test textbox component render a Textbox component 1`] = `
           1,
         ],
       ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
     }
   }
   required={false}

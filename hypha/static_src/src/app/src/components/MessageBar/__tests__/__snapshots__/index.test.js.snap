@@ -9,6 +9,12 @@ exports[`Test inline loading component render a inline loading component 1`] = `
       "calls": Array [
         Array [],
       ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
     }
   }
   type="success"
@@ -30,6 +36,12 @@ exports[`Test inline loading component render a inline loading component 1`] = `
           [MockFunction] {
             "calls": Array [
               Array [],
+            ],
+            "results": Array [
+              Object {
+                "type": "return",
+                "value": undefined,
+              },
             ],
           }
         }

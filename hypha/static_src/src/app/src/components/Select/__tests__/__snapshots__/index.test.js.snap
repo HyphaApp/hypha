@@ -22,6 +22,12 @@ exports[`Test select component render a select component 1`] = `
           1,
         ],
       ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
     }
   }
   options={
