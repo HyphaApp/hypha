@@ -4,8 +4,8 @@ Django settings for hypha project.
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-import dj_database_url
 
+import dj_database_url
 from environs import Env
 
 env = Env()
@@ -19,7 +19,7 @@ APP_NAME = env.str('APP_NAME', 'hypha')
 DEBUG = False
 
 # SECRET_KEY is required
-SECRET_KEY = env.str("SECRET_KEY")
+SECRET_KEY = env.str('SECRET_KEY', None)
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', [])
 
@@ -191,7 +191,7 @@ WSGI_APPLICATION = 'hypha.wsgi.application'
 DATABASES = {
     'default': dj_database_url.config(
         conn_max_age=600,
-        default=f"postgres:///{APP_NAME}"
+        default=f'postgres:///{APP_NAME}'
     )
 }
 
@@ -511,7 +511,6 @@ SLACK_TYPE_COMMENTS = env.list('SLACK_TYPE_COMMENTS', [])
 
 # Automatic transition settings
 TRANSITION_AFTER_REVIEWS = env.bool('TRANSITION_AFTER_REVIEWS', False)
-
 TRANSITION_AFTER_ASSIGNED = env.bool('TRANSITION_AFTER_ASSIGNED', False)
 
 
@@ -554,8 +553,8 @@ MAILCHIMP_LIST_ID = env.str('MAILCHIMP_LIST_ID', None)
 # Basic auth settings
 if env.bool('BASIC_AUTH_ENABLED', False):
     MIDDLEWARE.insert(0, 'baipw.middleware.BasicAuthIPWhitelistMiddleware')
-    BASIC_AUTH_LOGIN = env.str('BASIC_AUTH_LOGIN')
-    BASIC_AUTH_PASSWORD = env.str('BASIC_AUTH_PASSWORD')
+    BASIC_AUTH_LOGIN = env.str('BASIC_AUTH_LOGIN', None)
+    BASIC_AUTH_PASSWORD = env.str('BASIC_AUTH_PASSWORD', None)
     BASIC_AUTH_WHITELISTED_HTTP_HOSTS = env.list('BASIC_AUTH_WHITELISTED_HTTP_HOSTS', [])
     BASIC_AUTH_WHITELISTED_IP_NETWORKS = env.list('BASIC_AUTH_WHITELISTED_IP_NETWORKS', [])
 
@@ -650,5 +649,5 @@ if env.str('AWS_STORAGE_BUCKET_NAME', None):
     FILE_FORM_TEMP_STORAGE = PRIVATE_FILE_STORAGE
 
 # Matomo tracking
-MATOMO_URL = env.bool('MATOMO_URL', False)
-MATOMO_SITEID = env.bool('MATOMO_SITEID', False)
+MATOMO_URL = env.str('MATOMO_URL', None)
+MATOMO_SITEID = env.str('MATOMO_SITEID', None)
