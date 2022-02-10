@@ -1,4 +1,5 @@
 module.exports = {
+    testEnvironment: "jsdom",
     automock: false,
     collectCoverageFrom: [
         '**/hypha/static_src/src/app/src/**.{js}',

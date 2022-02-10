@@ -33,6 +33,12 @@ exports[`Test form field component should render CheckBox render a form field co
           ],
         ],
       ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
     }
   }
   type="CheckboxInput"
@@ -176,6 +182,12 @@ exports[`Test form field component should render DropDown render a form field co
             "value",
           ],
         ],
+      ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
       ],
     }
   }
@@ -438,6 +450,12 @@ exports[`Test form field component should render Radio render a form field compo
           ],
         ],
       ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
     }
   }
   type=""
@@ -652,6 +670,12 @@ exports[`Test form field component should render TextBox render a form field com
           undefined,
         ],
       ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
     }
   }
   type="type2"
@@ -789,6 +813,12 @@ exports[`Test form field component should render Textarea render a form field co
             "value",
           ],
         ],
+      ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
       ],
     }
   }

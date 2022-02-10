@@ -29,6 +29,16 @@ exports[`Test radio component render a radio component 1`] = `
           "2",
         ],
       ],
+      "results": Array [
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+        Object {
+          "type": "return",
+          "value": undefined,
+        },
+      ],
     }
   }
   required={false}
