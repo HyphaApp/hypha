@@ -4,13 +4,12 @@ Django settings for hypha project.
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-
 import dj_database_url
+
 from environs import Env
 
 env = Env()
 env.read_env()
-# env = os.environ.copy()
 
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
@@ -26,7 +25,6 @@ ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', [])
 
 
 # Organisation name and e-mail address, used in e-mail templates etc.
-
 ORG_LONG_NAME = env.str('ORG_LONG_NAME', 'Acme Corporation')
 ORG_SHORT_NAME = env.str('ORG_SHORT_NAME', 'ACME')
 ORG_EMAIL = env.str('ORG_EMAIL', 'info@example.org')
@@ -35,24 +33,16 @@ ORG_GUIDE_URL = env.url('ORG_GUIDE_URL', 'https://guide.example.org/')
 
 # Email settings
 EMAIL_HOST = env.str('EMAIL_HOST', None)
-
 EMAIL_PORT = env.int('EMAIL_PORT', None)
-
 EMAIL_HOST_USER = env.str('EMAIL_HOST_USER', None)
-
 EMAIL_HOST_PASSWORD = env.str('EMAIL_HOST_PASSWORD', None)
-
 EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS', False)
-
 EMAIL_USE_SSL = env.bool('EMAIL_USE_SSL', False)
-
 EMAIL_SUBJECT_PREFIX = env.str('EMAIL_SUBJECT_PREFIX', None)
-
 SERVER_EMAIL = DEFAULT_FROM_EMAIL = env.str('SERVER_EMAIL', None)
 
 
 # Application definition
-
 INSTALLED_APPS = [
     'scout_apm.django',
 
@@ -196,10 +186,8 @@ FORM_RENDERER = 'django.forms.renderers.TemplatesSetting'
 
 WSGI_APPLICATION = 'hypha.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/stable/ref/settings/#databases
-
 DATABASES = {
     'default': dj_database_url.config(
         conn_max_age=600,
@@ -275,7 +263,6 @@ if env.str('CLOUDFLARE_BEARER_TOKEN', None) and env.str('CLOUDFLARE_API_ZONEID')
 
 
 # Search
-
 WAGTAILSEARCH_BACKENDS = {
     'default': {
         'BACKEND': 'wagtail.contrib.postgres_search.backend',
@@ -285,7 +272,6 @@ WAGTAILSEARCH_BACKENDS = {
 
 # Password validation
 # https://docs.djangoproject.com/en/stable/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
@@ -317,19 +303,12 @@ LANGUAGE_CODE = env.str('LANGUAGE_CODE', 'en')
 CURRENCY_SYMBOL = env.str('CURRENCY_SYMBOL', '$')
 
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_L10N = False
-
 USE_TZ = True
-
 DATE_FORMAT = 'N j, Y'
-
 DATETIME_FORMAT = 'N j, Y, H:i'
-
 SHORT_DATE_FORMAT = 'Y-m-d'
-
 SHORT_DATETIME_FORMAT = 'Y-m-d H:i'
 
 DATETIME_INPUT_FORMATS = [
@@ -352,7 +331,6 @@ LOCALE_PATHS = (
     PROJECT_DIR + '/locale',
 )
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/stable/howto/static-files/
 
@@ -368,7 +346,6 @@ STATIC_URL = env.str('STATIC_URL', '/static/')
 
 MEDIA_ROOT = env.str('MEDIA_DIR', os.path.join(BASE_DIR, 'media'))
 MEDIA_URL = env.str('MEDIA_URL', '/media/')
-
 
 AUTH_USER_MODEL = 'users.User'
 
@@ -386,7 +363,6 @@ AUTHENTICATION_BACKENDS = (
     'social_core.backends.google.GoogleOAuth2',
     'django.contrib.auth.backends.ModelBackend',
 )
-
 
 # Logging
 LOGGING = {
@@ -437,9 +413,7 @@ LOGGING = {
 
 # Wagtail settings
 WAGTAIL_FRONTEND_LOGIN_URL = '/login/'
-
 WAGTAIL_SITE_NAME = 'hypha'
-
 WAGTAILIMAGES_IMAGE_MODEL = 'images.CustomImage'
 WAGTAILIMAGES_FEATURE_DETECTION_ENABLED = False
 
@@ -465,13 +439,10 @@ DEFAULT_PER_PAGE = 20
 
 ESI_ENABLED = False
 
-# Custom settings
-
 ENABLE_STYLEGUIDE = False
 DEBUGTOOLBAR = False
 
 # Staff e-mail domain
-
 STAFF_EMAIL_DOMAINS = env.list('STAFF_EMAIL_DOMAINS', [])
 
 # Social Auth
@@ -505,13 +476,9 @@ SOCIAL_AUTH_PIPELINE = (
 
 # Bleach Settings
 BLEACH_ALLOWED_TAGS = ['a', 'b', 'big', 'blockquote', 'br', 'cite', 'code', 'col', 'colgroup', 'dd', 'del', 'dl', 'dt', 'em', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'i', 'ins', 'li', 'ol', 'p', 'pre', 'small', 'span', 'strong', 'sub', 'sup', 'table', 'tbody', 'td', 'th', 'thead', 'tr', 'ul']
-
 BLEACH_ALLOWED_ATTRIBUTES = ['class', 'colspan', 'href', 'rowspan', 'target', 'title', 'width']
-
 BLEACH_ALLOWED_STYLES = []
-
 BLEACH_STRIP_TAGS = True
-
 BLEACH_STRIP_COMMENTS = True
 
 # File Field settings
@@ -560,36 +527,26 @@ else:
 
 
 # S3 configuration
-
 if env.str('AWS_STORAGE_BUCKET_NAME', None):
     DEFAULT_FILE_STORAGE = 'hypha.storage_backends.PublicMediaStorage'
     PRIVATE_FILE_STORAGE = 'hypha.storage_backends.PrivateMediaStorage'
-
     AWS_STORAGE_BUCKET_NAME = env.str('AWS_STORAGE_BUCKET_NAME')
-
     AWS_PUBLIC_BUCKET_NAME = env.str('AWS_PUBLIC_BUCKET_NAME', AWS_STORAGE_BUCKET_NAME)
-
     AWS_PRIVATE_BUCKET_NAME = env.str('AWS_PRIVATE_BUCKET_NAME', AWS_STORAGE_BUCKET_NAME)
-
     AWS_S3_CUSTOM_DOMAIN = env.str('AWS_S3_CUSTOM_DOMAIN', None)
-
     AWS_PRIVATE_CUSTOM_DOMAIN = env.str('AWS_PRIVATE_CUSTOM_DOMAIN', None)
-
     AWS_QUERYSTRING_EXPIRE = env.str('AWS_QUERYSTRING_EXPIRE', None)
-
     AWS_PUBLIC_CUSTOM_DOMAIN = env.str('AWS_PUBLIC_CUSTOM_DOMAIN', None)
-
     INSTALLED_APPS += (
         'storages',
     )
-
 
 # Settings to connect to the Bucket from which we are migrating data
 AWS_MIGRATION_BUCKET_NAME = env.str('AWS_MIGRATION_BUCKET_NAME', '')
 AWS_MIGRATION_ACCESS_KEY_ID = env.str('AWS_MIGRATION_ACCESS_KEY_ID', '')
 AWS_MIGRATION_SECRET_ACCESS_KEY = env.str('AWS_MIGRATION_SECRET_ACCESS_KEY', '')
 
-
+# Mailchimp settings.
 MAILCHIMP_API_KEY = env.str('MAILCHIMP_API_KEY', None)
 MAILCHIMP_LIST_ID = env.str('MAILCHIMP_LIST_ID', None)
 
@@ -611,15 +568,10 @@ if env.str('PRIMARY_HOST', None):
 
 # Security configuration
 # https://docs.djangoproject.com/en/stable/ref/middleware/#module-django.middleware.security
-
 SECURE_SSL_REDIRECT = env.bool('SECURE_SSL_REDIRECT', True)
-
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-
 SECURE_HSTS_SECONDS = env.int('SECURE_HSTS_SECONDS', None)
-
 SECURE_BROWSER_XSS_FILTER = env.bool('SECURE_BROWSER_XSS_FILTER', True)
-
 SECURE_CONTENT_TYPE_NOSNIFF = env.bool('SECURE_CONTENT_TYPE_NOSNIFF', True)
 
 if env.bool('COOKIE_SECURE', False):
@@ -667,9 +619,7 @@ PROJECTS_ENABLED = env.bool('PROJECTS_ENABLED', False)
 
 PROJECTS_AUTO_CREATE = env.bool('PROJECTS_AUTO_CREATE', False)
 
-
 # Salesforce integration
-
 if env.bool('SALESFORCE_INTEGRATION', False):
     DATABASES = {
         **DATABASES,
@@ -691,7 +641,6 @@ if env.bool('SALESFORCE_INTEGRATION', False):
 
 
 # django-file-form settings
-
 FILE_FORM_CACHE = 'django_file_form'
 FILE_FORM_UPLOAD_DIR = 'temp_uploads'
 # Ensure FILE_FORM_UPLOAD_DIR exists:
@@ -700,8 +649,6 @@ os.makedirs(os.path.join(MEDIA_ROOT, FILE_FORM_UPLOAD_DIR), exist_ok=True)
 if env.str('AWS_STORAGE_BUCKET_NAME', None):
     FILE_FORM_TEMP_STORAGE = PRIVATE_FILE_STORAGE
 
-
 # Matomo tracking
-
 MATOMO_URL = env.bool('MATOMO_URL', False)
 MATOMO_SITEID = env.bool('MATOMO_SITEID', False)
