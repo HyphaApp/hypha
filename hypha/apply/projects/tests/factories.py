@@ -8,11 +8,12 @@ from django.utils import timezone
 from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
 from hypha.apply.users.tests.factories import StaffFactory, UserFactory
 
-from ..models.payment import Invoice, SupportingDocument
+from ..models.payment import Invoice, InvoiceDeliverable, SupportingDocument
 from ..models.project import (
     COMPLETE,
     IN_PROGRESS,
     Contract,
+    Deliverable,
     DocumentCategory,
     PacketFile,
     Project,
@@ -188,3 +189,19 @@ class ReportFactory(factory.django.DjangoModelFactory):
 class ApprovedProjectFactory(ProjectFactory):
     contract = factory.RelatedFactory(ContractFactory, 'project')
     report_config = factory.RelatedFactory(ReportConfigFactory, 'project')
+
+
+class DeliverableFactory(factory.django.DjangoModelFactory):
+    name = factory.Sequence('name {}'.format)
+    unit_price = decimal.Decimal('100')
+    project = factory.SubFactory(ProjectFactory)
+
+    class Meta:
+        model = Deliverable
+
+
+class InvoiceDeliverableFactory(factory.django.DjangoModelFactory):
+    deliverable = factory.SubFactory(DeliverableFactory)
+
+    class Meta:
+        model = InvoiceDeliverable
