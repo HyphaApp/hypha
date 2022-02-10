@@ -259,17 +259,90 @@ class TestInvoiceDeliverableViewset(TestCase):
 
 @override_settings(ROOT_URLCONF='hypha.apply.urls')
 class TestInvoiceRequiredChecksViewSet(TestCase):
+    def post_to_set(self, project_id, invoice_id, valid_checks, valid_checks_link):
+        return self.client.post(
+            reverse_lazy('api:v1:set-required-checks', kwargs={'project_pk': project_id, 'pk': invoice_id}),
+            secure=True,
+            data={'valid_checks': valid_checks, 'valid_checks_link': valid_checks_link}
+        )
+
+    def get_to_retrieve(self, project_id, invoice_id):
+        return self.client.get(
+            reverse_lazy('api:v1:get-required-checks', kwargs={'project_pk': project_id, 'pk': invoice_id}),
+            secure=True
+        )
+
+    def test_cant_get_set_required_checks_without_login(self):
+        project = ProjectFactory()
+        invoice = InvoiceFactory(project=project, status=APPROVED_BY_STAFF)
+        valid_checks = True
+        valid_checks_link = 'https://google.com'
+
+        response = self.post_to_set(project.id, invoice.id, valid_checks, valid_checks_link)
+        self.assertEqual(response.status_code, 403)
+
+        response = self.get_to_retrieve(project.id, invoice.id)
+        self.assertEqual(response.status_code, 403)
+
     def test_finance1_can_set_required_valid_checks(self):
-        pass
+        user = FinanceFactory()
+        project = ProjectFactory()
+        invoice = InvoiceFactory(project=project, status=APPROVED_BY_STAFF)
+        valid_checks = True
+        valid_checks_link = 'https://google.com'
 
-    def test_applicant_cant_set_required_valid_checks(self):
-        pass
+        self.client.force_login(user)
+        response = self.post_to_set(project.id, invoice.id, valid_checks, valid_checks_link)
+        self.assertEqual(response.status_code, 201)
 
-    def test_staff_cant_set_required_valid_checks(self):
-        pass
+    def test_applicant_cant_get_set_required_valid_checks(self):
+        user = ApplicantFactory()
+        project = ProjectFactory()
+        invoice = InvoiceFactory(project=project, status=APPROVED_BY_STAFF)
+        valid_checks = True
+        valid_checks_link = 'https://google.com'
 
-    def test_finance2_cant_set_required_valid_checks(self):
-        pass
+        self.client.force_login(user)
+        response = self.post_to_set(project.id, invoice.id, valid_checks, valid_checks_link)
+        self.assertEqual(response.status_code, 403)
 
-    def test_set_required_valid_checks(self):
-        pass
+        response = self.get_to_retrieve(project.id, invoice.id)
+        self.assertEqual(response.status_code, 403)
+
+    def test_staff_cant_get_set_required_valid_checks(self):
+        user = StaffFactory()
+        project = ProjectFactory()
+        invoice = InvoiceFactory(project=project, status=APPROVED_BY_STAFF)
+        valid_checks = True
+        valid_checks_link = 'https://google.com'
+
+        self.client.force_login(user)
+        response = self.post_to_set(project.id, invoice.id, valid_checks, valid_checks_link)
+        self.assertEqual(response.status_code, 403)
+
+        response = self.get_to_retrieve(project.id, invoice.id)
+        self.assertEqual(response.status_code, 403)
+
+    def test_finance2_cant_get_set_required_valid_checks(self):
+        user = Finance2Factory()
+        project = ProjectFactory()
+        invoice = InvoiceFactory(project=project, status=APPROVED_BY_STAFF)
+        valid_checks = True
+        valid_checks_link = 'https://google.com'
+
+        self.client.force_login(user)
+        response = self.post_to_set(project.id, invoice.id, valid_checks, valid_checks_link)
+        self.assertEqual(response.status_code, 403)
+
+        response = self.get_to_retrieve(project.id, invoice.id)
+        self.assertEqual(response.status_code, 403)
+
+    def test_finance1_can_get_required_valid_checks(self):
+        user = FinanceFactory()
+        project = ProjectFactory()
+        invoice = InvoiceFactory(project=project, status=APPROVED_BY_STAFF, valid_checks=True)
+
+        self.client.force_login(user)
+        response = self.get_to_retrieve(project.id, invoice.id)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.data.get('valid_checks'))
