@@ -415,6 +415,7 @@
         margin: 20px 0 0;
         color: $color--white;
         background: $color--error;
+        z-index: 1;
 
         @include media-query(tablet-landscape) {
             position: absolute;
