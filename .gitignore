@@ -39,3 +39,6 @@ wheels/
 
 # Webpack
 webpack-stats.json
+
+# Compiled language files
+*.mo
