@@ -2,7 +2,13 @@ from django.test import TestCase, override_settings
 
 from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
 from hypha.apply.review.tests.factories import ReviewFactory
+from hypha.apply.projects.tests.factories import DeliverableFactory, InvoiceFactory
 
+from ..projects.serializers import (
+    DeliverableSerializer,
+    InvoiceDeliverableListSerializer,
+    InvoiceRequiredChecksSerializer,
+)
 from ..serializers import ReviewSummarySerializer
 
 
@@ -26,3 +32,45 @@ class TestReviewSummarySerializer(TestCase):
         self.assertEqual(data['recommendation'], {'value': 0, 'display': 'No'})
         self.assertEqual(len(data['assigned']), 1)
         self.assertEqual(len(data['reviews']), 1)
+
+
+class TestDeliverableSerializer(TestCase):
+    def test_id_is_required(self):
+        serializer = DeliverableSerializer(data={'quantity': 1})
+        self.assertFalse(serializer.is_valid(), serializer.error_messages)
+
+    def test_validate_id(self):
+        serializer = DeliverableSerializer(data={'id': 1, 'quantity': 1})
+        self.assertFalse(serializer.is_valid())
+
+        deliverable = DeliverableFactory()
+        serializer = DeliverableSerializer(data={'id': deliverable.id, 'quantity': 1})
+        self.assertTrue(serializer.is_valid())
+
+    def test_quantity_not_required(self):
+        deliverable = DeliverableFactory()
+        serializer = DeliverableSerializer(data={'id': deliverable.id})
+        self.assertTrue(serializer.is_valid())
+
+
+class TestInvoiceRequiredChecksSerializer(TestCase):
+    def test_valid_checks_required(self):
+        serializer = InvoiceRequiredChecksSerializer(data={'valid_checks_link': 'https://google.com'})
+        self.assertFalse(serializer.is_valid())
+
+    def test_valid_checks_link_required(self):
+        serializer = InvoiceRequiredChecksSerializer(data={'valid_checks': True})
+        self.assertFalse(serializer.is_valid())
+
+    def test_validate_valid_checks_and_link(self):
+        serializer = InvoiceRequiredChecksSerializer(data={
+            'valid_checks': False,
+            'valid_checks_link': 'https://google.com'
+        })
+        self.assertFalse(serializer.is_valid())
+
+        serializer = InvoiceRequiredChecksSerializer(data={
+            'valid_checks': True,
+            'valid_checks_link': 'https://google.com'
+        })
+        self.assertTrue(serializer.is_valid())

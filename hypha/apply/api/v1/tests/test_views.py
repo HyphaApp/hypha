@@ -111,7 +111,7 @@ class TestCommentEdit(TestCase):
 
 @override_settings(ROOT_URLCONF='hypha.apply.urls')
 class TestInvoiceDeliverableViewset(TestCase):
-    def post_to_add(self, project_id, invoice_id, deliverable_id, quantity):
+    def post_to_add(self, project_id, invoice_id, deliverable_id, quantity=1):
         return self.client.post(
             reverse_lazy('api:v1:set-deliverables', kwargs={'project_pk': project_id, 'invoice_pk': invoice_id}),
             secure=True,
@@ -130,7 +130,7 @@ class TestInvoiceDeliverableViewset(TestCase):
         invoice = InvoiceFactory(project=project)
         deliverable = DeliverableFactory(project=project)
 
-        response = self.post_to_add(project.id, invoice.id, deliverable.id, quantity=1)
+        response = self.post_to_add(project.id, invoice.id, deliverable.id)
         self.assertEqual(response.status_code, 403)
 
         response = self.delete_to_remove(project.id, invoice.id, deliverable.id)
@@ -143,7 +143,7 @@ class TestInvoiceDeliverableViewset(TestCase):
         deliverable = DeliverableFactory(project=project)
         self.client.force_login(user)
 
-        response = self.post_to_add(project.id, invoice.id, deliverable.id, quantity=1)
+        response = self.post_to_add(project.id, invoice.id, deliverable.id)
         self.assertEqual(response.status_code, 403)
 
     def test_staff_can_add_deliverables(self):
@@ -153,7 +153,7 @@ class TestInvoiceDeliverableViewset(TestCase):
         deliverable = DeliverableFactory(project=project)
         self.client.force_login(user)
 
-        response = self.post_to_add(project.id, invoice.id, deliverable.id, quantity=1)
+        response = self.post_to_add(project.id, invoice.id, deliverable.id)
         self.assertEqual(response.status_code, 201)
 
     def test_finance1_can_add_deliverables(self):
@@ -163,7 +163,7 @@ class TestInvoiceDeliverableViewset(TestCase):
         deliverable = DeliverableFactory(project=project)
         self.client.force_login(user)
 
-        response = self.post_to_add(project.id, invoice.id, deliverable.id, quantity=1)
+        response = self.post_to_add(project.id, invoice.id, deliverable.id)
         self.assertEqual(response.status_code, 201)
 
     def test_finance2_can_add_deliverables(self):
@@ -173,7 +173,7 @@ class TestInvoiceDeliverableViewset(TestCase):
         deliverable = DeliverableFactory(project=project)
         self.client.force_login(user)
 
-        response = self.post_to_add(project.id, invoice.id, deliverable.id, quantity=1)
+        response = self.post_to_add(project.id, invoice.id, deliverable.id)
         self.assertEqual(response.status_code, 201)
 
     def test_applicant_cant_remove_deliverables(self):
@@ -231,7 +231,7 @@ class TestInvoiceDeliverableViewset(TestCase):
         deliverable = DeliverableFactory()
         self.client.force_login(user)
 
-        response = self.post_to_add(project.id, invoice.id, deliverable.id, quantity=1)
+        response = self.post_to_add(project.id, invoice.id, deliverable.id)
         self.assertEqual(response.status_code, 400)
 
     def test_deliverable_already_exists_in_invoice(self):
@@ -243,7 +243,7 @@ class TestInvoiceDeliverableViewset(TestCase):
         invoice.deliverables.add(invoice_deliverable)
         self.client.force_login(user)
 
-        response = self.post_to_add(project.id, invoice.id, deliverable.id, quantity=1)
+        response = self.post_to_add(project.id, invoice.id, deliverable.id)
         self.assertEqual(response.status_code, 400)
 
     def test_deliverable_available_gte_quantity(self):
