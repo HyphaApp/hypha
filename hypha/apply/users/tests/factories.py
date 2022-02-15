@@ -2,7 +2,7 @@ import uuid
 
 import factory
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, Permission
 from django.utils.text import slugify
 
 from ..groups import (
@@ -65,6 +65,33 @@ class StaffFactory(OAuthUserFactory):
     def groups(self, create, extracted, **kwargs):
         if create:
             self.groups.add(GroupFactory(name=STAFF_GROUP_NAME))
+
+
+def get_wagtail_admin_access_permission():
+    return Permission.objects.get(
+        content_type__app_label='wagtailadmin',
+        codename='access_admin'
+    )
+
+
+class StaffWithWagtailAdminAccessFactory(StaffFactory):
+    @factory.post_generation
+    def groups(self, create, extracted, **kwargs):
+        if create:
+            modifiedStaffGroup = GroupFactory(name=STAFF_GROUP_NAME)
+            wagtail_admin_access_permission = get_wagtail_admin_access_permission()
+            modifiedStaffGroup.permissions.add(wagtail_admin_access_permission)
+            self.groups.add(modifiedStaffGroup)
+
+
+class StaffWithoutWagtailAdminAccessFactory(StaffFactory):
+    @factory.post_generation
+    def groups(self, create, extracted, **kwargs):
+        if create:
+            modifiedStaffGroup = GroupFactory(name=STAFF_GROUP_NAME)
+            wagtail_admin_access_permission = get_wagtail_admin_access_permission()
+            modifiedStaffGroup.permissions.remove(wagtail_admin_access_permission)
+            self.groups.add(modifiedStaffGroup)
 
 
 class FinanceFactory(OAuthUserFactory):

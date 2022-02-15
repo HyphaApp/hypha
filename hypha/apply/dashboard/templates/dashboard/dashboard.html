@@ -14,10 +14,12 @@
         {% block page_header %}
             <h1 class="gamma heading heading--no-margin heading--bold">{% trans "Dashboard" %}</h1>
         {% endblock %}
-        <a href="{% url 'wagtailadmin_home' %}" class="button button--primary button--arrow-pixels-white">
-            {% trans "Apply admin" %}
-            <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
-        </a>
+        {% if perms.wagtailadmin.access_admin %}
+            <a href="{% url 'wagtailadmin_home' %}" id="wagtail-admin-button" class="button button--primary button--arrow-pixels-white">
+                {% trans "Apply admin" %}
+                <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
+            </a>
+        {% endif %}
     </div>
 </div>
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
