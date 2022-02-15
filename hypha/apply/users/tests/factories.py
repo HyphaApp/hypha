@@ -48,7 +48,7 @@ class OAuthUserFactory(UserFactory):
 
 
 class AdminFactory(UserFactory):
-    is_admin = True
+    is_superuser = True
 
 
 class StaffFactory(OAuthUserFactory):
