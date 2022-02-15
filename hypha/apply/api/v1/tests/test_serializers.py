@@ -1,12 +1,11 @@
 from django.test import TestCase, override_settings
 
 from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
+from hypha.apply.projects.tests.factories import DeliverableFactory
 from hypha.apply.review.tests.factories import ReviewFactory
-from hypha.apply.projects.tests.factories import DeliverableFactory, InvoiceFactory
 
 from ..projects.serializers import (
     DeliverableSerializer,
-    InvoiceDeliverableListSerializer,
     InvoiceRequiredChecksSerializer,
 )
 from ..serializers import ReviewSummarySerializer
