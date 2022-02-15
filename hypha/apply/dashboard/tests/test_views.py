@@ -19,6 +19,9 @@ from hypha.apply.users.tests.factories import (
     GroupFactory,
     ReviewerFactory,
     StaffFactory,
+    StaffWithWagtailAdminAccessFactory,
+    StaffWithoutWagtailAdminAccessFactory,
+    AdminFactory,
 )
 from hypha.apply.utils.testing.tests import BaseViewTestCase
 
@@ -148,6 +151,25 @@ class TestStaffDashboard(BaseViewTestCase):
         self.assertContains(response, "Projects awaiting approval")
 
 
+class TestStaffDashboardWithWagtailAdminRights(BaseViewTestCase):
+    user_factory = StaffWithWagtailAdminAccessFactory
+    url_name = 'dashboard:{}'
+    base_view_name = 'dashboard'
+
+    def test_does_show_admin_button_to_staff_with_wagtail_admin_access(self):
+        response = self.get_page()
+        self.assertContains(response, 'wagtail-admin-button')
+
+
+class TestStaffDashboardWithoutWagtailAdminRights(BaseViewTestCase):
+    user_factory = StaffWithoutWagtailAdminAccessFactory
+    url_name = 'dashboard:{}'
+    base_view_name = 'dashboard'
+    def test_doesnt_show_admin_button_to_staff_without_wagtail_admin_access(self):
+        response = self.get_page()
+        self.assertNotContains(response, 'wagtail-admin-button')
+
+
 class TestReviewerDashboard(BaseViewTestCase):
     user_factory = ReviewerFactory
     url_name = 'dashboard:{}'
@@ -171,3 +193,13 @@ class TestReviewerDashboard(BaseViewTestCase):
         response = self.get_page()
         self.assertNotContains(response, submission.title)
         self.assertEquals(response.context['in_review_count'], 0)
+
+
+class TestAdminDashboard(BaseViewTestCase):
+    user_factory = AdminFactory
+    url_name = 'dashboard:{}'
+    base_view_name = 'dashboard'
+
+    def test_does_show_admin_button_to_admins(self):
+        response = self.get_page()
+        self.assertContains(response, 'wagtail-admin-button')

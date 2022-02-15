@@ -69,9 +69,13 @@ class AdminDashboardView(MyFlaggedMixin, TemplateView):
             'projects_to_approve': self.projects_to_approve(),
             'rounds': self.rounds(),
             'my_flagged': self.my_flagged(submissions),
+            'has_wagtail_admin_access': self.has_wagtail_admin_access(),
         })
 
         return context
+
+    def has_wagtail_admin_access(self):
+        return self.request.user.has_perm('wagtailadmin.access_admin')
 
     def awaiting_reviews(self, submissions):
         submissions = submissions.in_review_for(self.request.user).order_by('-submit_time')
