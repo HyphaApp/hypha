@@ -117,7 +117,8 @@ class InvoiceAdminView(InvoiceAccessMixin, DelegateableView, DetailView):
         invoice = self.get_object()
         project = invoice.project
         external_projectid = project.external_projectid
-        if external_projectid:
+        if external_projectid and not invoice.deliverables.exists():
+            # Once the deliverables has been attached on an invoice do not make API call
             deliverables = fetch_and_save_deliverables(project.id, external_projectid)
         deliverables = project.deliverables.all()
         return super().get_context_data(
