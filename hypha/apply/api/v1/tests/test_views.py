@@ -1,5 +1,6 @@
 from django.test import TestCase, override_settings
 from django.urls import reverse_lazy
+from rest_framework.exceptions import ErrorDetail
 
 from hypha.apply.activity.models import ALL, APPLICANT, Activity
 from hypha.apply.activity.tests.factories import CommentFactory
@@ -129,11 +130,12 @@ class TestInvoiceDeliverableViewset(TestCase):
         project = ProjectFactory()
         invoice = InvoiceFactory(project=project)
         deliverable = DeliverableFactory(project=project)
+        invoice_deliverable = InvoiceDeliverableFactory(deliverable=deliverable)
 
         response = self.post_to_add(project.id, invoice.id, deliverable.id)
         self.assertEqual(response.status_code, 403)
 
-        response = self.delete_to_remove(project.id, invoice.id, deliverable.id)
+        response = self.delete_to_remove(project.id, invoice.id, invoice_deliverable.id)
         self.assertEqual(response.status_code, 403)
 
     def test_applicant_cant_add_deliverables(self):
@@ -185,7 +187,7 @@ class TestInvoiceDeliverableViewset(TestCase):
         invoice.deliverables.add(invoice_deliverable)
         self.client.force_login(user)
 
-        response = self.delete_to_remove(project.id, invoice.id, deliverable.id)
+        response = self.delete_to_remove(project.id, invoice.id, invoice_deliverable.id)
         self.assertEqual(response.status_code, 403)
 
     def test_staff_can_remove_deliverables(self):
@@ -197,8 +199,8 @@ class TestInvoiceDeliverableViewset(TestCase):
         invoice.deliverables.add(invoice_deliverable)
         self.client.force_login(user)
 
-        response = self.delete_to_remove(project.id, invoice.id, deliverable.id)
-        self.assertEqual(response.status_code, 404)
+        response = self.delete_to_remove(project.id, invoice.id, invoice_deliverable.id)
+        self.assertEqual(response.status_code, 200)
 
     def test_finance1_can_remove_deliverables(self):
         user = FinanceFactory()
@@ -209,8 +211,8 @@ class TestInvoiceDeliverableViewset(TestCase):
         invoice.deliverables.add(invoice_deliverable)
         self.client.force_login(user)
 
-        response = self.delete_to_remove(project.id, invoice.id, deliverable.id)
-        self.assertEqual(response.status_code, 404)
+        response = self.delete_to_remove(project.id, invoice.id, invoice_deliverable.id)
+        self.assertEqual(response.status_code, 200)
 
     def test_finance2_can_remove_deliverables(self):
         user = Finance2Factory()
@@ -221,8 +223,8 @@ class TestInvoiceDeliverableViewset(TestCase):
         invoice.deliverables.add(invoice_deliverable)
         self.client.force_login(user)
 
-        response = self.delete_to_remove(project.id, invoice.id, deliverable.id)
-        self.assertEqual(response.status_code, 404)
+        response = self.delete_to_remove(project.id, invoice.id, invoice_deliverable.id)
+        self.assertEqual(response.status_code, 200)
 
     def test_deliverable_dont_exists_in_project_deliverables(self):
         user = StaffFactory()
@@ -233,6 +235,8 @@ class TestInvoiceDeliverableViewset(TestCase):
 
         response = self.post_to_add(project.id, invoice.id, deliverable.id)
         self.assertEqual(response.status_code, 400)
+        error_message = {'detail': ErrorDetail(string='Not Found', code='invalid')}
+        self.assertEqual(response.data, error_message)
 
     def test_deliverable_already_exists_in_invoice(self):
         user = StaffFactory()
@@ -245,6 +249,8 @@ class TestInvoiceDeliverableViewset(TestCase):
 
         response = self.post_to_add(project.id, invoice.id, deliverable.id)
         self.assertEqual(response.status_code, 400)
+        error_message = {'detail': ErrorDetail(string='Invoice Already has this deliverable', code='invalid')}
+        self.assertEqual(response.data, error_message)
 
     def test_deliverable_available_gte_quantity(self):
         user = StaffFactory()
@@ -255,6 +261,8 @@ class TestInvoiceDeliverableViewset(TestCase):
 
         response = self.post_to_add(project.id, invoice.id, deliverable.id, quantity=3)
         self.assertEqual(response.status_code, 400)
+        error_message = {'detail': ErrorDetail(string='Required quantity is more than available', code='invalid')}
+        self.assertEqual(response.data, error_message)
 
 
 @override_settings(ROOT_URLCONF='hypha.apply.urls')
