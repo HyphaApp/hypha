@@ -14,9 +14,9 @@ def fetch_and_save_deliverables(project_id, program_project_id=''):
 
 
 def save_deliverables(project_id, deliverables=[]):
-    project = Project.objects.get(id=project_id)
     if deliverables:
-        project.deliverables.all().delete()
+        remove_deliverables_from_project(project_id)
+    project = Project.objects.get(id=project_id)
     new_deliverable_list = []
     for deliverable in deliverables:
         item_id = deliverable['ITEMID']
@@ -33,3 +33,11 @@ def save_deliverables(project_id, deliverables=[]):
             )
         )
     Deliverable.objects.bulk_create(new_deliverable_list)
+
+
+def remove_deliverables_from_project(project_id):
+    project = Project.objects.get(id=project_id)
+    deliverables = project.deliverables.all()
+    for deliverable in deliverables:
+        deliverable.project = None
+        deliverable.save()
