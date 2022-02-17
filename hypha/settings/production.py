@@ -15,7 +15,7 @@ if env.str('MAILGUN_API_KEY', None):
     ANYMAIL = {
         'MAILGUN_API_KEY': env.str('MAILGUN_API_KEY'),
         'MAILGUN_SENDER_DOMAIN': env.str('EMAIL_HOST', None),
-        'MAILGUN_API_URL': env.url('MAILGUN_API_URL', 'https://api.mailgun.net/v3'),
+        'MAILGUN_API_URL': env.str('MAILGUN_API_URL', 'https://api.mailgun.net/v3'),
         'WEBHOOK_SECRET': env.str('ANYMAIL_WEBHOOK_SECRET', None)
     }
 
