@@ -1,3 +1,4 @@
+import json
 from io import BytesIO
 from unittest import mock
 
@@ -15,6 +16,7 @@ from ..files import get_files
 from ..forms.payment import (
     ChangeInvoiceStatusForm,
     CreateInvoiceForm,
+    EditInvoiceForm,
     SelectDocumentForm,
     filter_request_choices,
 )
@@ -39,6 +41,7 @@ from .factories import (
     DocumentCategoryFactory,
     InvoiceFactory,
     ProjectFactory,
+    SupportingDocumentFactory,
     address_to_form_data,
 )
 
@@ -363,6 +366,77 @@ class TestCreateInvoiceForm(TestCase):
             }
         )
         self.assertFalse(form.is_valid())
+
+
+class TestEditInvoiceForm(TestCase):
+
+    def test_remove_existing_supporting_document(self):
+        invoice = InvoiceFactory()
+        SupportingDocumentFactory(invoice=invoice, document=invoice.document)
+        self.assertTrue(invoice.supporting_documents.exists())
+
+        form = EditInvoiceForm(
+            data={
+                'document': invoice.document,
+                'supporting_documents-uploads': '[]',
+                'date_from': '2018-08-15',
+                'date_to': '2019-08-15',
+                'amount': invoice.amount,
+            },
+            files={
+                'supporting_documents': [],
+            },
+            instance=invoice)
+        self.assertTrue(form.is_valid())
+
+        form.save()
+        self.assertFalse(invoice.supporting_documents.exists())
+
+    def test_keep_existing_supporting_document(self):
+        invoice = InvoiceFactory()
+        supporting_document = SupportingDocumentFactory(invoice=invoice)
+        self.assertEqual(invoice.supporting_documents.count(), 1)
+
+        form = EditInvoiceForm(
+            data={
+                'document': invoice.document,
+                'supporting_documents-uploads': json.dumps(
+                    [{"name": supporting_document.document.name,
+                      "size": supporting_document.document.size,
+                      "type": "existing"}]
+                ),
+                'date_from': '2018-08-15',
+                'date_to': '2019-08-15',
+                'amount': invoice.amount,
+            },
+            instance=invoice)
+        self.assertTrue(form.is_valid())
+
+        invoice = form.save()
+        self.assertEqual(invoice.supporting_documents.count(), 1)
+
+    def test_add_new_supporting_document(self):
+        invoice = InvoiceFactory()
+        self.assertEqual(invoice.supporting_documents.count(), 0)
+
+        supporting_document = [SimpleUploadedFile('invoice.pdf', BytesIO(b'somebinarydata').read())]
+        form = EditInvoiceForm(
+            data={
+                'document': invoice.document,
+                'supporting_documents-uploads': '[]',
+                'date_from': '2018-08-15',
+                'date_to': '2019-08-15',
+                'amount': invoice.amount,
+            },
+            files={
+                'supporting_documents': supporting_document,
+            },
+            instance=invoice,
+        )
+        self.assertTrue(form.is_valid())
+
+        invoice = form.save()
+        self.assertEqual(invoice.supporting_documents.count(), 1)
 
 
 @override_settings(ROOT_URLCONF='hypha.apply.urls')
