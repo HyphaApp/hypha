@@ -20,10 +20,14 @@ from ..models.payment import (
     CHANGES_REQUESTED_BY_FINANCE_2,
     CHANGES_REQUESTED_BY_STAFF,
     DECLINED,
+    INVOICE_STATUS_FINANCE_1_CHOICES,
+    INVOICE_STATUS_FINANCE_2_CHOICES,
+    INVOICE_STATUS_PM_CHOICES,
     PAID,
     RESUBMITTED,
     SUBMITTED,
     Invoice,
+    invoice_status_user_choices,
 )
 from ..models.project import Project
 from ..models.report import Report, ReportConfig
@@ -92,6 +96,23 @@ class TestProjectModel(TestCase):
 
 
 class TestInvoiceModel(TestCase):
+    def test_invoice_status_user_choices(self):
+        applicant = ApplicantFactory()
+        staff = StaffFactory()
+        finance1 = FinanceFactory()
+        finance2 = Finance2Factory()
+        applicant_choices = invoice_status_user_choices(applicant)
+        self.assertEqual(applicant_choices, [])
+
+        staff_choices = invoice_status_user_choices(staff)
+        self.assertEqual(staff_choices, INVOICE_STATUS_PM_CHOICES)
+
+        finance1_choices = invoice_status_user_choices(finance1)
+        self.assertEqual(finance1_choices, INVOICE_STATUS_FINANCE_1_CHOICES)
+
+        finance2_choices = invoice_status_user_choices(finance2)
+        self.assertEqual(finance2_choices, INVOICE_STATUS_FINANCE_2_CHOICES)
+
     def test_staff_can_delete_from_submitted(self):
         invoice = InvoiceFactory(status=SUBMITTED)
         staff = StaffFactory()
@@ -365,6 +386,37 @@ class TestInvoiceModel(TestCase):
 
 
 class TestInvoiceQueryset(TestCase):
+    def test_in_progress(self):
+        InvoiceFactory(status=SUBMITTED)
+        InvoiceFactory(status=APPROVED_BY_STAFF)
+        InvoiceFactory(status=CHANGES_REQUESTED_BY_FINANCE_2)
+        InvoiceFactory(status=DECLINED)
+        self.assertEqual(Invoice.objects.in_progress().count(), 3)
+
+    def test_approved_by_staff(self):
+        InvoiceFactory(status=APPROVED_BY_STAFF)
+        self.assertEqual(Invoice.objects.approved_by_staff().count(), 1)
+
+    def test_approved_by_finance_1(self):
+        InvoiceFactory(status=APPROVED_BY_FINANCE_1)
+        self.assertEqual(Invoice.objects.approved_by_finance_1().count(), 1)
+
+    def test_for_finance_1(self):
+        InvoiceFactory(status=APPROVED_BY_STAFF)
+        InvoiceFactory(status=CHANGES_REQUESTED_BY_FINANCE_2)
+        InvoiceFactory(status=SUBMITTED)
+        self.assertEqual(Invoice.objects.for_finance_1().count(), 2)
+
+    def test_rejected(self):
+        InvoiceFactory(status=DECLINED)
+        InvoiceFactory(status=SUBMITTED)
+        self.assertEqual(Invoice.objects.rejected().count(), 1)
+
+    def test_not_rejected(self):
+        InvoiceFactory(status=DECLINED)
+        InvoiceFactory(status=SUBMITTED)
+        self.assertEqual(Invoice.objects.not_rejected().count(), 1)
+
     def test_get_totals(self):
         InvoiceFactory(paid_value=20)
         InvoiceFactory(paid_value=10, status=PAID)

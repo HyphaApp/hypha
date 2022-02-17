@@ -278,7 +278,7 @@ class SupportingDocument(models.Model):
     )
 
     def __str__(self):
-        return self.invoice.name + ' -> ' + self.document.name
+        return "{invoice}".format(invoice=self.invoice) + ' -> ' + self.document.name
 
     @property
     def filename(self):
