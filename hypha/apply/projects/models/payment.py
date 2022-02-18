@@ -59,10 +59,6 @@ def invoice_status_user_choices(user):
     return []
 
 
-def receipt_path(instance, filename):
-    return f'projects/{instance.project_id}/payment_invoices/{filename}'
-
-
 def invoice_path(instance, filename):
     return f'projects/{instance.project_id}/payment_invoices/{filename}'
 

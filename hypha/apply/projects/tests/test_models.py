@@ -32,7 +32,9 @@ from ..models.payment import (
 from ..models.project import Project
 from ..models.report import Report, ReportConfig
 from .factories import (
+    DeliverableFactory,
     DocumentCategoryFactory,
+    InvoiceDeliverableFactory,
     InvoiceFactory,
     PacketFileFactory,
     ProjectFactory,
@@ -189,6 +191,15 @@ class TestInvoiceModel(TestCase):
             paid_value=Decimal('2'),
         )
         self.assertEqual(invoice.value, Decimal('2'))
+
+    def test_deliverables_total_amount(self):
+        deliverable = DeliverableFactory(unit_price=100)
+        invoice_deliverable = InvoiceDeliverableFactory(deliverable=deliverable, quantity=2)
+        self.assertEqual(invoice_deliverable.deliverable.unit_price, 100.00)
+
+        invoice = InvoiceFactory(status=APPROVED_BY_STAFF)
+        invoice.deliverables.add(invoice_deliverable)
+        self.assertEqual(invoice.deliverables_total_amount['total'], 200.00)
 
     def test_staff_can_change_status(self):
         statuses = [SUBMITTED, RESUBMITTED, CHANGES_REQUESTED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_1]

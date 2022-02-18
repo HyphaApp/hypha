@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
             name='PaymentReceipt',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('file', models.FileField(storage=django.core.files.storage.FileSystemStorage(), upload_to=hypha.apply.projects.models.payment.receipt_path)),
+                ('file', models.FileField(storage=django.core.files.storage.FileSystemStorage())),
             ],
         ),
         migrations.CreateModel(
