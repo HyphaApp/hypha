@@ -113,7 +113,7 @@ const ReviewBlock = ({children, recommendation, score}) => {
                     {!isNaN(parseFloat(score)) &&
                         <div>{parseFloat(score).toFixed(1)}</div>
                     }
-                    <div>Actions</div>
+                    <div></div>
                 </li>
             }
             {children}
