@@ -943,7 +943,8 @@ class ApplicationSubmission(
     def is_finished(self):
         accepted = self.status in PHASES_MAPPING["accepted"]["statuses"]
         dismissed = self.status in PHASES_MAPPING["dismissed"]["statuses"]
-        return accepted or dismissed
+        withdrawn = self.status in PHASES_MAPPING["withdrawn"]["statuses"]
+        return accepted or dismissed or withdrawn
 
     # Methods for accessing data on the submission
 
