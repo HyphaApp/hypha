@@ -92,12 +92,16 @@ class TestReviewerFormQueries(TestCase):
 
         # 1 - Submission
         # 1 - Select Review
-        # 2 - Cascase
+        # 2 - Cascade
         # 1 - Fetch data
         # 1 - Cache existing
-        # 1 - auth group
-        # 1 - Add new
-        with self.assertNumQueries(8):
+        # 18 - 9 per reviewer
+        #    2 - auth group
+        #    2 - savepoint
+        #    2 - release savepoint
+        #    1 - Select reviewer
+        #    1 - Add
+        with self.assertNumQueries(22):
             form.save()
 
     def test_queries_existing_reviews(self):
@@ -116,8 +120,11 @@ class TestReviewerFormQueries(TestCase):
         self.assertTrue(form.is_valid())
 
         # 1 - Submission
-        # 1 - Delete old
-        # 1 - Cache existing
-        # 1 - Add new
-        with self.assertNumQueries(5):
+        # 18 - 9 per reviewer
+        #    2 - auth group
+        #    2 - savepoint
+        #    2 - release savepoint
+        #    1 - Select reviewer
+        #    1 - Add
+        with self.assertNumQueries(19):
             form.save()

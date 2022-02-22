@@ -1061,7 +1061,7 @@ class AssignedReviewersQuerySet(models.QuerySet):
 
         group = Group.objects.get(name=groups.pop())
 
-        return self.get_or_create(
+        return self.update_or_create(
             submission=submission,
             reviewer=reviewer,
             type=group,
@@ -1075,18 +1075,8 @@ class AssignedReviewersQuerySet(models.QuerySet):
         )
 
     def bulk_create_reviewers(self, reviewers, submission):
-        group = Group.objects.get(name=REVIEWER_GROUP_NAME)
-        self.bulk_create(
-            [
-                self.model(
-                    submission=submission,
-                    role=None,
-                    reviewer=reviewer,
-                    type=group,
-                ) for reviewer in reviewers
-            ],
-            ignore_conflicts=True
-        )
+        for reviewer in reviewers:
+            self.get_or_create_for_user(submission, reviewer)
 
     def update_role(self, role, reviewer, *submissions):
         # Remove role who didn't review
