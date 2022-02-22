@@ -402,6 +402,7 @@ SingleStageExternalDefinition = [
                 "ext_internal_review": _("Open Review"),
                 "ext_determination": _("Ready For Determination"),
                 "ext_rejected": _("Dismiss"),
+                "ext_screening_withdrawn": _("Withdraw"),
             },
             "display": _("Need screening"),
             "public": _("Application Received"),
@@ -420,16 +421,23 @@ SingleStageExternalDefinition = [
                     },
                     "method": "create_revision",
                 },
+                "ext_screening_withdrawn": _("Withdraw"),
             },
             "display": _("More information required"),
             "stage": RequestExt,
             "permissions": applicant_edit_permissions,
+        },
+        "ext_screening_withdrawn": {
+            "display": _("Withdrawn"),
+            "stage": RequestExt,
+            "permissions": staff_edit_permissions,
         },
     },
     {
         "ext_internal_review": {
             "transitions": {
                 "ext_post_review_discussion": _("Close Review"),
+                "ext_review_withdrawn": _("Withdraw"),
                 INITIAL_STATE: _("Need screening (revert)"),
             },
             "display": _("Internal Review"),
@@ -465,6 +473,7 @@ SingleStageExternalDefinition = [
                     },
                     "method": "create_revision",
                 },
+                "ext_review_withdrawn": _("Withdraw"),
             },
             "display": _("More information required"),
             "stage": RequestExt,
@@ -481,6 +490,11 @@ SingleStageExternalDefinition = [
             "stage": RequestExt,
             "permissions": reviewer_review_permissions,
         },
+        "ext_review_withdrawn": {
+            "display": _("Withdrawn"),
+            "stage": RequestExt,
+            "permissions": staff_edit_permissions,
+        },
     },
     {
         "ext_post_external_review_discussion": {
@@ -491,6 +505,7 @@ SingleStageExternalDefinition = [
                 "ext_almost": _("Accept but additional info required"),
                 "ext_accepted": _("Accept"),
                 "ext_rejected": _("Dismiss"),
+                "ext_external_review_withdrawn": _("Withdraw"),
             },
             "display": _("Ready For Discussion"),
             "stage": RequestExt,
@@ -508,10 +523,16 @@ SingleStageExternalDefinition = [
                     },
                     "method": "create_revision",
                 },
+                "ext_external_review_withdrawn": _("Withdraw"),
             },
             "display": _("More information required"),
             "stage": RequestExt,
             "permissions": applicant_edit_permissions,
+        },
+        "ext_external_review_withdrawn": {
+            "display": _("Withdrawn"),
+            "stage": RequestExt,
+            "permissions": staff_edit_permissions,
         },
     },
     {
@@ -523,6 +544,7 @@ SingleStageExternalDefinition = [
                 "ext_almost": _("Accept but additional info required"),
                 "ext_accepted": _("Accept"),
                 "ext_rejected": _("Dismiss"),
+                "ext_withdrawn": _("Withdraw"),
             },
             "display": _("Ready for Determination"),
             "permissions": hidden_from_applicant_permissions,
@@ -551,6 +573,11 @@ SingleStageExternalDefinition = [
             "display": _("Dismissed"),
             "stage": RequestExt,
             "permissions": no_permissions,
+        },
+        "ext_withdrawn": {
+            "display": _("Withdrawn"),
+            "stage": RequestExt,
+            "permissions": staff_edit_permissions,
         },
     },
 ]
@@ -1214,11 +1241,21 @@ def get_dismissed_statuses():
     return dismissed_statuses
 
 
+def get_withdrawn_statuses():
+    withdrawn_statuses = set()
+    for phase_name, phase in PHASES:
+        if phase.display_name == "Dismissed":
+            withdrawn_statuses.add(phase_name)
+    return withdrawn_statuses
+
+
+ext_or_higher_statuses = get_ext_or_higher_statuses()
 review_statuses = get_review_statuses()
 ext_review_statuses = get_ext_review_statuses()
 ext_or_higher_statuses = get_ext_or_higher_statuses()
 accepted_statuses = get_accepted_statuses()
 dismissed_statuses = get_dismissed_statuses()
+withdrawn_statuses = get_withdrawn_statuses()
 
 DETERMINATION_PHASES = [
     phase_name for phase_name, _ in PHASES if "_discussion" in phase_name
@@ -1316,6 +1353,10 @@ PHASES_MAPPING = {
     "dismissed": {
         "name": _("Dismissed"),
         "statuses": phases_matching("rejected"),
+    },
+    "withdrawn": {
+        "name": _("Withdrawn"),
+        "statuses": phases_matching("withdrawn"),
     },
 }
 
