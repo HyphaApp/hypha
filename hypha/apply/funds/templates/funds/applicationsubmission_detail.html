@@ -138,6 +138,15 @@
                                     </a>
                                 {% endif %}
                                 {% if request.user|has_edit_perm:object %}
+                                    {% if request.user.is_applicant %}
+                                        <a
+                                            class="link link--withdraw-submission is-active"
+                                            href="{% url 'funds:submissions:withdraw' object.id %}">
+                                            {% trans "Withdraw" %}
+                                        </a>
+                                    {% endif %}
+                                {% endif %}
+                                {% if request.user|has_edit_perm:object %}
                                     <a
                                         class="flex items-center font-bold transition-opacity hover:opacity-70"
                                         href="{% url 'funds:submissions:edit' object.id %}"

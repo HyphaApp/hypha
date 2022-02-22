@@ -39,7 +39,11 @@ from django.views.generic import (
     UpdateView,
 )
 from django.views.generic.base import TemplateView
-from django.views.generic.detail import SingleObjectMixin
+from django.views.generic.detail import (
+    BaseDetailView,
+    SingleObjectMixin,
+    SingleObjectTemplateResponseMixin,
+)
 from django_file_form.models import PlaceholderUploadedFile
 from django_filters.views import FilterView
 from django_htmx.http import (
@@ -1784,6 +1788,33 @@ class SubmissionDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         # delete submission and redirect to success url
         return super().form_valid(form)
 
+class SubmissionWithdrawView(SingleObjectTemplateResponseMixin, BaseDetailView):
+    model = ApplicationSubmission
+    success_url = reverse_lazy('funds:submissions:list')
+    template_name_suffix = '_confirm_withdraw'
+
+    def post(self, request, *args, **kwargs):
+        return self.withdraw(request, *args, **kwargs)
+
+    def withdraw(self, request, *args, **kwargs):
+        obj = self.get_object()
+
+        if not obj.phase.permissions.can_edit(request.user):
+            raise PermissionDenied
+
+        withdraw_actions = [action for action in obj.workflow[obj.status].transitions.keys() if 'withdraw' in action]
+
+        if len(withdraw_actions) > 0:
+            action = withdraw_actions[0]
+            obj.perform_transition(
+                action,
+                self.request.user,
+                request=self.request,
+                notify=False
+            )
+
+        success_url = obj.get_absolute_url()
+        return HttpResponseRedirect(success_url)
 
 @method_decorator(login_required, name="dispatch")
 class SubmissionPrivateMediaView(UserPassesTestMixin, PrivateMediaView):

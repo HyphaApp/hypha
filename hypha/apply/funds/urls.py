@@ -26,6 +26,7 @@ from .views import (
     SubmissionResultView,
     SubmissionsByStatus,
     SubmissionSealedView,
+    SubmissionWithdrawView,
     TranslateSubmissionView,
     UpdateLeadView,
     UpdateMetaTermsView,
@@ -258,6 +259,7 @@ submission_urls = (
                         "download/", SubmissionDetailPDFView.as_view(), name="download"
                     ),
                     path("delete/", SubmissionDeleteView.as_view(), name="delete"),
+                    path('withdraw/', SubmissionWithdrawView.as_view(), name="withdraw"),
                     path(
                         "documents/<uuid:field_id>/<str:file_name>",
                         SubmissionPrivateMediaView.as_view(),
