@@ -64,7 +64,8 @@ class ReviewModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass)
 
     def save(self, commit=True):
         self.instance.score = self.calculate_score(self.cleaned_data)
-        self.instance.recommendation = int(self.cleaned_data[self.instance.recommendation_field.id])
+        if self.instance.recommendation_field.id in self.cleaned_data:
+            self.instance.recommendation = int(self.cleaned_data[self.instance.recommendation_field.id])
         self.instance.is_draft = self.draft_button_name in self.data
         # Old review forms do not have the requred visability field.
         # This will set visibility to PRIVATE by default.
@@ -84,7 +85,10 @@ class ReviewModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass)
     def calculate_score(self, data):
         scores = []
         for field in self.instance.score_fields:
-            score = data.get(field.id)[1]
+            score = data.get(field.id)
+            if score is None:
+                continue
+            score = score[1]
             # Include NA answers as 0.
             if score == NA:
                 score = 0
@@ -93,6 +97,8 @@ class ReviewModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass)
         # append scores from them.
         for field in self.instance.score_fields_without_text:
             score = data.get(field.id)
+            if score is None:
+                continue
             # Include '' answers as 0.
             if score == '':
                 score = 0
