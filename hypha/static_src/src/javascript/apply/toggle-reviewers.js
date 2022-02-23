@@ -11,10 +11,10 @@
         // toggle class and update text
         $(this).toggleClass('is-open');
         if ($(this).hasClass('is-open')) {
-            $(this).html('Hide All Assigned Advisors');
+            $(this).html('Hide All Assigned Reviewers');
         }
         else {
-            $(this).html('All Assigned Advisors');
+            $(this).html('All Assigned Reviewers');
         }
 
         // toggle the reviewers
