@@ -2193,7 +2193,7 @@ msgid "No staff reviewers yet"
 msgstr ""
 
 #: hypha/apply/funds/templates/funds/includes/review_sidebar.html:27
-msgid "All Assigned Advisors"
+msgid "All Assigned Reviewers"
 msgstr ""
 
 #: hypha/apply/funds/templates/funds/includes/round-block-listing.html:33

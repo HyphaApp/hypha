@@ -24,7 +24,7 @@
             {% if reviewer_type.name in hidden_types %}
                 {% include 'funds/includes/review_sidebar_item.html' with reviewer=reviewer hidden=True %}
                 {% if forloop.last %}
-                    <li><a class="link link--bold link--underlined js-toggle-reviewers" href="#">{% trans "All Assigned Advisors" %}</a></li>
+                    <li><a class="link link--bold link--underlined js-toggle-reviewers" href="#">{% trans "All Assigned Reviewers" %}</a></li>
                 {% endif %}
              {% else %}
                 {% include 'funds/includes/review_sidebar_item.html' with reviewer=reviewer %}
