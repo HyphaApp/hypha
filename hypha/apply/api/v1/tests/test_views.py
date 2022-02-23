@@ -6,6 +6,7 @@ from hypha.apply.activity.models import ALL, APPLICANT, Activity
 from hypha.apply.activity.tests.factories import CommentFactory
 from hypha.apply.projects.models.payment import (
     APPROVED_BY_FINANCE_1,
+    APPROVED_BY_FINANCE_2,
     APPROVED_BY_STAFF,
     SUBMITTED,
 )
@@ -202,6 +203,18 @@ class TestInvoiceDeliverableViewset(TestCase):
         response = self.delete_to_remove(project.id, invoice.id, invoice_deliverable.id)
         self.assertEqual(response.status_code, 200)
 
+    def test_staff_cant_remove_deliverables_after_staff_approval(self):
+        user = StaffFactory()
+        project = ProjectFactory()
+        invoice = InvoiceFactory(project=project, status=APPROVED_BY_STAFF)
+        deliverable = DeliverableFactory(project=project)
+        invoice_deliverable = InvoiceDeliverableFactory(deliverable=deliverable)
+        invoice.deliverables.add(invoice_deliverable)
+        self.client.force_login(user)
+
+        response = self.delete_to_remove(project.id, invoice.id, invoice_deliverable.id)
+        self.assertEqual(response.status_code, 403)
+
     def test_finance1_can_remove_deliverables(self):
         user = FinanceFactory()
         project = ProjectFactory()
@@ -214,6 +227,18 @@ class TestInvoiceDeliverableViewset(TestCase):
         response = self.delete_to_remove(project.id, invoice.id, invoice_deliverable.id)
         self.assertEqual(response.status_code, 200)
 
+    def test_finance1_cant_remove_deliverables_after_finance1_approval(self):
+        user = FinanceFactory()
+        project = ProjectFactory()
+        invoice = InvoiceFactory(project=project, status=APPROVED_BY_FINANCE_1)
+        deliverable = DeliverableFactory(project=project)
+        invoice_deliverable = InvoiceDeliverableFactory(deliverable=deliverable)
+        invoice.deliverables.add(invoice_deliverable)
+        self.client.force_login(user)
+
+        response = self.delete_to_remove(project.id, invoice.id, invoice_deliverable.id)
+        self.assertEqual(response.status_code, 403)
+
     def test_finance2_can_remove_deliverables(self):
         user = Finance2Factory()
         project = ProjectFactory()
@@ -225,6 +250,21 @@ class TestInvoiceDeliverableViewset(TestCase):
 
         response = self.delete_to_remove(project.id, invoice.id, invoice_deliverable.id)
         self.assertEqual(response.status_code, 200)
+
+    def test_deliverables_cant_removed_after_finance2_approval(self):
+        project = ProjectFactory()
+        invoice = InvoiceFactory(project=project, status=APPROVED_BY_FINANCE_2)
+        deliverable = DeliverableFactory(project=project)
+        invoice_deliverable = InvoiceDeliverableFactory(deliverable=deliverable)
+        invoice.deliverables.add(invoice_deliverable)
+
+        finance1 = FinanceFactory()
+        finance2 = Finance2Factory()
+        staff = StaffFactory()
+        for user in [staff, finance1, finance2]:
+            self.client.force_login(user)
+            response = self.delete_to_remove(project.id, invoice.id, invoice_deliverable.id)
+            self.assertEqual(response.status_code, 403)
 
     def test_deliverable_dont_exists_in_project_deliverables(self):
         user = StaffFactory()
