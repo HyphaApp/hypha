@@ -21,7 +21,7 @@ from hypha.apply.users.groups import PARTNER_GROUP_NAME, STAFF_GROUP_NAME
 
 User = get_user_model()
 
-markdown = mistune.Markdown()
+markdown = mistune.create_markdown()
 
 
 class ActionSerializer(serializers.Field):
