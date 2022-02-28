@@ -38,7 +38,6 @@ module.exports = (webpackEnv) => {
                       { source: '../fonts', destination: '../../../static_compiled/fonts' },
                       { source: '../sass', destination: '../../../static_compiled/css' },
                       { source: '../javascript', destination: '../../../static_compiled/js' },
-                      // { source: '../javascript', destination: '../../../static_compiled/app' },
                     ],
                 }
             },
