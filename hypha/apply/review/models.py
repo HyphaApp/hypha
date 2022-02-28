@@ -1,4 +1,3 @@
-from django.contrib.postgres.fields import JSONField
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.urls import reverse
@@ -155,7 +154,7 @@ class Review(ReviewFormFieldsMixin, BaseStreamForm, AccessFormData, models.Model
         on_delete=models.CASCADE,
     )
 
-    form_data = JSONField(default=dict, encoder=DjangoJSONEncoder)
+    form_data = models.JSONField(default=dict, encoder=DjangoJSONEncoder)
 
     recommendation = models.IntegerField(verbose_name=_("Recommendation"), choices=RECOMMENDATION_CHOICES, default=0)
     score = models.DecimalField(max_digits=10, decimal_places=1, default=0)

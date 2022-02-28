@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from functools import partial
 from itertools import groupby
 from operator import methodcaller
@@ -18,7 +19,7 @@ from .models import (
     ReviewerRole,
     ScreeningStatus,
 )
-from .utils import render_icon
+from .utils import model_form_initial, render_icon
 from .widgets import MetaTermSelect2Widget, Select2MultiCheckboxesWidget
 from .workflow import get_action_mapping
 
@@ -202,7 +203,13 @@ class UpdateReviewersForm(ApplicationSubmissionModelForm):
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
+        if kwargs.get('instance'):
+            # Providing initials(from model's instance) to BaseModelForm
+            kwargs['initial'] = model_form_initial(kwargs.get('instance'), self._meta.fields, self._meta.exclude)
         super().__init__(*args, **kwargs)
+
+        # convert a python dict to orderedDict, to use move_to_end method
+        self.fields = OrderedDict(self.fields)
 
         assigned_roles = {
             assigned.role: assigned.reviewer

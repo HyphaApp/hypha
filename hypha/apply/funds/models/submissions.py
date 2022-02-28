@@ -6,8 +6,6 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.fields import GenericRelation
-from django.contrib.postgres.fields import JSONField
-from django.contrib.postgres.fields.jsonb import KeyTextTransform
 from django.core.exceptions import PermissionDenied
 from django.db import models
 from django.db.models import (
@@ -25,6 +23,7 @@ from django.db.models import (
     When,
 )
 from django.db.models.expressions import OrderBy, RawSQL
+from django.db.models.fields.json import KeyTextTransform
 from django.db.models.functions import Cast, Coalesce
 from django.dispatch import receiver
 from django.urls import reverse
@@ -414,7 +413,7 @@ class ApplicationSubmission(
         AbstractFormSubmission,
         metaclass=ApplicationSubmissionMetaclass,
 ):
-    form_data = JSONField(encoder=StreamFieldDataEncoder)
+    form_data = models.JSONField(encoder=StreamFieldDataEncoder)
     form_fields = StreamField(ApplicationCustomFormFieldsBlock())
     summary = models.TextField(default='', null=True, blank=True)
     page = models.ForeignKey('wagtailcore.Page', on_delete=models.PROTECT)
@@ -897,7 +896,7 @@ def log_status_update(sender, **kwargs):
 
 class ApplicationRevision(BaseStreamForm, AccessFormData, models.Model):
     submission = models.ForeignKey(ApplicationSubmission, related_name='revisions', on_delete=models.CASCADE)
-    form_data = JSONField(encoder=StreamFieldDataEncoder)
+    form_data = models.JSONField(encoder=StreamFieldDataEncoder)
     timestamp = models.DateTimeField(auto_now=True)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
 
@@ -993,7 +992,7 @@ class AssignedReviewersQuerySet(models.QuerySet):
         return self.filter(
             review__isnull=True,
             opinions__isnull=True,
-        ).distinct()
+        )
 
     def staff(self):
         return self.filter(type__name=STAFF_GROUP_NAME)

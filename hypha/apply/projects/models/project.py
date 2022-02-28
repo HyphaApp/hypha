@@ -6,7 +6,6 @@ import logging
 from django.apps import apps
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
-from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
@@ -82,12 +81,12 @@ class ProjectQuerySet(models.QuerySet):
 
     def with_amount_paid(self):
         return self.annotate(
-            amount_paid=Coalesce(Sum('invoices__paid_value'), Value(0)),
+            amount_paid=Coalesce(Sum('invoices__paid_value'), Value(0), output_field=models.DecimalField()),
         )
 
     def with_last_payment(self):
         return self.annotate(
-            last_payment_request=Max('invoices__requested_at'),
+            last_payment_request=Max('invoices__requested_at', output_field=models.DateTimeField()),
         )
 
     def with_outstanding_reports(self):
@@ -147,7 +146,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
 
     status = models.TextField(choices=PROJECT_STATUS_CHOICES, default=COMMITTED)
 
-    form_data = JSONField(encoder=StreamFieldDataEncoder, default=dict)
+    form_data = models.JSONField(encoder=StreamFieldDataEncoder, default=dict)
     form_fields = StreamField(FormFieldsBlock(), null=True)
 
     # tracks read/write state of the Project

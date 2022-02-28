@@ -1,5 +1,4 @@
-from django.conf.urls import url
-from django.urls import reverse
+from django.urls import re_path, reverse
 from wagtail.core import hooks
 
 from hypha.apply.utils.notifications import slack_notify
@@ -10,7 +9,7 @@ from .admin_views import index
 @hooks.register('register_admin_urls')
 def register_admin_urls():
     return [
-        url(r'^users/$', index, name='index'),
+        re_path(r'^users/$', index, name='index'),
     ]
 
 

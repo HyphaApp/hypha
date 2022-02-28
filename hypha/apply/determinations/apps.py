@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class DeterminationsConfig(AppConfig):
-    name = 'determinations'
+    name = 'hypha.apply.determinations'
