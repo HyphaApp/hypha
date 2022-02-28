@@ -23,7 +23,7 @@ from .serializers import (
 )
 
 
-class DeliverableViewSet(
+class InvoiceDeliverableViewSet(
     InvoiceNestedMixin,
     ProjectNestedMixin,
     mixins.CreateModelMixin,
@@ -88,7 +88,7 @@ class InvoiceRequiredChecksViewSet(
     viewsets.GenericViewSet,
 ):
     serializer_class = InvoiceRequiredChecksSerializer
-    permission_classes = [IsFinance1User, HasRequiredChecksPermission]
+    permission_classes = [permissions.IsAuthenticated, IsFinance1User, HasRequiredChecksPermission]
     queryset = Invoice.objects.all()
 
     @action(detail=True, methods=['post'])

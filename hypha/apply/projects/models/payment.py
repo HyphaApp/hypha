@@ -59,10 +59,6 @@ def invoice_status_user_choices(user):
     return []
 
 
-def receipt_path(instance, filename):
-    return f'projects/{instance.project_id}/payment_invoices/{filename}'
-
-
 def invoice_path(instance, filename):
     return f'projects/{instance.project_id}/payment_invoices/{filename}'
 
@@ -278,7 +274,7 @@ class SupportingDocument(models.Model):
     )
 
     def __str__(self):
-        return self.invoice.name + ' -> ' + self.document.name
+        return "{invoice}".format(invoice=self.invoice) + ' -> ' + self.document.name
 
     @property
     def filename(self):

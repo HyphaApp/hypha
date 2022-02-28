@@ -5,20 +5,36 @@ from django.test import TestCase
 from django.utils import timezone
 
 from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
-from hypha.apply.users.tests.factories import ApplicantFactory, StaffFactory
+from hypha.apply.users.tests.factories import (
+    ApplicantFactory,
+    Finance2Factory,
+    FinanceFactory,
+    StaffFactory,
+)
 
 from ..models.payment import (
+    APPROVED_BY_FINANCE_1,
+    APPROVED_BY_FINANCE_2,
+    APPROVED_BY_STAFF,
+    CHANGES_REQUESTED_BY_FINANCE_1,
+    CHANGES_REQUESTED_BY_FINANCE_2,
     CHANGES_REQUESTED_BY_STAFF,
     DECLINED,
+    INVOICE_STATUS_FINANCE_1_CHOICES,
+    INVOICE_STATUS_FINANCE_2_CHOICES,
+    INVOICE_STATUS_PM_CHOICES,
     PAID,
     RESUBMITTED,
     SUBMITTED,
     Invoice,
+    invoice_status_user_choices,
 )
 from ..models.project import Project
 from ..models.report import Report, ReportConfig
 from .factories import (
+    DeliverableFactory,
     DocumentCategoryFactory,
+    InvoiceDeliverableFactory,
     InvoiceFactory,
     PacketFileFactory,
     ProjectFactory,
@@ -82,6 +98,23 @@ class TestProjectModel(TestCase):
 
 
 class TestInvoiceModel(TestCase):
+    def test_invoice_status_user_choices(self):
+        applicant = ApplicantFactory()
+        staff = StaffFactory()
+        finance1 = FinanceFactory()
+        finance2 = Finance2Factory()
+        applicant_choices = invoice_status_user_choices(applicant)
+        self.assertEqual(applicant_choices, [])
+
+        staff_choices = invoice_status_user_choices(staff)
+        self.assertEqual(staff_choices, INVOICE_STATUS_PM_CHOICES)
+
+        finance1_choices = invoice_status_user_choices(finance1)
+        self.assertEqual(finance1_choices, INVOICE_STATUS_FINANCE_1_CHOICES)
+
+        finance2_choices = invoice_status_user_choices(finance2)
+        self.assertEqual(finance2_choices, INVOICE_STATUS_FINANCE_2_CHOICES)
+
     def test_staff_can_delete_from_submitted(self):
         invoice = InvoiceFactory(status=SUBMITTED)
         staff = StaffFactory()
@@ -124,7 +157,7 @@ class TestInvoiceModel(TestCase):
 
         self.assertFalse(invoice.can_user_delete(user))
 
-    def test_user_can_delete_from_changes_requested(self):
+    def test_user_cant_delete_from_changes_requested(self):
         invoice = InvoiceFactory(status=CHANGES_REQUESTED_BY_STAFF)
         user = ApplicantFactory()
 
@@ -159,8 +192,242 @@ class TestInvoiceModel(TestCase):
         )
         self.assertEqual(invoice.value, Decimal('2'))
 
+    def test_deliverables_total_amount(self):
+        deliverable = DeliverableFactory(unit_price=100)
+        invoice_deliverable = InvoiceDeliverableFactory(deliverable=deliverable, quantity=2)
+        self.assertEqual(invoice_deliverable.deliverable.unit_price, 100.00)
+
+        invoice = InvoiceFactory(status=APPROVED_BY_STAFF)
+        invoice.deliverables.add(invoice_deliverable)
+        self.assertEqual(invoice.deliverables_total_amount['total'], 200.00)
+
+    def test_staff_can_change_status(self):
+        statuses = [SUBMITTED, RESUBMITTED, CHANGES_REQUESTED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_1]
+        user = StaffFactory()
+        for status in statuses:
+            invoice = InvoiceFactory(status=status)
+            self.assertTrue(invoice.can_user_change_status(user))
+
+    def test_staff_cant_change_status(self):
+        statuses = [
+            APPROVED_BY_STAFF, APPROVED_BY_FINANCE_1, APPROVED_BY_FINANCE_2,
+            CHANGES_REQUESTED_BY_FINANCE_2, DECLINED, PAID
+        ]
+        user = StaffFactory()
+        for status in statuses:
+            invoice = InvoiceFactory(status=status)
+            self.assertFalse(invoice.can_user_change_status(user))
+
+    def test_finance1_can_change_status(self):
+        statuses = [APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_2]
+        user = FinanceFactory()
+        for status in statuses:
+            invoice = InvoiceFactory(status=status)
+            self.assertTrue(invoice.can_user_change_status(user))
+
+    def test_finance1_cant_change_status(self):
+        statuses = [
+            APPROVED_BY_FINANCE_1, APPROVED_BY_FINANCE_2, CHANGES_REQUESTED_BY_STAFF,
+            CHANGES_REQUESTED_BY_FINANCE_1, DECLINED, PAID, RESUBMITTED, SUBMITTED
+        ]
+        user = FinanceFactory()
+        for status in statuses:
+            invoice = InvoiceFactory(status=status)
+            self.assertFalse(invoice.can_user_change_status(user))
+
+    def test_finance2_can_change_status(self):
+        statuses = [APPROVED_BY_FINANCE_1]
+        user = Finance2Factory()
+        for status in statuses:
+            invoice = InvoiceFactory(status=status)
+            self.assertTrue(invoice.can_user_change_status(user))
+
+    def test_finance2_cant_change_status(self):
+        statuses = [
+            APPROVED_BY_STAFF, APPROVED_BY_FINANCE_2, CHANGES_REQUESTED_BY_FINANCE_1, CHANGES_REQUESTED_BY_FINANCE_2,
+            CHANGES_REQUESTED_BY_STAFF, DECLINED, PAID, RESUBMITTED, SUBMITTED
+        ]
+        user = Finance2Factory()
+        for status in statuses:
+            invoice = InvoiceFactory(status=status)
+            self.assertFalse(invoice.can_user_change_status(user))
+
+    def test_applicant_can_edit_invoice(self):
+        statuses = [CHANGES_REQUESTED_BY_STAFF, RESUBMITTED, SUBMITTED]
+        user = ApplicantFactory()
+        for status in statuses:
+            invoice = InvoiceFactory(status=status)
+            self.assertTrue(invoice.can_user_edit(user))
+
+    def test_applicant_cant_edit_invoice(self):
+        statuses = [
+            APPROVED_BY_FINANCE_1, APPROVED_BY_FINANCE_2, APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_1,
+            CHANGES_REQUESTED_BY_FINANCE_2, DECLINED, PAID
+        ]
+        user = ApplicantFactory()
+        for status in statuses:
+            invoice = InvoiceFactory(status=status)
+            self.assertFalse(invoice.can_user_edit(user))
+
+    def test_staff_can_edit_invoice(self):
+        statuses = [SUBMITTED, RESUBMITTED, CHANGES_REQUESTED_BY_FINANCE_1]
+        user = StaffFactory()
+        for status in statuses:
+            invoice = InvoiceFactory(status=status)
+            self.assertTrue(invoice.can_user_edit(user))
+
+    def test_staff_cant_edit_invoice(self):
+        statuses = [
+            APPROVED_BY_FINANCE_1, APPROVED_BY_FINANCE_2, APPROVED_BY_STAFF,
+            CHANGES_REQUESTED_BY_FINANCE_2, CHANGES_REQUESTED_BY_STAFF, DECLINED, PAID
+        ]
+        user = StaffFactory()
+        for status in statuses:
+            invoice = InvoiceFactory(status=status)
+            self.assertFalse(invoice.can_user_edit(user))
+
+    def test_applicant_cant_complete_required_checks(self):
+        statuses = [APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_2]
+        user = ApplicantFactory()
+        for status in statuses:
+            invoice = InvoiceFactory(status=status)
+            self.assertFalse(invoice.can_user_complete_required_checks(user))
+
+    def test_staff_cant_complete_required_checks(self):
+        statuses = [APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_2]
+        user = StaffFactory()
+        for status in statuses:
+            invoice = InvoiceFactory(status=status)
+            self.assertFalse(invoice.can_user_complete_required_checks(user))
+
+    def test_finance1_can_complete_required_checks(self):
+        statuses = [APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_2]
+        user = FinanceFactory()
+        for status in statuses:
+            invoice = InvoiceFactory(status=status)
+            self.assertTrue(invoice.can_user_complete_required_checks(user))
+
+    def test_finance2_cant_complete_required_checks(self):
+        statuses = [APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_2]
+        user = Finance2Factory()
+        for status in statuses:
+            invoice = InvoiceFactory(status=status)
+            self.assertFalse(invoice.can_user_complete_required_checks(user))
+
+    def test_applicant_cant_view_required_checks(self):
+        user = ApplicantFactory()
+        invoice = InvoiceFactory(status=APPROVED_BY_FINANCE_1)
+        self.assertFalse(invoice.can_user_view_required_checks(user))
+
+    def test_staff_cant_view_required_checks(self):
+        user = StaffFactory()
+        invoice = InvoiceFactory(status=APPROVED_BY_FINANCE_1)
+        self.assertFalse(invoice.can_user_view_required_checks(user))
+
+    def test_finance1_can_view_required_checks(self):
+        user = FinanceFactory()
+        invoice = InvoiceFactory(status=APPROVED_BY_FINANCE_1)
+        self.assertTrue(invoice.can_user_view_required_checks(user))
+
+    def test_finance2_can_view_required_checks(self):
+        user = Finance2Factory()
+        invoice = InvoiceFactory(status=APPROVED_BY_FINANCE_1)
+        self.assertTrue(invoice.can_user_view_required_checks(user))
+
+    def test_applicant_cant_edit_deliverables(self):
+        statuses = [
+            SUBMITTED, RESUBMITTED, CHANGES_REQUESTED_BY_STAFF, APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_1,
+            APPROVED_BY_FINANCE_1, CHANGES_REQUESTED_BY_FINANCE_2, APPROVED_BY_FINANCE_2, DECLINED, PAID
+        ]
+        user = ApplicantFactory()
+        for status in statuses:
+            invoice = InvoiceFactory(status=status)
+            self.assertFalse(invoice.can_user_edit_deliverables(user))
+
+    def test_staff_can_edit_deliverables(self):
+        statuses = [SUBMITTED, RESUBMITTED, CHANGES_REQUESTED_BY_FINANCE_1]
+        user = StaffFactory()
+        for status in statuses:
+            invoice = InvoiceFactory(status=status)
+            self.assertTrue(invoice.can_user_edit_deliverables(user))
+
+    def test_staff_cant_edit_deliverables(self):
+        statuses = [
+            APPROVED_BY_FINANCE_1, APPROVED_BY_FINANCE_2, APPROVED_BY_STAFF,
+            CHANGES_REQUESTED_BY_FINANCE_2, CHANGES_REQUESTED_BY_STAFF, DECLINED, PAID
+        ]
+        user = StaffFactory()
+        for status in statuses:
+            invoice = InvoiceFactory(status=status)
+            self.assertFalse(invoice.can_user_edit_deliverables(user))
+
+    def test_finance1_can_edit_deliverables(self):
+        statuses = [APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_2]
+        user = FinanceFactory()
+        for status in statuses:
+            invoice = InvoiceFactory(status=status)
+            self.assertTrue(invoice.can_user_edit_deliverables(user))
+
+    def test_finance1_cant_edit_deliverables(self):
+        statuses = [
+            APPROVED_BY_FINANCE_1, APPROVED_BY_FINANCE_2, CHANGES_REQUESTED_BY_FINANCE_1, CHANGES_REQUESTED_BY_STAFF,
+            DECLINED, PAID, SUBMITTED, RESUBMITTED,
+        ]
+        user = FinanceFactory()
+        for status in statuses:
+            invoice = InvoiceFactory(status=status)
+            self.assertFalse(invoice.can_user_edit_deliverables(user))
+
+    def test_finance2_can_edit_deliverables(self):
+        statuses = [APPROVED_BY_FINANCE_1]
+        user = Finance2Factory()
+        for status in statuses:
+            invoice = InvoiceFactory(status=status)
+            self.assertTrue(invoice.can_user_edit_deliverables(user))
+
+    def test_finance2_cant_edit_deliverables(self):
+        statuses = [
+            APPROVED_BY_FINANCE_2, APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_1,
+            CHANGES_REQUESTED_BY_FINANCE_2, CHANGES_REQUESTED_BY_STAFF, DECLINED, PAID, SUBMITTED, RESUBMITTED
+        ]
+        user = Finance2Factory()
+        for status in statuses:
+            invoice = InvoiceFactory(status=status)
+            self.assertFalse(invoice.can_user_edit_deliverables(user))
+
 
 class TestInvoiceQueryset(TestCase):
+    def test_in_progress(self):
+        InvoiceFactory(status=SUBMITTED)
+        InvoiceFactory(status=APPROVED_BY_STAFF)
+        InvoiceFactory(status=CHANGES_REQUESTED_BY_FINANCE_2)
+        InvoiceFactory(status=DECLINED)
+        self.assertEqual(Invoice.objects.in_progress().count(), 3)
+
+    def test_approved_by_staff(self):
+        InvoiceFactory(status=APPROVED_BY_STAFF)
+        self.assertEqual(Invoice.objects.approved_by_staff().count(), 1)
+
+    def test_approved_by_finance_1(self):
+        InvoiceFactory(status=APPROVED_BY_FINANCE_1)
+        self.assertEqual(Invoice.objects.approved_by_finance_1().count(), 1)
+
+    def test_for_finance_1(self):
+        InvoiceFactory(status=APPROVED_BY_STAFF)
+        InvoiceFactory(status=CHANGES_REQUESTED_BY_FINANCE_2)
+        InvoiceFactory(status=SUBMITTED)
+        self.assertEqual(Invoice.objects.for_finance_1().count(), 2)
+
+    def test_rejected(self):
+        InvoiceFactory(status=DECLINED)
+        InvoiceFactory(status=SUBMITTED)
+        self.assertEqual(Invoice.objects.rejected().count(), 1)
+
+    def test_not_rejected(self):
+        InvoiceFactory(status=DECLINED)
+        InvoiceFactory(status=SUBMITTED)
+        self.assertEqual(Invoice.objects.not_rejected().count(), 1)
+
     def test_get_totals(self):
         InvoiceFactory(paid_value=20)
         InvoiceFactory(paid_value=10, status=PAID)

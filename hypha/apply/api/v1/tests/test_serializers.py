@@ -1,8 +1,14 @@
 from django.test import TestCase, override_settings
+from rest_framework.exceptions import ErrorDetail
 
 from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
+from hypha.apply.projects.tests.factories import DeliverableFactory
 from hypha.apply.review.tests.factories import ReviewFactory
 
+from ..projects.serializers import (
+    DeliverableSerializer,
+    InvoiceRequiredChecksSerializer,
+)
 from ..serializers import ReviewSummarySerializer
 
 
@@ -26,3 +32,55 @@ class TestReviewSummarySerializer(TestCase):
         self.assertEqual(data['recommendation'], {'value': 0, 'display': 'No'})
         self.assertEqual(len(data['assigned']), 1)
         self.assertEqual(len(data['reviews']), 1)
+
+
+class TestDeliverableSerializer(TestCase):
+    def test_id_is_required(self):
+        serializer = DeliverableSerializer(data={'quantity': 1})
+        self.assertFalse(serializer.is_valid())
+        error_message = {'id': [ErrorDetail(string='This field is required.', code='required')]}
+        self.assertEqual(serializer.errors, error_message)
+
+    def test_validate_id(self):
+        serializer = DeliverableSerializer(data={'id': 1, 'quantity': 1})
+        self.assertFalse(serializer.is_valid())
+        error_message = {'id': {'detail': ErrorDetail(string='Not found', code='invalid')}}
+        self.assertEqual(serializer.errors, error_message)
+
+        deliverable = DeliverableFactory()
+        serializer = DeliverableSerializer(data={'id': deliverable.id, 'quantity': 1})
+        self.assertTrue(serializer.is_valid())
+
+    def test_quantity_not_required(self):
+        deliverable = DeliverableFactory()
+        serializer = DeliverableSerializer(data={'id': deliverable.id})
+        self.assertTrue(serializer.is_valid())
+
+
+class TestInvoiceRequiredChecksSerializer(TestCase):
+    def test_valid_checks_required(self):
+        serializer = InvoiceRequiredChecksSerializer(data={'valid_checks_link': 'https://google.com'})
+        self.assertFalse(serializer.is_valid())
+        error_message = {'valid_checks': [ErrorDetail(string='This field is required.', code='required')]}
+        self.assertEqual(serializer.errors, error_message)
+
+    def test_valid_checks_link_required(self):
+        serializer = InvoiceRequiredChecksSerializer(data={'valid_checks': True})
+        self.assertFalse(serializer.is_valid())
+        error_message = {'valid_checks_link': [ErrorDetail(string='This field is required.', code='required')]}
+        self.assertEqual(serializer.errors, error_message)
+
+    def test_validate_valid_checks_and_link(self):
+        serializer = InvoiceRequiredChecksSerializer(data={
+            'valid_checks': False,
+            'valid_checks_link': 'https://google.com'
+        })
+        self.assertFalse(serializer.is_valid())
+        error_message = {'valid_checks': [ErrorDetail(string='Checkbox is not checked', code='invalid')]}
+        self.assertEqual(serializer.errors, error_message)
+
+        serializer = InvoiceRequiredChecksSerializer(data={
+            'valid_checks': True,
+            'valid_checks_link': 'https://google.com'
+        })
+        self.assertTrue(serializer.is_valid())
