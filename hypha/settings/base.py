@@ -78,7 +78,6 @@ INSTALLED_APPS = [
     'social_django',
 
     'wagtail.contrib.modeladmin',
-    'wagtail.contrib.postgres_search',
     'wagtail.contrib.settings',
     'wagtail.contrib.search_promotions',
     'wagtail.contrib.forms',
@@ -265,7 +264,7 @@ if env.str('CLOUDFLARE_BEARER_TOKEN', None) and env.str('CLOUDFLARE_API_ZONEID')
 # Search
 WAGTAILSEARCH_BACKENDS = {
     'default': {
-        'BACKEND': 'wagtail.contrib.postgres_search.backend',
+        'BACKEND': 'wagtail.search.backends.database',
     },
 }
 
