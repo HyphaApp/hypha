@@ -26,11 +26,12 @@ devConfig.devServer = {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': '*',
     },
-    hotOnly: true,
     host: 'localhost',
     port: 3000,
-    overlay: true,
-    disableHostCheck: true,
+    allowedHosts: ['all'],
+    client: {
+      overlay: true,
+    }
 }
 
 devConfig.devtool = 'source-map'
