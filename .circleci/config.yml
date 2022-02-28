@@ -43,7 +43,7 @@ jobs:
           command: |
             npm install --quiet
             npm install -g gulp-cli
-            gulp deploy
+            npm run heroku-postbuild
       - save_cache:
           paths:
             - ./node_modules
