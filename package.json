@@ -2,7 +2,6 @@
     "name": "Hypha",
     "version": "1.0.0",
     "description": "The node.js requirements to build this project.",
-    "main": "gulpfile.js",
     "author": "Fredrik Jonsson",
     "license": "GPL-2.0",
     "browserslist": [

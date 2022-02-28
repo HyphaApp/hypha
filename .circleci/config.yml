@@ -42,7 +42,6 @@ jobs:
           name: builds static assets
           command: |
             npm install --quiet
-            npm install -g gulp-cli
             npm run heroku-postbuild
       - save_cache:
           paths:

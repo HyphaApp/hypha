@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #npm install --quiet
-gulp deploy
+npm run heroku-postbuild
 
 #pip3 install --quiet -r requirements-dev.txt
 python3 manage.py createcachetable
