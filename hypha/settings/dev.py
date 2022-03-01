@@ -116,9 +116,8 @@ if DEBUG:
         'debug_toolbar.middleware.DebugToolbarMiddleware',
         *MIDDLEWARE,
     ]
-    # The 10.0.x address here allows vagrant users to use the debug toolbar
     # https://django-debug-toolbar.readthedocs.io/en/latest/installation.html#configuring-internal-ips
-    INTERNAL_IPS = ['127.0.0.1', '10.0.2.2']
+    INTERNAL_IPS = ['127.0.0.1']
 
 # We disable all panels by default here since some of them (SQL, Template,
 # Profiling) can be very CPU intensive for this site.  However disabled panels
