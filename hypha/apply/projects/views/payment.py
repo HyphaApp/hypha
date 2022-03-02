@@ -18,10 +18,14 @@ from hypha.apply.utils.views import DelegateableView, DelegatedViewMixin, ViewDi
 
 from ..filters import InvoiceListFilter
 from ..forms import ChangeInvoiceStatusForm, CreateInvoiceForm, EditInvoiceForm
-from ..models.payment import INVOICE_TRANISTION_TO_RESUBMITTED, Invoice
+from ..models.payment import (
+    APPROVED_BY_FINANCE_2,
+    INVOICE_TRANISTION_TO_RESUBMITTED,
+    Invoice,
+)
 from ..models.project import Project
 from ..tables import InvoiceListTable
-from ..utils import fetch_and_save_deliverables
+from ..utils import create_invoice, fetch_and_save_deliverables
 
 
 @method_decorator(login_required, name='dispatch')
@@ -76,6 +80,10 @@ class ChangeInvoiceStatusView(DelegatedViewMixin, InvoiceAccessMixin, UpdateView
             related=self.object,
         )
 
+        if form.cleaned_data['status'] == APPROVED_BY_FINANCE_2:
+            # Create Invoice at integrated payment service
+            create_invoice(self.object)
+
         return response
 
 
@@ -119,7 +127,7 @@ class InvoiceAdminView(InvoiceAccessMixin, DelegateableView, DetailView):
         external_projectid = project.external_projectid
         if external_projectid and not invoice.deliverables.exists():
             # Once the deliverables has been attached on an invoice do not make API call
-            deliverables = fetch_and_save_deliverables(project.id, external_projectid)
+            deliverables = fetch_and_save_deliverables(project.id)
         deliverables = project.deliverables.all()
         return super().get_context_data(
             **kwargs,

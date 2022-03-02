@@ -1,4 +1,4 @@
-from .wrapper import ApiBase, Purchasing
+from .wrapper import ApiBase, Invoice, Project, Purchasing
 
 
 class SageIntacctSDK:
@@ -30,6 +30,8 @@ class SageIntacctSDK:
 
         self.api_base = ApiBase()
         self.purchasing = Purchasing()
+        self.project = Project()
+        self.invoice = Invoice()
         self.update_sender_id()
         self.update_sender_password()
         self.update_session_id()
@@ -40,6 +42,8 @@ class SageIntacctSDK:
         """
         self.api_base.set_sender_id(self.__sender_id)
         self.purchasing.set_sender_id(self.__sender_id)
+        self.project.set_sender_id(self.__sender_id)
+        self.invoice.set_sender_id(self.__sender_id)
 
     def update_sender_password(self):
         """
@@ -47,6 +51,8 @@ class SageIntacctSDK:
         """
         self.api_base.set_sender_password(self.__sender_password)
         self.purchasing.set_sender_password(self.__sender_password)
+        self.project.set_sender_password(self.__sender_password)
+        self.invoice.set_sender_password(self.__sender_password)
 
     def update_session_id(self):
         """
@@ -60,3 +66,5 @@ class SageIntacctSDK:
         )
         self.api_base.set_session_id(self.__session_id)
         self.purchasing.set_session_id(self.__session_id)
+        self.project.set_session_id(self.__session_id)
+        self.invoice.set_session_id(self.__session_id)
