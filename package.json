@@ -45,7 +45,7 @@
         "redux-thunk": "^2.3.0",
         "reselect": "^4.0.0",
         "resolve-cwd": "^3.0.0",
-        "sass": "1.49.9",
+        "sass": "^1.49.9",
         "seamless-immutable": "^7.1.4",
         "smoothscroll-polyfill": "^0.4.4",
         "underscore": "^1.13.1",
@@ -91,8 +91,11 @@
         "webpack-stream": "^5.2.1"
     },
     "scripts": {
-        "heroku-postbuild": "webpack --config ./hypha/static_src/src/app/webpack.prod.config.js",
-        "webpack-watch": "webpack serve --config ./hypha/static_src/src/app/webpack.dev.config.js ",
+        "heroku-postbuild": "npm run build:css && webpack --config ./hypha/static_src/src/app/webpack.prod.config.js",
+        "watch": "webpack serve --config ./hypha/static_src/src/app/webpack.dev.config.js ",
+        "build:css": "sass ./hypha/static_src/src/sass:./hypha/static_compiled/css  -I ./hypha/static_src/src/sass --no-source-map",
+        "dev:build": "npm run heroku-postbuild && npm run collectstatic && mv ./hypha/static_compiled/app/webpack-stats-prod.json ./hypha/static_compiled/app/webpack-stats.json",
+        "collectstatic": "python manage.py collectstatic --no-post-process --noinput --verbosity 0",
         "test": "NODE_ENV=test jest",
         "test:ci": "NODE_ENV=test jest --runInBand",
         "test:watch": "NODE_ENV=test jest --watch",

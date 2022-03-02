@@ -36,7 +36,6 @@ module.exports = (webpackEnv) => {
                     copy: [
                       { source: '../images', destination: '../../../static_compiled/images' },
                       { source: '../fonts', destination: '../../../static_compiled/fonts' },
-                      { source: '../sass', destination: '../../../static_compiled/css' },
                       { source: '../javascript', destination: '../../../static_compiled/js' },
                     ],
                 }
