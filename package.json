@@ -16,7 +16,7 @@
         "@material-ui/lab": "^4.0.0-alpha.58",
         "@material-ui/pickers": "^3.3.10",
         "@rooks/use-interval": "^3.0.1",
-        "@svgr/webpack": "^5.5.0",
+        "@svgr/webpack": "^6.2.1",
         "@tinymce/tinymce-react": "^3.12.6",
         "connected-react-router": "^6.9.1",
         "core-js": "^3.15.2",
@@ -28,7 +28,6 @@
         "js-cookie": "^2.2.0",
         "lodash.isequal": "^4.5.0",
         "lodash.pick": "^4.4.0",
-        "node-sass-import-once": "^1.2.0",
         "prop-types": "^15.7.2",
         "react": "^16.14.0",
         "react-dom": "^16.14.0",
@@ -58,8 +57,7 @@
         "@babel/plugin-proposal-class-properties": "^7.14.5",
         "@babel/preset-env": "^7.14.7",
         "@babel/preset-react": "^7.14.5",
-        "babel-core": "^7.0.0-bridge.0",
-        "babel-jest": "^21.2.0",
+        "babel-jest": "^27.5.1",
         "babel-loader": "^8.2.2",
         "css-loader": "^2.1.1",
         "enzyme": "^3.3.0",
@@ -89,8 +87,7 @@
         "webpack-bundle-analyzer": "^3.9.0",
         "webpack-bundle-tracker": "^1.4.0",
         "webpack-cli": "4.9.0",
-        "webpack-dev-server": "4.7.4",
-        "webpack-stream": "^5.2.1"
+        "webpack-dev-server": "4.7.4"
     },
     "scripts": {
         "heroku-postbuild": "npm run build",
