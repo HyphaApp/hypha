@@ -29,18 +29,20 @@ module.exports = (webpackEnv) => {
             filename: '[name]-[hash].js'
         },
 
-        plugins: [new ESLintPlugin(ESLINT_OPTIONS),
+        plugins: [
+            new ESLintPlugin(ESLINT_OPTIONS),
             new FileManagerPlugin({
                 events: {
-                  onEnd: {
-                    copy: [
-                      { source: '../images', destination: '../../../static_compiled/images' },
-                      { source: '../fonts', destination: '../../../static_compiled/fonts' },
-                      { source: '../javascript', destination: '../../../static_compiled/js' },
-                    ],
-                }
-            },
-        })],
+                    onEnd: {
+                        copy: [
+                            { source: '../images', destination: '../../../static_compiled/images' },
+                            { source: '../fonts', destination: '../../../static_compiled/fonts' },
+                            { source: '../javascript', destination: '../../../static_compiled/js' },
+                        ],
+                    }
+                },
+            })
+        ],
 
         module: {
             rules: [
