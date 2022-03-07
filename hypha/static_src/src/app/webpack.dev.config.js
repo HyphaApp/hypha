@@ -18,7 +18,7 @@ devConfig.plugins = devConfig.plugins.concat([
         API_BASE_URL: 'http://apply.localhost:8000/api',
     }),
     new ExtraWatchWebpackPlugin({
-      dirs: ['./hypha/static_src/src/javascript/'],
+        dirs: ['./hypha/static_src/src/javascript/'],
     }),
 ])
 
@@ -33,7 +33,7 @@ devConfig.devServer = {
     port: 3000,
     allowedHosts: ['all'],
     client: {
-      overlay: true,
+        overlay: true,
     }
 }
 
