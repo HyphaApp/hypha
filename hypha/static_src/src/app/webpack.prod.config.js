@@ -1,6 +1,6 @@
 var webpack = require('webpack')
 var BundleTracker = require('webpack-bundle-tracker')
-
+var TerserPlugin = require("terser-webpack-plugin");
 var config = require('./webpack.base.config.js')
 
 prodConfig = config('production')
@@ -15,7 +15,16 @@ prodConfig.plugins = prodConfig.plugins.concat([
     }),
 ])
 
-prodConfig.optimization = {}
+prodConfig.optimization = {
+  minimize: true,
+  minimizer: [new TerserPlugin({terserOptions: {
+    compress: {
+      drop_console: true,
+    },
+    mangle: true
+  }})
+],
+}
 
 
 module.exports = prodConfig

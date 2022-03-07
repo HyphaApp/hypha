@@ -1,9 +1,9 @@
 var path = require("path")
 var webpack = require('webpack')
 var BundleTracker = require('webpack-bundle-tracker')
+var ExtraWatchWebpackPlugin = require("extra-watch-webpack-plugin");
 
 var config = require('./webpack.base.config')
-
 devConfig = config("development")
 
 // override django's STATIC_URL for webpack bundles
@@ -16,6 +16,9 @@ devConfig.plugins = devConfig.plugins.concat([
     new BundleTracker({filename: './hypha/static_compiled/app/webpack-stats.json'}),
     new webpack.EnvironmentPlugin({
         API_BASE_URL: 'http://apply.localhost:8000/api',
+    }),
+    new ExtraWatchWebpackPlugin({
+      dirs: ['./hypha/static_src/src/javascript/'],
     }),
 ])
 

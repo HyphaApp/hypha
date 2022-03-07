@@ -68,6 +68,7 @@
         "eslint": "^8.7.0",
         "eslint-plugin-react": "^7.28.0",
         "eslint-webpack-plugin": "^2.5.4",
+        "extra-watch-webpack-plugin": "^1.0.3",
         "filemanager-webpack-plugin": "^6.1.7",
         "identity-obj-proxy": "^3.0.0",
         "istanbul-reports": "^3.0.2",
@@ -94,7 +95,8 @@
         "heroku-postbuild": "npm run build:css && webpack --config ./hypha/static_src/src/app/webpack.prod.config.js",
         "watch": "webpack serve --config ./hypha/static_src/src/app/webpack.dev.config.js ",
         "build:css": "sass ./hypha/static_src/src/sass:./hypha/static_compiled/css  -I ./hypha/static_src/src/sass --no-source-map",
-        "dev:build": "npm run heroku-postbuild && npm run collectstatic && mv ./hypha/static_compiled/app/webpack-stats-prod.json ./hypha/static_compiled/app/webpack-stats.json",
+        "dev:build:css": "sass ./hypha/static_src/src/sass:./hypha/static_compiled/css  -I ./hypha/static_src/src/sass ",
+        "dev:build": "npm run clean && npm run dev:build:css &&  webpack --config ./hypha/static_src/src/app/webpack.prod.config.js && npm run collectstatic && mv ./hypha/static_compiled/app/webpack-stats-prod.json ./hypha/static_compiled/app/webpack-stats.json",
         "collectstatic": "python manage.py collectstatic --no-post-process --noinput --verbosity 0",
         "test": "NODE_ENV=test jest",
         "test:ci": "NODE_ENV=test jest --runInBand",
@@ -104,7 +106,8 @@
         "lint-app:css": "stylelint \"hypha/static_src/src/app/src/**/*.scss\"",
         "lint:css": "stylelint \"hypha/static_src/src/sass/**/*.scss\"",
         "lint:js": "eslint \"hypha/static_src/src/javascript/**/*.js\"",
-        "lint": "npm run lint:css && npm run lint:js"
+        "lint": "npm run lint:css && npm run lint:js",
+        "clean": "rm -rf ./static ./hypha/static_compiled"
     },
     "engines": {
         "node": "16.13.x"
