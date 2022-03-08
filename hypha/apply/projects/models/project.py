@@ -137,7 +137,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
     )
     value = models.DecimalField(
         default=0,
-        max_digits=10,
+        max_digits=20,
         decimal_places=2,
         validators=[MinValueValidator(decimal.Decimal('0.01'))],
     )

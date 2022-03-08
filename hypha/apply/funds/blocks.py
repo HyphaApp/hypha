@@ -36,7 +36,9 @@ class TitleBlock(ApplicationMustIncludeFieldBlock):
 class ValueBlock(ApplicationSingleIncludeFieldBlock):
     name = 'value'
     description = 'The value of the project'
-    widget = forms.NumberInput(attrs={'min': 0})
+    max_digits = 20
+    decimal_digits = 2
+    widget = forms.NumberInput(attrs={'min': 0, 'max': ((pow(10, max_digits)-1)/pow(10, decimal_digits))})
 
     class Meta:
         label = _('Requested amount')
