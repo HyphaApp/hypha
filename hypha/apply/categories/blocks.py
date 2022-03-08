@@ -36,8 +36,9 @@ class CategoryQuestionBlock(OptionalFormFieldBlock):
         help_text=_('Leave blank to use the default Category label'),
     )
     help_text = TextBlock(
+        label=_('Help text'),
         required=False,
-        label=_('Leave blank to use the default Category help text'),
+        help_text=_('Leave blank to use the default Category help text'),
     )
     category = ModelChooserBlock('categories.Category')
     multi = BooleanBlock(label=_('Multi select'), required=False)
