@@ -122,7 +122,12 @@ class ApplicationSubmissionQueryset(JSONOrderable):
     def in_review_for(self, user, assigned=True):
         user_review_statuses = get_review_active_statuses(user)
         qs = self.prefetch_related('reviews__author__reviewer')
-        qs = qs.filter(Q(status__in=user_review_statuses), ~Q(reviews__author__reviewer=user) | Q(reviews__is_draft=True))
+        qs = qs.filter(
+            Q(status__in=user_review_statuses),
+            ~Q(reviews__author__reviewer=user) | (
+                Q(reviews__author__reviewer=user) & Q(reviews__is_draft=True)
+            )
+        )
         if assigned:
             qs = qs.filter(reviewers=user)
             # If this user has agreed with a review, then they have reviewed this submission already
