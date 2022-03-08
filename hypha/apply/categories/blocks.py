@@ -87,6 +87,15 @@ class CategoryQuestionBlock(OptionalFormFieldBlock):
         data = category.options.filter(id__in=data).values_list('value', flat=True)
         return data
 
+    def render(self, value, context):
+        # Overwriting field_label and help_text with default for empty values
+        category_fields = {'field_label': 'name', 'help_text': 'help_text'}
+
+        for field in category_fields.keys():
+            if not value.get(field):
+                value[field] = getattr(value['category'], category_fields[field])
+        return super(CategoryQuestionBlock, self).render(value, context)
+
     def get_searchable_content(self, value, data):
         return None
 
