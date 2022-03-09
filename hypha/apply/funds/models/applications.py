@@ -338,10 +338,11 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
 
     def get_form(self, *args, **kwargs):
         draft = kwargs.pop('draft', False)
+        user = kwargs.get('user')
         try:
-            form_class = self.get_form_class(draft, args[0])
+            form_class = self.get_form_class(draft, args[0], user=user)
         except IndexError:
-            form_class = self.get_form_class(draft)
+            form_class = self.get_form_class(draft, user=user)
         submission_id = kwargs.pop('submission_id', None)
         form_params = self.get_form_parameters(submission_id=submission_id)
         form_params.update(kwargs)
