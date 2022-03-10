@@ -348,6 +348,11 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
 
     @property
     def program_project_id(self):
+        '''
+        Program project id is used to fetch deliverables from IntAcct.
+
+        Stored in external_project_information as the first item of referenceno(PONUMBER).
+        '''
         reference_number = self.external_project_information.get('PONUMBER', None)
         if reference_number:
             return reference_number.split('-')[0]

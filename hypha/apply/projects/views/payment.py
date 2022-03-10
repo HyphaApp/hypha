@@ -81,7 +81,8 @@ class ChangeInvoiceStatusView(DelegatedViewMixin, InvoiceAccessMixin, UpdateView
         )
 
         if form.cleaned_data['status'] == APPROVED_BY_FINANCE_2:
-            # Create Invoice at integrated payment service
+            # Creates an invoice at enabled payment service once it
+            # has been approved by Finance 2.
             create_invoice(self.object)
 
         return response
@@ -126,7 +127,8 @@ class InvoiceAdminView(InvoiceAccessMixin, DelegateableView, DetailView):
         project = invoice.project
         external_projectid = project.external_projectid
         if external_projectid and not invoice.deliverables.exists():
-            # Once the deliverables has been attached on an invoice do not make API call
+            # Do not make API call to update deliverables once they
+            # have been attached on an invoice
             deliverables = fetch_and_save_deliverables(project.id)
         deliverables = project.deliverables.all()
         return super().get_context_data(

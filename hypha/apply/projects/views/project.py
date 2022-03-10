@@ -605,6 +605,8 @@ class ProjectApprovalEditView(UpdateView):
         response = super().form_valid(form)
         external_projectid = form.cleaned_data['external_projectid']
         if external_projectid:
+            # If the external project id is provided fetch more inforamtion
+            # from enabled payment service.
             fetch_and_save_project_details(self.object.id, external_projectid)
         return response
 

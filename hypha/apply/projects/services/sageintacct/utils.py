@@ -7,6 +7,13 @@ from .sageintacctsdk import SageIntacctSDK
 
 
 def fetch_deliverables(program_project_id=''):
+    '''
+    Fetch deliverables from IntAcct using the program project id(DEPARTMENTID).
+
+    Returns a list of deliverables or an empty list.
+
+    Also logs any error that occurred during the API call.
+    '''
     if not program_project_id:
         return []
     formatted_filter = {
@@ -36,6 +43,11 @@ def fetch_deliverables(program_project_id=''):
 
 
 def get_deliverables_json(invoice):
+    '''
+    Get a json format of deliverables attached to the invoice.
+
+    Used when creating invoice in IntAcct.
+    '''
     deliverables = invoice.deliverables.all()
     deliverables_list = []
     for deliverable in deliverables:
@@ -57,6 +69,13 @@ def get_deliverables_json(invoice):
 
 
 def create_intacct_invoice(invoice):
+    """
+    Creates a Contract Invoice Release at IntAcct.
+
+    Note that the order of field send in the query is important.
+
+    API call may also fail if the order of the field is not correct.
+    """
     project = invoice.project
     external_project_information = project.external_project_information
     external_projectid = project.external_projectid
@@ -125,6 +144,11 @@ def create_intacct_invoice(invoice):
 
 
 def fetch_project_details(external_projectid):
+    '''
+    Fetch detail of a project contract from IntAcct.
+
+    These details will be further used to fetch deliverables and create invoices.
+    '''
     formatted_filter = {
         'equalto': {'field': 'DOCNO', 'value': external_projectid}
     }

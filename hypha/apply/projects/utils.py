@@ -5,7 +5,7 @@ from .models import Deliverable, Project
 
 def fetch_and_save_deliverables(project_id):
     """
-    Get deliverables from various third party integrations.
+    Fetch deliverables from the enabled payment service and save it in Hypha.
     """
     if settings.INTACCT_ENABLED:
         from hypha.apply.projects.services.sageintacct.utils import fetch_deliverables
@@ -16,6 +16,11 @@ def fetch_and_save_deliverables(project_id):
 
 
 def save_deliverables(project_id, deliverables=[]):
+    '''
+    TODO: List of deliverables coming from IntAcct is
+    not varified yet from the team. This method may need
+    revision when that is done.
+    '''
     if deliverables:
         remove_deliverables_from_project(project_id)
     project = Project.objects.get(id=project_id)
@@ -55,6 +60,9 @@ def remove_deliverables_from_project(project_id):
 
 
 def fetch_and_save_project_details(project_id, external_projectid):
+    '''
+    Fetch and save project contract information from enabled payment service.
+    '''
     if settings.INTACCT_ENABLED:
         from hypha.apply.projects.services.sageintacct.utils import (
             fetch_project_details,
@@ -70,6 +78,9 @@ def save_project_details(project_id, data):
 
 
 def create_invoice(invoice):
+    '''
+    Creates invoice at enabled payment service. 
+    '''
     if settings.INTACCT_ENABLED:
         from hypha.apply.projects.services.sageintacct.utils import (
             create_intacct_invoice,

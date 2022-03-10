@@ -171,6 +171,11 @@ class Invoice(models.Model):
 
     @property
     def vendor_document_number(self):
+        '''
+        Vendor document number is a required field to create invoices in IntAcct.
+
+        Formatting should be HP###### i.e. HP000001 and so on.
+        '''
         prefix = 'HP'
         return prefix + f"{self.id:06}"
 
