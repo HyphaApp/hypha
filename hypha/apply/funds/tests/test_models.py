@@ -316,19 +316,24 @@ class TestFormSubmission(TestCase):
         self.assertEqual(ApplicationSubmission.objects.first().user, user)
 
     # This will need to be updated when we hide user information contextually
-    def test_errors_if_blank_user_data_even_if_logged_in(self):
+    def test_can_submit_if_blank_user_data_even_if_logged_in(self):
         user, _ = self.User.objects.get_or_create(email=self.email, defaults={'full_name': self.name})
 
         # Lead + applicant
         self.assertEqual(self.User.objects.count(), 2)
 
         response = self.submit_form(email='', name='', user=user, ignore_errors=True)
-        self.assertContains(response, 'This field is required')
+        self.assertEqual(response.status_code, 200)
 
         # Lead + applicant
         self.assertEqual(self.User.objects.count(), 2)
 
-        self.assertEqual(ApplicationSubmission.objects.count(), 0)
+        self.assertEqual(ApplicationSubmission.objects.count(), 1)
+
+        submission = ApplicationSubmission.objects.first()
+        self.assertEqual(submission.user, user)
+        self.assertEqual(submission.user.full_name, self.name)
+        self.assertEqual(submission.user.email, self.email)
 
     def test_valid_email(self):
         email = 'not_a_valid_email@'
