@@ -42,7 +42,7 @@ jobs:
           name: builds static assets
           command: |
             npm install --quiet
-            npm run heroku-postbuild
+            npm run build
       - save_cache:
           paths:
             - ./node_modules
