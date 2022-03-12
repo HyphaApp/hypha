@@ -62,7 +62,9 @@ def get_deliverables_json(invoice):
                 'locationid': extra_info['LOCATIONID'],
                 'departmentid': extra_info['DEPARTMENTID'],
                 'projectid': extra_info['PROJECTID'],
+                'customerid': extra_info['CUSTOMERID'],
                 'classid': extra_info['CLASSID'],
+                'billable': extra_info['BILLABLE'],
             }
         )
     return deliverables_list

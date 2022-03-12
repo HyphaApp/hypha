@@ -36,7 +36,8 @@ def save_deliverables(project_id, deliverables=[]):
             'PROJECTID': deliverable['PROJECTID'],
             'LOCATIONID': deliverable['LOCATIONID'],
             'CLASSID': deliverable['CLASSID'],
-            'BILLABLE': deliverable['BILLABLE']
+            'BILLABLE': deliverable['BILLABLE'],
+            'CUSTOMERID': deliverable['CUSTOMERID'],
         }
         new_deliverable_list.append(
             Deliverable(
@@ -79,7 +80,7 @@ def save_project_details(project_id, data):
 
 def create_invoice(invoice):
     '''
-    Creates invoice at enabled payment service. 
+    Creates invoice at enabled payment service.
     '''
     if settings.INTACCT_ENABLED:
         from hypha.apply.projects.services.sageintacct.utils import (

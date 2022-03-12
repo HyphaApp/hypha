@@ -11,6 +11,7 @@ dimensions_fields_mapping = {
         'CLASSID',
         'BILLABLE',
         'DEPARTMENTID',
+        'CUSTOMERID',
     ],
     'PODOCUMENT': [
         'DOCNO',
