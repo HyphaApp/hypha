@@ -112,7 +112,13 @@ class ApplicationSubmissionQueryset(JSONOrderable):
         return self.exclude(status__in=active_statuses)
 
     def in_community_review(self, user):
-        qs = self.filter(Q(status__in=COMMUNITY_REVIEW_PHASES), ~Q(user=user), ~Q(reviews__author=user) | Q(reviews__is_draft=True))
+        qs = self.filter(
+            Q(status__in=COMMUNITY_REVIEW_PHASES),
+            ~Q(user=user),
+            ~Q(reviews__author=user) | (
+                Q(reviews__author=user) & Q(reviews__is_draft=True)
+            )
+        )
         qs = qs.exclude(reviews__opinions__opinion=AGREE, reviews__opinions__author=user)
         return qs.distinct()
 
@@ -122,7 +128,12 @@ class ApplicationSubmissionQueryset(JSONOrderable):
     def in_review_for(self, user, assigned=True):
         user_review_statuses = get_review_active_statuses(user)
         qs = self.prefetch_related('reviews__author__reviewer')
-        qs = qs.filter(Q(status__in=user_review_statuses), ~Q(reviews__author__reviewer=user) | Q(reviews__is_draft=True))
+        qs = qs.filter(
+            Q(status__in=user_review_statuses),
+            ~Q(reviews__author__reviewer=user) | (
+                Q(reviews__author__reviewer=user) & Q(reviews__is_draft=True)
+            )
+        )
         if assigned:
             qs = qs.filter(reviewers=user)
             # If this user has agreed with a review, then they have reviewed this submission already
