@@ -8,7 +8,7 @@ def set_duration_required_false(apps, schema_editor):
     for submission in ApplicationSubmission.objects.all():
         for id, struct_child in enumerate(submission.form_fields):
             struct_value = struct_child.value
-            if struct_value['field_label'] == 'Duration' and struct_value['required'] is None:
+            if struct_child.block_type == 'duration' and struct_value['required'] is None:
                 submission.form_fields[id].value['required'] = False
                 submission.save()
 
