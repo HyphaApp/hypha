@@ -208,6 +208,9 @@ WAGTAIL_CACHE_TIMEOUT = CACHE_CONTROL_MAX_AGE
 # Set feed cache timeout (automatic cache refresh).
 FEED_CACHE_TIMEOUT = 600
 
+# Set X-Frame-Options header for every outgoing HttpResponse
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+
 if env.str('REDIS_URL', None):
     CACHES = {
         'default': {
