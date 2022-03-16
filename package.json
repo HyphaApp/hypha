@@ -59,6 +59,7 @@
         "@babel/preset-react": "^7.14.5",
         "babel-jest": "^27.5.1",
         "babel-loader": "^8.2.2",
+        "concurrently": "^7.0.0",
         "css-loader": "^2.1.1",
         "enzyme": "^3.3.0",
         "enzyme-adapter-react-16": "^1.1.1",
@@ -115,7 +116,7 @@
         "clean": "rm -rf ./static ./hypha/static_compiled"
     },
     "engines": {
-        "node": "16.13.x"
+        "node": "16.14.x"
     },
     "private": true
 }
