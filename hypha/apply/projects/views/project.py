@@ -68,7 +68,6 @@ from ..models.project import (
 )
 from ..models.report import Report
 from ..tables import InvoiceListTable, ProjectsListTable, ReportListTable
-from ..utils import fetch_and_save_project_details
 from .report import ReportFrequencyUpdate, ReportingMixin
 
 
@@ -602,13 +601,7 @@ class ProjectApprovalEditView(UpdateView):
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
-        response = super().form_valid(form)
-        external_projectid = form.cleaned_data['external_projectid']
-        if external_projectid:
-            # If the external project id is provided fetch more inforamtion
-            # from enabled payment service.
-            fetch_and_save_project_details(self.object.id, external_projectid)
-        return response
+        return super().form_valid(form)
 
 
 @method_decorator(staff_or_finance_required, name='dispatch')

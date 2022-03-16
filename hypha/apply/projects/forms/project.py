@@ -83,7 +83,6 @@ class ProjectApprovalForm(forms.ModelForm):
             'value',
             'proposed_start',
             'proposed_end',
-            'external_projectid',
         ]
         model = Project
         widgets = {

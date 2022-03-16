@@ -18,14 +18,9 @@ from hypha.apply.utils.views import DelegateableView, DelegatedViewMixin, ViewDi
 
 from ..filters import InvoiceListFilter
 from ..forms import ChangeInvoiceStatusForm, CreateInvoiceForm, EditInvoiceForm
-from ..models.payment import (
-    APPROVED_BY_FINANCE_2,
-    INVOICE_TRANISTION_TO_RESUBMITTED,
-    Invoice,
-)
+from ..models.payment import INVOICE_TRANISTION_TO_RESUBMITTED, Invoice
 from ..models.project import Project
 from ..tables import InvoiceListTable
-from ..utils import create_invoice, fetch_and_save_deliverables
 
 
 @method_decorator(login_required, name='dispatch')
@@ -80,11 +75,6 @@ class ChangeInvoiceStatusView(DelegatedViewMixin, InvoiceAccessMixin, UpdateView
             related=self.object,
         )
 
-        if form.cleaned_data['status'] == APPROVED_BY_FINANCE_2:
-            # Creates an invoice at enabled payment service once it
-            # has been approved by Finance 2.
-            create_invoice(self.object)
-
         return response
 
 
@@ -125,11 +115,6 @@ class InvoiceAdminView(InvoiceAccessMixin, DelegateableView, DetailView):
     def get_context_data(self, **kwargs):
         invoice = self.get_object()
         project = invoice.project
-        external_projectid = project.external_projectid
-        if external_projectid and not invoice.deliverables.exists():
-            # Do not make API call to update deliverables once they
-            # have been attached on an invoice
-            deliverables = fetch_and_save_deliverables(project.id)
         deliverables = project.deliverables.all()
         return super().get_context_data(
             **kwargs,
