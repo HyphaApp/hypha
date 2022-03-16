@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #npm install --quiet
-gulp deploy
+npm run build
 
 #pip3 install --quiet -r requirements-dev.txt
 python3 manage.py createcachetable

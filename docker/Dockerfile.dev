@@ -17,7 +17,6 @@ COPY package.json package-lock.json /usr/local/hypha/
 RUN sudo chown -R circleci:circleci /usr/local
 
 # Install node dependencies.
-RUN npm install  --quiet --global gulp-cli
 RUN npm install  --quiet
 
 # Install python dependencies.

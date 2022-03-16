@@ -1,6 +1,7 @@
 const webpack = require('webpack');
 const path = require('path');
 const ESLintPlugin = require('eslint-webpack-plugin');
+const FileManagerPlugin = require('filemanager-webpack-plugin');
 
 var COMMON_ENTRY = ['core-js/stable', 'regenerator-runtime/runtime'];
 
@@ -28,7 +29,20 @@ module.exports = (webpackEnv) => {
             filename: '[name]-[hash].js'
         },
 
-        plugins: [new ESLintPlugin(ESLINT_OPTIONS)],
+        plugins: [
+            new ESLintPlugin(ESLINT_OPTIONS),
+            new FileManagerPlugin({
+                events: {
+                    onEnd: {
+                        copy: [
+                            { source: '../images', destination: '../../../static_compiled/images' },
+                            { source: '../fonts', destination: '../../../static_compiled/fonts' },
+                            { source: '../javascript', destination: '../../../static_compiled/js' },
+                        ],
+                    }
+                },
+            })
+        ],
 
         module: {
             rules: [
@@ -36,7 +50,7 @@ module.exports = (webpackEnv) => {
                     test: /\.jsx?$/,
                     loader: 'babel-loader',
                     include: [path.resolve(__dirname, './src')],
-                    query: {
+                    options: {
                         presets: ['@babel/preset-react', ['@babel/preset-env', {useBuiltIns: "usage", corejs: 3}]],
                         plugins: [
                             'react-hot-loader/babel',

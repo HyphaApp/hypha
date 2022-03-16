@@ -1,9 +1,9 @@
 var path = require("path")
 var webpack = require('webpack')
 var BundleTracker = require('webpack-bundle-tracker')
+var ExtraWatchWebpackPlugin = require("extra-watch-webpack-plugin");
 
 var config = require('./webpack.base.config')
-
 devConfig = config("development")
 
 // override django's STATIC_URL for webpack bundles
@@ -17,6 +17,9 @@ devConfig.plugins = devConfig.plugins.concat([
     new webpack.EnvironmentPlugin({
         API_BASE_URL: 'http://apply.localhost:8000/api',
     }),
+    new ExtraWatchWebpackPlugin({
+        dirs: ['./hypha/static_src/src/javascript/'],
+    }),
 ])
 
 // Add a loader for JSX files with react-hot enabled
@@ -26,11 +29,12 @@ devConfig.devServer = {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': '*',
     },
-    hotOnly: true,
     host: 'localhost',
     port: 3000,
-    overlay: true,
-    disableHostCheck: true,
+    allowedHosts: ['all'],
+    client: {
+        overlay: true,
+    }
 }
 
 devConfig.devtool = 'source-map'
