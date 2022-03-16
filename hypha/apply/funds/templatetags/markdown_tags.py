@@ -4,7 +4,7 @@ from django import template
 
 register = template.Library()
 
-mistune_markdown = mistune.create_markdown()
+mistune_markdown = mistune.create_markdown(escape=False)
 
 
 @register.filter
