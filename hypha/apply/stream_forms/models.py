@@ -2,6 +2,7 @@
 import copy
 from collections import OrderedDict
 
+from django.utils.translation import gettext_lazy as _
 from wagtail.contrib.forms.models import AbstractForm
 
 from hypha.apply.funds.blocks import (
@@ -63,12 +64,15 @@ class BaseStreamForm:
             struct_value = struct_child.value
             if isinstance(block, FormFieldBlock):
                 field_from_block = block.get_field(struct_value)
+                disabled_help_text = _('You are logged in so this information is fetched from your user account.')
                 if isinstance(block, FullNameBlock) and user and user.is_authenticated:
                     field_from_block.disabled = True
                     field_from_block.initial = user.full_name
+                    field_from_block.help_text = disabled_help_text
                 if isinstance(block, EmailBlock) and user and user.is_authenticated:
                     field_from_block.disabled = True
                     field_from_block.initial = user.email
+                    field_from_block.help_text = disabled_help_text
                 if draft and not issubclass(block.__class__, ApplicationMustIncludeFieldBlock):
                     field_from_block.required = False
                 field_from_block.help_link = struct_value.get('help_link')
