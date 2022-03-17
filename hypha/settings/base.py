@@ -654,11 +654,10 @@ if env.str('AWS_STORAGE_BUCKET_NAME', None):
     FILE_FORM_TEMP_STORAGE = PRIVATE_FILE_STORAGE
 
 # Matomo tracking
+MATOMO_URL = env.str('MATOMO_URL', None)
+MATOMO_SITEID = env.str('MATOMO_SITEID', None)
 
-MATOMO_URL = env.bool('MATOMO_URL', False)
-MATOMO_SITEID = env.bool('MATOMO_SITEID', False)
-
-
+# Sage IntAcct integration
 INTACCT_ENABLED = env.bool('INTACCT_ENABLED', False)
 INTACCT_SENDER_ID = env.str('INTACCT_SENDER_ID', '')
 INTACCT_SENDER_PASSWORD = env.str('INTACCT_SENDER_PASSWORD', '')
