@@ -157,7 +157,15 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         related_query_name='project',
     )
     created_at = models.DateTimeField(auto_now_add=True)
-
+    external_projectid = models.CharField(
+        max_length=30,
+        blank=True,
+        help_text='ID of this project at integrated payment service.'
+    )
+    external_project_information = models.JSONField(
+        default=dict,
+        help_text='More details of the project integrated at payment service.'
+    )
     sent_to_compliance_at = models.DateTimeField(null=True)
 
     objects = ProjectQuerySet.as_manager()
@@ -338,6 +346,18 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
     def has_deliverables(self):
         return self.deliverables.exists()
 
+    @property
+    def program_project_id(self):
+        '''
+        Program project id is used to fetch deliverables from IntAcct.
+
+        Stored in external_project_information as the first item of referenceno(PONUMBER).
+        '''
+        reference_number = self.external_project_information.get('PONUMBER', None)
+        if reference_number:
+            return reference_number.split('-')[0]
+        return ''
+
     # def send_to_compliance(self, request):
     #     """Notify Compliance about this Project."""
 
@@ -441,12 +461,21 @@ class DocumentCategory(models.Model):
 
 
 class Deliverable(models.Model):
+    external_id = models.CharField(
+        max_length=30,
+        blank=True,
+        help_text='ID of this deliverable at integrated payment service.'
+    )
     name = models.TextField()
     available_to_invoice = models.IntegerField(default=1)
     unit_price = models.DecimalField(
         max_digits=10,
         decimal_places=2,
         validators=[MinValueValidator(decimal.Decimal('0.01'))],
+    )
+    extra_information = models.JSONField(
+        default=dict,
+        help_text='More details of the deliverable at integrated payment service.'
     )
     project = models.ForeignKey(
         Project,

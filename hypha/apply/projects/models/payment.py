@@ -169,6 +169,16 @@ class Invoice(models.Model):
     def status_display(self):
         return self.get_status_display()
 
+    @property
+    def vendor_document_number(self):
+        '''
+        Vendor document number is a required field to create invoices in IntAcct.
+
+        Formatting should be HP###### i.e. HP000001 and so on.
+        '''
+        prefix = 'HP'
+        return prefix + f"{self.id:06}"
+
     def can_user_delete(self, user):
         if user.is_applicant or user.is_apply_staff or user.is_finance_level_1 or user.is_finance_level_2 or user.is_contracting:
             if self.status in (SUBMITTED):

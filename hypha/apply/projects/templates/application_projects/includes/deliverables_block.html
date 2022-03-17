@@ -1,32 +1,34 @@
 {% load i18n invoice_tools %}
 <div class="sidebar__inner">
     {% can_edit_deliverables invoice user as user_can_edit_deliverables %}
-    <h5>{% trans "Choose deliverables" %}</h5>
-    <form id="add-deliverables", action="" data-projectid="{{ project.id }}" data-invoiceid="{{ invoice.id }}">
-        <div class="select-deliverables">
-            <select name="deliverables" id="deliverables">
-            <option value="deliverables">{% trans "Invoice Covers Deliverables" %}</option>
-            {% for deliverable in deliverables %}
-                <option id="{{ deliverable.id }}" value="{{ deliverable.id }}" data-deliverableid="{{ deliverable.id }}" data-availabletoinvoice="{{ deliverable.available_to_invoice }}">{{ deliverable.name }} (${{ deliverable.unit_price }})</option>
-            {% endfor %}
-            </select>
-        </div>
-        <br>
-        {% if user_can_edit_deliverables %}
-            <div class="available-to-invoice">
-                <b>{% trans "Available to invoice:" %} </b>
+    {% if user_can_edit_deliverables %}
+        <h5>{% trans "Choose deliverables" %}</h5>
+        <form id="add-deliverables", action="" data-projectid="{{ project.id }}" data-invoiceid="{{ invoice.id }}">
+            <div class="select-deliverables">
+                <select name="deliverables" id="deliverables">
+                <option value="deliverables">{% trans "Invoice Covers Deliverables" %}</option>
+                {% for deliverable in deliverables %}
+                    <option id="{{ deliverable.id }}" value="{{ deliverable.id }}" data-deliverableid="{{ deliverable.id }}" data-availabletoinvoice="{{ deliverable.available_to_invoice }}">{{ deliverable.name }} (${{ deliverable.unit_price }})</option>
+                {% endfor %}
+                </select>
             </div>
             <br>
-        {% endif %}
-
-        <div class="quantity">
-            <b><label for="quantity">{% trans "Quantity:" %}</label></b>
-            <input type="number" id="quantity" name="quantity" min="1">
-        </div>
+                <div class="available-to-invoice">
+                    <b>{% trans "Available to invoice:" %} </b>
+                </div>
+                <br>
+            <div class="quantity">
+                <b><label for="quantity">{% trans "Quantity:" %}</label></b>
+                <input type="number" id="quantity" name="quantity" min="1">
+            </div>
+            <br>
+            <input type="submit" value="Add Deliverable" {% if not user_can_edit_deliverables %}disabled{% endif %}>
+        </form>
         <br>
-        <input type="submit" value="Add Deliverable" {% if not user_can_edit_deliverables %}disabled{% endif %}>
-    </form>
-    <br>
+    {% else %}
+        <h5>{% trans "Deliverables" %}</h5>
+    {% endif %}
+
     <div id="list-deliverables">
         <div class="deliverables">
             {% for deliverable in invoice.deliverables.all %}

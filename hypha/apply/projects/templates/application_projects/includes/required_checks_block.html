@@ -4,7 +4,7 @@
     {% can_complete_required_checks object user as user_can_complete_required_checks %}
     <h5>{% trans "Required Checks" %}</h5>
     <form id="required-checks", action="" data-projectid="{{ project.id }}" data-invoiceid="{{ invoice.id }}">
-        <div class="available-to-invoice">
+        <div class="file-text">
             <b>{% trans "Make sure valid OFAC and SAM check, and W8/W9 are on file" %} </b>
         </div>
         <br>

@@ -42,3 +42,4 @@ webpack-stats.json
 
 # Compiled language files
 *.mo
+.env
