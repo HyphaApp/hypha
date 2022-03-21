@@ -9,7 +9,7 @@ executors:
       - image: cimg/python:3.9
   node:
     docker:
-      - image: cimg/node:12.22
+      - image: cimg/node:16.14
   with-database:
     docker:
       - image: cimg/python:3.9
@@ -35,9 +35,9 @@ jobs:
           command: sudo chown -R circleci:circleci /usr/local
       - restore_cache:
           keys:
-            - v3-npm-{{ .Branch }}-{{ checksum "package-lock.json" }}
-            - v3-npm-{{ .Branch }}-
-            - v3-npm-
+            - v4-npm-{{ .Branch }}-{{ checksum "package-lock.json" }}
+            - v4-npm-{{ .Branch }}-
+            - v4-npm-
       - run:
           name: builds static assets
           command: |
@@ -48,7 +48,7 @@ jobs:
             - ./node_modules
             - /usr/local/lib/node_modules
             - /usr/local/bin
-          key: v3-npm-{{ .Branch }}-{{ checksum "package-lock.json" }}
+          key: v4-npm-{{ .Branch }}-{{ checksum "package-lock.json" }}
       - persist_to_workspace:
           root: ~/repo
           paths:
@@ -87,9 +87,9 @@ jobs:
           command: sudo chown -R circleci:circleci /usr/local
       - restore_cache:
           keys:
-            - v3-python-{{ .Branch }}-{{ checksum "requirements-dev.txt" }}
-            - v3-python-{{ .Branch }}-
-            - v3-python-
+            - v4-python-{{ .Branch }}-{{ checksum "requirements-dev.txt" }}
+            - v4-python-{{ .Branch }}-
+            - v4-python-
       - run:
           name: install python dependencies
           command: |
@@ -100,7 +100,7 @@ jobs:
       - save_cache:
           paths:
             - ./venv
-          key: v3-python-{{ .Branch }}-{{ checksum "requirements-dev.txt" }}
+          key: v4-python-{{ .Branch }}-{{ checksum "requirements-dev.txt" }}
       - persist_to_workspace:
           root: ~/repo
           paths:
