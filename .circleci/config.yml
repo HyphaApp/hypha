@@ -87,7 +87,7 @@ jobs:
           command: sudo chown -R circleci:circleci /usr/local
       - restore_cache:
           keys:
-            - v4-python-{{ .Branch }}-{{ checksum "requirements-dev.txt" }}
+            - v4-python-{{ .Branch }}-{{ checksum "requirements.txt" }}{{ checksum "requirements-dev.txt" }}
             - v4-python-{{ .Branch }}-
             - v4-python-
       - run:
@@ -100,7 +100,7 @@ jobs:
       - save_cache:
           paths:
             - ./venv
-          key: v4-python-{{ .Branch }}-{{ checksum "requirements-dev.txt" }}
+          key: v4-python-{{ .Branch }}-{{ checksum "requirements.txt" }}{{ checksum "requirements-dev.txt" }}
       - persist_to_workspace:
           root: ~/repo
           paths:
