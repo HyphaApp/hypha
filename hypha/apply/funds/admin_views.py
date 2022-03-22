@@ -5,7 +5,7 @@ from django.utils.translation import gettext as _
 from wagtail.admin import messages
 from wagtail.admin.forms.pages import CopyForm
 from wagtail.admin.views.pages.utils import get_valid_next_url_from_request
-from wagtail.contrib.modeladmin.views import CreateView
+from wagtail.contrib.modeladmin.views import CreateView, EditView
 from wagtail.core import hooks
 from wagtail.core.models import Page
 
@@ -95,3 +95,27 @@ class CopyApplicationFormViewClass(CreateView):
 
     def get_initial(self):
         return {'name': f'[CHANGE] Copy of {self.form_instance.name}', 'form_fields': self.form_instance.form_fields}
+
+
+class CreateApplicationFormViewClass(CreateView):
+
+    def form_invalid(self, form):
+        for err in form.errors.values():
+            if isinstance(err, list):
+                for form_field_error in err:
+                    messages.error(self.request, form_field_error)
+            else:
+                messages.error(self.request, err.as_text())
+        return self.render_to_response(self.get_context_data(form=form))
+
+
+class EditApplicationFormViewClass(EditView):
+
+    def form_invalid(self, form):
+        for err in form.errors.values():
+            if isinstance(err, list):
+                for form_field_error in err:
+                    messages.error(self.request, form_field_error)
+            else:
+                messages.error(self.request, err.as_text())
+        return self.render_to_response(self.get_context_data(form=form))

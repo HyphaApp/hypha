@@ -109,7 +109,7 @@ class CustomFormFieldsBlock(StreamBlock):
 
         if all_errors or error_dict:
             error_dict['__all__'] = all_errors
-            raise ValidationError('Error', params=error_dict)
+            raise ValidationError(all_errors, params=error_dict)
 
         return value
 
