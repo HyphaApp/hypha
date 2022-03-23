@@ -6,7 +6,10 @@ from hypha.apply.determinations.models import DeterminationForm
 from hypha.apply.review.admin_helpers import ButtonsWithClone
 from hypha.apply.utils.admin import ListRelatedMixin
 
-from .admin_views import CreateDeterminationFormViewClass, EditDeterminationFormViewClass
+from .admin_views import (
+    CreateDeterminationFormViewClass,
+    EditDeterminationFormViewClass,
+)
 
 
 class CloneView(CreateView, InstanceSpecificView):
