@@ -6,6 +6,7 @@ from hypha.apply.review.models import ReviewForm
 from hypha.apply.utils.admin import ListRelatedMixin
 
 from .admin_helpers import ButtonsWithClone
+from .admin_views import CreateReviewFormViewClass, EditReviewFormViewClass
 
 
 class CloneView(CreateView, InstanceSpecificView):
@@ -20,6 +21,8 @@ class ReviewFormAdmin(ListRelatedMixin, ModelAdmin):
     list_display = ('name', 'used_by')
     button_helper_class = ButtonsWithClone
     clone_view_class = CloneView
+    create_view_class = CreateReviewFormViewClass
+    edit_view_class = EditReviewFormViewClass
 
     related_models = [
         ('applicationbasereviewform', 'application'),

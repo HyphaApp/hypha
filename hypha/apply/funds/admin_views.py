@@ -9,6 +9,8 @@ from wagtail.contrib.modeladmin.views import CreateView, EditView
 from wagtail.core import hooks
 from wagtail.core.models import Page
 
+from hypha.apply.utils.blocks import show_admin_form_error_messages
+
 
 def custom_admin_round_copy_view(request, page):
     # Custom view to handle copied Round pages.
@@ -100,22 +102,12 @@ class CopyApplicationFormViewClass(CreateView):
 class CreateApplicationFormViewClass(CreateView):
 
     def form_invalid(self, form):
-        for err in form.errors.values():
-            if isinstance(err, list):
-                for form_field_error in err:
-                    messages.error(self.request, form_field_error)
-            else:
-                messages.error(self.request, err.as_text())
+        show_admin_form_error_messages(self.request, form)
         return self.render_to_response(self.get_context_data(form=form))
 
 
 class EditApplicationFormViewClass(EditView):
 
     def form_invalid(self, form):
-        for err in form.errors.values():
-            if isinstance(err, list):
-                for form_field_error in err:
-                    messages.error(self.request, form_field_error)
-            else:
-                messages.error(self.request, err.as_text())
+        show_admin_form_error_messages(self.request, form)
         return self.render_to_response(self.get_context_data(form=form))
