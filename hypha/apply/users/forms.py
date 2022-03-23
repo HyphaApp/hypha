@@ -105,7 +105,8 @@ class EmailChangePasswordForm(forms.Form):
 
     def save(self, updated_email, name, slack, commit=True):
         self.user.full_name = name
-        self.user.slack = slack
+        if slack is not None:
+            self.user.slack = slack
         if commit:
             self.user.save()
         return self.user
