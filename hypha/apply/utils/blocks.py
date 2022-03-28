@@ -7,7 +7,12 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from pagedown.widgets import PagedownWidget
 from wagtail.admin import messages
-from wagtail.core.blocks import StaticBlock, StreamBlock, StreamValue
+from wagtail.core.blocks import (
+    ListBlock,
+    StaticBlock,
+    StreamBlock,
+    StreamValue,
+)
 
 from hypha.apply.stream_forms.blocks import (
     FormFieldBlock,
@@ -116,6 +121,19 @@ class CustomFormFieldsBlock(StreamBlock):
             for i, block_name in enumerate(block_types):
                 if block_name in duplicates:
                     self.add_error_to_child(error_dict, i, 'info', 'Duplicate field')
+
+        for block in value:
+            for child_block_name, child_block in block.block.child_blocks.items():
+                if child_block.required and not block.value[child_block_name]:
+                    all_errors.append(
+                        '{} cannot be empty for {}'.format(child_block_name.capitalize(), block.block.label)
+                    )
+                if isinstance(child_block,ListBlock) and child_block.child_block.required:
+                    for child_value in block.value[child_block_name]:
+                        if not child_value:
+                            all_errors.append(
+                                '{} cannot be empty for {}'.format(child_block_name.capitalize(), block.block.label)
+                            )
 
         if all_errors or error_dict:
             error_dict['__all__'] = all_errors
