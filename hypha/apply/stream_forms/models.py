@@ -2,9 +2,14 @@
 import copy
 from collections import OrderedDict
 
+from django.utils.translation import gettext_lazy as _
 from wagtail.contrib.forms.models import AbstractForm
 
-from hypha.apply.funds.blocks import ApplicationMustIncludeFieldBlock
+from hypha.apply.funds.blocks import (
+    ApplicationMustIncludeFieldBlock,
+    EmailBlock,
+    FullNameBlock,
+)
 
 from .blocks import (
     FormFieldBlock,
@@ -46,7 +51,7 @@ class BaseStreamForm:
     def get_defined_fields(self):
         return self.form_fields
 
-    def get_form_fields(self, draft=False, form_data={}):
+    def get_form_fields(self, draft=False, form_data={}, user=None):
         form_fields = OrderedDict()
         field_blocks = self.get_defined_fields()
         group_counter = 1
@@ -59,6 +64,15 @@ class BaseStreamForm:
             struct_value = struct_child.value
             if isinstance(block, FormFieldBlock):
                 field_from_block = block.get_field(struct_value)
+                disabled_help_text = _('You are logged in so this information is fetched from your user account.')
+                if isinstance(block, FullNameBlock) and user and user.is_authenticated:
+                    field_from_block.disabled = True
+                    field_from_block.initial = user.full_name
+                    field_from_block.help_text = disabled_help_text
+                if isinstance(block, EmailBlock) and user and user.is_authenticated:
+                    field_from_block.disabled = True
+                    field_from_block.initial = user.email
+                    field_from_block.help_text = disabled_help_text
                 if draft and not issubclass(block.__class__, ApplicationMustIncludeFieldBlock):
                     field_from_block.required = False
                 field_from_block.help_link = struct_value.get('help_link')
@@ -105,8 +119,8 @@ class BaseStreamForm:
 
         return form_fields
 
-    def get_form_class(self, draft=False, form_data={}):
-        return type('WagtailStreamForm', (self.submission_form_class,), self.get_form_fields(draft, form_data))
+    def get_form_class(self, draft=False, form_data={}, user=None):
+        return type('WagtailStreamForm', (self.submission_form_class,), self.get_form_fields(draft, form_data, user))
 
 
 class AbstractStreamForm(BaseStreamForm, AbstractForm):

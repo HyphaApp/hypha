@@ -976,7 +976,7 @@ class BaseSubmissionEditView(UpdateView):
 
     def get_form_class(self):
         draft = self.request.POST.get('save', False)
-        form_fields = self.object.get_form_fields(draft, self.object.raw_data)
+        form_fields = self.object.get_form_fields(draft, self.object.raw_data, user=self.request.user)
         field_blocks = self.object.get_defined_fields()
         for field_block in field_blocks:
             if isinstance(field_block.block, GroupToggleBlock):

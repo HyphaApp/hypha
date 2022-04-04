@@ -338,10 +338,11 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
 
     def get_form(self, *args, **kwargs):
         draft = kwargs.pop('draft', False)
+        user = kwargs.get('user')
         try:
-            form_class = self.get_form_class(draft, args[0])
+            form_class = self.get_form_class(draft, args[0], user=user)
         except IndexError:
-            form_class = self.get_form_class(draft)
+            form_class = self.get_form_class(draft, user=user)
         submission_id = kwargs.pop('submission_id', None)
         form_params = self.get_form_parameters(submission_id=submission_id)
         form_params.update(kwargs)
@@ -431,6 +432,14 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
 
     def open_round(self):
         return self.live
+
+    def get_form(self, *args, **kwargs):
+        user = kwargs.get('user')
+        form_class = self.get_form_class(user=user)
+        form_params = self.get_form_parameters()
+        form_params.update(kwargs)
+
+        return form_class(*args, **form_params)
 
     def serve(self, request, *args, **kwargs):
         if request.method == 'POST':
