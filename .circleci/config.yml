@@ -35,9 +35,9 @@ jobs:
           command: sudo chown -R circleci:circleci /usr/local
       - restore_cache:
           keys:
-            - v4-npm-{{ .Branch }}-{{ checksum "package-lock.json" }}
-            - v4-npm-{{ .Branch }}-
-            - v4-npm-
+            - v5-npm-{{ .Branch }}-{{ checksum "package-lock.json" }}
+            - v5-npm-{{ .Branch }}-
+            - v5-npm-
       - run:
           name: builds static assets
           command: |
@@ -48,7 +48,7 @@ jobs:
             - ./node_modules
             - /usr/local/lib/node_modules
             - /usr/local/bin
-          key: v4-npm-{{ .Branch }}-{{ checksum "package-lock.json" }}
+          key: v5-npm-{{ .Branch }}-{{ checksum "package-lock.json" }}
       - persist_to_workspace:
           root: ~/repo
           paths:
@@ -87,9 +87,9 @@ jobs:
           command: sudo chown -R circleci:circleci /usr/local
       - restore_cache:
           keys:
-            - v4-python-{{ .Branch }}-{{ checksum "requirements.txt" }}{{ checksum "requirements-dev.txt" }}
-            - v4-python-{{ .Branch }}-
-            - v4-python-
+            - v5-python-{{ .Branch }}-{{ checksum "requirements.txt" }}{{ checksum "requirements-dev.txt" }}
+            - v5-python-{{ .Branch }}-
+            - v5-python-
       - run:
           name: install python dependencies
           command: |
@@ -100,7 +100,7 @@ jobs:
       - save_cache:
           paths:
             - ./venv
-          key: v4-python-{{ .Branch }}-{{ checksum "requirements.txt" }}{{ checksum "requirements-dev.txt" }}
+          key: v5-python-{{ .Branch }}-{{ checksum "requirements.txt" }}{{ checksum "requirements-dev.txt" }}
       - persist_to_workspace:
           root: ~/repo
           paths:
