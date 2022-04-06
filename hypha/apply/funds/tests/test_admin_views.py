@@ -157,7 +157,7 @@ class TestCreateApplicationFormView(TestCase):
             self.assertEqual(expected_message, str(message.message).strip())
         self.assertEqual(ApplicationForm.objects.count(), 0)
 
-    def test_title_is_required(self):
+    def test_title_block_required(self):
         data = {'name': [self.name]}
         form_field_data = create_form_fields_data(
             {
@@ -173,7 +173,7 @@ class TestCreateApplicationFormView(TestCase):
             self.assertEqual(expected_message, str(message.message).strip())
         self.assertEqual(ApplicationForm.objects.count(), 0)
 
-    def test_email_is_required(self):
+    def test_email_block_required(self):
         data = {'name': [self.name]}
         form_field_data = create_form_fields_data(
             {
@@ -189,7 +189,7 @@ class TestCreateApplicationFormView(TestCase):
             self.assertEqual(expected_message, str(message.message).strip())
         self.assertEqual(ApplicationForm.objects.count(), 0)
 
-    def test_full_name_is_required(self):
+    def test_full_name_block_required(self):
         data = {'name': [self.name]}
         form_field_data = create_form_fields_data(
             {

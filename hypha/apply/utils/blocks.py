@@ -7,7 +7,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from pagedown.widgets import PagedownWidget
 from wagtail.admin import messages
-from wagtail.core.blocks import  ListBlock, StaticBlock, StreamBlock, StreamValue
+from wagtail.core.blocks import ListBlock, StaticBlock, StreamBlock, StreamValue
 
 from hypha.apply.stream_forms.blocks import (
     FormFieldBlock,
