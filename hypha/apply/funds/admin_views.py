@@ -99,14 +99,14 @@ class CopyApplicationFormViewClass(CreateView):
         return {'name': f'[CHANGE] Copy of {self.form_instance.name}', 'form_fields': self.form_instance.form_fields}
 
 
-class CreateApplicationFormViewClass(CreateView):
+class CreateApplicationFormView(CreateView):
 
     def form_invalid(self, form):
         show_admin_form_error_messages(self.request, form)
         return self.render_to_response(self.get_context_data(form=form))
 
 
-class EditApplicationFormViewClass(EditView):
+class EditApplicationFormView(EditView):
 
     def form_invalid(self, form):
         show_admin_form_error_messages(self.request, form)

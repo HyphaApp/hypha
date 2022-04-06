@@ -19,8 +19,8 @@ from .admin_helpers import (
 )
 from .admin_views import (
     CopyApplicationFormViewClass,
-    CreateApplicationFormViewClass,
-    EditApplicationFormViewClass,
+    CreateApplicationFormView,
+    EditApplicationFormView,
 )
 from .models import (
     ApplicationForm,
@@ -173,8 +173,8 @@ class ApplicationFormAdmin(ListRelatedMixin, ModelAdmin):
     list_filter = (FormsFundRoundListFilter,)
     permission_helper_class = DeletePermission
     button_helper_class = ApplicationFormButtonHelper
-    create_view_class = CreateApplicationFormViewClass
-    edit_view_class = EditApplicationFormViewClass
+    create_view_class = CreateApplicationFormView
+    edit_view_class = EditApplicationFormView
 
     related_models = [
         ('applicationbaseform', 'application'),
