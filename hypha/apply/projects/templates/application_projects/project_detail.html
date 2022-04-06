@@ -79,17 +79,7 @@
                 <h3>{% trans "Project Information" %}</h3>
                 <div class="grid grid--proposal-info">
                     <div>
-                        <h5>{% trans "Proposed start date" %}</h5>
-                        <p>{{ object.proposed_start|date:"DATE_FORMAT"|default:"-" }}</p>
-                    </div>
-
-                    <div>
-                        <h5>{% trans "Project Proposed end date" %}</h5>
-                        <p>{{ object.proposed_end|date:"DATE_FORMAT"|default:"-" }}</p>
-                    </div>
-
-                    <div>
-                        <h5>{% trans "Legal name" %}</h5>
+                        <h5>{% trans "Contractor" %}</h5>
                         <p>{{ object.vendor.name |default:"-" }}</p>
                     </div>
 
@@ -103,27 +93,9 @@
                     </div>
                 </div>
 
-                <details>
-                    <summary>{% trans "Show more" %}</summary>
-                    <div>
-                        <h5>{% trans "Address" %}</h5>
-                        <p>{{ object.vendor.get_address_display|default:"-"}}</p>
-                    </div>
-
-                    <div>
-                        <h5>{% trans "Phone" %}</h5>
-                        <p>{{ object.vendor.phone|default:"-" }}</p>
-                    </div>
-
-                    <div>
-                        <h5>{% trans "Value" %}</h5>
-                        <p>{{ CURRENCY_SYMBOL }}{{ object.value|default:"-" }}</p>
-                    </div>
-                </details>
 
                 {% if object.can_request_funding %}
                 <div class="wrapper wrapper--outer-space-large">
-                    {% include "application_projects/includes/funding_block.html" %}
                     {% include "application_projects/includes/invoices.html" %}
                 </div>
                 {% endif %}
