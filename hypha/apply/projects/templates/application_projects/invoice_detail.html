@@ -18,7 +18,7 @@
         <div class="card card--solid">
             <p class="card__text"><b>{% trans "Status" %}:</b> {{ object.get_status_display }}</p>
             <p class="card__text"><b>{% trans "Vendor" %}:</b> {{ object.project.vendor.name }}</p>
-            <p class="card__text"><b>{% trans "Invoice Number" %}:</b> {{ object.pk }}</p>
+            <p class="card__text"><b>{% trans "Invoice Number" %}:</b> {{ object.vendor_document_number }}</p>
             <p class="card__text"><b>{% trans "Period of Performance" %}:</b> {{ object.date_from.date }} | {{ object.date_to.date }}</p>
             <p class="card__text"><b>{% trans "Total" %}:</b> {{ CURRENCY_SYMBOL }}{{ object.amount|intcomma }}</p>
         </div>

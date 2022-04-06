@@ -16,8 +16,10 @@ from ..models.payment import (
     CHANGES_REQUESTED_BY_FINANCE_1,
     CHANGES_REQUESTED_BY_FINANCE_2,
     CHANGES_REQUESTED_BY_STAFF,
+    CONVERTED,
     DECLINED,
     INVOICE_STATUS_CHOICES,
+    PAID,
     RESUBMITTED,
     SUBMITTED,
     Invoice,
@@ -61,6 +63,8 @@ class ChangeInvoiceStatusForm(forms.ModelForm):
                 user_choices
             ),
             APPROVED_BY_FINANCE_1: filter_request_choices([CHANGES_REQUESTED_BY_FINANCE_2, APPROVED_BY_FINANCE_2], user_choices),
+            APPROVED_BY_FINANCE_2: filter_request_choices([CONVERTED, PAID], user_choices),
+            CONVERTED: filter_request_choices([PAID], user_choices),
         }
         status_field.choices = possible_status_transitions_lut.get(instance.status, [])
 

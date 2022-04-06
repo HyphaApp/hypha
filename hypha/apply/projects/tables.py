@@ -11,11 +11,13 @@ from .models import Invoice, Project, Report
 
 
 class BaseInvoiceTable(tables.Table):
-    project = tables.LinkColumn(
+    vendor_document_number = tables.LinkColumn(
         'funds:projects:invoice-detail',
-        verbose_name=_('Invoice reference'),
-        text=lambda r: textwrap.shorten(r.project.title, width=30, placeholder="..."),
+        verbose_name=_('Invoice Number'),
         args=[tables.utils.A('project.pk'), tables.utils.A('pk')],
+    )
+    project = tables.Column(
+        verbose_name=_('Project Name')
     )
     status = tables.Column()
     requested_at = tables.DateColumn(verbose_name=_('Submitted'))
@@ -23,6 +25,10 @@ class BaseInvoiceTable(tables.Table):
 
     def render_amount(self, value):
         return intcomma(value)
+
+    def render_project(self, value):
+        text = textwrap.shorten(value.title, width=30, placeholder="..."),
+        return text[0]
 
 
 class InvoiceDashboardTable(BaseInvoiceTable):
@@ -32,8 +38,9 @@ class InvoiceDashboardTable(BaseInvoiceTable):
     class Meta:
         fields = [
             'requested_at',
-            'project',
+            'vendor_document_number',
             'status',
+            'project',
             'date_from',
             'date_to',
         ]
@@ -49,9 +56,10 @@ class InvoiceListTable(BaseInvoiceTable):
     class Meta:
         fields = [
             'requested_at',
+            'vendor_document_number',
+            'status',
             'project',
             'amount',
-            'status',
             'lead',
             'fund',
         ]
