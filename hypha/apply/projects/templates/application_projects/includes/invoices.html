@@ -12,20 +12,14 @@
         <table class="data-block__table">
             <thead>
                 <tr>
-                    <th class="data-block__table-amount">{% trans "Amount" %} ({{ CURRENCY_SYMBOL }})</th>
                     <th class="data-block__table-status">{% trans "Status" %}</th>
-                    <th class="data-block__table-date">{% trans "From" %}</th>
-                    <th class="data-block__table-date">{% trans "To" %}</th>
                     <th class="data-block__table-update"></th>
                 </tr>
             </thead>
             <tbody>
                 {% for invoice in object.invoices.not_rejected %}
                 <tr>
-                    <td><span class="data-block__mobile-label">{% trans "Amount" %}: </span>{{ invoice.amount|intcomma }}</td>
                     <td><span class="data-block__mobile-label">{% trans "Status" %}: </span>{{ invoice.get_status_display }}</td>
-                    <td><span class="data-block__mobile-label">{% trans "From" %}: </span>{{ invoice.date_from.date }}</td>
-                    <td><span class="data-block__mobile-label">{% trans "To" %}: </span>{{ invoice.date_to.date }}</td>
                     <td>
                         <a class="data-block__action-link" href="{{ invoice.get_absolute_url }}">View</a>
                         {% can_edit invoice user as user_can_edit_request %}
@@ -59,7 +53,6 @@
             <table class="data-block__table is-hidden js-payment-block-rejected-table">
                 <thead>
                     <tr>
-                        <th class="data-block__table-amount">{% trans "Amount" %}</th>
                         <th class="data-block__table-status">{% trans "Status" %}</th>
                         <th class="data-block__table-view"></th>
                     </tr>
@@ -67,7 +60,6 @@
                 <tbody>
                     {% for invoice in object.invoices.rejected %}
                     <tr>
-                        <td><span class="data-block__mobile-label">{% trans "Amount" %}: </span>{{ CURRENCY_SYMBOL }}{{ invoice.value }}</td>
                         <td><span class="data-block__mobile-label">{% trans "Status" %}: </span>{{ invoice.get_status_display }}</td>
                         <td><a href="{{ invoice.get_absolute_url }}">{% trans "View" %}</a></td>
                     </tr>

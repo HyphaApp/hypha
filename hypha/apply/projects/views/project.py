@@ -642,7 +642,7 @@ class ProjectOverviewView(TemplateView):
         }
 
     def get_invoices(self, request):
-        invoices = Invoice.objects.order_by('date_to')[:10]
+        invoices = Invoice.objects.order_by('-requested_at')[:10]
 
         return {
             'filterset': InvoiceListFilter(request.GET or None, request=request, queryset=invoices),

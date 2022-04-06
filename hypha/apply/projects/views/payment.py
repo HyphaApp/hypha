@@ -273,6 +273,3 @@ class InvoiceListView(SingleTableMixin, FilterView):
     model = Invoice
     table_class = InvoiceListTable
     template_name = 'application_projects/invoice_list.html'
-
-    def get_queryset(self):
-        return Invoice.objects.order_by('date_to')

@@ -78,37 +78,25 @@ class ChangeInvoiceStatusForm(forms.ModelForm):
 
 class InvoiceBaseForm(forms.ModelForm):
     class Meta:
-        fields = ['date_from', 'date_to', 'amount', 'document', 'message_for_pm']
+        fields = ['document', 'message_for_pm']
         model = Invoice
-        widgets = {
-            'date_from': forms.DateInput,
-            'date_to': forms.DateInput,
-        }
 
     def __init__(self, user=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['amount'].widget.attrs['min'] = 0
         self.initial['message_for_pm'] = ''
-
-    def clean(self):
-        cleaned_data = super().clean()
-        date_from = cleaned_data['date_from']
-        date_to = cleaned_data['date_to']
-
-        if date_from > date_to:
-            self.add_error('date_from', _('Date From must be before Date To'))
-
-        return cleaned_data
 
 
 class CreateInvoiceForm(FileFormMixin, InvoiceBaseForm):
-    document = SingleFileField(label='Invoice File', required=True)
+    document = SingleFileField(
+        label='Invoice File', required=True,
+        help_text=_('The invoice must be a PDF.')
+    )
     supporting_documents = MultiFileField(
         required=False,
         help_text=_('Files that are related to the invoice. They could be xls, microsoft office documents, open office documents, pdfs, txt files.')
     )
 
-    field_order = ['date_from', 'date_to', 'amount', 'document', 'supporting_documents', 'message_for_pm']
+    field_order = ['document', 'supporting_documents', 'message_for_pm']
 
     def save(self, commit=True):
         invoice = super().save(commit=commit)
@@ -127,7 +115,7 @@ class EditInvoiceForm(FileFormMixin, InvoiceBaseForm):
     document = SingleFileField(label=_('Invoice File'), required=True)
     supporting_documents = MultiFileField(required=False)
 
-    field_order = ['date_from', 'date_to', 'amount', 'document', 'supporting_documents', 'message_for_pm']
+    field_order = ['document', 'supporting_documents', 'message_for_pm']
 
     @transaction.atomic
     def save(self, commit=True):

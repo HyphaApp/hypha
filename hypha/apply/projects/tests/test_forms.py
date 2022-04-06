@@ -287,10 +287,7 @@ class TestCreateInvoiceForm(TestCase):
     def test_adding_invoice(self):
         data = {
             'paid_value': '10',
-            'date_from': '2018-08-15',
-            'date_to': '2019-08-15',
             'comment': 'test comment',
-            'amount': 100.0
         }
 
         document = SimpleUploadedFile('invoice.pdf', BytesIO(b'somebinarydata').read())
@@ -314,10 +311,7 @@ class TestCreateInvoiceForm(TestCase):
     def test_supporting_documents_not_required(self):
         data = {
             'paid_value': '10',
-            'date_from': '2018-08-15',
-            'date_to': '2019-08-15',
             'comment': 'test comment',
-            'amount': 100
 
         }
 
@@ -345,10 +339,7 @@ class TestCreateInvoiceForm(TestCase):
             files=files,
             data={
                 'paid_value': '10',
-                'date_from': '2018-08-15',
-                'date_to': '2019-08-15',
                 'comment': 'test comment',
-                'amount': 100
 
             }
         )
@@ -358,10 +349,7 @@ class TestCreateInvoiceForm(TestCase):
             files=files,
             data={
                 'paid_value': '10',
-                'date_from': '2019-08-15',
-                'date_to': '2018-08-15',
                 'comment': 'test comment',
-                'amount': 100
 
             }
         )
@@ -379,9 +367,6 @@ class TestEditInvoiceForm(TestCase):
             data={
                 'document': invoice.document,
                 'supporting_documents-uploads': '[]',
-                'date_from': '2018-08-15',
-                'date_to': '2019-08-15',
-                'amount': invoice.amount,
             },
             files={
                 'supporting_documents': [],
@@ -405,9 +390,6 @@ class TestEditInvoiceForm(TestCase):
                       "size": supporting_document.document.size,
                       "type": "existing"}]
                 ),
-                'date_from': '2018-08-15',
-                'date_to': '2019-08-15',
-                'amount': invoice.amount,
             },
             instance=invoice)
         self.assertTrue(form.is_valid())
@@ -424,9 +406,6 @@ class TestEditInvoiceForm(TestCase):
             data={
                 'document': invoice.document,
                 'supporting_documents-uploads': '[]',
-                'date_from': '2018-08-15',
-                'date_to': '2019-08-15',
-                'amount': invoice.amount,
             },
             files={
                 'supporting_documents': supporting_document,

@@ -107,11 +107,6 @@ class PacketFileFactory(factory.django.DjangoModelFactory):
 class InvoiceFactory(factory.django.DjangoModelFactory):
     project = factory.SubFactory(ProjectFactory)
     by = factory.SubFactory(UserFactory)
-    amount = factory.Faker('pydecimal', min_value=1, max_value=10000000, right_digits=2)
-
-    date_from = factory.Faker('date_time').evaluate(None, None, {'tzinfo': pytz.utc, 'locale': None})
-    date_to = factory.Faker('date_time').evaluate(None, None, {'tzinfo': pytz.utc, 'locale': None})
-
     document = factory.django.FileField()
 
     class Meta:

@@ -814,9 +814,6 @@ class TestApplicantEditInvoiceView(BaseViewTestCase):
         self.assertTrue(invoice.supporting_documents.exists())
 
         response = self.post_page(invoice, {
-            'amount': invoice.amount,
-            'date_from': '2018-08-15',
-            'date_to': '2019-08-15',
             'comment': 'test comment',
             'invoice': '',
             'supporting_documents-uploads': '[]',
@@ -830,12 +827,7 @@ class TestApplicantEditInvoiceView(BaseViewTestCase):
         invoice = InvoiceFactory(project=project)
         supporting_document = SupportingDocumentFactory(invoice=invoice)
 
-        amount = invoice.amount
-
         response = self.post_page(invoice, {
-            'amount': amount + 1,
-            'date_from': '2018-08-15',
-            'date_to': '2019-08-15',
             'comment': 'test comment',
             'invoice': '',
             'supporting_documents-uploads': json.dumps([{"name": supporting_document.document.name, "size": supporting_document.document.size, "type": "existing"}]),
@@ -847,8 +839,6 @@ class TestApplicantEditInvoiceView(BaseViewTestCase):
         invoice.refresh_from_db()
 
         self.assertEqual(project.invoices.first().pk, invoice.pk)
-
-        self.assertEqual(amount + Decimal("1"), invoice.amount)
         self.assertEqual(invoice.supporting_documents.first().document, supporting_document.document)
 
 
@@ -868,9 +858,6 @@ class TestStaffEditInvoiceView(BaseViewTestCase):
         SupportingDocumentFactory(invoice=invoice)
 
         response = self.post_page(invoice, {
-            'amount': invoice.amount,
-            'date_from': '2018-08-15',
-            'date_to': '2019-08-15',
             'comment': 'test comment',
             'invoice': '',
             'supporting_documents-uploads': '[]',
@@ -885,15 +872,10 @@ class TestStaffEditInvoiceView(BaseViewTestCase):
         invoice = InvoiceFactory(project=project)
         supporting_document = SupportingDocumentFactory(invoice=invoice)
 
-        amount = invoice.amount
-
         document = BytesIO(b'somebinarydata')
         document.name = 'invoice.pdf'
 
         response = self.post_page(invoice, {
-            'amount': amount + 1,
-            'date_from': '2018-08-15',
-            'date_to': '2019-08-15',
             'comment': 'test comment',
             'document': document,
             'supporting_documents-uploads': json.dumps([{"name": supporting_document.document.name, "size": supporting_document.document.size, "type": "existing"}]),
@@ -906,7 +888,6 @@ class TestStaffEditInvoiceView(BaseViewTestCase):
 
         self.assertEqual(project.invoices.first().pk, invoice.pk)
 
-        self.assertEqual(amount + Decimal("1"), invoice.amount)
         self.assertEqual(invoice.supporting_documents.first().document, supporting_document.document)
 
 
