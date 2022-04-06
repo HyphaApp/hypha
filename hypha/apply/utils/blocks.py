@@ -7,12 +7,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from pagedown.widgets import PagedownWidget
 from wagtail.admin import messages
-from wagtail.core.blocks import (
-    ListBlock,
-    StaticBlock,
-    StreamBlock,
-    StreamValue,
-)
+from wagtail.core.blocks import  ListBlock, StaticBlock, StreamBlock, StreamValue
 
 from hypha.apply.stream_forms.blocks import (
     FormFieldBlock,
@@ -128,7 +123,7 @@ class CustomFormFieldsBlock(StreamBlock):
                     all_errors.append(
                         '{} cannot be empty for {}'.format(child_block.label, block.block.label)
                     )
-                if isinstance(child_block,ListBlock) and child_block.child_block.required:
+                if isinstance(child_block, ListBlock) and child_block.child_block.required:
                     for child_value in block.value[child_block_name]:
                         if not child_value:
                             all_errors.append(
