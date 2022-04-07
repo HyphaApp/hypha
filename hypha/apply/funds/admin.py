@@ -17,7 +17,11 @@ from .admin_helpers import (
     RoundFundChooserView,
     RoundStateListFilter,
 )
-from .admin_views import CopyApplicationFormViewClass
+from .admin_views import (
+    CopyApplicationFormViewClass,
+    CreateApplicationFormView,
+    EditApplicationFormView,
+)
 from .models import (
     ApplicationForm,
     FundType,
@@ -169,6 +173,8 @@ class ApplicationFormAdmin(ListRelatedMixin, ModelAdmin):
     list_filter = (FormsFundRoundListFilter,)
     permission_helper_class = DeletePermission
     button_helper_class = ApplicationFormButtonHelper
+    create_view_class = CreateApplicationFormView
+    edit_view_class = EditApplicationFormView
 
     related_models = [
         ('applicationbaseform', 'application'),

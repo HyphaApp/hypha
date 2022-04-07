@@ -6,6 +6,8 @@ from hypha.apply.determinations.models import DeterminationForm
 from hypha.apply.review.admin_helpers import ButtonsWithClone
 from hypha.apply.utils.admin import ListRelatedMixin
 
+from .admin_views import CreateDeterminationFormView, EditDeterminationFormView
+
 
 class CloneView(CreateView, InstanceSpecificView):
     def __init__(self, *args, **kwargs):
@@ -19,6 +21,8 @@ class DeterminationFormAdmin(ListRelatedMixin, ModelAdmin):
     list_display = ('name', 'used_by')
     button_helper_class = ButtonsWithClone
     clone_view_class = CloneView
+    create_view_class = CreateDeterminationFormView
+    edit_view_class = EditDeterminationFormView
 
     related_models = [
         ('applicationbasedeterminationform', 'application'),

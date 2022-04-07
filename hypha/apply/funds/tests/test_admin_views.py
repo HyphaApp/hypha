@@ -1,14 +1,32 @@
+import factory
 from django.contrib.auth.models import Group
+from django.contrib.messages import get_messages
 from django.test import TestCase
 from django.urls import reverse
 from wagtail.tests.utils import WagtailTestUtils
 
+from hypha.apply.funds.models.forms import ApplicationForm
 from hypha.apply.home.factories import ApplyHomePageFactory
 from hypha.apply.users.groups import STAFF_GROUP_NAME
 from hypha.apply.users.tests.factories import SuperUserFactory
 
 from .factories.models import RoundFactory
 from .test_admin_form import form_data
+
+
+def create_form_fields_data(blocks):
+    parent_field = 'form_fields'
+    form_fields_dict = dict()
+    form_fields_dict[f'{parent_field}-count'] = [str(len(blocks))]
+    for index, block_name in enumerate(blocks):
+        form_fields_dict[f'{parent_field}-{index}-deleted'] = ['']
+        form_fields_dict[f'{parent_field}-{index}-order'] = [str(index)]
+        form_fields_dict[f'{parent_field}-{index}-type'] = [str(block_name)]
+
+        for field_name, field_value in blocks[block_name].items():
+            form_fields_dict[f'{parent_field}-{index}-value-{field_name}'] = field_value
+
+    return form_fields_dict
 
 
 class TestFundCreationView(TestCase):
@@ -104,3 +122,117 @@ class TestRoundIndexView(WagtailTestUtils, TestCase):
         ]
         review_form_cell = f'<td class="field-review_forms title">{"".join(review_form_links)}</td>'
         self.assertContains(response, review_form_cell, html=True)
+
+
+class TestCreateApplicationFormView(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = SuperUserFactory()
+        cls.label_help_text_data = {
+            'field_label': factory.Faker('sentence').evaluate(None, None, {'locale': None}),
+            'help_text': factory.Faker('sentence').evaluate(None, None, {'locale': None})
+        }
+        cls.name = factory.Faker('name').evaluate(None, None, {'locale': None})
+
+    def create_page(self, data):
+        self.client.force_login(self.user)
+        url = reverse('funds_applicationform_modeladmin_create')
+        response = self.client.post(url, data=data, secure=True, follow=True)
+        return response
+
+    def test_name_field_required(self):
+        data = {'name': ['']}
+        form_field_data = create_form_fields_data(
+            {
+                'title': self.label_help_text_data,
+                'email': self.label_help_text_data,
+                'full_name': self.label_help_text_data,
+            }
+        )
+        data.update(form_field_data)
+        response = self.create_page(data=data)
+
+        expected_message = 'This field is required.'
+        for message in get_messages(response.context['request']):
+            self.assertEqual(expected_message, str(message.message).strip())
+        self.assertEqual(ApplicationForm.objects.count(), 0)
+
+    def test_title_block_required(self):
+        data = {'name': [self.name]}
+        form_field_data = create_form_fields_data(
+            {
+                'email': self.label_help_text_data,
+                'full_name': self.label_help_text_data,
+            }
+        )
+        data.update(form_field_data)
+        response = self.create_page(data=data)
+
+        expected_message = 'You are missing the following required fields: Title'
+        for message in get_messages(response.context['request']):
+            self.assertEqual(expected_message, str(message.message).strip())
+        self.assertEqual(ApplicationForm.objects.count(), 0)
+
+    def test_email_block_required(self):
+        data = {'name': [self.name]}
+        form_field_data = create_form_fields_data(
+            {
+                'title': self.label_help_text_data,
+                'full_name': self.label_help_text_data,
+            }
+        )
+        data.update(form_field_data)
+        response = self.create_page(data=data)
+
+        expected_message = 'You are missing the following required fields: Email'
+        for message in get_messages(response.context['request']):
+            self.assertEqual(expected_message, str(message.message).strip())
+        self.assertEqual(ApplicationForm.objects.count(), 0)
+
+    def test_full_name_block_required(self):
+        data = {'name': [self.name]}
+        form_field_data = create_form_fields_data(
+            {
+                'title': self.label_help_text_data,
+                'email': self.label_help_text_data,
+            }
+        )
+        data.update(form_field_data)
+        response = self.create_page(data=data)
+
+        expected_message = 'You are missing the following required fields: Full Name'
+        for message in get_messages(response.context['request']):
+            self.assertEqual(expected_message, str(message.message).strip())
+        self.assertEqual(ApplicationForm.objects.count(), 0)
+
+    def test_field_label_required(self):
+        data = {'name': [self.name]}
+        form_field_data = create_form_fields_data(
+            {
+                'title': {},
+                'email': {},
+                'full_name': {},
+            }
+        )
+        data.update(form_field_data)
+        response = self.create_page(data=data)
+
+        expected_messages_list = ['Label cannot be empty for Application title', 'Label cannot be empty for Email', 'Label cannot be empty for Full name']
+        for message in get_messages(response.context['request']):
+            self.assertIn(str(message.message).strip(), expected_messages_list)
+        self.assertEqual(ApplicationForm.objects.count(), 0)
+
+    def test_form_creation(self):
+        data = {'name': [self.name]}
+        form_field_data = create_form_fields_data(
+            {
+                'title': self.label_help_text_data,
+                'email': self.label_help_text_data,
+                'full_name': self.label_help_text_data,
+            }
+        )
+        data.update(form_field_data)
+        response = self.create_page(data=data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(ApplicationForm.objects.count(), 1)
