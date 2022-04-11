@@ -41,7 +41,7 @@ class UserFilterSet(WagtailFilterSet):
         return queryset
 
     def filter_by_status(self, queryset, name, value):
-        if value=='active':
+        if value == 'active':
             return queryset.filter(is_active=True)
         elif value == 'inactive':
             return queryset.filter(is_active=False)
