@@ -213,7 +213,7 @@ class RadioButtonsFieldBlock(OptionalFormFieldBlock):
 
 
 class GroupToggleBlock(FormFieldBlock):
-    required = BooleanBlock(label=_('Required'), default=True)
+    required = BooleanBlock(label=_('Required'), default=True, required=False)
     choices = ListBlock(
         CharBlock(label=_('Choice')),
         help_text=(
