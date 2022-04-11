@@ -4,26 +4,24 @@
 @import 'abstracts/variables';
 
 .users-list {
-  display: grid;
-  grid-template-columns: auto;
-  grid-column-gap: 50px;
+    display: grid;
+    grid-template-columns: auto;
+    grid-column-gap: 50px;
 
-  &--has-filters {
-    grid-template-columns: auto 250px;
-  }
-
-  &__results {
-    grid-column-start: col-start 1 col-end 2;
-  }
-
-  &__filters {
-    grid-column-start: col-start -2 col-end -1;
-
-    button[type='submit'] {
-      display: block;
-      margin-top: 20px;
+    &--has-filters {
+        grid-template-columns: auto 250px;
     }
 
-  }
+    &__results {
+        grid-column-start: col-start 1 col-end 2;
+    }
 
+    &__filters {
+        grid-column-start: col-start -2 col-end -1;
+
+        button[type='submit'] {
+            display: block;
+            margin-top: 20px;
+        }
+    }
 }
