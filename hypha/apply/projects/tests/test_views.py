@@ -1,5 +1,4 @@
 import json
-from decimal import Decimal
 from io import BytesIO
 
 from dateutil.relativedelta import relativedelta
