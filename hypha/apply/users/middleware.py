@@ -1,12 +1,9 @@
+from django.conf import settings
 from django.shortcuts import redirect
 from social_core.exceptions import AuthForbidden
 from social_django.middleware import (
     SocialAuthExceptionMiddleware as _SocialAuthExceptionMiddleware,
 )
-from wagtail.core.models import Site
-
-from hypha.apply.home.models import ApplyHomePage
-from hypha.apply.utils.two_factor import check_two_factor_settings
 
 
 class SocialAuthExceptionMiddleware(_SocialAuthExceptionMiddleware):
@@ -30,7 +27,6 @@ class TwoFactorAuthenticationMiddleware:
             'logout/',
             'account/',
             'two_factor/',
-            'admin/'
         ]
         for url in allowed_urls:
             if url in path:
@@ -40,9 +36,7 @@ class TwoFactorAuthenticationMiddleware:
     def __call__(self, request):
         # code to execute before the view
         user = request.user
-        site = Site.find_for_request(request)
-        homepage = site.root_page.specific
-        if isinstance(homepage, ApplyHomePage) and check_two_factor_settings(site=site) and user.is_authenticated and not user.is_verified() and not self.is_path_allowed(request.path):
+        if settings.ENFORCE_TWO_FACTOR and user.is_authenticated and not user.is_verified() and not self.is_path_allowed(request.path):
             return redirect('/account/two_factor/required/')
 
         response = self.get_response(request)

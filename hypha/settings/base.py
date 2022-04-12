@@ -362,6 +362,9 @@ WAGTAIL_PASSWORD_MANAGEMENT_ENABLED = False
 WAGTAILUSERS_PASSWORD_ENABLED = False
 WAGTAILUSERS_PASSWORD_REQUIRED = False
 
+# Enforce Two factor setting
+ENFORCE_TWO_FACTOR = env.bool('ENFORCE_TWO_FACTOR', False)
+
 LOGIN_URL = 'users_public:login'
 LOGIN_REDIRECT_URL = 'dashboard:dashboard'
 
