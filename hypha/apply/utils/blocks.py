@@ -118,17 +118,18 @@ class CustomFormFieldsBlock(StreamBlock):
                     self.add_error_to_child(error_dict, i, 'info', 'Duplicate field')
 
         for block in value:
-            for child_block_name, child_block in block.block.child_blocks.items():
-                if child_block.required and not block.value[child_block_name]:
-                    all_errors.append(
-                        '{} cannot be empty for {}'.format(child_block.label, block.block.label)
-                    )
-                if isinstance(child_block, ListBlock) and child_block.child_block.required:
-                    for child_value in block.value[child_block_name]:
-                        if not child_value:
-                            all_errors.append(
-                                '{} cannot be empty for {}'.format(child_block.label, block.block.label)
-                            )
+            if hasattr(block.block, 'child_blocks'):
+                for child_block_name, child_block in block.block.child_blocks.items():
+                    if child_block.required and not block.value[child_block_name]:
+                        all_errors.append(
+                            '{} cannot be empty for {}'.format(child_block.label, block.block.label)
+                        )
+                    if isinstance(child_block, ListBlock) and child_block.child_block.required:
+                        for child_value in block.value[child_block_name]:
+                            if not child_value:
+                                all_errors.append(
+                                    '{} cannot be empty for {}'.format(child_block.label, block.block.label)
+                                )
 
         if all_errors or error_dict:
             error_dict['__all__'] = all_errors
