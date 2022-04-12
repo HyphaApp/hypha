@@ -28,3 +28,15 @@ class PDFPageSettings(BaseSetting):
     panels = [
         FieldPanel('download_page_size'),
     ]
+
+
+@register_setting
+class TWOFASettings(BaseSetting):
+    two_factor_required = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = 'Two Factor Settings'
+
+    panels = [
+        FieldPanel('two_factor_required'),
+    ]

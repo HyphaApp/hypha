@@ -304,3 +304,7 @@ class TWOFADisableView(TwoFactorDisableView):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
+
+
+class TWOFARequiredMessageView(TemplateView):
+    template_name = 'two_factor/core/otp_required.html'

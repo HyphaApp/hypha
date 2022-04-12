@@ -146,6 +146,7 @@ MIDDLEWARE = [
 
     'hijack.middleware.HijackUserMiddleware',
 
+    'hypha.apply.users.middleware.TwoFactorAuthenticationMiddleware',
     'hypha.apply.users.middleware.SocialAuthExceptionMiddleware',
 
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
