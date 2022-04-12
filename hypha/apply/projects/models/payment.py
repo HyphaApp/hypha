@@ -122,14 +122,6 @@ class InvoiceDeliverable(models.Model):
 class Invoice(models.Model):
     project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="invoices")
     by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="invoices")
-    date_from = models.DateTimeField()
-    date_to = models.DateTimeField()
-    amount = models.DecimalField(
-        default=0,
-        max_digits=10,
-        decimal_places=2,
-        validators=[MinValueValidator(decimal.Decimal('0.01'))],
-    )
     paid_value = models.DecimalField(
         max_digits=10,
         decimal_places=2,
