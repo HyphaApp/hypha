@@ -254,7 +254,7 @@ class Invoice(models.Model):
 
     @property
     def value(self):
-        return self.paid_value or self.amount
+        return self.paid_value
 
     def get_absolute_url(self):
         return reverse(

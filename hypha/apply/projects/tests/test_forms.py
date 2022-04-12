@@ -329,32 +329,6 @@ class TestCreateInvoiceForm(TestCase):
 
         self.assertEqual(invoice.supporting_documents.count(), 0)
 
-    def test_invoice_dates_are_correct(self):
-        invoice = SimpleUploadedFile('invoice.pdf', BytesIO(b'somebinarydata').read())
-        files = {
-            'document': invoice,
-        }
-
-        form = CreateInvoiceForm(
-            files=files,
-            data={
-                'paid_value': '10',
-                'comment': 'test comment',
-
-            }
-        )
-        self.assertTrue(form.is_valid(), msg=form.errors)
-
-        form = CreateInvoiceForm(
-            files=files,
-            data={
-                'paid_value': '10',
-                'comment': 'test comment',
-
-            }
-        )
-        self.assertFalse(form.is_valid())
-
 
 class TestEditInvoiceForm(TestCase):
 
