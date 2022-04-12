@@ -12,13 +12,17 @@
         <table class="data-block__table">
             <thead>
                 <tr>
-                    <th class="data-block__table-status">{% trans "Status" %}</th>
+                    <th class="data-block__table-amount">{% trans "Submitted" %}</th>
+                    <th class="data-block__table-status">{% trans "Invoice Number" %}</th>
+                    <th class="data-block__table-date">{% trans "Status" %}</th>
                     <th class="data-block__table-update"></th>
                 </tr>
             </thead>
             <tbody>
                 {% for invoice in object.invoices.not_rejected %}
                 <tr>
+                    <td><span class="data-block__mobile-label">{% trans "Submitted" %}: </span>{{ invoice.requested_at.date }}</td>
+                    <td><span class="data-block__mobile-label">{% trans "Invoice Number" %}: </span>{{ invoice.vendor_document_number }}</td>
                     <td><span class="data-block__mobile-label">{% trans "Status" %}: </span>{{ invoice.get_status_display }}</td>
                     <td>
                         <a class="data-block__action-link" href="{{ invoice.get_absolute_url }}">View</a>
@@ -53,6 +57,8 @@
             <table class="data-block__table is-hidden js-payment-block-rejected-table">
                 <thead>
                     <tr>
+                        <th class="data-block__table-amount">{% trans "Submitted" %}</th>
+                        <th class="data-block__table-amount">{% trans "Invoice Number" %}</th>
                         <th class="data-block__table-status">{% trans "Status" %}</th>
                         <th class="data-block__table-view"></th>
                     </tr>
@@ -60,6 +66,8 @@
                 <tbody>
                     {% for invoice in object.invoices.rejected %}
                     <tr>
+                        <td><span class="data-block__mobile-label">{% trans "Submitted" %}: </span>{{ invoice.requested_at.date }}</td>
+                        <td><span class="data-block__mobile-label">{% trans "Invoice Number" %}: </span>{{ invoice.vendor_document_number }}</td>
                         <td><span class="data-block__mobile-label">{% trans "Status" %}: </span>{{ invoice.get_status_display }}</td>
                         <td><a href="{{ invoice.get_absolute_url }}">{% trans "View" %}</a></td>
                     </tr>
