@@ -26,11 +26,11 @@ REVIEW_GROUPS = [
     REVIEWER_GROUP_NAME,
     COMMUNITY_REVIEWER_GROUP_NAME,
 ]
-LIMIT_TO_STAFF = {'groups__name': STAFF_GROUP_NAME}
-LIMIT_TO_REVIEWERS = {'groups__name': REVIEWER_GROUP_NAME}
-LIMIT_TO_PARTNERS = {'groups__name': PARTNER_GROUP_NAME}
-LIMIT_TO_COMMUNITY_REVIEWERS = {'groups__name': COMMUNITY_REVIEWER_GROUP_NAME}
-LIMIT_TO_REVIEWER_GROUPS = {'groups__name__in': REVIEW_GROUPS}
+LIMIT_TO_STAFF = {'groups__name': STAFF_GROUP_NAME, 'is_active': True}
+LIMIT_TO_REVIEWERS = {'groups__name': REVIEWER_GROUP_NAME, 'is_active': True}
+LIMIT_TO_PARTNERS = {'groups__name': PARTNER_GROUP_NAME, 'is_active': True}
+LIMIT_TO_COMMUNITY_REVIEWERS = {'groups__name': COMMUNITY_REVIEWER_GROUP_NAME, 'is_active': True}
+LIMIT_TO_REVIEWER_GROUPS = {'groups__name__in': REVIEW_GROUPS, 'is_active': True}
 
 
 def admin_url(page):
