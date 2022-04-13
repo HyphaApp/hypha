@@ -104,12 +104,14 @@ def index(request):
     else:
         ordering = 'name'
 
+    user_count = users.count()
     paginator = Paginator(users, per_page=20)
     users = paginator.get_page(request.GET.get('p'))
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         return render(request, "wagtailusers/users/results.html", {
             'users': users,
+            'user_count': user_count,
             'is_searching': is_searching,
             'query_string': q,
             'filters': filters,
@@ -121,6 +123,7 @@ def index(request):
         return render(request, "wagtailusers/users/index.html", {
             'search_form': form,
             'users': users,
+            'user_count': user_count,
             'is_searching': is_searching,
             'ordering': ordering,
             'query_string': q,

@@ -3,10 +3,10 @@
     <div class="users-list__results">
         {% if users %}
             <h2 role="alert">
-            {% blocktrans trimmed count counter=users|length %}
-                There is {{ counter }} user
+            {% blocktrans trimmed count count=user_count %}
+                There is {{ user_count }} user
             {% plural %}
-                There are {{ counter }} users
+                There are {{ user_count }} users
             {% endblocktrans %}
             </h2>
 
