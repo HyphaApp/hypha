@@ -46,7 +46,7 @@ class TwoFactorAuthenticationMiddleware:
         # code to execute before the view
         user = request.user
         if settings.ENFORCE_TWO_FACTOR:
-            if user.is_authenticated and not user.is_verified():
+            if user.is_authenticated and not user.is_verified() and not user.social_auth.exists():
                 if not self.is_path_allowed(request.path):
                     return redirect('/account/two_factor/required/')
 
