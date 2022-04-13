@@ -7,7 +7,7 @@ from hypha.apply.users.tests.factories import UserFactory
 from ..middleware import ALLOWED_SUBPATH_FOR_UNVERIFIED_USERS
 
 
-@override_settings(ROOT_URLCONF='hypha.apply.urls')
+@override_settings(ROOT_URLCONF='hypha.apply.urls', ENFORCE_TWO_FACTOR=True)
 class TestTwoFactorAuthenticationMiddleware(TestCase):
     def enable_otp(self, user):
         return user.totpdevice_set.create(name='default')
