@@ -307,4 +307,4 @@ class TWOFADisableView(TwoFactorDisableView):
 
 
 class TWOFARequiredMessageView(TemplateView):
-    template_name = 'two_factor/core/otp_required.html'
+    template_name = 'two_factor/core/two_factor_required.html'

@@ -5,6 +5,12 @@ from social_django.middleware import (
     SocialAuthExceptionMiddleware as _SocialAuthExceptionMiddleware,
 )
 
+ALLOWED_SUBPATH_FOR_UNVERIFIED_USERS = [
+    'login/',
+    'logout/',
+    'account/',
+]
+
 
 class SocialAuthExceptionMiddleware(_SocialAuthExceptionMiddleware):
     """
@@ -22,14 +28,9 @@ class TwoFactorAuthenticationMiddleware:
         self.get_response = get_response
 
     def is_path_allowed(self, path):
-        allowed_urls = [
-            'login/',
-            'logout/',
-            'account/',
-            'two_factor/',
-        ]
-        for url in allowed_urls:
-            if url in path:
+
+        for sub_path in ALLOWED_SUBPATH_FOR_UNVERIFIED_USERS:
+            if sub_path in path:
                 return True
         return False
 
