@@ -24,6 +24,14 @@ class SocialAuthExceptionMiddleware(_SocialAuthExceptionMiddleware):
 
 
 class TwoFactorAuthenticationMiddleware:
+    """
+    Middleware to enforce 2FA activation for unverified users
+
+    To activate this middleware set env variable ENFORCE_TWO_FACTOR as True.
+
+    This will redirect all request from unverified users to enable 2FA first.
+    Except the request made on the url paths listed in ALLOWED_SUBPATH_FOR_UNVERIFIED_USERS.
+    """
     def __init__(self, get_response):
         self.get_response = get_response
 
@@ -37,8 +45,10 @@ class TwoFactorAuthenticationMiddleware:
     def __call__(self, request):
         # code to execute before the view
         user = request.user
-        if settings.ENFORCE_TWO_FACTOR and user.is_authenticated and not user.is_verified() and not self.is_path_allowed(request.path):
-            return redirect('/account/two_factor/required/')
+        if settings.ENFORCE_TWO_FACTOR:
+            if user.is_authenticated and not user.is_verified():
+                if not self.is_path_allowed(request.path):
+                    return redirect('/account/two_factor/required/')
 
         response = self.get_response(request)
 
