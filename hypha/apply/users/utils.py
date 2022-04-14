@@ -34,12 +34,14 @@ def send_activation_email(user, site=None):
 
     activation_path = reverse('users:activate', kwargs={'uidb64': uid, 'token': token})
 
+    timeout_days = settings.PASSWORD_RESET_TIMEOUT // (24 * 3600)
+
     context = {
         'user': user,
         'name': user.get_full_name(),
         'username': user.get_username(),
         'activation_path': activation_path,
-        'timeout_days': settings.PASSWORD_RESET_TIMEOUT,
+        'timeout_days': timeout_days,
         'org_long_name': settings.ORG_LONG_NAME,
     }
 
@@ -63,13 +65,15 @@ def send_confirmation_email(user, token, updated_email=None, site=None):
 
     activation_path = reverse('users:confirm_email', kwargs={'uidb64': uid, 'token': token})
 
+    timeout_days = settings.PASSWORD_RESET_TIMEOUT // (24 * 3600)
+
     context = {
         'user': user,
         'name': user.get_full_name(),
         'username': user.get_username(),
         'unverified_email': updated_email,
         'activation_path': activation_path,
-        'timeout_days': settings.PASSWORD_RESET_TIMEOUT,
+        'timeout_days': timeout_days,
         'org_long_name': settings.ORG_LONG_NAME,
     }
 
