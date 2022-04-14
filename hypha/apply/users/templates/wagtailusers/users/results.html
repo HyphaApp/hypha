@@ -1,0 +1,47 @@
+{% load i18n wagtailadmin_tags %}
+<div class="users-list users-list--has-filters">
+    <div class="users-list__results">
+        {% if users %}
+            <h2 role="alert">
+            {% blocktrans trimmed count count=user_count %}
+                There is {{ user_count }} user
+            {% plural %}
+                There are {{ user_count }} users
+            {% endblocktrans %}
+            </h2>
+
+            {% if is_searching %}
+                {% search_other %}
+            {% endif %}
+            {% include "wagtailusers/users/list.html" %}
+
+            {# call pagination_nav with no linkurl, to generate general-purpose links like <div href="?p=2"/> #}
+            {% include "wagtailadmin/shared/pagination_nav.html" with items=users %}
+        {% else %}
+            <h2 role="alert">{% blocktrans trimmed %}Sorry, no users match "<em>{{ query_string }}</em>"{% endblocktrans %}</h2>
+            {% if is_searching %}
+                {% search_other %}
+            {% else %}
+                {% url 'wagtailusers_users:add' as wagtailusers_add_url %}
+                {% if group %}
+                    {% with group.name as group_name %}
+                        <p>{% blocktrans trimmed %}The {{ group_name }} group has no users configured. Why not <a href="{{ wagtailusers_add_url }}">add some</a>?{% endblocktrans %}</p>
+                    {% endwith %}
+                {% else %}
+                    <p>{% blocktrans trimmed %}There are no users configured. Why not <a href="{{ wagtailusers_add_url }}">add some</a>?{% endblocktrans %}</p>
+                {% endif %}
+            {% endif %}
+        {% endif %}
+    </div>
+    <div class="users-list__filters">
+        <h2>{% trans 'Filter' %}</h2>
+        <form method="get">
+            {% for filter in filters.form %}
+                {{ filter.label_tag }}
+                {{ filter }}
+                {{ filter.errors }}
+            {% endfor %}
+            <button class="button button-longrunning" type="submit">{% icon name="spinner" %}{% trans 'Apply filters' %}</button>
+        </form>
+    </div>
+</div>
