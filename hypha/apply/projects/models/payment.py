@@ -1,5 +1,6 @@
 import decimal
 import os
+from textwrap import wrap
 
 from django.conf import settings
 from django.core.validators import MinValueValidator
@@ -22,6 +23,7 @@ CHANGES_REQUESTED_BY_FINANCE_2 = 'changes_requested_finance_2'
 APPROVED_BY_STAFF = 'approved_by_staff'
 APPROVED_BY_FINANCE_1 = 'approved_by_finance_1'
 APPROVED_BY_FINANCE_2 = 'approved_by_finance_2'
+CONVERTED = 'converted'
 PAID = 'paid'
 DECLINED = 'declined'
 
@@ -35,6 +37,7 @@ INVOICE_STATUS_CHOICES = [
     (APPROVED_BY_FINANCE_1, _('Approved by Finance 1')),
     (APPROVED_BY_FINANCE_2, _('Approved by Finance 2')),
     (PAID, _('Paid')),
+    (CONVERTED, _('Converted')),
     (DECLINED, _('Declined')),
 ]
 
@@ -46,7 +49,7 @@ INVOICE_TRANISTION_TO_RESUBMITTED = [
 
 INVOICE_STATUS_PM_CHOICES = [CHANGES_REQUESTED_BY_STAFF, APPROVED_BY_STAFF, DECLINED]
 INVOICE_STATUS_FINANCE_1_CHOICES = [CHANGES_REQUESTED_BY_FINANCE_1, APPROVED_BY_FINANCE_1]
-INVOICE_STATUS_FINANCE_2_CHOICES = [CHANGES_REQUESTED_BY_FINANCE_2, APPROVED_BY_FINANCE_2, PAID]
+INVOICE_STATUS_FINANCE_2_CHOICES = [CHANGES_REQUESTED_BY_FINANCE_2, APPROVED_BY_FINANCE_2, CONVERTED, PAID]
 
 
 def invoice_status_user_choices(user):
@@ -75,6 +78,9 @@ class InvoiceQueryset(models.QuerySet):
 
     def for_finance_1(self):
         return self.filter(status__in=[APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_2])
+
+    def for_finance_2(self):
+        return self.filter(status__in=[APPROVED_BY_FINANCE_1, APPROVED_BY_FINANCE_2, CONVERTED])
 
     def rejected(self):
         return self.filter(status=DECLINED)
@@ -116,14 +122,6 @@ class InvoiceDeliverable(models.Model):
 class Invoice(models.Model):
     project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="invoices")
     by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="invoices")
-    date_from = models.DateTimeField()
-    date_to = models.DateTimeField()
-    amount = models.DecimalField(
-        default=0,
-        max_digits=10,
-        decimal_places=2,
-        validators=[MinValueValidator(decimal.Decimal('0.01'))],
-    )
     paid_value = models.DecimalField(
         max_digits=10,
         decimal_places=2,
@@ -176,8 +174,8 @@ class Invoice(models.Model):
 
         Formatting should be HP###### i.e. HP000001 and so on.
         '''
-        prefix = 'HP'
-        return prefix + f"{self.id:06}"
+        prefix = 'HP-'
+        return prefix + '-'.join(wrap(f"{self.id:06}", 3))
 
     def can_user_delete(self, user):
         if user.is_applicant or user.is_apply_staff or user.is_finance_level_1 or user.is_finance_level_2 or user.is_contracting:
@@ -224,7 +222,7 @@ class Invoice(models.Model):
                 return True
 
         if user.is_finance_level_2:
-            if self.status in {APPROVED_BY_FINANCE_1}:
+            if self.status in {APPROVED_BY_FINANCE_1, APPROVED_BY_FINANCE_2, CONVERTED}:
                 return True
 
         return False
@@ -256,7 +254,7 @@ class Invoice(models.Model):
 
     @property
     def value(self):
-        return self.paid_value or self.amount
+        return self.paid_value
 
     def get_absolute_url(self):
         return reverse(

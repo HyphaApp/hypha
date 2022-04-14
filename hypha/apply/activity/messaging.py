@@ -18,7 +18,9 @@ from hypha.apply.projects.models.payment import (
     CHANGES_REQUESTED_BY_FINANCE_1,
     CHANGES_REQUESTED_BY_FINANCE_2,
     CHANGES_REQUESTED_BY_STAFF,
+    CONVERTED,
     DECLINED,
+    PAID,
     RESUBMITTED,
     SUBMITTED,
 )
@@ -509,7 +511,10 @@ class SlackAdapter(AdapterBase):
                 recipients.append(self.slack_id(submission.assigned.with_roles().last().reviewer))
 
         if message_type == MESSAGES.UPDATE_INVOICE_STATUS:
-            if related.status in [SUBMITTED, RESUBMITTED, CHANGES_REQUESTED_BY_FINANCE_1, APPROVED_BY_FINANCE_2]:
+            if related.status in [
+                SUBMITTED, RESUBMITTED, CHANGES_REQUESTED_BY_FINANCE_1,
+                APPROVED_BY_FINANCE_2, CONVERTED, PAID
+            ]:
                 # Notify project lead/staff
                 return recipients
             if related.status in [APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_2]:
