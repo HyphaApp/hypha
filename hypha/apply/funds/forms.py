@@ -193,7 +193,7 @@ class UpdateReviewersForm(ApplicationSubmissionModelForm):
     reviewer_reviewers = forms.ModelMultipleChoiceField(
         queryset=User.objects.reviewers().only('pk', 'full_name'),
         widget=Select2MultiCheckboxesWidget(attrs={'data-placeholder': 'Reviewers'}),
-        label=_('Reviewers'),
+        label=_('External Reviewers'),
         required=False,
     )
 
