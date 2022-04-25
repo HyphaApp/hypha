@@ -8,6 +8,7 @@ from django.db.models import BLANK_CHOICE_DASH
 from django.forms.widgets import ClearableFileInput
 from django.utils.dateparse import parse_datetime
 from django.utils.encoding import force_str
+from django.utils.functional import cached_property
 from django.utils.html import conditional_escape
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
@@ -28,6 +29,8 @@ from wagtail.core.blocks import (
     TimeBlock,
     URLBlock,
 )
+from wagtail.core.blocks.stream_block import StreamBlockAdapter
+from wagtail.core.telepath import register
 
 from .fields import MultiFileField, SingleFileField
 
@@ -483,3 +486,18 @@ class FormFieldsBlock(StreamBlock):
 
     class Meta:
         label = _('Form fields')
+
+
+class FormFieldsBlockAdapter(StreamBlockAdapter):
+    js_constructor = 'stream_forms.blocks.FormFieldsBlock'
+
+    @cached_property
+    def media(self):
+        streamblock_media = super().media
+        return forms.Media(
+            js=streamblock_media._js + ['js/apply/form-field-block.js'],
+            css=streamblock_media._css
+        )
+
+
+register(FormFieldsBlockAdapter(), FormFieldsBlock)
