@@ -57,6 +57,7 @@ from ..workflow import (
     active_statuses,
     dismissed_statuses,
     ext_or_higher_statuses,
+    ext_review_statuses,
     get_review_active_statuses,
     review_statuses,
 )
@@ -146,6 +147,8 @@ class ApplicationSubmissionQueryset(JSONOrderable):
             qs = qs.reviewed_by(user)
         if reviewer_settings.state == 'ext_state_or_higher':
             qs = qs.filter(status__in=ext_or_higher_statuses)
+        if reviewer_settings.state == 'ext_state_only':
+            qs = qs.filter(status__in=ext_review_statuses)
         if reviewer_settings.outcome == 'accepted':
             qs = qs.filter(status__in=accepted_statuses)
         if reviewer_settings.outcome == 'all_except_dismissed':
