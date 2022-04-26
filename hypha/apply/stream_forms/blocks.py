@@ -415,6 +415,10 @@ class FileFieldBlock(UploadableMediaBlock):
     """This doesn't know how to save the uploaded files
 
     You must implement this if you want to reuse it.
+
+    This block option is disabled/hide from the application forms,
+    now it is only working for the existing ones that are already using it.
+    Override the behaviour of FormFieldsBlock(StreamBlock) with 'js/apply/form-field-block.js' to hide its option.
     """
     field_class = SingleFileField
 
