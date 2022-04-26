@@ -146,6 +146,7 @@ MIDDLEWARE = [
 
     'hijack.middleware.HijackUserMiddleware',
 
+    'hypha.apply.users.middleware.TwoFactorAuthenticationMiddleware',
     'hypha.apply.users.middleware.SocialAuthExceptionMiddleware',
 
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
@@ -360,6 +361,9 @@ WAGTAIL_USER_CUSTOM_FIELDS = ['full_name']
 WAGTAIL_PASSWORD_MANAGEMENT_ENABLED = False
 WAGTAILUSERS_PASSWORD_ENABLED = False
 WAGTAILUSERS_PASSWORD_REQUIRED = False
+
+# Enforce Two factor setting
+ENFORCE_TWO_FACTOR = env.bool('ENFORCE_TWO_FACTOR', False)
 
 LOGIN_URL = 'users_public:login'
 LOGIN_REDIRECT_URL = 'dashboard:dashboard'
