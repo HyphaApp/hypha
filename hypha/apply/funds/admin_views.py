@@ -108,6 +108,12 @@ class CreateApplicationFormView(CreateView):
 
 class EditApplicationFormView(EditView):
 
+    def get_form(self):
+        form = super(EditApplicationFormView, self).get_form()
+        single_file_count = sum(1 for block in self.get_instance().form_fields.raw_data if block['type'] == 'file')
+        form.fields['form_fields'].block.meta.block_counts = {'file': {'min_num': 0, 'max_num': single_file_count}}
+        return form
+
     def form_invalid(self, form):
         show_admin_form_error_messages(self.request, form)
         return self.render_to_response(self.get_context_data(form=form))
