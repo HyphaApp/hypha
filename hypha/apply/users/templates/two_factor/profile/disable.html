@@ -5,7 +5,7 @@
   <p><a href="{% url 'two_factor:profile'%}"
        class="btn btn-link">{% trans "Back to account" %}</a></p>
   <h1>{% block title %}{% trans "Disable Two-factor Authentication" %}{% endblock %}</h1>
-  <p>{% blocktrans %}Disabling Two-factor authentication weakens your account security.
+  <p>{% blocktrans trimmed %}Disabling Two-factor authentication weakens your account security.
     We recommend reenabling it when you can.{% endblocktrans %}</p>
   <div class="wrapper wrapper--small wrapper--inner-space-medium">
       <form class="form" action="" method="POST" novalidate>
@@ -19,7 +19,7 @@
 
           {% if form.errors %}
               <ul class="errorlist">
-                  {% blocktrans count counter=form.errors.items|length %}
+                  {% blocktrans trimmed count counter=form.errors.items|length %}
                   <li>Please correct the error below.</li>
                   {% plural %}
                   <li>Please correct the errors below.</li>
