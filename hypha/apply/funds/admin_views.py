@@ -101,6 +101,11 @@ class CopyApplicationFormViewClass(CreateView):
 
 class CreateApplicationFormView(CreateView):
 
+    def get_form(self):
+        form = super(CreateApplicationFormView, self).get_form()
+        form.fields['form_fields'].block.meta.block_counts = {'file': {'min_num': 0, 'max_num': 0}}
+        return form
+
     def form_invalid(self, form):
         show_admin_form_error_messages(self.request, form)
         return self.render_to_response(self.get_context_data(form=form))
