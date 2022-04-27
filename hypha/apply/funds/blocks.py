@@ -194,9 +194,6 @@ class ApplicationCustomFormFieldsBlock(CustomFormFieldsBlock, FormFieldsBlock):
     required_blocks = ApplicationMustIncludeFieldBlock.__subclasses__()
     single_blocks = ApplicationSingleIncludeFieldBlock.__subclasses__()
 
-    class Meta:
-        block_counts = {}
-
 
 REQUIRED_BLOCK_NAMES = [block.name for block in ApplicationMustIncludeFieldBlock.__subclasses__()]
 
