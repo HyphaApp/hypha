@@ -71,10 +71,12 @@ module.exports = (webpackEnv) => {
                         loader: 'sass-loader',
                         options: {
                             sourceMap: !isProduction,
-                            data: '@import "main.scss";',
-                            includePaths: [
-                                path.join(__dirname, 'src')
-                            ]
+                            additionalData: '@import "main.scss";',
+                            sassOptions: {
+                                includePaths: [
+                                    path.join(__dirname, 'src')
+                                ]
+                            }
                         }
                     }]
                 },
