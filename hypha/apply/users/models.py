@@ -25,35 +25,35 @@ from .utils import send_activation_email
 class UserQuerySet(models.QuerySet):
     def staff(self):
         return self.filter(
-            Q(groups__name=STAFF_GROUP_NAME) | Q(is_superuser=True)
+            Q(groups__name=STAFF_GROUP_NAME, is_active=True) | Q(is_superuser=True, is_active=True)
         ).distinct()
 
     def staff_admin(self):
-        return self.filter(groups__name=TEAMADMIN_GROUP_NAME)
+        return self.filter(groups__name=TEAMADMIN_GROUP_NAME, is_active=True)
 
     def reviewers(self):
-        return self.filter(groups__name=REVIEWER_GROUP_NAME)
+        return self.filter(groups__name=REVIEWER_GROUP_NAME, is_active=True)
 
     def partners(self):
-        return self.filter(groups__name=PARTNER_GROUP_NAME)
+        return self.filter(groups__name=PARTNER_GROUP_NAME, is_active=True)
 
     def community_reviewers(self):
-        return self.filter(groups__name=COMMUNITY_REVIEWER_GROUP_NAME)
+        return self.filter(groups__name=COMMUNITY_REVIEWER_GROUP_NAME, is_active=True)
 
     def applicants(self):
-        return self.filter(groups__name=APPLICANT_GROUP_NAME)
+        return self.filter(groups__name=APPLICANT_GROUP_NAME, is_active=True)
 
     def approvers(self):
-        return self.filter(groups__name=APPROVER_GROUP_NAME)
+        return self.filter(groups__name=APPROVER_GROUP_NAME, is_active=True)
 
     def finances_level_1(self):
-        return self.filter(groups__name=FINANCE_GROUP_NAME).exclude(groups__name=APPROVER_GROUP_NAME)
+        return self.filter(groups__name=FINANCE_GROUP_NAME, is_active=True).exclude(groups__name=APPROVER_GROUP_NAME)
 
     def finances_level_2(self):
-        return self.filter(groups__name=FINANCE_GROUP_NAME).filter(groups__name=APPROVER_GROUP_NAME)
+        return self.filter(groups__name=FINANCE_GROUP_NAME, is_active=True).filter(groups__name=APPROVER_GROUP_NAME)
 
     def contracting(self):
-        return self.filter(groups__name=CONTRACTING_GROUP_NAME)
+        return self.filter(groups__name=CONTRACTING_GROUP_NAME, is_active=True)
 
 
 class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
