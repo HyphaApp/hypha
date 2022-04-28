@@ -348,8 +348,10 @@ class BatchUpdateReviewersForm(forms.Form):
         external_reviewers = self.cleaned_data['reviewer_reviewers']
         submissions = self.cleaned_data['submissions']
         if external_reviewers:
+            # User needs to be superuser or lead of all selected submissions.
             if self.user_cant_alter_submissions_external_reviewers(submissions, self.user):
                 self.add_error('reviewer_reviewers', _("Only Lead can change the External Reviewers"))
+            # If user is trying to change the external reviewers for submissions that doesn't have workflow with external_review stage.
             elif self.submissions_cant_have_external_reviewers(submissions):
                 self.add_error('reviewer_reviewers', _('External Reviewers cannot be selected because of the application workflow'))
 
@@ -373,7 +375,7 @@ class BatchUpdateReviewersForm(forms.Form):
 
     def user_cant_alter_submissions_external_reviewers(self, submissions, user):
         for submission in submissions:
-            if user!=submission.lead and not user.is_superuser:
+            if user != submission.lead and not user.is_superuser:
                 return True
         return False
 
