@@ -4,7 +4,11 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView
 from django_tables2.views import MultiTableMixin
 
-from hypha.apply.funds.models import ApplicationSubmission, RoundsAndLabs
+from hypha.apply.funds.models import (
+    ApplicationSubmission,
+    ReviewerSettings,
+    RoundsAndLabs,
+)
 from hypha.apply.funds.tables import (
     ReviewerSubmissionsTable,
     SubmissionFilterAndSearch,
@@ -188,7 +192,16 @@ class ReviewerDashboardView(MyFlaggedMixin, MySubmissionContextMixin, TemplateVi
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        submissions = ApplicationSubmission.objects.all().for_table(self.request.user)
+        '''
+        If use_settings variable is set for ReviewerSettings use settings
+        parameters to filter submissions or return all as it
+        was by default.
+        '''
+        reviewer_settings = ReviewerSettings.for_request(self.request)
+        if reviewer_settings.use_settings:
+            submissions = ApplicationSubmission.objects.for_reviewer_settings(self.request.user, reviewer_settings).for_table(self.request.user)
+        else:
+            submissions = ApplicationSubmission.objects.all().for_table(self.request.user)
 
         context.update({
             'awaiting_reviews': self.awaiting_reviews(submissions),
