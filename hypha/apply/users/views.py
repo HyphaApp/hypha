@@ -159,7 +159,10 @@ class EmailChangeDoneView(TemplateView):
 
 @login_required()
 def become(request):
-    if not request.user.is_apply_staff:
+    if not settings.HIJACK_ENABLE:
+        raise PermissionDenied()
+
+    if not request.user.is_superuser:
         raise PermissionDenied()
 
     id = request.POST.get('user_pk')
