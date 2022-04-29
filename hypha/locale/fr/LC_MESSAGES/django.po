@@ -8,19 +8,21 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-09 10:44+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2022-04-29 11:30+0000\n"
+"Last-Translator: Nathan <bonnemainsnathan@gmail.com>\n"
+"Language-Team: French <https://hosted.weblate.org/projects/hypha/hypha-core/"
+"fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 4.12.1-dev\n"
 
 #: hypha/apply/activity/messaging.py:39
 #, python-brace-format
 msgid " as {role}"
-msgstr ""
+msgstr " en tant que {role}"
 
 #: hypha/apply/activity/messaging.py:228
 #, python-brace-format
@@ -29,7 +31,7 @@ msgstr ""
 
 #: hypha/apply/activity/messaging.py:229 hypha/apply/activity/messaging.py:230
 msgid "Edited"
-msgstr ""
+msgstr "Modifié"
 
 #: hypha/apply/activity/messaging.py:231 hypha/apply/activity/messaging.py:245
 #, python-brace-format
@@ -67,7 +69,7 @@ msgstr ""
 
 #: hypha/apply/activity/messaging.py:243
 msgid "Created"
-msgstr ""
+msgstr "Créé"
 
 #: hypha/apply/activity/messaging.py:244
 #, python-brace-format
@@ -76,12 +78,12 @@ msgstr ""
 
 #: hypha/apply/activity/messaging.py:246
 msgid "Requested approval"
-msgstr ""
+msgstr "Approbation demandée"
 
 #: hypha/apply/activity/messaging.py:247
 #: hypha/apply/determinations/options.py:12
 msgid "Approved"
-msgstr ""
+msgstr "Approuvé"
 
 #: hypha/apply/activity/messaging.py:248
 #, python-brace-format
@@ -95,20 +97,20 @@ msgstr ""
 
 #: hypha/apply/activity/messaging.py:250
 msgid "Approved contract"
-msgstr ""
+msgstr "Contrat approuvé"
 
 #: hypha/apply/activity/messaging.py:251
 #, python-brace-format
 msgid "Updated Invoice status to: {invoice.status_display}"
-msgstr ""
+msgstr "Statut de la facture mis à jour vers : {invoice.status_display}"
 
 #: hypha/apply/activity/messaging.py:252
 msgid "Invoice created"
-msgstr ""
+msgstr "Facture créée"
 
 #: hypha/apply/activity/messaging.py:253
 msgid "Submitted a report"
-msgstr ""
+msgstr "Signalement envoyé"
 
 #: hypha/apply/activity/messaging.py:284
 msgid "Reviewers updated."
@@ -117,12 +119,12 @@ msgstr ""
 #: hypha/apply/activity/messaging.py:286 hypha/apply/activity/messaging.py:356
 #: hypha/apply/activity/messaging.py:513
 msgid "Added:"
-msgstr ""
+msgstr "Ajouté :"
 
 #: hypha/apply/activity/messaging.py:290 hypha/apply/activity/messaging.py:360
 #: hypha/apply/activity/messaging.py:517
 msgid "Removed:"
-msgstr ""
+msgstr "Supprimé :"
 
 #: hypha/apply/activity/messaging.py:296
 msgid "Batch Reviewers Updated."
@@ -131,7 +133,7 @@ msgstr ""
 #: hypha/apply/activity/messaging.py:298
 #, python-brace-format
 msgid "{user} as {name}."
-msgstr ""
+msgstr "{user} en tant que {name}."
 
 #: hypha/apply/activity/messaging.py:316
 #, python-brace-format
@@ -145,7 +147,7 @@ msgstr ""
 
 #: hypha/apply/activity/messaging.py:354
 msgid "Partners updated."
-msgstr ""
+msgstr "Partenaires mis à jour."
 
 #: hypha/apply/activity/messaging.py:367
 #, python-brace-format
@@ -179,16 +181,18 @@ msgid ""
 "A new {comment.visibility} comment has been posted on <{link}|{source.title}"
 "> by {user}"
 msgstr ""
+"Un nouveau commentaire {comment.visibility} a été publié sur <{link}|{source."
+"title}> par {user}"
 
 #: hypha/apply/activity/messaging.py:416 hypha/apply/activity/messaging.py:417
 #, python-brace-format
 msgid "{user} has edited <{link}|{source.title}>"
-msgstr ""
+msgstr "{user} a modifié <{link}|{source.title}>"
 
 #: hypha/apply/activity/messaging.py:420
 #, python-brace-format
 msgid "{user} has updated the partners on <{link}|{source.title}>"
-msgstr ""
+msgstr "{user} a mis à jour les partenaires sur <{link}|{source.title}>"
 
 #: hypha/apply/activity/messaging.py:421
 #, python-brace-format
@@ -196,11 +200,13 @@ msgid ""
 "{user} has updated the status of <{link}|{source.title}>: {old_phase."
 "display_name} → {source.phase}"
 msgstr ""
+"{user} a mis à jour le statut de <{link}|{source.title}> : {old_phase."
+"display_name} → {source.phase}"
 
 #: hypha/apply/activity/messaging.py:425
 #, python-brace-format
 msgid "A proposal has been submitted for review: <{link}|{source.title}>"
-msgstr ""
+msgstr "Une proposition est en attente d'examen : <{link}|{source.title}>"
 
 #: hypha/apply/activity/messaging.py:426
 #, python-brace-format
