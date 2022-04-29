@@ -89,7 +89,7 @@ class AccountView(UpdateView):
         return reverse_lazy('users:account')
 
     def get_context_data(self, **kwargs):
-        if self.request.user.is_superuser:
+        if self.request.user.is_superuser and settings.HIJACK_ENABLE:
             swappable_form = BecomeUserForm()
         else:
             swappable_form = None

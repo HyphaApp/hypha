@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth import views as auth_views
 from django.urls import include, path, reverse_lazy
 
@@ -37,7 +38,6 @@ public_urlpatterns = [
 urlpatterns = [
     path('account/', include([
         path('', AccountView.as_view(), name='account'),
-        path('become/', become, name='become'),
         path('password/', include([
             path('', EmailChangePasswordView.as_view(), name='email_change_confirm_password'),
             path(
@@ -94,3 +94,8 @@ urlpatterns = [
         path('oauth', oauth, name='oauth'),
     ])),
 ]
+
+if settings.HIJACK_ENABLE:
+    urlpatterns += [
+        path('account/become/', become, name='become'),
+    ]
