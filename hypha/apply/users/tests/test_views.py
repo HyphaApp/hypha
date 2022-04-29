@@ -61,7 +61,7 @@ class TestPasswordReset(BaseViewTestCase):
         self.assertIn('https://testserver/account/password/reset/confirm', mail.outbox[0].body)
 
 
-@override_settings(ROOT_URLCONF='hypha.apply.urls')
+@override_settings(ROOT_URLCONF='hypha.apply.urls', HIJACK_ENABLE=True)
 class TestBecome(TestCase):
     def setUp(self):
         self.staff = StaffFactory()
