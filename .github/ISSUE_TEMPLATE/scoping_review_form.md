@@ -1,6 +1,6 @@
 ---
-name: Scoping request
-about: Suggest an improvement to some existing functionality
+name: scoping review form
+about: You would like to contribute to Hypha and is interested in feedback
 title: ''
 labels:
   - 'Type: Scoping'
