@@ -160,7 +160,7 @@ class EmailChangeDoneView(TemplateView):
 @login_required()
 def become(request):
     if not settings.HIJACK_ENABLE:
-        raise PermissionDenied()
+        raise Http404(_('Hijack feature is not enabled.'))
 
     if not request.user.is_superuser:
         raise PermissionDenied()

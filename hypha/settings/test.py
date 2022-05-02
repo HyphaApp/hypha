@@ -9,6 +9,8 @@ logging.disable(logging.CRITICAL)
 
 SECRET_KEY = 'NOT A SECRET'
 
+HIJACK_ENABLE = True
+
 PROJECTS_ENABLED = True
 PROJECTS_AUTO_CREATE = True
 
