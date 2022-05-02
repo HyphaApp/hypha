@@ -1,6 +1,6 @@
 ---
-name: scoping review form
-about: You would like to contribute to Hypha and is interested in feedback
+name: Scoping Review Form
+about: Get feedback on your code
 title: ''
 labels:
   - 'Type: Scoping'
