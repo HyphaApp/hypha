@@ -23,6 +23,7 @@ from hijack.views import AcquireUserView
 from two_factor.forms import AuthenticationTokenForm, BackupTokenForm
 from two_factor.views import DisableView as TwoFactorDisableView
 from two_factor.views import LoginView as TwoFactorLoginView
+from two_factor.utils import default_device
 from wagtail.admin.views.account import password_management_enabled
 from wagtail.core.models import Site
 
@@ -98,6 +99,7 @@ class AccountView(UpdateView):
 
         return super().get_context_data(
             swappable_form=swappable_form,
+            default_device=default_device(self.request.user),
             show_change_password=show_change_password,
             **kwargs,
         )
