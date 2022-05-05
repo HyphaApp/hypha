@@ -1,4 +1,5 @@
 from django import template
+from django_otp import devices_for_user
 
 from ..utils import can_use_oauth_check
 
@@ -25,3 +26,12 @@ def can_use_oauth(context):
     user = context.get('user')
 
     return can_use_oauth_check(user)
+
+
+@register.simple_tag(takes_context=True)
+def user_2fa_enabled(context):
+    """Checking if 2FA devices exist for the user"""
+    user = context.get('user')
+    if len(list(devices_for_user(user))):
+        return True
+    return False
