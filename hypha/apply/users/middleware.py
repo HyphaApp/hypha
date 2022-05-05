@@ -4,6 +4,7 @@ from social_core.exceptions import AuthForbidden
 from social_django.middleware import (
     SocialAuthExceptionMiddleware as _SocialAuthExceptionMiddleware,
 )
+from two_factor.utils import default_device
 
 ALLOWED_SUBPATH_FOR_UNVERIFIED_USERS = [
     'login/',
@@ -42,11 +43,16 @@ class TwoFactorAuthenticationMiddleware:
                 return True
         return False
 
+    def is_2fa_setup(self, user):
+        if default_device(user):
+            return True
+        return False
+
     def __call__(self, request):
         # code to execute before the view
         user = request.user
         if settings.ENFORCE_TWO_FACTOR:
-            if user.is_authenticated and not user.is_verified() and not user.social_auth.exists():
+            if user.is_authenticated and not self.is_2fa_setup(user) and not user.social_auth.exists():
                 if not self.is_path_allowed(request.path):
                     return redirect('/account/two_factor/required/')
 

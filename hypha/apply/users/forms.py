@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2Widget
+from two_factor.utils import default_device
 from wagtail.core.models import Site
 from wagtail.users.forms import UserCreationForm, UserEditForm
 
@@ -75,11 +76,21 @@ class ProfileForm(forms.ModelForm):
 class BecomeUserForm(forms.Form):
     user_pk = forms.ModelChoiceField(
         widget=Select2Widget,
-        help_text=_('Only includes active, non-superusers'),
-        queryset=User.objects.filter(is_active=True, is_superuser=False),
+        help_text=_('Only includes active, non-superusers with 2FA setup'),
+        queryset=None,
         label='',
         required=False,
     )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        users = User.objects.filter(is_active=True, is_superuser=False)
+        users_without_2FA = []
+        for user in users:
+            if not default_device(user):
+                users_without_2FA.append(user.id)
+        users_with_2FA_setup = users.exclude(id__in=users_without_2FA)
+        self.fields['user_pk'].queryset = users_with_2FA_setup
 
 
 class EmailChangePasswordForm(forms.Form):
