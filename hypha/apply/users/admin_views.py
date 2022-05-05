@@ -3,7 +3,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404
+from django.template.response import TemplateResponse
 from django.utils.translation import gettext as _
 from django.views.decorators.vary import vary_on_headers
 from wagtail.admin.auth import any_permission_required
@@ -50,7 +51,7 @@ class UserFilterSet(WagtailFilterSet):
 
 @any_permission_required(add_user_perm, change_user_perm, delete_user_perm)
 @vary_on_headers('X-Requested-With')
-def index(request):
+def index(request, *args):
     """
     Override wagtail's users index view to filter by full_name
     https://github.com/wagtail/wagtail/blob/af69cb4a544a1b9be1339546be62ff54b389730e/wagtail/users/views/users.py#L47
@@ -58,9 +59,15 @@ def index(request):
     q = None
     is_searching = False
 
+    group = None
+    group_filter = Q()
+    if args:
+        group = get_object_or_404(Group, id=args[0])
+        group_filter = Q(groups=group) if args else Q()
+
     model_fields = [f.name for f in User._meta.get_fields()]
 
-    if request.GET.get('q', None):
+    if 'q' in request.GET:
         form = SearchForm(request.GET, placeholder=_("Search users"))
         if form.is_valid():
             q = form.cleaned_data['q']
@@ -84,15 +91,17 @@ def index(request):
                 if 'full_name' in model_fields:
                     conditions |= Q(full_name__icontains=term)
 
-            users = User.objects.filter(conditions)
+            users = User.objects.filter(group_filter & conditions)
     else:
         form = SearchForm(placeholder=_("Search users"))
 
     if not is_searching:
-        users = User.objects.all().order_by('-is_active', 'full_name')
+        users = User.objects.filter(group_filter).order_by('-is_active', 'full_name')
 
-    filters = UserFilterSet(request.GET, queryset=users, request=request)
-    users = filters.qs
+    filters = None
+    if not group:
+        filters = UserFilterSet(request.GET, queryset=users, request=request)
+        users = filters.qs
 
     if 'ordering' in request.GET:
         ordering = request.GET['ordering']
@@ -105,11 +114,11 @@ def index(request):
         ordering = 'name'
 
     user_count = users.count()
-    paginator = Paginator(users, per_page=20)
+    paginator = Paginator(users.select_related('wagtail_userprofile'), per_page=20)
     users = paginator.get_page(request.GET.get('p'))
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        return render(request, "wagtailusers/users/results.html", {
+        return TemplateResponse(request, "wagtailusers/users/results.html", {
             'users': users,
             'user_count': user_count,
             'is_searching': is_searching,
@@ -120,7 +129,8 @@ def index(request):
             'model_name': User._meta.model_name,
         })
     else:
-        return render(request, "wagtailusers/users/index.html", {
+        return TemplateResponse(request, "wagtailusers/users/index.html", {
+            'group': group,
             'search_form': form,
             'users': users,
             'user_count': user_count,
