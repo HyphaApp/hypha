@@ -143,10 +143,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_referrer_policy.middleware.ReferrerPolicyMiddleware',
     'django_otp.middleware.OTPMiddleware',
+    'hypha.apply.users.middleware.TwoFactorAuthenticationMiddleware',
 
     'hijack.middleware.HijackUserMiddleware',
 
-    'hypha.apply.users.middleware.TwoFactorAuthenticationMiddleware',
     'hypha.apply.users.middleware.SocialAuthExceptionMiddleware',
 
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
@@ -497,6 +497,7 @@ FILE_ALLOWED_EXTENSIONS = ['doc', 'docx', 'odp', 'ods', 'odt', 'pdf', 'ppt', 'pp
 FILE_ACCEPT_ATTR_VALUE = ', '.join(['.' + ext for ext in FILE_ALLOWED_EXTENSIONS])
 
 # Hijack Settings
+HIJACK_ENABLE = env.bool('HIJACK_ENABLE', False)
 HIJACK_LOGIN_REDIRECT_URL = '/dashboard/'
 HIJACK_LOGOUT_REDIRECT_URL = '/account/'
 HIJACK_DECORATOR = 'hypha.apply.users.decorators.superuser_decorator'

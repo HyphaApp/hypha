@@ -89,7 +89,7 @@ class AccountView(UpdateView):
         return reverse_lazy('users:account')
 
     def get_context_data(self, **kwargs):
-        if self.request.user.is_superuser:
+        if self.request.user.is_superuser and settings.HIJACK_ENABLE:
             swappable_form = BecomeUserForm()
         else:
             swappable_form = None
@@ -159,7 +159,10 @@ class EmailChangeDoneView(TemplateView):
 
 @login_required()
 def become(request):
-    if not request.user.is_apply_staff:
+    if not settings.HIJACK_ENABLE:
+        raise Http404(_('Hijack feature is not enabled.'))
+
+    if not request.user.is_superuser:
         raise PermissionDenied()
 
     id = request.POST.get('user_pk')
