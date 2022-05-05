@@ -4,7 +4,7 @@ from urllib.parse import urlencode
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model, login, update_session_auth_hash
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.forms import AdminPasswordChangeForm
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.exceptions import PermissionDenied
@@ -16,15 +16,17 @@ from django.utils.decorators import method_decorator
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import UpdateView
+from django.views.generic import UpdateView, View
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
+from django_otp import devices_for_user
 from hijack.views import AcquireUserView
 from two_factor.forms import AuthenticationTokenForm, BackupTokenForm
 from two_factor.views import DisableView as TwoFactorDisableView
 from two_factor.views import LoginView as TwoFactorLoginView
 from wagtail.admin.views.account import password_management_enabled
 from wagtail.core.models import Site
+from wagtail.users.views.users import change_user_perm
 
 from hypha.apply.home.models import ApplyHomePage
 
@@ -307,6 +309,42 @@ class TWOFADisableView(TwoFactorDisableView):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
+
+
+@method_decorator(permission_required(change_user_perm, raise_exception=True), name='dispatch')
+class TWOFAResetView(FormView):
+    """
+    View for PasswordForm to confirm the Disable 2FA process.
+    """
+    form_class = TWOFAPasswordForm
+    template_name = 'two_factor/reset.html'
+    user = None
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        # pass request's user to form to validate the password
+        kwargs['user'] = self.request.user
+        # store the user from url for redirecting to the same user's account edit page
+        self.user = get_object_or_404(User, pk=self.kwargs.get('user_id'))
+        return kwargs
+
+    def get_form(self, form_class=None):
+        form = super(TWOFAResetView, self).get_form(form_class=form_class)
+        form.fields['password'].label = "Password"
+        return form
+
+    def form_valid(self, form):
+        for device in devices_for_user(self.user):
+            device.delete()
+        return redirect(self.get_success_url())
+
+    def get_success_url(self):
+        return reverse('wagtailusers_users:edit', kwargs={'user_id': self.user.id})
+
+    def get_context_data(self, **kwargs):
+        ctx = super(TWOFAResetView, self).get_context_data(**kwargs)
+        ctx['user'] = self.user
+        return ctx
 
 
 class TWOFARequiredMessageView(TemplateView):
