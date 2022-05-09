@@ -50,7 +50,7 @@
                         {% endif %}
                         <!-- Add a custom button to user account edit form -->
                         {% user_2fa_enabled as is_2fa_enabled %}
-                        <a href="{% if is_2fa_enabled %}{% url 'users:two_factor_reset' user.pk %}{% else %}javascript:void(0){% endif %}" class="button {% if not is_2fa_enabled %}disabled{% endif %}">{% trans "Disable 2FA" %}</a>
+                        <a href="{% if is_2fa_enabled %}{% url 'users:two_factor_reset' user.pk %}{% else %}javascript:void(0){% endif %}" class="button {% if not is_2fa_enabled %}disabled{% endif %}" {% if not is_2fa_enabled %} title="{% blocktranslate %} {{ user }}'s 2FA security has been disabled {% endblocktranslate %}" {% endif %}>{% trans "Disable 2FA" %}</a>
                     </li>
                 </ul>
             </section>
