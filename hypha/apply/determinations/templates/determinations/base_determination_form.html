@@ -52,8 +52,7 @@
     </form>
     {% for type, message in message_templates.items %}
         <div class="is-hidden" data-type="{{ type }}" id="determination-message-{{ type }}">
-            <h1>message</h1>
-            {{ message|bleach }}
+            {{ message }}
         </div>
     {% endfor %}
 </div>
@@ -61,5 +60,5 @@
 {% endblock %}
 
 {% block extra_js %}
-    {# Skip this until the script is improved. <script src="{% static 'js/apply/determination-template.js' %}"></script> #}
+    <script src="{% static 'js/apply/determination-template.js' %}"></script>
 {% endblock %}
