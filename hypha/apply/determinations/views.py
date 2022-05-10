@@ -309,8 +309,9 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
         determination_messages = DeterminationMessageSettings.for_site(site)
 
         field_blocks_ids = {}
-        for field_block in self.get_defined_fields():
-            field_blocks_ids[field_block.block_type] = field_block.id
+        if self.submission.is_determination_form_attached:
+            for field_block in self.get_defined_fields():
+                field_blocks_ids[field_block.block_type] = field_block.id
 
         return super().get_context_data(
             submission=self.submission,
