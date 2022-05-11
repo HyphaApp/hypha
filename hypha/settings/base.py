@@ -365,6 +365,11 @@ WAGTAILUSERS_PASSWORD_REQUIRED = False
 # Enforce Two factor setting
 ENFORCE_TWO_FACTOR = env.bool('ENFORCE_TWO_FACTOR', False)
 
+# Give staff lead permissions.
+# Only effects setting external reviewers for now.
+GIVE_STAFF_LEAD_PERMS = env.bool('GIVE_STAFF_LEAD_PERMS', False)
+
+
 LOGIN_URL = 'users_public:login'
 LOGIN_REDIRECT_URL = 'dashboard:dashboard'
 

@@ -5,6 +5,7 @@ from operator import methodcaller
 
 import bleach
 from django import forms
+from django.conf import settings
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
@@ -251,7 +252,12 @@ class UpdateReviewersForm(ApplicationSubmissionModelForm):
         field.initial = initial
 
     def can_alter_external_reviewers(self, instance, user):
-        return instance.stage.has_external_review and (user == instance.lead or user.is_superuser)
+        if instance.stage.has_external_review:
+            if settings.GIVE_STAFF_LEAD_PERMS:
+                return user.is_apply_staff or user.is_superuser
+            else:
+                return user == instance.lead or user.is_superuser
+        return False
 
     def clean(self):
         cleaned_data = super().clean()
@@ -375,8 +381,10 @@ class BatchUpdateReviewersForm(forms.Form):
 
     def user_cant_alter_submissions_external_reviewers(self, submissions, user):
         for submission in submissions:
-            if user != submission.lead and not user.is_superuser:
-                return True
+            if settings.GIVE_STAFF_LEAD_PERMS:
+                return user != submission.lead and not user.is_superuser
+            else:
+                return not user.is_apply_staff and not user.is_superuser
         return False
 
     def save(self):
