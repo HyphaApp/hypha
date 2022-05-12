@@ -15,6 +15,7 @@ from wagtail.contrib.settings.models import BaseSetting, register_setting
 from wagtail.core.fields import RichTextField, StreamField
 
 from hypha.apply.funds.models.mixins import AccessFormData
+from hypha.apply.funds.workflow import Concept, ConceptProposal, Request
 
 from .blocks import (
     DeterminationBlock,
@@ -198,7 +199,11 @@ class DeterminationMessageSettings(BaseSetting):
 
     def get_for_stage(self, stage_name):
         message_templates = {}
-        prefix = f"{stage_name.lower()}_"
+        if stage_name in [Request.name, Concept.name, ConceptProposal.name]:
+            prefix = f"{stage_name.lower()}_"
+        else:
+            # Use Request's message templates for remaining workflows
+            prefix = "request_"
 
         for field in self._meta.get_fields():
             if prefix in field.name:
