@@ -445,7 +445,7 @@ class AdminProjectDetailView(
         context['approvals'] = self.object.approvals.distinct('by')
         context['remaining_document_categories'] = list(self.object.get_missing_document_categories())
 
-        if self.object.is_in_progress:
+        if self.object.is_in_progress and self.object.report_config.frequency:
             context['report_data'] = {
                 'startDate': self.object.report_config.current_due_report().start_date,
                 'projectEndDate': self.object.end_date,

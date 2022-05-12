@@ -182,19 +182,26 @@ class ReportConfig(models.Model):
 
     WEEK = _('week')
     MONTH = _('month')
+    YEAR = _('year')
     FREQUENCY_CHOICES = [
+        ('', '---'),
         (WEEK, _('Weeks')),
         (MONTH, _('Months')),
+        (YEAR, _('Years')),
     ]
 
     project = models.OneToOneField("Project", on_delete=models.CASCADE, related_name="report_config")
     schedule_start = models.DateField(null=True)
     occurrence = models.PositiveSmallIntegerField(default=1)
-    frequency = models.CharField(choices=FREQUENCY_CHOICES, default=MONTH, max_length=5)
+    frequency = models.CharField(choices=FREQUENCY_CHOICES, default='', blank=True, max_length=5)
 
     def get_frequency_display(self):
+        if not self.frequency:
+            return _('No reporting frequency set')
         next_report = self.current_due_report()
 
+        if self.frequency == self.YEAR:
+            return _('Once a year')
         if self.frequency == self.MONTH:
             if self.schedule_start and self.schedule_start.day == 31:
                 day_of_month = _('last day')
@@ -239,6 +246,11 @@ class ReportConfig(models.Model):
         if not self.project.start_date:
             return None
 
+        # No report required if frequency is not set
+        if not self.frequency:
+            return
+        
+        import ipdb; ipdb.set_trace()
         today = timezone.now().date()
 
         last_report = self.last_report()
@@ -275,6 +287,8 @@ class ReportConfig(models.Model):
         return report
 
     def next_date(self, last_date):
+        if not self.frequency:
+            return
         delta_frequency = self.frequency + 's'
         delta = relativedelta(**{delta_frequency: self.occurrence})
         next_date = last_date + delta

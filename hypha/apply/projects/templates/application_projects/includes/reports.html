@@ -16,21 +16,23 @@
                     <div class="modal" id="change-frequency">
                         {{ report_data|json_script:"reportData" }}
                         <h4 class="modal__header-bar">{% trans "Change reporting frequency" %}</h4>
-                        <div class="form__info-box">
-                            <p>
-                                {% trans "Next report will be due in" %}
-                                <b class="js-next-report-due-slot"></b>
-                                {% trans "and the report period will be" %}
-                                <b class="js-report-period-start"></b>
-                                {% trans "to" %}
-                                <b class="js-report-period-end"></b>
-                                {% trans "and then every" %}
-                                <b class="js-frequency-number-slot"></b>
-                                <b class="js-frequency-period-slot"></b>
-                                {% trans "after until the project end date" %}:
-                                <span class="js-project-end-slot"></span>.
-                            </p>
-                        </div>
+                        {% if object.report_config.frequency %}
+                            <div class="form__info-box">
+                                <p>
+                                    {% trans "Next report will be due in" %}
+                                    <b class="js-next-report-due-slot"></b>
+                                    {% trans "and the report period will be" %}
+                                    <b class="js-report-period-start"></b>
+                                    {% trans "to" %}
+                                    <b class="js-report-period-end"></b>
+                                    {% trans "and then every" %}
+                                    <b class="js-frequency-number-slot"></b>
+                                    <b class="js-frequency-period-slot"></b>
+                                    {% trans "after until the project end date" %}:
+                                    <span class="js-project-end-slot"></span>.
+                                </p>
+                            </div>
+                        {% endif %}
                         <p>{% trans "Schedule reports every" %}:</p>
                         {% trans "Continue" as continue %}
                         {% include 'funds/includes/delegated_form_base.html' with form=update_frequency_form value=continue extra_classes="form--report-frequency" %}
@@ -41,9 +43,11 @@
                 {% for report in object.report_config.past_due_reports %}
                     {% include "application_projects/includes/report_line.html" with report=report %}
                 {% endfor %}
-                {% with next_report=object.report_config.current_due_report %}
-                    {% include "application_projects/includes/report_line.html" with report=next_report current=True %}
-                {% endwith %}
+                {% if object.report_config.current_due_report %}
+                    {% with next_report=object.report_config.current_due_report %}
+                        {% include "application_projects/includes/report_line.html" with report=next_report current=True %}
+                    {% endwith %}
+                {% endif %}
             </ul>
         </div>
     </div>
@@ -67,28 +71,22 @@
                 <tbody>
                     {% for report in object.reports.done %}
                         <tr {% if forloop.counter > 8 %}class="is-hidden"{% endif %}>
-                            <td>
-                                <span class="data-block__mobile-label">{% trans "Period End" %}: </span>{{ report.end_date }}
-                            </td>
-                            <td>
-                                <span class="data-block__mobile-label">{% trans "Submitted" %}: </span>{{ report.submitted_date|default:"Skipped" }}
-                            </td>
-                            <td class="data-block__links">
-                                {% if not report.skipped %}
-                                    <a class="data-block__action-link" href="{% url "apply:projects:reports:detail" pk=report.pk %}">{% trans "View" %}</a>
+                            {% if not report.skipped %}
+                                <td>
+                                    <span class="data-block__mobile-label">{% trans "Period End" %}: </span>{{ report.end_date }}
+                                </td>
+                                <td>
+                                    <span class="data-block__mobile-label">{% trans "Submitted" %}: </span>{{ report.submitted_date|default:"Skipped" }}
+                                </td>
+                                <td class="data-block__links">
+                                    
+                                        <a class="data-block__action-link" href="{% url "apply:projects:reports:detail" pk=report.pk %}">{% trans "View" %}</a>
 
-                                    {% if request.user.is_apply_staff %}
-                                        <a class="data-block__action-link" href="{% url "apply:projects:reports:edit" pk=report.pk %}">{% trans "Edit" %}</a>
-                                    {% endif %}
-                                {% else %}
-                                    {% if request.user.is_apply_staff %}
-                                        <form action="{% url "apply:projects:reports:skip" pk=report.pk %}" method="post">
-                                            {% csrf_token %}
-                                            <button type="submit" class="btn data-block__action-link">{% trans "Unskip" %}</button>
-                                        </form>
-                                    {% endif %}
-                                {% endif %}
-                            </td>
+                                        {% if request.user.is_apply_staff %}
+                                            <a class="data-block__action-link" href="{% url "apply:projects:reports:edit" pk=report.pk %}">{% trans "Edit" %}</a>
+                                        {% endif %}
+                                </td>
+                            {% endif %}
                         </tr>
                         {% empty %}
                         <tr>

@@ -173,11 +173,17 @@ class ReportFrequencyUpdate(DelegatedViewMixin, UpdateView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs.pop('user')
-        instance = kwargs['instance'].report_config
+        project = kwargs['instance']
+        instance = project.report_config
         kwargs['instance'] = instance
-        kwargs['initial'] = {
-            'start': instance.current_due_report().end_date,
-        }
+        if instance.frequency:
+            kwargs['initial'] = {
+                'start': instance.current_due_report().end_date,
+            }
+        else:
+            kwargs['initial'] = {
+                'start': project.start_date,
+            }
         return kwargs
 
     def get_form(self):
