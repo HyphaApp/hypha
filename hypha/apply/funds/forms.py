@@ -315,9 +315,18 @@ class UpdateReviewersForm(ApplicationSubmissionModelForm):
 
 class BatchUpdateReviewersForm(forms.Form):
     submissions = forms.CharField(widget=forms.HiddenInput(attrs={'class': 'js-submissions-id'}))
+    external_reviewers = forms.ModelMultipleChoiceField(
+        queryset=User.objects.reviewers().only('pk', 'full_name'),
+        widget=Select2MultiCheckboxesWidget(attrs={'data-placeholder': 'Reviewers'}),
+        label=_('External Reviewers'),
+        required=False,
+    )
 
     def __init__(self, *args, user=None, round=None, **kwargs):
         super().__init__(*args, **kwargs)
+        self.user = user
+
+        self.fields = OrderedDict(self.fields)
 
         self.role_fields = {}
         field_data = make_role_reviewer_fields()
@@ -327,6 +336,8 @@ class BatchUpdateReviewersForm(forms.Form):
             self.fields[field_name] = data['field']
             self.role_fields[field_name] = data['role']
 
+        self.fields.move_to_end('external_reviewers')
+
     def clean_submissions(self):
         value = self.cleaned_data['submissions']
         submission_ids = [int(submission) for submission in value.split(',')]
@@ -334,6 +345,16 @@ class BatchUpdateReviewersForm(forms.Form):
 
     def clean(self):
         cleaned_data = super().clean()
+        external_reviewers = self.cleaned_data['external_reviewers']
+        submissions = self.cleaned_data['submissions']
+        if external_reviewers:
+            # User needs to be superuser or lead of all selected submissions.
+            if self.user_cant_alter_submissions_external_reviewers(submissions, self.user):
+                self.add_error('external_reviewers', _("Only Lead can change the External Reviewers"))
+            # If user is trying to change the external reviewers for submissions that doesn't have workflow with external_review stage.
+            elif self.submissions_cant_have_external_reviewers(submissions):
+                self.add_error('external_reviewers', _('External Reviewers cannot be selected because of the application workflow'))
+
         role_reviewers = [
             user
             for field, user in self.cleaned_data.items()
@@ -346,8 +367,21 @@ class BatchUpdateReviewersForm(forms.Form):
 
         return cleaned_data
 
+    def submissions_cant_have_external_reviewers(self, submissions):
+        for submission in submissions:
+            if not submission.stage.has_external_review:
+                return True
+        return False
+
+    def user_cant_alter_submissions_external_reviewers(self, submissions, user):
+        for submission in submissions:
+            if user != submission.lead and not user.is_superuser:
+                return True
+        return False
+
     def save(self):
         submissions = self.cleaned_data['submissions']
+        external_reviewers = self.cleaned_data['external_reviewers']
         assigned_roles = {
             role: self.cleaned_data[field]
             for field, role in self.role_fields.items()
@@ -355,6 +389,12 @@ class BatchUpdateReviewersForm(forms.Form):
         for role, reviewer in assigned_roles.items():
             if reviewer:
                 AssignedReviewers.objects.update_role(role, reviewer, *submissions)
+
+        for submission in submissions:
+            AssignedReviewers.objects.bulk_create_reviewers(
+                [reviewer for reviewer in external_reviewers],
+                submission,
+            )
 
         return None
 

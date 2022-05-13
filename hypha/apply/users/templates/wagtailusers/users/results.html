@@ -1,5 +1,5 @@
 {% load i18n wagtailadmin_tags %}
-<div class="users-list users-list--has-filters">
+<div class="users-list{% if filters %} users-list--has-filters{% endif %}">
     <div class="users-list__results">
         {% if users %}
             <h2 role="alert">
@@ -33,15 +33,17 @@
             {% endif %}
         {% endif %}
     </div>
-    <div class="users-list__filters">
-        <h2>{% trans 'Filter' %}</h2>
-        <form method="get">
-            {% for filter in filters.form %}
-                {{ filter.label_tag }}
-                {{ filter }}
-                {{ filter.errors }}
-            {% endfor %}
-            <button class="button button-longrunning" type="submit">{% icon name="spinner" %}{% trans 'Apply filters' %}</button>
-        </form>
-    </div>
+    {% if filters %}
+        <div class="users-list__filters">
+            <h2>{% trans 'Filter' %}</h2>
+            <form method="get">
+                {% for filter in filters.form %}
+                    {{ filter.label_tag }}
+                    {{ filter }}
+                    {{ filter.errors }}
+                {% endfor %}
+                <button class="button button-longrunning" type="submit">{% icon name="spinner" %}{% trans 'Apply filters' %}</button>
+            </form>
+        </div>
+    {% endif %}
 </div>

@@ -28,10 +28,9 @@ def can_use_oauth(context):
     return can_use_oauth_check(user)
 
 
-@register.simple_tag(takes_context=True)
-def user_2fa_enabled(context):
+@register.simple_tag
+def user_2fa_enabled(user):
     """Checking if 2FA devices exist for the user"""
-    user = context.get('user')
     if len(list(devices_for_user(user))):
         return True
     return False

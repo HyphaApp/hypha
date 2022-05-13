@@ -1,0 +1,31 @@
+<!-- It is a custom template built on the top of wagtail base, to confirm 2FA disable process with the user's Password -->
+{% extends "wagtailadmin/base.html" %}
+{% load i18n static wagtailadmin_tags %}
+
+{% block content %}
+
+    {% trans "Disabling 2FA" as editing_str %}
+    {% include "wagtailadmin/shared/header.html" with title=editing_str subtitle=user.get_username merged=1 tabbed=1 icon="user" %}
+
+    <form class="form" action="" method="POST" novalidate>
+        <div class="tab-content">
+            {% csrf_token %}
+
+            <section id="account" class="active nice-padding">
+                <p> Are you sure you want to disable the Two Factor Authentication for this user? Please type your password to confirm.</p>
+
+                <ul class="fields">
+                    {% block fields %}
+                        {% include "wagtailadmin/shared/field_as_li.html" with field=form.password %}
+                    {% endblock %}
+
+                    <li>
+                        <button class="button button--primary" type="submit">{% trans 'Disable 2FA' %}</button>
+                    </li>
+                </ul>
+            </section>
+        </div>
+    </form>
+
+
+{% endblock %}

@@ -91,7 +91,7 @@ class AccountView(UpdateView):
         return reverse_lazy('users:account')
 
     def get_context_data(self, **kwargs):
-        if self.request.user.is_superuser:
+        if self.request.user.is_superuser and settings.HIJACK_ENABLE:
             swappable_form = BecomeUserForm()
         else:
             swappable_form = None
@@ -161,7 +161,10 @@ class EmailChangeDoneView(TemplateView):
 
 @login_required()
 def become(request):
-    if not request.user.is_apply_staff:
+    if not settings.HIJACK_ENABLE:
+        raise Http404(_('Hijack feature is not enabled.'))
+
+    if not request.user.is_superuser:
         raise PermissionDenied()
 
     id = request.POST.get('user_pk')
@@ -309,12 +312,12 @@ class TWOFADisableView(TwoFactorDisableView):
 
 
 @method_decorator(permission_required(change_user_perm, raise_exception=True), name='dispatch')
-class TWOFAResetView(FormView):
+class TWOFAAdminDisableView(FormView):
     """
-    View for PasswordForm to confirm the Disable 2FA process.
+    View for PasswordForm to confirm the Disable 2FA process on wagtail admin.
     """
     form_class = TWOFAPasswordForm
-    template_name = 'two_factor/reset.html'
+    template_name = 'two_factor/admin/disable.html'
     user = None
 
     def get_form_kwargs(self):
@@ -326,7 +329,7 @@ class TWOFAResetView(FormView):
         return kwargs
 
     def get_form(self, form_class=None):
-        form = super(TWOFAResetView, self).get_form(form_class=form_class)
+        form = super(TWOFAAdminDisableView, self).get_form(form_class=form_class)
         form.fields['password'].label = "Password"
         return form
 
@@ -339,7 +342,7 @@ class TWOFAResetView(FormView):
         return reverse('wagtailusers_users:edit', kwargs={'user_id': self.user.id})
 
     def get_context_data(self, **kwargs):
-        ctx = super(TWOFAResetView, self).get_context_data(**kwargs)
+        ctx = super(TWOFAAdminDisableView, self).get_context_data(**kwargs)
         ctx['user'] = self.user
         return ctx
 

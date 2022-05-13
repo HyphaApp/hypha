@@ -49,8 +49,12 @@
                             <a href="{% url 'wagtailusers_users:delete' user.pk %}" class="button button-secondary no">{% trans "Delete user" %}</a>
                         {% endif %}
                         <!-- Add a custom button to user account edit form -->
-                        {% user_2fa_enabled as is_2fa_enabled %}
-                        <a href="{% if is_2fa_enabled %}{% url 'users:two_factor_reset' user.pk %}{% else %}javascript:void(0){% endif %}" class="button {% if not is_2fa_enabled %}disabled{% endif %}" {% if not is_2fa_enabled %} title="{% blocktranslate %} {{ user }}'s 2FA security has been disabled {% endblocktranslate %}" {% endif %}>{% trans "Disable 2FA" %}</a>
+                        {% user_2fa_enabled user as is_2fa_enabled %}
+                        {% if is_2fa_enabled %}
+                            <a href="{% url 'users:two_factor_reset' user.pk %}" class="button">{% trans "Disable 2FA" %}</a>
+                        {% else %}
+                            <button type="button" title="{% trans "This account do not have 2FA enabled." %}" class="button" disabled>{% trans "Disable 2FA" %}</button>
+                        {% endif %}
                     </li>
                 </ul>
             </section>
