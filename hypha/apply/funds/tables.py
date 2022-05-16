@@ -365,8 +365,13 @@ class SubmissionFilter(filters.FilterSet):
 
 
 class SubmissionFilterAndSearch(SubmissionFilter):
-    query = filters.CharFilter(field_name='search_data', lookup_expr="icontains", widget=forms.HiddenInput)
+    query = filters.CharFilter(method='search_data_and_id', widget=forms.HiddenInput)
     archived = filters.BooleanFilter(field_name='is_archive', widget=forms.HiddenInput, method='filter_archived')
+
+    def search_data_and_id(self, queryset, name, value):
+        if value.isnumeric() and len(value) <= 3:
+            return queryset.filter(id=value)
+        return queryset.filter(search_data__icontains=value)
 
     def filter_archived(self, queryset, name, value):
         if not value:
