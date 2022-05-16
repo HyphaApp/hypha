@@ -30,4 +30,7 @@ def transition_from_outcome(outcome, submission):
 
 
 def has_final_determination(submission):
-    return submission.determinations.final().exists()
+    # This was `submission.determinations.final().exists()` but in #9 ARDC asked
+    # to be able to revert after a determination has been made and presumably
+    # make a new determination, so no determinations are truly final.
+    return False

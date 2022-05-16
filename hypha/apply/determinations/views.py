@@ -419,7 +419,7 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
     def should_redirect(cls, request, submission, action):
         if has_final_determination(submission):
             determination = submission.determinations.final().first()
-            if action not in TRANSITION_DETERMINATION or determination.outcome == TRANSITION_DETERMINATION[action]:
+            if determination.outcome == TRANSITION_DETERMINATION[action]:
                 # We want to progress as normal so don't redirect through form
                 return False
             else:
