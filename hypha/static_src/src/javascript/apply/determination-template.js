@@ -1,10 +1,11 @@
 (function ($) {
 
     'use strict';
+    const field_blocks_ids = JSON.parse(document.getElementById('block-ids').textContent);
 
     let DeterminationCopy = class {
         static selector() {
-            return '#id_outcome';
+            return ('#id_' + field_blocks_ids['determination']);
         }
 
         constructor(node) {
@@ -32,7 +33,8 @@
         }
 
         updateTextArea(text) {
-            window.tinyMCE.get('id_message').setContent(text);
+            this.message_box = document.querySelector('#id_' + field_blocks_ids['message'] + '_ifr');
+            this.message_box.contentDocument.getElementsByTagName('body')[0].innerHTML = text;
         }
     };
 
