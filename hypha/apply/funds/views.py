@@ -115,7 +115,7 @@ User = get_user_model()
 
 class SubmissionStatsMixin:
     def get_context_data(self, **kwargs):
-        submissions = ApplicationSubmission.objects.all()
+        submissions = ApplicationSubmission.objects.exclude_draft()
         submission_undetermined_count = submissions.undetermined().count()
         review_my_count = submissions.reviewed_by(self.request.user).count()
 
@@ -128,7 +128,7 @@ class SubmissionStatsMixin:
         submission_accepted_sum = intcomma(submission_accepted_value.get('value__sum'))
         submission_accepted_count = submission_accepted.count()
 
-        reviews = Review.objects.all()
+        reviews = Review.objects.submitted()
         review_count = reviews.count()
         review_my_score = reviews.by_user(self.request.user).score()
 
@@ -1282,7 +1282,7 @@ class SubmissionResultView(SubmissionStatsMixin, FilterView):
         return new_kwargs
 
     def get_queryset(self):
-        return self.filterset_class._meta.model.objects.current()
+        return self.filterset_class._meta.model.objects.current().exclude_draft()
 
     def get_context_data(self, **kwargs):
         search_term = self.request.GET.get('query')

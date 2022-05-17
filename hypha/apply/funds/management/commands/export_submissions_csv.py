@@ -12,7 +12,7 @@ class Command(BaseCommand):
         with open('export_submissions.csv', 'w', newline='') as csvfile:
             writer = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
             writer.writerow(['Submission ID', 'Submission title', 'Submission author', 'Submission e-mail', 'Submission value', 'Submission duration', 'Submission reapplied', 'Submission stage', 'Submission phase', 'Submission screening', 'Submission date', 'Submission region', 'Submission country', 'Submission focus', 'Round/Lab/Fellowship'])
-            for submission in ApplicationSubmission.objects.all():
+            for submission in ApplicationSubmission.objects.exclude_draft():
                 submission_region = ''
                 submission_country = ''
                 submission_focus = ''
