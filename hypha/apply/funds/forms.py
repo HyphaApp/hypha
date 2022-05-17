@@ -5,6 +5,7 @@ from operator import methodcaller
 
 import bleach
 from django import forms
+from django.conf import settings
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
@@ -251,7 +252,14 @@ class UpdateReviewersForm(ApplicationSubmissionModelForm):
         field.initial = initial
 
     def can_alter_external_reviewers(self, instance, user):
-        return instance.stage.has_external_review and (user == instance.lead or user.is_superuser)
+        if instance.stage.has_external_review:
+            if user.is_superuser:
+                return True
+            if settings.GIVE_STAFF_LEAD_PERMS:
+                return user.is_apply_staff
+            else:
+                return user == instance.lead
+        return False
 
     def clean(self):
         cleaned_data = super().clean()
@@ -349,7 +357,7 @@ class BatchUpdateReviewersForm(forms.Form):
         submissions = self.cleaned_data['submissions']
         if external_reviewers:
             # User needs to be superuser or lead of all selected submissions.
-            if self.user_cant_alter_submissions_external_reviewers(submissions, self.user):
+            if not self.user_can_alter_submissions_external_reviewers(submissions, self.user):
                 self.add_error('external_reviewers', _("Only Lead can change the External Reviewers"))
             # If user is trying to change the external reviewers for submissions that doesn't have workflow with external_review stage.
             elif self.submissions_cant_have_external_reviewers(submissions):
@@ -373,10 +381,14 @@ class BatchUpdateReviewersForm(forms.Form):
                 return True
         return False
 
-    def user_cant_alter_submissions_external_reviewers(self, submissions, user):
-        for submission in submissions:
-            if user != submission.lead and not user.is_superuser:
-                return True
+    def user_can_alter_submissions_external_reviewers(self, submissions, user):
+        # User needs to be superuser or lead of all selected submissions.
+        if user.is_superuser:
+            return True
+        if settings.GIVE_STAFF_LEAD_PERMS and user.is_apply_staff:
+            return True
+        if submissions.count() == submissions.filter(lead=user).count():
+            return True
         return False
 
     def save(self):
