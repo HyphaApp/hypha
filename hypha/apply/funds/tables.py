@@ -369,9 +369,10 @@ class SubmissionFilterAndSearch(SubmissionFilter):
     archived = filters.BooleanFilter(field_name='is_archive', widget=forms.HiddenInput, method='filter_archived')
 
     def search_data_and_id(self, queryset, name, value):
-        if value.strip().startswith("#") and value.strip("#").isnumeric():
-            return queryset.filter(id=value.strip("#"))
-        return queryset.filter(Q(id=value.strip("#"))|Q(search_data__icontains=value))
+        possible_id = value.strip("#")
+        if value.strip().startswith("#") and possible_id.isnumeric():
+            return queryset.filter(id=possible_id)
+        return queryset.filter(Q(id=possible_id)|Q(search_data__icontains=value))
 
     def filter_archived(self, queryset, name, value):
         if not value:
