@@ -150,12 +150,24 @@ class ApplicationBaseReviewForm(AbstractRelatedReviewForm):
     application = ParentalKey('ApplicationBase', related_name='review_forms')
 
 
+class ApplicationBaseExternalReviewForm(AbstractRelatedReviewForm):
+    application = ParentalKey('ApplicationBase', related_name='external_review_forms')
+
+
 class RoundBaseReviewForm(AbstractRelatedReviewForm):
     round = ParentalKey('RoundBase', related_name='review_forms')
 
 
+class RoundBaseExternalReviewForm(AbstractRelatedReviewForm):
+    round = ParentalKey('RoundBase', related_name='external_review_forms')
+
+
 class LabBaseReviewForm(AbstractRelatedReviewForm):
     lab = ParentalKey('LabBase', related_name='review_forms')
+
+
+class LabBaseExternalReviewForm(AbstractRelatedReviewForm):
+    lab = ParentalKey('LabBase', related_name='external_review_forms')
 
 
 class ApplicationBaseDeterminationForm(AbstractRelatedDeterminationForm):

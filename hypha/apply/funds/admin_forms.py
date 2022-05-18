@@ -14,6 +14,7 @@ class WorkflowFormAdminForm(WagtailAdminPageForm):
         workflow = WORKFLOWS[cleaned_data['workflow_name']]
         application_forms = self.formsets['forms']
         review_forms = self.formsets['review_forms']
+        external_review_forms = self.formsets['external_review_forms']
         determination_forms = self.formsets['determination_forms']
         number_of_stages = len(workflow.stages)
 
@@ -21,6 +22,7 @@ class WorkflowFormAdminForm(WagtailAdminPageForm):
         if number_of_stages == 1:
             self.validate_stages_equal_forms(workflow, application_forms)
         self.validate_stages_equal_forms(workflow, review_forms, form_type="Review form")
+        self.validate_stages_equal_forms(workflow, external_review_forms, form_type="External Review form")
         self.validate_stages_equal_forms(
             workflow, determination_forms, form_type="Determination form"
         )
@@ -62,6 +64,18 @@ class WorkflowFormAdminForm(WagtailAdminPageForm):
 
             number_of_stages = len(workflow.stages)
             plural_stage = 's' if number_of_stages > 1 else ''
+
+            # External Review Form is optional and should be single if provided
+            if form_type == "External Review form":
+                if number_of_forms > 1:
+                    self.add_error(
+                        None,
+                        f'Number of {form_type}s should not be more than one: '
+                        f'{number_of_forms} {form_type}{plural_form} provided',
+                    )
+                    return
+                else:
+                    return
 
             if number_of_forms != number_of_stages:
                 self.add_error(
