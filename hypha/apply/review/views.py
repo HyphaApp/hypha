@@ -53,13 +53,13 @@ class ReviewContextMixin:
 
 def get_fields_for_stage(submission, user=None):
     forms = submission.get_from_parent('review_forms').all()
-    external_review_forms = submission.get_from_parent('external_review_forms')
+    external_review_forms = submission.get_from_parent('external_review_forms').all()
 
     # Use ExternalReviewForm if submission's stage has external review and external review form is attached to fund.
     # ExternalReviewForm is only for non-staff reviewers(external reviewers)
     if submission.stage.has_external_review and external_review_forms:
         if user and not user.is_apply_staff:
-            forms = external_review_forms.all()
+            forms = external_review_forms
 
     index = submission.workflow.stages.index(submission.stage)
     try:

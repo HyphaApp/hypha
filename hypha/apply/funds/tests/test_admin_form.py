@@ -38,14 +38,16 @@ def formset_base(field, total, delete, factory, same=False, form_stage_info=None
     return base_data
 
 
-def form_data(num_appl_forms=0, num_review_forms=0, num_determination_forms=0, delete=0, stages=1, same_forms=False, form_stage_info=[1]):
+def form_data(num_appl_forms=0, num_review_forms=0, num_determination_forms=0, num_external_review_forms=0, delete=0, stages=1, same_forms=False, form_stage_info=[1]):
     form_data = formset_base(
         'forms', num_appl_forms, delete, same=same_forms, factory=ApplicationFormFactory,
         form_stage_info=form_stage_info)
     review_form_data = formset_base('review_forms', num_review_forms, False, same=same_forms, factory=ReviewFormFactory)
+    external_review_form_data = formset_base('external_review_forms', num_external_review_forms, True, same=same_forms, factory=ReviewFormFactory)
     determination_form_data = formset_base('determination_forms', num_determination_forms, False, same=same_forms, factory=DeterminationFormFactory)
 
     form_data.update(review_form_data)
+    form_data.update(external_review_form_data)
     form_data.update(determination_form_data)
 
     fund_data = factory.build(dict, FACTORY_CLASS=FundTypeFactory)
