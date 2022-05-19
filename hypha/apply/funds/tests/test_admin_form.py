@@ -110,4 +110,3 @@ class TestWorkflowFormAdminForm(TestCase):
     def test_doesnt_validates_with_multiple_external_review_form(self):
         form = self.submit_data(form_data(1, 1, 1, num_external_review_forms=2, stages=1))
         self.assertFalse(form.is_valid(), form.errors.as_text())
-        self.assertTrue(form.errors['__all__'])
