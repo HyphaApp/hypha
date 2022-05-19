@@ -117,7 +117,7 @@ class WorkflowStreamForm(WorkflowHelpers, AbstractStreamForm):  # type: ignore
         FieldPanel('workflow_name'),
         InlinePanel('forms', label=_('Forms')),
         InlinePanel('review_forms', label=_('Internal Review Forms')),
-        InlinePanel('external_review_forms', label=_('External Review Forms')),
+        InlinePanel('external_review_forms', label=_('External Review Forms'), max_num=1),
         InlinePanel('determination_forms', label=_('Determination Forms'))
     ]
 
