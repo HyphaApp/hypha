@@ -98,3 +98,16 @@ class TestWorkflowFormAdminForm(TestCase):
         form = self.submit_data(form_data(2, 2, 2, stages=2, form_stage_info=[1, 1]))
         self.assertFalse(form.is_valid())
         self.assertTrue(form.errors['__all__'])
+
+    def test_validate_external_review_form(self):
+        form = self.submit_data(form_data(1, 1, 1, num_external_review_forms=1, stages=1))
+        self.assertTrue(form.is_valid(), form.errors.as_text())
+
+    def test_validates_without_external_review_form(self):
+        form = self.submit_data(form_data(1,1, 1, num_external_review_forms=0, stages=1))
+        self.assertTrue(form.is_valid(), form.errors.as_text())
+
+    def test_doesnt_validates_with_multiple_external_review_form(self):
+        form = self.submit_data(form_data(1, 1, 1, num_external_review_forms=2, stages=1))
+        self.assertFalse(form.is_valid(), form.errors.as_text())
+        self.assertTrue(form.errors['__all__'])
