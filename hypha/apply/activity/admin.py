@@ -8,7 +8,7 @@ class MessageInline(admin.TabularInline):
     readonly_fields = ('type', 'recipient', 'content', 'status', 'external_id')
     can_delete = False
 
-    def has_add_permission(self, request):
+    def has_add_permission(self, request, obj):
         return False
 
 
