@@ -15,9 +15,10 @@ COPY package.json package-lock.json /usr/local/hypha/
 
 # Set owner on /usr/local.
 RUN sudo chown -R circleci:circleci /usr/local
+USER circleci
 
 # Install node dependencies.
-RUN npm install  --quiet
+RUN npm install --global --quiet
 
 # Install python dependencies.
 COPY requirements.txt requirements-dev.txt /usr/local/hypha/
