@@ -2,11 +2,12 @@
 {% load i18n %}
 
 {% block content %}
-  <h1>{% block title %}{% trans "Enable Two-Factor Authentication" %}{% endblock %}</h1>
+  <h1>{% block title %}{% trans "Two-Factor Authentication(2FA)" %}{% endblock %}</h1>
   {% if wizard.steps.current == 'welcome' %}
     <p>{% blocktrans trimmed %}You are about to take your account security to the
-        next level. Follow the steps in this wizard to enable two-factor
-        authentication.{% endblocktrans %}</p>
+        next level.{% endblocktrans %}</p>
+    <p>{% blocktrans trimmed %}To start using 2FA, you need to install an Authenticator app(eg. Google Authenticator app) on your smartphone.{% endblocktrans %}</p>
+    <p>{% blocktrans trimmed %}Install the app you choose then continue to Enable Two-Factor Authentication. {% endblocktrans %}</p>
   {% elif wizard.steps.current == 'method' %}
     <p>{% blocktrans trimmed %}Please select which authentication method you would
         like to use.{% endblocktrans %}</p>

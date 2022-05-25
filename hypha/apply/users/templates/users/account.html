@@ -40,7 +40,7 @@
                     <p><a class="link link--button link--button--narrow" href="{% url 'two_factor:disable' %}">{% trans "Disable 2FA" %}</a></p>
                 </div>
             {% else %}
-                <p><a class="link link--button link--button--narrow" href="{% url 'two_factor:setup' %}">{% trans "Enable 2FA" %}</a></p>
+                <p><a class="link link--button link--button--narrow" href="{% url 'users:two_factor_setup' %}">{% trans "Enable 2FA" %}</a></p>
             {% endif %}
         {% endif %}
     </div>
