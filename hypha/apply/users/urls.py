@@ -13,6 +13,7 @@ from .views import (
     TWOFABackupTokensPasswordView,
     TWOFADisableView,
     TWOFARequiredMessageView,
+    TWOFASetupView,
     become,
     create_password,
     oauth,
@@ -87,6 +88,7 @@ urlpatterns = [
         ),
         # Two factor redirect
         path('two_factor/required/', TWOFARequiredMessageView.as_view(), name='two_factor_required'),
+        path('two_factor/setup/', TWOFASetupView.as_view(), name="two_factor_setup"),
         path('two_factor/backup_tokens/password/', TWOFABackupTokensPasswordView.as_view(), name='backup_tokens_password'),
         path('two_factor/disable/', TWOFADisableView.as_view(), name='disable'),
         path('two_factor/admin/disable/<str:user_id>/', TWOFAAdminDisableView.as_view(), name='admin_disable'),
