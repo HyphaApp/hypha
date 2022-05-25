@@ -1067,6 +1067,9 @@ class ApplicantSubmissionEditView(BaseSubmissionEditView):
                 notify=not (revision or submitting_proposal) or self.object.status == DRAFT_STATE,  # Use the other notification
             )
 
+        self.object.submit_time = timezone.now()
+        self.object.save()
+
         # Required for django-file-form: delete temporary files for the new files
         # uploaded while edit.
         form.delete_temporary_files()

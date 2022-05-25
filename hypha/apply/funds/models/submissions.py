@@ -27,7 +27,9 @@ from django.db.models.fields.json import KeyTextTransform
 from django.db.models.functions import Cast, Coalesce
 from django.dispatch import receiver
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.text import slugify
+from django.utils.translation import gettext_lazy as _
 from django_fsm import RETURN_VALUE, FSMField, can_proceed, transition
 from django_fsm.signals import post_transition
 from wagtail.contrib.forms.models import AbstractFormSubmission
@@ -480,6 +482,8 @@ class ApplicationSubmission(
         blank=True
     )
 
+    submit_time = models.DateTimeField(verbose_name=_('submit time'), auto_now_add=False)
+
     is_draft = False
 
     live_revision = models.OneToOneField(
@@ -667,6 +671,7 @@ class ApplicationSubmission(
         creating = not self.id
 
         if creating:
+            self.submit_time = timezone.now()
             # We are creating the object default to first stage
             self.workflow_name = self.get_from_parent('workflow_name')
             # Copy extra relevant information to the child
