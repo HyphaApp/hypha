@@ -1068,7 +1068,7 @@ class ApplicantSubmissionEditView(BaseSubmissionEditView):
             )
 
         self.object.submit_time = timezone.now()
-        self.object.save()
+        self.object.save(update_fields=['submit_time'])
 
         # Required for django-file-form: delete temporary files for the new files
         # uploaded while edit.
