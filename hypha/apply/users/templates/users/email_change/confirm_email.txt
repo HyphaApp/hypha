@@ -11,9 +11,9 @@
 {% blocktrans %}This link will only remain active for {{ timeout_days }} days and will lead you to profile page after verification.{% endblocktrans %}
 
 
-{% blocktrans with root_url=PUBLIC_SITE.root_url %}Kind Regards,
-The {{ ORG_SHORT_NAME }} Team
+{% blocktrans %}Kind Regards,
+The {{ ORG_SHORT_NAME }} Team{% endblocktrans %}
 
 --
 {{ ORG_LONG_NAME }}
-{{ root_url }}{% endblocktrans %}
+{{ PUBLIC_SITE.root_url }}
