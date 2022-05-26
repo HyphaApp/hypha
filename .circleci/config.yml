@@ -23,7 +23,6 @@ executors:
           POSTGRES_PASSWORD: hypha
           POSTGRES_DB: hypha
 
-
 jobs:
   build-fe:
     executor: node
@@ -87,7 +86,8 @@ jobs:
           command: sudo chown -R circleci:circleci /usr/local
       - restore_cache:
           keys:
-            - v5-python-{{ .Branch }}-{{ checksum "requirements.txt" }}{{ checksum "requirements-dev.txt" }}
+            - v5-python-{{ .Branch }}-{{ checksum "requirements.txt" }}{{
+              checksum "requirements-dev.txt" }}
             - v5-python-{{ .Branch }}-
             - v5-python-
       - run:
@@ -100,11 +100,14 @@ jobs:
       - save_cache:
           paths:
             - ./venv
-          key: v5-python-{{ .Branch }}-{{ checksum "requirements.txt" }}{{ checksum "requirements-dev.txt" }}
+          key: v5-python-{{ .Branch }}-{{ checksum "requirements.txt" }}{{ checksum
+            "requirements-dev.txt" }}
       - persist_to_workspace:
           root: ~/repo
           paths:
             - venv
+    # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
+    resource_class: large
 
   lint-be:
     executor: python
@@ -137,23 +140,22 @@ jobs:
             coverage run --source='hypha' manage.py test
             codecov
 
-
 workflows:
-    version: 2.1
-    process:
-      jobs:
-        - build-fe
-        - lint-fe:
-            requires:
+  version: 2.1
+  process:
+    jobs:
+      - build-fe
+      - lint-fe:
+          requires:
             - build-fe
-        - test-fe:
-            requires:
+      - test-fe:
+          requires:
             - build-fe
-        - build-be
-        - lint-be:
-            requires:
-              - build-be
-        - test-be:
-            requires:
+      - build-be
+      - lint-be:
+          requires:
+            - build-be
+      - test-be:
+          requires:
             - build-fe
             - build-be
