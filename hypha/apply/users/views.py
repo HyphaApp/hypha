@@ -24,7 +24,6 @@ from hijack.views import AcquireUserView
 from two_factor.forms import AuthenticationTokenForm, BackupTokenForm
 from two_factor.views import DisableView as TwoFactorDisableView
 from two_factor.views import LoginView as TwoFactorLoginView
-from two_factor.views import SetupView as TwoFactorSetupView
 from two_factor.views import BackupTokensView as TwoFactorBackupTokensView
 from two_factor.utils import default_device
 from wagtail.admin.views.account import password_management_enabled
@@ -349,10 +348,6 @@ class TWOFAAdminDisableView(FormView):
         ctx = super(TWOFAAdminDisableView, self).get_context_data(**kwargs)
         ctx['user'] = self.user
         return ctx
-
-
-class TWOFASetupView(TwoFactorSetupView):
-    success_url = "users:backup_tokens_password"
 
 
 class TWOFARequiredMessageView(TemplateView):

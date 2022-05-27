@@ -34,3 +34,11 @@ def user_2fa_enabled(user):
     if len(list(devices_for_user(user))):
         return True
     return False
+
+
+@register.simple_tag
+def tokens_text(token_set):
+    tokens_string = ""
+    for token in token_set:
+        tokens_string += str(token.token) + " \n"
+    return tokens_string
