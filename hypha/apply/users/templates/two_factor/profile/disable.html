@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block content %}
-  <p><a href="{% url 'two_factor:profile'%}"
+  <p><a href="{% url 'users:account'%}"
        class="btn btn-link">{% trans "Back to account" %}</a></p>
   <h1>{% block title %}{% trans "Disable Two-factor Authentication" %}{% endblock %}</h1>
   <p>{% blocktrans trimmed %}Disabling Two-factor authentication weakens your account security.
