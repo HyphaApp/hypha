@@ -1,10 +1,7 @@
-{% load i18n wagtailadmin_tags %}
-{% base_url_setting as base_url %}
-{% firstof name username as user %}
-
+{% load i18n wagtailadmin_tags %}{% base_url_setting as base_url %}{% firstof name username as user %}
 {% blocktrans %}Dear {{ user }},{% endblocktrans %}
 
-{% blocktrans %}An account on the {{ ORG_LONG_NAME }} web site has been created. Activate your account by clicking this link or copying and pasting it to your browser:{% endblocktrans %}
+{% blocktrans %}An account on the {{ org_long_name }} web site has been created. Activate your account by clicking this link or copying and pasting it to your browser:{% endblocktrans %}
 
 {% if site %}{{ site.root_url }}{% else %}{{ base_url }}{% endif %}{{ activation_path }}
 
@@ -18,8 +15,8 @@
 {% blocktrans %}If you do not complete the activation process within {{ timeout_days }} days you can use the password reset form at{% endblocktrans %}: {% if site %}{{ site.root_url }}{% else %}{{ base_url }}{% endif %}{% url 'users:password_reset' %}
 
 {% blocktrans %}Kind Regards,
-The {{ ORG_SHORT_NAME }} Team{% endblocktrans %}
+The {{ org_short_name }} Team{% endblocktrans %}
 
 -- 
-{{ ORG_LONG_NAME }}
-{{ PUBLIC_SITE.root_url }}
+{{ org_long_name }}
+{% if site %}{{ site.root_url }}{% else %}{{ base_url }}{% endif %}
