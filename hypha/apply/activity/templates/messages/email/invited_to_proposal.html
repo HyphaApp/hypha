@@ -5,11 +5,9 @@
 
 {% blocktrans %}The system will allow you to save a draft of your proposal as you work on it. When you feel it is ready for our review, please click the “Submit” button and we’ll know to take a look at it. We’ll reply to you with feedback on your Proposal as quickly as possible.{% endblocktrans %}{% endblock %}
 
-{% block more_info %}
-{% trans "Here is the link to start creating your proposal" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
+{% block more_info %}{% trans "Here is the link to start creating your proposal" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
 {% trans "If you have any questions, please submit them here" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}#communications
 
 {% trans "Link to our guide" %}: {{ ORG_GUIDE_URL }}
 
-{% blocktrans %}If you have any issues accessing the submission system or other general inquiries, please email us at {{ ORG_EMAIL }}{% endblocktrans %}
-{% endblock %}
+{% blocktrans %}If you have any issues accessing the submission system or other general inquiries, please email us at {{ ORG_EMAIL }}{% endblocktrans %}{% endblock %}

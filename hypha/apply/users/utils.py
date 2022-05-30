@@ -43,6 +43,7 @@ def send_activation_email(user, site=None):
         'activation_path': activation_path,
         'timeout_days': timeout_days,
         'org_long_name': settings.ORG_LONG_NAME,
+        'org_short_name': settings.ORG_SHORT_NAME,
     }
 
     if site:
@@ -75,6 +76,7 @@ def send_confirmation_email(user, token, updated_email=None, site=None):
         'activation_path': activation_path,
         'timeout_days': timeout_days,
         'org_long_name': settings.ORG_LONG_NAME,
+        'org_short_name': settings.ORG_SHORT_NAME,
     }
 
     if site:
