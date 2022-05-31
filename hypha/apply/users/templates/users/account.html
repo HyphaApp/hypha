@@ -36,7 +36,7 @@
             <h4>{% trans "Two-Factor Authentication (2FA)" %}</h4>
             {% if default_device %}
                 <div>
-                    <p><a class="link link--button link--button--narrow" href="{% url 'users:backup_tokens_password' %}">{% trans "Show Codes" %}</a></p>
+                    <p><a class="link link--button link--button--narrow" href="{% url 'users:backup_tokens_password' %}">{% trans "Show backup codes" %}</a></p>
                     <p><a class="link link--button link--button--narrow" href="{% url 'two_factor:disable' %}">{% trans "Disable 2FA" %}</a></p>
                 </div>
             {% else %}
