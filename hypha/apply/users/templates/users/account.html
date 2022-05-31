@@ -24,16 +24,16 @@
             {% endfor %}
             <button class="button button--primary" type="submit">{% trans "Update Profile" %}</button>
         </form>
-<!--    </div>-->
 
         {% if show_change_password and user.has_usable_password and not backends.associated %}
             <br>
             <hr>
-<!--        <div class="profile__column">-->
-            <h3>{% trans "Change password" %}</h3>
+        <div>
+            <h3>{% trans "Account Security" %}</h3>
+            <h4>{% trans "Password" %}</h4>
             <p><a class="button button--primary" href="{% url 'users:password_change' %}">{% trans "Update password" %}</a></p>
 
-            <h3>{% trans "Account security" %}</h3>
+            <h4>{% trans "Two-Factor Authentication (2FA)" %}</h4>
             {% if default_device %}
                 <div>
                     <p><a class="link link--button link--button--narrow" href="{% url 'users:backup_tokens_password' %}">{% trans "Show Codes" %}</a></p>
@@ -42,6 +42,7 @@
             {% else %}
                 <p><a class="link link--button link--button--narrow" href="{% url 'two_factor:setup' %}">{% trans "Enable 2FA" %}</a></p>
             {% endif %}
+        </div>
         {% endif %}
     </div>
 
