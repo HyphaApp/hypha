@@ -1,1 +1,10 @@
 // stylelint-disable no-empty-source
+// stylelint-disable selector-class-pattern
+
+.reviews-summary__td {
+    text-align: center;
+}
+
+.counts-separator {
+    color: $color--mid-grey;
+}
