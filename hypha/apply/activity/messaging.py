@@ -2,7 +2,6 @@ import json
 import logging
 from collections import defaultdict
 
-import requests
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -10,6 +9,7 @@ from django.db import models
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.translation import gettext as _
+from django_slack import slack_message
 
 from hypha.apply.projects.models.payment import (
     APPROVED_BY_FINANCE_1,
@@ -727,12 +727,10 @@ class SlackAdapter(AdapterBase):
         message = ' '.join([recipient, message]).strip()
 
         data = {
-            "room": target_rooms,
             "message": message,
         }
-        response = requests.post(self.destination, json=data)
-
-        return str(response.status_code) + ': ' + response.content.decode()
+        for room in target_rooms:
+            slack_message('messages/slack_message.html', data, channel=room)
 
 
 class EmailAdapter(AdapterBase):

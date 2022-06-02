@@ -24,6 +24,7 @@ django-redis==5.1.0
 django-referrer-policy==1.0
 django-salesforce==4.0
 django-select2==7.9.0
+django-slack==5.17.7
 django-storages==1.12.3
 django-tables2==2.4.1
 django-tinymce==3.4.0
