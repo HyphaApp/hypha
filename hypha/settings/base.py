@@ -105,6 +105,7 @@ INSTALLED_APPS = [
     'django_bleach',
     'django_fsm',
     'django_pwned_passwords',
+    'django_slack',
     'django_otp',
     'django_otp.plugins.otp_totp',
     'django_otp.plugins.otp_static',
@@ -387,6 +388,11 @@ AUTHENTICATION_BACKENDS = (
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+    },
     'handlers': {
         # Send logs with at least INFO level to the console.
         'console': {
@@ -394,6 +400,11 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'verbose',
         },
+        'slack_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django_slack.log.SlackExceptionHandler',
+        }
     },
     'formatters': {
         'verbose': {
@@ -425,6 +436,10 @@ LOGGING = {
             'handlers': ['console'],
             'level': 'WARNING',
             'propagate': False,
+        },
+        'django.slack': {
+            'level': 'ERROR',
+            'handlers': ['slack_admins'],
         },
     },
 }
@@ -528,6 +543,12 @@ SLACK_DESTINATION_URL = env.str('SLACK_DESTINATION_URL', None)
 SLACK_DESTINATION_ROOM = env.str('SLACK_DESTINATION_ROOM', None)
 SLACK_DESTINATION_ROOM_COMMENTS = env.str('SLACK_DESTINATION_ROOM_COMMENTS', None)
 SLACK_TYPE_COMMENTS = env.list('SLACK_TYPE_COMMENTS', [])
+
+# Django Slack settings
+SLACK_TOKEN = env.str('SLACK_TOKEN')
+SLACK_BACKEND = 'django_slack.backends.UrllibBackend'  # CeleryBackend can be used for async
+if SLACK_DESTINATION_URL:
+    SLACK_ENDPOINT_URL = SLACK_DESTINATION_URL
 
 # Automatic transition settings
 TRANSITION_AFTER_REVIEWS = env.bool('TRANSITION_AFTER_REVIEWS', False)
