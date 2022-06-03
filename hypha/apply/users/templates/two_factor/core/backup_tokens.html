@@ -17,10 +17,10 @@
     </ul>
     <p>{% blocktrans %}You should now download, or print these codes,
         and keep them somewhere safe.{% endblocktrans %}</p>
-    <p><a class="btn btn-link" href="data:text/plain;charset=UTF-8,{% tokens_text device.token_set.all %}" download="backup_codes.txt">
-        {% trans "Save Codes" %}</a></p>
     <form method="post">{% csrf_token %}{{ form }}
         <button class="btn btn-primary" type="submit">{% trans "Regenerate Codes" %}</button>
+        <a class="btn btn-link link--left-space" href="data:text/plain;charset=UTF-8,{% tokens_text device.token_set.all %}" download="backup_codes.txt">
+        {% trans "Save Codes" %}</a>
     </form>
   {% else %}
     <p>{% trans "You don't have any backup codes yet." %}</p>
