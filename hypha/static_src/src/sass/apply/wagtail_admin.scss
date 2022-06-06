@@ -1,0 +1,18 @@
+#roles {
+    input[type="checkbox"]::before {
+        top: 0px;
+    }
+
+    input[type="checkbox"] {
+        float: left;
+    }
+
+    .form__item label {
+        line-height: 22px;
+        font-weight: normal;
+    }
+
+    li.form__item {
+        margin-bottom: 15px;
+    }
+}
