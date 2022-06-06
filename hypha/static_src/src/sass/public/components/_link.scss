@@ -90,6 +90,7 @@
         display: none;
         color: $color--white;
         border: 0;
+        text-decoration: none;
 
         @include media-query(tablet-portrait) {
             right: 5%;

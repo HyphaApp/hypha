@@ -151,6 +151,7 @@
         color: $color--white;
         border-bottom: 1px solid transparent;
         transition: color, border $transition;
+        text-decoration: none;
 
         .header--light-bg & {
             color: $color--default;
