@@ -467,7 +467,7 @@ class SlackAdapter(AdapterBase):
 
     def __init__(self):
         super().__init__()
-        self.destination = settings.SLACK_ENDPOINT_URL
+        self.destination = settings.SLACK_DESTINATION_URL
         self.target_room = settings.SLACK_DESTINATION_ROOM
         self.comments_room = settings.SLACK_DESTINATION_ROOM_COMMENTS
         self.comments_type = settings.SLACK_TYPE_COMMENTS

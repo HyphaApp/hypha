@@ -335,6 +335,7 @@ class TestSlackAdapter(AdapterMixin, TestCase):
     target_room = '#<ROOM ID>'
 
     @override_settings(
+        SLACK_DESTINATION_URL=target_url,
         SLACK_ENDPOINT_URL=target_url,
         SLACK_DESTINATION_ROOM=None,
         SLACK_BACKEND="django_slack.backends.TestBackend",
@@ -347,6 +348,7 @@ class TestSlackAdapter(AdapterMixin, TestCase):
         self.assertEqual(messages, error_message)
 
     @override_settings(
+        SLACK_DESTINATION_URL=None,
         SLACK_ENDPOINT_URL=None,
         SLACK_DESTINATION_ROOM=target_room,
         SLACK_BACKEND="django_slack.backends.TestBackend",
@@ -359,6 +361,7 @@ class TestSlackAdapter(AdapterMixin, TestCase):
         self.assertEqual(messages, error_message)
 
     @override_settings(
+        SLACK_DESTINATION_URL=target_url,
         SLACK_ENDPOINT_URL=target_url,
         SLACK_DESTINATION_ROOM=target_room,
         SLACK_BACKEND="django_slack.backends.TestBackend",
@@ -376,6 +379,7 @@ class TestSlackAdapter(AdapterMixin, TestCase):
         self.assertEqual(message_payload['text'], message)
 
     @override_settings(
+        SLACK_DESTINATION_URL=target_url,
         SLACK_ENDPOINT_URL=target_url,
         SLACK_DESTINATION_ROOM=target_room,
         SLACK_BACKEND="django_slack.backends.TestBackend",
@@ -395,6 +399,7 @@ class TestSlackAdapter(AdapterMixin, TestCase):
         self.assertEqual(message_payload['channel'], '#dummy')
 
     @override_settings(
+        SLACK_DESTINATION_URL=target_url,
         SLACK_ENDPOINT_URL=target_url,
         SLACK_DESTINATION_ROOM=target_room,
         SLACK_BACKEND="django_slack.backends.TestBackend",
@@ -426,6 +431,7 @@ class TestSlackAdapter(AdapterMixin, TestCase):
         self.assertTrue(submission.lead.slack in recipients[0])
 
     @override_settings(
+        SLACK_DESTINATION_URL=target_url,
         SLACK_ENDPOINT_URL=target_url,
         SLACK_DESTINATION_ROOM=target_room,
         SLACK_BACKEND="django_slack.backends.TestBackend",
