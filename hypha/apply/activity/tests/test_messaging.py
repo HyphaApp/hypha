@@ -7,6 +7,7 @@ import responses
 from django.contrib.messages import get_messages
 from django.core import mail
 from django.test import TestCase, override_settings
+from django_slack.utils import get_backend
 
 from hypha.apply.funds.tests.factories import (
     ApplicationSubmissionFactory,
@@ -334,95 +335,90 @@ class TestSlackAdapter(AdapterMixin, TestCase):
     target_room = '#<ROOM ID>'
 
     @override_settings(
-        SLACK_DESTINATION_URL=target_url,
+        SLACK_ENDPOINT_URL=target_url,
         SLACK_DESTINATION_ROOM=None,
+        SLACK_BACKEND="django_slack.backends.TestBackend",
     )
-    @responses.activate
     def test_cant_send_with_no_room(self):
+        error_message = "Missing configuration: Room ID"
         adapter = SlackAdapter()
         submission = ApplicationSubmissionFactory()
-        adapter.send_message('my message', '', source=submission)
-        self.assertEqual(len(responses.calls), 0)
+        messages = adapter.send_message('my message', '', source=submission)
+        self.assertEqual(messages, error_message)
 
     @override_settings(
-        SLACK_DESTINATION_URL=None,
+        SLACK_ENDPOINT_URL=None,
         SLACK_DESTINATION_ROOM=target_room,
+        SLACK_BACKEND="django_slack.backends.TestBackend",
     )
-    @responses.activate
     def test_cant_send_with_no_url(self):
+        error_message = "Missing configuration: Destination URL"
         adapter = SlackAdapter()
         submission = ApplicationSubmissionFactory()
-        adapter.send_message('my message', '', source=submission)
-        self.assertEqual(len(responses.calls), 0)
+        messages = adapter.send_message('my message', '', source=submission)
+        self.assertEqual(messages, error_message)
 
     @override_settings(
-        SLACK_DESTINATION_URL=target_url,
+        SLACK_ENDPOINT_URL=target_url,
         SLACK_DESTINATION_ROOM=target_room,
+        SLACK_BACKEND="django_slack.backends.TestBackend",
     )
-    @responses.activate
     def test_correct_payload(self):
-        responses.add(responses.POST, self.target_url, status=200, body='OK')
+        backend = get_backend()
+        backend.reset_messages()
         submission = ApplicationSubmissionFactory()
         adapter = SlackAdapter()
         message = 'my message'
         adapter.send_message(message, '', source=submission)
-        self.assertEqual(len(responses.calls), 1)
-        self.assertDictEqual(
-            json.loads(responses.calls[0].request.body),
-            {
-                'room': [self.target_room],
-                'message': message,
-            }
-        )
+        messages = backend.retrieve_messages()
+        self.assertEqual(len(messages), 1)
+        message_payload = json.loads(messages[0]['payload'])
+        self.assertEqual(message_payload['text'], message)
 
     @override_settings(
-        SLACK_DESTINATION_URL=target_url,
+        SLACK_ENDPOINT_URL=target_url,
         SLACK_DESTINATION_ROOM=target_room,
+        SLACK_BACKEND="django_slack.backends.TestBackend",
     )
-    @responses.activate
     def test_fund_custom_slack_channel(self):
+        backend = get_backend()
+        backend.reset_messages()
         responses.add(responses.POST, self.target_url, status=200, body='OK')
         submission = ApplicationSubmissionFactory(round__parent__slack_channel='dummy')
         adapter = SlackAdapter()
         message = 'my message'
         adapter.send_message(message, '', source=submission)
-        self.assertEqual(len(responses.calls), 1)
-        self.assertDictEqual(
-            json.loads(responses.calls[0].request.body),
-            {
-                'room': ['#dummy'],
-                'message': message,
-            }
-        )
+        messages = backend.retrieve_messages()
+        self.assertEqual(len(messages), 1)
+        message_payload = json.loads(messages[0]['payload'])
+        self.assertEqual(message_payload['text'], message)
+        self.assertEqual(message_payload['channel'], '#dummy')
 
     @override_settings(
-        SLACK_DESTINATION_URL=target_url,
+        SLACK_ENDPOINT_URL=target_url,
         SLACK_DESTINATION_ROOM=target_room,
+        SLACK_BACKEND="django_slack.backends.TestBackend",
     )
-    @responses.activate
     def test_fund_multiple_custom_slack_channel(self):
-        responses.add(responses.POST, self.target_url, status=200, body='OK')
+        backend = get_backend()
+        backend.reset_messages()
         submission = ApplicationSubmissionFactory(round__parent__slack_channel='dummy1, dummy2')
         adapter = SlackAdapter()
         message = 'my message'
         adapter.send_message(message, '', source=submission)
-        self.assertEqual(len(responses.calls), 1)
-        self.assertDictEqual(
-            json.loads(responses.calls[0].request.body),
-            {
-                'room': ['#dummy1', '#dummy2'],
-                'message': message,
-            }
-        )
+        messages = backend.retrieve_messages()
+        self.assertEqual(len(messages), 2)
+        for index, sent_message in enumerate(messages):
+            message_payload = json.loads(sent_message['payload'])
+            self.assertEqual(message_payload['text'], message)
+            self.assertEqual(message_payload['channel'], '#dummy' + str(index + 1))
 
-    @responses.activate
     def test_gets_lead_if_slack_set(self):
         adapter = SlackAdapter()
         submission = ApplicationSubmissionFactory()
         recipients = adapter.recipients(MESSAGES.COMMENT, source=submission, related=None)
         self.assertTrue(submission.lead.slack in recipients[0])
 
-    @responses.activate
     def test_gets_blank_if_slack_not_set(self):
         adapter = SlackAdapter()
         submission = ApplicationSubmissionFactory(lead__slack='')
@@ -430,34 +426,17 @@ class TestSlackAdapter(AdapterMixin, TestCase):
         self.assertTrue(submission.lead.slack in recipients[0])
 
     @override_settings(
-        SLACK_DESTINATION_URL=target_url,
+        SLACK_ENDPOINT_URL=target_url,
         SLACK_DESTINATION_ROOM=target_room,
+        SLACK_BACKEND="django_slack.backends.TestBackend",
     )
-    @responses.activate
     def test_message_with_good_response(self):
-        responses.add(responses.POST, self.target_url, status=200, body='OK')
-
         self.adapter = SlackAdapter()
         self.adapter_process(MESSAGES.NEW_SUBMISSION)
         self.assertEqual(Message.objects.count(), 1)
         sent_message = Message.objects.first()
         self.assertEqual(sent_message.content[0:10], self.adapter.messages[MESSAGES.NEW_SUBMISSION][0:10])
         self.assertEqual(sent_message.status, '200: OK')
-
-    @override_settings(
-        SLACK_DESTINATION_URL=target_url,
-        SLACK_DESTINATION_ROOM=target_room,
-    )
-    @responses.activate
-    def test_message_with_bad_response(self):
-        responses.add(responses.POST, self.target_url, status=400, body='Bad Request')
-
-        self.adapter = SlackAdapter()
-        self.adapter_process(MESSAGES.NEW_SUBMISSION)
-        self.assertEqual(Message.objects.count(), 1)
-        sent_message = Message.objects.first()
-        self.assertEqual(sent_message.content[0:10], self.adapter.messages[MESSAGES.NEW_SUBMISSION][0:10])
-        self.assertEqual(sent_message.status, '400: Bad Request')
 
 
 @override_settings(SEND_MESSAGES=True)
@@ -637,10 +616,11 @@ class TestAdaptersForProject(AdapterMixin, TestCase):
     @override_settings(
         SLACK_DESTINATION_URL=target_url,
         SLACK_DESTINATION_ROOM=target_room,
+        SLACK_BACKEND="django_slack.backends.TestBackend",
     )
-    @responses.activate
     def test_slack_created(self):
-        responses.add(responses.POST, self.target_url, status=200, body='OK')
+        backend = get_backend()
+        backend.reset_messages()
         project = self.source_factory()
         user = UserFactory()
         self.adapter_process(
@@ -650,18 +630,19 @@ class TestAdaptersForProject(AdapterMixin, TestCase):
             source=project,
             related=project.submission,
         )
-        self.assertEqual(len(responses.calls), 1)
-        data = json.loads(responses.calls[0].request.body)
-        self.assertIn(str(user), data['message'])
-        self.assertIn(str(project), data['message'])
+        messages = backend.retrieve_messages()
+        self.assertEqual(len(messages), 1)
+        self.assertIn(str(user), messages[0]['text'])
+        self.assertIn(str(project), messages[0]['text'])
 
     @override_settings(
         SLACK_DESTINATION_URL=target_url,
         SLACK_DESTINATION_ROOM=target_room,
+        SLACK_BACKEND="django_slack.backends.TestBackend",
     )
-    @responses.activate
     def test_slack_lead_change(self):
-        responses.add(responses.POST, self.target_url, status=200, body='OK')
+        backend = get_backend()
+        backend.reset_messages()
         project = self.source_factory()
         user = UserFactory()
         self.adapter_process(
@@ -671,19 +652,19 @@ class TestAdaptersForProject(AdapterMixin, TestCase):
             source=project,
             related=project.submission,
         )
-        self.assertEqual(len(responses.calls), 1)
-        data = json.loads(responses.calls[0].request.body)
-        self.assertIn(str(user), data['message'])
-        self.assertIn(str(project), data['message'])
+        messages = backend.retrieve_messages()
+        self.assertEqual(len(messages), 1)
+        self.assertIn(str(user), messages[0]['text'])
+        self.assertIn(str(project), messages[0]['text'])
 
     @override_settings(
         SLACK_DESTINATION_URL=target_url,
         SLACK_DESTINATION_ROOM=target_room,
+        SLACK_BACKEND="django_slack.backends.TestBackend",
     )
-    @responses.activate
     def test_slack_applicant_update_invoice(self):
-        responses.add(responses.POST, self.target_url, status=200, body='OK')
-
+        backend = get_backend()
+        backend.reset_messages()
         project = self.source_factory()
         invoice = InvoiceFactory(project=project)
         applicant = ApplicantFactory()
@@ -695,21 +676,20 @@ class TestAdaptersForProject(AdapterMixin, TestCase):
             source=project,
             related=invoice,
         )
+        messages = backend.retrieve_messages()
 
-        self.assertEqual(len(responses.calls), 1)
-
-        data = json.loads(responses.calls[0].request.body)
-        self.assertIn(str(applicant), data['message'])
-        self.assertIn(str(project), data['message'])
+        self.assertEqual(len(messages), 1)
+        self.assertIn(str(applicant), messages[0]['text'])
+        self.assertIn(str(project), messages[0]['text'])
 
     @override_settings(
         SLACK_DESTINATION_URL=target_url,
         SLACK_DESTINATION_ROOM=target_room,
+        SLACK_BACKEND="django_slack.backends.TestBackend",
     )
-    @responses.activate
     def test_slack_staff_update_invoice(self):
-        responses.add(responses.POST, self.target_url, status=200, body='OK')
-
+        backend = get_backend()
+        backend.reset_messages()
         project = self.source_factory()
         invoice = InvoiceFactory(project=project)
         staff = StaffFactory()
@@ -721,8 +701,8 @@ class TestAdaptersForProject(AdapterMixin, TestCase):
             source=project,
             related=invoice,
         )
-
-        self.assertEqual(len(responses.calls), 1)
+        messages = backend.retrieve_messages()
+        self.assertEqual(len(messages), 1)
 
     @override_settings(SEND_MESSAGES=True)
     def test_email_staff_update_invoice(self):

@@ -467,7 +467,7 @@ class SlackAdapter(AdapterBase):
 
     def __init__(self):
         super().__init__()
-        self.destination = settings.SLACK_DESTINATION_URL
+        self.destination = settings.SLACK_ENDPOINT_URL
         self.target_room = settings.SLACK_DESTINATION_ROOM
         self.comments_room = settings.SLACK_DESTINATION_ROOM_COMMENTS
         self.comments_type = settings.SLACK_TYPE_COMMENTS
@@ -716,12 +716,14 @@ class SlackAdapter(AdapterBase):
     def send_message(self, message, recipient, source, **kwargs):
         target_rooms = self.slack_channels(source, **kwargs)
 
-        if not self.destination or not any(target_rooms):
+        if not self.destination or not any(target_rooms) or not settings.SLACK_TOKEN:
             errors = list()
             if not self.destination:
                 errors.append('Destination URL')
             if not target_rooms:
                 errors.append('Room ID')
+            if not settings.SLACK_TOKEN:
+                errors.append('Slack Token')
             return 'Missing configuration: {}'.format(', '.join(errors))
 
         message = ' '.join([recipient, message]).strip()
@@ -730,7 +732,12 @@ class SlackAdapter(AdapterBase):
             "message": message,
         }
         for room in target_rooms:
-            slack_message('messages/slack_message.html', data, channel=room)
+            try:
+                slack_message('messages/slack_message.html', data, channel=room)
+            except Exception as e:
+                logger.exception(e)
+                return '400: Bad Request'
+        return '200: OK'
 
 
 class EmailAdapter(AdapterBase):
