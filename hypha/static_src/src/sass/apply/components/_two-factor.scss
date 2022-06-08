@@ -26,7 +26,7 @@ label[for='id_generator-token'] {
 // stylelint-disable property-no-vendor-prefix, selector-id-pattern, selector-max-id
 #id_generator-token {
     -moz-appearance: textfield;
-    border: 2px solid #2166b6;
+    border: 2px solid $color--dark-blue;
     line-height: 1.35;
     width: 20%;
 
