@@ -6,7 +6,6 @@ from unittest.mock import Mock, patch
 import responses
 from django.contrib.messages import get_messages
 from django.core import mail
-from django.conf import settings
 from django.test import TestCase, override_settings
 from django_slack.utils import get_backend
 
@@ -378,7 +377,6 @@ class TestSlackAdapter(AdapterMixin, TestCase):
         submission = ApplicationSubmissionFactory()
         messages = adapter.send_message('my message', '', source=submission)
         self.assertEqual(messages, error_message)
-
 
     @override_settings(
         SLACK_DESTINATION_URL=target_url,
