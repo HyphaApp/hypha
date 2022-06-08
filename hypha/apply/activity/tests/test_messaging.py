@@ -6,6 +6,7 @@ from unittest.mock import Mock, patch
 import responses
 from django.contrib.messages import get_messages
 from django.core import mail
+from django.conf import settings
 from django.test import TestCase, override_settings
 from django_slack.utils import get_backend
 
@@ -331,14 +332,17 @@ class TestActivityAdapter(TestCase):
 class TestSlackAdapter(AdapterMixin, TestCase):
     source_factory = ApplicationSubmissionFactory
 
+    backend = 'django_slack.backends.TestBackend'
     target_url = 'https://my-slack-backend.com/incoming/my-very-secret-key'
     target_room = '#<ROOM ID>'
+    token = 'fake-token'
 
     @override_settings(
         SLACK_DESTINATION_URL=target_url,
         SLACK_ENDPOINT_URL=target_url,
         SLACK_DESTINATION_ROOM=None,
-        SLACK_BACKEND="django_slack.backends.TestBackend",
+        SLACK_BACKEND=backend,
+        SLACK_TOKEN=token,
     )
     def test_cant_send_with_no_room(self):
         error_message = "Missing configuration: Room ID"
@@ -351,7 +355,8 @@ class TestSlackAdapter(AdapterMixin, TestCase):
         SLACK_DESTINATION_URL=None,
         SLACK_ENDPOINT_URL=None,
         SLACK_DESTINATION_ROOM=target_room,
-        SLACK_BACKEND="django_slack.backends.TestBackend",
+        SLACK_BACKEND=backend,
+        SLACK_TOKEN=token,
     )
     def test_cant_send_with_no_url(self):
         error_message = "Missing configuration: Destination URL"
@@ -364,7 +369,23 @@ class TestSlackAdapter(AdapterMixin, TestCase):
         SLACK_DESTINATION_URL=target_url,
         SLACK_ENDPOINT_URL=target_url,
         SLACK_DESTINATION_ROOM=target_room,
-        SLACK_BACKEND="django_slack.backends.TestBackend",
+        SLACK_BACKEND=backend,
+        SLACK_TOKEN=None,
+    )
+    def test_cant_send_with_no_token(self):
+        error_message = "Missing configuration: Slack Token"
+        adapter = SlackAdapter()
+        submission = ApplicationSubmissionFactory()
+        messages = adapter.send_message('my message', '', source=submission)
+        self.assertEqual(messages, error_message)
+
+
+    @override_settings(
+        SLACK_DESTINATION_URL=target_url,
+        SLACK_ENDPOINT_URL=target_url,
+        SLACK_DESTINATION_ROOM=target_room,
+        SLACK_BACKEND=backend,
+        SLACK_TOKEN=token,
     )
     def test_correct_payload(self):
         backend = get_backend()
@@ -382,7 +403,8 @@ class TestSlackAdapter(AdapterMixin, TestCase):
         SLACK_DESTINATION_URL=target_url,
         SLACK_ENDPOINT_URL=target_url,
         SLACK_DESTINATION_ROOM=target_room,
-        SLACK_BACKEND="django_slack.backends.TestBackend",
+        SLACK_BACKEND=backend,
+        SLACK_TOKEN=token,
     )
     def test_fund_custom_slack_channel(self):
         backend = get_backend()
@@ -402,7 +424,8 @@ class TestSlackAdapter(AdapterMixin, TestCase):
         SLACK_DESTINATION_URL=target_url,
         SLACK_ENDPOINT_URL=target_url,
         SLACK_DESTINATION_ROOM=target_room,
-        SLACK_BACKEND="django_slack.backends.TestBackend",
+        SLACK_BACKEND=backend,
+        SLACK_TOKEN=token,
     )
     def test_fund_multiple_custom_slack_channel(self):
         backend = get_backend()
@@ -434,7 +457,8 @@ class TestSlackAdapter(AdapterMixin, TestCase):
         SLACK_DESTINATION_URL=target_url,
         SLACK_ENDPOINT_URL=target_url,
         SLACK_DESTINATION_ROOM=target_room,
-        SLACK_BACKEND="django_slack.backends.TestBackend",
+        SLACK_BACKEND=backend,
+        SLACK_TOKEN=token,
     )
     def test_message_with_good_response(self):
         self.adapter = SlackAdapter()
@@ -577,8 +601,10 @@ class TestAdaptersForProject(AdapterMixin, TestCase):
     activity = ActivityAdapter
     source_factory = ProjectFactory
     # Slack
+    backend = 'django_slack.backends.TestBackend'
     target_url = 'https://my-slack-backend.com/incoming/my-very-secret-key'
     target_room = '#<ROOM ID>'
+    token = 'fake-token'
 
     def test_activity_lead_change(self):
         old_lead = UserFactory()
@@ -622,7 +648,8 @@ class TestAdaptersForProject(AdapterMixin, TestCase):
     @override_settings(
         SLACK_DESTINATION_URL=target_url,
         SLACK_DESTINATION_ROOM=target_room,
-        SLACK_BACKEND="django_slack.backends.TestBackend",
+        SLACK_BACKEND=backend,
+        SLACK_TOKEN=token,
     )
     def test_slack_created(self):
         backend = get_backend()
@@ -644,7 +671,8 @@ class TestAdaptersForProject(AdapterMixin, TestCase):
     @override_settings(
         SLACK_DESTINATION_URL=target_url,
         SLACK_DESTINATION_ROOM=target_room,
-        SLACK_BACKEND="django_slack.backends.TestBackend",
+        SLACK_BACKEND=backend,
+        SLACK_TOKEN=token,
     )
     def test_slack_lead_change(self):
         backend = get_backend()
@@ -666,7 +694,8 @@ class TestAdaptersForProject(AdapterMixin, TestCase):
     @override_settings(
         SLACK_DESTINATION_URL=target_url,
         SLACK_DESTINATION_ROOM=target_room,
-        SLACK_BACKEND="django_slack.backends.TestBackend",
+        SLACK_BACKEND=backend,
+        SLACK_TOKEN=token,
     )
     def test_slack_applicant_update_invoice(self):
         backend = get_backend()
@@ -691,7 +720,8 @@ class TestAdaptersForProject(AdapterMixin, TestCase):
     @override_settings(
         SLACK_DESTINATION_URL=target_url,
         SLACK_DESTINATION_ROOM=target_room,
-        SLACK_BACKEND="django_slack.backends.TestBackend",
+        SLACK_BACKEND=backend,
+        SLACK_TOKEN=token,
     )
     def test_slack_staff_update_invoice(self):
         backend = get_backend()
