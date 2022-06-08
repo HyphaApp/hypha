@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('funds', '0096_only_active_users'),
+        ('funds', '0097_applicationbaseexternalreviewform_labbaseexternalreviewform_roundbaseexternalreviewform'),
     ]
 
     operations = [
