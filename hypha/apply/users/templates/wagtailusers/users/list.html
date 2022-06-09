@@ -28,6 +28,7 @@
                     <a href="{% url 'wagtailusers_users:index' %}?ordering=status" class="icon icon-arrow-down-after"></a>
                 {% endif %}
             </th>
+            <th class="last-login">{% trans "Last Login" %}</th>
         </tr>
     </thead>
     <tbody>
@@ -36,7 +37,7 @@
                 {% include "wagtailadmin/bulk_actions/listing_checkbox_cell.html" with obj_type="user" obj=user aria_labelledby_prefix="user_" aria_labelledby=user.pk|unlocalize aria_labelledby_suffix="_title" %}
                 <td id="user_{{ user.pk|unlocalize }}_title" class="title" valign="top">
                     <h2 class="title-wrapper">
-                        <span class="avatar small"><img src="{% avatar_url user size=25 %}" /></span>
+                        <span class="avatar small"><img src="{% avatar_url user size=25 %}" alt="" /></span>
                         <a href="{% url 'wagtailusers_users:edit' user.pk %}">{{ user.get_full_name|default:user.get_username }}</a>
                     </h2>
                     <ul class="actions">
@@ -46,6 +47,7 @@
                 <td class="username" valign="top">{{ user.get_username }}</td>
                 <td class="level" valign="top">{{ user.roles|join:', ' }}{% if user.is_superuser %} ({% trans "Admin" %}){% endif %}</td>
                 <td class="status" valign="top"><div class="status-tag {% if user.is_active %}primary{% endif %}">{% if user.is_active %}{% trans "Active" %}{% else %}{% trans "Inactive" %}{% endif %}</div></td>
+                <td {% if user.last_login %} class="human-readable-date" title="{{ user.last_login|date:"d M Y H:i" }}"{% endif %}>{% if user.last_login %}{% blocktrans with time_period=user.last_login|timesince %}{{ time_period }} ago{% endblocktrans %}{% endif %}</td>
             </tr>
         {% endfor %}
     </tbody>

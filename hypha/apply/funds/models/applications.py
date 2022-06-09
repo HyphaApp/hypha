@@ -33,7 +33,8 @@ from wagtail.admin.edit_handlers import (
 )
 from wagtail.contrib.settings.models import BaseSetting, register_setting
 from wagtail.core.fields import RichTextField
-from wagtail.core.models import Page, PageManager, PageQuerySet
+from wagtail.core.models import Page, PageManager
+from wagtail.query import PageQuerySet
 
 from ..admin_forms import RoundBasePageAdminForm, WorkflowFormAdminForm
 from ..edit_handlers import ReadOnlyInlinePanel, ReadOnlyPanel

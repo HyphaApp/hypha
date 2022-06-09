@@ -6,7 +6,7 @@
     {% trans "Editing" as editing_str %}
     {% include "wagtailadmin/shared/header.html" with title=editing_str subtitle=user.get_username merged=1 tabbed=1 icon="user" %}
 
-    <ul class="tab-nav merged" data-tab-nav>
+    <ul class="tab-nav merged">
         <li class="active"><a href="#account">{% trans "Account" %}</a></li>
         <li><a href="#roles">{% trans "Roles" %}</a></li>
     </ul>
@@ -24,6 +24,7 @@
                         {% endif %}
                         {% include "wagtailadmin/shared/field_as_li.html" with field=form.email %}
                         {% include "wagtailadmin/shared/field_as_li.html" with field=form.full_name %}
+                        {% block extra_fields %}{% endblock extra_fields %}
 
                         {% comment %}
                             First/last name hidden input with dummy values because.. Wagtail admin
@@ -41,8 +42,8 @@
                         {% if form.is_active %}
                             {% include "wagtailadmin/shared/field_as_li.html" with field=form.is_active %}
                         {% endif %}
-                    {% endblock fields %}
 
+                    {% endblock fields %}
                     <li>
                         <input type="submit" value="{% trans 'Save' %}" class="button" />
                         {% if can_delete %}
