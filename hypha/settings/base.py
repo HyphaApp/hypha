@@ -532,7 +532,8 @@ SLACK_TYPE_COMMENTS = env.list('SLACK_TYPE_COMMENTS', [])
 
 # Django Slack settings
 SLACK_TOKEN = env.str('SLACK_TOKEN', None)
-SLACK_BACKEND = 'django_slack.backends.CeleryBackend'  # UrllibBackend can be used for async
+SLACK_USERNAME = env.str('SLACK_USERNAME', 'bot')
+SLACK_BACKEND = 'django_slack.backends.CeleryBackend'  # UrllibBackend can be used for sync
 if SLACK_DESTINATION_URL:
     SLACK_ENDPOINT_URL = SLACK_DESTINATION_URL
 
