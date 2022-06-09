@@ -388,11 +388,6 @@ AUTHENTICATION_BACKENDS = (
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
-    'filters': {
-        'require_debug_false': {
-            '()': 'django.utils.log.RequireDebugFalse',
-        },
-    },
     'handlers': {
         # Send logs with at least INFO level to the console.
         'console': {
@@ -400,11 +395,6 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'verbose',
         },
-        'slack_admins': {
-            'level': 'ERROR',
-            'filters': ['require_debug_false'],
-            'class': 'django_slack.log.SlackExceptionHandler',
-        }
     },
     'formatters': {
         'verbose': {
@@ -436,10 +426,6 @@ LOGGING = {
             'handlers': ['console'],
             'level': 'WARNING',
             'propagate': False,
-        },
-        'django.slack': {
-            'level': 'ERROR',
-            'handlers': ['slack_admins'],
         },
     },
 }
