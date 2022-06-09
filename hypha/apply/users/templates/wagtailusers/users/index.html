@@ -21,10 +21,7 @@
 {% endblock %}
 
 {% block extra_css %}
-    {{ block.super }}
     <link rel="stylesheet" href="{% static 'css/apply/wagtail_users_list.css' %}" type="text/css" />
-
-    {{ filters.form.media.css }}
 {% endblock %}
 
 {% block content %}

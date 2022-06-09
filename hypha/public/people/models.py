@@ -14,8 +14,9 @@ from wagtail.admin.edit_handlers import (
     StreamFieldPanel,
 )
 from wagtail.core.fields import StreamField
-from wagtail.core.models import Orderable, PageManager, PageQuerySet
+from wagtail.core.models import Orderable, PageManager
 from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.query import PageQuerySet
 from wagtail.search import index
 
 from hypha.public.utils.blocks import StoryBlock
