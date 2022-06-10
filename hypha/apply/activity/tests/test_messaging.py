@@ -466,6 +466,24 @@ class TestSlackAdapter(AdapterMixin, TestCase):
         self.assertEqual(sent_message.content[0:10], self.adapter.messages[MESSAGES.NEW_SUBMISSION][0:10])
         self.assertEqual(sent_message.status, '200: OK')
 
+    @override_settings(
+        SLACK_DESTINATION_URL=target_url,
+        SLACK_ENDPOINT_URL=target_url,
+        SLACK_DESTINATION_ROOM=target_room,
+        SLACK_BACKEND=backend,
+        SLACK_TOKEN=token,
+    )
+    def test_400_bad_request(self):
+        backend = get_backend()
+        backend.reset_messages()
+        submission = ApplicationSubmissionFactory()
+        adapter = SlackAdapter()
+        message = ''
+        message_status = adapter.send_message(message, '', source=submission)
+        messages = backend.retrieve_messages()
+        self.assertEqual(len(messages), 0)
+        self.assertEqual(message_status, '400: Bad Request')
+
 
 @override_settings(SEND_MESSAGES=True)
 class TestEmailAdapter(AdapterMixin, TestCase):
