@@ -337,7 +337,6 @@ class TestSlackAdapter(AdapterMixin, TestCase):
     token = 'fake-token'
 
     @override_settings(
-        SLACK_DESTINATION_URL=target_url,
         SLACK_ENDPOINT_URL=target_url,
         SLACK_DESTINATION_ROOM=None,
         SLACK_BACKEND=backend,
@@ -351,7 +350,6 @@ class TestSlackAdapter(AdapterMixin, TestCase):
         self.assertEqual(messages, error_message)
 
     @override_settings(
-        SLACK_DESTINATION_URL=None,
         SLACK_ENDPOINT_URL=None,
         SLACK_DESTINATION_ROOM=target_room,
         SLACK_BACKEND=backend,
@@ -365,7 +363,6 @@ class TestSlackAdapter(AdapterMixin, TestCase):
         self.assertEqual(messages, error_message)
 
     @override_settings(
-        SLACK_DESTINATION_URL=target_url,
         SLACK_ENDPOINT_URL=target_url,
         SLACK_DESTINATION_ROOM=target_room,
         SLACK_BACKEND=backend,
@@ -379,7 +376,6 @@ class TestSlackAdapter(AdapterMixin, TestCase):
         self.assertEqual(messages, error_message)
 
     @override_settings(
-        SLACK_DESTINATION_URL=target_url,
         SLACK_ENDPOINT_URL=target_url,
         SLACK_DESTINATION_ROOM=target_room,
         SLACK_BACKEND=backend,
@@ -398,7 +394,6 @@ class TestSlackAdapter(AdapterMixin, TestCase):
         self.assertEqual(message_payload['text'], message)
 
     @override_settings(
-        SLACK_DESTINATION_URL=target_url,
         SLACK_ENDPOINT_URL=target_url,
         SLACK_DESTINATION_ROOM=target_room,
         SLACK_BACKEND=backend,
@@ -419,7 +414,6 @@ class TestSlackAdapter(AdapterMixin, TestCase):
         self.assertEqual(message_payload['channel'], '#dummy')
 
     @override_settings(
-        SLACK_DESTINATION_URL=target_url,
         SLACK_ENDPOINT_URL=target_url,
         SLACK_DESTINATION_ROOM=target_room,
         SLACK_BACKEND=backend,
@@ -452,7 +446,6 @@ class TestSlackAdapter(AdapterMixin, TestCase):
         self.assertTrue(submission.lead.slack in recipients[0])
 
     @override_settings(
-        SLACK_DESTINATION_URL=target_url,
         SLACK_ENDPOINT_URL=target_url,
         SLACK_DESTINATION_ROOM=target_room,
         SLACK_BACKEND=backend,
@@ -467,7 +460,6 @@ class TestSlackAdapter(AdapterMixin, TestCase):
         self.assertEqual(sent_message.status, '200: OK')
 
     @override_settings(
-        SLACK_DESTINATION_URL=target_url,
         SLACK_ENDPOINT_URL=target_url,
         SLACK_DESTINATION_ROOM=target_room,
         SLACK_BACKEND=backend,
@@ -662,7 +654,7 @@ class TestAdaptersForProject(AdapterMixin, TestCase):
         self.assertEqual(project.submission, activity.related_object)
 
     @override_settings(
-        SLACK_DESTINATION_URL=target_url,
+        SLACK_ENDPOINT_URL=target_url,
         SLACK_DESTINATION_ROOM=target_room,
         SLACK_BACKEND=backend,
         SLACK_TOKEN=token,
@@ -681,11 +673,12 @@ class TestAdaptersForProject(AdapterMixin, TestCase):
         )
         messages = backend.retrieve_messages()
         self.assertEqual(len(messages), 1)
-        self.assertIn(str(user), messages[0]['text'])
-        self.assertIn(str(project), messages[0]['text'])
+        message_payload = json.loads(messages[0]['payload'])
+        self.assertIn(str(user), message_payload['text'])
+        self.assertIn(str(project), message_payload['text'])
 
     @override_settings(
-        SLACK_DESTINATION_URL=target_url,
+        SLACK_ENDPOINT_URL=target_url,
         SLACK_DESTINATION_ROOM=target_room,
         SLACK_BACKEND=backend,
         SLACK_TOKEN=token,
@@ -704,11 +697,12 @@ class TestAdaptersForProject(AdapterMixin, TestCase):
         )
         messages = backend.retrieve_messages()
         self.assertEqual(len(messages), 1)
-        self.assertIn(str(user), messages[0]['text'])
-        self.assertIn(str(project), messages[0]['text'])
+        message_payload = json.loads(messages[0]['payload'])
+        self.assertIn(str(user), message_payload['text'])
+        self.assertIn(str(project), message_payload['text'])
 
     @override_settings(
-        SLACK_DESTINATION_URL=target_url,
+        SLACK_ENDPOINT_URL=target_url,
         SLACK_DESTINATION_ROOM=target_room,
         SLACK_BACKEND=backend,
         SLACK_TOKEN=token,
@@ -730,11 +724,12 @@ class TestAdaptersForProject(AdapterMixin, TestCase):
         messages = backend.retrieve_messages()
 
         self.assertEqual(len(messages), 1)
-        self.assertIn(str(applicant), messages[0]['text'])
-        self.assertIn(str(project), messages[0]['text'])
+        message_payload = json.loads(messages[0]['payload'])
+        self.assertIn(str(applicant), message_payload['text'])
+        self.assertIn(str(project), message_payload['text'])
 
     @override_settings(
-        SLACK_DESTINATION_URL=target_url,
+        SLACK_ENDPOINT_URL=target_url,
         SLACK_DESTINATION_ROOM=target_room,
         SLACK_BACKEND=backend,
         SLACK_TOKEN=token,
