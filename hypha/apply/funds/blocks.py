@@ -25,14 +25,12 @@ class ApplicationMustIncludeFieldBlock(MustIncludeFieldBlock):
 
 
 class TitleBlock(ApplicationMustIncludeFieldBlock):
-    name = "title"
-    description = "The title of the project"
-    field_label = blocks.CharBlock(
-        label=_("Label"), default=_("What is the title of your application?")
-    )
-    help_text = blocks.TextBlock(
+    name = 'title'
+    description = 'The title of the project'
+    field_label = blocks.CharBlock(label=_('Label'), default=_('What is the title of your application?'))
+    help_text = blocks.RichTextBlock(
         required=False,
-        label=_("Help text"),
+        label=_('Help text'),
         default=_("This project name can be changed if a full proposal is requested."),
     )
 
@@ -67,14 +65,15 @@ class OrganizationNameBlock(ApplicationSingleIncludeFieldBlock):
 
 
 class EmailBlock(ApplicationMustIncludeFieldBlock):
-    name = "email"
-    description = "The applicant email address"
+    name = 'email'
+    description = 'The applicant email address'
     field_label = blocks.CharBlock(
-        label=_("Label"), default=_("What email address should we use to contact you?")
+        label=_('Label'),
+        default=_('What email address should we use to contact you?')
     )
-    help_text = blocks.TextBlock(
+    help_text = blocks.RichTextBlock(
         required=False,
-        label=_("Help text"),
+        label=_('Help text'),
         default=_(
             "We will use this email address to communicate with you about your proposal."
         ),
@@ -114,12 +113,12 @@ class AddressFieldBlock(ApplicationSingleIncludeFieldBlock):
 
 
 class FullNameBlock(ApplicationMustIncludeFieldBlock):
-    name = "full_name"
-    description = "Full name"
-    field_label = blocks.CharBlock(label=_("Label"), default=_("What is your name?"))
-    help_text = blocks.TextBlock(
+    name = 'full_name'
+    description = 'Full name'
+    field_label = blocks.CharBlock(label=_('Label'), default=_('What is your name?'))
+    help_text = blocks.RichTextBlock(
         required=False,
-        label=_("Help text"),
+        label=_('Help text'),
         default=_(
             "We will use this name when we communicate with you about your proposal."
         ),
