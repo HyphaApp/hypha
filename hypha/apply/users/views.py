@@ -305,9 +305,6 @@ class TWOFASetupView(TwoFactorSetupView):
                                           issuer=self.get_issuer(),
                                           secret=context['secret_key'],
                                           digits=totp_digits())
-            import logging
-            logger = logging.getLogger('hypha')
-            logger.debug(otpauth_url)
             context.update({
                 'otpauth_url': otpauth_url,
             })
