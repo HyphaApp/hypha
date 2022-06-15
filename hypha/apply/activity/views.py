@@ -1,6 +1,8 @@
 from django.utils import timezone
-from django.views.generic import CreateView
+from django.utils.decorators import method_decorator
+from django.views.generic import CreateView, ListView
 
+from hypha.apply.users.decorators import staff_required
 from hypha.apply.utils.views import DelegatedViewMixin
 
 from .forms import CommentForm
@@ -57,3 +59,15 @@ class CommentFormView(DelegatedViewMixin, CreateView):
         kwargs = super().get_form_kwargs()
         kwargs.pop('instance')
         return kwargs
+
+
+@method_decorator(staff_required, name='dispatch')
+class NotificationsView(ListView):
+    model = Activity
+    template_name = 'activity/notifications.html'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(NotificationsView, self).get_context_data()
+        context['comments'] = Activity.comments.all().order_by('-timestamp')
+        context['actions'] = Activity.actions.all().order_by('-timestamp')
+        return context

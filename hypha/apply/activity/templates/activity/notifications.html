@@ -1,0 +1,48 @@
+{% extends "base-apply.html" %}
+{% load i18n static activity_tags %}
+
+{% block content %}
+<div class="admin-bar">
+    <div class="admin-bar__inner">
+        <div class="tabs js-tabs">
+            <div class="tabs__container">
+                <a class="tab__item" href="#comments" data-tab="tab-1">
+                    {% trans "Comments" %}
+                </a>
+
+                <a class="tab__item" href="#actions" data-tab="tab-2">
+                    {% trans "Actions" %}
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="wrapper wrapper--large wrapper--tabs js-tabs-content">
+    {# Tab 1 #}
+    <div class="tabs__content" id="tab-1">
+        {% for comment in object_list %}
+            {% if comment.type == 'comment' %}
+
+            <p><a href="{{ comment.source.get_absolute_url }}">{{ comment.source_content_type.name|source_type }}({{ comment.source.title|truncatechars:15 }})</a>
+                : {{ comment.user }} made a comment</p>
+            {% endif %}
+        {% endfor %}
+    </div>
+    {# Tab 2 #}
+    <div class="tabs__content" id="tab-2">
+        <div class="feed">
+            {% for action in actions %}
+                <p><a href="{{ action.source.get_absolute_url }}">{{ action.source_content_type.name|source_type }}({{ action.source.title|truncatechars:15 }})</a>
+                    : {{ action.message }} <a href="{{ action.related_object.get_absolute_url }}">{{ action.related_object.title }}</a>
+                </p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/apply/tabs.js' %}"></script>
+{% endblock %}
