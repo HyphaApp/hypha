@@ -2,10 +2,10 @@
 
 {% if wizard.steps.current == 'token' %}
     {% trans "Login" as button_text %}
-{% elif wizard.steps.current == 'welcome' %}
-    {% trans "Next" as button_text %}
-{% else %}
+{% elif wizard.steps.current == 'generator' %}
     {% trans "Enable Two-Factor Authentication" as button_text %}
+{% else %}
+    {% trans "Next" as button_text %}
 {% endif %}
 
 <button type="submit" class="button button--primary">{{ button_text }}</button>

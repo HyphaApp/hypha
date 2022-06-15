@@ -53,6 +53,21 @@
         }
     }
 
+    &--button-white {
+        @include button(transparent, $color--black);
+        color: $color--black;
+        border-color: $color--black;
+
+        &:focus,
+        &:hover {
+            color: $color--white;
+        }
+
+        &--narrow {
+            @include button--narrow;
+        }
+    }
+
     &--button-long-text {
         padding: 10px;
 
