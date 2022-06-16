@@ -2,7 +2,8 @@ from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.generic import CreateView, ListView
 
-from hypha.apply.users.decorators import staff_required
+from hypha.apply.funds.models.submissions import ApplicationSubmission
+from hypha.apply.users.decorators import login_required
 from hypha.apply.utils.views import DelegatedViewMixin
 
 from .forms import CommentForm
@@ -61,13 +62,25 @@ class CommentFormView(DelegatedViewMixin, CreateView):
         return kwargs
 
 
-@method_decorator(staff_required, name='dispatch')
+@method_decorator(login_required, name='dispatch')
 class NotificationsView(ListView):
     model = Activity
     template_name = 'activity/notifications.html'
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(NotificationsView, self).get_context_data()
-        context['comments'] = Activity.comments.all().order_by('-timestamp')
-        context['actions'] = Activity.actions.all().order_by('-timestamp')
+        user = self.request.user
+        if user.is_applicant or user.is_partner:
+            context['comments'] = Activity.comments.filter(source__user=user).order_by('-timestamp')
+            context['actions'] = Activity.actions.filter(source__user=user).order_by('-timestamp')
+        elif user.is_reviewer:
+            reviewer_submissions = ApplicationSubmission.objects.filter(reviewers=user).values_list("id", flat=True)
+            context['comments'] = Activity.comments.filter(source_object_id__in=reviewer_submissions).order_by('-timestamp')
+            context['actions'] = Activity.actions.filter(source_object_id__in=reviewer_submissions).order_by('-timestamp')
+        elif user.is_apply_staff or user.is_apply_staff_admin:
+            context['comments'] = Activity.comments.all().order_by('-timestamp')
+            context['actions'] = Activity.actions.all().order_by('-timestamp')
+        else:
+            context['comments'] = Activity.comments.filter(user=user).order_by('-timestamp')
+            context['actions'] = Activity.actions.filter(user=user).order_by('-timestamp')
         return context

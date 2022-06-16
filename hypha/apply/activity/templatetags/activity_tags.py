@@ -61,4 +61,4 @@ def visibility_options(activity, user):
 def source_type(value):
     if value and "submission" in value:
         return "Submission"
-    return value.capitalize()
+    return str(value).capitalize()

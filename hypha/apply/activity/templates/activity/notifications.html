@@ -4,6 +4,7 @@
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
+        <h1 class="gamma heading heading--no-margin heading--bold">{% trans "Notifications" %}</h1>
         <div class="tabs js-tabs">
             <div class="tabs__container">
                 <a class="tab__item" href="#comments" data-tab="tab-1">
@@ -24,7 +25,7 @@
         {% for comment in object_list %}
             {% if comment.type == 'comment' %}
 
-            <p><a href="{{ comment.source.get_absolute_url }}">{{ comment.source_content_type.name|source_type }}({{ comment.source.title|truncatechars:15 }})</a>
+            <p><a href="{{ comment.source.get_absolute_url }}">{{ comment.source_content_type.name|source_type }} ({{ comment.source.title|truncatechars:15 }})</a>
                 : {{ comment.user }} made a comment</p>
             {% endif %}
         {% endfor %}
@@ -33,7 +34,7 @@
     <div class="tabs__content" id="tab-2">
         <div class="feed">
             {% for action in actions %}
-                <p><a href="{{ action.source.get_absolute_url }}">{{ action.source_content_type.name|source_type }}({{ action.source.title|truncatechars:15 }})</a>
+                <p><a href="{{ action.source.get_absolute_url }}">{{ action.source_content_type.name|source_type }} ({{ action.source.title|truncatechars:15 }})</a>
                     : {{ action.message }} <a href="{{ action.related_object.get_absolute_url }}">{{ action.related_object.title }}</a>
                 </p>
             {% endfor %}
