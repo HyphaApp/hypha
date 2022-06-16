@@ -83,4 +83,5 @@ class NotificationsView(ListView):
         else:
             context['comments'] = Activity.comments.filter(user=user).order_by('-timestamp')
             context['actions'] = Activity.actions.filter(user=user).order_by('-timestamp')
+        # context['filter'] = NotificationFilter(self.request.GET, queryset=self.get_queryset())
         return context

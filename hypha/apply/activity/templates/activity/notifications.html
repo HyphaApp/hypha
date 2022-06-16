@@ -1,5 +1,5 @@
 {% extends "base-apply.html" %}
-{% load i18n static activity_tags %}
+{% load i18n static activity_tags apply_tags %}
 
 {% block content %}
 <div class="admin-bar">
@@ -22,23 +22,40 @@
 <div class="wrapper wrapper--large wrapper--tabs js-tabs-content">
     {# Tab 1 #}
     <div class="tabs__content" id="tab-1">
-        {% for comment in object_list %}
-            {% if comment.type == 'comment' %}
-
-            <p><a href="{{ comment.source.get_absolute_url }}">{{ comment.source_content_type.name|source_type }} ({{ comment.source.title|truncatechars:15 }})</a>
-                : {{ comment.user }} made a comment</p>
-            {% endif %}
+<!--        <form action="" method="get">-->
+<!--            {{ filter.form.as_p }}-->
+<!--            <input type="submit" />-->
+<!--        </form>-->
+        {% for comment in comments %}
+        <div class="feed__item feed__item--comment">
+            <div class="feed__pre-content">
+                <p class="feed__label feed__label--comment">{{ comment.source_content_type.name|source_type }}</p>
+            </div>
+            <div class="feed__content js-feed-content">
+                <div class="feed__meta js-feed-meta">
+                    <p class="feed__meta-item"><a href="{{ comment.source.get_absolute_url }}">{{ comment.source.title|capfirst|truncatechars:15 }}</a>
+                        : {{ comment.user }} made a comment – {{ comment.timestamp|date:"SHORT_DATETIME_FORMAT" }}</p>
+                </div>
+            </div>
+        </div>
         {% endfor %}
     </div>
     {# Tab 2 #}
     <div class="tabs__content" id="tab-2">
-        <div class="feed">
             {% for action in actions %}
-                <p><a href="{{ action.source.get_absolute_url }}">{{ action.source_content_type.name|source_type }} ({{ action.source.title|truncatechars:15 }})</a>
-                    : {{ action.message }} <a href="{{ action.related_object.get_absolute_url }}">{{ action.related_object.title }}</a>
-                </p>
+            <div class="feed__item feed__item--action">
+                <div class="feed__pre-content">
+                    <p class="feed__label feed__label--action">{{ action.source_content_type.name|source_type }}</p>
+                </div>
+                <div class="feed__content js-feed-content">
+                    <div class="feed__meta js-feed-meta">
+                        <p class="feed__meta-item"><a href="{{ action.source.get_absolute_url }}">{{ action.source.title|capfirst|truncatechars:15 }}</a>
+                                : {{ action.message }} {% if action.related_object %}<a href="{{ action.related_object.get_absolute_url }}">{{ action.related_object|model_verbose_name }}</a>{% endif %}
+                             – {{ action.timestamp|date:"SHORT_DATETIME_FORMAT" }}</p>
+                    </div>
+                </div>
+            </div>
             {% endfor %}
-        </div>
     </div>
 </div>
 
