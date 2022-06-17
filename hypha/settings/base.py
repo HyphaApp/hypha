@@ -297,6 +297,10 @@ PASSWORD_RESET_TIMEOUT = env.int('PASSWORD_RESET_TIMEOUT', 259200)
 # Seconds to enter password on password page while email change/2FA change (default 120).
 PASSWORD_PAGE_TIMEOUT = env.int('PASSWORD_PAGE_TIMEOUT', 120)
 
+# Use Pillow to create QR codes so they are PNG and not SVG.
+# Apples Safari on iOS and macOS can then recognise them automatically.
+TWO_FACTOR_QR_FACTORY = 'qrcode.image.pil.PilImage'
+
 # Internationalization
 # https://docs.djangoproject.com/en/stable/topics/i18n/
 

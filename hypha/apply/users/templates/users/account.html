@@ -4,7 +4,7 @@
 {% block title %}Account{% endblock %}
 
 {% block content %}
-<div class="admin-bar">
+<div class="admin-bar" xmlns="http://www.w3.org/1999/html">
     <div class="admin-bar__inner admin-bar__inner--with-button">
         <h3 class="admin-bar__heading">{% trans "Welcome" %} {{ user }}</h3>
         <a href="{% url 'dashboard:dashboard' %}" class="button button--primary button--arrow-pixels-white">
@@ -27,14 +27,25 @@
     </div>
 
     {% if show_change_password and user.has_usable_password and not backends.associated %}
+        <br>
+        <hr>
         <div class="profile__column">
-            <h3>{% trans "Change password" %}</h3>
+            <h3>{% trans "Account Security" %}</h3>
+            <h4>{% trans "Password" %}</h4>
             <p><a class="button button--primary" href="{% url 'users:password_change' %}">{% trans "Update password" %}</a></p>
 
-            <h3>{% trans "Account security" %}</h3>
-            <p><a class="link link--button link--button--narrow" href="{% url 'two_factor:profile' %}">{% trans "Two-factor authentication settings" %}</a></p>
+            <h4>{% trans "Two-Factor Authentication (2FA)" %}</h4>
+            {% if default_device %}
+                <div>
+                    <p><a class="button button--primary" href="{% url 'users:backup_tokens_password' %}">{% trans "Show backup codes" %}</a></p>
+                    <p><a class="button button--primary" href="{% url 'two_factor:disable' %}">{% trans "Disable 2FA" %}</a></p>
+                </div>
+            {% else %}
+                <p><a class="button button--primary" href="{% url 'two_factor:setup' %}">{% trans "Enable 2FA" %}</a></p>
+            {% endif %}
         </div>
     {% endif %}
+
 
     <div class="profile__column">
         {% if swappable_form %}
