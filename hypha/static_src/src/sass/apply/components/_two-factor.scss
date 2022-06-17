@@ -27,7 +27,7 @@ label[for='id_generator-token'] {
 }
 
 .bg-white {
-  background-color: $color--white;
+    background-color: $color--white;
 }
 
 // 2FA token field.
@@ -37,7 +37,7 @@ label[for='id_generator-token'] {
     border: 3px solid $color--dark-blue;
     line-height: 1.5;
     width: 8ch;
-    padding:  5px;
+    padding: 5px;
 
     &::-webkit-outer-spin-button,
     &::-webkit-inner-spin-button {
