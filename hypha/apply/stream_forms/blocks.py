@@ -419,7 +419,7 @@ class FileFieldBlock(UploadableMediaBlock):
 
     def get_field_kwargs(self, struct_value):
         kwargs = super().get_field_kwargs(struct_value)
-        kwargs['help_text'] = kwargs['help_text'] + f" Accepted file types are {settings.FILE_ACCEPT_ATTR_VALUE}"
+        kwargs['help_text'] = str(kwargs['help_text']) + f" Accepted file types are {settings.FILE_ACCEPT_ATTR_VALUE}"
         return kwargs
 
 
@@ -433,7 +433,7 @@ class MultiFileFieldBlock(UploadableMediaBlock):
 
     def get_field_kwargs(self, struct_value):
         kwargs = super().get_field_kwargs(struct_value)
-        kwargs['help_text'] = kwargs['help_text'] + f" Accepted file types are {settings.FILE_ACCEPT_ATTR_VALUE}"
+        kwargs['help_text'] = str(kwargs['help_text']) + f" Accepted file types are {settings.FILE_ACCEPT_ATTR_VALUE}"
         return kwargs
 
     def prepare_data(self, value, data, serialize):
