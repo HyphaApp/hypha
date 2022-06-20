@@ -2,7 +2,7 @@ from django.forms import Field, Widget
 from django.forms.utils import pretty_name
 from django.template.loader import render_to_string
 from django.urls import reverse
-from wagtail.admin.edit_handlers import EditHandler, FieldPanel
+from wagtail.admin.edit_handlers import Panel, FieldPanel
 from wagtail.core.models import Page
 
 
@@ -37,8 +37,8 @@ class DisplayField(Field):
     widget = ReadonlyWidget
 
 
-class ReadOnlyPanel(EditHandler):
-    template = 'wagtailadmin/edit_handlers/single_field_panel.html'
+class ReadOnlyPanel(Panel):
+    template = 'wagtailadmin/panels/single_field_panel.html'
     field_template = 'wagtailadmin/shared/field.html'
 
     def __init__(self, attr, **kwargs):
@@ -85,7 +85,7 @@ class ReadOnlyPanel(EditHandler):
 
 
 class ReadOnlyInlinePanel(ReadOnlyPanel):
-    template = 'wagtailadmin/edit_handlers/multi_field_panel.html'
+    template = 'wagtailadmin/panels/multi_field_panel.html'
 
     def get_child_edit_handler(self):
         child_edit_handler = ReadOnlyPanel(self.attr)
