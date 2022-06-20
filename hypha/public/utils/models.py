@@ -160,7 +160,8 @@ class CallToActionSnippet(models.Model):
                 ], icon='link'),
             ),
         ], max_num=1, required=True),
-        blank=True
+        blank=True,
+        use_json_field=True
     )
 
     panels = [

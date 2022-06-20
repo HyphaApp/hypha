@@ -78,7 +78,7 @@ class HomePage(BasePage):
     our_work_title = models.CharField(max_length=255)
     our_work = StreamField([
         ('work', OurWorkBlock()),
-    ])
+    ], use_json_field=True)
     our_work_link = models.ForeignKey('wagtailcore.Page', related_name='+', on_delete=models.PROTECT)
     our_work_link_text = models.CharField(max_length=255)
 

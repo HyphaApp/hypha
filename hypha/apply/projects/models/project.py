@@ -143,7 +143,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
     status = models.TextField(choices=PROJECT_STATUS_CHOICES, default=COMMITTED)
 
     form_data = models.JSONField(encoder=StreamFieldDataEncoder, default=dict)
-    form_fields = StreamField(FormFieldsBlock(), null=True)
+    form_fields = StreamField(FormFieldsBlock(), null=True, use_json_field=True)
 
     # tracks read/write state of the Project
     is_locked = models.BooleanField(default=False)

@@ -47,7 +47,11 @@ class DeterminationFormFieldsMixin(models.Model):
     class Meta:
         abstract = True
 
-    form_fields = StreamField(DeterminationCustomFormFieldsBlock(), default=[])
+    form_fields = StreamField(
+        DeterminationCustomFormFieldsBlock(),
+        default=[],
+        use_json_field=True,
+    )
 
     @property
     def determination_field(self):

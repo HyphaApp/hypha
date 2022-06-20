@@ -10,7 +10,7 @@ from ..edit_handlers import FilteredFieldPanel
 
 class ApplicationForm(models.Model):
     name = models.CharField(max_length=255)
-    form_fields = StreamField(ApplicationCustomFormFieldsBlock())
+    form_fields = StreamField(ApplicationCustomFormFieldsBlock(), use_json_field=True)
 
     panels = [
         FieldPanel('name'),

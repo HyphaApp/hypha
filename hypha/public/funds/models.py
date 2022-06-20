@@ -44,7 +44,7 @@ class BaseApplicationPage(BasePage):
         on_delete=models.SET_NULL,
         related_name='application_public',
     )
-    body = StreamField(FundBlock())
+    body = StreamField(FundBlock(), use_json_field=True)
 
     search_fields = BasePage.search_fields + [
         index.SearchField('introduction'),
@@ -150,7 +150,7 @@ class LabPage(BasePage):
     )
     lab_link = models.CharField(blank=True, max_length=255, verbose_name=_('External link'), validators=[MailToAndURLValidator()])
     link_text = models.CharField(max_length=255, help_text=_('Text to display on the button for external links'), blank=True)
-    body = StreamField(LabBlock())
+    body = StreamField(LabBlock(), use_json_field=True)
 
     search_fields = BasePage.search_fields + [
         index.SearchField('introduction'),

@@ -112,7 +112,7 @@ class ProjectPage(FundingMixin, BasePage):
         on_delete=models.SET_NULL
     )
     status = models.CharField(choices=STATUSES, max_length=25, default=STATUSES[0][0])
-    body = StreamField(StoryBlock())
+    body = StreamField(StoryBlock(), use_json_field=True)
 
     categories = models.TextField(default='{}', blank=True)
 

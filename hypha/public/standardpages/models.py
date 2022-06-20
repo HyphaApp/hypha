@@ -18,7 +18,7 @@ class InformationPageRelatedPage(RelatedPage):
 
 class InformationPage(BasePage):
     introduction = models.TextField(blank=True)
-    body = StreamField(StoryBlock())
+    body = StreamField(StoryBlock(), use_json_field=True)
 
     search_fields = BasePage.search_fields + [
         index.SearchField('introduction'),
