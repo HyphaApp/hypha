@@ -98,7 +98,10 @@ class NewsPage(BasePage):
         help_text=_('Use this field to override the date that the news item appears to have been published.')
     )
     introduction = models.TextField(blank=True)
-    body = StreamField(NewsStoryBlock(block_counts={'awesome_table_widget': {'max_num': 1}}))
+    body = StreamField(
+        NewsStoryBlock(block_counts={'awesome_table_widget': {'max_num': 1}}),
+        use_json_field=True
+    )
 
     search_fields = BasePage.search_fields + [
         index.SearchField('introduction'),

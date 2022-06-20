@@ -164,7 +164,7 @@ class PersonPage(FundingMixin, BasePage):
     job_title = models.CharField(max_length=255, blank=True)
     introduction = models.TextField(blank=True)
     website = models.URLField(blank=True, max_length=255)
-    biography = StreamField(StoryBlock(), blank=True)
+    biography = StreamField(StoryBlock(), blank=True, use_json_field=True)
     email = models.EmailField(blank=True)
 
     objects = PageManager.from_queryset(PersonQuerySet)()

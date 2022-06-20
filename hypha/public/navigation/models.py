@@ -19,7 +19,8 @@ class NavigationSettings(BaseSetting, ClusterableModel):
     primary_navigation = StreamField(
         [('link', LinkBlock()), ],
         blank=True,
-        help_text=_('Main site navigation')
+        help_text=_('Main site navigation'),
+        use_json_field=True,
     )
 
     panels = [
