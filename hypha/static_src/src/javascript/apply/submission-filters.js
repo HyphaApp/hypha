@@ -148,16 +148,23 @@
     $(window).resize(function resize() {
         if ($(window).width() < 1024) {
             // close the filters if open when reducing the window size
-            $('body').removeClass('filters-open');
-
+            $('.filters').removeClass('filters-open');
+            
             // update filter button text
             $('.js-toggle-filters').text('Filters');
-
+            
             // Correct spacing of dropdowns when toggled
             $('.select2').on('click', (e) => {
                 mobileFilterPadding(e.target);
-            });
+            });            
+        }
+        else {
+            $('.filters').addClass('filters-open');
         }
     }).trigger('resize');
+
+    $('#show-filters-button').on('click', () => {
+        $('.filters').addClass('filters-open');
+    })
 
 })(jQuery);
