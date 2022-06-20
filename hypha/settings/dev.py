@@ -10,7 +10,7 @@ WAGTAIL_CACHE = False
 
 ALLOWED_HOSTS = ['apply.localhost', 'localhost', '127.0.0.1', 'hypha.test', 'apply.hypha.test']
 
-BASE_URL = 'http://localhost:8000'
+WAGTAILADMIN_BASE_URL = 'http://localhost:8000'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
