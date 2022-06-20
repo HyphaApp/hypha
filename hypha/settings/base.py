@@ -590,7 +590,7 @@ if env.bool('BASIC_AUTH_ENABLED', False):
 if env.str('PRIMARY_HOST', None):
     # This is used by Wagtail's email notifications for constructing absolute
     # URLs.
-    BASE_URL = 'https://{}'.format(env.str('PRIMARY_HOST'))
+    WAGTAILADMIN_BASE_URL = 'https://{}'.format(env.str('PRIMARY_HOST'))
 
 
 # Security configuration
