@@ -4,7 +4,7 @@ from enum import Enum
 class MESSAGES(Enum):
     UPDATE_LEAD = 'Update Lead'
     BATCH_UPDATE_LEAD = 'Batch Update Lead'
-    EDIT = 'Edit'
+    EDIT_SUBMISSION = 'Edit'
     APPLICANT_EDIT = "Applicant Edit"
     NEW_SUBMISSION = 'New Submission'
     SCREENING = 'Screening'
@@ -49,7 +49,7 @@ class MESSAGES(Enum):
     REPORT_NOTIFY = 'Report Notify'
     CREATE_REMINDER = 'Reminder Created'
     DELETE_REMINDER = 'Reminder Deleted'
-    REVIEW_REMINDER = 'Reminde to Review'
+    REVIEW_REMINDER = 'Reminder to Review'
     BATCH_DELETE_SUBMISSION = 'Delete Batch Submissions'
 
     @classmethod

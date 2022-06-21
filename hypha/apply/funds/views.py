@@ -998,7 +998,7 @@ class AdminSubmissionEditView(BaseSubmissionEditView):
             revision = self.object.create_revision(by=self.request.user)
             if revision:
                 messenger(
-                    MESSAGES.EDIT,
+                    MESSAGES.EDIT_SUBMISSION,
                     request=self.request,
                     user=self.request.user,
                     source=self.object,
