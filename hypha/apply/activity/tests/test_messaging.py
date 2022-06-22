@@ -349,7 +349,6 @@ class TestSlackAdapter(AdapterMixin, TestCase):
         messages = adapter.send_message('my message', '', source=submission)
         self.assertEqual(messages, error_message)
 
-
     @override_settings(
         SLACK_ENDPOINT_URL=target_url,
         SLACK_DESTINATION_ROOM=target_room,
