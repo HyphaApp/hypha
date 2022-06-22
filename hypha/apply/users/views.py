@@ -7,6 +7,7 @@ from django.contrib.auth import get_user_model, login, update_session_auth_hash
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.forms import AdminPasswordChangeForm
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import PermissionDenied
 from django.core.signing import BadSignature, Signer, TimestampSigner, dumps, loads
 from django.shortcuts import Http404, get_object_or_404, redirect, render
@@ -16,14 +17,18 @@ from django.utils.decorators import method_decorator
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from django.utils.translation import gettext_lazy as _
+from django.views.decorators.cache import never_cache
 from django.views.generic import UpdateView
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 from django_otp import devices_for_user
 from hijack.views import AcquireUserView
 from two_factor.forms import AuthenticationTokenForm, BackupTokenForm
+from two_factor.utils import default_device, get_otpauth_url, totp_digits
+from two_factor.views import BackupTokensView as TwoFactorBackupTokensView
 from two_factor.views import DisableView as TwoFactorDisableView
 from two_factor.views import LoginView as TwoFactorLoginView
+from two_factor.views import SetupView as TwoFactorSetupView
 from wagtail.admin.views.account import password_management_enabled
 from wagtail.core.models import Site
 from wagtail.users.views.users import change_user_perm
@@ -100,6 +105,7 @@ class AccountView(UpdateView):
 
         return super().get_context_data(
             swappable_form=swappable_form,
+            default_device=default_device(self.request.user),
             show_change_password=show_change_password,
             **kwargs,
         )
@@ -281,8 +287,33 @@ def create_password(request):
     })
 
 
+@method_decorator(never_cache, name='dispatch')
 @method_decorator(login_required, name='dispatch')
-class TWOFABackupTokensPasswordView(FormView):
+class TWOFASetupView(TwoFactorSetupView):
+    def get_issuer(self):
+        return get_current_site(self.request).name
+
+    def get_context_data(self, form, **kwargs):
+        context = super().get_context_data(form, **kwargs)
+        if self.steps.current == 'generator':
+            try:
+                username = self.request.user.get_username()
+            except AttributeError:
+                username = self.request.user.username
+
+            otpauth_url = get_otpauth_url(accountname=username,
+                                          issuer=self.get_issuer(),
+                                          secret=context['secret_key'],
+                                          digits=totp_digits())
+            context.update({
+                'otpauth_url': otpauth_url,
+            })
+
+        return context
+
+
+@method_decorator(login_required, name='dispatch')
+class TWOFABackupTokensPasswordView(TwoFactorBackupTokensView):
     """
     Require password to see backup codes
     """

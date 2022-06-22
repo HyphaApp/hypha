@@ -8,6 +8,8 @@ app.config_from_object(settings, namespace='CELERY', force=True)
 
 
 def send_mail(subject, message, from_address, recipients, logs=None):
+    if settings.EMAIL_SUBJECT_PREFIX:
+        subject = str(settings.EMAIL_SUBJECT_PREFIX) + str(subject)
     # Convenience method to wrap the tasks and handle the callback
     send_mail_task.apply_async(
         kwargs={
