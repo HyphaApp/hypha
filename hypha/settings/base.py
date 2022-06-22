@@ -522,9 +522,9 @@ SEND_READY_FOR_REVIEW = env.bool('SEND_READY_FOR_REVIEW', True)
 
 # Django Slack settings
 SLACK_TOKEN = env.str('SLACK_TOKEN', None)
-SLACK_USERNAME = env.str('SLACK_USERNAME', 'bot')
+SLACK_USERNAME = env.str('SLACK_USERNAME', 'Hypha')
 SLACK_BACKEND = 'django_slack.backends.CeleryBackend'  # UrllibBackend can be used for sync
-SLACK_ENDPOINT_URL = env.str('SLACK_ENDPOINT_URL', None)
+SLACK_ENDPOINT_URL = env.str('SLACK_ENDPOINT_URL', 'https://slack.com/api/chat.postMessage')
 
 # Slack settings
 SLACK_DESTINATION_ROOM = env.str('SLACK_DESTINATION_ROOM', None)

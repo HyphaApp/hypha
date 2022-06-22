@@ -716,10 +716,8 @@ class SlackAdapter(AdapterBase):
     def send_message(self, message, recipient, source, **kwargs):
         target_rooms = self.slack_channels(source, **kwargs)
 
-        if not self.destination or not any(target_rooms) or not settings.SLACK_TOKEN:
+        if not any(target_rooms) or not settings.SLACK_TOKEN:
             errors = list()
-            if not self.destination:
-                errors.append('Destination URL')
             if not target_rooms:
                 errors.append('Room ID')
             if not settings.SLACK_TOKEN:
