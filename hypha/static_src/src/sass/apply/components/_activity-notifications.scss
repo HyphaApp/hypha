@@ -13,37 +13,31 @@
     position: absolute;
     right: 0;
     font-size: 15px;
-    background-color: #F0F0F0;
+    background-color: $color--light-grey;
     min-width: 400px;
-    box-shadow: 8px 8px 16px 8px rgba(0,0,0,0.2);
+    box-shadow: 1px 1px 1px 1px $color--light-mid-grey;
     z-index: 1;
 
     p {
-        color: black;
-        padding: 0px 10px;
+        color: $color--black;
+        padding: 0 10px;
         display: block;
     }
 }
 
 .dropdown-item {
-  border-bottom: .1px solid grey;
+    border-bottom: .1px solid $color--dark-grey;
 }
 
 .show-all {
-  text-align: center;
-}
-
-.source-label {
-    background-color: #7dc588;
+    text-align: center;
 }
 
 .show {
-    display:block;
+    display: block;
 }
 
-
 .notification {
-
     &__filters {
         display: flex;
         align-items: center;
@@ -58,6 +52,5 @@
         select {
             padding-right: 1em;
         }
-
     }
 }
