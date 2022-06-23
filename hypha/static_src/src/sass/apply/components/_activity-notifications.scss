@@ -1,17 +1,11 @@
 .dropbtn {
-    padding: 5px 12px;
+    padding: 7px 12px;
     cursor: pointer;
 }
 
 .dropdown {
     position: relative;
     display: inline-block;
-
-    &:hover {
-        .dropdown-content {
-            display: block;
-        }
-    }
 }
 
 .dropdown-content {
@@ -41,4 +35,8 @@
 
 .source-label {
     background-color: #7dc588;
+}
+
+.show {
+    display:block;
 }

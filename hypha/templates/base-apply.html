@@ -30,6 +30,7 @@
         <script src="{% static 'js/jquery.min.js' %}"></script>
         <script src="{% static 'js/js.cookie.min.js' %}"></script>
         <script src="{% static 'js/main-top.js' %}"></script>
+        <script src="{% static 'js/apply/notifications.js' %}"></script>
         {% if COOKIES_ACCEPTED and MATOMO_URL and MATOMO_SITEID %}
         {# we are only expecting strings, so make sure we escape the values #}
         <script>
@@ -106,14 +107,15 @@
                 <div class="header__button-container">
                     {% if latest_notifications %}
                     <div class="dropdown">
-                        <a href="#" class=" button--contains-icons dropbtn" aria-haspopup="activity" aria-expanded="false" role="button">
+                        <a href="#" onclick="return notificationToggle()" class=" button--contains-icons dropbtn" aria-haspopup="activity" aria-expanded="false" role="button">
                             <svg class="icon"><use xlink:href="#bell-icon"></use></svg>
                         </a>
-                        <div class="dropdown-content" role="activity">
+                        <div id="notificationDropdown" class="dropdown-content" role="activity">
+                            <p><b>Notifications</b></p>
                             {% for notification in latest_notifications %}
                             <p class="dropdown-item">
                                 <span class="source-label">{{ notification.source_content_type.name|source_type }}</span>
-                                <a href="{{ notification.source.get_absolute_url }}">{{ notification.source.title|capfirst }}</a>
+                                <a href="{{ notification.source.get_absolute_url }}">{{ notification.source.title|capfirst|truncatechars:15 }}</a>
                                 : {{ notification.user }} {% ifequal notification.type 'comment' %}made a comment{% else %} {{ notification.message|safe }}{% endifequal %}
                             </p>
                             {% endfor %}
