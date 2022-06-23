@@ -2,9 +2,10 @@ from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.generic import CreateView, ListView
 
-from hypha.apply.users.decorators import login_required
+from hypha.apply.users.decorators import staff_required
 from hypha.apply.utils.views import DelegatedViewMixin
 
+from .filters import NotificationFilter
 from .forms import CommentForm
 from .messaging import MESSAGES, messenger
 from .models import COMMENT, Activity
@@ -61,32 +62,19 @@ class CommentFormView(DelegatedViewMixin, CreateView):
         return kwargs
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(staff_required, name='dispatch')
 class NotificationsView(ListView):
     model = Activity
     template_name = 'activity/notifications.html'
+    filterset_class = NotificationFilter
+
+    def get_queryset(self):
+        # List only last 30 days' activities
+        queryset = Activity.objects.filter(timestamp__gte=(timezone.now() - timezone.timedelta(days=30)))
+        self.filterset = self.filterset_class(self.request.GET, queryset=queryset)
+        return self.filterset.qs.distinct().order_by('-timestamp')
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(NotificationsView, self).get_context_data()
-        user = self.request.user
-        comments = Activity.comments.all()
-        actions = Activity.actions.all()
-
-        # Getting issues with source's reverse relationship
-        # if user.is_applicant or user.is_partner:
-        #     context['comments'] = comments.filter(source__user=user).order_by('-timestamp')
-        #     context['actions'] = actions.filter(source__user=user).order_by('-timestamp')
-        # elif user.is_reviewer:
-        #     reviewer_submissions = ApplicationSubmission.objects.filter(reviewers=user).values_list("id", flat=True)
-        #     context['comments'] = comments.filter(source_object_id__in=reviewer_submissions).order_by('-timestamp')
-        #     context['actions'] = actions.filter(source_object_id__in=reviewer_submissions).order_by('-timestamp')
-
-        if user.is_apply_staff or user.is_apply_staff_admin:
-            context['comments'] = comments.all().order_by('-timestamp')
-            context['actions'] = actions.all().order_by('-timestamp')
-        else:
-            context['comments'] = comments.filter(user=user).order_by('-timestamp')
-            context['actions'] = actions.filter(user=user).order_by('-timestamp')
-        # WIP Filters
-        # context['filter'] = NotificationFilter(self.request.GET, queryset=self.get_queryset())
+        context['filter'] = self.filterset
         return context

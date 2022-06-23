@@ -1,4 +1,4 @@
-{% load i18n static wagtailuserbar wagtailcore_tags wagtailimages_tags navigation_tags util_tags hijack cookieconsent_tags activity_tags %}<!doctype html>
+{% load i18n static wagtailuserbar wagtailcore_tags wagtailimages_tags navigation_tags util_tags hijack cookieconsent_tags activity_tags apply_tags %}<!doctype html>
 {% wagtail_site as current_site %}
 <html class="no-js" lang="en">
     <head>
@@ -114,9 +114,10 @@
                             <p><b>Notifications</b></p>
                             {% for notification in latest_notifications %}
                             <p class="dropdown-item">
-                                <span class="source-label">{{ notification.source_content_type.name|source_type }}</span>
+                                <span><b>{{ notification.source_content_type.name|source_type }}</b></span>
                                 <a href="{{ notification.source.get_absolute_url }}">{{ notification.source.title|capfirst|truncatechars:15 }}</a>
-                                : {{ notification.user }} {% ifequal notification.type 'comment' %}made a comment{% else %} {{ notification.message|safe }}{% endifequal %}
+                                : {{ notification.user }} {% ifequal notification.type 'comment' %}made a comment{% else %} {{ notification.message|safe }}
+                                {% if notification.related_object %}<a href="{{ notification.related_object.get_absolute_url }}">{{ notification.related_object|model_verbose_name }}</a>{% endif %}{% endifequal %}
                             </p>
                             {% endfor %}
                             <p class="show-all"><a href="{% url "activity:notifications" %}">Show All</a></p>

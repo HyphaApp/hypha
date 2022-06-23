@@ -40,3 +40,24 @@
 .show {
     display:block;
 }
+
+
+.notification {
+
+    &__filters {
+        display: flex;
+        align-items: center;
+        padding: 4px;
+        justify-content: space-between;
+
+        p {
+            font-weight: 520;
+            padding-right: 10px;
+        }
+
+        select {
+            padding-right: 1em;
+        }
+
+    }
+}
