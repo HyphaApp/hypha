@@ -1,0 +1,6 @@
+{% extends django_slack %}
+<!--Template required for django-slack. We can customize it for channels, endpoint_url, etc as per the requirements.-->
+
+{% block text %}
+{{ message|safe }}
+{% endblock %}

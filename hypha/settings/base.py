@@ -105,6 +105,7 @@ INSTALLED_APPS = [
     'django_bleach',
     'django_fsm',
     'django_pwned_passwords',
+    'django_slack',
     'django_otp',
     'django_otp.plugins.otp_totp',
     'django_otp.plugins.otp_static',
@@ -524,7 +525,13 @@ if not SEND_MESSAGES:
 
 SEND_READY_FOR_REVIEW = env.bool('SEND_READY_FOR_REVIEW', True)
 
-SLACK_DESTINATION_URL = env.str('SLACK_DESTINATION_URL', None)
+# Django Slack settings
+SLACK_TOKEN = env.str('SLACK_TOKEN', None)
+SLACK_USERNAME = env.str('SLACK_USERNAME', 'Hypha')
+SLACK_BACKEND = 'django_slack.backends.CeleryBackend'  # UrllibBackend can be used for sync
+SLACK_ENDPOINT_URL = env.str('SLACK_ENDPOINT_URL', 'https://slack.com/api/chat.postMessage')
+
+# Slack settings
 SLACK_DESTINATION_ROOM = env.str('SLACK_DESTINATION_ROOM', None)
 SLACK_DESTINATION_ROOM_COMMENTS = env.str('SLACK_DESTINATION_ROOM_COMMENTS', None)
 SLACK_TYPE_COMMENTS = env.list('SLACK_TYPE_COMMENTS', [])
