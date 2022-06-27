@@ -1030,6 +1030,11 @@ class ApplicantSubmissionEditView(BaseSubmissionEditView):
     def form_valid(self, form):
         self.object.new_data(form.cleaned_data)
 
+        # Update submit_time only when application is getting submitted from the Draft State for the first time.
+        if self.object.status == DRAFT_STATE and 'submit' in self.request.POST:
+            self.object.submit_time = timezone.now()
+            self.object.save(update_fields=['submit_time'])
+
         if 'save' in self.request.POST:
             self.object.create_revision(draft=True, by=self.request.user)
             messages.success(self.request, _('Submission saved successfully'))
