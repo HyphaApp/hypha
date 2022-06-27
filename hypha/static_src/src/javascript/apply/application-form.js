@@ -6,6 +6,19 @@
         var $application_form = $(this);
         var $application_form_button = $application_form.find('button[type="submit"]');
 
+        // set aria-required attribute true for required fields
+        $application_form.find('input[required]').each(function(index, input_field) {
+            input_field.setAttribute('aria-required', true)
+        })
+
+        // add label_id as aria-describedby to help texts
+        $application_form.find('.form__group').each(function(index, form_group){
+            var label_id = form_group.querySelector('label').getAttribute('for')
+            if (form_group.querySelector('.form__help')){
+                form_group.querySelector('.form__help').setAttribute('aria-describedby', label_id)
+            }
+        })
+
         // Remove the "no javascript" messages
         $('.message-no-js').detach();
 
