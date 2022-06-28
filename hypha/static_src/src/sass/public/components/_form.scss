@@ -462,6 +462,10 @@
         position: relative;
         padding-left: 30px;
         cursor: pointer;
+
+        &:hover {
+            font-weight: bold;
+        }
     }
 
     [type='radio'] + label::before,
