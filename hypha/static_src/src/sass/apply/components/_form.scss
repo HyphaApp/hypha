@@ -283,10 +283,10 @@
     }
 
     &__help-link {
-        a{
+        a {
             &:hover {
-                    cursor: pointer;
-                    color: $color--darkest-blue;
+                cursor: pointer;
+                color: $color--darkest-blue;
             }
         }
     }
