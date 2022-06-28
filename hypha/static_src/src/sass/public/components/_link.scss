@@ -6,7 +6,7 @@
     }
 
     &--button {
-        @include button($color--light-blue, $color--dark-blue);
+        @include button($color--light-blue, $color--darkest-blue);
         display: inline-block;
 
         &--narrow {
