@@ -19,6 +19,17 @@
             }
         })
 
+        // set aria-invalid for field with errors
+        var $error_fields = $application_form.find('.form__error')
+        if ($error_fields.length){
+            //set focus to the first error field
+            $error_fields[0].querySelector('input').focus()
+
+            $error_fields.each(function(index, error_field){
+                error_field.querySelector('input').setAttribute('aria-invalid', true)
+            })
+        }
+
         // Remove the "no javascript" messages
         $('.message-no-js').detach();
 
