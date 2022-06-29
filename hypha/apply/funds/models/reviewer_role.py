@@ -44,7 +44,8 @@ class ReviewerSettings(BaseSetting):
 
     STATES = [
         ('all', 'All States'),
-        ('ext_state_or_higher', 'Only External review and higher')
+        ('ext_state_or_higher', 'Only External review and higher'),
+        ('ext_state_only', 'Only External review')
     ]
 
     OUTCOMES = [

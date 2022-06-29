@@ -18,11 +18,12 @@
     {% endif %}
 
     <form class="form form--with-p-tags" method="post">
+        <p class="form__help">{% trans "Forgot or want to change your password? Please enter your user account's email address and we will send you a password reset link." %}</p>
         {% csrf_token %}
         <p>{{ form.email.label_tag }}</p>
         <p>{{ form.email }}</p>
 
-        <button class="link link--button-secondary" type="submit">{% trans 'Reset password' %}</button>
+        <button class="link link--button-secondary" type="submit">{% trans "Send password reset email" %}</button>
     </form>
 </div>
 {% endblock %}

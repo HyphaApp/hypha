@@ -1,10 +1,14 @@
+import django_filters
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404
+from django.template.response import TemplateResponse
 from django.utils.translation import gettext as _
 from django.views.decorators.vary import vary_on_headers
 from wagtail.admin.auth import any_permission_required
+from wagtail.admin.filters import WagtailFilterSet
 from wagtail.admin.forms.search import SearchForm
 from wagtail.core.compat import AUTH_USER_APP_LABEL, AUTH_USER_MODEL_NAME
 
@@ -18,15 +22,48 @@ change_user_perm = "{0}.change_{1}".format(AUTH_USER_APP_LABEL, AUTH_USER_MODEL_
 delete_user_perm = "{0}.delete_{1}".format(AUTH_USER_APP_LABEL, AUTH_USER_MODEL_NAME.lower())
 
 
+class UserFilterSet(WagtailFilterSet):
+    STATUS_CHOICES = (
+        ('inactive', 'INACTIVE'),
+        ('active', 'ACTIVE'),
+    )
+    roles = django_filters.ModelChoiceFilter(queryset=Group.objects.all(), label='Roles', method='filter_by_roles')
+    status = django_filters.ChoiceFilter(choices=STATUS_CHOICES, label='Status', method='filter_by_status')
+
+    class Meta:
+        model = User
+        fields = [
+            'roles',
+            'status'
+        ]
+
+    def filter_by_roles(self, queryset, name, value):
+        queryset = queryset.filter(groups__name=value)
+        return queryset
+
+    def filter_by_status(self, queryset, name, value):
+        if value == 'active':
+            return queryset.filter(is_active=True)
+        elif value == 'inactive':
+            return queryset.filter(is_active=False)
+        return queryset
+
+
 @any_permission_required(add_user_perm, change_user_perm, delete_user_perm)
 @vary_on_headers('X-Requested-With')
-def index(request):
+def index(request, *args):
     """
     Override wagtail's users index view to filter by full_name
     https://github.com/wagtail/wagtail/blob/af69cb4a544a1b9be1339546be62ff54b389730e/wagtail/users/views/users.py#L47
     """
     q = None
     is_searching = False
+
+    group = None
+    group_filter = Q()
+    if args:
+        group = get_object_or_404(Group, id=args[0])
+        group_filter = Q(groups=group) if args else Q()
 
     model_fields = [f.name for f in User._meta.get_fields()]
 
@@ -54,12 +91,17 @@ def index(request):
                 if 'full_name' in model_fields:
                     conditions |= Q(full_name__icontains=term)
 
-            users = User.objects.filter(conditions)
+            users = User.objects.filter(group_filter & conditions)
     else:
         form = SearchForm(placeholder=_("Search users"))
 
     if not is_searching:
-        users = User.objects.all().order_by('-is_active', 'full_name')
+        users = User.objects.filter(group_filter).order_by('-is_active', 'full_name')
+
+    filters = None
+    if not group:
+        filters = UserFilterSet(request.GET, queryset=users, request=request)
+        users = filters.qs
 
     if 'ordering' in request.GET:
         ordering = request.GET['ordering']
@@ -71,21 +113,31 @@ def index(request):
     else:
         ordering = 'name'
 
-    paginator = Paginator(users, per_page=20)
+    user_count = users.count()
+    paginator = Paginator(users.select_related('wagtail_userprofile'), per_page=20)
     users = paginator.get_page(request.GET.get('p'))
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        return render(request, "wagtailusers/users/results.html", {
+        return TemplateResponse(request, "wagtailusers/users/results.html", {
             'users': users,
+            'user_count': user_count,
             'is_searching': is_searching,
             'query_string': q,
+            'filters': filters,
             'ordering': ordering,
+            'app_label': User._meta.app_label,
+            'model_name': User._meta.model_name,
         })
     else:
-        return render(request, "wagtailusers/users/index.html", {
+        return TemplateResponse(request, "wagtailusers/users/index.html", {
+            'group': group,
             'search_form': form,
             'users': users,
+            'user_count': user_count,
             'is_searching': is_searching,
             'ordering': ordering,
             'query_string': q,
+            'filters': filters,
+            'app_label': User._meta.app_label,
+            'model_name': User._meta.model_name,
         })

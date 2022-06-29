@@ -4,6 +4,7 @@ sentry-sdk==1.5.0
 
 # Production dependencies
 Babel==2.9.1
+bleach==4.1.0
 boto3==1.20.22
 celery==5.2.2
 dj-database-url==0.5.0
@@ -23,12 +24,13 @@ django-redis==5.1.0
 django-referrer-policy==1.0
 django-salesforce==4.0
 django-select2==7.9.0
+django-slack==5.17.7
 django-storages==1.12.3
 django-tables2==2.4.1
 django-tinymce==3.4.0
-django-two-factor-auth==1.13.1
+django-two-factor-auth==1.14.0
 django-webpack-loader==1.0.0
-django==3.2.12
+django==3.2.13
 djangorestframework-api-key==2.1.0
 djangorestframework==3.12.4
 drf-nested-routers==0.93.4

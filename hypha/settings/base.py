@@ -28,6 +28,7 @@ ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', [])
 ORG_LONG_NAME = env.str('ORG_LONG_NAME', 'Acme Corporation')
 ORG_SHORT_NAME = env.str('ORG_SHORT_NAME', 'ACME')
 ORG_EMAIL = env.str('ORG_EMAIL', 'info@example.org')
+ORG_URL = env.str('ORG_URL', 'https://www.example.org/')
 ORG_GUIDE_URL = env.str('ORG_GUIDE_URL', 'https://guide.example.org/')
 
 
@@ -104,6 +105,7 @@ INSTALLED_APPS = [
     'django_bleach',
     'django_fsm',
     'django_pwned_passwords',
+    'django_slack',
     'django_otp',
     'django_otp.plugins.otp_totp',
     'django_otp.plugins.otp_static',
@@ -143,6 +145,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_referrer_policy.middleware.ReferrerPolicyMiddleware',
     'django_otp.middleware.OTPMiddleware',
+    'hypha.apply.users.middleware.TwoFactorAuthenticationMiddleware',
 
     'hijack.middleware.HijackUserMiddleware',
 
@@ -295,6 +298,10 @@ PASSWORD_RESET_TIMEOUT = env.int('PASSWORD_RESET_TIMEOUT', 259200)
 # Seconds to enter password on password page while email change/2FA change (default 120).
 PASSWORD_PAGE_TIMEOUT = env.int('PASSWORD_PAGE_TIMEOUT', 120)
 
+# Use Pillow to create QR codes so they are PNG and not SVG.
+# Apples Safari on iOS and macOS can then recognise them automatically.
+TWO_FACTOR_QR_FACTORY = 'qrcode.image.pil.PilImage'
+
 # Internationalization
 # https://docs.djangoproject.com/en/stable/topics/i18n/
 
@@ -360,6 +367,14 @@ WAGTAIL_USER_CUSTOM_FIELDS = ['full_name']
 WAGTAIL_PASSWORD_MANAGEMENT_ENABLED = False
 WAGTAILUSERS_PASSWORD_ENABLED = False
 WAGTAILUSERS_PASSWORD_REQUIRED = False
+
+# Enforce Two factor setting
+ENFORCE_TWO_FACTOR = env.bool('ENFORCE_TWO_FACTOR', False)
+
+# Give staff lead permissions.
+# Only effects setting external reviewers for now.
+GIVE_STAFF_LEAD_PERMS = env.bool('GIVE_STAFF_LEAD_PERMS', False)
+
 
 LOGIN_URL = 'users_public:login'
 LOGIN_REDIRECT_URL = 'dashboard:dashboard'
@@ -493,6 +508,7 @@ FILE_ALLOWED_EXTENSIONS = ['doc', 'docx', 'odp', 'ods', 'odt', 'pdf', 'ppt', 'pp
 FILE_ACCEPT_ATTR_VALUE = ', '.join(['.' + ext for ext in FILE_ALLOWED_EXTENSIONS])
 
 # Hijack Settings
+HIJACK_ENABLE = env.bool('HIJACK_ENABLE', False)
 HIJACK_LOGIN_REDIRECT_URL = '/dashboard/'
 HIJACK_LOGOUT_REDIRECT_URL = '/account/'
 HIJACK_DECORATOR = 'hypha.apply.users.decorators.superuser_decorator'
@@ -509,7 +525,13 @@ if not SEND_MESSAGES:
 
 SEND_READY_FOR_REVIEW = env.bool('SEND_READY_FOR_REVIEW', True)
 
-SLACK_DESTINATION_URL = env.str('SLACK_DESTINATION_URL', None)
+# Django Slack settings
+SLACK_TOKEN = env.str('SLACK_TOKEN', None)
+SLACK_USERNAME = env.str('SLACK_USERNAME', 'Hypha')
+SLACK_BACKEND = 'django_slack.backends.CeleryBackend'  # UrllibBackend can be used for sync
+SLACK_ENDPOINT_URL = env.str('SLACK_ENDPOINT_URL', 'https://slack.com/api/chat.postMessage')
+
+# Slack settings
 SLACK_DESTINATION_ROOM = env.str('SLACK_DESTINATION_ROOM', None)
 SLACK_DESTINATION_ROOM_COMMENTS = env.str('SLACK_DESTINATION_ROOM_COMMENTS', None)
 SLACK_TYPE_COMMENTS = env.list('SLACK_TYPE_COMMENTS', [])

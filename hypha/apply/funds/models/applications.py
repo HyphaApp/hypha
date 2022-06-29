@@ -179,7 +179,16 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
         ReadOnlyPanel('get_workflow_name_display', heading=_('Workflow'), help_text=_('Copied from the fund.')),
         # Forms comes from parental key in models/forms.py
         ReadOnlyInlinePanel('forms', help_text=_('Copied from the fund.')),
-        ReadOnlyInlinePanel('review_forms', help_text=_('Copied from the fund.')),
+        ReadOnlyInlinePanel(
+            'review_forms',
+            help_text=_('Copied from the fund.'),
+            heading=_('Internal Review Form')
+        ),
+        ReadOnlyInlinePanel(
+            'external_review_forms',
+            help_text=_('Copied from the fund.'),
+            heading=_('External Review Form')
+        ),
         ReadOnlyInlinePanel('determination_forms', help_text=_('Copied from the fund.')),
     ]
 
@@ -221,6 +230,7 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
             # Would be nice to do this using model clusters as part of the __init__
             self._copy_forms('forms')
             self._copy_forms('review_forms')
+            self._copy_forms('external_review_forms')
             self._copy_forms('determination_forms')
 
     def _copy_forms(self, field):

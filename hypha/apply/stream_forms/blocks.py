@@ -429,6 +429,7 @@ class MultiFileFieldBlock(UploadableMediaBlock):
     field_class = MultiFileField
 
     class Meta:
+        icon = 'download'
         label = _('Multiple File field')
         template = 'stream_forms/render_multi_file_field.html'
 

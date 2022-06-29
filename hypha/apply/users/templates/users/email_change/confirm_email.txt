@@ -1,19 +1,15 @@
-{% load i18n wagtailadmin_tags %}
-{% base_url_setting as base_url %}
-{% firstof name username as user %}
-
+{% load i18n wagtailadmin_tags %}{% base_url_setting as base_url %}{% firstof name username as user %}
 {% blocktrans %}Dear {{ user }},{% endblocktrans %}
 
-{% blocktrans %}Request to change email of your account on the {{ ORG_LONG_NAME }} web site has been accepted. Confirm your email by clicking this link or copying and pasting it to your browser:{% endblocktrans %}
+{% blocktrans %}Request to change email of your account on the {{ org_long_name }} web site has been accepted. Confirm your email by clicking this link or copying and pasting it to your browser:{% endblocktrans %}
 
 {% if site %}{{ site.root_url }}{% else %}{{ base_url }}{% endif %}{{ activation_path }}
 
 {% blocktrans %}This link will only remain active for {{ timeout_days }} days and will lead you to profile page after verification.{% endblocktrans %}
 
-
-{% blocktrans with root_url=PUBLIC_SITE.root_url %}Kind Regards,
-The {{ ORG_SHORT_NAME }} Team
+{% blocktrans %}Kind Regards,
+The {{ org_short_name }} Team{% endblocktrans %}
 
 --
-{{ ORG_LONG_NAME }}
-{{ root_url }}{% endblocktrans %}
+{{ org_long_name }}
+{% if site %}{{ site.root_url }}{% else %}{{ base_url }}{% endif %}

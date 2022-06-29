@@ -1,27 +1,21 @@
 FROM cimg/python:3.9.10-node
 
-# Set work directory
+# Set work directory.
 WORKDIR /usr/local/hypha
 
-# Set environment variables
+# Set environment variables.
 ENV API_BASE_URL http://apply.hypha.test:8090/api
 ENV DATABASE_URL postgres://hypha:hypha@db:5432/hypha
 ENV DJANGO_SETTINGS_MODULE hypha.settings.dev
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-# Prepare for npm
-COPY package.json package-lock.json /usr/local/hypha/
-
 # Set owner on /usr/local.
 RUN sudo chown -R circleci:circleci /usr/local
-
-# Install node dependencies.
-RUN npm install  --quiet
 
 # Install python dependencies.
 COPY requirements.txt requirements-dev.txt /usr/local/hypha/
 RUN pip3 install --quiet -r requirements-dev.txt
 
-# Run entrypoint.sh
+# Run entrypoint.sh.
 ENTRYPOINT ["/usr/local/hypha/docker/entrypoint.dev.sh"]

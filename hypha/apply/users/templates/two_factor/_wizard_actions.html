@@ -1,8 +1,15 @@
 {% load i18n %}
 
-<button type="submit" class="button button--primary">{% trans "Next" %}</button>
+{% if wizard.steps.current == 'token' %}
+    {% trans "Login" as button_text %}
+{% elif wizard.steps.current == 'generator' %}
+    {% trans "Enable Two-Factor Authentication" as button_text %}
+{% else %}
+    {% trans "Next" as button_text %}
+{% endif %}
+
+<button type="submit" class="button button--primary">{{ button_text }}</button>
 
 {% if cancel_url %}
-  <a href="{% url 'users:account' %}"
-     class="link link--bold link--left-space">{% trans "Cancel" %}</a>
+    <a href="{% url 'users:account' %}" class="link link--bold link--left-space">{% trans "Cancel" %}</a>
 {% endif %}

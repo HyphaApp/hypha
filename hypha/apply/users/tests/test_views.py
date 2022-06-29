@@ -74,9 +74,9 @@ class TestBecome(TestCase):
         response = self.client.post(url, {'user_pk': target.pk}, follow=True, secure=True)
         return response
 
-    def test_staff_can_become_user(self):
+    def test_staff_cannot_become_user(self):
         response = self.become_request(self.staff, self.user)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 403)
 
     def test_staff_cannot_become_superuser(self):
         response = self.become_request(self.staff, self.superuser)

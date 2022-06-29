@@ -2,7 +2,6 @@ import json
 import logging
 from collections import defaultdict
 
-import requests
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -10,6 +9,7 @@ from django.db import models
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.translation import gettext as _
+from django_slack import slack_message
 
 from hypha.apply.projects.models.payment import (
     APPROVED_BY_FINANCE_1,
@@ -18,7 +18,9 @@ from hypha.apply.projects.models.payment import (
     CHANGES_REQUESTED_BY_FINANCE_1,
     CHANGES_REQUESTED_BY_FINANCE_2,
     CHANGES_REQUESTED_BY_STAFF,
+    CONVERTED,
     DECLINED,
+    PAID,
     RESUBMITTED,
     SUBMITTED,
 )
@@ -465,7 +467,7 @@ class SlackAdapter(AdapterBase):
 
     def __init__(self):
         super().__init__()
-        self.destination = settings.SLACK_DESTINATION_URL
+        self.destination = settings.SLACK_ENDPOINT_URL
         self.target_room = settings.SLACK_DESTINATION_ROOM
         self.comments_room = settings.SLACK_DESTINATION_ROOM_COMMENTS
         self.comments_type = settings.SLACK_TYPE_COMMENTS
@@ -509,7 +511,10 @@ class SlackAdapter(AdapterBase):
                 recipients.append(self.slack_id(submission.assigned.with_roles().last().reviewer))
 
         if message_type == MESSAGES.UPDATE_INVOICE_STATUS:
-            if related.status in [SUBMITTED, RESUBMITTED, CHANGES_REQUESTED_BY_FINANCE_1, APPROVED_BY_FINANCE_2]:
+            if related.status in [
+                SUBMITTED, RESUBMITTED, CHANGES_REQUESTED_BY_FINANCE_1,
+                APPROVED_BY_FINANCE_2, CONVERTED, PAID
+            ]:
                 # Notify project lead/staff
                 return recipients
             if related.status in [APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_2]:
@@ -711,23 +716,26 @@ class SlackAdapter(AdapterBase):
     def send_message(self, message, recipient, source, **kwargs):
         target_rooms = self.slack_channels(source, **kwargs)
 
-        if not self.destination or not any(target_rooms):
+        if not any(target_rooms) or not settings.SLACK_TOKEN:
             errors = list()
-            if not self.destination:
-                errors.append('Destination URL')
             if not target_rooms:
                 errors.append('Room ID')
+            if not settings.SLACK_TOKEN:
+                errors.append('Slack Token')
             return 'Missing configuration: {}'.format(', '.join(errors))
 
         message = ' '.join([recipient, message]).strip()
 
         data = {
-            "room": target_rooms,
             "message": message,
         }
-        response = requests.post(self.destination, json=data)
-
-        return str(response.status_code) + ': ' + response.content.decode()
+        for room in target_rooms:
+            try:
+                slack_message('messages/slack_message.html', data, channel=room)
+            except Exception as e:
+                logger.exception(e)
+                return '400: Bad Request'
+        return '200: OK'
 
 
 class EmailAdapter(AdapterBase):

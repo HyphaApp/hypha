@@ -115,7 +115,7 @@ User = get_user_model()
 
 class SubmissionStatsMixin:
     def get_context_data(self, **kwargs):
-        submissions = ApplicationSubmission.objects.all()
+        submissions = ApplicationSubmission.objects.exclude_draft()
         submission_undetermined_count = submissions.undetermined().count()
         review_my_count = submissions.reviewed_by(self.request.user).count()
 
@@ -128,7 +128,7 @@ class SubmissionStatsMixin:
         submission_accepted_sum = intcomma(submission_accepted_value.get('value__sum'))
         submission_accepted_count = submission_accepted.count()
 
-        reviews = Review.objects.all()
+        reviews = Review.objects.submitted()
         review_count = reviews.count()
         review_my_score = reviews.by_user(self.request.user).score()
 
@@ -1030,6 +1030,11 @@ class ApplicantSubmissionEditView(BaseSubmissionEditView):
     def form_valid(self, form):
         self.object.new_data(form.cleaned_data)
 
+        # Update submit_time only when application is getting submitted from the Draft State for the first time.
+        if self.object.status == DRAFT_STATE and 'submit' in self.request.POST:
+            self.object.submit_time = timezone.now()
+            self.object.save(update_fields=['submit_time'])
+
         if 'save' in self.request.POST:
             self.object.create_revision(draft=True, by=self.request.user)
             messages.success(self.request, _('Submission saved successfully'))
@@ -1282,7 +1287,7 @@ class SubmissionResultView(SubmissionStatsMixin, FilterView):
         return new_kwargs
 
     def get_queryset(self):
-        return self.filterset_class._meta.model.objects.current()
+        return self.filterset_class._meta.model.objects.current().exclude_draft()
 
     def get_context_data(self, **kwargs):
         search_term = self.request.GET.get('query')

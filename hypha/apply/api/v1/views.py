@@ -62,8 +62,8 @@ class SubmissionViewSet(viewsets.ReadOnlyModelViewSet, viewsets.GenericViewSet):
 
     def get_queryset(self):
         if self.action == 'list':
-            return ApplicationSubmission.objects.current().with_latest_update()
-        return ApplicationSubmission.objects.all().prefetch_related(
+            return ApplicationSubmission.objects.exclude_draft().current().with_latest_update()
+        return ApplicationSubmission.objects.exclude_draft().prefetch_related(
             Prefetch('reviews', Review.objects.submitted()),
         )
 

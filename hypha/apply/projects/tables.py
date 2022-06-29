@@ -11,31 +11,29 @@ from .models import Invoice, Project, Report
 
 
 class BaseInvoiceTable(tables.Table):
-    project = tables.LinkColumn(
+    vendor_document_number = tables.LinkColumn(
         'funds:projects:invoice-detail',
-        verbose_name=_('Invoice reference'),
-        text=lambda r: textwrap.shorten(r.project.title, width=30, placeholder="..."),
+        verbose_name=_('Invoice Number'),
         args=[tables.utils.A('project.pk'), tables.utils.A('pk')],
+    )
+    project = tables.Column(
+        verbose_name=_('Project Name')
     )
     status = tables.Column()
     requested_at = tables.DateColumn(verbose_name=_('Submitted'))
-    amount = tables.Column(verbose_name=_('Value ({currency})').format(currency=settings.CURRENCY_SYMBOL))
 
-    def render_amount(self, value):
-        return intcomma(value)
+    def render_project(self, value):
+        text = textwrap.shorten(value.title, width=30, placeholder="..."),
+        return text[0]
 
 
 class InvoiceDashboardTable(BaseInvoiceTable):
-    date_from = tables.DateColumn(verbose_name=_('Period Start'))
-    date_to = tables.DateColumn(verbose_name=_('Period End'))
-
     class Meta:
         fields = [
             'requested_at',
-            'project',
+            'vendor_document_number',
             'status',
-            'date_from',
-            'date_to',
+            'project',
         ]
         model = Invoice
         order_by = ['-requested_at']
@@ -49,9 +47,9 @@ class InvoiceListTable(BaseInvoiceTable):
     class Meta:
         fields = [
             'requested_at',
-            'project',
-            'amount',
+            'vendor_document_number',
             'status',
+            'project',
             'lead',
             'fund',
         ]
@@ -59,13 +57,6 @@ class InvoiceListTable(BaseInvoiceTable):
         orderable = True
         order_by = ['-requested_at']
         attrs = {'class': 'invoices-table'}
-
-    def order_value(self, qs, is_descending):
-        direction = '-' if is_descending else ''
-
-        qs = qs.order_by(f'{direction}paid_value', f'{direction}amount')
-
-        return qs, True
 
 
 class BaseProjectsTable(tables.Table):

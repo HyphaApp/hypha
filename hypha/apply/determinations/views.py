@@ -24,7 +24,7 @@ from hypha.apply.stream_forms.models import BaseStreamForm
 from hypha.apply.users.decorators import staff_required
 from hypha.apply.utils.views import CreateOrUpdateView, ViewDispatcher
 
-from .blocks import DeterminationBlock
+from .blocks import DeterminationBlock, DeterminationMessageBlock
 from .forms import (
     BatchConceptDeterminationForm,
     BatchDeterminationForm,
@@ -308,9 +308,18 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
         site = Site.find_for_request(self.request)
         determination_messages = DeterminationMessageSettings.for_site(site)
 
+        # Pass blocks ids to identify block types(determination & message) in determination message template js.
+        field_blocks_ids = {}
+        if self.submission.is_determination_form_attached:
+            for field_block in self.get_defined_fields():
+                if isinstance(field_block.block, DeterminationBlock) or \
+                        isinstance(field_block.block, DeterminationMessageBlock):
+                    field_blocks_ids[field_block.block_type] = field_block.id
+
         return super().get_context_data(
             submission=self.submission,
             message_templates=determination_messages.get_for_stage(self.submission.stage.name),
+            field_blocks_ids=field_blocks_ids,
             **kwargs
         )
 

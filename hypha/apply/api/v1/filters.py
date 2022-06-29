@@ -45,7 +45,7 @@ class SubmissionsFilter(filters.FilterSet):
     )
     id = filters.ModelMultipleChoiceFilter(
         field_name='id',
-        queryset=ApplicationSubmission.objects.current().with_latest_update(),
+        queryset=ApplicationSubmission.objects.exclude_draft().current().with_latest_update(),
         method='filter_id'
     )
 
