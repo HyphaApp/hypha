@@ -1,5 +1,6 @@
 import json
 import textwrap
+import re
 
 import django_filters as filters
 import django_tables2 as tables
@@ -369,10 +370,10 @@ class SubmissionFilterAndSearch(SubmissionFilter):
     archived = filters.BooleanFilter(field_name='is_archive', widget=forms.HiddenInput, method='filter_archived')
 
     def search_data_and_id(self, queryset, name, value):
-        possible_id = value.strip("#")
-        if value.strip().startswith("#") and possible_id.isnumeric():
-            return queryset.filter(id=possible_id)
-        return queryset.filter(Q(id=possible_id)|Q(search_data__icontains=value))
+        possible_ids = map(int, re.findall('\d+', value))
+        if value.strip().startswith("#") and len(possible_ids) > 0:
+            return queryset.filter(id__in=possible_ids)
+        return queryset.filter(Q(id__in=possible_ids)|Q(search_data__icontains=value))
 
     def filter_archived(self, queryset, name, value):
         if not value:
