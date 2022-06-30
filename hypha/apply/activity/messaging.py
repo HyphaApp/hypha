@@ -64,7 +64,7 @@ neat_related = {
     MESSAGES.TRANSITION: 'old_phase',
     MESSAGES.BATCH_TRANSITION: 'transitions',
     MESSAGES.APPLICANT_EDIT: 'revision',
-    MESSAGES.EDIT: 'revision',
+    MESSAGES.EDIT_SUBMISSION: 'revision',
     MESSAGES.COMMENT: 'comment',
     MESSAGES.SCREENING: 'old_status',
     MESSAGES.REVIEW_OPINION: 'opinion',
@@ -240,7 +240,7 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.TRANSITION: 'handle_transition',
         MESSAGES.BATCH_TRANSITION: 'handle_batch_transition',
         MESSAGES.NEW_SUBMISSION: _('Submitted {source.title} for {source.page.title}'),
-        MESSAGES.EDIT: _('Edited'),
+        MESSAGES.EDIT_SUBMISSION: _('Edited'),
         MESSAGES.APPLICANT_EDIT: _('Edited'),
         MESSAGES.UPDATE_LEAD: _('Lead changed from {old_lead} to {source.lead}'),
         MESSAGES.BATCH_UPDATE_LEAD: _('Batch Lead changed to {new_lead}'),
@@ -431,7 +431,7 @@ class SlackAdapter(AdapterBase):
         MESSAGES.UPDATE_LEAD: _('The lead of <{link}|{source.title}> has been updated from {old_lead} to {source.lead} by {user}'),
         MESSAGES.BATCH_UPDATE_LEAD: 'handle_batch_lead',
         MESSAGES.COMMENT: _('A new {comment.visibility} comment has been posted on <{link}|{source.title}> by {user}'),
-        MESSAGES.EDIT: _('{user} has edited <{link}|{source.title}>'),
+        MESSAGES.EDIT_SUBMISSION: _('{user} has edited <{link}|{source.title}>'),
         MESSAGES.APPLICANT_EDIT: _('{user} has edited <{link}|{source.title}>'),
         MESSAGES.REVIEWERS_UPDATED: 'reviewers_updated',
         MESSAGES.BATCH_REVIEWERS_UPDATED: 'handle_batch_reviewers',
@@ -741,9 +741,9 @@ class SlackAdapter(AdapterBase):
 class EmailAdapter(AdapterBase):
     adapter_type = 'Email'
     messages = {
-        MESSAGES.NEW_SUBMISSION: 'funds/email/confirmation.html',
+        MESSAGES.NEW_SUBMISSION: 'messages/email/submission_confirmation.html',
         MESSAGES.COMMENT: 'notify_comment',
-        MESSAGES.EDIT: 'messages/email/edit.html',
+        MESSAGES.EDIT_SUBMISSION: 'messages/email/submission_edit.html',
         MESSAGES.TRANSITION: 'handle_transition',
         MESSAGES.BATCH_TRANSITION: 'handle_batch_transition',
         MESSAGES.DETERMINATION_OUTCOME: 'handle_determination',
