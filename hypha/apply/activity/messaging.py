@@ -253,7 +253,7 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.NEW_REVIEW: _('Submitted a review'),
         MESSAGES.OPENED_SEALED: _('Opened the submission while still sealed'),
         MESSAGES.SCREENING: 'handle_screening_statuses',
-        MESSAGES.REVIEW_OPINION: _('{user} {opinion.opinion_display}s with {opinion.review.author}''s review of {source}'),
+        MESSAGES.REVIEW_OPINION: _('{user} {opinion.opinion_display}s with {opinion.review.author}s review of {source}'),
         MESSAGES.CREATED_PROJECT: _('Created'),
         MESSAGES.PROJECT_TRANSITION: _('Progressed from {old_stage} to {source.status_display}'),
         MESSAGES.UPDATE_PROJECT_LEAD: _('Lead changed from {old_lead} to {source.lead}'),
@@ -445,23 +445,23 @@ class SlackAdapter(AdapterBase):
         MESSAGES.NEW_REVIEW: _('{user} has submitted a review for <{link}|{source.title}>. Outcome: {review.outcome},  Score: {review.get_score_display}'),
         MESSAGES.READY_FOR_REVIEW: 'notify_reviewers',
         MESSAGES.OPENED_SEALED: _('{user} has opened the sealed submission: <{link}|{source.title}>'),
-        MESSAGES.REVIEW_OPINION: _('{user} {opinion.opinion_display}s with {opinion.review.author}''s review of {source.title}'),
+        MESSAGES.REVIEW_OPINION: _('{user} {opinion.opinion_display}s with {opinion.review.author}s review of <{link}|{source.title}>'),
         MESSAGES.BATCH_READY_FOR_REVIEW: 'batch_notify_reviewers',
         MESSAGES.DELETE_SUBMISSION: _('{user} has deleted {source.title}'),
-        MESSAGES.DELETE_REVIEW: _('{user} has deleted {review.author} review for <{link}|{source.title}>.'),
-        MESSAGES.CREATED_PROJECT: _('{user} has created a Project: <{link}|{source.title}>.'),
+        MESSAGES.DELETE_REVIEW: _('{user} has deleted {review.author} review for <{link}|{source.title}>'),
+        MESSAGES.CREATED_PROJECT: _('{user} has created a Project: <{link}|{source.title}>'),
         MESSAGES.UPDATE_PROJECT_LEAD: _('The lead of project <{link}|{source.title}> has been updated from {old_lead} to {source.lead} by {user}'),
-        MESSAGES.EDIT_REVIEW: _('{user} has edited {review.author} review for <{link}|{source.title}>.'),
-        MESSAGES.SEND_FOR_APPROVAL: _('{user} has requested approval on project <{link}|{source.title}>.'),
-        MESSAGES.APPROVE_PROJECT: _('{user} has approved project <{link}|{source.title}>.'),
-        MESSAGES.REQUEST_PROJECT_CHANGE: _('{user} has requested changes for project acceptance on <{link}|{source.title}>.'),
-        MESSAGES.UPLOAD_CONTRACT: _('{user} has uploaded a contract for <{link}|{source.title}>.'),
-        MESSAGES.APPROVE_CONTRACT: _('{user} has approved contract for <{link}|{source.title}>.'),
-        MESSAGES.CREATE_INVOICE: _('{user} has created invoice for <{link}|{source.title}>.'),
-        MESSAGES.UPDATE_INVOICE_STATUS: _('{user} has changed the status of <{link_related}|invoice> on <{link}|{source.title}> to {invoice.status_display}.'),
-        MESSAGES.DELETE_INVOICE: _('{user} has deleted invoice from <{link}|{source.title}>.'),
-        MESSAGES.UPDATE_INVOICE: _('{user} has updated invoice for <{link}|{source.title}>.'),
-        MESSAGES.SUBMIT_REPORT: _('{user} has submitted a report for <{link}|{source.title}>.'),
+        MESSAGES.EDIT_REVIEW: _('{user} has edited {review.author} review for <{link}|{source.title}>'),
+        MESSAGES.SEND_FOR_APPROVAL: _('{user} has requested approval on project <{link}|{source.title}>'),
+        MESSAGES.APPROVE_PROJECT: _('{user} has approved project <{link}|{source.title}>'),
+        MESSAGES.REQUEST_PROJECT_CHANGE: _('{user} has requested changes for project acceptance on <{link}|{source.title}>'),
+        MESSAGES.UPLOAD_CONTRACT: _('{user} has uploaded a contract for <{link}|{source.title}>'),
+        MESSAGES.APPROVE_CONTRACT: _('{user} has approved contract for <{link}|{source.title}>'),
+        MESSAGES.CREATE_INVOICE: _('{user} has created invoice for <{link}|{source.title}>'),
+        MESSAGES.UPDATE_INVOICE_STATUS: _('{user} has changed the status of <{link_related}|invoice> on <{link}|{source.title}> to {invoice.status_display}'),
+        MESSAGES.DELETE_INVOICE: _('{user} has deleted invoice from <{link}|{source.title}>'),
+        MESSAGES.UPDATE_INVOICE: _('{user} has updated invoice for <{link}|{source.title}>'),
+        MESSAGES.SUBMIT_REPORT: _('{user} has submitted a report for <{link}|{source.title}>'),
         MESSAGES.BATCH_DELETE_SUBMISSION: 'handle_batch_delete_submission'
     }
 
@@ -546,7 +546,7 @@ class SlackAdapter(AdapterBase):
 
     def reviewers_updated(self, source, link, user, added=list(), removed=list(), **kwargs):
         submission = source
-        message = [_('{user} has updated the reviewers on <{link}|{title}>.').format(user=user, link=link, title=submission.title)]
+        message = [_('{user} has updated the reviewers on <{link}|{title}>').format(user=user, link=link, title=submission.title)]
 
         if added:
             message.append(_('Added:'))
