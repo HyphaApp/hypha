@@ -253,11 +253,11 @@ class StatusMultipleChoiceFilter(Select2MultipleChoiceFilter):
 
 
 class SubmissionFilter(filters.FilterSet):
-    round = Select2ModelMultipleChoiceFilter(queryset=get_used_rounds, label=_('Rounds'))
     fund = Select2ModelMultipleChoiceFilter(field_name='page', queryset=get_used_funds, label=_('Funds'))
+    round = Select2ModelMultipleChoiceFilter(queryset=get_used_rounds, label=_('Rounds'))
     lead = Select2ModelMultipleChoiceFilter(queryset=get_round_leads, label=_('Leads'))
-    reviewers = Select2ModelMultipleChoiceFilter(queryset=get_reviewers, label=_('Reviewers'))
     screening_statuses = Select2ModelMultipleChoiceFilter(queryset=get_screening_statuses, label=_('Screening'), null_label=_('No Status'))
+    reviewers = Select2ModelMultipleChoiceFilter(queryset=get_reviewers, label=_('Reviewers'))
     category_options = Select2MultipleChoiceFilter(
         choices=[], label=_('Category'),
         method='filter_category_options'
@@ -266,7 +266,7 @@ class SubmissionFilter(filters.FilterSet):
 
     class Meta:
         model = ApplicationSubmission
-        fields = ('fund', 'round', 'status')
+        fields = ('status', 'fund', 'round')
 
     def __init__(self, *args, exclude=list(), limit_statuses=None, **kwargs):
         super().__init__(*args, **kwargs)
