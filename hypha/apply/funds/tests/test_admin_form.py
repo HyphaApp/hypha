@@ -54,6 +54,7 @@ def form_data(num_appl_forms=0, num_review_forms=0, num_determination_forms=0, n
     fund_data['workflow_name'] = workflow_for_stages(stages)
 
     form_data.update(fund_data)
+    form_data.update(approval_form='')
     return form_data
 
 

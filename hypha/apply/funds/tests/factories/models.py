@@ -82,6 +82,7 @@ class AbstractApplicationFactory(wagtail_factories.PageFactory):
 
     # Will need to update how the stages are identified as Fund Page changes
     workflow_name = factory.LazyAttribute(lambda o: workflow_for_stages(o.workflow_stages))
+    approval_form = factory.SubFactory('hypha.apply.projects.tests.factories.ProjectApprovalFormFactory')
 
     @factory.post_generation
     def forms(self, create, extracted, **kwargs):
