@@ -1,6 +1,7 @@
 {% load i18n wagtailcore_tags wagtailimages_tags %}
 
 {% with page=page.specific %}
+{% if page %}
 <a class="card" href="{% pageurl page %}">
     <h6 class="card__subheading">
         {% if page.is_open %}
@@ -21,4 +22,5 @@
     {% endif %}
     <svg class="icon icon--card-pixels"><use xlink:href="#arrow-head-pixels--transparent"></use></svg>
 </a>
+{% endif %}
 {% endwith %}
