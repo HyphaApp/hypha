@@ -1,5 +1,6 @@
 from wagtail.contrib.modeladmin.options import ModelAdmin, ModelAdminGroup
 
+from .admin_views import CreateProjectApprovalFormView, EditProjectApprovalFormView
 from .models import DocumentCategory, ProjectApprovalForm
 
 
@@ -13,6 +14,8 @@ class ProjectApprovalFormAdmin(ModelAdmin):
     model = ProjectApprovalForm
     menu_icon = 'form'
     list_display = ('name', 'used_by',)
+    create_view_class = CreateProjectApprovalFormView
+    edit_view_class = EditProjectApprovalFormView
 
     def used_by(self, obj):
         rows = list()
