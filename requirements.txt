@@ -4,13 +4,13 @@ sentry-sdk==1.5.0
 
 # Production dependencies
 Babel==2.9.1
-bleach==4.1.0
+bleach==5.0.0
 boto3==1.20.22
 celery==5.2.2
 dj-database-url==0.5.0
 django-anymail==8.4
 django-basic-auth-ip-whitelist==0.3.4
-django-bleach==1.0.0
+django-bleach==3.0.0
 django-countries==7.2.1
 django-extensions==3.1.5
 django-file-form==3.3.0
