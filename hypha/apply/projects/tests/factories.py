@@ -5,7 +5,10 @@ from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 
 from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
-from hypha.apply.stream_forms.testing.factories import FormDataFactory, FormFieldsBlockFactory
+from hypha.apply.stream_forms.testing.factories import (
+    FormDataFactory,
+    FormFieldsBlockFactory,
+)
 from hypha.apply.users.tests.factories import StaffFactory, UserFactory
 
 from ..models.payment import Invoice, InvoiceDeliverable, SupportingDocument
