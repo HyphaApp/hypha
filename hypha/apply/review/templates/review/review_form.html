@@ -34,7 +34,7 @@
             {% if field.field %}
                 {% include "forms/includes/field.html" %}
             {% else %}
-                {{ field }}
+                {{ field.block }}
             {% endif %}
         {% endfor %}
         {% if not object.id or object.is_draft %}

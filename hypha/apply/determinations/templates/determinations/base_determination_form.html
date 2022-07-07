@@ -40,7 +40,7 @@
             {% if field.field %}
                 {% include "forms/includes/field.html" %}
             {% else %}
-                {{ field }}
+                {{ field.block }}
             {% endif %}
         {% endfor %}
         {% block form_buttons %}
