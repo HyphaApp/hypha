@@ -49,7 +49,7 @@
                     {% endif %}
                 {% else %}
                     {% if field.group_number > 1 %}
-                        <div class="field-group-{{ field.group_number }}{% if not show_all_group_fields %} js-hidden{% endif %}">
+                        <div class="field-group-{{ field.group_number }}">
                             {{ field.block }}
                         </div>
                     {% else %}
