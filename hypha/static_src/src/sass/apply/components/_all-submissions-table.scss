@@ -113,13 +113,7 @@
                     }
                 }
 
-                a {
-                    color: $color--primary;
 
-                    @include media-query($table-breakpoint) {
-                        color: $color--dark-grey;
-                    }
-                }
             }
 
             // project status label
