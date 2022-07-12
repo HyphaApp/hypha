@@ -28,6 +28,7 @@ from django_tables2 import SingleTableMixin
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.views import ActivityContextMixin, CommentFormView
+from hypha.apply.stream_forms.models import BaseStreamForm
 from hypha.apply.users.decorators import (
     approver_required,
     staff_or_finance_required,
@@ -590,9 +591,14 @@ class ProjectDetailPDFView(SingleObjectMixin, View):
 
 
 @method_decorator(staff_required, name='dispatch')
-class ProjectApprovalEditView(UpdateView):
-    form_class = ProjectApprovalForm
+class ProjectApprovalEditView(BaseStreamForm, UpdateView):
+    submission_form_class = ProjectApprovalForm
     model = Project
+    template_name = 'application_projects/project_approval_form.html'
+
+    def buttons(self):
+        yield ('submit', 'primary', _('Submit'))
+        # yield ('save', 'white', _('Save draft'))
 
     def dispatch(self, request, *args, **kwargs):
         project = self.get_object()
@@ -609,6 +615,20 @@ class ProjectApprovalEditView(UpdateView):
             approval_form = self.object.submission.page.specific.approval_form
 
         return approval_form
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(
+            title=self.object.title,
+            buttons=self.buttons(),
+            **kwargs
+        )
+
+    def get_defined_fields(self):
+        approval_form = self.object.submission.get_from_parent('approval_form')
+        if approval_form:
+            return approval_form.form_fields
+        return self.object.get_defined_fields()
+
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
