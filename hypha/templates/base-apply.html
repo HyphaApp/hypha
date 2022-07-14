@@ -1,4 +1,4 @@
-{% load i18n static wagtailuserbar wagtailcore_tags wagtailimages_tags navigation_tags util_tags hijack cookieconsent_tags activity_tags apply_tags %}<!doctype html>
+{% load i18n static wagtailuserbar wagtailcore_tags wagtailimages_tags navigation_tags util_tags hijack cookieconsent_tags %}<!doctype html>
 {% wagtail_site as current_site %}
 <html class="no-js" lang="en">
     <head>
@@ -106,23 +106,7 @@
 
                 <div class="header__button-container">
                     {% if latest_notifications %}
-                    <div class="notifications notifications--dropdown">
-                        <a href="#" class="button button--contains-icons notifications__bell" aria-label="{% trans "Notifications" %}" aria-haspopup="activity" aria-expanded="false" role="button">
-                            <svg class="icon"><use xlink:href="#bell-icon"></use></svg>
-                        </a>
-                        <div class="notifications__content zeta hidden" role="activity">
-                            <h5>Notifications</h5>
-                            {% for notification in latest_notifications %}
-                            <p class="notifications__item">
-                                <strong>{{ notification.source_content_type.name|source_type }} </strong>
-                                <a href="{{ notification.source.get_absolute_url }}">{{ notification.source.title|capfirst|truncatechars:15 }}</a>
-                                : {{ notification.user }} {% ifequal notification.type 'comment' %}made a comment{% else %} {{ notification.message|safe }}
-                                {% if notification.related_object %}<a href="{{ notification.related_object.get_absolute_url }}">{{ notification.related_object|model_verbose_name }}</a>{% endif %}{% endifequal %}
-                            </p>
-                            {% endfor %}
-                            <p class="notifications__more"><a href="{% url "activity:notifications" %}">Show All</a></p>
-                        </div>
-                    </div>
+                        {% include "activity/include/notifications_dropdown.html" %}
                     {% endif %}
                     <a href="{% url 'users:account' %}" class="button button--transparent button--narrow button--contains-icons">
                         <svg class="icon icon--person"><use xlink:href="#person-icon"></use></svg>
