@@ -30,6 +30,12 @@
         {{ object.get_address_display }}
     </div>
     {% endif %}
+    {% if object.get_organization_name_display != "-" %}
+    <div class="grid__cell--span-two">
+        <h5>{% trans "Organization Name" %}</h5>
+        {{ object.get_organization_name_display }}
+    </div>
+    {% endif %}
 </div>
 
 <div class="rich-text rich-text--answers">
