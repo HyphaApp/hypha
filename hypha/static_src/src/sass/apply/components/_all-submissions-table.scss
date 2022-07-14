@@ -53,6 +53,12 @@
                     width: 110px;
                 }
             }
+
+            &.organization_name { // stylelint-disable-line selector-class-pattern
+                @include media-query($table-breakpoint) {
+                    width: 110px;
+                }
+            }
         }
 
         tr {
@@ -142,6 +148,12 @@
                 -webkit-hyphens: auto; // stylelint-disable-line property-no-vendor-prefix
                 -ms-hyphens: auto; // stylelint-disable-line property-no-vendor-prefix
                 hyphens: auto;
+            }
+
+            &.organization_name { // stylelint-disable-line selector-class-pattern
+                @include media-query($table-breakpoint) {
+                    padding-left: 15px;
+                }
             }
 
             // arrow to toggle project info - added via js
