@@ -2,6 +2,7 @@
     &--dropdown {
         position: relative;
         display: inline-block;
+        z-index: 200;
     }
 
     &__bell {

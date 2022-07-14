@@ -31,14 +31,14 @@
     <div class="tabs__content" id="tab-1">
         {% for activity in object_list %}
             {% if activity.type == 'comment' %}
-                <div class="feed__item feed__item--comment">
+                <div class="feed__item feed__item--{{ activity.type }}">
                     <div class="feed__pre-content">
                         <p class="feed__label feed__label--{{ activity.source_content_type.name|source_type|lower }}">{{ activity.source_content_type.name|source_type }}</p>
                     </div>
                     <div class="feed__content js-feed-content">
                         <div class="feed__meta js-feed-meta">
-                            <p class="feed__meta-item"><a href="{{ activity.source.get_absolute_url }}">{{ activity.source.title|capfirst }}</a>
-                                : {{ activity.user }} made a comment – {{ activity.timestamp|date:"SHORT_DATETIME_FORMAT" }}</p>
+                            <p class="feed__meta-item"><a href="{{ activity.source.get_absolute_url }}#communications">{{ activity.source.title|capfirst }}</a>
+                                : {{ activity.user.get_full_name }} {% trans "made a comment" %} – {{ activity.timestamp|date:"SHORT_DATE_FORMAT" }}</p>
                         </div>
                     </div>
                 </div>
@@ -49,15 +49,14 @@
     <div class="tabs__content" id="tab-2">
         {% for activity in object_list %}
             {% if activity.type == 'action' %}
-                <div class="feed__item feed__item--action">
+                <div class="feed__item feed__item--{{ activity.type }}">
                     <div class="feed__pre-content">
                         <p class="feed__label feed__label--{{ activity.source_content_type.name|source_type|lower }}">{{ activity.source_content_type.name|source_type }}</p>
                     </div>
                     <div class="feed__content js-feed-content">
                         <div class="feed__meta js-feed-meta">
                             <p class="feed__meta-item"><a href="{{ activity.source.get_absolute_url }}">{{ activity.source.title|capfirst }}</a>
-                                : {{ activity|display_for:request.user }} {% if activity.related_object %}<a href="{{ activity.related_object.get_absolute_url }}">{{ activity.related_object|model_verbose_name }}</a>{% endif %}
-                                 – {{ activity.timestamp|date:"SHORT_DATETIME_FORMAT" }}</p>
+                                : {{ activity.user.get_full_name }} – {{ activity.timestamp|date:"SHORT_DATE_FORMAT" }} – {{ activity|display_for:request.user }} {% if activity.related_object %}<a href="{{ activity.related_object.get_absolute_url }}" class="feed__related-item">{{ activity.related_object|model_verbose_name }} <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg></a>{% endif %}</p>
                         </div>
                     </div>
                 </div>

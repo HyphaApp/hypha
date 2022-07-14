@@ -160,6 +160,8 @@
     }
 
     &__related-item {
+        white-space: nowrap;
+
         svg {
             width: 10px;
             height: 14px;
