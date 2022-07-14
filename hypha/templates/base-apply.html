@@ -30,7 +30,9 @@
         <script src="{% static 'js/jquery.min.js' %}"></script>
         <script src="{% static 'js/js.cookie.min.js' %}"></script>
         <script src="{% static 'js/main-top.js' %}"></script>
+        {% if latest_notifications %}
         <script defer src="{% static 'js/apply/notifications.js' %}"></script>
+        {% endif %}
         {% if COOKIES_ACCEPTED and MATOMO_URL and MATOMO_SITEID %}
         {# we are only expecting strings, so make sure we escape the values #}
         <script>

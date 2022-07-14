@@ -44,8 +44,10 @@
             padding-right: 1em;
         }
 
-        .form__select {
-            margin-right: 1em;
+        .form {
+            &__select {
+                margin-right: 1em;
+            }
         }
     }
 }
