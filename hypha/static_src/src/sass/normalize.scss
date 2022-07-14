@@ -4,6 +4,8 @@
 /* Document
    ========================================================================== */
 
+@import 'apply/abstracts/variables';
+
 /**
  * 1. Correct the line height in all browsers.
  * 2. Prevent adjustments of font size after orientation changes in iOS.
@@ -229,6 +231,9 @@ button:-moz-focusring,
 
 fieldset {
   padding: 0.35em 0.75em 0.625em;
+  border-width: 1px;
+  border-style: solid;
+  border-color: $color--mid-grey;
 }
 
 /**

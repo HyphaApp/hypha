@@ -10,6 +10,14 @@
                 <span class="form__required">*</span>
             {% endif %}
         </label>
+    {% elif widget_type == 'checkbox_select_multiple' or widget_type == 'radio_select' %}
+        <fieldset>
+            <legend class="form__question form__question--{{ field_type }} {{ widget_type }}" {% if field.field.required %}required{% endif %}>
+                <span>{{ field.label }}</span>
+                {% if field.field.required %}
+                    <span class="form__required">*</span>
+                {% endif %}
+            </legend>
     {% else %}
         <label for="{{ field.id_for_label }}" class="form__question form__question--{{ field_type }} {{ widget_type }}" {% if field.field.required %}required{% endif %}>
             <span>{{ field.label }}</span>
@@ -47,5 +55,8 @@
             </div>
         {% endif %}
     </div>
+    {% if widget_type == 'checkbox_select_multiple' or widget_type == 'radio_select' %}
+        </fieldset>
+    {% endif %}
 </div>
 {% endwith %}

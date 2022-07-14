@@ -107,7 +107,7 @@
         &--multi_file_field,
         &--single_file_field,
         &--file_field {
-            @include button($color--light-blue, $color--dark-blue);
+            @include button($color--light-blue, $color--darkest-blue);
             max-width: 290px;
             text-align: center;
             background: url('./../../images/upload.svg') $color--light-blue no-repeat 40px center;
@@ -118,7 +118,7 @@
             }
 
             &:hover {
-                background: url('./../../images/upload.svg') $color--dark-blue no-repeat 40px center;
+                background: url('./../../images/upload.svg') $color--darkest-blue no-repeat 40px center;
 
                 .no-js & {
                     background: none;
@@ -283,6 +283,12 @@
     }
 
     &__help-link {
+        a {
+            &:hover {
+                cursor: pointer;
+                color: $color--darkest-blue;
+            }
+        }
     }
 
     &__open-icon {
