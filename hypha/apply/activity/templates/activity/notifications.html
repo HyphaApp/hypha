@@ -6,8 +6,8 @@
     <div class="admin-bar__inner">
         <div class="admin-bar__inner--with-button">
             <h1 class="gamma heading heading--no-margin heading--bold">{% trans "Notifications" %}</h1>
-            <form class="form notification__filters" method="get">
-                {{ filter.form.as_p }}
+            <form class="form notifications__filters" method="get">
+                {{ filter.form }}
                 <button class="button button--primary" type="submit" value="Filter">{% trans "Filter" %}</button>
             </form>
         </div>

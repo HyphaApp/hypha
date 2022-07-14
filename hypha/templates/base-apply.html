@@ -30,7 +30,7 @@
         <script src="{% static 'js/jquery.min.js' %}"></script>
         <script src="{% static 'js/js.cookie.min.js' %}"></script>
         <script src="{% static 'js/main-top.js' %}"></script>
-        <script src="{% static 'js/apply/notifications.js' %}"></script>
+        <script defer src="{% static 'js/apply/notifications.js' %}"></script>
         {% if COOKIES_ACCEPTED and MATOMO_URL and MATOMO_SITEID %}
         {# we are only expecting strings, so make sure we escape the values #}
         <script>
@@ -106,21 +106,21 @@
 
                 <div class="header__button-container">
                     {% if latest_notifications %}
-                    <div class="dropdown">
-                        <a href="#" onclick="return notificationToggle()" class=" button--contains-icons dropbtn" aria-haspopup="activity" aria-expanded="false" role="button">
+                    <div class="notifications notifications--dropdown">
+                        <a href="#" class="button button--contains-icons notifications__bell" aria-label="{% trans "Notifications" %}" aria-haspopup="activity" aria-expanded="false" role="button">
                             <svg class="icon"><use xlink:href="#bell-icon"></use></svg>
                         </a>
-                        <div id="notificationDropdown" class="dropdown-content" role="activity">
-                            <p><b>Notifications</b></p>
+                        <div class="notifications__content zeta hidden" role="activity">
+                            <h5>Notifications</h5>
                             {% for notification in latest_notifications %}
-                            <p class="dropdown-item">
-                                <span><b>{{ notification.source_content_type.name|source_type }}</b></span>
+                            <p class="notifications__item">
+                                <strong>{{ notification.source_content_type.name|source_type }} </strong>
                                 <a href="{{ notification.source.get_absolute_url }}">{{ notification.source.title|capfirst|truncatechars:15 }}</a>
                                 : {{ notification.user }} {% ifequal notification.type 'comment' %}made a comment{% else %} {{ notification.message|safe }}
                                 {% if notification.related_object %}<a href="{{ notification.related_object.get_absolute_url }}">{{ notification.related_object|model_verbose_name }}</a>{% endif %}{% endifequal %}
                             </p>
                             {% endfor %}
-                            <p class="show-all"><a href="{% url "activity:notifications" %}">Show All</a></p>
+                            <p class="notifications__more"><a href="{% url "activity:notifications" %}">Show All</a></p>
                         </div>
                     </div>
                     {% endif %}

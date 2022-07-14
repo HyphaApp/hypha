@@ -4,6 +4,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models import Case, Value, When
 from django.db.models.functions import Concat
+from django.utils import timezone
 
 from .options import MESSAGES
 
@@ -53,6 +54,9 @@ class ActivityQuerySet(BaseActivityQuerySet):
 
     def actions(self):
         return self.filter(type=ACTION)
+
+    def latest(self):
+        return self.filter(timestamp__gte=(timezone.now() - timezone.timedelta(days=30)))
 
 
 class ActivityBaseManager(models.Manager):

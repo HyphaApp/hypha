@@ -70,7 +70,7 @@ class NotificationsView(ListView):
 
     def get_queryset(self):
         # List only last 30 days' activities
-        queryset = Activity.objects.filter(timestamp__gte=(timezone.now() - timezone.timedelta(days=30)))
+        queryset = Activity.objects.latest()
         self.filterset = self.filterset_class(self.request.GET, queryset=queryset)
         return self.filterset.qs.distinct().order_by('-timestamp')
 
