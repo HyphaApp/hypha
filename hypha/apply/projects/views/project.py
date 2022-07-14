@@ -629,7 +629,6 @@ class ProjectApprovalEditView(BaseStreamForm, UpdateView):
             return approval_form.form_fields
         return self.object.get_defined_fields()
 
-
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
 
