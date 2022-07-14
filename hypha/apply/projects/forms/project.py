@@ -4,6 +4,7 @@ from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
 from hypha.apply.funds.models import ApplicationSubmission
+from hypha.apply.stream_forms.forms import StreamBaseForm
 from hypha.apply.users.groups import STAFF_GROUP_NAME
 
 from ..models.project import COMMITTED, Approval, Contract, PacketFile, Project
@@ -76,30 +77,38 @@ class CreateApprovalForm(forms.ModelForm):
         return by
 
 
-class ProjectApprovalForm(forms.ModelForm):
+class MixedMetaClass(type(StreamBaseForm), type(forms.ModelForm)):
+    pass
+
+
+class ProjectApprovalForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass):
     class Meta:
         fields = [
             'title',
-            'value',
-            'proposed_start',
-            'proposed_end',
         ]
         model = Project
         widgets = {
-            'title': forms.TextInput,
-            'proposed_end': forms.DateInput,
-            'proposed_start': forms.DateInput,
+            'title': forms.HiddenInput()
         }
 
     def __init__(self, *args, extra_fields=None, **kwargs):
         super().__init__(*args, **kwargs)
-        if extra_fields:
-            self.fields = {
-                **self.fields,
-                **extra_fields,
-            }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        cleaned_data['form_data'] = {
+            key: value
+            for key, value in cleaned_data.items()
+            if key not in self._meta.fields
+        }
+        return cleaned_data
 
     def save(self, *args, **kwargs):
+        self.instance.form_data = {
+            field: self.cleaned_data[field]
+            for field in self.instance.question_field_ids
+            if field in self.cleaned_data
+        }
         self.instance.user_has_updated_details = True
         return super().save(*args, **kwargs)
 

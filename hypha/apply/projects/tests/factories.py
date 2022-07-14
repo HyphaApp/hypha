@@ -5,6 +5,10 @@ from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 
 from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
+from hypha.apply.stream_forms.testing.factories import (
+    FormDataFactory,
+    FormFieldsBlockFactory,
+)
 from hypha.apply.users.tests.factories import StaffFactory, UserFactory
 
 from ..models.payment import Invoice, InvoiceDeliverable, SupportingDocument
@@ -16,6 +20,7 @@ from ..models.project import (
     DocumentCategory,
     PacketFile,
     Project,
+    ProjectApprovalForm,
 )
 from ..models.report import Report, ReportConfig, ReportVersion
 
@@ -53,6 +58,18 @@ class DocumentCategoryFactory(factory.django.DjangoModelFactory):
         model = DocumentCategory
 
 
+class ProjectApprovalFormFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = ProjectApprovalForm
+
+    name = factory.Faker('word')
+    form_fields = FormFieldsBlockFactory
+
+
+class ProjectApprovalFormDataFactory(FormDataFactory):
+    field_factory = FormFieldsBlockFactory
+
+
 class ProjectFactory(factory.django.DjangoModelFactory):
     submission = factory.SubFactory(ApplicationSubmissionFactory)
     user = factory.SubFactory(UserFactory)
@@ -64,6 +81,12 @@ class ProjectFactory(factory.django.DjangoModelFactory):
     proposed_end = factory.LazyFunction(timezone.now)
 
     is_locked = False
+
+    form_fields = FormFieldsBlockFactory
+    form_data = factory.SubFactory(
+        ProjectApprovalFormDataFactory,
+        form_fields=factory.SelfAttribute('..form_fields'),
+    )
 
     class Meta:
         model = Project

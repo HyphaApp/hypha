@@ -16,6 +16,7 @@ from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel
 from wagtail.contrib.settings.models import BaseSetting, register_setting
 from wagtail.core.fields import StreamField
 
@@ -370,6 +371,19 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
 
     #     self.sent_to_compliance_at = timezone.now()
     #     self.save(update_fields=['sent_to_compliance_at'])
+
+
+class ProjectApprovalForm(BaseStreamForm, models.Model):
+    name = models.CharField(max_length=255)
+    form_fields = StreamField(FormFieldsBlock())
+
+    panels = [
+        FieldPanel('name'),
+        StreamFieldPanel('form_fields'),
+    ]
+
+    def __str__(self):
+        return self.name
 
 
 @register_setting
