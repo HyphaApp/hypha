@@ -55,3 +55,10 @@ def display_for(activity, user):
 def visibility_options(activity, user):
     choices = activity.visibility_choices_for(user)
     return json.dumps(choices)
+
+
+@register.filter
+def source_type(value):
+    if value and "submission" in value:
+        return "Submission"
+    return str(value).capitalize()

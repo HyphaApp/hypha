@@ -1,0 +1,54 @@
+.notifications {
+    &--dropdown {
+        position: relative;
+        display: inline-block;
+        z-index: 200;
+    }
+
+    &__bell {
+        padding: 7px 12px;
+        cursor: pointer;
+    }
+
+    &__content {
+        position: absolute;
+        right: 1em;
+        padding: 1em;
+        margin-top: .5em;
+        background-color: $color--light-grey;
+        min-width: 400px;
+        box-shadow: 2px 2px 6px 1px $color--dark-grey;
+    }
+
+    &__item {
+        padding-bottom: 1em;
+        border-bottom: 1px solid $color--dark-grey;
+    }
+
+    &__more {
+        text-align: center;
+        font-weight: $weight--semibold;
+    }
+
+    &__filters {
+        display: flex;
+        align-items: center;
+        padding: 4px;
+        justify-content: space-between;
+
+        label {
+            font-weight: $weight--semibold;
+            padding-right: 1em;
+        }
+
+        select {
+            padding-right: 1em;
+        }
+
+        .form {
+            &__select {
+                margin-right: 1em;
+            }
+        }
+    }
+}

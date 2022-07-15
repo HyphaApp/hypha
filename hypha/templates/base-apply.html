@@ -30,6 +30,9 @@
         <script src="{% static 'js/jquery.min.js' %}"></script>
         <script src="{% static 'js/js.cookie.min.js' %}"></script>
         <script src="{% static 'js/main-top.js' %}"></script>
+        {% if latest_notifications %}
+        <script defer src="{% static 'js/apply/notifications.js' %}"></script>
+        {% endif %}
         {% if COOKIES_ACCEPTED and MATOMO_URL and MATOMO_SITEID %}
         {# we are only expecting strings, so make sure we escape the values #}
         <script>
@@ -104,6 +107,9 @@
                 </section>
 
                 <div class="header__button-container">
+                    {% if latest_notifications %}
+                        {% include "activity/include/notifications_dropdown.html" %}
+                    {% endif %}
                     <a href="{% url 'users:account' %}" class="button button--transparent button--narrow button--contains-icons">
                         <svg class="icon icon--person"><use xlink:href="#person-icon"></use></svg>
                         {{ request.user }}

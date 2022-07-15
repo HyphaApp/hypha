@@ -52,6 +52,14 @@
             background-color: $color--mint;
         }
 
+        &--submission {
+            background-color: $color--green;
+        }
+
+        &--project {
+            background-color: $color--mint;
+        }
+
         &--mobile {
             display: block;
             margin-right: 10px;
@@ -152,6 +160,8 @@
     }
 
     &__related-item {
+        white-space: nowrap;
+
         svg {
             width: 10px;
             height: 14px;

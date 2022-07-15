@@ -1,8 +1,11 @@
 from django.utils import timezone
-from django.views.generic import CreateView
+from django.utils.decorators import method_decorator
+from django.views.generic import CreateView, ListView
 
+from hypha.apply.users.decorators import staff_required
 from hypha.apply.utils.views import DelegatedViewMixin
 
+from .filters import NotificationFilter
 from .forms import CommentForm
 from .messaging import MESSAGES, messenger
 from .models import COMMENT, Activity
@@ -57,3 +60,21 @@ class CommentFormView(DelegatedViewMixin, CreateView):
         kwargs = super().get_form_kwargs()
         kwargs.pop('instance')
         return kwargs
+
+
+@method_decorator(staff_required, name='dispatch')
+class NotificationsView(ListView):
+    model = Activity
+    template_name = 'activity/notifications.html'
+    filterset_class = NotificationFilter
+
+    def get_queryset(self):
+        # List only last 30 days' activities
+        queryset = Activity.objects.latest()
+        self.filterset = self.filterset_class(self.request.GET, queryset=queryset)
+        return self.filterset.qs.distinct().order_by('-timestamp')
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(NotificationsView, self).get_context_data()
+        context['filter'] = self.filterset
+        return context
