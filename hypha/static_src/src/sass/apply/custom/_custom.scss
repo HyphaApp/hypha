@@ -1,1 +1,7 @@
 // stylelint-disable no-empty-source
+// stylelint-disable selector-class-pattern
+
+.list__item--average_score {
+    color: $color--mid-dark-grey;
+    font-weight: 400;
+}

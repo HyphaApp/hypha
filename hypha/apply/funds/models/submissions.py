@@ -13,6 +13,7 @@ from django.db.models import (
     Count,
     FloatField,
     IntegerField,
+    DecimalField,
     OuterRef,
     Prefetch,
     Q,
@@ -245,6 +246,12 @@ class ApplicationSubmissionQueryset(JSONOrderable):
                     count=Count('pk', distinct=True)
                 ).values('count'),
                 output_field=IntegerField(),
+            ),
+            review_score_avg=Subquery(
+                reviews.submitted().values('submission').annotate(
+                    avg=Avg('score')
+                ).values('avg'),
+                output_field=DecimalField(),
             ),
             review_recommendation=Case(
                 When(opinion_disagree__gt=0, then=MAYBE),
