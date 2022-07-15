@@ -30,6 +30,7 @@ class ViewDispatcher(View):
     community_view: View = None
     applicant_view: View = None
     finance_view: View = None
+    contracting_view: View = None
 
     def admin_check(self, request):
         return request.user.is_apply_staff
@@ -46,6 +47,9 @@ class ViewDispatcher(View):
     def finance_check(self, request):
         return request.user.is_finance
 
+    def contracting_check(self, request):
+        return request.user.is_contracting
+
     def dispatch(self, request, *args, **kwargs):
         view = self.applicant_view
 
@@ -59,6 +63,8 @@ class ViewDispatcher(View):
             view = self.community_view
         elif self.finance_check(request):
             view = self.finance_view
+        elif self.contracting_check(request):
+            view = self.contracting_view
 
         if view:
             return view.as_view()(request, *args, **kwargs)
