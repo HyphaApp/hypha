@@ -31,6 +31,7 @@ from hypha.apply.activity.views import ActivityContextMixin, CommentFormView
 from hypha.apply.stream_forms.models import BaseStreamForm
 from hypha.apply.users.decorators import (
     approver_required,
+    staff_or_finance_or_contracting_required,
     staff_or_finance_required,
     staff_required,
 )
@@ -47,6 +48,7 @@ from ..files import get_files
 from ..filters import InvoiceListFilter, ProjectListFilter, ReportListFilter
 from ..forms import (
     ApproveContractForm,
+    ChangePAFStatusForm,
     CreateApprovalForm,
     ProjectApprovalForm,
     RejectionForm,
@@ -63,6 +65,7 @@ from ..models.project import (
     CONTRACTING,
     IN_PROGRESS,
     PROJECT_STATUS_CHOICES,
+    WAITING_FOR_APPROVAL,
     Approval,
     Contract,
     PacketFile,
@@ -80,7 +83,9 @@ class SendForApprovalView(DelegatedViewMixin, UpdateView):
     model = Project
 
     def form_valid(self, form):
-        # lock project
+        project = self.kwargs['object']
+        old_stage = project.get_status_display()
+
         response = super().form_valid(form)
 
         messenger(
@@ -88,6 +93,17 @@ class SendForApprovalView(DelegatedViewMixin, UpdateView):
             request=self.request,
             user=self.request.user,
             source=self.object,
+        )
+
+        project.status = WAITING_FOR_APPROVAL
+        project.save(update_fields=['status'])
+
+        messenger(
+            MESSAGES.PROJECT_TRANSITION,
+            request=self.request,
+            user=self.request.user,
+            source=project,
+            related=old_stage,
         )
 
         return response
@@ -481,6 +497,7 @@ class ApplicantProjectDetailView(
 class ProjectDetailView(ViewDispatcher):
     admin_view = AdminProjectDetailView
     finance_view = AdminProjectDetailView
+    contracting_view = AdminProjectDetailView
     applicant_view = ApplicantProjectDetailView
 
 
@@ -536,13 +553,51 @@ class ContractPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
 
 # PROJECT EDIT
 
-@method_decorator(staff_or_finance_required, name='dispatch')
+@method_decorator(staff_or_finance_or_contracting_required, name='dispatch')
+class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
+    # WIP todo: needs to create activity and send notifications
+    form_class = ChangePAFStatusForm
+    context_name = 'change_paf_status'
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        if form.cleaned_data['comment']:
+            invoice_status_change = _('<p>PAF status updated to: {status}.</p>').format(status=self.object.status_display)
+            comment = f'<p>{self.object.comment}.</p>'
+
+            message = invoice_status_change + comment
+
+            # Activity.objects.create(
+            #     user=self.request.user,
+            #     type=COMMENT,
+            #     source=self.object.project,
+            #     timestamp=timezone.now(),
+            #     message=message,
+            #     visibility=ALL,
+            #     related_object=self.object,
+            # )
+
+        # messenger(
+        #     MESSAGES.UPDATE_INVOICE_STATUS,
+        #     request=self.request,
+        #     user=self.request.user,
+        #     source=self.object.project,
+        #     related=self.object,
+        # )
+
+        return response
+
+
+@method_decorator(staff_or_finance_or_contracting_required, name='dispatch')
 class ProjectDetailSimplifiedView(DetailView):
+    form_views = [
+        ChangePAFStatusView
+    ]
     model = Project
     template_name_suffix = '_simplified_detail'
 
 
-@method_decorator(staff_required, name='dispatch')
+@method_decorator(staff_or_finance_or_contracting_required, name='dispatch')
 class ProjectDetailPDFView(SingleObjectMixin, View):
     model = Project
 
@@ -590,7 +645,7 @@ class ProjectDetailPDFView(SingleObjectMixin, View):
         )
 
 
-@method_decorator(staff_required, name='dispatch')
+@method_decorator(staff_or_finance_or_contracting_required, name='dispatch')
 class ProjectApprovalEditView(BaseStreamForm, UpdateView):
     submission_form_class = ProjectApprovalForm
     model = Project
@@ -598,7 +653,6 @@ class ProjectApprovalEditView(BaseStreamForm, UpdateView):
 
     def buttons(self):
         yield ('submit', 'primary', _('Submit'))
-        # yield ('save', 'white', _('Save draft'))
 
     def dispatch(self, request, *args, **kwargs):
         project = self.get_object()
