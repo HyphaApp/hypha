@@ -53,19 +53,6 @@
                 margin-left: 10px;
             }
 
-            // show truncated emails on hover
-            &:hover {
-                position: absolute;
-                max-width: initial;
-                overflow: visible;
-                background-color: $color--mist;
-
-                + #{$root}__item--reviewer-outcome {
-                    width: 100%;
-                    text-align: right;
-                }
-            }
-
             #{$root}__item--opinion & {
                 font-weight: $weight--normal;
             }

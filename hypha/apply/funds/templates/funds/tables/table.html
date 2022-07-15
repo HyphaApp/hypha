@@ -71,6 +71,9 @@
                                     <span class="list__item--reviewer-name list__item--average_score">
                                         Avg. score
                                     </span>
+                                    <span class="list__item">
+                                        &nbsp;
+                                    </span>
                                     <span class="list__item list__item--review-score list__item--average_score">{{ submission.review_score_avg|floatformat:"1" }}</span>
                                 </li>
                                 {% for reviewer in submission.hasnt_reviewed %}
