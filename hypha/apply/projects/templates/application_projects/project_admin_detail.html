@@ -69,14 +69,14 @@
         {% endif %}
         data-fancybox
         data-src="#send-for-approval"
-        class="button button--bottom-space button--primary button--full-width {% if not object.can_send_for_approval %}button--tooltip-disabled{% endif %}"
+        class="button button--bottom-space button--primary button--full-width {% if not object.can_send_for_approval or not user.is_apply_staff %}button--tooltip-disabled{% endif %}"
         href="#">
         {% trans "Submit for Approval" %}
     </a>
 {% endif %}
 
 {% if object.can_make_approval %}
-  {% user_can_approve_project object user as user_can_approve %}
+  {% user_can_final_approve_project object user as user_can_approve %}
   <a data-fancybox
       data-src="#approve"
       class="button button--bottom-space button--primary button--full-width {% if user_can_approve %}is-not-disabled{% else %}is-disabled{% endif %}"
@@ -84,12 +84,13 @@
       {% trans "Approve" %}
   </a>
 
-  <a data-fancybox
-      data-src="#request-project-changes"
-     class="button button--bottom-space button--primary button--full-width {% if user_can_approve %}is-not-disabled{% else %}is-disabled{% endif %}"
-      href="#">
-      {% trans "Request changes" %}
-  </a>
+  <a data-fancybox data-src="#change-status" class="button button--primary button--full-width {% if user == object.user %} is-disabled {% endif %}" href="#">{% trans "Update Status" %}</a>
+  <div class="modal" id="change-status">
+      <h4 class="modal__header-bar">{% trans "Update Status" %}</h4>
+      <p>{% trans "Current status" %}: {{ object.get_status_display }}</p>
+      {% trans "Update Status" as update %}
+      {% include 'funds/includes/delegated_form_base.html' with form=change_paf_status value=update %}
+  </div>
 {% endif %}
 
 {% endblock %}
