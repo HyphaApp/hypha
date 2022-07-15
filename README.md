@@ -27,7 +27,8 @@
 - Built with [Django](https://www.djangoproject.com/), [Wagtail](https://wagtail.io/), and [React](https://reactjs.org/)
 - Deploy with [Heroku](https://docs.hypha.app/deployment/heroku), [Docker](https://docs.hypha.app/deployment/docker), or [your own server](https://docs.hypha.app/deployment/stand-alone).
 
-**Hypha Community** We offer several virtual meeting spaces, including communication forums, chat room channels, and an open GitHub repository for new and current adopters. Join our forums to discuss new features and report bugs for continuous improvement of the platform. [Get Started](https://we.hypha.app/)
+### Hypha Community
+We offer several virtual meeting spaces, including communication forums, chat room channels, and an open GitHub repository for new and current adopters. Join our forums to discuss new features and report bugs for continuous improvement of the platform. [Get Started](https://we.hypha.app/)
 
 You are welcome to test Hypha on our Sandbox Site. Enter the demo site and freely explore the potential of Hypha and its features. [Online Demo](https://sandbox.opentech.fund/)
 
