@@ -27,49 +27,30 @@
 - Built with [Django](https://www.djangoproject.com/), [Wagtail](https://wagtail.io/), and [React](https://reactjs.org/)
 - Deploy with [Heroku](https://docs.hypha.app/deployment/heroku), [Docker](https://docs.hypha.app/deployment/docker), or [your own server](https://docs.hypha.app/deployment/stand-alone).
 
-## Maintainers
+**Hypha Community** We offer several virtual meeting spaces, including communication forums, chat room channels, and an open GitHub repository for new and current adopters. Join our forums to discuss new features and report bugs for continuous improvement of the platform. [Get Started](https://we.hypha.app/)
 
-- [Di Luong](https://www.opentech.fund/about/people/di-luong/) @ [Open Technology Fund](https://www.opentech.fund/)
-- [Dan Blah](https://github.com/danblah) @ [Reset](https://www.reset.tech/)
-- [Fredrik Jonsson](https://github.com/frjo) @ [Combonetwork](https://www.combonet.se/)
+You are welcome to test Hypha on our Sandbox Site. Enter the demo site and freely explore the potential of Hypha and its features. [Online Demo](https://sandbox.opentech.fund/)
 
-## Community
+## Who contributes to Hypha? ##
 
-### Contributors
+Hypha is improved by a small community of developers, designers, and users. As an open source software with a [BSD 3-clause](https://github.com/HyphaApp/hypha/blob/main/LICENSE) license, we welcome any contribution to expand on what the platform can do and to create add-on functionality not already available. OTF currently partners with [Fredrik Jonsson](https://github.com/frjo) @ [Combonetwork](https://www.combonet.se/), Lead Developer, to ensure the long-term maintenance, security, and sustainability of Hypha.
 
-With thanks to all the people who have contributed code & UX design to Hypha: <3
+We are grateful to organizations that have chosen to implement Hypha and appreciate any and all code, design, documentation, bug reports, and other forms of contributions:
 
-- [Maxwell Pearl](https://maxwellpearl.com/)
-- [Psycle](https://psycle.com/)
+- [Open Technology Strategies](https://www.opentechstrategies.com)                
 - [Remote Inning](https://www.remoteinning.com/)
+- [Maxwell Pearl](https://maxwellpearl.com/)
+- [Psycle](https://psycle.com/)                                                    
 - [Simply Secure](https://simplysecure.org/)
 - [Throneless Technology](https://throneless.tech/)
 - [Torchbox](https://www.torchbox.com/)
 
-### Implementers
+## These organizations are already using Hypha ##
 
-Thank you brave folks who choose to use Hypha <3
-
+- [Digital Defenders Partnership](https://www.digitaldefenders.org/)
+- [Amateur Radio Digital Communications](https://www.ampr.org/)
 - [Digital Freedom Fund](https://digitalfreedomfund.org/)
-- [Open Technology Fund](https://www.opentech.fund)
-- [Reset](https://www.reset.tech)
-
-### Sponsors
-
-Thank you for your generosity <3
-
-- [Open Technology Fund](https://www.opentech.fund)
-- [Reset](https://www.reset.tech)
-
-## Sponsor Hypha
-
-Hypha is an open source project made possible thanks to the support of sponsors. If you rely on Hypha, please consider becoming a sponsor to help those contributing code. Hypha can be supported by anyone and the money will be distributed directly to contributors. You can provide general support via [Open Collective](https://opencollective.com/hypha) or [Liberapay](https://liberapay.com/hypha). You can sponsor specific issues via [Issuehunt](https://issuehunt.io/r/OpenTechFund/hypha). Thanks in advance <3
-
-[![Sponsor with Liberapay](https://liberapay.com/assets/widgets/donate.svg)](https://liberapay.com/hypha)
-
-[![Sponsor with Open Collective](https://opencollective.com/hypha/tiers/backer.svg?avatarHeight=75&width=600)](https://opencollective.com/hypha)
-
-[![Find and sponsor issues](https://issuehunt.io/static/embed/issuehunt-button-v1.svg)](https://issuehunt.io/r/OpenTechFund/hypha)
+- [Open Technology Fund](https://www.opentech.fund/)
 
 ## More information
 
@@ -77,5 +58,5 @@ Hypha is an open source project made possible thanks to the support of sponsors.
 * Docs: https://docs.hypha.app/
 * Community forum (Discourse): https://we.hypha.app/
 * Chat (Zulip): https://chat.hypha.app/
-* Why Hypha? **[Hyphae](https://en.wikipedia.org/wiki/Mycorrhizal_network):** long, branching ecosystem enriching organisms that form interconnected networks to collectively exchange resources. Hopefully, Hypha helps it's users do the same.
+* Why Hypha? [Hyphae](https://en.wikipedia.org/wiki/Mycorrhizal_network):** long, branching ecosystem enriching organisms that form interconnected networks to collectively exchange resources. Hopefully, Hypha helps it's users do the same.
 * Copyright (C) 2021 - Open Technology Fund
