@@ -1,6 +1,6 @@
 from django import template
 
-from ..models.project import COMMITTED
+from ..models.project import COMMITTED, WAITING_FOR_APPROVAL
 
 register = template.Library()
 
@@ -8,7 +8,7 @@ register = template.Library()
 @register.simple_tag
 def user_can_upload_contract(project, user):
     if user.is_apply_staff:
-        return project.status != COMMITTED
+        return project.status not in [COMMITTED, WAITING_FOR_APPROVAL]
 
     # Does the Project have any unapproved contracts?
     latest_contract = project.contracts.order_by('-created_at').first()

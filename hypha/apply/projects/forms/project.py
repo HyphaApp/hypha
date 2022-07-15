@@ -113,6 +113,50 @@ class ProjectApprovalForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaCl
         return super().save(*args, **kwargs)
 
 
+class ChangePAFStatusForm(forms.ModelForm):
+    # WIP todo: need to update this on the basis if wagtail PAF's reviewers roles
+    name_prefix = 'change_paf_status_form'
+
+    class Meta:
+        fields = ['status', ]
+        model = Project
+
+    def __init__(self, instance, user, *args, **kwargs):
+        super().__init__(instance=instance, *args, **kwargs)
+        # self.initial['comment'] = ''
+        # status_field = self.fields['status']
+        # user_choices = invoice_status_user_choices(user)
+        # possible_status_transitions_lut = {
+        #     SUBMITTED: filter_request_choices([CHANGES_REQUESTED_BY_STAFF, APPROVED_BY_STAFF, DECLINED], user_choices),
+        #     RESUBMITTED: filter_request_choices([CHANGES_REQUESTED_BY_STAFF, APPROVED_BY_STAFF, DECLINED], user_choices),
+        #     CHANGES_REQUESTED_BY_STAFF: filter_request_choices([DECLINED], user_choices),
+        #     APPROVED_BY_STAFF: filter_request_choices(
+        #         [
+        #             CHANGES_REQUESTED_BY_FINANCE_1, APPROVED_BY_FINANCE_1,
+        #         ],
+        #         user_choices
+        #     ),
+        #     CHANGES_REQUESTED_BY_FINANCE_1: filter_request_choices([CHANGES_REQUESTED_BY_STAFF, DECLINED], user_choices),
+        #     CHANGES_REQUESTED_BY_FINANCE_2: filter_request_choices(
+        #         [
+        #             CHANGES_REQUESTED_BY_FINANCE_1, APPROVED_BY_FINANCE_1,
+        #         ],
+        #         user_choices
+        #     ),
+        #     APPROVED_BY_FINANCE_1: filter_request_choices([CHANGES_REQUESTED_BY_FINANCE_2, APPROVED_BY_FINANCE_2], user_choices),
+        #     APPROVED_BY_FINANCE_2: filter_request_choices([CONVERTED, PAID], user_choices),
+        #     CONVERTED: filter_request_choices([PAID], user_choices),
+        # }
+        # status_field.choices = possible_status_transitions_lut.get(instance.status, [])
+
+    # def clean(self):
+    #     cleaned_data = super().clean()
+    #     status = cleaned_data['status']
+    #     if not self.instance.valid_checks and status == APPROVED_BY_FINANCE_1:
+    #         self.add_error('status', _('Required checks on this invoice need to be compeleted for approval.'))
+    #     return cleaned_data
+
+
 class RejectionForm(forms.Form):
     comment = forms.CharField(widget=forms.Textarea)
 

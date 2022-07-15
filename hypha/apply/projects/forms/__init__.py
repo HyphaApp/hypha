@@ -6,6 +6,7 @@ from .payment import (
 )
 from .project import (
     ApproveContractForm,
+    ChangePAFStatusForm,
     CreateApprovalForm,
     CreateProjectForm,
     ProjectApprovalForm,
@@ -30,6 +31,7 @@ from .vendor import (
 __all__ = [
     'SelectDocumentForm',
     'ApproveContractForm',
+    'ChangePAFStatusForm',
     'CreateProjectForm',
     'CreateApprovalForm',
     'ProjectApprovalForm',

@@ -16,9 +16,14 @@ from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+
+from modelcluster.fields import ParentalKey
+from modelcluster.models import ClusterableModel
 from wagtail.admin.panels import FieldPanel
+from wagtail.admin.edit_handlers import InlinePanel, StreamFieldPanel
 from wagtail.contrib.settings.models import BaseSetting, register_setting
 from wagtail.fields import StreamField
+from wagtail.core.models import Orderable
 
 from addressfield.fields import ADDRESS_FIELDS_ORDER
 from hypha.apply.funds.models.mixins import AccessFormData
@@ -41,12 +46,14 @@ def document_path(instance, filename):
 
 
 COMMITTED = 'committed'
+WAITING_FOR_APPROVAL = 'waiting_for_approval'
 CONTRACTING = 'contracting'
 IN_PROGRESS = 'in_progress'
 CLOSING = 'closing'
 COMPLETE = 'complete'
 PROJECT_STATUS_CHOICES = [
     (COMMITTED, _('Committed')),
+    (WAITING_FOR_APPROVAL, _('Waiting for Approval')),
     (CONTRACTING, _('Contracting')),
     (IN_PROGRESS, _('In Progress')),
     (CLOSING, _('Closing')),
@@ -73,6 +80,11 @@ class ProjectQuerySet(models.QuerySet):
             is_locked=True,
             status=COMMITTED,
             approvals__isnull=True,
+        )
+
+    def waiting_for_approval(self):
+        return self.filter(
+            status=WAITING_FOR_APPROVAL,
         )
 
     def by_end_date(self, desc=False):
@@ -276,11 +288,13 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
             return True
 
         # Approver can edit it when they are approving
-        return user.is_approver and self.can_make_approval
+        if self.can_make_approval:
+            if user.is_finance or user.is_approver or user.is_contracting:
+                return True
 
     @property
     def editable(self):
-        if self.status not in (CONTRACTING, COMMITTED):
+        if self.status not in (CONTRACTING, WAITING_FOR_APPROVAL, COMMITTED):
             return True
 
         # Someone has approved the project - consider it locked while with contracting
@@ -297,7 +311,11 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
 
     @property
     def can_make_approval(self):
-        return self.is_locked and self.status == COMMITTED
+        return self.is_locked and self.status == WAITING_FOR_APPROVAL
+
+    @property
+    def can_update_paf_status(self):
+        return self.status == WAITING_FOR_APPROVAL
 
     def can_request_funding(self):
         """
@@ -386,10 +404,21 @@ class ProjectApprovalForm(BaseStreamForm, models.Model):
         return self.name
 
 
+class PAFReviewersRole(Orderable):
+    role = models.CharField(max_length=200)
+    page = ParentalKey('ProjectSettings', related_name='paf_reviewers_roles')
+
+
 @register_setting
-class ProjectSettings(BaseSetting):
+class ProjectSettings(BaseSetting, ClusterableModel):
     compliance_email = models.TextField("Compliance Email")
     vendor_setup_required = models.BooleanField(default=True)
+
+    panels = [
+        FieldPanel('compliance_email'),
+        FieldPanel('vendor_setup_required'),
+        InlinePanel('paf_reviewers_roles', label=_('PAF Reviewers Roles')),
+    ]
 
 
 class Approval(models.Model):
