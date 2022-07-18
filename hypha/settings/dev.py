@@ -20,7 +20,6 @@ INSTALLED_APPS = INSTALLED_APPS + [
     'wagtail.contrib.styleguide',
 ]
 
-
 SECURE_SSL_REDIRECT = False
 
 # Change these in local.py.
@@ -31,9 +30,6 @@ try:
     from .local import *  # noqa
 except ImportError:
     pass
-
-PROJECTS_ENABLED = True
-PROJECTS_AUTO_CREATE = True
 
 # We add these here so they can react on settings made in local.py.
 
