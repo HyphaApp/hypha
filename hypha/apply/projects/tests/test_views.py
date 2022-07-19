@@ -288,7 +288,7 @@ class TestSendForApprovalView(BaseViewTestCase):
         project.refresh_from_db()
 
         self.assertTrue(project.is_locked)
-        self.assertEqual(project.status, 'committed')
+        self.assertEqual(project.status, 'waiting_for_approval')
 
 
 class TestApplicantUploadContractView(BaseViewTestCase):
