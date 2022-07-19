@@ -7,7 +7,15 @@ from hypha.apply.funds.models import ApplicationSubmission
 from hypha.apply.stream_forms.forms import StreamBaseForm
 from hypha.apply.users.groups import STAFF_GROUP_NAME
 
-from ..models.project import COMMITTED, Approval, Contract, PacketFile, Project
+from ..models.project import (
+    COMMITTED,
+    PAF_STATUS_CHOICES,
+    Approval,
+    Contract,
+    PacketFile,
+    PAFReviewersRole,
+    Project,
+)
 
 User = get_user_model()
 
@@ -114,47 +122,21 @@ class ProjectApprovalForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaCl
 
 
 class ChangePAFStatusForm(forms.ModelForm):
-    # WIP todo: need to update this on the basis if wagtail PAF's reviewers roles
     name_prefix = 'change_paf_status_form'
+    paf_reviewers_roles = PAFReviewersRole.objects.all().only('role')
+    paf_status = forms.ChoiceField(choices=PAF_STATUS_CHOICES)
+    role = forms.ModelChoiceField(queryset=paf_reviewers_roles)
+    comment = forms.CharField(required=False, widget=forms.Textarea)
 
     class Meta:
-        fields = ['status', ]
+        fields = ['paf_status', 'role', 'comment']
         model = Project
 
     def __init__(self, instance, user, *args, **kwargs):
         super().__init__(instance=instance, *args, **kwargs)
-        # self.initial['comment'] = ''
-        # status_field = self.fields['status']
-        # user_choices = invoice_status_user_choices(user)
-        # possible_status_transitions_lut = {
-        #     SUBMITTED: filter_request_choices([CHANGES_REQUESTED_BY_STAFF, APPROVED_BY_STAFF, DECLINED], user_choices),
-        #     RESUBMITTED: filter_request_choices([CHANGES_REQUESTED_BY_STAFF, APPROVED_BY_STAFF, DECLINED], user_choices),
-        #     CHANGES_REQUESTED_BY_STAFF: filter_request_choices([DECLINED], user_choices),
-        #     APPROVED_BY_STAFF: filter_request_choices(
-        #         [
-        #             CHANGES_REQUESTED_BY_FINANCE_1, APPROVED_BY_FINANCE_1,
-        #         ],
-        #         user_choices
-        #     ),
-        #     CHANGES_REQUESTED_BY_FINANCE_1: filter_request_choices([CHANGES_REQUESTED_BY_STAFF, DECLINED], user_choices),
-        #     CHANGES_REQUESTED_BY_FINANCE_2: filter_request_choices(
-        #         [
-        #             CHANGES_REQUESTED_BY_FINANCE_1, APPROVED_BY_FINANCE_1,
-        #         ],
-        #         user_choices
-        #     ),
-        #     APPROVED_BY_FINANCE_1: filter_request_choices([CHANGES_REQUESTED_BY_FINANCE_2, APPROVED_BY_FINANCE_2], user_choices),
-        #     APPROVED_BY_FINANCE_2: filter_request_choices([CONVERTED, PAID], user_choices),
-        #     CONVERTED: filter_request_choices([PAID], user_choices),
-        # }
-        # status_field.choices = possible_status_transitions_lut.get(instance.status, [])
-
-    # def clean(self):
-    #     cleaned_data = super().clean()
-    #     status = cleaned_data['status']
-    #     if not self.instance.valid_checks and status == APPROVED_BY_FINANCE_1:
-    #         self.add_error('status', _('Required checks on this invoice need to be compeleted for approval.'))
-    #     return cleaned_data
+        self.initial['comment'] = ''
+        status_field = self.fields['paf_status']
+        status_field.choices = PAF_STATUS_CHOICES
 
 
 class RejectionForm(forms.Form):

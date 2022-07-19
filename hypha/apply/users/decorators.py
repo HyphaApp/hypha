@@ -43,6 +43,12 @@ def is_approver(user):
     return True
 
 
+def is_contracting_approver(user):
+    if not user.is_approver or not user.is_contracting:
+        raise PermissionDenied
+    return True
+
+
 staff_required = [login_required, user_passes_test(is_apply_staff)]
 
 finance_required = [login_required, user_passes_test(is_finance)]
@@ -52,6 +58,8 @@ staff_or_finance_required = [login_required, user_passes_test(is_apply_staff_or_
 approver_required = [login_required, user_passes_test(is_approver)]
 
 staff_or_finance_or_contracting_required = [login_required, user_passes_test(is_apply_staff_or_finance_or_contracting)]
+
+contracting_approver_required = [login_required, user_passes_test(is_contracting_approver)]
 
 
 def superuser_decorator(fn):

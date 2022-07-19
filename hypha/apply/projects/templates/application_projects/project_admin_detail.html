@@ -84,10 +84,10 @@
       {% trans "Approve" %}
   </a>
 
-  <a data-fancybox data-src="#change-status" class="button button--primary button--full-width {% if user == object.user %} is-disabled {% endif %}" href="#">{% trans "Update Status" %}</a>
+  <a data-fancybox data-src="#change-status" class="button button--primary button--full-width {% if user == object.user or user_can_approve %} is-disabled {% endif %}" href="#">{% trans "Update PAF Status" %}</a>
   <div class="modal" id="change-status">
-      <h4 class="modal__header-bar">{% trans "Update Status" %}</h4>
-      <p>{% trans "Current status" %}: {{ object.get_status_display }}</p>
+      <h4 class="modal__header-bar">{% trans "Update PAF Status" %}</h4>
+      <p>{% trans "Project's current status" %}: {{ object.get_status_display }}</p>
       {% trans "Update Status" as update %}
       {% include 'funds/includes/delegated_form_base.html' with form=change_paf_status value=update %}
   </div>
