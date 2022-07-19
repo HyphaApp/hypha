@@ -31,7 +31,8 @@ def user_can_update_paf_status(project, user):
 
 @register.simple_tag
 def user_can_final_approve_project(project, user):
-    # todo: we need to decide the user role for final approval
+    if user.is_approver and user.is_contracting and project.can_make_final_approval:
+        return True
     return False
 
 

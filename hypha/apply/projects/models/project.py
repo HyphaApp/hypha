@@ -45,6 +45,13 @@ def document_path(instance, filename):
     return f'projects/{instance.project_id}/supporting_documents/{filename}'
 
 
+APPROVE = 'approve'
+REQUEST_CHANGE = 'request_change'
+PAF_STATUS_CHOICES = (
+    (APPROVE, 'Approve'),
+    (REQUEST_CHANGE, 'Request Change')
+)
+
 COMMITTED = 'committed'
 WAITING_FOR_APPROVAL = 'waiting_for_approval'
 CONTRACTING = 'contracting'
@@ -180,6 +187,11 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         help_text='More details of the project integrated at payment service.'
     )
     sent_to_compliance_at = models.DateTimeField(null=True)
+
+    paf_reviews_meta_data = models.JSONField(
+        default=dict,
+        help_text='Reviewers role and their actions/comments'
+    )
 
     objects = ProjectQuerySet.as_manager()
 
@@ -317,6 +329,16 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
     def can_update_paf_status(self):
         return self.status == WAITING_FOR_APPROVAL
 
+    @property
+    def can_make_final_approval(self):
+        paf_reviewers_count = PAFReviewersRole.objects.all().count()
+        if paf_reviewers_count == len(self.paf_reviews_meta_data):
+            for paf_review_data in self.paf_reviews_meta_data.values():
+                if paf_review_data['status'] == REQUEST_CHANGE:
+                    return False
+            return True
+        return False
+
     def can_request_funding(self):
         """
         Should we show this Project's funding block?
@@ -407,6 +429,9 @@ class ProjectApprovalForm(BaseStreamForm, models.Model):
 class PAFReviewersRole(Orderable):
     role = models.CharField(max_length=200)
     page = ParentalKey('ProjectSettings', related_name='paf_reviewers_roles')
+
+    def __str__(self):
+        return str(self.role)
 
 
 @register_setting
