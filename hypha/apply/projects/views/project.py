@@ -27,10 +27,12 @@ from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
+from hypha.apply.activity.models import ACTION, ALL, COMMENT, Activity
 from hypha.apply.activity.views import ActivityContextMixin, CommentFormView
 from hypha.apply.stream_forms.models import BaseStreamForm
 from hypha.apply.users.decorators import (
     approver_required,
+    contracting_approver_required,
     staff_or_finance_or_contracting_required,
     staff_or_finance_required,
     staff_required,
@@ -109,7 +111,7 @@ class SendForApprovalView(DelegatedViewMixin, UpdateView):
         return response
 
 
-@method_decorator(staff_required, name='dispatch')
+@method_decorator(contracting_approver_required, name='dispatch')
 class CreateApprovalView(DelegatedViewMixin, CreateView):
     context_name = 'add_approval_form'
     form_class = CreateApprovalForm
@@ -428,6 +430,51 @@ class UploadContractView(DelegatedViewMixin, CreateView):
 
 
 # PROJECT VIEW
+
+@method_decorator(staff_or_finance_or_contracting_required, name='dispatch')
+class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
+    form_class = ChangePAFStatusForm
+    context_name = 'change_paf_status'
+    model = Project
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        role = form.cleaned_data.get('role')
+        paf_status = form.cleaned_data.get('paf_status')
+        comment = form.cleaned_data.get('comment', '')
+
+        self.object.paf_reviews_meta_data.update({str(role.role): {'status': paf_status, 'comment': comment}})
+        self.object.save(update_fields=['paf_reviews_meta_data'])
+
+        paf_status_update_mesage = _('<p>{role} has updated PAF status to {paf_status}.</p>').format(
+            role=role, paf_status=paf_status)
+        Activity.objects.create(
+            user=self.request.user,
+            type=ACTION,
+            source=self.object,
+            timestamp=timezone.now(),
+            message=paf_status_update_mesage,
+            visibility=ALL,
+        )
+
+        if form.cleaned_data['comment']:
+
+            comment = f"<p>{form.cleaned_data['comment']}.</p>"
+
+            message = paf_status_update_mesage + comment
+
+            Activity.objects.create(
+                user=self.request.user,
+                type=COMMENT,
+                source=self.object,
+                timestamp=timezone.now(),
+                message=message,
+                visibility=ALL,
+            )
+
+        return response
+
+
 class BaseProjectDetailView(ReportingMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -454,6 +501,7 @@ class AdminProjectDetailView(
         UpdateLeadView,
         UploadContractView,
         UploadDocumentView,
+        ChangePAFStatusView,
     ]
     model = Project
     template_name_suffix = '_admin_detail'
@@ -554,42 +602,7 @@ class ContractPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
 # PROJECT EDIT
 
 @method_decorator(staff_or_finance_or_contracting_required, name='dispatch')
-class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
-    # WIP todo: needs to create activity and send notifications
-    form_class = ChangePAFStatusForm
-    context_name = 'change_paf_status'
-
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        if form.cleaned_data['comment']:
-            invoice_status_change = _('<p>PAF status updated to: {status}.</p>').format(status=self.object.status_display)
-            comment = f'<p>{self.object.comment}.</p>'
-
-            message = invoice_status_change + comment
-
-            # Activity.objects.create(
-            #     user=self.request.user,
-            #     type=COMMENT,
-            #     source=self.object.project,
-            #     timestamp=timezone.now(),
-            #     message=message,
-            #     visibility=ALL,
-            #     related_object=self.object,
-            # )
-
-        # messenger(
-        #     MESSAGES.UPDATE_INVOICE_STATUS,
-        #     request=self.request,
-        #     user=self.request.user,
-        #     source=self.object.project,
-        #     related=self.object,
-        # )
-
-        return response
-
-
-@method_decorator(staff_or_finance_or_contracting_required, name='dispatch')
-class ProjectDetailSimplifiedView(DetailView):
+class ProjectDetailSimplifiedView(DelegateableView, DetailView):
     form_views = [
         ChangePAFStatusView
     ]
