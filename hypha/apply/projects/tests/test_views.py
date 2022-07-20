@@ -12,6 +12,7 @@ from hypha.apply.funds.tests.factories import LabSubmissionFactory
 from hypha.apply.users.tests.factories import (
     ApplicantFactory,
     ApproverFactory,
+    ContractingApproverFactory,
     FinanceFactory,
     ReviewerFactory,
     StaffFactory,
@@ -69,7 +70,7 @@ class TestUpdateLeadView(BaseViewTestCase):
 class TestCreateApprovalView(BaseViewTestCase):
     base_view_name = 'detail'
     url_name = 'funds:projects:{}'
-    user_factory = ApproverFactory
+    user_factory = ContractingApproverFactory
 
     def get_kwargs(self, instance):
         return {'pk': instance.id}
