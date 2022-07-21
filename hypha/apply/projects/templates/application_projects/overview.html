@@ -75,7 +75,7 @@
 
 {% block extra_js %}
     {{ projects.filterset.form.media.js }}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.4.1/jquery.fancybox.min.js"></script>
+    <script src="https:{% static 'js/apply/jquery.fancybox.min.js' %}"></script>
     <script src="{% static 'js/apply/fancybox-global.js' %}"></script>
     <script src="{% static 'js/apply/all-submissions-table.js' %}"></script>
     <script src="{% static 'js/apply/symbol-es6.min.js' %}"></script>
