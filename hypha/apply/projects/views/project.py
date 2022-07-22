@@ -64,9 +64,11 @@ from ..forms import (
 )
 from ..models.payment import Invoice
 from ..models.project import (
+    COMMITTED,
     CONTRACTING,
     IN_PROGRESS,
     PROJECT_STATUS_CHOICES,
+    REQUEST_CHANGE,
     WAITING_FOR_APPROVAL,
     Approval,
     Contract,
@@ -84,6 +86,18 @@ class SendForApprovalView(DelegatedViewMixin, UpdateView):
     form_class = SetPendingForm
     model = Project
 
+    def send_to_compliance(self):
+        """Notify Compliance about this Project."""
+        messenger(
+            MESSAGES.SENT_TO_COMPLIANCE,
+            request=self.request,
+            user=self.request.user,
+            source=self.object,
+        )
+
+        self.object.sent_to_compliance_at = timezone.now()
+        self.object.save(update_fields=['sent_to_compliance_at'])
+
     def form_valid(self, form):
         project = self.kwargs['object']
         old_stage = project.get_status_display()
@@ -99,6 +113,8 @@ class SendForApprovalView(DelegatedViewMixin, UpdateView):
 
         project.status = WAITING_FOR_APPROVAL
         project.save(update_fields=['status'])
+
+        self.send_to_compliance()
 
         messenger(
             MESSAGES.PROJECT_TRANSITION,
@@ -138,8 +154,6 @@ class CreateApprovalView(DelegatedViewMixin, CreateView):
             user=self.request.user,
             source=project,
         )
-
-        # project.send_to_compliance(self.request)
 
         project.is_locked = False
         project.status = CONTRACTING
@@ -446,22 +460,35 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
         self.object.paf_reviews_meta_data.update({str(role.role): {'status': paf_status, 'comment': comment}})
         self.object.save(update_fields=['paf_reviews_meta_data'])
 
-        paf_status_update_mesage = _('<p>{role} has updated PAF status to {paf_status}.</p>').format(
+        paf_status_update_message = _('<p>{role} has updated PAF status to {paf_status}.</p>').format(
             role=role, paf_status=paf_status)
         Activity.objects.create(
             user=self.request.user,
             type=ACTION,
             source=self.object,
             timestamp=timezone.now(),
-            message=paf_status_update_mesage,
+            message=paf_status_update_message,
             visibility=ALL,
         )
+
+        if paf_status == REQUEST_CHANGE:
+            self.object.status = COMMITTED
+            self.object.is_locked = False
+            self.object.save(update_fields=['status', 'is_locked'])
+
+            messenger(
+                MESSAGES.REQUEST_PROJECT_CHANGE,
+                request=self.request,
+                user=self.request.user,
+                source=self.object,
+                comment=comment,
+            )
 
         if form.cleaned_data['comment']:
 
             comment = f"<p>{form.cleaned_data['comment']}.</p>"
 
-            message = paf_status_update_mesage + comment
+            message = paf_status_update_message + comment
 
             Activity.objects.create(
                 user=self.request.user,
