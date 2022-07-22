@@ -1,5 +1,6 @@
-from django.core import mail
 from test.support import EnvironmentVarGuard
+
+from django.core import mail
 from django.test import TestCase, override_settings
 
 from hypha.apply.users.tests.factories import UserFactory

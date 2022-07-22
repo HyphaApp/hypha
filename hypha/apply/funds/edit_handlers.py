@@ -2,7 +2,7 @@ from django.forms import Field, Widget
 from django.forms.utils import pretty_name
 from django.template.loader import render_to_string
 from django.urls import reverse
-from wagtail.admin.edit_handlers import Panel, FieldPanel
+from wagtail.admin.edit_handlers import FieldPanel, Panel
 from wagtail.core.models import Page
 
 
