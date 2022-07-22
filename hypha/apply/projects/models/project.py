@@ -399,19 +399,6 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
             return reference_number.split('-')[0]
         return ''
 
-    # def send_to_compliance(self, request):
-    #     """Notify Compliance about this Project."""
-
-    #     messenger(
-    #         MESSAGES.SENT_TO_COMPLIANCE,
-    #         request=request,
-    #         user=request.user,
-    #         source=self,
-    #     )
-
-    #     self.sent_to_compliance_at = timezone.now()
-    #     self.save(update_fields=['sent_to_compliance_at'])
-
 
 class ProjectApprovalForm(BaseStreamForm, models.Model):
     name = models.CharField(max_length=255)
