@@ -39,9 +39,9 @@ class CustomUserEditForm(CustomUserAdminFormBase, UserEditForm):
 
 
 class CustomUserCreationForm(CustomUserAdminFormBase, UserCreationForm):
-    pass
-
-
+    class Meta:
+        model = User
+        fields=['full_name','email']
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = User

@@ -40,6 +40,7 @@ from .decorators import require_oauth_whitelist
 from .forms import (
     BecomeUserForm,
     CustomAuthenticationForm,
+    CustomUserCreationForm,
     EmailChangePasswordForm,
     ProfileForm,
     TWOFAPasswordForm,
@@ -48,6 +49,16 @@ from .utils import send_confirmation_email
 
 User = get_user_model()
 
+class RegisterView(FormView):
+    form_class = CustomUserCreationForm
+    template_name = 'users/register.html'
+    success_url= '/login/'
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
+    def form_invalid(self, form):
+        return super().form_invalid(form)
 
 @method_decorator(ratelimit(key='ip', rate=settings.DEFAULT_RATE_LIMIT, method='POST'), name='dispatch')
 @method_decorator(ratelimit(key='post:email', rate=settings.DEFAULT_RATE_LIMIT, method='POST'), name='dispatch')
