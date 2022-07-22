@@ -5,7 +5,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
 from pagedown.widgets import PagedownWidget
-from wagtail.admin.edit_handlers import (
+from wagtail.admin.panels import (
     FieldPanel,
     FieldRowPanel,
     InlinePanel,
@@ -13,8 +13,8 @@ from wagtail.admin.edit_handlers import (
     PageChooserPanel,
     StreamFieldPanel,
 )
-from wagtail.core.fields import StreamField
-from wagtail.core.models import Orderable, PageManager
+from wagtail.fields import StreamField
+from wagtail.models import Orderable, PageManager
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.query import PageQuerySet
 from wagtail.search import index

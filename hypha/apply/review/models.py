@@ -3,8 +3,8 @@ from django.db import models
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
-from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel
-from wagtail.core.fields import StreamField
+from wagtail.admin.panels import FieldPanel, StreamFieldPanel
+from wagtail.fields import StreamField
 
 from hypha.apply.funds.models.mixins import AccessFormData
 from hypha.apply.stream_forms.models import BaseStreamForm

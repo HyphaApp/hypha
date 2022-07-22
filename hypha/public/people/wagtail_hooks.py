@@ -1,6 +1,6 @@
 from django.templatetags.static import static
 from django.utils.safestring import mark_safe
-from wagtail.core import hooks
+from wagtail import hooks
 
 
 @hooks.register('insert_editor_js')

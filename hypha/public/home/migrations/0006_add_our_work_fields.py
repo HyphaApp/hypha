@@ -4,8 +4,8 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 import django.db.models.deletion
-import wagtail.core.blocks
-import wagtail.core.fields
+import wagtail.blocks
+import wagtail.fields
 import wagtail.images.blocks
 
 
@@ -38,6 +38,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='homepage',
             name='our_work',
-            field=wagtail.core.fields.StreamField((('work', wagtail.core.blocks.StructBlock((('icon', wagtail.images.blocks.ImageChooserBlock()), ('description', wagtail.core.blocks.TextBlock(help_text='The first word will be bold'))))),)),
+            field=wagtail.fields.StreamField((('work', wagtail.blocks.StructBlock((('icon', wagtail.images.blocks.ImageChooserBlock()), ('description', wagtail.blocks.TextBlock(help_text='The first word will be bold'))))),)),
         ),
     ]

@@ -11,7 +11,7 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
 from django.views.generic.detail import DetailView
 from formtools.wizard.views import SessionWizardView
-from wagtail.core.models import Site
+from wagtail.models import Site
 
 from addressfield.fields import ADDRESS_FIELDS_ORDER
 from hypha.apply.activity.messaging import MESSAGES, messenger

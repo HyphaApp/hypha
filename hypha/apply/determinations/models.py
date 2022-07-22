@@ -4,7 +4,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-from wagtail.admin.edit_handlers import (
+from wagtail.admin.panels import (
     FieldPanel,
     MultiFieldPanel,
     ObjectList,
@@ -12,7 +12,7 @@ from wagtail.admin.edit_handlers import (
     TabbedInterface,
 )
 from wagtail.contrib.settings.models import BaseSetting, register_setting
-from wagtail.core.fields import RichTextField, StreamField
+from wagtail.fields import RichTextField, StreamField
 
 from hypha.apply.funds.models.mixins import AccessFormData
 from hypha.apply.funds.workflow import Concept, Proposal, Request

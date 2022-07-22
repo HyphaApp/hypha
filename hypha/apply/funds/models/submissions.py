@@ -33,7 +33,7 @@ from django.utils.translation import gettext_lazy as _
 from django_fsm import RETURN_VALUE, FSMField, can_proceed, transition
 from django_fsm.signals import post_transition
 from wagtail.contrib.forms.models import AbstractFormSubmission
-from wagtail.core.fields import StreamField
+from wagtail.fields import StreamField
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.categories.models import MetaTerm

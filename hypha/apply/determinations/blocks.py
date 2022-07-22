@@ -1,6 +1,6 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
-from wagtail.core.blocks import RichTextBlock
+from wagtail.blocks import RichTextBlock
 
 from hypha.apply.stream_forms.blocks import (
     CharFieldBlock,

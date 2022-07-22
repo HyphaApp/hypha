@@ -4,8 +4,8 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
 from pagedown.widgets import PagedownWidget
-from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, StreamFieldPanel
-from wagtail.core.fields import StreamField
+from wagtail.admin.panels import FieldPanel, InlinePanel, StreamFieldPanel
+from wagtail.fields import StreamField
 from wagtail.search import index
 
 from hypha.public.utils.blocks import StoryBlock

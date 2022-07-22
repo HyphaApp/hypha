@@ -2,7 +2,7 @@ from urllib.parse import urljoin
 
 from django.urls import reverse
 from wagtail.admin.menu import MenuItem
-from wagtail.core import hooks
+from wagtail import hooks
 
 from hypha.apply.home.models import ApplyHomePage
 

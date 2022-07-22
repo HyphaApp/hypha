@@ -5,15 +5,15 @@ from django.db.models.functions import Coalesce
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
 from pagedown.widgets import PagedownWidget
-from wagtail.admin.edit_handlers import (
+from wagtail.admin.panels import (
     FieldPanel,
     InlinePanel,
     PageChooserPanel,
     StreamFieldPanel,
 )
 from wagtail.contrib.settings.models import BaseSetting, register_setting
-from wagtail.core.fields import StreamField
-from wagtail.core.models import Orderable
+from wagtail.fields import StreamField
+from wagtail.models import Orderable
 from wagtail.search import index
 
 from hypha.public.utils.models import BasePage, RelatedPage

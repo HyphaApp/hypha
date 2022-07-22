@@ -12,7 +12,7 @@ from wagtail.contrib.modeladmin.helpers import (
     PageButtonHelper,
 )
 from wagtail.contrib.modeladmin.views import ChooseParentView
-from wagtail.core.models import Page
+from wagtail.models import Page
 
 
 class VerboseLabelModelChoiceField(forms.ModelChoiceField):
