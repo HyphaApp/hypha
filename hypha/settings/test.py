@@ -23,4 +23,4 @@ PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.MD5PasswordHasher',
 ]
 
-WAGTAILADMIN_BASE_URL = 'http://base-admin-url/'
+WAGTAILADMIN_BASE_URL = "https://primary-test-host.org"

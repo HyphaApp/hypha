@@ -587,10 +587,9 @@ if env.bool('BASIC_AUTH_ENABLED', False):
     BASIC_AUTH_WHITELISTED_IP_NETWORKS = env.list('BASIC_AUTH_WHITELISTED_IP_NETWORKS', [])
 
 
-if env.str('PRIMARY_HOST', None):
-    # This is used by Wagtail's email notifications for constructing absolute
-    # URLs.
-    WAGTAILADMIN_BASE_URL = 'https://{}'.format(env.str('PRIMARY_HOST'))
+# This is used by Wagtail's email notifications for constructing absolute URLs.
+PRIMARY_HOST = env.str('PRIMARY_HOST', None)
+WAGTAILADMIN_BASE_URL = env.str("WAGTAILADMIN_BASE_URL", None) or f'https://{PRIMARY_HOST}' if PRIMARY_HOST else None
 
 
 # Security configuration
