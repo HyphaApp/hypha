@@ -1,6 +1,6 @@
 from django import template
-from wagtail.models import Page
 from wagtail.coreutils import camelcase_to_underscore
+from wagtail.models import Page
 
 from hypha.public.home.models import HomePage
 from hypha.public.utils.models import SocialMediaSettings, SystemMessagesSettings

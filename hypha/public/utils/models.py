@@ -3,6 +3,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
+from wagtail import blocks
 from wagtail.admin.panels import (
     FieldPanel,
     FieldRowPanel,
@@ -12,10 +13,9 @@ from wagtail.admin.panels import (
     StreamFieldPanel,
 )
 from wagtail.contrib.settings.models import BaseSetting, register_setting
-from wagtail import blocks
 from wagtail.fields import RichTextField, StreamField
-from wagtail.models import Orderable, Page
 from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.models import Orderable, Page
 from wagtail.snippets.models import register_snippet
 from wagtailcache.cache import WagtailCacheMixin, cache_page
 

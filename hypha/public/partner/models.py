@@ -8,12 +8,12 @@ from django.http import Http404
 from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _
 from pagedown.widgets import PagedownWidget
-from wagtail.admin.panels import FieldPanel
 from wagtail.admin.forms import WagtailAdminModelForm
+from wagtail.admin.panels import FieldPanel
 from wagtail.contrib.settings.models import BaseSetting, register_setting
 from wagtail.fields import RichTextField
-from wagtail.models import Page
 from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.models import Page
 from wagtail.search import index
 
 from hypha.apply.categories.models import Category, Option

@@ -14,8 +14,8 @@ from wagtail.admin.panels import (
     StreamFieldPanel,
 )
 from wagtail.fields import StreamField
-from wagtail.models import Orderable, PageManager
 from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.models import Orderable, PageManager
 from wagtail.query import PageQuerySet
 from wagtail.search import index
 

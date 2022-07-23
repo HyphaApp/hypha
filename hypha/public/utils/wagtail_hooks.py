@@ -1,10 +1,10 @@
 from django.templatetags.static import static
+from wagtail import hooks
 from wagtail.contrib.modeladmin.options import (
     ModelAdmin,
     ModelAdminGroup,
     modeladmin_register,
 )
-from wagtail import hooks
 from wagtailcache.cache import clear_cache
 
 from hypha.public.news.models import NewsType
