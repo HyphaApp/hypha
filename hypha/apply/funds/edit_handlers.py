@@ -113,7 +113,10 @@ class FilteredFieldPanel(FieldPanel):
             filter_query=self.filter_query,
         )
 
-    def on_form_bound(self):
-        super().on_form_bound()
-        target_model = self.bound_field.field.queryset.model
-        self.bound_field.field.queryset = target_model.objects.filter(**self.filter_query)
+    class BoundPanel(FieldPanel.BoundPanel):
+        def __init__(self, **kwargs):
+            super().__init__(**kwargs)
+            target_model = self.bound_field.field.queryset.model
+            self.bound_field.field.queryset = target_model.objects.filter(
+                **self.panel.filter_query
+            )
