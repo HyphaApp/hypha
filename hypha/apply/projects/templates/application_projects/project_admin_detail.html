@@ -84,7 +84,8 @@
       {% trans "Approve" %}
   </a>
 
-  <a data-fancybox data-src="#change-status" class="button button--primary button--full-width {% if user == object.user or user_can_approve %} is-disabled {% endif %}" href="#">{% trans "Update PAF Status" %}</a>
+  {% user_can_update_paf_status object user as user_can_update_paf_status %}
+  <a data-fancybox data-src="#change-status" class="button button--primary button--full-width {% if not user_can_update_paf_status %} is-disabled {% endif %}" href="#">{% trans "Update PAF Status" %}</a>
   <div class="modal" id="change-status">
       <h4 class="modal__header-bar">{% trans "Update PAF Status" %}</h4>
       <p>{% trans "Project's current status" %}: {{ object.get_status_display }}</p>
