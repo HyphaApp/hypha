@@ -23,9 +23,10 @@ def user_can_approve_project(project, user):
 
 @register.simple_tag
 def user_can_update_paf_status(project, user):
-    if project.can_update_paf_status:
-        if user.is_finance or user.is_contracting or user.is_approver:
-            return True
+    if not project.user == user:
+        if project.can_update_paf_status:
+            if user.is_finance or user.is_contracting or user.is_approver:
+                return True
     return False
 
 
