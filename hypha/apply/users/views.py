@@ -49,7 +49,7 @@ from .utils import send_confirmation_email
 
 User = get_user_model()
 
-class RegisterView(FormView):
+class RegisterView(TwoFactorLoginView,FormView):
     form_class = CustomUserCreationForm
     template_name = 'users/register.html'
     success_url= '/login/'

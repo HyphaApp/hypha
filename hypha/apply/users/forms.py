@@ -39,9 +39,12 @@ class CustomUserEditForm(CustomUserAdminFormBase, UserEditForm):
 
 
 class CustomUserCreationForm(CustomUserAdminFormBase, UserCreationForm):
-    class Meta:
+
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'required':True}))
+    class Meta(UserCreationForm.Meta):
         model = User
-        fields=['full_name','email']
+        fields=['full_name','email','password']
+
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = User
