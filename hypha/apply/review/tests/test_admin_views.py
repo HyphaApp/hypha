@@ -11,6 +11,7 @@ from hypha.apply.users.tests.factories import SuperUserFactory
 class TestCreateReviewFormView(TestCase):
     @classmethod
     def setUpTestData(cls):
+        ReviewForm.objects.all().delete()
         cls.user = SuperUserFactory()
         cls.label_help_text_data = {
             'field_label': factory.Faker('sentence').evaluate(None, None, {'locale': None}),
@@ -53,11 +54,13 @@ class TestCreateReviewFormView(TestCase):
         response = self.create_page(data=data)
 
         expected_message = 'You are missing the following required fields: Recommendation'
-        for message in get_messages(response.context['request']):
-            self.assertEqual(expected_message, str(message.message).strip())
+        messages = list(response.context['messages'])
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(expected_message, str(messages[0]).strip())
         self.assertEqual(ReviewForm.objects.count(), 0)
 
     def test_comments_block_required(self):
+        ReviewForm.objects.all().delete()
         data = {'name': [self.name]}
         form_field_data = create_form_fields_data(
             {
@@ -69,8 +72,9 @@ class TestCreateReviewFormView(TestCase):
         response = self.create_page(data=data)
 
         expected_message = 'You are missing the following required fields: Comments'
-        for message in get_messages(response.context['request']):
-            self.assertEqual(expected_message, str(message.message).strip())
+        messages = list(response.context['messages'])
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(expected_message, str(messages[0]).strip())
         self.assertEqual(ReviewForm.objects.count(), 0)
 
     def test_visibility_block_required(self):
@@ -85,8 +89,9 @@ class TestCreateReviewFormView(TestCase):
         response = self.create_page(data=data)
 
         expected_message = 'You are missing the following required fields: Visibility'
-        for message in get_messages(response.context['request']):
-            self.assertEqual(expected_message, str(message.message).strip())
+        messages = list(response.context['messages'])
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(expected_message, str(messages[0]).strip())
         self.assertEqual(ReviewForm.objects.count(), 0)
 
     def test_field_label_required(self):
@@ -102,8 +107,10 @@ class TestCreateReviewFormView(TestCase):
         response = self.create_page(data=data)
 
         expected_messages_list = ['Label cannot be empty for Recommendation', 'Label cannot be empty for Comments', 'Label cannot be empty for Visibility']
-        for message in get_messages(response.context['request']):
-            self.assertIn(str(message.message).strip(), expected_messages_list)
+        messages = list(response.context['messages'])
+        self.assertEqual(len(messages), 3)
+        for message in messages:
+            self.assertIn(str(message).strip(), expected_messages_list)
         self.assertEqual(ReviewForm.objects.count(), 0)
 
     def test_form_creation(self):
