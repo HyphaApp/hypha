@@ -207,10 +207,6 @@ class FinalApprovalView(DelegatedViewMixin, UpdateView):
 
         return response
 
-    def form_invalid(self, form):
-        print("fafdfdafgdaf", form.errors)
-        return super(FinalApprovalView, self).form_invalid(form)
-
 
 @method_decorator(approver_required, name='dispatch')
 class RejectionView(DelegatedViewMixin, UpdateView):
