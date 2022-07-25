@@ -31,11 +31,11 @@
 </div>
 
 <div class="modal" id="approve">
-    <h4 class="modal__header-bar">{% trans "Add Approval" %}</h4>
+    <h4 class="modal__header-bar">{% trans "Update Final Approval Status" %}</h4>
     <p>{% trans "This will move the project into contracting and notify the compliance team." %}</p>
     <p>{% trans "This cannot be undone." %}</p>
-    {% trans "Approve" as approve %}
-    {% include 'funds/includes/delegated_form_base.html' with form=add_approval_form value=approve %}
+    {% trans "Update status" as update %}
+    {% include 'funds/includes/delegated_form_base.html' with form=final_approval_form value=update %}
 </div>
 
 <div class="modal" id="request-project-changes">
@@ -81,7 +81,7 @@
       data-src="#approve"
       class="button button--bottom-space button--primary button--full-width {% if user_can_approve %}is-not-disabled{% else %}is-disabled{% endif %}"
       href="#">
-      {% trans "Approve" %}
+      {% trans "Update Project Status" %}
   </a>
 
   {% user_can_update_paf_status object user as user_can_update_paf_status %}
