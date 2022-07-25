@@ -51,7 +51,7 @@ from ..filters import InvoiceListFilter, ProjectListFilter, ReportListFilter
 from ..forms import (
     ApproveContractForm,
     ChangePAFStatusForm,
-    CreateApprovalForm,
+    FinalApprovalForm,
     ProjectApprovalForm,
     RejectionForm,
     RemoveDocumentForm,
@@ -70,7 +70,6 @@ from ..models.project import (
     PROJECT_STATUS_CHOICES,
     REQUEST_CHANGE,
     WAITING_FOR_APPROVAL,
-    Approval,
     Contract,
     PacketFile,
     Project,
@@ -128,25 +127,49 @@ class SendForApprovalView(DelegatedViewMixin, UpdateView):
 
 
 @method_decorator(contracting_approver_required, name='dispatch')
-class CreateApprovalView(DelegatedViewMixin, CreateView):
-    context_name = 'add_approval_form'
-    form_class = CreateApprovalForm
-    model = Approval
+class FinalApprovalView(DelegatedViewMixin, UpdateView):
+    form_class = FinalApprovalForm
+    context_name = 'final_approval_form'
+    model = Project
 
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs.pop('instance')
-        kwargs.get('initial', {}).update({'by': kwargs.get('user')})
-        return kwargs
-
-    @transaction.atomic()
     def form_valid(self, form):
-        project = self.kwargs['object']
+        project = self.object
         old_stage = project.get_status_display()
 
-        form.instance.project = project
-
         response = super().form_valid(form)
+
+        comment = form.cleaned_data.get('comment', '')
+        status = form.cleaned_data['final_approval_status']
+
+        if status == REQUEST_CHANGE:
+            project.status = COMMITTED
+            project.is_locked = False
+            project.paf_reviews_meta_data = {}
+            project.save(update_fields=['status', 'is_locked', 'paf_reviews_meta_data'])
+
+            project_status_message = _(
+                '<p>{user} request changes the Project and update status to {project_status}.</p>').format(
+                user=self.request.user,
+                project_status=project.status
+            )
+
+            Activity.objects.create(
+                user=self.request.user,
+                type=ACTION,
+                source=project,
+                timestamp=timezone.now(),
+                message=project_status_message,
+                visibility=ALL,
+            )
+
+            messenger(
+                MESSAGES.REQUEST_PROJECT_CHANGE,
+                request=self.request,
+                user=self.request.user,
+                source=self.object,
+                comment=comment,
+            )
+            return response
 
         messenger(
             MESSAGES.APPROVE_PROJECT,
@@ -159,6 +182,21 @@ class CreateApprovalView(DelegatedViewMixin, CreateView):
         project.status = CONTRACTING
         project.save(update_fields=['is_locked', 'status'])
 
+        project_status_message = _(
+            '<p>{user} approved the Project and update status to {project_status}.</p>').format(
+            user=self.request.user,
+            project_status=project.status
+        )
+
+        Activity.objects.create(
+            user=self.request.user,
+            type=ACTION,
+            source=project,
+            timestamp=timezone.now(),
+            message=project_status_message,
+            visibility=ALL,
+        )
+
         messenger(
             MESSAGES.PROJECT_TRANSITION,
             request=self.request,
@@ -168,6 +206,10 @@ class CreateApprovalView(DelegatedViewMixin, CreateView):
         )
 
         return response
+
+    def form_invalid(self, form):
+        print("fafdfdafgdaf", form.errors)
+        return super(FinalApprovalView, self).form_invalid(form)
 
 
 @method_decorator(approver_required, name='dispatch')
@@ -519,7 +561,7 @@ class AdminProjectDetailView(
     form_views = [
         ApproveContractView,
         CommentFormView,
-        CreateApprovalView,
+        FinalApprovalView,
         RejectionView,
         RemoveDocumentView,
         SelectDocumentView,

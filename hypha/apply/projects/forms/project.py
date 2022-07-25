@@ -10,7 +10,6 @@ from hypha.apply.users.groups import STAFF_GROUP_NAME
 from ..models.project import (
     COMMITTED,
     PAF_STATUS_CHOICES,
-    Approval,
     Contract,
     PacketFile,
     PAFReviewersRole,
@@ -64,25 +63,17 @@ class CreateProjectForm(forms.Form):
         return Project.create_from_submission(submission)
 
 
-class CreateApprovalForm(forms.ModelForm):
-    by = forms.ModelChoiceField(
-        queryset=User.objects.approvers(),
-        widget=forms.HiddenInput(),
-    )
+class FinalApprovalForm(forms.ModelForm):
+    name_prefix = 'final_approval_form'
+    final_approval_status = forms.ChoiceField(choices=PAF_STATUS_CHOICES)
+    comment = forms.CharField(required=False, widget=forms.Textarea)
 
     class Meta:
-        model = Approval
-        fields = ('by',)
+        model = Project
+        fields = ['final_approval_status', 'comment']
 
-    def __init__(self, user=None, *args, **kwargs):
-        self.user = user
-        super().__init__(*args, **kwargs)
-
-    def clean_by(self):
-        by = self.cleaned_data['by']
-        if by != self.user:
-            raise forms.ValidationError(_('Cannot approve for a different user'))
-        return by
+    def __init__(self, instance, user=None, *args, **kwargs):
+        super().__init__(instance=instance, *args, **kwargs)
 
 
 class MixedMetaClass(type(StreamBaseForm), type(forms.ModelForm)):
@@ -134,9 +125,6 @@ class ChangePAFStatusForm(forms.ModelForm):
 
     def __init__(self, instance, user, *args, **kwargs):
         super().__init__(instance=instance, *args, **kwargs)
-        self.initial['comment'] = ''
-        status_field = self.fields['paf_status']
-        status_field.choices = PAF_STATUS_CHOICES
 
 
 class RejectionForm(forms.Form):
