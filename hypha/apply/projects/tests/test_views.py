@@ -24,7 +24,7 @@ from hypha.apply.utils.testing.tests import BaseViewTestCase
 from ..files import get_files
 from ..forms import SetPendingForm
 from ..models.payment import CHANGES_REQUESTED_BY_STAFF, SUBMITTED
-from ..models.project import COMMITTED, CONTRACTING, IN_PROGRESS
+from ..models.project import APPROVE, COMMITTED, CONTRACTING, IN_PROGRESS
 from ..views.project import ContractsMixin, ProjectDetailSimplifiedView
 from .factories import (
     ContractFactory,
@@ -67,7 +67,8 @@ class TestUpdateLeadView(BaseViewTestCase):
         self.assertEqual(project.lead, new_lead)
 
 
-class TestCreateApprovalView(BaseViewTestCase):
+class TestFinalApprovalView(BaseViewTestCase):
+    # :todo: Add more tests for updated version of final approval View
     base_view_name = 'detail'
     url_name = 'funds:projects:{}'
     user_factory = ContractingApproverFactory
@@ -77,30 +78,15 @@ class TestCreateApprovalView(BaseViewTestCase):
 
     def test_creating_an_approval_happy_path(self):
         project = ProjectFactory(in_approval=True)
-        self.assertEqual(project.approvals.count(), 0)
+        # self.assertEqual(project.approvals.count(), 0)
 
-        response = self.post_page(project, {'form-submitted-add_approval_form': '', 'by': self.user.id})
+        response = self.post_page(project, {'form-submitted-final_approval_form': '', 'final_approval_status': APPROVE})
         self.assertEqual(response.status_code, 200)
 
         project.refresh_from_db()
-        self.assertEqual(project.approvals.count(), 1)
+        # self.assertEqual(project.approvals.count(), 1)
         self.assertFalse(project.is_locked)
         self.assertEqual(project.status, 'contracting')
-
-        approval = project.approvals.first()
-        self.assertEqual(approval.project_id, project.pk)
-
-    def test_creating_an_approval_other_approver(self):
-        project = ProjectFactory(in_approval=True)
-        self.assertEqual(project.approvals.count(), 0)
-
-        other = self.user_factory()
-        response = self.post_page(project, {'form-submitted-add_approval_form': '', 'by': other.id})
-        self.assertEqual(response.status_code, 200)
-
-        project.refresh_from_db()
-        self.assertEqual(project.approvals.count(), 0)
-        self.assertTrue(project.is_locked)
 
 
 class BaseProjectDetailTestCase(BaseViewTestCase):
