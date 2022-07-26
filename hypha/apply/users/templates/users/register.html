@@ -8,8 +8,8 @@
 {% block content %}
   <div class="wrapper wrapper--small">
 
-    {% if form.errors %}
-        <div class="wrapper wrapper--error">{{ form.errors|striptags }}</div>
+    {% if form.non_field_errors %}
+        <div class="wrapper wrapper--error">{{ form.non_field_errors.as_text }}</div>
     {% endif %}
 
     <form class="form form--with-p-tags form--user-login" method="post">
