@@ -155,11 +155,11 @@
 
                     <div class="header__button-container">
                         {% if not request.user.is_authenticated %}
-                        {% include "utils/includes/login_button.html" %}
-                        {% include "utils/includes/register_button.html" %}
+                            {% include "utils/includes/login_button.html" %}
+                            {% include "utils/includes/register_button.html" %}
                         {%else%}
-                        {% include "utils/includes/profile_button.html" %}
-                        {% include "utils/includes/logout_button.html" %}
+                            {% include "utils/includes/profile_button.html" %}
+                            {% include "utils/includes/logout_button.html" %}
                         {%endif%}
                         <!--
                         <div class="button button--google-translate" id="google_translate_element"></div>
