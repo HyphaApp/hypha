@@ -9,13 +9,15 @@
   <div class="wrapper wrapper--small">
 
     {% if form.errors %}
-        <div class="wrapper wrapper--error">{{ form.non_field_errors|striptags }}</div>
+        <div class="wrapper wrapper--error">{{ form.errors|striptags }}</div>
     {% endif %}
 
     <form class="form form--with-p-tags form--user-login" method="post">
       {% csrf_token %}
         {% for field in form %}
+        {%if field.id_for_label != 'id_is_superuser' %}
           {% include "forms/includes/field.html" %}
+        {%endif%}
         {% endfor %}
         <button class="link link--button-secondary" type="submit">{% trans "Register" %}</button>
     </form>

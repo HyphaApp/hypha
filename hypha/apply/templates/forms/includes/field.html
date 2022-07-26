@@ -19,12 +19,14 @@
                 {% endif %}
             </legend>
     {% else %}
+        {% if not field.is_hidden%}
         <label for="{{ field.id_for_label }}" class="form__question form__question--{{ field_type }} {{ widget_type }}" {% if field.field.required %}required{% endif %}>
             <span>{{ field.label }}</span>
             {% if field.field.required %}
                 <span class="form__required">*</span>
             {% endif %}
         </label>
+        {% endif %}
     {% endif %}
 
     {% if field.help_text %}
@@ -35,23 +37,22 @@
         <p class="form__help-link"><a href="{{ field.field.help_link }}" target="_blank" rel="noopener noreferrer">{% trans "See help guide for more information." %}<svg class="form__open-icon"><use xlink:href="#open-in-new-tab"></use></svg></a></p>
     {% endif %}
 
-    <div class="form__item">
-        {% if widget_type == 'date_input' or widget_type == 'date_time_input' %}
+        {% if not field.is_hidden%}
+        <div class="form__item">
+            {% if widget_type == 'date_input' or widget_type == 'date_time_input' %}
             <div class="{{ widget_type }}">
-        {% endif %}
+                {% endif %}
 
-        {{ field }}
+                {{ field }}
 
-        {% if field.errors %}<h6 class="form__error-text">{{ field.errors.as_text|linebreaksbr }}</h6>{% endif %}
-        {% if widget_type == 'clearable_file_input' or widget_type == 'multi_file_input' %}
-            <!-- <div class="form__file-drop-zone">Drop files here</div> -->
-            <!-- <h1>{{ widget_type }}</h1> -->
-            <output class="form__file-list"></output>
-        {% endif %}
-        {% if widget_type == 'checkbox_input' %}
-            <label for="{{ field.id_for_label }}"></label>
-        {% endif %}
-        {% if widget_type == 'date_input' or widget_type == 'date_time_input' %}
+                {% if field.errors %}<h6 class="form__error-text">{{ field.errors.as_text|linebreaksbr }}</h6>{% endif %}
+                {% if widget_type == 'clearable_file_input' or widget_type == 'multi_file_input' %}
+                <output class="form__file-list"></output>
+                {% endif %}
+                {% if widget_type == 'checkbox_input' %}
+                <label for="{{ field.id_for_label }}"></label>
+                {% endif %}
+                {% if widget_type == 'date_input' or widget_type == 'date_time_input' %}
             </div>
         {% endif %}
     </div>

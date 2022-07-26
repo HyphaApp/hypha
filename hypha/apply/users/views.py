@@ -64,7 +64,6 @@ class RegisterView(View):
             context['email']=form.cleaned_data['email']
             context['full_name']=form.cleaned_data['full_name']
             context['password']=form.cleaned_data['password']
-            print(form.cleaned_data)
             site=Site.find_for_request(self.request)
             user,created = User.objects.get_or_create_and_notify(defaults={},site=site,**context)
             if created:
