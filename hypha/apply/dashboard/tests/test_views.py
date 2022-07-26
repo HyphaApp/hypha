@@ -86,7 +86,7 @@ class TestStaffDashboard(BaseViewTestCase):
         response = self.get_page()
         self.assertContains(response, 'Waiting for your review')
         self.assertContains(response, submission.title)
-        self.assertEquals(response.context['awaiting_reviews']['count'], 1)
+        self.assertEqual(response.context['awaiting_reviews']['count'], 1)
 
     def test_waiting_for_review_after_agreement_is_empty(self):
         staff = StaffFactory()
@@ -96,7 +96,7 @@ class TestStaffDashboard(BaseViewTestCase):
         response = self.get_page()
         self.assertContains(response, 'Waiting for your review')
         self.assertContains(response, "Nice! You're all caught up.")
-        self.assertEquals(response.context['awaiting_reviews']['count'], 0)
+        self.assertEqual(response.context['awaiting_reviews']['count'], 0)
 
     def test_active_invoices_with_no_project(self):
         response = self.get_page()
@@ -181,19 +181,19 @@ class TestReviewerDashboard(BaseViewTestCase):
         response = self.get_page()
         self.assertContains(response, 'Waiting for your review')
         self.assertContains(response, submission.title)
-        self.assertEquals(response.context['in_review_count'], 1)
+        self.assertEqual(response.context['in_review_count'], 1)
 
     def test_no_submissions_waiting_for_review(self):
         submission = ApplicationSubmissionFactory(status='external_review', workflow_stages=2, reviewers=[])
         response = self.get_page()
         self.assertNotContains(response, submission.title)
-        self.assertEquals(response.context['in_review_count'], 0)
+        self.assertEqual(response.context['in_review_count'], 0)
 
     def test_submission_assigned_but_not_in_external_review_status(self):
         submission = ApplicationSubmissionFactory(status='concept_review_discussion', workflow_stages=2, reviewers=[self.user])
         response = self.get_page()
         self.assertNotContains(response, submission.title)
-        self.assertEquals(response.context['in_review_count'], 0)
+        self.assertEqual(response.context['in_review_count'], 0)
 
 
 class TestAdminDashboard(BaseViewTestCase):

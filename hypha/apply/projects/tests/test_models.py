@@ -50,9 +50,9 @@ class TestProjectModel(TestCase):
 
         project = Project.create_from_submission(submission)
 
-        self.assertEquals(project.submission, submission)
-        self.assertEquals(project.title, submission.title)
-        self.assertEquals(project.user, submission.user)
+        self.assertEqual(project.submission, submission)
+        self.assertEqual(project.title, submission.title)
+        self.assertEqual(project.user, submission.user)
 
     def test_get_missing_document_categories_with_enough_documents(self):
         project = ProjectFactory()

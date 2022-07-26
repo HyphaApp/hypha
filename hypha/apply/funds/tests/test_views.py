@@ -245,7 +245,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         submission = ApplicationSubmission.objects.get(pk=self.submission.pk)
 
         self.assertTrue(hasattr(submission, 'project'))
-        self.assertEquals(submission.project.id, project.id)
+        self.assertEqual(submission.project.id, project.id)
 
     def test_can_see_add_determination_primary_action(self):
         def assert_add_determination_displayed(submission, button_text):
