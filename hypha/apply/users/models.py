@@ -163,7 +163,8 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
                 raise
 
     def get_or_create_and_notify(self, defaults=dict(), site=None, **kwargs):
-        defaults.update(password=kwargs.pop('password'))
+        temp_pass_hash = make_password(kwargs.pop('password'))
+        defaults.update(password=temp_pass_hash)
         user, created = self.get_or_create(defaults=defaults, **kwargs)
         if created:
             send_activation_email(user, site)

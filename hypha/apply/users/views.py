@@ -68,7 +68,7 @@ class RegisterView(View):
             site=Site.find_for_request(self.request)
             user,created = User.objects.get_or_create_and_notify(defaults={},site=site,**context)
             if created:
-                messages.success('Please check your email to activate the account.')
+                messages.success(request,'Please check your email to activate the account.')
         else:
             return render(request,'users/register.html',{'form':form})
         return render(request,'users/register.html',{'form':self.form})
