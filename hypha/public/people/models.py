@@ -11,10 +11,8 @@ from wagtail.admin.panels import (
     InlinePanel,
     MultiFieldPanel,
     PageChooserPanel,
-    StreamFieldPanel,
 )
 from wagtail.fields import StreamField
-from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.models import Orderable, PageManager
 from wagtail.query import PageQuerySet
 from wagtail.search import index
@@ -180,7 +178,7 @@ class PersonPage(FundingMixin, BasePage):
             FieldPanel('last_name'),
         ], heading=_('Name')),
         FieldPanel('active'),
-        ImageChooserPanel('photo'),
+        FieldPanel('photo'),
         FieldPanel('job_title'),
         InlinePanel('social_media_profile', label=_('Social accounts')),
         FieldPanel('website'),
@@ -190,7 +188,7 @@ class PersonPage(FundingMixin, BasePage):
         ], heading=_('Contact information')),
         InlinePanel('person_types', label=_('Person types')),
         FieldPanel('introduction'),
-        StreamFieldPanel('biography'),
+        FieldPanel('biography'),
         InlinePanel('funds_reviewed', label=_('Funds Reviewed')),
     ] + FundingMixin.content_panels
 

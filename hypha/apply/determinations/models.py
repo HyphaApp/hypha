@@ -8,7 +8,6 @@ from wagtail.admin.panels import (
     FieldPanel,
     MultiFieldPanel,
     ObjectList,
-    StreamFieldPanel,
     TabbedInterface,
 )
 from wagtail.contrib.settings.models import BaseSetting, register_setting
@@ -85,7 +84,7 @@ class DeterminationForm(DeterminationFormFieldsMixin, models.Model):
 
     panels = [
         FieldPanel('name'),
-        StreamFieldPanel('form_fields'),
+        FieldPanel('form_fields'),
     ]
 
     def __str__(self):

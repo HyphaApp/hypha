@@ -1,6 +1,6 @@
 from django.db import models
 from modelcluster.fields import ParentalKey
-from wagtail.admin.panels import FieldPanel, StreamFieldPanel
+from wagtail.admin.panels import FieldPanel
 from wagtail.fields import StreamField
 from wagtail.models import Orderable
 
@@ -14,7 +14,7 @@ class ApplicationForm(models.Model):
 
     panels = [
         FieldPanel('name'),
-        StreamFieldPanel('form_fields'),
+        FieldPanel('form_fields'),
     ]
 
     def __str__(self):

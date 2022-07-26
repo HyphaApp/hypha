@@ -3,7 +3,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
-from wagtail.admin.panels import FieldPanel, StreamFieldPanel
+from wagtail.admin.panels import FieldPanel
 from wagtail.fields import StreamField
 
 from hypha.apply.funds.models.mixins import AccessFormData
@@ -82,7 +82,7 @@ class ReviewForm(ReviewFormFieldsMixin, models.Model):
 
     panels = [
         FieldPanel('name'),
-        StreamFieldPanel('form_fields'),
+        FieldPanel('form_fields'),
     ]
 
     def __str__(self):

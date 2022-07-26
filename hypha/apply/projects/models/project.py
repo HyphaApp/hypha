@@ -16,7 +16,7 @@ from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from wagtail.admin.panels import FieldPanel, StreamFieldPanel
+from wagtail.admin.panels import FieldPanel
 from wagtail.contrib.settings.models import BaseSetting, register_setting
 from wagtail.fields import StreamField
 
@@ -379,7 +379,7 @@ class ProjectApprovalForm(BaseStreamForm, models.Model):
 
     panels = [
         FieldPanel('name'),
-        StreamFieldPanel('form_fields'),
+        FieldPanel('form_fields'),
     ]
 
     def __str__(self):

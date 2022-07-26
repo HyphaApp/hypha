@@ -8,7 +8,6 @@ from wagtail.admin.panels import (
     InlinePanel,
     MultiFieldPanel,
     PageChooserPanel,
-    StreamFieldPanel,
 )
 from wagtail.fields import StreamField
 from wagtail.search import index
@@ -112,7 +111,7 @@ class HomePage(BasePage):
         ], heading=_('News')),
         MultiFieldPanel([
             FieldPanel('our_work_title'),
-            StreamFieldPanel('our_work'),
+            FieldPanel('our_work'),
             PageChooserPanel('our_work_link'),
             FieldPanel('our_work_link_text'),
         ], heading=_('Our Work')),

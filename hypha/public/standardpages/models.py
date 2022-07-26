@@ -4,7 +4,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
 from pagedown.widgets import PagedownWidget
-from wagtail.admin.panels import FieldPanel, InlinePanel, StreamFieldPanel
+from wagtail.admin.panels import FieldPanel, InlinePanel
 from wagtail.fields import StreamField
 from wagtail.search import index
 
@@ -27,7 +27,7 @@ class InformationPage(BasePage):
 
     content_panels = BasePage.content_panels + [
         FieldPanel('introduction'),
-        StreamFieldPanel('body'),
+        FieldPanel('body'),
         InlinePanel('related_pages', label=_('Related pages')),
     ]
 

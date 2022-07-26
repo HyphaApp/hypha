@@ -1,7 +1,7 @@
 from django.utils.translation import gettext_lazy as _
 from modelcluster.models import ClusterableModel
 from wagtail import blocks
-from wagtail.admin.panels import StreamFieldPanel
+from wagtail.admin.panels import FieldPanel
 from wagtail.contrib.settings.models import BaseSetting, register_setting
 from wagtail.fields import StreamField
 
@@ -24,5 +24,5 @@ class NavigationSettings(BaseSetting, ClusterableModel):
     )
 
     panels = [
-        StreamFieldPanel('primary_navigation'),
+        FieldPanel('primary_navigation'),
     ]

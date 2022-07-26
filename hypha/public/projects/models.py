@@ -13,10 +13,8 @@ from wagtail.admin.panels import (
     InlinePanel,
     MultiFieldPanel,
     PageChooserPanel,
-    StreamFieldPanel,
 )
 from wagtail.fields import StreamField
-from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.search import index
 
 from hypha.apply.categories.models import Option
@@ -122,10 +120,10 @@ class ProjectPage(FundingMixin, BasePage):
     ]
 
     content_panels = BasePage.content_panels + [
-        ImageChooserPanel('icon'),
+        FieldPanel('icon'),
         FieldPanel('status'),
         FieldPanel('introduction'),
-        StreamFieldPanel('body'),
+        FieldPanel('body'),
         InlinePanel('contact_details', label=_('Contact Details')),
     ] + FundingMixin.content_panels + [
         InlinePanel('related_pages', label=_('Related Projects')),

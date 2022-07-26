@@ -5,12 +5,7 @@ from django.db.models.functions import Coalesce
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
 from pagedown.widgets import PagedownWidget
-from wagtail.admin.panels import (
-    FieldPanel,
-    InlinePanel,
-    PageChooserPanel,
-    StreamFieldPanel,
-)
+from wagtail.admin.panels import FieldPanel, InlinePanel, PageChooserPanel
 from wagtail.contrib.settings.models import BaseSetting, register_setting
 from wagtail.fields import StreamField
 from wagtail.models import Orderable
@@ -112,7 +107,7 @@ class NewsPage(BasePage):
         FieldPanel('publication_date'),
         InlinePanel('authors', label=_('Authors')),
         FieldPanel('introduction'),
-        StreamFieldPanel('body'),
+        FieldPanel('body'),
         InlinePanel('news_types', label=_('News types')),
         InlinePanel('related_projects', label=_('Mentioned project')),
         InlinePanel('related_pages', label=_('Related pages')),

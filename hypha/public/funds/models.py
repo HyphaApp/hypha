@@ -13,10 +13,8 @@ from wagtail.admin.panels import (
     InlinePanel,
     MultiFieldPanel,
     PageChooserPanel,
-    StreamFieldPanel,
 )
 from wagtail.fields import StreamField
-from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.search import index
 
 from hypha.apply.funds.models import ApplicationSubmission
@@ -53,7 +51,7 @@ class BaseApplicationPage(BasePage):
 
     content_panels = BasePage.content_panels + [
         FieldPanel('introduction', widget=PagedownWidget()),
-        StreamFieldPanel('body'),
+        FieldPanel('body'),
         InlinePanel('related_pages', label=_('Related pages')),
     ]
 
@@ -158,7 +156,7 @@ class LabPage(BasePage):
     ]
 
     content_panels = BasePage.content_panels + [
-        ImageChooserPanel('icon'),
+        FieldPanel('icon'),
         FieldPanel('introduction'),
         MultiFieldPanel([
             PageChooserPanel('lab_type', 'funds.LabType'),
@@ -167,7 +165,7 @@ class LabPage(BasePage):
                 FieldPanel('link_text'),
             ]),
         ], heading=_('Link for lab application')),
-        StreamFieldPanel('body'),
+        FieldPanel('body'),
         InlinePanel('related_pages', label=_('Related pages')),
     ]
 

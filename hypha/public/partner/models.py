@@ -12,7 +12,6 @@ from wagtail.admin.forms import WagtailAdminModelForm
 from wagtail.admin.panels import FieldPanel
 from wagtail.contrib.settings.models import BaseSetting, register_setting
 from wagtail.fields import RichTextField
-from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.models import Page
 from wagtail.search import index
 
@@ -70,7 +69,7 @@ class PartnerPage(BasePage):
         FieldPanel('public'),
         FieldPanel('description'),
         FieldPanel('web_url'),
-        ImageChooserPanel('logo'),
+        FieldPanel('logo'),
     ]
 
     def __str__(self):
