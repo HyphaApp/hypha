@@ -161,6 +161,11 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
                 user = self.create(**params)
             except IntegrityError:
                 raise
+
+    def get_or_create_and_notify(self, defaults=dict(), site=None, **kwargs):
+        defaults.update(password=kwargs.pop('password'))
+        user, created = self.get_or_create(defaults=defaults, **kwargs)
+        if created:
             send_activation_email(user, site)
             _created = True
 

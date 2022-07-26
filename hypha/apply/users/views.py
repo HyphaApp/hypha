@@ -19,7 +19,7 @@ from django.utils.http import urlsafe_base64_decode
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import never_cache
 from django.views.generic import UpdateView
-from django.views.generic.base import TemplateView
+from django.views.generic.base import TemplateView, View
 from django.views.generic.edit import FormView
 from django_otp import devices_for_user
 from django_ratelimit.decorators import ratelimit
@@ -49,17 +49,30 @@ from .utils import send_confirmation_email
 
 User = get_user_model()
 
-class RegisterView(TwoFactorLoginView,FormView):
-    form_class = CustomUserCreationForm
-    template_name = 'users/register.html'
-    success_url= '/login/'
+class RegisterView(View):
+    form = CustomUserCreationForm()
 
-    def form_valid(self, form):
-        form.save()
-        return super().form_valid(form)
-    def form_invalid(self, form):
-        return super().form_invalid(form)
+    def get(self, request):
+        if request.user.is_authenticated:
+            return redirect('dashboard:dashboard')
+        return render(request,'users/register.html',{'form':self.form})
 
+    def post(self,request):
+        form=CustomUserCreationForm(request.POST)
+        context={}
+        if form.is_valid():
+            context['email']=form.cleaned_data['email']
+            context['full_name']=form.cleaned_data['full_name']
+            context['password']=form.cleaned_data['password']
+            print(form.cleaned_data)
+            site=Site.find_for_request(self.request)
+            user,created = User.objects.get_or_create_and_notify(defaults={},site=site,**context)
+            if created:
+                messages.success('Please check your email to activate the account.')
+        else:
+            return render(request,'users/register.html',{'form':form})
+        return render(request,'users/register.html',{'form':self.form})
+     
 @method_decorator(ratelimit(key='ip', rate=settings.DEFAULT_RATE_LIMIT, method='POST'), name='dispatch')
 @method_decorator(ratelimit(key='post:email', rate=settings.DEFAULT_RATE_LIMIT, method='POST'), name='dispatch')
 class LoginView(TwoFactorLoginView):
@@ -252,7 +265,7 @@ class ActivationView(TemplateView):
         if self.valid(user, kwargs.get('token')):
             user.backend = settings.CUSTOM_AUTH_BACKEND
             login(request, user)
-            return redirect('users:activate_password')
+            return redirect('users:account')
 
         return render(request, 'users/activation/invalid.html')
 
