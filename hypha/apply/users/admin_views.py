@@ -1,3 +1,5 @@
+import csv
+import os
 import django_filters
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
@@ -7,11 +9,14 @@ from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.utils.translation import gettext as _
 from django.views.decorators.vary import vary_on_headers
+from django.conf import settings
+from django.http import HttpResponse
 from wagtail.admin.auth import any_permission_required
 from wagtail.admin.filters import WagtailFilterSet
 from wagtail.admin.forms.search import SearchForm
 from wagtail.compat import AUTH_USER_APP_LABEL, AUTH_USER_MODEL_NAME
 from wagtail.users.views.groups import GroupViewSet
+
 
 User = get_user_model()
 
@@ -22,6 +27,35 @@ add_user_perm = "{0}.add_{1}".format(AUTH_USER_APP_LABEL, AUTH_USER_MODEL_NAME.l
 change_user_perm = "{0}.change_{1}".format(AUTH_USER_APP_LABEL, AUTH_USER_MODEL_NAME.lower())
 delete_user_perm = "{0}.delete_{1}".format(AUTH_USER_APP_LABEL, AUTH_USER_MODEL_NAME.lower())
 
+def create_csv(users_list):
+    base_path=os.path.join(settings.PROJECT_DIR,'../media')
+    filename = 'users.csv'
+    with open(os.path.join(base_path+'/'+filename),'w+') as file:
+        fieldnames=['full_name','email','status','role']
+        writer = csv.DictWriter(file, fieldnames=fieldnames)
+        writer.writeheader()
+        for user in users_list:
+            writer.writerow(user)
+    return base_path + '/' + filename
+
+def export(request):
+    users=User.objects.all()
+    users_list = []
+    for user in users:
+        roles=list(user.groups.values_list('name',flat = True))
+        roles=','.join(roles)
+        user_data={
+            'full_name': user.full_name,
+            'email':user.email,
+            'status': 'Active' if user.is_active else 'Inactive',
+            'role': roles
+        }
+        users_list.append(user_data)
+    filepath=create_csv(users_list)
+    with open(filepath, 'rb') as file:
+            response = HttpResponse(file.read(), content_type="application/vnd.ms-excel")
+            response['Content-Disposition'] = 'inline; filename=' + os.path.basename(filepath)
+            return response
 
 class UserFilterSet(WagtailFilterSet):
     STATUS_CHOICES = (

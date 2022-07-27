@@ -46,6 +46,9 @@
                 {% endfor %}
                 <button class="button button-longrunning" type="submit">{% icon name="spinner" %}{% trans 'Apply filters' %}</button>
             </form>
+            <div class="users-list__export">
+                <button class="button"><a href="{%url 'users:export'%}">{% trans 'Export Users' %}</a></button>
+            </div>
         </div>
     {% endif %}
 </div>
