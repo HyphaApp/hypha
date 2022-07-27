@@ -52,6 +52,9 @@ User = get_user_model()
 class RegisterView(View):
     form = CustomUserCreationForm()
 
+    # def check_passwords(self,form):
+    #     return True if form.cleaned_data['password'] == form.cleaned_data['confirm_password'] else False
+
     def get(self, request):
         if request.user.is_authenticated:
             return redirect('dashboard:dashboard')
