@@ -41,7 +41,7 @@
 
 {% block extra_js %}
 {{ block.super }}
-<script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.4.1/jquery.fancybox.min.js"></script>
+<script src="{% static 'js/apply/jquery.fancybox.min.js' %}"></script>
 <script src="{% static 'js/apply/batch-actions.js' %}"></script>
 <script src="{% static 'js/apply/fancybox-global.js' %}"></script>
 {% endblock %}
