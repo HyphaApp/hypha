@@ -22,7 +22,7 @@ class ScreeningStatusViewSet(viewsets.ReadOnlyModelViewSet):
         permissions.IsAuthenticated, IsApplyStaffUser,
     )
     filter_backends = (filters.DjangoFilterBackend,)
-    filter_class = ScreeningStatusFilter
+    filterset_class = ScreeningStatusFilter
     pagination_class = None
     queryset = ScreeningStatus.objects.all()
     serializer_class = ScreeningStatusListSerializer
