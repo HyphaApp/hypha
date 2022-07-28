@@ -26,7 +26,7 @@
               <h6 class="listing__teaser">{{ details.listing_summary|default:details.introduction|truncatechars_html:120 }}</h6>
           {% endif %}
       </div>
-      <a class="listing__button" href="{% if request.user.is_authenticated %}{%pageurl page %}{%else%}{% url 'users_public:login' %}?next={{ APPLY_SITE.root_url }}{%endif%}">{% trans "Apply" %}</a>
+      <a class="listing__button" href="{% if request.user.is_authenticated %}{%pageurl page%}{%else%}{% url 'users_public:login' %}?next={%pageurl page%}{%endif%}">{% trans "Apply" %}</a>
   </div>
 {% endif %}
 {% endwith %}

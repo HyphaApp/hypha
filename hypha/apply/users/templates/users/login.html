@@ -38,7 +38,6 @@
         {% if not is_public_site %}
             <p><a class="link link--small" href="{% url 'users:password_reset' %}">{% trans "Forgot your password?" %}</a></p>
         {% endif %}
-        <p><a class="link link--small" href="{% url 'users_public:register' %}">{% trans "Dont't have an account? Register here to submit applications" %}</a></p>
         <button class="link link--button-secondary" type="submit">{% trans "Login" %}</button>
       {% else %}
         {{ wizard.form }}
