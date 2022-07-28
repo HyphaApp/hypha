@@ -39,18 +39,10 @@ class CustomUserEditForm(CustomUserAdminFormBase, UserEditForm):
 
 
 class CustomUserCreationForm(CustomUserAdminFormBase, UserCreationForm):
-    password = forms.CharField(widget=forms.PasswordInput(attrs={'required':True}))
-    confirm_password = forms.CharField(widget=forms.PasswordInput(attrs={'required':True}))
-    class Meta(UserCreationForm.Meta):
-        model = User
-        fields=['full_name','email','password','confirm_password']
-
-    def clean_confirm_password(self):
-        password = self.cleaned_data.get("password")
-        confirm_password = self.cleaned_data.get("confirm_password")
-        if password and confirm_password and password != confirm_password:
-            self.add_error('confirm_password','Your passwords don\'t match')
-        return confirm_password
+    error_messages = {
+        'duplicate_username': _("A user with that email already exists."),
+        'password_mismatch': _("The two password fields didn't match."),
+    }
 
 class ProfileForm(forms.ModelForm):
     class Meta:

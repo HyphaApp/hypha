@@ -15,7 +15,7 @@
     <form class="form form--with-p-tags form--user-login" method="post">
       {% csrf_token %}
         {% for field in form %}
-          {%if field.id_for_label != 'id_is_superuser' %}
+          {%if field.id_for_label != 'id_is_superuser' and field.label != 'Groups' %}
             {% include "forms/includes/field.html" %}
           {%endif%}
         {% endfor %}
