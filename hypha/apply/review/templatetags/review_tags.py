@@ -40,3 +40,10 @@ def can_review(user, submission):
 @register.filter
 def has_draft(user, submission):
     return submission.can_review(user) and submission.assigned.draft_reviewed().filter(reviewer=user).exists()
+
+
+@register.filter
+def average_review_score(reviewers):
+    sum = 0
+    [sum := sum + reviewer.review.score for reviewer in reviewers]
+    return sum/len(reviewers)
