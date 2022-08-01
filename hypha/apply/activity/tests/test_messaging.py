@@ -24,16 +24,11 @@ from hypha.apply.users.tests.factories import (
 )
 from hypha.apply.utils.testing import make_request
 
-from ..messaging import (
-    MESSAGES,
-    ActivityAdapter,
-    AdapterBase,
-    EmailAdapter,
-    MessengerBackend,
-    SlackAdapter,
-    neat_related,
-)
+from ..adapters import ActivityAdapter, AdapterBase, EmailAdapter, SlackAdapter
+from ..adapters.base import neat_related
+from ..messaging import MessengerBackend
 from ..models import ALL, TEAM, Activity, Event, Message
+from ..options import MESSAGES
 from .factories import CommentFactory, EventFactory, MessageFactory
 
 
