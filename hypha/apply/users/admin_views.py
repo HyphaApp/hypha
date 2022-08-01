@@ -38,12 +38,12 @@ def create_csv(users_list):
             writer.writerow(user)
     return base_path + '/' + filename
 
-def export(request):
-    users=User.objects.all()
+def export(users):
     users_list = []
     for user in users:
-        roles=list(user.groups.values_list('name',flat = True))
-        roles=','.join(roles)
+        if user.is_superuser:
+            user.roles.insert(0,'Admin')
+        roles=','.join(user.roles)
         user_data={
             'full_name': user.full_name,
             'email':user.email,
@@ -137,6 +137,10 @@ def index(request, *args):
     if not group:
         filters = UserFilterSet(request.GET, queryset=users, request=request)
         users = filters.qs
+
+    if 'export' in request.GET:
+        file = export(users)
+        return file
 
     if 'ordering' in request.GET:
         ordering = request.GET['ordering']

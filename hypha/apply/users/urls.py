@@ -20,7 +20,6 @@ from .views import (
     create_password,
     oauth,
 )
-from .admin_views import export
 
 app_name = 'users'
 
@@ -99,8 +98,6 @@ urlpatterns = [
         path('two_factor/disable/', TWOFADisableView.as_view(), name='disable'),
         path('two_factor/admin/disable/<str:user_id>/', TWOFAAdminDisableView.as_view(), name='admin_disable'),
     ])),
-    path('admin/users/export/', export, name='export'),
-
 ]
 
 if settings.HIJACK_ENABLE:
