@@ -127,13 +127,6 @@ class ChangePAFStatusForm(forms.ModelForm):
         super().__init__(instance=instance, *args, **kwargs)
 
 
-class RejectionForm(forms.Form):
-    comment = forms.CharField(widget=forms.Textarea)
-
-    def __init__(self, instance=None, user=None, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-
 class RemoveDocumentForm(forms.ModelForm):
     id = forms.IntegerField(widget=forms.HiddenInput())
 
