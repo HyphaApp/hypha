@@ -31,7 +31,6 @@ from hypha.apply.activity.models import ACTION, ALL, COMMENT, Activity
 from hypha.apply.activity.views import ActivityContextMixin, CommentFormView
 from hypha.apply.stream_forms.models import BaseStreamForm
 from hypha.apply.users.decorators import (
-    approver_required,
     contracting_approver_required,
     staff_or_finance_or_contracting_required,
     staff_or_finance_required,
@@ -53,7 +52,6 @@ from ..forms import (
     ChangePAFStatusForm,
     FinalApprovalForm,
     ProjectApprovalForm,
-    RejectionForm,
     RemoveDocumentForm,
     SelectDocumentForm,
     SetPendingForm,
@@ -206,27 +204,6 @@ class FinalApprovalView(DelegatedViewMixin, UpdateView):
         )
 
         return response
-
-
-@method_decorator(approver_required, name='dispatch')
-class RejectionView(DelegatedViewMixin, UpdateView):
-    context_name = 'rejection_form'
-    form_class = RejectionForm
-    model = Project
-
-    def form_valid(self, form):
-        messenger(
-            MESSAGES.REQUEST_PROJECT_CHANGE,
-            request=self.request,
-            user=self.request.user,
-            source=self.object,
-            comment=form.cleaned_data['comment'],
-        )
-
-        self.object.is_locked = False
-        self.object.save(update_fields=['is_locked'])
-
-        return redirect(self.object)
 
 
 # PROJECT DOCUMENTS
@@ -558,7 +535,6 @@ class AdminProjectDetailView(
         ApproveContractView,
         CommentFormView,
         FinalApprovalView,
-        RejectionView,
         RemoveDocumentView,
         SelectDocumentView,
         SendForApprovalView,
