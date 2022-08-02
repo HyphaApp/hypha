@@ -31,5 +31,4 @@ class ManageAdminGoup(ModelAdminGroup):
     menu_icon = 'folder-open-inverse'
     items = (
         DocumentCategoryAdmin,
-        ProjectApprovalFormAdmin,
     )

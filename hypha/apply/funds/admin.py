@@ -6,6 +6,7 @@ from wagtail.contrib.modeladmin.options import ModelAdmin, ModelAdminGroup
 from hypha.apply.categories.admin import CategoryAdmin, MetaTermAdmin
 from hypha.apply.determinations.admin import DeterminationFormAdmin
 from hypha.apply.funds.models import ReviewerRole, ScreeningStatus
+from hypha.apply.projects.admin import ProjectApprovalFormAdmin
 from hypha.apply.review.admin import ReviewFormAdmin
 from hypha.apply.utils.admin import ListRelatedMixin
 
@@ -210,6 +211,7 @@ class ApplyAdminGroup(ModelAdminGroup):
         ApplicationFormAdmin,
         ReviewFormAdmin,
         DeterminationFormAdmin,
+        ProjectApprovalFormAdmin,
         CategoryAdmin,
         ScreeningStatusAdmin,
         ReviewerRoleAdmin,
