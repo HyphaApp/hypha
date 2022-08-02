@@ -38,12 +38,6 @@
     {% include 'funds/includes/delegated_form_base.html' with form=final_approval_form value=update %}
 </div>
 
-<div class="modal" id="request-project-changes">
-    <h4 class="modal__header-bar">{% trans "Request Changes" %}</h4>
-    {% trans "Request Changes" as request_changes %}
-    {% include 'funds/includes/delegated_form_base.html' with form=rejection_form value=request_changes %}
-</div>
-
 {% if contract_to_approve %}
 <div class="modal" id="approve-contract">
     <h4 class="modal__header-bar">{% trans "Approve Contract" %}</h4>
