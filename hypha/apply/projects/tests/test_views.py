@@ -24,7 +24,7 @@ from hypha.apply.utils.testing.tests import BaseViewTestCase
 from ..files import get_files
 from ..forms import SetPendingForm
 from ..models.payment import CHANGES_REQUESTED_BY_STAFF, SUBMITTED
-from ..models.project import APPROVE, COMMITTED, CONTRACTING, IN_PROGRESS
+from ..models.project import APPROVE, CONTRACTING, IN_PROGRESS
 from ..views.project import ContractsMixin, ProjectDetailSimplifiedView
 from .factories import (
     ContractFactory,
@@ -155,62 +155,6 @@ class TestReviewerUserProjectDetailView(BaseProjectDetailTestCase):
         project = ProjectFactory()
         response = self.get_page(project)
         self.assertEqual(response.status_code, 403)
-
-
-class TestStaffProjectRejectView(BaseProjectDetailTestCase):
-    user_factory = StaffFactory
-
-    def test_cant_reject(self):
-        project = ProjectFactory(in_approval=True)
-        response = self.post_page(project, {
-            'form-submitted-rejection_form': '',
-            'comment': 'needs to change',
-        })
-        self.assertEqual(response.status_code, 403)
-        project = self.refresh(project)
-        self.assertEqual(project.status, COMMITTED)
-        self.assertTrue(project.is_locked)
-
-
-class TestApproverProjectRejectView(BaseProjectDetailTestCase):
-    user_factory = ApproverFactory
-
-    def test_can_reject(self):
-        project = ProjectFactory(in_approval=True)
-        response = self.post_page(project, {
-            'form-submitted-rejection_form': '',
-            'comment': 'needs to change',
-        })
-        self.assertEqual(response.status_code, 200)
-        project = self.refresh(project)
-        self.assertEqual(project.status, COMMITTED)
-        self.assertFalse(project.is_locked)
-
-    def test_cant_reject_no_comment(self):
-        project = ProjectFactory(in_approval=True)
-        response = self.post_page(project, {
-            'form-submitted-rejection_form': '',
-            'comment': '',
-        })
-        self.assertEqual(response.status_code, 200)
-        project = self.refresh(project)
-        self.assertEqual(project.status, COMMITTED)
-        self.assertTrue(project.is_locked)
-
-
-class TestUserProjectRejectView(BaseProjectDetailTestCase):
-    user_factory = ApplicantFactory
-
-    def test_cant_reject(self):
-        project = ProjectFactory(in_approval=True, user=self.user)
-        response = self.post_page(project, {
-            'form-submitted-rejection_form': '',
-            'comment': 'needs to change',
-        })
-        self.assertEqual(response.status_code, 200)
-        project = self.refresh(project)
-        self.assertEqual(project.status, COMMITTED)
-        self.assertTrue(project.is_locked)
 
 
 class TestRemoveDocumentView(BaseViewTestCase):
