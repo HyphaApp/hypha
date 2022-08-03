@@ -39,7 +39,7 @@ from ..models.payment import (
     SUBMITTED,
     invoice_status_user_choices,
 )
-from ..models.project import APPROVE, REQUEST_CHANGE
+from ..models.project import APPROVE
 from .factories import (
     DocumentCategoryFactory,
     InvoiceFactory,

@@ -25,7 +25,14 @@ from hypha.apply.utils.testing.tests import BaseViewTestCase
 from ..files import get_files
 from ..forms import SetPendingForm
 from ..models.payment import CHANGES_REQUESTED_BY_STAFF, SUBMITTED
-from ..models.project import APPROVE, COMMITTED, CONTRACTING, IN_PROGRESS, REQUEST_CHANGE, WAITING_FOR_APPROVAL
+from ..models.project import (
+    APPROVE,
+    COMMITTED,
+    CONTRACTING,
+    IN_PROGRESS,
+    REQUEST_CHANGE,
+    WAITING_FOR_APPROVAL,
+)
 from ..views.project import ContractsMixin, ProjectDetailSimplifiedView
 from .factories import (
     ContractFactory,
@@ -113,7 +120,7 @@ class TestChangePAFStatusView(BaseViewTestCase):
         return {'pk': instance.id}
 
     def test_applicant_cant_update_paf_status(self):
-        user= ApplicantFactory()
+        user = ApplicantFactory()
         self.client.force_login(user=user)
         project = ProjectFactory(in_approval=True)
 
