@@ -44,6 +44,6 @@ def has_draft(user, submission):
 
 @register.filter
 def average_review_score(reviewers):
-    sum = 0
-    [sum := sum + reviewer.review.score for reviewer in reviewers]
-    return sum/len(reviewers)
+    sum,count = 0,0
+    [(sum := sum + reviewer.review.score, count := count + 1)  for reviewer in reviewers if not reviewer.has_review if not reviewer.review.is_draft ]
+    return sum/count
