@@ -13,6 +13,7 @@ from hypha.apply.users.tests.factories import (
     ApplicantFactory,
     ApproverFactory,
     ContractingApproverFactory,
+    ContractingFactory,
     FinanceFactory,
     ReviewerFactory,
     StaffFactory,
@@ -24,7 +25,7 @@ from hypha.apply.utils.testing.tests import BaseViewTestCase
 from ..files import get_files
 from ..forms import SetPendingForm
 from ..models.payment import CHANGES_REQUESTED_BY_STAFF, SUBMITTED
-from ..models.project import APPROVE, CONTRACTING, IN_PROGRESS
+from ..models.project import APPROVE, COMMITTED, CONTRACTING, IN_PROGRESS, REQUEST_CHANGE, WAITING_FOR_APPROVAL
 from ..views.project import ContractsMixin, ProjectDetailSimplifiedView
 from .factories import (
     ContractFactory,
@@ -67,8 +68,107 @@ class TestUpdateLeadView(BaseViewTestCase):
         self.assertEqual(project.lead, new_lead)
 
 
+class TestSendForApprovalView(BaseViewTestCase):
+    base_view_name = 'detail'
+    url_name = 'funds:projects:{}'
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        return {'pk': instance.id}
+
+    def test_send_for_approval_fails_when_project_is_locked(self):
+        project = ProjectFactory(is_locked=True)
+
+        # The view doesn't have any custom changes when form validation fails
+        # so check that directly.
+        form = SetPendingForm(instance=project)
+        self.assertFalse(form.is_valid())
+
+    def test_send_for_approval_fails_when_project_is_not_in_committed_state(self):
+        project = ProjectFactory(status='in_progress')
+
+        # The view doesn't have any custom changes when form validation fails
+        # so check that directly.
+        form = SetPendingForm(instance=project)
+        self.assertFalse(form.is_valid())
+
+    def test_send_for_approval_happy_path(self):
+        project = ProjectFactory(is_locked=False, status=COMMITTED)
+
+        response = self.post_page(project, {'form-submitted-request_approval_form': ''})
+        self.assertEqual(response.status_code, 200)
+
+        project.refresh_from_db()
+
+        self.assertTrue(project.is_locked)
+        self.assertEqual(project.status, WAITING_FOR_APPROVAL)
+
+
+class TestChangePAFStatusView(BaseViewTestCase):
+    base_view_name = 'detail'
+    url_name = 'funds:projects:{}'
+    user_factory = StaffFactory
+
+    def get_kwargs(self, instance):
+        return {'pk': instance.id}
+
+    def test_applicant_cant_update_paf_status(self):
+        user= ApplicantFactory()
+        self.client.force_login(user=user)
+        project = ProjectFactory(in_approval=True)
+
+        response = self.post_page(project, {'form-submitted-change_paf_status_form': '', 'paf_status': APPROVE})
+        self.assertEqual(response.status_code, 403)
+
+    def test_staff_can_update_paf_status(self):
+        user = StaffFactory()
+        self.client.force_login(user=user)
+        project = ProjectFactory(in_approval=True)
+
+        response = self.post_page(project, {'form-submitted-change_paf_status_form': '', 'paf_status': APPROVE})
+        self.assertEqual(response.status_code, 200)
+
+    def test_finance_can_update_paf_status(self):
+        user = FinanceFactory()
+        self.client.force_login(user=user)
+        project = ProjectFactory(in_approval=True)
+
+        response = self.post_page(project, {'form-submitted-change_paf_status': '', 'paf_status': APPROVE})
+        self.assertEqual(response.status_code, 200)
+
+    def test_contracting_can_update_paf_status(self):
+        user = ContractingFactory()
+        self.client.force_login(user=user)
+        project = ProjectFactory(in_approval=True)
+
+        response = self.post_page(project, {'form-submitted-change_paf_status': '', 'paf_status': APPROVE})
+        self.assertEqual(response.status_code, 200)
+
+    def test_reviewer_approve_paf(self):
+        # reviewer can be staff, finance or contracting
+        project = ProjectFactory(in_approval=True)
+        # :todo: need to work on roles creation via wagtail Page
+
+        response = self.post_page(project, {'form-submitted-change_paf_status': '', 'paf_status': APPROVE})
+        project.refresh_from_db()
+        self.assertEqual(response.status_code, 200)
+
+    def test_reviewer_rejects_paf(self):
+        # reviewer can be staff, finance or contracting
+        project = ProjectFactory(in_approval=True)
+
+        response = self.post_page(project, {'form-submitted-change_paf_status': '', 'paf_status': REQUEST_CHANGE})
+        self.assertEqual(response.status_code, 200)
+        project.refresh_from_db()
+        self.assertEqual(project.status, COMMITTED)
+
+    def test_all_reviewers_approve_paf(self):
+        # reviewers can be staff, finance or contracting
+        # :todo: need to finish with roles first
+        pass
+
+
 class TestFinalApprovalView(BaseViewTestCase):
-    # :todo: Add more tests for updated version of final approval View
     base_view_name = 'detail'
     url_name = 'funds:projects:{}'
     user_factory = ContractingApproverFactory
@@ -76,17 +176,60 @@ class TestFinalApprovalView(BaseViewTestCase):
     def get_kwargs(self, instance):
         return {'pk': instance.id}
 
-    def test_creating_an_approval_happy_path(self):
+    def test_final_approver_cant_be_staff(self):
+        user = StaffFactory()
+        self.client.force_login(user)
         project = ProjectFactory(in_approval=True)
-        # self.assertEqual(project.approvals.count(), 0)
+        response = self.post_page(project, {'form-submitted-final_approval_form': '', 'final_approval_status': APPROVE})
+        self.assertEqual(response.status_code, 403)
+
+    def test_final_approver_cant_be_finance(self):
+        user = FinanceFactory()
+        self.client.force_login(user)
+        project = ProjectFactory(in_approval=True)
+        response = self.post_page(project, {'form-submitted-final_approval_form': '', 'final_approval_status': APPROVE})
+        self.assertEqual(response.status_code, 403)
+
+    def test_final_approver_cant_be_contracting(self):
+        user = ContractingFactory()
+        self.client.force_login(user)
+        project = ProjectFactory(in_approval=True)
+        response = self.post_page(project, {'form-submitted-final_approval_form': '', 'final_approval_status': APPROVE})
+        self.assertEqual(response.status_code, 403)
+
+    def test_final_approver_cant_be_approver(self):
+        user = ApproverFactory()
+        self.client.force_login(user)
+        project = ProjectFactory(in_approval=True)
+        response = self.post_page(project, {'form-submitted-final_approval_form': '', 'final_approval_status': APPROVE})
+        self.assertEqual(response.status_code, 403)
+
+    def test_final_approver_cant_be_applicant(self):
+        user = ApplicantFactory()
+        self.client.force_login(user)
+        project = ProjectFactory(in_approval=True)
+        response = self.post_page(project, {'form-submitted-final_approval_form': '', 'final_approval_status': APPROVE})
+        self.assertEqual(response.status_code, 403)
+
+    def test_final_approval(self):
+        project = ProjectFactory(in_approval=True)
 
         response = self.post_page(project, {'form-submitted-final_approval_form': '', 'final_approval_status': APPROVE})
         self.assertEqual(response.status_code, 200)
 
         project.refresh_from_db()
-        # self.assertEqual(project.approvals.count(), 1)
         self.assertFalse(project.is_locked)
-        self.assertEqual(project.status, 'contracting')
+        self.assertEqual(project.status, CONTRACTING)
+
+    def test_final_rejection(self):
+        project = ProjectFactory(in_approval=True)
+
+        response = self.post_page(project, {'form-submitted-final_approval_form': '', 'final_approval_status': REQUEST_CHANGE})
+        self.assertEqual(response.status_code, 200)
+
+        project.refresh_from_db()
+        self.assertFalse(project.is_locked)
+        self.assertEqual(project.status, COMMITTED)
 
 
 class BaseProjectDetailTestCase(BaseViewTestCase):
@@ -184,42 +327,6 @@ class TestRemoveDocumentView(BaseViewTestCase):
             'id': 1,
         })
         self.assertEqual(response.status_code, 200)
-
-
-class TestSendForApprovalView(BaseViewTestCase):
-    base_view_name = 'detail'
-    url_name = 'funds:projects:{}'
-    user_factory = StaffFactory
-
-    def get_kwargs(self, instance):
-        return {'pk': instance.id}
-
-    def test_send_for_approval_fails_when_project_is_locked(self):
-        project = ProjectFactory(is_locked=True)
-
-        # The view doesn't have any custom changes when form validation fails
-        # so check that directly.
-        form = SetPendingForm(instance=project)
-        self.assertFalse(form.is_valid())
-
-    def test_send_for_approval_fails_when_project_is_not_in_committed_state(self):
-        project = ProjectFactory(status='in_progress')
-
-        # The view doesn't have any custom changes when form validation fails
-        # so check that directly.
-        form = SetPendingForm(instance=project)
-        self.assertFalse(form.is_valid())
-
-    def test_send_for_approval_happy_path(self):
-        project = ProjectFactory(is_locked=False, status='committed')
-
-        response = self.post_page(project, {'form-submitted-request_approval_form': ''})
-        self.assertEqual(response.status_code, 200)
-
-        project.refresh_from_db()
-
-        self.assertTrue(project.is_locked)
-        self.assertEqual(project.status, 'waiting_for_approval')
 
 
 class TestApplicantUploadContractView(BaseViewTestCase):

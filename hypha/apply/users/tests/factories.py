@@ -131,6 +131,15 @@ class Finance2Factory(FinanceFactory):
             )
 
 
+class ContractingFactory(UserFactory):
+    @factory.post_generation
+    def groups(self, create, extracted, **kwargs):
+        if create:
+            self.groups.add(
+                GroupFactory(name=CONTRACTING_GROUP_NAME),
+            )
+
+
 class ContractingApproverFactory(UserFactory):
     @factory.post_generation
     def groups(self, create, extracted, **kwargs):
