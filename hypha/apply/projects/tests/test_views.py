@@ -9,6 +9,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from hypha.apply.funds.tests.factories import LabSubmissionFactory
+from hypha.apply.home.factories import ApplySiteFactory
 from hypha.apply.users.tests.factories import (
     ApplicantFactory,
     ApproverFactory,
@@ -32,6 +33,7 @@ from ..models.project import (
     IN_PROGRESS,
     REQUEST_CHANGE,
     WAITING_FOR_APPROVAL,
+    ProjectSettings,
 )
 from ..views.project import ContractsMixin, ProjectDetailSimplifiedView
 from .factories import (
@@ -39,6 +41,7 @@ from .factories import (
     DocumentCategoryFactory,
     InvoiceFactory,
     PacketFileFactory,
+    PAFReviewerRoleFactory,
     ProjectFactory,
     ReportFactory,
     ReportVersionFactory,
@@ -116,6 +119,15 @@ class TestChangePAFStatusView(BaseViewTestCase):
     url_name = 'funds:projects:{}'
     user_factory = StaffFactory
 
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        apply_site = ApplySiteFactory()
+        cls.project_setting, _ = ProjectSettings.objects.get_or_create(site_id=apply_site.id)
+        cls.project_setting.use_settings = True
+        cls.project_setting.save()
+        cls.role = PAFReviewerRoleFactory(page=cls.project_setting)
+
     def get_kwargs(self, instance):
         return {'pk': instance.id}
 
@@ -124,7 +136,8 @@ class TestChangePAFStatusView(BaseViewTestCase):
         self.client.force_login(user=user)
         project = ProjectFactory(in_approval=True)
 
-        response = self.post_page(project, {'form-submitted-change_paf_status_form': '', 'paf_status': APPROVE})
+        response = self.post_page(project, {'form-submitted-change_paf_status': '', 'paf_status': APPROVE,
+                                            'role': self.role.id})
         self.assertEqual(response.status_code, 403)
 
     def test_staff_can_update_paf_status(self):
@@ -132,7 +145,8 @@ class TestChangePAFStatusView(BaseViewTestCase):
         self.client.force_login(user=user)
         project = ProjectFactory(in_approval=True)
 
-        response = self.post_page(project, {'form-submitted-change_paf_status_form': '', 'paf_status': APPROVE})
+        response = self.post_page(project, {'form-submitted-change_paf_status': '', 'paf_status': APPROVE,
+                                            'role': self.role.id})
         self.assertEqual(response.status_code, 200)
 
     def test_finance_can_update_paf_status(self):
@@ -140,7 +154,8 @@ class TestChangePAFStatusView(BaseViewTestCase):
         self.client.force_login(user=user)
         project = ProjectFactory(in_approval=True)
 
-        response = self.post_page(project, {'form-submitted-change_paf_status': '', 'paf_status': APPROVE})
+        response = self.post_page(project, {'form-submitted-change_paf_status': '', 'paf_status': APPROVE,
+                                            'role': self.role.id})
         self.assertEqual(response.status_code, 200)
 
     def test_contracting_can_update_paf_status(self):
@@ -148,31 +163,32 @@ class TestChangePAFStatusView(BaseViewTestCase):
         self.client.force_login(user=user)
         project = ProjectFactory(in_approval=True)
 
-        response = self.post_page(project, {'form-submitted-change_paf_status': '', 'paf_status': APPROVE})
+        response = self.post_page(project, {'form-submitted-change_paf_status': '', 'paf_status': APPROVE,
+                                            'role': self.role.id})
         self.assertEqual(response.status_code, 200)
 
     def test_reviewer_approve_paf(self):
         # reviewer can be staff, finance or contracting
         project = ProjectFactory(in_approval=True)
-        # :todo: need to work on roles creation via wagtail Page
 
-        response = self.post_page(project, {'form-submitted-change_paf_status': '', 'paf_status': APPROVE})
-        project.refresh_from_db()
+        response = self.post_page(project, {'form-submitted-change_paf_status': '', 'role': self.role.id,
+                                            'paf_status': APPROVE})
         self.assertEqual(response.status_code, 200)
+        project.refresh_from_db()
+        self.assertIn(self.role.role, project.paf_reviews_meta_data.keys())
+        self.assertIn('approve', project.paf_reviews_meta_data[self.role.role]['status'])
 
     def test_reviewer_rejects_paf(self):
         # reviewer can be staff, finance or contracting
         project = ProjectFactory(in_approval=True)
 
-        response = self.post_page(project, {'form-submitted-change_paf_status': '', 'paf_status': REQUEST_CHANGE})
+        response = self.post_page(project, {'form-submitted-change_paf_status': '', 'paf_status': REQUEST_CHANGE,
+                                            'role': self.role.id})
         self.assertEqual(response.status_code, 200)
         project.refresh_from_db()
         self.assertEqual(project.status, COMMITTED)
-
-    def test_all_reviewers_approve_paf(self):
-        # reviewers can be staff, finance or contracting
-        # :todo: need to finish with roles first
-        pass
+        self.assertIn(self.role.role, project.paf_reviews_meta_data.keys())
+        self.assertEqual('request_change', project.paf_reviews_meta_data[self.role.role]['status'])
 
 
 class TestFinalApprovalView(BaseViewTestCase):
