@@ -53,7 +53,7 @@ def export(users):
         users_list.append(user_data)
     filepath=create_csv(users_list)
     with open(filepath, 'rb') as file:
-            response = HttpResponse(file.read(), content_type="application/vnd.ms-excel")
+            response = HttpResponse(file.read(), content_type="text/csv")
             response['Content-Disposition'] = 'inline; filename=' + os.path.basename(filepath)
             return response
 
