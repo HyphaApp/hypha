@@ -48,8 +48,11 @@ INVOICE_TRANISTION_TO_RESUBMITTED = [
 ]
 
 INVOICE_STATUS_PM_CHOICES = [CHANGES_REQUESTED_BY_STAFF, APPROVED_BY_STAFF, DECLINED]
-INVOICE_STATUS_FINANCE_1_CHOICES = [CHANGES_REQUESTED_BY_FINANCE_1, APPROVED_BY_FINANCE_1]
-INVOICE_STATUS_FINANCE_2_CHOICES = [CHANGES_REQUESTED_BY_FINANCE_2, APPROVED_BY_FINANCE_2, CONVERTED, PAID]
+INVOICE_STATUS_FINANCE_1_CHOICES = [CHANGES_REQUESTED_BY_FINANCE_1, APPROVED_BY_FINANCE_1, CONVERTED, PAID]
+INVOICE_STATUS_FINANCE_2_CHOICES = []
+if settings.INVOICE_EXTENDED_WORKFLOW:
+    INVOICE_STATUS_FINANCE_1_CHOICES = [CHANGES_REQUESTED_BY_FINANCE_1, APPROVED_BY_FINANCE_1]
+    INVOICE_STATUS_FINANCE_2_CHOICES = [CHANGES_REQUESTED_BY_FINANCE_2, APPROVED_BY_FINANCE_2, CONVERTED, PAID]
 
 
 def invoice_status_user_choices(user):
@@ -77,10 +80,14 @@ class InvoiceQueryset(models.QuerySet):
         return self.filter(status=APPROVED_BY_FINANCE_1)
 
     def for_finance_1(self):
-        return self.filter(status__in=[APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_2])
+        if settings.INVOICE_EXTENDED_WORKFLOW:
+            return self.filter(status__in=[APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_2])
+        return self.filter(status__in=[APPROVED_BY_STAFF, APPROVED_BY_FINANCE_1, CONVERTED])
 
     def for_finance_2(self):
-        return self.filter(status__in=[APPROVED_BY_FINANCE_1, APPROVED_BY_FINANCE_2, CONVERTED])
+        if settings.INVOICE_EXTENDED_WORKFLOW:
+            return self.filter(status__in=[APPROVED_BY_FINANCE_1, APPROVED_BY_FINANCE_2, CONVERTED])
+        return []
 
     def rejected(self):
         return self.filter(status=DECLINED)
@@ -218,8 +225,12 @@ class Invoice(models.Model):
                 return True
 
         if user.is_finance_level_1:
-            if self.status in {APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_2}:
-                return True
+            if settings.INVOICE_EXTENDED_WORKFLOW:
+                if self.status in {APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_2}:
+                    return True
+            else:
+                if self.status in {APPROVED_BY_STAFF, APPROVED_BY_FINANCE_1, CONVERTED}:
+                    return True
 
         if user.is_finance_level_2:
             if self.status in {APPROVED_BY_FINANCE_1, APPROVED_BY_FINANCE_2, CONVERTED}:
@@ -229,7 +240,9 @@ class Invoice(models.Model):
 
     def can_user_complete_required_checks(self, user):
         if user.is_finance_level_1:
-            if self.status in [APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_2]:
+            if self.status in [APPROVED_BY_STAFF]:
+                return True
+            elif settings.INVOICE_EXTENDED_WORKFLOW and self.status in [CHANGES_REQUESTED_BY_FINANCE_2]:
                 return True
         return False
 
@@ -245,7 +258,9 @@ class Invoice(models.Model):
             if self.status in {SUBMITTED, RESUBMITTED, CHANGES_REQUESTED_BY_FINANCE_1}:
                 return True
         if user.is_finance_level_1:
-            if self.status in {APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_2}:
+            if self.status in {APPROVED_BY_STAFF}:
+                return True
+            elif settings.INVOICE_EXTENDED_WORKFLOW and self.status in [CHANGES_REQUESTED_BY_FINANCE_2]:
                 return True
         if user.is_finance_level_2:
             if self.status in {APPROVED_BY_FINANCE_1}:

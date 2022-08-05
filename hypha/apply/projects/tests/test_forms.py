@@ -32,7 +32,9 @@ from ..models.payment import (
     CHANGES_REQUESTED_BY_FINANCE_1,
     CHANGES_REQUESTED_BY_FINANCE_2,
     CHANGES_REQUESTED_BY_STAFF,
+    CONVERTED,
     DECLINED,
+    PAID,
     RESUBMITTED,
     SUBMITTED,
     invoice_status_user_choices,
@@ -201,7 +203,8 @@ class TestChangeInvoiceStatusFormForm(TestCase):
         actual = set(form.fields['status'].choices)
         self.assertEqual(expected, actual)
 
-    def test_finance1_choices_with_approved_by_finance1_status(self):
+    @override_settings(INVOICE_EXTENDED_WORKFLOW=True)
+    def test_finance1_choices_with_approved_by_finance1_status_with_extended_flow(self):
         invoice = InvoiceFactory(status=APPROVED_BY_FINANCE_1)
         user = FinanceFactory()
         form = ChangeInvoiceStatusForm(instance=invoice, user=user)
@@ -211,6 +214,18 @@ class TestChangeInvoiceStatusFormForm(TestCase):
         actual = set(form.fields['status'].choices)
         self.assertEqual(expected, actual)
 
+    @override_settings(INVOICE_EXTENDED_WORKFLOW=False)
+    def test_finance1_choices_with_approved_by_finance1_status(self):
+        invoice = InvoiceFactory(status=APPROVED_BY_FINANCE_1)
+        user = FinanceFactory()
+        form = ChangeInvoiceStatusForm(instance=invoice, user=user)
+
+        expected = set(filter_request_choices([CONVERTED, PAID],
+                                              invoice_status_user_choices(user)))
+        actual = set(form.fields['status'].choices)
+        self.assertEqual(expected, actual)
+
+    @override_settings(INVOICE_EXTENDED_WORKFLOW=True)
     def test_finance2_choices_with_approved_by_finance1_status(self):
         invoice = InvoiceFactory(status=APPROVED_BY_FINANCE_1)
         user = Finance2Factory()
@@ -221,6 +236,7 @@ class TestChangeInvoiceStatusFormForm(TestCase):
         actual = set(form.fields['status'].choices)
         self.assertEqual(expected, actual)
 
+    @override_settings(INVOICE_EXTENDED_WORKFLOW=True)
     def test_staff_choices_with_changes_requested_by_finance2_status(self):
         invoice = InvoiceFactory(status=CHANGES_REQUESTED_BY_FINANCE_2)
         user = StaffFactory()
@@ -231,6 +247,7 @@ class TestChangeInvoiceStatusFormForm(TestCase):
         actual = set(form.fields['status'].choices)
         self.assertEqual(expected, actual)
 
+    @override_settings(INVOICE_EXTENDED_WORKFLOW=True)
     def test_finance1_choices_with_changes_requested_by_finance2_status(self):
         invoice = InvoiceFactory(status=CHANGES_REQUESTED_BY_FINANCE_2)
         user = FinanceFactory()
@@ -241,6 +258,7 @@ class TestChangeInvoiceStatusFormForm(TestCase):
         actual = set(form.fields['status'].choices)
         self.assertEqual(expected, actual)
 
+    @override_settings(INVOICE_EXTENDED_WORKFLOW=True)
     def test_finance2_choices_with_changes_requested_by_finance2_status(self):
         invoice = InvoiceFactory(status=CHANGES_REQUESTED_BY_FINANCE_2)
         user = Finance2Factory()

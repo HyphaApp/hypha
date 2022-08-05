@@ -1,6 +1,7 @@
 import json
 
 from django import forms
+from django.conf import settings
 from django.core.files.base import ContentFile
 from django.db import transaction
 from django.db.models.fields.files import FieldFile
@@ -56,16 +57,21 @@ class ChangeInvoiceStatusForm(forms.ModelForm):
                 user_choices
             ),
             CHANGES_REQUESTED_BY_FINANCE_1: filter_request_choices([CHANGES_REQUESTED_BY_STAFF, DECLINED], user_choices),
-            CHANGES_REQUESTED_BY_FINANCE_2: filter_request_choices(
-                [
-                    CHANGES_REQUESTED_BY_FINANCE_1, APPROVED_BY_FINANCE_1,
-                ],
-                user_choices
-            ),
-            APPROVED_BY_FINANCE_1: filter_request_choices([CHANGES_REQUESTED_BY_FINANCE_2, APPROVED_BY_FINANCE_2], user_choices),
-            APPROVED_BY_FINANCE_2: filter_request_choices([CONVERTED, PAID], user_choices),
+            APPROVED_BY_FINANCE_1: filter_request_choices([CONVERTED, PAID], user_choices),
             CONVERTED: filter_request_choices([PAID], user_choices),
         }
+        if settings.INVOICE_EXTENDED_WORKFLOW:
+            possible_status_transitions_lut.update({
+                CHANGES_REQUESTED_BY_FINANCE_2: filter_request_choices(
+                    [
+                        CHANGES_REQUESTED_BY_FINANCE_1, APPROVED_BY_FINANCE_1,
+                    ],
+                    user_choices
+                ),
+                APPROVED_BY_FINANCE_1: filter_request_choices([CHANGES_REQUESTED_BY_FINANCE_2, APPROVED_BY_FINANCE_2],
+                                                              user_choices),
+                APPROVED_BY_FINANCE_2: filter_request_choices([CONVERTED, PAID], user_choices),
+            })
         status_field.choices = possible_status_transitions_lut.get(instance.status, [])
 
     def clean(self):
