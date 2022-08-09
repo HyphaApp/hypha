@@ -16,14 +16,12 @@ from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
-from wagtail.admin.panels import FieldPanel
-from wagtail.admin.edit_handlers import InlinePanel, StreamFieldPanel
+from wagtail.admin.panels import FieldPanel, InlinePanel
 from wagtail.contrib.settings.models import BaseSetting, register_setting
-from wagtail.fields import StreamField
 from wagtail.core.models import Orderable
+from wagtail.fields import StreamField
 
 from addressfield.fields import ADDRESS_FIELDS_ORDER
 from hypha.apply.funds.models.mixins import AccessFormData
