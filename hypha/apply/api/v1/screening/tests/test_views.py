@@ -131,12 +131,9 @@ class SubmissionScreeningStatusViewSetTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(len(response.json()), 2)
 
-        self.assertEqual(response.json()[0]['id'], self.yes_screening_status.id)
-        self.assertEqual(response.json()[0]['title'], self.yes_screening_status.title)
-        self.assertEqual(response.json()[0]['yes'], self.yes_screening_status.yes)
-        self.assertEqual(response.json()[0]['default'], self.yes_screening_status.default)
-
-        self.assertEqual(response.json()[1]['id'], self.yes_default_screening_status.id)
+        possible_ids = [self.yes_screening_status.id, self.yes_default_screening_status.id]
+        self.assertIn(response.json()[0]['id'], possible_ids)
+        self.assertIn(response.json()[1]['id'], possible_ids)
 
     def test_staff_can_list_submission_screening_statuses(self):
         user = StaffFactory()
