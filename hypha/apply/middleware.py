@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.db.models.deletion import ProtectedError
 from django.http import HttpResponseRedirect
 from django.utils.translation import gettext as _
-from wagtail.core.models import Site
+from wagtail.models import Site
 
 from .home.models import ApplyHomePage
 

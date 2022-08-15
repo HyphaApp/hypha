@@ -3,7 +3,7 @@ import json
 from django import forms
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
-from wagtail.core.blocks import RichTextBlock
+from wagtail.blocks import RichTextBlock
 
 from hypha.apply.review.fields import ScoredAnswerField
 from hypha.apply.review.options import (

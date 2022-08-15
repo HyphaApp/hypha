@@ -12,7 +12,7 @@ from django.utils.html import conditional_escape
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from django_bleach.templatetags.bleach_tags import bleach_value
-from wagtail.core.blocks import (
+from wagtail.blocks import (
     BooleanBlock,
     CharBlock,
     ChoiceBlock,

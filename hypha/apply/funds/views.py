@@ -33,7 +33,7 @@ from django_file_form.models import PlaceholderUploadedFile
 from django_filters.views import FilterView
 from django_tables2.paginators import LazyPaginator
 from django_tables2.views import SingleTableMixin
-from wagtail.core.models import Page
+from wagtail.models import Page
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.views import (

@@ -8,6 +8,9 @@ from ..utils import send_activation_email
 
 @override_settings(ROOT_URLCONF='hypha.apply.urls')
 class TestActivationEmail(TestCase):
+
     def test_activation_email_includes_link(self):
         send_activation_email(UserFactory())
-        self.assertEqual(len(mail.outbox), 1)
+        assert len(mail.outbox) == 1
+        email_body = mail.outbox[0].body
+        assert "password reset form at: https://primary-test-host.org" in email_body

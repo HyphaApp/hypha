@@ -3,7 +3,7 @@ from django.contrib.syndication.views import Feed
 from django.core.cache import cache
 from django.db.models.functions import Coalesce
 from django.http import Http404
-from wagtail.core.models import Site
+from wagtail.models import Site
 
 from hypha.public.news.models import NewsFeedSettings, NewsIndex, NewsPage, NewsType
 

@@ -3,19 +3,17 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
-from wagtail.admin.edit_handlers import (
+from wagtail import blocks
+from wagtail.admin.panels import (
     FieldPanel,
     FieldRowPanel,
     InlinePanel,
     MultiFieldPanel,
     PageChooserPanel,
-    StreamFieldPanel,
 )
 from wagtail.contrib.settings.models import BaseSetting, register_setting
-from wagtail.core import blocks
-from wagtail.core.fields import RichTextField, StreamField
-from wagtail.core.models import Orderable, Page
-from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.fields import RichTextField, StreamField
+from wagtail.models import Orderable, Page
 from wagtail.snippets.models import register_snippet
 from wagtailcache.cache import WagtailCacheMixin, cache_page
 
@@ -108,7 +106,7 @@ class SocialFields(models.Model):
 
     promote_panels = [
         MultiFieldPanel([
-            ImageChooserPanel('social_image'),
+            FieldPanel('social_image'),
             FieldPanel('social_text'),
         ], 'Social networks'),
     ]
@@ -132,7 +130,7 @@ class ListingFields(models.Model):
 
     promote_panels = [
         MultiFieldPanel([
-            ImageChooserPanel('listing_image'),
+            FieldPanel('listing_image'),
             FieldPanel('listing_title'),
             FieldPanel('listing_summary'),
         ], 'Listing information'),
@@ -160,14 +158,15 @@ class CallToActionSnippet(models.Model):
                 ], icon='link'),
             ),
         ], max_num=1, required=True),
-        blank=True
+        blank=True,
+        use_json_field=True
     )
 
     panels = [
         FieldPanel('title'),
         FieldPanel('summary'),
-        ImageChooserPanel('image'),
-        StreamFieldPanel('link'),
+        FieldPanel('image'),
+        FieldPanel('link'),
     ]
 
     def get_link_text(self):
@@ -269,8 +268,8 @@ class SystemMessagesSettings(BaseSetting):
 
     panels = [
         MultiFieldPanel([
-            ImageChooserPanel('site_logo_default'),
-            ImageChooserPanel('site_logo_mobile'),
+            FieldPanel('site_logo_default'),
+            FieldPanel('site_logo_mobile'),
             FieldPanel('site_logo_link'),
         ], 'Site logo'),
         FieldPanel('footer_content'),
@@ -297,7 +296,7 @@ class BasePage(WagtailCacheMixin, SocialFields, ListingFields, Page):
         abstract = True
 
     content_panels = Page.content_panels + [
-        ImageChooserPanel('header_image')
+        FieldPanel('header_image')
     ]
 
     promote_panels = (

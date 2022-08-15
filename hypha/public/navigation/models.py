@@ -1,9 +1,9 @@
 from django.utils.translation import gettext_lazy as _
 from modelcluster.models import ClusterableModel
-from wagtail.admin.edit_handlers import StreamFieldPanel
+from wagtail import blocks
+from wagtail.admin.panels import FieldPanel
 from wagtail.contrib.settings.models import BaseSetting, register_setting
-from wagtail.core import blocks
-from wagtail.core.fields import StreamField
+from wagtail.fields import StreamField
 
 
 class LinkBlock(blocks.StructBlock):
@@ -19,9 +19,10 @@ class NavigationSettings(BaseSetting, ClusterableModel):
     primary_navigation = StreamField(
         [('link', LinkBlock()), ],
         blank=True,
-        help_text=_('Main site navigation')
+        help_text=_('Main site navigation'),
+        use_json_field=True,
     )
 
     panels = [
-        StreamFieldPanel('primary_navigation'),
+        FieldPanel('primary_navigation'),
     ]

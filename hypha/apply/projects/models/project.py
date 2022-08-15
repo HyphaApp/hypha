@@ -16,9 +16,9 @@ from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel
+from wagtail.admin.panels import FieldPanel
 from wagtail.contrib.settings.models import BaseSetting, register_setting
-from wagtail.core.fields import StreamField
+from wagtail.fields import StreamField
 
 from addressfield.fields import ADDRESS_FIELDS_ORDER
 from hypha.apply.funds.models.mixins import AccessFormData
@@ -143,7 +143,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
     status = models.TextField(choices=PROJECT_STATUS_CHOICES, default=COMMITTED)
 
     form_data = models.JSONField(encoder=StreamFieldDataEncoder, default=dict)
-    form_fields = StreamField(FormFieldsBlock(), null=True)
+    form_fields = StreamField(FormFieldsBlock(), null=True, use_json_field=True)
 
     # tracks read/write state of the Project
     is_locked = models.BooleanField(default=False)
@@ -379,7 +379,7 @@ class ProjectApprovalForm(BaseStreamForm, models.Model):
 
     panels = [
         FieldPanel('name'),
-        StreamFieldPanel('form_fields'),
+        FieldPanel('form_fields'),
     ]
 
     def __str__(self):

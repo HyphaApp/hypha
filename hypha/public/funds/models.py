@@ -7,16 +7,14 @@ from django.utils.deconstruct import deconstructible
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
 from pagedown.widgets import PagedownWidget
-from wagtail.admin.edit_handlers import (
+from wagtail.admin.panels import (
     FieldPanel,
     FieldRowPanel,
     InlinePanel,
     MultiFieldPanel,
     PageChooserPanel,
-    StreamFieldPanel,
 )
-from wagtail.core.fields import StreamField
-from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.fields import StreamField
 from wagtail.search import index
 
 from hypha.apply.funds.models import ApplicationSubmission
@@ -44,7 +42,7 @@ class BaseApplicationPage(BasePage):
         on_delete=models.SET_NULL,
         related_name='application_public',
     )
-    body = StreamField(FundBlock())
+    body = StreamField(FundBlock(), use_json_field=True)
 
     search_fields = BasePage.search_fields + [
         index.SearchField('introduction'),
@@ -53,7 +51,7 @@ class BaseApplicationPage(BasePage):
 
     content_panels = BasePage.content_panels + [
         FieldPanel('introduction', widget=PagedownWidget()),
-        StreamFieldPanel('body'),
+        FieldPanel('body'),
         InlinePanel('related_pages', label=_('Related pages')),
     ]
 
@@ -150,7 +148,7 @@ class LabPage(BasePage):
     )
     lab_link = models.CharField(blank=True, max_length=255, verbose_name=_('External link'), validators=[MailToAndURLValidator()])
     link_text = models.CharField(max_length=255, help_text=_('Text to display on the button for external links'), blank=True)
-    body = StreamField(LabBlock())
+    body = StreamField(LabBlock(), use_json_field=True)
 
     search_fields = BasePage.search_fields + [
         index.SearchField('introduction'),
@@ -158,7 +156,7 @@ class LabPage(BasePage):
     ]
 
     content_panels = BasePage.content_panels + [
-        ImageChooserPanel('icon'),
+        FieldPanel('icon'),
         FieldPanel('introduction'),
         MultiFieldPanel([
             PageChooserPanel('lab_type', 'funds.LabType'),
@@ -167,7 +165,7 @@ class LabPage(BasePage):
                 FieldPanel('link_text'),
             ]),
         ], heading=_('Link for lab application')),
-        StreamFieldPanel('body'),
+        FieldPanel('body'),
         InlinePanel('related_pages', label=_('Related pages')),
     ]
 

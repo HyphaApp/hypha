@@ -22,3 +22,5 @@ STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.MD5PasswordHasher',
 ]
+
+WAGTAILADMIN_BASE_URL = "https://primary-test-host.org"

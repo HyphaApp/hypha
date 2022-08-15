@@ -13,7 +13,7 @@ from django.views.generic.edit import ModelFormMixin, ProcessFormView
 from wagtail.admin import messages
 from wagtail.admin.auth import require_admin_access
 from wagtail.admin.views.pages.delete import delete
-from wagtail.core.models import Page
+from wagtail.models import Page
 
 
 def page_not_found(request, exception=None, template_name='apply/404.html'):

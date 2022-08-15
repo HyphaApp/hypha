@@ -14,9 +14,9 @@ from django.db import transaction
 from django.db.utils import IntegrityError
 from PIL import Image
 from wagtail.admin.rich_text.converters.editor_html import EditorHTMLConverter
-from wagtail.core.models import Page
-from wagtail.core.rich_text import RichText
 from wagtail.images import get_image_model
+from wagtail.models import Page
+from wagtail.rich_text import RichText
 
 from hypha.apply.categories.categories_seed import CATEGORIES
 from hypha.apply.categories.models import Category, Option

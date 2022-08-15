@@ -6,8 +6,8 @@ import factory
 import wagtail_factories
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.serializers.json import DjangoJSONEncoder
-from wagtail.core.blocks import RichTextBlock
-from wagtail.core.rich_text import RichText
+from wagtail.blocks import RichTextBlock
+from wagtail.rich_text import RichText
 
 from hypha.apply.stream_forms import blocks as stream_blocks
 

@@ -15,7 +15,7 @@ from django.views.generic import (
     ListView,
     UpdateView,
 )
-from wagtail.core.blocks import RichTextBlock
+from wagtail.blocks import RichTextBlock
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.funds.models import ApplicationSubmission, AssignedReviewers

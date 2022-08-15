@@ -6,7 +6,7 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.db.utils import IntegrityError
 from wagtail.admin.rich_text.converters.editor_html import EditorHTMLConverter
-from wagtail.core.rich_text import RichText
+from wagtail.rich_text import RichText
 
 from hypha.apply.categories.categories_seed import CATEGORIES
 from hypha.apply.categories.models import Category, Option

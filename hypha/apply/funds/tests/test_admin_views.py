@@ -3,7 +3,7 @@ from django.contrib.auth.models import Group
 from django.contrib.messages import get_messages
 from django.test import TestCase
 from django.urls import reverse
-from wagtail.tests.utils import WagtailTestUtils
+from wagtail.test.utils import WagtailTestUtils
 
 from hypha.apply.funds.models.forms import ApplicationForm
 from hypha.apply.home.factories import ApplyHomePageFactory

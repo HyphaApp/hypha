@@ -30,7 +30,7 @@ from two_factor.views import DisableView as TwoFactorDisableView
 from two_factor.views import LoginView as TwoFactorLoginView
 from two_factor.views import SetupView as TwoFactorSetupView
 from wagtail.admin.views.account import password_management_enabled
-from wagtail.core.models import Site
+from wagtail.models import Site
 from wagtail.users.views.users import change_user_perm
 
 from hypha.apply.home.models import ApplyHomePage

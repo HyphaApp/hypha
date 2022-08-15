@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.db import transaction
-from wagtail.core.models import Site
+from wagtail.models import Site
 
 
 class Command(BaseCommand):

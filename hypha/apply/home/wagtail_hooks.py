@@ -1,4 +1,4 @@
-from wagtail.core import hooks
+from wagtail import hooks
 
 from hypha.apply.users.groups import STAFF_GROUP_NAME
 

@@ -2,10 +2,10 @@
 
 django-debug-toolbar==3.2.2
 factory_boy==3.2.1
-flake8==4.0.1
+flake8==5.0.1
 isort==5.10.1
 model-bakery==1.3.3
 responses==0.16.0
 stellar==0.4.5
-wagtail-factories==2.0.1
+wagtail-factories==2.1.0
 Werkzeug==2.0.2

@@ -10,7 +10,7 @@ from django.views.decorators.vary import vary_on_headers
 from wagtail.admin.auth import any_permission_required
 from wagtail.admin.filters import WagtailFilterSet
 from wagtail.admin.forms.search import SearchForm
-from wagtail.core.compat import AUTH_USER_APP_LABEL, AUTH_USER_MODEL_NAME
+from wagtail.compat import AUTH_USER_APP_LABEL, AUTH_USER_MODEL_NAME
 
 User = get_user_model()
 

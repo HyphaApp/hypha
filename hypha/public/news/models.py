@@ -5,15 +5,10 @@ from django.db.models.functions import Coalesce
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
 from pagedown.widgets import PagedownWidget
-from wagtail.admin.edit_handlers import (
-    FieldPanel,
-    InlinePanel,
-    PageChooserPanel,
-    StreamFieldPanel,
-)
+from wagtail.admin.panels import FieldPanel, InlinePanel, PageChooserPanel
 from wagtail.contrib.settings.models import BaseSetting, register_setting
-from wagtail.core.fields import StreamField
-from wagtail.core.models import Orderable
+from wagtail.fields import StreamField
+from wagtail.models import Orderable
 from wagtail.search import index
 
 from hypha.public.utils.models import BasePage, RelatedPage
@@ -98,7 +93,10 @@ class NewsPage(BasePage):
         help_text=_('Use this field to override the date that the news item appears to have been published.')
     )
     introduction = models.TextField(blank=True)
-    body = StreamField(NewsStoryBlock(block_counts={'awesome_table_widget': {'max_num': 1}}))
+    body = StreamField(
+        NewsStoryBlock(block_counts={'awesome_table_widget': {'max_num': 1}}),
+        use_json_field=True
+    )
 
     search_fields = BasePage.search_fields + [
         index.SearchField('introduction'),
@@ -109,7 +107,7 @@ class NewsPage(BasePage):
         FieldPanel('publication_date'),
         InlinePanel('authors', label=_('Authors')),
         FieldPanel('introduction'),
-        StreamFieldPanel('body'),
+        FieldPanel('body'),
         InlinePanel('news_types', label=_('News types')),
         InlinePanel('related_projects', label=_('Mentioned project')),
         InlinePanel('related_pages', label=_('Related pages')),

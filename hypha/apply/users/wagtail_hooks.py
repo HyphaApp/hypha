@@ -1,5 +1,5 @@
 from django.urls import re_path, reverse
-from wagtail.core import hooks
+from wagtail import hooks
 
 from hypha.apply.utils.notifications import slack_notify
 

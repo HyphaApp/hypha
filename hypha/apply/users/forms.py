@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2Widget
-from wagtail.core.models import Site
+from wagtail.models import Site
 from wagtail.users.forms import UserCreationForm, UserEditForm
 
 from .models import UserSettings

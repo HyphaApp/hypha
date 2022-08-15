@@ -1,5 +1,5 @@
 from django.contrib.contenttypes.models import ContentType
-from wagtail.core import hooks
+from wagtail import hooks
 
 from hypha.public.forms.models import FormPage
 

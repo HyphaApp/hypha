@@ -8,15 +8,13 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
 from pagedown.widgets import PagedownWidget
-from wagtail.admin.edit_handlers import (
+from wagtail.admin.panels import (
     FieldPanel,
     InlinePanel,
     MultiFieldPanel,
     PageChooserPanel,
-    StreamFieldPanel,
 )
-from wagtail.core.fields import StreamField
-from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.fields import StreamField
 from wagtail.search import index
 
 from hypha.apply.categories.models import Option
@@ -112,7 +110,7 @@ class ProjectPage(FundingMixin, BasePage):
         on_delete=models.SET_NULL
     )
     status = models.CharField(choices=STATUSES, max_length=25, default=STATUSES[0][0])
-    body = StreamField(StoryBlock())
+    body = StreamField(StoryBlock(), use_json_field=True)
 
     categories = models.TextField(default='{}', blank=True)
 
@@ -122,10 +120,10 @@ class ProjectPage(FundingMixin, BasePage):
     ]
 
     content_panels = BasePage.content_panels + [
-        ImageChooserPanel('icon'),
+        FieldPanel('icon'),
         FieldPanel('status'),
         FieldPanel('introduction'),
-        StreamFieldPanel('body'),
+        FieldPanel('body'),
         InlinePanel('contact_details', label=_('Contact Details')),
     ] + FundingMixin.content_panels + [
         InlinePanel('related_pages', label=_('Related Projects')),

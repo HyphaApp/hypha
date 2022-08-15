@@ -4,7 +4,7 @@ from django.conf import settings
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.http import Http404
 from django.shortcuts import render
-from wagtail.core.models import Page, Site
+from wagtail.models import Page, Site
 from wagtail.search.models import Query
 
 

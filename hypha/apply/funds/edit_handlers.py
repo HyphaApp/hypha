@@ -2,8 +2,8 @@ from django.forms import Field, Widget
 from django.forms.utils import pretty_name
 from django.template.loader import render_to_string
 from django.urls import reverse
-from wagtail.admin.edit_handlers import EditHandler, FieldPanel
-from wagtail.core.models import Page
+from wagtail.admin.panels import FieldPanel, Panel
+from wagtail.models import Page
 
 
 def reverse_edit(obj):
@@ -37,10 +37,7 @@ class DisplayField(Field):
     widget = ReadonlyWidget
 
 
-class ReadOnlyPanel(EditHandler):
-    template = 'wagtailadmin/edit_handlers/single_field_panel.html'
-    field_template = 'wagtailadmin/shared/field.html'
-
+class ReadOnlyPanel(Panel):
     def __init__(self, attr, **kwargs):
         self.attr = attr
         super().__init__(**kwargs)
@@ -54,48 +51,60 @@ class ReadOnlyPanel(EditHandler):
             help_text=self.help_text,
         )
 
-    def context(self):
-        try:
-            value = getattr(self.instance, self.attr)
-        except AttributeError:
-            self.attr = '__'.join([self.instance._meta.model_name, str(self.instance.id)])
-            value = self.instance
+    class BoundPanel(Panel.BoundPanel):
+        field_template_name = 'wagtailadmin/shared/field.html'
+        template_name = 'wagtailadmin/panels/single_field_panel.html'
 
-        if callable(value):
-            value = value()
+        def render_as_object(self):
+            return render_to_string(self.template_name, self.context())
 
-        # Add initial value only when an object is present. Display nothing when a new page is being
-        # created. As it is a read-only panel and creates confusion when default values are displayed.
-        if self.instance.id:
-            self.form.initial[self.attr] = value
-        else:
-            self.form.initial[self.attr] = '-'
-        self.bound_field = DisplayField().get_bound_field(self.form, self.attr)
-        return {
-            'self': self,
-            'field': self.bound_field,
-            'show_label': False,
-        }
+        def render_as_field(self):
+            return render_to_string(self.field_template_name, self.context())
 
-    def render_as_object(self):
-        return render_to_string(self.template, self.context())
+        def context(self):
+            try:
+                value = getattr(self.instance, self.attr)
+            except AttributeError:
+                self.attr = '__'.join(
+                    [self.instance._meta.model_name, str(self.instance.id)]
+                )
+                value = self.instance
 
-    def render_as_field(self):
-        return render_to_string(self.field_template, self.context())
+            if callable(value):
+                value = value()
+
+            # Add initial value only when an object is present. Display nothing when a new page is being
+            # created. As it is a read-only panel and creates confusion when default values are displayed.
+            if self.instance.id:
+                self.form.initial[self.attr] = value
+            else:
+                self.form.initial[self.attr] = '-'
+            self.bound_field = DisplayField().get_bound_field(self.form, self.attr)
+            return {
+                'self': self,
+                'field': self.bound_field,
+                'show_label': False,
+            }
 
 
 class ReadOnlyInlinePanel(ReadOnlyPanel):
-    template = 'wagtailadmin/edit_handlers/multi_field_panel.html'
+    template_name = 'wagtailadmin/panels/multi_field_panel.html'
 
     def get_child_edit_handler(self):
         child_edit_handler = ReadOnlyPanel(self.attr)
         model = getattr(self.instance, self.attr)
         return child_edit_handler.bind_to(model=model)
 
-    def on_instance_bound(self):
-        values = getattr(self.instance, self.attr).all()
-        child_panel = self.get_child_edit_handler()
-        self.children = [child_panel.bind_to(instance=value, form=self.form, request=self.request) for value in values]
+    class BoundPanel(ReadOnlyPanel.BoundPanel):
+        def on_instance_bound(self):
+            values = getattr(self.instance, self.attr).all()
+            child_panel = self.get_child_edit_handler()
+            self.children = [
+                child_panel.bind_to(
+                    instance=value, form=self.form, request=self.request
+                )
+                for value in values
+            ]
 
 
 class FilteredFieldPanel(FieldPanel):
@@ -113,7 +122,10 @@ class FilteredFieldPanel(FieldPanel):
             filter_query=self.filter_query,
         )
 
-    def on_form_bound(self):
-        super().on_form_bound()
-        target_model = self.bound_field.field.queryset.model
-        self.bound_field.field.queryset = target_model.objects.filter(**self.filter_query)
+    class BoundPanel(FieldPanel.BoundPanel):
+        def __init__(self, **kwargs):
+            super().__init__(**kwargs)
+            target_model = self.bound_field.field.queryset.model
+            self.bound_field.field.queryset = target_model.objects.filter(
+                **self.panel.filter_query
+            )
