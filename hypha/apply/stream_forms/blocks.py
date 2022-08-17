@@ -34,7 +34,6 @@ from .fields import MultiFileField, SingleFileField
 
 class FormFieldBlock(StructBlock):
     field_label = CharBlock(label=_('Label'))
-    help_text = TextBlock(required=False, label=_('Help text'))
     help_link = URLBlock(required=False, label=_('Help link'))
 
     field_class = forms.CharField
@@ -53,9 +52,10 @@ class FormFieldBlock(StructBlock):
         return self.widget
 
     def get_field_kwargs(self, struct_value):
+        help_text = getattr(self.meta, "help_text", None)
         kwargs = {
             'label': struct_value['field_label'],
-            'help_text': conditional_escape(struct_value['help_text']),
+            'help_text': conditional_escape(help_text) if help_text else None,
             'required': struct_value.get('required', False)
         }
         if 'default_value' in struct_value:
@@ -418,11 +418,7 @@ class FileFieldBlock(UploadableMediaBlock):
     class Meta:
         label = _('File field')
         icon = 'download'
-
-    def get_field_kwargs(self, struct_value):
-        kwargs = super().get_field_kwargs(struct_value)
-        kwargs['help_text'] = kwargs['help_text'] + f" Accepted file types are {settings.FILE_ACCEPT_ATTR_VALUE}"
-        return kwargs
+        help_text = f"Accepted file types are {settings.FILE_ACCEPT_ATTR_VALUE}"
 
 
 class MultiFileFieldBlock(UploadableMediaBlock):
@@ -432,11 +428,7 @@ class MultiFileFieldBlock(UploadableMediaBlock):
         icon = 'download'
         label = _('Multiple File field')
         template = 'stream_forms/render_multi_file_field.html'
-
-    def get_field_kwargs(self, struct_value):
-        kwargs = super().get_field_kwargs(struct_value)
-        kwargs['help_text'] = kwargs['help_text'] + f" Accepted file types are {settings.FILE_ACCEPT_ATTR_VALUE}"
-        return kwargs
+        help_text = f"Accepted file types are {settings.FILE_ACCEPT_ATTR_VALUE}"
 
     def prepare_data(self, value, data, serialize):
         if serialize:
