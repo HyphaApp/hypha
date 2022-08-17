@@ -168,11 +168,13 @@ class StaffUploadContractForm(forms.ModelForm):
 
 class UploadDocumentForm(forms.ModelForm):
     class Meta:
-        fields = ['title', 'category', 'document']
+        fields = ['title', 'category', 'name_mentioned_in_contract', 'sign_autoritive_person_name', 'document']
         model = PacketFile
         widgets = {'title': forms.TextInput()}
         labels = {
             "title": _('File Name'),
+            "name_mentioned_in_contract": _('Name of organisation or person mentioned on the contract'),
+            "sign_autoritive_person_name": _('Name of person with authority to sign the contract')
         }
 
     def __init__(self, user=None, instance=None, *args, **kwargs):

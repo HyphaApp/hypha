@@ -440,6 +440,10 @@ class PacketFile(models.Model):
     title = models.TextField()
     document = models.FileField(upload_to=document_path, storage=PrivateStorage())
 
+    name_mentioned_in_contract = models.CharField(max_length=250, blank=True, null=True)
+    sign_autoritive_person_name = models.CharField(max_length=200, blank=True, null=True)
+
+
     def __str__(self):
         return _('Project file: {title}').format(title=self.title)
 
