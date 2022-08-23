@@ -94,7 +94,9 @@ class ParagraphBlockFactory(wagtail_factories.blocks.BlockFactory):
 class FormFieldBlockFactory(wagtail_factories.StructBlockFactory):
     default_value = factory.Faker('sentence')
     field_label = factory.Faker('sentence')
-    help_text = factory.LazyAttribute(lambda o: str(o._Resolver__step.builder.factory_meta.model))
+    help_text = factory.LazyAttribute(
+        lambda o: f"Help text for {o._Resolver__step.builder.factory_meta.model.__name__}"
+    )
 
     class Meta:
         model = stream_blocks.FormFieldBlock
