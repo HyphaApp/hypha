@@ -11,8 +11,8 @@ from .options import MESSAGES  # noqa
 
 
 class MessengerBackend:
-    def __init__(self, *adpaters):
-        self.adapters = adpaters
+    def __init__(self, *adapters):
+        self.adapters = adapters
 
     def __call__(self, *args, related=None, **kwargs):
         return self.send(*args, related=related, **kwargs)
