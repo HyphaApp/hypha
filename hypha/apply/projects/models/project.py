@@ -18,12 +18,10 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
-from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, StreamFieldPanel
-from wagtail.admin.panels import FieldPanel
+from wagtail.admin.panels import FieldPanel, InlinePanel
 from wagtail.contrib.settings.models import BaseSetting, register_setting
-from wagtail.core.fields import StreamField
-from wagtail.core.models import Orderable
 from wagtail.fields import StreamField
+from wagtail.models import Orderable
 
 from addressfield.fields import ADDRESS_FIELDS_ORDER
 from hypha.apply.funds.models.mixins import AccessFormData
