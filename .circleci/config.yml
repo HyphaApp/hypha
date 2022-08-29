@@ -96,7 +96,7 @@ jobs:
           command: |
             python3 -m venv venv
             . venv/bin/activate
-            pip install codecov
+            pip install codecov pytest-circleci-parallelized
             pip install -r requirements-dev.txt
       - save_cache:
           paths:
@@ -135,7 +135,7 @@ jobs:
             python manage.py check
             python manage.py makemigrations --check --noinput --verbosity=1
             python manage.py collectstatic --noinput --no-post-process --verbosity=1
-            pytest --cov -n 2
+            pytest --cov -n 1 --circleci-parallelize
             codecov
 
 
