@@ -5,9 +5,9 @@ from .emails import EmailAdapter
 from .slack import SlackAdapter
 
 __all__ = [
-    AdapterBase,
-    ActivityAdapter,
-    DjangoMessagesAdapter,
-    EmailAdapter,
-    SlackAdapter,
+    "AdapterBase",
+    "ActivityAdapter",
+    "DjangoMessagesAdapter",
+    "EmailAdapter",
+    "SlackAdapter",
 ]

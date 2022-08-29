@@ -14,20 +14,23 @@ def generate_submission_file_path(submission_id, field_id, file_name):
 
 
 class SubmissionStreamFieldFile(StreamFieldFile):
-    def generate_filename(self):
+
+    def get_submission_id(self):
         from hypha.apply.funds.models.submissions import ApplicationRevision
         submission_id = self.instance.pk
 
         if isinstance(self.instance, ApplicationRevision):
             submission_id = self.instance.submission.pk
+        return submission_id
 
-        return generate_submission_file_path(submission_id, self.field.id, self.name)
+    def generate_filename(self):
+        return generate_submission_file_path(self.get_submission_id(), self.field.id, self.name)
 
     @property
     def url(self):
         return reverse(
             'apply:submissions:serve_private_media', kwargs={
-                'pk': self.instance.pk,
+                'pk': self.get_submission_id(),
                 'field_id': self.field.id,
                 'file_name': self.basename,
             }
