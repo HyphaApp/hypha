@@ -151,14 +151,7 @@ class SetPendingForm(forms.ModelForm):
         if self.instance.status != COMMITTED:
             raise forms.ValidationError(_('A Project can only be sent for Approval when Committed.'))
 
-        if self.instance.is_locked:
-            raise forms.ValidationError(_('A Project can only be sent for Approval once'))
-
         super().clean()
-
-    def save(self, *args, **kwargs):
-        self.instance.is_locked = True
-        return super().save(*args, **kwargs)
 
 
 class UploadContractForm(forms.ModelForm):

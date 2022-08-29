@@ -122,7 +122,7 @@ class AdminDashboardView(MyFlaggedMixin, TemplateView):
                 'table': None,
             }
 
-        to_approve = Project.objects.in_approval().for_table()
+        to_approve = Project.objects.waiting_for_approval().for_table()
 
         return {
             'count': to_approve.count(),

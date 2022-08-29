@@ -176,7 +176,7 @@ class FinalApprovalView(DelegatedViewMixin, UpdateView):
             source=project,
         )
 
-        project.is_locked = False
+        project.is_locked = True
         project.status = CONTRACTING
         project.save(update_fields=['is_locked', 'status'])
 
@@ -488,8 +488,7 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
 
         if paf_status == REQUEST_CHANGE:
             self.object.status = COMMITTED
-            self.object.is_locked = False
-            self.object.save(update_fields=['status', 'is_locked'])
+            self.object.save(update_fields=['status'])
 
             messenger(
                 MESSAGES.REQUEST_PROJECT_CHANGE,

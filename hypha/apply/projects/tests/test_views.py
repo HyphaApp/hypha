@@ -110,7 +110,7 @@ class TestSendForApprovalView(BaseViewTestCase):
 
         project.refresh_from_db()
 
-        self.assertTrue(project.is_locked)
+        self.assertFalse(project.is_locked)
         self.assertEqual(project.status, WAITING_FOR_APPROVAL)
 
 
@@ -241,7 +241,7 @@ class TestFinalApprovalView(BaseViewTestCase):
         self.assertEqual(response.status_code, 200)
 
         project.refresh_from_db()
-        self.assertFalse(project.is_locked)
+        self.assertTrue(project.is_locked)
         self.assertEqual(project.status, CONTRACTING)
 
     def test_final_rejection(self):

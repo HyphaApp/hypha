@@ -57,7 +57,7 @@
                     {% trans "A lead must be assigned" %}
                 {% elif not object.user_has_updated_details %}
                     {% trans "Project approval form must be completed" %}
-                {% elif object.is_locked %}
+                {% elif object.can_make_approval or object.can_make_final_approval %}
                     {% trans "Currently awaiting approval" %}
                 {% endif %}"
         {% endif %}

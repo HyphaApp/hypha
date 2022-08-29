@@ -10,7 +10,7 @@ from hypha.apply.projects.models.payment import (
     RESUBMITTED,
     SUBMITTED,
 )
-from hypha.apply.projects.models.project import COMMITTED
+from hypha.apply.projects.models.project import WAITING_FOR_APPROVAL
 from hypha.apply.projects.tests.factories import InvoiceFactory, ProjectFactory
 from hypha.apply.review.tests.factories import ReviewFactory, ReviewOpinionFactory
 from hypha.apply.users.groups import APPROVER_GROUP_NAME
@@ -135,13 +135,13 @@ class TestStaffDashboard(BaseViewTestCase):
         self.assertNotContains(response, "Active Invoices")
 
     def test_non_project_approver_cannot_see_projects_awaiting_review_stats_or_table(self):
-        ProjectFactory(is_locked=True, status=COMMITTED)
+        ProjectFactory(is_locked=False, status=WAITING_FOR_APPROVAL)
 
         response = self.get_page()
         self.assertNotContains(response, "Projects awaiting approval")
 
     def test_project_approver_can_see_projects_awaiting_review_stats_or_table(self):
-        ProjectFactory(is_locked=True, status=COMMITTED)
+        ProjectFactory(is_locked=False, status=WAITING_FOR_APPROVAL)
 
         user = StaffFactory()
         user.groups.add(GroupFactory(name=APPROVER_GROUP_NAME))

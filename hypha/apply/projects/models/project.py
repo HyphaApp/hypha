@@ -80,13 +80,6 @@ class ProjectQuerySet(models.QuerySet):
     def complete(self):
         return self.filter(status=COMPLETE)
 
-    def in_approval(self):
-        return self.filter(
-            is_locked=True,
-            status=COMMITTED,
-            approvals__isnull=True,
-        )
-
     def waiting_for_approval(self):
         return self.filter(
             status=WAITING_FOR_APPROVAL,
@@ -259,10 +252,12 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
     def end_date(self):
         # Aiming for the proposed end date as the last day of the project
         # If still ongoing assume today is the end
-        return max(
-            self.proposed_end.date(),
-            timezone.now().date(),
-        )
+        if self.proposed_end:
+            return max(
+                self.proposed_end.date(),
+                timezone.now().date(),
+            )
+        return timezone.now().date()
 
     def paid_value(self):
         return self.invoices.paid_value()
@@ -295,24 +290,27 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
 
     def editable_by(self, user):
         if self.editable:
-            return True
+            # Approver can edit it when they are approving
+            if self.can_make_approval:
+                if user.is_finance or user.is_approver or user.is_contracting:
+                    return True
 
-        # Approver can edit it when they are approving
-        if self.can_make_approval:
-            if user.is_finance or user.is_approver or user.is_contracting:
+            # Lead can make changes to the project
+            if user == self.lead:
                 return True
+
+            # Staff can edit project
+            if user.is_apply_staff:
+                return True
+        return False
 
     @property
     def editable(self):
-        if self.status not in (CONTRACTING, WAITING_FOR_APPROVAL, COMMITTED):
-            return True
-
-        # Someone has approved the project - consider it locked while with contracting
-        if self.approvals.exists():
+        if self.is_locked:
             return False
-
-        # Someone must lead the project to make changes
-        return self.lead and not self.is_locked
+        elif self.status in (COMMITTED, WAITING_FOR_APPROVAL):  # locked condition is enough,it is just for double check
+            return True
+        return False
 
     def get_absolute_url(self):
         if settings.PROJECTS_ENABLED:
@@ -321,7 +319,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
 
     @property
     def can_make_approval(self):
-        return self.is_locked and self.status == WAITING_FOR_APPROVAL
+        return self.status == WAITING_FOR_APPROVAL
 
     @property
     def can_make_final_approval(self):
