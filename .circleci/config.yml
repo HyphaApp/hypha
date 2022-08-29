@@ -123,6 +123,7 @@ jobs:
   test-be:
     executor: with-database
     working_directory: ~/repo
+    parallelism: 4
     steps:
       - checkout
       - attach_workspace:
@@ -134,7 +135,7 @@ jobs:
             python manage.py check
             python manage.py makemigrations --check --noinput --verbosity=1
             python manage.py collectstatic --noinput --no-post-process --verbosity=1
-            pytest --cov
+            pytest --cov -n 2
             codecov
 
 
