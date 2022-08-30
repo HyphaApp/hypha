@@ -24,3 +24,6 @@ PASSWORD_HASHERS = [
 ]
 
 WAGTAILADMIN_BASE_URL = "https://primary-test-host.org"
+
+# Required by django-coverage-plugin to report template coverage
+TEMPLATES[0]['OPTIONS']['debug'] = True

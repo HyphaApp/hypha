@@ -32,10 +32,12 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-
+.coverage
+htmlcov/
 
 # Cache
 .mypy_cache/
+.pytest_cache/
 
 # Webpack
 webpack-stats.json
