@@ -180,3 +180,50 @@ class RoundBaseDeterminationForm(AbstractRelatedDeterminationForm):
 
 class LabBaseDeterminationForm(AbstractRelatedDeterminationForm):
     lab = ParentalKey('LabBase', related_name='determination_forms')
+
+
+class AbstractRelatedProjectApprovalForm(Orderable):
+    class Meta(Orderable.Meta):
+        abstract = True
+
+    form = models.ForeignKey('application_projects.ProjectApprovalForm', on_delete=models.PROTECT)
+
+    panels = [
+        FilteredFieldPanel('form', filter_query={
+            'roundbaseprojectapprovalform__isnull': True,
+        })
+    ]
+
+    @property
+    def fields(self):
+        return self.form.form_fields
+
+    def __eq__(self, other):
+        try:
+            if self.fields == other.fields and self.sort_order == other.sort_order:
+                # If the objects are saved to db. pk should also be compared
+                if hasattr(other, 'pk') and hasattr(self, 'pk'):
+                    return self.pk == other.pk
+                return True
+            return False
+        except AttributeError:
+            return False
+
+    def __hash__(self):
+        fields = [field.id for field in self.fields]
+        return hash((tuple(fields), self.sort_order, self.pk))
+
+    def __str__(self):
+        return self.form.name
+
+
+class ApplicationBaseProjectApprovalForm(AbstractRelatedProjectApprovalForm):
+    application = ParentalKey('ApplicationBase', related_name='approval_forms')
+
+
+class RoundBaseProjectApprovalForm(AbstractRelatedProjectApprovalForm):
+    round = ParentalKey('RoundBase', related_name='approval_forms')
+
+
+class LabBaseProjectApprovalForm(AbstractRelatedProjectApprovalForm):
+    lab = ParentalKey('LabBase', related_name='approval_forms')

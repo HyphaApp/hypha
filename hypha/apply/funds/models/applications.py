@@ -72,14 +72,6 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
         blank=True,
     )
 
-    approval_form = models.ForeignKey(
-        'application_projects.ProjectApprovalForm',
-        blank=True,
-        null=True,
-        on_delete=models.SET_NULL,
-        related_name='funds',
-    )
-
     guide_link = models.URLField(blank=True, max_length=255, help_text=_('Link to the apply guide.'))
 
     slack_channel = models.CharField(blank=True, max_length=128, help_text=_('The slack #channel for notifications. If left empty, notifications will go to the default channel.'))
@@ -117,7 +109,6 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
         return self.open_round.serve(request)
 
     content_panels = WorkflowStreamForm.content_panels + [
-        FieldPanel('approval_form'),
         FieldPanel('reviewers', widget=forms.SelectMultiple(attrs={'size': '16'})),
         FieldPanel('guide_link'),
         FieldPanel('slack_channel'),
@@ -200,6 +191,11 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
             heading=_('External Review Form')
         ),
         ReadOnlyInlinePanel('determination_forms', help_text=_('Copied from the fund.')),
+        ReadOnlyInlinePanel(
+            'approval_forms',
+            help_text=_('Copied from the fund.'),
+            heading=_('Project Approval Form')
+        ),
     ]
 
     edit_handler = TabbedInterface([
@@ -242,6 +238,7 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
             self._copy_forms('review_forms')
             self._copy_forms('external_review_forms')
             self._copy_forms('determination_forms')
+            self._copy_forms('approval_forms')
 
     def _copy_forms(self, field):
         for form in getattr(self.get_parent().specific, field).all():
@@ -419,14 +416,6 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
         blank=True,
     )
 
-    approval_form = models.ForeignKey(
-        'application_projects.ProjectApprovalForm',
-        blank=True,
-        null=True,
-        on_delete=models.SET_NULL,
-        related_name='labs',
-    )
-
     guide_link = models.URLField(blank=True, max_length=255, help_text=_('Link to the apply guide.'))
 
     slack_channel = models.CharField(blank=True, max_length=128, help_text=_('The slack #channel for notifications.'))
@@ -435,7 +424,6 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
     subpage_types = []  # type: ignore
 
     content_panels = WorkflowStreamForm.content_panels + [
-        FieldPanel('approval_form'),
         FieldPanel('lead'),
         FieldPanel('reviewers', widget=forms.SelectMultiple(attrs={'size': '16'})),
         FieldPanel('guide_link'),
