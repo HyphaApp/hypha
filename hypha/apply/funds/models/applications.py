@@ -188,7 +188,11 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
         FieldPanel('reviewers', widget=forms.SelectMultiple(attrs={'size': '16'})),
         ReadOnlyPanel('get_workflow_name_display', heading=_('Workflow'), help_text=_('Copied from the fund.')),
         # Forms comes from parental key in models/forms.py
-        ReadOnlyInlinePanel('forms', help_text=_('Copied from the fund.')),
+        ReadOnlyInlinePanel(
+            'forms',
+            help_text=_('Copied from the fund.'),
+            heading=_('Application forms')
+        ),
         ReadOnlyInlinePanel(
             'review_forms',
             help_text=_('Copied from the fund.'),

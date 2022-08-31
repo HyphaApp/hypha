@@ -116,7 +116,7 @@ class WorkflowStreamForm(WorkflowHelpers, AbstractStreamForm):  # type: ignore
 
     content_panels = AbstractStreamForm.content_panels + [
         FieldPanel('workflow_name'),
-        InlinePanel('forms', label=_('Forms')),
+        InlinePanel('forms', label=_('Application forms')),
         InlinePanel('review_forms', label=_('Internal Review Forms')),
         InlinePanel(
             'external_review_forms',
