@@ -1,12 +1,12 @@
 -r requirements.txt
 
 django-debug-toolbar==3.6.0
+dslr==0.3.1
 factory_boy==3.2.1
 flake8==5.0.4
 isort==5.10.1
 model-bakery==1.7.0
 responses==0.21.0
-stellar==0.4.5
 wagtail-factories==2.1.0
 Werkzeug==2.2.2
 pytest-django==4.5.2
