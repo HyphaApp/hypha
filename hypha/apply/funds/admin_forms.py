@@ -68,7 +68,6 @@ class WorkflowFormAdminForm(WagtailAdminPageForm):
                     "Please provide one Project Approval Form"
                 )
 
-
     def validate_stages_equal_forms(self, workflow, forms, form_type="form"):
         if forms.is_valid():
             valid_forms = [form for form in forms if not form.cleaned_data['DELETE']]
