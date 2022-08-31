@@ -354,10 +354,6 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         correct_state = self.status == COMMITTED and not self.is_locked
         return correct_state and self.user_has_updated_details
 
-    @property
-    def requires_approval(self):
-        return not self.approvals.exists()
-
     def get_missing_document_categories(self):
         """
         Get the number of documents required to meet each DocumentCategorys minimum
