@@ -41,8 +41,3 @@ def user_can_final_approve_project(project, user):
 @register.simple_tag
 def user_can_edit_project(project, user):
     return project.editable_by(user)
-
-
-@register.simple_tag
-def generate_fund_page_admin_url(page):
-    return reverse("funds_fundtype_modeladmin_edit", args=[page.id])

@@ -1,5 +1,5 @@
 {% extends "base-apply.html" %}
-{% load i18n static approval_tools %}
+{% load i18n static %}
 {% block title %}Editing: {{object.title }}{% endblock %}
 {% block content %}
 <div class="admin-bar">
@@ -47,9 +47,8 @@
     <div class="wrapper wrapper--light-grey-bg wrapper--form wrapper--sidebar">
         <div class="wrapper--sidebar--inner">
             <p>
-                Approval Form is not configured to the fund associated with this project/submission.
-                Please configure it first from
-                <a href="{% generate_fund_page_admin_url object.submission.page %}" target="_blank">Wagtail Admin</a>.
+                Approval form not configured. Please add an approval form in the
+                <a href="{% url 'funds_fundtype_modeladmin_edit' object.submission.page.id %}" target="_blank">fund settings</a>.
             </p>
         </div>
     </div>
