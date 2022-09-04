@@ -191,11 +191,6 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
             heading=_('External Review Form')
         ),
         ReadOnlyInlinePanel('determination_forms', help_text=_('Copied from the fund.')),
-        ReadOnlyInlinePanel(
-            'approval_forms',
-            help_text=_('Copied from the fund.'),
-            heading=_('Project Approval Form')
-        ),
     ]
 
     edit_handler = TabbedInterface([
@@ -238,7 +233,6 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
             self._copy_forms('review_forms')
             self._copy_forms('external_review_forms')
             self._copy_forms('determination_forms')
-            self._copy_forms('approval_forms')
 
     def _copy_forms(self, field):
         for form in getattr(self.get_parent().specific, field).all():

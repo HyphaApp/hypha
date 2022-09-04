@@ -188,12 +188,6 @@ class AbstractRelatedProjectApprovalForm(Orderable):
 
     form = models.ForeignKey('application_projects.ProjectApprovalForm', on_delete=models.PROTECT)
 
-    panels = [
-        FilteredFieldPanel('form', filter_query={
-            'roundbaseprojectapprovalform__isnull': True,
-        })
-    ]
-
     @property
     def fields(self):
         return self.form.form_fields
@@ -219,10 +213,6 @@ class AbstractRelatedProjectApprovalForm(Orderable):
 
 class ApplicationBaseProjectApprovalForm(AbstractRelatedProjectApprovalForm):
     application = ParentalKey('ApplicationBase', related_name='approval_forms')
-
-
-class RoundBaseProjectApprovalForm(AbstractRelatedProjectApprovalForm):
-    round = ParentalKey('RoundBase', related_name='approval_forms')
 
 
 class LabBaseProjectApprovalForm(AbstractRelatedProjectApprovalForm):
