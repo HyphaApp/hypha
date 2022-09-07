@@ -11,9 +11,9 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 
 from hypha.apply.funds.blocks import EmailBlock, FullNameBlock
-from hypha.apply.funds.models import ApplicationSubmission, Reminder
+from hypha.apply.funds.models import ApplicationSubmission, AssignedReviewers, Reminder
 from hypha.apply.funds.workflow import DRAFT_STATE, Request
-from hypha.apply.review.options import MAYBE, NO
+from hypha.apply.review.options import AGREE, MAYBE, NO
 from hypha.apply.review.tests.factories import ReviewFactory, ReviewOpinionFactory
 from hypha.apply.users.tests.factories import StaffFactory
 from hypha.apply.utils.testing import make_request
@@ -699,3 +699,30 @@ class TestReminderModel(TestCase):
     def test_reminder_action_message(self):
         reminder = ReminderFactory()
         self.assertEqual(reminder.action_message, Reminder.ACTION_MESSAGE[f'{reminder.action}-{reminder.medium}'])
+
+
+class TestAssignedReviewersQuerySet(TestCase):
+    def test_reviewed(self):
+        staff1 = StaffFactory()
+        staff2 = StaffFactory()
+        submission = ApplicationSubmissionFactory()
+        reviewer1 = AssignedReviewersFactory(submission=submission, reviewer=staff1)
+        reviewer2 = AssignedReviewersFactory(submission=submission, reviewer=staff2)
+        ReviewFactory(submission=submission, author=reviewer1)
+        ReviewFactory(submission=submission, is_draft=True, author=reviewer2)
+        self.assertEqual(AssignedReviewers.objects.reviewed().count(), 1)
+
+    def test_reviewed_with_review_order(self):
+        # testing the assigned reviewers count only(review_order's exclude condition)
+        staff1 = StaffFactory()
+        staff2 = StaffFactory()
+        submission = ApplicationSubmissionFactory()
+        reviewer1 = AssignedReviewersFactory(submission=submission, reviewer=staff1)
+        reviewer2 = AssignedReviewersFactory(submission=submission, reviewer=staff2)
+        review1 = ReviewFactory(submission=submission, author=reviewer1)
+        review2 = ReviewFactory(submission=submission, is_draft=True, author=reviewer2)
+        ReviewOpinionFactory(review=review1, author=reviewer2, opinion=AGREE)
+        self.assertEqual(AssignedReviewers.objects.reviewed().count(), 2)
+        self.assertEqual(AssignedReviewers.objects.reviewed().review_order().count(), 1)
+
+
