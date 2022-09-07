@@ -720,9 +720,7 @@ class TestAssignedReviewersQuerySet(TestCase):
         reviewer1 = AssignedReviewersFactory(submission=submission, reviewer=staff1)
         reviewer2 = AssignedReviewersFactory(submission=submission, reviewer=staff2)
         review1 = ReviewFactory(submission=submission, author=reviewer1)
-        review2 = ReviewFactory(submission=submission, is_draft=True, author=reviewer2)
+        ReviewFactory(submission=submission, is_draft=True, author=reviewer2)
         ReviewOpinionFactory(review=review1, author=reviewer2, opinion=AGREE)
         self.assertEqual(AssignedReviewers.objects.reviewed().count(), 2)
         self.assertEqual(AssignedReviewers.objects.reviewed().review_order().count(), 1)
-
-
