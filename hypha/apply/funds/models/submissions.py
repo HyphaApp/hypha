@@ -964,9 +964,9 @@ class AssignedReviewersQuerySet(models.QuerySet):
         ]
         return self.exclude(
             # Remove people from the list who are opinionated but
-            # didn't review, they appear elsewhere
-            opinions__isnull=False,
-            review__isnull=True,
+            # didn't submit a review, they appear elsewhere
+            Q(opinions__isnull=False) &
+            Q(Q(review__isnull=True) | Q(review__is_draft=True))
         ).annotate(
             type_order=models.Case(
                 *ordering,
