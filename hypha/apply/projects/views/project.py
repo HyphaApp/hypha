@@ -70,6 +70,7 @@ from ..models.project import (
     WAITING_FOR_APPROVAL,
     Contract,
     PacketFile,
+    PAFReviewersRole,
     Project,
 )
 from ..models.report import Report
@@ -120,6 +121,15 @@ class SendForApprovalView(DelegatedViewMixin, UpdateView):
             source=project,
             related=old_stage,
         )
+
+        if not PAFReviewersRole.objects.all().exists():
+            # notify final approver if there is no Project Reviewer roles exist
+            messenger(
+                MESSAGES.PROJECT_FINAL_APPROVAL,
+                request=self.request,
+                user=self.request.user,
+                source=self.object,
+            )
 
         return response
 
@@ -488,7 +498,8 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
 
         if paf_status == REQUEST_CHANGE:
             self.object.status = COMMITTED
-            self.object.save(update_fields=['status'])
+            self.object.paf_reviews_meta_data = {}
+            self.object.save(update_fields=['status', 'paf_reviews_meta_data'])
 
             messenger(
                 MESSAGES.REQUEST_PROJECT_CHANGE,
@@ -511,6 +522,15 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
                 timestamp=timezone.now(),
                 message=message,
                 visibility=ALL,
+            )
+
+        if self.object.can_make_final_approval:
+            # notify final approver if project is open for final approval
+            messenger(
+                MESSAGES.PROJECT_FINAL_APPROVAL,
+                request=self.request,
+                user=self.request.user,
+                source=self.object,
             )
 
         return response

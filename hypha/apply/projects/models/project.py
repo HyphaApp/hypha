@@ -325,7 +325,9 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
     def can_make_final_approval(self):
         if self.status == WAITING_FOR_APPROVAL:
             paf_reviewers_count = PAFReviewersRole.objects.all().count()
-            if paf_reviewers_count == len(self.paf_reviews_meta_data):
+            if paf_reviewers_count == 0:
+                return True
+            elif paf_reviewers_count == len(self.paf_reviews_meta_data):
                 for paf_review_data in self.paf_reviews_meta_data.values():
                     if paf_review_data['status'] == REQUEST_CHANGE:
                         return False
