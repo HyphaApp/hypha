@@ -187,8 +187,7 @@ class TestChangePAFStatusView(BaseViewTestCase):
         self.assertEqual(response.status_code, 200)
         project.refresh_from_db()
         self.assertEqual(project.status, COMMITTED)
-        self.assertIn(self.role.role, project.paf_reviews_meta_data.keys())
-        self.assertEqual('request_change', project.paf_reviews_meta_data[self.role.role]['status'])
+        self.assertEqual({}, project.paf_reviews_meta_data)
 
 
 class TestFinalApprovalView(BaseViewTestCase):
