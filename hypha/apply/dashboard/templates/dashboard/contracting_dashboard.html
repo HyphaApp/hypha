@@ -17,15 +17,6 @@
     </div>
 </div>
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
-    <div id="active-invoices" class="wrapper wrapper--bottom-space">
-        <h4 class="heading heading--normal">{% trans "Active Invoices" %}</h4>
-        {% if active_invoices.count %}
-            {% render_table active_invoices.table %}
-        {% else %}
-            {% trans "No Active Invoices" %}
-        {% endif %}
-    </div>
-
     {% if waiting_for_approval.count %}
     <div id="paf-awaiting-approval" class="wrapper wrapper--bottom-space">
         <h4 class="heading heading--normal">{% trans "PAF awaiting approval" %}</h4>
@@ -36,7 +27,6 @@
 {% endblock %}
 
 {% block extra_js %}
-    {{ my_reviewed.filterset.form.media.js }}
     <script src="{% static 'js/apply/url-search-params.js' %}"></script>
     <script src="{% static 'js/apply/submission-filters.js' %}"></script>
     <script src="{% static 'js/apply/submission-tooltips.js' %}"></script>

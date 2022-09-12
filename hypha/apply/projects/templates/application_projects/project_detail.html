@@ -120,7 +120,7 @@
 
                     <h5>{% trans "Actions to take" %}</h5>
 
-                    {% if request.user.is_apply_staff %}
+                    {% if request.user.is_apply_staff or request.user.is_contracting or request.user.is_finance %}
                     {% block admin_actions %}{% endblock %}
                     {% endif %}
 
@@ -231,14 +231,14 @@
     <div class="tabs__content" id="tab-2">
         <div class="feed">
             {% include "activity/include/comment_form.html" %}
-            {% include "activity/include/comment_list.html" with editable=True %}
+            {% include "activity/include/comment_list.html" with editable=False %}
         </div>
     </div>
 
     {# Tab 3 #}
     <div class="tabs__content" id="tab-3">
         <div class="feed">
-            {% include "activity/include/action_list.html" %}
+            {% include "activity/include/action_list.html" with editable=False %}
         </div>
     </div>
 </div>

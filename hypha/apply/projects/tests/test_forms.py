@@ -5,6 +5,7 @@ from unittest import mock
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
 
+from hypha.apply.home.factories import ApplySiteFactory
 from hypha.apply.users.tests.factories import (
     Finance2Factory,
     FinanceFactory,
@@ -21,6 +22,8 @@ from ..forms.payment import (
     filter_request_choices,
 )
 from ..forms.project import (
+    ChangePAFStatusForm,
+    FinalApprovalForm,
     ProjectApprovalForm,
     StaffUploadContractForm,
     UploadContractForm,
@@ -37,9 +40,11 @@ from ..models.payment import (
     SUBMITTED,
     invoice_status_user_choices,
 )
+from ..models.project import APPROVE, ProjectSettings
 from .factories import (
     DocumentCategoryFactory,
     InvoiceFactory,
+    PAFReviewerRoleFactory,
     ProjectFactory,
     SupportingDocumentFactory,
     address_to_form_data,
@@ -260,6 +265,56 @@ class TestChangeInvoiceStatusFormForm(TestCase):
         invoice.valid_checks = True
         form = ChangeInvoiceStatusForm(data={'status': APPROVED_BY_FINANCE_1}, instance=invoice, user=user)
         self.assertTrue(form.is_valid(), form.errors.as_text())
+
+
+class TestChangePAFStatusForm(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        apply_site = ApplySiteFactory()
+        cls.project_setting, _ = ProjectSettings.objects.get_or_create(site_id=apply_site.id)
+        cls.project_setting.use_settings = True
+        cls.project_setting.save()
+        cls.role = PAFReviewerRoleFactory(page=cls.project_setting)
+
+    def test_paf_status_is_required(self):
+        project = ProjectFactory(in_approval=True)
+        user = StaffFactory()
+        form = ChangePAFStatusForm(data={'role': self.role}, instance=project, user=user)
+        self.assertFalse(form.is_valid())
+        self.assertIn('paf_status', form.errors.keys())
+
+    def test_role_is_required(self):
+        project = ProjectFactory(in_approval=True)
+        user = StaffFactory()
+        form = ChangePAFStatusForm(data={'paf_status': APPROVE}, instance=project, user=user)
+        self.assertFalse(form.is_valid())
+        self.assertIn('role', form.errors.keys())
+
+    def test_comment_is_not_required(self):
+        project = ProjectFactory(in_approval=True)
+        user = StaffFactory()
+        form = ChangePAFStatusForm(data={'role': self.role, 'paf_status': APPROVE}, instance=project, user=user)
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.errors, {})
+
+
+class TestFinalApprovalForm(TestCase):
+    def test_final_approval_status_is_required(self):
+        project = ProjectFactory(in_approval=True)
+        user = StaffFactory()
+        form = FinalApprovalForm(data={'comment': ''}, instance=project, user=user)
+        self.assertFalse(form.is_valid())
+        self.assertNotEqual(form.errors, {})
+        self.assertIn('final_approval_status', form.errors.keys())
+
+    def test_comment_is_not_required(self):
+        project = ProjectFactory(in_approval=True)
+        user = StaffFactory()
+        form = FinalApprovalForm(data={'final_approval_status': APPROVE}, instance=project, user=user)
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.errors, {})
 
 
 class TestProjectApprovalForm(TestCase):

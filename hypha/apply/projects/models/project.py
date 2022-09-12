@@ -16,8 +16,11 @@ from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from wagtail.admin.panels import FieldPanel
+from modelcluster.fields import ParentalKey
+from modelcluster.models import ClusterableModel
+from wagtail.admin.panels import FieldPanel, InlinePanel
 from wagtail.contrib.settings.models import BaseSetting, register_setting
+from wagtail.core.models import Orderable
 from wagtail.fields import StreamField
 
 from addressfield.fields import ADDRESS_FIELDS_ORDER
@@ -40,13 +43,22 @@ def document_path(instance, filename):
     return f'projects/{instance.project_id}/supporting_documents/{filename}'
 
 
+APPROVE = 'approve'
+REQUEST_CHANGE = 'request_change'
+PAF_STATUS_CHOICES = (
+    (APPROVE, 'Approve'),
+    (REQUEST_CHANGE, 'Request Change')
+)
+
 COMMITTED = 'committed'
+WAITING_FOR_APPROVAL = 'waiting_for_approval'
 CONTRACTING = 'contracting'
 IN_PROGRESS = 'in_progress'
 CLOSING = 'closing'
 COMPLETE = 'complete'
 PROJECT_STATUS_CHOICES = [
     (COMMITTED, _('Committed')),
+    (WAITING_FOR_APPROVAL, _('Waiting for Approval')),
     (CONTRACTING, _('Contracting')),
     (IN_PROGRESS, _('In Progress')),
     (CLOSING, _('Closing')),
@@ -68,11 +80,9 @@ class ProjectQuerySet(models.QuerySet):
     def complete(self):
         return self.filter(status=COMPLETE)
 
-    def in_approval(self):
+    def waiting_for_approval(self):
         return self.filter(
-            is_locked=True,
-            status=COMMITTED,
-            approvals__isnull=True,
+            status=WAITING_FOR_APPROVAL,
         )
 
     def by_end_date(self, desc=False):
@@ -169,6 +179,11 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
     )
     sent_to_compliance_at = models.DateTimeField(null=True)
 
+    paf_reviews_meta_data = models.JSONField(
+        default=dict,
+        help_text='Reviewers role and their actions/comments'
+    )
+
     objects = ProjectQuerySet.as_manager()
 
     def __str__(self):
@@ -237,10 +252,12 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
     def end_date(self):
         # Aiming for the proposed end date as the last day of the project
         # If still ongoing assume today is the end
-        return max(
-            self.proposed_end.date(),
-            timezone.now().date(),
-        )
+        if self.proposed_end:
+            return max(
+                self.proposed_end.date(),
+                timezone.now().date(),
+            )
+        return timezone.now().date()
 
     def paid_value(self):
         return self.invoices.paid_value()
@@ -273,22 +290,27 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
 
     def editable_by(self, user):
         if self.editable:
-            return True
+            # Approver can edit it when they are approving
+            if self.can_make_approval:
+                if user.is_finance or user.is_approver or user.is_contracting:
+                    return True
 
-        # Approver can edit it when they are approving
-        return user.is_approver and self.can_make_approval
+            # Lead can make changes to the project
+            if user == self.lead:
+                return True
+
+            # Staff can edit project
+            if user.is_apply_staff:
+                return True
+        return False
 
     @property
     def editable(self):
-        if self.status not in (CONTRACTING, COMMITTED):
-            return True
-
-        # Someone has approved the project - consider it locked while with contracting
-        if self.approvals.exists():
+        if self.is_locked:
             return False
-
-        # Someone must lead the project to make changes
-        return self.lead and not self.is_locked
+        elif self.status in (COMMITTED, WAITING_FOR_APPROVAL):  # locked condition is enough,it is just for double check
+            return True
+        return False
 
     def get_absolute_url(self):
         if settings.PROJECTS_ENABLED:
@@ -297,7 +319,22 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
 
     @property
     def can_make_approval(self):
-        return self.is_locked and self.status == COMMITTED
+        return self.status == WAITING_FOR_APPROVAL
+
+    @property
+    def can_make_final_approval(self):
+        if self.status == WAITING_FOR_APPROVAL:
+            paf_reviewers_count = PAFReviewersRole.objects.all().count()
+            if paf_reviewers_count == len(self.paf_reviews_meta_data):
+                for paf_review_data in self.paf_reviews_meta_data.values():
+                    if paf_review_data['status'] == REQUEST_CHANGE:
+                        return False
+                return True
+        return False
+
+    @property
+    def can_update_paf_status(self):
+        return self.status == WAITING_FOR_APPROVAL and not self.can_make_final_approval
 
     def can_request_funding(self):
         """
@@ -359,19 +396,6 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
             return reference_number.split('-')[0]
         return ''
 
-    # def send_to_compliance(self, request):
-    #     """Notify Compliance about this Project."""
-
-    #     messenger(
-    #         MESSAGES.SENT_TO_COMPLIANCE,
-    #         request=request,
-    #         user=request.user,
-    #         source=self,
-    #     )
-
-    #     self.sent_to_compliance_at = timezone.now()
-    #     self.save(update_fields=['sent_to_compliance_at'])
-
 
 class ProjectApprovalForm(BaseStreamForm, models.Model):
     name = models.CharField(max_length=255)
@@ -386,10 +410,24 @@ class ProjectApprovalForm(BaseStreamForm, models.Model):
         return self.name
 
 
+class PAFReviewersRole(Orderable):
+    role = models.CharField(max_length=200)
+    page = ParentalKey('ProjectSettings', related_name='paf_reviewers_roles')
+
+    def __str__(self):
+        return str(self.role)
+
+
 @register_setting
-class ProjectSettings(BaseSetting):
+class ProjectSettings(BaseSetting, ClusterableModel):
     compliance_email = models.TextField("Compliance Email")
     vendor_setup_required = models.BooleanField(default=True)
+
+    panels = [
+        FieldPanel('compliance_email'),
+        FieldPanel('vendor_setup_required'),
+        InlinePanel('paf_reviewers_roles', label=_('PAF Reviewers Roles')),
+    ]
 
 
 class Approval(models.Model):

@@ -122,7 +122,7 @@ class AdminDashboardView(MyFlaggedMixin, TemplateView):
                 'table': None,
             }
 
-        to_approve = Project.objects.in_approval().for_table()
+        to_approve = Project.objects.waiting_for_approval().for_table()
 
         return {
             'count': to_approve.count(),
@@ -160,6 +160,7 @@ class FinanceDashboardView(MyFlaggedMixin, TemplateView):
 
         context.update({
             'active_invoices': self.active_invoices(),
+            'waiting_for_approval': self.waiting_for_approval(),
         })
 
         return context
@@ -173,6 +174,19 @@ class FinanceDashboardView(MyFlaggedMixin, TemplateView):
         return {
             'count': invoices.count(),
             'table': InvoiceDashboardTable(invoices),
+        }
+
+    def waiting_for_approval(self):
+        if not self.request.user.is_finance:
+            return {
+                'count': None,
+                'table': None,
+            }
+
+        to_paf_approve = Project.objects.waiting_for_approval().for_table()
+        return {
+            'count': to_paf_approve.count(),
+            'table': ProjectsDashboardTable(data=to_paf_approve),
         }
 
 
@@ -261,6 +275,31 @@ class PartnerDashboardView(MySubmissionContextMixin, TemplateView):
         return partner_submissions, partner_submissions_table
 
 
+class ContractingDashboardView(MyFlaggedMixin, TemplateView):
+    template_name = 'dashboard/contracting_dashboard.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'waiting_for_approval': self.waiting_for_approval()
+        })
+
+        return context
+
+    def waiting_for_approval(self):
+        if not self.request.user.is_contracting:
+            return {
+                'count': None,
+                'table': None,
+            }
+
+        to_paf_approve = Project.objects.waiting_for_approval().for_table()
+        return {
+            'count': to_paf_approve.count(),
+            'table': ProjectsDashboardTable(data=to_paf_approve),
+        }
+
+
 class CommunityDashboardView(MySubmissionContextMixin, TemplateView):
     template_name = 'dashboard/community_dashboard.html'
 
@@ -341,3 +380,4 @@ class DashboardView(ViewDispatcher):
     community_view = CommunityDashboardView
     applicant_view = ApplicantDashboardView
     finance_view = FinanceDashboardView
+    contracting_view = ContractingDashboardView
