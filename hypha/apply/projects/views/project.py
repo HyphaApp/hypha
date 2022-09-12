@@ -716,10 +716,8 @@ class ProjectApprovalEditView(BaseStreamForm, UpdateView):
 
     @cached_property
     def approval_form(self):
-        if self.object.get_defined_fields():
-            approval_form = self.object
-        else:
-            approval_form = self.object.submission.page.specific.approval_form
+        # fetching from the fund directly instead of going through round
+        approval_form = self.object.submission.page.specific.approval_forms.first()  # picking up the first one
 
         return approval_form
 
@@ -731,16 +729,16 @@ class ProjectApprovalEditView(BaseStreamForm, UpdateView):
         )
 
     def get_defined_fields(self):
-        approval_form = self.object.submission.get_from_parent('approval_form')
+        approval_form = self.approval_form
         if approval_form:
-            return approval_form.form_fields
+            return approval_form.form.form_fields
         return self.object.get_defined_fields()
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
 
         if self.approval_form:
-            fields = self.approval_form.get_form_fields()
+            fields = self.approval_form.form.get_form_fields()
         else:
             fields = {}
 
@@ -750,7 +748,7 @@ class ProjectApprovalEditView(BaseStreamForm, UpdateView):
 
     def form_valid(self, form):
         try:
-            form_fields = self.approval_form.form_fields
+            form_fields = self.approval_form.form.form_fields
         except AttributeError:
             form_fields = []
 
