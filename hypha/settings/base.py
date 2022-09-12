@@ -49,6 +49,7 @@ INSTALLED_APPS = [
 
     'hypha.cookieconsent',
     'hypha.images',
+    'hypha.core',
 
     'hypha.apply.activity',
     'hypha.apply.categories',
