@@ -3,7 +3,7 @@ import initialState from '../models';
 
 
 describe('Test the selector of screening decision', () => {
-    it('select screening decision', () => {
+    it('select screening state', () => {
         expect(selectScreeningInfo(initialState)).toEqual(initialState);
     });
     it('select screening Decisions', () => {

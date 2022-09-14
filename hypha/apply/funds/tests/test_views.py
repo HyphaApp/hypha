@@ -220,7 +220,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         screening_outcome2.save()
         self.submission.screening_statuses.clear()
         response = self.get_page(self.submission)
-        self.assertContains(response, 'Screening Decision')
+        self.assertContains(response, 'Screening decision')
 
     def test_cant_view_submission_screening_block(self):
         """
