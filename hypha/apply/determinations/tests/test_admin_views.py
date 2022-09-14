@@ -16,6 +16,11 @@ class TestCreateDeterminationFormView(TestCase):
             'field_label': factory.Faker('sentence').evaluate(None, None, {'locale': None}),
             'help_text': factory.Faker('sentence').evaluate(None, None, {'locale': None})
         }
+        cls.send_notice_data = {
+            'field_label': factory.Faker('sentence').evaluate(None, None, {'locale': None}),
+            'help_text': factory.Faker('sentence').evaluate(None, None, {'locale': None}),
+            'default_value': True,
+        }
         cls.name = factory.Faker('name').evaluate(None, None, {'locale': None})
 
     def create_page(self, data):
@@ -30,6 +35,7 @@ class TestCreateDeterminationFormView(TestCase):
             {
                 'determination': self.label_help_text_data,
                 'message': self.label_help_text_data,
+                'send_notice': self.send_notice_data,
             }
         )
         data.update(form_field_data)
@@ -45,6 +51,7 @@ class TestCreateDeterminationFormView(TestCase):
         form_field_data = create_form_fields_data(
             {
                 'message': self.label_help_text_data,
+                'send_notice': self.send_notice_data,
             }
         )
         data.update(form_field_data)
@@ -60,6 +67,7 @@ class TestCreateDeterminationFormView(TestCase):
         form_field_data = create_form_fields_data(
             {
                 'determination': self.label_help_text_data,
+                'send_notice': self.send_notice_data,
             }
         )
         data.update(form_field_data)
@@ -70,12 +78,29 @@ class TestCreateDeterminationFormView(TestCase):
             self.assertEqual(expected_message, str(message.message).strip())
         self.assertEqual(DeterminationForm.objects.count(), 0)
 
+    def test_send_notice_block_required(self):
+        data = {'name': [self.name]}
+        form_field_data = create_form_fields_data(
+            {
+                'determination': self.label_help_text_data,
+                'message': self.label_help_text_data,
+            }
+        )
+        data.update(form_field_data)
+        response = self.create_page(data=data)
+
+        expected_message = 'You are missing the following required fields: Send Notice'
+        for message in get_messages(response.context['request']):
+            self.assertEqual(expected_message, str(message.message).strip())
+        self.assertEqual(DeterminationForm.objects.count(), 0)
+
     def test_field_label_required(self):
         data = {'name': [self.name]}
         form_field_data = create_form_fields_data(
             {
                 'determination': {},
                 'message': {},
+                'send_notice': self.send_notice_data,
             }
         )
         data.update(form_field_data)
@@ -92,6 +117,7 @@ class TestCreateDeterminationFormView(TestCase):
             {
                 'determination': self.label_help_text_data,
                 'message': self.label_help_text_data,
+                'send_notice': self.send_notice_data,
             }
         )
         data.update(form_field_data)
