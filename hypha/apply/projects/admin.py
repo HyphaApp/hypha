@@ -1,8 +1,9 @@
 from wagtail.contrib.modeladmin.options import ModelAdmin, ModelAdminGroup
 
+from hypha.apply.utils.admin import ListRelatedMixin
+
 from .admin_views import CreateProjectApprovalFormView, EditProjectApprovalFormView
 from .models import DocumentCategory, ProjectApprovalForm
-from hypha.apply.utils.admin import ListRelatedMixin
 
 
 class DocumentCategoryAdmin(ModelAdmin):
