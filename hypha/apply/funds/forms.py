@@ -104,6 +104,9 @@ class ScreeningSubmissionForm(ApplicationSubmissionModelForm):
     class Meta:
         model = ApplicationSubmission
         fields = ('screening_statuses',)
+        labels = {
+            "screening_statuses": "Screening Decisions"
+        }
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
@@ -123,7 +126,7 @@ class ScreeningSubmissionForm(ApplicationSubmissionModelForm):
         instance = self.instance
         default_status = instance.screening_statuses.get(default=True)
         if default_status not in cleaned_data['screening_statuses']:
-            self.add_error('screening_statuses', 'Can\'t remove default screening status.')
+            self.add_error('screening_statuses', 'Can\'t remove default screening decision.')
         return cleaned_data
 
 

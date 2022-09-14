@@ -7,8 +7,8 @@ import {SidebarBlock} from '@components/SidebarBlock';
 import LoadingPanel from '@components/LoadingPanel';
 enzyme.configure({adapter: new Adapter()});
 
-describe('Test screening status Container', () => {
-    it('Should render screening statuses with loading', () => {
+describe('Test screening decision Container', () => {
+    it('Should render screening decisions with loading', () => {
         const wrapper = mount(
             <ScreeningStatusContainer
                 screeningInfo={{loading: true}}
@@ -21,7 +21,7 @@ describe('Test screening status Container', () => {
         expect(wrapper).toMatchSnapshot();
     });
 
-    it('Should render screening statuses with loading false & defaultoptions empty', () => {
+    it('Should render screening decisions with loading false & defaultoptions empty', () => {
         const defaultOptions = {};
         const wrapper = mount(
             <ScreeningStatusContainer
@@ -36,7 +36,7 @@ describe('Test screening status Container', () => {
         expect(wrapper).toMatchSnapshot();
     });
 
-    it('Should render screening statuses with Sidebarblock', () => {
+    it('Should render screening decisions with Sidebarblock', () => {
         const selectVisibleOption = jest.fn();
         const defaultOptions = {
             yes: {id: 1, title: 'a'},

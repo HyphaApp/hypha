@@ -12,13 +12,14 @@ class ScreeningStatus(models.Model):
     )
     default = models.BooleanField(
         default=False, verbose_name=_('Default Yes/No'),
-        help_text=_('Only one Yes and No screening status can be set as default.')
+        help_text=_('Only one Yes and No screening decision can be set as default.')
     )
 
     base_form_class = ScreeningStatusAdminForm
 
     class Meta:
-        verbose_name_plural = "screening statuses"
+        verbose_name = "Screening Decision"
+        verbose_name_plural = "screening decisions"
 
     def __str__(self):
         return self.title
