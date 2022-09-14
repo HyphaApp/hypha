@@ -197,7 +197,11 @@ class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
         return new_kwargs
 
     def get_queryset(self):
-        return self.filterset_class._meta.model.objects.exclude_draft().current().for_table(self.request.user)
+        submissions = self.filterset_class._meta.model.objects.current().for_table(self.request.user)
+        if settings.SUBMISSIONS_DRAFT_ACCESS_STAFF:
+            return submissions
+        else:
+            return submissions.exclude_draft()
 
     def get_context_data(self, **kwargs):
         search_term = self.request.GET.get('query')
@@ -765,7 +769,7 @@ class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Delega
 
     def dispatch(self, request, *args, **kwargs):
         submission = self.get_object()
-        if submission.status == DRAFT_STATE and not request.user == submission.user:
+        if submission.status == DRAFT_STATE and not request.user == submission.user and not settings.SUBMISSIONS_DRAFT_ACCESS_STAFF:
             raise Http404
         redirect = SubmissionSealedView.should_redirect(request, submission)
         return redirect or super().dispatch(request, *args, **kwargs)
