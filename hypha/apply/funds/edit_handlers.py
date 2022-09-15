@@ -68,9 +68,6 @@ class ReadOnlyPanel(Panel):
             try:
                 value = getattr(self.instance, self.panel.attr)
             except AttributeError:
-                self.attr = '__'.join(
-                    [self.instance._meta.model_name, str(self.instance.id)]
-                )
                 value = self.instance
 
             if callable(value):
