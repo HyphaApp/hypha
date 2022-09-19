@@ -36,8 +36,10 @@ from wagtail.fields import RichTextField
 from wagtail.models import Page, PageManager
 from wagtail.query import PageQuerySet
 
+from hypha.core.wagtail.admin.panels import ReadOnlyInlinePanel
+
 from ..admin_forms import RoundBasePageAdminForm, WorkflowFormAdminForm
-from ..edit_handlers import ReadOnlyInlinePanel, ReadOnlyPanel
+from ..edit_handlers import ReadOnlyPanel
 from ..workflow import OPEN_CALL_PHASES
 from .submissions import ApplicationSubmission
 from .utils import (
@@ -177,24 +179,36 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
             ]),
         ], heading=_('Dates')),
         FieldPanel('reviewers', widget=forms.SelectMultiple(attrs={'size': '16'})),
-        ReadOnlyPanel('get_workflow_name_display', heading=_('Workflow'), help_text=_('Copied from the fund.')),
+        ReadOnlyPanel(
+            'get_workflow_name_display',
+            heading=_('Workflow'),
+            help_text=_('Copied from the fund.'),
+        ),
         # Forms comes from parental key in models/forms.py
         ReadOnlyInlinePanel(
             'forms',
+            panels=[ReadOnlyPanel("name")],
+            heading=_('Application forms'),
             help_text=_('Copied from the fund.'),
-            heading=_('Application forms')
         ),
         ReadOnlyInlinePanel(
             'review_forms',
+            panels=[ReadOnlyPanel("name")],
+            heading=_('Internal Review Form'),
             help_text=_('Copied from the fund.'),
-            heading=_('Internal Review Form')
         ),
         ReadOnlyInlinePanel(
             'external_review_forms',
+            panels=[ReadOnlyPanel("name")],
             help_text=_('Copied from the fund.'),
-            heading=_('External Review Form')
+            heading=_('External Review Form'),
         ),
-        ReadOnlyInlinePanel('determination_forms', help_text=_('Copied from the fund.')),
+        ReadOnlyInlinePanel(
+            'determination_forms',
+            panels=[ReadOnlyPanel("name")],
+            help_text=_('Copied from the fund.'),
+            heading=_('Determination Form'),
+        ),
     ]
 
     edit_handler = TabbedInterface([
