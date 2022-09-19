@@ -13,8 +13,7 @@ django-basic-auth-ip-whitelist==0.3.4
 django-bleach==3.0.0
 django-countries==7.2.1
 django-extensions==3.1.5
-# django-file-form==3.3.0
-git+https://github.com/theskumar/django-file-form.git@feature/error-message-invalid-files
+django-file-form==3.4.1
 django-filter==2.4.0
 django-fsm==2.8.0
 django-heroku==0.3.1
