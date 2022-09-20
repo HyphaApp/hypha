@@ -547,6 +547,9 @@ TRANSITION_AFTER_ASSIGNED = env.bool('TRANSITION_AFTER_ASSIGNED', False)
 # Possible values are: fund, round, status, lead, reviewers, screening_statuses, category_options, meta_terms
 SUBMISSIONS_TABLE_EXCLUDED_FIELDS = env.list('SUBMISSIONS_TABLE_EXCLUDED_FIELDS', [])
 
+# Draft submissions access.
+SUBMISSIONS_DRAFT_ACCESS_STAFF = env.bool('SUBMISSIONS_DRAFT_ACCESS_STAFF', False)
+
 # Celery config
 if env.str('REDIS_URL', None):
     CELERY_BROKER_URL = env.str('REDIS_URL')
