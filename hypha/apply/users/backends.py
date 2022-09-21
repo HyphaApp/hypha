@@ -1,21 +1,9 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import ModelBackend
 
+from hypha.apply.users.utils import get_user_by_email
+
 UserModel = get_user_model()
-
-
-def get_user_by_email(email):
-    qs = UserModel.objects.filter(email__iexact=email)  # case insensitive matching
-
-    # if multiple accounts then check with case sensitive search
-    if len(qs) > 1:
-        qs = qs.filter(email=email)  # case sensitive matching
-
-    if len(qs) == 0:
-        return
-
-    user = qs[0]
-    return user
 
 
 class CustomModelBackend(ModelBackend):

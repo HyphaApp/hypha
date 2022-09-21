@@ -1,7 +1,10 @@
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser, BaseUserManager, Group
+from django.core import exceptions
 from django.db import models
 from django.db.models import Q
+from django.db.models.constants import LOOKUP_SEP
+from django.db.models.utils import resolve_callables
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
@@ -70,6 +73,9 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
         if not email:
             raise ValueError('The given email must be set')
         email = self.normalize_email(email)
+        existing_user = self.filter(email__iexact=email)
+        if existing_user:
+            raise ValueError('That email address is already taken.')
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
@@ -91,18 +97,46 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
 
         return self._create_user(email, password, **extra_fields)
 
+    def _extract_model_params(self, defaults, **kwargs):
+        """
+        Prepare `params` for creating a model instance based on the given
+        kwargs; for use by get_or_create().
+        """
+        defaults = defaults or {}
+        params = {k: v for k, v in kwargs.items() if LOOKUP_SEP not in k}
+        params.update(defaults)
+        property_names = self.model._meta._property_names
+        invalid_params = []
+        for param in params:
+            try:
+                self.model._meta.get_field(param)
+            except exceptions.FieldDoesNotExist:
+                # It's okay to use a model's property if it has a setter.
+                if not (param in property_names and getattr(self.model, param).fset):
+                    invalid_params.append(param)
+        if invalid_params:
+            raise exceptions.FieldError(
+                "Invalid field name(s) for model %s: '%s'." % (
+                    self.model._meta.object_name,
+                    "', '".join(sorted(invalid_params)),
+                ))
+        return params
+
     def get_or_create_and_notify(self, defaults=dict(), site=None, **kwargs):
         # Set a temp password so users can access the password reset function if needed.
         temp_pass = BaseUserManager().make_random_password(length=32)
         temp_pass_hash = make_password(temp_pass)
         defaults.update(password=temp_pass_hash)
-        user, created = self.get_or_create(defaults=defaults, **kwargs)
-        if created:
+        user = self.filter(email__iexact=kwargs.get('email')).first()
+        if not user:
+            params = dict(resolve_callables(self._extract_model_params(defaults, **kwargs)))
+            user = self.create(**params)
             send_activation_email(user, site)
             applicant_group = Group.objects.get(name=APPLICANT_GROUP_NAME)
             user.groups.add(applicant_group)
             user.save()
-        return user, created
+            return user, True
+        return user, False
 
 
 class User(AbstractUser):
