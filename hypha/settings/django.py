@@ -213,9 +213,11 @@ AUTH_USER_MODEL = 'users.User'
 LOGIN_URL = 'users_public:login'
 LOGIN_REDIRECT_URL = 'dashboard:dashboard'
 
+CUSTOM_AUTH_BACKEND = 'hypha.apply.users.backends.CustomModelBackend'
+
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.google.GoogleOAuth2',
-    'django.contrib.auth.backends.ModelBackend',
+    CUSTOM_AUTH_BACKEND,
 )
 
 # Default Auto field configuration

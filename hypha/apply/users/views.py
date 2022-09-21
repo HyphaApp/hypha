@@ -236,7 +236,7 @@ class ActivationView(TemplateView):
         user = self.get_user(kwargs.get('uidb64'))
 
         if self.valid(user, kwargs.get('token')):
-            user.backend = 'django.contrib.auth.backends.ModelBackend'
+            user.backend = settings.CUSTOM_AUTH_BACKEND
             login(request, user)
             return redirect('users:activate_password')
 

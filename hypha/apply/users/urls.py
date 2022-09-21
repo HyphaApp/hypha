@@ -69,7 +69,7 @@ urlpatterns = [
                 auth_views.PasswordResetConfirmView.as_view(
                     template_name='users/password_reset/confirm.html',
                     post_reset_login=True,
-                    post_reset_login_backend='django.contrib.auth.backends.ModelBackend',
+                    post_reset_login_backend=settings.CUSTOM_AUTH_BACKEND,
                     success_url=reverse_lazy('users:account')
                 ),
                 name='password_reset_confirm'
