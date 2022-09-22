@@ -1,7 +1,7 @@
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser, BaseUserManager, Group
 from django.core import exceptions
-from django.db import models
+from django.db import IntegrityError, models
 from django.db.models import Q
 from django.db.models.constants import LOOKUP_SEP
 from django.db.models.utils import resolve_callables
@@ -99,8 +99,8 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
 
     def _extract_model_params(self, defaults, **kwargs):
         """
-        Prepare `params` for creating a model instance based on the given
-        kwargs; for use by get_or_create().
+        Prepare `params` for creating a model instance based on the given kwargs;
+        A copied method from model's query.py; for use by get_or_create_and_notify().
         """
         defaults = defaults or {}
         params = {k: v for k, v in kwargs.items() if LOOKUP_SEP not in k}
@@ -127,10 +127,13 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
         temp_pass = BaseUserManager().make_random_password(length=32)
         temp_pass_hash = make_password(temp_pass)
         defaults.update(password=temp_pass_hash)
-        user = self.filter(email__iexact=kwargs.get('email')).first()
+        user = self.filter(email__iexact=kwargs.get('email')).first()  # case insensitive matching
         if not user:
-            params = dict(resolve_callables(self._extract_model_params(defaults, **kwargs)))
-            user = self.create(**params)
+            try:
+                params = dict(resolve_callables(self._extract_model_params(defaults, **kwargs)))
+                user = self.create(**params)
+            except IntegrityError:
+                raise
             send_activation_email(user, site)
             applicant_group = Group.objects.get(name=APPLICANT_GROUP_NAME)
             user.groups.add(applicant_group)
