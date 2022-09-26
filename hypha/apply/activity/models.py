@@ -5,6 +5,7 @@ from django.db import models
 from django.db.models import Case, Value, When
 from django.db.models.functions import Concat
 from django.utils import timezone
+from django.utils.translation import gettext as _
 
 from .options import MESSAGES
 
@@ -150,14 +151,17 @@ class Event(models.Model):
     """Model to track when messages are triggered"""
 
     when = models.DateTimeField(auto_now_add=True)
-    type = models.CharField(choices=MESSAGES.choices(), max_length=50)
+    type = models.CharField(_("verb"), choices=MESSAGES.choices, max_length=50)
     by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, null=True)
     content_type = models.ForeignKey(ContentType, blank=True, null=True, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField(blank=True, null=True)
     source = GenericForeignKey('content_type', 'object_id')
 
     def __str__(self):
-        return ' '.join([self.get_type_display(), 'by:', str(self.by), 'on:', self.source.title])
+        if self.source and hasattr(self.source, "title"):
+            return f'{self.by} {self.get_type_display()} - {self.source.title }'
+        else:
+            return f'{self.by} {self.get_type_display()}'
 
 
 class MessagesQueryset(models.QuerySet):
