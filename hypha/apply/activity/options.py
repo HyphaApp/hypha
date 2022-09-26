@@ -32,6 +32,7 @@ class MESSAGES(Enum):
     EDIT_REVIEW = 'Edit Review'
     SEND_FOR_APPROVAL = 'Send for Approval'
     APPROVE_PROJECT = 'Project was Approved'
+    PROJECT_FINAL_APPROVAL = 'Send for Final Approval'
     PROJECT_TRANSITION = 'Project was Transitioned'
     REQUEST_PROJECT_CHANGE = 'Project change requested'
     UPLOAD_DOCUMENT = 'Document was Uploaded to Project'
