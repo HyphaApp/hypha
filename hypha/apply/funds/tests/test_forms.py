@@ -28,7 +28,7 @@ class TestReviewerFormQueries(TestCase):
         # Meta categories
         # Assigned Reviewers
         # Roles
-        # Screening status
+        # Screening decision
         with self.assertNumQueries(6):
             form = UpdateReviewersForm(user=user, instance=submission)
 

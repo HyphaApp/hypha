@@ -156,7 +156,7 @@ msgstr ""
 
 #: hypha/apply/activity/adapters/activity_feed.py:218
 #, python-brace-format
-msgid "Screening status from {old_status} to {new_status}"
+msgid "Screening decision from {old_status} to {new_status}"
 msgstr ""
 
 #: hypha/apply/activity/adapters/django_messages.py:17
@@ -1825,7 +1825,7 @@ msgid "Default Yes/No"
 msgstr ""
 
 #: hypha/apply/funds/models/screening.py:15
-msgid "Only one Yes and No screening status can be set as default."
+msgid "Only one Yes and No screening decision can be set as default."
 msgstr ""
 
 #: hypha/apply/funds/models/submissions.py:485
@@ -2373,7 +2373,7 @@ msgid "Screen"
 msgstr ""
 
 #: hypha/apply/funds/templates/funds/includes/screening_status_block.html:4
-msgid "Screening status"
+msgid "Screening decision"
 msgstr ""
 
 #: hypha/apply/funds/templates/funds/includes/screening_status_block.html:36
@@ -2618,7 +2618,7 @@ msgid "Applicant"
 msgstr ""
 
 #: hypha/apply/funds/templates/funds/tables/table.html:23
-msgid "Screening statuses"
+msgid "Screening decisions"
 msgstr ""
 
 #: hypha/apply/funds/templates/funds/tables/table.html:24

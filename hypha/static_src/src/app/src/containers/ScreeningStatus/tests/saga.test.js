@@ -8,7 +8,7 @@ import homePageSaga from '../sagas';
 import * as ActionTypes from '../constants';
 
 
-describe('Test setDefaultValue in Screening status module', () => {
+describe('Test setDefaultValue in Screening decision module', () => {
 
     it('Should trigger correct action for SUCCESS status', () => {
         const id = 1;
@@ -69,7 +69,7 @@ describe('Test setDefaultValue in Screening status module', () => {
 
 });
 
-describe('Test setVisibleOption in Screening status module', () => {
+describe('Test setVisibleOption in Screening decision module', () => {
 
     it('Should trigger correct action for SUCCESS status', () => {
         const id = 1;
@@ -176,7 +176,7 @@ describe('Test setVisibleOption in Screening status module', () => {
 
 });
 
-describe('Test takeEvery in Screening status module', () => {
+describe('Test takeEvery in Screening decision module', () => {
 
     const genObject = homePageSaga();
 

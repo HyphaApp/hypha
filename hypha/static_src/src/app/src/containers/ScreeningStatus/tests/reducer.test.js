@@ -2,7 +2,7 @@ import initialState from '../models';
 import Reducer from '../reducer';
 import * as Actions from '../actions';
 
-describe('test reducer of screening status', () => {
+describe('test reducer of screening decision', () => {
     it('test  we get the initial data for undefined value of state', () => {
         expect(Reducer(undefined, {})).toEqual(initialState);
     });
@@ -16,7 +16,7 @@ describe('test reducer of screening status', () => {
         const action = Actions.hideLoadingAction();
         expect(Reducer(initialState, action)).toEqual(expected);
     });
-    it('on screening statuses success', () => {
+    it('on screening decisions success', () => {
         const data = {id: 1};
         const expected = initialState.set('screeningStatuses', data);
         const action = Actions.setScreeningSuccessAction(data);

@@ -14,10 +14,10 @@ def render_icon(image):
 
 def get_default_screening_statues():
     """
-    Get the default screening statuses set.
+    Get the default screening decisions set.
 
     If the default for yes and no doesn't exit. First yes and
-    first no screening statuses created should be set as default
+    first no screening decisions created should be set as default
     """
     yes_screening_statuses = ScreeningStatus.objects.filter(yes=True)
     no_screening_statuses = ScreeningStatus.objects.filter(yes=False)
@@ -27,7 +27,7 @@ def get_default_screening_statues():
         try:
             default_yes = yes_screening_statuses.get(default=True)
         except ScreeningStatus.DoesNotExist:
-            # Set first yes screening status as default
+            # Set first yes screening decision as default
             default_yes = yes_screening_statuses.first()
             default_yes.default = True
             default_yes.save()
@@ -35,7 +35,7 @@ def get_default_screening_statues():
         try:
             default_no = no_screening_statuses.get(default=True)
         except ScreeningStatus.DoesNotExist:
-            # Set first no screening status as default
+            # Set first no screening decision as default
             default_no = no_screening_statuses.first()
             default_no.default = True
             default_no.save()

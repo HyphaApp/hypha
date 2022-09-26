@@ -2,8 +2,8 @@ import * as actions from '../actions';
 import * as ActionTypes from '../constants';
 import Reducer from '../reducer';
 
-describe('Test actions of screening status', () => {
-    it('should return the screening statuses success action type', () => {
+describe('Test actions of screening decision', () => {
+    it('should return the screening decisions success action type', () => {
         const data = Reducer(undefined, {}).screeningStatuses;
         const expectedResult = {
             type: ActionTypes.GET_SCREENING_STATUSES,

@@ -52,12 +52,12 @@ class SubmissionScreeningStatusViewSet(
             ScreeningStatus, id=ser.validated_data['id']
         )
         if not submission.screening_statuses.filter(default=True).exists():
-            raise ValidationError({'detail': "Can't set screening status without default being set"})
+            raise ValidationError({'detail': "Can't set screening decision without default being set"})
         if (
             submission.screening_statuses.exists() and
             submission.screening_statuses.first().yes != screening_status.yes
         ):
-            raise ValidationError({'detail': "Can't set screening status for both yes and no"})
+            raise ValidationError({'detail': "Can't set screening decision for both yes and no"})
         submission.screening_statuses.add(
             screening_status
         )
@@ -84,7 +84,7 @@ class SubmissionScreeningStatusViewSet(
         screening_status = self.get_object()
         if screening_status.default:
             raise ValidationError({
-                'detail': "Can't delete default screening status."
+                'detail': "Can't delete default screening decision."
             })
         submission = self.get_submission_object()
         submission.screening_statuses.remove(screening_status)
