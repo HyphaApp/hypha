@@ -22,7 +22,7 @@ from .groups import (
     STAFF_GROUP_NAME,
     TEAMADMIN_GROUP_NAME,
 )
-from .utils import send_activation_email
+from .utils import get_user_by_email, send_activation_email
 
 
 class UserQuerySet(models.QuerySet):
@@ -73,7 +73,7 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
         if not email:
             raise ValueError('The given email must be set')
         email = self.normalize_email(email)
-        existing_user = self.filter(email__iexact=email)
+        existing_user = get_user_by_email(email, sensitive_search=0)
         if existing_user:
             raise ValueError('That email address is already taken.')
         user = self.model(email=email, **extra_fields)
@@ -127,7 +127,7 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
         temp_pass = BaseUserManager().make_random_password(length=32)
         temp_pass_hash = make_password(temp_pass)
         defaults.update(password=temp_pass_hash)
-        user = self.filter(email__iexact=kwargs.get('email')).first()  # case insensitive matching
+        user = get_user_by_email(kwargs.get('email'), sensitive_search=0)  # case insensitive matching
         if not user:
             try:
                 params = dict(resolve_callables(self._extract_model_params(defaults, **kwargs)))

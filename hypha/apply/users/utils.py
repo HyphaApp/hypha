@@ -8,12 +8,12 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
 
-def get_user_by_email(email):
+def get_user_by_email(email, sensitive_search=1):
     UserModel = get_user_model()
     qs = UserModel.objects.filter(email__iexact=email)  # case insensitive matching
 
     # if multiple accounts then check with case sensitive search
-    if len(qs) > 1:
+    if len(qs) > 1 and sensitive_search:
         qs = qs.filter(email=email)  # case sensitive matching
 
     if len(qs) == 0:
