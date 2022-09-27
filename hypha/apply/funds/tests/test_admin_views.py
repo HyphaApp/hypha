@@ -113,7 +113,7 @@ class TestRoundIndexView(WagtailTestUtils, TestCase):
             f'<a href="/admin/funds/applicationform/edit/{app.form.id}/">{app}</a>'
             for app in self.round.forms.all()
         ]
-        applications_cell = f'<td class="field-applications title">{"".join(application_links)}</td>'
+        applications_cell = f'<td class="field-application_forms title">{"".join(application_links)}</td>'
         self.assertContains(response, applications_cell, html=True)
 
     def test_number_of_rounds(self):
