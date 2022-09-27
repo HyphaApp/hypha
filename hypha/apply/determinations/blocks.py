@@ -57,7 +57,7 @@ class SendNoticeBlock(DeterminationMustIncludeFieldBlock):
     name = 'send_notice'
     description = 'Send Notice'
 
-    default_value = BooleanBlock(required=True)
+    default_value = BooleanBlock(default=True, required=False)
 
     field_class = forms.BooleanField
 
