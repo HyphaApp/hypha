@@ -123,16 +123,18 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
         return params
 
     def get_or_create_and_notify(self, defaults=dict(), site=None, **kwargs):
-        """Create or get an account for applicant.
+        """Create or get an account for applicant.and send activation email to applicant.
+
         Args:
-            defaults: _description_. Defaults to dict().
-            site: _description_. Defaults to None.
+            defaults: Dict containing user attributes for user creation. Defaults to dict().
+            site: current site for sending activation email. Defaults to None.
 
         Raises:
             IntegrityError: if multiple account exist with same email
 
         Returns:
-            _description_
+            A tuple containing a user instance and a boolean that indicates
+            whether the user was created or not.
         """
         _created = False
 
