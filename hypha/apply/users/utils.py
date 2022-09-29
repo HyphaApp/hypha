@@ -32,10 +32,10 @@ def is_user_already_registered(email: str) -> (bool, str):
     """
 
     user_model = get_user_model()
-    if user_model.objects.filter(email=email):
+    if user_model.objects.filter(email__iexact=email):
         return (True, _("Email is already in use."))
 
-    return (False, None)
+    return (False, '')
 
 
 def can_use_oauth_check(user):
