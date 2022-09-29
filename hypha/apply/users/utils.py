@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
@@ -8,12 +9,12 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
 
-def get_user_by_email(email, sensitive_search=1):
+def get_user_by_email(email):
     UserModel = get_user_model()
     qs = UserModel.objects.filter(email__iexact=email)  # case insensitive matching
 
     # if multiple accounts then check with case sensitive search
-    if len(qs) > 1 and sensitive_search:
+    if len(qs) > 1:
         qs = qs.filter(email=email)  # case sensitive matching
 
     if len(qs) == 0:
@@ -21,6 +22,20 @@ def get_user_by_email(email, sensitive_search=1):
 
     user = qs[0]
     return user
+
+
+def is_user_already_registered(email: str) -> (bool, str):
+    """
+    Checks if a specified user is already registered.
+    Returns a tuple containing a boolean value that indicates if the user exists
+    and in case he does whats the duplicated attribute
+    """
+
+    user_model = get_user_model()
+    if user_model.objects.filter(email=email):
+        return (True, _("Email is already in use."))
+
+    return (False, None)
 
 
 def can_use_oauth_check(user):
