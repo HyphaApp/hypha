@@ -143,13 +143,12 @@ class TestBaseAdapter(AdapterMixin, TestCase):
     @override_settings(SEND_MESSAGES=False)
     def test_django_messages_used(self):
         request = make_request()
-
         self.adapter_process(MESSAGES.UPDATE_LEAD, request=request)
 
         messages = list(get_messages(request))
-        self.assertEqual(len(messages), 1)
-        self.assertTrue(MESSAGES.UPDATE_LEAD.value in messages[0].message)
-        self.assertTrue(self.adapter.adapter_type in messages[0].message)
+        assert len(messages) == 1
+        assert MESSAGES.UPDATE_LEAD.value in messages[0].message
+        assert self.adapter.adapter_type in messages[0].message
 
 
 class TestMessageBackendApplication(TestCase):
@@ -192,7 +191,7 @@ class TestMessageBackendApplication(TestCase):
 
         self.assertEqual(Event.objects.count(), 1)
         self.assertEqual(Event.objects.first().type, MESSAGES.UPDATE_LEAD.name)
-        self.assertEqual(Event.objects.first().get_type_display(), MESSAGES.UPDATE_LEAD.value)
+        self.assertEqual(Event.objects.first().get_type_display(), MESSAGES.UPDATE_LEAD.label)
         self.assertEqual(Event.objects.first().by, user)
 
 

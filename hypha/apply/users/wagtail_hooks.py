@@ -1,7 +1,7 @@
-from django.urls import re_path, reverse
+from django.urls import re_path
 from wagtail import hooks
 
-from hypha.apply.utils.notifications import slack_notify
+from hypha.apply.activity.messaging import MESSAGES, messenger
 
 from .admin_views import index
 
@@ -16,11 +16,11 @@ def register_admin_urls():
 
 @hooks.register('after_create_user')
 def notify_after_create_user(request, user):
-    slack_notify(
-        message=f'{request.user} has crated a new account for {user}.',
+    messenger(
+        MESSAGES.STAFF_ACCOUNT_CREATED,
         request=request,
-        related=user,
-        path=reverse('wagtailusers_users:edit', args=(user.id,))
+        user=request.user,
+        source=user,
     )
 
 
@@ -31,9 +31,10 @@ def notify_after_edit_user(request, user):
         roles.append('Administrator')
     if roles:
         roles = ', '.join(roles)
-        slack_notify(
-            message=f'{request.user} has edited the account for {user} that now have these roles: {roles}.',
+        messenger(
+            MESSAGES.STAFF_ACCOUNT_EDITED,
             request=request,
-            related=user,
-            path=reverse('wagtailusers_users:edit', args=(user.id,))
+            user=request.user,
+            source=user,
+            roles=roles,
         )

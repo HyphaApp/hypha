@@ -1,5 +1,4 @@
 from django.db.models import TextChoices
-
 from django.utils.translation import gettext as _
 
 
@@ -55,3 +54,5 @@ class MESSAGES(TextChoices):
     DELETE_REMINDER = 'DELETE_REMINDER', _('deleted reminder')
     REVIEW_REMINDER = 'REVIEW_REMINDER', _('reminder to review')
     BATCH_DELETE_SUBMISSION = 'BATCH_DELETE_SUBMISSION', _('batch deleted submissions')
+    STAFF_ACCOUNT_CREATED = 'STAFF_ACCOUNT_CREATED', _('created new account')
+    STAFF_ACCOUNT_EDITED = 'STAFF_ACCOUNT_EDITED', _('edited account')

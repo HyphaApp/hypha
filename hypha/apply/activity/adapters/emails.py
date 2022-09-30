@@ -2,6 +2,7 @@ import logging
 from collections import defaultdict
 
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.template.loader import render_to_string
 from django.utils.translation import gettext as _
 
@@ -46,7 +47,7 @@ class EmailAdapter(AdapterBase):
     }
 
     def get_subject(self, message_type, source):
-        if source:
+        if source and hasattr(source, 'title'):
             if is_ready_for_review(message_type) or is_reviewer_update(message_type):
                 subject = _('Application ready to review: {source.title}').format(
                     source=source
@@ -226,6 +227,8 @@ class EmailAdapter(AdapterBase):
                 if related.status in {CHANGES_REQUESTED_BY_STAFF, DECLINED}:
                     return [source.user.email]
             return []
+        if isinstance(source, get_user_model()):
+            return user.email
         return [source.user.email]
 
     def batch_recipients(self, message_type, sources, **kwargs):
