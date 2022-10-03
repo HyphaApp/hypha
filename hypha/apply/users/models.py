@@ -143,9 +143,11 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
 
         if is_registered:
             user = get_user_by_email(email=email)
+            # already handled in PageStreamBaseForm.
             if not user:
                 raise IntegrityError("Found multiple account")
-
+            elif not user.is_active:
+                raise IntegrityError("Found an inactive account")
         else:
             temp_pass = BaseUserManager().make_random_password(length=32)
             temp_pass_hash = make_password(temp_pass)
@@ -155,15 +157,14 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
                 user = self.create(**params)
             except IntegrityError:
                 raise
-            applicant_group = Group.objects.get(name=APPLICANT_GROUP_NAME)
-            user.groups.add(applicant_group)
-            user.save()
             send_activation_email(user, site)
             _created = True
 
-
+        applicant_group = Group.objects.get(name=APPLICANT_GROUP_NAME)
+        if applicant_group not in user.groups.all():
+            user.groups.add(applicant_group)
+            user.save()
         return user, _created
-
 
 
 class User(AbstractUser):

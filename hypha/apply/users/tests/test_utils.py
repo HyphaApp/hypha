@@ -29,13 +29,13 @@ class TestGetUserByEmail(TestCase):
         assert get_user_by_email(email='ABC@gmail.com').id == user1.id
         assert get_user_by_email(email='ABC@GMAIL.COM').id == user1.id
 
-
     def test_multiple_accounts_same_email(self):
         user1 = UserFactory(email='abc@gmail.com')
         user2 = UserFactory(email='Abc@gmail.com')
 
         assert get_user_by_email(email='abc@gmail.com').id == user1.id
         assert get_user_by_email(email='Abc@gmail.com').id == user2.id
+
 
 @override_settings(ROOT_URLCONF='hypha.apply.urls')
 class TestUserAlreadyRegistered(TestCase):
@@ -44,7 +44,7 @@ class TestUserAlreadyRegistered(TestCase):
         assert is_user_already_registered(email='abc@gmail.com') == (False, '')
 
     def test_case_sensitive_email(self):
-        user1 = UserFactory(email='abc@gmail.com')
+        UserFactory(email='abc@gmail.com')
 
         assert is_user_already_registered(email='abc@gmail.com') == (True, "Email is already in use.")
         assert is_user_already_registered(email='ABc@gmail.com') == (True, "Email is already in use.")
