@@ -189,7 +189,7 @@ class SingleIncludeStatic(StaticBlock):
 
 class SingleIncludeMixin:
     def __init__(self, *args, **kwargs):
-        info_name = f'{self.name.title()} Field'
+        info_name = f'{self._meta_class.label} Field' if self._meta_class.label else f'{self.name.title()} Field'
         child_blocks = [('info', SingleIncludeStatic(label=info_name, description=self.description))]
         super().__init__(child_blocks, *args, **kwargs)
 
