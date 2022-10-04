@@ -8,38 +8,52 @@
     </div>
 </div>
 
-{% include "forms/includes/form_errors.html" with form=form %}
+{% if approval_form_exists %}
 
-<div class="wrapper wrapper--light-grey-bg wrapper--form wrapper--sidebar">
-    <div class="wrapper--sidebar--inner">
-        <form class="form application-form" action="" method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form.media }}
+    {% include "forms/includes/form_errors.html" with form=form %}
 
-            {% for field in form %}
-                {% if field.field %}
-                    {% if field.field.multi_input_field %}
-                        {% include "forms/includes/multi_input_field.html" %}
+    <div class="wrapper wrapper--light-grey-bg wrapper--form wrapper--sidebar">
+        <div class="wrapper--sidebar--inner">
+            <form class="form application-form" action="" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.media }}
+
+                {% for field in form %}
+                    {% if field.field %}
+                        {% if field.field.multi_input_field %}
+                            {% include "forms/includes/multi_input_field.html" %}
+                        {% else %}
+                            {% include "forms/includes/field.html" %}
+                        {% endif %}
                     {% else %}
-                        {% include "forms/includes/field.html" %}
+                        {{ field.block }}
                     {% endif %}
-                {% else %}
-                    {{ field.block }}
-                {% endif %}
-            {% endfor %}
+                {% endfor %}
 
-            {# Hidden fields needed e.g. for django-file-form. See `StreamBaseForm.hidden_fields` #}
-            {% for hidden_field in form.hidden_fields %}
-                {{ hidden_field }}
-            {% endfor %}
+                {# Hidden fields needed e.g. for django-file-form. See `StreamBaseForm.hidden_fields` #}
+                {% for hidden_field in form.hidden_fields %}
+                    {{ hidden_field }}
+                {% endfor %}
 
-            {% trans "Save draft" as save_draft %}
-            {% for button_name, button_type, button_value in buttons %}
-                <button class="button button--submit button--top-space button--{{ button_type }}" type="submit" name="{{ button_name }}" {% if button_value == save_draft %}formnovalidate{% endif %}>{{ button_value }}</button>
-            {% endfor %}
-        </form>
+                {% trans "Save draft" as save_draft %}
+                {% for button_name, button_type, button_value in buttons %}
+                    <button class="button button--submit button--top-space button--{{ button_type }}" type="submit" name="{{ button_name }}" {% if button_value == save_draft %}formnovalidate{% endif %}>{{ button_value }}</button>
+                {% endfor %}
+            </form>
+        </div>
     </div>
-</div>
+
+{% else %}
+    <div class="wrapper wrapper--light-grey-bg wrapper--form wrapper--sidebar">
+        <div class="wrapper--sidebar--inner">
+            <p>
+                Approval form not configured. Please add an approval form in the
+                <a href="{% url 'funds_fundtype_modeladmin_edit' object.submission.page.id %}" target="_blank">fund settings</a>.
+            </p>
+        </div>
+    </div>
+
+{% endif %}
 
 {% endblock %}
 

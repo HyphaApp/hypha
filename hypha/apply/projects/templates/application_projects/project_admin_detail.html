@@ -48,26 +48,24 @@
 </div>
 {% endif %}
 
-{% if object.requires_approval %}
-    <a
-        {% if not object.can_send_for_approval %}
-            onclick="return false"
-            data-tooltip="
-                {% if not object.lead %}
-                    {% trans "A lead must be assigned" %}
-                {% elif not object.user_has_updated_details %}
-                    {% trans "Project approval form must be completed" %}
-                {% elif object.can_make_approval or object.can_make_final_approval %}
-                    {% trans "Currently awaiting approval" %}
-                {% endif %}"
-        {% endif %}
-        data-fancybox
-        data-src="#send-for-approval"
-        class="button button--bottom-space button--primary button--full-width {% if not object.can_send_for_approval or not user.is_apply_staff %}button--tooltip-disabled{% endif %}"
-        href="#">
-        {% trans "Submit for Approval" %}
-    </a>
-{% endif %}
+<a
+    {% if not object.can_send_for_approval %}
+        onclick="return false"
+        data-tooltip="
+            {% if not object.lead %}
+                {% trans "A lead must be assigned" %}
+            {% elif not object.user_has_updated_details %}
+                {% trans "Project approval form must be completed" %}
+            {% elif object.can_make_approval or object.can_make_final_approval %}
+                {% trans "Currently awaiting approval" %}
+            {% endif %}"
+    {% endif %}
+    data-fancybox
+    data-src="#send-for-approval"
+    class="button button--bottom-space button--primary button--full-width {% if not object.can_send_for_approval or not user.is_apply_staff %}button--tooltip-disabled{% endif %}"
+    href="#">
+    {% trans "Submit for Approval" %}
+</a>
 
 {% if object.can_make_approval %}
   {% user_can_final_approve_project object user as user_can_approve %}

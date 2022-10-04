@@ -745,6 +745,7 @@ class ProjectApprovalEditView(BaseStreamForm, UpdateView):
         return super().get_context_data(
             title=self.object.title,
             buttons=self.buttons(),
+            approval_form_exists=True if self.approval_form else False,
             **kwargs
         )
 
