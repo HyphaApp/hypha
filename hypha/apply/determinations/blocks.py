@@ -1,6 +1,6 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
-from wagtail.blocks import RichTextBlock
+from wagtail.blocks import BooleanBlock, RichTextBlock
 
 from hypha.apply.stream_forms.blocks import (
     CharFieldBlock,
@@ -53,10 +53,23 @@ class DeterminationMessageBlock(DeterminationMustIncludeFieldBlock):
         return kwargs
 
 
-class SendNoticeBlock(CheckboxFieldBlock):
+class SendNoticeBlock(DeterminationMustIncludeFieldBlock):
+    name = 'send_notice'
+    description = 'Send Notice'
+
+    default_value = BooleanBlock(default=True, required=False)
+
+    field_class = forms.BooleanField
 
     class Meta:
         label = _('Send Notice')
+        icon = 'tick-inverse'
+
+    def get_searchable_content(self, value, data):
+        return None
+
+    def no_response(self):
+        return False
 
 
 class DeterminationCustomFormFieldsBlock(CustomFormFieldsBlock):
@@ -65,5 +78,4 @@ class DeterminationCustomFormFieldsBlock(CustomFormFieldsBlock):
     text_markup = RichTextBlock(group=_('Fields'), label=_('Section text/header'))
     checkbox = CheckboxFieldBlock(group=_('Fields'))
     dropdown = DropdownFieldBlock(group=_('Fields'))
-    send_notice = SendNoticeBlock(group=_('Fields'))
     required_blocks = DeterminationMustIncludeFieldBlock.__subclasses__()
