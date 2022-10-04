@@ -1,4 +1,4 @@
-from django.urls import re_path, reverse
+from django.urls import re_path
 from django.utils.safestring import mark_safe
 from wagtail.contrib.modeladmin.helpers import PermissionHelper
 from wagtail.contrib.modeladmin.options import ModelAdmin, ModelAdminGroup
@@ -8,7 +8,7 @@ from hypha.apply.determinations.admin import DeterminationFormAdmin
 from hypha.apply.funds.models import ReviewerRole, ScreeningStatus
 from hypha.apply.projects.admin import ProjectApprovalFormAdmin
 from hypha.apply.review.admin import ReviewFormAdmin
-from hypha.apply.utils.admin import ListRelatedMixin
+from hypha.apply.utils.admin import ListRelatedMixin, RelatedFormsMixin
 
 from .admin_helpers import (
     ApplicationFormButtonHelper,
@@ -42,60 +42,17 @@ class BaseRoundAdmin(ModelAdmin):
         return obj.get_parent()
 
 
-class RoundAdmin(BaseRoundAdmin):
+class RoundAdmin(BaseRoundAdmin, RelatedFormsMixin):
     model = Round
     menu_icon = 'repeat'
-    list_display = ('title', 'fund', 'start_date', 'end_date', 'applications', 'review_forms')
+    list_display = ('title', 'fund', 'start_date', 'end_date', 'application_forms', 'review_forms')
     list_filter = (RoundStateListFilter,)
     url_helper_class = RoundAdminURLHelper
-
-    def applications(self, obj):
-
-        def build_urls(applications):
-            for application in applications:
-                url = reverse('funds_applicationform_modeladmin_edit', args=[application.form.id])
-                yield f'<a href="{url}">{application}</a>'
-
-        urls = list(build_urls(obj.forms.all()))
-
-        if not urls:
-            return
-
-        return mark_safe('<br />'.join(urls))
 
     def fund(self, obj):
         url = self.url_helper.get_action_url('edit', obj.fund.id)
         url_tag = f'<a href="{url}">{obj.fund}</a>'
         return mark_safe(url_tag)
-
-    def review_forms(self, obj):
-        def build_urls(reviews):
-            for review in reviews:
-                url = reverse('review_reviewform_modeladmin_edit', args=[review.form.id])
-                yield f'<a href="{url}">{review}</a>'
-
-        urls = list(build_urls(obj.review_forms.all()))
-
-        if not urls:
-            return
-
-        return mark_safe('<br />'.join(urls))
-
-    def determination_forms(self, obj):
-        def build_urls(determinations):
-            for determination in determinations:
-                url = reverse(
-                    'determination_determinationform_modeladmin_edit',
-                    args=[determination.form.id]
-                )
-                yield f'<a href="{url}">{determination}</a>'
-
-        urls = list(build_urls(obj.determination_forms.all()))
-
-        if not urls:
-            return
-
-        return mark_safe('<br />'.join(urls))
 
 
 class ScreeningStatusPermissionHelper(PermissionHelper):
@@ -129,10 +86,11 @@ class SealedRoundAdmin(BaseRoundAdmin):
     list_display = ('title', 'fund', 'start_date', 'end_date')
 
 
-class FundAdmin(ModelAdmin):
+class FundAdmin(ModelAdmin, RelatedFormsMixin):
     model = FundType
     menu_icon = 'doc-empty'
     menu_label = 'Funds'
+    list_display = ('title', 'application_forms', 'review_forms', 'determination_forms')
 
 
 class RFPAdmin(ModelAdmin):
@@ -141,10 +99,11 @@ class RFPAdmin(ModelAdmin):
     menu_label = 'Request For Partners'
 
 
-class LabAdmin(ModelAdmin):
+class LabAdmin(ModelAdmin, RelatedFormsMixin):
     model = LabType
     menu_icon = 'doc-empty'
     menu_label = 'Labs'
+    list_display = ('title', 'application_forms', 'review_forms', 'determination_forms')
 
 
 class ReviewerRoleAdmin(ModelAdmin):
