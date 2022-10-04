@@ -18,8 +18,8 @@
         {% endblocktrans %}</p>
     <p><img src="{{ QR_URL }}" alt="QR Code" class="bg-white" width="200" height="200" /></p>
     <details>
-      <summary>Advanced</summary>
-      <p>For advanced users, here is the otpauth url in string format.</p>
+      <summary>{% trans "Advanced" %}</summary>
+      <p>{% trans "For advanced users, here is the otpauth url in string format." %}</p>
       <p><a href="{{ otpauth_url }}">{{ otpauth_url }}</a></p>
     </details>
   {% elif wizard.steps.current == 'sms' %}

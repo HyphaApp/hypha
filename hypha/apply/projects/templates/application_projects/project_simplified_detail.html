@@ -108,7 +108,7 @@
                         <span class="card__reviewer">
                             {{ review.author }}
                             {% if review.author.role %}
-                                as {{ review.author.role }}
+                                {% trans "as" %} {{ review.author.role }}
                             {% endif %}
                             - {{ review.created_at|date:"DATE_FORMAT" }}
                         </span>

@@ -11,7 +11,7 @@
         </a>
         <h2 class="heading heading--no-margin">{% trans "Determination" %} {% if determination.is_draft %}[{% trans "DRAFT" %}]{% endif %}
         </h2>
-        <h5>For: {{ determination.submission.title }}</h5>
+        <h5>{% trans "For" %}: {{ determination.submission.title }}</h5>
     </div>
 </div>
 
@@ -30,7 +30,7 @@
 </div>
 
 <div class="rich-text rich-text--answers">
-    <h4>Determination message</h4>
+    <h4>{% trans "Determination message" %}</h4>
     {{ determination.message|bleach }}
     {% for group in determination.detailed_data.values %}
         {% if group.title %}

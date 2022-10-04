@@ -5,7 +5,7 @@
 <div class="admin-bar">
     <div class="admin-bar__inner">
         <h1 class="beta heading heading--no-margin heading--bold">{{ title }}</h1>
-        <h5>For <a href="{% url "funds:submissions:detail" submission.id %}">{{ submission.title }}</a></h5>
+        <h5>{% trans "For" %} <a href="{% url "funds:submissions:detail" submission.id %}">{{ submission.title }}</a></h5>
     </div>
 </div>
 

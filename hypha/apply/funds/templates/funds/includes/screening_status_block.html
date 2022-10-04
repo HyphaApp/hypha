@@ -33,7 +33,7 @@
                     {% endfor%}
                 </div>
                 {% endif %}
-                <a id="screening-options" data-fancybox="" data-src="#screen-application" data-yes="{% if object.has_yes_default_screening_status_set %}true{% else %}false{% endif %}" class="link link--secondary-change" href="#">{% trans "Screening options<" %}/a>
+                <a id="screening-options" data-fancybox="" data-src="#screen-application" data-yes="{% if object.has_yes_default_screening_status_set %}true{% else %}false{% endif %}" class="link link--secondary-change" href="#">{% trans "Screening options" %}</a>
             </p>
         {% endif %}
         {% if not object.supports_default_screening %}

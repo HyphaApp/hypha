@@ -8,7 +8,7 @@
             <svg class="icon icon--calendar apply-bar__icon"><use xlink:href="#calendar"></use></svg>
             {% trans "Next deadline" %}: <span>{{ page.deadline|date:"DATE_FORMAT" }}</span>
         {% elif page.can_open %}
-            Closed
+            {% trans "Closed" %}
         {% endif %}
     </h6>
     {% if page.listing_image %}
