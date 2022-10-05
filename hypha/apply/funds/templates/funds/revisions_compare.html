@@ -5,7 +5,7 @@
 <div class="admin-bar">
     <div class="admin-bar__inner">
         <h2 class="heading heading--no-margin">{% trans "Comparing revisions" %}</h2>
-        <h5>For <a href="{% url "funds:submissions:detail" object.id %}">{{ object.title }}</a></h5>
+        <h5>{% trans "For" %} <a href="{% url "funds:submissions:detail" object.id %}">{{ object.title }}</a></h5>
         <h5><a href="{% url "funds:submissions:revisions:list" object.id %}">{% trans "Back to revisions" %}</a></h5>
     </div>
 </div>

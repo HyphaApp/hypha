@@ -1,7 +1,8 @@
 {% extends 'funds/includes/round-block-listing.html' %}
+{% load i18n %}
 
 {% block empty_round %}
     <p class="round-block__not-found">
-        You have no {{ type|lower }} rounds or labs assigned to you.
+        {% blocktrans with type=type|lower %}You have no {{ type }} rounds or labs assigned to you.{% endblocktrans %}
     </p>
 {% endblock %}

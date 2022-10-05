@@ -12,7 +12,7 @@
             {% csrf_token %}
 
             <section id="account" class="active nice-padding">
-                <p> Are you sure you want to disable the Two Factor Authentication for this user? Please type your password to confirm.</p>
+                <p>{% trans "Are you sure you want to disable the Two Factor Authentication for this user? Please type your password to confirm." %}</p>
 
                 <ul class="fields">
                     {% block fields %}
