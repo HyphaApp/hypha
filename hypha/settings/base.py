@@ -75,6 +75,9 @@ SLACK_TYPE_COMMENTS = env.list('SLACK_TYPE_COMMENTS', [])
 SLACK_ENDPOINT_URL = env.str('SLACK_ENDPOINT_URL', 'https://slack.com/api/chat.postMessage')
 SLACK_BACKEND = 'django_slack.backends.CeleryBackend'  # UrllibBackend can be used for sync
 
+# Activities email digest
+ACTIVITY_DIGEST_RECIPIENT_EMAILS = env.list("ACTIVITY_DIGEST_RECIPIENT_EMAILS", default=[])
+
 # Staff e-mail domain. Used for OAUTH2 whitelist default value and staff account creation.
 STAFF_EMAIL_DOMAINS = env.list('STAFF_EMAIL_DOMAINS', [])
 
@@ -158,7 +161,7 @@ EMAIL_HOST_USER = env.str('EMAIL_HOST_USER', None)
 EMAIL_HOST_PASSWORD = env.str('EMAIL_HOST_PASSWORD', None)
 EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS', False)
 EMAIL_USE_SSL = env.bool('EMAIL_USE_SSL', False)
-EMAIL_SUBJECT_PREFIX = env.str('EMAIL_SUBJECT_PREFIX', None)
+EMAIL_SUBJECT_PREFIX = env.str('EMAIL_SUBJECT_PREFIX', '')
 SERVER_EMAIL = DEFAULT_FROM_EMAIL = env.str('SERVER_EMAIL', None)
 
 

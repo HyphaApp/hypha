@@ -187,8 +187,11 @@ class Message(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     status = models.TextField()
     external_id = models.CharField(max_length=75, null=True, blank=True)  # Stores the id of the object from an external system
-
+    sent_in_email_digest = models.BooleanField(default=False)
     objects = MessagesQueryset.as_manager()
+
+    def __str__(self):
+        return f'[{self.type}][{self.status}] {self.content}'
 
     def update_status(self, status):
         if status:
