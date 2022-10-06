@@ -2,8 +2,10 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
+from django_file_form.forms import FileFormMixin
 
 from hypha.apply.funds.models import ApplicationSubmission
+from hypha.apply.stream_forms.fields import SingleFileField
 from hypha.apply.stream_forms.forms import StreamBaseForm
 from hypha.apply.users.groups import STAFF_GROUP_NAME
 
@@ -166,7 +168,9 @@ class StaffUploadContractForm(forms.ModelForm):
         model = Contract
 
 
-class UploadDocumentForm(forms.ModelForm):
+class UploadDocumentForm(FileFormMixin, forms.ModelForm):
+    document = SingleFileField(label=_('Document'), required=True)
+
     class Meta:
         fields = ['title', 'category', 'document']
         model = PacketFile
