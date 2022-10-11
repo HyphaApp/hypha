@@ -180,7 +180,7 @@ class ApplicationSubmissionQueryset(JSONOrderable):
 
     def current(self):
         # Applications which have the current stage active (have not been progressed) or not archived yet.
-        return self.exclude(next__isnull=False, is_archive=False)
+        return self.exclude(Q(next__isnull=False) | Q(is_archive=True))
 
     def current_accepted(self):
         # Applications which have the current stage active (have not been progressed)
