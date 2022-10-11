@@ -41,6 +41,11 @@
                         <svg class="icon icon--delete"><use xlink:href="#delete-submissions"></use></svg>
                         {% trans "Delete" %}
                     </button>
+
+                    <button data-fancybox data-src="#batch-archive-submission" class="button button--action js-batch-button" type="button">
+                        <svg class="icon icon--archive"><use xlink:href="#archive"></use></svg>
+                        {% trans "Archive" %}
+                    </button>
                 </div>
             {% endif %}
         </div>
@@ -87,4 +92,5 @@
     {% include "funds/includes/batch_update_reviewer_form.html" %}
     {% include "funds/includes/batch_progress_form.html" %}
     {% include "funds/includes/batch_delete_submission_form.html" %}
+    {% include "funds/includes/batch_archive_submission_form.html" %}
 {% endif %}
