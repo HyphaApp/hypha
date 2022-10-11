@@ -16,6 +16,34 @@ from .forms import NewsletterForm
 logger = logging.getLogger(__name__)
 
 
+def subscribe_to_mailchimp(email: str, data) -> None:
+    mailchimp_enabled = settings.MAILCHIMP_API_KEY and settings.MAILCHIMP_LIST_ID
+
+    dummy_key = 'a' * 32
+
+    if not mailchimp_enabled:
+        raise Exception(
+            f'Incorrect Mailchimp configuration: '
+            f'API_KEY: {settings.MAILCHIMP_API_KEY}, LIST_ID: {settings.MAILCHIMP_LIST_ID}'
+        )
+
+    client = MailChimp(
+        mc_api=settings.MAILCHIMP_API_KEY or dummy_key,
+        timeout=5.0,
+        enabled=mailchimp_enabled,
+    )
+    data = {k.upper(): v for k, v in data.items()}
+
+    client.lists.members.create(
+        settings.MAILCHIMP_LIST_ID,
+        {
+            'email_address': email,
+            'status': 'pending',
+            'merge_fields': data,
+        },
+    )
+
+
 @method_decorator(csrf_exempt, name='dispatch')
 class MailchimpSubscribeView(FormMixin, RedirectView):
     form_class = NewsletterForm
@@ -32,44 +60,27 @@ class MailchimpSubscribeView(FormMixin, RedirectView):
         return HttpResponseRedirect(self.get_success_url())
 
     def form_valid(self, form):
-        mailchimp_enabled = settings.MAILCHIMP_API_KEY and settings.MAILCHIMP_LIST_ID
-
-        dummy_key = 'a' * 32
-
-        client = MailChimp(mc_api=settings.MAILCHIMP_API_KEY or dummy_key, timeout=5.0, enabled=mailchimp_enabled)
-
         data = form.cleaned_data.copy()
         email = data.pop('email')
-        data = {
-            k.upper(): v
-            for k, v in data.items()
-        }
+
         try:
-            client.lists.members.create(settings.MAILCHIMP_LIST_ID, {
-                'email_address': email,
-                'status': 'pending',
-                'merge_fields': data,
-            })
+            subscribe_to_mailchimp(email=email, data=data)
+            self.success()
         except Exception as e:
             self.warning(e)
-        else:
-            if mailchimp_enabled:
-                self.success()
-            else:
-                self.warning(Exception(
-                    'Incorrect Mailchimp configuration: API_KEY: {}, LIST_ID: {}'.format(
-                        str(settings.MAILCHIMP_API_KEY),
-                        str(settings.MAILCHIMP_LIST_ID),
-                    )
-                ))
 
         return super().form_valid(form)
 
     def error(self, form):
-        messages.error(self.request, _('Sorry, there were errors with your form.') + str(form.errors))
+        messages.error(
+            self.request,
+            _('Sorry, there were errors with your form.') + str(form.errors),
+        )
 
     def warning(self, e):
-        messages.warning(self.request, _('Sorry, there has been an problem. Please try again later.'))
+        messages.warning(
+            self.request, _('Sorry, there has been an problem. Please try again later.')
+        )
         # If there is a problem with subscribing uncomment this to get notifications.
         # When things work warnings is only about spam scipts.
         # logger.error(e.args[0])

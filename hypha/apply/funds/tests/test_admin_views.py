@@ -3,7 +3,7 @@ from django.contrib.auth.models import Group
 from django.contrib.messages import get_messages
 from django.test import TestCase
 from django.urls import reverse
-from wagtail.tests.utils import WagtailTestUtils
+from wagtail.test.utils import WagtailTestUtils
 
 from hypha.apply.funds.models.forms import ApplicationForm
 from hypha.apply.home.factories import ApplyHomePageFactory
@@ -35,7 +35,7 @@ class TestFundCreationView(TestCase):
         cls.user = SuperUserFactory()
         cls.home = ApplyHomePageFactory()
 
-    def create_page(self, appl_forms=1, review_forms=1, determination_forms=1, external_review_form=0, stages=1, same_forms=False, form_stage_info=[1]):
+    def create_page(self, appl_forms=1, review_forms=1, determination_forms=1, external_review_form=0, project_approval_form=1, stages=1, same_forms=False, form_stage_info=[1]):
         self.client.force_login(self.user)
         url = reverse('wagtailadmin_pages:add', args=('funds', 'fundtype', self.home.id))
 
@@ -44,6 +44,7 @@ class TestFundCreationView(TestCase):
             review_forms,
             determination_forms,
             external_review_form,
+            project_approval_form,
             same_forms=same_forms,
             stages=stages,
             form_stage_info=form_stage_info,
@@ -112,7 +113,7 @@ class TestRoundIndexView(WagtailTestUtils, TestCase):
             f'<a href="/admin/funds/applicationform/edit/{app.form.id}/">{app}</a>'
             for app in self.round.forms.all()
         ]
-        applications_cell = f'<td class="field-applications title">{"".join(application_links)}</td>'
+        applications_cell = f'<td class="field-application_forms title">{"".join(application_links)}</td>'
         self.assertContains(response, applications_cell, html=True)
 
     def test_number_of_rounds(self):

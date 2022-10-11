@@ -3,7 +3,7 @@ from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
-from wagtail.core.blocks.field_block import RichTextBlock
+from wagtail.blocks.field_block import RichTextBlock
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.funds.models import AssignedReviewers

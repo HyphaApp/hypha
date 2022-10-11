@@ -1,8 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from wagtail.admin.edit_handlers import FieldPanel
+from wagtail.admin.panels import FieldPanel
 from wagtail.contrib.settings.models import BaseSetting, register_setting
-from wagtail.images.edit_handlers import ImageChooserPanel
 
 from hypha.apply.utils.image import generate_image_url
 
@@ -24,7 +23,7 @@ class ReviewerRole(models.Model):
 
     panels = [
         FieldPanel('name'),
-        ImageChooserPanel('icon'),
+        FieldPanel('icon'),
         FieldPanel('order'),
     ]
 

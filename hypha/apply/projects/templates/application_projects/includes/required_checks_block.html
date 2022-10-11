@@ -10,7 +10,7 @@
         <br>
         <div class="required-checks-checkbox">
             <input type="checkbox" name="valid_checks" id="valid_checks" {% if invoice.valid_checks %}checked{% endif %} {% if not user_can_complete_required_checks %} disabled {% endif %}>
-            <span>Valid OFAC, SAM, W8/W9 on file</span>
+            <span>{% trans "Valid OFAC, SAM, W8/W9 on file" %}</span>
         </div>
         <br>
         <div class="required-checks-link">
@@ -18,7 +18,7 @@
             <textarea name="valid-checks-link" id="valid-checks-link" rows=3 cols=30 required {% if not user_can_complete_required_checks %} disabled {% endif %}>{{ invoice.valid_checks_link }}</textarea> 
         </div>
         {% if user_can_complete_required_checks %}
-            <input type="submit" value="Save">
+            <input type="submit" value="{% trans 'Save' %}">
         {% endif %}
     </form>
     <br>

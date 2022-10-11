@@ -22,3 +22,8 @@ STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.MD5PasswordHasher',
 ]
+
+WAGTAILADMIN_BASE_URL = "https://primary-test-host.org"
+
+# Required by django-coverage-plugin to report template coverage
+TEMPLATES[0]['OPTIONS']['debug'] = True

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Test screening status Container Should render screening statuses with Sidebarblock 1`] = `
+exports[`Test screening decision Container Should render screening decisions with Sidebarblock 1`] = `
 <ScreeningStatusContainer
   defaultOptions={
     Object {
@@ -50,13 +50,13 @@ exports[`Test screening status Container Should render screening statuses with S
   }
 >
   <SidebarBlock
-    title="Screening Status"
+    title="Screening Decision"
   >
     <div
       className="sidebar-block"
     >
       <h5>
-        Screening Status
+        Screening Decision
       </h5>
       <div
         className="screening-status-box"
@@ -513,7 +513,7 @@ exports[`Test screening status Container Should render screening statuses with S
 </ScreeningStatusContainer>
 `;
 
-exports[`Test screening status Container Should render screening statuses with loading 1`] = `
+exports[`Test screening decision Container Should render screening decisions with loading 1`] = `
 <ScreeningStatusContainer
   allScreeningStatuses={null}
   screeningInfo={
@@ -668,7 +668,7 @@ exports[`Test screening status Container Should render screening statuses with l
 </ScreeningStatusContainer>
 `;
 
-exports[`Test screening status Container Should render screening statuses with loading false & defaultoptions empty 1`] = `
+exports[`Test screening decision Container Should render screening decisions with loading false & defaultoptions empty 1`] = `
 <ScreeningStatusContainer
   defaultOptions={Object {}}
   screeningInfo={

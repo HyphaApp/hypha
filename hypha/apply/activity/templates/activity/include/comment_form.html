@@ -1,4 +1,7 @@
+{% load i18n %}
+
 <h4>Add communication</h4>
 <div class="wrapper wrapper--comments">
-    {% include 'funds/includes/delegated_form_base.html' with form=comment_form value='Submit' extra_classes='form__comments'%}
+    {% trans "Submit" as submit %}
+    {% include "funds/includes/delegated_form_base.html" with form=comment_form value=submit extra_classes="form__comments" %}
 </div>

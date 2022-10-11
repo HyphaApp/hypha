@@ -10,19 +10,14 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import never_cache
 from modelcluster.fields import ParentalKey
-from wagtail.admin.edit_handlers import (
-    FieldPanel,
-    FieldRowPanel,
-    InlinePanel,
-    MultiFieldPanel,
-)
+from wagtail.admin.panels import FieldPanel, FieldRowPanel, InlinePanel, MultiFieldPanel
 from wagtail.contrib.forms.forms import FormBuilder
 from wagtail.contrib.forms.models import (
     FORM_FIELD_CHOICES,
     AbstractEmailForm,
     AbstractFormField,
 )
-from wagtail.core.fields import RichTextField
+from wagtail.fields import RichTextField
 from wagtail.search import index
 
 from hypha.public.utils.models import BasePage

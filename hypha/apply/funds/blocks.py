@@ -3,7 +3,7 @@ import json
 from django import forms
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
-from wagtail.core import blocks
+from wagtail import blocks
 
 from addressfield.fields import ADDRESS_FIELDS_ORDER, AddressField
 from hypha.apply.categories.blocks import CategoryQuestionBlock
@@ -104,6 +104,7 @@ class FullNameBlock(ApplicationMustIncludeFieldBlock):
                                  default=_("We will use this name when we communicate with you about your proposal."))
 
     class Meta:
+        label = _('Full name')
         icon = 'user'
 
 

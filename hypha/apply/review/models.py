@@ -3,8 +3,8 @@ from django.db import models
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
-from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel
-from wagtail.core.fields import StreamField
+from wagtail.admin.panels import FieldPanel
+from wagtail.fields import StreamField
 
 from hypha.apply.funds.models.mixins import AccessFormData
 from hypha.apply.stream_forms.models import BaseStreamForm
@@ -40,7 +40,7 @@ class ReviewFormFieldsMixin(models.Model):
     class Meta:
         abstract = True
 
-    form_fields = StreamField(ReviewCustomFormFieldsBlock())
+    form_fields = StreamField(ReviewCustomFormFieldsBlock(), use_json_field=True)
 
     @property
     def score_fields(self):
@@ -82,7 +82,7 @@ class ReviewForm(ReviewFormFieldsMixin, models.Model):
 
     panels = [
         FieldPanel('name'),
-        StreamFieldPanel('form_fields'),
+        FieldPanel('form_fields'),
     ]
 
     def __str__(self):

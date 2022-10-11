@@ -4,7 +4,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 from tinymce.widgets import TinyMCE
-from wagtail.core.models import Page
+from wagtail.models import Page
 
 from hypha.apply.categories.models import Option
 from hypha.apply.funds.models import ApplicationSubmission, Round, ScreeningStatus

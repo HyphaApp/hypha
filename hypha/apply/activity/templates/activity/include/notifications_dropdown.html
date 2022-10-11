@@ -5,15 +5,15 @@
         <svg class="icon"><use xlink:href="#bell-icon"></use></svg>
     </a>
     <div class="notifications__content zeta hidden" role="activity">
-        <h5>Notifications</h5>
+        <h5>{% trans "Notifications" %}</h5>
         {% for activity in latest_notifications %}
         <p class="notifications__item">
             <strong>{{ activity.source_content_type.name|source_type }} </strong>
-            <a href="{{ activity.source.get_absolute_url }}{% ifequal activity.type 'comment' %}#communications{% endifequal %}">{{ activity.source.title|capfirst|truncatechars:15 }}</a>
-            : {{ activity.user.get_full_name }} {% ifequal activity.type 'comment' %}{% trans "made a comment" %}{% else %} {{ activity|display_for:request.user }}{% endifequal %}
+            <a href="{{ activity.source.get_absolute_url }}{% if activity.type == 'comment' %}#communications{% endif %}">{{ activity.source.title|capfirst|truncatechars:15 }}</a>
+            : {{ activity.user.get_full_name }} {% if activity.type == 'comment' %}{% trans "made a comment" %}{% else %} {{ activity|display_for:request.user }}{% endif %}
             {% if activity.related_object %}<a href="{{ activity.related_object.get_absolute_url }}">{{ activity.related_object|model_verbose_name }}</a>{% endif %}
         </p>
         {% endfor %}
-        <p class="notifications__more"><a href="{% url "activity:notifications" %}">Show All</a></p>
+        <p class="notifications__more"><a href="{% url "activity:notifications" %}">{% trans "Show All" %}</a></p>
     </div>
 </div>

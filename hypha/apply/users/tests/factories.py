@@ -9,6 +9,7 @@ from ..groups import (
     APPLICANT_GROUP_NAME,
     APPROVER_GROUP_NAME,
     COMMUNITY_REVIEWER_GROUP_NAME,
+    CONTRACTING_GROUP_NAME,
     FINANCE_GROUP_NAME,
     PARTNER_GROUP_NAME,
     REVIEWER_GROUP_NAME,
@@ -126,6 +127,25 @@ class Finance2Factory(FinanceFactory):
         if create:
             self.groups.add(
                 GroupFactory(name=FINANCE_GROUP_NAME),
+                GroupFactory(name=APPROVER_GROUP_NAME)
+            )
+
+
+class ContractingFactory(UserFactory):
+    @factory.post_generation
+    def groups(self, create, extracted, **kwargs):
+        if create:
+            self.groups.add(
+                GroupFactory(name=CONTRACTING_GROUP_NAME),
+            )
+
+
+class ContractingApproverFactory(UserFactory):
+    @factory.post_generation
+    def groups(self, create, extracted, **kwargs):
+        if create:
+            self.groups.add(
+                GroupFactory(name=CONTRACTING_GROUP_NAME),
                 GroupFactory(name=APPROVER_GROUP_NAME)
             )
 

@@ -2,12 +2,12 @@ from django.contrib.admin.utils import unquote
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import gettext as _
+from wagtail import hooks
 from wagtail.admin import messages
 from wagtail.admin.forms.pages import CopyForm
 from wagtail.admin.views.pages.utils import get_valid_next_url_from_request
 from wagtail.contrib.modeladmin.views import CreateView, EditView
-from wagtail.core import hooks
-from wagtail.core.models import Page
+from wagtail.models import Page
 
 from hypha.apply.utils.blocks import show_admin_form_error_messages
 

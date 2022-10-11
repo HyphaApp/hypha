@@ -1,4 +1,4 @@
-from wagtail.core.blocks import StaticBlock
+from wagtail.blocks import StaticBlock
 
 from hypha.public.utils.blocks import StoryBlock
 

@@ -6,13 +6,13 @@ version: 2.1
 executors:
   python:
     docker:
-      - image: cimg/python:3.9
+      - image: cimg/python:3.10
   node:
     docker:
       - image: cimg/node:16.14
   with-database:
     docker:
-      - image: cimg/python:3.9
+      - image: cimg/python:3.10
         environment:
           DATABASE_URL: postgresql://hypha:hypha@localhost/hypha?sslmode=disable
           DJANGO_SETTINGS_MODULE: hypha.settings.test
@@ -90,13 +90,12 @@ jobs:
           keys:
             - v5-python-{{ .Branch }}-{{ checksum "requirements.txt" }}{{ checksum "requirements-dev.txt" }}
             - v5-python-{{ .Branch }}-
-            - v5-python-
       - run:
           name: install python dependencies
           command: |
             python3 -m venv venv
             . venv/bin/activate
-            pip install coverage codecov
+            pip install codecov pytest-circleci-parallelized
             pip install -r requirements-dev.txt
       - save_cache:
           paths:
@@ -118,12 +117,12 @@ jobs:
           name: run linting
           command: |
             . venv/bin/activate
-            flake8 ./hypha
-            make sort
+            make lint
 
   test-be:
     executor: with-database
     working_directory: ~/repo
+    parallelism: 4
     steps:
       - checkout
       - attach_workspace:
@@ -135,7 +134,7 @@ jobs:
             python manage.py check
             python manage.py makemigrations --check --noinput --verbosity=1
             python manage.py collectstatic --noinput --no-post-process --verbosity=1
-            coverage run --source='hypha' manage.py test
+            pytest --cov --cov-report term:skip-covered -n 1 --circleci-parallelize
             codecov
 
 

@@ -19,6 +19,7 @@ from ..models.project import (
     Deliverable,
     DocumentCategory,
     PacketFile,
+    PAFReviewersRole,
     Project,
     ProjectApprovalForm,
 )
@@ -101,6 +102,13 @@ class ProjectFactory(factory.django.DjangoModelFactory):
         is_complete = factory.Trait(
             status=COMPLETE,
         )
+
+
+class PAFReviewerRoleFactory(factory.django.DjangoModelFactory):
+    role = factory.Faker('name')
+
+    class Meta:
+        model = PAFReviewersRole
 
 
 class ContractFactory(factory.django.DjangoModelFactory):

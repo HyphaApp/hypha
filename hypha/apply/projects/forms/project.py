@@ -7,7 +7,14 @@ from hypha.apply.funds.models import ApplicationSubmission
 from hypha.apply.stream_forms.forms import StreamBaseForm
 from hypha.apply.users.groups import STAFF_GROUP_NAME
 
-from ..models.project import COMMITTED, Approval, Contract, PacketFile, Project
+from ..models.project import (
+    COMMITTED,
+    PAF_STATUS_CHOICES,
+    Contract,
+    PacketFile,
+    PAFReviewersRole,
+    Project,
+)
 
 User = get_user_model()
 
@@ -56,25 +63,17 @@ class CreateProjectForm(forms.Form):
         return Project.create_from_submission(submission)
 
 
-class CreateApprovalForm(forms.ModelForm):
-    by = forms.ModelChoiceField(
-        queryset=User.objects.approvers(),
-        widget=forms.HiddenInput(),
-    )
+class FinalApprovalForm(forms.ModelForm):
+    name_prefix = 'final_approval_form'
+    final_approval_status = forms.ChoiceField(choices=PAF_STATUS_CHOICES)
+    comment = forms.CharField(required=False, widget=forms.Textarea)
 
     class Meta:
-        model = Approval
-        fields = ('by',)
+        model = Project
+        fields = ['final_approval_status', 'comment']
 
-    def __init__(self, user=None, *args, **kwargs):
-        self.user = user
-        super().__init__(*args, **kwargs)
-
-    def clean_by(self):
-        by = self.cleaned_data['by']
-        if by != self.user:
-            raise forms.ValidationError(_('Cannot approve for a different user'))
-        return by
+    def __init__(self, instance, user=None, *args, **kwargs):
+        super().__init__(instance=instance, *args, **kwargs)
 
 
 class MixedMetaClass(type(StreamBaseForm), type(forms.ModelForm)):
@@ -113,11 +112,19 @@ class ProjectApprovalForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaCl
         return super().save(*args, **kwargs)
 
 
-class RejectionForm(forms.Form):
-    comment = forms.CharField(widget=forms.Textarea)
+class ChangePAFStatusForm(forms.ModelForm):
+    name_prefix = 'change_paf_status_form'
+    paf_reviewers_roles = PAFReviewersRole.objects.all().only('role')
+    paf_status = forms.ChoiceField(choices=PAF_STATUS_CHOICES)
+    role = forms.ModelChoiceField(queryset=paf_reviewers_roles)
+    comment = forms.CharField(required=False, widget=forms.Textarea)
 
-    def __init__(self, instance=None, user=None, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    class Meta:
+        fields = ['paf_status', 'role', 'comment']
+        model = Project
+
+    def __init__(self, instance, user, *args, **kwargs):
+        super().__init__(instance=instance, *args, **kwargs)
 
 
 class RemoveDocumentForm(forms.ModelForm):
@@ -144,14 +151,7 @@ class SetPendingForm(forms.ModelForm):
         if self.instance.status != COMMITTED:
             raise forms.ValidationError(_('A Project can only be sent for Approval when Committed.'))
 
-        if self.instance.is_locked:
-            raise forms.ValidationError(_('A Project can only be sent for Approval once'))
-
         super().clean()
-
-    def save(self, *args, **kwargs):
-        self.instance.is_locked = True
-        return super().save(*args, **kwargs)
 
 
 class UploadContractForm(forms.ModelForm):

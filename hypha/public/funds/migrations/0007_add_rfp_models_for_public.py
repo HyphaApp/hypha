@@ -4,8 +4,8 @@ from django.db import migrations, models
 import django.db.models.deletion
 import modelcluster.fields
 import hypha.public.funds.blocks
-import wagtail.core.blocks
-import wagtail.core.fields
+import wagtail.blocks
+import wagtail.fields
 import wagtail.documents.blocks
 import wagtail.embeds.blocks
 import wagtail.images.blocks

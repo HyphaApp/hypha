@@ -27,10 +27,12 @@ from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
+from hypha.apply.activity.models import ACTION, ALL, COMMENT, Activity
 from hypha.apply.activity.views import ActivityContextMixin, CommentFormView
 from hypha.apply.stream_forms.models import BaseStreamForm
 from hypha.apply.users.decorators import (
-    approver_required,
+    contracting_approver_required,
+    staff_or_finance_or_contracting_required,
     staff_or_finance_required,
     staff_required,
 )
@@ -47,9 +49,9 @@ from ..files import get_files
 from ..filters import InvoiceListFilter, ProjectListFilter, ReportListFilter
 from ..forms import (
     ApproveContractForm,
-    CreateApprovalForm,
+    ChangePAFStatusForm,
+    FinalApprovalForm,
     ProjectApprovalForm,
-    RejectionForm,
     RemoveDocumentForm,
     SelectDocumentForm,
     SetPendingForm,
@@ -60,12 +62,15 @@ from ..forms import (
 )
 from ..models.payment import Invoice
 from ..models.project import (
+    COMMITTED,
     CONTRACTING,
     IN_PROGRESS,
     PROJECT_STATUS_CHOICES,
-    Approval,
+    REQUEST_CHANGE,
+    WAITING_FOR_APPROVAL,
     Contract,
     PacketFile,
+    PAFReviewersRole,
     Project,
 )
 from ..models.report import Report
@@ -79,8 +84,22 @@ class SendForApprovalView(DelegatedViewMixin, UpdateView):
     form_class = SetPendingForm
     model = Project
 
+    def send_to_compliance(self):
+        """Notify Compliance about this Project."""
+        messenger(
+            MESSAGES.SENT_TO_COMPLIANCE,
+            request=self.request,
+            user=self.request.user,
+            source=self.object,
+        )
+
+        self.object.sent_to_compliance_at = timezone.now()
+        self.object.save(update_fields=['sent_to_compliance_at'])
+
     def form_valid(self, form):
-        # lock project
+        project = self.kwargs['object']
+        old_stage = project.get_status_display()
+
         response = super().form_valid(form)
 
         messenger(
@@ -90,29 +109,75 @@ class SendForApprovalView(DelegatedViewMixin, UpdateView):
             source=self.object,
         )
 
+        project.status = WAITING_FOR_APPROVAL
+        project.save(update_fields=['status'])
+
+        self.send_to_compliance()
+
+        messenger(
+            MESSAGES.PROJECT_TRANSITION,
+            request=self.request,
+            user=self.request.user,
+            source=project,
+            related=old_stage,
+        )
+
+        if not PAFReviewersRole.objects.all().exists():
+            # notify final approver if there is no Project Reviewer roles exist
+            messenger(
+                MESSAGES.PROJECT_FINAL_APPROVAL,
+                request=self.request,
+                user=self.request.user,
+                source=self.object,
+            )
+
         return response
 
 
-@method_decorator(staff_required, name='dispatch')
-class CreateApprovalView(DelegatedViewMixin, CreateView):
-    context_name = 'add_approval_form'
-    form_class = CreateApprovalForm
-    model = Approval
+@method_decorator(contracting_approver_required, name='dispatch')
+class FinalApprovalView(DelegatedViewMixin, UpdateView):
+    form_class = FinalApprovalForm
+    context_name = 'final_approval_form'
+    model = Project
 
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs.pop('instance')
-        kwargs.get('initial', {}).update({'by': kwargs.get('user')})
-        return kwargs
-
-    @transaction.atomic()
     def form_valid(self, form):
-        project = self.kwargs['object']
+        project = self.object
         old_stage = project.get_status_display()
 
-        form.instance.project = project
-
         response = super().form_valid(form)
+
+        comment = form.cleaned_data.get('comment', '')
+        status = form.cleaned_data['final_approval_status']
+
+        if status == REQUEST_CHANGE:
+            project.status = COMMITTED
+            project.is_locked = False
+            project.paf_reviews_meta_data = {}
+            project.save(update_fields=['status', 'is_locked', 'paf_reviews_meta_data'])
+
+            project_status_message = _(
+                '<p>{user} request changes the Project and update status to {project_status}.</p>').format(
+                user=self.request.user,
+                project_status=project.status
+            )
+
+            Activity.objects.create(
+                user=self.request.user,
+                type=ACTION,
+                source=project,
+                timestamp=timezone.now(),
+                message=project_status_message,
+                visibility=ALL,
+            )
+
+            messenger(
+                MESSAGES.REQUEST_PROJECT_CHANGE,
+                request=self.request,
+                user=self.request.user,
+                source=self.object,
+                comment=comment,
+            )
+            return response
 
         messenger(
             MESSAGES.APPROVE_PROJECT,
@@ -121,11 +186,24 @@ class CreateApprovalView(DelegatedViewMixin, CreateView):
             source=project,
         )
 
-        # project.send_to_compliance(self.request)
-
-        project.is_locked = False
+        project.is_locked = True
         project.status = CONTRACTING
         project.save(update_fields=['is_locked', 'status'])
+
+        project_status_message = _(
+            '<p>{user} approved the Project and update status to {project_status}.</p>').format(
+            user=self.request.user,
+            project_status=project.status
+        )
+
+        Activity.objects.create(
+            user=self.request.user,
+            type=ACTION,
+            source=project,
+            timestamp=timezone.now(),
+            message=project_status_message,
+            visibility=ALL,
+        )
 
         messenger(
             MESSAGES.PROJECT_TRANSITION,
@@ -136,27 +214,6 @@ class CreateApprovalView(DelegatedViewMixin, CreateView):
         )
 
         return response
-
-
-@method_decorator(approver_required, name='dispatch')
-class RejectionView(DelegatedViewMixin, UpdateView):
-    context_name = 'rejection_form'
-    form_class = RejectionForm
-    model = Project
-
-    def form_valid(self, form):
-        messenger(
-            MESSAGES.REQUEST_PROJECT_CHANGE,
-            request=self.request,
-            user=self.request.user,
-            source=self.object,
-            comment=form.cleaned_data['comment'],
-        )
-
-        self.object.is_locked = False
-        self.object.save(update_fields=['is_locked'])
-
-        return redirect(self.object)
 
 
 # PROJECT DOCUMENTS
@@ -412,6 +469,73 @@ class UploadContractView(DelegatedViewMixin, CreateView):
 
 
 # PROJECT VIEW
+
+@method_decorator(staff_or_finance_or_contracting_required, name='dispatch')
+class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
+    form_class = ChangePAFStatusForm
+    context_name = 'change_paf_status'
+    model = Project
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        role = form.cleaned_data.get('role')
+        paf_status = form.cleaned_data.get('paf_status')
+        comment = form.cleaned_data.get('comment', '')
+
+        self.object.paf_reviews_meta_data.update({str(role.role): {'status': paf_status, 'comment': comment}})
+        self.object.save(update_fields=['paf_reviews_meta_data'])
+
+        paf_status_update_message = _('<p>{role} has updated PAF status to {paf_status}.</p>').format(
+            role=role, paf_status=paf_status)
+        Activity.objects.create(
+            user=self.request.user,
+            type=ACTION,
+            source=self.object,
+            timestamp=timezone.now(),
+            message=paf_status_update_message,
+            visibility=ALL,
+        )
+
+        if paf_status == REQUEST_CHANGE:
+            self.object.status = COMMITTED
+            self.object.paf_reviews_meta_data = {}
+            self.object.save(update_fields=['status', 'paf_reviews_meta_data'])
+
+            messenger(
+                MESSAGES.REQUEST_PROJECT_CHANGE,
+                request=self.request,
+                user=self.request.user,
+                source=self.object,
+                comment=comment,
+            )
+
+        if form.cleaned_data['comment']:
+
+            comment = f"<p>{form.cleaned_data['comment']}.</p>"
+
+            message = paf_status_update_message + comment
+
+            Activity.objects.create(
+                user=self.request.user,
+                type=COMMENT,
+                source=self.object,
+                timestamp=timezone.now(),
+                message=message,
+                visibility=ALL,
+            )
+
+        if self.object.can_make_final_approval:
+            # notify final approver if project is open for final approval
+            messenger(
+                MESSAGES.PROJECT_FINAL_APPROVAL,
+                request=self.request,
+                user=self.request.user,
+                source=self.object,
+            )
+
+        return response
+
+
 class BaseProjectDetailView(ReportingMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -429,8 +553,7 @@ class AdminProjectDetailView(
     form_views = [
         ApproveContractView,
         CommentFormView,
-        CreateApprovalView,
-        RejectionView,
+        FinalApprovalView,
         RemoveDocumentView,
         SelectDocumentView,
         SendForApprovalView,
@@ -438,6 +561,7 @@ class AdminProjectDetailView(
         UpdateLeadView,
         UploadContractView,
         UploadDocumentView,
+        ChangePAFStatusView,
     ]
     model = Project
     template_name_suffix = '_admin_detail'
@@ -481,6 +605,7 @@ class ApplicantProjectDetailView(
 class ProjectDetailView(ViewDispatcher):
     admin_view = AdminProjectDetailView
     finance_view = AdminProjectDetailView
+    contracting_view = AdminProjectDetailView
     applicant_view = ApplicantProjectDetailView
 
 
@@ -536,13 +661,16 @@ class ContractPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
 
 # PROJECT EDIT
 
-@method_decorator(staff_or_finance_required, name='dispatch')
-class ProjectDetailSimplifiedView(DetailView):
+@method_decorator(staff_or_finance_or_contracting_required, name='dispatch')
+class ProjectDetailSimplifiedView(DelegateableView, DetailView):
+    form_views = [
+        ChangePAFStatusView
+    ]
     model = Project
     template_name_suffix = '_simplified_detail'
 
 
-@method_decorator(staff_required, name='dispatch')
+@method_decorator(staff_or_finance_or_contracting_required, name='dispatch')
 class ProjectDetailPDFView(SingleObjectMixin, View):
     model = Project
 
@@ -590,7 +718,7 @@ class ProjectDetailPDFView(SingleObjectMixin, View):
         )
 
 
-@method_decorator(staff_required, name='dispatch')
+@method_decorator(staff_or_finance_or_contracting_required, name='dispatch')
 class ProjectApprovalEditView(BaseStreamForm, UpdateView):
     submission_form_class = ProjectApprovalForm
     model = Project
@@ -598,7 +726,6 @@ class ProjectApprovalEditView(BaseStreamForm, UpdateView):
 
     def buttons(self):
         yield ('submit', 'primary', _('Submit'))
-        # yield ('save', 'white', _('Save draft'))
 
     def dispatch(self, request, *args, **kwargs):
         project = self.get_object()
@@ -609,10 +736,8 @@ class ProjectApprovalEditView(BaseStreamForm, UpdateView):
 
     @cached_property
     def approval_form(self):
-        if self.object.get_defined_fields():
-            approval_form = self.object
-        else:
-            approval_form = self.object.submission.page.specific.approval_form
+        # fetching from the fund directly instead of going through round
+        approval_form = self.object.submission.page.specific.approval_forms.first()  # picking up the first one
 
         return approval_form
 
@@ -620,20 +745,21 @@ class ProjectApprovalEditView(BaseStreamForm, UpdateView):
         return super().get_context_data(
             title=self.object.title,
             buttons=self.buttons(),
+            approval_form_exists=True if self.approval_form else False,
             **kwargs
         )
 
     def get_defined_fields(self):
-        approval_form = self.object.submission.get_from_parent('approval_form')
+        approval_form = self.approval_form
         if approval_form:
-            return approval_form.form_fields
+            return approval_form.form.form_fields
         return self.object.get_defined_fields()
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
 
         if self.approval_form:
-            fields = self.approval_form.get_form_fields()
+            fields = self.approval_form.form.get_form_fields()
         else:
             fields = {}
 
@@ -643,7 +769,7 @@ class ProjectApprovalEditView(BaseStreamForm, UpdateView):
 
     def form_valid(self, form):
         try:
-            form_fields = self.approval_form.form_fields
+            form_fields = self.approval_form.form.form_fields
         except AttributeError:
             form_fields = []
 

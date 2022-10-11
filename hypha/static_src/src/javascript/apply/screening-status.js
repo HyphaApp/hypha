@@ -48,7 +48,7 @@
         var $screeningStatuses = $screenApplication.find('#id_screening_statuses');
         $screeningStatuses = $screeningStatuses.empty();
         if (currentStatus === true) {
-            $('#current-status').text('Current statuses: ' + defaultYes);
+            $('#current-status').text('Current decisions: ' + defaultYes);
             $.each(yesStatuses, function (key, value) {
                 if (key === defaultYes) {
                     $screeningStatuses.append($('<option></option>')
@@ -63,7 +63,7 @@
             });
         }
         else {
-            $('#current-status').text('Current statuses: ' + defaultNo);
+            $('#current-status').text('Current decisions: ' + defaultNo);
             $.each(noStatuses, function (key, value) {
                 if (key === defaultNo) {
                     $screeningStatuses.append($('<option></option>')

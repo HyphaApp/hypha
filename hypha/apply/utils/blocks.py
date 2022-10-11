@@ -7,7 +7,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from pagedown.widgets import PagedownWidget
 from wagtail.admin import messages
-from wagtail.core.blocks import ListBlock, StaticBlock, StreamBlock, StreamValue
+from wagtail.blocks import ListBlock, StaticBlock, StreamBlock, StreamValue
 
 from hypha.apply.stream_forms.blocks import (
     FormFieldBlock,
@@ -184,12 +184,12 @@ class SingleIncludeStatic(StaticBlock):
         return mark_safe(form)
 
     def deconstruct(self):
-        return ('wagtail.core.blocks.static_block.StaticBlock', (), {})
+        return ('wagtail.blocks.static_block.StaticBlock', (), {})
 
 
 class SingleIncludeMixin:
     def __init__(self, *args, **kwargs):
-        info_name = f'{self.name.title()} Field'
+        info_name = f'{self._meta_class.label} Field' if self._meta_class.label else f'{self.name.title()} Field'
         child_blocks = [('info', SingleIncludeStatic(label=info_name, description=self.description))]
         super().__init__(child_blocks, *args, **kwargs)
 

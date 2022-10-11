@@ -1,0 +1,34 @@
+{% extends "base-apply.html" %}
+{% load render_table from django_tables2 %}
+{% load i18n static %}
+
+{% block title %}{% trans "Dashboard" %}{% endblock %}
+
+{% block content %}
+<div class="admin-bar">
+    <div class="admin-bar__inner admin-bar__inner--with-button">
+        {% block page_header %}
+            <h1 class="gamma heading heading--no-margin heading--bold">{% trans "Dashboard" %}</h1>
+        {% endblock %}
+        <a href="{% url 'wagtailadmin_home' %}" class="button button--primary button--arrow-pixels-white">
+            {% trans "Apply admin" %}
+            <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
+        </a>
+    </div>
+</div>
+<div class="wrapper wrapper--large wrapper--inner-space-medium">
+    {% if waiting_for_approval.count %}
+    <div id="paf-awaiting-approval" class="wrapper wrapper--bottom-space">
+        <h4 class="heading heading--normal">{% trans "PAF awaiting approval" %}</h4>
+        {% render_table waiting_for_approval.table %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/apply/url-search-params.js' %}"></script>
+    <script src="{% static 'js/apply/submission-filters.js' %}"></script>
+    <script src="{% static 'js/apply/submission-tooltips.js' %}"></script>
+    <script src="{% static 'js/apply/tabs.js' %}"></script>
+{% endblock %}

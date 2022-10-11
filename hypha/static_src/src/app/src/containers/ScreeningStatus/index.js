@@ -99,7 +99,7 @@ export class ScreeningStatusContainer extends React.PureComponent {
             const defaultSelectedId = screeningInfo.defaultSelectedValue &&
       screeningInfo.defaultSelectedValue.id;
             return (
-                <SidebarBlock title="Screening Status" >
+                <SidebarBlock title="Screening Decision" >
                     <div className="screening-status-box" style={{padding: '1rem'}}>
                         <div className="screening-default-options" >
                             <div

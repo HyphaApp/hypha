@@ -101,7 +101,7 @@ class SubmissionScreeningStatusViewSetTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
             response.json()['detail'],
-            "Can't set screening status without default being set"
+            "Can't set screening decision without default being set"
         )
 
     def test_cant_add_two_types_of_screening_status(self):
@@ -116,7 +116,7 @@ class SubmissionScreeningStatusViewSetTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
             response.json()['detail'],
-            "Can't set screening status for both yes and no"
+            "Can't set screening decision for both yes and no"
         )
 
     def test_add_screening_status(self):
@@ -129,13 +129,11 @@ class SubmissionScreeningStatusViewSetTests(APITestCase):
             data={'id': self.yes_screening_status.id}
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(len(response.json()), self.submission.screening_statuses.count())
-        first_submission_screening_status = self.submission.screening_statuses.order_by('-id').last()
-        self.assertEqual(response.json()[0]['id'], first_submission_screening_status.id)
-        self.assertEqual(response.json()[0]['title'], first_submission_screening_status.title)
-        self.assertEqual(response.json()[0]['yes'], first_submission_screening_status.yes)
-        self.assertEqual(response.json()[0]['default'], first_submission_screening_status.default)
-        self.assertEqual(response.json()[1]['id'], self.submission.screening_statuses.order_by('id').last().id)
+        self.assertEqual(len(response.json()), 2)
+
+        possible_ids = [self.yes_screening_status.id, self.yes_default_screening_status.id]
+        self.assertIn(response.json()[0]['id'], possible_ids)
+        self.assertIn(response.json()[1]['id'], possible_ids)
 
     def test_staff_can_list_submission_screening_statuses(self):
         user = StaffFactory()
@@ -145,7 +143,7 @@ class SubmissionScreeningStatusViewSetTests(APITestCase):
             self.get_submission_screening_status_url(submission_id=self.submission.id)
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.json()), self.submission.screening_statuses.count())
+        self.assertEqual(len(response.json()), 0)
 
     def test_set_default_screening_status(self):
         user = StaffFactory()
@@ -218,7 +216,7 @@ class SubmissionScreeningStatusViewSetTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
             response.json()['detail'],
-            "Can't delete default screening status."
+            "Can't delete default screening decision."
         )
 
     def test_cant_remove_not_set_screening_status(self):

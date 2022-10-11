@@ -8,12 +8,11 @@ from django.http import Http404
 from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _
 from pagedown.widgets import PagedownWidget
-from wagtail.admin.edit_handlers import FieldPanel
 from wagtail.admin.forms import WagtailAdminModelForm
+from wagtail.admin.panels import FieldPanel
 from wagtail.contrib.settings.models import BaseSetting, register_setting
-from wagtail.core.fields import RichTextField
-from wagtail.core.models import Page
-from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.fields import RichTextField
+from wagtail.models import Page
 from wagtail.search import index
 
 from hypha.apply.categories.models import Category, Option
@@ -70,7 +69,7 @@ class PartnerPage(BasePage):
         FieldPanel('public'),
         FieldPanel('description'),
         FieldPanel('web_url'),
-        ImageChooserPanel('logo'),
+        FieldPanel('logo'),
     ]
 
     def __str__(self):

@@ -1,7 +1,7 @@
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-from wagtail.admin.edit_handlers import (
+from wagtail.admin.panels import (
     FieldPanel,
     FieldRowPanel,
     InlinePanel,
@@ -10,7 +10,8 @@ from wagtail.admin.edit_handlers import (
 )
 from wagtail.contrib.forms.models import AbstractEmailForm
 
-from hypha.apply.activity.messaging import MESSAGES, messenger
+from hypha.apply.activity.messaging import messenger
+from hypha.apply.activity.options import MESSAGES
 from hypha.apply.stream_forms.models import AbstractStreamForm
 from hypha.apply.users.groups import (
     COMMUNITY_REVIEWER_GROUP_NAME,
@@ -104,25 +105,26 @@ class WorkflowStreamForm(WorkflowHelpers, AbstractStreamForm):  # type: ignore
     def render_landing_page(self, request, form_submission=None, *args, **kwargs):
         # We only reach this page after creation of a new submission
         # Hook in to notify about new applications
-        if not form_submission.status == DRAFT_STATE:
-            messenger(
-                MESSAGES.NEW_SUBMISSION,
-                request=request,
-                user=form_submission.user,
-                source=form_submission,
-            )
+        messenger(
+            MESSAGES.NEW_SUBMISSION,
+            request=request,
+            user=form_submission.user,
+            source=form_submission,
+        )
+
         return super().render_landing_page(request, form_submission, *args, **kwargs)
 
     content_panels = AbstractStreamForm.content_panels + [
         FieldPanel('workflow_name'),
-        InlinePanel('forms', label=_('Forms')),
+        InlinePanel('forms', label=_('Application forms')),
         InlinePanel('review_forms', label=_('Internal Review Forms')),
         InlinePanel(
             'external_review_forms',
             label=_('External Review Forms'), max_num=1,
             help_text='Add a form to be used by external reviewers.'
         ),
-        InlinePanel('determination_forms', label=_('Determination Forms'))
+        InlinePanel('determination_forms', label=_('Determination Forms')),
+        InlinePanel('approval_forms', label=_('Project Approval Form'), max_num=1)
     ]
 
 

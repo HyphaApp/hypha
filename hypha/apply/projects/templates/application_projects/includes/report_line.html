@@ -2,7 +2,7 @@
 <li class="data-block__list-item">
     <div class="data-block__info">
         {% if current %}
-            {% trans "The" %} {% if report.can_submit %}current{% else %}{% trans "next" %}{% endif %} {% trans "reporting period is" %}
+            {% trans "The" %} {% if report.can_submit %}{% trans "current" %}{% else %}{% trans "next" %}{% endif %} {% trans "reporting period is" %}
         {% else %}
             {% trans "A report is due for the period" %}
         {% endif %}
@@ -24,7 +24,7 @@
 
         {% if request.user.is_apply_staff and report.can_submit %}
 
-            <input data-fancybox data-src="#skip-report-{{report.id}}" type="button" value="{% trans "Skip" %}" class="btn data-block__action-link"></input>
+            <input data-fancybox data-src="#skip-report-{{report.id}}" type="button" value="{% trans 'Skip' %}" class="btn data-block__action-link"></input>
 
             <!-- Skip report confirmation modal -->
             <div class="modal" id="skip-report-{{report.id}}">

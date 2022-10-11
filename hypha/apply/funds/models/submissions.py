@@ -33,7 +33,7 @@ from django.utils.translation import gettext_lazy as _
 from django_fsm import RETURN_VALUE, FSMField, can_proceed, transition
 from django_fsm.signals import post_transition
 from wagtail.contrib.forms.models import AbstractFormSubmission
-from wagtail.core.fields import StreamField
+from wagtail.fields import StreamField
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.categories.models import MetaTerm
@@ -430,7 +430,7 @@ class ApplicationSubmission(
         metaclass=ApplicationSubmissionMetaclass,
 ):
     form_data = models.JSONField(encoder=StreamFieldDataEncoder)
-    form_fields = StreamField(ApplicationCustomFormFieldsBlock())
+    form_fields = StreamField(ApplicationCustomFormFieldsBlock(), use_json_field=True)
     summary = models.TextField(default='', null=True, blank=True)
     page = models.ForeignKey('wagtailcore.Page', on_delete=models.PROTECT)
     round = models.ForeignKey('wagtailcore.Page', on_delete=models.PROTECT, related_name='submissions', null=True)
@@ -484,7 +484,7 @@ class ApplicationSubmission(
 
     submit_time = models.DateTimeField(verbose_name=_('submit time'), auto_now_add=False)
 
-    is_draft = False
+    _is_draft = False
 
     live_revision = models.OneToOneField(
         'ApplicationRevision',
@@ -505,6 +505,10 @@ class ApplicationSubmission(
     drupal_id = models.IntegerField(null=True, blank=True, editable=False)
 
     objects = ApplicationSubmissionQueryset.as_manager()
+
+    @property
+    def is_draft(self):
+        return self.status == DRAFT_STATE
 
     def not_progressed(self):
         return not self.next
@@ -613,12 +617,12 @@ class ApplicationSubmission(
         submission_in_db.save()
 
     def new_data(self, data):
-        self.is_draft = False
+        self._is_draft = False
         self.form_data = data
         return self
 
     def from_draft(self):
-        self.is_draft = True
+        self._is_draft = True
         self.form_data = self.deserialised_data(self, self.draft_revision.form_data, self.form_fields)
         return self
 
@@ -665,7 +669,7 @@ class ApplicationSubmission(
         elif skip_custom:
             return super().save(*args, **kwargs)
 
-        if self.is_draft:
+        if self._is_draft:
             raise ValueError('Cannot save with draft data')
 
         creating = not self.id
@@ -960,9 +964,9 @@ class AssignedReviewersQuerySet(models.QuerySet):
         ]
         return self.exclude(
             # Remove people from the list who are opinionated but
-            # didn't review, they appear elsewhere
-            opinions__isnull=False,
-            review__isnull=True,
+            # didn't submit a review, they appear elsewhere
+            Q(opinions__isnull=False) &
+            Q(Q(review__isnull=True) | Q(review__is_draft=True))
         ).annotate(
             type_order=models.Case(
                 *ordering,

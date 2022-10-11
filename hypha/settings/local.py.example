@@ -14,7 +14,7 @@ CACHES = {
 
 # ALLOWED_HOSTS = ['apply.hypha.test', 'hypha.test', '127.0.0.1']
 
-# BASE_URL = 'http://hypha.test'
+# WAGTAILADMIN_BASE_URL = 'http://hypha.test'
 
 # Turn off DEBUG mode.
 # DEBUG = False

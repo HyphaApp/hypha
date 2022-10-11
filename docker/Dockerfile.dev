@@ -1,4 +1,4 @@
-FROM cimg/python:3.9.10-node
+FROM cimg/python:3.10.6-node
 
 # Set work directory.
 WORKDIR /usr/local/hypha

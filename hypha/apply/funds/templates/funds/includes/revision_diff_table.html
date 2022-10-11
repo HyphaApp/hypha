@@ -6,7 +6,7 @@
     {% if forloop.first %}
         <tr><td><h4>{% trans "Title" %}</h4>{{ from_field }}</td><td><h4>{% trans "Title" %}</h4>{{ to_field }}</td></tr>
     {% elif forloop.counter == 2 %}
-        <tr><td><h5>Legal Name</h5>{{ from_field }}</td><td><h5>{% trans "Legal Name" %}</h5>{{ to_field }}</td></tr>
+        <tr><td><h5>{% trans "Legal Name" %}</h5>{{ from_field }}</td><td><h5>{% trans "Legal Name" %}</h5>{{ to_field }}</td></tr>
     {% elif forloop.counter == 3 %}
         <tr><td><h5>{% trans "E-mail" %}</h5>{{ from_field }}</td><td><h5>{% trans "E-mail" %}</h5>{{ to_field }}</td></tr>
     {% elif forloop.counter == 4 %}

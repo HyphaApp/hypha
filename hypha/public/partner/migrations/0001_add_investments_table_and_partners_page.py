@@ -4,7 +4,7 @@ import django.core.validators
 from django.db import migrations, models
 import django.db.models.deletion
 import hypha.public.partner.models
-import wagtail.core.fields
+import wagtail.fields
 import wagtailcache.cache
 
 
@@ -42,7 +42,7 @@ class Migration(migrations.Migration):
                 ('listing_summary', models.CharField(blank=True, help_text="The text summary used when this page appears in listings. It's also used as the description for search engines if the 'Search description' field above is not defined.", max_length=255)),
                 ('status', models.CharField(choices=[('active', 'Active'), ('inactive', 'Inactive')], default='current_partner', max_length=20)),
                 ('public', models.BooleanField(default=True)),
-                ('description', wagtail.core.fields.RichTextField(blank=True)),
+                ('description', wagtail.fields.RichTextField(blank=True)),
                 ('web_url', models.URLField(blank=True)),
                 ('header_image', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='images.CustomImage')),
                 ('listing_image', models.ForeignKey(blank=True, help_text='Choose the image you wish to be displayed when this page appears in listings', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='images.CustomImage')),

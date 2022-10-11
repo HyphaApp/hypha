@@ -12,7 +12,7 @@
                 {% if activity.user == request.user %}
                     <p class="feed__meta-item feed__meta-item--edit-button">
                         <a class="link link--edit-submission is-active js-edit-comment" href="#">
-                            Edit
+                            {% trans "Edit" %}
                             <svg class="icon icon--pen"><use xlink:href="#pen"></use></svg>
                         </a>
                     </p>

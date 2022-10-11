@@ -5,17 +5,16 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
 from pagedown.widgets import PagedownWidget
-from wagtail.admin.edit_handlers import (
+from wagtail.admin.panels import (
     FieldPanel,
     FieldRowPanel,
     InlinePanel,
     MultiFieldPanel,
     PageChooserPanel,
-    StreamFieldPanel,
 )
-from wagtail.core.fields import StreamField
-from wagtail.core.models import Orderable, PageManager, PageQuerySet
-from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.fields import StreamField
+from wagtail.models import Orderable, PageManager
+from wagtail.query import PageQuerySet
 from wagtail.search import index
 
 from hypha.public.utils.blocks import StoryBlock
@@ -163,7 +162,7 @@ class PersonPage(FundingMixin, BasePage):
     job_title = models.CharField(max_length=255, blank=True)
     introduction = models.TextField(blank=True)
     website = models.URLField(blank=True, max_length=255)
-    biography = StreamField(StoryBlock(), blank=True)
+    biography = StreamField(StoryBlock(), blank=True, use_json_field=True)
     email = models.EmailField(blank=True)
 
     objects = PageManager.from_queryset(PersonQuerySet)()
@@ -179,7 +178,7 @@ class PersonPage(FundingMixin, BasePage):
             FieldPanel('last_name'),
         ], heading=_('Name')),
         FieldPanel('active'),
-        ImageChooserPanel('photo'),
+        FieldPanel('photo'),
         FieldPanel('job_title'),
         InlinePanel('social_media_profile', label=_('Social accounts')),
         FieldPanel('website'),
@@ -189,7 +188,7 @@ class PersonPage(FundingMixin, BasePage):
         ], heading=_('Contact information')),
         InlinePanel('person_types', label=_('Person types')),
         FieldPanel('introduction'),
-        StreamFieldPanel('biography'),
+        FieldPanel('biography'),
         InlinePanel('funds_reviewed', label=_('Funds Reviewed')),
     ] + FundingMixin.content_panels
 

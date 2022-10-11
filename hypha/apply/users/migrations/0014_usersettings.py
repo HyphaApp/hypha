@@ -2,7 +2,7 @@
 
 from django.db import migrations, models
 import django.db.models.deletion
-import wagtail.core.fields
+import wagtail.fields
 
 
 class Migration(migrations.Migration):
@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('consent_show', models.BooleanField(default=False, verbose_name='Show consent checkbox in login form')),
                 ('consent_text', models.CharField(max_length=255)),
-                ('consent_help', wagtail.core.fields.RichTextField()),
+                ('consent_help', wagtail.fields.RichTextField()),
                 ('site', models.OneToOneField(editable=False, on_delete=django.db.models.deletion.CASCADE, to='wagtailcore.Site')),
             ],
             options={

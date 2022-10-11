@@ -5,9 +5,9 @@ from django.db import models
 from django.db.models import Q
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
-from wagtail.admin.edit_handlers import FieldPanel, MultiFieldPanel
+from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 from wagtail.contrib.settings.models import BaseSetting, register_setting
-from wagtail.core.fields import RichTextField
+from wagtail.fields import RichTextField
 
 from .groups import (
     APPLICANT_GROUP_NAME,
@@ -55,6 +55,10 @@ class UserQuerySet(models.QuerySet):
 
     def contracting(self):
         return self.filter(groups__name=CONTRACTING_GROUP_NAME, is_active=True)
+
+    def contracting_approvers(self):
+        # final approvers for project
+        return self.filter(groups__name=CONTRACTING_GROUP_NAME, is_active=True).filter(groups__name=APPROVER_GROUP_NAME)
 
 
 class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
