@@ -1,4 +1,3 @@
-import mistune
 from django.contrib.auth import get_user_model
 from django_bleach.templatetags.bleach_tags import bleach_value
 from rest_framework import serializers
@@ -18,10 +17,9 @@ from hypha.apply.funds.models import (
 from hypha.apply.review.models import Review, ReviewOpinion
 from hypha.apply.review.options import RECOMMENDATION_CHOICES
 from hypha.apply.users.groups import PARTNER_GROUP_NAME, STAFF_GROUP_NAME
+from hypha.core.utils import markdown_to_html
 
 User = get_user_model()
-
-markdown = mistune.create_markdown(escape=False)
 
 
 class ActionSerializer(serializers.Field):
@@ -346,7 +344,7 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = ('id', 'timestamp', 'user', 'message', 'visibility', 'edited', 'edit_url', 'editable')
 
     def get_message(self, obj):
-        return bleach_value(markdown(obj.message))
+        return bleach_value(markdown_to_html(obj.message))
 
     def get_editable(self, obj):
         return self.context['request'].user == obj.user
