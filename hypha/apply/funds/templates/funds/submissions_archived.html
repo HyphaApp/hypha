@@ -1,0 +1,26 @@
+{% extends "funds/base_submissions_table.html" %}
+{% load i18n static %}
+{% load render_bundle from webpack_tags %}
+
+{% block title %}{% trans "Archived Submissions" %}{% endblock %}
+{% block content %}
+<div class="admin-bar">
+    <div class="admin-bar__inner wrapper--search">
+        {% block page_header %}
+            <div>
+                <h1 class="gamma heading heading--no-margin heading--bold">{% trans "Archived Submissions" %}<span class="submissions-count"> ({{ table.rows|length }})</span></h1>
+            </div>
+            <div id="submissions-all-react-app-switcher"></div>
+        {% endblock %}
+    </div>
+</div>
+
+<div id="submissions-all-react-app">
+    <div class="wrapper wrapper--large wrapper--inner-space-medium">
+        {% block table %}
+            {{ block.super }}
+        {% endblock %}
+    </div>
+</div>
+{% render_bundle 'allSubmissions' %}
+{% endblock %}
