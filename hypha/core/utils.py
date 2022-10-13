@@ -15,4 +15,10 @@ def markdown_to_html(text: str) -> str:
     Returns:
         Formatted markdown in HTML format
     """
-    return mistune.html(text)
+    md = mistune.create_markdown(
+        escape=False,
+        hard_wrap=True,
+        renderer='html',
+        plugins=['strikethrough', 'footnotes', 'table'],
+    )
+    return md(text)

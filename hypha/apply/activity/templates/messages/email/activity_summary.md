@@ -1,7 +1,9 @@
+{% extends "messages/email/base.html" %}
 {% load humanize i18n %}
 
-{% trans "Dear" %},
+{% block salutation %}{% trans "Dear" %},{% endblock %}
 
+{% block content %}
 {% blocktranslate with total_count_apnumber=total_count|apnumber count counter=total_count %}
 You have {{ total_count_apnumber }} new activity:
 {% plural %}
@@ -23,7 +25,4 @@ You have {{ total_count_apnumber }} new activities:
 {% if has_main_sections and messages %}**{% trans "Other activities" %}**{% endif %}
 {% for msg in messages %}
 - {{ msg.content_markdown }} • {{ msg.event.when }}{% endfor %}
-
-{% trans "Kind Regards" %},  
-{% trans "Team" %}  
-[{{org.NAME}}]{% if org.URL %}({{org.URL}}){% endif %}
+{% endblock content %}

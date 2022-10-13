@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 def slack_message_to_markdown(msg):
     """Converts messages in the slack format to markdown.
 
-    It converts href in the format <url|title> to [title]()
+    It converts href in the format <url|title> to [title](url)
 
     Args:
         msg: slack message as text
@@ -75,14 +75,13 @@ class Command(BaseCommand):
             'reviews': reviews,
             'has_main_sections': bool(exclude_ids),
             'total_count': total_count,
-            'org': {
-                'NAME': settings.ORG_LONG_NAME or settings.ORG_SHORT_NAME,
-                'URL': settings.ORG_URL,
-            },
+            'ORG_LONG_NAME': settings.ORG_LONG_NAME,
+            'ORG_SHORT_NAME': settings.ORG_SHORT_NAME,
+            'ORG_URL': settings.ORG_URL,
         }
 
         if total_count:
-            email = MarkdownMail('emails/activity_summary.md')
+            email = MarkdownMail('messages/email/activity_summary.md')
             email.send(
                 to=settings.ACTIVITY_DIGEST_RECIPIENT_EMAILS,
                 subject=self.EMAIL_SUBJECT,
