@@ -17,6 +17,13 @@ logger = logging.getLogger(__name__)
 
 
 def slack_message_to_markdown(msg):
+    """Converts messages in the slack format to markdown.
+
+    It converts href in the format <url|title> to [title]()
+
+    Args:
+        msg: slack message as text
+    """
     def to_href(match_obj):
         if match_obj.group() is not None:
             return f'[{match_obj.group(2)}]({match_obj.group(1)})'

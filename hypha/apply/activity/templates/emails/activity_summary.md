@@ -10,19 +10,19 @@ You have {{ total_count_apnumber }} new activities:
 
 {% if submissions %}**{% trans "Submissions" %}**
 {% for msg in submissions %}
-- {{ msg.content_markdown }} • {{ msg.event.when }}{% endfor %}{% endif %}
+- {{ msg.content_markdown }} • {{ msg.event.when }}{% endfor %}{% endif %}
 
 {% if comments %}**{% trans "Comments" %}**
 {% for msg in comments %}
-- {{ msg.content_markdown }} • {{ msg.event.when }}{% endfor %}{% endif %}
+- {{ msg.content_markdown }} • {{ msg.event.when }}{% endfor %}{% endif %}
 
 {% if reviews %}**{% trans "Reviews" %}**
 {% for msg in reviews %}
-- {{ msg.content_markdown }} • {{ msg.event.when }}{% endfor %}{% endif %}
+- {{ msg.content_markdown }} • {{ msg.event.when }}{% endfor %}{% endif %}
 
 {% if has_main_sections and messages %}**{% trans "Other activities" %}**{% endif %}
 {% for msg in messages %}
-- {{ msg.content_markdown }} • {{ msg.event.when }}{% endfor %}
+- {{ msg.content_markdown }} • {{ msg.event.when }}{% endfor %}
 
 {% trans "Kind Regards" %},  
 {% trans "Team" %}  
