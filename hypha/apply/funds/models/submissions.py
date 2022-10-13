@@ -182,6 +182,9 @@ class ApplicationSubmissionQueryset(JSONOrderable):
         # Applications which have the current stage active (have not been progressed) or not archived yet.
         return self.exclude(Q(next__isnull=False) | Q(is_archive=True))
 
+    def archived(self):
+        return self.filter(is_archive=True)
+
     def current_accepted(self):
         # Applications which have the current stage active (have not been progressed)
         return self.filter(status__in=PHASES_MAPPING['accepted']['statuses']).current()
