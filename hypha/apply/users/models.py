@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser, BaseUserManager, Group
 from django.db import models
@@ -191,6 +192,9 @@ class User(AbstractUser):
 
     @cached_property
     def is_finance_level_2(self):
+        # disable finance2 user if invoice flow in not extended
+        if not settings.INVOICE_EXTENDED_WORKFLOW:
+            return False
         return self.groups.filter(name=FINANCE_GROUP_NAME).exists() & self.groups.filter(name=APPROVER_GROUP_NAME).exists()
 
     @cached_property
