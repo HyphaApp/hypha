@@ -479,6 +479,7 @@ class PacketFile(models.Model):
 
     title = models.TextField()
     document = models.FileField(upload_to=document_path, storage=PrivateStorage())
+    created_at = models.DateField(auto_now_add=True, null=True)
 
     def __str__(self):
         return _('Project file: {title}').format(title=self.title)

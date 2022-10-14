@@ -108,7 +108,7 @@
                 {% for document in object.packet_files.all %}
                 <li class="docs-block__document">
                     <div class="docs-block__document-inner">
-                        <p class="docs-block__document-info"><b>{{ document.title }}</b></p>
+                        <p class="docs-block__document-info"><b>{{ document.title }}</b> - {{ document.created_at }}</p>
                         <p class="docs-block__document-info">{{ document.category.name }}</p>
                     </div>
                     <div class="docs-block__document-inner">
