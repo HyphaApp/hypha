@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 def cleanup_markdown(text):
     """Removes extra blank lines and spaces from markdown generated
-       using Django templates. Do this for readably of markdown itself.
+    using Django templates. Do this for readably of markdown itself.
     """
     return re.sub(r'\n\s*\n', '\n\r', text)
 
@@ -31,6 +31,18 @@ def language(lang):
 
 
 class MarkdownMail(object):
+    """Render and send an html + plain-text email using a markdown template.
+
+    Usages:
+    >>> email = MarkdownMail("messages/email/send_reset_email.md")
+    >>> email.send(to='xyz@email.com', from=settings.DEFAULT_FROM_EMAIL, context={'key': 'value'})
+
+    Translates the email based on Django settings or 'lang' parameter
+    available in the context.
+
+    Adds `Auto-Submitted` header.
+    """
+
     template_name = ''
 
     def __init__(self, template_name: str):
@@ -65,5 +77,8 @@ class MarkdownMail(object):
         return email
 
     def send(self, to: str | List[str], context, **kwargs):
+        kwargs.setdefault('headers', {})
+        kwargs['headers'].update({'Auto-Submitted': 'auto-generated'})
+
         email = self.make_email_object(to, context, **kwargs)
         return email.send()
