@@ -1,13 +1,13 @@
 {% extends "messages/email/base.html" %}
 {% load humanize i18n %}
 
-{% block salutation %}{% trans "Dear" %},{% endblock %}
+{% block salutation %}### {% trans "Activities Summary" %}{% endblock %}
 
 {% block content %}
 {% blocktranslate with total_count_apnumber=total_count|apnumber count counter=total_count %}
-You have {{ total_count_apnumber }} new activity:
+There is {{ total_count_apnumber }} new activity:
 {% plural %}
-You have {{ total_count_apnumber }} new activities:
+There are {{ total_count_apnumber }} new activities:
 {% endblocktranslate %}
 
 {% if submissions %}**{% trans "Submissions" %}**
