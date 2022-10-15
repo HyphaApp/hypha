@@ -79,6 +79,14 @@ class InvoiceQueryset(models.QuerySet):
     def approved_by_finance_1(self):
         return self.filter(status=APPROVED_BY_FINANCE_1)
 
+    def approved_by_finance_2(self):
+        return self.filter(status=APPROVED_BY_FINANCE_2)
+
+    def waiting_to_convert(self):
+        if settings.INVOICE_EXTENDED_WORKFLOW:
+            return self.filter(status=APPROVED_BY_FINANCE_2)
+        return self.filter(status=APPROVED_BY_FINANCE_1)
+
     def for_finance_1(self):
         if settings.INVOICE_EXTENDED_WORKFLOW:
             return self.filter(status__in=[APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_2])

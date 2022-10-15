@@ -160,6 +160,8 @@ class FinanceDashboardView(MyFlaggedMixin, TemplateView):
 
         context.update({
             'active_invoices': self.active_invoices(),
+            'invoices_for_approval': self.invoices_for_approval(),
+            'invoices_to_convert': self.invoices_to_convert(),
             'waiting_for_approval': self.waiting_for_approval(),
         })
 
@@ -171,6 +173,24 @@ class FinanceDashboardView(MyFlaggedMixin, TemplateView):
         else:
             invoices = Invoice.objects.for_finance_1()
 
+        return {
+            'count': invoices.count(),
+            'table': InvoiceDashboardTable(invoices),
+        }
+
+    def invoices_for_approval(self):
+        if self.request.user.is_finance_level_2:
+            invoices = Invoice.objects.approved_by_finance_1()
+        else:
+            invoices = Invoice.objects.approved_by_staff()
+
+        return {
+            'count': invoices.count(),
+            'table': InvoiceDashboardTable(invoices)
+        }
+
+    def invoices_to_convert(self):
+        invoices = Invoice.objects.waiting_to_convert()
         return {
             'count': invoices.count(),
             'table': InvoiceDashboardTable(invoices),
