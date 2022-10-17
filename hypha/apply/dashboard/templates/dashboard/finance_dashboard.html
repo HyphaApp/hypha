@@ -18,7 +18,9 @@
 </div>
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
     <div id="active-invoices" class="wrapper wrapper--bottom-space">
-        <h4 class="heading heading--normal">{% trans "Active Invoices" %}</h4>
+        <h4 class="heading heading--normal">{% trans "Active Invoices" %}
+            (<a href="#invoices-awaiting-approval" class="link {% if not invoices_for_approval.count %}is-disabled{% endif %}">Invoices for my review</a> |
+            <a href="#invoices-to-convert" class="link {% if not invoices_to_convert.count %}is-disabled{% endif %}">Invoices for entry to Sage IntAcct</a>)</h4>
         {% if active_invoices.count %}
             {% render_table active_invoices.table %}
         {% else %}
