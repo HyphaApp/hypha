@@ -1,5 +1,5 @@
 from wagtail.contrib.modeladmin.options import modeladmin_register
 
-from .admin import ManageAdminGoup
+from .admin import ProjectAdminGroup
 
-modeladmin_register(ManageAdminGoup)
+modeladmin_register(ProjectAdminGroup)
