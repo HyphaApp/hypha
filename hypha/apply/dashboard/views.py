@@ -191,9 +191,8 @@ class FinanceDashboardView(MyFlaggedMixin, TemplateView):
         }
 
     def invoices_to_convert(self):
-        if settings.INVOICE_EXTENDED_WORKFLOW:
-            if self.request.user.is_finance_level_1:
-                return {
+        if settings.INVOICE_EXTENDED_WORKFLOW and self.request.user.is_finance_level_1:
+            return {
                 'count': None,
                 'table': None,
             }
