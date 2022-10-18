@@ -17,6 +17,8 @@ from wagtail.models import Orderable, Page
 from wagtail.snippets.models import register_snippet
 from wagtailcache.cache import WagtailCacheMixin, cache_page
 
+from hypha.core.wagtail.admin.registry import register_hypha_setting
+
 
 class LinkFields(models.Model):
     """
@@ -221,7 +223,7 @@ class SocialMediaSettings(BaseSetting):
     )
 
 
-@register_setting
+@register_hypha_setting
 class SystemMessagesSettings(BaseSetting):
     class Meta:
         verbose_name = 'system settings'
