@@ -14,6 +14,7 @@ class DocumentCategoryAdmin(ModelAdmin):
 
 class ProjectApprovalFormAdmin(ListRelatedMixin, ModelAdmin):
     model = ProjectApprovalForm
+    menu_label = 'Approval Forms'
     menu_icon = 'form'
     list_display = ('name', 'used_by',)
     create_view_class = CreateProjectApprovalFormView
@@ -25,9 +26,10 @@ class ProjectApprovalFormAdmin(ListRelatedMixin, ModelAdmin):
     ]
 
 
-class ManageAdminGoup(ModelAdminGroup):
-    menu_label = 'Manage'
-    menu_icon = 'folder-open-inverse'
+class ProjectAdminGroup(ModelAdminGroup):
+    menu_label = 'Projects'
+    menu_icon = 'duplicate'
     items = (
         DocumentCategoryAdmin,
+        ProjectApprovalFormAdmin
     )
