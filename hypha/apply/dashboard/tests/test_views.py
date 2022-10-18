@@ -134,18 +134,8 @@ class TestStaffDashboard(BaseViewTestCase):
         response = self.get_page()
         self.assertNotContains(response, "Active Invoices")
 
-    def test_non_project_approver_cannot_see_projects_awaiting_review_stats_or_table(self):
+    def test_staff_can_see_projects_awaiting_review_stats_or_table(self):
         ProjectFactory(is_locked=False, status=WAITING_FOR_APPROVAL)
-
-        response = self.get_page()
-        self.assertNotContains(response, "Projects awaiting approval")
-
-    def test_project_approver_can_see_projects_awaiting_review_stats_or_table(self):
-        ProjectFactory(is_locked=False, status=WAITING_FOR_APPROVAL)
-
-        user = StaffFactory()
-        user.groups.add(GroupFactory(name=APPROVER_GROUP_NAME))
-        self.client.force_login(user)
 
         response = self.get_page()
         self.assertContains(response, "Projects awaiting approval")
