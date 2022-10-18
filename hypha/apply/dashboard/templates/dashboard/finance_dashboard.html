@@ -17,31 +17,46 @@
     </div>
 </div>
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
-    <div id="active-invoices" class="wrapper wrapper--bottom-space">
-        <h4 class="heading heading--normal">{% trans "Active Invoices" %}
-            (<a href="#invoices-awaiting-approval" class="link {% if not invoices_for_approval.count %}is-disabled{% endif %}">Invoices for my review</a> |
-            <a href="#invoices-to-convert" class="link {% if not invoices_to_convert.count %}is-disabled{% endif %}">Invoices for entry to Sage IntAcct</a>)</h4>
-        {% if active_invoices.count %}
-            {% render_table active_invoices.table %}
-        {% else %}
-            {% trans "No Active Invoices" %}
-        {% endif %}
-    </div>
+    <div class="wrapper wrapper--bottom-space">
+        <section class="section section--with-options">
+            <h4 class="heading heading--normal heading--no-margin">{% trans 'Invoices' %}</h4>
+            <div class="js-tabs">
+                <a class="tab__item tab__item--alt" href="#active-invoices" data-tab="tab-1">{% trans "Active Invoices" %}</a>
+                <a class="tab__item tab__item--alt" href="#waiting-for-review" data-tab="tab-2">{% trans "For Approval" %}</a>
+                <a class="tab__item tab__item--alt" href="#waiting-for-conversion" data-tab="tab-3">{% trans "For Conversion" %}</a>
+            </div>
+        </section>
 
-    {% if invoices_for_approval.count %}
-    <div id="invoices-awaiting-approval" class="wrapper wrapper--bottom-space">
-        <h4 class="heading heading--normal">{% trans "Invoices for my review" %}</h4>
-        {% render_table invoices_for_approval.table %}
-    </div>
-    {% endif %}
+        {# Active invoices tab #}
+        <div class="js-tabs-content">
+            <div class="tabs__content" id="tab-1">
+                {% if active_invoices.count %}
+                    {% render_table active_invoices.table %}
+                {% else %}
+                    {% trans "No Active Invoices" %}
+                {% endif %}
+            </div>
 
-    {% if invoices_to_convert.count %}
-    <div id="invoices-to-convert" class="wrapper wrapper--bottom-space">
-        <h4 class="heading heading--normal">{% trans "Invoices for entry to Sage IntAcct" %}</h4>
-        {% render_table invoices_to_convert.table %}
-    </div>
-    {% endif %}
+            {# Waiting for approval tab #}
+            <div class="tabs__content" id="tab-2">
+                {% if invoices_for_approval.count %}
+                    {% render_table invoices_for_approval.table %}
+                {% else %}
+                    {% trans "No Invoices for Approval " %}
+                {% endif %}
+            </div>
 
+            {# Waiting for conversion tab #}
+            <div class="tabs__content" id="tab-3">
+                {% if invoices_to_convert.count %}
+                    {% render_table invoices_to_convert.table %}
+                {% else %}
+                    {% trans "No Invoices for Conversion " %}
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
 
     {% if waiting_for_approval.count %}
     <div id="paf-awaiting-approval" class="wrapper wrapper--bottom-space">

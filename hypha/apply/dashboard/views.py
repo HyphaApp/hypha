@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
@@ -190,6 +191,12 @@ class FinanceDashboardView(MyFlaggedMixin, TemplateView):
         }
 
     def invoices_to_convert(self):
+        if settings.INVOICE_EXTENDED_WORKFLOW:
+            if self.request.user.is_finance_level_1:
+                return {
+                'count': None,
+                'table': None,
+            }
         invoices = Invoice.objects.waiting_to_convert()
         return {
             'count': invoices.count(),
