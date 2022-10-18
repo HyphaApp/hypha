@@ -1,8 +1,11 @@
 from django.conf import settings
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser, BaseUserManager, Group
-from django.db import models
+from django.core import exceptions
+from django.db import IntegrityError, models
 from django.db.models import Q
+from django.db.models.constants import LOOKUP_SEP
+from django.db.models.utils import resolve_callables
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
@@ -20,7 +23,7 @@ from .groups import (
     STAFF_GROUP_NAME,
     TEAMADMIN_GROUP_NAME,
 )
-from .utils import send_activation_email
+from .utils import get_user_by_email, is_user_already_registered, send_activation_email
 
 
 class UserQuerySet(models.QuerySet):
@@ -71,6 +74,9 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
         if not email:
             raise ValueError('The given email must be set')
         email = self.normalize_email(email)
+        is_registered, reason = is_user_already_registered(email)
+        if is_registered:
+            raise ValueError(reason)
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
@@ -92,18 +98,74 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
 
         return self._create_user(email, password, **extra_fields)
 
+    def _extract_model_params(self, defaults, **kwargs):
+        """
+        Prepare `params` for creating a model instance based on the given kwargs;
+        A copied method from model's query.py; for use by get_or_create_and_notify().
+        """
+        defaults = defaults or {}
+        params = {k: v for k, v in kwargs.items() if LOOKUP_SEP not in k}
+        params.update(defaults)
+        property_names = self.model._meta._property_names
+        invalid_params = []
+        for param in params:
+            try:
+                self.model._meta.get_field(param)
+            except exceptions.FieldDoesNotExist:
+                # It's okay to use a model's property if it has a setter.
+                if not (param in property_names and getattr(self.model, param).fset):
+                    invalid_params.append(param)
+        if invalid_params:
+            raise exceptions.FieldError(
+                "Invalid field name(s) for model %s: '%s'." % (
+                    self.model._meta.object_name,
+                    "', '".join(sorted(invalid_params)),
+                ))
+        return params
+
     def get_or_create_and_notify(self, defaults=dict(), site=None, **kwargs):
-        # Set a temp password so users can access the password reset function if needed.
-        temp_pass = BaseUserManager().make_random_password(length=32)
-        temp_pass_hash = make_password(temp_pass)
-        defaults.update(password=temp_pass_hash)
-        user, created = self.get_or_create(defaults=defaults, **kwargs)
-        if created:
+        """Create or get an account for applicant.and send activation email to applicant.
+
+        Args:
+            defaults: Dict containing user attributes for user creation. Defaults to dict().
+            site: current site for sending activation email. Defaults to None.
+
+        Raises:
+            IntegrityError: if multiple account exist with same email
+
+        Returns:
+            A tuple containing a user instance and a boolean that indicates
+            whether the user was created or not.
+        """
+        _created = False
+
+        email = kwargs.get('email')
+        is_registered, _ = is_user_already_registered(email=email)
+
+        if is_registered:
+            user = get_user_by_email(email=email)
+            # already handled in PageStreamBaseForm.
+            if not user:
+                raise IntegrityError("Found multiple account")
+            elif not user.is_active:
+                raise IntegrityError("Found an inactive account")
+        else:
+            temp_pass = BaseUserManager().make_random_password(length=32)
+            temp_pass_hash = make_password(temp_pass)
+            defaults.update(password=temp_pass_hash)
+            try:
+                params = dict(resolve_callables(self._extract_model_params(defaults, **kwargs)))
+                user = self.create(**params)
+            except IntegrityError:
+                raise
             send_activation_email(user, site)
-            applicant_group = Group.objects.get(name=APPLICANT_GROUP_NAME)
+            _created = True
+
+        applicant_group = Group.objects.get(name=APPLICANT_GROUP_NAME)
+        if applicant_group not in user.groups.all():
             user.groups.add(applicant_group)
             user.save()
-        return user, created
+        return user, _created
 
 
 class User(AbstractUser):
