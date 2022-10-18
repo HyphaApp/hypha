@@ -13,11 +13,9 @@ from hypha.apply.projects.models.payment import (
 from hypha.apply.projects.models.project import WAITING_FOR_APPROVAL
 from hypha.apply.projects.tests.factories import InvoiceFactory, ProjectFactory
 from hypha.apply.review.tests.factories import ReviewFactory, ReviewOpinionFactory
-from hypha.apply.users.groups import APPROVER_GROUP_NAME
 from hypha.apply.users.tests.factories import (
     AdminFactory,
     ApplicantFactory,
-    GroupFactory,
     ReviewerFactory,
     StaffFactory,
     StaffWithoutWagtailAdminAccessFactory,
