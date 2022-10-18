@@ -3,10 +3,11 @@ from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
-from wagtail.contrib.settings.models import BaseSetting, register_setting
+from wagtail.contrib.settings.models import BaseSetting
 from wagtail.fields import RichTextField
 
 from hypha.apply.utils.storage import PrivateStorage
+from hypha.core.wagtail.admin.registry import register_hypha_setting
 
 
 class BankInformation(models.Model):
@@ -87,7 +88,7 @@ class DueDiligenceDocument(models.Model):
         return self.vendor.name + ' -> ' + self.document.name
 
 
-@register_setting
+@register_hypha_setting
 class VendorFormSettings(BaseSetting):
     name_label = models.TextField(
         'label',
