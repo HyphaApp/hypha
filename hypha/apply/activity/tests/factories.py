@@ -39,7 +39,7 @@ class EventFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Event
 
-    type = factory.Iterator([choice[0] for choice in MESSAGES.choices()])
+    type = factory.Iterator([choice[0] for choice in MESSAGES.choices])
     by = factory.SubFactory(UserFactory)
     source = factory.SubFactory(ApplicationSubmissionFactory)
 

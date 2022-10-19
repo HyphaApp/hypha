@@ -1,61 +1,58 @@
-from enum import Enum
+from django.db.models import TextChoices
+from django.utils.translation import gettext as _
 
 
-class MESSAGES(Enum):
-    UPDATE_LEAD = 'Update Lead'
-    BATCH_UPDATE_LEAD = 'Batch Update Lead'
-    EDIT_SUBMISSION = 'Edit'
-    APPLICANT_EDIT = "Applicant Edit"
-    NEW_SUBMISSION = 'New Submission'
-    SCREENING = 'Screening'
-    TRANSITION = 'Transition'
-    BATCH_TRANSITION = 'Batch Transition'
-    DETERMINATION_OUTCOME = 'Determination Outcome'
-    BATCH_DETERMINATION_OUTCOME = 'Batch Determination Outcome'
-    INVITED_TO_PROPOSAL = 'Invited To Proposal'
-    REVIEWERS_UPDATED = 'Reviewers Updated'
-    BATCH_REVIEWERS_UPDATED = 'Batch Reviewers Updated'
-    PARTNERS_UPDATED = 'Partners Updated'
-    PARTNERS_UPDATED_PARTNER = 'Partners Updated Partner'
-    READY_FOR_REVIEW = 'Ready For Review'
-    BATCH_READY_FOR_REVIEW = 'Batch Ready For Review'
-    NEW_REVIEW = 'New Review'
-    COMMENT = 'Comment'
-    PROPOSAL_SUBMITTED = 'Proposal Submitted'
-    OPENED_SEALED = 'Opened Sealed Submission'
-    REVIEW_OPINION = 'Review Opinion'
-    DELETE_SUBMISSION = 'Delete Submission'
-    DELETE_REVIEW = 'Delete Review'
-    CREATED_PROJECT = 'Created Project'
-    UPDATED_VENDOR = 'Updated Contracting information'
-    UPDATE_PROJECT_LEAD = 'Update Project Lead'
-    EDIT_REVIEW = 'Edit Review'
-    SEND_FOR_APPROVAL = 'Send for Approval'
-    APPROVE_PROJECT = 'Project was Approved'
-    PROJECT_FINAL_APPROVAL = 'Send for Final Approval'
-    PROJECT_TRANSITION = 'Project was Transitioned'
-    REQUEST_PROJECT_CHANGE = 'Project change requested'
-    UPLOAD_DOCUMENT = 'Document was Uploaded to Project'
-    REMOVE_DOCUMENT = 'Document was Removed from Project'
-    UPLOAD_CONTRACT = 'Contract was Uploaded to Project'
-    APPROVE_CONTRACT = 'Contract was Approved'
-    CREATE_INVOICE = 'Invoice was created for Project'
-    UPDATE_INVOICE_STATUS = 'Updated Invoice Status'
-    DELETE_INVOICE = 'Delete Invoice'
-    SENT_TO_COMPLIANCE = 'Project was sent to Compliance'
-    UPDATE_INVOICE = 'Updated Invoice'
-    SUBMIT_REPORT = 'Submit Report'
-    SKIPPED_REPORT = 'Skipped Report'
-    REPORT_FREQUENCY_CHANGED = 'Report Frequency Changed'
-    REPORT_NOTIFY = 'Report Notify'
-    CREATE_REMINDER = 'Reminder Created'
-    DELETE_REMINDER = 'Reminder Deleted'
-    REVIEW_REMINDER = 'Reminder to Review'
-    BATCH_DELETE_SUBMISSION = 'Delete Batch Submissions'
-
-    @classmethod
-    def choices(cls):
-        return [
-            (choice.name, choice.value)
-            for choice in cls
-        ]
+class MESSAGES(TextChoices):
+    # Format: {Python Value} = {DB Value} {Display Text or Verb}
+    UPDATE_LEAD = 'UPDATE_LEAD', _('updated lead')
+    BATCH_UPDATE_LEAD = 'BATCH_UPDATE_LEAD', _('batch updated lead')
+    EDIT_SUBMISSION = 'EDIT_SUBMISSION', _('edited submission')
+    APPLICANT_EDIT = 'APPLICANT_EDIT', _("edited applicant")
+    NEW_SUBMISSION = 'NEW_SUBMISSION', _('submitted new submission')
+    SCREENING = 'SCREENING', _('screened')
+    TRANSITION = 'TRANSITION', _('transitioned')
+    BATCH_TRANSITION = 'BATCH_TRANSITION', _('batch transitioned')
+    DETERMINATION_OUTCOME = 'DETERMINATION_OUTCOME', _('sent determination outcome')
+    BATCH_DETERMINATION_OUTCOME = 'BATCH_DETERMINATION_OUTCOME', _('sent batch determination outcome')
+    INVITED_TO_PROPOSAL = 'INVITED_TO_PROPOSAL', _('invited to proposal')
+    REVIEWERS_UPDATED = 'REVIEWERS_UPDATED', _('updated reviewers')
+    BATCH_REVIEWERS_UPDATED = 'BATCH_REVIEWERS_UPDATED', _('batch updated reviewers')
+    PARTNERS_UPDATED = 'PARTNERS_UPDATED', _('updated partners')
+    PARTNERS_UPDATED_PARTNER = 'PARTNERS_UPDATED_PARTNER', _('partners updated partner')
+    READY_FOR_REVIEW = 'READY_FOR_REVIEW', _('marked ready for review')
+    BATCH_READY_FOR_REVIEW = 'BATCH_READY_FOR_REVIEW', _('marked batch ready for review')
+    NEW_REVIEW = 'NEW_REVIEW', _('added new review')
+    COMMENT = 'COMMENT', _('added comment')
+    PROPOSAL_SUBMITTED = 'PROPOSAL_SUBMITTED', _('submitted proposal')
+    OPENED_SEALED = 'OPENED_SEALED', _('opened sealed submission')
+    REVIEW_OPINION = 'REVIEW_OPINION', _('reviewed opinion')
+    DELETE_SUBMISSION = 'DELETE_SUBMISSION', _('deleted submission')
+    DELETE_REVIEW = 'DELETE_REVIEW', _('deleted review')
+    CREATED_PROJECT = 'CREATED_PROJECT', _('created project')
+    UPDATED_VENDOR = 'UPDATED_VENDOR', _('updated contracting information')
+    UPDATE_PROJECT_LEAD = 'UPDATE_PROJECT_LEAD', _('updated project lead')
+    EDIT_REVIEW = 'EDIT_REVIEW', _('edited review')
+    SEND_FOR_APPROVAL = 'SEND_FOR_APPROVAL', _('sent for approval')
+    APPROVE_PROJECT = 'APPROVE_PROJECT', _('approved project')
+    PROJECT_FINAL_APPROVAL = 'PROJECT_FINAL_APPROVAL', _('sent project for final approval')
+    PROJECT_TRANSITION = 'PROJECT_TRANSITION', _('transitioned project')
+    REQUEST_PROJECT_CHANGE = 'REQUEST_PROJECT_CHANGE', _('requested project change')
+    UPLOAD_DOCUMENT = 'UPLOAD_DOCUMENT', _('uploaded document to project')
+    REMOVE_DOCUMENT = 'REMOVE_DOCUMENT', _('removed document from project')
+    UPLOAD_CONTRACT = 'UPLOAD_CONTRACT', _('uploaded contract to project')
+    APPROVE_CONTRACT = 'APPROVE_CONTRACT', _('approved contract')
+    CREATE_INVOICE = 'CREATE_INVOICE', _('created invoice for project')
+    UPDATE_INVOICE_STATUS = 'UPDATE_INVOICE_STATUS', _('updated invoice status')
+    DELETE_INVOICE = 'DELETE_INVOICE', _('deleted invoice')
+    SENT_TO_COMPLIANCE = 'SENT_TO_COMPLIANCE', _('sent project to compliance')
+    UPDATE_INVOICE = 'UPDATE_INVOICE', _('updated invoice')
+    SUBMIT_REPORT = 'SUBMIT_REPORT', _('submitted report')
+    SKIPPED_REPORT = 'SKIPPED_REPORT', _('skipped report')
+    REPORT_FREQUENCY_CHANGED = 'REPORT_FREQUENCY_CHANGED', _('changed report frequency')
+    REPORT_NOTIFY = 'REPORT_NOTIFY', _('notified report')
+    CREATE_REMINDER = 'CREATE_REMINDER', _('created reminder')
+    DELETE_REMINDER = 'DELETE_REMINDER', _('deleted reminder')
+    REVIEW_REMINDER = 'REVIEW_REMINDER', _('reminder to review')
+    BATCH_DELETE_SUBMISSION = 'BATCH_DELETE_SUBMISSION', _('batch deleted submissions')
+    STAFF_ACCOUNT_CREATED = 'STAFF_ACCOUNT_CREATED', _('created new account')
+    STAFF_ACCOUNT_EDITED = 'STAFF_ACCOUNT_EDITED', _('edited account')

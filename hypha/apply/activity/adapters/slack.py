@@ -25,6 +25,8 @@ User = get_user_model()
 
 
 class SlackAdapter(AdapterBase):
+    """Notification Adaptor for internal staff on the configured slack channels.
+    """
     adapter_type = "Slack"
     always_send = True
     messages = {
@@ -65,6 +67,8 @@ class SlackAdapter(AdapterBase):
         MESSAGES.UPDATE_INVOICE: _('{user} has updated invoice for <{link}|{source.title}>'),
         MESSAGES.SUBMIT_REPORT: _('{user} has submitted a report for <{link}|{source.title}>'),
         MESSAGES.BATCH_DELETE_SUBMISSION: 'handle_batch_delete_submission',
+        MESSAGES.STAFF_ACCOUNT_CREATED: _('{user} has created a new account for <{link}|{source}>'),
+        MESSAGES.STAFF_ACCOUNT_EDITED: _('{user} has edited account for <{link}|{source}> that now has following roles: {roles}'),
     }
 
     def __init__(self):
@@ -92,6 +96,12 @@ class SlackAdapter(AdapterBase):
         }
 
     def recipients(self, message_type, source, related, **kwargs):
+        if message_type in [
+            MESSAGES.STAFF_ACCOUNT_CREATED,
+            MESSAGES.STAFF_ACCOUNT_EDITED,
+        ]:
+            return [self.slack_id(kwargs['user'])]
+
         if message_type == MESSAGES.SEND_FOR_APPROVAL:
             return [
                 self.slack_id(user)

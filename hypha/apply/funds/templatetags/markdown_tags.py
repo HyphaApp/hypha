@@ -1,20 +1,19 @@
-import mistune
 import tomd
 from django import template
 
-register = template.Library()
+from hypha.core.utils import markdown_to_html
 
-mistune_markdown = mistune.create_markdown(escape=False)
+register = template.Library()
 
 
 @register.filter
 def markdown(value):
-    return mistune_markdown(value)
+    return markdown_to_html(value)
 
 
 @register.filter
 def to_markdown(value):
     # pass through markdown to ensure comment is a
     # fully formed HTML block
-    value = markdown(value)
+    value = markdown_to_html(value)
     return tomd.convert(value)
