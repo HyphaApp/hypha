@@ -757,6 +757,18 @@ class ApplicationSubmission(
 
         return self.has_permission_to_review(user)
 
+    def can_view_draft(self, user):
+        if self.user == user:
+            return True
+
+        if user.is_apply_staff and settings.SUBMISSIONS_DRAFT_ACCESS_STAFF:
+            return True
+
+        if user.is_apply_staff_admin and settings.SUBMISSIONS_DRAFT_ACCESS_STAFF_ADMIN:
+            return True
+
+        return False
+
     def prepare_search_values(self):
         for field_id in self.question_field_ids:
             field = self.field(field_id)

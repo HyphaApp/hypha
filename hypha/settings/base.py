@@ -84,6 +84,9 @@ STAFF_EMAIL_DOMAINS = env.list('STAFF_EMAIL_DOMAINS', [])
 # Should staff be able to access/see draft submissions.
 SUBMISSIONS_DRAFT_ACCESS_STAFF = env.bool('SUBMISSIONS_DRAFT_ACCESS_STAFF', False)
 
+# Should staff admins be able to access/see draft submissions.
+SUBMISSIONS_DRAFT_ACCESS_STAFF_ADMIN = env.bool('SUBMISSIONS_DRAFT_ACCESS_STAFF_ADMIN', False)
+
 # Columns to exclude from the submission tables.
 # Possible values are: fund, round, status, lead, reviewers, screening_statuses, category_options, meta_terms
 SUBMISSIONS_TABLE_EXCLUDED_FIELDS = env.list('SUBMISSIONS_TABLE_EXCLUDED_FIELDS', [])

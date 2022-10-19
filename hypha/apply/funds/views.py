@@ -198,7 +198,10 @@ class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
 
     def get_queryset(self):
         submissions = self.filterset_class._meta.model.objects.current().for_table(self.request.user)
-        if settings.SUBMISSIONS_DRAFT_ACCESS_STAFF:
+        # Check if staff or staff admin should be able to see drafts.
+        if self.request.user.is_apply_staff and settings.SUBMISSIONS_DRAFT_ACCESS_STAFF:
+            return submissions
+        elif self.request.user.is_apply_staff_admin and settings.SUBMISSIONS_DRAFT_ACCESS_STAFF_ADMIN:
             return submissions
         else:
             return submissions.exclude_draft()
@@ -769,7 +772,7 @@ class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Delega
 
     def dispatch(self, request, *args, **kwargs):
         submission = self.get_object()
-        if submission.status == DRAFT_STATE and not request.user == submission.user and not settings.SUBMISSIONS_DRAFT_ACCESS_STAFF:
+        if submission.status == DRAFT_STATE and not submission.can_view_draft(request.user):
             raise Http404
         redirect = SubmissionSealedView.should_redirect(request, submission)
         return redirect or super().dispatch(request, *args, **kwargs)
