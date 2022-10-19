@@ -30,7 +30,7 @@ class SlackAdapter(AdapterBase):
     adapter_type = "Slack"
     always_send = True
     messages = {
-        MESSAGES.NEW_SUBMISSION: _('A new submission has been submitted for {source.page.title}: <{link}|{source.title}>'),
+        MESSAGES.NEW_SUBMISSION: _('A new submission has been submitted for {source.page.title}: <{link}|{source.title}> by {user}'),
         MESSAGES.UPDATE_LEAD: _('The lead of <{link}|{source.title}> has been updated from {old_lead} to {source.lead} by {user}'),
         MESSAGES.BATCH_UPDATE_LEAD: 'handle_batch_lead',
         MESSAGES.COMMENT: _('A new {comment.visibility} comment has been posted on <{link}|{source.title}> by {user}'),
