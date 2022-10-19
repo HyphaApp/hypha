@@ -281,13 +281,28 @@ class ContractingDashboardView(MyFlaggedMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update({
-            'waiting_for_approval': self.waiting_for_approval()
+            'paf_waiting_for_approval': self.paf_waiting_for_approval(),
+            'paf_waiting_for_final_approval': self.paf_waiting_for_final_approval()
         })
 
         return context
 
-    def waiting_for_approval(self):
-        if not self.request.user.is_contracting:
+    def paf_waiting_for_final_approval(self):
+        if not self.request.user.is_contracting_approver:
+            return {
+                'count': None,
+                'table': None,
+            }
+        to_paf_approve = Project.objects.waiting_for_approval().for_table()
+        to_paf_final_approval = [paf for paf in to_paf_approve if paf.can_make_final_approval]
+        return {
+            'count': len(to_paf_final_approval),
+            'table': ProjectsDashboardTable(data=to_paf_final_approval),
+        }
+
+
+    def paf_waiting_for_approval(self):
+        if not self.request.user.is_contracting or self.request.user.is_contracting_approver:
             return {
                 'count': None,
                 'table': None,

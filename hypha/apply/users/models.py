@@ -201,6 +201,10 @@ class User(AbstractUser):
     def is_contracting(self):
         return self.groups.filter(name=CONTRACTING_GROUP_NAME).exists()
 
+    @cached_property
+    def is_contracting_approver(self):
+        return self.groups.filter(name=CONTRACTING_GROUP_NAME).exists() and self.groups.filter(name=APPROVER_GROUP_NAME).exists()
+
     class Meta:
         ordering = ('full_name', 'email')
 

@@ -17,10 +17,18 @@
     </div>
 </div>
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
-    {% if waiting_for_approval.count %}
+    {% if paf_waiting_for_approval.count %}
     <div id="paf-awaiting-approval" class="wrapper wrapper--bottom-space">
         <h4 class="heading heading--normal">{% trans "PAF awaiting approval" %}</h4>
-        {% render_table waiting_for_approval.table %}
+        {% render_table paf_waiting_for_approval.table %}
+    </div>
+    {% endif %}
+
+<!--    For contracting-approver dashboard-->
+    {% if paf_waiting_for_final_approval.count %}
+    <div id="paf-awaiting-final-approval" class="wrapper wrapper--bottom-space">
+        <h4 class="heading heading--normal">{% trans "PAF waiting for final approval" %}</h4>
+        {% render_table paf_waiting_for_final_approval.table %}
     </div>
     {% endif %}
 </div>
