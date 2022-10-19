@@ -300,7 +300,6 @@ class ContractingDashboardView(MyFlaggedMixin, TemplateView):
             'table': ProjectsDashboardTable(data=to_paf_final_approval),
         }
 
-
     def paf_waiting_for_approval(self):
         if not self.request.user.is_contracting or self.request.user.is_contracting_approver:
             return {
