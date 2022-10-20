@@ -15,7 +15,6 @@ from wagtail.fields import RichTextField, StreamField
 
 from hypha.apply.funds.models.mixins import AccessFormData
 from hypha.apply.funds.workflow import Concept, Proposal, Request
-from hypha.core.wagtail.admin.registry import register_hypha_setting
 
 from .blocks import (
     DeterminationBlock,
@@ -184,7 +183,7 @@ class Determination(DeterminationFormFieldsMixin, AccessFormData, models.Model):
         return data
 
 
-@register_hypha_setting
+@register_setting
 class DeterminationMessageSettings(BaseSetting):
     class Meta:
         verbose_name = 'determination messages'

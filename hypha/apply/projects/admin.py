@@ -1,9 +1,10 @@
 from wagtail.contrib.modeladmin.options import ModelAdmin, ModelAdminGroup
 
 from hypha.apply.utils.admin import ListRelatedMixin
+from hypha.core.wagtail.admin import SettingModelAdmin
 
 from .admin_views import CreateProjectApprovalFormView, EditProjectApprovalFormView
-from .models import DocumentCategory, ProjectApprovalForm
+from .models import DocumentCategory, ProjectApprovalForm, ProjectSettings
 
 
 class DocumentCategoryAdmin(ModelAdmin):
@@ -26,10 +27,15 @@ class ProjectApprovalFormAdmin(ListRelatedMixin, ModelAdmin):
     ]
 
 
+class ProjectSettingsAdmin(SettingModelAdmin):
+    model = ProjectSettings
+
+
 class ProjectAdminGroup(ModelAdminGroup):
     menu_label = 'Projects'
     menu_icon = 'duplicate'
     items = (
         DocumentCategoryAdmin,
-        ProjectApprovalFormAdmin
+        ProjectApprovalFormAdmin,
+        ProjectSettingsAdmin,
     )

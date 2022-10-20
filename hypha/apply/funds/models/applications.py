@@ -31,13 +31,12 @@ from wagtail.admin.panels import (
     ObjectList,
     TabbedInterface,
 )
-from wagtail.contrib.settings.models import BaseSetting
+from wagtail.contrib.settings.models import BaseSetting, register_setting
 from wagtail.fields import RichTextField
 from wagtail.models import Page, PageManager
 from wagtail.query import PageQuerySet
 
 from hypha.core.wagtail.admin.panels import ReadOnlyInlinePanel
-from hypha.core.wagtail.admin.registry import register_hypha_setting
 
 from ..admin_forms import RoundBasePageAdminForm, WorkflowFormAdminForm
 from ..edit_handlers import ReadOnlyPanel
@@ -599,7 +598,7 @@ class RoundsAndLabs(Page):
         raise NotImplementedError('Do not save through this model')
 
 
-@register_hypha_setting
+@register_setting
 class ApplicationSettings(BaseSetting):
     class Meta:
         verbose_name = 'application settings'

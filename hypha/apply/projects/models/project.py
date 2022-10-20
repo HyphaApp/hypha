@@ -19,7 +19,7 @@ from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
 from wagtail.admin.panels import FieldPanel, InlinePanel
-from wagtail.contrib.settings.models import BaseSetting
+from wagtail.contrib.settings.models import BaseSetting, register_setting
 from wagtail.core.models import Orderable
 from wagtail.fields import StreamField
 
@@ -29,7 +29,6 @@ from hypha.apply.stream_forms.blocks import FormFieldsBlock
 from hypha.apply.stream_forms.files import StreamFieldDataEncoder
 from hypha.apply.stream_forms.models import BaseStreamForm
 from hypha.apply.utils.storage import PrivateStorage
-from hypha.core.wagtail.admin.registry import register_hypha_setting
 
 from .vendor import Vendor
 
@@ -417,7 +416,7 @@ class PAFReviewersRole(Orderable):
         return str(self.role)
 
 
-@register_hypha_setting
+@register_setting
 class ProjectSettings(BaseSetting, ClusterableModel):
     compliance_email = models.TextField("Compliance Email")
     vendor_setup_required = models.BooleanField(default=True)
