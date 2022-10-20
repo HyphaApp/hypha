@@ -4,6 +4,7 @@ from hypha.apply.projects import urls as projects_urls
 
 from .views import (
     AwaitingReviewSubmissionsListView,
+    ExportSubmissionsByRound,
     GroupingApplicationsListView,
     ReminderDeleteView,
     ReviewerLeaderboard,
@@ -82,6 +83,7 @@ submission_urls = ([
 rounds_urls = ([
     path('', RoundListView.as_view(), name="list"),
     path('<int:pk>/', SubmissionsByRound.as_view(), name="detail"),
+    path('export/<int:pk>/', ExportSubmissionsByRound.as_view(), name="export"),
 ], 'rounds')
 
 

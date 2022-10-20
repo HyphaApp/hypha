@@ -1,3 +1,4 @@
+import os
 from copy import copy
 from datetime import timedelta
 
@@ -9,8 +10,9 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.core.exceptions import PermissionDenied
+from django.core.management import call_command
 from django.db.models import Count, F, Q
-from django.http import FileResponse, Http404, HttpResponseRedirect
+from django.http import FileResponse, Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils import timezone
@@ -561,6 +563,26 @@ class SubmissionUserFlaggedView(UserPassesTestMixin, BaseAdminSubmissionsTable):
     def test_func(self):
         return self.request.user.is_apply_staff or self.request.user.is_reviewer
 
+@method_decorator(staff_required, name='dispatch')
+class ExportSubmissionsByRound(BaseAdminSubmissionsTable):
+    
+    def get_queryset(self):
+        try:
+            self.obj = Page.objects.get(pk=self.kwargs.get('pk')).specific
+        except Page.DoesNotExist as exc:
+            raise Http404(_("No Round or Lab found matching the query")) from exc
+
+        if not isinstance(self.obj, (LabBase, RoundBase)):
+            raise Http404(_("No Round or Lab found matching the query"))
+        return super().get_queryset().filter(Q(round=self.obj) | Q(page=self.obj))
+
+    def get(self, request, pk):
+        self.get_queryset()        
+        file_path = call_command('export_submissions_by_round', [self.obj, pk])
+        with open(file_path, 'rb') as file:
+            response = HttpResponse(file.read(), content_type="text/csv")
+            response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
+            return response
 
 @method_decorator(staff_required, name='dispatch')
 class SubmissionsByRound(BaseAdminSubmissionsTable, DelegateableListView):
