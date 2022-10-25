@@ -11,7 +11,7 @@ class ScoredAnswerWidget(forms.MultiWidget):
     def __init__(self, attrs=None):
         _widgets = (
             TinyMCE(attrs=attrs, mce_attrs=MCE_ATTRIBUTES_SHORT),
-            widgets.Select(attrs=attrs, choices=RATE_CHOICES),
+            widgets.Select(attrs={"data-score-field": "true"}, choices=RATE_CHOICES),
         )
         super().__init__(_widgets, attrs)
 
