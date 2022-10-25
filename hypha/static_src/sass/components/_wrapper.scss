@@ -127,6 +127,13 @@
         }
     }
 
+    // flex
+    &--flex {
+        display: flex;
+        align-items: start;
+        column-gap: 25px;
+    }
+
     // Inner spacing
     &--inner-space-small {
         padding: 20px 0;
