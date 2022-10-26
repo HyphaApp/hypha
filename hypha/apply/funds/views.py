@@ -91,7 +91,10 @@ from .models import (
     RoundBase,
     RoundsAndLabs,
 )
-from .permissions import is_user_has_access_to_view_submission
+from .permissions import (
+    is_user_has_access_to_view_archived_submissions,
+    is_user_has_access_to_view_submission,
+)
 from .tables import (
     AdminSubmissionsTable,
     ReviewerLeaderboardDetailTable,
@@ -465,7 +468,7 @@ class SubmissionOverviewView(BaseAdminSubmissionsTable):
         staff_flagged = self.get_staff_flagged()
 
         archived = self.get_archived()
-        show_archived = True if self.request.user.is_apply_staff_admin else False
+        show_archived = is_user_has_access_to_view_archived_submissions(self.request.user)
 
         return super().get_context_data(
             open_rounds=open_rounds,
@@ -496,8 +499,8 @@ class SubmissionOverviewView(BaseAdminSubmissionsTable):
         return SummarySubmissionsTable(qs[:limit], prefix='archived-')
 
 
-class SubmissionAdminListView(BaseAdminSubmissionsTable, DelegateableListView):
-    template_name = 'funds/submissions.html'
+class SubmissionAdminActiveListView(BaseAdminSubmissionsTable, DelegateableListView):
+    template_name = 'funds/submissions_active.html'
     form_views = [
         BatchUpdateLeadView,
         BatchUpdateReviewersView,
@@ -505,6 +508,16 @@ class SubmissionAdminListView(BaseAdminSubmissionsTable, DelegateableListView):
         BatchDeleteSubmissionView,
         BatchArchiveSubmissionView,
     ]
+
+
+class SubmissionAdminListView(SubmissionAdminActiveListView):
+
+    def get_queryset(self):
+        submissions = self.filterset_class._meta.model.objects.include_archive().for_table(self.request.user)
+        if settings.SUBMISSIONS_DRAFT_ACCESS_STAFF:
+            return submissions
+        else:
+            return submissions.exclude_draft()
 
 
 @method_decorator(staff_required, name='dispatch')
@@ -522,6 +535,10 @@ class SubmissionReviewerListView(BaseReviewerSubmissionsTable):
 class SubmissionListView(ViewDispatcher):
     admin_view = SubmissionAdminListView
     reviewer_view = SubmissionReviewerListView
+
+
+class SubmissionActiveListView(ViewDispatcher):
+    admin_view = SubmissionAdminActiveListView
 
 
 @method_decorator(staff_admin_required, name='dispatch')

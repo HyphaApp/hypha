@@ -185,6 +185,10 @@ class ApplicationSubmissionQueryset(JSONOrderable):
     def archived(self):
         return self.filter(is_archive=True)
 
+    def include_archive(self):
+        # Show all submissions( current submissions + archived submissions)
+        return self.exclude(next__isnull=False)
+
     def current_accepted(self):
         # Applications which have the current stage active (have not been progressed)
         return self.filter(status__in=PHASES_MAPPING['accepted']['statuses']).current()

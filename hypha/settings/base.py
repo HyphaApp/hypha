@@ -36,6 +36,10 @@ FILE_ACCEPT_ATTR_VALUE = ', '.join(['.' + ext for ext in FILE_ALLOWED_EXTENSIONS
 # Only effects setting external reviewers for now.
 GIVE_STAFF_LEAD_PERMS = env.bool('GIVE_STAFF_LEAD_PERMS', False)
 
+# Provide permissions for Archived submissions
+SUBMISSIONS_ARCHIVED_ACCESS_STAFF = env.bool('SUBMISSIONS_ARCHIVED_ACCESS_STAFF', False)
+SUBMISSIONS_ARCHIVED_ACCESS_STAFF_ADMIN = env.bool('SUBMISSIONS_ARCHIVED_ACCESS_STAFF_ADMIN', False)
+
 # Enable staff to "hijack" (become) other users.
 # Good for testing, might not be a good idea in production.
 HIJACK_ENABLE = env.bool('HIJACK_ENABLE', False)
