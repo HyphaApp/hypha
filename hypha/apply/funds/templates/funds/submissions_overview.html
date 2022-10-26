@@ -42,12 +42,12 @@
 
     {% block table %}
         <div class="wrapper wrapper--bottom-space">
-            {% trans "All Submissions" as all_submissions %}
+            {% trans "Active Submissions" as all_submissions %}
             {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term use_search=True filter_action=filter_action use_batch_actions=False heading=all_submissions %}
 
             {% render_table table %}
             <div class="all-submissions-table__more">
-                <a href="{% url 'apply:submissions:list' %}">{% trans "Show all" %}</a>
+                <a href="{% url 'apply:submissions:active' %}">{% trans "Show all" %}</a>
             </div>
         </div>
 
