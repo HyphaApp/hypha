@@ -9,10 +9,8 @@ from django.db.models.utils import resolve_callables
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
-from wagtail.contrib.settings.models import BaseSetting
+from wagtail.contrib.settings.models import BaseSetting, register_setting
 from wagtail.fields import RichTextField
-
-from hypha.core.wagtail.admin.registry import register_hypha_setting
 
 from .groups import (
     APPLICANT_GROUP_NAME,
@@ -272,7 +270,7 @@ class User(AbstractUser):
         return f'<{self.__class__.__name__}: {self.full_name} ({self.email})>'
 
 
-@register_hypha_setting
+@register_setting
 class UserSettings(BaseSetting):
     class Meta:
         verbose_name = 'user settings'

@@ -4,7 +4,7 @@ from hypha.apply.utils.admin import ListRelatedMixin
 from hypha.core.wagtail.admin import SettingModelAdmin
 
 from .admin_views import CreateProjectApprovalFormView, EditProjectApprovalFormView
-from .models import DocumentCategory, ProjectApprovalForm, ProjectSettings
+from .models import DocumentCategory, ProjectApprovalForm, ProjectSettings, VendorFormSettings
 
 
 class DocumentCategoryAdmin(ModelAdmin):
@@ -31,11 +31,16 @@ class ProjectSettingsAdmin(SettingModelAdmin):
     model = ProjectSettings
 
 
+class VendorFormSettingsAdmin(SettingModelAdmin):
+    model = VendorFormSettings
+
+
 class ProjectAdminGroup(ModelAdminGroup):
     menu_label = 'Projects'
     menu_icon = 'duplicate'
     items = (
         DocumentCategoryAdmin,
         ProjectApprovalFormAdmin,
+        VendorFormSettingsAdmin,
         ProjectSettingsAdmin,
     )

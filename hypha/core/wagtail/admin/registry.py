@@ -7,7 +7,7 @@ from wagtail.contrib.settings.registry import registry as wagtail_settings_regis
 from wagtail.permission_policies import ModelPermissionPolicy
 
 
-class HyphaSettingsRegistry(WagtailSettingsRegistry):
+class PublicSiteSettingsRegistry(WagtailSettingsRegistry):
     def register(self, model, **kwargs):
         """
         Register a model as a setting, adding it to the wagtail hypha Settings admin menu
@@ -19,7 +19,7 @@ class HyphaSettingsRegistry(WagtailSettingsRegistry):
         wagtail_settings_registry.append(model)
 
         # Register a new menu item in the "hypha settings" menu
-        @hooks.register("register_hypha_settings_menu_item")
+        @hooks.register("register_public_site_setting_menu_item")
         def menu_hook():
             return SettingMenuItem(model, **kwargs)
 
@@ -42,4 +42,4 @@ class HyphaSettingsRegistry(WagtailSettingsRegistry):
         return model
 
 
-register_hypha_setting = HyphaSettingsRegistry().register_decorator
+register_public_site_setting= PublicSiteSettingsRegistry().register_decorator

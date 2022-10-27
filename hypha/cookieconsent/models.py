@@ -3,10 +3,10 @@ from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 from wagtail.contrib.settings.models import BaseSetting
 from wagtail.fields import RichTextField
 
-from hypha.core.wagtail.admin.registry import register_hypha_setting
+from hypha.core.wagtail.admin.registry import register_public_site_setting
 
 
-@register_hypha_setting
+@register_public_site_setting
 class CookieConsentSettings(BaseSetting):
     class Meta:
         verbose_name = 'Cookie consent settings'

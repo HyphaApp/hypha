@@ -10,7 +10,7 @@ from .project import (
     ProjectSettings,
 )
 from .report import Report, ReportConfig, ReportPrivateFiles, ReportVersion
-from .vendor import BankInformation, DueDiligenceDocument, Vendor
+from .vendor import BankInformation, DueDiligenceDocument, Vendor, VendorFormSettings
 
 __all__ = [
     'Project',
@@ -25,6 +25,7 @@ __all__ = [
     'ReportPrivateFiles',
     'ReportConfig',
     'Vendor',
+    'VendorFormSettings',
     'BankInformation',
     'DueDiligenceDocument',
     'Invoice',

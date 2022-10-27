@@ -2,9 +2,10 @@ from django.utils.translation import gettext_lazy as _
 from modelcluster.models import ClusterableModel
 from wagtail import blocks
 from wagtail.admin.panels import FieldPanel
-from wagtail.contrib.settings.models import BaseSetting, register_setting
+from wagtail.contrib.settings.models import BaseSetting
 from wagtail.fields import StreamField
 
+from hypha.core.wagtail.admin import register_public_site_setting
 
 class LinkBlock(blocks.StructBlock):
     page = blocks.PageChooserBlock()
@@ -14,7 +15,7 @@ class LinkBlock(blocks.StructBlock):
         template = 'navigation/blocks/menu_item.html',
 
 
-@register_setting(icon='', classnames='icon icon-list-ul')
+@register_public_site_setting(icon='', classnames='icon icon-list-ul')
 class NavigationSettings(BaseSetting, ClusterableModel):
     primary_navigation = StreamField(
         [('link', LinkBlock()), ],

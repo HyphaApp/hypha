@@ -7,6 +7,7 @@ from hypha.apply.categories.admin import CategoryAdmin, MetaTermAdmin
 from hypha.apply.determinations.admin import (
     DeterminationFormAdmin,
     DeterminationMessageSettingsAdmin,
+    DeterminationFormSettingsAdmin,
 )
 from hypha.apply.funds.models import ReviewerRole, ScreeningStatus, ReviewerSettings
 from hypha.apply.review.admin import ReviewFormAdmin
@@ -183,6 +184,7 @@ class ApplyAdminGroup(ModelAdminGroup):
         ReviewerSettingAdmin,
         DeterminationFormAdmin,
         DeterminationMessageSettingsAdmin,
+        DeterminationFormSettingsAdmin,
         CategoryAdmin,
         ScreeningStatusAdmin,
         ReviewerRoleAdmin,

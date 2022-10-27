@@ -6,10 +6,12 @@ from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
 from pagedown.widgets import PagedownWidget
 from wagtail.admin.panels import FieldPanel, InlinePanel, PageChooserPanel
-from wagtail.contrib.settings.models import BaseSetting, register_setting
+from wagtail.contrib.settings.models import BaseSetting
 from wagtail.fields import StreamField
 from wagtail.models import Orderable
 from wagtail.search import index
+
+from hypha.core.wagtail.admin import register_public_site_setting
 
 from hypha.public.utils.models import BasePage, RelatedPage
 
@@ -166,7 +168,7 @@ class NewsIndex(BasePage):
         return context
 
 
-@register_setting
+@register_public_site_setting
 class NewsFeedSettings(BaseSetting):
     news_title = models.CharField(max_length=255, help_text=_('The title of the main news feed.'))
     news_description = models.CharField(max_length=255, help_text=_('The description of the main news feed.'))
