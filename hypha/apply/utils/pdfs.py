@@ -1,6 +1,9 @@
+import datetime
 import io
 import os
 from itertools import cycle
+
+from django.conf import settings
 
 from bs4 import BeautifulSoup, NavigableString
 from reportlab.lib import pagesizes
@@ -86,11 +89,11 @@ def do_nothing(doc, canvas):
 
 
 class ReportDocTemplate(BaseDocTemplate):
-    def build(self, flowables, onFirstPage=do_nothing, onLaterPages=do_nothing):
+    def build(self, flowables, onFirstPage=do_nothing, onLaterPages=do_nothing, onPageEnd=do_nothing):
         frame = Frame(self.leftMargin, self.bottomMargin, self.width, self.height, id='normal')
         self.addPageTemplates([
-            PageTemplate(id='Header', autoNextPageTemplate='Main', frames=frame, onPage=onFirstPage, pagesize=self.pagesize),
-            PageTemplate(id='Main', frames=frame, onPage=onLaterPages, pagesize=self.pagesize),
+            PageTemplate(id='Header', autoNextPageTemplate='Main', frames=frame, onPage=onFirstPage, onPageEnd=onPageEnd, pagesize=self.pagesize),
+            PageTemplate(id='Main', frames=frame, onPage=onLaterPages, onPageEnd=onPageEnd, pagesize=self.pagesize),
         ])
         super().build(flowables)
 
@@ -145,7 +148,19 @@ def make_pdf(title, sections, pagesize):
         story.insert(0, spacer)
         canvas.restoreState()
 
-    doc.build(story, onFirstPage=header_page, onLaterPages=main_page)
+    def end_page(canvas, doc):
+        nonlocal current_section
+        canvas.saveState()
+        footer_spacer = draw_footer(
+            canvas,
+            doc,
+            page_width,
+            page_height,
+        )
+        canvas.restoreState()
+        story.insert(0, footer_spacer)
+
+    doc.build(story, onFirstPage=header_page, onLaterPages=main_page, onPageEnd=end_page)
 
     buffer.seek(0)
     return buffer
@@ -171,7 +186,7 @@ def draw_header(canvas, doc, page_title, title, page_width, page_height):
         title_size / 2  # bottom padding
     )
 
-    canvas.setFillColor(DARK_GREY)
+    canvas.setFillColor(white)
     canvas.rect(
         0,
         page_height - total_height,
@@ -187,12 +202,12 @@ def draw_header(canvas, doc, page_title, title, page_width, page_height):
         1.5 * 1 * title_size  # text
     )
 
-    canvas.setFillColor(white)
-
+    canvas.setFillColor(DARK_GREY)
+    org_name_page_title = str(settings.ORG_LONG_NAME) + "(" + str(page_title) + ")"
     canvas.drawString(
         doc.leftMargin + FRAME_PADDING,
         pos,
-        page_title,
+        org_name_page_title,
     )
 
     pos -= title_size / 2
@@ -206,34 +221,41 @@ def draw_header(canvas, doc, page_title, title, page_width, page_height):
         )
         pos -= title_size / 2
 
+    canvas.setFillColor(DARK_GREY)
+    canvas.line(
+        0,
+        page_height - total_height,
+        page_width,
+        page_height - total_height,
+    )
+
     return Spacer(1, total_height - doc.topMargin)
 
 
 def draw_title_block(canvas, doc, page_title, title, meta, page_width, page_height):
-    page_title_size = 20
-    title_size = 30
+    page_title_size = 15
+    title_size = 20
     meta_size = 10
 
     text_width = page_width - doc.leftMargin - doc.rightMargin - 2 * FRAME_PADDING
 
     # Set canvas font to correctly calculate the splitting
     canvas.setFont("MontserratBold", title_size)
-    canvas.setFillColor(white)
+    canvas.setFillColor(DARK_GREY)
     split_title = split_text(canvas, title, text_width)
 
     canvas.setFont("MontserratBold", meta_size)
-    canvas.setFillColor(white)
+    canvas.setFillColor(DARK_GREY)
     meta_text = '  |  '.join(str(text) for text in meta)
     split_meta = split_text(canvas, meta_text, text_width)
 
     total_height = (
-        doc.topMargin +
         page_title_size + page_title_size * 3 / 4 +  # page title + spaceing
         len(split_title) * (title_size + title_size / 2) +  # title + spacing
         (1.5 * len(split_meta) + 3) * meta_size  # 1.5 per text line + 3 for spacing
     )
 
-    canvas.setFillColor(DARK_GREY)
+    canvas.setFillColor(white)
     canvas.rect(
         0,
         page_height - total_height,
@@ -244,19 +266,20 @@ def draw_title_block(canvas, doc, page_title, title, meta, page_width, page_heig
     )
 
     canvas.setFont("MontserratBold", page_title_size)
-    canvas.setFillColor(white)
-    pos = page_height - doc.topMargin
+    canvas.setFillColor(DARK_GREY)
+    pos = page_height
     pos -= page_title_size
+    org_name_page_title = str(settings.ORG_LONG_NAME) + "(" + str(page_title) + ")"
     canvas.drawString(
         doc.leftMargin + FRAME_PADDING,
         pos,
-        page_title,
+        org_name_page_title,
     )
 
     pos -= page_title_size * 3 / 4
 
     canvas.setFont("MontserratBold", title_size)
-    canvas.setFillColor(white)
+    canvas.setFillColor(DARK_GREY)
     for line in split_title:
         pos -= title_size
         canvas.drawString(
@@ -267,7 +290,7 @@ def draw_title_block(canvas, doc, page_title, title, meta, page_width, page_heig
         pos -= title_size / 2
 
     canvas.setFont("MontserratBold", meta_size)
-    canvas.setFillColor(white)
+    canvas.setFillColor(DARK_GREY)
 
     pos -= meta_size * 2
 
@@ -279,7 +302,46 @@ def draw_title_block(canvas, doc, page_title, title, meta, page_width, page_heig
         )
         pos -= meta_size / 2
 
+    canvas.setFillColor(DARK_GREY)
+    canvas.line(
+        0,
+        page_height - total_height,
+        page_width,
+        page_height - total_height,
+    )
+
     return Spacer(1, total_height - doc.topMargin)
+
+
+def draw_footer(canvas, doc, page_width, page_height):
+    text_size = 10
+
+    # Set canvas font to correctly calculate the splitting
+    canvas.setFont("MontserratBold", text_size)
+
+    total_height = (
+        1.5 * text_size +
+        text_size / 2  # bottom padding
+    )
+    canvas.setFillColor(DARK_GREY)
+    canvas.line(
+        0,
+        total_height,
+        page_width,
+        total_height,
+    )
+
+    canvas.setFont("NotoSans", text_size)
+    canvas.setFillColor(DARK_GREY)
+    pos = total_height
+    pos -= text_size
+    footer_export_date = "Exported on " + str(datetime.date.today())
+    canvas.drawString(
+        doc.leftMargin + FRAME_PADDING,
+        pos,
+        footer_export_date,
+    )
+    return Spacer(0, 0)
 
 
 def handle_block(block, custom_style=None):
