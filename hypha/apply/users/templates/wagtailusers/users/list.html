@@ -1,4 +1,4 @@
-{% load i18n l10n wagtailusers_tags wagtailadmin_tags %}
+{% load i18n l10n wagtailusers_tags wagtailadmin_tags hijack %}
 <table class="listing">
     <thead>
         <tr>
@@ -28,6 +28,7 @@
             <th class="level">{% trans "Roles" %}</th>
             <th class="status">{% trans "Status" %}</th>
             <th class="last-login">{% trans "Last Login" %}</th>
+            <th class="last-login">{% trans "Impersonate User" %}</th>
         </tr>
     </thead>
     <tbody>
@@ -61,6 +62,15 @@
                     {% endif %}
                 </td>
                 <td>{% if user.last_login %}{% human_readable_date user.last_login %}{% endif %}</td>
+                <td>
+                    {% if request.user|can_hijack:user %}
+                        <form action="{% url 'hijack:acquire' %}" method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="user_pk" value="{{ user.pk }}">
+                            <button class="button" type="submit">Impersonate</button>
+                        </form>
+                    {% endif %}
+                </td>
             </tr>
         {% endfor %}
     </tbody>
