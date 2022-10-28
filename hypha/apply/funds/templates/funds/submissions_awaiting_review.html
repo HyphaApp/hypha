@@ -2,13 +2,13 @@
 {% load i18n static %}
 {% load render_table from django_tables2 %}
 
-{% block title %}{% trans "Awaiting Review" %}{% endblock %}
+{% block title %}{% trans "Submissions awaiting Review" %}{% endblock %}
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner wrapper--search">
         {% block page_header %}
             <div>
-                <h1 class="gamma heading heading--no-margin heading--bold">{% trans "Waiting for your Review" %}<span class="submissions-count"> ({{ table.rows|length }})</span></h1>
+                <h1 class="gamma heading heading--no-margin heading--bold">{% trans "Submissions waiting for your review" %}<span class="submissions-count"> ({{ table.rows|length }})</span></h1>
             </div>
         {% endblock %}
     </div>
