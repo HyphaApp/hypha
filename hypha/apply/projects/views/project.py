@@ -1,13 +1,15 @@
 from copy import copy
 
+from xhtml2pdf import pisa
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models import Count
-from django.http import FileResponse, Http404
+from django.http import FileResponse, Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
+from django.template.loader import get_template
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -676,46 +678,29 @@ class ProjectDetailPDFView(SingleObjectMixin, View):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        pdf_page_settings = PDFPageSettings.for_request(request)
-        response = ProjectDetailSimplifiedView.as_view()(
-            request=self.request,
-            pk=self.object.pk,
-        )
-        project = draw_project_content(
-            response.render().content
-        )
-        submission = draw_submission_content(
-            self.object.submission.output_text_answers()
-        )
-        pdf = make_pdf(
-            title=self.object.title,
-            sections=[
-                {
-                    'content': project,
-                    'title': 'Project Approval Form',
-                    'meta': [
-                        self.object.submission.page,
-                        self.object.submission.round,
-                        f"Lead: { self.object.lead }",
-                    ],
-                }, {
-                    'content': submission,
-                    'title': 'Submission',
-                    'meta': [
-                        self.object.submission.stage,
-                        self.object.submission.page,
-                        self.object.submission.round,
-                        f"Lead: { self.object.submission.lead }",
-                    ],
-                },
-            ],
-            pagesize=pdf_page_settings.download_page_size,
-        )
-        return FileResponse(
-            pdf,
-            as_attachment=True,
-            filename=self.object.title + '.pdf',
-        )
+        pdf_page_settings = PDFPageSettings.for_request(request) # :todo: use pdf page settings in pdf creation
+
+        project = self.get_object()
+
+        context = {} # :todo: add context directly from project object
+        context['title'] = project.title
+        context['id'] = project.id
+        context['proposed_start_date'] = project.proposed_start
+        context['proposed_end_date'] = project.proposed_end
+
+        template_path = 'application_projects/paf_export.html'
+        template = get_template(template_path)
+        html = template.render(context)
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="report.pdf"'
+        print("set response")
+
+        pisa_status = pisa.CreatePDF(
+            html, dest=response, raise_exception=True)
+        if pisa_status.err:
+            print("errr in pdf creations")
+            raise
+        return response
 
 
 @method_decorator(staff_or_finance_or_contracting_required, name='dispatch')
