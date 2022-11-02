@@ -50,11 +50,7 @@ from hypha.apply.projects.models import Project
 from hypha.apply.review.models import Review
 from hypha.apply.review.views import ReviewContextMixin
 from hypha.apply.stream_forms.blocks import GroupToggleBlock
-from hypha.apply.users.decorators import (
-    staff_admin_required,
-    staff_or_finance_required,
-    staff_required,
-)
+from hypha.apply.users.decorators import staff_or_finance_required, staff_required
 from hypha.apply.utils.models import PDFPageSettings
 from hypha.apply.utils.pdfs import draw_submission_content, make_pdf
 from hypha.apply.utils.storage import PrivateMediaView
@@ -467,9 +463,6 @@ class SubmissionOverviewView(BaseAdminSubmissionsTable):
 
         staff_flagged = self.get_staff_flagged()
 
-        archived = self.get_archived()
-        show_archived = is_user_has_access_to_view_archived_submissions(self.request.user)
-
         return super().get_context_data(
             open_rounds=open_rounds,
             open_query=open_query,
@@ -478,8 +471,6 @@ class SubmissionOverviewView(BaseAdminSubmissionsTable):
             rounds_title=rounds_title,
             status_counts=grouped_statuses,
             staff_flagged=staff_flagged,
-            archived=archived,
-            show_archived=show_archived,
             **kwargs,
         )
 
@@ -492,11 +483,6 @@ class SubmissionOverviewView(BaseAdminSubmissionsTable):
             'table': SummarySubmissionsTable(qs[:limit], prefix='staff-flagged-', attrs={'class': 'all-submissions-table flagged-table'}, row_attrs=row_attrs),
             'display_more': qs.count() > limit,
         }
-
-    def get_archived(self):
-        qs = self.filterset_class._meta.model.objects.archived().order_by('-submit_time').for_table(self.request.user)
-        limit = 5
-        return SummarySubmissionsTable(qs[:limit], prefix='archived-')
 
 
 class SubmissionAdminActiveListView(BaseAdminSubmissionsTable, DelegateableListView):
@@ -565,18 +551,6 @@ class SubmissionListView(ViewDispatcher):
 
 class SubmissionActiveListView(ViewDispatcher):
     admin_view = SubmissionAdminActiveListView
-
-
-@method_decorator(staff_admin_required, name='dispatch')
-class SubmissionArchivedListView(BaseAdminSubmissionsTable):
-    template_name = 'funds/submissions_archived.html'
-
-    def get_queryset(self):
-        submissions = self.filterset_class._meta.model.objects.archived().for_table(self.request.user)
-        if settings.SUBMISSIONS_DRAFT_ACCESS_STAFF:
-            return submissions
-        else:
-            return submissions.exclude_draft()
 
 
 @method_decorator(staff_required, name='dispatch')
