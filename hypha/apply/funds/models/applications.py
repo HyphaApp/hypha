@@ -2,6 +2,7 @@ from datetime import date
 
 from django import forms
 from django.conf import settings
+from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import (
@@ -77,6 +78,12 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
     guide_link = models.URLField(blank=True, max_length=255, help_text=_('Link to the apply guide.'))
 
     slack_channel = models.CharField(blank=True, max_length=128, help_text=_('The slack #channel for notifications. If left empty, notifications will go to the default channel.'))
+    activity_digest_recipient_emails = ArrayField(
+        models.EmailField(default=''),
+        blank=True,
+        null=True,
+        help_text=_('Comma separated list of emails where a summary of all the activities related to this fund will be sent.')
+    )
 
     show_deadline = models.BooleanField(default=True, help_text=_('Should the deadline date be visible for users.'))
 
@@ -116,6 +123,7 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
         FieldPanel('reviewers', widget=forms.SelectMultiple(attrs={'size': '16'})),
         FieldPanel('guide_link'),
         FieldPanel('slack_channel'),
+        FieldPanel('activity_digest_recipient_emails'),
         FieldPanel('show_deadline'),
     ]
 
@@ -434,7 +442,12 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
     guide_link = models.URLField(blank=True, max_length=255, help_text=_('Link to the apply guide.'))
 
     slack_channel = models.CharField(blank=True, max_length=128, help_text=_('The slack #channel for notifications.'))
-
+    activity_digest_recipient_emails = ArrayField(
+        models.EmailField(default=''),
+        blank=True,
+        null=True,
+        help_text=_('Comma separated list of emails where a summary of all the activities related to this lab will be sent.')
+    )
     parent_page_types = ['apply_home.ApplyHomePage']
     subpage_types = []  # type: ignore
 
@@ -443,6 +456,7 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
         FieldPanel('reviewers', widget=forms.SelectMultiple(attrs={'size': '16'})),
         FieldPanel('guide_link'),
         FieldPanel('slack_channel'),
+        FieldPanel('activity_digest_recipient_emails'),
     ]
 
     edit_handler = TabbedInterface([
