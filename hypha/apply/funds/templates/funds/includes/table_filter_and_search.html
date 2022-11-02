@@ -1,4 +1,4 @@
-{% load django_tables2 i18n %}
+{% load django_tables2 i18n submission_tags %}
 
 <div class="wrapper wrapper--table-actions js-table-actions">
     <div class="actions-bar">
@@ -52,6 +52,14 @@
 
         {# Right #}
         <div class="actions-bar__inner actions-bar__inner--right">
+            {% if show_archive %}
+                {% get_url_param 'archived' as archived_param %}
+                {% if archived_param == '1' %}
+                    <a href="{% update_urlparams 'archived' '0' %}">{% trans "Exclude archived" %}</a>
+                {% else %}
+                    <a href="{% update_urlparams 'archived' '1' %}">{% trans "Include archived" %}</a>
+                {% endif %}
+            {% endif %}
             {% if filter_classes != 'filters-open' %}
                 <button class="button button--filters js-toggle-filters">{% trans "Filters" %}</button>
             {% endif %}

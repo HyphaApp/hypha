@@ -509,15 +509,27 @@ class SubmissionAdminActiveListView(BaseAdminSubmissionsTable, DelegateableListV
         BatchArchiveSubmissionView,
     ]
 
-
-class SubmissionAdminListView(SubmissionAdminActiveListView):
-
     def get_queryset(self):
-        submissions = self.filterset_class._meta.model.objects.include_archive().for_table(self.request.user)
+        if self.request.GET.get('archived') == '1':
+            submissions = self.filterset_class._meta.model.objects.include_archive().for_table(self.request.user)
+        else:
+            submissions = self.filterset_class._meta.model.objects.current().for_table(self.request.user)
         if settings.SUBMISSIONS_DRAFT_ACCESS_STAFF:
             return submissions
         else:
             return submissions.exclude_draft()
+
+    def get_context_data(self, **kwargs):
+        show_archive = is_user_has_access_to_view_archived_submissions(self.request.user)
+
+        return super().get_context_data(
+            show_archive=show_archive,
+            **kwargs,
+        )
+
+
+class SubmissionAdminListView(SubmissionAdminActiveListView):
+    template_name = 'funds/submissions.html'
 
 
 @method_decorator(staff_required, name='dispatch')

@@ -84,6 +84,7 @@ class SubmissionsTable(tables.Table):
         row_attrs = {
             'class': make_row_class,
             'data-record-id': lambda record: record.id,
+            'data-archived': lambda record: record.is_archive
         }
         attrs = {'class': 'all-submissions-table'}
         empty_text = _('No submissions available')
