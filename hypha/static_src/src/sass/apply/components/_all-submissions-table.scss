@@ -64,10 +64,11 @@
 
     tbody {
         tr {
-            &[data-archived="True"] {
+            &[data-archived='True'] {
                 background-color: $color--light-mid-grey;
             }
         }
+
         td {
             // project title
             &.title {
