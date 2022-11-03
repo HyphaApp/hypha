@@ -1,6 +1,5 @@
 from copy import copy
 from datetime import datetime
-from xhtml2pdf import pisa
 
 from django.conf import settings
 from django.contrib import messages
@@ -9,7 +8,7 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models import Count
-from django.http import FileResponse, Http404, HttpResponse
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import get_template
 from django.urls import reverse, reverse_lazy
@@ -29,6 +28,7 @@ from django.views.generic import (
 from django.views.generic.detail import SingleObjectMixin
 from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
+from xhtml2pdf import pisa
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import ACTION, ALL, COMMENT, Activity
@@ -41,11 +41,6 @@ from hypha.apply.users.decorators import (
     staff_required,
 )
 from hypha.apply.utils.models import PDFPageSettings
-from hypha.apply.utils.pdfs import (
-    draw_project_content,
-    draw_submission_content,
-    make_pdf,
-)
 from hypha.apply.utils.storage import PrivateMediaView
 from hypha.apply.utils.views import DelegateableView, DelegatedViewMixin, ViewDispatcher
 
@@ -718,7 +713,7 @@ class ProjectDetailPDFView(SingleObjectMixin, View):
         pisa_status = pisa.CreatePDF(
             html, dest=response, encoding='utf-8', raise_exception=True)
         if pisa_status.err:
-            #:todo: needs to handle it in a better way
+            # :todo: needs to handle it in a better way
             raise
         return response
 
