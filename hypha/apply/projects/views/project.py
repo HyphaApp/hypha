@@ -687,7 +687,7 @@ class ProjectDetailPDFView(SingleObjectMixin, View):
         )
         context['proposed_start_date'] = project.proposed_start
         context['proposed_end_date'] = project.proposed_end
-        context['contractor_name'] = project.vendor.contractor_name
+        context['contractor_name'] = project.vendor.contractor_name if project.vendor else None
         context['total_amount'] = project.value
 
         context['approvers'] = project.paf_reviews_meta_data
@@ -708,7 +708,7 @@ class ProjectDetailPDFView(SingleObjectMixin, View):
         template = get_template(template_path)
         html = template.render(context)
         response = HttpResponse(content_type='application/pdf')
-        response['Content-Disposition'] = 'attachment; filename="report.pdf"'
+        response['Content-Disposition'] = f'attachment; filename="{project.title}.pdf"'
 
         pisa_status = pisa.CreatePDF(
             html, dest=response, encoding='utf-8', raise_exception=True)
