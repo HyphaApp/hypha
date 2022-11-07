@@ -74,6 +74,13 @@
         {% include "funds/includes/round-block.html" with closed_rounds=rounds.closed open_rounds=rounds.open title="Your rounds and labs" page_type='dashboard' %}
     {% endif %}
 
+    {% if projects_to_approve.count %}
+    <div id="projects-awaiting-approval" class="wrapper wrapper--bottom-space">
+        <h4 class="heading heading--normal">{% trans "Projects awaiting approval" %}</h4>
+        {% render_table projects_to_approve.table %}
+    </div>
+    {% endif %}
+
     {% if projects.table.data %}
     <div id="active-projects" class="wrapper wrapper--bottom-space">
         {% trans "Your projects" as project_heading %}
@@ -86,13 +93,6 @@
         </div>
         {% endif %}
 
-    </div>
-    {% endif %}
-
-    {% if projects_to_approve.count %}
-    <div id="projects-awaiting-approval" class="wrapper wrapper--bottom-space">
-        <h4 class="heading heading--normal">{% trans "Projects awaiting approval" %}</h4>
-        {% render_table projects_to_approve.table %}
     </div>
     {% endif %}
 

@@ -117,7 +117,7 @@ class AdminDashboardView(MyFlaggedMixin, TemplateView):
         }
 
     def projects_to_approve(self):
-        if not self.request.user.is_approver:
+        if not self.request.user.is_apply_staff:
             return {
                 'count': None,
                 'table': None,
