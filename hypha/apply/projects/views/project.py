@@ -1,3 +1,4 @@
+import io
 from copy import copy
 from datetime import datetime
 
@@ -28,6 +29,8 @@ from django.views.generic import (
 from django.views.generic.detail import SingleObjectMixin
 from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
+from docx import Document
+from htmldocx import HtmlToDocx
 from xhtml2pdf import pisa
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
@@ -715,6 +718,71 @@ class ProjectDetailPDFView(SingleObjectMixin, View):
         if pisa_status.err:
             # :todo: needs to handle it in a better way
             raise
+        return response
+
+    def get_paf_data_with_field(self, project):
+        data_dict = {}
+        form_data_dict = project.form_data
+        for field in project.form_fields.raw_data:
+            if field['id'] in form_data_dict.keys():
+                if isinstance(field['value'], dict) and 'field_label' in field['value']:
+                    data_dict[field['value']['field_label']] = form_data_dict[field['id']]
+
+        return data_dict
+
+    def get_supporting_documents(self, project):
+        documents_dict = {}
+        for packet_file in project.packet_files.all():
+            documents_dict[packet_file.title] = self.request.build_absolute_uri(
+                reverse('apply:projects:document', kwargs={'pk': project.id, 'file_pk': packet_file.id})
+            )
+        return documents_dict
+
+
+@method_decorator(staff_or_finance_or_contracting_required, name='dispatch')
+class ProjectDetailDocxView(SingleObjectMixin, View):
+    model = Project
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+
+        project = self.get_object()
+
+        context = {}
+        context['id'] = project.id
+        context['title'] = project.title
+        context['project_link'] = self.request.build_absolute_uri(
+            reverse('apply:projects:detail', kwargs={'pk': project.id})
+        )
+        context['proposed_start_date'] = project.proposed_start
+        context['proposed_end_date'] = project.proposed_end
+        context['contractor_name'] = project.vendor.contractor_name if project.vendor else None
+        context['total_amount'] = project.value
+
+        context['approvers'] = project.paf_reviews_meta_data
+        context['paf_data'] = self.get_paf_data_with_field(project)
+        context['submission'] = project.submission
+        context['submission_link'] = self.request.build_absolute_uri(
+            reverse('apply:submissions:detail', kwargs={'pk': project.submission.id})
+        )
+        context['supporting_documents'] = self.get_supporting_documents(project)
+
+        context['org_name'] = settings.ORG_LONG_NAME
+        context['export_date'] = datetime.now().date()
+        context['export_user'] = self.request.user
+
+        template_path = 'application_projects/paf-docx-export.html'
+        template = get_template(template_path)
+        html = template.render(context)
+
+        buf = io.BytesIO()
+        document = Document()
+        new_parser = HtmlToDocx()
+        new_parser.add_html_to_document(html, document)
+        document.save(buf)
+
+        response = HttpResponse(buf.getvalue(), content_type='application/docx')
+        response['Content-Disposition'] = f'attachment; filename="{project.title}.docx"'
         return response
 
     def get_paf_data_with_field(self, project):
