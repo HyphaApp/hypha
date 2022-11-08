@@ -1,7 +1,8 @@
 {% extends "two_factor/_base_focus.html" %}
-{% load i18n users_tags %}
+{% load static i18n users_tags %}
 
 {% block content %}
+  <script src="{% static 'js/clipboard.js' %}"></script>
   <p class="actions actions-header"><a href="{% url 'users:account' %}" class="link link--bold">{% trans "Back to Account" %}</a></p>
   <h1>{% block title %}{% trans "Backup Codes" %}{% endblock %}</h1>
   <p>{% blocktrans trimmed %}Each of the code can be used only once. When they are used up, you can generate a new set of backup codes.{% endblocktrans %}</p>
@@ -11,33 +12,21 @@
     <p class="hide-print">{% blocktrans %}You should now print these codes or copy them to your
        clipboard and store them in your password manager.{% endblocktrans %}</p>
 
-    <p class="hide-print">{% blocktrans %}Once done, then click next.{% endblocktrans %}</p>
-
     <form method="post" class="actions actions-footer">{% csrf_token %}{{ form }}
     <p>
         <a href="#" class="btn btn-primary btn-print">{% trans "Print" %}</button>
+        <a href="#"
+            class="btn btn-primary btn-copy-to-clipboard"
+            data-clipboard-target="#list-backup-tokens"
+            data-clipboard-action="copy"
+        >{% trans "Copy to Clipboard" %}</a>
         <button class="btn btn-primary" type="submit">{% trans "Regenerate Codes" %}</button>
-        <style>
-        @media print {
-            .header, .admin-bar, .actions, .hide-print {
-                display: none;
-            }
-        }
-        </style>
-        <script>
-        var el = $('#list-backup-tokens');
-        el.on("click", function (){
-            el.select();
-        });
-
-        $(".btn-print").on("click", function(e){
-            e.preventDefault();
-            window.print();
-        })
-
-        </script>
     </p>
-        <a class="btn btn-link" href="#">{% trans "Next" %}</a>
+
+    <p class="hide-print">{% blocktrans %}Once done, then click next.{% endblocktrans %}</p>
+    <p>
+    <a class="btn btn-link" href="#">{% trans "Next" %}</a>
+    </p>
         {# <a class="btn btn-link link--left-space" href="data:text/plain;charset=UTF-8,{% tokens_text device.token_set.all %}" download="backup_codes.txt">{% trans "Save Codes" %}</a> #}
     </form>
   {% else %}
@@ -47,4 +36,40 @@
       </form>
   {% endif %}
 
+{% endblock %}
+{% block extra_css %}
+<style>
+@media print {
+    .header, .admin-bar, .actions, .hide-print {
+        display: none;
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/clipboard.js' %}"></script>
+<script>
+    {# Select the codes when clicked #}
+    $('#list-backup-tokens').on("click", function (e){
+        $(this).select();
+    });
+
+    {# Setup print button #}
+    $(".btn-print").on("click", function(e){
+        e.preventDefault();
+        window.print();
+    });
+
+    {# Instantiate clipboard by passing a HTML element, uses clipboard.js #}
+    var clipboardBtn = document.querySelectorAll('.btn-copy-to-clipboard');
+    var clipboard = new ClipboardJS(clipboardBtn);
+    clipboard.on('success', function (e) {
+        // @TODO: use a tooptip instead of alert
+        alert("Back codes copied to clipboard.");
+    });
+    clipboard.on('error', function (e) {
+        alert("Use ctrl/cmd + C to copy the backup codes.")
+    });
+</script>
 {% endblock %}
