@@ -316,7 +316,13 @@ class SubmissionFilter(filters.FilterSet):
 
 class SubmissionFilterAndSearch(SubmissionFilter):
     query = filters.CharFilter(field_name='search_data', lookup_expr="icontains", widget=forms.HiddenInput)
+    archived = filters.BooleanFilter(field_name='is_archive', widget=forms.HiddenInput, method='filter_archived')
 
+    def filter_archived(self, queryset, name, value):
+        if not value:
+            # if value is 0 or None
+            queryset = queryset.exclude(is_archive=True)
+        return queryset
 
 class SubmissionDashboardFilter(filters.FilterSet):
     round = Select2ModelMultipleChoiceFilter(queryset=get_used_rounds, label=_('Rounds'))

@@ -55,9 +55,9 @@
             {% if show_archive %}
                 {% get_url_param 'archived' as archived_param %}
                 {% if archived_param == '1' %}
-                    <a href="{% update_urlparams 'archived' '0' %}">{% trans "Exclude archived" %}</a>
+                    <a href="{% update_urlparams 'archived' '0' %}">{% trans "Hide archived" %}</a>
                 {% else %}
-                    <a href="{% update_urlparams 'archived' '1' %}">{% trans "Include archived" %}</a>
+                    <a href="{% update_urlparams 'archived' '1' %}">{% trans "Show archived" %}</a>
                 {% endif %}
             {% endif %}
             {% if filter_classes != 'filters-open' %}

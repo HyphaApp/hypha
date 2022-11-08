@@ -496,7 +496,8 @@ class SubmissionAdminActiveListView(BaseAdminSubmissionsTable, DelegateableListV
     ]
 
     def get_queryset(self):
-        if self.request.GET.get('archived') == '1':
+        if self.request.GET.get('archived'):
+            # if archived is in param, let archived filter handle the queryset as per its value.
             submissions = self.filterset_class._meta.model.objects.include_archive().for_table(self.request.user)
         else:
             submissions = self.filterset_class._meta.model.objects.current().for_table(self.request.user)
