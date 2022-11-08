@@ -1,16 +1,17 @@
 -r requirements.txt
 
+coverage==6.4.4
+django-coverage-plugin==2.0.3
 django-debug-toolbar==3.6.0
 dslr==0.3.1
 factory_boy==3.2.1
 flake8==5.0.4
 isort==5.10.1
 model-bakery==1.7.0
+pytest-cov==3.0.0
+pytest-django==4.5.2
+pytest-split==0.8.0
+pytest-xdist[psutil]==2.5.0
 responses==0.21.0
 wagtail-factories==2.1.0
 Werkzeug==2.2.2
-pytest-django==4.5.2
-pytest-xdist[psutil]==2.5.0
-coverage==6.4.4
-pytest-cov==3.0.0
-django-coverage-plugin==2.0.3
