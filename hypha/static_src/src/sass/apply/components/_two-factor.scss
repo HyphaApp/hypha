@@ -19,7 +19,17 @@
 
 // 2FA token label font size
 label[for='id_generator-token'] {
-    font-size: 20px;
+    font-size: 1.2em;
+}
+
+#list-backup-tokens {
+    border: #ccc;
+    padding: 1em;
+    line-height: 1.4em;
+    font-size: larger;
+    font-family: monospace;
+    resize: none;
+    font-style: bold;
 }
 
 .d-none {
@@ -34,10 +44,10 @@ label[for='id_generator-token'] {
 // stylelint-disable property-no-vendor-prefix, selector-id-pattern, selector-max-id
 #id_generator-token {
     -moz-appearance: textfield;
-    border: 3px solid $color--dark-blue;
+    // border: 3px solid $color--dark-blue;
     line-height: 1.5;
     width: 8ch;
-    padding: 5px;
+    padding: 3px;
 
     &::-webkit-outer-spin-button,
     &::-webkit-inner-spin-button {
