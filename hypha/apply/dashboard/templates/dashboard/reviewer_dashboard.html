@@ -77,6 +77,20 @@
                 {% render_table my_inactive_submissions %}
             </div>
         {% endif %}
+
+        {% if all_submissions.table.data %}
+            <div class="wrapper wrapper--bottom-space">
+
+                <h4 class="heading heading--normal">{% trans "All Submissions" %}</h4>
+                {% render_table all_submissions.table %}
+
+                {% if all_submissions.display_more %}
+                    <div class="all-submissions-table__more">
+                        <a href="{{ all_submissions.url }}">{% trans "Show all" %}</a>
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
     </div>
 
 {% endblock %}
