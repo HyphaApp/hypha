@@ -242,7 +242,7 @@ class DeterminationMessageSettings(BaseSetting):
 @register_setting
 class DeterminationFormSettings(BaseSetting):
     class Meta:
-        verbose_name = 'determination settings'
+        verbose_name = 'determination form settings'
 
     concept_principles_label = models.CharField('label', default='Goals and principles', max_length=255)
     concept_principles_help_text = models.TextField('help text', blank=True)

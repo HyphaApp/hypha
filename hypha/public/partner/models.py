@@ -10,13 +10,14 @@ from django.utils.translation import gettext_lazy as _
 from pagedown.widgets import PagedownWidget
 from wagtail.admin.forms import WagtailAdminModelForm
 from wagtail.admin.panels import FieldPanel
-from wagtail.contrib.settings.models import BaseSetting, register_setting
+from wagtail.contrib.settings.models import BaseSetting
 from wagtail.fields import RichTextField
 from wagtail.models import Page
 from wagtail.search import index
 
 from hypha.apply.categories.models import Category, Option
 from hypha.apply.funds.models import ApplicationSubmission
+from hypha.core.wagtail.admin import register_public_site_setting
 from hypha.public.utils.models import BasePage
 
 
@@ -113,7 +114,7 @@ def max_value_current_year(value):
     return MaxValueValidator(current_year())(value)
 
 
-@register_setting
+@register_public_site_setting
 class InvestmentCategorySettings(BaseSetting):
     class Meta:
         verbose_name = _('Investment Category Settings')

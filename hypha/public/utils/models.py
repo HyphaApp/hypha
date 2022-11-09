@@ -11,12 +11,14 @@ from wagtail.admin.panels import (
     MultiFieldPanel,
     PageChooserPanel,
 )
-from wagtail.contrib.settings.models import BaseSetting, register_setting
+from wagtail.contrib.settings.models import BaseSetting
 from wagtail.fields import RichTextField, StreamField
 from wagtail.models import Orderable, Page
 from wagtail.snippets.models import register_snippet
 from wagtailcache.cache import WagtailCacheMixin, cache_page
 
+
+from hypha.core.wagtail.admin import register_public_site_setting
 
 class LinkFields(models.Model):
     """
@@ -196,7 +198,7 @@ class CallToActionSnippet(models.Model):
         return self.title
 
 
-@register_setting
+@register_public_site_setting
 class SocialMediaSettings(BaseSetting):
     twitter_handle = models.CharField(
         max_length=255,
@@ -221,10 +223,10 @@ class SocialMediaSettings(BaseSetting):
     )
 
 
-@register_setting
+@register_public_site_setting
 class SystemMessagesSettings(BaseSetting):
     class Meta:
-        verbose_name = 'system settings'
+        verbose_name = 'System settings'
 
     site_logo_default = models.ForeignKey(
         'images.CustomImage',

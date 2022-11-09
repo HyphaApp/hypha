@@ -2,9 +2,10 @@ from django.urls import re_path
 from wagtail.contrib.modeladmin.options import ModelAdmin
 from wagtail.contrib.modeladmin.views import CreateView, InstanceSpecificView
 
-from hypha.apply.determinations.models import DeterminationForm
+from hypha.apply.determinations.models import DeterminationForm, DeterminationMessageSettings, DeterminationFormSettings
 from hypha.apply.review.admin_helpers import ButtonsWithClone
 from hypha.apply.utils.admin import ListRelatedMixin
+from hypha.core.wagtail.admin.options import SettingModelAdmin
 
 from .admin_views import CreateDeterminationFormView, EditDeterminationFormView
 
@@ -47,3 +48,10 @@ class DeterminationFormAdmin(ListRelatedMixin, ModelAdmin):
         kwargs.update(**{'model_admin': self})
         view_class = self.clone_view_class
         return view_class.as_view(**kwargs)(request)
+
+
+class DeterminationMessageSettingsAdmin(SettingModelAdmin):
+    model = DeterminationMessageSettings
+
+class DeterminationFormSettingsAdmin(SettingModelAdmin):
+    model = DeterminationFormSettings

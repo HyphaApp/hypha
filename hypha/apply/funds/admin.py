@@ -4,10 +4,15 @@ from wagtail.contrib.modeladmin.helpers import PermissionHelper
 from wagtail.contrib.modeladmin.options import ModelAdmin, ModelAdminGroup
 
 from hypha.apply.categories.admin import CategoryAdmin, MetaTermAdmin
-from hypha.apply.determinations.admin import DeterminationFormAdmin
-from hypha.apply.funds.models import ReviewerRole, ScreeningStatus
+from hypha.apply.determinations.admin import (
+    DeterminationFormAdmin,
+    DeterminationMessageSettingsAdmin,
+    DeterminationFormSettingsAdmin,
+)
+from hypha.apply.funds.models import ReviewerRole, ScreeningStatus, ReviewerSettings
 from hypha.apply.review.admin import ReviewFormAdmin
 from hypha.apply.utils.admin import ListRelatedMixin, RelatedFormsMixin
+from hypha.core.wagtail.admin.options import SettingModelAdmin
 
 from .admin_helpers import (
     ApplicationFormButtonHelper,
@@ -24,6 +29,7 @@ from .admin_views import (
 )
 from .models import (
     ApplicationForm,
+    ApplicationSettings,
     FundType,
     LabType,
     RequestForPartners,
@@ -157,6 +163,12 @@ class ApplicationFormAdmin(ListRelatedMixin, ModelAdmin):
         return urls + (copy_form_url, )
 
 
+class ApplicationSettingAdmin(SettingModelAdmin):
+    model = ApplicationSettings
+
+class ReviewerSettingAdmin(SettingModelAdmin):
+    model = ReviewerSettings
+
 class ApplyAdminGroup(ModelAdminGroup):
     menu_label = 'Apply'
     menu_icon = 'folder-open-inverse'
@@ -167,8 +179,12 @@ class ApplyAdminGroup(ModelAdminGroup):
         LabAdmin,
         RFPAdmin,
         ApplicationFormAdmin,
+        ApplicationSettingAdmin,
         ReviewFormAdmin,
+        ReviewerSettingAdmin,
         DeterminationFormAdmin,
+        DeterminationMessageSettingsAdmin,
+        DeterminationFormSettingsAdmin,
         CategoryAdmin,
         ScreeningStatusAdmin,
         ReviewerRoleAdmin,
