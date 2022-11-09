@@ -35,7 +35,7 @@
 
                 {% if my_reviewed.display_more %}
                     <div class="all-submissions-table__more">
-                        <a href="{{ my_reviewed.url }}?reviewers={{ request.user.pk }}">{% trans "Show all" %}</a>
+                        <a href="{{ my_reviewed.url }}">{% trans "Show all" %}</a>
                     </div>
                 {% endif %}
             </div>

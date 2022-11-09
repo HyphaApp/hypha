@@ -8,7 +8,12 @@
 
     {% adminbar %}
         {% slot header %}
-            {% trans "All Submissions" %}<span class="submissions-count"> ({{ table.rows|length }})</span>
+            {% if page_heading %}
+                {{ page_heading }}
+            {% else %}
+                {% trans "All Submissions" %}
+            {% endif %}
+            <span class="submissions-count"> ({{ table.rows|length }})</span>
         {% endslot %}
         {% slot sub_heading %}{% trans "Search and filter all submissions" %}{% endslot %}
 
