@@ -42,4 +42,4 @@ class PublicSiteSettingsRegistry(WagtailSettingsRegistry):
         return model
 
 
-register_public_site_setting= PublicSiteSettingsRegistry().register_decorator
+register_public_site_setting = PublicSiteSettingsRegistry().register_decorator

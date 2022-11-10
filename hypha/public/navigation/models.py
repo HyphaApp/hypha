@@ -7,6 +7,7 @@ from wagtail.fields import StreamField
 
 from hypha.core.wagtail.admin import register_public_site_setting
 
+
 class LinkBlock(blocks.StructBlock):
     page = blocks.PageChooserBlock()
     title = blocks.CharBlock(help_text=_("Leave blank to use the page's own title"), required=False)

@@ -1,12 +1,12 @@
 from django.utils.translation import gettext_lazy as _
 
-from .applications import (
+from .applications import (  # NOQA
     ApplicationBase,
     ApplicationSettings,
     LabBase,
     RoundBase,
     RoundsAndLabs,
-)  # NOQA
+)
 from .forms import ApplicationForm
 from .reminders import Reminder
 from .reviewer_role import ReviewerRole, ReviewerSettings
