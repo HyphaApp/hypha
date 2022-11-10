@@ -41,6 +41,9 @@
                 font-size: 22px;
                 font-weight: bold;
             }
+            p {
+                font-size: 16px;
+            }
             #page-width {
                 width: 100%;
                 font-size: 16px;
@@ -101,71 +104,52 @@
                     <b>Total Amount: </b> {{ total_amount|default:"None" }}
                 </td>
             </tr>
+        </table>
 <!--            PAF fields data in paragraph format-->
             {% for field_name, field_value in paf_data.items %}
-                <tr></tr>
-                <tr>
-                    <td colspan="2"><b>{{ field_name }}</b></td>
-                </tr>
-                <tr>
-                    <td colspan="2">{{ field_value|default:"-" }}</td>
-                </tr>
+                <p><b>{{ field_name }}</b></p>
+                <p>{{ field_value|default:"-" }}</p>
             {% endfor %}
-            <tr></tr>
 <!--            Approvers data in paragraph format-->
-            <tr> <td> <h4> Approvers </h4></td></tr>
+            <p><b> Approvers </b></p>
             {% if approvers %}
                 {% for approver_name, approver_data in approvers.items %}
-                    <tr>
-                        <td colspan="2"><b>{{ approver_name }}</b></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">{{ approver_data.status|default:"-" }}</td>
-                    </tr>
-                    <tr></tr>
+                        <p><b>{{ approver_name }}</b></p>
+                        <p>{{ approver_data.status|default:"-" }}</p>
                 {% endfor %}
             {% else %}
-                <tr><td colspan="2">-</td></tr>
-                <tr></tr>
+                <p>-</p>
             {% endif %}
 <!--            Supporting Documents with links-->
-            <tr>
-                <td colspan="2"> <b>Supporting Documents </b></td>
-            </tr>
+                <p> <b>Supporting Documents </b></p>
             {% if supporting_documents %}
                 {% for document, document_link in supporting_documents.items %}
-                    <tr>
-                        <td colspan="2"><a href="{{ document_link }}">{{ document }}</a></td>
-                    </tr>
+                        <p><a href="{{ document_link }}">{{ document }}</a></p>
                 {% endfor %}
-                <tr></tr>
             {% else %}
-                <tr><td colspan="2">-</td></tr>
-                <tr></tr>
+                <p>-</p>
             {% endif %}
 <!--           Submission title with link-->
-            <tr>
-                <td colspan="2"><b>Submission</b></td>
-            </tr>
-            <tr>
-                <td colspan="2"><a href="{{ submission_link }}">{{ submission }}</a></td>
-            </tr>
-        </table>
+                <p><b>Submission</b></p>
+                <p><a href="{{ submission_link }}">{{ submission }}</a></p>
+
         {%endblock%}
     </div>
 
-    <div id="page-footer">
-        {%block page_foot%}
-            <table>
-                <tr>
-                    <td>Exported by {{ export_user }} on {{ export_date }}</td>
-                    <td align="right">
-                        Page: <pdf:pagenumber />
-                    </td>
-                </tr>
-            </table>
-        {%endblock%}
-    </div>
+    {% if show_footer %}
+        <div id="page-footer">
+            {%block page_foot%}
+                <table>
+                    <tr>
+                        <td>Exported by {{ export_user }} on {{ export_date }}</td>
+                        <td align="right">
+                            Page: <pdf:pagenumber />
+                        </td>
+                    </tr>
+                </table>
+            {%endblock%}
+        </div>
+    {% endif %}
 </body>
 
 </html>

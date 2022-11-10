@@ -13,28 +13,30 @@
 {% block content %}
 <div class="simplified">
     <div class="simplified__admin-bar">
-        <div class="simplified__admin-bar-inner">
-            <a class="simplified__projects-link" href="{{ object.get_absolute_url }}">
-                {% trans "Back to project" %}
-            </a>
-            <h1 class="simplified__heading">{{ object.title }}</h1>
-            <h5 class="simplified__subheading">
-                <span>{{ object.submission.page }}</span>
-                <span>{{ object.submission.round }}</span>
-                <span>{% trans "Lead" %}: {{ object.lead }}</span>
-            </h5>
-            <a
-                class="button button--primary simplified__button"
-                href="{% url "apply:projects:download" pk=object.pk %}"
-            >
-                {% trans "Download PDF" %}
-            </a>
-            <a
-                class="button button--primary simplified__button"
-                href="{% url "apply:projects:docx" pk=object.pk %}"
-            >
-                {% trans "Download Docx" %}
-            </a>
+        <div class="simplified__admin-bar-inner-project">
+            <div>
+                <a class="simplified__projects-link" href="{{ object.get_absolute_url }}">
+                    {% trans "Back to project" %}
+                </a>
+                <h1 class="simplified__heading">{{ object.title }}</h1>
+                <h5 class="simplified__subheading">
+                    <span>{{ object.submission.page }}</span>
+                    <span>{{ object.submission.round }}</span>
+                    <span>{% trans "Lead" %}: {{ object.lead }}</span>
+                </h5>
+            </div>
+
+            <div class="simplified__dropdown">
+              <button class="button button--primary simplified__dropbtn" type="button">
+                  {% trans 'Download' %}
+              </button>
+              <div id="downloadDropdown" class="simplified__dropdown-content">
+                <a class="simplified__dropdown-item" href="{% url 'apply:projects:download' pk=object.pk %}">
+                    {% trans 'Download as PDF' %}</a>
+                <a class="simplified__dropdown-item" href="{% url 'apply:projects:docx' pk=object.pk %}">
+                    {% trans 'Download as DOCX' %}</a>
+              </div>
+            </div>
         </div>
     </div>
     <div class="wrapper wrapper--large wrapper--tabs">
@@ -175,4 +177,5 @@
     {{ block.super }}
     <script src="{% static 'js/apply/jquery.fancybox.min.js' %}"></script>
     <script src="{% static 'js/apply/fancybox-global.js' %}"></script>
+    <script src="{% static 'js/apply/simplified.js' %}"></script>
 {% endblock %}

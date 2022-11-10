@@ -2,7 +2,6 @@ import io
 from copy import copy
 from datetime import datetime
 
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
@@ -77,6 +76,7 @@ from ..models.project import (
 )
 from ..models.report import Report
 from ..tables import InvoiceListTable, ProjectsListTable, ReportListTable
+from ..utils import get_paf_download_context
 from .report import ReportFrequencyUpdate, ReportingMixin
 
 
@@ -682,29 +682,11 @@ class ProjectDetailPDFView(SingleObjectMixin, View):
 
         project = self.get_object()
 
-        context = {}
-        context['id'] = project.id
-        context['title'] = project.title
-        context['project_link'] = self.request.build_absolute_uri(
-            reverse('apply:projects:detail', kwargs={'pk': project.id})
-        )
-        context['proposed_start_date'] = project.proposed_start
-        context['proposed_end_date'] = project.proposed_end
-        context['contractor_name'] = project.vendor.contractor_name if project.vendor else None
-        context['total_amount'] = project.value
+        context = get_paf_download_context(self.request, project)
 
-        context['approvers'] = project.paf_reviews_meta_data
-        context['paf_data'] = self.get_paf_data_with_field(project)
-        context['submission'] = project.submission
-        context['submission_link'] = self.request.build_absolute_uri(
-            reverse('apply:submissions:detail', kwargs={'pk': project.submission.id})
-        )
-        context['supporting_documents'] = self.get_supporting_documents(project)
-
-        context['org_name'] = settings.ORG_LONG_NAME
+        context['show_footer'] = True
         context['export_date'] = datetime.now().date()
         context['export_user'] = self.request.user
-
         context['pagesize'] = pdf_page_settings.download_page_size
 
         template_path = 'application_projects/paf_export.html'
@@ -720,24 +702,6 @@ class ProjectDetailPDFView(SingleObjectMixin, View):
             raise
         return response
 
-    def get_paf_data_with_field(self, project):
-        data_dict = {}
-        form_data_dict = project.form_data
-        for field in project.form_fields.raw_data:
-            if field['id'] in form_data_dict.keys():
-                if isinstance(field['value'], dict) and 'field_label' in field['value']:
-                    data_dict[field['value']['field_label']] = form_data_dict[field['id']]
-
-        return data_dict
-
-    def get_supporting_documents(self, project):
-        documents_dict = {}
-        for packet_file in project.packet_files.all():
-            documents_dict[packet_file.title] = self.request.build_absolute_uri(
-                reverse('apply:projects:document', kwargs={'pk': project.id, 'file_pk': packet_file.id})
-            )
-        return documents_dict
-
 
 @method_decorator(staff_or_finance_or_contracting_required, name='dispatch')
 class ProjectDetailDocxView(SingleObjectMixin, View):
@@ -748,30 +712,11 @@ class ProjectDetailDocxView(SingleObjectMixin, View):
 
         project = self.get_object()
 
-        context = {}
-        context['id'] = project.id
-        context['title'] = project.title
-        context['project_link'] = self.request.build_absolute_uri(
-            reverse('apply:projects:detail', kwargs={'pk': project.id})
-        )
-        context['proposed_start_date'] = project.proposed_start
-        context['proposed_end_date'] = project.proposed_end
-        context['contractor_name'] = project.vendor.contractor_name if project.vendor else None
-        context['total_amount'] = project.value
+        context = get_paf_download_context(self.request, project)
 
-        context['approvers'] = project.paf_reviews_meta_data
-        context['paf_data'] = self.get_paf_data_with_field(project)
-        context['submission'] = project.submission
-        context['submission_link'] = self.request.build_absolute_uri(
-            reverse('apply:submissions:detail', kwargs={'pk': project.submission.id})
-        )
-        context['supporting_documents'] = self.get_supporting_documents(project)
+        context['show_footer'] = False
 
-        context['org_name'] = settings.ORG_LONG_NAME
-        context['export_date'] = datetime.now().date()
-        context['export_user'] = self.request.user
-
-        template_path = 'application_projects/paf-docx-export.html'
+        template_path = 'application_projects/paf_export.html'
         template = get_template(template_path)
         html = template.render(context)
 
@@ -784,24 +729,6 @@ class ProjectDetailDocxView(SingleObjectMixin, View):
         response = HttpResponse(buf.getvalue(), content_type='application/docx')
         response['Content-Disposition'] = f'attachment; filename="{project.title}.docx"'
         return response
-
-    def get_paf_data_with_field(self, project):
-        data_dict = {}
-        form_data_dict = project.form_data
-        for field in project.form_fields.raw_data:
-            if field['id'] in form_data_dict.keys():
-                if isinstance(field['value'], dict) and 'field_label' in field['value']:
-                    data_dict[field['value']['field_label']] = form_data_dict[field['id']]
-
-        return data_dict
-
-    def get_supporting_documents(self, project):
-        documents_dict = {}
-        for packet_file in project.packet_files.all():
-            documents_dict[packet_file.title] = self.request.build_absolute_uri(
-                reverse('apply:projects:document', kwargs={'pk': project.id, 'file_pk': packet_file.id})
-            )
-        return documents_dict
 
 
 @method_decorator(staff_or_finance_or_contracting_required, name='dispatch')
