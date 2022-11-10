@@ -12,7 +12,6 @@ from wagtail.models import Orderable
 from wagtail.search import index
 
 from hypha.core.wagtail.admin import register_public_site_setting
-
 from hypha.public.utils.models import BasePage, RelatedPage
 
 from .blocks import NewsStoryBlock

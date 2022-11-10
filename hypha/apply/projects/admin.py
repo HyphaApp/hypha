@@ -4,7 +4,12 @@ from hypha.apply.utils.admin import ListRelatedMixin
 from hypha.core.wagtail.admin import SettingModelAdmin
 
 from .admin_views import CreateProjectApprovalFormView, EditProjectApprovalFormView
-from .models import DocumentCategory, ProjectApprovalForm, ProjectSettings, VendorFormSettings
+from .models import (
+    DocumentCategory,
+    ProjectApprovalForm,
+    ProjectSettings,
+    VendorFormSettings,
+)
 
 
 class DocumentCategoryAdmin(ModelAdmin):

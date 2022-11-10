@@ -17,8 +17,8 @@ from wagtail.models import Orderable, Page
 from wagtail.snippets.models import register_snippet
 from wagtailcache.cache import WagtailCacheMixin, cache_page
 
-
 from hypha.core.wagtail.admin import register_public_site_setting
+
 
 class LinkFields(models.Model):
     """
