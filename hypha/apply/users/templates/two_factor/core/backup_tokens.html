@@ -23,11 +23,14 @@
         <button class="btn btn-primary" type="submit">{% trans "Regenerate Codes" %}</button>
     </p>
 
-    <p class="hide-print">{% blocktrans %}Once done, then click next.{% endblocktrans %}</p>
-    <p>
-    <a class="btn btn-link" href="#">{% trans "Next" %}</a>
-    </p>
-        {# <a class="btn btn-link link--left-space" href="data:text/plain;charset=UTF-8,{% tokens_text device.token_set.all %}" download="backup_codes.txt">{% trans "Save Codes" %}</a> #}
+
+    <p class="hide-print">{% blocktrans %}Once done, acknowledge you have stored the codes securely and then click "Finish".{% endblocktrans %}</p>
+    <div class="form">
+        <ul class="errorlist hidden error-action-agree"><li>Please confirm you have stored the codes securely below.</li></ul>
+        <input type="checkbox" id="action_agree" name="action_agree" value="action_agree">
+        <label for="action_agree"> I have stored the backup codes securely.</label><br><br>
+        <a class="btn btn-link btn-finish" href="{% url 'users:account' %}">{% trans "Finish" %}</a>
+    </div>
     </form>
   {% else %}
     <p>{% trans "You don't have any backup codes yet." %}</p>
@@ -61,12 +64,23 @@
         window.print();
     });
 
+    $(".btn-finish").on("click", function(e){
+        if(!$("#action_agree").is(":checked")) {
+            $(".error-action-agree").show();
+            e.preventDefault();
+        } else {
+            $(".error-action-agree").hide();
+            window.location.href = $(this).attr('href');
+        }
+    });
+
+
     {# Instantiate clipboard by passing a HTML element, uses clipboard.js #}
     var clipboardBtn = document.querySelectorAll('.btn-copy-to-clipboard');
     var clipboard = new ClipboardJS(clipboardBtn);
     clipboard.on('success', function (e) {
         // @TODO: use a tooptip instead of alert
-        alert("Back codes copied to clipboard.");
+        alert("Backup codes copied to clipboard.");
     });
     clipboard.on('error', function (e) {
         alert("Use ctrl/cmd + C to copy the backup codes.")
