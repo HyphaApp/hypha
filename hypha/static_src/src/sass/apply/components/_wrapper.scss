@@ -18,6 +18,7 @@
 
     &--main {
         padding: 0 $mobile-gutter;
+        min-height: calc(100vh - 260px - 160px);  // viewport - (header + footer)
 
         @include media-query(desktop) {
             padding: 0;
