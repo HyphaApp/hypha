@@ -11,7 +11,7 @@
   <p>{% blocktrans trimmed %}2FA is an extra layer of security used to make sure that people trying to gain access to an
     online account are who they say they are. We recommend using Authy or another
     authenticator app.{% endblocktrans %}</p>
-    <p>{% blocktrans trimmed %}Please contact hello@opentech.fund if you have technical difficulty
+    <p>{% blocktrans trimmed %}Please contact {{ ORG_EMAIL }} if you have technical difficulty
     enabling 2FA.{% endblocktrans %}</p>
   {% elif wizard.steps.current == 'method' %}
     <p>{% blocktrans trimmed %}Please select which authentication method you would
