@@ -71,7 +71,16 @@
           <a class="link link--button link--button-long-text" href="{% url "social:begin" "google-oauth2" %}{% if next %}?next={{ next }}{% endif %}">{% blocktrans %}Log in with your {{ ORG_SHORT_NAME }} email{% endblocktrans %}</a>
         </div>
     {% endif %}
-    <script>document.querySelector("label[for=id_token-otp_token]").textContent = "{% trans 'Verification Code' %}: ";</script>
-    <script>document.querySelector("label[for=id_backup-otp_token]").textContent = "{% trans 'Backup Code' %}: ";</script>
+    <script>
+    {# Fix copy of dynamic fields label #}
+    var labelOtpToken = document.querySelector("label[for=id_token-otp_token]");
+    if(labelOtpToken){
+        labelOtpToken.textContent = "{% trans 'Verification Code' %}: ";
+    }
+    var labelBackupOTPToken = document.querySelector("label[for=id_backup-otp_token]");
+    if(labelBackupOTPToken){
+        labelBackupOTPToken.textContent = "{% trans 'Backup Code' %}: ";
+    }
+    </script>
   </div>
 {% endblock %}
