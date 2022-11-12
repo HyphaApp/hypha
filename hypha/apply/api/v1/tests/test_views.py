@@ -169,6 +169,7 @@ class TestInvoiceDeliverableViewset(TestCase):
         response = self.post_to_add(project.id, invoice.id, deliverable.id)
         self.assertEqual(response.status_code, 201)
 
+    @override_settings(INVOICE_EXTENDED_WORKFLOW=True)
     def test_finance2_can_add_deliverables(self):
         user = Finance2Factory()
         project = ProjectFactory()
@@ -239,6 +240,7 @@ class TestInvoiceDeliverableViewset(TestCase):
         response = self.delete_to_remove(project.id, invoice.id, invoice_deliverable.id)
         self.assertEqual(response.status_code, 403)
 
+    @override_settings(INVOICE_EXTENDED_WORKFLOW=True)
     def test_finance2_can_remove_deliverables(self):
         user = Finance2Factory()
         project = ProjectFactory()
