@@ -495,6 +495,13 @@ class SubmissionAdminActiveListView(BaseAdminSubmissionsTable, DelegateableListV
         BatchArchiveSubmissionView,
     ]
 
+    def get_filterset_kwargs(self, filterset_class, **kwargs):
+        new_kwargs = super().get_filterset_kwargs(filterset_class)
+        archived_kwargs = {'archived': self.request.GET.get('archived', 0)}
+        new_kwargs.update(archived_kwargs)
+        new_kwargs.update(kwargs)
+        return new_kwargs
+
     def get_queryset(self):
         if self.request.GET.get('archived'):
             # if archived is in param, let archived filter handle the queryset as per its value.

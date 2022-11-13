@@ -270,7 +270,46 @@ class SubmissionFilter(filters.FilterSet):
         fields = ('status', 'fund', 'round')
 
     def __init__(self, *args, exclude=[], limit_statuses=None, **kwargs):
+        qs = kwargs.get('queryset')
+
+        archived = kwargs.pop('archived') if 'archived' in kwargs.keys() else None
+        if archived is not None:
+            archived = int(archived) if archived else None
+
         super().__init__(*args, **kwargs)
+
+        fund_qs = Page.objects.filter(id__in=qs.values('page').distinct('page')).distinct()
+        round_qs = Round.objects.filter(id__in=qs.values('round').distinct('round')).distinct()
+        lead_qs = User.objects.filter(id__in=qs.values('lead').distinct('lead')).distinct()
+        screening_statuses_qs = ScreeningStatus.objects.filter(
+            id__in=qs.values('screening_statuses__id').distinct('screening_statuses__id')
+        ).distinct()
+        reviewers_qs = User.objects.filter(
+            id__in=qs.exclude(reviewers__isnull=True).values('reviewers').distinct(
+                'reviewers')).distinct()
+        meta_terms_qs = MetaTerm.objects.filter(
+            filter_on_dashboard=True,
+            id__in=qs.values('meta_terms__id').distinct('meta_terms__id'))
+
+        if archived is not None and archived == 0:
+            fund_qs = Page.objects.filter(id__in=qs.filter(is_archive=archived).values('page').distinct('page'))
+            round_qs = Round.objects.filter(id__in=qs.filter(is_archive=archived).values('round').distinct('round')).distinct()
+            lead_qs = User.objects.filter(id__in=qs.filter(is_archive=archived).values('lead').distinct('lead')).distinct()
+            screening_statuses_qs = ScreeningStatus.objects.filter(
+                id__in=qs.filter(is_archive=archived).values('screening_statuses__id').distinct('screening_statuses__id'))
+            reviewers_qs = User.objects.filter(
+                id__in=qs.exclude(Q(reviewers__isnull=True) | Q(is_archive=archived)).values('reviewers').distinct(
+                    'reviewers')).distinct()
+            meta_terms_qs = MetaTerm.objects.filter(
+                filter_on_dashboard=True,
+                id__in=qs.filter(is_archive=True).values('meta_terms__id').distinct('meta_terms__id'))
+
+        self.filters['fund'].queryset = fund_qs
+        self.filters['round'].queryset = round_qs
+        self.filters['lead'].queryset = lead_qs
+        self.filters['screening_statuses'].queryset = screening_statuses_qs
+        self.filters['reviewers'].queryset = reviewers_qs
+        self.filters['meta_terms'].queryset = meta_terms_qs
 
         self.filters['status'] = StatusMultipleChoiceFilter(limit_to=limit_statuses)
         self.filters['category_options'].extra['choices'] = [
@@ -323,6 +362,7 @@ class SubmissionFilterAndSearch(SubmissionFilter):
             # if value is 0 or None
             queryset = queryset.exclude(is_archive=True)
         return queryset
+
 
 class SubmissionDashboardFilter(filters.FilterSet):
     round = Select2ModelMultipleChoiceFilter(queryset=get_used_rounds, label=_('Rounds'))
