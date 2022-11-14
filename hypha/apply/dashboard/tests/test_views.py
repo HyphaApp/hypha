@@ -82,7 +82,7 @@ class TestStaffDashboard(BaseViewTestCase):
     def test_waiting_for_review_with_count(self):
         submission = ApplicationSubmissionFactory(status='external_review', workflow_stages=2, reviewers=[self.user])
         response = self.get_page()
-        self.assertContains(response, 'Waiting for your review')
+        self.assertContains(response, 'Submissions waiting for your review')
         self.assertContains(response, submission.title)
         self.assertEqual(response.context['awaiting_reviews']['count'], 1)
 
@@ -92,7 +92,7 @@ class TestStaffDashboard(BaseViewTestCase):
         review = ReviewFactory(submission=submission, author__reviewer=staff, author__staff=True, recommendation_yes=True)
         ReviewOpinionFactory(review=review, author__reviewer=self.user, opinion_agree=True)
         response = self.get_page()
-        self.assertContains(response, 'Waiting for your review')
+        self.assertContains(response, 'Submissions waiting for your review')
         self.assertContains(response, "Nice! You're all caught up.")
         self.assertEqual(response.context['awaiting_reviews']['count'], 0)
 
@@ -167,7 +167,7 @@ class TestReviewerDashboard(BaseViewTestCase):
     def test_waiting_for_review_with_count(self):
         submission = ApplicationSubmissionFactory(status='external_review', workflow_stages=2, reviewers=[self.user])
         response = self.get_page()
-        self.assertContains(response, 'Waiting for your review')
+        self.assertContains(response, 'Submissions waiting for your review')
         self.assertContains(response, submission.title)
         self.assertEqual(response.context['in_review_count'], 1)
 
