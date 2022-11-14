@@ -183,30 +183,46 @@ class SummarySubmissionsTableWithRole(BaseAdminSubmissionsTable):
         return ''
 
 
-def get_used_rounds(request):
+def get_used_rounds(request=None, queryset=None):
+    if queryset:
+        return Round.objects.filter(id__in=queryset.values('round').distinct('round')).distinct()
     return Round.objects.filter(submissions__isnull=False).distinct()
 
 
-def get_used_funds(request):
+def get_used_funds(request=None, queryset=None):
     # Use page to pick up on both Labs and Funds
+    if queryset:
+        return Page.objects.filter(id__in=queryset.values('page').distinct('page')).distinct()
     return Page.objects.filter(applicationsubmission__isnull=False).distinct()
 
 
-def get_round_leads(request):
+def get_round_leads(request=None, queryset=None):
+    if queryset:
+        return User.objects.filter(id__in=queryset.values('lead').distinct('lead')).distinct()
     return User.objects.filter(submission_lead__isnull=False).distinct()
 
 
-def get_reviewers(request):
+def get_reviewers(request=None, queryset=None):
     """ All assigned reviewers, staff or admin """
+    if queryset:
+        return User.objects.filter(id__in=queryset.values('reviewers').distinct('reviewers')).distinct()
     return User.objects.filter(Q(submissions_reviewer__isnull=False) | Q(groups__name=STAFF_GROUP_NAME) | Q(is_superuser=True)).distinct()
 
 
-def get_screening_statuses(request):
+def get_screening_statuses(request=None, queryset=None):
+    if queryset:
+        return ScreeningStatus.objects.filter(
+            id__in=queryset.values('screening_statuses__id').distinct('screening_statuses__id')
+        ).distinct()
     return ScreeningStatus.objects.filter(
         id__in=ApplicationSubmission.objects.all().values('screening_statuses__id').distinct('screening_statuses__id'))
 
 
-def get_meta_terms(request):
+def get_meta_terms(request=None, queryset=None):
+    if queryset:
+        return MetaTerm.objects.filter(
+            filter_on_dashboard=True,
+            id__in=queryset.values('meta_terms__id').distinct('meta_terms__id'))
     return MetaTerm.objects.filter(
         filter_on_dashboard=True,
         id__in=ApplicationSubmission.objects.all().values('meta_terms__id').distinct('meta_terms__id'))
@@ -278,38 +294,17 @@ class SubmissionFilter(filters.FilterSet):
 
         super().__init__(*args, **kwargs)
 
-        fund_qs = Page.objects.filter(id__in=qs.values('page').distinct('page')).distinct()
-        round_qs = Round.objects.filter(id__in=qs.values('round').distinct('round')).distinct()
-        lead_qs = User.objects.filter(id__in=qs.values('lead').distinct('lead')).distinct()
-        screening_statuses_qs = ScreeningStatus.objects.filter(
-            id__in=qs.values('screening_statuses__id').distinct('screening_statuses__id')
-        ).distinct()
-        reviewers_qs = User.objects.filter(
-            id__in=qs.exclude(reviewers__isnull=True).values('reviewers').distinct(
-                'reviewers')).distinct()
-        meta_terms_qs = MetaTerm.objects.filter(
-            filter_on_dashboard=True,
-            id__in=qs.values('meta_terms__id').distinct('meta_terms__id'))
-
+        reviewers_qs = get_reviewers(queryset=qs.exclude(reviewers__isnull=True))
         if archived is not None and archived == 0:
-            fund_qs = Page.objects.filter(id__in=qs.filter(is_archive=archived).values('page').distinct('page'))
-            round_qs = Round.objects.filter(id__in=qs.filter(is_archive=archived).values('round').distinct('round')).distinct()
-            lead_qs = User.objects.filter(id__in=qs.filter(is_archive=archived).values('lead').distinct('lead')).distinct()
-            screening_statuses_qs = ScreeningStatus.objects.filter(
-                id__in=qs.filter(is_archive=archived).values('screening_statuses__id').distinct('screening_statuses__id'))
-            reviewers_qs = User.objects.filter(
-                id__in=qs.exclude(Q(reviewers__isnull=True) | Q(is_archive=archived)).values('reviewers').distinct(
-                    'reviewers')).distinct()
-            meta_terms_qs = MetaTerm.objects.filter(
-                filter_on_dashboard=True,
-                id__in=qs.filter(is_archive=True).values('meta_terms__id').distinct('meta_terms__id'))
+            reviewers_qs = get_reviewers(queryset=qs.exclude(Q(reviewers__isnull=True) | Q(is_archive=archived)))
+            qs = qs.filter(is_archive=archived)
 
-        self.filters['fund'].queryset = fund_qs
-        self.filters['round'].queryset = round_qs
-        self.filters['lead'].queryset = lead_qs
-        self.filters['screening_statuses'].queryset = screening_statuses_qs
+        self.filters['fund'].queryset = get_used_funds(queryset=qs)
+        self.filters['round'].queryset = get_used_rounds(queryset=qs)
+        self.filters['lead'].queryset = get_round_leads(queryset=qs)
+        self.filters['screening_statuses'].queryset = get_screening_statuses(queryset=qs)
         self.filters['reviewers'].queryset = reviewers_qs
-        self.filters['meta_terms'].queryset = meta_terms_qs
+        self.filters['meta_terms'].queryset = get_meta_terms(queryset=qs)
 
         self.filters['status'] = StatusMultipleChoiceFilter(limit_to=limit_statuses)
         self.filters['category_options'].extra['choices'] = [
