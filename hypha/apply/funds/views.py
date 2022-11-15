@@ -1,6 +1,9 @@
 import os
 from copy import copy
 from datetime import timedelta
+from itertools import chain
+from io import StringIO
+import csv
 
 import django_tables2 as tables
 from django.conf import settings
@@ -565,7 +568,38 @@ class SubmissionUserFlaggedView(UserPassesTestMixin, BaseAdminSubmissionsTable):
 
 @method_decorator(staff_required, name='dispatch')
 class ExportSubmissionsByRound(BaseAdminSubmissionsTable):
-    
+
+    def export_submissions(self, round_id):
+        csv_stream = StringIO()
+        writer = csv.writer(csv_stream)
+        header_row,values = [],[]
+        index = 0
+        check = False
+
+        for submission in ApplicationSubmission.objects.filter(round=round_id):
+            for field_id in submission.question_text_field_ids:
+                question_field = submission.serialize(field_id)
+                field_name = question_field['question']
+                field_value = question_field['answer']
+                if field_id not in submission.named_blocks:
+                    header_row.append(field_name) if not check else header_row
+                    values.append(field_value)
+                else:
+                    header_row.insert(index,field_name) if not check else header_row
+                    values.insert(index,field_value)
+                    index = index + 1
+
+            if not check:
+                writer.writerow(header_row)
+                check = True
+
+            writer.writerow(values)
+            values.clear()
+            index = 0
+
+        csv_stream.seek(0)
+        return csv_stream
+
     def get_queryset(self):
         try:
             self.obj = Page.objects.get(pk=self.kwargs.get('pk')).specific
@@ -577,12 +611,11 @@ class ExportSubmissionsByRound(BaseAdminSubmissionsTable):
         return super().get_queryset().filter(Q(round=self.obj) | Q(page=self.obj))
 
     def get(self, request, pk):
-        self.get_queryset()        
-        file_path = call_command('export_submissions_by_round', [self.obj, pk])
-        with open(file_path, 'rb') as file:
-            response = HttpResponse(file.read(), content_type="text/csv")
-            response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
-            return response
+        self.get_queryset()
+        csv_data = self.export_submissions(pk)
+        response = HttpResponse(csv_data.readlines(), content_type="text/csv")
+        response['Content-Disposition'] = 'inline; filename=' + str(self.obj) + '.csv'
+        return response
 
 @method_decorator(staff_required, name='dispatch')
 class SubmissionsByRound(BaseAdminSubmissionsTable, DelegateableListView):
