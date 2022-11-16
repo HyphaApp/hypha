@@ -22,7 +22,10 @@
     function calculate_score() {
         let score = 0;
         filtered_selectors.forEach(function (selector) {
-            score += parseInt(selector.value);
+            const value = parseInt(selector.value);
+            if (!isNaN(value) && value !== 99) {
+                score += value;
+            }
         });
         $(".form--score-box").text("Score: " + score);
     }
