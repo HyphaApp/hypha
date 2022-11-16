@@ -153,42 +153,4 @@
             margin: 0;
         }
     }
-
-    &__dropdown {
-        position: relative;
-        display: inline-block;
-    }
-
-    &__dropbtn {
-        font-size: 16px;
-        cursor: pointer;
-    }
-
-    &__dropbtn:hover,
-    &__dropbtn:focus {
-        background-color: $color--dark-blue;
-    }
-
-    &__dropdown-content {
-        display: none;
-        position: absolute;
-        background-color: $color--light-grey;
-        min-width: 160px;
-        box-shadow: 1px 8px 16px 1px $color--mid-dark-grey;
-        z-index: 1;
-    }
-
-    /* Links inside the dropdown */
-    &__dropdown-content a {
-        color: $color--black;
-        padding: 12px 16px;
-        text-decoration: none;
-        display: block;
-    }
-
-    /* Change color of dropdown links on hover */
-    &__dropdown-content a:hover { background-color: $color--mid-grey; }
-
-    /* Show the dropdown menu */
-    &__show { display: block; }
 }

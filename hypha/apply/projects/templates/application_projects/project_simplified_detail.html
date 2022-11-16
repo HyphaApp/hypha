@@ -26,14 +26,14 @@
                 </h5>
             </div>
 
-            <div class="simplified__dropdown">
-              <button class="button button--primary simplified__dropbtn" type="button">
+            <div class="dropdown">
+              <button class="button button--primary dropbtn" type="button" data-dropdown-target="#dropdown-content-download">
                   {% trans 'Download' %}
               </button>
-              <div id="downloadDropdown" class="simplified__dropdown-content">
-                <a class="simplified__dropdown-item" href="{% url 'apply:projects:download' pk=object.pk export_type='pdf' %}">
+              <div id="dropdown-content-download" class="dropdown-content">
+                <a class="dropdown-item" href="{% url 'apply:projects:download' pk=object.pk export_type='pdf' %}">
                     {% trans 'Download as PDF' %}</a>
-                <a class="simplified__dropdown-item" href="{% url 'apply:projects:download' pk=object.pk export_type='docx' %}">
+                <a class="dropdown-item" href="{% url 'apply:projects:download' pk=object.pk export_type='docx' %}">
                     {% trans 'Download as DOCX' %}</a>
               </div>
             </div>
@@ -177,5 +177,5 @@
     {{ block.super }}
     <script src="{% static 'js/apply/jquery.fancybox.min.js' %}"></script>
     <script src="{% static 'js/apply/fancybox-global.js' %}"></script>
-    <script src="{% static 'js/apply/simplified.js' %}"></script>
+    <script src="{% static 'js/apply/dropdown.js' %}"></script>
 {% endblock %}
