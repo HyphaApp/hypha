@@ -31,9 +31,9 @@
                   {% trans 'Download' %}
               </button>
               <div id="downloadDropdown" class="simplified__dropdown-content">
-                <a class="simplified__dropdown-item" href="{% url 'apply:projects:download' pk=object.pk %}">
+                <a class="simplified__dropdown-item" href="{% url 'apply:projects:download' pk=object.pk export_type='pdf' %}">
                     {% trans 'Download as PDF' %}</a>
-                <a class="simplified__dropdown-item" href="{% url 'apply:projects:docx' pk=object.pk %}">
+                <a class="simplified__dropdown-item" href="{% url 'apply:projects:download' pk=object.pk export_type='docx' %}">
                     {% trans 'Download as DOCX' %}</a>
               </div>
             </div>

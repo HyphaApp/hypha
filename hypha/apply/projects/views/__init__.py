@@ -15,8 +15,7 @@ from .project import (
     ContractPrivateMediaView,
     FinalApprovalView,
     ProjectApprovalEditView,
-    ProjectDetailDocxView,
-    ProjectDetailPDFView,
+    ProjectDetailDownloadView,
     ProjectDetailSimplifiedView,
     ProjectDetailView,
     ProjectListView,
@@ -40,7 +39,6 @@ from .report import (
 from .vendor import CreateVendorView, VendorDetailView, VendorPrivateMediaView
 
 __all__ = [
-    'ProjectDetailDocxView',
     'ChangeInvoiceStatusView',
     'SendForApprovalView',
     'FinalApprovalView',
@@ -57,7 +55,7 @@ __all__ = [
     'ProjectPrivateMediaView',
     'ContractPrivateMediaView',
     'ProjectDetailSimplifiedView',
-    'ProjectDetailPDFView',
+    'ProjectDetailDownloadView',
     'ProjectApprovalEditView',
     'ProjectListView',
     'ProjectOverviewView',

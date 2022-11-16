@@ -1,50 +1,6 @@
 from django.conf import settings
-from django.urls import reverse
 
 from .models import Deliverable, Project
-
-
-def get_paf_data_with_field(project):
-    data_dict = {}
-    form_data_dict = project.form_data
-    for field in project.form_fields.raw_data:
-        if field['id'] in form_data_dict.keys():
-            if isinstance(field['value'], dict) and 'field_label' in field['value']:
-                data_dict[field['value']['field_label']] = form_data_dict[field['id']]
-
-    return data_dict
-
-
-def get_supporting_documents(request, project):
-    documents_dict = {}
-    for packet_file in project.packet_files.all():
-        documents_dict[packet_file.title] = request.build_absolute_uri(
-            reverse('apply:projects:document', kwargs={'pk': project.id, 'file_pk': packet_file.id})
-        )
-    return documents_dict
-
-
-def get_paf_download_context(request, project):
-    context = {}
-    context['id'] = project.id
-    context['title'] = project.title
-    context['project_link'] = request.build_absolute_uri(
-        reverse('apply:projects:detail', kwargs={'pk': project.id})
-    )
-    context['proposed_start_date'] = project.proposed_start
-    context['proposed_end_date'] = project.proposed_end
-    context['contractor_name'] = project.vendor.contractor_name if project.vendor else None
-    context['total_amount'] = project.value
-
-    context['approvers'] = project.paf_reviews_meta_data
-    context['paf_data'] = get_paf_data_with_field(project)
-    context['submission'] = project.submission
-    context['submission_link'] = request.build_absolute_uri(
-        reverse('apply:submissions:detail', kwargs={'pk': project.submission.id})
-    )
-    context['supporting_documents'] = get_supporting_documents(request, project)
-    context['org_name'] = settings.ORG_LONG_NAME
-    return context
 
 
 def fetch_and_save_deliverables(project_id):
