@@ -7,6 +7,7 @@ from django.core.exceptions import PermissionDenied
 from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.text import slugify
 
 from hypha.apply.funds.tests.factories import LabSubmissionFactory
 from hypha.apply.home.factories import ApplySiteFactory
@@ -1446,6 +1447,7 @@ class TestStaffProjectPDFExport(BaseViewTestCase):
     def get_kwargs(self, instance):
         return {
             'pk': instance.pk,
+            'export_type': 'pdf',
         }
 
     def test_can_access(self):
@@ -1456,7 +1458,7 @@ class TestStaffProjectPDFExport(BaseViewTestCase):
     def test_reponse_object_is_pdf(self):
         project = ProjectFactory()
         response = self.get_page(project)
-        self.assertEqual(response.headers['content-disposition'].split('filename=')[1].strip('"'), project.title + '.pdf')
+        self.assertIn('.pdf', response.headers['content-disposition'].split('filename=')[1])
 
 
 class ApplicantStaffProjectPDFExport(BaseViewTestCase):
