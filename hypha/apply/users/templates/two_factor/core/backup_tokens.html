@@ -2,7 +2,6 @@
 {% load static i18n users_tags %}
 
 {% block content %}
-  <script src="{% static 'js/clipboard.js' %}"></script>
   <p class="actions actions-header"><a href="{% url 'users:account' %}" class="link link--bold">{% trans "Back to Account" %}</a></p>
   <h1>{% block title %}{% trans "Backup Codes" %}{% endblock %}</h1>
   <p>{% blocktrans trimmed %}Each of the code can be used only once. When they are used up, you can generate a new set of backup codes.{% endblocktrans %}</p>
@@ -24,12 +23,13 @@
         <button class="btn btn-primary" type="submit">{% trans "Regenerate Codes" %}</button>
     </p>
 
-
     <p class="hide-print">{% blocktrans %}Once done, acknowledge you have stored the codes securely and then click "Finish".{% endblocktrans %}</p>
     <div class="form">
         <ul class="errorlist hidden error-action-agree"><li>Please confirm you have stored the codes securely below.</li></ul>
-        <input type="checkbox" id="action_agree" name="action_agree" value="action_agree">
-        <label for="action_agree"> I have stored the backup codes securely.</label><br><br>
+        <div class="form__group form__group--checkbox">
+            <input type="checkbox" id="action_agree" name="action_agree" value="action_agree">
+            <label for="action_agree"> I have stored the backup codes securely.</label><br><br>
+        </div>
         <a class="btn btn-link btn-finish" href="{% url 'users:account' %}">{% trans "Finish" %}</a>
     </div>
     </form>
