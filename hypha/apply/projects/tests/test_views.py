@@ -7,7 +7,6 @@ from django.core.exceptions import PermissionDenied
 from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.text import slugify
 
 from hypha.apply.funds.tests.factories import LabSubmissionFactory
 from hypha.apply.home.factories import ApplySiteFactory
@@ -1439,7 +1438,7 @@ class TestSkipReport(BaseViewTestCase):
         self.assertTrue(report.skipped)
 
 
-class TestStaffProjectPDFExport(BaseViewTestCase):
+class TestStaffProjectDetailDownloadView(BaseViewTestCase):
     base_view_name = 'download'
     url_name = 'funds:projects:{}'
     user_factory = StaffFactory
@@ -1447,21 +1446,30 @@ class TestStaffProjectPDFExport(BaseViewTestCase):
     def get_kwargs(self, instance):
         return {
             'pk': instance.pk,
-            'export_type': 'pdf',
         }
 
-    def test_can_access(self):
+    def test_can_access_pdf(self):
         project = ProjectFactory()
-        response = self.get_page(project)
+        response = self.get_page(project, url_kwargs={'export_type': 'pdf'})
         self.assertEqual(response.status_code, 200)
 
-    def test_reponse_object_is_pdf(self):
+    def test_can_access_docx(self):
         project = ProjectFactory()
-        response = self.get_page(project)
+        response = self.get_page(project, url_kwargs={'export_type': 'docx'})
+        self.assertEqual(response.status_code, 200)
+
+    def test_response_object_is_pdf(self):
+        project = ProjectFactory()
+        response = self.get_page(project, url_kwargs={'export_type': 'pdf'})
         self.assertIn('.pdf', response.headers['content-disposition'].split('filename=')[1])
 
+    def test_response_object_is_docx(self):
+        project = ProjectFactory()
+        response = self.get_page(project, url_kwargs={'export_type': 'docx'})
+        self.assertIn('.docx', response.headers['content-disposition'].split('filename=')[1])
 
-class ApplicantStaffProjectPDFExport(BaseViewTestCase):
+
+class ApplicantStaffProjectDetailDownloadView(BaseViewTestCase):
     base_view_name = 'download'
     url_name = 'funds:projects:{}'
     user_factory = ApplicantFactory
@@ -1471,7 +1479,12 @@ class ApplicantStaffProjectPDFExport(BaseViewTestCase):
             'pk': instance.pk,
         }
 
-    def test_cant_access(self):
+    def test_cant_access_pdf(self):
         project = ProjectFactory()
-        response = self.get_page(project)
+        response = self.get_page(project, url_kwargs={'export_type': 'pdf'})
+        self.assertEqual(response.status_code, 403)
+
+    def test_cant_access_docx(self):
+        project = ProjectFactory()
+        response = self.get_page(project, url_kwargs={'export_type': 'docx'})
         self.assertEqual(response.status_code, 403)
