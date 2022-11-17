@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.urls import include, path, reverse_lazy
-from two_factor.urls import urlpatterns as tf_urls
 from django.views.generic import RedirectView
+from two_factor.urls import urlpatterns as tf_urls
 
 from hypha.urls import base_urlpatterns
 
