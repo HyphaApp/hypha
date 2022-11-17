@@ -1,0 +1,113 @@
+
+name: Hypha CI
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+      - test
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+  lint-fe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'npm'
+      - name: install node dependencies
+        run: npm install --quiet
+      - name: run scss and js linting
+        run: npm run lint
+
+  test-fe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'npm'
+      - name: install node dependencies
+        run: npm install --quiet
+      - name: tun functional unit test cases [REACT.JS]
+        run: npm run test:ci
+
+  lint-be:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+          cache-dependency-path: '**/requirements*.txt'
+      - name: install python dependencies
+        run: |
+          python3 -m venv venv
+          . venv/bin/activate
+          pip install --upgrade pip
+          pip install wheel
+          pip install -r requirements-dev.txt
+      - name: run python linting
+        run: |
+          . venv/bin/activate
+          make lint
+
+  test-be:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql://hypha:hypha@localhost/hypha?sslmode=disable
+      DJANGO_SETTINGS_MODULE: hypha.settings.test
+      SEND_MESSAGES: false
+    services:
+      postgres:
+        image: postgres:12-alpine
+        env:
+          POSTGRES_USER: hypha
+          POSTGRES_PASSWORD: hypha
+          POSTGRES_DB: hypha
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    strategy:
+      matrix:
+        group: [1, 2, 3]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+          cache-dependency-path: '**/requirements*.txt'
+      - uses: codecov/codecov-action@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'npm'
+      - name: install node dependencies
+        run: npm install --quiet
+      - name: builds static assets
+        run: npm run build
+      - name: install python dependencies
+        run: |
+          python3 -m venv venv
+          . venv/bin/activate
+          pip install --upgrade pip
+          pip install wheel
+          pip install -r requirements-dev.txt
+      - name: run python tests
+        run: |
+          . venv/bin/activate
+          python manage.py check
+          python manage.py makemigrations --check --noinput --verbosity=1
+          python manage.py collectstatic --noinput --no-post-process --verbosity=1
+          pytest --cov --cov-report term:skip-covered --splits 3 --group ${{ matrix.group }}
