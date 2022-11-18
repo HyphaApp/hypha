@@ -1,3 +1,5 @@
+// stylelint-disable property-no-vendor-prefix, selector-id-pattern, selector-max-id
+
 .two-factor {
     position: relative;
 
@@ -23,7 +25,7 @@ label[for='id_generator-token'] {
 }
 
 #list-backup-tokens {
-    border: #ccc;
+    border: $color--mid-grey;
     padding: 1em;
     line-height: 1.4em;
     font-size: larger;
@@ -41,10 +43,8 @@ label[for='id_generator-token'] {
 }
 
 // 2FA token field.
-// stylelint-disable property-no-vendor-prefix, selector-id-pattern, selector-max-id
 #id_generator-token {
     -moz-appearance: textfield;
-    // border: 3px solid $color--dark-blue;
     line-height: 1.5;
     width: 8ch;
     padding: 3px;
@@ -55,4 +55,3 @@ label[for='id_generator-token'] {
         margin: 0;
     }
 }
-// stylelint-enable
