@@ -24,7 +24,7 @@
 
 ### Technology
 
-- Built with [Django](https://www.djangoproject.com/), [Wagtail](https://wagtail.io/), and [React](https://reactjs.org/)
+- Built with [Django](https://www.djangoproject.com/) and [Wagtail](https://wagtail.io/).
 - Deploy with [Heroku](https://docs.hypha.app/deployment/heroku), [Docker](https://docs.hypha.app/deployment/docker), or [your own server](https://docs.hypha.app/deployment/stand-alone).
 
 ### Hypha Community

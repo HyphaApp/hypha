@@ -25,9 +25,6 @@ CURRENCY_SYMBOL = env.str('CURRENCY_SYMBOL', '$')
 # Default page pagination value.
 DEFAULT_PER_PAGE = 20
 
-# Webpack bundle loader. When set to False, the React app part of Hypha is disabled.
-ENABLE_WEBPACK_BUNDLES = env.bool('ENABLE_WEBPACK_BUNDLES', True)
-
 # IF Hypha should enforce 2FA for all users.
 ENFORCE_TWO_FACTOR = env.bool('ENFORCE_TWO_FACTOR', False)
 
