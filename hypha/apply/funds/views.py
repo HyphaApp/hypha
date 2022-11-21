@@ -75,6 +75,7 @@ from .forms import (
     UpdatePartnersForm,
     UpdateReviewersForm,
     UpdateSubmissionLeadForm,
+    UnarchiveSubmissionForm,
 )
 from .models import (
     ApplicationRevision,
@@ -675,6 +676,28 @@ class ScreeningSubmissionView(DelegatedViewMixin, UpdateView):
 
 
 @method_decorator(staff_required, name='dispatch')
+class UnarchiveSubmissionView(DelegatedViewMixin, UpdateView):
+    model = ApplicationSubmission
+    form_class = UnarchiveSubmissionForm
+    context_name = 'unarchive_form'
+
+    def form_valid(self, form):
+        old = copy(self.get_object())
+        response = super().form_valid(form)
+        # Record activity
+        # messenger(
+        #     MESSAGES.UNARCHIVE_SUBSMISSION,
+        #     request=self.request,
+        #     user=self.request.user,
+        #     source=self.object
+        # )
+        return response
+
+    def get_success_url(self):
+        return self.object.get_absolute_url()
+
+
+@method_decorator(staff_required, name='dispatch')
 class UpdateLeadView(DelegatedViewMixin, UpdateView):
     model = ApplicationSubmission
     form_class = UpdateSubmissionLeadForm
@@ -822,6 +845,7 @@ class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Delega
         UpdatePartnersView,
         CreateProjectView,
         UpdateMetaTermsView,
+        UnarchiveSubmissionView,
     ]
 
     def dispatch(self, request, *args, **kwargs):

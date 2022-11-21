@@ -144,6 +144,22 @@ class UpdateSubmissionLeadForm(ApplicationSubmissionModelForm):
         lead_field.queryset = lead_field.queryset.exclude(id=self.instance.lead.id)
 
 
+class UnarchiveSubmissionForm(ApplicationSubmissionModelForm):
+    unarchive = forms.BooleanField(required=False, widget=forms.HiddenInput())
+
+    class Meta:
+        model = ApplicationSubmission
+        fields = ('unarchive',)
+
+    def __init__(self, *args, **kwargs):
+        kwargs.pop('user')
+        super().__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        self.instance.is_archive = False
+        return super(UnarchiveSubmissionForm, self).save()
+
+
 class BatchUpdateSubmissionLeadForm(forms.Form):
     lead = forms.ChoiceField(label=_('Lead'))
     submissions = forms.CharField(widget=forms.HiddenInput(attrs={'class': 'js-submissions-id'}))
