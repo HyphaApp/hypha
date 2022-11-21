@@ -5,7 +5,7 @@
   <div class="listing listing--not-a-link">
       <div>
           <h4 class="listing__title listing__title--link">
-              {% if page.next_deadline %}
+              {% if page.next_deadline and page.show_deadline %}
                   <p class="listing__deadline">
                       <svg class="icon icon--calendar icon--small"><use xlink:href="#calendar"></use></svg>
                       <span>{% trans "Next deadline" %}: {{ page.next_deadline|date:"M j, Y" }}</span>

@@ -24,7 +24,7 @@
                     {% if subpage.can_open %}
                         <p class="listing__deadline">
                             {% if subpage.is_open %}
-                                {% if subpage.deadline %}
+                                {% if subpage.deadline and False %}
                                     <svg class="icon icon--calendar icon--small"><use xlink:href="#calendar"></use></svg>
                                     <span>Next deadline: {{ subpage.deadline|date:"M j, Y" }}</span>
                                 {% else %}
