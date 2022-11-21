@@ -257,10 +257,6 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
 
         submission = ApplicationSubmissionFactory(status='determination')
 
-        # Phase: ready-for-determination, no determination
-        # "Add determination" should be displayed
-        assert_add_determination_displayed(submission, 'Add determination')
-
         # Phase: ready-for-determination, draft determination
         # "Complete draft determination" should be displayed
         DeterminationFactory(submission=submission, author=self.user, accepted=True, submitted=False)
@@ -277,16 +273,12 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         submission = ApplicationSubmissionFactory()
 
         # Phase: received / in_discussion
-        # "Add determination" should not be displayed
         # "Complete draft determination" should not be displayed
-        assert_add_determination_not_displayed(submission, 'Add determination')
         assert_add_determination_not_displayed(submission, 'Complete draft determination')
 
         # Phase: accepted
-        # "Add determination" should not be displayed
         # "Complete draft determination" should not be displayed
         submission.perform_transition('accepted', self.user)
-        assert_add_determination_not_displayed(submission, 'Add determination')
         assert_add_determination_not_displayed(submission, 'Complete draft determination')
 
     def test_screen_application_primary_action_is_displayed(self):
@@ -647,16 +639,12 @@ class TestReviewerSubmissionView(BaseSubmissionViewTestCase):
         submission = ApplicationSubmissionFactory(status='determination', user=self.applicant, reviewers=[self.user])
 
         # Phase: ready-for-determination, no determination
-        # "Add determination" should not be displayed
         # "Complete draft determination" should not be displayed
-        assert_add_determination_not_displayed(submission, 'Add determination')
         assert_add_determination_not_displayed(submission, 'Complete draft determination')
 
         # Phase: ready-for-determination, draft determination
-        # "Add determination" should not be displayed
         # "Complete draft determination" should not be displayed
         DeterminationFactory(submission=submission, accepted=True, submitted=False)
-        assert_add_determination_not_displayed(submission, 'Add determination')
         assert_add_determination_not_displayed(submission, 'Complete draft determination')
 
     def test_can_see_create_review_primary_action(self):
@@ -960,16 +948,12 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
         submission = ApplicationSubmissionFactory(status='determination', user=self.user)
 
         # Phase: ready-for-determination, no determination
-        # "Add determination" should not be displayed
         # "Complete draft determination" should not be displayed
-        assert_add_determination_not_displayed(submission, 'Add determination')
         assert_add_determination_not_displayed(submission, 'Complete draft determination')
 
         # Phase: ready-for-determination, draft determination
-        # "Add determination" should not be displayed
         # "Complete draft determination" should not be displayed
         DeterminationFactory(submission=submission, accepted=True, submitted=False)
-        assert_add_determination_not_displayed(submission, 'Add determination')
         assert_add_determination_not_displayed(submission, 'Complete draft determination')
 
     def test_cant_see_create_review_primary_action(self):
