@@ -485,8 +485,8 @@ class SubmissionOverviewView(BaseAdminSubmissionsTable):
         }
 
 
-class SubmissionAdminActiveListView(BaseAdminSubmissionsTable, DelegateableListView):
-    template_name = 'funds/submissions_active.html'
+class SubmissionAdminListView(BaseAdminSubmissionsTable, DelegateableListView):
+    template_name = 'funds/submissions.html'
     form_views = [
         BatchUpdateLeadView,
         BatchUpdateReviewersView,
@@ -522,16 +522,6 @@ class SubmissionAdminActiveListView(BaseAdminSubmissionsTable, DelegateableListV
         )
 
 
-class SubmissionAdminListView(SubmissionAdminActiveListView):
-
-    def get_queryset(self):
-        submissions = self.filterset_class._meta.model.objects.include_archive().for_table(self.request.user)
-        if settings.SUBMISSIONS_DRAFT_ACCESS_STAFF:
-            return submissions
-        else:
-            return submissions.exclude_draft()
-
-
 @method_decorator(staff_required, name='dispatch')
 class GroupingApplicationsListView(TemplateView):
     '''
@@ -547,10 +537,6 @@ class SubmissionReviewerListView(BaseReviewerSubmissionsTable):
 class SubmissionListView(ViewDispatcher):
     admin_view = SubmissionAdminListView
     reviewer_view = SubmissionReviewerListView
-
-
-class SubmissionActiveListView(ViewDispatcher):
-    admin_view = SubmissionAdminActiveListView
 
 
 @method_decorator(staff_required, name='dispatch')
