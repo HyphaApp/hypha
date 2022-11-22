@@ -8,6 +8,7 @@
     &--button {
         @include button($color--light-blue, $color--darkest-blue);
         display: inline-block;
+        line-height: 1;
 
         &--narrow {
             @include button--narrow;
@@ -76,6 +77,14 @@
         }
     }
 
+    &--button-narrow {
+        @include button--narrow;
+    }
+
+    &--button-wide {
+        @include button--wide;
+    }
+
     &--underlined {
         text-decoration: underline;
     }
@@ -117,7 +126,7 @@
     }
 
     &--small {
-        font-size: 17px;
+        font-size: map-get($font-sizes, zeta);
     }
 
     &--arrow-pixels-blue {

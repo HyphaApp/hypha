@@ -25,6 +25,8 @@
     }
 
     &--user-login {
+        padding-bottom: 3em;
+
         ul {
             @extend %ul-straight-left;
             margin-bottom: 20px;
@@ -541,5 +543,9 @@
 
     .multi-input-field-hidden {
         display: none;
+    }
+
+    .password-reset {
+        margin-top: -1em;
     }
 }

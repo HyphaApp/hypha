@@ -19,4 +19,5 @@ def global_vars(request):
         'MATOMO_URL': settings.MATOMO_URL,
         'MATOMO_SITEID': settings.MATOMO_SITEID,
         'CURRENCY_SYMBOL': settings.CURRENCY_SYMBOL,
+        'GOOGLE_OAUTH2': settings.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY,
     }

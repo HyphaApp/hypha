@@ -7,9 +7,7 @@
 
 {% block content %}
   <div class="wrapper wrapper--small">
-    {% if wizard.steps.current == 'auth' %}
-        <p>{% blocktrans %}Enter your credentials.{% endblocktrans %}</p>
-    {% elif wizard.steps.current == 'token' %}
+    {% if wizard.steps.current == 'token' %}
         {% if device.method == 'call' %}
             <p>{% blocktrans trimmed %}We are calling your phone right now, please enter the
                 digits you hear.{% endblocktrans %}</p>
@@ -31,12 +29,12 @@
       {% if wizard.steps.current == 'auth' %}
         {% for field in form %}
             {% include "forms/includes/field.html" %}
+            {% if field.name == 'password' and not is_public_site %}
+                <div class="password-reset"><a class="link" href="{% url 'users:password_reset' %}">{% trans "Forgot your password?" %}</a></div>
+            {% endif %}
         {% endfor %}
         {{ form.extra_text|richtext }}
-        {% if not is_public_site %}
-            <p><a class="link link--small" href="{% url 'users:password_reset' %}">{% trans "Forgot your password?" %}</a></p>
-        {% endif %}
-        <button class="link link--button-secondary" type="submit">{% trans "Login" %}</button>
+        <button class="link link--button link--button-wide link--button-secondary" type="submit">{% trans "Login" %}</button>
       {% else %}
         {{ wizard.form }}
 
@@ -66,9 +64,9 @@
       {% endif %}
     </form>
 
-    {% if wizard.steps.current == 'auth' %}
-        <div class="wrapper wrapper--inner-space-large">
-          <a class="link link--button link--button-long-text" href="{% url "social:begin" "google-oauth2" %}{% if next %}?next={{ next }}{% endif %}">{% blocktrans %}Log in with your {{ ORG_SHORT_NAME }} email{% endblocktrans %}</a>
+    {% if wizard.steps.current == 'auth' and GOOGLE_OAUTH2 %}
+        <div class="wrapper wrapper--bottom-space">
+          <a class="link link--button link--button-tertiary" href="{% url "social:begin" "google-oauth2" %}{% if next %}?next={{ next }}{% endif %}">{% blocktrans %}Log in with your {{ ORG_SHORT_NAME }} email{% endblocktrans %}</a>
         </div>
     {% endif %}
     <script>
