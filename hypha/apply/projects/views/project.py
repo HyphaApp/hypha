@@ -1,5 +1,6 @@
+import datetime
+import io
 from copy import copy
-from datetime import datetime
 
 from django.conf import settings
 from django.contrib import messages
@@ -16,6 +17,7 @@ from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
+from django.utils.text import slugify
 from django.utils.translation import gettext as _
 from django.views import View
 from django.views.generic import (
@@ -28,6 +30,8 @@ from django.views.generic import (
 from django.views.generic.detail import SingleObjectMixin
 from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
+from docx import Document
+from htmldocx import HtmlToDocx
 from xhtml2pdf import pisa
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
@@ -670,52 +674,88 @@ class ProjectDetailSimplifiedView(DelegateableView, DetailView):
 
 
 @method_decorator(staff_or_finance_or_contracting_required, name='dispatch')
-class ProjectDetailPDFView(SingleObjectMixin, View):
+class ProjectDetailDownloadView(SingleObjectMixin, View):
     model = Project
 
     def get(self, request, *args, **kwargs):
+        export_type = kwargs.get('export_type', None)
         self.object = self.get_object()
-        pdf_page_settings = PDFPageSettings.for_request(request)
-
-        project = self.get_object()
-
-        context = {}
-        context['id'] = project.id
-        context['title'] = project.title
-        context['project_link'] = self.request.build_absolute_uri(
-            reverse('apply:projects:detail', kwargs={'pk': project.id})
-        )
-        context['proposed_start_date'] = project.proposed_start
-        context['proposed_end_date'] = project.proposed_end
-        context['contractor_name'] = project.vendor.contractor_name if project.vendor else None
-        context['total_amount'] = project.value
-
-        context['approvers'] = project.paf_reviews_meta_data
-        context['paf_data'] = self.get_paf_data_with_field(project)
-        context['submission'] = project.submission
-        context['submission_link'] = self.request.build_absolute_uri(
-            reverse('apply:submissions:detail', kwargs={'pk': project.submission.id})
-        )
-        context['supporting_documents'] = self.get_supporting_documents(project)
-
-        context['org_name'] = settings.ORG_LONG_NAME
-        context['export_date'] = datetime.now().date()
-        context['export_user'] = self.request.user
-
-        context['pagesize'] = pdf_page_settings.download_page_size
-
+        context = self.get_paf_download_context()
         template_path = 'application_projects/paf_export.html'
-        template = get_template(template_path)
+
+        if export_type == 'pdf':
+            pdf_page_settings = PDFPageSettings.for_request(request)
+
+            context['show_footer'] = True
+            context['export_date'] = datetime.date.today().strftime("%b %d, %Y")
+            context['export_user'] = request.user
+            context['pagesize'] = pdf_page_settings.download_page_size
+
+            return self.render_as_pdf(
+                context=context,
+                template=get_template(template_path),
+                filename=self.get_slugified_file_name(export_type)
+            )
+        elif export_type == 'docx':
+            context['show_footer'] = False
+
+            return self.render_as_docx(
+                context=context,
+                template=get_template(template_path),
+                filename=self.get_slugified_file_name(export_type)
+            )
+        else:
+            raise Http404(f"{export_type} type not supported at the moment")
+
+    def render_as_pdf(self, context, template, filename):
         html = template.render(context)
         response = HttpResponse(content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; filename="{project.title}.pdf"'
+        response['Content-Disposition'] = f'attachment; filename={filename}'
 
         pisa_status = pisa.CreatePDF(
             html, dest=response, encoding='utf-8', raise_exception=True)
         if pisa_status.err:
             # :todo: needs to handle it in a better way
-            raise
+            raise Http404('PDF type not supported at the moment')
         return response
+
+    def render_as_docx(self, context, template, filename):
+        html = template.render(context)
+
+        buf = io.BytesIO()
+        document = Document()
+        new_parser = HtmlToDocx()
+        new_parser.add_html_to_document(html, document)
+        document.save(buf)
+
+        response = HttpResponse(buf.getvalue(), content_type='application/docx')
+        response['Content-Disposition'] = f'attachment; filename={filename}'
+        return response
+
+    def get_slugified_file_name(self, export_type):
+        return f"{datetime.date.today().strftime('%Y%m%d')}-{slugify(self.object.title)}.{export_type}"
+
+    def get_paf_download_context(self):
+        context = dict()
+        context['id'] = self.object.id
+        context['title'] = self.object.title
+        context['project_link'] = self.request.build_absolute_uri(
+            reverse('apply:projects:detail', kwargs={'pk': self.object.id})
+        )
+        context['proposed_start_date'] = self.object.proposed_start
+        context['proposed_end_date'] = self.object.proposed_end
+        context['contractor_name'] = self.object.vendor.contractor_name if self.object.vendor else None
+        context['total_amount'] = self.object.value
+
+        context['approvers'] = self.object.paf_reviews_meta_data
+        context['paf_data'] = self.get_paf_data_with_field(self.object)
+        context['submission'] = self.object.submission
+        context['submission_link'] = self.request.build_absolute_uri(
+            reverse('apply:submissions:detail', kwargs={'pk': self.object.submission.id})
+        )
+        context['supporting_documents'] = self.get_supporting_documents(self.object)
+        context['org_name'] = settings.ORG_LONG_NAME
+        return context
 
     def get_paf_data_with_field(self, project):
         data_dict = {}
