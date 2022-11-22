@@ -1,13 +1,16 @@
 from copy import copy
+from datetime import datetime
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models import Count
-from django.http import FileResponse, Http404
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
+from django.template.loader import get_template
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -25,6 +28,7 @@ from django.views.generic import (
 from django.views.generic.detail import SingleObjectMixin
 from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
+from xhtml2pdf import pisa
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import ACTION, ALL, COMMENT, Activity
@@ -37,11 +41,6 @@ from hypha.apply.users.decorators import (
     staff_required,
 )
 from hypha.apply.utils.models import PDFPageSettings
-from hypha.apply.utils.pdfs import (
-    draw_project_content,
-    draw_submission_content,
-    make_pdf,
-)
 from hypha.apply.utils.storage import PrivateMediaView
 from hypha.apply.utils.views import DelegateableView, DelegatedViewMixin, ViewDispatcher
 
@@ -677,45 +676,64 @@ class ProjectDetailPDFView(SingleObjectMixin, View):
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
         pdf_page_settings = PDFPageSettings.for_request(request)
-        response = ProjectDetailSimplifiedView.as_view()(
-            request=self.request,
-            pk=self.object.pk,
+
+        project = self.get_object()
+
+        context = {}
+        context['id'] = project.id
+        context['title'] = project.title
+        context['project_link'] = self.request.build_absolute_uri(
+            reverse('apply:projects:detail', kwargs={'pk': project.id})
         )
-        project = draw_project_content(
-            response.render().content
+        context['proposed_start_date'] = project.proposed_start
+        context['proposed_end_date'] = project.proposed_end
+        context['contractor_name'] = project.vendor.contractor_name if project.vendor else None
+        context['total_amount'] = project.value
+
+        context['approvers'] = project.paf_reviews_meta_data
+        context['paf_data'] = self.get_paf_data_with_field(project)
+        context['submission'] = project.submission
+        context['submission_link'] = self.request.build_absolute_uri(
+            reverse('apply:submissions:detail', kwargs={'pk': project.submission.id})
         )
-        submission = draw_submission_content(
-            self.object.submission.output_text_answers()
-        )
-        pdf = make_pdf(
-            title=self.object.title,
-            sections=[
-                {
-                    'content': project,
-                    'title': 'Project Approval Form',
-                    'meta': [
-                        self.object.submission.page,
-                        self.object.submission.round,
-                        f"Lead: { self.object.lead }",
-                    ],
-                }, {
-                    'content': submission,
-                    'title': 'Submission',
-                    'meta': [
-                        self.object.submission.stage,
-                        self.object.submission.page,
-                        self.object.submission.round,
-                        f"Lead: { self.object.submission.lead }",
-                    ],
-                },
-            ],
-            pagesize=pdf_page_settings.download_page_size,
-        )
-        return FileResponse(
-            pdf,
-            as_attachment=True,
-            filename=self.object.title + '.pdf',
-        )
+        context['supporting_documents'] = self.get_supporting_documents(project)
+
+        context['org_name'] = settings.ORG_LONG_NAME
+        context['export_date'] = datetime.now().date()
+        context['export_user'] = self.request.user
+
+        context['pagesize'] = pdf_page_settings.download_page_size
+
+        template_path = 'application_projects/paf_export.html'
+        template = get_template(template_path)
+        html = template.render(context)
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="{project.title}.pdf"'
+
+        pisa_status = pisa.CreatePDF(
+            html, dest=response, encoding='utf-8', raise_exception=True)
+        if pisa_status.err:
+            # :todo: needs to handle it in a better way
+            raise
+        return response
+
+    def get_paf_data_with_field(self, project):
+        data_dict = {}
+        form_data_dict = project.form_data
+        for field in project.form_fields.raw_data:
+            if field['id'] in form_data_dict.keys():
+                if isinstance(field['value'], dict) and 'field_label' in field['value']:
+                    data_dict[field['value']['field_label']] = form_data_dict[field['id']]
+
+        return data_dict
+
+    def get_supporting_documents(self, project):
+        documents_dict = {}
+        for packet_file in project.packet_files.all():
+            documents_dict[packet_file.title] = self.request.build_absolute_uri(
+                reverse('apply:projects:document', kwargs={'pk': project.id, 'file_pk': packet_file.id})
+            )
+        return documents_dict
 
 
 @method_decorator(staff_or_finance_or_contracting_required, name='dispatch')

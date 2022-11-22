@@ -1456,7 +1456,7 @@ class TestStaffProjectPDFExport(BaseViewTestCase):
     def test_reponse_object_is_pdf(self):
         project = ProjectFactory()
         response = self.get_page(project)
-        self.assertEqual(response.filename, project.title + '.pdf')
+        self.assertEqual(response.headers['content-disposition'].split('filename=')[1].strip('"'), project.title + '.pdf')
 
 
 class ApplicantStaffProjectPDFExport(BaseViewTestCase):
