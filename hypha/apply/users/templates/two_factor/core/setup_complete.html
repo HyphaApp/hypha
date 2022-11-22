@@ -2,6 +2,9 @@
 {% load i18n %}
 
 {% block content %}
+  <p><a href="{% url 'users:account' %}" class="link link--bold">{% trans "Back to Account" %}</a></p>
+
+
   <h1>{% block title %}{% trans "Two-Factor Authentication(2FA)" %}{% endblock %}</h1>
 
   <p>{% blocktrans trimmed %}Congratulations, you've successfully enabled two-factor
@@ -11,7 +14,6 @@
 
   {% if not phone_methods %}
         <a href="{% url 'users:backup_tokens_password' %}" class="btn btn-link">{% trans "Show Codes" %}</a>
-        <a href="{% url 'users:account' %}" class="link link--bold link--left-space">{% trans "Back to Account" %}</a>
   {% else %}
     <p>{% blocktrans trimmed %}However, it might happen that you don't have access to
       your primary token device. To enable account recovery, add a phone

@@ -18,6 +18,7 @@
 
     &--main {
         padding: 0 20px;
+        min-height: calc(100vh - 410px - 160px);
     }
 
     &--admin {
@@ -257,4 +258,8 @@
         padding: 40px 20px;
         z-index: 10;
     }
+}
+
+.header--light-bg ~ .wrapper--main {
+    min-height: calc(100vh - 260px - 160px);
 }

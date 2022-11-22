@@ -1,5 +1,6 @@
 from django.conf import settings
-from django.urls import include, path
+from django.urls import include, path, reverse_lazy
+from django.views.generic import RedirectView
 from two_factor.urls import urlpatterns as tf_urls
 
 from hypha.urls import base_urlpatterns
@@ -16,6 +17,15 @@ urlpatterns = [
     path('api/', include(api_urls)),
     path('dashboard/', include(dashboard_urls)),
     path('hijack/', include('hijack.urls', 'hijack')),
+    # this must be above two factor include, this skip displaying the success
+    # page and advances user to download backup code page.
+    path(
+        'account/two_factor/setup/complete/',
+        RedirectView.as_view(
+            url=reverse_lazy('users:backup_tokens_password'), permanent=False
+        ),
+        name='two_factor:setup_complete',
+    ),
     path('', include(tf_urls, 'two_factor')),
 ]
 
