@@ -26,7 +26,7 @@ module.exports = (webpackEnv) => {
         },
 
         output: {
-            filename: '[name]-[hash].js'
+            filename: '[name]-[fullhash].js'
         },
 
         plugins: [
