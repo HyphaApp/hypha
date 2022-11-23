@@ -10,6 +10,11 @@
     }
 </ul>
 {% endif %}
+{% if object.is_archive %}
+<div class="banner banner__archived">
+    {% trans "This submission is archived." %}
+</div>
+{% endif %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
         <h1 class="beta heading heading--no-margin heading--bold">{{ object.title }}</h1>
