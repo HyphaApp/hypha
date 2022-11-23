@@ -3,7 +3,7 @@
 <div class="wrapper wrapper--breakout wrapper--light-grey-bg wrapper--apply-bar{% if class %} {{class}} {% endif %}">
     <div class="wrapper wrapper--small apply-bar">
         {% if page.is_open %}
-            {% if page.deadline %}
+            {% if page.deadline and False %}
               <div>
                 <h5 class="apply-bar__subheading">{% trans "Next deadline" %}</h5>
                 <h3 class="apply-bar__heading">

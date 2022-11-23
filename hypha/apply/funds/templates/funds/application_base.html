@@ -22,7 +22,7 @@
 {% endif %}
 
 <div class="wrapper wrapper--medium wrapper--light-grey-bg wrapper--form">
-    {% if page.end_date %}
+    {% if page.end_date and page.get_parent.specific.show_deadline %}
         <p class="listing__deadline">
             <svg class="icon icon--calendar icon--small"><use xlink:href="#calendar"></use></svg>
             <span>{% trans "Next deadline" %}: {{ page.end_date }}</span>

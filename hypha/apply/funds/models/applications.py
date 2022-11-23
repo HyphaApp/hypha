@@ -78,6 +78,8 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
 
     slack_channel = models.CharField(blank=True, max_length=128, help_text=_('The slack #channel for notifications. If left empty, notifications will go to the default channel.'))
 
+    show_deadline = models.BooleanField(default=True, help_text=_('Should the deadline date be visible for users.'))
+
     objects = PageManager.from_queryset(ApplicationBaseManager)()
 
     parent_page_types = ['apply_home.ApplyHomePage']
@@ -114,6 +116,7 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
         FieldPanel('reviewers', widget=forms.SelectMultiple(attrs={'size': '16'})),
         FieldPanel('guide_link'),
         FieldPanel('slack_channel'),
+        FieldPanel('show_deadline'),
     ]
 
     edit_handler = TabbedInterface([
