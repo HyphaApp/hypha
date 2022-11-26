@@ -71,11 +71,11 @@ from .forms import (
     CreateReminderForm,
     ProgressSubmissionForm,
     ScreeningSubmissionForm,
+    UnarchiveSubmissionForm,
     UpdateMetaTermsForm,
     UpdatePartnersForm,
     UpdateReviewersForm,
     UpdateSubmissionLeadForm,
-    UnarchiveSubmissionForm,
 )
 from .models import (
     ApplicationRevision,
@@ -89,6 +89,7 @@ from .models import (
     RoundsAndLabs,
 )
 from .permissions import (
+    has_permission,
     is_user_has_access_to_view_archived_submissions,
     is_user_has_access_to_view_submission,
 )
@@ -634,6 +635,14 @@ class ProgressSubmissionView(DelegatedViewMixin, UpdateView):
     form_class = ProgressSubmissionForm
     context_name = 'progress_form'
 
+    def dispatch(self, request, *args, **kwargs):
+        submission = self.get_object()
+        permission, reason = has_permission('submission_edit', request.user, object=submission, raise_exception=False)
+        if not permission:
+            messages.warning(self.request, reason)
+            return HttpResponseRedirect(submission.get_absolute_url())
+        return super(ProgressSubmissionView, self).dispatch(request, *args, **kwargs)
+
     def form_valid(self, form):
         action = form.cleaned_data.get('action')
         # Defer to the determination form for any of the determination transitions
@@ -651,6 +660,14 @@ class CreateProjectView(DelegatedViewMixin, CreateView):
     form_class = CreateProjectForm
     model = Project
 
+    def dispatch(self, request, *args, **kwargs):
+        submission = self.get_object()
+        permission, reason = has_permission('submission_edit', request.user, object=submission, raise_exception=False)
+        if not permission:
+            messages.warning(self.request, reason)
+            return HttpResponseRedirect(submission.get_absolute_url())
+        return super(CreateProjectView, self).dispatch(request, *args, **kwargs)
+
     def get_success_url(self):
         return self.object.get_absolute_url()
 
@@ -660,6 +677,14 @@ class ScreeningSubmissionView(DelegatedViewMixin, UpdateView):
     model = ApplicationSubmission
     form_class = ScreeningSubmissionForm
     context_name = 'screening_form'
+
+    def dispatch(self, request, *args, **kwargs):
+        submission = self.get_object()
+        permission, reason = has_permission('submission_edit', request.user, object=submission, raise_exception=False)
+        if not permission:
+            messages.warning(self.request, reason)
+            return HttpResponseRedirect(submission.get_absolute_url())
+        return super(ScreeningSubmissionView, self).dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         old = copy(self.get_object())
@@ -682,7 +707,6 @@ class UnarchiveSubmissionView(DelegatedViewMixin, UpdateView):
     context_name = 'unarchive_form'
 
     def form_valid(self, form):
-        old = copy(self.get_object())
         response = super().form_valid(form)
         # Record activity
         # messenger(
@@ -703,6 +727,14 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
     form_class = UpdateSubmissionLeadForm
     context_name = 'lead_form'
 
+    def dispatch(self, request, *args, **kwargs):
+        submission = self.get_object()
+        permission, reason = has_permission('submission_edit', request.user, object=submission, raise_exception=False)
+        if not permission:
+            messages.warning(self.request, reason)
+            return HttpResponseRedirect(submission.get_absolute_url())
+        return super(UpdateLeadView, self).dispatch(request, *args, **kwargs)
+
     def form_valid(self, form):
         # Fetch the old lead from the database
         old = copy(self.get_object())
@@ -722,6 +754,14 @@ class UpdateReviewersView(UpdateReviewersMixin, DelegatedViewMixin, UpdateView):
     model = ApplicationSubmission
     form_class = UpdateReviewersForm
     context_name = 'reviewer_form'
+
+    def dispatch(self, request, *args, **kwargs):
+        submission = self.get_object()
+        permission, reason = has_permission('submission_edit', request.user, object=submission, raise_exception=False)
+        if not permission:
+            messages.warning(self.request, reason)
+            return HttpResponseRedirect(submission.get_absolute_url())
+        return super(UpdateReviewersView, self).dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         old_reviewers = {
@@ -754,6 +794,14 @@ class UpdatePartnersView(DelegatedViewMixin, UpdateView):
     model = ApplicationSubmission
     form_class = UpdatePartnersForm
     context_name = 'partner_form'
+
+    def dispatch(self, request, *args, **kwargs):
+        submission = self.get_object()
+        permission, reason = has_permission('submission_edit', request.user, object=submission, raise_exception=False)
+        if not permission:
+            messages.warning(self.request, reason)
+            return HttpResponseRedirect(submission.get_absolute_url())
+        return super(UpdatePartnersView, self).dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         old_partners = set(self.get_object().partners.all())
@@ -790,12 +838,28 @@ class UpdateMetaTermsView(DelegatedViewMixin, UpdateView):
     form_class = UpdateMetaTermsForm
     context_name = 'meta_terms_form'
 
+    def dispatch(self, request, *args, **kwargs):
+        submission = self.get_object()
+        permission, reason = has_permission('submission_edit', request.user, object=submission, raise_exception=False)
+        if not permission:
+            messages.warning(self.request, reason)
+            return HttpResponseRedirect(submission.get_absolute_url())
+        return super(UpdateMetaTermsView, self).dispatch(request, *args, **kwargs)
+
 
 @method_decorator(staff_required, name='dispatch')
 class ReminderCreateView(DelegatedViewMixin, CreateView):
     context_name = 'reminder_form'
     form_class = CreateReminderForm
     model = Reminder
+
+    def dispatch(self, request, *args, **kwargs):
+        submission = self.get_object()
+        permission, reason = has_permission('submission_edit', request.user, object=submission, raise_exception=False)
+        if not permission:
+            messages.warning(self.request, reason)
+            return HttpResponseRedirect(submission.get_absolute_url())
+        return super(ReminderCreateView, self).dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -852,6 +916,7 @@ class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Delega
         submission = self.get_object()
         if submission.status == DRAFT_STATE and not submission.can_view_draft(request.user):
             raise Http404
+        permission, _ = has_permission('submission_view', request.user, object=submission, raise_exception=True)
         redirect = SubmissionSealedView.should_redirect(request, submission)
         return redirect or super().dispatch(request, *args, **kwargs)
 
@@ -884,6 +949,8 @@ class ReviewerSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Del
         if submission.status == DRAFT_STATE:
             raise Http404
 
+        permission, _ = has_permission('submission_view', request.user, object=submission, raise_exception=True)
+
         reviewer_settings = ReviewerSettings.for_request(request)
         if reviewer_settings.use_settings:
             queryset = ApplicationSubmission.objects.for_reviewer_settings(
@@ -905,6 +972,7 @@ class PartnerSubmissionDetailView(ActivityContextMixin, DelegateableView, Detail
 
     def dispatch(self, request, *args, **kwargs):
         submission = self.get_object()
+        permission, _ = has_permission('submission_view', request.user, object=submission, raise_exception=True)
         # If the requesting user submitted the application, return the Applicant view.
         # Partners may sometimes be applicants as well.
         if submission.user == request.user:
@@ -925,6 +993,7 @@ class CommunitySubmissionDetailView(ReviewContextMixin, ActivityContextMixin, De
 
     def dispatch(self, request, *args, **kwargs):
         submission = self.get_object()
+        permission, _ = has_permission('submission_view', request.user, object=submission, raise_exception=True)
         # If the requesting user submitted the application, return the Applicant view.
         # Reviewers may sometimes be applicants as well.
         if submission.user == request.user:
@@ -946,6 +1015,7 @@ class ApplicantSubmissionDetailView(ActivityContextMixin, DelegateableView, Deta
 
     def dispatch(self, request, *args, **kwargs):
         submission = self.get_object()
+        permission, _ = has_permission('submission_view', request.user, object=submission, raise_exception=True)
         # This view is only for applicants.
         if submission.user != request.user:
             raise PermissionDenied
@@ -1026,6 +1096,7 @@ class BaseSubmissionEditView(UpdateView):
     model = ApplicationSubmission
 
     def dispatch(self, request, *args, **kwargs):
+        permission, _ = has_permission('submission_edit', request.user, object=self.get_object(), raise_exception=True)
         if not self.get_object().phase.permissions.can_edit(request.user):
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)

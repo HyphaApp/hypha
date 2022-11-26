@@ -1,7 +1,7 @@
 from django import template
 from django.db.models import ObjectDoesNotExist
 
-from ..views import can_create_determination, can_edit_determination
+from ..permissions import can_create_determination, can_edit_determination
 
 register = template.Library()
 

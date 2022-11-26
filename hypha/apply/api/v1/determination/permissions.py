@@ -1,6 +1,6 @@
 from rest_framework import permissions
 
-from hypha.apply.determinations.utils import (
+from hypha.apply.determinations.permissions import (
     can_create_determination,
     can_edit_determination,
 )
