@@ -63,6 +63,7 @@ from hypha.apply.utils.views import (
 from .differ import compare
 from .files import generate_submission_file_path
 from .forms import (
+    ArchiveSubmissionForm,
     BatchArchiveSubmissionForm,
     BatchDeleteSubmissionForm,
     BatchProgressSubmissionForm,
@@ -722,6 +723,28 @@ class UnarchiveSubmissionView(DelegatedViewMixin, UpdateView):
 
 
 @method_decorator(staff_required, name='dispatch')
+class ArchiveSubmissionView(DelegatedViewMixin, UpdateView):
+    model = ApplicationSubmission
+    form_class = ArchiveSubmissionForm
+    context_name = 'archive_form'
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        submission = self.get_object()
+        # Record activity
+        # messenger(
+        #     MESSAGES.ARCHIVE_SUBMISSION,
+        #     request=self.request,
+        #     user=self.request.user,
+        #     source=submission,
+        # )
+        return response
+
+    def get_success_url(self):
+        return self.object.get_absolute_url()
+
+
+@method_decorator(staff_required, name='dispatch')
 class UpdateLeadView(DelegatedViewMixin, UpdateView):
     model = ApplicationSubmission
     form_class = UpdateSubmissionLeadForm
@@ -900,6 +923,7 @@ class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Delega
     template_name_suffix = '_admin_detail'
     model = ApplicationSubmission
     form_views = [
+        ArchiveSubmissionView,
         ProgressSubmissionView,
         ScreeningSubmissionView,
         ReminderCreateView,

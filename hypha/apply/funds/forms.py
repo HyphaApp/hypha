@@ -160,6 +160,22 @@ class UnarchiveSubmissionForm(ApplicationSubmissionModelForm):
         return super(UnarchiveSubmissionForm, self).save()
 
 
+class ArchiveSubmissionForm(ApplicationSubmissionModelForm):
+    archive = forms.BooleanField(required=False, widget=forms.HiddenInput())
+
+    class Meta:
+        model = ApplicationSubmission
+        fields = ('archive',)
+
+    def __init__(self, *args, **kwargs):
+        kwargs.pop('user')
+        super().__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        self.instance.is_archive = True
+        return super(ArchiveSubmissionForm, self).save()
+
+
 class BatchUpdateSubmissionLeadForm(forms.Form):
     lead = forms.ChoiceField(label=_('Lead'))
     submissions = forms.CharField(widget=forms.HiddenInput(attrs={'class': 'js-submissions-id'}))
