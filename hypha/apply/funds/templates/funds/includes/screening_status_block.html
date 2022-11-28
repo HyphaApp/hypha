@@ -1,4 +1,5 @@
-{% load i18n %}
+{% load i18n submission_tags %}
+{% can_screen object as screen_able %}
 <div class="sidebar__inner">
 
     <h5>{% trans "Screening decision" %}</h5>
@@ -33,7 +34,9 @@
                     {% endfor%}
                 </div>
                 {% endif %}
+                {% if screen_able %}
                 <a id="screening-options" data-fancybox="" data-src="#screen-application" data-yes="{% if object.has_yes_default_screening_status_set %}true{% else %}false{% endif %}" class="link link--secondary-change" href="#">{% trans "Screening options" %}</a>
+                {% endif %}
             </p>
         {% endif %}
         {% if not object.supports_default_screening %}

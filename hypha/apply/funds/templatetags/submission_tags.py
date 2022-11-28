@@ -44,3 +44,10 @@ def get_url_param(context, param):
     if captured_value and param in captured_value.keys():
         return captured_value[param][0]
     return None
+
+
+@register.simple_tag
+def can_screen(submission):
+    if submission.is_archive:
+        return False
+    return True

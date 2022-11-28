@@ -10,6 +10,7 @@ from hypha.apply.funds.models import ScreeningStatus
 from ..mixin import SubmissionNestedMixin
 from ..permissions import IsApplyStaffUser
 from .filters import ScreeningStatusFilter
+from .permissions import HasScreenPermission
 from .serializers import (
     ScreeningStatusDefaultSerializer,
     ScreeningStatusListSerializer,
@@ -35,7 +36,7 @@ class SubmissionScreeningStatusViewSet(
     viewsets.GenericViewSet
 ):
     permission_classes = (
-        permissions.IsAuthenticated, IsApplyStaffUser,
+        permissions.IsAuthenticated, IsApplyStaffUser, HasScreenPermission
     )
     serializer_class = ScreeningStatusListSerializer
     pagination_class = None
