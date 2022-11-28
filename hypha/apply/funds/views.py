@@ -710,12 +710,12 @@ class UnarchiveSubmissionView(DelegatedViewMixin, UpdateView):
     def form_valid(self, form):
         response = super().form_valid(form)
         # Record activity
-        # messenger(
-        #     MESSAGES.UNARCHIVE_SUBSMISSION,
-        #     request=self.request,
-        #     user=self.request.user,
-        #     source=self.object
-        # )
+        messenger(
+            MESSAGES.UNARCHIVE_SUBMISSION,
+            request=self.request,
+            user=self.request.user,
+            source=self.object
+        )
         return response
 
     def get_success_url(self):
@@ -732,12 +732,12 @@ class ArchiveSubmissionView(DelegatedViewMixin, UpdateView):
         response = super().form_valid(form)
         submission = self.get_object()
         # Record activity
-        # messenger(
-        #     MESSAGES.ARCHIVE_SUBMISSION,
-        #     request=self.request,
-        #     user=self.request.user,
-        #     source=submission,
-        # )
+        messenger(
+            MESSAGES.ARCHIVE_SUBMISSION,
+            request=self.request,
+            user=self.request.user,
+            source=submission,
+        )
         return response
 
     def get_success_url(self):

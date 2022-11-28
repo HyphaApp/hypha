@@ -58,3 +58,5 @@ class MESSAGES(TextChoices):
     BATCH_ARCHIVE_SUBMISSION = 'BATCH_ARCHIVE_SUBMISSION', _('batch archive submissions')
     STAFF_ACCOUNT_CREATED = 'STAFF_ACCOUNT_CREATED', _('created new account')
     STAFF_ACCOUNT_EDITED = 'STAFF_ACCOUNT_EDITED', _('edited account')
+    ARCHIVE_SUBMISSION = 'ARCHIVE_SUBMISSION', _('archived submission')
+    UNARCHIVE_SUBMISSION = 'UNARCHIVE_SUBMISSION', _('unarchived submission')

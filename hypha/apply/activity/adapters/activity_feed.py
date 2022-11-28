@@ -47,6 +47,8 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.REPORT_FREQUENCY_CHANGED: 'handle_report_frequency',
         MESSAGES.BATCH_DELETE_SUBMISSION: 'handle_batch_delete_submission',
         MESSAGES.BATCH_ARCHIVE_SUBMISSION: 'handle_batch_archive_submission',
+        MESSAGES.ARCHIVE_SUBMISSION: _('{user} has archived the submission: {source.title}'),
+        MESSAGES.UNARCHIVE_SUBMISSION: _('{user} has unarchived the submission: {source.title}'),
     }
 
     def recipients(self, message_type, **kwargs):

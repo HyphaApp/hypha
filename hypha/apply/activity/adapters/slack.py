@@ -70,6 +70,8 @@ class SlackAdapter(AdapterBase):
         MESSAGES.STAFF_ACCOUNT_CREATED: _('{user} has created a new account for <{link}|{source}>'),
         MESSAGES.STAFF_ACCOUNT_EDITED: _('{user} has edited account for <{link}|{source}> that now has following roles: {roles}'),
         MESSAGES.BATCH_ARCHIVE_SUBMISSION: 'handle_batch_archive_submission',
+        MESSAGES.ARCHIVE_SUBMISSION: _('{user} has archived the submission: {source.title}'),
+        MESSAGES.UNARCHIVE_SUBMISSION: _('{user} has unarchived the submission: {source.title}'),
     }
 
     def __init__(self):
