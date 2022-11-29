@@ -92,7 +92,6 @@ from .models import (
 from .permissions import (
     has_permission,
     is_user_has_access_to_view_archived_submissions,
-    is_user_has_access_to_view_submission,
 )
 from .tables import (
     AdminSubmissionsTable,
@@ -1387,7 +1386,8 @@ class SubmissionPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
         return self.storage.open(path_to_file)
 
     def test_func(self):
-        return is_user_has_access_to_view_submission(self.request.user, self.submission)
+        permission, _ = has_permission('submission_view', self.request.user, self.submission)
+        return permission
 
 
 @method_decorator(staff_or_finance_required, name='dispatch')
