@@ -11,7 +11,7 @@ from wagtail.admin.panels import (
     MultiFieldPanel,
     PageChooserPanel,
 )
-from wagtail.contrib.settings.models import BaseSetting
+from wagtail.contrib.settings.models import BaseSiteSetting
 from wagtail.fields import RichTextField, StreamField
 from wagtail.models import Orderable, Page
 from wagtail.snippets.models import register_snippet
@@ -199,7 +199,7 @@ class CallToActionSnippet(models.Model):
 
 
 @register_public_site_setting
-class SocialMediaSettings(BaseSetting):
+class SocialMediaSettings(BaseSiteSetting):
     twitter_handle = models.CharField(
         max_length=255,
         blank=True,
@@ -224,7 +224,7 @@ class SocialMediaSettings(BaseSetting):
 
 
 @register_public_site_setting
-class SystemMessagesSettings(BaseSetting):
+class SystemMessagesSettings(BaseSiteSetting):
     class Meta:
         verbose_name = 'System settings'
 

@@ -3,7 +3,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
-from wagtail.contrib.settings.models import BaseSetting, register_setting
+from wagtail.contrib.settings.models import BaseSiteSetting, register_setting
 from wagtail.fields import RichTextField
 
 from hypha.apply.utils.storage import PrivateStorage
@@ -88,7 +88,7 @@ class DueDiligenceDocument(models.Model):
 
 
 @register_setting
-class VendorFormSettings(BaseSetting):
+class VendorFormSettings(BaseSiteSetting):
     name_label = models.TextField(
         'label',
         default='1. What is the name of the person/organisation on the contract?'

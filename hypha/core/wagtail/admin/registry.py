@@ -2,7 +2,7 @@ from django.contrib.auth.models import Permission
 from wagtail import hooks
 from wagtail.admin.admin_url_finder import register_admin_url_finder
 from wagtail.contrib.settings.registry import Registry as WagtailSettingsRegistry
-from wagtail.contrib.settings.registry import SettingMenuItem, SettingsAdminURLFinder
+from wagtail.contrib.settings.registry import SettingMenuItem, SiteSettingAdminURLFinder
 from wagtail.contrib.settings.registry import registry as wagtail_settings_registry
 from wagtail.permission_policies import ModelPermissionPolicy
 
@@ -34,7 +34,7 @@ class PublicSiteSettingsRegistry(WagtailSettingsRegistry):
         permission_policy = ModelPermissionPolicy(model)
         finder_class = type(
             "_SettingsAdminURLFinder",
-            (SettingsAdminURLFinder,),
+            (SiteSettingAdminURLFinder,),
             {"model": model, "permission_policy": permission_policy},
         )
         register_admin_url_finder(model, finder_class)

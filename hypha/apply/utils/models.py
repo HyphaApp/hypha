@@ -1,11 +1,11 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel
-from wagtail.contrib.settings.models import BaseSetting, register_setting
+from wagtail.contrib.settings.models import BaseSiteSetting, register_setting
 
 
 @register_setting
-class PDFPageSettings(BaseSetting):
+class PDFPageSettings(BaseSiteSetting):
     A4 = 'A4'
     LEGAL = 'legal'
     LETTER = 'letter'

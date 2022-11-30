@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel
-from wagtail.contrib.settings.models import BaseSetting, register_setting
+from wagtail.contrib.settings.models import BaseSiteSetting, register_setting
 
 from hypha.apply.utils.image import generate_image_url
 
@@ -35,7 +35,7 @@ class ReviewerRole(models.Model):
 
 
 @register_setting
-class ReviewerSettings(BaseSetting):
+class ReviewerSettings(BaseSiteSetting):
     SUBMISSIONS = [
         ('all', 'All Submissions'),
         ('reviewed', 'Only reviewed Submissions'),

@@ -33,7 +33,7 @@ from wagtail.admin.panels import (
     ObjectList,
     TabbedInterface,
 )
-from wagtail.contrib.settings.models import BaseSetting, register_setting
+from wagtail.contrib.settings.models import BaseSiteSetting, register_setting
 from wagtail.fields import RichTextField
 from wagtail.models import Page, PageManager
 from wagtail.query import PageQuerySet
@@ -645,7 +645,7 @@ class RoundsAndLabs(Page):
 
 
 @register_setting
-class ApplicationSettings(BaseSetting):
+class ApplicationSettings(BaseSiteSetting):
     class Meta:
         verbose_name = 'application settings'
 

@@ -2,7 +2,7 @@ from django.contrib.auth.models import Permission
 from django.core.exceptions import ImproperlyConfigured
 from wagtail.contrib.modeladmin.helpers import PagePermissionHelper, PermissionHelper
 from wagtail.contrib.modeladmin.options import WagtailRegisterable
-from wagtail.contrib.settings.models import BaseSetting
+from wagtail.contrib.settings.models import BaseSiteSetting
 from wagtail.contrib.settings.registry import SettingMenuItem
 from wagtail.models import Page
 
@@ -13,7 +13,7 @@ class SettingModelAdmin(WagtailRegisterable):
     adding a SettingModelAdmin class just like ModelAdmin to the ModelGroupAdmin
     as an item.
 
-    The BaseSetting still needs to be registered with `@register_setting` decorator
+    The BaseSiteSetting still needs to be registered with `@register_setting` decorator
     and will show up in the setting menu.
     """
 
@@ -25,10 +25,10 @@ class SettingModelAdmin(WagtailRegisterable):
         """
         Don't allow initialization unless self.model is set to a valid model
         """
-        if not self.model or not issubclass(self.model, BaseSetting):
+        if not self.model or not issubclass(self.model, BaseSiteSetting):
             raise ImproperlyConfigured(
                 "The model attribute on your '%s' class must be set, and "
-                "must be inherit BaseSetting class." % self.__class__.__name__
+                "must be inherit BaseSiteSetting class." % self.__class__.__name__
             )
         self.parent = parent
 
