@@ -1,5 +1,5 @@
 {% extends "base-apply.html" %}
-{% load i18n %}
+{% load i18n static %}
 {% block title %}{{ title }}{% endblock %}
 {% block content %}
 
@@ -47,4 +47,7 @@
             <p>{% trans "You have already posted a review for this submission" %}</p>
         {% endif %}
     </div>
+{% endblock %}
+{% block extra_js %}
+    <script src="{% static 'js/review-form-actions.js' %}"></script>
 {% endblock %}
