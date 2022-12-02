@@ -173,12 +173,31 @@ class ReportFrequencyUpdate(DelegatedViewMixin, UpdateView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs.pop('user')
-        instance = kwargs['instance'].report_config
+        project = kwargs['instance']
+        instance = project.report_config
         kwargs['instance'] = instance
-        kwargs['initial'] = {
-            'start': instance.current_due_report().end_date,
-        }
+        if instance.frequency:
+            # Current due report can be none for ONE_TIME and No frequency,
+            # No frequency already handled above
+            # In case of ONE_TIME, either reporting is already completed(last_report exists)
+            # or there should be a current_due_report.
+            if instance.current_due_report():
+                kwargs['initial'] = {
+                    'start': instance.current_due_report().end_date,
+                }
+            else:
+                kwargs['initial'] = {
+                    'start': instance.last_report().end_date,
+                }
+        else:
+            kwargs['initial'] = {
+                'start': project.start_date,
+            }
         return kwargs
+
+    def get_object(self):
+        project = self.get_parent_object()
+        return project.report_config
 
     def get_form(self):
         if self.get_parent_object().is_in_progress:
