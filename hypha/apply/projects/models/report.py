@@ -217,8 +217,8 @@ class ReportConfig(models.Model):
                 month = next_report.end_date.strftime('%B')
             if self.occurrence == 1:
                 return _('Yearly on the {day} of the {month}').format(day=day_of_month, month=month)
-            return _('Every {occurrence} months on the {day} of the {month}').format(occurrence=self.occurrence,
-                                                                                     date=day_of_month, month=month)
+            return _('Every {occurrence} years on the {day} of the {month}').format(occurrence=self.occurrence,
+                                                                                     day=day_of_month, month=month)
 
         if self.frequency == self.MONTH:
             if self.schedule_start and self.schedule_start.day == 31:
