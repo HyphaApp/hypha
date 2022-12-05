@@ -188,7 +188,7 @@ def get_used_rounds(request):
 
 
 def get_used_rounds_from_dataset(dataset):
-    return Round.objects.filter(id__in=dataset.values('round').distinct('round')).distinct()
+    return Round.objects.filter(id__in=dataset.values('round')).distinct()
 
 
 def get_used_funds(request):
@@ -197,7 +197,7 @@ def get_used_funds(request):
 
 
 def get_used_funds_from_dataset(dataset):
-    return Page.objects.filter(id__in=dataset.values('page').distinct('page')).distinct()
+    return Page.objects.filter(id__in=dataset.values('page')).distinct()
 
 
 def get_round_leads(request):
@@ -205,7 +205,7 @@ def get_round_leads(request):
 
 
 def get_round_leads_from_dataset(dataset):
-    return User.objects.filter(id__in=dataset.values('lead').distinct('lead')).distinct()
+    return User.objects.filter(id__in=dataset.values('lead')).distinct()
 
 
 def get_reviewers(request):
@@ -215,7 +215,7 @@ def get_reviewers(request):
 
 def get_reviewers_from_dataset(dataset):
     """ All assigned reviewers, staff or admin """
-    return User.objects.filter(id__in=dataset.values('reviewers').distinct('reviewers')).distinct()
+    return User.objects.filter(id__in=dataset.values('reviewers')).distinct()
 
 
 def get_screening_statuses(request):
@@ -225,7 +225,7 @@ def get_screening_statuses(request):
 
 def get_screening_statuses_from_dataset(dataset):
     return ScreeningStatus.objects.filter(
-        id__in=dataset.values('screening_statuses__id').distinct('screening_statuses__id')
+        id__in=dataset.values('screening_statuses__id')
     ).distinct()
 
 
@@ -238,7 +238,7 @@ def get_meta_terms(request):
 def get_meta_terms_from_dataset(dataset):
     return MetaTerm.objects.filter(
         filter_on_dashboard=True,
-        id__in=dataset.values('meta_terms__id').distinct('meta_terms__id'))
+        id__in=dataset.values('meta_terms__id')).distinct()
 
 
 class Select2CheckboxWidgetMixin(filters.Filter):
