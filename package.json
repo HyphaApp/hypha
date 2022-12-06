@@ -13,11 +13,11 @@
         "@babel/cli": "^7.19.3",
         "@babel/core": "^7.20.2",
         "@babel/preset-env": "^7.20.2",
-        "concurrently": "^7.5.0",
         "core-js": "^3.26.1",
         "eslint": "^8.28.0",
         "eslint-plugin-template": "^0.7.0",
         "nodemon": "^2.0.20",
+        "npm-run-all": "^4.1.5",
         "sass": "^1.56.1",
         "stylelint": "^14.15.0",
         "stylelint-config-standard-scss": "^6.1.0",
@@ -25,22 +25,27 @@
     },
     "scripts": {
         "heroku-postbuild": "npm run build",
-        "build": "npm run build:css && npm run build:js && npm run build:images && npm run build:fonts",
+        "build": "npm-run-all -l clean lint --parallel 'build:*'",
+        "watch": "npm-run-all -l clean --parallel 'watch:*'",
+        "lint": "npm-run-all --parallel 'lint:*'",
+
         "build:js": "npx babel ./hypha/static_src/src/javascript --out-dir ./hypha/static_compiled/js",
         "build:css": "sass ./hypha/static_src/src/sass:./hypha/static_compiled/css --load-path ./hypha/static_src/src/sass --no-source-map",
         "build:images": "npx babel ./hypha/static_src/src/images --out-dir ./hypha/static_compiled/images --copy-files",
         "build:fonts": "npx babel ./hypha/static_src/src/fonts --out-dir ./hypha/static_compiled/fonts --copy-files",
-        "watch": "concurrently \"npm:watch:css\" \"npm:watch:js\" \"npm:watch:static\"",
+
         "watch:js": "npx babel --watch ./hypha/static_src/src/javascript --out-dir ./hypha/static_compiled/js",
         "watch:css": "sass --watch ./hypha/static_src/src/sass:./hypha/static_compiled/css --load-path ./hypha/static_src/src/sass",
         "watch:static": "nodemon --delay 3 --exec \"npm run collectstatic\" --watch ./hypha/static_compiled --ext css,js,json,png,svg",
         "watch:lint": "nodemon --exec \"npm run lint\" --watch ./hypha/static_src/src/sass --watch ./hypha/static_src/src/javscript --ext scss,js",
+
         "dev:build": "npm run clean && npm run dev:build:css && npm run dev:build:js && npm run collectstatic",
         "dev:build:css": "sass ./hypha/static_src/src/sass:./hypha/static_compiled/css --load-path ./hypha/static_src/src/sass",
         "dev:build:js": "npm run build:js",
+
         "lint:css": "stylelint \"hypha/static_src/src/sass/**/*.scss\"",
         "lint:js": "eslint \"hypha/static_src/src/javascript/**/*.js\"",
-        "lint": "npm run lint:css && npm run lint:js",
+
         "collectstatic": "python manage.py collectstatic --no-post-process --noinput --verbosity 0",
         "clean": "rm -rf ./static ./hypha/static_compiled"
     },
