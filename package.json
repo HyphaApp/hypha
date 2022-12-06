@@ -4,6 +4,17 @@
     "description": "The node.js requirements to build this project.",
     "author": "Fredrik Jonsson",
     "license": "GPL-2.0",
+    "babel": {
+        "presets": [
+            [
+                "@babel/preset-env",
+                {
+                    "useBuiltIns": "entry",
+                    "corejs": "3"
+                }
+            ]
+        ]
+    },
     "browserslist": [
         "> 3%",
         "Firefox ESR",
@@ -27,7 +38,7 @@
         "heroku-postbuild": "npm run build",
         "build": "npx npm-run-all --print-label --parallel build:*",
         "watch": "npx npm-run-all --print-label --parallel watch:*",
-        "lint": "npx npm-run-all --parallel 'lint:*'",
+        "lint": "npx npm-run-all --parallel lint:*",
 
         "build:js": "npx babel ./hypha/static_src/src/javascript --out-dir ./hypha/static_compiled/js",
         "build:css": "sass ./hypha/static_src/src/sass:./hypha/static_compiled/css --load-path ./hypha/static_src/src/sass --no-source-map",
@@ -42,6 +53,7 @@
         "dev:build": "npx npm-run-all --print-label --serial clean --parallel dev:build:* --serial collectstatic",
         "dev:build:js": "npm run build:js",
         "dev:build:css": "sass ./hypha/static_src/src/sass:./hypha/static_compiled/css --load-path ./hypha/static_src/src/sass",
+        "dev:build:lint": "npm run lint",
         "dev:build:images": "npm run build:images",
         "dev:build:fonts": "npm run build:fonts",
 
@@ -50,17 +62,6 @@
 
         "collectstatic": "python manage.py collectstatic --no-post-process --noinput --verbosity 0",
         "clean": "rm -rf ./static ./hypha/static_compiled"
-    },
-    "babel": {
-        "presets": [
-            [
-                "@babel/preset-env",
-                {
-                    "useBuiltIns": "entry",
-                    "corejs": "3"
-                }
-            ]
-        ]
     },
     "engines": {
         "node": "16.18.x"
