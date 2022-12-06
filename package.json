@@ -25,8 +25,8 @@
     },
     "scripts": {
         "heroku-postbuild": "npm run build",
-        "build": "npx npm-run-all --print-label clean lint --parallel build:*",
-        "watch": "npx npm-run-all --print-label clean --parallel watch:*",
+        "build": "npx npm-run-all --print-label --parallel build:*",
+        "watch": "npx npm-run-all --print-label --parallel watch:*",
         "lint": "npx npm-run-all --parallel 'lint:*'",
 
         "build:js": "npx babel ./hypha/static_src/src/javascript --out-dir ./hypha/static_compiled/js",
@@ -39,9 +39,11 @@
         "watch:static": "nodemon --delay 3 --exec \"npm run collectstatic\" --watch ./hypha/static_compiled --ext css,js,json,png,svg",
         "watch:lint": "nodemon --exec \"npm run lint\" --watch ./hypha/static_src/src/sass --watch ./hypha/static_src/src/javscript --ext scss,js",
 
-        "dev:build": "npm run clean && npm run dev:build:css && npm run dev:build:js && npm run collectstatic",
-        "dev:build:css": "sass ./hypha/static_src/src/sass:./hypha/static_compiled/css --load-path ./hypha/static_src/src/sass",
+        "dev:build": "npx npm-run-all --print-label --serial clean --parallel dev:build:* --serial collectstatic",
         "dev:build:js": "npm run build:js",
+        "dev:build:css": "sass ./hypha/static_src/src/sass:./hypha/static_compiled/css --load-path ./hypha/static_src/src/sass",
+        "dev:build:images": "npm run build:images",
+        "dev:build:fonts": "npm run build:fonts",
 
         "lint:css": "stylelint \"hypha/static_src/src/sass/**/*.scss\"",
         "lint:js": "eslint \"hypha/static_src/src/javascript/**/*.js\"",
