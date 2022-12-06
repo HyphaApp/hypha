@@ -44,6 +44,17 @@
         "collectstatic": "python manage.py collectstatic --no-post-process --noinput --verbosity 0",
         "clean": "rm -rf ./static ./hypha/static_compiled"
     },
+    "babel": {
+        "presets": [
+            [
+                "@babel/preset-env",
+                {
+                    "useBuiltIns": "entry",
+                    "corejs": "3"
+                }
+            ]
+        ]
+    },
     "engines": {
         "node": "16.18.x"
     },
