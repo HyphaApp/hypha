@@ -1,6 +1,6 @@
 # Hypha
 
-[![<HyphaApp>](https://circleci.com/gh/HyphaApp/hypha.svg?style=shield)](https://circleci.com/gh/HyphaApp/hypha)
+[![Hypha CI](https://github.com/HyphaApp/hypha/actions/workflows/hypha-ci.yml/badge.svg)](https://github.com/github/docs/actions/workflows/main.yml)
 ![GitHub top language](https://img.shields.io/github/languages/top/HyphaApp/hypha)
 ![Lines of code](https://img.shields.io/tokei/lines/github/HyphaApp/hypha)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/HyphaApp/hypha)
