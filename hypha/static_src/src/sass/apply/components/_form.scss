@@ -48,19 +48,21 @@
         }
 
         #{$root}--report-frequency & {
-            margin: 0;
+            margin: 1rem;
 
-            // Number input
-            &:nth-of-type(1) {
-                width: 20%;
-                display: inline-block;
-                margin-right: 1rem;
+            &--schedule {
+                margin: 0 1rem;
+                display: flex;
+                align-items: center;
             }
 
-            // Frequency select
-            &:nth-of-type(2) {
-                width: 50%;
-                display: inline-block;
+            &--occurrence {
+                width: 15%;
+                margin: 0 1rem;
+            }
+
+            &--frequency {
+                margin: 0;
             }
         }
 

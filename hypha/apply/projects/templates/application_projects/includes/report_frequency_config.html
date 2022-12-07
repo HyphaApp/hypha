@@ -1,0 +1,112 @@
+{% load i18n %}
+<div class="modal" id="change-frequency">
+
+    {{ report_data|json_script:"reportData" }}
+    <h4 class="modal__header-bar">{% trans "Change reporting frequency" %}</h4>
+    <div class="form__info-box">
+        <p>
+            {% trans "Next report will be due in" %}
+            <b class="js-next-report-due-slot"></b>
+            {% trans "and the report period will be" %}
+            <b class="js-report-period-start"></b>
+            {% trans "to" %}
+            <b class="js-report-period-end"></b>
+            {% trans "and then every" %}
+            <b class="js-frequency-number-slot"></b>
+            <b class="js-frequency-period-slot"></b>
+            {% trans "after until the project end date" %}:
+            <span class="js-project-end-slot"></span>.
+        </p>
+    </div>
+    <form
+        class="form {{ extra_classes }}"
+        method="post"
+        id="{{ form.name }}"
+        enctype="multipart/form-data"
+        {% if action %}action="{{ action }}"{% endif %}
+        >
+        {% csrf_token %}
+
+        {{ form.media }}
+        {% for hidden in form.hidden_fields %}
+            {{ hidden }}
+        {% endfor %}
+
+        <div class="form__group form__group--checkbox {{ form.disable_reporting.id_for_label }} {% if form.disable_reporting.errors %} form__error{% endif %}">
+            <label for="{{ form.disable_reporting.id_for_label }}" class="form__question {{ form.disable_reporting.widget_type }}">
+                <span>{{ form.disable_reporting.label }}</span>
+            </label>
+            <div class="form__item">
+                {{ form.disable_reporting }}
+                {% if form.disable_reporting.errors %}<h6 class="form__error-text">{{ form.disable_reporting.errors.as_text|linebreaksbr }}</h6>{% endif %}
+                <label for="{{ form.disable_reporting.id_for_label }}"></label>
+            </div>
+        </div>
+
+        <div class="form__group {{ form.start.id_for_label }} {% if form.start.errors %} form__error{% endif %}">
+            <label for="{{ form.start.id_for_label }}" class="form__question {{ form.start.widget_type }}">
+                <span>{{ form.start.label }}</span>
+            </label>
+            <div class="form__item">
+                {{ form.start }}
+                {% if form.start.errors %}<h6 class="form__error-text">{{ form.start.errors.as_text|linebreaksbr }}</h6>{% endif %}
+            </div>
+        </div>
+
+        <div class="form__group form__group--checkbox {{ form.does_not_repeat.id_for_label }} {% if form.does_not_repeat.errors %} form__error{% endif %}">
+            <label for="{{ form.does_not_repeat.id_for_label }}" class="form__question {{ form.does_not_repeat.widget_type }}">
+                <span>{{ form.does_not_repeat.label }}</span>
+            </label>
+            <div class="form__item">
+                {{ form.does_not_repeat }}
+                {% if form.does_not_repeat.errors %}<h6 class="form__error-text">{{ form.does_not_repeat.errors.as_text|linebreaksbr }}</h6>{% endif %}
+                <label for="{{ form.does_not_repeat.id_for_label }}"></label>
+            </div>
+        </div>
+
+        <div class="form__group--schedule">
+            <p>{% trans 'Schedule reports every:' %}</p>
+
+            <div class="form__group {{ form.occurrence.id_for_label }} form__group--occurrence {% if form.occurrence.errors %} form__error{% endif %}">
+                <label for="{{ form.occurrence.id_for_label }}" class="form__question {{ form.occurrence.widget_type }}">
+                    <span>{{ form.occurrence.label }}</span>
+                </label>
+                <div class="form__item">
+                    {{ form.occurrence }}
+                    {% if form.occurrence.errors %}<h6 class="form__error-text">{{ form.occurrence.errors.as_text|linebreaksbr }}</h6>{% endif %}
+                </div>
+            </div>
+
+            <div class="form__group {{ form.frequency.id_for_label }} form__group--frequency {% if form.frequency.errors %} form__error{% endif %}">
+                <label for="{{ form.frequency.id_for_label }}" class="form__question {{ form.frequency.widget_type }}">
+                    <span>{{ form.frequency.label }}</span>
+                </label>
+                <div class="form__item">
+                    {{ form.frequency }}
+                    {% if form.frequency.errors %}<h6 class="form__error-text">{{ form.frequency.errors.as_text|linebreaksbr }}</h6>{% endif %}
+                </div>
+            </div>
+        </div>
+
+        {% if cancel %}
+        <button
+            type="button"
+            data-fancybox-close=""
+            class="button button--{% if invert %}primary{% else %}white{% endif %} button--top-space"
+            title="{% trans "Close" %}">
+            {% trans "Cancel" %}
+        </button>
+        {% endif %}
+
+        {% trans "Delete" as delete %}
+        <button
+            class="button button--{% if invert %}white{% elif value == delete %}warning{% else %}primary{% endif %} button--top-space"
+            id="{{ form.name }}-submit"
+            name="{{ form_prefix }}{{ form.name }}"
+            type="submit"
+            form="{{ form.name }}">
+            {{ value }}
+        </button>
+
+    </form>
+</div>

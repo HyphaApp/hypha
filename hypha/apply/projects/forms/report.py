@@ -98,26 +98,16 @@ class ReportEditForm(FileFormMixin, forms.ModelForm):
 
 class ReportFrequencyForm(forms.ModelForm):
     start = forms.DateField(label='Starting on:')
+    disable_reporting = forms.BooleanField(label="Disable Reporting", required=False)
+    does_not_repeat = forms.BooleanField(label="Does not repeat", required=False)
 
     class Meta:
         model = ReportConfig
-        fields = ('occurrence', 'frequency', 'start')
+        fields = ('disable_reporting', 'start', 'does_not_repeat', 'occurrence', 'frequency')
         labels = {
-            'occurrence': _('No.'),
+            'occurrence': _(''),
+            'frequency': _(''),
         }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        today = timezone.now().date()
-        last_report = self.instance.last_report()
-
-        self.fields['start'].widget.attrs.update({
-            'min': max(
-                last_report.end_date if last_report else today,
-                today,
-            ),
-            'max': self.instance.project.end_date,
-        })
 
     def clean_start(self):
         start_date = self.cleaned_data['start']
@@ -134,11 +124,6 @@ class ReportFrequencyForm(forms.ModelForm):
                 code="bad_start"
             )
 
-        if start_date > self.instance.project.end_date:
-            raise ValidationError(
-                _('Cannot start a schedule beyond the end date'),
-                code="bad_start"
-            )
         return start_date
 
     def save(self, *args, **kwargs):
