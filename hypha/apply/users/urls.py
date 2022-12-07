@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib.auth import views as auth_views
 from django.urls import include, path, reverse_lazy
-from ratelimit.decorators import ratelimit
+from django_ratelimit.decorators import ratelimit
 
 from .views import (
     AccountView,
@@ -39,12 +39,12 @@ public_urlpatterns = [
 
 urlpatterns = [
     path('account/', include([
-        path('', ratelimit(key='ip', method='GET', rate='5/m', block=True)(AccountView.as_view()), name='account'),
+        path('', ratelimit(key='ip', rate=settings.DEFAULT_RATE_LIMIT, method='GET')(AccountView.as_view()), name='account'),
         path('password/', include([
             path('', EmailChangePasswordView.as_view(), name='email_change_confirm_password'),
             path(
                 'change/',
-                ratelimit(key='user', method='POST', rate=settings.DEFAULT_RATE_LIMIT, block=True)
+                ratelimit(key='user', rate=settings.DEFAULT_RATE_LIMIT, method='POST')
                 (auth_views.PasswordChangeView.as_view(
                     template_name="users/change_password.html",
                     success_url=reverse_lazy('users:account')
@@ -53,8 +53,8 @@ urlpatterns = [
             ),
             path(
                 'reset/',
-                ratelimit(key='post:email', method='POST', rate=settings.DEFAULT_RATE_LIMIT, block=True)
-                (ratelimit(key='ip', method='POST', rate=settings.DEFAULT_RATE_LIMIT, block=True)
+                ratelimit(key='post:email', rate=settings.DEFAULT_RATE_LIMIT, method='POST')
+                (ratelimit(key='ip', rate=settings.DEFAULT_RATE_LIMIT, method='POST')
                     (
                         auth_views.PasswordResetView.as_view(
                             template_name='users/password_reset/form.html',
@@ -85,21 +85,17 @@ urlpatterns = [
             ),
 
         ])),
-        path(
-            'activate/<uidb64>/<token>/',
-            ActivationView.as_view(),
-            name='activate'
-        ),
+        path('confirmation/done/', EmailChangeDoneView.as_view(), name="confirm_link_sent"),
+        path('confirmation/<uidb64>/<token>/', EmailChangeConfirmationView.as_view(), name="confirm_email"),
+        path('activate/<uidb64>/<token>/', ActivationView.as_view(), name='activate'),
+        path('activate/', create_password, name="activate_password"),
+        path('oauth', oauth, name='oauth'),
         # Two factor redirect
         path('two_factor/required/', TWOFARequiredMessageView.as_view(), name='two_factor_required'),
         path('two_factor/setup/', TWOFASetupView.as_view(), name='setup'),
         path('two_factor/backup_tokens/password/', TWOFABackupTokensPasswordView.as_view(), name='backup_tokens_password'),
         path('two_factor/disable/', TWOFADisableView.as_view(), name='disable'),
         path('two_factor/admin/disable/<str:user_id>/', TWOFAAdminDisableView.as_view(), name='admin_disable'),
-        path('confirmation/done/', EmailChangeDoneView.as_view(), name="confirm_link_sent"),
-        path('confirmation/<uidb64>/<token>/', EmailChangeConfirmationView.as_view(), name="confirm_email"),
-        path('activate/', create_password, name="activate_password"),
-        path('oauth', oauth, name='oauth'),
     ])),
 ]
 
