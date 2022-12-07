@@ -1,6 +1,5 @@
 {% extends "funds/base_submissions_table.html" %}
 {% load i18n static %}
-{% load render_bundle from webpack_tags %}
 
 {% block title %}{{ object }}{% endblock %}
 
@@ -11,16 +10,12 @@
                 <h1 class="gamma heading heading--no-margin heading--bold">{{ object }}<span class="submissions-count"> ({{ table.rows|length }})</span></h1>
                 <p class="admin-bar__meta">{% if object.fund %}{{ object.fund }} <span>|</span> {% endif %}{% trans "Lead" %}: {{ object.lead }}</p>
             </div>
-            <div id="submissions-by-round-app-react-switcher"></div>
         </div>
     </div>
 
-    <div id="submissions-by-round-react-app" data-round-id="{{ object.id }}">
-        <div class="wrapper wrapper--large wrapper--inner-space-medium">
-            {% block table %}
-                {{ block.super }}
-            {% endblock %}
-        </div>
-    </div>
-{% render_bundle 'submissionsByRound' %}
+<div class="wrapper wrapper--large wrapper--inner-space-medium">
+    {% block table %}
+        {{ block.super }}
+    {% endblock %}
+</div>
 {% endblock %}

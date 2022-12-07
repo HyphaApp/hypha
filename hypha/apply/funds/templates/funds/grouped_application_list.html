@@ -1,6 +1,5 @@
 {% extends "base-apply.html" %}
 {% load i18n static %}
-{% load render_bundle from webpack_tags %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/apply/fancybox.css' %}">
@@ -18,9 +17,6 @@
         </div>
 </div>
 <div id="grouped-applications-list"></div>
-
-{% render_bundle 'groupedApplications' %}
-
 {% endblock %}
 
 {% block extra_js %}

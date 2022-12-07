@@ -1,5 +1,4 @@
 {% extends "funds/base_submissions_table.html" %}
-{% load render_bundle from webpack_tags %}
 
 {% block title %}{{ status }}{% endblock %}
 
@@ -20,6 +19,4 @@
             {% endblock %}
         </div>
     </div>
-{% render_bundle 'submissionsByStatus' %}
-
 {% endblock %}
