@@ -1,0 +1,26 @@
+name: Deploy Docs
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Deploy docs
+        uses: mhausenblas/mkdocs-deploy-gh-pages@master
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          CUSTOM_DOMAIN: docs.hypha.app
+          CONFIG_FILE: mkdocs.yml
+          EXTRA_PACKAGES: build-base
+          REQUIREMENTS: requirements-docs.txt

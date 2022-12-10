@@ -9,6 +9,7 @@ help:
 	@echo "    make sort             run the isort import linter."
 	@echo "    make sort-fix         fix import sort order."
 	@echo "    make style            run the python code style linter."
+	@echo "    make serve-docs       run documentation development server."
 
 .PHONY: lint
 lint: sort style
@@ -42,3 +43,7 @@ py-test:
 
 .PHONY: test
 test: lint py-test cov-html
+
+serve-docs:
+	@echo "Serve and watch documentation locally:"
+	mkdocs serve
