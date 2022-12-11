@@ -8,19 +8,21 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-04 14:45+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2022-12-12 07:48+0000\n"
+"Last-Translator: taoren <15191097921@163.com>\n"
+"Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
+"hypha/hypha-core/zh_Hans/>\n"
 "Language: zh_Hans\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 4.15-dev\n"
 
 #: hypha/apply/activity/adapters/activity_feed.py:20
 #, python-brace-format
 msgid "Submitted {source.title} for {source.page.title}"
-msgstr ""
+msgstr "中文"
 
 #: hypha/apply/activity/adapters/activity_feed.py:21
 #: hypha/apply/activity/adapters/activity_feed.py:22
