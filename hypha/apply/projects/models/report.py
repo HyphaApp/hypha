@@ -95,6 +95,8 @@ class Report(models.Model):
 
     objects = ReportQueryset.as_manager()
 
+    wagtail_reference_index_ignore = True
+
     class Meta:
         ordering = ('-end_date',)
 
@@ -161,10 +163,14 @@ class ReportVersion(models.Model):
         null=True,
     )
 
+    wagtail_reference_index_ignore = True
+
 
 class ReportPrivateFiles(models.Model):
     report = models.ForeignKey("ReportVersion", on_delete=models.CASCADE, related_name="files")
     document = models.FileField(upload_to=report_path, storage=PrivateStorage())
+
+    wagtail_reference_index_ignore = True
 
     @property
     def filename(self):

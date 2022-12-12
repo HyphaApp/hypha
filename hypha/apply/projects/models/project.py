@@ -198,6 +198,8 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
 
     objects = ProjectQuerySet.as_manager()
 
+    wagtail_reference_index_ignore = True
+
     def __str__(self):
         return self.title
 

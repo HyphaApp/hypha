@@ -510,6 +510,8 @@ class ApplicationSubmission(
 
     objects = ApplicationSubmissionQueryset.as_manager()
 
+    wagtail_reference_index_ignore = True
+
     @property
     def is_draft(self):
         return self.status == DRAFT_STATE

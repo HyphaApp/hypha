@@ -92,6 +92,8 @@ class WorkflowStreamForm(WorkflowHelpers, AbstractStreamForm):  # type: ignore
     """
     Defines the common methods and fields for working with Workflows within Wagtail pages
     """
+    wagtail_reference_index_ignore = True
+
     class Meta:
         abstract = True
 

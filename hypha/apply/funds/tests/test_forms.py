@@ -92,7 +92,7 @@ class TestReviewerFormQueries(TestCase):
 
         # 1 - Submission
         # 1 - Select Review
-        # 2 - Cascase
+        # 2 - Cascade
         # 1 - Fetch data
         # 1 - Cache existing
         # 1 - auth group

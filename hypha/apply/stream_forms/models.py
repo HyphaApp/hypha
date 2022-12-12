@@ -23,6 +23,7 @@ from .forms import BlockFieldWrapper, PageStreamBaseForm
 
 class BaseStreamForm:
     submission_form_class = PageStreamBaseForm
+    wagtail_reference_index_ignore = True
 
     @classmethod
     def from_db(cls, db, field_names, values):

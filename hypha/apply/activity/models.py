@@ -114,6 +114,8 @@ class Activity(models.Model):
     comments = CommentManger.from_queryset(CommentQueryset)()
     actions = ActionManager.from_queryset(ActionQueryset)()
 
+    wagtail_reference_index_ignore = True
+
     class Meta:
         ordering = ['-timestamp']
         base_manager_name = 'objects'
@@ -149,6 +151,7 @@ class Activity(models.Model):
 
 class Event(models.Model):
     """Model to track when messages are triggered"""
+    wagtail_reference_index_ignore = True
 
     when = models.DateTimeField(auto_now_add=True)
     type = models.CharField(_("verb"), choices=MESSAGES.choices, max_length=50)

@@ -646,6 +646,9 @@ class RoundsAndLabs(Page):
 
 @register_setting
 class ApplicationSettings(BaseSiteSetting):
+
+    wagtail_reference_index_ignore = True
+
     class Meta:
         verbose_name = 'application settings'
 

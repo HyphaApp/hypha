@@ -30,6 +30,8 @@ class ReviewerRole(models.Model):
     def icon_url(self, filter_spec):
         return generate_image_url(self.icon, filter_spec)
 
+    wagtail_reference_index_ignore = True
+
     def __str__(self):
         return self.name
 

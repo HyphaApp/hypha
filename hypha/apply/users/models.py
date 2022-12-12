@@ -198,6 +198,8 @@ class User(AbstractUser):
 
     objects = UserManager()
 
+    wagtail_reference_index_ignore = True
+
     def __str__(self):
         return self.get_full_name() if self.get_full_name() else self.get_short_name()
 
@@ -291,6 +293,9 @@ class User(AbstractUser):
 
 @register_setting
 class UserSettings(BaseSiteSetting):
+
+    wagtail_reference_index_ignore = True
+
     class Meta:
         verbose_name = 'user settings'
 

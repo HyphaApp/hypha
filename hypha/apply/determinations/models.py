@@ -43,6 +43,9 @@ class DeterminationQuerySet(models.QuerySet):
 
 
 class DeterminationFormFieldsMixin(models.Model):
+
+    wagtail_reference_index_ignore = True
+
     class Meta:
         abstract = True
 
@@ -185,6 +188,9 @@ class Determination(DeterminationFormFieldsMixin, AccessFormData, models.Model):
 
 @register_setting
 class DeterminationMessageSettings(BaseSiteSetting):
+
+    wagtail_reference_index_ignore = True
+
     class Meta:
         verbose_name = 'determination messages'
 

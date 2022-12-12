@@ -144,6 +144,9 @@ class AssignedReviewersQuerySet(models.QuerySet):
 
 
 class AssignedReviewers(models.Model):
+
+    wagtail_reference_index_ignore = True
+
     reviewer = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,

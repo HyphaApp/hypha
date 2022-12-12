@@ -114,6 +114,8 @@ class ProjectPage(FundingMixin, BasePage):
 
     categories = models.TextField(default='{}', blank=True)
 
+    wagtail_reference_index_ignore = True
+
     search_fields = BasePage.search_fields + [
         index.SearchField('introduction'),
         index.SearchField('body'),

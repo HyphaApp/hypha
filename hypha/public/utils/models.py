@@ -225,6 +225,9 @@ class SocialMediaSettings(BaseSiteSetting):
 
 @register_public_site_setting
 class SystemMessagesSettings(BaseSiteSetting):
+
+    wagtail_reference_index_ignore = True
+
     class Meta:
         verbose_name = 'System settings'
 
@@ -284,6 +287,7 @@ class SystemMessagesSettings(BaseSiteSetting):
 
 @method_decorator(cache_page, name='serve')
 class BasePage(WagtailCacheMixin, SocialFields, ListingFields, Page):
+    wagtail_reference_index_ignore = True
     show_in_menus_default = True
 
     header_image = models.ForeignKey(
