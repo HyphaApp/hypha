@@ -1,11 +1,11 @@
 # Monitor dependencies
-scout-apm==2.23.4
+scout-apm==2.26.1
 sentry-sdk==1.9.5
 
 # Production dependencies
 Babel==2.9.1
 bleach==5.0.0
-boto3==1.20.22
+boto3==1.26.27
 celery==5.2.2
 dj-database-url==0.5.0
 django-anymail==8.4
