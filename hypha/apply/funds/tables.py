@@ -130,7 +130,7 @@ class LabeledCheckboxColumn(tables.CheckBoxColumn):
 
 
 class BaseAdminSubmissionsTable(SubmissionsTable):
-    lead = tables.Column(order_by=('lead.full_name',))
+    lead = tables.Column(order_by=('lead__full_name',))
     reviews_stats = tables.TemplateColumn(template_name='funds/tables/column_reviews.html', verbose_name=mark_safe("Reviews<div>Assgn.\tComp.</div>"), orderable=False)
     screening_status = tables.Column(verbose_name=_('Screening'), accessor='screening_statuses')
 
@@ -341,7 +341,7 @@ class SubmissionReviewerFilterAndSearch(SubmissionDashboardFilter):
 
 class RoundsTable(tables.Table):
     title = tables.LinkColumn('funds:rounds:detail', args=[A('pk')], orderable=True, text=lambda record: record.title)
-    fund = tables.Column(accessor=A('specific.fund'))
+    fund = tables.Column(accessor=A('specific__fund'))
     lead = tables.Column()
     start_date = tables.Column()
     end_date = tables.Column()

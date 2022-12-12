@@ -14,7 +14,7 @@ class BaseInvoiceTable(tables.Table):
     vendor_document_number = tables.LinkColumn(
         'funds:projects:invoice-detail',
         verbose_name=_('Invoice Number'),
-        args=[tables.utils.A('project.pk'), tables.utils.A('pk')],
+        args=[tables.utils.A('project__pk'), tables.utils.A('pk')],
     )
     project = tables.Column(
         verbose_name=_('Project Name')
@@ -41,8 +41,8 @@ class InvoiceDashboardTable(BaseInvoiceTable):
 
 
 class InvoiceListTable(BaseInvoiceTable):
-    fund = tables.Column(verbose_name=_('Fund'), accessor='project.submission.page')
-    lead = tables.Column(verbose_name=_('Lead'), accessor='project.lead')
+    fund = tables.Column(verbose_name=_('Fund'), accessor='project__submission__page')
+    lead = tables.Column(verbose_name=_('Lead'), accessor='project__lead')
 
     class Meta:
         fields = [
@@ -66,7 +66,7 @@ class BaseProjectsTable(tables.Table):
         args=[tables.utils.A('pk')],
     )
     status = tables.Column(verbose_name=_('Status'), accessor='get_status_display', order_by=('status',))
-    fund = tables.Column(verbose_name=_('Fund'), accessor='submission.page')
+    fund = tables.Column(verbose_name=_('Fund'), accessor='submission__page')
     reporting = tables.Column(verbose_name=_('Reporting'), accessor='pk')
     last_payment_request = tables.DateColumn()
     end_date = tables.DateColumn(verbose_name=_('End Date'), accessor='proposed_end')
@@ -152,7 +152,7 @@ class ReportListTable(tables.Table):
     )
     report_period = tables.Column(accessor='pk')
     submitted = tables.DateColumn()
-    lead = tables.Column(accessor='project.lead')
+    lead = tables.Column(accessor='project__lead')
 
     class Meta:
         fields = [
