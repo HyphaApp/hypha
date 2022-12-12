@@ -72,14 +72,18 @@ class BaseSubmissionViewTestCase(BaseViewTestCase):
 
 class TestStaffSubmissionView(BaseSubmissionViewTestCase):
     user_factory = StaffFactory
+    submission = None
 
     @classmethod
     def setUpTestData(cls):
-        cls.submission = ApplicationSubmissionFactory()
         super().setUpTestData()
 
     def __setUp__(self):
         self.refresh(self.submission)
+
+    def setUp(self):
+        self.submission = ApplicationSubmissionFactory()
+        super().setUp()
 
     def test_can_view_a_submission(self):
         response = self.get_page(self.submission)
@@ -858,12 +862,13 @@ class TestReviewerSubmissionView(BaseSubmissionViewTestCase):
 
 class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
     user_factory = ApplicantFactory
+    submission = None
+    draft_proposal_submission = None
 
-    @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
-        cls.submission = ApplicationSubmissionFactory(user=cls.user)
-        cls.draft_proposal_submission = InvitedToProposalFactory(user=cls.user, draft=True)
+    def setUp(self):
+        super().setUp()
+        self.submission = ApplicationSubmissionFactory(user=self.user)
+        self.draft_proposal_submission = InvitedToProposalFactory(user=self.user, draft=True)
 
     def __setUp__(self):
         self.refresh(self.submission)
@@ -1234,11 +1239,11 @@ class TestSuperUserSealedView(BaseSubmissionViewTestCase):
 
 class TestSuperUserSubmissionView(BaseSubmissionViewTestCase):
     user_factory = SuperUserFactory
+    submission = None
 
-    @classmethod
-    def setUpTestData(cls):
-        cls.submission = ApplicationSubmissionFactory()
-        super().setUpTestData()
+    def setUp(self):
+        self.submission = ApplicationSubmissionFactory()
+        super().setUp()
 
     def __setUp__(self):
         self.refresh(self.submission)

@@ -36,19 +36,17 @@ class BaseViewTestCase(TestCase):
     url_name = ''
     base_view_name = ''
     user_factory = None
-
-    @classmethod
-    def setUpTestData(cls):
-        if not cls.user_factory:
-            cls.user = AnonymousUser()
-        else:
-            cls.user = cls.user_factory()
-        super().setUpTestData()
+    user = None
 
     def setUp(self):
+        self.factory = RequestFactory()
+        if self.user_factory:
+            self.user = self.user_factory()
+        else:
+            self.user = AnonymousUser()
+
         if not self.user.is_anonymous:
             self.client.force_login(self.user)
-        self.factory = RequestFactory()
 
     def get_kwargs(self, instance):
         return {}

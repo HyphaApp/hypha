@@ -73,11 +73,11 @@ class StaffReviewFormTestCase(BaseViewTestCase):
     user_factory = StaffFactory
     url_name = 'funds:submissions:reviews:{}'
     base_view_name = 'review'
+    submission = None
 
-    @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
-        cls.submission = ApplicationSubmissionFactory(status='internal_review')
+    def setUp(self):
+        self.submission = ApplicationSubmissionFactory(status='internal_review')
+        super().setUp()
 
     def get_kwargs(self, instance):
         return {'submission_pk': instance.id}
@@ -128,11 +128,11 @@ class TestReviewScore(BaseViewTestCase):
     user_factory = StaffFactory
     url_name = 'funds:submissions:reviews:{}'
     base_view_name = 'review'
+    submission = None
 
-    @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
-        cls.submission = ApplicationSubmissionFactory(status='internal_review')
+    def setUp(self):
+        super().setUp()
+        self.submission = ApplicationSubmissionFactory(status='internal_review')
 
     def get_kwargs(self, instance):
         return {'submission_pk': instance.id}
@@ -267,10 +267,9 @@ class StaffReviewOpinionCase(BaseViewTestCase):
     url_name = 'funds:submissions:reviews:{}'
     base_view_name = 'review'
 
-    @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
-        cls.submission = ApplicationSubmissionFactory(status='draft_proposal', workflow_stages=2)
+    def setUp(self):
+        super().setUp()
+        self.submission = ApplicationSubmissionFactory(status='draft_proposal', workflow_stages=2)
 
     def get_kwargs(self, instance):
         return {'pk': instance.id, 'submission_pk': instance.submission.id}
@@ -323,11 +322,11 @@ class NonStaffReviewOpinionCase(BaseViewTestCase):
     user_factory = UserFactory
     url_name = 'funds:submissions:reviews:{}'
     base_view_name = 'review'
+    submission = None
 
-    @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
-        cls.submission = ApplicationSubmissionFactory(status='draft_proposal', workflow_stages=2)
+    def setUp(self):
+        super().setUp()
+        self.submission = ApplicationSubmissionFactory(status='draft_proposal', workflow_stages=2)
 
     def get_kwargs(self, instance):
         return {'pk': instance.id, 'submission_pk': instance.submission.id}

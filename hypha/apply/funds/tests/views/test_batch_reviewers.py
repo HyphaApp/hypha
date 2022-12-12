@@ -13,14 +13,17 @@ from hypha.apply.utils.testing.tests import BaseViewTestCase
 class BaseBatchReviewerTestCase(BaseViewTestCase):
     url_name = 'funds:submissions:{}'
     base_view_name = 'list'
+    submissions = []
+    staff = None
+    reviewers = []
+    roles = []
 
-    @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
-        cls.submissions = ApplicationSubmissionFactory.create_batch(4)
-        cls.staff = StaffFactory.create_batch(4)
-        cls.reviewers = ReviewerFactory.create_batch(4)
-        cls.roles = ReviewerRoleFactory.create_batch(2)
+    def setUp(self):
+        super().setUp()
+        self.submissions = ApplicationSubmissionFactory.create_batch(4)
+        self.staff = StaffFactory.create_batch(4)
+        self.reviewers = ReviewerFactory.create_batch(4)
+        self.roles = ReviewerRoleFactory.create_batch(2)
 
     def data(self, reviewer_roles, submissions):
         data = {
