@@ -185,8 +185,6 @@ class ReportConfig(models.Model):
     YEAR = _('year')
     ONE_TIME = _('one_time')
     FREQUENCY_CHOICES = [
-        ('', '---'),
-        (ONE_TIME, _('One Time')),
         (WEEK, _('Weeks')),
         (MONTH, _('Months')),
         (YEAR, _('Years')),
@@ -194,8 +192,10 @@ class ReportConfig(models.Model):
 
     project = models.OneToOneField("Project", on_delete=models.CASCADE, related_name="report_config")
     schedule_start = models.DateField(null=True)
-    occurrence = models.PositiveSmallIntegerField(default=1)
-    frequency = models.CharField(choices=FREQUENCY_CHOICES, blank=True, default=MONTH, max_length=10)
+    occurrence = models.PositiveSmallIntegerField(default=1, blank=True)
+    frequency = models.CharField(choices=FREQUENCY_CHOICES, blank=True, default=MONTH, max_length=6)
+    disable_reporting = models.BooleanField(default=False)
+    does_not_repeat = models.BooleanField(default=False)
 
     def get_frequency_display(self):
         if not self.frequency:

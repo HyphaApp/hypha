@@ -176,6 +176,8 @@ class ActivityAdapter(AdapterBase):
 
     def handle_report_frequency(self, config, **kwargs):
         new_schedule = config.get_frequency_display()
+        if config.disable_reporting:
+            return _('Disabled reporting')
         return _(
             'Updated reporting frequency. New schedule is: {new_schedule} starting on {schedule_start}'
         ).format(new_schedule=new_schedule, schedule_start=config.schedule_start)

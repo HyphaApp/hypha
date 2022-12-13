@@ -51,17 +51,20 @@
             margin: 1rem;
 
             &--schedule {
-                margin: 0 1rem;
                 display: flex;
                 align-items: center;
             }
 
-            &--occurrence {
+            &--report-every {
+                font-weight: 700;
+            }
+
+            &.id_occurrence {
                 width: 15%;
                 margin: 0 1rem;
             }
 
-            &--frequency {
+            &.id_frequency {
                 margin: 0;
             }
         }

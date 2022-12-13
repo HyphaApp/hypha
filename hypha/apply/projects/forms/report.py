@@ -97,13 +97,11 @@ class ReportEditForm(FileFormMixin, forms.ModelForm):
 
 
 class ReportFrequencyForm(forms.ModelForm):
-    start = forms.DateField(label='Starting on:')
-    disable_reporting = forms.BooleanField(label="Disable Reporting", required=False)
-    does_not_repeat = forms.BooleanField(label="Does not repeat", required=False)
+    start = forms.DateField(label='Report on:', required=False)
 
     class Meta:
         model = ReportConfig
-        fields = ('disable_reporting', 'start', 'does_not_repeat', 'occurrence', 'frequency')
+        fields = ('start', 'occurrence', 'frequency', 'does_not_repeat')
         labels = {
             'occurrence': _(''),
             'frequency': _(''),
@@ -125,7 +123,3 @@ class ReportFrequencyForm(forms.ModelForm):
             )
 
         return start_date
-
-    def save(self, *args, **kwargs):
-        self.instance.schedule_start = self.cleaned_data['start']
-        return super().save(*args, **kwargs)

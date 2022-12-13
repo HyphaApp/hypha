@@ -32,61 +32,20 @@
             {{ hidden }}
         {% endfor %}
 
-        <div class="form__group form__group--checkbox {{ form.disable_reporting.id_for_label }} {% if form.disable_reporting.errors %} form__error{% endif %}">
-            <label for="{{ form.disable_reporting.id_for_label }}" class="form__question {{ form.disable_reporting.widget_type }}">
-                <span>{{ form.disable_reporting.label }}</span>
-            </label>
-            <div class="form__item">
-                {{ form.disable_reporting }}
-                {% if form.disable_reporting.errors %}<h6 class="form__error-text">{{ form.disable_reporting.errors.as_text|linebreaksbr }}</h6>{% endif %}
-                <label for="{{ form.disable_reporting.id_for_label }}"></label>
-            </div>
-        </div>
-
-        <div class="form__group {{ form.start.id_for_label }} {% if form.start.errors %} form__error{% endif %}">
-            <label for="{{ form.start.id_for_label }}" class="form__question {{ form.start.widget_type }}">
-                <span>{{ form.start.label }}</span>
-            </label>
-            <div class="form__item">
-                {{ form.start }}
-                {% if form.start.errors %}<h6 class="form__error-text">{{ form.start.errors.as_text|linebreaksbr }}</h6>{% endif %}
-            </div>
-        </div>
-
-        <div class="form__group form__group--checkbox {{ form.does_not_repeat.id_for_label }} {% if form.does_not_repeat.errors %} form__error{% endif %}">
-            <label for="{{ form.does_not_repeat.id_for_label }}" class="form__question {{ form.does_not_repeat.widget_type }}">
-                <span>{{ form.does_not_repeat.label }}</span>
-            </label>
-            <div class="form__item">
-                {{ form.does_not_repeat }}
-                {% if form.does_not_repeat.errors %}<h6 class="form__error-text">{{ form.does_not_repeat.errors.as_text|linebreaksbr }}</h6>{% endif %}
-                <label for="{{ form.does_not_repeat.id_for_label }}"></label>
-            </div>
-        </div>
-
-        <div class="form__group--schedule">
-            <p>{% trans 'Schedule reports every:' %}</p>
-
-            <div class="form__group {{ form.occurrence.id_for_label }} form__group--occurrence {% if form.occurrence.errors %} form__error{% endif %}">
-                <label for="{{ form.occurrence.id_for_label }}" class="form__question {{ form.occurrence.widget_type }}">
-                    <span>{{ form.occurrence.label }}</span>
-                </label>
-                <div class="form__item">
-                    {{ form.occurrence }}
-                    {% if form.occurrence.errors %}<h6 class="form__error-text">{{ form.occurrence.errors.as_text|linebreaksbr }}</h6>{% endif %}
+        {% for field in form.visible_fields %}
+            {% if field.name == 'occurrence' %}
+                <label class="form__group form__group--report-every">{% trans 'Report every:' %}</label>
+                <div class="form__group--schedule">
+            {% endif %}
+            {% if field.field %}
+                {% include "forms/includes/field.html" %}
+            {% else %}
+                {{ field }}
+            {% endif %}
+            {% if field.name == 'frequency' %}
                 </div>
-            </div>
-
-            <div class="form__group {{ form.frequency.id_for_label }} form__group--frequency {% if form.frequency.errors %} form__error{% endif %}">
-                <label for="{{ form.frequency.id_for_label }}" class="form__question {{ form.frequency.widget_type }}">
-                    <span>{{ form.frequency.label }}</span>
-                </label>
-                <div class="form__item">
-                    {{ form.frequency }}
-                    {% if form.frequency.errors %}<h6 class="form__error-text">{{ form.frequency.errors.as_text|linebreaksbr }}</h6>{% endif %}
-                </div>
-            </div>
-        </div>
+            {% endif %}
+        {% endfor %}
 
         {% if cancel %}
         <button
@@ -98,15 +57,22 @@
         </button>
         {% endif %}
 
-        {% trans "Delete" as delete %}
-        <button
-            class="button button--{% if invert %}white{% elif value == delete %}warning{% else %}primary{% endif %} button--top-space"
-            id="{{ form.name }}-submit"
-            name="{{ form_prefix }}{{ form.name }}"
-            type="submit"
-            form="{{ form.name }}">
-            {{ value }}
-        </button>
+        <button class="button button--submit button--top-space button--primary" type="submit" name="{{ form_prefix }}{{ form.name }}" value="save">{% trans "Save" %}</button>
+        <button class="button button--submit button--top-space button--white" type="submit" name="{{ form_prefix }}{{ form.name }}" value="disable-reporting">{% trans "Disable Reporting" %}</button>
 
     </form>
 </div>
+
+<script>
+    var_repeat = $("#id_does_not_repeat")[0];
+    var_repeat.addEventListener('click', function() {
+        if (var_repeat.checked) {
+            $(".form__group--report-every").hide();
+            $(".form__group--schedule").hide();
+        }
+        else {
+            $(".form__group--report-every").show();
+            $(".form__group--schedule").show();
+        }
+    });
+</script>

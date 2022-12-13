@@ -206,6 +206,12 @@ class ReportFrequencyUpdate(DelegatedViewMixin, UpdateView):
 
     def form_valid(self, form):
         config = form.instance
+        form.instance.schedule_start = form.cleaned_data['start']
+        # 'form-submitted-' is set as form_prefix in DelegateBase view
+        if 'disable-reporting' in self.request.POST.get(f'form-submitted-{self.context_name}'):
+            form.instance.disable_reporting = True
+            form.instance.schedule_start = None
+
         response = super().form_valid(form)
         messenger(
             MESSAGES.REPORT_FREQUENCY_CHANGED,
