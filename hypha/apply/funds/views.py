@@ -89,10 +89,7 @@ from .models import (
     RoundBase,
     RoundsAndLabs,
 )
-from .permissions import (
-    has_permission,
-    is_user_has_access_to_view_archived_submissions,
-)
+from .permissions import has_permission, is_user_has_access_to_view_archived_submissions
 from .tables import (
     AdminSubmissionsTable,
     ReviewerLeaderboardDetailTable,
