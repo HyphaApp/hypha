@@ -42,7 +42,6 @@
                 opacity: 0;
                 pointer-events: none;
                 transition: opacity $quick-transition;
-                margin: 20px 0 0;
 
                 .batch-actions-enabled & {
                     opacity: 1;

@@ -214,7 +214,7 @@ def get_reviewers(request):
 
 
 def get_reviewers_from_dataset(dataset):
-    """ All assigned reviewers, staff or admin """
+    """ All assigned reviewers, not including Staff and Admin because we want a list of reviewers only"""
     return User.objects.filter(id__in=dataset.values('reviewers')).distinct()
 
 
@@ -309,8 +309,7 @@ class SubmissionFilter(filters.FilterSet):
 
         reviewers_qs = get_reviewers_from_dataset(dataset=qs.exclude(reviewers__isnull=True))
         if archived is not None and archived == 0:
-            reviewers_qs = get_reviewers_from_dataset(dataset=qs.exclude(
-                Q(reviewers__isnull=True) | Q(is_archive=archived)))
+            reviewers_qs = get_reviewers_from_dataset(dataset=qs.filter(is_archive=archived).exclude(reviewers__isnull=True))
             qs = qs.filter(is_archive=archived)
 
         self.filters['fund'].queryset = get_used_funds_from_dataset(dataset=qs)
