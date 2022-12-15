@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('funds', '0103_alter_screeningstatus'),
+        ('funds', '0104_show_deadline'),
     ]
 
     operations = [
