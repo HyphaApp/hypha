@@ -1,3 +1,4 @@
+docs_build/
 /hypha/static_compiled
 __coverage__/
 *.pyc

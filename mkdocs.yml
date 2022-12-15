@@ -1,0 +1,77 @@
+site_name: Hypha docs
+site_url: https://docs.hypha.app/
+site_description: 'Documentation for Hypha, an open source submission management platform.'
+repo_url: https://github.com/HyphaApp/hypha
+edit_uri: edit/main/docs/
+
+dev_addr: localhost:9100
+site_dir: docs_build
+
+theme:
+  name: material
+  favicon: https://www.hypha.app/favicon-32x32.png
+  features:
+    - navigation.indexes
+    - navigation.instant
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.tracking
+    - navigation.top
+    - toc.integrate
+    - header.autohide
+
+plugins:
+  - awesome-pages
+  - search
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - md_in_html
+  - def_list
+  - footnotes
+  - meta
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.critic
+  - pymdownx.inlinehilite
+  - pymdownx.highlight:
+      guess_lang: false
+      linenums: false
+  - pymdownx.magiclink
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+  - pymdownx.details
+  - pymdownx.keys
+
+nav:
+  - Home: index.md
+  - ...
+  - Glossary: glossary.md
+
+extra:
+  social:
+  - icon: material/chat
+    link: https://chat.hypha.app/
+    name: Hypha Chat
+
+  - icon: material/forum
+    link: https://we.hypha.app/
+    name: Hypha Forum
+
+  - icon: material/github
+    link: https://github.com/HyphaApp/
+    name: GitHub Org
