@@ -45,6 +45,7 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.SUBMIT_REPORT: _('Submitted a report'),
         MESSAGES.SKIPPED_REPORT: 'handle_skipped_report',
         MESSAGES.REPORT_FREQUENCY_CHANGED: 'handle_report_frequency',
+        MESSAGES.DISABLED_REPORTING: _('Reporting disabled'),
         MESSAGES.BATCH_DELETE_SUBMISSION: 'handle_batch_delete_submission',
         MESSAGES.BATCH_ARCHIVE_SUBMISSION: 'handle_batch_archive_submission',
         MESSAGES.ARCHIVE_SUBMISSION: _('{user} has archived the submission: {source.title}'),
@@ -176,8 +177,6 @@ class ActivityAdapter(AdapterBase):
 
     def handle_report_frequency(self, config, **kwargs):
         new_schedule = config.get_frequency_display()
-        if config.disable_reporting:
-            return _('Disabled reporting')
         return _(
             'Updated reporting frequency. New schedule is: {new_schedule} starting on {schedule_start}'
         ).format(new_schedule=new_schedule, schedule_start=config.schedule_start)

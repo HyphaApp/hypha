@@ -183,7 +183,6 @@ class ReportConfig(models.Model):
     WEEK = _('week')
     MONTH = _('month')
     YEAR = _('year')
-    ONE_TIME = _('one_time')
     FREQUENCY_CHOICES = [
         (WEEK, _('Weeks')),
         (MONTH, _('Months')),
@@ -192,20 +191,20 @@ class ReportConfig(models.Model):
 
     project = models.OneToOneField("Project", on_delete=models.CASCADE, related_name="report_config")
     schedule_start = models.DateField(null=True)
-    occurrence = models.PositiveSmallIntegerField(default=1, blank=True)
-    frequency = models.CharField(choices=FREQUENCY_CHOICES, blank=True, default=MONTH, max_length=6)
+    occurrence = models.PositiveSmallIntegerField(default=1)
+    frequency = models.CharField(choices=FREQUENCY_CHOICES, default=MONTH, max_length=6)
     disable_reporting = models.BooleanField(default=False)
     does_not_repeat = models.BooleanField(default=False)
 
     def get_frequency_display(self):
-        if not self.frequency:
-            return _('No reporting frequency set')
-        if self.frequency == self.ONE_TIME:
+        if self.disable_reporting:
+            return _('Reporting Disabled')
+        if self.does_not_repeat:
             last_report = self.last_report()
             if last_report:
-                return _('No reporting due, One time reporting has completed on {date}'.format(
+                return _('One time, that already has reported on {date}'.format(
                     date=last_report.end_date.strftime('%d %B, %Y')))
-            return _('One time reporting is due on {date}'.format(date=self.schedule_start.strftime('%d %B, %Y')))
+            return _('One time on {date}'.format(date=self.schedule_start.strftime('%d %B, %Y')))
         next_report = self.current_due_report()
 
         if self.frequency == self.YEAR:
@@ -260,7 +259,7 @@ class ReportConfig(models.Model):
         ).first()
 
     def current_due_report(self):
-        if not self.frequency:
+        if self.disable_reporting:
             return None
 
         # Project not started - no reporting required
@@ -275,7 +274,7 @@ class ReportConfig(models.Model):
 
         if last_report:
             # Frequency is one time and last report exists - no reporting required anymore
-            if self.frequency == self.ONE_TIME:
+            if self.does_not_repeat:
                 return None
 
             if last_report.end_date < schedule_date:
@@ -292,7 +291,7 @@ class ReportConfig(models.Model):
             else:
                 # schedule_start is the first day the project so the "last" period
                 # ended one day before that. If date is in past we required report now
-                if self.frequency == self.ONE_TIME:
+                if self.does_not_repeat:
                     next_due_date = today
                 else:
                     next_due_date = max(

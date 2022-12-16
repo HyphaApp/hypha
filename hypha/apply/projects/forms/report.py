@@ -1,5 +1,4 @@
 from django import forms
-from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -107,19 +106,7 @@ class ReportFrequencyForm(forms.ModelForm):
             'frequency': _(''),
         }
 
-    def clean_start(self):
-        start_date = self.cleaned_data['start']
-        last_report = self.instance.last_report()
-        if last_report and start_date <= last_report.end_date:
-            raise ValidationError(
-                _('Cannot start a schedule before the current reporting period'),
-                code="bad_start"
-            )
-
-        if start_date < timezone.now().date():
-            raise ValidationError(
-                _('Cannot start a schedule in the past'),
-                code="bad_start"
-            )
-
-        return start_date
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['occurrence'].required = False
+        self.fields['frequency'].required = False

@@ -574,9 +574,8 @@ class AdminProjectDetailView(
         context['approvals'] = self.object.approvals.distinct('by')
         context['remaining_document_categories'] = list(self.object.get_missing_document_categories())
 
-        if self.object.is_in_progress and self.object.report_config.frequency:
-            # Current due report can be none for ONE_TIME and No frequency,
-            # No frequency already handled above
+        if self.object.is_in_progress and not self.object.report_config.disable_reporting:
+            # Current due report can be none for ONE_TIME,
             # In case of ONE_TIME, either reporting is already completed(last_report exists)
             # or there should be a current_due_report.
             if self.object.report_config.current_due_report():

@@ -18,6 +18,7 @@ class DjangoMessagesAdapter(AdapterBase):
         MESSAGES.REMOVE_DOCUMENT: _('Successfully removed document'),
         MESSAGES.SKIPPED_REPORT: 'handle_skipped_report',
         MESSAGES.REPORT_FREQUENCY_CHANGED: 'handle_report_frequency',
+        MESSAGES.DISABLED_REPORTING: _('Reporting disabled'),
         MESSAGES.CREATE_REMINDER: _('Reminder created'),
         MESSAGES.DELETE_REMINDER: _('Reminder deleted'),
     }
@@ -34,8 +35,6 @@ class DjangoMessagesAdapter(AdapterBase):
         )
 
     def handle_report_frequency(self, config, **kwargs):
-        if config.disable_reporting:
-            return _("Disabled Reporting")
         new_schedule = config.get_frequency_display()
         return _('Successfully updated reporting frequency. They will now report {new_schedule} starting on {schedule_start}').format(new_schedule=new_schedule, schedule_start=config.schedule_start)
 

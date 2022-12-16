@@ -59,12 +59,12 @@
                 font-weight: 700;
             }
 
-            &.id_occurrence {
+            &.id_occurrence { // stylelint-disable-line selector-class-pattern
                 width: 15%;
                 margin: 0 1rem;
             }
 
-            &.id_frequency {
+            &.id_frequency { // stylelint-disable-line selector-class-pattern
                 margin: 0;
             }
         }

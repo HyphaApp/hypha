@@ -50,6 +50,7 @@ class MESSAGES(TextChoices):
     SUBMIT_REPORT = 'SUBMIT_REPORT', _('submitted report')
     SKIPPED_REPORT = 'SKIPPED_REPORT', _('skipped report')
     REPORT_FREQUENCY_CHANGED = 'REPORT_FREQUENCY_CHANGED', _('changed report frequency')
+    DISABLED_REPORTING = 'DISABLED_REPORTING', _('disabled reporting')
     REPORT_NOTIFY = 'REPORT_NOTIFY', _('notified report')
     CREATE_REMINDER = 'CREATE_REMINDER', _('created reminder')
     DELETE_REMINDER = 'DELETE_REMINDER', _('deleted reminder')

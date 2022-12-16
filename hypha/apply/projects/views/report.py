@@ -176,9 +176,8 @@ class ReportFrequencyUpdate(DelegatedViewMixin, UpdateView):
         project = kwargs['instance']
         instance = project.report_config
         kwargs['instance'] = instance
-        if instance.frequency:
-            # Current due report can be none for ONE_TIME and No frequency,
-            # No frequency already handled above
+        if not instance.disable_reporting:
+            # Current due report can be none for ONE_TIME(does not repeat),
             # In case of ONE_TIME, either reporting is already completed(last_report exists)
             # or there should be a current_due_report.
             if instance.current_due_report():
@@ -206,20 +205,28 @@ class ReportFrequencyUpdate(DelegatedViewMixin, UpdateView):
 
     def form_valid(self, form):
         config = form.instance
-        form.instance.schedule_start = form.cleaned_data['start']
         # 'form-submitted-' is set as form_prefix in DelegateBase view
         if 'disable-reporting' in self.request.POST.get(f'form-submitted-{self.context_name}'):
             form.instance.disable_reporting = True
             form.instance.schedule_start = None
-
-        response = super().form_valid(form)
-        messenger(
-            MESSAGES.REPORT_FREQUENCY_CHANGED,
-            request=self.request,
-            user=self.request.user,
-            source=config.project,
-            related=config,
-        )
+            response = super().form_valid(form)
+            messenger(
+                MESSAGES.DISABLED_REPORTING,
+                request=self.request,
+                user=self.request.user,
+                source=config.project,
+            )
+        else:
+            form.instance.disable_reporting = False
+            form.instance.schedule_start = form.cleaned_data['start']
+            response = super().form_valid(form)
+            messenger(
+                MESSAGES.REPORT_FREQUENCY_CHANGED,
+                request=self.request,
+                user=self.request.user,
+                source=config.project,
+                related=config,
+            )
 
         return response
 

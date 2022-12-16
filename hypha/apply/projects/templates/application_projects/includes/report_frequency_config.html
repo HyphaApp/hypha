@@ -62,17 +62,3 @@
 
     </form>
 </div>
-
-<script>
-    var_repeat = $("#id_does_not_repeat")[0];
-    var_repeat.addEventListener('click', function() {
-        if (var_repeat.checked) {
-            $(".form__group--report-every").hide();
-            $(".form__group--schedule").hide();
-        }
-        else {
-            $(".form__group--report-every").show();
-            $(".form__group--schedule").show();
-        }
-    });
-</script>
