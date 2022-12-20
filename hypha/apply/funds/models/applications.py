@@ -3,6 +3,7 @@ from datetime import date
 from django import forms
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import (
     Case,
@@ -73,6 +74,13 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
         limit_choices_to=LIMIT_TO_REVIEWERS,
         blank=True,
     )
+
+    image = models.ForeignKey('images.CustomImage', null=True, blank=True, on_delete=models.SET_NULL, related_name='+')
+
+    description = models.TextField(null=True, blank=True)
+
+    # higher the weight means top priority, 100th will be on top.
+    weight = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1), MaxValueValidator(100)])
 
     guide_link = models.URLField(blank=True, max_length=255, help_text=_('Link to the apply guide.'))
 
@@ -430,6 +438,13 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
         limit_choices_to=LIMIT_TO_REVIEWERS,
         blank=True,
     )
+
+    image = models.ForeignKey('images.CustomImage', null=True, blank=True, on_delete=models.SET_NULL, related_name='+')
+
+    description = models.TextField(null=True, blank=True)
+
+    # higher the weight means top priority, 100th will be on top.
+    weight = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1), MaxValueValidator(100)])
 
     guide_link = models.URLField(blank=True, max_length=255, help_text=_('Link to the apply guide.'))
 
