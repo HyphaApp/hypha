@@ -215,9 +215,8 @@ class ReportConfig(models.Model):
                 day_of_month = ordinal(next_report.end_date.day)
                 month = next_report.end_date.strftime('%B')
             if self.occurrence == 1:
-                return _('Yearly on the {day} of the {month}').format(day=day_of_month, month=month)
-            return _('Every {occurrence} years on the {day} of the {month}').format(occurrence=self.occurrence,
-                                                                                    day=day_of_month, month=month)
+                return _('Once a year on {month} {day}').format(day=day_of_month, month=month)
+            return _('Every {occurrence} years on {month} {day}').format(occurrence=self.occurrence, day=day_of_month, month=month)
 
         if self.frequency == self.MONTH:
             if self.schedule_start and self.schedule_start.day == 31:
@@ -225,13 +224,13 @@ class ReportConfig(models.Model):
             else:
                 day_of_month = ordinal(next_report.end_date.day)
             if self.occurrence == 1:
-                return _('Monthly on the {day} of the month').format(day=day_of_month)
-            return _('Every {occurrence} months on the {day} of the month').format(occurrence=self.occurrence, day=day_of_month)
+                return _('Once a month on the {day}').format(day=day_of_month)
+            return _('Every {occurrence} months on the {day}').format(occurrence=self.occurrence, day=day_of_month)
 
         weekday = next_report.end_date.strftime('%A')
 
         if self.occurrence == 1:
-            return _('Every week on {weekday}').format(weekday=weekday)
+            return _('Once a week on {weekday}').format(weekday=weekday)
         return _('Every {occurrence} weeks on {weekday}').format(occurrence=self.occurrence, weekday=weekday)
 
     def is_up_to_date(self):
