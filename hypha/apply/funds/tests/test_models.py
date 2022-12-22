@@ -203,7 +203,8 @@ class TestFormSubmission(TestCase):
         self.round_page = RoundFactory(parent=fund, now=True)
         self.lab_page = LabFactory(lead=self.round_page.lead)
 
-    def submit_form(self, page=None, email=None, name=None, draft=None, user=AnonymousUser(), ignore_errors=False):
+    def submit_form(self, page=None, email=None, name=None, draft=None, user=None, ignore_errors=False):
+        user = user or AnonymousUser()
         page = page or self.round_page
 
         fields = page.forms.first().fields
