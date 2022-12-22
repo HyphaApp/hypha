@@ -90,4 +90,4 @@ class HasReviewDraftPermission(permissions.BasePermission):
             submission = view.get_submission_object()
         except KeyError:
             return True
-        return submission.can_review(user) and submission.assigned.draft_reviewed().filter(reviewer=request.user).exists()
+        return submission.can_review(request.user) and submission.assigned.draft_reviewed().filter(reviewer=request.user).exists()
