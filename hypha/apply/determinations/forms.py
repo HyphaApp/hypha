@@ -60,7 +60,7 @@ class BaseDeterminationForm:
     def get_detailed_response(cls, saved_data):
         data = {}
         for group, title in cls.titles.items():
-            data.setdefault(group, {'title': title, 'questions': list()})
+            data.setdefault(group, {'title': title, 'questions': []})
 
         for name, field in cls.base_fields.items():
             try:
@@ -321,7 +321,8 @@ class BaseProposalDeterminationForm(forms.Form):
 
 
 class ConceptDeterminationForm(BaseConceptDeterminationForm, BaseNormalDeterminationForm):
-    def __init__(self, *args, submission, user, edit=False, initial={}, instance=None, **kwargs):
+    def __init__(self, *args, submission, user, edit=False, initial=None, instance=None, **kwargs):
+        initial = initial or {}
         initial.update(submission=submission.id)
 
         if instance:

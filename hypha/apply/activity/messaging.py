@@ -24,7 +24,7 @@ class MessengerBackend:
         user,
         related,
         source=None,
-        sources=list(),
+        sources=[],
         **kwargs
     ):
         from .models import Event

@@ -45,7 +45,7 @@ class NestedMultiWidget(KeepOwnAttrsWidget, forms.MultiWidget):
 
     def decompress(self, value):
         if value:
-            decompressed = list()
+            decompressed = []
             for i, widget in enumerate(self.widgets):
                 if hasattr(widget, 'components'):
                     decompressed.append(widget.decompress(value))
@@ -55,7 +55,7 @@ class NestedMultiWidget(KeepOwnAttrsWidget, forms.MultiWidget):
         return [None] * len(self.components)
 
     def value_from_datadict(self, data, files, name):
-        value = dict()
+        value = {}
         for i, widget in enumerate(self.widgets):
             widget_value = widget.value_from_datadict(data, files, name + '_%s' % i)
             # flatten the data structure to a single dict
@@ -89,7 +89,7 @@ class AddressWidget(NestedMultiWidget):
         )
 
     def __init__(self, *args, **kwargs):
-        attrs = kwargs.get('attrs', dict())
+        attrs = kwargs.get('attrs', {})
         attrs['class'] = 'address'
         kwargs['attrs'] = attrs
         super().__init__(*args, **kwargs)

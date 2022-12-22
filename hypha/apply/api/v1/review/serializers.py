@@ -72,7 +72,7 @@ class SubmissionReviewSerializer(serializers.ModelSerializer):
         return instance
 
     def calculate_score(self, instance, data):
-        scores = list()
+        scores = []
         for field in instance.score_fields:
             score = data.get(field.id, ['', NA])
             # Include NA answers as 0.

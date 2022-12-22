@@ -93,7 +93,7 @@ class CustomFormFieldsBlock(StreamBlock):
         except ValidationError as e:
             error_dict = e.params
         else:
-            error_dict = dict()
+            error_dict = {}
 
         block_types = [block.block_type for block in value]
         missing = set(self.required_block_names) - set(block_types)
@@ -103,7 +103,7 @@ class CustomFormFieldsBlock(StreamBlock):
             if name in self.single_block_names
         ]
 
-        all_errors = list()
+        all_errors = []
         if missing:
             all_errors.append(
                 'You are missing the following required fields: {}'.format(', '.join(prettify_names(missing)))

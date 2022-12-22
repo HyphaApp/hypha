@@ -407,7 +407,7 @@ class BatchUpdateReviewersForm(forms.Form):
 
         for submission in submissions:
             AssignedReviewers.objects.bulk_create_reviewers(
-                [reviewer for reviewer in external_reviewers],
+                list(external_reviewers),
                 submission,
             )
 

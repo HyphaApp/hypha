@@ -123,7 +123,7 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
                 ))
         return params
 
-    def get_or_create_and_notify(self, defaults=dict(), site=None, **kwargs):
+    def get_or_create_and_notify(self, defaults={}, site=None, **kwargs):
         """Create or get an account for applicant.and send activation email to applicant.
 
         Args:

@@ -362,12 +362,12 @@ class ReviewListView(ListView):
         review_data = {}
 
         # Add the header rows
-        review_data['title'] = {'question': '', 'answers': list()}
-        review_data['opinions'] = {'question': 'Opinions', 'answers': list()}
-        review_data['score'] = {'question': 'Overall Score', 'answers': list()}
-        review_data['recommendation'] = {'question': 'Recommendation', 'answers': list()}
-        review_data['revision'] = {'question': 'Revision', 'answers': list()}
-        review_data['comments'] = {'question': 'Comments', 'answers': list()}
+        review_data['title'] = {'question': '', 'answers': []}
+        review_data['opinions'] = {'question': 'Opinions', 'answers': []}
+        review_data['score'] = {'question': 'Overall Score', 'answers': []}
+        review_data['recommendation'] = {'question': 'Recommendation', 'answers': []}
+        review_data['revision'] = {'question': 'Revision', 'answers': []}
+        review_data['comments'] = {'question': 'Comments', 'answers': []}
 
         responses = self.object_list.count()
         ordered_reviewers = AssignedReviewers.objects.filter(submission=self.submission).reviewed().review_order()

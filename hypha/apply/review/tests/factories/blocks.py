@@ -20,7 +20,7 @@ class RecommendationBlockFactory(FormFieldBlockFactory):
         model = blocks.RecommendationBlock
 
     @classmethod
-    def make_answer(cls, params=dict()):
+    def make_answer(cls, params={}):
         return random.choices([NO, MAYBE, YES])
 
 
@@ -34,7 +34,7 @@ class VisibilityBlockFactory(FormFieldBlockFactory):
         model = blocks.VisibilityBlock
 
     @classmethod
-    def make_answer(cls, params=dict()):
+    def make_answer(cls, params={}):
         return random.choices([PRIVATE, REVIEWER])
 
 
@@ -43,7 +43,7 @@ class ScoreFieldWithoutTextBlockFactory(FormFieldBlockFactory):
         model = blocks.ScoreFieldWithoutTextBlock
 
     @classmethod
-    def make_answer(cls, params=dict()):
+    def make_answer(cls, params={}):
         return random.randint(1, 5)
 
 
@@ -52,11 +52,11 @@ class ScoreFieldBlockFactory(FormFieldBlockFactory):
         model = blocks.ScoreFieldBlock
 
     @classmethod
-    def make_answer(cls, params=dict()):
+    def make_answer(cls, params={}):
         return json.dumps([factory.Faker('paragraph').evaluate(None, None, dict(params, locale=None)), random.randint(1, 5)])
 
     @classmethod
-    def make_form_answer(cls, params=dict()):
+    def make_form_answer(cls, params={}):
         defaults = {
             'description': factory.Faker('paragraph').evaluate(None, None, {'locale': None}),
             'score': random.randint(1, 5),

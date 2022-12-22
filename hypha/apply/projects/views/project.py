@@ -736,7 +736,7 @@ class ProjectDetailDownloadView(SingleObjectMixin, View):
         return f"{datetime.date.today().strftime('%Y%m%d')}-{slugify(self.object.title)}.{export_type}"
 
     def get_paf_download_context(self):
-        context = dict()
+        context = {}
         context['id'] = self.object.id
         context['title'] = self.object.title
         context['project_link'] = self.request.build_absolute_uri(

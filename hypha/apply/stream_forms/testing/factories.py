@@ -102,7 +102,7 @@ class FormFieldBlockFactory(wagtail_factories.StructBlockFactory):
         model = stream_blocks.FormFieldBlock
 
     @classmethod
-    def make_answer(cls, params=dict()):
+    def make_answer(cls, params={}):
         return cls.default_value.evaluate(None, None, dict(params, locale=None))
 
     @classmethod
@@ -251,7 +251,7 @@ class StreamFieldUUIDFactory(wagtail_factories.StreamFieldFactory):
     def generate(self, step, params):
         params = self.build_form(params)
         blocks = super().generate(step, params)
-        ret_val = list()
+        ret_val = []
         # Convert to JSON so we can add id before create
         for block_name, value in blocks:
             block = self.factories[block_name]._meta.model()
@@ -262,7 +262,7 @@ class StreamFieldUUIDFactory(wagtail_factories.StreamFieldFactory):
     def build_form(self, data):
         extras = defaultdict(dict)
         exclusions = []
-        multiples = dict()
+        multiples = {}
         for field, value in data.items():
             # we dont care about position
             name, attr = field.split('__')

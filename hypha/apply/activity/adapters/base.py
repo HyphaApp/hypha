@@ -139,7 +139,7 @@ class AdapterBase:
         request,
         user,
         source,
-        sources=list(),
+        sources=[],
         related=None,
         **kwargs,
     ):

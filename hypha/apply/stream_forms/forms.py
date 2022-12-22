@@ -91,11 +91,11 @@ class BlockFieldWrapper:
         return self
 
     def css_classes(self):
-        return list()
+        return []
 
     @property
     def errors(self):
-        return list()
+        return []
 
     @property
     def html_name(self):

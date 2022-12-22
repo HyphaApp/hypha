@@ -510,7 +510,7 @@ class TestReviewersUpdateView(BaseSubmissionViewTestCase):
         cls.reviewers = ReviewerFactory.create_batch(4)
         cls.roles = ReviewerRoleFactory.create_batch(2)
 
-    def post_form(self, submission, reviewer_roles=list(), reviewers=list()):
+    def post_form(self, submission, reviewer_roles=[], reviewers=[]):
         data = {
             'form-submitted-reviewer_form': '',
             'reviewer_reviewers': [r.id for r in reviewers]
@@ -1442,7 +1442,7 @@ class TestUpdateReviewersMixin(BaseSubmissionViewTestCase):
         cls.reviewers = ReviewerFactory.create_batch(4)
         cls.roles = ReviewerRoleFactory.create_batch(2)
 
-    def post_form(self, submission, reviewer_roles=list(), reviewers=list()):
+    def post_form(self, submission, reviewer_roles=[], reviewers=[]):
         data = {
             'form-submitted-reviewer_form': '',
             'reviewer_reviewers': [r.id for r in reviewers]

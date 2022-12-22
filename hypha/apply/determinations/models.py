@@ -65,7 +65,7 @@ class DeterminationFormFieldsMixin(models.Model):
         return self._get_field_type(SendNoticeBlock)
 
     def _get_field_type(self, block_type, many=False):
-        fields = list()
+        fields = []
         for field in self.form_fields:
             try:
                 if isinstance(field.block, block_type):
@@ -165,7 +165,7 @@ class Determination(DeterminationFormFieldsMixin, AccessFormData, models.Model):
     def get_detailed_response(self):
         data = {}
         group = 0
-        data.setdefault(group, {'title': None, 'questions': list()})
+        data.setdefault(group, {'title': None, 'questions': []})
         for field in self.form_fields:
             if issubclass(
                 field.block.__class__, DeterminationMustIncludeFieldBlock
@@ -175,7 +175,7 @@ class Determination(DeterminationFormFieldsMixin, AccessFormData, models.Model):
                 value = self.form_data[field.id]
             except KeyError:
                 group = group + 1
-                data.setdefault(group, {'title': field.value.source, 'questions': list()})
+                data.setdefault(group, {'title': field.value.source, 'questions': []})
             else:
                 data[group]['questions'].append(
                     (field.value.get('field_label'), value)
