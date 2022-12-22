@@ -19,8 +19,8 @@ def group_reviewers(reviewers):
 
 def reviewers_message(reviewers):
     messages = []
-    for role, reviewers in group_reviewers(reviewers).items():
-        message = ', '.join(str(reviewer) for reviewer in reviewers)
+    for role, reviewers_ in group_reviewers(reviewers).items():
+        message = ', '.join(str(reviewer) for reviewer in reviewers_)
         if role:
             message += _(' as {role}').format(role=str(role))
         message += '.'
