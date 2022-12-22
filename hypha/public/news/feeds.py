@@ -12,8 +12,8 @@ class NewsFeed(Feed):
     def __call__(self, request, *args, **kwargs):
         try:
             self.site = Site.objects.get(is_default_site=True)
-        except Site.DoesNotExist:
-            raise Http404
+        except Site.DoesNotExist as e:
+            raise Http404 from e
         self.news_feed_settings = NewsFeedSettings.for_site(site=self.site)
 
         cache_key = self.get_cache_key(*args, **kwargs)

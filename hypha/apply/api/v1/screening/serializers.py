@@ -15,10 +15,10 @@ class ScreeningStatusSerializer(serializers.Serializer):
     def validate_id(self, value):
         try:
             ScreeningStatus.objects.get(id=value)
-        except ScreeningStatus.DoesNotExist:
+        except ScreeningStatus.DoesNotExist as e:
             raise exceptions.ValidationError({
                 'detail': 'Not found'
-            })
+            }) from e
         return value
 
 

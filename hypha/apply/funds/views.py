@@ -527,8 +527,8 @@ class SubmissionsByRound(BaseAdminSubmissionsTable, DelegateableListView):
         # We want to only show lab or Rounds in this view, their base class is Page
         try:
             self.obj = Page.objects.get(pk=self.kwargs.get('pk')).specific
-        except Page.DoesNotExist:
-            raise Http404(_("No Round or Lab found matching the query"))
+        except Page.DoesNotExist as e:
+            raise Http404(_("No Round or Lab found matching the query")) from e
 
         if not isinstance(self.obj, (LabBase, RoundBase)):
             raise Http404(_("No Round or Lab found matching the query"))
@@ -554,7 +554,7 @@ class SubmissionsByStatus(BaseAdminSubmissionsTable, DelegateableListView):
         try:
             status_data = self.status_mapping[self.status]
         except KeyError:
-            raise Http404(_("No statuses match the requested value"))
+            raise Http404(_("No statuses match the requested value")) from None
         self.status_name = status_data['name']
         self.statuses = status_data['statuses']
         return super().dispatch(request, *args, **kwargs)

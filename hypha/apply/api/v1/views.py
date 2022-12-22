@@ -189,7 +189,7 @@ class SubmissionActionViewSet(
         try:
             obj.perform_transition(action, self.request.user, request=self.request)
         except DjangoPermissionDenied as e:
-            raise PermissionDenied(str(e))
+            raise PermissionDenied(str(e)) from e
         # refresh_from_db() raises errors for particular actions.
         obj = self.get_object()
         serializer = SubmissionDetailSerializer(obj, context={
