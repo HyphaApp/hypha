@@ -63,7 +63,7 @@ class SubmissionReminderViewSet(
             },
             {
                 "id": "action",
-                "kwargs": {"label": "Action", "required": True, "choices": getattr(Reminder, 'ACTIONS').items(), "initial": getattr(Reminder, 'REVIEW')},
+                "kwargs": {"label": "Action", "required": True, "choices": Reminder.ACTIONS.items(), "initial": Reminder.REVIEW},
                 "type": "Select"
             }
         ]

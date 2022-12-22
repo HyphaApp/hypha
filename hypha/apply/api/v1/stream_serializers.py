@@ -128,11 +128,11 @@ class WagtailSerializer:
         respective classes. But for now this works.
         """
         if isinstance(field, BlockFieldWrapper):
-            return getattr(serializers, 'CharField')
+            return serializers.CharField
         if isinstance(field, ScoredAnswerField):
             return ScoredAnswerListField
         if isinstance(field, TypedChoiceField):
-            return getattr(serializers, 'ChoiceField')
+            return serializers.ChoiceField
         class_name = field.__class__.__name__
         return getattr(serializers, class_name)
 

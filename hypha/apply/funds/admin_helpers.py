@@ -122,7 +122,7 @@ class ApplicationFormButtonHelper(ButtonHelper):
 
         copy_form_button = self.copy_form_button(
             pk=getattr(obj, self.opts.pk.attname),
-            form_name=getattr(obj, 'name'),
+            form_name=obj.name,
             **kwargs
         )
         buttons.append(copy_form_button)
