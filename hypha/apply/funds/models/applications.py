@@ -80,7 +80,7 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
     description = models.TextField(null=True, blank=True)
 
     # higher the weight means top priority, 100th will be on top.
-    weight = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1), MaxValueValidator(100)])
+    weight = models.PositiveIntegerField(default=1, blank=True, validators=[MinValueValidator(1), MaxValueValidator(100)])
 
     guide_link = models.URLField(blank=True, max_length=255, help_text=_('Link to the apply guide.'))
 
@@ -447,7 +447,7 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
     description = models.TextField(null=True, blank=True)
 
     # higher the weight means top priority, 100th will be on top.
-    weight = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1), MaxValueValidator(100)])
+    weight = models.PositiveIntegerField(default=1, blank=True, validators=[MinValueValidator(1), MaxValueValidator(100)])
 
     guide_link = models.URLField(blank=True, max_length=255, help_text=_('Link to the apply guide.'))
 
