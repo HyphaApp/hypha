@@ -291,7 +291,6 @@ def create_password(request):
 
 
 @method_decorator(never_cache, name='dispatch')
-@method_decorator(ratelimit(key='user', rate=settings.DEFAULT_RATE_LIMIT, method='POST'), name='dispatch')
 @method_decorator(login_required, name='dispatch')
 class TWOFASetupView(TwoFactorSetupView):
     def get_issuer(self):
@@ -317,6 +316,7 @@ class TWOFASetupView(TwoFactorSetupView):
 
 
 @method_decorator(login_required, name='dispatch')
+@method_decorator(ratelimit(key='user', rate='5/m', method='POST'), name='dispatch')
 class TWOFABackupTokensPasswordView(TwoFactorBackupTokensView):
     """
     Require password to see backup codes
