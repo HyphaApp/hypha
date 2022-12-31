@@ -125,6 +125,9 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
         FieldPanel('guide_link'),
         FieldPanel('slack_channel'),
         FieldPanel('show_deadline'),
+        FieldPanel('description'),
+        FieldPanel('image'),
+        FieldPanel('weight'),
     ]
 
     edit_handler = TabbedInterface([
@@ -458,6 +461,9 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
         FieldPanel('reviewers', widget=forms.SelectMultiple(attrs={'size': '16'})),
         FieldPanel('guide_link'),
         FieldPanel('slack_channel'),
+        FieldPanel('description'),
+        FieldPanel('image'),
+        FieldPanel('weight'),
     ]
 
     edit_handler = TabbedInterface([
