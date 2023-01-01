@@ -10,8 +10,8 @@ from .views import (
     InvoicePrivateMedia,
     InvoiceView,
     ProjectApprovalEditView,
+    ProjectDetailApprovalView,
     ProjectDetailDownloadView,
-    ProjectDetailSimplifiedView,
     ProjectDetailView,
     ProjectListView,
     ProjectOverviewView,
@@ -38,7 +38,7 @@ urlpatterns = [
         path('documents/<int:file_pk>/', ProjectPrivateMediaView.as_view(), name="document"),
         path('contract/<int:file_pk>/', ContractPrivateMediaView.as_view(), name="contract"),
         path('download/<str:export_type>/', ProjectDetailDownloadView.as_view(), name='download'),
-        path('simplified/', ProjectDetailSimplifiedView.as_view(), name='simplified'),
+        path('approval/', ProjectDetailApprovalView.as_view(), name='approval'),
         path('invoice/', CreateInvoiceView.as_view(), name='invoice'),
         path('vendor/', CreateVendorView.as_view(), name='vendor'),
         path('vendor/<int:vendor_pk>/', VendorDetailView.as_view(), name='vendor-detail'),
@@ -62,7 +62,7 @@ urlpatterns = [
             path('documents/<int:file_pk>/', ReportPrivateMedia.as_view(), name="document"),
         ])),
     ], 'reports'))),
-    path('venor/', include(([
+    path('vendor/', include(([
         path('', ReportListView.as_view(), name='all'),
         path('<int:pk>/', include([
             path('', ReportDetailView.as_view(), name='detail'),

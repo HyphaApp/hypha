@@ -35,7 +35,7 @@ from ..models.project import (
     WAITING_FOR_APPROVAL,
     ProjectSettings,
 )
-from ..views.project import ContractsMixin, ProjectDetailSimplifiedView
+from ..views.project import ContractsMixin, ProjectDetailApprovalView
 from .factories import (
     ContractFactory,
     DocumentCategoryFactory,
@@ -771,7 +771,7 @@ class TestAnonPacketView(BasePacketFileViewTestCase):
             self.assertIn(reverse('users_public:login'), path)
 
 
-class TestProjectDetailSimplifiedView(TestCase):
+class TestProjectDetailApprovalView(TestCase):
     def test_staff_only(self):
         factory = RequestFactory()
         project = ProjectFactory()
@@ -779,12 +779,12 @@ class TestProjectDetailSimplifiedView(TestCase):
         request = factory.get(f'/project/{project.pk}')
         request.user = StaffFactory()
 
-        response = ProjectDetailSimplifiedView.as_view()(request, pk=project.pk)
+        response = ProjectDetailApprovalView.as_view()(request, pk=project.pk)
         self.assertEqual(response.status_code, 200)
 
         request.user = ApplicantFactory()
         with self.assertRaises(PermissionDenied):
-            ProjectDetailSimplifiedView.as_view()(request, pk=project.pk)
+            ProjectDetailApprovalView.as_view()(request, pk=project.pk)
 
 
 class TestStaffDetailInvoiceStatus(BaseViewTestCase):

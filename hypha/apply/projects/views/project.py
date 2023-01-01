@@ -674,12 +674,12 @@ class ContractPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
 # PROJECT EDIT
 
 @method_decorator(staff_or_finance_or_contracting_required, name='dispatch')
-class ProjectDetailSimplifiedView(DelegateableView, DetailView):
+class ProjectDetailApprovalView(DelegateableView, DetailView):
     form_views = [
         ChangePAFStatusView
     ]
     model = Project
-    template_name_suffix = '_simplified_detail'
+    template_name_suffix = '_approval_detail'
 
 
 @method_decorator(staff_or_finance_or_contracting_required, name='dispatch')
