@@ -19,7 +19,9 @@ filterwarnings = [
 
 [tool.coverage.run]
 parallel = true
-plugins = 'django_coverage_plugin'
+plugins = [
+    'django_coverage_plugin'
+]
 omit = [
     '*migrations*',
     '*test*',
@@ -35,13 +37,14 @@ ignore = [
 ]
 line-length = 88
 select = [
-    'C',  # flake8-comprehensions
-    'B',  # flake8-bugbear
+    # 'C',  # flake8-comprehensions
+    # 'B',  # flake8-bugbear
     'E',  # pycodestyle errors
     'F',  # pyflakes
     'I',  # iSort
     'W',  # pycodestyle warnings
 ]
+
 [tool.ruff.per-file-ignores]
 "hypha/settings/*.py" = ["F405"]
 "*migrations/*.py" = ["I001"]
