@@ -320,7 +320,7 @@ class BatchDeterminationTestCase(BaseViewTestCase):
 
     def dummy_request(self, path):
         request = RequestFactory().get(path)
-        middleware = SessionMiddleware()
+        middleware = SessionMiddleware(lambda x: x)
         middleware.process_request(request)
         request.session.save()
         request.user = StaffFactory()

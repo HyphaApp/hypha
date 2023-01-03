@@ -256,7 +256,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
             response = self.get_page(submission)
             # Ignore whitespace (including line breaks) in button text
             pattern = re.compile(rf'\s*{button_text}\s*')
-            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='js-actions-sidebar').find_all('a', class_='button--primary', text=pattern)
+            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='js-actions-sidebar').find_all('a', class_='button--primary', string=pattern)
             self.assertEqual(len(buttons), 1)
 
         submission = ApplicationSubmissionFactory(status='determination')
@@ -275,7 +275,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
             response = self.get_page(submission)
             # Ignore whitespace (including line breaks) in button text
             pattern = re.compile(rf'\s*{button_text}\s*')
-            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='js-actions-sidebar').find_all('a', class_='button--primary', text=pattern)
+            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='js-actions-sidebar').find_all('a', class_='button--primary', string=pattern)
             self.assertEqual(len(buttons), 0)
 
         submission = ApplicationSubmissionFactory()
@@ -303,13 +303,13 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         self.submission.screening_statuses.clear()
         self.submission.screening_statuses.add(screening_outcome)
         response = self.get_page(self.submission)
-        buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', text='Screen application')
+        buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', string='Screen application')
         self.assertEqual(len(buttons), 1)
         self.submission.screening_statuses.clear()
 
     def test_screen_application_primary_action_is_not_displayed(self):
         response = self.get_page(self.submission)
-        buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', text='Screen application')
+        buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', string='Screen application')
         self.assertEqual(len(buttons), 0)
 
     def test_can_see_create_review_primary_action(self):
@@ -317,7 +317,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
             response = self.get_page(submission)
             # Ignore whitespace (including line breaks) in button text
             pattern = re.compile(rf'\s*{button_text}\s*')
-            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='js-actions-sidebar').find_all('a', class_='button--primary', text=pattern)
+            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='js-actions-sidebar').find_all('a', class_='button--primary', string=pattern)
             self.assertEqual(len(buttons), 1)
 
         submission = ApplicationSubmissionFactory(with_external_review=True, status='ext_internal_review')
@@ -348,7 +348,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
             response = self.get_page(submission)
             # Ignore whitespace (including line breaks) in button text
             pattern = re.compile(rf'\s*{button_text}\s*')
-            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='js-actions-sidebar').find_all('a', class_='button--primary', text=pattern)
+            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='js-actions-sidebar').find_all('a', class_='button--primary', string=pattern)
             self.assertEqual(len(buttons), 0)
 
         submission = ApplicationSubmissionFactory(with_external_review=True)
@@ -378,7 +378,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
     def test_can_see_assign_reviewers_primary_action(self):
         def assert_assign_reviewers_displayed(submission):
             response = self.get_page(submission)
-            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', class_='button--primary', text='Assign reviewers')
+            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', class_='button--primary', string='Assign reviewers')
             self.assertEqual(len(buttons), 1)
 
         submission = ApplicationSubmissionFactory(status='internal_review')
@@ -408,7 +408,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
     def test_cant_see_assign_reviewers_primary_action(self):
         def assert_assign_reviewers_not_displayed(submission):
             response = self.get_page(submission)
-            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', class_='button--primary', text='Assign reviewers')
+            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', class_='button--primary', string='Assign reviewers')
             self.assertEqual(len(buttons), 0)
 
         submission = ApplicationSubmissionFactory()
@@ -425,7 +425,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
     def test_can_see_assign_reviewers_secondary_action(self):
         def assert_assign_reviewers_secondary_displayed(submission):
             response = self.get_page(submission)
-            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', class_='button--white', text='Reviewers')
+            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', class_='button--white', string='Reviewers')
             self.assertEqual(len(buttons), 1)
 
         submission = ApplicationSubmissionFactory()
@@ -445,7 +445,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
     def test_can_see_view_determination_primary_action(self):
         def assert_view_determination_displayed(submission):
             response = self.get_page(submission)
-            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='js-actions-sidebar').find_all('a', class_='button--primary', text='View determination')
+            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='js-actions-sidebar').find_all('a', class_='button--primary', string='View determination')
             self.assertEqual(len(buttons), 1)
 
         # Phase: accepted
@@ -461,7 +461,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
     def test_cant_see_view_determination_primary_action(self):
         def assert_view_determination_not_displayed(submission):
             response = self.get_page(submission)
-            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='js-actions-sidebar').find_all('a', class_='button--primary', text='View determination')
+            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='js-actions-sidebar').find_all('a', class_='button--primary', string='View determination')
             self.assertEqual(len(buttons), 0)
 
         # Phase: received / in_discussion
@@ -645,7 +645,7 @@ class TestReviewerSubmissionView(BaseSubmissionViewTestCase):
             response = self.get_page(submission)
             # Ignore whitespace (including line breaks) in button text
             pattern = re.compile(rf'\s*{button_text}\s*')
-            buttons = BeautifulSoup(response.content, 'html5lib').find_all('a', class_='button--primary', text=pattern)
+            buttons = BeautifulSoup(response.content, 'html5lib').find_all('a', class_='button--primary', string=pattern)
             self.assertEqual(len(buttons), 0)
 
         submission = ApplicationSubmissionFactory(status='determination', user=self.applicant, reviewers=[self.user])
@@ -668,7 +668,7 @@ class TestReviewerSubmissionView(BaseSubmissionViewTestCase):
             response = self.get_page(submission)
             # Ignore whitespace (including line breaks) in button text
             pattern = re.compile(rf'\s*{button_text}\s*')
-            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='js-actions-sidebar').find_all('a', class_='button--primary', text=pattern)
+            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='js-actions-sidebar').find_all('a', class_='button--primary', string=pattern)
             self.assertEqual(len(buttons), 1)
 
         submission = ApplicationSubmissionFactory(with_external_review=True, status='ext_external_review', user=self.applicant, reviewers=[self.user])
@@ -689,7 +689,7 @@ class TestReviewerSubmissionView(BaseSubmissionViewTestCase):
             response = self.get_page(submission)
             # Ignore whitespace (including line breaks) in button text
             pattern = re.compile(rf'\s*{button_text}\s*')
-            buttons = BeautifulSoup(response.content, 'html5lib').find_all('a', class_='button--primary', text=pattern)
+            buttons = BeautifulSoup(response.content, 'html5lib').find_all('a', class_='button--primary', string=pattern)
             self.assertEqual(len(buttons), 0)
 
         submission = ApplicationSubmissionFactory(with_external_review=True, user=self.applicant, reviewers=[self.user])
@@ -720,19 +720,19 @@ class TestReviewerSubmissionView(BaseSubmissionViewTestCase):
         submission = ApplicationSubmissionFactory(status='internal_review', user=self.applicant, reviewers=[self.user])
         response = self.get_page(submission)
 
-        buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', class_='button--primary', text='Assign reviewers')
+        buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', class_='button--primary', string='Assign reviewers')
         self.assertEqual(len(buttons), 0)
 
     def test_cant_see_assign_reviewers_secondary_action(self):
         submission = ApplicationSubmissionFactory(status='internal_review', user=self.applicant, reviewers=[self.user])
         response = self.get_page(submission)
-        buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', class_='button--white', text='Reviewers')
+        buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', class_='button--white', string='Reviewers')
         self.assertEqual(len(buttons), 0)
 
     def test_can_see_view_determination_primary_action(self):
         def assert_view_determination_displayed(submission):
             response = self.get_page(submission)
-            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='js-actions-sidebar').find_all('a', class_='button--primary', text='View determination')
+            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='js-actions-sidebar').find_all('a', class_='button--primary', string='View determination')
             self.assertEqual(len(buttons), 1)
 
         # Phase: accepted
@@ -748,7 +748,7 @@ class TestReviewerSubmissionView(BaseSubmissionViewTestCase):
     def test_cant_see_view_determination_primary_action(self):
         def assert_view_determination_not_displayed(submission):
             response = self.get_page(submission)
-            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', class_='button--primary', text='View determination')
+            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', class_='button--primary', string='View determination')
             self.assertEqual(len(buttons), 0)
 
         # Phase: received / in_discussion
@@ -959,7 +959,7 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
             response = self.get_page(submission)
             # Ignore whitespace (including line breaks) in button text
             pattern = re.compile(rf'\s*{button_text}\s*')
-            buttons = BeautifulSoup(response.content, 'html5lib').find_all('a', class_='button--primary', text=pattern)
+            buttons = BeautifulSoup(response.content, 'html5lib').find_all('a', class_='button--primary', string=pattern)
             self.assertEqual(len(buttons), 0)
 
         submission = ApplicationSubmissionFactory(status='determination', user=self.user)
@@ -982,7 +982,7 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
             response = self.get_page(submission)
             # Ignore whitespace (including line breaks) in button text
             pattern = re.compile(r'\s*Add a review\s*')
-            buttons = BeautifulSoup(response.content, 'html5lib').find_all('a', class_='button--primary', text=pattern)
+            buttons = BeautifulSoup(response.content, 'html5lib').find_all('a', class_='button--primary', string=pattern)
             self.assertEqual(len(buttons), 0)
 
         submission = ApplicationSubmissionFactory(user=self.user)
@@ -1001,20 +1001,20 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
         submission = ApplicationSubmissionFactory(status='internal_review', user=self.user)
         ReviewerRoleFactory()
         response = self.get_page(submission)
-        buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', class_='button--primary', text='Assign reviewers')
+        buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', class_='button--primary', string='Assign reviewers')
         self.assertEqual(len(buttons), 0)
 
     def test_cant_see_assign_reviewers_secondary_action(self):
         submission = ApplicationSubmissionFactory(status='internal_review', user=self.user)
         ReviewerRoleFactory()
         response = self.get_page(submission)
-        buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', class_='button--white', text='Reviewers')
+        buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', class_='button--white', string='Reviewers')
         self.assertEqual(len(buttons), 0)
 
     def test_can_see_view_determination_primary_action(self):
         def assert_view_determination_displayed(submission):
             response = self.get_page(submission)
-            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='js-actions-sidebar').find_all('a', class_='button--primary', text='View determination')
+            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='js-actions-sidebar').find_all('a', class_='button--primary', string='View determination')
             self.assertEqual(len(buttons), 1)
 
         # Phase: accepted
@@ -1030,7 +1030,7 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
     def test_cant_see_view_determination_primary_action(self):
         def assert_view_determination_not_displayed(submission):
             response = self.get_page(submission)
-            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', class_='button--primary', text='View determination')
+            buttons = BeautifulSoup(response.content, 'html5lib').find(class_='sidebar').find_all('a', class_='button--primary', string='View determination')
             self.assertEqual(len(buttons), 0)
 
         # Phase: received / in_discussion
