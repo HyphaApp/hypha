@@ -37,8 +37,8 @@ ignore = [
 ]
 line-length = 88
 select = [
-    # 'C',  # flake8-comprehensions
-    # 'B',  # flake8-bugbear
+    'C',  # flake8-comprehensions
+    'B',  # flake8-bugbear
     'E',  # pycodestyle errors
     'F',  # pyflakes
     'I',  # iSort
