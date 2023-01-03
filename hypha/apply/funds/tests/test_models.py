@@ -429,20 +429,22 @@ class TestApplicationSubmission(TestCase):
     def test_correct_file_path_generated(self):
         submission = ApplicationSubmissionFactory()
 
+        def check_generated_file_path(file_to_test, file_id):
+            file_path_generated = file_to_test.generate_filename()
+            file_path_required = os.path.join('submission', str(submission.id), str(file_id), file_to_test.basename)
+
+            self.assertEqual(file_path_generated, file_path_required)
+
         for file_id in submission.file_field_ids:
 
-            def check_generated_file_path(file_to_test):
-                file_path_generated = file_to_test.generate_filename()
-                file_path_required = os.path.join('submission', str(submission.id), str(file_id), file_to_test.basename)
 
-                self.assertEqual(file_path_generated, file_path_required)
 
             file_response = submission.data(file_id)
             if isinstance(file_response, list):
                 for stream_file in file_response:
-                    check_generated_file_path(stream_file)
+                    check_generated_file_path(stream_file, file_id=file_id)
             else:
-                check_generated_file_path(file_response)
+                check_generated_file_path(file_response, file_id=file_id)
 
     def test_create_revision_on_create(self):
         submission = ApplicationSubmissionFactory()
@@ -552,24 +554,24 @@ class TestSubmissionRenderMethods(TestCase):
     def test_file_private_url_included(self):
         submission = ApplicationSubmissionFactory()
         answers = submission.output_answers()
+
+        def file_url_in_answers(file_to_test, file_id):
+            url = reverse(
+                'apply:submissions:serve_private_media', kwargs={
+                    'pk': submission.pk,
+                    'field_id': file_id,
+                    'file_name': file_to_test.basename,
+                }
+            )
+            self.assertIn(url, answers)
+
         for file_id in submission.file_field_ids:
-
-            def file_url_in_answers(file_to_test):
-                url = reverse(
-                    'apply:submissions:serve_private_media', kwargs={
-                        'pk': submission.pk,
-                        'field_id': file_id,
-                        'file_name': file_to_test.basename,
-                    }
-                )
-                self.assertIn(url, answers)
-
             file_response = submission.data(file_id)
             if isinstance(file_response, list):
                 for stream_file in file_response:
-                    file_url_in_answers(stream_file)
+                    file_url_in_answers(file_to_test=stream_file, file_id=file_id)
             else:
-                file_url_in_answers(file_response)
+                file_url_in_answers(file_to_test=file_response, file_id=file_id)
 
 
 class TestRequestForPartners(TestCase):
