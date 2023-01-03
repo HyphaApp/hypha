@@ -5,10 +5,14 @@ from .fields import AddressField
 
 
 class TestRequiredFields(TestCase):
-    def build_validation_data(self, fields=[], required=[]):
-        fields = set(fields + required)
+    def build_validation_data(self, fields=None, required=None):
+        if fields is None:
+            fields = []
+        if required is None:
+            required = []
+
         return {'COUNTRY': {
-            'fields': [{field: {'label': field}} for field in fields],
+            'fields': [{field: {'label': field}} for field in set(fields + required)],
             'required': required,
         }}
 

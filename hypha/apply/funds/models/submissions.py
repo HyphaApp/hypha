@@ -672,7 +672,9 @@ class ApplicationSubmission(
             if response:
                 self.form_data[field_name] = response
 
-    def save(self, *args, update_fields=[], skip_custom=False, **kwargs):
+    def save(self, *args, update_fields=None, skip_custom=False, **kwargs):
+        if update_fields is None:
+            update_fields = []
         if update_fields and 'form_data' not in update_fields:
             # We don't want to use this approach if the user is sending data
             return super().save(*args, update_fields=update_fields, **kwargs)

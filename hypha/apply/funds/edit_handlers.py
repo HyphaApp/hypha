@@ -88,7 +88,9 @@ class ReadOnlyPanel(Panel):
 
 
 class FilteredFieldPanel(FieldPanel):
-    def __init__(self, *args, filter_query={}, **kwargs):
+    def __init__(self, *args, filter_query=None, **kwargs):
+        if filter_query is None:
+            filter_query = {}
         self.filter_query = filter_query
         super().__init__(*args, **kwargs)
 

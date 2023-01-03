@@ -24,10 +24,13 @@ class MessengerBackend:
         user,
         related,
         source=None,
-        sources=[],
+        sources=None,
         **kwargs
     ):
         from .models import Event
+
+        if sources is None:
+            sources = []
 
         if source:
             event = Event.objects.create(type=message_type.name, by=user, source=source)

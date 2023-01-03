@@ -42,7 +42,10 @@ class AddFormFieldsMetaclass(factory.base.FactoryMetaClass):
 
 class FormDataFactory(factory.Factory, metaclass=AddFormFieldsMetaclass):
     @classmethod
-    def _create(self, *args, form_fields={}, for_factory=None, clean=False, **kwargs):
+    def _create(self, *args, form_fields = None, for_factory=None, clean=False, **kwargs):
+        if form_fields is None:
+            form_fields = {}
+
         if form_fields and isinstance(form_fields, str):
             form_fields = json.loads(form_fields)
             form_definition = {
@@ -102,7 +105,8 @@ class FormFieldBlockFactory(wagtail_factories.StructBlockFactory):
         model = stream_blocks.FormFieldBlock
 
     @classmethod
-    def make_answer(cls, params={}):
+    def make_answer(cls, params=None):
+        params = params or {}
         return cls.default_value.evaluate(None, None, dict(params, locale=None))
 
     @classmethod

@@ -75,7 +75,9 @@ class Phase:
     future_name = phase_name displayed to applicants if they haven't passed this stage
     """
 
-    def __init__(self, name, display, stage, permissions, step, public=None, future=None, transitions={}):
+    def __init__(self, name, display, stage, permissions, step, public=None, future=None, transitions=None):
+        if transitions is None:
+            transitions = {}
         self.name = name
         self.display_name = display
         if public and future:
@@ -155,11 +157,11 @@ partner_can = lambda user: user.is_partner  # NOQA
 community_can = lambda user: user.is_community_reviewer  # NOQA
 
 
-def make_permissions(edit=[], review=[], view=[staff_can, applicant_can, reviewer_can, partner_can, ]):
+def make_permissions(edit=None, review=None, view=None):
     return {
-        'edit': edit,
-        'review': review,
-        'view': view,
+        'edit': edit or [],
+        'review': review or [],
+        'view': view or [staff_can, applicant_can, reviewer_can, partner_can, ],
     }
 
 
@@ -1111,7 +1113,9 @@ def get_action_mapping(workflow):
 DETERMINATION_OUTCOMES = get_determination_transitions()
 
 
-def phases_matching(phrase, exclude=[]):
+def phases_matching(phrase, exclude=None):
+    if exclude is None:
+        exclude = []
     return [
         status for status, _ in PHASES
         if status.endswith(phrase) and status not in exclude

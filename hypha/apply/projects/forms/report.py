@@ -35,7 +35,9 @@ class ReportEditForm(FileFormMixin, forms.ModelForm):
             'files',
         )
 
-    def __init__(self, *args, user=None, initial={}, **kwargs):
+    def __init__(self, *args, user=None, initial=None, **kwargs):
+        if initial is None:
+            initial = {}
         self.report_files = initial.pop(
             'file_list',
             ReportPrivateFiles.objects.none(),

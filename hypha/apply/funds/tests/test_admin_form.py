@@ -39,7 +39,9 @@ def formset_base(field, total, delete, factory, same=False, form_stage_info=None
     return base_data
 
 
-def form_data(num_appl_forms=0, num_review_forms=0, num_determination_forms=0, num_external_review_forms=0, num_project_approval_form=0, delete=0, stages=1, same_forms=False, form_stage_info=[1]):
+def form_data(num_appl_forms=0, num_review_forms=0, num_determination_forms=0, num_external_review_forms=0, num_project_approval_form=0, delete=0, stages=1, same_forms=False, form_stage_info=None):
+    if form_stage_info is None:
+        form_stage_info = [1]
     form_data = formset_base(
         'forms', num_appl_forms, delete, same=same_forms, factory=ApplicationFormFactory,
         form_stage_info=form_stage_info)

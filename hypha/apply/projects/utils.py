@@ -15,12 +15,14 @@ def fetch_and_save_deliverables(project_id):
         save_deliverables(project_id, deliverables)
 
 
-def save_deliverables(project_id, deliverables=[]):
+def save_deliverables(project_id, deliverables=None):
     '''
     TODO: List of deliverables coming from IntAcct is
-    not varified yet from the team. This method may need
+    not verified yet from the team. This method may need
     revision when that is done.
     '''
+    if deliverables is None:
+        deliverables = []
     if deliverables:
         remove_deliverables_from_project(project_id)
     project = Project.objects.get(id=project_id)

@@ -6,8 +6,9 @@ from django.urls import reverse
 request_factory = RequestFactory()
 
 
-def make_request(user=None, data={}, method='get', site=None):
+def make_request(user=None, data=None, method='get', site=None):
     user = user or AnonymousUser()
+    data = data or {}
     method = getattr(request_factory, method)
     request = method('', data)
     request.user = user
@@ -78,7 +79,8 @@ class BaseViewTestCase(TestCase):
     def get_page(self, instance=None, view_name=None, url_kwargs=None):
         return self.client.get(self.url(instance, view_name, url_kwargs=url_kwargs), secure=True, follow=True)
 
-    def post_page(self, instance=None, data={}, view_name=None, url_kwargs=None):
+    def post_page(self, instance=None, data=None, view_name=None, url_kwargs=None):
+        data = data or {}
         return self.client.post(self.url(instance, view_name, url_kwargs=url_kwargs), data, secure=True, follow=True)
 
     def refresh(self, instance):
