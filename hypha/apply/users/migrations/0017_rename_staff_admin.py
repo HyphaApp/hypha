@@ -14,7 +14,7 @@ def rename_group(apps, schema_editor):
     except Group.DoesNotExist:
         pass
     else:
-        setattr(team_admin_group, 'name', TEAMADMIN_GROUP_NAME)
+        team_admin_group.name = TEAMADMIN_GROUP_NAME
         team_admin_group.save()
 
 
@@ -24,7 +24,7 @@ def unrename_group(apps, schema_editor):
     except Group.DoesNotExist:
         pass
     else:
-        setattr(team_admin_group, 'name', 'Team Admin')
+        team_admin_group.name = 'Team Admin'
         team_admin_group.save()
 
 
