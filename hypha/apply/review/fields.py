@@ -43,7 +43,7 @@ class ScoredAnswerField(forms.MultiValueField):
             forms.ChoiceField(choices=RATE_CHOICES),
         )
 
-        super().__init__(fields=fields, *args, **kwargs)
+        super().__init__(*args, **kwargs, fields=fields)
 
     def compress(self, data_list):
         if data_list:

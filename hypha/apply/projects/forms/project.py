@@ -75,7 +75,7 @@ class FinalApprovalForm(forms.ModelForm):
         fields = ['final_approval_status', 'comment']
 
     def __init__(self, instance, user=None, *args, **kwargs):
-        super().__init__(instance=instance, *args, **kwargs)
+        super().__init__(*args, **kwargs, instance=instance)
 
 
 class MixedMetaClass(type(StreamBaseForm), type(forms.ModelForm)):
@@ -126,7 +126,7 @@ class ChangePAFStatusForm(forms.ModelForm):
         model = Project
 
     def __init__(self, instance, user, *args, **kwargs):
-        super().__init__(instance=instance, *args, **kwargs)
+        super().__init__(*args, **kwargs, instance=instance)
 
 
 class RemoveDocumentForm(forms.ModelForm):
