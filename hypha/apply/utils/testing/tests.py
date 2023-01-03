@@ -6,7 +6,8 @@ from django.urls import reverse
 request_factory = RequestFactory()
 
 
-def make_request(user=AnonymousUser(), data={}, method='get', site=None):
+def make_request(user=None, data={}, method='get', site=None):
+    user = user or AnonymousUser()
     method = getattr(request_factory, method)
     request = method('', data)
     request.user = user
