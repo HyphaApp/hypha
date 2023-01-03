@@ -160,9 +160,9 @@ class HomePage(BasePage):
         yield from sorted(qs, key=sort_by_deadline)
 
     def pages_from_related(self, related):
-        for related in related.all():
-            if related.page.live and related.page.public:
-                yield related.page.specific
+        for related_obj in related.all():
+            if related_obj.page.live and related_obj.page.public:
+                yield related_obj.page.specific
 
     def get_context(self, *args, **kwargs):
         context = super().get_context(*args, **kwargs)
