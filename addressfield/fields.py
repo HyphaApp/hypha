@@ -19,7 +19,7 @@ ADDRESS_FIELDS_ORDER = [
 
 
 def flatten_data(data):
-    flattened = dict()
+    flattened = {}
     for d in data:
         for k, v in d.items():
             if isinstance(v, list):
@@ -47,7 +47,7 @@ class AddressField(forms.CharField):
 
         fields = flatten_data(country_data['fields'])
 
-        missing_fields = set(country_data['required']) - set(field for field, value in value.items() if value)
+        missing_fields = set(country_data['required']) - {field for field, value in value.items() if value}
         if missing_fields:
             missing_field_name = [fields[field]['label'] for field in missing_fields]
             raise ValidationError('Please provide data for: {}'.format(', '.join(missing_field_name)))

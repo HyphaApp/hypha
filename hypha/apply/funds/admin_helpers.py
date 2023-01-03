@@ -48,8 +48,8 @@ class ButtonsWithPreview(PageButtonHelper):
             'title': 'Preview this %s' % self.verbose_name,
         }
 
-    def get_buttons_for_obj(self, obj, exclude=list(), classnames_add=list(),
-                            classnames_exclude=list()):
+    def get_buttons_for_obj(self, obj, exclude=[], classnames_add=[],
+                            classnames_exclude=[]):
         btns = super().get_buttons_for_obj(obj, exclude, classnames_add, classnames_exclude)
 
         # Put preview before delete

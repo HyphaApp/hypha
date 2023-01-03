@@ -41,7 +41,7 @@ class DurationBlockFactory(FormFieldBlockFactory):
         model = blocks.DurationBlock
 
     @classmethod
-    def make_answer(cls, params=dict()):
+    def make_answer(cls, params={}):
         choices = list(blocks.DurationBlock.DURATION_MONTH_OPTIONS.keys())
         return random.choice(choices)
 
@@ -51,7 +51,7 @@ class ValueFieldBlockFactory(FormFieldBlockFactory):
         model = blocks.ValueBlock
 
     @classmethod
-    def make_answer(cls, params=dict(), form=False):
+    def make_answer(cls, params={}, form=False):
         return random.randint(0, 1_000_000)
 
 
@@ -60,7 +60,7 @@ class AddressFieldBlockFactory(FormFieldBlockFactory):
         model = blocks.AddressFieldBlock
 
     @classmethod
-    def make_answer(cls, params=dict()):
+    def make_answer(cls, params={}):
         if not params:
             params = {}
         return json.dumps({
@@ -73,7 +73,7 @@ class AddressFieldBlockFactory(FormFieldBlockFactory):
         })
 
     @classmethod
-    def make_form_answer(cls, params=dict()):
+    def make_form_answer(cls, params={}):
         try:
             address = json.loads(params)
         except TypeError:

@@ -647,10 +647,10 @@ class UpdateReviewersView(UpdateReviewersMixin, DelegatedViewMixin, UpdateView):
     context_name = 'reviewer_form'
 
     def form_valid(self, form):
-        old_reviewers = set(
+        old_reviewers = {
             copy(reviewer)
             for reviewer in form.instance.assigned.all()
-        )
+        }
         response = super().form_valid(form)
 
         new_reviewers = set(form.instance.assigned.all())

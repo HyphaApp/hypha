@@ -22,7 +22,7 @@ class ListRelatedMixin:
         return ', '.join(getattr(obj, f'{form}_set').values_list(f'{field}__title', flat=True))
 
     def used_by(self, obj):
-        rows = list()
+        rows = []
         for form, field in self.related_models:
             related = self._list_related(obj, form, field)
             if related:

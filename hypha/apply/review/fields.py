@@ -31,7 +31,7 @@ class ScoredAnswerWidget(forms.MultiWidget):
             value = kwargs['value']
             attrs = kwargs['attrs']
             rendered.append(widget.render(name, value, attrs, renderer))
-        return mark_safe(''.join([widget for widget in rendered]))
+        return mark_safe(''.join(list(rendered)))
 
 
 class ScoredAnswerField(forms.MultiValueField):

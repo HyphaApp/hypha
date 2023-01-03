@@ -247,7 +247,7 @@ class VendorDetailView(DetailVendorAccessMixin, DetailView):
         vendor_form_settings = VendorFormSettings.for_request(self.request)
         data = {}
         group = 0
-        data.setdefault(group, {'title': str(_('Contracting Information')), 'questions': list()})
+        data.setdefault(group, {'title': str(_('Contracting Information')), 'questions': []})
         data[group]['questions'] = [
             (getattr(vendor_form_settings, 'name_label'), vendor.name),
             (getattr(vendor_form_settings, 'contractor_name_label'), vendor.contractor_name),
@@ -256,7 +256,7 @@ class VendorDetailView(DetailVendorAccessMixin, DetailView):
             ('Due Diligence Documents', ''),
         ]
         group = group + 1
-        data.setdefault(group, {'title': str(_('Bank Account Information')), 'questions': list()})
+        data.setdefault(group, {'title': str(_('Bank Account Information')), 'questions': []})
         bank_info = vendor.bank_info
         data[group]['questions'] = [
             (getattr(vendor_form_settings, 'account_holder_name_label'), bank_info.account_holder_name if bank_info else ''),
@@ -265,12 +265,12 @@ class VendorDetailView(DetailVendorAccessMixin, DetailView):
             (getattr(vendor_form_settings, 'account_currency_label'), bank_info.account_currency if bank_info else ''),
         ]
         group = group + 1
-        data.setdefault(group, {'title': str(_('(Optional) Extra Information for Accepting Payments')), 'questions': list()})
+        data.setdefault(group, {'title': str(_('(Optional) Extra Information for Accepting Payments')), 'questions': []})
         data[group]['questions'] = [
             (getattr(vendor_form_settings, 'branch_address_label'), self.get_address_display(bank_info.branch_address) if bank_info else ''),
         ]
         group = group + 1
-        data.setdefault(group, {'title': str(_('Intermediary Bank Account Information')), 'questions': list()})
+        data.setdefault(group, {'title': str(_('Intermediary Bank Account Information')), 'questions': []})
         iba_info = bank_info.iba_info if bank_info else None
         data[group]['questions'] = [
             (getattr(vendor_form_settings, 'ib_account_routing_number_label'), iba_info.account_routing_number if iba_info else ''),
@@ -279,13 +279,13 @@ class VendorDetailView(DetailVendorAccessMixin, DetailView):
             (getattr(vendor_form_settings, 'ib_branch_address_label'), self.get_address_display(iba_info.branch_address) if iba_info else ''),
         ]
         group = group + 1
-        data.setdefault(group, {'title': str(_('Account Holder National Identity Document Information')), 'questions': list()})
+        data.setdefault(group, {'title': str(_('Account Holder National Identity Document Information')), 'questions': []})
         data[group]['questions'] = [
             (getattr(vendor_form_settings, 'nid_type_label'), bank_info.nid_type if bank_info else ''),
             (getattr(vendor_form_settings, 'nid_number_label'), bank_info.nid_number if bank_info else ''),
         ]
         group = group + 1
-        data.setdefault(group, {'title': None, 'questions': list()})
+        data.setdefault(group, {'title': None, 'questions': []})
         data[group]['questions'] = [
             (getattr(vendor_form_settings, 'other_info_label'), vendor.other_info),
         ]

@@ -53,7 +53,7 @@ class SubmissionsFilter(filters.FilterSet):
         model = ApplicationSubmission
         fields = ('id', 'status', 'round', 'active', 'submit_date', 'fund', 'screening_statuses', 'reviewers', 'lead')
 
-    def __init__(self, *args, exclude=list(), limit_statuses=None, **kwargs):
+    def __init__(self, *args, exclude=[], limit_statuses=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.filters['category_options'].extra['choices'] = [
             (option.id, option.value)
@@ -89,7 +89,7 @@ class SubmissionsFilter(filters.FilterSet):
                     else:
                         if isinstance(category_options, str):
                             category_options = [category_options]
-                        include_in_filter = set(list(category_options)) & set(value)
+                        include_in_filter = set(category_options) & set(value)
                     # Check if filter options has any value in category options
                     # If yes then those submissions should be filtered in the list
                     if include_in_filter:
@@ -102,7 +102,7 @@ class SubmissionsFilter(filters.FilterSet):
     def filter_id(self, qs, name, value):
         if not value:
             return qs
-        return qs.filter(id__in=map(lambda x: x.id, value))
+        return qs.filter(id__in=[x.id for x in value])
 
 
 class NewerThanFilter(filters.ModelChoiceFilter):

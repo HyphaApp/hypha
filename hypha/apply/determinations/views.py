@@ -149,12 +149,7 @@ class BatchDeterminationCreateView(BaseStreamForm, CreateView):
         We can not create batch determination with submissions using two different
         type of forms.
         """
-        return len(set(
-            [
-                submission.is_determination_form_attached
-                for submission in submissions
-            ]
-        )) == 1
+        return len({submission.is_determination_form_attached for submission in submissions}) == 1
 
     def get_form_class(self):
         submissions = self.get_submissions()

@@ -74,7 +74,7 @@ class ActivityAdapter(AdapterBase):
             return {'visibility': TEAM}
         return {}
 
-    def reviewers_updated(self, added=list(), removed=list(), **kwargs):
+    def reviewers_updated(self, added=None, removed=None, **kwargs):
         message = [_('Reviewers updated.')]
         if added:
             message.append(_('Added:'))

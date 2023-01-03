@@ -16,7 +16,7 @@ from .test_admin_form import form_data
 
 def create_form_fields_data(blocks):
     parent_field = 'form_fields'
-    form_fields_dict = dict()
+    form_fields_dict = {}
     form_fields_dict[f'{parent_field}-count'] = [str(len(blocks))]
     for index, block_name in enumerate(blocks):
         form_fields_dict[f'{parent_field}-{index}-deleted'] = ['']

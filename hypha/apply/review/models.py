@@ -63,7 +63,7 @@ class ReviewFormFieldsMixin(models.Model):
         return self._get_field_type(RecommendationCommentsBlock)
 
     def _get_field_type(self, block_type, many=False):
-        fields = list()
+        fields = []
         for field in self.form_fields:
             try:
                 if isinstance(field.block, block_type):

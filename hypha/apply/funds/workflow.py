@@ -75,7 +75,7 @@ class Phase:
     future_name = phase_name displayed to applicants if they haven't passed this stage
     """
 
-    def __init__(self, name, display, stage, permissions, step, public=None, future=None, transitions=dict()):
+    def __init__(self, name, display, stage, permissions, step, public=None, future=None, transitions={}):
         self.name = name
         self.display_name = display
         if public and future:
@@ -94,7 +94,7 @@ class Phase:
         default_permissions = {UserPermissions.STAFF, UserPermissions.LEAD, UserPermissions.ADMIN}
 
         for transition_target, action in transitions.items():
-            transition = dict()
+            transition = {}
             try:
                 transition['display'] = action.get('display')
             except AttributeError:
@@ -131,7 +131,7 @@ class Permissions:
         self.permissions = permissions
 
     def can_do(self, user, action):
-        checks = self.permissions.get(action, list())
+        checks = self.permissions.get(action, [])
         return any(check(user) for check in checks)
 
     def can_edit(self, user):
@@ -155,7 +155,7 @@ partner_can = lambda user: user.is_partner  # NOQA
 community_can = lambda user: user.is_community_reviewer  # NOQA
 
 
-def make_permissions(edit=list(), review=list(), view=[staff_can, applicant_can, reviewer_can, partner_can, ]):
+def make_permissions(edit=[], review=[], view=[staff_can, applicant_can, reviewer_can, partner_can, ]):
     return {
         'edit': edit,
         'review': review,
@@ -1016,7 +1016,7 @@ def get_review_statuses(user=None):
 def get_ext_review_statuses():
     reviews = set()
 
-    for phase_name, phase in PHASES:
+    for phase_name, _phase in PHASES:
         if phase_name.endswith('external_review'):
             reviews.add(phase_name)
     return reviews
@@ -1065,7 +1065,7 @@ ext_or_higher_statuses = get_ext_or_higher_statuses()
 accepted_statuses = get_accepted_statuses()
 dismissed_statuses = get_dismissed_statuses()
 
-DETERMINATION_PHASES = list(phase_name for phase_name, _ in PHASES if '_discussion' in phase_name)
+DETERMINATION_PHASES = [phase_name for phase_name, _ in PHASES if '_discussion' in phase_name]
 DETERMINATION_RESPONSE_PHASES = [
     'post_review_discussion',
     'concept_review_discussion',
@@ -1077,7 +1077,7 @@ DETERMINATION_RESPONSE_PHASES = [
 
 def get_determination_transitions():
     transitions = {}
-    for phase_name, phase in PHASES:
+    for _phase_name, phase in PHASES:
         for transition_name in phase.transitions:
             if 'accepted' in transition_name:
                 transitions[transition_name] = 'accepted'
@@ -1098,7 +1098,7 @@ def get_action_mapping(workflow):
         phases = workflow.items()
     else:
         phases = PHASES
-    for phase_name, phase in phases:
+    for _phase_name, phase in phases:
         for transition_name, transition in phase.transitions.items():
             transition_display = transition['display']
             transition_key = slugify(transition_display)
@@ -1111,7 +1111,7 @@ def get_action_mapping(workflow):
 DETERMINATION_OUTCOMES = get_determination_transitions()
 
 
-def phases_matching(phrase, exclude=list()):
+def phases_matching(phrase, exclude=[]):
     return [
         status for status, _ in PHASES
         if status.endswith(phrase) and status not in exclude

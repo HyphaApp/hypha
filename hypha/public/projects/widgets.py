@@ -42,14 +42,14 @@ class CategoriesWidget(forms.MultiWidget):
     template_name = 'projects/widgets/categories_widget.html'
 
     def __init__(self, *args, **kwargs):
-        kwargs['widgets'] = list()
+        kwargs['widgets'] = []
         super().__init__(*args, **kwargs)
         self.widgets = LazyWidgets(OptionsWidget, Category)
 
     def decompress(self, value):
         data = json.loads(value)
         return [
-            data.get(str(widget.attrs['id']), list()) for widget in self.widgets
+            data.get(str(widget.attrs['id']), []) for widget in self.widgets
         ]
 
     def value_from_datadict(self, data, files, name):

@@ -45,7 +45,7 @@ def display_for(activity, user):
 
     visibile_for_user = activity.visibility_for(user)
 
-    if set(visibile_for_user) & set([TEAM, REVIEWER]):
+    if set(visibile_for_user) & {TEAM, REVIEWER}:
         return message_data[TEAM]
 
     return message_data[ALL]

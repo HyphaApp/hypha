@@ -61,7 +61,7 @@ class DeterminationBlockFactory(FormFieldBlockFactory):
         model = DeterminationBlock
 
     @classmethod
-    def make_answer(cls, params=dict()):
+    def make_answer(cls, params={}):
         return random.choices([ACCEPTED, NEEDS_MORE_INFO, REJECTED])
 
 

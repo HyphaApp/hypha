@@ -268,7 +268,7 @@ class SubmissionFilter(filters.FilterSet):
         model = ApplicationSubmission
         fields = ('status', 'fund', 'round')
 
-    def __init__(self, *args, exclude=list(), limit_statuses=None, **kwargs):
+    def __init__(self, *args, exclude=[], limit_statuses=None, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.filters['status'] = StatusMultipleChoiceFilter(limit_to=limit_statuses)
@@ -302,7 +302,7 @@ class SubmissionFilter(filters.FilterSet):
                     else:
                         if isinstance(category_options, str):
                             category_options = [category_options]
-                        include_in_filter = set(list(category_options)) & set(value)
+                        include_in_filter = set(category_options) & set(value)
                     # Check if filter options has any value in category options
                     # If yes then those submissions should be filtered in the list
                     if include_in_filter:
@@ -325,7 +325,7 @@ class SubmissionDashboardFilter(filters.FilterSet):
         model = ApplicationSubmission
         fields = ('fund', 'round')
 
-    def __init__(self, *args, exclude=list(), limit_statuses=None, **kwargs):
+    def __init__(self, *args, exclude=[], limit_statuses=None, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.filters = {

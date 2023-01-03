@@ -169,7 +169,7 @@ class SlackAdapter(AdapterBase):
         ]
 
     def reviewers_updated(
-        self, source, link, user, added=list(), removed=list(), **kwargs
+        self, source, link, user, added=[], removed=[], **kwargs
     ):
         submission = source
         message = [
@@ -350,7 +350,7 @@ class SlackAdapter(AdapterBase):
         target_rooms = self.slack_channels(source, **kwargs)
 
         if not any(target_rooms) or not settings.SLACK_TOKEN:
-            errors = list()
+            errors = []
             if not target_rooms:
                 errors.append('Room ID')
             if not settings.SLACK_TOKEN:
