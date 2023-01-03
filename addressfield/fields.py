@@ -43,7 +43,7 @@ class AddressField(forms.CharField):
         try:
             country_data = self.data[country]
         except KeyError:
-            raise ValidationError('Invalid country selected')
+            raise ValidationError('Invalid country selected') from None
 
         fields = flatten_data(country_data['fields'])
 

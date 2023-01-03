@@ -127,8 +127,8 @@ class EmailChangePasswordView(FormView):
         signer = Signer()
         try:
             signer.unsign(self.request.session['signed_token'])
-        except BadSignature:
-            raise Http404
+        except BadSignature as e:
+            raise Http404 from e
         return super(EmailChangePasswordView, self).get_initial()
 
     def get_form_kwargs(self):

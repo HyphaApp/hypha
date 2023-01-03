@@ -24,10 +24,10 @@ class DeliverableSerializer(serializers.Serializer):
     def validate_id(self, value):
         try:
             Deliverable.objects.get(id=value)
-        except Deliverable.DoesNotExist:
+        except Deliverable.DoesNotExist as e:
             raise exceptions.ValidationError({
                 'detail': _('Not found')
-            })
+            }) from e
         return value
 
 

@@ -66,7 +66,7 @@ class ProjectContactDetails(models.Model):
             try:
                 validate(self.value)
             except ValidationError as e:
-                raise ValidationError({'value': e})
+                raise ValidationError({'value': e}) from e
 
 
 class ProjectPageRelatedPage(RelatedPage):
