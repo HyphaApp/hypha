@@ -26,7 +26,7 @@ class ScoredAnswerWidget(forms.MultiWidget):
         rendered = []
         # We need to explicitly call the render method on the tinymce widget
         # MultiValueWidget just passes all the context into the template
-        for kwargs, widget in zip(context['widget']['subwidgets'], self.widgets):
+        for kwargs, widget in zip(context['widget']['subwidgets'], self.widgets, strict=False):
             name = kwargs['name']
             value = kwargs['value']
             attrs = kwargs['attrs']

@@ -522,7 +522,7 @@ class TestReviewersUpdateView(BaseSubmissionViewTestCase):
         data.update(
             **{
                 f'role_reviewer_{slugify(str(role))}': reviewer.id
-                for role, reviewer in zip(self.roles, reviewer_roles)
+                for role, reviewer in zip(self.roles, reviewer_roles, strict=False)
             }
         )
         return self.post_page(submission, data)
@@ -1458,7 +1458,7 @@ class TestUpdateReviewersMixin(BaseSubmissionViewTestCase):
         data.update(
             **{
                 f'role_reviewer_{slugify(str(role))}': reviewer.id
-                for role, reviewer in zip(self.roles, reviewer_roles)
+                for role, reviewer in zip(self.roles, reviewer_roles, strict=False)
             }
         )
         return self.post_page(submission, data)

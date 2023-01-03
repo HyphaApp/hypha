@@ -1311,12 +1311,12 @@ class RevisionCompareView(DetailView):
 
         required_fields = [
             compare(*fields)
-            for fields in zip(from_required, to_required)
+            for fields in zip(from_required, to_required, strict=False)
         ]
 
         stream_fields = [
             compare(*fields)
-            for fields in zip(from_rendered_text_fields, to_rendered_text_fields)
+            for fields in zip(from_rendered_text_fields, to_rendered_text_fields, strict=False)
         ]
 
         return (required_fields, stream_fields)

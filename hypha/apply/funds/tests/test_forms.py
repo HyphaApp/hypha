@@ -51,7 +51,7 @@ class TestReviewerFormQueries(TestCase):
         AssignedWithRoleReviewersFactory(role=roles[1], submission=submission, reviewer=staff[1], staff=True)
 
         data = {}
-        for field, user in zip(form.fields, staff):
+        for field, user in zip(form.fields, staff, strict=False):
             if field.startswith('role'):
                 data[field] = user.id
             else:

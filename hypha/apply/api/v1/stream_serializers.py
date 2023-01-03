@@ -99,7 +99,7 @@ class WagtailSerializer:
 
         if 'choices' in attrs:
             choices = OrderedDict(attrs['choices']).keys()
-            attrs['choices'] = OrderedDict(zip(choices, choices))
+            attrs['choices'] = OrderedDict(zip(choices, choices, strict=True))
 
         if getattr(form_field, 'initial', None):
             attrs['default'] = form_field.initial
