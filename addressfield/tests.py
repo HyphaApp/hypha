@@ -5,7 +5,7 @@ from .fields import AddressField
 
 
 class TestRequiredFields(TestCase):
-    def build_validation_data(self, fields=list(), required=list()):
+    def build_validation_data(self, fields=[], required=[]):
         fields = set(fields + required)
         return {'COUNTRY': {
             'fields': [{field: {'label': field}} for field in fields],

@@ -13,7 +13,7 @@ def review_score_update(apps, schema_editor):
             if field.name == 'updated_at':
                 field.auto_now = False
         # Update the score and save.
-        scores = list()
+        scores = []
         for field in review.score_fields:
             score = review.form_data.get(field.id)[1]
             # Include NA answers as 0.
@@ -36,7 +36,7 @@ def review_score_revert(apps, schema_editor):
             if field.name == 'updated_at':
                 field.auto_now = False
         # Update the score and save.
-        scores = list()
+        scores = []
         for field in review.score_fields:
             score = review.form_data.get(field.id)[1]
             # Exclude NA answers.
