@@ -42,7 +42,7 @@ class MetaTermButtonHelper(ButtonHelper):
 
         add_child_button = self.add_child_button(
             pk=getattr(obj, self.opts.pk.attname),
-            child_verbose_name=getattr(obj, 'node_child_verbose_name'),
+            child_verbose_name=obj.node_child_verbose_name,
             **kwargs
         )
         buttons.append(add_child_button)
