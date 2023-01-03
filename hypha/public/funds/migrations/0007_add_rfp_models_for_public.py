@@ -2,14 +2,6 @@
 
 from django.db import migrations, models
 import django.db.models.deletion
-import modelcluster.fields
-import hypha.public.funds.blocks
-import wagtail.blocks
-import wagtail.fields
-import wagtail.documents.blocks
-import wagtail.embeds.blocks
-import wagtail.images.blocks
-import wagtail.snippets.blocks
 
 
 class Migration(migrations.Migration):

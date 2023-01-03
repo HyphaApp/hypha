@@ -1,6 +1,6 @@
 from django.utils.translation import gettext_lazy as _
 
-from .applications import (  # NOQA
+from .applications import (
     ApplicationBase,
     ApplicationSettings,
     LabBase,
@@ -14,15 +14,16 @@ from .screening import ScreeningStatus
 from .submissions import ApplicationRevision, ApplicationSubmission, AssignedReviewers
 
 __all__ = [
-    'ApplicationSubmission',
-    'ApplicationSettings',
-    'AssignedReviewers',
-    'ApplicationRevision',
     'ApplicationForm',
-    'ScreeningStatus',
-    'ReviewerRole',
+    'ApplicationRevision',
+    'ApplicationSettings',
+    'ApplicationSubmission',
+    'AssignedReviewers',
     'Reminder',
+    'ReviewerRole',
     'ReviewerSettings',
+    'RoundsAndLabs',
+    'ScreeningStatus',
 ]
 
 
