@@ -55,10 +55,10 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterUniqueTogether(
             name='promotedlabs',
-            unique_together=set([('page',)]),
+            unique_together={('page',)},
         ),
         migrations.AlterUniqueTogether(
             name='promotedfunds',
-            unique_together=set([('page',)]),
+            unique_together={('page',)},
         ),
     ]
