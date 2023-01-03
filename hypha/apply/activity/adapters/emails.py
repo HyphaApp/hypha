@@ -268,7 +268,7 @@ class EmailAdapter(AdapterBase):
             )
 
     def partners_updated_partner(self, added, removed, **kwargs):
-        for partner in added:
+        for _partner in added:
             return self.render_message(
                 'messages/email/partners_update_partner.html', **kwargs
             )

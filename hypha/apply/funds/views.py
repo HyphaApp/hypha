@@ -1554,7 +1554,7 @@ class StaffAssignments(SingleTableMixin, ListView):
         table_data = super().get_table_data()
         reviewer_roles = ReviewerRole.objects.all().order_by('order')
         for data in table_data:
-            for i, role in enumerate(reviewer_roles):
+            for i, _role in enumerate(reviewer_roles):
                 # Only setting column name with dummy value 0.
                 # Actual value will be set in RoleColumn render method.
                 setattr(data, f'role{i}', 0)
