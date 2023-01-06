@@ -328,11 +328,12 @@ class OpenRoundLabSerializer(serializers.ModelSerializer):
     description = serializers.SerializerMethodField()
     image = serializers.SerializerMethodField()
     weight = serializers.SerializerMethodField()
+    landing_url = serializers.SerializerMethodField()
 
     class Meta:
         model = RoundsAndLabs
         fields = ('id', 'title', 'url_path', 'search_description', 'start_date', 'end_date',
-                  'description', 'image', 'weight')
+                  'description', 'image', 'weight', 'landing_url')
 
     def get_description(self, obj):
         if hasattr(obj, 'roundbase'):
@@ -357,6 +358,13 @@ class OpenRoundLabSerializer(serializers.ModelSerializer):
             return obj.roundbase.fund.applicationbase.weight
         elif hasattr(obj, 'labbase'):
             return obj.labbase.weight
+        return None
+
+    def get_landing_url(self, obj):
+        if hasattr(obj, 'roundbase'):
+            return obj.roundbase.fund.applicationbase.get_full_url()
+        elif hasattr(obj, 'labbase'):
+            return obj.labbase.get_full_url()
         return None
 
 
