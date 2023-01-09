@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('funds', '0104_show_deadline'),
+        ('funds', '0105_applicationbase_activity_digest_recipient_emails'),
     ]
 
     operations = [
