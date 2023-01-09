@@ -109,10 +109,10 @@ class ApplicationSubmissionQueryset(JSONOrderable):
     json_field = 'form_data'
 
     def active(self):
-        return self.filter(status__in=active_statuses)
+        return self.filter(status__in=active_statuses, is_archive=False)
 
     def inactive(self):
-        return self.exclude(status__in=active_statuses)
+        return self.exclude(Q(status__in=active_statuses) | Q(is_archive=True))
 
     def in_community_review(self, user):
         qs = self.filter(
@@ -179,7 +179,14 @@ class ApplicationSubmissionQueryset(JSONOrderable):
         return self.exclude(pk__in=determined_submissions)
 
     def current(self):
-        # Applications which have the current stage active (have not been progressed)
+        # Applications which have the current stage active (have not been progressed) or not archived yet.
+        return self.exclude(Q(next__isnull=False) | Q(is_archive=True))
+
+    def archived(self):
+        return self.filter(is_archive=True)
+
+    def include_archive(self):
+        # Show all submissions( current submissions + archived submissions)
         return self.exclude(next__isnull=False)
 
     def current_accepted(self):
@@ -503,6 +510,9 @@ class ApplicationSubmission(
 
     # Meta: used for migration purposes only
     drupal_id = models.IntegerField(null=True, blank=True, editable=False)
+
+    # archive old submissions
+    is_archive = models.BooleanField(default=False)
 
     objects = ApplicationSubmissionQueryset.as_manager()
 

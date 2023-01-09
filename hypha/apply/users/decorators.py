@@ -19,6 +19,12 @@ def is_apply_staff(user):
     return True
 
 
+def is_apply_staff_admin(user):
+    if not user.is_apply_staff_admin:
+        raise PermissionDenied
+    return True
+
+
 def is_finance(user):
     if not user.is_finance:
         raise PermissionDenied
@@ -50,6 +56,8 @@ def is_contracting_approver(user):
 
 
 staff_required = [login_required, user_passes_test(is_apply_staff)]
+
+staff_admin_required = [login_required, user_passes_test(is_apply_staff_admin)]
 
 finance_required = [login_required, user_passes_test(is_finance)]
 

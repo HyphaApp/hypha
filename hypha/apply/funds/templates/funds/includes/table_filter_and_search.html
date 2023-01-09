@@ -1,4 +1,4 @@
-{% load django_tables2 i18n %}
+{% load django_tables2 i18n submission_tags %}
 
 <div class="wrapper wrapper--table-actions js-table-actions">
     <div class="actions-bar">
@@ -41,12 +41,25 @@
                         <svg class="icon icon--delete"><use xlink:href="#delete-submissions"></use></svg>
                         {% trans "Delete" %}
                     </button>
+
+                    <button data-fancybox data-src="#batch-archive-submission" class="button button--action js-batch-button" type="button">
+                        <svg class="icon icon--archive"><use xlink:href="#archive"></use></svg>
+                        {% trans "Archive" %}
+                    </button>
                 </div>
             {% endif %}
         </div>
 
         {# Right #}
         <div class="actions-bar__inner actions-bar__inner--right">
+            {% get_url_param 'archived' as archived_param %}
+            {% if show_archive %}
+                {% if archived_param == '1' %}
+                    <a href="{% update_urlparams 'archived' '0' %}">{% trans "Hide archived" %}</a>
+                {% else %}
+                    <a href="{% update_urlparams 'archived' '1' %}">{% trans "Show archived" %}</a>
+                {% endif %}
+            {% endif %}
             {% if filter_classes != 'filters-open' %}
                 <button class="button button--filters js-toggle-filters">{% trans "Filters" %}</button>
             {% endif %}
@@ -56,6 +69,7 @@
                 <button class="button button--search" type="submit" aria-label="{% trans 'Search' %}">
                     <svg class="icon icon--magnifying-glass icon--search"><use xlink:href="#magnifying-glass"></use></svg>
                 </button>
+                <input type="hidden" value="{{ archived_param }}" name="archived">
                 {% trans "submissions" as submissions %}
                 <input class="input input--search input--secondary" type="text" placeholder="{% trans 'Search' %} {{ search_placeholder|default:submissions }}" name="query"{% if search_term %} value="{{ search_term }}"{% endif %} aria-label="{% trans 'Search input' %}">
             </form>
@@ -87,4 +101,5 @@
     {% include "funds/includes/batch_update_reviewer_form.html" %}
     {% include "funds/includes/batch_progress_form.html" %}
     {% include "funds/includes/batch_delete_submission_form.html" %}
+    {% include "funds/includes/batch_archive_submission_form.html" %}
 {% endif %}

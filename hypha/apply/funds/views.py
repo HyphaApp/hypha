@@ -63,6 +63,7 @@ from hypha.apply.utils.views import (
 from .differ import compare
 from .files import generate_submission_file_path
 from .forms import (
+    BatchArchiveSubmissionForm,
     BatchDeleteSubmissionForm,
     BatchProgressSubmissionForm,
     BatchUpdateReviewersForm,
@@ -86,7 +87,10 @@ from .models import (
     RoundBase,
     RoundsAndLabs,
 )
-from .permissions import is_user_has_access_to_view_submission
+from .permissions import (
+    is_user_has_access_to_view_archived_submissions,
+    is_user_has_access_to_view_submission,
+)
 from .tables import (
     AdminSubmissionsTable,
     ReviewerLeaderboardDetailTable,
@@ -294,6 +298,27 @@ class BatchDeleteSubmissionView(DelegatedViewMixin, FormView):
 
 
 @method_decorator(staff_required, name='dispatch')
+class BatchArchiveSubmissionView(DelegatedViewMixin, FormView):
+    form_class = BatchArchiveSubmissionForm
+    context_name = 'batch_archive_submission_form'
+
+    def form_valid(self, form):
+        submissions = form.cleaned_data['submissions']
+        messenger(
+            MESSAGES.BATCH_ARCHIVE_SUBMISSION,
+            request=self.request,
+            user=self.request.user,
+            sources=submissions,
+        )
+        form.save()
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, mark_safe(_('Sorry something went wrong') + form.errors.as_ul()))
+        return super().form_invalid(form)
+
+
+@method_decorator(staff_required, name='dispatch')
 class BatchProgressSubmissionView(DelegatedViewMixin, FormView):
     form_class = BatchProgressSubmissionForm
     context_name = 'batch_progress_form'
@@ -467,7 +492,34 @@ class SubmissionAdminListView(BaseAdminSubmissionsTable, DelegateableListView):
         BatchUpdateReviewersView,
         BatchProgressSubmissionView,
         BatchDeleteSubmissionView,
+        BatchArchiveSubmissionView,
     ]
+
+    def get_filterset_kwargs(self, filterset_class, **kwargs):
+        new_kwargs = super().get_filterset_kwargs(filterset_class)
+        archived_kwargs = {'archived': self.request.GET.get('archived', 0)}
+        new_kwargs.update(archived_kwargs)
+        new_kwargs.update(kwargs)
+        return new_kwargs
+
+    def get_queryset(self):
+        if self.request.GET.get('archived'):
+            # if archived is in param, let archived filter handle the queryset as per its value.
+            submissions = self.filterset_class._meta.model.objects.include_archive().for_table(self.request.user)
+        else:
+            submissions = self.filterset_class._meta.model.objects.current().for_table(self.request.user)
+        if settings.SUBMISSIONS_DRAFT_ACCESS_STAFF:
+            return submissions
+        else:
+            return submissions.exclude_draft()
+
+    def get_context_data(self, **kwargs):
+        show_archive = is_user_has_access_to_view_archived_submissions(self.request.user)
+
+        return super().get_context_data(
+            show_archive=show_archive,
+            **kwargs,
+        )
 
 
 @method_decorator(staff_required, name='dispatch')
@@ -514,6 +566,7 @@ class SubmissionsByRound(BaseAdminSubmissionsTable, DelegateableListView):
         BatchUpdateReviewersView,
         BatchProgressSubmissionView,
         BatchDeleteSubmissionView,
+        BatchArchiveSubmissionView,
     ]
 
     excluded_fields = ['round', 'fund'] + settings.SUBMISSIONS_TABLE_EXCLUDED_FIELDS
@@ -547,6 +600,7 @@ class SubmissionsByStatus(BaseAdminSubmissionsTable, DelegateableListView):
         BatchUpdateReviewersView,
         BatchProgressSubmissionView,
         BatchDeleteSubmissionView,
+        BatchArchiveSubmissionView,
     ]
 
     def dispatch(self, request, *args, **kwargs):

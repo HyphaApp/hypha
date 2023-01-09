@@ -46,6 +46,7 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.SKIPPED_REPORT: 'handle_skipped_report',
         MESSAGES.REPORT_FREQUENCY_CHANGED: 'handle_report_frequency',
         MESSAGES.BATCH_DELETE_SUBMISSION: 'handle_batch_delete_submission',
+        MESSAGES.BATCH_ARCHIVE_SUBMISSION: 'handle_batch_archive_submission',
     }
 
     def recipients(self, message_type, **kwargs):
@@ -108,6 +109,13 @@ class ActivityAdapter(AdapterBase):
         submissions = sources
         submissions_text = ', '.join([submission.title for submission in submissions])
         return _('Successfully deleted submissions: {title}').format(
+            title=submissions_text
+        )
+
+    def handle_batch_archive_submission(self, sources, **kwargs):
+        submissions = sources
+        submissions_text = ', '.join([submission.title for submission in submissions])
+        return _('Successfully archived submissions: {title}').format(
             title=submissions_text
         )
 

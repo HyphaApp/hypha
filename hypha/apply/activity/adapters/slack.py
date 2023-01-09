@@ -69,6 +69,7 @@ class SlackAdapter(AdapterBase):
         MESSAGES.BATCH_DELETE_SUBMISSION: 'handle_batch_delete_submission',
         MESSAGES.STAFF_ACCOUNT_CREATED: _('{user} has created a new account for <{link}|{source}>'),
         MESSAGES.STAFF_ACCOUNT_EDITED: _('{user} has edited account for <{link}|{source}> that now has following roles: {roles}'),
+        MESSAGES.BATCH_ARCHIVE_SUBMISSION: 'handle_batch_archive_submission',
     }
 
     def __init__(self):
@@ -273,6 +274,13 @@ class SlackAdapter(AdapterBase):
         submissions = sources
         submissions_text = ', '.join([submission.title for submission in submissions])
         return _('{user} has deleted submissions: {title}').format(
+            user=user, title=submissions_text
+        )
+
+    def handle_batch_archive_submission(self, sources, links, user, **kwargs):
+        submissions = sources
+        submissions_text = ', '.join([submission.title for submission in submissions])
+        return _('{user} has archived submissions: {title}').format(
             user=user, title=submissions_text
         )
 

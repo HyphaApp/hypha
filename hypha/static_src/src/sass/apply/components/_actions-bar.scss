@@ -1,5 +1,4 @@
 .actions-bar {
-    margin: 0 0 20px;
     width: 100%;
 
     @include media-query(tablet-landscape) {
@@ -27,12 +26,12 @@
 
         &--left {
             display: flex;
-            flex-direction: column;
-            align-items: flex-start;
+            flex-direction: row;
+            align-items: center;
         }
 
         &--right {
-            align-items: flex-end;
+            align-items: center;
         }
 
         &--batch-actions {
@@ -43,7 +42,6 @@
                 opacity: 0;
                 pointer-events: none;
                 transition: opacity $quick-transition;
-                margin: 20px 0 0;
 
                 .batch-actions-enabled & {
                     opacity: 1;
