@@ -658,7 +658,7 @@ class CreateProjectView(DelegatedViewMixin, CreateView):
     model = Project
 
     def dispatch(self, request, *args, **kwargs):
-        submission = self.get_object()
+        submission = self.get_parent_object()
         permission, reason = has_permission('submission_edit', request.user, object=submission, raise_exception=False)
         if not permission:
             messages.warning(self.request, reason)
@@ -873,7 +873,7 @@ class ReminderCreateView(DelegatedViewMixin, CreateView):
     model = Reminder
 
     def dispatch(self, request, *args, **kwargs):
-        submission = self.get_object()
+        submission = self.get_parent_object()
         permission, reason = has_permission('submission_edit', request.user, object=submission, raise_exception=False)
         if not permission:
             messages.warning(self.request, reason)
