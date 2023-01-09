@@ -56,7 +56,27 @@ def is_user_has_access_to_view_archived_submissions(user):
     return False
 
 
+<<<<<<< HEAD
 permissions_map = {
     'submission_view': is_user_has_access_to_view_submission,
     'submission_edit': can_edit_submission,
 }
+=======
+    elif user.is_partner and submission.partners.filter(pk=user.pk).exists():
+        has_access = True
+
+    elif user.is_community_reviewer and submission.community_review:
+        has_access = True
+
+    return has_access
+
+
+def is_user_has_access_to_view_archived_submissions(user):
+    if not user.is_authenticated:
+        pass
+    elif user.is_apply_staff and settings.SUBMISSIONS_ARCHIVED_ACCESS_STAFF:
+        return True
+    elif user.is_apply_staff_admin and settings.SUBMISSIONS_ARCHIVED_ACCESS_STAFF_ADMIN:
+        return True
+    return False
+>>>>>>> b078a0ae (Introduce archive feature for the submissions (#3003))
