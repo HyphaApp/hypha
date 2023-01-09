@@ -5,11 +5,9 @@
 Make sure you have these things installed on your system:
 
 * Git
-* Python 3.9.x
-  * python3-venv \(to setup virtual enviroment\)
-  * python3-pip \(to install python packages\)
+* Python 3.10.x
 * PostgreSQL 12.x
-  * libpq-dev \(on Linux at least\)
+  * libpq-dev (on Linux at least)
 * Apache or Nginx
 * Node 16.x
 
@@ -76,7 +74,7 @@ All the needed python packages for production are listed in the `requirements.tx
 For a development environment you then run:
 
 ```text
-$ pip install -r requirements-dev.txt
+$ python -m pip install -r requirements-dev.txt
 ```
 
 If any `requirements*.txt` file have been updated you will need to rerun this command to get the updated/added packages.
@@ -292,12 +290,6 @@ To build all assets for development use this command.
 $ npm run dev:build
 ```
 
-If you are working on the React components you also need to set "API\_BASE\_URL" to the correct value.
-
-```text
-$ export API_BASE_URL='http://apply.hypha.test/api'
-```
-
 To build the assets which get deployed, use the following. The deployment scripts will handle this, and the files should not be committed.
 
 ```text
@@ -366,16 +358,16 @@ Now you should be able to access the sites on [http://hypha.test/](http://hypha.
 
 ### Run tests
 
-Hypha has specific settings for testing so specify them when you run the "test" command.
+Hypha uses `py.test` test runner and settings from `hypha/settings/testing.py` to run its tests. Run the test with:
 
 ```text
-$ python manage.py test --settings=hypha.settings.test
+$ make test
 ```
 
 If you need to rerun the tests several times this will speed them up considerably.
 
 ```text
-$ python manage.py test --parallel --keepdb --settings=hypha.settings.test
+$ py.test --reuse-db
 ```
 
 ### Administration
