@@ -105,12 +105,20 @@ class WorkflowStreamForm(WorkflowHelpers, AbstractStreamForm):  # type: ignore
     def render_landing_page(self, request, form_submission=None, *args, **kwargs):
         # We only reach this page after creation of a new submission
         # Hook in to notify about new applications
-        messenger(
-            MESSAGES.NEW_SUBMISSION,
-            request=request,
-            user=form_submission.user,
-            source=form_submission,
-        )
+        if form_submission.status == DRAFT_STATE:
+            messenger(
+                MESSAGES.DRAFT_SUBMISSION,
+                request=request,
+                user=form_submission.user,
+                source=form_submission,
+            )
+        else:
+            messenger(
+                MESSAGES.NEW_SUBMISSION,
+                request=request,
+                user=form_submission.user,
+                source=form_submission,
+            )
 
         return super().render_landing_page(request, form_submission, *args, **kwargs)
 

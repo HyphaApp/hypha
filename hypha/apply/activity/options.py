@@ -9,6 +9,7 @@ class MESSAGES(TextChoices):
     EDIT_SUBMISSION = 'EDIT_SUBMISSION', _('edited submission')
     APPLICANT_EDIT = 'APPLICANT_EDIT', _("edited applicant")
     NEW_SUBMISSION = 'NEW_SUBMISSION', _('submitted new submission')
+    DRAFT_SUBMISSION = 'DRAFT_SUBMISSION', _('submitted new draft submission')
     SCREENING = 'SCREENING', _('screened')
     TRANSITION = 'TRANSITION', _('transitioned')
     BATCH_TRANSITION = 'BATCH_TRANSITION', _('batch transitioned')

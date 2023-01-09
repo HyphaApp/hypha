@@ -20,6 +20,7 @@ class EmailAdapter(AdapterBase):
     adapter_type = 'Email'
     messages = {
         MESSAGES.NEW_SUBMISSION: 'messages/email/submission_confirmation.html',
+        MESSAGES.DRAFT_SUBMISSION: 'messages/email/submission_confirmation.html',
         MESSAGES.COMMENT: 'notify_comment',
         MESSAGES.EDIT_SUBMISSION: 'messages/email/submission_edit.html',
         MESSAGES.TRANSITION: 'handle_transition',
