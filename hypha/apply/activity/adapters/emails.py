@@ -214,6 +214,19 @@ class EmailAdapter(AdapterBase):
 
             return [project_settings.compliance_email]
 
+        if message_type == MESSAGES.UPLOAD_CONTRACT:
+            if user == source.user:
+                # if contractor uploads the contract then notify the compliance
+                from hypha.apply.projects.models import ProjectSettings
+
+                project_settings = ProjectSettings.objects.first()
+
+                if project_settings is None:
+                    # TODO: what to do when this isn't configured??
+                    return []
+
+                return [project_settings.compliance_email]
+
         if message_type in {MESSAGES.SUBMIT_REPORT, MESSAGES.UPDATE_INVOICE}:
             # Don't tell the user if they did these activities
             if user.is_applicant:
