@@ -10,6 +10,11 @@
     }
 </ul>
 {% endif %}
+{% if object.is_archive %}
+<div class="banner banner__archived">
+    {% trans "This submission is archived." %}
+</div>
+{% endif %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
         <h1 class="beta heading heading--no-margin heading--bold">{{ object.title }}</h1>
@@ -152,8 +157,12 @@
     {# Tab 2 #}
     <div class="tabs__content" id="tab-2">
         <div class="feed">
-            {% include "activity/include/comment_form.html" %}
-            {% include "activity/include/comment_list.html" with editable=True %}
+            {% if not object.is_archive %}
+                {% include "activity/include/comment_form.html" %}
+                {% include "activity/include/comment_list.html" with editable=True %}
+            {% else %}
+                {% include "activity/include/comment_list.html" with editable=False %}
+            {% endif %}
         </div>
     </div>
 
