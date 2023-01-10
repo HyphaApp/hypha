@@ -358,17 +358,21 @@ Now you should be able to access the sites on [http://hypha.test/](http://hypha.
 
 ### Run tests
 
-Hypha uses `py.test` test runner and settings from `hypha/settings/testing.py` to run its tests. Run the test with:
+Hypha uses [py.test](https://pytest-django.readthedocs.io/en/latest/) test runner and use `hypha/settings/testing.py` for test settings. 
+
+Run the test with:
 
 ```text
-$ make test
+$ pytest
 ```
 
 If you need to rerun the tests several times this will speed them up considerably.
 
 ```text
-$ py.test --reuse-db
+$ pytest --reuse-db
 ```
+
+Alernatively, you can run `make test` command that will check for linting, run pytest with --reuse-db and show coverage report.
 
 ### Administration
 
