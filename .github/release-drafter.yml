@@ -35,6 +35,10 @@ categories:
       - 'Type: Dependencies'
       - 'dependencies'
       - 'maintenance'
+  - title: '📜 Documentation'
+    labels:
+      - 'Type: Documentation'
+      - 'documentation'
 template: |
   ## Changes
 
