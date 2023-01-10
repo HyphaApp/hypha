@@ -252,12 +252,6 @@ class SystemMessagesSettings(BaseSetting):
         help_text=_('Link for the site logo, e.g. "https://www.example.org/". If not set, defaults to page with slug set to "home".'),
     )
 
-    footer_content = models.TextField(
-        "Footer content",
-        default='<p>Configure this text in Wagtail admin -> Settings -> System settings.</p>',
-        help_text=_('This will be added to the footer, html tags is allowed.'),
-    )
-
     title_404 = models.CharField(
         "Title",
         max_length=255,
@@ -274,7 +268,6 @@ class SystemMessagesSettings(BaseSetting):
             FieldPanel('site_logo_mobile'),
             FieldPanel('site_logo_link'),
         ], 'Site logo'),
-        FieldPanel('footer_content'),
         MultiFieldPanel([
             FieldPanel('title_404'),
             FieldPanel('body_404'),

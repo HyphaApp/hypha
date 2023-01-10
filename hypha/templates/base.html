@@ -165,23 +165,6 @@
             {% block content %}{% endblock %}
         </main>
 
-        <footer class="footer">
-            <div class="grid grid--two wrapper wrapper--large">
-                <div class="footer__inner">
-                    <div class="footer__social-links">
-                        {% if settings.utils.SocialMediaSettings.twitter_handle %}
-                            <a href="https://twitter.com/{{ settings.utils.SocialMediaSettings.twitter_handle }}">
-                                <svg class="icon icon--footer-social"><use xlink:href="#twitter"></use></svg>
-                                <h4 class="heading heading--no-margin">@{{ settings.utils.SocialMediaSettings.twitter_handle }}</h4>
-                            </a>
-                        {% endif %}
-                    </div>
-                    {{ settings.utils.SystemMessagesSettings.footer_content|safe }}
-                </div>
-            </div>
-
-        </footer>
-
         {% cookie_banner %}
 
         <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
