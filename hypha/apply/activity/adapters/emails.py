@@ -45,6 +45,7 @@ class EmailAdapter(AdapterBase):
         MESSAGES.REPORT_FREQUENCY_CHANGED: 'messages/email/report_frequency.html',
         MESSAGES.REPORT_NOTIFY: 'messages/email/report_notify.html',
         MESSAGES.REVIEW_REMINDER: 'messages/email/ready_to_review.html',
+        MESSAGES.PROJECT_FINAL_APPROVAL: 'messages/email/project_final_approval.html',
     }
 
     def get_subject(self, message_type, source):
@@ -203,7 +204,7 @@ class EmailAdapter(AdapterBase):
             partners = kwargs['added']
             return [partner.email for partner in partners]
 
-        if message_type == MESSAGES.SENT_TO_COMPLIANCE:
+        if message_type in [MESSAGES.SENT_TO_COMPLIANCE, MESSAGES.PROJECT_FINAL_APPROVAL]:
             from hypha.apply.projects.models import ProjectSettings
 
             project_settings = ProjectSettings.objects.first()
