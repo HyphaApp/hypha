@@ -26,7 +26,6 @@ INSTALLED_APPS = [
     'hypha.public.funds',
     'hypha.public.home',
     'hypha.public.navigation',
-    'hypha.public.projects',
     'hypha.public.standardpages',
     'hypha.public.forms',
     'hypha.public.utils',

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-10 08:46+0000\n"
+"POT-Creation-Date: 2023-01-10 08:58+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -5408,18 +5408,6 @@ msgstr ""
 
 #: hypha/public/navigation/models.py:24
 msgid "Main site navigation"
-msgstr ""
-
-#: hypha/public/projects/models.py:127
-msgid "Contact Details"
-msgstr ""
-
-#: hypha/public/projects/models.py:129
-msgid "Related Projects"
-msgstr ""
-
-#: hypha/public/projects/models.py:132
-msgid "Categories"
 msgstr ""
 
 #: hypha/public/utils/models.py:125
