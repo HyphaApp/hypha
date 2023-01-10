@@ -123,7 +123,7 @@ class AdminDashboardView(MyFlaggedMixin, TemplateView):
                 'table': None,
             }
 
-        to_approve = Project.objects.waiting_for_approval().for_table()
+        to_approve = Project.objects.waiting_for_approval().filter(ready_for_final_approval=False).for_table()
 
         return {
             'count': to_approve.count(),
@@ -209,7 +209,7 @@ class FinanceDashboardView(MyFlaggedMixin, TemplateView):
                 'table': None,
             }
 
-        to_paf_approve = Project.objects.waiting_for_approval().for_table()
+        to_paf_approve = Project.objects.waiting_for_approval().filter(ready_for_final_approval=False).for_table()
         return {
             'count': to_paf_approve.count(),
             'table': ProjectsDashboardTable(data=to_paf_approve),
@@ -319,8 +319,7 @@ class ContractingDashboardView(MyFlaggedMixin, TemplateView):
                 'count': None,
                 'table': None,
             }
-        to_paf_approve = Project.objects.waiting_for_approval().for_table()
-        to_paf_final_approval = [paf for paf in to_paf_approve if paf.can_make_final_approval]
+        to_paf_final_approval = Project.objects.waiting_for_final_approval().for_table()
         return {
             'count': len(to_paf_final_approval),
             'table': ProjectsDashboardTable(data=to_paf_final_approval),
@@ -333,7 +332,7 @@ class ContractingDashboardView(MyFlaggedMixin, TemplateView):
                 'table': None,
             }
 
-        to_paf_approve = Project.objects.waiting_for_approval().for_table()
+        to_paf_approve = Project.objects.waiting_for_approval().filter(ready_for_final_approval=False).for_table()
         return {
             'count': to_paf_approve.count(),
             'table': ProjectsDashboardTable(data=to_paf_approve),

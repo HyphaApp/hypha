@@ -126,6 +126,8 @@ class SendForApprovalView(DelegatedViewMixin, UpdateView):
         )
 
         if not PAFReviewersRole.objects.all().exists():
+            project.ready_for_final_approval = True
+            project.save(update_fields={'ready_for_final_approval'})
             # notify final approver if there is no Project Reviewer roles exist
             messenger(
                 MESSAGES.PROJECT_FINAL_APPROVAL,
@@ -156,7 +158,8 @@ class FinalApprovalView(DelegatedViewMixin, UpdateView):
             project.status = COMMITTED
             project.is_locked = False
             project.paf_reviews_meta_data = {}
-            project.save(update_fields=['status', 'is_locked', 'paf_reviews_meta_data'])
+            project.ready_for_final_approval = False
+            project.save(update_fields=['status', 'is_locked', 'paf_reviews_meta_data', 'ready_for_final_approval'])
 
             project_status_message = _(
                 '<p>{user} request changes the Project and update status to {project_status}.</p>').format(
@@ -191,7 +194,8 @@ class FinalApprovalView(DelegatedViewMixin, UpdateView):
 
         project.is_locked = True
         project.status = CONTRACTING
-        project.save(update_fields=['is_locked', 'status'])
+        project.ready_for_final_approval = False
+        project.save(update_fields=['is_locked', 'status', 'ready_for_final_approval'])
 
         project_status_message = _(
             '<p>{user} approved the Project and update status to {project_status}.</p>').format(
@@ -528,6 +532,8 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
             )
 
         if self.object.can_make_final_approval:
+            self.object.ready_for_final_approval = True
+            self.object.save(update_fields={'ready_for_final_approval'})
             # notify final approver if project is open for final approval
             messenger(
                 MESSAGES.PROJECT_FINAL_APPROVAL,

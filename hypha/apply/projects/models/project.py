@@ -85,6 +85,12 @@ class ProjectQuerySet(models.QuerySet):
             status=WAITING_FOR_APPROVAL,
         )
 
+    def waiting_for_final_approval(self):
+        return self.filter(
+            status=WAITING_FOR_APPROVAL,
+            ready_for_final_approval=True,
+        )
+
     def by_end_date(self, desc=False):
         order = getattr(F('proposed_end'), 'desc' if desc else 'asc')(nulls_last=True)
 
@@ -183,6 +189,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         default=dict,
         help_text='Reviewers role and their actions/comments'
     )
+    ready_for_final_approval = models.BooleanField(default=False, blank=True)
 
     objects = ProjectQuerySet.as_manager()
 
@@ -323,6 +330,9 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
 
     @property
     def can_make_final_approval(self):
+        if self.ready_for_final_approval:
+            return True
+        # if project is in transition phase to final approval.
         if self.status == WAITING_FOR_APPROVAL:
             paf_reviewers_count = PAFReviewersRole.objects.all().count()
             if paf_reviewers_count == 0:
@@ -336,7 +346,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
 
     @property
     def can_update_paf_status(self):
-        return self.status == WAITING_FOR_APPROVAL and not self.can_make_final_approval
+        return self.status == WAITING_FOR_APPROVAL and not self.ready_for_final_approval
 
     def can_request_funding(self):
         """
