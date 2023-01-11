@@ -60,8 +60,21 @@
 
     {% if waiting_for_approval.count %}
     <div id="paf-awaiting-approval" class="wrapper wrapper--bottom-space">
-        <h4 class="heading heading--normal">{% trans "PAF awaiting approval" %}</h4>
-        {% render_table waiting_for_approval.table %}
+        <section class="section section--with-options">
+            <h4 class="heading heading--normal heading--no-margin">{% trans 'PAF awaiting approval' %}</h4>
+            <div class="js-tabs">
+                <a class="tab__item tab__item--alt" href="#active-invoices-4" data-tab="tab-4">{% trans "Awaiting your approval" %}</a>
+                <a class="tab__item tab__item--alt" href="#waiting-for-review-5" data-tab="tab-5">{% trans "Approved by you" %}</a>
+            </div>
+        </section>
+        <div class="js-tabs-content">
+            <div class="tabs__content" id="tab-4">
+                {% render_table waiting_for_approval.table %}
+            </div>
+            <div class="tabs__content" id="tab-5">
+                {% render_table waiting_for_approval.table %}
+            </div>
+        </div>
     </div>
     {% endif %}
 </div>
