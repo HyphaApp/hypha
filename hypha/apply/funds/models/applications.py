@@ -4,6 +4,7 @@ from django import forms
 from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import (
     Case,
@@ -75,6 +76,13 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
         blank=True,
     )
 
+    image = models.ForeignKey('images.CustomImage', null=True, blank=True, on_delete=models.SET_NULL, related_name='+')
+
+    description = models.TextField(null=True, blank=True)
+
+    # higher the weight means top priority, 100th will be on top.
+    weight = models.PositiveIntegerField(default=1, blank=True, validators=[MinValueValidator(1), MaxValueValidator(100)])
+
     guide_link = models.URLField(blank=True, max_length=255, help_text=_('Link to the apply guide.'))
 
     slack_channel = models.CharField(blank=True, max_length=128, help_text=_('The slack #channel for notifications. If left empty, notifications will go to the default channel.'))
@@ -122,6 +130,9 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
     content_panels = WorkflowStreamForm.content_panels + [
         FieldPanel('reviewers', widget=forms.SelectMultiple(attrs={'size': '16'})),
         FieldPanel('guide_link'),
+        FieldPanel('description'),
+        FieldPanel('image'),
+        FieldPanel('weight'),
         FieldPanel('slack_channel'),
         FieldPanel('activity_digest_recipient_emails'),
         FieldPanel('show_deadline'),
@@ -439,6 +450,13 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
         blank=True,
     )
 
+    image = models.ForeignKey('images.CustomImage', null=True, blank=True, on_delete=models.SET_NULL, related_name='+')
+
+    description = models.TextField(null=True, blank=True)
+
+    # higher the weight means top priority, 100th will be on top.
+    weight = models.PositiveIntegerField(default=1, blank=True, validators=[MinValueValidator(1), MaxValueValidator(100)])
+
     guide_link = models.URLField(blank=True, max_length=255, help_text=_('Link to the apply guide.'))
 
     slack_channel = models.CharField(blank=True, max_length=128, help_text=_('The slack #channel for notifications.'))
@@ -455,6 +473,9 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
         FieldPanel('lead'),
         FieldPanel('reviewers', widget=forms.SelectMultiple(attrs={'size': '16'})),
         FieldPanel('guide_link'),
+        FieldPanel('description'),
+        FieldPanel('image'),
+        FieldPanel('weight'),
         FieldPanel('slack_channel'),
         FieldPanel('activity_digest_recipient_emails'),
     ]
