@@ -360,7 +360,7 @@ class TestApplicantUploadContractView(BaseViewTestCase):
         return {'pk': instance.id}
 
     def test_owner_upload_contract(self):
-        project = ProjectFactory(user=self.user)
+        project = ProjectFactory(status=CONTRACTING, user=self.user)
 
         test_doc = BytesIO(b'somebinarydata')
         test_doc.name = 'contract.pdf'
@@ -377,7 +377,7 @@ class TestApplicantUploadContractView(BaseViewTestCase):
         self.assertTrue(project.contracts.first().is_signed)
 
     def test_non_owner_upload_contract(self):
-        project = ProjectFactory()
+        project = ProjectFactory(status=CONTRACTING)
         contract_count = project.contracts.count()
 
         test_doc = BytesIO(b'somebinarydata')
@@ -402,7 +402,7 @@ class TestStaffUploadContractView(BaseViewTestCase):
         return {'pk': instance.id}
 
     def test_upload_contract(self):
-        project = ProjectFactory()
+        project = ProjectFactory(status=CONTRACTING)
 
         test_doc = BytesIO(b'somebinarydata')
         test_doc.name = 'contract.pdf'
@@ -419,7 +419,7 @@ class TestStaffUploadContractView(BaseViewTestCase):
         self.assertFalse(project.contracts.first().is_signed)
 
     def test_upload_contract_with_signed_set_to_true(self):
-        project = ProjectFactory()
+        project = ProjectFactory(status=CONTRACTING)
 
         test_doc = BytesIO(b'somebinarydata')
         test_doc.name = 'contract.pdf'
