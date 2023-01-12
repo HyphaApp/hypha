@@ -77,6 +77,7 @@ from ..models.project import (
     Project,
 )
 from ..models.report import Report
+from ..permissions import has_permission
 from ..tables import InvoiceListTable, ProjectsListTable, ReportListTable
 from .report import ReportFrequencyUpdate, ReportingMixin
 
@@ -437,9 +438,7 @@ class UploadContractView(DelegatedViewMixin, CreateView):
         response = super().dispatch(request, *args, **kwargs)
 
         project = self.kwargs['object']
-        is_owner = project.user == request.user
-        if not (request.user.is_apply_staff or is_owner):
-            raise PermissionDenied
+        permission, _ = has_permission('contract_upload', request.user, object=project)
 
         return response
 
@@ -531,7 +530,7 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
                 visibility=ALL,
             )
 
-        if self.object.can_make_final_approval:
+        if self.object.is_approved_by_all_paf_reviewers:
             self.object.ready_for_final_approval = True
             self.object.save(update_fields={'ready_for_final_approval'})
             # notify final approver if project is open for final approval

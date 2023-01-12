@@ -329,7 +329,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         return self.status == WAITING_FOR_APPROVAL
 
     @property
-    def can_make_final_approval(self):
+    def is_approved_by_all_paf_reviewers(self):
         if self.ready_for_final_approval:
             return True
         # if project is in transition phase to final approval.

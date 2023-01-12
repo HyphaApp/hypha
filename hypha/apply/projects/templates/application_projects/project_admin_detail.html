@@ -1,6 +1,6 @@
 {% extends "application_projects/project_detail.html" %}
 
-{% load i18n approval_tools static %}
+{% load i18n approval_tools contract_tools static %}
 
 {% block admin_actions %}
 <div class="modal" id="send-for-approval">
@@ -119,13 +119,16 @@
 {% block approve_contract %}
 {% if contract_to_approve %}
     {{ block.super }}
-    <p>
-        <a data-fancybox
-        data-src="#approve-contract"
-        class="button button--bottom-space button--primary button--full-width"
-        href="#">
-            {% trans "Approve Contract" %}
-        </a>
-    </p>
+    {% user_can_approve_contract user object as can_approve_contract %}
+    {% if can_approve_contract %}
+        <p>
+            <a data-fancybox
+            data-src="#approve-contract"
+            class="button button--bottom-space button--primary button--full-width"
+            href="#">
+                {% trans "Approve Contract" %}
+            </a>
+        </p>
+    {% endif %}
 {% endif %}
 {% endblock %}
