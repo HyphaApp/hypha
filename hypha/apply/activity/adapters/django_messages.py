@@ -18,6 +18,7 @@ class DjangoMessagesAdapter(AdapterBase):
         MESSAGES.REMOVE_DOCUMENT: _('Successfully removed document'),
         MESSAGES.SKIPPED_REPORT: 'handle_skipped_report',
         MESSAGES.REPORT_FREQUENCY_CHANGED: 'handle_report_frequency',
+        MESSAGES.DISABLED_REPORTING: _('Reporting disabled'),
         MESSAGES.CREATE_REMINDER: _('Reminder created'),
         MESSAGES.DELETE_REMINDER: _('Reminder deleted'),
     }

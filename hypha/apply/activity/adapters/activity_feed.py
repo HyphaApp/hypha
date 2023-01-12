@@ -45,6 +45,7 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.SUBMIT_REPORT: _('Submitted a report'),
         MESSAGES.SKIPPED_REPORT: 'handle_skipped_report',
         MESSAGES.REPORT_FREQUENCY_CHANGED: 'handle_report_frequency',
+        MESSAGES.DISABLED_REPORTING: _('Reporting disabled'),
         MESSAGES.BATCH_DELETE_SUBMISSION: 'handle_batch_delete_submission',
         MESSAGES.BATCH_ARCHIVE_SUBMISSION: 'handle_batch_archive_submission',
         MESSAGES.ARCHIVE_SUBMISSION: _('{user} has archived the submission: {source.title}'),

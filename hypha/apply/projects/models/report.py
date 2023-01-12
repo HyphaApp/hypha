@@ -182,18 +182,41 @@ class ReportConfig(models.Model):
 
     WEEK = _('week')
     MONTH = _('month')
+    YEAR = _('year')
     FREQUENCY_CHOICES = [
         (WEEK, _('Weeks')),
         (MONTH, _('Months')),
+        (YEAR, _('Years')),
     ]
 
     project = models.OneToOneField("Project", on_delete=models.CASCADE, related_name="report_config")
     schedule_start = models.DateField(null=True)
     occurrence = models.PositiveSmallIntegerField(default=1)
-    frequency = models.CharField(choices=FREQUENCY_CHOICES, default=MONTH, max_length=5)
+    frequency = models.CharField(choices=FREQUENCY_CHOICES, default=MONTH, max_length=6)
+    disable_reporting = models.BooleanField(default=False)
+    does_not_repeat = models.BooleanField(default=False)
 
     def get_frequency_display(self):
+        if self.disable_reporting:
+            return _('Reporting Disabled')
+        if self.does_not_repeat:
+            last_report = self.last_report()
+            if last_report:
+                return _('One time, that already has reported on {date}'.format(
+                    date=last_report.end_date.strftime('%d %B, %Y')))
+            return _('One time on {date}'.format(date=self.schedule_start.strftime('%d %B, %Y')))
         next_report = self.current_due_report()
+
+        if self.frequency == self.YEAR:
+            if self.schedule_start and self.schedule_start.day == 31:
+                day_of_month = _('last day')
+                month = self.schedule_start.strftime('%B')
+            else:
+                day_of_month = ordinal(next_report.end_date.day)
+                month = next_report.end_date.strftime('%B')
+            if self.occurrence == 1:
+                return _('Once a year on {month} {day}').format(day=day_of_month, month=month)
+            return _('Every {occurrence} years on {month} {day}').format(occurrence=self.occurrence, day=day_of_month, month=month)
 
         if self.frequency == self.MONTH:
             if self.schedule_start and self.schedule_start.day == 31:
@@ -201,13 +224,13 @@ class ReportConfig(models.Model):
             else:
                 day_of_month = ordinal(next_report.end_date.day)
             if self.occurrence == 1:
-                return _('Monthly on the {day} of the month').format(day=day_of_month)
-            return _('Every {occurrence} months on the {day} of the month').format(occurrence=self.occurrence, day=day_of_month)
+                return _('Once a month on the {day}').format(day=day_of_month)
+            return _('Every {occurrence} months on the {day}').format(occurrence=self.occurrence, day=day_of_month)
 
         weekday = next_report.end_date.strftime('%A')
 
         if self.occurrence == 1:
-            return _('Every week on {weekday}').format(weekday=weekday)
+            return _('Once a week on {weekday}').format(weekday=weekday)
         return _('Every {occurrence} weeks on {weekday}').format(occurrence=self.occurrence, weekday=weekday)
 
     def is_up_to_date(self):
@@ -235,6 +258,9 @@ class ReportConfig(models.Model):
         ).first()
 
     def current_due_report(self):
+        if self.disable_reporting:
+            return None
+
         # Project not started - no reporting required
         if not self.project.start_date:
             return None
@@ -246,6 +272,10 @@ class ReportConfig(models.Model):
         schedule_date = self.schedule_start or self.project.start_date
 
         if last_report:
+            # Frequency is one time and last report exists - no reporting required anymore
+            if self.does_not_repeat:
+                return None
+
             if last_report.end_date < schedule_date:
                 # reporting schedule changed schedule_start is now the next report date
                 next_due_date = schedule_date
@@ -260,10 +290,13 @@ class ReportConfig(models.Model):
             else:
                 # schedule_start is the first day the project so the "last" period
                 # ended one day before that. If date is in past we required report now
-                next_due_date = max(
-                    self.next_date(schedule_date - relativedelta(days=1)),
-                    today,
-                )
+                if self.does_not_repeat:
+                    next_due_date = today
+                else:
+                    next_due_date = max(
+                        self.next_date(schedule_date - relativedelta(days=1)),
+                        today,
+                    )
 
         report, _ = self.project.reports.update_or_create(
             project=self.project,

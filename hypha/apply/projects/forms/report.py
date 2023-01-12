@@ -1,5 +1,4 @@
 from django import forms
-from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -97,50 +96,17 @@ class ReportEditForm(FileFormMixin, forms.ModelForm):
 
 
 class ReportFrequencyForm(forms.ModelForm):
-    start = forms.DateField(label='Starting on:')
+    start = forms.DateField(label='Report on:', required=False)
 
     class Meta:
         model = ReportConfig
-        fields = ('occurrence', 'frequency', 'start')
+        fields = ('start', 'occurrence', 'frequency', 'does_not_repeat')
         labels = {
-            'occurrence': _('No.'),
+            'occurrence': _(''),
+            'frequency': _(''),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        today = timezone.now().date()
-        last_report = self.instance.last_report()
-
-        self.fields['start'].widget.attrs.update({
-            'min': max(
-                last_report.end_date if last_report else today,
-                today,
-            ),
-            'max': self.instance.project.end_date,
-        })
-
-    def clean_start(self):
-        start_date = self.cleaned_data['start']
-        last_report = self.instance.last_report()
-        if last_report and start_date <= last_report.end_date:
-            raise ValidationError(
-                _('Cannot start a schedule before the current reporting period'),
-                code="bad_start"
-            )
-
-        if start_date < timezone.now().date():
-            raise ValidationError(
-                _('Cannot start a schedule in the past'),
-                code="bad_start"
-            )
-
-        if start_date > self.instance.project.end_date:
-            raise ValidationError(
-                _('Cannot start a schedule beyond the end date'),
-                code="bad_start"
-            )
-        return start_date
-
-    def save(self, *args, **kwargs):
-        self.instance.schedule_start = self.cleaned_data['start']
-        return super().save(*args, **kwargs)
+        self.fields['occurrence'].required = False
+        self.fields['frequency'].required = False

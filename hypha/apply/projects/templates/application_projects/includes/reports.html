@@ -10,31 +10,11 @@
                 <p class="data-block__card-copy">{{ object.report_config.get_frequency_display }}</p>
                 {% if request.user.is_apply_staff %}
                     <p class="data-block__card-copy">
-                        <a data-fancybox data-src="#change-frequency" href="#" class="data-block__action-link">{% trans "Change" %}</a>
+                        <a data-fancybox data-src="#change-frequency" href="#" class="data-block__action-link">{% if object.report_config.disable_reporting %}{% trans "Enable" %}{% else %}{% trans "Change" %}{% endif %}</a>
                     </p>
                     <!-- Change report frequency modal -->
-                    <div class="modal" id="change-frequency">
-                        {{ report_data|json_script:"reportData" }}
-                        <h4 class="modal__header-bar">{% trans "Change reporting frequency" %}</h4>
-                        <div class="form__info-box">
-                            <p>
-                                {% trans "Next report will be due in" %}
-                                <b class="js-next-report-due-slot"></b>
-                                {% trans "and the report period will be" %}
-                                <b class="js-report-period-start"></b>
-                                {% trans "to" %}
-                                <b class="js-report-period-end"></b>
-                                {% trans "and then every" %}
-                                <b class="js-frequency-number-slot"></b>
-                                <b class="js-frequency-period-slot"></b>
-                                {% trans "after until the project end date" %}:
-                                <span class="js-project-end-slot"></span>.
-                            </p>
-                        </div>
-                        <p>{% trans "Schedule reports every" %}:</p>
-                        {% trans "Continue" as continue %}
-                        {% include 'funds/includes/delegated_form_base.html' with form=update_frequency_form value=continue extra_classes="form--report-frequency" %}
-                    </div>
+                    {% include 'application_projects/includes/report_frequency_config.html' with form=update_frequency_form extra_classes="form--report-frequency" config=object.report_config %}
+
                 {% endif %}
             </div>
             <ul class="data-block__list">
