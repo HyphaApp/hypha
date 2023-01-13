@@ -298,7 +298,10 @@ class SubmissionFilter(filters.FilterSet):
         model = ApplicationSubmission
         fields = ('status', 'fund', 'round')
 
-    def __init__(self, *args, exclude=[], limit_statuses=None, **kwargs):
+    def __init__(self, *args, exclude=None, limit_statuses=None, **kwargs):
+        if exclude is None:
+            exclude = []
+
         qs = kwargs.get('queryset')
 
         archived = kwargs.pop('archived') if 'archived' in kwargs.keys() else None
@@ -380,7 +383,9 @@ class SubmissionDashboardFilter(filters.FilterSet):
         model = ApplicationSubmission
         fields = ('fund', 'round')
 
-    def __init__(self, *args, exclude=[], limit_statuses=None, **kwargs):
+    def __init__(self, *args, exclude=None, limit_statuses=None, **kwargs):
+        if exclude is None:
+            exclude = []
         super().__init__(*args, **kwargs)
 
         self.filters = {

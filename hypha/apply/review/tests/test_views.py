@@ -153,11 +153,11 @@ class TestReviewScore(BaseViewTestCase):
         review_form.save()
         score_fields = {
             field.id: {'score': score}
-            for field, score in zip(form.score_fields, scores)
+            for field, score in zip(form.score_fields, scores, strict=False)
         }
         score_fields_without_text = {
             field.id: score
-            for field, score in zip(form.score_fields_without_text, scores_without_text)
+            for field, score in zip(form.score_fields_without_text, scores_without_text, strict=False)
         }
         score_fields.update(score_fields_without_text)
         data = ReviewFormFieldsFactory.form_response(

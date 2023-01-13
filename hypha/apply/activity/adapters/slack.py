@@ -172,8 +172,12 @@ class SlackAdapter(AdapterBase):
         ]
 
     def reviewers_updated(
-        self, source, link, user, added=[], removed=[], **kwargs
+        self, source, link, user, added=None, removed=None, **kwargs
     ):
+        if added is None:
+            added = []
+        if removed is None:
+            removed = []
         submission = source
         message = [
             _('{user} has updated the reviewers on <{link}|{title}>').format(

@@ -372,7 +372,9 @@ class ConceptDeterminationForm(BaseConceptDeterminationForm, BaseNormalDetermina
 
 
 class ProposalDeterminationForm(BaseProposalDeterminationForm, BaseNormalDeterminationForm):
-    def __init__(self, *args, submission, user, edit=False, initial={}, instance=None, **kwargs):
+    def __init__(self, *args, submission, user, edit=False, initial=None, instance=None, **kwargs):
+        if initial is None:
+            initial = {}
         initial.update(submission=submission.id)
 
         if instance:
@@ -403,7 +405,9 @@ class ProposalDeterminationForm(BaseProposalDeterminationForm, BaseNormalDetermi
 
 
 class BatchConceptDeterminationForm(BaseConceptDeterminationForm, BaseBatchDeterminationForm):
-    def __init__(self, *args, submissions, initial={}, **kwargs):
+    def __init__(self, *args, submissions, initial=None, **kwargs):
+        if initial is None:
+            initial = {}
         initial.update(submissions=submissions.values_list('id', flat=True))
         super(BaseBatchDeterminationForm, self).__init__(*args, initial=initial, **kwargs)
         self.fields['outcome'].widget = forms.HiddenInput()
@@ -412,7 +416,9 @@ class BatchConceptDeterminationForm(BaseConceptDeterminationForm, BaseBatchDeter
 
 
 class BatchProposalDeterminationForm(BaseProposalDeterminationForm, BaseBatchDeterminationForm):
-    def __init__(self, *args, submissions, initial={}, **kwargs):
+    def __init__(self, *args, submissions, initial=None, **kwargs):
+        if initial is None:
+            initial = {}
         initial.update(submissions=submissions.values_list('id', flat=True))
         super(BaseBatchDeterminationForm, self).__init__(*args, initial=initial, **kwargs)
         self.fields['outcome'].widget = forms.HiddenInput()
@@ -447,9 +453,11 @@ class DeterminationModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMet
 
     def __init__(
         self, *args, submission, action, user=None,
-        edit=False, initial={}, instance=None, site=None,
+        edit=False, initial=None, instance=None, site=None,
         **kwargs
     ):
+        if initial is None:
+            initial = {}
         initial.update(submission=submission.id)
         initial.update(author=user.id)
         if instance:
@@ -519,9 +527,11 @@ class BatchDeterminationForm(StreamBaseForm, forms.Form, metaclass=FormMixedMeta
     )
 
     def __init__(
-        self, *args, user, submissions, action, initial={},
+        self, *args, user, submissions, action, initial=None,
         edit=False, site=None, **kwargs
     ):
+        if initial is None:
+            initial = {}
         initial.update(submissions=submissions.values_list('id', flat=True))
         try:
             initial.update(outcome=TRANSITION_DETERMINATION[action])

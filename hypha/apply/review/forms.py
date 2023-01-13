@@ -33,7 +33,10 @@ class ReviewModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass)
             }
         }
 
-    def __init__(self, *args, submission, user=None, initial={}, instance=None, **kwargs):
+    def __init__(self, *args, submission, user=None, initial=None, instance=None, **kwargs):
+        if initial is None:
+            initial = {}
+
         initial.update(submission=submission.id)
 
         if instance:

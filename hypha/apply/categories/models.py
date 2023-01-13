@@ -168,7 +168,7 @@ class MetaTermForm(WagtailAdminModelForm):
         return parent
 
     def save(self, commit=True, *args, **kwargs):
-        instance = super().save(commit=False, *args, **kwargs)
+        instance = super().save(*args, **kwargs, commit=False)
         parent = self.cleaned_data['parent']
 
         if not commit:

@@ -139,10 +139,12 @@ class AdapterBase:
         request,
         user,
         source,
-        sources=[],
+        sources=None,
         related=None,
         **kwargs,
     ):
+        if sources is None:
+            sources = []
         try:
             # If this was a batch action we want to pull out the submission
             source = sources[0]

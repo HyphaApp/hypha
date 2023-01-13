@@ -42,7 +42,7 @@ class ChangeInvoiceStatusForm(forms.ModelForm):
         model = Invoice
 
     def __init__(self, instance, user, *args, **kwargs):
-        super().__init__(instance=instance, *args, **kwargs)
+        super().__init__(*args, **kwargs, instance=instance)
         self.initial['comment'] = ''
         status_field = self.fields['status']
         user_choices = invoice_status_user_choices(user)

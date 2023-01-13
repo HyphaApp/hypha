@@ -35,7 +35,9 @@ class TestFundCreationView(TestCase):
         cls.user = SuperUserFactory()
         cls.home = ApplyHomePageFactory()
 
-    def create_page(self, appl_forms=1, review_forms=1, determination_forms=1, external_review_form=0, project_approval_form=1, stages=1, same_forms=False, form_stage_info=[1]):
+    def create_page(self, appl_forms=1, review_forms=1, determination_forms=1, external_review_form=0, project_approval_form=1, stages=1, same_forms=False, form_stage_info=None):
+        if form_stage_info is None:
+            form_stage_info = [1]
         self.client.force_login(self.user)
         url = reverse('wagtailadmin_pages:add', args=('funds', 'fundtype', self.home.id))
 

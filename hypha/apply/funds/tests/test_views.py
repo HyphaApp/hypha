@@ -510,7 +510,11 @@ class TestReviewersUpdateView(BaseSubmissionViewTestCase):
         cls.reviewers = ReviewerFactory.create_batch(4)
         cls.roles = ReviewerRoleFactory.create_batch(2)
 
-    def post_form(self, submission, reviewer_roles=[], reviewers=[]):
+    def post_form(self, submission, reviewer_roles=None, reviewers=None):
+        if reviewer_roles is None:
+            reviewer_roles = []
+        if reviewers is None:
+            reviewers = []
         data = {
             'form-submitted-reviewer_form': '',
             'reviewer_reviewers': [r.id for r in reviewers]
@@ -518,7 +522,7 @@ class TestReviewersUpdateView(BaseSubmissionViewTestCase):
         data.update(
             **{
                 f'role_reviewer_{slugify(str(role))}': reviewer.id
-                for role, reviewer in zip(self.roles, reviewer_roles)
+                for role, reviewer in zip(self.roles, reviewer_roles, strict=False)
             }
         )
         return self.post_page(submission, data)
@@ -1442,7 +1446,11 @@ class TestUpdateReviewersMixin(BaseSubmissionViewTestCase):
         cls.reviewers = ReviewerFactory.create_batch(4)
         cls.roles = ReviewerRoleFactory.create_batch(2)
 
-    def post_form(self, submission, reviewer_roles=[], reviewers=[]):
+    def post_form(self, submission, reviewer_roles=None, reviewers=None):
+        if reviewer_roles is None:
+            reviewer_roles = []
+        if reviewers is None:
+            reviewers = []
         data = {
             'form-submitted-reviewer_form': '',
             'reviewer_reviewers': [r.id for r in reviewers]
@@ -1450,7 +1458,7 @@ class TestUpdateReviewersMixin(BaseSubmissionViewTestCase):
         data.update(
             **{
                 f'role_reviewer_{slugify(str(role))}': reviewer.id
-                for role, reviewer in zip(self.roles, reviewer_roles)
+                for role, reviewer in zip(self.roles, reviewer_roles, strict=False)
             }
         )
         return self.post_page(submission, data)

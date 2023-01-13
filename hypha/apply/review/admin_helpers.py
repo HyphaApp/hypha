@@ -12,8 +12,8 @@ class ButtonsWithClone(PageButtonHelper):
             'title': 'Clone this %s' % self.verbose_name,
         }
 
-    def get_buttons_for_obj(self, obj, exclude=[], classnames_add=[],
-                            classnames_exclude=[]):
+    def get_buttons_for_obj(self, obj, exclude=None, classnames_add=None,
+                            classnames_exclude=None):
         btns = super().get_buttons_for_obj(obj, exclude, classnames_add, classnames_exclude)
 
         # Put preview before delete

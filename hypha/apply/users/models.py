@@ -123,7 +123,7 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
                 ))
         return params
 
-    def get_or_create_and_notify(self, defaults={}, site=None, **kwargs):
+    def get_or_create_and_notify(self, defaults: dict | None =None, site=None, **kwargs):
         """Create or get an account for applicant.and send activation email to applicant.
 
         Args:
@@ -138,6 +138,9 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
             whether the user was created or not.
         """
         _created = False
+
+        if defaults is None:
+            defaults = {}
 
         email = kwargs.get('email')
         is_registered, _ = is_user_already_registered(email=email)

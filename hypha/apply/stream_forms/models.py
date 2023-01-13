@@ -51,7 +51,10 @@ class BaseStreamForm:
     def get_defined_fields(self):
         return self.form_fields
 
-    def get_form_fields(self, draft=False, form_data={}, user=None):
+    def get_form_fields(self, draft=False, form_data=None, user=None):
+        if form_data is None:
+            form_data = {}
+
         form_fields = OrderedDict()
         field_blocks = self.get_defined_fields()
         group_counter = 1
@@ -119,7 +122,7 @@ class BaseStreamForm:
 
         return form_fields
 
-    def get_form_class(self, draft=False, form_data={}, user=None):
+    def get_form_class(self, draft=False, form_data=None, user=None):
         return type('WagtailStreamForm', (self.submission_form_class,), self.get_form_fields(draft, form_data, user))
 
 

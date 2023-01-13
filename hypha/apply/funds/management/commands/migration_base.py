@@ -48,7 +48,7 @@ class MigrateCommand(BaseCommand):
 
     # Monkey patch the status field so it is no longer protected
     patched_status_field = FSMField(default=INITIAL_STATE, protected=False)
-    setattr(ApplicationSubmission, 'status', patched_status_field)
+    ApplicationSubmission.status = patched_status_field
 
     def add_arguments(self, parser):
         parser.add_argument('source', type=argparse.FileType('r'), help='Migration source JSON file')

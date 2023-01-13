@@ -34,7 +34,7 @@ class BaseBatchReviewerTestCase(BaseViewTestCase):
         data.update(
             **{
                 f'role_reviewer_{slugify(str(role))}': reviewer.id
-                for role, reviewer in zip(self.roles, reviewer_roles)
+                for role, reviewer in zip(self.roles, reviewer_roles, strict=False)
             }
         )
         return data

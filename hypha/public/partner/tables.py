@@ -120,7 +120,7 @@ class InvestmentTable(tables.Table):
             extra_columns.append(
                 (field_name, tables.Column(orderable=False,))
             )
-        super().__init__(data, extra_columns=extra_columns, *args, **kwargs)
+        super().__init__(data, *args, **kwargs, extra_columns=extra_columns)
 
     def render_amount_committed(self, value):
         return f'{int(value):,}'

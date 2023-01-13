@@ -53,7 +53,9 @@ class SubmissionsFilter(filters.FilterSet):
         model = ApplicationSubmission
         fields = ('id', 'status', 'round', 'active', 'submit_date', 'fund', 'screening_statuses', 'reviewers', 'lead')
 
-    def __init__(self, *args, exclude=[], limit_statuses=None, **kwargs):
+    def __init__(self, *args, exclude=None, limit_statuses=None, **kwargs):
+        if exclude is None:
+            exclude = []
         super().__init__(*args, **kwargs)
         self.filters['category_options'].extra['choices'] = [
             (option.id, option.value)

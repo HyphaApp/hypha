@@ -2,29 +2,19 @@
 help:
 	@echo "Usage:"
 	@echo "    make help             prints this help."
-	@echo "    make lint             run all python linting."
+	@echo "    make lint             run python linting."
+	@echo "    make lint-fix         try fixing plausible python linting issues."
 	@echo "    make test             run linting and test and generate html coverage report"
 	@echo "    make py-test          run all python tests and display coverage"
 	@echo "    make cov-html         generate html coverage report"
-	@echo "    make sort             run the isort import linter."
-	@echo "    make sort-fix         fix import sort order."
-	@echo "    make style            run the python code style linter."
 	@echo "    make serve-docs       run documentation development server."
 
 .PHONY: lint
-lint: sort style
+lint:
+	@echo "Checking code style with ruff" && ruff .
 
-.PHONY: sort
-sort:
-	@echo "Checking imports with isort" && isort --check-only --diff hypha
-
-.PHONY: sort-fix
-sort-fix:
-	@echo "Fixing imports with isort" && isort hypha
-
-.PHONY: style
-style:
-	@echo "Checking code style with flake8" && flake8 .
+lint-fix:
+	@echo "Try fixing plausible python linting issues." && ruff --fix .
 
 .PHONY: cov-htmlcov
 cov-html:
