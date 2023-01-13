@@ -334,10 +334,10 @@ Run all migrations to set up the database tables.
 $ python manage.py migrate --noinput
 ```
 
-Create the first super user.
+Create the first super user and set the addresses and ports of the two wagtail sites.
 
 ```text
-$ python manage.py createsuperuser
+$ python manage.py initialize
 ```
 
 Collect all the static files.
@@ -347,12 +347,6 @@ $ python manage.py collectstatic --noinput --settings=hypha.settings.dev
 ```
 
 (If this command complain about missing `static_compiled` directory, run the `npm run dev:build` command above first.)
-
-Set the addresses and ports of the two wagtail sites.
-
-```text
-$ python manage.py wagtailsiteupdate hypha.test apply.hypha.test 80
-```
 
 Now you should be able to access the sites on [http://hypha.test/](http://hypha.test/) and [http://apply.hypha.test/](http://apply.hypha.test/)
 
