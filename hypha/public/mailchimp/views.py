@@ -9,6 +9,7 @@ from django.utils.translation import gettext as _
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import RedirectView
 from django.views.generic.edit import FormMixin
+from django_ratelimit.decorators import ratelimit
 from mailchimp3 import MailChimp
 
 from .forms import NewsletterForm
@@ -44,6 +45,8 @@ def subscribe_to_mailchimp(email: str, data) -> None:
     )
 
 
+@method_decorator(ratelimit(key='ip', rate=settings.DEFAULT_RATE_LIMIT, method='POST'), name='dispatch')
+@method_decorator(ratelimit(key='post:email', rate=settings.DEFAULT_RATE_LIMIT, method='POST'), name='dispatch')
 @method_decorator(csrf_exempt, name='dispatch')
 class MailchimpSubscribeView(FormMixin, RedirectView):
     form_class = NewsletterForm
