@@ -1446,15 +1446,11 @@ class TestUpdateReviewersMixin(BaseSubmissionViewTestCase):
         cls.reviewers = ReviewerFactory.create_batch(4)
         cls.roles = ReviewerRoleFactory.create_batch(2)
 
-<<<<<<< HEAD
     def post_form(self, submission, reviewer_roles=None, reviewers=None):
         if reviewer_roles is None:
             reviewer_roles = []
         if reviewers is None:
             reviewers = []
-=======
-    def post_form(self, submission, reviewer_roles=[], reviewers=[]):
->>>>>>> e8b089e9 (Fix usages of dict() and list() with literal keywords (#3094))
         data = {
             'form-submitted-reviewer_form': '',
             'reviewer_reviewers': [r.id for r in reviewers]
