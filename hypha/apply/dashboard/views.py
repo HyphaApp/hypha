@@ -163,7 +163,8 @@ class FinanceDashboardView(MyFlaggedMixin, TemplateView):
             'active_invoices': self.active_invoices(),
             'invoices_for_approval': self.invoices_for_approval(),
             'invoices_to_convert': self.invoices_to_convert(),
-            'waiting_for_approval': self.waiting_for_approval(),
+            'awaiting_your_approval': self.waiting_for_approval()['awaiting_your_approval'],
+            'approved_by_you': self.waiting_for_approval()['approved_by_you'],
         })
 
         return context
@@ -210,9 +211,25 @@ class FinanceDashboardView(MyFlaggedMixin, TemplateView):
             }
 
         to_paf_approve = Project.objects.waiting_for_approval().filter(ready_for_final_approval=False).for_table()
+        awaiting_user_approval = list()
+        approved_by_user = list()
+        for project in to_paf_approve:
+            paf_reviewed_users = [review_value.get('user_id') for review_value in project.paf_reviews_meta_data.values()]
+            if self.request.user.id in paf_reviewed_users:
+                approved_by_user.append(project)
+            else:
+                awaiting_user_approval.append(project)
+
         return {
-            'count': to_paf_approve.count(),
-            'table': ProjectsDashboardTable(data=to_paf_approve),
+            'awaiting_your_approval': {
+                'count': len(awaiting_user_approval),
+                'table': ProjectsDashboardTable(data=awaiting_user_approval),
+            },
+            'approved_by_you': {
+                'count': len(approved_by_user),
+                'table': ProjectsDashboardTable(data=approved_by_user),
+            }
+
         }
 
 

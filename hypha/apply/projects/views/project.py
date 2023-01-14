@@ -488,7 +488,9 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
         paf_status = form.cleaned_data.get('paf_status')
         comment = form.cleaned_data.get('comment', '')
 
-        self.object.paf_reviews_meta_data.update({str(role.role): {'status': paf_status, 'comment': comment}})
+        self.object.paf_reviews_meta_data.update(
+            {str(role.role): {'status': paf_status, 'comment': comment, 'user_id': self.request.user.id}}
+        )
         self.object.save(update_fields=['paf_reviews_meta_data'])
 
         paf_status_update_message = _('<p>{role} has updated PAF status to {paf_status}.</p>').format(

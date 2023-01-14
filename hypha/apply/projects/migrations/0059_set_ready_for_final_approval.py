@@ -27,7 +27,7 @@ def set_value_to_ready_for_final_approval(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('application_projects', '0057_project_ready_for_final_approval'),
+        ('application_projects', '0058_project_ready_for_final_approval'),
     ]
 
     operations = [

@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('application_projects', '0056_packetfile_created_at'),
+        ('application_projects', '0057_alter_report_config'),
     ]
 
     operations = [
