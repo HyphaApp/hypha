@@ -22,7 +22,7 @@
             x-data="{ tab: '{% trans "Active" %}' }"
         >
             <section class="section section--with-options">
-                <h4 class="heading heading--normal heading--no-margin">{% trans 'Invoices' %} (<span x-text="tab"></span>)</h4>
+                <h4 class="heading heading--normal heading--no-margin">{% trans 'Invoices' %} </h4>
                 <nav>
                     <a class="tab__item tab__item--alt"
                         role="tab"
@@ -80,9 +80,10 @@
 
         </div>
 
+    {% if paf_waiting_for_approval.count %}
         <div id="paf-awaiting-approval" class="wrapper wrapper--bottom-space" x-data="{ tab: '{% trans "Awaiting your approval" %}' }">
             <section class="section section--with-options">
-                <h4 class="heading heading--normal heading--no-margin">{% trans 'PAF' %} (<span x-text="tab"></span>)</h4>
+                <h4 class="heading heading--normal heading--no-margin">{% trans 'PAF waiting for approval' %}</h4>
                 <nav>
                     <a class="tab__item tab__item--alt"
                         role="tab"
@@ -104,21 +105,22 @@
             </section>
 
             <div x-show="tab === '{% trans "Awaiting your approval" %}'" role="tabpanel" tabindex="0" aria-labelledby="tab-paf-awaiting" id="panel-paf-awaiting">
-                {% if awaiting_your_approval.count %}
-                    {% render_table awaiting_your_approval.table %}
+                {% if paf_waiting_for_approval.awaiting_your_approval.count %}
+                    {% render_table paf_waiting_for_approval.awaiting_your_approval.table %}
                 {% else %}
                     {% trans "You have approved all PAFs, no PAF is waiting for your Approval " %}
                 {% endif %}
             </div>
             <div x-show="tab === '{% trans "Approved by you" %}'" role="tabpanel" tabindex="0" aria-labelledby="tab-paf-approved" id="panel-paf-approved">
-                {% if approved_by_you.count %}
-                    {% render_table approved_by_you.table %}
+                {% if paf_waiting_for_approval.approved_by_you.count %}
+                    {% render_table paf_waiting_for_approval.approved_by_you.table %}
                 {% else %}
                     {% trans "No PAF is approved by you yet " %}
                 {% endif %}
             </div>
 
         </div>
+    {% endif %}
     </div>
 {% endblock %}
 
