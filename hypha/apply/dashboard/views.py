@@ -71,7 +71,7 @@ class AdminDashboardView(MyFlaggedMixin, TemplateView):
             'awaiting_reviews': self.awaiting_reviews(submissions),
             'my_reviewed': self.my_reviewed(submissions),
             'projects': self.projects(),
-            'projects_to_approve': self.projects_to_approve(),
+            'paf_waiting_for_approval': self.paf_waiting_for_approval(),
             'rounds': self.rounds(),
             'my_flagged': self.my_flagged(submissions),
         })
@@ -116,18 +116,43 @@ class AdminDashboardView(MyFlaggedMixin, TemplateView):
             'url': reverse('apply:projects:all'),
         }
 
-    def projects_to_approve(self):
+    def paf_waiting_for_approval(self):
+
         if not self.request.user.is_apply_staff:
             return {
                 'count': None,
-                'table': None,
+                'awaiting_your_approval': {
+                    'count': None,
+                    'table': None,
+                },
+                'approved_by_you': {
+                    'count': None,
+                    'table': None,
+                }
             }
 
-        to_approve = Project.objects.waiting_for_approval().filter(ready_for_final_approval=False).for_table()
+        to_paf_approve = Project.objects.waiting_for_approval().filter(ready_for_final_approval=False).for_table()
+
+        awaiting_user_approval = []
+        approved_by_user = []
+        for project in to_paf_approve:
+            paf_reviewed_users = [review_value.get('user_id') for review_value in
+                                  project.paf_reviews_meta_data.values()]
+            if self.request.user.id in paf_reviewed_users:
+                approved_by_user.append(project)
+            else:
+                awaiting_user_approval.append(project)
 
         return {
-            'count': to_approve.count(),
-            'table': ProjectsDashboardTable(data=to_approve),
+            'count': to_paf_approve.count(),
+            'awaiting_your_approval': {
+                'count': len(awaiting_user_approval),
+                'table': ProjectsDashboardTable(data=awaiting_user_approval),
+            },
+            'approved_by_you': {
+                'count': len(approved_by_user),
+                'table': ProjectsDashboardTable(data=approved_by_user),
+            }
         }
 
     def my_reviewed(self, submissions):
