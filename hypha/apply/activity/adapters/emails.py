@@ -11,7 +11,12 @@ from hypha.apply.projects.models.payment import CHANGES_REQUESTED_BY_STAFF, DECL
 from ..options import MESSAGES
 from ..tasks import send_mail
 from .base import AdapterBase
-from .utils import is_ready_for_review, is_reviewer_update, is_transition, get_compliance_email
+from .utils import (
+    get_compliance_email,
+    is_ready_for_review,
+    is_reviewer_update,
+    is_transition,
+)
 
 logger = logging.getLogger(__name__)
 

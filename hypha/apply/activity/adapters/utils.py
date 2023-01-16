@@ -3,7 +3,6 @@ from collections import defaultdict
 from django.utils.translation import gettext as _
 
 from hypha.apply.activity.options import MESSAGES
-
 from hypha.apply.projects.models import ProjectSettings
 
 
