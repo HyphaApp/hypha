@@ -428,11 +428,15 @@ class PAFReviewersRole(Orderable):
 
 @register_setting
 class ProjectSettings(BaseSetting, ClusterableModel):
-    compliance_email = models.TextField("Compliance Email")
+    contracting_gp_email = models.TextField("Contracting Group Email", null=True, blank=True)
+    finance_gp_email = models.TextField("Finance Group Email", null=True, blank=True)
+    staff_gp_email = models.TextField("Staff Group Email", null=True, blank=True)
     vendor_setup_required = models.BooleanField(default=True)
 
     panels = [
-        FieldPanel('compliance_email'),
+        FieldPanel('staff_gp_email'),
+        FieldPanel('contracting_gp_email'),
+        FieldPanel('finance_gp_email'),
         FieldPanel('vendor_setup_required'),
         InlinePanel('paf_reviewers_roles', label=_('PAF Reviewers Roles')),
     ]

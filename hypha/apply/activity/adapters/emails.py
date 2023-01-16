@@ -7,7 +7,12 @@ from django.template.loader import render_to_string
 from django.utils.translation import gettext as _
 
 from hypha.apply.projects.models.payment import CHANGES_REQUESTED_BY_STAFF, DECLINED
-from hypha.apply.users.groups import APPROVER_GROUP_NAME, CONTRACTING_GROUP_NAME
+from hypha.apply.users.groups import (
+    APPROVER_GROUP_NAME,
+    CONTRACTING_GROUP_NAME,
+    FINANCE_GROUP_NAME,
+    STAFF_GROUP_NAME,
+)
 from hypha.apply.users.models import User
 
 from ..options import MESSAGES
@@ -217,13 +222,13 @@ class EmailAdapter(AdapterBase):
                 filter(groups__name=APPROVER_GROUP_NAME).values_list('email', flat=True)
             return contracting_approver_emails
 
-        if message_type in [MESSAGES.SENT_TO_COMPLIANCE]:
-            return get_compliance_email()
+        if message_type == MESSAGES.SENT_TO_COMPLIANCE:
+            return get_compliance_email(target_user_gps=[CONTRACTING_GROUP_NAME, FINANCE_GROUP_NAME, STAFF_GROUP_NAME])
 
         if message_type == MESSAGES.UPLOAD_CONTRACT:
             if user == source.user:
                 # if contractor uploads the contract then notify the compliance
-                return get_compliance_email()
+                return get_compliance_email(target_user_gps=[CONTRACTING_GROUP_NAME, STAFF_GROUP_NAME])
 
         if message_type in {MESSAGES.SUBMIT_REPORT, MESSAGES.UPDATE_INVOICE}:
             # Don't tell the user if they did these activities
