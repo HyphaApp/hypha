@@ -75,44 +75,7 @@
     {% endif %}
 
     {% if paf_waiting_for_approval.count %}
-        <div id="paf-awaiting-approval" class="wrapper wrapper--bottom-space" x-data="{ tab: '{% trans "Awaiting your approval" %}' }">
-            <section class="section section--with-options">
-                <h4 class="heading heading--normal heading--no-margin">{% trans 'PAF waiting for approval' %}</h4>
-                <nav>
-                    <a class="tab__item tab__item--alt"
-                        role="tab"
-                        href="#"
-                        id="tab-paf-awaiting"
-                        aria-controls="panel-paf-awaiting"
-                        :class="{ 'tab__item--active': tab === '{% trans "Awaiting your approval" %}' }"
-                        @click.prevent="tab = '{% trans "Awaiting your approval" %}'"
-                    >{% trans "Awaiting your approval" %}</a>
-                    <a class="tab__item tab__item--alt"
-                        role="tab"
-                        href="#"
-                        id="tab-paf-approved"
-                        aria-controls="panel-paf-approved"
-                        :class="{ 'tab__item--active': tab === '{% trans "Approved by you" %}' }"
-                        @click.prevent="tab = '{% trans "Approved by you" %}'"
-                    >{% trans "Approved by you" %}</a>
-                </nav>
-            </section>
-
-            <div x-show="tab === '{% trans "Awaiting your approval" %}'" role="tabpanel" tabindex="0" aria-labelledby="tab-paf-awaiting" id="panel-paf-awaiting">
-                {% if paf_waiting_for_approval.awaiting_your_approval.count %}
-                    {% render_table paf_waiting_for_approval.awaiting_your_approval.table %}
-                {% else %}
-                    {% trans "You have approved all PAFs, no PAF is waiting for your Approval " %}
-                {% endif %}
-            </div>
-            <div x-show="tab === '{% trans "Approved by you" %}'" role="tabpanel" tabindex="0" aria-labelledby="tab-paf-approved" id="panel-paf-approved">
-                {% if paf_waiting_for_approval.approved_by_you.count %}
-                    {% render_table paf_waiting_for_approval.approved_by_you.table %}
-                {% else %}
-                    {% trans "No PAF is approved by you yet " %}
-                {% endif %}
-            </div>
-        </div>
+        {% include "dashboard/includes/paf_waiting_for_approval.html" with paf_waiting_for_approval=paf_waiting_for_approval %}
     {% endif %}
 
     {% if projects.table.data %}
