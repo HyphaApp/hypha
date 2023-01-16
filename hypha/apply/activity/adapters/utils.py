@@ -4,6 +4,8 @@ from django.utils.translation import gettext as _
 
 from hypha.apply.activity.options import MESSAGES
 
+from hypha.apply.projects.models import ProjectSettings
+
 
 def link_to(target, request):
     if target and hasattr(target, 'get_absolute_url'):
@@ -38,3 +40,13 @@ def is_ready_for_review(message_type):
 
 def is_reviewer_update(message_type):
     return message_type in [MESSAGES.REVIEWERS_UPDATED, MESSAGES.BATCH_REVIEWERS_UPDATED]
+
+
+def get_compliance_email():
+    project_settings = ProjectSettings.objects.first()
+
+    if project_settings is None:
+        # TODO: what to do when this isn't configured??
+        return []
+
+    return [project_settings.compliance_email]

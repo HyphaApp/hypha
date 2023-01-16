@@ -11,7 +11,7 @@ from hypha.apply.projects.models.payment import CHANGES_REQUESTED_BY_STAFF, DECL
 from ..options import MESSAGES
 from ..tasks import send_mail
 from .base import AdapterBase
-from .utils import is_ready_for_review, is_reviewer_update, is_transition
+from .utils import is_ready_for_review, is_reviewer_update, is_transition, get_compliance_email
 
 logger = logging.getLogger(__name__)
 
@@ -205,28 +205,12 @@ class EmailAdapter(AdapterBase):
             return [partner.email for partner in partners]
 
         if message_type in [MESSAGES.SENT_TO_COMPLIANCE, MESSAGES.PROJECT_FINAL_APPROVAL]:
-            from hypha.apply.projects.models import ProjectSettings
-
-            project_settings = ProjectSettings.objects.first()
-
-            if project_settings is None:
-                # TODO: what to do when this isn't configured??
-                return []
-
-            return [project_settings.compliance_email]
+            return get_compliance_email()
 
         if message_type == MESSAGES.UPLOAD_CONTRACT:
             if user == source.user:
                 # if contractor uploads the contract then notify the compliance
-                from hypha.apply.projects.models import ProjectSettings
-
-                project_settings = ProjectSettings.objects.first()
-
-                if project_settings is None:
-                    # TODO: what to do when this isn't configured??
-                    return []
-
-                return [project_settings.compliance_email]
+                return get_compliance_email()
 
         if message_type in {MESSAGES.SUBMIT_REPORT, MESSAGES.UPDATE_INVOICE}:
             # Don't tell the user if they did these activities
