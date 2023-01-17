@@ -52,9 +52,6 @@ User = get_user_model()
 class RegisterView(View):
     form = CustomUserCreationForm()
 
-    # def check_passwords(self,form):
-    #     return True if form.cleaned_data['password'] == form.cleaned_data['confirm_password'] else False
-
     def get(self, request):
         if request.user.is_authenticated:
             return redirect('dashboard:dashboard')
@@ -66,7 +63,11 @@ class RegisterView(View):
         if form.is_valid():
             context['email']=form.cleaned_data['email']
             context['full_name']=form.cleaned_data['full_name']
-            context['password']=form.cleaned_data['password']
+
+            # If using wagtail password management
+            if 'password1' in form.cleaned_data:
+                context['password']=form.cleaned_data['password1']
+
             site=Site.find_for_request(self.request)
             user,created = User.objects.get_or_create_and_notify(defaults={},site=site,**context)
             if created:
@@ -74,7 +75,7 @@ class RegisterView(View):
         else:
             return render(request,'users/register.html',{'form':form})
         return render(request,'users/register.html',{'form':self.form})
-     
+
 @method_decorator(ratelimit(key='ip', rate=settings.DEFAULT_RATE_LIMIT, method='POST'), name='dispatch')
 @method_decorator(ratelimit(key='post:email', rate=settings.DEFAULT_RATE_LIMIT, method='POST'), name='dispatch')
 class LoginView(TwoFactorLoginView):

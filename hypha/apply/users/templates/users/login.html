@@ -35,10 +35,6 @@
         {% endfor %}
         {{ form.extra_text|richtext }}
         <button class="link link--button link--button-wide link--button-secondary" type="submit">{% trans "Login" %}</button>
-        {% if not is_public_site %}
-            <p><a class="link link--small" href="{% url 'users:password_reset' %}">{% trans "Forgot your password?" %}</a></p>
-        {% endif %}
-        <button class="link link--button-secondary" type="submit">{% trans "Login" %}</button>
       {% else %}
         {{ wizard.form }}
 

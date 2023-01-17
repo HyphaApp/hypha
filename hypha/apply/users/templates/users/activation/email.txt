@@ -7,7 +7,7 @@
 
 {% blocktrans %}This link can be used only once and will lead you to a page where you can set your password. It will remain active for {{ timeout_days }} days, so please set your password as soon as possible.{% endblocktrans %}
 
-{% trans "After activating your account, you will be able to log in at" %}: {% if site %}{{ site.root_url }}{% else %}{{ base_url }}{% endif %} {% trans "in the future using" %}:
+{% trans "After setting your password, you will be able to log in at" %}: {% if site %}{{ site.root_url }}{% else %}{{ base_url }}{% endif %} {% trans "in the future using" %}:
 
 {% trans "Username" %}: {{ username }}
 {% trans "Password" %}: {% trans "Your chosen password" %}

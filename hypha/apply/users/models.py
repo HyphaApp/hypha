@@ -153,8 +153,14 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
             elif not user.is_active:
                 raise IntegrityError("Found an inactive account")
         else:
-            temp_pass = BaseUserManager().make_random_password(length=32)
+            if 'password' in kwargs:
+                # Coming from registration without application
+                temp_pass = kwargs.pop('password')
+            else:
+                temp_pass = BaseUserManager().make_random_password(length=32)
+
             temp_pass_hash = make_password(temp_pass)
+
             defaults.update(password=temp_pass_hash)
             try:
                 params = dict(resolve_callables(self._extract_model_params(defaults, **kwargs)))
@@ -162,11 +168,6 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
             except IntegrityError:
                 raise
 
-    def get_or_create_and_notify(self, defaults=dict(), site=None, **kwargs):
-        temp_pass_hash = make_password(kwargs.pop('password'))
-        defaults.update(password=temp_pass_hash)
-        user, created = self.get_or_create(defaults=defaults, **kwargs)
-        if created:
             send_activation_email(user, site)
             _created = True
 
