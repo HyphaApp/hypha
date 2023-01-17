@@ -69,7 +69,9 @@
                 <button class="button button--search" type="submit" aria-label="{% trans 'Search' %}">
                     <svg class="icon icon--magnifying-glass icon--search"><use xlink:href="#magnifying-glass"></use></svg>
                 </button>
+                {% if show_archive %}
                 <input type="hidden" value="{{ archived_param }}" name="archived">
+                {% endif %}
                 {% trans "submissions" as submissions %}
                 <input class="input input--search input--secondary" type="text" placeholder="{% trans 'Search' %} {{ search_placeholder|default:submissions }}" name="query"{% if search_term %} value="{{ search_term }}"{% endif %} aria-label="{% trans 'Search input' %}">
             </form>
