@@ -73,7 +73,9 @@
 
             <div class="header__button-container">
                 {% include "utils/includes/login_button.html" %}
-                {% include "utils/includes/register_button.html" %}
+                {% if ENABLE_REGISTRATION_WITHOUT_APPLICATION %}
+                    {% include "utils/includes/register_button.html" %}
+                {% endif %}
                 <div class="button button--google-translate" id="google_translate_element"></div>
             </div>
         </div>

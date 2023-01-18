@@ -53,11 +53,21 @@ class RegisterView(View):
     form = CustomUserCreationForm()
 
     def get(self, request):
+        # We keep /register in the urls in order to test (where we turn on/off
+        # the setting per test), but when disabled, we want to pretend it doesn't
+        # exist va 404
+        if not settings.ENABLE_REGISTRATION_WITHOUT_APPLICATION:
+            raise Http404
+
         if request.user.is_authenticated:
             return redirect('dashboard:dashboard')
         return render(request,'users/register.html',{'form':self.form})
 
     def post(self,request):
+        # See comment in get() above about doing this here rather than in urls
+        if not settings.ENABLE_REGISTRATION_WITHOUT_APPLICATION:
+            raise Http404
+
         form=CustomUserCreationForm(request.POST)
         context={}
         if form.is_valid():

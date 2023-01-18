@@ -20,13 +20,11 @@ from django.db.models import (
 )
 from django.db.models.functions import Coalesce, Left, Length
 from django.http import Http404
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.template.response import TemplateResponse
 from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
-from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import login_required
 from modelcluster.fields import ParentalManyToManyField
 from wagtail.admin.panels import (
     FieldPanel,
@@ -121,8 +119,11 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
             # There isn't an open round
             return None
 
-    @method_decorator(login_required)
     def serve(self, request):
+        # Manually do what the login_required decorator does so that we can check settings
+        if not request.user.is_authenticated and settings.FORCE_LOGIN_FOR_APPLICATION:
+            return redirect('%s?next=%s' % (settings.WAGTAIL_FRONTEND_LOGIN_URL, request.path))
+
         if hasattr(request, 'is_preview') or not self.open_round:
             return super().serve(request)
 
@@ -511,8 +512,11 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
 
         return form_class(*args, **form_params)
 
-    @method_decorator(login_required)
     def serve(self, request, *args, **kwargs):
+        # Manually do what the login_required decorator does so that we can check settings
+        if not request.user.is_authenticated and settings.FORCE_LOGIN_FOR_APPLICATION:
+            return redirect('%s?next=%s' % (settings.WAGTAIL_FRONTEND_LOGIN_URL, request.path))
+
         if request.method == 'POST':
             form = self.get_form(request.POST, request.FILES, page=self, user=request.user)
             draft = request.POST.get('draft', False)

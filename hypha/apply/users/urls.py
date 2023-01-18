@@ -35,8 +35,8 @@ public_urlpatterns = [
 
     # Log out
     path('logout/', auth_views.LogoutView.as_view(next_page='/'), name='logout'),
+    path('register/', RegisterView.as_view() , name='register')
 ]
-
 
 urlpatterns = [
     path('account/', include([
