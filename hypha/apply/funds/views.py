@@ -179,6 +179,7 @@ class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
     table_class = AdminSubmissionsTable
     filterset_class = SubmissionFilterAndSearch
     filter_action = ''
+    search_action = ''
     paginator_class = LazyPaginator
     table_pagination = {'per_page': 25}
 
@@ -214,6 +215,7 @@ class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
 
         return super().get_context_data(
             search_term=search_term,
+            search_action=self.search_action,
             filter_action=self.filter_action,
             **kwargs,
         )
@@ -431,6 +433,7 @@ class SubmissionOverviewView(BaseAdminSubmissionsTable):
     table_class = SummarySubmissionsTable
     table_pagination = False
     filter_action = reverse_lazy('funds:submissions:list')
+    search_action = reverse_lazy('funds:submissions:list')
 
     def get_table_data(self):
         limit = 5
