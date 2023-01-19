@@ -7,6 +7,8 @@ from django.template.loader import render_to_string
 from django.utils.translation import gettext as _
 
 from hypha.apply.projects.models.payment import CHANGES_REQUESTED_BY_STAFF, DECLINED
+from hypha.apply.users.models import User
+from hypha.apply.users.groups import CONTRACTING_GROUP_NAME, APPROVER_GROUP_NAME
 
 from ..options import MESSAGES
 from ..tasks import send_mail
@@ -209,7 +211,13 @@ class EmailAdapter(AdapterBase):
             partners = kwargs['added']
             return [partner.email for partner in partners]
 
-        if message_type in [MESSAGES.SENT_TO_COMPLIANCE, MESSAGES.PROJECT_FINAL_APPROVAL]:
+        if message_type == MESSAGES.PROJECT_FINAL_APPROVAL:
+            # users with contracting + approver role
+            contracting_approver_emails = User.objects.filter(groups__name=CONTRACTING_GROUP_NAME).\
+                filter(groups__name=APPROVER_GROUP_NAME).values_list('email', flat=True)
+            return contracting_approver_emails
+
+        if message_type in [MESSAGES.SENT_TO_COMPLIANCE]:
             return get_compliance_email()
 
         if message_type == MESSAGES.UPLOAD_CONTRACT:
