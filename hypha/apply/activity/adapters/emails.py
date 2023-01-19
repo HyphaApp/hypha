@@ -7,8 +7,8 @@ from django.template.loader import render_to_string
 from django.utils.translation import gettext as _
 
 from hypha.apply.projects.models.payment import CHANGES_REQUESTED_BY_STAFF, DECLINED
+from hypha.apply.users.groups import APPROVER_GROUP_NAME, CONTRACTING_GROUP_NAME
 from hypha.apply.users.models import User
-from hypha.apply.users.groups import CONTRACTING_GROUP_NAME, APPROVER_GROUP_NAME
 
 from ..options import MESSAGES
 from ..tasks import send_mail
