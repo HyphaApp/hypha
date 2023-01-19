@@ -129,6 +129,7 @@ class ProjectsListTable(BaseProjectsTable):
         model = Project
         orderable = True
         order_by = ('-end_date',)
+        template_name = 'application_projects/tables/table.html'
         attrs = {'class': 'projects-table'}
 
     def order_fund_allocation(self, qs, is_descending):
