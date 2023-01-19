@@ -4,12 +4,12 @@ from django.utils.translation import gettext as _
 
 from hypha.apply.activity.options import MESSAGES
 from hypha.apply.projects.models import ProjectSettings
-from hypha.apply.users.models import User
 from hypha.apply.users.groups import (
     CONTRACTING_GROUP_NAME,
     FINANCE_GROUP_NAME,
     STAFF_GROUP_NAME,
 )
+from hypha.apply.users.models import User
 
 
 def link_to(target, request):
