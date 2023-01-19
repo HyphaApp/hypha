@@ -140,9 +140,10 @@
                     </li>
                 {% endif %}
                 {% if table.page.has_previous or table.page.has_next %}
+                    {% total_num_of_pages table.rows|length table.paginator.per_page as total_pages %}
                     <li class="cardinality">
                         <p>
-                            {% trans "Page" %} {{ table.page.number }}
+                            {% trans "Page" %} {{ table.page.number }} / {{ total_pages }}
                         </p>
                     </li>
                 {% endif %}
