@@ -69,7 +69,7 @@
                 <button class="button button--search" type="submit" aria-label="{% trans 'Search' %}">
                     <svg class="icon icon--magnifying-glass icon--search"><use xlink:href="#magnifying-glass"></use></svg>
                 </button>
-                {% if show_archive %}
+                {% if show_archive and archived_param is not None %}
                 <input type="hidden" value="{{ archived_param }}" name="archived">
                 {% endif %}
                 {% trans "submissions" as submissions %}
