@@ -26,6 +26,8 @@ After their approval, a notification will be sent to the contracting group email
 5. **Closing**:
 6. **Complete**:
 
+![Request workflow flowchart](../assets/project_workflow.png)
+
 ### **Related User or Users' Group**
 1. Contractor/Applicant
 2. Staff (PM, VP)
