@@ -4,6 +4,12 @@ from django.utils.translation import gettext as _
 
 from hypha.apply.activity.options import MESSAGES
 from hypha.apply.projects.models import ProjectSettings
+from hypha.apply.users.groups import (
+    CONTRACTING_GROUP_NAME,
+    FINANCE_GROUP_NAME,
+    STAFF_GROUP_NAME,
+)
+from hypha.apply.users.models import User
 
 
 def link_to(target, request):
@@ -41,11 +47,37 @@ def is_reviewer_update(message_type):
     return message_type in [MESSAGES.REVIEWERS_UPDATED, MESSAGES.BATCH_REVIEWERS_UPDATED]
 
 
-def get_compliance_email():
+def get_compliance_email(target_user_gps=None):
     project_settings = ProjectSettings.objects.first()
 
     if project_settings is None:
         # TODO: what to do when this isn't configured??
         return []
-
-    return [project_settings.compliance_email]
+    target_user_emails = []
+    if not target_user_gps or not isinstance(target_user_gps, list):
+        return [project_settings.staff_gp_email]
+    if CONTRACTING_GROUP_NAME in target_user_gps:
+        if project_settings.contracting_gp_email:
+            target_user_emails.extend([project_settings.contracting_gp_email])
+        else:
+            contracting_users_email = []
+            for user in User.objects.filter(groups__name=CONTRACTING_GROUP_NAME):
+                contracting_users_email.append(user.email)
+            target_user_emails.extend(contracting_users_email)
+    if FINANCE_GROUP_NAME in target_user_gps:
+        if project_settings.finance_gp_email:
+            target_user_emails.extend([project_settings.finance_gp_email])
+        else:
+            finance_users_email = []
+            for user in User.objects.filter(groups__name=FINANCE_GROUP_NAME):
+                finance_users_email.append(user.email)
+            target_user_emails.extend(finance_users_email)
+    if STAFF_GROUP_NAME in target_user_gps:
+        if project_settings.staff_gp_email:
+            target_user_emails.extend([project_settings.staff_gp_email])
+        else:
+            staff_users_email = []
+            for user in User.objects.filter(groups__name=STAFF_GROUP_NAME):
+                staff_users_email.append(user.email)
+            target_user_emails.extend(staff_users_email)
+    return target_user_emails
