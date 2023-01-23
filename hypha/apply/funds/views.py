@@ -1203,13 +1203,24 @@ class ApplicantSubmissionEditView(BaseSubmissionEditView):
             for transition in transitions
         }
 
+    def get_object_fund_current_round(self):
+        from hypha.apply.funds.models.applications import ApplicationBase
+        assigned_fund = get_object_or_404(ApplicationBase, pk=self.object.round.get_parent().pk)
+        if assigned_fund.open_round:
+            return assigned_fund.open_round
+        return False
+
     def form_valid(self, form):
         self.object.new_data(form.cleaned_data)
 
         # Update submit_time only when application is getting submitted from the Draft State for the first time.
         if self.object.status == DRAFT_STATE and 'submit' in self.request.POST:
             self.object.submit_time = timezone.now()
-            self.object.save(update_fields=['submit_time'])
+            if self.object.round:
+                current_round = self.get_object_fund_current_round()
+                if current_round:
+                    self.object.round = current_round
+            self.object.save(update_fields=['submit_time', 'round'])
 
         if 'save' in self.request.POST:
             self.object.create_revision(draft=True, by=self.request.user)
