@@ -33,7 +33,7 @@ def can_upload_contract(user, project):
     if not user.is_authenticated:
         return False, 'Login Required'
 
-    if user.is_apply_staff or user == project.user:
+    if user.is_apply_staff or user.is_contracting or user == project.user:
         return True, 'Staff and Project owner can upload the contract'
 
     return False, 'Forbidden Error'

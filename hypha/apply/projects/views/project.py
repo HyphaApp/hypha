@@ -435,12 +435,10 @@ class UploadContractView(DelegatedViewMixin, CreateView):
     model = Project
 
     def dispatch(self, request, *args, **kwargs):
-        response = super().dispatch(request, *args, **kwargs)
-
         project = self.kwargs['object']
         permission, _ = has_permission('contract_upload', request.user, object=project)
-
-        return response
+        if permission:
+            return super().dispatch(request, *args, **kwargs)
 
     def get_form_class(self):
         if self.request.user.is_apply_staff:
