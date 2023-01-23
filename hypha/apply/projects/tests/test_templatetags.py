@@ -70,7 +70,7 @@ class TestContractTools(TestCase):
         project = ProjectFactory(status=CLOSING, user=applicant)
         self.assertFalse(user_can_upload_contract(project, applicant))
 
-    def test_only_owner_or_staff_can_upload_contract(self):
+    def test_only_owner_or_staff_or_contracting_can_upload_contract(self):
         applicant = ApplicantFactory()
         staff = StaffFactory()
         finance = FinanceFactory()
@@ -88,7 +88,7 @@ class TestContractTools(TestCase):
         self.assertTrue(user_can_upload_contract(project, staff))
 
         project = ProjectFactory(status=CONTRACTING, user=applicant)
-        self.assertFalse(user_can_upload_contract(project, contracting))
+        self.assertTrue(user_can_upload_contract(project, contracting))
 
         project = ProjectFactory(status=CONTRACTING, user=applicant)
         self.assertFalse(user_can_upload_contract(project, finance))
