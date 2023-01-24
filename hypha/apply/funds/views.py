@@ -1204,8 +1204,7 @@ class ApplicantSubmissionEditView(BaseSubmissionEditView):
         }
 
     def get_object_fund_current_round(self):
-        from hypha.apply.funds.models.applications import ApplicationBase
-        assigned_fund = get_object_or_404(ApplicationBase, pk=self.object.round.get_parent().pk)
+        assigned_fund = self.object.round.get_parent().specific
         if assigned_fund.open_round:
             return assigned_fund.open_round
         return False
