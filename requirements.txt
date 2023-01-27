@@ -27,9 +27,9 @@ django-referrer-policy==1.0
 django-salesforce==4.1
 django-select2==8.0.0
 django-slack==5.18.0
-django-storages==1.12.3
-django-tables2==2.4.1
-django-tinymce==3.4.0
+django-storages==1.13.2
+django-tables2==2.5.1
+django-tinymce==3.5.0
 django-two-factor-auth==1.14.0
 django-webpack-loader==1.0.0
 django==3.2.18
