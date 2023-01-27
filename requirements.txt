@@ -25,7 +25,7 @@ django-ratelimit==4.0.0
 django-redis==5.2.0
 django-referrer-policy==1.0
 django-salesforce==4.1
-django-select2==7.9.0
+django-select2==8.0.0
 django-slack==5.18.0
 django-storages==1.12.3
 django-tables2==2.4.1
