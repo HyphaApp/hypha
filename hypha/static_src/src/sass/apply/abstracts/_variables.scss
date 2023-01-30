@@ -1,4 +1,4 @@
-// stylelint-disable color-function-notation, color-no-hex, alpha-value-notation
+// stylelint-disable color-function-notation, color-no-hex, alpha-value-notation, value-keyword-case
 // Set via JS
 :root {
     --header-admin-height: 0;
@@ -64,8 +64,9 @@ $color--correct: $color--mint;
 $color--button-disabled: $color--lighter-blue;
 
 // Fonts
-$font--primary: 'noto-sans';
-$font--headings: 'montserrat';
+$font--primary: -apple-system,BlinkMacSystemFont,Segoe UI,system-ui,Roboto,Helvetica Neue,Arial,
+    sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;
+$font--headings: $font--primary;
 
 // Font weights
 $weight--black: 800;
