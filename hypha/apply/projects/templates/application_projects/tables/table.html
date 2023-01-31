@@ -1,0 +1,42 @@
+{% extends 'django_tables2/table.html' %}
+{% load django_tables2 table_tags review_tags wagtailimages_tags i18n %}
+
+{% block pagination %}
+    {% if table.page and table.paginator.num_pages > 0 %}
+        <div class="pagination--wrapper">
+            <div class='per-page'>
+                {% trans "Show" %}
+                <a href="{% querystring "per_page"=25 %}" {% if table.paginator.per_page == 25 %}class="current"{% endif %}>25</a> |
+                <a href="{% querystring "per_page"=50 %}" {% if table.paginator.per_page == 50 %}class="current"{% endif %}>50</a> |
+                <a href="{% querystring "per_page"=100 %}" {% if table.paginator.per_page == 100 %}class="current"{% endif %}>100</a> |
+                {% trans "items" %}
+            </div>
+            {% if table.paginator.num_pages > 1 %}
+                <ul class="pagination">
+                    {% if table.page.has_previous %}
+                        <li class="previous">
+                            <a href="{% querystring table.prefixed_page_field=table.page.previous_page_number %}">
+                                {% trans 'previous' %}
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% if table.page.has_previous or table.page.has_next %}
+                        {% total_num_of_pages table.rows|length table.paginator.per_page as total_pages %}
+                        <li class="cardinality">
+                            <p>
+                                {% trans "Page" %} {{ table.page.number }} / {{ total_pages }}
+                            </p>
+                        </li>
+                    {% endif %}
+                    {% if table.page.has_next %}
+                        <li class="next">
+                            <a href="{% querystring table.prefixed_page_field=table.page.next_page_number %}">
+                                {% trans 'next' %}
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endblock pagination %}

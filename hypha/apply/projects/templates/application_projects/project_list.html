@@ -10,7 +10,7 @@
     <div class="admin-bar__inner wrapper--search">
         {% block page_header %}
             <div>
-                <h1 class="gamma heading heading--no-margin heading--bold">{% trans "All Projects" %}</h1>
+                <h1 class="gamma heading heading--no-margin heading--bold">{% trans "All Projects" %}<span class="submissions-count"> ({{ table.rows|length }})</span></h1>
             </div>
         {% endblock %}
     </div>
