@@ -1,11 +1,10 @@
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 from rest_framework import mixins, permissions, status, viewsets
-from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
-from hypha.apply.projects.models.payment import Invoice, InvoiceDeliverable
+from hypha.apply.projects.models.payment import InvoiceDeliverable
 from hypha.apply.projects.models.project import Deliverable
 
 from ..mixin import InvoiceNestedMixin, ProjectNestedMixin

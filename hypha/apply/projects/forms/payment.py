@@ -74,11 +74,6 @@ class ChangeInvoiceStatusForm(forms.ModelForm):
             })
         status_field.choices = possible_status_transitions_lut.get(instance.status, [])
 
-    def clean(self):
-        cleaned_data = super().clean()
-        status = cleaned_data['status']
-        return cleaned_data
-
 
 class InvoiceBaseForm(forms.ModelForm):
     class Meta:
