@@ -23,6 +23,8 @@ theme:
 plugins:
   - awesome-pages
   - search
+  - git-revision-date-localized:
+      type: timeago
 
 markdown_extensions:
   - admonition
