@@ -47,28 +47,24 @@ h1,
 .alpha {
     @include responsive-font-sizes(40px, map-get($font-sizes, alpha));
     font-weight: $weight--black;
-    letter-spacing: -.02rem;
 }
 
 h2,
 %h2,
 .beta {
     @include responsive-font-sizes(30px, map-get($font-sizes, beta));
-    letter-spacing: -.02rem;
 }
 
 h3,
 %h3,
 .gamma {
     @include responsive-font-sizes(20px, map-get($font-sizes, gamma));
-    letter-spacing: -.02rem;
 }
 
 h4,
 %h4,
 .delta {
     @include responsive-font-sizes(18px, map-get($font-sizes, delta));
-    letter-spacing: -.02rem;
 }
 
 h5,

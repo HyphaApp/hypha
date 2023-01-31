@@ -50,7 +50,6 @@
     &__view {
         text-transform: uppercase;
         font-weight: $weight--bold;
-        letter-spacing: .5px;
         transition: opacity $quick-transition;
 
         @include media-query(tablet-portrait) {
