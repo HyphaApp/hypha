@@ -16,14 +16,17 @@ theme:
     repo: fontawesome/brands/github
   font: false
   features:
+    - header.autohide
+    - navigation.expand
     - navigation.indexes
     - navigation.instant
+    - navigation.footer
+    - navigation.sections
     - navigation.tabs
     - navigation.tabs.sticky
-    - navigation.tracking
     - navigation.top
-    - toc.integrate
-    - header.autohide
+    - navigation.tracking
+    - toc.follow
 
 plugins:
   - awesome-pages
