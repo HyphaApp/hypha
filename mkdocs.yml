@@ -13,6 +13,7 @@ theme:
   favicon: https://www.hypha.app/favicon-32x32.png
   icon:
     repo: fontawesome/brands/github
+  font: false
   features:
     - navigation.indexes
     - navigation.instant
