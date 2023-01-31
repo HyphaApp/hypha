@@ -1,6 +1,7 @@
-site_name: Hypha docs
+site_name: Hypha Documentation
 site_url: https://docs.hypha.app/
 site_description: 'Documentation for Hypha, an open source submission management platform.'
+repo_name: HyphaApp/hypha
 repo_url: https://github.com/HyphaApp/hypha
 edit_uri: edit/main/docs/
 
@@ -10,6 +11,8 @@ site_dir: docs_build
 theme:
   name: material
   favicon: https://www.hypha.app/favicon-32x32.png
+  icon:
+    repo: fontawesome/brands/github
   features:
     - navigation.indexes
     - navigation.instant
