@@ -5,10 +5,7 @@ from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
 from hypha.apply.projects.tests.factories import DeliverableFactory
 from hypha.apply.review.tests.factories import ReviewFactory
 
-from ..projects.serializers import (
-    DeliverableSerializer,
-    InvoiceRequiredChecksSerializer,
-)
+from ..projects.serializers import DeliverableSerializer
 from ..serializers import ReviewSummarySerializer
 
 
@@ -54,33 +51,4 @@ class TestDeliverableSerializer(TestCase):
     def test_quantity_not_required(self):
         deliverable = DeliverableFactory()
         serializer = DeliverableSerializer(data={'id': deliverable.id})
-        self.assertTrue(serializer.is_valid())
-
-
-class TestInvoiceRequiredChecksSerializer(TestCase):
-    def test_valid_checks_required(self):
-        serializer = InvoiceRequiredChecksSerializer(data={'valid_checks_link': 'https://google.com'})
-        self.assertFalse(serializer.is_valid())
-        error_message = {'valid_checks': [ErrorDetail(string='This field is required.', code='required')]}
-        self.assertEqual(serializer.errors, error_message)
-
-    def test_valid_checks_link_required(self):
-        serializer = InvoiceRequiredChecksSerializer(data={'valid_checks': True})
-        self.assertFalse(serializer.is_valid())
-        error_message = {'valid_checks_link': [ErrorDetail(string='This field is required.', code='required')]}
-        self.assertEqual(serializer.errors, error_message)
-
-    def test_validate_valid_checks_and_link(self):
-        serializer = InvoiceRequiredChecksSerializer(data={
-            'valid_checks': False,
-            'valid_checks_link': 'https://google.com'
-        })
-        self.assertFalse(serializer.is_valid())
-        error_message = {'valid_checks': [ErrorDetail(string='Checkbox is not checked', code='invalid')]}
-        self.assertEqual(serializer.errors, error_message)
-
-        serializer = InvoiceRequiredChecksSerializer(data={
-            'valid_checks': True,
-            'valid_checks_link': 'https://google.com'
-        })
         self.assertTrue(serializer.is_valid())

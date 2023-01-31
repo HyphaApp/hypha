@@ -274,16 +274,6 @@ class TestChangeInvoiceStatusFormForm(TestCase):
         actual = set(form.fields['status'].choices)
         self.assertEqual(expected, actual)
 
-    def test_valid_checks_required_for_approved_by_finance1(self):
-        invoice = InvoiceFactory(status=APPROVED_BY_STAFF)
-        user = FinanceFactory()
-        form = ChangeInvoiceStatusForm(data={'status': APPROVED_BY_FINANCE_1}, instance=invoice, user=user)
-        self.assertFalse(form.is_valid(), form.errors.as_text())
-
-        invoice.valid_checks = True
-        form = ChangeInvoiceStatusForm(data={'status': APPROVED_BY_FINANCE_1}, instance=invoice, user=user)
-        self.assertTrue(form.is_valid(), form.errors.as_text())
-
 
 class TestChangePAFStatusForm(TestCase):
 

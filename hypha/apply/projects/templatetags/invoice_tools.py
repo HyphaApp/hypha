@@ -37,15 +37,5 @@ def percentage(value, total):
 
 
 @register.simple_tag
-def can_complete_required_checks(invoice, user):
-    return invoice.can_user_complete_required_checks(user)
-
-
-@register.simple_tag
-def can_view_required_checks(invoice, user):
-    return invoice.can_user_view_required_checks(user)
-
-
-@register.simple_tag
 def can_edit_deliverables(invoice, user):
     return invoice.can_user_edit_deliverables(user)

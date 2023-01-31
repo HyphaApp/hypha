@@ -11,7 +11,6 @@ from hypha.apply.projects.models.project import Deliverable
 from ..mixin import InvoiceNestedMixin, ProjectNestedMixin
 from ..permissions import (
     HasDeliverableEditPermission,
-    HasRequiredChecksPermission,
     IsApplyStaffUser,
     IsFinance1User,
     IsFinance2User,
@@ -19,7 +18,6 @@ from ..permissions import (
 from .serializers import (
     DeliverableSerializer,
     InvoiceDeliverableListSerializer,
-    InvoiceRequiredChecksSerializer,
 )
 
 
@@ -81,24 +79,3 @@ class InvoiceDeliverableViewSet(
         return Response(
             {'deliverables': ser.data, 'total': invoice.deliverables_total_amount['total']},
         )
-
-
-class InvoiceRequiredChecksViewSet(
-    mixins.RetrieveModelMixin,
-    viewsets.GenericViewSet,
-):
-    serializer_class = InvoiceRequiredChecksSerializer
-    permission_classes = [permissions.IsAuthenticated, IsFinance1User, HasRequiredChecksPermission]
-    queryset = Invoice.objects.all()
-
-    @action(detail=True, methods=['post'])
-    def set_required_checks(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        valid_checks = serializer.validated_data['valid_checks']
-        valid_checks_link = serializer.validated_data['valid_checks_link']
-        invoice = self.get_object()
-        invoice.valid_checks = valid_checks
-        invoice.valid_checks_link = valid_checks_link
-        invoice.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)

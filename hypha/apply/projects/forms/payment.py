@@ -77,8 +77,6 @@ class ChangeInvoiceStatusForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
         status = cleaned_data['status']
-        if not self.instance.valid_checks and status == APPROVED_BY_FINANCE_1:
-            self.add_error('status', _('Required checks on this invoice need to be compeleted for approval.'))
         return cleaned_data
 
 
