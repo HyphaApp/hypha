@@ -16,6 +16,8 @@ theme:
     repo: fontawesome/brands/github
   font: false
   features:
+    - content.action.edit
+    - content.action.view
     - header.autohide
     - navigation.expand
     - navigation.indexes
