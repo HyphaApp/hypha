@@ -60,7 +60,7 @@
         "lint:css": "stylelint \"hypha/static_src/src/sass/**/*.scss\"",
         "lint:js": "eslint \"hypha/static_src/src/javascript/**/*.js\"",
 
-        "collectstatic": "python manage.py collectstatic --no-post-process --noinput --verbosity 0",
+        "collectstatic": "python manage.py collectstatic --no-post-process --noinput --verbosity 0 --settings=hypha.settings.dev",
         "clean": "rm -rf ./static ./hypha/static_compiled"
     },
     "engines": {
