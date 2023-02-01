@@ -24,7 +24,7 @@
                         {% image item.icon max-50x50 as icon %}
                         <img class="card__icon" src="{{ icon.url }}" alt="{{ icon.alt }}">
                     {% endif %}
-                    {% if item.deadline %}
+                    {% if item.deadline and False %}
                         <h6 class="card__subheading">
                             <svg class="icon icon--calendar apply-bar__icon"><use xlink:href="#calendar"></use></svg>
                             Next deadline:
