@@ -4,7 +4,7 @@
 {% block salutation %}{% endblock %}
 
 {% block content %}
-{% trans "A Project is awaiting your review." %}
+{% trans "A Project is awaiting final approval." %}
 
 {% trans "Title" %}: {{ source.title }}
 {% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{% url 'apply:projects:approval' pk=source.pk %}

@@ -85,6 +85,12 @@ class ProjectQuerySet(models.QuerySet):
             status=WAITING_FOR_APPROVAL,
         )
 
+    def waiting_for_final_approval(self):
+        return self.filter(
+            status=WAITING_FOR_APPROVAL,
+            ready_for_final_approval=True,
+        )
+
     def by_end_date(self, desc=False):
         order = getattr(F('proposed_end'), 'desc' if desc else 'asc')(nulls_last=True)
 
@@ -183,6 +189,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         default=dict,
         help_text='Reviewers role and their actions/comments'
     )
+    ready_for_final_approval = models.BooleanField(default=False, blank=True)
 
     objects = ProjectQuerySet.as_manager()
 
@@ -322,7 +329,10 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         return self.status == WAITING_FOR_APPROVAL
 
     @property
-    def can_make_final_approval(self):
+    def is_approved_by_all_paf_reviewers(self):
+        if self.ready_for_final_approval:
+            return True
+        # if project is in transition phase to final approval.
         if self.status == WAITING_FOR_APPROVAL:
             paf_reviewers_count = PAFReviewersRole.objects.all().count()
             if paf_reviewers_count == 0:
@@ -336,7 +346,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
 
     @property
     def can_update_paf_status(self):
-        return self.status == WAITING_FOR_APPROVAL and not self.can_make_final_approval
+        return self.status == WAITING_FOR_APPROVAL and not self.ready_for_final_approval
 
     def can_request_funding(self):
         """
@@ -418,11 +428,15 @@ class PAFReviewersRole(Orderable):
 
 @register_setting
 class ProjectSettings(BaseSetting, ClusterableModel):
-    compliance_email = models.TextField("Compliance Email")
+    contracting_gp_email = models.TextField("Contracting Group Email", null=True, blank=True)
+    finance_gp_email = models.TextField("Finance Group Email", null=True, blank=True)
+    staff_gp_email = models.TextField("Staff Group Email", null=True, blank=True)
     vendor_setup_required = models.BooleanField(default=True)
 
     panels = [
-        FieldPanel('compliance_email'),
+        FieldPanel('staff_gp_email'),
+        FieldPanel('contracting_gp_email'),
+        FieldPanel('finance_gp_email'),
         FieldPanel('vendor_setup_required'),
         InlinePanel('paf_reviewers_roles', label=_('PAF Reviewers Roles')),
     ]

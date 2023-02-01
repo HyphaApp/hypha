@@ -35,7 +35,7 @@ from ..models.project import (
     WAITING_FOR_APPROVAL,
     ProjectSettings,
 )
-from ..views.project import ContractsMixin, ProjectDetailSimplifiedView
+from ..views.project import ContractsMixin, ProjectDetailApprovalView
 from .factories import (
     ContractFactory,
     DocumentCategoryFactory,
@@ -360,7 +360,7 @@ class TestApplicantUploadContractView(BaseViewTestCase):
         return {'pk': instance.id}
 
     def test_owner_upload_contract(self):
-        project = ProjectFactory(user=self.user)
+        project = ProjectFactory(status=CONTRACTING, user=self.user)
 
         test_doc = BytesIO(b'somebinarydata')
         test_doc.name = 'contract.pdf'
@@ -377,7 +377,7 @@ class TestApplicantUploadContractView(BaseViewTestCase):
         self.assertTrue(project.contracts.first().is_signed)
 
     def test_non_owner_upload_contract(self):
-        project = ProjectFactory()
+        project = ProjectFactory(status=CONTRACTING)
         contract_count = project.contracts.count()
 
         test_doc = BytesIO(b'somebinarydata')
@@ -402,7 +402,7 @@ class TestStaffUploadContractView(BaseViewTestCase):
         return {'pk': instance.id}
 
     def test_upload_contract(self):
-        project = ProjectFactory()
+        project = ProjectFactory(status=CONTRACTING)
 
         test_doc = BytesIO(b'somebinarydata')
         test_doc.name = 'contract.pdf'
@@ -419,7 +419,7 @@ class TestStaffUploadContractView(BaseViewTestCase):
         self.assertFalse(project.contracts.first().is_signed)
 
     def test_upload_contract_with_signed_set_to_true(self):
-        project = ProjectFactory()
+        project = ProjectFactory(status=CONTRACTING)
 
         test_doc = BytesIO(b'somebinarydata')
         test_doc.name = 'contract.pdf'
@@ -771,7 +771,7 @@ class TestAnonPacketView(BasePacketFileViewTestCase):
             self.assertIn(reverse('users_public:login'), path)
 
 
-class TestProjectDetailSimplifiedView(TestCase):
+class TestProjectDetailApprovalView(TestCase):
     def test_staff_only(self):
         factory = RequestFactory()
         project = ProjectFactory()
@@ -779,12 +779,12 @@ class TestProjectDetailSimplifiedView(TestCase):
         request = factory.get(f'/project/{project.pk}')
         request.user = StaffFactory()
 
-        response = ProjectDetailSimplifiedView.as_view()(request, pk=project.pk)
+        response = ProjectDetailApprovalView.as_view()(request, pk=project.pk)
         self.assertEqual(response.status_code, 200)
 
         request.user = ApplicantFactory()
         with self.assertRaises(PermissionDenied):
-            ProjectDetailSimplifiedView.as_view()(request, pk=project.pk)
+            ProjectDetailApprovalView.as_view()(request, pk=project.pk)
 
 
 class TestStaffDetailInvoiceStatus(BaseViewTestCase):

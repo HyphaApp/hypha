@@ -77,6 +77,7 @@ from ..models.project import (
     Project,
 )
 from ..models.report import Report
+from ..permissions import has_permission
 from ..tables import InvoiceListTable, ProjectsListTable, ReportListTable
 from .report import ReportFrequencyUpdate, ReportingMixin
 
@@ -126,6 +127,8 @@ class SendForApprovalView(DelegatedViewMixin, UpdateView):
         )
 
         if not PAFReviewersRole.objects.all().exists():
+            project.ready_for_final_approval = True
+            project.save(update_fields={'ready_for_final_approval'})
             # notify final approver if there is no Project Reviewer roles exist
             messenger(
                 MESSAGES.PROJECT_FINAL_APPROVAL,
@@ -156,7 +159,8 @@ class FinalApprovalView(DelegatedViewMixin, UpdateView):
             project.status = COMMITTED
             project.is_locked = False
             project.paf_reviews_meta_data = {}
-            project.save(update_fields=['status', 'is_locked', 'paf_reviews_meta_data'])
+            project.ready_for_final_approval = False
+            project.save(update_fields=['status', 'is_locked', 'paf_reviews_meta_data', 'ready_for_final_approval'])
 
             project_status_message = _(
                 '<p>{user} request changes the Project and update status to {project_status}.</p>').format(
@@ -191,7 +195,8 @@ class FinalApprovalView(DelegatedViewMixin, UpdateView):
 
         project.is_locked = True
         project.status = CONTRACTING
-        project.save(update_fields=['is_locked', 'status'])
+        project.ready_for_final_approval = False
+        project.save(update_fields=['is_locked', 'status', 'ready_for_final_approval'])
 
         project_status_message = _(
             '<p>{user} approved the Project and update status to {project_status}.</p>').format(
@@ -430,14 +435,10 @@ class UploadContractView(DelegatedViewMixin, CreateView):
     model = Project
 
     def dispatch(self, request, *args, **kwargs):
-        response = super().dispatch(request, *args, **kwargs)
-
         project = self.kwargs['object']
-        is_owner = project.user == request.user
-        if not (request.user.is_apply_staff or is_owner):
-            raise PermissionDenied
-
-        return response
+        permission, _ = has_permission('contract_upload', request.user, object=project)
+        if permission:
+            return super().dispatch(request, *args, **kwargs)
 
     def get_form_class(self):
         if self.request.user.is_apply_staff:
@@ -485,7 +486,9 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
         paf_status = form.cleaned_data.get('paf_status')
         comment = form.cleaned_data.get('comment', '')
 
-        self.object.paf_reviews_meta_data.update({str(role.role): {'status': paf_status, 'comment': comment}})
+        self.object.paf_reviews_meta_data.update(
+            {str(role.role): {'status': paf_status, 'comment': comment, 'user_id': self.request.user.id}}
+        )
         self.object.save(update_fields=['paf_reviews_meta_data'])
 
         paf_status_update_message = _('<p>{role} has updated PAF status to {paf_status}.</p>').format(
@@ -527,7 +530,9 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
                 visibility=ALL,
             )
 
-        if self.object.can_make_final_approval:
+        if self.object.is_approved_by_all_paf_reviewers:
+            self.object.ready_for_final_approval = True
+            self.object.save(update_fields={'ready_for_final_approval'})
             # notify final approver if project is open for final approval
             messenger(
                 MESSAGES.PROJECT_FINAL_APPROVAL,
@@ -674,12 +679,12 @@ class ContractPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
 # PROJECT EDIT
 
 @method_decorator(staff_or_finance_or_contracting_required, name='dispatch')
-class ProjectDetailSimplifiedView(DelegateableView, DetailView):
+class ProjectDetailApprovalView(DelegateableView, DetailView):
     form_views = [
         ChangePAFStatusView
     ]
     model = Project
-    template_name_suffix = '_simplified_detail'
+    template_name_suffix = '_approval_detail'
 
 
 @method_decorator(staff_or_finance_or_contracting_required, name='dispatch')

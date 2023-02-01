@@ -1,6 +1,6 @@
 {% extends "application_projects/project_detail.html" %}
 
-{% load i18n approval_tools static %}
+{% load i18n approval_tools contract_tools static %}
 
 {% block admin_actions %}
 <div class="modal" id="send-for-approval">
@@ -56,7 +56,7 @@
                 {% trans "A lead must be assigned" %}
             {% elif not object.user_has_updated_details %}
                 {% trans "Project approval form must be completed" %}
-            {% elif object.can_make_approval or object.can_make_final_approval %}
+            {% elif object.can_make_approval or object.ready_for_final_approval %}
                 {% trans "Currently awaiting approval" %}
             {% endif %}"
     {% endif %}
@@ -119,13 +119,16 @@
 {% block approve_contract %}
 {% if contract_to_approve %}
     {{ block.super }}
-    <p>
-        <a data-fancybox
-        data-src="#approve-contract"
-        class="button button--bottom-space button--primary button--full-width"
-        href="#">
-            {% trans "Approve Contract" %}
-        </a>
-    </p>
+    {% user_can_approve_contract user object as can_approve_contract %}
+    {% if can_approve_contract %}
+        <p>
+            <a data-fancybox
+            data-src="#approve-contract"
+            class="button button--bottom-space button--primary button--full-width"
+            href="#">
+                {% trans "Approve Contract" %}
+            </a>
+        </p>
+    {% endif %}
 {% endif %}
 {% endblock %}
