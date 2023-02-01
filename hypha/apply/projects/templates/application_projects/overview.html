@@ -44,7 +44,7 @@
     <div class="wrapper wrapper--bottom-space">
 
         {% trans "Project Invoices" as heading %}
-        {% include "funds/includes/table_filter_and_search.html" with filter=invoices.filterset filter_action=invoices.url heading=heading filter_classes="filters--dates" %}
+        {% include "funds/includes/table_filter_and_search.html" with filter=invoices.filterset filter_action=invoices.url heading=heading %}
 
         {% render_table invoices.table %}
 
