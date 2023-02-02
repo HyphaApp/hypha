@@ -1,6 +1,8 @@
-site_name: Hypha docs
+site_name: Hypha Documentation
 site_url: https://docs.hypha.app/
 site_description: 'Documentation for Hypha, an open source submission management platform.'
+copyright: Copyright &copy; 2018 - 2023 - Open Technology Fund
+repo_name: HyphaApp/hypha
 repo_url: https://github.com/HyphaApp/hypha
 edit_uri: edit/main/docs/
 
@@ -10,19 +12,33 @@ site_dir: docs_build
 theme:
   name: material
   favicon: https://www.hypha.app/favicon-32x32.png
+#   logo: https://raw.githubusercontent.com/HyphaApp/hypha/main/public/android-chrome-512x512.png
+  icon:
+    repo: fontawesome/brands/github
+#   palette:
+#     primary: black
+#     accent: deep purple
+  font: false
   features:
+    - content.action.edit
+    - content.action.view
+    - header.autohide
+    - navigation.expand
     - navigation.indexes
     - navigation.instant
+    - navigation.footer
+    - navigation.sections
     - navigation.tabs
     - navigation.tabs.sticky
-    - navigation.tracking
     - navigation.top
-    - toc.integrate
-    - header.autohide
+    - navigation.tracking
+    - toc.follow
 
 plugins:
   - awesome-pages
   - search
+  - git-revision-date-localized:
+      type: timeago
 
 markdown_extensions:
   - admonition
@@ -60,7 +76,7 @@ markdown_extensions:
 nav:
   - Home: index.md
   - ...
-  - Glossary: glossary.md
+  - Issues: https://github.com/HyphaApp/hypha/issues
 
 extra:
   social:
