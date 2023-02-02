@@ -12,8 +12,12 @@ site_dir: docs_build
 theme:
   name: material
   favicon: https://www.hypha.app/favicon-32x32.png
+#   logo: https://raw.githubusercontent.com/HyphaApp/hypha/main/public/android-chrome-512x512.png
   icon:
     repo: fontawesome/brands/github
+#   palette:
+#     primary: black
+#     accent: deep purple
   font: false
   features:
     - content.action.edit
@@ -72,7 +76,7 @@ markdown_extensions:
 nav:
   - Home: index.md
   - ...
-  - Glossary: glossary.md
+  - Issues: https://github.com/HyphaApp/hypha/issues
 
 extra:
   social:
