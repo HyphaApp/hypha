@@ -7,6 +7,7 @@ Babel==2.9.1
 bleach==5.0.0
 boto3==1.26.27
 celery==5.2.2
+click==8.1.3
 dj-database-url==0.5.0
 django-anymail==8.4
 django-basic-auth-ip-whitelist==0.3.4
@@ -47,11 +48,11 @@ Pillow==9.3.0
 psycopg2-binary
 reportlab==3.6.12
 social_auth_app_django==5.0.0
+tablib==3.2.1
 tomd==0.1.3
 wagtail-cache==2.1.0
 wagtail-purge==0.2
 wagtail==3.0.1
-tablib==3.2.1
 whitenoise==5.3.0
-xmltodict==0.12.0
 xhtml2pdf==0.2.8
+xmltodict==0.12.0
