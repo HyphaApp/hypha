@@ -55,7 +55,6 @@
 
     &__heading {
         @include responsive-font-sizes(30px, map-get($font-sizes, beta));
-        letter-spacing: -.02rem;
         font-weight: $weight--bold;
         margin: 0;
     }
