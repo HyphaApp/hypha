@@ -16,18 +16,30 @@ from hypha.core.mail import MarkdownMail
 logger = logging.getLogger(__name__)
 
 
-def groupby_fund_lab_emails(messages):
-    emails_msgs_map = defaultdict(list)
+def groupby_fund_lab_id(messages):
+    fund_map_msgs_map = defaultdict(list)
     for msg in messages:
-        emails = get_fund_or_lab_emails(msg.event)
-        if emails:
-            emails_msgs_map[",".join(emails)].append(msg)
-    return emails_msgs_map.items()
+        id = extract_fund_or_lab_property(msg.event, "id")
+        if id:
+            fund_map_msgs_map[id].append(msg)
+    return fund_map_msgs_map.items()
 
 
-def get_fund_or_lab_emails(event) -> list:
-    """Retrieve the digest email for a fund or lab if present.
+def extract_fund_or_lab_property(event, prop):
+    """Retrieve properties from fund or lab, if present.
 
+                     ┌─────┐
+                     │Fund │
+                     └─────┘
+        event.source    │
+                  ┌─────┼────────────┐
+                  │  ┌──▼──┐ ┌─────┐ │
+                  │  │Round│ │ Lab │ │
+                  │  └──┬──┘ └┬────┘ │
+                  └─────┼─────┼──────┘
+                        └──┬──┘
+                           │
+                           ▼
     Args:
         event: Event ModelClass instance
 
@@ -35,10 +47,15 @@ def get_fund_or_lab_emails(event) -> list:
         An array of emails or empty list.
     """
     if hasattr(event.source, "get_from_parent"):
-        # it is related to a lab or fund
-        return event.source.get_from_parent('activity_digest_recipient_emails')
+        if event.source.round:
+            # Get attribute from the parent of round
+            fund = event.source.round.get_parent()
+            return getattr(fund.specific, prop)
 
-    return []
+        # extract from the lab
+        return event.source.get_from_parent(prop)
+
+    return None
 
 
 def slack_message_to_markdown(msg):
@@ -135,12 +152,21 @@ class Command(BaseCommand):
             )
 
         # Send digest of for funds that has "activity_digest_recipient_emails" set.
-        for to, messages in groupby_fund_lab_emails(slack_messages):
+        for _id, messages in groupby_fund_lab_id(slack_messages):
+            emails = extract_fund_or_lab_property(
+                messages[0].event, 'activity_digest_recipient_emails'
+            )
+            if not emails:
+                continue
+            title = extract_fund_or_lab_property(messages[0].event, 'title')
+            subject = settings.EMAIL_SUBJECT_PREFIX + _('Activities Summary - ') + title
+
             prepare_and_send_activity_digest_email(
-                subject=settings.EMAIL_SUBJECT_PREFIX + _('Activities Summary'),
-                to=to.split(","),
+                subject=subject,
+                to=emails,
                 slack_messages=messages,
             )
+
             # mark as sent
             Message.objects.filter(id__in=[m.id for m in messages]).update(
                 sent_in_email_digest=True
