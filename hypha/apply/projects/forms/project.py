@@ -10,8 +10,12 @@ from hypha.apply.stream_forms.forms import StreamBaseForm
 from hypha.apply.users.groups import STAFF_GROUP_NAME
 
 from ..models.project import (
+    CLOSING,
     COMMITTED,
+    COMPLETE,
+    IN_PROGRESS,
     PAF_STATUS_CHOICES,
+    PROJECT_STATUS_CHOICES,
     Contract,
     PacketFile,
     PAFReviewersRole,
@@ -19,6 +23,10 @@ from ..models.project import (
 )
 
 User = get_user_model()
+
+
+def filter_request_choices(choices):
+    return [(k, v) for k, v in PROJECT_STATUS_CHOICES if k in choices]
 
 
 class ApproveContractForm(forms.Form):
@@ -127,6 +135,25 @@ class ChangePAFStatusForm(forms.ModelForm):
 
     def __init__(self, instance, user, *args, **kwargs):
         super().__init__(*args, **kwargs, instance=instance)
+
+
+class ChangeProjectStatusForm(forms.ModelForm):
+    name_prefix = 'change_project_status_form'
+    comment = forms.CharField(required=False, widget=forms.Textarea)
+
+    class Meta:
+        fields = ['status', 'comment']
+        model = Project
+
+    def __init__(self, instance, user, *args, **kwargs):
+        super().__init__(*args, **kwargs, instance=instance)
+        status_field = self.fields['status']
+        possible_status_transitions = {
+            IN_PROGRESS: filter_request_choices([CLOSING, COMPLETE]),
+            CLOSING: filter_request_choices([IN_PROGRESS, COMPLETE]),
+            COMPLETE: filter_request_choices([IN_PROGRESS, CLOSING]),
+        }
+        status_field.choices = possible_status_transitions.get(instance.status, [])
 
 
 class RemoveDocumentForm(forms.ModelForm):

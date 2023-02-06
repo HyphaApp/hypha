@@ -1,12 +1,18 @@
 {% extends "base-apply.html" %}
 
-{% load i18n contract_tools static wagtailcore_tags approval_tools %}
+{% load i18n contract_tools static wagtailcore_tags approval_tools invoice_tools project_tags %}
 
 {% block title %}{{ object.title }}{% endblock %}
 
 {% block body_class %}{% endblock %}
 
 {% block content %}
+{% show_closing_banner object as show_banner %}
+{% if show_banner %}
+<div class="banner banner__close">
+    {% blocktrans with status=object.get_status_display %} This project is in {{ status }} state. {% endblocktrans %}
+</div>
+{% endif %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
         <h1 class="beta heading heading--no-margin heading--bold">{{ object.title }}</h1>
@@ -93,21 +99,23 @@
                     </div>
                 </div>
 
-
-                {% if object.can_request_funding %}
+                {% user_can_view_invoices object user as can_view_invoices %}
+                {% if can_view_invoices %}
                 <div class="wrapper wrapper--outer-space-large">
                     {% include "application_projects/includes/invoices.html" %}
                 </div>
                 {% endif %}
 
-                {% if object.is_in_progress %}
+                {% user_can_view_reports object user as can_view_reports %}
+                {% if can_view_reports %}
                     <div class="wrapper wrapper--outer-space-large">
                         {% include "application_projects/includes/reports.html" %}
                     </div>
                 {% endif %}
 
-                {% if not object.is_in_progress %}
-                {% include "application_projects/includes/supporting_documents.html" %}
+                {% can_access_supporting_documents_section object as can_access_supporting_document %}
+                {% if can_access_supporting_document %}
+                    {% include "application_projects/includes/supporting_documents.html" %}
                 {% endif %}
             </article>
 
@@ -149,7 +157,8 @@
                     </a>
                     {% endif %}
 
-                    {% if object.can_request_funding %}
+                    {% user_can_add_invoices object user as can_add_invoice %}
+                    {% if can_add_invoice %}
                     <a class="button button--primary button--bottom-space button--full-width"
                        href="{% url "apply:projects:invoice" pk=object.pk %}">
                         {% trans "Add Invoice" %}
@@ -162,7 +171,7 @@
 
                 </div>
 
-                {% if object.is_in_progress %}
+                {% if not can_access_supporting_document %}
                 <div class="sidebar__inner">
                     <h5>{% trans "Supporting Information" %}</h5>
 

@@ -2,6 +2,8 @@ import decimal
 
 from django import template
 
+from hypha.apply.projects.models.project import CLOSING, COMPLETE, IN_PROGRESS
+
 register = template.Library()
 
 
@@ -49,3 +51,17 @@ def can_view_required_checks(invoice, user):
 @register.simple_tag
 def can_edit_deliverables(invoice, user):
     return invoice.can_user_edit_deliverables(user)
+
+
+@register.simple_tag
+def user_can_view_invoices(project, user):
+    if project.status in [IN_PROGRESS, CLOSING, COMPLETE]:
+        return True
+    return False
+
+
+@register.simple_tag
+def user_can_add_invoices(project, user):
+    if project.status == IN_PROGRESS:
+        return True
+    return False

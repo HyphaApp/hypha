@@ -1,4 +1,8 @@
-{% load i18n %}
+{% load i18n project_tags %}
+
+{% user_can_add_reports object user as can_add_reports %}
+{% user_can_edit_reports object user as can_edit_reports %}
+{% if can_add_reports %}
 <div class="wrapper wrapper--outer-space-large">
     <div class="data-block">
         <div class="data-block__header">
@@ -28,6 +32,7 @@
         </div>
     </div>
 </div>
+{% endif %}
 
 
 <div class="wrapper wrapper--outer-space-large">
@@ -57,7 +62,7 @@
                                 {% if not report.skipped %}
                                     <a class="data-block__action-link" href="{% url "apply:projects:reports:detail" pk=report.pk %}">{% trans "View" %}</a>
 
-                                    {% if request.user.is_apply_staff %}
+                                    {% if request.user.is_apply_staff and can_edit_reports %}
                                         <a class="data-block__action-link" href="{% url "apply:projects:reports:edit" pk=report.pk %}">{% trans "Edit" %}</a>
                                     {% endif %}
                                 {% else %}
