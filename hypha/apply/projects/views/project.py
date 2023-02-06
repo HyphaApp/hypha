@@ -53,6 +53,7 @@ from ..filters import InvoiceListFilter, ProjectListFilter, ReportListFilter
 from ..forms import (
     ApproveContractForm,
     ChangePAFStatusForm,
+    ChangeProjectStatusForm,
     FinalApprovalForm,
     ProjectApprovalForm,
     RemoveDocumentForm,
@@ -544,6 +545,46 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
         return response
 
 
+@method_decorator(staff_or_finance_required, name='dispatch')
+class ChangeProjectstatusView(DelegatedViewMixin, UpdateView):
+    """
+    Project status can be updated manually only in 'IN PROGRESS, CLOSING and COMPLETE' state.
+    """
+    form_class = ChangeProjectStatusForm
+    context_name = 'change_project_status'
+    model = Project
+
+    def dispatch(self, request, *args, **kwargs):
+        self.project = get_object_or_404(Project, pk=self.kwargs['pk'])
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        old_stage = self.project.get_status_display()
+
+        response = super().form_valid(form)
+
+        comment = form.cleaned_data.get('comment', '')
+
+        if comment:
+            Activity.objects.create(
+                user=self.request.user,
+                type=COMMENT,
+                source=self.object,
+                timestamp=timezone.now(),
+                message=comment,
+                visibility=ALL,
+            )
+
+        messenger(
+            MESSAGES.PROJECT_TRANSITION,
+            request=self.request,
+            user=self.request.user,
+            source=self.object,
+            related=old_stage,
+        )
+        return response
+
+
 class BaseProjectDetailView(ReportingMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -570,6 +611,7 @@ class AdminProjectDetailView(
         UploadContractView,
         UploadDocumentView,
         ChangePAFStatusView,
+        ChangeProjectstatusView,
     ]
     model = Project
     template_name_suffix = '_admin_detail'

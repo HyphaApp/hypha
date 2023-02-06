@@ -30,6 +30,12 @@
     {% include 'funds/includes/delegated_form_base.html' with form=lead_form value=update %}
 </div>
 
+<div class="modal" id="project-status">
+    <h4 class="modal__header-bar">{% trans "Update Project Status" %}</h4>
+    {% trans "Update" as update %}
+    {% include 'funds/includes/delegated_form_base.html' with form=change_project_status value=update %}
+</div>
+
 <div class="modal" id="approve">
     <h4 class="modal__header-bar">{% trans "Update Final Approval Status" %}</h4>
     <p>{% trans "This will move the project into contracting and notify the compliance team." %}</p>
@@ -104,6 +110,12 @@
 <!-- href="#"> -->
 <!-- Meta Terms -->
 <!-- </a> -->
+
+<details>
+    <summary class="sidebar__separator sidebar__separator--medium">{% trans "More actions" %}</summary>
+
+    <a data-fancybox data-src="#project-status" class="button button--white button--full-width button--bottom-space" href="#">{% trans "Update Project Status" %}</a>
+</details>
 {% endblock %}
 
 {% block project_approvals %}
