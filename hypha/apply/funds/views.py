@@ -510,7 +510,9 @@ class SubmissionAdminListView(BaseAdminSubmissionsTable, DelegateableListView):
             submissions = self.filterset_class._meta.model.objects.include_archive().for_table(self.request.user)
         else:
             submissions = self.filterset_class._meta.model.objects.current().for_table(self.request.user)
-        if settings.SUBMISSIONS_DRAFT_ACCESS_STAFF:
+        if self.request.user.is_apply_staff and settings.SUBMISSIONS_DRAFT_ACCESS_STAFF:
+            return submissions
+        elif self.request.user.is_apply_staff_admin and settings.SUBMISSIONS_DRAFT_ACCESS_STAFF_ADMIN:
             return submissions
         else:
             return submissions.exclude_draft()
