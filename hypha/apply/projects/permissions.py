@@ -1,6 +1,6 @@
 from django.core.exceptions import PermissionDenied
 
-from .models.project import CLOSING, CONTRACTING, COMPLETE, IN_PROGRESS
+from .models.project import CLOSING, COMPLETE, CONTRACTING, IN_PROGRESS
 
 
 def has_permission(action, user, object=None, raise_exception=True):
