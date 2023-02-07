@@ -545,7 +545,6 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
         return response
 
 
-@method_decorator(staff_or_finance_required, name='dispatch')
 class ChangeProjectstatusView(DelegatedViewMixin, UpdateView):
     """
     Project status can be updated manually only in 'IN PROGRESS, CLOSING and COMPLETE' state.
@@ -556,6 +555,7 @@ class ChangeProjectstatusView(DelegatedViewMixin, UpdateView):
 
     def dispatch(self, request, *args, **kwargs):
         self.project = get_object_or_404(Project, pk=self.kwargs['pk'])
+        permission, _ = has_permission('project_status_update', request.user, self.project, raise_exception=True)
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
