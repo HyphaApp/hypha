@@ -473,7 +473,7 @@ INVOICE_EXTENDED_WORKFLOW = env.bool('INVOICE_EXTENDED_WORKFLOW', True)
 
 # Use Pillow to create QR codes so they are PNG and not SVG.
 # Apples Safari on iOS and macOS can then recognise them automatically.
-TWO_FACTOR_QR_FACTORY = 'qrcode.image.pil.PilImage'
+# TWO_FACTOR_QR_FACTORY = 'qrcode.image.pil.PilImage'
 
 LOCALE_PATHS = (
     PROJECT_DIR + '/locale',
