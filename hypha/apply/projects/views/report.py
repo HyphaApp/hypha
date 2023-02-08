@@ -17,6 +17,7 @@ from hypha.apply.utils.views import DelegatedViewMixin
 from ..filters import ReportListFilter
 from ..forms import ReportEditForm, ReportFrequencyForm
 from ..models import Report, ReportConfig, ReportPrivateFiles
+from ..permissions import has_permission
 from ..tables import ReportListTable
 
 
@@ -47,27 +48,27 @@ class ReportAccessMixin(UserPassesTestMixin):
         return False
 
 
-class ReportDetailView(ReportAccessMixin, DetailView):
+@method_decorator(login_required, name='dispatch')
+class ReportDetailView(DetailView):
     model = Report
 
     def dispatch(self, *args, **kwargs):
         report = self.get_object()
-        if not report.current or report.skipped:
-            raise PermissionDenied
-        return super().dispatch(*args, **kwargs)
+        permission, _ = has_permission('report_view', self.request.user, object=report, raise_exception=True)
+        if permission:
+            return super().dispatch(*args, **kwargs)
 
 
-class ReportUpdateView(ReportAccessMixin, UpdateView):
+@method_decorator(login_required, name='dispatch')
+class ReportUpdateView(UpdateView):
     form_class = ReportEditForm
     model = Report
 
     def dispatch(self, *args, **kwargs):
         report = self.get_object()
-        if not report.can_submit:
-            raise PermissionDenied
-        if report.current and self.request.user.is_applicant:
-            raise PermissionDenied
-        return super().dispatch(*args, **kwargs)
+        permission, _ = has_permission('report_update', self.request.user, object=report, raise_exception=True)
+        if permission:
+            return super().dispatch(*args, **kwargs)
 
     def get_initial(self):
         if self.object.draft:
