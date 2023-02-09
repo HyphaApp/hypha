@@ -208,7 +208,7 @@
 
                     {% for contract in contracts %}
                     <p>
-                        <a href="{% url 'apply:projects:contract' pk=project.pk file_pk=contract.pk %}}" target="_blank" class="link link--bold">
+                        <a href="{% url 'apply:projects:contract' pk=project.pk file_pk=contract.pk %}" target="_blank" class="link link--bold">
                             {{ contract.created_at|date:"DATE_FORMAT" }}
                         </a>
                             - {% trans "Approved by" %} {{ contract.approver }}
