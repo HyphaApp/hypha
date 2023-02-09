@@ -3,11 +3,13 @@
     <div class="users-list__results">
         {% if users %}
             <h2 role="alert">
-            {% blocktrans trimmed count counter=users|length %}
-                There is {{ counter }} user
-            {% plural %}
-                There are {{ counter }} users
-            {% endblocktrans %}
+            {% if user_count %}
+                {% blocktrans trimmed count counter=user_count %}
+                    There is {{ counter }} user
+                {% plural %}
+                    There are {{ counter }} users
+                {% endblocktrans %}
+            {% endif %}
             </h2>
 
             {% if is_searching %}

@@ -11,6 +11,7 @@ from wagtail.admin.auth import any_permission_required
 from wagtail.admin.filters import WagtailFilterSet
 from wagtail.admin.forms.search import SearchForm
 from wagtail.compat import AUTH_USER_APP_LABEL, AUTH_USER_MODEL_NAME
+from wagtail.users.views.groups import GroupViewSet
 
 User = get_user_model()
 
@@ -113,12 +114,14 @@ def index(request, *args):
     else:
         ordering = 'name'
 
+    user_count = users.count()
     paginator = Paginator(users.select_related('wagtail_userprofile'), per_page=20)
     users = paginator.get_page(request.GET.get('p'))
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         return TemplateResponse(request, "wagtailusers/users/results.html", {
             'users': users,
+            'user_count': user_count,
             'is_searching': is_searching,
             'query_string': q,
             'filters': filters,
@@ -131,6 +134,7 @@ def index(request, *args):
             'group': group,
             'search_form': form,
             'users': users,
+            'user_count': user_count,
             'is_searching': is_searching,
             'ordering': ordering,
             'query_string': q,
@@ -138,3 +142,13 @@ def index(request, *args):
             'app_label': User._meta.app_label,
             'model_name': User._meta.model_name,
         })
+
+
+class CustomGroupViewSet(GroupViewSet):
+    """
+    Overriding the wagtail.users.views.groups.GroupViewSet just to use custom users view(index)
+    when getting all users for a group.
+    """
+    @property
+    def users_view(self):
+        return index
