@@ -667,7 +667,7 @@ class ContractPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
         return document.file
 
     def test_func(self):
-        if self.request.user.is_apply_staff:
+        if self.request.user.is_apply_staff or self.request.user.is_contracting:
             return True
 
         if self.request.user == self.project.user:
