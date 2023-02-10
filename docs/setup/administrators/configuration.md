@@ -72,6 +72,14 @@ The corrosponding locale dir is named: en, en_GB, en_US
 
     ENFORCE_TWO_FACTOR = env.bool('ENFORCE_TWO_FACTOR', False)
 
+### If users should be able to register accounts without first creating applications
+
+    ENABLE_REGISTRATION_WITHOUT_APPLICATION = env.bool('ENABLE_REGISTRATION_WITHOUT_APPLICATION', False)
+
+### If users are forced to log in before creating applications
+
+    FORCE_LOGIN_FOR_APPLICATION = env.bool('FORCE_LOGIN_FOR_APPLICATION', False)
+
 ### Set the allowed file extension for all uploads fields.
 
     FILE_ALLOWED_EXTENSIONS = ['doc', 'docx', 'odp', 'ods', 'odt', 'pdf', 'ppt', 'pptx', 'rtf', 'txt', 'xls', 'xlsx']
