@@ -58,6 +58,7 @@ class EmailAdapter(AdapterBase):
         MESSAGES.REPORT_NOTIFY: 'messages/email/report_notify.html',
         MESSAGES.REVIEW_REMINDER: 'messages/email/ready_to_review.html',
         MESSAGES.PROJECT_FINAL_APPROVAL: 'messages/email/project_final_approval.html',
+        MESSAGES.PROJECT_TRANSITION: 'handle_project_transition',
     }
 
     def get_subject(self, message_type, source):
@@ -115,6 +116,15 @@ class EmailAdapter(AdapterBase):
             old_phase = transitions[submission.id]
             return self.handle_transition(
                 old_phase=old_phase, source=submission, **kwargs
+            )
+
+    def handle_project_transition(self, source, **kwargs):
+        from hypha.apply.projects.models.project import CONTRACTING
+        if source.status == CONTRACTING:
+            return self.render_message(
+                'messages/email/ready_for_contracting.html',
+                source=source,
+                **kwargs,
             )
 
     def handle_invoice_status_updated(self, related, **kwargs):
@@ -244,6 +254,12 @@ class EmailAdapter(AdapterBase):
                 if related.status in {CHANGES_REQUESTED_BY_STAFF, DECLINED}:
                     return [source.user.email]
             return []
+
+        if message_type == MESSAGES.PROJECT_TRANSITION:
+            from hypha.apply.projects.models.project import CONTRACTING
+            if source.status == CONTRACTING:
+                return get_compliance_email(target_user_gps=[CONTRACTING_GROUP_NAME])
+
         if isinstance(source, get_user_model()):
             return user.email
         return [source.user.email]
