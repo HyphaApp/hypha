@@ -156,13 +156,17 @@ class SetPendingForm(forms.ModelForm):
         super().clean()
 
 
-class UploadContractForm(forms.ModelForm):
+class UploadContractForm(FileFormMixin, forms.ModelForm):
+    file = SingleFileField(label=_('Contract'), required=True)
+
     class Meta:
         fields = ['file']
         model = Contract
 
 
-class StaffUploadContractForm(forms.ModelForm):
+class StaffUploadContractForm(FileFormMixin, forms.ModelForm):
+    file = SingleFileField(label=_('Contract'), required=True)
+
     class Meta:
         fields = ['file', 'is_signed']
         model = Contract
