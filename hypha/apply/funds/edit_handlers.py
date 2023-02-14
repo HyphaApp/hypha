@@ -56,7 +56,7 @@ class ReadOnlyPanel(Panel):
 
     class BoundPanel(Panel.BoundPanel):
         field_template_name = 'wagtailadmin/shared/field.html'
-        template_name = 'wagtailadmin/panels/single_field_panel.html'
+        template_name = 'wagtailadmin/panels/field_panel.html'
 
         def render_as_object(self):
             return render_to_string(self.template_name, self.context())
