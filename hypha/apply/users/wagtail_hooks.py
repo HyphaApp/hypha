@@ -3,15 +3,19 @@ from wagtail import hooks
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 
-from .admin_views import index
+from .admin_views import CustomGroupViewSet, index
 
 
 @hooks.register('register_admin_urls')
 def register_admin_urls():
     return [
         re_path(r'^users/$', index, name='index'),
-        re_path(r'^groups/(\d+)/users/$', index, name='index'),
     ]
+
+
+@hooks.register("register_admin_viewset")
+def register_viewset():
+    return CustomGroupViewSet("groups", url_prefix="groups")
 
 
 @hooks.register('after_create_user')

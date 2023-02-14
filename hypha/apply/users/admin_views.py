@@ -11,6 +11,7 @@ from wagtail.admin.auth import any_permission_required
 from wagtail.admin.filters import WagtailFilterSet
 from wagtail.admin.forms.search import SearchForm
 from wagtail.compat import AUTH_USER_APP_LABEL, AUTH_USER_MODEL_NAME
+from wagtail.users.views.groups import GroupViewSet
 
 User = get_user_model()
 
@@ -141,3 +142,13 @@ def index(request, *args):
             'app_label': User._meta.app_label,
             'model_name': User._meta.model_name,
         })
+
+
+class CustomGroupViewSet(GroupViewSet):
+    """
+    Overriding the wagtail.users.views.groups.GroupViewSet just to use custom users view(index)
+    when getting all users for a group.
+    """
+    @property
+    def users_view(self):
+        return index
