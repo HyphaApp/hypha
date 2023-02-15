@@ -494,8 +494,7 @@ class TestSelectDocumentForm(TestCase):
 
 
 class TestStaffContractUploadForm(TestCase):
-    mock_file = mock.MagicMock(spec=SimpleUploadedFile)
-    mock_file.read.return_value = b"fake file contents"
+    mock_file = SimpleUploadedFile('contract.pdf', BytesIO(b'somebinarydata').read())
 
     def test_staff_can_upload_unsigned(self):
         form = StaffUploadContractForm(data={}, files={'file': self.mock_file})
@@ -509,8 +508,7 @@ class TestStaffContractUploadForm(TestCase):
 
 
 class TestContractUploadForm(TestCase):
-    mock_file = mock.MagicMock(spec=SimpleUploadedFile)
-    mock_file.read.return_value = b"fake file contents"
+    mock_file = SimpleUploadedFile('contract.pdf', BytesIO(b'somebinarydata').read())
 
     def test_applicant_cant_upload_unsigned(self):
         form = UploadContractForm(data={}, files={'file': self.mock_file})
