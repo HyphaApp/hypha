@@ -70,7 +70,6 @@ class BaseProjectsTable(tables.Table):
     reporting = tables.Column(verbose_name=_('Reporting'), accessor='pk')
     last_payment_request = tables.DateColumn()
     end_date = tables.DateColumn(verbose_name=_('End Date'), accessor='proposed_end')
-    fund_allocation = tables.Column(verbose_name=_('Fund Allocation ({currency})').format(currency=settings.CURRENCY_SYMBOL), accessor='value')
 
     def order_reporting(self, qs, is_descending):
         direction = '-' if is_descending else ''
@@ -78,9 +77,6 @@ class BaseProjectsTable(tables.Table):
         qs = qs.order_by(f'{direction}outstanding_reports')
 
         return qs, True
-
-    def render_fund_allocation(self, record):
-        return f'{intcomma(record.amount_paid)} / {intcomma(record.value)}'
 
     def render_reporting(self, record):
         if not hasattr(record, 'report_config'):
@@ -107,7 +103,6 @@ class ProjectsDashboardTable(BaseProjectsTable):
             'reporting',
             'last_payment_request',
             'end_date',
-            'fund_allocation',
         ]
         model = Project
         orderable = False
@@ -115,6 +110,8 @@ class ProjectsDashboardTable(BaseProjectsTable):
 
 
 class ProjectsListTable(BaseProjectsTable):
+    fund_allocation = tables.Column(verbose_name=_('Fund Allocation ({currency})').format(currency=settings.CURRENCY_SYMBOL), accessor='value')
+
     class Meta:
         fields = [
             'title',
@@ -131,6 +128,9 @@ class ProjectsListTable(BaseProjectsTable):
         order_by = ('-end_date',)
         template_name = 'application_projects/tables/table.html'
         attrs = {'class': 'projects-table'}
+
+    def render_fund_allocation(self, record):
+        return f'{intcomma(record.amount_paid)} / {intcomma(record.value)}'
 
     def order_fund_allocation(self, qs, is_descending):
         direction = '-' if is_descending else ''
