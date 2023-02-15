@@ -1,4 +1,5 @@
-## **Introduction**
+!!! note
+    Projects functionality is still under active development.
 
 The project is the enhanced version of a submission. A project can be created only after the `Accepted` state(approved by staff) of a submission. It is a process to review the legalities of an application(PAF), get applicant details(like bank details and etc), and avail the funds to an applicant via contracts and invoices. We will learn more about its terminology, workflow, usage, and implementation below. First, Let's start with its terminology.
 
@@ -28,7 +29,7 @@ After their approval, a notification will be sent to the contracting group email
 
 ![Request workflow flowchart](../assets/project_workflow.png)
 
-### **Related User or Users' Group**
+## **Related User or Users' Group**
 1. Contractor/Applicant
 2. Staff (PM, VP)
 3. Finance
