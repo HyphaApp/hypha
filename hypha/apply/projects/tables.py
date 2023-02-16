@@ -1,9 +1,6 @@
 import textwrap
 
 import django_tables2 as tables
-from django.conf import settings
-from django.contrib.humanize.templatetags.humanize import intcomma
-from django.db.models import F, Sum
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
