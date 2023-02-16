@@ -13,4 +13,4 @@ pytest-split==0.8.0
 pytest-xdist[psutil]==2.5.0
 responses==0.21.0
 wagtail-factories==2.1.0
-Werkzeug==2.2.2
+Werkzeug==2.2.3
