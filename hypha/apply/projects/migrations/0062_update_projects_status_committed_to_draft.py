@@ -3,7 +3,7 @@
 from django.db import migrations
 
 
-def set_value_to_ready_for_final_approval(apps, schema_editor):
+def update_committed_project_status_to_draft(apps, schema_editor):
     Project = apps.get_model('application_projects', 'Project')
 
     for project in Project.objects.filter(status='committed'):
@@ -18,5 +18,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(set_value_to_ready_for_final_approval)
+        migrations.RunPython(update_committed_project_status_to_draft)
     ]

@@ -69,8 +69,8 @@ from ..forms import (
 from ..models.payment import Invoice
 from ..models.project import (
     APPROVE,
-    DRAFT,
     CONTRACTING,
+    DRAFT,
     IN_PROGRESS,
     PROJECT_ACTION_MESSAGE_TAG,
     PROJECT_STATUS_CHOICES,

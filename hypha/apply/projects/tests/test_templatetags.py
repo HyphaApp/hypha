@@ -16,9 +16,9 @@ from ..models.payment import (
 )
 from ..models.project import (
     CLOSING,
-    DRAFT,
     COMPLETE,
     CONTRACTING,
+    DRAFT,
     IN_PROGRESS,
     WAITING_FOR_APPROVAL,
 )
