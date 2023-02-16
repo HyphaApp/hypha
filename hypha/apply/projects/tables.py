@@ -110,8 +110,6 @@ class ProjectsDashboardTable(BaseProjectsTable):
 
 
 class ProjectsListTable(BaseProjectsTable):
-    fund_allocation = tables.Column(verbose_name=_('Fund Allocation ({currency})').format(currency=settings.CURRENCY_SYMBOL), accessor='value')
-
     class Meta:
         fields = [
             'title',
@@ -121,7 +119,6 @@ class ProjectsListTable(BaseProjectsTable):
             'reporting',
             'last_payment_request',
             'end_date',
-            'fund_allocation',
         ]
         model = Project
         orderable = True
@@ -129,17 +126,6 @@ class ProjectsListTable(BaseProjectsTable):
         template_name = 'application_projects/tables/table.html'
         attrs = {'class': 'projects-table'}
 
-    def render_fund_allocation(self, record):
-        return f'{intcomma(record.amount_paid)} / {intcomma(record.value)}'
-
-    def order_fund_allocation(self, qs, is_descending):
-        direction = '-' if is_descending else ''
-
-        qs = qs.annotate(
-            paid_ratio=Sum('invoices__paid_value') / F('value'),
-        ).order_by(f'{direction}paid_ratio', f'{direction}value')
-
-        return qs, True
 
     def order_end_date(self, qs, desc):
         return qs.by_end_date(desc), True
