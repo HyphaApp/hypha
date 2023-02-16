@@ -665,6 +665,11 @@ class AdminProjectDetailView(
     model = Project
     template_name_suffix = '_admin_detail'
 
+    def dispatch(self, *args, **kwargs):
+        project = self.get_object()
+        permission, _ = has_permission('project_access', self.request.user, object=project, raise_exception=True)
+        return super().dispatch(*args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         project_settings = ProjectSettings.for_request(self.request)
@@ -710,8 +715,7 @@ class ApplicantProjectDetailView(
 
     def dispatch(self, request, *args, **kwargs):
         project = self.get_object()
-        if project.user != request.user:
-            raise PermissionDenied
+        permission, _ = has_permission('project_access', request.user, object=project, raise_exception=True)
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):

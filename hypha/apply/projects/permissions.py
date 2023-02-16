@@ -153,6 +153,25 @@ def can_view_report(user, report, **kwargs):
     return False, 'Forbidden Error'
 
 
+def can_access_project(user, project):
+    if not user.is_authenticated:
+        return False, 'Login Required'
+
+    if user.is_contracting and project.status in [CONTRACTING, WAITING_FOR_APPROVAL]:
+        return True, 'Contracting can view project only in Waiting for approval and contracting status'
+
+    if user.is_finance and project.status in [WAITING_FOR_APPROVAL, IN_PROGRESS]:
+        return True, 'Finance can view project only  in Waiting for approval and in progress status'
+
+    if user.is_apply_staff:
+        return True, 'Staff can view project in all statuses'
+
+    if user.is_applicant and user == project.user:
+        return True, 'Applicant(project user) can view project in all statuses'
+
+    return False, 'Forbidden Error'
+
+
 permissions_map = {
     'contract_approve': can_approve_contract,
     'contract_upload': can_upload_contract,
@@ -163,4 +182,5 @@ permissions_map = {
     'report_config_update': can_update_report_config,
     'report_view': can_view_report,
     'submit_contract_documents': can_submit_contract_documents,
+    'project_access': can_access_project,
 }
