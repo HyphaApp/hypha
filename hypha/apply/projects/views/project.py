@@ -69,7 +69,7 @@ from ..forms import (
 from ..models.payment import Invoice
 from ..models.project import (
     APPROVE,
-    COMMITTED,
+    DRAFT,
     CONTRACTING,
     IN_PROGRESS,
     PROJECT_ACTION_MESSAGE_TAG,
@@ -489,7 +489,7 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
         )
 
         if paf_status == REQUEST_CHANGE:
-            self.object.status = COMMITTED
+            self.object.status = DRAFT
             self.object.save(update_fields=['status'])
 
             messenger(

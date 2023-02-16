@@ -58,14 +58,14 @@ PAF_STATUS_CHOICES = (
     (REQUEST_CHANGE, 'Request Change')
 )
 
-COMMITTED = 'committed'
+DRAFT = 'draft'
 WAITING_FOR_APPROVAL = 'waiting_for_approval'
 CONTRACTING = 'contracting'
 IN_PROGRESS = 'in_progress'
 CLOSING = 'closing'
 COMPLETE = 'complete'
 PROJECT_STATUS_CHOICES = [
-    (COMMITTED, _('Committed')),
+    (DRAFT, _('Draft')),
     (WAITING_FOR_APPROVAL, _('Waiting for Approval')),
     (CONTRACTING, _('Contracting')),
     (IN_PROGRESS, _('In Progress')),
@@ -161,7 +161,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
     proposed_start = models.DateTimeField(_('Proposed Start Date'), null=True)
     proposed_end = models.DateTimeField(_('Proposed End Date'), null=True)
 
-    status = models.TextField(choices=PROJECT_STATUS_CHOICES, default=COMMITTED)
+    status = models.TextField(choices=PROJECT_STATUS_CHOICES, default=DRAFT)
 
     form_data = models.JSONField(encoder=StreamFieldDataEncoder, default=dict)
     form_fields = StreamField(ProjectApprovalFormCustomFormFieldsBlock(), null=True, use_json_field=True)
@@ -321,7 +321,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
     def editable(self):
         if self.is_locked:
             return False
-        elif self.status == COMMITTED:  # locked condition is enough,it is just for double check
+        elif self.status == DRAFT:  # locked condition is enough,it is just for double check
             return True
         return False
 
@@ -360,7 +360,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         we infer it from the current status being "Comitted" and the Project
         being locked.
         """
-        correct_state = self.status == COMMITTED and not self.is_locked
+        correct_state = self.status == DRAFT and not self.is_locked
         return correct_state and self.user_has_updated_details
 
     def get_missing_document_categories(self):

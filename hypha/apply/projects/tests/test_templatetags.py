@@ -16,7 +16,7 @@ from ..models.payment import (
 )
 from ..models.project import (
     CLOSING,
-    COMMITTED,
+    DRAFT,
     COMPLETE,
     CONTRACTING,
     IN_PROGRESS,
@@ -31,7 +31,7 @@ class TestContractTools(TestCase):
     def test_staff_cant_upload_contract(self):
         staff = StaffFactory()
 
-        project = ProjectFactory(status=COMMITTED)
+        project = ProjectFactory(status=DRAFT)
         self.assertFalse(user_can_upload_contract(project, staff))
 
         project = ProjectFactory(status=WAITING_FOR_APPROVAL)
@@ -52,7 +52,7 @@ class TestContractTools(TestCase):
     def test_owner_can_only_upload_during_contracting(self):
         applicant = ApplicantFactory()
 
-        project = ProjectFactory(status=COMMITTED, user=applicant)
+        project = ProjectFactory(status=DRAFT, user=applicant)
         self.assertFalse(user_can_upload_contract(project, applicant))
 
         project = ProjectFactory(status=WAITING_FOR_APPROVAL, user=applicant)

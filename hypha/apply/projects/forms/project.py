@@ -12,8 +12,8 @@ from hypha.apply.users.groups import STAFF_GROUP_NAME
 
 from ..models.project import (
     CLOSING,
-    COMMITTED,
     COMPLETE,
+    DRAFT,
     IN_PROGRESS,
     PAF_STATUS_CHOICES,
     PROJECT_STATUS_CHOICES,
@@ -271,8 +271,8 @@ class ApproversForm(forms.ModelForm):
 
 class SetPendingForm(ApproversForm):
     def clean(self):
-        if self.instance.status != COMMITTED:
-            raise forms.ValidationError(_('A Project can only be sent for Approval when Committed.'))
+        if self.instance.status != DRAFT:
+            raise forms.ValidationError(_('A Project can only be sent for Approval when Drafted.'))
 
         cleaned_data = super().clean()
         return cleaned_data
