@@ -81,9 +81,12 @@ class AccessFormData:
                 file = self.process_file(self, field, data.get(field.id, []))
                 try:
                     file.save()
-                except AttributeError:
-                    for f in file:
-                        f.save()
+                except (AttributeError, FileNotFoundError):
+                    try:
+                        for f in file:
+                            f.save()
+                    except FileNotFoundError:
+                        pass
                 self.form_data[field.id] = file
 
     def extract_files(self):

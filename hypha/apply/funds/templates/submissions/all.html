@@ -1,0 +1,132 @@
+{% extends base_template %}
+
+{% load i18n static %}
+{% load render_table from django_tables2 %}
+{% load django_tables2 i18n submission_tags %}
+
+{% block title %}{% trans "Submissions" %}{% endblock %}
+{% block content %}
+    <div class="admin-bar">
+        <div class="admin-bar__inner wrapper--search">
+            {% block page_header %}
+                <div>
+                    <h1 class="gamma heading heading--no-margin heading--bold">{% trans "All Submissions" %}<span class="submissions-count"> ({{ total }})</span></h1>
+                </div>
+            {% endblock %}
+        </div>
+    </div>
+
+    <div class="wrapper wrapper--large wrapper--inner-space-medium">
+        {% block table %}
+
+        <div class="wrapper wrapper--table-actions js-table-actions">
+            <div class="actions-bar">
+                {# Left #}
+                <div class="actions-bar__inner actions-bar__inner--left">
+                    {% if use_batch_actions %}
+                        <div class="actions-bar__per-page">{% trans "Show" %} <a href="{% querystring "per_page"=25 %}">25</a> | <a href="{% querystring "per_page"=50 %}">50</a> | <a href="{% querystring "per_page"=100 %}">100</a> {% trans "items" %}</div>
+                    {% endif %}
+
+                    {% if heading %}
+                        <h4 class="heading heading--normal heading--no-margin">{{ heading }}</h4>
+                    {% endif %}
+
+
+                    {% if use_batch_actions %}
+                        <div class="actions-bar__inner actions-bar__inner--batch-actions">
+                            <p class="actions-bar__total"><span class="js-total-actions">0</span> {% trans "Selected" %}</p>
+
+                            <button
+                                data-fancybox
+                                type="button"
+                                data-src="#batch-progress"
+                                class="button button--action button--change-status js-batch-button js-batch-progress"
+                            >
+                                <svg><use xlink:href="#arrow-split"></use></svg>
+                                {% trans "Status" %}
+                            </button>
+
+                            <button data-fancybox data-src="#batch-update-lead" class="button button--action js-batch-button" type="button">
+                                <svg><use xlink:href="#add-person"></use></svg>
+                                {% trans "Lead" %}
+                            </button>
+
+                            <button data-fancybox data-src="#batch-update-reviewers" class="button button--action js-batch-button" type="button">
+                                <svg><use xlink:href="#add-person"></use></svg>
+                                {% trans "Reviewers" %}
+                            </button>
+
+                            <button data-fancybox data-src="#batch-delete-submission" class="button button--action js-batch-button" type="button">
+                                <svg class="icon icon--delete"><use xlink:href="#delete-submissions"></use></svg>
+                                {% trans "Delete" %}
+                            </button>
+
+                            <button data-fancybox data-src="#batch-archive-submission" class="button button--action js-batch-button" type="button">
+                                <svg class="icon icon--archive"><use xlink:href="#archive"></use></svg>
+                                {% trans "Archive" %}
+                            </button>
+                        </div>
+                    {% endif %}
+                </div>
+
+                {# Right #}
+                <div class="actions-bar__inner actions-bar__inner--right">
+                    {% get_url_param 'archived' as archived_param %}
+                    {% if show_archive %}
+                        {% if archived_param == '1' %}
+                            <a href="{% update_urlparams 'archived' '0' %}">{% trans "Hide archived" %}</a>
+                        {% else %}
+                            <a href="{% update_urlparams 'archived' '1' %}">{% trans "Show archived" %}</a>
+                        {% endif %}
+                    {% endif %}
+
+                    <form action="./" method="get" role="search" class="form form--search-desktop">
+                        <button class="button button--search" type="submit" aria-label="{% trans 'Search' %}">
+                            <svg class="icon icon--magnifying-glass icon--search"><use xlink:href="#magnifying-glass"></use></svg>
+                        </button>
+                        {% if show_archive and archived_param is not None %}
+                        <input type="hidden" value="{{ archived_param }}" name="archived">
+                        {% endif %}
+                        {% trans "submissions" as submissions %}
+                        <input class="input input--search input--secondary placeholder-slate-400"
+                            type="text"
+                            placeholder="{% trans 'Search' %} {{ search_placeholder|default:"submissions..." }}"
+                            name="query"
+                            {% if search_term %}value="{{ search_term }}"{% endif %}
+                            aria-label="{% trans 'Search input' %}"
+                        >
+                    </form>
+                </div>
+            </div>
+
+        </div>
+
+        <form action="./" method="get">
+            <ul class="flex justify-items-stretch py-2">
+                {{ filters.form.as_ul }}
+            </ul>
+        </form>
+
+        {% if use_batch_actions %}
+            {% include "funds/includes/batch_update_lead_form.html" %}
+            {% include "funds/includes/batch_update_reviewer_form.html" %}
+            {% include "funds/includes/batch_progress_form.html" %}
+            {% include "funds/includes/batch_delete_submission_form.html" %}
+            {% include "funds/includes/batch_archive_submission_form.html" %}
+        {% endif %}
+
+
+        {% if total %}
+            {% if search_term %}
+                <p>Found {{ total }} result{{total|pluralize}} for <strong><em>"{{ search_term }}"</strong></em> ({{ duration }}s)</p>
+            {% endif %}
+
+            {% render_table table %}
+
+        {% else %}
+            <p>No results for <strong><em>"{{ search_term }}"</strong></em>. ({{ duration }}s)</p>
+        {% endif %}
+
+        {% endblock %}
+    </div>
+{% endblock %}

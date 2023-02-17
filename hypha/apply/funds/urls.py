@@ -28,7 +28,9 @@ from .views import (
     SubmissionStaffFlaggedView,
     SubmissionUserFlaggedView,
 )
+
 from .views_partials import partial_submission_activities
+from .views_beta import submission_all_beta
 
 revision_urls = ([
     path('', RevisionListView.as_view(), name='list'),
@@ -45,6 +47,7 @@ app_name = 'funds'
 submission_urls = ([
     path('', SubmissionOverviewView.as_view(), name="overview"),
     path('all/', SubmissionListView.as_view(), name="list"),
+    path('all-beta/', submission_all_beta, name="list-beta"),
     path('summary/', GroupingApplicationsListView.as_view(), name="summary"),
     path('result/', SubmissionResultView.as_view(), name="result"),
     path('flagged/', include([

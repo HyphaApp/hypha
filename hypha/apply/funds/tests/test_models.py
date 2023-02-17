@@ -574,6 +574,7 @@ class TestSubmissionRenderMethods(TestCase):
                 file_url_in_answers(file_to_test=file_response, file_id=file_id)
 
 
+@override_settings(FORCE_LOGIN_FOR_APPLICATION=False)
 class TestRequestForPartners(TestCase):
     def test_message_when_no_round(self):
         rfp = RequestForPartnersFactory()

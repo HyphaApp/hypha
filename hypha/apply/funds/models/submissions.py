@@ -1,10 +1,13 @@
 import json
-from functools import partialmethod
+import operator
+from functools import partialmethod, reduce
 
 from django.apps import apps
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib.postgres.indexes import GinIndex
+from django.contrib.postgres.search import SearchVector, SearchVectorField
 from django.core.exceptions import PermissionDenied
 from django.db import models
 from django.db.models import (
@@ -18,6 +21,7 @@ from django.db.models import (
     Q,
     Subquery,
     Sum,
+    Value,
     When,
 )
 from django.db.models.expressions import OrderBy, RawSQL
@@ -473,6 +477,7 @@ class ApplicationSubmission(
     )
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
     search_data = models.TextField()
+    search_document = SearchVectorField(null=True)
 
     # Workflow inherited from WorkflowHelpers
     status = FSMField(default=INITIAL_STATE, protected=True)
@@ -651,7 +656,8 @@ class ApplicationSubmission(
                 self.form_data = current_submission.form_data
             else:
                 self.live_revision = revision
-                self.search_data = ' '.join(self.prepare_search_values())
+                self.search_data = ' '.join(list(self.prepare_search_values()))
+                self.search_document = self.prepare_search_vector()
 
             self.draft_revision = revision
             self.save(skip_custom=True)
@@ -696,7 +702,9 @@ class ApplicationSubmission(
         self.clean_submission()
 
         # add a denormed version of the answer for searching
+        # @TODO: remove 'search_data' in favour of 'search_document' for FTS
         self.search_data = ' '.join(self.prepare_search_values())
+        self.search_document = self.prepare_search_vector()
 
         super().save(*args, **kwargs)
 
@@ -780,20 +788,42 @@ class ApplicationSubmission(
 
         return False
 
-    def prepare_search_values(self):
+    def get_searchable_contents(self):
+        contents = []
         for field_id in self.question_field_ids:
             field = self.field(field_id)
             data = self.data(field_id)
             value = field.block.get_searchable_content(field.value, data)
             if value:
                 if isinstance(value, list):
-                    yield ', '.join(value)
+                    contents.append(', '.join(value))
                 else:
-                    yield value
+                    contents.append(value)
+        return contents
+
+    def prepare_search_values(self):
+        values = self.get_searchable_contents()
 
         # Add named fields into the search index
         for field in ['full_name', 'email', 'title']:
-            yield getattr(self, field)
+            values.append(getattr(self, field))
+        return values
+
+    def index_components(self):
+        return {
+            'A': self.title,
+            'C': " ".join([self.full_name, self.email]),
+            'B': ' '.join(self.get_searchable_contents()),
+        }
+
+    def prepare_search_vector(self):
+        search_vectors = []
+        for weight, text in self.index_components().items():
+            search_vectors.append(
+                SearchVector(Value(text), weight=weight)
+            )
+        return reduce(operator.add, search_vectors)
+
 
     def get_absolute_url(self):
         return reverse('funds:submissions:detail', urlconf='hypha.apply.urls', args=(self.id,))

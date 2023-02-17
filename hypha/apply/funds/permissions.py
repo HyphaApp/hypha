@@ -46,7 +46,7 @@ def is_user_has_access_to_view_submission(user, submission):
     return False, ''
 
 
-def is_user_has_access_to_view_archived_submissions(user):
+def is_user_has_access_to_view_archived_submissions(user, obj=None):
     if not user.is_authenticated:
         pass
     elif user.is_apply_staff and settings.SUBMISSIONS_ARCHIVED_ACCESS_STAFF:
