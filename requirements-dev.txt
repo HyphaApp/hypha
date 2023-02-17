@@ -1,6 +1,7 @@
 -r requirements.txt
 
 coverage==6.4.4
+django-browser-reload==1.6.0
 django-coverage-plugin==2.0.3
 django-debug-toolbar==3.6.0
 dslr==0.3.1

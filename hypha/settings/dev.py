@@ -107,9 +107,11 @@ if DEBUG:
     INSTALLED_APPS = [
         *INSTALLED_APPS,
         'debug_toolbar',
+        'django_browser_reload',
     ]
     MIDDLEWARE = [
         'debug_toolbar.middleware.DebugToolbarMiddleware',
+        'django_browser_reload.middleware.BrowserReloadMiddleware',
         *MIDDLEWARE,
     ]
     # https://django-debug-toolbar.readthedocs.io/en/latest/installation.html#configuring-internal-ips
