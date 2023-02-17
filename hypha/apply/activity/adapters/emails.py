@@ -8,10 +8,12 @@ from django.utils.translation import gettext as _
 
 from hypha.apply.projects.models.payment import CHANGES_REQUESTED_BY_STAFF, DECLINED
 from hypha.apply.users.groups import (
+    APPROVER_GROUP_NAME,
     CONTRACTING_GROUP_NAME,
     FINANCE_GROUP_NAME,
     STAFF_GROUP_NAME,
 )
+from hypha.apply.users.models import User
 
 from ..options import MESSAGES
 from ..tasks import send_mail
@@ -53,6 +55,7 @@ class EmailAdapter(AdapterBase):
         MESSAGES.APPROVE_PAF: 'messages/email/paf_for_approval.html',
         MESSAGES.UPDATE_INVOICE: 'handle_invoice_updated',
         MESSAGES.UPDATE_INVOICE_STATUS: 'handle_invoice_status_updated',
+        MESSAGES.APPROVE_INVOICE: 'messages/email/invoice_approved.html',
         MESSAGES.SUBMIT_REPORT: 'messages/email/report_submitted.html',
         MESSAGES.SKIPPED_REPORT: 'messages/email/report_skipped.html',
         MESSAGES.REPORT_FREQUENCY_CHANGED: 'messages/email/report_frequency.html',
@@ -285,6 +288,15 @@ class EmailAdapter(AdapterBase):
                 return get_compliance_email(target_user_gps=[CONTRACTING_GROUP_NAME])
             if source.status == IN_PROGRESS:
                 return [source.user.email]
+
+        if message_type == MESSAGES.APPROVE_INVOICE:
+            if user.is_apply_staff:
+                return get_compliance_email(target_user_gps=[FINANCE_GROUP_NAME])
+            if settings.INVOICE_EXTENDED_WORKFLOW and user.is_finance_level_1:
+                finance_2_users_email = User.objects.filter(groups__name=FINANCE_GROUP_NAME).\
+                    filter(groups__name=APPROVER_GROUP_NAME).values_list('email', flat=True)
+                return finance_2_users_email
+            return []
 
         if isinstance(source, get_user_model()):
             return user.email

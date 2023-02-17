@@ -24,6 +24,7 @@ neat_related = {
     MESSAGES.UPLOAD_CONTRACT: 'contract',
     MESSAGES.CREATE_INVOICE: 'create_invoice',
     MESSAGES.UPDATE_INVOICE_STATUS: 'invoice',
+    MESSAGES.APPROVE_INVOICE: 'invoice',
     MESSAGES.DELETE_INVOICE: 'invoice',
     MESSAGES.UPDATE_INVOICE: 'invoice',
     MESSAGES.SUBMIT_REPORT: 'report',

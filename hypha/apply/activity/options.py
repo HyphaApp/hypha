@@ -45,6 +45,7 @@ class MESSAGES(TextChoices):
     APPROVE_CONTRACT = 'APPROVE_CONTRACT', _('approved contract')
     CREATE_INVOICE = 'CREATE_INVOICE', _('created invoice for project')
     UPDATE_INVOICE_STATUS = 'UPDATE_INVOICE_STATUS', _('updated invoice status')
+    APPROVE_INVOICE = 'APPROVE_INVOICE', _('approve invoice')
     DELETE_INVOICE = 'DELETE_INVOICE', _('deleted invoice')
     SENT_TO_COMPLIANCE = 'SENT_TO_COMPLIANCE', _('sent project to compliance')
     UPDATE_INVOICE = 'UPDATE_INVOICE', _('updated invoice')

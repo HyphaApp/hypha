@@ -1,0 +1,14 @@
+{% extends "messages/email/base.html" %}
+
+{% load i18n %}
+{% block salutation %}{% endblock %}
+
+{% block content %}
+{% trans "An Invoice is waiting for your approval." %}
+
+{% trans "Title" %}: {{ source.title }}
+{% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ invoice.get_absolute_url }}
+{% trans "Project" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
+
+{% blocktrans with lead=source.lead email=source.lead.email %}Please contact {{ lead }} - {{ email }} if you have any questions.{% endblocktrans %}
+{% endblock %}
