@@ -120,7 +120,7 @@
 
         @include media-query(tablet-portrait) {
             padding-bottom: 3rem;
-            margin-bottom: 3rem;
+            margin-bottom: 0;
         }
     }
 
