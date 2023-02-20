@@ -1,6 +1,5 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
-from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.decorators import method_decorator
 from django.views import View
@@ -55,8 +54,7 @@ class ReportDetailView(DetailView):
     def dispatch(self, *args, **kwargs):
         report = self.get_object()
         permission, _ = has_permission('report_view', self.request.user, object=report, raise_exception=True)
-        if permission:
-            return super().dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 @method_decorator(login_required, name='dispatch')
@@ -67,8 +65,7 @@ class ReportUpdateView(UpdateView):
     def dispatch(self, *args, **kwargs):
         report = self.get_object()
         permission, _ = has_permission('report_update', self.request.user, object=report, raise_exception=True)
-        if permission:
-            return super().dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
     def get_initial(self):
         if self.object.draft:
