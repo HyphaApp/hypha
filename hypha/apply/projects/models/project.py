@@ -213,7 +213,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
             )
 
     @classmethod
-    def create_from_submission(cls, submission):
+    def create_from_submission(cls, submission, lead=None):
         """
         Create a Project from the given submission.
 
@@ -243,6 +243,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
             user=submission.user,
             title=submission.title,
             vendor=vendor,
+            lead=lead if lead else None,
             value=submission.form_data.get('value', 0),
         )
 
