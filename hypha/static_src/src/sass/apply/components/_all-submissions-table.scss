@@ -278,6 +278,9 @@
         background-color: $color--white;
         padding: 20px 25px;
         min-height: auto;
+        border-bottom: 1px solid $color--light-mid-grey;
+        border-left: 1px solid $color--light-mid-grey;
+        border-right: 1px solid $color--light-mid-grey;
 
         a {
             margin: 0;
