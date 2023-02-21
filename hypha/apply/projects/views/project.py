@@ -610,7 +610,7 @@ class ApplicantProjectDetailView(
     ]
 
     model = Project
-    template_name_suffix = '_applicant_detail'
+    template_name_suffix = '_detail'
 
     def dispatch(self, request, *args, **kwargs):
         project = self.get_object()
