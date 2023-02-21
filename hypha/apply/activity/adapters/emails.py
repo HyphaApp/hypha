@@ -75,6 +75,18 @@ class EmailAdapter(AdapterBase):
                 subject = _(
                     'Reminder: Application ready to review: {source.title}'
                 ).format(source=source)
+            elif message_type in [MESSAGES.PROJECT_FINAL_APPROVAL, MESSAGES.SENT_TO_COMPLIANCE]:
+                subject = _('Project is waiting for approval: {source.title}').format(source=source)
+            elif message_type == MESSAGES.UPLOAD_CONTRACT:
+                subject = _('Contract uploaded for the project: {source.title}').format(source=source)
+            elif message_type == MESSAGES.PROJECT_TRANSITION:
+                from hypha.apply.projects.models.project import CONTRACTING, IN_PROGRESS
+                if source.status == CONTRACTING:
+                    subject = _('Project is waiting for the contract: {source.title}').format(source=source)
+                elif source.status == IN_PROGRESS:
+                    subject = _('Project is ready for invoicing: {source.title}').format(source=source)
+                else:
+                    subject = _('Project status has changed to {source.status}: {source.title}').format(source=source)
             else:
                 try:
                     subject = source.page.specific.subject or _(
@@ -227,7 +239,7 @@ class EmailAdapter(AdapterBase):
 
         if message_type == MESSAGES.UPLOAD_CONTRACT:
             if user == source.user:
-                # if contractor uploads the contract then notify the compliance
+                # if applicant re-uploads the contract then notify the compliance
                 return get_compliance_email(target_user_gps=[CONTRACTING_GROUP_NAME, STAFF_GROUP_NAME])
 
         if message_type in {MESSAGES.SUBMIT_REPORT, MESSAGES.UPDATE_INVOICE}:
