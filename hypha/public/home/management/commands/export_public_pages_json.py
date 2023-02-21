@@ -20,6 +20,13 @@ class Command(BaseCommand):
         body = ''.join(streamfields)
         return tomd.convert(body).strip()
 
+    def get_streamfield_as_raw(self, field):
+        streamfields = []
+        for block in field:
+            streamfields.append(str(block.value))
+        body = ''.join(streamfields)
+        return body
+
     def get_authors(self, items):
         related = []
         for item in items.all():
@@ -86,7 +93,7 @@ class Command(BaseCommand):
                 'related_pages': self.get_related_pages(page.related_pages),
                 'related_projects': self.get_related_pages(page.related_projects),
                 'intro': str(page.introduction).strip(),
-                'body': self.get_streamfield_as_markdown(page.body),
+                'body': self.get_streamfield_as_raw(page.body),
                 'slug': str(page.slug).strip(),
             })
             with open('exports/news.json', 'w', newline='') as jsonfile:
@@ -107,7 +114,7 @@ class Command(BaseCommand):
                 'email': str(page.email).strip(),
                 'web': str(page.website).strip(),
                 'intro': str(page.introduction).strip(),
-                'body': self.get_streamfield_as_markdown(page.biography),
+                'body': self.get_streamfield_as_raw(page.biography),
                 'slug': str(page.slug).strip(),
             })
             with open('exports/people.json', 'w', newline='') as jsonfile:
@@ -126,7 +133,7 @@ class Command(BaseCommand):
                 'contact': self.get_contact(page.contact_details),
                 'related_pages': self.get_related_pages(page.related_pages),
                 'intro': str(page.introduction).strip(),
-                'body': self.get_streamfield_as_markdown(page.body),
+                'body': self.get_streamfield_as_raw(page.body),
                 'slug': str(page.slug).strip(),
             })
             with open('exports/projects.json', 'w', newline='') as jsonfile:
