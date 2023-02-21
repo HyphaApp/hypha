@@ -29,13 +29,3 @@ class DeliverableSerializer(serializers.Serializer):
                 'detail': _('Not found')
             }) from e
         return value
-
-
-class InvoiceRequiredChecksSerializer(serializers.Serializer):
-    valid_checks = serializers.BooleanField()
-    valid_checks_link = serializers.URLField()
-
-    def validate_valid_checks(self, value):
-        if not value:
-            raise serializers.ValidationError('Checkbox is not checked')
-        return value

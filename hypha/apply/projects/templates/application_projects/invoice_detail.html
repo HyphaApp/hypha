@@ -38,11 +38,8 @@
     <aside class="sidebar">
         {% block deliverables %}
         {% endblock %}
-        {% block required_checks %}
-        {% endblock %}
-        {% block required_checks_modal %}
-        {% endblock %}
         <div class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions">
+            <h5>{% trans "Actions to take" %}</h5>
             {% block actions %}
                 {% can_edit object user as user_can_edit_request %}
                 <a
