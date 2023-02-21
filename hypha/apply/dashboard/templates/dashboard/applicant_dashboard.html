@@ -45,24 +45,24 @@
     {% endfor %}
 </div>
 
-{% if tables.0.data %}
+{% if active_projects.count %}
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
     <h3>{% trans "Your active projects" %}</h3>
-    {% render_table tables.0 %}
+    {% render_table active_projects.table %}
 </div>
 {% endif %}
 
-{% if tables.1.data %}
+{% if historical_submissions.count %}
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
     <h3>{% trans "Submission history" %}</h3>
-    {% render_table tables.1 %}
+    {% render_table historical_submissions.table %}
 </div>
 {% endif %}
 
-{% if tables.2.data %}
+{% if historical_projects.count %}
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
     <h3>{% trans "Project history" %}</h3>
-    {% render_table tables.2 %}
+    {% render_table historical_projects.table %}
 </div>
 {% endif %}
 
