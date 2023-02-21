@@ -106,8 +106,8 @@
                 </div>
                 {% endif %}
 
-                {% user_can_view_reports object user as can_view_reports %}
-                {% if can_view_reports %}
+                {% project_can_have_report object as can_have_reports %}
+                {% if can_have_reports %}
                     <div class="wrapper wrapper--outer-space-large">
                         {% include "application_projects/includes/reports.html" %}
                     </div>

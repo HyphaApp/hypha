@@ -7,24 +7,34 @@ register = template.Library()
 
 
 @register.simple_tag
-def user_can_view_reports(project, user):
+def project_can_have_report(project):
     if project.status in [COMPLETE, CLOSING, IN_PROGRESS]:
         return True
     return False
 
 
 @register.simple_tag
-def user_can_add_reports(project, user):
-    if project.status == IN_PROGRESS:
-        return True
-    return False
+def user_can_update_project_reports(project, user):
+    permission, _ = has_permission('project_reports_update', user, object=project, raise_exception=False)
+    return permission
 
 
 @register.simple_tag
-def user_can_edit_reports(project, user):
-    if project.status == IN_PROGRESS:
-        return True
-    return False
+def user_can_update_report_config(project, user):
+    permission, _ = has_permission('report_config_update', user, object=project, raise_exception=False)
+    return permission
+
+
+@register.simple_tag
+def user_can_update_report(report, user):
+    permission, _ = has_permission('report_update', user, object=report, raise_exception=False)
+    return permission
+
+
+@register.simple_tag
+def user_can_view_report(report, user):
+    permission, _ = has_permission('report_view', user, object=report, raise_exception=False)
+    return permission
 
 
 @register.simple_tag
