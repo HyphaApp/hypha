@@ -187,7 +187,7 @@
                     {% block approve_contract %}
                         {% if contract_to_approve %}
                         <p>
-                            <a href="{{ contract_to_approve.file.url }}" target="_blank" class="link link--bold">
+                            <a href="{% url 'apply:projects:contract' pk=project.pk file_pk=contract_to_approve.pk %}" target="_blank" class="link link--bold">
                                 {{ contract_to_approve.created_at|date:"DATE_FORMAT" }}
                             </a>
                             ({% trans "Signed" %})
@@ -198,7 +198,7 @@
                     {% block sign_contract %}
                         {% if contract_to_sign%}
                         <p>
-                            <a href="{{ contract_to_sign.file.url }}" target="_blank" class="link link--bold">
+                            <a href="{% url 'apply:projects:contract' pk=project.pk file_pk=contract_to_sign.pk %}" target="_blank" class="link link--bold">
                                 {{ contract_to_sign.created_at|date:"DATE_FORMAT" }}
                             </a>
                             ({% trans "Unsigned" %})
@@ -208,7 +208,7 @@
 
                     {% for contract in contracts %}
                     <p>
-                        <a href="{{ contract.file.url }}" target="_blank" class="link link--bold">
+                        <a href="{% url 'apply:projects:contract' pk=project.pk file_pk=contract.pk %}" target="_blank" class="link link--bold">
                             {{ contract.created_at|date:"DATE_FORMAT" }}
                         </a>
                             - {% trans "Approved by" %} {{ contract.approver }}
