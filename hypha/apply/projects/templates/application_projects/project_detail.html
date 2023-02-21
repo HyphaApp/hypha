@@ -215,12 +215,14 @@
                     </p>
                     {% endfor %}
 
-                    {% block correction_in_contract %}
-                        <a class="link link--bold" href="#communications" target="_blank">
-                            <svg class="icon icon--info-circle"><use xlink:href="#info-circle-fill"></use></svg>
-                                <span>{% trans "Corrections or amendments to your contract?" %}</span>
-                        </a>
-                    {% endblock %}
+                    {% if contract_to_approve or contract_to_sign %}
+                        {% block correction_in_contract %}
+                            <a class="link link--bold" href="#communications" target="_blank">
+                                <svg class="icon icon--info-circle"><use xlink:href="#info-circle-fill"></use></svg>
+                                    <span>{% trans "Corrections or amendments to your contract?" %}</span>
+                            </a>
+                        {% endblock %}
+                    {% endif %}
                 </div>
                 {% endif %}
             </aside>
