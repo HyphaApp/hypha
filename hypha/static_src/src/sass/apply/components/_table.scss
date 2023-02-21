@@ -1,11 +1,27 @@
 // stylelint-disable selector-max-compound-selectors
 
+.table-container {
+    > table {
+        border: 1px solid $color--light-mid-grey;
+    }
+}
+
 // base table styles - specific ones in their own scss partial
 table {
     width: 100%;
     background-color: $color--white;
     border-collapse: collapse;
     table-layout: fixed;
+
+    tbody {
+        @include media-query($table-breakpoint) {
+            tr {
+                &:hover {
+                    background-color: $color--light-grey;
+                }
+            }
+        }
+    }
 
     // table head
     th {
@@ -28,21 +44,17 @@ table {
         @include media-query($table-breakpoint) {
             border-top: 0;
             border-right: 0;
-            border-bottom: 2px solid $color--light-grey;
+            border-bottom: 1px solid $color--light-mid-grey;
             border-left: 0;
 
             &.is-expanded {
-                border-bottom: 1px solid $color--light-mid-grey;
+                border-bottom: 1px solid $color--light-grey;
 
                 .lead {
                     span {
                         background-color: $color--mist;
                     }
                 }
-            }
-
-            &:hover {
-                box-shadow: 0 6px 35px -13px $color--black-50;
             }
 
             &.reviews-summary {
@@ -71,7 +83,6 @@ table {
                         padding-right: 5px;
                         overflow: hidden;
                         text-overflow: ellipsis;
-                        background: $color--white;
 
                         &:hover {
                             display: inline-block;
