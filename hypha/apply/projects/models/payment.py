@@ -152,15 +152,6 @@ class Invoice(models.Model):
         'InvoiceDeliverable',
         related_name='invoices'
     )
-    valid_checks = models.BooleanField(
-        default=False,
-        help_text='Valid OFAC, SAM, W8/W9 on file'
-    )
-    valid_checks_link = models.URLField(
-        max_length=200,
-        blank=True,
-        help_text='Link to SAM/OFAC/W8/W9'
-    )
     objects = InvoiceQueryset.as_manager()
 
     def __str__(self):
@@ -244,19 +235,6 @@ class Invoice(models.Model):
             if self.status in {APPROVED_BY_FINANCE_1, APPROVED_BY_FINANCE_2, CONVERTED}:
                 return True
 
-        return False
-
-    def can_user_complete_required_checks(self, user):
-        if user.is_finance_level_1:
-            if self.status in [APPROVED_BY_STAFF]:
-                return True
-            elif settings.INVOICE_EXTENDED_WORKFLOW and self.status in [CHANGES_REQUESTED_BY_FINANCE_2]:
-                return True
-        return False
-
-    def can_user_view_required_checks(self, user):
-        if user.is_finance_level_1 or user.is_finance_level_2:
-            return True
         return False
 
     def can_user_edit_deliverables(self, user):

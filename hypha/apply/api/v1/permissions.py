@@ -38,9 +38,3 @@ class HasDeliverableEditPermission(permissions.BasePermission):
     def has_permission(self, request, view):
         invoice = view.get_invoice_object()
         return invoice.can_user_edit_deliverables(request.user)
-
-
-class HasRequiredChecksPermission(permissions.BasePermission):
-    def has_permission(self, request, view):
-        invoice = view.get_object()
-        return invoice.can_user_complete_required_checks(request.user)

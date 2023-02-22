@@ -21,16 +21,16 @@
         "last 2 versions"
     ],
     "devDependencies": {
-        "@babel/cli": "^7.19.3",
-        "@babel/core": "^7.20.5",
+        "@babel/cli": "^7.20.7",
+        "@babel/core": "^7.20.12",
         "@babel/preset-env": "^7.20.2",
-        "core-js": "^3.26.1",
-        "eslint": "^8.29.0",
+        "core-js": "^3.27.2",
+        "eslint": "^8.33.0",
         "eslint-plugin-template": "^0.7.0",
         "nodemon": "^2.0.20",
         "npm-run-all2": "^6.0.4",
-        "sass": "^1.56.1",
-        "stylelint": "^14.16.0",
+        "sass": "^1.57.1",
+        "stylelint": "^14.16.1",
         "stylelint-config-standard-scss": "^6.1.0",
         "stylelint-scss": "^4.3.0"
     },

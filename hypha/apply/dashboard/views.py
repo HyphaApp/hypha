@@ -3,7 +3,6 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView
-from django_tables2.views import MultiTableMixin
 
 from hypha.apply.funds.models import (
     ApplicationSubmission,
@@ -442,12 +441,7 @@ class CommunityDashboardView(MySubmissionContextMixin, TemplateView):
         return ReviewerSubmissionsTable(submissions.reviewed_by(request.user).order_by('-submit_time'), prefix='my-reviewed-')
 
 
-class ApplicantDashboardView(MultiTableMixin, TemplateView):
-    tables = [
-        ProjectsDashboardTable,
-        SubmissionsTable,
-        ProjectsDashboardTable,
-    ]
+class ApplicantDashboardView(TemplateView):
     template_name = 'dashboard/applicant_dashboard.html'
 
     def get_context_data(self, **kwargs):
@@ -455,10 +449,17 @@ class ApplicantDashboardView(MultiTableMixin, TemplateView):
 
         context = super().get_context_data(**kwargs)
         context['my_active_submissions'] = my_active_submissions
+        context['active_projects'] = self.active_project_data()
+        context['historical_projects'] = self.historical_project_data()
+        context['historical_submissions'] = self.historical_submission_data()
         return context
 
-    def active_project_data(self, user):
-        return Project.objects.filter(user=user).active().for_table()
+    def active_project_data(self):
+        active_projects = Project.objects.filter(user=self.request.user).active().for_table()
+        return {
+            'count': active_projects.count(),
+            'table': ProjectsDashboardTable(data=active_projects),
+        }
 
     def my_active_submissions(self, user):
         active_subs = ApplicationSubmission.objects.filter(
@@ -468,20 +469,21 @@ class ApplicantDashboardView(MultiTableMixin, TemplateView):
         for submission in active_subs:
             yield submission.from_draft()
 
-    def historical_project_data(self, user):
-        return Project.objects.filter(user=user).complete().for_table()
+    def historical_project_data(self):
+        historical_projects = Project.objects.filter(user=self.request.user).complete().for_table()
+        return {
+            'count': historical_projects.count(),
+            'table': ProjectsDashboardTable(data=historical_projects),
+        }
 
-    def historical_submission_data(self, user):
-        return ApplicationSubmission.objects.filter(
-            user=user,
-        ).inactive().current().for_table(user)
-
-    def get_tables_data(self):
-        return [
-            self.active_project_data(self.request.user),
-            self.historical_submission_data(self.request.user),
-            self.historical_project_data(self.request.user),
-        ]
+    def historical_submission_data(self):
+        historical_submissions = ApplicationSubmission.objects.filter(
+            user=self.request.user,
+        ).inactive().current().for_table(self.request.user)
+        return {
+            'count': historical_submissions.count(),
+            'table': SubmissionsTable(data=historical_submissions)
+        }
 
 
 class DashboardView(ViewDispatcher):

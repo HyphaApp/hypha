@@ -54,15 +54,29 @@ class CreateProjectForm(forms.Form):
         widget=forms.HiddenInput(),
     )
 
+    project_lead = forms.ModelChoiceField(label=_('Set Project Lead'), queryset=User.objects.all())
+
     def __init__(self, instance=None, user=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         if instance:
             self.fields['submission'].initial = instance.id
 
+        # Update lead field queryset
+        lead_field = self.fields['project_lead']
+        qwargs = Q(groups__name=STAFF_GROUP_NAME) | Q(is_superuser=True)
+        lead_field.queryset = (lead_field.queryset.filter(qwargs).distinct())
+
+    def clean_project_lead(self):
+        project_lead = self.cleaned_data['project_lead']
+        if not project_lead:
+            raise forms.ValidationError(_('Project lead is a required field'))
+        return project_lead
+
     def save(self, *args, **kwargs):
         submission = self.cleaned_data['submission']
-        return Project.create_from_submission(submission)
+        lead = self.cleaned_data['project_lead']
+        return Project.create_from_submission(submission, lead=lead)
 
 
 class FinalApprovalForm(forms.ModelForm):

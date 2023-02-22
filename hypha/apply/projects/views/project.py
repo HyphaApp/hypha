@@ -610,7 +610,7 @@ class ApplicantProjectDetailView(
     ]
 
     model = Project
-    template_name_suffix = '_applicant_detail'
+    template_name_suffix = '_detail'
 
     def dispatch(self, request, *args, **kwargs):
         project = self.get_object()
@@ -667,7 +667,7 @@ class ContractPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
         return document.file
 
     def test_func(self):
-        if self.request.user.is_apply_staff:
+        if self.request.user.is_apply_staff or self.request.user.is_contracting:
             return True
 
         if self.request.user == self.project.user:

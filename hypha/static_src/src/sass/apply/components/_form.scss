@@ -372,6 +372,10 @@
 
         .id_message { // stylelint-disable-line selector-class-pattern
             grid-area: message;
+
+            > label {
+                @include hidden;
+            }
         }
 
         .id_visibility_0 { // stylelint-disable-line selector-class-pattern
