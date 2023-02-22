@@ -424,28 +424,6 @@ REST_FRAMEWORK = {
 }
 
 
-# Salesforce integration settings
-
-if env.bool('SALESFORCE_INTEGRATION', False):
-    DATABASES = {
-        **DATABASES,
-        'salesforce': {
-            'ENGINE': 'salesforce.backend',
-            'CONSUMER_KEY': env.str('SALESFORCE_CONSUMER_KEY', ''),
-            'CONSUMER_SECRET': env.str('SALESFORCE_CONSUMER_SECRET', ''),
-            'USER': env.str('SALESFORCE_USER', ''),
-            'PASSWORD': env.str('SALESFORCE_PASSWORD', ''),
-            'HOST': env.str('SALESFORCE_LOGIN_URL', '')
-        }
-    }
-
-    SALESFORCE_QUERY_TIMEOUT = (30, 30)  # (connect timeout, data timeout)
-
-    DATABASE_ROUTERS = [
-        'salesforce.router.ModelRouter'
-    ]
-
-
 # django-file-form settings
 
 FILE_FORM_CACHE = 'django_file_form'
