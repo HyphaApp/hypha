@@ -15,7 +15,7 @@
         {% block page_header_tabs %}
             {% if request.user.is_apply_staff %}
             <div class="tabs">
-                <div class="tabs__container">
+                <div class="tabs__container" hx-boost="true">
                     <a class="tab__item tab__item--right" href="{% url 'apply:submissions:staff_assignments' %}">
                         {% trans "Staff assignments" %}
                     </a>

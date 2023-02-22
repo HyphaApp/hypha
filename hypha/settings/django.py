@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'hypha.public.partner',
 
     'social_django',
+    'django_htmx',
 
     'wagtail.contrib.modeladmin',
     'wagtail.contrib.settings',
@@ -115,6 +116,7 @@ MIDDLEWARE = [
 
     'hypha.apply.middleware.apply_url_conf_middleware',
     'hypha.apply.middleware.HandleProtectionErrorMiddleware',
+    'django_htmx.middleware.HtmxMiddleware',
 ]
 
 # Logging
