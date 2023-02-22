@@ -39,9 +39,6 @@ htmlcov/
 .mypy_cache/
 .pytest_cache/
 
-# Webpack
-webpack-stats.json
-
 # Compiled language files
 *.mo
 .env
