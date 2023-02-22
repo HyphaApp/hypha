@@ -30,7 +30,11 @@
         <script src="{% static 'js/jquery.min.js' %}"></script>
         <script src="{% static 'js/js.cookie.min.js' %}"></script>
         <script src="{% static 'js/main-top.js' %}"></script>
-        <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+        <!-- alphine js start-->
+        <script defer src="{% static 'js/apply/vendor/alpine-3.11.1.min.js' %}"></script>
+        <style> [x-cloak] {display: none !important} </style>
+        <!-- apline.js ends-->
 
         {% if COOKIES_ACCEPTED and MATOMO_URL and MATOMO_SITEID %}
         {# we are only expecting strings, so make sure we escape the values #}
