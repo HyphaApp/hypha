@@ -46,18 +46,6 @@
         <script defer src="{% static 'js/apply/vendor/alpine-3.11.1.min.js' %}"></script>
         <style> [x-cloak] {display: none !important} </style>
         <!-- alpine.js end -->
-
-        {% if COOKIES_ACCEPTED and MATOMO_URL and MATOMO_SITEID %}
-        {# we are only expecting strings, so make sure we escape the values #}
-        <script>
-          var matomo = {
-            'url': '{{ MATOMO_URL }}',
-            'siteid': '{{ MATOMO_SITEID }}'
-          };
-        </script>
-        <script src="{% static 'js/tracking.js' %}"></script>
-        <script defer src="https://{{ MATOMO_URL }}/matomo.js"></script>
-        {% endif %}
     </head>
 
     <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' class="{% block body_class %}light-grey-bg template-{{ page.get_verbose_name|slugify }}{% endblock %}">

@@ -48,10 +48,6 @@ SUBMISSIONS_ARCHIVED_ACCESS_STAFF_ADMIN = env.bool('SUBMISSIONS_ARCHIVED_ACCESS_
 # Good for testing, might not be a good idea in production.
 HIJACK_ENABLE = env.bool('HIJACK_ENABLE', False)
 
-# Matomo tracking.
-MATOMO_SITEID = env.str('MATOMO_SITEID', None)
-MATOMO_URL = env.str('MATOMO_URL', None)
-
 # Organisation name and e-mail address etc., used in e-mail templates etc.
 ORG_EMAIL = env.str('ORG_EMAIL', 'info@example.org')
 ORG_GUIDE_URL = env.str('ORG_GUIDE_URL', 'https://guide.example.org/')
