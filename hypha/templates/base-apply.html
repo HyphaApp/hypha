@@ -30,10 +30,12 @@
         <script src="{% static 'js/jquery.min.js' %}"></script>
         <script src="{% static 'js/js.cookie.min.js' %}"></script>
         <script src="{% static 'js/main-top.js' %}"></script>
-        <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-        {% if latest_notifications %}
-        <script defer src="{% static 'js/apply/notifications.js' %}"></script>
-        {% endif %}
+
+        <!-- alphine js start-->
+        <script defer src="{% static 'js/apply/vendor/alpine-3.11.1.min.js' %}"></script>
+        <style> [x-cloak] {display: none !important} </style>
+        <!-- apline.js ends-->
+
         {% if COOKIES_ACCEPTED and MATOMO_URL and MATOMO_SITEID %}
         {# we are only expecting strings, so make sure we escape the values #}
         <script>
@@ -109,7 +111,19 @@
 
                 <div class="header__button-container">
                     {% if latest_notifications %}
-                        {% include "activity/include/notifications_dropdown.html" %}
+                        <div x-data="{open: false}">
+                            <a href="{% url "activity:notifications" %}"
+                                class="button button--contains-icons notifications__bell"
+                                aria-label="{% trans "Notifications" %}"
+                                aria-haspopup="activity"
+                                aria-expanded="false"
+                                role="button"
+                                @click.prevent="open = ! open"
+                            >
+                                <svg class="icon"><use xlink:href="#bell-icon"></use></svg>
+                            </a>
+                            <div x-cloak x-show="open" x-transition @click.outside="open = false">{% include "activity/include/notifications_dropdown.html" %}</div>
+                        </div>
                     {% endif %}
                     <a href="{% url 'users:account' %}" class="button button--transparent button--narrow button--contains-icons">
                         <svg class="icon icon--person"><use xlink:href="#person-icon"></use></svg>

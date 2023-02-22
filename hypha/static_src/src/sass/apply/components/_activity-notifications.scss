@@ -1,8 +1,7 @@
 .notifications {
     &--dropdown {
         position: relative;
-        display: inline-block;
-        z-index: 200;
+        z-index: 999999;
     }
 
     &__bell {
@@ -13,21 +12,36 @@
     &__content {
         position: absolute;
         right: 1em;
-        padding: 1em;
-        margin-top: .5em;
-        background-color: $color--light-grey;
+        margin-top: .5rem;
+        padding-bottom: .25rem;
+        background-color: $color--white;
+        border: 1px solid $color--light-grey;
         min-width: 400px;
-        box-shadow: 2px 2px 6px 1px $color--dark-grey;
+        box-shadow: rgba(0, 0, 0, 10%) 0 4px 6px -1px, rgba(0, 0, 0, 6%) 0 2px 4px -1px;  /* stylelint-disable-line */
     }
 
-    &__item {
-        padding-bottom: 1em;
-        border-bottom: 1px solid $color--dark-grey;
+    &__header {
+        padding: .75rem 1rem;
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 1px solid $color--light-grey;
+        font-weight: $weight--semibold;
+        background-color: $color--light-grey;
     }
 
     &__more {
-        text-align: center;
         font-weight: $weight--semibold;
+    }
+
+    &__item {
+        margin: 0;
+        padding: .75rem 1rem;
+        border-bottom: 1px solid $color--light-grey;
+
+        &:last-child {
+            margin-bottom: 0;
+            border-bottom: 0;
+        }
     }
 
     &__filters {

@@ -1,11 +1,12 @@
 {% load i18n activity_tags bleach_tags markdown_tags submission_tags apply_tags %}
 
 <div class="notifications notifications--dropdown">
-    <a href="#" class="button button--contains-icons notifications__bell" aria-label="{% trans "Notifications" %}" aria-haspopup="activity" aria-expanded="false" role="button">
-        <svg class="icon"><use xlink:href="#bell-icon"></use></svg>
-    </a>
-    <div class="notifications__content zeta hidden" role="activity">
-        <h5>{% trans "Notifications" %}</h5>
+    <div class="notifications__content zeta" role="activity">
+        <div class="notifications__header">
+            <span>{% trans "Notifications" %}</span>
+            <a class="notifications__more" href="{% url "activity:notifications" %}">{% trans "Show All" %}</a>
+        </div>
+
         {% for activity in latest_notifications %}
         <p class="notifications__item">
             <strong>{{ activity.source_content_type.name|source_type }} </strong>
@@ -14,6 +15,6 @@
             {% if activity.related_object %}<a href="{{ activity.related_object.get_absolute_url }}">{{ activity.related_object|model_verbose_name }}</a>{% endif %}
         </p>
         {% endfor %}
-        <p class="notifications__more"><a href="{% url "activity:notifications" %}">{% trans "Show All" %}</a></p>
+
     </div>
 </div>
