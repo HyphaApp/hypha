@@ -70,11 +70,6 @@
         }
     }
 
-    &__date,
-    &__determination {
-        color: $color--primary;
-    }
-
     &__title {
         color: $color--default;
         font-size: map-get($font-sizes, epsilon);
@@ -86,5 +81,19 @@
         padding: 20px;
         background-color: $color--white;
         border: 1px solid $color--light-mid-grey;
+    }
+
+    @include media-query(tablet-landscape) {
+        &__title {
+            flex-basis: 25em;
+        }
+
+        &__fund {
+            flex-basis: 20em;
+        }
+
+        &__view {
+            flex-basis: 5em;
+        }
     }
 }

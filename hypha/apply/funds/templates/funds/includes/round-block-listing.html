@@ -5,7 +5,7 @@
         {% if forloop.counter0 < 5 %}
             <li class="round-block__item">
                 <a href="{% url 'apply:rounds:detail' pk=round.pk %}" class="round-block__title">{{ round }}</a>
-                <p> {{ round.fund|default_if_none:"-" }} </p>
+                <p class="round-block__fund"> {{ round.fund|default_if_none:"-" }} </p>
                 <p class="round-block__date">
                     {% if round.end_date %}
                         {{ display_text }} {{ round.end_date|date:"SHORT_DATE_FORMAT" }}
