@@ -4,7 +4,7 @@
     pointer-events: none;
 
     .bar {
-        background: #0076ff;
+        background: $color--dark-blue;
 
         position: fixed;
         z-index: 1031;
@@ -12,7 +12,7 @@
         left: 0;
 
         width: 100%;
-        height: 3px;
+        height: 2px;
     }
 
     /* Fancy blur effect */
@@ -22,7 +22,7 @@
         right: 0px;
         width: 100px;
         height: 100%;
-        box-shadow: 0 0 10px #0076ff, 0 0 5px #0076ff;
+        box-shadow: 0 0 10px $color--dark-blue, 0 0 5px $color--dark-blue;
         opacity: 1;
 
         transform: rotate(3deg) translate(0px, -4px);
@@ -43,8 +43,8 @@
         box-sizing: border-box;
 
         border: solid 2px transparent;
-        border-top-color: #29d;
-        border-left-color: #29d;
+        border-top-color: $color--dark-blue;
+        border-left-color: $color--dark-blue;
         border-radius: 50%;
 
         animation: nprogress-spinner 400ms linear infinite;

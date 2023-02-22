@@ -5,6 +5,9 @@
     "author": "Fredrik Jonsson",
     "license": "GPL-2.0",
     "babel": {
+        "exclude": [
+            "**/*.min.js"
+        ],
         "presets": [
             [
                 "@babel/preset-env",
