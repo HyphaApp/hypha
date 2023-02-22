@@ -104,8 +104,8 @@ class ReportFrequencyForm(forms.ModelForm):
         model = ReportConfig
         fields = ('start', 'occurrence', 'frequency', 'does_not_repeat')
         labels = {
-            'occurrence': _(''),
-            'frequency': _(''),
+            'occurrence': '',
+            'frequency': '',
         }
 
     def __init__(self, *args, **kwargs):
