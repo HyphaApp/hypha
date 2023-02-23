@@ -12,7 +12,7 @@
     function get_questions() {
         var questions_text = [];
         questions_text.push('# ' + $('.header__title').html());
-        $('.application-form').find('.form__group, .rich-text').each(function () {
+        $('.application-form').find('.form__group, .rich-text, h2, h3').each(function () {
             var question_text = '';
             var label_text = $(this).find('.form__question').html();
             if (label_text) {
@@ -64,7 +64,7 @@
             else {
                 // Get the sub headers and help text.
                 question_text = strip($(this).html());
-                if ($(this).find('h2')) {
+                if ($(this).find('h2, h3')) {
                     question_text = '## ' + question_text;
                 }
             }
@@ -85,12 +85,16 @@
 
         $('.js-clipboard-button').on('click', function (e) {
             e.preventDefault();
+            $application_form.addClass('flash-item');
             var questions = get_questions();
             var $textarea = $('<textarea>').html(questions).addClass('visually-hidden');
             $textarea.appendTo('body');
             $textarea.select();
             document.execCommand('copy');
             $textarea.remove();
+            setTimeout(function () {
+                $application_form.removeClass('flash-item');
+            }, 1200);
         });
     }
 

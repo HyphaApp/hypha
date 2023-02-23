@@ -549,3 +549,11 @@
         margin-top: -1em;
     }
 }
+
+.flash-item {
+    animation: flash 1s ease 1;
+}
+
+@keyframes flash {
+    50% { background-color: $color--mustard; }
+}
