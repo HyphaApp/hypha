@@ -28,7 +28,9 @@ from ..forms import SetPendingForm
 from ..models.payment import CHANGES_REQUESTED_BY_STAFF, SUBMITTED
 from ..models.project import (
     APPROVE,
+    CLOSING,
     COMMITTED,
+    COMPLETE,
     CONTRACTING,
     IN_PROGRESS,
     REQUEST_CHANGE,
@@ -1151,10 +1153,19 @@ class TestStaffSubmitReport(BaseViewTestCase):
             'pk': instance.pk,
         }
 
-    def test_get_page(self):
+    def test_get_page_for_inprogress_project(self):
         report = ReportFactory(project__status=IN_PROGRESS)
         response = self.get_page(report)
         self.assertContains(response, report.project.title)
+
+    def test_cant_get_page_for_closing_and_complete_project(self):
+        report = ReportFactory(project__status=CLOSING)
+        response = self.get_page(report)
+        self.assertEqual(response.status_code, 403)
+
+        report = ReportFactory(project__status=COMPLETE)
+        response = self.get_page(report)
+        self.assertEqual(response.status_code, 403)
 
     def test_submit_report(self):
         report = ReportFactory(project__status=IN_PROGRESS)
@@ -1165,6 +1176,15 @@ class TestStaffSubmitReport(BaseViewTestCase):
         self.assertEqual(report.versions.first(), report.current)
         self.assertEqual(report.current.author, self.user)
         self.assertIsNone(report.draft)
+
+    def test_cant_submit_report_for_closing_and_complete_project(self):
+        report = ReportFactory(project__status=CLOSING)
+        response = self.post_page(report, {'public_content': 'Some text'})
+        self.assertEqual(response.status_code, 403)
+
+        report = ReportFactory(project__status=COMPLETE)
+        response = self.post_page(report, {'public_content': 'Some text'})
+        self.assertEqual(response.status_code, 403)
 
     def test_submit_private_report(self):
         report = ReportFactory(project__status=IN_PROGRESS)
@@ -1233,7 +1253,7 @@ class TestStaffSubmitReport(BaseViewTestCase):
     def test_cant_submit_future_report(self):
         submitted_report = ReportFactory(
             end_date=timezone.now() + relativedelta(days=1),
-            is_submitted=True,
+            is_submitted=True, project__status=IN_PROGRESS,
         )
         future_report = ReportFactory(
             end_date=timezone.now() + relativedelta(days=3),
@@ -1253,10 +1273,19 @@ class TestApplicantSubmitReport(BaseViewTestCase):
             'pk': instance.pk,
         }
 
-    def test_get_own_report(self):
+    def test_get_own_report_for_inprogress_project(self):
         report = ReportFactory(project__status=IN_PROGRESS, project__user=self.user)
         response = self.get_page(report)
         self.assertContains(response, report.project.title)
+
+    def test_cant_get_own_report_for_closing_and_complete_project(self):
+        report = ReportFactory(project__status=CLOSING, project__user=self.user)
+        response = self.get_page(report)
+        self.assertEqual(response.status_code, 403)
+
+        report = ReportFactory(project__status=COMPLETE, project__user=self.user)
+        response = self.get_page(report)
+        self.assertEqual(response.status_code, 403)
 
     def test_cant_get_other_report(self):
         report = ReportFactory(project__status=IN_PROGRESS)
@@ -1309,7 +1338,8 @@ class TestApplicantSubmitReport(BaseViewTestCase):
         self.assertIsNone(report.draft)
 
     def test_cant_edit_submitted_report(self):
-        report = ReportFactory(is_submitted=True, project__user=self.user)
+        # :todo: need to check if applicant can edit submitted report or not.
+        report = ReportFactory(project__status=IN_PROGRESS, is_submitted=True, project__user=self.user)
         self.assertEqual(report.versions.first(), report.current)
         response = self.post_page(report, {'public_content': 'Some text', 'save': ' Save'})
         self.assertEqual(response.status_code, 403)
@@ -1335,18 +1365,26 @@ class TestStaffReportDetail(BaseViewTestCase):
         response = self.get_page(report)
         self.assertEqual(response.status_code, 200)
 
+        report = ReportFactory(project__status=CLOSING, is_submitted=True)
+        response = self.get_page(report)
+        self.assertEqual(response.status_code, 200)
+
+        report = ReportFactory(project__status=COMPLETE, is_submitted=True)
+        response = self.get_page(report)
+        self.assertEqual(response.status_code, 200)
+
     def test_cant_access_skipped_report(self):
         report = ReportFactory(project__status=IN_PROGRESS, skipped=True)
         response = self.get_page(report)
         self.assertEqual(response.status_code, 403)
 
     def test_cant_access_draft_report(self):
-        report = ReportFactory(is_draft=True)
+        report = ReportFactory(project__status=IN_PROGRESS, is_draft=True)
         response = self.get_page(report)
         self.assertEqual(response.status_code, 403)
 
     def test_cant_access_future_report(self):
-        report = ReportFactory(end_date=timezone.now() + relativedelta(days=1))
+        report = ReportFactory(project__status=IN_PROGRESS, end_date=timezone.now() + relativedelta(days=1))
         response = self.get_page(report)
         self.assertEqual(response.status_code, 403)
 
@@ -1362,32 +1400,33 @@ class TestApplicantReportDetail(BaseViewTestCase):
         }
 
     def test_can_access_own_submitted_report(self):
-        report = ReportFactory(is_submitted=True, project__user=self.user)
+        report = ReportFactory(project__status=IN_PROGRESS, is_submitted=True, project__user=self.user)
         response = self.get_page(report)
         self.assertEqual(response.status_code, 200)
 
     def test_cant_access_own_draft_report(self):
-        report = ReportFactory(is_draft=True, project__user=self.user)
+        report = ReportFactory(project__status=IN_PROGRESS, is_draft=True, project__user=self.user)
         response = self.get_page(report)
         self.assertEqual(response.status_code, 403)
 
     def test_cant_access_own_future_report(self):
-        report = ReportFactory(end_date=timezone.now() + relativedelta(days=1), project__user=self.user)
+        report = ReportFactory(project__status=IN_PROGRESS, end_date=timezone.now() + relativedelta(days=1),
+                               project__user=self.user)
         response = self.get_page(report)
         self.assertEqual(response.status_code, 403)
 
     def test_cant_access_other_submitted_report(self):
-        report = ReportFactory(is_submitted=True)
+        report = ReportFactory(project__status=IN_PROGRESS, is_submitted=True)
         response = self.get_page(report)
         self.assertEqual(response.status_code, 200)
 
     def test_cant_access_other_draft_report(self):
-        report = ReportFactory(is_draft=True)
+        report = ReportFactory(project__status=IN_PROGRESS, is_draft=True)
         response = self.get_page(report)
         self.assertEqual(response.status_code, 403)
 
     def test_cant_access_other_future_report(self):
-        report = ReportFactory(end_date=timezone.now() + relativedelta(days=1))
+        report = ReportFactory(project__status=IN_PROGRESS, end_date=timezone.now() + relativedelta(days=1))
         response = self.get_page(report)
         self.assertEqual(response.status_code, 403)
 
@@ -1403,35 +1442,35 @@ class TestSkipReport(BaseViewTestCase):
         }
 
     def test_can_skip_report(self):
-        report = ReportFactory(past_due=True)
+        report = ReportFactory(project__status=IN_PROGRESS, past_due=True)
         response = self.post_page(report)
         self.assertEqual(response.status_code, 200)
         report.refresh_from_db()
         self.assertTrue(report.skipped)
 
     def test_can_unskip_report(self):
-        report = ReportFactory(skipped=True, past_due=True)
+        report = ReportFactory(project__status=IN_PROGRESS, skipped=True, past_due=True)
         response = self.post_page(report)
         self.assertEqual(response.status_code, 200)
         report.refresh_from_db()
         self.assertFalse(report.skipped)
 
     def test_cant_skip_current_report(self):
-        report = ReportFactory(end_date=timezone.now() + relativedelta(days=1))
+        report = ReportFactory(project__status=IN_PROGRESS, end_date=timezone.now() + relativedelta(days=1))
         response = self.post_page(report)
         self.assertEqual(response.status_code, 200)
         report.refresh_from_db()
         self.assertFalse(report.skipped)
 
     def test_cant_skip_submitted_report(self):
-        report = ReportFactory(is_submitted=True)
+        report = ReportFactory(project__status=IN_PROGRESS, is_submitted=True)
         response = self.post_page(report, data={})
         self.assertEqual(response.status_code, 200)
         report.refresh_from_db()
         self.assertFalse(report.skipped)
 
     def test_can_skip_draft_report(self):
-        report = ReportFactory(is_draft=True, past_due=True)
+        report = ReportFactory(project__status=IN_PROGRESS, is_draft=True, past_due=True)
         response = self.post_page(report)
         self.assertEqual(response.status_code, 200)
         report.refresh_from_db()

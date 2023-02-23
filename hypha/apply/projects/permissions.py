@@ -62,7 +62,7 @@ def can_update_report(user, report):
     if not report.can_submit:
         return False, 'Future reports are not editable'
 
-    if user.is_apply_staff or user == report.project.user:
+    if user.is_apply_staff or (user == report.project.user and not report.current):
         return True, 'Staff and Project Owner can edit the editable reports'
 
     return False, 'Forbidden Error'
@@ -93,6 +93,8 @@ def can_view_report(user, report):
         return False, 'Login Required'
     if report.project.status not in [COMPLETE, CLOSING, IN_PROGRESS]:
         return False, 'Report are not available at this state'
+    if not report.current:
+        return False, 'Only current reports can be viewed'
     if report.skipped:
         return False, 'Skipped reports are not available'
     if user.is_apply_staff or user.is_finance or user == report.project.user:
