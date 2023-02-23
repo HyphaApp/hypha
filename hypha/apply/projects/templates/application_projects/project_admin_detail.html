@@ -1,6 +1,6 @@
 {% extends "application_projects/project_detail.html" %}
 
-{% load i18n approval_tools contract_tools static %}
+{% load i18n approval_tools contract_tools project_tags static %}
 
 {% block admin_actions %}
 <div class="modal" id="send-for-approval">
@@ -28,6 +28,12 @@
     <h4 class="modal__header-bar">{% trans "Assign Lead" %}</h4>
     {% trans "Update" as update %}
     {% include 'funds/includes/delegated_form_base.html' with form=lead_form value=update %}
+</div>
+
+<div class="modal" id="project-status">
+    <h4 class="modal__header-bar">{% trans "Update Project Status" %}</h4>
+    {% trans "Update" as update %}
+    {% include 'funds/includes/delegated_form_base.html' with form=change_project_status value=update %}
 </div>
 
 <div class="modal" id="approve">
@@ -89,21 +95,24 @@
 {% endblock %}
 
 {% block admin_assignments %}
-<p class="sidebar__separator">{% trans "Assign" %}</p>
+    <p class="sidebar__separator">{% trans "Assign" %}</p>
 
-<a data-fancybox
- data-src="#assign-lead"
- class="button button--bottom-space button--white button--full-width"
- href="#">
-  {% trans "Lead" %}
-</a>
+    <a data-fancybox
+     data-src="#assign-lead"
+     class="button button--bottom-space button--white button--full-width"
+     href="#">
+      {% trans "Lead" %}
+    </a>
 
-<!-- <a data-fancybox -->
-<!-- data-src="#update-meta-terms" -->
-<!-- class="button button--bottom-space button--white button--full-width" -->
-<!-- href="#"> -->
-<!-- Meta Terms -->
-<!-- </a> -->
+    {% user_can_update_project_status project user as can_update_status %}
+    <!-- Move the condition below to link if add more than one link to 'More Actions'-->
+    {% if can_update_status %}
+    <details>
+        <summary class="sidebar__separator sidebar__separator--medium">{% trans "More actions" %}</summary>
+
+        <a data-fancybox data-src="#project-status" class="button button--white button--full-width button--bottom-space" href="#">{% trans "Update Project Status" %}</a>
+    </details>
+    {% endif %}
 {% endblock %}
 
 {% block project_approvals %}
