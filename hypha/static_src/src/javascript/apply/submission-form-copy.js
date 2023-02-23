@@ -11,6 +11,7 @@
     // Get all questions on the page/form.
     function get_questions() {
         var questions_text = [];
+        var i = 1;
         questions_text.push('# ' + $('.header__title').html());
         $('.application-form').find('.form__group, .rich-text, h2, h3').each(function () {
             var question_text = '';
@@ -65,7 +66,8 @@
                 // Get the sub headers and help text.
                 question_text = strip($(this).html());
                 if ($(this).find('h2, h3')) {
-                    question_text = '## ' + question_text;
+                    question_text = '## ' + i + '. ' + question_text;
+                    i++;
                 }
             }
             questions_text.push(question_text);
