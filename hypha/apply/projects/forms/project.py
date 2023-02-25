@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth import get_user_model
 from django.db.models import Q
+from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from django_file_form.forms import FileFormMixin
 
@@ -18,6 +19,7 @@ from ..models.project import (
     PROJECT_STATUS_CHOICES,
     Contract,
     PacketFile,
+    PAFApprovals,
     PAFReviewersRole,
     Project,
 )
@@ -138,13 +140,11 @@ class ProjectApprovalForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaCl
 
 class ChangePAFStatusForm(forms.ModelForm):
     name_prefix = 'change_paf_status_form'
-    paf_reviewers_roles = PAFReviewersRole.objects.all().only('role')
     paf_status = forms.ChoiceField(choices=PAF_STATUS_CHOICES)
-    role = forms.ModelChoiceField(queryset=paf_reviewers_roles)
     comment = forms.CharField(required=False, widget=forms.Textarea)
 
     class Meta:
-        fields = ['paf_status', 'role', 'comment']
+        fields = ['paf_status', 'comment']
         model = Project
 
     def __init__(self, instance, user, *args, **kwargs):
@@ -190,11 +190,45 @@ class SetPendingForm(forms.ModelForm):
     def __init__(self, user=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        for paf_reviewer_role in PAFReviewersRole.objects.all():
+            users = User.objects.all()
+            for group in paf_reviewer_role.user_roles.all():
+                users = users.filter(groups__name=group)
+            approval = PAFApprovals.objects.filter(project=self.instance, paf_reviewer_role=paf_reviewer_role)
+            if approval:
+                initial_user = approval.first().user
+            self.fields[slugify(paf_reviewer_role.label)] = forms.ModelChoiceField(
+                queryset=users,
+                label=paf_reviewer_role.label,
+                initial=initial_user if approval else None,
+                disabled=approval.first().approved if approval.first() else False,
+                # using approval.first() as condition for existing projects
+            )
+
     def clean(self):
         if self.instance.status != COMMITTED:
             raise forms.ValidationError(_('A Project can only be sent for Approval when Committed.'))
 
-        super().clean()
+        cleaned_data = super().clean()
+        paf_reviewer_roles = PAFReviewersRole.objects.all()
+        if paf_reviewer_roles:
+            for paf_reviewer_role in paf_reviewer_roles:
+                if not cleaned_data[slugify(paf_reviewer_role.label)]:
+                    self.add_error(slugify(paf_reviewer_role.label))
+        return cleaned_data
+
+    def save(self, commit=True):
+        # add users as PAFApprovals
+        for paf_reviewer_role in PAFReviewersRole.objects.all():
+            if not PAFApprovals.objects.filter(project=self.instance, paf_reviewer_role=paf_reviewer_role).exists():
+                PAFApprovals.objects.create(
+                    project=self.instance,
+                    paf_reviewer_role=paf_reviewer_role,
+                    user=self.cleaned_data[slugify(paf_reviewer_role.label)],
+                    approved=False,
+                )
+        return super().save(commit=True)
+
 
 
 class UploadContractForm(FileFormMixin, forms.ModelForm):

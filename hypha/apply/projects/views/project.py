@@ -66,6 +66,7 @@ from ..forms import (
 )
 from ..models.payment import Invoice
 from ..models.project import (
+    APPROVE,
     COMMITTED,
     CONTRACTING,
     IN_PROGRESS,
@@ -74,6 +75,7 @@ from ..models.project import (
     WAITING_FOR_APPROVAL,
     Contract,
     PacketFile,
+    PAFApprovals,
     PAFReviewersRole,
     Project,
 )
@@ -116,8 +118,6 @@ class SendForApprovalView(DelegatedViewMixin, UpdateView):
 
         project.status = WAITING_FOR_APPROVAL
         project.save(update_fields=['status'])
-
-        self.send_to_compliance()
 
         messenger(
             MESSAGES.PROJECT_TRANSITION,
@@ -481,19 +481,27 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
     context_name = 'change_paf_status'
     model = Project
 
+    def dispatch(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if not self.request.user.paf_approvals.filter(project=self.object, approved=False).exists():
+            raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)
+
     def form_valid(self, form):
         response = super().form_valid(form)
-        role = form.cleaned_data.get('role')
+        paf_approval = self.request.user.paf_approvals.filter(project=self.object, approved=False).first()
+        # role = form.cleaned_data.get('role')
         paf_status = form.cleaned_data.get('paf_status')
         comment = form.cleaned_data.get('comment', '')
 
-        self.object.paf_reviews_meta_data.update(
-            {str(role.role): {'status': paf_status, 'comment': comment, 'user_id': self.request.user.id}}
-        )
-        self.object.save(update_fields=['paf_reviews_meta_data'])
+        # self.object.paf_reviews_meta_data.update(
+        #     {str(role.role): {'status': paf_status, 'comment': comment, 'user_id': self.request.user.id}}
+        # )
+
+        # self.object.save(update_fields=['paf_reviews_meta_data'])
 
         paf_status_update_message = _('<p>{role} has updated PAF status to {paf_status}.</p>').format(
-            role=role, paf_status=paf_status)
+            role=paf_approval.paf_reviewer_role.label, paf_status=paf_status)
         Activity.objects.create(
             user=self.request.user,
             type=ACTION,
@@ -505,8 +513,7 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
 
         if paf_status == REQUEST_CHANGE:
             self.object.status = COMMITTED
-            self.object.paf_reviews_meta_data = {}
-            self.object.save(update_fields=['status', 'paf_reviews_meta_data'])
+            self.object.save(update_fields=['status'])
 
             messenger(
                 MESSAGES.REQUEST_PROJECT_CHANGE,
@@ -515,6 +522,9 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
                 source=self.object,
                 comment=comment,
             )
+        elif paf_status == APPROVE:
+            paf_approval.approved = True
+            paf_approval.save(update_fields=['approved'])
 
         if form.cleaned_data['comment']:
 
@@ -618,7 +628,7 @@ class AdminProjectDetailView(
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['approvals'] = self.object.approvals.distinct('by')
+        context['paf_approvals'] = PAFApprovals.objects.filter(project=self.object)
         context['remaining_document_categories'] = list(self.object.get_missing_document_categories())
 
         if self.object.is_in_progress and not self.object.report_config.disable_reporting:

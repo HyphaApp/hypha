@@ -23,10 +23,9 @@ def user_can_approve_project(project, user):
 
 @register.simple_tag
 def user_can_update_paf_status(project, user):
-    if not project.user == user:
+    if project.paf_approvals and user.id in project.paf_approvals.filter(approved=False).values_list('user', flat=True):
         if project.can_update_paf_status:
-            if user.is_finance or user.is_contracting or user.is_approver:
-                return True
+            return True
     return False
 
 
