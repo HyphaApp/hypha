@@ -159,9 +159,9 @@ class FinalApprovalView(DelegatedViewMixin, UpdateView):
         if status == REQUEST_CHANGE:
             project.status = COMMITTED
             project.is_locked = False
-            project.paf_reviews_meta_data = {}
             project.ready_for_final_approval = False
-            project.save(update_fields=['status', 'is_locked', 'paf_reviews_meta_data', 'ready_for_final_approval'])
+            project.save(update_fields=['status', 'is_locked', 'ready_for_final_approval'])
+            project.paf_approvals.all().update(approved=False)  # Approvers should look into it again.
 
             project_status_message = _(
                 '<p>{user} request changes the Project and update status to {project_status}.</p>').format(
@@ -490,15 +490,8 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
     def form_valid(self, form):
         response = super().form_valid(form)
         paf_approval = self.request.user.paf_approvals.filter(project=self.object, approved=False).first()
-        # role = form.cleaned_data.get('role')
         paf_status = form.cleaned_data.get('paf_status')
         comment = form.cleaned_data.get('comment', '')
-
-        # self.object.paf_reviews_meta_data.update(
-        #     {str(role.role): {'status': paf_status, 'comment': comment, 'user_id': self.request.user.id}}
-        # )
-
-        # self.object.save(update_fields=['paf_reviews_meta_data'])
 
         paf_status_update_message = _('<p>{role} has updated PAF status to {paf_status}.</p>').format(
             role=paf_approval.paf_reviewer_role.label, paf_status=paf_status)
@@ -813,7 +806,7 @@ class ProjectDetailDownloadView(SingleObjectMixin, View):
         context['contractor_name'] = self.object.vendor.contractor_name if self.object.vendor else None
         context['total_amount'] = self.object.value
 
-        context['approvers'] = self.object.paf_reviews_meta_data
+        context['approvals'] = self.object.paf_approvals.all()
         context['paf_data'] = self.get_paf_data_with_field(self.object)
         context['submission'] = self.object.submission
         context['submission_link'] = self.request.build_absolute_uri(

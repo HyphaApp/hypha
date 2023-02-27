@@ -1,10 +1,10 @@
 from .payment import Invoice, InvoiceDeliverable, SupportingDocument
 from .project import (
-    PAFApprovals,
     Contract,
     Deliverable,
     DocumentCategory,
     PacketFile,
+    PAFApprovals,
     Project,
     ProjectApprovalForm,
     ProjectSettings,
