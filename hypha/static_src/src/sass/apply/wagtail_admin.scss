@@ -1,18 +1,16 @@
-#tab-roles {
-    input[type="checkbox"]::before {
-        top: 0px;
-    }
+input[type='checkbox']::before {
+    top: 0;
+}
 
-    input[type="checkbox"] {
-        float: left;
-    }
+input[type='checkbox'] {
+    float: left;
+}
 
-    .form__item label {
+.grid > li {
+    margin-bottom: 15px;
+
+    & > label {
         line-height: 22px;
         font-weight: normal;
-    }
-
-    li.form__item {
-        margin-bottom: 15px;
     }
 }
