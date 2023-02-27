@@ -1,7 +1,6 @@
 import json
 import os
 
-import tomd
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
@@ -13,17 +12,13 @@ from hypha.public.projects.models import ProjectPage
 class Command(BaseCommand):
     help = "Export public pages to json files."
 
-    def get_streamfield_as_markdown(self, field):
+    def get_streamfield_as_blocks(self, field):
         streamfields = []
         for block in field:
-            streamfields.append(str(block.value))
-        body = ''.join(streamfields)
-        return tomd.convert(body).strip()
-
-    def get_streamfield_as_raw(self, field):
-        streamfields = []
-        for block in field:
-            streamfields.append(str(block.value))
+            if hasattr(block.value, 'render_as_block'):
+                streamfields.append(str(block.value.render_as_block()))
+            else:
+                streamfields.append(str(block.value))
         body = ''.join(streamfields)
         return body
 
@@ -93,7 +88,7 @@ class Command(BaseCommand):
                 'related_pages': self.get_related_pages(page.related_pages),
                 'related_projects': self.get_related_pages(page.related_projects),
                 'intro': str(page.introduction).strip(),
-                'body': self.get_streamfield_as_raw(page.body),
+                'body': self.get_streamfield_as_blocks(page.body),
                 'slug': str(page.slug).strip(),
             })
             with open('exports/news.json', 'w', newline='') as jsonfile:
@@ -114,7 +109,7 @@ class Command(BaseCommand):
                 'email': str(page.email).strip(),
                 'web': str(page.website).strip(),
                 'intro': str(page.introduction).strip(),
-                'body': self.get_streamfield_as_raw(page.biography),
+                'body': self.get_streamfield_as_blocks(page.biography),
                 'slug': str(page.slug).strip(),
             })
             with open('exports/people.json', 'w', newline='') as jsonfile:
@@ -133,7 +128,7 @@ class Command(BaseCommand):
                 'contact': self.get_contact(page.contact_details),
                 'related_pages': self.get_related_pages(page.related_pages),
                 'intro': str(page.introduction).strip(),
-                'body': self.get_streamfield_as_raw(page.body),
+                'body': self.get_streamfield_as_blocks(page.body),
                 'slug': str(page.slug).strip(),
             })
             with open('exports/projects.json', 'w', newline='') as jsonfile:
