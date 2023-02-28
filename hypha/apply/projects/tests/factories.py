@@ -9,7 +9,7 @@ from hypha.apply.stream_forms.testing.factories import (
     FormDataFactory,
     FormFieldsBlockFactory,
 )
-from hypha.apply.users.tests.factories import StaffFactory, UserFactory
+from hypha.apply.users.tests.factories import GroupFactory, StaffFactory, UserFactory
 
 from ..models.payment import Invoice, InvoiceDeliverable, SupportingDocument
 from ..models.project import (
@@ -19,6 +19,7 @@ from ..models.project import (
     Deliverable,
     DocumentCategory,
     PacketFile,
+    PAFApprovals,
     PAFReviewersRole,
     Project,
     ProjectApprovalForm,
@@ -105,10 +106,29 @@ class ProjectFactory(factory.django.DjangoModelFactory):
 
 
 class PAFReviewerRoleFactory(factory.django.DjangoModelFactory):
-    role = factory.Faker('name')
+    label = factory.Faker('name')
 
     class Meta:
         model = PAFReviewersRole
+
+    @factory.post_generation
+    def user_roles(self, create, extracted, **kwargs):
+        if create:
+            if not extracted:
+                roles = GroupFactory(**kwargs)
+            else:
+                roles = extracted
+
+            self.user_roles.add(roles)
+
+
+class PAFApprovalsFactory(factory.django.DjangoModelFactory):
+    project = factory.SubFactory(ProjectFactory)
+    paf_reviewer_role = factory.SubFactory(PAFReviewerRoleFactory)
+    user = factory.SubFactory(StaffFactory)
+
+    class Meta:
+        model = PAFApprovals
 
 
 class ContractFactory(factory.django.DjangoModelFactory):

@@ -19,7 +19,7 @@ from hypha.apply.funds.tables import (
     review_filter_for_user,
 )
 from hypha.apply.projects.filters import ProjectListFilter
-from hypha.apply.projects.models import Invoice, Project, PAFApprovals
+from hypha.apply.projects.models import Invoice, PAFApprovals, Project
 from hypha.apply.projects.models.project import WAITING_FOR_APPROVAL
 from hypha.apply.projects.tables import InvoiceDashboardTable, ProjectsDashboardTable
 from hypha.apply.utils.views import ViewDispatcher
