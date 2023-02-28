@@ -3,6 +3,7 @@ import decimal
 import json
 import logging
 
+from django import forms
 from django.apps import apps
 from django.conf import settings
 from django.contrib.auth.models import Group
@@ -17,7 +18,7 @@ from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from modelcluster.fields import ParentalKey
+from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from modelcluster.models import ClusterableModel
 from wagtail.admin.panels import FieldPanel, InlinePanel
 from wagtail.contrib.settings.models import BaseSetting, register_setting
@@ -414,9 +415,9 @@ class ProjectApprovalForm(BaseStreamForm, models.Model):
         return self.name
 
 
-class PAFReviewersRole(Orderable):
+class PAFReviewersRole(Orderable, ClusterableModel):
     label = models.CharField(max_length=200)
-    user_roles = models.ManyToManyField(
+    user_roles = ParentalManyToManyField(
         Group,
         verbose_name=_("user groups"),
         help_text=_(
@@ -425,6 +426,11 @@ class PAFReviewersRole(Orderable):
         related_name="paf_reviewers_roles",
     )
     page = ParentalKey('ProjectSettings', related_name='paf_reviewers_roles')
+
+    panels = [
+        FieldPanel('label'),
+        FieldPanel('user_roles', widget=forms.CheckboxSelectMultiple),
+    ]
 
     def __str__(self):
         return str(self.label)
