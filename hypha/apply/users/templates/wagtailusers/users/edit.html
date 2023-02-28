@@ -1,24 +1,23 @@
 <!-- Override the Wagtail's user edit template to add a custom 'Disable 2FA' button to account section-->
 {% extends "wagtailusers/users/edit.html" %}
-{% load i18n wagtailimages_tags users_tags %}
 {% load wagtailimages_tags %}
 {% load users_tags %}
 {% load i18n %}
 {% block content %}
 
     {% trans "Editing" as editing_str %}
-    {% include "wagtailadmin/shared/header.html" with title=editing_str subtitle=user.get_username merged=1 tabbed=1 icon="user" %}
+    {% include "wagtailadmin/shared/header.html" with title=editing_str subtitle=user.get_username merged=1 icon="user" %}
 
     <style>
         {# fix for checkbox alignment #}
         input[type=checkbox] {
-            vertical-align: text-bottom;
+            margin-bottom: .4rem;
         }
     </style>
 
     <div class="w-tabs" data-tabs>
         <div class="w-tabs__wrapper">
-            <div role="tablist" class="w-tabs__list nice-padding">
+            <div role="tablist" class="w-tabs__list">
                 {% trans "Account" as account_text %}
                 {% include 'wagtailadmin/shared/tabs/tab_nav_link.html' with tab_id='account' title=account_text %}
                 {% trans "Roles" as roles_text %}
@@ -27,7 +26,7 @@
         </div>
 
         <form action="{% url 'wagtailusers_users:edit' user.pk %}" method="POST" novalidate{% if form.is_multipart %} enctype="multipart/form-data"{% endif %}>
-            <div class="tab-content nice-padding">
+            <div class="tab-content">
                 {% csrf_token %}
 
                 <section
@@ -66,9 +65,9 @@
 
                         {% endblock fields %}
                         <li>
-                            <input type="submit" value="{% trans 'Save' %}" class="button" />
+                            <input type="submit" value="{% trans 'Save' %}" class="button"/>
                             {% if can_delete %}
-                                <a href="{% url 'wagtailusers_users:delete' user.pk %}" class="button button-secondary no">{% trans "Delete user" %}</a>
+                                <a href="{% url 'wagtailusers_users:delete' user.pk %}" class="button no">{% trans "Delete user" %}</a>
                             {% endif %}
                             <!-- Add a custom button to user account edit form -->
                             {% user_2fa_enabled user as is_2fa_enabled %}
@@ -94,9 +93,9 @@
 
                         {% include "wagtailadmin/shared/field_as_li.html" with field=form.groups %}
                         <li>
-                            <input type="submit" value="{% trans 'Save' %}" class="button" />
+                            <input type="submit" value="{% trans 'Save' %}" class="button"/>
                             {% if can_delete %}
-                                <a href="{% url 'wagtailusers_users:delete' user.pk %}" class="button button-secondary no">{% trans "Delete user" %}</a>
+                                <a href="{% url 'wagtailusers_users:delete' user.pk %}" class="button no">{% trans "Delete user" %}</a>
                             {% endif %}
                         </li>
                     </ul>
@@ -108,7 +107,6 @@
 
 {% block extra_css %}
     {{ block.super }}
-    {% include "wagtailadmin/pages/_editor_css.html" %}
     {{ form.media.css }}
 {% endblock %}
 {% block extra_js %}
@@ -116,4 +114,3 @@
     {% include "wagtailadmin/pages/_editor_js.html" %}
     {{ form.media.js }}
 {% endblock %}
-
