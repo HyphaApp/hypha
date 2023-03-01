@@ -302,12 +302,12 @@ class TestActivityAdapter(TestCase):
         self.assertIn(submission.phase.display_name, message)
         self.assertIn(old_phase.display_name, message)
 
-    def test_lead_not_saved_on_activity(self):
+    def test_lead_saved_on_activity(self):
         submission = ApplicationSubmissionFactory()
         user = UserFactory()
         self.adapter.send_message('a message', user=user, source=submission, sources=[], related=user)
         activity = Activity.objects.first()
-        self.assertEqual(activity.related_object, None)
+        self.assertEqual(activity.related_object, user)
 
     def test_review_saved_on_activity(self):
         review = ReviewFactory()
