@@ -21,8 +21,8 @@
         {% include 'funds/includes/delegated_form_base.html' with form=request_approval_form value=submit_anyway cancel=True invert=True %}
     {% else %}
         <p> {% trans "Select approvers for Project Approval Form" %} {% if paf_approval_sequential %} {% trans "(Sequentially)" %} {% else %}{% trans "(Parallely)" %}{% endif %}</p>
-        {% trans "Request" as request %}
-        {% include 'funds/includes/delegated_form_base.html' with form=request_approval_form value=request %}
+        {% trans "Request" as submit %}
+        {% include 'funds/includes/delegated_form_base.html' with form=request_approval_form value=submit %}
     {% endif %}
 </div>
 
