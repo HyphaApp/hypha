@@ -144,7 +144,7 @@
                     {% endfor %}
                 </div>
             </article>
-            {% user_can_update_paf_status object user as user_can_take_actions %}
+            {% user_can_update_paf_status object user request=request as user_can_take_actions %}
             {% if user_can_take_actions %}
             <aside class="sidebar">
                 {% if mobile %}

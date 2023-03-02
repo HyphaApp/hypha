@@ -20,7 +20,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from modelcluster.models import ClusterableModel
-from wagtail.admin.panels import FieldPanel, InlinePanel
+from wagtail.admin.panels import FieldPanel, InlinePanel, MultiFieldPanel
 from wagtail.contrib.settings.models import BaseSetting, register_setting
 from wagtail.core.models import Orderable
 from wagtail.fields import StreamField
@@ -442,13 +442,20 @@ class ProjectSettings(BaseSetting, ClusterableModel):
     finance_gp_email = models.TextField("Finance Group Email", null=True, blank=True)
     staff_gp_email = models.TextField("Staff Group Email", null=True, blank=True)
     vendor_setup_required = models.BooleanField(default=True)
+    paf_approval_sequential = models.BooleanField(default=True, help_text="Uncheck it to approve PAF parallely")
 
     panels = [
         FieldPanel('staff_gp_email'),
         FieldPanel('contracting_gp_email'),
         FieldPanel('finance_gp_email'),
         FieldPanel('vendor_setup_required'),
-        InlinePanel('paf_reviewers_roles', label=_('PAF Reviewers Roles')),
+        MultiFieldPanel(
+            [
+                FieldPanel('paf_approval_sequential', heading='Approve PAF Sequentially'),
+                InlinePanel('paf_reviewers_roles', label=_('PAF Reviewers Roles')),
+            ],
+            heading=_('PAF Reviewers Roles'),
+        )
     ]
 
 
@@ -462,6 +469,7 @@ class PAFApprovals(models.Model):
 
     class Meta:
         unique_together = ['project', 'paf_reviewer_role']
+        ordering = ["paf_reviewer_role__sort_order"]
 
     def __str__(self):
         return _('Approval of {project} by {user}').format(project=self.project, user=self.user)

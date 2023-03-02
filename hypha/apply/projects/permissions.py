@@ -1,10 +1,17 @@
 from django.core.exceptions import PermissionDenied
 
-from .models.project import CLOSING, COMPLETE, CONTRACTING, IN_PROGRESS
+from .models.project import (
+    CLOSING,
+    COMPLETE,
+    CONTRACTING,
+    IN_PROGRESS,
+    WAITING_FOR_APPROVAL,
+    ProjectSettings,
+)
 
 
-def has_permission(action, user, object=None, raise_exception=True):
-    value, reason = permissions_map[action](user, object)
+def has_permission(action, user, object=None, raise_exception=True, **kwargs):
+    value, reason = permissions_map[action](user, object, **kwargs)
 
     # :todo: cache the permissions based on key action:user_id:object:id
     if raise_exception and not value:
@@ -13,7 +20,7 @@ def has_permission(action, user, object=None, raise_exception=True):
     return value, reason
 
 
-def can_approve_contract(user, project):
+def can_approve_contract(user, project, **kwargs):
     if project.status != CONTRACTING:
         return False, 'Project is not in Contracting State'
 
@@ -26,7 +33,7 @@ def can_approve_contract(user, project):
     return False, 'Forbidden Error'
 
 
-def can_upload_contract(user, project):
+def can_upload_contract(user, project, **kwargs):
     if project.status != CONTRACTING:
         return False, 'Project is not in Contracting State'
 
@@ -39,7 +46,35 @@ def can_upload_contract(user, project):
     return False, 'Forbidden Error'
 
 
-def can_update_project_status(user, project):
+def can_update_paf_status(user, project, **kwargs):
+    if not user.is_authenticated:
+        return False, 'Login Required'
+
+    if not project.paf_approvals.filter(approved=False).exists():
+        return False, 'No PAF Approvals Exists'
+
+    if project.status != WAITING_FOR_APPROVAL:
+        return False, 'Incorrect project status to approve PAF'
+
+    if project.ready_for_final_approval:
+        return False, 'PAF has already approved'
+
+    request = kwargs.get('request')
+    if request:
+        project_settings = ProjectSettings.for_request(request)
+        if project_settings.paf_approval_sequential:
+            if user.id == project.paf_approvals.filter(approved=False).first().user.id:
+                return True, 'Next Approver can approve PAF(For Sequential Approvals)'
+            return False, 'Only Next can approve PAF(For Sequential Approvals)'
+        if user.id in project.paf_approvals.filter(approved=False).values_list('user', flat=True):
+            return True, 'All assigned approvers can approve PAF(For Parallel Approvals)'
+
+        return False, 'Unable to access the Project Settings'
+
+    return False, 'Forbidden Error'
+
+
+def can_update_project_status(user, project, **kwargs):
     if project.status not in [COMPLETE, CLOSING, IN_PROGRESS]:
         return False, 'Forbidden Error'
 
@@ -52,7 +87,7 @@ def can_update_project_status(user, project):
     return False, 'Forbidden Error'
 
 
-def can_update_report(user, report):
+def can_update_report(user, report, **kwargs):
     if not user.is_authenticated:
         return False, 'Login Required'
     if report.project.status != IN_PROGRESS:
@@ -68,7 +103,7 @@ def can_update_report(user, report):
     return False, 'Forbidden Error'
 
 
-def can_update_report_config(user, project):
+def can_update_report_config(user, project, **kwargs):
     if not user.is_authenticated:
         return False, 'Login Required'
     if project.status != IN_PROGRESS:
@@ -78,7 +113,7 @@ def can_update_report_config(user, project):
     return False, 'Forbidden Error'
 
 
-def can_update_project_reports(user, project):
+def can_update_project_reports(user, project, **kwargs):
     if not user.is_authenticated:
         return False, 'Login Required'
     if project.status != IN_PROGRESS:
@@ -88,7 +123,7 @@ def can_update_project_reports(user, project):
     return False, 'Forbidden Error'
 
 
-def can_view_report(user, report):
+def can_view_report(user, report, **kwargs):
     if not user.is_authenticated:
         return False, 'Login Required'
     if report.project.status not in [COMPLETE, CLOSING, IN_PROGRESS]:
@@ -105,6 +140,7 @@ def can_view_report(user, report):
 permissions_map = {
     'contract_approve': can_approve_contract,
     'contract_upload': can_upload_contract,
+    'paf_status_update': can_update_paf_status,
     'project_status_update': can_update_project_status,
     'project_reports_update': can_update_project_reports,
     'report_update': can_update_report,

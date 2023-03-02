@@ -16,10 +16,11 @@
             <li><strong>{{ missing.category.name }} ({{ missing.difference }})</strong></li>
             {% endfor %}
         </ul>
-        <p> {% trans "Select approvers for Project Approval Form" %} </p>
+        <p> {% trans "Select approvers for Project Approval Form" %} {% if paf_approval_sequential %} {% trans "(Sequentially)" %} {% else %}{% trans "(Parallely)" %}{% endif %}</p>
         {% trans "Submit anyway" as submit_anyway %}
         {% include 'funds/includes/delegated_form_base.html' with form=request_approval_form value=submit_anyway cancel=True invert=True %}
     {% else %}
+        <p> {% trans "Select approvers for Project Approval Form" %} {% if paf_approval_sequential %} {% trans "(Sequentially)" %} {% else %}{% trans "(Parallely)" %}{% endif %}</p>
         {% trans "Request" as request %}
         {% include 'funds/includes/delegated_form_base.html' with form=request_approval_form value=request %}
     {% endif %}
@@ -55,7 +56,8 @@
 </div>
 {% endif %}
 
-{% if object.can_send_for_approval %}
+{% user_can_send_for_approval object user as can_send_to_approve %}
+{% if can_send_to_approve %}
     <a
         {% if not object.can_send_for_approval %}
             onclick="return false"
@@ -87,7 +89,7 @@
         </a>
     {% endif %}
 
-    {% user_can_update_paf_status object user as user_can_update_paf %}
+    {% user_can_update_paf_status object user request=request as user_can_update_paf %}
     {% if user_can_update_paf %}
         <a data-fancybox data-src="#change-status" class="button button--primary button--full-width" href="#">{% trans "Update PAF Status" %}</a>
         <div class="modal" id="change-status">

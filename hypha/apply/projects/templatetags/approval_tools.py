@@ -1,5 +1,7 @@
 from django import template
 
+from ..permissions import has_permission
+
 register = template.Library()
 
 
@@ -9,7 +11,7 @@ def user_has_approved(project, user):
 
 
 @register.simple_tag
-def can_send_for_approval(project, user):
+def user_can_send_for_approval(project, user):
     return user.is_apply_staff and project.can_send_for_approval
 
 
@@ -22,10 +24,11 @@ def user_can_approve_project(project, user):
 
 
 @register.simple_tag
-def user_can_update_paf_status(project, user):
-    if project.paf_approvals and user.id in project.paf_approvals.filter(approved=False).values_list('user', flat=True):
-        if project.can_update_paf_status:
-            return True
+def user_can_update_paf_status(project, user, **kwargs):
+    request = kwargs.get('request')
+    if request:
+        permission, _ = has_permission('paf_status_update', user, object=project, raise_exception=False, request=request)
+        return permission
     return False
 
 

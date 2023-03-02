@@ -78,6 +78,7 @@ from ..models.project import (
     PAFApprovals,
     PAFReviewersRole,
     Project,
+    ProjectSettings,
 )
 from ..models.report import Report
 from ..permissions import has_permission
@@ -90,18 +91,6 @@ class SendForApprovalView(DelegatedViewMixin, UpdateView):
     context_name = 'request_approval_form'
     form_class = SetPendingForm
     model = Project
-
-    def send_to_compliance(self):
-        """Notify Compliance about this Project."""
-        messenger(
-            MESSAGES.SENT_TO_COMPLIANCE,
-            request=self.request,
-            user=self.request.user,
-            source=self.object,
-        )
-
-        self.object.sent_to_compliance_at = timezone.now()
-        self.object.save(update_fields=['sent_to_compliance_at'])
 
     def form_valid(self, form):
         project = self.kwargs['object']
@@ -483,8 +472,9 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
 
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
-        if not self.request.user.paf_approvals.filter(project=self.object, approved=False).exists():
-            raise PermissionDenied
+        permission, _ = has_permission(
+            'paf_status_update', self.request.user, object=self.object, raise_exception=True, request=request
+        )
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
@@ -518,6 +508,16 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
         elif paf_status == APPROVE:
             paf_approval.approved = True
             paf_approval.save(update_fields=['approved'])
+            project_settings = ProjectSettings.for_request(self.request)
+            if project_settings.paf_approval_sequential:
+                # notify next approver
+                if self.object.paf_approvals.filter(approved=False).exists():
+                    messenger(
+                        MESSAGES.APPROVE_PAF,
+                        request=self.request,
+                        user=self.request.user,
+                        source=self.object,
+                    )
 
         if form.cleaned_data['comment']:
 
@@ -621,6 +621,8 @@ class AdminProjectDetailView(
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        project_settings = ProjectSettings.for_request(self.request)
+        context['paf_approval_sequential'] = project_settings.paf_approval_sequential
         context['paf_approvals'] = PAFApprovals.objects.filter(project=self.object)
         context['remaining_document_categories'] = list(self.object.get_missing_document_categories())
 
