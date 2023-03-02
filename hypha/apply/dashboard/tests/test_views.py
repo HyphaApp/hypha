@@ -132,11 +132,11 @@ class TestStaffDashboard(BaseViewTestCase):
         response = self.get_page()
         self.assertNotContains(response, "Active Invoices")
 
-    def test_staff_can_see_projects_awaiting_review_stats_or_table(self):
+    def test_unassigned_staff_cant_see_projects_awaiting_review_stats_or_table(self):
         ProjectFactory(is_locked=False, status=WAITING_FOR_APPROVAL)
 
         response = self.get_page()
-        self.assertContains(response, "Projects awaiting approval")
+        self.assertNotContains(response, "Projects awaiting approval")
 
 
 class TestStaffDashboardWithWagtailAdminAccess(BaseViewTestCase):
