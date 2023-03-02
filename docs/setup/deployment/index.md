@@ -6,7 +6,7 @@ If you are considering deploying Hypha, there are several ways to deploy it. It 
 
 ### Stand Alone
 
-This requires a Linux server \(It has been tested with Ubuntu, but should work with any flavor\).
+This requires a Linux server (It has been tested with Ubuntu, but should work with any flavor\).
 
 ### Heroku
 

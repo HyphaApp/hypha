@@ -24,6 +24,7 @@ theme:
   features:
     - content.action.edit
     - content.action.view
+    - content.code.copy
     - header.autohide
     - navigation.expand
     - navigation.indexes
@@ -63,6 +64,9 @@ markdown_extensions:
   - pymdownx.highlight:
       guess_lang: false
       linenums: false
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
   - pymdownx.magiclink
   - pymdownx.mark
   - pymdownx.smartsymbols
