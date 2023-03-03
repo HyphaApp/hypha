@@ -407,6 +407,11 @@
             color: $color--black-50;
             cursor: not-allowed;
         }
+
+        &.invalid {
+            border: 2px solid $color--error;
+            outline: none;
+        }
     }
 
     &__error {

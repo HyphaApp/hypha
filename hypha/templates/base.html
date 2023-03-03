@@ -55,6 +55,12 @@
         {% block extra_css %}{% endblock %}
         <link rel="stylesheet" href="{% static 'css/print.css' %}" media="print">
 
+        <!-- alpine js start -->
+        <script defer src="{% static 'js/apply/vendor/alpine-3.11.1.min.js' %}"></script>
+        <style> [x-cloak] {display: none !important} </style>
+        <!-- apline.js end -->
+
+
         <script src="{% static 'js/jquery.min.js' %}"></script>
         <script src="{% static 'js/main-top.js' %}"></script>
         {% if COOKIES_ACCEPTED and MATOMO_URL and MATOMO_SITEID %}
