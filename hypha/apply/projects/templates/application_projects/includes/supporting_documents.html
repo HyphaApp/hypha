@@ -134,8 +134,8 @@
         </li>
     </ul>
     <div class="docs-block__buttons">
-        {% can_send_for_approval object user as can_approve %}
-        {% if can_approve %}
+        {% user_can_send_for_approval object user as can_send_to_approve %}
+        {% if can_send_to_approve %}
             <a data-fancybox
             data-src="#send-for-approval"
             class="button button--primary"

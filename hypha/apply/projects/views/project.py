@@ -66,6 +66,7 @@ from ..forms import (
 )
 from ..models.payment import Invoice
 from ..models.project import (
+    APPROVE,
     COMMITTED,
     CONTRACTING,
     IN_PROGRESS,
@@ -74,8 +75,10 @@ from ..models.project import (
     WAITING_FOR_APPROVAL,
     Contract,
     PacketFile,
+    PAFApprovals,
     PAFReviewersRole,
     Project,
+    ProjectSettings,
 )
 from ..models.report import Report
 from ..permissions import has_permission
@@ -88,18 +91,6 @@ class SendForApprovalView(DelegatedViewMixin, UpdateView):
     context_name = 'request_approval_form'
     form_class = SetPendingForm
     model = Project
-
-    def send_to_compliance(self):
-        """Notify Compliance about this Project."""
-        messenger(
-            MESSAGES.SENT_TO_COMPLIANCE,
-            request=self.request,
-            user=self.request.user,
-            source=self.object,
-        )
-
-        self.object.sent_to_compliance_at = timezone.now()
-        self.object.save(update_fields=['sent_to_compliance_at'])
 
     def form_valid(self, form):
         project = self.kwargs['object']
@@ -116,8 +107,6 @@ class SendForApprovalView(DelegatedViewMixin, UpdateView):
 
         project.status = WAITING_FOR_APPROVAL
         project.save(update_fields=['status'])
-
-        self.send_to_compliance()
 
         messenger(
             MESSAGES.PROJECT_TRANSITION,
@@ -159,9 +148,9 @@ class FinalApprovalView(DelegatedViewMixin, UpdateView):
         if status == REQUEST_CHANGE:
             project.status = COMMITTED
             project.is_locked = False
-            project.paf_reviews_meta_data = {}
             project.ready_for_final_approval = False
-            project.save(update_fields=['status', 'is_locked', 'paf_reviews_meta_data', 'ready_for_final_approval'])
+            project.save(update_fields=['status', 'is_locked', 'ready_for_final_approval'])
+            project.paf_approvals.all().update(approved=False)  # Approvers should look into it again.
 
             project_status_message = _(
                 '<p>{user} request changes the Project and update status to {project_status}.</p>').format(
@@ -481,19 +470,21 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
     context_name = 'change_paf_status'
     model = Project
 
+    def dispatch(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        permission, _ = has_permission(
+            'paf_status_update', self.request.user, object=self.object, raise_exception=True, request=request
+        )
+        return super().dispatch(request, *args, **kwargs)
+
     def form_valid(self, form):
         response = super().form_valid(form)
-        role = form.cleaned_data.get('role')
+        paf_approval = self.request.user.paf_approvals.filter(project=self.object, approved=False).first()
         paf_status = form.cleaned_data.get('paf_status')
         comment = form.cleaned_data.get('comment', '')
 
-        self.object.paf_reviews_meta_data.update(
-            {str(role.role): {'status': paf_status, 'comment': comment, 'user_id': self.request.user.id}}
-        )
-        self.object.save(update_fields=['paf_reviews_meta_data'])
-
         paf_status_update_message = _('<p>{role} has updated PAF status to {paf_status}.</p>').format(
-            role=role, paf_status=paf_status)
+            role=paf_approval.paf_reviewer_role.label, paf_status=paf_status)
         Activity.objects.create(
             user=self.request.user,
             type=ACTION,
@@ -505,8 +496,7 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
 
         if paf_status == REQUEST_CHANGE:
             self.object.status = COMMITTED
-            self.object.paf_reviews_meta_data = {}
-            self.object.save(update_fields=['status', 'paf_reviews_meta_data'])
+            self.object.save(update_fields=['status'])
 
             messenger(
                 MESSAGES.REQUEST_PROJECT_CHANGE,
@@ -515,6 +505,19 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
                 source=self.object,
                 comment=comment,
             )
+        elif paf_status == APPROVE:
+            paf_approval.approved = True
+            paf_approval.save(update_fields=['approved'])
+            project_settings = ProjectSettings.for_request(self.request)
+            if project_settings.paf_approval_sequential:
+                # notify next approver
+                if self.object.paf_approvals.filter(approved=False).exists():
+                    messenger(
+                        MESSAGES.APPROVE_PAF,
+                        request=self.request,
+                        user=self.request.user,
+                        source=self.object,
+                    )
 
         if form.cleaned_data['comment']:
 
@@ -618,7 +621,9 @@ class AdminProjectDetailView(
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['approvals'] = self.object.approvals.distinct('by')
+        project_settings = ProjectSettings.for_request(self.request)
+        context['paf_approval_sequential'] = project_settings.paf_approval_sequential
+        context['paf_approvals'] = PAFApprovals.objects.filter(project=self.object)
         context['remaining_document_categories'] = list(self.object.get_missing_document_categories())
 
         if self.object.is_in_progress and not self.object.report_config.disable_reporting:
@@ -803,7 +808,7 @@ class ProjectDetailDownloadView(SingleObjectMixin, View):
         context['contractor_name'] = self.object.vendor.contractor_name if self.object.vendor else None
         context['total_amount'] = self.object.value
 
-        context['approvers'] = self.object.paf_reviews_meta_data
+        context['approvals'] = self.object.paf_approvals.all()
         context['paf_data'] = self.get_paf_data_with_field(self.object)
         context['submission'] = self.object.submission
         context['submission_link'] = self.request.build_absolute_uri(

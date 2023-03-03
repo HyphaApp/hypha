@@ -288,21 +288,14 @@ class TestChangePAFStatusForm(TestCase):
     def test_paf_status_is_required(self):
         project = ProjectFactory(in_approval=True)
         user = StaffFactory()
-        form = ChangePAFStatusForm(data={'role': self.role}, instance=project, user=user)
+        form = ChangePAFStatusForm(data={'comment': 'comment'}, instance=project, user=user)
         self.assertFalse(form.is_valid())
         self.assertIn('paf_status', form.errors.keys())
-
-    def test_role_is_required(self):
-        project = ProjectFactory(in_approval=True)
-        user = StaffFactory()
-        form = ChangePAFStatusForm(data={'paf_status': APPROVE}, instance=project, user=user)
-        self.assertFalse(form.is_valid())
-        self.assertIn('role', form.errors.keys())
 
     def test_comment_is_not_required(self):
         project = ProjectFactory(in_approval=True)
         user = StaffFactory()
-        form = ChangePAFStatusForm(data={'role': self.role, 'paf_status': APPROVE}, instance=project, user=user)
+        form = ChangePAFStatusForm(data={'paf_status': APPROVE}, instance=project, user=user)
         self.assertTrue(form.is_valid())
         self.assertEqual(form.errors, {})
 

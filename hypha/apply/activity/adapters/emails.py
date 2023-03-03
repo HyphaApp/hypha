@@ -50,6 +50,8 @@ class EmailAdapter(AdapterBase):
         MESSAGES.CREATED_PROJECT: 'handle_project_created',
         MESSAGES.UPDATED_VENDOR: 'handle_vendor_updated',
         MESSAGES.SENT_TO_COMPLIANCE: 'messages/email/sent_to_compliance.html',
+        MESSAGES.SEND_FOR_APPROVAL: 'messages/email/paf_for_approval.html',
+        MESSAGES.APPROVE_PAF: 'messages/email/paf_for_approval.html',
         MESSAGES.UPDATE_INVOICE: 'handle_invoice_updated',
         MESSAGES.UPDATE_INVOICE_STATUS: 'handle_invoice_status_updated',
         MESSAGES.SUBMIT_REPORT: 'messages/email/report_submitted.html',
@@ -227,6 +229,17 @@ class EmailAdapter(AdapterBase):
         if message_type == MESSAGES.PARTNERS_UPDATED_PARTNER:
             partners = kwargs['added']
             return [partner.email for partner in partners]
+
+        if message_type in [MESSAGES.SEND_FOR_APPROVAL, MESSAGES.APPROVE_PAF]:
+            from hypha.apply.projects.models.project import ProjectSettings
+            # notify the assigned approvers
+            request = kwargs.get('request')
+            project_settings = ProjectSettings.for_request(request)
+            if project_settings.paf_approval_sequential:
+                next_paf_approval = source.paf_approvals.filter(approved=False).first()
+                if next_paf_approval:
+                    return [next_paf_approval.user.email]
+            return source.paf_approvals.filter(approved=False).values_list('user__email', flat=True)
 
         if message_type == MESSAGES.PROJECT_FINAL_APPROVAL:
             # users with contracting + approver role

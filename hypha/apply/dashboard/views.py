@@ -19,7 +19,9 @@ from hypha.apply.funds.tables import (
     review_filter_for_user,
 )
 from hypha.apply.projects.filters import ProjectListFilter
-from hypha.apply.projects.models import Invoice, Project
+from hypha.apply.projects.models import Invoice, PAFApprovals, Project, ProjectSettings
+from hypha.apply.projects.models.project import WAITING_FOR_APPROVAL
+from hypha.apply.projects.permissions import has_permission
 from hypha.apply.projects.tables import InvoiceDashboardTable, ProjectsDashboardTable
 from hypha.apply.utils.views import ViewDispatcher
 
@@ -116,8 +118,10 @@ class AdminDashboardView(MyFlaggedMixin, TemplateView):
         }
 
     def paf_waiting_for_approval(self):
-
-        if not self.request.user.is_apply_staff:
+        if not self.request.user.is_apply_staff or not PAFApprovals.objects.filter(
+            project__status=WAITING_FOR_APPROVAL,
+            user=self.request.user,
+        ).exists():
             return {
                 'count': None,
                 'awaiting_your_approval': {
@@ -130,20 +134,32 @@ class AdminDashboardView(MyFlaggedMixin, TemplateView):
                 }
             }
 
-        to_paf_approve = Project.objects.waiting_for_approval().filter(ready_for_final_approval=False).for_table()
-
-        awaiting_user_approval = []
-        approved_by_user = []
-        for project in to_paf_approve:
-            paf_reviewed_users = [review_value.get('user_id') for review_value in
-                                  project.paf_reviews_meta_data.values()]
-            if self.request.user.id in paf_reviewed_users:
-                approved_by_user.append(project)
-            else:
-                awaiting_user_approval.append(project)
+        waiting_paf_approval = Project.objects.waiting_for_approval().filter(ready_for_final_approval=False).for_table()
+        project_settings = ProjectSettings.for_request(self.request)
+        if project_settings.paf_approval_sequential:
+            awaiting_user_approval = []
+            for waiting_project in waiting_paf_approval.filter(paf_approvals__approved=False):
+                permission, _ = has_permission(
+                    'paf_status_update',
+                    self.request.user,
+                    object=waiting_project,
+                    raise_exception=False,
+                    request=self.request
+                )
+                if permission:
+                    awaiting_user_approval.append(waiting_project)
+        else:
+            awaiting_user_approval = waiting_paf_approval.filter(
+                paf_approvals__user=self.request.user,
+                paf_approvals__approved=False,
+            )
+        approved_by_user = waiting_paf_approval.filter(
+            paf_approvals__user=self.request.user,
+            paf_approvals__approved=True,
+        )
 
         return {
-            'count': to_paf_approve.count(),
+            'count': waiting_paf_approval.count(),
             'awaiting_your_approval': {
                 'count': len(awaiting_user_approval),
                 'table': ProjectsDashboardTable(data=awaiting_user_approval),
@@ -227,7 +243,10 @@ class FinanceDashboardView(MyFlaggedMixin, TemplateView):
         }
 
     def paf_waiting_for_approval(self):
-        if not self.request.user.is_finance:
+        if not self.request.user.is_finance or not PAFApprovals.objects.filter(
+            project__status=WAITING_FOR_APPROVAL,
+            user=self.request.user,
+        ).exists():
             return {
                 'count': None,
                 'awaiting_your_approval': {
@@ -240,18 +259,32 @@ class FinanceDashboardView(MyFlaggedMixin, TemplateView):
                 }
             }
 
-        to_paf_approve = Project.objects.waiting_for_approval().filter(ready_for_final_approval=False).for_table()
-        awaiting_user_approval = []
-        approved_by_user = []
-        for project in to_paf_approve:
-            paf_reviewed_users = [review_value.get('user_id') for review_value in project.paf_reviews_meta_data.values()]
-            if self.request.user.id in paf_reviewed_users:
-                approved_by_user.append(project)
-            else:
-                awaiting_user_approval.append(project)
+        waiting_paf_approval = Project.objects.waiting_for_approval().filter(ready_for_final_approval=False).for_table()
+        project_settings = ProjectSettings.for_request(self.request)
+        if project_settings.paf_approval_sequential:
+            awaiting_user_approval = []
+            for waiting_project in waiting_paf_approval.filter(paf_approvals__approved=False):
+                permission, _ = has_permission(
+                    'paf_status_update',
+                    self.request.user,
+                    object=waiting_project,
+                    raise_exception=False,
+                    request=self.request
+                )
+                if permission:
+                    awaiting_user_approval.append(waiting_project)
+        else:
+            awaiting_user_approval = waiting_paf_approval.filter(
+                paf_approvals__user=self.request.user,
+                paf_approvals__approved=False,
+            )
+        approved_by_user = waiting_paf_approval.filter(
+            paf_approvals__user=self.request.user,
+            paf_approvals__approved=True,
+        )
 
         return {
-            'count': to_paf_approve.count(),
+            'count': waiting_paf_approval.count(),
             'awaiting_your_approval': {
                 'count': len(awaiting_user_approval),
                 'table': ProjectsDashboardTable(data=awaiting_user_approval),
@@ -373,7 +406,10 @@ class ContractingDashboardView(MyFlaggedMixin, TemplateView):
         }
 
     def paf_waiting_for_approval(self):
-        if not self.request.user.is_contracting or self.request.user.is_contracting_approver:
+        if not self.request.user.is_contracting or not PAFApprovals.objects.filter(
+            project__status=WAITING_FOR_APPROVAL,
+            user=self.request.user,
+        ).exists():
             return {
                 'count': None,
                 'awaiting_your_approval': {
@@ -386,19 +422,32 @@ class ContractingDashboardView(MyFlaggedMixin, TemplateView):
                 }
             }
 
-        to_paf_approve = Project.objects.waiting_for_approval().filter(ready_for_final_approval=False).for_table()
-        awaiting_user_approval = []
-        approved_by_user = []
-        for project in to_paf_approve:
-            paf_reviewed_users = [review_value.get('user_id') for review_value in
-                                  project.paf_reviews_meta_data.values()]
-            if self.request.user.id in paf_reviewed_users:
-                approved_by_user.append(project)
-            else:
-                awaiting_user_approval.append(project)
+        waiting_paf_approval = Project.objects.waiting_for_approval().filter(ready_for_final_approval=False).for_table()
+        project_settings = ProjectSettings.for_request(self.request)
+        if project_settings.paf_approval_sequential:
+            awaiting_user_approval = []
+            for waiting_project in waiting_paf_approval.filter(paf_approvals__approved=False):
+                permission, _ = has_permission(
+                    'paf_status_update',
+                    self.request.user,
+                    object=waiting_project,
+                    raise_exception=False,
+                    request=self.request
+                )
+                if permission:
+                    awaiting_user_approval.append(waiting_project)
+        else:
+            awaiting_user_approval = waiting_paf_approval.filter(
+                paf_approvals__user=self.request.user,
+                paf_approvals__approved=False,
+            )
+        approved_by_user = waiting_paf_approval.filter(
+            paf_approvals__user=self.request.user,
+            paf_approvals__approved=True,
+        )
 
         return {
-            'count': to_paf_approve.count(),
+            'count': waiting_paf_approval.count(),
             'awaiting_your_approval': {
                 'count': len(awaiting_user_approval),
                 'table': ProjectsDashboardTable(data=awaiting_user_approval),

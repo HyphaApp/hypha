@@ -118,7 +118,7 @@ class AdapterBase:
         self, message_type, event, request, user, source, related=None, **kwargs
     ):
         recipients = self.recipients(
-            message_type, source=source, related=related, user=user, **kwargs
+            message_type, source=source, related=related, user=user, request=request, **kwargs
         )
         self.process_send(
             message_type,

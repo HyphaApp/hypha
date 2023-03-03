@@ -43,6 +43,7 @@ from .factories import (
     DocumentCategoryFactory,
     InvoiceFactory,
     PacketFileFactory,
+    PAFApprovalsFactory,
     PAFReviewerRoleFactory,
     ProjectFactory,
     ReportFactory,
@@ -133,63 +134,77 @@ class TestChangePAFStatusView(BaseViewTestCase):
     def get_kwargs(self, instance):
         return {'pk': instance.id}
 
-    def test_applicant_cant_update_paf_status(self):
+    def test_unassigned_applicant_cant_update_paf_status(self):
         user = ApplicantFactory()
         self.client.force_login(user=user)
-        project = ProjectFactory(in_approval=True)
+        project = ProjectFactory(status=WAITING_FOR_APPROVAL)
 
-        response = self.post_page(project, {'form-submitted-change_paf_status': '', 'paf_status': APPROVE,
-                                            'role': self.role.id})
+        PAFApprovalsFactory(project=project, user=ApplicantFactory(), paf_reviewer_role=self.role)
+
+        response = self.post_page(project, {'form-submitted-change_paf_status': '', 'paf_status': APPROVE})
         self.assertEqual(response.status_code, 403)
 
-    def test_staff_can_update_paf_status(self):
+    def test_unassigned_staff_cant_update_paf_status(self):
         user = StaffFactory()
         self.client.force_login(user=user)
-        project = ProjectFactory(in_approval=True)
+        project = ProjectFactory(status=WAITING_FOR_APPROVAL)
 
-        response = self.post_page(project, {'form-submitted-change_paf_status': '', 'paf_status': APPROVE,
-                                            'role': self.role.id})
-        self.assertEqual(response.status_code, 200)
+        PAFApprovalsFactory(project=project, user=StaffFactory(), paf_reviewer_role=self.role)
 
-    def test_finance_can_update_paf_status(self):
+        response = self.post_page(project, {'form-submitted-change_paf_status': '', 'paf_status': APPROVE})
+        self.assertEqual(response.status_code, 403)
+
+    def test_unassigned_finance_cant_update_paf_status(self):
         user = FinanceFactory()
         self.client.force_login(user=user)
-        project = ProjectFactory(in_approval=True)
+        project = ProjectFactory(status=WAITING_FOR_APPROVAL)
 
-        response = self.post_page(project, {'form-submitted-change_paf_status': '', 'paf_status': APPROVE,
-                                            'role': self.role.id})
-        self.assertEqual(response.status_code, 200)
+        PAFApprovalsFactory(project=project, user=FinanceFactory(), paf_reviewer_role=self.role)
 
-    def test_contracting_can_update_paf_status(self):
+        response = self.post_page(project, {'form-submitted-change_paf_status': '', 'paf_status': APPROVE})
+        self.assertEqual(response.status_code, 403)
+
+    def test_unassigned_contracting_cant_update_paf_status(self):
         user = ContractingFactory()
         self.client.force_login(user=user)
-        project = ProjectFactory(in_approval=True)
+        project = ProjectFactory(status=WAITING_FOR_APPROVAL)
 
-        response = self.post_page(project, {'form-submitted-change_paf_status': '', 'paf_status': APPROVE,
-                                            'role': self.role.id})
-        self.assertEqual(response.status_code, 200)
+        PAFApprovalsFactory(project=project, user=ContractingFactory(), paf_reviewer_role=self.role)
 
-    def test_reviewer_approve_paf(self):
+        response = self.post_page(project, {'form-submitted-change_paf_status': '', 'paf_status': APPROVE})
+        self.assertEqual(response.status_code, 403)
+
+    def test_assigned_approvers_can_approve_paf(self):
         # reviewer can be staff, finance or contracting
-        project = ProjectFactory(in_approval=True)
+        project = ProjectFactory(status=WAITING_FOR_APPROVAL)
 
-        response = self.post_page(project, {'form-submitted-change_paf_status': '', 'role': self.role.id,
-                                            'paf_status': APPROVE})
+        approval = PAFApprovalsFactory(project=project, user=self.user, paf_reviewer_role=self.role)
+
+        response = self.post_page(project, {'form-submitted-change_paf_status': '', 'paf_status': APPROVE})
+
         self.assertEqual(response.status_code, 200)
+
+        approval.refresh_from_db()
         project.refresh_from_db()
-        self.assertIn(self.role.role, project.paf_reviews_meta_data.keys())
-        self.assertIn('approve', project.paf_reviews_meta_data[self.role.role]['status'])
+        self.assertEqual(self.role.label, approval.paf_reviewer_role.label)
+        self.assertTrue(approval.approved)
+        self.assertIn(approval, project.paf_approvals.filter(approved=True))
 
-    def test_reviewer_rejects_paf(self):
-        # reviewer can be staff, finance or contracting
-        project = ProjectFactory(in_approval=True)
+    def test_assigned_approvers_can_reject_paf(self):
+        # reviewer can be staff, finance or contracting, or any assigned role
+        project = ProjectFactory(status=WAITING_FOR_APPROVAL)
 
-        response = self.post_page(project, {'form-submitted-change_paf_status': '', 'paf_status': REQUEST_CHANGE,
-                                            'role': self.role.id})
+        approval = PAFApprovalsFactory(project=project, user=self.user, paf_reviewer_role=self.role)
+
+        response = self.post_page(project, {'form-submitted-change_paf_status': '', 'paf_status': REQUEST_CHANGE})
+
         self.assertEqual(response.status_code, 200)
         project.refresh_from_db()
         self.assertEqual(project.status, COMMITTED)
-        self.assertEqual({}, project.paf_reviews_meta_data)
+        approval.refresh_from_db()
+        self.assertEqual(self.role.label, approval.paf_reviewer_role.label)
+        self.assertFalse(approval.approved)
+        self.assertIn(approval, project.paf_approvals.filter(approved=False))
 
 
 class TestFinalApprovalView(BaseViewTestCase):

@@ -3,8 +3,10 @@ import decimal
 import json
 import logging
 
+from django import forms
 from django.apps import apps
 from django.conf import settings
+from django.contrib.auth.models import Group
 from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
@@ -16,9 +18,9 @@ from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from modelcluster.fields import ParentalKey
+from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from modelcluster.models import ClusterableModel
-from wagtail.admin.panels import FieldPanel, InlinePanel
+from wagtail.admin.panels import FieldPanel, InlinePanel, MultiFieldPanel
 from wagtail.contrib.settings.models import BaseSetting, register_setting
 from wagtail.core.models import Orderable
 from wagtail.fields import StreamField
@@ -335,13 +337,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
             return True
         # if project is in transition phase to final approval.
         if self.status == WAITING_FOR_APPROVAL:
-            paf_reviewers_count = PAFReviewersRole.objects.all().count()
-            if paf_reviewers_count == 0:
-                return True
-            elif paf_reviewers_count == len(self.paf_reviews_meta_data):
-                for paf_review_data in self.paf_reviews_meta_data.values():
-                    if paf_review_data['status'] == REQUEST_CHANGE:
-                        return False
+            if not self.paf_approvals.filter(approved=False):
                 return True
         return False
 
@@ -419,12 +415,25 @@ class ProjectApprovalForm(BaseStreamForm, models.Model):
         return self.name
 
 
-class PAFReviewersRole(Orderable):
-    role = models.CharField(max_length=200)
+class PAFReviewersRole(Orderable, ClusterableModel):
+    label = models.CharField(max_length=200)
+    user_roles = ParentalManyToManyField(
+        Group,
+        verbose_name=_("user groups"),
+        help_text=_(
+            "Only selected group's users will be listed for this PAFReviewerRole"
+        ),
+        related_name="paf_reviewers_roles",
+    )
     page = ParentalKey('ProjectSettings', related_name='paf_reviewers_roles')
 
+    panels = [
+        FieldPanel('label'),
+        FieldPanel('user_roles', widget=forms.CheckboxSelectMultiple),
+    ]
+
     def __str__(self):
-        return str(self.role)
+        return str(self.label)
 
 
 @register_setting
@@ -433,27 +442,41 @@ class ProjectSettings(BaseSetting, ClusterableModel):
     finance_gp_email = models.TextField("Finance Group Email", null=True, blank=True)
     staff_gp_email = models.TextField("Staff Group Email", null=True, blank=True)
     vendor_setup_required = models.BooleanField(default=True)
+    paf_approval_sequential = models.BooleanField(default=True, help_text="Uncheck it to approve PAF parallely")
 
     panels = [
         FieldPanel('staff_gp_email'),
         FieldPanel('contracting_gp_email'),
         FieldPanel('finance_gp_email'),
         FieldPanel('vendor_setup_required'),
-        InlinePanel('paf_reviewers_roles', label=_('PAF Reviewers Roles')),
+        MultiFieldPanel(
+            [
+                FieldPanel('paf_approval_sequential', heading='Approve PAF Sequentially'),
+                InlinePanel('paf_reviewers_roles', label=_('PAF Reviewers Roles')),
+            ],
+            heading=_('PAF Reviewers Roles'),
+        )
     ]
 
 
-class Approval(models.Model):
-    project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="approvals")
-    by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="approvals")
-
+class PAFApprovals(models.Model):
+    project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="paf_approvals")
+    paf_reviewer_role = models.ForeignKey("PAFReviewersRole", on_delete=models.CASCADE, related_name="paf_approvals")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="paf_approvals")
+    approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField()
 
     class Meta:
-        unique_together = ['project', 'by']
+        unique_together = ['project', 'paf_reviewer_role']
+        ordering = ["paf_reviewer_role__sort_order"]
 
     def __str__(self):
-        return _('Approval of {project} by {user}').format(project=self.project, user=self.by)
+        return _('Approval of {project} by {user}').format(project=self.project, user=self.user)
+
+    def save(self, *args, **kwargs):
+        self.updated_at = timezone.now()
+        return super().save(*args, **kwargs)
 
 
 class ContractQuerySet(models.QuerySet):

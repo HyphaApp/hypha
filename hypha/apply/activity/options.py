@@ -35,6 +35,7 @@ class MESSAGES(TextChoices):
     EDIT_REVIEW = 'EDIT_REVIEW', _('edited review')
     SEND_FOR_APPROVAL = 'SEND_FOR_APPROVAL', _('sent for approval')
     APPROVE_PROJECT = 'APPROVE_PROJECT', _('approved project')
+    APPROVE_PAF = 'APPROVE_PAF', _('approved paf')
     PROJECT_FINAL_APPROVAL = 'PROJECT_FINAL_APPROVAL', _('sent project for final approval')
     PROJECT_TRANSITION = 'PROJECT_TRANSITION', _('transitioned project')
     REQUEST_PROJECT_CHANGE = 'REQUEST_PROJECT_CHANGE', _('requested project change')
