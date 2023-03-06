@@ -13,7 +13,6 @@ from hypha.apply.home.factories import ApplySiteFactory
 from hypha.apply.users.tests.factories import (
     ApplicantFactory,
     ApproverFactory,
-    ContractingApproverFactory,
     ContractingFactory,
     FinanceFactory,
     ReviewerFactory,

@@ -39,7 +39,6 @@ from hypha.apply.activity.models import ACTION, ALL, COMMENT, Activity
 from hypha.apply.activity.views import ActivityContextMixin, CommentFormView
 from hypha.apply.stream_forms.models import BaseStreamForm
 from hypha.apply.users.decorators import (
-    contracting_approver_required,
     staff_or_finance_or_contracting_required,
     staff_or_finance_required,
     staff_required,
