@@ -8,8 +8,8 @@ minimal setup, the setup may vary slightly for your base operating systems.
 Make sure you have these things installed on your system:
 
 * Git
-* Python 3.10.x
-* PostgreSQL 12.x (with `libpq-dev` on Linux)
+* Python 3.11.x
+* PostgreSQL 14.x (with `libpq-dev` on Linux)
 * Node 16.x
 
 On Linux install them with your normal package manager. On macOS [Homebrew](https://brew.sh/) is an excellent option. For Windows [Chocolatey](https://chocolatey.org/) seems popular but we have no experience with Windows.
