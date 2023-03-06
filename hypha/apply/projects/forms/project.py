@@ -89,19 +89,6 @@ class CreateProjectForm(forms.Form):
         return Project.create_from_submission(submission, lead=lead)
 
 
-class FinalApprovalForm(forms.ModelForm):
-    name_prefix = 'final_approval_form'
-    final_approval_status = forms.ChoiceField(choices=PAF_STATUS_CHOICES)
-    comment = forms.CharField(required=False, widget=forms.Textarea)
-
-    class Meta:
-        model = Project
-        fields = ['final_approval_status', 'comment']
-
-    def __init__(self, instance, user=None, *args, **kwargs):
-        super().__init__(*args, **kwargs, instance=instance)
-
-
 class MixedMetaClass(type(StreamBaseForm), type(forms.ModelForm)):
     pass
 

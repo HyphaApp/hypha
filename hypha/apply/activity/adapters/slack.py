@@ -56,7 +56,6 @@ class SlackAdapter(AdapterBase):
         MESSAGES.UPDATE_PROJECT_LEAD: _('The lead of project <{link}|{source.title}> has been updated from {old_lead} to {source.lead} by {user}'),
         MESSAGES.EDIT_REVIEW: _('{user} has edited {review.author} review for <{link}|{source.title}>'),
         MESSAGES.SEND_FOR_APPROVAL: _('{user} has requested approval on project <{link}|{source.title}>'),
-        MESSAGES.PROJECT_FINAL_APPROVAL: _('Project Approval Form is open for the final approval: <{link}|{source.title}>'),
         MESSAGES.APPROVE_PROJECT: _('{user} has approved project <{link}|{source.title}>'),
         MESSAGES.REQUEST_PROJECT_CHANGE: _('{user} has requested changes for project acceptance on <{link}|{source.title}>'),
         MESSAGES.UPLOAD_CONTRACT: _('{user} has uploaded a contract for <{link}|{source.title}>'),
@@ -109,13 +108,6 @@ class SlackAdapter(AdapterBase):
             return [
                 self.slack_id(user)
                 for user in User.objects.approvers()
-                if self.slack_id(user)
-            ]
-
-        if message_type == MESSAGES.PROJECT_FINAL_APPROVAL:
-            return [
-                self.slack_id(user)
-                for user in User.objects.contracting_approvers()
                 if self.slack_id(user)
             ]
 

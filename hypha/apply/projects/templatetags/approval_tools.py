@@ -33,12 +33,5 @@ def user_can_update_paf_status(project, user, **kwargs):
 
 
 @register.simple_tag
-def user_can_final_approve_project(project, user):
-    if user.is_approver and user.is_contracting and project.ready_for_final_approval:
-        return True
-    return False
-
-
-@register.simple_tag
 def user_can_edit_project(project, user):
     return project.editable_by(user)

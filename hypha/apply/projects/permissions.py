@@ -56,9 +56,6 @@ def can_update_paf_status(user, project, **kwargs):
     if project.status != WAITING_FOR_APPROVAL:
         return False, 'Incorrect project status to approve PAF'
 
-    if project.ready_for_final_approval:
-        return False, 'PAF has already approved'
-
     request = kwargs.get('request')
     if request:
         project_settings = ProjectSettings.for_request(request)

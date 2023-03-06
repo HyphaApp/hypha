@@ -134,7 +134,7 @@ class AdminDashboardView(MyFlaggedMixin, TemplateView):
                 }
             }
 
-        waiting_paf_approval = Project.objects.waiting_for_approval().filter(ready_for_final_approval=False).for_table()
+        waiting_paf_approval = Project.objects.waiting_for_approval().for_table()
         project_settings = ProjectSettings.for_request(self.request)
         if project_settings.paf_approval_sequential:
             awaiting_user_approval = []
@@ -259,7 +259,7 @@ class FinanceDashboardView(MyFlaggedMixin, TemplateView):
                 }
             }
 
-        waiting_paf_approval = Project.objects.waiting_for_approval().filter(ready_for_final_approval=False).for_table()
+        waiting_paf_approval = Project.objects.waiting_for_approval().for_table()
         project_settings = ProjectSettings.for_request(self.request)
         if project_settings.paf_approval_sequential:
             awaiting_user_approval = []
@@ -388,23 +388,10 @@ class ContractingDashboardView(MyFlaggedMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context.update({
             'paf_waiting_for_approval': self.paf_waiting_for_approval(),
-            'paf_waiting_for_final_approval': self.paf_waiting_for_final_approval(),
             'projects_in_contracting': self.projects_in_contracting(),
         })
 
         return context
-
-    def paf_waiting_for_final_approval(self):
-        if not self.request.user.is_contracting_approver:
-            return {
-                'count': None,
-                'table': None,
-            }
-        to_paf_final_approval = Project.objects.waiting_for_final_approval().for_table()
-        return {
-            'count': len(to_paf_final_approval),
-            'table': ProjectsDashboardTable(data=to_paf_final_approval),
-        }
 
     def paf_waiting_for_approval(self):
         if not self.request.user.is_contracting or not PAFApprovals.objects.filter(
@@ -423,7 +410,7 @@ class ContractingDashboardView(MyFlaggedMixin, TemplateView):
                 }
             }
 
-        waiting_paf_approval = Project.objects.waiting_for_approval().filter(ready_for_final_approval=False).for_table()
+        waiting_paf_approval = Project.objects.waiting_for_approval().for_table()
         project_settings = ProjectSettings.for_request(self.request)
         if project_settings.paf_approval_sequential:
             awaiting_user_approval = []

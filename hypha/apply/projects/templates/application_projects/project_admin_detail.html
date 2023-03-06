@@ -16,13 +16,17 @@
             <li><strong>{{ missing.category.name }} ({{ missing.difference }})</strong></li>
             {% endfor %}
         </ul>
-        <p> {% trans "Select approvers for Project Approval Form" %} {% if paf_approval_sequential %} {% trans "(Sequentially)" %} {% else %}{% trans "(Parallely)" %}{% endif %}</p>
-        {% trans "Submit anyway" as submit_anyway %}
-        {% include 'funds/includes/delegated_form_base.html' with form=request_approval_form value=submit_anyway cancel=True invert=True %}
+        {% trans "Submit anyway" as submit %}
     {% else %}
-        <p> {% trans "Select approvers for Project Approval Form" %} {% if paf_approval_sequential %} {% trans "(Sequentially)" %} {% else %}{% trans "(Parallely)" %}{% endif %}</p>
         {% trans "Request" as submit %}
+    {% endif %}
+    {% if project_settings.paf_reviewers_roles.all %}
+        <p> {% trans "Select approvers for Project Approval Form" %} {% if project_settings.paf_approval_sequential %} {% trans "(Sequentially)" %} {% else %}{% trans "(Parallely)" %}{% endif %}</p>
         {% include 'funds/includes/delegated_form_base.html' with form=request_approval_form value=submit %}
+    {% else %}
+        <p>{% trans "No PAF Reviewer Roles created yet, please create these in " %}
+        <a href="{% project_settings_url project_settings %}" target="_blank">{% trans " project settings" %}</a>
+        </p>
     {% endif %}
 </div>
 
@@ -38,13 +42,6 @@
     {% include 'funds/includes/delegated_form_base.html' with form=change_project_status value=update %}
 </div>
 
-<div class="modal" id="approve">
-    <h4 class="modal__header-bar">{% trans "Update Final Approval Status" %}</h4>
-    <p>{% trans "This will move the project into contracting and notify the compliance team." %}</p>
-    <p>{% trans "This cannot be undone." %}</p>
-    {% trans "Update status" as update %}
-    {% include 'funds/includes/delegated_form_base.html' with form=final_approval_form value=update %}
-</div>
 
 {% if contract_to_approve %}
 <div class="modal" id="approve-contract">
@@ -66,7 +63,7 @@
                     {% trans "A lead must be assigned" %}
                 {% elif not object.user_has_updated_details %}
                     {% trans "Project approval form must be completed" %}
-                {% elif object.can_make_approval or object.ready_for_final_approval %}
+                {% elif object.can_make_approval %}
                     {% trans "Currently awaiting approval" %}
                 {% endif %}"
         {% endif %}
@@ -79,15 +76,6 @@
 {% endif %}
 
 {% if object.can_make_approval %}
-    {% user_can_final_approve_project object user as user_can_approve %}
-    {% if user_can_approve %}
-        <a data-fancybox
-          data-src="#approve"
-          class="button button--bottom-space button--primary button--full-width"
-          href="#">
-          {% trans "Update Project Status" %}
-        </a>
-    {% endif %}
 
     {% user_can_update_paf_status object user request=request as user_can_update_paf %}
     {% if user_can_update_paf %}
