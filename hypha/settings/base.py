@@ -183,32 +183,18 @@ FEED_CACHE_TIMEOUT = 600
 # Set X-Frame-Options header for every outgoing HttpResponse
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
-if env.str('REDIS_URL', None):
-    CACHES = {
-        'default': {
-            'BACKEND': 'django_redis.cache.RedisCache',
-            'LOCATION': env.dj_cache_url('REDIS_URL'),
-        },
-        'wagtailcache': {
-            'BACKEND': 'wagtailcache.compat_backends.django_redis.RedisCache',
-            'LOCATION': env.dj_cache_url('REDIS_URL'),
-            'KEY_PREFIX': 'wagtailcache',
-            'TIMEOUT': CACHE_CONTROL_MAX_AGE,
-        }
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'database_cache',
+    },
+    'wagtailcache': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'database_cache',
+        'KEY_PREFIX': 'wagtailcache',
+        'TIMEOUT': CACHE_CONTROL_MAX_AGE,
     }
-else:
-    CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-            'LOCATION': 'database_cache',
-        },
-        'wagtailcache': {
-            'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-            'LOCATION': 'database_cache',
-            'KEY_PREFIX': 'wagtailcache',
-            'TIMEOUT': CACHE_CONTROL_MAX_AGE,
-        }
-    }
+}
 
 # Use a more permanent cache for django-file-form.
 # It uses it to store metadata about files while they are being uploaded.
@@ -338,10 +324,7 @@ HIJACK_PERMISSION_CHECK = 'hijack.permissions.superusers_and_staff'
 
 # Celery settings
 
-if env.str('REDIS_URL', None):
-    CELERY_BROKER_URL = env.str('REDIS_URL')
-else:
-    CELERY_TASK_ALWAYS_EAGER = True
+CELERY_TASK_ALWAYS_EAGER = True
 
 
 # S3 settings
