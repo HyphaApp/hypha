@@ -10,7 +10,7 @@ Make sure you have these things installed on your system:
 * Git
 * Python 3.11.x
 * PostgreSQL 14.x (with `libpq-dev` on Linux)
-* Node 16.x
+* Node 18.x
 
 On Linux install them with your normal package manager. On macOS [Homebrew](https://brew.sh/) is an excellent option. For Windows [Chocolatey](https://chocolatey.org/) seems popular but we have no experience with Windows.
 
@@ -36,7 +36,7 @@ NOTE: In production media is stored on AWS S3 but for local development you need
 
 ## Install project dependencies
 
-First create and activate [python virtual environment](https://docs.python.org/3.10/library/venv.html):
+First create and activate [python virtual environment](https://docs.python.org/3.11/library/venv.html):
 
 ```console
 $ python3 -m venv .venv/
