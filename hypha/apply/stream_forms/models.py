@@ -112,7 +112,7 @@ class BaseStreamForm:
                         field_from_block.visible = grouped_fields_visible
                     form_fields[struct_child.id] = field_from_block
             elif isinstance(block, GroupToggleEndBlock):
-                # Group toogle end block is used only to group fields and not used in actual form.
+                # Group toggle end block is used only to group fields and not used in actual form.
                 # Todo: Use streamblock to create nested form field blocks, a more elegant method to group form fields.
                 is_in_group = False
             else:

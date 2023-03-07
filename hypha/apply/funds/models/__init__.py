@@ -1,5 +1,6 @@
 from django.utils.translation import gettext_lazy as _
 
+from .application_revisions import ApplicationRevision
 from .applications import (
     ApplicationBase,
     ApplicationSettings,
@@ -7,11 +8,12 @@ from .applications import (
     RoundBase,
     RoundsAndLabs,
 )
+from .assigned_reviewers import AssignedReviewers
 from .forms import ApplicationForm
 from .reminders import Reminder
 from .reviewer_role import ReviewerRole, ReviewerSettings
 from .screening import ScreeningStatus
-from .submissions import ApplicationRevision, ApplicationSubmission, AssignedReviewers
+from .submissions import ApplicationSubmission
 
 __all__ = [
     'ApplicationForm',
