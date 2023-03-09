@@ -29,6 +29,10 @@
         {% render_table paf_waiting_for_final_approval.table %}
     </div>
     {% endif %}
+
+    {% if projects_in_contracting.count %}
+        {% include "dashboard/includes/projects_in_contracting.html" with projects_in_contracting=projects_in_contracting %}
+    {% endif %}
 </div>
 {% endblock %}
 

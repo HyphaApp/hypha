@@ -388,7 +388,8 @@ class ContractingDashboardView(MyFlaggedMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context.update({
             'paf_waiting_for_approval': self.paf_waiting_for_approval(),
-            'paf_waiting_for_final_approval': self.paf_waiting_for_final_approval()
+            'paf_waiting_for_final_approval': self.paf_waiting_for_final_approval(),
+            'projects_in_contracting': self.projects_in_contracting(),
         })
 
         return context
@@ -455,6 +456,34 @@ class ContractingDashboardView(MyFlaggedMixin, TemplateView):
             'approved_by_you': {
                 'count': len(approved_by_user),
                 'table': ProjectsDashboardTable(data=approved_by_user),
+            }
+        }
+
+    def projects_in_contracting(self):
+        if not self.request.user.is_contracting:
+            return {
+                'count': None,
+                'waiting_for_contract': {
+                    'count': None,
+                    'table': None,
+                },
+                'waiting_for_contract_approval': {
+                    'count': None,
+                    'table': None,
+                }
+            }
+        projects_in_contracting = Project.objects.in_contracting()
+        waiting_for_contract = projects_in_contracting.filter(contracts__isnull=True).for_table()
+        waiting_for_contract_approval = projects_in_contracting.filter(contracts__isnull=False).for_table()
+        return {
+            'count': projects_in_contracting.count(),
+            'waiting_for_contract': {
+                'count': waiting_for_contract.count(),
+                'table': ProjectsDashboardTable(data=waiting_for_contract)
+            },
+            'waiting_for_contract_approval': {
+                'count': waiting_for_contract_approval.count(),
+                'table': ProjectsDashboardTable(data=waiting_for_contract_approval)
             }
         }
 

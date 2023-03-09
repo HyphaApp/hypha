@@ -82,6 +82,9 @@ class ProjectQuerySet(models.QuerySet):
     def complete(self):
         return self.filter(status=COMPLETE)
 
+    def in_contracting(self):
+        return self.filter(status=CONTRACTING)
+
     def waiting_for_approval(self):
         return self.filter(
             status=WAITING_FOR_APPROVAL,
