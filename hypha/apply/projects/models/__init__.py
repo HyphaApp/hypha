@@ -7,8 +7,8 @@ from .project import (
     PAFApprovals,
     Project,
     ProjectApprovalForm,
-    ProjectSOWForm,
     ProjectSettings,
+    ProjectSOWForm,
 )
 from .report import Report, ReportConfig, ReportPrivateFiles, ReportVersion
 from .vendor import BankInformation, DueDiligenceDocument, Vendor, VendorFormSettings

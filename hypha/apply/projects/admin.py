@@ -7,13 +7,13 @@ from .admin_views import (
     CreateProjectApprovalFormView,
     CreateProjectSOWFormView,
     EditProjectApprovalFormView,
-    EditProjectSOWFormView
+    EditProjectSOWFormView,
 )
 from .models import (
     DocumentCategory,
     ProjectApprovalForm,
-    ProjectSOWForm,
     ProjectSettings,
+    ProjectSOWForm,
     VendorFormSettings,
 )
 
