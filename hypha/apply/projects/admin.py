@@ -3,10 +3,16 @@ from wagtail.contrib.modeladmin.options import ModelAdmin, ModelAdminGroup
 from hypha.apply.utils.admin import ListRelatedMixin
 from hypha.core.wagtail.admin import SettingModelAdmin
 
-from .admin_views import CreateProjectApprovalFormView, EditProjectApprovalFormView
+from .admin_views import (
+    CreateProjectApprovalFormView,
+    CreateProjectSOWFormView,
+    EditProjectApprovalFormView,
+    EditProjectSOWFormView
+)
 from .models import (
     DocumentCategory,
     ProjectApprovalForm,
+    ProjectSOWForm,
     ProjectSettings,
     VendorFormSettings,
 )
@@ -32,6 +38,20 @@ class ProjectApprovalFormAdmin(ListRelatedMixin, ModelAdmin):
     ]
 
 
+class ProjectSOWFormAdmin(ListRelatedMixin, ModelAdmin):
+    model = ProjectSOWForm
+    menu_label = 'SOW Forms'
+    menu_icon = 'form'
+    list_display = ('name', 'used_by',)
+    create_view_class = CreateProjectSOWFormView
+    edit_view_class = EditProjectSOWFormView
+
+    related_models = [
+        ('applicationbaseprojectsowform', 'application'),
+        ('labbaseprojectsowform', 'lab'),
+    ]
+
+
 class ProjectSettingsAdmin(SettingModelAdmin):
     model = ProjectSettings
 
@@ -46,6 +66,7 @@ class ProjectAdminGroup(ModelAdminGroup):
     items = (
         DocumentCategoryAdmin,
         ProjectApprovalFormAdmin,
+        ProjectSOWFormAdmin,
         VendorFormSettingsAdmin,
         ProjectSettingsAdmin,
     )

@@ -7,6 +7,7 @@ from .project import (
     PAFApprovals,
     Project,
     ProjectApprovalForm,
+    ProjectSOWForm,
     ProjectSettings,
 )
 from .report import Report, ReportConfig, ReportPrivateFiles, ReportVersion
@@ -15,6 +16,7 @@ from .vendor import BankInformation, DueDiligenceDocument, Vendor, VendorFormSet
 __all__ = [
     'Project',
     'ProjectApprovalForm',
+    'ProjectSOWForm',
     'ProjectSettings',
     'PAFApprovals',
     'Contract',

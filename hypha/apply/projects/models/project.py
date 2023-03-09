@@ -395,7 +395,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         return ''
 
 
-class ProjectApprovalForm(BaseStreamForm, models.Model):
+class ProjectBaseStreamForm(BaseStreamForm, models.Model):
     name = models.CharField(max_length=255)
     form_fields = StreamField(FormFieldsBlock())
 
@@ -404,8 +404,19 @@ class ProjectApprovalForm(BaseStreamForm, models.Model):
         FieldPanel('form_fields'),
     ]
 
+    class Meta:
+        abstract = True
+
     def __str__(self):
         return self.name
+
+
+class ProjectApprovalForm(ProjectBaseStreamForm):
+    pass
+
+
+class ProjectSOWForm(ProjectBaseStreamForm):
+    pass
 
 
 class PAFReviewersRole(Orderable, ClusterableModel):
