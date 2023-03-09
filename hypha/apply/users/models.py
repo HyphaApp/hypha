@@ -6,6 +6,7 @@ from django.db import IntegrityError, models
 from django.db.models import Q
 from django.db.models.constants import LOOKUP_SEP
 from django.db.models.utils import resolve_callables
+from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
@@ -269,6 +270,14 @@ class User(AbstractUser):
     @cached_property
     def is_contracting_approver(self):
         return self.groups.filter(name=CONTRACTING_GROUP_NAME).exists() and self.groups.filter(name=APPROVER_GROUP_NAME).exists()
+
+    def get_absolute_url(self):
+        """Used in the activities messages to generate URL for user instances.
+
+        Returns:
+           url pointing to the wagtail admin, as there are no public urls for user.
+        """
+        return reverse('wagtailusers_users:edit', args=[self.id])
 
     class Meta:
         ordering = ('full_name', 'email')
