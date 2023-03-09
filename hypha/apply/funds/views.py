@@ -673,6 +673,17 @@ class CreateProjectView(DelegatedViewMixin, CreateView):
     def get_success_url(self):
         return self.object.get_absolute_url()
 
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messenger(
+            MESSAGES.CREATED_PROJECT,
+            request=self.request,
+            user=self.request.user,
+            source=self.object,
+            related=self.object.submission,
+        )
+        return response
+
 
 @method_decorator(staff_required, name='dispatch')
 class ScreeningSubmissionView(DelegatedViewMixin, UpdateView):
