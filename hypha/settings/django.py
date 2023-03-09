@@ -80,7 +80,6 @@ INSTALLED_APPS = [
 
     'hijack',
     'pagedown',
-    'salesforce',
 
     'django.contrib.admin',
     'django.contrib.auth',

@@ -64,10 +64,6 @@ The corrosponding locale dir is named: en, en_GB, en_US
 
     DEFAULT_PER_PAGE = 20
 
-### Webpack bundle loader. When set to False, the React app part of Hypha is disabled.
-
-    ENABLE_WEBPACK_BUNDLES = env.bool('ENABLE_WEBPACK_BUNDLES', True)
-
 ### If Hypha should enforce 2FA for all users.
 
     ENFORCE_TWO_FACTOR = env.bool('ENFORCE_TWO_FACTOR', False)
@@ -88,11 +84,6 @@ Only effects setting external reviewers for now.
 Good for testing, might not be a good idea in production.
 
     HIJACK_ENABLE = env.bool('HIJACK_ENABLE', False)
-
-### Matomo tracking.
-
-    MATOMO_SITEID = env.str('MATOMO_SITEID', None)
-    MATOMO_URL = env.str('MATOMO_URL', None)
 
 ### Organisation name and e-mail address etc., used in e-mail templates etc.
 

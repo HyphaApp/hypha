@@ -13,7 +13,6 @@ __coverage__/
 node_modules/
 /npm-debug.log
 /.idea/
-salesforce.env
 
 # Distribution / packaging
 .Python
@@ -39,9 +38,6 @@ htmlcov/
 # Cache
 .mypy_cache/
 .pytest_cache/
-
-# Webpack
-webpack-stats.json
 
 # Compiled language files
 *.mo

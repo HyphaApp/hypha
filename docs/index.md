@@ -30,5 +30,5 @@ View our [Roadmap](https://github.com/HyphaApp/hypha/wiki/Roadmap) for upcoming 
 
 ## Technology
 
-* Built with [Django](https://www.djangoproject.com/), PostgreSQL, Redis and [Wagtail](https://wagtail.io/)
+* Built with [Django](https://www.djangoproject.com/), PostgreSQL and [Wagtail](https://wagtail.io/)
 * Deploy with [Heroku](https://docs.hypha.app/deployment/heroku), [Docker](https://docs.hypha.app/deployment/docker), or [your own server](https://docs.hypha.app/deployment/stand-alone).

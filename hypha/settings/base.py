@@ -48,10 +48,6 @@ SUBMISSIONS_ARCHIVED_ACCESS_STAFF_ADMIN = env.bool('SUBMISSIONS_ARCHIVED_ACCESS_
 # Good for testing, might not be a good idea in production.
 HIJACK_ENABLE = env.bool('HIJACK_ENABLE', False)
 
-# Matomo tracking.
-MATOMO_SITEID = env.str('MATOMO_SITEID', None)
-MATOMO_URL = env.str('MATOMO_URL', None)
-
 # Organisation name and e-mail address etc., used in e-mail templates etc.
 ORG_EMAIL = env.str('ORG_EMAIL', 'info@example.org')
 ORG_GUIDE_URL = env.str('ORG_GUIDE_URL', 'https://guide.example.org/')
@@ -187,32 +183,18 @@ FEED_CACHE_TIMEOUT = 600
 # Set X-Frame-Options header for every outgoing HttpResponse
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
-if env.str('REDIS_URL', None):
-    CACHES = {
-        'default': {
-            'BACKEND': 'django_redis.cache.RedisCache',
-            'LOCATION': env.dj_cache_url('REDIS_URL'),
-        },
-        'wagtailcache': {
-            'BACKEND': 'wagtailcache.compat_backends.django_redis.RedisCache',
-            'LOCATION': env.dj_cache_url('REDIS_URL'),
-            'KEY_PREFIX': 'wagtailcache',
-            'TIMEOUT': CACHE_CONTROL_MAX_AGE,
-        }
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'database_cache',
+    },
+    'wagtailcache': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'database_cache',
+        'KEY_PREFIX': 'wagtailcache',
+        'TIMEOUT': CACHE_CONTROL_MAX_AGE,
     }
-else:
-    CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-            'LOCATION': 'database_cache',
-        },
-        'wagtailcache': {
-            'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-            'LOCATION': 'database_cache',
-            'KEY_PREFIX': 'wagtailcache',
-            'TIMEOUT': CACHE_CONTROL_MAX_AGE,
-        }
-    }
+}
 
 # Use a more permanent cache for django-file-form.
 # It uses it to store metadata about files while they are being uploaded.
@@ -342,10 +324,7 @@ HIJACK_PERMISSION_CHECK = 'hijack.permissions.superusers_and_staff'
 
 # Celery settings
 
-if env.str('REDIS_URL', None):
-    CELERY_BROKER_URL = env.str('REDIS_URL')
-else:
-    CELERY_TASK_ALWAYS_EAGER = True
+CELERY_TASK_ALWAYS_EAGER = True
 
 
 # S3 settings
@@ -422,28 +401,6 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     )
 }
-
-
-# Salesforce integration settings
-
-if env.bool('SALESFORCE_INTEGRATION', False):
-    DATABASES = {
-        **DATABASES,
-        'salesforce': {
-            'ENGINE': 'salesforce.backend',
-            'CONSUMER_KEY': env.str('SALESFORCE_CONSUMER_KEY', ''),
-            'CONSUMER_SECRET': env.str('SALESFORCE_CONSUMER_SECRET', ''),
-            'USER': env.str('SALESFORCE_USER', ''),
-            'PASSWORD': env.str('SALESFORCE_PASSWORD', ''),
-            'HOST': env.str('SALESFORCE_LOGIN_URL', '')
-        }
-    }
-
-    SALESFORCE_QUERY_TIMEOUT = (30, 30)  # (connect timeout, data timeout)
-
-    DATABASE_ROUTERS = [
-        'salesforce.router.ModelRouter'
-    ]
 
 
 # django-file-form settings
