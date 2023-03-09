@@ -1,9 +1,11 @@
 from django.urls import re_path
 from wagtail import hooks
+from wagtail.core.models import Site
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 
 from .admin_views import CustomGroupViewSet, index
+from .utils import send_activation_email
 
 
 @hooks.register('register_admin_urls')
@@ -27,6 +29,8 @@ def notify_after_create_user(request, user):
         source=user,
     )
 
+    site = Site.find_for_request(request)
+    send_activation_email(user, site)
 
 @hooks.register('after_edit_user')
 def notify_after_edit_user(request, user):
