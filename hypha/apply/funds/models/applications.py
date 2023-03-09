@@ -204,9 +204,9 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
                 FieldPanel('end_date'),
             ]),
         ], heading=_('Dates')),
-        FieldPanel('reviewers', widget=forms.SelectMultiple(attrs={'size': '16'})),
         ReadOnlyPanel(
             'get_workflow_name_display',
+        FieldPanel('reviewers', widget=forms.CheckboxSelectMultiple),
             heading=_('Workflow'),
             help_text=_('Copied from the fund.'),
         ),
@@ -475,7 +475,7 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
 
     content_panels = WorkflowStreamForm.content_panels + [
         FieldPanel('lead'),
-        FieldPanel('reviewers', widget=forms.SelectMultiple(attrs={'size': '16'})),
+        FieldPanel('reviewers', widget=forms.CheckboxSelectMultiple),
         FieldPanel('guide_link'),
         FieldPanel('description'),
         FieldPanel('image'),
