@@ -132,7 +132,7 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
         return self.open_round.serve(request)
 
     content_panels = WorkflowStreamForm.content_panels + [
-        FieldPanel('reviewers', widget=forms.SelectMultiple(attrs={'size': '16'})),
+        FieldPanel('reviewers', widget=forms.CheckboxSelectMultiple),
         FieldPanel('guide_link'),
         FieldPanel('description'),
         FieldPanel('image'),
@@ -204,9 +204,9 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
                 FieldPanel('end_date'),
             ]),
         ], heading=_('Dates')),
+        FieldPanel('reviewers', widget=forms.CheckboxSelectMultiple),
         ReadOnlyPanel(
             'get_workflow_name_display',
-        FieldPanel('reviewers', widget=forms.CheckboxSelectMultiple),
             heading=_('Workflow'),
             help_text=_('Copied from the fund.'),
         ),
