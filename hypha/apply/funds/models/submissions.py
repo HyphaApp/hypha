@@ -4,7 +4,6 @@ from functools import partialmethod
 from django.apps import apps
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
 from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import PermissionDenied
 from django.db import models
@@ -12,7 +11,6 @@ from django.db.models import (
     Avg,
     Case,
     Count,
-    F,
     FloatField,
     IntegerField,
     OuterRef,
@@ -66,13 +64,8 @@ from ..workflow import (
 from .mixins import AccessFormData
 from .reviewer_role import ReviewerRole
 from .utils import (
-    COMMUNITY_REVIEWER_GROUP_NAME,
     LIMIT_TO_PARTNERS,
-    LIMIT_TO_REVIEWER_GROUPS,
     LIMIT_TO_STAFF,
-    REVIEW_GROUPS,
-    REVIEWER_GROUP_NAME,
-    STAFF_GROUP_NAME,
     WorkflowHelpers,
 )
 
@@ -214,6 +207,7 @@ class ApplicationSubmissionQueryset(JSONOrderable):
         )
 
     def for_table(self, user):
+        AssignedReviewers = apps.get_model("funds", "AssignedReviewers")
         activities = self.model.activities.rel.model
         comments = activities.comments.filter(submission=OuterRef('id')).visible_to(user)
         roles_for_review = self.model.assigned.field.model.objects.with_roles().filter(
@@ -638,6 +632,7 @@ class ApplicationSubmission(
 
     def create_revision(self, draft=False, force=False, by=None, **kwargs):
         # Will return True/False if the revision was created or not
+        ApplicationRevision = apps.get_model('funds', 'ApplicationRevision')
         self.clean_submission()
         current_submission = ApplicationSubmission.objects.get(id=self.id)
         current_data = current_submission.form_data
@@ -704,6 +699,9 @@ class ApplicationSubmission(
         super().save(*args, **kwargs)
 
         if creating:
+            AssignedReviewers = apps.get_model('funds', 'AssignedReviewers')
+            ApplicationRevision = apps.get_model('funds', 'ApplicationRevision')
+
             self.process_file_data(files)
             for reviewer in self.get_from_parent('reviewers').all():
                 AssignedReviewers.objects.get_or_create_for_user(
@@ -939,212 +937,3 @@ def log_status_update(sender, **kwargs):
             user=by,
             source=instance,
         )
-
-
-class ApplicationRevision(BaseStreamForm, AccessFormData, models.Model):
-    submission = models.ForeignKey(ApplicationSubmission, related_name='revisions', on_delete=models.CASCADE)
-    form_data = models.JSONField(encoder=StreamFieldDataEncoder)
-    timestamp = models.DateTimeField(auto_now=True)
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
-
-    class Meta:
-        ordering = ['-timestamp']
-
-    def __str__(self):
-        return f'Revision for {self.submission.title} by {self.author} '
-
-    @property
-    def form_fields(self):
-        return self.submission.form_fields
-
-    def get_compare_url_to_latest(self):
-        return reverse("funds:submissions:revisions:compare", kwargs={
-            'submission_pk': self.submission.id,
-            'to': self.submission.live_revision.id,
-            'from': self.id,
-        })
-
-    def get_absolute_url(self):
-        # Compares against the previous revision
-        previous_revision = self.submission.revisions.filter(id__lt=self.id).first()
-        return reverse("funds:submissions:revisions:compare", kwargs={
-            'submission_pk': self.submission.id,
-            'to': self.id,
-            'from': previous_revision.id,
-        })
-
-
-class AssignedReviewersQuerySet(models.QuerySet):
-    def review_order(self):
-        review_order = [
-            STAFF_GROUP_NAME,
-            COMMUNITY_REVIEWER_GROUP_NAME,
-            REVIEWER_GROUP_NAME,
-        ]
-
-        ordering = [
-            models.When(type__name=review_type, then=models.Value(i))
-            for i, review_type in enumerate(review_order)
-        ]
-        return self.exclude(
-            # Remove people from the list who are opinionated but
-            # didn't submit a review, they appear elsewhere
-            Q(opinions__isnull=False) &
-            Q(Q(review__isnull=True) | Q(review__is_draft=True))
-        ).annotate(
-            type_order=models.Case(
-                *ordering,
-                output_field=models.IntegerField(),
-            ),
-            has_review=models.Case(
-                models.When(review__isnull=True, then=models.Value(1)),
-                models.When(review__is_draft=True, then=models.Value(1)),
-                default=models.Value(0),
-                output_field=models.IntegerField(),
-            )
-        ).order_by(
-            'type_order',
-            'has_review',
-            F('role__order').asc(nulls_last=True),
-        ).select_related(
-            'reviewer',
-            'role',
-        )
-
-    def with_roles(self):
-        return self.filter(role__isnull=False)
-
-    def without_roles(self):
-        return self.filter(role__isnull=True)
-
-    def reviewed(self):
-        return self.filter(
-            Q(opinions__opinion=AGREE) |
-            Q(Q(review__isnull=False) & Q(review__is_draft=False))
-        ).distinct()
-
-    def draft_reviewed(self):
-        return self.filter(
-            Q(Q(review__isnull=False) & Q(review__is_draft=True))
-        ).distinct()
-
-    def not_reviewed(self):
-        return self.filter(
-            Q(review__isnull=True) | Q(review__is_draft=True),
-            Q(opinions__isnull=True) | Q(opinions__opinion=DISAGREE),
-        ).distinct()
-
-    def never_tried_to_review(self):
-        # Different from not reviewed as draft reviews allowed
-        return self.filter(
-            review__isnull=True,
-            opinions__isnull=True,
-        )
-
-    def staff(self):
-        return self.filter(type__name=STAFF_GROUP_NAME)
-
-    def get_or_create_for_user(self, submission, reviewer):
-        groups = set(reviewer.groups.values_list('name', flat=True)) & set(REVIEW_GROUPS)
-        if len(groups) > 1:
-            if COMMUNITY_REVIEWER_GROUP_NAME in groups:
-                groups = {COMMUNITY_REVIEWER_GROUP_NAME}
-            elif reviewer.is_apply_staff:
-                groups = {STAFF_GROUP_NAME}
-            else:
-                groups = {REVIEWER_GROUP_NAME}
-        elif not groups:
-            if reviewer.is_staff or reviewer.is_superuser:
-                groups = {STAFF_GROUP_NAME}
-            else:
-                groups = {REVIEWER_GROUP_NAME}
-
-        group = Group.objects.get(name=groups.pop())
-
-        return self.get_or_create(
-            submission=submission,
-            reviewer=reviewer,
-            type=group,
-        )
-
-    def get_or_create_staff(self, submission, reviewer):
-        return self.get_or_create(
-            submission=submission,
-            reviewer=reviewer,
-            type=Group.objects.get(name=STAFF_GROUP_NAME),
-        )
-
-    def bulk_create_reviewers(self, reviewers, submission):
-        group = Group.objects.get(name=REVIEWER_GROUP_NAME)
-        self.bulk_create(
-            [
-                self.model(
-                    submission=submission,
-                    role=None,
-                    reviewer=reviewer,
-                    type=group,
-                ) for reviewer in reviewers
-            ],
-            ignore_conflicts=True
-        )
-
-    def update_role(self, role, reviewer, *submissions):
-        # Remove role who didn't review
-        self.filter(submission__in=submissions, role=role).never_tried_to_review().delete()
-        # Anyone else we remove their role
-        self.filter(submission__in=submissions, role=role).update(role=None)
-        # Create/update the new role reviewers
-        group = Group.objects.get(name=STAFF_GROUP_NAME)
-        for submission in submissions:
-            self.update_or_create(
-                submission=submission,
-                reviewer=reviewer,
-                defaults={'role': role, 'type': group},
-            )
-
-
-class AssignedReviewers(models.Model):
-    reviewer = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        limit_choices_to=LIMIT_TO_REVIEWER_GROUPS,
-    )
-    type = models.ForeignKey(
-        'auth.Group',
-        on_delete=models.PROTECT,
-    )
-    submission = models.ForeignKey(
-        ApplicationSubmission,
-        related_name='assigned',
-        on_delete=models.CASCADE
-    )
-    role = models.ForeignKey(
-        'funds.ReviewerRole',
-        related_name='+',
-        on_delete=models.SET_NULL,
-        null=True,
-    )
-
-    objects = AssignedReviewersQuerySet.as_manager()
-
-    class Meta:
-        unique_together = (('submission', 'role'), ('submission', 'reviewer'))
-
-    def __hash__(self):
-        return hash(self.pk)
-
-    def __str__(self):
-        return f'{self.reviewer}'
-
-    def __eq__(self, other):
-        if not isinstance(other, models.Model):
-            return False
-        if self._meta.concrete_model != other._meta.concrete_model:
-            return False
-        my_pk = self.pk
-        if my_pk is None:
-            return self is other
-        return all([
-            self.reviewer_id == other.reviewer_id,
-            self.role_id == other.role_id,
-        ])

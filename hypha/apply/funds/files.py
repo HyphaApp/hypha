@@ -16,7 +16,7 @@ def generate_submission_file_path(submission_id, field_id, file_name):
 class SubmissionStreamFieldFile(StreamFieldFile):
 
     def get_submission_id(self):
-        from hypha.apply.funds.models.submissions import ApplicationRevision
+        from hypha.apply.funds.models import ApplicationRevision
         submission_id = self.instance.pk
 
         if isinstance(self.instance, ApplicationRevision):
