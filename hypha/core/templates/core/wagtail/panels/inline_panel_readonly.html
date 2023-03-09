@@ -2,6 +2,10 @@
 
 {{ self.formset.management_form }}
 
+{% if self.help_text %}
+    {% help_block status="info" %}{{ self.help_text }}{% endhelp_block %}
+{% endif %}
+
 <ul class="multiple" id="id_{{ self.formset.prefix }}-FORMS">
     {% if self.formset.non_form_errors %}
         <li class="error-message">
