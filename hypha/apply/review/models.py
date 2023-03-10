@@ -204,7 +204,7 @@ class Review(ReviewFormFieldsMixin, BaseStreamForm, AccessFormData, models.Model
 
     @cached_property
     def is_updated(self):
-        # Only compear dates, not time.
+        # Only compare dates, not time.
         return self.created_at.date() < self.updated_at.date()
 
 

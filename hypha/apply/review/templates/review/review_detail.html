@@ -14,7 +14,7 @@
     </div>
 </div>
 
-<div class="grid">
+<div style="display: flex; gap: 2rem; padding-top: 2rem;">
     <div>
         <h5>{% trans "Recommendation" %}</h5>
         <p>{{ review.get_recommendation_display }}</p>
@@ -23,6 +23,7 @@
         <h5>{% trans "Score" %}</h5>
         <p>{{ review.get_score_display }}</p>
     </div>
+    <div style="flex-grow: 1"></div>
     <div>
         <svg class="icon icon--eye"><use xlink:href="#eye"></use></svg>
         {{ review.get_visibility_display }}
