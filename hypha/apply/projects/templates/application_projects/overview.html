@@ -11,16 +11,12 @@
 {% endblock %}
 
 {% block content %}
-<div class="admin-bar">
-    <div class="admin-bar__inner wrapper--search">
-        {% block page_header %}
-            <div>
-                <h1 class="gamma heading heading--no-margin heading--bold">{% trans "Projects" %}</h1>
-                <h5>{% trans "Track and explore recent projects" %}</h5>
-            </div>
-        {% endblock %}
-    </div>
-</div>
+
+    {% adminbar %}
+        {% slot header %}{% trans "Projects" %}{% endslot %}
+        {% slot sub_heading %} {% trans "Track and explore recent projects" %} {% endslot %}
+    {% endadminbar %}
+
 
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
 

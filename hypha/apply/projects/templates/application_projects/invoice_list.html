@@ -6,15 +6,11 @@
 {% block title %}{% trans "Invoices" %}{% endblock %}
 
 {% block content %}
-<div class="admin-bar">
-    <div class="admin-bar__inner wrapper--search">
-        {% block page_header %}
-            <div>
-                <h1 class="gamma heading heading--no-margin heading--bold">{% trans "All Invoices" %}</h1>
-            </div>
-        {% endblock %}
-    </div>
-</div>
+
+    {% adminbar %}
+        {% slot header %}{% trans "All Invoices" %} ({{ table.rows|length }}){% endslot %}
+        {% slot sub_heading %}{% trans "View, search and filter all project invoices" %}{% endslot %}
+    {% endadminbar %}
 
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
     {% if table %}

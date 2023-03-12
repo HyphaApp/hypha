@@ -4,18 +4,15 @@
 {% block title %}{{ object }}{% endblock %}
 
 {% block content %}
-    <div class="admin-bar">
-        <div class="admin-bar__inner admin-bar__inner--with-button">
-            <div>
-                <h1 class="gamma heading heading--no-margin heading--bold">{{ object }}<span class="submissions-count"> ({{ table.rows|length }})</span></h1>
-                <p class="admin-bar__meta">{% if object.fund %}{{ object.fund }} <span>|</span> {% endif %}{% trans "Lead" %}: {{ object.lead }}</p>
-            </div>
-        </div>
-    </div>
 
-<div class="wrapper wrapper--large wrapper--inner-space-medium">
-    {% block table %}
-        {{ block.super }}
-    {% endblock %}
-</div>
+    {% adminbar %}
+        {% slot header %}{{ object }} ({{ table.rows|length }}){% endslot %}
+        {% slot sub_heading %}{% if object.fund %}{{ object.fund }} <span>|</span> {% endif %}{% trans "Lead" %}: {{ object.lead }}{% endslot %}
+    {% endadminbar %}
+
+    <div class="wrapper wrapper--large wrapper--inner-space-medium">
+        {% block table %}
+            {{ block.super }}
+        {% endblock %}
+    </div>
 {% endblock %}
