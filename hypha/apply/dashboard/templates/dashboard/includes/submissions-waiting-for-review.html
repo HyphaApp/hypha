@@ -15,8 +15,8 @@
     {% endif %}
 
 {% else %}
-    <div class="reviewer-dash-box">
-        <h5 class="reviewer-dash-box__title">{% trans "Nice! You're all caught up." %}</h5>
+    <div class="border py-10 bg-white w-full text-center px-2">
+        <p class="text-base my-2">{% trans "Nice! You're all caught up. 🎉" %}</p>
         <a class="button button--primary" href="{% url 'apply:submissions:list' %}" hx-boost='true'>{% trans "Find new applications to review" %}</a>
     </div>
     {# TODO Fill in data and update styles in future ticket #}
