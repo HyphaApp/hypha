@@ -162,6 +162,9 @@ TEMPLATES = [
             "builtins": [
                 "django_web_components.templatetags.components",
             ],
+            "builtins": [
+                "django_web_components.templatetags.components",
+            ],
         },
     },
 ]
