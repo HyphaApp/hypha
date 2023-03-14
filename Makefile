@@ -1,3 +1,5 @@
+DJANGO_PORT = 9001
+
 .PHONY: help
 help:
 	@echo "Usage:"
@@ -8,8 +10,14 @@ help:
 	@echo "    make lint-fix         try fixing plausible python linting issues."
 	@echo "    make py-test          run all python tests and display coverage"
 	@echo "    make test             run linting and test and generate html coverage report"
-	@echo "    make serve-docs       run documentation development server."
+	@echo "    make serve-docs       run documentation development server"
+	@echo "    make serve-django     run Django development server on port 9001."
+	@echo "    make serve            run Django and docs preview server, also watch and compile frontend changes"
 	@echo "    make watch            watch js and css resources for development"
+
+.PHONY: serve
+serve:
+	$(MAKE) -j3 watch serve-django serve-docs
 
 .PHONY: build
 build:
@@ -43,6 +51,10 @@ lint-fix:
 py-test:
 	@echo "Running python tests"
 	pytest --reuse-db --cov --cov-report term:skip-covered
+
+.PHONY: serve-django
+serve-django:
+	python manage.py runserver 0.0.0.0:$(DJANGO_PORT) --settings=hypha.settings.dev
 
 .PHONY: test
 test: lint py-test cov-html
