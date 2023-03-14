@@ -67,17 +67,19 @@
                     </a>
                 {% endif %}
             </div>
-            <ul class="docs-block__document-list">
-                <li class="docs-block__document">
-                    <div class="docs-block__document-inner">
-                        <p class="docs-block__document-info">{% trans "Scope Of Work (SOW)" %}</p>
-                    </div>
-                    <div class="docs-block__document-inner">
-                        <a class="docs-block__link" href="{% url 'apply:projects:sow' pk=project.pk %}">{% trans "View" %}</a>
-                        <a class="docs-block__link" href="{% url 'apply:projects:download-sow' pk=project.pk export_type='pdf' %}">{% trans "Download" %}</a>
-                    </div>
-                </li>
-            </ul>
+            {% if object.user_has_updated_details and not user.is_applicant %}
+                <ul class="docs-block__document-list">
+                    <li class="docs-block__document">
+                        <div class="docs-block__document-inner">
+                            <p class="docs-block__document-info">{% trans "Scope Of Work (SOW)" %}</p>
+                        </div>
+                        <div class="docs-block__document-inner">
+                            <a class="docs-block__link" href="{% url 'apply:projects:sow' pk=project.pk %}">{% trans "View" %}</a>
+                            <a class="docs-block__link" href="{% url 'apply:projects:download-sow' pk=project.pk export_type='pdf' %}">{% trans "Download" %}</a>
+                        </div>
+                    </li>
+                </ul>
+            {% endif %}
         </li>
 
         <li class="docs-block__row">
