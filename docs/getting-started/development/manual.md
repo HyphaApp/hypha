@@ -178,12 +178,6 @@ Build all assets for development:
 $ npm run dev:build
 ```
 
-Collect all the static files.
-
-```text
-$ python manage.py collectstatic --noinput --settings=hypha.settings.dev
-```
-
 !!! tip
     See the `package.json` file for a complete list of commands. Here are the most common in development.
 
@@ -193,20 +187,14 @@ $ python manage.py collectstatic --noinput --settings=hypha.settings.dev
 $ python manage.py runserver 0.0.0.0:9001 --settings=hypha.settings.dev
 ```
 
+Alternatively, you can also use `$ make serve-django`
+
+
 Now you should be able to access the sites:
 
 1. Public Site: [http://hypha.test:9001/](http://hypha.test:9001/) 
 2. Apply Site: [http://apply.hypha.test:9001/](http://apply.hypha.test:9001/)
 
-## Run tests
-
-Hypha uses `ruff` and [py.test](https://pytest-django.readthedocs.io/en/latest/) test runner and uses `hypha/settings/testing.py` for test settings. 
-
-Run the test with:
-
-```console
-$ make test
-```
 
 ## Documentation
 
@@ -221,6 +209,29 @@ $ python -m pip install -r requirements-dev.txt
 Run:
 ```console
 $ make serve-docs
+```
+
+Open http://localhost:9100/ to preview the documentation site.
+
+
+!!! tip
+    You can use `$ make serve` command to run Django Development Server, watch and compile frontend changes and preview docs all at once.
+
+## Running tests
+
+Hypha uses `ruff` and [py.test](https://pytest-django.readthedocs.io/en/latest/) test runner and uses `hypha/settings/testing.py` for test settings.
+For frontend code, stylelint and eslint is used. 
+
+Run the test with:
+
+```console
+$ make test
+```
+
+For lint the code and not run the full test suite you can use:
+
+```console
+$ make lint
 ```
 
 
