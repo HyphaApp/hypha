@@ -56,7 +56,9 @@
     }
 
     &--normal {
-        font-weight: $weight--normal;
+        font-weight: 500;
+        font-size: 1.25rem;
+        line-height: 1.75rem;
     }
 
     &--bold {
