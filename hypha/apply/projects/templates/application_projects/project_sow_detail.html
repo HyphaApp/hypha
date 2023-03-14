@@ -1,0 +1,64 @@
+{% extends "base-apply.html" %}
+{% load i18n static approval_tools %}
+
+{% block title %}{{ object.title }}{% endblock %}
+
+{% block extra_css %}
+        <link rel="stylesheet" href="{% static 'css/apply/fancybox.css' %}">
+        {{ reviewer_form.media.css }}
+{% endblock %}
+
+{% block body_class %}light-grey-bg{% endblock %}
+
+{% block content %}
+<div class="simplified">
+    <div class="simplified__admin-bar">
+        <div class="simplified__admin-bar-inner-project">
+            <div>
+                <a class="simplified__projects-link" href="{{ object.get_absolute_url }}">
+                    {% trans "Back to project" %}
+                </a>
+                <h1 class="simplified__heading">{{ object.title }}</h1>
+                <h5 class="simplified__subheading">
+                    <span>{{ object.submission.page }}</span>
+                    <span>{{ object.submission.round }}</span>
+                    <span>{% trans "Lead" %}: {{ object.lead }}</span>
+                </h5>
+            </div>
+
+            <div class="dropdown">
+              <button class="button button--primary dropbtn" type="button" data-dropdown-target="#dropdown-content-download">
+                  {% trans 'Download' %}
+              </button>
+              <div id="dropdown-content-download" class="dropdown-content">
+                <a class="dropdown-item" href="{% url 'apply:projects:download-sow' pk=object.pk export_type='pdf' %}">
+                    {% trans 'Download as PDF' %}</a>
+                <a class="dropdown-item" href="{% url 'apply:projects:download-sow' pk=object.pk export_type='docx' %}">
+                    {% trans 'Download as DOCX' %}</a>
+              </div>
+            </div>
+        </div>
+    </div>
+    <div class="wrapper wrapper--large wrapper--tabs">
+        <div class="wrapper wrapper--sidebar">
+            <article class="wrapper--sidebar--inner simplified__wrapper">
+                <h3>{% trans "Project Scope of Work(SOW)" %}</h3>
+                <div class="card card--solid">
+                    {% if object.sow.output_answers %}
+                        <div class="simplified__rich-text">
+                            {{ object.sow.output_answers }}
+                        </div>
+                    {% endif %}
+                </div>
+            </article>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+    {{ block.super }}
+    <script src="{% static 'js/apply/jquery.fancybox.min.js' %}"></script>
+    <script src="{% static 'js/apply/fancybox-global.js' %}"></script>
+    <script src="{% static 'js/apply/dropdown.js' %}"></script>
+{% endblock %}

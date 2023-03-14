@@ -628,6 +628,92 @@ class ProjectDetailApprovalView(DelegateableView, DetailView):
 
 
 @method_decorator(staff_or_finance_or_contracting_required, name='dispatch')
+class ProjectSOWView(DetailView):
+    model = Project
+    template_name_suffix = '_sow_detail'
+
+
+@method_decorator(staff_or_finance_or_contracting_required, name='dispatch')
+class ProjectSOWDownloadView(SingleObjectMixin, View):
+    model = Project
+
+    def get(self, request, *args, **kwargs):
+        export_type = kwargs.get('export_type', 'pdf')
+        self.object = self.get_object()
+        context = {}
+        context['sow_data'] = self.get_sow_data_with_field(self.object)
+        context['org_name'] = settings.ORG_LONG_NAME
+        context['title'] = self.object.title
+        context['project_link'] = self.request.build_absolute_uri(
+            reverse('apply:projects:detail', kwargs={'pk': self.object.id})
+        )
+        template_path = 'application_projects/sow_export.html'
+
+        if export_type == 'pdf':
+            pdf_page_settings = PDFPageSettings.for_request(request)
+
+            context['show_footer'] = True
+            context['export_date'] = datetime.date.today().strftime("%b %d, %Y")
+            context['export_user'] = request.user
+            context['pagesize'] = pdf_page_settings.download_page_size
+
+            return self.render_as_pdf(
+                context=context,
+                template=get_template(template_path),
+                filename=self.get_slugified_file_name(export_type)
+            )
+        elif export_type == 'docx':
+            context['show_footer'] = False
+
+            return self.render_as_docx(
+                context=context,
+                template=get_template(template_path),
+                filename=self.get_slugified_file_name(export_type)
+            )
+        else:
+            raise Http404(f"{export_type} type not supported at the moment")
+
+    def render_as_pdf(self, context, template, filename):
+        html = template.render(context)
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename={filename}'
+
+        pisa_status = pisa.CreatePDF(
+            html, dest=response, encoding='utf-8', raise_exception=True)
+        if pisa_status.err:
+            # :todo: needs to handle it in a better way
+            raise Http404('PDF type not supported at the moment')
+        return response
+
+    def render_as_docx(self, context, template, filename):
+        html = template.render(context)
+
+        buf = io.BytesIO()
+        document = Document()
+        new_parser = HtmlToDocx()
+        new_parser.add_html_to_document(html, document)
+        document.save(buf)
+
+        response = HttpResponse(buf.getvalue(), content_type='application/docx')
+        response['Content-Disposition'] = f'attachment; filename={filename}'
+        return response
+
+    def get_slugified_file_name(self, export_type):
+        return f"{datetime.date.today().strftime('%Y%m%d')}-{slugify(self.object.title)}.{export_type}"
+
+    def get_sow_data_with_field(self, project):
+        data_dict = {}
+        if project.sow:
+            form_data_dict = project.sow.form_data
+            for field in project.sow.form_fields.raw_data:
+                if field['id'] in form_data_dict.keys():
+                    if isinstance(field['value'], dict) and 'field_label' in field['value']:
+                        data_dict[field['value']['field_label']] = form_data_dict[field['id']]
+
+        return data_dict
+
+
+@method_decorator(staff_or_finance_or_contracting_required, name='dispatch')
 class ProjectDetailDownloadView(SingleObjectMixin, View):
     model = Project
 

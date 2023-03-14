@@ -94,6 +94,12 @@
                             {{ object.output_answers }}
                         </div>
                     {% endif %}
+
+                    {% if object.sow.output_answers %}
+                        <div class="simplified__rich-text">
+                            {{ object.sow.output_answers }}
+                        </div>
+                    {% endif %}
                 </div>
 
                 <h3>{% trans "Approvals" %}</h3>
