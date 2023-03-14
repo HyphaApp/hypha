@@ -22,6 +22,7 @@ from ..models.project import (
     PAFApprovals,
     PAFReviewersRole,
     Project,
+    ProjectSOW,
 )
 
 User = get_user_model()
@@ -116,12 +117,46 @@ class ProjectApprovalForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaCl
         return cleaned_data
 
     def save(self, *args, **kwargs):
+        self.instance.form_fields = kwargs.pop('paf_form_fields')
         self.instance.form_data = {
             field: self.cleaned_data[field]
             for field in self.instance.question_field_ids
             if field in self.cleaned_data
         }
         self.instance.user_has_updated_details = True
+        return super().save(*args, **kwargs)
+
+
+class ProjectSOWForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass):
+    class Meta:
+        fields = [
+            'project',
+        ]
+        model = ProjectSOW
+        widgets = {
+            'project': forms.HiddenInput()
+        }
+
+    def __init__(self, *args, extra_fields=None, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        cleaned_data['form_data'] = {
+            key: value
+            for key, value in cleaned_data.items()
+            if key not in self._meta.fields
+        }
+        return cleaned_data
+
+    def save(self, *args, **kwargs):
+        self.instance, _ = self._meta.model.objects.get_or_create(project=kwargs.pop('project'))
+        self.instance.form_fields = kwargs.pop('sow_form_fields')
+        self.instance.form_data = {
+            field: self.cleaned_data[field]
+            for field in self.instance.question_field_ids
+            if field in self.cleaned_data
+        }
         return super().save(*args, **kwargs)
 
 
