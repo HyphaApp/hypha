@@ -200,7 +200,7 @@ Track errors from your Hypha installation.
     SENTRY_DEBUG = env.bool('SENTRY_DEBUG', False)
     SENTRY_DENY_URLS = env.list('SENTRY_DENY_URLS', default=[])
 
-See [setup guide](./setup-sentry.md) for sentry.
+See [setup guide](./setup-error-performance-monitoring.md) for sentry.
 
 ## S3 settings
 
