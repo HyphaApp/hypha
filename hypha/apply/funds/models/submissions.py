@@ -703,11 +703,10 @@ class ApplicationSubmission(
             ApplicationRevision = apps.get_model('funds', 'ApplicationRevision')
 
             self.process_file_data(files)
-            for reviewer in self.get_from_parent('reviewers').all():
-                AssignedReviewers.objects.get_or_create_for_user(
-                    reviewer=reviewer,
-                    submission=self
-                )
+            AssignedReviewers.objects.bulk_create_reviewers(
+                list(self.get_from_parent('reviewers').all()),
+                self,
+            )
             first_revision = ApplicationRevision.objects.create(
                 submission=self,
                 form_data=self.form_data,

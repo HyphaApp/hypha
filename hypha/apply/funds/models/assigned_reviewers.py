@@ -104,7 +104,7 @@ class AssignedReviewersQuerySet(models.QuerySet):
         return self.get_or_create(
             submission=submission,
             reviewer=reviewer,
-            type=group,
+            defaults={'type': group},
         )
 
     def get_or_create_staff(self, submission, reviewer):
