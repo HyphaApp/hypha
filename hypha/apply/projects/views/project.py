@@ -868,9 +868,10 @@ class ProjectApprovalEditView(BaseStreamForm, UpdateView):
             "title": self.object.title,
             "buttons": self.buttons(),
             "approval_form_exists": True if self.approval_form else False,
-            "sow_form_exists": True if self.sow_form else False,
+            "sow_form_exists": True if self.approval_sow_form else False,
             "paf_form": self.paf_form,
             "sow_form": self.sow_form,
+            "object": self.object,
             **kwargs
         }
 
