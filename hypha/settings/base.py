@@ -151,6 +151,7 @@ TEMPLATES = [
                 'hypha.apply.projects.context_processors.projects_enabled',
                 'hypha.cookieconsent.context_processors.cookies_accepted',
                 'hypha.apply.activity.context_processors.notification_context',
+                'hypha.core.context_processors.global_vars',
             ],
         },
     },
@@ -448,3 +449,23 @@ if not SEND_MESSAGES:
 COUNTRIES_OVERRIDE = {
     'KV': 'Kosovo',
 }
+
+# Sentry configuration.
+# -----------------------------------------------------------------------------
+SENTRY_DSN = env.str('SENTRY_DSN', None)
+SENTRY_PUBLIC_KEY = env.str('SENTRY_PUBLIC_KEY', None)
+SENTRY_TRACES_SAMPLE_RATE = env.float('SENTRY_TRACES_SAMPLE_RATE', default=0)
+SENTRY_ENVIRONMENT = env.str('SENTRY_ENVIRONMENT', 'production')
+SENTRY_DEBUG = env.bool('SENTRY_DEBUG', False)
+SENTRY_DENY_URLS = env.list('SENTRY_DENY_URLS', default=[])
+
+if SENTRY_DSN:
+    import sentry_sdk
+    from sentry_sdk.integrations.django import DjangoIntegration
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        environment=SENTRY_ENVIRONMENT,
+        traces_sample_rate=SENTRY_TRACES_SAMPLE_RATE,
+        debug=SENTRY_DEBUG,
+        integrations=[DjangoIntegration()]
+    )

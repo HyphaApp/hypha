@@ -19,17 +19,6 @@ if env.str('MAILGUN_API_KEY', None):
         'WEBHOOK_SECRET': env.str('ANYMAIL_WEBHOOK_SECRET', None)
     }
 
-# Sentry configuration.
-if env.str('SENTRY_DSN', None):
-    import sentry_sdk
-    from sentry_sdk.integrations.celery import CeleryIntegration
-    from sentry_sdk.integrations.django import DjangoIntegration
-    sentry_sdk.init(
-        dsn=env.str('SENTRY_DSN'),
-        environment=env.str('SENTRY_ENVIRONMENT', None),
-        integrations=[DjangoIntegration(), CeleryIntegration()]
-    )
-
 # Heroku configuration.
 # Set ON_HEROKU to true in Config Vars or via cli 'heroku config:set ON_HEROKU=true'.
 if env.bool('ON_HEROKU', False):

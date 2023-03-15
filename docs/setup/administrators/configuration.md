@@ -189,12 +189,18 @@ It is also possible to use a local e-mail server.
     EMAIL_USE_SSL = env.bool('EMAIL_USE_SSL', False)
 
 
-## Sentry configuration.
+## Sentry
 
 Track errors from your Hypha installation.
 
     SENTRY_DSN = env.str('SENTRY_DSN', None)
+    SENTRY_PUBLIC_KEY = env.str('SENTRY_PUBLIC_KEY', None)
+    SENTRY_TRACES_SAMPLE_RATE = env.float('SENTRY_TRACES_SAMPLE_RATE', default=0)
+    SENTRY_ENVIRONMENT = env.str('SENTRY_ENVIRONMENT', 'unknown')
+    SENTRY_DEBUG = env.bool('SENTRY_DEBUG', False)
+    SENTRY_DENY_URLS = env.list('SENTRY_DENY_URLS', default=[])
 
+See [setup guide](./setup-error-performance-monitoring.md) for sentry.
 
 ## S3 settings
 

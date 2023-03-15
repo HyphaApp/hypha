@@ -211,5 +211,25 @@
         <script src="{% static 'js/main.js' %}"></script>
         <script src="{% static 'js/cookieconsent.js' %}"></script>
         {% block extra_js %}{% endblock %}
+
+        {% block sentry_sdk %}
+        {% if SENTRY_PUBLIC_KEY %}
+        <script
+            src="https://js.sentry-cdn.com/{{ SENTRY_PUBLIC_KEY }}.min.js"
+            crossorigin="anonymous"
+        ></script>
+        <script>
+            Sentry.onLoad(function() {
+                Sentry.init({
+                    environment: "{{ SENTRY_ENVIRONMENT }}",
+                    debug: {% if SENTRY_DEBUG %}true{% else %}false{% endif %},
+                    integrations: [new BrowserTracing()],
+                    denyUrls: {{ SENTRY_DENY_URLS|safe }},
+                    tracesSampleRate: {{ SENTRY_TRACES_SAMPLE_RATE }}
+                });
+             });
+        </script>
+        {% endif %}
+        {% endblock sentry_sdk %}
     </body>
 </html>
