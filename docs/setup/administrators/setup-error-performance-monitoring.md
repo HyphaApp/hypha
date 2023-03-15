@@ -21,7 +21,9 @@ add lazy-loaded sdk from Sentry CDN to all the templates, and then initialize it
 SENTRY_PUBLIC_KEY="2214b...."
 ```
 
-You can set a comma separated `SENTRY_DENY_URLS` environment variable if you want to exclude any page from being tracked.
+You can set a comma separated `SENTRY_DENY_URLS` environment variable to exclude any page from being tracked. 
+
+See more: https://docs.sentry.io/platforms/javascript/
 
 ## Performance monitoring
 
