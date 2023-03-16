@@ -22,7 +22,6 @@ from ..forms.payment import (
 )
 from ..forms.project import (
     ChangePAFStatusForm,
-    FinalApprovalForm,
     ProjectApprovalForm,
     StaffUploadContractForm,
     UploadContractForm,
@@ -296,23 +295,6 @@ class TestChangePAFStatusForm(TestCase):
         project = ProjectFactory(in_approval=True)
         user = StaffFactory()
         form = ChangePAFStatusForm(data={'paf_status': APPROVE}, instance=project, user=user)
-        self.assertTrue(form.is_valid())
-        self.assertEqual(form.errors, {})
-
-
-class TestFinalApprovalForm(TestCase):
-    def test_final_approval_status_is_required(self):
-        project = ProjectFactory(in_approval=True)
-        user = StaffFactory()
-        form = FinalApprovalForm(data={'comment': ''}, instance=project, user=user)
-        self.assertFalse(form.is_valid())
-        self.assertNotEqual(form.errors, {})
-        self.assertIn('final_approval_status', form.errors.keys())
-
-    def test_comment_is_not_required(self):
-        project = ProjectFactory(in_approval=True)
-        user = StaffFactory()
-        form = FinalApprovalForm(data={'final_approval_status': APPROVE}, instance=project, user=user)
         self.assertTrue(form.is_valid())
         self.assertEqual(form.errors, {})
 

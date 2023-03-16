@@ -8,12 +8,10 @@ from django.utils.translation import gettext as _
 
 from hypha.apply.projects.models.payment import CHANGES_REQUESTED_BY_STAFF, DECLINED
 from hypha.apply.users.groups import (
-    APPROVER_GROUP_NAME,
     CONTRACTING_GROUP_NAME,
     FINANCE_GROUP_NAME,
     STAFF_GROUP_NAME,
 )
-from hypha.apply.users.models import User
 
 from ..options import MESSAGES
 from ..tasks import send_mail
@@ -59,7 +57,6 @@ class EmailAdapter(AdapterBase):
         MESSAGES.REPORT_FREQUENCY_CHANGED: 'messages/email/report_frequency.html',
         MESSAGES.REPORT_NOTIFY: 'messages/email/report_notify.html',
         MESSAGES.REVIEW_REMINDER: 'messages/email/ready_to_review.html',
-        MESSAGES.PROJECT_FINAL_APPROVAL: 'messages/email/project_final_approval.html',
         MESSAGES.PROJECT_TRANSITION: 'handle_project_transition',
     }
 
@@ -78,7 +75,7 @@ class EmailAdapter(AdapterBase):
                 subject = _(
                     'Reminder: Application ready to review: {source.title}'
                 ).format(source=source)
-            elif message_type in [MESSAGES.PROJECT_FINAL_APPROVAL, MESSAGES.SENT_TO_COMPLIANCE]:
+            elif message_type in [MESSAGES.SENT_TO_COMPLIANCE]:
                 subject = _('Project is waiting for approval: {source.title}').format(source=source)
             elif message_type == MESSAGES.UPLOAD_CONTRACT:
                 subject = _('Contract uploaded for the project: {source.title}').format(source=source)
@@ -257,12 +254,6 @@ class EmailAdapter(AdapterBase):
                 if next_paf_approval:
                     return [next_paf_approval.user.email]
             return source.paf_approvals.filter(approved=False).values_list('user__email', flat=True)
-
-        if message_type == MESSAGES.PROJECT_FINAL_APPROVAL:
-            # users with contracting + approver role
-            contracting_approver_emails = User.objects.filter(groups__name=CONTRACTING_GROUP_NAME).\
-                filter(groups__name=APPROVER_GROUP_NAME).values_list('email', flat=True)
-            return contracting_approver_emails
 
         if message_type == MESSAGES.SENT_TO_COMPLIANCE:
             return get_compliance_email(target_user_gps=[CONTRACTING_GROUP_NAME, FINANCE_GROUP_NAME, STAFF_GROUP_NAME])

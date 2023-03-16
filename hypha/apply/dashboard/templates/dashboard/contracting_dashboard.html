@@ -22,14 +22,6 @@
         {% include "dashboard/includes/paf_waiting_for_approval.html" with paf_waiting_for_approval=paf_waiting_for_approval %}
     {% endif %}
 
-<!--    For contracting-approver dashboard-->
-    {% if paf_waiting_for_final_approval.count %}
-    <div id="paf-awaiting-final-approval" class="wrapper wrapper--bottom-space">
-        <h4 class="heading heading--normal">{% trans "PAF waiting for final approval" %}</h4>
-        {% render_table paf_waiting_for_final_approval.table %}
-    </div>
-    {% endif %}
-
     {% if projects_in_contracting.count %}
         {% include "dashboard/includes/projects_in_contracting.html" with projects_in_contracting=projects_in_contracting %}
     {% endif %}

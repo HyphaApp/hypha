@@ -39,7 +39,6 @@ from hypha.apply.activity.models import ACTION, ALL, COMMENT, Activity
 from hypha.apply.activity.views import ActivityContextMixin, CommentFormView
 from hypha.apply.stream_forms.models import BaseStreamForm
 from hypha.apply.users.decorators import (
-    contracting_approver_required,
     staff_or_finance_or_contracting_required,
     staff_or_finance_required,
     staff_required,
@@ -54,7 +53,6 @@ from ..forms import (
     ApproveContractForm,
     ChangePAFStatusForm,
     ChangeProjectStatusForm,
-    FinalApprovalForm,
     ProjectApprovalForm,
     RemoveDocumentForm,
     SelectDocumentForm,
@@ -76,7 +74,6 @@ from ..models.project import (
     Contract,
     PacketFile,
     PAFApprovals,
-    PAFReviewersRole,
     Project,
     ProjectSettings,
 )
@@ -116,106 +113,10 @@ class SendForApprovalView(DelegatedViewMixin, UpdateView):
             related=old_stage,
         )
 
-        if not PAFReviewersRole.objects.all().exists():
-            project.ready_for_final_approval = True
-            project.save(update_fields={'ready_for_final_approval'})
-            # notify final approver if there is no Project Reviewer roles exist
-            messenger(
-                MESSAGES.PROJECT_FINAL_APPROVAL,
-                request=self.request,
-                user=self.request.user,
-                source=self.object,
-            )
-
-        return response
-
-
-@method_decorator(contracting_approver_required, name='dispatch')
-class FinalApprovalView(DelegatedViewMixin, UpdateView):
-    form_class = FinalApprovalForm
-    context_name = 'final_approval_form'
-    model = Project
-
-    def form_valid(self, form):
-        project = self.object
-        old_stage = project.get_status_display()
-
-        response = super().form_valid(form)
-
-        comment = form.cleaned_data.get('comment', '')
-        status = form.cleaned_data['final_approval_status']
-
-        if status == REQUEST_CHANGE:
-            project.status = COMMITTED
-            project.is_locked = False
-            project.ready_for_final_approval = False
-            project.save(update_fields=['status', 'is_locked', 'ready_for_final_approval'])
-            project.paf_approvals.all().update(approved=False)  # Approvers should look into it again.
-
-            project_status_message = _(
-                '<p>{user} request changes the Project and update status to {project_status}.</p>').format(
-                user=self.request.user,
-                project_status=project.status
-            )
-
-            Activity.objects.create(
-                user=self.request.user,
-                type=ACTION,
-                source=project,
-                timestamp=timezone.now(),
-                message=project_status_message,
-                visibility=ALL,
-            )
-
-            messenger(
-                MESSAGES.REQUEST_PROJECT_CHANGE,
-                request=self.request,
-                user=self.request.user,
-                source=self.object,
-                comment=comment,
-            )
-            return response
-
-        messenger(
-            MESSAGES.APPROVE_PROJECT,
-            request=self.request,
-            user=self.request.user,
-            source=project,
-        )
-
-        project.is_locked = True
-        project.status = CONTRACTING
-        project.ready_for_final_approval = False
-        project.save(update_fields=['is_locked', 'status', 'ready_for_final_approval'])
-
-        project_status_message = _(
-            '<p>{user} approved the Project and update status to {project_status}.</p>').format(
-            user=self.request.user,
-            project_status=project.status
-        )
-
-        Activity.objects.create(
-            user=self.request.user,
-            type=ACTION,
-            source=project,
-            timestamp=timezone.now(),
-            message=project_status_message,
-            visibility=ALL,
-        )
-
-        messenger(
-            MESSAGES.PROJECT_TRANSITION,
-            request=self.request,
-            user=self.request.user,
-            source=project,
-            related=old_stage,
-        )
-
         return response
 
 
 # PROJECT DOCUMENTS
-
 @method_decorator(staff_required, name='dispatch')
 class UploadDocumentView(DelegatedViewMixin, CreateView):
     context_name = 'document_form'
@@ -525,16 +426,18 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
             )
 
         if self.object.is_approved_by_all_paf_reviewers:
-            self.object.ready_for_final_approval = True
-            self.object.save(update_fields={'ready_for_final_approval'})
-            # notify final approver if project is open for final approval
+            old_stage = self.object.get_status_display()
+            self.object.is_locked = True
+            self.object.status = CONTRACTING
+            self.object.save(update_fields=['is_locked', 'status'])
+
             messenger(
-                MESSAGES.PROJECT_FINAL_APPROVAL,
+                MESSAGES.PROJECT_TRANSITION,
                 request=self.request,
                 user=self.request.user,
                 source=self.object,
+                related=old_stage,
             )
-
         return response
 
 
@@ -595,7 +498,6 @@ class AdminProjectDetailView(
     form_views = [
         ApproveContractView,
         CommentFormView,
-        FinalApprovalView,
         RemoveDocumentView,
         SelectDocumentView,
         SendForApprovalView,
@@ -612,7 +514,7 @@ class AdminProjectDetailView(
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         project_settings = ProjectSettings.for_request(self.request)
-        context['paf_approval_sequential'] = project_settings.paf_approval_sequential
+        context['project_settings'] = project_settings
         context['paf_approvals'] = PAFApprovals.objects.filter(project=self.object)
         context['remaining_document_categories'] = list(self.object.get_missing_document_categories())
 

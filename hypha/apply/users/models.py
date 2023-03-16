@@ -60,10 +60,6 @@ class UserQuerySet(models.QuerySet):
     def contracting(self):
         return self.filter(groups__name=CONTRACTING_GROUP_NAME, is_active=True)
 
-    def contracting_approvers(self):
-        # final approvers for project
-        return self.filter(groups__name=CONTRACTING_GROUP_NAME, is_active=True).filter(groups__name=APPROVER_GROUP_NAME)
-
 
 class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
     use_in_migrations = True

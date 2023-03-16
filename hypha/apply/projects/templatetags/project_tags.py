@@ -1,4 +1,5 @@
 from django import template
+from django.urls import reverse
 
 from hypha.apply.projects.models.project import CLOSING, COMPLETE, IN_PROGRESS
 from hypha.apply.projects.permissions import has_permission
@@ -55,3 +56,15 @@ def show_closing_banner(project):
 def user_can_update_project_status(project, user):
     can_update_status, _ = has_permission('project_status_update', user, object=project, raise_exception=False)
     return can_update_status
+
+
+@register.simple_tag
+def project_settings_url(instance):
+    return reverse(
+        "wagtailsettings:edit",
+        args=[
+            instance._meta.app_label,
+            instance._meta.model_name,
+            instance.site_id,
+        ],
+    )
