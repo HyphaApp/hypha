@@ -3,7 +3,10 @@ from django.test import TestCase
 
 from hypha.apply.determinations.tests.factories import DeterminationFormFactory
 from hypha.apply.funds.models import FundType
-from hypha.apply.projects.tests.factories import ProjectApprovalFormFactory
+from hypha.apply.projects.tests.factories import (
+    ProjectApprovalFormFactory,
+    ProjectSOWFormFactory,
+)
 from hypha.apply.review.tests.factories import ReviewFormFactory
 
 from .factories import ApplicationFormFactory, FundTypeFactory, workflow_for_stages
@@ -39,7 +42,7 @@ def formset_base(field, total, delete, factory, same=False, form_stage_info=None
     return base_data
 
 
-def form_data(num_appl_forms=0, num_review_forms=0, num_determination_forms=0, num_external_review_forms=0, num_project_approval_form=0, delete=0, stages=1, same_forms=False, form_stage_info=None):
+def form_data(num_appl_forms=0, num_review_forms=0, num_determination_forms=0, num_external_review_forms=0, num_project_approval_form=0, num_project_sow_form=0, delete=0, stages=1, same_forms=False, form_stage_info=None):
     if form_stage_info is None:
         form_stage_info = [1]
     form_data = formset_base(
@@ -49,11 +52,13 @@ def form_data(num_appl_forms=0, num_review_forms=0, num_determination_forms=0, n
     external_review_form_data = formset_base('external_review_forms', num_external_review_forms, True, same=same_forms, factory=ReviewFormFactory)
     determination_form_data = formset_base('determination_forms', num_determination_forms, False, same=same_forms, factory=DeterminationFormFactory)
     project_approval_form_data = formset_base('approval_forms', num_project_approval_form, False, same=same_forms, factory=ProjectApprovalFormFactory)
+    project_sow_form_data = formset_base('sow_forms', num_project_sow_form, False, same=same_forms, factory=ProjectSOWFormFactory)
 
     form_data.update(review_form_data)
     form_data.update(external_review_form_data)
     form_data.update(determination_form_data)
     form_data.update(project_approval_form_data)
+    form_data.update(project_sow_form_data)
 
     fund_data = factory.build(dict, FACTORY_CLASS=FundTypeFactory)
     fund_data['workflow_name'] = workflow_for_stages(stages)
