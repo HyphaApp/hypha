@@ -117,7 +117,7 @@ class ProjectApprovalForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaCl
         return cleaned_data
 
     def save(self, *args, **kwargs):
-        self.instance.form_fields = kwargs.pop('paf_form_fields')
+        self.instance.form_fields = kwargs.pop('paf_form_fields', {})
         self.instance.form_data = {
             field: self.cleaned_data[field]
             for field in self.instance.question_field_ids
@@ -150,8 +150,8 @@ class ProjectSOWForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass):
         return cleaned_data
 
     def save(self, *args, **kwargs):
-        self.instance, _ = self._meta.model.objects.get_or_create(project=kwargs.pop('project'))
-        self.instance.form_fields = kwargs.pop('sow_form_fields')
+        self.instance, _ = self._meta.model.objects.get_or_create(project=kwargs.pop('project', None))
+        self.instance.form_fields = kwargs.pop('sow_form_fields', {})
         self.instance.form_data = {
             field: self.cleaned_data[field]
             for field in self.instance.question_field_ids
