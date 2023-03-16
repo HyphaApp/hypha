@@ -212,6 +212,7 @@ class AbstractRelatedProjectApprovalForm(Orderable):
 
 
 class AbstractRelatedProjectSOWForm(Orderable):
+    """ Abstract class for SOW Form to use it in Funds and Labs, similar to the other forms liks ReviewForms etc """
     class Meta(Orderable.Meta):
         abstract = True
 

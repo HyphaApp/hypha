@@ -123,7 +123,6 @@ class BaseStreamForm:
         return form_fields
 
     def get_form_class(self, draft=False, form_data=None, user=None):
-        print("jkjkjkjjk", form_data, draft, user)
         return type('WagtailStreamForm', (self.submission_form_class,), self.get_form_fields(draft, form_data, user))
 
 
