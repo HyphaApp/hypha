@@ -863,7 +863,8 @@ class ProjectApprovalEditView(BaseStreamForm, UpdateView):
 
     def get_context_data(self, **kwargs):
         self.paf_form = self.get_paf_form()
-        self.sow_form = self.get_sow_form()
+        if self.approval_sow_form:
+            self.sow_form = self.get_sow_form()
         return {
             "title": self.object.title,
             "buttons": self.buttons(),
@@ -899,15 +900,13 @@ class ProjectApprovalEditView(BaseStreamForm, UpdateView):
         kwargs = super().get_form_kwargs()
         if self.approval_sow_form:
             fields = self.approval_sow_form.form.get_form_fields()
-        else:
-            fields = {}
 
-        kwargs['extra_fields'] = fields
-        try:
-            sow_instance = self.object.sow
-            kwargs['initial'].update({'project': self.object, **sow_instance.raw_data})
-        except ObjectDoesNotExist:
-            kwargs['initial'].update({'project': self.object})
+            kwargs['extra_fields'] = fields
+            try:
+                sow_instance = self.object.sow
+                kwargs['initial'].update({'project': self.object, **sow_instance.raw_data})
+            except ObjectDoesNotExist:
+                kwargs['initial'].update({'project': self.object})
         return kwargs
 
     def post(self, request, *args, **kwargs):
@@ -917,24 +916,38 @@ class ProjectApprovalEditView(BaseStreamForm, UpdateView):
         """
 
         self.paf_form = self.get_paf_form()
-        self.sow_form = self.get_sow_form()
-        if self.paf_form.is_valid() and self.sow_form.is_valid():
-            try:
-                paf_form_fields = self.approval_form.form.form_fields
-            except AttributeError:
-                paf_form_fields = []
-            try:
-                sow_form_fields = self.approval_sow_form.form.form_fields
-            except AttributeError:
-                sow_form_fields = []
+        if self.approval_sow_form:
+            self.sow_form = self.get_sow_form()
+            if self.paf_form.is_valid() and self.sow_form.is_valid():
+                # if both forms exists, both needs to be valid together
+                try:
+                    paf_form_fields = self.approval_form.form.form_fields
+                except AttributeError:
+                    paf_form_fields = []
+                try:
+                    sow_form_fields = self.approval_sow_form.form.form_fields
+                except AttributeError:
+                    sow_form_fields = []
 
-            self.paf_form.save(paf_form_fields=paf_form_fields)
-            self.sow_form.save(sow_form_fields=sow_form_fields, project=self.object)
-            return HttpResponseRedirect(self.get_success_url())
+                self.paf_form.save(paf_form_fields=paf_form_fields)
+                self.sow_form.save(sow_form_fields=sow_form_fields, project=self.object)
+                return HttpResponseRedirect(self.get_success_url())
+            else:
+                if not self.paf_form.is_valid():
+                    return self.form_invalid(self.paf_form)
+                return self.form_invalid(self.sow_form)
         else:
-            if not self.paf_form.is_valid():
+            if self.paf_form.is_valid():
+                # paf can exist alone also, it needs to be valid
+                try:
+                    paf_form_fields = self.approval_form.form.form_fields
+                except AttributeError:
+                    paf_form_fields = []
+                self.paf_form.save(paf_form_fields=paf_form_fields)
+                return HttpResponseRedirect(self.get_success_url())
+            else:
                 return self.form_invalid(self.paf_form)
-            return self.form_invalid(self.sow_form)
+
 
 
 @method_decorator(staff_or_finance_required, name='dispatch')

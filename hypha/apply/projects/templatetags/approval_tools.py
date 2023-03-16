@@ -5,6 +5,11 @@ from ..permissions import has_permission
 register = template.Library()
 
 
+@register.simple_tag
+def has_project_sow_form(project):
+    return project.submission.page.specific.sow_forms.exists()
+
+
 def user_has_approved(project, user):
     """Has the given User already approved the given Project"""
     return project.approvals.filter(by=user).exists()

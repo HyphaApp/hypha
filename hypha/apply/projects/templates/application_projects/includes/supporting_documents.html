@@ -67,7 +67,8 @@
                     </a>
                 {% endif %}
             </div>
-            {% if object.user_has_updated_details and not user.is_applicant %}
+            {% has_project_sow_form object as project_sow %}
+            {% if project_sow and object.user_has_updated_details and not user.is_applicant %}
                 <ul class="docs-block__document-list">
                     <li class="docs-block__document">
                         <div class="docs-block__document-inner">

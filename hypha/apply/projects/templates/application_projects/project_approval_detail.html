@@ -95,7 +95,8 @@
                         </div>
                     {% endif %}
 
-                    {% if object.sow.output_answers %}
+                    {% has_project_sow_form object as project_sow %}
+                    {% if project_sow and object.sow.output_answers %}
                         <div class="simplified__rich-text">
                             {{ object.sow.output_answers }}
                         </div>
