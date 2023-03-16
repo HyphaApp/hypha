@@ -95,6 +95,7 @@ table {
             &.title {
                 a {
                     font-weight: $weight--bold;
+                    text-decoration: underline;
                 }
             }
         }
