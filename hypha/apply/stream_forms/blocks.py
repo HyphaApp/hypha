@@ -463,7 +463,7 @@ class HeadingBlock(StructBlock):
 
 
 class FormFieldsBlock(StreamBlock):
-    text_markup = RichTextBlock(group=_('Custom'), label=_('Section text'))
+    text_markup = RichTextBlock(group=_('Custom'), label=_('Paragraph'))
     header_markup = HeadingBlock(group=_('Custom'), label=_('Section header'))
     char = CharFieldBlock(group=_('Fields'))
     multi_inputs_char = MultiInputCharFieldBlock(group=_('Fields'))
