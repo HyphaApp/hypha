@@ -703,7 +703,7 @@ class ProjectSOWDownloadView(SingleObjectMixin, View):
 
     def get_sow_data_with_field(self, project):
         data_dict = {}
-        if project.sow:
+        if project.submission.page.specific.sow_forms.exists() and project.sow:
             form_data_dict = project.sow.form_data
             for field in project.sow.form_fields.raw_data:
                 if field['id'] in form_data_dict.keys():
@@ -789,6 +789,7 @@ class ProjectDetailDownloadView(SingleObjectMixin, View):
 
         context['approvals'] = self.object.paf_approvals.all()
         context['paf_data'] = self.get_paf_data_with_field(self.object)
+        context['sow_data'] = self.get_sow_data_with_field(self.object)
         context['submission'] = self.object.submission
         context['submission_link'] = self.request.build_absolute_uri(
             reverse('apply:submissions:detail', kwargs={'pk': self.object.submission.id})
@@ -804,6 +805,17 @@ class ProjectDetailDownloadView(SingleObjectMixin, View):
             if field['id'] in form_data_dict.keys():
                 if isinstance(field['value'], dict) and 'field_label' in field['value']:
                     data_dict[field['value']['field_label']] = form_data_dict[field['id']]
+
+        return data_dict
+
+    def get_sow_data_with_field(self, project):
+        data_dict = {}
+        if project.submission.page.specific.sow_forms.exists() and project.sow:
+            form_data_dict = project.sow.form_data
+            for field in project.sow.form_fields.raw_data:
+                if field['id'] in form_data_dict.keys():
+                    if isinstance(field['value'], dict) and 'field_label' in field['value']:
+                        data_dict[field['value']['field_label']] = form_data_dict[field['id']]
 
         return data_dict
 
