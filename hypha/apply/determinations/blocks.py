@@ -75,7 +75,7 @@ class SendNoticeBlock(DeterminationMustIncludeFieldBlock):
 class DeterminationCustomFormFieldsBlock(CustomFormFieldsBlock):
     char = CharFieldBlock(group=_('Fields'))
     text = TextFieldBlock(group=_('Fields'))
-    text_markup = RichTextBlock(group=_('Fields'), label=_('Section text/header'))
+    text_markup = RichTextBlock(group=_('Fields'), label=_('Paragraph'))
     checkbox = CheckboxFieldBlock(group=_('Fields'))
     dropdown = DropdownFieldBlock(group=_('Fields'))
     required_blocks = DeterminationMustIncludeFieldBlock.__subclasses__()
