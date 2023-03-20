@@ -36,7 +36,21 @@
                 <span>{{ object.submission.round }}</span>
             {% endif %}
 
-            <span>{% trans "Lead" %}: {{ object.lead }}</span>
+            <span>
+                <a data-fancybox
+                    data-src="#assign-lead"
+                    class="link link--edit-lead is-active link--transparent"
+                    href="#">
+                    <u>{% trans "Lead" %}: {{ object.lead }}</u>
+                    <svg class="icon icon--pen"><use xlink:href="#pen"></use></svg>
+                </a>
+                <div class="modal" id="assign-lead">
+                    <h4 class="modal__header-bar">{% trans "Assign Lead" %}</h4>
+                    {% trans "Update" as update %}
+                    {% include 'funds/includes/delegated_form_base.html' with form=lead_form value=update %}
+                </div>
+                </button>
+            </span>
 
         </h5>
 
@@ -119,7 +133,41 @@
                 {% endif %}
             </article>
 
+            {% block sidebar %}
+
             <aside class="sidebar">
+                {% user_next_step_on_project object user as next_step %}
+                {% if next_step %}
+                    {% if mobile %}
+                    <a class="js-actions-toggle button button--white button--full-width button--actions">{% trans "Next Step" %}</a>
+                    {% endif %}
+
+                    <div class="js-actions-sidebar sidebar__inner sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
+
+                        <h5>{% trans "Next Step" %}</h5>
+                        <p>{{ next_step }}</p>
+
+                    </div>
+                {% endif %}
+                {% if object.paf_approvals.exists %}
+                    {% if mobile %}
+                    <a class="js-actions-toggle button button--white button--full-width button--actions">{% trans "PAF Approvals" %}</a>
+                    {% endif %}
+
+
+                    <div class="js-actions-sidebar sidebar__inner sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
+
+                    <h5>{% trans "PAF Approvals" %}</h5>
+                        {% for paf_approval in object.paf_approvals.all %}
+                            {% if paf_approval.approved %}
+                                <p class="">{% trans "Approved by " %}{{ paf_approval.user }}</p>
+                            {% else %}
+                                <p class="">{% trans "Pending approval by " %}{{ paf_approval.user }}</p>
+                            {% endif %}
+                        {% endfor %}
+
+                </div>
+                {% endif %}
                 {% if mobile %}
                 <a class="js-actions-toggle button button--white button--full-width button--actions">{% trans "Actions to take" %}</a>
                 {% endif %}
@@ -235,6 +283,7 @@
                 </div>
                 {% endif %}
             </aside>
+            {% endblock sidebar %}
         </div>
     </div>
 

@@ -1,17 +1,18 @@
 .docs-block {
     border: 1px solid $color--light-blue;
 
-    @include media-query(tablet-portrait) {
-        max-width: 610px;
-    }
 
     &__header {
-        background-color: $color--light-blue;
-        color: $color--white;
+        background-color: $color--light-blue-90;
         padding: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
 
     &__heading {
+        font-size: 20px;
+        font-weight: 700;
         margin: 0;
     }
 

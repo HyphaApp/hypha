@@ -1,7 +1,7 @@
 from django import template
 from django.urls import reverse
 
-from hypha.apply.projects.models.project import CLOSING, COMPLETE, IN_PROGRESS
+from hypha.apply.projects.models.project import COMMITTED, CLOSING, COMPLETE, IN_PROGRESS, WAITING_FOR_APPROVAL
 from hypha.apply.projects.permissions import has_permission
 
 register = template.Library()
@@ -11,6 +11,17 @@ register = template.Library()
 def project_can_have_report(project):
     if project.status in [COMPLETE, CLOSING, IN_PROGRESS]:
         return True
+    return False
+
+
+@register.simple_tag
+def user_next_step_on_project(project, user):
+    if project.status == COMMITTED:
+        if not project.user_has_updated_details:
+            return "Awaiting PAF to be filled in"
+        return "Awaiting PAF submission for Approval"
+    elif project.status == WAITING_FOR_APPROVAL:
+        return "Awaiting PAF Approvals"
     return False
 
 

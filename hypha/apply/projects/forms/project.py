@@ -77,6 +77,8 @@ class CreateProjectForm(forms.Form):
         lead_field = self.fields['project_lead']
         qwargs = Q(groups__name=STAFF_GROUP_NAME) | Q(is_superuser=True)
         lead_field.queryset = (lead_field.queryset.filter(qwargs).distinct())
+        if instance:
+            lead_field.initial = instance.lead
 
     def clean_project_lead(self):
         project_lead = self.cleaned_data['project_lead']
@@ -203,7 +205,7 @@ class RemoveDocumentForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
 
-class SetPendingForm(forms.ModelForm):
+class ApproversForm(forms.ModelForm):
     class Meta:
         fields = ['id']
         model = Project
@@ -228,10 +230,8 @@ class SetPendingForm(forms.ModelForm):
             )
 
     def clean(self):
-        if self.instance.status != COMMITTED:
-            raise forms.ValidationError(_('A Project can only be sent for Approval when Committed.'))
-
         cleaned_data = super().clean()
+
         paf_reviewer_roles = PAFReviewersRole.objects.all()
         if paf_reviewer_roles:
             for paf_reviewer_role in paf_reviewer_roles:
@@ -242,15 +242,28 @@ class SetPendingForm(forms.ModelForm):
     def save(self, commit=True):
         # add users as PAFApprovals
         for paf_reviewer_role in PAFReviewersRole.objects.all():
-            if not PAFApprovals.objects.filter(project=self.instance, paf_reviewer_role=paf_reviewer_role).exists():
+            paf_approvals = PAFApprovals.objects.filter(project=self.instance, paf_reviewer_role=paf_reviewer_role)
+            if not paf_approvals.exists():
                 PAFApprovals.objects.create(
                     project=self.instance,
                     paf_reviewer_role=paf_reviewer_role,
                     user=self.cleaned_data[slugify(paf_reviewer_role.label)],
                     approved=False,
                 )
+            elif not paf_approvals.first().approved:
+                paf_approval = paf_approvals.first()
+                paf_approval.user = self.cleaned_data[slugify(paf_reviewer_role.label)]
+                paf_approval.save()
         return super().save(commit=True)
 
+
+class SetPendingForm(ApproversForm):
+    def clean(self):
+        if self.instance.status != COMMITTED:
+            raise forms.ValidationError(_('A Project can only be sent for Approval when Committed.'))
+
+        cleaned_data = super().clean()
+        return cleaned_data
 
 
 class UploadContractForm(FileFormMixin, forms.ModelForm):

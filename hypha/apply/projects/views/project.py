@@ -51,6 +51,7 @@ from ..files import get_files
 from ..filters import InvoiceListFilter, ProjectListFilter, ReportListFilter
 from ..forms import (
     ApproveContractForm,
+    ApproversForm,
     ChangePAFStatusForm,
     ChangeProjectStatusForm,
     ProjectApprovalForm,
@@ -482,6 +483,52 @@ class ChangeProjectstatusView(DelegatedViewMixin, UpdateView):
         return response
 
 
+class UpdatePAFApproversView(DelegatedViewMixin, UpdateView):
+    context_name = 'update_approvers_form'
+    form_class = ApproversForm
+    model = Project
+
+    def form_valid(self, form):
+        project = self.kwargs['object']
+
+        project_settings = ProjectSettings.for_request(self.request)
+        if self.object.paf_approvals.exists():
+            old_approvers = list(project.paf_approvals.filter(approved=False).values_list('user__id', flat=True))
+
+        response = super().form_valid(form)
+
+        paf_approvals = self.object.paf_approvals.filter(approved=False)
+
+        if old_approvers and paf_approvals:
+            # if approvers exists already
+            if project_settings.paf_approval_sequential:
+                user = paf_approvals.first().user
+                if user.id != old_approvers[0]:
+                    # notify only if first user/approver is updated
+                    messenger(
+                        MESSAGES.APPROVE_PAF,
+                        request=self.request,
+                        user=self.object.user,
+                        source=self.object,
+                    )
+            else:
+                messenger(
+                    MESSAGES.APPROVE_PAF,
+                    request=self.request,
+                    user=self.object.user,
+                    source=self.object,
+                )
+        elif paf_approvals:
+            messenger(
+                MESSAGES.APPROVE_PAF,
+                request=self.request,
+                user=self.object.user,
+                source=self.object,
+            )
+
+        return response
+
+
 class BaseProjectDetailView(ReportingMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -502,6 +549,7 @@ class AdminProjectDetailView(
         RemoveDocumentView,
         SelectDocumentView,
         SendForApprovalView,
+        UpdatePAFApproversView,
         ReportFrequencyUpdate,
         UpdateLeadView,
         UploadContractView,
@@ -616,7 +664,7 @@ class ContractPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
         return False
 
 
-# PROJECT EDIT
+# PROJECT APPROVAL FORM VIEWS
 
 @method_decorator(staff_or_finance_or_contracting_required, name='dispatch')
 class ProjectDetailApprovalView(DelegateableView, DetailView):
@@ -829,7 +877,7 @@ class ProjectDetailDownloadView(SingleObjectMixin, View):
 
 
 @method_decorator(staff_or_finance_or_contracting_required, name='dispatch')
-class ProjectApprovalEditView(BaseStreamForm, UpdateView):
+class ProjectApprovalFormEditView(BaseStreamForm, UpdateView):
     model = Project
     template_name = 'application_projects/project_approval_form.html'
     # Remember to assign paf_form first and then sow_form, else get_defined_fields method may provide unexpected results

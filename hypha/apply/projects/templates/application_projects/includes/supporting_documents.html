@@ -1,9 +1,36 @@
-{% load i18n approval_tools %}
+{% load i18n approval_tools project_tags %}
 {% user_can_edit_project object request.user as editable %}
 
 <div class="docs-block wrapper--outer-space-large">
     <div class="docs-block__header">
-        <h5 class="docs-block__heading">{% trans "Supporting documents" %}</h5>
+        <div class="docs-block__heading">{% trans "Project documents" %}</div>
+        {% user_can_send_for_approval object user as can_send_to_approve %}
+        {% if can_send_to_approve %}
+            <a data-fancybox
+            data-src="#send-for-approval"
+            class="button button--project-action"
+            href="#">
+                {% trans "Submit for Approval" %}
+            </a>
+        {% endif %}
+        {% user_can_update_paf_approvers object user as can_update_paf_approvers %}
+        {% if can_update_paf_approvers %}
+            <a data-fancybox
+            data-src="#update-paf-approvers"
+            class="button button--project-action button--project-action--white"
+            href="#">
+                {% trans "View/Update Approvers" %}
+            </a>
+        {% endif %}
+        {% user_can_update_paf_status object user request=request as can_update_paf_status %}
+        {% if object.can_make_approval and can_update_paf_status %}
+            <a data-fancybox
+            data-src="#update-paf-status"
+            class="button button--project-action"
+            href="#">
+                {% trans "Update PAF Status" %}
+            </a>
+        {% endif %}
     </div>
     <ul class="docs-block__inner">
 
@@ -29,7 +56,7 @@
                 </div>
                 <div class="docs-block__row-inner">
                     {% if editable %}
-                        <a class="docs-block__link" href="{% url 'apply:projects:vendor' pk=project.pk %}">
+                        <a class="{% if not project.vendor.user_has_updated_details %}button button--project-action{% else %}docs-block__link{% endif %}" href="{% url 'apply:projects:vendor' pk=project.pk %}">
                             {% if project.vendor.user_has_updated_details %}
                             {% trans "Edit" %}
                             {% else %}
@@ -53,7 +80,7 @@
             </div>
             <div class="docs-block__row-inner">
                 {% if editable and not user.is_applicant %}
-                    <a class="docs-block__link" href="{% url 'apply:projects:edit' pk=object.pk %}">
+                    <a class="{% if not object.user_has_updated_details %}button button--project-action{% else %}docs-block__link{% endif %}" href="{% url 'apply:projects:edit' pk=object.pk %}">
                         {% if object.user_has_updated_details %}
                         {% trans "Edit" %}
                         {% else %}
@@ -90,6 +117,7 @@
                 </svg>
                 <p class="docs-block__title">{% trans "Supporting documents" %}</p>
             </div>
+            {% if user.is_apply_staff %}
             <div class="docs-block__row-inner">
                 {% if select_document_form.should_show %}
                     <a
@@ -104,17 +132,22 @@
                 {% endif %}
                 <a data-fancybox data-src="#upload-supporting-doc" class="docs-block__link" href="#">{% trans "Upload new" %}</a>
             </div>
+            {% endif %}
             {% if remaining_document_categories %}
-            <div class="docs-block__info-text">
-                <p>
-                    {% trans "Every project should include the following documents" %}:
-                </p>
-                <ul>
-                    {% for missing in remaining_document_categories %}
-                        <li>{{ missing.category.name }} ({{ missing.difference }})</li>
-                    {% endfor %}
-                </ul>
-            </div>
+            <ul class="docs-block__document-list">
+                <li class="docs-block__document">
+                    <div class="docs-block__document-inner">
+                        <p>
+                            {% trans "Every project should include the following documents" %}:
+                        </p>
+                        <ul>
+                            {% for missing in remaining_document_categories %}
+                                <li>{{ missing.category.name }} ({{ missing.difference }})</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </li>
+            </ul>
             {% endif %}
 
             {% if object.packet_files.exists %}
@@ -127,6 +160,7 @@
                     </div>
                     <div class="docs-block__document-inner">
                         <a class="docs-block__document-link" href="{% url 'apply:projects:document' pk=object.pk file_pk=document.pk %}">{% trans "Download" %}</a>
+                        {% if user.is_apply_staff %}
                         <form method="POST" id="{{ remove_document_form.name }}" class="docs-block__document-form">
                             {% csrf_token %}
                             {{ document.get_remove_form }}
@@ -138,7 +172,7 @@
                                 form="{{ remove_document_form.name }}"
                                 value="{% trans 'Remove' %}" />
                         </form>
-                            </input>
+                        {% endif %}
                     </div>
                 </li>
                 {% endfor %}
@@ -147,17 +181,6 @@
 
         </li>
     </ul>
-    <div class="docs-block__buttons">
-        {% user_can_send_for_approval object user as can_send_to_approve %}
-        {% if can_send_to_approve %}
-            <a data-fancybox
-            data-src="#send-for-approval"
-            class="button button--primary"
-            href="#">
-                {% trans "Submit for Approval" %}
-            </a>
-        {% endif %}
-    </div>
 </div>
 
 <div class="modal" id="copy-supporting-doc">
@@ -173,3 +196,57 @@
     {% trans "Submit" as submit %}
     {% include 'funds/includes/delegated_form_base.html' with form=document_form value=submit %}
 </div>
+
+{% if can_send_to_approve %}
+<div class="modal" id="send-for-approval">
+    <h4 class="modal__header-bar">{% trans "Request Approval" %}</h4>
+
+    {% if remaining_document_categories %}
+        <h5>{% trans "Are you sure you're ready to submit?" %}</h5>
+
+        <p>{% trans "This project is missing the following documents" %}:</p>
+
+        <ul>
+            {% for missing in remaining_document_categories %}
+            <li><strong>{{ missing.category.name }} ({{ missing.difference }})</strong></li>
+            {% endfor %}
+        </ul>
+        {% trans "Submit anyway" as submit %}
+    {% else %}
+        {% trans "Request" as submit %}
+    {% endif %}
+    {% if project_settings.paf_reviewers_roles.all %}
+        <p> {% trans "Select approvers for Project Approval Form" %} {% if project_settings.paf_approval_sequential %} {% trans "(Sequentially)" %} {% else %}{% trans "(Parallely)" %}{% endif %}</p>
+        {% include 'funds/includes/delegated_form_base.html' with form=request_approval_form value=submit %}
+    {% else %}
+        <p>{% trans "No PAF Reviewer Roles created yet, please create these in " %}
+        <a href="{% project_settings_url project_settings %}" target="_blank">{% trans " project settings" %}</a>
+        </p>
+    {% endif %}
+</div>
+{% endif %}
+
+{% if can_update_paf_approvers %}
+<div class="modal" id="update-paf-approvers">
+    <h4 class="modal__header-bar">{% trans "Update Approvers" %}</h4>
+
+    {% trans "Submit" as submit %}
+    {% if project_settings.paf_reviewers_roles.all %}
+        <p> {% trans "Select approvers for Project Approval Form" %} {% if project_settings.paf_approval_sequential %} {% trans "(Sequentially)" %} {% else %}{% trans "(Parallely)" %}{% endif %}</p>
+        {% include 'funds/includes/delegated_form_base.html' with form=update_approvers_form value=submit %}
+    {% else %}
+        <p>{% trans "No PAF Reviewer Roles created yet, please create these in " %}
+        <a href="{% project_settings_url project_settings %}" target="_blank">{% trans " project settings" %}</a>
+        </p>
+    {% endif %}
+</div>
+{% endif %}
+
+{% if can_update_paf_status %}
+    <div class="modal" id="update-paf-status">
+        <h4 class="modal__header-bar">{% trans "Update PAF Status" %}</h4>
+        <p>{% trans "Project's current status" %}: {{ object.get_status_display }}</p>
+        {% trans "Update Status" as update %}
+        {% include 'funds/includes/delegated_form_base.html' with form=change_paf_status value=update %}
+    </div>
+{% endif %}
