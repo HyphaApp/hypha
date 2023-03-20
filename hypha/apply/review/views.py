@@ -88,8 +88,13 @@ class ReviewEditView(UserPassesTestMixin, BaseStreamForm, UpdateView):
         )
 
     def get_defined_fields(self):
+        """Retrieve currently stored form_fields, if it exists, else retrieve it from the form configured
+        in the rounds/lab of the submission.
+
+        This ensures editing of submitted review is not affected by the changes to the original review forms.
+        """
         review = self.get_object()
-        return get_fields_for_stage(review.submission, user=self.request.user)
+        return review.form_fields or get_fields_for_stage(review.submission, user=self.request.user)
 
     def get_form_kwargs(self):
         review = self.get_object()
