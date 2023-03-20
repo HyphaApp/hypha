@@ -58,6 +58,7 @@
         "dev:build:js": "npm run build:js",
         "dev:build:sass": "sass ./hypha/static_src/src/sass:./hypha/static_compiled/css --load-path ./hypha/static_src/src/sass",
         "dev:build:lint": "npm run lint",
+        "dev:build:tailwind": "tailwindcss -i ./hypha/static_src/src/tailwind-entry.css -o ./hypha/static_compiled/css/tailwind-output.css",
         "dev:build:images": "npm run build:images",
         "dev:build:fonts": "npm run build:fonts",
         "lint:sass": "stylelint \"hypha/static_src/src/sass/**/*.scss\"",
