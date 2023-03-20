@@ -5,23 +5,15 @@
 {% block title %}{% trans "Reviews" %}{% endblock %}
 
 {% block content %}
-<div class="admin-bar">
-    <div class="admin-bar__inner wrapper--search">
-        {% block page_header %}
-            <div>
-                <h1 class="gamma heading heading--no-margin heading--bold">{% blocktrans %}Reviews by {{ object }}{% endblocktrans %}</h1>
-                <h5>{% trans "Track and explore the reviews" %}</h5>
-            </div>
-        {% endblock %}
-        {% block page_header_tabs %}
-            {{ block.super }}
+
+    {% adminbar %}
+        {% slot header %}{% blocktrans %}Reviews by {{ object }}{% endblocktrans %}{% endslot %}
+        {% slot sub_heading %}{% trans "Track and explore the reviews" %}{% endslot %}
+    {% endadminbar %}
+
+    <div class="wrapper wrapper--large wrapper--inner-space-medium">
+        {% block table %}
+            {% render_table table %}
         {% endblock %}
     </div>
-</div>
-
-<div class="wrapper wrapper--large wrapper--inner-space-medium">
-    {% block table %}
-        {% render_table table %}
-    {% endblock %}
-</div>
 {% endblock %}

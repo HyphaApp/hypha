@@ -6,16 +6,12 @@
 {{ filter.form.media.css }}
 {% endblock %}
 
-{% block content%}
-<div class="admin-bar">
-        <div class="admin-bar__inner wrapper--search">
-                {% block page_header %}
-                    <div>
-                        <h1 class="gamma heading heading--no-margin heading--bold">{% trans "List of Submissions summary" %}</h1>
-                    </div>
-                {% endblock %}
-        </div>
-</div>
+{% block content %}
+
+    {% adminbar %}
+        {% slot header %}{% trans "List of Submissions summary" %}{% endslot %}
+    {% endadminbar %}
+
 <div id="grouped-applications-list"></div>
 {% endblock %}
 

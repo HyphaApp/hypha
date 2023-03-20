@@ -6,13 +6,11 @@
 {% block title %}{% trans "Reports" %}{% endblock %}
 
 {% block content %}
-<div class="admin-bar">
-    <div class="admin-bar__inner wrapper--search">
-        {% block page_header %}
-            <h1 class="gamma heading heading--no-margin heading--bold">{% trans "Submitted Reports" %}</h1>
-        {% endblock %}
-    </div>
-</div>
+
+    {% adminbar %}
+        {% slot header %}{% trans "Submitted Reports" %} ({{ table.rows|length }}){% endslot %}
+        {% slot sub_heading %}{% trans "View and filter all Submitted Reports" %}{% endslot %}
+    {% endadminbar %}
 
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
     {% if table %}

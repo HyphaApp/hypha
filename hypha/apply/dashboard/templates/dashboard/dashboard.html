@@ -9,32 +9,30 @@
 {% block title %}{% trans "Dashboard" %}{% endblock %}
 
 {% block content %}
-<div class="admin-bar">
-    <div class="admin-bar__inner admin-bar__inner--with-button">
-        {% block page_header %}
-            <h1 class="gamma heading heading--no-margin heading--bold">{% trans "Dashboard" %}</h1>
-        {% endblock %}
+
+    {% adminbar %}
+        {% slot header %}{% trans "Dashboard" %}{% endslot %}
+        {% slot sub_heading %}{% trans "Welcome" %}, {{ request.user }}!{% endslot %}
+
         {% if perms.wagtailadmin.access_admin %}
             <a href="{% url 'wagtailadmin_home' %}" id="wagtail-admin-button" class="button button--primary button--arrow-pixels-white">
                 {% trans "Apply admin" %}
                 <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
             </a>
         {% endif %}
-    </div>
-</div>
+    {% endadminbar %}
+
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
-
-
     <div class="wrapper wrapper--bottom-space">
         <div class="stat-block">
-            <a href="#submissions-awaiting-review" class="stat-block__item">
+            <a href="#submissions-awaiting-review" class="stat-block__item border">
                 <p class="stat-block__number">{{ awaiting_reviews.count }}</p>
                 <p class="stat-block__text">{% trans "Submissions waiting for your review" %}</p>
                 {% if awaiting_reviews.count %}
                     <div class="stat-block__view">{% trans "View" %}</div>
                 {% endif %}
             </a>
-            <a href="#active-projects" class="stat-block__item">
+            <a href="#active-projects" class="stat-block__item border">
                 <p class="stat-block__number">{{ projects.count }}</p>
                 <p class="stat-block__text">{% trans "Live projects under your management" %}</p>
                 {% if projects.count %}
@@ -42,7 +40,7 @@
                 {% endif %}
             </a>
             {% if not paf_waiting_for_approval.count is None%}
-            <a href="#paf-awaiting-approval" class="stat-block__item">
+            <a href="#paf-awaiting-approval" class="stat-block__item border">
                 <p class="stat-block__number">{{ paf_waiting_for_approval.count }}</p>
                 <p class="stat-block__text">{% trans "Projects awaiting approval" %}</p>
                 {% if paf_waiting_for_approval.count %}
@@ -50,7 +48,7 @@
                 {% endif %}
             </a>
             {% endif %}
-            <a href="#active-invoices" class="stat-block__item">
+            <a href="#active-invoices" class="stat-block__item border">
                 <p class="stat-block__number">{{ active_invoices.count }}</p>
                 <p class="stat-block__text">{% trans "Requests for invoices requiring your attention" %}</p>
                 {% if active_invoices.count %}

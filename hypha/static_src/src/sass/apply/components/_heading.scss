@@ -56,7 +56,9 @@
     }
 
     &--normal {
-        font-weight: $weight--normal;
+        font-weight: 500;
+        font-size: 1.25rem;
+        line-height: 1.75rem;
     }
 
     &--bold {
@@ -72,18 +74,5 @@
             line-height: auto;
             text-align: left;
         }
-    }
-
-    &--submission-count {
-        display: inline-block;
-        padding: 2px 10px;
-        font-size: 13px;
-        font-weight: $weight--bold;
-        color: $color--marine;
-        text-align: center;
-        background-color: $color--sky-blue;
-        border-radius: 20%;
-        border: 1px solid $color--light-blue-90;
-        vertical-align: middle;
     }
 }

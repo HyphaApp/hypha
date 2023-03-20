@@ -4,15 +4,11 @@
 
 {% block title %}{% trans "Submissions" %}{% endblock %}
 {% block content %}
-<div class="admin-bar">
-    <div class="admin-bar__inner wrapper--search">
-        {% block page_header %}
-            <div>
-                <h1 class="gamma heading heading--no-margin heading--bold">{% trans "All Submissions" %}<span class="submissions-count"> ({{ table.rows|length }})</span></h1>
-            </div>
-        {% endblock %}
-    </div>
-</div>
+
+    {% adminbar %}
+        {% slot header %}{% trans "All Submissions" %}<span class="submissions-count"> ({{ table.rows|length }}){% endslot %}
+        {% slot sub_heading %}{% trans "Search and filter all submissions" %}{% endslot %}
+    {% endadminbar %}
 
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
     {% block table %}

@@ -5,19 +5,25 @@
 {% block title %}{% trans "Reviews" %}{% endblock %}
 
 {% block content %}
-<div class="admin-bar">
-    <div class="admin-bar__inner wrapper--search">
-        {% block page_header %}
-            <div>
-                <h1 class="gamma heading heading--no-margin heading--bold">{% trans "Reviewer leaderboard" %}</h1>
-                <h5>{% trans "Track and explore the reviews" %}</h5>
+
+    {% adminbar %}
+        {% slot header %}{% trans "Reviewer leaderboard" %}{% endslot %}
+        {% slot sub_heading %}{% trans "Track and explore the reviews" %}{% endslot %}
+
+        {% if request.user.is_apply_staff %}
+            <div class="flex mt-2 md:m-0 gap-3 justify-center items-center font-medium uppercase" hx-boost="true">
+                <a class="px-3 py-2 text-gray-300 transition-colors hover:bg-slate-50 rounded hover:text-gray-800" href="{% url 'apply:submissions:staff_assignments' %}">
+                    {% trans "Staff assignments" %}
+                </a>
+                <a class="px-3 py-2 bg-slate-50 rounded text-gray-800" href="{% url 'apply:submissions:reviewer_leaderboard' %} aria-current="page"">
+                    {% trans "Reviews" %}
+                </a>
+                <a class="px-3 py-2 text-gray-300 transition-colors hover:bg-slate-50 rounded hover:text-gray-800" href="{% url 'apply:submissions:result' %}">
+                    {% trans "Results" %}
+                </a>
             </div>
-        {% endblock %}
-        {% block page_header_tabs %}
-            {{ block.super }}
-        {% endblock %}
-    </div>
-</div>
+        {% endif %}
+    {% endadminbar %}
 
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
     {% block table %}

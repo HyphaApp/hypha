@@ -8,7 +8,7 @@ INSTALLED_APPS = [
 
     'hypha.cookieconsent',
     'hypha.images',
-    'hypha.core',
+    'hypha.core.apps.CoreAppConfig',
 
     'hypha.apply.activity',
     'hypha.apply.categories',
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
 
     'social_django',
     'django_htmx',
+    'django_web_components',
 
     'wagtail.contrib.modeladmin',
     'wagtail.contrib.settings',

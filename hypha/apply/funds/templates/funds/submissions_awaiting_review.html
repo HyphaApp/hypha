@@ -4,19 +4,15 @@
 
 {% block title %}{% trans "Submissions awaiting Review" %}{% endblock %}
 {% block content %}
-<div class="admin-bar">
-    <div class="admin-bar__inner wrapper--search">
-        {% block page_header %}
-            <div>
-                <h1 class="gamma heading heading--no-margin heading--bold">{% trans "Submissions waiting for your review" %}<span class="submissions-count"> ({{ table.rows|length }})</span></h1>
-            </div>
+
+    {% adminbar %}
+        {% slot header %}{% trans "Submissions waiting for your review" %} ({{ table.rows|length }}){% endslot %}
+        {% comment %} {% slot sub_heading %}{% trans "Search and filter all submissions" %}{% endslot %} {% endcomment %}
+    {% endadminbar %}
+
+    <div class="wrapper wrapper--large wrapper--inner-space-medium">
+        {% block table %}
+            {% render_table table %}
         {% endblock %}
     </div>
-</div>
-
-<div class="wrapper wrapper--large wrapper--inner-space-medium">
-    {% block table %}
-        {% render_table table %}
-    {% endblock %}
-</div>
 {% endblock %}
