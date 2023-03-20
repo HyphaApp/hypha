@@ -39,8 +39,10 @@ class CustomUserEditForm(CustomUserAdminFormBase, UserEditForm):
 
 
 class CustomUserCreationForm(CustomUserAdminFormBase, UserCreationForm):
-    pass
-
+    error_messages = {
+        'duplicate_username': _("A user with that email already exists."),
+        'password_mismatch': _("The two password fields didn't match."),
+    }
 
 class ProfileForm(forms.ModelForm):
     class Meta:

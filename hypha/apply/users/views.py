@@ -19,7 +19,7 @@ from django.utils.http import urlsafe_base64_decode
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import never_cache
 from django.views.generic import UpdateView
-from django.views.generic.base import TemplateView
+from django.views.generic.base import TemplateView, View
 from django.views.generic.edit import FormView
 from django_otp import devices_for_user
 from django_ratelimit.decorators import ratelimit
@@ -40,6 +40,7 @@ from .decorators import require_oauth_whitelist
 from .forms import (
     BecomeUserForm,
     CustomAuthenticationForm,
+    CustomUserCreationForm,
     EmailChangePasswordForm,
     ProfileForm,
     TWOFAPasswordForm,
@@ -48,6 +49,42 @@ from .utils import send_confirmation_email
 
 User = get_user_model()
 
+class RegisterView(View):
+    form = CustomUserCreationForm()
+
+    def get(self, request):
+        # We keep /register in the urls in order to test (where we turn on/off
+        # the setting per test), but when disabled, we want to pretend it doesn't
+        # exist va 404
+        if not settings.ENABLE_REGISTRATION_WITHOUT_APPLICATION:
+            raise Http404
+
+        if request.user.is_authenticated:
+            return redirect('dashboard:dashboard')
+        return render(request,'users/register.html',{'form':self.form})
+
+    def post(self,request):
+        # See comment in get() above about doing this here rather than in urls
+        if not settings.ENABLE_REGISTRATION_WITHOUT_APPLICATION:
+            raise Http404
+
+        form=CustomUserCreationForm(request.POST)
+        context={}
+        if form.is_valid():
+            context['email']=form.cleaned_data['email']
+            context['full_name']=form.cleaned_data['full_name']
+
+            # If using wagtail password management
+            if 'password1' in form.cleaned_data:
+                context['password']=form.cleaned_data['password1']
+
+            site=Site.find_for_request(self.request)
+            user,created = User.objects.get_or_create_and_notify(defaults={},site=site,**context)
+            if created:
+                messages.success(request,'Please check your email to activate the account.')
+        else:
+            return render(request,'users/register.html',{'form':form})
+        return render(request,'users/register.html',{'form':self.form})
 
 @method_decorator(ratelimit(key='ip', rate=settings.DEFAULT_RATE_LIMIT, method='POST'), name='dispatch')
 @method_decorator(ratelimit(key='post:email', rate=settings.DEFAULT_RATE_LIMIT, method='POST'), name='dispatch')
@@ -241,7 +278,15 @@ class ActivationView(TemplateView):
         if self.valid(user, kwargs.get('token')):
             user.backend = settings.CUSTOM_AUTH_BACKEND
             login(request, user)
-            return redirect('users:activate_password')
+            if (
+                settings.WAGTAILUSERS_PASSWORD_ENABLED and
+                settings.ENABLE_REGISTRATION_WITHOUT_APPLICATION
+            ):
+                # In this case, the user entered a password while registering,
+                # and so they shouldn't need to activate a password
+                return redirect('users:account')
+            else:
+                return redirect('users:activate_password')
 
         return render(request, 'users/activation/invalid.html')
 

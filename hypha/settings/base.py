@@ -99,6 +99,12 @@ TRANSITION_AFTER_ASSIGNED = env.bool('TRANSITION_AFTER_ASSIGNED', False)
 # Possible values are: False, 1,2,3,…
 TRANSITION_AFTER_REVIEWS = env.bool('TRANSITION_AFTER_REVIEWS', False)
 
+# Forces users to log in first in order to make an application.  This is particularly useful in conjunction
+# with ENABLE_REGISTRATION_WITHOUT_APPLICATION
+FORCE_LOGIN_FOR_APPLICATION = env.bool('FORCE_LOGIN_FOR_APPLICATION', False)
+
+# Enable users to create accounts without submitting an application.
+ENABLE_REGISTRATION_WITHOUT_APPLICATION = env.bool('ENABLE_REGISTRATION_WITHOUT_APPLICATION', False)
 
 # Project settings.
 

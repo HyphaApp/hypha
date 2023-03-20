@@ -18,4 +18,5 @@ def global_vars(request):
         'ORG_URL': settings.ORG_URL,
         'CURRENCY_SYMBOL': settings.CURRENCY_SYMBOL,
         'GOOGLE_OAUTH2': settings.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY,
+        'ENABLE_REGISTRATION_WITHOUT_APPLICATION': settings.ENABLE_REGISTRATION_WITHOUT_APPLICATION,
     }

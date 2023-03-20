@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block header_modifier %}header--light-bg{% endblock %}
+{% block page_title %}{% trans "Register" %}{% endblock %}
+{% block title %}{% trans "Register" %}{% endblock %}
+
+{% block content %}
+  <div class="wrapper wrapper--small">
+
+    {% if form.non_field_errors %}
+        <div class="wrapper wrapper--error">{{ form.non_field_errors.as_text }}</div>
+    {% endif %}
+
+    <form class="form form--with-p-tags form--user-login" method="post">
+      {% csrf_token %}
+        {% for field in form %}
+          {%if field.id_for_label != 'id_is_superuser' and field.label != 'Groups' %}
+            {% include "forms/includes/field.html" %}
+          {%endif%}
+        {% endfor %}
+        <button class="link link--button-secondary" type="submit">{% trans "Register" %}</button>
+    </form>
+  </div>
+{% endblock %}
