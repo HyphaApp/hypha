@@ -1,6 +1,5 @@
 from unittest import mock
 
-from hypha.apply.determinations.tests.factories import DeterminationFactory
 from hypha.apply.funds.models import ApplicationSubmission
 from hypha.apply.funds.tests.factories import (
     ApplicationSubmissionFactory,
@@ -68,14 +67,6 @@ class StaffTestCase(BaseBatchProgressViewTestCase):
         other_submission = self.refresh(other_submission)
         self.assertEqual(submission.status, 'internal_review')
         self.assertEqual(other_submission.status, 'proposal_internal_review')
-
-    def test_mixed_determine_notifies(self):
-        submission = ApplicationSubmissionFactory()
-        dismissed_submission = ApplicationSubmissionFactory(status='rejected')
-        DeterminationFactory(submission=dismissed_submission, rejected=True, submitted=True)
-        action = 'dismiss'
-        response = self.post_page(data=self.data(action, [submission, dismissed_submission]))
-        self.assertEqual(len(response.context['messages']), 1)
 
     def test_determine_redirects(self):
         submission = ApplicationSubmissionFactory()

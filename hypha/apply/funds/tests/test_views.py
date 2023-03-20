@@ -135,26 +135,6 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         self.assertEqual(submission.status, 'concept_review_discussion')
         self.assertIsNone(submission.next)
 
-    def test_not_redirected_if_determination_submitted(self):
-        submission = ApplicationSubmissionFactory(lead=self.user)
-        DeterminationFactory(submission=submission, rejected=True, submitted=True)
-
-        self.post_page(submission, {'form-submitted-progress_form': '', 'action': 'rejected'})
-
-        submission = self.refresh(submission)
-        self.assertEqual(submission.status, 'rejected')
-
-    def test_not_redirected_if_wrong_determination_selected(self):
-        submission = ApplicationSubmissionFactory(lead=self.user)
-        DeterminationFactory(submission=submission, accepted=True, submitted=True)
-
-        response = self.post_page(submission, {'form-submitted-progress_form': '', 'action': 'rejected'})
-        self.assertContains(response, 'you tried to progress')
-
-        submission = self.refresh(submission)
-        self.assertNotEqual(submission.status, 'accepted')
-        self.assertNotEqual(submission.status, 'rejected')
-
     def test_cant_access_edit_button_when_applicant_editing(self):
         submission = ApplicationSubmissionFactory(status='more_info')
         response = self.get_page(submission)
@@ -499,6 +479,12 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
 
         response = SubmissionDetailView.as_view()(request, pk=submission.pk)
         self.assertEqual(response.status_code, 200)
+
+    def test_can_revert_determined_submission(self):
+        submission = ApplicationSubmissionFactory(lead=self.user, with_external_review=True, status='ext_rejected')
+        self.post_page(submission, {'form-submitted-progress_form': '', 'action': 'ext_external_review'})
+        submission = self.refresh(submission)
+        self.assertEqual(submission.status, 'ext_external_review')
 
 
 class TestReviewersUpdateView(BaseSubmissionViewTestCase):
