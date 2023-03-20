@@ -156,12 +156,12 @@ class TestCreateApplicationFormView(TestCase):
     def setUpTestData(cls):
         cls.user = SuperUserFactory()
         cls.label_help_text_data = {
-            "field_label": factory.Faker("sentence").evaluate(
-                None, None, {"locale": None}
+            'field_label': factory.Faker('sentence').evaluate(
+                None, None, {'locale': None}
             ),
-            "help_text": factory.Faker("sentence").evaluate(
-                None, None, {"locale": None}
-            ),
+            'field_help_text': factory.Faker('sentence').evaluate(
+                None, None, {'locale': None}
+            )
         }
         cls.name = factory.Faker("name").evaluate(None, None, {"locale": None})
 
