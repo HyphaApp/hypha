@@ -10,15 +10,21 @@
 
 {% if approval_form_exists %}
 
-    {% include "forms/includes/form_errors.html" with form=form %}
+    {% include "forms/includes/form_errors.html" with form=paf_form %}
+    {% if sow_form_exists %}
+        {% include "forms/includes/form_errors.html" with form=sow_form %}
+    {% endif %}
 
     <div class="wrapper wrapper--light-grey-bg wrapper--form wrapper--sidebar">
         <div class="wrapper--sidebar--inner">
             <form class="form application-form" action="" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
-                {{ form.media }}
+                {{ paf_form.media }}
+                {% if sow_form_exists %}
+                    {{ sow_form.media }}
+                {% endif %}
 
-                {% for field in form %}
+                {% for field in paf_form %}
                     {% if field.field %}
                         {% if field.field.multi_input_field %}
                             {% include "forms/includes/multi_input_field.html" %}
@@ -31,9 +37,29 @@
                 {% endfor %}
 
                 {# Hidden fields needed e.g. for django-file-form. See `StreamBaseForm.hidden_fields` #}
-                {% for hidden_field in form.hidden_fields %}
+                {% for hidden_field in paf_form.hidden_fields %}
                     {{ hidden_field }}
                 {% endfor %}
+
+                {% if sow_form_exists %}
+                    <hr>
+                    {% for field in sow_form %}
+                        {% if field.field %}
+                            {% if field.field.multi_input_field %}
+                                {% include "forms/includes/multi_input_field.html" %}
+                            {% else %}
+                                {% include "forms/includes/field.html" %}
+                            {% endif %}
+                        {% else %}
+                            {{ field.block }}
+                        {% endif %}
+                    {% endfor %}
+
+
+                    {% for hidden_field in sow_form.hidden_fields %}
+                        {{ hidden_field }}
+                    {% endfor %}
+                {% endif %}
 
                 {% trans "Save draft" as save_draft %}
                 {% for button_name, button_type, button_value in buttons %}

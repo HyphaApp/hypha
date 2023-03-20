@@ -110,6 +110,11 @@
                 <p><b>{{ field_name }}</b></p>
                 <p>{{ field_value|default:"-" }}</p>
             {% endfor %}
+<!--            SOW fields data in paragraph format-->
+            {% for field_name, field_value in sow_data.items %}
+                <p><b>{{ field_name }}</b></p>
+                <p>{{ field_value|default:"-" }}</p>
+            {% endfor %}
 <!--            Approvers data in paragraph format-->
             <p><b> Approvals </b></p>
             {% if approvals %}

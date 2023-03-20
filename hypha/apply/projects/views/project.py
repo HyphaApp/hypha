@@ -6,10 +6,10 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.db import transaction
 from django.db.models import Count
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import get_template
 from django.urls import reverse, reverse_lazy
@@ -54,6 +54,7 @@ from ..forms import (
     ChangePAFStatusForm,
     ChangeProjectStatusForm,
     ProjectApprovalForm,
+    ProjectSOWForm,
     RemoveDocumentForm,
     SelectDocumentForm,
     SetPendingForm,
@@ -627,6 +628,92 @@ class ProjectDetailApprovalView(DelegateableView, DetailView):
 
 
 @method_decorator(staff_or_finance_or_contracting_required, name='dispatch')
+class ProjectSOWView(DetailView):
+    model = Project
+    template_name_suffix = '_sow_detail'
+
+
+@method_decorator(staff_or_finance_or_contracting_required, name='dispatch')
+class ProjectSOWDownloadView(SingleObjectMixin, View):
+    model = Project
+
+    def get(self, request, *args, **kwargs):
+        export_type = kwargs.get('export_type', 'pdf')
+        self.object = self.get_object()
+        context = {}
+        context['sow_data'] = self.get_sow_data_with_field(self.object)
+        context['org_name'] = settings.ORG_LONG_NAME
+        context['title'] = self.object.title
+        context['project_link'] = self.request.build_absolute_uri(
+            reverse('apply:projects:detail', kwargs={'pk': self.object.id})
+        )
+        template_path = 'application_projects/sow_export.html'
+
+        if export_type == 'pdf':
+            pdf_page_settings = PDFPageSettings.for_request(request)
+
+            context['show_footer'] = True
+            context['export_date'] = datetime.date.today().strftime("%b %d, %Y")
+            context['export_user'] = request.user
+            context['pagesize'] = pdf_page_settings.download_page_size
+
+            return self.render_as_pdf(
+                context=context,
+                template=get_template(template_path),
+                filename=self.get_slugified_file_name(export_type)
+            )
+        elif export_type == 'docx':
+            context['show_footer'] = False
+
+            return self.render_as_docx(
+                context=context,
+                template=get_template(template_path),
+                filename=self.get_slugified_file_name(export_type)
+            )
+        else:
+            raise Http404(f"{export_type} type not supported at the moment")
+
+    def render_as_pdf(self, context, template, filename):
+        html = template.render(context)
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename={filename}'
+
+        pisa_status = pisa.CreatePDF(
+            html, dest=response, encoding='utf-8', raise_exception=True)
+        if pisa_status.err:
+            # :todo: needs to handle it in a better way
+            raise Http404('PDF type not supported at the moment')
+        return response
+
+    def render_as_docx(self, context, template, filename):
+        html = template.render(context)
+
+        buf = io.BytesIO()
+        document = Document()
+        new_parser = HtmlToDocx()
+        new_parser.add_html_to_document(html, document)
+        document.save(buf)
+
+        response = HttpResponse(buf.getvalue(), content_type='application/docx')
+        response['Content-Disposition'] = f'attachment; filename={filename}'
+        return response
+
+    def get_slugified_file_name(self, export_type):
+        return f"{datetime.date.today().strftime('%Y%m%d')}-{slugify(self.object.title)}.{export_type}"
+
+    def get_sow_data_with_field(self, project):
+        data_dict = {}
+        if project.submission.page.specific.sow_forms.exists() and project.sow:
+            form_data_dict = project.sow.form_data
+            for field in project.sow.form_fields.raw_data:
+                if field['id'] in form_data_dict.keys():
+                    if isinstance(field['value'], dict) and 'field_label' in field['value']:
+                        data_dict[field['value']['field_label']] = form_data_dict[field['id']]
+
+        return data_dict
+
+
+@method_decorator(staff_or_finance_or_contracting_required, name='dispatch')
 class ProjectDetailDownloadView(SingleObjectMixin, View):
     model = Project
 
@@ -702,6 +789,7 @@ class ProjectDetailDownloadView(SingleObjectMixin, View):
 
         context['approvals'] = self.object.paf_approvals.all()
         context['paf_data'] = self.get_paf_data_with_field(self.object)
+        context['sow_data'] = self.get_sow_data_with_field(self.object)
         context['submission'] = self.object.submission
         context['submission_link'] = self.request.build_absolute_uri(
             reverse('apply:submissions:detail', kwargs={'pk': self.object.submission.id})
@@ -720,6 +808,17 @@ class ProjectDetailDownloadView(SingleObjectMixin, View):
 
         return data_dict
 
+    def get_sow_data_with_field(self, project):
+        data_dict = {}
+        if project.submission.page.specific.sow_forms.exists() and project.sow:
+            form_data_dict = project.sow.form_data
+            for field in project.sow.form_fields.raw_data:
+                if field['id'] in form_data_dict.keys():
+                    if isinstance(field['value'], dict) and 'field_label' in field['value']:
+                        data_dict[field['value']['field_label']] = form_data_dict[field['id']]
+
+        return data_dict
+
     def get_supporting_documents(self, project):
         documents_dict = {}
         for packet_file in project.packet_files.all():
@@ -731,18 +830,20 @@ class ProjectDetailDownloadView(SingleObjectMixin, View):
 
 @method_decorator(staff_or_finance_or_contracting_required, name='dispatch')
 class ProjectApprovalEditView(BaseStreamForm, UpdateView):
-    submission_form_class = ProjectApprovalForm
     model = Project
     template_name = 'application_projects/project_approval_form.html'
+    # Remember to assign paf_form first and then sow_form, else get_defined_fields method may provide unexpected results
+    paf_form = None
+    sow_form = None
 
     def buttons(self):
         yield ('submit', 'primary', _('Submit'))
 
     def dispatch(self, request, *args, **kwargs):
-        project = self.get_object()
-        if not project.editable_by(request.user):
+        self.object = self.get_object()
+        if not self.object.editable_by(request.user):
             messages.info(self.request, _('You are not allowed to edit the project at this time'))
-            return redirect(project)
+            return redirect(self.object)
         return super().dispatch(request, *args, **kwargs)
 
     @cached_property
@@ -752,21 +853,50 @@ class ProjectApprovalEditView(BaseStreamForm, UpdateView):
 
         return approval_form
 
+    @cached_property
+    def approval_sow_form(self):
+        # fetching from the fund directly instead of going through round
+        approval_sow_form = self.object.submission.page.specific.sow_forms.first()  # picking up the first one
+
+        return approval_sow_form
+
+    def get_form_class(self, form_class,  draft=False, form_data=None, user=None):
+        return type('WagtailStreamForm', (form_class,), self.get_form_fields(draft, form_data, user))
+
+    def get_paf_form(self, form_class=None):
+        if form_class is None:
+            form_class = self.get_form_class(ProjectApprovalForm)
+        return form_class(**self.get_paf_form_kwargs())
+
+    def get_sow_form(self, form_class=None):
+        if form_class is None:
+            form_class = self.get_form_class(ProjectSOWForm)
+        return form_class(**self.get_sow_form_kwargs())
+
     def get_context_data(self, **kwargs):
-        return super().get_context_data(
-            title=self.object.title,
-            buttons=self.buttons(),
-            approval_form_exists=True if self.approval_form else False,
+        self.paf_form = self.get_paf_form()
+        if self.approval_sow_form:
+            self.sow_form = self.get_sow_form()
+        return {
+            "title": self.object.title,
+            "buttons": self.buttons(),
+            "approval_form_exists": True if self.approval_form else False,
+            "sow_form_exists": True if self.approval_sow_form else False,
+            "paf_form": self.paf_form,
+            "sow_form": self.sow_form,
+            "object": self.object,
             **kwargs
-        )
+        }
 
     def get_defined_fields(self):
         approval_form = self.approval_form
-        if approval_form:
+        if approval_form and not self.paf_form:
             return approval_form.form.form_fields
+        if self.approval_sow_form and self.paf_form and not self.sow_form:
+            return self.approval_sow_form.form.form_fields
         return self.object.get_defined_fields()
 
-    def get_form_kwargs(self):
+    def get_paf_form_kwargs(self):
         kwargs = super().get_form_kwargs()
 
         if self.approval_form:
@@ -778,15 +908,58 @@ class ProjectApprovalEditView(BaseStreamForm, UpdateView):
         kwargs['initial'].update(self.object.raw_data)
         return kwargs
 
-    def form_valid(self, form):
-        try:
-            form_fields = self.approval_form.form.form_fields
-        except AttributeError:
-            form_fields = []
+    def get_sow_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        if self.approval_sow_form:
+            fields = self.approval_sow_form.form.get_form_fields()
 
-        form.instance.form_fields = form_fields
+            kwargs['extra_fields'] = fields
+            try:
+                sow_instance = self.object.sow
+                kwargs['initial'].update({'project': self.object, **sow_instance.raw_data})
+            except ObjectDoesNotExist:
+                kwargs['initial'].update({'project': self.object})
+        return kwargs
 
-        return super().form_valid(form)
+    def post(self, request, *args, **kwargs):
+        """
+        Handle POST requests: instantiate a form instance with the passed
+        POST variables and then check if it's valid.
+        """
+
+        self.paf_form = self.get_paf_form()
+        if self.approval_sow_form:
+            self.sow_form = self.get_sow_form()
+            if self.paf_form.is_valid() and self.sow_form.is_valid():
+                # if both forms exists, both needs to be valid together
+                try:
+                    paf_form_fields = self.approval_form.form.form_fields
+                except AttributeError:
+                    paf_form_fields = []
+                try:
+                    sow_form_fields = self.approval_sow_form.form.form_fields
+                except AttributeError:
+                    sow_form_fields = []
+
+                self.paf_form.save(paf_form_fields=paf_form_fields)
+                self.sow_form.save(sow_form_fields=sow_form_fields, project=self.object)
+                return HttpResponseRedirect(self.get_success_url())
+            else:
+                if not self.paf_form.is_valid():
+                    return self.form_invalid(self.paf_form)
+                return self.form_invalid(self.sow_form)
+        else:
+            if self.paf_form.is_valid():
+                # paf can exist alone also, it needs to be valid
+                try:
+                    paf_form_fields = self.approval_form.form.form_fields
+                except AttributeError:
+                    paf_form_fields = []
+                self.paf_form.save(paf_form_fields=paf_form_fields)
+                return HttpResponseRedirect(self.get_success_url())
+            else:
+                return self.form_invalid(self.paf_form)
+
 
 
 @method_decorator(staff_or_finance_required, name='dispatch')

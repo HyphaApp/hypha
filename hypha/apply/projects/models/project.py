@@ -395,7 +395,13 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         return ''
 
 
-class ProjectApprovalForm(BaseStreamForm, models.Model):
+class ProjectSOW(BaseStreamForm, AccessFormData, models.Model):
+    project = models.OneToOneField(Project, related_name='sow', on_delete=models.CASCADE)
+    form_data = models.JSONField(encoder=StreamFieldDataEncoder, default=dict)
+    form_fields = StreamField(FormFieldsBlock(), null=True, use_json_field=True)
+
+
+class ProjectBaseStreamForm(BaseStreamForm, models.Model):
     name = models.CharField(max_length=255)
     form_fields = StreamField(FormFieldsBlock())
 
@@ -404,8 +410,19 @@ class ProjectApprovalForm(BaseStreamForm, models.Model):
         FieldPanel('form_fields'),
     ]
 
+    class Meta:
+        abstract = True
+
     def __str__(self):
         return self.name
+
+
+class ProjectApprovalForm(ProjectBaseStreamForm):
+    pass
+
+
+class ProjectSOWForm(ProjectBaseStreamForm):
+    pass
 
 
 class PAFReviewersRole(Orderable, ClusterableModel):

@@ -132,7 +132,8 @@ class WorkflowStreamForm(WorkflowHelpers, AbstractStreamForm):  # type: ignore
             help_text='Add a form to be used by external reviewers.'
         ),
         InlinePanel('determination_forms', label=_('Determination Forms')),
-        InlinePanel('approval_forms', label=_('Project Approval Form'), max_num=1)
+        InlinePanel('approval_forms', label=_('Project Approval Form'), max_num=1),
+        InlinePanel('sow_forms', label=_('Project SOW Form'), max_num=1)
     ]
 
 

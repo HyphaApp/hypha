@@ -23,6 +23,7 @@ from ..models.project import (
     PAFReviewersRole,
     Project,
     ProjectApprovalForm,
+    ProjectSOWForm,
 )
 from ..models.report import Report, ReportConfig, ReportVersion
 
@@ -63,6 +64,14 @@ class DocumentCategoryFactory(factory.django.DjangoModelFactory):
 class ProjectApprovalFormFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = ProjectApprovalForm
+
+    name = factory.Faker('word')
+    form_fields = FormFieldsBlockFactory
+
+
+class ProjectSOWFormFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = ProjectSOWForm
 
     name = factory.Faker('word')
     form_fields = FormFieldsBlockFactory
