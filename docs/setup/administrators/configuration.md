@@ -137,7 +137,7 @@ Good for testing, might not be a good idea in production.
 
 ### Columns to exclude from the submission tables.
 
-Possible values are: fund, round, status, lead, reviewers, screening_statuses, category_options, meta_terms
+Possible values are: fund, round, status, lead, reviewers, screening_statuses, category_options, meta_terms, organization_name
 
     SUBMISSIONS_TABLE_EXCLUDED_FIELDS = env.list('SUBMISSIONS_TABLE_EXCLUDED_FIELDS', [])
 
