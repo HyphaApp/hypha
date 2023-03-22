@@ -2,130 +2,300 @@
 
 {% load i18n static %}
 {% load render_table from django_tables2 %}
-{% load django_tables2 i18n submission_tags %}
+{% load django_tables2 i18n %}
+{% load querystrings %}
 
 {% block title %}{% trans "Submissions" %}{% endblock %}
+
 {% block content %}
-    <div class="admin-bar">
-        <div class="admin-bar__inner wrapper--search">
-            {% block page_header %}
-                <div>
-                    <h1 class="gamma heading heading--no-margin heading--bold">{% trans "All Submissions" %}<span class="submissions-count"> ({{ total }})</span></h1>
-                </div>
-            {% endblock %}
+    <script>
+        function liveSearch() {
+            // Locate the card elements
+            let card = document.querySelectorAll('[data-filter]')
+            let cards = document.querySelectorAll('[data-filter] li')
+
+            // Locate the search input
+            let search_query = document.getElementById(card[0].getAttribute("data-filter-for")).value;
+            // Loop through the cards
+            for (var i = 0; i < cards.length; i++) {
+                // If the text is within the card...
+                if (cards[i].innerText.toLowerCase()
+                    // ...and the text matches the search query...
+                        .includes(search_query.toLowerCase())) {
+                        // ...remove the `.is-hidden` class.
+                        cards[i].classList.remove("hidden");
+                    } else {
+                        // Otherwise, add the class.
+                        cards[i].classList.add("hidden");
+                    }
+            }
+        }
+    </script>
+
+    {% adminbar %}
+        {% slot header %}
+            {% trans "All Submissions" %}
+            <span class="submissions-count"> ({{ total }})</span>
+        {% endslot %}
+
+        <div class="relative mt-2 md:mt-0">
+            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <svg class="w-5 h-5 text-gray-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd"
+                        d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                        clip-rule="evenodd"></path>
+                </svg>
+            </div>
+            <form>
+                {% for key, value in request.GET.items %}
+                    <input class='filter_options' type="hidden" value="{{ value}}" name="{{ key }}">
+                {% endfor %}
+                <input
+                    type="search"
+                    id="search-navbar"
+                    class="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-sm bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Search..."
+                    name="query"
+                    hx-trigger="keyup changed delay:500ms, search"
+                    hx-push-url="true"
+                    hx-get="./"
+                    hx-include="input.filter_options:not([name=query])"
+                    hx-target="#main"
+                    aria-label="{% trans 'Search Submissions' %}"
+                    {% if search_term %}value="{{ search_term }}" autofocus{% endif %}
+                >
+            </form>
         </div>
-    </div>
+    {% endadminbar %}
+
+    <nav
+        hx-target="#main"
+        hx-swap="outerHTML"
+        class="px-2 py-3 flex flex-wrap gap-2 items-center justify-end bg-white md:space-x-5 md:text-sm md:font-medium  border-gray-200 dark:bg-gray-900 dark:border-gray-800"
+    >
+
+        {% dropdown_menu title="Status" heading="Filter by current status" enable_search=True %}
+            <ul hx-boost="true" data-filter data-filter-for="input-status-filter"
+                class="flex flex-col overflow-scroll max-h-80 text-gray-700 dark:text-gray-200"
+                aria-labelledby="dropdownBgHoverButton">
+                {% if selected_statuses %}
+                    <li>
+                        <a href="{% remove_from_query " page" "status" %}"
+                            class="flex px-3 py-2 text-gray-600 border-b items-center hover:bg-gray-100 focus:bg-gray-100{% if s.selected %}bg-gray-100{% endif %}">
+                            All status
+                        </a>
+                    </li>
+                {% endif %}
+                {% for s in status_counts %}
+                    <li>
+                        <a href="{% modify_query "page" status=s.slug %}" role="menuitemradio" aria-checked="{{ s.selected }}"
+                            class="flex px-3 py-2 text-gray-600 border-b items-center hover:bg-gray-100 focus:bg-gray-100{% if s.selected %}bg-gray-100{% endif %}">
+                            {{ s.title }} {% if s.n %}({{ s.n }}){% endif %}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% enddropdown_menu %}
+
+        {% dropdown_menu title="Fund" heading="Filter by Fund" enable_search=True %}
+            {% slot "url" %}{% url "apply:submissions:submenu-funds" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
+        {% enddropdown_menu %}
+
+        {% dropdown_menu title="Round" heading="Filter by Round" enable_search=True %}
+            {% slot "url" %}{% url "apply:submissions:submenu-rounds" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
+        {% enddropdown_menu %}
+
+
+        {% dropdown_menu title="Lead" heading="Filter by Lead" enable_search=True %}
+            {% slot "url" %}{% url "apply:submissions:submenu-leads" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
+        {% enddropdown_menu %}
+
+        {% dropdown_menu title="Sort" heading="Sort by" %}
+            <a href="{% modify_query "page" sort="-submit_time" %}"
+                hx-get="{% modify_query "page" sort="-submit_time" %}"
+                hx-push-url="true"
+                class="flex px-3 py-2 text-gray-600 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
+                {% trans "Newest" %}
+            </a>
+            <a href="{% modify_query "page" sort="submit_time" %}"
+                hx-get="{% modify_query "page" sort="submit_time" %}"
+                hx-push-url="true"
+                class="flex px-3 py-2 text-gray-600 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
+                {% trans "Oldest" %}
+            </a>
+            <a href="{% modify_query "page" sort="-comments" %}"
+                hx-get="{% modify_query "page" sort="-comments" %}"
+                hx-push-url="true"
+                class="flex px-3 py-2 text-gray-600 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
+                {% trans "Most commented" %}
+            </a>
+            <a href="{% modify_query "page" sort="comments" %}"
+                hx-get="{% modify_query "page" sort="comments" %}"
+                hx-push-url="true"
+                class="flex px-3 py-2 text-gray-600 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
+                {% trans "Least commented" %}
+            </a>
+            <a href="{% modify_query "page" sort="-last_update" %}"
+                hx-get="{% modify_query "page" sort="-last_update" %}"
+                hx-push-url="true"
+                class="flex px-3 py-2 text-gray-600 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
+                {% trans "Recently Updated" %}
+            </a>
+            <a href="{% modify_query "page" sort="last_update" %}"
+                hx-get="{% modify_query "page" sort="last_update" %}"
+                hx-push-url="true"
+                class="flex px-3 py-2 text-gray-600 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
+                {% trans "Least Recently Updated" %}
+            </a>
+        {% enddropdown_menu %}
+
+        {% if show_archive %}
+        <form method='GET' action="./">
+                {% for key, value in request.GET.items %}
+                    {% if key != 'archived' %}<input type="hidden" value="{{ value}}" name="{{ key }}">{% endif %}
+                {% endfor %}
+            <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" {% if show_archived %}checked{% endif %}
+                    class="sr-only peer"
+                    name="archived"
+                    hx-push-url="true"
+                    hx-get="./"
+                    hx-include="input.filter_options:not([name=archived])"
+                    hx-target="#main"
+                >
+                <div
+                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600">
+                </div>
+                <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">Archived</span>
+            </label>
+        </form>
+        {% endif %}
+    </nav>
+
+    {% if is_filtered %}
+        {% comment %} Display option to clear all the filters {% endcomment %}
+        <div class="px-2 py-3 bg-white">
+            <a href="./"
+                hx-get="./"
+                hx-target="#main"
+                hx-push-url="true"
+                title="Clear Filters"
+                class="font-medium flex items-center transition-colors text-neutral-600 hover:text-gray-900">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                    class="w-5 h-5 inline-block stroke-2 stroke-white bg-gray-500 hover:bg-gray-900 rounded mr-1"
+                    aria-hidden='true'>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                <span>Clear current search query, filters and sorts</span>
+            </a>
+        </div>
+    {% endif %}
 
     <div class="wrapper wrapper--large wrapper--inner-space-medium">
         {% block table %}
+            <div class="wrapper wrapper--table-actions js-table-actions">
+                <div class="actions-bar">
+                    {# Left #}
+                    <div class="actions-bar__inner actions-bar__inner--left">
+                        {% if use_batch_actions %}
+                            <div class="actions-bar__per-page">{% trans "Show" %} <a href="{% querystring " per_page"=25 %}">25</a>
+                                | <a href="{% querystring " per_page"=50 %}">50</a> | <a href="{% querystring " per_page"=100
+                                    %}">100</a> {% trans "items" %}</div>
+                        {% endif %}
 
-        <div class="wrapper wrapper--table-actions js-table-actions">
-            <div class="actions-bar">
-                {# Left #}
-                <div class="actions-bar__inner actions-bar__inner--left">
-                    {% if use_batch_actions %}
-                        <div class="actions-bar__per-page">{% trans "Show" %} <a href="{% querystring "per_page"=25 %}">25</a> | <a href="{% querystring "per_page"=50 %}">50</a> | <a href="{% querystring "per_page"=100 %}">100</a> {% trans "items" %}</div>
+                        {% if use_batch_actions %}
+                            <div class="actions-bar__inner actions-bar__inner--batch-actions">
+                                <p class="actions-bar__total"><span class="js-total-actions">0</span> {% trans "Selected" %}</p>
+
+                                <button data-fancybox type="button" data-src="#batch-progress"
+                                    class="button button--action button--change-status js-batch-button js-batch-progress">
+                                    <svg>
+                                        <use xlink:href="#arrow-split"></use>
+                                    </svg>
+                                    {% trans "Status" %}
+                                </button>
+
+                                <button data-fancybox data-src="#batch-update-lead" class="button button--action js-batch-button"
+                                    type="button">
+                                    <svg>
+                                        <use xlink:href="#add-person"></use>
+                                    </svg>
+                                    {% trans "Lead" %}
+                                </button>
+
+                                <button data-fancybox data-src="#batch-update-reviewers"
+                                    class="button button--action js-batch-button" type="button">
+                                    <svg>
+                                        <use xlink:href="#add-person"></use>
+                                    </svg>
+                                    {% trans "Reviewers" %}
+                                </button>
+
+                                <button data-fancybox data-src="#batch-delete-submission"
+                                    class="button button--action js-batch-button" type="button">
+                                    <svg class="icon icon--delete">
+                                        <use xlink:href="#delete-submissions"></use>
+                                    </svg>
+                                    {% trans "Delete" %}
+                                </button>
+
+                                <button data-fancybox data-src="#batch-archive-submission"
+                                    class="button button--action js-batch-button" type="button">
+                                    <svg class="icon icon--archive">
+                                        <use xlink:href="#archive"></use>
+                                    </svg>
+                                    {% trans "Archive" %}
+                                </button>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    {# Right #}
+
+                    {% comment %} <div class="actions-bar__inner actions-bar__inner--right">
+                <form action="./" method="get" role="search" class="form form--search-desktop">
+                    <button class="button button--search" type="submit" aria-label="{% trans 'Search' %}">
+                        <svg class="icon icon--magnifying-glass icon--search">
+                            <use xlink:href="#magnifying-glass"></use>
+                        </svg>
+                    </button>
+                    {% if show_archive and archived_param is not None %}
+                    <input type="hidden" value="{{ archived_param }}" name="archived">
                     {% endif %}
-
-                    {% if heading %}
-                        <h4 class="heading heading--normal heading--no-margin">{{ heading }}</h4>
-                    {% endif %}
-
-
-                    {% if use_batch_actions %}
-                        <div class="actions-bar__inner actions-bar__inner--batch-actions">
-                            <p class="actions-bar__total"><span class="js-total-actions">0</span> {% trans "Selected" %}</p>
-
-                            <button
-                                data-fancybox
-                                type="button"
-                                data-src="#batch-progress"
-                                class="button button--action button--change-status js-batch-button js-batch-progress"
-                            >
-                                <svg><use xlink:href="#arrow-split"></use></svg>
-                                {% trans "Status" %}
-                            </button>
-
-                            <button data-fancybox data-src="#batch-update-lead" class="button button--action js-batch-button" type="button">
-                                <svg><use xlink:href="#add-person"></use></svg>
-                                {% trans "Lead" %}
-                            </button>
-
-                            <button data-fancybox data-src="#batch-update-reviewers" class="button button--action js-batch-button" type="button">
-                                <svg><use xlink:href="#add-person"></use></svg>
-                                {% trans "Reviewers" %}
-                            </button>
-
-                            <button data-fancybox data-src="#batch-delete-submission" class="button button--action js-batch-button" type="button">
-                                <svg class="icon icon--delete"><use xlink:href="#delete-submissions"></use></svg>
-                                {% trans "Delete" %}
-                            </button>
-
-                            <button data-fancybox data-src="#batch-archive-submission" class="button button--action js-batch-button" type="button">
-                                <svg class="icon icon--archive"><use xlink:href="#archive"></use></svg>
-                                {% trans "Archive" %}
-                            </button>
-                        </div>
-                    {% endif %}
+                    {% trans "submissions" as submissions %}
+                    <input class="input input--search input--secondary placeholder-slate-400" type="text"
+                        placeholder="{% trans 'Search' %} {{ search_placeholder|default:" submissions..." }}"
+                        name="query" {% if search_term %}value="{{ search_term }}" {% endif %}
+                        aria-label="{% trans 'Search input' %}">
+                </form>
+            </div> {% endcomment %}
                 </div>
 
-                {# Right #}
-                <div class="actions-bar__inner actions-bar__inner--right">
-                    {% get_url_param 'archived' as archived_param %}
-                    {% if show_archive %}
-                        {% if archived_param == '1' %}
-                            <a href="{% update_urlparams 'archived' '0' %}">{% trans "Hide archived" %}</a>
-                        {% else %}
-                            <a href="{% update_urlparams 'archived' '1' %}">{% trans "Show archived" %}</a>
-                        {% endif %}
-                    {% endif %}
-
-                    <form action="./" method="get" role="search" class="form form--search-desktop">
-                        <button class="button button--search" type="submit" aria-label="{% trans 'Search' %}">
-                            <svg class="icon icon--magnifying-glass icon--search"><use xlink:href="#magnifying-glass"></use></svg>
-                        </button>
-                        {% if show_archive and archived_param is not None %}
-                        <input type="hidden" value="{{ archived_param }}" name="archived">
-                        {% endif %}
-                        {% trans "submissions" as submissions %}
-                        <input class="input input--search input--secondary placeholder-slate-400"
-                            type="text"
-                            placeholder="{% trans 'Search' %} {{ search_placeholder|default:"submissions..." }}"
-                            name="query"
-                            {% if search_term %}value="{{ search_term }}"{% endif %}
-                            aria-label="{% trans 'Search input' %}"
-                        >
-                    </form>
-                </div>
             </div>
 
-        </div>
 
-        <form action="./" method="get">
-            <ul class="flex justify-items-stretch py-2">
-                {{ filters.form.as_ul }}
-            </ul>
-        </form>
-
-        {% if use_batch_actions %}
-            {% include "funds/includes/batch_update_lead_form.html" %}
-            {% include "funds/includes/batch_update_reviewer_form.html" %}
-            {% include "funds/includes/batch_progress_form.html" %}
-            {% include "funds/includes/batch_delete_submission_form.html" %}
-            {% include "funds/includes/batch_archive_submission_form.html" %}
-        {% endif %}
-
-
-        {% if total %}
-            {% if search_term %}
-                <p>Found {{ total }} result{{total|pluralize}} for <strong><em>"{{ search_term }}"</strong></em> ({{ duration }}s)</p>
+            {% if use_batch_actions %}
+                {% include "funds/includes/batch_update_lead_form.html" %}
+                {% include "funds/includes/batch_update_reviewer_form.html" %}
+                {% include "funds/includes/batch_progress_form.html" %}
+                {% include "funds/includes/batch_delete_submission_form.html" %}
+                {% include "funds/includes/batch_archive_submission_form.html" %}
             {% endif %}
 
-            {% render_table table %}
+            {% if total %}
+                {% if search_term %}
+                    <p>Found {{ total }} result{{total|pluralize}} for <strong><em>"{{ search_term }}"</strong></em> ({{ duration }}s)
+                    </p>
+                {% endif %}
 
-        {% else %}
-            <p>No results for <strong><em>"{{ search_term }}"</strong></em>. ({{ duration }}s)</p>
-        {% endif %}
+                <div hx-boost="true">
+                    {% render_table table %}
+                </div>
+
+            {% else %}
+                <p>No results for <strong><em>"{{ search_term }}"</strong></em>. ({{ duration }}s)</p>
+            {% endif %}
 
         {% endblock %}
     </div>

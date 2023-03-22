@@ -27,8 +27,9 @@
         {% block extra_css %}{% endblock %}
         <link rel="stylesheet" href="{% static 'css/print.css' %}" media="print">
 
-        <script src="{% static 'js/apply/vendor/htmx.min.js' %}" defer></script>
         <!-- htmx start: installed with npm -->
+        <script src="{% static 'js/apply/vendor/htmx.min.js' %}"></script>
+        {% comment %} <script src="{% static 'js/apply/vendor/htmx-ext-alpine-morph.min.js' %}" defer></script> {% endcomment %}
         <script src="{% static 'js/apply/vendor/nprogress-2.0.0.min.js' %}" defer></script>
         <script>
             window.addEventListener('DOMContentLoaded', (event) => {
@@ -44,6 +45,10 @@
 
         <!-- alpine js start -->
         <style> [x-cloak] {display: none !important} </style>
+        <!-- Alpine Plugins -->
+        <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/focus@3.x.x/dist/cdn.min.js"></script>
+
+        <!-- Alpine Core: installed with npm  -->
         <script defer src="{% static 'js/apply/vendor/alpine.min.js' %}"></script>
         <!-- alpine.js end -->
     </head>
