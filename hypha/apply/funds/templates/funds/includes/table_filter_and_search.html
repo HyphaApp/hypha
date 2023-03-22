@@ -1,4 +1,5 @@
-{% load django_tables2 i18n submission_tags %}
+{% load django_tables2 i18n %}
+{% load querystrings %}
 
 <div class="wrapper wrapper--table-actions js-table-actions">
     <div class="actions-bar">
@@ -48,12 +49,12 @@
 
         {# Right #}
         <div class="actions-bar__inner actions-bar__inner--right">
-            {% get_url_param 'archived' as archived_param %}
+            {% get_query 'archived' as archived_param %}
             {% if show_archive %}
-                {% if archived_param == '1' %}
-                    <a href="{% update_urlparams 'archived' '0' %}">{% trans "Hide archived" %}</a>
+                {% if request.GET.archived == '1' %}
+                    <a href="{% modify_query archived='0' %}">{% trans "Hide archived" %}</a>
                 {% else %}
-                    <a href="{% update_urlparams 'archived' '1' %}">{% trans "Show archived" %}</a>
+                    <a href="{% modify_query archived='1' %}">{% trans "Show archived" %}</a>
                 {% endif %}
             {% endif %}
             {% if filter_classes != 'filters-open' %}
