@@ -1,22 +1,12 @@
 from django.conf import settings
 
-from hypha.apply.home.models import ApplyHomePage
 from hypha.public.home.models import HomePage
 from hypha.public.mailchimp.forms import NewsletterForm
 
 
 def global_vars(request):
     return {
-        'APPLY_SITE': ApplyHomePage.objects.first().get_site(),
         'PUBLIC_SITE': HomePage.objects.first().get_site(),
         'newsletter_form': NewsletterForm(),
         'newsletter_enabled': settings.MAILCHIMP_API_KEY and settings.MAILCHIMP_LIST_ID,
-        'ORG_LONG_NAME': settings.ORG_LONG_NAME,
-        'ORG_SHORT_NAME': settings.ORG_SHORT_NAME,
-        'ORG_EMAIL': settings.ORG_EMAIL,
-        'ORG_GUIDE_URL': settings.ORG_GUIDE_URL,
-        'ORG_URL': settings.ORG_URL,
-        'CURRENCY_SYMBOL': settings.CURRENCY_SYMBOL,
-        'GOOGLE_OAUTH2': settings.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY,
-        'ENABLE_REGISTRATION_WITHOUT_APPLICATION': settings.ENABLE_REGISTRATION_WITHOUT_APPLICATION,
     }
