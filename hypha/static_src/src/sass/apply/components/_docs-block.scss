@@ -80,6 +80,8 @@
 
     &__link {
         font-weight: $weight--bold;
+        display: flex;
+        align-items: center;
         margin-right: 1rem;
 
         &:disabled,
