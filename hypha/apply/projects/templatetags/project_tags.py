@@ -1,7 +1,14 @@
 from django import template
 from django.urls import reverse
 
-from hypha.apply.projects.models.project import COMMITTED, CLOSING, COMPLETE, IN_PROGRESS, WAITING_FOR_APPROVAL
+from hypha.apply.projects.models.project import (
+    CLOSING,
+    COMMITTED,
+    COMPLETE,
+    CONTRACTING,
+    IN_PROGRESS,
+    WAITING_FOR_APPROVAL,
+)
 from hypha.apply.projects.permissions import has_permission
 
 register = template.Library()
@@ -18,10 +25,25 @@ def project_can_have_report(project):
 def user_next_step_on_project(project, user):
     if project.status == COMMITTED:
         if not project.user_has_updated_details:
-            return "Awaiting PAF to be filled in"
-        return "Awaiting PAF submission for Approval"
+            return "Awaiting PAF to be filled in from Lead/Staff"
+        return "Awaiting PAF submission for Approval from Lead/Staff"
     elif project.status == WAITING_FOR_APPROVAL:
-        return "Awaiting PAF Approvals"
+        return "Awaiting PAF Approvals from assigned approvers"
+    elif project.status == CONTRACTING:
+        if not project.contracts.exists():
+            return "Awaiting signed contract from Contracting team"
+        else:
+            contract = project.contracts.order_by('-created_at').first()
+            if not contract.signed_by_applicant:
+                if user.is_applicant:
+                    return "Awaiting counter-signed contract from Applicant. \n\n" \
+                           "Please download the signed contract uploaded by contracting team, counter sign that and " \
+                           "upload it here. Also make sure to upload other required contracting documents"
+                return "Awaiting counter-signed contract from Applicant"
+            elif not project.submitted_contract_documents:
+                return "Awaiting contract documents submission from Applicant"
+            else:
+                return "Awaiting contract approval from Staff"
     return False
 
 
@@ -47,6 +69,13 @@ def user_can_update_report(report, user):
 def user_can_view_report(report, user):
     permission, _ = has_permission('report_view', user, object=report, raise_exception=False)
     return permission
+
+
+@register.simple_tag
+def project_can_have_contracting_section(project):
+    if project.status in [COMMITTED, WAITING_FOR_APPROVAL]:
+        return False
+    return True
 
 
 @register.simple_tag

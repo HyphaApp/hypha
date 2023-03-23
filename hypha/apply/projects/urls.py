@@ -1,6 +1,7 @@
 from django.urls import include, path
 
 from .views import (
+    ContractDocumentPrivateMediaView,
     ContractPrivateMediaView,
     CreateInvoiceView,
     CreateVendorView,
@@ -39,6 +40,7 @@ urlpatterns = [
         path('edit/', ProjectApprovalFormEditView.as_view(), name="edit"),
         path('documents/<int:file_pk>/', ProjectPrivateMediaView.as_view(), name="document"),
         path('contract/<int:file_pk>/', ContractPrivateMediaView.as_view(), name="contract"),
+        path('contract/documents/<int:file_pk>/', ContractDocumentPrivateMediaView.as_view(), name="contract_document"),
         path('download/<str:export_type>/', ProjectDetailDownloadView.as_view(), name='download'),
         path('approval/', ProjectDetailApprovalView.as_view(), name='approval'),
         path('sow/', ProjectSOWView.as_view(), name='sow'),

@@ -12,10 +12,13 @@ from .project import (
     CreateProjectForm,
     ProjectApprovalForm,
     ProjectSOWForm,
+    RemoveContractDocumentForm,
     RemoveDocumentForm,
     SetPendingForm,
     StaffUploadContractForm,
+    SubmitContractDocumentsForm,
     UpdateProjectLeadForm,
+    UploadContractDocumentForm,
     UploadContractForm,
     UploadDocumentForm,
 )
@@ -31,6 +34,7 @@ from .vendor import (
 
 __all__ = [
     'SelectDocumentForm',
+    'SubmitContractDocumentsForm',
     'ApproveContractForm',
     'ApproversForm',
     'ChangePAFStatusForm',
@@ -39,8 +43,10 @@ __all__ = [
     'ProjectApprovalForm',
     'ProjectSOWForm',
     'RemoveDocumentForm',
+    'RemoveContractDocumentForm',
     'SetPendingForm',
     'UploadContractForm',
+    'UploadContractDocumentForm',
     'StaffUploadContractForm',
     'UploadDocumentForm',
     'UpdateProjectLeadForm',

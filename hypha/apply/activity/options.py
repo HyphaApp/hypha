@@ -38,6 +38,7 @@ class MESSAGES(TextChoices):
     APPROVE_PAF = 'APPROVE_PAF', _('approved paf')
     PROJECT_TRANSITION = 'PROJECT_TRANSITION', _('transitioned project')
     REQUEST_PROJECT_CHANGE = 'REQUEST_PROJECT_CHANGE', _('requested project change')
+    SUBMIT_CONTRACT_DOCUMENTS = 'SUBMIT_CONTRACT_DOCUMENTS', _('submitted contract documents')
     UPLOAD_DOCUMENT = 'UPLOAD_DOCUMENT', _('uploaded document to project')
     REMOVE_DOCUMENT = 'REMOVE_DOCUMENT', _('removed document from project')
     UPLOAD_CONTRACT = 'UPLOAD_CONTRACT', _('uploaded contract to project')

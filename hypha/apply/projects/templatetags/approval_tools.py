@@ -1,8 +1,7 @@
 from django import template
 
-from ..permissions import has_permission
-
 from ..models.project import WAITING_FOR_APPROVAL
+from ..permissions import has_permission
 
 register = template.Library()
 

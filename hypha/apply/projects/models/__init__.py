@@ -1,6 +1,8 @@
 from .payment import Invoice, InvoiceDeliverable, SupportingDocument
 from .project import (
     Contract,
+    ContractDocumentCategory,
+    ContractPacketFile,
     Deliverable,
     DocumentCategory,
     PacketFile,
@@ -21,7 +23,9 @@ __all__ = [
     'PAFApprovals',
     'Contract',
     'PacketFile',
+    'ContractPacketFile',
     'DocumentCategory',
+    'ContractDocumentCategory',
     'Report',
     'ReportVersion',
     'ReportPrivateFiles',

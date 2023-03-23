@@ -5,7 +5,7 @@
         <p class="data-block__title">{% trans "Invoices" %}</p>
         {% user_can_add_invoices object user as can_add_invoice %}
         {% if can_add_invoice %}
-            <a class="data-block__button button button--primary"
+            <a class="button button--project-action"
                href="{% url "apply:projects:invoice" pk=object.pk %}">
                 {% trans "Add Invoice" %}
             </a>

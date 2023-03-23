@@ -159,7 +159,7 @@
                         <p class="docs-block__document-info">{{ document.category.name }}</p>
                     </div>
                     <div class="docs-block__document-inner">
-                        <a class="docs-block__document-link" href="{% url 'apply:projects:document' pk=object.pk file_pk=document.pk %}">{% trans "Download" %}</a>
+                        <a class="docs-block__document-link" href="{% url 'apply:projects:document' pk=object.pk file_pk=document.pk %}" target="_blank">{% trans "Download" %}</a>
                         {% if user.is_apply_staff %}
                         <form method="POST" id="{{ remove_document_form.name }}" class="docs-block__document-form">
                             {% csrf_token %}
@@ -183,6 +183,7 @@
     </ul>
 </div>
 
+{% if user.is_apply_staff %}
 <div class="modal" id="copy-supporting-doc">
     <h4 class="modal__header-bar">{% trans "Select a document" %}</h4>
     {% url 'apply:projects:copy-documents' pk=object.pk as select_document_url %}
@@ -196,6 +197,7 @@
     {% trans "Submit" as submit %}
     {% include 'funds/includes/delegated_form_base.html' with form=document_form value=submit %}
 </div>
+{% endif %}
 
 {% if can_send_to_approve %}
 <div class="modal" id="send-for-approval">
@@ -216,7 +218,8 @@
         {% trans "Request" as submit %}
     {% endif %}
     {% if project_settings.paf_reviewers_roles.all %}
-        <p> {% trans "Select approvers for Project Approval Form" %} {% if project_settings.paf_approval_sequential %} {% trans "(Sequentially)" %} {% else %}{% trans "(Parallely)" %}{% endif %}</p>
+        <p> <strong> {% trans "Please select approvers for PAF in " %} {% if project_settings.paf_approval_sequential %} {% trans "sequential order" %} {% else %}{% trans "parallel order" %}{% endif %}</strong></p>
+        <p>{% trans "(please note that in "%}{% if project_settings.paf_approval_sequential %}{%trans "sequential order, approvers will approve PAF one after the other)"%}{% else %}{% trans "parallel order, approvers can approve PAF anytime)" %}{% endif %}</p>
         {% include 'funds/includes/delegated_form_base.html' with form=request_approval_form value=submit %}
     {% else %}
         <p>{% trans "No PAF Reviewer Roles created yet, please create these in " %}
@@ -232,7 +235,7 @@
 
     {% trans "Submit" as submit %}
     {% if project_settings.paf_reviewers_roles.all %}
-        <p> {% trans "Select approvers for Project Approval Form" %} {% if project_settings.paf_approval_sequential %} {% trans "(Sequentially)" %} {% else %}{% trans "(Parallely)" %}{% endif %}</p>
+        <p> {% trans "Are you sure you want to update the approvers? The approvers will be notified via email." %} {% if project_settings.paf_approval_sequential %} {% trans "(Sequentially)" %} {% else %}{% trans "(Parallely)" %}{% endif %}</p>
         {% include 'funds/includes/delegated_form_base.html' with form=update_approvers_form value=submit %}
     {% else %}
         <p>{% trans "No PAF Reviewer Roles created yet, please create these in " %}

@@ -10,6 +10,7 @@ from .admin_views import (
     EditProjectSOWFormView,
 )
 from .models import (
+    ContractDocumentCategory,
     DocumentCategory,
     ProjectApprovalForm,
     ProjectSettings,
@@ -20,6 +21,12 @@ from .models import (
 
 class DocumentCategoryAdmin(ModelAdmin):
     model = DocumentCategory
+    menu_icon = 'doc-full'
+    list_display = ('name', 'recommended_minimum',)
+
+
+class ContractDocumentCategoryAdmin(ModelAdmin):
+    model = ContractDocumentCategory
     menu_icon = 'doc-full'
     list_display = ('name', 'recommended_minimum',)
 
@@ -64,6 +71,7 @@ class ProjectAdminGroup(ModelAdminGroup):
     menu_label = 'Projects'
     menu_icon = 'duplicate'
     items = (
+        ContractDocumentCategoryAdmin,
         DocumentCategoryAdmin,
         ProjectApprovalFormAdmin,
         ProjectSOWFormAdmin,

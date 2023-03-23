@@ -45,6 +45,7 @@ class EmailAdapter(AdapterBase):
         MESSAGES.PARTNERS_UPDATED: 'partners_updated_applicant',
         MESSAGES.PARTNERS_UPDATED_PARTNER: 'partners_updated_partner',
         MESSAGES.UPLOAD_CONTRACT: 'messages/email/contract_uploaded.html',
+        MESSAGES.SUBMIT_CONTRACT_DOCUMENTS: 'messages/email/submit_contract_documents.html',
         MESSAGES.CREATED_PROJECT: 'handle_project_created',
         MESSAGES.UPDATED_VENDOR: 'handle_vendor_updated',
         MESSAGES.SENT_TO_COMPLIANCE: 'messages/email/sent_to_compliance.html',
@@ -79,6 +80,8 @@ class EmailAdapter(AdapterBase):
                 subject = _('Project is waiting for approval: {source.title}').format(source=source)
             elif message_type == MESSAGES.UPLOAD_CONTRACT:
                 subject = _('Contract uploaded for the project: {source.title}').format(source=source)
+            elif message_type == MESSAGES.SUBMIT_CONTRACT_DOCUMENTS:
+                subject = _('Contract Documents required approval for the project: {source.title}').format(source=source)
             elif message_type == MESSAGES.PROJECT_TRANSITION:
                 from hypha.apply.projects.models.project import CONTRACTING, IN_PROGRESS
                 if source.status == CONTRACTING:
@@ -258,10 +261,8 @@ class EmailAdapter(AdapterBase):
         if message_type == MESSAGES.SENT_TO_COMPLIANCE:
             return get_compliance_email(target_user_gps=[CONTRACTING_GROUP_NAME, FINANCE_GROUP_NAME, STAFF_GROUP_NAME])
 
-        if message_type == MESSAGES.UPLOAD_CONTRACT:
-            if user == source.user:
-                # if applicant re-uploads the contract then notify the compliance
-                return get_compliance_email(target_user_gps=[CONTRACTING_GROUP_NAME, STAFF_GROUP_NAME])
+        if message_type == MESSAGES.SUBMIT_CONTRACT_DOCUMENTS:
+            return get_compliance_email(target_user_gps=[STAFF_GROUP_NAME])
 
         if message_type in {MESSAGES.SUBMIT_REPORT, MESSAGES.UPDATE_INVOICE}:
             # Don't tell the user if they did these activities
