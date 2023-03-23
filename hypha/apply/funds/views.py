@@ -1797,6 +1797,9 @@ class SubmissionWithdrawView(SingleObjectTemplateResponseMixin, BaseDetailView):
         return self.withdraw(request, *args, **kwargs)
 
     def withdraw(self, request, *args, **kwargs):
+        if not settings.ENABLE_SUBMISSION_WITHDRAWAL:
+            raise PermissionDenied
+
         obj = self.get_object()
 
         if not obj.phase.permissions.can_edit(request.user):
