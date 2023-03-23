@@ -463,12 +463,12 @@ class TestStaffContractUploadForm(TestCase):
     def test_staff_can_upload_unsigned(self):
         form = StaffUploadContractForm(data={}, files={'file': self.mock_file})
         self.assertTrue(form.is_valid(), form.errors)
-        self.assertFalse(form.cleaned_data.get('is_signed'))
+        self.assertFalse(form.cleaned_data.get('signed_by_applicant'))
 
     def test_staff_can_upload_signed(self):
-        form = StaffUploadContractForm(data={'is_signed': True}, files={'file': self.mock_file})
+        form = StaffUploadContractForm(data={'signed_by_applicant': True}, files={'file': self.mock_file})
         self.assertTrue(form.is_valid(), form.errors)
-        self.assertTrue(form.cleaned_data.get('is_signed'))
+        self.assertTrue(form.cleaned_data.get('signed_by_applicant'))
 
 
 class TestContractUploadForm(TestCase):
@@ -477,9 +477,9 @@ class TestContractUploadForm(TestCase):
     def test_applicant_cant_upload_unsigned(self):
         form = UploadContractForm(data={}, files={'file': self.mock_file})
         self.assertTrue(form.is_valid(), form.errors)
-        self.assertIsNone(form.cleaned_data.get('is_signed'))
+        self.assertIsNone(form.cleaned_data.get('signed_by_applicant'))
 
     def test_applicant_can_upload_signed(self):
-        form = UploadContractForm(data={'is_signed': True}, files={'file': self.mock_file})
+        form = UploadContractForm(data={'signed_by_applicant': True}, files={'file': self.mock_file})
         self.assertTrue(form.is_valid(), form.errors)
-        self.assertIsNone(form.cleaned_data.get('is_signed'))
+        self.assertIsNone(form.cleaned_data.get('signed_by_applicant'))
