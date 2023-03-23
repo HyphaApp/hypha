@@ -20,4 +20,5 @@ def global_vars(request):
         "SENTRY_DENY_URLS": settings.SENTRY_DENY_URLS,
         "SENTRY_DEBUG": settings.SENTRY_DEBUG,
         "SENTRY_PUBLIC_KEY": settings.SENTRY_PUBLIC_KEY,
+        "ENABLE_SUBMISSION_WITHDRAWAL": settings.ENABLE_SUBMISSION_WITHDRAWAL,
     }

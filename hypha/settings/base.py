@@ -158,6 +158,9 @@ REVIEW_VISIBILITY_DEFAULT = env.str("REVIEW_VISIBILITY_DEFAULT", "private")
 # Require an applicant to view their rendered application before submitting
 SUBMISSION_PREVIEW_REQUIRED = env.bool("SUBMISSION_PREVIEW_REQUIRED", True)
 
+# Allow Withdrawing of Submissions
+ENABLE_SUBMISSION_WITHDRAWAL = env.bool('ENABLE_SUBMISSION_WITHDRAWAL', False)
+
 # Project settings.
 
 # SECRET_KEY is required
