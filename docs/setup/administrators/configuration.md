@@ -76,6 +76,10 @@ The corrosponding locale dir is named: en, en_GB, en_US
 
     FORCE_LOGIN_FOR_APPLICATION = env.bool('FORCE_LOGIN_FOR_APPLICATION', False)
 
+### Allow Withdrawing of Submissions
+
+    ENABLE_SUBMISSION_WITHDRAWAL = env.bool('ENABLE_SUBMISSION_WITHDRAWAL', False)
+
 ### Set the allowed file extension for all uploads fields.
 
     FILE_ALLOWED_EXTENSIONS = ['doc', 'docx', 'odp', 'ods', 'odt', 'pdf', 'ppt', 'pptx', 'rtf', 'txt', 'xls', 'xlsx']

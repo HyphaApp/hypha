@@ -363,7 +363,7 @@ SingleStageExternalDefinition = [
             'display': _('Need screening'),
             'public': _('Application Received'),
             'stage': RequestExt,
-            'permissions': default_permissions,
+            'permissions': applicant_edit_permissions,
         },
         'ext_more_info': {
             'transitions': {
