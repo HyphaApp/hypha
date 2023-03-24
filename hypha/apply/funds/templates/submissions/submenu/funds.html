@@ -14,8 +14,13 @@
     {% for f in funds %}
         <li>
             <a
+                {% if f.selected %}
+                href="{% url "apply:submissions:list-beta" %}{% remove_from_query "only_query_string" "page" fund=f.id %}"
+                hx-get="{% url "apply:submissions:list-beta" %}{% remove_from_query "only_query_string" "page" fund=f.id %}"
+                {% else %}
                 href="{% url "apply:submissions:list-beta" %}{% modify_query "only_query_string" "page" fund=f.id %}"
                 hx-get="{% url "apply:submissions:list-beta" %}{% modify_query "only_query_string" "page" fund=f.id %}"
+                {% endif %}
                 hx-push-url="true"
                 class="flex {% if f.selected %}pl-2 font-medium{% else %}pl-8{% endif %} pr-3 py-2 text-gray-600 border-b items-center hover:bg-gray-100 focus:bg-gray-100{% if f.selected %}bg-gray-100{% endif %}">
                 {% if f.selected %}
