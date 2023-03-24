@@ -1,37 +1,13 @@
 {% extends base_template %}
 
 {% load i18n static %}
-{% load render_table from django_tables2 %}
-{% load django_tables2 i18n %}
+{% comment %} {% load render_table from django_tables2 %} {% endcomment %}
 {% load querystrings %}
+{% load humanize %}
 
 {% block title %}{% trans "Submissions" %}{% endblock %}
 
 {% block content %}
-    <script>
-        function liveSearch() {
-            // Locate the card elements
-            let card = document.querySelectorAll('[data-filter]')
-            let cards = document.querySelectorAll('[data-filter] li')
-
-            // Locate the search input
-            let search_query = document.getElementById(card[0].getAttribute("data-filter-for")).value;
-            // Loop through the cards
-            for (var i = 0; i < cards.length; i++) {
-                // If the text is within the card...
-                if (cards[i].innerText.toLowerCase()
-                    // ...and the text matches the search query...
-                        .includes(search_query.toLowerCase())) {
-                        // ...remove the `.is-hidden` class.
-                        cards[i].classList.remove("hidden");
-                    } else {
-                        // Otherwise, add the class.
-                        cards[i].classList.add("hidden");
-                    }
-            }
-        }
-    </script>
-
     {% adminbar %}
         {% slot header %}
             {% trans "All Submissions" %}
@@ -40,8 +16,11 @@
 
         <div class="relative mt-2 md:mt-0">
             <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                <svg class="w-5 h-5 text-gray-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg">
+                <svg class="text-gray-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="20"
+                    width="20"
+                >
                     <path fill-rule="evenodd"
                         d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
                         clip-rule="evenodd"></path>
@@ -69,234 +48,461 @@
         </div>
     {% endadminbar %}
 
-    <nav
-        hx-target="#main"
-        hx-swap="outerHTML"
-        class="px-2 py-3 flex flex-wrap gap-2 items-center justify-end bg-white md:space-x-5 md:text-sm md:font-medium  border-gray-200 dark:bg-gray-900 dark:border-gray-800"
-    >
-
-        {% dropdown_menu title="Status" heading="Filter by current status" enable_search=True %}
-            <ul hx-boost="true" data-filter data-filter-for="input-status-filter"
-                class="flex flex-col overflow-scroll max-h-80 text-gray-700 dark:text-gray-200"
-                aria-labelledby="dropdownBgHoverButton">
-                {% if selected_statuses %}
-                    <li>
-                        <a href="{% remove_from_query " page" "status" %}"
-                            class="flex px-3 py-2 text-gray-600 border-b items-center hover:bg-gray-100 focus:bg-gray-100{% if s.selected %}bg-gray-100{% endif %}">
-                            All status
-                        </a>
-                    </li>
-                {% endif %}
-                {% for s in status_counts %}
-                    <li>
-                        <a href="{% modify_query "page" status=s.slug %}" role="menuitemradio" aria-checked="{{ s.selected }}"
-                            class="flex px-3 py-2 text-gray-600 border-b items-center hover:bg-gray-100 focus:bg-gray-100{% if s.selected %}bg-gray-100{% endif %}">
-                            {{ s.title }} {% if s.n %}({{ s.n }}){% endif %}
-                        </a>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% enddropdown_menu %}
-
-        {% dropdown_menu title="Fund" heading="Filter by Fund" enable_search=True %}
-            {% slot "url" %}{% url "apply:submissions:submenu-funds" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
-        {% enddropdown_menu %}
-
-        {% dropdown_menu title="Round" heading="Filter by Round" enable_search=True %}
-            {% slot "url" %}{% url "apply:submissions:submenu-rounds" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
-        {% enddropdown_menu %}
-
-
-        {% dropdown_menu title="Lead" heading="Filter by Lead" enable_search=True %}
-            {% slot "url" %}{% url "apply:submissions:submenu-leads" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
-        {% enddropdown_menu %}
-
-        {% dropdown_menu title="Sort" heading="Sort by" %}
-            <a href="{% modify_query "page" sort="-submit_time" %}"
-                hx-get="{% modify_query "page" sort="-submit_time" %}"
-                hx-push-url="true"
-                class="flex px-3 py-2 text-gray-600 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
-                {% trans "Newest" %}
-            </a>
-            <a href="{% modify_query "page" sort="submit_time" %}"
-                hx-get="{% modify_query "page" sort="submit_time" %}"
-                hx-push-url="true"
-                class="flex px-3 py-2 text-gray-600 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
-                {% trans "Oldest" %}
-            </a>
-            <a href="{% modify_query "page" sort="-comments" %}"
-                hx-get="{% modify_query "page" sort="-comments" %}"
-                hx-push-url="true"
-                class="flex px-3 py-2 text-gray-600 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
-                {% trans "Most commented" %}
-            </a>
-            <a href="{% modify_query "page" sort="comments" %}"
-                hx-get="{% modify_query "page" sort="comments" %}"
-                hx-push-url="true"
-                class="flex px-3 py-2 text-gray-600 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
-                {% trans "Least commented" %}
-            </a>
-            <a href="{% modify_query "page" sort="-last_update" %}"
-                hx-get="{% modify_query "page" sort="-last_update" %}"
-                hx-push-url="true"
-                class="flex px-3 py-2 text-gray-600 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
-                {% trans "Recently Updated" %}
-            </a>
-            <a href="{% modify_query "page" sort="last_update" %}"
-                hx-get="{% modify_query "page" sort="last_update" %}"
-                hx-push-url="true"
-                class="flex px-3 py-2 text-gray-600 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
-                {% trans "Least Recently Updated" %}
-            </a>
-        {% enddropdown_menu %}
-
-        {% if show_archive %}
-        <form method='GET' action="./">
-                {% for key, value in request.GET.items %}
-                    {% if key != 'archived' %}<input type="hidden" value="{{ value}}" name="{{ key }}">{% endif %}
-                {% endfor %}
-            <label class="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" {% if show_archived %}checked{% endif %}
-                    class="sr-only peer"
-                    name="archived"
-                    hx-push-url="true"
-                    hx-get="./"
-                    hx-include="input.filter_options:not([name=archived])"
-                    hx-target="#main"
-                >
-                <div
-                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600">
-                </div>
-                <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">Archived</span>
-            </label>
-        </form>
-        {% endif %}
-    </nav>
-
     {% if is_filtered %}
         {% comment %} Display option to clear all the filters {% endcomment %}
-        <div class="px-2 py-3 bg-white">
+        <div class="py-3 mt-3 flex gap-1"
+            hx-target="#main"
+            hx-push-url="true"
+        >
             <a href="./"
                 hx-get="./"
-                hx-target="#main"
-                hx-push-url="true"
                 title="Clear Filters"
-                class="font-medium flex items-center transition-colors text-neutral-600 hover:text-gray-900">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                    class="w-5 h-5 inline-block stroke-2 stroke-white bg-gray-500 hover:bg-gray-900 rounded mr-1"
-                    aria-hidden='true'>
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-                <span>Clear current search query, filters and sorts</span>
+                class="inline-flex items-center px-2 py-1 mr-2 text-xs font-medium text-blue-800 bg-blue-100 rounded dark:bg-blue-900 dark:text-blue-300">
+                Clear all filters
             </a>
+
+            {% if search_term %}
+                <span class="inline-flex items-center px-2 py-1 mr-2 text-xs select-none font-medium text-blue-800 bg-blue-100 rounded dark:bg-blue-900 dark:text-blue-300"> {{ search_term }}
+                    <a href="{% remove_from_query "query" %}" role="button" class="inline-flex items-center p-0.5 ml-2 text-xs text-blue-400 bg-transparent rounded-sm hover:bg-blue-200 hover:text-blue-900 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
+                        <svg aria-hidden="true" class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                        <span class="sr-only">Remove search filter</span>
+                    </a>
+                </span>
+            {% endif %}
+            {% if selected_statuses %}
+                <span class="inline-flex items-center px-2 py-1 mr-2 text-xs select-none font-medium text-blue-800 bg-blue-100 rounded dark:bg-blue-900 dark:text-blue-300">
+                    Status:{% for s in selected_statuses %}{{ s }}{% endfor %}
+                    <a href="{% remove_from_query "status" %}" role="button" class="inline-flex items-center p-0.5 ml-2 text-xs text-blue-400 bg-transparent rounded-sm hover:bg-blue-200 hover:text-blue-900 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
+                        <svg aria-hidden="true" class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                        <span class="sr-only">Remove Status Filter</span>
+                    </a>
+                </span>
+            {% endif %}
+            {% if selected_funds %}
+                <span class="inline-flex items-center px-2 py-1 mr-2 text-xs select-none font-medium text-blue-800 bg-blue-100 rounded dark:bg-blue-900 dark:text-blue-300">
+                    Fund:{% for s in selected_funds %}{{ s }}{% endfor %}
+                    <a href="{% remove_from_query "fund" %}" role="button" class="inline-flex items-center p-0.5 ml-2 text-xs text-blue-400 bg-transparent rounded-sm hover:bg-blue-200 hover:text-blue-900 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
+                        <svg aria-hidden="true" class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                        <span class="sr-only">Remove Fund Filter</span>
+                    </a>
+                </span>
+            {% endif %}
+            {% if selected_rounds %}
+                <span class="inline-flex items-center px-2 py-1 mr-2 text-xs select-none font-medium text-blue-800 bg-blue-100 rounded dark:bg-blue-900 dark:text-blue-300">
+                    Round:{% for s in selected_rounds %}{{ s }}{% endfor %}
+                    <a href="{% remove_from_query "round" %}" role="button" class="inline-flex items-center p-0.5 ml-2 text-xs text-blue-400 bg-transparent rounded-sm hover:bg-blue-200 hover:text-blue-900 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
+                        <svg aria-hidden="true" class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                        <span class="sr-only">Remove Round Filter</span>
+                    </a>
+                </span>
+            {% endif %}
+            {% if selected_leads %}
+                <span class="inline-flex items-center px-2 py-1 mr-2 text-xs select-none font-medium text-blue-800 bg-blue-100 rounded dark:bg-blue-900 dark:text-blue-300">
+                    Lead:{% for s in selected_leads %}{{ s }}{% endfor %}
+                    <a href="{% remove_from_query "lead" %}" role="button" class="inline-flex items-center p-0.5 ml-2 text-xs text-blue-400 bg-transparent rounded-sm hover:bg-blue-200 hover:text-blue-900 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
+                        <svg aria-hidden="true" class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                        <span class="sr-only">Remove Leads Filter</span>
+                    </a>
+                </span>
+            {% endif %}
+            {% for s in selected_reviewers %}
+                <span class="inline-flex items-center px-2 py-1 mr-2 text-xs select-none font-medium text-blue-800 bg-blue-100 rounded dark:bg-blue-900 dark:text-blue-300">
+                    Reviewer:{{ s }}
+                    <a href="{% remove_from_query reviewers=s %}" role="button" class="inline-flex items-center p-0.5 ml-2 text-xs text-blue-400 bg-transparent rounded-sm hover:bg-blue-200 hover:text-blue-900 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
+                        <svg aria-hidden="true" class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                        <span class="sr-only">Remove Reviewer Filter</span>
+                    </a>
+                </span>
+            {% endfor %}
+            {% if selected_sort %}
+                <span class="inline-flex items-center px-2 py-1 mr-2 text-xs select-none font-medium text-blue-800 bg-blue-100 rounded dark:bg-blue-900 dark:text-blue-300">
+                    sort:{{ selected_sort }}
+                    <a href="{% remove_from_query "sort" %}" role="button" class="inline-flex items-center p-0.5 ml-2 text-xs text-blue-400 bg-transparent rounded-sm hover:bg-blue-200 hover:text-blue-900 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
+                        <svg aria-hidden="true" class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                        <span class="sr-only">Remove Sort Filter</span>
+                    </a>
+                </span>
+            {% endif %}
+            {% if show_archived %}
+                <span class="inline-flex items-center px-2 py-1 mr-2 text-xs select-none font-medium text-blue-800 bg-blue-100 rounded dark:bg-blue-900 dark:text-blue-300">
+                    Archived
+                    <a href="{% remove_from_query "archived" %}" role="button" class="inline-flex items-center p-0.5 ml-2 text-xs text-blue-400 bg-transparent rounded-sm hover:bg-blue-200 hover:text-blue-900 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
+                        <svg aria-hidden="true" class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                        <span class="sr-only">Remove Sort Filter</span>
+                    </a>
+                </span>
+            {% endif %}
         </div>
     {% endif %}
 
-    <div class="wrapper wrapper--large wrapper--inner-space-medium">
-        {% block table %}
-            <div class="wrapper wrapper--table-actions js-table-actions">
-                <div class="actions-bar">
-                    {# Left #}
-                    <div class="actions-bar__inner actions-bar__inner--left">
-                        {% if use_batch_actions %}
-                            <div class="actions-bar__per-page">{% trans "Show" %} <a href="{% querystring " per_page"=25 %}">25</a>
-                                | <a href="{% querystring " per_page"=50 %}">50</a> | <a href="{% querystring " per_page"=100
-                                    %}">100</a> {% trans "items" %}</div>
+    <section x-data="{
+        selectAll: false,
+        selectedSubmissions: [],
+        toggleAllCheckboxes() {
+            this.selectAll = !this.selectAll
+            this.selectedSubmissions = [];
+
+            checkboxes = document.querySelectorAll('input[x-model=selectedSubmissions]');
+
+            [...checkboxes].map((el) => {
+                el.checked = this.selectAll;
+                (this.selectAll) ? this.selectedSubmissions.push(el.value) : this.selectedSubmissions = [];
+            })
+        },
+        get selectedSubmissionCount(){
+            return this.selectedSubmissions.length;
+        },
+        get showSelectedSubmissions(){
+            return (this.selectedSubmissions.length > 0);
+        }
+    }"
+    x-init="
+        $watch('selectedSubmissions', (value) => {
+            var total = document.querySelectorAll('input[x-model=selectedSubmissions]').length
+            if (value.length == 0) {
+                $refs.checkboxSelectAll.indeterminate = false
+                $refs.checkboxSelectAll.checked = false
+            } else if (value.length === total) {
+                $refs.checkboxSelectAll.indeterminate = false
+                $refs.checkboxSelectAll.checked = true
+            } else {
+                $refs.checkboxSelectAll.indeterminate = true
+                $refs.checkboxSelectAll.checked = false
+            }
+        })
+    ">
+
+        <header
+            hx-target="#main"
+            hx-swap="outerHTML"
+            class="mt-3 px-3 py-3 min-h-5 flex justify-between items-center justify-between border-x border-t rounded-t-md flex-wrap gap-5 bg-gray-50 md:text-sm md:font-medium  border-gray-200 dark:bg-gray-900 dark:border-gray-800"
+        >
+            <section class="flex items-center gap-2 py-1">
+                <input type="checkbox"
+                    x-ref="checkboxSelectAll"
+                    aria-label="Select all submissions"
+                    autocomplete="off"
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    @click="toggleAllCheckboxes()"
+                >
+                <div x-cloak x-show="showSelectedSubmissions"> <span x-text="selectedSubmissionCount"></span> selected</div>
+            </section>
+
+            <section x-cloak
+                x-show="showSelectedSubmissions"
+                class="selection-actions flex flex-wrap flex-row gap-5 items-center"
+            >
+                {% dropdown_menu title="Lead" heading="Assign Lead" enable_search=True search_field_id="lead-filter-field" %}
+                    {% slot "url" %}{% url "apply:submissions:submenu-leads" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
+                {% enddropdown_menu %}
+            </section>
+
+            <nav x-show="!showSelectedSubmissions"
+                class="menu-filters flex flex-wrap flex-row gap:2 md:gap-5 items-center"
+            >
+                {% dropdown_menu title="Status" heading="Filter by current status" enable_search=True search_field_id="status-filter-field" %}
+                    <ul
+                        class="flex flex-col overflow-scroll max-h-80 text-gray-700 dark:text-gray-200"
+                        aria-labelledby="dropdownBgHoverButton">
+                        {% if selected_statuses %}
+                            <li>
+                                <a hx-get="{% remove_from_query "page" "status" %}"
+                                    href="{% remove_from_query "page" "status" %}"
+                                    class="flex px-3 py-2 text-gray-600 border-b items-center hover:bg-gray-100 focus:bg-gray-100{% if s.selected %}bg-gray-100{% endif %}">
+                                    {% trans "All statuses" %}
+                                </a>
+                            </li>
                         {% endif %}
+                        {% for s in status_counts %}
+                            <li data-filter-for="status-filter-field">
+                                <a
+                                    {% if s.selected %}
+                                        href="{% remove_from_query "page" status=s.title %}"
+                                    {% else %}
+                                        href="{% modify_query "page" status=s.title %}"
+                                    {% endif %}
+                                    role="menuitemradio" aria-checked="{{ s.selected }}"
+                                    class="flex {% if s.selected %}bg-gray-100 pl-2 font-medium{% else %}pl-8{% endif %} pr-3 py-2 text-gray-600 border-b items-center hover:bg-gray-100 focus:bg-gray-100"
+                                >
+                                    {% if s.selected %}
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 mr-2" height="4" width="4">
+                                            <path fill-rule="evenodd"
+                                                d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                    {% endif %}
+                                    {{ s.title }} {% if s.count %}({{ s.count }}){% endif %}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% enddropdown_menu %}
 
-                        {% if use_batch_actions %}
-                            <div class="actions-bar__inner actions-bar__inner--batch-actions">
-                                <p class="actions-bar__total"><span class="js-total-actions">0</span> {% trans "Selected" %}</p>
+                {% dropdown_menu title="Fund" heading="Filter by Fund" enable_search=True search_field_id="fund-filter-field" %}
+                    {% slot "url" %}{% url "apply:submissions:submenu-funds" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
+                {% enddropdown_menu %}
 
-                                <button data-fancybox type="button" data-src="#batch-progress"
-                                    class="button button--action button--change-status js-batch-button js-batch-progress">
-                                    <svg>
-                                        <use xlink:href="#arrow-split"></use>
-                                    </svg>
-                                    {% trans "Status" %}
-                                </button>
+                {% dropdown_menu title="Round" heading="Filter by Round" enable_search=True search_field_id="round-filter-field" %}
+                    {% slot "url" %}{% url "apply:submissions:submenu-rounds" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
+                {% enddropdown_menu %}
 
-                                <button data-fancybox data-src="#batch-update-lead" class="button button--action js-batch-button"
-                                    type="button">
-                                    <svg>
-                                        <use xlink:href="#add-person"></use>
-                                    </svg>
-                                    {% trans "Lead" %}
-                                </button>
+                {% dropdown_menu title="Lead" heading="Filter by Lead" enable_search=True search_field_id="lead-filter-field" %}
+                    {% slot "url" %}{% url "apply:submissions:submenu-leads" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
+                {% enddropdown_menu %}
 
-                                <button data-fancybox data-src="#batch-update-reviewers"
-                                    class="button button--action js-batch-button" type="button">
-                                    <svg>
-                                        <use xlink:href="#add-person"></use>
-                                    </svg>
-                                    {% trans "Reviewers" %}
-                                </button>
+                {% dropdown_menu title="Reviewers" heading="Filter by Reviewer" enable_search=True search_field_id="reviewer-filter-field" %}
+                    {% slot "url" %}{% url "apply:submissions:submenu-reviewers" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
+                {% enddropdown_menu %}
 
-                                <button data-fancybox data-src="#batch-delete-submission"
-                                    class="button button--action js-batch-button" type="button">
-                                    <svg class="icon icon--delete">
-                                        <use xlink:href="#delete-submissions"></use>
-                                    </svg>
-                                    {% trans "Delete" %}
-                                </button>
+                {% dropdown_menu title="Sort" heading="Sort by" %}
+                    {% for sort_option in sort_options %}
+                        <a
+                            {% if sort_option.selected %}
+                            href="{% remove_from_query "page" sort=sort_option.param %}"
+                            hx-get="{% remove_from_query "page" sort=sort_option.param %}"
+                            {% else %}
+                            href="{% modify_query "page" sort=sort_option.param %}"
+                            hx-get="{% modify_query "page" sort=sort_option.param %}"
+                            {% endif %}
+                            hx-push-url="true"
+                            aria-selected="{% if sort_option.selected %}true{% else %}false{% endif %}"
+                            class="flex {% if sort_option.selected %}pl-3 font-bold{% else %}pl-8{% endif %} pr-3 py-2 text-gray-600 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
+                            {% if sort_option.selected %}
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 mr-1" height="4" width="4">
+                                    <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+                                </svg>
+                            {% endif %}
 
-                                <button data-fancybox data-src="#batch-archive-submission"
-                                    class="button button--action js-batch-button" type="button">
-                                    <svg class="icon icon--archive">
-                                        <use xlink:href="#archive"></use>
-                                    </svg>
-                                    {% trans "Archive" %}
-                                </button>
+                            {{ sort_option.name }}
+                        </a>
+                    {% endfor %}
+                {% enddropdown_menu %}
+
+                {% if show_archive %}
+                    <form method='GET' action="./">
+                        {% for key, value in request.GET.items %}
+                            {% if key != 'archived' %}<input type="hidden" value="{{ value}}" name="{{ key }}">{% endif %}
+                        {% endfor %}
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" {% if show_archived %}checked{% endif %}
+                                class="sr-only peer"
+                                name="archived"
+                                hx-push-url="true"
+                                hx-get="./"
+                                hx-include="input.filter_options:not([name=archived])"
+                                hx-target="#main"
+                            >
+                            <div
+                                class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600">
                             </div>
-                        {% endif %}
+                            <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">Archived</span>
+                        </label>
+                    </form>
+                {% endif %}
+            </nav>
+        </header>
+
+        <div class="bg-white border-x border-b rounded-b-md w-full">
+            {% for s in submissions %}
+                <div class="item-row border-t pr-4 py-3 flex hover:bg-gray-100 w-full transition-colors">
+                    <label class='inline-block pl-3 py-2 flex'>
+                        <input id="submission-{{ s.id }}"
+                            type="checkbox"
+                            value="{{ s.id }}"
+                            x-model="selectedSubmissions"
+                            name="submissions"
+                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                    </label>
+                    <div class="flex flex-col grow ml-3">
+                        <div class="flex items-center gap-2 flex-nowrap">
+                            <div class="grow">
+                            <a
+                                title="{{ s.title }}"
+                                href="{% url "funds:submissions:detail" s.id %}"
+                                hx-target="#main"
+                                hx-swap="body"
+                                class="font-bold grow text-ellipsis text-base text-gray-700 hover:text-purple-600 overflow-clip transition-colors"
+                            >{{ s.title|truncatechars:"60" }}</a>
+                            </div>
+                            <div class="column-status inline-flex">
+                                <a href="{% modify_query status=s.phase.display_name %}"
+                                    class="rounded px-3 py-1 text-xs font-medium text-gray-800
+                                    {% if s.phase.display_name == "Need screening" %}bg-orange-200{% endif %}
+                                    {% if s.phase.display_name == "Draft" %}bg-gray-200{% endif %}
+                                    {% if s.phase.display_name == "Accepted" %}bg-green-200{% endif %}
+                                    {% if s.phase.display_name == "Ready for Determination" %}bg-blue-200{% endif %}
+                                    {% if s.phase.display_name == "Accepted" %}bg-green-200{% endif %}
+                                    {% if s.phase.display_name == "Internal Review" %}bg-stone-200{% endif %}
+                                    {% if s.phase.display_name == "External Review" %}bg-lime-200{% endif %}"
+                                >
+                                    {{ s.phase.display_name }}
+                                </a>
+                            </div>
+                            <span class="rounded px-3 py-1 text-xs font-medium text-gray-800">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 inline-block">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                {{ s.lead }}
+                            </span>
+                            {% comment %} Comment Count {% endcomment %}
+                            <div class="flex items-center justify-end">
+                                <svg aria-hidden='true' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 inline-block mr-1">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.076-4.076a1.526 1.526 0 011.037-.443 48.282 48.282 0 005.68-.494c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
+                                </svg>
+                                <span class="inline-block font-medium">{{ s.comment_count }}</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center text-xs pt-1">
+                            <span>
+                                #{{ s.id }} submitted on {{ s.submit_time|date:"SHORT_DATE_FORMAT" }} by {{ s.user }} • {{ s.stage }} •
+                            </span>
+
+                            <span class="meta-fund inline-flex items-center">
+                                <svg aria-hidden='true'
+                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                    class="w-3 h-3 stroke-2 inline-block mx-1">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0112 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 01-.673-.38m0 0A2.18 2.18 0 013 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 013.413-.387m7.5 0V5.25A2.25 2.25 0 0013.5 3h-3a2.25 2.25 0 00-2.25 2.25v.894m7.5 0a48.667 48.667 0 00-7.5 0M12 12.75h.008v.008H12v-.008z" />
+                                </svg>
+
+                                {{ s.page }}
+                            </span>
+
+                            {% if s.round %}
+                                <span class="meta-round inline-flex items-center">
+                                    <svg aria-hidden='true' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" class="w-3 h-3 stroke-2 inline-block">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                                    </svg>
+                                    {{ s.round }}
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+            <div class="flex flex-col items-center justify-center py-20 px-4 border-t">
+                <h2 class='text-2xl'>No results matched your search</h2>
+                <p>Try <a href="./" hx-get="./" hx-target="#main" hx-push-url="true">clearing</a> all the query and start again.</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% comment %} <div class="wrapper wrapper--large wrapper--inner-space-medium">
+            {% block table %}
+                <div class="wrapper wrapper--table-actions js-table-actions">
+                    <div class="actions-bar">
+                        {# Left #}
+                        <div class="actions-bar__inner actions-bar__inner--left">
+                            {% if use_batch_actions %}
+                                <div class="actions-bar__per-page">
+                                    {% trans "Show" %}
+                                    <a href="{% modify_query per_page=25 %}">25</a>
+                                    | <a href="{% modify_query per_page=50 %}">50</a>
+                                    | <a href="{% modify_query per_page=100%}">100</a>
+                                    {% trans "items" %}
+                                </div>
+                            {% endif %}
+
+                            {% if use_batch_actions %}
+                                <div class="actions-bar__inner actions-bar__inner--batch-actions">
+                                    <p class="actions-bar__total"><span class="js-total-actions">0</span> {% trans "Selected" %}</p>
+
+                                    <button data-fancybox type="button" data-src="#batch-progress"
+                                        class="button button--action button--change-status js-batch-button js-batch-progress">
+                                        <svg>
+                                            <use xlink:href="#arrow-split"></use>
+                                        </svg>
+                                        {% trans "Status" %}
+                                    </button>
+
+                                    <button data-fancybox data-src="#batch-update-lead" class="button button--action js-batch-button"
+                                        type="button">
+                                        <svg>
+                                            <use xlink:href="#add-person"></use>
+                                        </svg>
+                                        {% trans "Lead" %}
+                                    </button>
+
+                                    <button data-fancybox data-src="#batch-update-reviewers"
+                                        class="button button--action js-batch-button" type="button">
+                                        <svg>
+                                            <use xlink:href="#add-person"></use>
+                                        </svg>
+                                        {% trans "Reviewers" %}
+                                    </button>
+
+                                    <button data-fancybox data-src="#batch-delete-submission"
+                                        class="button button--action js-batch-button" type="button">
+                                        <svg class="icon icon--delete">
+                                            <use xlink:href="#delete-submissions"></use>
+                                        </svg>
+                                        {% trans "Delete" %}
+                                    </button>
+
+                                    <button data-fancybox data-src="#batch-archive-submission"
+                                        class="button button--action js-batch-button" type="button">
+                                        <svg class="icon icon--archive">
+                                            <use xlink:href="#archive"></use>
+                                        </svg>
+                                        {% trans "Archive" %}
+                                    </button>
+                                </div>
+                            {% endif %}
+                        </div>
                     </div>
 
-                    {# Right #}
-
-                    {% comment %} <div class="actions-bar__inner actions-bar__inner--right">
-                <form action="./" method="get" role="search" class="form form--search-desktop">
-                    <button class="button button--search" type="submit" aria-label="{% trans 'Search' %}">
-                        <svg class="icon icon--magnifying-glass icon--search">
-                            <use xlink:href="#magnifying-glass"></use>
-                        </svg>
-                    </button>
-                    {% if show_archive and archived_param is not None %}
-                    <input type="hidden" value="{{ archived_param }}" name="archived">
-                    {% endif %}
-                    {% trans "submissions" as submissions %}
-                    <input class="input input--search input--secondary placeholder-slate-400" type="text"
-                        placeholder="{% trans 'Search' %} {{ search_placeholder|default:" submissions..." }}"
-                        name="query" {% if search_term %}value="{{ search_term }}" {% endif %}
-                        aria-label="{% trans 'Search input' %}">
-                </form>
-            </div> {% endcomment %}
                 </div>
 
-            </div>
 
-
-            {% if use_batch_actions %}
-                {% include "funds/includes/batch_update_lead_form.html" %}
-                {% include "funds/includes/batch_update_reviewer_form.html" %}
-                {% include "funds/includes/batch_progress_form.html" %}
-                {% include "funds/includes/batch_delete_submission_form.html" %}
-                {% include "funds/includes/batch_archive_submission_form.html" %}
-            {% endif %}
-
-            {% if total %}
-                {% if search_term %}
-                    <p>Found {{ total }} result{{total|pluralize}} for <strong><em>"{{ search_term }}"</strong></em> ({{ duration }}s)
-                    </p>
+                {% if use_batch_actions %}
+                    {% include "funds/includes/batch_update_lead_form.html" %}
+                    {% include "funds/includes/batch_update_reviewer_form.html" %}
+                    {% include "funds/includes/batch_progress_form.html" %}
+                    {% include "funds/includes/batch_delete_submission_form.html" %}
+                    {% include "funds/includes/batch_archive_submission_form.html" %}
                 {% endif %}
 
-                <div hx-boost="true">
-                    {% render_table table %}
-                </div>
+                {% if total %}
+                    {% if search_term %}
+                        <p>Found {{ total }} result{{total|pluralize}} for <strong><em>"{{ search_term }}"</strong></em> ({{ duration }}s)
+                        </p>
+                    {% endif %}
 
-            {% else %}
-                <p>No results for <strong><em>"{{ search_term }}"</strong></em>. ({{ duration }}s)</p>
-            {% endif %}
+                    <div hx-boost="true">
+                        {% render_table table %}
+                    </div>
 
-        {% endblock %}
-    </div>
-{% endblock %}
+                {% else %}
+                    <p>No results for <strong><em>"{{ search_term }}"</strong></em>. ({{ duration }}s)</p>
+                {% endif %}
+
+            {% endblock %}
+        </div> {% endcomment %}
+    </section>
+    <script>
+        function liveSearch(event) {
+            // Locate the card elements
+            let cards = document.querySelectorAll(`[data-filter-for=${event.target.id}]`)
+
+            // Loop through the cards
+            for (var i = 0; i < cards.length; i++) {
+                // If the text is within the card...
+                if (cards[i].innerText.toLowerCase()
+                    // ...and the text matches the search query...
+                        .includes(event.target.value.toLowerCase())) {
+                        // ...remove the `.is-hidden` class.
+                        cards[i].classList.remove("hidden");
+                    } else {
+                        // Otherwise, add the class.
+                        cards[i].classList.add("hidden");
+                    }
+            }
+        }
+        htmx.onLoad((event) => {
+            for (const element of document.querySelectorAll('.js-filterable-field')) {
+                element.addEventListener("keyup", liveSearch);
+            }
+        });
+    </script>
+
+{% endblock content %}

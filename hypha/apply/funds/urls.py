@@ -33,6 +33,7 @@ from .views_partials import partial_submission_activities
 from .views_beta import (
     sub_menu_funds,
     sub_menu_leads,
+    sub_menu_reviewers,
     sub_menu_rounds,
     submission_all_beta,
 )
@@ -56,6 +57,7 @@ submission_urls = ([
     path('all-beta/submenu/funds/', sub_menu_funds, name="submenu-funds"),
     path('all-beta/submenu/leads/', sub_menu_leads, name="submenu-leads"),
     path('all-beta/submenu/rounds/', sub_menu_rounds, name="submenu-rounds"),
+    path('all-beta/submenu/reviewers/', sub_menu_reviewers, name="submenu-reviewers"),
     path('summary/', GroupingApplicationsListView.as_view(), name="summary"),
     path('result/', SubmissionResultView.as_view(), name="result"),
     path('flagged/', include([

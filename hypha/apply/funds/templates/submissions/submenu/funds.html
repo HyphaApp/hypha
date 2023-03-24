@@ -2,7 +2,7 @@
 
 <ul class="text-gray-700 dark:text-gray-200" aria-labelledby="dropdownBgHoverButton">
     {% if selected_funds %}
-        <li>
+        <li data-filter-for="fund-filter-field">
             <a href="{% url "apply:submissions:list-beta" %}{% remove_from_query "only_query_string" "page" "fund" %}"
                 hx-get="{% url "apply:submissions:list-beta" %}{% remove_from_query "only_query_string" "page" "fund" %}"
                 hx-push-url="true"
@@ -12,7 +12,7 @@
         </li>
     {% endif %}
     {% for f in funds %}
-        <li>
+        <li data-filter-for="fund-filter-field">
             <a
                 {% if f.selected %}
                 href="{% url "apply:submissions:list-beta" %}{% remove_from_query "only_query_string" "page" fund=f.id %}"
