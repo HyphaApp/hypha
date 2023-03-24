@@ -811,8 +811,8 @@ class ApplicationSubmission(
 
     def index_components(self):
         return {
-            'A': self.title,
-            'C': " ".join([self.full_name, self.email]),
+            'A': ' '.join([f'id:{self.id}', self.title]),
+            'C': ' '.join([self.full_name, self.email]),
             'B': ' '.join(self.get_searchable_contents()),
         }
 
