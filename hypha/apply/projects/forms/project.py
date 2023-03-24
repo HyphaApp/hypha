@@ -295,6 +295,10 @@ class UploadContractForm(FileFormMixin, forms.ModelForm):
         fields = ['file']
         model = Contract
 
+    def save(self, commit=True):
+        self.instance.file = self.cleaned_data.get('file')
+        return super().save(commit=True)
+
 
 class StaffUploadContractForm(FileFormMixin, forms.ModelForm):
     file = SingleFileField(label=_('Contract'), required=True)

@@ -343,15 +343,13 @@ class ApproveContractView(DelegatedViewMixin, UpdateView):
 class UploadContractView(DelegatedViewMixin, CreateView):
     context_name = 'contract_form'
     model = Project
+    form_class = UploadContractForm
 
     def dispatch(self, request, *args, **kwargs):
         project = self.kwargs['object']
         permission, _ = has_permission('contract_upload', request.user, object=project)
         if permission:
             return super().dispatch(request, *args, **kwargs)
-
-    def get_form_class(self):
-        return UploadContractForm
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -361,6 +359,9 @@ class UploadContractView(DelegatedViewMixin, CreateView):
 
     def form_valid(self, form):
         project = self.kwargs['object']
+
+        if project.contracts.exists():
+            form.instance = project.contracts.order_by('created_at').first()
 
         form.instance.project = project
 
