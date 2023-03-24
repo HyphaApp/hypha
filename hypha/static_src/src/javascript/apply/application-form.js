@@ -2,22 +2,12 @@
 
     'use strict';
 
+    let symbol = $(document.currentScript).attr('symbol');
     const amount = $('#requested-amount');
-    amount.on('input', function () {
-        if (amount[0].value !== '') {
-            let numberValue = parseInt(amount[0].value.replace(/\D/g, ''));
-            if (isNaN(numberValue)) {
-                amount[0].value = '';
-            }
-            else {
-                amount[0].value = numberValue.toLocaleString('en-US');
-            }
-        }
-    });
     $(amount[0]).css({paddingLeft: '20px'});
-    const form_item = amount[0].parentElement;
+    const form_item = $(amount[0]).parents().eq(1);
     $(form_item).css({position: 'relative'});
-    const currency_sign = "<span id='curr_sign'>$</span>";
+    const currency_sign = "<span id='curr_sign'>" + symbol + '</span>';
     $(form_item).append(currency_sign);
     $('#curr_sign').css({position: 'absolute', left: '10px', top: '4px'});
 
