@@ -41,7 +41,9 @@
             </div>
             <div class="docs-block__row-inner">
                 {% if user.is_applicant %}
-                    <a class="docs-block__link" href="{{ project.submission.get_absolute_url }}">{% trans "View" %}</a>
+                    <a class="docs-block__icon-link" href="{{ project.submission.get_absolute_url }}">
+                        {% trans "View" %}
+                    </a>
                 {% else %}
                     <a class="docs-block__link" href="{% url 'apply:submissions:simplified' pk=project.submission.pk %}">{% trans "View" %}</a>
                     <a class="docs-block__link" href="{% url "apply:submissions:download" pk=project.submission.pk %}">{% trans "Download" %}</a>
@@ -155,8 +157,8 @@
                 {% for document in object.packet_files.all %}
                 <li class="docs-block__document">
                     <div class="docs-block__document-inner">
-                        <p class="docs-block__document-info"><b>{{ document.title }}</b> - {{ document.created_at }}</p>
                         <p class="docs-block__document-info">{{ document.category.name }}</p>
+                        <p class="docs-block__document-info"><b>{{ document.title }}</b> - {{ document.created_at }}</p>
                     </div>
                     <div class="docs-block__document-inner">
                         <a class="docs-block__document-link" href="{% url 'apply:projects:document' pk=object.pk file_pk=document.pk %}" target="_blank">{% trans "Download" %}</a>

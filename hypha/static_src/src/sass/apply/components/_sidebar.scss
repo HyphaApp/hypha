@@ -17,6 +17,11 @@
 
             @include media-query(tablet-portrait) {
                 display: block;
+
+                &--instructions {
+                    margin-top: 10px;
+                    margin-left: 10px;
+                }
             }
         }
 

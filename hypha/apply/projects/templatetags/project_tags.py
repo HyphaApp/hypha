@@ -36,14 +36,24 @@ def user_next_step_on_project(project, user):
             contract = project.contracts.order_by('-created_at').first()
             if not contract.signed_by_applicant:
                 if user.is_applicant:
-                    return "Awaiting counter-signed contract from Applicant. \n\n" \
-                           "Please download the signed contract uploaded by contracting team, counter sign that and " \
-                           "upload it here. Also make sure to upload other required contracting documents"
+                    return "Awaiting counter-signed contract and contracting documents from Applicant."
                 return "Awaiting counter-signed contract from Applicant"
             elif not project.submitted_contract_documents:
                 return "Awaiting contract documents submission from Applicant"
             else:
                 return "Awaiting contract approval from Staff"
+    return False
+
+
+@register.simple_tag
+def user_next_step_instructions(project, user):
+    if project.status == CONTRACTING and user == project.user and project.contracts.exists():
+        contract = project.contracts.order_by('-created_at').first()
+        if contract and not contract.signed_by_applicant:
+            return ['Please download the signed contract uploaded by contracting team',
+                    'Counter Sign',
+                    'Upload it back',
+                    'Please also make sure to upload other required contracting documents']
     return False
 
 

@@ -367,6 +367,9 @@ class UploadContractView(DelegatedViewMixin, CreateView):
 
         if self.request.user == project.user:
             form.instance.signed_by_applicant = True
+            form.instance.uploaded_by_applicant_at = timezone.now()
+        elif self.request.user.is_contracting:
+            form.instance.uploaded_by_contractor_at = timezone.now()
 
         response = super().form_valid(form)
 

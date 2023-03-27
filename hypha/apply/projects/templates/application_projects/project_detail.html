@@ -152,6 +152,14 @@
 
                         <h5>{% trans "Next Step" %}</h5>
                         <p>{{ next_step }}</p>
+                        {% user_next_step_instructions object user as instructions %}
+                        {% if instructions %}
+                            <div class="sidebar__inner--actions--instructions">
+                            {% for instruction in instructions %}
+                                <p>{{forloop.counter}}. {{ instruction }}</p>
+                            {% endfor %}
+                            </div>
+                        {% endif %}
 
                     </div>
                 {% endif %}

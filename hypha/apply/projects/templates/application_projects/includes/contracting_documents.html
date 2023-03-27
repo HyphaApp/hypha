@@ -51,18 +51,27 @@
         <li class="docs-block__row">
             <div class="docs-block__row-inner">
                 <svg class="icon docs-block__icon {% if object.submitted_contract_documents %}is-complete{% endif %}"><use xlink:href="#tick"></use></svg>
-                <p class="docs-block__title">{% trans "Contract" %}</p>
+                <p class="docs-block__title">{% trans "Contract" %}
+                    <i>{% if contract.updated_at %}({{ contract.updated_at }}){% endif %}</i></p>
             </div>
             {% if contract_uploaded and not is_contract_approved %}
             <div class="docs-block__row-inner">
-                <a class="docs-block__link" href="#communications" target="_blank">
-                    <svg class="icon icon--info-circle"><use xlink:href="#info-circle-fill"></use></svg>
-                        <span>{% trans "Corrections/amendments?" %}</span>
-                </a>
                 <a class="docs-block__link" href="{% url 'apply:projects:contract' pk=project.pk file_pk=contract.pk %}" target="_blank">
                     {% trans "Download" %}
                 </a>
             </div>
+            <ul class="docs-block__document-list">
+                <li class="docs-block__document">
+                    <div class="docs-block__row-inner">
+                    </div>
+                    <div class="docs-block__row-inner">
+                        <a class="docs-block__icon-link" href="#communications" target="_blank">
+                            <svg class="icon icon--info-circle"><use xlink:href="#info-circle-fill"></use></svg>
+                                <span>{% trans "Corrections/amendments?" %}</span>
+                        </a>
+                    </div>
+                </li>
+            </ul>
             {% endif %}
 
             {% show_contract_upload_row object user as show_contract_row %}
@@ -72,7 +81,8 @@
                 <li class="docs-block__document">
                     <div class="docs-block__row-inner">
                         <svg class="icon docs-block__icon {% if contract_uploaded %}is-complete{% endif %}"><use xlink:href="#tick"></use></svg>
-                        <p class="docs-block__title">{% trans "Signed contract by Contracting team " %}</p>
+                        <p class="docs-block__title">{% trans "Signed contract by Contracting team " %}
+                            <i>{% if contract.uploaded_by_contractor_at %}({{ contract.uploaded_by_contractor_at }}){% endif %}</i></p>
                     </div>
                     {% if can_upload_contract and user.is_contracting %}
                     <div class="docs-block__row-inner">
@@ -90,7 +100,8 @@
                 <li class="docs-block__document">
                     <div class="docs-block__row-inner">
                         <svg class="icon docs-block__icon {% if contract_reuploaded %}is-complete{% endif %}"><use xlink:href="#tick"></use></svg>
-                        <p class="docs-block__title">{% trans "CounterSigned contract by Applicant/Contractor " %}</p>
+                        <p class="docs-block__title">{% trans "CounterSigned contract by Applicant/Contractor " %}
+                        <i>{% if contract.uploaded_by_applicant_at %}({{ contract.uploaded_by_applicant_at }}){% endif %}</i></p>
                     </div>
                     {% if can_upload_contract and user.is_applicant %}
                     <div class="docs-block__row-inner">
@@ -150,8 +161,8 @@
                 {% for document in object.contract_packet_files.all %}
                 <li class="docs-block__document">
                     <div class="docs-block__document-inner">
-                        <p class="docs-block__document-info"><b>{{ document.title }}</b> - {{ document.created_at }}</p>
                         <p class="docs-block__document-info">{{ document.category.name }}</p>
+                        <p class="docs-block__document-info"><b>{{ document.title }}</b> - {{ document.created_at }}</p>
                     </div>
                     <div class="docs-block__document-inner">
                         <a class="docs-block__document-link" href="{% url 'apply:projects:contract_document' pk=object.pk file_pk=document.pk %}" target="_blank">{% trans "Download" %}</a>

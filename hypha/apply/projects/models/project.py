@@ -525,10 +525,17 @@ class Contract(models.Model):
     file = models.FileField(upload_to=contract_path, storage=PrivateStorage())
 
     signed_by_applicant = models.BooleanField("Counter Signed?", default=False)
+    uploaded_by_contractor_at = models.DateTimeField(null=True)
+    uploaded_by_applicant_at = models.DateTimeField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     approved_at = models.DateTimeField(null=True)
+    updated_at = models.DateTimeField(null=True)
 
     objects = ContractQuerySet.as_manager()
+
+    def save(self, *args, **kwargs):
+        self.updated_at = timezone.now()
+        return super().save(*args, **kwargs)
 
     @property
     def state(self):
