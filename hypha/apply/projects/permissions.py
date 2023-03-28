@@ -24,11 +24,14 @@ def can_approve_contract(user, project, **kwargs):
     if project.status != CONTRACTING:
         return False, 'Project is not in Contracting State'
 
+    if not project.submitted_contract_documents:
+        return False, 'No contract documents submission yet'
+
     if not user.is_authenticated:
         return False, 'Login Required'
 
-    if user.is_apply_staff:
-        return True, 'Staff can approve the contract'
+    if user.is_apply_staff and not user.is_contracting and not user.is_applicant:
+        return True, 'Only Staff can approve the contract'
 
     return False, 'Forbidden Error'
 
@@ -40,8 +43,24 @@ def can_upload_contract(user, project, **kwargs):
     if not user.is_authenticated:
         return False, 'Login Required'
 
-    if user.is_apply_staff or user.is_contracting or user == project.user:
-        return True, 'Staff and Project owner can upload the contract'
+    if user == project.user and project.contracts.exists():
+        return True, 'Project Owner can only re-upload contract with counter-sign'
+
+    if user.is_contracting:
+        return True, 'Contracting team can upload the contract'
+
+    return False, 'Forbidden Error'
+
+
+def can_submit_contract_documents(user, project, **kwargs):
+    if project.status != CONTRACTING:
+        return False, 'Project is not in Contracting State'
+    if user != project.user:
+        return False, 'Only Applicant can submit contracting documents'
+    if not kwargs.get('contract', None):
+        return False, 'Can not submit without contract'
+    if not project.submitted_contract_documents:
+        return True, 'Applicant can submit contracting documents'
 
     return False, 'Forbidden Error'
 
@@ -143,4 +162,5 @@ permissions_map = {
     'report_update': can_update_report,
     'report_config_update': can_update_report_config,
     'report_view': can_view_report,
+    'submit_contract_documents': can_submit_contract_documents,
 }

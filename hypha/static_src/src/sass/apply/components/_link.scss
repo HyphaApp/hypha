@@ -213,6 +213,22 @@
         }
     }
 
+    &--edit-lead {
+        display: flex;
+        align-items: center;
+        font-weight: $weight--bold;
+
+        &:hover {
+            cursor: not-allowed;
+        }
+
+        &.is-active {
+            &:hover {
+                cursor: pointer;
+            }
+        }
+    }
+
     &--edit-submission,
     &--delete-submission {
         display: flex;

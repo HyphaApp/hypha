@@ -51,15 +51,18 @@ from ..files import get_files
 from ..filters import InvoiceListFilter, ProjectListFilter, ReportListFilter
 from ..forms import (
     ApproveContractForm,
+    ApproversForm,
     ChangePAFStatusForm,
     ChangeProjectStatusForm,
     ProjectApprovalForm,
     ProjectSOWForm,
+    RemoveContractDocumentForm,
     RemoveDocumentForm,
     SelectDocumentForm,
     SetPendingForm,
-    StaffUploadContractForm,
+    SubmitContractDocumentsForm,
     UpdateProjectLeadForm,
+    UploadContractDocumentForm,
     UploadContractForm,
     UploadDocumentForm,
 )
@@ -73,6 +76,7 @@ from ..models.project import (
     REQUEST_CHANGE,
     WAITING_FOR_APPROVAL,
     Contract,
+    ContractPacketFile,
     PacketFile,
     PAFApprovals,
     Project,
@@ -152,6 +156,29 @@ class RemoveDocumentView(DelegatedViewMixin, FormView):
         try:
             project.packet_files.get(pk=document_id).delete()
         except PacketFile.DoesNotExist:
+            pass
+
+        return redirect(project)
+
+
+@method_decorator(login_required, name='dispatch')
+class RemoveContractDocumentView(DelegatedViewMixin, FormView):
+    context_name = 'remove_contract_document_form'
+    form_class = RemoveContractDocumentForm
+    model = Project
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_applicant:
+            raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        document_id = form.cleaned_data["id"]
+        project = self.kwargs['object']
+
+        try:
+            project.contract_packet_files.get(pk=document_id).delete()
+        except ContractPacketFile.DoesNotExist:
             pass
 
         return redirect(project)
@@ -239,7 +266,7 @@ class ContractsMixin:
         contract_to_approve = None
         contract_to_sign = None
         if latest_contract:
-            if not latest_contract.is_signed:
+            if not latest_contract.signed_by_applicant:
                 contract_to_sign = latest_contract
             elif not latest_contract.approver:
                 contract_to_approve = latest_contract
@@ -248,6 +275,7 @@ class ContractsMixin:
         context['contract_to_approve'] = contract_to_approve
         context['contract_to_sign'] = contract_to_sign
         context['contracts'] = contracts.approved()
+        context['contract'] = latest_contract
         return context
 
 
@@ -315,17 +343,13 @@ class ApproveContractView(DelegatedViewMixin, UpdateView):
 class UploadContractView(DelegatedViewMixin, CreateView):
     context_name = 'contract_form'
     model = Project
+    form_class = UploadContractForm
 
     def dispatch(self, request, *args, **kwargs):
         project = self.kwargs['object']
         permission, _ = has_permission('contract_upload', request.user, object=project)
         if permission:
             return super().dispatch(request, *args, **kwargs)
-
-    def get_form_class(self):
-        if self.request.user.is_apply_staff:
-            return StaffUploadContractForm
-        return UploadContractForm
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -336,19 +360,76 @@ class UploadContractView(DelegatedViewMixin, CreateView):
     def form_valid(self, form):
         project = self.kwargs['object']
 
+        if project.contracts.exists():
+            form.instance = project.contracts.order_by('created_at').first()
+
         form.instance.project = project
 
         if self.request.user == project.user:
-            form.instance.is_signed = True
+            form.instance.signed_by_applicant = True
 
         response = super().form_valid(form)
 
+        if self.request.user != project.user:
+            messenger(
+                MESSAGES.UPLOAD_CONTRACT,
+                request=self.request,
+                user=self.request.user,
+                source=project,
+                related=form.instance,
+            )
+
+        return response
+
+
+@method_decorator(login_required, name='dispatch')
+class SubmitContractDocumentsView(DelegatedViewMixin, UpdateView):
+    context_name = 'submit_contract_documents_form'
+    model = Project
+    form_class = SubmitContractDocumentsForm
+
+    def dispatch(self, request, *args, **kwargs):
+        project = self.get_object()
+        if list(project.get_missing_contract_document_categories()):
+            raise PermissionDenied
+        contract = project.contracts.order_by('-created_at').first()
+        permission, _ = has_permission('submit_contract_documents', request.user, object=project,
+                                       raise_exception=True, contract=contract)
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        project = self.kwargs['object']
+        response = super().form_valid(form)
+
+        project.submitted_contract_documents = True
+        project.save(update_fields=['submitted_contract_documents'])
+
         messenger(
-            MESSAGES.UPLOAD_CONTRACT,
+            MESSAGES.SUBMIT_CONTRACT_DOCUMENTS,
             request=self.request,
             user=self.request.user,
             source=project,
-            related=form.instance,
+        )
+
+        return response
+
+
+@method_decorator(login_required, name='dispatch')
+class UploadContractDocumentView(DelegatedViewMixin, CreateView):
+    form_class = UploadContractDocumentForm
+    model = Project
+    context_name = 'contract_document_form'
+
+    def form_valid(self, form):
+        project = self.kwargs['object']
+        form.instance.project = project
+        response = super().form_valid(form)
+
+        messenger(
+            MESSAGES.UPLOAD_DOCUMENT,
+            request=self.request,
+            user=self.request.user,
+            source=project,
         )
 
         return response
@@ -482,6 +563,52 @@ class ChangeProjectstatusView(DelegatedViewMixin, UpdateView):
         return response
 
 
+class UpdatePAFApproversView(DelegatedViewMixin, UpdateView):
+    context_name = 'update_approvers_form'
+    form_class = ApproversForm
+    model = Project
+
+    def form_valid(self, form):
+        project = self.kwargs['object']
+
+        project_settings = ProjectSettings.for_request(self.request)
+        if self.object.paf_approvals.exists():
+            old_approvers = list(project.paf_approvals.filter(approved=False).values_list('user__id', flat=True))
+
+        response = super().form_valid(form)
+
+        paf_approvals = self.object.paf_approvals.filter(approved=False)
+
+        if old_approvers and paf_approvals:
+            # if approvers exists already
+            if project_settings.paf_approval_sequential:
+                user = paf_approvals.first().user
+                if user.id != old_approvers[0]:
+                    # notify only if first user/approver is updated
+                    messenger(
+                        MESSAGES.APPROVE_PAF,
+                        request=self.request,
+                        user=self.object.user,
+                        source=self.object,
+                    )
+            else:
+                messenger(
+                    MESSAGES.APPROVE_PAF,
+                    request=self.request,
+                    user=self.object.user,
+                    source=self.object,
+                )
+        elif paf_approvals:
+            messenger(
+                MESSAGES.APPROVE_PAF,
+                request=self.request,
+                user=self.object.user,
+                source=self.object,
+            )
+
+        return response
+
+
 class BaseProjectDetailView(ReportingMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -502,6 +629,7 @@ class AdminProjectDetailView(
         RemoveDocumentView,
         SelectDocumentView,
         SendForApprovalView,
+        UpdatePAFApproversView,
         ReportFrequencyUpdate,
         UpdateLeadView,
         UploadContractView,
@@ -547,6 +675,9 @@ class ApplicantProjectDetailView(
         SelectDocumentView,
         UploadContractView,
         UploadDocumentView,
+        UploadContractDocumentView,
+        RemoveContractDocumentView,
+        SubmitContractDocumentsView,
     ]
 
     model = Project
@@ -557,6 +688,11 @@ class ApplicantProjectDetailView(
         if project.user != request.user:
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['remaining_contract_document_categories'] = list(self.object.get_missing_contract_document_categories())
+        return context
 
 
 class ProjectDetailView(ViewDispatcher):
@@ -616,7 +752,32 @@ class ContractPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
         return False
 
 
-# PROJECT EDIT
+@method_decorator(login_required, name='dispatch')
+class ContractDocumentPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
+    raise_exception = True
+
+    def dispatch(self, *args, **kwargs):
+        project_pk = self.kwargs['pk']
+        self.project = get_object_or_404(Project, pk=project_pk)
+        return super().dispatch(*args, **kwargs)
+
+    def get_media(self, *args, **kwargs):
+        document = ContractPacketFile.objects.get(pk=kwargs['file_pk'])
+        if document.project != self.project:
+            raise Http404
+        return document.document
+
+    def test_func(self):
+        if self.request.user.is_apply_staff or self.request.user.is_contracting:
+            return True
+
+        if self.request.user == self.project.user:
+            return True
+
+        return False
+
+
+# PROJECT APPROVAL FORM VIEWS
 
 @method_decorator(staff_or_finance_or_contracting_required, name='dispatch')
 class ProjectDetailApprovalView(DelegateableView, DetailView):
@@ -829,7 +990,7 @@ class ProjectDetailDownloadView(SingleObjectMixin, View):
 
 
 @method_decorator(staff_or_finance_or_contracting_required, name='dispatch')
-class ProjectApprovalEditView(BaseStreamForm, UpdateView):
+class ProjectApprovalFormEditView(BaseStreamForm, UpdateView):
     model = Project
     template_name = 'application_projects/project_approval_form.html'
     # Remember to assign paf_form first and then sow_form, else get_defined_fields method may provide unexpected results

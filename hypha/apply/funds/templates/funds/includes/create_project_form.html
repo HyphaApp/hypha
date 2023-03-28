@@ -2,7 +2,7 @@
 <div class="modal" id="create-project">
     <h4 class="modal__header-bar">{% trans "Create Project" %}</h4>
     <p>{% trans "This will create a new project. This cannot be undone." %}</p>
-    <p>{% trans "A lead is required to create a project, select the appropriate lead below." %}</p>
+    <p>{% trans "A lead is required to create a project, select the lead below." %}</p>
 
     {% trans "Confirm" as confirm %}
     {% include 'funds/includes/delegated_form_base.html' with form=project_form value=confirm %}
