@@ -1,8 +1,9 @@
 {% load i18n approval_tools project_tags %}
 {% user_can_edit_project object request.user as editable %}
+{% allow_collapsible_header object header_type='project_documents' as collapsible_header %}
 
-<div class="docs-block wrapper--outer-space-large">
-    <div class="docs-block__header">
+<div class="docs-block wrapper--outer-space-large" {% if collapsible_header %} x-data="{ collapsed: false }" {% endif %}>
+    <div class="docs-block__header" {% if collapsible_header %} x-on:click="collapsed = ! collapsed" {% endif %}>
         <div class="docs-block__heading">{% trans "Project documents" %}</div>
         {% user_can_send_for_approval object user as can_send_to_approve %}
         {% if can_send_to_approve %}
@@ -32,7 +33,7 @@
             </a>
         {% endif %}
     </div>
-    <ul class="docs-block__inner">
+    <ul class="docs-block__inner" {% if collapsible_header %} x-show="collapsed" {% endif %}>
 
         <li class="docs-block__row">
             <div class="docs-block__row-inner">

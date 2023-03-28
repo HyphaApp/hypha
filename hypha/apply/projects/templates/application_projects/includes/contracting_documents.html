@@ -1,8 +1,9 @@
 {% load i18n contract_tools project_tags %}
+{% allow_collapsible_header object header_type='contracting_documents' as collapsible_header %}
 
-<div class="docs-block wrapper--outer-space-large">
-    <div class="docs-block__header">
-        <div class="docs-block__heading">{% trans "Contracting documents" %}</div>
+<div class="docs-block wrapper--outer-space-large" {% if collapsible_header %} x-data="{ collapsed: false }" {% endif %}>
+    <div class="docs-block__header" {% if collapsible_header %} x-on:click="collapsed = ! collapsed" {% endif %}>
+        <div class="docs-block__heading" >{% trans "Contracting documents" %}</div>
         {% user_can_upload_contract object request.user as can_upload_contract %}
         {% if can_upload_contract and user.is_contracting and not user.is_apply_staff %}
             <a data-fancybox
@@ -44,7 +45,7 @@
         {% endif %}
     </div>
 
-    <ul class="docs-block__inner">
+    <ul class="docs-block__inner" {% if collapsible_header %} x-show="collapsed" {% endif %}>
 
         {% is_project_contract_approved object as is_contract_approved %}
         {% contract_uploaded_by_contracting object as contract_uploaded %}
@@ -54,12 +55,13 @@
                 <p class="docs-block__title">{% trans "Contract" %}
                     <i>{% if contract.updated_at %}({{ contract.updated_at }}){% endif %}</i></p>
             </div>
-            {% if contract_uploaded and not is_contract_approved %}
+            {% if contract_uploaded %}
             <div class="docs-block__row-inner">
                 <a class="docs-block__link" href="{% url 'apply:projects:contract' pk=project.pk file_pk=contract.pk %}" target="_blank">
                     {% trans "Download" %}
                 </a>
             </div>
+            {% if not is_contract_approved %}
             <ul class="docs-block__document-list">
                 <li class="docs-block__document">
                     <div class="docs-block__row-inner">
@@ -72,6 +74,7 @@
                     </div>
                 </li>
             </ul>
+            {% endif %}
             {% endif %}
 
             {% show_contract_upload_row object user as show_contract_row %}

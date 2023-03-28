@@ -118,3 +118,12 @@ def project_settings_url(instance):
             instance.site_id,
         ],
     )
+
+
+@register.simple_tag
+def allow_collapsible_header(project, header_type):
+    if header_type == 'project_documents' and project.status not in [COMMITTED, WAITING_FOR_APPROVAL]:
+        return True
+    if header_type == 'contracting_documents' and project.status not in [COMMITTED, WAITING_FOR_APPROVAL, CONTRACTING]:
+        return True
+    return False
