@@ -32,14 +32,14 @@
     &--project-action {
         @include button($color--light-blue, $color--dark-blue);
         display: inline-block;
-        padding: .5em 20px;
+        padding: .5rem 1.2rem;
 
         &--white {
             @include button($color--white, $color--light-blue);
             display: inline-block;
             color: $color--light-blue;
             border: 1px solid $color--mid-grey;
-            padding: .5em 20px;
+            padding: .5rem 1.2rem;
 
             &:focus {
                 color: $color--light-blue;

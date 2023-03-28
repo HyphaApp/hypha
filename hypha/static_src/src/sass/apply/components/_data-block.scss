@@ -24,8 +24,8 @@
     }
 
     &__title {
-        font-size: 20px;
-        font-weight: 700;
+        font-size: $base-font-size-large;
+        font-weight: $weight--bold;
         margin: 0 0 1rem;
 
         @include media-query(mob-landscape) {
@@ -36,7 +36,7 @@
     &__button {
         @include button($color--light-blue, $color--dark-blue);
         display: inline-block;
-        padding: .5em 20px;
+        padding: .5rem 1.2rem;
 
         #{$root}__header & {
             &:hover,
