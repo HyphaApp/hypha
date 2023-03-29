@@ -1,22 +1,22 @@
 import csv
 import os
+
 import django_filters
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.utils.translation import gettext as _
 from django.views.decorators.vary import vary_on_headers
-from django.conf import settings
-from django.http import HttpResponse
 from wagtail.admin.auth import any_permission_required
 from wagtail.admin.filters import WagtailFilterSet
 from wagtail.admin.forms.search import SearchForm
 from wagtail.compat import AUTH_USER_APP_LABEL, AUTH_USER_MODEL_NAME
 from wagtail.users.views.groups import GroupViewSet
-
 
 User = get_user_model()
 
