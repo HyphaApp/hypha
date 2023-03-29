@@ -52,6 +52,6 @@ def user_can_view_invoices(project, user):
 
 @register.simple_tag
 def user_can_add_invoices(project, user):
-    if project.status == IN_PROGRESS:
+    if project.status == IN_PROGRESS and (user.is_apply_staff or user == project.user):
         return True
     return False

@@ -163,7 +163,7 @@
 
                     </div>
                 {% endif %}
-                {% if object.paf_approvals.exists %}
+                {% if object.paf_approvals.exists and not user.is_applicant %}
                     {% if mobile %}
                     <a class="js-actions-toggle button button--white button--full-width button--actions">{% trans "PAF Approvals" %}</a>
                     {% endif %}

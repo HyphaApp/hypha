@@ -42,6 +42,9 @@ def user_next_step_on_project(project, user):
                 return "Awaiting contract documents submission from Applicant"
             else:
                 return "Awaiting contract approval from Staff"
+    elif project.status == IN_PROGRESS:
+        if user.is_applicant or user.is_apply_staff:
+            return "Upload Invoices"
     return False
 
 
