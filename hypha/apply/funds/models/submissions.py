@@ -11,9 +11,9 @@ from django.db.models import (
     Avg,
     Case,
     Count,
+    DecimalField,
     FloatField,
     IntegerField,
-    DecimalField,
     OuterRef,
     Prefetch,
     Q,
@@ -64,11 +64,7 @@ from ..workflow import (
 )
 from .mixins import AccessFormData
 from .reviewer_role import ReviewerRole
-from .utils import (
-    LIMIT_TO_PARTNERS,
-    LIMIT_TO_STAFF,
-    WorkflowHelpers,
-)
+from .utils import LIMIT_TO_PARTNERS, LIMIT_TO_STAFF, WorkflowHelpers
 
 
 class JSONOrderable(models.QuerySet):
