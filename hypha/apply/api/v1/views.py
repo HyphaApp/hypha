@@ -15,7 +15,7 @@ from hypha.apply.activity.models import COMMENT, Activity
 from hypha.apply.categories.models import MetaTerm
 from hypha.apply.determinations.views import DeterminationCreateOrUpdateView
 from hypha.apply.funds.models import ApplicationSubmission, RoundsAndLabs
-from hypha.apply.funds.workflow import STATUSES
+from hypha.apply.funds.workflows import STATUSES
 from hypha.apply.review.models import Review
 
 from .filters import CommentFilter, SubmissionsFilter

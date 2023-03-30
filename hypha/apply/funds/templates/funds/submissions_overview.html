@@ -20,6 +20,14 @@
                 <a class="px-3 py-2 text-gray-300 transition-colors hover:bg-slate-50 rounded hover:text-gray-800" href="{% url 'apply:submissions:result' %}">
                     {% trans "Results" %}
                 </a>
+                <a class="px-3 py-2 text-gray-300 transition-colors hover:bg-slate-50 rounded hover:text-gray-800"
+                    href="{% url 'apply:submissions:list-beta' %}"
+                    hx-get="{% url 'apply:submissions:list-beta' %}"
+                    hx-target="#main"
+                    hx-push-url="true"
+                >
+                    {% trans "All" %}
+                </a>
             </div>
         {% endif %}
 

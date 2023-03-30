@@ -6,7 +6,7 @@ from hypha.apply.funds.tests.factories.models import (
     ApplicationSubmissionFactory,
     AssignedReviewersFactory,
 )
-from hypha.apply.funds.workflow import INITIAL_STATE
+from hypha.apply.funds.workflows import INITIAL_STATE
 from hypha.apply.users.tests.factories import ReviewerFactory, StaffFactory, UserFactory
 from hypha.apply.utils.testing.tests import BaseViewTestCase
 

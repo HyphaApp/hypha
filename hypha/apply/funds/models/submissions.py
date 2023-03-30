@@ -43,7 +43,7 @@ from hypha.apply.stream_forms.files import StreamFieldDataEncoder
 from hypha.apply.stream_forms.models import BaseStreamForm
 
 from ..blocks import NAMED_BLOCKS, ApplicationCustomFormFieldsBlock
-from ..workflow import (
+from ..workflows import (
     COMMUNITY_REVIEW_PHASES,
     DETERMINATION_RESPONSE_PHASES,
     DRAFT_STATE,
@@ -52,7 +52,6 @@ from ..workflow import (
     PHASES_MAPPING,
     STAGE_CHANGE_ACTIONS,
     WORKFLOWS,
-    UserPermissions,
     accepted_statuses,
     active_statuses,
     dismissed_statuses,
@@ -61,6 +60,7 @@ from ..workflow import (
     get_review_active_statuses,
     review_statuses,
 )
+from ..workflows.permissions import UserPermissions
 from .mixins import AccessFormData
 from .reviewer_role import ReviewerRole
 from .utils import (

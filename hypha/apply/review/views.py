@@ -19,7 +19,7 @@ from wagtail.blocks import RichTextBlock
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.funds.models import ApplicationSubmission, AssignedReviewers
-from hypha.apply.funds.workflow import INITIAL_STATE
+from hypha.apply.funds.workflows import INITIAL_STATE
 from hypha.apply.review.blocks import RecommendationBlock, RecommendationCommentsBlock
 from hypha.apply.review.forms import ReviewModelForm, ReviewOpinionForm
 from hypha.apply.stream_forms.models import BaseStreamForm

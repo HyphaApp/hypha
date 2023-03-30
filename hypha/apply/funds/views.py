@@ -104,7 +104,7 @@ from .tables import (
     SummarySubmissionsTable,
 )
 from .utils import get_default_screening_statues
-from .workflow import (
+from .workflows import (
     DRAFT_STATE,
     INITIAL_STATE,
     PHASES_MAPPING,

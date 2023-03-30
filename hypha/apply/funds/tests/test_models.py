@@ -12,7 +12,8 @@ from django.urls import reverse
 
 from hypha.apply.funds.blocks import EmailBlock, FullNameBlock
 from hypha.apply.funds.models import ApplicationSubmission, AssignedReviewers, Reminder
-from hypha.apply.funds.workflow import DRAFT_STATE, Request
+from hypha.apply.funds.workflows import DRAFT_STATE
+from hypha.apply.funds.workflows.stage import Request
 from hypha.apply.review.options import AGREE, MAYBE, NO
 from hypha.apply.review.tests.factories import ReviewFactory, ReviewOpinionFactory
 from hypha.apply.users.tests.factories import StaffFactory

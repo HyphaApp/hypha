@@ -25,7 +25,7 @@ from hypha.apply.funds.tests.factories import (
     SealedRoundFactory,
     SealedSubmissionFactory,
 )
-from hypha.apply.funds.workflow import INITIAL_STATE
+from hypha.apply.funds.workflows import INITIAL_STATE
 from hypha.apply.home.factories import ApplySiteFactory
 from hypha.apply.projects.models import Project
 from hypha.apply.projects.tests.factories import ProjectFactory

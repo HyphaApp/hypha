@@ -4,7 +4,7 @@ from django.apps import apps
 from wagtail.admin.forms import WagtailAdminModelForm, WagtailAdminPageForm
 
 from .models.submissions import ApplicationSubmission
-from .workflow import WORKFLOWS
+from .workflows import WORKFLOWS
 
 
 class WorkflowFormAdminForm(WagtailAdminPageForm):

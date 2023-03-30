@@ -18,7 +18,7 @@ from wagtail.fields import StreamField
 from wagtail.search import index
 
 from hypha.apply.funds.models import ApplicationSubmission
-from hypha.apply.funds.workflow import OPEN_CALL_PHASES
+from hypha.apply.funds.workflows import OPEN_CALL_PHASES
 from hypha.public.utils.models import BasePage, RelatedPage
 
 from .blocks import FundBlock, LabBlock

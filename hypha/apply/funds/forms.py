@@ -22,7 +22,7 @@ from .models import (
 )
 from .utils import model_form_initial, render_icon
 from .widgets import MetaTermSelect2Widget, Select2MultiCheckboxesWidget
-from .workflow import get_action_mapping
+from .workflows import get_action_mapping
 
 
 class ApplicationSubmissionModelForm(forms.ModelForm):

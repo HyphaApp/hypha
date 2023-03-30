@@ -1,6 +1,6 @@
 from django.core.exceptions import PermissionDenied
 
-from hypha.apply.funds.workflow import INITIAL_STATE
+from hypha.apply.funds.workflows import INITIAL_STATE
 
 
 def review_workflow_actions(request, submission):
