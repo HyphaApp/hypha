@@ -146,3 +146,30 @@
         vertical-align: middle;
     }
 }
+
+// Inline icons.
+
+.icon-inline {
+    .icon-link {
+        opacity: 0;
+        transition: all 130ms ease-in;
+        text-decoration: none;
+    }
+
+    &:focus-visible,
+    &:hover {
+        .icon-link {
+            opacity: .3;
+
+            &:focus-visible,
+            &:hover {
+                opacity: 1;
+            }
+        }
+    }
+
+    svg {
+        display: inline;
+        vertical-align: middle;
+    }
+}
