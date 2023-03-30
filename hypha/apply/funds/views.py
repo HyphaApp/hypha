@@ -1,9 +1,7 @@
-import os
+import csv
 from copy import copy
 from datetime import timedelta
-from itertools import chain
 from io import StringIO
-import csv
 
 import django_tables2 as tables
 from django.conf import settings
@@ -13,7 +11,6 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.core.exceptions import PermissionDenied
-from django.core.management import call_command
 from django.db.models import Count, F, Q
 from django.http import FileResponse, Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
