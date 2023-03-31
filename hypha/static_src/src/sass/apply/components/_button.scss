@@ -158,6 +158,7 @@
 
         svg {
             fill: $color--primary;
+            height: 24px;
         }
     }
 
@@ -336,8 +337,8 @@
 
         svg {
             fill: $color--light-blue;
-            width: 24px;
-            height: 24px;
+            width: 1em;
+            height: 1em;
             margin-right: 10px;
             pointer-events: none;
         }

@@ -1,6 +1,7 @@
 .icon {
-    width: 20px;
-    height: 20px;
+    width: 1em;
+    height: 1em;
+    display: inline-block;
     transition: fill $transition;
     fill: $color--dark-grey;
 
@@ -106,7 +107,6 @@
     }
 
     &--delete {
-        width: 12px;
         margin-left: 7px;
         fill: $color--tomato;
     }
@@ -147,29 +147,3 @@
     }
 }
 
-// Inline icons.
-
-.icon-inline {
-    .icon-link {
-        opacity: 0;
-        transition: all 130ms ease-in;
-        text-decoration: none;
-    }
-
-    &:focus-visible,
-    &:hover {
-        .icon-link {
-            opacity: .3;
-
-            &:focus-visible,
-            &:hover {
-                opacity: 1;
-            }
-        }
-    }
-
-    svg {
-        display: inline;
-        vertical-align: middle;
-    }
-}
