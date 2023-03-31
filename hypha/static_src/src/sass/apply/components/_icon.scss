@@ -9,6 +9,12 @@
         fill: $color--white;
     }
 
+    &--anchor-link {
+        line-height: 1;
+        height: 0.8em;
+        vertical-align: middle;
+    }
+
     &--person {
         width: 15px;
         height: 15px;
