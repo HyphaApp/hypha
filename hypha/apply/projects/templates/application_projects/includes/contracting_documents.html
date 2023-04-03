@@ -57,8 +57,9 @@
             </div>
             {% if contract_uploaded %}
             <div class="docs-block__row-inner">
-                <a class="docs-block__link" href="{% url 'apply:projects:contract' pk=project.pk file_pk=contract.pk %}" target="_blank">
+                <a class="docs-block__icon-link" href="{% url 'apply:projects:contract' pk=project.pk file_pk=contract.pk %}" target="_blank">
                     {% trans "Download" %}
+                    <svg class="icon icon--caret-down"><use xlink:href="#caret-down"></use></svg>
                 </a>
             </div>
             {% if not is_contract_approved %}
@@ -88,8 +89,9 @@
                             <i>{% if contract.uploaded_by_contractor_at %}({{ contract.uploaded_by_contractor_at }}){% endif %}</i></p>
                     </div>
                     {% if can_upload_contract and user.is_contracting %}
-                    <div class="docs-block__row-inner">
-                        <a data-fancybox class="docs-block__link" href="#" data-src="#upload-contract">
+                    <div class="docs-block__row-inner docs-block__row-inner__contract-upload-row">
+                        <a data-fancybox class="docs-block__icon-link" style="padding:5px" href="#" data-src="#upload-contract">
+                            <svg class="icon icon--arrow-up"><use xlink:href="#arrow-up"></use></svg>
                             {% if not contract %}
                                 {% trans "Upload" %}
                             {% elif not contract.approver %}
@@ -107,8 +109,9 @@
                         <i>{% if contract.uploaded_by_applicant_at %}({{ contract.uploaded_by_applicant_at }}){% endif %}</i></p>
                     </div>
                     {% if can_upload_contract and user.is_applicant %}
-                    <div class="docs-block__row-inner">
-                        <a data-fancybox class="docs-block__link" href="#" data-src="#upload-contract">
+                    <div class="docs-block__row-inner docs-block__row-inner__contract-upload-row">
+                        <a data-fancybox class="docs-block__icon-link" style="padding:5px" href="#" data-src="#upload-contract">
+                            <svg class="icon icon--arrow-up"><use xlink:href="#arrow-up"></use></svg>
                             {% if not contract.signed_by_applicant %}
                                 {% trans "Upload" %}
                             {% elif not contract.approver %}
@@ -133,7 +136,10 @@
             {% can_update_contracting_documents object user as can_update_documents %}
             {% if can_update_documents %}
             <div class="docs-block__row-inner">
-                <a data-fancybox data-src="#upload-contracting-doc" class="docs-block__link" href="#">{% trans "Upload new" %}</a>
+                <a data-fancybox data-src="#upload-contracting-doc" class="docs-block__icon-link" href="#">
+                    <svg class="icon icon--arrow-up"><use xlink:href="#arrow-up"></use></svg>
+                    {% trans "Upload new" %}
+                </a>
                 <div class="modal" id="upload-contracting-doc">
                     <h4 class="modal__header-bar">{% trans "Upload a new document" %}</h4>
                     <p></p>

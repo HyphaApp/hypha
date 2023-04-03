@@ -43,11 +43,18 @@
             <div class="docs-block__row-inner">
                 {% if user.is_applicant %}
                     <a class="docs-block__icon-link" href="{{ project.submission.get_absolute_url }}">
+                        <svg class="icon icon--project-eye"><use xlink:href="#eye"></use></svg>
                         {% trans "View" %}
                     </a>
                 {% else %}
-                    <a class="docs-block__link" href="{% url 'apply:submissions:simplified' pk=project.submission.pk %}">{% trans "View" %}</a>
-                    <a class="docs-block__link" href="{% url "apply:submissions:download" pk=project.submission.pk %}">{% trans "Download" %}</a>
+                    <a class="docs-block__icon-link" href="{% url 'apply:submissions:simplified' pk=project.submission.pk %}">
+                        <svg class="icon icon--project-eye"><use xlink:href="#eye"></use></svg>
+                        {% trans "View" %}
+                    </a>
+                    <a class="docs-block__icon-link" href="{% url "apply:submissions:download" pk=project.submission.pk %}">
+                        {% trans "Download" %}
+                        <svg class="icon icon--caret-down"><use xlink:href="#caret-down"></use></svg>
+                    </a>
                 {% endif %}
             </div>
         </li>
@@ -59,8 +66,9 @@
                 </div>
                 <div class="docs-block__row-inner">
                     {% if editable %}
-                        <a class="{% if not project.vendor.user_has_updated_details %}button button--project-action{% else %}docs-block__link{% endif %}" href="{% url 'apply:projects:vendor' pk=project.pk %}">
+                        <a class="{% if not project.vendor.user_has_updated_details %}button button--project-action{% else %}docs-block__icon-link{% endif %}" href="{% url 'apply:projects:vendor' pk=project.pk %}">
                             {% if project.vendor.user_has_updated_details %}
+                            <svg class="icon icon--project-pen"><use xlink:href="#pen"></use></svg>
                             {% trans "Edit" %}
                             {% else %}
                             {% trans "Fill in" %}
@@ -68,7 +76,10 @@
                         </a>
                     {% endif %}
                     {% if project.vendor.user_has_updated_details %}
-                        <a class="docs-block__link" href="{% url 'apply:projects:vendor-detail' pk=project.pk vendor_pk=project.vendor.pk %}">{% trans "View" %}</a>
+                        <a class="docs-block__icon-link" href="{% url 'apply:projects:vendor-detail' pk=project.pk vendor_pk=project.vendor.pk %}">
+                            <svg class="icon icon--project-eye"><use xlink:href="#eye"></use></svg>
+                            {% trans "View" %}
+                        </a>
                     {% endif %}
                 </div>
             </li>
@@ -83,8 +94,9 @@
             </div>
             <div class="docs-block__row-inner">
                 {% if editable and not user.is_applicant %}
-                    <a class="{% if not object.user_has_updated_details %}button button--project-action{% else %}docs-block__link{% endif %}" href="{% url 'apply:projects:edit' pk=object.pk %}">
+                    <a class="{% if not object.user_has_updated_details %}button button--project-action{% else %}docs-block__icon-link{% endif %}" href="{% url 'apply:projects:edit' pk=object.pk %}">
                         {% if object.user_has_updated_details %}
+                        <svg class="icon icon--project-pen"><use xlink:href="#pen"></use></svg>
                         {% trans "Edit" %}
                         {% else %}
                         {% trans "Fill in" %}
@@ -92,7 +104,8 @@
                     </a>
                 {% endif %}
                 {% if object.user_has_updated_details and not user.is_applicant %}
-                    <a class="docs-block__link" href="{% url 'apply:projects:approval' pk=project.pk %}">
+                    <a class="docs-block__icon-link" href="{% url 'apply:projects:approval' pk=project.pk %}">
+                        <svg class="icon icon--project-eye"><use xlink:href="#eye"></use></svg>
                         {% trans "View" %}
                     </a>
                 {% endif %}
@@ -104,9 +117,15 @@
                         <div class="docs-block__document-inner">
                             <p class="docs-block__document-info">{% trans "Scope Of Work (SOW)" %}</p>
                         </div>
-                        <div class="docs-block__document-inner">
-                            <a class="docs-block__link" href="{% url 'apply:projects:sow' pk=project.pk %}">{% trans "View" %}</a>
-                            <a class="docs-block__link" href="{% url 'apply:projects:download-sow' pk=project.pk export_type='pdf' %}">{% trans "Download" %}</a>
+                        <div class="docs-block__document-inner__actions">
+                            <a class="docs-block__icon-link" href="{% url 'apply:projects:sow' pk=project.pk %}">
+                                <svg class="icon icon--project-eye"><use xlink:href="#eye"></use></svg>
+                                {% trans "View" %}
+                            </a>
+                            <a class="docs-block__icon-link" href="{% url 'apply:projects:download-sow' pk=project.pk export_type='pdf' %}">
+                                {% trans "Download" %}
+                                <svg class="icon icon--caret-down"><use xlink:href="#caret-down"></use></svg>
+                            </a>
                         </div>
                     </li>
                 </ul>
@@ -133,7 +152,10 @@
                 {% else %}
                     <span class="docs-block__link is-disabled" data-tooltip="No files on submission">{% trans "Choose file" %}</span>
                 {% endif %}
-                <a data-fancybox data-src="#upload-supporting-doc" class="docs-block__link" href="#">{% trans "Upload new" %}</a>
+                <a data-fancybox data-src="#upload-supporting-doc" class="docs-block__icon-link" href="#">
+                    <svg class="icon icon--arrow-up"><use xlink:href="#arrow-up"></use></svg>
+                    {% trans "Upload new" %}
+                </a>
             </div>
             {% endif %}
             {% if remaining_document_categories %}
@@ -162,7 +184,9 @@
                         <p class="docs-block__document-info"><b>{{ document.title }}</b> - {{ document.created_at }}</p>
                     </div>
                     <div class="docs-block__document-inner">
-                        <a class="docs-block__document-link" href="{% url 'apply:projects:document' pk=object.pk file_pk=document.pk %}" target="_blank">{% trans "Download" %}</a>
+                        <a class="docs-block__document-link" href="{% url 'apply:projects:document' pk=object.pk file_pk=document.pk %}" target="_blank">
+                            {% trans "Download" %}
+                        </a>
                         {% if user.is_apply_staff %}
                         <form method="POST" id="{{ remove_document_form.name }}" class="docs-block__document-form">
                             {% csrf_token %}

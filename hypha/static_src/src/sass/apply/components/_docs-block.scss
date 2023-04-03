@@ -52,6 +52,10 @@
                 flex: 1;
             }
         }
+
+        &__contract-upload-row {
+            border: 1px solid $color--light-blue;
+        }
     }
 
     &__title {
@@ -165,6 +169,11 @@
             &:first-child {
                 margin: 0 1rem 0 0;
             }
+        }
+
+        &__actions {
+            display: flex;
+            align-items: center;
         }
     }
 
