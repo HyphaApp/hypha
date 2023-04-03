@@ -3,13 +3,15 @@
     'use strict';
 
     let symbol = $(document.currentScript).attr('symbol');
-    const amount = $('#requested-amount');
-    $(amount[0]).css({paddingLeft: '20px'});
-    const form_item = $(amount[0]).parents().eq(1);
-    $(form_item).css({position: 'relative'});
-    const currency_sign = "<span id='curr_sign'>" + symbol + '</span>';
-    $(form_item).append(currency_sign);
-    $('#curr_sign').css({position: 'absolute', left: '10px', top: '4px'});
+    const amount = $('.requested-amount');
+    if (typeof amount[0] !== 'undefined') {
+        $(amount[0]).css({paddingLeft: '20px'});
+        const form_item = $(amount[0]).parents().eq(1);
+        $(form_item).css({position: 'relative'});
+        const currency_sign = "<span id='curr_sign'>" + symbol + '</span>';
+        $(form_item).append(currency_sign);
+        $('#curr_sign').css({position: 'absolute', left: '10px', top: '4px'});
+    }
 
     $('.application-form').each(function () {
         var $application_form = $(this);
