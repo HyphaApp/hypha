@@ -1,11 +1,18 @@
 .icon {
-    width: 20px;
-    height: 20px;
+    width: 1em;
+    height: 1em;
+    display: inline-block;
     transition: fill $transition;
     fill: $color--dark-grey;
 
     .header__menus--mobile.is-visible & { // stylelint-disable-line force-element-nesting, selector-class-pattern
         fill: $color--white;
+    }
+
+    &--anchor-link {
+        line-height: 1;
+        height: .8em;
+        vertical-align: middle;
     }
 
     &--person {
@@ -106,7 +113,6 @@
     }
 
     &--delete {
-        width: 12px;
         margin-left: 7px;
         fill: $color--tomato;
     }
