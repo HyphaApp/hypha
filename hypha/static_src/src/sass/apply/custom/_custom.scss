@@ -2,6 +2,9 @@
 // stylelint-disable selector-class-pattern
 
 .list__item--average_score {
-    color: $color--mid-dark-grey;
+    color: $color--dark-grey;
     font-weight: $weight--normal;
+    font-size: map-get($font-sizes, zeta);
+    display: inline;
+    padding-left: 2px;
 }

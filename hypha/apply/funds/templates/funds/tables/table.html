@@ -21,7 +21,16 @@
                         <th><h6 class="heading heading--normal heading--no-margin">{% trans "Applicant" %}</h6></th>
                         <th><h6 class="heading heading--normal heading--no-margin">{% trans "Last updated" %}</h6></th>
                         <th><h6 class="heading heading--normal heading--no-margin">{% trans "Screening decisions" %}</h6></th>
-                        <th><h6 class="heading heading--normal heading--no-margin">{% trans "Review outcomes" %}</h6></th>
+                        <th>
+                            <h6 class="heading heading--normal heading--no-margin">{% trans "Review outcomes" %}
+                            <span class="list__item--reviewer-name list__item--average_score">(Avg. score: 
+                            {% if submission.review_score_avg %}
+                                {{ submission.review_score_avg|floatformat:"1" }})
+                            {% else %}
+                                0)
+                            {% endif %}
+                            </span></h6>
+                        </th>
                     </tr>
                     <tr class="submission-meta__row submission-meta__row--black">
                         <td><strong>{{ submission.full_name }}</strong></td>
@@ -67,15 +76,6 @@
                                         {% endif %}
                                     {% endfor %}
                                 {% endfor %}
-                                <li class="list__item list__item--reviewer">
-                                    <span class="list__item--reviewer-name list__item--average_score">
-                                        Avg. score
-                                    </span>
-                                    <span class="list__item">
-                                        &nbsp;
-                                    </span>
-                                    <span class="list__item list__item--review-score list__item--average_score">{{ submission.review_score_avg|floatformat:"1" }}</span>
-                                </li>
                                 {% for reviewer in submission.hasnt_reviewed %}
                                     <li class="list__item list__item--reviewer">
                                         <span class="list__item--reviewer-name">
