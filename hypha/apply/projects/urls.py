@@ -26,6 +26,7 @@ from .views import (
     ReportUpdateView,
     VendorDetailView,
     VendorPrivateMediaView,
+    partial_project_activities,
 )
 
 app_name = 'projects'
@@ -37,6 +38,7 @@ urlpatterns = [
 
     path('<int:pk>/', include([
         path('', ProjectDetailView.as_view(), name='detail'),
+        path('partial/activities/', partial_project_activities, name="partial-activities"),
         path('edit/', ProjectApprovalFormEditView.as_view(), name="edit"),
         path('documents/<int:file_pk>/', ProjectPrivateMediaView.as_view(), name="document"),
         path('contract/<int:file_pk>/', ContractPrivateMediaView.as_view(), name="contract"),

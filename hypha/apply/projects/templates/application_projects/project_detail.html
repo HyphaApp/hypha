@@ -86,7 +86,18 @@
                     {% trans "Communications" %}
                 </a>
 
-                <a class="tab__item" href="#activity-feed" data-tab="tab-3">
+                <a
+                    class="tab__item"
+                    href="#activity-feed"
+                    data-tab="tab-3"
+                    hx-get="{% url 'apply:projects:partial-activities' object.id %}"
+                    hx-target="#tab-3 .feed"
+                    hx-trigger="open-tab-3 once"
+                    data-tab="tab-3"
+                    x-data
+                    @hashchange.window="location.hash === '#activity-feed' ? $dispatch('open-tab-3') : ''"
+                    x-init="location.hash === '#activity-feed' ? $dispatch('open-tab-3') : ''"
+                >
                     {% trans "Activity Feed" %}
                 </a>
             </div>
@@ -195,7 +206,8 @@
     {# Tab 3 #}
     <div class="tabs__content" id="tab-3">
         <div class="feed">
-            {% include "activity/include/action_list.html" with editable=False %}
+            {% comment %} Loaded using the htmx via alpine's custom event "open-tab-3"{% endcomment %}
+            <p>Loading...</p>
         </div>
     </div>
 </div>

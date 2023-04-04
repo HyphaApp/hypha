@@ -27,6 +27,7 @@ from .views import (
     SubmissionStaffFlaggedView,
     SubmissionUserFlaggedView,
 )
+from .views_partials import partial_submission_activities
 
 revision_urls = ([
     path('', RevisionListView.as_view(), name='list'),
@@ -59,6 +60,7 @@ submission_urls = ([
     ])),
     path('<int:pk>/', include([
         path('', SubmissionDetailView.as_view(), name="detail"),
+        path('partial/activities/', partial_submission_activities, name="partial-activities"),
         path('edit/', SubmissionEditView.as_view(), name="edit"),
         path('sealed/', SubmissionSealedView.as_view(), name="sealed"),
         path('simplified/', SubmissionDetailSimplifiedView.as_view(), name="simplified"),

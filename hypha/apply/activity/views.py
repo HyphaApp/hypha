@@ -9,25 +9,17 @@ from .filters import NotificationFilter
 from .forms import CommentForm
 from .messaging import MESSAGES, messenger
 from .models import COMMENT, Activity
+from .services import get_related_comments_for_user
 
 
 class ActivityContextMixin:
+    """Mixin to add related 'comments' of the current view's 'self.object'
+    """
     def get_context_data(self, **kwargs):
-        related_query = self.model.activities.rel.related_query_name
-        query = {related_query: self.object}
         extra = {
             # Do not prefetch on the related_object__author as the models
             # are not homogeneous and this will fail
-            'actions': Activity.actions.filter(**query).select_related(
-                'user',
-            ).prefetch_related(
-                'related_object',
-            ).visible_to(self.request.user),
-            'comments': Activity.comments.filter(**query).select_related(
-                'user',
-            ).prefetch_related(
-                'related_object',
-            ).visible_to(self.request.user),
+            'comments': get_related_comments_for_user(self.object, self.request.user)
         }
         return super().get_context_data(**extra, **kwargs)
 
