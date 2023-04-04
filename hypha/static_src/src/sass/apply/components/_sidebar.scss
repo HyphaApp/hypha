@@ -35,6 +35,16 @@
         }
     }
 
+    &__paf-approvals {
+        &--pending {
+            color: $color--mid-grey;
+        }
+
+        &--approved {
+            color: $color--black;
+        }
+    }
+
     &__screening-selected-options {
         display: flex;
         flex-wrap: wrap;

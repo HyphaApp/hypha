@@ -100,6 +100,21 @@
         stroke: $color--black;
     }
 
+    &--action-tick {
+        stroke: $color--black;
+        fill: transparent;
+        margin-right: 8px;
+        width: 16px;
+        height: 16px;
+    }
+
+    &--action-cross {
+        stroke: $color--black;
+        fill: transparent;
+        width: 16px;
+        height: 16px;
+    }
+
     &--project-eye {
         align-self: center;
         width: 1em;
