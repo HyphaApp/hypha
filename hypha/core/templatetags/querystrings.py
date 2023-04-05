@@ -41,7 +41,7 @@ def modify_query(context, *params_to_remove, **params_to_change):
         only_query_string = True
     query_params = []
     for key, value_list in context["request"].GET.lists():
-        if not key in params_to_remove:
+        if  key not in params_to_remove:
             # don't add key-value pairs for params_to_remove
             if key in params_to_change:
                 # update values for keys in params_to_change

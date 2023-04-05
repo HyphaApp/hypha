@@ -2,6 +2,7 @@ import time
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.db import models
 from django.http import HttpRequest, HttpResponse
@@ -23,6 +24,7 @@ from .tables import (
 User = get_user_model()
 
 
+@login_required
 def submission_dashboard(request: HttpRequest, template_name='submissions/all.html') -> HttpResponse:
     search_term = request.GET.get('query')
     show_archived = request.GET.get("archived", False) == 'on'
@@ -32,7 +34,7 @@ def submission_dashboard(request: HttpRequest, template_name='submissions/all.ht
     selected_statuses = request.GET.getlist("status")
     selected_reviewers = request.GET.getlist("reviewers")
     selected_sort = request.GET.get("sort")
-    per_page = request.GET.get("per_page", 20)
+    # per_page = request.GET.get("per_page", 20)
 
     if request.htmx:
         base_template = "includes/_partial-main.html"
