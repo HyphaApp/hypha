@@ -30,9 +30,11 @@ def user_next_step_on_project(project, user):
             return "Submit project documents for approval"
         return "Awaiting approval form to be created."
     elif project.status == WAITING_FOR_APPROVAL:
+        if user.id in project.paf_approvals.values_list('user', flat=True):
+            return "Awaiting project approval from assigned approvers. Please review and update status"
         if user.is_applicant:
             return "Awaiting approval form to be approved."
-        return "Awaiting PAF Approvals from assigned approvers"
+        return "Awaiting project approval from assigned approvers"
     elif project.status == CONTRACTING:
         if not project.contracts.exists():
             return "Awaiting signed contract from Contracting team"
@@ -50,7 +52,7 @@ def user_next_step_on_project(project, user):
                 return "Awaiting contract approval from Staff"
     elif project.status == IN_PROGRESS:
         if user.is_applicant or user.is_apply_staff:
-            return "Upload Invoices"
+            return "Add invoices"
     return False
 
 

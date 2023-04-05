@@ -39,7 +39,7 @@
             data-src="#approve-contract"
             class="button button--project-action"
             href="#">
-                {% trans "Approve Contract" %}
+                {% trans "Approve contract documents" %}
             </a>
 
         {% endif %}
@@ -208,7 +208,8 @@
     {% else %}
         <h4 class="modal__header-bar">{% trans "Upload Contract" %}</h4>
     {% endif %}
-    <p>{% trans "The signed contract will be uploaded once you submit." %}</p>
+    <p><i><b>{% trans "The signed contract will be uploaded once you submit." %}</b></i></p>
+    <br>
     {% trans "Submit" as upload %}
     {% include 'funds/includes/delegated_form_base.html' with form=contract_form value=upload %}
 </div>

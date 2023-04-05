@@ -35,6 +35,13 @@
         }
     }
 
+    &__project {
+        position: -webkit-sticky; /* for Safari */
+        position: sticky;
+        align-self: flex-start;
+        top: 0;
+    }
+
     &__paf-approvals {
         &--pending {
             color: $color--mid-grey;
