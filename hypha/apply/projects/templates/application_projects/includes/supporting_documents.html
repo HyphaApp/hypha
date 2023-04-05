@@ -11,7 +11,11 @@
             data-src="#send-for-approval"
             class="button button--project-action"
             href="#">
-                {% trans "Submit for Approval" %}
+                {% if object.paf_approvals.exists %}
+                    {% trans "Resubmit for approval" %}
+                {% else %}
+                    {% trans "Submit for Approval" %}
+                {% endif %}
             </a>
         {% endif %}
         {% user_can_update_paf_approvers object user as can_update_paf_approvers %}
