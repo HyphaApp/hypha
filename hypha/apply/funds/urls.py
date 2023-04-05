@@ -31,11 +31,14 @@ from .views import (
 
 from .views_partials import partial_submission_activities
 from .views_beta import (
+    submission_all_beta,
+)
+from .views_partials import (
+    partial_reviews,
     sub_menu_funds,
     sub_menu_leads,
     sub_menu_reviewers,
     sub_menu_rounds,
-    submission_all_beta,
 )
 
 revision_urls = ([
@@ -75,6 +78,7 @@ submission_urls = ([
     path('<int:pk>/', include([
         path('', SubmissionDetailView.as_view(), name="detail"),
         path('partial/activities/', partial_submission_activities, name="partial-activities"),
+        path('partial/reviews/', partial_reviews, name="partial-reviews"),
         path('edit/', SubmissionEditView.as_view(), name="edit"),
         path('sealed/', SubmissionSealedView.as_view(), name="sealed"),
         path('simplified/', SubmissionDetailSimplifiedView.as_view(), name="simplified"),

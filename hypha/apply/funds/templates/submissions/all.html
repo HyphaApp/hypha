@@ -332,10 +332,31 @@
                                     {{ s.phase.display_name }}
                                 </a>
                             </div>
-                            <span class="rounded px-3 py-1 text-xs font-medium text-gray-800">
+                            <span
+                                data-tippy-content="Assigned to {{ s.lead }}"
+                                data-tippy-placement="left"
+                                class="rounded px-3 py-1 text-xs font-medium text-gray-800"
+                            >
                                 {% heroicon_outline "user-circle" aria_hidden="true" size=16 class="stroke-1.5 inline-block" %}
                                 {{ s.lead }}
                             </span>
+                            <div
+                                class="relative group" id="review-{{s.id}}"
+                                hx-trigger="mouseover once"
+                                hx-get="{% url "funds:submissions:partial-reviews" s.id %}"
+                                hx-target="find div"
+                            >
+                                <span class="rounded animate-pulse bg-gray-200 w-20 h-4 inline-block"></span>
+                                <div
+                                    class="bg-white border z-10 bottom-6 -right-4 w-64 shadow-lg p-2 rounded  absolute hidden group-hover:block"
+                                >
+                                    <div class="animate-pulse min-h-30">
+                                        <div class="w-full h-9 bg-gray-100 mb-6"></div>
+                                        <div class="w-full h-6 bg-gray-100 mb-1"></div>
+                                        <div class="w-full h-1 bg-gray-100 mb-3"></div>
+                                    </div>
+                                </div>
+                            </div>
                             {% comment %} Comment Count {% endcomment %}
                             <div class="flex items-center justify-end">
                                 {% heroicon_outline "chat-bubble-left" aria_hidden="true" size=16 class="stroke-2 mr-1" %}

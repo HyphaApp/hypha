@@ -150,6 +150,16 @@
 
         <script src="{% static 'js/main.js' %}"></script>
         <script src="{% static 'js/cookieconsent.js' %}"></script>
+        <!-- Tooltips -->
+        <script src="{% static 'js/tooltips/popper.min.js' %}"></script>
+        <script src="{% static 'js/tooltips/tippy.min.js' %}"></script>
+        <script>
+            htmx.onLoad(function() {
+                tippy('[data-tippy-content]');
+            });
+        </script>
+        <!-- Tooltips end -->
+
         {% block extra_js %}{% endblock %}
 
         {% block sentry_sdk %}
