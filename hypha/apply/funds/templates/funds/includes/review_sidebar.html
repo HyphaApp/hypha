@@ -1,5 +1,6 @@
 {% load i18n review_tags %}
-<ul class="reviews-sidebar js-reviews-sidebar">
+
+<ul class="reviews-sidebar" x-data='{showHiddenReviewers: false}'>
     <li class="reviews-sidebar__item reviews-sidebar__item--header">
         <div></div>
         <div>{{ recommendation|traffic_light }}</div>
@@ -23,10 +24,20 @@
         {% for reviewer in reviewers %}
             {% if reviewer_type.name in hidden_types %}
                 {% include 'funds/includes/review_sidebar_item.html' with reviewer=reviewer hidden=True %}
+
                 {% if forloop.last %}
-                    <li><a class="link link--bold link--underlined js-toggle-reviewers" href="#">{% trans "All Assigned Reviewers" %}</a></li>
+                    <li>
+                        <a
+                            role="button"
+                            class="text-sm link link--bold link--underlined"
+                            @click.prevent="showHiddenReviewers = !showHiddenReviewers"
+                            href="#"
+                        >
+                            <span x-show="!showHiddenReviewers">{% trans "Show more..." %}</span>
+                            <span x-cloak x-show="showHiddenReviewers">{% trans "Show less..." %}</span>
+                        </a></li>
                 {% endif %}
-             {% else %}
+            {% else %}
                 {% include 'funds/includes/review_sidebar_item.html' with reviewer=reviewer %}
             {% endif %}
         {% endfor %}
