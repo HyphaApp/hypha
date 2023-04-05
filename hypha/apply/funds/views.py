@@ -50,7 +50,6 @@ from hypha.apply.determinations.views import (
 from hypha.apply.projects.forms import CreateProjectForm
 from hypha.apply.projects.models import Project
 from hypha.apply.review.models import Review
-from hypha.apply.review.views import ReviewContextMixin
 from hypha.apply.stream_forms.blocks import GroupToggleBlock
 from hypha.apply.users.decorators import staff_or_finance_required, staff_required
 from hypha.apply.utils.models import PDFPageSettings
@@ -988,7 +987,7 @@ class ReminderDeleteView(DeleteView):
         return response
 
 
-class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, DelegateableView, DetailView):
+class AdminSubmissionDetailView(ActivityContextMixin, DelegateableView, DetailView):
     template_name_suffix = '_admin_detail'
     model = ApplicationSubmission
     form_views = [
@@ -1028,7 +1027,7 @@ class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Delega
         )
 
 
-class ReviewerSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, DelegateableView, DetailView):
+class ReviewerSubmissionDetailView(ActivityContextMixin, DelegateableView, DetailView):
     template_name_suffix = '_reviewer_detail'
     model = ApplicationSubmission
     form_views = [CommentFormView]
@@ -1079,7 +1078,7 @@ class PartnerSubmissionDetailView(ActivityContextMixin, DelegateableView, Detail
         return super().dispatch(request, *args, **kwargs)
 
 
-class CommunitySubmissionDetailView(ReviewContextMixin, ActivityContextMixin, DelegateableView, DetailView):
+class CommunitySubmissionDetailView(ActivityContextMixin, DelegateableView, DetailView):
     template_name_suffix = '_community_detail'
     model = ApplicationSubmission
     form_views = [CommentFormView]

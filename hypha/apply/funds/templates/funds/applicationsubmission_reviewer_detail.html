@@ -9,7 +9,14 @@
     <div class="sidebar__inner">
         <h5>{% trans "Reviews & assignees" %}</h5>
 
-        {% include 'funds/includes/review_sidebar.html' %}
+        <div hx-trigger="revealed" hx-get="{% url "funds:submissions:partial-reviews" object.id %}" hx-target="this">
+            <div class="animate-pulse min-h-30">
+                <div class="w-full h-9 bg-gray-200 mb-3"></div>
+                <div class="w-full h-6 bg-gray-200 mb-1"></div>
+                <div class="w-full h-1 bg-gray-200 mb-3"></div>
+                <div class="w-20 h-6 bg-gray-200 mb-3"></div>
+            </div>
+        </div>
 
         <div class="wrapper wrapper--sidebar-buttons">
             {% include 'review/includes/review_button.html' with submission=object class="button--half-width" %}
