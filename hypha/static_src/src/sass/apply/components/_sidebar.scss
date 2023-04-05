@@ -35,7 +35,7 @@
         }
     }
 
-    &__project {
+    &__project { // stylelint-disable value-no-vendor-prefix
         position: -webkit-sticky; /* for Safari */
         position: sticky;
         align-self: flex-start;
