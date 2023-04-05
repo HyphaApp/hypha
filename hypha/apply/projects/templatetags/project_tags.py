@@ -24,10 +24,14 @@ def project_can_have_report(project):
 @register.simple_tag
 def user_next_step_on_project(project, user):
     if project.status == COMMITTED:
-        if not project.user_has_updated_details:
-            return "Awaiting PAF to be filled in from Lead/Staff"
-        return "Awaiting PAF submission for Approval from Lead/Staff"
+        if user.is_apply_staff:
+            if not project.user_has_updated_details:
+                return "Fill in the Approval Form(PAF)"
+            return "Submit project documents for approval"
+        return "Awaiting approval form to be created."
     elif project.status == WAITING_FOR_APPROVAL:
+        if user.is_applicant:
+            return "Awaiting approval form to be approved."
         return "Awaiting PAF Approvals from assigned approvers"
     elif project.status == CONTRACTING:
         if not project.contracts.exists():
@@ -36,11 +40,13 @@ def user_next_step_on_project(project, user):
             contract = project.contracts.order_by('-created_at').first()
             if not contract.signed_by_applicant:
                 if user.is_applicant:
-                    return "Awaiting counter-signed contract and contracting documents from Applicant."
+                    return "Awaiting contract documents to be submitted by applicant."
                 return "Awaiting counter-signed contract from Applicant"
             elif not project.submitted_contract_documents:
                 return "Awaiting contract documents submission from Applicant"
             else:
+                if user.is_apply_staff:
+                    return "Review the contract for all relevant details and approve."
                 return "Awaiting contract approval from Staff"
     elif project.status == IN_PROGRESS:
         if user.is_applicant or user.is_apply_staff:
