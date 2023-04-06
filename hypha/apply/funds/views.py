@@ -231,7 +231,9 @@ class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
 
     def dispatch(self, request, *args, **kwargs):
         disp = super().dispatch(request, *args, **kwargs)
-        if "export" in request.GET:
+        if "export" in request.GET and (
+            self.request.user.is_staff or self.request.user.is_apply_staff
+        ):
             csv_data = self.export_applications(self.object_list)
             return csv_data
         return disp
