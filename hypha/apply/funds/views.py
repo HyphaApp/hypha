@@ -26,6 +26,7 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.decorators import method_decorator
+from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 from django.views import View
@@ -227,6 +228,41 @@ class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
             filter_action=self.filter_action,
             **kwargs,
         )
+
+    def dispatch(self, request, *args, **kwargs):
+        disp = super().dispatch(request, *args, **kwargs)
+        if "export" in request.GET:
+            csv_data = self.export_applications(self.object_list)
+            return csv_data
+        return disp
+
+    def export_applications(self, submissions_list):
+        csv_stream = StringIO()
+        header_row = []
+        index = 0
+        data_list = []
+        for submission in submissions_list:
+            values = {}
+            for field_id in submission.question_text_field_ids:
+                question_field = submission.serialize(field_id)
+                field_name = question_field["question"]
+                field_value = question_field["answer"]
+                if field_name not in header_row:
+                    if field_id not in submission.named_blocks:
+                        header_row.append(field_name)
+                    else:
+                        header_row.insert(index, field_name)
+                        index = index + 1
+                values[field_name] = strip_tags(field_value)
+            data_list.append(values)
+        writer = csv.DictWriter(csv_stream, fieldnames=header_row, restval="")
+        writer.writeheader()
+        for data in data_list:
+            writer.writerow(data)
+        csv_stream.seek(0)
+        response = HttpResponse(csv_stream.readlines(), content_type="text/csv")
+        response["Content-Disposition"] = "inline; filename=" + "submissions.csv"
+        return response
 
 
 @method_decorator(staff_required, name="dispatch")

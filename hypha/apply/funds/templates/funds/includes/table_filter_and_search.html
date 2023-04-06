@@ -66,6 +66,9 @@
                     <a href="{% modify_query archived='1' %}">{% trans "Show archived" %}</a>
                 {% endif %}
             {% endif %}
+            {% with request.get_full_path as path %}
+                <a href="{{path}}{% if '?' in path %}&{%else%}?{% endif %}export=true"><button type="submit" class="button--primary">{% trans 'Export all submissions' %}</button></a>
+            {% endwith %}
             {% if filter_classes != 'filters-open' %}
                 <button class="button js-toggle-filters">
                     {% heroicon_mini "adjustments-horizontal" class="inline me-1 text-dark-blue align-text-bottom" aria_hidden=true %}
