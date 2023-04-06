@@ -49,6 +49,8 @@ def contract_document_path(instance, filename):
     return f'projects/{instance.project_id}/contracting_documents/{filename}'
 
 
+PROJECT_ACTION_MESSAGE_TAG = 'project_action_message'
+
 APPROVE = 'approve'
 REQUEST_CHANGE = 'request_change'
 PAF_STATUS_CHOICES = (
@@ -525,10 +527,17 @@ class Contract(models.Model):
     file = models.FileField(upload_to=contract_path, storage=PrivateStorage())
 
     signed_by_applicant = models.BooleanField("Counter Signed?", default=False)
+    uploaded_by_contractor_at = models.DateTimeField(null=True)
+    uploaded_by_applicant_at = models.DateTimeField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     approved_at = models.DateTimeField(null=True)
+    updated_at = models.DateTimeField(null=True)
 
     objects = ContractQuerySet.as_manager()
+
+    def save(self, *args, **kwargs):
+        self.updated_at = timezone.now()
+        return super().save(*args, **kwargs)
 
     @property
     def state(self):

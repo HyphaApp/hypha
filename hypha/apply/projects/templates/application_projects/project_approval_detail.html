@@ -26,17 +26,6 @@
                 </h5>
             </div>
 
-            <div class="dropdown">
-              <button class="button button--primary dropbtn" type="button" data-dropdown-target="#dropdown-content-download">
-                  {% trans 'Download' %}
-              </button>
-              <div id="dropdown-content-download" class="dropdown-content">
-                <a class="dropdown-item" href="{% url 'apply:projects:download' pk=object.pk export_type='pdf' %}">
-                    {% trans 'Download as PDF' %}</a>
-                <a class="dropdown-item" href="{% url 'apply:projects:download' pk=object.pk export_type='docx' %}">
-                    {% trans 'Download as DOCX' %}</a>
-              </div>
-            </div>
         </div>
     </div>
     <div class="wrapper wrapper--large wrapper--tabs">
@@ -105,10 +94,12 @@
 
                 <h3>{% trans "Approvals" %}</h3>
                 <div class="card card--solid">
-                    <h4>{% trans "Approver" %}</h4>
-                    {% with approval=project.approvals.first %}
-                        <p>{{ approval.by }} - {{ approval.created_at|date:"DATE_FORMAT" }}</p>
-                    {% endwith %}
+                    {% for approval in project.paf_approvals.all %}
+                        {% if approval.approved %}
+                            <p><b>{{ approval.paf_reviewer_role.label }}</b>({{ approval.user.full_name }}) - {{ approval.created_at|date:"DATE_FORMAT" }}</p>
+                            <br>
+                        {% endif %}
+                    {% endfor %}
                 </div>
 
                 <h3>{% trans "Review" %}</h3>
@@ -153,7 +144,7 @@
             </article>
             {% user_can_update_paf_status object user request=request as user_can_take_actions %}
             {% if user_can_take_actions %}
-            <aside class="sidebar">
+            <aside class="sidebar sidebar__project">
                 {% if mobile %}
                     <a class="js-actions-toggle button button--white button--full-width button--actions">{% trans "Actions to take" %}</a>
                 {% endif %}
@@ -164,7 +155,18 @@
                     {% if can_edit_project %}
                         <a class="button button--bottom-space button--primary button--full-width {% if user_can_approve %} is-disabled {% endif %}" href="{% url 'apply:projects:edit' pk=object.pk %}">{% trans "Edit PAF" %}</a>
                     {% endif %}
-                    <a data-fancybox data-src="#change-status" class="button button--primary button--full-width {% if user_can_approve %} is-disabled {% endif %}" href="#">{% trans "Update PAF Status" %}</a>
+                    <div class="dropdown">
+                      <button class="button button--white dropbtn button--bottom-space button--full-width" type="button" data-dropdown-target="#dropdown-content-download">
+                          {% trans 'Download Approval Form' %}
+                      </button>
+                      <div id="dropdown-content-download" class="dropdown-content">
+                        <a class="dropdown-item" href="{% url 'apply:projects:download' pk=object.pk export_type='pdf' %}">
+                            {% trans 'Download as PDF' %}</a>
+                        <a class="dropdown-item" href="{% url 'apply:projects:download' pk=object.pk export_type='docx' %}">
+                            {% trans 'Download as DOCX' %}</a>
+                      </div>
+                    </div>
+                    <a data-fancybox data-src="#change-status" class="button button--primary button--full-width {% if user_can_approve %} is-disabled {% endif %}" href="#">{% trans "Update Status" %}</a>
                     <div class="modal" id="change-status">
                         <h4 class="modal__header-bar">{% trans "Update PAF Status" %}</h4>
                         <p>{% trans "Project's current status" %}: {{ object.get_status_display }}</p>

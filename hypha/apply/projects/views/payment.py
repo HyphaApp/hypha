@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
@@ -25,7 +26,7 @@ from ..models.payment import (
     INVOICE_TRANISTION_TO_RESUBMITTED,
     Invoice,
 )
-from ..models.project import Project
+from ..models.project import PROJECT_ACTION_MESSAGE_TAG, Project
 from ..tables import InvoiceListTable
 
 
@@ -192,6 +193,7 @@ class CreateInvoiceView(CreateView):
             source=self.project,
             related=self.object,
         )
+        messages.success(self.request, _("Invoice has been uploaded"), extra_tags=PROJECT_ACTION_MESSAGE_TAG)
 
         # Required for django-file-form: delete temporary files for the new files
         # that are uploaded.

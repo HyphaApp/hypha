@@ -1,8 +1,9 @@
 {% load i18n contract_tools project_tags %}
+{% allow_collapsible_header object header_type='contracting_documents' as collapsible_header %}
 
-<div class="docs-block wrapper--outer-space-large">
-    <div class="docs-block__header">
-        <div class="docs-block__heading">{% trans "Contracting documents" %}</div>
+<div class="docs-block wrapper--outer-space-large" {% if collapsible_header %} x-data="{ collapsed: false }" {% endif %}>
+    <div class="docs-block__header" {% if collapsible_header %} x-on:click="collapsed = ! collapsed" {% endif %}>
+        <div class="docs-block__heading" >{% trans "Contracting documents" %}</div>
         {% user_can_upload_contract object request.user as can_upload_contract %}
         {% if can_upload_contract and user.is_contracting and not user.is_apply_staff %}
             <a data-fancybox
@@ -38,31 +39,43 @@
             data-src="#approve-contract"
             class="button button--project-action"
             href="#">
-                {% trans "Approve Contract" %}
+                {% trans "Approve contract documents" %}
             </a>
 
         {% endif %}
     </div>
 
-    <ul class="docs-block__inner">
+    <ul class="docs-block__inner" {% if collapsible_header %} x-show="collapsed" {% endif %}>
 
         {% is_project_contract_approved object as is_contract_approved %}
         {% contract_uploaded_by_contracting object as contract_uploaded %}
         <li class="docs-block__row">
             <div class="docs-block__row-inner">
                 <svg class="icon docs-block__icon {% if object.submitted_contract_documents %}is-complete{% endif %}"><use xlink:href="#tick"></use></svg>
-                <p class="docs-block__title">{% trans "Contract" %}</p>
+                <p class="docs-block__title">{% trans "Contract" %}
+                    <i>{% if contract.updated_at %}({{ contract.updated_at }}){% endif %}</i></p>
             </div>
-            {% if contract_uploaded and not is_contract_approved %}
+            {% if contract_uploaded %}
             <div class="docs-block__row-inner">
-                <a class="docs-block__link" href="#communications" target="_blank">
-                    <svg class="icon icon--info-circle"><use xlink:href="#info-circle-fill"></use></svg>
-                        <span>{% trans "Corrections/amendments?" %}</span>
-                </a>
-                <a class="docs-block__link" href="{% url 'apply:projects:contract' pk=project.pk file_pk=contract.pk %}" target="_blank">
+                <a class="docs-block__icon-link" href="{% url 'apply:projects:contract' pk=project.pk file_pk=contract.pk %}" target="_blank">
                     {% trans "Download" %}
+                    <svg class="icon icon--caret-down"><use xlink:href="#caret-down"></use></svg>
                 </a>
             </div>
+            {% if not is_contract_approved %}
+            <ul class="docs-block__document-list">
+                <li class="docs-block__document">
+                    <div class="docs-block__row-inner">
+                    </div>
+                    <div class="docs-block__row-inner">
+                        <a class="docs-block__icon-link" href="#communications" target="_blank">
+                            <svg class="icon icon--info-circle"><use xlink:href="#info-circle-fill"></use></svg>
+                                <span>{% trans "Corrections/amendments?" %}</span>
+                        </a>
+                    </div>
+                </li>
+            </ul>
+            {% endif %}
             {% endif %}
 
             {% show_contract_upload_row object user as show_contract_row %}
@@ -72,11 +85,13 @@
                 <li class="docs-block__document">
                     <div class="docs-block__row-inner">
                         <svg class="icon docs-block__icon {% if contract_uploaded %}is-complete{% endif %}"><use xlink:href="#tick"></use></svg>
-                        <p class="docs-block__title">{% trans "Signed contract by Contracting team " %}</p>
+                        <p class="docs-block__title">{% trans "Signed contract by Contracting team " %}
+                            <i>{% if contract.uploaded_by_contractor_at %}({{ contract.uploaded_by_contractor_at }}){% endif %}</i></p>
                     </div>
                     {% if can_upload_contract and user.is_contracting %}
-                    <div class="docs-block__row-inner">
-                        <a data-fancybox class="docs-block__link" href="#" data-src="#upload-contract">
+                    <div class="docs-block__row-inner docs-block__row-inner__contract-upload-row">
+                        <a data-fancybox class="docs-block__icon-link" style="padding:5px" href="#" data-src="#upload-contract">
+                            <svg class="icon icon--arrow-up"><use xlink:href="#arrow-up"></use></svg>
                             {% if not contract %}
                                 {% trans "Upload" %}
                             {% elif not contract.approver %}
@@ -90,11 +105,13 @@
                 <li class="docs-block__document">
                     <div class="docs-block__row-inner">
                         <svg class="icon docs-block__icon {% if contract_reuploaded %}is-complete{% endif %}"><use xlink:href="#tick"></use></svg>
-                        <p class="docs-block__title">{% trans "CounterSigned contract by Applicant/Contractor " %}</p>
+                        <p class="docs-block__title">{% trans "CounterSigned contract by Applicant/Contractor " %}
+                        <i>{% if contract.uploaded_by_applicant_at %}({{ contract.uploaded_by_applicant_at }}){% endif %}</i></p>
                     </div>
                     {% if can_upload_contract and user.is_applicant %}
-                    <div class="docs-block__row-inner">
-                        <a data-fancybox class="docs-block__link" href="#" data-src="#upload-contract">
+                    <div class="docs-block__row-inner docs-block__row-inner__contract-upload-row">
+                        <a data-fancybox class="docs-block__icon-link" style="padding:5px" href="#" data-src="#upload-contract">
+                            <svg class="icon icon--arrow-up"><use xlink:href="#arrow-up"></use></svg>
                             {% if not contract.signed_by_applicant %}
                                 {% trans "Upload" %}
                             {% elif not contract.approver %}
@@ -119,7 +136,10 @@
             {% can_update_contracting_documents object user as can_update_documents %}
             {% if can_update_documents %}
             <div class="docs-block__row-inner">
-                <a data-fancybox data-src="#upload-contracting-doc" class="docs-block__link" href="#">{% trans "Upload new" %}</a>
+                <a data-fancybox data-src="#upload-contracting-doc" class="docs-block__icon-link" href="#">
+                    <svg class="icon icon--arrow-up"><use xlink:href="#arrow-up"></use></svg>
+                    {% trans "Upload new" %}
+                </a>
                 <div class="modal" id="upload-contracting-doc">
                     <h4 class="modal__header-bar">{% trans "Upload a new document" %}</h4>
                     <p></p>
@@ -150,8 +170,8 @@
                 {% for document in object.contract_packet_files.all %}
                 <li class="docs-block__document">
                     <div class="docs-block__document-inner">
-                        <p class="docs-block__document-info"><b>{{ document.title }}</b> - {{ document.created_at }}</p>
                         <p class="docs-block__document-info">{{ document.category.name }}</p>
+                        <p class="docs-block__document-info"><b>{{ document.title }}</b> - {{ document.created_at }}</p>
                     </div>
                     <div class="docs-block__document-inner">
                         <a class="docs-block__document-link" href="{% url 'apply:projects:contract_document' pk=object.pk file_pk=document.pk %}" target="_blank">{% trans "Download" %}</a>
@@ -188,7 +208,8 @@
     {% else %}
         <h4 class="modal__header-bar">{% trans "Upload Contract" %}</h4>
     {% endif %}
-    <p>{% trans "The signed contract will be uploaded once you submit." %}</p>
+    <p><i><b>{% trans "The signed contract will be uploaded once you submit." %}</b></i></p>
+    <br>
     {% trans "Submit" as upload %}
     {% include 'funds/includes/delegated_form_base.html' with form=contract_form value=upload %}
 </div>

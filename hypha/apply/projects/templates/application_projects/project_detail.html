@@ -152,10 +152,18 @@
 
                         <h5>{% trans "Next Step" %}</h5>
                         <p>{{ next_step }}</p>
+                        {% user_next_step_instructions object user as instructions %}
+                        {% if instructions %}
+                            <div class="sidebar__inner--actions--instructions">
+                            {% for instruction in instructions %}
+                                <p>{{forloop.counter}}. {{ instruction }}</p>
+                            {% endfor %}
+                            </div>
+                        {% endif %}
 
                     </div>
                 {% endif %}
-                {% if object.paf_approvals.exists %}
+                {% if object.paf_approvals.exists and not user.is_applicant %}
                     {% if mobile %}
                     <a class="js-actions-toggle button button--white button--full-width button--actions">{% trans "PAF Approvals" %}</a>
                     {% endif %}
@@ -166,10 +174,11 @@
                     <h5>{% trans "PAF Approvals" %}</h5>
                         {% for paf_approval in object.paf_approvals.all %}
                             {% if paf_approval.approved %}
-                                <p class="">{% trans "Approved by " %}{{ paf_approval.user }}</p>
+                                <p class="sidebar__paf-approvals--approved">{% trans "Approved by " %}{{ paf_approval.user }}</p>
                             {% else %}
-                                <p class="">{% trans "Pending approval from " %}{{ paf_approval.user }}</p>
+                                <p class="sidebar__paf-approvals--pending">{% trans "Pending approval from " %}{{ paf_approval.user }}</p>
                             {% endif %}
+                            <br>
                         {% endfor %}
 
                 </div>

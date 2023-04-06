@@ -72,6 +72,7 @@ from ..models.project import (
     COMMITTED,
     CONTRACTING,
     IN_PROGRESS,
+    PROJECT_ACTION_MESSAGE_TAG,
     PROJECT_STATUS_CHOICES,
     REQUEST_CHANGE,
     WAITING_FOR_APPROVAL,
@@ -118,6 +119,7 @@ class SendForApprovalView(DelegatedViewMixin, UpdateView):
             related=old_stage,
         )
 
+        messages.success(self.request, _("PAF has been submitted for approval"), extra_tags=PROJECT_ACTION_MESSAGE_TAG)
         return response
 
 
@@ -140,6 +142,8 @@ class UploadDocumentView(DelegatedViewMixin, CreateView):
             source=project,
         )
 
+        messages.success(self.request, _("Document has been uploaded"), extra_tags=PROJECT_ACTION_MESSAGE_TAG)
+
         return response
 
 
@@ -158,6 +162,7 @@ class RemoveDocumentView(DelegatedViewMixin, FormView):
         except PacketFile.DoesNotExist:
             pass
 
+        messages.success(self.request, _("Document has been removed"), extra_tags=PROJECT_ACTION_MESSAGE_TAG)
         return redirect(project)
 
 
@@ -180,6 +185,8 @@ class RemoveContractDocumentView(DelegatedViewMixin, FormView):
             project.contract_packet_files.get(pk=document_id).delete()
         except ContractPacketFile.DoesNotExist:
             pass
+
+        messages.success(self.request, _("Contracting document has been removed"), extra_tags=PROJECT_ACTION_MESSAGE_TAG)
 
         return redirect(project)
 
@@ -250,6 +257,7 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
             related=old_lead or 'Unassigned',
         )
 
+        messages.success(self.request, _('Lead has been updated'), extra_tags=PROJECT_ACTION_MESSAGE_TAG)
         return response
 
 
@@ -333,6 +341,9 @@ class ApproveContractView(DelegatedViewMixin, UpdateView):
                 related=old_stage,
             )
 
+        messages.success(self.request, _("Contractor documents have been approved."
+                                         " You can start receive invoices from applicant now."),
+                         extra_tags=PROJECT_ACTION_MESSAGE_TAG)
         return response
 
     def get_success_url(self):
@@ -367,6 +378,11 @@ class UploadContractView(DelegatedViewMixin, CreateView):
 
         if self.request.user == project.user:
             form.instance.signed_by_applicant = True
+            form.instance.uploaded_by_applicant_at = timezone.now()
+            messages.success(self.request, _("CounterSigned contract uploaded"), extra_tags=PROJECT_ACTION_MESSAGE_TAG)
+        elif self.request.user.is_contracting:
+            form.instance.uploaded_by_contractor_at = timezone.now()
+            messages.success(self.request, _("Signed contract uploaded"), extra_tags=PROJECT_ACTION_MESSAGE_TAG)
 
         response = super().form_valid(form)
 
@@ -411,6 +427,7 @@ class SubmitContractDocumentsView(DelegatedViewMixin, UpdateView):
             source=project,
         )
 
+        messages.success(self.request, _("Contract documents submitted"), extra_tags=PROJECT_ACTION_MESSAGE_TAG)
         return response
 
 
@@ -432,6 +449,7 @@ class UploadContractDocumentView(DelegatedViewMixin, CreateView):
             source=project,
         )
 
+        messages.success(self.request, _("Contracting document has been uploaded"), extra_tags=PROJECT_ACTION_MESSAGE_TAG)
         return response
 
 
@@ -478,6 +496,8 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
                 source=self.object,
                 comment=comment,
             )
+            messages.success(self.request, _("PAF status has been updated"),
+                             extra_tags=PROJECT_ACTION_MESSAGE_TAG)
         elif paf_status == APPROVE:
             paf_approval.approved = True
             paf_approval.save(update_fields=['approved'])
@@ -491,6 +511,8 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
                         user=self.request.user,
                         source=self.object,
                     )
+            messages.success(self.request, _("PAF has been approved"),
+                             extra_tags=PROJECT_ACTION_MESSAGE_TAG)
 
         if form.cleaned_data['comment']:
 
@@ -560,6 +582,8 @@ class ChangeProjectstatusView(DelegatedViewMixin, UpdateView):
             source=self.object,
             related=old_stage,
         )
+
+        messages.success(self.request, _("Project status has been updated"), extra_tags=PROJECT_ACTION_MESSAGE_TAG)
         return response
 
 
@@ -606,6 +630,7 @@ class UpdatePAFApproversView(DelegatedViewMixin, UpdateView):
                 source=self.object,
             )
 
+        messages.success(self.request, _("PAF approvers have been updated"), extra_tags=PROJECT_ACTION_MESSAGE_TAG)
         return response
 
 

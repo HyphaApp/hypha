@@ -163,7 +163,23 @@
 
     &__action-link {
         font-size: map-get($font-sizes, zeta);
+        font-weight: $weight--bold;
         display: inline-block;
+        margin-right: 1rem;
+        text-decoration: underline;
+        color: $color--primary;
+        word-break: normal;
+
+        &:last-child {
+            margin: 0;
+        }
+    }
+
+    &__action-icon-link {
+        font-size: map-get($font-sizes, zeta);
+        font-weight: $weight--bold;
+        display: flex;
+        align-items: center;
         margin-right: 1rem;
         text-decoration: underline;
         color: $color--primary;
