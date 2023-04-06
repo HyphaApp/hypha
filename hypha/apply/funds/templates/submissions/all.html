@@ -359,9 +359,11 @@
                                 </div>
                             </div>
                             {% comment %} Comment Count {% endcomment %}
-                            <div class="flex items-center justify-end">
-                                {% heroicon_outline "chat-bubble-left" aria_hidden="true" size=16 class="stroke-2 mr-1" %}
-                                <span class="inline-block font-medium">{{ s.comment_count }}</span>
+                            <div class="flex items-center justify-end w-10">
+                                {% if s.comment_count %}
+                                    {% heroicon_outline "chat-bubble-left" aria_hidden="true" size=16 class="stroke-2 mr-1" %}
+                                    <span class="inline-block font-medium">{{ s.comment_count }}</span>
+                                {% endif %}
                             </div>
                         </div>
 
