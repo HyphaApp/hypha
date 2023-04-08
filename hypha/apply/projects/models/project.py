@@ -27,11 +27,11 @@ from wagtail.fields import StreamField
 
 from addressfield.fields import ADDRESS_FIELDS_ORDER
 from hypha.apply.funds.models.mixins import AccessFormData
-from hypha.apply.stream_forms.blocks import FormFieldsBlock
 from hypha.apply.stream_forms.files import StreamFieldDataEncoder
 from hypha.apply.stream_forms.models import BaseStreamForm
 from hypha.apply.utils.storage import PrivateStorage
 
+from ..blocks import ProjectApprovalFormCustomFormFieldsBlock
 from .vendor import Vendor
 
 logger = logging.getLogger(__name__)
@@ -164,7 +164,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
     status = models.TextField(choices=PROJECT_STATUS_CHOICES, default=COMMITTED)
 
     form_data = models.JSONField(encoder=StreamFieldDataEncoder, default=dict)
-    form_fields = StreamField(FormFieldsBlock(), null=True, use_json_field=True)
+    form_fields = StreamField(ProjectApprovalFormCustomFormFieldsBlock(), null=True, use_json_field=True)
 
     # tracks read/write state of the Project
     is_locked = models.BooleanField(default=False)
@@ -424,12 +424,12 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
 class ProjectSOW(BaseStreamForm, AccessFormData, models.Model):
     project = models.OneToOneField(Project, related_name='sow', on_delete=models.CASCADE)
     form_data = models.JSONField(encoder=StreamFieldDataEncoder, default=dict)
-    form_fields = StreamField(FormFieldsBlock(), null=True, use_json_field=True)
+    form_fields = StreamField(ProjectApprovalFormCustomFormFieldsBlock(), null=True, use_json_field=True)
 
 
 class ProjectBaseStreamForm(BaseStreamForm, models.Model):
     name = models.CharField(max_length=255)
-    form_fields = StreamField(FormFieldsBlock())
+    form_fields = StreamField(ProjectApprovalFormCustomFormFieldsBlock(), use_json_field=True)
 
     panels = [
         FieldPanel('name'),

@@ -77,7 +77,7 @@
         <div class="wrapper--sidebar--inner">
             <p>
                 {% trans "Approval form not configured. Please add an approval form in the" %}
-                <a href="{% url 'funds_fundtype_modeladmin_edit' object.submission.page.id %}" target="_blank">{% trans "fund settings" %}</a>.
+                <a href="{% url 'wagtailadmin_pages:edit' object.submission.page.id %}" target="_blank">{% trans "fund settings" %}</a>.
             </p>
         </div>
     </div>
