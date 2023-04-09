@@ -8,23 +8,15 @@ minimal setup, the setup may vary slightly for your base operating systems.
 Make sure you have these things installed on your system:
 
 * Git – [Installation Guide](https://git-scm.com/downloads)
-* [pyenv](https://github.com/pyenv/pyenv#readme) / Python 3.11.x – [Installation Guide](https://github.com/pyenv/pyenv#installation)
-* [nvm](https://github.com/nvm-sh/nvm#readme) / Node 18.x - [Installation Guide](https://github.com/nvm-sh/nvm#installing-and-updating)
+* Python 3.11.x
+* Node 18.x
 * PostgreSQL 14.x (with `libpq-dev` on Linux)
 
-On Linux install them with your normal package manager. On macOS [Homebrew](https://brew.sh/) is an excellent option. For Windows [Chocolatey](https://chocolatey.org/) seems popular but we have no experience with Windows.
+!!! info
+    On Linux install them with your normal package manager. On macOS [Homebrew] is an excellent option. For Windows [Chocolatey](https://chocolatey.org/) seems popular but we have no experience with Windows. 
+    
+    This project ships with `.python-version` and `.nvmrc` to support **[pyenv]** and **[nvm]**. You can use it to setup the correct versions of Python and Node required for this project.
 
-
-```console 
-$ git --version
-git version 2.39.0
-
-$ pyenv --version
-pyenv 2.3.10
-
-$ nvm --version
-0.39.1
-```
 
 ## Get Source Code
 
@@ -48,28 +40,7 @@ NOTE: In production media is stored on AWS S3 but for local development you need
 
 ## Install project dependencies
 
-In this step, we'll install the required version of Python and NodeJS. 
-
-```console
-$ pyenv install
-$ nvm install
-```
-
-*Python and node versions are picked from `.python-version` and `.nvmrc`*
-
-Check that you have the correct version of python and NodeJS:
-
-```console
-$ python -V
-Python 3.11.1
-```
-
-```console
-$ node --version
-v18.14.2
-```
-
-Now create and activate [python virtual environment](https://docs.python.org/3.11/library/venv.html):
+Create and activate [python virtual environment](https://docs.python.org/3.11/library/venv.html):
 
 ```console
 $ python -m venv venv/
@@ -91,10 +62,9 @@ Build all JS/CSS assets for development:
 $ npm run dev:build
 ```
 
-Hypha uses nodejs to compile SCSS and JS from the `static_src` directory.
-
-!!! tip
-    See the `package.json` file for a complete list of commands. Here are the most common in development.
+!!! info
+    Hypha uses NodeJS to compile SCSS and JS from the `hypha/static_src/` directory. See the `package.json` 
+    file for a complete list of commands.
 
 
 ## Add/Update Configuration
@@ -289,7 +259,6 @@ For lint the code and not run the full test suite you can use:
 $ make lint
 ```
 
-
 ## Helpful URLs
 
 * The Apply dashboard: [http://apply.hypha.test:9001/dashboard/](http://apply.hypha.test:9001/dashboard/)
@@ -298,3 +267,6 @@ $ make lint
 
 Use the email address and password you set in the `createsuperuser` step above to login.
 
+[nvm]: https://github.com/nvm-sh/nvm#readme
+[pyenv]: https://github.com/pyenv/pyenv#readme
+[Homebrew]: https://brew.sh/
