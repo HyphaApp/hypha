@@ -1,0 +1,110 @@
+{% load i18n querystrings %}
+{% load heroicons %}
+
+<div class="item-row border-t pr-4 py-3 flex hover:bg-gray-100 w-full transition-colors" :class="selectedSubmissions.includes('{{ s.id }}') ? 'bg-slate-100' :''">
+    <label class="pl-3 py-2 flex">
+        <input id="submission-{{ s.id }}"
+            type="checkbox"
+            value="{{ s.id }}"
+            x-model="selectedSubmissions"
+            name="submissions"
+            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+    </label>
+    <div class="pl-2 py-2 flex select-none" tabindex="-1">
+        {% if s.is_archive %}
+            {% trans "Archived Submission" as text_archived %}
+            {% heroicon_outline "lock-closed" aria_hidden="true" size=21 class="inline stroke-red-800 stroke-1.5 -mt-1" data_tippy_placement='right' data_tippy_content=text_archived data_tippy_delay=200 %}
+            <span class="sr-only">{% trans "Archived" %}</span>
+        {% else %}
+            {% if s.has_yes_default_screening_status_set %}
+            {% heroicon_mini "hand-thumb-up" aria_hidden="true" size=21 class="inline fill-green-400 stroke-1.5 -mt-1" data_tippy_placement='right' data_tippy_content="Screening Status: Yes" data_tippy_delay=200 %}
+            {% else %}
+                {% if s.has_no_default_screening_status_set %}
+                    {% heroicon_mini "hand-thumb-down" aria_hidden="true" size=21 class="inline fill-red-400 stroke-1.5 -mt-1" data_tippy_placement='right' data_tippy_content="Screening Status: No" data_tippy_delay=200 %}
+                {% else %}
+                    {% heroicon_outline "question-mark-circle" aria_hidden="true" size=21 class="inline stroke-slate-300 stroke-1.5 -mt-1" data_tippy_placement='right' data_tippy_content="Awaiting Screening" data_tippy_delay=200 %}
+                    <span class="sr-only">{% trans "Archived" %}</span>
+                {% endif %}
+            {% endif %}
+        {% endif %}
+    </div>
+    <div class="flex flex-col grow ml-2">
+        <div class="space-y-1 md:space-y-0 md:flex md:flex-wrap md:gap-2 md:justify-around md:flex-row md:items-center">
+            <div class='w-full md:w-auto'>
+                <a
+                    title="{{ s.title }}"
+                    href="{% url "funds:submissions:detail" s.id %}"
+                    class="font-bold text-base text-[#404041] hover:text-blue-600 transition-colors"
+                >{{ s.title }}</a>
+            </div>
+            <div class="md:grow"></div>
+            <div class="column-status inline-block md:block">
+                <a href="{% modify_query status=s.phase.display_name %}"
+                    class="rounded px-3 py-1 text-xs font-medium text-gray-800
+                        {% if s.phase.display_name == "Need screening" %}bg-orange-200{% endif %}
+                        {% if s.phase.display_name == "Draft" %}bg-gray-200{% endif %}
+                        {% if s.phase.display_name == "Accepted" %}bg-green-200{% endif %}
+                        {% if s.phase.display_name == "Ready for Determination" %}bg-blue-200{% endif %}
+                        {% if s.phase.display_name == "Accepted" %}bg-green-200{% endif %}
+                        {% if s.phase.display_name == "Internal Review" %}bg-stone-200{% endif %}
+                        {% if s.phase.display_name == "External Review" %}bg-lime-200{% endif %}"
+                >
+                    {{ s.phase.display_name }}
+                </a>
+            </div>
+            <div
+                data-tippy-content="Assigned to {{ s.lead }}"
+                data-tippy-placement="left"
+                class="inline-block md:block px-3 py-1 text-xs font-medium text-gray-800 whitespace-nowrap"
+            >
+                {% heroicon_outline "user-circle" aria_hidden="true" size=16 class="stroke-1.5 inline-block" %}
+                <span class="inline-block w-20 truncate">{{ s.lead }}</span>
+            </div>
+            <div
+                class="inline-block md:block relative group" id="review-{{s.id}}"
+                hx-trigger="mouseover once"
+                hx-get="{% url "funds:submissions:partial-reviews" s.id %}"
+                hx-target="find div"
+            >
+                <span class="rounded animate-pulse bg-gray-200 w-20 h-4 inline-block"></span>
+                <div
+                    class="bg-white border z-10 bottom-6 -right-1/2 md:-right-4 w-64 shadow-lg p-2 rounded  absolute hidden group-hover:block"
+                >
+                    <div class="animate-pulse min-h-30">
+                        <div class="w-full h-9 bg-gray-200 mb-3"></div>
+                        <div class="w-full h-6 bg-gray-200 mb-1"></div>
+                        <div class="w-full h-1 bg-gray-200 mb-3"></div>
+                        <div class="w-20 h-6 bg-gray-200 mb-3"></div>
+                    </div>
+                </div>
+            </div>
+            {% comment %} Comment Count {% endcomment %}
+            <div class="inline-flex md:flex items-center justify-end w-10 whitespace-nowrap">
+                {% if s.comment_count %}
+                    {% heroicon_outline "chat-bubble-left" aria_hidden="true" size=16 class="stroke-2 mr-1" %}
+                    <span class="inline-block font-medium">{{ s.comment_count }}</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="flex items-center text-xs pt-1 flex-wrap">
+            <span>
+                #{{ s.id }} submitted on <time datetime="{{ s.submit_time|date:"c" }}" title="{{ s.submit_time|date }}">{{ s.submit_time|date:"SHORT_DATE_FORMAT" }}</time> by {{ s.user }}
+            </span>
+
+            <span class="meta-fund inline-flex items-center ml-1">
+                • {{ s.stage }} •
+                {% heroicon_outline "briefcase" aria_hidden="true" size=15 class="stroke-1.5 mx-1" %}
+                {{ s.page }}
+            </span>
+
+            {% if s.round %}
+                <span class="meta-round inline-flex items-center">
+                    {% heroicon_mini "arrow-small-right" aria_hidden="true" size=15 class="stroke-1.5" %}
+                    {{ s.round }}
+                </span>
+            {% endif %}
+        </div>
+    </div>
+</div>
+

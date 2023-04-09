@@ -78,7 +78,7 @@
 
 // Button mixin
 @mixin button($bg, $hover-bg) {
-    padding: .5em 60px;
+    padding: .5em 50px;
     font-weight: $weight--bold;
     color: $color--white;
     text-align: center;

@@ -175,7 +175,7 @@
         <header
             hx-target="#main"
             hx-swap="outerHTML"
-            class="mt-3 px-3 py-3 min-h-5 flex justify-between items-center justify-between border-x border-t rounded-t-md flex-wrap gap-5 bg-gray-50 md:text-sm md:font-medium  border-gray-200 dark:bg-gray-900 dark:border-gray-800"
+            class="mt-3 px-3 py-3 min-h-5 flex justify-between items-center justify-between border-x border-t flex-wrap gap-5 bg-gray-50 md:text-sm md:font-medium  border-gray-200 dark:bg-gray-900 dark:border-gray-800"
         >
             <section class="flex items-center gap-2 py-1">
                 <input type="checkbox"
@@ -296,96 +296,9 @@
             </nav>
         </header>
 
-        <div class="bg-white border-x border-b rounded-b-md w-full">
+        <div class="bg-white border-x border-b w-full">
             {% for s in submissions %}
-                <div class="item-row border-t pr-4 py-3 flex hover:bg-gray-100 w-full transition-colors">
-                    <label class='inline-block pl-3 py-2 flex'>
-                        <input id="submission-{{ s.id }}"
-                            type="checkbox"
-                            value="{{ s.id }}"
-                            x-model="selectedSubmissions"
-                            name="submissions"
-                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                    </label>
-                    <div class="flex flex-col grow ml-3">
-                        <div class="flex items-center gap-2 flex-nowrap">
-                            <div class="grow">
-                            <a
-                                title="{{ s.title }}"
-                                href="{% url "funds:submissions:detail" s.id %}"
-                                hx-target="#main"
-                                hx-swap="body"
-                                class="font-bold grow text-ellipsis text-base text-gray-700 hover:text-purple-600 overflow-clip transition-colors"
-                            >{{ s.title|truncatechars:"60" }}</a>
-                            </div>
-                            <div class="column-status inline-flex">
-                                <a href="{% modify_query status=s.phase.display_name %}"
-                                    class="rounded px-3 py-1 text-xs font-medium text-gray-800
-                                        {% if s.phase.display_name == "Need screening" %}bg-orange-200{% endif %}
-                                        {% if s.phase.display_name == "Draft" %}bg-gray-200{% endif %}
-                                        {% if s.phase.display_name == "Accepted" %}bg-green-200{% endif %}
-                                        {% if s.phase.display_name == "Ready for Determination" %}bg-blue-200{% endif %}
-                                        {% if s.phase.display_name == "Accepted" %}bg-green-200{% endif %}
-                                        {% if s.phase.display_name == "Internal Review" %}bg-stone-200{% endif %}
-                                        {% if s.phase.display_name == "External Review" %}bg-lime-200{% endif %}"
-                                >
-                                    {{ s.phase.display_name }}
-                                </a>
-                            </div>
-                            <span
-                                data-tippy-content="Assigned to {{ s.lead }}"
-                                data-tippy-placement="left"
-                                class="rounded px-3 py-1 text-xs font-medium text-gray-800"
-                            >
-                                {% heroicon_outline "user-circle" aria_hidden="true" size=16 class="stroke-1.5 inline-block" %}
-                                {{ s.lead }}
-                            </span>
-                            <div
-                                class="relative group" id="review-{{s.id}}"
-                                hx-trigger="mouseover once"
-                                hx-get="{% url "funds:submissions:partial-reviews" s.id %}"
-                                hx-target="find div"
-                            >
-                                <span class="rounded animate-pulse bg-gray-200 w-20 h-4 inline-block"></span>
-                                <div
-                                    class="bg-white border z-10 bottom-6 -right-4 w-64 shadow-lg p-2 rounded  absolute hidden group-hover:block"
-                                >
-                                    <div class="animate-pulse min-h-30">
-                                        <div class="w-full h-9 bg-gray-200 mb-3"></div>
-                                        <div class="w-full h-6 bg-gray-200 mb-1"></div>
-                                        <div class="w-full h-1 bg-gray-200 mb-3"></div>
-                                        <div class="w-20 h-6 bg-gray-200 mb-3"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            {% comment %} Comment Count {% endcomment %}
-                            <div class="flex items-center justify-end w-10">
-                                {% if s.comment_count %}
-                                    {% heroicon_outline "chat-bubble-left" aria_hidden="true" size=16 class="stroke-2 mr-1" %}
-                                    <span class="inline-block font-medium">{{ s.comment_count }}</span>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <div class="flex items-center text-xs pt-1">
-                            <span>
-                                #{{ s.id }} submitted on <time datetime="{{ s.submit_time|date:"c" }}" title="{{ s.submit_time|date }}">{{ s.submit_time|date:"SHORT_DATE_FORMAT" }}</time> by {{ s.user }} • {{ s.stage }} •
-                            </span>
-
-                            <span class="meta-fund inline-flex items-center">
-                                {% heroicon_outline "briefcase" aria_hidden="true" size=15 class="stroke-1.5 mx-1" %}
-                                {{ s.page }}
-                            </span>
-
-                            {% if s.round %}
-                                <span class="meta-round inline-flex items-center">
-                                    {% heroicon_mini "arrow-small-right" aria_hidden="true" size=15 class="stroke-1.5" %}
-                                    {{ s.round }}
-                                </span>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
+                {% include "funds/includes/submission-list-item.html" with s=s %}
             {% empty %}
                 <div class="flex flex-col items-center justify-center py-20 px-4 border-t">
                     <h2 class='text-2xl'>No results matched your search</h2>
