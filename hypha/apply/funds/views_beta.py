@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.postgres.search import SearchQuery, SearchRank
+from django.core.paginator import Paginator
 from django.db import models
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
@@ -34,7 +35,7 @@ def submission_dashboard(request: HttpRequest, template_name='submissions/all.ht
     selected_statuses = request.GET.getlist("status")
     selected_reviewers = request.GET.getlist("reviewers")
     selected_sort = request.GET.get("sort")
-    # per_page = request.GET.get("per_page", 20)
+    page = request.GET.get("page", 1)
 
     if request.htmx:
         base_template = "includes/_partial-main.html"
@@ -135,11 +136,14 @@ def submission_dashboard(request: HttpRequest, template_name='submissions/all.ht
 
     end = time.time()
 
+    page = Paginator(qs, per_page=60, orphans=20).page(page)
+
     ctx = {
         'base_template': base_template,
         'search_term': search_term,
         'filters': filters,
-        'submissions': qs,
+        'page': page,
+        'submissions': page.object_list,
         'show_archived': show_archived,
         'selected_funds': selected_funds,
         'selected_rounds': selected_rounds,
@@ -150,7 +154,7 @@ def submission_dashboard(request: HttpRequest, template_name='submissions/all.ht
         'selected_sort': selected_sort,
         'selected_statuses': selected_statuses,
         'is_filtered': is_filtered,
-        'table': table,
+        # 'table': table,
         'duration': end - start,
         'total': len(table.rows),
         'show_archive': is_user_has_access_to_view_archived_submissions(request.user),

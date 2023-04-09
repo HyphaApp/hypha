@@ -307,6 +307,24 @@
             {% endfor %}
         </div>
 
+        <nav class="mt-5 mb-20" aria-label="Pagination">
+            <span class="step-links flex gap-2 justify-center items-center">
+                {% if page.has_previous %}
+                    <a href="?page=1" class="px-3 py-2 border hover:bg-slate-300">&laquo; First</a>
+                    <a href="?page={{ page.previous_page_number }}" class="px-3 py-2 border hover:bg-slate-300">Previous</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ page.number }} of {{ page.paginator.num_pages }}.
+                </span>
+
+                {% if page.has_next %}
+                    <a href="?page={{ page.next_page_number }}" class="px-3 py-2 border hover:bg-slate-300">Next</a>
+                    <a href="?page={{ page.paginator.num_pages }}" class="px-3 py-2 border hover:bg-slate-300">Last &raquo;</a>
+                {% endif %}
+            </span>
+        </nav>
+
         {% comment %} <div class="wrapper wrapper--large wrapper--inner-space-medium">
             {% block table %}
                 <div class="wrapper wrapper--table-actions js-table-actions">
