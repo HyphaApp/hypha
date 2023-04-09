@@ -63,23 +63,24 @@
             <div
                 class="inline-block md:block relative group"
                 hx-trigger="mouseover once"
-                hx-get="{% url "funds:submissions:partial-reviews" s.id %}"
+                hx-get="{% url "funds:submissions:partial-reviews-card" s.id %}"
                 hx-target="find .review-hovercard"
                 hx-swap="innerHTML"
             >
-                <span id="r{{s.id}}" class="inline-block text-sm w-10">
-                    <span class="rounded animate-pulse bg-gray-200 w-full h-4 inline-block"
-                    ></span>
+                <span id="r{{s.id}}" class="inline-flex text-sm items-center gap-1 w-20">
+                    <span class="rounded animate-pulse bg-gray-200 w-full h-5 inline-block"
+                    ></span>{% comment %} pre-loading animation {% endcomment %}
                 </span>
 
                 <div
                     class="review-hovercard bg-white border z-10 bottom-6 -right-1/2 md:-right-4 w-64 shadow-lg p-2 rounded  absolute hidden group-hover:block"
                 >
+                    {% comment %} pre-loading animation {% endcomment %}
                     <div class="animate-pulse min-h-30">
                         <div class="w-full h-9 bg-gray-200 mb-3"></div>
                         <div class="w-full h-6 bg-gray-200 mb-1"></div>
                         <div class="w-full h-1 bg-gray-200 mb-3"></div>
-                        <div class="w-20 h-6 bg-gray-200 mb-3"></div>
+                        <div class="w-1/2 h-6 bg-gray-200 mb-3"></div>
                     </div>
                 </div>
             </div>

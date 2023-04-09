@@ -1,1 +1,21 @@
-{% for s in submissions %}<span id="r{{s.id}}">1 2 <span class="inline-block rounded-full bg-blue-600 w-3 h-3"></span> </span>{% endfor %}
+{% load review_tags %}
+
+{% for s in submissions %}<span id="r{{s.id}}" >
+    <span class="inline-flex items-center justify-center gap-2 rounded border w-full px-3 py-1 text-xs font-medium">
+        <span class="inline-flex" title="">
+            <span title="Submitted Count" aria-label="Total number of reviews">{{ s.review_submitted_count|default:'0' }}</span>
+            <span>/</span>
+            <span>
+                {% if s.stage.has_external_review %}
+                    {{ s.review_count|default:'0' }}
+                {% else %}
+                    {{ s.review_staff_count|default:'0' }}
+                {% endif %}
+            </span>
+        </span>
+
+        {{ s.review_recommendation|traffic_light }}
+
+    </span>
+</span>
+{% endfor %}

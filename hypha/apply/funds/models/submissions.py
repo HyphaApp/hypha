@@ -12,17 +12,14 @@ from django.core.exceptions import PermissionDenied
 from django.db import models
 from django.db.models import (
     Avg,
-    Case,
     Count,
     FloatField,
     IntegerField,
     OuterRef,
-    Prefetch,
     Q,
     Subquery,
     Sum,
     Value,
-    When,
 )
 from django.db.models.expressions import OrderBy, RawSQL
 from django.db.models.fields.json import KeyTextTransform
@@ -41,8 +38,8 @@ from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.categories.models import MetaTerm
 from hypha.apply.determinations.models import Determination
 from hypha.apply.flags.models import Flag
-from hypha.apply.review.models import ReviewOpinion
-from hypha.apply.review.options import AGREE, DISAGREE, MAYBE
+from hypha.apply.funds.services import annotate_review_recommendation_and_count
+from hypha.apply.review.options import AGREE
 from hypha.apply.stream_forms.files import StreamFieldDataEncoder
 from hypha.apply.stream_forms.models import BaseStreamForm
 
@@ -211,18 +208,13 @@ class ApplicationSubmissionQueryset(JSONOrderable):
         )
 
     def for_table(self, user):
-        AssignedReviewers = apps.get_model("funds", "AssignedReviewers")
         activities = self.model.activities.rel.model
         comments = activities.comments.filter(submission=OuterRef('id')).visible_to(user)
         roles_for_review = self.model.assigned.field.model.objects.with_roles().filter(
             submission=OuterRef('id'), reviewer=user)
 
-        review_model = self.model.reviews.field.model
-        reviews = review_model.objects.filter(submission=OuterRef('id'))
-        opinions = review_model.opinions.field.model.objects.filter(review__submission=OuterRef('id'))
-        reviewers = self.model.assigned.field.model.objects.filter(submission=OuterRef('id'))
-
-        return self.with_latest_update().annotate(
+        qs = annotate_review_recommendation_and_count(self.with_latest_update())
+        return qs.annotate(
             comment_count=Coalesce(
                 Subquery(
                     comments.values('submission').order_by().annotate(count=Count('pk')).values('count'),
@@ -230,51 +222,7 @@ class ApplicationSubmissionQueryset(JSONOrderable):
                 ),
                 0,
             ),
-            opinion_disagree=Subquery(
-                opinions.filter(opinion=DISAGREE).values(
-                    'review__submission'
-                ).annotate(count=Count('*')).values('count')[:1],
-                output_field=IntegerField(),
-            ),
-            review_staff_count=Subquery(
-                reviewers.staff().values('submission').annotate(count=Count('pk')).values('count'),
-                output_field=IntegerField(),
-            ),
-            review_count=Subquery(
-                reviewers.values('submission').annotate(count=Count('pk')).values('count'),
-                output_field=IntegerField(),
-            ),
-            review_submitted_count=Subquery(
-                reviewers.reviewed().values('submission').annotate(
-                    count=Count('pk', distinct=True)
-                ).values('count'),
-                output_field=IntegerField(),
-            ),
-            review_recommendation=Case(
-                When(opinion_disagree__gt=0, then=MAYBE),
-                default=Subquery(
-                    reviews.submitted().values('submission').annotate(
-                        calc_recommendation=Sum('recommendation') / Count('recommendation'),
-                    ).values('calc_recommendation'),
-                    output_field=IntegerField(),
-                )
-            ),
             role_icon=Subquery(roles_for_review[:1].values('role__icon')),
-        ).prefetch_related(
-            Prefetch(
-                'assigned',
-                queryset=AssignedReviewers.objects.reviewed().review_order().select_related(
-                    'reviewer',
-                ).prefetch_related(
-                    Prefetch('review__opinions', queryset=ReviewOpinion.objects.select_related('author')),
-                ),
-                to_attr='has_reviewed'
-            ),
-            Prefetch(
-                'assigned',
-                queryset=AssignedReviewers.objects.not_reviewed().staff(),
-                to_attr='hasnt_reviewed'
-            )
         ).select_related(
             'page',
             'round',

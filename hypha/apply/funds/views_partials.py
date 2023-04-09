@@ -10,6 +10,7 @@ from hypha.apply.activity.services import (
     get_related_actions_for_user,
 )
 from hypha.apply.funds.permissions import has_permission
+from hypha.apply.funds.services import annotate_review_recommendation_and_count
 from hypha.apply.users.groups import REVIEWER_GROUP_NAME, STAFF_GROUP_NAME
 
 from .models import ApplicationSubmission, Round
@@ -162,10 +163,11 @@ def partial_reviews_decisions(request: HttpRequest) -> HttpResponse:
     if submission_ids:
         submission_ids = [x for x in submission_ids.split(",") if x]
 
-    submissions = ApplicationSubmission.objects.filter(id__in=submission_ids)
+    qs = ApplicationSubmission.objects.filter(id__in=submission_ids)
+    qs = annotate_review_recommendation_and_count(qs)
 
     ctx = {
-        'submissions': submissions,
+        'submissions': qs,
     }
 
     return render(request, "submissions/partials/submission-reviews-list-multi.html", ctx)
