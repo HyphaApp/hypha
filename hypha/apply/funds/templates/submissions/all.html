@@ -7,7 +7,7 @@
 
 {% block title %}{% trans "Submissions" %}{% endblock %}
 
-{% block content %}
+{% block content %}{% spaceless %}
     {% adminbar %}
         {% slot header %}
             {% trans "All Submissions" %}
@@ -296,7 +296,15 @@
             </nav>
         </header>
 
-        <div class="bg-white border-x border-b w-full">
+        {% comment %}
+        Load reviews using htmx multi-swap extension, the reviewers for all the submission
+        on the page are fetched after the pages is loaded
+        {% endcomment %}
+        <div class="bg-white border-x border-b w-full"
+            hx-trigger="load delay:50"
+            hx-get="{% url "funds:submissions:partial-reviews-decisions" %}?ids={{ submission_ids|join:',' }}"
+            hx-swap="multi:{% for s in submission_ids %}#r{{s}}{% if not forloop.last %},{% endif %}{% endfor %}"
+        >
             {% for s in submissions %}
                 {% include "funds/includes/submission-list-item.html" with s=s %}
             {% empty %}
@@ -443,4 +451,4 @@
         });
     </script>
 
-{% endblock content %}
+{% endspaceless %}{% endblock content %}

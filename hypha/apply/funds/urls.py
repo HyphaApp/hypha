@@ -28,13 +28,13 @@ from .views import (
     SubmissionStaffFlaggedView,
     SubmissionUserFlaggedView,
 )
-
-from .views_partials import partial_submission_activities
 from .views_beta import (
     submission_all_beta,
 )
 from .views_partials import (
-    partial_reviews,
+    partial_reviews_card,
+    partial_reviews_decisions,
+    partial_submission_activities,
     sub_menu_funds,
     sub_menu_leads,
     sub_menu_reviewers,
@@ -61,6 +61,7 @@ submission_urls = ([
     path('all-beta/submenu/leads/', sub_menu_leads, name="submenu-leads"),
     path('all-beta/submenu/rounds/', sub_menu_rounds, name="submenu-rounds"),
     path('all-beta/submenu/reviewers/', sub_menu_reviewers, name="submenu-reviewers"),
+    path('all-beta/partials/review_decisions/', partial_reviews_decisions, name="partial-reviews-decisions"),
     path('summary/', GroupingApplicationsListView.as_view(), name="summary"),
     path('result/', SubmissionResultView.as_view(), name="result"),
     path('flagged/', include([
@@ -78,7 +79,7 @@ submission_urls = ([
     path('<int:pk>/', include([
         path('', SubmissionDetailView.as_view(), name="detail"),
         path('partial/activities/', partial_submission_activities, name="partial-activities"),
-        path('partial/reviews/', partial_reviews, name="partial-reviews"),
+        path('partial/reviews-card/', partial_reviews_card, name="partial-reviews-card"),
         path('edit/', SubmissionEditView.as_view(), name="edit"),
         path('sealed/', SubmissionSealedView.as_view(), name="sealed"),
         path('simplified/', SubmissionDetailSimplifiedView.as_view(), name="simplified"),

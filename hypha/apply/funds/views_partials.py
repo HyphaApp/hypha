@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.db import models
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.http import require_GET
 from wagtail.models import Page
@@ -123,7 +124,17 @@ def partial_submission_activities(request, pk):
     return render(request, 'activity/include/action_list.html', ctx)
 
 
-def partial_reviews(request, pk):
+def partial_reviews_card(request: HttpRequest, pk: str) -> HttpResponse:
+    """Returns a partial html for the submission reviews box on the submission
+    detail page and hovercard on the submissison list page.
+
+    Args:
+        request: HttpRequest object
+        pk: Submission ID
+
+    Returns:
+        HttpResponse
+    """
     submission = get_object_or_404(ApplicationSubmission, pk=pk)
 
     assigned_reviewers = submission.assigned.review_order()
@@ -142,3 +153,19 @@ def partial_reviews(request, pk):
     }
 
     return render(request, "funds/includes/review_sidebar.html", ctx)
+
+
+@login_required
+@require_GET
+def partial_reviews_decisions(request: HttpRequest) -> HttpResponse:
+    submission_ids = request.GET.get('ids')
+    if submission_ids:
+        submission_ids = [x for x in submission_ids.split(",") if x]
+
+    submissions = ApplicationSubmission.objects.filter(id__in=submission_ids)
+
+    ctx = {
+        'submissions': submissions,
+    }
+
+    return render(request, "submissions/partials/submission-reviews-list-multi.html", ctx)

@@ -45,7 +45,7 @@
                         {% if s.phase.display_name == "Draft" %}bg-gray-200{% endif %}
                         {% if s.phase.display_name == "Accepted" %}bg-green-200{% endif %}
                         {% if s.phase.display_name == "Ready for Determination" %}bg-blue-200{% endif %}
-                        {% if s.phase.display_name == "Accepted" %}bg-green-200{% endif %}
+                        {% if s.phase.display_name == "Invited for Proposal" %}bg-slate-200{% endif %}
                         {% if s.phase.display_name == "Internal Review" %}bg-stone-200{% endif %}
                         {% if s.phase.display_name == "External Review" %}bg-lime-200{% endif %}"
                 >
@@ -61,14 +61,19 @@
                 <span class="inline-block w-20 truncate">{{ s.lead }}</span>
             </div>
             <div
-                class="inline-block md:block relative group" id="review-{{s.id}}"
+                class="inline-block md:block relative group"
                 hx-trigger="mouseover once"
                 hx-get="{% url "funds:submissions:partial-reviews" s.id %}"
-                hx-target="find div"
+                hx-target="find .review-hovercard"
+                hx-swap="innerHTML"
             >
-                <span class="rounded animate-pulse bg-gray-200 w-20 h-4 inline-block"></span>
+                <span id="r{{s.id}}" class="inline-block text-sm w-10">
+                    <span class="rounded animate-pulse bg-gray-200 w-full h-4 inline-block"
+                    ></span>
+                </span>
+
                 <div
-                    class="bg-white border z-10 bottom-6 -right-1/2 md:-right-4 w-64 shadow-lg p-2 rounded  absolute hidden group-hover:block"
+                    class="review-hovercard bg-white border z-10 bottom-6 -right-1/2 md:-right-4 w-64 shadow-lg p-2 rounded  absolute hidden group-hover:block"
                 >
                     <div class="animate-pulse min-h-30">
                         <div class="w-full h-9 bg-gray-200 mb-3"></div>

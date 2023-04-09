@@ -144,6 +144,7 @@ def submission_dashboard(request: HttpRequest, template_name='submissions/all.ht
         'filters': filters,
         'page': page,
         'submissions': page.object_list,
+        'submission_ids': [x.id for x in page.object_list],
         'show_archived': show_archived,
         'selected_funds': selected_funds,
         'selected_rounds': selected_rounds,
