@@ -2,7 +2,7 @@ import decimal
 
 from django import template
 
-from hypha.apply.projects.models.project import CLOSING, COMPLETE, IN_PROGRESS
+from hypha.apply.projects.models.project import CLOSING, COMPLETE, IN_PROGRESS, ProjectSettings
 
 register = template.Library()
 
@@ -55,3 +55,9 @@ def user_can_add_invoices(project, user):
     if project.status == IN_PROGRESS and (user.is_apply_staff or user == project.user):
         return True
     return False
+
+
+@register.simple_tag
+def is_vendor_setup(request):
+    project_settings = ProjectSettings.for_request(request)
+    return project_settings.vendor_setup_required
