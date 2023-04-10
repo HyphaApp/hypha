@@ -2,11 +2,11 @@
 
 # Install node packages and run build command.
 npm install --quiet
-npm run build
+npm run dev:build
 
 # Run needed python commands.
 python3 manage.py createcachetable
-python3 manage.py collectstatic --noinput --verbosity=0
+#python3 manage.py collectstatic --noinput --verbosity=0
 python3 manage.py migrate
 python3 manage.py wagtailsiteupdate hypha.test apply.hypha.test 8090
 

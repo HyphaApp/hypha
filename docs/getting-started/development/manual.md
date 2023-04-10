@@ -7,12 +7,16 @@ minimal setup, the setup may vary slightly for your base operating systems.
 
 Make sure you have these things installed on your system:
 
-* Git
-* Python 3.10.x
-* PostgreSQL 12.x (with `libpq-dev` on Linux)
-* Node 16.x
+* Git – [Installation Guide](https://git-scm.com/downloads)
+* Python 3.11.x
+* Node 18.x
+* PostgreSQL 14.x (with `libpq-dev` on Linux)
 
-On Linux install them with your normal package manager. On macOS [Homebrew](https://brew.sh/) is an excellent option. For Windows [Chocolatey](https://chocolatey.org/) seems popular but we have no experience with Windows.
+!!! info
+    On Linux install them with your normal package manager. On macOS [Homebrew] is an excellent option. For Windows [Chocolatey](https://chocolatey.org/) seems popular but we have no experience with Windows. 
+    
+    This project ships with `.python-version` and `.nvmrc` to support **[pyenv]** and **[nvm]**. You can use it to setup the correct versions of Python and Node required for this project.
+
 
 ## Get Source Code
 
@@ -36,49 +40,88 @@ NOTE: In production media is stored on AWS S3 but for local development you need
 
 ## Install project dependencies
 
-First create and activate [python virtual environment](https://docs.python.org/3.10/library/venv.html):
+Create and activate [python virtual environment](https://docs.python.org/3.11/library/venv.html):
 
 ```console
-$ python3 -m venv .venv/
-$ source .venv/bin/activate
+$ python -m venv venv/
+$ source venv/bin/activate
 ```
 
-Now, install Python packages inside the virtual environment:
+Install Python & Node packages:
 
 ```console
-$ python -m pip install -r requirements-dev.txt
+$ pip install -r requirements-dev.txt
+$ npm install
 ```
+
+## Compile JS & SCSS
+
+Build all JS/CSS assets for development:
+
+```console
+$ npm run dev:build
+```
+
+!!! info
+    Hypha uses NodeJS to compile SCSS and JS from the `hypha/static_src/` directory. See the `package.json` 
+    file for a complete list of commands.
+
 
 ## Add/Update Configuration
 
-There are two ways to manage the Django settings in Hypha:
+Hypha supports configuration via either a `local.py` or a `.env` file:
 
-**Using `hypha/settings/local.py`** 
+=== "Using `.env` file"
 
-When you use the "dev" settings it will included all the setting you put in `local.py`. Copy the local settings example file.
+    Create an empty `.env` file at the root of the project:
 
-```console
-$ cp -p hypha/settings/local.py.example hypha/settings/local.py
-```
+    ```hl_lines="2"
+    .
+    ├── .env
+    ├── manage.py
+    ├── hypha
+    │   ├── urls.py
+    │   ├── settings/
+    │   ├── ...
+    ├── ...
+    ```
 
-Open and take a look at the `local.py`, it already has some sensible defaults and you can use this to override all the settings.
+    Open `.env` file and add your config:
 
-**Using `.env` file**
+    ```bash title="./.env"
+    ALLOWED_HOSTS=apply.hypha.test,hypha.test
+    BASE_URL=http://hypha.test
+    SECRET_KEY=<put-in-long-random-string>
+    DATABASE_URL=postgres://localhost/hypha-db
+    ```
 
-It is also possible to use a local `.env`, to use it create a new `.env` file at the root of the project.
+=== "Using `local.py`"
 
-```bash title=".env"
-ALLOWED_HOSTS=apply.hypha.test,hypha.test
-BASE_URL=http://hypha.test
-SECRET_KEY=<put-in-long-random-string>
-DATABASE_URL=postgres://localhost/hypha-db
-```
+    Copy the provided `local.py.example` file and rename it to `local.py`.
 
+    ```console
+    $ cp -p hypha/settings/local.py.example hypha/settings/local.py
+    ```
 
-!!! info 
-
-    On production it's recommended to use environment variables for all settings. For local development putting them in a file is however convenient.
-
+    ```hl_lines="10 11"
+    .
+    ├── manage.py
+    ├── hypha
+    │   ├── urls.py
+    │   ├── settings
+    │   │   ├── __init__.py
+    │   │   ├── base.py
+    │   │   ├── dev.py
+    │   │   ├── django.py
+    │   │   ├── local.py
+    │   │   ├── local.py.example
+    │   │   ├── production.py
+    │   │   └── test.py
+    │   ├── ...
+    ├── ...
+    ```
+    
+    Open and take a look at the `local.py`, it already has some sensible defaults and you can use this to override all the settings.
 
 ## Setup Database and Initial Data
 
@@ -105,7 +148,7 @@ There are two ways to about it, you can either load demo data from  `/public/san
     It's not always completely up to date so run:
     
     ```console
-    $ python manage.py migrate --noinput
+    $ python manage.py migrate
     ```
 
 === "From Scratch"
@@ -118,7 +161,7 @@ There are two ways to about it, you can either load demo data from  `/public/san
     Run all migrations to set up the database tables.
 
     ```text
-    $ python manage.py migrate --noinput
+    $ python manage.py migrate
     ```
 
 !!! tip "Tips"
@@ -162,25 +205,6 @@ Here we are setting the public site be served at http://hypha.test:9001 and appl
 $ python manage.py createsuperuser
 ```
 
-## Frontend Setup
-
-Hypha uses nodejs to compile SCSS and JS from the `static_src` directory. If are not required to touch them, you can skip these step.
-
-Install node dependencies:
-
-```console
-$ npm install
-```
-
-Build all assets for development:
-
-```console
-$ npm run dev:build
-```
-
-!!! tip
-    See the `package.json` file for a complete list of commands. Here are the most common in development.
-
 ## Run Development Server
 
 ```console
@@ -203,6 +227,7 @@ To live preview of documentation, while you writing it.
 Activate your virtual environment and install dependencies:
 
 ```console
+$ source venv/bin/activate
 $ python -m pip install -r requirements-dev.txt
 ```
 
@@ -234,7 +259,6 @@ For lint the code and not run the full test suite you can use:
 $ make lint
 ```
 
-
 ## Helpful URLs
 
 * The Apply dashboard: [http://apply.hypha.test:9001/dashboard/](http://apply.hypha.test:9001/dashboard/)
@@ -243,3 +267,6 @@ $ make lint
 
 Use the email address and password you set in the `createsuperuser` step above to login.
 
+[nvm]: https://github.com/nvm-sh/nvm#readme
+[pyenv]: https://github.com/pyenv/pyenv#readme
+[Homebrew]: https://brew.sh/

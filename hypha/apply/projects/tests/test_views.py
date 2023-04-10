@@ -121,14 +121,13 @@ class TestChangePAFStatusView(BaseViewTestCase):
     url_name = 'funds:projects:{}'
     user_factory = StaffFactory
 
-    @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
+    def setUp(self):
+        super().setUp()
         apply_site = ApplySiteFactory()
-        cls.project_setting, _ = ProjectSettings.objects.get_or_create(site_id=apply_site.id)
-        cls.project_setting.use_settings = True
-        cls.project_setting.save()
-        cls.role = PAFReviewerRoleFactory(page=cls.project_setting)
+        self.project_setting, _ = ProjectSettings.objects.get_or_create(site_id=apply_site.id)
+        self.project_setting.use_settings = True
+        self.project_setting.save()
+        self.role = PAFReviewerRoleFactory(page=self.project_setting)
 
     def get_kwargs(self, instance):
         return {'pk': instance.id}

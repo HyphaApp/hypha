@@ -504,12 +504,11 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
 class TestReviewersUpdateView(BaseSubmissionViewTestCase):
     user_factory = StaffFactory
 
-    @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
-        cls.staff = StaffFactory.create_batch(4)
-        cls.reviewers = ReviewerFactory.create_batch(4)
-        cls.roles = ReviewerRoleFactory.create_batch(2)
+    def setUp(self):
+        super().setUp()
+        self.staff = StaffFactory.create_batch(4)
+        self.reviewers = ReviewerFactory.create_batch(4)
+        self.roles = ReviewerRoleFactory.create_batch(2)
 
     def post_form(self, submission, reviewer_roles=None, reviewers=None):
         if reviewer_roles is None:
@@ -635,15 +634,14 @@ class TestReviewersUpdateView(BaseSubmissionViewTestCase):
 class TestReviewerSubmissionView(BaseSubmissionViewTestCase):
     user_factory = ReviewerFactory
 
-    @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
-        cls.applicant = ApplicantFactory()
-        cls.reviewer_role = ReviewerRoleFactory()
+    def setUp(self):
+        super().setUp()
+        self.applicant = ApplicantFactory()
+        self.reviewer_role = ReviewerRoleFactory()
         apply_site = ApplySiteFactory()
-        cls.reviewer_settings, _ = ReviewerSettings.objects.get_or_create(site_id=apply_site.id)
-        cls.reviewer_settings.use_settings = True
-        cls.reviewer_settings.save()
+        self.reviewer_settings, _ = ReviewerSettings.objects.get_or_create(site_id=apply_site.id)
+        self.reviewer_settings.use_settings = True
+        self.reviewer_settings.save()
 
     def test_cant_see_add_determination_primary_action(self):
         def assert_add_determination_not_displayed(submission, button_text):

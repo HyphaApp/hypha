@@ -67,7 +67,7 @@
         "clean": "rm -rf ./static ./hypha/static_compiled"
     },
     "engines": {
-        "node": "16.18.x"
+        "node": "18.x"
     },
     "private": true
 }
