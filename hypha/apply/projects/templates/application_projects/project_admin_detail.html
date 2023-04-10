@@ -18,7 +18,7 @@
         <a data-fancybox data-src="#project-status" class="button button--white button--full-width button--bottom-space" href="#">{% trans "Update Project Status" %}</a>
 
         <div class="modal" id="project-status">
-            <h4 class="modal__header-bar">{% trans "Update Project Status" %}</h4>
+            <h4 class="modal__project-header-bar">{% trans "Update Project Status" %}</h4>
             {% trans "Update" as update %}
             {% include 'funds/includes/delegated_form_base.html' with form=change_project_status value=update %}
         </div>

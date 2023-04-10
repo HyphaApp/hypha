@@ -2,7 +2,12 @@ import decimal
 
 from django import template
 
-from hypha.apply.projects.models.project import CLOSING, COMPLETE, IN_PROGRESS, ProjectSettings
+from hypha.apply.projects.models.project import (
+    CLOSING,
+    COMPLETE,
+    IN_PROGRESS,
+    ProjectSettings,
+)
 
 register = template.Library()
 

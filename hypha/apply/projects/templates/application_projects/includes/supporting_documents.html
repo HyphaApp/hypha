@@ -210,14 +210,14 @@
 
 {% if user.is_apply_staff %}
 <div class="modal" id="copy-supporting-doc">
-    <h4 class="modal__header-bar">{% trans "Select a document" %}</h4>
+    <h4 class="modal__project-header-bar">{% trans "Select a document" %}</h4>
     {% url 'apply:projects:copy-documents' pk=object.pk as select_document_url %}
     {% trans "Copy" as copy %}
     {% include 'funds/includes/delegated_form_base.html' with form=select_document_form value=copy action=select_document_url %}
 </div>
 
 <div class="modal" id="upload-supporting-doc">
-    <h4 class="modal__header-bar">{% trans "Upload a new document" %}</h4>
+    <h4 class="modal__project-header-bar">{% trans "Upload a new document" %}</h4>
     <p></p>
     {% trans "Submit" as submit %}
     {% include 'funds/includes/delegated_form_base.html' with form=document_form value=submit %}
@@ -226,7 +226,7 @@
 
 {% if can_send_to_approve %}
 <div class="modal" id="send-for-approval">
-    <h4 class="modal__header-bar">{% trans "Request Approval" %}</h4>
+    <h4 class="modal__project-header-bar">{% trans "Request Approval" %}</h4>
 
     {% if remaining_document_categories %}
         <h5>{% trans "Are you sure you're ready to submit?" %}</h5>
@@ -256,7 +256,7 @@
 
 {% if can_update_paf_approvers %}
 <div class="modal" id="update-paf-approvers">
-    <h4 class="modal__header-bar">{% trans "Update Approvers" %}</h4>
+    <h4 class="modal__project-header-bar">{% trans "Update Approvers" %}</h4>
 
     {% trans "Submit" as submit %}
     {% if project_settings.paf_reviewers_roles.all %}
@@ -272,7 +272,7 @@
 
 {% if can_update_paf_status %}
     <div class="modal" id="update-paf-status">
-        <h4 class="modal__header-bar">{% trans "Update PAF Status" %}</h4>
+        <h4 class="modal__project-header-bar">{% trans "Update PAF Status" %}</h4>
         <p>{% trans "Project's current status" %}: {{ object.get_status_display }}</p>
         {% trans "Update Status" as update %}
         {% include 'funds/includes/delegated_form_base.html' with form=change_paf_status value=update %}

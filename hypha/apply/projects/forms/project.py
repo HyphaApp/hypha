@@ -66,7 +66,7 @@ class CreateProjectForm(forms.Form):
         widget=forms.HiddenInput(),
     )
 
-    project_lead = forms.ModelChoiceField(label=_('Set Project Lead'), queryset=User.objects.all())
+    project_lead = forms.ModelChoiceField(label=_('Select Project Lead'), queryset=User.objects.all())
 
     def __init__(self, instance=None, user=None, *args, **kwargs):
         super().__init__(*args, **kwargs)

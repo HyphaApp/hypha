@@ -26,7 +26,7 @@
                 {% trans "Submit contract documents" %}
             </a>
             <div class="modal" id="submit-contract-documents">
-                <h4 class="modal__header-bar">{% trans "Submit contracting documents" %}</h4>
+                <h4 class="modal__project-header-bar">{% trans "Submit contracting documents" %}</h4>
                 <h5> {% trans "Are you sure you want to submit contracting documents?" %}</h5>
                 <p>{% trans "Make sure you have uploaded correct contract and all required contracting documents." %}</p>
                 {% trans "Submit" as submit %}
@@ -141,7 +141,7 @@
                     {% trans "Upload new" %}
                 </a>
                 <div class="modal" id="upload-contracting-doc">
-                    <h4 class="modal__header-bar">{% trans "Upload a new document" %}</h4>
+                    <h4 class="modal__project-header-bar">{% trans "Upload a new document" %}</h4>
                     <p></p>
                     {% trans "Submit" as submit %}
                     {% include 'funds/includes/delegated_form_base.html' with form=contract_document_form value=submit %}
@@ -208,9 +208,9 @@
 {% if can_upload_contract %}
 <div class="modal" id="upload-contract">
     {% if not user.is_apply_staff %}
-        <h4 class="modal__header-bar">{% trans "Upload Signed Contract" %}</h4>
+        <h4 class="modal__project-header-bar">{% trans "Upload Signed Contract" %}</h4>
     {% else %}
-        <h4 class="modal__header-bar">{% trans "Upload Contract" %}</h4>
+        <h4 class="modal__project-header-bar">{% trans "Upload Contract" %}</h4>
     {% endif %}
     <p><i><b>{% trans "The signed contract will be uploaded once you submit." %}</b></i></p>
     <br>
@@ -221,7 +221,7 @@
 
 {% if contract_to_approve %}
 <div class="modal" id="approve-contract">
-    <h4 class="modal__header-bar">{% trans "Approve Contract" %}</h4>
+    <h4 class="modal__project-header-bar">{% trans "Approve Contract" %}</h4>
     <p>{% trans "You confirm that the uploaded contract is acceptable for commencing the project." %}</p>
     <p>{% trans "This cannot be undone." %}</p>
     {% trans "Confirm" as confirm %}
