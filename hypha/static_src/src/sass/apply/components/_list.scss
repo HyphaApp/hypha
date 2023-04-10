@@ -41,6 +41,12 @@
             justify-content: space-between;
         }
 
+        &--has-reviewed {
+            display: grid;
+            justify-content: space-between;
+            grid-template-columns: 40% 40% 20%;
+        }
+
         &--reviewer-name {
             max-width: 190px;
             overflow: hidden;

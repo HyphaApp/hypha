@@ -50,9 +50,9 @@
                         <td>
                             <ul class="list list--no-margin">
                                 {% for reviewer in submission.has_reviewed %}
-                                    <li class="list__item list__item--reviewer">
+                                    <li class="list__item list__item--has-reviewed ">
                                         <span class="list__item--reviewer-name">
-                                            {{ reviewer }}
+                                            {{ reviewer|truncatechars:10 }}
                                             {% if reviewer.role %}{% image reviewer.role.icon max-12x12 %}{% endif %}
                                         </span>
                                         <span class="list__item list__item--reviewer-outcome">{{ reviewer.review.get_recommendation_display }}</span>
