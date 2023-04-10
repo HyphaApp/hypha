@@ -141,7 +141,7 @@
                     {% trans "Upload new" %}
                 </a>
                 <div class="modal" id="upload-contracting-doc">
-                    <h4 class="modal__project-header-bar">{% trans "Upload a new document" %}</h4>
+                    <h4 class="modal__project-header-bar">{% trans "Upload contracting documents" %}</h4>
                     <p></p>
                     {% trans "Submit" as submit %}
                     {% include 'funds/includes/delegated_form_base.html' with form=contract_document_form value=submit %}
@@ -184,7 +184,7 @@
                             {% csrf_token %}
                             {{ document.get_remove_form }}
                             <input
-                                class="button button--link"
+                                class="button button--link button--remove"
                                 id="{{ remove_contract_document_form.name }}-submit"
                                 name="{{ form_prefix }}{{ remove_contract_document_form.name }}"
                                 type="submit"

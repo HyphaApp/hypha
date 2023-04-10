@@ -137,17 +137,6 @@
             </div>
             {% if user.is_apply_staff %}
             <div class="docs-block__row-inner">
-                {% if select_document_form.should_show %}
-                    <a
-                        data-fancybox
-                        data-src="#copy-supporting-doc"
-                        class="docs-block__link"
-                        href="#">
-                        {% trans "Choose file" %}
-                    </a>
-                {% else %}
-                    <span class="docs-block__link is-disabled" data-tooltip="No files on submission">{% trans "Choose file" %}</span>
-                {% endif %}
                 <a data-fancybox data-src="#upload-supporting-doc" class="docs-block__icon-link" href="#">
                     <svg class="icon icon--arrow-up"><use xlink:href="#arrow-up"></use></svg>
                     {% trans "Upload new" %}
@@ -190,7 +179,7 @@
                             {% csrf_token %}
                             {{ document.get_remove_form }}
                             <input
-                                class="button button--link"
+                                class="button button--link button--remove"
                                 id="{{ remove_document_form.name }}-submit"
                                 name="{{ form_prefix }}{{ remove_document_form.name }}"
                                 type="submit"
@@ -217,7 +206,7 @@
 </div>
 
 <div class="modal" id="upload-supporting-doc">
-    <h4 class="modal__project-header-bar">{% trans "Upload a new document" %}</h4>
+    <h4 class="modal__project-header-bar">{% trans "Upload supporting documents" %}</h4>
     <p></p>
     {% trans "Submit" as submit %}
     {% include 'funds/includes/delegated_form_base.html' with form=document_form value=submit %}
