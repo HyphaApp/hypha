@@ -173,7 +173,8 @@
                             <svg class="icon icon--project-eye"><use xlink:href="#eye"></use></svg>
                             {% trans "View" %}
                         </a>
-                        {% if user.is_apply_staff %}
+                        {% user_can_remove_supporting_documents object user as can_remove_supporting_doc %}
+                        {% if can_remove_supporting_doc %}
                         <form method="POST" id="{{ remove_document_form.name }}" class="docs-block__icon-link">
                             <svg class="icon icon--delete"><use xlink:href="#delete"></use></svg>
                             {% csrf_token %}
@@ -215,7 +216,7 @@
 
 {% if can_send_to_approve %}
 <div class="modal" id="send-for-approval">
-    <h4 class="modal__project-header-bar">{% trans "Request Approval" %}</h4>
+    <h4 class="modal__project-header-bar">{% trans "Submit for Approval" %}</h4>
 
     {% if remaining_document_categories %}
         <h5>{% trans "Are you sure you're ready to submit?" %}</h5>
@@ -229,11 +230,12 @@
         </ul>
         {% trans "Submit anyway" as submit %}
     {% else %}
-        {% trans "Request" as submit %}
+        {% trans "Submit" as submit %}
     {% endif %}
     {% if project_settings.paf_reviewers_roles.all %}
         <p> <strong> {% trans "Please select approvers for PAF in " %} {% if project_settings.paf_approval_sequential %} {% trans "sequential order" %} {% else %}{% trans "parallel order" %}{% endif %}</strong></p>
         <p>{% trans "(please note that in "%}{% if project_settings.paf_approval_sequential %}{%trans "sequential order, approvers will approve PAF one after the other)"%}{% else %}{% trans "parallel order, approvers can approve PAF anytime)" %}{% endif %}</p>
+        <br>
         {% include 'funds/includes/delegated_form_base.html' with form=request_approval_form value=submit %}
     {% else %}
         <p>{% trans "No PAF Reviewer Roles created yet, please create these in " %}

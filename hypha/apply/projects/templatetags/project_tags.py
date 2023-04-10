@@ -138,3 +138,10 @@ def allow_collapsible_header(project, header_type):
     if header_type == 'contracting_documents' and project.status not in [COMMITTED, WAITING_FOR_APPROVAL, CONTRACTING]:
         return True
     return False
+
+
+@register.simple_tag
+def user_can_remove_supporting_documents(project, user):
+    if user.is_apply_staff and project.status == COMMITTED:
+        return True
+    return False
