@@ -52,6 +52,7 @@ class EmailAdapter(AdapterBase):
         MESSAGES.UPDATED_VENDOR: 'handle_vendor_updated',
         MESSAGES.SENT_TO_COMPLIANCE: 'messages/email/sent_to_compliance.html',
         MESSAGES.SEND_FOR_APPROVAL: 'messages/email/paf_for_approval.html',
+        MESSAGES.REQUEST_PROJECT_CHANGE: 'messages/email/project_request_change.html',
         MESSAGES.APPROVE_PAF: 'messages/email/paf_for_approval.html',
         MESSAGES.UPDATE_INVOICE: 'handle_invoice_updated',
         MESSAGES.UPDATE_INVOICE_STATUS: 'handle_invoice_status_updated',
@@ -93,6 +94,8 @@ class EmailAdapter(AdapterBase):
                     subject = _('Project is ready for invoicing: {source.title}').format(source=source)
                 else:
                     subject = _('Project status has changed to {source.status}: {source.title}').format(source=source)
+            elif message_type == MESSAGES.REQUEST_PROJECT_CHANGE:
+                subject = _("Project has been rejected, please update and resubmit")
             else:
                 try:
                     subject = source.page.specific.subject or _(
@@ -260,6 +263,9 @@ class EmailAdapter(AdapterBase):
                 if next_paf_approval:
                     return [next_paf_approval.user.email]
             return source.paf_approvals.filter(approved=False).values_list('user__email', flat=True)
+
+        if message_type == MESSAGES.REQUEST_PROJECT_CHANGE:
+            return [source.lead.email]
 
         if message_type == MESSAGES.SENT_TO_COMPLIANCE:
             return get_compliance_email(target_user_gps=[CONTRACTING_GROUP_NAME, FINANCE_GROUP_NAME, STAFF_GROUP_NAME])

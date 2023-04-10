@@ -455,7 +455,7 @@ class UploadContractDocumentView(DelegatedViewMixin, CreateView):
 
 # PROJECT VIEW
 
-@method_decorator(staff_or_finance_or_contracting_required, name='dispatch')
+@method_decorator(login_required, name='dispatch')
 class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
     form_class = ChangePAFStatusForm
     context_name = 'change_paf_status'
