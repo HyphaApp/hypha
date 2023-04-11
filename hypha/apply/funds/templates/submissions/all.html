@@ -200,6 +200,11 @@
             <nav x-show="!showSelectedSubmissions"
                 class="menu-filters flex flex-wrap flex-row gap:2 md:gap-5 items-center"
             >
+                <div id="filterange" aria-label="Filter by date range" style="cursor: pointer; padding: 5px 10px;">
+                    {% heroicon_outline "calendar-days" size=18 class="inline mr-1" %}
+                    <span></span> <i class="fa fa-caret-down"></i>
+                </div>
+
                 {% dropdown_menu title="Status" heading="Filter by current status" enable_search=True search_field_id="status-filter-field" %}
                     <ul
                         class="flex flex-col overflow-scroll max-h-80 text-gray-700 dark:text-gray-200"
@@ -425,7 +430,11 @@
             {% endblock %}
         </div> {% endcomment %}
     </section>
+{% endspaceless %}{% endblock content %}
+{% block extra_js %}
     <script>
+        // Dropdown Filter Search
+        // ---------------------------------------------
         function liveSearch(event) {
             // Locate the card elements
             let cards = document.querySelectorAll(`[data-filter-for=${event.target.id}]`)
@@ -449,6 +458,33 @@
                 element.addEventListener("keyup", liveSearch);
             }
         });
-    </script>
 
-{% endspaceless %}{% endblock content %}
+
+        // Date Range Picker
+        // ---------------------------------------------
+        htmx.onLoad(function() {
+            var start = moment().subtract(29, 'days');
+            var end = moment();
+
+            function cb(start, end) {
+                $('#filterange span').html(start.format('MMM D, YYYY') + ' - ' + end.format('MMM D, YYYY'));
+            }
+
+            $('#filterange').daterangepicker({
+                startDate: start,
+                endDate: end,
+                ranges: {
+                    'Today': [moment(), moment()],
+                    'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                    'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                    'This Month': [moment().startOf('month'), moment().endOf('month')],
+                    'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                }
+            }, cb);
+
+            cb(start, end);
+
+        });
+    </script>
+{% endblock %}
