@@ -91,7 +91,7 @@
                     {% if can_upload_contract and user.is_contracting %}
                     <div class="docs-block__row-inner docs-block__row-inner__contract-upload-row">
                         <a data-fancybox class="docs-block__icon-link" style="padding:5px" href="#" data-src="#upload-contract">
-                            <svg class="icon icon--arrow-up"><use xlink:href="#arrow-up"></use></svg>
+                            <svg class="icon icon--arrow-up-short-bar"><use xlink:href="#arrow-up-short-bar"></use></svg>
                             {% if not contract %}
                                 {% trans "Upload" %}
                             {% elif not contract.approver %}
@@ -111,7 +111,7 @@
                     {% if can_upload_contract and user.is_applicant %}
                     <div class="docs-block__row-inner docs-block__row-inner__contract-upload-row">
                         <a data-fancybox class="docs-block__icon-link" style="padding:5px" href="#" data-src="#upload-contract">
-                            <svg class="icon icon--arrow-up"><use xlink:href="#arrow-up"></use></svg>
+                            <svg class="icon icon--arrow-up-short-bar"><use xlink:href="#arrow-up-short-bar"></use></svg>
                             {% if not contract.signed_by_applicant %}
                                 {% trans "Upload" %}
                             {% elif not contract.approver %}
@@ -137,7 +137,7 @@
             {% if can_update_documents %}
             <div class="docs-block__row-inner">
                 <a data-fancybox data-src="#upload-contracting-doc" class="docs-block__icon-link" href="#">
-                    <svg class="icon icon--arrow-up"><use xlink:href="#arrow-up"></use></svg>
+                    <svg class="icon icon--arrow-up-short-bar"><use xlink:href="#arrow-up-short-bar"></use></svg>
                     {% trans "Upload new" %}
                 </a>
                 <div class="modal" id="upload-contracting-doc">
@@ -180,7 +180,7 @@
                         </a>
                         {% if can_update_documents %}
                         <form method="POST" id="{{ remove_contract_document_form.name }}" class="docs-block__icon-link">
-                            <svg class="icon icon--delete"><use xlink:href="#delete"></use></svg>
+                            <svg class="icon icon--delete" style="margin-left:0; margin-right:2px"><use xlink:href="#delete"></use></svg>
                             {% csrf_token %}
                             {{ document.get_remove_form }}
                             <input

@@ -141,9 +141,17 @@
         fill: $color--light-blue;
     }
 
+    &--arrow-up-short-bar {
+        position: relative;
+        align-self: center;
+        height: 1.4em;
+        margin-right: 2px;
+        fill: $color--light-blue;
+    }
+
     &--project-pen {
         width: 12px;
-        margin-right: 5px;
+        margin-right: 3px;
         fill: $color--light-blue;
     }
 
@@ -196,6 +204,7 @@
         width: 18px;
         height: 18px;
         cursor: pointer;
+        margin-right: 3px;
         vertical-align: middle;
     }
 }
