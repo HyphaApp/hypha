@@ -1,4 +1,4 @@
-In 2021, Radically Open Security carried out a penetration test for the Hypha web app and its user roles. This test resulted in 1 elevated, 5 moderate and 13 low-severity issues. This document outlines the details of the findings and their implemented solutions. Read the full report [here](). 
+In 2021, Radically Open Security carried out a penetration test for the Hypha web app and its user roles. This test resulted in 1 elevated, 5 moderate and 13 low-severity issues. This document outlines the details of the findings and their implemented solutions.
 
 #### Elevated Threat Level Issues 
 
@@ -33,18 +33,18 @@ encrypted data and decrypt it.
 
 5. The application incorrectly validates input that can affect the control flow or data flow of a program
     - Allowing dangerous input could lead to XSS
-> Update: Resolved with PR [#2508](https://github.com/HyphaApp/hypha/pull/2508 ) using invalid elements attribute of tinymce to validate input. 
+> Update: Resolved with PR [#2508](https://github.com/HyphaApp/hypha/pull/2508 ) using invalid elements attribute of TinyMCE to validate input. 
 
 
 #### Low Threat Level Issues
 
 1. Obsoleted CBC ciphers
     - TLS misconfiguration - `apply.opentech.fund` are configured to support cipher block chaining encryption (CBC) 
-> Status: at the time of the report, unresolved 
+> Status: At the time of the report, unresolved.
 
 2. Open redirect
     - Subscribe newsletter is vulnerable to open redirection.
-> Recommendation: Do not use user input for URLs. If dynamic urls are requires, use whitelisting. 
+> Recommendation: Do not use user input for URLs. If dynamic URLs are required, use whitelisting. 
 
 3. Insecure password reset 
     - The password reset functionality is by default set to 8 days and the reset token remains the same until it has been changed. The link does change after the password (including the same password) has been reset. 
@@ -63,7 +63,7 @@ encrypted data and decrypt it.
         - `http://apply.hypha.test:8090/admin/cache/`
         - `http://apply.hypha.test:8090/admin/purge/`
 
-7. XSS in Used By
+7. XSS in `Used By`
     - The `Used By` field incorrectly validates input that results in XSS. This XSS can only be created and triggered by high-privileged users (staff and admin), which makes it low impact. However it is recommended to not allow XSS in the first place, since a successful attack could lead to session hijack, credential stealing, or infecting systems with malware.  
 
 
@@ -81,12 +81,12 @@ encrypted data and decrypt it.
 
 
 11. Django `SECRET_KEY` not random 
-    - SECRET_KEY is hardcoded and using a default value. The secret key is used for all sessions if you are using any other session backend than `django.contrib.sessions.backends.cache`, or are using the default `get_session_auth_hash()`, all messages if you are using `CookieStorage` or `FallbackStorage`, all `PasswordResetView` tokens, and any usage of cryptographic signing, unless a different key is provided.
+    - `SECRET_KEY` is hardcoded and using a default value. The secret key is used for all sessions if you are using any other session backend than `django.contrib.sessions.backends.cache`, or are using the default `get_session_auth_hash()`, all messages if you are using `CookieStorage` or `FallbackStorage`, all `PasswordResetView` tokens, and any usage of cryptographic signing, unless a different key is provided.
 > Recommendation: Automatically generate Strong Random Secret key instead of using a static key.
 
 
 12. Arbitrary document file upload 
-    - No restrictions configured on the document file upload functionality. .exe files were successfully uploaded via the document upload functionality. 
+    - No restrictions configured on the document file upload functionality. `.exe` files were successfully uploaded via the document upload functionality. 
 > Recommendation: Verify all upload functionality. 
 
 

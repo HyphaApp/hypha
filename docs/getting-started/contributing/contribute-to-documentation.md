@@ -17,7 +17,7 @@ This project consists of several distinct documentation types with specific purp
 ### Developer Tutorials
 
 Provides step-by-step instructions on how to set up a local instance of Hypha.
-> Best practices: Write technical documentation with a new developer in mind. Create a quickstart doc wherever possible. What is the bare minimum information that a user needs to get started with the feature that you are documenting? Start there. 
+> Write technical documentation with a new developer in mind. Create a quickstart doc wherever possible. What is the bare minimum information that a user needs to get started with the feature that you are documenting? Start there. 
 
 ### User Guides
 
