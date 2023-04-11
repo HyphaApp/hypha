@@ -44,7 +44,7 @@
         &--has-reviewed {
             display: grid;
             justify-content: space-between;
-            grid-template-columns: 40% 40% 20%;
+            grid-template-columns: 40% 30% 20%;
         }
 
         &--reviewer-name {
@@ -52,8 +52,8 @@
             overflow: hidden;
             font-weight: $weight--bold;
             text-overflow: ellipsis;
-            display: flex;
             align-items: center;
+            white-space: nowrap;
 
             > img {
                 margin-left: 10px;
