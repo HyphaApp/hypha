@@ -30,6 +30,7 @@ from .project import (
     UploadContractView,
     UploadDocumentView,
 )
+from .project_partials import partial_project_activities
 from .report import (
     ReportDetailView,
     ReportFrequencyUpdate,
@@ -41,6 +42,7 @@ from .report import (
 from .vendor import CreateVendorView, VendorDetailView, VendorPrivateMediaView
 
 __all__ = [
+    'partial_project_activities',
     'ChangeInvoiceStatusView',
     'SendForApprovalView',
     'UploadDocumentView',
