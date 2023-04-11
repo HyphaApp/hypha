@@ -500,7 +500,8 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
                              extra_tags=PROJECT_ACTION_MESSAGE_TAG)
         elif paf_status == APPROVE:
             paf_approval.approved = True
-            paf_approval.save(update_fields=['approved'])
+            paf_approval.approved_at = timezone.now()
+            paf_approval.save(update_fields=['approved', 'approved_at'])
             project_settings = ProjectSettings.for_request(self.request)
             if project_settings.paf_approval_sequential:
                 # notify next approver

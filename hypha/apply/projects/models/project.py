@@ -502,6 +502,7 @@ class PAFApprovals(models.Model):
     approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField()
+    approved_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         unique_together = ['project', 'paf_reviewer_role']
