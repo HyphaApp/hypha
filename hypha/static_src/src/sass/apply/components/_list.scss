@@ -49,11 +49,7 @@
 
         &--reviewer-name {
             max-width: 190px;
-            overflow: hidden;
             font-weight: $weight--bold;
-            text-overflow: ellipsis;
-            align-items: center;
-            white-space: nowrap;
 
             > img {
                 margin-left: 10px;

@@ -23,7 +23,7 @@
                         <th><h6 class="heading heading--normal heading--no-margin">{% trans "Screening decisions" %}</h6></th>
                         <th>
                             <h6 class="heading heading--normal heading--no-margin">{% trans "Review outcomes" %}
-                            <span class="list__item--reviewer-name list__item--average_score">(Avg. score: 
+                            <span class="list__item--reviewer-name truncate list__item--average_score">(Avg. score: 
                             {% if submission.review_score_avg %}
                                 {{ submission.review_score_avg|floatformat:"1" }})
                             {% else %}
@@ -51,7 +51,7 @@
                             <ul class="list list--no-margin">
                                 {% for reviewer in submission.has_reviewed %}
                                     <li class="list__item list__item--has-reviewed ">
-                                        <span class="list__item--reviewer-name">
+                                        <span class="list__item--reviewer-name truncate">
                                             {{ reviewer }}
                                             {% if reviewer.role %}{% image reviewer.role.icon max-12x12 %}{% endif %}
                                         </span>
