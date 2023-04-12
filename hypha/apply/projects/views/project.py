@@ -672,6 +672,7 @@ class AdminProjectDetailView(
         context['project_settings'] = project_settings
         context['paf_approvals'] = PAFApprovals.objects.filter(project=self.object)
         context['remaining_document_categories'] = list(self.object.get_missing_document_categories())
+        context['remaining_contract_document_categories'] = list(self.object.get_missing_contract_document_categories())
 
         if self.object.is_in_progress and not self.object.report_config.disable_reporting:
             # Current due report can be none for ONE_TIME,

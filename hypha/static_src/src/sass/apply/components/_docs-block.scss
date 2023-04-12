@@ -136,12 +136,8 @@
 
     &__document-list {
         width: 100%;
-        margin-top: 1.5rem;
+        margin-top: 1rem;
         padding-left: 0;
-
-        @include media-query(tablet-landscape) {
-            padding-left: 3rem;
-        }
     }
 
     &__document {
@@ -149,8 +145,6 @@
         align-items: center;
         justify-content: space-between;
         padding-bottom: 1rem;
-        margin: 1rem 0;
-        border-bottom: 1px solid $color--light-mid-grey;
         flex-wrap: wrap;
 
         &:last-child {

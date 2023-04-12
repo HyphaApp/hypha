@@ -5,18 +5,6 @@
     <div class="docs-block__header" {% if collapsible_header %} x-on:click="collapsed = ! collapsed" {% endif %}>
         <div class="docs-block__heading" >{% trans "Contracting documents" %}</div>
         {% user_can_upload_contract object request.user as can_upload_contract %}
-        {% if can_upload_contract and user.is_contracting and not user.is_apply_staff %}
-            <a data-fancybox
-            data-src="#upload-contract"
-            class="button button--project-action"
-            href="#">
-                {% if not contract %}
-                    {% trans "Upload contract" %}
-                {% elif not contract.approver %}
-                    {% trans "Reupload contract" %}
-                {% endif %}
-            </a>
-        {% endif %}
         {% user_can_submit_contract object user contract as can_submit_contract %}
         {% if can_submit_contract %}
             <a data-fancybox
@@ -52,8 +40,7 @@
         <li class="docs-block__row">
             <div class="docs-block__row-inner">
                 <svg class="icon docs-block__icon {% if object.submitted_contract_documents %}is-complete{% endif %}"><use xlink:href="#tick"></use></svg>
-                <p class="docs-block__title">{% trans "Contract" %}
-                    <i>{% if contract.updated_at %}({{ contract.updated_at }}){% endif %}</i></p>
+                <p class="docs-block__title">{% trans "Contract" %}</p>
             </div>
             {% if contract_uploaded %}
             <div class="docs-block__row-inner">
@@ -62,8 +49,19 @@
                         {% trans "View" %}
                 </a>
             </div>
+            {% if contract.updated_at %}
+            <ul class="docs-block__document-list" style="margin-top:0;">
+                <li class="docs-block__document">
+                    <div class="docs-block__row-inner">
+                    </div>
+                    <div class="docs-block__row-inner">
+                                <i>{{ contract.updated_at }}</i>
+                    </div>
+                </li>
+            </ul>
+            {% endif %}
             {% if not is_contract_approved %}
-            <ul class="docs-block__document-list">
+            <ul class="docs-block__document-list" style="margin-top:0;">
                 <li class="docs-block__document">
                     <div class="docs-block__row-inner">
                     </div>
@@ -90,8 +88,8 @@
                     </div>
                     {% if can_upload_contract and user.is_contracting %}
                     <div class="docs-block__row-inner docs-block__row-inner__contract-upload-row">
-                        <a data-fancybox class="docs-block__icon-link" style="padding:5px" href="#" data-src="#upload-contract">
-                            <svg class="icon icon--arrow-up-short-bar"><use xlink:href="#arrow-up-short-bar"></use></svg>
+                        <a data-fancybox class="docs-block__icon-link button--project-action" style="padding:5px" href="#" data-src="#upload-contract">
+                            <svg class="icon icon--arrow-up-short-bar icon--arrow-up-short-bar--contract-upload"><use xlink:href="#arrow-up-short-bar"></use></svg>
                             {% if not contract %}
                                 {% trans "Upload" %}
                             {% elif not contract.approver %}
@@ -110,8 +108,8 @@
                     </div>
                     {% if can_upload_contract and user.is_applicant %}
                     <div class="docs-block__row-inner docs-block__row-inner__contract-upload-row">
-                        <a data-fancybox class="docs-block__icon-link" style="padding:5px" href="#" data-src="#upload-contract">
-                            <svg class="icon icon--arrow-up-short-bar"><use xlink:href="#arrow-up-short-bar"></use></svg>
+                        <a data-fancybox class="docs-block__icon-link button--project-action" style="padding:5px" href="#" data-src="#upload-contract">
+                            <svg class="icon icon--arrow-up-short-bar icon--arrow-up-short-bar--contract-upload"><use xlink:href="#arrow-up-short-bar"></use></svg>
                             {% if not contract.signed_by_applicant %}
                                 {% trans "Upload" %}
                             {% elif not contract.approver %}
@@ -136,7 +134,7 @@
             {% can_update_contracting_documents object user as can_update_documents %}
             {% if can_update_documents %}
             <div class="docs-block__row-inner">
-                <a data-fancybox data-src="#upload-contracting-doc" class="docs-block__icon-link" href="#">
+                <a data-fancybox data-src="#upload-contracting-doc" class="docs-block__icon-link" style="margin-right:0;" href="#">
                     <svg class="icon icon--arrow-up-short-bar"><use xlink:href="#arrow-up-short-bar"></use></svg>
                     {% trans "Upload new" %}
                 </a>
@@ -149,7 +147,7 @@
             </div>
             {% endif %}
             {% if remaining_contract_document_categories %}
-            <ul class="docs-block__document-list">
+            <ul class="docs-block__document-list" style="padding-left:2.25rem;">
                 <li class="docs-block__document">
                     <div class="docs-block__document-inner">
                         <p>
@@ -166,7 +164,7 @@
             {% endif %}
 
             {% if object.contract_packet_files.exists %}
-            <ul class="docs-block__document-list">
+            <ul class="docs-block__document-list" style="padding-left:2.25rem;">
                 {% for document in object.contract_packet_files.all %}
                 <li class="docs-block__document">
                     <div class="docs-block__document-inner">

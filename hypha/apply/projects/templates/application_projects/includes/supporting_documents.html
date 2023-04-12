@@ -112,7 +112,7 @@
             </div>
             {% has_project_sow_form object as project_sow %}
             {% if project_sow and object.user_has_updated_details and not user.is_applicant %}
-                <ul class="docs-block__document-list">
+                <ul class="docs-block__document-list" style="padding-left:2.25rem;">
                     <li class="docs-block__document">
                         <div class="docs-block__document-inner">
                             <p class="docs-block__document-info">{% trans "Scope Of Work (SOW)" %}</p>
@@ -137,14 +137,14 @@
             </div>
             {% if user.is_apply_staff %}
             <div class="docs-block__row-inner">
-                <a data-fancybox data-src="#upload-supporting-doc" class="docs-block__icon-link" href="#">
+                <a data-fancybox data-src="#upload-supporting-doc" class="docs-block__icon-link" style="margin-right:0;" href="#">
                     <svg class="icon icon--arrow-up-short-bar"><use xlink:href="#arrow-up-short-bar"></use></svg>
                     {% trans "Upload new" %}
                 </a>
             </div>
             {% endif %}
             {% if remaining_document_categories %}
-            <ul class="docs-block__document-list">
+            <ul class="docs-block__document-list" style="padding-left:2.25rem;">
                 <li class="docs-block__document">
                     <div class="docs-block__document-inner">
                         <p>
@@ -161,7 +161,7 @@
             {% endif %}
 
             {% if object.packet_files.exists %}
-            <ul class="docs-block__document-list">
+            <ul class="docs-block__document-list" style="padding-left:2.25rem;">
                 {% for document in object.packet_files.all %}
                 <li class="docs-block__document">
                     <div class="docs-block__document-inner">

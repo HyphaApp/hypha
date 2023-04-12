@@ -147,6 +147,10 @@
         height: 1.4em;
         margin-right: 2px;
         fill: $color--light-blue;
+
+        &--contract-upload {
+            stroke: $color--white;
+        }
     }
 
     &--project-pen {
