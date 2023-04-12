@@ -68,7 +68,7 @@
                     <div class="docs-block__row-inner">
                         <a class="docs-block__icon-link" href="#communications" target="_blank">
                             <svg class="icon icon--info-circle"><use xlink:href="#info-circle-fill"></use></svg>
-                                <span>{% trans "Corrections/amendments?" %}</span>
+                                <span>{% trans "Need corrections/amendments to contract?" %}</span>
                         </a>
                     </div>
                 </li>
@@ -103,7 +103,7 @@
                 <li class="docs-block__document">
                     <div class="docs-block__row-inner">
                         <svg class="icon docs-block__icon {% if contract_reuploaded %}is-complete{% endif %}"><use xlink:href="#tick"></use></svg>
-                        <p class="docs-block__title">{% trans "CounterSigned contract by Applicant/Contractor " %}
+                        <p class="docs-block__title">{% trans "Countersigned contract by Applicant/Contractor " %}
                         <i>{% if contract.uploaded_by_applicant_at %}({{ contract.uploaded_by_applicant_at }}){% endif %}</i></p>
                     </div>
                     {% if can_upload_contract and user.is_applicant %}
@@ -205,10 +205,10 @@
 
 {% if can_upload_contract %}
 <div class="modal" id="upload-contract">
-    {% if not user.is_apply_staff %}
-        <h4 class="modal__project-header-bar">{% trans "Upload Signed Contract" %}</h4>
+    {% if user.is_applicant %}
+        <h4 class="modal__project-header-bar">{% trans "Upload Countersigned Contract" %}</h4>
     {% else %}
-        <h4 class="modal__project-header-bar">{% trans "Upload Contract" %}</h4>
+        <h4 class="modal__project-header-bar">{% trans "Upload Signed Contract" %}</h4>
     {% endif %}
     <p><i><b>{% trans "The signed contract will be uploaded once you submit." %}</b></i></p>
     <br>

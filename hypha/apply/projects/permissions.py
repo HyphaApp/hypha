@@ -44,7 +44,7 @@ def can_upload_contract(user, project, **kwargs):
         return False, 'Login Required'
 
     if user == project.user and project.contracts.exists():
-        return True, 'Project Owner can only re-upload contract with counter-sign'
+        return True, 'Project Owner can only re-upload contract with countersigned'
 
     if user.is_contracting:
         return True, 'Contracting team can upload the contract'

@@ -43,7 +43,7 @@ def user_next_step_on_project(project, user):
             if not contract.signed_by_applicant:
                 if user.is_applicant:
                     return "Awaiting contract documents to be submitted by applicant."
-                return "Awaiting counter-signed contract from Applicant"
+                return "Awaiting countersigned contract from Applicant"
             elif not project.submitted_contract_documents:
                 return "Awaiting contract documents submission from Applicant"
             else:
@@ -51,8 +51,10 @@ def user_next_step_on_project(project, user):
                     return "Review the contract for all relevant details and approve."
                 return "Awaiting contract approval from Staff"
     elif project.status == IN_PROGRESS:
-        if user.is_applicant or user.is_apply_staff:
+        if user.is_applicant:
             return "Add invoices"
+        elif user.is_apply_staff:
+            return "Review invoice and take action"
     return False
 
 

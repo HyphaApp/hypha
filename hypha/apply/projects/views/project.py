@@ -379,7 +379,7 @@ class UploadContractView(DelegatedViewMixin, CreateView):
         if self.request.user == project.user:
             form.instance.signed_by_applicant = True
             form.instance.uploaded_by_applicant_at = timezone.now()
-            messages.success(self.request, _("CounterSigned contract uploaded"), extra_tags=PROJECT_ACTION_MESSAGE_TAG)
+            messages.success(self.request, _("Countersigned contract uploaded"), extra_tags=PROJECT_ACTION_MESSAGE_TAG)
         elif self.request.user.is_contracting:
             form.instance.uploaded_by_contractor_at = timezone.now()
             messages.success(self.request, _("Signed contract uploaded"), extra_tags=PROJECT_ACTION_MESSAGE_TAG)
