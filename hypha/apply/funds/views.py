@@ -1,7 +1,5 @@
-import csv
 from copy import copy
 from datetime import timedelta
-from io import StringIO
 from typing import Generator, Tuple
 
 import django_tables2 as tables
@@ -26,7 +24,6 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.decorators import method_decorator
-from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 from django.views import View
@@ -130,6 +127,7 @@ from .tables import (
     UserFlaggedSubmissionsTable,
 )
 from .utils import (
+    export_submissions_to_csv,
     get_or_create_default_screening_statuses,
 )
 from .workflow import (
@@ -234,37 +232,11 @@ class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
         if "export" in request.GET and (
             self.request.user.is_staff or self.request.user.is_apply_staff
         ):
-            csv_data = self.export_applications(self.object_list)
-            return csv_data
+            csv_data = export_submissions_to_csv(self.object_list)
+            response = HttpResponse(csv_data.readlines(), content_type="text/csv")
+            response["Content-Disposition"] = "attachment; filename=submissions.csv"
+            return response
         return disp
-
-    def export_applications(self, submissions_list):
-        csv_stream = StringIO()
-        header_row = []
-        index = 0
-        data_list = []
-        for submission in submissions_list:
-            values = {}
-            for field_id in submission.question_text_field_ids:
-                question_field = submission.serialize(field_id)
-                field_name = question_field["question"]
-                field_value = question_field["answer"]
-                if field_name not in header_row:
-                    if field_id not in submission.named_blocks:
-                        header_row.append(field_name)
-                    else:
-                        header_row.insert(index, field_name)
-                        index = index + 1
-                values[field_name] = strip_tags(field_value)
-            data_list.append(values)
-        writer = csv.DictWriter(csv_stream, fieldnames=header_row, restval="")
-        writer.writeheader()
-        for data in data_list:
-            writer.writerow(data)
-        csv_stream.seek(0)
-        response = HttpResponse(csv_stream.readlines(), content_type="text/csv")
-        response["Content-Disposition"] = "inline; filename=" + "submissions.csv"
-        return response
 
 
 @method_decorator(staff_required, name="dispatch")
@@ -663,37 +635,6 @@ class SubmissionUserFlaggedView(UserPassesTestMixin, BaseAdminSubmissionsTable):
 
 @method_decorator(login_required, name="dispatch")
 class ExportSubmissionsByRound(UserPassesTestMixin, BaseAdminSubmissionsTable):
-    def export_submissions(self, round_id):
-        csv_stream = StringIO()
-        writer = csv.writer(csv_stream)
-        header_row, values = [], []
-        index = 0
-        check = False
-
-        for submission in ApplicationSubmission.objects.filter(round=round_id):
-            for field_id in submission.question_text_field_ids:
-                question_field = submission.serialize(field_id)
-                field_name = question_field["question"]
-                field_value = question_field["answer"]
-                if field_id not in submission.named_blocks:
-                    header_row.append(field_name) if not check else header_row
-                    values.append(field_value)
-                else:
-                    header_row.insert(index, field_name) if not check else header_row
-                    values.insert(index, field_value)
-                    index = index + 1
-
-            if not check:
-                writer.writerow(header_row)
-                check = True
-
-            writer.writerow(values)
-            values.clear()
-            index = 0
-
-        csv_stream.seek(0)
-        return csv_stream
-
     def get_queryset(self):
         try:
             self.obj = Page.objects.get(pk=self.kwargs.get("pk")).specific
@@ -706,9 +647,13 @@ class ExportSubmissionsByRound(UserPassesTestMixin, BaseAdminSubmissionsTable):
 
     def get(self, request, pk):
         self.get_queryset()
-        csv_data = self.export_submissions(pk)
+        csv_data = export_submissions_to_csv(
+            ApplicationSubmission.objects.filter(round=pk)
+        )
         response = HttpResponse(csv_data.readlines(), content_type="text/csv")
-        response["Content-Disposition"] = "inline; filename=" + str(self.obj) + ".csv"
+        response["Content-Disposition"] = (
+            "attachment; filename=" + str(self.obj) + ".csv"
+        )
         return response
 
     def test_func(self):
