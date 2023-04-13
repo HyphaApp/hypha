@@ -420,7 +420,7 @@ class ReviewDeleteView(UserPassesTestMixin, DeleteView):
 
     def test_func(self):
         review = self.get_object()
-        return self.request.user.has_perm('review.delete_review') or self.request.user == review.author
+        return self.request.user.has_perm('review.delete_review') or self.request.user == review.author.reviewer
 
     def delete(self, request, *args, **kwargs):
         review = self.get_object()
