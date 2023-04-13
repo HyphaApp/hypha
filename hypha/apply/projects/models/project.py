@@ -398,7 +398,6 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
                     'category': category,
                     'difference': difference,
                 }
-            return False
 
     @property
     def is_in_progress(self):

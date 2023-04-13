@@ -128,6 +128,7 @@
             {% endif %}
         </li>
 
+        {% if supporting_documents_configured %}
         <li class="docs-block__row">
             <div class="docs-block__row-inner">
                 <svg class="icon docs-block__icon{% if not remaining_document_categories %} is-complete{% endif %}">
@@ -195,6 +196,7 @@
             {% endif %}
 
         </li>
+        {% endif %}
     </ul>
 </div>
 
@@ -247,12 +249,13 @@
 
 {% if can_update_paf_approvers %}
 <div class="modal" id="update-paf-approvers">
-    <h4 class="modal__project-header-bar">{% trans "Update Approvers" %}</h4>
+    <h4 class="modal__project-header-bar">{% trans "View/Update Approvers" %}</h4>
 
     {% trans "Submit" as submit %}
     {% if project_settings.paf_reviewers_roles.all %}
-        <p> {% trans "Are you sure you want to update the approvers? The approvers will be notified via email." %} {% if project_settings.paf_approval_sequential %} {% trans "(Sequentially)" %} {% else %}{% trans "(Parallely)" %}{% endif %}</p>
-        {% include 'funds/includes/delegated_form_base.html' with form=update_approvers_form value=submit %}
+        <p> {% trans "Are you sure you want to update the approvers?" %} {% if project_settings.paf_approval_sequential %} {% trans "The uppermost active approver will be notified via email." %} {% else %}{% trans "All approvers will be notified via email." %}{% endif %}</p>
+    <br>
+    {% include 'funds/includes/delegated_form_base.html' with form=update_approvers_form value=submit %}
     {% else %}
         <p>{% trans "No PAF Reviewer Roles created yet, please create these in " %}
         <a href="{% project_settings_url project_settings %}" target="_blank">{% trans " project settings" %}</a>

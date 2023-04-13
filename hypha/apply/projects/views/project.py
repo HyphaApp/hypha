@@ -78,6 +78,8 @@ from ..models.project import (
     WAITING_FOR_APPROVAL,
     Contract,
     ContractPacketFile,
+    ContractDocumentCategory,
+    DocumentCategory,
     PacketFile,
     PAFApprovals,
     Project,
@@ -640,6 +642,8 @@ class BaseProjectDetailView(ReportingMixin, DetailView):
         context = super().get_context_data(**kwargs)
         context['statuses'] = PROJECT_STATUS_CHOICES
         context['current_status_index'] = [status for status, _ in PROJECT_STATUS_CHOICES].index(self.object.status)
+        context['supporting_documents_configured'] = True if DocumentCategory.objects.count() else False
+        context['contracting_documents_configured'] = True if ContractDocumentCategory.objects.count() else False
         return context
 
 
