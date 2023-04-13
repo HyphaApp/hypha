@@ -759,6 +759,9 @@ class ProjectPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
         if self.request.user == self.project.user:
             return True
 
+        if self.request.user.id in self.project.paf_approvals.filter(approved=False).values_list('user__id', flat=True):
+            return True
+
         return False
 
 
