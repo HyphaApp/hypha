@@ -354,6 +354,10 @@
         color: $color--primary;
     }
 
+    &--remove {
+        color: $color--tomato;
+    }
+
     &--tooltip-disabled {
         background-color: $color--button-disabled;
 

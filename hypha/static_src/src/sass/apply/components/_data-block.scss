@@ -181,12 +181,15 @@
         display: flex;
         align-items: center;
         margin-right: 1rem;
-        text-decoration: underline;
         color: $color--primary;
         word-break: normal;
 
         &:last-child {
             margin: 0;
+        }
+
+        &--remove {
+            color: $color--tomato;
         }
     }
 

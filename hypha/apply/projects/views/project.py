@@ -77,7 +77,9 @@ from ..models.project import (
     REQUEST_CHANGE,
     WAITING_FOR_APPROVAL,
     Contract,
+    ContractDocumentCategory,
     ContractPacketFile,
+    DocumentCategory,
     PacketFile,
     PAFApprovals,
     Project,
@@ -379,7 +381,7 @@ class UploadContractView(DelegatedViewMixin, CreateView):
         if self.request.user == project.user:
             form.instance.signed_by_applicant = True
             form.instance.uploaded_by_applicant_at = timezone.now()
-            messages.success(self.request, _("CounterSigned contract uploaded"), extra_tags=PROJECT_ACTION_MESSAGE_TAG)
+            messages.success(self.request, _("Countersigned contract uploaded"), extra_tags=PROJECT_ACTION_MESSAGE_TAG)
         elif self.request.user.is_contracting:
             form.instance.uploaded_by_contractor_at = timezone.now()
             messages.success(self.request, _("Signed contract uploaded"), extra_tags=PROJECT_ACTION_MESSAGE_TAG)
@@ -455,7 +457,7 @@ class UploadContractDocumentView(DelegatedViewMixin, CreateView):
 
 # PROJECT VIEW
 
-@method_decorator(staff_or_finance_or_contracting_required, name='dispatch')
+@method_decorator(login_required, name='dispatch')
 class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
     form_class = ChangePAFStatusForm
     context_name = 'change_paf_status'
@@ -500,7 +502,8 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
                              extra_tags=PROJECT_ACTION_MESSAGE_TAG)
         elif paf_status == APPROVE:
             paf_approval.approved = True
-            paf_approval.save(update_fields=['approved'])
+            paf_approval.approved_at = timezone.now()
+            paf_approval.save(update_fields=['approved', 'approved_at'])
             project_settings = ProjectSettings.for_request(self.request)
             if project_settings.paf_approval_sequential:
                 # notify next approver
@@ -639,6 +642,8 @@ class BaseProjectDetailView(ReportingMixin, DetailView):
         context = super().get_context_data(**kwargs)
         context['statuses'] = PROJECT_STATUS_CHOICES
         context['current_status_index'] = [status for status, _ in PROJECT_STATUS_CHOICES].index(self.object.status)
+        context['supporting_documents_configured'] = True if DocumentCategory.objects.count() else False
+        context['contracting_documents_configured'] = True if ContractDocumentCategory.objects.count() else False
         return context
 
 
@@ -671,6 +676,7 @@ class AdminProjectDetailView(
         context['project_settings'] = project_settings
         context['paf_approvals'] = PAFApprovals.objects.filter(project=self.object)
         context['remaining_document_categories'] = list(self.object.get_missing_document_categories())
+        context['remaining_contract_document_categories'] = list(self.object.get_missing_contract_document_categories())
 
         if self.object.is_in_progress and not self.object.report_config.disable_reporting:
             # Current due report can be none for ONE_TIME,

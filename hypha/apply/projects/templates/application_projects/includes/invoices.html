@@ -42,8 +42,8 @@
 
                         {% can_delete invoice user as user_can_delete_request %}
                         {% if user_can_delete_request %}
-                        <a class="data-block__action-icon-link" href="{% url 'apply:projects:invoice-delete' pk=invoice.project.pk invoice_pk=invoice.pk %}">
-                            <svg class="icon icon--delete"><use xlink:href="#delete"></use></svg>
+                        <a class="data-block__action-icon-link data-block__action-icon-link--remove" href="{% url 'apply:projects:invoice-delete' pk=invoice.project.pk invoice_pk=invoice.pk %}">
+                            <svg class="icon icon--delete" style="margin-left:0; margin-right:2px"><use xlink:href="#delete"></use></svg>
                             {% trans "Delete" %}
                         </a>
                         {% endif %}

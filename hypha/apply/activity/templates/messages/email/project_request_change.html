@@ -1,0 +1,12 @@
+{% extends "messages/email/base.html" %}
+
+{% load i18n %}
+{% block salutation %}{% endblock %}
+
+{% block content %}
+{% trans "A Project has been rejected by PAF reviewers, please update it accordingly and resubmit it to the reviewers." %}
+
+{% trans "Title" %}: {{ source.title }}
+{% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{% url 'apply:projects:detail' pk=source.pk %}
+
+{% endblock %}

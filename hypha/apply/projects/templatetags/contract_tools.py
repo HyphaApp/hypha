@@ -53,7 +53,7 @@ def user_can_upload_contract(project, user):
 def show_contract_upload_row(project, user):
     if project.status != CONTRACTING:
         return False
-    if (user.is_contracting or user == project.user) and not user.is_apply_staff:
+    if user.is_contracting or user == project.user or user.is_apply_staff:
         return True
     return False
 

@@ -55,10 +55,6 @@
                         <svg class="icon icon--project-eye"><use xlink:href="#eye"></use></svg>
                         {% trans "View" %}
                     </a>
-                    <a class="docs-block__icon-link" href="{% url "apply:submissions:download" pk=project.submission.pk %}">
-                        {% trans "Download" %}
-                        <svg class="icon icon--caret-down"><use xlink:href="#caret-down"></use></svg>
-                    </a>
                 {% endif %}
             </div>
         </li>
@@ -116,7 +112,7 @@
             </div>
             {% has_project_sow_form object as project_sow %}
             {% if project_sow and object.user_has_updated_details and not user.is_applicant %}
-                <ul class="docs-block__document-list">
+                <ul class="docs-block__document-list" style="padding-left:2.25rem;">
                     <li class="docs-block__document">
                         <div class="docs-block__document-inner">
                             <p class="docs-block__document-info">{% trans "Scope Of Work (SOW)" %}</p>
@@ -126,16 +122,13 @@
                                 <svg class="icon icon--project-eye"><use xlink:href="#eye"></use></svg>
                                 {% trans "View" %}
                             </a>
-                            <a class="docs-block__icon-link" href="{% url 'apply:projects:download-sow' pk=project.pk export_type='pdf' %}">
-                                {% trans "Download" %}
-                                <svg class="icon icon--caret-down"><use xlink:href="#caret-down"></use></svg>
-                            </a>
                         </div>
                     </li>
                 </ul>
             {% endif %}
         </li>
 
+        {% if supporting_documents_configured %}
         <li class="docs-block__row">
             <div class="docs-block__row-inner">
                 <svg class="icon docs-block__icon{% if not remaining_document_categories %} is-complete{% endif %}">
@@ -145,25 +138,14 @@
             </div>
             {% if user.is_apply_staff %}
             <div class="docs-block__row-inner">
-                {% if select_document_form.should_show %}
-                    <a
-                        data-fancybox
-                        data-src="#copy-supporting-doc"
-                        class="docs-block__link"
-                        href="#">
-                        {% trans "Choose file" %}
-                    </a>
-                {% else %}
-                    <span class="docs-block__link is-disabled" data-tooltip="No files on submission">{% trans "Choose file" %}</span>
-                {% endif %}
-                <a data-fancybox data-src="#upload-supporting-doc" class="docs-block__icon-link" href="#">
-                    <svg class="icon icon--arrow-up"><use xlink:href="#arrow-up"></use></svg>
+                <a data-fancybox data-src="#upload-supporting-doc" class="docs-block__icon-link" style="margin-right:0;" href="#">
+                    <svg class="icon icon--arrow-up-short-bar"><use xlink:href="#arrow-up-short-bar"></use></svg>
                     {% trans "Upload new" %}
                 </a>
             </div>
             {% endif %}
             {% if remaining_document_categories %}
-            <ul class="docs-block__document-list">
+            <ul class="docs-block__document-list" style="padding-left:2.25rem;">
                 <li class="docs-block__document">
                     <div class="docs-block__document-inner">
                         <p>
@@ -180,23 +162,26 @@
             {% endif %}
 
             {% if object.packet_files.exists %}
-            <ul class="docs-block__document-list">
+            <ul class="docs-block__document-list" style="padding-left:2.25rem;">
                 {% for document in object.packet_files.all %}
                 <li class="docs-block__document">
                     <div class="docs-block__document-inner">
                         <p class="docs-block__document-info">{{ document.category.name }}</p>
                         <p class="docs-block__document-info"><b>{{ document.title }}</b> - {{ document.created_at }}</p>
                     </div>
-                    <div class="docs-block__document-inner">
-                        <a class="docs-block__document-link" href="{% url 'apply:projects:document' pk=object.pk file_pk=document.pk %}" target="_blank">
-                            {% trans "Download" %}
+                    <div class="docs-block__row-inner">
+                        <a class="docs-block__icon-link" href="{% url 'apply:projects:document' pk=object.pk file_pk=document.pk %}" target="_blank">
+                            <svg class="icon icon--project-eye"><use xlink:href="#eye"></use></svg>
+                            {% trans "View" %}
                         </a>
-                        {% if user.is_apply_staff %}
-                        <form method="POST" id="{{ remove_document_form.name }}" class="docs-block__document-form">
+                        {% user_can_remove_supporting_documents object user as can_remove_supporting_doc %}
+                        {% if can_remove_supporting_doc %}
+                        <form method="POST" id="{{ remove_document_form.name }}" class="docs-block__icon-link">
+                            <svg class="icon icon--delete" style="margin-left:0; margin-right:2px"><use xlink:href="#delete"></use></svg>
                             {% csrf_token %}
                             {{ document.get_remove_form }}
                             <input
-                                class="button button--link"
+                                class="button button--link button--remove"
                                 id="{{ remove_document_form.name }}-submit"
                                 name="{{ form_prefix }}{{ remove_document_form.name }}"
                                 type="submit"
@@ -211,19 +196,20 @@
             {% endif %}
 
         </li>
+        {% endif %}
     </ul>
 </div>
 
 {% if user.is_apply_staff %}
 <div class="modal" id="copy-supporting-doc">
-    <h4 class="modal__header-bar">{% trans "Select a document" %}</h4>
+    <h4 class="modal__project-header-bar">{% trans "Select a document" %}</h4>
     {% url 'apply:projects:copy-documents' pk=object.pk as select_document_url %}
     {% trans "Copy" as copy %}
     {% include 'funds/includes/delegated_form_base.html' with form=select_document_form value=copy action=select_document_url %}
 </div>
 
 <div class="modal" id="upload-supporting-doc">
-    <h4 class="modal__header-bar">{% trans "Upload a new document" %}</h4>
+    <h4 class="modal__project-header-bar">{% trans "Upload supporting documents" %}</h4>
     <p></p>
     {% trans "Submit" as submit %}
     {% include 'funds/includes/delegated_form_base.html' with form=document_form value=submit %}
@@ -232,7 +218,7 @@
 
 {% if can_send_to_approve %}
 <div class="modal" id="send-for-approval">
-    <h4 class="modal__header-bar">{% trans "Request Approval" %}</h4>
+    <h4 class="modal__project-header-bar">{% trans "Submit for Approval" %}</h4>
 
     {% if remaining_document_categories %}
         <h5>{% trans "Are you sure you're ready to submit?" %}</h5>
@@ -246,11 +232,12 @@
         </ul>
         {% trans "Submit anyway" as submit %}
     {% else %}
-        {% trans "Request" as submit %}
+        {% trans "Submit" as submit %}
     {% endif %}
     {% if project_settings.paf_reviewers_roles.all %}
         <p> <strong> {% trans "Please select approvers for PAF in " %} {% if project_settings.paf_approval_sequential %} {% trans "sequential order" %} {% else %}{% trans "parallel order" %}{% endif %}</strong></p>
         <p>{% trans "(please note that in "%}{% if project_settings.paf_approval_sequential %}{%trans "sequential order, approvers will approve PAF one after the other)"%}{% else %}{% trans "parallel order, approvers can approve PAF anytime)" %}{% endif %}</p>
+        <br>
         {% include 'funds/includes/delegated_form_base.html' with form=request_approval_form value=submit %}
     {% else %}
         <p>{% trans "No PAF Reviewer Roles created yet, please create these in " %}
@@ -262,12 +249,13 @@
 
 {% if can_update_paf_approvers %}
 <div class="modal" id="update-paf-approvers">
-    <h4 class="modal__header-bar">{% trans "Update Approvers" %}</h4>
+    <h4 class="modal__project-header-bar">{% trans "View/Update Approvers" %}</h4>
 
     {% trans "Submit" as submit %}
     {% if project_settings.paf_reviewers_roles.all %}
-        <p> {% trans "Are you sure you want to update the approvers? The approvers will be notified via email." %} {% if project_settings.paf_approval_sequential %} {% trans "(Sequentially)" %} {% else %}{% trans "(Parallely)" %}{% endif %}</p>
-        {% include 'funds/includes/delegated_form_base.html' with form=update_approvers_form value=submit %}
+        <p> {% trans "Are you sure you want to update the approvers?" %} {% if project_settings.paf_approval_sequential %} {% trans "The uppermost active approver will be notified via email." %} {% else %}{% trans "All approvers will be notified via email." %}{% endif %}</p>
+    <br>
+    {% include 'funds/includes/delegated_form_base.html' with form=update_approvers_form value=submit %}
     {% else %}
         <p>{% trans "No PAF Reviewer Roles created yet, please create these in " %}
         <a href="{% project_settings_url project_settings %}" target="_blank">{% trans " project settings" %}</a>
@@ -278,7 +266,7 @@
 
 {% if can_update_paf_status %}
     <div class="modal" id="update-paf-status">
-        <h4 class="modal__header-bar">{% trans "Update PAF Status" %}</h4>
+        <h4 class="modal__project-header-bar">{% trans "Update PAF Status" %}</h4>
         <p>{% trans "Project's current status" %}: {{ object.get_status_display }}</p>
         {% trans "Update Status" as update %}
         {% include 'funds/includes/delegated_form_base.html' with form=change_paf_status value=update %}
