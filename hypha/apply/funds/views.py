@@ -1802,7 +1802,7 @@ class SubmissionWithdrawView(SingleObjectTemplateResponseMixin, BaseDetailView):
 
         obj = self.get_object()
 
-        if not obj.phase.permissions.can_edit(request.user):
+        if not request.user.is_applicant:
             raise PermissionDenied
 
         withdraw_actions = [action for action in obj.workflow[obj.status].transitions.keys() if 'withdraw' in action]

@@ -137,14 +137,12 @@
                                         {% trans "Delete" %}
                                     </a>
                                 {% endif %}
-                                {% if request.user|has_edit_perm:object %}
-                                    {% if request.user.is_applicant %}
-                                        <a
-                                            class="link link--withdraw-submission is-active"
-                                            href="{% url 'funds:submissions:withdraw' object.id %}">
-                                            {% trans "Withdraw" %}
-                                        </a>
-                                    {% endif %}
+                                {% if ENABLE_SUBMISSION_WITHDRAWAL and request.user.is_applicant %}
+                                    <a
+                                        class="link link--withdraw-submission is-active"
+                                        href="{% url 'funds:submissions:withdraw' object.id %}">
+                                        {% trans "Withdraw" %}
+                                    </a>
                                 {% endif %}
                                 {% if request.user|has_edit_perm:object %}
                                     <a
