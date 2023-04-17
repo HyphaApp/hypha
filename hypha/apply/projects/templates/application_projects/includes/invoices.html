@@ -15,19 +15,19 @@
         <table class="data-block__table">
             <thead>
                 <tr>
-                    <th class="data-block__table-amount">{% trans "Submitted" %}</th>
-                    <th class="data-block__table-status">{% trans "Invoice Number" %}</th>
-                    <th class="data-block__table-date">{% trans "Status" %}</th>
+                    <th class="data-block__table-date">{% trans "Submitted" %}</th>
+                    <th class="data-block__table-amount">{% trans "Invoice Number" %}</th>
+                    <th class="data-block__table-status">{% trans "Status" %}</th>
                     <th class="data-block__table-update"></th>
                 </tr>
             </thead>
             <tbody>
                 {% for invoice in object.invoices.not_rejected %}
                 <tr>
-                    <td><span class="data-block__mobile-label">{% trans "Submitted" %}: </span>{{ invoice.requested_at.date }}</td>
-                    <td><span class="data-block__mobile-label">{% trans "Invoice Number" %}: </span>{{ invoice.vendor_document_number }}</td>
-                    <td><span class="data-block__mobile-label">{% trans "Status" %}: </span>{{ invoice.get_status_display }}</td>
-                    <td style="display:flex; flex-wrap:wrap;">
+                    <td style="padding: 1rem 10px;"><span class="data-block__mobile-label">{% trans "Submitted" %}: </span>{{ invoice.requested_at.date }}</td>
+                    <td style="padding: 1rem 10px;"><span class="data-block__mobile-label">{% trans "Invoice Number" %}: </span>{{ invoice.vendor_document_number }}</td>
+                    <td style="padding: 1rem 10px;"><span class="data-block__mobile-label">{% trans "Status" %}: </span>{{ invoice.get_status_display }}</td>
+                    <td style="display:flex; flex-wrap:wrap; justify-content:flex-end; padding:1rem 0px;">
                         <a class="data-block__action-icon-link" href="{{ invoice.get_absolute_url }}">
                             <svg class="icon icon--project-eye"><use xlink:href="#eye"></use></svg>
                             {% trans "View" %}
@@ -41,11 +41,29 @@
                         {% endif %}
 
                         {% can_delete invoice user as user_can_delete_request %}
-                        {% if user_can_delete_request %}
+                        {% if user.is_applicant and user_can_delete_request %}
                         <a class="data-block__action-icon-link data-block__action-icon-link--remove" href="{% url 'apply:projects:invoice-delete' pk=invoice.project.pk invoice_pk=invoice.pk %}">
                             <svg class="icon icon--delete" style="margin-left:0; margin-right:2px"><use xlink:href="#delete"></use></svg>
                             {% trans "Delete" %}
                         </a>
+                        {% endif %}
+                        {% can_change_status invoice user as can_change_invoice_status %}
+                        {% if can_change_invoice_status %}
+                            <a
+                                data-fancybox
+                                data-src="#change-invoice-status"
+                                id="update_invoice_status"
+                                class="data-block__button button button--primary"
+                                href="#"
+                            >
+                            {% trans "Update Status" %}
+                            </a>
+                            <div class="modal" id="change-invoice-status">
+                                <h4 class="modal__project-header-bar">{% trans "Update Invoice status" %}</h4>
+                                <p>{% trans "Current status" %}: {{ invoice.get_status_display }}</p>
+                                {% trans "Update Status" as update %}
+                                {% include 'funds/includes/delegated_form_base.html' with form=change_invoice_status value=update %}
+                            </div>
                         {% endif %}
                     </td>
                 </tr>
@@ -65,7 +83,7 @@
             <table class="data-block__table is-hidden js-payment-block-rejected-table">
                 <thead>
                     <tr>
-                        <th class="data-block__table-amount">{% trans "Submitted" %}</th>
+                        <th class="data-block__table-date">{% trans "Submitted" %}</th>
                         <th class="data-block__table-amount">{% trans "Invoice Number" %}</th>
                         <th class="data-block__table-status">{% trans "Status" %}</th>
                         <th class="data-block__table-view"></th>

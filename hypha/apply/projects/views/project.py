@@ -88,6 +88,7 @@ from ..models.project import (
 from ..models.report import Report
 from ..permissions import has_permission
 from ..tables import InvoiceListTable, ProjectsListTable, ReportListTable
+from ..views.payment import ChangeInvoiceStatusView
 from .report import ReportFrequencyUpdate, ReportingMixin
 
 
@@ -666,6 +667,7 @@ class AdminProjectDetailView(
         UploadDocumentView,
         ChangePAFStatusView,
         ChangeProjectstatusView,
+        ChangeInvoiceStatusView,
     ]
     model = Project
     template_name_suffix = '_admin_detail'
