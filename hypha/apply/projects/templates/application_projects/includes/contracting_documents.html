@@ -88,7 +88,7 @@
                     </div>
                     {% if can_upload_contract and user.is_contracting %}
                     <div class="docs-block__row-inner docs-block__row-inner__contract-upload-row">
-                        <a data-fancybox class="docs-block__icon-link button--project-action" style="padding:5px" href="#" data-src="#upload-contract">
+                        <a data-fancybox class="docs-block__icon-link button--project-action" style="padding:10px; border:none;" href="#" data-src="#upload-contract">
                             <svg class="icon icon--arrow-up-short-bar icon--arrow-up-short-bar--contract-upload"><use xlink:href="#arrow-up-short-bar"></use></svg>
                             {% if not contract %}
                                 {% trans "Upload" %}
@@ -108,7 +108,7 @@
                     </div>
                     {% if can_upload_contract and user.is_applicant %}
                     <div class="docs-block__row-inner docs-block__row-inner__contract-upload-row">
-                        <a data-fancybox class="docs-block__icon-link button--project-action" style="padding:5px" href="#" data-src="#upload-contract">
+                        <a data-fancybox class="docs-block__icon-link button--project-action" style="padding:10px; border:none;" href="#" data-src="#upload-contract">
                             <svg class="icon icon--arrow-up-short-bar icon--arrow-up-short-bar--contract-upload"><use xlink:href="#arrow-up-short-bar"></use></svg>
                             {% if not contract.signed_by_applicant %}
                                 {% trans "Upload" %}
@@ -207,12 +207,13 @@
 <div class="modal" id="upload-contract">
     {% if user.is_applicant %}
         <h4 class="modal__project-header-bar">{% trans "Upload Countersigned Contract" %}</h4>
+        {% trans "Upload" as upload %}
     {% else %}
         <h4 class="modal__project-header-bar">{% trans "Upload Signed Contract" %}</h4>
+        <p><i><b>{% trans "The signed contract will be sent to Applicant once you submit." %}</b></i></p>
+        <br>
+        {% trans "Submit" as upload %}
     {% endif %}
-    <p><i><b>{% trans "The signed contract will be uploaded once you submit." %}</b></i></p>
-    <br>
-    {% trans "Submit" as upload %}
     {% include 'funds/includes/delegated_form_base.html' with form=contract_form value=upload %}
 </div>
 {% endif %}

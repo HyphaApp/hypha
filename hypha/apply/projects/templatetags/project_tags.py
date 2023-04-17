@@ -27,7 +27,11 @@ def user_next_step_on_project(project, user):
         if user.is_apply_staff:
             if not project.user_has_updated_details:
                 return "Fill in the Approval Form(PAF)"
+            if project.paf_approvals.exists():
+                return "Resubmit project documents for approval"
             return "Submit project documents for approval"
+        if project.paf_approvals.exists():
+            return "Changes requested. Awaiting documents to be resubmitted."
         return "Awaiting approval form to be created."
     elif project.status == WAITING_FOR_APPROVAL:
         if user.id in project.paf_approvals.values_list('user', flat=True):
@@ -64,7 +68,7 @@ def user_next_step_instructions(project, user):
         contract = project.contracts.order_by('-created_at').first()
         if contract and not contract.signed_by_applicant:
             return ['Please download the signed contract uploaded by contracting team',
-                    'Counter Sign',
+                    'Countersigned',
                     'Upload it back',
                     'Please also make sure to upload other required contracting documents']
     return False
@@ -145,5 +149,14 @@ def allow_collapsible_header(project, header_type):
 @register.simple_tag
 def user_can_remove_supporting_documents(project, user):
     if user.is_apply_staff and project.status == COMMITTED:
+        return True
+    return False
+
+
+@register.simple_tag
+def user_can_take_actions(project, user):
+    if user.is_apply_staff or user.is_contracting:
+        return True
+    if user.id in project.paf_approvals.values_list('user', flat=True):
         return True
     return False
