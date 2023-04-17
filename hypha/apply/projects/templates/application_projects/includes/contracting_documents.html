@@ -3,7 +3,12 @@
 
 <div class="docs-block wrapper--outer-space-large" {% if collapsible_header %} x-data="{ collapsed: false }" {% endif %}>
     <div class="docs-block__header" {% if collapsible_header %} x-on:click="collapsed = ! collapsed" {% endif %}>
-        <div class="docs-block__heading" >{% trans "Contracting documents" %}</div>
+        <div class="docs-block__heading" >{% trans "Contracting documents" %}
+            {% if collapsible_header %}
+            <svg class="icon icon--caret-up" x-show="collapsed"><use xlink:href="#caret-up"></use></svg>
+            <svg class="icon icon--caret-down" x-show="!collapsed"><use xlink:href="#caret-down"></use></svg>
+            {% endif %}
+        </div>
         {% user_can_upload_contract object request.user as can_upload_contract %}
         {% user_can_submit_contract object user contract as can_submit_contract %}
         {% if can_submit_contract %}
