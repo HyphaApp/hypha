@@ -5,7 +5,7 @@
         <p class="data-block__title">{% trans "Invoices" %}</p>
         {% user_can_add_invoices object user as can_add_invoice %}
         {% if can_add_invoice %}
-            <a class="button button--project-action"
+            <a class="button button--project-action button--project-action--white" target="_blank"
                href="{% url "apply:projects:invoice" pk=object.pk %}">
                 {% trans "Add Invoice" %}
             </a>
@@ -28,13 +28,13 @@
                     <td style="padding: 1rem 10px;"><span class="data-block__mobile-label">{% trans "Invoice Number" %}: </span>{{ invoice.vendor_document_number }}</td>
                     <td style="padding: 1rem 10px;"><span class="data-block__mobile-label">{% trans "Status" %}: </span>{{ invoice.get_status_display }}</td>
                     <td style="display:flex; flex-wrap:wrap; justify-content:flex-end; padding:1rem 0px;">
-                        <a class="data-block__action-icon-link" href="{{ invoice.get_absolute_url }}">
+                        <a class="data-block__action-icon-link" href="{{ invoice.get_absolute_url }}" target="_blank">
                             <svg class="icon icon--project-eye"><use xlink:href="#eye"></use></svg>
                             {% trans "View" %}
                         </a>
                         {% can_edit invoice user as user_can_edit_request %}
                         {% if user_can_edit_request %}
-                        <a class="data-block__action-icon-link" href="{% url "apply:projects:invoice-edit" pk=invoice.project.pk invoice_pk=invoice.pk %}">
+                        <a class="data-block__action-icon-link" target="_blank" href="{% url "apply:projects:invoice-edit" pk=invoice.project.pk invoice_pk=invoice.pk %}">
                             <svg class="icon icon--project-pen"><use xlink:href="#pen"></use></svg>
                             {% trans "Edit" %}
                         </a>
@@ -42,7 +42,7 @@
 
                         {% can_delete invoice user as user_can_delete_request %}
                         {% if user.is_applicant and user_can_delete_request %}
-                        <a class="data-block__action-icon-link data-block__action-icon-link--remove" href="{% url 'apply:projects:invoice-delete' pk=invoice.project.pk invoice_pk=invoice.pk %}">
+                        <a class="data-block__action-icon-link data-block__action-icon-link--remove" target="_blank" href="{% url 'apply:projects:invoice-delete' pk=invoice.project.pk invoice_pk=invoice.pk %}">
                             <svg class="icon icon--delete" style="margin-left:0; margin-right:2px"><use xlink:href="#delete"></use></svg>
                             {% trans "Delete" %}
                         </a>
@@ -87,7 +87,7 @@
                         <th class="data-block__table-date">{% trans "Submitted" %}</th>
                         <th class="data-block__table-amount">{% trans "Invoice Number" %}</th>
                         <th class="data-block__table-status">{% trans "Status" %}</th>
-                        <th class="data-block__table-view"></th>
+                        <th class="data-block__table-update"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -96,7 +96,12 @@
                         <td><span class="data-block__mobile-label">{% trans "Submitted" %}: </span>{{ invoice.requested_at.date }}</td>
                         <td><span class="data-block__mobile-label">{% trans "Invoice Number" %}: </span>{{ invoice.vendor_document_number }}</td>
                         <td><span class="data-block__mobile-label">{% trans "Status" %}: </span>{{ invoice.get_status_display }}</td>
-                        <td><a href="{{ invoice.get_absolute_url }}">{% trans "View" %}</a></td>
+                        <td style="display:flex; justify-content:flex-end; padding:1rem 0px;">
+                            <a class="data-block__action-icon-link" href="{{ invoice.get_absolute_url }}" target="_blank">
+                                <svg class="icon icon--project-eye"><use xlink:href="#eye"></use></svg>
+                                {% trans "View" %}
+                            </a>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
