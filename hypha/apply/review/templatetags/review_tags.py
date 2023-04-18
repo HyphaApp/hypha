@@ -2,6 +2,7 @@ from django import template
 from django.utils.safestring import mark_safe
 
 from ..models import MAYBE, NO, YES
+from ..options import NA
 
 register = template.Library()
 
@@ -48,11 +49,11 @@ def average_review_score(reviewers):
         scores = [
             reviewer.review.score
             for reviewer in reviewers
-            if not reviewer.has_review and not reviewer.review.is_draft
+            if not reviewer.has_review and not reviewer.review.is_draft and not reviewer.review.score == NA
         ]
         if len(scores) > 0:
             return sum(scores) / len(scores)
         else:
-            return None
+            return 0
     else:
         return reviewers
