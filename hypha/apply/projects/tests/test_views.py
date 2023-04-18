@@ -231,12 +231,13 @@ class TestFinanceProjectDetailView(BaseProjectDetailTestCase):
     user_factory = FinanceFactory
 
     def test_has_access(self):
-        project = ProjectFactory()
+        project = ProjectFactory(status=WAITING_FOR_APPROVAL)
         response = self.get_page(project)
         self.assertEqual(response.status_code, 200)
 
+
     def test_lab_project_renders(self):
-        project = ProjectFactory(submission=LabSubmissionFactory())
+        project = ProjectFactory(submission=LabSubmissionFactory(), status=WAITING_FOR_APPROVAL)
         response = self.get_page(project)
         self.assertEqual(response.status_code, 200)
 
