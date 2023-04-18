@@ -60,10 +60,11 @@
                             </a>
                             <div class="modal" id="change-invoice-status-{{ invoice.id }}">
                                 {% get_invoice_form invoice user as invoice_form %}
+                                {% get_invoice_form_id invoice_form invoice as invoice_form_id %}
                                 <h4 class="modal__project-header-bar">{% trans "Update Invoice status" %}</h4>
                                 <p>{% trans "Current status" %}: {{ invoice.get_status_display }}</p>
                                 {% trans "Update Status" as update %}
-                                {% include 'funds/includes/delegated_form_base.html' with form=invoice_form value=update action=invoice.get_absolute_url %}
+                                {% include 'funds/includes/delegated_form_base.html' with form=invoice_form value=update action=invoice.get_absolute_url form_id=invoice_form_id %}
                             </div>
                         {% endif %}
                     </td>

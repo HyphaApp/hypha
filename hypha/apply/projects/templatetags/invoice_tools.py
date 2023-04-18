@@ -77,3 +77,8 @@ def get_invoice_form(invoice, user):
         form.form_id = f'{form.name}-{invoice.id}'
         return form
     return None
+
+
+@register.simple_tag
+def get_invoice_form_id(form, invoice):
+    return f'{form.name}-{invoice.id}'
