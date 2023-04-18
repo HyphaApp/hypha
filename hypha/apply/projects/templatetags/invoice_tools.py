@@ -66,3 +66,14 @@ def user_can_add_invoices(project, user):
 def is_vendor_setup(request):
     project_settings = ProjectSettings.for_request(request)
     return project_settings.vendor_setup_required
+
+
+@register.simple_tag
+def get_invoice_form(invoice, user):
+    from hypha.apply.projects.views.payment import ChangeInvoiceStatusForm
+    form = ChangeInvoiceStatusForm(instance=invoice, user=user)
+    if form:
+        form.name = "change_invoice_status"
+        form.form_id = f'{form.name}-{invoice.id}'
+        return form
+    return None

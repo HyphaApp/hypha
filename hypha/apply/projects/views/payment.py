@@ -55,6 +55,7 @@ class InvoiceAccessMixin(UserPassesTestMixin):
 class ChangeInvoiceStatusView(DelegatedViewMixin, InvoiceAccessMixin, UpdateView):
     form_class = ChangeInvoiceStatusForm
     context_name = 'change_invoice_status'
+    model = Invoice
 
     def form_valid(self, form):
         response = super().form_valid(form)

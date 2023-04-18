@@ -51,18 +51,19 @@
                         {% if can_change_invoice_status %}
                             <a
                                 data-fancybox
-                                data-src="#change-invoice-status"
-                                id="update_invoice_status"
+                                data-src="#change-invoice-status-{{ invoice.id }}"
+                                id="update_invoice_status-{{ invoice.id }}"
                                 class="data-block__button button button--primary"
                                 href="#"
                             >
                             {% trans "Update Status" %}
                             </a>
-                            <div class="modal" id="change-invoice-status">
+                            <div class="modal" id="change-invoice-status-{{ invoice.id }}">
+                                {% get_invoice_form invoice user as invoice_form %}
                                 <h4 class="modal__project-header-bar">{% trans "Update Invoice status" %}</h4>
                                 <p>{% trans "Current status" %}: {{ invoice.get_status_display }}</p>
                                 {% trans "Update Status" as update %}
-                                {% include 'funds/includes/delegated_form_base.html' with form=change_invoice_status value=update %}
+                                {% include 'funds/includes/delegated_form_base.html' with form=invoice_form value=update action=invoice.get_absolute_url %}
                             </div>
                         {% endif %}
                     </td>
