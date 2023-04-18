@@ -100,6 +100,10 @@ class ChangeInvoiceStatusView(DelegatedViewMixin, InvoiceAccessMixin, UpdateView
 class DeleteInvoiceView(DeleteView):
     model = Invoice
 
+    def get_object(self):
+        project = get_object_or_404(Project, pk=self.kwargs['pk'])
+        return get_object_or_404(project.invoices.all(), pk=self.kwargs['invoice_pk'])
+
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
         if not self.object.can_user_delete(request.user):
