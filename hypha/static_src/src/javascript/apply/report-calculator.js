@@ -1,8 +1,11 @@
 (function ($) {
 
     'use strict';
-
-    const reportData = JSON.parse(document.getElementById('reportData').textContent);
+    const reportDataEl = document.getElementById('reportData');
+    if (!reportDataEl) {
+        return;
+    }
+    const reportData = JSON.parse(reportDataEl.textContent);
 
     // Form inputs
     const frequencyNumberInput = document.getElementById('id_occurrence');

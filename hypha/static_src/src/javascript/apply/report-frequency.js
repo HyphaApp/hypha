@@ -2,8 +2,13 @@
 
     'use strict';
 
-    const var_repeat = $('#id_does_not_repeat')[0];
-    if (var_repeat.checked) {
+    const var_repeat = $('#id_does_not_repeat');
+
+    if (!var_repeat.length) {
+        return;
+    }
+
+    if (var_repeat[0].checked) {
         $('.form__group--report-every').hide();
         $('.form__group--schedule').hide();
     }
