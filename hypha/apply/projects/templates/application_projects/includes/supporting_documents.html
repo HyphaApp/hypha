@@ -2,12 +2,12 @@
 {% user_can_edit_project object request.user as editable %}
 {% allow_collapsible_header object header_type='project_documents' as collapsible_header %}
 
-<div class="docs-block wrapper--outer-space-large" {% if collapsible_header %} x-data="{ collapsed: false }" {% endif %}>
-    <div class="docs-block__header" {% if collapsible_header %} x-on:click="collapsed = ! collapsed" {% endif %}>
+<div class="docs-block wrapper--outer-space-large" {% if collapsible_header %} x-data="{ collapsed: true }" {% endif %}>
+    <div class="docs-block__header" id="project-documents-section" {% if collapsible_header %} x-on:click="collapsed = ! collapsed" role="button" aria-label="Toggle Project documents visibility" aria-controls="project-documents-elements" {% endif %}>
         <div class="docs-block__heading">{% trans "Project documents" %}
             {% if collapsible_header %}
-            <svg class="icon icon--caret-up" x-show="collapsed"><use xlink:href="#caret-up"></use></svg>
-            <svg class="icon icon--caret-down" x-show="!collapsed"><use xlink:href="#caret-down"></use></svg>
+            <svg class="icon icon--caret-up" x-show="!collapsed" aria-hidden=true><use xlink:href="#caret-up"></use></svg>
+            <svg class="icon icon--caret-down" x-show="collapsed" aria-hidden=true><use xlink:href="#caret-down"></use></svg>
             {% endif %}
         </div>
         {% user_can_send_for_approval object user as can_send_to_approve %}
@@ -42,7 +42,8 @@
             </a>
         {% endif %}
     </div>
-    <ul class="docs-block__inner" {% if collapsible_header %} x-show="collapsed" {% endif %}>
+    <ul class="docs-block__inner" id="project-documents-elements" {% if collapsible_header %} x-show="!collapsed" role="region"
+       aria-labelledby="project-documents-section" {% endif %}>
 
         <li class="docs-block__row">
             <div class="docs-block__row-inner">
