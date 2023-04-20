@@ -7,7 +7,7 @@
 {% blocktrans with status=invoice.get_status_display %}It is now {{ status }}.{% endblocktrans %}
 
 {% if has_changes_requested and invoice.comment %}
-    {% trans "The staff member left this comment" %}:
+{% trans "The staff member left this comment" %}:
 
     {{ invoice.comment }}
 {% endif %}
