@@ -56,7 +56,7 @@
                 </a>
             </div>
             {% if contract.updated_at %}
-            <ul class="docs-block__document-list" style="margin-top:0;">
+            <ul class="mt-0 w-full pl-9">
                 <li class="docs-block__document">
                     <div class="docs-block__row-inner">
                     </div>
@@ -67,7 +67,7 @@
             </ul>
             {% endif %}
             {% if not is_contract_approved %}
-            <ul class="docs-block__document-list" style="margin-top:0;">
+            <ul class="mt-0 w-full pl-9">
                 <li class="docs-block__document">
                     <div class="docs-block__row-inner">
                     </div>
@@ -94,7 +94,7 @@
                     </div>
                     {% if can_upload_contract and user.is_contracting %}
                     <div class="docs-block__row-inner docs-block__row-inner__contract-upload-row">
-                        <a data-fancybox class="docs-block__icon-link button--project-action" style="padding:10px; border:none;" href="#" data-src="#upload-contract">
+                        <a data-fancybox class="font-bold flex items-center w-auto text-left bg-light-blue text-white mr-0 p-2.5 border-none" href="#" data-src="#upload-contract">
                             <svg class="icon icon--arrow-up-short-bar icon--arrow-up-short-bar--contract-upload"><use xlink:href="#arrow-up-short-bar"></use></svg>
                             {% if not contract %}
                                 {% trans "Upload" %}
@@ -114,7 +114,7 @@
                     </div>
                     {% if can_upload_contract and user.is_applicant %}
                     <div class="docs-block__row-inner docs-block__row-inner__contract-upload-row">
-                        <a data-fancybox class="docs-block__icon-link button--project-action" style="padding:10px; border:none;" href="#" data-src="#upload-contract">
+                        <a data-fancybox class="font-bold flex items-center w-auto text-left bg-light-blue text-white mr-0 p-2.5 border-none" href="#" data-src="#upload-contract">
                             <svg class="icon icon--arrow-up-short-bar icon--arrow-up-short-bar--contract-upload"><use xlink:href="#arrow-up-short-bar"></use></svg>
                             {% if not contract.signed_by_applicant %}
                                 {% trans "Upload" %}
@@ -140,7 +140,7 @@
             {% can_update_contracting_documents object user as can_update_documents %}
             {% if can_update_documents %}
             <div class="docs-block__row-inner">
-                <a data-fancybox data-src="#upload-contracting-doc" class="docs-block__icon-link" style="margin-right:0;" href="#">
+                <a data-fancybox data-src="#upload-contracting-doc" class="font-bold flex items-center mr-0" href="#">
                     <svg class="icon icon--arrow-up-short-bar"><use xlink:href="#arrow-up-short-bar"></use></svg>
                     {% trans "Upload new" %}
                 </a>
@@ -153,7 +153,7 @@
             </div>
             {% endif %}
             {% if remaining_contract_document_categories %}
-            <ul class="docs-block__document-list" style="padding-left:2.25rem;">
+            <ul class="mt-4 w-full pl-9">
                 <li class="docs-block__document">
                     <div class="docs-block__document-inner">
                         <p>
@@ -170,7 +170,7 @@
             {% endif %}
 
             {% if object.contract_packet_files.exists %}
-            <ul class="docs-block__document-list" style="padding-left:2.25rem;">
+            <ul class="mt-4 w-full pl-9">
                 {% for document in object.contract_packet_files.all %}
                 <li class="docs-block__document">
                     <div class="docs-block__document-inner">
@@ -184,7 +184,7 @@
                         </a>
                         {% if can_update_documents %}
                         <form method="POST" id="{{ remove_contract_document_form.name }}" class="docs-block__icon-link">
-                            <svg class="icon icon--delete" style="margin-left:0; margin-right:2px"><use xlink:href="#delete"></use></svg>
+                            <svg class="w-4 h-4 inline-block fill-tomato mr-0.5 ml-0"><use xlink:href="#delete"></use></svg>
                             {% csrf_token %}
                             {{ document.get_remove_form }}
                             <input
