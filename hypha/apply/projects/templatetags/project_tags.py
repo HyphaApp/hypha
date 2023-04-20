@@ -64,6 +64,9 @@ def user_next_step_on_project(project, user):
 
 @register.simple_tag
 def user_next_step_instructions(project, user):
+    """
+    To provide instructions incase next step is not enough like 'contracting documents submitted by an applicant'
+    """
     if project.status == CONTRACTING and user == project.user and project.contracts.exists():
         contract = project.contracts.order_by('-created_at').first()
         if contract and not contract.signed_by_applicant:
@@ -155,6 +158,9 @@ def user_can_remove_supporting_documents(project, user):
 
 @register.simple_tag
 def user_can_take_actions(project, user):
+    """
+    Checking permissions for 'Action to take' section on paf approval details page.
+    """
     if user.is_apply_staff or user.is_contracting:
         return True
     if user.id in project.paf_approvals.values_list('user', flat=True):
