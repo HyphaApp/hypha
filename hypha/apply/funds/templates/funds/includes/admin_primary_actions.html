@@ -51,15 +51,15 @@
     <a data-fancybox data-src="#update-status" class="button button--primary button--full-width {% if progress_form.should_show %}is-not-disabled{% else %}is-disabled{% endif %}" href="#">{% trans "Update status" %}</a>
 
 
-    <p class="sidebar__separator">{% trans "Assign" %}</p>
+    <div class="sidebar__separator mt-4">{% trans "Assign" %}</div>
 
-    <div class="wrapper wrapper--sidebar-buttons">
+    <div class="wrapper wrapper--sidebar-buttons mt-2">
         <a data-fancybox data-src="#update-reviewers" class="button button--half-width button--white" href="#">{% trans "Reviewers" %}</a>
         <a data-fancybox data-src="#update-partners" class="button button--half-width button--white" href="#">{% trans "Partners" %}</a>
         <a data-fancybox data-src="#assign-lead" class="button button--half-width button--white" href="#">{% trans "Lead" %}</a>
     </div>
 
-    <details>
+    <details class="mt-4">
         <summary class="sidebar__separator sidebar__separator--medium">{% trans "More actions" %}</summary>
         <a class="button button--white button--full-width button--bottom-space" href="{% url 'funds:submissions:revisions:list' submission_pk=object.id %}">{% trans "Revisions" %}</a>
 
