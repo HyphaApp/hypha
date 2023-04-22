@@ -74,7 +74,6 @@ def get_invoice_form(invoice, user):
     form = ChangeInvoiceStatusForm(instance=invoice, user=user)
     if form:
         form.name = "change_invoice_status"
-        form.form_id = f'{form.name}-{invoice.id}'
         return form
     return None
 

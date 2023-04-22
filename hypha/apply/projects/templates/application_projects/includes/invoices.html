@@ -24,10 +24,10 @@
             <tbody>
                 {% for invoice in object.invoices.not_rejected %}
                 <tr>
-                    <td style="padding: 1rem 10px;"><span class="data-block__mobile-label">{% trans "Submitted" %}: </span>{{ invoice.requested_at.date }}</td>
-                    <td style="padding: 1rem 10px;"><span class="data-block__mobile-label">{% trans "Invoice Number" %}: </span>{{ invoice.vendor_document_number }}</td>
-                    <td style="padding: 1rem 10px;"><span class="data-block__mobile-label">{% trans "Status" %}: </span>{{ invoice.get_status_display }}</td>
-                    <td style="display:flex; flex-wrap:wrap; justify-content:flex-end; padding:1rem 0px;">
+                    <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Submitted" %}: </span>{{ invoice.requested_at.date }}</td>
+                    <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Invoice Number" %}: </span>{{ invoice.vendor_document_number }}</td>
+                    <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Status" %}: </span>{{ invoice.get_status_display }}</td>
+                    <td class="flex flex-wrap justify-end py-4 px-0">
                         <a class="data-block__action-icon-link" href="{{ invoice.get_absolute_url }}" target="_blank">
                             <svg class="icon icon--project-eye"><use xlink:href="#eye"></use></svg>
                             {% trans "View" %}
@@ -94,10 +94,10 @@
                 <tbody>
                     {% for invoice in object.invoices.rejected %}
                     <tr>
-                        <td><span class="data-block__mobile-label">{% trans "Submitted" %}: </span>{{ invoice.requested_at.date }}</td>
-                        <td><span class="data-block__mobile-label">{% trans "Invoice Number" %}: </span>{{ invoice.vendor_document_number }}</td>
-                        <td><span class="data-block__mobile-label">{% trans "Status" %}: </span>{{ invoice.get_status_display }}</td>
-                        <td style="display:flex; justify-content:flex-end; padding:1rem 0px;">
+                        <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Submitted" %}: </span>{{ invoice.requested_at.date }}</td>
+                        <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Invoice Number" %}: </span>{{ invoice.vendor_document_number }}</td>
+                        <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Status" %}: </span>{{ invoice.get_status_display }}</td>
+                        <td class="flex justify-end py-4 px-0">
                             <a class="data-block__action-icon-link" href="{{ invoice.get_absolute_url }}" target="_blank">
                                 <svg class="icon icon--project-eye"><use xlink:href="#eye"></use></svg>
                                 {% trans "View" %}

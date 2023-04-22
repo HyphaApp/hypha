@@ -51,10 +51,10 @@
                 <tbody>
                     {% for report in object.reports.done %}
                         <tr {% if forloop.counter > 8 %}class="is-hidden"{% endif %}>
-                            <td>
+                            <td class="py-4 px-2.5">
                                 <span class="data-block__mobile-label">{% trans "Period End" %}: </span>{{ report.end_date }}
                             </td>
-                            <td>
+                            <td class="py-4 px-2.5">
                                 <span class="data-block__mobile-label">{% trans "Submitted" %}: </span>{{ report.submitted_date|default:"Skipped" }}
                             </td>
                             <td class="data-block__links">
