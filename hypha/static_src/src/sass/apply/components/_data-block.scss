@@ -119,42 +119,29 @@
             }
 
             td {
-                padding: 0 0 .5rem;
                 word-break: break-word;
-
-                @include media-query(tablet-landscape) {
-                    padding: 1rem;
-                }
-
-                &:first-child {
-                    padding: 1rem 0 .5rem;
-
-                    @include media-query(tablet-landscape) {
-                        padding: 1rem;
-                    }
-                }
             }
         }
     }
 
     &__table-amount {
-        width: 25%;
+        width: 12%;
         min-width: 90px;
     }
 
     &__table-status {
         min-width: 160px;
-        width: 25%;
+        width: 15%;
     }
 
     &__table-date {
         min-width: 180px;
-        width: 25%;
+        width: 15%;
     }
 
     &__table-update {
         min-width: 160px;
-        width: 20%;
+        width: 25%;
 
         @include media-query(desktop) {
             width: 30%;
