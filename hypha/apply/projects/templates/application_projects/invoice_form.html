@@ -28,7 +28,9 @@
                     {{ field }}
                 {% endif %}
             {% endfor %}
-            <button class="button button--submit button--top-space button--primary" type="submit" name="save">{% trans "Save" %}</button>
+            {% for button_name, button_type, button_value in buttons %}
+                <button class="button button--submit button--top-space button--{{ button_type }}" type="submit" name="{{ button_name }} {% if button_value == delete %}formnovalidate{% endif %}">{{ button_value }}</button>
+            {% endfor %}
         </form>
     </div>
 </div>

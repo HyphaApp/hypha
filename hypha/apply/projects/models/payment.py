@@ -184,7 +184,7 @@ class Invoice(models.Model):
         return prefix + '-'.join(wrap(f"{self.id:06}", 3))
 
     def can_user_delete(self, user):
-        if user.is_applicant or user.is_apply_staff or user.is_finance_level_1 or user.is_finance_level_2 or user.is_contracting:
+        if user.is_applicant or user.is_apply_staff:
             if self.status in (SUBMITTED):
                 return True
 
