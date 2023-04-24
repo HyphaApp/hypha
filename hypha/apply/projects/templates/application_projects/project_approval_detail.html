@@ -157,7 +157,7 @@
                         <a class="button button--bottom-space button--primary button--full-width {% if user_can_approve %} is-disabled {% endif %}" href="{% url 'apply:projects:edit' pk=object.pk %}">{% trans "Edit PAF" %}</a>
                     {% endif %}
                     <div class="dropdown">
-                      <button class="button button--white dropbtn button--bottom-space button--full-width" style="padding:0.5em 53px" type="button" data-dropdown-target="#dropdown-content-download">
+                      <button class="button button--project-action--paf-download dropbtn button--bottom-space button--full-width" type="button" data-dropdown-target="#dropdown-content-download">
                           {% trans 'Download Approval Form' %}
                       </button>
                       <div id="dropdown-content-download" class="dropdown-content">
