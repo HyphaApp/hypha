@@ -91,8 +91,11 @@ class CategoryQuestionBlock(OptionalFormFieldBlock):
 
         for field in category_fields.keys():
             if not value.get(field):
-                value[field] = getattr(value['category'], category_fields[field])
-        return super(CategoryQuestionBlock, self).render(value, context)
+                category = value['category']
+                if isinstance(category, int):
+                    category = self.get_instance(id=category)
+                value[field] = getattr(category, category_fields[field])
+        return super().render(value, context)
 
     def get_searchable_content(self, value, data):
         return None
