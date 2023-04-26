@@ -305,7 +305,7 @@
         Load reviews using htmx multi-swap extension, the reviewers for all the submission
         on the page are fetched after the pages is loaded
         {% endcomment %}
-        <div class="bg-white border-x border-b w-full"
+        <section class="bg-white border-x border-b w-full"
             hx-trigger="load delay:50"
             hx-get="{% url "funds:submissions:partial-reviews-decisions" %}?ids={{ submission_ids|join:',' }}"
             hx-swap="multi:{% for s in submission_ids %}#r{{s}}{% if not forloop.last %},{% endif %}{% endfor %}"
@@ -318,7 +318,7 @@
                     <p>Try <a href="./" hx-get="./" hx-target="#main" hx-push-url="true">clearing</a> all the query and start again.</p>
                 </div>
             {% endfor %}
-        </div>
+        </section>
 
         <nav class="mt-5 mb-20" aria-label="Pagination">
             <span class="step-links flex gap-2 justify-center items-center">
