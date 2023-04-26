@@ -416,7 +416,7 @@ class FileFieldBlock(UploadableMediaBlock):
     field_class = SingleFileField
 
     class Meta:
-        label = _('File field')
+        label = _('Single File field')
         icon = 'download'
 
     def get_field_kwargs(self, struct_value):
