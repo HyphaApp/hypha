@@ -57,7 +57,7 @@ def user_next_step_on_project(project, user):
     elif project.status == IN_PROGRESS:
         if user.is_applicant:
             return "Add invoices"
-        elif user.is_apply_staff:
+        elif user.is_apply_staff or user.is_finance:
             return "Review invoice and take action"
     return False
 
@@ -71,7 +71,7 @@ def user_next_step_instructions(project, user):
         contract = project.contracts.order_by('-created_at').first()
         if contract and not contract.signed_by_applicant:
             return ['Please download the signed contract uploaded by contracting team',
-                    'Countersigned',
+                    'Countersign',
                     'Upload it back',
                     'Please also make sure to upload other required contracting documents']
     return False
