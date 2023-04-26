@@ -60,6 +60,7 @@
                 <button class="button button--filters js-toggle-filters">{% trans "Filters" %}</button>
             {% endif %}
 
+            <button class="button button--filters js-toggle-filters" id="show-filters-button">{% trans "Filters" %}</button>
             {% if use_search|default:False %}
             <form action="{{ search_action }}" method="get" role="search" class="form form--search-desktop">
                 <button class="button button--search" type="submit" aria-label="{% trans 'Search' %}">
