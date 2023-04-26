@@ -84,7 +84,7 @@ class FormFieldBlock(StructBlock):
     def serialize_no_response(self, value, context):
         return {
             'question': value['field_label'],
-            'answer': 'No Response',
+            'answer': '-',
             'type': 'no_response',
         }
 
@@ -108,7 +108,7 @@ class FormFieldBlock(StructBlock):
         return str(data)
 
     def no_response(self):
-        return "No response"
+        return "-"
 
 
 class OptionalFormFieldBlock(FormFieldBlock):
