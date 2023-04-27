@@ -9,14 +9,6 @@
 {% endblock %}
 
 {% block content %}
-    {% if request.user == source.user %}
-        {% trans "A Project's contract is awaiting your review." %}
-
-        {% trans "Title" %}: {{ source.title }}
-        {% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
-
-        {% blocktrans with lead=source.lead email=source.lead.email %}Please contact {{ lead }} - {{ email }} if you have any questions.{% endblocktrans %}
-    {% else %}
 
         {% trans "A new contract has been added to your Project" %}:
 
@@ -28,7 +20,6 @@
         {% else %}
         {% blocktrans %}Please review the contract and sign it before reuploading it to your Project page for the {{ ORG_SHORT_NAME }} Team to approve.{% endblocktrans %}
         {% endif %}
-    {% endif %}
 {% endblock %}
 
 

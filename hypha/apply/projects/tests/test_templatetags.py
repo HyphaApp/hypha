@@ -24,11 +24,11 @@ from ..models.project import (
 )
 from ..templatetags.contract_tools import user_can_upload_contract
 from ..templatetags.invoice_tools import can_change_status, can_delete, can_edit
-from .factories import InvoiceFactory, ProjectFactory
+from .factories import ContractFactory, InvoiceFactory, ProjectFactory
 
 
 class TestContractTools(TestCase):
-    def test_staff_can_only_upload_during_contracting(self):
+    def test_staff_cant_upload_contract(self):
         staff = StaffFactory()
 
         project = ProjectFactory(status=COMMITTED)
@@ -38,7 +38,7 @@ class TestContractTools(TestCase):
         self.assertFalse(user_can_upload_contract(project, staff))
 
         project = ProjectFactory(status=CONTRACTING)
-        self.assertTrue(user_can_upload_contract(project, staff))
+        self.assertFalse(user_can_upload_contract(project, staff))
 
         project = ProjectFactory(status=IN_PROGRESS)
         self.assertFalse(user_can_upload_contract(project, staff))
@@ -59,6 +59,7 @@ class TestContractTools(TestCase):
         self.assertFalse(user_can_upload_contract(project, applicant))
 
         project = ProjectFactory(status=CONTRACTING, user=applicant)
+        ContractFactory(project=project)
         self.assertTrue(user_can_upload_contract(project, applicant))
 
         project = ProjectFactory(status=IN_PROGRESS, user=applicant)
@@ -70,7 +71,7 @@ class TestContractTools(TestCase):
         project = ProjectFactory(status=CLOSING, user=applicant)
         self.assertFalse(user_can_upload_contract(project, applicant))
 
-    def test_only_owner_or_staff_or_contracting_can_upload_contract(self):
+    def test_only_owner_or_contracting_can_upload_contract(self):
         applicant = ApplicantFactory()
         staff = StaffFactory()
         finance = FinanceFactory()
@@ -78,14 +79,14 @@ class TestContractTools(TestCase):
 
         # owner can upload
         project = ProjectFactory(status=CONTRACTING, user=applicant)
+        ContractFactory(project=project)
         self.assertTrue(user_can_upload_contract(project, applicant))
 
         project = ProjectFactory(status=CONTRACTING, user=staff)
         self.assertFalse(user_can_upload_contract(project, applicant))
 
-        # staff can upload
         project = ProjectFactory(status=CONTRACTING, user=applicant)
-        self.assertTrue(user_can_upload_contract(project, staff))
+        self.assertFalse(user_can_upload_contract(project, staff))
 
         project = ProjectFactory(status=CONTRACTING, user=applicant)
         self.assertTrue(user_can_upload_contract(project, contracting))

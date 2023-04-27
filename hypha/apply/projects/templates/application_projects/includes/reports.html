@@ -61,12 +61,18 @@
                                 {% if not report.skipped %}
                                     {% user_can_view_report report user as can_view_report %}
                                     {% if can_view_report %}
-                                    <a class="data-block__action-link" href="{% url "apply:projects:reports:detail" pk=report.pk %}">{% trans "View" %}</a>
+                                    <a class="data-block__action-icon-link" href="{% url "apply:projects:reports:detail" pk=report.pk %}">
+                                        <svg class="icon icon--project-eye"><use xlink:href="#eye"></use></svg>
+                                        {% trans "View" %}
+                                    </a>
                                     {% endif %}
 
                                     {% user_can_update_report report user as can_update_report %}
                                     {% if can_update_report %}
-                                        <a class="data-block__action-link" href="{% url "apply:projects:reports:edit" pk=report.pk %}">{% trans "Edit" %}</a>
+                                        <a class="data-block__action-icon-link" href="{% url "apply:projects:reports:edit" pk=report.pk %}">
+                                            <svg class="icon icon--project-pen"><use xlink:href="#pen"></use></svg>
+                                            {% trans "Edit" %}
+                                        </a>
                                     {% endif %}
                                 {% else %}
                                     {% if can_update_project_reports %}

@@ -45,6 +45,12 @@ def document_path(instance, filename):
     return f'projects/{instance.project_id}/supporting_documents/{filename}'
 
 
+def contract_document_path(instance, filename):
+    return f'projects/{instance.project_id}/contracting_documents/{filename}'
+
+
+PROJECT_ACTION_MESSAGE_TAG = 'project_action_message'
+
 APPROVE = 'approve'
 REQUEST_CHANGE = 'request_change'
 PAF_STATUS_CHOICES = (
@@ -165,6 +171,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
 
     # tracks updates to the Projects fields via the Project Application Form.
     user_has_updated_details = models.BooleanField(default=False)
+    submitted_contract_documents = models.BooleanField("Submit Contracting Documents", default=False)
 
     activities = GenericRelation(
         'activity.Activity',
@@ -314,7 +321,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
     def editable(self):
         if self.is_locked:
             return False
-        elif self.status in (COMMITTED, WAITING_FOR_APPROVAL):  # locked condition is enough,it is just for double check
+        elif self.status == COMMITTED:  # locked condition is enough,it is just for double check
             return True
         return False
 
@@ -373,6 +380,25 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
                     'category': category,
                     'difference': difference,
                 }
+
+    def get_missing_contract_document_categories(self):
+        """
+        Get the number of documents required to meet each ContractDocumentCategories minimum
+        """
+        # Count the number of documents in each category currently
+        existing_categories = ContractDocumentCategory.objects.filter(contract_packet_files__project=self)
+        counter = collections.Counter(existing_categories)
+
+        # Find the difference between the current count and recommended count
+        for category in ContractDocumentCategory.objects.all():
+            current_count = counter[category]
+            difference = category.recommended_minimum - current_count
+            if difference > 0:
+                yield {
+                    'category': category,
+                    'difference': difference,
+                }
+            return False
 
     @property
     def is_in_progress(self):
@@ -491,7 +517,7 @@ class PAFApprovals(models.Model):
 
 class ContractQuerySet(models.QuerySet):
     def approved(self):
-        return self.filter(is_signed=True, approver__isnull=False)
+        return self.filter(signed_by_applicant=True, approver__isnull=False)
 
 
 class Contract(models.Model):
@@ -500,15 +526,22 @@ class Contract(models.Model):
 
     file = models.FileField(upload_to=contract_path, storage=PrivateStorage())
 
-    is_signed = models.BooleanField("Signed?", default=False)
+    signed_by_applicant = models.BooleanField("Counter Signed?", default=False)
+    uploaded_by_contractor_at = models.DateTimeField(null=True)
+    uploaded_by_applicant_at = models.DateTimeField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     approved_at = models.DateTimeField(null=True)
+    updated_at = models.DateTimeField(null=True)
 
     objects = ContractQuerySet.as_manager()
 
+    def save(self, *args, **kwargs):
+        self.updated_at = timezone.now()
+        return super().save(*args, **kwargs)
+
     @property
     def state(self):
-        return _('Signed') if self.is_signed else _('Unsigned')
+        return _('Counter Signed') if self.signed_by_applicant else _('Unsigned')
 
     def __str__(self):
         return _('Contract for {project} ({state})').format(project=self.project, state=self.state)
@@ -547,6 +580,36 @@ def delete_packetfile_file(sender, instance, **kwargs):
     instance.document.delete(False)
 
 
+class ContractPacketFile(models.Model):
+    category = models.ForeignKey("ContractDocumentCategory", null=True, on_delete=models.CASCADE, related_name="contract_packet_files")
+    project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="contract_packet_files")
+
+    title = models.TextField()
+    document = models.FileField(upload_to=contract_document_path, storage=PrivateStorage())
+    created_at = models.DateField(auto_now_add=True, null=True)
+
+    def __str__(self):
+        return _('Contract file: {title}').format(title=self.title)
+
+    def get_remove_form(self):
+        """
+        Get an instantiated RemoveContractDocumentForm with this class as `instance`.
+
+        This allows us to build instances of the RemoveContractDocumentForm for each
+        instance of ContractPacketFile in the contracting documents template.  The
+        standard Delegated View flow makes it difficult to create these forms
+        in the view or template.
+       """
+        from ..forms import RemoveContractDocumentForm
+        return RemoveContractDocumentForm(instance=self)
+
+
+@receiver(post_delete, sender=ContractPacketFile)
+def delete_contractpacketfile_file(sender, instance, **kwargs):
+    # Remove the file and don't save the base model
+    instance.document.delete(False)
+
+
 class DocumentCategory(models.Model):
     name = models.CharField(max_length=254)
     recommended_minimum = models.PositiveIntegerField()
@@ -556,7 +619,19 @@ class DocumentCategory(models.Model):
 
     class Meta:
         ordering = ('name',)
-        verbose_name_plural = 'Document Categories'
+        verbose_name_plural = 'Project Document Categories'
+
+
+class ContractDocumentCategory(models.Model):
+    name = models.CharField(max_length=254)
+    recommended_minimum = models.PositiveIntegerField()
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ('name',)
+        verbose_name_plural = 'Contract Document Categories'
 
 
 class Deliverable(models.Model):

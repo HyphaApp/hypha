@@ -36,7 +36,25 @@
                 <span>{{ object.submission.round }}</span>
             {% endif %}
 
-            <span>{% trans "Lead" %}: {{ object.lead }}</span>
+            <span>
+                {% if request.user.is_apply_staff %}
+                    <a data-fancybox
+                        data-src="#assign-lead"
+                        class="link link--edit-lead is-active link--transparent"
+                        href="#">
+                        <u>{% trans "Lead" %}: {{ object.lead }}</u>
+                        <svg class="icon icon--pen"><use xlink:href="#pen"></use></svg>
+                    </a>
+                    <div class="modal" id="assign-lead">
+                        <h4 class="modal__header-bar">{% trans "Assign Lead" %}</h4>
+                        {% trans "Update" as update %}
+                        {% include 'funds/includes/delegated_form_base.html' with form=lead_form value=update %}
+                    </div>
+                {% else %}
+                    <span>{% trans "Lead" %}: {{ object.lead }}</span>
+                {% endif %}
+                </button>
+            </span>
 
         </h5>
 
@@ -113,128 +131,65 @@
                     </div>
                 {% endif %}
 
-                {% can_access_supporting_documents_section object as can_access_supporting_document %}
-                {% if can_access_supporting_document %}
-                    {% include "application_projects/includes/supporting_documents.html" %}
+                {% project_can_have_contracting_section object as can_have_contracting_section %}
+                {% if can_have_contracting_section %}
+                    {% include "application_projects/includes/contracting_documents.html" %}
                 {% endif %}
+
+                {% include "application_projects/includes/supporting_documents.html" %}
             </article>
 
+            {% block sidebar %}
+
             <aside class="sidebar">
-                {% if mobile %}
-                <a class="js-actions-toggle button button--white button--full-width button--actions">{% trans "Actions to take" %}</a>
-                {% endif %}
-
-                <div class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
-
-                    <h5>{% trans "Actions to take" %}</h5>
-
-                    {% if request.user.is_apply_staff or request.user.is_contracting or request.user.is_finance %}
-                    {% block admin_actions %}{% endblock %}
+                {% user_next_step_on_project object user as next_step %}
+                {% if next_step %}
+                    {% if mobile %}
+                    <a class="js-actions-toggle button button--white button--full-width button--actions">{% trans "Next Step" %}</a>
                     {% endif %}
 
-                    {% user_can_edit_project object request.user as editable %}
-                    {% if editable and settings.application_projects.ProjectSettings.vendor_setup_required and not project.vendor.user_has_updated_details %}
-                        <a class="button button--bottom-space button--primary button--full-width" href="{% url 'apply:projects:vendor' pk=project.pk %}">{% trans "Fill in Contracting Info" %}</a>
-                    {% endif %}
+                    <div class="js-actions-sidebar sidebar__inner sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
 
-                    {% user_can_upload_contract object request.user as can_upload_contract %}
-                    {% if can_upload_contract %}
-                    <div class="modal" id="upload-contract">
-                        {% if not user.is_apply_staff %}
-                            <h4 class="modal__header-bar">{% trans "Upload Signed Contract" %}</h4>
-                        {% else %}
-                            <h4 class="modal__header-bar">{% trans "Upload Contract" %}</h4>
+                        <h5>{% trans "Next Step" %}</h5>
+                        <p>{{ next_step }}</p>
+                        {% user_next_step_instructions object user as instructions %}
+                        {% if instructions %}
+                            <div class="sidebar__inner--actions--instructions">
+                            {% for instruction in instructions %}
+                                <p>{{forloop.counter}}. {{ instruction }}</p>
+                            {% endfor %}
+                            </div>
                         {% endif %}
-                        {% trans "Upload" as upload %}
-                        {% include 'funds/includes/delegated_form_base.html' with form=contract_form value=upload %}
+
                     </div>
-
-                    <a data-fancybox
-                       data-src="#upload-contract"
-                       class="button button--primary button--full-width button--bottom-space"
-                       href="#">
-                        {% trans "Upload contract" %}
-                    </a>
+                {% endif %}
+                {% if object.paf_approvals.exists and not user.is_applicant %}
+                    {% if mobile %}
+                    <a class="js-actions-toggle button button--white button--full-width button--actions">{% trans "PAF Approvals" %}</a>
                     {% endif %}
 
-                    {% user_can_add_invoices object user as can_add_invoice %}
-                    {% if can_add_invoice %}
-                    <a class="button button--primary button--bottom-space button--full-width"
-                       href="{% url "apply:projects:invoice" pk=object.pk %}">
-                        {% trans "Add Invoice" %}
-                    </a>
-                    {% endif %}
 
-                    {% if request.user.is_apply_staff %}
-                    {% block admin_assignments %}{% endblock %}
-                    {% endif %}
+                    <div class="js-actions-sidebar sidebar__inner sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
 
-                </div>
+                    <h5>{% trans "PAF Approvals" %}</h5>
+                        {% for paf_approval in object.paf_approvals.all %}
+                            {% if paf_approval.approved %}
+                                <p class="sidebar__paf-approvals--approved">{% trans "Approved by " %}{{ paf_approval.user }}</p>
+                            {% else %}
+                                <p class="sidebar__paf-approvals--pending">{% trans "Pending approval from " %}{{ paf_approval.user }}</p>
+                            {% endif %}
+                            <br>
+                        {% endfor %}
 
-                {% if not can_access_supporting_document %}
-                <div class="sidebar__inner">
-                    <h5>{% trans "Supporting Information" %}</h5>
-
-                    <p><a class="link link--bold" href="{{ object.submission.get_absolute_url }}">{% trans "Proposal" %}</a></p>
-                    {% if project.vendor %}
-                        <p><a class="link link--bold" href="{% url 'apply:projects:vendor-detail' pk=project.pk vendor_pk=project.vendor.pk %}">{% trans "Contracting Information" %}</a></p>
-                    {% endif %}
-                    {% if request.user.is_apply_staff %}
-                    <p><a class="link link--bold" href="{% url 'apply:projects:approval' pk=project.pk %}">{% trans "Approval form" %}</a></p>
-                    {% endif %}
                 </div>
                 {% endif %}
 
-                {% if request.user.is_apply_staff and approvals %}
-                {% block project_approvals %}{% endblock %}
+                {% if request.user.is_apply_staff %}
+                {% block admin_assignments %}{% endblock %}
                 {% endif %}
 
-                {% if contracts or contract_to_sign or contract_to_approve %}
-                <div class="sidebar__inner">
-                    <h5>{% trans "Contracts" %}</h5>
-
-                    {% block approve_contract %}
-                        {% if contract_to_approve %}
-                        <p>
-                            <a href="{% url 'apply:projects:contract' pk=project.pk file_pk=contract_to_approve.pk %}" target="_blank" class="link link--bold">
-                                {{ contract_to_approve.created_at|date:"DATE_FORMAT" }}
-                            </a>
-                            ({% trans "Signed" %})
-                        </p>
-                        {% endif %}
-                    {% endblock %}
-
-                    {% block sign_contract %}
-                        {% if contract_to_sign%}
-                        <p>
-                            <a href="{% url 'apply:projects:contract' pk=project.pk file_pk=contract_to_sign.pk %}" target="_blank" class="link link--bold">
-                                {{ contract_to_sign.created_at|date:"DATE_FORMAT" }}
-                            </a>
-                            ({% trans "Unsigned" %})
-                        </p>
-                        {% endif %}
-                    {% endblock %}
-
-                    {% for contract in contracts %}
-                    <p>
-                        <a href="{% url 'apply:projects:contract' pk=project.pk file_pk=contract.pk %}" target="_blank" class="link link--bold">
-                            {{ contract.created_at|date:"DATE_FORMAT" }}
-                        </a>
-                            - {% trans "Approved by" %} {{ contract.approver }}
-                    </p>
-                    {% endfor %}
-
-                    {% if contract_to_approve or contract_to_sign %}
-                        {% block correction_in_contract %}
-                            <a class="link link--bold" href="#communications" target="_blank">
-                                <svg class="icon icon--info-circle"><use xlink:href="#info-circle-fill"></use></svg>
-                                    <span>{% trans "Corrections or amendments to your contract?" %}</span>
-                            </a>
-                        {% endblock %}
-                    {% endif %}
-                </div>
-                {% endif %}
             </aside>
+            {% endblock sidebar %}
         </div>
     </div>
 

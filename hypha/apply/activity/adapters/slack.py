@@ -59,6 +59,7 @@ class SlackAdapter(AdapterBase):
         MESSAGES.APPROVE_PROJECT: _('{user} has approved project <{link}|{source.title}>'),
         MESSAGES.REQUEST_PROJECT_CHANGE: _('{user} has requested changes for project acceptance on <{link}|{source.title}>'),
         MESSAGES.UPLOAD_CONTRACT: _('{user} has uploaded a contract for <{link}|{source.title}>'),
+        MESSAGES.SUBMIT_CONTRACT_DOCUMENTS: _('{user} has submitted the contracting document for project <{link}|{source.title}>'),
         MESSAGES.APPROVE_CONTRACT: _('{user} has approved contract for <{link}|{source.title}>'),
         MESSAGES.CREATE_INVOICE: _('{user} has created invoice for <{link}|{source.title}>'),
         MESSAGES.UPDATE_INVOICE_STATUS: _('{user} has changed the status of <{link_related}|invoice> on <{link}|{source.title}> to {invoice.status_display}'),

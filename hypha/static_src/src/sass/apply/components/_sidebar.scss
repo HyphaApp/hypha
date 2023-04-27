@@ -17,6 +17,11 @@
 
             @include media-query(tablet-portrait) {
                 display: block;
+
+                &--instructions {
+                    margin-top: 10px;
+                    margin-left: 10px;
+                }
             }
         }
 
@@ -27,6 +32,23 @@
                 display: block;
                 border-top: 0;
             }
+        }
+    }
+
+    &__project { // stylelint-disable value-no-vendor-prefix
+        position: -webkit-sticky; /* for Safari */
+        position: sticky;
+        align-self: flex-start;
+        top: 0;
+    }
+
+    &__paf-approvals {
+        &--pending {
+            color: $color--mid-grey;
+        }
+
+        &--approved {
+            color: $color--black;
         }
     }
 

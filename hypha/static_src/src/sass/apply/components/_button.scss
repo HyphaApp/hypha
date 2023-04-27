@@ -29,6 +29,28 @@
         }
     }
 
+    &--project-action {
+        @include button($color--light-blue, $color--dark-blue);
+        display: inline-block;
+        padding: .5rem 1.2rem;
+
+        &--white {
+            @include button($color--white, $color--light-blue);
+            display: inline-block;
+            color: $color--light-blue;
+            border: 1px solid $color--mid-grey;
+            padding: .5rem 1.2rem;
+
+            &:focus {
+                color: $color--light-blue;
+            }
+
+            &:hover {
+                color: $color--white;
+            }
+        }
+    }
+
     &--left-space {
         margin-left: 20px;
     }
@@ -136,6 +158,7 @@
 
         svg {
             fill: $color--primary;
+            height: 24px;
         }
     }
 
@@ -314,8 +337,8 @@
 
         svg {
             fill: $color--light-blue;
-            width: 24px;
-            height: 24px;
+            width: 1em;
+            height: 1em;
             margin-right: 10px;
             pointer-events: none;
         }

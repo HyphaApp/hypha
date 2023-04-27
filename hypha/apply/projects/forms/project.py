@@ -18,6 +18,7 @@ from ..models.project import (
     PAF_STATUS_CHOICES,
     PROJECT_STATUS_CHOICES,
     Contract,
+    ContractPacketFile,
     PacketFile,
     PAFApprovals,
     PAFReviewersRole,
@@ -49,7 +50,7 @@ class ApproveContractForm(forms.Form):
         if not self.instance:
             raise forms.ValidationError(_('The contract you were trying to approve has already been approved'))
 
-        if not self.instance.is_signed:
+        if not self.instance.signed_by_applicant:
             raise forms.ValidationError(_('You can only approve a signed contract'))
 
         super().clean()
@@ -77,6 +78,8 @@ class CreateProjectForm(forms.Form):
         lead_field = self.fields['project_lead']
         qwargs = Q(groups__name=STAFF_GROUP_NAME) | Q(is_superuser=True)
         lead_field.queryset = (lead_field.queryset.filter(qwargs).distinct())
+        if instance:
+            lead_field.initial = instance.lead
 
     def clean_project_lead(self):
         project_lead = self.cleaned_data['project_lead']
@@ -203,7 +206,18 @@ class RemoveDocumentForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
 
-class SetPendingForm(forms.ModelForm):
+class RemoveContractDocumentForm(forms.ModelForm):
+    id = forms.IntegerField(widget=forms.HiddenInput())
+
+    class Meta:
+        fields = ['id']
+        model = ContractPacketFile
+
+    def __init__(self, user=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+class ApproversForm(forms.ModelForm):
     class Meta:
         fields = ['id']
         model = Project
@@ -228,10 +242,8 @@ class SetPendingForm(forms.ModelForm):
             )
 
     def clean(self):
-        if self.instance.status != COMMITTED:
-            raise forms.ValidationError(_('A Project can only be sent for Approval when Committed.'))
-
         cleaned_data = super().clean()
+
         paf_reviewer_roles = PAFReviewersRole.objects.all()
         if paf_reviewer_roles:
             for paf_reviewer_role in paf_reviewer_roles:
@@ -242,15 +254,38 @@ class SetPendingForm(forms.ModelForm):
     def save(self, commit=True):
         # add users as PAFApprovals
         for paf_reviewer_role in PAFReviewersRole.objects.all():
-            if not PAFApprovals.objects.filter(project=self.instance, paf_reviewer_role=paf_reviewer_role).exists():
+            paf_approvals = PAFApprovals.objects.filter(project=self.instance, paf_reviewer_role=paf_reviewer_role)
+            if not paf_approvals.exists():
                 PAFApprovals.objects.create(
                     project=self.instance,
                     paf_reviewer_role=paf_reviewer_role,
                     user=self.cleaned_data[slugify(paf_reviewer_role.label)],
                     approved=False,
                 )
+            elif not paf_approvals.first().approved:
+                paf_approval = paf_approvals.first()
+                paf_approval.user = self.cleaned_data[slugify(paf_reviewer_role.label)]
+                paf_approval.save()
         return super().save(commit=True)
 
+
+class SetPendingForm(ApproversForm):
+    def clean(self):
+        if self.instance.status != COMMITTED:
+            raise forms.ValidationError(_('A Project can only be sent for Approval when Committed.'))
+
+        cleaned_data = super().clean()
+        return cleaned_data
+
+
+class SubmitContractDocumentsForm(forms.ModelForm):
+    class Meta:
+        fields = ['id']
+        model = Project
+        widgets = {'id': forms.HiddenInput()}
+
+    def __init__(self, user=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
 
 class UploadContractForm(FileFormMixin, forms.ModelForm):
@@ -260,12 +295,16 @@ class UploadContractForm(FileFormMixin, forms.ModelForm):
         fields = ['file']
         model = Contract
 
+    def save(self, commit=True):
+        self.instance.file = self.cleaned_data.get('file')
+        return super().save(commit=True)
+
 
 class StaffUploadContractForm(FileFormMixin, forms.ModelForm):
     file = SingleFileField(label=_('Contract'), required=True)
 
     class Meta:
-        fields = ['file', 'is_signed']
+        fields = ['file', 'signed_by_applicant']
         model = Contract
 
 
@@ -282,6 +321,21 @@ class UploadDocumentForm(FileFormMixin, forms.ModelForm):
     def save(self, commit=True):
         self.instance.title = self.instance.document
         return super(UploadDocumentForm, self).save(commit=True)
+
+
+class UploadContractDocumentForm(FileFormMixin, forms.ModelForm):
+    document = SingleFileField(label=_('Contract Document'), required=True)
+
+    class Meta:
+        fields = ['category', 'document']
+        model = ContractPacketFile
+
+    def __init__(self, user=None, instance=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        self.instance.title = self.instance.document
+        return super(UploadContractDocumentForm, self).save(commit=True)
 
 
 class UpdateProjectLeadForm(forms.ModelForm):

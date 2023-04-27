@@ -1,11 +1,18 @@
 .icon {
-    width: 20px;
-    height: 20px;
+    width: 1em;
+    height: 1em;
+    display: inline-block;
     transition: fill $transition;
     fill: $color--dark-grey;
 
     .header__menus--mobile.is-visible & { // stylelint-disable-line force-element-nesting, selector-class-pattern
         fill: $color--white;
+    }
+
+    &--anchor-link {
+        line-height: 1;
+        height: .8em;
+        vertical-align: middle;
     }
 
     &--person {
@@ -93,6 +100,53 @@
         stroke: $color--black;
     }
 
+    &--action-tick {
+        stroke: $color--black;
+        fill: transparent;
+        margin-right: 8px;
+        width: 16px;
+        height: 16px;
+    }
+
+    &--action-cross {
+        stroke: $color--black;
+        fill: transparent;
+        width: 16px;
+        height: 16px;
+    }
+
+    &--project-eye {
+        align-self: center;
+        width: 1em;
+        height: 1em;
+        margin-right: 2px;
+        stroke: $color--light-blue;
+    }
+
+    &--caret-down {
+        position: relative;
+        top: .1em;
+        align-self: center;
+        width: 1em;
+        height: 1em;
+        fill: $color--light-blue;
+    }
+
+    &--arrow-up {
+        position: relative;
+        top: .1em;
+        align-self: center;
+        width: 1.4em;
+        height: 1.4em;
+        fill: $color--light-blue;
+    }
+
+    &--project-pen {
+        width: 12px;
+        margin-right: 5px;
+        fill: $color--light-blue;
+    }
+
     &--pen {
         width: 12px;
         margin-left: 7px;
@@ -106,7 +160,6 @@
     }
 
     &--delete {
-        width: 12px;
         margin-left: 7px;
         fill: $color--tomato;
     }

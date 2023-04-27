@@ -1,5 +1,6 @@
 from django import template
 
+from ..models.project import WAITING_FOR_APPROVAL
 from ..permissions import has_permission
 
 register = template.Library()
@@ -21,10 +22,13 @@ def user_can_send_for_approval(project, user):
 
 
 @register.simple_tag
-def user_can_approve_project(project, user):
-    if not user_has_approved(project, user):
-        if user.is_finance or user.is_contracting or user.is_approver:
-            return True
+def user_can_update_paf_approvers(project, user):
+    if not project.status == WAITING_FOR_APPROVAL:
+        return False
+    if user.paf_approvals.filter(project=project).exists():
+        return False
+    if project.paf_approvals.exists() and user.is_apply_staff:
+        return True
     return False
 
 

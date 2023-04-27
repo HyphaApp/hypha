@@ -1,0 +1,15 @@
+{% extends "messages/email/base.html" %}
+
+{% load i18n %}
+
+{% block salutation %}
+{% endblock %}
+
+{% block content %}
+    {% trans "A Project's contract is awaiting your review." %}
+
+    {% trans "Title" %}: {{ source.title }}
+    {% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
+
+    {% blocktrans with lead=source.lead email=source.lead.email %}Please contact {{ lead }} - {{ email }} if you have any questions.{% endblocktrans %}
+{% endblock %}

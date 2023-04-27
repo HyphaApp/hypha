@@ -4,6 +4,9 @@
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
+        <a class="simplified__projects-link" href="{{ object.get_absolute_url }}">
+            {% trans "Back to project" %}
+        </a>
         <h2 class="heading heading--no-margin">{% trans "Editing" %}: {{ object.title }}</h2>
     </div>
 </div>

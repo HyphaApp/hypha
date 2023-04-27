@@ -5,7 +5,7 @@
         <p class="data-block__title">{% trans "Invoices" %}</p>
         {% user_can_add_invoices object user as can_add_invoice %}
         {% if can_add_invoice %}
-            <a class="data-block__button button button--primary"
+            <a class="button button--project-action"
                href="{% url "apply:projects:invoice" pk=object.pk %}">
                 {% trans "Add Invoice" %}
             </a>
@@ -27,18 +27,23 @@
                     <td><span class="data-block__mobile-label">{% trans "Submitted" %}: </span>{{ invoice.requested_at.date }}</td>
                     <td><span class="data-block__mobile-label">{% trans "Invoice Number" %}: </span>{{ invoice.vendor_document_number }}</td>
                     <td><span class="data-block__mobile-label">{% trans "Status" %}: </span>{{ invoice.get_status_display }}</td>
-                    <td>
-                        <a class="data-block__action-link" href="{{ invoice.get_absolute_url }}">{% trans "View" %}</a>
+                    <td style="display:flex; flex-wrap:wrap;">
+                        <a class="data-block__action-icon-link" href="{{ invoice.get_absolute_url }}">
+                            <svg class="icon icon--project-eye"><use xlink:href="#eye"></use></svg>
+                            {% trans "View" %}
+                        </a>
                         {% can_edit invoice user as user_can_edit_request %}
                         {% if user_can_edit_request %}
-                        <a class="data-block__action-link" href="{% url "apply:projects:invoice-edit" pk=invoice.project.pk invoice_pk=invoice.pk %}">
+                        <a class="data-block__action-icon-link" href="{% url "apply:projects:invoice-edit" pk=invoice.project.pk invoice_pk=invoice.pk %}">
+                            <svg class="icon icon--project-pen"><use xlink:href="#pen"></use></svg>
                             {% trans "Edit" %}
                         </a>
                         {% endif %}
 
                         {% can_delete invoice user as user_can_delete_request %}
                         {% if user_can_delete_request %}
-                        <a class="data-block__action-link" href="{% url 'apply:projects:invoice-delete' pk=invoice.project.pk invoice_pk=invoice.pk %}">
+                        <a class="data-block__action-icon-link" href="{% url 'apply:projects:invoice-delete' pk=invoice.project.pk invoice_pk=invoice.pk %}">
+                            <svg class="icon icon--delete"><use xlink:href="#delete"></use></svg>
                             {% trans "Delete" %}
                         </a>
                         {% endif %}

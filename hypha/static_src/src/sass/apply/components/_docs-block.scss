@@ -1,17 +1,17 @@
 .docs-block {
     border: 1px solid $color--light-blue;
 
-    @include media-query(tablet-portrait) {
-        max-width: 610px;
-    }
-
     &__header {
-        background-color: $color--light-blue;
-        color: $color--white;
+        background-color: $color--light-blue-90;
         padding: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
 
     &__heading {
+        font-size: $base-font-size-large;
+        font-weight: $weight--bold;
         margin: 0;
     }
 
@@ -52,6 +52,10 @@
                 flex: 1;
             }
         }
+
+        &__contract-upload-row {
+            border: 1px solid $color--light-blue;
+        }
     }
 
     &__title {
@@ -80,6 +84,23 @@
 
     &__link {
         font-weight: $weight--bold;
+        margin-right: 1rem;
+
+        &:disabled,
+        &.is-disabled {
+            color: $color--mid-grey;
+            cursor: default;
+        }
+
+        &:last-child {
+            margin-right: 0;
+        }
+    }
+
+    &__icon-link {
+        font-weight: $weight--bold;
+        display: flex;
+        align-items: center;
         margin-right: 1rem;
 
         &:disabled,
@@ -148,6 +169,11 @@
             &:first-child {
                 margin: 0 1rem 0 0;
             }
+        }
+
+        &__actions {
+            display: flex;
+            align-items: center;
         }
     }
 

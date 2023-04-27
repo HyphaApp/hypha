@@ -144,7 +144,7 @@ class ContractFactory(factory.django.DjangoModelFactory):
     approver = factory.SubFactory(StaffFactory)
     project = factory.SubFactory(ProjectFactory)
     approved_at = factory.LazyFunction(timezone.now)
-    is_signed = True
+    signed_by_applicant = True
 
     file = factory.django.FileField()
 

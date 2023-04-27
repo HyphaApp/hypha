@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
@@ -18,8 +20,13 @@ from hypha.apply.utils.views import DelegateableView, DelegatedViewMixin, ViewDi
 
 from ..filters import InvoiceListFilter
 from ..forms import ChangeInvoiceStatusForm, CreateInvoiceForm, EditInvoiceForm
-from ..models.payment import INVOICE_TRANISTION_TO_RESUBMITTED, Invoice
-from ..models.project import Project
+from ..models.payment import (
+    APPROVED_BY_FINANCE_1,
+    APPROVED_BY_STAFF,
+    INVOICE_TRANISTION_TO_RESUBMITTED,
+    Invoice,
+)
+from ..models.project import PROJECT_ACTION_MESSAGE_TAG, Project
 from ..tables import InvoiceListTable
 
 
@@ -65,6 +72,17 @@ class ChangeInvoiceStatusView(DelegatedViewMixin, InvoiceAccessMixin, UpdateView
                 message=message,
                 visibility=ALL,
                 related_object=self.object,
+            )
+
+        if (self.request.user.is_apply_staff and self.object.status == APPROVED_BY_STAFF) or \
+            (settings.INVOICE_EXTENDED_WORKFLOW and self.request.user.is_finance_level_1 and
+             self.object.status == APPROVED_BY_FINANCE_1):
+            messenger(
+                MESSAGES.APPROVE_INVOICE,
+                request=self.request,
+                user=self.request.user,
+                source=self.object.project,
+                related=self.object,
             )
 
         messenger(
@@ -175,6 +193,7 @@ class CreateInvoiceView(CreateView):
             source=self.project,
             related=self.object,
         )
+        messages.success(self.request, _("Invoice has been uploaded"), extra_tags=PROJECT_ACTION_MESSAGE_TAG)
 
         # Required for django-file-form: delete temporary files for the new files
         # that are uploaded.

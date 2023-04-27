@@ -8,10 +8,12 @@ from django.utils.translation import gettext as _
 
 from hypha.apply.projects.models.payment import CHANGES_REQUESTED_BY_STAFF, DECLINED
 from hypha.apply.users.groups import (
+    APPROVER_GROUP_NAME,
     CONTRACTING_GROUP_NAME,
     FINANCE_GROUP_NAME,
     STAFF_GROUP_NAME,
 )
+from hypha.apply.users.models import User
 
 from ..options import MESSAGES
 from ..tasks import send_mail
@@ -45,6 +47,7 @@ class EmailAdapter(AdapterBase):
         MESSAGES.PARTNERS_UPDATED: 'partners_updated_applicant',
         MESSAGES.PARTNERS_UPDATED_PARTNER: 'partners_updated_partner',
         MESSAGES.UPLOAD_CONTRACT: 'messages/email/contract_uploaded.html',
+        MESSAGES.SUBMIT_CONTRACT_DOCUMENTS: 'messages/email/submit_contract_documents.html',
         MESSAGES.CREATED_PROJECT: 'handle_project_created',
         MESSAGES.UPDATED_VENDOR: 'handle_vendor_updated',
         MESSAGES.SENT_TO_COMPLIANCE: 'messages/email/sent_to_compliance.html',
@@ -52,6 +55,7 @@ class EmailAdapter(AdapterBase):
         MESSAGES.APPROVE_PAF: 'messages/email/paf_for_approval.html',
         MESSAGES.UPDATE_INVOICE: 'handle_invoice_updated',
         MESSAGES.UPDATE_INVOICE_STATUS: 'handle_invoice_status_updated',
+        MESSAGES.APPROVE_INVOICE: 'messages/email/invoice_approved.html',
         MESSAGES.SUBMIT_REPORT: 'messages/email/report_submitted.html',
         MESSAGES.SKIPPED_REPORT: 'messages/email/report_skipped.html',
         MESSAGES.REPORT_FREQUENCY_CHANGED: 'messages/email/report_frequency.html',
@@ -79,6 +83,8 @@ class EmailAdapter(AdapterBase):
                 subject = _('Project is waiting for approval: {source.title}').format(source=source)
             elif message_type == MESSAGES.UPLOAD_CONTRACT:
                 subject = _('Contract uploaded for the project: {source.title}').format(source=source)
+            elif message_type == MESSAGES.SUBMIT_CONTRACT_DOCUMENTS:
+                subject = _('Contract Documents required approval for the project: {source.title}').format(source=source)
             elif message_type == MESSAGES.PROJECT_TRANSITION:
                 from hypha.apply.projects.models.project import CONTRACTING, IN_PROGRESS
                 if source.status == CONTRACTING:
@@ -258,10 +264,8 @@ class EmailAdapter(AdapterBase):
         if message_type == MESSAGES.SENT_TO_COMPLIANCE:
             return get_compliance_email(target_user_gps=[CONTRACTING_GROUP_NAME, FINANCE_GROUP_NAME, STAFF_GROUP_NAME])
 
-        if message_type == MESSAGES.UPLOAD_CONTRACT:
-            if user == source.user:
-                # if applicant re-uploads the contract then notify the compliance
-                return get_compliance_email(target_user_gps=[CONTRACTING_GROUP_NAME, STAFF_GROUP_NAME])
+        if message_type == MESSAGES.SUBMIT_CONTRACT_DOCUMENTS:
+            return get_compliance_email(target_user_gps=[STAFF_GROUP_NAME])
 
         if message_type in {MESSAGES.SUBMIT_REPORT, MESSAGES.UPDATE_INVOICE}:
             # Don't tell the user if they did these activities
@@ -284,6 +288,15 @@ class EmailAdapter(AdapterBase):
                 return get_compliance_email(target_user_gps=[CONTRACTING_GROUP_NAME])
             if source.status == IN_PROGRESS:
                 return [source.user.email]
+
+        if message_type == MESSAGES.APPROVE_INVOICE:
+            if user.is_apply_staff:
+                return get_compliance_email(target_user_gps=[FINANCE_GROUP_NAME])
+            if settings.INVOICE_EXTENDED_WORKFLOW and user.is_finance_level_1:
+                finance_2_users_email = User.objects.filter(groups__name=FINANCE_GROUP_NAME).\
+                    filter(groups__name=APPROVER_GROUP_NAME).values_list('email', flat=True)
+                return finance_2_users_email
+            return []
 
         if isinstance(source, get_user_model()):
             return user.email

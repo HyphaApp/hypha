@@ -1,7 +1,15 @@
 {% if messages %}
     <ul class="messages">
         {% for message in messages %}
-            {% include "includes/message_item.html" with message=message tag=message.tags close=True %}
+            {% if 'project_action_message' in message.tags %}
+                <li class="messages__actions" x-data="{ show: true }" x-show="show">
+                    <svg class="icon icon--action-tick"><use xlink:href="#line-tick"></use></svg>
+                    <p class="messages__copy">{{ message }}</p>
+                    <svg class="icon icon--action-cross" x-on:click="show = !show"><use xlink:href="#line-cross"></use></svg>
+                </li>
+            {% else %}
+                {% include "includes/message_item.html" with message=message tag=message.tags close=True %}
+            {% endif %}
         {% endfor %}
     </ul>
 {% endif %}

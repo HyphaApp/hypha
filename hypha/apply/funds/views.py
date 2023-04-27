@@ -684,6 +684,11 @@ class CreateProjectView(DelegatedViewMixin, CreateView):
         )
         return response
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['action_message'] = _('Project Created!')
+        return context
+
 
 @method_decorator(staff_required, name='dispatch')
 class ScreeningSubmissionView(DelegatedViewMixin, UpdateView):
