@@ -24,11 +24,7 @@
                         <th>
                             <h6 class="heading heading--normal heading--no-margin">{% trans "Review outcomes" %}
                             <span class="list__item--reviewer-name list__item--average_score">(Avg. score: 
-                            {% if submission.review_score_avg %}
-                                {{ submission.review_score_avg|floatformat:"1" }})
-                            {% else %}
-                                0)
-                            {% endif %}
+                                {{ submission.has_reviewed|average_review_score|floatformat:'1'}})
                             </span></h6>
                         </th>
                     </tr>
@@ -56,7 +52,7 @@
                                             {% if reviewer.role %}{% image reviewer.role.icon max-12x12 %}{% endif %}
                                         </span>
                                         <span class="list__item list__item--reviewer-outcome">{{ reviewer.review.get_recommendation_display }}</span>
-                                        <span class="list__item list__item--review-score">{{ reviewer.review.score }}</span>
+                                        <span class="list__item list__item--review-score">{{ reviewer.review.get_score_display }}</span>
                                     </li>
                                     {% for opinion in reviewer.review.opinions.all %}
                                         {% if forloop.first %}
