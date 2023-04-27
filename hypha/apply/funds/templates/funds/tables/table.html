@@ -51,8 +51,14 @@
                                             {{ reviewer }}
                                             {% if reviewer.role %}{% image reviewer.role.icon max-12x12 %}{% endif %}
                                         </span>
-                                        <span class="list__item list__item--reviewer-outcome">{{ reviewer.review.get_recommendation_display }}</span>
-                                        <span class="list__item list__item--review-score">{{ reviewer.review.get_score_display }}</span>
+                                        {% with reviewer.review.get_recommendation_display as recommendation and reviewer.review.get_score_display as score%}
+                                            <div class="{%if recommendation == 'Yes'%}yes-text{%elif recommendation == 'Maybe'%}maybe-text{%elif recommendation == 'No'%}no-text{%endif%} list__item list__item--reviewer-outcome">
+                                                {{ recommendation }}
+                                            </div>
+                                            <div  style="margin-left: 4px;" class="{%if recommendation == 'Yes'%}yes-text{%elif recommendation == 'Maybe'%}maybe-text{%elif recommendation == 'No'%}no-text{%endif%}">
+                                                {{ score }}
+                                            </div>
+                                        {% endwith %}
                                     </li>
                                     {% for opinion in reviewer.review.opinions.all %}
                                         {% if forloop.first %}

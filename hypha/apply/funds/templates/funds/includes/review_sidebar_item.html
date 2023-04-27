@@ -28,8 +28,14 @@
                 {% if reviewer.role %}{% image reviewer.role.icon max-12x12 %}{% endif %}
             </div>
         {% endif %}
-        <div>{{ reviewer.review.get_recommendation_display }}</div>
-        <div>{{ reviewer.review.get_score_display }}</div>
+        {% with reviewer.review.get_recommendation_display as recommendation and reviewer.review.get_score_display as score%}
+        <div class="{%if recommendation == 'Yes'%}yes-text{%elif recommendation == 'Maybe'%}maybe-text{%elif recommendation == 'No'%}no-text{%endif%}">
+            {{ recommendation }}
+        </div>
+        <div  style="margin-left: 4px;" class="{%if recommendation == 'Yes'%}yes-text{%elif recommendation == 'Maybe'%}maybe-text{%elif recommendation == 'No'%}no-text{%endif%}">
+            {{ score }}
+        </div>
+        {% endwith %}
     {% endif %}
 </li>
 
