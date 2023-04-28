@@ -2,6 +2,7 @@ from django import template
 from django.utils.safestring import mark_safe
 
 from ..models import MAYBE, NO, YES
+from ..options import NA
 
 register = template.Library()
 
@@ -40,3 +41,19 @@ def can_review(user, submission):
 @register.filter
 def has_draft(user, submission):
     return submission.can_review(user) and submission.assigned.draft_reviewed().filter(reviewer=user).exists()
+
+
+@register.filter
+def average_review_score(reviewers):
+    if reviewers:
+        scores = [
+            reviewer.review.score
+            for reviewer in reviewers
+            if not reviewer.has_review and not reviewer.review.is_draft and not reviewer.review.score == NA
+        ]
+        if len(scores) > 0:
+            return sum(scores) / len(scores)
+        else:
+            return 0
+    else:
+        return reviewers
