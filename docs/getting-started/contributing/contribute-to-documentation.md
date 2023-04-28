@@ -12,18 +12,19 @@ The Hypha Guide welcomes contributors! There are lots of ways to help out, inclu
 
 ## Documentation types
 
-This project consists of several distinct documentation types with specific purposes. When proposing new additions to the project please pick the appropriate documentation type.
+This project consists of several distinct documentation types with specific purposes, inspired by a documentation framework called [Diátaxis](https://diataxis.fr/). When proposing new additions to the project please pick the appropriate documentation type.
 
-## Developer
+### Developer Tutorials
 
-Provides step-by-step information on how to set up a local instance of Hypha.
+Provides step-by-step instructions on how to set up a local instance of Hypha.
+> Write technical documentation with a new developer in mind. Create a quickstart doc wherever possible. What is the bare minimum information that a user needs to get started with the feature that you are documenting? Start there. 
 
-## User Guides
+### User Guides
 
 Guides are focused on accomplishing a specific task and can assume some level of prerequisite knowledge. There may be multiple approaches to accomplishing a task, and we welcome your input.
 
 Other adopters like the [Digital Freedom Fund ](https://apply.hypha.digitalfreedomfund.org/)and [Open Technology Fund](https://guide.opentech.fund/application-platform-guidance) have created platform guides specific to their application processes.
 
-## Discussions
+### Discussions
 
 Discussions are focused on understanding and information exchange. These explore a specific topic without a specific goal in mind. https://we.hypha.app/
