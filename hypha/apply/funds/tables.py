@@ -132,7 +132,7 @@ class LabeledCheckboxColumn(tables.CheckBoxColumn):
 
 class BaseAdminSubmissionsTable(SubmissionsTable):
     lead = tables.Column(order_by=('lead__full_name',))
-    reviews_stats = tables.TemplateColumn(template_name='funds/tables/column_reviews.html', verbose_name=mark_safe("Reviews<div>Assgn.\tComp.</div>"), orderable=False)
+    reviews_stats = tables.TemplateColumn(template_name='funds/tables/column_reviews.html', verbose_name=mark_safe("Reviews<div>Comp. <span class=\"counts-separator\">/</span> Assgn.</div>"), orderable=False)
     screening_status = tables.Column(verbose_name=_('Screening'), accessor='screening_statuses')
 
     class Meta(SubmissionsTable.Meta):

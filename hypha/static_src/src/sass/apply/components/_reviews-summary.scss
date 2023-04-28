@@ -14,5 +14,14 @@
     &__td {
         padding: 10px;
         vertical-align: middle;
+        text-align: center;
     }
+
+    &__td-width {
+        width: max-content;
+    }
+}
+
+.counts-separator {
+    color: $color--mid-grey;
 }

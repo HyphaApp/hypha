@@ -29,7 +29,7 @@ def traffic_light(value):
     try:
         return mark_safe(TRAFFIC_LIGHT_TEMPLATE.format(**TRAFFIC_LIGHT_COLORS[value]))
     except KeyError:
-        return '-'
+        return ''
 
 
 @register.filter
