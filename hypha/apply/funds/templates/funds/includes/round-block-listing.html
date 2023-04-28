@@ -21,6 +21,7 @@
                         {% endif %}
                     </p>
                 <a class="round-block__view" href="{% url 'apply:rounds:detail' pk=round.pk %}">{% trans 'View' %}</a>
+                <a class="round-block__view" href="{% url 'apply:rounds:export' pk=round.pk %}">{% trans 'Export' %}</a>
             </li>
         {% else %}
             <li class="round-block__item round-block__item--more">
