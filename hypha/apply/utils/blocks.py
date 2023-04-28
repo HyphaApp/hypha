@@ -53,7 +53,7 @@ class RichTextFieldBlock(TextFieldBlock):
         return bleach.clean(data or '', tags=[], strip=True)
 
     def no_response(self):
-        return '<p>No response</p>'
+        return '<p>-</p>'
 
 
 class MarkdownTextFieldBlock(TextFieldBlock):
@@ -69,7 +69,7 @@ class MarkdownTextFieldBlock(TextFieldBlock):
         return bleach.clean(data or '', tags=[], strip=True)
 
     def no_response(self):
-        return '<p>No response</p>'
+        return '<p>-</p>'
 
 
 class CustomFormFieldsBlock(StreamBlock):

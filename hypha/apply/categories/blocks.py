@@ -100,4 +100,4 @@ class CategoryQuestionBlock(OptionalFormFieldBlock):
         return None
 
     def no_response(self):
-        return ['No Response']
+        return '-'
