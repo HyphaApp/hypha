@@ -69,6 +69,15 @@
             }
         }
 
+        &--margin {
+            margin-top: 10px;
+            margin-bottom: 5px;
+        }
+
+        a {
+            text-decoration: underline;
+        }
+
         &--average_score {
             color: $color--dark-grey;
             font-weight: $weight--normal;

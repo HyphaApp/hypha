@@ -78,6 +78,13 @@
                                         {% endif %}
                                     {% endfor %}
                                 {% endfor %}
+                                <li class="list__item list__item--reviewer list__item--margin">
+                                    <span>
+                                        {% if request.user.is_apply_staff and submission.reviews.exists %}
+                                            <a href="{% url 'apply:submissions:reviews:list' submission_pk=submission.id %}" >{% trans "Reviews" %}</a>
+                                        {% endif %}
+                                    </span>
+                                </li>
                                 {% for reviewer in submission.hasnt_reviewed %}
                                     <li class="list__item list__item--reviewer">
                                         <span class="list__item--reviewer-name">
