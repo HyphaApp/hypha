@@ -13,7 +13,7 @@ from hypha.core.utils import markdown_to_html
 logger = logging.getLogger(__name__)
 
 
-def cleanup_markdown(text):
+def remove_extra_empty_lines(text: str) -> str:
     """Removes extra blank lines and spaces from markdown generated
     using Django templates. Do this for readably of markdown itself.
     """
@@ -65,7 +65,7 @@ class MarkdownMail(object):
 
         with language(lang):
             rendered_template = self._render_template(context)
-            body_txt = cleanup_markdown(rendered_template)
+            body_txt = remove_extra_empty_lines(rendered_template)
             body_html = markdown_to_html(rendered_template)
 
         email = EmailMultiAlternatives(**kwargs)

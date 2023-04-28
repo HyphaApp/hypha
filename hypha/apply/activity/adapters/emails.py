@@ -14,6 +14,10 @@ from hypha.apply.users.groups import (
     STAFF_GROUP_NAME,
 )
 from hypha.apply.users.models import User
+from hypha.core.mail import (
+    language,
+    remove_extra_empty_lines,
+)
 
 from ..options import MESSAGES
 from ..tasks import send_mail
@@ -350,7 +354,11 @@ class EmailAdapter(AdapterBase):
             )
 
     def render_message(self, template, **kwargs):
-        return render_to_string(template, kwargs, kwargs['request'])
+
+        with language(settings.LANGUAGE_CODE):
+            text = render_to_string(template, kwargs, kwargs['request'])
+
+        return remove_extra_empty_lines(text)
 
     def send_message(self, message, source, subject, recipient, logs, **kwargs):
         try:
