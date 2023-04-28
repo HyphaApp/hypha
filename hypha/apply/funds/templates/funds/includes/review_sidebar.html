@@ -24,7 +24,7 @@
             {% endifchanged %}
         {% endif %}
 
-        {% for reviewer in reviewers %}
+        {% for reviewer in reviewers|order_by %}
             {% if reviewer_type.name in hidden_types %}
                 {% include 'funds/includes/review_sidebar_item.html' with reviewer=reviewer hidden=True %}
 

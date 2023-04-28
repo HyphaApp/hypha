@@ -45,7 +45,7 @@
 
                         <td>
                             <ul class="list list--no-margin">
-                                {% for reviewer in submission.has_reviewed %}
+                                {% for reviewer in submission.has_reviewed|order_by %}
                                     <li class="list__item list__item--has-reviewed ">
                                         <span class="list__item--reviewer-name truncate">
                                             {{ reviewer }}

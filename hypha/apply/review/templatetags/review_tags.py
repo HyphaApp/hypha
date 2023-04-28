@@ -57,3 +57,8 @@ def average_review_score(reviewers):
             return 0
     else:
         return reviewers
+
+@register.filter_function
+def order_by(reviewers):
+    reviewers.sort(key=lambda reviewer: reviewer.review.recommendation if not reviewer.has_review else -1,reverse=True)
+    return reviewers
