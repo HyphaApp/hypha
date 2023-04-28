@@ -24,4 +24,15 @@
             margin-top: 20px;
         }
     }
+
+    &__export {
+        button {
+            display: block;
+            margin-top: 20px;
+        }
+
+        a {
+            color: $color--white;
+        }
+    }
 }
