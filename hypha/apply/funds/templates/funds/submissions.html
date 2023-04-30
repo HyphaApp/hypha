@@ -6,7 +6,10 @@
 {% block content %}
 
     {% adminbar %}
-        {% slot header %}{% trans "All Submissions" %}<span class="submissions-count"> ({{ table.rows|length }}){% endslot %}
+        {% slot header %}
+            {% trans "All Submissions" %}<span class="submissions-count"> ({{ table.rows|length }})
+                <a class="text-sm" href="{% url 'apply:submissions:list-beta' %}">(Try Beta)</a>
+        {% endslot %}
         {% slot sub_heading %}{% trans "Search and filter all submissions" %}{% endslot %}
     {% endadminbar %}
 

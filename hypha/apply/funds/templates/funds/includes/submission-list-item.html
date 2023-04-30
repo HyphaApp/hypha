@@ -1,82 +1,77 @@
 {% load i18n querystrings %}
 {% load heroicons %}
 
-<div class="item-row relative border-t flex hover:bg-gray-100 w-full">
+<div class="relative border-t md:flex flex-wrap md:flex-nowrap hover:bg-gray-100 w-full px-2">
 
     {% comment %} Select {% endcomment %}
-    <label class="pl-3 py-3 flex">
+    <label class="hidden pl-1 py-2.5 sm:inline-flex">
         <input id="submission-{{ s.id }}"
             type="checkbox"
             value="{{ s.id }}"
             x-model="selectedSubmissions"
             name="submissions"
-            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
     </label>
 
     {% comment %} Screening, and Archived icons {% endcomment %}
-    <div class="pl-3 pt-3 select-none" tabindex="-1">
+    <span class="pt-2 sm:pl-2 select-none inline-block" tabindex="-1">
         {% if s.is_archive %}
             {% trans "Archived Submission" as text_archived %}
-            {% heroicon_outline "lock-closed" aria_hidden="true" size=21 class="inline stroke-red-800 stroke-1.5 -mt-1" data_tippy_placement='right' data_tippy_content=text_archived data_tippy_delay=200 %}
+            {% heroicon_outline "lock-closed" aria_hidden="true" size=21 class="inline stroke-red-800 stroke-1.5 -mt-1 align-text-bottom" data_tippy_placement='right' data_tippy_content=text_archived data_tippy_delay=200 %}
             <span class="sr-only">{% trans "Archived" %}</span>
         {% else %}
             {% if s.has_yes_default_screening_status_set %}
-                {% heroicon_mini "hand-thumb-up" aria_hidden="true" size=21 class="inline fill-green-400 stroke-1.5 -mt-1" data_tippy_placement='right' data_tippy_content="Screening Status: Yes" data_tippy_delay=200 %}
+                {% heroicon_mini "hand-thumb-up" aria_hidden="true" size=21 class="inline fill-green-400 stroke-1.5 -mt-1 align-text-bottom" data_tippy_placement='right' data_tippy_content="Screening Status: Yes" data_tippy_delay=200 %}
             {% else %}
                 {% if s.has_no_default_screening_status_set %}
-                    {% heroicon_mini "hand-thumb-down" aria_hidden="true" size=21 class="inline fill-red-400 stroke-1.5 -mt-1" data_tippy_placement='right' data_tippy_content="Screening Status: No" data_tippy_delay=200 %}
+                    {% heroicon_mini "hand-thumb-down" aria_hidden="true" size=21 class="inline fill-red-400 stroke-1.5 -mt-1 align-text-bottom" data_tippy_placement='right' data_tippy_content="Screening Status: No" data_tippy_delay=200 %}
                 {% else %}
-                    {% heroicon_outline "question-mark-circle" aria_hidden="true" size=21 class="inline stroke-slate-300 stroke-1.5 -mt-1" data_tippy_placement='right' data_tippy_content="Awaiting Screening" data_tippy_delay=200 %}
+                    {% heroicon_outline "question-mark-circle" aria_hidden="true" size=21 class="inline stroke-slate-300 stroke-1.5 -mt-1 align-text-bottom" data_tippy_placement='right' data_tippy_content="Awaiting Screening" data_tippy_delay=200 %}
                     <span class="sr-only">{% trans "Archived" %}</span>
                 {% endif %}
             {% endif %}
         {% endif %}
-    </div>
+    </span>
 
     {% comment %} Title {% endcomment %}
-    <div class="flex flex-auto pt-1 pb-2 px-2">
-        <div class="space-y-1 md:space-y-0 md:flex md:flex-col md:grow">
-            <span class="flex justify-between">
-                <a
-                    title="{{ s.title }}"
-                    href="{% url "funds:submissions:detail" s.id %}"
-                    class="font-semibold break-all text-lg text-[#404041] hover:text-blue-600 transition-colors"
-                >{{ s.title }}</a>
+    <div class="px-2 space-y-1 pt-1 md:pb-2 min-w-0 md:space-y-0 md:flex md:flex-col md:flex-auto">
+        <span>
+            <a
+                title="{{ s.title }}"
+                href="{% url "funds:submissions:detail" s.id %}"
+                class="font-semibold text-base text-[#404041] hover:text-blue-600 transition-colors break-words"
+            >{{ s.title }}</a>
 
-                <span>
-                    <a href="{% modify_query status=s.phase.display_name %}"
-                        class="rounded whitespace-nowrap inline-block ml-2 px-2 mt-1 py-1 text-xs font-medium text-gray-800
-                            {% if s.phase.display_name == "Need screening" %}bg-orange-200{% endif %}
-                            {% if s.phase.display_name == "Draft" %}bg-gray-200{% endif %}
-                            {% if s.phase.display_name == "Accepted" %}bg-green-200{% endif %}
-                            {% if s.phase.display_name == "Ready for Determination" %}bg-blue-200{% endif %}
-                            {% if s.phase.display_name == "Invited for Proposal" %}bg-slate-200{% endif %}
-                            {% if s.phase.display_name == "Internal Review" %}bg-stone-200{% endif %}
-                            {% if s.phase.display_name == "External Review" %}bg-lime-200{% endif %}"
-                    >
-                        {{ s.phase.display_name }}
-                    </a>
-                </span>
-            </span>
+            <a href="{% modify_query status=s.phase.display_name %}"
+                class=" rounded-full whitespace-nowrap inline-block ml-1 px-2 py-0.5 text-xs font-medium text-gray-800
+                    {% if s.phase.display_name == "Need screening" %}bg-orange-200{% endif %}
+                    {% if s.phase.display_name == "Draft" %}bg-gray-200{% endif %}
+                    {% if s.phase.display_name == "Accepted" %}bg-green-200{% endif %}
+                    {% if s.phase.display_name == "Ready for Determination" %}bg-blue-200{% endif %}
+                    {% if s.phase.display_name == "Invited for Proposal" %}bg-slate-200{% endif %}
+                    {% if s.phase.display_name == "Internal Review" %}bg-stone-200{% endif %}
+                    {% if s.phase.display_name == "External Review" %}bg-lime-200{% endif %}
+                    {% if s.phase.display_name == "Accepted but additional info required" %}bg-teal-200{% endif %}"
+            >
+                {{ s.phase.display_name }}
+            </a>
+        </span>
 
-            <div class="flex items-center text-xs pt-1 flex-wrap">
-                <span>
-                    #{{ s.id }} submitted on <time datetime="{{ s.submit_time|date:"c" }}" title="{{ s.submit_time|date }}">{{ s.submit_time|date:"SHORT_DATE_FORMAT" }}</time> by {{ s.user }}
-                </span>
 
-                <span class="meta-fund inline-flex items-center ml-1">
-                    • {{ s.stage }} •
-                    {% heroicon_outline "briefcase" aria_hidden="true" size=15 class="stroke-1.5 mx-1" %}
-                    {{ s.page }}
-                </span>
+        <div class="pt-1">
+            <p class="text-xs m-0">
+                #{{ s.id }}
+                submitted on <time datetime="{{ s.submit_time|date:"c" }}" title="{{ s.submit_time|date }}">{{ s.submit_time|date:"SHORT_DATE_FORMAT" }}</time>
+                by {{ s.user }} • {{ s.stage }} •
+
+                {% heroicon_outline "briefcase" aria_hidden="true" size=15 class="stroke-1.5 inline align-text-bottom" %}
+                {{ s.page }}
 
                 {% if s.round %}
-                    <span class="meta-round inline-flex items-center">
-                        {% heroicon_mini "arrow-small-right" aria_hidden="true" size=15 class="stroke-1.5" %}
-                        {{ s.round }}
-                    </span>
+                    {% heroicon_mini "arrow-small-right" aria_hidden="true" size=15 class="stroke-1.5 inline align-text-bottom" %}
+                    {{ s.round }}
                 {% endif %}
-            </div>
+            </p>
         </div>
     </div>
 

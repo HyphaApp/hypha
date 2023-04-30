@@ -12,40 +12,9 @@
         {% slot header %}
             {% trans "All Submissions" %}
             <span class="submissions-count"> ({{ total }})</span>
+            <a class="text-sm" href="{% url 'apply:submissions:list' %}">(Use Older version)</a>
         {% endslot %}
 
-        <div class="relative mt-2 md:mt-0">
-            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                <svg class="text-gray-500" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg"
-                    height="20"
-                    width="20"
-                >
-                    <path fill-rule="evenodd"
-                        d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                        clip-rule="evenodd"></path>
-                </svg>
-            </div>
-            <form>
-                {% for key, value in request.GET.items %}
-                    <input class='filter_options' type="hidden" value="{{ value}}" name="{{ key }}">
-                {% endfor %}
-                <input
-                    type="search"
-                    id="search-navbar"
-                    class="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-sm bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Search..."
-                    name="query"
-                    hx-trigger="keyup changed delay:500ms, search"
-                    hx-push-url="true"
-                    hx-get="./"
-                    hx-include="input.filter_options:not([name=query])"
-                    hx-target="#main"
-                    aria-label="{% trans 'Search Submissions' %}"
-                    {% if search_term %}value="{{ search_term }}" autofocus{% endif %}
-                >
-            </form>
-        </div>
     {% endadminbar %}
 
     {% if is_filtered %}
@@ -135,74 +104,115 @@
         </div>
     {% endif %}
 
+    <form method='GET' action="./" class="mt-3 flex gap-1 justify-between items-center">
+        {% for key, value in request.GET.items %}
+            {% if key != 'archived' %}<input type="hidden" class="filter_options" value="{{ value}}" name="{{ key }}">{% endif %}
+        {% endfor %}
+
+        <label class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                {% heroicon_mini "magnifying-glass" size=20 class="text-gray-500" %}
+            </span>
+            <input
+                type="search"
+                id="search-navbar"
+                class="block md:w-96 p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-sm bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Search..."
+                name="query"
+                hx-trigger="keyup changed delay:500ms, search"
+                hx-push-url="true"
+                hx-get="./"
+                hx-include="input.filter_options:not([name=query])"
+                hx-target="#main"
+                hx-swap="outerHTML"
+                aria-label="{% trans 'Search Submissions' %}"
+                {% if search_term %}value="{{ search_term }}" autofocus{% endif %}
+            >
+        </label>
+
+
+        {% if show_archive %}
+        <span>
+            <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" {% if show_archived %}checked{% endif %}
+                    class="sr-only peer"
+                    name="archived"
+                    hx-push-url="true"
+                    hx-get="./"
+                    hx-include="input.filter_options:not([name=archived])"
+                    hx-target="#main"
+                >
+                <div
+                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600">
+                </div>
+                <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">Archived</span>
+            </label>
+        </span>
+        {% endif %}
+    </form>
+
     <section x-data="{
         selectAll: false,
         selectedSubmissions: [],
         toggleAllCheckboxes() {
-            this.selectAll = !this.selectAll
-            this.selectedSubmissions = [];
+        this.selectAll = !this.selectAll
+        this.selectedSubmissions = [];
 
-            checkboxes = document.querySelectorAll('input[x-model=selectedSubmissions]');
+        checkboxes = document.querySelectorAll('input[x-model=selectedSubmissions]');
 
-            [...checkboxes].map((el) => {
-                el.checked = this.selectAll;
-                (this.selectAll) ? this.selectedSubmissions.push(el.value) : this.selectedSubmissions = [];
-            })
+        [...checkboxes].map((el) => {
+        el.checked = this.selectAll;
+        (this.selectAll) ? this.selectedSubmissions.push(el.value) : this.selectedSubmissions = [];
+        })
         },
         get selectedSubmissionCount(){
-            return this.selectedSubmissions.length;
+        return this.selectedSubmissions.length;
         },
         get showSelectedSubmissions(){
-            return (this.selectedSubmissions.length > 0);
+        return (this.selectedSubmissions.length > 0);
         }
-    }"
-    x-init="
-        $watch('selectedSubmissions', (value) => {
+        }"
+        x-init="
+            $watch('selectedSubmissions', (value) => {
             var total = document.querySelectorAll('input[x-model=selectedSubmissions]').length
             if (value.length == 0) {
-                $refs.checkboxSelectAll.indeterminate = false
-                $refs.checkboxSelectAll.checked = false
+            $refs.checkboxSelectAll.indeterminate = false
+            $refs.checkboxSelectAll.checked = false
             } else if (value.length === total) {
-                $refs.checkboxSelectAll.indeterminate = false
-                $refs.checkboxSelectAll.checked = true
+            $refs.checkboxSelectAll.indeterminate = false
+            $refs.checkboxSelectAll.checked = true
             } else {
-                $refs.checkboxSelectAll.indeterminate = true
-                $refs.checkboxSelectAll.checked = false
+            $refs.checkboxSelectAll.indeterminate = true
+            $refs.checkboxSelectAll.checked = false
             }
-        })
-    ">
+            })
+        ">
 
         <header
             hx-target="#main"
             hx-swap="outerHTML"
-            class="mt-3 px-3 py-3 min-h-5 flex justify-between items-center justify-between border-x border-t flex-wrap gap-5 bg-gray-50 md:text-sm md:font-medium  border-gray-200 dark:bg-gray-900 dark:border-gray-800"
+            class="mt-3 px-3 py-3 flex flex-wrap items-center justify-between border-x border-t gap-5 bg-gray-50 md:text-sm md:font-medium border-gray-200"
         >
-            <section class="flex items-center gap-2 py-1">
+            <span class="hidden sm:inline-flex items-center py-1">
                 <input type="checkbox"
                     x-ref="checkboxSelectAll"
                     aria-label="Select all submissions"
                     autocomplete="off"
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
                     @click="toggleAllCheckboxes()"
                 >
-                <div x-cloak x-show="showSelectedSubmissions"> <span x-text="selectedSubmissionCount"></span> selected</div>
-            </section>
-
-            <section x-cloak
-                x-show="showSelectedSubmissions"
-                class="selection-actions flex flex-wrap flex-row gap-5 items-center"
-            >
-                {% dropdown_menu title="Lead" heading="Assign Lead" enable_search=True search_field_id="lead-filter-field" %}
-                    {% slot "url" %}{% url "apply:submissions:submenu-leads" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
-                {% enddropdown_menu %}
-            </section>
+                <span x-cloak class="ml-2" x-show="showSelectedSubmissions"> <span x-text="selectedSubmissionCount"></span> selected</span>
+            </span>
 
             <nav x-show="!showSelectedSubmissions"
-                class="menu-filters flex flex-wrap flex-row gap:2 md:gap-5 items-center"
+                class="menu-filters flex flex-wrap gap-1 md:gap-5 items-center"
             >
-                <div id="filterange" aria-label="Filter by date range" style="cursor: pointer; padding: 5px 10px;">
-                    {% heroicon_outline "calendar-days" size=18 class="inline mr-1" %}
-                    <span></span> <i class="fa fa-caret-down"></i>
+                <div id="filterange" aria-label="Filter by date range" class="flex items-center">
+                    <button class="flex cursor-pointer items-center justify-between w-full py-2 pl-3 pr-4 font-medium text-gray-600 hover:bg-gray-50 md:hover:bg-transparent md:hover:text-blue-700 md:p-0">
+                        {% trans "Dates" %}
+                        {% heroicon_mini "chevron-down" aria_hidden="true" width=18 height=18 class="ml-1" %}
+                    </button>
+
                 </div>
 
                 {% dropdown_menu title="Status" heading="Filter by current status" enable_search=True search_field_id="status-filter-field" %}
@@ -276,29 +286,19 @@
                         </a>
                     {% endfor %}
                 {% enddropdown_menu %}
-
-                {% if show_archive %}
-                    <form method='GET' action="./">
-                        {% for key, value in request.GET.items %}
-                            {% if key != 'archived' %}<input type="hidden" value="{{ value}}" name="{{ key }}">{% endif %}
-                        {% endfor %}
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" {% if show_archived %}checked{% endif %}
-                                class="sr-only peer"
-                                name="archived"
-                                hx-push-url="true"
-                                hx-get="./"
-                                hx-include="input.filter_options:not([name=archived])"
-                                hx-target="#main"
-                            >
-                            <div
-                                class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600">
-                            </div>
-                            <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">Archived</span>
-                        </label>
-                    </form>
-                {% endif %}
             </nav>
+
+            <section x-cloak
+                x-show="showSelectedSubmissions"
+                class="selection-actions flex flex-wrap flex-row gap-5 items-center"
+            >
+                {% dropdown_menu title="Status" heading="Change Status" enable_search=True search_field_id="status-filter-field" %}
+                    {% slot "url" %}{% url "apply:submissions:submenu-leads" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
+                {% enddropdown_menu %}
+                {% dropdown_menu title="Lead" heading="Assign Lead" enable_search=True search_field_id="lead-filter-field" %}
+                    {% slot "url" %}{% url "apply:submissions:submenu-leads" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
+                {% enddropdown_menu %}
+            </section>
         </header>
 
         {% comment %}
@@ -344,16 +344,6 @@
                     <div class="actions-bar">
                         {# Left #}
                         <div class="actions-bar__inner actions-bar__inner--left">
-                            {% if use_batch_actions %}
-                                <div class="actions-bar__per-page">
-                                    {% trans "Show" %}
-                                    <a href="{% modify_query per_page=25 %}">25</a>
-                                    | <a href="{% modify_query per_page=50 %}">50</a>
-                                    | <a href="{% modify_query per_page=100%}">100</a>
-                                    {% trans "items" %}
-                                </div>
-                            {% endif %}
-
                             {% if use_batch_actions %}
                                 <div class="actions-bar__inner actions-bar__inner--batch-actions">
                                     <p class="actions-bar__total"><span class="js-total-actions">0</span> {% trans "Selected" %}</p>
@@ -466,10 +456,6 @@
             var start = moment().subtract(29, 'days');
             var end = moment();
 
-            function cb(start, end) {
-                $('#filterange span').html(start.format('MMM D, YYYY') + ' - ' + end.format('MMM D, YYYY'));
-            }
-
             $('#filterange').daterangepicker({
                 startDate: start,
                 endDate: end,
@@ -481,9 +467,12 @@
                     'This Month': [moment().startOf('month'), moment().endOf('month')],
                     'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
                 }
-            }, cb);
+            });
 
-            cb(start, end);
+            $('#filterange').on('apply.daterangepicker', function(ev, picker) {
+                $('#search-navbar').val(`from:${picker.startDate.format('YYYY-MM-DD')} to:${picker.endDate.format('YYYY-MM-DD')}`);
+                htmx.trigger('#search-navbar', 'search');
+            });
 
         });
     </script>
