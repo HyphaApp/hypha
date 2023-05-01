@@ -9,7 +9,6 @@ from django.db import models
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.utils.translation import gettext as _
-from django_tables2 import RequestConfig
 
 from hypha.apply.funds.workflow import PHASES
 from hypha.apply.search.filters import apply_date_filter
@@ -20,38 +19,14 @@ from .models import (
 )
 from .permissions import is_user_has_access_to_view_archived_submissions
 from .tables import (
-    AdminSubmissionsTable,
     SubmissionFilter,
 )
 
 User = get_user_model()
 
 
-def date_query_parser(query: str):
-    """Parse an input query string containing date filters in the format
-    >2021-01-01, <2021-01-01, >=2021-01-01, <=2021-01-01, =2021-01-01
-
-    to a django queryset filter, it recognizes year, month and day formats
-    """
-    filter_extras = {}
-    if query:
-        if query.startswith(">="):
-            filter_extras['gte'] = query[2:]
-        elif query.startswith("<="):
-            filter_extras['lte'] = query[2:]
-        elif query.startswith(">"):
-            filter_extras['gt'] = query[1:]
-        elif query.startswith("<"):
-            filter_extras['lt'] = query[1:]
-        elif query.startswith("="):
-            filter_extras['exact'] = query[1:]
-        else:
-            filter_extras['exact'] = query
-    return filter_extras
-
-
 @login_required
-def submission_dashboard(request: HttpRequest, template_name='submissions/all.html') -> HttpResponse:
+def submission_all_beta(request: HttpRequest, template_name='submissions/all.html') -> HttpResponse:
     search_query = request.GET.get('query') or ""
     parsed_query = parse_search_query(search_query)
     search_term, search_filters = parsed_query['text'], parsed_query['filters']
@@ -62,6 +37,7 @@ def submission_dashboard(request: HttpRequest, template_name='submissions/all.ht
     selected_leads = request.GET.getlist("lead")
     selected_statuses = request.GET.getlist("status")
     selected_reviewers = request.GET.getlist("reviewers")
+    selected_meta_terms = request.GET.getlist("meta_terms")
     selected_sort = request.GET.get("sort")
     page = request.GET.get("page", 1)
 
@@ -130,6 +106,7 @@ def submission_dashboard(request: HttpRequest, template_name='submissions/all.ht
         selected_rounds,
         selected_leads,
         selected_reviewers,
+        selected_meta_terms,
         selected_sort,
     ])
 
@@ -161,10 +138,6 @@ def submission_dashboard(request: HttpRequest, template_name='submissions/all.ht
     else:
         qs = qs.order_by("-submit_time")
 
-
-    table = AdminSubmissionsTable(data=qs)
-    RequestConfig(request, paginate={'per_page': 25}).configure(table)
-
     end = time.time()
 
     page = Paginator(qs, per_page=60, orphans=20).page(page)
@@ -181,18 +154,13 @@ def submission_dashboard(request: HttpRequest, template_name='submissions/all.ht
         'selected_rounds': selected_rounds,
         'selected_leads': selected_leads,
         'selected_reviewers': selected_reviewers,
+        'selected_meta_terms': selected_meta_terms,
         'status_counts': status_counts,
         'sort_options': sort_options,
         'selected_sort': selected_sort,
         'selected_statuses': selected_statuses,
         'is_filtered': is_filtered,
-        # 'table': table,
         'duration': end - start,
-        'total': len(table.rows),
         'show_archive': is_user_has_access_to_view_archived_submissions(request.user),
     }
     return render(request, template_name, ctx)
-
-
-# submission_all_beta = SubmissionAdminListView.as_view()
-submission_all_beta = submission_dashboard

@@ -1,7 +1,6 @@
 {% extends base_template %}
 
 {% load i18n static %}
-{% comment %} {% load render_table from django_tables2 %} {% endcomment %}
 {% load querystrings heroicons %}
 {% load humanize %}
 
@@ -11,7 +10,7 @@
     {% adminbar %}
         {% slot header %}
             {% trans "All Submissions" %}
-            <span class="submissions-count"> ({{ total }})</span>
+            <span class="submissions-count"> ({{ page.paginator.count }})</span>
             <a class="text-sm" href="{% url 'apply:submissions:list' %}">(Use Older version)</a>
         {% endslot %}
 
@@ -19,12 +18,14 @@
 
     {% if is_filtered %}
         {% comment %} Display option to clear all the filters {% endcomment %}
-        <div class="py-3 mt-3 flex gap-1"
+        <div
+            class="py-3 mt-3 flex gap-1"
             hx-target="#main"
             hx-push-url="true"
             hx-swap="outerHTML"
         >
-            <a href="./"
+            <a
+                href="./"
                 hx-get="./"
                 title="Remove all Filters"
                 class="inline-flex items-center px-2 py-1 mr-2 text-xs font-medium text-blue-400 bg-blue-100 rounded hover:bg-blue-200 hover:text-blue-900"
@@ -78,6 +79,15 @@
                     </a>
                 </span>
             {% endfor %}
+            {% for s in selected_meta_terms %}
+                <span class="inline-flex items-center px-2 py-1 mr-2 text-xs select-none font-medium text-blue-800 bg-blue-100 rounded dark:bg-blue-900 dark:text-blue-300">
+                    Meta Term:{{ s }}
+                    <a href="{% remove_from_query meta_terms=s %}" role="button" class="inline-flex items-center p-0.5 ml-1 text-xs text-blue-400 bg-transparent rounded-sm hover:bg-blue-200 hover:text-blue-900 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
+                        {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
+                        <span class="sr-only">Remove Meta Term filter</span>
+                    </a>
+                </span>
+            {% endfor %}
             {% if selected_sort %}
                 <span class="inline-flex items-center px-2 py-1 mr-2 text-xs select-none font-medium text-blue-800 bg-blue-100 rounded dark:bg-blue-900 dark:text-blue-300">
                     sort:{{ selected_sort }}
@@ -87,21 +97,12 @@
                     </a>
                 </span>
             {% endif %}
-            {% if show_archived %}
-                <span class="inline-flex items-center px-2 py-1 mr-2 text-xs select-none font-medium text-blue-800 bg-blue-100 rounded dark:bg-blue-900 dark:text-blue-300">
-                    Archived
-                    <a href="{% remove_from_query "archived" %}" role="button" class="inline-flex items-center p-0.5 ml-1 text-xs text-blue-400 bg-transparent rounded-sm hover:bg-blue-200 hover:text-blue-900 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
-                        {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
-                        <span class="sr-only">Remove show archived filter</span>
-                    </a>
-                </span>
-            {% endif %}
         </div>
     {% endif %}
 
     <form method='GET' action="./" class="mt-3 flex gap-1 md:gap-4 justify-between items-center">
         {% for key, value in request.GET.items %}
-            {% if key != 'archived' %}<input type="hidden" class="filter_options" value="{{ value}}" name="{{ key }}">{% endif %}
+            {% if key != 'archived' %}<input type="hidden" class="js-filter-options" value="{{ value}}" name="{{ key }}">{% endif %}
         {% endfor %}
 
         <label class="relative flex-auto">
@@ -117,7 +118,7 @@
                 hx-trigger="search"
                 hx-push-url="true"
                 hx-get="./"
-                hx-include="input.filter_options:not([name=query])"
+                hx-include="input.js-filter-options:not([name=query])"
                 hx-target="#main"
                 hx-swap="outerHTML"
                 aria-label="{% trans 'Search Submissions' %}"
@@ -127,70 +128,74 @@
 
 
         {% if show_archive %}
-        <span>
-            <label class="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" {% if show_archived %}checked{% endif %}
-                    class="sr-only peer"
-                    name="archived"
-                    hx-push-url="true"
-                    hx-get="./"
-                    hx-swap="outerHTML"
-                    hx-include="input.filter_options:not([name=archived])"
-                    hx-target="#main"
-                >
-                <div
-                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600">
-                </div>
-                <span class="ml-3 text-sm font-medium text-gray-600">Archived</span>
-            </label>
-        </span>
+            <span>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" {% if show_archived %}checked{% endif %}
+                           class="sr-only peer"
+                           name="archived"
+                           hx-push-url="true"
+                           hx-get="./"
+                           hx-swap="outerHTML"
+                           hx-include="input.js-filter-options:not([name=archived])"
+                           hx-target="#main"
+                    >
+                    <div
+                        class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600">
+                    </div>
+                    <span class="ml-3 text-sm font-medium text-gray-600">Archived</span>
+                </label>
+            </span>
         {% endif %}
     </form>
 
-    <section x-data="{
-        selectAll: false,
-        selectedSubmissions: [],
-        toggleAllCheckboxes() {
-        this.selectAll = !this.selectAll
-        this.selectedSubmissions = [];
+    <section
+        x-data="
+        {
+            selectAll: false,
+            selectedSubmissions: [],
 
-        checkboxes = document.querySelectorAll('input[x-model=selectedSubmissions]');
+            toggleAllCheckboxes() {
+                this.selectAll = !this.selectAll
+                this.selectedSubmissions = [];
 
-        [...checkboxes].map((el) => {
-        el.checked = this.selectAll;
-        (this.selectAll) ? this.selectedSubmissions.push(el.value) : this.selectedSubmissions = [];
-        })
-        },
-        get selectedSubmissionCount(){
-        return this.selectedSubmissions.length;
-        },
-        get showSelectedSubmissions(){
-        return (this.selectedSubmissions.length > 0);
-        }
+                checkboxes = document.querySelectorAll('input[x-model=selectedSubmissions]');
+
+                [...checkboxes].map((el) => {
+                    el.checked = this.selectAll;
+                    (this.selectAll) ? this.selectedSubmissions.push(el.value) : this.selectedSubmissions = [];
+                })
+            },
+            get selectedSubmissionCount(){
+                return this.selectedSubmissions.length;
+            },
+            get showSelectedSubmissions(){
+                return (this.selectedSubmissions.length > 0);
+            }
         }"
         x-init="
             $watch('selectedSubmissions', (value) => {
-            var total = document.querySelectorAll('input[x-model=selectedSubmissions]').length
-            if (value.length == 0) {
-            $refs.checkboxSelectAll.indeterminate = false
-            $refs.checkboxSelectAll.checked = false
-            } else if (value.length === total) {
-            $refs.checkboxSelectAll.indeterminate = false
-            $refs.checkboxSelectAll.checked = true
-            } else {
-            $refs.checkboxSelectAll.indeterminate = true
-            $refs.checkboxSelectAll.checked = false
-            }
+                var total = document.querySelectorAll('input[x-model=selectedSubmissions]').length
+                if (value.length == 0) {
+                    $refs.checkboxSelectAll.indeterminate = false
+                    $refs.checkboxSelectAll.checked = false
+                } else if (value.length === total) {
+                    $refs.checkboxSelectAll.indeterminate = false
+                    $refs.checkboxSelectAll.checked = true
+                } else {
+                    $refs.checkboxSelectAll.indeterminate = true
+                    $refs.checkboxSelectAll.checked = false
+                }
             })
-        ">
-
+        "
+    >
         <header
             hx-target="#main"
             hx-swap="outerHTML"
             class="mt-3 px-3 py-3 flex flex-wrap items-center justify-between border-x border-t gap-5 bg-gray-50 md:text-sm md:font-medium border-gray-200"
         >
             <span class="hidden sm:inline-flex items-center py-1">
-                <input type="checkbox"
+                <input
+                    type="checkbox"
                     x-ref="checkboxSelectAll"
                     aria-label="Select all submissions"
                     autocomplete="off"
@@ -218,8 +223,8 @@
                         {% if selected_statuses %}
                             <li>
                                 <a hx-get="{% remove_from_query "page" "status" %}"
-                                    href="{% remove_from_query "page" "status" %}"
-                                    class="flex px-3 py-2 text-gray-600 border-b items-center hover:bg-gray-100 focus:bg-gray-100{% if s.selected %}bg-gray-100{% endif %}">
+                                   href="{% remove_from_query "page" "status" %}"
+                                   class="flex px-3 py-2 text-gray-600 border-b items-center hover:bg-gray-100 focus:bg-gray-100{% if s.selected %}bg-gray-100{% endif %}">
                                     {% trans "All statuses" %}
                                 </a>
                             </li>
@@ -261,6 +266,10 @@
                     {% slot "url" %}{% url "apply:submissions:submenu-reviewers" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
                 {% enddropdown_menu %}
 
+                {% dropdown_menu title="Terms" heading="Filter by Terms" enable_search=True search_field_id="meta_term-filter-field" %}
+                    {% slot "url" %}{% url "apply:submissions:submenu-meta-terms" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
+                {% enddropdown_menu %}
+
                 {% dropdown_menu title="Sort" heading="Sort by" %}
                     {% for sort_option in sort_options %}
                         <a
@@ -284,7 +293,8 @@
                 {% enddropdown_menu %}
             </nav>
 
-            <section x-cloak
+            <section
+                x-cloak
                 x-show="showSelectedSubmissions"
                 class="selection-actions flex flex-wrap flex-row gap-5 items-center"
             >
@@ -301,7 +311,8 @@
         Load reviews using htmx multi-swap extension, the reviewers for all the submission
         on the page are fetched after the pages is loaded
         {% endcomment %}
-        <section class="bg-white border-x border-b w-full"
+        <section
+            class="bg-white border-x border-b w-full"
             hx-trigger="load delay:50"
             hx-get="{% url "funds:submissions:partial-reviews-decisions" %}?ids={{ submission_ids|join:',' }}"
             hx-swap="multi:{% for s in submission_ids %}#r{{s}}{% if not forloop.last %},{% endif %}{% endfor %}"
@@ -398,21 +409,6 @@
                     {% include "funds/includes/batch_delete_submission_form.html" %}
                     {% include "funds/includes/batch_archive_submission_form.html" %}
                 {% endif %}
-
-                {% if total %}
-                    {% if search_term %}
-                        <p>Found {{ total }} result{{total|pluralize}} for <strong><em>"{{ search_term }}"</strong></em> ({{ duration }}s)
-                        </p>
-                    {% endif %}
-
-                    <div hx-boost="true">
-                        {% render_table table %}
-                    </div>
-
-                {% else %}
-                    <p>No results for <strong><em>"{{ search_term }}"</strong></em>. ({{ duration }}s)</p>
-                {% endif %}
-
             {% endblock %}
         </div> {% endcomment %}
     </section>
@@ -429,14 +425,14 @@
             for (var i = 0; i < cards.length; i++) {
                 // If the text is within the card...
                 if (cards[i].innerText.toLowerCase()
-                    // ...and the text matches the search query...
+                    // and the text matches the search query
                         .includes(event.target.value.toLowerCase())) {
-                        // ...remove the `.is-hidden` class.
-                        cards[i].classList.remove("hidden");
-                    } else {
+                        // remove the `.is-hidden` class.
+                            cards[i].classList.remove("hidden");
+                        } else {
                         // Otherwise, add the class.
-                        cards[i].classList.add("hidden");
-                    }
+                            cards[i].classList.add("hidden");
+                        }
             }
         }
         htmx.onLoad((event) => {
@@ -444,7 +440,6 @@
                 element.addEventListener("keyup", liveSearch);
             }
         });
-
 
         // Date Range Picker
         // ---------------------------------------------

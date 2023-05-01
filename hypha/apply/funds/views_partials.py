@@ -9,6 +9,7 @@ from wagtail.models import Page
 from hypha.apply.activity.services import (
     get_related_actions_for_user,
 )
+from hypha.apply.categories.models import MetaTerm
 from hypha.apply.funds.permissions import has_permission
 from hypha.apply.funds.services import annotate_review_recommendation_and_count
 from hypha.apply.users.groups import REVIEWER_GROUP_NAME, STAFF_GROUP_NAME
@@ -112,6 +113,30 @@ def sub_menu_reviewers(request):
     }
 
     return render(request, "submissions/submenu/reviewers.html", ctx)
+
+
+def sub_menu_meta_terms(request):
+    selected_meta_terms = request.GET.getlist("meta_terms")
+
+    terms_qs = MetaTerm.objects.filter(
+        filter_on_dashboard=True,
+        id__in=ApplicationSubmission.objects.all().values('meta_terms__id').distinct('meta_terms__id'))
+
+    meta_terms = [{
+        'id': item.id,
+        'selected': str(item.id) in selected_meta_terms,
+        'title': str(item),
+    } for item in terms_qs]
+
+
+    meta_terms = sorted(meta_terms, key=lambda t: t['selected'], reverse=True)
+
+    ctx = {
+        'meta_terms': meta_terms,
+        'selected_meta_terms': selected_meta_terms,
+    }
+
+    return render(request, "submissions/submenu/meta-terms.html", ctx)
 
 
 @login_required
