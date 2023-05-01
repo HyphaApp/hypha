@@ -119,7 +119,7 @@
                 class="block md:w-96 p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-sm bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Search..."
                 name="query"
-                hx-trigger="keyup changed delay:500ms, search"
+                hx-trigger="search"
                 hx-push-url="true"
                 hx-get="./"
                 hx-include="input.filter_options:not([name=query])"
@@ -209,7 +209,7 @@
             >
                 <div id="filterange" aria-label="Filter by date range" class="flex items-center">
                     <button class="flex cursor-pointer items-center justify-between w-full py-2 pl-3 pr-4 font-medium text-gray-600 hover:bg-gray-50 md:hover:bg-transparent md:hover:text-blue-700 md:p-0">
-                        {% trans "Dates" %}
+                        {% trans "Submitted" %}
                         {% heroicon_mini "chevron-down" aria_hidden="true" width=18 height=18 class="ml-1" %}
                     </button>
 
@@ -470,7 +470,7 @@
             });
 
             $('#filterange').on('apply.daterangepicker', function(ev, picker) {
-                $('#search-navbar').val(`from:${picker.startDate.format('YYYY-MM-DD')} to:${picker.endDate.format('YYYY-MM-DD')}`);
+                $('#search-navbar').val(`submitted:>=${picker.startDate.format('YYYY-MM-DD')} submitted:<=${picker.endDate.format('YYYY-MM-DD')}`);
                 htmx.trigger('#search-navbar', 'search');
             });
 

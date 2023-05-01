@@ -12,6 +12,8 @@ from django.utils.translation import gettext as _
 from django_tables2 import RequestConfig
 
 from hypha.apply.funds.workflow import PHASES
+from hypha.apply.search.filters import apply_date_filter
+from hypha.apply.search.query_parser import parse_search_query
 
 from .models import (
     ApplicationSubmission,
@@ -25,9 +27,39 @@ from .tables import (
 User = get_user_model()
 
 
+def date_query_parser(query: str):
+    """Parse an input query string containing date filters in the format
+    >2021-01-01, <2021-01-01, >=2021-01-01, <=2021-01-01, =2021-01-01
+
+    to a django queryset filter, it recognizes year, month and day formats
+    """
+    filter_extras = {}
+    if query:
+        if query.startswith(">="):
+            filter_extras['gte'] = query[2:]
+        elif query.startswith("<="):
+            filter_extras['lte'] = query[2:]
+        elif query.startswith(">"):
+            filter_extras['gt'] = query[1:]
+        elif query.startswith("<"):
+            filter_extras['lt'] = query[1:]
+        elif query.startswith("="):
+            filter_extras['exact'] = query[1:]
+        else:
+            filter_extras['exact'] = query
+    return filter_extras
+
+
 @login_required
 def submission_dashboard(request: HttpRequest, template_name='submissions/all.html') -> HttpResponse:
-    search_term = request.GET.get('query')
+    search_query = request.GET.get('query') or ""
+    parsed_query = parse_search_query(search_query)
+    search_term, search_filters = parsed_query['text'], parsed_query['filters']
+
+    print("===============")
+    print(parsed_query)
+    print("===============")
+
     show_archived = request.GET.get("archived", False) == 'on'
     selected_funds = request.GET.getlist("fund")
     selected_rounds = request.GET.getlist("round")
@@ -48,6 +80,10 @@ def submission_dashboard(request: HttpRequest, template_name='submissions/all.ht
         qs = ApplicationSubmission.objects.include_archive().for_table(request.user)
     else:
         qs = ApplicationSubmission.objects.current().for_table(request.user)
+
+    if search_filters:
+        if 'submitted' in search_filters:
+            qs = apply_date_filter(qs=qs, field='submit_time', values=search_filters['submitted'])
 
     if search_term:
         query = SearchQuery(search_term)
@@ -93,7 +129,6 @@ def submission_dashboard(request: HttpRequest, template_name='submissions/all.ht
     filter_kwargs = {**request.GET, **filter_extras}
     filters = SubmissionFilter(filter_kwargs, queryset=qs)
     is_filtered = any([
-        search_term,
         selected_funds,
         selected_statuses,
         selected_rounds,
@@ -121,7 +156,7 @@ def submission_dashboard(request: HttpRequest, template_name='submissions/all.ht
     } for k, v in sort_options_raw.items()]
 
     if selected_sort and selected_sort in sort_options_raw.keys():
-        if not search_term and selected_sort == 'relevance-desc':
+        if not search_query and selected_sort == 'relevance-desc':
             qs = qs.order_by('-submit_time')
         else:
             qs = qs.order_by(sort_options_raw[selected_sort][0])
@@ -140,7 +175,7 @@ def submission_dashboard(request: HttpRequest, template_name='submissions/all.ht
 
     ctx = {
         'base_template': base_template,
-        'search_term': search_term,
+        'search_term': search_query,
         'filters': filters,
         'page': page,
         'submissions': page.object_list,
