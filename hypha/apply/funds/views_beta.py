@@ -56,10 +56,6 @@ def submission_dashboard(request: HttpRequest, template_name='submissions/all.ht
     parsed_query = parse_search_query(search_query)
     search_term, search_filters = parsed_query['text'], parsed_query['filters']
 
-    print("===============")
-    print(parsed_query)
-    print("===============")
-
     show_archived = request.GET.get("archived", False) == 'on'
     selected_funds = request.GET.getlist("fund")
     selected_rounds = request.GET.getlist("round")
