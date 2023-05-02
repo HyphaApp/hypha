@@ -151,7 +151,7 @@ def submission_all_beta(request: HttpRequest, template_name='submissions/all.htm
 
     ctx = {
         'base_template': base_template,
-        'search_term': search_query,
+        'search_query': search_query,
         'filters': filters,
         'page': page,
         'submissions': page.object_list,

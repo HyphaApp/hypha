@@ -122,7 +122,7 @@
                 hx-target="#main"
                 hx-swap="outerHTML"
                 aria-label="{% trans 'Search Submissions' %}"
-                {% if search_term %}value="{{ search_term }}" autofocus{% endif %}
+                value="{{ search_query|default_if_none:'' }}" {% if search_query %}autofocus{% endif %}
             >
         </label>
 
@@ -266,6 +266,10 @@
                     {% slot "url" %}{% url "apply:submissions:submenu-reviewers" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
                 {% enddropdown_menu %}
 
+                {% dropdown_menu title="Category" heading="Filter by Category" enable_search=True search_field_id="category-filter-field" %}
+                    {% slot "url" %}{% url "apply:submissions:submenu-meta-terms" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
+                {% enddropdown_menu %}
+
                 {% dropdown_menu title="Terms" heading="Filter by Terms" enable_search=True search_field_id="meta_term-filter-field" %}
                     {% slot "url" %}{% url "apply:submissions:submenu-meta-terms" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
                 {% enddropdown_menu %}
@@ -322,7 +326,7 @@
             {% empty %}
                 <div class="flex flex-col items-center justify-center py-20 px-4 border-t">
                     <h2 class='text-2xl'>No results matched your search</h2>
-                    <p>Try <a href="./" hx-get="./" hx-target="#main" hx-push-url="true">clearing</a> all the query and start again.</p>
+                    <p>Try <a href="./" hx-get="./" hx-target="#main" hx-push-url="true" hx-swap="outerHTML">clearing</a> all the query and start again.</p>
                 </div>
             {% endfor %}
         </section>
