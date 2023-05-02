@@ -238,7 +238,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
     def test_can_create_project(self):
         # check submission doesn't already have a Project
         with self.assertRaisesMessage(Project.DoesNotExist, 'ApplicationSubmission has no project.'):
-            self.submission.project
+            self.submission.project  # noqa: B018
 
         self.post_page(self.submission, {
             'form-submitted-project_form': '',

@@ -445,8 +445,11 @@ class ApiBase:
             if paginated_data['@numremaining'] == '0':
                 break
         if filtered_total != len(complete_data):
-            warn(message='Your data may not be complete. Records returned do not equal total query record count',
-                 category=DataIntegrityWarning)
+            warn(
+                message='Your data may not be complete. Records returned do not equal total query record count',
+                category=DataIntegrityWarning,
+                stacklevel=2
+            )
         return complete_data
 
     def get_lookup(self):
