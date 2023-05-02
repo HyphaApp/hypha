@@ -3,7 +3,6 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser, BaseUserManager, Group
 from django.core import exceptions
 from django.db import IntegrityError, models
-from django.db.models import Q
 from django.db.models.constants import LOOKUP_SEP
 from django.db.models.utils import resolve_callables
 from django.urls import reverse
@@ -29,9 +28,7 @@ from .utils import get_user_by_email, is_user_already_registered, send_activatio
 
 class UserQuerySet(models.QuerySet):
     def staff(self):
-        return self.filter(
-            Q(groups__name=STAFF_GROUP_NAME, is_active=True) | Q(is_superuser=True, is_active=True)
-        ).distinct()
+        return self.filter(groups__name=STAFF_GROUP_NAME, is_active=True)
 
     def staff_admin(self):
         return self.filter(groups__name=TEAMADMIN_GROUP_NAME, is_active=True)
@@ -50,6 +47,9 @@ class UserQuerySet(models.QuerySet):
 
     def approvers(self):
         return self.filter(groups__name=APPROVER_GROUP_NAME, is_active=True)
+
+    def finances(self):
+        return self.filter(groups__name=FINANCE_GROUP_NAME, is_active=True)
 
     def finances_level_1(self):
         return self.filter(groups__name=FINANCE_GROUP_NAME, is_active=True).exclude(groups__name=APPROVER_GROUP_NAME)

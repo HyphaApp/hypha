@@ -61,7 +61,7 @@ def get_compliance_email(target_user_gps=None):
             target_user_emails.extend([project_settings.contracting_gp_email])
         else:
             contracting_users_email = []
-            for user in User.objects.filter(groups__name=CONTRACTING_GROUP_NAME):
+            for user in User.objects.contracting():
                 contracting_users_email.append(user.email)
             target_user_emails.extend(contracting_users_email)
     if FINANCE_GROUP_NAME in target_user_gps:
@@ -69,7 +69,7 @@ def get_compliance_email(target_user_gps=None):
             target_user_emails.extend([project_settings.finance_gp_email])
         else:
             finance_users_email = []
-            for user in User.objects.filter(groups__name=FINANCE_GROUP_NAME):
+            for user in User.objects.finances():
                 finance_users_email.append(user.email)
             target_user_emails.extend(finance_users_email)
     if STAFF_GROUP_NAME in target_user_gps:
@@ -77,7 +77,7 @@ def get_compliance_email(target_user_gps=None):
             target_user_emails.extend([project_settings.staff_gp_email])
         else:
             staff_users_email = []
-            for user in User.objects.filter(groups__name=STAFF_GROUP_NAME):
+            for user in User.objects.staff():
                 staff_users_email.append(user.email)
             target_user_emails.extend(staff_users_email)
     return target_user_emails
