@@ -88,6 +88,7 @@ from ..models.project import (
 from ..models.report import Report
 from ..permissions import has_permission
 from ..tables import InvoiceListTable, ProjectsListTable, ReportListTable
+from ..views.payment import ChangeInvoiceStatusView
 from .report import ReportFrequencyUpdate, ReportingMixin
 
 
@@ -344,7 +345,7 @@ class ApproveContractView(DelegatedViewMixin, UpdateView):
             )
 
         messages.success(self.request, _("Contractor documents have been approved."
-                                         " You can start receive invoices from applicant now."),
+                                         " You can receive invoices from applicant now."),
                          extra_tags=PROJECT_ACTION_MESSAGE_TAG)
         return response
 
@@ -666,6 +667,7 @@ class AdminProjectDetailView(
         UploadDocumentView,
         ChangePAFStatusView,
         ChangeProjectstatusView,
+        ChangeInvoiceStatusView,
     ]
     model = Project
     template_name_suffix = '_admin_detail'
@@ -757,6 +759,9 @@ class ProjectPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
             return True
 
         if self.request.user == self.project.user:
+            return True
+
+        if self.request.user.id in self.project.paf_approvals.filter(approved=False).values_list('user__id', flat=True):
             return True
 
         return False

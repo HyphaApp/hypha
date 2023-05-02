@@ -2,7 +2,7 @@
 <form
     class="form {{ extra_classes }}"
     method="post"
-    id="{{ form.name }}"
+    id="{% if form_id %}{{ form_id }}{% else %}{{ form.name }}{% endif %}"
     enctype="multipart/form-data"
     {% if action %}action="{{ action }}"{% endif %}
     >
@@ -36,7 +36,7 @@
         id="{{ form.name }}-submit"
         name="{{ form_prefix }}{{ form.name }}"
         type="submit"
-        form="{{ form.name }}">
+        form="{% if form_id %}{{ form_id }}{% else %}{{ form.name }}{% endif %}">
         {{ value }}
     </button>
 

@@ -185,9 +185,9 @@
                     <h5>{% trans "PAF Approvals" %}</h5>
                         {% for paf_approval in object.paf_approvals.all %}
                             {% if paf_approval.approved %}
-                                <p class="sidebar__paf-approvals--approved">{% trans "Approved by " %}{{ paf_approval.user }} {% if paf_approval.approved_at %}(<i>{{ paf_approval.approved_at|date }}</i>){% endif %}</p>
+                                <p class="sidebar__paf-approvals--approved m-0">{% trans "Approved by " %}{{ paf_approval.user }} {% if paf_approval.approved_at %}(<i>{{ paf_approval.approved_at|date }}</i>){% endif %}</p>
                             {% else %}
-                                <p class="sidebar__paf-approvals--pending">{% trans "Pending approval from " %}{{ paf_approval.user }}</p>
+                                <p class="sidebar__paf-approvals--pending m-0">{% trans "Pending approval from " %}{{ paf_approval.user }}</p>
                             {% endif %}
                             <br>
                         {% endfor %}

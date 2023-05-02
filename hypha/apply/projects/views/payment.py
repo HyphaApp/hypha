@@ -55,6 +55,7 @@ class InvoiceAccessMixin(UserPassesTestMixin):
 class ChangeInvoiceStatusView(DelegatedViewMixin, InvoiceAccessMixin, UpdateView):
     form_class = ChangeInvoiceStatusForm
     context_name = 'change_invoice_status'
+    model = Invoice
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -98,6 +99,10 @@ class ChangeInvoiceStatusView(DelegatedViewMixin, InvoiceAccessMixin, UpdateView
 
 class DeleteInvoiceView(DeleteView):
     model = Invoice
+
+    def get_object(self):
+        project = get_object_or_404(Project, pk=self.kwargs['pk'])
+        return get_object_or_404(project.invoices.all(), pk=self.kwargs['invoice_pk'])
 
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -160,8 +165,11 @@ class CreateInvoiceView(CreateView):
             return redirect(self.project)
         return super().dispatch(request, *args, **kwargs)
 
+    def buttons(self):
+        yield ('submit', 'primary', _('Save'))
+
     def get_context_data(self, **kwargs):
-        return super().get_context_data(project=self.project, **kwargs)
+        return super().get_context_data(project=self.project, buttons=self.buttons(), **kwargs)
 
     def form_valid(self, form):
         form.instance.project = self.project
@@ -210,12 +218,30 @@ class EditInvoiceView(InvoiceAccessMixin, UpdateView):
             return redirect(invoice)
         return super().dispatch(request, *args, **kwargs)
 
+    def buttons(self):
+        yield ('submit', 'primary', _('Save'))
+        if self.object.can_user_delete(self.request.user):
+            yield ('delete', 'warning', _('Delete'))
+
     def get_initial(self):
         initial = super().get_initial()
         initial["supporting_documents"] = [
             document.document for document in self.object.supporting_documents.all()
         ]
         return initial
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(buttons=self.buttons(), **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = self.get_form()
+        if 'delete' in form.data:
+            return redirect('apply:projects:invoice-delete', pk=self.object.project.id, invoice_pk=self.object.id)
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
 
     def form_valid(self, form):
         response = super().form_valid(form)

@@ -1,5 +1,5 @@
 {% extends "base-apply.html" %}
-{% load i18n static approval_tools %}
+{% load i18n static approval_tools project_tags %}
 
 {% block title %}{{ object.title }}{% endblock %}
 
@@ -142,8 +142,9 @@
                     {% endfor %}
                 </div>
             </article>
-            {% user_can_update_paf_status object user request=request as user_can_take_actions %}
-            {% if user_can_take_actions %}
+            {% user_can_update_paf_status object user request=request as can_update_paf_status %}
+            {% user_can_take_actions object user as can_take_actions %}
+            {% if can_take_actions %}
             <aside class="sidebar sidebar__project">
                 {% if mobile %}
                     <a class="js-actions-toggle button button--white button--full-width button--actions">{% trans "Actions to take" %}</a>
@@ -156,7 +157,7 @@
                         <a class="button button--bottom-space button--primary button--full-width {% if user_can_approve %} is-disabled {% endif %}" href="{% url 'apply:projects:edit' pk=object.pk %}">{% trans "Edit PAF" %}</a>
                     {% endif %}
                     <div class="dropdown">
-                      <button class="button button--white dropbtn button--bottom-space button--full-width" type="button" data-dropdown-target="#dropdown-content-download">
+                      <button class="button button--project-action--paf-download dropbtn button--bottom-space button--full-width" type="button" data-dropdown-target="#dropdown-content-download">
                           {% trans 'Download Approval Form' %}
                       </button>
                       <div id="dropdown-content-download" class="dropdown-content">
@@ -166,6 +167,7 @@
                             {% trans 'Download as DOCX' %}</a>
                       </div>
                     </div>
+                    {% if can_update_paf_status %}
                     <a data-fancybox data-src="#change-status" class="button button--primary button--full-width {% if user_can_approve %} is-disabled {% endif %}" href="#">{% trans "Update Status" %}</a>
                     <div class="modal" id="change-status">
                         <h4 class="modal__project-header-bar">{% trans "Update status" %}</h4>
@@ -173,6 +175,7 @@
                         {% trans "Update Status" as update %}
                         {% include 'funds/includes/delegated_form_base.html' with form=change_paf_status value=update %}
                     </div>
+                    {% endif %}
                 </div>
 
             </aside>

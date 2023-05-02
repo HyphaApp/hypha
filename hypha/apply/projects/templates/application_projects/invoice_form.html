@@ -5,6 +5,9 @@
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
+        <a class="simplified__projects-link" href="{{ object.project.get_absolute_url }}">
+            {% trans "Back to project" %}
+        </a>
         <h2 class="heading heading--no-margin">{% if object %}{% trans "Editing" %}{% else %}{% trans "Create" %}{% endif %} {% trans "Invoice" %}</h2>
         <h5 class="heading heading--no-margin">{% if object %}{{ object.project.title }}{% else %}{% trans "For" %}: {{ project.title }}{% endif %}</h5>
     </div>
@@ -25,7 +28,9 @@
                     {{ field }}
                 {% endif %}
             {% endfor %}
-            <button class="button button--submit button--top-space button--primary" type="submit" name="save">{% trans "Save" %}</button>
+            {% for button_name, button_type, button_value in buttons %}
+                <button class="button button--submit button--top-space button--{{ button_type }}" type="submit" name="{{ button_name }} {% if button_value == delete %}formnovalidate{% endif %}">{{ button_value }}</button>
+            {% endfor %}
         </form>
     </div>
 </div>

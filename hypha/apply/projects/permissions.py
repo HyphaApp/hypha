@@ -2,6 +2,7 @@ from django.core.exceptions import PermissionDenied
 
 from .models.project import (
     CLOSING,
+    COMMITTED,
     COMPLETE,
     CONTRACTING,
     IN_PROGRESS,
@@ -168,6 +169,10 @@ def can_access_project(user, project):
 
     if user.is_applicant and user == project.user:
         return True, 'Applicant(project user) can view project in all statuses'
+
+    if project.status in [COMMITTED, WAITING_FOR_APPROVAL] and project.paf_approvals.exists() and \
+        user.id in project.paf_approvals.all().values_list('user', flat=True):
+        return True, 'PAF Approvers can access the project in Committed and Approval state'
 
     return False, 'Forbidden Error'
 

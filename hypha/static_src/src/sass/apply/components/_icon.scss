@@ -113,6 +113,7 @@
         fill: transparent;
         width: 16px;
         height: 16px;
+        cursor: pointer;
     }
 
     &--project-eye {
@@ -125,11 +126,20 @@
 
     &--caret-down {
         position: relative;
-        top: .1em;
+        top: .4em;
         align-self: center;
         width: 1em;
         height: 1em;
-        fill: $color--light-blue;
+        margin-left: 10px;
+    }
+
+    &--caret-up {
+        position: relative;
+        top: .4em;
+        align-self: center;
+        width: 1em;
+        height: 1em;
+        margin-left: 10px;
     }
 
     &--arrow-up {
@@ -145,7 +155,7 @@
         position: relative;
         align-self: center;
         height: 1.4em;
-        margin-right: 2px;
+        margin-right: 3px;
         fill: $color--light-blue;
 
         &--contract-upload {
