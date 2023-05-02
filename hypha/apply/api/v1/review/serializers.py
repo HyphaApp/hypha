@@ -42,10 +42,7 @@ class SubmissionReviewSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         validated_data = super().validate(data)
-        validated_data['form_data'] = {
-            key: value
-            for key, value in validated_data.items()
-        }
+        validated_data['form_data'] = dict(validated_data.items())
         return validated_data
 
     def update(self, instance, validated_data):
