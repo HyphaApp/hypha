@@ -28,9 +28,9 @@ from ..models.payment import CHANGES_REQUESTED_BY_STAFF, SUBMITTED
 from ..models.project import (
     APPROVE,
     CLOSING,
-    COMMITTED,
     COMPLETE,
     CONTRACTING,
+    DRAFT,
     IN_PROGRESS,
     REQUEST_CHANGE,
     WAITING_FOR_APPROVAL,
@@ -96,7 +96,7 @@ class TestSendForApprovalView(BaseViewTestCase):
         form = SetPendingForm(instance=project)
         self.assertFalse(form.is_valid())
 
-    def test_send_for_approval_fails_when_project_is_not_in_committed_state(self):
+    def test_send_for_approval_fails_when_project_is_not_in_draft_state(self):
         project = ProjectFactory(status='in_progress')
 
         # The view doesn't have any custom changes when form validation fails
@@ -105,7 +105,7 @@ class TestSendForApprovalView(BaseViewTestCase):
         self.assertFalse(form.is_valid())
 
     def test_send_for_approval_happy_path(self):
-        project = ProjectFactory(is_locked=False, status=COMMITTED)
+        project = ProjectFactory(is_locked=False, status=DRAFT)
 
         response = self.post_page(project, {'form-submitted-request_approval_form': ''})
         self.assertEqual(response.status_code, 200)
@@ -198,7 +198,7 @@ class TestChangePAFStatusView(BaseViewTestCase):
 
         self.assertEqual(response.status_code, 200)
         project.refresh_from_db()
-        self.assertEqual(project.status, COMMITTED)
+        self.assertEqual(project.status, DRAFT)
         approval.refresh_from_db()
         self.assertEqual(self.role.label, approval.paf_reviewer_role.label)
         self.assertFalse(approval.approved)

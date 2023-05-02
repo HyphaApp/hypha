@@ -3,9 +3,9 @@ from django.urls import reverse
 
 from hypha.apply.projects.models.project import (
     CLOSING,
-    COMMITTED,
     COMPLETE,
     CONTRACTING,
+    DRAFT,
     IN_PROGRESS,
     WAITING_FOR_APPROVAL,
 )
@@ -23,7 +23,7 @@ def project_can_have_report(project):
 
 @register.simple_tag
 def user_next_step_on_project(project, user):
-    if project.status == COMMITTED:
+    if project.status == DRAFT:
         if user.is_apply_staff:
             if not project.user_has_updated_details:
                 return "Fill in the Approval Form(PAF)"
@@ -103,7 +103,7 @@ def user_can_view_report(report, user):
 
 @register.simple_tag
 def project_can_have_contracting_section(project):
-    if project.status in [COMMITTED, WAITING_FOR_APPROVAL]:
+    if project.status in [DRAFT, WAITING_FOR_APPROVAL]:
         return False
     return True
 
@@ -142,16 +142,16 @@ def project_settings_url(instance):
 
 @register.simple_tag
 def allow_collapsible_header(project, header_type):
-    if header_type == 'project_documents' and project.status not in [COMMITTED, WAITING_FOR_APPROVAL]:
+    if header_type == 'project_documents' and project.status not in [DRAFT, WAITING_FOR_APPROVAL]:
         return True
-    if header_type == 'contracting_documents' and project.status not in [COMMITTED, WAITING_FOR_APPROVAL, CONTRACTING]:
+    if header_type == 'contracting_documents' and project.status not in [DRAFT, WAITING_FOR_APPROVAL, CONTRACTING]:
         return True
     return False
 
 
 @register.simple_tag
 def user_can_remove_supporting_documents(project, user):
-    if user.is_apply_staff and project.status == COMMITTED:
+    if user.is_apply_staff and project.status == DRAFT:
         return True
     return False
 
