@@ -14,7 +14,7 @@ def update_committed_project_status_to_draft(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('application_projects', '0061_alter_project_status'),
+        ('application_projects', '0073_alter_project_status'),
     ]
 
     operations = [
