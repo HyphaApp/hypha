@@ -8,6 +8,7 @@ from django.core.paginator import Paginator
 from django.db import models
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
+from django.utils.text import slugify
 from django.utils.translation import gettext as _
 
 from hypha.apply.funds.workflow import PHASES
@@ -53,9 +54,14 @@ def submission_all_beta(request: HttpRequest, template_name='submissions/all.htm
     else:
         qs = ApplicationSubmission.objects.current().for_table(request.user)
 
-    if search_filters:
-        if 'submitted' in search_filters:
-            qs = apply_date_filter(qs=qs, field='submit_time', values=search_filters['submitted'])
+    match search_filters:
+        case {'submitted': values}:
+            qs = apply_date_filter(qs=qs, field='submit_time', values=values)
+        case {'updated': values}:
+            qs = apply_date_filter(qs=qs, field='last_update', values=values)
+        case {'is': values}:
+            if 'archived' in values:
+                qs = qs.filter(is_archive=True)
 
     if search_term:
         query = SearchQuery(search_term)
@@ -90,6 +96,7 @@ def submission_all_beta(request: HttpRequest, template_name='submissions/all.htm
         status_count_raw[status_display] = {
             'count': count + row['n'],
             'title': status_display,
+            'slug': slugify(status_display).lower(),
             'selected': status_display in selected_statuses,
         }
 
