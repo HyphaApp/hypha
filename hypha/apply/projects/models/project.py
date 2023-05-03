@@ -563,6 +563,9 @@ class PacketFile(models.Model):
     def __str__(self):
         return _('Project file: {title}').format(title=self.title)
 
+    class Meta:
+        ordering = ('-created_at',)
+
     def get_remove_form(self):
         """
         Get an instantiated RemoveDocumentForm with this class as `instance`.
@@ -614,19 +617,26 @@ def delete_contractpacketfile_file(sender, instance, **kwargs):
 
 class DocumentCategory(models.Model):
     name = models.CharField(max_length=254)
-    recommended_minimum = models.PositiveIntegerField()
+    recommended_minimum = models.PositiveIntegerField(null=True, blank=True)
+    required = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
 
     class Meta:
-        ordering = ('name',)
+        ordering = ('-required', 'name')
         verbose_name_plural = 'Project Document Categories'
+
+    panels = [
+        FieldPanel('name'),
+        FieldPanel('required')
+    ]
 
 
 class ContractDocumentCategory(models.Model):
     name = models.CharField(max_length=254)
-    recommended_minimum = models.PositiveIntegerField()
+    recommended_minimum = models.PositiveIntegerField(null=True, blank=True)
+    required = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -634,6 +644,11 @@ class ContractDocumentCategory(models.Model):
     class Meta:
         ordering = ('name',)
         verbose_name_plural = 'Contract Document Categories'
+
+    panels = [
+        FieldPanel('name'),
+        FieldPanel('required')
+    ]
 
 
 class Deliverable(models.Model):

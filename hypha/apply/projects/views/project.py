@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.db import transaction
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import get_template
@@ -790,8 +790,10 @@ class AdminProjectDetailView(
         project_settings = ProjectSettings.for_request(self.request)
         context['project_settings'] = project_settings
         context['paf_approvals'] = PAFApprovals.objects.filter(project=self.object)
-        context['remaining_document_categories'] = list(self.object.get_missing_document_categories())
-        context['remaining_contract_document_categories'] = list(self.object.get_missing_contract_document_categories())
+        context['all_document_categories'] = DocumentCategory.objects.all()
+        context['remaining_document_categories'] = DocumentCategory.objects.filter(~Q(packet_files__project=self.object))
+        context['all_contract_document_categories'] = ContractDocumentCategory.objects.all()
+        context['remaining_contract_document_categories'] = ContractDocumentCategory.objects.filter(~Q(contract_packet_files__project=self.object))
 
         if self.object.is_in_progress and not self.object.report_config.disable_reporting:
             # Current due report can be none for ONE_TIME,
@@ -836,7 +838,8 @@ class ApplicantProjectDetailView(
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['remaining_contract_document_categories'] = list(self.object.get_missing_contract_document_categories())
+        context['all_contract_document_categories'] = ContractDocumentCategory.objects.all()
+        context['remaining_contract_document_categories'] = ContractDocumentCategory.objects.filter(~Q(contract_packet_files__project=self.object))
         return context
 
 

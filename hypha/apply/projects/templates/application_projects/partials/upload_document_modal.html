@@ -1,0 +1,6 @@
+{% load i18n static %}
+
+<h4 class="modal__project-header-bar">{{ header }}</h4>
+<p></p>
+{% trans "Submit" as submit %}
+{% include 'funds/includes/delegated_form_base.html' with form=document_form value=submit %}
