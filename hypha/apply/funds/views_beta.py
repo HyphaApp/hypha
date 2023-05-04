@@ -64,7 +64,7 @@ def submission_all_beta(request: HttpRequest, template_name='submissions/all.htm
                 qs = qs.filter(is_archive=True)
 
     if search_term:
-        query = SearchQuery(search_term)
+        query = SearchQuery(search_term, search_type='websearch')
         rank_annotation = SearchRank(models.F('search_document'), query)
         qs = qs.filter(search_document=query)
         qs = qs.annotate(rank=rank_annotation)
