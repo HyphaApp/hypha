@@ -26,8 +26,8 @@ from .views import (
     ReportUpdateView,
     VendorDetailView,
     VendorPrivateMediaView,
-    partial_project_activities,
     partial_document_category_form,
+    partial_project_activities,
 )
 
 app_name = 'projects'

@@ -30,7 +30,7 @@ from .project import (
     UploadContractView,
     UploadDocumentView,
 )
-from .project_partials import partial_project_activities, partial_document_category_form
+from .project_partials import partial_document_category_form, partial_project_activities
 from .report import (
     ReportDetailView,
     ReportFrequencyUpdate,
