@@ -10,6 +10,7 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.utils.text import slugify
 from django.utils.translation import gettext as _
+from wagtail.models import Page
 
 from hypha.apply.funds.workflow import PHASES
 from hypha.apply.search.filters import apply_date_filter
@@ -17,6 +18,7 @@ from hypha.apply.search.query_parser import parse_search_query
 
 from .models import (
     ApplicationSubmission,
+    Round,
 )
 from .permissions import is_user_has_access_to_view_archived_submissions
 from .tables import (
@@ -41,6 +43,9 @@ def submission_all_beta(request: HttpRequest, template_name='submissions/all.htm
     selected_meta_terms = request.GET.getlist("meta_terms")
     selected_sort = request.GET.get("sort")
     page = request.GET.get("page", 1)
+
+    selected_fund_objects = Page.objects.filter(id__in=selected_funds) if selected_funds else []
+    selected_round_objects = Round.objects.filter(id__in=selected_rounds) if selected_rounds else []
 
     if request.htmx:
         base_template = "includes/_partial-main.html"
@@ -108,9 +113,9 @@ def submission_all_beta(request: HttpRequest, template_name='submissions/all.htm
     filter_kwargs = {**request.GET, **filter_extras}
     filters = SubmissionFilter(filter_kwargs, queryset=qs)
     is_filtered = any([
-        selected_funds,
+        selected_fund_objects,
         selected_statuses,
-        selected_rounds,
+        selected_round_objects,
         selected_leads,
         selected_reviewers,
         selected_meta_terms,
@@ -158,7 +163,9 @@ def submission_all_beta(request: HttpRequest, template_name='submissions/all.htm
         'submission_ids': [x.id for x in page.object_list],
         'show_archived': show_archived,
         'selected_funds': selected_funds,
+        'selected_fund_objects': selected_fund_objects,
         'selected_rounds': selected_rounds,
+        'selected_round_objects': selected_round_objects,
         'selected_leads': selected_leads,
         'selected_reviewers': selected_reviewers,
         'selected_meta_terms': selected_meta_terms,
