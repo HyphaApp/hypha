@@ -318,9 +318,11 @@
         {% endcomment %}
         <section
             class="bg-white border-x border-b w-full"
+            {% if submission_ids %}
             hx-trigger="load delay:50"
             hx-get="{% url "funds:submissions:partial-reviews-decisions" %}?ids={{ submission_ids|join:',' }}"
             hx-swap="multi:{% for s in submission_ids %}#r{{s}}{% if not forloop.last %},{% endif %}{% endfor %}"
+            {% endif %}
         >
             {% for s in submissions %}
                 {% include "funds/includes/submission-list-item.html" with s=s %}

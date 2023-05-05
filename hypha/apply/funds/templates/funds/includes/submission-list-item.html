@@ -43,7 +43,7 @@
             >{{ s.title }}</a>
 
             <a href="{% modify_query status=s.phase.display_name %}"
-                class=" rounded-full whitespace-nowrap inline-block ml-1 px-2 py-0.5 text-xs font-medium text-gray-800
+                class="rounded-full whitespace-nowrap inline-block ml-1 px-2 pt-0.5 pb-1 text-xs font-medium text-gray-800
                     {% if s.phase.display_name == "Need screening" %}bg-orange-200{% endif %}
                     {% if s.phase.display_name == "Draft" %}bg-gray-200{% endif %}
                     {% if s.phase.display_name == "Accepted" %}bg-green-200{% endif %}
@@ -55,6 +55,14 @@
             >
                 {{ s.phase.display_name }}
             </a>
+            {% for meta_term in s.meta_terms.all %}
+            <span
+                data-tippy-content="Meta Term: {{meta_term.name}}"
+                data-tippy-placement="top"
+                class="rounded-full whitespace-nowrap inline-block ml-1 px-2 pt-0.5 pb-1 text-xs font-medium text-white bg-blue-600"
+            >{{meta_term.name}}</span>
+            {% endfor %}
+
         </span>
 
 
