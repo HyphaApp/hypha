@@ -38,6 +38,7 @@ from .views_partials import (
     sub_menu_funds,
     sub_menu_leads,
     sub_menu_meta_terms,
+    sub_menu_category_options,
     sub_menu_reviewers,
     sub_menu_rounds,
 )
@@ -63,6 +64,7 @@ submission_urls = ([
     path('all-beta/submenu/rounds/', sub_menu_rounds, name="submenu-rounds"),
     path('all-beta/submenu/reviewers/', sub_menu_reviewers, name="submenu-reviewers"),
     path('all-beta/submenu/meta-terms/', sub_menu_meta_terms, name="submenu-meta-terms"),
+    path('all-beta/submenu/category-options/', sub_menu_category_options, name="submenu-category-options"),
     path('all-beta/partials/review_decisions/', partial_reviews_decisions, name="partial-reviews-decisions"),
     path('summary/', GroupingApplicationsListView.as_view(), name="summary"),
     path('result/', SubmissionResultView.as_view(), name="result"),

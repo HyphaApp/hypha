@@ -41,6 +41,7 @@ def submission_all_beta(request: HttpRequest, template_name='submissions/all.htm
     selected_statuses = request.GET.getlist("status")
     selected_reviewers = request.GET.getlist("reviewers")
     selected_meta_terms = request.GET.getlist("meta_terms")
+    selected_category_options = request.GET.getlist("category_options")
     selected_sort = request.GET.get("sort")
     page = request.GET.get("page", 1)
 
@@ -119,6 +120,7 @@ def submission_all_beta(request: HttpRequest, template_name='submissions/all.htm
         selected_leads,
         selected_reviewers,
         selected_meta_terms,
+        selected_category_options,
         selected_sort,
     ])
 
@@ -169,6 +171,7 @@ def submission_all_beta(request: HttpRequest, template_name='submissions/all.htm
         'selected_leads': selected_leads,
         'selected_reviewers': selected_reviewers,
         'selected_meta_terms': selected_meta_terms,
+        'selected_category_options': selected_category_options,
         'status_counts': status_counts,
         'sort_options': sort_options,
         'selected_sort': selected_sort,

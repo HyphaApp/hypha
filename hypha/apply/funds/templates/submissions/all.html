@@ -88,6 +88,15 @@
                     </a>
                 </span>
             {% endfor %}
+            {% for s in selected_category_options %}
+                <span class="inline-flex items-center px-2 py-1 mr-2 text-xs select-none font-medium text-blue-800 bg-blue-100 rounded">
+                    Category:{{ s }}
+                    <a href="{% remove_from_query category_options=s %}" role="button" class="inline-flex items-center p-0.5 ml-1 text-xs text-blue-400 bg-transparent rounded-sm hover:bg-blue-200 hover:text-blue-900 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
+                        {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
+                        <span class="sr-only">Remove category filter</span>
+                    </a>
+                </span>
+            {% endfor %}
             {% if selected_sort %}
                 <span class="inline-flex items-center px-2 py-1 mr-2 text-xs select-none font-medium text-blue-800 bg-blue-100 rounded">
                     sort:{{ selected_sort }}
@@ -267,7 +276,7 @@
                 {% enddropdown_menu %}
 
                 {% dropdown_menu title="Category" heading="Filter by Category" enable_search=True search_field_id="category-filter-field" %}
-                    {% slot "url" %}{% url "apply:submissions:submenu-meta-terms" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
+                    {% slot "url" %}{% url "apply:submissions:submenu-category-options" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
                 {% enddropdown_menu %}
 
                 {% dropdown_menu title="Terms" heading="Filter by Terms" enable_search=True search_field_id="meta_term-filter-field" position="right" %}
