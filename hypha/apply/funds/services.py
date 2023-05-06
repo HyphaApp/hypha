@@ -10,8 +10,26 @@ from django.db.models import (
     Sum,
     When,
 )
+from django.db.models.functions import Coalesce
 
+from hypha.apply.activity.models import Activity
 from hypha.apply.review.options import DISAGREE, MAYBE
+
+
+def annotate_comments_count(submissions: QuerySet, user) -> QuerySet:
+    comments = Activity.comments.filter(submission=OuterRef('id')).visible_to(user)
+    return submissions.annotate(
+        comment_count=Coalesce(
+            Subquery(
+                comments.values('submission')
+                .order_by()
+                .annotate(count=Count('pk'))
+                .values('count'),
+                output_field=IntegerField(),
+            ),
+            0,
+        ),
+    )
 
 
 def annotate_review_recommendation_and_count(submissions: QuerySet) -> QuerySet:

@@ -14,7 +14,6 @@ from django.db.models import (
     Avg,
     Count,
     FloatField,
-    IntegerField,
     OuterRef,
     Q,
     Subquery,
@@ -23,7 +22,7 @@ from django.db.models import (
 )
 from django.db.models.expressions import OrderBy, RawSQL
 from django.db.models.fields.json import KeyTextTransform
-from django.db.models.functions import Cast, Coalesce
+from django.db.models.functions import Cast
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
@@ -38,7 +37,10 @@ from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.categories.models import MetaTerm
 from hypha.apply.determinations.models import Determination
 from hypha.apply.flags.models import Flag
-from hypha.apply.funds.services import annotate_review_recommendation_and_count
+from hypha.apply.funds.services import (
+    annotate_comments_count,
+    annotate_review_recommendation_and_count,
+)
 from hypha.apply.review.options import AGREE
 from hypha.apply.stream_forms.files import StreamFieldDataEncoder
 from hypha.apply.stream_forms.models import BaseStreamForm
@@ -208,20 +210,12 @@ class ApplicationSubmissionQueryset(JSONOrderable):
         )
 
     def for_table(self, user):
-        activities = self.model.activities.rel.model
-        comments = activities.comments.filter(submission=OuterRef('id')).visible_to(user)
         roles_for_review = self.model.assigned.field.model.objects.with_roles().filter(
             submission=OuterRef('id'), reviewer=user)
 
         qs = annotate_review_recommendation_and_count(self.with_latest_update())
+        qs = annotate_comments_count(qs, user)
         return qs.annotate(
-            comment_count=Coalesce(
-                Subquery(
-                    comments.values('submission').order_by().annotate(count=Count('pk')).values('count'),
-                    output_field=IntegerField(),
-                ),
-                0,
-            ),
             role_icon=Subquery(roles_for_review[:1].values('role__icon')),
         ).select_related(
             'page',
