@@ -7,10 +7,10 @@ from hypha.apply.activity.models import Activity
 from hypha.apply.categories.blocks import CategoryQuestionBlock
 from hypha.apply.categories.models import Option
 from hypha.apply.funds.models import ApplicationSubmission, FundType, LabType
+from hypha.apply.funds.reviewers.services import get_all_reviewers
 from hypha.apply.funds.workflow import PHASES
 
 from .utils import (
-    get_reviewers,
     get_round_leads,
     get_screening_statuses,
     get_used_rounds,
@@ -33,7 +33,7 @@ class SubmissionsFilter(filters.FilterSet):
     )
     reviewers = filters.ModelMultipleChoiceFilter(
         field_name='reviewers',
-        queryset=get_reviewers(),
+        queryset=get_all_reviewers(),
     )
     lead = filters.ModelMultipleChoiceFilter(
         field_name='lead',

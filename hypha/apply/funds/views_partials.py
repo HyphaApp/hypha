@@ -1,6 +1,5 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from django.db import models
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.http import require_GET
@@ -11,8 +10,9 @@ from hypha.apply.activity.services import (
 )
 from hypha.apply.categories.models import MetaTerm, Option
 from hypha.apply.funds.permissions import has_permission
+from hypha.apply.funds.reviewers.services import get_all_reviewers
 from hypha.apply.funds.services import annotate_review_recommendation_and_count
-from hypha.apply.users.groups import REVIEWER_GROUP_NAME, STAFF_GROUP_NAME
+from hypha.apply.users.groups import REVIEWER_GROUP_NAME
 
 from .models import ApplicationSubmission, Round
 
@@ -94,16 +94,14 @@ def sub_menu_rounds(request):
 
 def sub_menu_reviewers(request):
     selected_reviewers = request.GET.getlist("reviewers")
+    qs = get_all_reviewers()
 
     reviewers = [{
         'id': item.id,
         'selected': str(item.id) in selected_reviewers,
         'title': str(item),
         'slack': item.slack,
-    } for item in User.objects.filter(
-        models.Q(submissions_reviewer__isnull=False) | models.Q(groups__name=STAFF_GROUP_NAME) | models.Q(is_superuser=True)
-    ).order_by().distinct()]
-
+    } for item in qs.order_by().distinct()]
 
     reviewers = sorted(reviewers, key=lambda t: t['selected'], reverse=True)
 

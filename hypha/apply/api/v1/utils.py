@@ -92,12 +92,6 @@ def get_field_widget(form_field):
 def get_round_leads():
     return User.objects.filter(submission_lead__isnull=False).distinct()
 
-
-def get_reviewers():
-    """ All assigned reviewers, staff or admin """
-    return User.objects.filter(Q(submissions_reviewer__isnull=False) | Q(groups__name=STAFF_GROUP_NAME) | Q(is_superuser=True)).distinct()
-
-
 def get_screening_statuses():
     return ScreeningStatus.objects.filter(
         id__in=ApplicationSubmission.objects.all().values('screening_statuses__id').distinct('screening_statuses__id'))
