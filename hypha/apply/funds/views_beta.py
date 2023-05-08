@@ -60,6 +60,8 @@ def submission_all_beta(request: HttpRequest, template_name='submissions/all.htm
     else:
         qs = ApplicationSubmission.objects.current().for_table(request.user)
 
+    qs = qs.prefetch_related('meta_terms')
+
     match search_filters:
         case {'submitted': values}:
             qs = apply_date_filter(qs=qs, field='submit_time', values=values)
