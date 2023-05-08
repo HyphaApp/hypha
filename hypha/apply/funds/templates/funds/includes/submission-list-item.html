@@ -37,10 +37,12 @@
     <div class="px-2 space-y-1 pt-1 md:pb-2 min-w-0 md:space-y-0 md:flex md:flex-col md:flex-auto">
         <span>
             <a
-                title="{{ s.title }}"
+                title="{{ s.form_data.title }}"
                 href="{% url "funds:submissions:detail" s.id %}"
                 class="font-semibold text-base text-[#404041] hover:text-blue-600 transition-colors break-words"
-            >{{ s.title }}</a>
+            >
+                {{ s.form_data.title }}
+            </a>
 
             <a href="{% modify_query status=s.phase.display_name %}"
                 class="rounded-full whitespace-nowrap inline-block ml-1 px-2 pt-0.5 pb-1 text-xs font-medium text-gray-800
