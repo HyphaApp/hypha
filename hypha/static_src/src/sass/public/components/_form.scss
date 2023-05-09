@@ -69,25 +69,11 @@
         }
 
         &--checkbox {
-            display: flex;
-            align-items: center;
-            margin: 20px 0;
-
             .form {
-                &__question {
-                    margin: 0;
-                }
-
                 &__item {
-                    position: relative;
-                    top: -10px;
-                    order: -1;
-                    padding: 0;
-                }
-
-                &__help {
-                    order: -2;
-                    width: 100%;
+                    display: flex;
+                    align-items: center;
+                    gap: .5em;
                 }
             }
         }
@@ -147,6 +133,7 @@
         }
 
         &--boolean_field {
+            display: inline;
             font-size: 17px;
         }
         // stylelint-enable selector-class-pattern
@@ -455,81 +442,41 @@
     // Radio + Checkbox
     [type='radio'],
     [type='checkbox'] {
-        position: absolute;
-        top: 5px;
-        left: 5px;
-        z-index: -1;
-        width: 1px;
-        height: 1px;
-    }
+        appearance: none;
+        accent-color: $color--dark-blue;
+        height: .7em;
+        width: .7em;
+        outline: 2px solid $color--dark-blue;
 
-    [type='radio'] + label,
-    [type='checkbox'] + label {
-        display: block;
-        position: relative;
-        padding-left: 30px;
-        cursor: pointer;
+        & + label {
+            padding-inline-start: .5em;
 
-        &:hover {
-            font-weight: bold;
+            &:hover {
+                font-weight: bold;
+            }
         }
-    }
 
-    [type='radio'] + label::before,
-    [type='checkbox'] + label::before {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 20px;
-        height: 20px;
-        background: $color--white;
-        border: 1px solid $color--mid-grey;
-        content: '';
+        &:checked {
+            background-color: $color--dark-blue;
+        }
     }
 
     // Radio specific
     [type='radio'] {
-        & + label::before {
-            border-radius: 100%;
-        }
-
-        & + label::after {
-            position: absolute;
-            top: 5px;
-            left: 5px;
-            width: 10px;
-            height: 10px;
-            background: $color--dark-blue;
-            border-radius: 100%;
-            content: '';
-            transition: transform, opacity, $transition;
-        }
-
-        &:not(:checked) + label::after {
-            opacity: 0;
-            transform: scale(0);
-        }
-
-        &:checked + label::after {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        &:checked + label::before {
-            border: 1px solid $color--dark-blue;
-        }
+        border-radius: 50%;
+        outline-offset: 2px;
     }
 
     // Checkbox specific
     input[type='checkbox'] {
-        & + label::before {
-            transition: background-color $transition;
-        }
+        height: 1em;
+        width: 1em;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: .8em;
 
-        &:checked + label::before {
-            background: url('./../../images/tick.svg') $color--dark-blue center no-repeat;
-            background-size: 12px;
-            border: 1px solid $color--dark-blue;
+        &:checked {
+            background-image: url('./../../images/tick.svg');
         }
     }
 
