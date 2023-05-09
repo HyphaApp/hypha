@@ -22,6 +22,33 @@
             {% if key != 'archived' %}<input type="hidden" class="js-filter-options" value="{{ value}}" name="{{ key }}">{% endif %}
         {% endfor %}
 
+        {% dropdown_menu title="Filters" %}
+            <a
+                href="{% url "apply:submissions:list-beta" %}{% modify_query "only_query_string" "page" round=f.id %}"
+                hx-get="{% url "apply:submissions:list-beta" %}{% modify_query "only_query_string" "page" round=f.id %}"
+                hx-push-url="true"
+                hx-target="#main"
+                hx-swap="outerHTML"
+                class="flex {% if f.selected %}pl-2 font-medium{% else %}pl-8{% endif %} pr-3 py-2 text-gray-600 border-b items-center hover:bg-gray-100 focus:bg-gray-100{% if f.selected %}bg-gray-100{% endif %}">
+                {% if f.selected %}
+                    {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 mr-1" %}
+                {% endif %}
+                Your flagged submissions
+            </a>
+            <a
+                href="{% url "apply:submissions:list-beta" %}{% modify_query "only_query_string" "page" review="awaiting" %}"
+                hx-get="{% url "apply:submissions:list-beta" %}{% modify_query "only_query_string" "page" review="awaiting" %}"
+                hx-push-url="true"
+                hx-target="#main"
+                hx-swap="outerHTML"
+                class="flex {% if f.selected %}pl-2 font-medium{% else %}pl-8{% endif %} pr-3 py-2 text-gray-600 border-b items-center hover:bg-gray-100 focus:bg-gray-100{% if f.selected %}bg-gray-100{% endif %}">
+                {% if f.selected %}
+                    {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 mr-1" %}
+                {% endif %}
+                Awaiting your review
+            </a>
+        {% enddropdown_menu %}
+
         <label class="relative flex-auto">
             <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                 {% heroicon_mini "magnifying-glass" size=20 class="text-gray-500" %}
