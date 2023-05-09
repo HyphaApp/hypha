@@ -29,6 +29,7 @@ from .views import (
     SubmissionUserFlaggedView,
 )
 from .views_beta import (
+    bulk_archive_submissions,
     submission_all_beta,
 )
 from .views_partials import (
@@ -59,6 +60,7 @@ submission_urls = ([
     path('', SubmissionOverviewView.as_view(), name="overview"),
     path('all/', SubmissionListView.as_view(), name="list"),
     path('all-beta/', submission_all_beta, name="list-beta"),
+    path('all-beta/bulk_archive/', bulk_archive_submissions, name="bulk-archive"),
     path('all-beta/submenu/funds/', sub_menu_funds, name="submenu-funds"),
     path('all-beta/submenu/leads/', sub_menu_leads, name="submenu-leads"),
     path('all-beta/submenu/rounds/', sub_menu_rounds, name="submenu-rounds"),

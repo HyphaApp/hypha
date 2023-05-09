@@ -319,6 +319,15 @@
                 {% dropdown_menu title="Lead" heading="Assign Lead" enable_search=True search_field_id="lead-filter-field" position="right" %}
                     {% slot "url" %}{% url "apply:submissions:submenu-leads" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
                 {% enddropdown_menu %}
+                <button
+                    hx-post="{% url 'apply:submissions:bulk-archive' %}"
+                    hx-include="[name='submissions']"
+                    hx-confirm="Are you sure you want to archive the selected submissions?"
+                    class="border px-2 py-1 flex items-center bg-gray-100 hover:bg-gray-200"
+                >
+                    {% heroicon_outline "lock-closed" aria_hidden="true" size=14 class="stroke-gray-600 mr-1 inline" %}
+                    {% trans "Archive" %}
+                </button>
             </section>
         </header>
 

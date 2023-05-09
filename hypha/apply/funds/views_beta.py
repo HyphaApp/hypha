@@ -3,6 +3,7 @@ import time
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import user_passes_test
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.core.paginator import Paginator
 from django.db import models
@@ -183,3 +184,11 @@ def submission_all_beta(request: HttpRequest, template_name='submissions/all.htm
         'show_archive': is_user_has_access_to_view_archived_submissions(request.user),
     }
     return render(request, template_name, ctx)
+
+
+@user_passes_test(is_apply_staff)
+def bulk_archive_submissions(request):
+    submission_ids = request.POST.getlist("submissions")
+    ApplicationSubmission.objects.filter(id__in=submission_ids).update(is_archive=True)
+    return HttpResponseClientRefresh()
+
