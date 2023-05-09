@@ -112,8 +112,8 @@ class DeleteInvoiceView(DeleteView):
         return super().dispatch(request, *args, **kwargs)
 
     @transaction.atomic()
-    def delete(self, request, *args, **kwargs):
-        response = super().delete(request, *args, **kwargs)
+    def form_valid(self, form):
+        response = super().form_valid(form)
 
         messenger(
             MESSAGES.DELETE_INVOICE,
