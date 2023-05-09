@@ -2,8 +2,8 @@ import time
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
+from django.views.decorators.http import require_http_methods
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.core.paginator import Paginator
 from django.db import models
@@ -11,11 +11,13 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.utils.text import slugify
 from django.utils.translation import gettext as _
+from django_htmx.http import HttpResponseClientRefresh
 from wagtail.models import Page
 
 from hypha.apply.funds.workflow import PHASES
 from hypha.apply.search.filters import apply_date_filter
 from hypha.apply.search.query_parser import parse_search_query
+from hypha.apply.users.decorators import is_apply_staff
 
 from .models import (
     ApplicationSubmission,
@@ -29,7 +31,7 @@ from .tables import (
 User = get_user_model()
 
 
-@login_required
+@user_passes_test(is_apply_staff)
 def submission_all_beta(request: HttpRequest, template_name='submissions/all.html') -> HttpResponse:
     search_query = request.GET.get('query') or ""
     parsed_query = parse_search_query(search_query)
@@ -187,8 +189,16 @@ def submission_all_beta(request: HttpRequest, template_name='submissions/all.htm
 
 
 @user_passes_test(is_apply_staff)
+@require_http_methods(["POST"])
 def bulk_archive_submissions(request):
     submission_ids = request.POST.getlist("submissions")
     ApplicationSubmission.objects.filter(id__in=submission_ids).update(is_archive=True)
     return HttpResponseClientRefresh()
 
+
+@user_passes_test(is_apply_staff)
+@require_http_methods(["POST"])
+def bulk_delete_submissions(request):
+    submission_ids = request.POST.getlist("submissions")
+    ApplicationSubmission.objects.filter(id__in=submission_ids).delete()
+    return HttpResponseClientRefresh()
