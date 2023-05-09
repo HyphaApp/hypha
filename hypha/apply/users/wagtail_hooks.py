@@ -1,6 +1,6 @@
 from django.urls import re_path
 from wagtail import hooks
-from wagtail.core.models import Site
+from wagtail.models import Site
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 

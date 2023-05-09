@@ -37,6 +37,9 @@ from .options import (
 
 
 class ReviewFormFieldsMixin(models.Model):
+
+    wagtail_reference_index_ignore = True
+
     class Meta:
         abstract = True
 

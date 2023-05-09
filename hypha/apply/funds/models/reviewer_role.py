@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel
-from wagtail.contrib.settings.models import BaseSetting, register_setting
+from wagtail.contrib.settings.models import BaseSiteSetting, register_setting
 
 from hypha.apply.utils.image import generate_image_url
 
@@ -30,12 +30,14 @@ class ReviewerRole(models.Model):
     def icon_url(self, filter_spec):
         return generate_image_url(self.icon, filter_spec)
 
+    wagtail_reference_index_ignore = True
+
     def __str__(self):
         return self.name
 
 
 @register_setting
-class ReviewerSettings(BaseSetting):
+class ReviewerSettings(BaseSiteSetting):
     SUBMISSIONS = [
         ('all', 'All Submissions'),
         ('reviewed', 'Only reviewed Submissions'),

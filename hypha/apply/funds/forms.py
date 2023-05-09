@@ -9,6 +9,7 @@ from django.conf import settings
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
+from wagtail.signal_handlers import disable_reference_index_auto_update
 
 from hypha.apply.categories.models import MetaTerm
 from hypha.apply.users.models import User
@@ -335,43 +336,44 @@ class UpdateReviewersForm(ApplicationSubmissionModelForm):
         return cleaned_data
 
     def save(self, *args, **kwargs):
-        instance = super().save(*args, **kwargs)
         """
         1. Update role reviewers
         2. Update non-role reviewers
             2a. Remove those not on form
             2b. Add in any new non-role reviewers selected
         """
+        with disable_reference_index_auto_update():
+            instance = super().save(*args, **kwargs)
 
-        # 1. Update role reviewers
-        assigned_roles = {
-            role: self.cleaned_data[field]
-            for field, role in self.role_fields.items()
-        }
-        for role, reviewer in assigned_roles.items():
-            if reviewer:
-                AssignedReviewers.objects.update_role(role, reviewer, instance)
-            else:
-                AssignedReviewers.objects.filter(role=role, submission=instance, review__isnull=True).delete()
+            # 1. Update role reviewers
+            assigned_roles = {
+                role: self.cleaned_data[field]
+                for field, role in self.role_fields.items()
+            }
+            for role, reviewer in assigned_roles.items():
+                if reviewer:
+                    AssignedReviewers.objects.update_role(role, reviewer, instance)
+                else:
+                    AssignedReviewers.objects.filter(role=role, submission=instance, review__isnull=True).delete()
 
-        # 2. Update non-role reviewers
-        # 2a. Remove those not on form
-        if self.can_alter_external_reviewers(self.instance, self.user):
-            reviewers = self.cleaned_data.get('reviewer_reviewers')
-            assigned_reviewers = instance.assigned.without_roles()
-            assigned_reviewers.never_tried_to_review().exclude(
-                reviewer__in=reviewers
-            ).delete()
+            # 2. Update non-role reviewers
+            # 2a. Remove those not on form
+            if self.can_alter_external_reviewers(self.instance, self.user):
+                reviewers = self.cleaned_data.get('reviewer_reviewers')
+                assigned_reviewers = instance.assigned.without_roles()
+                assigned_reviewers.never_tried_to_review().exclude(
+                    reviewer__in=reviewers
+                ).delete()
 
-            remaining_reviewers = assigned_reviewers.values_list('reviewer_id', flat=True)
+                remaining_reviewers = assigned_reviewers.values_list('reviewer_id', flat=True)
 
-            # 2b. Add in any new non-role reviewers selected
-            AssignedReviewers.objects.bulk_create_reviewers(
-                [reviewer for reviewer in reviewers if reviewer.id not in remaining_reviewers],
-                instance,
-            )
+                # 2b. Add in any new non-role reviewers selected
+                AssignedReviewers.objects.bulk_create_reviewers(
+                    [reviewer for reviewer in reviewers if reviewer.id not in remaining_reviewers],
+                    instance,
+                )
 
-        return instance
+            return instance
 
 
 class BatchUpdateReviewersForm(forms.Form):

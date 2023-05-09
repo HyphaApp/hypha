@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
-from wagtail.contrib.settings.models import BaseSetting, register_setting
+from wagtail.contrib.settings.models import BaseSiteSetting, register_setting
 from wagtail.fields import RichTextField
 
 from .groups import (
@@ -198,6 +198,8 @@ class User(AbstractUser):
 
     objects = UserManager()
 
+    wagtail_reference_index_ignore = True
+
     def __str__(self):
         return self.get_full_name() if self.get_full_name() else self.get_short_name()
 
@@ -290,7 +292,10 @@ class User(AbstractUser):
 
 
 @register_setting
-class UserSettings(BaseSetting):
+class UserSettings(BaseSiteSetting):
+
+    wagtail_reference_index_ignore = True
+
     class Meta:
         verbose_name = 'user settings'
 

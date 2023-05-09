@@ -9,6 +9,8 @@ from .mixins import AccessFormData
 
 
 class ApplicationRevision(BaseStreamForm, AccessFormData, models.Model):
+    wagtail_reference_index_ignore = True
+
     submission = models.ForeignKey('funds.ApplicationSubmission', related_name='revisions', on_delete=models.CASCADE)
     form_data = models.JSONField(encoder=StreamFieldDataEncoder)
     timestamp = models.DateTimeField(auto_now=True)

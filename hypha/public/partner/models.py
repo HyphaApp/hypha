@@ -10,7 +10,7 @@ from django.utils.translation import gettext_lazy as _
 from pagedown.widgets import PagedownWidget
 from wagtail.admin.forms import WagtailAdminModelForm
 from wagtail.admin.panels import FieldPanel
-from wagtail.contrib.settings.models import BaseSetting
+from wagtail.contrib.settings.models import BaseSiteSetting
 from wagtail.fields import RichTextField
 from wagtail.models import Page
 from wagtail.search import index
@@ -115,7 +115,7 @@ def max_value_current_year(value):
 
 
 @register_public_site_setting
-class InvestmentCategorySettings(BaseSetting):
+class InvestmentCategorySettings(BaseSiteSetting):
     class Meta:
         verbose_name = _('Investment Category Settings')
 

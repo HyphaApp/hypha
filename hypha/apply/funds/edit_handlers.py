@@ -1,5 +1,4 @@
 from django.forms import Field, Widget
-from django.forms.utils import pretty_name
 from django.template.loader import render_to_string
 from django.urls import reverse
 from wagtail.admin.panels import FieldPanel, Panel
@@ -39,30 +38,25 @@ class DisplayField(Field):
 
 class ReadOnlyPanel(Panel):
     def __init__(self, attr: str, **kwargs):
-        self.attr = attr
         super().__init__(**kwargs)
-        self.heading = pretty_name(self.attr) if not self.heading else self.heading
+        self.attr = attr
 
     def clone_kwargs(self):
+        """Return a dictionary of keyword arguments that can be used to create
+        a clone of this panel definition.
         """
-        Return a dictionary of keyword arguments that can be used to create a clone of this panel definition.
-        """
-        return {
+        kwargs = super().clone_kwargs()
+        kwargs.update({
             "attr": self.attr,
-            "heading": self.heading,
-            "classname": self.classname,
-            "help_text": self.help_text,
-        }
+        })
+        return kwargs
+
 
     class BoundPanel(Panel.BoundPanel):
-        field_template_name = 'wagtailadmin/shared/field.html'
-        template_name = 'wagtailadmin/panels/single_field_panel.html'
+        template_name = 'wagtailadmin/panels/field_panel.html'
 
-        def render_as_object(self):
+        def render_html(self, parent_context):
             return render_to_string(self.template_name, self.context())
-
-        def render_as_field(self):
-            return render_to_string(self.field_template_name, self.context())
 
         def context(self):
             try:
@@ -79,7 +73,9 @@ class ReadOnlyPanel(Panel):
                 self.form.initial[self.panel.attr] = value
             else:
                 self.form.initial[self.panel.attr] = '-'
+
             self.bound_field = DisplayField().get_bound_field(self.form, self.panel.attr)
+
             return {
                 'self': self,
                 'field': self.bound_field,

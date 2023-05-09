@@ -1,13 +1,13 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel
-from wagtail.contrib.settings.models import BaseSetting
+from wagtail.contrib.settings.models import BaseSiteSetting
 
 from hypha.core.wagtail.admin import register_public_site_setting
 
 
 @register_public_site_setting
-class NewsletterSettings(BaseSetting):
+class NewsletterSettings(BaseSiteSetting):
     class Meta:
         verbose_name = 'newsletter settings'
 

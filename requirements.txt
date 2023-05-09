@@ -50,9 +50,9 @@ reportlab==3.6.12
 social_auth_app_django==5.0.0
 tablib==3.3.0
 tomd==0.1.3
-wagtail-cache==2.1.0
+wagtail-cache==2.2.0
 wagtail-purge==0.2
-wagtail==3.0.1
+wagtail==4.2.2
 whitenoise==5.3.0
 xhtml2pdf==0.2.8
 xmltodict==0.13.0

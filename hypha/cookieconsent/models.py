@@ -1,13 +1,13 @@
 from django.db import models
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
-from wagtail.contrib.settings.models import BaseSetting
+from wagtail.contrib.settings.models import BaseSiteSetting
 from wagtail.fields import RichTextField
 
 from hypha.core.wagtail.admin.registry import register_public_site_setting
 
 
 @register_public_site_setting
-class CookieConsentSettings(BaseSetting):
+class CookieConsentSettings(BaseSiteSetting):
     class Meta:
         verbose_name = 'Cookie consent settings'
 

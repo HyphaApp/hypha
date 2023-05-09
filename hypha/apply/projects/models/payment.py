@@ -124,6 +124,8 @@ class InvoiceDeliverable(models.Model):
         default=0
     )
 
+    wagtail_reference_index_ignore = True
+
     def __str__(self):
         return self.deliverable.name
 
@@ -153,6 +155,8 @@ class Invoice(models.Model):
         related_name='invoices'
     )
     objects = InvoiceQueryset.as_manager()
+
+    wagtail_reference_index_ignore = True
 
     def __str__(self):
         return _('Invoice requested for {project}').format(project=self.project)
@@ -273,6 +277,8 @@ class Invoice(models.Model):
 
 
 class SupportingDocument(models.Model):
+    wagtail_reference_index_ignore = True
+
     document = models.FileField(
         upload_to="supporting_documents", storage=PrivateStorage()
     )

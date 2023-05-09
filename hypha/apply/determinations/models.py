@@ -10,7 +10,7 @@ from wagtail.admin.panels import (
     ObjectList,
     TabbedInterface,
 )
-from wagtail.contrib.settings.models import BaseSetting, register_setting
+from wagtail.contrib.settings.models import BaseSiteSetting, register_setting
 from wagtail.fields import RichTextField, StreamField
 
 from hypha.apply.funds.models.mixins import AccessFormData
@@ -43,6 +43,9 @@ class DeterminationQuerySet(models.QuerySet):
 
 
 class DeterminationFormFieldsMixin(models.Model):
+
+    wagtail_reference_index_ignore = True
+
     class Meta:
         abstract = True
 
@@ -184,7 +187,10 @@ class Determination(DeterminationFormFieldsMixin, AccessFormData, models.Model):
 
 
 @register_setting
-class DeterminationMessageSettings(BaseSetting):
+class DeterminationMessageSettings(BaseSiteSetting):
+
+    wagtail_reference_index_ignore = True
+
     class Meta:
         verbose_name = 'determination messages'
 
@@ -240,7 +246,7 @@ class DeterminationMessageSettings(BaseSetting):
 
 
 @register_setting
-class DeterminationFormSettings(BaseSetting):
+class DeterminationFormSettings(BaseSiteSetting):
     class Meta:
         verbose_name = 'determination form settings'
 

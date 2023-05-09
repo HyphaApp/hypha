@@ -33,7 +33,7 @@ from wagtail.admin.panels import (
     ObjectList,
     TabbedInterface,
 )
-from wagtail.contrib.settings.models import BaseSetting, register_setting
+from wagtail.contrib.settings.models import BaseSiteSetting, register_setting
 from wagtail.fields import RichTextField
 from wagtail.models import Page, PageManager
 from wagtail.query import PageQuerySet
@@ -132,7 +132,7 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
         return self.open_round.serve(request)
 
     content_panels = WorkflowStreamForm.content_panels + [
-        FieldPanel('reviewers', widget=forms.SelectMultiple(attrs={'size': '16'})),
+        FieldPanel('reviewers', widget=forms.CheckboxSelectMultiple),
         FieldPanel('guide_link'),
         FieldPanel('description'),
         FieldPanel('image'),
@@ -204,7 +204,7 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
                 FieldPanel('end_date'),
             ]),
         ], heading=_('Dates')),
-        FieldPanel('reviewers', widget=forms.SelectMultiple(attrs={'size': '16'})),
+        FieldPanel('reviewers', widget=forms.CheckboxSelectMultiple),
         ReadOnlyPanel(
             'get_workflow_name_display',
             heading=_('Workflow'),
@@ -475,7 +475,7 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
 
     content_panels = WorkflowStreamForm.content_panels + [
         FieldPanel('lead'),
-        FieldPanel('reviewers', widget=forms.SelectMultiple(attrs={'size': '16'})),
+        FieldPanel('reviewers', widget=forms.CheckboxSelectMultiple),
         FieldPanel('guide_link'),
         FieldPanel('description'),
         FieldPanel('image'),
@@ -645,7 +645,10 @@ class RoundsAndLabs(Page):
 
 
 @register_setting
-class ApplicationSettings(BaseSetting):
+class ApplicationSettings(BaseSiteSetting):
+
+    wagtail_reference_index_ignore = True
+
     class Meta:
         verbose_name = 'application settings'
 

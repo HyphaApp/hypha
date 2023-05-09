@@ -2,6 +2,10 @@
     "makefile.extensionOutputFolder": "./.vscode",
     "cSpell.words": [
         "Anymail",
-        "WAGTAILADMIN"
+        "coreutils",
+        "modelcluster",
+        "pagedown",
+        "WAGTAILADMIN",
+        "wagtailcore"
     ]
 }

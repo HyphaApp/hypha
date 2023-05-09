@@ -3,7 +3,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
-from wagtail.contrib.settings.models import BaseSetting, register_setting
+from wagtail.contrib.settings.models import BaseSiteSetting, register_setting
 from wagtail.fields import RichTextField
 
 from hypha.apply.utils.storage import PrivateStorage
@@ -36,6 +36,8 @@ class BankInformation(models.Model):
         verbose_name='National Identity Document Number'
     )
 
+    wagtail_reference_index_ignore = True
+
     def __str__(self):
         return self.account_holder_name
 
@@ -66,6 +68,8 @@ class Vendor(models.Model):
     # tracks updates to the Vendor fields via the Vendor Setup Form.
     user_has_updated_details = models.BooleanField(default=False)
 
+    wagtail_reference_index_ignore = True
+
     def __str__(self):
         return self.name
 
@@ -74,6 +78,7 @@ class Vendor(models.Model):
 
 
 class DueDiligenceDocument(models.Model):
+
     document = models.FileField(
         upload_to="due_diligence_documents", storage=PrivateStorage()
     )
@@ -83,12 +88,16 @@ class DueDiligenceDocument(models.Model):
         related_name='due_diligence_documents',
     )
 
+    wagtail_reference_index_ignore = True
+
     def __str__(self):
         return self.vendor.name + ' -> ' + self.document.name
 
 
 @register_setting
-class VendorFormSettings(BaseSetting):
+class VendorFormSettings(BaseSiteSetting):
+    wagtail_reference_index_ignore = True
+
     name_label = models.TextField(
         'label',
         default='1. What is the name of the person/organisation on the contract?'

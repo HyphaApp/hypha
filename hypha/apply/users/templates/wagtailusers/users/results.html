@@ -2,26 +2,26 @@
 <div class="users-list{% if filters %} users-list--has-filters{% endif %}">
     <div class="users-list__results">
         {% if users %}
-            <h2 role="alert">
-            {% if user_count %}
-                {% blocktrans trimmed count counter=user_count %}
-                    There is {{ counter }} user
-                {% plural %}
-                    There are {{ counter }} users
-                {% endblocktrans %}
-            {% endif %}
-            </h2>
-
             {% if is_searching %}
+                <h2 role="alert">
+                    {% blocktrans trimmed count counter=users|length %}
+                        There is {{ counter }} match
+                    {% plural %}
+                        There are {{ counter }} matches
+                    {% endblocktrans %}
+                </h2>
+
                 {% search_other %}
             {% endif %}
+
             {% include "wagtailusers/users/list.html" %}
 
-            {# call pagination_nav with no linkurl, to generate general-purpose links like <div href="?p=2"/> #}
-            {% include "wagtailadmin/shared/pagination_nav.html" with items=users %}
+            {# call pagination_nav with no linkurl, to generate general-purpose links like <a href="?p=2"> #}
+            {% include "wagtailadmin/shared/pagination_nav.html" with items=page_obj %}
         {% else %}
-            <h2 role="alert">{% blocktrans trimmed %}Sorry, no users match "<em>{{ query_string }}</em>"{% endblocktrans %}</h2>
             {% if is_searching %}
+                <h2 role="alert">{% blocktrans trimmed %}Sorry, no users match "<em>{{ query_string }}</em>"{% endblocktrans %}</h2>
+
                 {% search_other %}
             {% else %}
                 {% url 'wagtailusers_users:add' as wagtailusers_add_url %}

@@ -21,9 +21,9 @@ from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from modelcluster.models import ClusterableModel
 from wagtail.admin.panels import FieldPanel, InlinePanel, MultiFieldPanel
-from wagtail.contrib.settings.models import BaseSetting, register_setting
-from wagtail.core.models import Orderable
+from wagtail.contrib.settings.models import BaseSiteSetting, register_setting
 from wagtail.fields import StreamField
+from wagtail.models import Orderable
 
 from addressfield.fields import ADDRESS_FIELDS_ORDER
 from hypha.apply.funds.models.mixins import AccessFormData
@@ -197,6 +197,8 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
     )
 
     objects = ProjectQuerySet.as_manager()
+
+    wagtail_reference_index_ignore = True
 
     def __str__(self):
         return self.title
@@ -472,7 +474,7 @@ class PAFReviewersRole(Orderable, ClusterableModel):
 
 
 @register_setting
-class ProjectSettings(BaseSetting, ClusterableModel):
+class ProjectSettings(BaseSiteSetting, ClusterableModel):
     contracting_gp_email = models.TextField("Contracting Group Email", null=True, blank=True)
     finance_gp_email = models.TextField("Finance Group Email", null=True, blank=True)
     staff_gp_email = models.TextField("Staff Group Email", null=True, blank=True)
