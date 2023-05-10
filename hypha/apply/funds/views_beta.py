@@ -3,7 +3,6 @@ import time
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import user_passes_test
-from django.views.decorators.http import require_http_methods
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.core.paginator import Paginator
 from django.db import models
@@ -11,6 +10,7 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.utils.text import slugify
 from django.utils.translation import gettext as _
+from django.views.decorators.http import require_http_methods
 from django_htmx.http import HttpResponseClientRefresh
 from wagtail.models import Page
 

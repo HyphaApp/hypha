@@ -2,7 +2,6 @@ from collections import OrderedDict
 
 from django import forms
 from django.contrib.auth import get_user_model
-from django.db.models import Q
 from tinymce.widgets import TinyMCE
 from wagtail.models import Page
 
@@ -10,7 +9,6 @@ from hypha.apply.categories.models import Option
 from hypha.apply.funds.models import ApplicationSubmission, Round, ScreeningStatus
 from hypha.apply.review.fields import ScoredAnswerField, ScoredAnswerWidget
 from hypha.apply.stream_forms.forms import BlockFieldWrapper
-from hypha.apply.users.groups import STAFF_GROUP_NAME
 
 User = get_user_model()
 

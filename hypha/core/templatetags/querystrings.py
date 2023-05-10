@@ -98,7 +98,7 @@ def remove_from_query(context, *args, **kwargs):
         if key not in args:
             for value in value_list:
                 # skip key-value pairs mentioned in kwargs
-                if not (key in kwargs and force_text(value) == force_text(kwargs[key])):
+                if not (key in kwargs and str(value) == str(kwargs[key])):
                     query_params.append((key, value))
     return construct_query_string(
         context=context, query_params=query_params, only_query_string=only_query_string

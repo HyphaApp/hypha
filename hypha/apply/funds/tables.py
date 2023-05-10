@@ -17,10 +17,10 @@ from wagtail.models import Page
 
 from hypha.apply.categories.blocks import CategoryQuestionBlock
 from hypha.apply.categories.models import MetaTerm, Option
+from hypha.apply.funds.reviewers.services import get_all_reviewers
 from hypha.apply.review.models import Review
 from hypha.apply.utils.image import generate_image_tag
 from hypha.images.models import CustomImage
-from hypha.apply.funds.reviewers.services import get_all_reviewers
 
 from .models import ApplicationSubmission, Round, ScreeningStatus
 from .widgets import Select2MultiCheckboxesWidget
