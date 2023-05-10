@@ -499,7 +499,7 @@ class ProjectSettings(BaseSiteSetting, ClusterableModel):
 class PAFApprovals(models.Model):
     project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="paf_approvals")
     paf_reviewer_role = models.ForeignKey("PAFReviewersRole", on_delete=models.CASCADE, related_name="paf_approvals")
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="paf_approvals")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="paf_approvals")
     approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField()

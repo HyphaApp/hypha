@@ -1,5 +1,6 @@
 from collections import defaultdict
 
+from django.db.models import Count
 from django.utils.translation import gettext as _
 
 from hypha.apply.activity.options import MESSAGES
@@ -81,3 +82,23 @@ def get_compliance_email(target_user_gps=None):
                 staff_users_email.append(user.email)
             target_user_emails.extend(staff_users_email)
     return target_user_emails
+
+
+def get_users_for_groups(groups, user_queryset=None, exact_match=False):
+    """
+    It will return the user queryset with the mentioned groups,
+
+    **NOTE: exact_match and user_queryset are not working together(for now). Set either one of them.
+    """
+    if groups:
+        if not user_queryset:
+            if exact_match:
+                user_queryset = User.objects.annotate(group_count=Count('groups')).filter(group_count=len(groups), groups__name=groups.pop().name)
+            else:
+                user_queryset = User.objects.filter(groups__name=groups.pop().name)
+        else:
+            user_queryset = user_queryset.filter(groups__name=groups.pop().name)
+        return get_users_for_groups(groups, user_queryset=user_queryset)
+    else:
+        return user_queryset
+

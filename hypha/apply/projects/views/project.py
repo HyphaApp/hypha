@@ -52,6 +52,7 @@ from ..filters import InvoiceListFilter, ProjectListFilter, ReportListFilter
 from ..forms import (
     ApproveContractForm,
     ApproversForm,
+    AssignApproversForm,
     ChangePAFStatusForm,
     ChangeProjectStatusForm,
     ProjectApprovalForm,
@@ -104,12 +105,42 @@ class SendForApprovalView(DelegatedViewMixin, UpdateView):
 
         response = super().form_valid(form)
 
-        messenger(
-            MESSAGES.SEND_FOR_APPROVAL,
-            request=self.request,
-            user=self.request.user,
-            source=self.object,
-        )
+        project_settings = ProjectSettings.for_request(self.request)
+
+        paf_approvals = self.object.paf_approvals.filter(approved=False)
+
+        if project_settings.paf_approval_sequential:
+            user = paf_approvals.first().user
+            if user:
+                # notify only if first user/approver is updated
+                messenger(
+                    MESSAGES.SEND_FOR_APPROVAL,
+                    request=self.request,
+                    user=self.object.user,
+                    source=self.object,
+                )
+            else:
+                messenger(
+                    MESSAGES.ASSIGN_PAF_APPROVER,
+                    request=self.request,
+                    user=self.object.user,
+                    source=self.object,
+                )
+        else:
+            if paf_approvals.filter(user__isnull=False).exists():
+                messenger(
+                    MESSAGES.SEND_FOR_APPROVAL,
+                    request=self.request,
+                    user=self.object.user,
+                    source=self.object,
+                )
+            if paf_approvals.filter(user__isnull=True).exists():
+                messenger(
+                    MESSAGES.ASSIGN_PAF_APPROVER,
+                    request=self.request,
+                    user=self.object.user,
+                    source=self.object,
+                )
 
         project.status = WAITING_FOR_APPROVAL
         project.save(update_fields=['status'])
@@ -509,12 +540,20 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
             if project_settings.paf_approval_sequential:
                 # notify next approver
                 if self.object.paf_approvals.filter(approved=False).exists():
-                    messenger(
-                        MESSAGES.APPROVE_PAF,
-                        request=self.request,
-                        user=self.request.user,
-                        source=self.object,
-                    )
+                    if self.object.paf_approvals.filter(approved=False).first().user:
+                        messenger(
+                            MESSAGES.APPROVE_PAF,
+                            request=self.request,
+                            user=self.request.user,
+                            source=self.object,
+                        )
+                    else:
+                        messenger(
+                            MESSAGES.ASSIGN_PAF_APPROVER,
+                            request=self.request,
+                            user=self.request.user,
+                            source=self.object,
+                        )
             messages.success(self.request, _("PAF has been approved"),
                              extra_tags=PROJECT_ACTION_MESSAGE_TAG)
 
@@ -591,6 +630,37 @@ class ChangeProjectstatusView(DelegatedViewMixin, UpdateView):
         return response
 
 
+class UpdateAssignApproversView(DelegatedViewMixin, UpdateView):
+    context_name = 'assign_approvers_form'
+    form_class = AssignApproversForm
+    model = Project
+
+    def form_valid(self, form):
+        from ..forms.project import get_latest_project_paf_approval_via_roles
+        project = self.kwargs['object']
+
+        response = super().form_valid(form)
+
+        paf_approval = get_latest_project_paf_approval_via_roles(project=project, roles=self.request.user.groups.all())
+
+        if paf_approval.user:
+            messenger(
+                MESSAGES.APPROVE_PAF,
+                request=self.request,
+                user=self.object.user,
+                source=self.object,
+            )
+        else:
+            messenger(
+                MESSAGES.ASSIGN_PAF_APPROVER,
+                request=self.request,
+                user=self.object.user,
+                source=self.object,
+            )
+
+        return response
+
+
 class UpdatePAFApproversView(DelegatedViewMixin, UpdateView):
     context_name = 'update_approvers_form'
     form_class = ApproversForm
@@ -611,7 +681,7 @@ class UpdatePAFApproversView(DelegatedViewMixin, UpdateView):
             # if approvers exists already
             if project_settings.paf_approval_sequential:
                 user = paf_approvals.first().user
-                if user.id != old_approvers[0]:
+                if user and user.id != old_approvers[0]:
                     # notify only if first user/approver is updated
                     messenger(
                         MESSAGES.APPROVE_PAF,
@@ -619,20 +689,43 @@ class UpdatePAFApproversView(DelegatedViewMixin, UpdateView):
                         user=self.object.user,
                         source=self.object,
                     )
+                elif not user:
+                    messenger(
+                        MESSAGES.ASSIGN_PAF_APPROVER,
+                        request=self.request,
+                        user=self.object.user,
+                        source=self.object,
+                    )
             else:
+                if paf_approvals.filter(user__isnull=False).exists():
+                    messenger(
+                        MESSAGES.APPROVE_PAF,
+                        request=self.request,
+                        user=self.object.user,
+                        source=self.object,
+                    )
+                if paf_approvals.filter(user__isnull=True).exists():
+                    messenger(
+                        MESSAGES.ASSIGN_PAF_APPROVER,
+                        request=self.request,
+                        user=self.object.user,
+                        source=self.object,
+                    )
+        elif paf_approvals:
+            if paf_approvals.filter(user__isnull=False).exists():
                 messenger(
                     MESSAGES.APPROVE_PAF,
                     request=self.request,
                     user=self.object.user,
                     source=self.object,
                 )
-        elif paf_approvals:
-            messenger(
-                MESSAGES.APPROVE_PAF,
-                request=self.request,
-                user=self.object.user,
-                source=self.object,
-            )
+            if paf_approvals.filter(user__isnull=True).exists():
+                messenger(
+                    MESSAGES.ASSIGN_PAF_APPROVER,
+                    request=self.request,
+                    user=self.object.user,
+                    source=self.object,
+                )
 
         messages.success(self.request, _("PAF approvers have been updated"), extra_tags=PROJECT_ACTION_MESSAGE_TAG)
         return response
@@ -665,6 +758,7 @@ class AdminProjectDetailView(
         UpdateLeadView,
         UploadContractView,
         UploadDocumentView,
+        UpdateAssignApproversView,
         ChangePAFStatusView,
         ChangeProjectstatusView,
         ChangeInvoiceStatusView,

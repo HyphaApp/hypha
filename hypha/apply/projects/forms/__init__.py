@@ -7,6 +7,7 @@ from .payment import (
 from .project import (
     ApproveContractForm,
     ApproversForm,
+    AssignApproversForm,
     ChangePAFStatusForm,
     ChangeProjectStatusForm,
     CreateProjectForm,
@@ -37,6 +38,7 @@ __all__ = [
     'SubmitContractDocumentsForm',
     'ApproveContractForm',
     'ApproversForm',
+    'AssignApproversForm',
     'ChangePAFStatusForm',
     'ChangeProjectStatusForm',
     'CreateProjectForm',

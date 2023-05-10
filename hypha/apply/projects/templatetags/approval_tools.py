@@ -1,6 +1,6 @@
 from django import template
 
-from ..models.project import WAITING_FOR_APPROVAL
+from ..models.project import WAITING_FOR_APPROVAL, ProjectSettings
 from ..permissions import has_permission
 
 register = template.Library()
@@ -22,13 +22,58 @@ def user_can_send_for_approval(project, user):
 
 
 @register.simple_tag
-def user_can_update_paf_approvers(project, user):
-    if not project.status == WAITING_FOR_APPROVAL:
+def user_can_update_paf_approvers(project, user, request):
+    from hypha.apply.activity.adapters.utils import get_users_for_groups
+    if project.status != WAITING_FOR_APPROVAL:
         return False
-    if user.paf_approvals.filter(project=project).exists():
-        return False
-    if project.paf_approvals.exists() and user.is_apply_staff:
+    if user == project.lead:
         return True
+    if not project.paf_approvals.exists():
+        return False
+
+    project_settings = ProjectSettings.for_request(request)
+    if project_settings.paf_approval_sequential:
+        next_paf_approval = project.paf_approvals.filter(approved=False).first()
+        if next_paf_approval:
+            if next_paf_approval.user and user in get_users_for_groups(list(next_paf_approval.paf_reviewer_role.user_roles.all()), exact_match=True):
+                return True
+        return False
+    else:
+        approvers_ids = []
+        for approval in project.paf_approvals.filter(approved=False, user__isnull=False):
+            approvers_ids.extend(assigner.id for assigner in
+                                 get_users_for_groups(list(approval.paf_reviewer_role.user_roles.all()),
+                                                      exact_match=True))
+        if user.id in approvers_ids:
+            return True
+    return False
+
+
+@register.simple_tag
+def user_can_assign_approvers_to_project(project, user, request):
+    from hypha.apply.activity.adapters.utils import get_users_for_groups
+    if project.status != WAITING_FOR_APPROVAL:
+        return False
+    if not project.paf_approvals.exists():
+        return False
+    project_settings = ProjectSettings.for_request(request)
+    if project_settings.paf_approval_sequential:
+        next_paf_approval = project.paf_approvals.filter(approved=False).first()
+        if next_paf_approval:
+            if next_paf_approval.user:
+                return False
+            else:
+                if user in get_users_for_groups(list(next_paf_approval.paf_reviewer_role.user_roles.all()), exact_match=True):
+                    return True
+            return False
+        return False
+    else:
+        assigners_ids = []
+        for approval in project.paf_approvals.filter(approved=False, user__isnull=True):
+            assigners_ids.extend(assigner.id for assigner in get_users_for_groups(list(approval.paf_reviewer_role.user_roles.all()), exact_match=True))
+
+        if user.id in assigners_ids:
+            return True
     return False
 
 

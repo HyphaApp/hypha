@@ -10,6 +10,7 @@
             <svg class="icon icon--caret-down" x-show="collapsed" aria-hidden=true><use xlink:href="#caret-down"></use></svg>
             {% endif %}
         </div>
+        <div>
         {% user_can_send_for_approval object user as can_send_to_approve %}
         {% if can_send_to_approve %}
             <a data-fancybox
@@ -23,24 +24,43 @@
                 {% endif %}
             </a>
         {% endif %}
-        {% user_can_update_paf_approvers object user as can_update_paf_approvers %}
+        {% user_can_update_paf_approvers object user request as can_update_paf_approvers %}
+        {% user_can_assign_approvers_to_project object user request as can_assign_paf_approvers %}
         {% if can_update_paf_approvers %}
+            {% if user == project.lead %}
             <a data-fancybox
             data-src="#update-paf-approvers"
-            class="button button--project-action button--project-action--white"
+            class="button button--project-action button--project-action--white ml-2"
             href="#">
                 {% trans "View/Update Approvers" %}
+            </a>
+            {% else %}
+            <a data-fancybox
+            data-src="#change-assigned-paf-approvers"
+            class="button button--project-action button--project-action--white ml-2"
+            href="#">
+                {% trans "Change approver" %}
+            </a>
+            {% endif %}
+        {% endif %}
+        {% if can_assign_paf_approvers %}
+            <a data-fancybox
+            data-src="#assign-paf-approvers"
+            class="button button--project-action ml-2"
+            href="#">
+                {% trans "Assign approver" %}
             </a>
         {% endif %}
         {% user_can_update_paf_status object user request=request as can_update_paf_status %}
         {% if object.can_make_approval and can_update_paf_status %}
             <a data-fancybox
             data-src="#update-paf-status"
-            class="button button--project-action"
+            class="button button--project-action ml-2"
             href="#">
                 {% trans "Update Status" %}
             </a>
         {% endif %}
+        </div>
     </div>
     <ul class="docs-block__inner" id="project-documents-elements" {% if collapsible_header %} x-show="!collapsed" role="region"
        aria-labelledby="project-documents-section" {% endif %}>
@@ -268,6 +288,21 @@
         </p>
     {% endif %}
 </div>
+
+<div class="modal" id="change-assigned-paf-approvers">
+        <h4 class="modal__project-header-bar">{% trans "Change Approver" %}</h4>
+        {% trans "Submit" as submit %}
+        {% include 'funds/includes/delegated_form_base.html' with form=assign_approvers_form value=submit %}
+    </div>
+
+{% endif %}
+
+{% if can_assign_paf_approvers %}
+    <div class="modal" id="assign-paf-approvers">
+        <h4 class="modal__project-header-bar">{% trans "Assign Approver" %}</h4>
+        {% trans "Submit" as submit %}
+        {% include 'funds/includes/delegated_form_base.html' with form=assign_approvers_form value=submit %}
+    </div>
 {% endif %}
 
 {% if can_update_paf_status %}

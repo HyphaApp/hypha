@@ -80,7 +80,8 @@ def can_update_paf_status(user, project, **kwargs):
     if request:
         project_settings = ProjectSettings.for_request(request)
         if project_settings.paf_approval_sequential:
-            if user.id == project.paf_approvals.filter(approved=False).first().user.id:
+            approver = project.paf_approvals.filter(approved=False).first().user
+            if approver and user.id == approver.id:
                 return True, 'Next Approver can approve PAF(For Sequential Approvals)'
             return False, 'Only Next can approve PAF(For Sequential Approvals)'
         if user.id in project.paf_approvals.filter(approved=False).values_list('user', flat=True):
