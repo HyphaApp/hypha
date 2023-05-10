@@ -635,6 +635,13 @@ class UpdateAssignApproversView(DelegatedViewMixin, UpdateView):
     form_class = AssignApproversForm
     model = Project
 
+    def dispatch(self, request, *args, **kwargs):
+        self.project = get_object_or_404(Project, pk=self.kwargs['pk'])
+        #:todo: when assign button will be available is different from when a user can assign
+        # permission, _ = has_permission('paf_approvers_assign', request.user, self.project, raise_exception=True,
+        #                                request=request)
+        return super().dispatch(request, *args, **kwargs)
+
     def form_valid(self, form):
         from ..forms.project import get_latest_project_paf_approval_via_roles
         project = self.kwargs['object']
@@ -665,6 +672,11 @@ class UpdatePAFApproversView(DelegatedViewMixin, UpdateView):
     context_name = 'update_approvers_form'
     form_class = ApproversForm
     model = Project
+
+    def dispatch(self, request, *args, **kwargs):
+        self.project = get_object_or_404(Project, pk=self.kwargs['pk'])
+        permission, _ = has_permission('paf_approvers_update', request.user, self.project, raise_exception=True, request=request)
+        return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         project = self.kwargs['object']
