@@ -459,6 +459,11 @@ class ApplicationSubmission(
 
     wagtail_reference_index_ignore = True
 
+    class Meta:
+        indexes = [
+            GinIndex(fields=['search_document']),
+        ]
+
     @property
     def is_draft(self):
         return self.status == DRAFT_STATE

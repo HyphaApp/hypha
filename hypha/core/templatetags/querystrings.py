@@ -1,7 +1,6 @@
 from urllib.parse import parse_qs, urlencode, urlparse
 
 from django import template
-from django.utils.encoding import force_text
 from django.utils.safestring import mark_safe
 
 register = template.Library()
@@ -23,10 +22,10 @@ def construct_query_string(context, query_params, only_query_string=False):
     query_string = "" if only_query_string else context["request"].path
     if len(query_params):
         query_params = sorted(
-            query_params, key=lambda elem: "|".join([force_text(elem[0]), force_text(elem[1])])
+            query_params, key=lambda elem: "|".join([str(elem[0]), str(elem[1])])
         )
         encoded_params = urlencode(
-            [(key, force_text(value)) for (key, value) in query_params if value]
+            [(key, str(value)) for (key, value) in query_params if value]
         ).replace("&", "&amp;")
         query_string += "?{encoded_params}".format(encoded_params=encoded_params)
     return mark_safe(query_string)
