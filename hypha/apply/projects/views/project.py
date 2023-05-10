@@ -116,14 +116,14 @@ class SendForApprovalView(DelegatedViewMixin, UpdateView):
                 messenger(
                     MESSAGES.SEND_FOR_APPROVAL,
                     request=self.request,
-                    user=self.object.user,
+                    user=self.request.user,
                     source=self.object,
                 )
             else:
                 messenger(
                     MESSAGES.ASSIGN_PAF_APPROVER,
                     request=self.request,
-                    user=self.object.user,
+                    user=self.request.user,
                     source=self.object,
                 )
         else:
@@ -131,14 +131,14 @@ class SendForApprovalView(DelegatedViewMixin, UpdateView):
                 messenger(
                     MESSAGES.SEND_FOR_APPROVAL,
                     request=self.request,
-                    user=self.object.user,
+                    user=self.request.user,
                     source=self.object,
                 )
             if paf_approvals.filter(user__isnull=True).exists():
                 messenger(
                     MESSAGES.ASSIGN_PAF_APPROVER,
                     request=self.request,
-                    user=self.object.user,
+                    user=self.request.user,
                     source=self.object,
                 )
 
@@ -647,14 +647,14 @@ class UpdateAssignApproversView(DelegatedViewMixin, UpdateView):
             messenger(
                 MESSAGES.APPROVE_PAF,
                 request=self.request,
-                user=self.object.user,
+                user=self.request.user,
                 source=self.object,
             )
         else:
             messenger(
                 MESSAGES.ASSIGN_PAF_APPROVER,
                 request=self.request,
-                user=self.object.user,
+                user=self.request.user,
                 source=self.object,
             )
 
@@ -686,14 +686,14 @@ class UpdatePAFApproversView(DelegatedViewMixin, UpdateView):
                     messenger(
                         MESSAGES.APPROVE_PAF,
                         request=self.request,
-                        user=self.object.user,
+                        user=self.request.user,
                         source=self.object,
                     )
                 elif not user:
                     messenger(
                         MESSAGES.ASSIGN_PAF_APPROVER,
                         request=self.request,
-                        user=self.object.user,
+                        user=self.request.user,
                         source=self.object,
                     )
             else:
@@ -701,14 +701,14 @@ class UpdatePAFApproversView(DelegatedViewMixin, UpdateView):
                     messenger(
                         MESSAGES.APPROVE_PAF,
                         request=self.request,
-                        user=self.object.user,
+                        user=self.request.user,
                         source=self.object,
                     )
                 if paf_approvals.filter(user__isnull=True).exists():
                     messenger(
                         MESSAGES.ASSIGN_PAF_APPROVER,
                         request=self.request,
-                        user=self.object.user,
+                        user=self.request.user,
                         source=self.object,
                     )
         elif paf_approvals:
@@ -716,14 +716,14 @@ class UpdatePAFApproversView(DelegatedViewMixin, UpdateView):
                 messenger(
                     MESSAGES.APPROVE_PAF,
                     request=self.request,
-                    user=self.object.user,
+                    user=self.request.user,
                     source=self.object,
                 )
             if paf_approvals.filter(user__isnull=True).exists():
                 messenger(
                     MESSAGES.ASSIGN_PAF_APPROVER,
                     request=self.request,
-                    user=self.object.user,
+                    user=self.request.user,
                     source=self.object,
                 )
 

@@ -284,8 +284,13 @@ class EmailAdapter(AdapterBase):
                     return [assigner.email for assigner in assigners]
 
             assigners_emails = []
-            for approval in source.paf_approvals.filter(approved=False, user__isnull=True):
-                assigners_emails.extend([assigner.email for assigner in get_users_for_groups(list(approval.paf_reviewer_role.user_roles.all()), exact_match=True)])
+            if user == source.lead:
+                for approval in source.paf_approvals.filter(approved=False, user__isnull=True):
+                    assigners_emails.extend([assigner.email for assigner in get_users_for_groups(list(approval.paf_reviewer_role.user_roles.all()), exact_match=True)])
+            else:
+                assigners_emails.extend([assigner.email for assigner in
+                                         get_users_for_groups(list(user.groups.all()),
+                                                              exact_match=True)])
             return set(assigners_emails)
 
         if message_type == MESSAGES.REQUEST_PROJECT_CHANGE:

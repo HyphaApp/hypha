@@ -1,5 +1,7 @@
 from django.core.exceptions import PermissionDenied
 
+from hypha.apply.activity.adapters.utils import get_users_for_groups
+
 from .models.project import (
     CLOSING,
     COMPLETE,
@@ -171,9 +173,13 @@ def can_access_project(user, project):
     if user.is_applicant and user == project.user:
         return True, 'Applicant(project user) can view project in all statuses'
 
-    if project.status in [DRAFT, WAITING_FOR_APPROVAL] and project.paf_approvals.exists() and \
-        user.id in project.paf_approvals.all().values_list('user', flat=True):
-        return True, 'PAF Approvers can access the project in Draft and Approval state'
+    if project.status in [DRAFT, WAITING_FOR_APPROVAL, CONTRACTING] and project.paf_approvals.exists():
+        paf_reviewer_roles_users_ids = []
+        for approval in project.paf_approvals.all():
+            paf_reviewer_roles_users_ids.extend([role_user.id for role_user in get_users_for_groups(
+                list(approval.paf_reviewer_role.user_roles.all()), exact_match=True)])
+        if user.id in paf_reviewer_roles_users_ids:
+            return True, 'PAF Approvers can access the project in Draft, Approval state and after approval state'
 
     return False, 'Forbidden Error'
 
