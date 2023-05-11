@@ -27,7 +27,12 @@
         @click="toggle()"
         :aria-expanded="open"
         :aria-controls="$id('dropdown-button')"
-        {% if slots.url %}hx-get="{% render_slot slots.url %}" hx-trigger="mouseover once, focus once" hx-target="#dd-content-{{ id }}" hx-swap='innerHTML'{% endif %}
+        {% if slots.url %}
+            hx-get="{% render_slot slots.url %}"
+            {% merge_attrs slots.url.attributes hx-trigger="mouseover once, focus once" %}
+            hx-target="#dd-content-{{ id }}"
+            hx-swap="innerHTML"
+        {% endif %}
     >
         {{ attributes.title }}
 
@@ -65,7 +70,7 @@
                 x-ref="searchInput"
                 @keydown.down="$focus.next()"
                 placeholder="Filter {{ attributes.title }}" id="input-status-filter"
-                class="js-filterable-field grow p-2 text-inherit font-normal w-max text-gray-900 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500">
+                class="js-filterable-field grow p-2 md:p-1 text-inherit font-normal w-max text-gray-900 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500">
         </div>
         {% endif %}
 

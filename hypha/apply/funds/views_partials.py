@@ -1,7 +1,10 @@
+import functools
+
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, render
+from django.utils.text import slugify
 from django.views.decorators.http import require_GET
 from wagtail.models import Page
 
@@ -19,7 +22,7 @@ from .models import ApplicationSubmission, Round
 User = get_user_model()
 
 
-
+@login_required
 def sub_menu_funds(request):
     selected_funds = request.GET.getlist("fund")
 
@@ -40,6 +43,7 @@ def sub_menu_funds(request):
     return render(request, "submissions/submenu/funds.html", ctx)
 
 
+@login_required
 def sub_menu_leads(request):
     selected_leads = request.GET.getlist("lead")
 
@@ -60,6 +64,7 @@ def sub_menu_leads(request):
     return render(request, "submissions/submenu/leads.html", ctx)
 
 
+@login_required
 def sub_menu_rounds(request):
     selected_rounds = request.GET.getlist("round")
     selected_fund = request.GET.get("fund")
@@ -92,6 +97,7 @@ def sub_menu_rounds(request):
     return render(request, "submissions/submenu/rounds.html", ctx)
 
 
+@login_required
 def sub_menu_reviewers(request):
     selected_reviewers = request.GET.getlist("reviewers")
     qs = get_all_reviewers()
@@ -113,6 +119,7 @@ def sub_menu_reviewers(request):
     return render(request, "submissions/submenu/reviewers.html", ctx)
 
 
+@login_required
 def sub_menu_meta_terms(request):
     selected_meta_terms = request.GET.getlist("meta_terms")
 
@@ -137,6 +144,7 @@ def sub_menu_meta_terms(request):
     return render(request, "submissions/submenu/meta-terms.html", ctx)
 
 
+@login_required
 def sub_menu_category_options(request):
     selected_category_options = request.GET.getlist("category_options")
 
@@ -216,3 +224,20 @@ def partial_reviews_decisions(request: HttpRequest) -> HttpResponse:
     }
 
     return render(request, "submissions/partials/submission-reviews-list-multi.html", ctx)
+
+
+@login_required
+@require_GET
+def sub_menu_change_status(request: HttpRequest) -> HttpResponse:
+    submission_ids = request.GET.getlist('submissions')
+    qs = ApplicationSubmission.objects.filter(id__in=submission_ids)
+
+    list_of_actions_list = [s.get_actions_for_user(request.user) for s in qs]
+    action_names = [[x[1] for x in action_list] for action_list in list_of_actions_list]
+    common_actions = sorted(functools.reduce(lambda l1, l2: set(l1).intersection(l2), action_names))
+
+    ctx = {
+        'statuses': {slugify(a): a for a in common_actions}.items(),
+    }
+
+    return render(request, "submissions/submenu/change-status.html", ctx)

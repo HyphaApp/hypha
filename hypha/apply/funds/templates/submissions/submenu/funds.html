@@ -1,13 +1,13 @@
 {% load i18n %}
 {% load querystrings heroicons %}
 
-<ul class="text-gray-700 dark:text-gray-200" aria-labelledby="dropdownBgHoverButton">
+<ul class="text-gray-700 divide-y" aria-labelledby="dropdownBgHoverButton">
     {% if selected_funds %}
         <li data-filter-for="fund-filter-field">
             <a href="{% url "apply:submissions:list-beta" %}{% remove_from_query "only_query_string" "page" "fund" %}"
                 hx-get="{% url "apply:submissions:list-beta" %}{% remove_from_query "only_query_string" "page" "fund" %}"
                 hx-push-url="true"
-                class="flex px-3 py-2 text-gray-600 border-b items-center hover:bg-gray-100 focus:bg-gray-100{% if s.selected %}bg-gray-100{% endif %}">
+                class="flex px-3 py-2 text-gray-600 items-center hover:bg-gray-100 focus:bg-gray-100{% if s.selected %}bg-gray-100{% endif %}">
                 {% trans "All Funds &amp; Labs" %}
             </a>
         </li>
@@ -23,7 +23,7 @@
                 hx-get="{% url "apply:submissions:list-beta" %}{% modify_query "only_query_string" "page" fund=f.id %}"
                 {% endif %}
                 hx-push-url="true"
-                class="flex {% if f.selected %}pl-2 font-medium{% else %}pl-8{% endif %} pr-3 py-2 text-gray-600 border-b items-center hover:bg-gray-100 focus:bg-gray-100{% if f.selected %}bg-gray-100{% endif %}">
+                class="flex {% if f.selected %}pl-2 font-medium{% else %}pl-8{% endif %} pr-3 py-2 text-gray-600 items-center hover:bg-gray-100 focus:bg-gray-100{% if f.selected %}bg-gray-100{% endif %}">
                 {% if f.selected %}
                     {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 mr-1" %}
                 {% endif %}

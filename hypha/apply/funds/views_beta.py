@@ -2,7 +2,7 @@ import time
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.core.paginator import Paginator
 from django.db import models
@@ -31,6 +31,7 @@ from .tables import (
 User = get_user_model()
 
 
+@login_required
 @user_passes_test(is_apply_staff)
 def submission_all_beta(request: HttpRequest, template_name='submissions/all.html') -> HttpResponse:
     search_query = request.GET.get('query') or ""
@@ -188,6 +189,7 @@ def submission_all_beta(request: HttpRequest, template_name='submissions/all.htm
     return render(request, template_name, ctx)
 
 
+@login_required
 @user_passes_test(is_apply_staff)
 @require_http_methods(["POST"])
 def bulk_archive_submissions(request):
@@ -196,6 +198,7 @@ def bulk_archive_submissions(request):
     return HttpResponseClientRefresh()
 
 
+@login_required
 @user_passes_test(is_apply_staff)
 @require_http_methods(["POST"])
 def bulk_delete_submissions(request):
