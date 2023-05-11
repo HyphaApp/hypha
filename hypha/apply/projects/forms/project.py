@@ -277,6 +277,7 @@ class SetPendingForm(ApproversForm):
         if self.instance.status != DRAFT:
             raise forms.ValidationError(_('A Project can only be sent for Approval when Drafted.'))
 
+        # :todo: we should have a check form contains enough data to create PAF Approvals
         cleaned_data = super().clean()
         return cleaned_data
 
