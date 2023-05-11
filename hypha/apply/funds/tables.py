@@ -4,6 +4,7 @@ import textwrap
 import django_filters as filters
 import django_tables2 as tables
 from django import forms
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db.models import F, Q
 from django.urls import reverse
@@ -78,8 +79,8 @@ class SubmissionsTable(tables.Table):
     class Meta:
         model = ApplicationSubmission
         order_by = ('-last_update',)
-        fields = ('title', 'phase', 'stage', 'fund', 'round', 'submit_time', 'last_update')
-        sequence = fields + ('comments',)
+        fields = getattr(settings, "SUBMISSION_TABLE_FIELDS", ())
+        sequence = tuple(fields) + ('comments',)
         template_name = 'funds/tables/table.html'
         row_attrs = {
             'class': make_row_class,
@@ -136,8 +137,8 @@ class BaseAdminSubmissionsTable(SubmissionsTable):
     screening_status = tables.Column(verbose_name=_('Screening'), accessor='screening_statuses')
 
     class Meta(SubmissionsTable.Meta):
-        fields = ('title', 'phase', 'stage', 'fund', 'round', 'lead', 'submit_time', 'last_update', 'screening_status', 'reviews_stats')  # type: ignore
-        sequence = fields + ('comments',)
+        fields = getattr(settings, "BASE_SUBMISSION_TABLE_FIELDS", ())  # type: ignore
+        sequence = tuple(fields) + ('comments',)
 
     def render_lead(self, value):
         return format_html('<span>{}</span>', value)
@@ -170,7 +171,7 @@ class SummarySubmissionsTableWithRole(BaseAdminSubmissionsTable):
     role_icon = tables.Column(verbose_name=_('Role'))
 
     class Meta(BaseAdminSubmissionsTable.Meta):
-        sequence = BaseAdminSubmissionsTable.Meta.fields + ('role_icon', 'comments')
+        sequence = tuple(BaseAdminSubmissionsTable.Meta.fields) + ('role_icon', 'comments')
         orderable = False
 
     def render_role_icon(self, value):

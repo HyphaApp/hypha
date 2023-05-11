@@ -478,3 +478,6 @@ if SENTRY_DSN:
         debug=SENTRY_DEBUG,
         integrations=[DjangoIntegration()]
     )
+
+BASE_SUBMISSION_TABLE_FIELDS = env.list('TABLE_FIELDS', ['title', 'submit_time', 'screening_status', 'phase', 'stage', 'fund', 'round', 'lead', 'last_update', 'reviews_stats'])
+SUBMISSION_TABLE_FIELDS = env.list('SUBMISSION_TABLE_FIELDS', ['title', 'submit_time', 'phase', 'stage', 'fund', 'round', 'last_update'])
