@@ -110,22 +110,23 @@ class SendForApprovalView(DelegatedViewMixin, UpdateView):
         paf_approvals = self.object.paf_approvals.filter(approved=False)
 
         if project_settings.paf_approval_sequential:
-            user = paf_approvals.first().user
-            if user:
-                # notify only if first user/approver is updated
-                messenger(
-                    MESSAGES.SEND_FOR_APPROVAL,
-                    request=self.request,
-                    user=self.request.user,
-                    source=self.object,
-                )
-            else:
-                messenger(
-                    MESSAGES.ASSIGN_PAF_APPROVER,
-                    request=self.request,
-                    user=self.request.user,
-                    source=self.object,
-                )
+            if paf_approvals:
+                user = paf_approvals.first().user
+                if user:
+                    # notify only if first user/approver is updated
+                    messenger(
+                        MESSAGES.SEND_FOR_APPROVAL,
+                        request=self.request,
+                        user=self.request.user,
+                        source=self.object,
+                    )
+                else:
+                    messenger(
+                        MESSAGES.ASSIGN_PAF_APPROVER,
+                        request=self.request,
+                        user=self.request.user,
+                        source=self.object,
+                    )
         else:
             if paf_approvals.filter(user__isnull=False).exists():
                 messenger(
