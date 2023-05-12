@@ -135,11 +135,14 @@ Good for testing, might not be a good idea in production.
 
     SUBMISSIONS_DRAFT_ACCESS_STAFF = env.bool('SUBMISSIONS_DRAFT_ACCESS_STAFF', False)
 
-### Columns to exclude from the submission tables.
+### Columns to include in submission tables and their ordering.
 
-Possible values are: fund, round, status, lead, reviewers, screening_statuses, category_options, meta_terms
+Possible values are: title, submit_time, screening_status, phase, stage, fund, round, lead, last_update, reviews_stats
 
-    SUBMISSIONS_TABLE_EXCLUDED_FIELDS = env.list('SUBMISSIONS_TABLE_EXCLUDED_FIELDS', [])
+    BASE_SUBMISSION_TABLE_FIELDS = env.list('BASE_SUBMISSION_TABLE_FIELDS', ['title', 'submit_time', 'screening_status', 'phase', 'stage', 'fund', 'round', 'lead', 'last_update', 'reviews_stats'])
+
+    SUBMISSION_TABLE_FIELDS = env.list('SUBMISSION_TABLE_FIELDS', ['title', 'submit_time', 'phase', 'stage', 'fund', 'round', 'last_update'])
+
 
 ### Should submission automatically transition after all reviewer roles are assigned.
 

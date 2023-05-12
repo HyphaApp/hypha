@@ -185,20 +185,8 @@ class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
     paginator_class = LazyPaginator
     table_pagination = {'per_page': 25}
 
-    excluded_fields = settings.SUBMISSIONS_TABLE_EXCLUDED_FIELDS
-
-    @property
-    def excluded(self):
-        return {
-            'exclude': self.excluded_fields
-        }
-
-    def get_table_kwargs(self, **kwargs):
-        return {**self.excluded, **kwargs}
-
     def get_filterset_kwargs(self, filterset_class, **kwargs):
         new_kwargs = super().get_filterset_kwargs(filterset_class)
-        new_kwargs.update(self.excluded)
         new_kwargs.update(kwargs)
         return new_kwargs
 
@@ -413,17 +401,6 @@ class AwaitingReviewSubmissionsListView(SingleTableMixin, ListView):
     paginator_class = LazyPaginator
     table_pagination = {'per_page': 25}
 
-    excluded_fields = settings.SUBMISSIONS_TABLE_EXCLUDED_FIELDS
-
-    @property
-    def excluded(self):
-        return {
-            'exclude': self.excluded_fields
-        }
-
-    def get_table_kwargs(self, **kwargs):
-        return {**self.excluded, **kwargs}
-
     def get_queryset(self):
         submissions = ApplicationSubmission.objects.in_review_for(self.request.user).order_by('-submit_time')
         return submissions.for_table(self.request.user)
@@ -625,7 +602,16 @@ class SubmissionsByRound(BaseAdminSubmissionsTable, DelegateableListView):
         BatchArchiveSubmissionView,
     ]
 
-    excluded_fields = ['round', 'fund'] + settings.SUBMISSIONS_TABLE_EXCLUDED_FIELDS
+    excluded_fields = ['round', 'fund']
+
+    @property
+    def excluded(self):
+        return {
+            'exclude': self.excluded_fields
+        }
+
+    def get_table_kwargs(self, **kwargs):
+        return {**self.excluded, **kwargs}
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -1532,17 +1518,8 @@ class SubmissionResultView(SubmissionStatsMixin, FilterView):
     filterset_class = SubmissionFilterAndSearch
     filter_action = ''
 
-    excluded_fields = settings.SUBMISSIONS_TABLE_EXCLUDED_FIELDS
-
-    @property
-    def excluded(self):
-        return {
-            'exclude': self.excluded_fields
-        }
-
     def get_filterset_kwargs(self, filterset_class, **kwargs):
         new_kwargs = super().get_filterset_kwargs(filterset_class)
-        new_kwargs.update(self.excluded)
         new_kwargs.update(kwargs)
         return new_kwargs
 

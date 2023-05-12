@@ -88,10 +88,6 @@ SUBMISSIONS_DRAFT_ACCESS_STAFF = env.bool('SUBMISSIONS_DRAFT_ACCESS_STAFF', Fals
 # Should staff admins be able to access/see draft submissions.
 SUBMISSIONS_DRAFT_ACCESS_STAFF_ADMIN = env.bool('SUBMISSIONS_DRAFT_ACCESS_STAFF_ADMIN', False)
 
-# Columns to exclude from the submission tables.
-# Possible values are: fund, round, status, lead, reviewers, screening_statuses, category_options, meta_terms
-SUBMISSIONS_TABLE_EXCLUDED_FIELDS = env.list('SUBMISSIONS_TABLE_EXCLUDED_FIELDS', [])
-
 # Should submission automatically transition after all reviewer roles are assigned.
 TRANSITION_AFTER_ASSIGNED = env.bool('TRANSITION_AFTER_ASSIGNED', False)
 
