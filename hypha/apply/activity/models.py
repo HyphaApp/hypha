@@ -136,11 +136,11 @@ class Activity(models.Model):
     @classmethod
     def visibility_for(cls, user):
         if user.is_apply_staff:
-            return getattr(settings, "COMMENT_VISIBILITY_ADMIN", [])
+            return settings.COMMENT_VISIBILITY_STAFF
         if user.is_reviewer:
-            return getattr(settings, "COMMENT_VISIBILITY_REVIEWER", [])
+            return settings.COMMENT_VISIBILITY_REVIEWER
         if user.is_partner:
-            return getattr(settings, "COMMENT_VISIBILITY_PARTNER", [])
+            return settings.COMMENT_VISIBILITY_PARTNER
 
         return [APPLICANT, ALL]
 
