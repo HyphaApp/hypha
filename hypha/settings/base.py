@@ -478,3 +478,8 @@ if SENTRY_DSN:
         debug=SENTRY_DEBUG,
         integrations=[DjangoIntegration()]
     )
+
+# Comment Visibility setting
+COMMENT_VISIBILITY_ADMIN = env.list('COMMENT_VISIBITY_ADMIN', ['applicant', 'team', 'reviewers', 'partners', 'all'])
+COMMENT_VISIBILITY_REVIEWER = env.list('COMMENT_VISIBILITY_REVIEWER', ['reviewers','all'])
+COMMENT_VISIBILITY_PARTNER = env.list('COMMENT_VISIBILITY_PARTNER', ['partners','all'])

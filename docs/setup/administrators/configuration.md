@@ -141,6 +141,12 @@ Possible values are: fund, round, status, lead, reviewers, screening_statuses, c
 
     SUBMISSIONS_TABLE_EXCLUDED_FIELDS = env.list('SUBMISSIONS_TABLE_EXCLUDED_FIELDS', [])
 
+### Comment visibility setting for admin, reviewer and partner.
+
+    COMMENT_VISIBILITY_ADMIN = env.list('COMMENT_VISIBITY_ADMIN', ['applicant', 'team', 'reviewers', 'partners', 'all'])
+    COMMENT_VISIBILITY_REVIEWER = env.list('COMMENT_VISIBILITY_REVIEWER', ['reviewers','all'])
+    COMMENT_VISIBILITY_PARTNER = env.list('COMMENT_VISIBILITY_PARTNER', ['partners','all'])
+
 ### Should submission automatically transition after all reviewer roles are assigned.
 
     TRANSITION_AFTER_ASSIGNED = env.bool('TRANSITION_AFTER_ASSIGNED', False)
