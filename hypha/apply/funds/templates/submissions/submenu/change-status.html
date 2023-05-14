@@ -1,19 +1,19 @@
 {% load i18n %}
 {% load querystrings %}
-<ul class="text-gray-700 divide-y dark:text-gray-200" aria-labelledby="dropdown-change-status">
+<ul class="text-gray-700 divide-y" aria-labelledby="dropdown-change-status">
     {% for slug, value in statuses %}
         <li data-filter-for="change-status-filter-field">
             <a
                 hx-post="{% url "apply:submissions:submenu-change-status" %}?status={{ slug }}"
                 title="Change status to {{ value }}"
-                class="flex pl-4 pr-3 py-2 text-gray-600 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
+                class="flex pl-4 pr-3 py-2 text-gray-600 items-center hover:bg-gray-100 focus:bg-gray-100">
                 <strong class="font-bold">{{ value }}</strong>
             </a>
         </li>
     {% empty %}
         <li>
             <span
-                class="pl-4 pr-3 py-2 text-gray-600 border-b hover:bg-gray-100 focus:bg-gray-100">
+                class="pl-4 pr-3 py-2 text-gray-600 hover:bg-gray-100 focus:bg-gray-100">
                 <strong class="font-bold">{% trans "No status available for currently selected submissions" %} </strong>
             </span>
         </li>

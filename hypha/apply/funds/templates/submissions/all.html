@@ -259,13 +259,13 @@
 
                 {% dropdown_menu title="Status" heading="Filter by current status" enable_search=True search_field_id="status-filter-field" %}
                     <ul
-                        class="flex flex-col overflow-scroll max-h-80 text-gray-700 dark:text-gray-200"
+                        class="flex flex-col overflow-scroll divide-y max-h-80 text-gray-700 dark:text-gray-200"
                         aria-labelledby="dropdownBgHoverButton">
                         {% if selected_statuses %}
                             <li>
                                 <a hx-get="{% remove_from_query "page" "status" %}"
                                    href="{% remove_from_query "page" "status" %}"
-                                   class="flex px-3 py-2 text-gray-600 border-b items-center hover:bg-gray-100 focus:bg-gray-100{% if s.selected %}bg-gray-100{% endif %}">
+                                   class="flex px-3 py-2 text-gray-600 items-center hover:bg-gray-100 focus:bg-gray-100{% if s.selected %}bg-gray-100{% endif %}">
                                     {% trans "All statuses" %}
                                 </a>
                             </li>
@@ -279,7 +279,7 @@
                                         href="{% modify_query "page" status=s.slug %}"
                                     {% endif %}
                                     role="menuitemradio" aria-checked="{{ s.selected }}"
-                                    class="flex {% if s.selected %}bg-gray-100 pl-2 font-medium{% else %}pl-8{% endif %} pr-3 py-2 text-gray-600 border-b items-center hover:bg-gray-100 focus:bg-gray-100"
+                                    class="flex {% if s.selected %}bg-gray-100 pl-2 font-medium{% else %}pl-8{% endif %} pr-3 py-2 text-gray-600 items-center hover:bg-gray-100 focus:bg-gray-100"
                                 >
                                     {% if s.selected %}
                                         {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 mr-1" %}

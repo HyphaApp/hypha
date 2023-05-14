@@ -34,7 +34,7 @@
         </nav>
 
         {% if closed_rounds %}
-        <div class="tab-closed-rounds overflow-scroll max-h-80"
+        <div class="tab-closed-rounds divide-y overflow-scroll max-h-80"
             x-show="tab === 'closed_rounds'"
             role="tabpanel"
         >
@@ -43,7 +43,7 @@
                     href="{% url "apply:submissions:list-beta" %}{% modify_query "only_query_string" "page" round=f.id %}"
                     hx-get="{% url "apply:submissions:list-beta" %}{% modify_query "only_query_string" "page" round=f.id %}"
                     hx-push-url="true"
-                    class="flex {% if f.selected %}pl-2 font-medium{% else %}pl-8{% endif %} pr-3 py-2 text-gray-600 border-b items-center hover:bg-gray-100 focus:bg-gray-100{% if f.selected %}bg-gray-100{% endif %}">
+                    class="flex {% if f.selected %}pl-2 font-medium{% else %}pl-8{% endif %} pr-3 py-2 text-gray-600 items-center hover:bg-gray-100 focus:bg-gray-100{% if f.selected %}bg-gray-100{% endif %}">
                     {% if f.selected %}
                         {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 mr-1" %}
                     {% endif %}
@@ -54,7 +54,7 @@
         {% endif %}
 
         {% if open_rounds %}
-            <div class="tab-open-rounds overflow-scroll max-h-80"
+            <div class="tab-open-rounds divide-y overflow-scroll max-h-80"
                 x-show="tab === 'open_rounds'"
                 role="tabpanel"
             >
@@ -64,7 +64,7 @@
                         href="{% url "apply:submissions:list-beta" %}{% modify_query "only_query_string" "page" round=f.id %}"
                         hx-get="{% url "apply:submissions:list-beta" %}{% modify_query "only_query_string" "page" round=f.id %}"
                         hx-push-url="true"
-                        class="flex {% if f.selected %}pl-2 font-medium{% else %}pl-8{% endif %} pr-3 py-2 text-gray-600 border-b items-center hover:bg-gray-100 focus:bg-gray-100{% if f.selected %}bg-gray-100{% endif %}">
+                        class="flex {% if f.selected %}pl-2 font-medium{% else %}pl-8{% endif %} pr-3 py-2 text-gray-600 items-center hover:bg-gray-100 focus:bg-gray-100{% if f.selected %}bg-gray-100{% endif %}">
                         {% if f.selected %}
                             {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 mr-1" %}
                         {% endif %}
