@@ -35,5 +35,9 @@
                 <strong class="font-bold">{{ meta_term.title }}</strong>
             </a>
         </li>
+    {% empty %}
+        <li class="pl-4 pr-3 py-2 text-gray-600 max-w-xs">
+            {% trans "No meta terms available" %}
+        </li>
     {% endfor %}
 </ul>

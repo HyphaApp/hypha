@@ -27,13 +27,12 @@ def sub_menu_funds(request):
     selected_funds = request.GET.getlist("fund")
 
     # Funds Filter Options
-    funds = [{
-        'id': f.id,
-        'selected': str(f.id) in selected_funds,
-        'title': f.title
-    } for f in Page.objects.filter(
-        applicationsubmission__isnull=False
-    ).order_by("title").distinct()]
+    funds = [
+        {'id': f.id, 'selected': str(f.id) in selected_funds, 'title': f.title}
+        for f in Page.objects.filter(applicationsubmission__isnull=False)
+        .order_by("title")
+        .distinct()
+    ]
 
     ctx = {
         'funds': funds,
@@ -47,14 +46,17 @@ def sub_menu_funds(request):
 def sub_menu_leads(request):
     selected_leads = request.GET.getlist("lead")
 
-    leads = [{
-        'id': item.id,
-        'selected': str(item.id) in selected_leads,
-        'title': str(item),
-        'slack': item.slack,
-    } for item in User.objects.filter(
-        submission_lead__isnull=False
-    ).order_by().distinct()]
+    leads = [
+        {
+            'id': item.id,
+            'selected': str(item.id) in selected_leads,
+            'title': str(item),
+            'slack': item.slack,
+        }
+        for item in User.objects.filter(submission_lead__isnull=False)
+        .order_by()
+        .distinct()
+    ]
 
     ctx = {
         'leads': leads,
@@ -74,19 +76,18 @@ def sub_menu_rounds(request):
         fund = Page.objects.get(id=selected_fund)
         qs = Round.objects.child_of(fund)
 
-    open_rounds = [{
-        'id': item.id,
-        'selected': str(item.id) in selected_rounds,
-        'title': str(item)
-    } for item in qs.open().order_by('-end_date').distinct()]
+    open_rounds = [
+        {'id': item.id, 'selected': str(item.id) in selected_rounds, 'title': str(item)}
+        for item in qs.open().order_by('-end_date').distinct()
+    ]
 
-    closed_rounds = [{
-        'id': item.id,
-        'selected': str(item.id) in selected_rounds,
-        'title': str(item)
-    } for item in qs.closed().filter(
-        submissions__isnull=False
-    ).order_by('-end_date').distinct()]
+    closed_rounds = [
+        {'id': item.id, 'selected': str(item.id) in selected_rounds, 'title': str(item)}
+        for item in qs.closed()
+        .filter(submissions__isnull=False)
+        .order_by('-end_date')
+        .distinct()
+    ]
 
     ctx = {
         'open_rounds': open_rounds,
@@ -102,12 +103,15 @@ def sub_menu_reviewers(request):
     selected_reviewers = request.GET.getlist("reviewers")
     qs = get_all_reviewers()
 
-    reviewers = [{
-        'id': item.id,
-        'selected': str(item.id) in selected_reviewers,
-        'title': str(item),
-        'slack': item.slack,
-    } for item in qs.order_by().distinct()]
+    reviewers = [
+        {
+            'id': item.id,
+            'selected': str(item.id) in selected_reviewers,
+            'title': str(item),
+            'slack': item.slack,
+        }
+        for item in qs.order_by().distinct()
+    ]
 
     reviewers = sorted(reviewers, key=lambda t: t['selected'], reverse=True)
 
@@ -125,14 +129,19 @@ def sub_menu_meta_terms(request):
 
     terms_qs = MetaTerm.objects.filter(
         filter_on_dashboard=True,
-        id__in=ApplicationSubmission.objects.all().values('meta_terms__id').distinct('meta_terms__id'))
+        id__in=ApplicationSubmission.objects.all()
+        .values('meta_terms__id')
+        .distinct('meta_terms__id'),
+    )
 
-    meta_terms = [{
-        'id': item.id,
-        'selected': str(item.id) in selected_meta_terms,
-        'title': str(item),
-    } for item in terms_qs]
-
+    meta_terms = [
+        {
+            'id': item.id,
+            'selected': str(item.id) in selected_meta_terms,
+            'title': str(item),
+        }
+        for item in terms_qs
+    ]
 
     meta_terms = sorted(meta_terms, key=lambda t: t['selected'], reverse=True)
 
@@ -150,12 +159,14 @@ def sub_menu_category_options(request):
 
     qs = Option.objects.filter(category__filter_on_dashboard=True).values('id', 'value')
 
-    items = [{
-        'id': item['id'],
-        'selected': str(item['id']) in selected_category_options,
-        'title': item['value'],
-    } for item in qs]
-
+    items = [
+        {
+            'id': item['id'],
+            'selected': str(item['id']) in selected_category_options,
+            'title': item['value'],
+        }
+        for item in qs
+    ]
 
     items = sorted(items, key=lambda t: t['selected'], reverse=True)
 
@@ -223,18 +234,24 @@ def partial_reviews_decisions(request: HttpRequest) -> HttpResponse:
         'submissions': qs,
     }
 
-    return render(request, "submissions/partials/submission-reviews-list-multi.html", ctx)
+    return render(
+        request, "submissions/partials/submission-reviews-list-multi.html", ctx
+    )
 
 
 @login_required
 @require_GET
 def sub_menu_change_status(request: HttpRequest) -> HttpResponse:
-    submission_ids = request.GET.getlist('submissions')
+    submission_ids = request.GET.getlist('selectedSubmissionIds')
     qs = ApplicationSubmission.objects.filter(id__in=submission_ids)
 
     list_of_actions_list = [s.get_actions_for_user(request.user) for s in qs]
     action_names = [[x[1] for x in action_list] for action_list in list_of_actions_list]
-    common_actions = sorted(functools.reduce(lambda l1, l2: set(l1).intersection(l2), action_names))
+    common_actions = (
+        sorted(functools.reduce(lambda l1, l2: set(l1).intersection(l2), action_names))
+        if action_names
+        else []
+    )
 
     ctx = {
         'statuses': {slugify(a): a for a in common_actions}.items(),

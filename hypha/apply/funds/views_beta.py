@@ -33,7 +33,9 @@ User = get_user_model()
 
 @login_required
 @user_passes_test(is_apply_staff)
-def submission_all_beta(request: HttpRequest, template_name='submissions/all.html') -> HttpResponse:
+def submission_all_beta(
+    request: HttpRequest, template_name='submissions/all.html'
+) -> HttpResponse:
     search_query = request.GET.get('query') or ""
     parsed_query = parse_search_query(search_query)
     search_term, search_filters = parsed_query['text'], parsed_query['filters']
@@ -49,8 +51,12 @@ def submission_all_beta(request: HttpRequest, template_name='submissions/all.htm
     selected_sort = request.GET.get("sort")
     page = request.GET.get("page", 1)
 
-    selected_fund_objects = Page.objects.filter(id__in=selected_funds) if selected_funds else []
-    selected_round_objects = Round.objects.filter(id__in=selected_rounds) if selected_rounds else []
+    selected_fund_objects = (
+        Page.objects.filter(id__in=selected_funds) if selected_funds else []
+    )
+    selected_round_objects = (
+        Round.objects.filter(id__in=selected_rounds) if selected_rounds else []
+    )
 
     if request.htmx:
         base_template = "includes/_partial-main.html"
@@ -97,9 +103,7 @@ def submission_all_beta(request: HttpRequest, template_name='submissions/all.htm
 
     # Status Filter Options
     STATUS_MAP = {k: phase.display_name for k, phase in PHASES}
-    for row in qs.order_by().values('status').annotate(
-        n=models.Count('status')
-    ):
+    for row in qs.order_by().values('status').annotate(n=models.Count('status')):
         status_display = STATUS_MAP[row['status']]
         try:
             count = status_count_raw[status_display]['count']
@@ -114,21 +118,24 @@ def submission_all_beta(request: HttpRequest, template_name='submissions/all.htm
 
     status_counts = sorted(
         status_count_raw.values(),
-        key=lambda t: (t['selected'], t['count']), reverse=True
+        key=lambda t: (t['selected'], t['count']),
+        reverse=True,
     )
 
     filter_kwargs = {**request.GET, **filter_extras}
     filters = SubmissionFilter(filter_kwargs, queryset=qs)
-    is_filtered = any([
-        selected_fund_objects,
-        selected_statuses,
-        selected_round_objects,
-        selected_leads,
-        selected_reviewers,
-        selected_meta_terms,
-        selected_category_options,
-        selected_sort,
-    ])
+    is_filtered = any(
+        [
+            selected_fund_objects,
+            selected_statuses,
+            selected_round_objects,
+            selected_leads,
+            selected_reviewers,
+            selected_meta_terms,
+            selected_category_options,
+            selected_sort,
+        ]
+    )
 
     qs = filters.qs
 
@@ -142,11 +149,10 @@ def submission_all_beta(request: HttpRequest, template_name='submissions/all.htm
         "relevance-desc": ("-rank", _('Best Match')),
     }
 
-    sort_options = [{
-        'name': v[1],
-        'param': k,
-        'selected': selected_sort == k
-    } for k, v in sort_options_raw.items()]
+    sort_options = [
+        {'name': v[1], 'param': k, 'selected': selected_sort == k}
+        for k, v in sort_options_raw.items()
+    ]
 
     if selected_sort and selected_sort in sort_options_raw.keys():
         if not search_query and selected_sort == 'relevance-desc':

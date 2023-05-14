@@ -30,5 +30,9 @@
                 {{ f.title }} {% if f.n %}({{ f.n }}){% endif %}
             </a>
         </li>
+    {% empty %}
+        <li class="pl-4 pr-3 py-2 text-gray-600 max-w-xs">
+            {% trans "No funds available" %}
+        </li>
     {% endfor %}
 </ul>

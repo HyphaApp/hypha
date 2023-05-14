@@ -36,5 +36,9 @@
                 {% if user.slack %} <span class="text-gray-500 font-light ml-1">{{ user.slack }}</span>{% endif %}
             </a>
         </li>
+    {% empty %}
+        <li class="pl-4 pr-3 py-2 text-gray-600 max-w-xs">
+            {% trans "No reviewer available" %}
+        </li>
     {% endfor %}
 </ul>
