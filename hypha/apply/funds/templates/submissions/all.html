@@ -11,7 +11,11 @@
         {% slot header %}
             {% trans "All Submissions" %}
             <span class="submissions-count"> ({{ page.paginator.count }})</span>
-            <a class="text-sm" href="{% url 'apply:submissions:list' %}">(Use old version)</a>
+            <a class="text-sm text-lime-300 border-b border-transparent hover:opacity-70 transition-all"
+                href="{% url 'apply:submissions:list' %}"
+            >
+                {% trans "View older version" %}
+            </a>
         {% endslot %}
 
     {% endadminbar %}
@@ -343,7 +347,7 @@
                     {% slot "url" hx-include="[name='submissions']" hx-trigger="mouseover, focus" %}{% url "apply:submissions:submenu-change-status" %}{% endslot %}
                 {% enddropdown_menu %}
 
-                {% dropdown_menu title="Lead" heading="Assign Lead" enable_search=True search_field_id="lead-filter-field" position="right" %}
+                {% dropdown_menu title="Lead" heading="Assign Lead" enable_search=True search_field_id="change-lead-filter-field" position="right" %}
                     {% slot "url" %}{% url "apply:submissions:submenu-leads" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
                 {% enddropdown_menu %}
                 <button
