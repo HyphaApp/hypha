@@ -90,7 +90,11 @@ from .models import (
     RoundBase,
     RoundsAndLabs,
 )
-from .permissions import has_permission, is_user_has_access_to_view_archived_submissions
+from .permissions import (
+    can_access_drafts,
+    has_permission,
+    is_user_has_access_to_view_archived_submissions,
+)
 from .tables import (
     AdminSubmissionsTable,
     ReviewerLeaderboardDetailTable,
@@ -203,13 +207,11 @@ class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
 
     def get_queryset(self):
         submissions = self.filterset_class._meta.model.objects.current().for_table(self.request.user)
-        # Check if staff or staff admin should be able to see drafts.
-        if self.request.user.is_apply_staff and settings.SUBMISSIONS_DRAFT_ACCESS_STAFF:
-            return submissions
-        elif self.request.user.is_apply_staff_admin and settings.SUBMISSIONS_DRAFT_ACCESS_STAFF_ADMIN:
-            return submissions
-        else:
-            return submissions.exclude_draft()
+
+        if not can_access_drafts(self.request.user):
+            submissions = submissions.exclude_draft()
+
+        return submissions
 
     def get_context_data(self, **kwargs):
         search_term = self.request.GET.get('query')

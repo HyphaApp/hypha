@@ -23,7 +23,10 @@ from .models import (
     ApplicationSubmission,
     Round,
 )
-from .permissions import is_user_has_access_to_view_archived_submissions
+from .permissions import (
+    can_access_drafts,
+    is_user_has_access_to_view_archived_submissions,
+)
 from .tables import (
     SubmissionFilter,
 )
@@ -70,7 +73,9 @@ def submission_all_beta(
     else:
         qs = ApplicationSubmission.objects.current().for_table(request.user)
 
-    qs = qs.prefetch_related('meta_terms')
+    match can_access_drafts(request.user):
+        case False, _:
+            qs = qs.exclude_draft()
 
     match search_filters:
         case {'submitted': values}:
@@ -138,6 +143,7 @@ def submission_all_beta(
     )
 
     qs = filters.qs
+    qs = qs.prefetch_related('meta_terms')
 
     sort_options_raw = {
         "submitted-desc": ("-submit_time", _('Newest')),
