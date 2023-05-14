@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.utils.text import slugify
-from django.views.decorators.http import require_GET
+from django.views.decorators.http import require_http_methods
 from wagtail.models import Page
 
 from hypha.apply.activity.services import (
@@ -23,6 +23,7 @@ User = get_user_model()
 
 
 @login_required
+@require_http_methods(['GET'])
 def sub_menu_funds(request):
     selected_funds = request.GET.getlist("fund")
 
@@ -43,6 +44,7 @@ def sub_menu_funds(request):
 
 
 @login_required
+@require_http_methods(['GET'])
 def sub_menu_leads(request):
     selected_leads = request.GET.getlist("lead")
 
@@ -67,6 +69,7 @@ def sub_menu_leads(request):
 
 
 @login_required
+@require_http_methods(['GET'])
 def sub_menu_rounds(request):
     selected_rounds = request.GET.getlist("round")
     selected_fund = request.GET.get("fund")
@@ -99,6 +102,7 @@ def sub_menu_rounds(request):
 
 
 @login_required
+@require_http_methods(['GET'])
 def sub_menu_reviewers(request):
     selected_reviewers = request.GET.getlist("reviewers")
     qs = get_all_reviewers()
@@ -124,6 +128,7 @@ def sub_menu_reviewers(request):
 
 
 @login_required
+@require_http_methods(['GET'])
 def sub_menu_meta_terms(request):
     selected_meta_terms = request.GET.getlist("meta_terms")
 
@@ -154,6 +159,7 @@ def sub_menu_meta_terms(request):
 
 
 @login_required
+@require_http_methods(['GET'])
 def sub_menu_category_options(request):
     selected_category_options = request.GET.getlist("category_options")
 
@@ -179,7 +185,7 @@ def sub_menu_category_options(request):
 
 
 @login_required
-@require_GET
+@require_http_methods(['GET'])
 def partial_submission_activities(request, pk):
     submission = get_object_or_404(ApplicationSubmission, pk=pk)
     has_permission(
@@ -189,6 +195,8 @@ def partial_submission_activities(request, pk):
     return render(request, 'activity/include/action_list.html', ctx)
 
 
+@login_required
+@require_http_methods(['GET'])
 def partial_reviews_card(request: HttpRequest, pk: str) -> HttpResponse:
     """Returns a partial html for the submission reviews box on the submission
     detail page and hovercard on the submissison list page.
@@ -221,7 +229,7 @@ def partial_reviews_card(request: HttpRequest, pk: str) -> HttpResponse:
 
 
 @login_required
-@require_GET
+@require_http_methods(['GET'])
 def partial_reviews_decisions(request: HttpRequest) -> HttpResponse:
     submission_ids = request.GET.get('ids')
     if submission_ids:
@@ -240,7 +248,7 @@ def partial_reviews_decisions(request: HttpRequest) -> HttpResponse:
 
 
 @login_required
-@require_GET
+@require_http_methods(['GET', 'POST'])
 def sub_menu_change_status(request: HttpRequest) -> HttpResponse:
     submission_ids = request.GET.getlist('selectedSubmissionIds')
     qs = ApplicationSubmission.objects.filter(id__in=submission_ids)
