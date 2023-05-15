@@ -631,6 +631,7 @@ class ChangeProjectstatusView(DelegatedViewMixin, UpdateView):
         return response
 
 
+@method_decorator(login_required, name='dispatch')
 class UpdateAssignApproversView(DelegatedViewMixin, UpdateView):
     context_name = 'assign_approvers_form'
     form_class = AssignApproversForm
@@ -638,9 +639,8 @@ class UpdateAssignApproversView(DelegatedViewMixin, UpdateView):
 
     def dispatch(self, request, *args, **kwargs):
         self.project = get_object_or_404(Project, pk=self.kwargs['pk'])
-        #:todo: when assign button will be available is different from when a user can assign
-        # permission, _ = has_permission('paf_approvers_assign', request.user, self.project, raise_exception=True,
-        #                                request=request)
+        permission, _ = has_permission('update_paf_assigned_approvers', request.user, self.project,
+                                       raise_exception=True, request=request)
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
