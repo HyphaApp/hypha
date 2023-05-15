@@ -43,9 +43,10 @@ def user_next_step_on_project(project, user, request=None):
             project_settings = ProjectSettings.for_request(request=request)
             if project_settings.paf_approval_sequential:
                 latest_unapproved_approval = project.paf_approvals.filter(approved=False).first()
-                if latest_unapproved_approval.user:
-                    return f"Awaiting approval. Assigned to {latest_unapproved_approval.user.get_full_name()}"
-                return f"Awaiting {latest_unapproved_approval.paf_reviewer_role.label} to assign an approver"
+                if latest_unapproved_approval:
+                    if latest_unapproved_approval.user:
+                        return f"Awaiting approval. Assigned to {latest_unapproved_approval.user.get_full_name()}"
+                    return f"Awaiting {latest_unapproved_approval.paf_reviewer_role.label} to assign an approver"
             else:
                 matched_roles = PAFReviewersRole.objects.annotate(roles_count=Count('user_roles')).filter(
                     roles_count=len(user.groups.all()))
