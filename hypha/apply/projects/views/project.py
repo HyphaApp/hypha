@@ -683,6 +683,7 @@ class UpdatePAFApproversView(DelegatedViewMixin, UpdateView):
         project = self.kwargs['object']
 
         project_settings = ProjectSettings.for_request(self.request)
+        old_approvers = None
         if self.object.paf_approvals.exists():
             old_approvers = list(project.paf_approvals.filter(approved=False).values_list('user__id', flat=True))
 

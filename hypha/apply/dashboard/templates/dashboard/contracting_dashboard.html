@@ -22,6 +22,13 @@
         {% include "dashboard/includes/paf_waiting_for_approval.html" with paf_waiting_for_approval=paf_waiting_for_approval %}
     {% endif %}
 
+    {% if paf_waiting_for_assignment.count %}
+     <div id="paf_waiting_for_assignment" class="wrapper wrapper--bottom-space">
+        <h4 class="heading heading--normal">{% trans "PAF needs assignee" %}</h4>
+        {% render_table paf_waiting_for_assignment.table %}
+    </div>
+    {% endif %}
+
     {% if projects_in_contracting.count %}
         {% include "dashboard/includes/projects_in_contracting.html" with projects_in_contracting=projects_in_contracting %}
     {% endif %}
