@@ -611,3 +611,12 @@ if SENTRY_DSN:
         debug=SENTRY_DEBUG,
         integrations=[DjangoIntegration()],
     )
+
+RATE_CHOICES = env.list('RATE_CHOCICES', [
+    "Need more info",
+    "Poor",
+    "Not so good",
+    "Is o.k.",
+    "Good",
+    "Excellent",
+])

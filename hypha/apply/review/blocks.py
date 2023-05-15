@@ -1,6 +1,7 @@
 import json
 
 from django import forms
+from django.conf import settings
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from wagtail.blocks import RichTextBlock
@@ -20,6 +21,7 @@ from hypha.apply.stream_forms.blocks import (
     CharFieldBlock,
     CheckboxFieldBlock,
     DropdownFieldBlock,
+    IntegerBlock,
     OptionalFormFieldBlock,
     TextFieldBlock,
 )
@@ -74,6 +76,8 @@ class ScoreFieldWithoutTextBlock(OptionalFormFieldBlock):
 
     name = "score without text"
     field_class = forms.ChoiceField
+    min = IntegerBlock(min_value=0, max_value=len(settings.RATE_CHOICES)-1,  default=0, required=False)
+    max = IntegerBlock(min_value=1, max_value=len(settings.RATE_CHOICES), default=len(settings.RATE_CHOICES), required=False)
 
     class Meta:
         icon = "order"
@@ -81,6 +85,15 @@ class ScoreFieldWithoutTextBlock(OptionalFormFieldBlock):
     def get_field_kwargs(self, struct_value):
         kwargs = super().get_field_kwargs(struct_value)
         kwargs["choices"] = self.get_choices(RATE_CHOICES)
+        if struct_value.get('min') is None:
+            struct_value['min'] = len(settings.RATE_CHOICES)-1
+        if struct_value.get('max') is None:
+            struct_value['max'] = len(settings.RATE_CHOICES)
+        if struct_value['min'] > struct_value['max']:
+            struct_value['min'] = struct_value['max']
+        kwargs['choices'] = kwargs['choices'][
+            int(struct_value['min']) + 1 : int(struct_value['max']) + 2
+        ]
         return kwargs
 
     def render(self, value, context=None):
