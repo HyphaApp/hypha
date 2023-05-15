@@ -17,6 +17,15 @@
         {% endif %}
         <p>{% blocktrans with email=ORG_EMAIL|urlize %}If you do not receive an e-mail within 15 minutes please check your
 spam folder and contact {{ email }} for further assistance.{% endblocktrans %}</p>
+
+		<p>
+		{% if request.user.is_authenticated %}
+			<a href="/dashboard/">{% blocktrans %}Return to my dashboard.{% endblocktrans %}</a>
+		{% else %}
+			{% blocktrans %}Once you've activated an account, you can track your submissions after {% endblocktrans %}<a href="/login/">{% blocktrans %}logging in{% endblocktrans %}</a>.
+		{% endif %}
+		</p>
+
         {% with email_context=page.specific %}<p>{{ email_context.confirmation_text_extra|urlize }}</p>{% endwith %}
 
         {% block extra_text %}{{ settings.funds.ApplicationSettings.extra_text_round|richtext }}{% endblock %}
