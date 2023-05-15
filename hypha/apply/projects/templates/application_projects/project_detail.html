@@ -153,7 +153,7 @@
             {% block sidebar %}
 
             <aside class="sidebar">
-                {% user_next_step_on_project object user as next_step %}
+                {% user_next_step_on_project object user request=request as next_step %}
                 {% if next_step %}
                     {% if mobile %}
                     <a class="js-actions-toggle button button--white button--full-width button--actions">{% trans "Next Step" %}</a>
@@ -187,7 +187,7 @@
                             {% if paf_approval.approved %}
                                 <p class="sidebar__paf-approvals--approved m-0">{% trans "Approved by " %}{{ paf_approval.user }} {% if paf_approval.approved_at %}(<i>{{ paf_approval.approved_at|date }}</i>){% endif %}</p>
                             {% else %}
-                                <p class="sidebar__paf-approvals--pending m-0">{% trans "Pending approval from " %}{{ paf_approval.user }}</p>
+                                <p class="sidebar__paf-approvals--pending m-0">{% trans "Pending approval from " %}{% if paf_approval.user %}{{ paf_approval.user }}{% else %} {{ paf_approval.paf_reviewer_role.label }}{% trans "(Nobody assigned yet)" %} {% endif %}</p>
                             {% endif %}
                             <br>
                         {% endfor %}

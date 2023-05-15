@@ -1,4 +1,5 @@
 from django import template
+from django.db.models import Count
 from django.urls import reverse
 
 from hypha.apply.projects.models.project import (
@@ -22,7 +23,8 @@ def project_can_have_report(project):
 
 
 @register.simple_tag
-def user_next_step_on_project(project, user):
+def user_next_step_on_project(project, user, request=None):
+    from hypha.apply.projects.models.project import PAFReviewersRole, ProjectSettings
     if project.status == DRAFT:
         if user.is_apply_staff:
             if not project.user_has_updated_details:
@@ -34,10 +36,32 @@ def user_next_step_on_project(project, user):
             return "Changes requested. Awaiting documents to be resubmitted."
         return "Awaiting approval form to be created."
     elif project.status == WAITING_FOR_APPROVAL:
-        if user.id in project.paf_approvals.values_list('user', flat=True):
-            return "Awaiting project approval from assigned approvers. Please review and update status"
         if user.is_applicant:
             return "Awaiting approval form to be approved."
+
+        if request:
+            project_settings = ProjectSettings.for_request(request=request)
+            if project_settings.paf_approval_sequential:
+                latest_unapproved_approval = project.paf_approvals.filter(approved=False).first()
+                if latest_unapproved_approval.user:
+                    return f"Awaiting approval. Assigned to {latest_unapproved_approval.user.get_full_name()}"
+                return f"Awaiting {latest_unapproved_approval.paf_reviewer_role.label} to assign an approver"
+            else:
+                matched_roles = PAFReviewersRole.objects.annotate(roles_count=Count('user_roles')).filter(
+                    roles_count=len(user.groups.all()))
+                for group in user.groups.all():
+                    matched_roles = matched_roles.filter(user_roles__id=group.id)
+                if not matched_roles:
+                    return "Awaiting PAF approval form to be approved"
+                else:
+                    matched_unapproved_approval = project.paf_approvals.filter(approved=False, paf_reviewer_role__in=matched_roles)
+                    if not matched_unapproved_approval.exists():
+                        return "Awaiting approval from other approvers teams"
+                    else:
+                        if matched_unapproved_approval.first().user:
+                            return f"Awaiting approval. Assigned to {matched_unapproved_approval.first().user.get_full_name()}"
+                        return f"Awaiting {matched_unapproved_approval.first().paf_reviewer_role.label} to assign an approver"
+
         return "Awaiting project approval from assigned approvers"
     elif project.status == CONTRACTING:
         if not project.contracts.exists():
