@@ -32,10 +32,10 @@ def can_access_archived_submissions(user):
 
 def can_access_drafts(user):
     if user.is_apply_staff and settings.SUBMISSIONS_DRAFT_ACCESS_STAFF:
-        return True, ''
+        return True
     if user.is_apply_staff_admin and settings.SUBMISSIONS_DRAFT_ACCESS_STAFF_ADMIN:
-        return True, ''
-    return False, ''
+        return True
+    return False
 
 
 def is_user_has_access_to_view_submission(user, submission):
