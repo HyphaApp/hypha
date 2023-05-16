@@ -19,13 +19,10 @@ from hypha.apply.search.filters import apply_date_filter
 from hypha.apply.search.query_parser import parse_search_query
 from hypha.apply.users.decorators import is_apply_staff
 
+from . import permissions, services
 from .models import (
     ApplicationSubmission,
     Round,
-)
-from .permissions import (
-    can_access_drafts,
-    is_user_has_access_to_view_archived_submissions,
 )
 from .tables import (
     SubmissionFilter,
@@ -54,6 +51,8 @@ def submission_all_beta(
     selected_sort = request.GET.get("sort")
     page = request.GET.get("page", 1)
 
+    can_view_archives = permissions.can_access_archived_submissions(request.user)
+
     selected_fund_objects = (
         Page.objects.filter(id__in=selected_funds) if selected_funds else []
     )
@@ -68,14 +67,13 @@ def submission_all_beta(
 
     start = time.time()
 
-    if show_archived:
+    if can_view_archives and show_archived:
         qs = ApplicationSubmission.objects.include_archive().for_table(request.user)
     else:
         qs = ApplicationSubmission.objects.current().for_table(request.user)
 
-    match can_access_drafts(request.user):
-        case False, _:
-            qs = qs.exclude_draft()
+    if not permissions.can_access_drafts(request.user):
+        qs = qs.exclude_draft()
 
     match search_filters:
         case {'submitted': values}:
@@ -198,7 +196,7 @@ def submission_all_beta(
         'selected_statuses': selected_statuses,
         'is_filtered': is_filtered,
         'duration': end - start,
-        'show_archive': is_user_has_access_to_view_archived_submissions(request.user),
+        'can_view_archive': can_view_archives,
     }
     return render(request, template_name, ctx)
 
