@@ -6,7 +6,8 @@
     "license": "GPL-2.0",
     "babel": {
         "exclude": [
-            "**/*.min.js"
+            "**/*.min.js",
+            "**/esm/*.js"
         ],
         "presets": [
             [

@@ -1,20 +1,22 @@
 DJANGO_PORT = 9001
 JS_VENDOR_DIR = ./hypha/static_src/src/javascript/apply/vendor
+JS_ESM_DIR = ./hypha/static_src/src/javascript/esm
 
 .PHONY: help
 help:
 	@echo "Usage:"
-	@echo "    make help             prints this help."
-	@echo "    make build            build js and css resources for development"
-	@echo "    make cov-html         generate html coverage report"
-	@echo "    make lint             run css, js and python linting."
-	@echo "    make lint-fix         try fixing plausible python linting issues."
-	@echo "    make py-test          run all python tests and display coverage"
-	@echo "    make test             run linting and test and generate html coverage report"
-	@echo "    make serve-docs       run documentation development server"
-	@echo "    make serve-django     run Django development server on port 9001."
-	@echo "    make serve            run Django and docs preview server, also watch and compile frontend changes"
-	@echo "    make watch            watch js and css resources for development"
+	@echo "  make help               prints this help."
+	@echo "  make build              build js and css resources for development"
+	@echo "  make cov-html           generate html coverage report"
+	@echo "  make lint               run css, js and python linting."
+	@echo "  make lint-fix           try fixing plausible python linting issues."
+	@echo "  make py-test            run all python tests and display coverage"
+	@echo "  make test               run linting and test and generate html coverage report"
+	@echo "  make serve-docs         run documentation development server"
+	@echo "  make serve-django       run Django development server on port 9001."
+	@echo "  make serve              run Django and docs preview server, also watch and compile frontend changes"
+	@echo "  make watch              watch js and css resources for development"
+	@echo "  make download-esm-modules  download esm modules from npm and copy to static_src"
 
 .PHONY: serve
 serve:
@@ -70,12 +72,18 @@ watch:
 	@echo "Watch js and css resources for development."
 	npm run watch
 
+.PHONY: download-esm-modules
+download-esm-modules:
+	pip install download-esm
+	download-esm @github/relative-time-element $(JS_ESM_DIR)
+
 .PHONY: copy-npm-scripts
 copy-npm-scripts:
 	# Used by "npm install"
 	cp node_modules/htmx.org/dist/htmx.min.js $(JS_VENDOR_DIR)/htmx.min.js
 	cp node_modules/htmx.org/dist/ext/multi-swap.js $(JS_VENDOR_DIR)/htmx-ext-multi-swap.min.js
 	cp node_modules/alpinejs/dist/cdn.min.js $(JS_VENDOR_DIR)/alpine.min.js
+	cp node_modules/@github/relative-time-element/dist/index.js $(JS_VENDOR_DIR)/github-relative-time-element.min.js
 	cp node_modules/@alpinejs/focus/dist/cdn.min.js $(JS_VENDOR_DIR)/alpine-focus.min.js
 	cp node_modules/daterangepicker/moment.min.js $(JS_VENDOR_DIR)/moment.min.js
 	cp node_modules/daterangepicker/daterangepicker.js $(JS_VENDOR_DIR)/daterangepicker.min.js
