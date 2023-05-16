@@ -28,8 +28,8 @@
 
         {% dropdown_menu title="Filters" %}
             <a
-                href="{% url "apply:submissions:list-beta" %}{% modify_query "only_query_string" "page" round=f.id %}"
-                hx-get="{% url "apply:submissions:list-beta" %}{% modify_query "only_query_string" "page" round=f.id %}"
+                href="{% url "apply:submissions:list-beta" %}{% modify_query "only_query_string" "page" query="flagged:@me" %}"
+                hx-get="{% url "apply:submissions:list-beta" %}{% modify_query "only_query_string" "page" query="flagged:@me" %}"
                 hx-push-url="true"
                 hx-target="#main"
                 hx-swap="outerHTML"
@@ -37,11 +37,11 @@
                 {% if f.selected %}
                     {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 mr-1" %}
                 {% endif %}
-                Your flagged submissions
+                {% trans "Your flagged submissions" %}
             </a>
             <a
-                href="{% url "apply:submissions:list-beta" %}{% modify_query "only_query_string" "page" review="awaiting" %}"
-                hx-get="{% url "apply:submissions:list-beta" %}{% modify_query "only_query_string" "page" review="awaiting" %}"
+                href="{% url "apply:submissions:list-beta" %}{% modify_query "only_query_string" "page" "query" reviewers=request.user.id %}"
+                hx-get="{% url "apply:submissions:list-beta" %}{% modify_query "only_query_string" "page" "query" reviewers=request.user.id %}"
                 hx-push-url="true"
                 hx-target="#main"
                 hx-swap="outerHTML"
