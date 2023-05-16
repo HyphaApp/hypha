@@ -11,10 +11,11 @@ from django.shortcuts import render
 from django.utils.text import slugify
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_http_methods
-from django_htmx.http import HttpResponseClientRefresh
+from django_htmx.http import HttpResponseClientRedirect, HttpResponseClientRefresh
 from wagtail.models import Page
 
-from hypha.apply.funds.workflow import PHASES
+from hypha.apply.determinations.views import BatchDeterminationCreateView
+from hypha.apply.funds.workflow import PHASES, get_action_mapping
 from hypha.apply.search.filters import apply_date_filter
 from hypha.apply.search.query_parser import parse_search_query
 from hypha.apply.users.decorators import is_apply_staff
@@ -237,6 +238,26 @@ def bulk_delete_submissions(request):
         user=request.user,
         request=request,
     )
+
+    return HttpResponseClientRefresh()
+
+
+@login_required
+@user_passes_test(is_apply_staff)
+@require_http_methods(["POST"])
+def bulk_update_submissions_status(request: HttpRequest) -> HttpResponse:
+    submission_ids = request.POST.getlist('selectedSubmissionIds')
+    action = request.GET.get('action')
+    transitions = get_action_mapping(workflow=None)[action]['transitions']
+
+    qs = ApplicationSubmission.objects.filter(id__in=submission_ids)
+
+    redirect: HttpResponse = BatchDeterminationCreateView.should_redirect(request, qs, transitions) # type: ignore
+    if redirect:
+        return HttpResponseClientRedirect(redirect.url)
+
+    for submission in qs:
+        submission.perform_transition(action, request.user, request=request)
 
     return HttpResponseClientRefresh()
 

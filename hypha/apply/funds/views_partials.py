@@ -266,3 +266,4 @@ def sub_menu_change_status(request: HttpRequest) -> HttpResponse:
     }
 
     return render(request, "submissions/submenu/change-status.html", ctx)
+

@@ -31,6 +31,7 @@ from .views import (
 from .views_beta import (
     bulk_archive_submissions,
     bulk_delete_submissions,
+    bulk_update_submissions_status,
     submission_all_beta,
 )
 from .views_partials import (
@@ -64,6 +65,7 @@ submission_urls = ([
     path('all-beta/', submission_all_beta, name="list-beta"),
     path('all-beta/bulk_archive/', bulk_archive_submissions, name="bulk-archive"),
     path('all-beta/bulk_delete/', bulk_delete_submissions, name="bulk-delete"),
+    path('all-beta/bulk_update_status/', bulk_update_submissions_status, name="bulk-update-status"),
     path('all-beta/submenu/funds/', sub_menu_funds, name="submenu-funds"),
     path('all-beta/submenu/leads/', sub_menu_leads, name="submenu-leads"),
     path('all-beta/submenu/rounds/', sub_menu_rounds, name="submenu-rounds"),

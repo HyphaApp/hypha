@@ -4,7 +4,7 @@
     {% for slug, value in statuses %}
         <li data-filter-for="change-status-filter-field">
             <a
-                hx-post="{% url "apply:submissions:submenu-change-status" %}"
+                hx-post="{% url "apply:submissions:bulk-update-status" %}"
                 hx-vals='{"action": "{{ slug }}"}'
                 hx-include="[name=selectedSubmissionIds]"
                 hx-confirm='{% blocktrans %}Are you sure you want to change the status of the selected submissions to "{{ value }}"?{% endblocktrans %}'
