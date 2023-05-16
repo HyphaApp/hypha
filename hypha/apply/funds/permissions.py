@@ -22,6 +22,14 @@ def can_edit_submission(user, submission):
     return True, ''
 
 
+def can_access_archived_submissions(user):
+    if user.is_apply_staff and settings.SUBMISSIONS_ARCHIVED_ACCESS_STAFF:
+        return True
+    if user.is_apply_staff_admin and settings.SUBMISSIONS_ARCHIVED_ACCESS_STAFF_ADMIN:
+        return True
+    return False
+
+
 def can_access_drafts(user):
     if user.is_apply_staff and settings.SUBMISSIONS_DRAFT_ACCESS_STAFF:
         return True, ''
@@ -31,15 +39,10 @@ def can_access_drafts(user):
 
 
 def is_user_has_access_to_view_submission(user, submission):
-
     if not user.is_authenticated:
         return False, "Login Required"
 
-    if submission.is_archive:
-        if user.is_apply_staff and settings.SUBMISSIONS_ARCHIVED_ACCESS_STAFF:
-            return True, ''
-        if user.is_apply_staff_admin and settings.SUBMISSIONS_ARCHIVED_ACCESS_STAFF_ADMIN:
-            return True, ''
+    if submission.is_archive and not can_access_archived_submissions(user):
         return False, "Archived Submission"
 
     if user.is_apply_staff or submission.user == user or user.is_reviewer:
@@ -52,16 +55,6 @@ def is_user_has_access_to_view_submission(user, submission):
         return True, ''
 
     return False, ''
-
-
-def is_user_has_access_to_view_archived_submissions(user, obj=None):
-    if not user.is_authenticated:
-        pass
-    elif user.is_apply_staff and settings.SUBMISSIONS_ARCHIVED_ACCESS_STAFF:
-        return True
-    elif user.is_apply_staff_admin and settings.SUBMISSIONS_ARCHIVED_ACCESS_STAFF_ADMIN:
-        return True
-    return False
 
 
 permissions_map = {

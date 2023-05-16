@@ -91,9 +91,9 @@ from .models import (
     RoundsAndLabs,
 )
 from .permissions import (
+    can_access_archived_submissions,
     can_access_drafts,
     has_permission,
-    is_user_has_access_to_view_archived_submissions,
 )
 from .tables import (
     AdminSubmissionsTable,
@@ -521,7 +521,7 @@ class SubmissionAdminListView(BaseAdminSubmissionsTable, DelegateableListView):
             return submissions.exclude_draft()
 
     def get_context_data(self, **kwargs):
-        show_archive = is_user_has_access_to_view_archived_submissions(self.request.user)
+        show_archive = can_access_archived_submissions(self.request.user)
 
         return super().get_context_data(
             show_archive=show_archive,
