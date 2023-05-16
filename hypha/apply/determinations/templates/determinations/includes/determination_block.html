@@ -6,7 +6,7 @@
             <a class="link link--bold" href="{% url 'apply:submissions:determinations:detail' submission_pk=object.id pk=determination.id %}">
                 {% if determination.is_draft %}[{% trans "Draft" %}] {% endif %}{{ determination.get_outcome_display }}
             </a>
-            - <time datetime="{{ determination.updated_at|date:"c" }}" title="{{ determination.updated_at|naturaltime }}">{{ determination.updated_at|date:"SHORT_DATETIME_FORMAT" }}</time> {% trans "by" %} {{ determination.author }}
+            <relative-time datetime={{ determination.updated_at|date:"c" }}>{{ determination.updated_at|date:"SHORT_DATETIME_FORMAT" }}</relative-time> {% trans "by" %} {{ determination.author }}
         </p>
     {% empty %}
         <p>{% trans "Awaiting determination" %}</p>
