@@ -1,19 +1,21 @@
 DJANGO_PORT = 9001
+JS_ESM_DIR = ./hypha/static_src/src/javascript/esm
 
 .PHONY: help
 help:
 	@echo "Usage:"
-	@echo "    make help             prints this help."
-	@echo "    make build            build js and css resources for development"
-	@echo "    make cov-html         generate html coverage report"
-	@echo "    make lint             run css, js and python linting."
-	@echo "    make lint-fix         try fixing plausible python linting issues."
-	@echo "    make py-test          run all python tests and display coverage"
-	@echo "    make test             run linting and test and generate html coverage report"
-	@echo "    make serve-docs       run documentation development server"
-	@echo "    make serve-django     run Django development server on port 9001."
-	@echo "    make serve            run Django and docs preview server, also watch and compile frontend changes"
-	@echo "    make watch            watch js and css resources for development"
+	@echo "  make help               prints this help."
+	@echo "  make build              build js and css resources for development"
+	@echo "  make cov-html           generate html coverage report"
+	@echo "  make lint               run css, js and python linting."
+	@echo "  make lint-fix           try fixing plausible python linting issues."
+	@echo "  make py-test            run all python tests and display coverage"
+	@echo "  make test               run linting and test and generate html coverage report"
+	@echo "  make serve-docs         run documentation development server"
+	@echo "  make serve-django       run Django development server on port 9001."
+	@echo "  make serve              run Django and docs preview server, also watch and compile frontend changes"
+	@echo "  make watch              watch js and css resources for development"
+	@echo "  make download-esm-modules  download esm modules from npm and copy to static_src"
 
 .PHONY: serve
 serve:
@@ -68,3 +70,8 @@ serve-docs:
 watch:
 	@echo "Watch js and css resources for development."
 	npm run watch
+
+.PHONY: download-esm-modules
+download-esm-modules:
+	pip install download-esm
+	download-esm @github/relative-time-element $(JS_ESM_DIR)

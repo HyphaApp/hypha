@@ -47,6 +47,9 @@
         <script defer src="{% static 'js/apply/vendor/alpine-3.11.1.min.js' %}"></script>
         <style> [x-cloak] {display: none !important} </style>
         <!-- alpine.js end -->
+
+        <!-- modules -->
+        <script type="module" src="{% static 'js/esm/github-relative-time-element-4-3-0.js' %}"></script>
     </head>
 
     <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' class="{% block body_class %}light-grey-bg template-{{ page.get_verbose_name|slugify }}{% endblock %}">
