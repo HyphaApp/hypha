@@ -60,6 +60,13 @@ def sub_menu_leads(request):
         .distinct()
     ]
 
+    # show selected and current user first
+    leads = sorted(
+        leads,
+        key=lambda x: x['selected'] or x['id'] == request.user.id,
+        reverse=True,
+    )
+
     ctx = {
         'leads': leads,
         'selected_leads': selected_leads,
@@ -117,7 +124,12 @@ def sub_menu_reviewers(request):
         for item in qs.order_by().distinct()
     ]
 
-    reviewers = sorted(reviewers, key=lambda t: t['selected'], reverse=True)
+    # show selected and current user first
+    reviewers = sorted(
+        reviewers,
+        key=lambda t: t['selected'] or t['id'] == request.user.id,
+        reverse=True,
+    )
 
     ctx = {
         'reviewers': reviewers,
@@ -266,4 +278,3 @@ def sub_menu_change_status(request: HttpRequest) -> HttpResponse:
     }
 
     return render(request, "submissions/submenu/change-status.html", ctx)
-
