@@ -220,11 +220,6 @@ class BatchDeleteSubmissionForm(forms.Form):
         submission_ids = [int(submission) for submission in value.split(',')]
         return ApplicationSubmission.objects.filter(id__in=submission_ids)
 
-    def save(self):
-        submissions = self.cleaned_data['submissions']
-        submissions.delete()
-        return None
-
 
 class BatchArchiveSubmissionForm(forms.Form):
     submissions = forms.CharField(widget=forms.HiddenInput(attrs={'class': 'js-submissions-id'}))
@@ -237,11 +232,6 @@ class BatchArchiveSubmissionForm(forms.Form):
         value = self.cleaned_data['submissions']
         submission_ids = [int(submission) for submission in value.split(',')]
         return ApplicationSubmission.objects.filter(id__in=submission_ids)
-
-    def save(self):
-        submissions = self.cleaned_data['submissions']
-        submissions.update(is_archive=True)
-        return None
 
 
 class UpdateReviewersForm(ApplicationSubmissionModelForm):

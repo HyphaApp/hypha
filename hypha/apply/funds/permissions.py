@@ -22,11 +22,24 @@ def can_edit_submission(user, submission):
     return True, ''
 
 
+def can_bulk_delete_submissions(user) -> bool:
+    if user.is_apply_staff:
+        return True
+    return False
+
+
 def can_access_archived_submissions(user):
     if user.is_apply_staff and settings.SUBMISSIONS_ARCHIVED_ACCESS_STAFF:
         return True
     if user.is_apply_staff_admin and settings.SUBMISSIONS_ARCHIVED_ACCESS_STAFF_ADMIN:
         return True
+    return False
+
+
+def can_bulk_archive_submissions(user) -> bool:
+    if can_access_archived_submissions(user) and can_bulk_delete_submissions(user):
+        return True
+
     return False
 
 

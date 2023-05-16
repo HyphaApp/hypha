@@ -61,6 +61,7 @@ from hypha.apply.utils.views import (
     ViewDispatcher,
 )
 
+from . import services
 from .differ import compare
 from .files import generate_submission_file_path
 from .forms import (
@@ -287,13 +288,11 @@ class BatchDeleteSubmissionView(DelegatedViewMixin, FormView):
 
     def form_valid(self, form):
         submissions = form.cleaned_data['submissions']
-        messenger(
-            MESSAGES.BATCH_DELETE_SUBMISSION,
-            request=self.request,
+        services.bulk_delete_submissions(
+            submissions=submissions,
             user=self.request.user,
-            sources=submissions,
+            request=self.request,
         )
-        form.save()
         return super().form_valid(form)
 
     def form_invalid(self, form):
@@ -308,13 +307,11 @@ class BatchArchiveSubmissionView(DelegatedViewMixin, FormView):
 
     def form_valid(self, form):
         submissions = form.cleaned_data['submissions']
-        messenger(
-            MESSAGES.BATCH_ARCHIVE_SUBMISSION,
-            request=self.request,
+        services.bulk_archive_submissions(
+            submissions=submissions,
             user=self.request.user,
-            sources=submissions,
+            request=self.request,
         )
-        form.save()
         return super().form_valid(form)
 
     def form_invalid(self, form):

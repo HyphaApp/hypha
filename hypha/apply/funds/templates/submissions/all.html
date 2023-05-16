@@ -350,24 +350,30 @@
                 {% dropdown_menu title="Lead" heading="Assign Lead" enable_search=True search_field_id="change-lead-filter-field" position="right" %}
                     {% slot "url" %}{% url "apply:submissions:submenu-leads" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
                 {% enddropdown_menu %}
-                <button
-                    hx-post="{% url 'apply:submissions:bulk-archive' %}"
-                    hx-include="[name='selectedSubmissionIds']"
-                    hx-confirm="Are you sure you want to archive the selected submissions?"
-                    class="border px-2 py-1 flex items-center bg-gray-100 hover:bg-gray-200"
-                >
-                    {% heroicon_outline "lock-closed" aria_hidden="true" size=14 class="stroke-gray-600 mr-1 inline" %}
-                    {% trans "Archive" %}
-                </button>
-                <button
-                    hx-post="{% url 'apply:submissions:bulk-delete' %}"
-                    hx-include="[name='selectedSubmissionIds']"
-                    hx-confirm="Are you sure you want to delete the selected submissions? This action cannot be undone."
-                    class="border px-2 py-1 flex items-center bg-gray-100 hover:bg-red-300"
-                >
-                    {% heroicon_outline "trash" aria_hidden="true" size=14 class="stroke-gray-600 mr-1 inline" %}
-                    {% trans "Delete" %}
-                </button>
+
+                {% if can_bulk_archive %}
+                    <button
+                        hx-post="{% url 'apply:submissions:bulk-archive' %}"
+                        hx-include="[name='selectedSubmissionIds']"
+                        hx-confirm="Are you sure you want to archive the selected submissions?"
+                        class="border px-2 py-1 flex items-center bg-gray-100 hover:bg-gray-200"
+                    >
+                        {% heroicon_outline "lock-closed" aria_hidden="true" size=14 class="stroke-gray-600 mr-1 inline" %}
+                        {% trans "Archive" %}
+                    </button>
+                {% endif %}
+
+                {% if can_bulk_delete %}
+                    <button
+                        hx-post="{% url 'apply:submissions:bulk-delete' %}"
+                        hx-include="[name='selectedSubmissionIds']"
+                        hx-confirm="Are you sure you want to delete the selected submissions? This action cannot be undone."
+                        class="border px-2 py-1 flex items-center bg-gray-100 hover:bg-red-300"
+                    >
+                        {% heroicon_outline "trash" aria_hidden="true" size=14 class="stroke-gray-600 mr-1 inline" %}
+                        {% trans "Delete" %}
+                    </button>
+                {% endif %}
             </section>
         </header>
 

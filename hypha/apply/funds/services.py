@@ -11,9 +11,57 @@ from django.db.models import (
     When,
 )
 from django.db.models.functions import Coalesce
+from django.http import HttpRequest
 
+from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import Activity
 from hypha.apply.review.options import DISAGREE, MAYBE
+
+
+def bulk_archive_submissions(
+    submissions: QuerySet, user, request: HttpRequest
+) -> QuerySet:
+    """Archive submissions and generate action log.
+
+    Args:
+        submissions: queryset of submissions to archive
+        user: user who is archiving the submissions
+        request: django request object
+
+    Returns:
+        QuerySet of submissions that have been archived
+    """
+    submissions.update(is_archive=True)
+    messenger(
+        MESSAGES.BATCH_ARCHIVE_SUBMISSION,
+        request=request,
+        user=user,
+        sources=submissions,
+    )
+    return submissions
+
+
+def bulk_delete_submissions(
+    submissions: QuerySet, user, request: HttpRequest
+) -> QuerySet:
+    """Permanently deletes submissions and generate action log.
+
+    Args:
+        submissions: queryset of submissions to archive
+        user: user who is archiving the submissions
+        request: django request object
+
+    Returns:
+        QuerySet of submissions that have been archived
+    """
+    submissions.delete()
+    messenger(
+        MESSAGES.BATCH_DELETE_SUBMISSION,
+        request=request,
+        user=user,
+        sources=submissions,
+    )
+    return submissions
 
 
 def annotate_comments_count(submissions: QuerySet, user) -> QuerySet:

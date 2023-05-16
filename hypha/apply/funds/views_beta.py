@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.core.paginator import Paginator
 from django.db import models
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, HttpResponseForbidden
 from django.shortcuts import render
 from django.utils.text import slugify
 from django.utils.translation import gettext as _
@@ -197,23 +197,46 @@ def submission_all_beta(
         'is_filtered': is_filtered,
         'duration': end - start,
         'can_view_archive': can_view_archives,
+        'can_bulk_archive': permissions.can_bulk_archive_submissions(request.user),
+        'can_bulk_delete': permissions.can_bulk_delete_submissions(request.user),
     }
     return render(request, template_name, ctx)
 
 
 @login_required
-@user_passes_test(is_apply_staff)
 @require_http_methods(["POST"])
 def bulk_archive_submissions(request):
-    submission_ids = request.POST.getlist("submissions")
-    ApplicationSubmission.objects.filter(id__in=submission_ids).update(is_archive=True)
+
+    if not permissions.can_bulk_archive_submissions(request.user):
+        return HttpResponseForbidden()
+
+    submission_ids = request.POST.getlist("selectedSubmissionIds")
+    submissions = ApplicationSubmission.objects.filter(id__in=submission_ids)
+
+    services.bulk_archive_submissions(
+        submissions=submissions,
+        user=request.user,
+        request=request,
+    )
+
     return HttpResponseClientRefresh()
 
 
 @login_required
-@user_passes_test(is_apply_staff)
 @require_http_methods(["POST"])
 def bulk_delete_submissions(request):
-    submission_ids = request.POST.getlist("submissions")
-    ApplicationSubmission.objects.filter(id__in=submission_ids).delete()
+
+    if not permissions.can_bulk_delete_submissions(request.user):
+        return HttpResponseForbidden()
+
+    submission_ids = request.POST.getlist("selectedSubmissionIds")
+    submissions = ApplicationSubmission.objects.filter(id__in=submission_ids)
+
+    services.bulk_delete_submissions(
+        submissions=submissions,
+        user=request.user,
+        request=request,
+    )
+
     return HttpResponseClientRefresh()
+
