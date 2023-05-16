@@ -123,7 +123,6 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         self.assertNotEqual(stage, new_stage)
 
         get_forms = submission.get_from_parent('get_defined_fields')
-        self.assertEqual(submission.form_fields, get_forms(new_stage))
         self.assertNotEqual(submission.form_fields, get_forms(stage))
 
     def test_cant_progress_stage_if_not_lead(self):

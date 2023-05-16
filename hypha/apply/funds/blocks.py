@@ -28,7 +28,7 @@ class TitleBlock(ApplicationMustIncludeFieldBlock):
     name = 'title'
     description = 'The title of the project'
     field_label = blocks.CharBlock(label=_('Label'), default=_('What is the title of your application?'))
-    help_text = blocks.TextBlock(required=False, label=_('Help text'), default=_("This project name can be changed if a full proposal is requested."))
+    help_text = blocks.RichTextBlock(required=False, label=_('Help text'), default=_("This project name can be changed if a full proposal is requested."))
 
     class Meta:
         label = _('Application title')
@@ -51,7 +51,7 @@ class EmailBlock(ApplicationMustIncludeFieldBlock):
     name = 'email'
     description = 'The applicant email address'
     field_label = blocks.CharBlock(label=_('Label'), default=_('What email address should we use to contact you?'))
-    help_text = blocks.TextBlock(required=False, label=_('Help text'),
+    help_text = blocks.RichTextBlock(required=False, label=_('Help text'),
                                  default=_("We will use this email address to communicate with you about your proposal."))
 
     widget = forms.EmailInput
@@ -100,7 +100,7 @@ class FullNameBlock(ApplicationMustIncludeFieldBlock):
     name = 'full_name'
     description = 'Full name'
     field_label = blocks.CharBlock(label=_('Label'), default=_('What is your name?'))
-    help_text = blocks.TextBlock(required=False, label=_('Help text'),
+    help_text = blocks.RichTextBlock(required=False, label=_('Help text'),
                                  default=_("We will use this name when we communicate with you about your proposal."))
 
     class Meta:
