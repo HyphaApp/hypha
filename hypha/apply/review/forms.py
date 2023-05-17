@@ -1,4 +1,5 @@
 from django import forms
+from django.conf import settings
 from django.core.exceptions import NON_FIELD_ERRORS
 from django.utils.html import escape
 
@@ -98,10 +99,13 @@ class ReviewModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass)
                 score = 0
             scores.append(int(score))
 
-        try:
-            return sum(scores) / len(scores)
-        except ZeroDivisionError:
-            return NA
+        if settings.DISPLAY_TOTAL_REVIEW_SCORE:
+            return sum(scores)
+        else:
+            try:
+                return sum(scores) / len(scores)
+            except ZeroDivisionError:
+                return NA
 
 
 class SubmitButtonWidget(forms.Widget):

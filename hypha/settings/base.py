@@ -478,3 +478,5 @@ if SENTRY_DSN:
         debug=SENTRY_DEBUG,
         integrations=[DjangoIntegration()]
     )
+
+DISPLAY_TOTAL_REVIEW_SCORE = env.bool('DISPLAY_TOTAL_REVIEW_SCORE', default = False)
