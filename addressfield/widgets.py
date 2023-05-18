@@ -1,6 +1,5 @@
 from django import forms
 from django_countries import countries
-from django_select2.forms import Select2Widget
 
 
 class KeepOwnAttrsWidget(forms.Widget):
@@ -9,7 +8,7 @@ class KeepOwnAttrsWidget(forms.Widget):
         return super().get_context(name, value, attrs)
 
 
-class CountrySelectWithChoices(KeepOwnAttrsWidget, Select2Widget):
+class CountrySelectWithChoices(KeepOwnAttrsWidget, forms.Select):
     is_required = True
 
     def __init__(self, *args, **kwargs):
