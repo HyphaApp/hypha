@@ -48,7 +48,12 @@
         <style> [x-cloak] {display: none !important} </style>
         <!-- alpine.js end -->
 
-        <!-- modules -->
+        {% comment %}
+        Use 'make download-esm-modules' to download the new version these modules
+        and use here after rename it properly.
+
+        See: https://simonwillison.net/2023/May/2/download-esm/
+        {% endcomment %}
         <script type="module" src="{% static 'js/esm/github-relative-time-element.js' %}"></script>
     </head>
 

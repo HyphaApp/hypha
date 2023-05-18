@@ -73,5 +73,9 @@ watch:
 
 .PHONY: download-esm-modules
 download-esm-modules:
-	pip install download-esm
+	pip install -q download-esm
 	download-esm @github/relative-time-element $(JS_ESM_DIR)
+	@echo "\nDownloaded esm modules from npm as esm to folder $(JS_ESM_DIR)."
+	@echo "You'll need to rename it and remove the version number from it"
+	@echo "and then use it in your code."
+
