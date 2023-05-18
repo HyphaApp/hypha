@@ -611,3 +611,5 @@ if SENTRY_DSN:
         debug=SENTRY_DEBUG,
         integrations=[DjangoIntegration()],
     )
+
+DEFAULT_REVIEW_VISIBILITY = env.str('DEFAULT_REVIEW_VISIBILITY', 'private')

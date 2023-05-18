@@ -1,6 +1,7 @@
 import json
 
 from django import forms
+from django.conf import settings
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from wagtail.blocks import RichTextBlock
@@ -8,7 +9,6 @@ from wagtail.blocks import RichTextBlock
 from hypha.apply.review.fields import ScoredAnswerField
 from hypha.apply.review.options import (
     NA,
-    PRIVATE,
     RATE_CHOICE_NA,
     RATE_CHOICES,
     RATE_CHOICES_DICT,
@@ -152,7 +152,7 @@ class VisibilityBlock(ReviewMustIncludeFieldBlock):
     def get_field_kwargs(self, struct_value):
         kwargs = super(VisibilityBlock, self).get_field_kwargs(struct_value)
         kwargs["choices"] = VISIBILITY.items()
-        kwargs["initial"] = PRIVATE
+        kwargs["initial"] = settings.DEFAULT_REVIEW_VISIBILITY
         kwargs["help_text"] = mark_safe(
             "<br>".join(
                 [
