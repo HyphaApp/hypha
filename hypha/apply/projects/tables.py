@@ -106,6 +106,22 @@ class ProjectsDashboardTable(BaseProjectsTable):
         attrs = {'class': 'projects-table'}
 
 
+class ProjectsAssigneeDashboardTable(BaseProjectsTable):
+    class Meta:
+        fields = [
+            'title',
+            'fund',
+            'lead',
+            'reporting',
+            'last_payment_request',
+            'end_date',
+        ]
+        model = Project
+        orderable = False
+        exclude = ['status']
+        attrs = {'class': 'projects-table'}
+
+
 class ProjectsListTable(BaseProjectsTable):
     class Meta:
         fields = [

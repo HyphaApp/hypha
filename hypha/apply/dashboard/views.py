@@ -23,7 +23,11 @@ from hypha.apply.projects.filters import ProjectListFilter
 from hypha.apply.projects.models import Invoice, PAFApprovals, Project, ProjectSettings
 from hypha.apply.projects.models.project import WAITING_FOR_APPROVAL
 from hypha.apply.projects.permissions import has_permission
-from hypha.apply.projects.tables import InvoiceDashboardTable, ProjectsDashboardTable
+from hypha.apply.projects.tables import (
+    InvoiceDashboardTable,
+    ProjectsAssigneeDashboardTable,
+    ProjectsDashboardTable,
+)
 from hypha.apply.utils.views import ViewDispatcher
 
 
@@ -144,7 +148,7 @@ class AdminDashboardView(MyFlaggedMixin, TemplateView):
 
         return {
             'count': projects.count(),
-            'table': ProjectsDashboardTable(projects),
+            'table': ProjectsAssigneeDashboardTable(projects),
         }
 
     def paf_waiting_for_approval(self):
@@ -272,7 +276,7 @@ class FinanceDashboardView(MyFlaggedMixin, TemplateView):
 
         return {
             'count': projects.count(),
-            'table': ProjectsDashboardTable(projects),
+            'table': ProjectsAssigneeDashboardTable(projects),
         }
 
     def invoices_for_approval(self):
@@ -422,7 +426,7 @@ class ReviewerDashboardView(MyFlaggedMixin, MySubmissionContextMixin, TemplateVi
 
         return {
             'count': projects.count(),
-            'table': ProjectsDashboardTable(projects),
+            'table': ProjectsAssigneeDashboardTable(projects),
         }
 
     def my_reviewed(self, submissions):
@@ -551,7 +555,7 @@ class ContractingDashboardView(MyFlaggedMixin, TemplateView):
 
         return {
             'count': projects.count(),
-            'table': ProjectsDashboardTable(projects),
+            'table': ProjectsAssigneeDashboardTable(projects),
         }
 
     def projects_in_contracting(self):

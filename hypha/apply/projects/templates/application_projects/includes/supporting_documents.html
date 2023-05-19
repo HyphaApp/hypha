@@ -247,7 +247,8 @@
     <h4 class="modal__project-header-bar">{% trans "Submit for Approval" %}</h4>
 
     {% if remaining_document_categories %}
-        <h5>{% trans "Are you sure you're ready to submit?" %}</h5>
+        <h5>{% trans "Are you sure you're ready to submit the project documents to be approved in" %}
+            {% if project_settings.paf_approval_sequential %}{% trans "sequential order?" %}{% else %}{% trans "parallel order?" %}{% endif %}</h5>
 
         <p>{% trans "This project is missing the following documents" %}:</p>
 
@@ -258,12 +259,19 @@
         </ul>
         {% trans "Submit anyway" as submit %}
     {% else %}
+        <h5>{% trans "Are you ready to submit the project documents to be approved in" %}
+            {% if project_settings.paf_approval_sequential %}{% trans "sequential order?" %}{% else %}{% trans "parallel order?" %}{% endif %}</h5>
         {% trans "Submit" as submit %}
     {% endif %}
     {% if project_settings.paf_reviewers_roles.all %}
-        <p> <strong> {% trans "Please select approvers for PAF in " %} {% if project_settings.paf_approval_sequential %} {% trans "sequential order" %} {% else %}{% trans "parallel order" %}{% endif %}</strong></p>
-        <p>{% trans "(please note that in "%}{% if project_settings.paf_approval_sequential %}{%trans "sequential order, approvers will approve PAF one after the other)"%}{% else %}{% trans "parallel order, approvers can approve PAF anytime)" %}{% endif %}</p>
-        <br>
+
+        <div class="flex items-center text-sm">
+            <p class="flex-shrink text-slate-500 pr-2 mb-0">Optional</p>
+            <p class="flex-grow h-px bg-mid-grey mb-0"></p>
+        </div>
+
+        <p>{% trans "Please note that in "%}{% if project_settings.paf_approval_sequential %}{%trans "sequential order, approvers will approve PAF one after the other"%}{% else %}{% trans "parallel order, approvers can approve PAF anytime" %}{% endif %}</p>
+
         {% include 'funds/includes/delegated_form_base.html' with form=request_approval_form value=submit %}
     {% else %}
         <p>{% trans "No PAF Reviewer Roles created yet, please create these in " %}
@@ -291,6 +299,7 @@
 
 <div class="modal" id="change-assigned-paf-approvers">
         <h4 class="modal__project-header-bar">{% trans "Change Approver" %}</h4>
+        <p class="text-mid-grey">{% trans "Selected approver will be notified. On unselecting, every listed member here will be notified." %} </p>
         {% trans "Submit" as submit %}
         {% include 'funds/includes/delegated_form_base.html' with form=assign_approvers_form value=submit %}
     </div>
@@ -300,6 +309,7 @@
 {% if can_assign_paf_approvers %}
     <div class="modal" id="assign-paf-approvers">
         <h4 class="modal__project-header-bar">{% trans "Assign Approver" %}</h4>
+        <p class="text-mid-grey">{% trans "Selected approver will be notified. On unselecting, every listed member here will be notified." %} </p>
         {% trans "Submit" as submit %}
         {% include 'funds/includes/delegated_form_base.html' with form=assign_approvers_form value=submit %}
     </div>
@@ -308,7 +318,6 @@
 {% if can_update_paf_status %}
     <div class="modal" id="update-paf-status">
         <h4 class="modal__project-header-bar">{% trans "Update PAF Status" %}</h4>
-        <p>{% trans "Project's current status" %}: {{ object.get_status_display }}</p>
         {% trans "Update Status" as update %}
         {% include 'funds/includes/delegated_form_base.html' with form=change_paf_status value=update %}
     </div>
