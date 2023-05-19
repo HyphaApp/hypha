@@ -18,6 +18,7 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 
 
 # Hypha custom settings
+REVIEW_VISIBILITY_DEFAULT = env.str('REVIEW_VISIBILITY_DEFAULT', 'private')
 
 # Set the currency symbol to be used.
 CURRENCY_CODE = env.str("CURRENCY_CODE", "USD")
@@ -611,5 +612,3 @@ if SENTRY_DSN:
         debug=SENTRY_DEBUG,
         integrations=[DjangoIntegration()],
     )
-
-DEFAULT_REVIEW_VISIBILITY = env.str('DEFAULT_REVIEW_VISIBILITY', 'private')

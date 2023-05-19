@@ -166,7 +166,7 @@ Possible values are: 'reviewers' or 'private'.
 Private: Visible only to staff.
 Reviewers: Visible to other reviewers and staff.
 
-    DEFAULT_REVIEW_VISIBILITY = env.str('DEFAULT_REVIEW_VISIBILITY', 'private')
+    REVIEW_VISIBILITY_DEFAULT = env.str('REVIEW_VISIBILITY_DEFAULT', 'private')
 
 ### Should submission automatically transition after all reviewer roles are assigned.
 

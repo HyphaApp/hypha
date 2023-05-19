@@ -152,7 +152,7 @@ class VisibilityBlock(ReviewMustIncludeFieldBlock):
     def get_field_kwargs(self, struct_value):
         kwargs = super(VisibilityBlock, self).get_field_kwargs(struct_value)
         kwargs["choices"] = VISIBILITY.items()
-        kwargs["initial"] = settings.DEFAULT_REVIEW_VISIBILITY
+        kwargs["initial"] = settings.REVIEW_VISIBILITY_DEFAULT
         kwargs["help_text"] = mark_safe(
             "<br>".join(
                 [
