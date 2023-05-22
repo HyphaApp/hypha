@@ -19,7 +19,7 @@
     {% block determination_information %}
     {% endblock %}
 
-    <form class="form form--with-p-tags" action="" method="post">
+    <form class="form form--with-p-tags" action="" method="post" x-data="{ submitButtonDisabled: false }" x-on:submit="submitButtonDisabled = true">
         {{ form.media }}
         {% csrf_token %}
 
@@ -47,7 +47,7 @@
             {% if form.draft_button_name %}
                 <button class="button button--submit button--top-space button--white" type="submit" name="{{ form.draft_button_name }}" formnovalidate>{% trans "Save draft" %}</button>
             {% endif %}
-            <button class="button button--submit button--top-space button--primary" type="submit" name="submit">{% trans "Submit" %}</button>
+            <button class="button button--submit button--top-space button--primary" x-bind:disabled="submitButtonDisabled" type="submit" name="submit">{% trans "Submit" %}</button>
         {% endblock %}
     </form>
     {% for type, message in message_templates.items %}
