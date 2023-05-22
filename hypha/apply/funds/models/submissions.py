@@ -616,6 +616,10 @@ class ApplicationSubmission(
         self.ensure_user_has_account()
         self.process_file_data(self.form_data)
 
+    def get_assigned_meta_terms(self):
+        """Returns assigned meta terms excluding the 'root' term"""
+        return self.meta_terms.exclude(depth=1)
+
     def process_form_data(self):
         for field_name, field_id in self.named_blocks.items():
             response = self.form_data.pop(field_id, None)

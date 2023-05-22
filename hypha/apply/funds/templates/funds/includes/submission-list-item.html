@@ -51,14 +51,13 @@
             >
                 {{ s.phase.display_name }}
             </a>
-            {% for meta_term in s.meta_terms.all %}
+            {% for meta_term in s.get_assigned_meta_terms %}
             <span
                 data-tippy-content="Meta Term: {{meta_term.name}}"
                 data-tippy-placement="top"
                 class="rounded-full whitespace-nowrap inline-block ml-1 px-2 pt-0.5 pb-1 text-xs font-medium text-white bg-blue-600"
             >{{meta_term.name}}</span>
             {% endfor %}
-
         </span>
 
 

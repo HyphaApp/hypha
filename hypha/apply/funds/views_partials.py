@@ -149,7 +149,7 @@ def sub_menu_meta_terms(request):
         id__in=ApplicationSubmission.objects.all()
         .values('meta_terms__id')
         .distinct('meta_terms__id'),
-    )
+    ).exclude(depth=1)
 
     meta_terms = [
         {
