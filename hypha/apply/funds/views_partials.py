@@ -156,11 +156,11 @@ def sub_menu_meta_terms(request):
             'id': item.id,
             'selected': str(item.id) in selected_meta_terms,
             'title': str(item),
+            'depth_range': range((item.depth - 2) * 2),
+            'depth': item.depth - 1
         }
         for item in terms_qs
     ]
-
-    meta_terms = sorted(meta_terms, key=lambda t: t['selected'], reverse=True)
 
     ctx = {
         'meta_terms': meta_terms,

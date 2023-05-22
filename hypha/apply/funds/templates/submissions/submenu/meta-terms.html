@@ -32,7 +32,9 @@
                             clip-rule="evenodd" />
                     </svg>
                 {% endif %}
-                <strong class="font-bold">{{ meta_term.title }}</strong>
+                <strong class="{% if meta_term.depth == 1 %}font-bold{% else %}font-normal{% endif %}">
+                    {% for _ in meta_term.depth_range %}&nbsp;{% endfor %}{{ meta_term.title }}
+                </strong>
             </a>
         </li>
     {% empty %}
