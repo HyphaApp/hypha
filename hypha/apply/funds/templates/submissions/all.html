@@ -347,9 +347,9 @@
                 x-show="showSelectedSubmissions"
                 class="selection-actions flex flex-wrap flex-row gap-5 items-center"
             >
-                {% dropdown_menu title="Status" heading="Update Status" enable_search=True %}
+                {% comment %} {% dropdown_menu title="Status" heading="Update Status" enable_search=True %}
                     {% slot "url" hx-include="[name='selectedSubmissionIds']" hx-trigger="mouseover, focus" %}{% url "apply:submissions:submenu-change-status" %}{% endslot %}
-                {% enddropdown_menu %}
+                {% enddropdown_menu %} {% endcomment %}
 
                 {% dropdown_menu title="Lead" heading="Assign Lead" enable_search=True position="right" %}
                     {% slot "url" %}{% url "apply:submissions:submenu-leads" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
