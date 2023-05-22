@@ -18,6 +18,19 @@ be fixed when streamfield, may require intermediate fix prior to launch]
 hypha/apply/funds/views.py and hypha/apply/review/views.py.
 """
 
+PHASE_BG_COLORS = {
+    'Draft': 'bg-gray-200',
+    'Accepted': 'bg-green-200',
+    'Need screening': 'bg-cyan-200',
+    'Ready for Determination': 'bg-blue-200',
+    'Ready For Discussion': 'bg-blue-100',
+    'Invited for Proposal': 'bg-yellow-100',
+    'Internal Review': 'bg-yellow-200',
+    'External Review': 'bg-yellow-200',
+    'More information required': 'bg-rose-200',
+    'Accepted but additional info required': 'bg-rose-100',
+    'Dismissed': 'bg-red-200',
+}
 
 class UserPermissions(Enum):
     STAFF = 1
@@ -85,6 +98,7 @@ class Phase:
 
         self.public_name = public or self.display_name
         self.future_name_staff = future or self.display_name
+        self.bg_color = PHASE_BG_COLORS.get(self.display_name, 'bg-gray-200')
         self.future_name_public = future or self.public_name
         self.stage = stage
         self.permissions = Permissions(permissions)

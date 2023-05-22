@@ -1,6 +1,10 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-    content: ["./hypha/templates/**/*.html", "./hypha/**/templates/**/*.html"],
+    content: [
+        "./hypha/templates/**/*.html",
+        "./hypha/**/templates/**/*.html",
+        "./hypha/**/*.{py,js}",
+    ],
     theme: {
         extend: {
             colors: {

@@ -108,18 +108,21 @@ def submission_all_beta(
     # month_counts_raw = {}
 
     # Status Filter Options
-    STATUS_MAP = {k: phase.display_name for k, phase in PHASES}
+    STATUS_MAP = dict(PHASES)
     for row in qs.order_by().values('status').annotate(n=models.Count('status')):
-        status_display = STATUS_MAP[row['status']]
+        phase = STATUS_MAP[row['status']]
+        display_name = phase.display_name
+        slug = slugify(display_name).lower()
         try:
-            count = status_count_raw[status_display]['count']
+            count = status_count_raw[display_name]['count']
         except KeyError:
             count = 0
-        status_count_raw[status_display] = {
+        status_count_raw[display_name] = {
             'count': count + row['n'],
-            'title': status_display,
-            'slug': slugify(status_display).lower(),
-            'selected': status_display in selected_statuses,
+            'title': display_name,
+            'bg_color': phase.bg_color,
+            'slug': slug,
+            'selected': slug in selected_statuses,
         }
 
     status_counts = sorted(

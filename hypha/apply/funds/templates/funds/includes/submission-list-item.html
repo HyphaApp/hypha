@@ -47,15 +47,7 @@
             </a>
 
             <a href="{% modify_query status=s.phase.display_name %}"
-                class="rounded-full whitespace-nowrap inline-block ml-1 px-2 pt-0.5 pb-1 text-xs font-medium text-gray-800
-                    {% if s.phase.display_name == "Need screening" %}bg-orange-200{% endif %}
-                    {% if s.phase.display_name == "Draft" %}bg-gray-200{% endif %}
-                    {% if s.phase.display_name == "Accepted" %}bg-green-200{% endif %}
-                    {% if s.phase.display_name == "Ready for Determination" %}bg-blue-200{% endif %}
-                    {% if s.phase.display_name == "Invited for Proposal" %}bg-slate-200{% endif %}
-                    {% if s.phase.display_name == "Internal Review" %}bg-stone-200{% endif %}
-                    {% if s.phase.display_name == "External Review" %}bg-lime-200{% endif %}
-                    {% if s.phase.display_name == "Accepted but additional info required" %}bg-teal-200{% endif %}"
+                class="{{ s.phase.bg_color }} rounded-full whitespace-nowrap inline-block ml-1 px-2 pt-0.5 pb-1 text-xs font-medium text-gray-800"
             >
                 {{ s.phase.display_name }}
             </a>
