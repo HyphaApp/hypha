@@ -76,6 +76,7 @@ watch:
 download-esm-modules:
 	pip install download-esm
 	download-esm @github/relative-time-element $(JS_ESM_DIR)
+	download-esm @github/filter-input-element $(JS_ESM_DIR)
 
 .PHONY: copy-npm-scripts
 copy-npm-scripts:

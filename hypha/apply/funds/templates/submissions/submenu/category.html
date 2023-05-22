@@ -1,8 +1,9 @@
 {% load i18n %}
 {% load querystrings %}
-<ul class="text-gray-700 dark:text-gray-200" aria-labelledby="dropdown-meta-terms">
+<ul class="text-gray-700 dark:text-gray-200" aria-labelledby="dropdown-categories"
+    data-filter-list>
     {% if selected_category_options %}
-        <li data-filter-for="category-filter-field">
+        <li data-filter-item-text>
             <a href="{% url "apply:submissions:list-beta" %}{% remove_from_query "only_query_string" "page" "category_options" %}"
                 hx-get="{% url "apply:submissions:list-beta" %}{% remove_from_query "only_query_string" "page" "category_options" %}"
                 hx-push-url="true"
@@ -12,7 +13,7 @@
         </li>
     {% endif %}
     {% for item in category_options %}
-        <li data-filter-for="category-filter-field">
+        <li data-filter-item-text>
             <a
                 {% if item.selected %}
                 href="{% url "apply:submissions:list-beta" %}{% remove_from_query "only_query_string" "page" category_options=item.id %}"
@@ -37,7 +38,8 @@
         </li>
     {% empty %}
         <li class="pl-4 pr-3 py-2 text-gray-600 max-w-xs">
-            {% trans "No category available" %}
+            {% trans "No categories found." %}
         </li>
     {% endfor %}
 </ul>
+<p class="m-0 px-3 py-2 text-gray-500" data-filter-empty-state hidden>{% trans "No categories found. Sorry about that." %}</p>

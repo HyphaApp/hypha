@@ -60,21 +60,18 @@
         {% endif %}
 
         {% if attributes.enable_search %}
-        <div class='py-3 px-3 border-b flex grow'>
-            <label for="input-filter-search-status" class="sr-only">Filter {{ attributes.title }}</label>
+        <filter-input aria-owns="dd-content-{{ id }}" class='py-3 px-3 border-b flex grow'>
+            <label for="search-{{ id }}" class="sr-only">Filter {{ attributes.title }}</label>
             <input type="text"
-                autocomplete='off'
                 autofocus
-                spellcheck='false'
-                id="{{ attributes.search_field_id }}"
-                x-ref="searchInput"
+                id="search-{{ id }}"
                 @keydown.down="$focus.next()"
-                placeholder="Filter {{ attributes.title }}" id="input-status-filter"
-                class="js-filterable-field grow p-2 md:p-1 text-inherit font-normal w-max text-gray-900 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500">
-        </div>
+                placeholder="Filter {{ attributes.title }}"
+                class="grow p-2 md:py-1 text-inherit font-normal w-max text-gray-900 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500">
+        </filter-input>
         {% endif %}
 
-        <div id="dd-content-{{ id }}" class="font-semibold text-inherit"
+        <div id="dd-content-{{ id }}" class="font-semibold text-inherit md:w-[300px]"
             @keydown.down="$focus.next()"
             @keydown.up="$focus.previous()"
         >

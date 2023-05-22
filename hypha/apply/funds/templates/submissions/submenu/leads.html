@@ -1,8 +1,8 @@
 {% load i18n %}
 {% load querystrings heroicons %}
-<ul class="text-gray-700 divide-y" aria-labelledby="dropdownBgHoverButton">
+<ul class="text-gray-700 divide-y" aria-labelledby="dropdownBgHoverButton" data-filter-list>
     {% if selected_leads %}
-        <li data-filter-for="lead-filter-field">
+        <li data-filter-item-text>
             <a href="{% url "apply:submissions:list-beta" %}{% remove_from_query "only_query_string" "page" "lead" %}"
                 hx-get="{% url "apply:submissions:list-beta" %}{% remove_from_query "only_query_string" "page" "lead" %}"
                 hx-push-url="true"
@@ -12,7 +12,7 @@
         </li>
     {% endif %}
     {% for user in leads %}
-        <li data-filter-for="lead-filter-field">
+        <li data-filter-item-text>
             <a
                 href="{% url "apply:submissions:list-beta" %}{% modify_query "only_query_string" "page" lead=user.id %}"
                 hx-get="{% url "apply:submissions:list-beta" %}{% modify_query "only_query_string" "page" lead=user.id %}"
@@ -29,7 +29,8 @@
         </li>
     {% empty %}
         <li class="pl-4 pr-3 py-2 text-gray-600 max-w-xs">
-            {% trans "No leads available" %}
+            {% trans "No leads found." %}
         </li>
     {% endfor %}
 </ul>
+<p class="m-0 px-3 py-2 text-gray-500" data-filter-empty-state hidden>{% trans "No leads found. Sorry about that." %}</p>

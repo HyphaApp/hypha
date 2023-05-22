@@ -257,10 +257,10 @@
 
                 </div>
 
-                {% dropdown_menu title="Status" heading="Filter by current status" enable_search=True search_field_id="status-filter-field" %}
+                {% dropdown_menu title="Status" heading="Filter by current status" enable_search=True %}
                     <ul
-                        class="flex flex-col overflow-scroll divide-y max-h-80 text-gray-700 dark:text-gray-200"
-                        aria-labelledby="dropdownBgHoverButton">
+                        class="flex flex-col overflow-scroll divide-y max-h-80 text-gray-700"
+                        data-filter-list>
                         {% if selected_statuses %}
                             <li>
                                 <a hx-get="{% remove_from_query "page" "status" %}"
@@ -271,7 +271,7 @@
                             </li>
                         {% endif %}
                         {% for s in status_counts %}
-                            <li data-filter-for="status-filter-field">
+                            <li>
                                 <a
                                     {% if s.selected %}
                                         href="{% remove_from_query "page" status=s.slug %}"
@@ -282,36 +282,40 @@
                                     class="flex {% if s.selected %}bg-gray-100 pl-2 font-medium{% else %}pl-8{% endif %} pr-3 py-2 text-gray-600 items-center hover:bg-gray-100 focus:bg-gray-100"
                                 >
                                     {% if s.selected %}
-                                        {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 mr-1" %}
+                                        {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 mr-2" %}
                                     {% endif %}
-                                    {{ s.title }} {% if s.count %}({{ s.count }}){% endif %}
+                                    <span class="select-none inline-block rounded-full {{ s.bg_color }} w-3 h-3 mr-1" aria-hidden=true></span>
+                                    <span>
+                                        {{ s.title }} {% if s.count %}({{ s.count }}){% endif %}
+                                    </span>
                                 </a>
                             </li>
                         {% endfor %}
                     </ul>
+                    <p class="m-0 px-3 py-2 text-gray-500" data-filter-empty-state hidden>{% trans "No statuses found. Sorry about that." %}</p>
                 {% enddropdown_menu %}
 
-                {% dropdown_menu title="Fund" heading="Filter by Fund &amp; Labs" enable_search=True search_field_id="fund-filter-field" %}
+                {% dropdown_menu title="Fund" heading="Filter by Fund &amp; Labs" enable_search=True %}
                     {% slot "url" %}{% url "apply:submissions:submenu-funds" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
                 {% enddropdown_menu %}
 
-                {% dropdown_menu title="Round" heading="Filter by Round" enable_search=True search_field_id="round-filter-field" %}
+                {% dropdown_menu title="Round" heading="Filter by Round" enable_search=True %}
                     {% slot "url" %}{% url "apply:submissions:submenu-rounds" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
                 {% enddropdown_menu %}
 
-                {% dropdown_menu title="Lead" heading="Filter by Lead" enable_search=True search_field_id="lead-filter-field" %}
+                {% dropdown_menu title="Lead" heading="Filter by Lead" enable_search=True %}
                     {% slot "url" %}{% url "apply:submissions:submenu-leads" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
                 {% enddropdown_menu %}
 
-                {% dropdown_menu title="Reviewers" heading="Filter by Reviewer" enable_search=True search_field_id="reviewer-filter-field" %}
+                {% dropdown_menu title="Reviewers" heading="Filter by Reviewer" enable_search=True position="right" %}
                     {% slot "url" %}{% url "apply:submissions:submenu-reviewers" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
                 {% enddropdown_menu %}
 
-                {% dropdown_menu title="Category" heading="Filter by Category" enable_search=True search_field_id="category-filter-field" %}
+                {% dropdown_menu title="Category" heading="Filter by Category" enable_search=True position="right" %}
                     {% slot "url" %}{% url "apply:submissions:submenu-category-options" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
                 {% enddropdown_menu %}
 
-                {% dropdown_menu title="Terms" heading="Filter by Terms" enable_search=True search_field_id="meta_term-filter-field" position="right" %}
+                {% dropdown_menu title="Terms" heading="Filter by Terms" enable_search=True position="right" %}
                     {% slot "url" %}{% url "apply:submissions:submenu-meta-terms" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
                 {% enddropdown_menu %}
 
@@ -343,15 +347,15 @@
                 x-show="showSelectedSubmissions"
                 class="selection-actions flex flex-wrap flex-row gap-5 items-center"
             >
-                {% dropdown_menu title="Status" heading="Update Status" enable_search=True search_field_id="change-status-filter-field" %}
+                {% dropdown_menu title="Status" heading="Update Status" enable_search=True %}
                     {% slot "url" hx-include="[name='selectedSubmissionIds']" hx-trigger="mouseover, focus" %}{% url "apply:submissions:submenu-change-status" %}{% endslot %}
                 {% enddropdown_menu %}
 
-                {% dropdown_menu title="Lead" heading="Assign Lead" enable_search=True search_field_id="change-lead-filter-field" position="right" %}
+                {% dropdown_menu title="Lead" heading="Assign Lead" enable_search=True position="right" %}
                     {% slot "url" %}{% url "apply:submissions:submenu-leads" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
                 {% enddropdown_menu %}
 
-                {% dropdown_menu title="Reviewers" heading="Assign Reviewer(s)" enable_search=True search_field_id="reviewer-change-filter-field" %}
+                {% dropdown_menu title="Reviewers" heading="Assign Reviewer(s)" enable_search=True %}
                     {% slot "url" %}{% url "apply:submissions:submenu-reviewers" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
                 {% enddropdown_menu %}
 
@@ -464,32 +468,6 @@
 {% endspaceless %}{% endblock content %}
 {% block extra_js %}
     <script>
-        // Dropdown Filter Search
-        // ---------------------------------------------
-        function liveSearch(event) {
-            // Locate the card elements
-            let cards = document.querySelectorAll(`[data-filter-for=${event.target.id}]`)
-
-            // Loop through the cards
-            for (var i = 0; i < cards.length; i++) {
-                // If the text is within the card...
-                if (cards[i].innerText.toLowerCase()
-                    // and the text matches the search query
-                        .includes(event.target.value.toLowerCase())) {
-                        // remove the `.is-hidden` class.
-                            cards[i].classList.remove("hidden");
-                        } else {
-                        // Otherwise, add the class.
-                            cards[i].classList.add("hidden");
-                        }
-            }
-        }
-        htmx.onLoad((event) => {
-            for (const element of document.querySelectorAll('.js-filterable-field')) {
-                element.addEventListener("keyup", liveSearch);
-            }
-        });
-
         // Date Range Picker
         // ---------------------------------------------
         htmx.onLoad(function() {

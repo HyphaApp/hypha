@@ -1,8 +1,8 @@
 {% load i18n %}
 {% load querystrings %}
-<ul class="text-gray-700 divide-y dark:text-gray-200" aria-labelledby="dropdown-reviewers">
+<ul class="text-gray-700 divide-y dark:text-gray-200" aria-labelledby="dropdown-reviewers" data-filter-list>
     {% if selected_reviewers %}
-        <li data-filter-for="reviewer-filter-field">
+        <li data-filter-item-text>
             <a href="{% url "apply:submissions:list-beta" %}{% remove_from_query "only_query_string" "page" "reviewers" %}"
                 hx-get="{% url "apply:submissions:list-beta" %}{% remove_from_query "only_query_string" "page" "reviewers" %}"
                 hx-push-url="true"
@@ -12,7 +12,7 @@
         </li>
     {% endif %}
     {% for user in reviewers %}
-        <li data-filter-for="reviewer-filter-field">
+        <li data-filter-item-text>
             <a
                 {% if user.selected %}
                 href="{% url "apply:submissions:list-beta" %}{% remove_from_query "only_query_string" "page" reviewers=user.id %}"
@@ -38,7 +38,8 @@
         </li>
     {% empty %}
         <li class="pl-4 pr-3 py-2 text-gray-600 max-w-xs">
-            {% trans "No reviewer available" %}
+            {% trans "No reviewers found." %}
         </li>
     {% endfor %}
 </ul>
+<p class="m-0 px-3 py-2 text-gray-500" data-filter-empty-state hidden>{% trans "No reviewers found. Sorry about that." %}</p>

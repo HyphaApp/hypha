@@ -1,8 +1,8 @@
 {% load i18n %}
 {% load querystrings %}
-<ul class="text-gray-700 divide-y" aria-labelledby="dropdown-meta-terms">
+<ul class="text-gray-700 divide-y" aria-labelledby="dropdown-meta-terms" data-filter-list>
     {% if selected_meta_terms %}
-        <li data-filter-for="meta_term-filter-field">
+        <li data-filter-item-text>
             <a href="{% url "apply:submissions:list-beta" %}{% remove_from_query "only_query_string" "page" "meta_terms" %}"
                 hx-get="{% url "apply:submissions:list-beta" %}{% remove_from_query "only_query_string" "page" "meta_terms" %}"
                 hx-push-url="true"
@@ -12,7 +12,7 @@
         </li>
     {% endif %}
     {% for meta_term in meta_terms %}
-        <li data-filter-for="meta_term-filter-field">
+        <li data-filter-item-text>
             <a
                 {% if meta_term.selected %}
                 href="{% url "apply:submissions:list-beta" %}{% remove_from_query "only_query_string" "page" meta_terms=meta_term.id %}"
@@ -37,7 +37,8 @@
         </li>
     {% empty %}
         <li class="pl-4 pr-3 py-2 text-gray-600 max-w-xs">
-            {% trans "No meta terms available" %}
+            {% trans "No meta terms found." %}
         </li>
     {% endfor %}
 </ul>
+<p class="m-0 px-3 py-2 text-gray-500" data-filter-empty-state hidden>{% trans "No meta terms found. Sorry about that." %}</p>

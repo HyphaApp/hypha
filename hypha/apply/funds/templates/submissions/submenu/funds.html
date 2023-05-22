@@ -1,9 +1,9 @@
 {% load i18n %}
 {% load querystrings heroicons %}
 
-<ul class="text-gray-700 divide-y" aria-labelledby="dropdownBgHoverButton">
+<ul class="text-gray-700 divide-y" aria-labelledby="dropdownBgHoverButton" data-filter-list>
     {% if selected_funds %}
-        <li data-filter-for="fund-filter-field">
+        <li data-filter-item-text>
             <a href="{% url "apply:submissions:list-beta" %}{% remove_from_query "only_query_string" "page" "fund" %}"
                 hx-get="{% url "apply:submissions:list-beta" %}{% remove_from_query "only_query_string" "page" "fund" %}"
                 hx-push-url="true"
@@ -13,7 +13,7 @@
         </li>
     {% endif %}
     {% for f in funds %}
-        <li data-filter-for="fund-filter-field">
+        <li data-filter-item-text>
             <a
                 {% if f.selected %}
                 href="{% url "apply:submissions:list-beta" %}{% remove_from_query "only_query_string" "page" fund=f.id %}"
@@ -32,7 +32,8 @@
         </li>
     {% empty %}
         <li class="pl-4 pr-3 py-2 text-gray-600 max-w-xs">
-            {% trans "No funds available" %}
+            {% trans "No funds found." %}
         </li>
     {% endfor %}
 </ul>
+<p class="m-0 px-3 py-2 text-gray-500" data-filter-empty-state hidden>{% trans "No funds found. Sorry about that." %}</p>
