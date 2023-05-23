@@ -261,7 +261,7 @@ def partial_reviews_decisions(request: HttpRequest) -> HttpResponse:
 
 @login_required
 @require_http_methods(['GET', 'POST'])
-def sub_menu_change_status(request: HttpRequest) -> HttpResponse:
+def sub_menu_update_status(request: HttpRequest) -> HttpResponse:
     submission_ids = request.GET.getlist('selectedSubmissionIds')
     qs = ApplicationSubmission.objects.filter(id__in=submission_ids)
 
