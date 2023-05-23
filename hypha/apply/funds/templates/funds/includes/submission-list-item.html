@@ -46,7 +46,7 @@
                 {{ s.form_data.title }}
             </a>
 
-            <a href="{% modify_query status=s.phase.display_name %}"
+            <a href="{% modify_query status=s.phase.display_slug %}"
                 class="{{ s.phase.bg_color }} rounded-full whitespace-nowrap inline-block ml-1 px-2 pt-0.5 pb-1 text-xs font-medium text-gray-800"
             >
                 {{ s.phase.display_name }}

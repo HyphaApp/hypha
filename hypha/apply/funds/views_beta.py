@@ -8,7 +8,6 @@ from django.core.paginator import Paginator
 from django.db import models
 from django.http import HttpRequest, HttpResponse, HttpResponseForbidden
 from django.shortcuts import render
-from django.utils.text import slugify
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_http_methods
 from django_htmx.http import HttpResponseClientRedirect, HttpResponseClientRefresh
@@ -100,9 +99,6 @@ def submission_all_beta(
     if selected_funds:
         qs = qs.filter(page__in=selected_funds)
 
-    # if selected_statuses:
-    #     qs = qs.filter(status__in=selected_statuses)
-
     status_count_raw = {}
     # year_counts_raw = {}
     # month_counts_raw = {}
@@ -112,7 +108,6 @@ def submission_all_beta(
     for row in qs.order_by().values('status').annotate(n=models.Count('status')):
         phase = STATUS_MAP[row['status']]
         display_name = phase.display_name
-        slug = slugify(display_name).lower()
         try:
             count = status_count_raw[display_name]['count']
         except KeyError:
@@ -121,8 +116,8 @@ def submission_all_beta(
             'count': count + row['n'],
             'title': display_name,
             'bg_color': phase.bg_color,
-            'slug': slug,
-            'selected': slug in selected_statuses,
+            'slug': phase.display_slug,
+            'selected': phase.display_slug in selected_statuses,
         }
 
     status_counts = sorted(

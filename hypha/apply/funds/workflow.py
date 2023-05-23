@@ -93,6 +93,7 @@ class Phase:
             transitions = {}
         self.name = name
         self.display_name = display
+        self.display_slug = slugify(display)
         if public and future:
             raise ValueError("Cant provide both a future and a public name")
 
