@@ -195,18 +195,6 @@ class BatchUpdateSubmissionLeadForm(forms.Form):
         submission_ids = [int(submission) for submission in value.split(',')]
         return ApplicationSubmission.objects.filter(id__in=submission_ids)
 
-    def save(self):
-        new_lead = self.cleaned_data['lead']
-        submissions = self.cleaned_data['submissions']
-
-        for submission in submissions:
-            # Onle save if the lead has changed.
-            if submission.lead != new_lead:
-                submission.lead = new_lead
-                submission.save()
-
-        return None
-
 
 class BatchDeleteSubmissionForm(forms.Form):
     submissions = forms.CharField(widget=forms.HiddenInput(attrs={'class': 'js-submissions-id'}))

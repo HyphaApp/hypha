@@ -6,6 +6,7 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.utils.text import slugify
 from django.views.decorators.http import require_http_methods
+from django_htmx.http import HttpResponseClientRefresh
 from wagtail.models import Page
 
 from hypha.apply.activity.services import (
@@ -17,6 +18,7 @@ from hypha.apply.funds.reviewers.services import get_all_reviewers
 from hypha.apply.funds.services import annotate_review_recommendation_and_count
 from hypha.apply.users.groups import REVIEWER_GROUP_NAME
 
+from . import services
 from .models import ApplicationSubmission, Round
 
 User = get_user_model()
@@ -45,7 +47,9 @@ def sub_menu_funds(request):
 
 @login_required
 @require_http_methods(['GET'])
-def sub_menu_leads(request):
+def sub_menu_leads(
+    request, template_name="submissions/submenu/leads.html"
+) -> HttpResponse:
     selected_leads = request.GET.getlist("lead")
 
     leads = [
@@ -63,8 +67,8 @@ def sub_menu_leads(request):
     # show selected and current user first
     leads = sorted(
         leads,
-        key=lambda x: x['selected'] or x['id'] == request.user.id,
-        reverse=True,
+        key=lambda x: (not x['selected'], x['id'] != request.user.id, x['title']),
+        reverse=False,
     )
 
     ctx = {
@@ -72,7 +76,7 @@ def sub_menu_leads(request):
         'selected_leads': selected_leads,
     }
 
-    return render(request, "submissions/submenu/leads.html", ctx)
+    return render(request, template_name, ctx)
 
 
 @login_required
@@ -157,7 +161,7 @@ def sub_menu_meta_terms(request):
             'selected': str(item.id) in selected_meta_terms,
             'title': str(item),
             'depth_range': range((item.depth - 2) * 2),
-            'depth': item.depth - 1
+            'depth': item.depth - 1,
         }
         for item in terms_qs
     ]
@@ -278,3 +282,41 @@ def sub_menu_update_status(request: HttpRequest) -> HttpResponse:
     }
 
     return render(request, "submissions/submenu/change-status.html", ctx)
+
+
+@login_required
+@require_http_methods(['GET', 'POST'])
+def sub_menu_bulk_update_lead(request: HttpRequest) -> HttpResponse:
+    if request.method == 'POST':
+        submission_ids = request.POST.getlist('selectedSubmissionIds')
+        lead = request.POST.get("lead")
+
+        submissions = ApplicationSubmission.objects.filter(id__in=submission_ids)
+        lead = User.objects.get(id=lead)
+
+        services.bulk_update_lead(
+            submissions=submissions, user=request.user, request=request, lead=lead
+        )
+        return HttpResponseClientRefresh()
+
+    leads = [
+        {
+            'id': item.id,
+            'title': str(item),
+            'slack': item.slack,
+        }
+        for item in User.objects.staff()
+    ]
+
+    # sort by lead names and put current user first
+    leads = sorted(
+        leads,
+        key=lambda x: (x['id'] != request.user.id, x['title']),
+        reverse=False,
+    )
+
+    ctx = {
+        'leads': leads,
+    }
+
+    return render(request, "submissions/submenu/bulk-update-lead.html", ctx)

@@ -1,4 +1,5 @@
 from django.apps import apps
+from django.contrib.auth import get_user_model
 from django.db.models import (
     Case,
     Count,
@@ -60,6 +61,33 @@ def bulk_delete_submissions(
         request=request,
         user=user,
         sources=submissions,
+    )
+    return submissions
+
+
+def bulk_update_lead(
+    submissions: QuerySet, user, request: HttpRequest, lead
+) -> QuerySet:
+    """Update lead for submissions and generate action log.
+
+    Args:
+        submissions: queryset of submissions to update
+        user: user who is changing the lead
+        request: django request object
+        lead: user who is the new lead
+
+    Returns:
+        QuerySet of submissions that have been changed
+    """
+    submissions = submissions.exclude(lead=lead)
+    submissions.update(lead=lead)
+
+    messenger(
+        MESSAGES.BATCH_UPDATE_LEAD,
+        request=request,
+        user=user,
+        sources=submissions,
+        new_lead=lead,
     )
     return submissions
 

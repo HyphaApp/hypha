@@ -1,22 +1,23 @@
 {% load i18n %}
 {% load querystrings %}
-<ul class="text-gray-700 divide-y" aria-labelledby="dropdown-change-status">
-    {% for slug, value in statuses %}
-        <li data-filter-for="change-status-filter-field">
+<ul class="text-gray-700 divide-y" aria-labelledby="dropdown-change-status" data-filter-list>
+    {% for user in leads %}
+        <li data-filter-item-text>
             <a
-                hx-post="{% url "apply:submissions:bulk-update-status" %}"
-                hx-vals='{"action": "{{ slug }}"}'
+                hx-post="{% url "apply:submissions:submenu-bulk-update-lead" %}"
+                hx-vals='{"lead": "{{ user.id }}"}'
                 hx-include="[name=selectedSubmissionIds]"
-                hx-confirm='{% blocktrans %}Are you sure you want to change the status of the selected submissions to "{{ value }}"?{% endblocktrans %}'
-                title="Change status to {{ value }}"
-                class="flex pl-4 pr-3 py-2 text-gray-600 items-center hover:bg-gray-100 focus:bg-gray-100">
-                <strong class="font-bold">{{ value }}</strong>
+                hx-confirm='{% blocktrans with user_title=user.title %}Are you sure you want to assign "{{ user_title }}" as lead of the selected submissions?{% endblocktrans %}'
+                title="{% blocktrans with user_title=user.title %}Assign {{ user_title }} as lead.{% endblocktrans %}"
+                class="flex pl-8 pr-3 py-2 text-gray-600 items-center hover:bg-gray-100 focus:bg-gray-100">
+                <strong class="font-bold">{{ user.title }}</strong>
+                {% if user.slack %} <span class="text-gray-500 font-light ml-1">{{ user.slack }}</span>{% endif %}
             </a>
         </li>
     {% empty %}
         <li class="pl-4 pr-3 py-2 text-gray-600 max-w-xs">
-            {% trans "No status found for currently selected submissions." %}
+            {% trans "No lead found. Sorry about that." %}
         </li>
     {% endfor %}
 </ul>
-<p class="m-0 px-3 py-2 text-gray-500" data-filter-empty-state hidden>{% trans "No statuses found. Sorry about that." %}</p>
+<p class="m-0 px-3 py-2 text-gray-500" data-filter-empty-state hidden>{% trans "No lead found. Sorry about that." %}</p>

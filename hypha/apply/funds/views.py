@@ -233,14 +233,11 @@ class BatchUpdateLeadView(DelegatedViewMixin, FormView):
     def form_valid(self, form):
         new_lead = form.cleaned_data['lead']
         submissions = form.cleaned_data['submissions']
-        form.save()
-
-        messenger(
-            MESSAGES.BATCH_UPDATE_LEAD,
-            request=self.request,
+        services.bulk_update_lead(
+            submissions=submissions,
             user=self.request.user,
-            sources=submissions,
-            new_lead=new_lead,
+            lead=new_lead,
+            request=self.request
         )
         return super().form_valid(form)
 

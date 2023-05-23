@@ -352,7 +352,7 @@
                 {% enddropdown_menu %} {% endcomment %}
 
                 {% dropdown_menu title="Lead" heading="Assign Lead" enable_search=True position="right" %}
-                    {% slot "url" %}{% url "apply:submissions:submenu-leads" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
+                    {% slot "url" %}{% url "apply:submissions:submenu-bulk-update-lead" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
                 {% enddropdown_menu %}
 
                 {% dropdown_menu title="Reviewers" heading="Assign Reviewer(s)" enable_search=True %}
