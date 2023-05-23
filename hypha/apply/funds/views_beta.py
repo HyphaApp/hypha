@@ -14,6 +14,7 @@ from django_htmx.http import HttpResponseClientRedirect, HttpResponseClientRefre
 from wagtail.models import Page
 
 from hypha.apply.determinations.views import BatchDeterminationCreateView
+from hypha.apply.funds.models.screening import ScreeningStatus
 from hypha.apply.funds.workflow import PHASES, get_action_mapping
 from hypha.apply.search.filters import apply_date_filter
 from hypha.apply.search.query_parser import parse_search_query
@@ -31,6 +32,35 @@ from .tables import (
 User = get_user_model()
 
 
+def screening_decision_context(selected_screening_statuses: list) -> dict:
+    screening_options = [
+        {
+            'slug': 'null',
+            'title': _('No screening'),
+            'selected': 'null' in selected_screening_statuses,
+        },
+    ] + [
+        {
+            'slug': str(item.id),
+            'title': item.title,
+            'selected': str(item.id) in selected_screening_statuses,
+        }
+        for item in ScreeningStatus.objects.filter(
+            id__in=ApplicationSubmission.objects.all()
+            .values('screening_statuses__id')
+            .distinct('screening_statuses__id')
+        )
+    ]
+
+    selected_screening_statuses_objects = filter(
+        lambda x: x['selected'] is True, screening_options
+    )
+    return {
+        'selected_screening_statuses_objects': selected_screening_statuses_objects,
+        'screening_options': screening_options,
+    }
+
+
 @login_required
 @user_passes_test(is_apply_staff)
 def submission_all_beta(
@@ -45,6 +75,7 @@ def submission_all_beta(
     selected_rounds = request.GET.getlist("round")
     selected_leads = request.GET.getlist("lead")
     selected_statuses = request.GET.getlist("status")
+    selected_screening_statuses = request.GET.getlist("screening_statuses")
     selected_reviewers = request.GET.getlist("reviewers")
     selected_meta_terms = request.GET.getlist("meta_terms")
     selected_category_options = request.GET.getlist("category_options")
@@ -137,6 +168,7 @@ def submission_all_beta(
             selected_reviewers,
             selected_meta_terms,
             selected_category_options,
+            selected_screening_statuses,
             selected_sort,
         ]
     )
@@ -198,14 +230,13 @@ def submission_all_beta(
         'can_view_archive': can_view_archives,
         'can_bulk_archive': permissions.can_bulk_archive_submissions(request.user),
         'can_bulk_delete': permissions.can_bulk_delete_submissions(request.user),
-    }
+    } | screening_decision_context(selected_screening_statuses)
     return render(request, template_name, ctx)
 
 
 @login_required
 @require_http_methods(["POST"])
 def bulk_archive_submissions(request):
-
     if not permissions.can_bulk_archive_submissions(request.user):
         return HttpResponseForbidden()
 
@@ -224,7 +255,6 @@ def bulk_archive_submissions(request):
 @login_required
 @require_http_methods(["POST"])
 def bulk_delete_submissions(request):
-
     if not permissions.can_bulk_delete_submissions(request.user):
         return HttpResponseForbidden()
 
@@ -250,7 +280,7 @@ def bulk_update_submissions_status(request: HttpRequest) -> HttpResponse:
 
     qs = ApplicationSubmission.objects.filter(id__in=submission_ids)
 
-    redirect: HttpResponse = BatchDeterminationCreateView.should_redirect(request, qs, transitions) # type: ignore
+    redirect: HttpResponse = BatchDeterminationCreateView.should_redirect(request, qs, transitions)  # type: ignore
     if redirect:
         return HttpResponseClientRedirect(redirect.url)
 
@@ -258,4 +288,3 @@ def bulk_update_submissions_status(request: HttpRequest) -> HttpResponse:
         submission.perform_transition(action, request.user, request=request)
 
     return HttpResponseClientRefresh()
-
