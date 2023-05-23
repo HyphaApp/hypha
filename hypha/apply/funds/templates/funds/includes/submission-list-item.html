@@ -46,14 +46,23 @@
                 {{ s.form_data.title }}
             </a>
 
-            <a href="{% modify_query status=s.phase.display_slug %}"
+            <a
+                hx-get="{% modify_query "page" status=s.phase.display_slug %}"
+                hx-target="#main"
+                hx-push-url="true"
+                hx-swap="outerHTML"
+                href="{% modify_query "page" status=s.phase.display_slug %}"
                 class="{{ s.phase.bg_color }} hover:opacity-70 transition-opacity rounded-full whitespace-nowrap inline-block ml-1 px-2 pt-0.5 pb-1 text-xs font-medium text-gray-800"
             >
                 {{ s.phase.display_name }}
             </a>
             {% for meta_term in s.get_assigned_meta_terms %}
             <a
-                href="{% modify_query meta_terms=meta_term.id %}"
+                href="{% modify_query "page" meta_terms=meta_term.id %}"
+                hx-get="{% modify_query "page" meta_terms=meta_term.id %}"
+                hx-target="#main"
+                hx-push-url="true"
+                hx-swap="outerHTML"
                 data-tippy-content="Meta Term: {{meta_term.name}}"
                 data-tippy-placement="top"
                 class="hover:opacity-70 transition-opacity rounded-full whitespace-nowrap inline-block ml-1 px-2 pt-0.5 pb-1 text-xs font-medium text-white bg-blue-600"
