@@ -879,6 +879,27 @@ class ProjectPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
 
 
 @method_decorator(login_required, name='dispatch')
+class CategoryTemplatePrivateMediaView(UserPassesTestMixin, PrivateMediaView):
+    raise_exception = True
+
+    def dispatch(self, *args, **kwargs):
+        project_pk = self.kwargs['pk']
+        self.project = get_object_or_404(Project, pk=project_pk)
+        return super().dispatch(*args, **kwargs)
+
+    def get_media(self, *args, **kwargs):
+        category = DocumentCategory.objects.get(pk=kwargs['category_pk'])
+        if not category.template:
+            raise Http404
+        return category.template
+
+    def test_func(self):
+        if self.request.user.is_apply_staff or self.request.user.is_contracting or self.request.user.is_finance:
+            return True
+        return False
+
+
+@method_decorator(login_required, name='dispatch')
 class ContractPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
     raise_exception = True
 

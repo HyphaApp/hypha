@@ -45,6 +45,10 @@ def document_path(instance, filename):
     return f'projects/{instance.project_id}/supporting_documents/{filename}'
 
 
+def document_template_path(instance, filename):
+    return f'projects/supporting_documents/{instance.id}/template/{filename}'
+
+
 def contract_document_path(instance, filename):
     return f'projects/{instance.project_id}/contracting_documents/{filename}'
 
@@ -619,6 +623,7 @@ class DocumentCategory(models.Model):
     name = models.CharField(max_length=254)
     recommended_minimum = models.PositiveIntegerField(null=True, blank=True)
     required = models.BooleanField(default=False)
+    template = models.FileField(upload_to=document_template_path, storage=PrivateStorage(), blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -629,7 +634,8 @@ class DocumentCategory(models.Model):
 
     panels = [
         FieldPanel('name'),
-        FieldPanel('required')
+        FieldPanel('required'),
+        FieldPanel('template'),
     ]
 
 

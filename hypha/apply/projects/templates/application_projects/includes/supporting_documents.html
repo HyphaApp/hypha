@@ -162,26 +162,22 @@
                 </svg>
                 <p class="docs-block__title">{% trans "Supporting documents" %}</p>
             </div>
-            {% if user.is_apply_staff %}
-            <div class="docs-block__row-inner">
-                <a data-fancybox data-src="#upload-supporting-doc" class="font-bold flex items-center mr-0" href="#">
-                    <svg class="icon icon--arrow-up-short-bar"><use xlink:href="#arrow-up-short-bar"></use></svg>
-                    {% trans "Upload new" %}
-                </a>
-            </div>
-            {% endif %}
 
             {% if all_document_categories %}
 
             <div class="w-full pl-9">
-                <p>
-                    {% trans "Every project should include the following documents" %}:
-                </p>
+                <p></p>
                 <ul>
                     {% for document_category in all_document_categories %}
                         <li class="docs-block__document">
                             <div class="docs-block__document-inner">
-                                <p class="docs-block__document-info">{{ document_category.name }} {% if document_category.required %}<span class="text-red-700">*</span>{% endif %}</p>
+                                <p class="docs-block__document-info">{{ document_category.name }}
+                                    {% if document_category.required %}<span class="text-red-700">*</span>{% endif %}
+                                    {% if document_category.template %}
+                                    <a class="pl-2 font-bold underline decoration-dashed" href="{% url 'apply:projects:category_template' pk=object.pk category_pk=document_category.pk %}" target="_blank">{% trans "View template" %}</a>
+                                    <svg class="icon icon--info-circle pl-0.5"><use xlink:href="#info-circle-fill"></use></svg>
+                                    {% endif %}
+                                </p>
                                 {% if document_category not in remaining_document_categories %}
                                     {% category_latest_file project document_category as latest_file %}
                                     <p class="docs-block__document-info"><b>{{ latest_file.title }}</b> - {{ latest_file.created_at }}</p>
@@ -189,17 +185,10 @@
                             </div>
                             {% if document_category in remaining_document_categories %}
                                 <div class="docs-block__document-inner__actions">
-                                    <a data-fancybox data-src="#upload-supporting-doc-{{ document_category.id }}" class="font-bold flex items-center mr-0" href="#">
-                                        <div hx-get="{% url "apply:projects:partial-document-form" pk=object.id category_pk=document_category.id %}"
-                                        hx-target="#upload-supporting-doc-{{ document_category.id }}"
-                                        hx-swap="innerhtml">
+                                    <a data-fancybox data-src="#upload-supporting-doc" class="font-bold flex items-center mr-0" onclick="handleCategory({{ document_category.id }})" href="#">
                                         <svg class="icon icon--arrow-up-short-bar"><use xlink:href="#arrow-up-short-bar"></use></svg>
                                         {% trans "Upload" %}
-                                        </div>
                                     </a>
-                                <div class="modal" id="upload-supporting-doc-{{ document_category.id }}">
-                                    {% comment %} Loading via htmx ... {% endcomment %}
-                                </div>
 
                                 </div>
                             {% else %}
@@ -212,7 +201,7 @@
                                     </a>
                                     {% user_can_remove_supporting_documents object user as can_remove_supporting_doc %}
                                     {% if can_remove_supporting_doc %}
-                                    <form method="POST" id="{{ remove_document_form.name }}" class="docs-block__icon-link">
+                                    <form method="POST" id="{{ remove_document_form.name }}-{{ latest_file.pk }}" class="docs-block__icon-link">
                                         <svg class="icon icon--delete" style="margin-left:0; margin-right:2px"><use xlink:href="#delete"></use></svg>
                                         {% csrf_token %}
                                         {{ latest_file.get_remove_form }}
@@ -221,7 +210,7 @@
                                             id="{{ remove_document_form.name }}-submit"
                                             name="{{ form_prefix }}{{ remove_document_form.name }}"
                                             type="submit"
-                                            form="{{ remove_document_form.name }}"
+                                            form="{{ remove_document_form.name }}-{{ latest_file.pk }}"
                                             value="{% trans 'Remove' %}" />
                                     </form>
                                     {% endif %}
@@ -234,59 +223,18 @@
             </div>
             {% endif %}
 
-<!--            {% if object.packet_files.exists %}-->
-<!--            <ul class="docs-block__document-list" style="padding-left:2.25rem;">-->
-<!--                {% for document in object.packet_files.all %}-->
-<!--                <li class="docs-block__document">-->
-<!--                    <div class="docs-block__document-inner">-->
-<!--                        <p class="docs-block__document-info">{{ document.category.name }}</p>-->
-<!--                        <p class="docs-block__document-info"><b>{{ document.title }}</b> - {{ document.created_at }}</p>-->
-<!--                    </div>-->
-<!--                    <div class="docs-block__row-inner">-->
-<!--                        <a class="docs-block__icon-link" href="{% url 'apply:projects:document' pk=object.pk file_pk=document.pk %}" target="_blank">-->
-<!--                            <svg class="icon icon&#45;&#45;project-eye"><use xlink:href="#eye"></use></svg>-->
-<!--                            {% trans "View" %}-->
-<!--                        </a>-->
-<!--                        {% user_can_remove_supporting_documents object user as can_remove_supporting_doc %}-->
-<!--                        {% if can_remove_supporting_doc %}-->
-<!--                        <form method="POST" id="{{ remove_document_form.name }}" class="docs-block__icon-link">-->
-<!--                            <svg class="icon icon&#45;&#45;delete" style="margin-left:0; margin-right:2px"><use xlink:href="#delete"></use></svg>-->
-<!--                            {% csrf_token %}-->
-<!--                            {{ document.get_remove_form }}-->
-<!--                            <input-->
-<!--                                class="button button&#45;&#45;link button&#45;&#45;remove"-->
-<!--                                id="{{ remove_document_form.name }}-submit"-->
-<!--                                name="{{ form_prefix }}{{ remove_document_form.name }}"-->
-<!--                                type="submit"-->
-<!--                                form="{{ remove_document_form.name }}"-->
-<!--                                value="{% trans 'Remove' %}" />-->
-<!--                        </form>-->
-<!--                        {% endif %}-->
-<!--                    </div>-->
-<!--                </li>-->
-<!--                {% endfor %}-->
-<!--            </ul>-->
-<!--            {% endif %}-->
-
         </li>
         {% endif %}
     </ul>
 </div>
 
 {% if user.is_apply_staff %}
-<div class="modal" id="copy-supporting-doc">
-    <h4 class="modal__project-header-bar">{% trans "Select a document" %}</h4>
-    {% url 'apply:projects:copy-documents' pk=object.pk as select_document_url %}
-    {% trans "Copy" as copy %}
-    {% include 'funds/includes/delegated_form_base.html' with form=select_document_form value=copy action=select_document_url %}
+<div class="modal" id="upload-supporting-doc">
+    <h4 class="modal__project-header-bar">{% trans "Upload supporting documents" %}</h4>
+    <p></p>
+    {% trans "Submit" as submit %}
+    {% include 'funds/includes/delegated_form_base.html' with form=document_form value=submit %}
 </div>
-
-<!--<div class="modal" id="upload-supporting-doc">-->
-<!--    <h4 class="modal__project-header-bar">{% trans "Upload supporting documents" %}</h4>-->
-<!--    <p></p>-->
-<!--    {% trans "Submit" as submit %}-->
-<!--    {% include 'funds/includes/delegated_form_base.html' with form=document_form value=submit %}-->
-<!--</div>-->
 {% endif %}
 
 {% if can_send_to_approve %}
@@ -300,8 +248,8 @@
         <p>{% trans "This project is missing the following documents" %}:</p>
 
         <ul>
-            {% for missing in remaining_document_categories %}
-            <li><strong>{{ missing.category.name }} ({{ missing.difference }})</strong></li>
+            {% for missing_category in remaining_document_categories %}
+            <li><strong>{{ missing_category.name }} </strong></li>
             {% endfor %}
         </ul>
         {% trans "Submit anyway" as submit %}
