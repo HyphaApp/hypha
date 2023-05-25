@@ -27,7 +27,6 @@ from .views import (
     ReportUpdateView,
     VendorDetailView,
     VendorPrivateMediaView,
-    partial_document_category_form,
     partial_project_activities,
 )
 
@@ -41,7 +40,6 @@ urlpatterns = [
     path('<int:pk>/', include([
         path('', ProjectDetailView.as_view(), name='detail'),
         path('partial/activities/', partial_project_activities, name="partial-activities"),
-        path('partial/document/<int:category_pk>/form/', partial_document_category_form, name="partial-document-form"),
         path('edit/', ProjectApprovalFormEditView.as_view(), name="edit"),
         path('documents/<int:file_pk>/', ProjectPrivateMediaView.as_view(), name="document"),
         path('category/<str:type>/<int:category_pk>/template/', CategoryTemplatePrivateMediaView.as_view(), name="category_template"),
