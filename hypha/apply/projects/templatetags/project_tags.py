@@ -196,3 +196,8 @@ def user_can_take_actions(project, user):
 @register.simple_tag
 def category_latest_file(project, category):
     return category.packet_files.filter(project=project).first()
+
+
+@register.simple_tag
+def contract_category_latest_file(project, category):
+    return category.contract_packet_files.filter(project=project).first()
