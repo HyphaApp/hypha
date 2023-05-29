@@ -18,7 +18,7 @@ from wagtail.models import Site
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import Activity
 from hypha.apply.funds.models import ApplicationSubmission
-from hypha.apply.funds.workflow import DETERMINATION_OUTCOMES
+from hypha.apply.funds.workflow import DETERMINATION_OUTCOMES, Concept
 from hypha.apply.projects.models import Project
 from hypha.apply.stream_forms.models import BaseStreamForm
 from hypha.apply.users.decorators import staff_required
@@ -347,7 +347,7 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
     def add_proposal_form_field(self, fields):
         action = self.request.GET.get('action')
         stages_num = len(self.submission.workflow.stages)
-        if stages_num > 1 and action == 'invited_to_proposal':
+        if stages_num > 1 and self.submission.stage == Concept:
             second_stage_forms = self.submission.get_from_parent('forms').filter(stage=2)
             if second_stage_forms.count() > 1:
                 proposal_form_choices = [
@@ -355,10 +355,15 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
                     for index, form in enumerate(second_stage_forms)
                 ]
                 proposal_form_choices.insert(0, ('', _('-- No proposal form selected -- ')))
+                proposal_form_help_text = _('Select the proposal form only for determination approval')
+                if action == 'invited_to_proposal':
+                    proposal_form_help_text = _('Select the proposal form to use for proposal stage.')
                 fields['proposal_form'] = forms.ChoiceField(
                     label=_('Proposal Form'),
                     choices=proposal_form_choices,
-                    help_text=_('Select the proposal form to use for proposal stage.'),
+                    help_text=proposal_form_help_text,
+                    required=True if action == 'invited_to_proposal' else False,
+                    disabled=True,
                 )
                 fields.move_to_end('proposal_form', last=False)
         return fields
