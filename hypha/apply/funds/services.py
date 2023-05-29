@@ -1,5 +1,6 @@
 from django.apps import apps
-from django.contrib.auth import get_user_model
+from django.conf import settings
+from django.core.exceptions import PermissionDenied
 from django.db.models import (
     Case,
     Count,
@@ -16,6 +17,8 @@ from django.http import HttpRequest
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import Activity
+from hypha.apply.funds.models.assigned_reviewers import AssignedReviewers
+from hypha.apply.funds.workflow import INITIAL_STATE
 from hypha.apply.review.options import DISAGREE, MAYBE
 
 
@@ -92,6 +95,51 @@ def bulk_update_lead(
     return submissions
 
 
+def bulk_update_reviewers(
+    submissions: QuerySet,
+    user,
+    request: HttpRequest,
+    assigned_roles: dict,
+    external_reviewers=None,
+) -> QuerySet:
+    """Update reviewer for submissions and generate action log.
+
+    Args:
+        submissions: queryset of submissions to update
+        user: user who is changing the reviewer
+        request: django request object
+        assigned_roles: roles and reviewers to assign against them
+        reviewer: user who is the new reviewer
+
+    Returns:
+        QuerySet of submissions that have been changed
+    """
+    for role, reviewer in assigned_roles.items():
+        if reviewer:
+            AssignedReviewers.objects.update_role(role, reviewer, *submissions)
+
+    for submission in submissions:
+        AssignedReviewers.objects.bulk_create_reviewers(
+            external_reviewers or [],
+            submission,
+        )
+
+    messenger(
+        MESSAGES.BATCH_REVIEWERS_UPDATED,
+        request=request,
+        user=user,
+        sources=submissions,
+        added=[[role, reviewer] for role, reviewer in assigned_roles.items()],
+    )
+
+    for submission in submissions:
+        set_status_after_reviewers_assigned(
+            submission, updated_by=user, request=request
+        )
+
+    return submissions
+
+
 def annotate_comments_count(submissions: QuerySet, user) -> QuerySet:
     comments = Activity.comments.filter(submission=OuterRef('id')).visible_to(user)
     return submissions.annotate(
@@ -106,6 +154,34 @@ def annotate_comments_count(submissions: QuerySet, user) -> QuerySet:
             0,
         ),
     )
+
+
+def set_status_after_reviewers_assigned(submission, updated_by, request) -> None:
+    if not settings.TRANSITION_AFTER_ASSIGNED:
+        return None
+
+    # Check if all internal reviewers have been selected.
+    if submission.has_all_reviewer_roles_assigned:
+        # Automatic workflow actions.
+        action = None
+        if submission.status == INITIAL_STATE:
+            # Automatically transition the application to "Internal review".
+            action = submission.workflow.stepped_phases[2][0].name
+        elif submission.status == 'proposal_discussion':
+            # Automatically transition the proposal to "Internal review".
+            action = 'proposal_internal_review'
+
+        # If action is set run perform_transition().
+        if action:
+            try:
+                submission.perform_transition(
+                    action,
+                    updated_by,
+                    request=request,
+                    notify=False,
+                )
+            except (PermissionDenied, KeyError):
+                pass
 
 
 def annotate_review_recommendation_and_count(submissions: QuerySet) -> QuerySet:

@@ -1,5 +1,3 @@
-from django.utils.text import slugify
-
 from hypha.apply.funds.tests.factories import (
     ApplicationSubmissionFactory,
     AssignedWithRoleReviewersFactory,
@@ -33,7 +31,7 @@ class BaseBatchReviewerTestCase(BaseViewTestCase):
 
         data.update(
             **{
-                f'role_reviewer_{slugify(str(role))}': reviewer.id
+                f'role_reviewer_{str(role.id)}': reviewer.id
                 for role, reviewer in zip(self.roles, reviewer_roles, strict=False)
             }
         )

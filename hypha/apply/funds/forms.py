@@ -6,6 +6,7 @@ from operator import methodcaller
 import bleach
 from django import forms
 from django.conf import settings
+from django.http import HttpRequest
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
@@ -14,6 +15,7 @@ from wagtail.signal_handlers import disable_reference_index_auto_update
 from hypha.apply.categories.models import MetaTerm
 from hypha.apply.users.models import User
 
+from . import services
 from .models import (
     ApplicationSubmission,
     AssignedReviewers,
@@ -358,15 +360,15 @@ class BatchUpdateReviewersForm(forms.Form):
     submissions = forms.CharField(widget=forms.HiddenInput(attrs={'class': 'js-submissions-id'}))
     external_reviewers = forms.ModelMultipleChoiceField(
         queryset=User.objects.reviewers().only('pk', 'full_name'),
-        widget=Select2MultiCheckboxesWidget(attrs={'data-placeholder': 'Reviewers'}),
+        widget=Select2MultiCheckboxesWidget(attrs={'data-placeholder': 'Select...'}),
         label=_('External Reviewers'),
         required=False,
     )
 
     def __init__(self, *args, user=None, round=None, **kwargs):
         super().__init__(*args, **kwargs)
+        self.request = kwargs.pop('request', None)
         self.user = user
-
         self.fields = OrderedDict(self.fields)
 
         self.role_fields = {}
@@ -424,25 +426,6 @@ class BatchUpdateReviewersForm(forms.Form):
             return True
         return False
 
-    def save(self):
-        submissions = self.cleaned_data['submissions']
-        external_reviewers = self.cleaned_data['external_reviewers']
-        assigned_roles = {
-            role: self.cleaned_data[field]
-            for field, role in self.role_fields.items()
-        }
-        for role, reviewer in assigned_roles.items():
-            if reviewer:
-                AssignedReviewers.objects.update_role(role, reviewer, *submissions)
-
-        for submission in submissions:
-            AssignedReviewers.objects.bulk_create_reviewers(
-                list(external_reviewers),
-                submission,
-            )
-
-        return None
-
 
 def make_role_reviewer_fields():
     role_fields = []
@@ -450,10 +433,10 @@ def make_role_reviewer_fields():
 
     for role in ReviewerRole.objects.all().order_by('order'):
         role_name = bleach.clean(role.name, strip=True)
-        field_name = 'role_reviewer_' + slugify(role_name)
+        field_name = f'role_reviewer_{role.id}'
         field = forms.ModelChoiceField(
             queryset=staff_reviewers,
-            empty_label=_('-- No reviewer selected --'),
+            empty_label=_('---'),
             required=False,
             label=mark_safe(render_icon(role.icon) + _('{role_name} Reviewer').format(role_name=role_name)),
         )

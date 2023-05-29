@@ -392,8 +392,8 @@
                     {% slot "url" %}{% url "apply:submissions:submenu-bulk-update-lead" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
                 {% enddropdown_menu %}
 
-                {% dropdown_menu title="Reviewers" heading="Assign Reviewer(s)" enable_search=True %}
-                    {% slot "url" %}{% url "apply:submissions:submenu-reviewers" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
+                {% dropdown_menu title="Reviewers" heading="Assign Reviewer(s)" %}
+                    {% slot "url" hx-include="[name='selectedSubmissionIds']" hx-trigger="click" %}{% url "apply:submissions:submenu-bulk-update-reviewers" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
                 {% enddropdown_menu %}
 
                 {% if can_bulk_archive %}
@@ -461,46 +461,6 @@
                 {% endif %}
             </span>
         </nav>
-
-        {% comment %} <div class="wrapper wrapper--large wrapper--inner-space-medium">
-            {% block table %}
-                <div class="wrapper wrapper--table-actions js-table-actions">
-                    <div class="actions-bar">
-                        {# Left #}
-                        <div class="actions-bar__inner actions-bar__inner--left">
-                            {% if use_batch_actions %}
-                                <div class="actions-bar__inner actions-bar__inner--batch-actions">
-
-                                    <button data-fancybox data-src="#batch-update-lead" class="button button--action js-batch-button"
-                                        type="button">
-                                        <svg>
-                                            <use xlink:href="#add-person"></use>
-                                        </svg>
-                                        {% trans "Lead" %}
-                                    </button>
-
-                                    <button data-fancybox data-src="#batch-update-reviewers"
-                                        class="button button--action js-batch-button" type="button">
-                                        <svg>
-                                            <use xlink:href="#add-person"></use>
-                                        </svg>
-                                        {% trans "Reviewers" %}
-                                    </button>
-                                </div>
-                            {% endif %}
-                        </div>
-                    </div>
-
-                </div>
-
-
-                {% if use_batch_actions %}
-                    {% include "funds/includes/batch_update_lead_form.html" %}
-                    {% include "funds/includes/batch_update_reviewer_form.html" %}
-                    {% include "funds/includes/batch_progress_form.html" %}
-                {% endif %}
-            {% endblock %}
-        </div> {% endcomment %}
     </section>
 {% endspaceless %}{% endblock content %}
 {% block extra_js %}

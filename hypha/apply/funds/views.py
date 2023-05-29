@@ -112,7 +112,6 @@ from .tables import (
 from .utils import get_default_screening_statues
 from .workflow import (
     DRAFT_STATE,
-    INITIAL_STATE,
     PHASES_MAPPING,
     STAGE_CHANGE_ACTIONS,
     active_statuses,
@@ -152,33 +151,6 @@ class SubmissionStatsMixin:
             review_my_score=review_my_score,
             **kwargs,
         )
-
-
-class UpdateReviewersMixin:
-    def set_status_after_reviewers_assigned(self, submission):
-        transition_after = settings.TRANSITION_AFTER_ASSIGNED
-        # Check if all internal reviewers have been selected.
-        if transition_after and submission.has_all_reviewer_roles_assigned:
-            # Automatic workflow actions.
-            action = None
-            if submission.status == INITIAL_STATE:
-                # Automatically transition the application to "Internal review".
-                action = submission.workflow.stepped_phases[2][0].name
-            elif submission.status == 'proposal_discussion':
-                # Automatically transition the proposal to "Internal review".
-                action = 'proposal_internal_review'
-
-            # If action is set run perform_transition().
-            if action:
-                try:
-                    submission.perform_transition(
-                        action,
-                        self.request.user,
-                        request=self.request,
-                        notify=False,
-                    )
-                except (PermissionDenied, KeyError):
-                    pass
 
 
 class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
@@ -247,29 +219,24 @@ class BatchUpdateLeadView(DelegatedViewMixin, FormView):
 
 
 @method_decorator(staff_required, name='dispatch')
-class BatchUpdateReviewersView(UpdateReviewersMixin, DelegatedViewMixin, FormView):
+class BatchUpdateReviewersView(DelegatedViewMixin, FormView):
     form_class = BatchUpdateReviewersForm
     context_name = 'batch_reviewer_form'
 
     def form_valid(self, form):
         submissions = form.cleaned_data['submissions']
-        form.save()
-        reviewers = [
-            [role, form.cleaned_data[field_name]]
-            for field_name, role in form.role_fields.items()
-        ]
-
-        messenger(
-            MESSAGES.BATCH_REVIEWERS_UPDATED,
-            request=self.request,
+        external_reviewers = form.cleaned_data['external_reviewers']
+        assigned_roles = {
+            role: form.cleaned_data[field]
+            for field, role in form.role_fields.items()
+        }
+        services.bulk_update_reviewers(
+            submissions=submissions,
+            external_reviewers=external_reviewers,
+            assigned_roles=assigned_roles,
             user=self.request.user,
-            sources=submissions,
-            added=reviewers,
+            request=self.request,
         )
-
-        for submission in submissions:
-            # Update submission status if needed.
-            self.set_status_after_reviewers_assigned(submission)
 
         return super().form_valid(form)
 
@@ -836,7 +803,7 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
 
 
 @method_decorator(staff_required, name='dispatch')
-class UpdateReviewersView(UpdateReviewersMixin, DelegatedViewMixin, UpdateView):
+class UpdateReviewersView(DelegatedViewMixin, UpdateView):
     model = ApplicationSubmission
     form_class = UpdateReviewersForm
     context_name = 'reviewer_form'
@@ -870,7 +837,11 @@ class UpdateReviewersView(UpdateReviewersMixin, DelegatedViewMixin, UpdateView):
         )
 
         # Update submission status if needed.
-        self.set_status_after_reviewers_assigned(form.instance)
+        services.set_status_after_reviewers_assigned(
+            submission=form.instance,
+            updated_by=self.request.user,
+            request=self.request
+        )
 
         return response
 

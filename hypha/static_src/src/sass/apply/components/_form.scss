@@ -300,6 +300,10 @@
         background: url('./../../images/dropdown.svg') $color--white no-repeat 95% center;
         background-size: 8px;
 
+        &:has(.choices) {
+            background: none;
+        }
+
         .form--scoreable & {
             margin-top: 20px;
         }

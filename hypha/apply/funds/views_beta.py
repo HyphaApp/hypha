@@ -1,6 +1,7 @@
 import time
 
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.postgres.search import SearchQuery, SearchRank
@@ -91,7 +92,7 @@ def submission_all_beta(
         Round.objects.filter(id__in=selected_rounds) if selected_rounds else []
     )
 
-    if request.htmx:
+    if request.htmx and not request.htmx.boosted:
         base_template = "includes/_partial-main.html"
     else:
         base_template = "funds/base_submissions_table.html"
@@ -249,6 +250,7 @@ def bulk_archive_submissions(request):
         request=request,
     )
 
+    messages.info(request, f"{len(submissions)} submissions archived.")
     return HttpResponseClientRefresh()
 
 

@@ -1,5 +1,6 @@
 DJANGO_PORT = 9001
 JS_VENDOR_DIR = ./hypha/static_src/src/javascript/apply/vendor
+CSS_VENDOR_DIR = ./hypha/static_src/src/javascript/apply/vendor
 JS_ESM_DIR = ./hypha/static_src/src/javascript/esm
 
 .PHONY: help
@@ -77,6 +78,7 @@ download-esm-modules:
 	pip install download-esm
 	download-esm @github/relative-time-element $(JS_ESM_DIR)
 	download-esm @github/filter-input-element $(JS_ESM_DIR)
+	download-esm choices.js $(JS_ESM_DIR)
 
 .PHONY: copy-npm-scripts
 copy-npm-scripts:
@@ -84,7 +86,6 @@ copy-npm-scripts:
 	cp node_modules/htmx.org/dist/htmx.min.js $(JS_VENDOR_DIR)/htmx.min.js
 	cp node_modules/htmx.org/dist/ext/multi-swap.js $(JS_VENDOR_DIR)/htmx-ext-multi-swap.min.js
 	cp node_modules/alpinejs/dist/cdn.min.js $(JS_VENDOR_DIR)/alpine.min.js
-	cp node_modules/@github/relative-time-element/dist/index.js $(JS_VENDOR_DIR)/github-relative-time-element.min.js
 	cp node_modules/@alpinejs/focus/dist/cdn.min.js $(JS_VENDOR_DIR)/alpine-focus.min.js
 	cp node_modules/daterangepicker/moment.min.js $(JS_VENDOR_DIR)/moment.min.js
 	cp node_modules/daterangepicker/daterangepicker.js $(JS_VENDOR_DIR)/daterangepicker.min.js

@@ -9,7 +9,7 @@ def render_icon(image):
     if not image:
         return ''
     filter_spec = 'fill-20x20'
-    return generate_image_tag(image, filter_spec)
+    return generate_image_tag(image, filter_spec, html_class="icon mr-2 align-middle")
 
 
 def get_default_screening_statues():

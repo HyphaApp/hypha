@@ -6,13 +6,17 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.utils.text import slugify
 from django.views.decorators.http import require_http_methods
-from django_htmx.http import HttpResponseClientRefresh
+from django_htmx.http import (
+    HttpResponseClientRefresh,
+)
 from wagtail.models import Page
 
 from hypha.apply.activity.services import (
     get_related_actions_for_user,
 )
 from hypha.apply.categories.models import MetaTerm, Option
+from hypha.apply.funds.forms import BatchUpdateReviewersForm
+from hypha.apply.funds.models.reviewer_role import ReviewerRole
 from hypha.apply.funds.permissions import has_permission
 from hypha.apply.funds.reviewers.services import get_all_reviewers
 from hypha.apply.funds.services import annotate_review_recommendation_and_count
@@ -320,3 +324,39 @@ def sub_menu_bulk_update_lead(request: HttpRequest) -> HttpResponse:
     }
 
     return render(request, "submissions/submenu/bulk-update-lead.html", ctx)
+
+
+@login_required
+@require_http_methods(['GET', 'POST'])
+def sub_menu_bulk_update_reviewers(request: HttpRequest) -> HttpResponse:
+
+    if request.method == 'POST':
+        submission_ids = request.POST.getlist('selectedSubmissionIds')
+        submissions = ApplicationSubmission.objects.filter(id__in=submission_ids)
+        external_reviewers_ids = request.POST.getlist("external_reviewers")
+        external_reviewers = User.objects.filter(id__in=external_reviewers_ids)
+
+        assigned_roles = {}
+        for field, value in request.POST.items():
+            if field.startswith('role_reviewer_'):
+                if value:
+                    role = ReviewerRole.objects.get(id=field[14:])
+                    user = User.objects.staff().get(id=value)
+                    # key, value of role id and reviewer id
+                    assigned_roles[role] = user
+
+        services.bulk_update_reviewers(
+            submissions=submissions,
+            user=request.user,
+            request=request,
+            external_reviewers=external_reviewers,
+            assigned_roles=assigned_roles,
+        )
+        return HttpResponseClientRefresh()
+
+    form = BatchUpdateReviewersForm(user=request.user)
+    ctx = {
+        'form': form,
+    }
+
+    return render(request, "submissions/submenu/bulk-update-reviewers.html", ctx)
