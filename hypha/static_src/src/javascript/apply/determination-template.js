@@ -20,9 +20,9 @@
         }
 
         getMatchingCopy(value) {
+            var proposal_form = document.querySelector('#id_proposal_form');
             if (value === '0') {
                 this.text = document.querySelector('div[data-type="rejected"]').textContent;
-                var proposal_form = document.querySelector('#id_proposal_form');
                 if (proposal_form) {
                     proposal_form.disabled = true;
                     proposal_form.required = false;
@@ -30,7 +30,6 @@
             }
             else if (value === '1') {
                 this.text = document.querySelector('div[data-type="more_info"]').textContent;
-                var proposal_form = document.querySelector('#id_proposal_form');
                 if (proposal_form) {
                     proposal_form.disabled = true;
                     proposal_form.required = false;
@@ -38,7 +37,6 @@
             }
             else {
                 this.text = document.querySelector('div[data-type="accepted"]').textContent;
-                var proposal_form = document.querySelector('#id_proposal_form');
                 if (proposal_form) {
                     proposal_form.disabled = false;
                     proposal_form.required = true;
