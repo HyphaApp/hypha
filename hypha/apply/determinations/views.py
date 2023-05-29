@@ -329,6 +329,7 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
         return kwargs
 
     def get_form_class(self):
+        action = self.request.GET.get('action')
         if not self.submission.is_determination_form_attached:
             # If new determination forms are not attached use the old ones.
             return get_form_for_stage(self.submission)
@@ -341,11 +342,12 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
                 )
                 # Outcome field choices need to be set according to the phase.
                 form_fields[field_block.id].choices = outcome_choices
-        form_fields = self.add_proposal_form_field(form_fields)
+                # Set initial outcome based on action.
+                form_fields[field_block.id].initial = TRANSITION_DETERMINATION[action]
+        form_fields = self.add_proposal_form_field(form_fields, action)
         return type('WagtailStreamForm', (self.submission_form_class,), form_fields)
 
-    def add_proposal_form_field(self, fields):
-        action = self.request.GET.get('action')
+    def add_proposal_form_field(self, fields, action):
         stages_num = len(self.submission.workflow.stages)
         if stages_num > 1 and self.submission.stage == Concept:
             second_stage_forms = self.submission.get_from_parent('forms').filter(stage=2)
