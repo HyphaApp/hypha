@@ -10,6 +10,7 @@
             <svg class="icon icon--caret-down" x-show="collapsed" aria-hidden=true><use xlink:href="#caret-down"></use></svg>
             {% endif %}
         </div>
+        <div>
         {% user_can_send_for_approval object user as can_send_to_approve %}
         {% if can_send_to_approve %}
             <a data-fancybox
@@ -23,24 +24,43 @@
                 {% endif %}
             </a>
         {% endif %}
-        {% user_can_update_paf_approvers object user as can_update_paf_approvers %}
+        {% user_can_update_paf_approvers object user request as can_update_paf_approvers %}
+        {% user_can_assign_approvers_to_project object user request as can_assign_paf_approvers %}
         {% if can_update_paf_approvers %}
+            {% if user == project.lead %}
             <a data-fancybox
             data-src="#update-paf-approvers"
-            class="button button--project-action button--project-action--white"
+            class="button button--project-action button--project-action--white ml-2"
             href="#">
                 {% trans "View/Update Approvers" %}
+            </a>
+            {% else %}
+            <a data-fancybox
+            data-src="#change-assigned-paf-approvers"
+            class="button button--project-action button--project-action--white ml-2"
+            href="#">
+                {% trans "Change approver" %}
+            </a>
+            {% endif %}
+        {% endif %}
+        {% if can_assign_paf_approvers %}
+            <a data-fancybox
+            data-src="#assign-paf-approvers"
+            class="button button--project-action ml-2"
+            href="#">
+                {% trans "Assign approver" %}
             </a>
         {% endif %}
         {% user_can_update_paf_status object user request=request as can_update_paf_status %}
         {% if object.can_make_approval and can_update_paf_status %}
             <a data-fancybox
             data-src="#update-paf-status"
-            class="button button--project-action"
+            class="button button--project-action ml-2"
             href="#">
                 {% trans "Update Status" %}
             </a>
         {% endif %}
+        </div>
     </div>
     <ul class="docs-block__inner" id="project-documents-elements" {% if collapsible_header %} x-show="!collapsed" role="region"
        aria-labelledby="project-documents-section" {% endif %}>
@@ -227,7 +247,8 @@
     <h4 class="modal__project-header-bar">{% trans "Submit for Approval" %}</h4>
 
     {% if remaining_document_categories %}
-        <h5>{% trans "Are you sure you're ready to submit?" %}</h5>
+        <h5>{% trans "Are you sure you're ready to submit the project documents to be approved in" %}
+            {% if project_settings.paf_approval_sequential %}{% trans "sequential order?" %}{% else %}{% trans "parallel order?" %}{% endif %}</h5>
 
         <p>{% trans "This project is missing the following documents" %}:</p>
 
@@ -238,12 +259,19 @@
         </ul>
         {% trans "Submit anyway" as submit %}
     {% else %}
+        <h5>{% trans "Are you ready to submit the project documents to be approved in" %}
+            {% if project_settings.paf_approval_sequential %}{% trans "sequential order?" %}{% else %}{% trans "parallel order?" %}{% endif %}</h5>
         {% trans "Submit" as submit %}
     {% endif %}
     {% if project_settings.paf_reviewers_roles.all %}
-        <p> <strong> {% trans "Please select approvers for PAF in " %} {% if project_settings.paf_approval_sequential %} {% trans "sequential order" %} {% else %}{% trans "parallel order" %}{% endif %}</strong></p>
-        <p>{% trans "(please note that in "%}{% if project_settings.paf_approval_sequential %}{%trans "sequential order, approvers will approve PAF one after the other)"%}{% else %}{% trans "parallel order, approvers can approve PAF anytime)" %}{% endif %}</p>
-        <br>
+
+        <div class="flex items-center text-sm">
+            <p class="flex-shrink text-slate-500 pr-2 mb-0">Optional</p>
+            <p class="flex-grow h-px bg-mid-grey mb-0"></p>
+        </div>
+
+        <p>{% trans "Please note that in "%}{% if project_settings.paf_approval_sequential %}{%trans "sequential order, approvers will approve PAF one after the other"%}{% else %}{% trans "parallel order, approvers can approve PAF anytime" %}{% endif %}</p>
+
         {% include 'funds/includes/delegated_form_base.html' with form=request_approval_form value=submit %}
     {% else %}
         <p>{% trans "No PAF Reviewer Roles created yet, please create these in " %}
@@ -268,12 +296,28 @@
         </p>
     {% endif %}
 </div>
+
+<div class="modal" id="change-assigned-paf-approvers">
+        <h4 class="modal__project-header-bar">{% trans "Change Approver" %}</h4>
+        <p class="text-mid-grey">{% trans "Selected approver will be notified. On unselecting, every listed member here will be notified." %} </p>
+        {% trans "Submit" as submit %}
+        {% include 'funds/includes/delegated_form_base.html' with form=assign_approvers_form value=submit %}
+    </div>
+
+{% endif %}
+
+{% if can_assign_paf_approvers %}
+    <div class="modal" id="assign-paf-approvers">
+        <h4 class="modal__project-header-bar">{% trans "Assign Approver" %}</h4>
+        <p class="text-mid-grey">{% trans "Selected approver will be notified. On unselecting, every listed member here will be notified." %} </p>
+        {% trans "Submit" as submit %}
+        {% include 'funds/includes/delegated_form_base.html' with form=assign_approvers_form value=submit %}
+    </div>
 {% endif %}
 
 {% if can_update_paf_status %}
     <div class="modal" id="update-paf-status">
         <h4 class="modal__project-header-bar">{% trans "Update PAF Status" %}</h4>
-        <p>{% trans "Project's current status" %}: {{ object.get_status_display }}</p>
         {% trans "Update Status" as update %}
         {% include 'funds/includes/delegated_form_base.html' with form=change_paf_status value=update %}
     </div>

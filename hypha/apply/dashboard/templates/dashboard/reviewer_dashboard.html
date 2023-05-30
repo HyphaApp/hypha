@@ -70,6 +70,13 @@
     </div>
     {% endif %}
 
+    {% if paf_waiting_for_assignment.count %}
+     <div id="paf_waiting_for_assignment" class="wrapper wrapper--bottom-space">
+        <h4 class="heading heading--normal">{% trans "PAF waiting for assignee" %}</h4>
+        {% render_table paf_waiting_for_assignment.table %}
+    </div>
+    {% endif %}
+
     {% if my_inactive_submissions.data %}
         <div class="wrapper wrapper--bottom-space">
             <h4 class="heading heading--normal">{% trans "Submission history" %}</h4>

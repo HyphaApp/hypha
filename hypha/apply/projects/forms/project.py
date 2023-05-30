@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth import get_user_model
-from django.db.models import Q
+from django.db.models import Count, Q
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from django_file_form.forms import FileFormMixin
@@ -31,6 +31,17 @@ User = get_user_model()
 
 def filter_request_choices(choices):
     return [(k, v) for k, v in PROJECT_STATUS_CHOICES if k in choices]
+
+
+def get_latest_project_paf_approval_via_roles(project, roles):
+    # exact match the roles with paf approval's reviewer roles
+    paf_approvals = project.paf_approvals.annotate(
+        roles_count=Count('paf_reviewer_role__user_roles')
+    ).filter(roles_count=len(list(roles)), approved=False)
+
+    for role in roles:
+        paf_approvals = paf_approvals.filter(paf_reviewer_role__user_roles__id=role.id)
+    return paf_approvals.first()
 
 
 class ApproveContractForm(forms.Form):
@@ -224,47 +235,39 @@ class ApproversForm(forms.ModelForm):
         widgets = {'id': forms.HiddenInput()}
 
     def __init__(self, user=None, *args, **kwargs):
+        from hypha.apply.activity.adapters.utils import get_users_for_groups
         super().__init__(*args, **kwargs)
 
         for paf_reviewer_role in PAFReviewersRole.objects.all():
-            users = User.objects.all()
-            for group in paf_reviewer_role.user_roles.all():
-                users = users.filter(groups__name=group)
+            users = get_users_for_groups(list(paf_reviewer_role.user_roles.all()), exact_match=True)
             approval = PAFApprovals.objects.filter(project=self.instance, paf_reviewer_role=paf_reviewer_role)
             if approval:
                 initial_user = approval.first().user
             self.fields[slugify(paf_reviewer_role.label)] = forms.ModelChoiceField(
                 queryset=users,
+                required=False,
+                blank=True,
                 label=paf_reviewer_role.label,
                 initial=initial_user if approval else None,
                 disabled=approval.first().approved if approval.first() else False,
                 # using approval.first() as condition for existing projects
             )
 
-    def clean(self):
-        cleaned_data = super().clean()
-
-        paf_reviewer_roles = PAFReviewersRole.objects.all()
-        if paf_reviewer_roles:
-            for paf_reviewer_role in paf_reviewer_roles:
-                if not cleaned_data[slugify(paf_reviewer_role.label)]:
-                    self.add_error(slugify(paf_reviewer_role.label))
-        return cleaned_data
-
     def save(self, commit=True):
         # add users as PAFApprovals
         for paf_reviewer_role in PAFReviewersRole.objects.all():
+            assigned_user = self.cleaned_data[slugify(paf_reviewer_role.label)]
             paf_approvals = PAFApprovals.objects.filter(project=self.instance, paf_reviewer_role=paf_reviewer_role)
             if not paf_approvals.exists():
                 PAFApprovals.objects.create(
                     project=self.instance,
                     paf_reviewer_role=paf_reviewer_role,
-                    user=self.cleaned_data[slugify(paf_reviewer_role.label)],
+                    user=assigned_user if assigned_user else None,
                     approved=False,
                 )
             elif not paf_approvals.first().approved:
                 paf_approval = paf_approvals.first()
-                paf_approval.user = self.cleaned_data[slugify(paf_reviewer_role.label)]
+                paf_approval.user = assigned_user if assigned_user else None
                 paf_approval.save()
         return super().save(commit=True)
 
@@ -274,8 +277,49 @@ class SetPendingForm(ApproversForm):
         if self.instance.status != DRAFT:
             raise forms.ValidationError(_('A Project can only be sent for Approval when Drafted.'))
 
+        # :todo: we should have a check form contains enough data to create PAF Approvals
         cleaned_data = super().clean()
         return cleaned_data
+
+
+class AssignApproversForm(forms.ModelForm):
+    class Meta:
+        fields = ['id']
+        model = Project
+        widgets = {'id': forms.HiddenInput()}
+
+    def __init__(self, user=None, *args, **kwargs):
+        from hypha.apply.activity.adapters.utils import get_users_for_groups
+        super().__init__(*args, **kwargs)
+        self.user = user
+
+        paf_approval = get_latest_project_paf_approval_via_roles(project=self.instance, roles=user.groups.all())
+
+        if paf_approval:
+            current_paf_reviewer_role = paf_approval.paf_reviewer_role
+
+            users = get_users_for_groups(list(current_paf_reviewer_role.user_roles.all()), exact_match=True)
+
+            self.fields[slugify(current_paf_reviewer_role.label)] = forms.ModelChoiceField(
+                queryset=users,
+                required=False,
+                blank=True,
+                label=current_paf_reviewer_role.label,
+                initial=paf_approval.user,
+                disabled=paf_approval.approved,
+            )
+
+    def save(self, commit=True):
+        paf_approval = get_latest_project_paf_approval_via_roles(project=self.instance, roles=self.user.groups.all())
+
+        current_paf_reviewer_role = paf_approval.paf_reviewer_role
+        assigned_user = self.cleaned_data[slugify(current_paf_reviewer_role.label)]
+
+        if not paf_approval.approved:
+            paf_approval.user = assigned_user if assigned_user else None
+            paf_approval.save()
+
+        return super().save(commit=True)
 
 
 class SubmitContractDocumentsForm(forms.ModelForm):

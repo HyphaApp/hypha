@@ -24,6 +24,7 @@ from ..tasks import send_mail
 from .base import AdapterBase
 from .utils import (
     get_compliance_email,
+    get_users_for_groups,
     is_ready_for_review,
     is_reviewer_update,
     is_transition,
@@ -57,6 +58,7 @@ class EmailAdapter(AdapterBase):
         MESSAGES.SENT_TO_COMPLIANCE: 'messages/email/sent_to_compliance.html',
         MESSAGES.SEND_FOR_APPROVAL: 'messages/email/paf_for_approval.html',
         MESSAGES.REQUEST_PROJECT_CHANGE: 'messages/email/project_request_change.html',
+        MESSAGES.ASSIGN_PAF_APPROVER: 'messages/email/assign_paf_approvers.html',
         MESSAGES.APPROVE_PAF: 'messages/email/paf_for_approval.html',
         MESSAGES.UPDATE_INVOICE: 'handle_invoice_updated',
         MESSAGES.UPDATE_INVOICE_STATUS: 'handle_invoice_status_updated',
@@ -84,7 +86,7 @@ class EmailAdapter(AdapterBase):
                 subject = _(
                     'Reminder: Application ready to review: {source.title}'
                 ).format(source=source)
-            elif message_type in [MESSAGES.SENT_TO_COMPLIANCE]:
+            elif message_type in [MESSAGES.SENT_TO_COMPLIANCE, MESSAGES.APPROVE_PAF, MESSAGES.SEND_FOR_APPROVAL]:
                 subject = _('Project is waiting for approval: {source.title}').format(source=source)
             elif message_type == MESSAGES.UPLOAD_CONTRACT:
                 subject = _('Contract uploaded for the project: {source.title}').format(source=source)
@@ -100,6 +102,8 @@ class EmailAdapter(AdapterBase):
                     subject = _('Project status has changed to {source.status}: {source.title}').format(source=source)
             elif message_type == MESSAGES.REQUEST_PROJECT_CHANGE:
                 subject = _("Project has been rejected, please update and resubmit")
+            elif message_type == MESSAGES.ASSIGN_PAF_APPROVER:
+                subject = _("Project documents are ready to be assigned for approval: {source.title}".format(source=source))
             else:
                 try:
                     subject = source.page.specific.subject or _(
@@ -264,9 +268,30 @@ class EmailAdapter(AdapterBase):
             project_settings = ProjectSettings.for_request(request)
             if project_settings.paf_approval_sequential:
                 next_paf_approval = source.paf_approvals.filter(approved=False).first()
-                if next_paf_approval:
+                if next_paf_approval and next_paf_approval.user:
                     return [next_paf_approval.user.email]
-            return source.paf_approvals.filter(approved=False).values_list('user__email', flat=True)
+            return list(filter(lambda approver: approver is not None, source.paf_approvals.filter(approved=False).values_list('user__email', flat=True)))
+
+        if message_type == MESSAGES.ASSIGN_PAF_APPROVER:
+            from hypha.apply.projects.models.project import ProjectSettings
+            # notify PAFReviewerRole's groups' users to assign approvers
+            request = kwargs.get('request')
+            project_settings = ProjectSettings.for_request(request)
+            if project_settings.paf_approval_sequential:
+                next_paf_approval = source.paf_approvals.filter(approved=False).first()
+                if next_paf_approval and not next_paf_approval.user:
+                    assigners = get_users_for_groups(list(next_paf_approval.paf_reviewer_role.user_roles.all()), exact_match=True)
+                    return [assigner.email for assigner in assigners]
+
+            assigners_emails = []
+            if user == source.lead:
+                for approval in source.paf_approvals.filter(approved=False, user__isnull=True):
+                    assigners_emails.extend([assigner.email for assigner in get_users_for_groups(list(approval.paf_reviewer_role.user_roles.all()), exact_match=True)])
+            else:
+                assigners_emails.extend([assigner.email for assigner in
+                                         get_users_for_groups(list(user.groups.all()),
+                                                              exact_match=True)])
+            return set(assigners_emails)
 
         if message_type == MESSAGES.REQUEST_PROJECT_CHANGE:
             return [source.lead.email]

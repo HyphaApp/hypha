@@ -76,6 +76,13 @@
         {% include "dashboard/includes/paf_waiting_for_approval.html" with paf_waiting_for_approval=paf_waiting_for_approval %}
     {% endif %}
 
+    {% if paf_waiting_for_assignment.count %}
+     <div id="paf_waiting_for_assignment" class="wrapper wrapper--bottom-space">
+        <h4 class="heading heading--normal">{% trans "PAF waiting for assignee" %}</h4>
+        {% render_table paf_waiting_for_assignment.table %}
+    </div>
+    {% endif %}
+
     {% if projects.table.data %}
     <div id="active-projects" class="wrapper wrapper--bottom-space">
         {% trans "Your projects" as project_heading %}

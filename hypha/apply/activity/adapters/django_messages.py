@@ -14,7 +14,6 @@ class DjangoMessagesAdapter(AdapterBase):
         MESSAGES.BATCH_REVIEWERS_UPDATED: 'batch_reviewers_updated',
         MESSAGES.BATCH_TRANSITION: 'batch_transition',
         MESSAGES.BATCH_DETERMINATION_OUTCOME: 'batch_determinations',
-        MESSAGES.UPLOAD_DOCUMENT: _('Successfully uploaded document'),
         MESSAGES.REMOVE_DOCUMENT: _('Successfully removed document'),
         MESSAGES.SKIPPED_REPORT: 'handle_skipped_report',
         MESSAGES.REPORT_FREQUENCY_CHANGED: 'handle_report_frequency',

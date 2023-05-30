@@ -1,5 +1,7 @@
 from django.core.exceptions import PermissionDenied
 
+from hypha.apply.activity.adapters.utils import get_users_for_groups
+
 from .models.project import (
     CLOSING,
     COMPLETE,
@@ -66,6 +68,100 @@ def can_submit_contract_documents(user, project, **kwargs):
     return False, 'Forbidden Error'
 
 
+def can_update_paf_approvers(user, project, **kwargs):
+    if not user.is_authenticated:
+        return False, 'Login Required'
+
+    if project.status != WAITING_FOR_APPROVAL:
+        return False, 'PAF Approvers can be updated only in Waiting for approval state'
+    if user == project.lead:
+        return True, 'Lead can update approvers in approval state'
+    if not project.paf_approvals.exists():
+        return False, 'No user can update approvers without paf approval, except lead(lead can add paf approvals)'
+
+    request = kwargs.get('request')
+    project_settings = ProjectSettings.for_request(request)
+    if project_settings.paf_approval_sequential:
+        next_paf_approval = project.paf_approvals.filter(approved=False).first()
+        if next_paf_approval:
+            if next_paf_approval.user and user in get_users_for_groups(list(next_paf_approval.paf_reviewer_role.user_roles.all()), exact_match=True):
+                return True, 'PAF Reviewer-roles users can update next approval approvers if any approvers assigned'
+        return False, 'Forbidden Error'
+    else:
+        approvers_ids = []
+        for approval in project.paf_approvals.filter(approved=False, user__isnull=False):
+            approvers_ids.extend(assigner.id for assigner in
+                                 get_users_for_groups(list(approval.paf_reviewer_role.user_roles.all()),
+                                                      exact_match=True))
+        if user.id in approvers_ids:
+            return True, 'PAF Reviewer-roles users can update approvers'
+    return False, 'Forbidden Error'
+
+
+def can_update_assigned_paf_approvers(user, project, **kwargs):
+    """
+    Only for Approvers teams members(with PAFReviewerRoles' user_roles' users)
+    UpdateAssignApproversView will be used by only approvers teams members.
+    """
+    if not user.is_authenticated:
+        return False, 'Login Required'
+    if project.status != WAITING_FOR_APPROVAL:
+        return False, 'PAF approvers can be assigned only in Waiting for Approval state'
+    if not project.paf_approvals.exists():
+        return False, 'No user can assign approvers with paf_approvals'
+
+    request = kwargs.get('request')
+    project_settings = ProjectSettings.for_request(request)
+    if project_settings.paf_approval_sequential:
+        next_paf_approval = project.paf_approvals.filter(approved=False).first()
+        if next_paf_approval:
+            if user in get_users_for_groups(list(next_paf_approval.paf_reviewer_role.user_roles.all()),
+                                                exact_match=True):
+                return True, 'PAF Reviewer-roles users can assign approvers'
+            return False, 'Forbidden Error'
+        return False, 'Forbidden Error'
+    else:
+        assigners_ids = []
+        for approval in project.paf_approvals.filter(approved=False):
+            assigners_ids.extend(assigner.id for assigner in
+                                 get_users_for_groups(list(approval.paf_reviewer_role.user_roles.all()),
+                                                      exact_match=True))
+        if user.id in assigners_ids:
+            return True, 'PAF Reviewer-roles users can assign approvers'
+    return False, 'Forbidden Error'
+
+
+def can_assign_paf_approvers(user, project, **kwargs):
+    if not user.is_authenticated:
+        return False, 'Login Required'
+
+    if project.status != WAITING_FOR_APPROVAL:
+        return False, 'PAF approvers can be assigned only in Waiting for Approval state'
+    if not project.paf_approvals.exists():
+        return False, 'No user can assign approvers with paf_approvals'
+
+    request = kwargs.get('request')
+    project_settings = ProjectSettings.for_request(request)
+    if project_settings.paf_approval_sequential:
+        next_paf_approval = project.paf_approvals.filter(approved=False).first()
+        if next_paf_approval:
+            if next_paf_approval.user:
+                return False, 'User already assigned'
+            else:
+                if user in get_users_for_groups(list(next_paf_approval.paf_reviewer_role.user_roles.all()), exact_match=True):
+                    return True, 'PAF Reviewer-roles users can assign approvers'
+            return False, 'Forbidden Error'
+        return False, 'Forbidden Error'
+    else:
+        assigners_ids = []
+        for approval in project.paf_approvals.filter(approved=False, user__isnull=True):
+            assigners_ids.extend(assigner.id for assigner in get_users_for_groups(list(approval.paf_reviewer_role.user_roles.all()), exact_match=True))
+
+        if user.id in assigners_ids:
+            return True, 'PAF Reviewer-roles users can assign approvers'
+    return False, 'Forbidden Error'
+
+
 def can_update_paf_status(user, project, **kwargs):
     if not user.is_authenticated:
         return False, 'Login Required'
@@ -80,7 +176,8 @@ def can_update_paf_status(user, project, **kwargs):
     if request:
         project_settings = ProjectSettings.for_request(request)
         if project_settings.paf_approval_sequential:
-            if user.id == project.paf_approvals.filter(approved=False).first().user.id:
+            approver = project.paf_approvals.filter(approved=False).first().user
+            if approver and user.id == approver.id:
                 return True, 'Next Approver can approve PAF(For Sequential Approvals)'
             return False, 'Only Next can approve PAF(For Sequential Approvals)'
         if user.id in project.paf_approvals.filter(approved=False).values_list('user', flat=True):
@@ -170,9 +267,13 @@ def can_access_project(user, project):
     if user.is_applicant and user == project.user:
         return True, 'Applicant(project user) can view project in all statuses'
 
-    if project.status in [DRAFT, WAITING_FOR_APPROVAL] and project.paf_approvals.exists() and \
-        user.id in project.paf_approvals.all().values_list('user', flat=True):
-        return True, 'PAF Approvers can access the project in Draft and Approval state'
+    if project.status in [DRAFT, WAITING_FOR_APPROVAL, CONTRACTING] and project.paf_approvals.exists():
+        paf_reviewer_roles_users_ids = []
+        for approval in project.paf_approvals.all():
+            paf_reviewer_roles_users_ids.extend([role_user.id for role_user in get_users_for_groups(
+                list(approval.paf_reviewer_role.user_roles.all()), exact_match=True)])
+        if user.id in paf_reviewer_roles_users_ids:
+            return True, 'PAF Approvers can access the project in Draft, Approval state and after approval state'
 
     return False, 'Forbidden Error'
 
@@ -181,6 +282,9 @@ permissions_map = {
     'contract_approve': can_approve_contract,
     'contract_upload': can_upload_contract,
     'paf_status_update': can_update_paf_status,
+    'paf_approvers_update': can_update_paf_approvers,
+    'paf_approvers_assign': can_assign_paf_approvers,
+    'update_paf_assigned_approvers': can_update_assigned_paf_approvers,  # Permission for UpdateAssignApproversView
     'project_status_update': can_update_project_status,
     'project_reports_update': can_update_project_reports,
     'report_update': can_update_report,
