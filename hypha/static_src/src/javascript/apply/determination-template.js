@@ -1,4 +1,4 @@
-(function ($) {
+(function () {
 
     'use strict';
     const field_blocks_ids = JSON.parse(document.getElementById('block-ids').textContent);
@@ -9,7 +9,7 @@
         }
 
         constructor(node) {
-            this.node = node[0];
+            this.node = node;
             this.bindEventListeners();
         }
 
@@ -20,7 +20,7 @@
         }
 
         getMatchingCopy(value) {
-            var proposal_form = document.querySelector('#id_proposal_form');
+            const proposal_form = document.querySelector('#id_proposal_form');
             if (value === '0') {
                 this.text = document.querySelector('div[data-type="rejected"]').textContent;
                 if (proposal_form) {
@@ -51,8 +51,8 @@
         }
     };
 
-    $(DeterminationCopy.selector()).each((index, el) => {
-        new DeterminationCopy($(el));
+    document.querySelectorAll(DeterminationCopy.selector()).forEach(el => {
+        new DeterminationCopy(el)
     });
 
-})(jQuery);
+})();

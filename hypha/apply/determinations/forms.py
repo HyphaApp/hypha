@@ -350,7 +350,7 @@ class ConceptDeterminationForm(BaseConceptDeterminationForm, BaseNormalDetermina
         action = kwargs.get('action')
         stages_num = len(submission.workflow.stages)
 
-        if stages_num > 1 and action == 'invited_to_proposal':
+        if stages_num > 1:
             second_stage_forms = submission.get_from_parent('forms').filter(stage=2)
             if second_stage_forms.count() > 1:
                 proposal_form_choices = [
@@ -358,10 +358,15 @@ class ConceptDeterminationForm(BaseConceptDeterminationForm, BaseNormalDetermina
                     for index, form in enumerate(second_stage_forms)
                 ]
                 proposal_form_choices.insert(0, ('', _('-- No proposal form selected -- ')))
+                proposal_form_help_text = _('Select the proposal form only for determination approval')
+                if action == 'invited_to_proposal':
+                    proposal_form_help_text = _('Select the proposal form to use for proposal stage.')
                 self.fields['proposal_form'] = forms.ChoiceField(
                     label=_('Proposal Form'),
                     choices=proposal_form_choices,
-                    help_text=_('Select the proposal form to use for proposal stage.'),
+                    help_text=proposal_form_help_text,
+                    required=True if action == 'invited_to_proposal' else False,
+                    disabled=False if action == 'invited_to_proposal' else True,
                 )
                 self.fields['proposal_form'].group = 1
                 self.fields.move_to_end('proposal_form', last=False)

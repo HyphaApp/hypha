@@ -342,8 +342,9 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
                 )
                 # Outcome field choices need to be set according to the phase.
                 form_fields[field_block.id].choices = outcome_choices
-                # Set initial outcome based on action.
-                form_fields[field_block.id].initial = TRANSITION_DETERMINATION[action]
+                if action:
+                    # Set initial outcome based on action.
+                    form_fields[field_block.id].initial = TRANSITION_DETERMINATION[action]
         form_fields = self.add_proposal_form_field(form_fields, action)
         return type('WagtailStreamForm', (self.submission_form_class,), form_fields)
 
@@ -365,7 +366,7 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
                     choices=proposal_form_choices,
                     help_text=proposal_form_help_text,
                     required=True if action == 'invited_to_proposal' else False,
-                    disabled=True,
+                    disabled=False if action == 'invited_to_proposal' else True,
                 )
                 fields.move_to_end('proposal_form', last=False)
         return fields
