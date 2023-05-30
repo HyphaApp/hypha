@@ -52,7 +52,7 @@
     };
 
     document.querySelectorAll(DeterminationCopy.selector()).forEach(el => {
-        new DeterminationCopy(el)
+        new DeterminationCopy(el);
     });
 
 })();
