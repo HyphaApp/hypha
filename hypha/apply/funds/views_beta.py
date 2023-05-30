@@ -200,7 +200,7 @@ def submission_all_beta(
     elif search_term:
         qs = qs.order_by('-rank')
     else:
-        qs = qs.order_by("-last_update")
+        qs = qs.order_by("-submit_time")
 
     end = time.time()
 
