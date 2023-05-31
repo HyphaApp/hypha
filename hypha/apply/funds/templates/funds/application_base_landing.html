@@ -23,7 +23,7 @@
 
 		<p>
 		{% if request.user.is_authenticated %}
-			<a href="{% url 'dashboard:dashboard' %}"><button class="button button--primary">{% blocktrans %}Return to my dashboard.{% endblocktrans %}</button></a>
+			<a href="{% url 'dashboard:dashboard' %}"><button class="button button--primary">{% blocktrans %}Go to my dashboard.{% endblocktrans %}</button></a>
 		{% else %}
 			<a href="{% url 'users_public:login' %}"><button class="button button--primary">{% blocktrans %}Log in{% endblocktrans %}</button></a>
 		{% endif %}
