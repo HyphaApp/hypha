@@ -7,7 +7,7 @@ from hypha.apply.users.groups import STAFF_GROUP_NAME
 User = get_user_model()
 
 
-def get_all_reviewers() -> QuerySet:
+def get_all_reviewers(*args, **kwargs) -> QuerySet:
     """All assigned reviewers, staff or admin.
     """
     q_obj = (
