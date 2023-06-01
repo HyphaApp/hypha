@@ -583,14 +583,14 @@ class RoundsAndLabsManager(PageManager):
         return self.get_queryset(RoundsAndLabsProgressQueryset).annotate(
             total_submissions=Coalesce(
                 Subquery(
-                    submissions.values('round').annotate(count=Count('pk')).values('count'),
+                    submissions.exclude_draft().values('round').annotate(count=Count('pk')).values('count'),
                     output_field=IntegerField(),
                 ),
                 0,
             ),
             closed_submissions=Coalesce(
                 Subquery(
-                    closed_submissions.values('round').annotate(count=Count('pk')).values('count'),
+                    closed_submissions.exclude_draft().values('round').annotate(count=Count('pk')).values('count'),
                     output_field=IntegerField(),
                 ),
                 0,
