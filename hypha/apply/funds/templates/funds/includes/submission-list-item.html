@@ -75,7 +75,14 @@
             <p class="text-xs m-0">
                 #{{ s.id }}
                 submitted <relative-time datetime="{{ s.submit_time|date:"c" }}">{{ s.submit_time|date:"SHORT_DATE_FORMAT" }}</relative-time>
-                by {{ s.user }} • {{ s.stage }} •
+                by <a
+                    href="?applicants={{ s.user.id }}"
+                    hx-get="?applicants={{ s.user.id }}"
+                    hx-target="#main"
+                    hx-push-url="true"
+                    hx-swap="outerHTML"
+                    class="text-inherit hover:underline"
+                >{{ s.user }}</a> • {{ s.stage }} •
 
                 <a
                     href="?fund={{ s.page.id }}"

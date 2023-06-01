@@ -75,6 +75,7 @@ def submission_all_beta(
     selected_funds = request.GET.getlist("fund")
     selected_rounds = request.GET.getlist("round")
     selected_leads = request.GET.getlist("lead")
+    selected_applicants = request.GET.getlist("applicants")
     selected_statuses = request.GET.getlist("status")
     selected_screening_statuses = request.GET.getlist("screening_statuses")
     selected_reviewers = request.GET.getlist("reviewers")
@@ -131,6 +132,9 @@ def submission_all_beta(
     if selected_funds:
         qs = qs.filter(page__in=selected_funds)
 
+    if selected_applicants:
+        qs = qs.filter(user__in=selected_applicants)
+
     status_count_raw = {}
     # year_counts_raw = {}
     # month_counts_raw = {}
@@ -166,6 +170,7 @@ def submission_all_beta(
             selected_statuses,
             selected_round_objects,
             selected_leads,
+            selected_applicants,
             selected_reviewers,
             selected_meta_terms,
             selected_category_options,
@@ -219,6 +224,7 @@ def submission_all_beta(
         'selected_rounds': selected_rounds,
         'selected_round_objects': selected_round_objects,
         'selected_leads': selected_leads,
+        'selected_applicants': selected_applicants,
         'selected_reviewers': selected_reviewers,
         'selected_meta_terms': selected_meta_terms,
         'selected_category_options': selected_category_options,
