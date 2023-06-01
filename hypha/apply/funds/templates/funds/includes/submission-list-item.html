@@ -6,11 +6,11 @@
     {% comment %} Select {% endcomment %}
     <label class="hidden pl-1 py-2.5 sm:inline-flex">
         <input id="submission-{{ s.id }}"
-            type="checkbox"
-            value="{{ s.id }}"
-            x-model="selectedSubmissions"
-            name="selectedSubmissionIds"
-            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+               type="checkbox"
+               value="{{ s.id }}"
+               x-model="selectedSubmissions"
+               name="selectedSubmissionIds"
+               class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
         >
         <span class="sr-only">Select submission #{{ s.id }}</span>
     </label>
@@ -57,16 +57,16 @@
                 {{ s.phase.display_name }}
             </a>
             {% for meta_term in s.get_assigned_meta_terms %}
-            <a
-                href="{% modify_query "page" meta_terms=meta_term.id %}"
-                hx-get="{% modify_query "page" meta_terms=meta_term.id %}"
-                hx-target="#main"
-                hx-push-url="true"
-                hx-swap="outerHTML"
-                data-tippy-content="Meta Term: {{meta_term.name}}"
-                data-tippy-placement="top"
-                class="hover:opacity-70 transition-opacity rounded-full whitespace-nowrap inline-block ml-1 px-2 pt-0.5 pb-1 text-xs font-medium text-white bg-blue-600"
-            >{{meta_term.name}}</a>
+                <a
+                    href="{% modify_query "page" meta_terms=meta_term.id %}"
+                    hx-get="{% modify_query "page" meta_terms=meta_term.id %}"
+                    hx-target="#main"
+                    hx-push-url="true"
+                    hx-swap="outerHTML"
+                    data-tippy-content="Meta Term: {{meta_term.name}}"
+                    data-tippy-placement="top"
+                    class="hover:opacity-70 transition-opacity rounded-full whitespace-nowrap inline-block ml-1 px-2 pt-0.5 pb-1 text-xs font-medium text-white bg-blue-600"
+                >{{meta_term.name}}</a>
             {% endfor %}
         </span>
 
@@ -77,12 +77,26 @@
                 submitted <relative-time datetime="{{ s.submit_time|date:"c" }}">{{ s.submit_time|date:"SHORT_DATE_FORMAT" }}</relative-time>
                 by {{ s.user }} • {{ s.stage }} •
 
-                {% heroicon_outline "briefcase" aria_hidden="true" size=15 class="stroke-1.5 inline align-text-bottom" %}
-                {{ s.page }}
+                <a
+                    href="?fund={{ s.page.id }}"
+                    hx-get="?fund={{ s.page.id }}"
+                    hx-target="#main"
+                    hx-push-url="true"
+                    hx-swap="outerHTML"
+                    class="text-inherit hover:underline"
+                >{% heroicon_outline "briefcase" aria_hidden="true" size=15 class="stroke-1.5 inline align-text-bottom" %}
+                    {{ s.page }}</a>
 
                 {% if s.round %}
                     {% heroicon_mini "arrow-small-right" aria_hidden="true" size=15 class="stroke-1.5 inline align-text-bottom" %}
-                    {{ s.round }}
+                    <a
+                        href="?round={{ s.round.id }}"
+                        hx-get="?round={{ s.round.id }}"
+                        hx-target="#main"
+                        hx-push-url="true"
+                        hx-swap="outerHTML"
+                        class="text-inherit hover:underline"
+                    >{{ s.round }}</a>
                 {% endif %}
             </p>
         </div>
