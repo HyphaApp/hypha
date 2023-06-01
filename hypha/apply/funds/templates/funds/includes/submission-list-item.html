@@ -42,9 +42,7 @@
                 title="{{ s.form_data.title }}"
                 href="{% url "funds:submissions:detail" s.id %}?ref=all-beta"
                 class="font-semibold text-base text-[#404041] hover:text-blue-600 transition-colors break-words"
-            >
-                {{ s.form_data.title }}
-            </a>
+            >{{ s.form_data.title }}</a>
 
             <a
                 hx-get="{% modify_query "page" status=s.phase.display_slug %}"
@@ -53,9 +51,8 @@
                 hx-swap="outerHTML"
                 href="{% modify_query "page" status=s.phase.display_slug %}"
                 class="{{ s.phase.bg_color }} hover:opacity-70 transition-opacity rounded-full whitespace-nowrap inline-block ml-1 px-2 pt-0.5 pb-1 text-xs font-medium text-gray-800"
-            >
-                {{ s.phase.display_name }}
-            </a>
+            >{{ s.phase.display_name }}</a>
+
             {% for meta_term in s.get_assigned_meta_terms %}
                 <a
                     href="{% modify_query "page" meta_terms=meta_term.id %}"
@@ -118,8 +115,15 @@
                 data-tippy-placement="left"
                 class="block truncate"
             >
-                {% heroicon_outline "user-circle" aria_hidden="true" size=16 class="stroke-1.5 inline-block" %}
-                {{ s.lead }}
+                {% heroicon_outline "user-circle" aria_hidden="true" size=16 class="stroke-1.5 inline-block mr-1" %}
+                <a
+                    href="?lead={{ s.lead.id }}"
+                    hx-get="?lead={{ s.lead.id }}"
+                    hx-target="#main"
+                    hx-push-url="true"
+                    hx-swap="outerHTML"
+                    class="text-inherit hover:underline"
+                >{{ s.lead }}</a>
             </div>
         </span>
 
@@ -163,4 +167,3 @@
         </span>
     </div>
 </div>
-
