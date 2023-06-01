@@ -12,9 +12,16 @@
     }
 </ul>
 {% endif %}
-
 <div class="admin-bar">
     <div class="admin-bar__inner">
+        {% if request.GET.ref == 'all-beta' %}
+        <a class="simplified__submissions-link"
+            hx-boost="true"
+            href="{% url "funds:submissions:list-beta" %}"
+        >
+            {% trans "Back to submissions" %}
+        </a>
+        {% endif %}
         <h1 class="beta heading heading--no-margin heading--bold">{{ object.title }}</h1>
         <h5 class="heading heading--meta">
             <span>{{ object.stage }}</span>
