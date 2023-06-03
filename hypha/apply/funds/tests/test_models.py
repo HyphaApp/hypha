@@ -189,6 +189,7 @@ class TestRoundModelWorkflowAndForms(TestCase):
 
 
 @override_settings(ROOT_URLCONF='hypha.apply.urls')
+@override_settings(FORCE_LOGIN_FOR_APPLICATION=False)
 class TestFormSubmission(TestCase):
     def setUp(self):
         self.User = get_user_model()
