@@ -6,16 +6,13 @@ from operator import methodcaller
 import bleach
 from django import forms
 from django.conf import settings
-from django.http import HttpRequest
 from django.utils.safestring import mark_safe
-from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from wagtail.signal_handlers import disable_reference_index_auto_update
 
 from hypha.apply.categories.models import MetaTerm
 from hypha.apply.users.models import User
 
-from . import services
 from .models import (
     ApplicationSubmission,
     AssignedReviewers,
