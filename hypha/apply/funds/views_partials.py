@@ -24,6 +24,7 @@ from hypha.apply.users.groups import REVIEWER_GROUP_NAME
 
 from . import services
 from .models import ApplicationSubmission, Round
+from .permissions import can_change_external_reviewers
 
 User = get_user_model()
 
@@ -329,7 +330,6 @@ def sub_menu_bulk_update_lead(request: HttpRequest) -> HttpResponse:
 @login_required
 @require_http_methods(['GET', 'POST'])
 def sub_menu_bulk_update_reviewers(request: HttpRequest) -> HttpResponse:
-
     if request.method == 'POST':
         submission_ids = request.POST.getlist('selectedSubmissionIds')
         submissions = ApplicationSubmission.objects.filter(id__in=submission_ids)
@@ -354,9 +354,20 @@ def sub_menu_bulk_update_reviewers(request: HttpRequest) -> HttpResponse:
         )
         return HttpResponseClientRefresh()
 
+    submission_ids = request.GET.getlist('selectedSubmissionIds')
     form = BatchUpdateReviewersForm(user=request.user)
+
+    show_external_reviewers = False
+    if submission_ids:
+        submissions = ApplicationSubmission.objects.filter(id__in=submission_ids)
+        show_external_reviewers = all(
+            can_change_external_reviewers(user=request.user, submission=s)
+            for s in submissions
+        )
+
     ctx = {
         'form': form,
+        'show_external_reviewers': show_external_reviewers,
     }
 
     return render(request, "submissions/submenu/bulk-update-reviewers.html", ctx)

@@ -5,7 +5,6 @@ from operator import methodcaller
 
 import bleach
 from django import forms
-from django.conf import settings
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from wagtail.signal_handlers import disable_reference_index_auto_update
@@ -20,6 +19,7 @@ from .models import (
     ReviewerRole,
     ScreeningStatus,
 )
+from .permissions import can_change_external_reviewers
 from .utils import model_form_initial, render_icon
 from .widgets import MetaTermSelect2Widget, Select2MultiCheckboxesWidget
 from .workflow import get_action_mapping
@@ -263,8 +263,7 @@ class UpdateReviewersForm(ApplicationSubmissionModelForm):
             id__in=self.instance.assigned.reviewed().values('reviewer'),
         )
 
-        if self.can_alter_external_reviewers(self.instance, self.user):
-
+        if can_change_external_reviewers(user=self.user, submission=self.instance):
             reviewers = self.instance.reviewers.all().only('pk')
             self.prepare_field(
                 'reviewer_reviewers',
@@ -281,16 +280,6 @@ class UpdateReviewersForm(ApplicationSubmissionModelForm):
         field = self.fields[field_name]
         field.queryset = field.queryset.exclude(id__in=excluded)
         field.initial = initial
-
-    def can_alter_external_reviewers(self, instance, user):
-        if instance.stage.has_external_review:
-            if user.is_superuser:
-                return True
-            if settings.GIVE_STAFF_LEAD_PERMS:
-                return user.is_apply_staff
-            else:
-                return user == instance.lead
-        return False
 
     def clean(self):
         cleaned_data = super().clean()
@@ -335,7 +324,7 @@ class UpdateReviewersForm(ApplicationSubmissionModelForm):
 
             # 2. Update non-role reviewers
             # 2a. Remove those not on form
-            if self.can_alter_external_reviewers(self.instance, self.user):
+            if can_change_external_reviewers(submission=self.instance, user=self.user):
                 reviewers = self.cleaned_data.get('reviewer_reviewers')
                 assigned_reviewers = instance.assigned.without_roles()
                 assigned_reviewers.never_tried_to_review().exclude(
@@ -389,11 +378,9 @@ class BatchUpdateReviewersForm(forms.Form):
         submissions = self.cleaned_data['submissions']
         if external_reviewers:
             # User needs to be superuser or lead of all selected submissions.
-            if not self.user_can_alter_submissions_external_reviewers(submissions, self.user):
-                self.add_error('external_reviewers', _("Only Lead can change the External Reviewers"))
-            # If user is trying to change the external reviewers for submissions that doesn't have workflow with external_review stage.
-            elif self.submissions_cant_have_external_reviewers(submissions):
-                self.add_error('external_reviewers', _('External Reviewers cannot be selected because of the application workflow'))
+
+            if not all(can_change_external_reviewers(submission=s, user=self.user) for s in submissions):
+                self.add_error('external_reviewers', _("Make sure all submissions support external reviewers and you are lead for all the selected submissions."))
 
         role_reviewers = [
             user
@@ -411,16 +398,6 @@ class BatchUpdateReviewersForm(forms.Form):
         for submission in submissions:
             if not submission.stage.has_external_review:
                 return True
-        return False
-
-    def user_can_alter_submissions_external_reviewers(self, submissions, user):
-        # User needs to be superuser or lead of all selected submissions.
-        if user.is_superuser:
-            return True
-        if settings.GIVE_STAFF_LEAD_PERMS and user.is_apply_staff:
-            return True
-        if submissions.count() == submissions.filter(lead=user).count():
-            return True
         return False
 
 

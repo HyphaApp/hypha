@@ -43,6 +43,30 @@ def can_bulk_archive_submissions(user) -> bool:
     return False
 
 
+def can_change_external_reviewers(user, submission) -> bool:
+    """
+    External reviewers of a submission can be changed by lead and staff.
+
+    Staff can only change external reviewers if the `GIVE_STAFF_LEAD_PERMS`
+    setting is enabled. Superusers can always change external reviewers.
+    """
+    # check if all submissions have external review enabled
+    if not submission.stage.has_external_review:
+        return False
+
+    if user.is_superuser:
+        return True
+
+    if settings.GIVE_STAFF_LEAD_PERMS and user.is_apply_staff:
+        return True
+
+    # only leads can change external reviewers
+    if submission.lead.id == user.id:
+        return True
+
+    return False
+
+
 def can_access_drafts(user):
     if user.is_apply_staff and settings.SUBMISSIONS_DRAFT_ACCESS_STAFF:
         return True
