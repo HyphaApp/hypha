@@ -21,7 +21,7 @@
     {% endadminbar %}
 
 
-    <form method='GET' action="./" class="mt-3 flex gap-2 md:gap-4 justify-between items-center">
+    <form method="GET" action="./" class="mt-3 flex gap-2 md:gap-4 justify-between items-center">
         {% for key, value in request.GET.items %}
             {% if key != 'archived' %}<input type="hidden" class="js-filter-options" value="{{ value}}" name="{{ key }}">{% endif %}
         {% endfor %}
