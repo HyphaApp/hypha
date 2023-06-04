@@ -1,8 +1,76 @@
 import datetime as dt
 import re
 
+from lark import Lark, Transformer
 
-def tokenize_date_filter_value(date_str: str)-> list:
+
+# Custom transformer to convert parse tree to a dictionary
+class QueryTransformer(Transformer):
+    def expression(self, items):
+        filters = {}
+        text = []
+        for item in items:
+            if isinstance(item, dict):
+                for key, value in item.items():
+                    if key in filters:
+                        filters[key].append(value)
+                    else:
+                        filters[key] = [value]
+            else:
+                text.append(item)
+        return {"filters": filters, "text": " ".join(str(t) for t in text)}
+
+    def filter_expression(self, items):
+        if len(items) == 3:
+            key = items[0]
+            value = items[2]
+            return {key: value}
+        else:
+            return {"id": items[1]}
+
+    def search_term(self, items):
+        return items[0]
+
+    def string(self, s):
+        (s,) = s
+        return s.value
+
+    def NUMBER(self, s):
+        return int(s.value)
+
+    def ESCAPED_STRING(self, s):
+        return s.value[1:-1]
+
+
+# Define the grammar
+parser = Lark(
+    r'''
+    ?start: expression
+
+    expression: (filter_expression | search_term)*
+    filter_expression: string FILTER_COLON string
+                    | string FILTER_COLON ESCAPED_STRING
+                    | FILTER_HASH NUMBER
+    search_term: string
+    filer_value: string
+            | ESCAPED_STRING
+
+    string: /[^:#\s]+/
+
+    FILTER_COLON: ":"
+    FILTER_HASH: "#"
+
+    %import common.NUMBER
+    %import common.ESCAPED_STRING
+    %ignore /\s+/
+''',
+    start='start',
+    parser='lalr',
+    transformer=QueryTransformer()
+)
+
+
+def tokenize_date_filter_value(date_str: str) -> list:
     """Convert a date filter string into a list of tokens.
 
     Format: [operator][year][-[month]-[day]]
@@ -58,28 +126,4 @@ def parse_search_query(search_query: str) -> dict:
         "text": "hello world"
     }
     """
-    filter_pattern = r'(\w+):("[^"]+"|\S+)'
-    id_pattern = r'#(\d+)'
-    filters = {}
-    remaining_text = search_query
-    for match in re.finditer(filter_pattern, search_query):
-        filter_name, filter_value = match.groups()
-        # Remove quotes if present
-        if filter_value.startswith('"') and filter_value.endswith('"'):
-            filter_value = filter_value[1:-1]
-        # Append to existing list if filter already exists
-        if filter_name.lower() in filters:
-            filters[filter_name.lower()].append(filter_value)
-        else:
-            filters[filter_name.lower()] = [filter_value]
-        # Remove filter from remaining text
-        remaining_text = remaining_text.replace(match.group(0), '').strip()
-
-    # Add id filter if present
-    for match in re.finditer(id_pattern, remaining_text):
-        if "id" in filters:
-            filters["id"].append(match.group(1))
-        else:
-            filters['id'] = [match.group(1)]
-        remaining_text = remaining_text.replace(match.group(0), '').strip()
-    return {"filters": filters, "text": remaining_text}
+    return parser.parse(search_query)

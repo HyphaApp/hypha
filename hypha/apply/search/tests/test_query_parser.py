@@ -7,6 +7,9 @@ from ..query_parser import parse_search_query, tokenize_date_filter_value
 
 @pytest.mark.parametrize("query, expected", [
     ('', {"filters": {}, "text": ""}),
+    ('#12 #13', {"filters": {"id": [12, 13]}, "text": ""}),
+    ('text before #12', {"filters": {"id": [12]}, "text": "text before"}),
+    ('#12 text after', {"filters": {"id": [12]}, "text": "text after"}),
     ('hello', {"filters": {}, "text": "hello"}),
     ('submitted:2023-12-02 hello', {"filters": {'submitted': ['2023-12-02']}, "text": "hello"}),
     ('submitted:>2023-12-02 submitted:<2023-12-01 hello', {"filters": {'submitted': ['>2023-12-02', '<2023-12-01']}, "text": "hello"}),

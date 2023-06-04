@@ -115,6 +115,8 @@ def submission_all_beta(
             qs = apply_date_filter(qs=qs, field='last_update', values=values)
         case {'flagged': ['@me']}:
             qs = qs.flagged_by(request.user)
+        case {'id': values}:
+            qs = qs.filter(id__in=values)
         case {'is': values}:
             if 'archived' in values:
                 qs = qs.filter(is_archive=True)
