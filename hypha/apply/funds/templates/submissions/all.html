@@ -401,7 +401,7 @@
                     {% slot "url" %}{% url "apply:submissions:submenu-bulk-update-lead" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
                 {% enddropdown_menu %}
 
-                {% dropdown_menu title="Reviewers" heading="Assign Reviewer(s)" %}
+                {% dropdown_menu title="Reviewers" heading="Assign Reviewer(s)" position="right" %}
                     {% slot "url" hx-include="[name='selectedSubmissionIds']" hx-trigger="click" %}{% url "apply:submissions:submenu-bulk-update-reviewers" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
                 {% enddropdown_menu %}
 
