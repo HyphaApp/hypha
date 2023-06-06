@@ -328,7 +328,7 @@ class EmailAdapter(AdapterBase):
             if user.is_apply_staff:
                 return get_compliance_email(target_user_gps=[FINANCE_GROUP_NAME])
             if settings.INVOICE_EXTENDED_WORKFLOW and user.is_finance_level_1:
-                finance_2_users_email = User.objects.filter(is_active=True, groups__name=FINANCE_GROUP_NAME).\
+                finance_2_users_email = User.objects.active().filter(groups__name=FINANCE_GROUP_NAME).\
                     filter(groups__name=APPROVER_GROUP_NAME).values_list('email', flat=True)
                 return finance_2_users_email
             return []
