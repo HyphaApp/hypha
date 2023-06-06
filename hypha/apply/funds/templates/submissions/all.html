@@ -28,25 +28,37 @@
 
         {% dropdown_menu title="Filters" heading="Filter submissions" %}
             <a
-                href="{% url "apply:submissions:list-beta" %}{% modify_query "only_query_string" "page" query="flagged:@me" %}"
-                hx-get="{% url "apply:submissions:list-beta" %}{% modify_query "only_query_string" "page" query="flagged:@me" %}"
+                href="{% url "apply:submissions:list-beta" %}?query=lead:@me"
+                hx-get="{% url "apply:submissions:list-beta" %}?query=lead:@me"
                 hx-push-url="true"
                 hx-target="#main"
                 hx-swap="outerHTML"
-                class="flex {% if f.selected %}pl-2 font-medium{% else %}pl-8{% endif %} pr-3 py-2 text-gray-600 border-b items-center hover:bg-gray-100 focus:bg-gray-100{% if f.selected %}bg-gray-100{% endif %}">
-                {% if f.selected %}
+                class="flex {% if request.GET.query == "lead:@me" %}pl-2 font-medium bg-gray-100{% else %}pl-8 font-normal{% endif %} pr-3 py-2 text-gray-800 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
+                {% if request.GET.query == "lead:@me" %}
+                    {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 mr-1" %}
+                {% endif %}
+                {% trans "Your assigned submissions" %} {{ request.GET.lead }}
+            </a>
+            <a
+                href="{% url "apply:submissions:list-beta" %}?query=flagged:@me"
+                hx-get="{% url "apply:submissions:list-beta" %}?query=flagged:@me"
+                hx-push-url="true"
+                hx-target="#main"
+                hx-swap="outerHTML"
+                class="flex {% if request.GET.query == "flagged:@me" %}pl-2 font-medium bg-gray-100{% else %}pl-8 font-normal{% endif %} pr-3 py-2 text-gray-800 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
+                {% if request.GET.query == "flagged:@me" %}
                     {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 mr-1" %}
                 {% endif %}
                 {% trans "Your flagged submissions" %}
             </a>
             <a
-                href="{% url "apply:submissions:list-beta" %}{% modify_query "only_query_string" "page" "query" reviewers=request.user.id %}"
-                hx-get="{% url "apply:submissions:list-beta" %}{% modify_query "only_query_string" "page" "query" reviewers=request.user.id %}"
+                href="{% url "apply:submissions:list-beta" %}?query=reviewer:@me"
+                href="{% url "apply:submissions:list-beta" %}?query=reviewer:@me"
                 hx-push-url="true"
                 hx-target="#main"
                 hx-swap="outerHTML"
-                class="flex {% if f.selected %}pl-2 font-medium{% else %}pl-8{% endif %} pr-3 py-2 text-gray-600 border-b items-center hover:bg-gray-100 focus:bg-gray-100{% if f.selected %}bg-gray-100{% endif %}">
-                {% if f.selected %}
+                class="flex {% if request.GET.query == "reviewer:@me" %}pl-2 font-medium bg-gray-100{% else %}pl-8 font-normal{% endif %} pr-3 py-2 text-gray-800 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
+                {% if request.GET.query == "reviewer:@me" %}
                     {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 mr-1" %}
                 {% endif %}
                 {% trans "Awaiting your review" %}

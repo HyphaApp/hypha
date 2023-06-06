@@ -108,18 +108,30 @@ def submission_all_beta(
     if not permissions.can_access_drafts(request.user):
         qs = qs.exclude_draft()
 
-    match search_filters:
-        case {'submitted': values}:
-            qs = apply_date_filter(qs=qs, field='submit_time', values=values)
-        case {'updated': values}:
-            qs = apply_date_filter(qs=qs, field='last_update', values=values)
-        case {'flagged': ['@me']}:
+    if "submitted" in search_filters:
+        qs = apply_date_filter(qs=qs, field='submit_time', values=search_filters['submitted'])
+
+    if "updated" in search_filters:
+        qs = apply_date_filter(qs=qs, field='last_update', values=search_filters['updated'])
+
+    if "flagged" in search_filters:
+        if "@me" in search_filters['flagged']:
             qs = qs.flagged_by(request.user)
-        case {'id': values}:
-            qs = qs.filter(id__in=values)
-        case {'is': values}:
-            if 'archived' in values:
-                qs = qs.filter(is_archive=True)
+
+    if "lead" in search_filters:
+        if "@me" in search_filters['lead']:
+            qs = qs.filter(lead=request.user)
+
+    if "reviewer" in search_filters:
+        if "@me" in search_filters['reviewer']:
+            qs = qs.filter(reviewers=request.user)
+
+    if "id" in search_filters:
+        qs = qs.filter(id__in=search_filters['id'])
+
+    if "is" in search_filters:
+        if "archived" in search_filters['is']:
+            qs = qs.filter(is_archive=True)
 
     if search_term:
         query = SearchQuery(search_term, search_type='websearch')
