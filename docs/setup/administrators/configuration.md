@@ -143,9 +143,9 @@ Possible values are: fund, round, status, lead, reviewers, screening_statuses, c
 
 ### Score diplayed on reviews page.
 
-If True sum of scores will be displayed otherwise average of scores will be displayed
+If 'sum' sum of score will be displayed, if 'avg' average of score will be displayed, empty string is for use-cases where no final summary is desired by any setup.
 
-    DISPLAY_TOTAL_REVIEW_SCORE = env.bool('DISPLAY_TOTAL_REVIEW_SCORE', default = False)
+    REVIEWS_FINAL_SCORE_METHOD: Literal['sum', 'avg', ''] = env.str('REVIEWS_FINAL_SCORE_METHOD', default='avg')
 
 ### Should submission automatically transition after all reviewer roles are assigned.
 

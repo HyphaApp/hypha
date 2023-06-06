@@ -3,6 +3,7 @@ Hypha project base settings.
 """
 
 import os
+from typing import Literal
 
 import dj_database_url
 from environs import Env
@@ -18,6 +19,7 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 
 
 # Hypha custom settings
+REVIEWS_FINAL_SCORE_METHOD: Literal['sum', 'avg', ''] = env.str('REVIEWS_FINAL_SCORE_METHOD', default='avg')
 
 # Set the currency symbol to be used.
 CURRENCY_SYMBOL = env.str('CURRENCY_SYMBOL', '$')
@@ -479,4 +481,3 @@ if SENTRY_DSN:
         integrations=[DjangoIntegration()]
     )
 
-DISPLAY_TOTAL_REVIEW_SCORE = env.bool('DISPLAY_TOTAL_REVIEW_SCORE', default = False)

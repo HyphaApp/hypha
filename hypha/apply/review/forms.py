@@ -99,13 +99,15 @@ class ReviewModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass)
                 score = 0
             scores.append(int(score))
 
-        if settings.DISPLAY_TOTAL_REVIEW_SCORE:
+        if settings.REVIEWS_FINAL_SCORE_METHOD == 'sum':
             return sum(scores)
-        else:
+        elif settings.REVIEWS_FINAL_SCORE_METHOD == 'avg':
             try:
                 return sum(scores) / len(scores)
             except ZeroDivisionError:
                 return NA
+        else:
+            return NA
 
 
 class SubmitButtonWidget(forms.Widget):
