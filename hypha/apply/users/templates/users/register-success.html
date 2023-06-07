@@ -1,0 +1,25 @@
+{% extends "base-apply.html" %}
+{% load i18n %}
+
+{% block header_modifier %}header--light-bg{% endblock %}
+{% block title %}{% trans "Register - Step 2" %}{% endblock %}
+
+{% block content %}
+
+    {% adminbar %}
+        {% slot header %}{% trans "Register - Step 2" %}{% endslot %}
+    {% endadminbar %}
+
+    <div class="wrapper mt-6 max-w-2xl">
+
+        <h2 class="text-xl">
+            {% if request.GET.name %}Hi {{ request.GET.name }}, {% endif %}{% trans "your account has been created!" %}</h2>
+        <p>
+            {% if request.GET.email %}
+                {% blocktrans with email=request.GET.email %}"Please check your inbox for email ({{ email }}) to activate and login to your account."{% endblocktrans %}
+            {% else %}
+                {% blocktrans %}Please check your email to activate and login to your account.{% endblocktrans %}
+            {% endif %}
+        </p>
+    </div>
+{% endblock %}

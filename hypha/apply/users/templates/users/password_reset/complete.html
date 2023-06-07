@@ -1,13 +1,16 @@
-{% extends "base.html" %}
+{% extends "base-apply.html" %}
 {% load i18n %}
-
 {% block title %}{% trans "Reset password" %}{% endblock %}
-{% block page_title %}{% trans "Password change successful" %}{% endblock %}
 
 {% block content %}
-<div class="wrapper wrapper--small wrapper--bottom-space">
-    <p>
-        <a href="{% url 'users_public:login' %}">{% trans "Log in" %}</a>
-    </p>
-</div>
+
+    {% adminbar %}
+        {% slot header %}{% trans "Password change successful" %}{% endslot %}
+    {% endadminbar %}
+
+    <div class="wrapper mt-6 max-w-2xl">
+        <p>
+            <a href="{% url 'users_public:login' %}">{% trans "Log in" %}</a>
+        </p>
+    </div>
 {% endblock %}

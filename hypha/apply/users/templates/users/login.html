@@ -1,12 +1,15 @@
-{% extends 'base.html' %}
+{% extends "base-apply.html" %}
 {% load i18n wagtailcore_tags %}
 
-{% block header_modifier %}header--light-bg{% endblock %}
-{% block page_title %}{% trans "Login" %}{% endblock %}
 {% block title %}{% trans "Login" %}{% endblock %}
 
 {% block content %}
-  <div class="wrapper wrapper--small">
+
+    {% adminbar %}
+        {% slot header %}{% trans "Login" %}{% endslot %}
+    {% endadminbar %}
+
+  <div class="wrapper mt-6 max-w-2xl">
     {% if wizard.steps.current == 'token' %}
         {% if device.method == 'call' %}
             <p>{% blocktrans trimmed %}We are calling your phone right now, please enter the
