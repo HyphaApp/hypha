@@ -420,7 +420,7 @@ class TWOFAAdminDisableView(FormView):
         return redirect(self.get_success_url())
 
     def get_success_url(self):
-        return reverse('wagtailusers_users:edit', kwargs={'user_id': self.user.id})
+        return reverse('wagtailusers_users:edit',  args=[self.user.id])
 
     def get_context_data(self, **kwargs):
         ctx = super(TWOFAAdminDisableView, self).get_context_data(**kwargs)

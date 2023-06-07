@@ -74,7 +74,7 @@
                             {% if is_2fa_enabled %}
                                 <a href="{% url 'users:admin_disable' user.pk %}" class="button">{% trans "Disable 2FA" %}</a>
                             {% else %}
-                                <button type="button" title="{% trans "This account do not have 2FA enabled." %}" class="button" disabled>{% trans "Disable 2FA" %}</button>
+                                <button type="button" title="{% trans "This account do not have 2FA enabled." %}" class="button" disabled>{% trans "2FA already disabled" %}</button>
                             {% endif %}
                         </li>
                     </ul>
