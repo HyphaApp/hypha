@@ -113,7 +113,7 @@
                         </button>
                     </div>
 
-                    <section class="header__menus header__menus--desktop">
+                    {% comment %} <section class="header__menus header__menus--desktop">
                         {% cache 3600 navigation__primary current_site %}
                             {% primarynav %}
                         {% endcache %}
@@ -122,7 +122,7 @@
                             <svg class="header__icon header__icon--open-search icon"><use xlink:href="#magnifying-glass"></use></svg>
                             <svg class="header__icon header__icon--close-search icon"><use xlink:href="#cross"></use></svg>
                         </button>
-                    </section>
+                    </section> {% endcomment %}
 
                     <section class="header__menus header__menus--mobile">
                         <div class="header__inner header__inner--menu-open">

@@ -10,7 +10,8 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import PermissionDenied
 from django.core.signing import BadSignature, Signer, TimestampSigner, dumps, loads
-from django.shortcuts import Http404, get_object_or_404, redirect, render
+from django.http import HttpResponseRedirect
+from django.shortcuts import Http404, get_object_or_404, redirect, render, resolve_url
 from django.template.response import TemplateResponse
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
@@ -81,10 +82,17 @@ class RegisterView(View):
             site=Site.find_for_request(self.request)
             user,created = User.objects.get_or_create_and_notify(defaults={},site=site,**context)
             if created:
-                messages.success(request,'Please check your email to activate the account.')
+                params = {"name": user.full_name, "email": user.email}
+                # redirect to success page with params as query params
+                return HttpResponseRedirect(resolve_url('users_public:register-success') + '?' + urlencode(params))
         else:
             return render(request,'users/register.html',{'form':form})
         return render(request,'users/register.html',{'form':self.form})
+
+
+class RegistrationSuccessView(TemplateView):
+    template_name = 'users/register-success.html'
+
 
 @method_decorator(ratelimit(key='ip', rate=settings.DEFAULT_RATE_LIMIT, method='POST'), name='dispatch')
 @method_decorator(ratelimit(key='post:email', rate=settings.DEFAULT_RATE_LIMIT, method='POST'), name='dispatch')

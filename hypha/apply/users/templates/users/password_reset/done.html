@@ -1,11 +1,27 @@
-{% extends "base.html" %}
+{% extends "base-apply.html" %}
 {% load i18n %}
-{% block header_modifier %}header--light-bg{% endblock %}
-{% block page_title %}{% trans "Check your email" %}{% endblock %}
-{% block title %}{% trans "Reset password" %}{% endblock %}
+
+{% block title %}{% trans "Password Reset" %}{% endblock %}
 
 {% block content %}
-<div class="wrapper wrapper--small wrapper--bottom-space">
-    <p>{% trans "A link to reset your password has been emailed to you." %}</p>
-</div>
+
+    {% adminbar %}
+        {% slot header %}{% trans "Password Reset" %}{% endslot %}
+    {% endadminbar %}
+
+    <div class="wrapper mt-12 max-w-xl">
+
+        <h2 class="text-xl">
+            {% trans "Check your inbox for a password reset email!" %}
+        </h2>
+        <p>
+            {% blocktrans %}We have sent an email to you with a password recovery link, open the link in the email to change your password.{% endblocktrans %}
+        </p>
+        <p>
+            {% blocktrans %}Check your "Spam" folder, if you don't find the email in your inbox.{% endblocktrans %}
+
+        </p>
+
+
+    </div>
 {% endblock %}
