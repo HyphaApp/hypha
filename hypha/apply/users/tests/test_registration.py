@@ -31,7 +31,9 @@ class TestRegistration(TestCase):
             secure=True)
         assert len(mail.outbox) == 1
         assert 'Activate your account on the' in mail.outbox[0].body
-        self.assertContains(response, 'Please check your email to activate the account.')
+
+        assert response.status_code == 302
+        assert reverse('users_public:register-success') in response.url
 
     @override_settings(ENABLE_REGISTRATION_WITHOUT_APPLICATION=True)
     def test_duplicate_registration_fails(self):
