@@ -1,4 +1,4 @@
-(function ($) {
+(function () {
 
     'use strict';
     const field_blocks_ids = JSON.parse(document.getElementById('block-ids').textContent);
@@ -9,7 +9,7 @@
         }
 
         constructor(node) {
-            this.node = node[0];
+            this.node = node;
             this.bindEventListeners();
         }
 
@@ -20,14 +20,27 @@
         }
 
         getMatchingCopy(value) {
+            const proposal_form = document.querySelector('#id_proposal_form');
             if (value === '0') {
                 this.text = document.querySelector('div[data-type="rejected"]').textContent;
+                if (proposal_form) {
+                    proposal_form.disabled = true;
+                    proposal_form.required = false;
+                }
             }
             else if (value === '1') {
                 this.text = document.querySelector('div[data-type="more_info"]').textContent;
+                if (proposal_form) {
+                    proposal_form.disabled = true;
+                    proposal_form.required = false;
+                }
             }
             else {
                 this.text = document.querySelector('div[data-type="accepted"]').textContent;
+                if (proposal_form) {
+                    proposal_form.disabled = false;
+                    proposal_form.required = true;
+                }
             }
             this.updateTextArea(this.text);
         }
@@ -38,8 +51,8 @@
         }
     };
 
-    $(DeterminationCopy.selector()).each((index, el) => {
-        new DeterminationCopy($(el));
+    document.querySelectorAll(DeterminationCopy.selector()).forEach(el => {
+        new DeterminationCopy(el);
     });
 
-})(jQuery);
+})();
