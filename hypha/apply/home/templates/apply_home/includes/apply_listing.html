@@ -11,15 +11,15 @@
                       <span>{% trans "Next deadline" %}: {{ page.next_deadline|date:"M j, Y" }}</span>
                   </p>
               {% endif %}
-              {% if details %}
+              {% comment %} {% if details %}
                   <a href="{% pageurl details %}">
-              {% endif %}
+              {% endif %} {% endcomment %}
 
               {{ page.title }}
 
-              {% if details %}
+              {% comment %} {% if details %}
                   </a>
-              {% endif %}
+              {% endif %} {% endcomment %}
           </h4>
 
           {% if details.listing_summary or details.introduction %}
