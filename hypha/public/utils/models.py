@@ -11,7 +11,11 @@ from wagtail.admin.panels import (
     MultiFieldPanel,
     PageChooserPanel,
 )
-from wagtail.contrib.settings.models import BaseSiteSetting
+from wagtail.contrib.settings.models import (
+    BaseGenericSetting,
+    BaseSiteSetting,
+    register_setting,
+)
 from wagtail.fields import RichTextField, StreamField
 from wagtail.models import Orderable, Page
 from wagtail.snippets.models import register_snippet
@@ -223,8 +227,8 @@ class SocialMediaSettings(BaseSiteSetting):
     )
 
 
-@register_public_site_setting
-class SystemMessagesSettings(BaseSiteSetting):
+@register_setting
+class SystemMessagesSettings(BaseGenericSetting):
 
     wagtail_reference_index_ignore = True
 

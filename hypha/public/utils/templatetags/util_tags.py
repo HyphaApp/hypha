@@ -1,9 +1,7 @@
 from django import template
 from wagtail.coreutils import camelcase_to_underscore
-from wagtail.models import Page
 
-from hypha.public.home.models import HomePage
-from hypha.public.utils.models import SocialMediaSettings, SystemMessagesSettings
+from hypha.public.utils.models import SocialMediaSettings
 
 register = template.Library()
 
@@ -33,18 +31,3 @@ def field_type(bound_field):
 @register.simple_tag
 def verbose_name(instance):
     return instance.specific._meta.verbose_name.title()
-
-
-# Get the site logo link
-@register.simple_tag()
-def site_logo_link(site):
-    if SystemMessagesSettings.for_site(site).site_logo_link:
-        logo_link = SystemMessagesSettings.for_site(site).site_logo_link
-    else:
-        try:
-            home = HomePage.objects.first().get_site()
-            logo_link = home.root_url
-        except AttributeError:
-            home = Page.objects.filter(slug='home').first()
-            logo_link = home.url
-    return logo_link
