@@ -93,9 +93,9 @@ def get_users_for_groups(groups, user_queryset=None, exact_match=False):
     if groups:
         if not user_queryset:
             if exact_match:
-                user_queryset = User.objects.annotate(group_count=Count('groups')).filter(group_count=len(groups), groups__name=groups.pop().name)
+                user_queryset = User.objects.active().annotate(group_count=Count('groups')).filter(group_count=len(groups), groups__name=groups.pop().name)
             else:
-                user_queryset = User.objects.filter(groups__name=groups.pop().name)
+                user_queryset = User.objects.active().filter(groups__name=groups.pop().name)
         else:
             user_queryset = user_queryset.filter(groups__name=groups.pop().name)
         return get_users_for_groups(groups, user_queryset=user_queryset)

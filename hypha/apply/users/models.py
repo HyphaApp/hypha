@@ -27,6 +27,9 @@ from .utils import get_user_by_email, is_user_already_registered, send_activatio
 
 
 class UserQuerySet(models.QuerySet):
+    def active(self):
+        return self.filter(is_active=True)
+
     def staff(self):
         return self.filter(groups__name=STAFF_GROUP_NAME, is_active=True)
 
