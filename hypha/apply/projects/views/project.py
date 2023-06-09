@@ -879,13 +879,14 @@ class ProjectPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
 
 
 @method_decorator(login_required, name='dispatch')
-class CategoryTemplatePrivateMediaView(UserPassesTestMixin, PrivateMediaView):
+class CategoryTemplatePrivateMediaView(PrivateMediaView):
     raise_exception = True
 
     def dispatch(self, *args, **kwargs):
         project_pk = self.kwargs['pk']
         self.project = get_object_or_404(Project, pk=project_pk)
         self.category_type = kwargs['type']
+        permission, _ = has_permission('project_access', self.request.user, object=self.project, raise_exception=True)
         return super().dispatch(*args, **kwargs)
 
     def get_media(self, *args, **kwargs):
@@ -898,15 +899,6 @@ class CategoryTemplatePrivateMediaView(UserPassesTestMixin, PrivateMediaView):
         if not category.template:
             raise Http404
         return category.template
-
-    def test_func(self):
-        if self.category_type == "project_document":
-            if self.request.user.is_apply_staff or self.request.user.is_contracting or self.request.user.is_finance:
-                return True
-        elif self.category_type == "contract_document":
-            if self.request.user.is_applicant:
-                return True
-        return False
 
 
 @method_decorator(login_required, name='dispatch')
