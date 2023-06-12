@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext as _
 from django_slack import slack_message
+from django_slack.exceptions import ChannelNotFound
 
 from hypha.apply.activity.adapters.base import AdapterBase
 from hypha.apply.activity.adapters.utils import link_to, reviewers_message
@@ -372,7 +373,10 @@ class SlackAdapter(AdapterBase):
         for room in target_rooms:
             try:
                 slack_message('messages/slack_message.html', data, channel=room)
+            except ChannelNotFound as e:
+                logger.warning(e)
+                return '400: Bad Request'
             except Exception as e:
-                logger.exception(e)
+                logger.error(e)
                 return '400: Bad Request'
         return '200: OK'
