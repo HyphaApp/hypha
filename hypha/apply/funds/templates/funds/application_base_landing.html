@@ -15,11 +15,19 @@
     	{% else %}
         	<p>{% trans "An e-mail with more information has been sent to the address you entered." %}</p>
         {% endif %}
-        <p>{% blocktrans with email=ORG_EMAIL|urlize %}If you do not receive an e-mail within 15 minutes please check your
-spam folder and contact {{ email }} for further assistance.{% endblocktrans %}</p>
+        <p>{% blocktrans with email=ORG_EMAIL|urlize %}If you do not receive an e-mail within 15 minutes please check your spam folder and contact {{ email }} for further assistance.{% endblocktrans %}</p>
+
         {% with email_context=page.specific %}<p>{{ email_context.confirmation_text_extra|urlize }}</p>{% endwith %}
 
         {% block extra_text %}{{ settings.funds.ApplicationSettings.extra_text_round|richtext }}{% endblock %}
+
+		<p>
+		{% if request.user.is_authenticated %}
+			<a href="{% url 'dashboard:dashboard' %}"><button class="button button--primary">{% blocktrans %}Go to my dashboard.{% endblocktrans %}</button></a>
+		{% else %}
+			<a href="{% url 'users_public:login' %}"><button class="button button--primary">{% blocktrans %}Log in{% endblocktrans %}</button></a>
+		{% endif %}
+		</p>
     </div>
 </div>
 {% endblock %}
