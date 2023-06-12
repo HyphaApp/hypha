@@ -436,6 +436,11 @@ INTACCT_USER_PASSWORD = env.str('INTACCT_USER_PASSWORD', '')
 # Finance extension to finance2 for Project Invoicing
 INVOICE_EXTENDED_WORKFLOW = env.bool('INVOICE_EXTENDED_WORKFLOW', True)
 
+
+# Reviews Average Score show/hide settings
+
+SHOW_AVERAGE_REVIEW_SCORE = env.bool('SHOW_AVERAGE_REVIEW_SCORE', True)
+
 # Misc settings
 
 # Use Pillow to create QR codes so they are PNG and not SVG.

@@ -31,6 +31,29 @@ from .models import Review
 from .options import DISAGREE
 
 
+<<<<<<< HEAD
+=======
+class ReviewContextMixin:
+    def get_context_data(self, **kwargs):
+        assigned_reviewers = self.object.assigned.review_order()
+
+        if not self.object.stage.has_external_review:
+            assigned_reviewers = assigned_reviewers.staff()
+
+        # Calculate the recommendation based on role and staff reviews
+        recommendation = self.object.reviews.by_staff().recommendation()
+
+        return super().get_context_data(
+            hidden_types=[REVIEWER_GROUP_NAME],
+            SHOW_AVERAGE_REVIEW_SCORE=settings.SHOW_AVERAGE_REVIEW_SCORE,
+            staff_reviewers_exist=assigned_reviewers.staff().exists(),
+            assigned_reviewers=assigned_reviewers,
+            recommendation=recommendation,
+            **kwargs,
+        )
+
+
+>>>>>>> 92da38558 (Add settings for Average review score, set default true as it is existing feature)
 def get_fields_for_stage(submission, user=None):
     forms = submission.get_from_parent('review_forms').all()
     external_review_forms = submission.get_from_parent('external_review_forms').all()
