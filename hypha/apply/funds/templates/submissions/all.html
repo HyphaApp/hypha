@@ -266,13 +266,17 @@
         >
             <span class="hidden md:inline-flex items-center py-1">
                 <input
+                    id="id_select_all"
                     type="checkbox"
                     x-ref="checkboxSelectAll"
                     aria-label="Select all submissions"
-                    autocomplete="off"
                     class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
                     @click="toggleAllCheckboxes()"
                 >
+                <label
+                    for="id_select_all"
+                    x-show="!showSelectedSubmissions"
+                    class="ml-2">Select all</label>
                 <span x-cloak class="ml-2" x-show="showSelectedSubmissions"> <span x-text="selectedSubmissionCount"></span> selected</span>
             </span>
 
