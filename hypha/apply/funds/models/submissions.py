@@ -4,6 +4,7 @@ from functools import partialmethod
 from django.apps import apps
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import PermissionDenied
 from django.db import models
@@ -41,6 +42,7 @@ from hypha.apply.review.models import ReviewOpinion
 from hypha.apply.review.options import AGREE, DISAGREE, MAYBE
 from hypha.apply.stream_forms.files import StreamFieldDataEncoder
 from hypha.apply.stream_forms.models import BaseStreamForm
+from hypha.apply.users.groups import APPLICANT_GROUP_NAME
 
 from ..blocks import NAMED_BLOCKS, ApplicationCustomFormFieldsBlock
 from ..workflow import (
@@ -555,6 +557,11 @@ class ApplicationSubmission(
         if self.user and self.user.is_authenticated:
             self.form_data['email'] = self.user.email
             self.form_data['full_name'] = self.user.get_full_name()
+            # Ensure applying user should have applicant role
+            applicant_group = Group.objects.get(name=APPLICANT_GROUP_NAME)
+            if applicant_group not in self.user.groups.all():
+                self.user.groups.add(applicant_group)
+                self.user.save()
         else:
             # Rely on the form having the following must include fields (see blocks.py)
             email = self.form_data.get('email')
@@ -567,6 +574,7 @@ class ApplicationSubmission(
                     email=email,
                     defaults={'full_name': full_name}
                 )
+                # :todo: check for the applicant group in get_or_create.
             else:
                 self.user, _ = User.objects.get_or_create_and_notify(
                     email=email,
