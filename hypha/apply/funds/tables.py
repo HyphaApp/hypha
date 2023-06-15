@@ -17,8 +17,8 @@ from wagtail.models import Page
 
 from hypha.apply.categories.blocks import CategoryQuestionBlock
 from hypha.apply.categories.models import MetaTerm, Option
+from hypha.apply.funds.reviewers.services import get_all_reviewers
 from hypha.apply.review.models import Review
-from hypha.apply.users.groups import STAFF_GROUP_NAME
 from hypha.apply.utils.image import generate_image_tag
 from hypha.images.models import CustomImage
 
@@ -209,11 +209,6 @@ def get_round_leads_from_dataset(dataset):
     return User.objects.filter(id__in=dataset.values('lead')).distinct()
 
 
-def get_reviewers(request):
-    """ All assigned reviewers, staff or admin """
-    return User.objects.filter(Q(submissions_reviewer__isnull=False) | Q(groups__name=STAFF_GROUP_NAME) | Q(is_superuser=True)).distinct()
-
-
 def get_reviewers_from_dataset(dataset):
     """ All assigned reviewers, not including Staff and Admin because we want a list of reviewers only"""
     return User.objects.filter(id__in=dataset.values('reviewers')).distinct()
@@ -288,7 +283,7 @@ class SubmissionFilter(filters.FilterSet):
     round = Select2ModelMultipleChoiceFilter(queryset=get_used_rounds, label=_('Rounds'))
     lead = Select2ModelMultipleChoiceFilter(queryset=get_round_leads, label=_('Leads'))
     screening_statuses = Select2ModelMultipleChoiceFilter(queryset=get_screening_statuses, label=_('Screening'), null_label=_('No Status'))
-    reviewers = Select2ModelMultipleChoiceFilter(queryset=get_reviewers, label=_('Reviewers'))
+    reviewers = Select2ModelMultipleChoiceFilter(queryset=get_all_reviewers, label=_('Reviewers'))
     category_options = Select2MultipleChoiceFilter(
         choices=[], label=_('Category'),
         method='filter_category_options'
@@ -508,7 +503,7 @@ class ReviewerLeaderboardFilter(filters.FilterSet):
     reviewer = Select2ModelMultipleChoiceFilter(
         field_name='pk',
         label=_('Reviewers'),
-        queryset=get_reviewers,
+        queryset=get_all_reviewers,
     )
     funds = Select2ModelMultipleChoiceFilter(
         field_name='submission__page',

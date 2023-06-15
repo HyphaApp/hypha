@@ -50,7 +50,6 @@ from hypha.apply.determinations.views import (
 from hypha.apply.projects.forms import CreateProjectForm
 from hypha.apply.projects.models import Project
 from hypha.apply.review.models import Review
-from hypha.apply.review.views import ReviewContextMixin
 from hypha.apply.stream_forms.blocks import GroupToggleBlock
 from hypha.apply.users.decorators import staff_or_finance_required, staff_required
 from hypha.apply.utils.models import PDFPageSettings
@@ -62,6 +61,7 @@ from hypha.apply.utils.views import (
     ViewDispatcher,
 )
 
+from . import services
 from .differ import compare
 from .files import generate_submission_file_path
 from .forms import (
@@ -91,7 +91,11 @@ from .models import (
     RoundBase,
     RoundsAndLabs,
 )
-from .permissions import has_permission, is_user_has_access_to_view_archived_submissions
+from .permissions import (
+    can_access_archived_submissions,
+    can_access_drafts,
+    has_permission,
+)
 from .tables import (
     AdminSubmissionsTable,
     ReviewerLeaderboardDetailTable,
@@ -108,7 +112,6 @@ from .tables import (
 from .utils import get_default_screening_statues
 from .workflow import (
     DRAFT_STATE,
-    INITIAL_STATE,
     PHASES_MAPPING,
     STAGE_CHANGE_ACTIONS,
     active_statuses,
@@ -150,33 +153,6 @@ class SubmissionStatsMixin:
         )
 
 
-class UpdateReviewersMixin:
-    def set_status_after_reviewers_assigned(self, submission):
-        transition_after = settings.TRANSITION_AFTER_ASSIGNED
-        # Check if all internal reviewers have been selected.
-        if transition_after and submission.has_all_reviewer_roles_assigned:
-            # Automatic workflow actions.
-            action = None
-            if submission.status == INITIAL_STATE:
-                # Automatically transition the application to "Internal review".
-                action = submission.workflow.stepped_phases[2][0].name
-            elif submission.status == 'proposal_discussion':
-                # Automatically transition the proposal to "Internal review".
-                action = 'proposal_internal_review'
-
-            # If action is set run perform_transition().
-            if action:
-                try:
-                    submission.perform_transition(
-                        action,
-                        self.request.user,
-                        request=self.request,
-                        notify=False,
-                    )
-                except (PermissionDenied, KeyError):
-                    pass
-
-
 class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
     table_class = AdminSubmissionsTable
     filterset_class = SubmissionFilterAndSearch
@@ -204,13 +180,11 @@ class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
 
     def get_queryset(self):
         submissions = self.filterset_class._meta.model.objects.current().for_table(self.request.user)
-        # Check if staff or staff admin should be able to see drafts.
-        if self.request.user.is_apply_staff and settings.SUBMISSIONS_DRAFT_ACCESS_STAFF:
-            return submissions
-        elif self.request.user.is_apply_staff_admin and settings.SUBMISSIONS_DRAFT_ACCESS_STAFF_ADMIN:
-            return submissions
-        else:
-            return submissions.exclude_draft()
+
+        if not can_access_drafts(self.request.user):
+            submissions = submissions.exclude_draft()
+
+        return submissions
 
     def get_context_data(self, **kwargs):
         search_term = self.request.GET.get('query')
@@ -231,14 +205,11 @@ class BatchUpdateLeadView(DelegatedViewMixin, FormView):
     def form_valid(self, form):
         new_lead = form.cleaned_data['lead']
         submissions = form.cleaned_data['submissions']
-        form.save()
-
-        messenger(
-            MESSAGES.BATCH_UPDATE_LEAD,
-            request=self.request,
+        services.bulk_update_lead(
+            submissions=submissions,
             user=self.request.user,
-            sources=submissions,
-            new_lead=new_lead,
+            lead=new_lead,
+            request=self.request
         )
         return super().form_valid(form)
 
@@ -248,29 +219,24 @@ class BatchUpdateLeadView(DelegatedViewMixin, FormView):
 
 
 @method_decorator(staff_required, name='dispatch')
-class BatchUpdateReviewersView(UpdateReviewersMixin, DelegatedViewMixin, FormView):
+class BatchUpdateReviewersView(DelegatedViewMixin, FormView):
     form_class = BatchUpdateReviewersForm
     context_name = 'batch_reviewer_form'
 
     def form_valid(self, form):
         submissions = form.cleaned_data['submissions']
-        form.save()
-        reviewers = [
-            [role, form.cleaned_data[field_name]]
-            for field_name, role in form.role_fields.items()
-        ]
-
-        messenger(
-            MESSAGES.BATCH_REVIEWERS_UPDATED,
-            request=self.request,
+        external_reviewers = form.cleaned_data['external_reviewers']
+        assigned_roles = {
+            role: form.cleaned_data[field]
+            for field, role in form.role_fields.items()
+        }
+        services.bulk_update_reviewers(
+            submissions=submissions,
+            external_reviewers=external_reviewers,
+            assigned_roles=assigned_roles,
             user=self.request.user,
-            sources=submissions,
-            added=reviewers,
+            request=self.request,
         )
-
-        for submission in submissions:
-            # Update submission status if needed.
-            self.set_status_after_reviewers_assigned(submission)
 
         return super().form_valid(form)
 
@@ -286,13 +252,11 @@ class BatchDeleteSubmissionView(DelegatedViewMixin, FormView):
 
     def form_valid(self, form):
         submissions = form.cleaned_data['submissions']
-        messenger(
-            MESSAGES.BATCH_DELETE_SUBMISSION,
-            request=self.request,
+        services.bulk_delete_submissions(
+            submissions=submissions,
             user=self.request.user,
-            sources=submissions,
+            request=self.request,
         )
-        form.save()
         return super().form_valid(form)
 
     def form_invalid(self, form):
@@ -307,13 +271,11 @@ class BatchArchiveSubmissionView(DelegatedViewMixin, FormView):
 
     def form_valid(self, form):
         submissions = form.cleaned_data['submissions']
-        messenger(
-            MESSAGES.BATCH_ARCHIVE_SUBMISSION,
-            request=self.request,
+        services.bulk_archive_submissions(
+            submissions=submissions,
             user=self.request.user,
-            sources=submissions,
+            request=self.request,
         )
-        form.save()
         return super().form_valid(form)
 
     def form_invalid(self, form):
@@ -512,15 +474,14 @@ class SubmissionAdminListView(BaseAdminSubmissionsTable, DelegateableListView):
             submissions = self.filterset_class._meta.model.objects.include_archive().for_table(self.request.user)
         else:
             submissions = self.filterset_class._meta.model.objects.current().for_table(self.request.user)
-        if self.request.user.is_apply_staff and settings.SUBMISSIONS_DRAFT_ACCESS_STAFF:
-            return submissions
-        elif self.request.user.is_apply_staff_admin and settings.SUBMISSIONS_DRAFT_ACCESS_STAFF_ADMIN:
-            return submissions
-        else:
-            return submissions.exclude_draft()
+
+        if not can_access_drafts(self.request.user):
+            submissions = submissions.exclude_draft()
+
+        return submissions
 
     def get_context_data(self, **kwargs):
-        show_archive = is_user_has_access_to_view_archived_submissions(self.request.user)
+        show_archive = can_access_archived_submissions(self.request.user)
 
         return super().get_context_data(
             show_archive=show_archive,
@@ -842,7 +803,7 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
 
 
 @method_decorator(staff_required, name='dispatch')
-class UpdateReviewersView(UpdateReviewersMixin, DelegatedViewMixin, UpdateView):
+class UpdateReviewersView(DelegatedViewMixin, UpdateView):
     model = ApplicationSubmission
     form_class = UpdateReviewersForm
     context_name = 'reviewer_form'
@@ -876,7 +837,11 @@ class UpdateReviewersView(UpdateReviewersMixin, DelegatedViewMixin, UpdateView):
         )
 
         # Update submission status if needed.
-        self.set_status_after_reviewers_assigned(form.instance)
+        services.set_status_after_reviewers_assigned(
+            submission=form.instance,
+            updated_by=self.request.user,
+            request=self.request
+        )
 
         return response
 
@@ -988,7 +953,7 @@ class ReminderDeleteView(DeleteView):
         return response
 
 
-class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, DelegateableView, DetailView):
+class AdminSubmissionDetailView(ActivityContextMixin, DelegateableView, DetailView):
     template_name_suffix = '_admin_detail'
     model = ApplicationSubmission
     form_views = [
@@ -1028,7 +993,7 @@ class AdminSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, Delega
         )
 
 
-class ReviewerSubmissionDetailView(ReviewContextMixin, ActivityContextMixin, DelegateableView, DetailView):
+class ReviewerSubmissionDetailView(ActivityContextMixin, DelegateableView, DetailView):
     template_name_suffix = '_reviewer_detail'
     model = ApplicationSubmission
     form_views = [CommentFormView]
@@ -1079,7 +1044,7 @@ class PartnerSubmissionDetailView(ActivityContextMixin, DelegateableView, Detail
         return super().dispatch(request, *args, **kwargs)
 
 
-class CommunitySubmissionDetailView(ReviewContextMixin, ActivityContextMixin, DelegateableView, DetailView):
+class CommunitySubmissionDetailView(ActivityContextMixin, DelegateableView, DetailView):
     template_name_suffix = '_community_detail'
     model = ApplicationSubmission
     form_views = [CommentFormView]

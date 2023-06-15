@@ -28,7 +28,26 @@ from .views import (
     SubmissionStaffFlaggedView,
     SubmissionUserFlaggedView,
 )
-from .views_partials import partial_submission_activities
+from .views_beta import (
+    bulk_archive_submissions,
+    bulk_delete_submissions,
+    bulk_update_submissions_status,
+    submission_all_beta,
+)
+from .views_partials import (
+    partial_reviews_card,
+    partial_reviews_decisions,
+    partial_submission_activities,
+    sub_menu_bulk_update_lead,
+    sub_menu_bulk_update_reviewers,
+    sub_menu_category_options,
+    sub_menu_funds,
+    sub_menu_leads,
+    sub_menu_meta_terms,
+    sub_menu_reviewers,
+    sub_menu_rounds,
+    sub_menu_update_status,
+)
 
 revision_urls = ([
     path('', RevisionListView.as_view(), name='list'),
@@ -45,6 +64,20 @@ app_name = 'funds'
 submission_urls = ([
     path('', SubmissionOverviewView.as_view(), name="overview"),
     path('all/', SubmissionListView.as_view(), name="list"),
+    path('all-beta/', submission_all_beta, name="list-beta"),
+    path('all-beta/bulk_archive/', bulk_archive_submissions, name="bulk-archive"),
+    path('all-beta/bulk_delete/', bulk_delete_submissions, name="bulk-delete"),
+    path('all-beta/bulk_update_status/', bulk_update_submissions_status, name="bulk-update-status"),
+    path('all-beta/submenu/funds/', sub_menu_funds, name="submenu-funds"),
+    path('all-beta/submenu/leads/', sub_menu_leads, name="submenu-leads"),
+    path('all-beta/submenu/rounds/', sub_menu_rounds, name="submenu-rounds"),
+    path('all-beta/submenu/reviewers/', sub_menu_reviewers, name="submenu-reviewers"),
+    path('all-beta/submenu/meta-terms/', sub_menu_meta_terms, name="submenu-meta-terms"),
+    path('all-beta/submenu/bulk-update-status/', sub_menu_update_status, name="submenu-update-status"),
+    path('all-beta/submenu/bulk-update-lead/', sub_menu_bulk_update_lead, name="submenu-bulk-update-lead"),
+    path('all-beta/submenu/bulk-update-reviewers/', sub_menu_bulk_update_reviewers, name="submenu-bulk-update-reviewers"),
+    path('all-beta/submenu/category-options/', sub_menu_category_options, name="submenu-category-options"),
+    path('all-beta/partials/review_decisions/', partial_reviews_decisions, name="partial-reviews-decisions"),
     path('summary/', GroupingApplicationsListView.as_view(), name="summary"),
     path('result/', SubmissionResultView.as_view(), name="result"),
     path('flagged/', include([
@@ -62,6 +95,7 @@ submission_urls = ([
     path('<int:pk>/', include([
         path('', SubmissionDetailView.as_view(), name="detail"),
         path('partial/activities/', partial_submission_activities, name="partial-activities"),
+        path('partial/reviews-card/', partial_reviews_card, name="partial-reviews-card"),
         path('edit/', SubmissionEditView.as_view(), name="edit"),
         path('sealed/', SubmissionSealedView.as_view(), name="sealed"),
         path('simplified/', SubmissionDetailSimplifiedView.as_view(), name="simplified"),

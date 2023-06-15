@@ -38,6 +38,7 @@ INSTALLED_APPS = [
 
     'social_django',
     'django_htmx',
+    'heroicons',
     'django_web_components',
 
     'wagtail.contrib.modeladmin',

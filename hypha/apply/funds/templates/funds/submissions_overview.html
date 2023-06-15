@@ -10,14 +10,25 @@
         {% slot sub_heading %}{% trans "Track and explore recent submissions" %}{% endslot %}
 
         {% if request.user.is_apply_staff %}
-            <div class="flex mt-2 md:m-0 gap-3 justify-center items-center font-medium uppercase" hx-boost="true">
-                <a class="px-3 py-2 text-gray-300 transition-colors hover:bg-slate-50 rounded hover:text-gray-800" href="{% url 'apply:submissions:staff_assignments' %}">
+            <div class="flex mt-2 md:m-0 gap-3 justify-center items-center font-medium uppercase">
+                <a class="px-3 py-2 text-gray-300 transition-colors hover:bg-slate-50 rounded hover:text-gray-800"
+                    href="{% url 'apply:submissions:list' %}"
+                    title="Goto all submissions list page"
+                >
+                    {% trans "All" %}
+                </a>
+                <a class="px-3 py-2 text-gray-300 transition-colors hover:bg-slate-50 rounded hover:text-gray-800"
+                    href="{% url 'apply:submissions:staff_assignments' %}"
+                >
                     {% trans "Staff assignments" %}
                 </a>
-                <a class="px-3 py-2 text-gray-300 transition-colors hover:bg-slate-50 rounded hover:text-gray-800" href="{% url 'apply:submissions:reviewer_leaderboard' %}">
+                <a class="px-3 py-2 text-gray-300 transition-colors hover:bg-slate-50 rounded hover:text-gray-800"
+                    href="{% url 'apply:submissions:reviewer_leaderboard' %}"
+                >
                     {% trans "Reviews" %}
                 </a>
-                <a class="px-3 py-2 text-gray-300 transition-colors hover:bg-slate-50 rounded hover:text-gray-800" href="{% url 'apply:submissions:result' %}">
+                <a class="px-3 py-2 text-gray-300 transition-colors hover:bg-slate-50 rounded hover:text-gray-800"
+                    href="{% url 'apply:submissions:result' %}">
                     {% trans "Results" %}
                 </a>
             </div>
@@ -36,7 +47,7 @@
         {% block table %}
             <div class="wrapper wrapper--bottom-space">
                 {% trans "All Submissions" as all_submissions %}
-                {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term use_search=True filter_action=filter_action search_action=search_action use_batch_actions=False heading=all_submissions %}
+                {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term use_search=True filter_action=filter_action search_action=search_action use_batch_actions=False heading=all_submissions show_try_new_submissions_link=True%}
 
                 {% render_table table %}
                 <div class="all-submissions-table__more">

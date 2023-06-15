@@ -25,6 +25,7 @@ plugins = [
 omit = [
     '*migrations*',
     '*test*',
+    'hypa/public/*',
 ]
 
 # https://github.com/charliermarsh/ruff#ruff

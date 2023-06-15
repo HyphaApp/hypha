@@ -6,7 +6,8 @@
     "license": "GPL-2.0",
     "babel": {
         "exclude": [
-            "**/*.min.js"
+            "**/*.min.js",
+            "**/esm/*.js"
         ],
         "presets": [
             [
@@ -25,19 +26,23 @@
         "not dead"
     ],
     "devDependencies": {
+        "@alpinejs/focus": "^3.12.0",
         "@babel/cli": "^7.20.7",
         "@babel/core": "^7.20.12",
         "@babel/preset-env": "^7.20.2",
+        "@tailwindcss/forms": "^0.5.3",
+        "alpinejs": "^3.12.0",
         "core-js": "^3.27.2",
+        "daterangepicker": "^3.1.0",
         "eslint": "^8.33.0",
         "eslint-plugin-template": "^0.7.0",
+        "htmx.org": "^1.8.6",
         "nodemon": "^2.0.20",
         "npm-run-all2": "^6.0.4",
         "sass": "^1.57.1",
-        "stylelint": "^14.16.1",
         "stylelint-config-standard-scss": "^6.1.0",
         "stylelint-scss": "^4.3.0",
-        "tailwindcss": "^3.2.7"
+        "tailwindcss": "^3.3.2"
     },
     "scripts": {
         "heroku-postbuild": "npm run build",
@@ -46,19 +51,19 @@
         "lint": "npx npm-run-all --parallel lint:*",
         "build:js": "npx babel ./hypha/static_src/src/javascript --out-dir ./hypha/static_compiled/js",
         "build:sass": "sass ./hypha/static_src/src/sass:./hypha/static_compiled/css --load-path ./hypha/static_src/src/sass --no-source-map",
-        "build:tailwind": "tailwindcss -i ./hypha/static_src/src/tailwind-entry.css -o ./hypha/static_compiled/css/tailwind-output.css --minify",
+        "build:tailwind": "tailwindcss -i ./hypha/static_src/src/tailwind/main.css -o ./hypha/static_compiled/css/tailwind-output.css --minify",
         "build:images": "npx babel ./hypha/static_src/src/images --out-dir ./hypha/static_compiled/images --copy-files",
         "build:fonts": "npx babel ./hypha/static_src/src/fonts --out-dir ./hypha/static_compiled/fonts --copy-files",
         "watch:js": "npx babel --watch ./hypha/static_src/src/javascript --out-dir ./hypha/static_compiled/js",
         "watch:sass": "sass --watch ./hypha/static_src/src/sass:./hypha/static_compiled/css --load-path ./hypha/static_src/src/sass",
-        "watch:tailwind": "tailwindcss -i ./hypha/static_src/src/tailwind-entry.css -o ./hypha/static_compiled/css/tailwind-output.css --watch",
+        "watch:tailwind": "tailwindcss -i ./hypha/static_src/src/tailwind/main.css -o ./hypha/static_compiled/css/tailwind-output.css --watch",
         "watch:static": "nodemon --delay 3 --exec \"npm run collectstatic\" --watch ./hypha/static_compiled --ext css,js,json,png,svg",
         "watch:lint": "nodemon --exec \"npm run lint\" --watch ./hypha/static_src/src/sass --watch ./hypha/static_src/src/javscript --ext scss,js",
         "dev:build": "npx npm-run-all --print-label --serial clean --parallel dev:build:* --serial collectstatic",
         "dev:build:js": "npm run build:js",
         "dev:build:sass": "sass ./hypha/static_src/src/sass:./hypha/static_compiled/css --load-path ./hypha/static_src/src/sass",
         "dev:build:lint": "npm run lint",
-        "dev:build:tailwind": "tailwindcss -i ./hypha/static_src/src/tailwind-entry.css -o ./hypha/static_compiled/css/tailwind-output.css",
+        "dev:build:tailwind": "tailwindcss -i ./hypha/static_src/src/tailwind/main.css -o ./hypha/static_compiled/css/tailwind-output.css",
         "dev:build:images": "npm run build:images",
         "dev:build:fonts": "npm run build:fonts",
         "lint:sass": "stylelint \"hypha/static_src/src/sass/**/*.scss\"",

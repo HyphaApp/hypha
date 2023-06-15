@@ -8,7 +8,6 @@ from django.http import Http404
 from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.text import slugify
 
 from hypha.apply.activity.models import TEAM, Activity
 from hypha.apply.determinations.tests.factories import DeterminationFactory
@@ -521,7 +520,7 @@ class TestReviewersUpdateView(BaseSubmissionViewTestCase):
         }
         data.update(
             **{
-                f'role_reviewer_{slugify(str(role))}': reviewer.id
+                f'role_reviewer_{str(role.id)}': reviewer.id
                 for role, reviewer in zip(self.roles, reviewer_roles, strict=False)
             }
         )
@@ -1456,7 +1455,7 @@ class TestUpdateReviewersMixin(BaseSubmissionViewTestCase):
         }
         data.update(
             **{
-                f'role_reviewer_{slugify(str(role))}': reviewer.id
+                f'role_reviewer_{str(role.id)}': reviewer.id
                 for role, reviewer in zip(self.roles, reviewer_roles, strict=False)
             }
         )

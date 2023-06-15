@@ -5,9 +5,7 @@ from operator import methodcaller
 
 import bleach
 from django import forms
-from django.conf import settings
 from django.utils.safestring import mark_safe
-from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from wagtail.signal_handlers import disable_reference_index_auto_update
 
@@ -21,6 +19,7 @@ from .models import (
     ReviewerRole,
     ScreeningStatus,
 )
+from .permissions import can_change_external_reviewers
 from .utils import model_form_initial, render_icon
 from .widgets import MetaTermSelect2Widget, Select2MultiCheckboxesWidget
 from .workflow import get_action_mapping
@@ -195,18 +194,6 @@ class BatchUpdateSubmissionLeadForm(forms.Form):
         submission_ids = [int(submission) for submission in value.split(',')]
         return ApplicationSubmission.objects.filter(id__in=submission_ids)
 
-    def save(self):
-        new_lead = self.cleaned_data['lead']
-        submissions = self.cleaned_data['submissions']
-
-        for submission in submissions:
-            # Onle save if the lead has changed.
-            if submission.lead != new_lead:
-                submission.lead = new_lead
-                submission.save()
-
-        return None
-
 
 class BatchDeleteSubmissionForm(forms.Form):
     submissions = forms.CharField(widget=forms.HiddenInput(attrs={'class': 'js-submissions-id'}))
@@ -220,11 +207,6 @@ class BatchDeleteSubmissionForm(forms.Form):
         submission_ids = [int(submission) for submission in value.split(',')]
         return ApplicationSubmission.objects.filter(id__in=submission_ids)
 
-    def save(self):
-        submissions = self.cleaned_data['submissions']
-        submissions.delete()
-        return None
-
 
 class BatchArchiveSubmissionForm(forms.Form):
     submissions = forms.CharField(widget=forms.HiddenInput(attrs={'class': 'js-submissions-id'}))
@@ -237,11 +219,6 @@ class BatchArchiveSubmissionForm(forms.Form):
         value = self.cleaned_data['submissions']
         submission_ids = [int(submission) for submission in value.split(',')]
         return ApplicationSubmission.objects.filter(id__in=submission_ids)
-
-    def save(self):
-        submissions = self.cleaned_data['submissions']
-        submissions.update(is_archive=True)
-        return None
 
 
 class UpdateReviewersForm(ApplicationSubmissionModelForm):
@@ -286,8 +263,7 @@ class UpdateReviewersForm(ApplicationSubmissionModelForm):
             id__in=self.instance.assigned.reviewed().values('reviewer'),
         )
 
-        if self.can_alter_external_reviewers(self.instance, self.user):
-
+        if can_change_external_reviewers(user=self.user, submission=self.instance):
             reviewers = self.instance.reviewers.all().only('pk')
             self.prepare_field(
                 'reviewer_reviewers',
@@ -304,16 +280,6 @@ class UpdateReviewersForm(ApplicationSubmissionModelForm):
         field = self.fields[field_name]
         field.queryset = field.queryset.exclude(id__in=excluded)
         field.initial = initial
-
-    def can_alter_external_reviewers(self, instance, user):
-        if instance.stage.has_external_review:
-            if user.is_superuser:
-                return True
-            if settings.GIVE_STAFF_LEAD_PERMS:
-                return user.is_apply_staff
-            else:
-                return user == instance.lead
-        return False
 
     def clean(self):
         cleaned_data = super().clean()
@@ -358,7 +324,7 @@ class UpdateReviewersForm(ApplicationSubmissionModelForm):
 
             # 2. Update non-role reviewers
             # 2a. Remove those not on form
-            if self.can_alter_external_reviewers(self.instance, self.user):
+            if can_change_external_reviewers(submission=self.instance, user=self.user):
                 reviewers = self.cleaned_data.get('reviewer_reviewers')
                 assigned_reviewers = instance.assigned.without_roles()
                 assigned_reviewers.never_tried_to_review().exclude(
@@ -380,15 +346,15 @@ class BatchUpdateReviewersForm(forms.Form):
     submissions = forms.CharField(widget=forms.HiddenInput(attrs={'class': 'js-submissions-id'}))
     external_reviewers = forms.ModelMultipleChoiceField(
         queryset=User.objects.reviewers().only('pk', 'full_name'),
-        widget=Select2MultiCheckboxesWidget(attrs={'data-placeholder': 'Reviewers'}),
+        widget=Select2MultiCheckboxesWidget(attrs={'data-placeholder': 'Select...'}),
         label=_('External Reviewers'),
         required=False,
     )
 
     def __init__(self, *args, user=None, round=None, **kwargs):
         super().__init__(*args, **kwargs)
+        self.request = kwargs.pop('request', None)
         self.user = user
-
         self.fields = OrderedDict(self.fields)
 
         self.role_fields = {}
@@ -412,11 +378,9 @@ class BatchUpdateReviewersForm(forms.Form):
         submissions = self.cleaned_data['submissions']
         if external_reviewers:
             # User needs to be superuser or lead of all selected submissions.
-            if not self.user_can_alter_submissions_external_reviewers(submissions, self.user):
-                self.add_error('external_reviewers', _("Only Lead can change the External Reviewers"))
-            # If user is trying to change the external reviewers for submissions that doesn't have workflow with external_review stage.
-            elif self.submissions_cant_have_external_reviewers(submissions):
-                self.add_error('external_reviewers', _('External Reviewers cannot be selected because of the application workflow'))
+
+            if not all(can_change_external_reviewers(submission=s, user=self.user) for s in submissions):
+                self.add_error('external_reviewers', _("Make sure all submissions support external reviewers and you are lead for all the selected submissions."))
 
         role_reviewers = [
             user
@@ -436,35 +400,6 @@ class BatchUpdateReviewersForm(forms.Form):
                 return True
         return False
 
-    def user_can_alter_submissions_external_reviewers(self, submissions, user):
-        # User needs to be superuser or lead of all selected submissions.
-        if user.is_superuser:
-            return True
-        if settings.GIVE_STAFF_LEAD_PERMS and user.is_apply_staff:
-            return True
-        if submissions.count() == submissions.filter(lead=user).count():
-            return True
-        return False
-
-    def save(self):
-        submissions = self.cleaned_data['submissions']
-        external_reviewers = self.cleaned_data['external_reviewers']
-        assigned_roles = {
-            role: self.cleaned_data[field]
-            for field, role in self.role_fields.items()
-        }
-        for role, reviewer in assigned_roles.items():
-            if reviewer:
-                AssignedReviewers.objects.update_role(role, reviewer, *submissions)
-
-        for submission in submissions:
-            AssignedReviewers.objects.bulk_create_reviewers(
-                list(external_reviewers),
-                submission,
-            )
-
-        return None
-
 
 def make_role_reviewer_fields():
     role_fields = []
@@ -472,10 +407,10 @@ def make_role_reviewer_fields():
 
     for role in ReviewerRole.objects.all().order_by('order'):
         role_name = bleach.clean(role.name, strip=True)
-        field_name = 'role_reviewer_' + slugify(role_name)
+        field_name = f'role_reviewer_{role.id}'
         field = forms.ModelChoiceField(
             queryset=staff_reviewers,
-            empty_label=_('-- No reviewer selected --'),
+            empty_label=_('---'),
             required=False,
             label=mark_safe(render_icon(role.icon) + _('{role_name} Reviewer').format(role_name=role_name)),
         )

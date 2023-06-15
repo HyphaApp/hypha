@@ -1,11 +1,23 @@
-{% load django_tables2 i18n submission_tags %}
+{% load django_tables2 i18n heroicons %}
+{% load querystrings %}
 
 <div class="wrapper wrapper--table-actions js-table-actions">
     <div class="actions-bar">
         {# Left #}
         <div class="actions-bar__inner actions-bar__inner--left">
             {% if heading %}
-                <h4 class="heading heading--normal heading--no-margin">{{ heading }}</h4>
+                <h4 class="heading heading--normal heading--no-margin">{{ heading }}
+
+                    {% if show_try_new_submissions_link %}
+                        <a class="text-sm text-[#1d79a8] border-b border-transparent hover:opacity-70 hover:underline transition-all"
+                            hx-boost="true"
+                            href="{% url 'apply:submissions:list-beta' %}"
+                        >
+                            ({% heroicon_outline "rocket-launch" aria_hidden="true" size=15 stroke_width="2" class="inline align-text-bottom" %}
+                            {% trans "Try newer version" %})
+                        </a>
+                    {% endif %}
+                </h4>
             {% endif %}
 
 
@@ -48,12 +60,12 @@
 
         {# Right #}
         <div class="actions-bar__inner actions-bar__inner--right">
-            {% get_url_param 'archived' as archived_param %}
+            {% get_query 'archived' as archived_param %}
             {% if show_archive %}
-                {% if archived_param == '1' %}
-                    <a href="{% update_urlparams 'archived' '0' %}">{% trans "Hide archived" %}</a>
+                {% if request.GET.archived == '1' %}
+                    <a href="{% modify_query archived='0' %}">{% trans "Hide archived" %}</a>
                 {% else %}
-                    <a href="{% update_urlparams 'archived' '1' %}">{% trans "Show archived" %}</a>
+                    <a href="{% modify_query archived='1' %}">{% trans "Show archived" %}</a>
                 {% endif %}
             {% endif %}
             {% if filter_classes != 'filters-open' %}

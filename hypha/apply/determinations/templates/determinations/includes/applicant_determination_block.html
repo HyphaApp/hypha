@@ -1,4 +1,4 @@
-{% load i18n humanize %}
+{% load i18n %}
 <div class="sidebar__inner">
     <h5>{% trans "Determinations" %}</h5>
     {% for determination in submission.determinations.submitted %}
@@ -6,7 +6,8 @@
             <a class="link link--bold" href="{% url 'apply:submissions:determinations:detail' submission_pk=object.id pk=determination.id %}">
                 {{ determination.get_outcome_display }}
             </a>
-            - <time datetime="{{ determination.updated_at|date:"c" }}" title="{{ determination.updated_at|naturaltime }}">{{ determination.updated_at|date:"SHORT_DATETIME_FORMAT" }}</time> {% trans "by" %} {{ determination.author }}
+            <relative-time datetime={{ determination.updated_at|date:"c" }}>{{ determination.updated_at|date:"SHORT_DATETIME_FORMAT" }}</relative-time>
+            {% trans "by" %} {{ determination.author }}
         </p>
     {% empty %}
         <p>{% trans "Awaiting determination" %}</p>

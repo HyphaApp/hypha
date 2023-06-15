@@ -24,31 +24,11 @@ from hypha.apply.review.blocks import RecommendationBlock, RecommendationComment
 from hypha.apply.review.forms import ReviewModelForm, ReviewOpinionForm
 from hypha.apply.stream_forms.models import BaseStreamForm
 from hypha.apply.users.decorators import staff_required
-from hypha.apply.users.groups import REVIEWER_GROUP_NAME
 from hypha.apply.utils.image import generate_image_tag
 from hypha.apply.utils.views import CreateOrUpdateView
 
 from .models import Review
 from .options import DISAGREE
-
-
-class ReviewContextMixin:
-    def get_context_data(self, **kwargs):
-        assigned_reviewers = self.object.assigned.review_order()
-
-        if not self.object.stage.has_external_review:
-            assigned_reviewers = assigned_reviewers.staff()
-
-        # Calculate the recommendation based on role and staff reviews
-        recommendation = self.object.reviews.by_staff().recommendation()
-
-        return super().get_context_data(
-            hidden_types=[REVIEWER_GROUP_NAME],
-            staff_reviewers_exist=assigned_reviewers.staff().exists(),
-            assigned_reviewers=assigned_reviewers,
-            recommendation=recommendation,
-            **kwargs,
-        )
 
 
 def get_fields_for_stage(submission, user=None):

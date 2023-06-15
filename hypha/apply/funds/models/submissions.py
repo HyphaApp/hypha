@@ -1,28 +1,28 @@
 import json
-from functools import partialmethod
+import operator
+from functools import partialmethod, reduce
 
 from django.apps import apps
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib.postgres.indexes import GinIndex
+from django.contrib.postgres.search import SearchVector, SearchVectorField
 from django.core.exceptions import PermissionDenied
 from django.db import models
 from django.db.models import (
     Avg,
-    Case,
     Count,
     FloatField,
-    IntegerField,
     OuterRef,
-    Prefetch,
     Q,
     Subquery,
     Sum,
-    When,
+    Value,
 )
 from django.db.models.expressions import OrderBy, RawSQL
 from django.db.models.fields.json import KeyTextTransform
-from django.db.models.functions import Cast, Coalesce
+from django.db.models.functions import Cast
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
@@ -37,8 +37,11 @@ from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.categories.models import MetaTerm
 from hypha.apply.determinations.models import Determination
 from hypha.apply.flags.models import Flag
-from hypha.apply.review.models import ReviewOpinion
-from hypha.apply.review.options import AGREE, DISAGREE, MAYBE
+from hypha.apply.funds.services import (
+    annotate_comments_count,
+    annotate_review_recommendation_and_count,
+)
+from hypha.apply.review.options import AGREE
 from hypha.apply.stream_forms.files import StreamFieldDataEncoder
 from hypha.apply.stream_forms.models import BaseStreamForm
 
@@ -207,70 +210,13 @@ class ApplicationSubmissionQueryset(JSONOrderable):
         )
 
     def for_table(self, user):
-        AssignedReviewers = apps.get_model("funds", "AssignedReviewers")
-        activities = self.model.activities.rel.model
-        comments = activities.comments.filter(submission=OuterRef('id')).visible_to(user)
         roles_for_review = self.model.assigned.field.model.objects.with_roles().filter(
             submission=OuterRef('id'), reviewer=user)
 
-        review_model = self.model.reviews.field.model
-        reviews = review_model.objects.filter(submission=OuterRef('id'))
-        opinions = review_model.opinions.field.model.objects.filter(review__submission=OuterRef('id'))
-        reviewers = self.model.assigned.field.model.objects.filter(submission=OuterRef('id'))
-
-        return self.with_latest_update().annotate(
-            comment_count=Coalesce(
-                Subquery(
-                    comments.values('submission').order_by().annotate(count=Count('pk')).values('count'),
-                    output_field=IntegerField(),
-                ),
-                0,
-            ),
-            opinion_disagree=Subquery(
-                opinions.filter(opinion=DISAGREE).values(
-                    'review__submission'
-                ).annotate(count=Count('*')).values('count')[:1],
-                output_field=IntegerField(),
-            ),
-            review_staff_count=Subquery(
-                reviewers.staff().values('submission').annotate(count=Count('pk')).values('count'),
-                output_field=IntegerField(),
-            ),
-            review_count=Subquery(
-                reviewers.values('submission').annotate(count=Count('pk')).values('count'),
-                output_field=IntegerField(),
-            ),
-            review_submitted_count=Subquery(
-                reviewers.reviewed().values('submission').annotate(
-                    count=Count('pk', distinct=True)
-                ).values('count'),
-                output_field=IntegerField(),
-            ),
-            review_recommendation=Case(
-                When(opinion_disagree__gt=0, then=MAYBE),
-                default=Subquery(
-                    reviews.submitted().values('submission').annotate(
-                        calc_recommendation=Sum('recommendation') / Count('recommendation'),
-                    ).values('calc_recommendation'),
-                    output_field=IntegerField(),
-                )
-            ),
+        qs = annotate_review_recommendation_and_count(self.with_latest_update())
+        qs = annotate_comments_count(qs, user)
+        return qs.annotate(
             role_icon=Subquery(roles_for_review[:1].values('role__icon')),
-        ).prefetch_related(
-            Prefetch(
-                'assigned',
-                queryset=AssignedReviewers.objects.reviewed().review_order().select_related(
-                    'reviewer',
-                ).prefetch_related(
-                    Prefetch('review__opinions', queryset=ReviewOpinion.objects.select_related('author')),
-                ),
-                to_attr='has_reviewed'
-            ),
-            Prefetch(
-                'assigned',
-                queryset=AssignedReviewers.objects.not_reviewed().staff(),
-                to_attr='hasnt_reviewed'
-            )
         ).select_related(
             'page',
             'round',
@@ -473,6 +419,7 @@ class ApplicationSubmission(
     )
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
     search_data = models.TextField()
+    search_document = SearchVectorField(null=True)
 
     # Workflow inherited from WorkflowHelpers
     status = FSMField(default=INITIAL_STATE, protected=True)
@@ -511,6 +458,11 @@ class ApplicationSubmission(
     objects = ApplicationSubmissionQueryset.as_manager()
 
     wagtail_reference_index_ignore = True
+
+    class Meta:
+        indexes = [
+            GinIndex(fields=['search_document']),
+        ]
 
     @property
     def is_draft(self):
@@ -651,7 +603,8 @@ class ApplicationSubmission(
                 self.form_data = current_submission.form_data
             else:
                 self.live_revision = revision
-                self.search_data = ' '.join(self.prepare_search_values())
+                self.search_data = ' '.join(list(self.prepare_search_values()))
+                self.search_document = self.prepare_search_vector()
 
             self.draft_revision = revision
             self.save(skip_custom=True)
@@ -662,6 +615,10 @@ class ApplicationSubmission(
         self.process_form_data()
         self.ensure_user_has_account()
         self.process_file_data(self.form_data)
+
+    def get_assigned_meta_terms(self):
+        """Returns assigned meta terms excluding the 'root' term"""
+        return self.meta_terms.exclude(depth=1)
 
     def process_form_data(self):
         for field_name, field_id in self.named_blocks.items():
@@ -696,7 +653,9 @@ class ApplicationSubmission(
         self.clean_submission()
 
         # add a denormed version of the answer for searching
+        # @TODO: remove 'search_data' in favour of 'search_document' for FTS
         self.search_data = ' '.join(self.prepare_search_values())
+        self.search_document = self.prepare_search_vector()
 
         super().save(*args, **kwargs)
 
@@ -780,20 +739,42 @@ class ApplicationSubmission(
 
         return False
 
-    def prepare_search_values(self):
+    def get_searchable_contents(self):
+        contents = []
         for field_id in self.question_field_ids:
             field = self.field(field_id)
             data = self.data(field_id)
             value = field.block.get_searchable_content(field.value, data)
             if value:
                 if isinstance(value, list):
-                    yield ', '.join(value)
+                    contents.append(', '.join(value))
                 else:
-                    yield value
+                    contents.append(value)
+        return contents
+
+    def prepare_search_values(self):
+        values = self.get_searchable_contents()
 
         # Add named fields into the search index
         for field in ['full_name', 'email', 'title']:
-            yield getattr(self, field)
+            values.append(getattr(self, field))
+        return values
+
+    def index_components(self):
+        return {
+            'A': ' '.join([f'id:{self.id}', self.title]),
+            'C': ' '.join([self.full_name, self.email]),
+            'B': ' '.join(self.get_searchable_contents()),
+        }
+
+    def prepare_search_vector(self):
+        search_vectors = []
+        for weight, text in self.index_components().items():
+            search_vectors.append(
+                SearchVector(Value(text), weight=weight)
+            )
+        return reduce(operator.add, search_vectors)
+
 
     def get_absolute_url(self):
         return reverse('funds:submissions:detail', urlconf='hypha.apply.urls', args=(self.id,))

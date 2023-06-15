@@ -15,6 +15,7 @@ from hypha.apply.activity.models import COMMENT, Activity
 from hypha.apply.categories.models import MetaTerm
 from hypha.apply.determinations.views import DeterminationCreateOrUpdateView
 from hypha.apply.funds.models import ApplicationSubmission, RoundsAndLabs
+from hypha.apply.funds.reviewers.services import get_all_reviewers
 from hypha.apply.funds.workflow import STATUSES
 from hypha.apply.review.models import Review
 
@@ -39,7 +40,6 @@ from .serializers import (
 )
 from .utils import (
     get_category_options,
-    get_reviewers,
     get_round_leads,
     get_screening_statuses,
     get_used_funds,
@@ -131,7 +131,7 @@ class SubmissionFilters(APIView):
             ]),
             self.format("reviewers", "Reviewers", self.filter_unique_options([
                 {"key": reviewer.get('id'), "label": reviewer.get('full_name') or reviewer.get('email')}
-                for reviewer in get_reviewers().values()
+                for reviewer in get_all_reviewers().values()
             ])),
             self.format("category_options", "Category", self.filter_unique_options([
                 {"key": option.get('id'), "label": option.get('value')}

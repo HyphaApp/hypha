@@ -1,0 +1,90 @@
+{% load i18n %}
+{% load querystrings heroicons %}
+
+<div class='flex flex-col'>
+
+    {% if open_rounds or closed_rounds %}
+
+        {% if selected_rounds %}
+            <a
+                href="{% url "apply:submissions:list-beta" %}{% remove_from_query "only_query_string" "page" "round" %}"
+                hx-get="{% url "apply:submissions:list-beta" %}{% remove_from_query "only_query_string" "page" "round" %}"
+                hx-push-url="true"
+                class="flex px-3 py-2 text-gray-600 border-b items-center hover:bg-gray-100 focus:bg-gray-100{% if s.selected %}bg-gray-100{% endif %}">
+                {% trans "All Rounds" %}
+            </a>
+        {% endif %}
+
+        <div
+            role="tablist"
+            x-data="{tab: 'closed_rounds'}"
+        >
+            <nav class="flex px-3 pt-2" style="box-shadow: inset 0 -1px 0 #e5e7eb">
+
+                {% if closed_rounds %}
+                <span @click="tab = 'closed_rounds'"
+                    role="tab"
+                    :class="{ 'border-x border-t border-b-transparent': tab === 'closed_rounds' }"
+                    class="text-center bg-white inline-block px-4 py-2 border-b rounded-t-lg cursor-pointer hover:text-gray-900">Closed</span>
+                {% endif %}
+
+                {% if open_rounds %}
+                <span @click="tab = 'open_rounds'"
+                    role="tab"
+                    :class="{ 'border-x border-t border-b-transparent': tab === 'open_rounds' }"
+                    class="text-center bg-white inline-block px-4 py-2 border-b rounded-t-lg round cursor-pointer hover:text-gray-900">Open</span>
+                {% endif %}
+            </nav>
+
+             <div data-filter-list>
+                {% if closed_rounds %}
+                    <div class="tab-closed-rounds divide-y overflow-scroll max-h-80"
+                        x-show="tab === 'closed_rounds'"
+                        :aria-hidden="tab === 'closed_rounds' ? 'false' : 'true'"
+                        role="tabpanel"
+                    >
+                        {% for f in closed_rounds %}
+                            <a data-filter-item-text
+                                href="{% url "apply:submissions:list-beta" %}{% modify_query "only_query_string" "page" round=f.id %}"
+                                hx-get="{% url "apply:submissions:list-beta" %}{% modify_query "only_query_string" "page" round=f.id %}"
+                                hx-push-url="true"
+                                class="flex {% if f.selected %}pl-2 font-medium{% else %}pl-8{% endif %} pr-3 py-2 text-gray-600 items-center hover:bg-gray-100 focus:bg-gray-100{% if f.selected %}bg-gray-100{% endif %}">
+                                {% if f.selected %}
+                                    {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 mr-1" %}
+                                {% endif %}
+                                {{ f.title }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {% if open_rounds %}
+                    <div class="tab-open-rounds divide-y overflow-scroll max-h-80"
+                        x-show="tab === 'open_rounds'"
+                        :aria-hidden="tab === 'open_rounds' ? 'false' : 'true'"
+                        role="tabpanel"
+                    >
+                        {% for f in open_rounds %}
+                            <a
+                                data-filter-item-text
+                                href="{% url "apply:submissions:list-beta" %}{% modify_query "only_query_string" "page" round=f.id %}"
+                                hx-get="{% url "apply:submissions:list-beta" %}{% modify_query "only_query_string" "page" round=f.id %}"
+                                hx-push-url="true"
+                                class="flex {% if f.selected %}pl-2 font-medium{% else %}pl-8{% endif %} pr-3 py-2 text-gray-600 items-center hover:bg-gray-100 focus:bg-gray-100{% if f.selected %}bg-gray-100{% endif %}">
+                                {% if f.selected %}
+                                    {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 mr-1" %}
+                                {% endif %}
+
+                                {{ f.title }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        {% else %}
+            <div class="block px-3 py-2 text-gray-600">
+                {% trans "No rounds available" %}
+            </div>
+        {% endif %}
+    </div>
+</div>

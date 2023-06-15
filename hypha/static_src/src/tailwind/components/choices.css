@@ -1,0 +1,293 @@
+/* ===============================
+=   Choices
+=   For the select component rendered with choices.js
+=============================== */
+.choices {
+    @apply relative overflow-hidden mb-6 text-base focus:outline-none;
+}
+
+.choices:last-child {
+    @apply mb-0;
+}
+
+.choices.is-open {
+    overflow: visible;
+}
+
+.choices.is-disabled .choices__inner,
+.choices.is-disabled .choices__input {
+    background-color: #eaeaea;
+    @apply cursor-not-allowed select-none;
+}
+
+.choices.is-disabled .choices__item {
+    cursor: not-allowed;
+}
+
+.choices [hidden] {
+    display: none !important;
+}
+
+.choices[data-type*="select-one"] {
+    cursor: pointer;
+}
+
+.choices[data-type*="select-one"] .choices__inner {
+    @apply pb-1;
+}
+
+.choices[data-type*="select-one"] .choices__input {
+    @apply block w-full p-2 m-0 bg-white border-b border-gray-400;
+}
+
+.choices[data-type*="select-one"] .choices__button {
+    background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMjEiIHZpZXdCb3g9IjAgMCAyMSAyMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjMDAwIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0yLjU5Mi4wNDRsMTguMzY0IDE4LjM2NC0yLjU0OCAyLjU0OEwuMDQ0IDIuNTkyeiIvPjxwYXRoIGQ9Ik0wIDE4LjM2NEwxOC4zNjQgMGwyLjU0OCAyLjU0OEwyLjU0OCAyMC45MTJ6Ii8+PC9nPjwvc3ZnPg==");
+    background-size: .6em;
+
+    @apply w-5 h-5 absolute p-0 right-0 top-1/2 -mt-2 mr-6 opacity-25 focus:opacity-100 hover:opacity-100;
+}
+
+.choices[data-type*="select-one"] .choices__button:focus {
+    box-shadow: 0 0 0 2px #00bcd4;
+}
+
+.choices[data-type*="select-one"]
+    .choices__item[data-value=""]
+    .choices__button {
+    display: none;
+}
+
+.choices[data-type*="select-one"]::after {
+    content: "";
+    margin-top: -2.5px;
+    @apply h-0 w-0 absolute top-1/2 right-[11.5px]
+          opacity-60 hover:opacity-100
+          pointer-events-none
+          border-[5px] border-t-gray-600
+          border-r-transparent border-b-transparent border-l-transparent;
+}
+
+.choices[data-type*="select-one"].is-open::after {
+    margin-top: -7.5px;
+    @apply border-t-transparent border-r-transparent border-b-gray-600 border-l-transparent;
+}
+
+.choices[data-type*="select-one"][dir="rtl"]::after {
+    left: 11.5px;
+    right: auto;
+}
+
+.choices[data-type*="select-one"][dir="rtl"] .choices__button {
+    right: auto;
+    left: 0;
+    margin-left: 25px;
+    margin-right: 0;
+}
+
+.choices[data-type*="select-multiple"] .choices__inner,
+.choices[data-type*="text"] .choices__inner {
+    cursor: text;
+}
+
+.choices[data-type*="select-multiple"] .choices__input {
+    @apply max-w-full focus:ring-0;
+}
+
+.choices[data-type*="select-multiple"] .choices__button,
+.choices[data-type*="text"] .choices__button {
+    background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMjEiIHZpZXdCb3g9IjAgMCAyMSAyMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjRkZGIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0yLjU5Mi4wNDRsMTguMzY0IDE4LjM2NC0yLjU0OCAyLjU0OEwuMDQ0IDIuNTkyeiIvPjxwYXRoIGQ9Ik0wIDE4LjM2NEwxOC4zNjQgMGwyLjU0OCAyLjU0OEwyLjU0OCAyMC45MTJ6Ii8+PC9nPjwvc3ZnPg==");
+    background-size: 8px;
+    @apply relative inline-block w-2 pl-4 my-0 ml-1 -mr-1 opacity-75 hover:opacity-100 focus:opacity-100;
+}
+
+.choices__inner {
+    min-height: 40px;
+    @apply inline-block w-full align-top p-1 border border-gray-300 rounded-sm text-sm text-gray-900 overflow-hidden;
+}
+
+.is-focused .choices__inner,
+.is-open .choices__inner {
+    @apply ring-1 ring-blue-500 border-blue-500;
+}
+
+.is-open .choices__inner {
+    @apply rounded-sm;
+}
+
+.is-flipped.is-open .choices__inner {
+    border-radius: 0 0 2.5px 2.5px;
+}
+
+.choices__list {
+    @apply m-0 pl-0 list-none;
+}
+
+.choices__list--single {
+    display: inline-block;
+    padding: 4px 16px 4px 4px;
+    width: 100%;
+}
+
+[dir="rtl"] .choices__list--single {
+    @apply pr-1 pl-4;
+}
+
+.choices__list--single .choices__item {
+    @apply w-full;
+}
+
+.choices__list--multiple {
+    display: inline;
+}
+
+.choices__list--multiple .choices__item {
+    box-sizing: border-box;
+    @apply rounded-full break-all inline-block align-middle mr-1 px-2 mb-1 pt-0.5 pb-1 md:text-sm font-medium text-white bg-blue-600;
+}
+
+.choices__list--multiple .choices__item[data-deletable] {
+    @apply pr-2;
+}
+
+[dir="rtl"] .choices__list--multiple .choices__item {
+    @apply ml-1 mr-0;
+}
+
+.choices__list--multiple .choices__item.is-highlighted {
+    @apply bg-blue-500;
+}
+
+.is-disabled .choices__list--multiple .choices__item {
+    background-color: #aaaaaa;
+    border: 1px solid #919191;
+}
+
+.choices__list--dropdown,
+.choices__list[aria-expanded] {
+    border-bottom-left-radius: 2.5px;
+    border-bottom-right-radius: 2.5px;
+    will-change: visibility;
+    @apply absolute z-10 top-full invisible w-full overflow-hidden break-all mt-1 border shadow-md bg-white;
+}
+
+.is-active.choices__list--dropdown,
+.is-active.choices__list[aria-expanded] {
+    @apply visible;
+}
+
+.is-open .choices__list--dropdown,
+.is-open .choices__list[aria-expanded] {
+    /* border-color: #b7b7b7; */
+}
+
+.is-flipped .choices__list--dropdown,
+.is-flipped .choices__list[aria-expanded] {
+    @apply bottom-full top-auto mt-0 mb-1 rounded-t-sm;
+}
+
+.choices__list--dropdown .choices__list,
+.choices__list[aria-expanded] .choices__list {
+    @apply relative divide-y overflow-auto;
+    max-height: 300px;
+    -webkit-overflow-scrolling: touch;
+    will-change: scroll-position;
+}
+
+.choices__list--dropdown .choices__item,
+.choices__list[aria-expanded] .choices__item {
+    @apply relative py-2 px-3 md:text-sm;
+}
+
+[dir="rtl"] .choices__list--dropdown .choices__item,
+[dir="rtl"] .choices__list[aria-expanded] .choices__item {
+    text-align: right;
+}
+
+@media (min-width: 640px) {
+    .choices__list--dropdown .choices__item--selectable,
+    .choices__list[aria-expanded] .choices__item--selectable {
+        padding-right: 100px;
+    }
+
+    .choices__list--dropdown .choices__item--selectable::after,
+    .choices__list[aria-expanded] .choices__item--selectable::after {
+        content: attr(data-select-text);
+        font-size: 12px;
+        opacity: 0;
+        position: absolute;
+        right: 0.5rem;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    [dir="rtl"] .choices__list--dropdown .choices__item--selectable,
+    [dir="rtl"] .choices__list[aria-expanded] .choices__item--selectable {
+        text-align: right;
+        padding-left: 100px;
+        padding-right: 0.5rem;
+    }
+
+    [dir="rtl"] .choices__list--dropdown .choices__item--selectable::after,
+    [dir="rtl"]
+        .choices__list[aria-expanded]
+        .choices__item--selectable::after {
+        right: auto;
+        left: 0.5rem;
+    }
+}
+
+.choices__list--dropdown .choices__item--selectable.is-highlighted,
+.choices__list[aria-expanded] .choices__item--selectable.is-highlighted {
+    @apply bg-gray-100;
+}
+
+.choices__list--dropdown .choices__item--selectable.is-highlighted::after,
+.choices__list[aria-expanded] .choices__item--selectable.is-highlighted::after {
+    opacity: 0.5;
+}
+
+.choices__item {
+    cursor: default;
+}
+
+.choices__item--selectable {
+    cursor: pointer;
+}
+
+.choices__item--disabled {
+    @apply opacity-50 cursor-not-allowed select-none;
+}
+
+.choices__heading {
+  @apply font-semibold text-sm py-2 border-b border-gray-300 text-gray-600;
+}
+
+.choices__button {
+    text-indent: -9999px;
+    @apply cursor-pointer bg-center bg-no-repeat bg-transparent border-none appearance-none focus:outline-none;
+}
+
+.choices__input {
+    padding: 4px 0 4px 2px;
+    @apply text-sm rounded-none max-w-full w-full inline-block align-middle border-none text-gray-700 placeholder-gray-400 bg-transparent;
+}
+
+.choices__input::-webkit-search-decoration,
+.choices__input::-webkit-search-cancel-button,
+.choices__input::-webkit-search-results-button,
+.choices__input::-webkit-search-results-decoration {
+    display: none;
+}
+
+.choices__input::-ms-clear,
+.choices__input::-ms-reveal {
+    @apply hidden w-0 h-0;
+}
+
+[dir="rtl"] .choices__input {
+    @apply pl-0 pr-1;
+}
+
+.choices__placeholder {
+    @apply opacity-50;
+}

@@ -1,5 +1,7 @@
 {% extends "base-apply.html" %}
 {% load i18n static workflow_tags wagtailcore_tags statusbar_tags %}
+{% load heroicons %}
+
 {% block title %}{{ object.title }}{% endblock %}
 {% block body_class %}{% endblock %}
 {% block content %}
@@ -10,13 +12,16 @@
     }
 </ul>
 {% endif %}
-{% if object.is_archive %}
-<div class="banner banner__archived">
-    {% trans "This submission is archived." %}
-</div>
-{% endif %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
+        {% if request.GET.ref == 'all-beta' %}
+        <a class="simplified__submissions-link"
+            hx-boost="true"
+            href="{% url "funds:submissions:list-beta" %}"
+        >
+            {% trans "Back to submissions" %}
+        </a>
+        {% endif %}
         <h1 class="beta heading heading--no-margin heading--bold">{{ object.title }}</h1>
         <h5 class="heading heading--meta">
             <span>{{ object.stage }}</span>
@@ -66,6 +71,13 @@
     </div>
 </div>
 
+{% if object.is_archive %}
+<div class="py-2 bg-red-600 text-white font-bold text-center">
+    {% heroicon_outline "lock-closed" aria_hidden="true" size=16 stroke_width=2 class="inline align-baseline mr-1" %}
+    {% trans "This submission has been archived." %}
+</div>
+{% endif %}
+
 <div class="wrapper wrapper--large wrapper--tabs js-tabs-content">
     {# Tab 1 #}
     <div class="tabs__content" id="tab-1">
@@ -81,8 +93,8 @@
             {% else %}
                 <article class="wrapper--sidebar--inner">
                     <header class="heading heading--submission-meta heading-text zeta">
-                        <span>{% trans "Submitted" %}: <strong>{{ object.submit_time.date }} {% trans "by" %} {{ object.user.get_full_name }}</strong></span>
-                        <span>{% trans "Last edited" %}: <strong>{{ object.live_revision.timestamp.date }} {% trans "by" %} {{ object.live_revision.author }}</strong></span>
+                        <span>{% trans "Submitted" %} <strong><relative-time datetime={{ object.submit_time|date:"c" }}>{{ object.submit_time|date:"SHORT_DATETIME_FORMAT" }}</relative-time></strong> {% trans "by" %} <strong>{{ object.user.get_full_name }}</strong></span>
+                        <span>{% trans "Updated" %} <strong><relative-time datetime={{ object.live_revision.timestamp|date:"c" }}>{{ object.live_revision.timestamp|date:"SHORT_DATETIME_FORMAT" }}</relative-time></strong> {% trans "by" %} <strong>{{ object.user.get_full_name }}</strong></span>
                         <div class="wrapper wrapper--submission-actions">
                             {% if perms.funds.delete_applicationsubmission %}
                                 <a class="link link--delete-submission is-active" href="{% url 'funds:submissions:delete' object.id %}">
