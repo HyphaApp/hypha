@@ -191,3 +191,13 @@ def user_can_take_actions(project, user):
     if user.id in project.paf_approvals.values_list('user', flat=True):
         return True
     return False
+
+
+@register.simple_tag
+def category_latest_file(project, category):
+    return category.packet_files.filter(project=project).first()
+
+
+@register.simple_tag
+def contract_category_latest_file(project, category):
+    return category.contract_packet_files.filter(project=project).first()

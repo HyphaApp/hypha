@@ -22,13 +22,13 @@ from .models import (
 class DocumentCategoryAdmin(ModelAdmin):
     model = DocumentCategory
     menu_icon = 'doc-full'
-    list_display = ('name', 'recommended_minimum',)
+    list_display = ('name', 'required',)
 
 
 class ContractDocumentCategoryAdmin(ModelAdmin):
     model = ContractDocumentCategory
     menu_icon = 'doc-full'
-    list_display = ('name', 'recommended_minimum',)
+    list_display = ('name', 'required',)
 
 
 class ProjectApprovalFormAdmin(ListRelatedMixin, ModelAdmin):

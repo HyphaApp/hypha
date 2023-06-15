@@ -45,6 +45,14 @@ def document_path(instance, filename):
     return f'projects/{instance.project_id}/supporting_documents/{filename}'
 
 
+def document_template_path(instance, filename):
+    return f'projects/supporting_documents/{instance.id}/template/{filename}'
+
+
+def contract_document_template_path(instance, filename):
+    return f'projects/contract_documents/{instance.id}/template/{filename}'
+
+
 def contract_document_path(instance, filename):
     return f'projects/{instance.project_id}/contracting_documents/{filename}'
 
@@ -563,6 +571,9 @@ class PacketFile(models.Model):
     def __str__(self):
         return _('Project file: {title}').format(title=self.title)
 
+    class Meta:
+        ordering = ('-created_at',)
+
     def get_remove_form(self):
         """
         Get an instantiated RemoveDocumentForm with this class as `instance`.
@@ -614,26 +625,42 @@ def delete_contractpacketfile_file(sender, instance, **kwargs):
 
 class DocumentCategory(models.Model):
     name = models.CharField(max_length=254)
-    recommended_minimum = models.PositiveIntegerField()
+    recommended_minimum = models.PositiveIntegerField(null=True, blank=True)
+    required = models.BooleanField(default=False)
+    template = models.FileField(upload_to=document_template_path, storage=PrivateStorage(), blank=True, null=True)
 
     def __str__(self):
         return self.name
 
     class Meta:
-        ordering = ('name',)
+        ordering = ('-required', 'name')
         verbose_name_plural = 'Project Document Categories'
+
+    panels = [
+        FieldPanel('name'),
+        FieldPanel('required'),
+        FieldPanel('template'),
+    ]
 
 
 class ContractDocumentCategory(models.Model):
     name = models.CharField(max_length=254)
-    recommended_minimum = models.PositiveIntegerField()
+    recommended_minimum = models.PositiveIntegerField(null=True, blank=True)
+    required = models.BooleanField(default=True)
+    template = models.FileField(upload_to=contract_document_template_path, storage=PrivateStorage(), blank=True, null=True)
 
     def __str__(self):
         return self.name
 
     class Meta:
-        ordering = ('name',)
+        ordering = ('-required', 'name')
         verbose_name_plural = 'Contract Document Categories'
+
+    panels = [
+        FieldPanel('name'),
+        FieldPanel('required'),
+        FieldPanel('template'),
+    ]
 
 
 class Deliverable(models.Model):

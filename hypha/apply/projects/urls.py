@@ -1,6 +1,7 @@
 from django.urls import include, path
 
 from .views import (
+    CategoryTemplatePrivateMediaView,
     ContractDocumentPrivateMediaView,
     ContractPrivateMediaView,
     CreateInvoiceView,
@@ -41,6 +42,7 @@ urlpatterns = [
         path('partial/activities/', partial_project_activities, name="partial-activities"),
         path('edit/', ProjectApprovalFormEditView.as_view(), name="edit"),
         path('documents/<int:file_pk>/', ProjectPrivateMediaView.as_view(), name="document"),
+        path('category/<str:type>/<int:category_pk>/template/', CategoryTemplatePrivateMediaView.as_view(), name="category_template"),
         path('contract/<int:file_pk>/', ContractPrivateMediaView.as_view(), name="contract"),
         path('contract/documents/<int:file_pk>/', ContractDocumentPrivateMediaView.as_view(), name="contract_document"),
         path('download/<str:export_type>/', ProjectDetailDownloadView.as_view(), name='download'),
