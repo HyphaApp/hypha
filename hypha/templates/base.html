@@ -1,4 +1,4 @@
-{% load static cache wagtailuserbar wagtailcore_tags wagtailimages_tags navigation_tags util_tags cookieconsent_tags %}<!doctype html>
+{% load static cache wagtailcore_tags wagtailimages_tags navigation_tags util_tags cookieconsent_tags %}<!doctype html>
 {% wagtail_site as current_site %}
 <html class="no-js" lang="en">
     <head>
@@ -68,8 +68,6 @@
     <body class="{% block body_class %}template-{{ page.get_verbose_name|slugify }}{% endblock %}">
 
         {% include "includes/sprites.html" %}
-
-        {% wagtailuserbar %}
 
         {% include 'includes/messages.html' %}
 
