@@ -182,11 +182,7 @@
         </main>
 
         <footer class="footer">
-            <div class="grid grid--two wrapper wrapper--large">
-                <div class="footer__inner">
-                    {% include "mailchimp/newsletter_signup.html" %}
-                </div>
-
+            <div class="wrapper wrapper--large">
                 <div class="footer__inner">
                     <div class="footer__social-links">
                         {% if settings.utils.SocialMediaSettings.twitter_handle %}
@@ -199,7 +195,6 @@
                     {{ settings.utils.SystemMessagesSettings.footer_content|safe }}
                 </div>
             </div>
-
         </footer>
 
         {% cookie_banner %}

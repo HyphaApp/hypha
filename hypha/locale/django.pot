@@ -5845,38 +5845,6 @@ msgstr ""
 msgid "Promoted RFPs"
 msgstr ""
 
-#: hypha/public/mailchimp/forms.py:6
-msgid "Email Address"
-msgstr ""
-
-#: hypha/public/mailchimp/forms.py:7
-msgid "First Name"
-msgstr ""
-
-#: hypha/public/mailchimp/forms.py:8
-msgid "Last Name"
-msgstr ""
-
-#: hypha/public/mailchimp/models.py:18
-msgid "The title of the newsletter signup form."
-msgstr ""
-
-#: hypha/public/mailchimp/templates/mailchimp/newsletter_signup.html:17
-msgid "Sign up"
-msgstr ""
-
-#: hypha/public/mailchimp/views.py:80
-msgid "Sorry, there were errors with your form."
-msgstr ""
-
-#: hypha/public/mailchimp/views.py:85
-msgid "Sorry, there has been an problem. Please try again later."
-msgstr ""
-
-#: hypha/public/mailchimp/views.py:92
-msgid "Thank you for subscribing"
-msgstr ""
-
 #: hypha/public/navigation/models.py:13
 msgid "Leave blank to use the page's own title"
 msgstr ""
