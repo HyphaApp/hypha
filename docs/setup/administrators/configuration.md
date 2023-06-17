@@ -127,6 +127,8 @@ Good for testing, might not be a good idea in production.
     SLACK_ENDPOINT_URL = env.str('SLACK_ENDPOINT_URL', 'https://slack.com/api/chat.postMessage')
     SLACK_BACKEND = 'django_slack.backends.CeleryBackend'  # UrllibBackend can be used for sync
 
+If `SLACK_DESTINATION_ROOM` is not correctly configured, it will fail silently only with the error log, without making any noise to sentry.
+
 ### Staff e-mail domain. Used for OAUTH2 whitelist default value and staff account creation.
 
     STAFF_EMAIL_DOMAINS = env.list('STAFF_EMAIL_DOMAINS', [])
