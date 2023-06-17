@@ -574,7 +574,11 @@ class ApplicationSubmission(
                     email=email,
                     defaults={'full_name': full_name}
                 )
-                # :todo: check for the applicant group in get_or_create.
+                # Ensure applying user should have applicant role
+                applicant_group = Group.objects.get(name=APPLICANT_GROUP_NAME)
+                if applicant_group not in self.user.groups.all():
+                    self.user.groups.add(applicant_group)
+                    self.user.save()
             else:
                 self.user, _ = User.objects.get_or_create_and_notify(
                     email=email,
