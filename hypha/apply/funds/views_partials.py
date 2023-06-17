@@ -1,5 +1,6 @@
 import functools
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
@@ -241,6 +242,7 @@ def partial_reviews_card(request: HttpRequest, pk: str) -> HttpResponse:
 
     ctx = {
         'hidden_types': [REVIEWER_GROUP_NAME],
+        'SHOW_AVERAGE_REVIEW_SCORE': settings.SHOW_AVERAGE_REVIEW_SCORE,
         'staff_reviewers_exist': assigned_reviewers.staff().exists(),
         'assigned_reviewers': assigned_reviewers,
         'recommendation': recommendation,
