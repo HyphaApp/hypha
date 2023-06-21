@@ -44,3 +44,15 @@ def user_can_update_paf_status(project, user, **kwargs):
 @register.simple_tag
 def user_can_edit_project(project, user):
     return project.editable_by(user)
+
+
+@register.simple_tag
+def project_rejected_by_user(project, user):
+    """ Using for paf approvals sidebar section"""
+    # todo: need to find a better way to know request change action on PAF.
+    from hypha.apply.activity.models import Activity
+
+    if not user:
+        return False
+    message = 'Requested changes for acceptance'  # picked from activity.adapters.activity_feed.ActivityAdapter messages
+    return Activity.actions.filter(source_object_id=project.id, user__id=user.id, message__icontains=message).exists()

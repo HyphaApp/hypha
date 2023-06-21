@@ -184,10 +184,16 @@
 
                     <h5>{% trans "PAF Approvals" %}</h5>
                         {% for paf_approval in object.paf_approvals.all %}
-                            {% if paf_approval.approved %}
-                                <p class="sidebar__paf-approvals--approved m-0">{% trans "Approved by " %}{{ paf_approval.user }} {% if paf_approval.approved_at %}(<i>{{ paf_approval.approved_at|date }}</i>){% endif %}</p>
+
+                            {% if not paf_approval.approved %}
+                                {% project_rejected_by_user object paf_approval.user as rejected %}
+                                {% if rejected %}
+                                    <p class="sidebar__paf-approvals--pending m-0">{% trans "Requested changes by " %}{{ paf_approval.user }}</p>
+                                {% else %}
+                                    <p class="sidebar__paf-approvals--pending m-0">{% trans "Pending approval from " %}{% if paf_approval.user %}{{ paf_approval.user }}{% else %} {{ paf_approval.paf_reviewer_role.label }}{% trans " (nobody assigned yet)" %} {% endif %}</p>
+                                {% endif %}
                             {% else %}
-                                <p class="sidebar__paf-approvals--pending m-0">{% trans "Pending approval from " %}{% if paf_approval.user %}{{ paf_approval.user }}{% else %} {{ paf_approval.paf_reviewer_role.label }}{% trans " (nobody assigned yet)" %} {% endif %}</p>
+                                <p class="sidebar__paf-approvals--approved m-0">{% trans "Approved by " %}{{ paf_approval.user }} {% if paf_approval.approved_at %}(<i>{{ paf_approval.approved_at|date }}</i>){% endif %}</p>
                             {% endif %}
                             <br>
                         {% endfor %}
