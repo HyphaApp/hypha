@@ -70,6 +70,12 @@
             {% endif %}
             {% endblock %}
         </div>
+        <div class="js-actions-sidebar sidebar__inner sidebar__inner--actions">
+            <h5>{% trans "Activity Feed" %}</h5>
+            {% for activity in activities %}
+                <p>{{ activity.message }} - {{ activity.user }}</p>
+            {% endfor %}
+        </div>
     </aside>
 </div>
 {% endblock %}
