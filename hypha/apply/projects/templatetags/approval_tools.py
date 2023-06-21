@@ -55,4 +55,5 @@ def project_rejected_by_user(project, user):
     if not user:
         return False
     message = 'Requested changes for acceptance'  # picked from activity.adapters.activity_feed.ActivityAdapter messages
-    return Activity.actions.filter(source_object_id=project.id, user__id=user.id, message__icontains=message).exists()
+    return Activity.actions.filter(source_content_type__model="project", source_object_id=project.id,
+                                   user__id=user.id, message__icontains=message).exists()
