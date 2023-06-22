@@ -33,7 +33,6 @@ from ..models.payment import (
     CHANGES_REQUESTED_BY_FINANCE_1,
     CHANGES_REQUESTED_BY_FINANCE_2,
     CHANGES_REQUESTED_BY_STAFF,
-    CONVERTED,
     DECLINED,
     PAID,
     RESUBMITTED,
@@ -223,7 +222,7 @@ class TestChangeInvoiceStatusFormForm(TestCase):
         user = FinanceFactory()
         form = ChangeInvoiceStatusForm(instance=invoice, user=user)
 
-        expected = set(filter_request_choices([CONVERTED, PAID],
+        expected = set(filter_request_choices([PAID],
                                               invoice_status_user_choices(user)))
         actual = set(form.fields['status'].choices)
         self.assertEqual(expected, actual)

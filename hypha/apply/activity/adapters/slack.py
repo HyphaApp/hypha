@@ -14,7 +14,6 @@ from hypha.apply.projects.models.payment import (
     APPROVED_BY_STAFF,
     CHANGES_REQUESTED_BY_FINANCE_1,
     CHANGES_REQUESTED_BY_FINANCE_2,
-    CONVERTED,
     PAID,
     RESUBMITTED,
     SUBMITTED,
@@ -131,7 +130,6 @@ class SlackAdapter(AdapterBase):
                 RESUBMITTED,
                 CHANGES_REQUESTED_BY_FINANCE_1,
                 APPROVED_BY_FINANCE_2,
-                CONVERTED,
                 PAID,
             ]:
                 # Notify project lead/staff

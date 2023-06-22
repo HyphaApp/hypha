@@ -19,7 +19,6 @@ from ..models.payment import (
     CHANGES_REQUESTED_BY_FINANCE_1,
     CHANGES_REQUESTED_BY_FINANCE_2,
     CHANGES_REQUESTED_BY_STAFF,
-    CONVERTED,
     DECLINED,
     INVOICE_STATUS_FINANCE_1_CHOICES,
     INVOICE_STATUS_FINANCE_2_CHOICES,
@@ -229,7 +228,7 @@ class TestInvoiceModel(TestCase):
 
     @override_settings(INVOICE_EXTENDED_WORKFLOW=False)
     def test_finance1_can_change_status(self):
-        statuses = [APPROVED_BY_STAFF, APPROVED_BY_FINANCE_1, CONVERTED]
+        statuses = [APPROVED_BY_STAFF, APPROVED_BY_FINANCE_1]
         user = FinanceFactory()
         for status in statuses:
             invoice = InvoiceFactory(status=status)
@@ -259,7 +258,7 @@ class TestInvoiceModel(TestCase):
 
     @override_settings(INVOICE_EXTENDED_WORKFLOW=True)
     def test_finance2_can_change_status_with_extended_flow(self):
-        statuses = [APPROVED_BY_FINANCE_1, APPROVED_BY_FINANCE_2, CONVERTED]
+        statuses = [APPROVED_BY_FINANCE_1, APPROVED_BY_FINANCE_2]
         user = Finance2Factory()
         for status in statuses:
             invoice = InvoiceFactory(status=status)
