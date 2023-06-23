@@ -1,5 +1,11 @@
 # Docker
 
+This is a set of instructions on spinning up hypha in a docker container for
+evaluation of the system. While Docker is a well suited to this type of quick
+exploration, we do not currently recommend these docker instructions for
+production use. Instead, we advise production deployments to instead install
+into a [stand-alone](stand-alone.md) directory.
+
 ## Requirements
 
 Recent version of [Docker](https://www.docker.com/get-started).
