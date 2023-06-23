@@ -42,6 +42,7 @@ from wagtail.blocks import BoundBlock
 from faker import Faker
 
 import random
+import json
 
 class Command(BaseCommand):
     help = "Sanitizes the reviews, submissions, and users of identifiable inforamtion"
@@ -63,7 +64,7 @@ class Command(BaseCommand):
                     key = form_field.block_type
                 except:
                     pass
-            if not data:
+            if not data and form_field.id in form_holder.form_data:
                 data = form_holder.form_data[form_field.id]
                 key = form_field.id
 
@@ -88,7 +89,18 @@ class Command(BaseCommand):
             elif form_field.value['field_label'].lower() == "contact phone number":
                 update_data(self.f.phone_number())
             elif form_field.value['field_label'].lower() == "organization address":
-                update_data(self.f.address())
+                try:
+                    address = json.loads(data)
+                    address['country'] = self.f.country_code()
+                    address['thoroughfare'] = self.f.street_address()
+                    address['premise'] = ''
+                    address['localityname'] = self.f.city()
+                    address['administrativearea'] = 'CA'
+                    address['postalcode'] = self.f.postcode()
+                    update_data(json.dumps(address))
+                except json.decoder.JSONDecodeError:
+                    # Address was just a string
+                    update_data(self.f.address())
             elif form_field.value['field_label'].lower() == "requested grant amount":
                 update_data(self.f.pricetag())
             elif form_field.value['field_label'].lower() == "project website":
