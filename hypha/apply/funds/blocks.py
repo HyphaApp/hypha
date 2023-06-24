@@ -14,6 +14,7 @@ from hypha.apply.utils.blocks import (
     RichTextFieldBlock,
     SingleIncludeBlock,
 )
+from hypha.apply.utils.templatetags.apply_tags import format_number_as_currency
 
 
 class ApplicationSingleIncludeFieldBlock(SingleIncludeBlock):
@@ -44,7 +45,7 @@ class ValueBlock(ApplicationSingleIncludeFieldBlock):
         label = _('Requested amount')
 
     def prepare_data(self, value, data, serialize):
-        return settings.CURRENCY_SYMBOL + str(data)
+        return format_number_as_currency(str(data))
 
 
 class EmailBlock(ApplicationMustIncludeFieldBlock):

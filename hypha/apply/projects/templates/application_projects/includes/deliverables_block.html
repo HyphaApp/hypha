@@ -1,4 +1,4 @@
-{% load i18n invoice_tools %}
+{% load i18n invoice_tools apply_tags %}
 <div class="sidebar__inner">
     {% can_edit_deliverables invoice user as user_can_edit_deliverables %}
     {% if user_can_edit_deliverables %}
@@ -32,13 +32,13 @@
     <div id="list-deliverables">
         <div class="deliverables">
             {% for deliverable in invoice.deliverables.all %}
-                <b>{{ deliverable.deliverable.name }} ({{ deliverable.quantity }} {{ CURRENCY_SYMBOL }}{{deliverable.deliverable.unit_price}})</b>{% if user_can_edit_deliverables %}<a href="{% url "api:v1:remove-deliverables" pk=deliverable.pk invoice_pk=invoice.pk project_pk=project.pk %}"> {% trans "Remove" %}</a>{% endif %}<br>
+                <b>{{ deliverable.deliverable.name }} ({{ deliverable.quantity }} {{ deliverable.deliverable.unit_price|format_number_as_currency }})</b>{% if user_can_edit_deliverables %}<a href="{% url "api:v1:remove-deliverables" pk=deliverable.pk invoice_pk=invoice.pk project_pk=project.pk %}"> {% trans "Remove" %}</a>{% endif %}<br>
             {% endfor %}
         </div>
         {% if invoice.deliverables_total_amount.total %}
             <div class="total">
                 <b>...</b><br>
-                <b>{% trans "Total:" %} {{ CURRENCY_SYMBOL}}{{ invoice.deliverables_total_amount.total }}</b>
+                <b>{% trans "Total:" %} {{ invoice.deliverables_total_amount.total|format_number_as_currency }}</b>
             </div>
         {% endif %}
     </div>

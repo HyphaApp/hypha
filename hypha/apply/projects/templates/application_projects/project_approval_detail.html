@@ -1,5 +1,5 @@
 {% extends "base-apply.html" %}
-{% load i18n static approval_tools project_tags %}
+{% load i18n static approval_tools project_tags apply_tags %}
 
 {% block title %}{{ object.title }}{% endblock %}
 
@@ -65,8 +65,8 @@
                         </div>
 
                         <div>
-                            <p class="font-bold">{% trans "Value" %}</p>
-                            <p>{{ CURRENCY_SYMBOL }}{{ object.value|default:"-" }}</p>
+                            <h5>{% trans "Value" %}</h5>
+                            <p>{{ object.value|default:"-"|format_number_as_currency }}</p>
                         </div>
 
                         {% if object.sent_to_compliance_at %}

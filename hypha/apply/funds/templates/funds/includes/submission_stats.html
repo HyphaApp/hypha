@@ -1,9 +1,9 @@
-{% load i18n %}
+{% load i18n apply_tags %}
 <div class="stat-block">
     <div class="stat-block__item">
         <h5>{% trans "Amounts" %}</h5>
         <table>
-            <tr><th>{% trans "Applied" %} ({{ CURRENCY_SYMBOL }})</th><th>{% trans "Accepted" %}  ({{ CURRENCY_SYMBOL }})</th></tr>
+            <tr><th>{% trans "Applied" %} ({{ ""|format_number_as_currency }})</th><th>{% trans "Accepted" %}  ({{ ""|format_number_as_currency }})</th></tr>
             <tr><td>{{ submission_sum|default:"0" }}</td><td>{{ submission_accepted_sum|default:"0" }}</td></tr>
         </table>
     </div>

@@ -20,7 +20,8 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 # Hypha custom settings
 
 # Set the currency symbol to be used.
-CURRENCY_SYMBOL = env.str('CURRENCY_SYMBOL', '$')
+CURRENCY_CODE = env.str('CURRENCY_CODE', 'USD')
+LOCALE = env.str('LOCALE', 'en_US')
 
 # Default page pagination value.
 DEFAULT_PER_PAGE = 20

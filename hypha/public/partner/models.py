@@ -1,3 +1,4 @@
+import babel.numbers
 import datetime
 
 from django import forms
@@ -201,7 +202,9 @@ class Investment(models.Model):
         decimal_places=2,
         default=0,
         max_digits=11,
-        verbose_name=_('Amount Committed ({currency})').format(currency=settings.CURRENCY_SYMBOL.strip())
+        verbose_name=_('Amount Committed ({currency})').format(currency=babel.numbers.get_currency_symbol(
+            settings.CURRENCY_CODE, locale=settings.LOCALE
+        ).strip())
     )
     description = models.TextField()
     application = models.OneToOneField(
