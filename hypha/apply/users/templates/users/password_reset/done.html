@@ -2,12 +2,9 @@
 {% load i18n %}
 
 {% block title %}{% trans "Password Reset" %}{% endblock %}
+{% block body_class %}bg-white{% endblock %}
 
 {% block content %}
-
-    {% adminbar %}
-        {% slot header %}{% trans "Password Reset" %}{% endslot %}
-    {% endadminbar %}
 
     <div class="wrapper mt-12 max-w-xl">
 
@@ -19,9 +16,6 @@
         </p>
         <p>
             {% blocktrans %}Check your "Spam" folder, if you don't find the email in your inbox.{% endblocktrans %}
-
         </p>
-
-
     </div>
 {% endblock %}

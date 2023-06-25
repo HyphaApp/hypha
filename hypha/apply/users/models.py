@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
-from wagtail.contrib.settings.models import BaseSiteSetting, register_setting
+from wagtail.contrib.settings.models import BaseGenericSetting, register_setting
 from wagtail.fields import RichTextField
 
 from .groups import (
@@ -295,34 +295,42 @@ class User(AbstractUser):
 
 
 @register_setting
-class UserSettings(BaseSiteSetting):
-
+class AuthSettings(BaseGenericSetting):
     wagtail_reference_index_ignore = True
 
     class Meta:
-        verbose_name = 'user settings'
+        verbose_name = 'Auth Settings'
 
-    consent_show = models.BooleanField(
-        'Show consent checkbox',
-        default=False,
-    )
-
-    consent_text = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
+    consent_show = models.BooleanField(_('Show consent checkbox?'), default=False)
+    consent_text = models.CharField(max_length=255, blank=True)
     consent_help = RichTextField(blank=True)
-
-    extra_text = RichTextField(blank=True)
+    extra_text = RichTextField(
+        _("Login extra text"),
+        blank=True, help_text=_("Displayed along side login form")
+    )
+    register_extra_text = RichTextField(
+        blank=True, help_text=_("Extra text to be displayed on register form")
+    )
 
     panels = [
-        MultiFieldPanel([
-            FieldPanel('consent_show'),
-            FieldPanel('consent_text'),
-            FieldPanel('consent_help'),
-        ], 'consent checkbox on login form'),
-        MultiFieldPanel([
-            FieldPanel('extra_text'),
-        ], 'extra text on login form'),
+        MultiFieldPanel(
+            [
+                FieldPanel('consent_show'),
+                FieldPanel('consent_text'),
+                FieldPanel('consent_help'),
+            ],
+            _("User consent on login & register forms")
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel('extra_text'),
+            ],
+            _('Login form customizations'),
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel('register_extra_text'),
+            ],
+            _('Register form customizations'),
+        ),
     ]
