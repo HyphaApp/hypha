@@ -22,7 +22,7 @@
         <button class="link link--button-secondary" type="submit">{% trans "Register" %}</button>
     </form>
     <p>
-        Already have an account? <a href="{% url 'users_public:login' %}">Log in</a>
+        {% trans "Already have an account?" %} <a href="{% url 'users_public:login' %}"> {% trans "Log in" %}</a>
     </p>
   </div>
 {% endblock %}
