@@ -2,18 +2,11 @@
 {% load i18n %}
 
 {% block title %}{% trans "Reset password" %}{% endblock %}
+{% block body_class %}bg-white{% endblock %}
 
 {% block content %}
-    {% adminbar %}
-        {% slot header %}{% trans "Reset Password" %}{% endslot %}
-        {% slot back %}
-            <a class="simplified__submissions-link" href="{% url 'users_public:login' %}">
-                {% trans "Back to Login" %}
-            </a>
-        {% endslot %}
-    {% endadminbar %}
 
-    <section class="mt-6">
+    <section class="mt-5 pt-4">
         <div class="wrapper">
             {% if form.non_field_errors %}
                 <div class="messages">
@@ -25,15 +18,21 @@
                 </div>
             {% endif %}
 
-            <form class="form form--with-p-tags" method="post">
-                <h2 class="text-xl">{% trans "Forgot or want to change your password?" %}</h2>
+            <form class="form form--with-p-tags pt-4" method="post">
+                <h2 class="text-2xl">{% trans "Forgot password?" %}</h2>
                 <p class="form__help">{% trans "Please enter your user account's email address and we will send you a password reset link." %}</p>
                 {% csrf_token %}
                 <p>{{ form.email.label_tag }}</p>
                 <p>{{ form.email }}</p>
 
-                <button class="btn btn-primary" type="submit">{% trans "Send password reset email" %}</button>
+                <button class="btn btn-primary" type="submit">{% trans "Send reset email" %}</button>
             </form>
+
+            <div class="mt-4">
+                <a href="{% url 'users_public:login' %}" hx-boost="true">
+                    {% trans "Log in" %}
+                </a>
+            </div>
         </div>
     </section>
 {% endblock %}

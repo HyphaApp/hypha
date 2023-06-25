@@ -3,10 +3,9 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2Widget
-from wagtail.models import Site
 from wagtail.users.forms import UserCreationForm, UserEditForm
 
-from .models import UserSettings
+from .models import AuthSettings
 
 User = get_user_model()
 
@@ -14,8 +13,7 @@ User = get_user_model()
 class CustomAuthenticationForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.site = Site.find_for_request(self.request)
-        self.user_settings = UserSettings.for_site(site=self.site)
+        self.user_settings = AuthSettings.load(request_or_site=self.request)
         self.extra_text = self.user_settings.extra_text
         if self.user_settings.consent_show:
             self.fields['consent'] = forms.BooleanField(
@@ -43,6 +41,19 @@ class CustomUserCreationForm(CustomUserAdminFormBase, UserCreationForm):
         'duplicate_username': _("A user with that email already exists."),
         'password_mismatch': _("The two password fields didn't match."),
     }
+
+    def __init__(self, request=None, *args, **kwargs):
+        self.request = request
+        super().__init__(*args, **kwargs)
+
+        self.user_settings = AuthSettings.load(request_or_site=self.request)
+        if self.user_settings.consent_show:
+            self.fields['consent'] = forms.BooleanField(
+                label=self.user_settings.consent_text,
+                help_text=self.user_settings.consent_help,
+                required=True,
+            )
+
 
 class ProfileForm(forms.ModelForm):
     class Meta:
