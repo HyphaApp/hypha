@@ -558,8 +558,8 @@ class ApplicationSubmission(
             self.form_data['email'] = self.user.email
             self.form_data['full_name'] = self.user.get_full_name()
             # Ensure applying user should have applicant role
-            applicant_group = Group.objects.get(name=APPLICANT_GROUP_NAME)
-            if applicant_group not in self.user.groups.all():
+            if not self.user.is_applicant:
+                applicant_group = Group.objects.get(name=APPLICANT_GROUP_NAME)
                 self.user.groups.add(applicant_group)
                 self.user.save()
         else:
@@ -575,8 +575,8 @@ class ApplicationSubmission(
                     defaults={'full_name': full_name}
                 )
                 # Ensure applying user should have applicant role
-                applicant_group = Group.objects.get(name=APPLICANT_GROUP_NAME)
-                if applicant_group not in self.user.groups.all():
+                if not self.user.is_applicant:
+                    applicant_group = Group.objects.get(name=APPLICANT_GROUP_NAME)
                     self.user.groups.add(applicant_group)
                     self.user.save()
             else:
