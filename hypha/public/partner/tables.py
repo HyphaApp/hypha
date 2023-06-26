@@ -46,7 +46,7 @@ class InvestmentFilter(filters.FilterSet):
     amount_committed = Select2MultipleChoiceFilter(
         choices=AMOUNT_COMMITTED_CHOICES,
         label=_('Amount Committed ({currency})').format(currency=babel.numbers.get_currency_symbol(
-            settings.CURRENCY_CODE, locale=settings.LOCALE
+            settings.CURRENCY_CODE, locale=settings.CURRENCY_LOCALE
         ).strip()),
         method='filter_amount_committed'
     )

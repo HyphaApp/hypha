@@ -21,7 +21,7 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 
 # Set the currency symbol to be used.
 CURRENCY_CODE = env.str('CURRENCY_CODE', 'USD')
-LOCALE = env.str('LOCALE', 'en_US')
+CURRENCY_LOCALE = env.str('CURRENCY_LOCALE', 'en_US')
 
 # Default page pagination value.
 DEFAULT_PER_PAGE = 20

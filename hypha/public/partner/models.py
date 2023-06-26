@@ -203,7 +203,7 @@ class Investment(models.Model):
         default=0,
         max_digits=11,
         verbose_name=_('Amount Committed ({currency})').format(currency=babel.numbers.get_currency_symbol(
-            settings.CURRENCY_CODE, locale=settings.LOCALE
+            settings.CURRENCY_CODE, locale=settings.CURRENCY_LOCALE
         ).strip())
     )
     description = models.TextField()

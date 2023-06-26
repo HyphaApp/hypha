@@ -83,7 +83,7 @@ class CreateVendorFormStep3(FileFormMixin, BaseVendorForm, forms.Form):
 
 class CreateVendorFormStep4(BaseVendorForm, forms.Form):
     CURRENCY_CHOICES = [
-        (currency, f'{get_currency_name(currency, locale=Locale.parse(settings.LANGUAGE_CODE, sep="-"))} - {currency}')
+        (currency, f'{get_currency_name(currency, locale=settings.CURRENCY_LOCALE)} - {currency}')
         for currency in get_active_currencies()
     ]
 
@@ -116,7 +116,7 @@ class CreateVendorFormStep5(BaseVendorForm, forms.Form):
 
 class CreateVendorFormStep6(BaseVendorForm, forms.Form):
     CURRENCY_CHOICES = [
-        (currency, f'{get_currency_name(currency, locale=Locale.parse(settings.LANGUAGE_CODE, sep="-"))} - {currency}')
+        (currency, f'{get_currency_name(currency, locale=settings.CURRENCY_LOCALE)} - {currency}')
         for currency in get_active_currencies()
     ]
     branch_address = AddressField()
