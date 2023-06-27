@@ -12,7 +12,7 @@
         <div class="wrapper wrapper--error">{{ form.non_field_errors.as_text }}</div>
     {% endif %}
 
-    <form class="form form--with-p-tags form--user-login" method="post">
+    <form class="form form--with-p-tags" method="post">
       {% csrf_token %}
         {% for field in form %}
           {%if field.id_for_label != 'id_is_superuser' and field.label != 'Groups' %}
@@ -21,5 +21,8 @@
         {% endfor %}
         <button class="link link--button-secondary" type="submit">{% trans "Register" %}</button>
     </form>
+    <p>
+        {% trans "Already have an account?" %} <a href="{% url 'users_public:login' %}"> {% trans "Log in" %}</a>
+    </p>
   </div>
 {% endblock %}
