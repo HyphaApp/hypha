@@ -529,6 +529,7 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
         if paf_status == REQUEST_CHANGE:
             self.object.status = DRAFT
             self.object.save(update_fields=['status'])
+            paf_approval.save()
 
             messenger(
                 MESSAGES.REQUEST_PROJECT_CHANGE,

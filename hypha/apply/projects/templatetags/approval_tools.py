@@ -1,4 +1,5 @@
 from django import template
+from datetime import timedelta
 
 from ..permissions import has_permission
 
@@ -57,3 +58,19 @@ def project_rejected_by_user(project, user):
     message = 'Requested changes for acceptance'  # picked from activity.adapters.activity_feed.ActivityAdapter messages
     return Activity.actions.filter(source_content_type__model="project", source_object_id=project.id,
                                    user__id=user.id, message__icontains=message).exists()
+
+
+@register.simple_tag
+def get_comment_for_requested_approval(requested_approval):
+    from hypha.apply.activity.models import Activity
+    if requested_approval.updated_at:
+        comment = Activity.comments.filter(user__id=requested_approval.user.id,
+                                           source_content_type__model="project",
+                                           source_object_id=requested_approval.project.id,
+                                           timestamp__range=(
+                                               requested_approval.updated_at - timedelta(minutes=2),
+                                               requested_approval.updated_at + timedelta(minutes=2)
+                                           )).first()
+        return comment if comment else None
+    return None
+
