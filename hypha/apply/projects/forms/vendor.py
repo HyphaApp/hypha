@@ -1,7 +1,7 @@
 import datetime
 from operator import itemgetter
 
-from babel.core import Locale, get_global
+from babel.core import get_global
 from babel.numbers import get_currency_name, get_territory_currencies
 from django import forms
 from django.conf import settings

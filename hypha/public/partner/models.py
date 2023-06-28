@@ -1,6 +1,6 @@
-import babel.numbers
 import datetime
 
+import babel.numbers
 from django import forms
 from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
