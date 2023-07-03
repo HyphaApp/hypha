@@ -1,14 +1,14 @@
 {% extends "base-apply.html" %}
 {% load i18n static %}
 
-{% block title %}{% if object %}{% trans "Edit" %}{% else %}{% trans "Create" %}{% endif %} {% trans "Invoice" %}: {% if object %}{{ object.project.title }}{% else %}{{ project.title }}{% endif %}{% endblock %}
+{% block title %}{% if object %}{% trans "Edit" %}{% else %}{% trans "Add" %}{% endif %} {% trans "Invoice" %}: {% if object %}{{ object.project.title }}{% else %}{{ project.title }}{% endif %}{% endblock %}
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
         <a class="simplified__projects-link" href="{{ object.project.get_absolute_url }}">
             {% trans "Back to project" %}
         </a>
-        <h2 class="heading heading--no-margin">{% if object %}{% trans "Editing" %}{% else %}{% trans "Create" %}{% endif %} {% trans "Invoice" %}</h2>
+        <h2 class="heading heading--no-margin">{% if object %}{% trans "Editing" %}{% else %}{% trans "Add" %}{% endif %} {% trans "Invoice" %}</h2>
         <h5 class="heading heading--no-margin">{% if object %}{{ object.project.title }}{% else %}{% trans "For" %}: {{ project.title }}{% endif %}</h5>
     </div>
 </div>

@@ -108,7 +108,7 @@
                     <p>{{ project.submission.lead }}</p>
 
                     <h4>{% trans "Reviews" %}</h4>
-                    <h5>{% trans "Staff Reviewers" %}</h5>
+                    <h5>{% trans "Staff reviewers" %}</h5>
                     {% for review in project.submission.reviews.by_staff %}
                     <div class="card__reviewer-outcome">
                         <span class="card__reviewer">
@@ -122,7 +122,7 @@
                     {% empty %}
                         {% trans "No reviews" %}
                     {% endfor %}
-                    <h5>{% trans "External Reviewers" %}</h5>
+                    <h5>{% trans "Advisory council" %}</h5>
                     {% for review in project.submission.reviews.by_reviewers %}
                         <div class="card__reviewer-outcome">
                             <span class="card__reviewer">
