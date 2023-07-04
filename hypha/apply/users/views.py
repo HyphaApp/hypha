@@ -50,6 +50,7 @@ from .utils import send_confirmation_email
 
 User = get_user_model()
 
+
 class RegisterView(View):
     form = CustomUserCreationForm
 
@@ -64,38 +65,50 @@ class RegisterView(View):
             return redirect('dashboard:dashboard')
         return render(request, 'users/register.html', {'form': self.form()})
 
-    def post(self,request):
+    def post(self, request):
         # See comment in get() above about doing this here rather than in urls
         if not settings.ENABLE_REGISTRATION_WITHOUT_APPLICATION:
             raise Http404
 
-        form=CustomUserCreationForm(request.POST)
-        context={}
+        form = CustomUserCreationForm(request.POST)
+        context = {}
         if form.is_valid():
-            context['email']=form.cleaned_data['email']
-            context['full_name']=form.cleaned_data['full_name']
+            context['email'] = form.cleaned_data['email']
+            context['full_name'] = form.cleaned_data['full_name']
 
             # If using wagtail password management
             if 'password1' in form.cleaned_data:
-                context['password']=form.cleaned_data['password1']
+                context['password'] = form.cleaned_data['password1']
 
-            site=Site.find_for_request(self.request)
-            user,created = User.objects.get_or_create_and_notify(defaults={},site=site,**context)
+            site = Site.find_for_request(self.request)
+            user, created = User.objects.get_or_create_and_notify(
+                defaults={}, site=site, **context
+            )
             if created:
                 params = {"name": user.full_name, "email": user.email}
                 # redirect to success page with params as query params
-                return HttpResponseRedirect(resolve_url('users_public:register-success') + '?' + urlencode(params))
+                return HttpResponseRedirect(
+                    resolve_url('users_public:register-success')
+                    + '?'
+                    + urlencode(params)
+                )
         else:
-            return render(request,'users/register.html',{'form':form})
-        return render(request,'users/register.html',{'form':self.form})
+            return render(request, 'users/register.html', {'form': form})
+        return render(request, 'users/register.html', {'form': self.form})
 
 
 class RegistrationSuccessView(TemplateView):
     template_name = 'users/register-success.html'
 
 
-@method_decorator(ratelimit(key='ip', rate=settings.DEFAULT_RATE_LIMIT, method='POST'), name='dispatch')
-@method_decorator(ratelimit(key='post:email', rate=settings.DEFAULT_RATE_LIMIT, method='POST'), name='dispatch')
+@method_decorator(
+    ratelimit(key='ip', rate=settings.DEFAULT_RATE_LIMIT, method='POST'),
+    name='dispatch',
+)
+@method_decorator(
+    ratelimit(key='post:email', rate=settings.DEFAULT_RATE_LIMIT, method='POST'),
+    name='dispatch',
+)
 class LoginView(TwoFactorLoginView):
     form_list = (
         ('auth', CustomAuthenticationForm),
@@ -106,7 +119,10 @@ class LoginView(TwoFactorLoginView):
     def get_context_data(self, form, **kwargs):
         context_data = super(LoginView, self).get_context_data(form, **kwargs)
         context_data["is_public_site"] = True
-        if Site.find_for_request(self.request) == ApplyHomePage.objects.first().get_site():
+        if (
+            Site.find_for_request(self.request)
+            == ApplyHomePage.objects.first().get_site()
+        ):
             context_data["is_public_site"] = False
         return context_data
 
@@ -126,21 +142,21 @@ class AccountView(UpdateView):
         user = get_object_or_404(User, id=self.request.user.id)
         if updated_email and updated_email != user.email:
             base_url = reverse('users:email_change_confirm_password')
-            query_dict = {
-                'updated_email': updated_email,
-                'name': name,
-                'slack': slack
-            }
+            query_dict = {'updated_email': updated_email, 'name': name, 'slack': slack}
 
             signer = TimestampSigner()
             signed_value = signer.sign(dumps(query_dict))
             # Using session variables for redirect validation
             token_signer = Signer()
             self.request.session['signed_token'] = token_signer.sign(user.email)
-            return redirect('{}?{}'.format(base_url, urlencode({'value': signed_value})))
+            return redirect(
+                '{}?{}'.format(base_url, urlencode({'value': signed_value}))
+            )
         return super(AccountView, self).form_valid(form)
 
-    def get_success_url(self,):
+    def get_success_url(
+        self,
+    ):
         return reverse_lazy('users:account')
 
     def get_context_data(self, **kwargs):
@@ -149,7 +165,9 @@ class AccountView(UpdateView):
         else:
             swappable_form = None
 
-        show_change_password = password_management_enabled() and self.request.user.has_usable_password(),
+        show_change_password = (
+            password_management_enabled() and self.request.user.has_usable_password(),
+        )
 
         return super().get_context_data(
             swappable_form=swappable_form,
@@ -191,11 +209,13 @@ class EmailChangePasswordView(FormView):
         signer = TimestampSigner()
         try:
             unsigned_value = signer.unsign(
-                self.request.GET.get('value'),
-                max_age=settings.PASSWORD_PAGE_TIMEOUT
+                self.request.GET.get('value'), max_age=settings.PASSWORD_PAGE_TIMEOUT
             )
         except Exception:
-            messages.error(self.request, _("Password Page timed out. Try changing the email again."))
+            messages.error(
+                self.request,
+                _("Password Page timed out. Try changing the email again."),
+            )
             return redirect('users:account')
         value = loads(unsigned_value)
         form.save(**value)
@@ -203,7 +223,8 @@ class EmailChangePasswordView(FormView):
             self.request.user,
             signer.sign(dumps(value['updated_email'])),
             updated_email=value['updated_email'],
-            site=Site.find_for_request(self.request))
+            site=Site.find_for_request(self.request),
+        )
         return super(EmailChangePasswordView, self).form_valid(form)
 
 
@@ -248,7 +269,9 @@ class EmailChangeConfirmationView(TemplateView):
             if user.email != email:
                 user.email = email
                 user.save()
-                messages.success(request, _(f"Your email has been successfully updated to {email}!"))
+                messages.success(
+                    request, _(f"Your email has been successfully updated to {email}!")
+                )
             return redirect('users:account')
 
         return render(request, 'users/email_change/invalid_link.html')
@@ -258,7 +281,7 @@ class EmailChangeConfirmationView(TemplateView):
         try:
             unsigned_value = signer.unsign(
                 token,
-                max_age=datetime.timedelta(seconds=settings.PASSWORD_RESET_TIMEOUT)
+                max_age=datetime.timedelta(seconds=settings.PASSWORD_RESET_TIMEOUT),
             )
         except Exception:
             return False
@@ -271,9 +294,7 @@ class EmailChangeConfirmationView(TemplateView):
         doesn't.
         """
         try:
-            user = User.objects.get(**{
-                'pk': force_str(urlsafe_base64_decode(uidb64))
-            })
+            user = User.objects.get(**{'pk': force_str(urlsafe_base64_decode(uidb64))})
             return user
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
             return None
@@ -287,8 +308,8 @@ class ActivationView(TemplateView):
             user.backend = settings.CUSTOM_AUTH_BACKEND
             login(request, user)
             if (
-                settings.WAGTAILUSERS_PASSWORD_ENABLED and
-                settings.ENABLE_REGISTRATION_WITHOUT_APPLICATION
+                settings.WAGTAILUSERS_PASSWORD_ENABLED
+                and settings.ENABLE_REGISTRATION_WITHOUT_APPLICATION
             ):
                 # In this case, the user entered a password while registering,
                 # and so they shouldn't need to activate a password
@@ -314,9 +335,7 @@ class ActivationView(TemplateView):
         doesn't.
         """
         try:
-            user = User.objects.get(**{
-                'pk': force_str(urlsafe_base64_decode(uidb64))
-            })
+            user = User.objects.get(**{'pk': force_str(urlsafe_base64_decode(uidb64))})
             return user
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
             return None
@@ -338,9 +357,7 @@ def create_password(request):
             messages.error(request, 'Please correct the errors below.')
     else:
         form = AdminPasswordChangeForm(request.user)
-    return render(request, 'users/change_password.html', {
-        'form': form
-    })
+    return render(request, 'users/change_password.html', {'form': form})
 
 
 @method_decorator(never_cache, name='dispatch')
@@ -357,23 +374,31 @@ class TWOFASetupView(TwoFactorSetupView):
             except AttributeError:
                 username = self.request.user.username
 
-            otpauth_url = get_otpauth_url(accountname=username,
-                                          issuer=self.get_issuer(),
-                                          secret=context['secret_key'],
-                                          digits=totp_digits())
-            context.update({
-                'otpauth_url': otpauth_url,
-            })
+            otpauth_url = get_otpauth_url(
+                accountname=username,
+                issuer=self.get_issuer(),
+                secret=context['secret_key'],
+                digits=totp_digits(),
+            )
+            context.update(
+                {
+                    'otpauth_url': otpauth_url,
+                }
+            )
 
         return context
 
 
 @method_decorator(login_required, name='dispatch')
-@method_decorator(ratelimit(key='user', rate=settings.DEFAULT_RATE_LIMIT, method='POST'), name='dispatch')
+@method_decorator(
+    ratelimit(key='user', rate=settings.DEFAULT_RATE_LIMIT, method='POST'),
+    name='dispatch',
+)
 class TWOFABackupTokensPasswordView(TwoFactorBackupTokensView):
     """
     Require password to see backup codes
     """
+
     form_class = TWOFAPasswordForm
     success_url = reverse_lazy('two_factor:backup_tokens')
     template_name = 'two_factor/core/backup_tokens_password.html'
@@ -384,12 +409,16 @@ class TWOFABackupTokensPasswordView(TwoFactorBackupTokensView):
         return kwargs
 
 
-@method_decorator(ratelimit(key='user', rate=settings.DEFAULT_RATE_LIMIT, method='POST'), name='dispatch')
+@method_decorator(
+    ratelimit(key='user', rate=settings.DEFAULT_RATE_LIMIT, method='POST'),
+    name='dispatch',
+)
 @method_decorator(login_required, name='dispatch')
 class TWOFADisableView(TwoFactorDisableView):
     """
     View for disabling two-factor for a user's account.
     """
+
     template_name = 'two_factor/profile/disable.html'
     success_url = reverse_lazy('users:account')
     form_class = TWOFAPasswordForm
@@ -400,11 +429,14 @@ class TWOFADisableView(TwoFactorDisableView):
         return kwargs
 
 
-@method_decorator(permission_required(change_user_perm, raise_exception=True), name='dispatch')
+@method_decorator(
+    permission_required(change_user_perm, raise_exception=True), name='dispatch'
+)
 class TWOFAAdminDisableView(FormView):
     """
     View for PasswordForm to confirm the Disable 2FA process on wagtail admin.
     """
+
     form_class = TWOFAPasswordForm
     template_name = 'two_factor/admin/disable.html'
     user = None
@@ -428,7 +460,7 @@ class TWOFAAdminDisableView(FormView):
         return redirect(self.get_success_url())
 
     def get_success_url(self):
-        return reverse('wagtailusers_users:edit',  args=[self.user.id])
+        return reverse('wagtailusers_users:edit', args=[self.user.id])
 
     def get_context_data(self, **kwargs):
         ctx = super(TWOFAAdminDisableView, self).get_context_data(**kwargs)
