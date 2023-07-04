@@ -8,7 +8,7 @@
 <div class="w-full grid md:mt-5 md:py-4">
     <section>
         <div class="px-4 pt-4">
-            <form class="form form--with-p-tags" method="post">
+            <form class="form form--with-p-tags" method="post" action="{% url 'users_public:register' %}">
                 {% csrf_token %}
                 <h2 class="text-2xl">Create your account</h2>
 

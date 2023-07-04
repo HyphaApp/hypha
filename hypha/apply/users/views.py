@@ -51,7 +51,7 @@ from .utils import send_confirmation_email
 User = get_user_model()
 
 class RegisterView(View):
-    form = CustomUserCreationForm()
+    form = CustomUserCreationForm
 
     def get(self, request):
         # We keep /register in the urls in order to test (where we turn on/off
@@ -62,32 +62,38 @@ class RegisterView(View):
 
         if request.user.is_authenticated:
             return redirect('dashboard:dashboard')
-        return render(request,'users/register.html',{'form':self.form})
+        return render(request, 'users/register.html', {'form': self.form()})
 
     def post(self,request):
         # See comment in get() above about doing this here rather than in urls
         if not settings.ENABLE_REGISTRATION_WITHOUT_APPLICATION:
             raise Http404
 
-        form=CustomUserCreationForm(request.POST)
-        context={}
+        form = self.form(data=request.POST)
+        context = {}
         if form.is_valid():
-            context['email']=form.cleaned_data['email']
-            context['full_name']=form.cleaned_data['full_name']
-
             # If using wagtail password management
             if 'password1' in form.cleaned_data:
                 context['password']=form.cleaned_data['password1']
 
-            site=Site.find_for_request(self.request)
-            user,created = User.objects.get_or_create_and_notify(defaults={},site=site,**context)
+            site = Site.find_for_request(self.request)
+            user, created = User.objects.get_or_create_and_notify(
+                email=form.cleaned_data['email'],
+                site=site,
+                defaults={
+                    'full_name': form.cleaned_data['full_name'],
+                },
+                **context
+            )
             if created:
                 params = {"name": user.full_name, "email": user.email}
                 # redirect to success page with params as query params
-                return HttpResponseRedirect(resolve_url('users_public:register-success') + '?' + urlencode(params))
-        else:
-            return render(request,'users/register.html',{'form':form})
-        return render(request,'users/register.html',{'form':self.form})
+                return HttpResponseRedirect(
+                    resolve_url('users_public:register-success')
+                    + '?'
+                    + urlencode(params)
+                )
+        return render(request, 'users/register.html', {'form': form})
 
 
 class RegistrationSuccessView(TemplateView):
