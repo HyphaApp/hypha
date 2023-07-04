@@ -51,7 +51,7 @@ from .utils import send_confirmation_email
 User = get_user_model()
 
 class RegisterView(View):
-    form = CustomUserCreationForm()
+    form = CustomUserCreationForm
 
     def get(self, request):
         # We keep /register in the urls in order to test (where we turn on/off
@@ -62,7 +62,7 @@ class RegisterView(View):
 
         if request.user.is_authenticated:
             return redirect('dashboard:dashboard')
-        return render(request,'users/register.html',{'form':self.form})
+        return render(request, 'users/register.html', {'form': self.form()})
 
     def post(self,request):
         # See comment in get() above about doing this here rather than in urls
