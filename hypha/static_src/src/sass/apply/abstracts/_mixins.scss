@@ -231,18 +231,7 @@
     input[type='checkbox'] {
         margin: 0 auto;
         display: block;
-        width: 20px;
-        height: 20px;
-        border: 1px solid $color--mid-grey;
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        background-color: $color--white;
-
-        &:checked {
-            background: url('./../../images/tick.svg') $color--dark-blue center no-repeat;
-            background-size: 12px;
-            border: 1px solid $color--dark-blue;
-        }
+        width: 1.1rem;
+        height: 1.1rem;
     }
 }

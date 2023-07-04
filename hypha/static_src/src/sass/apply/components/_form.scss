@@ -298,8 +298,6 @@
 
     &__select {
         max-width: 385px;
-        background: url('./../../images/dropdown.svg') $color--white no-repeat 95% center;
-        background-size: 8px;
 
         &:has(.choices) {
             background: none;
@@ -324,12 +322,6 @@
         }
 
         select {
-            background: transparent;
-            border-radius: 0;
-            appearance: none;
-            -webkit-appearance: none; // stylelint-disable-line property-no-vendor-prefix
-            -moz-appearance: none; // stylelint-disable-line property-no-vendor-prefix
-
             option {
                 background-color: $color--white;
             }
@@ -388,13 +380,6 @@
     input[type='datetime-local'] {
         width: 100%;
         max-width: 385px;
-        padding: .4em;
-        border: 1px solid $color--mid-grey;
-
-        &:disabled {
-            color: $color--black-50;
-            cursor: not-allowed;
-        }
 
         &.invalid {
             border: 2px solid $color--error;
@@ -478,41 +463,12 @@
     // Radio + Checkbox
     [type='radio'],
     [type='checkbox'] {
-        appearance: none;
-        accent-color: $color--dark-blue;
-        height: .7em;
-        width: .7em;
-        outline: 2px solid $color--dark-blue;
-
         & + label {
             padding-inline-start: .5em;
 
             &:hover {
                 font-weight: bold;
             }
-        }
-
-        &:checked {
-            background-color: $color--dark-blue;
-        }
-    }
-
-    // Radio specific
-    [type='radio'] {
-        border-radius: 50%;
-        outline-offset: 2px;
-    }
-
-    // Checkbox specific
-    input[type='checkbox'] {
-        height: 1em;
-        width: 1em;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-size: .8em;
-
-        &:checked {
-            background-image: url('./../../images/tick.svg');
         }
     }
 

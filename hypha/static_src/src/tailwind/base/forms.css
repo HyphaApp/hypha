@@ -1,0 +1,20 @@
+[type="text"],
+[type="email"],
+[type="url"],
+[type="password"],
+[type="number"],
+[type="date"],
+[type="datetime-local"],
+[type="month"],
+[type="search"],
+[type="tel"],
+[type="time"],
+[type="week"],
+[multiple],
+textarea,
+select {
+    @apply border-gray-300 focus:ring-dark-blue disabled:opacity-75 disabled:cursor-not-allowed;
+}
+[type='checkbox'], [type='radio'] {
+    @apply border-gray-300 text-dark-blue focus:ring-dark-blue;
+}
