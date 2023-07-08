@@ -101,8 +101,9 @@
         let selectedIDs = [];
 
         $checkbox.filter(':checked').each(function () {
-            const href = $(this).parents('tr').find('.js-title').find('a').attr('href');
-            const title = $(this).parents('tr').find('.js-title').data('title-tooltip');
+            const link = $(this).parents('tr').find('.js-title').find('a');
+            const href = link.attr('href');
+            const title = link.data('tippy-content');
 
             $batchTitlesList.append(`
                 <a href="${href}" class="list-reveal__item" target="_blank" rel="noopener noreferrer" title="${title}">

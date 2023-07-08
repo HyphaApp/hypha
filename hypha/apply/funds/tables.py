@@ -1,6 +1,5 @@
 import json
 import re
-import textwrap
 
 import django_filters as filters
 import django_tables2 as tables
@@ -59,7 +58,7 @@ def render_title(record):
         title = record.title
     except AttributeError:
         title = record.submission.title
-    return textwrap.shorten(title, width=30, placeholder="...")
+    return title
 
 
 def render_reviewer_link(record):
@@ -68,7 +67,23 @@ def render_reviewer_link(record):
 
 class SubmissionsTable(tables.Table):
     """Base table for listing submissions, do not include admin data to this table"""
-    title = tables.LinkColumn('funds:submissions:detail', text=render_title, args=[A('pk')], orderable=True, attrs={'td': {'data-title-tooltip': lambda record: record.title, 'class': 'js-title'}})
+
+    title = tables.LinkColumn(
+        'funds:submissions:detail',
+        text=render_title,
+        args=[A('pk')],
+        orderable=True,
+        attrs={
+            'td': {
+                'class': 'js-title',
+            },
+            'a': {
+                'data-tippy-content': lambda record: record.title,
+                'data-tippy-placement': 'top',
+                'class': 'truncate inline-block w-[calc(100%-2rem)]',
+            }
+        },
+    )
     submit_time = tables.DateColumn(verbose_name=_('Submitted'))
     phase = tables.Column(verbose_name=_('Status'), order_by=('status',), attrs={'td': {'data-actions': render_actions, 'class': 'js-actions'}})
     stage = tables.Column(verbose_name=_('Type'), order_by=('status',))
@@ -544,7 +559,23 @@ class ReviewerLeaderboardTable(tables.Table):
 
 
 class ReviewerLeaderboardDetailTable(tables.Table):
-    title = tables.LinkColumn('funds:submissions:reviews:review', text=render_title, args=[A('submission_id'), A('pk')], orderable=True, verbose_name=_('Submission'), attrs={'td': {'data-title-tooltip': lambda record: record.submission.title, 'class': 'title js-title'}})
+    title = tables.LinkColumn(
+        'funds:submissions:reviews:review',
+        text=render_title,
+        args=[A('submission_id'), A('pk')],
+        orderable=True,
+        verbose_name=_('Submission'),
+        attrs={
+            'td': {
+                'class': 'js-title',
+            },
+            'a': {
+                'data-tippy-content': lambda record: record.submission.title,
+                'data-tippy-placement': 'top',
+                'class': 'truncate inline-block w-[calc(100%-2rem)]',
+            }
+        },
+    )
 
     class Meta:
         model = Review
