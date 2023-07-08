@@ -17,7 +17,7 @@ class Command(BaseCommand):
         APPLY_SITE_DOMAIN = click.prompt("Domain of apply site ", default="apply.hypha.test")
         SUPER_ADMIN_EMAIL = click.prompt("Superadmin Email ", default="superadmin@hypha.test")
         SUPER_ADMIN_PASSWORD = click.prompt("Superadmin Password ", default="hypha123")
-        SITE_PORT = click.prompt("Site port", default="8090")
+        SITE_PORT = click.prompt("Site port", default="9001")
 
         User = get_user_model()
 
@@ -34,13 +34,13 @@ class Command(BaseCommand):
 
         # Set site port and domain
         click.secho(f">>> Set public site to {PUBLIC_SITE_DOMAIN}:{SITE_PORT}", fg="green")
-        site_apply = Site.objects.get(id=2)
-        site_apply.hostname = PUBLIC_SITE_DOMAIN
-        site_apply.port = SITE_PORT
-        site_apply.save()
-
-        click.secho(f">>> Set apply site to {APPLY_SITE_DOMAIN}:{SITE_PORT}", fg="green")
-        site_public = Site.objects.get(id=3)
-        site_public.hostname = APPLY_SITE_DOMAIN
+        site_public = Site.objects.get(id=2)
+        site_public.hostname = PUBLIC_SITE_DOMAIN
         site_public.port = SITE_PORT
         site_public.save()
+
+        click.secho(f">>> Set apply site to {APPLY_SITE_DOMAIN}:{SITE_PORT}", fg="green")
+        site_apply = Site.objects.get(id=3)
+        site_apply.hostname = APPLY_SITE_DOMAIN
+        site_apply.port = SITE_PORT
+        site_apply.save()
