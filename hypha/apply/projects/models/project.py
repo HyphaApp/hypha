@@ -63,7 +63,7 @@ APPROVE = 'approve'
 REQUEST_CHANGE = 'request_change'
 PAF_STATUS_CHOICES = (
     (APPROVE, 'Approve'),
-    (REQUEST_CHANGE, 'Request Changes or more information')
+    (REQUEST_CHANGE, 'Request changes or more information')
 )
 
 DRAFT = 'draft'
