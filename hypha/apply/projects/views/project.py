@@ -1172,7 +1172,7 @@ class ProjectApprovalFormEditView(BaseStreamForm, UpdateView):
     sow_form = None
 
     def buttons(self):
-        yield ('submit', 'primary', _('Submit'))
+        yield ('submit', 'primary', _('Save'))
 
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()

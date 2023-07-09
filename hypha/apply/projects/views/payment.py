@@ -178,7 +178,7 @@ class CreateInvoiceView(CreateView):
         response = super().form_valid(form)
 
         if form.cleaned_data['message_for_pm']:
-            invoice_status_change = _('<p>Invoice created.</p>')
+            invoice_status_change = _('<p>Invoice added.</p>')
 
             message_for_pm = f'<p>{form.cleaned_data["message_for_pm"]}</p>'
 
