@@ -83,6 +83,14 @@
             }
         }
 
+        &--status-update {
+            grid-template-columns: 100%;
+
+            @include media-query(mob-landscape) {
+                grid-template-columns: 100%;
+            }
+        }
+
         &__cell {
             &--span-two {
                 @include media-query(mob-landscape) {

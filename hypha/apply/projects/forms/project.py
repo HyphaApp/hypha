@@ -176,7 +176,7 @@ class ProjectSOWForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass):
 
 class ChangePAFStatusForm(forms.ModelForm):
     name_prefix = 'change_paf_status_form'
-    paf_status = forms.ChoiceField(choices=PAF_STATUS_CHOICES)
+    paf_status = forms.ChoiceField(choices=PAF_STATUS_CHOICES, widget=forms.RadioSelect())
     comment = forms.CharField(required=False, widget=forms.Textarea)
 
     class Meta:
@@ -185,6 +185,7 @@ class ChangePAFStatusForm(forms.ModelForm):
 
     def __init__(self, instance, user, *args, **kwargs):
         super().__init__(*args, **kwargs, instance=instance)
+        self.fields['paf_status'].widget.attrs['class'] = 'grid--status-update'
 
 
 class ChangeProjectStatusForm(forms.ModelForm):
