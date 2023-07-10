@@ -145,13 +145,6 @@
         }
     });
 
-    // Get the header and admin bar height and set custom prop with value
-    $(window).on('load', function () {
-        const headerHeight = $('.header').outerHeight();
-        const adminbarHeight = $('.admin-bar').outerHeight();
-        document.documentElement.style.setProperty('--header-admin-height', headerHeight + adminbarHeight + 'px');
-    });
-
     // Setting the CSRF token on AJAX requests.
     var csrftoken = false;
     if (typeof window.Cookies !== 'undefined') {
