@@ -319,6 +319,7 @@ class ContractsMixin:
         context['contract_to_sign'] = contract_to_sign
         context['contracts'] = contracts.approved()
         context['contract'] = latest_contract
+        context['org_short_name'] = settings.ORG_SHORT_NAME
         return context
 
 
