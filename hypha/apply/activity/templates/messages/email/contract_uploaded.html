@@ -4,7 +4,7 @@
 
 {% block salutation %}
 {% if request.user != source.user %}
-{% blocktrans with name=source.user.get_full_name|default:"applicant" %}Dear {{ name }},{% endblocktrans %}
+{% blocktrans with name=source.user.get_full_name|default:"vendor" %}Dear {{ name }},{% endblocktrans %}
 {% endif %}
 {% endblock %}
 

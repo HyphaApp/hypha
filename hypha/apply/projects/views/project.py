@@ -377,7 +377,7 @@ class ApproveContractView(DelegatedViewMixin, UpdateView):
             )
 
         messages.success(self.request, _("Contractor documents have been approved."
-                                         " You can receive invoices from applicant now."),
+                                         " You can receive invoices from vendor now."),
                          extra_tags=PROJECT_ACTION_MESSAGE_TAG)
         return response
 

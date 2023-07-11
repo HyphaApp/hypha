@@ -89,7 +89,7 @@ def user_next_step_on_project(project, user, request=None):
                     return "Review the contract for all relevant details and approve."
                 if user.is_applicant:
                     return f"Awaiting contract approval from {settings.ORG_SHORT_NAME}"
-                return f"Awaiting contract approval from Staff"
+                return "Awaiting contract approval from Staff"
     elif project.status == IN_PROGRESS:
         if user.is_applicant:
             return "Add invoices"
@@ -106,7 +106,7 @@ def user_next_step_instructions(project, user):
     if project.status == CONTRACTING and user == project.user and project.contracts.exists():
         contract = project.contracts.order_by('-created_at').first()
         if contract and not contract.signed_by_applicant:
-            return ['Please download the signed contract uploaded by contracting team',
+            return [f'Please download the signed contract uploaded by {settings.ORG_SHORT_NAME}',
                     'Countersign',
                     'Upload it back',
                     'Please also make sure to upload other required contracting documents']

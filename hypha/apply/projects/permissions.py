@@ -59,11 +59,11 @@ def can_submit_contract_documents(user, project, **kwargs):
     if project.status != CONTRACTING:
         return False, 'Project is not in Contracting State'
     if user != project.user:
-        return False, 'Only Applicant can submit contracting documents'
+        return False, 'Only Vendor can submit contracting documents'
     if not kwargs.get('contract', None):
         return False, 'Can not submit without contract'
     if not project.submitted_contract_documents:
-        return True, 'Applicant can submit contracting documents'
+        return True, 'Vendor can submit contracting documents'
 
     return False, 'Forbidden Error'
 
@@ -265,7 +265,7 @@ def can_access_project(user, project):
         return True, 'Staff can view project in all statuses'
 
     if user.is_applicant and user == project.user:
-        return True, 'Applicant(project user) can view project in all statuses'
+        return True, 'Vendor(project user) can view project in all statuses'
 
     if project.status in [DRAFT, WAITING_FOR_APPROVAL, CONTRACTING] and project.paf_approvals.exists():
         paf_reviewer_roles_users_ids = []
