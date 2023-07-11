@@ -80,7 +80,10 @@ class SubmissionsTable(tables.Table):
             'a': {
                 'data-tippy-content': lambda record: record.title,
                 'data-tippy-placement': 'top',
-                'class': 'truncate inline-block w-[calc(100%-2rem)]',
+
+                # Use after:content-[''] after:block to hide the default browser tooltip on Safari
+                # https://stackoverflow.com/a/43915246
+                'class': "truncate inline-block w-[calc(100%-2rem)] after:content-[''] after:block",
             }
         },
     )
@@ -572,7 +575,10 @@ class ReviewerLeaderboardDetailTable(tables.Table):
             'a': {
                 'data-tippy-content': lambda record: record.submission.title,
                 'data-tippy-placement': 'top',
-                'class': 'truncate inline-block w-[calc(100%-2rem)]',
+
+                # Use after:content-[''] after:block to hide the default browser tooltip on Safari
+                # https://stackoverflow.com/a/43915246
+                'class': 'truncate inline-block w-[calc(100%-2rem)] after:content-[''] after:block',
             }
         },
     )
