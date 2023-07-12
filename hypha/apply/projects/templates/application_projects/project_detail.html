@@ -16,8 +16,8 @@
 {% endif %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
-        <h1 class="beta heading heading--no-margin heading--bold">{{ object.title }}</h1>
-        <h5 class="heading heading--meta">
+        <h1 class="mb-0">{{ object.title }}</h1>
+        <div class="heading heading--meta text-sm mt-1">
 
             <span>{{ object.submission.page }}</span>
 
@@ -49,7 +49,7 @@
                 </button>
             </span>
 
-        </h5>
+        </div>
 
         <div class="status-bar">
             {% for status, text in statuses %}

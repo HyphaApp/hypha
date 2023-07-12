@@ -6,7 +6,7 @@
     <div class="feed__content js-feed-content">
         <div class="feed__meta js-feed-meta">
             <p class="feed__label feed__label--{{ activity.type }} feed__label--mobile">{{ activity.type|capfirst }}</p>
-            <p class="feed__meta-item"><span>{{ activity|display_author:request.user }}</span> <relative-time class="text-gray-500 text-sm" datetime={{ activity.timestamp|date:"c" }}>{{ activity.timestamp|date:"SHORT_DATETIME_FORMAT" }}</relative-time> </p>
+            <p class="feed__meta-item"><span>{{ activity|display_author:request.user }}</span> <relative-time class="text-fg-muted text-sm" datetime={{ activity.timestamp|date:"c" }}>{{ activity.timestamp|date:"SHORT_DATETIME_FORMAT" }}</relative-time> </p>
 
             {% if editable %}
                 {% if activity.user == request.user %}

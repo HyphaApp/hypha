@@ -34,7 +34,7 @@
 
     &__group {
         position: relative;
-        margin: 1rem 0;
+        margin-top: 1.5rem;
 
         &:nth-of-type(1) {
             margin-top: 0;
@@ -92,8 +92,9 @@
 
     &__question {
         display: block;
-        margin-bottom: .5em;
-        font-weight: $weight--bold;
+        font-weight: $weight--semibold;
+        font-size: 1rem;
+        line-height: 1.25rem;
 
         // stylelint-disable selector-class-pattern
         &--image_field,
@@ -125,7 +126,6 @@
 
         &--boolean_field {
             display: inline;
-            font-size: 17px;
             margin-bottom: 0;
         }
         // stylelint-enable selector-class-pattern
@@ -277,12 +277,20 @@
     }
 
     &__help {
+        margin: 0;
+        color: var(--color-fg-muted);
+        font-size: .875rem;
+        line-height: 1.25rem;
+
         .profile & {
             margin-top: 0;
         }
     }
 
     &__help-link {
+        font-size: .875rem;
+        line-height: 1.25rem;
+
         a {
             &:hover {
                 cursor: pointer;
@@ -300,7 +308,7 @@
 
     &__item {
         position: relative;
-        padding-bottom: 10px;
+        padding-top: .5rem;
     }
 
     &__select {
@@ -423,10 +431,6 @@
         padding: .4em;
         border: 1px solid $color--mid-grey;
         line-height: math.div($base-line-height, $base-font-size);
-
-        @include media-query(tablet-landscape) {
-            max-width: 70%;
-        }
     }
 
     .wmd-preview {
@@ -480,11 +484,8 @@
     [type='radio'],
     [type='checkbox'] {
         & + label {
-            padding-inline-start: .5em;
-
-            &:hover {
-                font-weight: bold;
-            }
+            padding-inline-start: .25rem;
+            cursor: pointer;
         }
     }
 
@@ -497,8 +498,22 @@
 
     .address {
         padding: .4em;
-        border: 1px solid $color--mid-grey;
+        border: 1px solid #cfcfcf8f;  // stylelint-disable-line color-no-hex
         max-width: 410px;
+
+        .form__group {               // stylelint-disable-line selector-class-pattern
+            margin-top: .5rem;
+        }
+
+        .form__question {             // stylelint-disable-line selector-class-pattern
+            margin-bottom: .25rem;
+            font-size: 1rem;
+            line-height: 1.25rem;
+
+            &:nth-of-type(1) {
+                margin-top: 0;
+            }
+        }
     }
 
     .multi-input-field-hidden {

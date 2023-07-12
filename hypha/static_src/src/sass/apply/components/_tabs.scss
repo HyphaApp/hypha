@@ -1,5 +1,5 @@
 .tabs {
-    margin: 20px 0 -20px;
+    margin: 1.5rem 0 -20px;
 
     &__container {
         display: flex;
@@ -34,11 +34,12 @@
 
         @include media-query(small-tablet) {
             width: auto;
-            padding: 20px;
+            padding: .75rem 1rem;
         }
 
         &:hover {
             color: $color--light-blue;
+            background-color: rgba(#fff, .8);   // stylelint-disable-line color-no-hex
         }
 
         &--alt {

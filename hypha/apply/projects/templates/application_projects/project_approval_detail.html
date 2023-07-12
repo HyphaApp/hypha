@@ -8,26 +8,27 @@
         {{ reviewer_form.media.css }}
 {% endblock %}
 
-{% block body_class %}light-grey-bg{% endblock %}
-
 {% block content %}
-<div class="simplified">
-    <div class="simplified__admin-bar">
-        <div class="simplified__admin-bar-inner-project">
-            <div>
-                <a class="simplified__projects-link" href="{{ object.get_absolute_url }}">
-                    {% trans "View project page" %}
-                </a>
-                <h1 class="simplified__heading">{{ object.title }}</h1>
-                <h5 class="simplified__subheading">
-                    <span>{{ object.submission.page }}</span>
-                    <span>{{ object.submission.round }}</span>
-                    <span>{% trans "Lead" %}: {{ object.lead }}</span>
-                </h5>
-            </div>
+    {% adminbar %}
+        {% slot back_link %}
+            <a class="simplified__projects-link" href="{{ object.get_absolute_url }}" rel="noopener">
+                {% trans "Back to Project" %}
+            </a>
+        {% endslot %}
 
-        </div>
-    </div>
+        {% slot header %}
+            {{ object.title }}
+        {% endslot %}
+        {% slot sub_heading %}
+            <div class="heading heading--meta text-sm mt-1">
+                <span>{{ object.submission.page }}</span>
+                <span>{{ object.submission.round }}</span>
+                <span>{% trans "Lead" %}: {{ object.lead }}</span>
+            </div>
+        {% endslot %}
+    {% endadminbar %}
+
+<div class="simplified">
     <div class="wrapper wrapper--large wrapper--tabs">
         <div class="wrapper wrapper--sidebar">
             <article class="wrapper--sidebar--inner">

@@ -20,24 +20,25 @@
         {% endif %}
     {% endfor %}
 
-    {% if cancel %}
-    <button
-        type="button"
-        data-fancybox-close=""
-        class="button button--{% if invert %}primary{% else %}white{% endif %}"
-        title="{% trans "Close" %}">
-        {% trans "Cancel" %}
-    </button>
-    {% endif %}
-
-    {% trans "Delete" as delete %}
-    <button
-        class="button button--{% if invert %}white{% elif value == delete %}warning{% else %}primary{% endif %}"
-        id="{{ form.name }}-submit"
-        name="{{ form_prefix }}{{ form.name }}"
-        type="submit"
-        form="{% if form_id %}{{ form_id }}{% else %}{{ form.name }}{% endif %}">
-        {{ value }}
-    </button>
+    <div class="form__group">
+        {% if cancel %}
+        <button
+            type="button"
+            data-fancybox-close=""
+            class="button button--{% if invert %}primary{% else %}white{% endif %}"
+            title="{% trans "Close" %}">
+            {% trans "Cancel" %}
+        </button>
+        {% endif %}
+        {% trans "Delete" as delete %}
+        <button
+            class="button button--{% if invert %}white{% elif value == delete %}warning{% else %}primary{% endif %}"
+            id="{{ form.name }}-submit"
+            name="{{ form_prefix }}{{ form.name }}"
+            type="submit"
+            form="{% if form_id %}{{ form_id }}{% else %}{{ form.name }}{% endif %}">
+            {{ value }}
+        </button>
+    </div>
 
 </form>

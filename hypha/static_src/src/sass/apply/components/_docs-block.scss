@@ -3,15 +3,16 @@
 
     &__header {
         background-color: $color--light-blue-90;
-        padding: 1rem;
+        padding: .5rem .75rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
     }
 
     &__heading {
-        font-size: $base-font-size-large;
-        font-weight: $weight--bold;
+        font-size: 1.125rem;
+        line-height: 1.75rem;
+        font-weight: 600;
         margin: 0;
     }
 

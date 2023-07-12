@@ -13,9 +13,12 @@
 
         // add label_id as aria-describedby to help texts
         $application_form.find('.form__group').each(function (index, form_group) {
-            var label_id = form_group.querySelector('label').getAttribute('for');
-            if (form_group.querySelector('.form__help')) {
-                form_group.querySelector('.form__help').setAttribute('aria-describedby', label_id);
+            var label = form_group.querySelector('label')
+            if (label) {
+                var label_id = label.getAttribute('for');
+                if (form_group.querySelector('.form__help')) {
+                    form_group.querySelector('.form__help').setAttribute('aria-describedby', label_id);
+                }
             }
         });
 

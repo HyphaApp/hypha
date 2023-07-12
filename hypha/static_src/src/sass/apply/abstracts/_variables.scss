@@ -6,7 +6,7 @@
 
 // Default
 $color--white: #fff;
-$color--black: #141414;
+$color--black: #1f2328;
 $color--light-grey: #f7f7f7;
 $color--light-mid-grey: #e8e8e8;
 $color--mid-grey: #cfcfcf;
@@ -57,7 +57,7 @@ $color--white-20: rgba(255, 255, 255, .2);
 $color--white-10: rgba(255, 255, 255, .1);
 
 // Assignment
-$color--default: $color--dark-grey;
+$color--default: $color--black;
 $color--primary: $color--light-blue;
 $color--error: $color--tomato;
 $color--correct: $color--mint;
@@ -77,17 +77,17 @@ $weight--light: 200;
 
 // Font sizes
 $base-font-size: 16px;
-$base-font-size-large: 19px;
+$base-font-size-large: 18px;
 $base-line-height: 24px;
-$base-line-height-large: 29px;
+$base-line-height-large: 28px;
 $font-sizes: (
-    alpha:   72px,
-    beta:    42px,
-    gamma:   36px,
+    alpha:   36px,
+    beta:    30px,
+    gamma:   28px,
     delta:   24px,
-    epsilon: 17px,
-    zeta:    15px,
-    milli:   13px
+    epsilon: 18px,
+    zeta:    14px,
+    milli:   12px
 );
 
 // Wrappers
@@ -124,9 +124,6 @@ $mobile-gutter: 20px;
 
 // Filters
 $filter-dropdown: '.select2 .select2-selection.select2-selection--single';
-
-// listing header/spacer height
-$listing-header-height: 75px;
 
 // Table breakpoint
 $table-breakpoint: 'tablet-landscape';

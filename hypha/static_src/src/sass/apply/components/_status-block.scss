@@ -46,7 +46,7 @@
     }
 
     &__info {
-        font-size: 13px;
+        @include font-size(zeta);
         color: $color--dark-blue;
 
         @include media-query(tablet-landscape) {
@@ -55,7 +55,7 @@
     }
 
     &__title {
-        font-weight: $weight--semibold;
+        font-weight: 500;
         width: 100%;
         hyphens: auto;
     }
