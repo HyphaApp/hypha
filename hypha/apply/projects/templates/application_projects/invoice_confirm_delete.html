@@ -17,7 +17,7 @@
     <div class="wrapper--sidebar--inner">
 
         <div class="card card--solid">
-            <p class="card__text"><b>{% trans "Status" %}:</b> {{ object.get_status_display }}</p>
+            <p class="card__text"><b>{% trans "Status" %}:</b> {{ object.status_display }}</p>
             {% is_vendor_setup request as show_vendor_information %}
             {% if show_vendor_information %}
             <p class="card__text"><b>{% trans "Vendor" %}:</b> {{ object.project.vendor.name }}</p>

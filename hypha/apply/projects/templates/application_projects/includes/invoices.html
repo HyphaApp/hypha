@@ -26,7 +26,7 @@
                 <tr>
                     <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Date Submitted" %}: </span>{{ invoice.requested_at.date }}</td>
                     <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Invoice Number" %}: </span>{{ invoice.vendor_document_number }}</td>
-                    <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Status" %}: </span>{{ invoice.get_status_display }}</td>
+                    <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Status" %}: </span>{{ invoice.status_display }}</td>
                     <td class="flex flex-wrap justify-end py-4 px-0">
                         <a class="data-block__action-icon-link" href="{{ invoice.get_absolute_url }}" target="_blank">
                             <svg class="icon icon--project-eye"><use xlink:href="#eye"></use></svg>
@@ -62,7 +62,7 @@
                                 {% get_invoice_form invoice user as invoice_form %}
                                 {% get_invoice_form_id invoice_form invoice as invoice_form_id %}
                                 <h4 class="modal__project-header-bar">{% trans "Update Invoice status" %}</h4>
-                                <p>{% trans "Current status" %}: {{ invoice.get_status_display }}</p>
+                                <p>{% trans "Current status" %}: {{ invoice.status_display }}</p>
                                 {% trans "Update Status" as update %}
                                 {% include 'funds/includes/delegated_form_base.html' with form=invoice_form value=update action=invoice.get_absolute_url form_id=invoice_form_id %}
                             </div>
@@ -96,7 +96,7 @@
                     <tr>
                         <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Date Submitted" %}: </span>{{ invoice.requested_at.date }}</td>
                         <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Invoice Number" %}: </span>{{ invoice.vendor_document_number }}</td>
-                        <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Status" %}: </span>{{ invoice.get_status_display }}</td>
+                        <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Status" %}: </span>{{ invoice.status_display }}</td>
                         <td class="flex justify-end py-4 px-0">
                             <a class="data-block__action-icon-link" href="{{ invoice.get_absolute_url }}" target="_blank">
                                 <svg class="icon icon--project-eye"><use xlink:href="#eye"></use></svg>

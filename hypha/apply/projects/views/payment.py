@@ -60,7 +60,7 @@ class ChangeInvoiceStatusView(DelegatedViewMixin, InvoiceAccessMixin, UpdateView
     def form_valid(self, form):
         response = super().form_valid(form)
         if form.cleaned_data['comment']:
-            invoice_status_change = _('<p>Invoice status updated to: {status}.</p>').format(status=self.object.status_display)
+            invoice_status_change = _('<p>Invoice status updated to: {status}.</p>').format(status=self.object.get_status_display())
             comment = f'<p>{self.object.comment}.</p>'
 
             message = invoice_status_change + comment
@@ -139,10 +139,12 @@ class InvoiceAdminView(InvoiceAccessMixin, DelegateableView, DetailView):
         invoice = self.get_object()
         project = invoice.project
         deliverables = project.deliverables.all()
+        invoice_activities = Activity.actions.filter(related_content_type__model='invoice', related_object_id=invoice.id)
         return super().get_context_data(
             **kwargs,
             deliverables=deliverables,
-            activities=Activity.actions.filter(related_content_type__model='invoice', related_object_id=invoice.id),
+            latest_activity=invoice_activities.first(),
+            activities=invoice_activities[1:],
         )
 
 
@@ -252,7 +254,7 @@ class EditInvoiceView(InvoiceAccessMixin, UpdateView):
                 self.object.save()
 
             if form.cleaned_data['message_for_pm']:
-                invoice_status_change = _('<p>Invoice status updated to: {status}.</p>').format(status=self.object.status_display)
+                invoice_status_change = _('<p>Invoice status updated to: {status}.</p>').format(status=self.object.get_status_display())
                 message_for_pm = f'<p>{form.cleaned_data["message_for_pm"]}</p>'
                 message = invoice_status_change + message_for_pm
 

@@ -16,12 +16,29 @@
 <div class="wrapper wrapper--sidebar wrapper--outer-space-medium">
     <div class="wrapper--sidebar--inner">
         <div class="card card--solid">
-            <p class="card__text"><b>{% trans "Status" %}:</b> {{ object.get_status_display }}</p>
+            <p class="card__text"><b>{% trans "Invoice Number" %}:</b> {{ object.vendor_document_number }}</p>
             {% is_vendor_setup request as show_vendor_information %}
             {% if show_vendor_information %}
             <p class="card__text"><b>{% trans "Vendor" %}:</b> {{ object.project.vendor.name }}</p>
             {% endif %}
-            <p class="card__text"><b>{% trans "Invoice Number" %}:</b> {{ object.vendor_document_number }}</p>
+            <p class="card__text"><b>{% trans "Lead" %}:</b> {{ object.project.lead }}</p>
+            <p class="card__text"><b>{% trans "Fund" %}:</b> {{ object.project.submission.page }}</p>
+        </div>
+        <div class="card card--solid flex" x-data="{ collapsed: true }">
+                <div class="flex-none">
+                    <p><b>{% trans "Status" %}: </b></p>
+                </div>
+                <div class="flex-1 pl-2">
+                    <p>{{ latest_activity.message }}({{ latest_activity.user }})</p>
+                    {% for activity in activities %}
+                        <p x-show="!collapsed">{{ activity.message }}({{ activity.user }})</p>
+                    {% endfor %}
+                </div>
+                <div class="flex-1 text-right" x-on:click="collapsed = ! collapsed" role="button">
+                    <a href="#">{% trans "View status history" %}
+                    <svg class="icon icon--caret-up" x-show="!collapsed" aria-hidden=true><use xlink:href="#caret-up"></use></svg>
+                        <svg class="icon icon--caret-down" x-show="collapsed" aria-hidden=true><use xlink:href="#caret-down"></use></svg></a>
+                </div>
         </div>
 
         <div class="card card--solid">
