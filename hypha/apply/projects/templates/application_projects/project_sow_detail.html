@@ -1,14 +1,7 @@
-{% extends "base-apply.html" %}
+{% extends "application_projects/project_approval_detail.html" %}
 {% load i18n static approval_tools %}
 
 {% block title %}{{ object.title }}{% endblock %}
-
-{% block extra_css %}
-        <link rel="stylesheet" href="{% static 'css/apply/fancybox.css' %}">
-        {{ reviewer_form.media.css }}
-{% endblock %}
-
-{% block body_class %}light-grey-bg{% endblock %}
 
 {% block content %}
 <div class="simplified">
@@ -45,7 +38,7 @@
                 <h3>{% trans "Project scope of work(SOW)" %}</h3>
                 <div class="card card--solid">
                     {% if object.sow.output_answers %}
-                        <div class="simplified__rich-text">
+                        <div>
                             {{ object.sow.output_answers }}
                         </div>
                     {% endif %}
@@ -55,10 +48,3 @@
     </div>
 </div>
 {% endblock content %}
-
-{% block extra_js %}
-    {{ block.super }}
-    <script src="{% static 'js/apply/jquery.fancybox.min.js' %}"></script>
-    <script src="{% static 'js/apply/fancybox-global.js' %}"></script>
-    <script src="{% static 'js/apply/dropdown.js' %}"></script>
-{% endblock %}
