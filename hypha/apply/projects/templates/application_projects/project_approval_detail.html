@@ -104,7 +104,7 @@
                 <div class="card card--solid">
                     {% for approval in project.paf_approvals.all %}
                         {% if approval.approved %}
-                            <p><b>{{ approval.paf_reviewer_role.label }}</b>({{ approval.user.full_name }}) - {{ approval.created_at|date:"DATE_FORMAT" }}</p>
+                            <p><b>{{ approval.paf_reviewer_role.label }}</b>({{ approval.user }}) - {{ approval.approved_at|date:"DATE_FORMAT" }}</p>
                         {% endif %}
                     {% endfor %}
                 </div>
@@ -114,7 +114,7 @@
                     <h4>{% trans "Submission lead" %}</h4>
                     <p>{{ project.submission.lead }}</p>
 
-                    <h4>{% trans "Staff Reviewers" %}</h4>
+                    <h4>{% trans "Staff reviewers" %}</h4>
                     {% for review in project.submission.reviews.by_staff %}
                     <div class="card__reviewer-outcome">
                         <span class="card__reviewer">
@@ -128,7 +128,7 @@
                     {% empty %}
                         <p>{% trans "No reviews" %}</p>
                     {% endfor %}
-                    <h4>{% trans "External Reviewers" %}</h4>
+                    <h4>{% trans "Advisory council" %}</h4>
                     {% for review in project.submission.reviews.by_reviewers %}
                         <div class="card__reviewer-outcome">
                             <span class="card__reviewer">
