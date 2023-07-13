@@ -108,8 +108,12 @@
                 display: none;
             }
 
+            .form__required {
+                color: $color--white;
+            }
+
             &:hover {
-                background: url('./../../images/upload.svg') $color--darkest-blue no-repeat 40px center;
+                background: url('./../../images/upload.svg') $color--dark-blue no-repeat 20px center;
 
                 .no-js & {
                     background: none;
