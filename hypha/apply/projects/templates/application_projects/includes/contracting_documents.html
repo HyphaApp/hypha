@@ -50,7 +50,7 @@
             </div>
             {% if contract_uploaded %}
             <div class="docs-block__row-inner">
-                <a class="font-bold flex items-center w-auto text-left bg-white text-light-blue mr-0 mb-1 p-2.5 border-solid border border-light-blue" href="{% url 'apply:projects:contract' pk=project.pk file_pk=contract.pk %}" target="_blank">
+                <a class="font-bold flex items-center w-auto text-left bg-white text-light-blue mr-0 mb-1 p-2.5 border-solid border border-light-blue focus:text-light-blue hover:bg-light-blue hover:text-white" href="{% url 'apply:projects:contract' pk=project.pk file_pk=contract.pk %}" target="_blank">
                     <svg class="icon icon--project-eye"><use xlink:href="#eye"></use></svg>
                         {% trans "View" %}
                 </a>
@@ -78,7 +78,7 @@
                 <li class="docs-block__document">
                     <div class="docs-block__row-inner">
                         <p class="docs-block__title">
-                            {% if not contract.uploaded_by_contractor_at %}{% trans "Pending signed contract by " %}{% else %}{% trans "Signed contract by " %}{% endif %}{% if user == object.user %}{{ org_short_name }}{% else %}{% trans "Contracting team " %} {% endif %}
+                            {% if not contract.uploaded_by_contractor_at %}{% trans "Pending signed contract by " %}{% else %}{% trans "Signed contract by " %}{% endif %}{% if user == object.user %}{{ ORG_SHORT_NAME }}{% else %}{% trans "Contracting team " %} {% endif %}
                             <i>{% if contract.uploaded_by_contractor_at %}({{ contract.uploaded_by_contractor_at }}){% endif %}</i></p>
                     </div>
                     {% if can_upload_contract and user.is_contracting %}
