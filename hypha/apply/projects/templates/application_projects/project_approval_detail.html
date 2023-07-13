@@ -6,14 +6,6 @@
 {% block extra_css %}
         <link rel="stylesheet" href="{% static 'css/apply/fancybox.css' %}">
         {{ reviewer_form.media.css }}
-        <style>
-            h4 {
-                font-size: 16px;
-            }
-            h3 {
-                font-size: 28px;
-            }
-        </style>
 {% endblock %}
 
 {% block body_class %}light-grey-bg{% endblock %}
@@ -39,47 +31,47 @@
     <div class="wrapper wrapper--large wrapper--tabs">
         <div class="wrapper wrapper--sidebar">
             <article class="wrapper--sidebar--inner">
-                <h3>{% trans "Project Information" %}</h3>
+                <h4>{% trans "Project Information" %}</h4>
                 <div class="card card--solid">
                     <div class="grid grid--proposal-info">
                         <div>
-                            <h4>{% trans "Proposed start date" %}</h4>
+                            <p class="font-bold">{% trans "Proposed start date" %}</p>
                             <p>{{ object.proposed_start|date:"DATE_FORMAT"|default:"-" }}</p>
                         </div>
 
                         <div>
-                            <h4>{% trans "Project Proposed end date" %}</h4>
+                            <p class="font-bold">{% trans "Project Proposed end date" %}</p>
                             <p>{{ object.proposed_end|date:"DATE_FORMAT"|default:"-" }}</p>
                         </div>
 
                         <div>
-                            <h4>{% trans "Legal name" %}</h4>
+                            <p class="font-bold">{% trans "Legal name" %}</p>
                             <p>{{ object.contact_legal_name|default:"-" }}</p>
                         </div>
 
                         <div>
-                            <h4>{% trans "E-mail" %}</h4>
+                            <p class="font-bold">{% trans "E-mail" %}</p>
                             <p>{{ object.contact_email|default:"-" }}</p>
                         </div>
 
                         <div>
-                            <h4>{% trans "Address" %}</h4>
+                            <p class="font-bold">{% trans "Address" %}</p>
                             <p>{{ object.get_address_display|default:"-"}}</p>
                         </div>
 
                         <div>
-                            <h4>{% trans "Phone" %}</h4>
+                            <p class="font-bold">{% trans "Phone" %}</p>
                             <p>{{ object.phone|default:"-" }}</p>
                         </div>
 
                         <div>
-                            <h4>{% trans "Value" %}</h4>
+                            <p class="font-bold">{% trans "Value" %}</p>
                             <p>{{ CURRENCY_SYMBOL }}{{ object.value|default:"-" }}</p>
                         </div>
 
                         {% if object.sent_to_compliance_at %}
                         <div>
-                            <h4>{% trans "Sent to Compliance" %}</h4>
+                            <p class="font-bold">{% trans "Sent to Compliance" %}</p>
                             <p>{{ object.sent_to_compliance_at|date:"DATE_FORMAT" }}</p>
                         </div>
                         {% endif %}
@@ -87,20 +79,20 @@
                     </div>
 
                     {% if object.output_answers %}
-                        <div>
+                        <div class="simplified__paf_answers">
                             {{ object.output_answers }}
                         </div>
                     {% endif %}
 
                     {% has_project_sow_form object as project_sow %}
                     {% if project_sow and object.sow.output_answers %}
-                        <div>
+                        <div class="simplified__paf_answers">
                             {{ object.sow.output_answers }}
                         </div>
                     {% endif %}
                 </div>
 
-                <h3>{% trans "Approvals" %}</h3>
+                <h4>{% trans "Approvals" %}</h4>
                 <div class="card card--solid">
                     {% for approval in project.paf_approvals.all %}
                         {% if approval.approved %}
@@ -109,12 +101,12 @@
                     {% endfor %}
                 </div>
 
-                <h3>{% trans "Review" %}</h3>
+                <h4>{% trans "Review" %}</h4>
                 <div class="card card--solid">
-                    <h4>{% trans "Submission lead" %}</h4>
+                    <p class="font-bold">{% trans "Submission lead" %}</p>
                     <p>{{ project.submission.lead }}</p>
 
-                    <h4>{% trans "Staff reviewers" %}</h4>
+                    <p class="font-bold">{% trans "Staff reviewers" %}</p>
                     {% for review in project.submission.reviews.by_staff %}
                     <div class="card__reviewer-outcome">
                         <span class="card__reviewer">
@@ -128,7 +120,7 @@
                     {% empty %}
                         <p>{% trans "No reviews" %}</p>
                     {% endfor %}
-                    <h4>{% trans "Advisory council" %}</h4>
+                    <p class="font-bold">{% trans "Advisory council" %}</p>
                     {% for review in project.submission.reviews.by_reviewers %}
                         <div class="card__reviewer-outcome">
                             <span class="card__reviewer">
@@ -140,7 +132,7 @@
                     {% endfor %}
                 </div>
 
-                <h3>{% trans "Supporting Documents" %}</h3>
+                <h4>{% trans "Supporting Documents" %}</h4>
                 <div class="card card--solid">
                     <p><a href="{% url 'apply:submissions:simplified' pk=object.submission_id %}">{% trans "Submission" %}</a></p>
                     {% for packet_file in object.packet_files.all %}
