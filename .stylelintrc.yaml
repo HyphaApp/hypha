@@ -51,6 +51,7 @@ rules:
       - include
   media-feature-name-no-vendor-prefix: true
   media-feature-parentheses-space-inside: never
+  media-feature-range-notation: prefix
   no-descending-specificity: null
   no-missing-end-of-source-newline: true
   number-leading-zero: never
