@@ -183,7 +183,7 @@ You will need two domain to run this app, used to serve the public and apply sit
 First, add these sites to the database:
 
 ```console
-$ python manage.py wagtailupdatesite hypha.test apply.hypha.test 9001
+$ python manage.py wagtailsiteupdate hypha.test apply.hypha.test 9001
 ```
 
 Then, add this to your `/etc/hosts` file.
