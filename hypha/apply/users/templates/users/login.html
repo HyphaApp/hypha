@@ -25,7 +25,7 @@
                     Those codes were generated for you during 2FA setup to print or keep safe in a password manager.{% endblocktrans %}</p>
             {% endif %}
 
-            <form class="form form--with-p-tags form--user-login" method="post">
+            <form class="form form--user-login" method="post">
                 {% csrf_token %}
                 {{ wizard.management_form }}
 
@@ -38,7 +38,10 @@
                     {% if settings.users.AuthSettings.extra_text %}
                         {{ settings.users.AuthSettings.extra_text|richtext}}
                     {% endif %}
-                    <button class="link link--button link--button-wide link--button-secondary" type="submit">{% trans "Log in" %}</button>
+
+                    <div class="form__group">
+                        <button class="link link--button link--button-secondary" type="submit">{% trans "Log in" %}</button>
+                    </div>
 
                     {% if GOOGLE_OAUTH2 %}
                     <div class="flex items-center justify-start relative">
