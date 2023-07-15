@@ -446,7 +446,8 @@
             grid-template-columns: 2fr 1fr;
             column-gap: 2rem;
 
-            .wmd-input, .wmd-preview {
+            .wmd-input,
+            .wmd-preview {
                 max-width: 100%;
                 margin-bottom: 0;
             }
