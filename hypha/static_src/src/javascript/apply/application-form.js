@@ -26,7 +26,10 @@
             $error_fields[0].querySelector('input').focus();
 
             $error_fields.each(function (index, error_field) {
-                error_field.querySelector('input').setAttribute('aria-invalid', true);
+                const inputEl = error_field.querySelector('input, textarea');
+                if (inputEl) {
+                    inputEl.setAttribute('aria-invalid', true);
+                }
             });
         }
 
