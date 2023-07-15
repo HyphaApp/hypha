@@ -91,11 +91,11 @@
     }
 
     &--form {
-        padding: 20px;
-        margin: 20px auto;
+        padding: 0;
+        margin: 2em auto;
 
-        @include media-query(tablet-portrait) {
-            padding: 2rem 17rem 2rem 5rem;
+        @include media-query(tablet-landscape) {
+            padding: 2rem 22rem 2rem 0rem;
             margin: 1rem auto 3rem;
         }
     }
