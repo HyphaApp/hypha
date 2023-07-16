@@ -1,6 +1,7 @@
 import json
 
 from django import template
+from django.conf import settings
 
 from hypha.apply.determinations.models import Determination
 from hypha.apply.projects.models import Contract
@@ -55,6 +56,13 @@ def display_for(activity, user):
 def visibility_options(activity, user):
     choices = activity.visibility_choices_for(user)
     return json.dumps(choices)
+
+
+@register.filter
+def visibility_display(visibility, user):
+    if not user.is_apply_staff:
+        return f"{visibility} + {settings.ORG_SHORT_NAME} team"
+    return visibility
 
 
 @register.filter

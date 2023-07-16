@@ -136,17 +136,28 @@ class Activity(models.Model):
     @classmethod
     def visibility_for(cls, user):
         if user.is_apply_staff:
-            return [APPLICANT, TEAM, REVIEWER, PARTNER, ALL]
+            return [TEAM, APPLICANT, REVIEWER, PARTNER, ALL]
         if user.is_reviewer:
             return [REVIEWER, ALL]
-        if user.is_partner:
-            return [PARTNER, ALL]
+        if user.is_finance or user.is_contracting:
+            # for project part
+            return [TEAM, APPLICANT, REVIEWER, PARTNER, ALL]
+        if user.is_applicant:
+            return [APPLICANT, ALL]
 
-        return [APPLICANT, ALL]
+        return [ALL]
 
     @classmethod
     def visibility_choices_for(cls, user):
-        return [(choice, VISIBILITY[choice]) for choice in cls.visibility_for(user)]
+        if user.is_applicant:
+            return [(APPLICANT, VISIBILITY[APPLICANT])]
+        if user.is_reviewer:
+            return [(REVIEWER, VISIBILITY[REVIEWER])]
+        if user.is_apply_staff:
+            return [(APPLICANT, VISIBILITY[APPLICANT]), (REVIEWER, VISIBILITY[REVIEWER]), (ALL, VISIBILITY[ALL])]
+        if user.is_finance or user.is_contracting:
+            return [(APPLICANT, VISIBILITY[APPLICANT])]
+        return [(TEAM, VISIBILITY[TEAM])]
 
 
 class Event(models.Model):
