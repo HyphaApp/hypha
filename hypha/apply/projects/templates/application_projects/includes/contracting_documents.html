@@ -61,8 +61,8 @@
                     <div class="docs-block__row-inner">
                     </div>
                     <div class="docs-block__row-inner">
+                        <svg class="icon icon--info-circle"><use xlink:href="#info-circle-fill"></use></svg>
                         <a class="docs-block__icon-link" href="#communications" target="_blank">
-                            <svg class="icon icon--info-circle"><use xlink:href="#info-circle-fill"></use></svg>
                                 <span>{% trans "Corrections/amendments?" %}</span>
                         </a>
                     </div>
@@ -144,8 +144,8 @@
                                     {% endif %}
                                     {% if document_category.required %}<span class="text-red-700">*</span>{% endif %}
                                     {% if document_category.template %}
-                                    <a class="pl-2 font-bold underline decoration-dashed" href="{% url 'apply:projects:category_template' pk=object.pk type='contract_document' category_pk=document_category.pk %}" target="_blank">{% trans "View template" %}</a>
-                                    <svg class="icon icon--info-circle pl-0.5"><use xlink:href="#info-circle-fill"></use></svg>
+                                    <svg class="icon icon--info-circle"><use xlink:href="#info-circle-fill"></use></svg>
+                                    <a class="font-bold underline decoration-dashed" href="{% url 'apply:projects:category_template' pk=object.pk type='contract_document' category_pk=document_category.pk %}" target="_blank">{% trans "View template" %}</a>
                                     {% endif %}
                                 </p>
                                 {% if document_category not in remaining_contract_document_categories %}
