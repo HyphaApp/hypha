@@ -60,8 +60,10 @@ def visibility_options(activity, user):
 
 @register.filter
 def visibility_display(visibility, user):
-    if not user.is_apply_staff:
+    if not user.is_apply_staff and not user.is_finance and not user.is_contracting:
         return f"{visibility} + {settings.ORG_SHORT_NAME} team"
+    if visibility != TEAM:
+        return f"{visibility} + team"
     return visibility
 
 

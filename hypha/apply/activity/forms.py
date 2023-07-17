@@ -14,7 +14,7 @@ class CommentForm(forms.ModelForm):
             'message': 'Message',
         }
         help_texts = {
-            'visibility': 'Pick a suitable user role. Staff can view every comment.'
+            'visibility': 'Select a relevant user role. Staff can view every comment.'
         }
         widgets = {
             'visibility': forms.RadioSelect(),
