@@ -96,39 +96,37 @@
                 <div class="card card--solid">
                     {% for approval in project.paf_approvals.all %}
                         {% if approval.approved %}
-                            <p><b>{{ approval.paf_reviewer_role.label }}</b>({{ approval.user }}) - {{ approval.approved_at|date:"DATE_FORMAT" }}</p>
+                            <p><b>{{ approval.paf_reviewer_role.label }}</b> - {{ approval.user }} ({{ approval.approved_at|date:"DATE_FORMAT" }})</p>
+                        {% else %}
+                            <p><b>{{ approval.paf_reviewer_role.label }}</b> {% trans " - Pending" %}</p>
                         {% endif %}
                     {% endfor %}
                 </div>
 
                 <h4>{% trans "Review" %}</h4>
                 <div class="card card--solid">
-                    <p class="font-bold">{% trans "Submission lead" %}</p>
-                    <p>{{ project.submission.lead }}</p>
+                    <p class="font-bold mb-0 mt-0">{% trans "Submission lead" %}</p>
+                    <p class="mt-2 mb-0">{{ project.submission.lead }}</p>
 
-                    <p class="font-bold">{% trans "Staff reviewers" %}</p>
+                    <p class="font-bold mt-6 mb-0">{% trans "Staff reviewers" %}</p>
                     {% for review in project.submission.reviews.by_staff %}
-                    <div class="card__reviewer-outcome">
-                        <span class="card__reviewer">
+                        <p class="mt-2 mb-0">
                             {{ review.author }}
                             {% if review.author.role %}
                                 {% trans "as" %} {{ review.author.role }}
                             {% endif %}
                             - {{ review.created_at|date:"DATE_FORMAT" }}
-                        </span>
-                    </div>
+                        </p>
                     {% empty %}
-                        <p>{% trans "No reviews" %}</p>
+                        <p class="mt-2 mb-0">{% trans "No reviews" %}</p>
                     {% endfor %}
-                    <p class="font-bold">{% trans "Advisory council" %}</p>
+                    <p class="font-bold mb-0 mt-6">{% trans "Advisory council" %}</p>
                     {% for review in project.submission.reviews.by_reviewers %}
-                        <div class="card__reviewer-outcome">
-                            <span class="card__reviewer">
+                            <p class="mt-2 mb-0">
                                 {{ review.author }} - {{ review.created_at|date:"DATE_FORMAT" }}
-                            </span>
-                        </div>
+                            </p>
                     {% empty %}
-                        <p>{% trans "No reviews" %}</p>
+                        <p class="mt-2 mb-0">{% trans "No reviews" %}</p>
                     {% endfor %}
                 </div>
 

@@ -119,8 +119,8 @@
             <p><b> Approvals </b></p>
             {% if approvals %}
                 {% for approval in approvals %}
-                        <p><b>{{ approval.paf_reviewer_role.label }}</b>({{ approval.user.email }})</p>
-                        <p>{% if approval.approved %} "Approved" {% else %} "Not approved yet"{% endif %}</p>
+                        <p>{{ approval.paf_reviewer_role.label }} - {% if approval.approved %} Approved {% else %} Pending{% endif %}
+                            {% if approval.user %}({{ approval.user }}){% endif %}</p>
                 {% endfor %}
             {% else %}
                 <p>-</p>
