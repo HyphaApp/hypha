@@ -1,4 +1,4 @@
-<nav role="navigation" aria-label="Primary" hx-boost="true">
+<nav role="navigation" aria-label="Primary">
     <ul class="nav nav--primary" role="menubar">
         {% if request.user.is_apply_staff %}
             {% include "navigation/primarynav-apply-item.html" with name="My dashboard" url="dashboard:dashboard" %}
