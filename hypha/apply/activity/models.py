@@ -157,7 +157,7 @@ class Activity(models.Model):
             return [(TEAM, VISIBILITY[TEAM]), (APPLICANT, VISIBILITY[APPLICANT]), (REVIEWER, VISIBILITY[REVIEWER]), (ALL, VISIBILITY[ALL])]
         if user.is_finance or user.is_contracting:
             return [(TEAM, VISIBILITY[TEAM]), (APPLICANT, VISIBILITY[APPLICANT])]
-        return [(TEAM, VISIBILITY[TEAM])]
+        return [(ALL, VISIBILITY[ALL])]
 
 
 class Event(models.Model):
