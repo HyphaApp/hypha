@@ -35,9 +35,11 @@
                     {% endfor %}
                 </div>
                 <div class="flex-1 text-right" x-on:click="collapsed = ! collapsed" role="button">
-                    <a href="#">{% trans "View status history" %}
-                    <svg class="icon icon--caret-up" x-show="!collapsed" aria-hidden=true><use xlink:href="#caret-up"></use></svg>
-                        <svg class="icon icon--caret-down" x-show="collapsed" aria-hidden=true><use xlink:href="#caret-down"></use></svg></a>
+                    <p class="font-bold text-light-blue" x-show="collapsed">{% trans "View status history" %}
+                        <svg class="icon icon--arrow-down top-1"  aria-hidden=true><use xlink:href="#arrow-down"></use></svg></p>
+                    <p class="font-bold text-light-blue" x-show="!collapsed">{% trans "Hide status history" %}
+                        <svg class="icon icon--arrow-up top-1" aria-hidden=true><use xlink:href="#arrow-up"></use></svg></p>
+
                 </div>
         </div>
 

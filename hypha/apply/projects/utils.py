@@ -1,7 +1,5 @@
 from django.conf import settings
 
-from hypha.apply.activity.models import Activity
-
 from .models import Deliverable, Project
 
 
@@ -91,9 +89,3 @@ def create_invoice(invoice):
             create_intacct_invoice,
         )
         create_intacct_invoice(invoice)
-
-
-def get_invoice_latest_approver(invoice):
-    latest_staff_invoice_approval_activity = Activity.actions.filter(related_content_type__model='invoice',
-                                                                     related_object_id=invoice.id).first()
-    return latest_staff_invoice_approval_activity.user

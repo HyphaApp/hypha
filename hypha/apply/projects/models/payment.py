@@ -173,11 +173,6 @@ class Invoice(models.Model):
 
     @property
     def status_display(self):
-        if 'staff' in self.status:
-            from hypha.apply.projects.utils import get_invoice_latest_approver
-            staff_approver = get_invoice_latest_approver(self)
-            if staff_approver.id == self.project.lead.id:
-                return self.get_status_display().replace("staff", "lead").replace("Staff", "Lead")
         return self.get_status_display()
 
     @property
