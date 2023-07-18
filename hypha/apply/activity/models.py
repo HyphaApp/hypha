@@ -154,9 +154,9 @@ class Activity(models.Model):
         if user.is_reviewer:
             return [(REVIEWER, VISIBILITY[REVIEWER])]
         if user.is_apply_staff:
-            return [(APPLICANT, VISIBILITY[APPLICANT]), (TEAM, VISIBILITY[TEAM]), (REVIEWER, VISIBILITY[REVIEWER]), (ALL, VISIBILITY[ALL])]
+            return [(TEAM, VISIBILITY[TEAM]), (APPLICANT, VISIBILITY[APPLICANT]), (REVIEWER, VISIBILITY[REVIEWER]), (ALL, VISIBILITY[ALL])]
         if user.is_finance or user.is_contracting:
-            return [(APPLICANT, VISIBILITY[APPLICANT]), (TEAM, VISIBILITY[TEAM])]
+            return [(TEAM, VISIBILITY[TEAM]), (APPLICANT, VISIBILITY[APPLICANT])]
         return [(TEAM, VISIBILITY[TEAM])]
 
 

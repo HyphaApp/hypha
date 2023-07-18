@@ -1,5 +1,4 @@
 from django import forms
-from django.core.exceptions import ValidationError
 from pagedown.widgets import PagedownWidget
 
 from .models import Activity
