@@ -21,7 +21,7 @@ from hypha.apply.funds.tables import (
 )
 from hypha.apply.projects.filters import ProjectListFilter
 from hypha.apply.projects.models import Invoice, PAFApprovals, Project, ProjectSettings
-from hypha.apply.projects.models.project import WAITING_FOR_APPROVAL
+from hypha.apply.projects.models.project import INTERNAL_APPROVAL
 from hypha.apply.projects.permissions import has_permission
 from hypha.apply.projects.tables import (
     InvoiceDashboardTable,
@@ -153,7 +153,7 @@ class AdminDashboardView(MyFlaggedMixin, TemplateView):
 
     def paf_waiting_for_approval(self):
         if not self.request.user.is_apply_staff or not PAFApprovals.objects.filter(
-            project__status=WAITING_FOR_APPROVAL,
+            project__status=INTERNAL_APPROVAL,
             user=self.request.user,
         ).exists():
             return {
@@ -168,7 +168,7 @@ class AdminDashboardView(MyFlaggedMixin, TemplateView):
                 }
             }
 
-        waiting_paf_approval = Project.objects.waiting_for_approval().for_table()
+        waiting_paf_approval = Project.objects.internal_approval().for_table()
         project_settings = ProjectSettings.for_request(self.request)
         if project_settings.paf_approval_sequential:
             awaiting_user_approval = []
@@ -304,7 +304,7 @@ class FinanceDashboardView(MyFlaggedMixin, TemplateView):
 
     def paf_waiting_for_approval(self):
         if not self.request.user.is_finance or not PAFApprovals.objects.filter(
-            project__status=WAITING_FOR_APPROVAL,
+            project__status=INTERNAL_APPROVAL,
             user=self.request.user,
         ).exists():
             return {
@@ -319,7 +319,7 @@ class FinanceDashboardView(MyFlaggedMixin, TemplateView):
                 }
             }
 
-        waiting_paf_approval = Project.objects.waiting_for_approval().for_table()
+        waiting_paf_approval = Project.objects.internal_approval().for_table()
         project_settings = ProjectSettings.for_request(self.request)
         if project_settings.paf_approval_sequential:
             awaiting_user_approval = []
@@ -482,7 +482,7 @@ class ContractingDashboardView(MyFlaggedMixin, TemplateView):
 
     def paf_waiting_for_approval(self):
         if not self.request.user.is_contracting or not PAFApprovals.objects.filter(
-            project__status=WAITING_FOR_APPROVAL,
+            project__status=INTERNAL_APPROVAL,
             user=self.request.user,
         ).exists():
             return {
@@ -497,7 +497,7 @@ class ContractingDashboardView(MyFlaggedMixin, TemplateView):
                 }
             }
 
-        waiting_paf_approval = Project.objects.waiting_for_approval().for_table()
+        waiting_paf_approval = Project.objects.internal_approval().for_table()
         project_settings = ProjectSettings.for_request(self.request)
         if project_settings.paf_approval_sequential:
             awaiting_user_approval = []

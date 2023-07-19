@@ -67,16 +67,16 @@ PAF_STATUS_CHOICES = (
 )
 
 DRAFT = 'draft'
-WAITING_FOR_APPROVAL = 'waiting_for_approval'
+INTERNAL_APPROVAL = 'internal_approval'
 CONTRACTING = 'contracting'
-IN_PROGRESS = 'in_progress'
+INVOICING_AND_REPORTING = 'invoicing_and_reporting'
 CLOSING = 'closing'
 COMPLETE = 'complete'
 PROJECT_STATUS_CHOICES = [
     (DRAFT, _('Draft')),
-    (WAITING_FOR_APPROVAL, _('Waiting for Approval')),
+    (INTERNAL_APPROVAL, _('Internal approval')),
     (CONTRACTING, _('Contracting')),
-    (IN_PROGRESS, _('In Progress')),
+    (INVOICING_AND_REPORTING, _('Invoicing and reporting')),
     (CLOSING, _('Closing')),
     (COMPLETE, _('Complete')),
 ]
@@ -90,7 +90,7 @@ class ProjectQuerySet(models.QuerySet):
     def in_progress(self):
         # Projects that users need to interact with, submitting reports or payment request.
         return self.filter(
-            status__in=(IN_PROGRESS, CLOSING,)
+            status__in=(INVOICING_AND_REPORTING, CLOSING,)
         )
 
     def complete(self):
@@ -99,9 +99,9 @@ class ProjectQuerySet(models.QuerySet):
     def in_contracting(self):
         return self.filter(status=CONTRACTING)
 
-    def waiting_for_approval(self):
+    def internal_approval(self):
         return self.filter(
-            status=WAITING_FOR_APPROVAL,
+            status=INTERNAL_APPROVAL,
         )
 
     def by_end_date(self, desc=False):
@@ -342,24 +342,24 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
 
     @property
     def can_make_approval(self):
-        return self.status == WAITING_FOR_APPROVAL
+        return self.status == INTERNAL_APPROVAL
 
     @property
     def is_approved_by_all_paf_reviewers(self):
-        if self.status == WAITING_FOR_APPROVAL:
+        if self.status == INTERNAL_APPROVAL:
             if not self.paf_approvals.filter(approved=False):
                 return True
         return False
 
     @property
     def can_update_paf_status(self):
-        return self.status == WAITING_FOR_APPROVAL
+        return self.status == INTERNAL_APPROVAL
 
     def can_request_funding(self):
         """
         Should we show this Project's funding block?
         """
-        return self.status in (CLOSING, IN_PROGRESS)
+        return self.status in (CLOSING, INVOICING_AND_REPORTING)
 
     @property
     def can_send_for_approval(self):
@@ -411,7 +411,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
 
     @property
     def is_in_progress(self):
-        return self.status == IN_PROGRESS
+        return self.status == INVOICING_AND_REPORTING
 
     @property
     def has_deliverables(self):

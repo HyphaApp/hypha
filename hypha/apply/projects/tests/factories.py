@@ -14,7 +14,7 @@ from hypha.apply.users.tests.factories import GroupFactory, StaffFactory, UserFa
 from ..models.payment import Invoice, InvoiceDeliverable, SupportingDocument
 from ..models.project import (
     COMPLETE,
-    IN_PROGRESS,
+    INVOICING_AND_REPORTING,
     Contract,
     Deliverable,
     DocumentCategory,
@@ -107,7 +107,7 @@ class ProjectFactory(factory.django.DjangoModelFactory):
             is_locked=True,
         )
         in_progress = factory.Trait(
-            status=IN_PROGRESS,
+            status=INVOICING_AND_REPORTING,
         )
         is_complete = factory.Trait(
             status=COMPLETE,

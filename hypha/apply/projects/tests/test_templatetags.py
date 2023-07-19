@@ -19,8 +19,8 @@ from ..models.project import (
     COMPLETE,
     CONTRACTING,
     DRAFT,
-    IN_PROGRESS,
-    WAITING_FOR_APPROVAL,
+    INTERNAL_APPROVAL,
+    INVOICING_AND_REPORTING,
 )
 from ..templatetags.contract_tools import user_can_upload_contract
 from ..templatetags.invoice_tools import can_change_status, can_delete, can_edit
@@ -34,13 +34,13 @@ class TestContractTools(TestCase):
         project = ProjectFactory(status=DRAFT)
         self.assertFalse(user_can_upload_contract(project, staff))
 
-        project = ProjectFactory(status=WAITING_FOR_APPROVAL)
+        project = ProjectFactory(status=INTERNAL_APPROVAL)
         self.assertFalse(user_can_upload_contract(project, staff))
 
         project = ProjectFactory(status=CONTRACTING)
         self.assertFalse(user_can_upload_contract(project, staff))
 
-        project = ProjectFactory(status=IN_PROGRESS)
+        project = ProjectFactory(status=INVOICING_AND_REPORTING)
         self.assertFalse(user_can_upload_contract(project, staff))
 
         project = ProjectFactory(status=COMPLETE)
@@ -55,14 +55,14 @@ class TestContractTools(TestCase):
         project = ProjectFactory(status=DRAFT, user=applicant)
         self.assertFalse(user_can_upload_contract(project, applicant))
 
-        project = ProjectFactory(status=WAITING_FOR_APPROVAL, user=applicant)
+        project = ProjectFactory(status=INTERNAL_APPROVAL, user=applicant)
         self.assertFalse(user_can_upload_contract(project, applicant))
 
         project = ProjectFactory(status=CONTRACTING, user=applicant)
         ContractFactory(project=project)
         self.assertTrue(user_can_upload_contract(project, applicant))
 
-        project = ProjectFactory(status=IN_PROGRESS, user=applicant)
+        project = ProjectFactory(status=INVOICING_AND_REPORTING, user=applicant)
         self.assertFalse(user_can_upload_contract(project, applicant))
 
         project = ProjectFactory(status=COMPLETE, user=applicant)
