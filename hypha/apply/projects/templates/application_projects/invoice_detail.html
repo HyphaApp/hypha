@@ -29,9 +29,9 @@
                     <p><b>{% trans "Status" %}: </b></p>
                 </div>
                 <div class="flex-1 pl-2">
-                    <p>{{ latest_activity.message }}({{ latest_activity.user }})</p>
+                    <p>{{ latest_activity.message|extract_status }} ({{ latest_activity.user }})</p>
                     {% for activity in activities %}
-                        <p x-show="!collapsed">{{ activity.message }}({{ activity.user }})</p>
+                        <p x-show="!collapsed">{{ activity.message|extract_status }} ({{ activity.user }})</p>
                     {% endfor %}
                 </div>
                 <div class="flex-1 text-right" x-on:click="collapsed = ! collapsed" role="button">
@@ -60,7 +60,7 @@
     <aside class="sidebar">
         {% block deliverables %}
         {% endblock %}
-        <div class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions">
+        <div class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions sticky top-8">
             <h5>{% trans "Actions to take" %}</h5>
             {% block actions %}
                 {% can_edit object user as user_can_edit_request %}

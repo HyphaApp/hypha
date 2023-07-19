@@ -81,3 +81,8 @@ def get_invoice_form(invoice, user):
 @register.simple_tag
 def get_invoice_form_id(form, invoice):
     return f'{form.name}-{invoice.id}'
+
+
+@register.filter
+def extract_status(invoice_activity_message):
+    return invoice_activity_message.replace("Updated Invoice status to: ", "").replace(".", "")
