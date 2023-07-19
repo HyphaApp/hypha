@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='project',
             name='status',
-            field=models.TextField(choices=[('draft', 'Draft'), ('internal_approval', 'Internal Approval'), ('contracting', 'Contracting'), ('invoicing_and_reporting', 'Invoicing and reporting'), ('closing', 'Closing'), ('complete', 'Complete')], default='draft'),
+            field=models.TextField(choices=[('draft', 'Draft'), ('internal_approval', 'Internal approval'), ('contracting', 'Contracting'), ('invoicing_and_reporting', 'Invoicing and reporting'), ('closing', 'Closing'), ('complete', 'Complete')], default='draft'),
         ),
         migrations.RunPython(update_project_statuses),
     ]
