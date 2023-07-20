@@ -5,6 +5,7 @@ from functools import partialmethod, reduce
 from django.apps import apps
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVector, SearchVectorField
@@ -44,6 +45,7 @@ from hypha.apply.funds.services import (
 from hypha.apply.review.options import AGREE
 from hypha.apply.stream_forms.files import StreamFieldDataEncoder
 from hypha.apply.stream_forms.models import BaseStreamForm
+from hypha.apply.users.groups import APPLICANT_GROUP_NAME
 
 from ..blocks import NAMED_BLOCKS, ApplicationCustomFormFieldsBlock
 from ..workflow import (
@@ -507,6 +509,11 @@ class ApplicationSubmission(
         if self.user and self.user.is_authenticated:
             self.form_data['email'] = self.user.email
             self.form_data['full_name'] = self.user.get_full_name()
+            # Ensure applying user should have applicant role
+            if not self.user.is_applicant:
+                applicant_group = Group.objects.get(name=APPLICANT_GROUP_NAME)
+                self.user.groups.add(applicant_group)
+                self.user.save()
         else:
             # Rely on the form having the following must include fields (see blocks.py)
             email = self.form_data.get('email')
@@ -519,6 +526,11 @@ class ApplicationSubmission(
                     email=email,
                     defaults={'full_name': full_name}
                 )
+                # Ensure applying user should have applicant role
+                if not self.user.is_applicant:
+                    applicant_group = Group.objects.get(name=APPLICANT_GROUP_NAME)
+                    self.user.groups.add(applicant_group)
+                    self.user.save()
             else:
                 self.user, _ = User.objects.get_or_create_and_notify(
                     email=email,

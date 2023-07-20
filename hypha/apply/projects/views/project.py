@@ -208,7 +208,7 @@ class RemoveContractDocumentView(DelegatedViewMixin, FormView):
     model = Project
 
     def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_applicant:
+        if not request.user.is_applicant or request.user != self.get_object().user:
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
@@ -228,6 +228,7 @@ class RemoveContractDocumentView(DelegatedViewMixin, FormView):
 
 @method_decorator(login_required, name='dispatch')
 class SelectDocumentView(DelegatedViewMixin, CreateView):
+    # todo: (no role issue) not getting used anywhere
     form_class = SelectDocumentForm
     context_name = 'select_document_form'
     model = PacketFile
@@ -471,6 +472,11 @@ class UploadContractDocumentView(DelegatedViewMixin, CreateView):
     form_class = UploadContractDocumentForm
     model = Project
     context_name = 'contract_document_form'
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user != self.get_object().user or not request.user.is_applicant:
+            raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         project = self.kwargs['object']

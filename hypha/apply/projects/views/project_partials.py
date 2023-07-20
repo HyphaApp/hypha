@@ -7,12 +7,14 @@ from hypha.apply.activity.services import (
 )
 
 from ..models.project import Project
+from ..permissions import has_permission
 
 
 @login_required
 @require_GET
 def partial_project_activities(request, pk):
     project = get_object_or_404(Project, pk=pk)
+    has_permission('project_access', request.user, object=project, raise_exception=True)
     ctx = {
         'actions': get_related_actions_for_user(project, request.user)
     }
