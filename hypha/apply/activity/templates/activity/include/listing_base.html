@@ -24,7 +24,7 @@
 
                 <p class="feed__meta-item feed__meta-item--right" {% if not activity.private %} hidden {% endif %}>
                     <svg class="icon icon--eye"><use xlink:href="#eye"></use></svg>
-                    <span class="js-comment-visibility">{{ activity.visibility }}</span>
+                    <span class="js-comment-visibility">{{ activity.visibility|visibility_display:request.user }}</span>
                 </p>
         </div>
 
