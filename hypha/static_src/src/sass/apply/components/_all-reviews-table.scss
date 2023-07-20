@@ -37,34 +37,6 @@
                     display: table-cell;
                 }
 
-                &.has-tooltip {
-                    @include media-query($table-breakpoint) {
-                        &::before {
-                            position: absolute;
-                            top: 50px;
-                            left: 45px;
-                            z-index: -1;
-                            width: 200px;
-                            padding: 5px;
-                            font-size: 12px;
-                            font-weight: $weight--normal;
-                            white-space: normal;
-                            background: $color--sky-blue;
-                            border: 1px solid $color--marine;
-                            content: attr(data-title-tooltip);
-                            opacity: 0;
-                            transition: opacity $transition;
-                        }
-
-                        &:hover {
-                            &::before {
-                                z-index: 10;
-                                opacity: 1;
-                            }
-                        }
-                    }
-                }
-
                 a {
                     color: $color--primary;
                 }
