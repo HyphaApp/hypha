@@ -122,6 +122,10 @@
         height: 1em;
         margin-right: 2px;
         stroke: $color--light-blue;
+
+        .border:hover & {
+            stroke: $color--white;
+        }
     }
 
     &--caret-down {
