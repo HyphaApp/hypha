@@ -1,4 +1,5 @@
 from django import template
+from django.conf import settings
 from django.db.models import Count
 from django.urls import reverse
 
@@ -32,12 +33,16 @@ def user_next_step_on_project(project, user, request=None):
             if project.paf_approvals.exists():
                 return "Resubmit project documents for approval"
             return "Submit project documents for approval"
+        elif user.is_applicant:
+            return "Awaiting project documents to be created and approved by OTF internally. " \
+                   "Please check back when the project has moved to contracting stage."
         if project.paf_approvals.exists():
             return "Changes requested. Awaiting documents to be resubmitted."
         return "Awaiting approval form to be created."
     elif project.status == WAITING_FOR_APPROVAL:
         if user.is_applicant:
-            return "Awaiting approval form to be approved."
+            return "Awaiting project documents to be created and approved by OTF internally. " \
+                   "Please check back when the project has moved to contracting stage."
 
         if request:
             project_settings = ProjectSettings.for_request(request=request)
@@ -66,18 +71,24 @@ def user_next_step_on_project(project, user, request=None):
         return "Awaiting project approval from assigned approvers"
     elif project.status == CONTRACTING:
         if not project.contracts.exists():
+            if user.is_applicant:
+                return f"Awaiting signed contract from {settings.ORG_SHORT_NAME}"
             return "Awaiting signed contract from Contracting team"
         else:
             contract = project.contracts.order_by('-created_at').first()
             if not contract.signed_by_applicant:
                 if user.is_applicant:
-                    return "Awaiting contract documents to be submitted by applicant."
-                return "Awaiting countersigned contract from Applicant"
+                    return "Awaiting contract documents to be submitted by you."
+                return "Awaiting countersigned contract from Vendor"
             elif not project.submitted_contract_documents:
-                return "Awaiting contract documents submission from Applicant"
+                if user.is_applicant:
+                    return "Awaiting contract documents submission by you"
+                return "Awaiting contract documents submission from Vendor"
             else:
                 if user.is_apply_staff:
                     return "Review the contract for all relevant details and approve."
+                if user.is_applicant:
+                    return f"Awaiting contract approval from {settings.ORG_SHORT_NAME}"
                 return "Awaiting contract approval from Staff"
     elif project.status == IN_PROGRESS:
         if user.is_applicant:
@@ -95,7 +106,7 @@ def user_next_step_instructions(project, user):
     if project.status == CONTRACTING and user == project.user and project.contracts.exists():
         contract = project.contracts.order_by('-created_at').first()
         if contract and not contract.signed_by_applicant:
-            return ['Please download the signed contract uploaded by contracting team',
+            return [f'Please download the signed contract uploaded by {settings.ORG_SHORT_NAME}',
                     'Countersign',
                     'Upload it back',
                     'Please also make sure to upload other required contracting documents']

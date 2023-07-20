@@ -42,7 +42,7 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.UPLOAD_CONTRACT: _('Uploaded a {contract.state} contract'),
         MESSAGES.APPROVE_CONTRACT: _('Approved contract'),
         MESSAGES.UPDATE_INVOICE_STATUS: 'handle_update_invoice_status',
-        MESSAGES.CREATE_INVOICE: _('Invoice created'),
+        MESSAGES.CREATE_INVOICE: _('Invoice added'),
         MESSAGES.SUBMIT_REPORT: _('Submitted a report'),
         MESSAGES.SKIPPED_REPORT: 'handle_skipped_report',
         MESSAGES.REPORT_FREQUENCY_CHANGED: 'handle_report_frequency',

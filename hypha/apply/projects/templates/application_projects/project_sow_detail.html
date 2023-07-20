@@ -28,7 +28,7 @@
 
             <div class="dropdown">
               <button class="button button--primary dropbtn" type="button" data-dropdown-target="#dropdown-content-download">
-                  {% trans 'Download' %}
+                  {% trans 'Download SOW' %}
               </button>
               <div id="dropdown-content-download" class="dropdown-content">
                 <a class="dropdown-item" href="{% url 'apply:projects:download-sow' pk=object.pk export_type='pdf' %}">

@@ -15,7 +15,7 @@
         <table class="data-block__table">
             <thead>
                 <tr>
-                    <th class="data-block__table-date">{% trans "Submitted" %}</th>
+                    <th class="data-block__table-date">{% trans "Date Submitted" %}</th>
                     <th class="data-block__table-amount">{% trans "Invoice Number" %}</th>
                     <th class="data-block__table-status">{% trans "Status" %}</th>
                     <th class="data-block__table-update"></th>
@@ -24,7 +24,7 @@
             <tbody>
                 {% for invoice in object.invoices.not_rejected %}
                 <tr>
-                    <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Submitted" %}: </span>{{ invoice.requested_at.date }}</td>
+                    <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Date Submitted" %}: </span>{{ invoice.requested_at.date }}</td>
                     <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Invoice Number" %}: </span>{{ invoice.vendor_document_number }}</td>
                     <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Status" %}: </span>{{ invoice.get_status_display }}</td>
                     <td class="flex flex-wrap justify-end py-4 px-0">
@@ -85,7 +85,7 @@
             <table class="data-block__table is-hidden js-payment-block-rejected-table">
                 <thead>
                     <tr>
-                        <th class="data-block__table-date">{% trans "Submitted" %}</th>
+                        <th class="data-block__table-date">{% trans "Date Submitted" %}</th>
                         <th class="data-block__table-amount">{% trans "Invoice Number" %}</th>
                         <th class="data-block__table-status">{% trans "Status" %}</th>
                         <th class="data-block__table-update"></th>
@@ -94,7 +94,7 @@
                 <tbody>
                     {% for invoice in object.invoices.rejected %}
                     <tr>
-                        <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Submitted" %}: </span>{{ invoice.requested_at.date }}</td>
+                        <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Date Submitted" %}: </span>{{ invoice.requested_at.date }}</td>
                         <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Invoice Number" %}: </span>{{ invoice.vendor_document_number }}</td>
                         <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Status" %}: </span>{{ invoice.get_status_display }}</td>
                         <td class="flex justify-end py-4 px-0">

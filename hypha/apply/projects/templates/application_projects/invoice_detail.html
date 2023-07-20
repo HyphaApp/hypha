@@ -57,14 +57,16 @@
                         "#"
                     {% endif %}
                 >
-                    {% trans "Edit" %}
+                    {% trans "Edit Invoice" %}
                 </a>
                 {% endif %}
                 {% can_delete object user as user_can_delete_request %}
                 {% if user_can_delete_request %}
                 <a
                     class="button button--bottom-space button--primary button--full-width"
-                    href="{% url 'apply:projects:invoice-delete' pk=object.project.pk invoice_pk=object.pk %}">{% trans "Delete" %}</a>
+                    href="{% url 'apply:projects:invoice-delete' pk=object.project.pk invoice_pk=object.pk %}">
+                    {% trans "Delete Invoice" %}
+                </a>
             {% endif %}
             {% endblock %}
         </div>
