@@ -535,13 +535,6 @@ class UploadContractDocumentView(DelegatedViewMixin, CreateView):
         form.instance.project = project
         response = super().form_valid(form)
 
-        messenger(
-            MESSAGES.UPLOAD_CONTRACT_DOCUMENT,
-            request=self.request,
-            user=self.request.user,
-            source=project,
-        )
-
         messages.success(
             self.request,
             _("Contracting document has been uploaded"),
