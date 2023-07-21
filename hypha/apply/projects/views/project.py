@@ -1304,7 +1304,7 @@ class ProjectApprovalFormEditView(BaseStreamForm, UpdateView):
 
 
 
-@method_decorator(staff_or_finance_required, name='dispatch')
+@method_decorator(staff_or_finance_or_contracting_required, name='dispatch')
 class ProjectListView(SingleTableMixin, FilterView):
     filterset_class = ProjectListFilter
     queryset = Project.objects.for_table()
@@ -1312,7 +1312,7 @@ class ProjectListView(SingleTableMixin, FilterView):
     template_name = 'application_projects/project_list.html'
 
 
-@method_decorator(staff_or_finance_required, name='dispatch')
+@method_decorator(staff_or_finance_or_contracting_required, name='dispatch')
 class ProjectOverviewView(TemplateView):
     template_name = 'application_projects/overview.html'
 
@@ -1325,6 +1325,12 @@ class ProjectOverviewView(TemplateView):
         return context
 
     def get_reports(self, request):
+        if request.user.is_contracting:
+            return {
+                'filterset': None,
+                'table': None,
+                'url': None,
+            }
         reports = Report.objects.for_table().submitted()[:10]
         return {
             'filterset': ReportListFilter(request.GET or None, request=request, queryset=reports),
@@ -1342,6 +1348,12 @@ class ProjectOverviewView(TemplateView):
         }
 
     def get_invoices(self, request):
+        if request.user.is_contracting:
+            return {
+                'filterset': None,
+                'table': None,
+                'url': None,
+            }
         invoices = Invoice.objects.order_by('-requested_at')[:10]
 
         return {
