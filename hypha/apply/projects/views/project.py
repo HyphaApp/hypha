@@ -40,7 +40,6 @@ from hypha.apply.activity.views import ActivityContextMixin, CommentFormView
 from hypha.apply.stream_forms.models import BaseStreamForm
 from hypha.apply.users.decorators import (
     staff_or_finance_or_contracting_required,
-    staff_or_finance_required,
     staff_required,
 )
 from hypha.apply.utils.models import PDFPageSettings
