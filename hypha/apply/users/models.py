@@ -1,3 +1,5 @@
+from re import match
+
 from django.conf import settings
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser, BaseUserManager, Group
@@ -170,6 +172,10 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
             elif not user.is_active:
                 raise IntegrityError("Found an inactive account")
         else:
+            for regex in settings.INVALID_FULL_NAME_REGEXES:
+                if "full_name" in kwargs and match(regex, kwargs["full_name"]):
+                    raise IntegrityError("Invalid Full name")
+
             if "password" in kwargs:
                 # Coming from registration without application
                 temp_pass = kwargs.pop("password")

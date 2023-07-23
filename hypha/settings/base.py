@@ -158,6 +158,9 @@ REVIEW_VISIBILITY_DEFAULT = env.str("REVIEW_VISIBILITY_DEFAULT", "private")
 # Require an applicant to view their rendered application before submitting
 SUBMISSION_PREVIEW_REQUIRED = env.bool("SUBMISSION_PREVIEW_REQUIRED", True)
 
+# Array of regexes that match to invalid full names (like ".*http://.*" to prevent attachs)
+INVALID_FULL_NAME_REGEXES = env.list("INVALID_FULL_NAME_REGEXES", [])
+
 # Project settings.
 
 # SECRET_KEY is required
