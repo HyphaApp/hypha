@@ -1,3 +1,5 @@
+from re import match
+
 from django import forms
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -157,6 +159,8 @@ class CustomUserCreationForm(CustomUserAdminFormBase, UserCreationForm):
 
 
 class ProfileForm(forms.ModelForm):
+    error_messages = {"invalid_full_name": _("Full Name is Invalid")}
+
     class Meta:
         model = User
         fields = ["full_name", "email", "slack"]
@@ -197,6 +201,13 @@ class ProfileForm(forms.ModelForm):
                 self.instance.email
             )  # updated email to avoid email existing message, fix information leak.
         return email
+
+    def clean_full_name(self):
+        full_name = self.cleaned_data["full_name"]
+        for regex in settings.INVALID_FULL_NAME_REGEXES:
+            if match(regex, full_name):
+                raise forms.ValidationError(self.error_messages["invalid_full_name"])
+        return full_name
 
 
 class BecomeUserForm(forms.Form):
