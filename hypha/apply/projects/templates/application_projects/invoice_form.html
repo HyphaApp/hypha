@@ -5,7 +5,7 @@
 {% block content %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
-        <a class="simplified__projects-link" href="{{ object.project.get_absolute_url }}">
+        <a class="simplified__projects-link" href="{{ project.get_absolute_url }}">
             {% trans "View project page" %}
         </a>
         <h2 class="heading heading--no-margin">{% if object %}{% trans "Editing" %}{% else %}{% trans "Add" %}{% endif %} {% trans "Invoice" %}</h2>

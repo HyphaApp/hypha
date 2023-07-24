@@ -147,6 +147,14 @@ class Invoice(models.Model):
     requested_at = models.DateTimeField(auto_now_add=True)
     message_for_pm = models.TextField(blank=True, verbose_name=_('Message'))
     comment = models.TextField(blank=True)
+    invoice_number = models.CharField(max_length=50, null=True, verbose_name=_("Invoice number"))
+    invoice_amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(decimal.Decimal('0.01'))],
+        null=True,
+        verbose_name=_("Invoice amount")
+    )
     status = FSMField(default=SUBMITTED, choices=INVOICE_STATUS_CHOICES)
     deliverables = ManyToManyField(
         'InvoiceDeliverable',
