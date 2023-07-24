@@ -15,8 +15,8 @@
         <table class="data-block__table">
             <thead>
                 <tr>
-                    <th class="data-block__table-date">{% trans "Date Submitted" %}</th>
-                    <th class="data-block__table-amount">{% trans "Invoice Number" %}</th>
+                    <th class="data-block__table-date">{% trans "Date submitted" %}</th>
+                    <th class="data-block__table-amount">{% trans "Invoice number" %}</th>
                     <th class="data-block__table-status">{% trans "Status" %}</th>
                     <th class="data-block__table-update"></th>
                 </tr>
@@ -25,8 +25,8 @@
                 {% for invoice in object.invoices.not_rejected %}
                 {% display_invoice_status_for_user user invoice as invoice_status %}
                 <tr>
-                    <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Date Submitted" %}: </span>{{ invoice.requested_at.date }}</td>
-                    <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Invoice Number" %}: </span>{{ invoice.vendor_document_number }}</td>
+                    <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Date submitted" %}: </span>{{ invoice.requested_at.date }}</td>
+                    <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Invoice number" %}: </span>{{ invoice.invoice_number }}</td>
                     <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Status" %}: </span>{{ invoice_status }}</td>
                     <td class="flex flex-wrap justify-end py-4 px-0">
                         <a class="data-block__action-icon-link" href="{{ invoice.get_absolute_url }}" target="_blank">
@@ -86,8 +86,8 @@
             <table class="data-block__table is-hidden js-payment-block-rejected-table">
                 <thead>
                     <tr>
-                        <th class="data-block__table-date">{% trans "Date Submitted" %}</th>
-                        <th class="data-block__table-amount">{% trans "Invoice Number" %}</th>
+                        <th class="data-block__table-date">{% trans "Date submitted" %}</th>
+                        <th class="data-block__table-amount">{% trans "Invoice number" %}</th>
                         <th class="data-block__table-status">{% trans "Status" %}</th>
                         <th class="data-block__table-update"></th>
                     </tr>
@@ -96,8 +96,8 @@
                     {% for invoice in object.invoices.rejected %}
                     {% display_invoice_status_for_user user invoice as invoice_status %}
                     <tr>
-                        <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Date Submitted" %}: </span>{{ invoice.requested_at.date }}</td>
-                        <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Invoice Number" %}: </span>{{ invoice.vendor_document_number }}</td>
+                        <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Date submitted" %}: </span>{{ invoice.requested_at.date }}</td>
+                        <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Invoice number" %}: </span>{{ invoice.invoice_number }}</td>
                         <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Status" %}: </span>{{ invoice_status }}</td>
                         <td class="flex justify-end py-4 px-0">
                             <a class="data-block__action-icon-link" href="{{ invoice.get_absolute_url }}" target="_blank">
