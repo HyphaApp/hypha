@@ -453,6 +453,9 @@ COUNTRIES_OVERRIDE = {
     'KV': 'Kosovo',
 }
 
+# Google Translate
+ENABLE_GOOGLE_TRANSLATE = env.bool('ENABLE_GOOGLE_TRANSLATE', True)
+
 # Sentry configuration.
 # -----------------------------------------------------------------------------
 SENTRY_DSN = env.str('SENTRY_DSN', None)

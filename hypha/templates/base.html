@@ -111,7 +111,7 @@
                         </button>
                     </div>
 
-                    {% comment %} <section class="header__menus header__menus--desktop">
+                    <section class="header__menus header__menus--desktop">
                         {% cache 3600 navigation__primary current_site %}
                             {% primarynav %}
                         {% endcache %}
@@ -120,7 +120,7 @@
                             <svg class="header__icon header__icon--open-search icon"><use xlink:href="#magnifying-glass"></use></svg>
                             <svg class="header__icon header__icon--close-search icon"><use xlink:href="#cross"></use></svg>
                         </button>
-                    </section> {% endcomment %}
+                    </section>
 
                     <section class="header__menus header__menus--mobile">
                         <div class="header__inner header__inner--menu-open">
@@ -150,6 +150,9 @@
                         {% include "utils/includes/login_button.html" %}
                         {% if not request.user.is_authenticated and ENABLE_REGISTRATION_WITHOUT_APPLICATION %}
                             {% include "utils/includes/register_button.html" %}
+                        {% endif %}
+                        {% if ENABLE_GOOGLE_TRANSLATE %}
+                        <div class="button button--google-translate" id="google_translate_element"></div>
                         {% endif %}
                     </div>
                 </div>
@@ -195,6 +198,15 @@
         </footer>
 
         {% cookie_banner %}
+
+        {% if ENABLE_GOOGLE_TRANSLATE %}
+        <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+        <script>
+            function googleTranslateElementInit() {
+              new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE, autoDisplay: false}, 'google_translate_element');
+            }
+        </script>
+        {% endif %}
 
         <script src="{% static 'js/js.cookie.min.js' %}"></script>
         <script src="{% static 'js/main.js' %}"></script>
