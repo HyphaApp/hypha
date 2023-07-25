@@ -18,7 +18,7 @@ def update_project_statuses(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('application_projects', '0076_alter_projectdocument_and_contractdocument_category'),
+        ('application_projects', '0077_alter_invoice_status'),
     ]
 
     operations = [
