@@ -1,6 +1,9 @@
 .footer {
     color: $color--white;
-    background: $color--dark-blue;
+
+    @include media-query(tablet-portrait) {
+        background: linear-gradient(to right, $color--dark-blue 50%, $color--light-blue 50%);
+    }
 
     a {
         color: inherit;
@@ -11,6 +14,14 @@
 
         @include media-query(tablet-portrait) {
             padding: 40px 80px;
+        }
+
+        &:first-child {
+            background: $color--dark-blue;
+        }
+
+        &:last-child {
+            background: $color--light-blue;
         }
     }
 

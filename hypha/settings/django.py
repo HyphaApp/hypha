@@ -25,6 +25,7 @@ INSTALLED_APPS = [
 
     'hypha.public.funds',
     'hypha.public.home',
+    'hypha.public.mailchimp',
     'hypha.public.navigation',
     'hypha.public.news',
     'hypha.public.people',
