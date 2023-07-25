@@ -49,6 +49,7 @@ from .utils import send_confirmation_email
 
 User = get_user_model()
 
+@method_decorator(ratelimit(key='ip', rate=settings.DEFAULT_RATE_LIMIT, method='POST'), name='dispatch')
 class RegisterView(View):
     form = CustomUserCreationForm()
 
