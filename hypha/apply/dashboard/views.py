@@ -193,7 +193,7 @@ class AdminDashboardView(MyFlaggedMixin, TemplateView):
         )
 
         return {
-            'count': waiting_paf_approval.count(),
+            'count': len(awaiting_user_approval) + len(approved_by_user),
             'awaiting_your_approval': {
                 'count': len(awaiting_user_approval),
                 'table': ProjectsDashboardTable(data=awaiting_user_approval),
@@ -344,7 +344,7 @@ class FinanceDashboardView(MyFlaggedMixin, TemplateView):
         )
 
         return {
-            'count': waiting_paf_approval.count(),
+            'count': len(awaiting_user_approval) + len(approved_by_user),
             'awaiting_your_approval': {
                 'count': len(awaiting_user_approval),
                 'table': ProjectsDashboardTable(data=awaiting_user_approval),
@@ -522,7 +522,7 @@ class ContractingDashboardView(MyFlaggedMixin, TemplateView):
         )
 
         return {
-            'count': waiting_paf_approval.count(),
+            'count': len(awaiting_user_approval) + len(approved_by_user),
             'awaiting_your_approval': {
                 'count': len(awaiting_user_approval),
                 'table': ProjectsDashboardTable(data=awaiting_user_approval),

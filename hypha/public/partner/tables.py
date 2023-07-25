@@ -1,3 +1,4 @@
+import babel.numbers
 import django_filters as filters
 import django_tables2 as tables
 from django import forms
@@ -44,7 +45,9 @@ class InvestmentFilter(filters.FilterSet):
 
     amount_committed = Select2MultipleChoiceFilter(
         choices=AMOUNT_COMMITTED_CHOICES,
-        label=_('Amount Committed ({currency})').format(currency=settings.CURRENCY_SYMBOL.strip()),
+        label=_('Amount Committed ({currency})').format(currency=babel.numbers.get_currency_symbol(
+            settings.CURRENCY_CODE, locale=settings.CURRENCY_LOCALE
+        ).strip()),
         method='filter_amount_committed'
     )
     partner__status = Select2MultipleChoiceFilter(

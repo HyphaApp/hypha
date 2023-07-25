@@ -1,5 +1,5 @@
 {% load i18n activity_tags bleach_tags markdown_tags submission_tags apply_tags %}
-<div class="feed__item feed__item--{{ activity.type }}">
+<div class="feed__item feed__item--{{ activity.type }}" id="communications#{{ activity.id }}">
     <div class="feed__pre-content">
         <p class="feed__label feed__label--{{ activity.type }}">{{ activity.type|capfirst }}</p>
     </div>

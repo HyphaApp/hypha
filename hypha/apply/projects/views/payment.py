@@ -141,7 +141,8 @@ class InvoiceAdminView(InvoiceAccessMixin, DelegateableView, DetailView):
         deliverables = project.deliverables.all()
         return super().get_context_data(
             **kwargs,
-            deliverables=deliverables
+            deliverables=deliverables,
+            activities=Activity.actions.filter(related_content_type__model='invoice', related_object_id=invoice.id),
         )
 
 

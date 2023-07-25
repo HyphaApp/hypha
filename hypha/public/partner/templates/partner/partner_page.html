@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% load wagtailcore_tags wagtailimages_tags %}
+{% load wagtailcore_tags wagtailimages_tags apply_tags %}
 
 {% block content %}
 <section class="wrapper wrapper--small wrapper--inner-space-large wrapper--sidebar">
@@ -18,7 +18,7 @@
             <p class="list list--contact"><span>{{ key }}</span><br>{{ value|join:', ' }}</p><br>
         {% endfor %}
 
-        <p class="list list--contact"><span>Total Investments: </span>{{ CURRENCY_SYMBOL }}{{ total_investments }}</p>
+        <p class="list list--contact"><span>Total Investments: </span>{{ total_investments|format_number_as_currency }}</p>
     </div>
 
     <div>

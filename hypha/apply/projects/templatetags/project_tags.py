@@ -91,7 +91,7 @@ def user_next_step_on_project(project, user, request=None):
                     return f"Awaiting contract approval from {settings.ORG_SHORT_NAME}"
                 return "Awaiting contract approval from Staff"
     elif project.status == IN_PROGRESS:
-        if user.is_applicant:
+        if user.is_applicant and not project.invoices.exists():
             return "Add invoices"
         elif user.is_apply_staff or user.is_finance:
             return "Review invoice and take action"
