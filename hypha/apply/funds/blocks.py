@@ -52,7 +52,7 @@ class OrganizationNameBlock(ApplicationSingleIncludeFieldBlock):
     widget = forms.TextInput()
 
     class Meta:
-        label = _('Organization Name')
+        label = _('Organization name')
 
 
 class EmailBlock(ApplicationMustIncludeFieldBlock):
