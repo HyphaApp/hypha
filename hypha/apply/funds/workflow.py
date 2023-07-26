@@ -468,6 +468,9 @@ SingleStageExternalDefinition = [
     },
     {
         'ext_accepted': {
+            'transitions': {
+                'ext_external_review': _('Open Internal Review (revert)'),
+            },
             'display': _('Accepted'),
             'future': _('Application Outcome'),
             'stage': RequestExt,
@@ -483,6 +486,9 @@ SingleStageExternalDefinition = [
             'permissions': applicant_edit_permissions,
         },
         'ext_rejected': {
+            'transitions': {
+                'ext_external_review': _('Open Internal Review (revert)'),
+            },
             'display': _('Dismissed'),
             'stage': RequestExt,
             'permissions': no_permissions,
