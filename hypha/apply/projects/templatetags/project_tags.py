@@ -8,8 +8,8 @@ from hypha.apply.projects.models.project import (
     COMPLETE,
     CONTRACTING,
     DRAFT,
-    IN_PROGRESS,
-    WAITING_FOR_APPROVAL,
+    INTERNAL_APPROVAL,
+    INVOICING_AND_REPORTING,
 )
 from hypha.apply.projects.permissions import has_permission
 
@@ -18,7 +18,7 @@ register = template.Library()
 
 @register.simple_tag
 def project_can_have_report(project):
-    if project.status in [COMPLETE, CLOSING, IN_PROGRESS]:
+    if project.status in [COMPLETE, CLOSING, INVOICING_AND_REPORTING]:
         return True
     return False
 
@@ -39,7 +39,7 @@ def user_next_step_on_project(project, user, request=None):
         if project.paf_approvals.exists():
             return "Changes requested. Awaiting documents to be resubmitted."
         return "Awaiting approval form to be created."
-    elif project.status == WAITING_FOR_APPROVAL:
+    elif project.status == INTERNAL_APPROVAL:
         if user.is_applicant:
             return "Awaiting project documents to be created and approved by OTF internally. " \
                    "Please check back when the project has moved to contracting stage."
@@ -90,7 +90,7 @@ def user_next_step_on_project(project, user, request=None):
                 if user.is_applicant:
                     return f"Awaiting contract approval from {settings.ORG_SHORT_NAME}"
                 return "Awaiting contract approval from Staff"
-    elif project.status == IN_PROGRESS:
+    elif project.status == INVOICING_AND_REPORTING:
         if user.is_applicant and not project.invoices.exists():
             return "Add invoices"
         elif user.is_apply_staff or user.is_finance:
@@ -139,14 +139,14 @@ def user_can_view_report(report, user):
 
 @register.simple_tag
 def project_can_have_contracting_section(project):
-    if project.status in [DRAFT, WAITING_FOR_APPROVAL]:
+    if project.status in [DRAFT, INTERNAL_APPROVAL]:
         return False
     return True
 
 
 @register.simple_tag
 def can_access_supporting_documents_section(project):
-    if project.status not in [IN_PROGRESS, CLOSING, COMPLETE]:
+    if project.status not in [INVOICING_AND_REPORTING, CLOSING, COMPLETE]:
         return True
     return False
 
@@ -178,9 +178,9 @@ def project_settings_url(instance):
 
 @register.simple_tag
 def allow_collapsible_header(project, header_type):
-    if header_type == 'project_documents' and project.status not in [DRAFT, WAITING_FOR_APPROVAL]:
+    if header_type == 'project_documents' and project.status not in [DRAFT, INTERNAL_APPROVAL]:
         return True
-    if header_type == 'contracting_documents' and project.status not in [DRAFT, WAITING_FOR_APPROVAL, CONTRACTING]:
+    if header_type == 'contracting_documents' and project.status not in [DRAFT, INTERNAL_APPROVAL, CONTRACTING]:
         return True
     return False
 

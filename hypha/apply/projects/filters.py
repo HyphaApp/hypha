@@ -12,7 +12,12 @@ from hypha.apply.funds.tables import (
 )
 
 from .models.payment import INVOICE_STATUS_CHOICES, Invoice
-from .models.project import CLOSING, IN_PROGRESS, PROJECT_STATUS_CHOICES, Project
+from .models.project import (
+    CLOSING,
+    INVOICING_AND_REPORTING,
+    PROJECT_STATUS_CHOICES,
+    Project,
+)
 from .models.report import Report
 
 User = get_user_model()
@@ -60,7 +65,7 @@ class ProjectListFilter(filters.FilterSet):
             return queryset.filter(outstanding_reports__gt=0)
         return queryset.filter(
             Q(outstanding_reports__lt=1) | Q(outstanding_reports__isnull=True),
-            status__in=(IN_PROGRESS, CLOSING),
+            status__in=(INVOICING_AND_REPORTING, CLOSING),
         )
 
 

@@ -14,7 +14,7 @@ from ..models.project import (
     CLOSING,
     COMPLETE,
     DRAFT,
-    IN_PROGRESS,
+    INVOICING_AND_REPORTING,
     PAF_STATUS_CHOICES,
     PROJECT_STATUS_CHOICES,
     Contract,
@@ -200,9 +200,9 @@ class ChangeProjectStatusForm(forms.ModelForm):
         super().__init__(*args, **kwargs, instance=instance)
         status_field = self.fields['status']
         possible_status_transitions = {
-            IN_PROGRESS: filter_request_choices([CLOSING, COMPLETE]),
-            CLOSING: filter_request_choices([IN_PROGRESS, COMPLETE]),
-            COMPLETE: filter_request_choices([IN_PROGRESS, CLOSING]),
+            INVOICING_AND_REPORTING: filter_request_choices([CLOSING, COMPLETE]),
+            CLOSING: filter_request_choices([INVOICING_AND_REPORTING, COMPLETE]),
+            COMPLETE: filter_request_choices([INVOICING_AND_REPORTING, CLOSING]),
         }
         status_field.choices = possible_status_transitions.get(instance.status, [])
 

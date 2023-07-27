@@ -7,8 +7,8 @@ from .models.project import (
     COMPLETE,
     CONTRACTING,
     DRAFT,
-    IN_PROGRESS,
-    WAITING_FOR_APPROVAL,
+    INTERNAL_APPROVAL,
+    INVOICING_AND_REPORTING,
     ProjectSettings,
 )
 
@@ -72,8 +72,8 @@ def can_update_paf_approvers(user, project, **kwargs):
     if not user.is_authenticated:
         return False, 'Login Required'
 
-    if project.status != WAITING_FOR_APPROVAL:
-        return False, 'PAF Approvers can be updated only in Waiting for approval state'
+    if project.status != INTERNAL_APPROVAL:
+        return False, 'PAF Approvers can be updated only in Internal approval state'
     if user == project.lead:
         return True, 'Lead can update approvers in approval state'
     if not project.paf_approvals.exists():
@@ -105,8 +105,8 @@ def can_update_assigned_paf_approvers(user, project, **kwargs):
     """
     if not user.is_authenticated:
         return False, 'Login Required'
-    if project.status != WAITING_FOR_APPROVAL:
-        return False, 'PAF approvers can be assigned only in Waiting for Approval state'
+    if project.status != INTERNAL_APPROVAL:
+        return False, 'PAF approvers can be assigned only in Internal approval state'
     if not project.paf_approvals.exists():
         return False, 'No user can assign approvers with paf_approvals'
 
@@ -135,8 +135,8 @@ def can_assign_paf_approvers(user, project, **kwargs):
     if not user.is_authenticated:
         return False, 'Login Required'
 
-    if project.status != WAITING_FOR_APPROVAL:
-        return False, 'PAF approvers can be assigned only in Waiting for Approval state'
+    if project.status != INTERNAL_APPROVAL:
+        return False, 'PAF approvers can be assigned only in Internal approval state'
     if not project.paf_approvals.exists():
         return False, 'No user can assign approvers with paf_approvals'
 
@@ -169,7 +169,7 @@ def can_update_paf_status(user, project, **kwargs):
     if not project.paf_approvals.filter(approved=False).exists():
         return False, 'No PAF Approvals Exists'
 
-    if project.status != WAITING_FOR_APPROVAL:
+    if project.status != INTERNAL_APPROVAL:
         return False, 'Incorrect project status to approve PAF'
 
     request = kwargs.get('request')
@@ -189,7 +189,7 @@ def can_update_paf_status(user, project, **kwargs):
 
 
 def can_update_project_status(user, project, **kwargs):
-    if project.status not in [COMPLETE, CLOSING, IN_PROGRESS]:
+    if project.status not in [COMPLETE, CLOSING, INVOICING_AND_REPORTING]:
         return False, 'Forbidden Error'
 
     if not user.is_authenticated:
@@ -204,8 +204,8 @@ def can_update_project_status(user, project, **kwargs):
 def can_update_report(user, report, **kwargs):
     if not user.is_authenticated:
         return False, 'Login Required'
-    if report.project.status != IN_PROGRESS:
-        return False, 'Report can be updated only in In Progress state'
+    if report.project.status != INVOICING_AND_REPORTING:
+        return False, 'Report can be updated only in Invoicing and reporting state'
     if report.skipped:
         return False, 'Skipped reports are not editable'
     if not report.can_submit:
@@ -220,27 +220,27 @@ def can_update_report(user, report, **kwargs):
 def can_update_report_config(user, project, **kwargs):
     if not user.is_authenticated:
         return False, 'Login Required'
-    if project.status != IN_PROGRESS:
-        return False, 'Report Config can be changed only in In Progress state'
+    if project.status != INVOICING_AND_REPORTING:
+        return False, 'Report Config can be changed only in Invoicing and reporting state'
     if user.is_apply_staff:
-        return True, 'Only Staff can update report config for In Progress projects'
+        return True, 'Only Staff can update report config for Invoicing and reporting projects'
     return False, 'Forbidden Error'
 
 
 def can_update_project_reports(user, project, **kwargs):
     if not user.is_authenticated:
         return False, 'Login Required'
-    if project.status != IN_PROGRESS:
-        return False, 'Report Config can be changed only in In Progress state'
+    if project.status != INVOICING_AND_REPORTING:
+        return False, 'Report Config can be changed only in Invoicing and reporting state'
     if user.is_apply_staff or user == project.user:
-        return True, 'Only Staff and project owner can update report config for In Progress projects'
+        return True, 'Only Staff and project owner can update report config for Invoicing and reporting projects'
     return False, 'Forbidden Error'
 
 
 def can_view_report(user, report, **kwargs):
     if not user.is_authenticated:
         return False, 'Login Required'
-    if report.project.status not in [COMPLETE, CLOSING, IN_PROGRESS]:
+    if report.project.status not in [COMPLETE, CLOSING, INVOICING_AND_REPORTING]:
         return False, 'Report are not available at this state'
     if not report.current:
         return False, 'Only current reports can be viewed'
@@ -255,11 +255,11 @@ def can_access_project(user, project):
     if not user.is_authenticated:
         return False, 'Login Required'
 
-    if user.is_contracting and project.status in [CONTRACTING, WAITING_FOR_APPROVAL]:
-        return True, 'Contracting can view project only in Waiting for approval and contracting status'
+    if user.is_contracting and project.status in [CONTRACTING, INTERNAL_APPROVAL]:
+        return True, 'Contracting can view project only in Internal approval and contracting status'
 
-    if user.is_finance and project.status in [WAITING_FOR_APPROVAL, IN_PROGRESS]:
-        return True, 'Finance can view project only  in Waiting for approval and in progress status'
+    if user.is_finance and project.status in [INTERNAL_APPROVAL, INVOICING_AND_REPORTING]:
+        return True, 'Finance can view project only  in Internal approval and Invoicing and reporting status'
 
     if user.is_apply_staff:
         return True, 'Staff can view project in all statuses'
@@ -267,7 +267,7 @@ def can_access_project(user, project):
     if user.is_applicant and user == project.user:
         return True, 'Vendor(project user) can view project in all statuses'
 
-    if project.status in [DRAFT, WAITING_FOR_APPROVAL, CONTRACTING] and project.paf_approvals.exists():
+    if project.status in [DRAFT, INTERNAL_APPROVAL, CONTRACTING] and project.paf_approvals.exists():
         paf_reviewer_roles_users_ids = []
         for approval in project.paf_approvals.all():
             paf_reviewer_roles_users_ids.extend([role_user.id for role_user in get_users_for_groups(

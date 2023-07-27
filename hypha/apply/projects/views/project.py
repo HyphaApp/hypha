@@ -72,11 +72,11 @@ from ..models.project import (
     APPROVE,
     CONTRACTING,
     DRAFT,
-    IN_PROGRESS,
+    INTERNAL_APPROVAL,
+    INVOICING_AND_REPORTING,
     PROJECT_ACTION_MESSAGE_TAG,
     PROJECT_STATUS_CHOICES,
     REQUEST_CHANGE,
-    WAITING_FOR_APPROVAL,
     Contract,
     ContractDocumentCategory,
     ContractPacketFile,
@@ -143,7 +143,7 @@ class SendForApprovalView(DelegatedViewMixin, UpdateView):
                     source=self.object,
                 )
 
-        project.status = WAITING_FOR_APPROVAL
+        project.status = INTERNAL_APPROVAL
         project.save(update_fields=['status'])
 
         messenger(
@@ -366,7 +366,7 @@ class ApproveContractView(DelegatedViewMixin, UpdateView):
                 related=self.object,
             )
 
-            self.project.status = IN_PROGRESS
+            self.project.status = INVOICING_AND_REPORTING
             self.project.save(update_fields=['status'])
 
             messenger(

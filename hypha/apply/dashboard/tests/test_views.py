@@ -10,7 +10,7 @@ from hypha.apply.projects.models.payment import (
     RESUBMITTED,
     SUBMITTED,
 )
-from hypha.apply.projects.models.project import WAITING_FOR_APPROVAL
+from hypha.apply.projects.models.project import INTERNAL_APPROVAL
 from hypha.apply.projects.tests.factories import InvoiceFactory, ProjectFactory
 from hypha.apply.review.tests.factories import ReviewFactory, ReviewOpinionFactory
 from hypha.apply.users.tests.factories import (
@@ -133,7 +133,7 @@ class TestStaffDashboard(BaseViewTestCase):
         self.assertNotContains(response, "Active Invoices")
 
     def test_unassigned_staff_cant_see_projects_awaiting_review_stats_or_table(self):
-        ProjectFactory(is_locked=False, status=WAITING_FOR_APPROVAL)
+        ProjectFactory(is_locked=False, status=INTERNAL_APPROVAL)
 
         response = self.get_page()
         self.assertNotContains(response, "Projects awaiting approval")

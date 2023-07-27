@@ -5,7 +5,7 @@ from django import template
 from hypha.apply.projects.models.project import (
     CLOSING,
     COMPLETE,
-    IN_PROGRESS,
+    INVOICING_AND_REPORTING,
     ProjectSettings,
 )
 
@@ -50,14 +50,14 @@ def can_edit_deliverables(invoice, user):
 
 @register.simple_tag
 def user_can_view_invoices(project, user):
-    if project.status in [IN_PROGRESS, CLOSING, COMPLETE]:
+    if project.status in [INVOICING_AND_REPORTING, CLOSING, COMPLETE]:
         return True
     return False
 
 
 @register.simple_tag
 def user_can_add_invoices(project, user):
-    if project.status == IN_PROGRESS and (user.is_apply_staff or user == project.user):
+    if project.status == INVOICING_AND_REPORTING and (user.is_apply_staff or user == project.user):
         return True
     return False
 

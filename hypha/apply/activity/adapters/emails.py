@@ -93,10 +93,13 @@ class EmailAdapter(AdapterBase):
             elif message_type == MESSAGES.SUBMIT_CONTRACT_DOCUMENTS:
                 subject = _('Contract Documents required approval for the project: {source.title}').format(source=source)
             elif message_type == MESSAGES.PROJECT_TRANSITION:
-                from hypha.apply.projects.models.project import CONTRACTING, IN_PROGRESS
+                from hypha.apply.projects.models.project import (
+                    CONTRACTING,
+                    INVOICING_AND_REPORTING,
+                )
                 if source.status == CONTRACTING:
                     subject = _('Project is waiting for the contract: {source.title}').format(source=source)
-                elif source.status == IN_PROGRESS:
+                elif source.status == INVOICING_AND_REPORTING:
                     subject = _('Project is ready for invoicing: {source.title}').format(source=source)
                 else:
                     subject = _('Project status has changed to {source.status}: {source.title}').format(source=source)
@@ -147,7 +150,10 @@ class EmailAdapter(AdapterBase):
             )
 
     def handle_project_transition(self, source, **kwargs):
-        from hypha.apply.projects.models.project import CONTRACTING, IN_PROGRESS
+        from hypha.apply.projects.models.project import (
+            CONTRACTING,
+            INVOICING_AND_REPORTING,
+        )
         if source.status == CONTRACTING:
             return self.render_message(
                 'messages/email/ready_for_contracting.html',
@@ -155,7 +161,7 @@ class EmailAdapter(AdapterBase):
                 **kwargs,
             )
 
-        if source.status == IN_PROGRESS:
+        if source.status == INVOICING_AND_REPORTING:
             return self.render_message(
                 'messages/email/ready_for_invoicing.html',
                 source=source,
@@ -318,10 +324,13 @@ class EmailAdapter(AdapterBase):
             return []
 
         if message_type == MESSAGES.PROJECT_TRANSITION:
-            from hypha.apply.projects.models.project import CONTRACTING, IN_PROGRESS
+            from hypha.apply.projects.models.project import (
+                CONTRACTING,
+                INVOICING_AND_REPORTING,
+            )
             if source.status == CONTRACTING:
                 return get_compliance_email(target_user_gps=[CONTRACTING_GROUP_NAME])
-            if source.status == IN_PROGRESS:
+            if source.status == INVOICING_AND_REPORTING:
                 return [source.user.email]
 
         if message_type == MESSAGES.APPROVE_INVOICE:
