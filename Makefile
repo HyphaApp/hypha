@@ -10,6 +10,7 @@ help:
 	@echo "  make build              build js and css resources for development"
 	@echo "  make cov-html           generate html coverage report"
 	@echo "  make lint               run css, js and python linting."
+	@echo "  make fmt                run code formatters on all code."
 	@echo "  make lint-fix           try fixing plausible python linting issues."
 	@echo "  make py-test            run all python tests and display coverage"
 	@echo "  make test               run linting and test and generate html coverage report"
@@ -28,6 +29,13 @@ build:
 	@echo "Build js and css resources for development."
 	npm run dev:build
 
+.PHONY: fmt
+fmt:
+	@echo "run code formatters on all code."
+	python -m ruff --fix .
+	python -m black .
+	npx prettier . --write
+
 .PHONY: cov-html
 cov-html:
 ifneq ("$(wildcard .coverage)","")
@@ -43,8 +51,12 @@ endif
 lint:
 	@echo "Checking python code style with ruff"
 	ruff .
+	# black . --check
 	@echo "Checking js and css code style."
 	npm run lint
+	# @TODO: enable once we have a consistent code style
+	# npx prettier . --check
+
 
 .PHONY: lint-fix
 lint-fix:

@@ -1,0 +1,20 @@
+# Ignore all HTML files, use djHtml instead.
+**/*.html
+
+# Ignore markdown files, prettier is not great with them
+**/*.md
+
+# Minified JavaScript files shouldn't be changed
+**/**.min.js
+**/javascript/esm/**
+
+# Ignore all files in the static & media directory.
+static_compiled/**
+media/**
+
+# Ignore all files in the virtualenv directory.
+.venv/**
+venv/**
+
+node_modules/**
+htmlcov/**

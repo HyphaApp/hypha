@@ -1,4 +1,4 @@
-// stylelint-disable selector-max-compound-selectors
+// stylelint-disable selector-class-pattern,selector-max-compound-selectors
 
 .all-submissions-table {
     @include table-ordering-styles;
@@ -14,7 +14,7 @@
         }
 
         th {
-            &.reviews_stats { // stylelint-disable-line selector-class-pattern
+            &.reviews_stats {
                 color: $color--black-60;
 
                 div {
@@ -118,12 +118,13 @@
                     font-size: 13px;
                     text-align: center;
                     vertical-align: middle;
-                    background: url('./../../images/quote-outline.svg') transparent no-repeat center center;
+                    background: url("./../../images/quote-outline.svg")
+                        transparent no-repeat center center;
                     background-size: 24px;
                 }
             }
 
-            &.reviews_stats { // stylelint-disable-line selector-class-pattern
+            &.reviews_stats {
                 display: none;
 
                 @include media-query($table-breakpoint) {
@@ -144,9 +145,7 @@
 
             &.fund,
             &.round,
-            &.screening_status { // stylelint-disable-line selector-class-pattern
-                -webkit-hyphens: auto; // stylelint-disable-line property-no-vendor-prefix
-                -ms-hyphens: auto; // stylelint-disable-line property-no-vendor-prefix
+            &.screening_status {
                 hyphens: auto;
             }
 
@@ -172,7 +171,8 @@
                 }
             }
 
-            > span.mobile-label { // stylelint-disable-line force-element-nesting
+            // stylelint-disable-next-line force-element-nesting
+            > span.mobile-label {
                 display: inline-block;
                 width: 90px;
 

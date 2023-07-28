@@ -59,12 +59,14 @@
                 font-weight: 700;
             }
 
-            &.id_occurrence { // stylelint-disable-line selector-class-pattern
+            // stylelint-disable-next-line selector-class-pattern
+            &.id_occurrence {
                 width: 15%;
                 margin: 0 1rem;
             }
 
-            &.id_frequency { // stylelint-disable-line selector-class-pattern
+            // stylelint-disable-next-line selector-class-pattern
+            &.id_frequency {
                 margin: 0;
             }
         }
@@ -246,7 +248,8 @@
                 }
 
                 input {
-                    &:first-of-type { // stylelint-disable-line max-nesting-depth
+                    // stylelint-disable-next-line max-nesting-depth
+                    &:first-of-type {
                         @supports (display: grid) {
                             grid-column: 1;
                         }

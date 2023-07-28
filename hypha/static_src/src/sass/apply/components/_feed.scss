@@ -144,7 +144,8 @@
 
             span {
                 &:first-child {
-                    &::after { // stylelint-disable-line max-nesting-depth
+                    // stylelint-disable-next-line max-nesting-depth
+                    &::after {
                         @include triangle(right, $color--black-50, 4px);
                         display: inline-block;
                         margin: 0 5px 0 10px;
