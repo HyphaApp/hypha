@@ -148,11 +148,18 @@
 
     &--arrow-up {
         position: relative;
-        top: .1em;
         align-self: center;
-        width: 1.4em;
-        height: 1.4em;
-        fill: $color--light-blue;
+        width: 16px;
+        height: 17px;
+        stroke: $color--light-blue;
+    }
+
+    &--arrow-down {
+        position: relative;
+        align-self: center;
+        width: 16px;
+        height: 17px;
+        stroke: $color--light-blue;
     }
 
     &--arrow-up-short-bar {

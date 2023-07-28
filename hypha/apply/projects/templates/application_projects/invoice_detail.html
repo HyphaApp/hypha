@@ -16,12 +16,31 @@
 <div class="wrapper wrapper--sidebar wrapper--outer-space-medium">
     <div class="wrapper--sidebar--inner">
         <div class="card card--solid">
-            <p class="card__text"><b>{% trans "Status" %}:</b> {{ object.get_status_display }}</p>
+            <p class="card__text"><b>{% trans "Invoice Number" %}:</b> {{ object.vendor_document_number }}</p>
             {% is_vendor_setup request as show_vendor_information %}
             {% if show_vendor_information %}
             <p class="card__text"><b>{% trans "Vendor" %}:</b> {{ object.project.vendor.name }}</p>
             {% endif %}
-            <p class="card__text"><b>{% trans "Invoice Number" %}:</b> {{ object.vendor_document_number }}</p>
+            <p class="card__text"><b>{% trans "Lead" %}:</b> {{ object.project.lead }}</p>
+            <p class="card__text"><b>{% trans "Fund" %}:</b> {{ object.project.submission.page }}</p>
+        </div>
+        <div class="card card--solid flex" x-data="{ collapsed: true }">
+                <div class="flex-none">
+                    <p><b>{% trans "Status" %}: </b></p>
+                </div>
+                <div class="flex-1 pl-2">
+                    <p>{{ latest_activity.message|extract_status }} ({{ latest_activity.user }})</p>
+                    {% for activity in activities %}
+                        <p x-show="!collapsed">{{ activity.message|extract_status }} ({{ activity.user }})</p>
+                    {% endfor %}
+                </div>
+                <div class="flex-1 text-right" x-on:click="collapsed = ! collapsed" role="button">
+                    <p class="font-bold text-light-blue" x-show="collapsed">{% trans "View status history" %}
+                        <svg class="icon icon--arrow-down top-1"  aria-hidden=true><use xlink:href="#arrow-down"></use></svg></p>
+                    <p class="font-bold text-light-blue" x-show="!collapsed">{% trans "Hide status history" %}
+                        <svg class="icon icon--arrow-up top-1" aria-hidden=true><use xlink:href="#arrow-up"></use></svg></p>
+
+                </div>
         </div>
 
         <div class="card card--solid">
@@ -41,7 +60,7 @@
     <aside class="sidebar">
         {% block deliverables %}
         {% endblock %}
-        <div class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions">
+        <div class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions sticky top-8">
             <h5>{% trans "Actions to take" %}</h5>
             {% block actions %}
                 {% can_edit object user as user_can_edit_request %}
