@@ -8,6 +8,7 @@ from hypha.apply.projects.models.project import (
     INVOICING_AND_REPORTING,
     ProjectSettings,
 )
+from hypha.apply.projects.utils import get_invoice_public_status
 
 register = template.Library()
 
@@ -86,3 +87,10 @@ def get_invoice_form_id(form, invoice):
 @register.filter
 def extract_status(invoice_activity_message):
     return invoice_activity_message.replace("Updated Invoice status to: ", "").replace(".", "")
+
+
+@register.simple_tag
+def display_invoice_status_for_user(user, invoice):
+    if user.is_apply_staff or user.is_contracting or user.is_finance:
+        return invoice.status_display
+    return get_invoice_public_status(invoice_status=invoice.status)
