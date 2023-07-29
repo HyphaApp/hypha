@@ -127,7 +127,7 @@ class TestSendForApprovalView(BaseViewTestCase):
 class TestChangePAFStatusView(BaseViewTestCase):
     base_view_name = 'detail'
     url_name = 'funds:projects:{}'
-    user_factory = StaffFactory
+    user_factory = ApproverFactory
 
     def setUp(self):
         super().setUp()
