@@ -139,7 +139,8 @@ class InvoiceAdminView(InvoiceAccessMixin, DelegateableView, DetailView):
         invoice = self.get_object()
         project = invoice.project
         deliverables = project.deliverables.all()
-        invoice_activities = Activity.actions.filter(related_content_type__model='invoice', related_object_id=invoice.id)
+        invoice_activities = Activity.actions.filter(related_content_type__model='invoice',
+                                                     related_object_id=invoice.id).visible_to(self.request.user)
         return super().get_context_data(
             **kwargs,
             deliverables=deliverables,
@@ -150,6 +151,16 @@ class InvoiceAdminView(InvoiceAccessMixin, DelegateableView, DetailView):
 
 class InvoiceApplicantView(InvoiceAccessMixin, DelegateableView, DetailView):
     form_views = []
+
+    def get_context_data(self, **kwargs):
+        invoice = self.get_object()
+        invoice_activities = Activity.actions.filter(related_content_type__model='invoice',
+                                                     related_object_id=invoice.id).visible_to(self.request.user)
+        return super().get_context_data(
+            **kwargs,
+            latest_activity=invoice_activities.first(),
+            activities=invoice_activities[1:],
+        )
 
 
 class InvoiceView(ViewDispatcher):
