@@ -322,6 +322,8 @@ class TestProjectApprovalForm(TestCase):
 class TestCreateInvoiceForm(TestCase):
     def test_adding_invoice(self):
         data = {
+            'invoice_number': '00INV_NUM',
+            'invoice_amount': '10',
             'paid_value': '10',
             'comment': 'test comment',
         }
@@ -346,6 +348,8 @@ class TestCreateInvoiceForm(TestCase):
 
     def test_supporting_documents_not_required(self):
         data = {
+            'invoice_number': '00INV_NUM',
+            'invoice_amount': '10',
             'paid_value': '10',
             'comment': 'test comment',
 
@@ -375,6 +379,8 @@ class TestEditInvoiceForm(TestCase):
 
         form = EditInvoiceForm(
             data={
+                'invoice_number': invoice.invoice_number,
+                'invoice_amount': invoice.invoice_amount,
                 'document': invoice.document,
                 'supporting_documents-uploads': '[]',
             },
@@ -394,6 +400,8 @@ class TestEditInvoiceForm(TestCase):
 
         form = EditInvoiceForm(
             data={
+                'invoice_number': invoice.invoice_number,
+                'invoice_amount': invoice.invoice_amount,
                 'document': invoice.document,
                 'supporting_documents-uploads': json.dumps(
                     [{"name": supporting_document.document.name,
@@ -414,6 +422,8 @@ class TestEditInvoiceForm(TestCase):
         supporting_document = [SimpleUploadedFile('invoice.pdf', BytesIO(b'somebinarydata').read())]
         form = EditInvoiceForm(
             data={
+                'invoice_number': invoice.invoice_number,
+                'invoice_amount': invoice.invoice_amount,
                 'document': invoice.document,
                 'supporting_documents-uploads': '[]',
             },

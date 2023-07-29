@@ -789,6 +789,8 @@ class TestApplicantEditInvoiceView(BaseViewTestCase):
         self.assertTrue(invoice.supporting_documents.exists())
 
         response = self.post_page(invoice, {
+            'invoice_number': invoice.invoice_number,
+            'invoice_amount': invoice.invoice_amount,
             'comment': 'test comment',
             'invoice': '',
             'supporting_documents-uploads': '[]',
@@ -803,6 +805,8 @@ class TestApplicantEditInvoiceView(BaseViewTestCase):
         supporting_document = SupportingDocumentFactory(invoice=invoice)
 
         response = self.post_page(invoice, {
+            'invoice_number': invoice.invoice_number,
+            'invoice_amount': invoice.invoice_amount,
             'comment': 'test comment',
             'invoice': '',
             'supporting_documents-uploads': json.dumps([{"name": supporting_document.document.name, "size": supporting_document.document.size, "type": "existing"}]),
@@ -833,6 +837,8 @@ class TestStaffEditInvoiceView(BaseViewTestCase):
         SupportingDocumentFactory(invoice=invoice)
 
         response = self.post_page(invoice, {
+            'invoice_number': invoice.invoice_number,
+            'invoice_amount': invoice.invoice_amount,
             'comment': 'test comment',
             'invoice': '',
             'supporting_documents-uploads': '[]',
@@ -851,6 +857,8 @@ class TestStaffEditInvoiceView(BaseViewTestCase):
         document.name = 'invoice.pdf'
 
         response = self.post_page(invoice, {
+            'invoice_number': invoice.invoice_number,
+            'invoice_amount': invoice.invoice_amount,
             'comment': 'test comment',
             'document': document,
             'supporting_documents-uploads': json.dumps([{"name": supporting_document.document.name, "size": supporting_document.document.size, "type": "existing"}]),
