@@ -2,6 +2,7 @@ import decimal
 
 from django import template
 
+from hypha.apply.activity.templatetags.activity_tags import display_for
 from hypha.apply.projects.models.project import (
     CLOSING,
     COMPLETE,
@@ -84,9 +85,12 @@ def get_invoice_form_id(form, invoice):
     return f'{form.name}-{invoice.id}'
 
 
-@register.filter
-def extract_status(invoice_activity_message):
-    return invoice_activity_message.replace("Updated Invoice status to: ", "").replace(".", "")
+@register.simple_tag
+def extract_status(activity, user):
+    if activity and user:
+        invoice_activity_message = display_for(activity, user)
+        return invoice_activity_message.replace("Updated Invoice status to: ", "").replace(".", "")
+    return ''
 
 
 @register.simple_tag

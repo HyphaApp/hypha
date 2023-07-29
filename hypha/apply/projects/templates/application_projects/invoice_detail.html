@@ -30,9 +30,11 @@
                     <p><b>{% trans "Status" %}: </b></p>
                 </div>
                 <div class="flex-1 pl-2">
-                    <p>{{ latest_activity.message|extract_status }} ({{ latest_activity.user }})</p>
+                    {% extract_status latest_activity user as latest_activity_status %}
+                    <p>{{ latest_activity_status }} ({{ latest_activity.user }})</p>
                     {% for activity in activities %}
-                        <p x-show="!collapsed">{{ activity.message|extract_status }} ({{ activity.user }})</p>
+                        {% extract_status activity user as activity_status %}
+                        <p x-show="!collapsed">{{ activity_status }} ({{ activity.user }})</p>
                     {% endfor %}
                 </div>
                 <div class="flex-1 text-right" x-on:click="collapsed = ! collapsed" role="button">
