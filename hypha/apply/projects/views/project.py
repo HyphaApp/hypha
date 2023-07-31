@@ -1240,7 +1240,7 @@ class ProjectApprovalFormEditView(BaseStreamForm, UpdateView):
             self.sow_form = self.get_sow_form()
 
         submission_attachments = []
-        for field, files in self.object.submission.extract_files().items():
+        for _field, files in self.object.submission.extract_files().items():
             if isinstance(files, list):
                 submission_attachments.extend(files)
             else:
