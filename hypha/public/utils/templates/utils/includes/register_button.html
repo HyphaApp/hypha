@@ -1,3 +1,4 @@
+{% load i18n %}
 <a href="{{ APPLY_SITE.root_url }}{% url 'users_public:register' %}" class="button button--transparent {{ class }}">
-    Register
+    {% trans "Register" %}
 </a>

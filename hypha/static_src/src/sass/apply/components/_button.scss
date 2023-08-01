@@ -21,6 +21,7 @@
     &--primary {
         @include button($color--light-blue, $color--dark-blue);
         display: inline-block;
+        border: 1px solid $color--light-blue;
 
         .form--filters & {
             width: 100%;
@@ -104,6 +105,7 @@
         }
     }
 
+    &--secondary,
     &--white {
         @include button($color--white, $color--light-blue);
         display: inline-block;

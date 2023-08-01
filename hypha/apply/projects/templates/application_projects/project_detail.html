@@ -18,15 +18,7 @@
         <h1 class="beta heading heading--no-margin heading--bold">{{ object.title }}</h1>
         <h5 class="heading heading--meta">
 
-            <span>
-                {% if public_page %}
-                <a class="link--transparent link--underlined" href="{% pageurl public_page %}" >
-                    {{ object.submission.page }}
-                </a>
-                {% else %}
-                {{ object.submission.page }}
-                {% endif %}
-            </span>
+            <span>{{ object.submission.page }}</span>
 
             {% if request.user.is_apply_staff and object.submission.round %}
             <span>

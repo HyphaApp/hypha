@@ -1,3 +1,4 @@
+{% if request.user.is_authenticated %}
 <nav role="navigation" aria-label="Primary">
     <ul class="nav nav--primary" role="menubar">
         {% if request.user.is_apply_staff %}
@@ -12,3 +13,4 @@
         {% endif %}
     </ul>
 </nav>
+{% endif %}

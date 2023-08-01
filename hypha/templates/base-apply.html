@@ -70,7 +70,7 @@
         <header class="header">
 
             <div class="header__inner wrapper wrapper--large">
-                <a href="{% site_logo_link current_site %}" aria-label="Home link">
+                <a href="{{ settings.utils.SystemMessagesSettings.site_logo_link|default:"/" }}" aria-label="Home link">
                     {% if settings.utils.SystemMessagesSettings.site_logo_default %}
                         {% image settings.utils.SystemMessagesSettings.site_logo_default width-215 as logo_default %}
                         <img class="header__logo header__logo--desktop"
@@ -107,7 +107,7 @@
 
                 <section class="header__menus header__menus--mobile">
                     <div class="header__inner header__inner--menu-open">
-                        <a href="{% site_logo_link current_site %}" aria-label="Home link">
+                        <a href="{{ settings.utils.SystemMessagesSettings.site_logo_link|default:"/" }}" aria-label="Home link">
                             {% if settings.utils.SystemMessagesSettings.site_logo_mobile %}
                                 {% image settings.utils.SystemMessagesSettings.site_logo_mobile width-60 as logo_mobile %}
                                 <img class="header__logo header__logo--mobile" src="{{ logo_mobile.url }}">
@@ -121,12 +121,16 @@
                             </button>
                         </div>
                     </div>
+
                     {% include "navigation/primarynav-apply.html" %}
+
+                    {% if request.user.is_authenticated %}
                     <a href="{% url 'users:account' %}" class="link link--button-transparent link--mobile-standout">
                         <svg class="icon"><use xlink:href="#person-icon"></use></svg>
                         {{ request.user }}
                     </a>
                     <a href="{% url 'users_public:logout' %}" class="link link--button-transparent link--mobile-standout">{% trans "Log out" %}</a>
+                    {% endif %}
                 </section>
 
                 <div class="header__button-container">
@@ -145,13 +149,20 @@
                             <div x-cloak x-show="open" x-transition @click.outside="open = false">{% include "activity/include/notifications_dropdown.html" %}</div>
                         </div>
                     {% endif %}
-                    <a href="{% url 'users:account' %}" class="button button--transparent button--narrow button--contains-icons" hx-boost="true">
-                        <svg class="icon icon--person"><use xlink:href="#person-icon"></use></svg>
-                        {{ request.user }}
-                    </a>
-                    <a href="{% url 'users_public:logout' %}" class="button button--transparent button--narrow">
-                        {% trans "Log out" %}
-                    </a>
+                    {% if request.user.is_authenticated %}
+                        <a href="{% url 'users:account' %}" class="button button--transparent button--narrow button--contains-icons" hx-boost="true">
+                            <svg class="icon icon--person"><use xlink:href="#person-icon"></use></svg>
+                            {{ request.user }}
+                        </a>
+                        <a href="{% url 'users_public:logout' %}" class="button button--transparent button--narrow">
+                            {% trans "Log out" %}
+                        </a>
+                    {% else %}
+                        {% include "utils/includes/login_button.html" %}
+                        {% if ENABLE_REGISTRATION_WITHOUT_APPLICATION %}
+                            {% include "utils/includes/register_button.html" %}
+                        {% endif %}
+                    {% endif %}
                 </div>
             </div>
         </header>

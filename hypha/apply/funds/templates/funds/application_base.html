@@ -1,27 +1,27 @@
-{% extends "base.html" %}
-
-{% load wagtailcore_tags static i18n util_tags %}
-{# Dont include fixed apply button on this page #}
-{% block apply_button %}{% endblock %}
-{% block header_modifier %}header--light-bg{% endblock %}
+{% extends "base-apply.html" %}
+{% load wagtailcore_tags static i18n util_tags heroicons %}
+{% block body_class %}{% endblock %}
 
 {% block content %}
-{% if form.errors or form.non_field_errors %}
-<div class="wrapper wrapper--medium wrapper--error">
-    <svg class="icon icon--error"><use xlink:href="#error"></use></svg>
-    {% if form.non_field_errors %}
-        <ul>
-            {% for error in form.non_field_errors %}
-                <li class="error">{{ error }}</li>
-            {% endfor %}
-        </ul>
-    {% else %}
-    <h5 class="heading heading--no-margin heading--regular">{% trans "There were some errors with your form. Please amend the fields highlighted below" %}</h5>
-    {% endif %}
-</div>
-{% endif %}
 
-<div class="wrapper wrapper--medium wrapper--light-grey-bg wrapper--form">
+<div class="wrapper wrapper--medium wrapper--form">
+
+    <h1>{{ page.title }}</h1>
+    {% if form.errors or form.non_field_errors %}
+    <div class="wrapper wrapper--error">
+        {% heroicon_solid "exclamation-triangle" aria_hidden="true" class="inline mr-2 fill-red-500" %}
+        {% if form.non_field_errors %}
+            <ul>
+                {% for error in form.non_field_errors %}
+                    <li class="error">{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+        <h5 class="heading heading--no-margin heading--regular">{% trans "There were some errors with your form. Please amend the fields highlighted below" %}</h5>
+        {% endif %}
+    </div>
+    {% endif %}
+
     {% if page.end_date and page.get_parent.specific.show_deadline %}
         <p class="listing__deadline">
             <svg class="icon icon--calendar icon--small"><use xlink:href="#calendar"></use></svg>
@@ -64,8 +64,8 @@
                 {{ hidden_field }}
             {% endfor %}
 
-            <button class="link link--button-secondary" type="submit" disabled>{% trans "Submit for review" %}</button>
-            <button class="link link--button-tertiary" type="submit" name="draft" value="Save draft" formnovalidate>{% trans "Save draft" %}</button>
+            <button class="button button--primary" type="submit" disabled>{% trans "Submit for review" %}</button>
+            <button class="button button--secondary" type="submit" name="draft" value="Save draft" formnovalidate>{% trans "Save draft" %}</button>
         </form>
         <p class="wrapper--error message-no-js js-hidden">{% trans "You must have Javascript enabled to use this form." %}</p>
     {% endif %}

@@ -25,7 +25,7 @@
         <h1 class="beta heading heading--no-margin heading--bold">{{ object.title }}</h1>
         <h5 class="heading heading--meta">
             <span>{{ object.stage }}</span>
-            <span>{% if public_page %}<a class="link--transparent link--underlined" href="{% pageurl public_page %}" >{{ object.page }}</a>{% else %}{{ object.page }}{% endif %}</span>
+            <span>{{ object.page }}</span>
             {% if request.user.is_apply_staff and object.round %}
                 <span><a class="link--transparent link--underlined" href="{% url 'apply:rounds:detail' pk=object.round.pk %}">{{ object.round }}</a></span>
             {% else %}

@@ -1,8 +1,9 @@
-{% load components %}
+{% load components i18n %}
 
 <div class="admin-bar">
     <div class="admin-bar__inner items-center md:flex md:justify-between">
         <div>
+            {% render_slot slots.back %}
             <h1 class="text-2xl mb-0 font-bold md:text-3xl md:m-0">{% render_slot slots.header %}</h1>
             {% if slots.sub_heading %}<p class="text-sm hidden md:block m-0">{% render_slot slots.sub_heading %}</p>{% endif %}
         </div>

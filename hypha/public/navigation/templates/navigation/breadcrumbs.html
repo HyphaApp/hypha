@@ -1,4 +1,4 @@
-{% load wagtailcore_tags util_tags %}
+{% load wagtailcore_tags %}
 
 {% if page.get_ancestors|length > 2 %}
     <nav role="navigation" aria-label="breadcrumb">
@@ -11,7 +11,7 @@
                         </li>
                     {% else %}
                         <li class="nav__item nav__item--breadcrumb">
-                            <a class="nav__link nav__link--breadcrumb" href="{% site_logo_link current_site %}" title="Home">
+                            <a class="nav__link nav__link--breadcrumb" href="{{ settings.utils.SystemMessagesSettings.site_logo_link|default:"/" }}" title="Home">
                                 Home
                             </a>
                         </li>

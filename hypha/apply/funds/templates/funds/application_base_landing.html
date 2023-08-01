@@ -1,33 +1,34 @@
-{% extends "base.html" %}
+{% extends "base-apply.html" %}
 {% load i18n wagtailcore_tags wagtailsettings_tags %}
+{% block body_class %}{% endblock %}
 
-{% block header_modifier %}header--light-bg{% endblock %}
 {% block content %}
-<div class="wrapper wrapper--small">
-	{% if form_submission.status == 'draft' %}
-		<h3>{% trans "Your application is saved as a draft." %}</h3>
-	{% else %}
-    	<h3>{% blocktrans %}Thank you for your submission to the {{ ORG_LONG_NAME }}.{% endblocktrans %}</h3>
-	{% endif %}
-    <div class="rich-text">
-    	{% if form_submission.status == 'draft' %}
-    		<p>{% trans "Please note that it is not submitted for review. You can complete your application by following the log-in details emailed to you." %}</p>
-    	{% else %}
-        	<p>{% trans "An e-mail with more information has been sent to the address you entered." %}</p>
+    <div class="wrapper max-w-2xl mt-8">
+        {% if form_submission.status == 'draft' %}
+            <h3>{% trans "Your application is saved as a draft." %}</h3>
+        {% else %}
+            <h3>{% blocktrans %}Thank you for your submission to the {{ ORG_LONG_NAME }}.{% endblocktrans %}</h3>
         {% endif %}
-        <p>{% blocktrans with email=ORG_EMAIL|urlize %}If you do not receive an e-mail within 15 minutes please check your spam folder and contact {{ email }} for further assistance.{% endblocktrans %}</p>
+        <div class="rich-text">
+            {% if form_submission.status == 'draft' %}
+                <p>{% trans "Please note that it is not submitted for review. You can complete your application by following the log-in details emailed to you." %}</p>
+            {% else %}
+                <p>{% trans "An e-mail with more information has been sent to the address you entered." %}</p>
+            {% endif %}
+            <p>
+                {% blocktrans with email=ORG_EMAIL|urlize %}If you do not receive an e-mail within 15 minutes please check your spam folder and contact {{ email }} for further assistance.{% endblocktrans %}</p>
 
-        {% with email_context=page.specific %}<p>{{ email_context.confirmation_text_extra|urlize }}</p>{% endwith %}
+                {% with email_context=page.specific %}<p>{{ email_context.confirmation_text_extra|urlize }}</p>{% endwith %}
 
-        {% block extra_text %}{{ settings.funds.ApplicationSettings.extra_text_round|richtext }}{% endblock %}
+                {% block extra_text %}{{ settings.funds.ApplicationSettings.extra_text_round|richtext }}{% endblock %}
 
-		<p>
-		{% if request.user.is_authenticated %}
-			<a href="{% url 'dashboard:dashboard' %}"><button class="button button--primary">{% blocktrans %}Go to my dashboard.{% endblocktrans %}</button></a>
-		{% else %}
-			<a href="{% url 'users_public:login' %}"><button class="button button--primary">{% blocktrans %}Log in{% endblocktrans %}</button></a>
-		{% endif %}
-		</p>
+            <p>
+            {% if request.user.is_authenticated %}
+                <a href="{% url 'dashboard:dashboard' %}"><button class="button button--primary">{% blocktrans %}Go to my dashboard.{% endblocktrans %}</button></a>
+            {% else %}
+                <a href="{% url 'users_public:login' %}"><button class="button button--primary">{% blocktrans %}Log in{% endblocktrans %}</button></a>
+            {% endif %}
+            </p>
+        </div>
     </div>
-</div>
 {% endblock %}
