@@ -255,14 +255,10 @@ def can_access_project(user, project):
     if not user.is_authenticated:
         return False, 'Login Required'
 
-    if user.is_contracting and project.status in [CONTRACTING, INTERNAL_APPROVAL]:
-        return True, 'Contracting can view project only in Internal approval and contracting status'
-
-    if user.is_finance and project.status in [INTERNAL_APPROVAL, INVOICING_AND_REPORTING]:
-        return True, 'Finance can view project only  in Internal approval and Invoicing and reporting status'
-
-    if user.is_apply_staff:
-        return True, 'Staff can view project in all statuses'
+    if user.is_apply_staff or user.is_finance or user.is_contracting:
+        # Staff, Finance and Contracting are internal and trusted peoples,
+        # Their action are limited, but they can view all projects.
+        return True, 'Staff, Finance and Contracting can view project in all statuses'
 
     if user.is_applicant and user == project.user:
         return True, 'Vendor(project user) can view project in all statuses'
