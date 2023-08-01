@@ -90,8 +90,8 @@ SUBMISSIONS_DRAFT_ACCESS_STAFF = env.bool('SUBMISSIONS_DRAFT_ACCESS_STAFF', Fals
 SUBMISSIONS_DRAFT_ACCESS_STAFF_ADMIN = env.bool('SUBMISSIONS_DRAFT_ACCESS_STAFF_ADMIN', False)
 
 # Columns to exclude from the submission tables.
-# Possible values are: fund, round, status, lead, reviewers, screening_statuses, category_options, meta_terms
-SUBMISSIONS_TABLE_EXCLUDED_FIELDS = env.list('SUBMISSIONS_TABLE_EXCLUDED_FIELDS', [])
+# Possible values are: fund, round, status, lead, reviewers, screening_statuses, category_options, meta_terms, organization_name
+SUBMISSIONS_TABLE_EXCLUDED_FIELDS = env.list('SUBMISSIONS_TABLE_EXCLUDED_FIELDS', ['organization_name'])
 
 # Should submission automatically transition after all reviewer roles are assigned.
 TRANSITION_AFTER_ASSIGNED = env.bool('TRANSITION_AFTER_ASSIGNED', False)
