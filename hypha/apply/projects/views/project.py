@@ -34,6 +34,7 @@ from docx import Document
 from htmldocx import HtmlToDocx
 from xhtml2pdf import pisa
 
+from hypha.apply.activity.adapters.utils import get_users_for_groups
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import ACTION, ALL, COMMENT, Activity
 from hypha.apply.activity.views import ActivityContextMixin, CommentFormView
@@ -510,7 +511,22 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
 
     def form_valid(self, form):
         response = super().form_valid(form)
+        project_settings = ProjectSettings.for_request(self.request)
         paf_approval = self.request.user.paf_approvals.filter(project=self.object, approved=False).first()
+        if not paf_approval:
+            # get paf approval form for not-assigned case
+            if project_settings.paf_approval_sequential:
+                paf_approval = self.object.paf_approvals.filter(approved=False).first()
+            else:
+                for approval in self.object.paf_approvals.filter(approved=False):
+                    if self.request.user.id in \
+                    [role_user.id for role_user in get_users_for_groups(list(approval.paf_reviewer_role.user_roles.all()), exact_match=True)]:
+                        paf_approval = approval
+                        break
+                else:
+                    # should never be the case but still to avoid 500.
+                    raise PermissionDenied("User don't have PAF approver roles")
+
         paf_status = form.cleaned_data.get('paf_status')
         comment = form.cleaned_data.get('comment', '')
 
@@ -530,6 +546,10 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
             self.object.save(update_fields=['status'])
             paf_approval.save()
 
+            if not paf_approval.user:
+                paf_approval.user = self.request.user
+                paf_approval.save(update_fields=['user'])
+
             messenger(
                 MESSAGES.REQUEST_PROJECT_CHANGE,
                 request=self.request,
@@ -542,8 +562,8 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
         elif paf_status == APPROVE:
             paf_approval.approved = True
             paf_approval.approved_at = timezone.now()
-            paf_approval.save(update_fields=['approved', 'approved_at'])
-            project_settings = ProjectSettings.for_request(self.request)
+            paf_approval.user = self.request.user
+            paf_approval.save(update_fields=['approved', 'approved_at', 'user'])
             if project_settings.paf_approval_sequential:
                 # notify next approver
                 if self.object.paf_approvals.filter(approved=False).exists():

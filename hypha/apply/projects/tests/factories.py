@@ -9,6 +9,7 @@ from hypha.apply.stream_forms.testing.factories import (
     FormDataFactory,
     FormFieldsBlockFactory,
 )
+from hypha.apply.users.groups import APPROVER_GROUP_NAME, STAFF_GROUP_NAME
 from hypha.apply.users.tests.factories import GroupFactory, StaffFactory, UserFactory
 
 from ..models.payment import Invoice, InvoiceDeliverable, SupportingDocument
@@ -123,12 +124,10 @@ class PAFReviewerRoleFactory(factory.django.DjangoModelFactory):
     @factory.post_generation
     def user_roles(self, create, extracted, **kwargs):
         if create:
-            if not extracted:
-                roles = GroupFactory(**kwargs)
-            else:
-                roles = extracted
-
-            self.user_roles.add(roles)
+            self.user_roles.add(
+                GroupFactory(name=STAFF_GROUP_NAME),
+                GroupFactory(name=APPROVER_GROUP_NAME),
+            )
 
 
 class PAFApprovalsFactory(factory.django.DjangoModelFactory):

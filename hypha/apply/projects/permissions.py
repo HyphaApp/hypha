@@ -176,14 +176,20 @@ def can_update_paf_status(user, project, **kwargs):
     if request:
         project_settings = ProjectSettings.for_request(request)
         if project_settings.paf_approval_sequential:
-            approver = project.paf_approvals.filter(approved=False).first().user
-            if approver and user.id == approver.id:
-                return True, 'Next Approver can approve PAF(For Sequential Approvals)'
-            return False, 'Only Next can approve PAF(For Sequential Approvals)'
-        if user.id in project.paf_approvals.filter(approved=False).values_list('user', flat=True):
-            return True, 'All assigned approvers can approve PAF(For Parallel Approvals)'
-
-        return False, 'Unable to access the Project Settings'
+            approval = project.paf_approvals.filter(approved=False).first()
+            possible_approvers_ids = [role_user.id for role_user in get_users_for_groups(
+                list(approval.paf_reviewer_role.user_roles.all()), exact_match=True)]
+            if user.id in possible_approvers_ids:
+                return True, 'Next approval group users can approve PAF(For Sequential Approvals)'
+            return False, 'Only Next approval group can approve PAF(For Sequential Approvals)'
+        else:
+            possible_approvers_ids = []
+            for approval in project.paf_approvals.filter(approved=False):
+                possible_approvers_ids.extend([role_user.id for role_user in get_users_for_groups(
+                    list(approval.paf_reviewer_role.user_roles.all()), exact_match=True)])
+            if user.id in possible_approvers_ids:
+                return True, 'All approval group users can approve PAF(For Parallel Approvals)'
+            return False, 'Only approval group users can approve PAF(For Parallel Approvals)'
 
     return False, 'Forbidden Error'
 
