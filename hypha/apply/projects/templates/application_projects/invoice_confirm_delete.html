@@ -3,6 +3,7 @@
 
 {% block title %} {% trans "Invoice" %}: {{ object.project.title }}{% endblock %}
 {% block content %}
+{% display_invoice_status_for_user user object as invoice_status %}
 <div class="admin-bar">
     <div class="admin-bar__inner">
         <a class="simplified__projects-link" href="{{ object.project.get_absolute_url }}">
@@ -17,7 +18,7 @@
     <div class="wrapper--sidebar--inner">
 
         <div class="card card--solid">
-            <p class="card__text"><b>{% trans "Status" %}:</b> {{ object.status_display }}</p>
+            <p class="card__text"><b>{% trans "Status" %}:</b> {{ invoice_status }}</p>
             {% is_vendor_setup request as show_vendor_information %}
             {% if show_vendor_information %}
             <p class="card__text"><b>{% trans "Vendor" %}:</b> {{ object.project.vendor.name }}</p>

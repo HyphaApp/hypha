@@ -1,6 +1,19 @@
 from django.conf import settings
+from django.utils.translation import gettext_lazy as _
 
 from .models import Deliverable, Project
+from .models.payment import (
+    APPROVED_BY_FINANCE_1,
+    APPROVED_BY_FINANCE_2,
+    APPROVED_BY_STAFF,
+    CHANGES_REQUESTED_BY_FINANCE_1,
+    CHANGES_REQUESTED_BY_FINANCE_2,
+    CHANGES_REQUESTED_BY_STAFF,
+    DECLINED,
+    PAID,
+    RESUBMITTED,
+    SUBMITTED,
+)
 
 
 def fetch_and_save_deliverables(project_id):
@@ -89,3 +102,21 @@ def create_invoice(invoice):
             create_intacct_invoice,
         )
         create_intacct_invoice(invoice)
+
+
+# Invoices public statuses
+def get_invoice_public_status(invoice_status):
+    if (invoice_status in [SUBMITTED, RESUBMITTED, APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_1]) or\
+        (invoice_status in [APPROVED_BY_FINANCE_1, CHANGES_REQUESTED_BY_FINANCE_2]
+            and settings.INVOICE_EXTENDED_WORKFLOW
+    ):
+        return _('Pending Approval')
+    if (invoice_status == APPROVED_BY_FINANCE_1) or\
+        (invoice_status == APPROVED_BY_FINANCE_2 and settings.INVOICE_EXTENDED_WORKFLOW):
+        return _('Approved')
+    if invoice_status == CHANGES_REQUESTED_BY_STAFF:
+        return _('Request for change or more information')
+    if invoice_status == DECLINED:
+        return _('Declined')
+    if invoice_status == PAID:
+        return _('Paid')

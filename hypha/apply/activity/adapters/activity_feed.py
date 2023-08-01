@@ -6,9 +6,10 @@ from django.utils.translation import gettext as _
 
 from hypha.apply.activity.models import ALL, TEAM
 from hypha.apply.activity.options import MESSAGES
+from hypha.apply.projects.utils import get_invoice_public_status
 
 from .base import AdapterBase
-from .utils import is_transition, reviewers_message
+from .utils import is_invoice_public_transition, is_transition, reviewers_message
 
 
 class ActivityAdapter(AdapterBase):
@@ -77,6 +78,11 @@ class ActivityAdapter(AdapterBase):
         ):
             # User's shouldn't see status activity changes for stages that aren't visible to the them
             return {'visibility': TEAM}
+
+        if message_type == MESSAGES.UPDATE_INVOICE_STATUS:
+            invoice = kwargs.get('invoice', None)
+            if invoice and not is_invoice_public_transition(invoice):
+                return {'visibility': TEAM}
         return {}
 
     def reviewers_updated(self, added=None, removed=None, **kwargs):
@@ -189,10 +195,20 @@ class ActivityAdapter(AdapterBase):
             return "Marked a Report as required"
 
     def handle_update_invoice_status(self, invoice, **kwargs):
-        invoice_status_change = _('Updated Invoice status to: {status}.').format(
-            status=invoice.status_display
-        )
-        return invoice_status_change
+        base_message = _('Updated Invoice status to: {invoice_status}.')
+        staff_message = base_message.format(invoice_status=invoice.get_status_display())
+
+        if is_invoice_public_transition(invoice):
+            public_status = get_invoice_public_status(invoice_status=invoice.status)
+            applicant_message = base_message.format(invoice_status=public_status)
+            return json.dumps(
+                {
+                    TEAM: staff_message,
+                    ALL: applicant_message
+                }
+            )
+
+        return staff_message
 
     def send_message(self, message, user, source, sources, **kwargs):
         from ..models import Activity

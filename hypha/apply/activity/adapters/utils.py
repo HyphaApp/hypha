@@ -1,10 +1,20 @@
 from collections import defaultdict
 
+from django.conf import settings
 from django.db.models import Count
 from django.utils.translation import gettext as _
 
 from hypha.apply.activity.options import MESSAGES
 from hypha.apply.projects.models import ProjectSettings
+from hypha.apply.projects.models.payment import (
+    APPROVED_BY_FINANCE_1,
+    APPROVED_BY_FINANCE_2,
+    CHANGES_REQUESTED_BY_STAFF,
+    DECLINED,
+    PAID,
+    RESUBMITTED,
+    SUBMITTED,
+)
 from hypha.apply.users.groups import (
     CONTRACTING_GROUP_NAME,
     FINANCE_GROUP_NAME,
@@ -42,6 +52,14 @@ def is_transition(message_type):
 
 def is_ready_for_review(message_type):
     return message_type in [MESSAGES.READY_FOR_REVIEW, MESSAGES.BATCH_READY_FOR_REVIEW]
+
+
+def is_invoice_public_transition(invoice):
+    if invoice.status in [SUBMITTED, RESUBMITTED, CHANGES_REQUESTED_BY_STAFF, APPROVED_BY_FINANCE_2, DECLINED, PAID]:
+        return True
+    if not settings.INVOICE_EXTENDED_WORKFLOW and invoice.status == APPROVED_BY_FINANCE_1:
+        return True
+    return False
 
 
 def is_reviewer_update(message_type):

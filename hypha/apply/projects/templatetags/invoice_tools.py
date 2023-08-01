@@ -2,12 +2,14 @@ import decimal
 
 from django import template
 
+from hypha.apply.activity.templatetags.activity_tags import display_for
 from hypha.apply.projects.models.project import (
     CLOSING,
     COMPLETE,
     INVOICING_AND_REPORTING,
     ProjectSettings,
 )
+from hypha.apply.projects.utils import get_invoice_public_status
 
 register = template.Library()
 
@@ -83,6 +85,16 @@ def get_invoice_form_id(form, invoice):
     return f'{form.name}-{invoice.id}'
 
 
-@register.filter
-def extract_status(invoice_activity_message):
-    return invoice_activity_message.replace("Updated Invoice status to: ", "").replace(".", "")
+@register.simple_tag
+def extract_status(activity, user):
+    if activity and user:
+        invoice_activity_message = display_for(activity, user)
+        return invoice_activity_message.replace("Updated Invoice status to: ", "").replace(".", "")
+    return ''
+
+
+@register.simple_tag
+def display_invoice_status_for_user(user, invoice):
+    if user.is_apply_staff or user.is_contracting or user.is_finance:
+        return invoice.status_display
+    return get_invoice_public_status(invoice_status=invoice.status)
