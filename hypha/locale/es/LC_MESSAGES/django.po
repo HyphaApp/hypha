@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-08-26 07:10+0000\n"
-"PO-Revision-Date: 2021-08-27 08:22+0000\n"
-"Last-Translator: Hypha Application <bernard+work@ei8fdb.org>\n"
+"PO-Revision-Date: 2023-08-03 08:19+0000\n"
+"Last-Translator: gallegonovato <fran-carro@hotmail.es>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/hypha/hypha-core/"
 "es/>\n"
 "Language: es\n"
@@ -17,44 +17,44 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.8.1-dev\n"
+"X-Generator: Weblate 5.0-dev\n"
 
 #: hypha/apply/activity/messaging.py:39
 #, python-brace-format
 msgid " as {role}"
-msgstr ""
+msgstr " como {role}"
 
 #: hypha/apply/activity/messaging.py:228
 #, python-brace-format
 msgid "Submitted {source.title} for {source.page.title}"
-msgstr ""
+msgstr "Enviado {source.title} para {source.page.title}"
 
 #: hypha/apply/activity/messaging.py:231 hypha/apply/activity/messaging.py:245
 #, python-brace-format
 msgid "Lead changed from {old_lead} to {source.lead}"
-msgstr ""
+msgstr "Lead cambiado de {old_lead} a {source.lead}"
 
 #: hypha/apply/activity/messaging.py:232
 #, python-brace-format
 msgid "Batch Lead changed to {new_lead}"
-msgstr ""
+msgstr "Batch Lead cambiado a {new_lead}"
 
 #: hypha/apply/activity/messaging.py:233
 #, python-brace-format
 msgid "Sent a determination. Outcome: {determination.clean_outcome}"
-msgstr ""
+msgstr "Envió una determinación. Resultado: {determination.clean_outcome}"
 
 #: hypha/apply/activity/messaging.py:235
 msgid "Invited to submit a proposal"
-msgstr ""
+msgstr "Invitados a presentar una propuesta"
 
 #: hypha/apply/activity/messaging.py:239
 msgid "Submitted a review"
-msgstr ""
+msgstr "Enviar una revisión"
 
 #: hypha/apply/activity/messaging.py:240
 msgid "Opened the submission while still sealed"
-msgstr ""
+msgstr "Abierto el envío cuando aún estaba precintado"
 
 #: hypha/apply/activity/messaging.py:242
 #, python-brace-format
@@ -62,38 +62,40 @@ msgid ""
 "{user} {opinion.opinion_display}s with {opinion.review.author}s review of "
 "{source}"
 msgstr ""
+"{user} {opinion.opinion_display}s con {opinion.review.author}s revisión de "
+"{source}"
 
 #: hypha/apply/activity/messaging.py:243
 msgid "Created"
-msgstr ""
+msgstr "Creado"
 
 #: hypha/apply/activity/messaging.py:244
 #, python-brace-format
 msgid "Progressed from {old_stage} to {source.status_display}"
-msgstr ""
+msgstr "Progresó de {old_stage} a {source.status_display}"
 
 #: hypha/apply/activity/messaging.py:246
 msgid "Requested approval"
-msgstr ""
+msgstr "Solicitud de aprobación"
 
 #: hypha/apply/activity/messaging.py:247
 #: hypha/apply/determinations/options.py:12
 msgid "Approved"
-msgstr ""
+msgstr "Aprobado"
 
 #: hypha/apply/activity/messaging.py:248
 #, python-brace-format
 msgid "Requested changes for acceptance: \"{comment}\""
-msgstr ""
+msgstr "Cambios solicitados para su aceptación: \"{comment}\""
 
 #: hypha/apply/activity/messaging.py:249
 #, python-brace-format
 msgid "Uploaded a {contract.state} contract"
-msgstr ""
+msgstr "Subido un contrato {contract.state}"
 
 #: hypha/apply/activity/messaging.py:250
 msgid "Approved contract"
-msgstr ""
+msgstr "Contrato aprobado"
 
 #: hypha/apply/activity/messaging.py:251
 #, python-brace-format
@@ -111,11 +113,11 @@ msgstr ""
 
 #: hypha/apply/activity/messaging.py:254
 msgid "Invoice created"
-msgstr ""
+msgstr "Factura emitida"
 
 #: hypha/apply/activity/messaging.py:255
 msgid "Submitted a report"
-msgstr ""
+msgstr "Presentado un informe"
 
 #: hypha/apply/activity/messaging.py:286
 msgid "Reviewers updated."
