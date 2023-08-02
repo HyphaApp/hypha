@@ -137,6 +137,7 @@ class ProjectApprovalForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaCl
             for field in self.instance.question_field_ids
             if field in self.cleaned_data
         }
+        self.instance.process_file_data(self.cleaned_data)
         self.instance.user_has_updated_details = True
         return super().save(*args, **kwargs)
 
@@ -171,6 +172,7 @@ class ProjectSOWForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass):
             for field in self.instance.question_field_ids
             if field in self.cleaned_data
         }
+        self.instance.process_file_data(self.cleaned_data)
         return super().save(*args, **kwargs)
 
 

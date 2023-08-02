@@ -28,6 +28,7 @@ from django.views.generic import (
     UpdateView,
 )
 from django.views.generic.detail import SingleObjectMixin
+from django_file_form.models import PlaceholderUploadedFile
 from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
 from docx import Document
@@ -1266,8 +1267,24 @@ class ProjectApprovalFormEditView(BaseStreamForm, UpdateView):
             fields = {}
 
         kwargs['extra_fields'] = fields
-        kwargs['initial'].update(self.object.raw_data)
+        initial = self.object.raw_data
+        for field_id in self.object.file_field_ids:
+            initial.pop(field_id + '-uploads', False)
+            initial[field_id] = self.get_placeholder_file(
+                self.object.raw_data.get(field_id)
+            )
+        kwargs['initial'].update(initial)
         return kwargs
+
+    def get_placeholder_file(self, initial_file):
+        if not isinstance(initial_file, list):
+            return PlaceholderUploadedFile(
+                initial_file.filename, size=initial_file.size, file_id=initial_file.name
+            )
+        return [
+            PlaceholderUploadedFile(f.filename, size=f.size, file_id=f.name)
+            for f in initial_file
+        ]
 
     def get_sow_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -1277,7 +1294,14 @@ class ProjectApprovalFormEditView(BaseStreamForm, UpdateView):
             kwargs['extra_fields'] = fields
             try:
                 sow_instance = self.object.sow
-                kwargs['initial'].update({'project': self.object, **sow_instance.raw_data})
+                initial = sow_instance.raw_data
+                for field_id in sow_instance.file_field_ids:
+                    initial.pop(field_id + '-uploads', False)
+                    initial[field_id] = self.get_placeholder_file(
+                        sow_instance.raw_data.get(field_id)
+                    )
+                initial['project'] = self.object
+                kwargs['initial'].update(initial)
             except ObjectDoesNotExist:
                 kwargs['initial'].update({'project': self.object})
         return kwargs
@@ -1304,6 +1328,8 @@ class ProjectApprovalFormEditView(BaseStreamForm, UpdateView):
 
                 self.paf_form.save(paf_form_fields=paf_form_fields)
                 self.sow_form.save(sow_form_fields=sow_form_fields, project=self.object)
+                self.paf_form.delete_temporary_files()
+                self.sow_form.delete_temporary_files()
                 return HttpResponseRedirect(self.get_success_url())
             else:
                 if not self.paf_form.is_valid():
@@ -1317,10 +1343,10 @@ class ProjectApprovalFormEditView(BaseStreamForm, UpdateView):
                 except AttributeError:
                     paf_form_fields = []
                 self.paf_form.save(paf_form_fields=paf_form_fields)
+                self.paf_form.delete_temporary_files()
                 return HttpResponseRedirect(self.get_success_url())
             else:
                 return self.form_invalid(self.paf_form)
-
 
 
 @method_decorator(staff_or_finance_or_contracting_required, name='dispatch')
