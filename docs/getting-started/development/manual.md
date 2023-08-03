@@ -92,7 +92,7 @@ Hypha supports configuration via either a `local.py` or a `.env` file:
     ALLOWED_HOSTS=apply.hypha.test,hypha.test
     BASE_URL=http://hypha.test
     SECRET_KEY=<put-in-long-random-string>
-    DATABASE_URL=postgres://localhost/hypha-db
+    DATABASE_URL=postgres://localhost/hypha
     ```
 
 === "Using `local.py`"
@@ -128,10 +128,10 @@ Hypha supports configuration via either a `local.py` or a `.env` file:
 Create an empty database:
 
 ```console
-$ createdb hypha-db
+$ createdb hypha
 ```
 
-Ensure database name `hypha-db` is added to your `hypha/settings/local.py` or `.env`.
+Ensure database name `hypha` is added to your `hypha/settings/local.py` or `.env`.
 
 Let's create all the tables and schemas required by the project.
 
@@ -142,7 +142,7 @@ There are two ways to about it, you can either load demo data from  `/public/san
 
     ```console
     $ pg_restore --verbose --clean  --if-exists --no-acl --no-owner \
-                 --dbname=hypha-db public/sandbox_db.dump
+                 --dbname=hypha public/sandbox_db.dump
     ```
 
     It's not always completely up to date so run:
@@ -167,12 +167,12 @@ There are two ways to about it, you can either load demo data from  `/public/san
 !!! tip "Tips"
 
     - If `createdb`and `dropdb` are not available you will need to add the Postgres bin directory to your `path` or call the commands with complete path.
-    - If you need to delete/drop the database, you can use `$ dropdb hypha-db`
+    - If you need to delete/drop the database, you can use `$ dropdb hypha`
     - On Linux you might need to run as the "postgres" user first when setting up Postgres. Use it to create the database and set up a database user.For local development I suggest creating a user with the same name as your account, then you will not need to specify it on every command.
 
         ```console
         $ su - postgres
-        $ createdb hypha-db
+        $ createdb hypha
         $ createuser [your-account-name]
         ```
 
