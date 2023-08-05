@@ -34,14 +34,14 @@ def user_next_step_on_project(project, user, request=None):
                 return "Resubmit project documents for approval"
             return "Submit project documents for approval"
         elif user.is_applicant:
-            return "Awaiting project documents to be created and approved by OTF internally. " \
+            return f"Awaiting project documents to be created and approved by {settings.ORG_SHORT_NAME} internally. " \
                    "Please check back when the project has moved to contracting stage."
         if project.paf_approvals.exists():
             return "Changes requested. Awaiting documents to be resubmitted."
         return "Awaiting approval form to be created."
     elif project.status == INTERNAL_APPROVAL:
         if user.is_applicant:
-            return "Awaiting project documents to be created and approved by OTF internally. " \
+            return f"Awaiting project documents to be created and approved by {settings.ORG_SHORT_NAME} internally. " \
                    "Please check back when the project has moved to contracting stage."
 
         if request:
