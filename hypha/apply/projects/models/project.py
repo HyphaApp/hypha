@@ -1,4 +1,3 @@
-import collections
 import decimal
 import json
 import logging
@@ -372,42 +371,6 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         """
         correct_state = self.status == DRAFT and not self.is_locked
         return correct_state and self.user_has_updated_details
-
-    def get_missing_document_categories(self):
-        """
-        Get the number of documents required to meet each DocumentCategorys minimum
-        """
-        # Count the number of documents in each category currently
-        existing_categories = DocumentCategory.objects.filter(packet_files__project=self)
-        counter = collections.Counter(existing_categories)
-
-        # Find the difference between the current count and recommended count
-        for category in DocumentCategory.objects.all():
-            current_count = counter[category]
-            difference = category.recommended_minimum - current_count
-            if difference > 0:
-                yield {
-                    'category': category,
-                    'difference': difference,
-                }
-
-    def get_missing_contract_document_categories(self):
-        """
-        Get the number of documents required to meet each ContractDocumentCategories minimum
-        """
-        # Count the number of documents in each category currently
-        existing_categories = ContractDocumentCategory.objects.filter(contract_packet_files__project=self)
-        counter = collections.Counter(existing_categories)
-
-        # Find the difference between the current count and recommended count
-        for category in ContractDocumentCategory.objects.all():
-            current_count = counter[category]
-            difference = category.recommended_minimum - current_count
-            if difference > 0:
-                yield {
-                    'category': category,
-                    'difference': difference,
-                }
 
     @property
     def is_in_progress(self):
