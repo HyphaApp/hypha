@@ -2,6 +2,7 @@ from django import template
 from django.conf import settings
 from django.db.models import Count
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 
 from hypha.apply.projects.models.project import (
     CLOSING,
@@ -29,20 +30,20 @@ def user_next_step_on_project(project, user, request=None):
     if project.status == DRAFT:
         if user.is_apply_staff:
             if not project.user_has_updated_details:
-                return "Fill in the Approval Form(PAF)"
+                return _("Fill in the Approval Form(PAF)")
             if project.paf_approvals.exists():
-                return "Resubmit project documents for approval"
-            return "Submit project documents for approval"
+                return _("Resubmit project documents for approval")
+            return _("Submit project documents for approval")
         elif user.is_applicant:
-            return f"Awaiting project documents to be created and approved by {settings.ORG_SHORT_NAME} internally. " \
-                   "Please check back when the project has moved to contracting stage."
+            return _(f"Awaiting project documents to be created and approved by {settings.ORG_SHORT_NAME} internally. "
+                     f"Please check back when the project has moved to contracting stage.")
         if project.paf_approvals.exists():
-            return "Changes requested. Awaiting documents to be resubmitted."
-        return "Awaiting approval form to be created."
+            return _("Changes requested. Awaiting documents to be resubmitted.")
+        return _("Awaiting approval form to be created.")
     elif project.status == INTERNAL_APPROVAL:
         if user.is_applicant:
-            return f"Awaiting project documents to be created and approved by {settings.ORG_SHORT_NAME} internally. " \
-                   "Please check back when the project has moved to contracting stage."
+            return _(f"Awaiting project documents to be created and approved by {settings.ORG_SHORT_NAME} internally. "
+                     f"Please check back when the project has moved to contracting stage.")
 
         if request:
             project_settings = ProjectSettings.for_request(request=request)
@@ -50,51 +51,51 @@ def user_next_step_on_project(project, user, request=None):
                 latest_unapproved_approval = project.paf_approvals.filter(approved=False).first()
                 if latest_unapproved_approval:
                     if latest_unapproved_approval.user:
-                        return f"Awaiting approval. Assigned to {latest_unapproved_approval.user}"
-                    return f"Awaiting {latest_unapproved_approval.paf_reviewer_role.label} to assign an approver"
+                        return _(f"Awaiting approval. Assigned to {latest_unapproved_approval.user}")
+                    return _(f"Awaiting {latest_unapproved_approval.paf_reviewer_role.label} to assign an approver")
             else:
                 matched_roles = PAFReviewersRole.objects.annotate(roles_count=Count('user_roles')).filter(
                     roles_count=len(user.groups.all()))
                 for group in user.groups.all():
                     matched_roles = matched_roles.filter(user_roles__id=group.id)
                 if not matched_roles:
-                    return "Awaiting PAF approval form to be approved"
+                    return _("Awaiting PAF approval form to be approved")
                 else:
                     matched_unapproved_approval = project.paf_approvals.filter(approved=False, paf_reviewer_role__in=matched_roles)
                     if not matched_unapproved_approval.exists():
-                        return "Awaiting approval from other approvers teams"
+                        return _("Awaiting approval from other approvers teams")
                     else:
                         if matched_unapproved_approval.first().user:
-                            return f"Awaiting approval. Assigned to {matched_unapproved_approval.first().user}"
-                        return f"Awaiting {matched_unapproved_approval.first().paf_reviewer_role.label} to assign an approver"
+                            return _(f"Awaiting approval. Assigned to {matched_unapproved_approval.first().user}")
+                        return _(f"Awaiting {matched_unapproved_approval.first().paf_reviewer_role.label} to assign an approver")
 
-        return "Awaiting project approval from assigned approvers"
+        return _("Awaiting project approval from assigned approvers")
     elif project.status == CONTRACTING:
         if not project.contracts.exists():
             if user.is_applicant:
-                return f"Awaiting signed contract from {settings.ORG_SHORT_NAME}"
-            return "Awaiting signed contract from Contracting team"
+                return _(f"Awaiting signed contract from {settings.ORG_SHORT_NAME}")
+            return _("Awaiting signed contract from Contracting team")
         else:
             contract = project.contracts.order_by('-created_at').first()
             if not contract.signed_by_applicant:
                 if user.is_applicant:
-                    return "Awaiting contract documents to be submitted by you."
-                return "Awaiting countersigned contract from Vendor"
+                    return _("Awaiting contract documents to be submitted by you.")
+                return _("Awaiting countersigned contract from Vendor")
             elif not project.submitted_contract_documents:
                 if user.is_applicant:
-                    return "Awaiting contract documents submission by you"
-                return "Awaiting contract documents submission from Vendor"
+                    return _("Awaiting contract documents submission by you")
+                return _("Awaiting contract documents submission from Vendor")
             else:
                 if user.is_apply_staff:
-                    return "Review the contract for all relevant details and approve."
+                    return _("Review the contract for all relevant details and approve.")
                 if user.is_applicant:
-                    return f"Awaiting contract approval from {settings.ORG_SHORT_NAME}"
-                return "Awaiting contract approval from Staff"
+                    return _(f"Awaiting contract approval from {settings.ORG_SHORT_NAME}")
+                return _("Awaiting contract approval from Staff")
     elif project.status == INVOICING_AND_REPORTING:
         if user.is_applicant and not project.invoices.exists():
-            return "Add invoices"
+            return _("Add invoices")
         elif user.is_apply_staff or user.is_finance:
-            return "Review invoice and take action"
+            return _("Review invoice and take action")
     return False
 
 
@@ -106,10 +107,10 @@ def user_next_step_instructions(project, user):
     if project.status == CONTRACTING and user == project.user and project.contracts.exists():
         contract = project.contracts.order_by('-created_at').first()
         if contract and not contract.signed_by_applicant:
-            return [f'Please download the signed contract uploaded by {settings.ORG_SHORT_NAME}',
-                    'Countersign',
-                    'Upload it back',
-                    'Please also make sure to upload other required contracting documents']
+            return [_(f'Please download the signed contract uploaded by {settings.ORG_SHORT_NAME}'),
+                    _('Countersign'),
+                    _('Upload it back'),
+                    _('Please also make sure to upload other required contracting documents')]
     return False
 
 
