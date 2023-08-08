@@ -16,7 +16,7 @@ from django.db.models.functions import Coalesce
 from django.http import HttpRequest
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
-from hypha.apply.activity.models import Activity
+from hypha.apply.activity.models import Activity, Event
 from hypha.apply.funds.models.assigned_reviewers import AssignedReviewers
 from hypha.apply.funds.workflow import INITIAL_STATE
 from hypha.apply.review.options import DISAGREE, MAYBE
@@ -58,6 +58,10 @@ def bulk_delete_submissions(
     Returns:
         QuerySet of submissions that have been archived
     """
+    # delete NEW_SUBMISSION events for all submissions
+    submission_ids = submissions.values_list('id', flat=True)
+    Event.objects.filter(type=MESSAGES.NEW_SUBMISSION, object_id__in=submission_ids).delete()
+    # delete submissions
     submissions.delete()
     messenger(
         MESSAGES.BATCH_DELETE_SUBMISSION,

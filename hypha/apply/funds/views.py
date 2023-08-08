@@ -1412,10 +1412,10 @@ class SubmissionDeleteView(DeleteView):
             request=request,
             source=submission,
         )
-        response = super().delete(request, *args, **kwargs)
         # delete NEW_SUBMISSION event for this particular submission
         Event.objects.filter(type=MESSAGES.NEW_SUBMISSION, object_id=submission.id).delete()
-
+        # delete submission
+        response = super().delete(request, *args, **kwargs)
         return response
 
 
