@@ -74,6 +74,7 @@ from hypha.apply.utils.views import (
     ViewDispatcher,
 )
 
+from ..review.views import RelatedSubmissionsMixin
 from . import services
 from .differ import compare
 from .files import generate_private_file_path
@@ -1083,7 +1084,9 @@ class ReminderDeleteView(DeleteView):
         return super().form_valid(form)
 
 
-class AdminSubmissionDetailView(ActivityContextMixin, DelegateableView, DetailView):
+class AdminSubmissionDetailView(
+    RelatedSubmissionsMixin, ActivityContextMixin, DelegateableView, DetailView
+):
     template_name_suffix = "_admin_detail"
     model = ApplicationSubmission
     form_views = [
@@ -1113,19 +1116,9 @@ class AdminSubmissionDetailView(ActivityContextMixin, DelegateableView, DetailVi
         return redirect or super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        other_submissions = (
-            self.model.objects.filter(user=self.object.user)
-            .current()
-            .exclude(id=self.object.id)
-            .order_by("-submit_time")
-        )
-        if self.object.next:
-            other_submissions = other_submissions.exclude(id=self.object.next.id)
-
         default_screening_statuses = get_default_screening_statues()
 
         return super().get_context_data(
-            other_submissions=other_submissions,
             default_screening_statuses=default_screening_statuses,
             archive_access_groups=get_archive_view_groups(),
             can_archive=can_alter_archived_submissions(self.request.user),
@@ -1133,7 +1126,9 @@ class AdminSubmissionDetailView(ActivityContextMixin, DelegateableView, DetailVi
         )
 
 
-class ReviewerSubmissionDetailView(ActivityContextMixin, DelegateableView, DetailView):
+class ReviewerSubmissionDetailView(
+    RelatedSubmissionsMixin, ActivityContextMixin, DelegateableView, DetailView
+):
     template_name_suffix = "_reviewer_detail"
     model = ApplicationSubmission
     form_views = [CommentFormView]
@@ -1188,7 +1183,9 @@ class PartnerSubmissionDetailView(ActivityContextMixin, DelegateableView, Detail
         return super().dispatch(request, *args, **kwargs)
 
 
-class CommunitySubmissionDetailView(ActivityContextMixin, DelegateableView, DetailView):
+class CommunitySubmissionDetailView(
+    RelatedSubmissionsMixin, ActivityContextMixin, DelegateableView, DetailView
+):
     template_name_suffix = "_community_detail"
     model = ApplicationSubmission
     form_views = [CommentFormView]
