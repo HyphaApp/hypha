@@ -1,3 +1,5 @@
+import logging
+
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
@@ -27,10 +29,64 @@ from hypha.apply.todo.options import REVIEW_DRAFT
 from hypha.apply.todo.views import add_task_to_user, remove_tasks_for_user
 from hypha.apply.users.decorators import staff_required
 from hypha.apply.utils.image import generate_image_tag
+from hypha.apply.utils.models import SubmissionsDetailsSettings
 from hypha.apply.utils.views import CreateOrUpdateView
 
+from ..users.groups import REVIEWER_GROUP_NAME
 from .models import Review, ReviewOpinion
 from .options import DISAGREE
+
+logger = logging.getLogger(__name__)
+
+
+class RelatedSubmissionsMixin:
+    def sees_other_submissions(self):
+        if self.request.user.is_superuser:
+            logger.debug(
+                "User is a superuser and therefore should see related submissions"
+            )
+            return True
+        submissions_details_settings = SubmissionsDetailsSettings.objects.filter()
+        roles_that_view = [
+            g.group.name
+            for g in submissions_details_settings
+            if g.sees_related_submissions
+        ]
+        for role in self.request.user.roles:
+            logger.debug(f"Found role {role} associated with user {self.request.user}")
+            if role in roles_that_view:
+                logger.debug(f"Found role {role} should see related submissions")
+                return True
+        logger.debug("None of this user's roles should see related submissions")
+        return False
+
+    def get_context_data(self, **kwargs):
+        other_submissions = None
+        if self.sees_other_submissions():
+            other_submissions = (
+                self.model.objects.filter(user=self.object.user)
+                .current()
+                .exclude(id=self.object.id)
+                .order_by("-submit_time")
+            )
+            if self.object.next:
+                other_submissions = other_submissions.exclude(id=self.object.next.id)
+        assigned_reviewers = self.object.assigned.review_order()
+
+        if not self.object.stage.has_external_review:
+            assigned_reviewers = assigned_reviewers.staff()
+
+        # Calculate the recommendation based on role and staff reviews
+        recommendation = self.object.reviews.by_staff().recommendation()
+
+        return super().get_context_data(
+            hidden_types=[REVIEWER_GROUP_NAME],
+            staff_reviewers_exist=assigned_reviewers.staff().exists(),
+            assigned_reviewers=assigned_reviewers,
+            recommendation=recommendation,
+            other_submissions=other_submissions,
+            **kwargs,
+        )
 
 
 def get_fields_for_stage(submission, user=None):
