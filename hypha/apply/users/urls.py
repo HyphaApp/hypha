@@ -10,6 +10,8 @@ from .views import (
     EmailChangeDoneView,
     EmailChangePasswordView,
     LoginView,
+    PasswordResetConfirmView,
+    PasswordResetView,
     RegisterView,
     RegistrationSuccessView,
     TWOFAAdminDisableView,
@@ -54,18 +56,7 @@ urlpatterns = [
                 )),
                 name='password_change',
             ),
-            path(
-                'reset/',
-                ratelimit(key='post:email', rate=settings.DEFAULT_RATE_LIMIT, method='POST')
-                (ratelimit(key='ip', rate=settings.DEFAULT_RATE_LIMIT, method='POST')
-                    (
-                        auth_views.PasswordResetView.as_view(
-                            template_name='users/password_reset/form.html',
-                            email_template_name='users/password_reset/email.txt',
-                            success_url=reverse_lazy('users:password_reset_done')
-                        ))),
-                name='password_reset'
-            ),
+            path('reset/', PasswordResetView.as_view(), name='password_reset'),
             path(
                 'reset/done/',
                 auth_views.PasswordResetDoneView.as_view(template_name='users/password_reset/done.html'),
@@ -73,12 +64,7 @@ urlpatterns = [
             ),
             path(
                 'reset/confirm/<uidb64>/<token>/',
-                auth_views.PasswordResetConfirmView.as_view(
-                    template_name='users/password_reset/confirm.html',
-                    post_reset_login=True,
-                    post_reset_login_backend=settings.CUSTOM_AUTH_BACKEND,
-                    success_url=reverse_lazy('users:account')
-                ),
+                PasswordResetConfirmView.as_view(),
                 name='password_reset_confirm'
             ),
             path(

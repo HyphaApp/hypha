@@ -13,6 +13,9 @@
 
         <form class="form" method="post" novalidate>
             {% csrf_token %}
+            {% if redirect_url %}
+                <input type="hidden" name="next" value="{{ redirect_url }}" />
+            {% endif %}
 
             {% if form.non_field_errors %}
                 <ul class="errorlist">

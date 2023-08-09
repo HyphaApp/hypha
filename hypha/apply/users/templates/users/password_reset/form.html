@@ -22,6 +22,9 @@
                 <h2 class="text-2xl">{% trans "Forgot password?" %}</h2>
                 <p class="form__help">{% trans "Please enter your user account's email address and we will send you a password reset link." %}</p>
                 {% csrf_token %}
+                {% if redirect_url %}
+                    <input type="hidden" name="next" value="{{ redirect_url }}">
+                {% endif %}
                 <p>{{ form.email.label_tag }}</p>
                 <p>{{ form.email }}</p>
 
@@ -29,7 +32,7 @@
             </form>
 
             <div class="mt-4">
-                <a href="{% url 'users_public:login' %}" hx-boost="true">
+                <a href="{% url 'users_public:login' %}{% if redirect_url %}?next={{ redirect_url }}{% endif %}" hx-boost="true">
                     {% trans "Log in" %}
                 </a>
             </div>
