@@ -368,6 +368,7 @@ class BaseReviewerSubmissionsTable(BaseAdminSubmissionsTable):
         return super().get_queryset().reviewed_by(self.request.user)
 
 
+@method_decorator(login_required, name='dispatch')
 class AwaitingReviewSubmissionsListView(SingleTableMixin, ListView):
     model = ApplicationSubmission
     table_class = AdminSubmissionsTable
