@@ -1067,6 +1067,8 @@ class ProjectSOWDownloadView(SingleObjectMixin, View):
         if project.submission.page.specific.sow_forms.exists() and project.sow:
             form_data_dict = project.sow.form_data
             for field in project.sow.form_fields.raw_data:
+                if field.get('type', None) in ['file', 'multi_file']:
+                    continue
                 if field['id'] in form_data_dict.keys():
                     if isinstance(field['value'], dict) and 'field_label' in field['value']:
                         data_dict[field['value']['field_label']] = form_data_dict[field['id']]
@@ -1143,10 +1145,7 @@ class ProjectDetailDownloadView(SingleObjectMixin, View):
         context['project_link'] = self.request.build_absolute_uri(
             reverse('apply:projects:detail', kwargs={'pk': self.object.id})
         )
-        context['proposed_start_date'] = self.object.proposed_start
-        context['proposed_end_date'] = self.object.proposed_end
         context['contractor_name'] = self.object.vendor.contractor_name if self.object.vendor else None
-        context['total_amount'] = self.object.value
 
         context['approvals'] = self.object.paf_approvals.all()
         context['paf_data'] = self.get_paf_data_with_field(self.object)
@@ -1163,6 +1162,8 @@ class ProjectDetailDownloadView(SingleObjectMixin, View):
         data_dict = {}
         form_data_dict = project.form_data
         for field in project.form_fields.raw_data:
+            if field.get('type', None) in ['file', 'multi_file']:
+                continue
             if field['id'] in form_data_dict.keys():
                 if isinstance(field['value'], dict) and 'field_label' in field['value']:
                     data_dict[field['value']['field_label']] = form_data_dict[field['id']]
@@ -1174,6 +1175,8 @@ class ProjectDetailDownloadView(SingleObjectMixin, View):
         if project.submission.page.specific.sow_forms.exists() and project.sow:
             form_data_dict = project.sow.form_data
             for field in project.sow.form_fields.raw_data:
+                if field.get('type', None) in ['file', 'multi_file']:
+                    continue
                 if field['id'] in form_data_dict.keys():
                     if isinstance(field['value'], dict) and 'field_label' in field['value']:
                         data_dict[field['value']['field_label']] = form_data_dict[field['id']]
