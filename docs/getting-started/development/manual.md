@@ -242,6 +242,17 @@ Open http://localhost:9100/ to preview the documentation site.
 !!! tip
     You can use `$ make serve` command to run Django Development Server, watch and compile frontend changes and preview docs all at once.
 
+
+## Coding Style
+
+Hypha's coding style is enforced by black, ruff and prettier and comes pre-configured with prettier. 
+
+Install pre-commit to auto-format the code before each commit:
+
+```
+pre-commit install
+```
+
 ## Running tests
 
 Hypha uses `ruff` and [py.test](https://pytest-django.readthedocs.io/en/latest/) test runner and uses `hypha/settings/testing.py` for test settings.
