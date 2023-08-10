@@ -13,6 +13,7 @@ from hypha.apply.projects.models.project import (
     INVOICING_AND_REPORTING,
 )
 from hypha.apply.projects.permissions import has_permission
+from hypha.apply.projects.utils import get_project_public_status
 
 register = template.Library()
 
@@ -224,3 +225,10 @@ def category_latest_file(project, category):
 @register.simple_tag
 def contract_category_latest_file(project, category):
     return category.contract_packet_files.filter(project=project).first()
+
+
+@register.simple_tag
+def display_project_status(project, user):
+    if user.is_apply_staff or user.is_contracting or user.is_finance:
+        return project.status_display
+    return get_project_public_status(project_status=project.status)

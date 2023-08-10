@@ -7,6 +7,7 @@ from django.template.loader import render_to_string
 from django.utils.translation import gettext as _
 
 from hypha.apply.projects.models.payment import CHANGES_REQUESTED_BY_STAFF, DECLINED
+from hypha.apply.projects.templatetags.project_tags import display_project_status
 from hypha.apply.users.groups import (
     APPROVER_GROUP_NAME,
     CONTRACTING_GROUP_NAME,
@@ -102,7 +103,7 @@ class EmailAdapter(AdapterBase):
                 elif source.status == INVOICING_AND_REPORTING:
                     subject = _('Project is ready for invoicing: {source.title}').format(source=source)
                 else:
-                    subject = _('Project status has changed to {source.status}: {source.title}').format(source=source)
+                    subject = _('Project status has changed to {project_status}: {source.title}').format(project_status=display_project_status(source, source.user), source=source)
             elif message_type == MESSAGES.REQUEST_PROJECT_CHANGE:
                 subject = _("Project has been rejected, please update and resubmit")
             elif message_type == MESSAGES.ASSIGN_PAF_APPROVER:
