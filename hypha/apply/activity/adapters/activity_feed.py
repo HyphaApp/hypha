@@ -4,7 +4,7 @@ from django.db.models import Model as DjangoModel
 from django.utils import timezone
 from django.utils.translation import gettext as _
 
-from hypha.apply.activity.models import ALL, TEAM
+from hypha.apply.activity.models import ALL, APPLICANT, TEAM
 from hypha.apply.activity.options import MESSAGES
 from hypha.apply.projects.utils import (
     get_invoice_public_status,
@@ -44,7 +44,7 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.DELETE_REVIEW_OPINION: _(
             "{user} deleted the opinion for review: {review_opinion.review}"
         ),
-        MESSAGES.CREATED_PROJECT: _("Created"),
+        MESSAGES.CREATED_PROJECT: _("Created project"),
         MESSAGES.PROJECT_TRANSITION: "handle_project_transition",
         MESSAGES.UPDATE_PROJECT_LEAD: _(
             "Lead changed from {old_lead} to {source.lead}"
@@ -72,6 +72,8 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.UNARCHIVE_SUBMISSION: _(
             "{user} has unarchived the submission: {source.title}"
         ),
+        MESSAGES.APPROVE_INVOICE: _('Approved an invoice'),
+        MESSAGES.DELETE_INVOICE: _('Deleted an invoice'),
     }
 
     def recipients(self, message_type, **kwargs):
@@ -91,8 +93,20 @@ class ActivityAdapter(AdapterBase):
             MESSAGES.SEND_FOR_APPROVAL,
             MESSAGES.APPROVE_PAF,
             MESSAGES.NEW_REVIEW,
+            MESSAGES.UPDATE_PROJECT_LEAD,
         ]:
             return {"visibility": TEAM}
+
+        if message_type in [
+            MESSAGES.CREATED_PROJECT,
+            MESSAGES.APPROVE_CONTRACT,
+            MESSAGES.UPLOAD_CONTRACT,
+            MESSAGES.SUBMIT_CONTRACT_DOCUMENTS,
+            MESSAGES.UPDATE_INVOICE_STATUS,
+            MESSAGES.DELETE_INVOICE,
+            MESSAGES.CREATE_INVOICE,
+        ]:
+            return {'visibility': APPLICANT}
 
         source = source or sources[0]
         if is_transition(message_type) and not source.phase.permissions.can_view(
