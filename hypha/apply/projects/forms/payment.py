@@ -75,7 +75,7 @@ class ChangeInvoiceStatusForm(forms.ModelForm):
 
 class InvoiceBaseForm(forms.ModelForm):
     class Meta:
-        fields = ['document', 'message_for_pm']
+        fields = ['invoice_number', 'invoice_amount', 'document', 'message_for_pm']
         model = Invoice
 
     def __init__(self, user=None, *args, **kwargs):
@@ -93,7 +93,7 @@ class CreateInvoiceForm(FileFormMixin, InvoiceBaseForm):
         help_text=_('Files that are related to the invoice. They could be xls, microsoft office documents, open office documents, pdfs, txt files.')
     )
 
-    field_order = ['document', 'supporting_documents', 'message_for_pm']
+    field_order = ['invoice_number', 'invoice_amount', 'document', 'supporting_documents', 'message_for_pm']
 
     def save(self, commit=True):
         invoice = super().save(commit=commit)
@@ -112,7 +112,7 @@ class EditInvoiceForm(FileFormMixin, InvoiceBaseForm):
     document = SingleFileField(label=_('Invoice File'), required=True)
     supporting_documents = MultiFileField(required=False)
 
-    field_order = ['document', 'supporting_documents', 'message_for_pm']
+    field_order = ['invoice_number', 'invoice_amount', 'document', 'supporting_documents', 'message_for_pm']
 
     @transaction.atomic
     def save(self, commit=True):

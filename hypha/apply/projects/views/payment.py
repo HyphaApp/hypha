@@ -245,7 +245,7 @@ class EditInvoiceView(InvoiceAccessMixin, UpdateView):
         return initial
 
     def get_context_data(self, **kwargs):
-        return super().get_context_data(buttons=self.buttons(), **kwargs)
+        return super().get_context_data(project=self.object.project, buttons=self.buttons(), **kwargs)
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()

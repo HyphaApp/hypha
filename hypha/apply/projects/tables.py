@@ -28,7 +28,7 @@ class InvoiceDashboardTable(BaseInvoiceTable):
     class Meta:
         fields = [
             'requested_at',
-            'vendor_document_number',
+            'invoice_number',
             'status',
             'project',
         ]
@@ -44,7 +44,7 @@ class InvoiceListTable(BaseInvoiceTable):
     class Meta:
         fields = [
             'requested_at',
-            'vendor_document_number',
+            'invoice_number',
             'status',
             'project',
             'lead',
