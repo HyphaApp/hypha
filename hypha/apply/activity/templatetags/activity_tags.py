@@ -14,6 +14,8 @@ register = template.Library()
 
 @register.filter
 def display_author(activity, user):
+    if user.is_applicant and (activity.user.is_apply_staff or activity.user.is_finance or activity.user.is_contracting):
+        return settings.ORG_LONG_NAME
     if isinstance(activity.related_object, Review) and activity.source.user == user:
         return 'Reviewer'
     return activity.user.get_full_name_with_group()
