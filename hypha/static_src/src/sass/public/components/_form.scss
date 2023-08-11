@@ -257,7 +257,8 @@
                 }
 
                 input {
-                    &:first-of-type { // stylelint-disable-line max-nesting-depth
+                    // stylelint-disable-next-line max-nesting-depth
+                    &:first-of-type {
                         @supports (display: grid) {
                             grid-column: 1;
                         }
@@ -328,8 +329,6 @@
             background: transparent;
             border-radius: 0;
             appearance: none;
-            -webkit-appearance: none; // stylelint-disable-line property-no-vendor-prefix
-            -moz-appearance: none; // stylelint-disable-line property-no-vendor-prefix
 
             option {
                 background-color: $color--white;

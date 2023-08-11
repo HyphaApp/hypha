@@ -45,7 +45,8 @@ table {
                 box-shadow: 0 6px 35px -13px $color--black-50;
             }
 
-            &.reviews-summary__tr { // stylelint-disable-line selector-class-pattern
+            // stylelint-disable-next-line selector-class-pattern
+            &.reviews-summary__tr {
                 box-shadow: none;
             }
         }

@@ -17,7 +17,7 @@
         background-color: $color--white;
         border: 1px solid $color--light-grey;
         min-width: 400px;
-        box-shadow: rgba(0, 0, 0, 10%) 0 4px 6px -1px, rgba(0, 0, 0, 6%) 0 2px 4px -1px;  /* stylelint-disable-line */
+        box-shadow: rgba(#000, 10%) 0 4px 6px -1px, rgba(#000, 6%) 0 2px 4px -1px;
     }
 
     &__header {

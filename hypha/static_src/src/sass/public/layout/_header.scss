@@ -181,7 +181,8 @@
                 fill: $color--dark-grey;
             }
 
-            .header__menus--mobile.is-visible & { // stylelint-disable-line selector-class-pattern
+            // stylelint-disable-next-line selector-class-pattern
+            .header__menus--mobile.is-visible & {
                 fill: $color--white;
             }
         }

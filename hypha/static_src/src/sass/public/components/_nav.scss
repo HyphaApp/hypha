@@ -156,7 +156,8 @@
             color: $color--default;
         }
 
-        .header__menus--mobile & { // stylelint-disable-line selector-class-pattern
+        // stylelint-disable-next-line selector-class-pattern
+        .header__menus--mobile & {
             color: $color--white;
         }
 
