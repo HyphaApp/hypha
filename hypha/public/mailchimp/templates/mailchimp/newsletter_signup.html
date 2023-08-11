@@ -1,4 +1,3 @@
-{% if newsletter_enabled %}
 {% load static i18n %}
 
 <h4>{{ settings.mailchimp.NewsletterSettings.newsletter_title }}</h4>
@@ -22,6 +21,3 @@
 {% block extra_js %}
     <script src="{% static 'js/public/protect-form.js' %}"></script>
 {% endblock %}
-{% else %}
-Set MAILCHIMP_API_KEY and MAILCHIMP_LIST_ID to activate newsletter form.
-{% endif %}
