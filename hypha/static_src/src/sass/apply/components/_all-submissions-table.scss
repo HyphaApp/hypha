@@ -18,7 +18,7 @@
                 color: $color--black-60;
 
                 div {
-                    font-size: 12px;
+                    font-size: 0.75rem;
                 }
             }
 
@@ -70,7 +70,7 @@
 
     tbody {
         tr {
-            &[data-archived='True'] {
+            &[data-archived="True"] {
                 background-color: $color--light-mid-grey;
             }
         }
