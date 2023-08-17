@@ -10,6 +10,7 @@ from .views import (
     EmailChangeDoneView,
     EmailChangePasswordView,
     LoginView,
+    PasswordLessLoginSignupView,
     PasswordResetConfirmView,
     PasswordResetView,
     RegisterView,
@@ -28,6 +29,10 @@ app_name = 'users'
 
 
 public_urlpatterns = [
+    path(
+        'auth/', PasswordLessLoginSignupView.as_view(),
+        name='passwordless_login_signup'
+    ),
     path(
         'login/', LoginView.as_view(
             template_name='users/login.html',

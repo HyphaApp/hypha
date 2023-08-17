@@ -213,7 +213,7 @@ DATETIME_INPUT_FORMATS = [
 
 AUTH_USER_MODEL = 'users.User'
 
-LOGIN_URL = 'users_public:login'
+LOGIN_URL = 'users_public:passwordless_login_signup'
 LOGIN_REDIRECT_URL = 'dashboard:dashboard'
 
 CUSTOM_AUTH_BACKEND = 'hypha.apply.users.backends.CustomModelBackend'
