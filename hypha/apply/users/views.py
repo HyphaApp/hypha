@@ -56,9 +56,9 @@ from .forms import (
     ProfileForm,
     TWOFAPasswordForm,
 )
-from .services import send_passwordless_login_signup_email
-from .utils import get_redirect_url, send_confirmation_email
+from .services import PasswordlessAuthService
 from .tokens import PasswordlessLoginTokenGenerator
+from .utils import get_redirect_url, send_confirmation_email
 
 User = get_user_model()
 
@@ -571,22 +571,17 @@ class PasswordResetConfirmView(DjPasswordResetConfirmView):
 @method_decorator(ratelimit(key='post:email', rate=settings.DEFAULT_RATE_LIMIT, method='POST'), name='dispatch')
 class PasswordLessLoginSignupView(TemplateView):
     template_name = 'users/passwordless_login_signup.html'
-    redirect_field_name = 'next'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['next'] = get_redirect_url(self.request, self.redirect_field_name)
-        return context
 
     def post(self, request):
         email = request.POST.get('email')
-        next_url = get_redirect_url(request, self.redirect_field_name)
-        send_passwordless_login_signup_email(
-            email=email,
-            request=request,
-            next_url=next_url
-        )
-        ctx = self.get_context_data()
+        email = email.strip() if email else None
+
+        service = PasswordlessAuthService(request)
+        service.initiate_login_signup(email=email)
+
+        ctx = {
+            'next': service.next_url
+        }
         return TemplateResponse(request, "users/partials/passwordless_login_signup_sent.html", ctx)
 
 
