@@ -11,6 +11,7 @@ from .views import (
     EmailChangePasswordView,
     LoginView,
     PasswordLessLoginSignupView,
+    PasswordlessLoginView,
     PasswordResetConfirmView,
     PasswordResetView,
     RegisterView,
@@ -90,6 +91,11 @@ urlpatterns = [
         path('two_factor/backup_tokens/password/', TWOFABackupTokensPasswordView.as_view(), name='backup_tokens_password'),
         path('two_factor/disable/', TWOFADisableView.as_view(), name='disable'),
         path('two_factor/admin/disable/<str:user_id>/', TWOFAAdminDisableView.as_view(), name='admin_disable'),
+        path(
+            'auth/<uidb64>/<token>/',
+            PasswordlessLoginView.as_view(),
+            name='do_passwordless_login'
+        ),
     ])),
 ]
 

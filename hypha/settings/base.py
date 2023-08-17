@@ -130,6 +130,7 @@ LANGUAGE_CODE = env.str('LANGUAGE_CODE', 'en')
 
 # Number of seconds that password reset and account activation links are valid (default 259200, 3 days).
 PASSWORD_RESET_TIMEOUT = env.int('PASSWORD_RESET_TIMEOUT', 259200)
+PASSWORDLESS_LOGIN_TIMEOUT = env.int('PASSWORDLESS_LOGIN_TIMEOUT', 7200)  # 2 hours
 
 # Seconds to enter password on password page while email change/2FA change (default 120).
 PASSWORD_PAGE_TIMEOUT = env.int('PASSWORD_PAGE_TIMEOUT', 120)

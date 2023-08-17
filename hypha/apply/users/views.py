@@ -58,6 +58,7 @@ from .forms import (
 )
 from .services import send_passwordless_login_signup_email
 from .utils import get_redirect_url, send_confirmation_email
+from .tokens import PasswordlessLoginTokenGenerator
 
 User = get_user_model()
 
@@ -587,3 +588,42 @@ class PasswordLessLoginSignupView(TemplateView):
         )
         ctx = self.get_context_data()
         return TemplateResponse(request, "users/partials/passwordless_login_signup_sent.html", ctx)
+
+
+class PasswordlessLoginView(TemplateView):
+    redirect_field_name = 'next'
+
+    def get(self, request, *args, **kwargs):
+        user = self.get_user(kwargs.get('uidb64'))
+
+        if self.is_valid(user, kwargs.get('token')):
+            user.backend = settings.CUSTOM_AUTH_BACKEND
+            login(request, user)
+            if redirect_url := get_redirect_url(request, self.redirect_field_name):
+                return redirect(redirect_url)
+
+            return redirect('dashboard:dashboard')
+
+        return render(request, 'users/activation/invalid.html')
+
+    def is_valid(self, user, token):
+        """
+        Verify that the activation token is valid and within the
+        permitted activation time window.
+        """
+
+        token_generator = PasswordlessLoginTokenGenerator()
+        return user is not None and token_generator.check_token(user, token)
+
+    def get_user(self, uidb64):
+        """
+        Given the verified uid, look up and return the
+        corresponding user account if it exists, or ``None`` if it
+        doesn't.
+        """
+        try:
+            return User.objects.get(**{
+                'pk': force_str(urlsafe_base64_decode(uidb64))
+            })
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            return None
