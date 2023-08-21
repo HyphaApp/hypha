@@ -1332,7 +1332,7 @@ class ProjectListView(SingleTableMixin, FilterView):
 
 
 @method_decorator(staff_or_finance_or_contracting_required, name='dispatch')
-class ProjectOverviewView(TemplateView):
+class AdminProjectOverviewView(TemplateView):
     template_name = 'application_projects/overview.html'
 
     def get_context_data(self, **kwargs):
@@ -1399,3 +1399,28 @@ class ProjectOverviewView(TemplateView):
             }
             for key, display in PROJECT_STATUS_CHOICES
         }
+
+
+class ApplicantProjectOverviewView(TemplateView):
+    template_name = 'application_projects/overview.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['projects'] = self.get_projects(self.request)
+        return context
+
+    def get_projects(self, request):
+        projects = Project.objects.filter(user=request.user).for_table()
+
+        return {
+            'filterset': ProjectListFilter(request.GET or None, request=request, queryset=projects),
+            'table': ProjectsListTable(projects, order_by=()),
+            'url': reverse('apply:projects:all'),
+        }
+
+
+class ProjectOverviewView(ViewDispatcher):
+    admin_view = AdminProjectOverviewView
+    finance_view = AdminProjectOverviewView
+    contracting_view = AdminProjectOverviewView
+    applicant_view = ApplicantProjectOverviewView

@@ -392,7 +392,7 @@ class AwaitingReviewSubmissionsListView(SingleTableMixin, ListView):
 
 
 @method_decorator(staff_required, name='dispatch')
-class SubmissionOverviewView(BaseAdminSubmissionsTable):
+class AdminSubmissionOverviewView(BaseAdminSubmissionsTable):
     template_name = 'funds/submissions_overview.html'
     table_class = SummarySubmissionsTable
     table_pagination = False
@@ -449,6 +449,20 @@ class SubmissionOverviewView(BaseAdminSubmissionsTable):
             'table': SummarySubmissionsTable(qs[:limit], prefix='staff-flagged-', attrs={'class': 'all-submissions-table flagged-table'}, row_attrs=row_attrs),
             'display_more': qs.count() > limit,
         }
+
+
+class ApplicantSubmissionOverviewView(BaseAdminSubmissionsTable):
+    template_name = 'funds/submissions_overview.html'
+    table_class = SummarySubmissionsTable
+    table_pagination = False
+
+    def get_table_data(self):
+        return super().get_table_data().filter(user=self.request.user).order_by(F('last_update').desc(nulls_last=True))
+
+
+class SubmissionOverviewView(ViewDispatcher):
+    admin_view = AdminSubmissionOverviewView
+    applicant_view = ApplicantSubmissionOverviewView
 
 
 class SubmissionAdminListView(BaseAdminSubmissionsTable, DelegateableListView):

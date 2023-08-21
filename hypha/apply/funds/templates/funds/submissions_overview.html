@@ -38,7 +38,9 @@
 
     <div class="wrapper wrapper--large wrapper--inner-space-medium">
 
+        {% if not request.user.is_applicant %}
         {% include "funds/includes/status-block.html" with type="Applications" %}
+        {% endif %}
 
         {% if closed_rounds or open_rounds %}
             {% include "funds/includes/round-block.html" with closed_rounds=closed_rounds open_rounds=open_rounds title=rounds_title page_type='submission' %}
@@ -50,9 +52,11 @@
                 {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term use_search=True filter_action=filter_action search_action=search_action use_batch_actions=False heading=all_submissions show_try_new_submissions_link=True%}
 
                 {% render_table table %}
+                {% if not request.user.is_applicant %}
                 <div class="all-submissions-table__more">
                     <a href="{% url 'apply:submissions:list' %}">{% trans "Show all" %}</a>
                 </div>
+                {% endif %}
             </div>
 
             {% if staff_flagged.table.data %}
