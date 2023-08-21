@@ -22,6 +22,7 @@ from hypha.apply.funds.tables import (
 )
 from hypha.apply.projects.filters import ProjectListFilter
 from hypha.apply.projects.models import Invoice, PAFApprovals, Project, ProjectSettings
+from hypha.apply.projects.models.payment import CHANGES_REQUESTED_BY_STAFF, PAID
 from hypha.apply.projects.models.project import INTERNAL_APPROVAL
 from hypha.apply.projects.permissions import has_permission
 from hypha.apply.projects.tables import (
@@ -770,19 +771,46 @@ class ApplicantDashboardView(TemplateView):
         my_active_submissions = list(self.my_active_submissions(self.request.user))
 
         context = super().get_context_data(**kwargs)
-        context["my_active_submissions"] = my_active_submissions
-        context["active_projects"] = self.active_project_data()
-        context["historical_projects"] = self.historical_project_data()
-        context["historical_submissions"] = self.historical_submission_data()
+        context['my_active_submissions'] = my_active_submissions
+        context['active_projects'] = self.active_project_data()
+        context['active_invoices'] = self.active_invoices()
+        context['my_tasks'] = self.my_tasks()
         return context
+
+    def my_tasks(self):
+        """ Tasks list:
+            1. Project waiting for counter-signed contract
+            2. Project waiting for contract document submissions.
+            3. Changes requested for invoices.
+            4. Reports due
+            5. Submissions: More information requested
+            6. Submissions: Proposal application for two step workflow
+
+        """
+        user_projects = Project.objects.filter(user=self.request.user)  # applicant's projects
+        projects_waiting_for_contract = user_projects.in_contracting().filter(contracts__isnull=False, contracts__signed_by_applicant=False).distinct()
+        projects_waiting_for_contract_documents = user_projects.in_contracting().filter(contracts__isnull=False, contracts__signed_by_applicant=True, submitted_contract_documents=False).distinct()
+        invoices_require_updates = Invoice.objects.filter(project__id__in=user_projects.values_list('id', flat=True), status=CHANGES_REQUESTED_BY_STAFF).distinct()
+
+        # :todo: add data for submissions and reports
+
+        return {
+            'count': (projects_waiting_for_contract.count() + projects_waiting_for_contract_documents.count()
+                      + invoices_require_updates.count()),
+            'tasks': {
+                'projects_waiting_for_contract': projects_waiting_for_contract,
+                'projects_waiting_for_contract_documents': projects_waiting_for_contract_documents,
+                'invoices_require_updates': invoices_require_updates,
+            }
+        }
 
     def active_project_data(self):
         active_projects = (
             Project.objects.filter(user=self.request.user).active().for_table()
         )
         return {
-            "count": active_projects.count(),
-            "table": ProjectsDashboardTable(data=active_projects),
+            'count': active_projects.count(),
+            'data': active_projects,
         }
 
     def my_active_submissions(self, user):
@@ -798,27 +826,11 @@ class ApplicantDashboardView(TemplateView):
         for submission in active_subs:
             yield submission.from_draft()
 
-    def historical_project_data(self):
-        historical_projects = (
-            Project.objects.filter(user=self.request.user).complete().for_table()
-        )
+    def active_invoices(self):
+        active_invoices = Invoice.objects.filter(project__user=self.request.user).exclude(status=PAID)
         return {
-            "count": historical_projects.count(),
-            "table": ProjectsDashboardTable(data=historical_projects),
-        }
-
-    def historical_submission_data(self):
-        historical_submissions = (
-            ApplicationSubmission.objects.filter(
-                user=self.request.user,
-            )
-            .inactive()
-            .current()
-            .for_table(self.request.user)
-        )
-        return {
-            "count": historical_submissions.count(),
-            "table": SubmissionsTable(data=historical_submissions),
+            'count': active_invoices.count(),
+            'data': active_invoices
         }
 
 

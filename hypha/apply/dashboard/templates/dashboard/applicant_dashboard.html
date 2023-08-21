@@ -1,84 +1,107 @@
 {% extends "base-apply.html" %}
 {% load render_table from django_tables2 %}
-{% load i18n static wagtailcore_tags workflow_tags statusbar_tags heroicons %}
+{% load i18n static wagtailcore_tags workflow_tags heroicons statusbar_tags dashboard_statusbar_tags apply_tags invoice_tools %}
 
 {% block title %}{% trans "Dashboard" %}{% endblock %}
 
 {% block content %}
-    {% adminbar %}
-        {% slot header %}{% trans "Dashboard" %}{% endslot %}
-        {% slot sub_heading %}{% trans "An overview of active and past submissions and projects" %}{% endslot %}
-
-        <div class="wrapper wrapper--cta-box">
-            <h3 class="text-xl mb-0">{% trans "Submit a new application" %}</h3>
-            <p class="mt-0 mb-4 text-fg-muted text-sm">{% trans "Apply now for our open rounds" %}</p>
-            <a class="button button--primary" href="{% pageurl APPLY_SITE.root_page %}" class="button">{% trans "Apply" %}</a>
+<div class="admin-bar">
+    <div class="admin-bar__inner wrapper--applicant-dashboard">
+        <div>
+            <h3 class="heading heading--no-margin">{% trans "My dashboard" %}</h3>
+            <h5>{% trans "An overview of active and past submissions and projects" %}</h5>
         </div>
-    {% endadminbar %}
-
-    <div class="wrapper wrapper--large wrapper--inner-space-medium mb-4">
-        <h2 class="text-xl mb-2">
-            {% trans "Your active submissions" %}
-        </h2>
-        <div class="">
-            {% for submission in my_active_submissions %}
-                <div class="wrapper wrapper--status-bar-outer">
-                    <div class="wrapper wrapper--status-bar-inner">
-                        <div class="flex max-w-sm sm:max-w-lg flex-col gap-2 md:flex-row md:justify-between md:w-full md:max-w-none lg:flex-col lg:justify-start lg:w-auto lg:max-w-sm">
-                            <div>
-                                <h3 class="heading heading--no-margin text-base font-bold">
-                                    <a class="link link--underlined" href="{% url 'funds:submissions:detail' submission.id %}">
-                                        {{ submission.title }}
-                                    </a>
-                                </h3>
-                                <p class="heading heading--no-margin text-fg-muted text-sm">
-                                    {% trans "Submitted" %}: {{ submission.submit_time.date }} {% trans "by" %} {{ submission.user.get_full_name }}
-                                </p>
-                            </div>
-                            {% if request.user|has_edit_perm:submission %}
-                                <div>
-                                    <a class="button button--primary" href="{% url 'funds:submissions:edit' submission.id %}">
-                                        {% if submission.status == 'draft_proposal' %}
-                                            {% trans "Start your" %} {{ submission.stage }} {% trans "application" %}
-                                        {% else %}
-                                            <span class="whitespace-nowrap">
-                                                {% heroicon_mini "pencil-square" size=18 class="inline mr-1 align-text-bottom" aria_hidden=true %}
-                                                {% trans "Edit" %}
-                                            </span>
-                                        {% endif %}
-                                    </a>
-                                </div>
-                            {% endif %}
-
-                        </div>
-                        {% status_bar submission.workflow submission.phase request.user css_class="status-bar--small" %}
-                    </div>
-                </div>
-            {% empty %}
-                {% trans "No active submissions" %}
-            {% endfor %}
+        <div class="wrapper wrapper--cta-box flex items-center">
+            <div class="flex-1">
+            <h4 class="heading heading--no-margin">{% trans "Submit a new application" %}</h4>
+            <h6 class="heading text-base heading--no-margin">{% trans "Apply now for our open rounds" %}</h6>
+            </div>
+            <div>
+            <a class="button button--blue-white" href="{% pageurl APPLY_SITE.root_page %}" class="button">{% trans "Apply" %}</a>
+            </div>
         </div>
     </div>
+</div>
 
-    {% if active_projects.count %}
-        <div class="wrapper wrapper--large wrapper--inner-space-medium mb-8">
-            <h2 class="text-xl mb-2">{% trans "Your active projects" %}</h2>
-            {% render_table active_projects.table %}
+<div class="wrapper wrapper--large wrapper--inner-space-medium">
+    {% if my_tasks.count %}
+        <h3 class="text-center">{% trans "My tasks" %}</h3>
+        <div class="w-8/12 m-auto mb-10">
+            {% for project in my_tasks.tasks.projects_waiting_for_contract %}
+            <div class="bg-white p-1 flex mb-1 items-center">
+                <svg class="icon icon--dashboard-tasks"><use xlink:href="#dashboard-contract"></use></svg>
+                <p class="flex-1">{% trans "Project " %}'<a href="{{ project.get_absolute_url }}">{{ project.title }}</a>'{% trans " is waiting for contract" %}</p>
+                <a class="button button-primary m-2" href="{{ project.get_absolute_url }}">View</a>
+            </div>
+            {% endfor %}
+            {% for project in my_tasks.tasks.projects_waiting_for_contract_documents %}
+            <div class="bg-white p-1 flex mb-1 items-center">
+                <svg class="icon icon--dashboard-tasks"><use xlink:href="#dashboard-document"></use></svg>
+                <p class="flex-1">{% trans "Project " %}'<a href="{{ project.get_absolute_url }}">{{ project.title }}</a>'{% trans " is waiting for contract document submissions" %}</p>
+                <a class="button button-primary m-2" href="{{ project.get_absolute_url }}">View</a>
+            </div>
+            {% endfor %}
+            {% for invoice in my_tasks.tasks.invoices_require_updates %}
+            <div class="bg-white p-1 flex mb-1 items-center">
+                <svg class="icon icon--dashboard-tasks"><use xlink:href="#dashboard-invoice"></use></svg>
+                <p class="flex-1">{% trans "Changes requested for invoice " %}'<a href="{{ invoice.get_absolute_url }}">{{ invoice.invoice_number }}</a>'</p>
+                <a class="button button-primary m-2" href="{{ invoice.get_absolute_url }}">View</a>
+            </div>
+            {% endfor %}
         </div>
     {% endif %}
-
-    {% if historical_submissions.count %}
-        <div class="wrapper wrapper--large wrapper--inner-space-medium mb-8">
-            <h2 class="text-xl mb-2">{% trans "Submission history" %}</h3>
-            {% render_table historical_submissions.table %}
+    <h3>{% trans "My active submissions" %}</h3>
+    {% for submission in my_active_submissions %}
+        <div class="wrapper wrapper--status-bar-outer">
+            <div class="wrapper wrapper--status-bar-inner">
+                <div>
+                    <h5 class="heading heading--no-margin"><a class="link link--underlined" href="{% url 'funds:submissions:detail' submission.id %}">{{ submission.title }}</a></h5>
+                    <h6 class="heading heading--no-margin heading--submission-meta"><span>{% trans "Submitted" %}:</span> {{ submission.submit_time.date }} {% trans "by" %} {{ submission.user.get_full_name }}</h6>
+                </div>
+            </div>
         </div>
-    {% endif %}
-
-    {% if historical_projects.count %}
-        <div class="wrapper wrapper--large wrapper--inner-space-medium mb-8">
-            <h2 class="text-xl mb-2">{% trans "Project history" %}</h2>
-            {% render_table historical_projects.table %}
+    {% empty %}
+        {% trans "No active submissions" %}
+    {% endfor %}
+    <h3>{% trans "My active projects" %}</h3>
+    {% for project in active_projects.data %}
+        <div class="wrapper wrapper--status-bar-outer">
+            <div class="wrapper wrapper--status-bar-inner">
+                <div>
+                    <h5 class="heading heading--no-margin"><a class="link link--underlined" href="{% url 'apply:projects:detail' project.id %}">{{ project.title }}</a></h5>
+                    <h6 class="heading heading--no-margin heading--submission-meta"><span>{% trans "Project start date: " %}:</span> {{ project.created_at }}</h6>
+                </div>
+                {% project_status_bar project.status request.user css_class="status-bar--small" %}
+            </div>
         </div>
-    {% endif %}
+    {% empty %}
+        {% trans "No active projects" %}
+    {% endfor %}
+
+    <h3>{% trans "My active invoices" %}</h3>
+    {% for invoice in active_invoices.data %}
+        <div class="wrapper wrapper--status-bar-outer">
+            <div class="wrapper wrapper--status-bar-inner">
+                <div class="max-w-[33%] w-full text-left">
+                    <h5 class="heading heading--no-margin"><a class="link link--underlined" href="{{ invoice.get_absolute_url }}">
+                        {% if invoice.invoice_number %}{{ invoice.invoice_number }}{% else %}{{ invoice.vendor_document_number }}{% endif %}
+                    </a></h5>
+                    <h6 class="heading heading--no-margin heading--submission-meta"><span>{% trans "Date added: " %}:</span> {{ invoice.requested_at }}</h6>
+                </div>
+                <div class="max-w-[33%] w-full text-center">
+                    <h6 class="font-normal text-xl">{% if invoice.invoice_amount %}{{ invoice.invoice_amount | format_number_as_currency }}{% else %}-{% endif %}</h6>
+                </div>
+                <div class="max-w-[33%] w-full flex">
+                    <div class="w-full flex-1"></div>
+                    <div class="max-w-fit w-full text-right">
+                        <h6 class="{{ invoice.get_status_display|invoice_status_bg_colour }} font-normal text-base">{{ invoice.get_status_display }}</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        {% trans "No active invoices" %}
+    {% endfor %}
+</div>
 
 {% endblock %}
