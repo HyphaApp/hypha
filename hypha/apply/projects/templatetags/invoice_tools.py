@@ -9,6 +9,7 @@ from hypha.apply.projects.models.project import (
     INVOICING_AND_REPORTING,
     ProjectSettings,
 )
+from hypha.apply.projects.models.payment import INVOICE_STATUS_BG_COLORS
 from hypha.apply.projects.utils import get_invoice_public_status
 
 register = template.Library()
@@ -98,3 +99,8 @@ def display_invoice_status_for_user(user, invoice):
     if user.is_apply_staff or user.is_contracting or user.is_finance:
         return invoice.status_display
     return get_invoice_public_status(invoice_status=invoice.status)
+
+
+@register.filter
+def invoice_status_bg_colour(invoice_status):
+    return INVOICE_STATUS_BG_COLORS.get(invoice_status, 'bg-gray-200')
