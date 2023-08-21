@@ -412,9 +412,9 @@ class AwaitingReviewSubmissionsListView(SingleTableMixin, ListView):
         return submissions.for_table(self.request.user)
 
 
-@method_decorator(staff_required, name="dispatch")
-class SubmissionOverviewView(BaseAdminSubmissionsTable):
-    template_name = "funds/submissions_overview.html"
+@method_decorator(staff_required, name='dispatch')
+class AdminSubmissionOverviewView(BaseAdminSubmissionsTable):
+    template_name = 'funds/submissions_overview.html'
     table_class = SummarySubmissionsTable
     table_pagination = False
     filter_action = reverse_lazy("funds:submissions:list")
@@ -492,6 +492,20 @@ class SubmissionOverviewView(BaseAdminSubmissionsTable):
             ),
             "display_more": qs.count() > limit,
         }
+
+
+class ApplicantSubmissionOverviewView(BaseAdminSubmissionsTable):
+    template_name = 'funds/submissions_overview.html'
+    table_class = SummarySubmissionsTable
+    table_pagination = False
+
+    def get_table_data(self):
+        return super().get_table_data().filter(user=self.request.user).order_by(F('last_update').desc(nulls_last=True))
+
+
+class SubmissionOverviewView(ViewDispatcher):
+    admin_view = AdminSubmissionOverviewView
+    applicant_view = ApplicantSubmissionOverviewView
 
 
 class SubmissionAdminListView(BaseAdminSubmissionsTable, DelegateableListView):
