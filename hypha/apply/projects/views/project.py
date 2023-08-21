@@ -89,6 +89,7 @@ from ..models.project import (
 from ..models.report import Report
 from ..permissions import has_permission
 from ..tables import InvoiceListTable, ProjectsListTable, ReportListTable
+from ..utils import get_paf_status_display
 from ..views.payment import ChangeInvoiceStatusView
 from .report import ReportFrequencyUpdate, ReportingMixin
 
@@ -531,7 +532,7 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
         comment = form.cleaned_data.get('comment', '')
 
         paf_status_update_message = _('<p>{role} has updated PAF status to {paf_status}.</p>').format(
-            role=paf_approval.paf_reviewer_role.label, paf_status=paf_status)
+            role=paf_approval.paf_reviewer_role.label, paf_status=get_paf_status_display(paf_status).lower())
         Activity.objects.create(
             user=self.request.user,
             type=ACTION,
@@ -586,7 +587,7 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
 
         if form.cleaned_data['comment']:
 
-            comment = f"<p>{form.cleaned_data['comment']}.</p>"
+            comment = f"<p>\"{form.cleaned_data['comment']}.\"</p>"
 
             message = paf_status_update_message + comment
 

@@ -14,6 +14,7 @@ from .models.payment import (
     RESUBMITTED,
     SUBMITTED,
 )
+from .models.project import PAF_STATUS_CHOICES
 
 
 def fetch_and_save_deliverables(project_id):
@@ -102,6 +103,10 @@ def create_invoice(invoice):
             create_intacct_invoice,
         )
         create_intacct_invoice(invoice)
+
+
+def get_paf_status_display(paf_status):
+    return dict(PAF_STATUS_CHOICES)[paf_status]
 
 
 # Invoices public statuses

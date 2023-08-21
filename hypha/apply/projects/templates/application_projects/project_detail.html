@@ -185,7 +185,7 @@
                                             <svg class="icon icon--request-changes"><use xlink:href="#request-changes"></use></svg>
                                         </div>
                                         <div>
-                                            <p class="sidebar__paf-approvals--approved m-0">{% trans "Requested changes by " %}{{ paf_approval.user }}</p>
+                                            <p class="sidebar__paf-approvals--approved m-0">{% trans "Request changes or more information by " %}{{ paf_approval.user }}</p>
                                             {% get_comment_for_requested_approval paf_approval as rejected_comment %}
                                             {% if rejected_comment %}
                                                 <a href="#communications#{{ rejected_comment.id }}" class="font-bold" target="_blank">View comment</a>
