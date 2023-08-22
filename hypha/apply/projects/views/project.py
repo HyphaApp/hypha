@@ -1130,7 +1130,7 @@ class ContractDocumentPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
 
 @method_decorator(staff_or_finance_or_contracting_required, name="dispatch")
 class ProjectDetailApprovalView(DelegateableView, DetailView):
-    form_views = [ChangePAFStatusView]
+    form_views = [ChangePAFStatusView, UpdateAssignApproversView]
     model = Project
     template_name_suffix = "_approval_detail"
 
