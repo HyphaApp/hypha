@@ -28,8 +28,6 @@
     </div>
 
     {% if show_change_password and user.has_usable_password and not backends.associated %}
-        <br>
-        <hr>
         <div class="profile__column">
             <h3>{% trans "Account Security" %}</h3>
             <h4>{% trans "Password" %}</h4>
@@ -48,18 +46,17 @@
     {% endif %}
 
 
+    {% if swappable_form %}
     <div class="profile__column">
-        {% if swappable_form %}
-            <h3>{% trans "Become" %}:</h3>
-            <form action="{% url 'users:become' %}" method="post" class="form">
-                {{ swappable_form.media }}
-                {% csrf_token %}
-                {% for field in swappable_form %}
-                    {% include "forms/includes/field.html" %}
-                {% endfor %}
-                <button class="button button--primary" type="submit">{% trans "Become" %}</button>
-            </form>
-        {% endif %}
+        <h3>{% trans "Become" %}:</h3>
+        <form action="{% url 'users:become' %}" method="post" class="form">
+            {{ swappable_form.media }}
+            {% csrf_token %}
+            {% for field in swappable_form %}
+                {% include "forms/includes/field.html" %}
+            {% endfor %}
+            <button class="button button--primary" type="submit">{% trans "Become" %}</button>
+        </form>
 
         {# Remove the comment block tags below when such need arises. e.g. adding new providers #}
         {% comment %}
@@ -69,5 +66,6 @@
         {% endif %}
         {% endcomment %}
     </div>
+    {% endif %}
 </div>
 {% endblock %}
