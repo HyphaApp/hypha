@@ -14,8 +14,11 @@ from .models.payment import (
     RESUBMITTED,
     SUBMITTED,
 )
-
-from .models.project import PAF_STATUS_CHOICES, PROJECT_PUBLIC_STATUSES, PROJECT_STATUS_CHOICES
+from .models.project import (
+    PAF_STATUS_CHOICES,
+    PROJECT_PUBLIC_STATUSES,
+    PROJECT_STATUS_CHOICES,
+)
 
 
 def fetch_and_save_deliverables(project_id):
