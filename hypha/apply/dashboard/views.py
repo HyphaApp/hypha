@@ -21,7 +21,7 @@ from hypha.apply.funds.tables import (
 )
 from hypha.apply.projects.filters import ProjectListFilter
 from hypha.apply.projects.models import Invoice, PAFApprovals, Project, ProjectSettings
-from hypha.apply.projects.models.payment import CHANGES_REQUESTED_BY_STAFF, PAID
+from hypha.apply.projects.models.payment import CHANGES_REQUESTED_BY_STAFF, PAID, APPROVED_BY_STAFF, APPROVED_BY_FINANCE_1, CHANGES_REQUESTED_BY_FINANCE_2
 from hypha.apply.projects.models.project import INTERNAL_APPROVAL
 from hypha.apply.projects.permissions import has_permission
 from hypha.apply.projects.tables import (
@@ -233,16 +233,45 @@ class FinanceDashboardView(MyFlaggedMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        invoices = self.invoices_for_approval()
+        paf_for_approval = self.paf_waiting_for_approval()
+        paf_for_assignment = self.paf_waiting_for_approver_assignment()
 
         context.update({
-            'active_invoices': self.active_invoices(),
-            'invoices_for_approval': self.invoices_for_approval(),
-            'invoices_to_convert': self.invoices_to_convert(),
-            'paf_waiting_for_approval': self.paf_waiting_for_approval(),
-            'paf_waiting_for_assignment': self.paf_waiting_for_approver_assignment(),
+            'my_tasks': {
+                'count': (invoices['count'] + paf_for_approval['count'] + paf_for_assignment['count']),
+                'tasks': {
+                    'invoices_for_approval': invoices,
+                    'paf_waiting_for_approval': paf_for_approval,
+                    'paf_waiting_for_assignment': paf_for_assignment,
+                }
+            },
+            'cards': self.get_cards(),
         })
 
         return context
+
+    def get_cards(self):
+        paf_count = Project.objects.filter(status=INTERNAL_APPROVAL).count()
+        invoice_count = Invoice.objects.filter(status__in=[APPROVED_BY_FINANCE_1, APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_2]).count()
+
+        return [
+            {
+                'name': 'PAFs',
+                'count': paf_count,
+                'url': ''
+            },
+            {
+                'name': 'Invoices',
+                'count': invoice_count,
+                'url': ''
+            },
+            {
+                'name': 'Reports',
+                'count': 0,
+                'url': ''
+            }
+        ]
 
     def active_invoices(self):
         if self.request.user.is_finance_level_2:
@@ -251,8 +280,8 @@ class FinanceDashboardView(MyFlaggedMixin, TemplateView):
             invoices = Invoice.objects.for_finance_1()
 
         return {
-            'count': invoices.count(),
-            'table': InvoiceDashboardTable(invoices),
+            'count': invoices.count() if invoices.count() else 0,
+            'data': invoices,
         }
 
     def paf_waiting_for_approver_assignment(self):
@@ -276,8 +305,8 @@ class FinanceDashboardView(MyFlaggedMixin, TemplateView):
                     projects = projects.exclude(id=project.id)
 
         return {
-            'count': projects.count(),
-            'table': ProjectsAssigneeDashboardTable(projects),
+            'count': projects.count() if projects.count() else 0,
+            'data': projects,
         }
 
     def invoices_for_approval(self):
@@ -287,20 +316,20 @@ class FinanceDashboardView(MyFlaggedMixin, TemplateView):
             invoices = Invoice.objects.approved_by_staff()
 
         return {
-            'count': invoices.count(),
-            'table': InvoiceDashboardTable(invoices)
+            'count': invoices.count() if invoices.count() else 0,
+            'data': invoices
         }
 
     def invoices_to_convert(self):
         if settings.INVOICE_EXTENDED_WORKFLOW and self.request.user.is_finance_level_1:
             return {
-                'count': None,
-                'table': None,
+                'count': 0,
+                'data': None,
             }
         invoices = Invoice.objects.waiting_to_convert()
         return {
-            'count': invoices.count(),
-            'table': InvoiceDashboardTable(invoices),
+            'count': invoices.count() if invoices.count() else 0,
+            'data': invoices,
         }
 
     def paf_waiting_for_approval(self):
@@ -309,15 +338,8 @@ class FinanceDashboardView(MyFlaggedMixin, TemplateView):
             user=self.request.user,
         ).exists():
             return {
-                'count': None,
-                'awaiting_your_approval': {
-                    'count': None,
-                    'table': None,
-                },
-                'approved_by_you': {
-                    'count': None,
-                    'table': None,
-                }
+                'count': 0,
+                'data': None,
             }
 
         waiting_paf_approval = Project.objects.internal_approval().for_table()
@@ -346,14 +368,7 @@ class FinanceDashboardView(MyFlaggedMixin, TemplateView):
 
         return {
             'count': len(awaiting_user_approval) + len(approved_by_user),
-            'awaiting_your_approval': {
-                'count': len(awaiting_user_approval),
-                'table': ProjectsDashboardTable(data=awaiting_user_approval),
-            },
-            'approved_by_you': {
-                'count': len(approved_by_user),
-                'table': ProjectsDashboardTable(data=approved_by_user),
-            }
+            'data': awaiting_user_approval,
         }
 
 

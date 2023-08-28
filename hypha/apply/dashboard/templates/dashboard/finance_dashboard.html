@@ -6,88 +6,53 @@
 
 {% block content %}
     <div class="admin-bar">
-        <div class="admin-bar__inner admin-bar__inner--with-button">
+        <div class="text-center">
             {% block page_header %}
-                <h1 class="gamma heading heading--no-margin heading--bold">{% trans "Dashboard" %}</h1>
+                <h1 class="gamma heading heading--no-margin heading--bold">{% trans "My dashboard" %}</h1>
+                <span>{% trans "Here’s a list of items that need attention" %}</span>
             {% endblock %}
-            <a href="{% url 'wagtailadmin_home' %}" class="button button--primary button--arrow-pixels-white">
-                {% trans "Apply admin" %}
-                <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
-            </a>
         </div>
     </div>
     <div class="wrapper wrapper--large wrapper--inner-space-medium">
-        <div class="wrapper wrapper--bottom-space"
-            role="tablist" aria-label="Invoice Tabs"
-            x-data="{ tab: '{% trans "Active" %}' }"
-        >
-            <section class="section section--with-options">
-                <h4 class="heading heading--normal heading--no-margin">{% trans 'Invoices' %} </h4>
-                <nav>
-                    <a class="tab__item tab__item--alt"
-                        role="tab"
-                        href="#"
-                        id="tab-invoices-active"
-                        aria-controls="panel-invoices-active"
-                        :class="{ 'tab__item--active': tab === '{% trans "Active" %}' }"
-                        @click.prevent="tab = '{% trans "Active" %}'"
-                    >{% trans "Active Invoices" %}</a>
-                    <a class="tab__item tab__item--alt"
-                        role="tab"
-                        href="#"
-                        id="tab-invoices-for-approval"
-                        aria-controls="panel-invoices-for-approval"
-                        :class="{ 'tab__item--active': tab === '{% trans "For Approval" %}' }"
-                        @click.prevent="tab = '{% trans "For Approval" %}'"
-                    >{% trans "For Approval" %}</a>
-                    <a class="tab__item tab__item--alt"
-                        role="tab"
-                        href="#"
-                        id="tab-invoices-for-conversion"
-                        aria-controls="panel-invoices-for-conversion"
-                        :class="{ 'tab__item--active': tab === '{% trans "For Conversion" %}' }"
-                        @click.prevent="tab = '{% trans "For Conversion" %}'"
-                    >{% trans "For Conversion" %}</a>
-                </nav>
+        <div class="wrapper wrapper--bottom-space">
+            <section class="w-8/12 m-auto">
+                <h3>{% trans "Overview" %}</h3>
+                <ul class="flex border-l border-b border-t border-solid">
+                    {% for card in cards %}
+                        <a class="w-full p-2 bg-white hover:bg-grey focus:bg-grey border-r border-solid border-grey" href="{{ card.url }}">
+                        <li>
+                            <h5 class="status-block__title">{{ card.name }}</h5>
+                            <p class="text-grey">{{ card.count }}</p>
+                        </li>
+                        </a>
+                    {% endfor %}
+                </ul>
             </section>
-
-            {# Active invoices tab #}
-            <div x-show="tab === '{% trans "Active" %}'" role="tabpanel" tabindex="0" aria-labelledby="tab-invoices-active" id="panel-invoices-active">
-                {% if active_invoices.count %}
-                    {% render_table active_invoices.table %}
-                {% else %}
-                    {% trans "No Active Invoices" %}
-                {% endif %}
-            </div>
-
-            {# Waiting for approval tab #}
-            <div x-show="tab === '{% trans "For Approval" %}'" role="tabpanel" tabindex="0" aria-labelledby="tab-invoices-for-approval" id="panel-invoices-for-approval">
-                {% if invoices_for_approval.count %}
-                    {% render_table invoices_for_approval.table %}
-                {% else %}
-                    {% trans "No Invoices for Approval " %}
-                {% endif %}
-            </div>
-
-            {# Waiting for conversion tab #}
-            <div x-show="tab === '{% trans "For Conversion" %}'" role="tabpanel" tabindex="0" aria-labelledby="tab-invoices-for-conversion" id="panel-invoices-for-conversion">
-                {% if invoices_to_convert.count %}
-                    {% render_table invoices_to_convert.table %}
-                {% else %}
-                    {% trans "No Invoices for Conversion " %}
-                {% endif %}
-            </div>
-
         </div>
-
-    {% if paf_waiting_for_approval.count %}
-        {% include "dashboard/includes/paf_waiting_for_approval.html" with paf_waiting_for_approval=paf_waiting_for_approval %}
-    {% endif %}
-
-    {% if paf_waiting_for_assignment.count %}
-        <div id="paf_waiting_for_assignment" class="wrapper wrapper--bottom-space">
-            <h4 class="heading heading--normal">{% trans "PAF waiting for assignee" %}</h4>
-            {% render_table paf_waiting_for_assignment.table %}
+        {% if my_tasks.count %}
+        <div class="w-8/12 m-auto mb-10">
+            <h3 >{% trans "My tasks" %}</h3>
+            {% for invoice in my_tasks.tasks.invoices_for_approval.data %}
+            <div class="bg-white p-1 flex mb-1 items-center">
+                <svg class="icon icon--dashboard-tasks"><use xlink:href="#dashboard-invoice"></use></svg>
+                <p class="flex-1">{% trans "Invoice " %}'<a href="{{ invoice.get_absolute_url }}">{{ invoice.invoice_number }}</a>'{% trans " is waiting for your approval" %}</p>
+                <a class="button button-primary m-2" href="{{ invoice.get_absolute_url }}">View</a>
+            </div>
+            {% endfor %}
+            {% for project in my_tasks.tasks.paf_waiting_for_assignment.data %}
+            <div class="bg-white p-1 flex mb-1 items-center">
+                <svg class="icon icon--dashboard-tasks"><use xlink:href="#dashboard-paf"></use></svg>
+                <p class="flex-1">{% trans "PAF project " %}'<a href="{{ project.get_absolute_url }}">{{ project.title }}</a>'{% trans " is waiting for your approval" %}</p>
+                <a class="button button-primary m-2" href="{% url 'apply:projects:approval' pk=project.pk %}">View</a>
+            </div>
+            {% endfor %}
+            {% for project in my_tasks.tasks.paf_waiting_for_approval.data %}
+            <div class="bg-white p-1 flex mb-1 items-center">
+                <svg class="icon icon--dashboard-tasks"><use xlink:href="#dashboard-paf"></use></svg>
+                <p class="flex-1">{% trans "PAF project " %}'<a href="{{ project.get_absolute_url }}">{{ project.title }}</a>'{% trans " is waiting for assignee" %}</p>
+                <a class="button button-primary m-2" href="{% url 'apply:projects:approval' pk=project.pk %}">View</a>
+            </div>
+            {% endfor %}
         </div>
     {% endif %}
     </div>
