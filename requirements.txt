@@ -49,7 +49,7 @@ phonenumberslite==8.13.4
 Pillow==9.4.0
 psycopg2-binary
 qrcode==7.4.2
-reportlab==3.6.12
+reportlab==3.6.13
 social_auth_app_django==5.0.0
 tablib==3.3.0
 tomd==0.1.3
