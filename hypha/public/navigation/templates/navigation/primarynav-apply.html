@@ -8,10 +8,13 @@
         {% elif request.user.is_finance or request.user.is_contracting %}
             {% include "navigation/primarynav-apply-item.html" with name="My dashboard" url="dashboard:dashboard" %}
             {% include "navigation/primarynav-apply-item.html" with name="Projects" url="apply:projects:overview" %}
+            {% include "navigation/primarynav-apply-item.html" with name="Invoices" url="apply:projects:invoices" %}
         {% elif request.user.is_applicant %}
             {% include "navigation/primarynav-apply-item.html" with name="My dashboard" url="dashboard:dashboard" %}
             {% include "navigation/primarynav-apply-item.html" with name="Submissions" url="funds:submissions:overview" %}
             {% include "navigation/primarynav-apply-item.html" with name="Projects" url="apply:projects:overview" %}
+            {% include "navigation/primarynav-apply-item.html" with name="Invoices" url="apply:projects:invoices" %}
+            {% include "navigation/primarynav-apply-item.html" with name="Reports" url="apply:projects:reports:all" %}
         {% else %}
             {% include "navigation/primarynav-apply-item.html" with name="My dashboard" url="dashboard:dashboard" %}
         {% endif %}
