@@ -33,50 +33,6 @@
             <article class="wrapper--sidebar--inner">
                 <h4>{% trans "Project Information" %}</h4>
                 <div class="card card--solid">
-                    <div class="grid grid--proposal-info">
-                        <div>
-                            <p class="font-bold">{% trans "Proposed start date" %}</p>
-                            <p>{{ object.proposed_start|date:"DATE_FORMAT"|default:"-" }}</p>
-                        </div>
-
-                        <div>
-                            <p class="font-bold">{% trans "Project Proposed end date" %}</p>
-                            <p>{{ object.proposed_end|date:"DATE_FORMAT"|default:"-" }}</p>
-                        </div>
-
-                        <div>
-                            <p class="font-bold">{% trans "Legal name" %}</p>
-                            <p>{{ object.contact_legal_name|default:"-" }}</p>
-                        </div>
-
-                        <div>
-                            <p class="font-bold">{% trans "E-mail" %}</p>
-                            <p>{{ object.contact_email|default:"-" }}</p>
-                        </div>
-
-                        <div>
-                            <p class="font-bold">{% trans "Address" %}</p>
-                            <p>{{ object.get_address_display|default:"-"}}</p>
-                        </div>
-
-                        <div>
-                            <p class="font-bold">{% trans "Phone" %}</p>
-                            <p>{{ object.phone|default:"-" }}</p>
-                        </div>
-
-                        <div>
-                            <h5>{% trans "Value" %}</h5>
-                            <p>{{ object.value|default:"-"|format_number_as_currency }}</p>
-                        </div>
-
-                        {% if object.sent_to_compliance_at %}
-                        <div>
-                            <p class="font-bold">{% trans "Sent to Compliance" %}</p>
-                            <p>{{ object.sent_to_compliance_at|date:"DATE_FORMAT" }}</p>
-                        </div>
-                        {% endif %}
-
-                    </div>
 
                     {% if object.output_answers %}
                         <div class="simplified__paf_answers">
