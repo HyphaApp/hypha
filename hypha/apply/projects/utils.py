@@ -14,7 +14,11 @@ from .models.payment import (
     RESUBMITTED,
     SUBMITTED,
 )
-from .models.project import PAF_STATUS_CHOICES
+from .models.project import (
+    PAF_STATUS_CHOICES,
+    PROJECT_PUBLIC_STATUSES,
+    PROJECT_STATUS_CHOICES,
+)
 
 
 def fetch_and_save_deliverables(project_id):
@@ -125,3 +129,11 @@ def get_invoice_public_status(invoice_status):
         return _('Declined')
     if invoice_status == PAID:
         return _('Paid')
+
+
+def get_project_status_display_value(project_status):
+    return dict(PROJECT_STATUS_CHOICES)[project_status]
+
+
+def get_project_public_status(project_status):
+    return dict(PROJECT_PUBLIC_STATUSES)[project_status]

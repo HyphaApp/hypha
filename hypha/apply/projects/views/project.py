@@ -76,6 +76,7 @@ from ..models.project import (
     INTERNAL_APPROVAL,
     INVOICING_AND_REPORTING,
     PROJECT_ACTION_MESSAGE_TAG,
+    PROJECT_PUBLIC_STATUSES,
     PROJECT_STATUS_CHOICES,
     REQUEST_CHANGE,
     Contract,
@@ -103,7 +104,7 @@ class SendForApprovalView(DelegatedViewMixin, UpdateView):
 
     def form_valid(self, form):
         project = self.kwargs['object']
-        old_stage = project.get_status_display()
+        old_stage = project.status
 
         response = super().form_valid(form)
 
@@ -358,7 +359,7 @@ class ApproveContractView(DelegatedViewMixin, UpdateView):
             form.instance.project = self.project
             response = super().form_valid(form)
 
-            old_stage = self.project.get_status_display()
+            old_stage = self.project.status
 
             messenger(
                 MESSAGES.APPROVE_CONTRACT,
@@ -602,7 +603,7 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
             )
 
         if self.object.is_approved_by_all_paf_reviewers:
-            old_stage = self.object.get_status_display()
+            old_stage = self.object.status
             self.object.is_locked = True
             self.object.status = CONTRACTING
             self.object.save(update_fields=['is_locked', 'status'])
@@ -631,7 +632,7 @@ class ChangeProjectstatusView(DelegatedViewMixin, UpdateView):
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
-        old_stage = self.project.get_status_display()
+        old_stage = self.project.status
 
         response = super().form_valid(form)
 
@@ -815,6 +816,8 @@ class AdminProjectDetailView(
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['statuses'] = PROJECT_STATUS_CHOICES
+        context['current_status_index'] = [status for status, _ in PROJECT_STATUS_CHOICES].index(self.object.status)
         project_settings = ProjectSettings.for_request(self.request)
         context['project_settings'] = project_settings
         context['paf_approvals'] = PAFApprovals.objects.filter(project=self.object)
@@ -866,6 +869,8 @@ class ApplicantProjectDetailView(
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['statuses'] = PROJECT_PUBLIC_STATUSES
+        context['current_status_index'] = [status for status, _ in PROJECT_PUBLIC_STATUSES].index(self.object.status)
         context['all_contract_document_categories'] = ContractDocumentCategory.objects.all()
         context['remaining_contract_document_categories'] = ContractDocumentCategory.objects.filter(~Q(contract_packet_files__project=self.object))
         return context

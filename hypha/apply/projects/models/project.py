@@ -79,6 +79,14 @@ PROJECT_STATUS_CHOICES = [
     (CLOSING, _('Closing')),
     (COMPLETE, _('Complete')),
 ]
+PROJECT_PUBLIC_STATUSES = [
+    (DRAFT, _('Draft')),
+    (INTERNAL_APPROVAL, _('{} approval').format(settings.ORG_SHORT_NAME)),
+    (CONTRACTING, _('Contracting')),
+    (INVOICING_AND_REPORTING, _('Invoicing and reporting')),
+    (CLOSING, _('Closing')),
+    (COMPLETE, _('Complete')),
+]
 
 
 class ProjectQuerySet(models.QuerySet):

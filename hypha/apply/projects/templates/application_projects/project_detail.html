@@ -8,9 +8,10 @@
 
 {% block content %}
 {% show_closing_banner object as show_banner %}
+{% display_project_status object request.user as project_status %}
 {% if show_banner %}
 <div class="banner banner__close">
-    {% blocktrans with status=object.get_status_display %} This project is in {{ status }} state. {% endblocktrans %}
+    {% blocktrans with status=project_status %} This project is in {{ status }} state. {% endblocktrans %}
 </div>
 {% endif %}
 <div class="admin-bar">
@@ -64,7 +65,7 @@
 
         <div class="status-bar--mobile">
             <h6 class="status-bar__subheading">
-                {{ object.get_status_display }}
+                {{ project_status }}
             </h6>
         </div>
 

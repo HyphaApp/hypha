@@ -6,7 +6,11 @@ from django.utils.translation import gettext as _
 
 from hypha.apply.activity.models import ALL, TEAM
 from hypha.apply.activity.options import MESSAGES
-from hypha.apply.projects.utils import get_invoice_public_status
+from hypha.apply.projects.utils import (
+    get_invoice_public_status,
+    get_project_public_status,
+    get_project_status_display_value,
+)
 
 from .base import AdapterBase
 from .utils import is_invoice_public_transition, is_transition, reviewers_message
@@ -34,7 +38,7 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.SCREENING: 'handle_screening_statuses',
         MESSAGES.REVIEW_OPINION: _('{user} {opinion.opinion_display}s with {opinion.review.author}s review of {source}'),
         MESSAGES.CREATED_PROJECT: _('Created'),
-        MESSAGES.PROJECT_TRANSITION: _('Progressed from {old_stage} to {source.status_display}'),
+        MESSAGES.PROJECT_TRANSITION: 'handle_project_transition',
         MESSAGES.UPDATE_PROJECT_LEAD: _('Lead changed from {old_lead} to {source.lead}'),
         MESSAGES.SEND_FOR_APPROVAL: _('Requested approval'),
         MESSAGES.APPROVE_PROJECT: _('Approved'),
@@ -160,6 +164,27 @@ class ActivityAdapter(AdapterBase):
             )
 
         return staff_message
+
+    def handle_project_transition(self, old_stage, source, **kwargs):
+        project = source
+        base_message = _('Progressed from {old_display} to {new_display}')
+
+        staff_message = base_message.format(
+            old_display=get_project_status_display_value(old_stage),
+            new_display=project.status_display,
+        )
+
+        applicant_message = base_message.format(
+            old_display=get_project_public_status(project_status=old_stage),
+            new_display=get_project_public_status(project_status=project.status),
+        )
+
+        return json.dumps(
+                {
+                    TEAM: staff_message,
+                    ALL: applicant_message,
+                }
+            )
 
     def handle_batch_transition(self, transitions, sources, **kwargs):
         submissions = sources
