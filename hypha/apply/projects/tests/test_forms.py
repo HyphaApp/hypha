@@ -2,6 +2,7 @@ import json
 from io import BytesIO
 
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.http import QueryDict
 from django.test import TestCase, override_settings
 
 from hypha.apply.home.factories import ApplySiteFactory
@@ -304,12 +305,15 @@ class TestProjectApprovalForm(TestCase):
 
         self.assertFalse(project.user_has_updated_details)
 
-        data = {
+        # Use querydict for request.POST
+        data = QueryDict('').copy()
+
+        data.update({
             'title': f'{project.title} test',
             'value': project.value,
             'proposed_start': project.proposed_start,
             'proposed_end': project.proposed_end,
-        }
+        })
         data.update(address_to_form_data())
         form = ProjectApprovalForm(instance=project, data=data)
         self.assertTrue(form.is_valid(), form.errors.as_text())
