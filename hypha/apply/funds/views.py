@@ -38,6 +38,7 @@ from django_tables2.views import SingleTableMixin
 from wagtail.models import Page
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
+from hypha.apply.activity.models import Event
 from hypha.apply.activity.views import (
     ActivityContextMixin,
     CommentFormView,
@@ -1411,6 +1412,9 @@ class SubmissionDeleteView(DeleteView):
             request=request,
             source=submission,
         )
+        # delete NEW_SUBMISSION event for this particular submission
+        Event.objects.filter(type=MESSAGES.NEW_SUBMISSION, object_id=submission.id).delete()
+        # delete submission
         response = super().delete(request, *args, **kwargs)
         return response
 
