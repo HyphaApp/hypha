@@ -18,7 +18,7 @@
         {% include "forms/includes/form_errors.html" with form=sow_form %}
     {% endif %}
 
-    <div class="wrapper wrapper--light-grey-bg wrapper--form wrapper--sidebar">
+    <div class="wrapper wrapper--light-grey-bg wrapper--sidebar pt-8 pl-20 pb-8 mt-4 mb-12 mx-auto ">
         <div class="wrapper--sidebar--inner">
             <form class="form application-form" action="" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
@@ -70,6 +70,14 @@
                 {% endfor %}
             </form>
         </div>
+        <aside class="sidebar sidebar__project">
+            <div class="js-actions-sidebar sidebar__inner sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
+                <h5>{% trans "Proposal attachments" %}</h5>
+                {% for file in submissions_attachments %}
+                <p><b><a href="{{ file.url }}" target="_blank">{{ file.filename }}</a></b></p>
+                {% endfor %}
+            </div>
+        </aside>
     </div>
 
 {% else %}

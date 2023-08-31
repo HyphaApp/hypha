@@ -1239,6 +1239,14 @@ class ProjectApprovalFormEditView(BaseStreamForm, UpdateView):
         self.paf_form = self.get_paf_form()
         if self.approval_sow_form:
             self.sow_form = self.get_sow_form()
+
+        submission_attachments = []
+        for _field, files in self.object.submission.extract_files().items():
+            if isinstance(files, list):
+                submission_attachments.extend(files)
+            else:
+                submission_attachments.append(files)
+
         return {
             "title": self.object.title,
             "buttons": self.buttons(),
@@ -1247,6 +1255,7 @@ class ProjectApprovalFormEditView(BaseStreamForm, UpdateView):
             "paf_form": self.paf_form,
             "sow_form": self.sow_form,
             "object": self.object,
+            'submissions_attachments': submission_attachments,
             **kwargs
         }
 
