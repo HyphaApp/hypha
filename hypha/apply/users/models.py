@@ -124,7 +124,7 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
         return params
 
     def get_or_create_and_notify(self, defaults: dict | None =None, site=None, **kwargs):
-        """Create or get an account for applicant.and send activation email to applicant.
+        """Create or get an account for applicant and send activation email to applicant.
 
         Args:
             defaults: Dict containing user attributes for user creation. Defaults to dict().
@@ -143,6 +143,10 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
             defaults = {}
 
         email = kwargs.get('email')
+        redirect_url = ''
+        if 'redirect_url' in kwargs:
+            redirect_url = kwargs.pop('redirect_url')
+
         is_registered, _ = is_user_already_registered(email=email)
 
         if is_registered:
@@ -168,7 +172,7 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
             except IntegrityError:
                 raise
 
-            send_activation_email(user, site)
+            send_activation_email(user, site, redirect_url=redirect_url)
             _created = True
 
         applicant_group = Group.objects.get(name=APPLICANT_GROUP_NAME)

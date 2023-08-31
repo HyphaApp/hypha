@@ -1,4 +1,5 @@
 import datetime
+from typing import Any
 from urllib.parse import urlencode
 
 from django.conf import settings
@@ -7,6 +8,14 @@ from django.contrib.auth import get_user_model, login, update_session_auth_hash
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.forms import AdminPasswordChangeForm
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.contrib.auth.views import (
+    INTERNAL_RESET_SESSION_TOKEN,
+    SuccessURLAllowedHostsMixin,
+)
+from django.contrib.auth.views import (
+    PasswordResetConfirmView as DjPasswordResetConfirmView,
+)
+from django.contrib.auth.views import PasswordResetView as DjPasswordResetView
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import PermissionDenied
 from django.core.signing import BadSignature, Signer, TimestampSigner, dumps, loads
@@ -19,6 +28,7 @@ from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import never_cache
+from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import UpdateView
 from django.views.generic.base import TemplateView, View
 from django.views.generic.edit import FormView
@@ -46,12 +56,14 @@ from .forms import (
     ProfileForm,
     TWOFAPasswordForm,
 )
-from .utils import send_confirmation_email
+from .utils import get_redirect_url, send_confirmation_email
 
 User = get_user_model()
 
+
 @method_decorator(ratelimit(key='ip', rate=settings.DEFAULT_RATE_LIMIT, method='POST'), name='dispatch')
-class RegisterView(View):
+class RegisterView(SuccessURLAllowedHostsMixin, View):
+    redirect_field_name = 'next'
     form = CustomUserCreationForm
 
     def get(self, request):
@@ -63,7 +75,12 @@ class RegisterView(View):
 
         if request.user.is_authenticated:
             return redirect('dashboard:dashboard')
-        return render(request, 'users/register.html', {'form': self.form()})
+
+        ctx = {
+            'form': self.form(),
+            'redirect_url': get_redirect_url(request, self.redirect_field_name),
+        }
+        return render(request, 'users/register.html', ctx)
 
     def post(self,request):
         # See comment in get() above about doing this here rather than in urls
@@ -81,6 +98,7 @@ class RegisterView(View):
             user, created = User.objects.get_or_create_and_notify(
                 email=form.cleaned_data['email'],
                 site=site,
+                redirect_url=get_redirect_url(request, self.redirect_field_name),
                 defaults={
                     'full_name': form.cleaned_data['full_name'],
                 },
@@ -113,6 +131,7 @@ class LoginView(TwoFactorLoginView):
     def get_context_data(self, form, **kwargs):
         context_data = super(LoginView, self).get_context_data(form, **kwargs)
         context_data["is_public_site"] = True
+        context_data["redirect_url"] = get_redirect_url(self.request, self.redirect_field_name)
         if Site.find_for_request(self.request) == ApplyHomePage.objects.first().get_site():
             context_data["is_public_site"] = False
         return context_data
@@ -286,7 +305,9 @@ class EmailChangeConfirmationView(TemplateView):
             return None
 
 
-class ActivationView(TemplateView):
+class ActivationView(SuccessURLAllowedHostsMixin, TemplateView):
+    redirect_field_name = 'next'
+
     def get(self, request, *args, **kwargs):
         user = self.get_user(kwargs.get('uidb64'))
 
@@ -301,7 +322,10 @@ class ActivationView(TemplateView):
                 # and so they shouldn't need to activate a password
                 return redirect('users:account')
             else:
-                return redirect('users:activate_password')
+                url = reverse('users:activate_password')
+                if redirect_url := get_redirect_url(request, self.redirect_field_name):
+                    url = f'{url}?next={redirect_url}'
+                return redirect(url)
 
         return render(request, 'users/activation/invalid.html')
 
@@ -333,21 +357,66 @@ def create_password(request):
     """
     A custom view for the admin password change form used for account activation.
     """
+    redirect_url = get_redirect_url(request, redirect_field='next')
 
     if request.method == 'POST':
         form = AdminPasswordChangeForm(request.user, request.POST)
+
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request, user)  # Important!
             messages.success(request, 'Your password was successfully updated!')
+            if redirect_url:
+                return redirect(redirect_url)
             return redirect('users:account')
         else:
             messages.error(request, 'Please correct the errors below.')
     else:
         form = AdminPasswordChangeForm(request.user)
+
     return render(request, 'users/change_password.html', {
-        'form': form
+        'form': form,
+        'redirect_url': redirect_url,
     })
+
+
+@method_decorator(ratelimit(key='post:email', rate=settings.DEFAULT_RATE_LIMIT, method='POST'), name='dispatch')
+@method_decorator(ratelimit(key='ip', rate=settings.DEFAULT_RATE_LIMIT, method='POST'), name='dispatch')
+class PasswordResetView(DjPasswordResetView):
+    redirect_field_name = 'next'
+    email_template_name = 'users/password_reset/email.txt'
+    template_name = 'users/password_reset/form.html'
+    success_url = reverse_lazy('users:password_reset_done')
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['redirect_url'] = get_redirect_url(self.request, self.redirect_field_name)
+        return ctx
+
+    def get_extra_email_context(self):
+        return {
+            'redirect_url': get_redirect_url(self.request, self.redirect_field_name),
+            'site': Site.find_for_request(self.request),
+            'org_short_name': settings.ORG_SHORT_NAME,
+            'org_long_name': settings.ORG_LONG_NAME,
+        }
+
+    def form_valid(self, form):
+        """
+        Overrides default django form_valid to pass extra context to send_email method
+        """
+        opts = {
+            'use_https': self.request.is_secure(),
+            'token_generator': self.token_generator,
+            'from_email': self.from_email,
+            'email_template_name': self.email_template_name,
+            'subject_template_name': self.subject_template_name,
+            'request': self.request,
+            'html_email_template_name': self.html_email_template_name,
+            'extra_email_context': self.get_extra_email_context(),
+        }
+        form.save(**opts)
+        return HttpResponseRedirect(self.get_success_url())
 
 
 @method_decorator(never_cache, name='dispatch')
@@ -445,3 +514,53 @@ class TWOFAAdminDisableView(FormView):
 
 class TWOFARequiredMessageView(TemplateView):
     template_name = 'two_factor/core/two_factor_required.html'
+
+
+class PasswordResetConfirmView(DjPasswordResetConfirmView):
+    redirect_field_name = 'next'
+    template_name = 'users/password_reset/confirm.html'
+    post_reset_login = True
+    post_reset_login_backend = settings.CUSTOM_AUTH_BACKEND
+    success_url = reverse_lazy('users:account')
+
+    def get_success_url(self) -> str:
+        if next_path := get_redirect_url(self.request, self.redirect_field_name):
+            return next_path
+        return super().get_success_url()
+
+    def get_context_data(self, **kwargs: Any) -> Any:
+        context = super().get_context_data(**kwargs)
+        context['redirect_url'] = get_redirect_url(self.request, self.redirect_field_name)
+        return context
+
+    @method_decorator(sensitive_post_parameters())
+    @method_decorator(never_cache)
+    def dispatch(self, *args, **kwargs):
+        assert 'uidb64' in kwargs and 'token' in kwargs
+
+        self.validlink = False
+        self.user = self.get_user(kwargs['uidb64'])
+
+        if self.user is not None:
+            token = kwargs['token']
+            if token == self.reset_url_token:
+                session_token = self.request.session.get(INTERNAL_RESET_SESSION_TOKEN)
+                if self.token_generator.check_token(self.user, session_token):
+                    # If the token is valid, display the password reset form.
+                    self.validlink = True
+                    return super().dispatch(*args, **kwargs)
+            else:
+                if self.token_generator.check_token(self.user, token):
+                    # Store the token in the session and redirect to the
+                    # password reset form at a URL without the token. That
+                    # avoids the possibility of leaking the token in the
+                    # HTTP Referer header.
+                    self.request.session[INTERNAL_RESET_SESSION_TOKEN] = token
+                    redirect_url = self.request.path.replace(token, self.reset_url_token)
+
+                    # Add handler for '?next' redirect parameter.
+                    if next_path := get_redirect_url(self.request, self.redirect_field_name):
+                        redirect_url = f'{redirect_url}?next={next_path}'
+
+                    return HttpResponseRedirect(redirect_url)
+
