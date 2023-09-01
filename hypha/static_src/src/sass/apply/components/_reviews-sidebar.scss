@@ -57,6 +57,18 @@
         &.no-response {
             color: $color--black-20;
         }
+
+        .yes {
+            color: $color--green;
+        }
+
+        .maybe {
+            color: $color--mustard;
+        }
+
+        .no {
+            color: $color--tomato;
+        }
     }
 
     &__date {
