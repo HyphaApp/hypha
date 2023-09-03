@@ -200,7 +200,7 @@ class Review(ReviewFormFieldsMixin, BaseStreamForm, AccessFormData, models.Model
 
     @property
     def get_score_display(self):
-        return "{:.1f}".format(self.score) if self.score != NA else "NA"
+        return "{:.1f}".format(self.score) if self.score != NA else "-"
 
     def get_absolute_url(self):
         return reverse(
