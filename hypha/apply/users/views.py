@@ -245,19 +245,26 @@ class EmailChangePasswordView(FormView):
         value = loads(unsigned_value)
         form.save(**value)
         user = self.request.user
-        if user.email != value['updated_email']:
+        if user.email != value["updated_email"]:
             send_confirmation_email(
                 user,
-                signer.sign(dumps(value['updated_email'])),
-                updated_email=value['updated_email'],
-                site=Site.find_for_request(self.request))
+                signer.sign(dumps(value["updated_email"])),
+                updated_email=value["updated_email"],
+                site=Site.find_for_request(self.request),
+            )
         # alert email
         user.email_user(
-            subject='Alert! An attempt to update your email.',
-            message=render_to_string('users/email_change/update_info_email.html',
-                                     {"name": user.get_full_name(), "username": user.get_username(),
-                                      "org_email": settings.ORG_EMAIL, "org_short_name": settings.ORG_SHORT_NAME,
-                                      "org_long_name": settings.ORG_LONG_NAME, }),
+            subject="Alert! An attempt to update your email.",
+            message=render_to_string(
+                "users/email_change/update_info_email.html",
+                {
+                    "name": user.get_full_name(),
+                    "username": user.get_username(),
+                    "org_email": settings.ORG_EMAIL,
+                    "org_short_name": settings.ORG_SHORT_NAME,
+                    "org_long_name": settings.ORG_LONG_NAME,
+                },
+            ),
             from_email=settings.DEFAULT_FROM_EMAIL,
         )
         return super(EmailChangePasswordView, self).form_valid(form)
