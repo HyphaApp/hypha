@@ -90,6 +90,12 @@ class ProfileForm(forms.ModelForm):
 
         return slack
 
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if User.objects.filter(email=email).exists():
+            email = self.instance.email  # updated email to avoid email existing message, fix information leak.
+        return email
+
 
 class BecomeUserForm(forms.Form):
     user_pk = forms.ModelChoiceField(
