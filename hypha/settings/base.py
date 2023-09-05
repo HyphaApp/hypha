@@ -107,6 +107,9 @@ FORCE_LOGIN_FOR_APPLICATION = env.bool('FORCE_LOGIN_FOR_APPLICATION', False)
 # Enable users to create accounts without submitting an application.
 ENABLE_REGISTRATION_WITHOUT_APPLICATION = env.bool('ENABLE_REGISTRATION_WITHOUT_APPLICATION', False)
 
+# Allow Withdrawing of Submissions
+ENABLE_SUBMISSION_WITHDRAWAL = env.bool('ENABLE_SUBMISSION_WITHDRAWAL', False)
+
 # Project settings.
 
 # SECRET_KEY is required

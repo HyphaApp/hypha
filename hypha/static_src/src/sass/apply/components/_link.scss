@@ -226,7 +226,8 @@
     }
 
     &--edit-submission,
-    &--delete-submission {
+    &--delete-submission,
+    &--withdraw-submission {
         display: flex;
         align-items: center;
         font-weight: $weight--bold;
@@ -245,12 +246,13 @@
         }
     }
 
-    &--delete-submission {
+    &--delete-submission,
+    &--withdraw-submission {
         margin-right: 1rem;
         padding-right: 1rem;
         border-right: 2px solid $color--mid-grey;
 
-        &:only-child {
+        &:last-child {
             border-right: 0;
             padding-right: 0;
             margin-right: 0;
