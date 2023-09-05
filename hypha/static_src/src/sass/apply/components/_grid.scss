@@ -39,7 +39,7 @@
 
         &--two {
             grid-template-columns: 100%;
-            grid-gap: 0;
+            grid-gap: .25rem;
 
             @include media-query(tablet-portrait) {
                 grid-template-columns: 1fr 1fr;

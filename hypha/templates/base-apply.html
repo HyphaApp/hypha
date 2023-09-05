@@ -61,7 +61,7 @@
     <body
         hx-ext="multi-swap"
         hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-        class="{% block body_class %}light-grey-bg template-{{ page.get_verbose_name|slugify }}{% endblock %}"
+        class="antialiased {% block body_class %}template-{{ page.get_verbose_name|slugify }}{% endblock %}"
     >
 
         {% include "includes/sprites.html" %}

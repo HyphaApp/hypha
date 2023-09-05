@@ -11,7 +11,7 @@
                 title="{% blocktrans with user_title=user.title %}Assign {{ user_title }} as lead.{% endblocktrans %}"
                 class="flex pl-8 pr-3 py-2 text-gray-600 items-center hover:bg-gray-100 focus:bg-gray-100">
                 <strong class="font-bold">{{ user.title }}</strong>
-                {% if user.slack %} <span class="text-gray-500 font-light ml-1">{{ user.slack }}</span>{% endif %}
+                {% if user.slack %} <span class="text-fg-muted font-light ml-1">{{ user.slack }}</span>{% endif %}
             </a>
         </li>
     {% empty %}
@@ -20,4 +20,4 @@
         </li>
     {% endfor %}
 </ul>
-<p class="m-0 px-3 py-2 text-gray-500" data-filter-empty-state hidden>{% trans "No lead found. Sorry about that." %}</p>
+<p class="m-0 px-3 py-2 text-fg-muted" data-filter-empty-state hidden>{% trans "No lead found. Sorry about that." %}</p>

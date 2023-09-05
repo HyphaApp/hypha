@@ -37,9 +37,9 @@
     }
 
     &__text {
-        font-weight: $weight--bold;
+        // font-weight: $weight--bold;
         margin: .5rem 0;
-        color: $color--dark-grey;
+        color: var(--color-fg-default);
 
         @include media-query(small-tablet) {
             margin: .5rem 0;

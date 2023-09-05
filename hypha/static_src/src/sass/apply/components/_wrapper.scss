@@ -63,7 +63,7 @@
     }
 
     &--light-grey-bg {
-        background-color: $color--light-grey;
+        background-color: var(--color-bg-default);
     }
 
     &--media-boxes {

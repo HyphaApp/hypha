@@ -22,8 +22,8 @@
             {% trans "Back to submissions" %}
         </a>
         {% endif %}
-        <h1 class="beta heading heading--no-margin heading--bold">{{ object.title }}</h1>
-        <h5 class="heading heading--meta">
+        <h1 class="mb-0 mt-2 font-normal">{{ object.title }}</h1>
+        <div class="heading heading--meta text-sm mt-1">
             <span>{{ object.stage }}</span>
             <span>{{ object.page }}</span>
             {% if request.user.is_apply_staff and object.round %}
@@ -36,7 +36,7 @@
             {% else %}
                 <span>{% trans "Lead" %}: {{ object.lead }}</span>
             {% endif %}
-        </h5>
+        </div>
         {% status_bar object.workflow object.phase request.user author=object.user same_stage=True %}
 
         <div class="tabs js-tabs">

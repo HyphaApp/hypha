@@ -6,27 +6,32 @@
 {% block body_class %}{% endblock %}
 
 {% block content %}
-<div class="simplified">
-    <div class="simplified__admin-bar">
-        <div class="simplified__admin-bar-inner">
+    {% adminbar %}
+        {% slot back_link %}
             <a class="simplified__projects-link" href="{{ object.project.get_absolute_url }}">
-                {% trans "View project page" %}
+                {% trans "Goto project page" %}
             </a>
-            <h1 class="simplified__heading">{{ object.title }}</h1>
-            <h5 class="simplified__subheading">
+        {% endslot %}
+
+        {% slot header %}
+            {{ object.title }}
+        {% endslot %}
+        {% slot sub_heading %}
+            <div class="heading heading--meta text-sm mt-1">
                 <span>{{ object.stage }}</span>
                 <span>{{ object.page }}</span>
                 <span>{{ object.round }}</span>
                 <span>{% trans "Lead" %}: {{ object.lead }}</span>
-            </h5>
-            <a
-                class="button button--primary simplified__button"
-                href="{% url "apply:submissions:download" pk=object.pk %}"
-            >
-                {% trans "Download PDF" %}
-            </a>
-        </div>
-    </div>
+            </div>
+        {% endslot %}
+
+        <a class="button button--primary simplified__button"
+            href="{% url "apply:submissions:download" pk=object.pk %}"
+        >
+            {% trans "Download PDF" %}
+        </a>
+    {% endadminbar %}
+
 
     <div class="simplified__wrapper">
         <header class="simplified__meta">

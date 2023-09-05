@@ -6,16 +6,12 @@
     &--meta {
         display: flex;
         flex-wrap: wrap;
-        margin: 0;
-
-        @include media-query(tablet-portrait) {
-            margin-bottom: 1rem;
-        }
+        margin-top: .25rem;
 
         span {
             &::after {
-                padding: 0 15px;
-                content: '|';
+                padding: 0 .25rem;
+                content: '•';
             }
 
             &:last-child {
@@ -59,6 +55,7 @@
         font-weight: 500;
         font-size: 1.25rem;
         line-height: 1.75rem;
+        margin-bottom: .25rem;
     }
 
     &--bold {

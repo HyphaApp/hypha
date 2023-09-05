@@ -24,7 +24,7 @@
                     {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 mr-1" %}
                 {% endif %}
                 <strong class="font-bold">{{ user.title }}</strong>
-                {% if user.slack %} <span class="text-gray-500 font-light ml-1">{{ user.slack }}</span>{% endif %}
+                {% if user.slack %} <span class="text-fg-muted font-light ml-1">{{ user.slack }}</span>{% endif %}
             </a>
         </li>
     {% empty %}
@@ -33,4 +33,4 @@
         </li>
     {% endfor %}
 </ul>
-<p class="m-0 px-3 py-2 text-gray-500" data-filter-empty-state hidden>{% trans "No leads found. Sorry about that." %}</p>
+<p class="m-0 px-3 py-2 text-fg-muted" data-filter-empty-state hidden>{% trans "No leads found. Sorry about that." %}</p>

@@ -38,7 +38,7 @@
                     <div class="feed__content js-feed-content">
                         <div class="feed__meta js-feed-meta">
                             <p class="feed__meta-item"><a href="{{ activity.source.get_absolute_url }}#communications">{{ activity.source.title|capfirst }}</a>
-                                : {{ activity.user.get_full_name }} {% trans "made a comment" %} <relative-time class="text-gray-500 text-sm" datetime={{ activity.timestamp|date:"c" }}>{{ activity.timestamp|date:"SHORT_DATETIME_FORMAT" }}</relative-time></p>
+                                : {{ activity.user.get_full_name }} {% trans "made a comment" %} <relative-time class="text-fg-muted text-sm" datetime={{ activity.timestamp|date:"c" }}>{{ activity.timestamp|date:"SHORT_DATETIME_FORMAT" }}</relative-time></p>
                         </div>
                     </div>
                 </div>
@@ -56,7 +56,7 @@
                     <div class="feed__content js-feed-content">
                         <div class="feed__meta js-feed-meta">
                             <p class="feed__meta-item"><a href="{{ activity.source.get_absolute_url }}">{{ activity.source.title|capfirst }}</a>
-                                : {{ activity.user.get_full_name }} {{ activity|display_for:request.user }} <relative-time class="text-gray-500 text-sm" datetime={{ activity.timestamp|date:"c" }}>{{ activity.timestamp|date:"SHORT_DATETIME_FORMAT" }}</relative-time> {% if activity.related_object %}<a href="{{ activity.related_object.get_absolute_url }}" class="feed__related-item">{{ activity.related_object|model_verbose_name }} <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg></a>{% endif %}</p>
+                                : {{ activity.user.get_full_name }} {{ activity|display_for:request.user }} <relative-time class="text-fg-muted text-sm" datetime={{ activity.timestamp|date:"c" }}>{{ activity.timestamp|date:"SHORT_DATETIME_FORMAT" }}</relative-time> {% if activity.related_object %}<a href="{{ activity.related_object.get_absolute_url }}" class="feed__related-item">{{ activity.related_object|model_verbose_name }} <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg></a>{% endif %}</p>
                         </div>
                     </div>
                 </div>

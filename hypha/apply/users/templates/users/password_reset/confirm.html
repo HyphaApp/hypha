@@ -39,7 +39,9 @@
                 {% include "forms/includes/field.html" %}
             {% endfor %}
 
-            <button class="btn btn-primary" type="submit">{% trans 'Reset' %}</button>
+            <div class="form__group">
+                <button class="btn btn-primary" type="submit">{% trans 'Reset' %}</button>
+            </div>
         </form>
     {% else %}
         <p>{% trans "The password reset link was invalid, possibly because it has already been used.  Please request a new password reset." %}</p>

@@ -12,8 +12,14 @@ module.exports = {
                 "dark-blue": "#0c72a0",
                 tomato: "#f05e54",
                 "mid-grey": "#cfcfcf",
+                arsenic: "#404041",
+                "fg-muted": "var(--color-fg-muted)",
+                "fg-default": "var(--color-fg-default)",
             },
         },
     },
-    plugins: [require("@tailwindcss/forms")],
+    plugins: [
+        require("@tailwindcss/forms"),
+        require("@tailwindcss/typography"),
+    ],
 };
