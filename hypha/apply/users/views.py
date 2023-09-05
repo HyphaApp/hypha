@@ -571,17 +571,23 @@ class PasswordResetConfirmView(DjPasswordResetConfirmView):
 @method_decorator(ratelimit(key='post:email', rate=settings.DEFAULT_RATE_LIMIT, method='POST'), name='dispatch')
 class PasswordLessLoginSignupView(TemplateView):
     template_name = 'users/passwordless_login_signup.html'
+    redirect_field_name = 'next'
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        ctx = super().get_context_data(**kwargs) or {}
+        ctx['redirect_url'] = get_redirect_url(self.request, self.redirect_field_name)
+        return ctx
+
 
     def post(self, request):
         email = request.POST.get('email')
         email = email.strip() if email else None
 
-        service = PasswordlessAuthService(request)
+        service = PasswordlessAuthService(request, redirect_field_name=self.redirect_field_name)
         service.initiate_login_signup(email=email)
 
-        ctx = {
-            'next': service.next_url
-        }
+        ctx = self.get_context_data()
+
         return TemplateResponse(request, "users/partials/passwordless_login_signup_sent.html", ctx)
 
 

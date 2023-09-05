@@ -16,9 +16,10 @@ User = get_user_model()
 
 class PasswordlessAuthService:
     token_generator_class = PasswordlessLoginTokenGenerator
-    redirect_field_name = 'next'
+    next_url = None
 
-    def __init__(self, request: HttpRequest) -> None:
+    def __init__(self, request: HttpRequest, redirect_field_name: str = "next") -> None:
+        self.redirect_field_name = redirect_field_name
         self.next_url = get_redirect_url(request, self.redirect_field_name)
         self.request = request
         self.site = Site.find_for_request(request)
