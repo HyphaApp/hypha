@@ -22,9 +22,11 @@ from django.db.models.functions import Coalesce, Left, Length
 from django.http import Http404
 from django.shortcuts import redirect, render
 from django.template.response import TemplateResponse
+from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
+from django_ratelimit.decorators import ratelimit
 from modelcluster.fields import ParentalManyToManyField
 from wagtail.admin.panels import (
     FieldPanel,
@@ -67,6 +69,7 @@ class ApplicationBaseManager(PageQuerySet):
         return qs.order_by("end_date")
 
 
+@method_decorator(ratelimit(key='ip', rate=settings.DEFAULT_RATE_LIMIT, method='POST'), name='serve')
 class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
     is_createable = False
 
@@ -489,6 +492,7 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
         raise Http404()
 
 
+@method_decorator(ratelimit(key='ip', rate=settings.DEFAULT_RATE_LIMIT, method='POST'), name='serve')
 class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
     is_createable = False
     submission_class = ApplicationSubmission
