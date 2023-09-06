@@ -348,10 +348,7 @@ class SubmissionCommentViewSet(
         )
 
 
-class CommentViewSet(
-    mixins.ListModelMixin,
-    viewsets.GenericViewSet,
-):
+class CommentViewSet(viewsets.GenericViewSet):
     """
     Edit a comment.
     """
