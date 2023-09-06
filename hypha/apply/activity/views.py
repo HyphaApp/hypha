@@ -1,6 +1,8 @@
+from django.conf import settings
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.generic import CreateView, ListView
+from django_ratelimit.decorators import ratelimit
 
 from hypha.apply.users.decorators import staff_required
 from hypha.apply.utils.views import DelegatedViewMixin
@@ -24,6 +26,7 @@ class ActivityContextMixin:
         return super().get_context_data(**extra, **kwargs)
 
 
+@method_decorator(ratelimit(key='user', rate=settings.DEFAULT_RATE_LIMIT, method='POST'), name='dispatch')
 class CommentFormView(DelegatedViewMixin, CreateView):
     form_class = CommentForm
     context_name = "comment_form"
