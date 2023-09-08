@@ -6,7 +6,9 @@
         {# Left #}
         <div class="actions-bar__inner actions-bar__inner--left">
             {% if heading %}
-                <h4 class="heading heading--normal heading--no-margin">{{ heading }}
+                <h2 class="text-xl mb-2">
+
+                    {{ heading }}
 
                     {% if show_try_new_submissions_link %}
                         <a class="text-sm text-[#1d79a8] border-b border-transparent hover:opacity-70 hover:underline transition-all"
@@ -17,7 +19,7 @@
                             {% trans "Try newer version" %})
                         </a>
                     {% endif %}
-                </h4>
+                </h2>
             {% endif %}
 
 

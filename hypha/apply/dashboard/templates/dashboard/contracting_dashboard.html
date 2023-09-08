@@ -5,17 +5,14 @@
 {% block title %}{% trans "Dashboard" %}{% endblock %}
 
 {% block content %}
-<div class="admin-bar">
-    <div class="admin-bar__inner admin-bar__inner--with-button">
-        {% block page_header %}
-            <h1 class="gamma heading heading--no-margin heading--bold">{% trans "Dashboard" %}</h1>
-        {% endblock %}
+    {% adminbar %}
+        {% slot header %}{% trans "Dashboard" %}{% endslot %}
+
         <a href="{% url 'wagtailadmin_home' %}" class="button button--primary button--arrow-pixels-white">
             {% trans "Apply admin" %}
             <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
         </a>
-    </div>
-</div>
+    {% endadminbar %}
 
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
     {% if paf_waiting_for_approval.count %}

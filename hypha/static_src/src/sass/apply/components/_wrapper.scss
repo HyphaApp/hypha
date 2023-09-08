@@ -3,17 +3,20 @@
 
     &--small {
         max-width: $wrapper--small;
-        margin: 0 auto;
+        margin-left: auto;
+        margin-right: auto;
     }
 
     &--medium {
         max-width: $wrapper--medium;
-        margin: 0 auto;
+        margin-left: auto;
+        margin-right: auto;
     }
 
     &--large {
         max-width: $site-width;
-        margin: 0 auto;
+        margin-left: auto;
+        margin-right: auto;
     }
 
     &--main {
@@ -236,7 +239,7 @@
     }
 
     &--status-bar-outer {
-        padding: 20px;
+        padding: 20px 0;
         background-color: $color--white;
         border-bottom: 3px solid $color--light-grey;
     }
