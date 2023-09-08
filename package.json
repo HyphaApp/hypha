@@ -73,6 +73,7 @@
     "dev:build:tailwind": "tailwindcss -i ./hypha/static_src/src/tailwind/main.css -o ./hypha/static_compiled/css/tailwind-output.css",
     "dev:build:images": "npm run build:images",
     "dev:build:fonts": "npm run build:fonts",
+    "lint:prettier": "prettier . --check",
     "lint:sass": "stylelint \"hypha/static_src/src/sass/**/*.scss\"",
     "lint:js": "eslint \"hypha/static_src/src/javascript/**/*.js\"",
     "collectstatic": "python manage.py collectstatic --no-post-process --noinput --verbosity 0 --settings=hypha.settings.dev",

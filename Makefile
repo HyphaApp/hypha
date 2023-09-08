@@ -35,6 +35,7 @@ fmt:
 	python -m ruff --fix .
 	python -m black .
 	npx prettier . --write
+	djhtml hypha/
 
 .PHONY: cov-html
 cov-html:
@@ -52,9 +53,10 @@ lint:
 	@echo "Checking python code style with ruff"
 	ruff .
 	black . --check
+	@echo "Checking html file indendation."
+	djhtml hypha/ --check
 	@echo "Checking js and css code style."
 	npm run lint
-	npx prettier . --check
 
 
 .PHONY: lint-fix
