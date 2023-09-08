@@ -5,21 +5,21 @@
 {% block body_class %}bg-white{% endblock %}
 
 {% block content %}
-<div class="w-full bg-white mt-5 md:py-4">
+    <div class="w-full bg-white mt-5 md:py-4">
 
-    <section class="max-w-2xl">
-        {% heroicon_outline "exclamation-triangle" aria_hidden="true" size=64 class="stroke-red-600" %}
+        <section class="max-w-2xl">
+            {% heroicon_outline "exclamation-triangle" aria_hidden="true" size=64 class="stroke-red-600" %}
 
-        <h2 class="text-2xl">{% trans "Invalid activation URL" %}</h2>
-        {% url 'users:password_reset' as password_reset %}
-        <div class="wrapper wrapper--small wrapper--bottom-space">
-            <p><strong>{% trans "Two possible reasons:" %}</strong></p>
-            <ol class="list-decimal pl-6">
-                <li>{% trans "The activation link has expired." %}</li>
-                <li>{% trans "The account has already been activated." %}</li>
-            </ol>
+            <h2 class="text-2xl">{% trans "Invalid activation URL" %}</h2>
+            {% url 'users:password_reset' as password_reset %}
+            <div class="wrapper wrapper--small wrapper--bottom-space">
+                <p><strong>{% trans "Two possible reasons:" %}</strong></p>
+                <ol class="list-decimal pl-6">
+                    <li>{% trans "The activation link has expired." %}</li>
+                    <li>{% trans "The account has already been activated." %}</li>
+                </ol>
 
-            <p>{% blocktrans %}First try to <a href="{{ password_reset }}">reset your password</a>. If that fails please contact {{ ORG_SHORT_NAME }} at{% endblocktrans %} <a href="mailto:{{ ORG_EMAIL }}">{{ ORG_EMAIL }}</a></p>
-    </section>
-</div>
+                <p>{% blocktrans %}First try to <a href="{{ password_reset }}">reset your password</a>. If that fails please contact {{ ORG_SHORT_NAME }} at{% endblocktrans %} <a href="mailto:{{ ORG_EMAIL }}">{{ ORG_EMAIL }}</a></p>
+            </section>
+        </div>
 {% endblock %}

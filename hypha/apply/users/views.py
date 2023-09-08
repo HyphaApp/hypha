@@ -615,45 +615,54 @@ class PasswordResetConfirmView(DjPasswordResetConfirmView):
                     return HttpResponseRedirect(redirect_url)
 
 
-@method_decorator(ratelimit(key='ip', rate=settings.DEFAULT_RATE_LIMIT, method='POST'), name='dispatch')
-@method_decorator(ratelimit(key='post:email', rate=settings.DEFAULT_RATE_LIMIT, method='POST'), name='dispatch')
+@method_decorator(
+    ratelimit(key="ip", rate=settings.DEFAULT_RATE_LIMIT, method="POST"),
+    name="dispatch",
+)
+@method_decorator(
+    ratelimit(key="post:email", rate=settings.DEFAULT_RATE_LIMIT, method="POST"),
+    name="dispatch",
+)
 class PasswordLessLoginSignupView(TemplateView):
-    template_name = 'users/passwordless_login_signup.html'
-    redirect_field_name = 'next'
+    template_name = "users/passwordless_login_signup.html"
+    redirect_field_name = "next"
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         ctx = super().get_context_data(**kwargs) or {}
-        ctx['redirect_url'] = get_redirect_url(self.request, self.redirect_field_name)
+        ctx["redirect_url"] = get_redirect_url(self.request, self.redirect_field_name)
         return ctx
 
-
     def post(self, request):
-        email = request.POST.get('email')
+        email = request.POST.get("email")
         email = email.strip() if email else None
 
-        service = PasswordlessAuthService(request, redirect_field_name=self.redirect_field_name)
+        service = PasswordlessAuthService(
+            request, redirect_field_name=self.redirect_field_name
+        )
         service.initiate_login_signup(email=email)
 
         ctx = self.get_context_data()
 
-        return TemplateResponse(request, "users/partials/passwordless_login_signup_sent.html", ctx)
+        return TemplateResponse(
+            request, "users/partials/passwordless_login_signup_sent.html", ctx
+        )
 
 
 class PasswordlessLoginView(TemplateView):
-    redirect_field_name = 'next'
+    redirect_field_name = "next"
 
     def get(self, request, *args, **kwargs):
-        user = self.get_user(kwargs.get('uidb64'))
+        user = self.get_user(kwargs.get("uidb64"))
 
-        if self.is_valid(user, kwargs.get('token')):
+        if self.is_valid(user, kwargs.get("token")):
             user.backend = settings.CUSTOM_AUTH_BACKEND
             login(request, user)
             if redirect_url := get_redirect_url(request, self.redirect_field_name):
                 return redirect(redirect_url)
 
-            return redirect('dashboard:dashboard')
+            return redirect("dashboard:dashboard")
 
-        return render(request, 'users/activation/invalid.html')
+        return render(request, "users/activation/invalid.html")
 
     def is_valid(self, user, token):
         """
@@ -671,8 +680,6 @@ class PasswordlessLoginView(TemplateView):
         doesn't.
         """
         try:
-            return User.objects.get(**{
-                'pk': force_str(urlsafe_base64_decode(uidb64))
-            })
+            return User.objects.get(**{"pk": force_str(urlsafe_base64_decode(uidb64))})
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
             return None

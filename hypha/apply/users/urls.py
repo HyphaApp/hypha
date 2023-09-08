@@ -31,8 +31,7 @@ app_name = "users"
 
 public_urlpatterns = [
     path(
-        'auth/', PasswordLessLoginSignupView.as_view(),
-        name='passwordless_login_signup'
+        "auth/", PasswordLessLoginSignupView.as_view(), name="passwordless_login_signup"
     ),
     path(
         "login/",
@@ -149,7 +148,7 @@ urlpatterns = [
                 path(
                     "auth/<uidb64>/<token>/",
                     PasswordlessLoginView.as_view(),
-                    name='do_passwordless_login'
+                    name="do_passwordless_login",
                 ),
             ]
         ),
