@@ -6,15 +6,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('funds', '0026_add_leads_to_submission_and_lab'),
+        ("funds", "0026_add_leads_to_submission_and_lab"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='applicationsubmission',
-            name='drupal_id',
+            model_name="applicationsubmission",
+            name="drupal_id",
             field=models.IntegerField(blank=True, editable=False, null=True),
         ),
     ]

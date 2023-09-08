@@ -5,21 +5,34 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('images', '0003_customimage_drupal_id'),
-        ('utils', '0002_add_footer_content_setting'),
+        ("images", "0003_customimage_drupal_id"),
+        ("utils", "0002_add_footer_content_setting"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='systemmessagessettings',
-            name='site_logo_default',
-            field=models.ForeignKey(blank=True, help_text='Default site logo', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='images.CustomImage'),
+            model_name="systemmessagessettings",
+            name="site_logo_default",
+            field=models.ForeignKey(
+                blank=True,
+                help_text="Default site logo",
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="+",
+                to="images.CustomImage",
+            ),
         ),
         migrations.AddField(
-            model_name='systemmessagessettings',
-            name='site_logo_mobile',
-            field=models.ForeignKey(blank=True, help_text='Mobil site logo (if not set default will be used)', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='images.CustomImage'),
+            model_name="systemmessagessettings",
+            name="site_logo_mobile",
+            field=models.ForeignKey(
+                blank=True,
+                help_text="Mobil site logo (if not set default will be used)",
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="+",
+                to="images.CustomImage",
+            ),
         ),
     ]

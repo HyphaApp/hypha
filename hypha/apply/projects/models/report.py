@@ -17,7 +17,9 @@ from hypha.apply.utils.storage import PrivateStorage
 
 
 def report_path(instance, filename):
-    return f'reports/{instance.report.report_id}/version/{instance.report_id}/{filename}'
+    return (
+        f"reports/{instance.report.report_id}/version/{instance.report_id}/{filename}"
+    )
 
 
 class ReportQueryset(models.QuerySet):
@@ -32,7 +34,7 @@ class ReportQueryset(models.QuerySet):
             current__isnull=True,
             skipped=False,
             end_date__lt=today,
-        ).order_by('end_date')
+        ).order_by("end_date")
 
     def any_very_late(self):
         two_weeks_ago = timezone.now().date() - relativedelta(weeks=2)
@@ -42,18 +44,19 @@ class ReportQueryset(models.QuerySet):
         return self.filter(current__isnull=False)
 
     def for_table(self):
-        Project = apps.get_model('application_projects', 'Project')
+        Project = apps.get_model("application_projects", "Project")
         return self.annotate(
             last_end_date=Subquery(
                 Report.objects.filter(
-                    project=OuterRef('project_id'),
-                    end_date__lt=OuterRef('end_date')
-                ).values('end_date')[:1]
+                    project=OuterRef("project_id"), end_date__lt=OuterRef("end_date")
+                ).values("end_date")[:1]
             ),
             project_start_date=Subquery(
                 Project.objects.filter(
-                    pk=OuterRef('project_id'),
-                ).with_start_date().values('start')[:1]
+                    pk=OuterRef("project_id"),
+                )
+                .with_start_date()
+                .values("start")[:1]
             ),
             start=Case(
                 When(
@@ -62,34 +65,36 @@ class ReportQueryset(models.QuerySet):
                     # Use cast to get an actual date object
                     then=Cast(
                         ExpressionWrapper(
-                            F('last_end_date') + datetime.timedelta(days=1),
+                            F("last_end_date") + datetime.timedelta(days=1),
                             output_field=models.DateTimeField(),
                         ),
                         models.DateField(),
                     ),
                 ),
-                default=F('project_start_date'),
+                default=F("project_start_date"),
                 output_field=models.DateField(),
-            )
+            ),
         )
 
 
 class Report(models.Model):
     skipped = models.BooleanField(default=False)
     end_date = models.DateField()
-    project = models.ForeignKey("Project", on_delete=models.CASCADE, related_name="reports")
+    project = models.ForeignKey(
+        "Project", on_delete=models.CASCADE, related_name="reports"
+    )
     submitted = models.DateTimeField(null=True)
     notified = models.DateTimeField(null=True)
     current = models.OneToOneField(
         "ReportVersion",
         on_delete=models.CASCADE,
-        related_name='live_for_report',
+        related_name="live_for_report",
         null=True,
     )
     draft = models.OneToOneField(
         "ReportVersion",
         on_delete=models.CASCADE,
-        related_name='draft_for_report',
+        related_name="draft_for_report",
         null=True,
     )
 
@@ -98,28 +103,39 @@ class Report(models.Model):
     wagtail_reference_index_ignore = True
 
     class Meta:
-        ordering = ('-end_date',)
+        ordering = ("-end_date",)
 
     def get_absolute_url(self):
-        return reverse('apply:projects:reports:detail', kwargs={'pk': self.pk})
+        return reverse("apply:projects:reports:detail", kwargs={"pk": self.pk})
 
     @property
     def previous(self):
-        return Report.objects.submitted().filter(
-            project=self.project_id,
-            end_date__lt=self.end_date,
-        ).exclude(
-            pk=self.pk,
-        ).first()
+        return (
+            Report.objects.submitted()
+            .filter(
+                project=self.project_id,
+                end_date__lt=self.end_date,
+            )
+            .exclude(
+                pk=self.pk,
+            )
+            .first()
+        )
 
     @property
     def next(self):
-        return Report.objects.submitted().filter(
-            project=self.project_id,
-            end_date__gt=self.end_date,
-        ).exclude(
-            pk=self.pk,
-        ).order_by('end_date').first()
+        return (
+            Report.objects.submitted()
+            .filter(
+                project=self.project_id,
+                end_date__gt=self.end_date,
+            )
+            .exclude(
+                pk=self.pk,
+            )
+            .order_by("end_date")
+            .first()
+        )
 
     @property
     def past_due(self):
@@ -151,7 +167,9 @@ class Report(models.Model):
 
 
 class ReportVersion(models.Model):
-    report = models.ForeignKey("Report", on_delete=models.CASCADE, related_name="versions")
+    report = models.ForeignKey(
+        "Report", on_delete=models.CASCADE, related_name="versions"
+    )
     submitted = models.DateTimeField()
     public_content = models.TextField()
     private_content = models.TextField()
@@ -167,7 +185,9 @@ class ReportVersion(models.Model):
 
 
 class ReportPrivateFiles(models.Model):
-    report = models.ForeignKey("ReportVersion", on_delete=models.CASCADE, related_name="files")
+    report = models.ForeignKey(
+        "ReportVersion", on_delete=models.CASCADE, related_name="files"
+    )
     document = models.FileField(upload_to=report_path, storage=PrivateStorage())
 
     wagtail_reference_index_ignore = True
@@ -180,22 +200,27 @@ class ReportPrivateFiles(models.Model):
         return self.filename
 
     def get_absolute_url(self):
-        return reverse('apply:projects:reports:document', kwargs={'pk': self.report.report_id, 'file_pk': self.pk})
+        return reverse(
+            "apply:projects:reports:document",
+            kwargs={"pk": self.report.report_id, "file_pk": self.pk},
+        )
 
 
 class ReportConfig(models.Model):
     """Persists configuration about the reporting schedule etc"""
 
-    WEEK = _('week')
-    MONTH = _('month')
-    YEAR = _('year')
+    WEEK = _("week")
+    MONTH = _("month")
+    YEAR = _("year")
     FREQUENCY_CHOICES = [
-        (WEEK, _('Weeks')),
-        (MONTH, _('Months')),
-        (YEAR, _('Years')),
+        (WEEK, _("Weeks")),
+        (MONTH, _("Months")),
+        (YEAR, _("Years")),
     ]
 
-    project = models.OneToOneField("Project", on_delete=models.CASCADE, related_name="report_config")
+    project = models.OneToOneField(
+        "Project", on_delete=models.CASCADE, related_name="report_config"
+    )
     schedule_start = models.DateField(null=True)
     occurrence = models.PositiveSmallIntegerField(default=1)
     frequency = models.CharField(choices=FREQUENCY_CHOICES, default=MONTH, max_length=6)
@@ -204,40 +229,55 @@ class ReportConfig(models.Model):
 
     def get_frequency_display(self):
         if self.disable_reporting:
-            return _('Reporting Disabled')
+            return _("Reporting Disabled")
         if self.does_not_repeat:
             last_report = self.last_report()
             if last_report:
-                return _('One time, that already has reported on {date}'.format(
-                    date=last_report.end_date.strftime('%d %B, %Y')))
-            return _('One time on {date}'.format(date=self.schedule_start.strftime('%d %B, %Y')))
+                return _(
+                    "One time, that already has reported on {date}".format(
+                        date=last_report.end_date.strftime("%d %B, %Y")
+                    )
+                )
+            return _(
+                "One time on {date}".format(
+                    date=self.schedule_start.strftime("%d %B, %Y")
+                )
+            )
         next_report = self.current_due_report()
 
         if self.frequency == self.YEAR:
             if self.schedule_start and self.schedule_start.day == 31:
-                day_of_month = _('last day')
-                month = self.schedule_start.strftime('%B')
+                day_of_month = _("last day")
+                month = self.schedule_start.strftime("%B")
             else:
                 day_of_month = ordinal(next_report.end_date.day)
-                month = next_report.end_date.strftime('%B')
+                month = next_report.end_date.strftime("%B")
             if self.occurrence == 1:
-                return _('Once a year on {month} {day}').format(day=day_of_month, month=month)
-            return _('Every {occurrence} years on {month} {day}').format(occurrence=self.occurrence, day=day_of_month, month=month)
+                return _("Once a year on {month} {day}").format(
+                    day=day_of_month, month=month
+                )
+            return _("Every {occurrence} years on {month} {day}").format(
+                occurrence=self.occurrence, day=day_of_month, month=month
+            )
 
         if self.frequency == self.MONTH:
             if self.schedule_start and self.schedule_start.day == 31:
-                day_of_month = _('last day')
+                day_of_month = _("last day")
             else:
                 day_of_month = ordinal(next_report.end_date.day)
             if self.occurrence == 1:
-                return _('Once a month on the {day}').format(day=day_of_month)
-            return _('Every {occurrence} months on the {day}').format(occurrence=self.occurrence, day=day_of_month)
+                return _("Once a month on the {day}").format(day=day_of_month)
+            return _("Every {occurrence} months on the {day}").format(
+                occurrence=self.occurrence, day=day_of_month
+            )
 
-        weekday = next_report.end_date.strftime('%A')
+        weekday = next_report.end_date.strftime("%A")
 
         if self.occurrence == 1:
-            return _('Once a week on {weekday}').format(weekday=weekday)
-        return _('Every {occurrence} weeks on {weekday}').format(occurrence=self.occurrence, weekday=weekday)
+            return _("Once a week on {weekday}").format(weekday=weekday)
+        return _("Every {occurrence} weeks on {weekday}").format(
+            occurrence=self.occurrence, weekday=weekday
+        )
 
     def is_up_to_date(self):
         return len(self.project.reports.to_do()) == 0
@@ -258,9 +298,7 @@ class ReportConfig(models.Model):
         # - was skipped but due after today
         # - was submitted but due after today
         return self.project.reports.filter(
-            Q(end_date__lt=today) |
-            Q(skipped=True) |
-            Q(submitted__isnull=False)
+            Q(end_date__lt=today) | Q(skipped=True) | Q(submitted__isnull=False)
         ).first()
 
     def current_due_report(self):
@@ -309,12 +347,12 @@ class ReportConfig(models.Model):
             current__isnull=True,
             skipped=False,
             end_date__gte=today,
-            defaults={'end_date': next_due_date}
+            defaults={"end_date": next_due_date},
         )
         return report
 
     def next_date(self, last_date):
-        delta_frequency = self.frequency + 's'
+        delta_frequency = self.frequency + "s"
         delta = relativedelta(**{delta_frequency: self.occurrence})
         next_date = last_date + delta
         return next_date

@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('images', '0002_customimage_file_hash'),
+        ("images", "0002_customimage_file_hash"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='customimage',
-            name='drupal_id',
+            model_name="customimage",
+            name="drupal_id",
             field=models.IntegerField(blank=True, editable=False, null=True),
         ),
     ]

@@ -5,22 +5,21 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('navigation', '0001_initial'),
+        ("navigation", "0001_initial"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='navigationsettings',
-            name='footer_links',
+            model_name="navigationsettings",
+            name="footer_links",
         ),
         migrations.RemoveField(
-            model_name='navigationsettings',
-            name='footer_navigation',
+            model_name="navigationsettings",
+            name="footer_navigation",
         ),
         migrations.RemoveField(
-            model_name='navigationsettings',
-            name='secondary_navigation',
+            model_name="navigationsettings",
+            name="secondary_navigation",
         ),
     ]

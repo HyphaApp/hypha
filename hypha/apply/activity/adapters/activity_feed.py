@@ -20,42 +20,54 @@ class ActivityAdapter(AdapterBase):
     adapter_type = "Activity Feed"
     always_send = True
     messages = {
-        MESSAGES.TRANSITION: 'handle_transition',
-        MESSAGES.BATCH_TRANSITION: 'handle_batch_transition',
-        MESSAGES.NEW_SUBMISSION: _('Submitted {source.title} for {source.page.title}'),
-        MESSAGES.EDIT_SUBMISSION: _('Edited'),
-        MESSAGES.APPLICANT_EDIT: _('Edited'),
-        MESSAGES.UPDATE_LEAD: _('Lead changed from {old_lead} to {source.lead}'),
-        MESSAGES.BATCH_UPDATE_LEAD: _('Batch Lead changed to {new_lead}'),
-        MESSAGES.DETERMINATION_OUTCOME: _('Sent a determination. Outcome: {determination.clean_outcome}'),
-        MESSAGES.BATCH_DETERMINATION_OUTCOME: 'batch_determination',
-        MESSAGES.INVITED_TO_PROPOSAL: _('Invited to submit a proposal'),
-        MESSAGES.REVIEWERS_UPDATED: 'reviewers_updated',
-        MESSAGES.BATCH_REVIEWERS_UPDATED: 'batch_reviewers_updated',
-        MESSAGES.PARTNERS_UPDATED: 'partners_updated',
-        MESSAGES.NEW_REVIEW: _('Submitted a review'),
-        MESSAGES.OPENED_SEALED: _('Opened the submission while still sealed'),
-        MESSAGES.SCREENING: 'handle_screening_statuses',
-        MESSAGES.REVIEW_OPINION: _('{user} {opinion.opinion_display}s with {opinion.review.author}s review of {source}'),
-        MESSAGES.CREATED_PROJECT: _('Created'),
-        MESSAGES.PROJECT_TRANSITION: 'handle_project_transition',
-        MESSAGES.UPDATE_PROJECT_LEAD: _('Lead changed from {old_lead} to {source.lead}'),
-        MESSAGES.SEND_FOR_APPROVAL: _('Requested approval'),
-        MESSAGES.APPROVE_PROJECT: _('Approved'),
-        MESSAGES.REQUEST_PROJECT_CHANGE: _('Requested changes for acceptance: "{comment}"'),
-        MESSAGES.SUBMIT_CONTRACT_DOCUMENTS: _('Submitted Contract Documents'),
-        MESSAGES.UPLOAD_CONTRACT: _('Uploaded a {contract.state} contract'),
-        MESSAGES.APPROVE_CONTRACT: _('Approved contract'),
-        MESSAGES.UPDATE_INVOICE_STATUS: 'handle_update_invoice_status',
-        MESSAGES.CREATE_INVOICE: _('Invoice added'),
-        MESSAGES.SUBMIT_REPORT: _('Submitted a report'),
-        MESSAGES.SKIPPED_REPORT: 'handle_skipped_report',
-        MESSAGES.REPORT_FREQUENCY_CHANGED: 'handle_report_frequency',
-        MESSAGES.DISABLED_REPORTING: _('Reporting disabled'),
-        MESSAGES.BATCH_DELETE_SUBMISSION: 'handle_batch_delete_submission',
-        MESSAGES.BATCH_ARCHIVE_SUBMISSION: 'handle_batch_archive_submission',
-        MESSAGES.ARCHIVE_SUBMISSION: _('{user} has archived the submission: {source.title}'),
-        MESSAGES.UNARCHIVE_SUBMISSION: _('{user} has unarchived the submission: {source.title}'),
+        MESSAGES.TRANSITION: "handle_transition",
+        MESSAGES.BATCH_TRANSITION: "handle_batch_transition",
+        MESSAGES.NEW_SUBMISSION: _("Submitted {source.title} for {source.page.title}"),
+        MESSAGES.EDIT_SUBMISSION: _("Edited"),
+        MESSAGES.APPLICANT_EDIT: _("Edited"),
+        MESSAGES.UPDATE_LEAD: _("Lead changed from {old_lead} to {source.lead}"),
+        MESSAGES.BATCH_UPDATE_LEAD: _("Batch Lead changed to {new_lead}"),
+        MESSAGES.DETERMINATION_OUTCOME: _(
+            "Sent a determination. Outcome: {determination.clean_outcome}"
+        ),
+        MESSAGES.BATCH_DETERMINATION_OUTCOME: "batch_determination",
+        MESSAGES.INVITED_TO_PROPOSAL: _("Invited to submit a proposal"),
+        MESSAGES.REVIEWERS_UPDATED: "reviewers_updated",
+        MESSAGES.BATCH_REVIEWERS_UPDATED: "batch_reviewers_updated",
+        MESSAGES.PARTNERS_UPDATED: "partners_updated",
+        MESSAGES.NEW_REVIEW: _("Submitted a review"),
+        MESSAGES.OPENED_SEALED: _("Opened the submission while still sealed"),
+        MESSAGES.SCREENING: "handle_screening_statuses",
+        MESSAGES.REVIEW_OPINION: _(
+            "{user} {opinion.opinion_display}s with {opinion.review.author}s review of {source}"
+        ),
+        MESSAGES.CREATED_PROJECT: _("Created"),
+        MESSAGES.PROJECT_TRANSITION: "handle_project_transition",
+        MESSAGES.UPDATE_PROJECT_LEAD: _(
+            "Lead changed from {old_lead} to {source.lead}"
+        ),
+        MESSAGES.SEND_FOR_APPROVAL: _("Requested approval"),
+        MESSAGES.APPROVE_PROJECT: _("Approved"),
+        MESSAGES.REQUEST_PROJECT_CHANGE: _(
+            'Requested changes for acceptance: "{comment}"'
+        ),
+        MESSAGES.SUBMIT_CONTRACT_DOCUMENTS: _("Submitted Contract Documents"),
+        MESSAGES.UPLOAD_CONTRACT: _("Uploaded a {contract.state} contract"),
+        MESSAGES.APPROVE_CONTRACT: _("Approved contract"),
+        MESSAGES.UPDATE_INVOICE_STATUS: "handle_update_invoice_status",
+        MESSAGES.CREATE_INVOICE: _("Invoice added"),
+        MESSAGES.SUBMIT_REPORT: _("Submitted a report"),
+        MESSAGES.SKIPPED_REPORT: "handle_skipped_report",
+        MESSAGES.REPORT_FREQUENCY_CHANGED: "handle_report_frequency",
+        MESSAGES.DISABLED_REPORTING: _("Reporting disabled"),
+        MESSAGES.BATCH_DELETE_SUBMISSION: "handle_batch_delete_submission",
+        MESSAGES.BATCH_ARCHIVE_SUBMISSION: "handle_batch_archive_submission",
+        MESSAGES.ARCHIVE_SUBMISSION: _(
+            "{user} has archived the submission: {source.title}"
+        ),
+        MESSAGES.UNARCHIVE_SUBMISSION: _(
+            "{user} has unarchived the submission: {source.title}"
+        ),
     }
 
     def recipients(self, message_type, **kwargs):
@@ -74,43 +86,43 @@ class ActivityAdapter(AdapterBase):
             MESSAGES.SEND_FOR_APPROVAL,
             MESSAGES.NEW_REVIEW,
         ]:
-            return {'visibility': TEAM}
+            return {"visibility": TEAM}
 
         source = source or sources[0]
         if is_transition(message_type) and not source.phase.permissions.can_view(
             source.user
         ):
             # User's shouldn't see status activity changes for stages that aren't visible to the them
-            return {'visibility': TEAM}
+            return {"visibility": TEAM}
 
         if message_type == MESSAGES.UPDATE_INVOICE_STATUS:
-            invoice = kwargs.get('invoice', None)
+            invoice = kwargs.get("invoice", None)
             if invoice and not is_invoice_public_transition(invoice):
-                return {'visibility': TEAM}
+                return {"visibility": TEAM}
         return {}
 
     def reviewers_updated(self, added=None, removed=None, **kwargs):
-        message = [_('Reviewers updated.')]
+        message = [_("Reviewers updated.")]
         if added:
-            message.append(_('Added:'))
+            message.append(_("Added:"))
             message.extend(reviewers_message(added))
 
         if removed:
-            message.append(_('Removed:'))
+            message.append(_("Removed:"))
             message.extend(reviewers_message(removed))
 
-        return ' '.join(message)
+        return " ".join(message)
 
     def batch_reviewers_updated(self, added, **kwargs):
-        base = [_('Batch Reviewers Updated.')]
+        base = [_("Batch Reviewers Updated.")]
         base.extend(
             [
-                _('{user} as {name}.').format(user=str(user), name=role.name)
+                _("{user} as {name}.").format(user=str(user), name=role.name)
                 for role, user in added
                 if user
             ]
         )
-        return ' '.join(base)
+        return " ".join(base)
 
     def batch_determination(self, sources, determinations, **kwargs):
         submission = sources[0]
@@ -121,21 +133,21 @@ class ActivityAdapter(AdapterBase):
 
     def handle_batch_delete_submission(self, sources, **kwargs):
         submissions = sources
-        submissions_text = ', '.join([submission.title for submission in submissions])
-        return _('Successfully deleted submissions: {title}').format(
+        submissions_text = ", ".join([submission.title for submission in submissions])
+        return _("Successfully deleted submissions: {title}").format(
             title=submissions_text
         )
 
     def handle_batch_archive_submission(self, sources, **kwargs):
         submissions = sources
-        submissions_text = ', '.join([submission.title for submission in submissions])
-        return _('Successfully archived submissions: {title}').format(
+        submissions_text = ", ".join([submission.title for submission in submissions])
+        return _("Successfully archived submissions: {title}").format(
             title=submissions_text
         )
 
     def handle_transition(self, old_phase, source, **kwargs):
         submission = source
-        base_message = _('Progressed from {old_display} to {new_display}')
+        base_message = _("Progressed from {old_display} to {new_display}")
 
         new_phase = submission.phase
 
@@ -167,7 +179,7 @@ class ActivityAdapter(AdapterBase):
 
     def handle_project_transition(self, old_stage, source, **kwargs):
         project = source
-        base_message = _('Progressed from {old_display} to {new_display}')
+        base_message = _("Progressed from {old_display} to {new_display}")
 
         staff_message = base_message.format(
             old_display=get_project_status_display_value(old_stage),
@@ -180,15 +192,15 @@ class ActivityAdapter(AdapterBase):
         )
 
         return json.dumps(
-                {
-                    TEAM: staff_message,
-                    ALL: applicant_message,
-                }
-            )
+            {
+                TEAM: staff_message,
+                ALL: applicant_message,
+            }
+        )
 
     def handle_batch_transition(self, transitions, sources, **kwargs):
         submissions = sources
-        kwargs.pop('source')
+        kwargs.pop("source")
         for submission in submissions:
             old_phase = transitions[submission.id]
             return self.handle_transition(
@@ -196,21 +208,21 @@ class ActivityAdapter(AdapterBase):
             )
 
     def partners_updated(self, added, removed, **kwargs):
-        message = [_('Partners updated.')]
+        message = [_("Partners updated.")]
         if added:
-            message.append(_('Added:'))
-            message.append(', '.join([str(user) for user in added]) + '.')
+            message.append(_("Added:"))
+            message.append(", ".join([str(user) for user in added]) + ".")
 
         if removed:
-            message.append(_('Removed:'))
-            message.append(', '.join([str(user) for user in removed]) + '.')
+            message.append(_("Removed:"))
+            message.append(", ".join([str(user) for user in removed]) + ".")
 
-        return ' '.join(message)
+        return " ".join(message)
 
     def handle_report_frequency(self, config, **kwargs):
         new_schedule = config.get_frequency_display()
         return _(
-            'Updated reporting frequency. New schedule is: {new_schedule} starting on {schedule_start}'
+            "Updated reporting frequency. New schedule is: {new_schedule} starting on {schedule_start}"
         ).format(new_schedule=new_schedule, schedule_start=config.schedule_start)
 
     def handle_skipped_report(self, report, **kwargs):
@@ -220,27 +232,22 @@ class ActivityAdapter(AdapterBase):
             return "Marked a Report as required"
 
     def handle_update_invoice_status(self, invoice, **kwargs):
-        base_message = _('Updated Invoice status to: {invoice_status}.')
+        base_message = _("Updated Invoice status to: {invoice_status}.")
         staff_message = base_message.format(invoice_status=invoice.get_status_display())
 
         if is_invoice_public_transition(invoice):
             public_status = get_invoice_public_status(invoice_status=invoice.status)
             applicant_message = base_message.format(invoice_status=public_status)
-            return json.dumps(
-                {
-                    TEAM: staff_message,
-                    ALL: applicant_message
-                }
-            )
+            return json.dumps({TEAM: staff_message, ALL: applicant_message})
 
         return staff_message
 
     def send_message(self, message, user, source, sources, **kwargs):
         from ..models import Activity
 
-        visibility = kwargs.get('visibility', ALL)
+        visibility = kwargs.get("visibility", ALL)
 
-        related = kwargs['related']
+        related = kwargs["related"]
         if isinstance(related, dict):
             try:
                 related = related[source.id]
@@ -248,7 +255,7 @@ class ActivityAdapter(AdapterBase):
                 pass
 
         has_correct_fields = all(
-            hasattr(related, attr) for attr in ['get_absolute_url']
+            hasattr(related, attr) for attr in ["get_absolute_url"]
         )
         isnt_source = source != related
         is_model = isinstance(related, DjangoModel)
@@ -267,7 +274,7 @@ class ActivityAdapter(AdapterBase):
         )
 
     def handle_screening_statuses(self, source, old_status, **kwargs):
-        new_status = ', '.join([s.title for s in source.screening_statuses.all()])
-        return _('Screening decision from {old_status} to {new_status}').format(
+        new_status = ", ".join([s.title for s in source.screening_statuses.all()])
+        return _("Screening decision from {old_status} to {new_status}").format(
             old_status=old_status, new_status=new_status
         )

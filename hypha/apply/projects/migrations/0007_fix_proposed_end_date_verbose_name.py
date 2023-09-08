@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('application_projects', '0006_add_project_paf_fields'),
+        ("application_projects", "0006_add_project_paf_fields"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='project',
-            name='proposed_end',
-            field=models.DateTimeField(null=True, verbose_name='Proposed End Date'),
+            model_name="project",
+            name="proposed_end",
+            field=models.DateTimeField(null=True, verbose_name="Proposed End Date"),
         ),
     ]

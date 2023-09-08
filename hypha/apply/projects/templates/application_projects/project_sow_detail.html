@@ -4,47 +4,47 @@
 {% block title %}{{ object.title }}{% endblock %}
 
 {% block content %}
-<div class="simplified">
-    <div class="simplified__admin-bar">
-        <div class="simplified__admin-bar-inner-project">
-            <div>
-                <a class="simplified__projects-link" href="{{ object.get_absolute_url }}">
-                    {% trans "View project page" %}
-                </a>
-                <h1 class="simplified__heading">{{ object.title }}</h1>
-                <h5 class="simplified__subheading">
-                    <span>{{ object.submission.page }}</span>
-                    <span>{{ object.submission.round }}</span>
-                    <span>{% trans "Lead" %}: {{ object.lead }}</span>
-                </h5>
-            </div>
-
-            <div class="dropdown">
-              <button class="button button--primary dropbtn" type="button" data-dropdown-target="#dropdown-content-download">
-                  {% trans 'Download SOW' %}
-              </button>
-              <div id="dropdown-content-download" class="dropdown-content">
-                <a class="dropdown-item" href="{% url 'apply:projects:download-sow' pk=object.pk export_type='pdf' %}">
-                    {% trans 'Download as PDF' %}</a>
-                <a class="dropdown-item" href="{% url 'apply:projects:download-sow' pk=object.pk export_type='docx' %}">
-                    {% trans 'Download as DOCX' %}</a>
-              </div>
-            </div>
-        </div>
-    </div>
-    <div class="wrapper wrapper--large wrapper--tabs">
-        <div class="wrapper wrapper--sidebar">
-            <article class="wrapper--sidebar--inner simplified__wrapper">
-                <h4>{% trans "Project scope of work(SOW)" %}</h4>
-                <div class="card card--solid">
-                    {% if object.sow.output_answers %}
-                        <div class="simplified__paf_answers">
-                            {{ object.sow.output_answers }}
-                        </div>
-                    {% endif %}
+    <div class="simplified">
+        <div class="simplified__admin-bar">
+            <div class="simplified__admin-bar-inner-project">
+                <div>
+                    <a class="simplified__projects-link" href="{{ object.get_absolute_url }}">
+                        {% trans "View project page" %}
+                    </a>
+                    <h1 class="simplified__heading">{{ object.title }}</h1>
+                    <h5 class="simplified__subheading">
+                        <span>{{ object.submission.page }}</span>
+                        <span>{{ object.submission.round }}</span>
+                        <span>{% trans "Lead" %}: {{ object.lead }}</span>
+                    </h5>
                 </div>
-            </article>
+
+                <div class="dropdown">
+                    <button class="button button--primary dropbtn" type="button" data-dropdown-target="#dropdown-content-download">
+                        {% trans 'Download SOW' %}
+                    </button>
+                    <div id="dropdown-content-download" class="dropdown-content">
+                        <a class="dropdown-item" href="{% url 'apply:projects:download-sow' pk=object.pk export_type='pdf' %}">
+                            {% trans 'Download as PDF' %}</a>
+                        <a class="dropdown-item" href="{% url 'apply:projects:download-sow' pk=object.pk export_type='docx' %}">
+                            {% trans 'Download as DOCX' %}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="wrapper wrapper--large wrapper--tabs">
+            <div class="wrapper wrapper--sidebar">
+                <article class="wrapper--sidebar--inner simplified__wrapper">
+                    <h4>{% trans "Project scope of work(SOW)" %}</h4>
+                    <div class="card card--solid">
+                        {% if object.sow.output_answers %}
+                            <div class="simplified__paf_answers">
+                                {{ object.sow.output_answers }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </article>
+            </div>
         </div>
     </div>
-</div>
 {% endblock content %}

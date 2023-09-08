@@ -4,21 +4,19 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('wagtailcore', '0040_page_draft_title'),
-        ('funds', '0049_screening_status'),
+        ("wagtailcore", "0040_page_draft_title"),
+        ("funds", "0049_screening_status"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='RoundsAndLabs',
-            fields=[
-            ],
+            name="RoundsAndLabs",
+            fields=[],
             options={
-                'proxy': True,
-                'indexes': [],
+                "proxy": True,
+                "indexes": [],
             },
-            bases=('wagtailcore.page',),
+            bases=("wagtailcore.page",),
         ),
     ]

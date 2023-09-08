@@ -5,7 +5,7 @@
 
     &__back {
         position: absolute;
-        top: .5rem;
+        top: 0.5rem;
     }
 
     h1,
@@ -20,7 +20,7 @@
 }
 
 // 2FA token label font size
-label[for='id_generator-token'] {
+label[for="id_generator-token"] {
     font-size: 1.2em;
 }
 

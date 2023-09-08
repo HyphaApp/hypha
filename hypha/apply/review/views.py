@@ -32,8 +32,8 @@ from .options import DISAGREE
 
 
 def get_fields_for_stage(submission, user=None):
-    forms = submission.get_from_parent('review_forms').all()
-    external_review_forms = submission.get_from_parent('external_review_forms').all()
+    forms = submission.get_from_parent("review_forms").all()
+    external_review_forms = submission.get_from_parent("external_review_forms").all()
 
     # Use ExternalReviewForm if submission's stage has external review and external review form is attached to fund.
     # ExternalReviewForm is only for non-staff reviewers(external reviewers)
@@ -48,23 +48,24 @@ def get_fields_for_stage(submission, user=None):
         return forms[0].form.form_fields
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(login_required, name="dispatch")
 class ReviewEditView(UserPassesTestMixin, BaseStreamForm, UpdateView):
     submission_form_class = ReviewModelForm
     model = Review
-    template_name = 'review/review_edit_form.html'
+    template_name = "review/review_edit_form.html"
     raise_exception = True
 
     def test_func(self):
         review = self.get_object()
-        return self.request.user.has_perm('review.change_review') or self.request.user == review.author.reviewer
+        return (
+            self.request.user.has_perm("review.change_review")
+            or self.request.user == review.author.reviewer
+        )
 
     def get_context_data(self, **kwargs):
         review = self.get_object()
         return super().get_context_data(
-            submission=review.submission,
-            title=_('Edit Review'),
-            **kwargs
+            submission=review.submission, title=_("Edit Review"), **kwargs
         )
 
     def get_defined_fields(self):
@@ -74,16 +75,18 @@ class ReviewEditView(UserPassesTestMixin, BaseStreamForm, UpdateView):
         This ensures editing of submitted review is not affected by the changes to the original review forms.
         """
         review = self.get_object()
-        return review.form_fields or get_fields_for_stage(review.submission, user=self.request.user)
+        return review.form_fields or get_fields_for_stage(
+            review.submission, user=self.request.user
+        )
 
     def get_form_kwargs(self):
         review = self.get_object()
         kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user
-        kwargs['submission'] = review.submission
+        kwargs["user"] = self.request.user
+        kwargs["submission"] = review.submission
 
         if self.object:
-            kwargs['initial'] = self.object.form_data
+            kwargs["initial"] = self.object.form_data
 
         return kwargs
 
@@ -105,22 +108,28 @@ class ReviewEditView(UserPassesTestMixin, BaseStreamForm, UpdateView):
 
     def get_success_url(self):
         review = self.get_object()
-        return reverse_lazy('funds:submissions:detail', args=(review.submission.id,))
+        return reverse_lazy("funds:submissions:detail", args=(review.submission.id,))
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(login_required, name="dispatch")
 class ReviewCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
     submission_form_class = ReviewModelForm
     model = Review
-    template_name = 'review/review_form.html'
+    template_name = "review/review_form.html"
 
     def get_object(self, queryset=None):
-        return self.model.objects.get(submission=self.submission, author__reviewer=self.request.user)
+        return self.model.objects.get(
+            submission=self.submission, author__reviewer=self.request.user
+        )
 
     def dispatch(self, request, *args, **kwargs):
-        self.submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
+        self.submission = get_object_or_404(
+            ApplicationSubmission, id=self.kwargs["submission_pk"]
+        )
 
-        if not self.submission.phase.permissions.can_review(request.user) or not self.submission.has_permission_to_review(request.user):
+        if not self.submission.phase.permissions.can_review(
+            request.user
+        ) or not self.submission.has_permission_to_review(request.user):
             raise PermissionDenied()
 
         if self.request.POST and self.submission.reviewed_by(request.user):
@@ -133,8 +142,8 @@ class ReviewCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
         return super().get_context_data(
             submission=self.submission,
             has_submitted_review=has_submitted_review,
-            title=_('Update Review draft') if self.object else _('Create Review'),
-            **kwargs
+            title=_("Update Review draft") if self.object else _("Create Review"),
+            **kwargs,
         )
 
     def get_defined_fields(self):
@@ -142,11 +151,11 @@ class ReviewCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user
-        kwargs['submission'] = self.submission
+        kwargs["user"] = self.request.user
+        kwargs["submission"] = self.submission
 
         if self.object:
-            kwargs['initial'] = self.object.form_data
+            kwargs["initial"] = self.object.form_data
 
         return kwargs
 
@@ -184,21 +193,37 @@ def review_workflow_actions(request, submission):
     if transition_after and submission.status == INITIAL_STATE:
         # Automatically transition the application to "Internal review".
         action = submission_stepped_phases[2][0].name
-    elif transition_after and submission.status == 'proposal_discussion':
+    elif transition_after and submission.status == "proposal_discussion":
         # Automatically transition the proposal to "Internal review".
-        action = 'proposal_internal_review'
-    elif transition_after and submission.status == submission_stepped_phases[2][0].name and submission.reviews.count() >= transition_after:
+        action = "proposal_internal_review"
+    elif (
+        transition_after
+        and submission.status == submission_stepped_phases[2][0].name
+        and submission.reviews.count() >= transition_after
+    ):
         # Automatically transition the application to "Ready for discussion".
         action = submission_stepped_phases[3][0].name
-    elif transition_after and submission.status == 'ext_external_review' and submission.reviews.by_reviewers().count() >= transition_after:
+    elif (
+        transition_after
+        and submission.status == "ext_external_review"
+        and submission.reviews.by_reviewers().count() >= transition_after
+    ):
         # Automatically transition the application to "Ready for discussion".
-        action = 'ext_post_external_review_discussion'
-    elif transition_after and submission.status == 'com_external_review' and submission.reviews.by_reviewers().count() >= transition_after:
+        action = "ext_post_external_review_discussion"
+    elif (
+        transition_after
+        and submission.status == "com_external_review"
+        and submission.reviews.by_reviewers().count() >= transition_after
+    ):
         # Automatically transition the application to "Ready for discussion".
-        action = 'com_post_external_review_discussion'
-    elif transition_after and submission.status == 'external_review' and submission.reviews.by_reviewers().count() >= transition_after:
+        action = "com_post_external_review_discussion"
+    elif (
+        transition_after
+        and submission.status == "external_review"
+        and submission.reviews.by_reviewers().count() >= transition_after
+    ):
         # Automatically transition the proposal to "Ready for discussion".
-        action = 'post_external_review_discussion'
+        action = "post_external_review_discussion"
 
     # If action is set run perform_transition().
     if action:
@@ -221,7 +246,9 @@ class ReviewDisplay(UserPassesTestMixin, DetailView):
         review = self.get_object()
         if review.author.reviewer != self.request.user:
             consensus_form = ReviewOpinionForm(
-                instance=review.opinions.filter(author__reviewer=self.request.user).first(),
+                instance=review.opinions.filter(
+                    author__reviewer=self.request.user
+                ).first(),
             )
         else:
             consensus_form = None
@@ -245,7 +272,12 @@ class ReviewDisplay(UserPassesTestMixin, DetailView):
         if user.is_reviewer and review.reviewer_visibility:
             return True
 
-        if user.is_community_reviewer and submission.community_review and review.reviewer_visibility and submission.user != user:
+        if (
+            user.is_community_reviewer
+            and submission.community_review
+            and review.reviewer_visibility
+            and submission.user != user
+        ):
             return True
 
         return False
@@ -254,13 +286,17 @@ class ReviewDisplay(UserPassesTestMixin, DetailView):
         review = self.get_object()
 
         if review.is_draft:
-            return HttpResponseRedirect(reverse_lazy('apply:submissions:reviews:form', args=(review.submission.id,)))
+            return HttpResponseRedirect(
+                reverse_lazy(
+                    "apply:submissions:reviews:form", args=(review.submission.id,)
+                )
+            )
 
         return super().dispatch(request, *args, **kwargs)
 
 
 class ReviewOpinionFormView(UserPassesTestMixin, CreateView):
-    template_name = 'review/review_detail.html'
+    template_name = "review/review_detail.html"
     form_class = ReviewOpinionForm
     model = Review
     raise_exception = True
@@ -268,8 +304,10 @@ class ReviewOpinionFormView(UserPassesTestMixin, CreateView):
     def get_form_kwargs(self):
         self.object = self.get_object()
         kwargs = super().get_form_kwargs()
-        instance = kwargs['instance']
-        kwargs['instance'] = instance.opinions.filter(author__reviewer=self.request.user).first()
+        instance = kwargs["instance"]
+        kwargs["instance"] = instance.opinions.filter(
+            author__reviewer=self.request.user
+        ).first()
         return kwargs
 
     def test_func(self):
@@ -287,7 +325,12 @@ class ReviewOpinionFormView(UserPassesTestMixin, CreateView):
         if user.is_reviewer and review.reviewer_visibility:
             return True
 
-        if user.is_community_reviewer and submission.community_review and review.reviewer_visibility and submission.user != user:
+        if (
+            user.is_community_reviewer
+            and submission.community_review
+            and review.reviewer_visibility
+            and submission.user != user
+        ):
             return True
 
         return False
@@ -312,7 +355,11 @@ class ReviewOpinionFormView(UserPassesTestMixin, CreateView):
         )
 
         if opinion.opinion == DISAGREE:
-            return HttpResponseRedirect(reverse_lazy('apply:submissions:reviews:form', args=(self.review.submission.pk,)))
+            return HttpResponseRedirect(
+                reverse_lazy(
+                    "apply:submissions:reviews:form", args=(self.review.submission.pk,)
+                )
+            )
         else:
             return response
 
@@ -320,7 +367,7 @@ class ReviewOpinionFormView(UserPassesTestMixin, CreateView):
         return self.review.get_absolute_url()
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(login_required, name="dispatch")
 class ReviewDetailView(DetailView):
     def get(self, request, *args, **kwargs):
         view = ReviewDisplay.as_view()
@@ -331,76 +378,102 @@ class ReviewDetailView(DetailView):
         return view(request, *args, **kwargs)
 
 
-@method_decorator(staff_required, name='dispatch')
+@method_decorator(staff_required, name="dispatch")
 class ReviewListView(ListView):
     model = Review
 
     def get_queryset(self):
-        self.submission = get_object_or_404(ApplicationSubmission, id=self.kwargs['submission_pk'])
-        self.queryset = self.model.objects.filter(submission=self.submission, is_draft=False)
+        self.submission = get_object_or_404(
+            ApplicationSubmission, id=self.kwargs["submission_pk"]
+        )
+        self.queryset = self.model.objects.filter(
+            submission=self.submission, is_draft=False
+        )
         return super().get_queryset()
 
     def should_display(self, field):
-        return not isinstance(field.block, (RecommendationBlock, RecommendationCommentsBlock, RichTextBlock))
+        return not isinstance(
+            field.block,
+            (RecommendationBlock, RecommendationCommentsBlock, RichTextBlock),
+        )
 
     def get_context_data(self, **kwargs):
         review_data = {}
 
         # Add the header rows
-        review_data['title'] = {'question': '', 'answers': []}
-        review_data['opinions'] = {'question': 'Opinions', 'answers': []}
-        review_data['score'] = {'question': 'Overall Score', 'answers': []}
-        review_data['recommendation'] = {'question': 'Recommendation', 'answers': []}
-        review_data['revision'] = {'question': 'Revision', 'answers': []}
-        review_data['comments'] = {'question': 'Comments', 'answers': []}
+        review_data["title"] = {"question": "", "answers": []}
+        review_data["opinions"] = {"question": "Opinions", "answers": []}
+        review_data["score"] = {"question": "Overall Score", "answers": []}
+        review_data["recommendation"] = {"question": "Recommendation", "answers": []}
+        review_data["revision"] = {"question": "Revision", "answers": []}
+        review_data["comments"] = {"question": "Comments", "answers": []}
 
         responses = self.object_list.count()
-        ordered_reviewers = AssignedReviewers.objects.filter(submission=self.submission).reviewed().review_order()
+        ordered_reviewers = (
+            AssignedReviewers.objects.filter(submission=self.submission)
+            .reviewed()
+            .review_order()
+        )
 
         reviews = {review.author: review for review in self.object_list}
         for i, reviewer in enumerate(ordered_reviewers):
             review = reviews[reviewer]
-            author = '<a href="{}"><span>{}</span></a>'.format(review.get_absolute_url(), review.author)
+            author = '<a href="{}"><span>{}</span></a>'.format(
+                review.get_absolute_url(), review.author
+            )
             if review.author.role:
-                author += generate_image_tag(review.author.role.icon, '12x12')
-            author = f'<div>{author}</div>'
+                author += generate_image_tag(review.author.role.icon, "12x12")
+            author = f"<div>{author}</div>"
 
-            review_data['title']['answers'].append(author)
-            opinions_template = get_template('review/includes/review_opinions_list.html')
-            opinions_html = opinions_template.render({'opinions': review.opinions.select_related('author').all()})
-            review_data['opinions']['answers'].append(opinions_html)
-            review_data['score']['answers'].append(review.get_score_display)
-            review_data['recommendation']['answers'].append(review.get_recommendation_display())
-            review_data['comments']['answers'].append(review.get_comments_display(include_question=False))
+            review_data["title"]["answers"].append(author)
+            opinions_template = get_template(
+                "review/includes/review_opinions_list.html"
+            )
+            opinions_html = opinions_template.render(
+                {"opinions": review.opinions.select_related("author").all()}
+            )
+            review_data["opinions"]["answers"].append(opinions_html)
+            review_data["score"]["answers"].append(review.get_score_display)
+            review_data["recommendation"]["answers"].append(
+                review.get_recommendation_display()
+            )
+            review_data["comments"]["answers"].append(
+                review.get_comments_display(include_question=False)
+            )
             if review.for_latest:
-                revision = 'Current'
+                revision = "Current"
             else:
                 revision = '<a href="{}">Compare</a>'.format(review.get_compare_url())
-            review_data['revision']['answers'].append(revision)
+            review_data["revision"]["answers"].append(revision)
 
             for field_id in review.fields:
                 field = review.field(field_id)
                 data = review.data(field_id)
                 if self.should_display(field):
-                    question = field.value['field_label']
-                    review_data.setdefault(field.id, {'question': question, 'answers': [''] * responses})
-                    review_data[field.id]['answers'][i] = field.block.render(None, {'data': data})
+                    question = field.value["field_label"]
+                    review_data.setdefault(
+                        field.id, {"question": question, "answers": [""] * responses}
+                    )
+                    review_data[field.id]["answers"][i] = field.block.render(
+                        None, {"data": data}
+                    )
 
         return super().get_context_data(
-            submission=self.submission,
-            review_data=review_data,
-            **kwargs
+            submission=self.submission, review_data=review_data, **kwargs
         )
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(login_required, name="dispatch")
 class ReviewDeleteView(UserPassesTestMixin, DeleteView):
     model = Review
     raise_exception = True
 
     def test_func(self):
         review = self.get_object()
-        return self.request.user.has_perm('review.delete_review') or self.request.user == review.author.reviewer
+        return (
+            self.request.user.has_perm("review.delete_review")
+            or self.request.user == review.author.reviewer
+        )
 
     def delete(self, request, *args, **kwargs):
         review = self.get_object()
@@ -416,4 +489,4 @@ class ReviewDeleteView(UserPassesTestMixin, DeleteView):
 
     def get_success_url(self):
         review = self.get_object()
-        return reverse_lazy('funds:submissions:detail', args=(review.submission.id,))
+        return reverse_lazy("funds:submissions:detail", args=(review.submission.id,))

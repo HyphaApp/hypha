@@ -1,20 +1,20 @@
 {% load heroicons %}
 <div
     x-data="{
-        open: false,
-        toggle() {
+            open: false,
+            toggle() {
             if (this.open) {
-                return this.close()
+            return this.close()
             }
             this.$refs.button.focus()
             this.open = true
-        },
-        close(focusAfter) {
+            },
+            close(focusAfter) {
             if (! this.open) return
             this.open = false
             focusAfter && focusAfter.focus()
-        }
-    }"
+            }
+            }"
     x-on:keydown.escape.prevent.stop="close($refs.button)"
     x-on:focusin.window="! $refs.panel.contains($event.target) && close()"
     x-id="['dropdown-button']"
@@ -41,14 +41,14 @@
 
     <!-- Panel -->
     <div class="m-4 z-20 border min-w-max fixed top-0 left-0 right-0 md:text-sm md:m-0 md:mt-1 md:absolute md:left-auto {% if attributes.position == 'right' %}md:right-0{% else %} md:right-auto{% endif %} md:top-auto md:bottom-auto bg-white divide-y divide-gray-100 rounded-lg shadow-lg"
-        role="menu"
-        x-ref="panel"
-        x-show="open"
-        x-trap="open"
-        x-transition.origin.top
-        @click.away="open = false"
-        :id="$id('dropdown-button')"
-        x-cloak
+         role="menu"
+         x-ref="panel"
+         x-show="open"
+         x-trap="open"
+         x-transition.origin.top
+         @click.away="open = false"
+         :id="$id('dropdown-button')"
+         x-cloak
     >
         {% if attributes.heading %}
             <header class="subheading border-b px-3 py-2 flex justify-between items-center gap-2">
@@ -60,26 +60,26 @@
         {% endif %}
 
         {% if attributes.enable_search %}
-        <filter-input aria-owns="dd-content-{{ id }}" class='py-3 px-3 border-b flex grow'>
-            <label for="search-{{ id }}" class="sr-only">Filter {{ attributes.title }}</label>
-            <input type="text"
-                autofocus
-                id="search-{{ id }}"
-                @keydown.down="$focus.next()"
-                placeholder="Filter {{ attributes.title }}"
-                class="grow p-2 md:py-1 text-inherit font-normal w-max text-gray-900 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500">
-        </filter-input>
+            <filter-input aria-owns="dd-content-{{ id }}" class='py-3 px-3 border-b flex grow'>
+                <label for="search-{{ id }}" class="sr-only">Filter {{ attributes.title }}</label>
+                <input type="text"
+                       autofocus
+                       id="search-{{ id }}"
+                       @keydown.down="$focus.next()"
+                       placeholder="Filter {{ attributes.title }}"
+                       class="grow p-2 md:py-1 text-inherit font-normal w-max text-gray-900 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500">
+            </filter-input>
         {% endif %}
 
         <div id="dd-content-{{ id }}" class="font-semibold text-inherit md:w-[300px]"
-            @keydown.down="$focus.next()"
-            @keydown.up="$focus.previous()"
+             @keydown.down="$focus.next()"
+             @keydown.up="$focus.previous()"
         >
             {% render_slot slots.inner_block %}
             {% if slots.url %}
                 <div role="status" class="flex justify-center items-center py-4">
                     <svg aria-hidden="true" width="8" height="8" class="w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
-                        viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                         viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
                             fill="currentColor" />

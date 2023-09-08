@@ -18,7 +18,7 @@
         position: relative;
 
         &::before {
-            content: '';
+            content: "";
             position: absolute;
             top: 0;
             right: 0;
@@ -30,25 +30,25 @@
 
     .otf-icon-red {
         &::before {
-            background-image: url('./../../images/learnings/otf-icon-red.svg');
+            background-image: url("./../../images/learnings/otf-icon-red.svg");
         }
     }
 
     .bullhorn-icon-red {
         &::before {
-            background-image: url('./../../images/learnings/bullhorn-icon-red.svg');
+            background-image: url("./../../images/learnings/bullhorn-icon-red.svg");
         }
     }
 
     .potion-icon-red {
         &::before {
-            background-image: url('./../../images/learnings/potion-icon-red.svg');
+            background-image: url("./../../images/learnings/potion-icon-red.svg");
         }
     }
 
     .user-friends-icon-red {
         &::before {
-            background-image: url('./../../images/learnings/user-friends-icon-red.svg');
+            background-image: url("./../../images/learnings/user-friends-icon-red.svg");
         }
     }
 

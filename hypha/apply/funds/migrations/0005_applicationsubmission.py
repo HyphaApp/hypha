@@ -8,24 +8,40 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('wagtailcore', '0040_page_draft_title'),
-        ('funds', '0004_categoryblock_add_required_option'),
+        ("wagtailcore", "0040_page_draft_title"),
+        ("funds", "0004_categoryblock_add_required_option"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='ApplicationSubmission',
+            name="ApplicationSubmission",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('form_data', django.contrib.postgres.fields.jsonb.JSONField()),
-                ('submit_time', models.DateTimeField(auto_now_add=True, verbose_name='submit time')),
-                ('page', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='wagtailcore.Page')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("form_data", django.contrib.postgres.fields.jsonb.JSONField()),
+                (
+                    "submit_time",
+                    models.DateTimeField(auto_now_add=True, verbose_name="submit time"),
+                ),
+                (
+                    "page",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="wagtailcore.Page",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'form submission',
-                'abstract': False,
+                "verbose_name": "form submission",
+                "abstract": False,
             },
         ),
     ]

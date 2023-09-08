@@ -6,24 +6,32 @@ from django.db import migrations
 # importing and creating a future dependency. Changes to Group names should
 # be handled in another migration
 
-STAFF_GROUP_NAME = 'Staff'
-REVIEWER_GROUP_NAME = 'Reviewer'
-PARTNER_GROUP_NAME = 'Partner'
-COMMUNITY_REVIEWER_GROUP_NAME = 'Community reviewer'
+STAFF_GROUP_NAME = "Staff"
+REVIEWER_GROUP_NAME = "Reviewer"
+PARTNER_GROUP_NAME = "Partner"
+COMMUNITY_REVIEWER_GROUP_NAME = "Community reviewer"
 
-REVIEWER_GROUPS = {STAFF_GROUP_NAME,
+REVIEWER_GROUPS = {
+    STAFF_GROUP_NAME,
     REVIEWER_GROUP_NAME,
     COMMUNITY_REVIEWER_GROUP_NAME,
-    PARTNER_GROUP_NAME,}
+    PARTNER_GROUP_NAME,
+}
 
 
 def add_reviewer_type(apps, schema_editor):
-    AssignedReviewer = apps.get_model('funds', 'AssignedReviewers')
-    Group = apps.get_model('auth', 'Group')
-    for assigned in AssignedReviewer.objects.prefetch_related('reviewer__groups'):
-        groups = set(assigned.reviewer.groups.values_list('name', flat=True)) & REVIEWER_GROUPS
+    AssignedReviewer = apps.get_model("funds", "AssignedReviewers")
+    Group = apps.get_model("auth", "Group")
+    for assigned in AssignedReviewer.objects.prefetch_related("reviewer__groups"):
+        groups = (
+            set(assigned.reviewer.groups.values_list("name", flat=True))
+            & REVIEWER_GROUPS
+        )
         if len(groups) > 1:
-            if PARTNER_GROUP_NAME in groups and assigned.reviewer in assigned.submission.partners.all():
+            if (
+                PARTNER_GROUP_NAME in groups
+                and assigned.reviewer in assigned.submission.partners.all()
+            ):
                 groups = {PARTNER_GROUP_NAME}
             elif COMMUNITY_REVIEWER_GROUP_NAME in groups:
                 groups = {COMMUNITY_REVIEWER_GROUP_NAME}
@@ -43,9 +51,8 @@ def add_reviewer_type(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('funds', '0061_prepare_assigned_reviewers_for_data_migration'),
+        ("funds", "0061_prepare_assigned_reviewers_for_data_migration"),
     ]
 
     operations = [

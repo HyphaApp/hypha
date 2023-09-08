@@ -6,15 +6,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('public_funds', '0005_link_text_optional'),
+        ("public_funds", "0005_link_text_optional"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='fundindex',
-            name='introduction',
+            model_name="fundindex",
+            name="introduction",
             field=models.TextField(blank=True),
         ),
     ]

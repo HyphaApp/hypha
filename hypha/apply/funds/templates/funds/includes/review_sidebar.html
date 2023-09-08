@@ -8,7 +8,7 @@
         {% trans 'Avg. Score'%}: {{assigned_reviewers|average_review_score|floatformat:'1'}}
     </span>
 </div>
-     
+
 <ul class="reviews-sidebar mt-4" x-data='{showHiddenReviewers: false}'>
     {% if not staff_reviewers_exist %}
         <li class="reviews-sidebar__no-reviews">{% trans "No staff reviewers yet" %}</li>

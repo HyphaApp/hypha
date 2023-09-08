@@ -6,15 +6,18 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('funds', '0001_initial'),
+        ("funds", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='fundtype',
-            name='workflow',
-            field=models.CharField(choices=[('single', 'Single Stage'), ('double', 'Two Stage')], default='single', max_length=100),
+            model_name="fundtype",
+            name="workflow",
+            field=models.CharField(
+                choices=[("single", "Single Stage"), ("double", "Two Stage")],
+                default="single",
+                max_length=100,
+            ),
         ),
     ]

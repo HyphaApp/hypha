@@ -3,17 +3,15 @@ from django import template
 register = template.Library()
 
 
-@register.inclusion_tag('funds/includes/status_bar.html')
-def status_bar(workflow, current_phase, user, author=False, css_class='', same_stage=False):
-
+@register.inclusion_tag("funds/includes/status_bar.html")
+def status_bar(
+    workflow, current_phase, user, author=False, css_class="", same_stage=False
+):
     phases = workflow.phases_for(user)
     is_applicant = user == author if author else user.is_applicant
 
     if same_stage and not is_applicant:
-        phases = [
-            phase for phase in phases
-            if phase.stage == current_phase.stage
-        ]
+        phases = [phase for phase in phases if phase.stage == current_phase.stage]
 
     if not current_phase.permissions.can_view(user):
         current_phase = workflow.previous_visible(current_phase, user)
@@ -30,10 +28,10 @@ def status_bar(workflow, current_phase, user, author=False, css_class='', same_s
         phases = new_phase_list
 
     return {
-        'phases': phases,
-        'current_phase': current_phase,
-        'class': css_class,
-        'public': user.is_applicant or user.is_partner,
+        "phases": phases,
+        "current_phase": current_phase,
+        "class": css_class,
+        "public": user.is_applicant or user.is_partner,
     }
 
 

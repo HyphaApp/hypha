@@ -13,7 +13,7 @@ from hypha.public.utils.models import BasePage, RelatedPage
 
 
 class InformationPageRelatedPage(RelatedPage):
-    source_page = ParentalKey('InformationPage', related_name='related_pages')
+    source_page = ParentalKey("InformationPage", related_name="related_pages")
 
 
 class InformationPage(BasePage):
@@ -21,14 +21,14 @@ class InformationPage(BasePage):
     body = StreamField(StoryBlock(), use_json_field=True)
 
     search_fields = BasePage.search_fields + [
-        index.SearchField('introduction'),
-        index.SearchField('body'),
+        index.SearchField("introduction"),
+        index.SearchField("body"),
     ]
 
     content_panels = BasePage.content_panels + [
-        FieldPanel('introduction'),
-        FieldPanel('body'),
-        InlinePanel('related_pages', label=_('Related pages')),
+        FieldPanel("introduction"),
+        FieldPanel("body"),
+        InlinePanel("related_pages", label=_("Related pages")),
     ]
 
 
@@ -36,18 +36,18 @@ class IndexPage(BasePage):
     introduction = models.TextField(blank=True)
 
     content_panels = BasePage.content_panels + [
-        FieldPanel('introduction', widget=PagedownWidget()),
+        FieldPanel("introduction", widget=PagedownWidget()),
     ]
 
     search_fields = BasePage.search_fields + [
-        index.SearchField('introduction'),
+        index.SearchField("introduction"),
     ]
 
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request, *args, **kwargs)
         subpages = self.get_children().live()
         per_page = settings.DEFAULT_PER_PAGE
-        page_number = request.GET.get('page')
+        page_number = request.GET.get("page")
         paginator = Paginator(subpages, per_page)
 
         try:
@@ -57,6 +57,6 @@ class IndexPage(BasePage):
         except EmptyPage:
             subpages = paginator.page(paginator.num_pages)
 
-        context['subpages'] = subpages
+        context["subpages"] = subpages
 
         return context

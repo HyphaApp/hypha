@@ -9,26 +9,151 @@ import wagtail.fields
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
-        ('wagtailcore', '0040_page_draft_title'),
+        ("wagtailcore", "0040_page_draft_title"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='NavigationSettings',
+            name="NavigationSettings",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('primary_navigation', wagtail.fields.StreamField((('link', wagtail.blocks.StructBlock((('page', wagtail.blocks.PageChooserBlock()), ('title', wagtail.blocks.CharBlock(help_text="Leave blank to use the page's own title", required=False))))),), blank=True, help_text='Main site navigation')),
-                ('secondary_navigation', wagtail.fields.StreamField((('link', wagtail.blocks.StructBlock((('page', wagtail.blocks.PageChooserBlock()), ('title', wagtail.blocks.CharBlock(help_text="Leave blank to use the page's own title", required=False))))),), blank=True, help_text='Alternative navigation')),
-                ('footer_navigation', wagtail.fields.StreamField((('column', wagtail.blocks.StructBlock((('heading', wagtail.blocks.CharBlock(required=False, help_text='Leave blank if no header required.')), ('links', wagtail.blocks.ListBlock(wagtail.blocks.StructBlock((('page', wagtail.blocks.PageChooserBlock()), ('title', wagtail.blocks.CharBlock(help_text="Leave blank to use the page's own title", required=False))))))))),), blank=True, help_text='Multiple columns of footer links with optional header.')),
-                ('footer_links', wagtail.fields.StreamField((('link', wagtail.blocks.StructBlock((('page', wagtail.blocks.PageChooserBlock()), ('title', wagtail.blocks.CharBlock(help_text="Leave blank to use the page's own title", required=False))))),), blank=True, help_text='Single list of elements at the base of the page.')),
-                ('site', models.OneToOneField(editable=False, on_delete=django.db.models.deletion.CASCADE, to='wagtailcore.Site')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "primary_navigation",
+                    wagtail.fields.StreamField(
+                        (
+                            (
+                                "link",
+                                wagtail.blocks.StructBlock(
+                                    (
+                                        ("page", wagtail.blocks.PageChooserBlock()),
+                                        (
+                                            "title",
+                                            wagtail.blocks.CharBlock(
+                                                help_text="Leave blank to use the page's own title",
+                                                required=False,
+                                            ),
+                                        ),
+                                    )
+                                ),
+                            ),
+                        ),
+                        blank=True,
+                        help_text="Main site navigation",
+                    ),
+                ),
+                (
+                    "secondary_navigation",
+                    wagtail.fields.StreamField(
+                        (
+                            (
+                                "link",
+                                wagtail.blocks.StructBlock(
+                                    (
+                                        ("page", wagtail.blocks.PageChooserBlock()),
+                                        (
+                                            "title",
+                                            wagtail.blocks.CharBlock(
+                                                help_text="Leave blank to use the page's own title",
+                                                required=False,
+                                            ),
+                                        ),
+                                    )
+                                ),
+                            ),
+                        ),
+                        blank=True,
+                        help_text="Alternative navigation",
+                    ),
+                ),
+                (
+                    "footer_navigation",
+                    wagtail.fields.StreamField(
+                        (
+                            (
+                                "column",
+                                wagtail.blocks.StructBlock(
+                                    (
+                                        (
+                                            "heading",
+                                            wagtail.blocks.CharBlock(
+                                                required=False,
+                                                help_text="Leave blank if no header required.",
+                                            ),
+                                        ),
+                                        (
+                                            "links",
+                                            wagtail.blocks.ListBlock(
+                                                wagtail.blocks.StructBlock(
+                                                    (
+                                                        (
+                                                            "page",
+                                                            wagtail.blocks.PageChooserBlock(),
+                                                        ),
+                                                        (
+                                                            "title",
+                                                            wagtail.blocks.CharBlock(
+                                                                help_text="Leave blank to use the page's own title",
+                                                                required=False,
+                                                            ),
+                                                        ),
+                                                    )
+                                                )
+                                            ),
+                                        ),
+                                    )
+                                ),
+                            ),
+                        ),
+                        blank=True,
+                        help_text="Multiple columns of footer links with optional header.",
+                    ),
+                ),
+                (
+                    "footer_links",
+                    wagtail.fields.StreamField(
+                        (
+                            (
+                                "link",
+                                wagtail.blocks.StructBlock(
+                                    (
+                                        ("page", wagtail.blocks.PageChooserBlock()),
+                                        (
+                                            "title",
+                                            wagtail.blocks.CharBlock(
+                                                help_text="Leave blank to use the page's own title",
+                                                required=False,
+                                            ),
+                                        ),
+                                    )
+                                ),
+                            ),
+                        ),
+                        blank=True,
+                        help_text="Single list of elements at the base of the page.",
+                    ),
+                ),
+                (
+                    "site",
+                    models.OneToOneField(
+                        editable=False,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="wagtailcore.Site",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
     ]

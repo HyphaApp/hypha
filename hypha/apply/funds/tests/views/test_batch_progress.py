@@ -11,14 +11,14 @@ from hypha.apply.utils.testing.tests import BaseViewTestCase
 
 
 class BaseBatchProgressViewTestCase(BaseViewTestCase):
-    url_name = 'funds:submissions:{}'
-    base_view_name = 'list'
+    url_name = "funds:submissions:{}"
+    base_view_name = "list"
 
     def data(self, action, submissions):
         return {
-            'form-submitted-batch_progress_form': 'Update',
-            'action': action,
-            'submissions': ','.join([str(submission.id) for submission in submissions]),
+            "form-submitted-batch_progress_form": "Update",
+            "action": action,
+            "submissions": ",".join([str(submission.id) for submission in submissions]),
         }
 
 
@@ -27,82 +27,92 @@ class StaffTestCase(BaseBatchProgressViewTestCase):
 
     def test_can_progress_application(self):
         submission = ApplicationSubmissionFactory()
-        action = 'open-review'
+        action = "open-review"
         self.post_page(data=self.data(action, [submission]))
         submission = self.refresh(submission)
-        self.assertEqual(submission.status, 'internal_review')
+        self.assertEqual(submission.status, "internal_review")
 
     def test_can_progress_multiple_applications(self):
         submissions = ApplicationSubmissionFactory.create_batch(3)
-        action = 'open-review'
+        action = "open-review"
         self.post_page(data=self.data(action, submissions))
 
         self.assertCountEqual(
             [self.refresh(submission).status for submission in submissions],
-            ['internal_review'] * 3,
+            ["internal_review"] * 3,
         )
 
     def test_cant_progress_in_incorrect_state(self):
         submission = ApplicationSubmissionFactory()
-        action = 'close-review'
+        action = "close-review"
         self.post_page(data=self.data(action, [submission]))
         submission = self.refresh(submission)
-        self.assertEqual(submission.status, 'in_discussion')
+        self.assertEqual(submission.status, "in_discussion")
 
     def test_can_progress_one_in_mixed_state(self):
         bad_submission = ApplicationSubmissionFactory()
-        good_submission = ApplicationSubmissionFactory(status='internal_review')
-        action = 'close-review'
+        good_submission = ApplicationSubmissionFactory(status="internal_review")
+        action = "close-review"
         self.post_page(data=self.data(action, [good_submission, bad_submission]))
         good_submission = self.refresh(good_submission)
         bad_submission = self.refresh(bad_submission)
-        self.assertEqual(bad_submission.status, 'in_discussion')
-        self.assertEqual(good_submission.status, 'post_review_discussion')
+        self.assertEqual(bad_submission.status, "in_discussion")
+        self.assertEqual(good_submission.status, "post_review_discussion")
 
     def test_can_progress_different_states(self):
         submission = ApplicationSubmissionFactory()
         other_submission = InvitedToProposalFactory()
-        action = 'open-review'
+        action = "open-review"
         self.post_page(data=self.data(action, [submission, other_submission]))
         submission = self.refresh(submission)
         other_submission = self.refresh(other_submission)
-        self.assertEqual(submission.status, 'internal_review')
-        self.assertEqual(other_submission.status, 'proposal_internal_review')
+        self.assertEqual(submission.status, "internal_review")
+        self.assertEqual(other_submission.status, "proposal_internal_review")
 
     def test_mixed_determine_notifies(self):
         submission = ApplicationSubmissionFactory()
-        dismissed_submission = ApplicationSubmissionFactory(status='rejected')
-        DeterminationFactory(submission=dismissed_submission, rejected=True, submitted=True)
-        action = 'dismiss'
-        response = self.post_page(data=self.data(action, [submission, dismissed_submission]))
-        self.assertEqual(len(response.context['messages']), 1)
+        dismissed_submission = ApplicationSubmissionFactory(status="rejected")
+        DeterminationFactory(
+            submission=dismissed_submission, rejected=True, submitted=True
+        )
+        action = "dismiss"
+        response = self.post_page(
+            data=self.data(action, [submission, dismissed_submission])
+        )
+        self.assertEqual(len(response.context["messages"]), 1)
 
     def test_determine_redirects(self):
         submission = ApplicationSubmissionFactory()
-        action = 'dismiss'
+        action = "dismiss"
         response = self.post_page(data=self.data(action, [submission]))
-        redirect_url = self.url_from_pattern('apply:submissions:determinations:batch', absolute=False)
-        self.assertEqual(response.request['PATH_INFO'][:len(redirect_url)], redirect_url)
+        redirect_url = self.url_from_pattern(
+            "apply:submissions:determinations:batch", absolute=False
+        )
+        self.assertEqual(
+            response.request["PATH_INFO"][: len(redirect_url)], redirect_url
+        )
 
-    @mock.patch('hypha.apply.funds.views.messenger')
+    @mock.patch("hypha.apply.funds.views.messenger")
     def test_messenger_not_called_with_failed(self, patched):
         submission = ApplicationSubmissionFactory()
-        action = 'close-review'
+        action = "close-review"
         self.post_page(data=self.data(action, [submission]))
         patched.assert_called_once()
         _, _, kwargs = patched.mock_calls[0]
-        self.assertQuerysetEqual(kwargs['sources'], ApplicationSubmission.objects.none())
+        self.assertQuerysetEqual(
+            kwargs["sources"], ApplicationSubmission.objects.none()
+        )
 
-    @mock.patch('hypha.apply.funds.views.messenger')
+    @mock.patch("hypha.apply.funds.views.messenger")
     def test_messenger_with_submission_in_review(self, patched):
         submission = ApplicationSubmissionFactory()
-        action = 'open-review'
+        action = "open-review"
         self.post_page(data=self.data(action, [submission]))
         self.assertEqual(patched.call_count, 2)
         _, _, kwargs = patched.mock_calls[0]
-        self.assertCountEqual(kwargs['sources'], [submission])
+        self.assertCountEqual(kwargs["sources"], [submission])
         _, _, kwargs = patched.mock_calls[1]
-        self.assertCountEqual(kwargs['sources'], [submission])
+        self.assertCountEqual(kwargs["sources"], [submission])
 
 
 class ReivewersTestCase(BaseBatchProgressViewTestCase):

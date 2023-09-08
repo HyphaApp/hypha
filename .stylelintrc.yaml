@@ -31,10 +31,10 @@ rules:
   max-nesting-depth:
     - 4
     - ignoreAtRules:
-      - each
-      - media
-      - supports
-      - include
+        - each
+        - media
+        - supports
+        - include
   media-feature-name-no-vendor-prefix: true
   media-feature-range-notation: prefix
   no-descending-specificity: null
@@ -43,14 +43,14 @@ rules:
   rule-empty-line-before:
     - always-multi-line
     - except:
-      - first-nested
+        - first-nested
       ignore:
-      - after-comment
+        - after-comment
   scss/at-extend-no-missing-placeholder: true
   scss/at-function-pattern: "^[a-z]+([a-z0-9-]+[a-z0-9]+)?$"
   scss/at-import-no-partial-leading-underscore: true
   scss/at-import-partial-extension-blacklist:
-  - scss
+    - scss
   scss/at-mixin-pattern: "^[a-z]+([a-z0-9-]+[a-z0-9]+)?$"
   scss/at-rule-no-unknown: true
   scss/comment-no-empty: null

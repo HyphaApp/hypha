@@ -6,17 +6,17 @@
     &--meta {
         display: flex;
         flex-wrap: wrap;
-        margin-top: .25rem;
+        margin-top: 0.25rem;
 
         span {
             &::after {
-                padding: 0 .25rem;
-                content: '•';
+                padding: 0 0.25rem;
+                content: "•";
             }
 
             &:last-child {
                 &::after {
-                    content: '';
+                    content: "";
                 }
             }
         }
@@ -27,7 +27,7 @@
         flex-direction: column;
         margin-top: 20px;
         font-weight: $weight--normal;
-        color: transparentize($color--dark-grey, .5);
+        color: transparentize($color--dark-grey, 0.5);
 
         @include media-query(tablet-landscape) {
             flex-direction: row;
@@ -44,7 +44,7 @@
     }
 
     &--light-grey {
-        color: transparentize($color--dark-grey, .5);
+        color: transparentize($color--dark-grey, 0.5);
     }
 
     &--uppercase {
@@ -55,7 +55,7 @@
         font-weight: 500;
         font-size: 1.25rem;
         line-height: 1.75rem;
-        margin-bottom: .25rem;
+        margin-bottom: 0.25rem;
     }
 
     &--bold {

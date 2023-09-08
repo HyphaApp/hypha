@@ -37,7 +37,7 @@
         id="{{ form.name }}"
         enctype="multipart/form-data"
         {% if action %}action="{{ action }}"{% endif %}
-        >
+    >
         {% csrf_token %}
 
         {{ form.media }}
@@ -61,13 +61,13 @@
         {% endfor %}
 
         {% if cancel %}
-        <button
-            type="button"
-            data-fancybox-close=""
-            class="button button--{% if invert %}primary{% else %}white{% endif %} button--top-space"
-            title="{% trans "Close" %}">
-            {% trans "Cancel" %}
-        </button>
+            <button
+                type="button"
+                data-fancybox-close=""
+                class="button button--{% if invert %}primary{% else %}white{% endif %} button--top-space"
+                title="{% trans "Close" %}">
+                {% trans "Cancel" %}
+            </button>
         {% endif %}
 
         <button class="button button--submit button--top-space button--primary" type="submit" name="{{ form_prefix }}{{ form.name }}" value="save">{% trans "Save" %}</button>

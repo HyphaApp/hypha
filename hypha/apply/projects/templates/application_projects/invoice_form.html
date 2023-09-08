@@ -3,35 +3,35 @@
 
 {% block title %}{% if object %}{% trans "Edit" %}{% else %}{% trans "Add" %}{% endif %} {% trans "Invoice" %}: {% if object %}{{ object.project.title }}{% else %}{{ project.title }}{% endif %}{% endblock %}
 {% block content %}
-<div class="admin-bar">
-    <div class="admin-bar__inner">
-        <a class="simplified__projects-link" href="{{ project.get_absolute_url }}">
-            {% trans "View project page" %}
-        </a>
-        <h2 class="heading heading--no-margin">{% if object %}{% trans "Editing" %}{% else %}{% trans "Add" %}{% endif %} {% trans "Invoice" %}</h2>
-        <h5 class="heading heading--no-margin">{% if object %}{{ object.project.title }}{% else %}{% trans "For" %}: {{ project.title }}{% endif %}</h5>
+    <div class="admin-bar">
+        <div class="admin-bar__inner">
+            <a class="simplified__projects-link" href="{{ project.get_absolute_url }}">
+                {% trans "View project page" %}
+            </a>
+            <h2 class="heading heading--no-margin">{% if object %}{% trans "Editing" %}{% else %}{% trans "Add" %}{% endif %} {% trans "Invoice" %}</h2>
+            <h5 class="heading heading--no-margin">{% if object %}{{ object.project.title }}{% else %}{% trans "For" %}: {{ project.title }}{% endif %}</h5>
+        </div>
     </div>
-</div>
 
-{% include "forms/includes/form_errors.html" with form=form %}
+    {% include "forms/includes/form_errors.html" with form=form %}
 
-<div class="wrapper wrapper--light-grey-bg wrapper--form wrapper--sidebar">
-    <div class="wrapper--sidebar--inner">
-        <form class="form" action="" method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form.media }}
+    <div class="wrapper wrapper--light-grey-bg wrapper--form wrapper--sidebar">
+        <div class="wrapper--sidebar--inner">
+            <form class="form" action="" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.media }}
 
-            {% for field in form %}
-                {% if field.field %}
-                    {% include "forms/includes/field.html" %}
-                {% else %}
-                    {{ field }}
-                {% endif %}
-            {% endfor %}
-            {% for button_name, button_type, button_value in buttons %}
-                <button class="button button--submit button--top-space button--{{ button_type }}" type="submit" name="{{ button_name }} {% if button_value == delete %}formnovalidate{% endif %}">{{ button_value }}</button>
-            {% endfor %}
-        </form>
+                {% for field in form %}
+                    {% if field.field %}
+                        {% include "forms/includes/field.html" %}
+                    {% else %}
+                        {{ field }}
+                    {% endif %}
+                {% endfor %}
+                {% for button_name, button_type, button_value in buttons %}
+                    <button class="button button--submit button--top-space button--{{ button_type }}" type="submit" name="{{ button_name }} {% if button_value == delete %}formnovalidate{% endif %}">{{ button_value }}</button>
+                {% endfor %}
+            </form>
+        </div>
     </div>
-</div>
 {% endblock %}

@@ -15,7 +15,7 @@ Cell1  | Cell2""",
 ]
 
 
-@pytest.mark.parametrize('test_input,expected', markdown_test_dataset)
+@pytest.mark.parametrize("test_input,expected", markdown_test_dataset)
 def test_markdown_to_html(test_input, expected):
-    output = markdown_to_html(test_input).replace('\n', '').replace('  ', '')
+    output = markdown_to_html(test_input).replace("\n", "").replace("  ", "")
     assert output == expected

@@ -12,7 +12,7 @@ class CountrySelectWithChoices(KeepOwnAttrsWidget, forms.Select):
     is_required = True
 
     def __init__(self, *args, **kwargs):
-        kwargs['choices'] = countries
+        kwargs["choices"] = countries
         super().__init__(*args, **kwargs)
 
 
@@ -21,19 +21,25 @@ class KeepAttrsTextInput(KeepOwnAttrsWidget, forms.TextInput):
 
 
 def classify(field):
-    return field.replace('_', '')
+    return field.replace("_", "")
 
 
 def display(field):
-    return field.replace('_', ' ').title()
+    return field.replace("_", " ").title()
 
 
 class NestedMultiWidget(KeepOwnAttrsWidget, forms.MultiWidget):
-    template_name = 'addressfield/widgets/nested_with_label.html'
+    template_name = "addressfield/widgets/nested_with_label.html"
 
     def __init__(self, *args, **kwargs):
         widgets = [
-            widget(attrs={'class': classify(field), 'required': False, 'display': display(field)})
+            widget(
+                attrs={
+                    "class": classify(field),
+                    "required": False,
+                    "display": display(field),
+                }
+            )
             for field, widget in self.components.items()
         ]
         super().__init__(widgets, *args, **kwargs)
@@ -46,7 +52,7 @@ class NestedMultiWidget(KeepOwnAttrsWidget, forms.MultiWidget):
         if value:
             decompressed = []
             for i, widget in enumerate(self.widgets):
-                if hasattr(widget, 'components'):
+                if hasattr(widget, "components"):
                     decompressed.append(widget.decompress(value))
                 else:
                     decompressed.append(value.get(self.field_names[i]))
@@ -56,9 +62,9 @@ class NestedMultiWidget(KeepOwnAttrsWidget, forms.MultiWidget):
     def value_from_datadict(self, data, files, name):
         value = {}
         for i, widget in enumerate(self.widgets):
-            widget_value = widget.value_from_datadict(data, files, name + '_%s' % i)
+            widget_value = widget.value_from_datadict(data, files, name + "_%s" % i)
             # flatten the data structure to a single dict
-            if hasattr(widget, 'widgets'):
+            if hasattr(widget, "widgets"):
                 value.update(widget_value)
             else:
                 value[self.field_names[i]] = widget_value
@@ -67,28 +73,28 @@ class NestedMultiWidget(KeepOwnAttrsWidget, forms.MultiWidget):
 
 class LocalityWidget(NestedMultiWidget):
     components = {
-        'locality_name': KeepAttrsTextInput,
-        'administrative_area': KeepAttrsTextInput,
-        'postal_code': KeepAttrsTextInput,
+        "locality_name": KeepAttrsTextInput,
+        "administrative_area": KeepAttrsTextInput,
+        "postal_code": KeepAttrsTextInput,
     }
 
 
 class AddressWidget(NestedMultiWidget):
     components = {
-        'country': CountrySelectWithChoices,
-        'thoroughfare': KeepAttrsTextInput,
-        'premise': KeepAttrsTextInput,
-        'locality': LocalityWidget,
+        "country": CountrySelectWithChoices,
+        "thoroughfare": KeepAttrsTextInput,
+        "premise": KeepAttrsTextInput,
+        "locality": LocalityWidget,
     }
 
     class Media:
         js = (
-            'jquery.addressfield.min.js',
-            'address_form.js',
+            "jquery.addressfield.min.js",
+            "address_form.js",
         )
 
     def __init__(self, *args, **kwargs):
-        attrs = kwargs.get('attrs', {})
-        attrs['class'] = 'address'
-        kwargs['attrs'] = attrs
+        attrs = kwargs.get("attrs", {})
+        attrs["class"] = "address"
+        kwargs["attrs"] = attrs
         super().__init__(*args, **kwargs)

@@ -7,8 +7,8 @@ from .models.screening import ScreeningStatus
 
 def render_icon(image):
     if not image:
-        return ''
-    filter_spec = 'fill-20x20'
+        return ""
+    filter_spec = "fill-20x20"
     return generate_image_tag(image, filter_spec, html_class="icon mr-2 align-middle")
 
 
@@ -60,7 +60,7 @@ def model_form_initial(instance, fields=None, exclude=None):
     opts = instance._meta
     data = {}
     for f in chain(opts.concrete_fields, opts.private_fields, opts.many_to_many):
-        if not getattr(f, 'editable', False):
+        if not getattr(f, "editable", False):
             continue
         if fields and f.name not in fields:
             continue

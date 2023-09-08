@@ -18,10 +18,10 @@ class SageIntacctSDKError(Exception):
 class SageIntacctSDKWarning(Warning):
     """The base Warning class for SageIntacctSDK.
 
-       Parameters:
-           msg (str): Short description of the alert.
-           response: Error response from the API call.
-       """
+    Parameters:
+        msg (str): Short description of the alert.
+        response: Error response from the API call.
+    """
 
     def __init__(self, msg, response=None):
         super(SageIntacctSDKWarning, self).__init__(msg)

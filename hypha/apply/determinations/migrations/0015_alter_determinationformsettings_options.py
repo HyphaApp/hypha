@@ -4,14 +4,13 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('determinations', '0014_alter_determination_formfield_send_notice'),
+        ("determinations", "0014_alter_determination_formfield_send_notice"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='determinationformsettings',
-            options={'verbose_name': 'determination form settings'},
+            name="determinationformsettings",
+            options={"verbose_name": "determination form settings"},
         ),
     ]

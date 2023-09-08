@@ -7,20 +7,26 @@ DEBUG = True
 RELOAD = True
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'CHANGEME!!!'
+SECRET_KEY = "CHANGEME!!!"
 
 WAGTAIL_CACHE = False
 
-ALLOWED_HOSTS = ['apply.localhost', 'localhost', '127.0.0.1', 'hypha.test', 'apply.hypha.test']
+ALLOWED_HOSTS = [
+    "apply.localhost",
+    "localhost",
+    "127.0.0.1",
+    "hypha.test",
+    "apply.hypha.test",
+]
 
-WAGTAILADMIN_BASE_URL = 'http://localhost:8000'
+WAGTAILADMIN_BASE_URL = "http://localhost:8000"
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 AUTH_PASSWORD_VALIDATORS = []
 
 INSTALLED_APPS = INSTALLED_APPS + [
-    'wagtail.contrib.styleguide',
+    "wagtail.contrib.styleguide",
 ]
 
 SECURE_SSL_REDIRECT = False
@@ -38,69 +44,69 @@ except ImportError:
 
 # E-mail to local files.
 if LOCAL_FILE_EMAIL:
-    EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
-    EMAIL_FILE_PATH = BASE_DIR + '/var/mail'
+    EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+    EMAIL_FILE_PATH = BASE_DIR + "/var/mail"
 
 # Local logging to file.
 if LOCAL_FILE_LOGGING:
     LOGGING = {
-        'version': 1,
-        'disable_existing_loggers': True,
-        'formatters': {
-            'standard': {
-                'format': "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
-                'datefmt': "%Y-%m-%d %H:%M:%S"
+        "version": 1,
+        "disable_existing_loggers": True,
+        "formatters": {
+            "standard": {
+                "format": "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
+                "datefmt": "%Y-%m-%d %H:%M:%S",
             },
         },
-        'handlers': {
-            'null': {
-                'level': 'DEBUG',
-                'class': 'logging.NullHandler',
+        "handlers": {
+            "null": {
+                "level": "DEBUG",
+                "class": "logging.NullHandler",
             },
-            'logfile': {
-                'level': 'DEBUG',
-                'class': 'logging.handlers.RotatingFileHandler',
-                'filename': BASE_DIR + '/var/log/debug.log',
-                'maxBytes': 1000000,
-                'backupCount': 2,
-                'formatter': 'standard',
+            "logfile": {
+                "level": "DEBUG",
+                "class": "logging.handlers.RotatingFileHandler",
+                "filename": BASE_DIR + "/var/log/debug.log",
+                "maxBytes": 1000000,
+                "backupCount": 2,
+                "formatter": "standard",
             },
         },
-        'loggers': {
-            'django': {
-                'handlers': ['logfile'],
-                'level': 'INFO',
-                'propagate': True,
+        "loggers": {
+            "django": {
+                "handlers": ["logfile"],
+                "level": "INFO",
+                "propagate": True,
             },
-            'django.db.backends': {
-                'handlers': ['logfile'],
-                'level': 'INFO',
-                'propagate': False,
+            "django.db.backends": {
+                "handlers": ["logfile"],
+                "level": "INFO",
+                "propagate": False,
             },
-            'django.request': {
-                'handlers': ['logfile'],
-                'level': 'DEBUG',
-                'propagate': False,
+            "django.request": {
+                "handlers": ["logfile"],
+                "level": "DEBUG",
+                "propagate": False,
             },
-            'django.template': {
-                'handlers': ['logfile'],
-                'level': 'INFO',
-                'propagate': False,
+            "django.template": {
+                "handlers": ["logfile"],
+                "level": "INFO",
+                "propagate": False,
             },
-            'django.security': {
-                'handlers': ['logfile'],
-                'level': 'DEBUG',
-                'propagate': False,
+            "django.security": {
+                "handlers": ["logfile"],
+                "level": "DEBUG",
+                "propagate": False,
             },
-            'wagtail': {
-                'handlers': ['logfile'],
-                'level': 'DEBUG',
+            "wagtail": {
+                "handlers": ["logfile"],
+                "level": "DEBUG",
             },
-            'hypha': {
-                'handlers': ['logfile'],
-                'level': 'DEBUG',
+            "hypha": {
+                "handlers": ["logfile"],
+                "level": "DEBUG",
             },
-        }
+        },
     }
 
 
@@ -109,22 +115,22 @@ if LOCAL_FILE_LOGGING:
 if DEBUG:
     INSTALLED_APPS = [
         *INSTALLED_APPS,
-        'debug_toolbar',
+        "debug_toolbar",
     ]
     MIDDLEWARE = [
-        'debug_toolbar.middleware.DebugToolbarMiddleware',
+        "debug_toolbar.middleware.DebugToolbarMiddleware",
         *MIDDLEWARE,
     ]
     # https://django-debug-toolbar.readthedocs.io/en/latest/installation.html#configuring-internal-ips
-    INTERNAL_IPS = ['127.0.0.1']
+    INTERNAL_IPS = ["127.0.0.1"]
 
     if RELOAD:
         INSTALLED_APPS = [
             *INSTALLED_APPS,
-            'django_browser_reload',
+            "django_browser_reload",
         ]
         MIDDLEWARE = [
-            'django_browser_reload.middleware.BrowserReloadMiddleware',
+            "django_browser_reload.middleware.BrowserReloadMiddleware",
             *MIDDLEWARE,
         ]
 
@@ -133,23 +139,25 @@ if DEBUG:
 # can be easily toggled on in the UI.
 DEBUG_TOOLBAR_CONFIG = {
     "DISABLE_PANELS": {
-        'debug_toolbar.panels.versions.VersionsPanel',
-        'debug_toolbar.panels.timer.TimerPanel',
-        'debug_toolbar.panels.settings.SettingsPanel',
-        'debug_toolbar.panels.headers.HeadersPanel',
-        'debug_toolbar.panels.request.RequestPanel',
-        'debug_toolbar.panels.sql.SQLPanel',
-        'debug_toolbar.panels.staticfiles.StaticFilesPanel',
-        'debug_toolbar.panels.templates.TemplatesPanel',
-        'debug_toolbar.panels.cache.CachePanel',
-        'debug_toolbar.panels.signals.SignalsPanel',
-        'debug_toolbar.panels.logging.LoggingPanel',
-        'debug_toolbar.panels.redirects.RedirectsPanel',
-        'debug_toolbar.panels.profiling.ProfilingPanel',
+        "debug_toolbar.panels.versions.VersionsPanel",
+        "debug_toolbar.panels.timer.TimerPanel",
+        "debug_toolbar.panels.settings.SettingsPanel",
+        "debug_toolbar.panels.headers.HeadersPanel",
+        "debug_toolbar.panels.request.RequestPanel",
+        "debug_toolbar.panels.sql.SQLPanel",
+        "debug_toolbar.panels.staticfiles.StaticFilesPanel",
+        "debug_toolbar.panels.templates.TemplatesPanel",
+        "debug_toolbar.panels.cache.CachePanel",
+        "debug_toolbar.panels.signals.SignalsPanel",
+        "debug_toolbar.panels.logging.LoggingPanel",
+        "debug_toolbar.panels.redirects.RedirectsPanel",
+        "debug_toolbar.panels.profiling.ProfilingPanel",
     },
     "SHOW_COLLAPSED": True,
 }
 
 # Required for testing the apis from postman
-REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'] = REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'] + ('rest_framework.authentication.BasicAuthentication', )
-SENTRY_DENY_URLS += ['__reload__', '/favicon.ico', '/media/', '/static/', '__debug__']
+REST_FRAMEWORK["DEFAULT_AUTHENTICATION_CLASSES"] = REST_FRAMEWORK[
+    "DEFAULT_AUTHENTICATION_CLASSES"
+] + ("rest_framework.authentication.BasicAuthentication",)
+SENTRY_DENY_URLS += ["__reload__", "/favicon.ico", "/media/", "/static/", "__debug__"]

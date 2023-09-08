@@ -11,7 +11,7 @@ class Command(BaseCommand):
     @transaction.atomic
     def handle(self, *args, **options):
         with connection.cursor() as cursor:
-            cursor.execute('SELECT id, form_fields FROM review_reviewform')
+            cursor.execute("SELECT id, form_fields FROM review_reviewform")
             form_fields = cursor.fetchall()
 
         for row in form_fields:
@@ -19,11 +19,14 @@ class Command(BaseCommand):
             form = json.loads(review_form)
             updated = False
             for field in form:
-                if field['id'] == '976386e1-3a66-490f-9e82-bfbe1f134cf2':
-                    field['id'] = str(uuid.uuid4())
+                if field["id"] == "976386e1-3a66-490f-9e82-bfbe1f134cf2":
+                    field["id"] = str(uuid.uuid4())
                     updated = True
 
             if updated:
                 updated_form = json.dumps(form)
                 with connection.cursor() as cursor:
-                    cursor.execute('UPDATE review_reviewform SET form_fields = %s WHERE id = %s', [updated_form, review_id])
+                    cursor.execute(
+                        "UPDATE review_reviewform SET form_fields = %s WHERE id = %s",
+                        [updated_form, review_id],
+                    )

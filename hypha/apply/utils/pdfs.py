@@ -25,17 +25,68 @@ from reportlab.platypus import (
 )
 
 STYLES = {
-    'Question': PS(fontName='MontserratBold', fontSize=14, name='Question', spaceAfter=0, spaceBefore=18, leading=21),
-    'QuestionSmall': PS(fontName='MontserratBold', fontSize=12, name='QuestionSmall', spaceAfter=0, spaceBefore=16, leading=18),
-    'Normal': PS(fontName='NotoSans', name='Normal'),
-    'Heading1': PS(fontName='NotoSansBold', fontSize=12, name='Heading1', spaceAfter=4, spaceBefore=12, leading=18),
-    'Heading2': PS(fontName='NotoSansBold', fontSize=10, name='Heading2', spaceAfter=4, spaceBefore=10, leading=15),
-    'Heading3': PS(fontName='NotoSansBold', fontSize=10, name='Heading3', spaceAfter=4, spaceBefore=10, leading=15),
-    'Heading4': PS(fontName='NotoSansBold', fontSize=10, name='Heading4', spaceAfter=4, spaceBefore=10, leading=15),
-    'Heading5': PS(fontName='NotoSansBold', fontSize=10, name='Heading5', spaceAfter=4, spaceBefore=10, leading=15),
+    "Question": PS(
+        fontName="MontserratBold",
+        fontSize=14,
+        name="Question",
+        spaceAfter=0,
+        spaceBefore=18,
+        leading=21,
+    ),
+    "QuestionSmall": PS(
+        fontName="MontserratBold",
+        fontSize=12,
+        name="QuestionSmall",
+        spaceAfter=0,
+        spaceBefore=16,
+        leading=18,
+    ),
+    "Normal": PS(fontName="NotoSans", name="Normal"),
+    "Heading1": PS(
+        fontName="NotoSansBold",
+        fontSize=12,
+        name="Heading1",
+        spaceAfter=4,
+        spaceBefore=12,
+        leading=18,
+    ),
+    "Heading2": PS(
+        fontName="NotoSansBold",
+        fontSize=10,
+        name="Heading2",
+        spaceAfter=4,
+        spaceBefore=10,
+        leading=15,
+    ),
+    "Heading3": PS(
+        fontName="NotoSansBold",
+        fontSize=10,
+        name="Heading3",
+        spaceAfter=4,
+        spaceBefore=10,
+        leading=15,
+    ),
+    "Heading4": PS(
+        fontName="NotoSansBold",
+        fontSize=10,
+        name="Heading4",
+        spaceAfter=4,
+        spaceBefore=10,
+        leading=15,
+    ),
+    "Heading5": PS(
+        fontName="NotoSansBold",
+        fontSize=10,
+        name="Heading5",
+        spaceAfter=4,
+        spaceBefore=10,
+        leading=15,
+    ),
 }
 
-font_location = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'media', 'fonts')
+font_location = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "media", "fonts"
+)
 
 
 def font(font_name):
@@ -49,28 +100,32 @@ def prepare_fonts():
     global PREPARED_FONTS
     if PREPARED_FONTS:
         return
-    pdfmetrics.registerFont(TTFont('Montserrat', font('Montserrat-Regular.ttf')))
-    pdfmetrics.registerFont(TTFont('MontserratBold', font('Montserrat-Bold.ttf')))
-    pdfmetrics.registerFont(TTFont('MontserratItalic', font('Montserrat-Italic.ttf')))
-    pdfmetrics.registerFont(TTFont('MontserratBoldItalic', font('Montserrat-BoldItalic.ttf')))
+    pdfmetrics.registerFont(TTFont("Montserrat", font("Montserrat-Regular.ttf")))
+    pdfmetrics.registerFont(TTFont("MontserratBold", font("Montserrat-Bold.ttf")))
+    pdfmetrics.registerFont(TTFont("MontserratItalic", font("Montserrat-Italic.ttf")))
+    pdfmetrics.registerFont(
+        TTFont("MontserratBoldItalic", font("Montserrat-BoldItalic.ttf"))
+    )
     pdfmetrics.registerFontFamily(
-        'Montserrat',
-        normal='Montserrat',
-        bold='MontserratBold',
-        italic='MontserratItalic',
-        boldItalic='MontserratBoldItalic'
+        "Montserrat",
+        normal="Montserrat",
+        bold="MontserratBold",
+        italic="MontserratItalic",
+        boldItalic="MontserratBoldItalic",
     )
 
-    pdfmetrics.registerFont(TTFont('NotoSans', font('NotoSans-Regular.ttf')))
-    pdfmetrics.registerFont(TTFont('NotoSansBold', font('NotoSans-Bold.ttf')))
-    pdfmetrics.registerFont(TTFont('NotoSansItalic', font('NotoSans-Italic.ttf')))
-    pdfmetrics.registerFont(TTFont('NotoSansBoldItalic', font('NotoSans-BoldItalic.ttf')))
+    pdfmetrics.registerFont(TTFont("NotoSans", font("NotoSans-Regular.ttf")))
+    pdfmetrics.registerFont(TTFont("NotoSansBold", font("NotoSans-Bold.ttf")))
+    pdfmetrics.registerFont(TTFont("NotoSansItalic", font("NotoSans-Italic.ttf")))
+    pdfmetrics.registerFont(
+        TTFont("NotoSansBoldItalic", font("NotoSans-BoldItalic.ttf"))
+    )
     pdfmetrics.registerFontFamily(
-        'NotoSans',
-        normal='NotoSans',
-        bold='NotoSansBold',
-        italic='NotoSansItalic',
-        boldItalic='NotoSansBoldItalic'
+        "NotoSans",
+        normal="NotoSans",
+        bold="NotoSansBold",
+        italic="NotoSansItalic",
+        boldItalic="NotoSansBoldItalic",
     )
     PREPARED_FONTS = True
 
@@ -87,11 +142,23 @@ def do_nothing(doc, canvas):
 
 class ReportDocTemplate(BaseDocTemplate):
     def build(self, flowables, onFirstPage=do_nothing, onLaterPages=do_nothing):
-        frame = Frame(self.leftMargin, self.bottomMargin, self.width, self.height, id='normal')
-        self.addPageTemplates([
-            PageTemplate(id='Header', autoNextPageTemplate='Main', frames=frame, onPage=onFirstPage, pagesize=self.pagesize),
-            PageTemplate(id='Main', frames=frame, onPage=onLaterPages, pagesize=self.pagesize),
-        ])
+        frame = Frame(
+            self.leftMargin, self.bottomMargin, self.width, self.height, id="normal"
+        )
+        self.addPageTemplates(
+            [
+                PageTemplate(
+                    id="Header",
+                    autoNextPageTemplate="Main",
+                    frames=frame,
+                    onPage=onFirstPage,
+                    pagesize=self.pagesize,
+                ),
+                PageTemplate(
+                    id="Main", frames=frame, onPage=onLaterPages, pagesize=self.pagesize
+                ),
+            ]
+        )
         super().build(flowables)
 
 
@@ -108,8 +175,8 @@ def make_pdf(title, sections, pagesize):
 
     story = []
     for section in sections:
-        story.extend(section['content'])
-        story.append(NextPageTemplate('Header'))
+        story.extend(section["content"])
+        story.append(NextPageTemplate("Header"))
         story.append(PageBreak())
 
     current_section = None
@@ -122,9 +189,9 @@ def make_pdf(title, sections, pagesize):
         title_spacer = draw_title_block(
             canvas,
             doc,
-            current_section['title'],
+            current_section["title"],
             title,
-            current_section['meta'],
+            current_section["meta"],
             page_width,
             page_height,
         )
@@ -137,7 +204,7 @@ def make_pdf(title, sections, pagesize):
         spacer = draw_header(
             canvas,
             doc,
-            current_section['title'],
+            current_section["title"],
             title,
             page_width,
             page_height,
@@ -166,9 +233,9 @@ def draw_header(canvas, doc, page_title, title, page_width, page_height):
 
     # only count title - assume 1 line of title in header
     total_height = (
-        doc.topMargin +
-        1.5 * (len(split_title) - 1) * title_size +
-        title_size / 2  # bottom padding
+        doc.topMargin
+        + 1.5 * (len(split_title) - 1) * title_size
+        + title_size / 2  # bottom padding
     )
 
     canvas.setFillColor(DARK_GREY)
@@ -182,9 +249,9 @@ def draw_header(canvas, doc, page_title, title, page_width, page_height):
     )
 
     pos = (
-        (page_height - doc.topMargin) +  # bottom of top margin
-        title_size / 2 +  # spacing below page title
-        1.5 * 1 * title_size  # text
+        (page_height - doc.topMargin)
+        + title_size / 2  # bottom of top margin
+        + 1.5 * 1 * title_size  # spacing below page title  # text
     )
 
     canvas.setFillColor(white)
@@ -223,14 +290,16 @@ def draw_title_block(canvas, doc, page_title, title, meta, page_width, page_heig
 
     canvas.setFont("MontserratBold", meta_size)
     canvas.setFillColor(white)
-    meta_text = '  |  '.join(str(text) for text in meta)
+    meta_text = "  |  ".join(str(text) for text in meta)
     split_meta = split_text(canvas, meta_text, text_width)
 
     total_height = (
-        doc.topMargin +
-        page_title_size + page_title_size * 3 / 4 +  # page title + spaceing
-        len(split_title) * (title_size + title_size / 2) +  # title + spacing
-        (1.5 * len(split_meta) + 3) * meta_size  # 1.5 per text line + 3 for spacing
+        doc.topMargin
+        + page_title_size
+        + page_title_size * 3 / 4
+        + len(split_title) * (title_size + title_size / 2)  # page title + spaceing
+        + (1.5 * len(split_meta) + 3)  # title + spacing
+        * meta_size  # 1.5 per text line + 3 for spacing
     )
 
     canvas.setFillColor(DARK_GREY)
@@ -295,52 +364,54 @@ def handle_block(block, custom_style=None):
         if isinstance(tag, NavigableString):
             text = tag.strip()
             if text:
-                paragraphs.append(Paragraph(text, styles['Normal']))
-        elif tag.name in {'ul', 'ol'}:
-            style = styles['Normal']
-            if tag.name == 'ul':
-                bullet = 'bullet'
-            elif tag.name == 'ol':
-                bullet = '1'
+                paragraphs.append(Paragraph(text, styles["Normal"]))
+        elif tag.name in {"ul", "ol"}:
+            style = styles["Normal"]
+            if tag.name == "ul":
+                bullet = "bullet"
+            elif tag.name == "ol":
+                bullet = "1"
 
             paragraphs.append(
                 ListFlowable(
                     [
                         ListItem(Paragraph(bullet_item.get_text(), style))
-                        for bullet_item in tag.find_all('li')
+                        for bullet_item in tag.find_all("li")
                     ],
                     bulletType=bullet,
                 )
             )
-        elif tag.name in {'table'}:
+        elif tag.name in {"table"}:
             paragraphs.append(
                 Table(
                     [
                         [
-                            Paragraph(cell.get_text(), styles['Normal'])
-                            for cell in row.find_all({'td', 'th'})
+                            Paragraph(cell.get_text(), styles["Normal"])
+                            for cell in row.find_all({"td", "th"})
                         ]
-                        for row in tag.find_all('tr')
+                        for row in tag.find_all("tr")
                     ],
-                    colWidths='*',
-                    style=TableStyle([
-                        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
-                        ('LINEABOVE', (0, 0), (-1, -1), 1, DARK_GREY),
-                    ]),
+                    colWidths="*",
+                    style=TableStyle(
+                        [
+                            ("VALIGN", (0, 0), (-1, -1), "TOP"),
+                            ("LINEABOVE", (0, 0), (-1, -1), 1, DARK_GREY),
+                        ]
+                    ),
                 )
             )
         else:
             style = None
-            if tag.name in {'p'}:
-                style = styles['Normal']
-            elif tag.name == 'h2':
-                style = styles['Heading2']
-            elif tag.name == 'h3':
-                style = styles['Heading3']
-            elif tag.name == 'h4':
-                style = styles['Heading4']
-            elif tag.name == 'h5':
-                style = styles['Heading5']
+            if tag.name in {"p"}:
+                style = styles["Normal"]
+            elif tag.name == "h2":
+                style = styles["Heading2"]
+            elif tag.name == "h3":
+                style = styles["Heading3"]
+            elif tag.name == "h4":
+                style = styles["Heading4"]
+            elif tag.name == "h5":
+                style = styles["Heading5"]
 
             if style:
                 text = tag.get_text()
@@ -355,29 +426,37 @@ def draw_submission_content(content):
     prepare_fonts()
     paragraphs = []
 
-    for section in BeautifulSoup(content, "html5lib").find_all('section'):
-        question_text = section.select_one('.question').get_text()
-        question = Paragraph(question_text, STYLES['Question'])
+    for section in BeautifulSoup(content, "html5lib").find_all("section"):
+        question_text = section.select_one(".question").get_text()
+        question = Paragraph(question_text, STYLES["Question"])
 
         # Keep the question and the first block of the answer together
         # this keeps 1 line answers tidy and ensures that bigger responses break
         # sooner instead of waiting to fill an entire page. There may still be issues
-        first_answer, *rest = handle_block(section.select_one('.answer'))
-        paragraphs.extend([
-            KeepTogether([
-                question,
-                first_answer,
-            ]),
-            *rest
-        ])
+        first_answer, *rest = handle_block(section.select_one(".answer"))
+        paragraphs.extend(
+            [
+                KeepTogether(
+                    [
+                        question,
+                        first_answer,
+                    ]
+                ),
+                *rest,
+            ]
+        )
     return paragraphs
 
 
 def draw_project_content(content):
     prepare_fonts()
     paragraphs = []
-    for section in BeautifulSoup(content, "html5lib").find_all(class_='simplified__wrapper'):
-        flowables = handle_block(section, custom_style={"Heading3": "Question", "Heading5": "QuestionSmall"})
+    for section in BeautifulSoup(content, "html5lib").find_all(
+        class_="simplified__wrapper"
+    ):
+        flowables = handle_block(
+            section, custom_style={"Heading3": "Question", "Heading5": "QuestionSmall"}
+        )
         paragraphs.extend(flowables)
 
     return paragraphs

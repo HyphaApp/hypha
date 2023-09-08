@@ -2,17 +2,17 @@
     <div class="wrapper wrapper--breakout">
         <div class="wrapper--media-boxes">
             <div class="grid grid--two grid--medium-gap">
-            {% for project in page.projectfunding_set.projects %}
-                {% if forloop.counter0 == 10 %}
-                    <input class="show-more--checkbox" type="checkbox" id="projects-toggle">
-                    <label class="link link--button link--button__center show-more--button" for="projects-toggle">Show more</label>
-                {% endif %}
-                {% if forloop.counter0 < 10 %}
-                    {% include "public_funds/includes/project_listing.html" with project=project %}
-                {% else %}
-                    {% include "public_funds/includes/project_listing.html" with project=project class="show-more--target" %}
-                {% endif %}
-            {% endfor %}
+                {% for project in page.projectfunding_set.projects %}
+                    {% if forloop.counter0 == 10 %}
+                        <input class="show-more--checkbox" type="checkbox" id="projects-toggle">
+                        <label class="link link--button link--button__center show-more--button" for="projects-toggle">Show more</label>
+                    {% endif %}
+                    {% if forloop.counter0 < 10 %}
+                        {% include "public_funds/includes/project_listing.html" with project=project %}
+                    {% else %}
+                        {% include "public_funds/includes/project_listing.html" with project=project class="show-more--target" %}
+                    {% endif %}
+                {% endfor %}
             </div>
         </div>
     </div>

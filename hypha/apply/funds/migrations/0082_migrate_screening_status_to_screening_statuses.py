@@ -5,28 +5,29 @@ from django.db import migrations
 
 def make_many_screening_statuses(apps, schema_editor):
     """
-        Adds the ScreeningStatus object in ApplicationSubmission.screening_status
-        to the many-to-many relationship in ApplicationSubmission.screening_statuses
+    Adds the ScreeningStatus object in ApplicationSubmission.screening_status
+    to the many-to-many relationship in ApplicationSubmission.screening_statuses
     """
-    ApplicationSubmission = apps.get_model('funds', 'ApplicationSubmission')
+    ApplicationSubmission = apps.get_model("funds", "ApplicationSubmission")
 
-    for submission in ApplicationSubmission.objects.filter(screening_status__isnull=False):
+    for submission in ApplicationSubmission.objects.filter(
+        screening_status__isnull=False
+    ):
         if submission.screening_status:
             submission.screening_statuses.add(submission.screening_status)
 
-    ScreeningStatus = apps.get_model('funds', 'ScreeningStatus')
+    ScreeningStatus = apps.get_model("funds", "ScreeningStatus")
 
     if not ScreeningStatus.objects.filter(yes=True).exists():
-        ScreeningStatus.objects.create(title='Accept', yes=True, default=True)
+        ScreeningStatus.objects.create(title="Accept", yes=True, default=True)
 
     if not ScreeningStatus.objects.filter(yes=False).exists():
-        ScreeningStatus.objects.create(title='Dismiss', yes=False, default=True)
+        ScreeningStatus.objects.create(title="Dismiss", yes=False, default=True)
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('funds', '0081_add_screening_statuses_field'),
+        ("funds", "0081_add_screening_statuses_field"),
     ]
 
     operations = [

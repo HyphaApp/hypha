@@ -4,30 +4,29 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('application_projects', '0001_initial'),
+        ("application_projects", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='project',
-            name='contact_address',
-            field=models.TextField(default=''),
+            model_name="project",
+            name="contact_address",
+            field=models.TextField(default=""),
         ),
         migrations.AddField(
-            model_name='project',
-            name='contact_email',
-            field=models.TextField(default=''),
+            model_name="project",
+            name="contact_email",
+            field=models.TextField(default=""),
         ),
         migrations.AddField(
-            model_name='project',
-            name='contact_legal_name',
-            field=models.TextField(default=''),
+            model_name="project",
+            name="contact_legal_name",
+            field=models.TextField(default=""),
         ),
         migrations.AddField(
-            model_name='project',
-            name='value',
+            model_name="project",
+            name="value",
             field=models.DecimalField(decimal_places=2, default=0, max_digits=10),
         ),
     ]

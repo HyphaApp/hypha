@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('application_projects', '0016_add_project_settings'),
+        ("application_projects", "0016_add_project_settings"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='project',
-            name='sent_to_compliance_at',
+            model_name="project",
+            name="sent_to_compliance_at",
             field=models.DateTimeField(null=True),
         ),
     ]

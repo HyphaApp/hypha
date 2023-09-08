@@ -15,11 +15,13 @@ class ListRelatedMixin:
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        related = [f'{form}_set__{field}' for form, field in self.related_models]
+        related = [f"{form}_set__{field}" for form, field in self.related_models]
         return qs.prefetch_related(*related)
 
     def _list_related(self, obj, form, field):
-        return ', '.join(getattr(obj, f'{form}_set').values_list(f'{field}__title', flat=True))
+        return ", ".join(
+            getattr(obj, f"{form}_set").values_list(f"{field}__title", flat=True)
+        )
 
     def used_by(self, obj):
         rows = []
@@ -27,7 +29,7 @@ class ListRelatedMixin:
             related = self._list_related(obj, form, field)
             if related:
                 rows.append(related)
-        return ', '.join(rows)
+        return ", ".join(rows)
 
 
 class RelatedFormsMixin:
@@ -38,10 +40,12 @@ class RelatedFormsMixin:
     """
 
     def application_forms(self, obj):
-
         def build_urls(application_forms):
             for application_form in application_forms:
-                url = reverse('funds_applicationform_modeladmin_edit', args=[application_form.form.id])
+                url = reverse(
+                    "funds_applicationform_modeladmin_edit",
+                    args=[application_form.form.id],
+                )
                 yield f'<a href="{url}">{application_form}</a>'
 
         urls = list(build_urls(obj.forms.all()))
@@ -49,12 +53,14 @@ class RelatedFormsMixin:
         if not urls:
             return
 
-        return mark_safe('<br />'.join(urls))
+        return mark_safe("<br />".join(urls))
 
     def review_forms(self, obj):
         def build_urls(review_forms):
             for review_form in review_forms:
-                url = reverse('review_reviewform_modeladmin_edit', args=[review_form.form.id])
+                url = reverse(
+                    "review_reviewform_modeladmin_edit", args=[review_form.form.id]
+                )
                 yield f'<a href="{url}">{review_form}</a>'
 
         urls = list(build_urls(obj.review_forms.all()))
@@ -62,12 +68,15 @@ class RelatedFormsMixin:
         if not urls:
             return
 
-        return mark_safe('<br />'.join(urls))
+        return mark_safe("<br />".join(urls))
 
     def determination_forms(self, obj):
         def build_urls(determination_forms):
             for determination_form in determination_forms:
-                url = reverse('determinations_determinationform_modeladmin_edit', args=[determination_form.form.id])
+                url = reverse(
+                    "determinations_determinationform_modeladmin_edit",
+                    args=[determination_form.form.id],
+                )
                 yield f'<a href="{url}">{determination_form}</a>'
 
         urls = list(build_urls(obj.determination_forms.all()))
@@ -75,4 +84,4 @@ class RelatedFormsMixin:
         if not urls:
             return
 
-        return mark_safe('<br />'.join(urls))
+        return mark_safe("<br />".join(urls))

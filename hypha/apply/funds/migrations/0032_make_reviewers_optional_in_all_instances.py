@@ -6,30 +6,49 @@ import modelcluster.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('funds', '0031_labtype_reviewers'),
+        ("funds", "0031_labtype_reviewers"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='applicationsubmission',
-            name='reviewers',
-            field=models.ManyToManyField(blank=True, limit_choices_to={'groups__name__in': ['Staff', 'Reviewer']}, related_name='submissions_reviewer', to=settings.AUTH_USER_MODEL),
+            model_name="applicationsubmission",
+            name="reviewers",
+            field=models.ManyToManyField(
+                blank=True,
+                limit_choices_to={"groups__name__in": ["Staff", "Reviewer"]},
+                related_name="submissions_reviewer",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AlterField(
-            model_name='fundtype',
-            name='reviewers',
-            field=modelcluster.fields.ParentalManyToManyField(blank=True, limit_choices_to={'groups__name': 'Reviewer'}, related_name='fund_reviewers', to=settings.AUTH_USER_MODEL),
+            model_name="fundtype",
+            name="reviewers",
+            field=modelcluster.fields.ParentalManyToManyField(
+                blank=True,
+                limit_choices_to={"groups__name": "Reviewer"},
+                related_name="fund_reviewers",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AlterField(
-            model_name='labtype',
-            name='reviewers',
-            field=modelcluster.fields.ParentalManyToManyField(blank=True, limit_choices_to={'groups__name': 'Reviewer'}, related_name='labs_reviewer', to=settings.AUTH_USER_MODEL),
+            model_name="labtype",
+            name="reviewers",
+            field=modelcluster.fields.ParentalManyToManyField(
+                blank=True,
+                limit_choices_to={"groups__name": "Reviewer"},
+                related_name="labs_reviewer",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AlterField(
-            model_name='round',
-            name='reviewers',
-            field=modelcluster.fields.ParentalManyToManyField(blank=True, limit_choices_to={'groups__name': 'Reviewer'}, related_name='rounds_reviewer', to=settings.AUTH_USER_MODEL),
+            model_name="round",
+            name="reviewers",
+            field=modelcluster.fields.ParentalManyToManyField(
+                blank=True,
+                limit_choices_to={"groups__name": "Reviewer"},
+                related_name="rounds_reviewer",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]

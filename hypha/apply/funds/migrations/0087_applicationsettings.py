@@ -6,23 +6,37 @@ import wagtail.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('wagtailcore', '0059_apply_collection_ordering'),
-        ('funds', '0086_applicationsubmission_summary'),
+        ("wagtailcore", "0059_apply_collection_ordering"),
+        ("funds", "0086_applicationsubmission_summary"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='ApplicationSettings',
+            name="ApplicationSettings",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('extra_text_round', wagtail.fields.RichTextField(blank=True)),
-                ('extra_text_lab', wagtail.fields.RichTextField(blank=True)),
-                ('site', models.OneToOneField(editable=False, on_delete=django.db.models.deletion.CASCADE, to='wagtailcore.Site')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("extra_text_round", wagtail.fields.RichTextField(blank=True)),
+                ("extra_text_lab", wagtail.fields.RichTextField(blank=True)),
+                (
+                    "site",
+                    models.OneToOneField(
+                        editable=False,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="wagtailcore.Site",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'application settings',
+                "verbose_name": "application settings",
             },
         ),
     ]

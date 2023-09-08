@@ -12,12 +12,12 @@ def add_groups(apps, schema_editor):
     db_alias = schema_editor.connection.alias
     emit_post_migrate_signal(2, False, db_alias)
 
-    Group = apps.get_model('auth.Group')
-    Permission = apps.get_model('auth.Permission')
+    Group = apps.get_model("auth.Group")
+    Permission = apps.get_model("auth.Permission")
 
     for group_data in GROUPS:
-        group, created = Group.objects.get_or_create(name=group_data['name'])
-        for codename in group_data['permissions']:
+        group, created = Group.objects.get_or_create(name=group_data["name"])
+        for codename in group_data["permissions"]:
             try:
                 permission = Permission.objects.get(codename=codename)
             except ObjectDoesNotExist:
@@ -28,16 +28,13 @@ def add_groups(apps, schema_editor):
 
 
 def remove_groups(apps, schema_editor):
-    Group = apps.get_model('auth.Group')
+    Group = apps.get_model("auth.Group")
     Group.objects.filter(name=CONTRACTING_GROUP_NAME).delete()
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('users', '0017_rename_staff_admin'),
+        ("users", "0017_rename_staff_admin"),
     ]
 
-    operations = [
-        migrations.RunPython(add_groups, remove_groups)
-    ]
+    operations = [migrations.RunPython(add_groups, remove_groups)]

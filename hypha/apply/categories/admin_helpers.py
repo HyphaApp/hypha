@@ -19,21 +19,24 @@ class MetaTermButtonHelper(ButtonHelper):
     def add_child_button(self, pk, child_verbose_name, **kwargs):
         """Build a add child button, to easily add a child under meta term."""
         instance = self.model.objects.get(pk=pk)
-        if instance.is_archived or instance.get_parent() and instance.get_parent().is_archived:
+        if (
+            instance.is_archived
+            or instance.get_parent()
+            and instance.get_parent().is_archived
+        ):
             return
 
         classnames = self.prepare_classnames(
-            start=self.edit_button_classnames + ['icon', 'icon-plus'],
-            add=kwargs.get('classnames_add'),
-            exclude=kwargs.get('classnames_exclude')
+            start=self.edit_button_classnames + ["icon", "icon-plus"],
+            add=kwargs.get("classnames_add"),
+            exclude=kwargs.get("classnames_exclude"),
         )
         return {
-            'classname': classnames,
-            'label': 'Add %s %s' % (
-                child_verbose_name, self.verbose_name),
-            'title': 'Add %s %s under this one' % (
-                child_verbose_name, self.verbose_name),
-            'url': self.url_helper.get_action_url('add_child', quote(pk)),
+            "classname": classnames,
+            "label": "Add %s %s" % (child_verbose_name, self.verbose_name),
+            "title": "Add %s %s under this one"
+            % (child_verbose_name, self.verbose_name),
+            "url": self.url_helper.get_action_url("add_child", quote(pk)),
         }
 
     def get_buttons_for_obj(self, obj, exclude=None, *args, **kwargs):

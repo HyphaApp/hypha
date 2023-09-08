@@ -10,7 +10,7 @@ from ...models import Review, ReviewForm, ReviewOpinion
 from ...options import AGREE, DISAGREE, MAYBE, NO, PRIVATE, REVIEWER, YES
 from . import blocks
 
-__all__ = ['ReviewFactory', 'ReviewFormFactory', 'ReviewOpinionFactory']
+__all__ = ["ReviewFactory", "ReviewFormFactory", "ReviewOpinionFactory"]
 
 
 class ReviewFormDataFactory(FormDataFactory):
@@ -29,12 +29,16 @@ class ReviewFactory(factory.django.DjangoModelFactory):
         visibility_reviewer = factory.Trait(visibility=REVIEWER)
 
     submission = factory.SubFactory(ApplicationSubmissionFactory)
-    revision = factory.SelfAttribute('submission.live_revision')
-    author = factory.SubFactory(AssignedReviewersFactory, submission=factory.SelfAttribute('..submission'))
-    form_fields = factory.LazyAttribute(lambda o: o.submission.round.review_forms.first().fields)
+    revision = factory.SelfAttribute("submission.live_revision")
+    author = factory.SubFactory(
+        AssignedReviewersFactory, submission=factory.SelfAttribute("..submission")
+    )
+    form_fields = factory.LazyAttribute(
+        lambda o: o.submission.round.review_forms.first().fields
+    )
     form_data = factory.SubFactory(
         ReviewFormDataFactory,
-        form_fields=factory.SelfAttribute('..form_fields'),
+        form_fields=factory.SelfAttribute("..form_fields"),
     )
     is_draft = False
     recommendation = NO
@@ -50,7 +54,11 @@ class ReviewOpinionFactory(factory.django.DjangoModelFactory):
         opinion_disagree = factory.Trait(opinion=DISAGREE)
 
     review = factory.SubFactory(ReviewFactory)
-    author = factory.SubFactory(AssignedReviewersFactory, staff=True, submission=factory.SelfAttribute('..review.submission'))
+    author = factory.SubFactory(
+        AssignedReviewersFactory,
+        staff=True,
+        submission=factory.SelfAttribute("..review.submission"),
+    )
     opinion = DISAGREE
 
 
@@ -58,5 +66,5 @@ class ReviewFormFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = ReviewForm
 
-    name = factory.Faker('word')
+    name = factory.Faker("word")
     form_fields = blocks.ReviewFormFieldsFactory

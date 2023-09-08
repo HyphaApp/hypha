@@ -4,15 +4,24 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('people', '0010_personpage_active'),
+        ("people", "0010_personpage_active"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='personcontactinfomation',
-            name='contact_method',
-            field=models.CharField(blank=True, choices=[('irc', 'IRC'), ('im', 'IM/Jabber/XMPP'), ('phone', 'Phone'), ('pgp', 'PGP fingerprint'), ('otr', 'OTR fingerprint')], max_length=255),
+            model_name="personcontactinfomation",
+            name="contact_method",
+            field=models.CharField(
+                blank=True,
+                choices=[
+                    ("irc", "IRC"),
+                    ("im", "IM/Jabber/XMPP"),
+                    ("phone", "Phone"),
+                    ("pgp", "PGP fingerprint"),
+                    ("otr", "OTR fingerprint"),
+                ],
+                max_length=255,
+            ),
         ),
     ]

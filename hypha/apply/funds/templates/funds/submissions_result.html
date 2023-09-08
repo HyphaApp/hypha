@@ -27,21 +27,21 @@
     {% endadminbar %}
 
 
-<div class="wrapper wrapper--large wrapper--inner-space-medium">
-    <div class="wrapper wrapper--bottom-space">
-        <h4 class="heading heading--normal">{% trans "Summary" %}</h4>
-        {% include "funds/includes/submission_stats.html" %}
-    </div>
+    <div class="wrapper wrapper--large wrapper--inner-space-medium">
+        <div class="wrapper wrapper--bottom-space">
+            <h4 class="heading heading--normal">{% trans "Summary" %}</h4>
+            {% include "funds/includes/submission_stats.html" %}
+        </div>
 
-    <h4 class="heading heading--normal">{% trans "Filter submissions to calculate values" %}</h4>
-    {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term use_search=True filter_action=filter_action use_batch_actions=False filter_classes="filters-open" %}
-    <div class="grid">
-        <div><strong>{% trans "Number of submission" %}:</strong> {{ count_values }}{% if not count_values == object_list.count %} ({{ object_list.count }}){% endif %}</div>
-        <div><strong>{% trans "Average value" %}:</strong> {{ average_value|format_number_as_currency }}</div>
-        <div><strong>{% trans "Total value" %}:</strong> {{ total_value|format_number_as_currency }}</div>
+        <h4 class="heading heading--normal">{% trans "Filter submissions to calculate values" %}</h4>
+        {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term use_search=True filter_action=filter_action use_batch_actions=False filter_classes="filters-open" %}
+        <div class="grid">
+            <div><strong>{% trans "Number of submission" %}:</strong> {{ count_values }}{% if not count_values == object_list.count %} ({{ object_list.count }}){% endif %}</div>
+            <div><strong>{% trans "Average value" %}:</strong> {{ average_value|format_number_as_currency }}</div>
+            <div><strong>{% trans "Total value" %}:</strong> {{ total_value|format_number_as_currency }}</div>
+        </div>
+        {% if not count_values == object_list.count %}
+            <p>{% trans "Some submissions lack values and are not included." %}</p>
+        {% endif %}
     </div>
-    {% if not count_values == object_list.count %}
-        <p>{% trans "Some submissions lack values and are not included." %}</p>
-    {% endif %}
-</div>
 {% endblock %}

@@ -17,7 +17,7 @@ def remove_extra_empty_lines(text: str) -> str:
     """Removes extra blank lines and spaces from markdown generated
     using Django templates. Do this for readably of markdown itself.
     """
-    return re.sub(r'\n\s*\n', '\n\r', text)
+    return re.sub(r"\n\s*\n", "\n\r", text)
 
 
 @contextmanager
@@ -43,7 +43,7 @@ class MarkdownMail(object):
     Adds `Auto-Submitted` header.
     """
 
-    template_name = ''
+    template_name = ""
 
     def __init__(self, template_name: str):
         self._email = None
@@ -61,7 +61,7 @@ class MarkdownMail(object):
         if not isinstance(to, (list, tuple)):
             to = [to]
 
-        lang = context.get('lang', None) or settings.LANGUAGE_CODE
+        lang = context.get("lang", None) or settings.LANGUAGE_CODE
 
         with language(lang):
             rendered_template = self._render_template(context)
@@ -70,15 +70,15 @@ class MarkdownMail(object):
 
         email = EmailMultiAlternatives(**kwargs)
         email.body = body_txt
-        email.attach_alternative(body_html, 'text/html')
+        email.attach_alternative(body_html, "text/html")
 
         email.to = to
 
         return email
 
     def send(self, to: str | List[str], context, **kwargs):
-        kwargs.setdefault('headers', {})
-        kwargs['headers'].update({'Auto-Submitted': 'auto-generated'})
+        kwargs.setdefault("headers", {})
+        kwargs["headers"].update({"Auto-Submitted": "auto-generated"})
 
         email = self.make_email_object(to, context, **kwargs)
         return email.send()

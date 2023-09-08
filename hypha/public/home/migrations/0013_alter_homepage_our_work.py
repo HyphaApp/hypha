@@ -7,15 +7,32 @@ import wagtail.images.blocks
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('home', '0012_add_news_homepage'),
+        ("home", "0012_add_news_homepage"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='homepage',
-            name='our_work',
-            field=wagtail.fields.StreamField([('work', wagtail.blocks.StructBlock([('icon', wagtail.images.blocks.ImageChooserBlock()), ('description', wagtail.blocks.TextBlock(help_text='The first word will be bold'))]))], use_json_field=True),
+            model_name="homepage",
+            name="our_work",
+            field=wagtail.fields.StreamField(
+                [
+                    (
+                        "work",
+                        wagtail.blocks.StructBlock(
+                            [
+                                ("icon", wagtail.images.blocks.ImageChooserBlock()),
+                                (
+                                    "description",
+                                    wagtail.blocks.TextBlock(
+                                        help_text="The first word will be bold"
+                                    ),
+                                ),
+                            ]
+                        ),
+                    )
+                ],
+                use_json_field=True,
+            ),
         ),
     ]

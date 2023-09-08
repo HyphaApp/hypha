@@ -25,13 +25,13 @@ from hypha.apply.users.tests.factories import (
 )
 
 
-@override_settings(ROOT_URLCONF='hypha.apply.urls')
+@override_settings(ROOT_URLCONF="hypha.apply.urls")
 class TestCommentEdit(TestCase):
-    def post_to_edit(self, comment_pk, message='my message'):
+    def post_to_edit(self, comment_pk, message="my message"):
         return self.client.post(
-            reverse_lazy('api:v1:comments-edit', kwargs={'pk': comment_pk}),
+            reverse_lazy("api:v1:comments-edit", kwargs={"pk": comment_pk}),
             secure=True,
-            data={'message': message},
+            data={"message": message},
         )
 
     def test_cant_edit_if_not_author(self):
@@ -44,7 +44,7 @@ class TestCommentEdit(TestCase):
         comment = CommentFactory(user=user)
         self.client.force_login(user)
 
-        new_message = 'hi there'
+        new_message = "hi there"
 
         response = self.post_to_edit(comment.pk, new_message)
 
@@ -55,9 +55,9 @@ class TestCommentEdit(TestCase):
 
         time = comment.timestamp.timestamp() * 1000
 
-        self.assertEqual(time, response.json()['timestamp'])
+        self.assertEqual(time, response.json()["timestamp"])
         self.assertFalse(comment.current)
-        self.assertEqual(response.json()['message'], new_message)
+        self.assertEqual(response.json()["message"], new_message)
 
     def test_incorrect_id_denied(self):
         response = self.post_to_edit(10000)
@@ -69,12 +69,13 @@ class TestCommentEdit(TestCase):
         self.client.force_login(user)
 
         self.client.post(
-            reverse_lazy('api:v1:comments-edit', kwargs={'pk': comment.pk}),
+            reverse_lazy("api:v1:comments-edit", kwargs={"pk": comment.pk}),
             secure=True,
             data={
-                'message': comment.message,
-                'visibility': comment.visibility,
-            })
+                "message": comment.message,
+                "visibility": comment.visibility,
+            },
+        )
 
         self.assertEqual(Activity.objects.count(), 1)
 
@@ -84,24 +85,24 @@ class TestCommentEdit(TestCase):
         self.client.force_login(user)
 
         response = self.client.post(
-            reverse_lazy('api:v1:comments-edit', kwargs={'pk': comment.pk}),
+            reverse_lazy("api:v1:comments-edit", kwargs={"pk": comment.pk}),
             secure=True,
             data={
-                'message': 'the new message',
-                'visibility': ALL,
+                "message": "the new message",
+                "visibility": ALL,
             },
         )
 
         self.assertEqual(response.status_code, 200, response.json())
-        self.assertEqual(response.json()['visibility'], ALL)
+        self.assertEqual(response.json()["visibility"], ALL)
 
     def test_out_of_order_does_nothing(self):
         user = ApplicantFactory()  # any role assigned user
         comment = CommentFactory(user=user)
         self.client.force_login(user)
 
-        new_message = 'hi there'
-        newer_message = 'hello there'
+        new_message = "hi there"
+        newer_message = "hello there"
 
         response_one = self.post_to_edit(comment.pk, new_message)
         response_two = self.post_to_edit(comment.pk, newer_message)
@@ -111,19 +112,28 @@ class TestCommentEdit(TestCase):
         self.assertEqual(Activity.objects.count(), 2)
 
 
-@override_settings(ROOT_URLCONF='hypha.apply.urls')
+@override_settings(ROOT_URLCONF="hypha.apply.urls")
 class TestInvoiceDeliverableViewset(TestCase):
     def post_to_add(self, project_id, invoice_id, deliverable_id, quantity=1):
         return self.client.post(
-            reverse_lazy('api:v1:set-deliverables', kwargs={'project_pk': project_id, 'invoice_pk': invoice_id}),
+            reverse_lazy(
+                "api:v1:set-deliverables",
+                kwargs={"project_pk": project_id, "invoice_pk": invoice_id},
+            ),
             secure=True,
-            data={'id': deliverable_id, 'quantity': quantity},
+            data={"id": deliverable_id, "quantity": quantity},
         )
 
     def delete_to_remove(self, project_id, invoice_id, deliverable_id):
         return self.client.delete(
-            reverse_lazy('api:v1:remove-deliverables', kwargs={
-                'project_pk': project_id, 'invoice_pk': invoice_id, 'pk': deliverable_id}),
+            reverse_lazy(
+                "api:v1:remove-deliverables",
+                kwargs={
+                    "project_pk": project_id,
+                    "invoice_pk": invoice_id,
+                    "pk": deliverable_id,
+                },
+            ),
             secure=True,
         )
 
@@ -265,7 +275,9 @@ class TestInvoiceDeliverableViewset(TestCase):
         staff = StaffFactory()
         for user in [staff, finance1, finance2]:
             self.client.force_login(user)
-            response = self.delete_to_remove(project.id, invoice.id, invoice_deliverable.id)
+            response = self.delete_to_remove(
+                project.id, invoice.id, invoice_deliverable.id
+            )
             self.assertEqual(response.status_code, 403)
 
     def test_deliverable_dont_exists_in_project_deliverables(self):
@@ -277,7 +289,7 @@ class TestInvoiceDeliverableViewset(TestCase):
 
         response = self.post_to_add(project.id, invoice.id, deliverable.id)
         self.assertEqual(response.status_code, 400)
-        error_message = {'detail': ErrorDetail(string='Not Found', code='invalid')}
+        error_message = {"detail": ErrorDetail(string="Not Found", code="invalid")}
         self.assertEqual(response.data, error_message)
 
     def test_deliverable_already_exists_in_invoice(self):
@@ -291,7 +303,11 @@ class TestInvoiceDeliverableViewset(TestCase):
 
         response = self.post_to_add(project.id, invoice.id, deliverable.id)
         self.assertEqual(response.status_code, 400)
-        error_message = {'detail': ErrorDetail(string='Invoice Already has this deliverable', code='invalid')}
+        error_message = {
+            "detail": ErrorDetail(
+                string="Invoice Already has this deliverable", code="invalid"
+            )
+        }
         self.assertEqual(response.data, error_message)
 
     def test_deliverable_available_gte_quantity(self):
@@ -303,5 +319,9 @@ class TestInvoiceDeliverableViewset(TestCase):
 
         response = self.post_to_add(project.id, invoice.id, deliverable.id, quantity=3)
         self.assertEqual(response.status_code, 400)
-        error_message = {'detail': ErrorDetail(string='Required quantity is more than available', code='invalid')}
+        error_message = {
+            "detail": ErrorDetail(
+                string="Required quantity is more than available", code="invalid"
+            )
+        }
         self.assertEqual(response.data, error_message)

@@ -33,11 +33,12 @@
                 right: 15px;
                 height: $dropdown-height;
                 pointer-events: none;
-                background: url('./../../images/dropdown.svg') transparent no-repeat 95% center;
+                background: url("./../../images/dropdown.svg") transparent
+                    no-repeat 95% center;
                 background-size: 8px;
                 width: 8px;
 
-                b[role='presentation'] {
+                b[role="presentation"] {
                     display: none;
                 }
             }
@@ -56,7 +57,7 @@
             // stylelint-disable-next-line declaration-no-important
             color: $color--default !important;
             // stylelint-disable-next-line declaration-no-important
-            background-color: transparentize($color--primary, .9) !important;
+            background-color: transparentize($color--primary, 0.9) !important;
         }
     }
 
@@ -81,15 +82,16 @@
             margin-right: 10px;
             background: $color--white;
             border: 1px solid $color--mid-grey;
-            content: '';
+            content: "";
         }
 
-        &[aria-selected='true'] {
+        &[aria-selected="true"] {
             &::before {
-                background: url('./../../images/tick.svg') $color--dark-blue center no-repeat;
+                background: url("./../../images/tick.svg") $color--dark-blue
+                    center no-repeat;
                 background-size: 12px;
                 border: 1px solid $color--dark-blue;
-                content: '';
+                content: "";
             }
         }
     }

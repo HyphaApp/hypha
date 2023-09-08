@@ -24,8 +24,8 @@ from hypha.apply.users.models import User
 
 
 def link_to(target, request):
-    if target and hasattr(target, 'get_absolute_url'):
-        return request.scheme + '://' + request.get_host() + target.get_absolute_url()
+    if target and hasattr(target, "get_absolute_url"):
+        return request.scheme + "://" + request.get_host() + target.get_absolute_url()
 
 
 def group_reviewers(reviewers):
@@ -38,10 +38,10 @@ def group_reviewers(reviewers):
 def reviewers_message(reviewers):
     messages = []
     for role, reviewers_ in group_reviewers(reviewers).items():
-        message = ', '.join(str(reviewer) for reviewer in reviewers_)
+        message = ", ".join(str(reviewer) for reviewer in reviewers_)
         if role:
-            message += _(' as {role}').format(role=str(role))
-        message += '.'
+            message += _(" as {role}").format(role=str(role))
+        message += "."
         messages.append(message)
     return messages
 
@@ -55,15 +55,28 @@ def is_ready_for_review(message_type):
 
 
 def is_invoice_public_transition(invoice):
-    if invoice.status in [SUBMITTED, RESUBMITTED, CHANGES_REQUESTED_BY_STAFF, APPROVED_BY_FINANCE_2, DECLINED, PAID]:
+    if invoice.status in [
+        SUBMITTED,
+        RESUBMITTED,
+        CHANGES_REQUESTED_BY_STAFF,
+        APPROVED_BY_FINANCE_2,
+        DECLINED,
+        PAID,
+    ]:
         return True
-    if not settings.INVOICE_EXTENDED_WORKFLOW and invoice.status == APPROVED_BY_FINANCE_1:
+    if (
+        not settings.INVOICE_EXTENDED_WORKFLOW
+        and invoice.status == APPROVED_BY_FINANCE_1
+    ):
         return True
     return False
 
 
 def is_reviewer_update(message_type):
-    return message_type in [MESSAGES.REVIEWERS_UPDATED, MESSAGES.BATCH_REVIEWERS_UPDATED]
+    return message_type in [
+        MESSAGES.REVIEWERS_UPDATED,
+        MESSAGES.BATCH_REVIEWERS_UPDATED,
+    ]
 
 
 def get_compliance_email(target_user_gps=None):
@@ -111,12 +124,17 @@ def get_users_for_groups(groups, user_queryset=None, exact_match=False):
     if groups:
         if not user_queryset:
             if exact_match:
-                user_queryset = User.objects.active().annotate(group_count=Count('groups')).filter(group_count=len(groups), groups__name=groups.pop().name)
+                user_queryset = (
+                    User.objects.active()
+                    .annotate(group_count=Count("groups"))
+                    .filter(group_count=len(groups), groups__name=groups.pop().name)
+                )
             else:
-                user_queryset = User.objects.active().filter(groups__name=groups.pop().name)
+                user_queryset = User.objects.active().filter(
+                    groups__name=groups.pop().name
+                )
         else:
             user_queryset = user_queryset.filter(groups__name=groups.pop().name)
         return get_users_for_groups(groups, user_queryset=user_queryset)
     else:
         return user_queryset
-

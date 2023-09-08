@@ -4,13 +4,13 @@
     <div class="wrapper wrapper--small apply-bar">
         {% if page.is_open %}
             {% if page.deadline and False %}
-              <div>
-                <h5 class="apply-bar__subheading">{% trans "Next deadline" %}</h5>
-                <h3 class="apply-bar__heading">
-                    <svg class="icon icon--calendar apply-bar__icon"><use xlink:href="#calendar"></use></svg>
-                    <span>{{ page.deadline|date:"M j, Y" }}</span>
-                </h3>
-              </div>
+                <div>
+                    <h5 class="apply-bar__subheading">{% trans "Next deadline" %}</h5>
+                    <h3 class="apply-bar__heading">
+                        <svg class="icon icon--calendar apply-bar__icon"><use xlink:href="#calendar"></use></svg>
+                        <span>{{ page.deadline|date:"M j, Y" }}</span>
+                    </h3>
+                </div>
             {% endif %}
             <a href="{% pageurl apply_page %}" class="link link--button-secondary">
                 {% trans "Apply for this" %} {% verbose_name apply_page %}

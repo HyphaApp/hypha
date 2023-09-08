@@ -4,19 +4,16 @@ from django.db import migrations
 
 
 def update_committed_project_status_to_draft(apps, schema_editor):
-    Project = apps.get_model('application_projects', 'Project')
+    Project = apps.get_model("application_projects", "Project")
 
-    for project in Project.objects.filter(status='committed'):
-        project.status = 'draft'
-        project.save(update_fields={'status'})
+    for project in Project.objects.filter(status="committed"):
+        project.status = "draft"
+        project.save(update_fields={"status"})
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('application_projects', '0073_alter_project_status'),
+        ("application_projects", "0073_alter_project_status"),
     ]
 
-    operations = [
-        migrations.RunPython(update_committed_project_status_to_draft)
-    ]
+    operations = [migrations.RunPython(update_committed_project_status_to_draft)]

@@ -13,8 +13,8 @@
         {% if request.user.is_apply_staff %}
             <div class="flex mt-2 md:m-0 gap-3 justify-center items-center font-medium uppercase">
                 <a class="px-3 py-2 text-gray-300 transition-colors hover:bg-slate-50 rounded hover:text-gray-800"
-                    href="{% url 'apply:submissions:list' %}"
-                    title="Goto all submissions list page"
+                   href="{% url 'apply:submissions:list' %}"
+                   title="Goto all submissions list page"
                 >
                     {% trans "All" %}
                 </a>
@@ -31,12 +31,12 @@
         {% endif %}
     {% endadminbar %}
 
-<div class="wrapper wrapper--large wrapper--inner-space-medium">
-    {% block table %}
-        {% trans "All reviewers" as all_reviewers %}
-        {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term search_placeholder="reviewers" use_search=True filter_action=filter_action use_batch_actions=False heading=all_reviewers %}
+    <div class="wrapper wrapper--large wrapper--inner-space-medium">
+        {% block table %}
+            {% trans "All reviewers" as all_reviewers %}
+            {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term search_placeholder="reviewers" use_search=True filter_action=filter_action use_batch_actions=False heading=all_reviewers %}
 
-        {% render_table table %}
-    {% endblock %}
-</div>
+            {% render_table table %}
+        {% endblock %}
+    </div>
 {% endblock %}

@@ -5,29 +5,28 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('review', '0002_add_common_fields'),
+        ("review", "0002_add_common_fields"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='conceptreview',
-            name='review_ptr',
+            model_name="conceptreview",
+            name="review_ptr",
         ),
         migrations.RemoveField(
-            model_name='proposalreview',
-            name='review_ptr',
+            model_name="proposalreview",
+            name="review_ptr",
         ),
         migrations.AlterField(
-            model_name='review',
-            name='review',
+            model_name="review",
+            name="review",
             field=django.contrib.postgres.fields.jsonb.JSONField(),
         ),
         migrations.DeleteModel(
-            name='ConceptReview',
+            name="ConceptReview",
         ),
         migrations.DeleteModel(
-            name='ProposalReview',
+            name="ProposalReview",
         ),
     ]

@@ -6,16 +6,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('activity', '0001_initial'),
+        ("activity", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='activity',
-            name='type',
-            field=models.CharField(choices=[('comment', 'Comment'), ('action', 'Action')], default='comment', max_length=30),
+            model_name="activity",
+            name="type",
+            field=models.CharField(
+                choices=[("comment", "Comment"), ("action", "Action")],
+                default="comment",
+                max_length=30,
+            ),
             preserve_default=False,
         ),
     ]

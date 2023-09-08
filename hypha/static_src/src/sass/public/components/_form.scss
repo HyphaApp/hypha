@@ -1,6 +1,6 @@
 // stylelint-disable selector-max-compound-selectors,
 
-@use 'sass:math';
+@use "sass:math";
 
 .form {
     &--header-search-desktop {
@@ -14,7 +14,7 @@
 
             label {
                 display: block;
-                margin-bottom: .5em;
+                margin-bottom: 0.5em;
                 font-weight: $weight--bold;
             }
         }
@@ -73,18 +73,18 @@
                 &__item {
                     display: flex;
                     align-items: center;
-                    gap: .5em;
+                    gap: 0.5em;
                 }
             }
         }
 
-        input[type='date']:last-child {
+        input[type="date"]:last-child {
             max-width: 385px;
         }
     }
 
     .field-group-wrapper {
-        padding: .5rem;
+        padding: 0.5rem;
         margin-bottom: 1rem;
         border: 1px solid $color--mid-grey;
 
@@ -105,7 +105,7 @@
 
     &__question {
         display: block;
-        margin-bottom: .5em;
+        margin-bottom: 0.5em;
         font-weight: $weight--bold;
 
         // stylelint-disable selector-class-pattern
@@ -116,7 +116,8 @@
             @include button($color--light-blue, $color--darkest-blue);
             max-width: 290px;
             text-align: center;
-            background: url('./../../images/upload.svg') $color--light-blue no-repeat 50px center;
+            background: url("./../../images/upload.svg") $color--light-blue
+                no-repeat 50px center;
             border: 0;
 
             .no-js & {
@@ -124,7 +125,8 @@
             }
 
             &:hover {
-                background: url('./../../images/upload.svg') $color--darkest-blue no-repeat 50px center;
+                background: url("./../../images/upload.svg")
+                    $color--darkest-blue no-repeat 50px center;
 
                 .no-js & {
                     background: none;
@@ -142,7 +144,7 @@
 
     &__file-list {
         ul {
-            margin: .5rem 0;
+            margin: 0.5rem 0;
         }
     }
 
@@ -163,7 +165,7 @@
 
             &.is-active {
                 font-weight: $weight--normal;
-                background-color: transparentize($color--primary, .9);
+                background-color: transparentize($color--primary, 0.9);
                 border-color: $color--mid-grey;
             }
 
@@ -304,7 +306,8 @@
 
     &__select {
         max-width: 385px;
-        background: url('./../../images/dropdown.svg') $color--white no-repeat 95% center;
+        background: url("./../../images/dropdown.svg") $color--white no-repeat
+            95% center;
         background-size: 8px;
 
         .form--scoreable & {
@@ -321,7 +324,7 @@
             }
         }
 
-        select[multiple='multiple'] {
+        select[multiple="multiple"] {
             display: block;
         }
 
@@ -349,17 +352,17 @@
     }
 
     select,
-    input[type='url'],
-    input[type='text']:not(.input--secondary),
-    input[type='date'],
-    input[type='time'],
-    input[type='email']:not(.input--secondary),
-    input[type='number'],
-    input[type='password'],
-    input[type='datetime-local'] {
+    input[type="url"],
+    input[type="text"]:not(.input--secondary),
+    input[type="date"],
+    input[type="time"],
+    input[type="email"]:not(.input--secondary),
+    input[type="number"],
+    input[type="password"],
+    input[type="datetime-local"] {
         width: 100%;
         max-width: 385px;
-        padding: .4em;
+        padding: 0.4em;
         border: 1px solid $color--mid-grey;
 
         &:disabled {
@@ -376,14 +379,14 @@
     &__error {
         select,
         textarea,
-        input[type='url'],
-        input[type='text'],
-        input[type='date'],
-        input[type='time'],
-        input[type='email'],
-        input[type='number'],
-        input[type='password'],
-        input[type='datetime-local'] {
+        input[type="url"],
+        input[type="text"],
+        input[type="date"],
+        input[type="time"],
+        input[type="email"],
+        input[type="number"],
+        input[type="password"],
+        input[type="datetime-local"] {
             border: 2px solid $color--error;
         }
     }
@@ -410,21 +413,21 @@
                 border-color: transparent $color--error transparent transparent;
                 border-style: solid;
                 border-width: 5px 10px 5px 0;
-                content: '';
+                content: "";
             }
         }
     }
 
     // make date & time input siblings inline
-    input[type='date'] {
+    input[type="date"] {
         max-width: calc(385px - 100px);
     }
 
-    input[type='date'] + input[type='time'] {
+    input[type="date"] + input[type="time"] {
         width: 100px;
     }
 
-    input[type='file'] {
+    input[type="file"] {
         @extend %off-screen;
 
         .no-js & {
@@ -434,22 +437,22 @@
 
     textarea {
         width: 100%;
-        padding: .4em;
+        padding: 0.4em;
         border: 1px solid $color--mid-grey;
         line-height: math.div($base-line-height, $base-font-size);
     }
 
     // Radio + Checkbox
-    [type='radio'],
-    [type='checkbox'] {
+    [type="radio"],
+    [type="checkbox"] {
         appearance: none;
         accent-color: $color--dark-blue;
-        height: .7em;
-        width: .7em;
+        height: 0.7em;
+        width: 0.7em;
         outline: 2px solid $color--dark-blue;
 
         & + label {
-            padding-inline-start: .5em;
+            padding-inline-start: 0.5em;
 
             &:hover {
                 font-weight: bold;
@@ -462,33 +465,33 @@
     }
 
     // Radio specific
-    [type='radio'] {
+    [type="radio"] {
         border-radius: 50%;
         outline-offset: 2px;
     }
 
     // Checkbox specific
-    input[type='checkbox'] {
+    input[type="checkbox"] {
         height: 1em;
         width: 1em;
         background-position: center;
         background-repeat: no-repeat;
-        background-size: .8em;
+        background-size: 0.8em;
 
         &:checked {
-            background-image: url('./../../images/tick.svg');
+            background-image: url("./../../images/tick.svg");
         }
     }
 
     .errorlist {
         padding: 5px;
-        margin-bottom: .2em;
+        margin-bottom: 0.2em;
         background: $color--light-pink;
         border: 1px solid $color--tomato;
     }
 
     .address {
-        padding: .4em;
+        padding: 0.4em;
         border: 1px solid $color--mid-grey;
         max-width: 410px;
     }
@@ -507,5 +510,7 @@
 }
 
 @keyframes flash {
-    50% { background-color: $color--mustard; }
+    50% {
+        background-color: $color--mustard;
+    }
 }

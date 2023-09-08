@@ -15,26 +15,24 @@ from hypha.apply.utils.views import custom_wagtail_page_delete
 from hypha.public import urls as public_urls
 
 urlpatterns = [
-    path('django-admin/', admin.site.urls),
+    path("django-admin/", admin.site.urls),
     path(
-        'admin/login/',
+        "admin/login/",
         LoginView.as_view(
-            template_name='users/login.html',
-            redirect_authenticated_user=True
+            template_name="users/login.html", redirect_authenticated_user=True
         ),
-        name='wagtailadmin_login'
+        name="wagtailadmin_login",
     ),
-    path('admin/pages/<int:page_id>/delete/', custom_wagtail_page_delete),
-    path('admin/', include(wagtailadmin_urls)),
-
-    path('documents/', include(wagtaildocs_urls)),
-    path('sitemap.xml', sitemap),
-    path('upload/', include(django_file_form_urls)),
-    path('', include((user_urls, 'users_public'))),
-    path('', include(public_urls)),
-    path('', include('social_django.urls', namespace='social')),
-    path('tinymce/', include('tinymce.urls')),
-    path('select2/', include('django_select2.urls')),
+    path("admin/pages/<int:page_id>/delete/", custom_wagtail_page_delete),
+    path("admin/", include(wagtailadmin_urls)),
+    path("documents/", include(wagtaildocs_urls)),
+    path("sitemap.xml", sitemap),
+    path("upload/", include(django_file_form_urls)),
+    path("", include((user_urls, "users_public"))),
+    path("", include(public_urls)),
+    path("", include("social_django.urls", namespace="social")),
+    path("tinymce/", include("tinymce.urls")),
+    path("select2/", include("django_select2.urls")),
 ]
 
 
@@ -48,29 +46,34 @@ if settings.DEBUG:
 
     urlpatterns += [
         # Add views for testing 404 and 500 templates
-        path('test404/', TemplateView.as_view(template_name='404.html')),
-        path('test500/', TemplateView.as_view(template_name='500.html')),
+        path("test404/", TemplateView.as_view(template_name="404.html")),
+        path("test500/", TemplateView.as_view(template_name="500.html")),
     ]
 
 if settings.DEBUG or settings.ENABLE_STYLEGUIDE:
     urlpatterns += [
         # Add styleguide
-        path('styleguide/', TemplateView.as_view(template_name='styleguide.html')),
+        path("styleguide/", TemplateView.as_view(template_name="styleguide.html")),
     ]
 
 urlpatterns += [
-    re_path(r'^images/([^/]*)/(\d*)/([^/]*)/[^/]*$', ServeView.as_view(), name='wagtailimages_serve'),
+    re_path(
+        r"^images/([^/]*)/(\d*)/([^/]*)/[^/]*$",
+        ServeView.as_view(),
+        name="wagtailimages_serve",
+    ),
 ]
 
 urlpatterns += [
-    path('', include(wagtail_urls)),
+    path("", include(wagtail_urls)),
 ]
 
 
 if settings.DEBUG:
     import debug_toolbar
+
     urlpatterns = [
-        path('__debug__/', include(debug_toolbar.urls)),
+        path("__debug__/", include(debug_toolbar.urls)),
         path("__reload__/", include("django_browser_reload.urls")),
     ] + urlpatterns
 

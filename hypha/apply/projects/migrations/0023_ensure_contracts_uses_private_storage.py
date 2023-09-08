@@ -6,15 +6,17 @@ import hypha.apply.projects.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('application_projects', '0022_update_field_definitions_for_forms'),
+        ("application_projects", "0022_update_field_definitions_for_forms"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='contract',
-            name='file',
-            field=models.FileField(storage=django.core.files.storage.FileSystemStorage(), upload_to=hypha.apply.projects.models.project.contract_path),
+            model_name="contract",
+            name="file",
+            field=models.FileField(
+                storage=django.core.files.storage.FileSystemStorage(),
+                upload_to=hypha.apply.projects.models.project.contract_path,
+            ),
         ),
     ]

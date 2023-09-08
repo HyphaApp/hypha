@@ -5,20 +5,32 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('activity', '0005_event'),
+        ("activity", "0005_event"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Message',
+            name="Message",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('type', models.CharField(max_length=15)),
-                ('content', models.TextField()),
-                ('recipient', models.CharField(max_length=250)),
-                ('event', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='activity.Event')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("type", models.CharField(max_length=15)),
+                ("content", models.TextField()),
+                ("recipient", models.CharField(max_length=250)),
+                (
+                    "event",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="activity.Event"
+                    ),
+                ),
             ],
         ),
     ]

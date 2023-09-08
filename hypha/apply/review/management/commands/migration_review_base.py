@@ -78,15 +78,39 @@ class MigrateCommand(BaseCommand):
     }
 
     def add_arguments(self, parser):
-        parser.add_argument('source', type=argparse.FileType('r'), help='Migration source JSON file')
+        parser.add_argument(
+            "source", type=argparse.FileType("r"), help="Migration source JSON file"
+        )
 
     @transaction.atomic
     def handle(self, *args, **options):
-        with options['source'] as json_data:
+        with options["source"] as json_data:
             self.data = json.load(json_data)
 
             # A user can only submitt a single review in the new system so pick the latest one.
-            blacklist = {"7574", "7413", "7412", "5270", "6468", "6436", "5511", "3490", "2840", "2837", "2737", "9362", "9203", "8958", "13313", "4868", "4867", "5863", "5770", "3962", "3747"}
+            blacklist = {
+                "7574",
+                "7413",
+                "7412",
+                "5270",
+                "6468",
+                "6436",
+                "5511",
+                "3490",
+                "2840",
+                "2837",
+                "2737",
+                "9362",
+                "9203",
+                "8958",
+                "13313",
+                "4868",
+                "4867",
+                "5863",
+                "5770",
+                "3962",
+                "3747",
+            }
 
             counter = 0
             for id in self.data:
@@ -100,9 +124,9 @@ class MigrateCommand(BaseCommand):
         node = self.data[id]
 
         try:
-            review = Review.objects.get(drupal_id=node['nid'])
+            review = Review.objects.get(drupal_id=node["nid"])
         except Review.DoesNotExist:
-            review = Review(drupal_id=node['nid'])
+            review = Review(drupal_id=node["nid"])
 
         # Disable auto_* on date fields so imported dates are used.
         for field in review._meta.local_fields:
@@ -112,9 +136,9 @@ class MigrateCommand(BaseCommand):
                 field.auto_now = False
 
         # TODO timezone?
-        review.created_at = datetime.fromtimestamp(int(node['created']), timezone.utc)
-        review.updated_at = datetime.fromtimestamp(int(node['changed']), timezone.utc)
-        review.author = self.get_user(node['uid'])
+        review.created_at = datetime.fromtimestamp(int(node["created"]), timezone.utc)
+        review.updated_at = datetime.fromtimestamp(int(node["changed"]), timezone.utc)
+        review.author = self.get_user(node["uid"])
         review.recommendation = self.get_recommendation(node)
         review.submission = self.get_submission(node)
         review.revision = review.submission.live_revision
@@ -138,7 +162,7 @@ class MigrateCommand(BaseCommand):
         for field in node:
             if field in self.STREAMFIELD_MAP:
                 try:
-                    id = self.STREAMFIELD_MAP[field]['id']
+                    id = self.STREAMFIELD_MAP[field]["id"]
                     form_data[id] = self.get_field_value(field, node)
                 except TypeError:
                     pass
@@ -150,7 +174,11 @@ class MigrateCommand(BaseCommand):
 
         review.form_data = form_data
 
-        scores = [review.data(field.id)[1] for field in review.score_fields if review.data(field.id)[1] != NA]
+        scores = [
+            review.data(field.id)[1]
+            for field in review.score_fields
+            if review.data(field.id)[1] != NA
+        ]
         try:
             review.score = sum(scores) / len(scores)
         except ZeroDivisionError:
@@ -160,7 +188,9 @@ class MigrateCommand(BaseCommand):
             review.save()
             self.stdout.write(f"Processed \"{node['title']}\" ({node['nid']})")
         except IntegrityError:
-            self.stdout.write(f"*** Skipped \"{node['title']}\" ({node['nid']}) due to IntegrityError")
+            self.stdout.write(
+                f"*** Skipped \"{node['title']}\" ({node['nid']}) due to IntegrityError"
+            )
 
     def get_user(self, uid):
         try:
@@ -179,65 +209,73 @@ class MigrateCommand(BaseCommand):
         field: [{value|target_id|tid: VALUE},]
         """
         mapping = self.STREAMFIELD_MAP[field]
-        mapping_type = mapping['type']
-        key = mapping.get('key', 'value')
+        mapping_type = mapping["type"]
+        key = mapping.get("key", "value")
         source_value = node[field]
         value = None
 
         if mapping_type == "direct":
             value = source_value
-        elif mapping_type == 'value':
+        elif mapping_type == "value":
             if key in source_value:
-                value = self.nl2br(source_value[key]) if source_value else ''
+                value = self.nl2br(source_value[key]) if source_value else ""
             else:
-                value = self.nl2br(source_value['value']) if source_value else ''
-        elif mapping_type == 'merge_value':
+                value = self.nl2br(source_value["value"]) if source_value else ""
+        elif mapping_type == "merge_value":
             values = []
             i = 0
             for item in source_value:
-                question = self.REQUEST_QUESTION_MAP[node['request_nid']]
+                question = self.REQUEST_QUESTION_MAP[node["request_nid"]]
                 if i in question:
                     values.append(f"<strong>{question[i]}</strong>{item[key]}<br>\n")
                 i += 1
-            merged_values = ''.join(values)
-            value = self.nl2br(merged_values) if source_value else ''
-        elif mapping_type == 'score':
+            merged_values = "".join(values)
+            value = self.nl2br(merged_values) if source_value else ""
+        elif mapping_type == "score":
             value_rate = int(source_value[key]) if source_value else NA
-            value_text = ''
+            value_text = ""
             if "_rate" in field:
-                field = field.replace('field_field_', 'field_')
+                field = field.replace("field_field_", "field_")
                 text_field = field[:-5]
                 if text_field in self.STREAMFIELD_MAP:
                     value_text_field = node[text_field]
-                    if 'safe_value' in value_text_field:
-                        value_text = self.nl2br(value_text_field['safe_value']) if value_text_field else ''
+                    if "safe_value" in value_text_field:
+                        value_text = (
+                            self.nl2br(value_text_field["safe_value"])
+                            if value_text_field
+                            else ""
+                        )
                     else:
-                        value_text = self.nl2br(value_text_field['value']) if value_text_field else ''
+                        value_text = (
+                            self.nl2br(value_text_field["value"])
+                            if value_text_field
+                            else ""
+                        )
             value = [value_text, value_rate]
-        elif mapping_type == 'map' and 'map' in 'mapping':
-            value = mapping['map'].get(source_value[key])
-        elif mapping_type == 'boolean':
-            value = source_value[key] == '1' if source_value else False
+        elif mapping_type == "map" and "map" in "mapping":
+            value = mapping["map"].get(source_value[key])
+        elif mapping_type == "boolean":
+            value = source_value[key] == "1" if source_value else False
 
         return value
 
     def get_recommendation(self, node):
-        mapping = self.REVIEWFIELD_MAP[node['type']]
-        field_name = mapping['recommendation']
-        rec_map = mapping.get('rec_map')
+        mapping = self.REVIEWFIELD_MAP[node["type"]]
+        field_name = mapping["recommendation"]
+        rec_map = mapping.get("rec_map")
         try:
-            return rec_map[node[field_name]['value']]
+            return rec_map[node[field_name]["value"]]
         except TypeError:
             return 0
 
     def get_submission(self, node):
-        mapping = self.REVIEWFIELD_MAP[node['type']]
-        field_name = mapping['submission']
+        mapping = self.REVIEWFIELD_MAP[node["type"]]
+        field_name = mapping["submission"]
         try:
-            nid = node[field_name]['target_id']
+            nid = node[field_name]["target_id"]
             return ApplicationSubmission.objects.get(drupal_id=nid)
         except ApplicationSubmission.DoesNotExist:
             return None
 
     def nl2br(self, value):
-        return value.replace('\r\n', '<br>\n')
+        return value.replace("\r\n", "<br>\n")

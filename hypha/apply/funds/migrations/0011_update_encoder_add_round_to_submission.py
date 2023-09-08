@@ -9,22 +9,28 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('wagtailcore', '0040_page_draft_title'),
-        ('funds', '0010_update_for_rich_text_block'),
+        ("wagtailcore", "0040_page_draft_title"),
+        ("funds", "0010_update_for_rich_text_block"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='applicationsubmission',
-            name='round',
-            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, related_name='submissions', to='wagtailcore.Page'),
+            model_name="applicationsubmission",
+            name="round",
+            field=models.ForeignKey(
+                default=1,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="submissions",
+                to="wagtailcore.Page",
+            ),
             preserve_default=False,
         ),
         migrations.AlterField(
-            model_name='applicationsubmission',
-            name='form_data',
-            field=django.contrib.postgres.fields.jsonb.JSONField(encoder=django.core.serializers.json.DjangoJSONEncoder),
+            model_name="applicationsubmission",
+            name="form_data",
+            field=django.contrib.postgres.fields.jsonb.JSONField(
+                encoder=django.core.serializers.json.DjangoJSONEncoder
+            ),
         ),
     ]

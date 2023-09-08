@@ -11,11 +11,17 @@ from wagtail.rich_text import RichText
 
 from hypha.apply.stream_forms import blocks as stream_blocks
 
-__all__ = ['BLOCK_FACTORY_DEFINITION', 'FormFieldBlockFactory',
-           'CharFieldBlockFactory', 'NumberFieldBlockFactory',
-           'RadioFieldBlockFactory', 'UploadableMediaFactory',
-           'ImageFieldBlockFactory', 'FileFieldBlockFactory',
-           'MultiFileFieldBlockFactory']
+__all__ = [
+    "BLOCK_FACTORY_DEFINITION",
+    "FormFieldBlockFactory",
+    "CharFieldBlockFactory",
+    "NumberFieldBlockFactory",
+    "RadioFieldBlockFactory",
+    "UploadableMediaFactory",
+    "ImageFieldBlockFactory",
+    "FileFieldBlockFactory",
+    "MultiFileFieldBlockFactory",
+]
 
 
 class AnswerFactory(factory.Factory):
@@ -29,7 +35,7 @@ class AnswerFactory(factory.Factory):
 class AddFormFieldsMetaclass(factory.base.FactoryMetaClass):
     def __new__(mcs, class_name, bases, attrs):
         # Add the form field definitions to allow nested calls
-        field_factory = attrs.pop('field_factory', None)
+        field_factory = attrs.pop("field_factory", None)
         if field_factory:
             wrapped_factories = {
                 k: factory.SubFactory(AnswerFactory, sub_factory=v)
@@ -42,20 +48,18 @@ class AddFormFieldsMetaclass(factory.base.FactoryMetaClass):
 
 class FormDataFactory(factory.Factory, metaclass=AddFormFieldsMetaclass):
     @classmethod
-    def _create(self, *args, form_fields = None, for_factory=None, clean=False, **kwargs):
+    def _create(self, *args, form_fields=None, for_factory=None, clean=False, **kwargs):
         if form_fields is None:
             form_fields = {}
 
         if form_fields and isinstance(form_fields, str):
             form_fields = json.loads(form_fields)
-            form_definition = {
-                field['type']: field['id']
-                for field in form_fields
-            }
+            form_definition = {field["type"]: field["id"] for field in form_fields}
         else:
             form_definition = {
                 f.block_type: f.id
-                for f in form_fields or for_factory.Meta.model.form_fields.field.to_python(form_fields)
+                for f in form_fields
+                or for_factory.Meta.model.form_fields.field.to_python(form_fields)
             }
 
         form_data = {}
@@ -95,8 +99,8 @@ class ParagraphBlockFactory(wagtail_factories.blocks.BlockFactory):
 
 
 class FormFieldBlockFactory(wagtail_factories.StructBlockFactory):
-    default_value = factory.Faker('sentence')
-    field_label = factory.Faker('sentence')
+    default_value = factory.Faker("sentence")
+    field_label = factory.Faker("sentence")
     help_text = factory.LazyAttribute(
         lambda o: f"Help text for {o._Resolver__step.builder.factory_meta.model.__name__}"
     )
@@ -117,35 +121,35 @@ class FormFieldBlockFactory(wagtail_factories.StructBlockFactory):
 
 
 class CharFieldBlockFactory(FormFieldBlockFactory):
-    default_value = factory.Faker('sentence')
+    default_value = factory.Faker("sentence")
 
     class Meta:
         model = stream_blocks.CharFieldBlock
 
 
 class TextFieldBlockFactory(FormFieldBlockFactory):
-    default_value = factory.Faker('sentence')
+    default_value = factory.Faker("sentence")
 
     class Meta:
         model = stream_blocks.TextFieldBlock
 
 
 class DateFieldBlockFactory(FormFieldBlockFactory):
-    default_value = factory.Faker('date_object')
+    default_value = factory.Faker("date_object")
 
     class Meta:
         model = stream_blocks.DateFieldBlock
 
 
 class TimeFieldBlockFactory(FormFieldBlockFactory):
-    default_value = factory.Faker('time_object')
+    default_value = factory.Faker("time_object")
 
     class Meta:
         model = stream_blocks.TimeFieldBlock
 
 
 class DateTimeFieldBlockFactory(FormFieldBlockFactory):
-    default_value = factory.Faker('date_time')
+    default_value = factory.Faker("date_time")
 
     class Meta:
         model = stream_blocks.DateTimeFieldBlock
@@ -157,8 +161,8 @@ class DateTimeFieldBlockFactory(FormFieldBlockFactory):
         else:
             date_time = super().make_form_answer(params)
         return {
-            'date': str(date_time.date()),
-            'time': str(date_time.time()),
+            "date": str(date_time.date()),
+            "time": str(date_time.time()),
         }
 
 
@@ -174,7 +178,7 @@ class NumberFieldBlockFactory(FormFieldBlockFactory):
 
 
 class CheckboxFieldBlockFactory(FormFieldBlockFactory):
-    choices = ['check_one', 'check_two']
+    choices = ["check_one", "check_two"]
 
     class Meta:
         model = stream_blocks.CheckboxFieldBlock
@@ -185,7 +189,7 @@ class CheckboxFieldBlockFactory(FormFieldBlockFactory):
 
 
 class CheckboxesFieldBlockFactory(FormFieldBlockFactory):
-    checkboxes = ['check_multiple_one', 'check_multiple_two', 'check_multiple_three']
+    checkboxes = ["check_multiple_one", "check_multiple_two", "check_multiple_three"]
 
     class Meta:
         model = stream_blocks.CheckboxesFieldBlock
@@ -196,7 +200,7 @@ class CheckboxesFieldBlockFactory(FormFieldBlockFactory):
 
 
 class RadioFieldBlockFactory(FormFieldBlockFactory):
-    choices = ['first', 'second']
+    choices = ["first", "second"]
 
     class Meta:
         model = stream_blocks.RadioButtonsFieldBlock
@@ -207,7 +211,7 @@ class RadioFieldBlockFactory(FormFieldBlockFactory):
 
 
 class DropdownFieldBlockFactory(FormFieldBlockFactory):
-    choices = ['first', 'second']
+    choices = ["first", "second"]
 
     class Meta:
         model = stream_blocks.DropdownFieldBlock
@@ -223,9 +227,9 @@ class UploadableMediaFactory(FormFieldBlockFactory):
     @classmethod
     def make_answer(cls, params=None):
         params = params or {}
-        params.setdefault('data', b'this is some content')
-        if params.get('filename') is None:
-            params['filename'] = 'example.pdf'
+        params.setdefault("data", b"this is some content")
+        if params.get("filename") is None:
+            params["filename"] = "example.pdf"
         file_name, file = cls.default_value._make_content(params)
         return SimpleUploadedFile(file_name, file.read())
 
@@ -260,7 +264,9 @@ class StreamFieldUUIDFactory(wagtail_factories.StreamFieldFactory):
         for block_name, value in blocks:
             block = self.factories[block_name]._meta.model()
             value = block.get_prep_value(value)
-            ret_val.append({'type': block_name, 'value': value, 'id': str(uuid.uuid4())})
+            ret_val.append(
+                {"type": block_name, "value": value, "id": str(uuid.uuid4())}
+            )
         return json.dumps(ret_val, cls=DjangoJSONEncoder)
 
     def build_form(self, data):
@@ -269,10 +275,10 @@ class StreamFieldUUIDFactory(wagtail_factories.StreamFieldFactory):
         multiples = {}
         for field, value in data.items():
             # we dont care about position
-            name, attr = field.split('__')
-            if name == 'exclude':
+            name, attr = field.split("__")
+            if name == "exclude":
                 exclusions.append(attr)
-            elif name == 'multiple':
+            elif name == "multiple":
                 multiples[attr] = value
             else:
                 extras[name] = {attr: value}
@@ -280,20 +286,22 @@ class StreamFieldUUIDFactory(wagtail_factories.StreamFieldFactory):
         defined_both = set(exclusions) & set(multiples)
         if defined_both:
             raise ValueError(
-                'Cant exclude and provide multiple at the same time: {}'.format(', '.join(defined_both))
+                "Cant exclude and provide multiple at the same time: {}".format(
+                    ", ".join(defined_both)
+                )
             )
 
         form_fields = {}
         field_count = 0
         for field in self.factories:
-            if field == 'text_markup' or field in exclusions:
+            if field == "text_markup" or field in exclusions:
                 pass
             else:
                 for _ in range(multiples.get(field, 1)):
-                    form_fields[f'{field_count}__{field}__'] = ''
+                    form_fields[f"{field_count}__{field}__"] = ""
                     field_count += 1
             for attr, value in extras[field].items():
-                form_fields[f'{field_count}__{field}__{attr}'] = value
+                form_fields[f"{field_count}__{field}__{attr}"] = value
 
         return form_fields
 
@@ -301,38 +309,40 @@ class StreamFieldUUIDFactory(wagtail_factories.StreamFieldFactory):
         if not field_values:
             field_values = {}
         data = {
-            field.id: self.factories[field.block.name].make_form_answer(field_values.get(field.id, {}))
+            field.id: self.factories[field.block.name].make_form_answer(
+                field_values.get(field.id, {})
+            )
             for field in fields
-            if hasattr(self.factories[field.block.name], 'make_form_answer')
+            if hasattr(self.factories[field.block.name], "make_form_answer")
         }
         return flatten_for_form(data)
 
 
 BLOCK_FACTORY_DEFINITION = {
-    'text_markup': ParagraphBlockFactory,
-    'char': CharFieldBlockFactory,
-    'text': TextFieldBlockFactory,
-    'number': NumberFieldBlockFactory,
-    'checkbox': CheckboxFieldBlockFactory,
-    'radios': RadioFieldBlockFactory,
-    'dropdown': DropdownFieldBlockFactory,
-    'checkboxes': CheckboxesFieldBlockFactory,
-    'date': DateFieldBlockFactory,
-    'time': TimeFieldBlockFactory,
-    'datetime': DateTimeFieldBlockFactory,
-    'image': ImageFieldBlockFactory,
-    'file': FileFieldBlockFactory,
-    'multi_file': MultiFileFieldBlockFactory,
+    "text_markup": ParagraphBlockFactory,
+    "char": CharFieldBlockFactory,
+    "text": TextFieldBlockFactory,
+    "number": NumberFieldBlockFactory,
+    "checkbox": CheckboxFieldBlockFactory,
+    "radios": RadioFieldBlockFactory,
+    "dropdown": DropdownFieldBlockFactory,
+    "checkboxes": CheckboxesFieldBlockFactory,
+    "date": DateFieldBlockFactory,
+    "time": TimeFieldBlockFactory,
+    "datetime": DateTimeFieldBlockFactory,
+    "image": ImageFieldBlockFactory,
+    "file": FileFieldBlockFactory,
+    "multi_file": MultiFileFieldBlockFactory,
 }
 
 FormFieldsBlockFactory = StreamFieldUUIDFactory(BLOCK_FACTORY_DEFINITION)
 
 
-def flatten_for_form(data, field_name='', number=False):
+def flatten_for_form(data, field_name="", number=False):
     result = {}
     for i, (field, value) in enumerate(data.items()):
         if number:
-            field = f'{field_name}_{i}'
+            field = f"{field_name}_{i}"
         if isinstance(value, dict):
             result.update(**flatten_for_form(value, field_name=field, number=True))
         else:

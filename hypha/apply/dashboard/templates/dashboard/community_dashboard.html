@@ -59,18 +59,18 @@
                                 </p>
                             </div>
                             {% if request.user|has_edit_perm:submission %}
-                            <div>
-                                <a class="button button--primary" href="{% url 'funds:submissions:edit' submission.id %}">
-                                    {% if submission.status == 'draft_proposal' %}
-                                        {% trans "Start your" %} {{ submission.stage }} {% trans "application" %}
-                                    {% else %}
-                                        <span class="whitespace-nowrap">
-                                            {% heroicon_mini "pencil-square" size=18 class="inline mr-1 align-text-bottom" aria_hidden=true %}
-                                            {% trans "Edit" %}
-                                        </span>
-                                    {% endif %}
-                                </a>
-                            </div>
+                                <div>
+                                    <a class="button button--primary" href="{% url 'funds:submissions:edit' submission.id %}">
+                                        {% if submission.status == 'draft_proposal' %}
+                                            {% trans "Start your" %} {{ submission.stage }} {% trans "application" %}
+                                        {% else %}
+                                            <span class="whitespace-nowrap">
+                                                {% heroicon_mini "pencil-square" size=18 class="inline mr-1 align-text-bottom" aria_hidden=true %}
+                                                {% trans "Edit" %}
+                                            </span>
+                                        {% endif %}
+                                    </a>
+                                </div>
                             {% endif %}
                         </div>
 

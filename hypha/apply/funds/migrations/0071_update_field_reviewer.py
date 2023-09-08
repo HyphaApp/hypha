@@ -6,15 +6,20 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('funds', '0070_rename_meta_categories_to_meta_terms'),
+        ("funds", "0070_rename_meta_categories_to_meta_terms"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='assignedreviewers',
-            name='reviewer',
-            field=models.ForeignKey(limit_choices_to={'groups__name__in': ['Staff', 'Reviewer', 'Community reviewer']}, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
+            model_name="assignedreviewers",
+            name="reviewer",
+            field=models.ForeignKey(
+                limit_choices_to={
+                    "groups__name__in": ["Staff", "Reviewer", "Community reviewer"]
+                },
+                on_delete=django.db.models.deletion.CASCADE,
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]

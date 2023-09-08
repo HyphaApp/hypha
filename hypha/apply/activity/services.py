@@ -16,9 +16,9 @@ def get_related_actions_for_user(obj, user):
 
     return (
         Activity.actions.filter(**{related_query: obj})
-        .select_related('user')
+        .select_related("user")
         .prefetch_related(
-            'related_object',
+            "related_object",
         )
         .visible_to(user)
     )
@@ -39,9 +39,9 @@ def get_related_comments_for_user(obj, user):
 
     return (
         Activity.comments.filter(**{related_query: obj})
-        .select_related('user')
+        .select_related("user")
         .prefetch_related(
-            'related_object',
+            "related_object",
         )
         .visible_to(user)
     )

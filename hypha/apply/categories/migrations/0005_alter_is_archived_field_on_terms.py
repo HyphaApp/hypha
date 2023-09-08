@@ -4,15 +4,18 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('categories', '0004_rename_meta_categories_to_meta_terms'),
+        ("categories", "0004_rename_meta_categories_to_meta_terms"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='metaterm',
-            name='is_archived',
-            field=models.BooleanField(default=False, help_text='Archived terms can be viewed but not set on content.', verbose_name='Archived'),
+            model_name="metaterm",
+            name="is_archived",
+            field=models.BooleanField(
+                default=False,
+                help_text="Archived terms can be viewed but not set on content.",
+                verbose_name="Archived",
+            ),
         ),
     ]

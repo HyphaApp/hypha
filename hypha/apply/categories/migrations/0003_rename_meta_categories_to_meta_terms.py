@@ -6,29 +6,59 @@ import wagtail.search.index
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('categories', '0002_metacategory'),
+        ("categories", "0002_metacategory"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='MetaTerm',
+            name="MetaTerm",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('path', models.CharField(max_length=255, unique=True)),
-                ('depth', models.PositiveIntegerField()),
-                ('numchild', models.PositiveIntegerField(default=0)),
-                ('name', models.CharField(help_text='Keep the name short, ideally one word.', max_length=50, unique=True)),
-                ('is_archived', models.BooleanField(default=False, verbose_name='Archived')),
-                ('help_text', wagtail.fields.RichTextField(blank=True)),
-                ('filter_on_dashboard', models.BooleanField(default=True, help_text='Make available to filter on dashboard')),
-                ('available_to_applicants', models.BooleanField(default=False, help_text='Make available to applicants')),
-                ('node_order_index', models.IntegerField(blank=True, default=0, editable=False)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("path", models.CharField(max_length=255, unique=True)),
+                ("depth", models.PositiveIntegerField()),
+                ("numchild", models.PositiveIntegerField(default=0)),
+                (
+                    "name",
+                    models.CharField(
+                        help_text="Keep the name short, ideally one word.",
+                        max_length=50,
+                        unique=True,
+                    ),
+                ),
+                (
+                    "is_archived",
+                    models.BooleanField(default=False, verbose_name="Archived"),
+                ),
+                ("help_text", wagtail.fields.RichTextField(blank=True)),
+                (
+                    "filter_on_dashboard",
+                    models.BooleanField(
+                        default=True, help_text="Make available to filter on dashboard"
+                    ),
+                ),
+                (
+                    "available_to_applicants",
+                    models.BooleanField(
+                        default=False, help_text="Make available to applicants"
+                    ),
+                ),
+                (
+                    "node_order_index",
+                    models.IntegerField(blank=True, default=0, editable=False),
+                ),
             ],
             options={
-                'verbose_name': 'Meta Term',
-                'verbose_name_plural': 'Meta Terms',
+                "verbose_name": "Meta Term",
+                "verbose_name_plural": "Meta Terms",
             },
             bases=(wagtail.search.index.Indexed, models.Model),
         ),

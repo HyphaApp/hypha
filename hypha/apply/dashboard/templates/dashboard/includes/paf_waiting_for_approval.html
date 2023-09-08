@@ -8,20 +8,20 @@
         </h2>
         <nav>
             <a class="tab__item tab__item--alt"
-                role="tab"
-                href="#"
-                id="tab-paf-awaiting"
-                aria-controls="panel-paf-awaiting"
-                :class="{ 'tab__item--active': tab === '{% trans "Awaiting your approval" %}' }"
-                @click.prevent="tab = '{% trans "Awaiting your approval" %}'"
+               role="tab"
+               href="#"
+               id="tab-paf-awaiting"
+               aria-controls="panel-paf-awaiting"
+               :class="{ 'tab__item--active': tab === '{% trans "Awaiting your approval" %}' }"
+               @click.prevent="tab = '{% trans "Awaiting your approval" %}'"
             >{% trans "Awaiting your approval" %}</a>
             <a class="tab__item tab__item--alt"
-                role="tab"
-                href="#"
-                id="tab-paf-approved"
-                aria-controls="panel-paf-approved"
-                :class="{ 'tab__item--active': tab === '{% trans "Approved by you" %}' }"
-                @click.prevent="tab = '{% trans "Approved by you" %}'"
+               role="tab"
+               href="#"
+               id="tab-paf-approved"
+               aria-controls="panel-paf-approved"
+               :class="{ 'tab__item--active': tab === '{% trans "Approved by you" %}' }"
+               @click.prevent="tab = '{% trans "Approved by you" %}'"
             >{% trans "Approved by you" %}</a>
         </nav>
     </section>

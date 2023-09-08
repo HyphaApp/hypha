@@ -116,7 +116,10 @@
             display: block;
 
             &--projectpage-introduction {
-                @include responsive-font-sizes(18px, map-get($font-sizes, delta));
+                @include responsive-font-sizes(
+                    18px,
+                    map-get($font-sizes, delta)
+                );
             }
         }
 

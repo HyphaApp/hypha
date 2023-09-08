@@ -1,7 +1,5 @@
 (function ($) {
+    "use strict";
 
-    'use strict';
-
-    $('#id_generator-token').focus();
-
+    $("#id_generator-token").focus();
 })(jQuery);

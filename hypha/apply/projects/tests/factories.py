@@ -29,14 +29,16 @@ from ..models.project import (
 from ..models.report import Report, ReportConfig, ReportVersion
 
 ADDRESS = {
-    'country': 'GB',
-    'thoroughfare': factory.Faker('street_name').evaluate(None, None, {'locale': None}),
-    'premise': factory.Faker('building_number').evaluate(None, None, {'locale': None}),
-    'locality': {
-        'localityname': factory.Faker('city').evaluate(None, None, {'locale': None}),
-        'administrativearea': factory.Faker('city').evaluate(None, None, {'locale': None}),
-        'postal_code': 'SW1 4AQ',
-    }
+    "country": "GB",
+    "thoroughfare": factory.Faker("street_name").evaluate(None, None, {"locale": None}),
+    "premise": factory.Faker("building_number").evaluate(None, None, {"locale": None}),
+    "locality": {
+        "localityname": factory.Faker("city").evaluate(None, None, {"locale": None}),
+        "administrativearea": factory.Faker("city").evaluate(
+            None, None, {"locale": None}
+        ),
+        "postal_code": "SW1 4AQ",
+    },
 }
 
 
@@ -45,17 +47,17 @@ def address_to_form_data():
     Generate a AddressField compatible dictionary from the address data
     """
     return {
-        'contact_address_0': ADDRESS['country'],
-        'contact_address_1': ADDRESS['thoroughfare'],
-        'contact_address_2': ADDRESS['premise'],
-        'contact_address_3_0': ADDRESS['locality']['localityname'],
-        'contact_address_3_1': ADDRESS['locality']['administrativearea'],
-        'contact_address_3_2': ADDRESS['locality']['postal_code'],
+        "contact_address_0": ADDRESS["country"],
+        "contact_address_1": ADDRESS["thoroughfare"],
+        "contact_address_2": ADDRESS["premise"],
+        "contact_address_3_0": ADDRESS["locality"]["localityname"],
+        "contact_address_3_1": ADDRESS["locality"]["administrativearea"],
+        "contact_address_3_2": ADDRESS["locality"]["postal_code"],
     }
 
 
 class DocumentCategoryFactory(factory.django.DjangoModelFactory):
-    name = factory.Sequence('name {}'.format)
+    name = factory.Sequence("name {}".format)
     recommended_minimum = 1
 
     class Meta:
@@ -66,7 +68,7 @@ class ProjectApprovalFormFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = ProjectApprovalForm
 
-    name = factory.Faker('word')
+    name = factory.Faker("word")
     form_fields = FormFieldsBlockFactory
 
 
@@ -74,7 +76,7 @@ class ProjectSOWFormFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = ProjectSOWForm
 
-    name = factory.Faker('word')
+    name = factory.Faker("word")
     form_fields = FormFieldsBlockFactory
 
 
@@ -86,9 +88,9 @@ class ProjectFactory(factory.django.DjangoModelFactory):
     submission = factory.SubFactory(ApplicationSubmissionFactory)
     user = factory.SubFactory(UserFactory)
 
-    title = factory.Sequence('name {}'.format)
+    title = factory.Sequence("name {}".format)
     lead = factory.SubFactory(StaffFactory)
-    value = decimal.Decimal('100')
+    value = decimal.Decimal("100")
     proposed_start = factory.LazyFunction(timezone.now)
     proposed_end = factory.LazyFunction(timezone.now)
 
@@ -97,7 +99,7 @@ class ProjectFactory(factory.django.DjangoModelFactory):
     form_fields = FormFieldsBlockFactory
     form_data = factory.SubFactory(
         ProjectApprovalFormDataFactory,
-        form_fields=factory.SelfAttribute('..form_fields'),
+        form_fields=factory.SelfAttribute("..form_fields"),
     )
 
     class Meta:
@@ -116,7 +118,7 @@ class ProjectFactory(factory.django.DjangoModelFactory):
 
 
 class PAFReviewerRoleFactory(factory.django.DjangoModelFactory):
-    label = factory.Faker('name')
+    label = factory.Faker("name")
 
     class Meta:
         model = PAFReviewersRole
@@ -155,7 +157,7 @@ class PacketFileFactory(factory.django.DjangoModelFactory):
     category = factory.SubFactory(DocumentCategoryFactory)
     project = factory.SubFactory(ProjectFactory)
 
-    title = factory.Sequence('name {}'.format)
+    title = factory.Sequence("name {}".format)
     document = factory.django.FileField()
 
     class Meta:
@@ -163,8 +165,8 @@ class PacketFileFactory(factory.django.DjangoModelFactory):
 
 
 class InvoiceFactory(factory.django.DjangoModelFactory):
-    invoice_number = factory.Faker('name')
-    invoice_amount = decimal.Decimal('10')
+    invoice_number = factory.Faker("name")
+    invoice_amount = decimal.Decimal("10")
     project = factory.SubFactory(ProjectFactory)
     by = factory.SubFactory(UserFactory)
     document = factory.django.FileField()
@@ -190,7 +192,7 @@ class ReportConfigFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = ReportConfig
-        django_get_or_create = ('project',)
+        django_get_or_create = ("project",)
 
     class Params:
         weeks = factory.Trait(
@@ -201,8 +203,8 @@ class ReportConfigFactory(factory.django.DjangoModelFactory):
 class ReportVersionFactory(factory.django.DjangoModelFactory):
     report = factory.SubFactory("hypha.apply.projects.tests.factories.ReportFactory")
     submitted = factory.LazyFunction(timezone.now)
-    public_content = factory.Faker('paragraph')
-    private_content = factory.Faker('paragraph')
+    public_content = factory.Faker("paragraph")
+    private_content = factory.Faker("paragraph")
     draft = True
 
     class Meta:
@@ -223,7 +225,9 @@ class ReportVersionFactory(factory.django.DjangoModelFactory):
 
 
 class ReportFactory(factory.django.DjangoModelFactory):
-    project = factory.SubFactory("hypha.apply.projects.tests.factories.ApprovedProjectFactory")
+    project = factory.SubFactory(
+        "hypha.apply.projects.tests.factories.ApprovedProjectFactory"
+    )
     end_date = factory.LazyFunction(timezone.now)
 
     class Meta:
@@ -231,24 +235,28 @@ class ReportFactory(factory.django.DjangoModelFactory):
 
     class Params:
         past_due = factory.Trait(
-            end_date=factory.LazyFunction(lambda: timezone.now() - relativedelta(days=1))
+            end_date=factory.LazyFunction(
+                lambda: timezone.now() - relativedelta(days=1)
+            )
         )
         is_submitted = factory.Trait(
-            version=factory.RelatedFactory(ReportVersionFactory, 'report', draft=False, relate=True)
+            version=factory.RelatedFactory(
+                ReportVersionFactory, "report", draft=False, relate=True
+            )
         )
         is_draft = factory.Trait(
-            version=factory.RelatedFactory(ReportVersionFactory, 'report', relate=True),
+            version=factory.RelatedFactory(ReportVersionFactory, "report", relate=True),
         )
 
 
 class ApprovedProjectFactory(ProjectFactory):
-    contract = factory.RelatedFactory(ContractFactory, 'project')
-    report_config = factory.RelatedFactory(ReportConfigFactory, 'project')
+    contract = factory.RelatedFactory(ContractFactory, "project")
+    report_config = factory.RelatedFactory(ReportConfigFactory, "project")
 
 
 class DeliverableFactory(factory.django.DjangoModelFactory):
-    name = factory.Sequence('name {}'.format)
-    unit_price = decimal.Decimal('100')
+    name = factory.Sequence("name {}".format)
+    unit_price = decimal.Decimal("100")
     project = factory.SubFactory(ProjectFactory)
 
     class Meta:

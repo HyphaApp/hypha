@@ -5,15 +5,16 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('funds', '0062_data_migrate_type_for_assigned_reviewers'),
+        ("funds", "0062_data_migrate_type_for_assigned_reviewers"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='assignedreviewers',
-            name='type',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='auth.Group'),
+            model_name="assignedreviewers",
+            name="type",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT, to="auth.Group"
+            ),
         ),
     ]

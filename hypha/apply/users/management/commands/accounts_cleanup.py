@@ -13,7 +13,12 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         onehundredfifty_days_ago = timezone.now() - timedelta(days=150)
         User = get_user_model()
-        users_inactivate = User.objects.filter(date_joined__date__lte=onehundredfifty_days_ago, is_active=True, is_staff=False, last_login__isnull=True)
+        users_inactivate = User.objects.filter(
+            date_joined__date__lte=onehundredfifty_days_ago,
+            is_active=True,
+            is_staff=False,
+            last_login__isnull=True,
+        )
 
         for user in users_inactivate:
             user.is_active = False

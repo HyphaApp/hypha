@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('activity', '0048_add_project_transition'),
+        ("activity", "0048_add_project_transition"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='activity',
-            name='source_object_id',
+            model_name="activity",
+            name="source_object_id",
             field=models.PositiveIntegerField(blank=True, db_index=True, null=True),
         ),
     ]

@@ -2,55 +2,25 @@
 {% load bleach_tags markdown_tags %}
 {% with widget_type=field|widget_type field_type=field|field_type %}
 
-<div class="form__group {{ field.id_for_label }} form__group--{{ widget_type }} {% if widget_type == 'checkbox_input' %} form__group--checkbox{% endif %}{% if widget_type == 'clearable_file_input' or widget_type == 'multi_file_input' or widget_type == 'single_file_field_widget' or widget_type == 'multi_file_field_widget' %} form__group--file{% endif %}{% if field.help_text %} form__group--wrap{% endif %}{% if field.errors %} form__error{% endif %}{% if is_application and field.field.group_number > 1 %} field-group field-group-{{ field.field.group_number }}{% endif %}{% if is_application and field.field.grouper_for %} form-fields-grouper{% endif %}"{% if is_application and field.field.grouper_for %}data-grouper-for="{{ field.field.grouper_for }}" data-toggle-on="{{ field.field.choices.0.0 }}" data-toggle-off="{{ field.field.choices.1.0 }}"{% endif %}{% if is_application and field.field.group_number > 1 %} data-hidden="{% if not show_all_group_fields and not field.field.visible %}true{% else %}false{% endif %}" data-required="{{ field.field.required_when_visible }}"{% endif %}{% if field.field.word_limit %} data-word-limit="{{ field.field.word_limit }}"{% endif %}>
-    {% if widget_type == 'clearable_file_input' or widget_type == 'multi_file_input' or widget_type == 'single_file_field_widget' or widget_type == 'multi_file_field_widget'%}
-        <span class="form__question">{{ field.label }}</span>
-        <label for="{{ field.id_for_label }}" class="form__question form__question--{{ field_type }} {{ widget_type }}" {% if field.field.required %}required{% endif %}>
-            <span>{% trans "Upload" %}</span>
-            {% if field.field.required %}
-                <span class="form__required">*</span>
-            {% endif %}
-        </label>
-    {% elif widget_type == 'checkbox_select_multiple' or widget_type == 'radio_select' %}
-        <fieldset>
-            <legend class="form__question form__question--{{ field_type }} {{ widget_type }}" {% if field.field.required %}required{% endif %}>
-                <span>{{ field.label }}</span>
-                {% if field.field.required %}
-                    <span class="form__required">*</span>
-                {% endif %}
-            </legend>
-    {% else %}
-        {% if not field.is_hidden and widget_type != 'checkbox_input' %}
+    <div class="form__group {{ field.id_for_label }} form__group--{{ widget_type }} {% if widget_type == 'checkbox_input' %} form__group--checkbox{% endif %}{% if widget_type == 'clearable_file_input' or widget_type == 'multi_file_input' or widget_type == 'single_file_field_widget' or widget_type == 'multi_file_field_widget' %} form__group--file{% endif %}{% if field.help_text %} form__group--wrap{% endif %}{% if field.errors %} form__error{% endif %}{% if is_application and field.field.group_number > 1 %} field-group field-group-{{ field.field.group_number }}{% endif %}{% if is_application and field.field.grouper_for %} form-fields-grouper{% endif %}"{% if is_application and field.field.grouper_for %}data-grouper-for="{{ field.field.grouper_for }}" data-toggle-on="{{ field.field.choices.0.0 }}" data-toggle-off="{{ field.field.choices.1.0 }}"{% endif %}{% if is_application and field.field.group_number > 1 %} data-hidden="{% if not show_all_group_fields and not field.field.visible %}true{% else %}false{% endif %}" data-required="{{ field.field.required_when_visible }}"{% endif %}{% if field.field.word_limit %} data-word-limit="{{ field.field.word_limit }}"{% endif %}>
+        {% if widget_type == 'clearable_file_input' or widget_type == 'multi_file_input' or widget_type == 'single_file_field_widget' or widget_type == 'multi_file_field_widget'%}
+            <span class="form__question">{{ field.label }}</span>
             <label for="{{ field.id_for_label }}" class="form__question form__question--{{ field_type }} {{ widget_type }}" {% if field.field.required %}required{% endif %}>
-                <span>{{ field.label }}</span>
+                <span>{% trans "Upload" %}</span>
                 {% if field.field.required %}
                     <span class="form__required">*</span>
                 {% endif %}
             </label>
-        {% endif %}
-    {% endif %}
-
-    {% if field.help_text %}
-        <div class="form__help prose prose-sm">{{ field.help_text|markdown|bleach }}</div>
-    {% endif %}
-
-    {% if field.field.help_link %}
-        <p class="form__help-link"><a href="{{ field.field.help_link }}" target="_blank" rel="noopener noreferrer">{% trans "See help guide for more information." %}<svg class="form__open-icon"><use xlink:href="#open-in-new-tab"></use></svg></a></p>
-    {% endif %}
-
-    {% if not field.is_hidden %}
-        <div class="form__item">
-            {% if widget_type == 'date_input' or widget_type == 'date_time_input' %}
-                <div class="{{ widget_type }}">
-            {% endif %}
-
-            {{ field }}
-
-                {% if field.errors %}<h6 class="form__error-text">{{ field.errors.as_text|linebreaksbr }}</h6>{% endif %}
-                {% if widget_type == 'clearable_file_input' or widget_type == 'multi_file_input' %}
-                <output class="form__file-list"></output>
-            {% endif %}
-            {% if widget_type == 'checkbox_input' %}
+        {% elif widget_type == 'checkbox_select_multiple' or widget_type == 'radio_select' %}
+            <fieldset>
+                <legend class="form__question form__question--{{ field_type }} {{ widget_type }}" {% if field.field.required %}required{% endif %}>
+                    <span>{{ field.label }}</span>
+                    {% if field.field.required %}
+                        <span class="form__required">*</span>
+                    {% endif %}
+                </legend>
+        {% else %}
+            {% if not field.is_hidden and widget_type != 'checkbox_input' %}
                 <label for="{{ field.id_for_label }}" class="form__question form__question--{{ field_type }} {{ widget_type }}" {% if field.field.required %}required{% endif %}>
                     <span>{{ field.label }}</span>
                     {% if field.field.required %}
@@ -58,16 +28,46 @@
                     {% endif %}
                 </label>
             {% endif %}
-            {% if widget_type == 'date_input' or widget_type == 'date_time_input' %}
-                </div>
-            {% endif %}
-        </div>
-    {% else %}
-        {{ field }}
-    {% endif %}
+        {% endif %}
 
-    {% if widget_type == 'checkbox_select_multiple' or widget_type == 'radio_select' %}
-        </fieldset>
-    {% endif %}
-</div>
+        {% if field.help_text %}
+            <div class="form__help prose prose-sm">{{ field.help_text|markdown|bleach }}</div>
+        {% endif %}
+
+        {% if field.field.help_link %}
+            <p class="form__help-link"><a href="{{ field.field.help_link }}" target="_blank" rel="noopener noreferrer">{% trans "See help guide for more information." %}<svg class="form__open-icon"><use xlink:href="#open-in-new-tab"></use></svg></a></p>
+        {% endif %}
+
+        {% if not field.is_hidden %}
+            <div class="form__item">
+                {% if widget_type == 'date_input' or widget_type == 'date_time_input' %}
+                    <div class="{{ widget_type }}">
+                {% endif %}
+
+                {{ field }}
+
+                {% if field.errors %}<h6 class="form__error-text">{{ field.errors.as_text|linebreaksbr }}</h6>{% endif %}
+                {% if widget_type == 'clearable_file_input' or widget_type == 'multi_file_input' %}
+                    <output class="form__file-list"></output>
+                {% endif %}
+                {% if widget_type == 'checkbox_input' %}
+                    <label for="{{ field.id_for_label }}" class="form__question form__question--{{ field_type }} {{ widget_type }}" {% if field.field.required %}required{% endif %}>
+                        <span>{{ field.label }}</span>
+                        {% if field.field.required %}
+                            <span class="form__required">*</span>
+                        {% endif %}
+                    </label>
+                {% endif %}
+                {% if widget_type == 'date_input' or widget_type == 'date_time_input' %}
+                    </div>
+                {% endif %}
+            </div>
+        {% else %}
+            {{ field }}
+        {% endif %}
+
+        {% if widget_type == 'checkbox_select_multiple' or widget_type == 'radio_select' %}
+            </fieldset>
+        {% endif %}
+    </div>
 {% endwith %}

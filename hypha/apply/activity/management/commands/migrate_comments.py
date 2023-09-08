@@ -16,11 +16,13 @@ class Command(BaseCommand):
     data = []
 
     def add_arguments(self, parser):
-        parser.add_argument('source', type=argparse.FileType('r'), help='Migration source JSON file')
+        parser.add_argument(
+            "source", type=argparse.FileType("r"), help="Migration source JSON file"
+        )
 
     @transaction.atomic
     def handle(self, *args, **options):
-        with options['source'] as json_data:
+        with options["source"] as json_data:
             self.data = json.load(json_data)
 
             for id in self.data:
@@ -31,12 +33,14 @@ class Command(BaseCommand):
 
         try:
             activity = Activity.objects.create(
-                timestamp=datetime.fromtimestamp(int(comment['created']), timezone.utc),
-                user=self.get_user(comment['uid']),
-                submission=self.get_submission(comment['nid']),
-                message=self.get_message(comment['subject'], comment['comment_body']['value']),
-                type='comment',
-                visibility='internal',
+                timestamp=datetime.fromtimestamp(int(comment["created"]), timezone.utc),
+                user=self.get_user(comment["uid"]),
+                submission=self.get_submission(comment["nid"]),
+                message=self.get_message(
+                    comment["subject"], comment["comment_body"]["value"]
+                ),
+                type="comment",
+                visibility="internal",
             )
             # Disable auto_* on date fields so imported dates are used.
             for field in activity._meta.local_fields:
@@ -44,9 +48,13 @@ class Command(BaseCommand):
                     field.auto_now_add = False
             try:
                 activity.save()
-                self.stdout.write(f"Processed \"{comment['subject']}\" ({comment['cid']})")
+                self.stdout.write(
+                    f"Processed \"{comment['subject']}\" ({comment['cid']})"
+                )
             except IntegrityError:
-                self.stdout.write(f"Skipped \"{comment['subject']}\" ({comment['cid']}) due to IntegrityError")
+                self.stdout.write(
+                    f"Skipped \"{comment['subject']}\" ({comment['cid']}) due to IntegrityError"
+                )
                 pass
         except ValueError:
             pass
@@ -66,7 +74,7 @@ class Command(BaseCommand):
         try:
             return ApplicationSubmission.objects.get(drupal_id=nid)
         except ApplicationSubmission.DoesNotExist:
-            return 'None'
+            return "None"
 
     def nl2br(self, value):
-        return value.replace('\r\n', '<br>\n')
+        return value.replace("\r\n", "<br>\n")

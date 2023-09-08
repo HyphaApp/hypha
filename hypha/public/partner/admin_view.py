@@ -7,7 +7,7 @@ from .models import InvestmentCategorySettings
 class CreateInvestmentView(CreateView):
     def get_form_kwargs(self):
         kwargs = super(CreateInvestmentView, self).get_form_kwargs()
-        kwargs['request'] = self.request
+        kwargs["request"] = self.request
         return kwargs
 
     def get_context_data(self):
@@ -15,21 +15,21 @@ class CreateInvestmentView(CreateView):
         ics = InvestmentCategorySettings.for_request(self.request)
         categories = ics.categories.all()
         for category in categories:
-            field_name = category.name.lower().replace(' ', '_')
+            field_name = category.name.lower().replace(" ", "_")
             field_panel = FieldPanel(field_name).bind_to(
                 model=self.model,
-                instance=context['edit_handler'].instance,
-                request=context['edit_handler'].request,
-                form=context['form']
+                instance=context["edit_handler"].instance,
+                request=context["edit_handler"].request,
+                form=context["form"],
             )
-            context['edit_handler'].children.append(field_panel)
+            context["edit_handler"].children.append(field_panel)
         return context
 
 
 class EditInvestmentView(EditView):
     def get_form_kwargs(self):
         kwargs = super(EditInvestmentView, self).get_form_kwargs()
-        kwargs['request'] = self.request
+        kwargs["request"] = self.request
         return kwargs
 
     def get_context_data(self):
@@ -37,12 +37,12 @@ class EditInvestmentView(EditView):
         ics = InvestmentCategorySettings.for_request(self.request)
         categories = ics.categories.all()
         for category in categories:
-            field_name = category.name.lower().replace(' ', '_')
+            field_name = category.name.lower().replace(" ", "_")
             field_panel = FieldPanel(field_name).bind_to(
                 model=self.model,
-                instance=context['edit_handler'].instance,
-                request=context['edit_handler'].request,
-                form=context['form']
+                instance=context["edit_handler"].instance,
+                request=context["edit_handler"].request,
+                form=context["form"],
             )
-            context['edit_handler'].children.append(field_panel)
+            context["edit_handler"].children.append(field_panel)
         return context

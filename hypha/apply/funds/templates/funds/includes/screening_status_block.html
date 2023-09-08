@@ -28,14 +28,14 @@
         {% if object.has_default_screening_status_set %}
             <p id="screening-options-para">
                 {% if object.screening_statuses.all.count > 1 %}
-                <div class="sidebar__screening-selected-options" id="Options">
-                    {% for status in object.screening_statuses.all%}
+                    <div class="sidebar__screening-selected-options" id="Options">
+                        {% for status in object.screening_statuses.all%}
                             <span class="sidebar__screening-option">{{ status }}</span>
-                    {% endfor%}
-                </div>
+                        {% endfor%}
+                    </div>
                 {% endif %}
                 {% if screen_able %}
-                <a id="screening-options" data-fancybox="" data-src="#screen-application" data-yes="{% if object.has_yes_default_screening_status_set %}true{% else %}false{% endif %}" class="link link--secondary-change" href="#">{% trans "Screening options" %}</a>
+                    <a id="screening-options" data-fancybox="" data-src="#screen-application" data-yes="{% if object.has_yes_default_screening_status_set %}true{% else %}false{% endif %}" class="link link--secondary-change" href="#">{% trans "Screening options" %}</a>
                 {% endif %}
             </p>
         {% endif %}
@@ -43,7 +43,7 @@
             <p id="screening-options-para">
                 <div class="sidebar__screening-selected-options">
                     {% for status in object.screening_statuses.all%}
-                            <span class="sidebar__screening-option">{{ status }}</span>
+                        <span class="sidebar__screening-option">{{ status }}</span>
                     {% endfor%}
                 </div>
             </p>

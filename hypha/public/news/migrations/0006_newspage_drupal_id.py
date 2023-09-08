@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('news', '0005_newsprojectrelatedpage'),
+        ("news", "0005_newsprojectrelatedpage"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='newspage',
-            name='drupal_id',
+            model_name="newspage",
+            name="drupal_id",
             field=models.IntegerField(blank=True, editable=False, null=True),
         ),
     ]

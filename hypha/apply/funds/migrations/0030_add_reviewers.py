@@ -7,31 +7,47 @@ import modelcluster.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('funds', '0029_applicationsubmission_next'),
+        ("funds", "0029_applicationsubmission_next"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='applicationsubmission',
-            name='reviewers',
-            field=models.ManyToManyField(limit_choices_to={'groups__name__in': ['Staff', 'Reviewer']}, related_name='submissions_reviewer', to=settings.AUTH_USER_MODEL),
+            model_name="applicationsubmission",
+            name="reviewers",
+            field=models.ManyToManyField(
+                limit_choices_to={"groups__name__in": ["Staff", "Reviewer"]},
+                related_name="submissions_reviewer",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AddField(
-            model_name='fundtype',
-            name='reviewers',
-            field=modelcluster.fields.ParentalManyToManyField(limit_choices_to={'groups__name': 'Reviewer'}, related_name='fund_reviewers', to=settings.AUTH_USER_MODEL),
+            model_name="fundtype",
+            name="reviewers",
+            field=modelcluster.fields.ParentalManyToManyField(
+                limit_choices_to={"groups__name": "Reviewer"},
+                related_name="fund_reviewers",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AddField(
-            model_name='round',
-            name='reviewers',
-            field=modelcluster.fields.ParentalManyToManyField(limit_choices_to={'groups__name': 'Reviewer'}, related_name='rounds_reviewer', to=settings.AUTH_USER_MODEL),
+            model_name="round",
+            name="reviewers",
+            field=modelcluster.fields.ParentalManyToManyField(
+                limit_choices_to={"groups__name": "Reviewer"},
+                related_name="rounds_reviewer",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AlterField(
-            model_name='round',
-            name='lead',
-            field=models.ForeignKey(limit_choices_to={'groups__name': 'Staff'}, on_delete=django.db.models.deletion.PROTECT, related_name='round_lead', to=settings.AUTH_USER_MODEL),
+            model_name="round",
+            name="lead",
+            field=models.ForeignKey(
+                limit_choices_to={"groups__name": "Staff"},
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="round_lead",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]

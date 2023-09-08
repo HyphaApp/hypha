@@ -5,23 +5,45 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
-        ('wagtailcore', '0041_group_collection_permissions_verbose_name_plural'),
+        ("wagtailcore", "0041_group_collection_permissions_verbose_name_plural"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='NewsletterSettings',
+            name="NewsletterSettings",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('newsletter_title', models.CharField(default='Get the latest internet freedom news', help_text='The title of the newsletter signup form.', max_length=255, verbose_name='Newsletter title')),
-                ('site', models.OneToOneField(editable=False, on_delete=django.db.models.deletion.CASCADE, to='wagtailcore.Site')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "newsletter_title",
+                    models.CharField(
+                        default="Get the latest internet freedom news",
+                        help_text="The title of the newsletter signup form.",
+                        max_length=255,
+                        verbose_name="Newsletter title",
+                    ),
+                ),
+                (
+                    "site",
+                    models.OneToOneField(
+                        editable=False,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="wagtailcore.Site",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'newsletter settings',
+                "verbose_name": "newsletter settings",
             },
         ),
     ]

@@ -5,33 +5,40 @@ import wagtail.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('users', '0019_rename_usersettings_authsettings'),
+        ("users", "0019_rename_usersettings_authsettings"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='authsettings',
-            options={'verbose_name': 'Auth Settings'},
+            name="authsettings",
+            options={"verbose_name": "Auth Settings"},
         ),
         migrations.RemoveField(
-            model_name='authsettings',
-            name='site',
+            model_name="authsettings",
+            name="site",
         ),
         migrations.AddField(
-            model_name='authsettings',
-            name='register_extra_text',
-            field=wagtail.fields.RichTextField(blank=True, help_text='Extra text to be displayed on register form'),
+            model_name="authsettings",
+            name="register_extra_text",
+            field=wagtail.fields.RichTextField(
+                blank=True, help_text="Extra text to be displayed on register form"
+            ),
         ),
         migrations.AlterField(
-            model_name='authsettings',
-            name='consent_show',
-            field=models.BooleanField(default=False, verbose_name='Show consent checkbox?'),
+            model_name="authsettings",
+            name="consent_show",
+            field=models.BooleanField(
+                default=False, verbose_name="Show consent checkbox?"
+            ),
         ),
         migrations.AlterField(
-            model_name='authsettings',
-            name='extra_text',
-            field=wagtail.fields.RichTextField(blank=True, help_text='Displayed along side login form', verbose_name='Login extra text'),
+            model_name="authsettings",
+            name="extra_text",
+            field=wagtail.fields.RichTextField(
+                blank=True,
+                help_text="Displayed along side login form",
+                verbose_name="Login extra text",
+            ),
         ),
     ]

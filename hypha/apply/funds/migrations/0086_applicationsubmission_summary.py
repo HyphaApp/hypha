@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('funds', '0085_add_days_to_duration_block'),
+        ("funds", "0085_add_days_to_duration_block"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='applicationsubmission',
-            name='summary',
-            field=models.TextField(blank=True, default='', null=True),
+            model_name="applicationsubmission",
+            name="summary",
+            field=models.TextField(blank=True, default="", null=True),
         ),
     ]

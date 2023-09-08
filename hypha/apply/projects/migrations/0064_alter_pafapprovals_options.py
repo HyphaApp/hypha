@@ -4,14 +4,13 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('application_projects', '0063_projectsettings_paf_approval_sequential'),
+        ("application_projects", "0063_projectsettings_paf_approval_sequential"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='pafapprovals',
-            options={'ordering': ['paf_reviewer_role__sort_order']},
+            name="pafapprovals",
+            options={"ordering": ["paf_reviewer_role__sort_order"]},
         ),
     ]

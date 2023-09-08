@@ -18,22 +18,24 @@ class ReviewModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass)
 
     class Meta:
         model = Review
-        fields = ['recommendation', 'visibility', 'score', 'submission']
+        fields = ["recommendation", "visibility", "score", "submission"]
 
         widgets = {
-            'recommendation': forms.HiddenInput(),
-            'score': forms.HiddenInput(),
-            'submission': forms.HiddenInput(),
-            'visibility': forms.HiddenInput(),
+            "recommendation": forms.HiddenInput(),
+            "score": forms.HiddenInput(),
+            "submission": forms.HiddenInput(),
+            "visibility": forms.HiddenInput(),
         }
 
         error_messages = {
             NON_FIELD_ERRORS: {
-                'unique_together': "You have already posted a review for this submission",
+                "unique_together": "You have already posted a review for this submission",
             }
         }
 
-    def __init__(self, *args, submission, user=None, initial=None, instance=None, **kwargs):
+    def __init__(
+        self, *args, submission, user=None, initial=None, instance=None, **kwargs
+    ):
         if initial is None:
             initial = {}
 
@@ -54,7 +56,7 @@ class ReviewModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass)
 
     def clean(self):
         cleaned_data = super().clean()
-        cleaned_data['form_data'] = {
+        cleaned_data["form_data"] = {
             key: value
             for key, value in cleaned_data.items()
             if key not in self._meta.fields
@@ -64,16 +66,20 @@ class ReviewModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass)
 
     def save(self, commit=True):
         self.instance.score = self.calculate_score(self.cleaned_data)
-        self.instance.recommendation = int(self.cleaned_data[self.instance.recommendation_field.id])
+        self.instance.recommendation = int(
+            self.cleaned_data[self.instance.recommendation_field.id]
+        )
         self.instance.is_draft = self.draft_button_name in self.data
         # Old review forms do not have the requred visability field.
         # This will set visibility to PRIVATE by default.
         try:
-            self.instance.visibility = self.cleaned_data[self.instance.visibility_field.id]
+            self.instance.visibility = self.cleaned_data[
+                self.instance.visibility_field.id
+            ]
         except AttributeError:
             self.instance.visibility = PRIVATE
 
-        self.instance.form_data = self.cleaned_data['form_data']
+        self.instance.form_data = self.cleaned_data["form_data"]
 
         if not self.instance.is_draft:
             # Capture the revision against which the user was reviewing
@@ -94,7 +100,7 @@ class ReviewModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass)
         for field in self.instance.score_fields_without_text:
             score = data.get(field.id)
             # Include '' answers as 0.
-            if score == '':
+            if score == "":
                 score = 0
             scores.append(int(score))
 
@@ -106,7 +112,7 @@ class ReviewModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass)
 
 class SubmitButtonWidget(forms.Widget):
     def render(self, name, value, attrs=None, renderer=None):
-        disabled = 'disabled' if attrs.get('disabled') else ''
+        disabled = "disabled" if attrs.get("disabled") else ""
         return '<input type="submit" name="{name}" value="{value}" class="button button--primary button--bottom-space" {disabled}>'.format(
             disabled=disabled,
             name=escape(name),
@@ -118,7 +124,7 @@ class OpinionField(forms.IntegerField):
     def __init__(self, *args, opinion, **kwargs):
         kwargs["widget"] = SubmitButtonWidget
         self.opinion = opinion
-        kwargs['label'] = ''
+        kwargs["label"] = ""
         super().__init__(*args, **kwargs)
 
     def clean(self, value):
@@ -131,7 +137,7 @@ class ReviewOpinionForm(forms.ModelForm):
 
     class Meta:
         model = ReviewOpinion
-        fields = ('opinion',)
+        fields = ("opinion",)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -147,8 +153,8 @@ class ReviewOpinionForm(forms.ModelForm):
         opinions = [cleaned_data.get(opinion.lower()) for _, opinion in OPINION_CHOICES]
         valid_opinions = [opinion for opinion in opinions if opinion is not None]
         if len(valid_opinions) > 1:
-            self.add_error(None, 'Cant submit both an agreement and disagreement')
-        cleaned_data = {'opinion': valid_opinions[0]}
+            self.add_error(None, "Cant submit both an agreement and disagreement")
+        cleaned_data = {"opinion": valid_opinions[0]}
         return cleaned_data
 
     def save(self, *args, **kwargs):
