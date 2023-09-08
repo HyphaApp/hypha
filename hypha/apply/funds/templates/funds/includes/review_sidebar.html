@@ -5,9 +5,9 @@
         {{ recommendation|traffic_light }}
     </span>
     {% with assigned_reviewers|average_review_score as average %}
-    <span class="font-medium">
-        {{ assigned_reviewers|average_review_score }}
-    </span>
+        <span class="font-medium">
+            {{ assigned_reviewers|average_review_score }}
+        </span>
     {% endwith %}
 </div>
 

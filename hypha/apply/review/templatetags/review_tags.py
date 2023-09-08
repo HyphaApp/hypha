@@ -55,5 +55,7 @@ def average_review_score(reviewers):
             and not reviewer.review.score == NA
         ]
         if len(scores) > 0:
-            return _('Avg. score: {average}').format(average=round(sum(scores) / len(scores), 1))
-    return ''
+            return _("Avg. score: {average}").format(
+                average=round(sum(scores) / len(scores), 1)
+            )
+    return ""
