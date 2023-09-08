@@ -463,8 +463,8 @@
             }
         }
 
+        // stylelint-disable-next-line selector-class-pattern
         .id_message {
-            // stylelint-disable-line selector-class-pattern
             grid-area: message;
 
             > label {
@@ -472,8 +472,8 @@
             }
         }
 
+        // stylelint-disable-next-line selector-class-pattern
         .id_visibility_0 {
-            // stylelint-disable-line selector-class-pattern
             grid-area: visibility;
         }
 
@@ -505,13 +505,13 @@
         border: 1px solid #cfcfcf8f; // stylelint-disable-line color-no-hex
         max-width: 410px;
 
+        // stylelint-disable-next-line selector-class-pattern
         .form__group {
-            // stylelint-disable-line selector-class-pattern
             margin-top: 0.5rem;
         }
 
+        // stylelint-disable-next-line selector-class-pattern
         .form__question {
-            // stylelint-disable-line selector-class-pattern
             margin-bottom: 0.25rem;
             font-size: 1rem;
             line-height: 1.25rem;
