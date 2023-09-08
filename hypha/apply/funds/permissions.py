@@ -75,6 +75,14 @@ def can_access_drafts(user):
     return False
 
 
+def can_export_submissions(user):
+    if user.is_apply_staff and settings.SUBMISSIONS_EXPORT_ACCESS_STAFF:
+        return True
+    if user.is_apply_staff_admin and settings.SUBMISSIONS_EXPORT_ACCESS_STAFF_ADMIN:
+        return True
+    return False
+
+
 def is_user_has_access_to_view_submission(user, submission):
     if not user.is_authenticated:
         return False, "Login Required"

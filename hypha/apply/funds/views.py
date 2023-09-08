@@ -95,6 +95,7 @@ from .models import (
 from .permissions import (
     can_access_archived_submissions,
     can_access_drafts,
+    can_export_submissions,
     has_permission,
 )
 from .tables import (
@@ -432,6 +433,7 @@ class SubmissionOverviewView(BaseAdminSubmissionsTable):
         base_query = (
             RoundsAndLabs.objects.with_progress().active().order_by("-end_date")
         )
+        can_export = can_export_submissions(self.request.user)
         open_rounds = base_query.open()[:limit]
         open_query = "?round_state=open"
         closed_rounds = base_query.closed()[:limit]
@@ -465,6 +467,7 @@ class SubmissionOverviewView(BaseAdminSubmissionsTable):
         return super().get_context_data(
             open_rounds=open_rounds,
             open_query=open_query,
+            can_export=can_export,
             closed_rounds=closed_rounds,
             closed_query=closed_query,
             rounds_title=rounds_title,
@@ -582,8 +585,8 @@ class SubmissionUserFlaggedView(UserPassesTestMixin, BaseAdminSubmissionsTable):
         return self.request.user.is_apply_staff or self.request.user.is_reviewer
 
 
-@method_decorator(staff_required, name="dispatch")
-class ExportSubmissionsByRound(BaseAdminSubmissionsTable):
+@method_decorator(login_required, name="dispatch")
+class ExportSubmissionsByRound(UserPassesTestMixin, BaseAdminSubmissionsTable):
     def export_submissions(self, round_id):
         csv_stream = StringIO()
         writer = csv.writer(csv_stream)
@@ -631,6 +634,9 @@ class ExportSubmissionsByRound(BaseAdminSubmissionsTable):
         response = HttpResponse(csv_data.readlines(), content_type="text/csv")
         response["Content-Disposition"] = "inline; filename=" + str(self.obj) + ".csv"
         return response
+
+    def test_func(self):
+        return can_export_submissions(self.request.user)
 
 
 @method_decorator(staff_required, name="dispatch")
