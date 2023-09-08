@@ -5,25 +5,38 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('funds', '0048_add_field_slack_channel'),
+        ("funds", "0048_add_field_slack_channel"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='ScreeningStatus',
+            name="ScreeningStatus",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=128)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=128)),
             ],
             options={
-                'verbose_name_plural': 'screening statuses',
+                "verbose_name_plural": "screening statuses",
             },
         ),
         migrations.AddField(
-            model_name='applicationsubmission',
-            name='screening_status',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='funds.ScreeningStatus', verbose_name='screening status'),
+            model_name="applicationsubmission",
+            name="screening_status",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="+",
+                to="funds.ScreeningStatus",
+                verbose_name="screening status",
+            ),
         ),
     ]

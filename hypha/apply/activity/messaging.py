@@ -18,14 +18,7 @@ class MessengerBackend:
         return self.send(*args, related=related, **kwargs)
 
     def send(
-        self,
-        message_type,
-        request,
-        user,
-        related,
-        source=None,
-        sources=None,
-        **kwargs
+        self, message_type, request, user, related, source=None, sources=None, **kwargs
     ):
         from .models import Event
 

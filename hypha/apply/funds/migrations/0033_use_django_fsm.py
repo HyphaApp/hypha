@@ -5,35 +5,56 @@ import django_fsm
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('funds', '0032_make_reviewers_optional_in_all_instances'),
+        ("funds", "0032_make_reviewers_optional_in_all_instances"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='applicationsubmission',
-            name='status',
-            field=django_fsm.FSMField(default='in_discussion', max_length=50, protected=True),
+            model_name="applicationsubmission",
+            name="status",
+            field=django_fsm.FSMField(
+                default="in_discussion", max_length=50, protected=True
+            ),
         ),
         migrations.AlterField(
-            model_name='applicationsubmission',
-            name='workflow_name',
-            field=models.CharField(choices=[('single', 'Request'), ('double', 'Concept & Proposal')], default='single', max_length=100, verbose_name='Workflow'),
+            model_name="applicationsubmission",
+            name="workflow_name",
+            field=models.CharField(
+                choices=[("single", "Request"), ("double", "Concept & Proposal")],
+                default="single",
+                max_length=100,
+                verbose_name="Workflow",
+            ),
         ),
         migrations.AlterField(
-            model_name='fundtype',
-            name='workflow_name',
-            field=models.CharField(choices=[('single', 'Request'), ('double', 'Concept & Proposal')], default='single', max_length=100, verbose_name='Workflow'),
+            model_name="fundtype",
+            name="workflow_name",
+            field=models.CharField(
+                choices=[("single", "Request"), ("double", "Concept & Proposal")],
+                default="single",
+                max_length=100,
+                verbose_name="Workflow",
+            ),
         ),
         migrations.AlterField(
-            model_name='labtype',
-            name='workflow_name',
-            field=models.CharField(choices=[('single', 'Request'), ('double', 'Concept & Proposal')], default='single', max_length=100, verbose_name='Workflow'),
+            model_name="labtype",
+            name="workflow_name",
+            field=models.CharField(
+                choices=[("single", "Request"), ("double", "Concept & Proposal")],
+                default="single",
+                max_length=100,
+                verbose_name="Workflow",
+            ),
         ),
         migrations.AlterField(
-            model_name='round',
-            name='workflow_name',
-            field=models.CharField(choices=[('single', 'Request'), ('double', 'Concept & Proposal')], default='single', max_length=100, verbose_name='Workflow'),
+            model_name="round",
+            name="workflow_name",
+            field=models.CharField(
+                choices=[("single", "Request"), ("double", "Concept & Proposal")],
+                default="single",
+                max_length=100,
+                verbose_name="Workflow",
+            ),
         ),
     ]

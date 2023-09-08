@@ -2,17 +2,24 @@
 {% load i18n static %}
 
 {% block content_wrapper %}
-    <div class="admin-bar">
-        <div class="admin-bar__inner admin-bar__inner--with-button">
-            <h3 class="admin-bar__heading">{% trans "Welcome" %} {{ user }}</h3>
-            <a href="{% url 'dashboard:dashboard' %}" class="button button--primary button--arrow-pixels-white" hx-boost='true'>
-                {% trans "Go to my dashboard" %}
-                <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
-            </a>
-        </div>
-    </div>
+    {% adminbar %}
 
-    <div class="wrapper wrapper--small wrapper--inner-space-medium  two-factor">
+        {% slot back_link %}
+            <a href="/account/" class="simplified__submissions-link"> {% trans "Back to Account" %}</a>
+        {% endslot %}
+
+        {% slot header %}
+            {% trans "Two-Factor Authentication (2FA)" %}
+        {% endslot %}
+        {% comment %} {% slot sub_heading %}{% trans "All submissions ready for discussion." %}{% endslot %} {% endcomment %}
+
+        <a href="{% url 'dashboard:dashboard' %}" class="button button--primary button--arrow-pixels-white" hx-boost='true'>
+            {% trans "Go to my dashboard" %}
+            <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
+        </a>
+    {% endadminbar %}
+
+    <div class="wrapper wrapper--inner-space-medium max-w-2xl  two-factor">
         {% block content %}{% endblock %}
     </div>
 {% endblock %}

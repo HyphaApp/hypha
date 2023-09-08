@@ -4,21 +4,21 @@ from django.db import migrations
 
 
 def set_duration_required_false(apps, schema_editor):
-    ApplicationSubmission = apps.get_model('funds', 'ApplicationSubmission')
+    ApplicationSubmission = apps.get_model("funds", "ApplicationSubmission")
     for submission in ApplicationSubmission.objects.all():
         for id, struct_child in enumerate(submission.form_fields):
             struct_value = struct_child.value
-            if struct_child.block_type == 'duration' and struct_value['required'] is None:
-                submission.form_fields[id].value['required'] = False
+            if (
+                struct_child.block_type == "duration"
+                and struct_value["required"] is None
+            ):
+                submission.form_fields[id].value["required"] = False
                 submission.save()
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('funds', '0092_auto_20220308_0827'),
+        ("funds", "0092_auto_20220308_0827"),
     ]
 
-    operations = [
-        migrations.RunPython(set_duration_required_false)
-    ]
+    operations = [migrations.RunPython(set_duration_required_false)]

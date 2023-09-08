@@ -6,26 +6,26 @@
 {% block header_modifier %}header--light-bg{% endblock %}
 
 {% block content %}
-<div class="wrapper wrapper--small">
-    {% if page.strapline %}
-        <h4 class="heading heading--regular">{{ page.strapline }}</h4>
-    {% endif %}
+    <div class="wrapper wrapper--small">
+        {% if page.strapline %}
+            <h4 class="heading heading--regular">{{ page.strapline }}</h4>
+        {% endif %}
 
-    <div class="wrapper wrapper--breakout">
-        <svg class="icon icon--body-pixels-right"><use xlink:href="#body-pixels-right"></use></svg>
-    </div>
+        <div class="wrapper wrapper--breakout">
+            <svg class="icon icon--body-pixels-right"><use xlink:href="#body-pixels-right"></use></svg>
+        </div>
 
-    <div class="wrapper wrapper--listings">
-    {% for fund in open_funds %}
-        {% include "apply_home/includes/apply_listing.html" with page=fund %}
-    {% endfor %}
-    {% for lab in open_labs %}
-        {% include "apply_home/includes/apply_listing.html" with page=lab %}
-    {% endfor %}
-    </div>
+        <div class="wrapper wrapper--listings">
+            {% for fund in open_funds %}
+                {% include "apply_home/includes/apply_listing.html" with page=fund %}
+            {% endfor %}
+            {% for lab in open_labs %}
+                {% include "apply_home/includes/apply_listing.html" with page=lab %}
+            {% endfor %}
+        </div>
 
-    <div class="wrapper wrapper--breakout">
-        <svg class="icon icon--body-pixels-left"><use xlink:href="#body-pixels-left"></use></svg>
+        <div class="wrapper wrapper--breakout">
+            <svg class="icon icon--body-pixels-left"><use xlink:href="#body-pixels-left"></use></svg>
+        </div>
     </div>
-</div>
 {% endblock %}

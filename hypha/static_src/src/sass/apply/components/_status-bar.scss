@@ -71,7 +71,7 @@
             background: $color--dark-grey;
             border: 5px solid $color--mid-grey;
             border-radius: 50%;
-            content: '';
+            content: "";
 
             .status-bar--small & {
                 background: $color--white;
@@ -107,7 +107,7 @@
                 background: $color--white;
                 border: 5px solid $color--error;
                 border-radius: 50%;
-                content: '';
+                content: "";
             }
         }
 

@@ -7,24 +7,24 @@
             <li><strong>{{ action.grouper }}</strong>
                 <ul>
                     {% for reminder in action.list %}
-                    <li class="{% if reminder.is_expired %}expired-reminder{% endif %} reminder-list">
-                        <div class="reminder-title">
-                            {% if reminder.title %}
-                                {{ reminder.title }}
-                            {% else %}
-                                {% trans "untitled reminder" %}
-                            {% endif %}
-                        </div>
-                        <a class="link reminder-delete" href="{% url 'funds:submissions:reminders:delete' object.id reminder.id %}">
-                            <svg class="icon icon--delete"><use xlink:href="#delete"></use></svg>
-                        </a>
-                    </li>
+                        <li class="{% if reminder.is_expired %}expired-reminder{% endif %} reminder-list">
+                            <div class="reminder-title">
+                                {% if reminder.title %}
+                                    {{ reminder.title }}
+                                {% else %}
+                                    {% trans "untitled reminder" %}
+                                {% endif %}
+                            </div>
+                            <a class="link reminder-delete" href="{% url 'funds:submissions:reminders:delete' object.id reminder.id %}">
+                                <svg class="icon icon--delete"><use xlink:href="#delete"></use></svg>
+                            </a>
+                        </li>
                     {% endfor %}
                 </ul>
             </li>
             <br>
         {% empty %}
-        <li>{% trans "No reminders yet." %}</li>
-    	{% endfor %}
+            <li>{% trans "No reminders yet." %}</li>
+        {% endfor %}
     </ul>
 </div>

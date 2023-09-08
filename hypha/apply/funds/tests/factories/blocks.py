@@ -12,25 +12,31 @@ from hypha.apply.stream_forms.testing.factories import (
 )
 from hypha.apply.utils.testing.factories import RichTextFieldBlockFactory
 
-__all__ = ['CustomFormFieldsFactory', 'TitleBlockFactory', 'EmailBlockFactory', 'FullNameBlockFactory', 'ValueFieldBlockFactory']
+__all__ = [
+    "CustomFormFieldsFactory",
+    "TitleBlockFactory",
+    "EmailBlockFactory",
+    "FullNameBlockFactory",
+    "ValueFieldBlockFactory",
+]
 
 
 class TitleBlockFactory(FormFieldBlockFactory):
-    default_value = factory.Faker('sentence')
+    default_value = factory.Faker("sentence")
 
     class Meta:
         model = blocks.TitleBlock
 
 
 class EmailBlockFactory(FormFieldBlockFactory):
-    default_value = factory.Faker('email')
+    default_value = factory.Faker("email")
 
     class Meta:
         model = blocks.EmailBlock
 
 
 class FullNameBlockFactory(FormFieldBlockFactory):
-    default_value = factory.Faker('name')
+    default_value = factory.Faker("name")
 
     class Meta:
         model = blocks.FullNameBlock
@@ -63,51 +69,71 @@ class AddressFieldBlockFactory(FormFieldBlockFactory):
     def make_answer(cls, params=None):
         if not params:
             params = {}
-        return json.dumps({
-            'country': 'GB',
-            'thoroughfare': factory.Faker('street_name').evaluate(None, None, dict(params, locale=None)),
-            'premise': factory.Faker('building_number').evaluate(None, None, dict(params, locale=None)),
-            'localityname': factory.Faker('city').evaluate(None, None, dict(params, locale=None)),
-            'administrativearea': factory.Faker('city').evaluate(None, None, dict(params, locale=None)),
-            'postalcode': 'SW1 4AQ',
-        })
+        return json.dumps(
+            {
+                "country": "GB",
+                "thoroughfare": factory.Faker("street_name").evaluate(
+                    None, None, dict(params, locale=None)
+                ),
+                "premise": factory.Faker("building_number").evaluate(
+                    None, None, dict(params, locale=None)
+                ),
+                "localityname": factory.Faker("city").evaluate(
+                    None, None, dict(params, locale=None)
+                ),
+                "administrativearea": factory.Faker("city").evaluate(
+                    None, None, dict(params, locale=None)
+                ),
+                "postalcode": "SW1 4AQ",
+            }
+        )
 
     @classmethod
     def make_form_answer(cls, params=None):
         if params is None:
-            params = ''
+            params = ""
         try:
             address = json.loads(params)
         except TypeError:
             if not params:
                 params = {}
             return {
-                'country': 'GB',
-                'thoroughfare': factory.Faker('street_name').evaluate(None, None, dict(params, locale=None)),
-                'premise': factory.Faker('building_number').evaluate(None, None, dict(params, locale=None)),
-                'locality': {
-                    'localityname': factory.Faker('city').evaluate(None, None, dict(params, locale=None)),
-                    'administrativearea': factory.Faker('city').evaluate(None, None, dict(params, locale=None)),
-                    'postal_code': 'SW1 4AQ',
-                }
+                "country": "GB",
+                "thoroughfare": factory.Faker("street_name").evaluate(
+                    None, None, dict(params, locale=None)
+                ),
+                "premise": factory.Faker("building_number").evaluate(
+                    None, None, dict(params, locale=None)
+                ),
+                "locality": {
+                    "localityname": factory.Faker("city").evaluate(
+                        None, None, dict(params, locale=None)
+                    ),
+                    "administrativearea": factory.Faker("city").evaluate(
+                        None, None, dict(params, locale=None)
+                    ),
+                    "postal_code": "SW1 4AQ",
+                },
             }
 
-        address['locality'] = {
-            'localityname': address.pop('localityname'),
-            'administrativearea': address.pop('administrativearea'),
-            'postalcode': address.pop('postalcode'),
+        address["locality"] = {
+            "localityname": address.pop("localityname"),
+            "administrativearea": address.pop("administrativearea"),
+            "postalcode": address.pop("postalcode"),
         }
         return address
 
 
-CustomFormFieldsFactory = StreamFieldUUIDFactory({
-    **BLOCK_FACTORY_DEFINITION,
-    'duration': DurationBlockFactory,
-    'title': TitleBlockFactory,
-    'value': ValueFieldBlockFactory,
-    'email': EmailBlockFactory,
-    'address': AddressFieldBlockFactory,
-    'full_name': FullNameBlockFactory,
-    'text_markup': ParagraphBlockFactory,
-    'rich_text': RichTextFieldBlockFactory,
-})
+CustomFormFieldsFactory = StreamFieldUUIDFactory(
+    {
+        **BLOCK_FACTORY_DEFINITION,
+        "duration": DurationBlockFactory,
+        "title": TitleBlockFactory,
+        "value": ValueFieldBlockFactory,
+        "email": EmailBlockFactory,
+        "address": AddressFieldBlockFactory,
+        "full_name": FullNameBlockFactory,
+        "text_markup": ParagraphBlockFactory,
+        "rich_text": RichTextFieldBlockFactory,
+    }
+)

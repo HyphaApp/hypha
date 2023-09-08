@@ -12,7 +12,7 @@
             {% trans "All Submissions" %}
             <span class="submissions-count"> ({{ page.paginator.count }})</span>
             <a class="text-sm text-lime-300 border-b border-transparent hover:opacity-70 transition-all"
-                href="{% url 'apply:submissions:list' %}"
+               href="{% url 'apply:submissions:list' %}"
             >
                 {% trans "View older version" %}
             </a>
@@ -67,7 +67,7 @@
 
         <label class="relative flex-auto">
             <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                {% heroicon_mini "magnifying-glass" size=20 class="text-gray-500" %}
+                {% heroicon_mini "magnifying-glass" size=20 class="text-fg-muted" %}
             </span>
             <input
                 type="search"
@@ -221,43 +221,43 @@
 
     <section
         x-data="
-        {
-            selectAll: false,
-            selectedSubmissions: [],
+                {
+                selectAll: false,
+                selectedSubmissions: [],
 
-            toggleAllCheckboxes() {
+                toggleAllCheckboxes() {
                 this.selectAll = !this.selectAll
                 this.selectedSubmissions = [];
 
                 checkboxes = document.querySelectorAll('input[x-model=selectedSubmissions]');
 
                 [...checkboxes].map((el) => {
-                    el.checked = this.selectAll;
-                    (this.selectAll) ? this.selectedSubmissions.push(el.value) : this.selectedSubmissions = [];
+                el.checked = this.selectAll;
+                (this.selectAll) ? this.selectedSubmissions.push(el.value) : this.selectedSubmissions = [];
                 })
-            },
-            get selectedSubmissionCount(){
+                },
+                get selectedSubmissionCount(){
                 return this.selectedSubmissions.length;
-            },
-            get showSelectedSubmissions(){
+                },
+                get showSelectedSubmissions(){
                 return (this.selectedSubmissions.length > 0);
-            }
-        }"
+                }
+                }"
         x-init="
-            $watch('selectedSubmissions', (value) => {
+                $watch('selectedSubmissions', (value) => {
                 var total = document.querySelectorAll('input[x-model=selectedSubmissions]').length
                 if (value.length == 0) {
-                    $refs.checkboxSelectAll.indeterminate = false
-                    $refs.checkboxSelectAll.checked = false
+                $refs.checkboxSelectAll.indeterminate = false
+                $refs.checkboxSelectAll.checked = false
                 } else if (value.length === total) {
-                    $refs.checkboxSelectAll.indeterminate = false
-                    $refs.checkboxSelectAll.checked = true
+                $refs.checkboxSelectAll.indeterminate = false
+                $refs.checkboxSelectAll.checked = true
                 } else {
-                    $refs.checkboxSelectAll.indeterminate = true
-                    $refs.checkboxSelectAll.checked = false
+                $refs.checkboxSelectAll.indeterminate = true
+                $refs.checkboxSelectAll.checked = false
                 }
-            })
-        "
+                })
+               "
     >
         <header
             hx-target="#main"
@@ -281,7 +281,7 @@
             </span>
 
             <nav x-show="!showSelectedSubmissions"
-                class="menu-filters flex flex-wrap gap-2 items-center"
+                 class="menu-filters flex flex-wrap gap-2 items-center"
             >
                 <div id="filterupdated" aria-label="Filter by Updated" class="flex items-center">
                     <button class="flex cursor-pointer items-center justify-between w-full py-1 pl-2 pr-2 border md:pr-4 md:border-none font-medium text-gray-600 hover:bg-gray-50 md:hover:bg-transparent md:hover:text-blue-700 md:p-0">
@@ -326,7 +326,7 @@
                             </li>
                         {% endfor %}
                     </ul>
-                    <p class="m-0 px-3 py-2 text-gray-500" data-filter-empty-state hidden>{% trans "No statuses found. Sorry about that." %}</p>
+                    <p class="m-0 px-3 py-2 text-fg-muted" data-filter-empty-state hidden>{% trans "No statuses found. Sorry about that." %}</p>
                 {% enddropdown_menu %}
 
                 {% dropdown_menu title="Fund" heading="Filter by Fund &amp; Labs" enable_search=True %}
@@ -454,9 +454,9 @@
         <section
             class="bg-white border-x border-b w-full"
             {% if submission_ids %}
-            hx-trigger="load delay:50"
-            hx-get="{% url "funds:submissions:partial-reviews-decisions" %}?ids={{ submission_ids|join:',' }}"
-            hx-swap="multi:{% for s in submission_ids %}#r{{s}}{% if not forloop.last %},{% endif %}{% endfor %}"
+                hx-trigger="load delay:50"
+                hx-get="{% url "funds:submissions:partial-reviews-decisions" %}?ids={{ submission_ids|join:',' }}"
+                hx-swap="multi:{% for s in submission_ids %}#r{{s}}{% if not forloop.last %},{% endif %}{% endfor %}"
             {% endif %}
         >
             {% for s in submissions %}

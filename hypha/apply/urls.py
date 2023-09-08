@@ -11,31 +11,31 @@ from .users import urls as users_urls
 from .utils import views
 
 urlpatterns = [
-    path('apply/', include('hypha.apply.funds.urls', 'apply')),
-    path('activity/', include('hypha.apply.activity.urls', 'activity')),
-    path('', include(users_urls)),
-    path('api/', include(api_urls)),
-    path('dashboard/', include(dashboard_urls)),
-    path('hijack/', include('hijack.urls', 'hijack')),
+    path("apply/", include("hypha.apply.funds.urls", "apply")),
+    path("activity/", include("hypha.apply.activity.urls", "activity")),
+    path("", include(users_urls)),
+    path("api/", include(api_urls)),
+    path("dashboard/", include(dashboard_urls)),
+    path("hijack/", include("hijack.urls", "hijack")),
     # this must be above two factor include, this skip displaying the success
     # page and advances user to download backup code page.
     path(
-        'account/two_factor/setup/complete/',
+        "account/two_factor/setup/complete/",
         RedirectView.as_view(
-            url=reverse_lazy('users:backup_tokens_password'), permanent=False
+            url=reverse_lazy("users:backup_tokens_password"), permanent=False
         ),
-        name='two_factor:setup_complete',
+        name="two_factor:setup_complete",
     ),
-    path('', include(tf_urls, 'two_factor')),
+    path("", include(tf_urls, "two_factor")),
 ]
 
 if settings.DEBUG:
     urlpatterns += [
         # Add views for testing 404 and 500 templates
-        path('test404/', views.page_not_found),
+        path("test404/", views.page_not_found),
     ]
 
 urlpatterns += base_urlpatterns
 
 
-handler404 = 'hypha.apply.utils.views.page_not_found'
+handler404 = "hypha.apply.utils.views.page_not_found"

@@ -6,23 +6,23 @@ from django.conf import settings
 from .sageintacctsdk import SageIntacctSDK
 
 
-def fetch_deliverables(program_project_id=''):
-    '''
+def fetch_deliverables(program_project_id=""):
+    """
     Fetch deliverables from IntAcct using the program project id(DEPARTMENTID).
 
     Returns a list of deliverables or an empty list.
 
     Also logs any error that occurred during the API call.
-    '''
+    """
     if not program_project_id:
         return []
     formatted_filter = {
-        'and': {
-            'equalto': [
-                {'field': 'DOCPARID', 'value': 'Project Contract'},
-                {'field': 'DEPARTMENTID', 'value': program_project_id}
+        "and": {
+            "equalto": [
+                {"field": "DOCPARID", "value": "Project Contract"},
+                {"field": "DEPARTMENTID", "value": program_project_id},
             ],
-            'greaterthan': {'field': 'QTY_REMAINING', 'value': 0.0}
+            "greaterthan": {"field": "QTY_REMAINING", "value": 0.0},
         }
     }
 
@@ -32,7 +32,7 @@ def fetch_deliverables(program_project_id=''):
             sender_password=settings.INTACCT_SENDER_PASSWORD,
             user_id=settings.INTACCT_USER_ID,
             company_id=settings.INTACCT_COMPANY_ID,
-            user_password=settings.INTACCT_USER_PASSWORD
+            user_password=settings.INTACCT_USER_PASSWORD,
         )
     except Exception as e:
         logging.error(e)
@@ -43,11 +43,11 @@ def fetch_deliverables(program_project_id=''):
 
 
 def get_deliverables_json(invoice):
-    '''
+    """
     Get a json format of deliverables attached to the invoice.
 
     Used when creating invoice in IntAcct.
-    '''
+    """
     deliverables = invoice.deliverables.all()
     deliverables_list = []
     for deliverable in deliverables:
@@ -55,16 +55,16 @@ def get_deliverables_json(invoice):
         extra_info = project_deliverable.extra_information
         deliverables_list.append(
             {
-                'itemid': project_deliverable.external_id,
-                'quantity': deliverable.quantity,
-                'unit': extra_info['UNIT'],
-                'price': project_deliverable.unit_price,
-                'locationid': extra_info['LOCATIONID'],
-                'departmentid': extra_info['DEPARTMENTID'],
-                'projectid': extra_info['PROJECTID'],
-                'customerid': extra_info['CUSTOMERID'],
-                'classid': extra_info['CLASSID'],
-                'billable': extra_info['BILLABLE'],
+                "itemid": project_deliverable.external_id,
+                "quantity": deliverable.quantity,
+                "unit": extra_info["UNIT"],
+                "price": project_deliverable.unit_price,
+                "locationid": extra_info["LOCATIONID"],
+                "departmentid": extra_info["DEPARTMENTID"],
+                "projectid": extra_info["PROJECTID"],
+                "customerid": extra_info["CUSTOMERID"],
+                "classid": extra_info["CLASSID"],
+                "billable": extra_info["BILLABLE"],
             }
         )
     return deliverables_list
@@ -81,11 +81,11 @@ def create_intacct_invoice(invoice):
     project = invoice.project
     external_project_information = project.external_project_information
     external_projectid = project.external_projectid
-    transactiontype = 'Contract Invoice Release'
+    transactiontype = "Contract Invoice Release"
     date_created = invoice.requested_at
-    createdfrom = external_project_information['DOCPARID'] + '-' + external_projectid
-    vendorid = external_project_information['CUSTVENDID']
-    referenceno = external_project_information['PONUMBER']
+    createdfrom = external_project_information["DOCPARID"] + "-" + external_projectid
+    vendorid = external_project_information["CUSTVENDID"]
+    referenceno = external_project_information["PONUMBER"]
     project.created_at + timedelta(days=20)
     datedue = date_created + timedelta(days=20)
     contract_start_date = project.proposed_start
@@ -93,42 +93,36 @@ def create_intacct_invoice(invoice):
     deliverables = get_deliverables_json(invoice)
     vendordocno = invoice.vendor_document_number
     data = {
-        'transactiontype': transactiontype,
-        'datecreated': {
-            'year': date_created.year,
-            'month': date_created.month,
-            'day': date_created.day,
+        "transactiontype": transactiontype,
+        "datecreated": {
+            "year": date_created.year,
+            "month": date_created.month,
+            "day": date_created.day,
         },
-        'createdfrom': createdfrom,
-        'vendorid': vendorid,
-        'referenceno': referenceno,
-        'vendordocno': vendordocno,
-        'datedue': {
-            'year': datedue.year,
-            'month': datedue.month,
-            'day': datedue.day,
+        "createdfrom": createdfrom,
+        "vendorid": vendorid,
+        "referenceno": referenceno,
+        "vendordocno": vendordocno,
+        "datedue": {
+            "year": datedue.year,
+            "month": datedue.month,
+            "day": datedue.day,
         },
-        'returnto': {
-            'contactname': ''
-        },
-        'payto': {
-            'contactname': ''
-        },
-        'customfields': {
-            'customfield': [
+        "returnto": {"contactname": ""},
+        "payto": {"contactname": ""},
+        "customfields": {
+            "customfield": [
                 {
-                    'customfieldname': 'CONTRACT_START_DATE',
-                    'customfieldvalue': f'{contract_start_date.month}/{contract_start_date.day}/{contract_start_date.year}'
+                    "customfieldname": "CONTRACT_START_DATE",
+                    "customfieldvalue": f"{contract_start_date.month}/{contract_start_date.day}/{contract_start_date.year}",
                 },
                 {
-                    'customfieldname': 'CONTRACT_END_DATE',
-                    'customfieldvalue': f'{contract_end_date.month}/{contract_end_date.day}/{contract_end_date.year}'
-                }
+                    "customfieldname": "CONTRACT_END_DATE",
+                    "customfieldvalue": f"{contract_end_date.month}/{contract_end_date.day}/{contract_end_date.year}",
+                },
             ]
         },
-        'potransitems': {
-            'potransitem': deliverables
-        }
+        "potransitems": {"potransitem": deliverables},
     }
     try:
         connection = SageIntacctSDK(
@@ -136,7 +130,7 @@ def create_intacct_invoice(invoice):
             sender_password=settings.INTACCT_SENDER_PASSWORD,
             user_id=settings.INTACCT_USER_ID,
             company_id=settings.INTACCT_COMPANY_ID,
-            user_password=settings.INTACCT_USER_PASSWORD
+            user_password=settings.INTACCT_USER_PASSWORD,
         )
     except Exception as e:
         logging.error(e)
@@ -146,14 +140,12 @@ def create_intacct_invoice(invoice):
 
 
 def fetch_project_details(external_projectid):
-    '''
+    """
     Fetch detail of a project contract from IntAcct.
 
     These details will be further used to fetch deliverables and create invoices.
-    '''
-    formatted_filter = {
-        'equalto': {'field': 'DOCNO', 'value': external_projectid}
-    }
+    """
+    formatted_filter = {"equalto": {"field": "DOCNO", "value": external_projectid}}
 
     try:
         connection = SageIntacctSDK(
@@ -161,7 +153,7 @@ def fetch_project_details(external_projectid):
             sender_password=settings.INTACCT_SENDER_PASSWORD,
             user_id=settings.INTACCT_USER_ID,
             company_id=settings.INTACCT_COMPANY_ID,
-            user_password=settings.INTACCT_USER_PASSWORD
+            user_password=settings.INTACCT_USER_PASSWORD,
         )
     except Exception as e:
         logging.error(e)

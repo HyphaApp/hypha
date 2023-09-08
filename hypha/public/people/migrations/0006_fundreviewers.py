@@ -6,24 +6,50 @@ import modelcluster.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('wagtailcore', '0040_page_draft_title'),
-        ('people', '0005_django2_update'),
+        ("wagtailcore", "0040_page_draft_title"),
+        ("people", "0005_django2_update"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='FundReviewers',
+            name="FundReviewers",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('sort_order', models.IntegerField(blank=True, editable=False, null=True)),
-                ('page', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='reviewers', to='wagtailcore.Page')),
-                ('reviewer', modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.CASCADE, related_name='funds_reviewed', to='people.PersonPage')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "sort_order",
+                    models.IntegerField(blank=True, editable=False, null=True),
+                ),
+                (
+                    "page",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="reviewers",
+                        to="wagtailcore.Page",
+                    ),
+                ),
+                (
+                    "reviewer",
+                    modelcluster.fields.ParentalKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="funds_reviewed",
+                        to="people.PersonPage",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['sort_order'],
-                'abstract': False,
+                "ordering": ["sort_order"],
+                "abstract": False,
             },
         ),
     ]

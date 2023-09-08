@@ -30,7 +30,6 @@
             font-weight: $weight--semibold;
 
             &:first-child {
-
                 #{$root}__outcome {
                     &::before,
                     &::after {

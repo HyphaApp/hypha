@@ -4,15 +4,14 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('wagtailcore', '0083_workflowcontenttype'),
-        ('users', '0018_add_contracting_group'),
+        ("wagtailcore", "0083_workflowcontenttype"),
+        ("users", "0018_add_contracting_group"),
     ]
 
     operations = [
         migrations.RenameModel(
-            old_name='UserSettings',
-            new_name='AuthSettings',
+            old_name="UserSettings",
+            new_name="AuthSettings",
         ),
     ]

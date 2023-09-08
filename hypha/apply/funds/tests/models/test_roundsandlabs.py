@@ -39,10 +39,12 @@ class BaseRoundsAndLabTestCase:
         qs = RoundsAndLabs.objects.with_progress()
         fetched_obj = qs.first()
         self.assertEqual(fetched_obj.lead, obj.lead.full_name)
-        self.assertEqual(fetched_obj.start_date, getattr(obj, 'start_date', None))
-        self.assertEqual(fetched_obj.end_date, getattr(obj, 'end_date', None))
+        self.assertEqual(fetched_obj.start_date, getattr(obj, "start_date", None))
+        self.assertEqual(fetched_obj.end_date, getattr(obj, "end_date", None))
         self.assertEqual(fetched_obj.parent_path, obj.get_parent().path)
-        self.assertEqual(fetched_obj.fund, getattr(getattr(obj, 'fund', None), 'title', None))
+        self.assertEqual(
+            fetched_obj.fund, getattr(getattr(obj, "fund", None), "title", None)
+        )
 
     def test_active(self):
         obj = self.base_factory()
@@ -82,7 +84,7 @@ class BaseRoundsAndLabTestCase:
 class TestForLab(BaseRoundsAndLabTestCase, TestCase):
     base_factory = LabFactory
     submission_factory = LabSubmissionFactory
-    relation_to_app = 'page'
+    relation_to_app = "page"
 
     # Specific tests as labs and round have very different behaviour here
     def test_new(self):
@@ -104,7 +106,7 @@ class TestForLab(BaseRoundsAndLabTestCase, TestCase):
 class TestForRound(BaseRoundsAndLabTestCase, TestCase):
     base_factory = RoundFactory
     submission_factory = ApplicationSubmissionFactory
-    relation_to_app = 'round'
+    relation_to_app = "round"
 
     # Specific tests as labs and round have very different behaviour here
     def test_new(self):

@@ -6,18 +6,17 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('funds', '0013_allow_nullable_round_on_submission'),
+        ("funds", "0013_allow_nullable_round_on_submission"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='fundtype',
-            options={'verbose_name': 'Fund'},
+            name="fundtype",
+            options={"verbose_name": "Fund"},
         ),
         migrations.AlterModelOptions(
-            name='labtype',
-            options={'verbose_name': 'Lab'},
+            name="labtype",
+            options={"verbose_name": "Lab"},
         ),
     ]

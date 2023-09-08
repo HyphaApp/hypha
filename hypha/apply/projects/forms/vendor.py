@@ -16,7 +16,7 @@ from ..models.vendor import VendorFormSettings
 
 def get_active_currencies():
     active_currencies = []
-    territories = get_global('territory_currencies').keys()
+    territories = get_global("territory_currencies").keys()
     for territory in territories:
         currencies = get_territory_currencies(territory, datetime.date.today())
         if currencies:
@@ -35,11 +35,13 @@ class BaseVendorForm:
     def apply_form_settings(self, fields):
         for field in fields:
             try:
-                self.fields[field].label = getattr(self.form_settings, f'{field}_label')
+                self.fields[field].label = getattr(self.form_settings, f"{field}_label")
             except AttributeError:
                 pass
             try:
-                self.fields[field].help_text = getattr(self.form_settings, f'{field}_help_text')
+                self.fields[field].help_text = getattr(
+                    self.form_settings, f"{field}_help_text"
+                )
             except AttributeError:
                 pass
         return fields
@@ -47,13 +49,15 @@ class BaseVendorForm:
 
 class CreateVendorFormStep1(BaseVendorForm, forms.Form):
     TYPE_CHOICES = [
-        ('organization', _('Yes, the account belongs to the organisation above')),
-        ('personal', _('No, it is a personal bank account')),
+        ("organization", _("Yes, the account belongs to the organisation above")),
+        ("personal", _("No, it is a personal bank account")),
     ]
 
     name = forms.CharField(required=True)
     contractor_name = forms.CharField(required=True)
-    type = forms.ChoiceField(choices=TYPE_CHOICES, required=True, widget=forms.RadioSelect)
+    type = forms.ChoiceField(
+        choices=TYPE_CHOICES, required=True, widget=forms.RadioSelect
+    )
 
     def __init__(self, *args, **kwargs):
         super(CreateVendorFormStep1, self).__init__(*args, **kwargs)
@@ -62,10 +66,10 @@ class CreateVendorFormStep1(BaseVendorForm, forms.Form):
 
 class CreateVendorFormStep2(BaseVendorForm, forms.Form):
     required_to_pay_taxes = forms.TypedChoiceField(
-        choices=((False, 'No'), (True, 'Yes')),
-        coerce=lambda x: x == 'True',
+        choices=((False, "No"), (True, "Yes")),
+        coerce=lambda x: x == "True",
         widget=forms.RadioSelect,
-        required=True
+        required=True,
     )
 
     def __init__(self, *args, **kwargs):
@@ -83,7 +87,10 @@ class CreateVendorFormStep3(FileFormMixin, BaseVendorForm, forms.Form):
 
 class CreateVendorFormStep4(BaseVendorForm, forms.Form):
     CURRENCY_CHOICES = [
-        (currency, f'{get_currency_name(currency, locale=settings.CURRENCY_LOCALE)} - {currency}')
+        (
+            currency,
+            f"{get_currency_name(currency, locale=settings.CURRENCY_LOCALE)} - {currency}",
+        )
         for currency in get_active_currencies()
     ]
 
@@ -93,7 +100,7 @@ class CreateVendorFormStep4(BaseVendorForm, forms.Form):
     account_currency = forms.ChoiceField(
         choices=sorted(CURRENCY_CHOICES, key=itemgetter(1)),
         required=True,
-        initial='USD'
+        initial="USD",
     )
 
     def __init__(self, *args, **kwargs):
@@ -103,10 +110,10 @@ class CreateVendorFormStep4(BaseVendorForm, forms.Form):
 
 class CreateVendorFormStep5(BaseVendorForm, forms.Form):
     need_extra_info = forms.TypedChoiceField(
-        choices=((False, _('No')), (True, _('Yes'))),
-        coerce=lambda x: x == 'True',
+        choices=((False, _("No")), (True, _("Yes"))),
+        coerce=lambda x: x == "True",
         widget=forms.RadioSelect,
-        required=True
+        required=True,
     )
 
     def __init__(self, *args, **kwargs):
@@ -116,7 +123,10 @@ class CreateVendorFormStep5(BaseVendorForm, forms.Form):
 
 class CreateVendorFormStep6(BaseVendorForm, forms.Form):
     CURRENCY_CHOICES = [
-        (currency, f'{get_currency_name(currency, locale=settings.CURRENCY_LOCALE)} - {currency}')
+        (
+            currency,
+            f"{get_currency_name(currency, locale=settings.CURRENCY_LOCALE)} - {currency}",
+        )
         for currency in get_active_currencies()
     ]
     branch_address = AddressField()
@@ -125,7 +135,7 @@ class CreateVendorFormStep6(BaseVendorForm, forms.Form):
     ib_account_currency = forms.ChoiceField(
         choices=sorted(CURRENCY_CHOICES, key=itemgetter(1)),
         required=False,
-        initial='USD'
+        initial="USD",
     )
     ib_branch_address = AddressField()
     nid_type = forms.CharField(required=False)

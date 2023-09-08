@@ -11,32 +11,459 @@ import wagtail.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('funds', '0002_fundpage_workflow'),
-        ('categories', '0001_initial'),
+        ("funds", "0002_fundpage_workflow"),
+        ("categories", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='ApplicationForm',
+            name="ApplicationForm",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255)),
-                ('form_fields', wagtail.fields.StreamField((('char', wagtail.blocks.StructBlock((('field_label', wagtail.blocks.CharBlock(label='Label')), ('help_text', wagtail.blocks.TextBlock(label='Help text', required=False)), ('required', wagtail.blocks.BooleanBlock(label='Required', required=False)), ('format', wagtail.blocks.ChoiceBlock(choices=[('email', 'Email'), ('url', 'URL')], label='Format', required=False)), ('default_value', wagtail.blocks.CharBlock(label='Default value', required=False))), group='Fields')), ('text', wagtail.blocks.StructBlock((('field_label', wagtail.blocks.CharBlock(label='Label')), ('help_text', wagtail.blocks.TextBlock(label='Help text', required=False)), ('required', wagtail.blocks.BooleanBlock(label='Required', required=False)), ('default_value', wagtail.blocks.TextBlock(label='Default value', required=False))), group='Fields')), ('number', wagtail.blocks.StructBlock((('field_label', wagtail.blocks.CharBlock(label='Label')), ('help_text', wagtail.blocks.TextBlock(label='Help text', required=False)), ('required', wagtail.blocks.BooleanBlock(label='Required', required=False)), ('default_value', wagtail.blocks.CharBlock(label='Default value', required=False))), group='Fields')), ('checkbox', wagtail.blocks.StructBlock((('field_label', wagtail.blocks.CharBlock(label='Label')), ('help_text', wagtail.blocks.TextBlock(label='Help text', required=False)), ('default_value', wagtail.blocks.BooleanBlock(required=False))), group='Fields')), ('radios', wagtail.blocks.StructBlock((('field_label', wagtail.blocks.CharBlock(label='Label')), ('help_text', wagtail.blocks.TextBlock(label='Help text', required=False)), ('required', wagtail.blocks.BooleanBlock(label='Required', required=False)), ('choices', wagtail.blocks.ListBlock(wagtail.blocks.CharBlock(label='Choice')))), group='Fields')), ('dropdown', wagtail.blocks.StructBlock((('field_label', wagtail.blocks.CharBlock(label='Label')), ('help_text', wagtail.blocks.TextBlock(label='Help text', required=False)), ('required', wagtail.blocks.BooleanBlock(label='Required', required=False)), ('choices', wagtail.blocks.ListBlock(wagtail.blocks.CharBlock(label='Choice')))), group='Fields')), ('checkboxes', wagtail.blocks.StructBlock((('field_label', wagtail.blocks.CharBlock(label='Label')), ('help_text', wagtail.blocks.TextBlock(label='Help text', required=False)), ('required', wagtail.blocks.BooleanBlock(label='Required', required=False)), ('checkboxes', wagtail.blocks.ListBlock(wagtail.blocks.CharBlock(label='Checkbox')))), group='Fields')), ('date', wagtail.blocks.StructBlock((('field_label', wagtail.blocks.CharBlock(label='Label')), ('help_text', wagtail.blocks.TextBlock(label='Help text', required=False)), ('required', wagtail.blocks.BooleanBlock(label='Required', required=False)), ('default_value', wagtail.blocks.DateBlock(required=False))), group='Fields')), ('time', wagtail.blocks.StructBlock((('field_label', wagtail.blocks.CharBlock(label='Label')), ('help_text', wagtail.blocks.TextBlock(label='Help text', required=False)), ('required', wagtail.blocks.BooleanBlock(label='Required', required=False)), ('default_value', wagtail.blocks.TimeBlock(required=False))), group='Fields')), ('datetime', wagtail.blocks.StructBlock((('field_label', wagtail.blocks.CharBlock(label='Label')), ('help_text', wagtail.blocks.TextBlock(label='Help text', required=False)), ('required', wagtail.blocks.BooleanBlock(label='Required', required=False)), ('default_value', wagtail.blocks.DateTimeBlock(required=False))), group='Fields')), ('image', wagtail.blocks.StructBlock((('field_label', wagtail.blocks.CharBlock(label='Label')), ('help_text', wagtail.blocks.TextBlock(label='Help text', required=False)), ('required', wagtail.blocks.BooleanBlock(label='Required', required=False))), group='Fields')), ('file', wagtail.blocks.StructBlock((('field_label', wagtail.blocks.CharBlock(label='Label')), ('help_text', wagtail.blocks.TextBlock(label='Help text', required=False)), ('required', wagtail.blocks.BooleanBlock(label='Required', required=False))), group='Fields')), ('text_markup', wagtail.blocks.RichTextBlock(group='Other', label='Paragraph')), ('category', wagtail.blocks.StructBlock((('field_label', wagtail.blocks.CharBlock(help_text='Leave blank to use the default Category label', label='Label', required=False)), ('help_text', wagtail.blocks.TextBlock(label='Leave blank to use the default Category help text', required=False)), ('category', hypha.apply.categories.blocks.ModelChooserBlock('categories.Category')), ('multi', wagtail.blocks.BooleanBlock(label='Multi select', required=False))), group='Custom')))))
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                (
+                    "form_fields",
+                    wagtail.fields.StreamField(
+                        (
+                            (
+                                "char",
+                                wagtail.blocks.StructBlock(
+                                    (
+                                        (
+                                            "field_label",
+                                            wagtail.blocks.CharBlock(label="Label"),
+                                        ),
+                                        (
+                                            "help_text",
+                                            wagtail.blocks.TextBlock(
+                                                label="Help text", required=False
+                                            ),
+                                        ),
+                                        (
+                                            "required",
+                                            wagtail.blocks.BooleanBlock(
+                                                label="Required", required=False
+                                            ),
+                                        ),
+                                        (
+                                            "format",
+                                            wagtail.blocks.ChoiceBlock(
+                                                choices=[
+                                                    ("email", "Email"),
+                                                    ("url", "URL"),
+                                                ],
+                                                label="Format",
+                                                required=False,
+                                            ),
+                                        ),
+                                        (
+                                            "default_value",
+                                            wagtail.blocks.CharBlock(
+                                                label="Default value", required=False
+                                            ),
+                                        ),
+                                    ),
+                                    group="Fields",
+                                ),
+                            ),
+                            (
+                                "text",
+                                wagtail.blocks.StructBlock(
+                                    (
+                                        (
+                                            "field_label",
+                                            wagtail.blocks.CharBlock(label="Label"),
+                                        ),
+                                        (
+                                            "help_text",
+                                            wagtail.blocks.TextBlock(
+                                                label="Help text", required=False
+                                            ),
+                                        ),
+                                        (
+                                            "required",
+                                            wagtail.blocks.BooleanBlock(
+                                                label="Required", required=False
+                                            ),
+                                        ),
+                                        (
+                                            "default_value",
+                                            wagtail.blocks.TextBlock(
+                                                label="Default value", required=False
+                                            ),
+                                        ),
+                                    ),
+                                    group="Fields",
+                                ),
+                            ),
+                            (
+                                "number",
+                                wagtail.blocks.StructBlock(
+                                    (
+                                        (
+                                            "field_label",
+                                            wagtail.blocks.CharBlock(label="Label"),
+                                        ),
+                                        (
+                                            "help_text",
+                                            wagtail.blocks.TextBlock(
+                                                label="Help text", required=False
+                                            ),
+                                        ),
+                                        (
+                                            "required",
+                                            wagtail.blocks.BooleanBlock(
+                                                label="Required", required=False
+                                            ),
+                                        ),
+                                        (
+                                            "default_value",
+                                            wagtail.blocks.CharBlock(
+                                                label="Default value", required=False
+                                            ),
+                                        ),
+                                    ),
+                                    group="Fields",
+                                ),
+                            ),
+                            (
+                                "checkbox",
+                                wagtail.blocks.StructBlock(
+                                    (
+                                        (
+                                            "field_label",
+                                            wagtail.blocks.CharBlock(label="Label"),
+                                        ),
+                                        (
+                                            "help_text",
+                                            wagtail.blocks.TextBlock(
+                                                label="Help text", required=False
+                                            ),
+                                        ),
+                                        (
+                                            "default_value",
+                                            wagtail.blocks.BooleanBlock(required=False),
+                                        ),
+                                    ),
+                                    group="Fields",
+                                ),
+                            ),
+                            (
+                                "radios",
+                                wagtail.blocks.StructBlock(
+                                    (
+                                        (
+                                            "field_label",
+                                            wagtail.blocks.CharBlock(label="Label"),
+                                        ),
+                                        (
+                                            "help_text",
+                                            wagtail.blocks.TextBlock(
+                                                label="Help text", required=False
+                                            ),
+                                        ),
+                                        (
+                                            "required",
+                                            wagtail.blocks.BooleanBlock(
+                                                label="Required", required=False
+                                            ),
+                                        ),
+                                        (
+                                            "choices",
+                                            wagtail.blocks.ListBlock(
+                                                wagtail.blocks.CharBlock(label="Choice")
+                                            ),
+                                        ),
+                                    ),
+                                    group="Fields",
+                                ),
+                            ),
+                            (
+                                "dropdown",
+                                wagtail.blocks.StructBlock(
+                                    (
+                                        (
+                                            "field_label",
+                                            wagtail.blocks.CharBlock(label="Label"),
+                                        ),
+                                        (
+                                            "help_text",
+                                            wagtail.blocks.TextBlock(
+                                                label="Help text", required=False
+                                            ),
+                                        ),
+                                        (
+                                            "required",
+                                            wagtail.blocks.BooleanBlock(
+                                                label="Required", required=False
+                                            ),
+                                        ),
+                                        (
+                                            "choices",
+                                            wagtail.blocks.ListBlock(
+                                                wagtail.blocks.CharBlock(label="Choice")
+                                            ),
+                                        ),
+                                    ),
+                                    group="Fields",
+                                ),
+                            ),
+                            (
+                                "checkboxes",
+                                wagtail.blocks.StructBlock(
+                                    (
+                                        (
+                                            "field_label",
+                                            wagtail.blocks.CharBlock(label="Label"),
+                                        ),
+                                        (
+                                            "help_text",
+                                            wagtail.blocks.TextBlock(
+                                                label="Help text", required=False
+                                            ),
+                                        ),
+                                        (
+                                            "required",
+                                            wagtail.blocks.BooleanBlock(
+                                                label="Required", required=False
+                                            ),
+                                        ),
+                                        (
+                                            "checkboxes",
+                                            wagtail.blocks.ListBlock(
+                                                wagtail.blocks.CharBlock(
+                                                    label="Checkbox"
+                                                )
+                                            ),
+                                        ),
+                                    ),
+                                    group="Fields",
+                                ),
+                            ),
+                            (
+                                "date",
+                                wagtail.blocks.StructBlock(
+                                    (
+                                        (
+                                            "field_label",
+                                            wagtail.blocks.CharBlock(label="Label"),
+                                        ),
+                                        (
+                                            "help_text",
+                                            wagtail.blocks.TextBlock(
+                                                label="Help text", required=False
+                                            ),
+                                        ),
+                                        (
+                                            "required",
+                                            wagtail.blocks.BooleanBlock(
+                                                label="Required", required=False
+                                            ),
+                                        ),
+                                        (
+                                            "default_value",
+                                            wagtail.blocks.DateBlock(required=False),
+                                        ),
+                                    ),
+                                    group="Fields",
+                                ),
+                            ),
+                            (
+                                "time",
+                                wagtail.blocks.StructBlock(
+                                    (
+                                        (
+                                            "field_label",
+                                            wagtail.blocks.CharBlock(label="Label"),
+                                        ),
+                                        (
+                                            "help_text",
+                                            wagtail.blocks.TextBlock(
+                                                label="Help text", required=False
+                                            ),
+                                        ),
+                                        (
+                                            "required",
+                                            wagtail.blocks.BooleanBlock(
+                                                label="Required", required=False
+                                            ),
+                                        ),
+                                        (
+                                            "default_value",
+                                            wagtail.blocks.TimeBlock(required=False),
+                                        ),
+                                    ),
+                                    group="Fields",
+                                ),
+                            ),
+                            (
+                                "datetime",
+                                wagtail.blocks.StructBlock(
+                                    (
+                                        (
+                                            "field_label",
+                                            wagtail.blocks.CharBlock(label="Label"),
+                                        ),
+                                        (
+                                            "help_text",
+                                            wagtail.blocks.TextBlock(
+                                                label="Help text", required=False
+                                            ),
+                                        ),
+                                        (
+                                            "required",
+                                            wagtail.blocks.BooleanBlock(
+                                                label="Required", required=False
+                                            ),
+                                        ),
+                                        (
+                                            "default_value",
+                                            wagtail.blocks.DateTimeBlock(
+                                                required=False
+                                            ),
+                                        ),
+                                    ),
+                                    group="Fields",
+                                ),
+                            ),
+                            (
+                                "image",
+                                wagtail.blocks.StructBlock(
+                                    (
+                                        (
+                                            "field_label",
+                                            wagtail.blocks.CharBlock(label="Label"),
+                                        ),
+                                        (
+                                            "help_text",
+                                            wagtail.blocks.TextBlock(
+                                                label="Help text", required=False
+                                            ),
+                                        ),
+                                        (
+                                            "required",
+                                            wagtail.blocks.BooleanBlock(
+                                                label="Required", required=False
+                                            ),
+                                        ),
+                                    ),
+                                    group="Fields",
+                                ),
+                            ),
+                            (
+                                "file",
+                                wagtail.blocks.StructBlock(
+                                    (
+                                        (
+                                            "field_label",
+                                            wagtail.blocks.CharBlock(label="Label"),
+                                        ),
+                                        (
+                                            "help_text",
+                                            wagtail.blocks.TextBlock(
+                                                label="Help text", required=False
+                                            ),
+                                        ),
+                                        (
+                                            "required",
+                                            wagtail.blocks.BooleanBlock(
+                                                label="Required", required=False
+                                            ),
+                                        ),
+                                    ),
+                                    group="Fields",
+                                ),
+                            ),
+                            (
+                                "text_markup",
+                                wagtail.blocks.RichTextBlock(
+                                    group="Other", label="Paragraph"
+                                ),
+                            ),
+                            (
+                                "category",
+                                wagtail.blocks.StructBlock(
+                                    (
+                                        (
+                                            "field_label",
+                                            wagtail.blocks.CharBlock(
+                                                help_text="Leave blank to use the default Category label",
+                                                label="Label",
+                                                required=False,
+                                            ),
+                                        ),
+                                        (
+                                            "help_text",
+                                            wagtail.blocks.TextBlock(
+                                                label="Leave blank to use the default Category help text",
+                                                required=False,
+                                            ),
+                                        ),
+                                        (
+                                            "category",
+                                            hypha.apply.categories.blocks.ModelChooserBlock(
+                                                "categories.Category"
+                                            ),
+                                        ),
+                                        (
+                                            "multi",
+                                            wagtail.blocks.BooleanBlock(
+                                                label="Multi select", required=False
+                                            ),
+                                        ),
+                                    ),
+                                    group="Custom",
+                                ),
+                            ),
+                        )
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='FundForm',
+            name="FundForm",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('sort_order', models.IntegerField(blank=True, editable=False, null=True)),
-                ('form', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='funds.ApplicationForm')),
-                ('fund', modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.CASCADE, related_name='forms', to='funds.FundType')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "sort_order",
+                    models.IntegerField(blank=True, editable=False, null=True),
+                ),
+                (
+                    "form",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="funds.ApplicationForm",
+                    ),
+                ),
+                (
+                    "fund",
+                    modelcluster.fields.ParentalKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="forms",
+                        to="funds.FundType",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['sort_order'],
-                'abstract': False,
+                "ordering": ["sort_order"],
+                "abstract": False,
             },
         ),
     ]

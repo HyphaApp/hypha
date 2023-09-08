@@ -12,23 +12,23 @@
         {% if request.user.is_apply_staff %}
             <div class="flex mt-2 md:m-0 gap-3 justify-center items-center font-medium uppercase">
                 <a class="px-3 py-2 text-gray-300 transition-colors hover:bg-slate-50 rounded hover:text-gray-800"
-                    href="{% url 'apply:submissions:list' %}"
-                    title="Goto all submissions list page"
+                   href="{% url 'apply:submissions:list' %}"
+                   title="Goto all submissions list page"
                 >
                     {% trans "All" %}
                 </a>
                 <a class="px-3 py-2 text-gray-300 transition-colors hover:bg-slate-50 rounded hover:text-gray-800"
-                    href="{% url 'apply:submissions:staff_assignments' %}"
+                   href="{% url 'apply:submissions:staff_assignments' %}"
                 >
                     {% trans "Staff assignments" %}
                 </a>
                 <a class="px-3 py-2 text-gray-300 transition-colors hover:bg-slate-50 rounded hover:text-gray-800"
-                    href="{% url 'apply:submissions:reviewer_leaderboard' %}"
+                   href="{% url 'apply:submissions:reviewer_leaderboard' %}"
                 >
                     {% trans "Reviews" %}
                 </a>
                 <a class="px-3 py-2 text-gray-300 transition-colors hover:bg-slate-50 rounded hover:text-gray-800"
-                    href="{% url 'apply:submissions:result' %}">
+                   href="{% url 'apply:submissions:result' %}">
                     {% trans "Results" %}
                 </a>
             </div>

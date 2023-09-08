@@ -6,27 +6,36 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('application_projects', '0027_report_current'),
+        ("application_projects", "0027_report_current"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='report',
-            name='draft',
-            field=models.OneToOneField(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='draft_for_report', to='application_projects.ReportVersion'),
+            model_name="report",
+            name="draft",
+            field=models.OneToOneField(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="draft_for_report",
+                to="application_projects.ReportVersion",
+            ),
         ),
         migrations.AddField(
-            model_name='reportversion',
-            name='draft',
+            model_name="reportversion",
+            name="draft",
             field=models.BooleanField(default=False),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='reportversion',
-            name='author',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='reports', to=settings.AUTH_USER_MODEL),
+            model_name="reportversion",
+            name="author",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="reports",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]

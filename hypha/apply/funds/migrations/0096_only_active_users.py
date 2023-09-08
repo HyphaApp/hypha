@@ -7,51 +7,92 @@ import modelcluster.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('funds', '0095_only_external_review_option'),
+        ("funds", "0095_only_external_review_option"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='applicationbase',
-            name='reviewers',
-            field=modelcluster.fields.ParentalManyToManyField(blank=True, limit_choices_to={'groups__name': 'Reviewer', 'is_active': True}, related_name='applicationbase_reviewers', to=settings.AUTH_USER_MODEL),
+            model_name="applicationbase",
+            name="reviewers",
+            field=modelcluster.fields.ParentalManyToManyField(
+                blank=True,
+                limit_choices_to={"groups__name": "Reviewer", "is_active": True},
+                related_name="applicationbase_reviewers",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AlterField(
-            model_name='applicationsubmission',
-            name='lead',
-            field=models.ForeignKey(limit_choices_to={'groups__name': 'Staff', 'is_active': True}, on_delete=django.db.models.deletion.PROTECT, related_name='submission_lead', to=settings.AUTH_USER_MODEL),
+            model_name="applicationsubmission",
+            name="lead",
+            field=models.ForeignKey(
+                limit_choices_to={"groups__name": "Staff", "is_active": True},
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="submission_lead",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AlterField(
-            model_name='applicationsubmission',
-            name='partners',
-            field=models.ManyToManyField(blank=True, limit_choices_to={'groups__name': 'Partner', 'is_active': True}, related_name='submissions_partner', to=settings.AUTH_USER_MODEL),
+            model_name="applicationsubmission",
+            name="partners",
+            field=models.ManyToManyField(
+                blank=True,
+                limit_choices_to={"groups__name": "Partner", "is_active": True},
+                related_name="submissions_partner",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AlterField(
-            model_name='assignedreviewers',
-            name='reviewer',
-            field=models.ForeignKey(limit_choices_to={'groups__name__in': ['Staff', 'Reviewer', 'Community reviewer'], 'is_active': True}, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
+            model_name="assignedreviewers",
+            name="reviewer",
+            field=models.ForeignKey(
+                limit_choices_to={
+                    "groups__name__in": ["Staff", "Reviewer", "Community reviewer"],
+                    "is_active": True,
+                },
+                on_delete=django.db.models.deletion.CASCADE,
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AlterField(
-            model_name='labbase',
-            name='lead',
-            field=models.ForeignKey(limit_choices_to={'groups__name': 'Staff', 'is_active': True}, on_delete=django.db.models.deletion.PROTECT, related_name='lab_lead', to=settings.AUTH_USER_MODEL),
+            model_name="labbase",
+            name="lead",
+            field=models.ForeignKey(
+                limit_choices_to={"groups__name": "Staff", "is_active": True},
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="lab_lead",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AlterField(
-            model_name='labbase',
-            name='reviewers',
-            field=modelcluster.fields.ParentalManyToManyField(blank=True, limit_choices_to={'groups__name': 'Reviewer', 'is_active': True}, related_name='labs_reviewer', to=settings.AUTH_USER_MODEL),
+            model_name="labbase",
+            name="reviewers",
+            field=modelcluster.fields.ParentalManyToManyField(
+                blank=True,
+                limit_choices_to={"groups__name": "Reviewer", "is_active": True},
+                related_name="labs_reviewer",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AlterField(
-            model_name='roundbase',
-            name='lead',
-            field=models.ForeignKey(limit_choices_to={'groups__name': 'Staff', 'is_active': True}, on_delete=django.db.models.deletion.PROTECT, related_name='roundbase_lead', to=settings.AUTH_USER_MODEL),
+            model_name="roundbase",
+            name="lead",
+            field=models.ForeignKey(
+                limit_choices_to={"groups__name": "Staff", "is_active": True},
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="roundbase_lead",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AlterField(
-            model_name='roundbase',
-            name='reviewers',
-            field=modelcluster.fields.ParentalManyToManyField(blank=True, limit_choices_to={'groups__name': 'Reviewer', 'is_active': True}, related_name='roundbase_reviewer', to=settings.AUTH_USER_MODEL),
+            model_name="roundbase",
+            name="reviewers",
+            field=modelcluster.fields.ParentalManyToManyField(
+                blank=True,
+                limit_choices_to={"groups__name": "Reviewer", "is_active": True},
+                related_name="roundbase_reviewer",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]

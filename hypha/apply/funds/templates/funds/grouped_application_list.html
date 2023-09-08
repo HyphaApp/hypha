@@ -2,8 +2,8 @@
 {% load i18n static %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/apply/fancybox.css' %}">
-{{ filter.form.media.css }}
+    <link rel="stylesheet" href="{% static 'css/apply/fancybox.css' %}">
+    {{ filter.form.media.css }}
 {% endblock %}
 
 {% block content %}
@@ -12,7 +12,7 @@
         {% slot header %}{% trans "List of Submissions summary" %}{% endslot %}
     {% endadminbar %}
 
-<div id="grouped-applications-list"></div>
+    <div id="grouped-applications-list"></div>
 {% endblock %}
 
 {% block extra_js %}

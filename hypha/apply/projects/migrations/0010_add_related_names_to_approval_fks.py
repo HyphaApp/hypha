@@ -6,20 +6,27 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('application_projects', '0009_add_approval'),
+        ("application_projects", "0009_add_approval"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='approval',
-            name='by',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='approvals', to=settings.AUTH_USER_MODEL),
+            model_name="approval",
+            name="by",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="approvals",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AlterField(
-            model_name='approval',
-            name='project',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='approvals', to='application_projects.Project'),
+            model_name="approval",
+            name="project",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="approvals",
+                to="application_projects.Project",
+            ),
         ),
     ]

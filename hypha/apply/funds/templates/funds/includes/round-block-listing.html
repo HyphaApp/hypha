@@ -12,14 +12,14 @@
                     {% else %}
                         {% trans "Open" %}
                     {% endif %}
-                    </p>
-                    <p class="round-block__determination">
-                        {% if round.progress is None %}
-                            -
-                        {% else %}
-                            {{ round.progress }}% {% trans 'Determined' %} ({{ round.closed_submissions }}/{{ round.total_submissions }})
-                        {% endif %}
-                    </p>
+                </p>
+                <p class="round-block__determination">
+                    {% if round.progress is None %}
+                        -
+                    {% else %}
+                        {{ round.progress }}% {% trans 'Determined' %} ({{ round.closed_submissions }}/{{ round.total_submissions }})
+                    {% endif %}
+                </p>
                 <a class="round-block__view" href="{% url 'apply:rounds:detail' pk=round.pk %}">{% trans 'View' %}</a>
                 <a class="round-block__view" href="{% url 'apply:rounds:export' pk=round.pk %}">{% trans 'Export' %}</a>
             </li>
@@ -29,10 +29,10 @@
             </li>
         {% endif %}
     {% empty %}
-            {% block empty_round %}
-                <p class="round-block__not-found">
-                    {% trans "There are no" %} {% if round.end_date %} {{ display_text|lower }} {% else %} {{ type|lower }} {% endif %} {% trans "rounds" %}
-                </p>
-            {% endblock %}
+        {% block empty_round %}
+            <p class="round-block__not-found">
+                {% trans "There are no" %} {% if round.end_date %} {{ display_text|lower }} {% else %} {{ type|lower }} {% endif %} {% trans "rounds" %}
+            </p>
+        {% endblock %}
     {% endfor %}
 </ul>

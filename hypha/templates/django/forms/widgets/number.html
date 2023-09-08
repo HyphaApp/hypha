@@ -6,18 +6,18 @@ It upgrades default '<input type=number>' that doesn't allow user to enter any v
 With this user can enter any text and get a feedback why it's wrong.
 {% endcomment %}
 <span x-data="{
-    value: '{% if widget.value != None %}{{ widget.value|stringformat:'s' }}{% endif %}',
-    get error() {
-        return this.value !== '' && isNaN(this.value) ? '{% trans "This must be a number" %}': ''
-    }
-}">
+              value: '{% if widget.value != None %}{{ widget.value|stringformat:'s' }}{% endif %}',
+              get error() {
+              return this.value !== '' && isNaN(this.value) ? '{% trans "This must be a number" %}': ''
+              }
+              }">
     <input x-model='value'
-        :class="error ? 'invalid': ''"
-        type="text"
-        inputmode="numeric"
-        pattern="[0-9.]*"  {% comment %} Allow for digit with a decimal{% endcomment %}
-        name="{{ widget.name }}"
-        {% if widget.value != None %} value="{{ widget.value|stringformat:'s' }}"{% endif %}
-        {% include "django/forms/widgets/attrs.html" %}>
-        <span x-cloak x-show="error" x-text="error" class="form__error-text"></span>
+           :class="error ? 'invalid': ''"
+           type="text"
+           inputmode="numeric"
+           pattern="[0-9.]*"  {% comment %} Allow for digit with a decimal{% endcomment %}
+           name="{{ widget.name }}"
+           {% if widget.value != None %} value="{{ widget.value|stringformat:'s' }}"{% endif %}
+           {% include "django/forms/widgets/attrs.html" %}>
+    <span x-cloak x-show="error" x-text="error" class="form__error-text"></span>
 </span>

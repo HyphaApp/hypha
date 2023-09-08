@@ -7,16 +7,13 @@ from hypha.apply.users.groups import STAFF_GROUP_NAME
 
 
 class Migration(migrations.Migration):
-
     def add_permissions(apps, schema_editor):
         staff_group = Group.objects.get(name=STAFF_GROUP_NAME)
-        staff_add_perm = Permission.objects.get(name='Can change event')
+        staff_add_perm = Permission.objects.get(name="Can change event")
         staff_group.permissions.add(staff_add_perm)
 
     dependencies = [
-        ('users', '0007_user_slack'),
+        ("users", "0007_user_slack"),
     ]
 
-    operations = [
-        migrations.RunPython(add_permissions)
-    ]
+    operations = [migrations.RunPython(add_permissions)]

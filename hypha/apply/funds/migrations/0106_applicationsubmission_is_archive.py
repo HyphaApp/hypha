@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('funds', '0105_applicationbase_activity_digest_recipient_emails'),
+        ("funds", "0105_applicationbase_activity_digest_recipient_emails"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='applicationsubmission',
-            name='is_archive',
+            model_name="applicationsubmission",
+            name="is_archive",
             field=models.BooleanField(default=False),
         ),
     ]

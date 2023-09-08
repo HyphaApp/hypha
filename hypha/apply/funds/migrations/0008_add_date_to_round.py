@@ -7,20 +7,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('funds', '0007_round'),
+        ("funds", "0007_round"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='round',
-            name='end_date',
+            model_name="round",
+            name="end_date",
             field=models.DateField(blank=True, default=datetime.date.today),
         ),
         migrations.AddField(
-            model_name='round',
-            name='start_date',
+            model_name="round",
+            name="start_date",
             field=models.DateField(blank=True, default=datetime.date.today),
         ),
     ]

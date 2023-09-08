@@ -4,15 +4,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('determinations', '0008_rename_more_info'),
+        ("determinations", "0008_rename_more_info"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='determination',
-            name='send_notice',
-            field=models.BooleanField(default=True, verbose_name='Send message to applicant'),
+            model_name="determination",
+            name="send_notice",
+            field=models.BooleanField(
+                default=True, verbose_name="Send message to applicant"
+            ),
         ),
     ]

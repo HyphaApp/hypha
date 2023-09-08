@@ -63,9 +63,12 @@ from .utils import get_redirect_url, send_confirmation_email
 User = get_user_model()
 
 
-@method_decorator(ratelimit(key='ip', rate=settings.DEFAULT_RATE_LIMIT, method='POST'), name='dispatch')
+@method_decorator(
+    ratelimit(key="ip", rate=settings.DEFAULT_RATE_LIMIT, method="POST"),
+    name="dispatch",
+)
 class RegisterView(SuccessURLAllowedHostsMixin, View):
-    redirect_field_name = 'next'
+    redirect_field_name = "next"
     form = CustomUserCreationForm
 
     def get(self, request):
@@ -76,15 +79,15 @@ class RegisterView(SuccessURLAllowedHostsMixin, View):
             raise Http404
 
         if request.user.is_authenticated:
-            return redirect('dashboard:dashboard')
+            return redirect("dashboard:dashboard")
 
         ctx = {
-            'form': self.form(),
-            'redirect_url': get_redirect_url(request, self.redirect_field_name),
+            "form": self.form(),
+            "redirect_url": get_redirect_url(request, self.redirect_field_name),
         }
-        return render(request, 'users/register.html', ctx)
+        return render(request, "users/register.html", ctx)
 
-    def post(self,request):
+    def post(self, request):
         # See comment in get() above about doing this here rather than in urls
         if not settings.ENABLE_REGISTRATION_WITHOUT_APPLICATION:
             raise Http404
@@ -93,83 +96,94 @@ class RegisterView(SuccessURLAllowedHostsMixin, View):
         context = {}
         if form.is_valid():
             # If using wagtail password management
-            if 'password1' in form.cleaned_data:
-                context['password']=form.cleaned_data['password1']
+            if "password1" in form.cleaned_data:
+                context["password"] = form.cleaned_data["password1"]
 
             site = Site.find_for_request(self.request)
             user, created = User.objects.get_or_create_and_notify(
-                email=form.cleaned_data['email'],
+                email=form.cleaned_data["email"],
                 site=site,
                 redirect_url=get_redirect_url(request, self.redirect_field_name),
                 defaults={
-                    'full_name': form.cleaned_data['full_name'],
+                    "full_name": form.cleaned_data["full_name"],
                 },
-                **context
+                **context,
             )
             if created:
                 params = {"name": user.full_name, "email": user.email}
                 # redirect to success page with params as query params
                 return HttpResponseRedirect(
-                    resolve_url('users_public:register-success')
-                    + '?'
+                    resolve_url("users_public:register-success")
+                    + "?"
                     + urlencode(params)
                 )
-        return render(request, 'users/register.html', {'form': form})
+        return render(request, "users/register.html", {"form": form})
 
 
 class RegistrationSuccessView(TemplateView):
-    template_name = 'users/register-success.html'
+    template_name = "users/register-success.html"
 
 
-@method_decorator(ratelimit(key='ip', rate=settings.DEFAULT_RATE_LIMIT, method='POST'), name='dispatch')
-@method_decorator(ratelimit(key='post:email', rate=settings.DEFAULT_RATE_LIMIT, method='POST'), name='dispatch')
+@method_decorator(
+    ratelimit(key="ip", rate=settings.DEFAULT_RATE_LIMIT, method="POST"),
+    name="dispatch",
+)
+@method_decorator(
+    ratelimit(key="post:email", rate=settings.DEFAULT_RATE_LIMIT, method="POST"),
+    name="dispatch",
+)
 class LoginView(TwoFactorLoginView):
     form_list = (
-        ('auth', CustomAuthenticationForm),
-        ('token', AuthenticationTokenForm),
-        ('backup', BackupTokenForm),
+        ("auth", CustomAuthenticationForm),
+        ("token", AuthenticationTokenForm),
+        ("backup", BackupTokenForm),
     )
 
     def get_context_data(self, form, **kwargs):
         context_data = super(LoginView, self).get_context_data(form, **kwargs)
         context_data["is_public_site"] = True
-        context_data["redirect_url"] = get_redirect_url(self.request, self.redirect_field_name)
-        if Site.find_for_request(self.request) == ApplyHomePage.objects.first().get_site():
+        context_data["redirect_url"] = get_redirect_url(
+            self.request, self.redirect_field_name
+        )
+        if (
+            Site.find_for_request(self.request)
+            == ApplyHomePage.objects.first().get_site()
+        ):
             context_data["is_public_site"] = False
         return context_data
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(login_required, name="dispatch")
 class AccountView(UpdateView):
     form_class = ProfileForm
-    template_name = 'users/account.html'
+    template_name = "users/account.html"
 
     def get_object(self):
         return self.request.user
 
     def form_valid(self, form):
-        updated_email = form.cleaned_data['email']
-        name = form.cleaned_data['full_name']
-        slack = form.cleaned_data.get('slack', '')
+        updated_email = form.cleaned_data["email"]
+        name = form.cleaned_data["full_name"]
+        slack = form.cleaned_data.get("slack", "")
         user = get_object_or_404(User, id=self.request.user.id)
         if updated_email and updated_email != user.email:
-            base_url = reverse('users:email_change_confirm_password')
-            query_dict = {
-                'updated_email': updated_email,
-                'name': name,
-                'slack': slack
-            }
+            base_url = reverse("users:email_change_confirm_password")
+            query_dict = {"updated_email": updated_email, "name": name, "slack": slack}
 
             signer = TimestampSigner()
             signed_value = signer.sign(dumps(query_dict))
             # Using session variables for redirect validation
             token_signer = Signer()
-            self.request.session['signed_token'] = token_signer.sign(user.email)
-            return redirect('{}?{}'.format(base_url, urlencode({'value': signed_value})))
+            self.request.session["signed_token"] = token_signer.sign(user.email)
+            return redirect(
+                "{}?{}".format(base_url, urlencode({"value": signed_value}))
+            )
         return super(AccountView, self).form_valid(form)
 
-    def get_success_url(self,):
-        return reverse_lazy('users:account')
+    def get_success_url(
+        self,
+    ):
+        return reverse_lazy("users:account")
 
     def get_context_data(self, **kwargs):
         if self.request.user.is_superuser and settings.HIJACK_ENABLE:
@@ -177,7 +191,9 @@ class AccountView(UpdateView):
         else:
             swappable_form = None
 
-        show_change_password = password_management_enabled() and self.request.user.has_usable_password(),
+        show_change_password = (
+            password_management_enabled() and self.request.user.has_usable_password(),
+        )
 
         return super().get_context_data(
             swappable_form=swappable_form,
@@ -187,76 +203,79 @@ class AccountView(UpdateView):
         )
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(login_required, name="dispatch")
 class EmailChangePasswordView(FormView):
     form_class = EmailChangePasswordForm
-    template_name = 'users/email_change/confirm_password.html'
-    success_url = reverse_lazy('users:confirm_link_sent')
-    title = _('Enter Password')
+    template_name = "users/email_change/confirm_password.html"
+    success_url = reverse_lazy("users:confirm_link_sent")
+    title = _("Enter Password")
 
     def get_initial(self):
         """
         Validating the redirection from account via session variable
         """
-        if 'signed_token' not in self.request.session:
+        if "signed_token" not in self.request.session:
             raise Http404
         signer = Signer()
         try:
-            signer.unsign(self.request.session['signed_token'])
+            signer.unsign(self.request.session["signed_token"])
         except BadSignature as e:
             raise Http404 from e
         return super(EmailChangePasswordView, self).get_initial()
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user
+        kwargs["user"] = self.request.user
         return kwargs
 
     def form_valid(self, form):
         # Make sure redirection url is inaccessible after email is sent
-        if 'signed_token' in self.request.session:
-            del self.request.session['signed_token']
+        if "signed_token" in self.request.session:
+            del self.request.session["signed_token"]
         signer = TimestampSigner()
         try:
             unsigned_value = signer.unsign(
-                self.request.GET.get('value'),
-                max_age=settings.PASSWORD_PAGE_TIMEOUT
+                self.request.GET.get("value"), max_age=settings.PASSWORD_PAGE_TIMEOUT
             )
         except Exception:
-            messages.error(self.request, _("Password Page timed out. Try changing the email again."))
-            return redirect('users:account')
+            messages.error(
+                self.request,
+                _("Password Page timed out. Try changing the email again."),
+            )
+            return redirect("users:account")
         value = loads(unsigned_value)
         form.save(**value)
         send_confirmation_email(
             self.request.user,
-            signer.sign(dumps(value['updated_email'])),
-            updated_email=value['updated_email'],
-            site=Site.find_for_request(self.request))
+            signer.sign(dumps(value["updated_email"])),
+            updated_email=value["updated_email"],
+            site=Site.find_for_request(self.request),
+        )
         return super(EmailChangePasswordView, self).form_valid(form)
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(login_required, name="dispatch")
 class EmailChangeDoneView(TemplateView):
-    template_name = 'users/email_change/done.html'
-    title = _('Verify Email')
+    template_name = "users/email_change/done.html"
+    title = _("Verify Email")
 
 
 @login_required()
 def become(request):
     if not settings.HIJACK_ENABLE:
-        raise Http404(_('Hijack feature is not enabled.'))
+        raise Http404(_("Hijack feature is not enabled."))
 
     if not request.user.is_superuser:
         raise PermissionDenied()
 
-    id = request.POST.get('user_pk')
+    id = request.POST.get("user_pk")
     if request.POST and id:
         target_user = User.objects.get(pk=id)
         if target_user.is_superuser:
             raise PermissionDenied()
 
         return AcquireUserView.as_view()(request)
-    return redirect('users:account')
+    return redirect("users:account")
 
 
 @login_required()
@@ -264,29 +283,31 @@ def become(request):
 def oauth(request):
     """Generic, empty view for the OAuth associations."""
 
-    return TemplateResponse(request, 'users/oauth.html', {})
+    return TemplateResponse(request, "users/oauth.html", {})
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(login_required, name="dispatch")
 class EmailChangeConfirmationView(TemplateView):
     def get(self, request, *args, **kwargs):
-        user = self.get_user(kwargs.get('uidb64'))
-        email = self.unsigned(kwargs.get('token'))
+        user = self.get_user(kwargs.get("uidb64"))
+        email = self.unsigned(kwargs.get("token"))
         if user and email:
             if user.email != email:
                 user.email = email
                 user.save()
-                messages.success(request, _(f"Your email has been successfully updated to {email}!"))
-            return redirect('users:account')
+                messages.success(
+                    request, _(f"Your email has been successfully updated to {email}!")
+                )
+            return redirect("users:account")
 
-        return render(request, 'users/email_change/invalid_link.html')
+        return render(request, "users/email_change/invalid_link.html")
 
     def unsigned(self, token):
         signer = TimestampSigner()
         try:
             unsigned_value = signer.unsign(
                 token,
-                max_age=datetime.timedelta(seconds=settings.PASSWORD_RESET_TIMEOUT)
+                max_age=datetime.timedelta(seconds=settings.PASSWORD_RESET_TIMEOUT),
             )
         except Exception:
             return False
@@ -299,37 +320,35 @@ class EmailChangeConfirmationView(TemplateView):
         doesn't.
         """
         try:
-            user = User.objects.get(**{
-                'pk': force_str(urlsafe_base64_decode(uidb64))
-            })
+            user = User.objects.get(**{"pk": force_str(urlsafe_base64_decode(uidb64))})
             return user
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
             return None
 
 
 class ActivationView(SuccessURLAllowedHostsMixin, TemplateView):
-    redirect_field_name = 'next'
+    redirect_field_name = "next"
 
     def get(self, request, *args, **kwargs):
-        user = self.get_user(kwargs.get('uidb64'))
+        user = self.get_user(kwargs.get("uidb64"))
 
-        if self.valid(user, kwargs.get('token')):
+        if self.valid(user, kwargs.get("token")):
             user.backend = settings.CUSTOM_AUTH_BACKEND
             login(request, user)
             if (
-                settings.WAGTAILUSERS_PASSWORD_ENABLED and
-                settings.ENABLE_REGISTRATION_WITHOUT_APPLICATION
+                settings.WAGTAILUSERS_PASSWORD_ENABLED
+                and settings.ENABLE_REGISTRATION_WITHOUT_APPLICATION
             ):
                 # In this case, the user entered a password while registering,
                 # and so they shouldn't need to activate a password
-                return redirect('users:account')
+                return redirect("users:account")
             else:
-                url = reverse('users:activate_password')
+                url = reverse("users:activate_password")
                 if redirect_url := get_redirect_url(request, self.redirect_field_name):
-                    url = f'{url}?next={redirect_url}'
+                    url = f"{url}?next={redirect_url}"
                 return redirect(url)
 
-        return render(request, 'users/activation/invalid.html')
+        return render(request, "users/activation/invalid.html")
 
     def valid(self, user, token):
         """
@@ -347,9 +366,7 @@ class ActivationView(SuccessURLAllowedHostsMixin, TemplateView):
         doesn't.
         """
         try:
-            user = User.objects.get(**{
-                'pk': force_str(urlsafe_base64_decode(uidb64))
-            })
+            user = User.objects.get(**{"pk": force_str(urlsafe_base64_decode(uidb64))})
             return user
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
             return None
@@ -359,48 +376,58 @@ def create_password(request):
     """
     A custom view for the admin password change form used for account activation.
     """
-    redirect_url = get_redirect_url(request, redirect_field='next')
+    redirect_url = get_redirect_url(request, redirect_field="next")
 
-    if request.method == 'POST':
+    if request.method == "POST":
         form = AdminPasswordChangeForm(request.user, request.POST)
 
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request, user)  # Important!
-            messages.success(request, 'Your password was successfully updated!')
+            messages.success(request, "Your password was successfully updated!")
             if redirect_url:
                 return redirect(redirect_url)
-            return redirect('users:account')
+            return redirect("users:account")
         else:
-            messages.error(request, 'Please correct the errors below.')
+            messages.error(request, "Please correct the errors below.")
     else:
         form = AdminPasswordChangeForm(request.user)
 
-    return render(request, 'users/change_password.html', {
-        'form': form,
-        'redirect_url': redirect_url,
-    })
+    return render(
+        request,
+        "users/change_password.html",
+        {
+            "form": form,
+            "redirect_url": redirect_url,
+        },
+    )
 
 
-@method_decorator(ratelimit(key='post:email', rate=settings.DEFAULT_RATE_LIMIT, method='POST'), name='dispatch')
-@method_decorator(ratelimit(key='ip', rate=settings.DEFAULT_RATE_LIMIT, method='POST'), name='dispatch')
+@method_decorator(
+    ratelimit(key="post:email", rate=settings.DEFAULT_RATE_LIMIT, method="POST"),
+    name="dispatch",
+)
+@method_decorator(
+    ratelimit(key="ip", rate=settings.DEFAULT_RATE_LIMIT, method="POST"),
+    name="dispatch",
+)
 class PasswordResetView(DjPasswordResetView):
-    redirect_field_name = 'next'
-    email_template_name = 'users/password_reset/email.txt'
-    template_name = 'users/password_reset/form.html'
-    success_url = reverse_lazy('users:password_reset_done')
+    redirect_field_name = "next"
+    email_template_name = "users/password_reset/email.txt"
+    template_name = "users/password_reset/form.html"
+    success_url = reverse_lazy("users:password_reset_done")
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        ctx['redirect_url'] = get_redirect_url(self.request, self.redirect_field_name)
+        ctx["redirect_url"] = get_redirect_url(self.request, self.redirect_field_name)
         return ctx
 
     def get_extra_email_context(self):
         return {
-            'redirect_url': get_redirect_url(self.request, self.redirect_field_name),
-            'site': Site.find_for_request(self.request),
-            'org_short_name': settings.ORG_SHORT_NAME,
-            'org_long_name': settings.ORG_LONG_NAME,
+            "redirect_url": get_redirect_url(self.request, self.redirect_field_name),
+            "site": Site.find_for_request(self.request),
+            "org_short_name": settings.ORG_SHORT_NAME,
+            "org_long_name": settings.ORG_LONG_NAME,
         }
 
     def form_valid(self, form):
@@ -408,96 +435,111 @@ class PasswordResetView(DjPasswordResetView):
         Overrides default django form_valid to pass extra context to send_email method
         """
         opts = {
-            'use_https': self.request.is_secure(),
-            'token_generator': self.token_generator,
-            'from_email': self.from_email,
-            'email_template_name': self.email_template_name,
-            'subject_template_name': self.subject_template_name,
-            'request': self.request,
-            'html_email_template_name': self.html_email_template_name,
-            'extra_email_context': self.get_extra_email_context(),
+            "use_https": self.request.is_secure(),
+            "token_generator": self.token_generator,
+            "from_email": self.from_email,
+            "email_template_name": self.email_template_name,
+            "subject_template_name": self.subject_template_name,
+            "request": self.request,
+            "html_email_template_name": self.html_email_template_name,
+            "extra_email_context": self.get_extra_email_context(),
         }
         form.save(**opts)
         return HttpResponseRedirect(self.get_success_url())
 
 
-@method_decorator(never_cache, name='dispatch')
-@method_decorator(login_required, name='dispatch')
+@method_decorator(never_cache, name="dispatch")
+@method_decorator(login_required, name="dispatch")
 class TWOFASetupView(TwoFactorSetupView):
     def get_issuer(self):
         return get_current_site(self.request).name
 
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form, **kwargs)
-        if self.steps.current == 'generator':
+        if self.steps.current == "generator":
             try:
                 username = self.request.user.get_username()
             except AttributeError:
                 username = self.request.user.username
 
-            otpauth_url = get_otpauth_url(accountname=username,
-                                          issuer=self.get_issuer(),
-                                          secret=context['secret_key'],
-                                          digits=totp_digits())
-            context.update({
-                'otpauth_url': otpauth_url,
-            })
+            otpauth_url = get_otpauth_url(
+                accountname=username,
+                issuer=self.get_issuer(),
+                secret=context["secret_key"],
+                digits=totp_digits(),
+            )
+            context.update(
+                {
+                    "otpauth_url": otpauth_url,
+                }
+            )
 
         return context
 
 
-@method_decorator(login_required, name='dispatch')
-@method_decorator(ratelimit(key='user', rate=settings.DEFAULT_RATE_LIMIT, method='POST'), name='dispatch')
+@method_decorator(login_required, name="dispatch")
+@method_decorator(
+    ratelimit(key="user", rate=settings.DEFAULT_RATE_LIMIT, method="POST"),
+    name="dispatch",
+)
 class TWOFABackupTokensPasswordView(TwoFactorBackupTokensView):
     """
     Require password to see backup codes
     """
+
     form_class = TWOFAPasswordForm
-    success_url = reverse_lazy('two_factor:backup_tokens')
-    template_name = 'two_factor/core/backup_tokens_password.html'
+    success_url = reverse_lazy("two_factor:backup_tokens")
+    template_name = "two_factor/core/backup_tokens_password.html"
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user
+        kwargs["user"] = self.request.user
         return kwargs
 
 
-@method_decorator(ratelimit(key='user', rate=settings.DEFAULT_RATE_LIMIT, method='POST'), name='dispatch')
-@method_decorator(login_required, name='dispatch')
+@method_decorator(
+    ratelimit(key="user", rate=settings.DEFAULT_RATE_LIMIT, method="POST"),
+    name="dispatch",
+)
+@method_decorator(login_required, name="dispatch")
 class TWOFADisableView(TwoFactorDisableView):
     """
     View for disabling two-factor for a user's account.
     """
-    template_name = 'two_factor/profile/disable.html'
-    success_url = reverse_lazy('users:account')
+
+    template_name = "two_factor/profile/disable.html"
+    success_url = reverse_lazy("users:account")
     form_class = TWOFAPasswordForm
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user
+        kwargs["user"] = self.request.user
         return kwargs
 
 
-@method_decorator(permission_required(change_user_perm, raise_exception=True), name='dispatch')
+@method_decorator(
+    permission_required(change_user_perm, raise_exception=True), name="dispatch"
+)
 class TWOFAAdminDisableView(FormView):
     """
     View for PasswordForm to confirm the Disable 2FA process on wagtail admin.
     """
+
     form_class = TWOFAPasswordForm
-    template_name = 'two_factor/admin/disable.html'
+    template_name = "two_factor/admin/disable.html"
     user = None
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         # pass request's user to form to validate the password
-        kwargs['user'] = self.request.user
+        kwargs["user"] = self.request.user
         # store the user from url for redirecting to the same user's account edit page
-        self.user = get_object_or_404(User, pk=self.kwargs.get('user_id'))
+        self.user = get_object_or_404(User, pk=self.kwargs.get("user_id"))
         return kwargs
 
     def get_form(self, form_class=None):
         form = super(TWOFAAdminDisableView, self).get_form(form_class=form_class)
-        form.fields['password'].label = "Password"
+        form.fields["password"].label = "Password"
         return form
 
     def form_valid(self, form):
@@ -506,24 +548,24 @@ class TWOFAAdminDisableView(FormView):
         return redirect(self.get_success_url())
 
     def get_success_url(self):
-        return reverse('wagtailusers_users:edit',  args=[self.user.id])
+        return reverse("wagtailusers_users:edit", args=[self.user.id])
 
     def get_context_data(self, **kwargs):
         ctx = super(TWOFAAdminDisableView, self).get_context_data(**kwargs)
-        ctx['user'] = self.user
+        ctx["user"] = self.user
         return ctx
 
 
 class TWOFARequiredMessageView(TemplateView):
-    template_name = 'two_factor/core/two_factor_required.html'
+    template_name = "two_factor/core/two_factor_required.html"
 
 
 class PasswordResetConfirmView(DjPasswordResetConfirmView):
-    redirect_field_name = 'next'
-    template_name = 'users/password_reset/confirm.html'
+    redirect_field_name = "next"
+    template_name = "users/password_reset/confirm.html"
     post_reset_login = True
     post_reset_login_backend = settings.CUSTOM_AUTH_BACKEND
-    success_url = reverse_lazy('users:account')
+    success_url = reverse_lazy("users:account")
 
     def get_success_url(self) -> str:
         if next_path := get_redirect_url(self.request, self.redirect_field_name):
@@ -532,19 +574,21 @@ class PasswordResetConfirmView(DjPasswordResetConfirmView):
 
     def get_context_data(self, **kwargs: Any) -> Any:
         context = super().get_context_data(**kwargs)
-        context['redirect_url'] = get_redirect_url(self.request, self.redirect_field_name)
+        context["redirect_url"] = get_redirect_url(
+            self.request, self.redirect_field_name
+        )
         return context
 
     @method_decorator(sensitive_post_parameters())
     @method_decorator(never_cache)
     def dispatch(self, *args, **kwargs):
-        assert 'uidb64' in kwargs and 'token' in kwargs
+        assert "uidb64" in kwargs and "token" in kwargs
 
         self.validlink = False
-        self.user = self.get_user(kwargs['uidb64'])
+        self.user = self.get_user(kwargs["uidb64"])
 
         if self.user is not None:
-            token = kwargs['token']
+            token = kwargs["token"]
             if token == self.reset_url_token:
                 session_token = self.request.session.get(INTERNAL_RESET_SESSION_TOKEN)
                 if self.token_generator.check_token(self.user, session_token):
@@ -558,11 +602,15 @@ class PasswordResetConfirmView(DjPasswordResetConfirmView):
                     # avoids the possibility of leaking the token in the
                     # HTTP Referer header.
                     self.request.session[INTERNAL_RESET_SESSION_TOKEN] = token
-                    redirect_url = self.request.path.replace(token, self.reset_url_token)
+                    redirect_url = self.request.path.replace(
+                        token, self.reset_url_token
+                    )
 
                     # Add handler for '?next' redirect parameter.
-                    if next_path := get_redirect_url(self.request, self.redirect_field_name):
-                        redirect_url = f'{redirect_url}?next={next_path}'
+                    if next_path := get_redirect_url(
+                        self.request, self.redirect_field_name
+                    ):
+                        redirect_url = f"{redirect_url}?next={next_path}"
 
                     return HttpResponseRedirect(redirect_url)
 

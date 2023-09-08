@@ -4,14 +4,13 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('users', '0005_user_drupal_id'),
+        ("users", "0005_user_drupal_id"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='user',
-            options={'ordering': ('full_name', 'email')},
+            name="user",
+            options={"ordering": ("full_name", "email")},
         ),
     ]

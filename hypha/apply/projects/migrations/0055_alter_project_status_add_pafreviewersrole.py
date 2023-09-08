@@ -6,33 +6,62 @@ import modelcluster.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('application_projects', '0054_alter_project_form_fields'),
+        ("application_projects", "0054_alter_project_form_fields"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='project',
-            name='paf_reviews_meta_data',
-            field=models.JSONField(default=dict, help_text='Reviewers role and their actions/comments'),
+            model_name="project",
+            name="paf_reviews_meta_data",
+            field=models.JSONField(
+                default=dict, help_text="Reviewers role and their actions/comments"
+            ),
         ),
         migrations.AlterField(
-            model_name='project',
-            name='status',
-            field=models.TextField(choices=[('committed', 'Committed'), ('waiting_for_approval', 'Waiting for Approval'), ('contracting', 'Contracting'), ('in_progress', 'In Progress'), ('closing', 'Closing'), ('complete', 'Complete')], default='committed'),
+            model_name="project",
+            name="status",
+            field=models.TextField(
+                choices=[
+                    ("committed", "Committed"),
+                    ("waiting_for_approval", "Waiting for Approval"),
+                    ("contracting", "Contracting"),
+                    ("in_progress", "In Progress"),
+                    ("closing", "Closing"),
+                    ("complete", "Complete"),
+                ],
+                default="committed",
+            ),
         ),
         migrations.CreateModel(
-            name='PAFReviewersRole',
+            name="PAFReviewersRole",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('sort_order', models.IntegerField(blank=True, editable=False, null=True)),
-                ('role', models.CharField(max_length=200)),
-                ('page', modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.CASCADE, related_name='paf_reviewers_roles', to='application_projects.projectsettings')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "sort_order",
+                    models.IntegerField(blank=True, editable=False, null=True),
+                ),
+                ("role", models.CharField(max_length=200)),
+                (
+                    "page",
+                    modelcluster.fields.ParentalKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="paf_reviewers_roles",
+                        to="application_projects.projectsettings",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['sort_order'],
-                'abstract': False,
+                "ordering": ["sort_order"],
+                "abstract": False,
             },
         ),
     ]

@@ -4,20 +4,27 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('funds', '0079_add_reviewer_settings_for_submission_access'),
+        ("funds", "0079_add_reviewer_settings_for_submission_access"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='screeningstatus',
-            name='default',
-            field=models.BooleanField(default=False, help_text='Only one Yes and No screening status can be set as default.', verbose_name='Default Yes/No'),
+            model_name="screeningstatus",
+            name="default",
+            field=models.BooleanField(
+                default=False,
+                help_text="Only one Yes and No screening status can be set as default.",
+                verbose_name="Default Yes/No",
+            ),
         ),
         migrations.AddField(
-            model_name='screeningstatus',
-            name='yes',
-            field=models.BooleanField(default=False, help_text='Tick mark for Yes otherwise No.', verbose_name='Yes/No'),
+            model_name="screeningstatus",
+            name="yes",
+            field=models.BooleanField(
+                default=False,
+                help_text="Tick mark for Yes otherwise No.",
+                verbose_name="Yes/No",
+            ),
         ),
     ]

@@ -7,24 +7,24 @@ from hypha.apply.activity.models import ACTION, TEAM, ALL
 
 
 def forward_visibility_options(apps, schema_editor):
-    Activity = apps.get_model('activity', 'Activity')
+    Activity = apps.get_model("activity", "Activity")
     for activity in Activity.objects.filter(type=ACTION):
         try:
             message = json.loads(activity.message)
         except json.JSONDecodeError:
             continue
 
-        if 'internal' in message and 'public' in message:
+        if "internal" in message and "public" in message:
             new_message = {
-                TEAM: message['internal'],
-                ALL: message['public'],
+                TEAM: message["internal"],
+                ALL: message["public"],
             }
             activity.message = json.dumps(new_message)
             activity.save()
 
 
 def backward_visibility_options(apps, schema_editor):
-    Activity = apps.get_model('activity', 'Activity')
+    Activity = apps.get_model("activity", "Activity")
     for activity in Activity.objects.filter(type=ACTION):
         try:
             message = json.loads(activity.message)
@@ -32,17 +32,16 @@ def backward_visibility_options(apps, schema_editor):
             continue
 
         new_message = {
-            'internal': message[TEAM],
-            'public': message[ALL],
+            "internal": message[TEAM],
+            "public": message[ALL],
         }
         activity.message = json.dumps(new_message)
         activity.save()
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('activity', '0027_update_visibility_options_2'),
+        ("activity", "0027_update_visibility_options_2"),
     ]
 
     operations = [

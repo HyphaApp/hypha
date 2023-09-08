@@ -5,15 +5,18 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('projects', '0006_allow_blank_source'),
+        ("projects", "0006_allow_blank_source"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='projectpagerelatedpage',
-            name='page',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='+', to='wagtailcore.Page'),
+            model_name="projectpagerelatedpage",
+            name="page",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="+",
+                to="wagtailcore.Page",
+            ),
         ),
     ]

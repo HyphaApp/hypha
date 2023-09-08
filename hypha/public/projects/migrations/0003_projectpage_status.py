@@ -6,15 +6,23 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('projects', '0002_projectfunding'),
+        ("projects", "0002_projectfunding"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='projectpage',
-            name='status',
-            field=models.CharField(choices=[('idea', 'Just an Idea. (Pre-alpha)'), ('exists', 'It Exists! (Alpha/Beta)'), ('release', "It's basically done. (Release)"), ('production', 'People Use it. (Production)')], default='idea', max_length=25),
+            model_name="projectpage",
+            name="status",
+            field=models.CharField(
+                choices=[
+                    ("idea", "Just an Idea. (Pre-alpha)"),
+                    ("exists", "It Exists! (Alpha/Beta)"),
+                    ("release", "It's basically done. (Release)"),
+                    ("production", "People Use it. (Production)"),
+                ],
+                default="idea",
+                max_length=25,
+            ),
         ),
     ]

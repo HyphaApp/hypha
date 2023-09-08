@@ -4,14 +4,13 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('categories', '0003_rename_meta_categories_to_meta_terms'),
-        ('funds', '0070_rename_meta_categories_to_meta_terms'),
+        ("categories", "0003_rename_meta_categories_to_meta_terms"),
+        ("funds", "0070_rename_meta_categories_to_meta_terms"),
     ]
 
     operations = [
         migrations.DeleteModel(
-            name='MetaCategory',
+            name="MetaCategory",
         ),
     ]

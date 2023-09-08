@@ -9,13 +9,15 @@ register = template.Library()
 
 @register.simple_tag
 def user_can_approve_contract(user, project):
-    can_approve, _ = has_permission('contract_approve', user, object=project, raise_exception=False)
+    can_approve, _ = has_permission(
+        "contract_approve", user, object=project, raise_exception=False
+    )
     return can_approve
 
 
 @register.simple_tag
 def is_project_contract_approved(project):
-    contract = project.contracts.order_by('-created_at').first()
+    contract = project.contracts.order_by("-created_at").first()
     if contract and contract.approver:
         return True
     return False
@@ -23,7 +25,7 @@ def is_project_contract_approved(project):
 
 @register.simple_tag
 def contract_uploaded_by_contracting(project):
-    contract = project.contracts.order_by('-created_at').first()
+    contract = project.contracts.order_by("-created_at").first()
     if contract:
         return True
     return False
@@ -31,7 +33,7 @@ def contract_uploaded_by_contracting(project):
 
 @register.simple_tag
 def contract_reuploaded_by_applicant(project):
-    contract = project.contracts.order_by('-created_at').first()
+    contract = project.contracts.order_by("-created_at").first()
     if contract and contract.signed_by_applicant:
         return True
     return False
@@ -39,13 +41,21 @@ def contract_reuploaded_by_applicant(project):
 
 @register.simple_tag
 def user_can_submit_contract(project, user, contract):
-    can_submit, _ = has_permission('submit_contract_documents', user, object=project, raise_exception=False, contract=contract)
+    can_submit, _ = has_permission(
+        "submit_contract_documents",
+        user,
+        object=project,
+        raise_exception=False,
+        contract=contract,
+    )
     return can_submit
 
 
 @register.simple_tag
 def user_can_upload_contract(project, user):
-    can_upload, _ = has_permission('contract_upload', user, object=project, raise_exception=False)
+    can_upload, _ = has_permission(
+        "contract_upload", user, object=project, raise_exception=False
+    )
     return can_upload
 
 

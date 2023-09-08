@@ -22,22 +22,16 @@ from hypha.public.utils.models import BaseFunding, BasePage, FundingMixin, Relat
 
 
 class SocialMediaProfile(models.Model):
-    person_page = ParentalKey(
-        'PersonPage',
-        related_name='social_media_profile'
-    )
+    person_page = ParentalKey("PersonPage", related_name="social_media_profile")
     site_titles = (
-        ('twitter', "Twitter"),
-        ('linkedin', "LinkedIn"),
+        ("twitter", "Twitter"),
+        ("linkedin", "LinkedIn"),
     )
     site_urls = (
-        ('twitter', 'https://twitter.com/'),
-        ('linkedin', 'https://www.linkedin.com/in/')
+        ("twitter", "https://twitter.com/"),
+        ("linkedin", "https://www.linkedin.com/in/"),
     )
-    service = models.CharField(
-        max_length=200,
-        choices=site_titles
-    )
+    service = models.CharField(max_length=200, choices=site_titles)
     username = models.CharField(max_length=255)
 
     @property
@@ -45,7 +39,7 @@ class SocialMediaProfile(models.Model):
         return dict(self.site_urls)[self.service] + self.username
 
     def clean(self):
-        if self.service == 'twitter' and self.username.startswith('@'):
+        if self.service == "twitter" and self.username.startswith("@"):
             self.username = self.username[1:]
 
 
@@ -57,16 +51,14 @@ class PersonType(models.Model):
 
 
 class PersonPagePersonType(models.Model):
-    page = ParentalKey('PersonPage', related_name='person_types')
+    page = ParentalKey("PersonPage", related_name="person_types")
     person_type = models.ForeignKey(
-        'PersonType',
-        related_name='+',
+        "PersonType",
+        related_name="+",
         on_delete=models.PROTECT,
     )
 
-    panels = [
-        FieldPanel('person_type')
-    ]
+    panels = [FieldPanel("person_type")]
 
     def __str__(self):
         return self.person_type.title
@@ -74,34 +66,41 @@ class PersonPagePersonType(models.Model):
 
 class FundingQuerySet(models.QuerySet):
     def people(self):
-        return PersonPage.objects.filter(id__in=self.values_list('page__id')).live().active().public()
+        return (
+            PersonPage.objects.filter(id__in=self.values_list("page__id"))
+            .live()
+            .active()
+            .public()
+        )
 
 
 class Funding(BaseFunding):
-    page = ParentalKey('PersonPage', related_name='funding')
+    page = ParentalKey("PersonPage", related_name="funding")
 
     objects = FundingQuerySet.as_manager()
 
 
 class PersonContactInfomation(Orderable):
     methods = (
-        ('irc', 'IRC'),
-        ('im', 'IM/Jabber/XMPP'),
-        ('phone', 'Phone'),
-        ('pgp', 'PGP fingerprint'),
-        ('otr', 'OTR fingerprint'),
+        ("irc", "IRC"),
+        ("im", "IM/Jabber/XMPP"),
+        ("phone", "Phone"),
+        ("pgp", "PGP fingerprint"),
+        ("otr", "OTR fingerprint"),
     )
-    page = ParentalKey('PersonPage', related_name='contact_details')
+    page = ParentalKey("PersonPage", related_name="contact_details")
     contact_method = models.CharField(max_length=255, choices=methods, blank=True)
-    other_method = models.CharField(max_length=255, blank=True, verbose_name=_('Other'))
+    other_method = models.CharField(max_length=255, blank=True, verbose_name=_("Other"))
     contact_detail = models.CharField(max_length=255)
 
     panels = [
-        FieldRowPanel([
-            FieldPanel('contact_method'),
-            FieldPanel('other_method'),
-        ]),
-        FieldPanel('contact_detail'),
+        FieldRowPanel(
+            [
+                FieldPanel("contact_method"),
+                FieldPanel("other_method"),
+            ]
+        ),
+        FieldPanel("contact_detail"),
     ]
 
     @property
@@ -110,31 +109,46 @@ class PersonContactInfomation(Orderable):
 
     def clean(self):
         if not (self.contact_method or self.other_method):
-            raise ValidationError({
-                'contact_method': 'Please select or type at least one contact method.',
-                'other_method': '',
-            })
+            raise ValidationError(
+                {
+                    "contact_method": "Please select or type at least one contact method.",
+                    "other_method": "",
+                }
+            )
 
         if self.contact_method and self.other_method:
-            raise ValidationError({
-                'contact_method': 'Please only select or type one contact method.',
-                'other_method': '',
-            })
+            raise ValidationError(
+                {
+                    "contact_method": "Please only select or type one contact method.",
+                    "other_method": "",
+                }
+            )
 
 
 class ReviewerQuerySet(models.QuerySet):
     def people(self):
-        return PersonPage.objects.filter(id__in=self.values_list('reviewer__id')).live().active().public()
+        return (
+            PersonPage.objects.filter(id__in=self.values_list("reviewer__id"))
+            .live()
+            .active()
+            .public()
+        )
 
 
 class FundReviewers(RelatedPage):
-    page = models.ForeignKey('wagtailcore.Page', null=True, blank=True, on_delete=models.SET_NULL, related_name='reviewers')
-    reviewer = ParentalKey('PersonPage', related_name='funds_reviewed')
+    page = models.ForeignKey(
+        "wagtailcore.Page",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="reviewers",
+    )
+    reviewer = ParentalKey("PersonPage", related_name="funds_reviewed")
 
     objects = ReviewerQuerySet.as_manager()
 
     panels = [
-        PageChooserPanel('page', 'public_funds.FundPage'),
+        PageChooserPanel("page", "public_funds.FundPage"),
     ]
 
 
@@ -145,18 +159,18 @@ class PersonQuerySet(PageQuerySet):
 
 class PersonPage(FundingMixin, BasePage):
     subpage_types = []
-    parent_page_types = ['PersonIndexPage']
+    parent_page_types = ["PersonIndexPage"]
 
     drupal_id = models.IntegerField(null=True, blank=True, editable=False)
 
     first_name = models.CharField(max_length=255, blank=True)
     last_name = models.CharField(max_length=255)
     photo = models.ForeignKey(
-        'images.CustomImage',
+        "images.CustomImage",
         null=True,
         blank=True,
-        related_name='+',
-        on_delete=models.SET_NULL
+        related_name="+",
+        on_delete=models.SET_NULL,
     )
     active = models.BooleanField(default=True)
     job_title = models.CharField(max_length=255, blank=True)
@@ -168,61 +182,80 @@ class PersonPage(FundingMixin, BasePage):
     objects = PageManager.from_queryset(PersonQuerySet)()
 
     search_fields = BasePage.search_fields + [
-        index.SearchField('introduction'),
-        index.SearchField('biography')
+        index.SearchField("introduction"),
+        index.SearchField("biography"),
     ]
 
-    content_panels = BasePage.content_panels + [
-        MultiFieldPanel([
-            FieldPanel('first_name'),
-            FieldPanel('last_name'),
-        ], heading=_('Name')),
-        FieldPanel('active'),
-        FieldPanel('photo'),
-        FieldPanel('job_title'),
-        InlinePanel('social_media_profile', label=_('Social accounts')),
-        FieldPanel('website'),
-        MultiFieldPanel([
-            FieldPanel('email'),
-            InlinePanel('contact_details', label=_('Other Contact Methods')),
-        ], heading=_('Contact information')),
-        InlinePanel('person_types', label=_('Person types')),
-        FieldPanel('introduction'),
-        FieldPanel('biography'),
-        InlinePanel('funds_reviewed', label=_('Funds Reviewed')),
-    ] + FundingMixin.content_panels
+    content_panels = (
+        BasePage.content_panels
+        + [
+            MultiFieldPanel(
+                [
+                    FieldPanel("first_name"),
+                    FieldPanel("last_name"),
+                ],
+                heading=_("Name"),
+            ),
+            FieldPanel("active"),
+            FieldPanel("photo"),
+            FieldPanel("job_title"),
+            InlinePanel("social_media_profile", label=_("Social accounts")),
+            FieldPanel("website"),
+            MultiFieldPanel(
+                [
+                    FieldPanel("email"),
+                    InlinePanel("contact_details", label=_("Other Contact Methods")),
+                ],
+                heading=_("Contact information"),
+            ),
+            InlinePanel("person_types", label=_("Person types")),
+            FieldPanel("introduction"),
+            FieldPanel("biography"),
+            InlinePanel("funds_reviewed", label=_("Funds Reviewed")),
+        ]
+        + FundingMixin.content_panels
+    )
 
 
 class PersonIndexPage(BasePage):
-    subpage_types = ['PersonPage']
-    parent_page_types = ['standardpages.IndexPage']
+    subpage_types = ["PersonPage"]
+    parent_page_types = ["standardpages.IndexPage"]
 
     introduction = models.TextField(blank=True)
 
     content_panels = BasePage.content_panels + [
-        FieldPanel('introduction', widget=PagedownWidget()),
+        FieldPanel("introduction", widget=PagedownWidget()),
     ]
 
     search_fields = BasePage.search_fields + [
-        index.SearchField('introduction'),
+        index.SearchField("introduction"),
     ]
 
     def get_context(self, request, *args, **kwargs):
-        people = PersonPage.objects.live().public().descendant_of(self).order_by(
-            'title',
-        ).select_related(
-            'photo',
-        ).prefetch_related(
-            'person_types__person_type',
+        people = (
+            PersonPage.objects.live()
+            .public()
+            .descendant_of(self)
+            .order_by(
+                "title",
+            )
+            .select_related(
+                "photo",
+            )
+            .prefetch_related(
+                "person_types__person_type",
+            )
         )
 
-        if request.GET.get('person_type') and request.GET.get('person_type').isdigit():
-            people = people.filter(person_types__person_type=request.GET.get('person_type'))
+        if request.GET.get("person_type") and request.GET.get("person_type").isdigit():
+            people = people.filter(
+                person_types__person_type=request.GET.get("person_type")
+            )
 
-        if not request.GET.get('include_inactive') == 'true':
+        if not request.GET.get("include_inactive") == "true":
             people = people.filter(active=True)
 
-        page_number = request.GET.get('page')
+        page_number = request.GET.get("page")
         paginator = Paginator(people, settings.DEFAULT_PER_PAGE)
         try:
             people = paginator.page(page_number)
@@ -235,9 +268,9 @@ class PersonIndexPage(BasePage):
         context.update(
             people=people,
             # Only show person types that have been used
-            person_types=PersonPagePersonType.objects.all().values_list(
-                'person_type__pk', 'person_type__title'
-            ).distinct()
+            person_types=PersonPagePersonType.objects.all()
+            .values_list("person_type__pk", "person_type__title")
+            .distinct(),
         )
 
         return context

@@ -7,21 +7,32 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('images', '0001_initial'),
-        ('people', '0001_initial'),
+        ("images", "0001_initial"),
+        ("people", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='personindexpage',
-            name='header_image',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='images.CustomImage'),
+            model_name="personindexpage",
+            name="header_image",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="+",
+                to="images.CustomImage",
+            ),
         ),
         migrations.AddField(
-            model_name='personpage',
-            name='header_image',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='images.CustomImage'),
+            model_name="personpage",
+            name="header_image",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="+",
+                to="images.CustomImage",
+            ),
         ),
     ]

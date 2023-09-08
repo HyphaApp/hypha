@@ -17,13 +17,13 @@
         <p>
             {% if request.GET.name %} {% trans "Hi " %}{{ request.GET.name }}, {% endif %}
 
-             {% trans "your account" %}
+            {% trans "your account" %}
 
-             {% if request.GET.email %}
+            {% if request.GET.email %}
                 {% trans "with the email" %} {{ request.GET.email }}
-             {% endif %}
+            {% endif %}
 
-             {% trans "has been successfully created! We have sent you an account activatation email." %}
+            {% trans "has been successfully created! We have sent you an account activatation email." %}
         </p>
 
         <p>

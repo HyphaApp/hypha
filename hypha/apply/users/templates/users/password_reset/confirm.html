@@ -6,43 +6,45 @@
 {% block content %}
 
     <div class="wrapper max-w-xl mt-12">
-    {% if validlink %}
+        {% if validlink %}
 
-        <h2 class="text-2xl">Reset Password</h2>
-        <p>{% trans "Please enter your new password twice so we can verify you typed it in correctly." %}</p>
+            <h2 class="text-2xl">Reset Password</h2>
+            <p>{% trans "Please enter your new password twice so we can verify you typed it in correctly." %}</p>
 
-        <form class="form" method="post" novalidate>
-            {% csrf_token %}
-            {% if redirect_url %}
-                <input type="hidden" name="next" value="{{ redirect_url }}" />
-            {% endif %}
+            <form class="form" method="post" novalidate>
+                {% csrf_token %}
+                {% if redirect_url %}
+                    <input type="hidden" name="next" value="{{ redirect_url }}" />
+                {% endif %}
 
-            {% if form.non_field_errors %}
-                <ul class="errorlist">
-                    {% for error in form.non_field_errors %}
-                        <li>{{ error }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
+                {% if form.non_field_errors %}
+                    <ul class="errorlist">
+                        {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
 
-            {% if form.errors %}
-                <ul class="errorlist">
-                    {% blocktrans trimmed count counter=form.errors.items|length %}
-                    <li>Please correct the error below.</li>
-                    {% plural %}
-                    <li>Please correct the errors below.</li>
-                    {% endblocktrans %}
-                </ul>
-            {% endif %}
+                {% if form.errors %}
+                    <ul class="errorlist">
+                        {% blocktrans trimmed count counter=form.errors.items|length %}
+                            <li>Please correct the error below.</li>
+                        {% plural %}
+                            <li>Please correct the errors below.</li>
+                        {% endblocktrans %}
+                    </ul>
+                {% endif %}
 
-            {% for field in form %}
-                {% include "forms/includes/field.html" %}
-            {% endfor %}
+                {% for field in form %}
+                    {% include "forms/includes/field.html" %}
+                {% endfor %}
 
-            <button class="btn btn-primary" type="submit">{% trans 'Reset' %}</button>
-        </form>
-    {% else %}
-        <p>{% trans "The password reset link was invalid, possibly because it has already been used.  Please request a new password reset." %}</p>
-    {% endif %}
+                <div class="form__group">
+                    <button class="btn btn-primary" type="submit">{% trans 'Reset' %}</button>
+                </div>
+            </form>
+        {% else %}
+            <p>{% trans "The password reset link was invalid, possibly because it has already been used.  Please request a new password reset." %}</p>
+        {% endif %}
     </div>
 {% endblock %}

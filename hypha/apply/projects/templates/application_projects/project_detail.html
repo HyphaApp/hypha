@@ -7,49 +7,49 @@
 {% block body_class %}{% endblock %}
 
 {% block content %}
-{% show_closing_banner object as show_banner %}
-{% display_project_status object request.user as project_status %}
-{% if show_banner %}
-<div class="banner banner__close">
-    {% blocktrans with status=project_status %} This project is in {{ status }} state. {% endblocktrans %}
-</div>
-{% endif %}
-<div class="admin-bar">
-    <div class="admin-bar__inner">
-        <h1 class="beta heading heading--no-margin heading--bold">{{ object.title }}</h1>
-        <h5 class="heading heading--meta">
+    {% show_closing_banner object as show_banner %}
+    {% display_project_status object request.user as project_status %}
+    {% if show_banner %}
+        <div class="banner banner__close">
+            {% blocktrans with status=project_status %} This project is in {{ status }} state. {% endblocktrans %}
+        </div>
+    {% endif %}
+    <div class="admin-bar">
+        <div class="admin-bar__inner">
+            <h1 class="mb-0">{{ object.title }}</h1>
+            <div class="heading heading--meta text-sm mt-1">
 
-            <span>{{ object.submission.page }}</span>
+                <span>{{ object.submission.page }}</span>
 
-            {% if request.user.is_apply_staff and object.submission.round %}
-            <span>
-                <a class="link--transparent link--underlined" href="{% url 'apply:rounds:detail' pk=object.submission.round.pk %}">{{ object.submission.round }}</a>
-            </span>
-            {% else %}
-                <span>{{ object.submission.round }}</span>
-            {% endif %}
-
-            <span>
-                {% if request.user.is_apply_staff %}
-                    <a data-fancybox
-                        data-src="#assign-lead"
-                        class="link link--edit-lead is-active link--transparent"
-                        href="#">
-                        <u>{% trans "Lead" %}: {{ object.lead }}</u>
-                        <svg class="icon icon--pen"><use xlink:href="#pen"></use></svg>
-                    </a>
-                    <div class="modal" id="assign-lead">
-                        <h4 class="modal__project-header-bar">{% trans "Assign Lead" %}</h4>
-                        {% trans "Update" as update %}
-                        {% include 'funds/includes/delegated_form_base.html' with form=lead_form value=update %}
-                    </div>
+                {% if request.user.is_apply_staff and object.submission.round %}
+                    <span>
+                        <a class="link--transparent link--underlined" href="{% url 'apply:rounds:detail' pk=object.submission.round.pk %}">{{ object.submission.round }}</a>
+                    </span>
                 {% else %}
-                    <span>{% trans "Lead" %}: {{ object.lead }}</span>
+                    <span>{{ object.submission.round }}</span>
                 {% endif %}
+
+                <span>
+                    {% if request.user.is_apply_staff %}
+                        <a data-fancybox
+                           data-src="#assign-lead"
+                           class="link link--edit-lead is-active link--transparent"
+                           href="#">
+                            <u>{% trans "Lead" %}: {{ object.lead }}</u>
+                            <svg class="icon icon--pen"><use xlink:href="#pen"></use></svg>
+                        </a>
+                        <div class="modal" id="assign-lead">
+                            <h4 class="modal__project-header-bar">{% trans "Assign Lead" %}</h4>
+                            {% trans "Update" as update %}
+                            {% include 'funds/includes/delegated_form_base.html' with form=lead_form value=update %}
+                        </div>
+                    {% else %}
+                        <span>{% trans "Lead" %}: {{ object.lead }}</span>
+                    {% endif %}
                 </button>
             </span>
 
-        </h5>
+        </div>
 
         <div class="status-bar">
             {% for status, text in statuses %}
@@ -96,140 +96,140 @@
             </div>
         </div>
     </div>
-</div>
+    </div>
 
-<div class="wrapper wrapper--large wrapper--tabs js-tabs-content">
-    <div class="tabs__content" id="tab-1">
-        {% block notifications %}
-        {% endblock %}
-        <div class="wrapper wrapper--sidebar">
-            <article class="wrapper--sidebar--inner">
-                <h3>{% trans "Project Information" %}</h3>
-                <div class="grid grid--proposal-info">
-                    <div>
-                        <h5>{% trans "Contractor" %}</h5>
-                        <p>{{ object.vendor.name |default:"-" }}</p>
+    <div class="wrapper wrapper--large wrapper--tabs js-tabs-content">
+        <div class="tabs__content" id="tab-1">
+            {% block notifications %}
+            {% endblock %}
+            <div class="wrapper wrapper--sidebar">
+                <article class="wrapper--sidebar--inner">
+                    <h3>{% trans "Project Information" %}</h3>
+                    <div class="grid grid--proposal-info">
+                        <div>
+                            <h5>{% trans "Contractor" %}</h5>
+                            <p>{{ object.vendor.name |default:"-" }}</p>
+                        </div>
+
+                        <div>
+                            <h5>{% trans "E-mail" %}</h5>
+                            {% if object.vendor.user.email %}
+                                <a href="mailto:{{ object.vendor.user.email }}">{{ object.vendor.user.email }}</a>
+                            {% else %}
+                                -
+                            {% endif %}
+                        </div>
                     </div>
 
-                    <div>
-                        <h5>{% trans "E-mail" %}</h5>
-                        {% if object.vendor.user.email %}
-                        <a href="mailto:{{ object.vendor.user.email }}">{{ object.vendor.user.email }}</a>
-                        {% else %}
-                        -
-                        {% endif %}
-                    </div>
-                </div>
-
-                {% user_can_view_invoices object user as can_view_invoices %}
-                {% if can_view_invoices %}
-                <div class="wrapper wrapper--outer-space-large">
-                    {% include "application_projects/includes/invoices.html" %}
-                </div>
-                {% endif %}
-
-                {% project_can_have_report object as can_have_reports %}
-                {% if can_have_reports %}
-                    <div class="wrapper wrapper--outer-space-large">
-                        {% include "application_projects/includes/reports.html" %}
-                    </div>
-                {% endif %}
-
-                {% project_can_have_contracting_section object as can_have_contracting_section %}
-                {% if can_have_contracting_section %}
-                    {% include "application_projects/includes/contracting_documents.html" %}
-                {% endif %}
-
-                {% include "application_projects/includes/supporting_documents.html" %}
-            </article>
-
-            {% block sidebar %}
-
-            <aside class="sidebar">
-                {% user_next_step_on_project object user request=request as next_step %}
-                {% if next_step %}
-                    {% if mobile %}
-                    <a class="js-actions-toggle button button--white button--full-width button--actions">{% trans "Next Step" %}</a>
+                    {% user_can_view_invoices object user as can_view_invoices %}
+                    {% if can_view_invoices %}
+                        <div class="wrapper wrapper--outer-space-large">
+                            {% include "application_projects/includes/invoices.html" %}
+                        </div>
                     {% endif %}
 
-                    <div class="js-actions-sidebar sidebar__inner sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
+                    {% project_can_have_report object as can_have_reports %}
+                    {% if can_have_reports %}
+                        <div class="wrapper wrapper--outer-space-large">
+                            {% include "application_projects/includes/reports.html" %}
+                        </div>
+                    {% endif %}
 
-                        <h5>{% trans "Next Step" %}</h5>
-                        <p>{{ next_step }}</p>
-                        {% user_next_step_instructions object user as instructions %}
-                        {% if instructions %}
-                            <div class="sidebar__inner--actions--instructions">
-                            {% for instruction in instructions %}
-                                <p>{{forloop.counter}}. {{ instruction }}</p>
-                            {% endfor %}
+                    {% project_can_have_contracting_section object as can_have_contracting_section %}
+                    {% if can_have_contracting_section %}
+                        {% include "application_projects/includes/contracting_documents.html" %}
+                    {% endif %}
+
+                    {% include "application_projects/includes/supporting_documents.html" %}
+                </article>
+
+                {% block sidebar %}
+
+                    <aside class="sidebar">
+                        {% user_next_step_on_project object user request=request as next_step %}
+                        {% if next_step %}
+                            {% if mobile %}
+                                <a class="js-actions-toggle button button--white button--full-width button--actions">{% trans "Next Step" %}</a>
+                            {% endif %}
+
+                            <div class="js-actions-sidebar sidebar__inner sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
+
+                                <h5>{% trans "Next Step" %}</h5>
+                                <p>{{ next_step }}</p>
+                                {% user_next_step_instructions object user as instructions %}
+                                {% if instructions %}
+                                    <div class="sidebar__inner--actions--instructions">
+                                        {% for instruction in instructions %}
+                                            <p>{{forloop.counter}}. {{ instruction }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+
+                            </div>
+                        {% endif %}
+                        {% if object.paf_approvals.exists and not user.is_applicant %}
+                            {% if mobile %}
+                                <a class="js-actions-toggle button button--white button--full-width button--actions">{% trans "PAF Approvals" %}</a>
+                            {% endif %}
+
+
+                            <div class="js-actions-sidebar sidebar__inner sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
+
+                                <h5>{% trans "PAF Approvals" %}</h5>
+                                {% for paf_approval in object.paf_approvals.all %}
+
+                                    {% if not paf_approval.approved %}
+                                        {% project_rejected_by_user object paf_approval.user as rejected %}
+                                        {% if rejected %}
+                                            <div class="flex">
+                                                <div>
+                                                    <svg class="icon icon--request-changes"><use xlink:href="#request-changes"></use></svg>
+                                                </div>
+                                                <div>
+                                                    <p class="sidebar__paf-approvals--approved m-0">{% trans "Request changes or more information by " %}{{ paf_approval.user }}</p>
+                                                    {% get_comment_for_requested_approval paf_approval as rejected_comment %}
+                                                    {% if rejected_comment %}
+                                                        <a href="#communications#{{ rejected_comment.id }}" class="font-bold" target="_blank">View comment</a>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            <p class="sidebar__paf-approvals--pending m-0">{% trans "Pending approval from " %}{% if paf_approval.user %}{{ paf_approval.user }}{% else %} {{ paf_approval.paf_reviewer_role.label }}{% trans " (nobody assigned yet)" %} {% endif %}</p>
+                                        {% endif %}
+                                    {% else %}
+                                        <p class="sidebar__paf-approvals--approved m-0">{% trans "Approved by " %}{{ paf_approval.user }} {% if paf_approval.approved_at %}(<i>{{ paf_approval.approved_at|date }}</i>){% endif %}</p>
+                                    {% endif %}
+                                    <br>
+                                {% endfor %}
+
                             </div>
                         {% endif %}
 
-                    </div>
-                {% endif %}
-                {% if object.paf_approvals.exists and not user.is_applicant %}
-                    {% if mobile %}
-                    <a class="js-actions-toggle button button--white button--full-width button--actions">{% trans "PAF Approvals" %}</a>
-                    {% endif %}
+                        {% if request.user.is_apply_staff %}
+                            {% block admin_assignments %}{% endblock %}
+                        {% endif %}
 
-
-                    <div class="js-actions-sidebar sidebar__inner sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
-
-                    <h5>{% trans "PAF Approvals" %}</h5>
-                        {% for paf_approval in object.paf_approvals.all %}
-
-                            {% if not paf_approval.approved %}
-                                {% project_rejected_by_user object paf_approval.user as rejected %}
-                                {% if rejected %}
-                                    <div class="flex">
-                                        <div>
-                                            <svg class="icon icon--request-changes"><use xlink:href="#request-changes"></use></svg>
-                                        </div>
-                                        <div>
-                                            <p class="sidebar__paf-approvals--approved m-0">{% trans "Request changes or more information by " %}{{ paf_approval.user }}</p>
-                                            {% get_comment_for_requested_approval paf_approval as rejected_comment %}
-                                            {% if rejected_comment %}
-                                                <a href="#communications#{{ rejected_comment.id }}" class="font-bold" target="_blank">View comment</a>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                {% else %}
-                                    <p class="sidebar__paf-approvals--pending m-0">{% trans "Pending approval from " %}{% if paf_approval.user %}{{ paf_approval.user }}{% else %} {{ paf_approval.paf_reviewer_role.label }}{% trans " (nobody assigned yet)" %} {% endif %}</p>
-                                {% endif %}
-                            {% else %}
-                                <p class="sidebar__paf-approvals--approved m-0">{% trans "Approved by " %}{{ paf_approval.user }} {% if paf_approval.approved_at %}(<i>{{ paf_approval.approved_at|date }}</i>){% endif %}</p>
-                            {% endif %}
-                            <br>
-                        {% endfor %}
-
-                </div>
-                {% endif %}
-
-                {% if request.user.is_apply_staff %}
-                {% block admin_assignments %}{% endblock %}
-                {% endif %}
-
-            </aside>
-            {% endblock sidebar %}
+                    </aside>
+                {% endblock sidebar %}
+            </div>
         </div>
-    </div>
 
     {# Tab 2 #}
-    <div class="tabs__content" id="tab-2">
-        <div class="feed">
-            {% include "activity/include/comment_form.html" %}
-            {% include "activity/include/comment_list.html" with editable=False %}
+        <div class="tabs__content" id="tab-2">
+            <div class="feed">
+                {% include "activity/include/comment_form.html" %}
+                {% include "activity/include/comment_list.html" with editable=False %}
+            </div>
         </div>
-    </div>
 
     {# Tab 3 #}
-    <div class="tabs__content" id="tab-3">
-        <div class="feed">
+        <div class="tabs__content" id="tab-3">
+            <div class="feed">
             {% comment %} Loaded using the htmx via alpine's custom event "open-tab-3"{% endcomment %}
-            <p>Loading...</p>
+                <p>Loading...</p>
+            </div>
         </div>
     </div>
-</div>
 {% endblock content %}
 
 {% block extra_css %}

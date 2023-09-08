@@ -4,7 +4,7 @@
 {% block body_class %}light-grey-bg{% endblock %}
 
 {% block content %}
-<div class="wrapper wrapper--small wrapper--inner-space-medium">
+    <div class="wrapper wrapper--small wrapper--inner-space-medium">
 
         {% if page.introduction %}
             <h4 class="heading heading--listings-introduction">{{ page.introduction|markdown|bleach }}</h4>
@@ -29,9 +29,9 @@
                         {% if n.listing_image %}
                             {% image n.listing_image fill-450x300 %}
                         {% endif %}
-                            <h4 class="listing__title" role="listitem">
-                                {{ n.listing_title|default:n.title }}
-                            </h4>
+                        <h4 class="listing__title" role="listitem">
+                            {{ n.listing_title|default:n.title }}
+                        </h4>
                         {% if n.listing_summary or n.introduction %}
                             <h6 class="listing__teaser">{{ n.listing_summary|default:n.introduction }}</h6>
                         {% endif %}
@@ -52,5 +52,5 @@
             {# no items #}
         {% endif %}
 
-</div>
+    </div>
 {% endblock %}

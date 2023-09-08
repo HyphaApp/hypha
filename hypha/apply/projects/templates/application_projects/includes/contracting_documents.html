@@ -5,17 +5,17 @@
     <div class="docs-block__header" id="contract-documents-section" {% if collapsible_header %} x-on:click="collapsed = ! collapsed" role="button" aria-label="Toggle Contract documents visibility" aria-controls="contract-documents-elements" {% endif %}>
         <div class="docs-block__heading" >{% trans "Contracting documents" %}
             {% if collapsible_header %}
-            <svg class="icon icon--caret-up" x-show="!collapsed" aria-hidden=true><use xlink:href="#caret-up"></use></svg>
-            <svg class="icon icon--caret-down" x-show="collapsed" aria-hidden=true><use xlink:href="#caret-down"></use></svg>
+                <svg class="icon icon--caret-up" x-show="!collapsed" aria-hidden=true><use xlink:href="#caret-up"></use></svg>
+                <svg class="icon icon--caret-down" x-show="collapsed" aria-hidden=true><use xlink:href="#caret-down"></use></svg>
             {% endif %}
         </div>
         {% user_can_upload_contract object request.user as can_upload_contract %}
         {% user_can_submit_contract object user contract as can_submit_contract %}
         {% if can_submit_contract %}
             <a data-fancybox
-            data-src="#submit-contract-documents"
-            class="button button--project-action {% if remaining_contract_document_categories or not contract.signed_by_applicant %}is-disabled{% endif %}"
-            href="#">
+               data-src="#submit-contract-documents"
+               class="button button--project-action {% if remaining_contract_document_categories or not contract.signed_by_applicant %}is-disabled{% endif %}"
+               href="#">
                 {% trans "Submit contract documents" %}
             </a>
             <div class="modal" id="submit-contract-documents">
@@ -29,9 +29,9 @@
         {% user_can_approve_contract request.user object as can_approve_contract %}
         {% if contract_to_approve and can_approve_contract %}
             <a data-fancybox
-            data-src="#approve-contract"
-            class="button button--project-action"
-            href="#">
+               data-src="#approve-contract"
+               class="button button--project-action"
+               href="#">
                 {% trans "Approve contract documents" %}
             </a>
 
@@ -39,195 +39,195 @@
     </div>
 
     <ul class="docs-block__inner" id="contract-documents-elements" {% if collapsible_header %} x-show="!collapsed" role="region"
-       aria-labelledby="contract-documents-section" {% endif %}>
+            aria-labelledby="contract-documents-section" {% endif %}>
 
-        {% is_project_contract_approved object as is_contract_approved %}
-        {% contract_uploaded_by_contracting object as contract_uploaded %}
-        <li class="docs-block__row">
-            <div class="docs-block__row-inner">
-                <svg class="icon docs-block__icon {% if object.submitted_contract_documents %}is-complete{% endif %}"><use xlink:href="#tick"></use></svg>
-                <p class="docs-block__title">{% trans "Contract" %}</p>
-            </div>
-            {% if contract_uploaded %}
-            <div class="docs-block__row-inner">
-                <a class="font-bold flex items-center w-auto text-left bg-white text-light-blue mr-0 mb-1 p-2.5 border-solid border border-light-blue focus:text-light-blue hover:bg-light-blue hover:text-white" href="{% url 'apply:projects:contract' pk=project.pk file_pk=contract.pk %}" target="_blank">
-                    <svg class="icon icon--project-eye"><use xlink:href="#eye"></use></svg>
-                        {% trans "View" %}
-                </a>
-            </div>
-            {% if not is_contract_approved %}
-            <ul class="mt-0 w-full pl-9">
-                <li class="docs-block__document">
+            {% is_project_contract_approved object as is_contract_approved %}
+            {% contract_uploaded_by_contracting object as contract_uploaded %}
+            <li class="docs-block__row">
+                <div class="docs-block__row-inner">
+                    <svg class="icon docs-block__icon {% if object.submitted_contract_documents %}is-complete{% endif %}"><use xlink:href="#tick"></use></svg>
+                    <p class="docs-block__title">{% trans "Contract" %}</p>
+                </div>
+                {% if contract_uploaded %}
                     <div class="docs-block__row-inner">
-                    </div>
-                    <div class="docs-block__row-inner">
-                        <svg class="icon icon--info-circle"><use xlink:href="#info-circle-fill"></use></svg>
-                        <a class="docs-block__icon-link" href="#communications" target="_blank">
-                                <span>{% trans "Corrections/amendments?" %}</span>
+                        <a class="font-bold flex items-center w-auto text-left bg-white text-light-blue mr-0 mb-1 p-2.5 border-solid border border-light-blue focus:text-light-blue hover:bg-light-blue hover:text-white" href="{% url 'apply:projects:contract' pk=project.pk file_pk=contract.pk %}" target="_blank">
+                            <svg class="icon icon--project-eye"><use xlink:href="#eye"></use></svg>
+                            {% trans "View" %}
                         </a>
                     </div>
-                </li>
-            </ul>
-            {% endif %}
-            {% endif %}
-
-            {% show_contract_upload_row object user as show_contract_row %}
-            {% if show_contract_row %}
-            {% contract_reuploaded_by_applicant object as contract_reuploaded %}
-            <ul class="mt-2 w-full pl-9">
-                <li class="docs-block__document">
-                    <div class="docs-block__row-inner">
-                        <p class="docs-block__title">
-                            {% if not contract.uploaded_by_contractor_at %}{% trans "Pending signed contract by " %}{% else %}{% trans "Signed contract by " %}{% endif %}{% if user == object.user %}{{ ORG_SHORT_NAME }}{% else %}{% trans "Contracting team " %} {% endif %}
-                            <i>{% if contract.uploaded_by_contractor_at %}({{ contract.uploaded_by_contractor_at }}){% endif %}</i></p>
-                    </div>
-                    {% if can_upload_contract and user.is_contracting %}
-                    <div class="docs-block__row-inner docs-block__row-inner__contract-upload-row">
-                        <a data-fancybox class="font-bold flex items-center w-auto text-left bg-light-blue text-white mr-0 p-2.5 border-none" href="#" data-src="#upload-contract">
-                            <svg class="icon icon--arrow-up-short-bar icon--arrow-up-short-bar--contract-upload"><use xlink:href="#arrow-up-short-bar"></use></svg>
-                            {% if not contract %}
-                                {% trans "Upload" %}
-                            {% elif not contract.approver %}
-                                {% trans "Reupload" %}
-                            {% endif %}
-                        </a>
-                    </div>
-                    {% endif %}
-                </li>
-
-                <li class="docs-block__document">
-                    <div class="docs-block__row-inner">
-                        <p class="docs-block__title">{% if not contract.uploaded_by_applicant_at %}{% trans "Pending countersigned contract by " %}{% else %}{% trans "Countersigned contract by " %}{% endif %}{% if user == object.user %}{% trans "you " %} {% else %}{% trans "Vendor " %}{% endif %}
-                        <i>{% if contract.uploaded_by_applicant_at %}({{ contract.uploaded_by_applicant_at }}){% endif %}</i></p>
-                    </div>
-                    {% if can_upload_contract and user.is_applicant %}
-                    <div class="docs-block__row-inner docs-block__row-inner__contract-upload-row">
-                        <a data-fancybox class="font-bold flex items-center w-auto text-left bg-light-blue text-white mr-0 p-2.5 border-none" href="#" data-src="#upload-contract">
-                            <svg class="icon icon--arrow-up-short-bar icon--arrow-up-short-bar--contract-upload"><use xlink:href="#arrow-up-short-bar"></use></svg>
-                            {% if not contract.signed_by_applicant %}
-                                {% trans "Upload" %}
-                            {% elif not contract.approver %}
-                                {% trans "Reupload" %}
-                            {% endif %}
-                        </a>
-                    </div>
-                    {% endif %}
-                </li>
-            </ul>
-            {% endif %}
-        </li>
-
-        {% if contracting_documents_configured and contract_uploaded %}
-        <li class="docs-block__row">
-            <div class="docs-block__row-inner">
-                <svg class="icon docs-block__icon{% if not remaining_contract_document_categories %} is-complete{% endif %}">
-                    <use xlink:href="#tick"></use>
-                </svg>
-                <p class="docs-block__title">{% trans "Contracting documents" %}</p>
-            </div>
-            {% can_update_contracting_documents object user as can_update_documents %}
-
-            {% if all_contract_document_categories %}
-
-            <div class="w-full pl-9">
-                <p></p>
-                <ul>
-                    {% for document_category in all_contract_document_categories %}
-                        <li class="docs-block__document">
-                            <div class="docs-block__document-inner">
-                                <p class="docs-block__document-info">
-                                    {% if document_category in remaining_contract_document_categories %}
-                                        {% trans "Pending " %}
-                                        {{ document_category.name|lower }}
-                                    {% else %}
-                                        {{ document_category.name }}
-                                    {% endif %}
-                                    {% if document_category.required %}<span class="text-red-700">*</span>{% endif %}
-                                    {% if document_category.template %}
-                                    <svg class="icon icon--info-circle"><use xlink:href="#info-circle-fill"></use></svg>
-                                    <a class="font-bold underline decoration-dashed" href="{% url 'apply:projects:category_template' pk=object.pk type='contract_document' category_pk=document_category.pk %}" target="_blank">{% trans "View template" %}</a>
-                                    {% endif %}
-                                </p>
-                                {% if document_category not in remaining_contract_document_categories %}
-                                    {% contract_category_latest_file project document_category as latest_file %}
-                                    <p class="docs-block__document-info"><b>{{ latest_file.title }}</b> - {{ latest_file.created_at }}</p>
-                                {% endif %}
-                            </div>
-                            {% if document_category in remaining_contract_document_categories and can_update_documents %}
-                                <div class="docs-block__document-inner__actions">
-                                    <a data-fancybox data-src="#upload-contracting-doc" class="font-bold flex items-center mr-0" onclick="handleCategory({{ document_category.id }})" href="#">
-                                        <svg class="icon icon--arrow-up-short-bar"><use xlink:href="#arrow-up-short-bar"></use></svg>
-                                        {% trans "Upload" %}
-                                    </a>
-                                </div>
-                            {% else %}
-                                {% contract_category_latest_file project document_category as latest_file %}
-                                {% if latest_file %}
+                    {% if not is_contract_approved %}
+                        <ul class="mt-0 w-full pl-9">
+                            <li class="docs-block__document">
                                 <div class="docs-block__row-inner">
-                                    <a class="docs-block__icon-link" href="{% url 'apply:projects:contract_document' pk=object.pk file_pk=latest_file.pk %}" target="_blank">
-                                        <svg class="icon icon--project-eye"><use xlink:href="#eye"></use></svg>
-                                        {% trans "View" %}
-                                    </a>
-                                    {% if can_update_documents %}
-                                    <form method="POST" id="{{ remove_contract_document_form.name }}-{{ latest_file.pk }}" class="docs-block__icon-link">
-                                        <svg class="icon icon--delete" style="margin-left:0; margin-right:2px"><use xlink:href="#delete"></use></svg>
-                                        {% csrf_token %}
-                                        {{ latest_file.get_remove_form }}
-                                        <input
-                                            class="button button--link button--remove"
-                                            id="{{ remove_contract_document_form.name }}-submit"
-                                            name="{{ form_prefix }}{{ remove_contract_document_form.name }}"
-                                            type="submit"
-                                            form="{{ remove_contract_document_form.name }}-{{ latest_file.pk }}"
-                                            value="{% trans 'Remove' %}" />
-                                    </form>
-                                    {% endif %}
                                 </div>
-                                {% endif %}
+                                <div class="docs-block__row-inner">
+                                    <svg class="icon icon--info-circle"><use xlink:href="#info-circle-fill"></use></svg>
+                                    <a class="docs-block__icon-link" href="#communications" target="_blank">
+                                        <span>{% trans "Corrections/amendments?" %}</span>
+                                    </a>
+                                </div>
+                            </li>
+                        </ul>
+                    {% endif %}
+                {% endif %}
+
+                {% show_contract_upload_row object user as show_contract_row %}
+                {% if show_contract_row %}
+                    {% contract_reuploaded_by_applicant object as contract_reuploaded %}
+                    <ul class="mt-2 w-full pl-9">
+                        <li class="docs-block__document">
+                            <div class="docs-block__row-inner">
+                                <p class="docs-block__title">
+                                    {% if not contract.uploaded_by_contractor_at %}{% trans "Pending signed contract by " %}{% else %}{% trans "Signed contract by " %}{% endif %}{% if user == object.user %}{{ ORG_SHORT_NAME }}{% else %}{% trans "Contracting team " %} {% endif %}
+                                    <i>{% if contract.uploaded_by_contractor_at %}({{ contract.uploaded_by_contractor_at }}){% endif %}</i></p>
+                            </div>
+                            {% if can_upload_contract and user.is_contracting %}
+                                <div class="docs-block__row-inner docs-block__row-inner__contract-upload-row">
+                                    <a data-fancybox class="font-bold flex items-center w-auto text-left bg-light-blue text-white mr-0 p-2.5 border-none" href="#" data-src="#upload-contract">
+                                        <svg class="icon icon--arrow-up-short-bar icon--arrow-up-short-bar--contract-upload"><use xlink:href="#arrow-up-short-bar"></use></svg>
+                                        {% if not contract %}
+                                            {% trans "Upload" %}
+                                        {% elif not contract.approver %}
+                                            {% trans "Reupload" %}
+                                        {% endif %}
+                                    </a>
+                                </div>
                             {% endif %}
                         </li>
-                    {% endfor %}
-                </ul>
-            </div>
-            {% endif %}
-        </li>
-        {% endif %}
 
-    </ul>
+                        <li class="docs-block__document">
+                            <div class="docs-block__row-inner">
+                                <p class="docs-block__title">{% if not contract.uploaded_by_applicant_at %}{% trans "Pending countersigned contract by " %}{% else %}{% trans "Countersigned contract by " %}{% endif %}{% if user == object.user %}{% trans "you " %} {% else %}{% trans "Vendor " %}{% endif %}
+                                    <i>{% if contract.uploaded_by_applicant_at %}({{ contract.uploaded_by_applicant_at }}){% endif %}</i></p>
+                            </div>
+                            {% if can_upload_contract and user.is_applicant %}
+                                <div class="docs-block__row-inner docs-block__row-inner__contract-upload-row">
+                                    <a data-fancybox class="font-bold flex items-center w-auto text-left bg-light-blue text-white mr-0 p-2.5 border-none" href="#" data-src="#upload-contract">
+                                        <svg class="icon icon--arrow-up-short-bar icon--arrow-up-short-bar--contract-upload"><use xlink:href="#arrow-up-short-bar"></use></svg>
+                                        {% if not contract.signed_by_applicant %}
+                                            {% trans "Upload" %}
+                                        {% elif not contract.approver %}
+                                            {% trans "Reupload" %}
+                                        {% endif %}
+                                    </a>
+                                </div>
+                            {% endif %}
+                        </li>
+                    </ul>
+                {% endif %}
+            </li>
+
+            {% if contracting_documents_configured and contract_uploaded %}
+                <li class="docs-block__row">
+                    <div class="docs-block__row-inner">
+                        <svg class="icon docs-block__icon{% if not remaining_contract_document_categories %} is-complete{% endif %}">
+                            <use xlink:href="#tick"></use>
+                        </svg>
+                        <p class="docs-block__title">{% trans "Contracting documents" %}</p>
+                    </div>
+                    {% can_update_contracting_documents object user as can_update_documents %}
+
+                    {% if all_contract_document_categories %}
+
+                        <div class="w-full pl-9">
+                            <p></p>
+                            <ul>
+                                {% for document_category in all_contract_document_categories %}
+                                    <li class="docs-block__document">
+                                        <div class="docs-block__document-inner">
+                                            <p class="docs-block__document-info">
+                                                {% if document_category in remaining_contract_document_categories %}
+                                                    {% trans "Pending " %}
+                                                    {{ document_category.name|lower }}
+                                                {% else %}
+                                                    {{ document_category.name }}
+                                                {% endif %}
+                                                {% if document_category.required %}<span class="text-red-700">*</span>{% endif %}
+                                                {% if document_category.template %}
+                                                    <svg class="icon icon--info-circle"><use xlink:href="#info-circle-fill"></use></svg>
+                                                    <a class="font-bold underline decoration-dashed" href="{% url 'apply:projects:category_template' pk=object.pk type='contract_document' category_pk=document_category.pk %}" target="_blank">{% trans "View template" %}</a>
+                                                {% endif %}
+                                            </p>
+                                            {% if document_category not in remaining_contract_document_categories %}
+                                                {% contract_category_latest_file project document_category as latest_file %}
+                                                <p class="docs-block__document-info"><b>{{ latest_file.title }}</b> - {{ latest_file.created_at }}</p>
+                                            {% endif %}
+                                        </div>
+                                        {% if document_category in remaining_contract_document_categories and can_update_documents %}
+                                            <div class="docs-block__document-inner__actions">
+                                                <a data-fancybox data-src="#upload-contracting-doc" class="font-bold flex items-center mr-0" onclick="handleCategory({{ document_category.id }})" href="#">
+                                                    <svg class="icon icon--arrow-up-short-bar"><use xlink:href="#arrow-up-short-bar"></use></svg>
+                                                    {% trans "Upload" %}
+                                                </a>
+                                            </div>
+                                        {% else %}
+                                            {% contract_category_latest_file project document_category as latest_file %}
+                                            {% if latest_file %}
+                                                <div class="docs-block__row-inner">
+                                                    <a class="docs-block__icon-link" href="{% url 'apply:projects:contract_document' pk=object.pk file_pk=latest_file.pk %}" target="_blank">
+                                                        <svg class="icon icon--project-eye"><use xlink:href="#eye"></use></svg>
+                                                        {% trans "View" %}
+                                                    </a>
+                                                    {% if can_update_documents %}
+                                                        <form method="POST" id="{{ remove_contract_document_form.name }}-{{ latest_file.pk }}" class="docs-block__icon-link">
+                                                            <svg class="icon icon--delete" style="margin-left:0; margin-right:2px"><use xlink:href="#delete"></use></svg>
+                                                            {% csrf_token %}
+                                                            {{ latest_file.get_remove_form }}
+                                                            <input
+                                                                class="button button--link button--remove"
+                                                                id="{{ remove_contract_document_form.name }}-submit"
+                                                                name="{{ form_prefix }}{{ remove_contract_document_form.name }}"
+                                                                type="submit"
+                                                                form="{{ remove_contract_document_form.name }}-{{ latest_file.pk }}"
+                                                                value="{% trans 'Remove' %}" />
+                                                        </form>
+                                                    {% endif %}
+                                                </div>
+                                            {% endif %}
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                </li>
+            {% endif %}
+
+        </ul>
 </div>
 
 <!-- Modals -->
 
 {% if can_upload_contract %}
-<div class="modal" id="upload-contract">
-    {% if user.is_applicant %}
-        <h4 class="modal__project-header-bar">{% trans "Upload Countersigned Contract" %}</h4>
-        {% trans "Upload" as upload %}
-    {% else %}
-        <h4 class="modal__project-header-bar">{% trans "Upload Signed Contract" %}</h4>
-        <p><i><b>{% trans "The signed contract will be sent to Applicant once you submit." %}</b></i></p>
-        <br>
-        {% trans "Submit" as upload %}
-    {% endif %}
-    {% include 'funds/includes/delegated_form_base.html' with form=contract_form value=upload %}
-</div>
+    <div class="modal" id="upload-contract">
+        {% if user.is_applicant %}
+            <h4 class="modal__project-header-bar">{% trans "Upload Countersigned Contract" %}</h4>
+            {% trans "Upload" as upload %}
+        {% else %}
+            <h4 class="modal__project-header-bar">{% trans "Upload Signed Contract" %}</h4>
+            <p><i><b>{% trans "The signed contract will be sent to Applicant once you submit." %}</b></i></p>
+            <br>
+            {% trans "Submit" as upload %}
+        {% endif %}
+        {% include 'funds/includes/delegated_form_base.html' with form=contract_form value=upload %}
+    </div>
 {% endif %}
 
 {% if can_update_documents %}
-<div class="modal" id="upload-contracting-doc">
-    <h4 class="modal__project-header-bar">{% trans "Upload contracting documents" %}</h4>
-    <p></p>
-    {% trans "Submit" as submit %}
-    {% include 'funds/includes/delegated_form_base.html' with form=contract_document_form value=submit %}
-</div>
+    <div class="modal" id="upload-contracting-doc">
+        <h4 class="modal__project-header-bar">{% trans "Upload contracting documents" %}</h4>
+        <p></p>
+        {% trans "Submit" as submit %}
+        {% include 'funds/includes/delegated_form_base.html' with form=contract_document_form value=submit %}
+    </div>
 {% endif %}
 
 {% if contract_to_approve %}
-<div class="modal" id="approve-contract">
-    <h4 class="modal__project-header-bar">{% trans "Approve Contract" %}</h4>
-    <p>{% trans "You confirm that the uploaded contract is acceptable for commencing the project." %}</p>
-    <p>{% trans "This cannot be undone." %}</p>
-    {% trans "Confirm" as confirm %}
-    {% include 'funds/includes/delegated_form_base.html' with form=approve_contract_form value=confirm %}
-</div>
+    <div class="modal" id="approve-contract">
+        <h4 class="modal__project-header-bar">{% trans "Approve Contract" %}</h4>
+        <p>{% trans "You confirm that the uploaded contract is acceptable for commencing the project." %}</p>
+        <p>{% trans "This cannot be undone." %}</p>
+        {% trans "Confirm" as confirm %}
+        {% include 'funds/includes/delegated_form_base.html' with form=approve_contract_form value=confirm %}
+    </div>
 {% endif %}

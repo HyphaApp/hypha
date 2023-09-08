@@ -1,29 +1,9 @@
 // stylelint-disable property-no-vendor-prefix
-
-// Box Sizing
-*,
-*::before,
-*::after {
-    box-sizing: border-box;
-}
-
-// Prevent text size change on orientation change.
-html {
-    font-family: $font--primary;
-    -webkit-text-size-adjust: 100%;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
-
 body {
     overflow-x: hidden;
 
     &.no-scroll {
         overflow-y: hidden;
-    }
-
-    &.app-open {
-        overflow: hidden;
     }
 }
 
@@ -31,19 +11,6 @@ body {
 img,
 svg {
     vertical-align: top;
-}
-
-// Responsive images
-img {
-    height: auto;
-    max-width: 100%;
-}
-
-button,
-input,
-select,
-textarea {
-    font-family: inherit;
 }
 
 a {
@@ -56,14 +23,7 @@ a {
 }
 
 p {
-    margin-block: 1rem;
-}
-
-ul,
-ol {
-    padding: 0;
-    margin: 0;
-    list-style: none;
+    margin-block: 0.5rem;
 }
 
 details > summary {
@@ -123,10 +83,6 @@ details > summary {
 %on-screen {
     position: relative;
     left: 0;
-}
-
-.light-grey-bg {
-    background-color: $color--light-grey;
 }
 
 .mid-grey-text {

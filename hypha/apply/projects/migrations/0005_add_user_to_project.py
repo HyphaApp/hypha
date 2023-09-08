@@ -6,21 +6,30 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('application_projects', '0004_project_rename_name_to_title'),
+        ("application_projects", "0004_project_rename_name_to_title"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='project',
-            name='user',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='owned_projects', to=settings.AUTH_USER_MODEL),
+            model_name="project",
+            name="user",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="owned_projects",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AlterField(
-            model_name='project',
-            name='lead',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='lead_projects', to=settings.AUTH_USER_MODEL),
+            model_name="project",
+            name="lead",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="lead_projects",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]

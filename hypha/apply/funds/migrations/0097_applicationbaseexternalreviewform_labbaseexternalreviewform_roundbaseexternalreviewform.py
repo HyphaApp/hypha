@@ -6,50 +6,121 @@ import modelcluster.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('review', '0024_auto_20220111_1314'),
-        ('funds', '0096_only_active_users'),
+        ("review", "0024_auto_20220111_1314"),
+        ("funds", "0096_only_active_users"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='RoundBaseExternalReviewForm',
+            name="RoundBaseExternalReviewForm",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('sort_order', models.IntegerField(blank=True, editable=False, null=True)),
-                ('form', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='review.reviewform')),
-                ('round', modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.CASCADE, related_name='external_review_forms', to='funds.roundbase')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "sort_order",
+                    models.IntegerField(blank=True, editable=False, null=True),
+                ),
+                (
+                    "form",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="review.reviewform",
+                    ),
+                ),
+                (
+                    "round",
+                    modelcluster.fields.ParentalKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="external_review_forms",
+                        to="funds.roundbase",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['sort_order'],
-                'abstract': False,
+                "ordering": ["sort_order"],
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='LabBaseExternalReviewForm',
+            name="LabBaseExternalReviewForm",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('sort_order', models.IntegerField(blank=True, editable=False, null=True)),
-                ('form', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='review.reviewform')),
-                ('lab', modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.CASCADE, related_name='external_review_forms', to='funds.labbase')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "sort_order",
+                    models.IntegerField(blank=True, editable=False, null=True),
+                ),
+                (
+                    "form",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="review.reviewform",
+                    ),
+                ),
+                (
+                    "lab",
+                    modelcluster.fields.ParentalKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="external_review_forms",
+                        to="funds.labbase",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['sort_order'],
-                'abstract': False,
+                "ordering": ["sort_order"],
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='ApplicationBaseExternalReviewForm',
+            name="ApplicationBaseExternalReviewForm",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('sort_order', models.IntegerField(blank=True, editable=False, null=True)),
-                ('application', modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.CASCADE, related_name='external_review_forms', to='funds.applicationbase')),
-                ('form', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='review.reviewform')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "sort_order",
+                    models.IntegerField(blank=True, editable=False, null=True),
+                ),
+                (
+                    "application",
+                    modelcluster.fields.ParentalKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="external_review_forms",
+                        to="funds.applicationbase",
+                    ),
+                ),
+                (
+                    "form",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="review.reviewform",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['sort_order'],
-                'abstract': False,
+                "ordering": ["sort_order"],
+                "abstract": False,
             },
         ),
     ]

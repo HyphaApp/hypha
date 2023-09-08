@@ -17,7 +17,11 @@
         width: 100%;
         text-align: center;
         margin: 0;
-        padding: 3em 0 .5em;
-        background-image: linear-gradient(to bottom, $color--white-10, $color--white);
+        padding: 3em 0 0.5em;
+        background-image: linear-gradient(
+            to bottom,
+            $color--white-10,
+            $color--white
+        );
     }
 }

@@ -9,7 +9,7 @@
   <p>{% blocktrans trimmed %}The page you requested, enforces users to verify using
     two-factor authentication for security reasons. You need to set up these
     security features in order to access this page. Without setting up these security features,
-      You can only access the account(Profile section) or can logout from the system.{% endblocktrans %}</p>
+    You can only access the account(Profile section) or can logout from the system.{% endblocktrans %}</p>
 
   <p>{% blocktrans trimmed %}Two-factor authentication is not already set up for your
     account. Set up two-factor authentication for enhanced account
@@ -17,6 +17,6 @@
 
   <p>
     <a href="{% url 'two_factor:setup' %}" class="btn btn-primary">
-    {% trans "Set up Two-Factor Authentication (2FA)" %}</a>
+      {% trans "Set up Two-Factor Authentication (2FA)" %}</a>
   </p>
 {% endblock %}

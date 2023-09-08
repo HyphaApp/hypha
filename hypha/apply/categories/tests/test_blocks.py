@@ -14,10 +14,10 @@ class TestCategoryQuestionBlock(TestCase):
 
     def get_field(self, **kwargs):
         data = {
-            'field_label': '',
-            'help_text': '',
-            'category': self.category.id,
-            'multi': False,
+            "field_label": "",
+            "help_text": "",
+            "category": self.category.id,
+            "multi": False,
         }
         data.update(kwargs)
 
@@ -26,15 +26,15 @@ class TestCategoryQuestionBlock(TestCase):
         return self.block.get_field(block)
 
     def test_field_and_help_default(self):
-        field = self.get_field(field_label='', help_text='')
+        field = self.get_field(field_label="", help_text="")
         self.assertEqual(self.category.name, field.label)
         self.assertEqual(self.category.help_text, field.help_text)
 
     def test_supplied_field_and_help(self):
-        values = {'field_label': 'LABEL', 'help_text': 'HELP'}
+        values = {"field_label": "LABEL", "help_text": "HELP"}
         field = self.get_field(**values)
-        self.assertEqual(values['field_label'], field.label)
-        self.assertEqual(values['help_text'], field.help_text)
+        self.assertEqual(values["field_label"], field.label)
+        self.assertEqual(values["help_text"], field.help_text)
 
     def test_multi_select_enabled(self):
         field = self.get_field(multi=True)
@@ -50,9 +50,9 @@ class TestCategoryQuestionBlock(TestCase):
         field = self.get_field()
         self.assertEqual(
             field.choices,
-            [(option.id, option.value) for option in self.category.options.all()]
+            [(option.id, option.value) for option in self.category.options.all()],
         )
 
     def test_can_render_if_no_response(self):
-        display = self.block.render({'category': self.category}, {'data': None})
+        display = self.block.render({"category": self.category}, {"data": None})
         self.assertIn(self.block.no_response()[0], display)

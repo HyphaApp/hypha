@@ -15,7 +15,9 @@ class HandleProtectionErrorMiddleware:
         if isinstance(exception, ProtectedError):
             messages.error(
                 request,
-                _('The object you are trying to delete is used somewhere. Please remove any usages and try again!.'),
+                _(
+                    "The object you are trying to delete is used somewhere. Please remove any usages and try again!."
+                ),
             )
             return HttpResponseRedirect(request.path)
 
@@ -35,7 +37,7 @@ def apply_url_conf_middleware(get_response):
         site = Site.find_for_request(request)
         homepage = site.root_page.specific
         if isinstance(homepage, ApplyHomePage):
-            request.urlconf = 'hypha.apply.urls'
+            request.urlconf = "hypha.apply.urls"
 
         response = get_response(request)
         return response

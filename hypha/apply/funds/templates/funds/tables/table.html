@@ -53,13 +53,13 @@
                                             <ul class="list list--opinion">
                                         {% endif %}
 
-                                            <li class="list__item list__item--reviewer list__item--opinion">
-                                                <span class="list__item--reviewer-name">
-                                                    {{ opinion.author }}
-                                                    {% if opinion.author.role %}{% image opinion.author.role.icon max-12x12 %}{% endif %}
-                                                </span>
-                                                <span class="list__item list__item--reviewer-outcome {{ opinion.get_opinion_display|lower }}">{{ opinion.get_opinion_display }}</span>
-                                            </li>
+                                        <li class="list__item list__item--reviewer list__item--opinion">
+                                            <span class="list__item--reviewer-name">
+                                                {{ opinion.author }}
+                                                {% if opinion.author.role %}{% image opinion.author.role.icon max-12x12 %}{% endif %}
+                                            </span>
+                                            <span class="list__item list__item--reviewer-outcome {{ opinion.get_opinion_display|lower }}">{{ opinion.get_opinion_display }}</span>
+                                        </li>
 
                                         {% if forloop.last %}
                                             </ul>
@@ -89,14 +89,14 @@
             <td colspan="{{ table.columns|length }}">
                 <table class="submission-meta">
                     <tr class="submission-meta__row">
-                    {% for column in row.table.columns %}
-                        {% if forloop.first %}
-                        {% elif forloop.counter == 2 %}
-                            <th>{% trans "Linked" %} {{ row.record.previous.stage }}</th>
-                        {% else %}
-                            <th class="th th--{{ column.header|lower }}">{{ column.header }}</th>
-                        {% endif %}
-                    {% endfor %}
+                        {% for column in row.table.columns %}
+                            {% if forloop.first %}
+                            {% elif forloop.counter == 2 %}
+                                <th>{% trans "Linked" %} {{ row.record.previous.stage }}</th>
+                            {% else %}
+                                <th class="th th--{{ column.header|lower }}">{{ column.header }}</th>
+                            {% endif %}
+                        {% endfor %}
                     </tr>
 
                     {# mutate the row to render the data for the child row #}
@@ -105,7 +105,7 @@
                             {% for column, cell in row.items %}
                                 {% if column.name != "selected" %}
                                     <td {{ column.attrs.td.as_html }}>{% if column.localize == None %}{{ cell }}{% else %}{% if column.localize %}{{ cell|localize }}{% else %}{{ cell|unlocalize }}{% endif %}{% endif %}</td>
-                                    {% endif %}
+                                {% endif %}
                             {% endfor %}
                         </tr>
                     {% endwith %}
@@ -117,7 +117,7 @@
 {% endblock %}
 
 {% block table.tbody.empty_text %}
-<tr class="all-submissions-table__empty"><td colspan="{{ table.columns|length }}">{{ table.empty_text }}</td></tr>
+    <tr class="all-submissions-table__empty"><td colspan="{{ table.columns|length }}">{{ table.empty_text }}</td></tr>
 {% endblock table.tbody.empty_text %}
 
 {% block pagination %}

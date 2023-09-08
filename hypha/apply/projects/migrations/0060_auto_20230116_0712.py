@@ -4,29 +4,34 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('application_projects', '0059_set_ready_for_final_approval'),
+        ("application_projects", "0059_set_ready_for_final_approval"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='projectsettings',
-            name='compliance_email',
+            model_name="projectsettings",
+            name="compliance_email",
         ),
         migrations.AddField(
-            model_name='projectsettings',
-            name='contracting_gp_email',
-            field=models.TextField(blank=True, null=True, verbose_name='Contracting Group Email'),
+            model_name="projectsettings",
+            name="contracting_gp_email",
+            field=models.TextField(
+                blank=True, null=True, verbose_name="Contracting Group Email"
+            ),
         ),
         migrations.AddField(
-            model_name='projectsettings',
-            name='finance_gp_email',
-            field=models.TextField(blank=True, null=True, verbose_name='Finance Group Email'),
+            model_name="projectsettings",
+            name="finance_gp_email",
+            field=models.TextField(
+                blank=True, null=True, verbose_name="Finance Group Email"
+            ),
         ),
         migrations.AddField(
-            model_name='projectsettings',
-            name='staff_gp_email',
-            field=models.TextField(blank=True, null=True, verbose_name='Staff Group Email'),
+            model_name="projectsettings",
+            name="staff_gp_email",
+            field=models.TextField(
+                blank=True, null=True, verbose_name="Staff Group Email"
+            ),
         ),
     ]

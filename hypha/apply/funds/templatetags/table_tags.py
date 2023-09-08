@@ -15,5 +15,4 @@ def row_from_record(row, record):
 
 @register.simple_tag
 def total_num_of_pages(total_no_of_rows, per_page):
-    return math.ceil(total_no_of_rows/per_page)
-
+    return math.ceil(total_no_of_rows / per_page)

@@ -1,6 +1,6 @@
 site_name: Hypha Documentation
 site_url: https://docs.hypha.app/
-site_description: 'Documentation for Hypha, an open source submission management platform.'
+site_description: "Documentation for Hypha, an open source submission management platform."
 copyright: Copyright &copy; 2018 - 2023 - Open Technology Fund
 repo_name: HyphaApp/hypha
 repo_url: https://github.com/HyphaApp/hypha
@@ -17,9 +17,9 @@ theme:
   logo: data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB2aWV3Qm94PSIwIDAgNTAwIDUwMCIgd2lkdGg9IjUwMCIgaGVpZ2h0PSI1MDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGcgZmlsbD0iI2ZmZiIgdHJhbnNmb3JtPSJtYXRyaXgoMSwgMCwgMCwgMSwgLTAuMTg4NzI4LCAwLjY4NjI4OCkiPgogICAgPHBhdGggc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjAiIGQ9Ik0uNiAxNDAuMmMuMiA3Ny41LjYgMTQzIDEgMTQ1LjYuMyAyLjYgMS4xIDcuMiAxLjcgMTAuM2wxLjYgOS44Yy4zIDIuMyAxLjggOC40IDMgMTMuNmEyNDEuNiAyNDEuNiAwIDAgMCAxNDkuNCAxNjQuOWMxMCAzLjcgMTAgMy43IDEwLjIgMS4zYTM1Ni42IDM1Ni42IDAgMCAxIDk5LjMtMjE1LjRBMzU1IDM1NSAwIDAgMSA0MjkuNCAxNzRsMTIuNC0zIDE0LTMuMWExNDg2LjYgMTQ4Ni42IDAgMCAxIDMyLTVjLjktMS0xMi40LTMxLTE5LTQyLjZhMjQxLjkgMjQxLjkgMCAwIDAtMTQ4LTExMy40Yy0xLjMtLjItNC4xLTEtNi40LTEuNS0yLjMtLjYtNS44LTEuNC03LjgtMS43bC02LjEtMWMtMS41LS4yLTQuNS0uOC02LjgtMS0yLjItLjUtNS40LTEtNy4yLTEuMi0xLjYtLjMtNjYuNy0uNy0xNDQuNy0uOEwuMy0uN3ptMjgyLjMtNDMuOGExNTggMTU4IDAgMCAxIDUyLjIgMTkuMmMxIDAgMTcgMTEuNyAxNyAxMi40IDAgLjUtMSAxLjItMi4zIDEuNWE0OTUuNiA0OTUuNiAwIDAgMC00OC4zIDIzLjQgNDk0LjkgNDk0LjkgMCAwIDAtNDEuMyAyNy4xIDMzNy44IDMzNy44IDAgMCAwLTQwLjggMzYgNzY2LjcgNzY2LjcgMCAwIDAtMTcuNSAxOC4ybC04LjggMTAuOWE0MDQuOCA0MDQuOCAwIDAgMC01NC43IDg5LjhjMCAuMy0xIDMuMS0yLjUgNi4yYTQzLjUgNDMuNSAwIDAgMC0zLjYgOS4yYy0xLjQgMy42LTIuNCAyLjgtOS43LTcuNi0xMi42LTE4LTIxLjEtMzguNy0yNS4yLTYxLjUtLjMtMS44LS43LTQ0LjQtMS05NC44TDk2IDk0LjhsOTEuNy40YzUwLjMuMiA5My4yLjcgOTUuMiAxLjJ6Ii8+CiAgICA8cGF0aCBkPSJNNDg4LjggMjM1YTMzNiAzMzYgMCAwIDAtNzguNSAyMC42Yy0yMC40IDguNS01MSAyNS45LTYwLjYgMzQuMy0xIC45IDQ5IDUxLjYgNTAuNiA1MS42YTMzIDMzIDAgMCAwIDYtMy40IDIxNi42IDIxNi42IDAgMCAxIDcxLTMwLjFsNy4zLTEuNWEzMzYuNiAzMzYuNiAwIDAgMSAxNC45LTIuNmMuNC0uMi42LTE1LjguNi0zNC44di0zNC40SDQ5NmMtMi4zIDAtNS41LjEtNy4yLjN6TTI4OSAzNTMuMWEzMDEuMiAzMDEuMiAwIDAgMC01MCAxMzkuMmwtLjcgNi43aDcwLjJsLjYtNi4yYzIuOC0yNS4zIDE1LTYwLjUgMjktODMuNyAyLjctNC41IDUuMi04LjUgNS4zLTkgLjQtLjYtNDkuOS01MS4zLTUwLjgtNTEuMy0uMiAwLTEuOCAyLTMuNiA0LjN6bTIwMS44IDIzLjJjLTU0LjMgMTIuNi05Mi4xIDQ4LjEtMTA3LjMgMTAxLTIuNiA5LTMuMiAxMS43LTQgMTguNmwtLjQgMy4xaDYwLjVsNjAuNS0uMXYtNjEuOGMwLTU0LjItLjItNjEuOC0xLjUtNjItLjgtLjEtNC40LjQtNy44IDEuMnoiLz4KICA8L2c+Cjwvc3ZnPg==
   icon:
     repo: fontawesome/brands/github
-#   palette:
-#     primary: black
-#     accent: deep purple
+  #   palette:
+  #     primary: black
+  #     accent: deep purple
   font: false
   features:
     - content.action.edit
@@ -86,14 +86,14 @@ nav:
 
 extra:
   social:
-  - icon: material/chat
-    link: https://chat.hypha.app/
-    name: Hypha Chat
+    - icon: material/chat
+      link: https://chat.hypha.app/
+      name: Hypha Chat
 
-  - icon: material/forum
-    link: https://we.hypha.app/
-    name: Hypha Forum
+    - icon: material/forum
+      link: https://we.hypha.app/
+      name: Hypha Forum
 
-  - icon: material/github
-    link: https://github.com/HyphaApp/
-    name: GitHub Org
+    - icon: material/github
+      link: https://github.com/HyphaApp/
+      name: GitHub Org

@@ -5,15 +5,19 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('funds', '0028_update_on_delete_django2'),
+        ("funds", "0028_update_on_delete_django2"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='applicationsubmission',
-            name='next',
-            field=models.OneToOneField(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='previous', to='funds.ApplicationSubmission'),
+            model_name="applicationsubmission",
+            name="next",
+            field=models.OneToOneField(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="previous",
+                to="funds.ApplicationSubmission",
+            ),
         ),
     ]

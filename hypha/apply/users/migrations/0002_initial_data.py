@@ -14,35 +14,32 @@ def add_groups(apps, schema_editor):
     db_alias = schema_editor.connection.alias
     emit_post_migrate_signal(2, False, db_alias)
 
-    Group = apps.get_model('auth.Group')
-    Permission = apps.get_model('auth.Permission')
+    Group = apps.get_model("auth.Group")
+    Permission = apps.get_model("auth.Permission")
 
     for group_data in GROUPS:
-        group, created = Group.objects.get_or_create(name=group_data['name'])
-        for permission in group_data['permissions']:
+        group, created = Group.objects.get_or_create(name=group_data["name"])
+        for permission in group_data["permissions"]:
             try:
                 group.permissions.add(Permission.objects.get(codename=permission))
             except ObjectDoesNotExist:
-                print ("Could not find the '%s' permission" % permission)
+                print("Could not find the '%s' permission" % permission)
 
 
 def remove_groups(apps, schema_editor):
-    Group = apps.get_model('auth.Group')
+    Group = apps.get_model("auth.Group")
 
-    groups = [group_data['name'] for group_data in GROUPS]
+    groups = [group_data["name"] for group_data in GROUPS]
     Group.objects.filter(name__in=groups).delete()
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('users', '0001_initial'),
-        ('wagtailadmin', '0001_create_admin_access_permissions'),
-        ('wagtailimages', '0002_initial_data'),
-        ('wagtaildocs', '0002_initial_data'),
-        ('contenttypes', '__latest__'),
+        ("users", "0001_initial"),
+        ("wagtailadmin", "0001_create_admin_access_permissions"),
+        ("wagtailimages", "0002_initial_data"),
+        ("wagtaildocs", "0002_initial_data"),
+        ("contenttypes", "__latest__"),
     ]
 
-    operations = [
-        migrations.RunPython(add_groups, remove_groups)
-    ]
+    operations = [migrations.RunPython(add_groups, remove_groups)]

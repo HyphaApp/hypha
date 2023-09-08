@@ -4,7 +4,7 @@ from wagtail import hooks
 from hypha.public.forms.models import FormPage
 
 
-@hooks.register('filter_form_submissions_for_user')
+@hooks.register("filter_form_submissions_for_user")
 def construct_from_wagtail_forms(user, queryset):
     """only show wagtail forms (hiding all the ones created from the apply app)."""
 

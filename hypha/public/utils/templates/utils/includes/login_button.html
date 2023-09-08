@@ -2,8 +2,8 @@
 <a href="{{ APPLY_SITE.root_url }}{% url 'users_public:passwordless_login_signup' %}{% if redirect_url %}?next={{ redirect_url }}{% endif %}" class="button button--transparent button--contains-icons {{ class }}">
     <svg class="icon icon--person"><use xlink:href="#person-icon"></use></svg>
     {% if user.is_authenticated %}
-    My {{ ORG_SHORT_NAME }}
+        My {{ ORG_SHORT_NAME }}
     {% else %}
-    {% trans "Login" %}
+        {% trans "Login" %}
     {% endif %}
 </a>

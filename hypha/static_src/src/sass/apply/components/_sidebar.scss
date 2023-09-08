@@ -35,7 +35,8 @@
         }
     }
 
-    &__project { // stylelint-disable value-no-vendor-prefix
+    &__project {
+        // stylelint-disable value-no-vendor-prefix
         position: -webkit-sticky; /* for Safari */
         position: sticky;
         align-self: flex-start;
@@ -74,13 +75,13 @@
     }
 
     &__screening-option {
-        margin: .3em;
+        margin: 0.3em;
         border: 1px solid $color--black-20;
         border-radius: 16px;
         padding: 6px;
         padding-right: 12px;
         padding-left: 12px;
-        font-size: .8125rem;
+        font-size: 0.8125rem;
     }
 
     &__separator {
@@ -97,7 +98,7 @@
             width: calc(100% - 60px);
             height: 1px;
             background-color: $color--black-20;
-            content: '';
+            content: "";
         }
 
         &--medium {

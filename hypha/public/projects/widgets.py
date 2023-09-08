@@ -21,40 +21,40 @@ class LazyWidgets:
         self.widget = widget
 
     def __iter__(self):
-        for obj in self.model.objects.order_by('id'):
+        for obj in self.model.objects.order_by("id"):
             yield self.widget(
-                attrs={'id': obj.id, 'label_tag': obj.name},
-                choices=LazyChoices(obj.options, ['id', 'value']),
+                attrs={"id": obj.id, "label_tag": obj.name},
+                choices=LazyChoices(obj.options, ["id", "value"]),
             )
 
 
 class OptionsWidget(forms.CheckboxSelectMultiple):
-    template_name = 'projects/widgets/options_widget.html'
-    option_template_name = 'projects/widgets/options_option.html'
+    template_name = "projects/widgets/options_widget.html"
+    option_template_name = "projects/widgets/options_option.html"
 
     def __init__(self, *args, **kwargs):
-        choices = kwargs['choices']
+        choices = kwargs["choices"]
         super().__init__(*args, **kwargs)
         self.choices = choices
 
 
 class CategoriesWidget(forms.MultiWidget):
-    template_name = 'projects/widgets/categories_widget.html'
+    template_name = "projects/widgets/categories_widget.html"
 
     def __init__(self, *args, **kwargs):
-        kwargs['widgets'] = []
+        kwargs["widgets"] = []
         super().__init__(*args, **kwargs)
         self.widgets = LazyWidgets(OptionsWidget, Category)
 
     def decompress(self, value):
         data = json.loads(value)
-        return [
-            data.get(str(widget.attrs['id']), []) for widget in self.widgets
-        ]
+        return [data.get(str(widget.attrs["id"]), []) for widget in self.widgets]
 
     def value_from_datadict(self, data, files, name):
         data = {
-            widget.attrs['id']: widget.value_from_datadict(data, files, name + '_%s' % i)
+            widget.attrs["id"]: widget.value_from_datadict(
+                data, files, name + "_%s" % i
+            )
             for i, widget in enumerate(self.widgets)
         }
         return json.dumps(data)

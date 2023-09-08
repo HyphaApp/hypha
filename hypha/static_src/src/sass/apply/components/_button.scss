@@ -13,7 +13,7 @@
     &:disabled,
     &.is-disabled {
         pointer-events: none;
-        opacity: .5;
+        opacity: 0.5;
     }
 
     &-default,
@@ -33,14 +33,14 @@
     &--project-action {
         @include button($color--light-blue, $color--dark-blue);
         display: inline-block;
-        padding: .5rem 1.2rem;
+        padding: 0.5rem 1.2rem;
 
         &--white {
             @include button($color--white, $color--light-blue);
             display: inline-block;
             color: $color--light-blue;
             border: 1px solid $color--mid-grey;
-            padding: .5rem 1.2rem;
+            padding: 0.5rem 1.2rem;
 
             &:focus {
                 color: $color--light-blue;
@@ -56,7 +56,7 @@
             display: inline-block;
             color: $color--light-blue;
             border: 1px solid $color--mid-grey;
-            padding: .5rem 3.3rem;
+            padding: 0.5rem 3.3rem;
 
             &:focus {
                 color: $color--light-blue;
@@ -137,7 +137,8 @@
         padding: 15px 20px;
         font-weight: $weight--normal;
         color: $color--default;
-        background: url('./../../images/filters.svg') $color--white no-repeat 93% center;
+        background: url("./../../images/filters.svg") $color--white no-repeat
+            93% center;
         border: 1px solid $color--light-mid-grey;
         transition: none;
         width: 100%;
@@ -148,11 +149,11 @@
             border: 0;
             justify-content: flex-start;
             width: auto;
-            opacity: .7;
+            opacity: 0.7;
 
             &::before {
-                content: '';
-                background-image: url('./../../images/filters.svg');
+                content: "";
+                background-image: url("./../../images/filters.svg");
                 transform: rotate(90deg);
                 background-color: transparent;
                 background-position: left center;
@@ -171,7 +172,7 @@
 
     &--search {
         position: absolute;
-        top: .65em;
+        top: 0.65em;
         right: 10px;
 
         svg {
@@ -218,7 +219,7 @@
             top: 0;
             right: 15px;
             font-size: 30px;
-            content: '+';
+            content: "+";
             line-height: 1.2;
         }
 
@@ -228,7 +229,7 @@
 
             &::after {
                 top: -12px;
-                content: '_';
+                content: "_";
             }
         }
 
@@ -390,7 +391,7 @@
             position: relative;
 
             &::after {
-                content: '\2691';
+                content: "\2691";
                 color: $color--tomato;
                 position: absolute;
                 top: 4px;

@@ -1,10 +1,8 @@
-@use 'sass:math';
+@use "sass:math";
 
 // $TYPOGRAPHY
 // Base font
 html {
-    font-size: math.div($base-font-size, 16px) * 100%;
-    line-height: math.div($base-line-height, $base-font-size);
     color: $color--default;
 }
 
@@ -15,9 +13,8 @@ html {
 */
 @mixin heading-text {
     margin: 0 0 1rem;
-    font-family: $font--headings;
     font-style: inherit;
-    font-weight: $weight--bold;
+    font-weight: $weight--semibold;
 }
 
 @mixin body-text {
@@ -45,32 +42,39 @@ h6,
 h1,
 %h1,
 .alpha {
-    @include responsive-font-sizes(40px, map-get($font-sizes, alpha));
-    font-weight: $weight--black;
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+    font-weight: 400;
 }
 
 h2,
 %h2,
 .beta {
-    @include responsive-font-sizes(30px, map-get($font-sizes, beta));
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+    font-weight: 500;
 }
 
 h3,
 %h3,
 .gamma {
-    @include responsive-font-sizes(20px, map-get($font-sizes, gamma));
+    font-size: 1.5rem;
+    line-height: 2rem;
 }
 
 h4,
 %h4,
 .delta {
-    @include responsive-font-sizes(18px, map-get($font-sizes, delta));
+    font-size: 1.25rem;
+    line-height: 1.75rem;
 }
 
 h5,
 %h5,
 .epsilon {
-    @include responsive-font-sizes(15px, map-get($font-sizes, epsilon));
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+    font-weight: 600;
 }
 
 h6,
@@ -81,5 +85,6 @@ h6,
 
 small,
 .milli {
-    @include font-size(milli);
+    font-size: 0.875rem;
+    line-height: 1.25rem;
 }

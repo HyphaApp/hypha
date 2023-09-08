@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('application_projects', '0031_add_public_private_content'),
+        ("application_projects", "0031_add_public_private_content"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='report',
-            name='notified',
+            model_name="report",
+            name="notified",
             field=models.DateTimeField(null=True),
         ),
     ]

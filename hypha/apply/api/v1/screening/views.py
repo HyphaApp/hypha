@@ -20,7 +20,8 @@ from .serializers import (
 
 class ScreeningStatusViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = (
-        permissions.IsAuthenticated, IsApplyStaffUser,
+        permissions.IsAuthenticated,
+        IsApplyStaffUser,
     )
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = ScreeningStatusFilter
@@ -33,10 +34,12 @@ class SubmissionScreeningStatusViewSet(
     SubmissionNestedMixin,
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
-    viewsets.GenericViewSet
+    viewsets.GenericViewSet,
 ):
     permission_classes = (
-        permissions.IsAuthenticated, IsApplyStaffUser, HasScreenPermission
+        permissions.IsAuthenticated,
+        IsApplyStaffUser,
+        HasScreenPermission,
     )
     serializer_class = ScreeningStatusListSerializer
     pagination_class = None
@@ -50,29 +53,33 @@ class SubmissionScreeningStatusViewSet(
         ser.is_valid(raise_exception=True)
         submission = self.get_submission_object()
         screening_status = get_object_or_404(
-            ScreeningStatus, id=ser.validated_data['id']
+            ScreeningStatus, id=ser.validated_data["id"]
         )
         if not submission.screening_statuses.filter(default=True).exists():
-            raise ValidationError({'detail': "Can't set screening decision without default being set"})
+            raise ValidationError(
+                {"detail": "Can't set screening decision without default being set"}
+            )
         if (
-            submission.screening_statuses.exists() and
-            submission.screening_statuses.first().yes != screening_status.yes
+            submission.screening_statuses.exists()
+            and submission.screening_statuses.first().yes != screening_status.yes
         ):
-            raise ValidationError({'detail': "Can't set screening decision for both yes and no"})
-        submission.screening_statuses.add(
-            screening_status
-        )
+            raise ValidationError(
+                {"detail": "Can't set screening decision for both yes and no"}
+            )
+        submission.screening_statuses.add(screening_status)
         ser = self.get_serializer(submission.screening_statuses.all(), many=True)
         return Response(ser.data, status=status.HTTP_201_CREATED)
 
-    @action(detail=False, methods=['post'])
+    @action(detail=False, methods=["post"])
     def default(self, request, *args, **kwargs):
         ser = ScreeningStatusDefaultSerializer(data=request.data)
         ser.is_valid(raise_exception=True)
-        yes = ser.validated_data['yes']
+        yes = ser.validated_data["yes"]
         submission = self.get_submission_object()
         if submission.screening_statuses.filter(default=False).exists():
-            submission.screening_statuses.remove(*submission.screening_statuses.filter(default=False))
+            submission.screening_statuses.remove(
+                *submission.screening_statuses.filter(default=False)
+            )
         screening_status = ScreeningStatus.objects.get(default=True, yes=yes)
         if submission.has_default_screening_status_set:
             default_status = submission.screening_statuses.get()
@@ -84,9 +91,9 @@ class SubmissionScreeningStatusViewSet(
     def destroy(self, request, *args, **kwargs):
         screening_status = self.get_object()
         if screening_status.default:
-            raise ValidationError({
-                'detail': "Can't delete default screening decision."
-            })
+            raise ValidationError(
+                {"detail": "Can't delete default screening decision."}
+            )
         submission = self.get_submission_object()
         submission.screening_statuses.remove(screening_status)
         ser = self.get_serializer(submission.screening_statuses.all(), many=True)

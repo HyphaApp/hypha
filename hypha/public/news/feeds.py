@@ -26,7 +26,7 @@ class NewsFeed(Feed):
         return response
 
     def get_cache_key(self, *args, **kwargs):
-        tag = ''
+        tag = ""
         for key, value in kwargs.items():
             tag += f"-{key}-{value}"
         return f"{self.__class__.__module__}{tag}"
@@ -44,9 +44,12 @@ class NewsFeed(Feed):
         return self.site.root_url
 
     def items(self):
-        return NewsPage.objects.live().public().annotate(
-            date=Coalesce('publication_date', 'first_published_at')
-        ).order_by('-date')[:20]
+        return (
+            NewsPage.objects.live()
+            .public()
+            .annotate(date=Coalesce("publication_date", "first_published_at"))
+            .order_by("-date")[:20]
+        )
 
     def item_title(self, item):
         return item.title
@@ -75,6 +78,10 @@ class NewsTypeFeed(NewsFeed):
         return self.site.root_url
 
     def items(self, obj):
-        return NewsPage.objects.live().public().filter(news_types__news_type=obj).annotate(
-            date=Coalesce('publication_date', 'first_published_at')
-        ).order_by('-date')[:20]
+        return (
+            NewsPage.objects.live()
+            .public()
+            .filter(news_types__news_type=obj)
+            .annotate(date=Coalesce("publication_date", "first_published_at"))
+            .order_by("-date")[:20]
+        )

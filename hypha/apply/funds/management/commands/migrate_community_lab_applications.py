@@ -126,5 +126,4 @@ class Command(MigrateCommand):
             "id": "a1f03bca-9267-49cf-9880-444d6806065c",
             "type": "boolean",
         },
-
     }

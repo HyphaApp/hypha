@@ -8,19 +8,19 @@ from ..utils import get_field_kwargs, get_field_widget
 
 
 class ReviewOpinionReadSerializer(serializers.ModelSerializer):
-    author_id = serializers.ReadOnlyField(source='author.id')
-    opinion = serializers.ReadOnlyField(source='get_opinion_display')
+    author_id = serializers.ReadOnlyField(source="author.id")
+    opinion = serializers.ReadOnlyField(source="get_opinion_display")
 
     class Meta:
         model = ReviewOpinion
-        fields = ('author_id', 'opinion')
+        fields = ("author_id", "opinion")
 
 
 class ReviewOpinionWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReviewOpinion
-        fields = ('opinion', )
-        extra_kwargs = {'opinion': {'write_only': True}}
+        fields = ("opinion",)
+        extra_kwargs = {"opinion": {"write_only": True}}
 
 
 class SubmissionReviewSerializer(serializers.ModelSerializer):
@@ -28,21 +28,23 @@ class SubmissionReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Review
-        fields = ['id', 'score', 'is_draft', 'opinions', ]
-        extra_kwargs = {
-            'score': {'read_only': True},
-            'is_draft': {'required': False}
-        }
+        fields = [
+            "id",
+            "score",
+            "is_draft",
+            "opinions",
+        ]
+        extra_kwargs = {"score": {"read_only": True}, "is_draft": {"required": False}}
 
     def get_recommendation(self, obj):
         return {
-            'value': obj.recommendation,
-            'display': obj.get_recommendation_display(),
+            "value": obj.recommendation,
+            "display": obj.get_recommendation_display(),
         }
 
     def validate(self, data):
         validated_data = super().validate(data)
-        validated_data['form_data'] = dict(validated_data.items())
+        validated_data["form_data"] = dict(validated_data.items())
         return validated_data
 
     def update(self, instance, validated_data):
@@ -52,7 +54,7 @@ class SubmissionReviewSerializer(serializers.ModelSerializer):
         instance.recommendation = int(
             recommendation if recommendation is not None else NO
         )
-        instance.is_draft = self.validated_data.get('is_draft', False)
+        instance.is_draft = self.validated_data.get("is_draft", False)
 
         # Old review forms do not have the requred visability field.
         # This will set visibility to PRIVATE by default.
@@ -71,7 +73,7 @@ class SubmissionReviewSerializer(serializers.ModelSerializer):
     def calculate_score(self, instance, data):
         scores = []
         for field in instance.score_fields:
-            score = data.get(field.id, ['', NA])
+            score = data.get(field.id, ["", NA])
             # Include NA answers as 0.
             score = score[1] if score is not None else NA
             if score == NA:
@@ -80,9 +82,9 @@ class SubmissionReviewSerializer(serializers.ModelSerializer):
         # Check if there are score_fields_without_text and also
         # append scores from them.
         for field in instance.score_fields_without_text:
-            score = data.get(field.id, '')
+            score = data.get(field.id, "")
             # Include '' answers as 0.
-            if score is None or score == '':
+            if score is None or score == "":
                 score = 0
             scores.append(int(score))
 
@@ -103,7 +105,7 @@ class FieldSerializer(serializers.Serializer):
 
     def get_type(self, obj):
         if isinstance(obj[1], BlockFieldWrapper):
-            return 'LoadHTML'
+            return "LoadHTML"
         return obj[1].__class__.__name__
 
     def get_kwargs(self, obj):

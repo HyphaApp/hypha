@@ -12,7 +12,7 @@ $color--dark-grey: #404041;
 // Brand
 $color--lightest-blue: #24aae1;
 $color--light-blue: #1d79a8;
-$color--light-blue-90: transparentize($color--light-blue, .9);
+$color--light-blue-90: transparentize($color--light-blue, 0.9);
 $color--lighter-blue: #7ab8d4;
 $color--dark-blue: #0c72a0;
 $color--darkest-blue: #3d6bdb;
@@ -39,17 +39,17 @@ $color--linkedin: #137ab8;
 $color--facebook: #396ab5;
 
 // Transparent
-$color--black-60: rgba(0, 0, 0, .6);
-$color--black-50: rgba(0, 0, 0, .5);
-$color--black-40: rgba(0, 0, 0, .4);
-$color--black-25: rgba(0, 0, 0, .25);
-$color--black-20: rgba(0, 0, 0, .2);
-$color--black-10: rgba(0, 0, 0, .1);
-$color--white-50: rgba(255, 255, 255, .5);
-$color--white-40: rgba(255, 255, 255, .4);
-$color--white-25: rgba(255, 255, 255, .25);
-$color--white-20: rgba(255, 255, 255, .2);
-$color--white-10: rgba(255, 255, 255, .1);
+$color--black-60: rgba(0, 0, 0, 0.6);
+$color--black-50: rgba(0, 0, 0, 0.5);
+$color--black-40: rgba(0, 0, 0, 0.4);
+$color--black-25: rgba(0, 0, 0, 0.25);
+$color--black-20: rgba(0, 0, 0, 0.2);
+$color--black-10: rgba(0, 0, 0, 0.1);
+$color--white-50: rgba(255, 255, 255, 0.5);
+$color--white-40: rgba(255, 255, 255, 0.4);
+$color--white-25: rgba(255, 255, 255, 0.25);
+$color--white-20: rgba(255, 255, 255, 0.2);
+$color--white-10: rgba(255, 255, 255, 0.1);
 
 // Assignment
 $color--default: $color--dark-grey;
@@ -59,8 +59,8 @@ $color--correct: $color--mint;
 $color--button-disabled: $color--lighter-blue;
 
 // Fonts
-$font--primary: 'noto-sans';
-$font--headings: 'montserrat';
+$font--primary: "noto-sans";
+$font--headings: "montserrat";
 
 // Font weights
 $weight--black: 800;
@@ -75,13 +75,13 @@ $base-font-size-large: 19px;
 $base-line-height: 24px;
 $base-line-height-large: 29px;
 $font-sizes: (
-    alpha:   72px,
-    beta:    42px,
-    gamma:   36px,
-    delta:   24px,
+    alpha: 72px,
+    beta: 42px,
+    gamma: 36px,
+    delta: 24px,
     epsilon: 17px,
-    zeta:    15px,
-    milli:   13px
+    zeta: 15px,
+    milli: 13px,
 );
 
 // Wrappers
@@ -94,24 +94,24 @@ $max-text-line-length: 50em;
 
 // Breakpoints
 $breakpoints: (
-    'mob-portrait'      '(min-width: 320px)',
-    'mob-landscape'     '(min-width: 480px)',
-    'small-tablet'      '(min-width: 600px)',
-    'tablet-portrait'   '(min-width: 768px)',
-    'tablet-landscape'  '(min-width: 1024px)',
-    'laptop-short'      '(min-width: 1024px) and (max-height: 1280px)',
-    'desktop'           '(min-width: 1320px)',
-    'desktop-medium'    '(min-width: 1920px)',
-    'desktop-wide'      '(min-width: 2556px)'
+    "mob-portrait" "(min-width: 320px)",
+    "mob-landscape" "(min-width: 480px)",
+    "small-tablet" "(min-width: 600px)",
+    "tablet-portrait" "(min-width: 768px)",
+    "tablet-landscape" "(min-width: 1024px)",
+    "laptop-short" "(min-width: 1024px) and (max-height: 1280px)",
+    "desktop" "(min-width: 1320px)",
+    "desktop-medium" "(min-width: 1920px)",
+    "desktop-wide" "(min-width: 2556px)"
 );
 
 // Transition
-$transition: .25s ease-out;
-$quick-transition: .15s ease;
-$medium-transition: .5s ease;
+$transition: 0.25s ease-out;
+$quick-transition: 0.15s ease;
+$medium-transition: 0.5s ease;
 
 // Filters
-$filter-dropdown: '.select2 .select2-selection.select2-selection--single';
+$filter-dropdown: ".select2 .select2-selection.select2-selection--single";
 
 // Delays
 $base-delay: 30ms;
@@ -120,16 +120,16 @@ $base-delay: 30ms;
 $mobile-gutter: 20px;
 
 // Filters
-$filter-dropdown: '.select2 .select2-selection.select2-selection--single';
+$filter-dropdown: ".select2 .select2-selection.select2-selection--single";
 
 // listing header/spacer height
 $listing-header-height: 75px;
 
 // Table breakpoint
-$table-breakpoint: 'tablet-landscape';
+$table-breakpoint: "tablet-landscape";
 
 // Dropdown height
 $dropdown-height: 45px;
 
 // Table breakpoint
-$table-breakpoint: 'tablet-landscape';
+$table-breakpoint: "tablet-landscape";

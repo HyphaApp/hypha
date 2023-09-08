@@ -7,15 +7,19 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('funds', '0012_create_lab_models'),
+        ("funds", "0012_create_lab_models"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='applicationsubmission',
-            name='round',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='submissions', to='wagtailcore.Page'),
+            model_name="applicationsubmission",
+            name="round",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="submissions",
+                to="wagtailcore.Page",
+            ),
         ),
     ]

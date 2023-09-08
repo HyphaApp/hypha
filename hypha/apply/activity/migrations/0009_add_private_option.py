@@ -4,15 +4,23 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('activity', '0008_message_external_id'),
+        ("activity", "0008_message_external_id"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='activity',
-            name='visibility',
-            field=models.CharField(choices=[('private', 'Private'), ('reviewers', 'Reviewers and Staff'), ('internal', 'Internal'), ('public', 'Public')], default='public', max_length=10),
+            model_name="activity",
+            name="visibility",
+            field=models.CharField(
+                choices=[
+                    ("private", "Private"),
+                    ("reviewers", "Reviewers and Staff"),
+                    ("internal", "Internal"),
+                    ("public", "Public"),
+                ],
+                default="public",
+                max_length=10,
+            ),
         ),
     ]

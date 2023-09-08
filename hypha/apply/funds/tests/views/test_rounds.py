@@ -4,8 +4,8 @@ from hypha.apply.utils.testing.tests import BaseViewTestCase
 
 
 class BaseAllRoundsViewTestCase(BaseViewTestCase):
-    url_name = 'funds:rounds:{}'
-    base_view_name = 'list'
+    url_name = "funds:rounds:{}"
+    base_view_name = "list"
 
 
 class TestStaffRoundPage(BaseAllRoundsViewTestCase):
@@ -33,14 +33,14 @@ class TestApplicantRoundPage(BaseAllRoundsViewTestCase):
 
 
 class ByRoundTestCase(BaseViewTestCase):
-    url_name = 'apply:rounds:{}'
-    base_view_name = 'detail'
+    url_name = "apply:rounds:{}"
+    base_view_name = "detail"
 
     def get_kwargs(self, instance):
         try:
-            return {'pk': instance.id}
+            return {"pk": instance.id}
         except AttributeError:
-            return {'pk': instance['id']}
+            return {"pk": instance["id"]}
 
 
 class TestStaffSubmissionByRound(ByRoundTestCase):
@@ -63,7 +63,7 @@ class TestStaffSubmissionByRound(ByRoundTestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_cant_access_non_existing_page(self):
-        response = self.get_page({'id': 555})
+        response = self.get_page({"id": 555})
         self.assertEqual(response.status_code, 404)
 
 
@@ -87,5 +87,5 @@ class TestApplicantSubmissionByRound(ByRoundTestCase):
         self.assertEqual(response.status_code, 403)
 
     def test_cant_access_non_existing_page(self):
-        response = self.get_page({'id': 555})
+        response = self.get_page({"id": 555})
         self.assertEqual(response.status_code, 403)

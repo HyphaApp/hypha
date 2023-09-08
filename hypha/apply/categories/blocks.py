@@ -20,21 +20,21 @@ def get_categories_as_choices():
 
 class CategoryQuestionBlock(OptionalFormFieldBlock):
     class Meta:
-        template = 'stream_forms/render_list_field.html'
+        template = "stream_forms/render_list_field.html"
 
     category = ModelChooserBlock(required=True, choices=get_categories_as_choices)
-    multi = BooleanBlock(label=_('Multi select'), required=False)
+    multi = BooleanBlock(label=_("Multi select"), required=False)
     # Overwrite field label and help text so we can defer to the category
     # as required
     field_label = CharBlock(
-        label=_('Label'),
+        label=_("Label"),
         required=False,
-        help_text=_('Leave blank to use the default Category label'),
+        help_text=_("Leave blank to use the default Category label"),
     )
     help_text = TextBlock(
-        label=_('Help text'),
+        label=_("Help text"),
         required=False,
-        help_text=_('Leave blank to use the default Category help text'),
+        help_text=_("Leave blank to use the default Category help text"),
     )
 
     @cached_property
@@ -45,10 +45,10 @@ class CategoryQuestionBlock(OptionalFormFieldBlock):
         return self.model_class.objects.get(id=id)
 
     def get_field_class(self, struct_value):
-        return forms.MultipleChoiceField if struct_value['multi'] else forms.ChoiceField
+        return forms.MultipleChoiceField if struct_value["multi"] else forms.ChoiceField
 
     def use_defaults_from_category(self, kwargs, category):
-        category_fields = {'label': 'name', 'help_text': 'help_text'}
+        category_fields = {"label": "name", "help_text": "help_text"}
 
         for field in category_fields.keys():
             if not kwargs.get(field):
@@ -58,15 +58,15 @@ class CategoryQuestionBlock(OptionalFormFieldBlock):
 
     def get_field_kwargs(self, struct_value):
         kwargs = super().get_field_kwargs(struct_value)
-        category = self.get_instance(id=struct_value['category'])
+        category = self.get_instance(id=struct_value["category"])
         kwargs = self.use_defaults_from_category(kwargs, category)
-        choices = category.options.values_list('id', 'value')
-        kwargs.update({'choices': choices})
+        choices = category.options.values_list("id", "value")
+        kwargs.update({"choices": choices})
         return kwargs
 
     def get_widget(self, struct_value):
-        if struct_value['multi']:
-            category = self.get_instance(id=struct_value['category'])
+        if struct_value["multi"]:
+            category = self.get_instance(id=struct_value["category"])
             category_size = category.options.count()
             # Pick widget according to number of options to maintain good usability.
             if category_size < 32:
@@ -81,17 +81,17 @@ class CategoryQuestionBlock(OptionalFormFieldBlock):
             return data
         if isinstance(data, str):
             data = [data]
-        category = self.get_instance(id=value['category'])
-        data = category.options.filter(id__in=data).values_list('value', flat=True)
+        category = self.get_instance(id=value["category"])
+        data = category.options.filter(id__in=data).values_list("value", flat=True)
         return data
 
     def render(self, value, context):
         # Overwriting field_label and help_text with default for empty values
-        category_fields = {'field_label': 'name', 'help_text': 'help_text'}
+        category_fields = {"field_label": "name", "help_text": "help_text"}
 
         for field in category_fields.keys():
             if not value.get(field):
-                category = value['category']
+                category = value["category"]
                 if isinstance(category, int):
                     category = self.get_instance(id=category)
                 value[field] = getattr(category, category_fields[field])
@@ -101,4 +101,4 @@ class CategoryQuestionBlock(OptionalFormFieldBlock):
         return None
 
     def no_response(self):
-        return '-'
+        return "-"

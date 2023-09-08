@@ -19,12 +19,12 @@ class AddChildMetaTermViewClass(CreateView):
     def get_page_title(self):
         """Generate a title that explains you are adding a child."""
         title = super().get_page_title()
-        return title + ' %s %s for %s' % (
+        return title + " %s %s for %s" % (
             self.model.node_child_verbose_name,
             self.opts.verbose_name,
-            self.parent_instance
+            self.parent_instance,
         )
 
     def get_initial(self):
         """Set the selected parent field to the parent_pk."""
-        return {'parent': self.parent_pk}
+        return {"parent": self.parent_pk}

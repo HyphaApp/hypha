@@ -6,15 +6,15 @@ from hypha.apply.projects.models import Deliverable, InvoiceDeliverable
 
 class InvoiceDeliverableListSerializer(serializers.ModelSerializer):
     invoice_id = serializers.SerializerMethodField()
-    project_id = serializers.IntegerField(source='deliverable.project.id')
+    project_id = serializers.IntegerField(source="deliverable.project.id")
 
     class Meta:
         model = InvoiceDeliverable
-        fields = ('id', 'deliverable', 'quantity', 'invoice_id', 'project_id')
+        fields = ("id", "deliverable", "quantity", "invoice_id", "project_id")
         depth = 1
 
     def get_invoice_id(self, obj):
-        return self.context['invoice'].id
+        return self.context["invoice"].id
 
 
 class DeliverableSerializer(serializers.Serializer):
@@ -25,7 +25,5 @@ class DeliverableSerializer(serializers.Serializer):
         try:
             Deliverable.objects.get(id=value)
         except Deliverable.DoesNotExist as e:
-            raise exceptions.ValidationError({
-                'detail': _('Not found')
-            }) from e
+            raise exceptions.ValidationError({"detail": _("Not found")}) from e
         return value

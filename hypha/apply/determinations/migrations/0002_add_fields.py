@@ -6,49 +6,56 @@ import django.utils.timezone
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('determinations', '0001_initial'),
+        ("determinations", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='determination',
-            name='created_at',
-            field=models.DateTimeField(auto_now_add=True, default=django.utils.timezone.now, verbose_name='Creation time'),
+            model_name="determination",
+            name="created_at",
+            field=models.DateTimeField(
+                auto_now_add=True,
+                default=django.utils.timezone.now,
+                verbose_name="Creation time",
+            ),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='determination',
-            name='data',
+            model_name="determination",
+            name="data",
             field=django.contrib.postgres.fields.jsonb.JSONField(blank=True),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='determination',
-            name='message',
-            field=models.TextField(blank=True, verbose_name='Determination message'),
+            model_name="determination",
+            name="message",
+            field=models.TextField(blank=True, verbose_name="Determination message"),
         ),
         migrations.AddField(
-            model_name='determination',
-            name='outcome',
-            field=models.IntegerField(choices=[(0, 'Rejected'), (1, 'Needs more info'), (2, 'Accepted')], default=1, verbose_name='Determination'),
+            model_name="determination",
+            name="outcome",
+            field=models.IntegerField(
+                choices=[(0, "Rejected"), (1, "Needs more info"), (2, "Accepted")],
+                default=1,
+                verbose_name="Determination",
+            ),
         ),
         migrations.AddField(
-            model_name='determination',
-            name='updated_at',
-            field=models.DateTimeField(auto_now=True, verbose_name='Update time'),
+            model_name="determination",
+            name="updated_at",
+            field=models.DateTimeField(auto_now=True, verbose_name="Update time"),
         ),
         migrations.AlterUniqueTogether(
-            name='determination',
+            name="determination",
             unique_together=set(),
         ),
         migrations.RemoveField(
-            model_name='determination',
-            name='determination',
+            model_name="determination",
+            name="determination",
         ),
         migrations.RemoveField(
-            model_name='determination',
-            name='determination_data',
+            model_name="determination",
+            name="determination_data",
         ),
     ]

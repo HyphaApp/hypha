@@ -31,25 +31,27 @@ class ScoreFieldBlock(OptionalFormFieldBlock):
     field_class = ScoredAnswerField
 
     class Meta:
-        label = _('Score')
-        icon = 'order'
-        template = 'review/render_scored_answer_field.html'
+        label = _("Score")
+        icon = "order"
+        template = "review/render_scored_answer_field.html"
 
     def get_field_kwargs(self, struct_value):
         kwargs = super().get_field_kwargs(struct_value)
-        kwargs['initial'] = ['', NA]
+        kwargs["initial"] = ["", NA]
         return kwargs
 
     def render(self, value, context=None):
         try:
-            comment, score = context['data']
+            comment, score = context["data"]
         except ValueError:
             # TODO: Remove json load as data moved away from JSON
-            comment, score = json.loads(context['data'])
-        context.update(**{
-            'comment': comment,
-            'score': RATE_CHOICES_DICT.get(int(score), RATE_CHOICE_NA)
-        })
+            comment, score = json.loads(context["data"])
+        context.update(
+            **{
+                "comment": comment,
+                "score": RATE_CHOICES_DICT.get(int(score), RATE_CHOICE_NA),
+            }
+        )
 
         return super().render(value, context)
 
@@ -69,21 +71,22 @@ class ScoreFieldWithoutTextBlock(OptionalFormFieldBlock):
     as default to the forms and also when this field is
     required it automatically handles validation on empty string.
     """
-    name = 'score without text'
+
+    name = "score without text"
     field_class = forms.ChoiceField
 
     class Meta:
-        icon = 'order'
+        icon = "order"
 
     def get_field_kwargs(self, struct_value):
         kwargs = super().get_field_kwargs(struct_value)
-        kwargs['choices'] = self.get_choices(RATE_CHOICES)
+        kwargs["choices"] = self.get_choices(RATE_CHOICES)
         return kwargs
 
     def render(self, value, context=None):
-        data = int(context['data'])
+        data = int(context["data"])
         choices = dict(self.get_choices(RATE_CHOICES))
-        context['data'] = choices[data]
+        context["data"] = choices[data]
 
         return super().render(value, context)
 
@@ -93,7 +96,7 @@ class ScoreFieldWithoutTextBlock(OptionalFormFieldBlock):
         """
         rate_choices = list(choices)
         rate_choices.pop(-1)
-        rate_choices.append(('', 'n/a - choose not to answer'))
+        rate_choices.append(("", "n/a - choose not to answer"))
         return tuple(rate_choices)
 
 
@@ -102,67 +105,72 @@ class ReviewMustIncludeFieldBlock(MustIncludeFieldBlock):
 
 
 class RecommendationBlock(ReviewMustIncludeFieldBlock):
-    name = 'recommendation'
-    description = 'Overall recommendation'
+    name = "recommendation"
+    description = "Overall recommendation"
     field_class = forms.ChoiceField
 
     class Meta:
-        icon = 'pick'
+        icon = "pick"
 
     def get_field_kwargs(self, struct_value):
         kwargs = super().get_field_kwargs(struct_value)
-        kwargs['choices'] = RECOMMENDATION_CHOICES
+        kwargs["choices"] = RECOMMENDATION_CHOICES
         return kwargs
 
     def render(self, value, context=None):
-        data = int(context['data'])
+        data = int(context["data"])
         choices = dict(RECOMMENDATION_CHOICES)
-        context['data'] = choices[data]
+        context["data"] = choices[data]
 
         return super().render(value, context)
 
 
 class RecommendationCommentsBlock(ReviewMustIncludeFieldBlock):
-    name = 'comments'
-    description = 'Recommendation comments'
+    name = "comments"
+    description = "Recommendation comments"
     widget = RICH_TEXT_WIDGET_SHORT
 
     class Meta:
-        icon = 'openquote'
-        template = 'stream_forms/render_unsafe_field.html'
+        icon = "openquote"
+        template = "stream_forms/render_unsafe_field.html"
 
     def get_field_kwargs(self, struct_value):
         kwargs = super().get_field_kwargs(struct_value)
-        kwargs['required'] = False
+        kwargs["required"] = False
         return kwargs
 
 
 class VisibilityBlock(ReviewMustIncludeFieldBlock):
-    name = 'visibility'
-    description = 'Visibility'
+    name = "visibility"
+    description = "Visibility"
     field_class = forms.ChoiceField
     widget = forms.RadioSelect()
 
     class Meta:
-        icon = 'radio-empty'
+        icon = "radio-empty"
 
     def get_field_kwargs(self, struct_value):
         kwargs = super(VisibilityBlock, self).get_field_kwargs(struct_value)
-        kwargs['choices'] = VISIBILITY.items()
-        kwargs['initial'] = PRIVATE
-        kwargs['help_text'] = mark_safe('<br>'.join(
-            [VISIBILITY[choice] + ': ' + VISIBILILTY_HELP_TEXT[choice] for choice in VISIBILITY]
-        ))
+        kwargs["choices"] = VISIBILITY.items()
+        kwargs["initial"] = PRIVATE
+        kwargs["help_text"] = mark_safe(
+            "<br>".join(
+                [
+                    VISIBILITY[choice] + ": " + VISIBILILTY_HELP_TEXT[choice]
+                    for choice in VISIBILITY
+                ]
+            )
+        )
         return kwargs
 
 
 class ReviewCustomFormFieldsBlock(CustomFormFieldsBlock):
-    char = CharFieldBlock(group=_('Fields'))
-    text = TextFieldBlock(group=_('Fields'))
-    text_markup = RichTextBlock(group=_('Fields'), label=_('Paragraph'))
-    score = ScoreFieldBlock(group=_('Fields'))
-    score_without_text = ScoreFieldWithoutTextBlock(group=_('Fields'))
-    checkbox = CheckboxFieldBlock(group=_('Fields'))
-    dropdown = DropdownFieldBlock(group=_('Fields'))
+    char = CharFieldBlock(group=_("Fields"))
+    text = TextFieldBlock(group=_("Fields"))
+    text_markup = RichTextBlock(group=_("Fields"), label=_("Paragraph"))
+    score = ScoreFieldBlock(group=_("Fields"))
+    score_without_text = ScoreFieldWithoutTextBlock(group=_("Fields"))
+    checkbox = CheckboxFieldBlock(group=_("Fields"))
+    dropdown = DropdownFieldBlock(group=_("Fields"))
 
     required_blocks = ReviewMustIncludeFieldBlock.__subclasses__()

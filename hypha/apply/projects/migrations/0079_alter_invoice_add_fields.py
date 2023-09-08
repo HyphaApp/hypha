@@ -6,20 +6,27 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('application_projects', '0078_update_project_statuses'),
+        ("application_projects", "0078_update_project_statuses"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='invoice',
-            name='invoice_amount',
-            field=models.DecimalField(decimal_places=2, max_digits=10, null=True, validators=[django.core.validators.MinValueValidator(Decimal('0.01'))], verbose_name='Invoice amount'),
+            model_name="invoice",
+            name="invoice_amount",
+            field=models.DecimalField(
+                decimal_places=2,
+                max_digits=10,
+                null=True,
+                validators=[django.core.validators.MinValueValidator(Decimal("0.01"))],
+                verbose_name="Invoice amount",
+            ),
         ),
         migrations.AddField(
-            model_name='invoice',
-            name='invoice_number',
-            field=models.CharField(max_length=50, null=True, verbose_name='Invoice number'),
+            model_name="invoice",
+            name="invoice_number",
+            field=models.CharField(
+                max_length=50, null=True, verbose_name="Invoice number"
+            ),
         ),
     ]

@@ -7,23 +7,23 @@ from .models import Activity
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Activity
-        fields = ('message', 'visibility')
+        fields = ("message", "visibility")
         labels = {
-            'visibility': 'Visible to',
-            'message': 'Message',
+            "visibility": "Visible to",
+            "message": "Message",
         }
         help_texts = {
-            'visibility': 'Select a relevant user role. Staff can view every comment.'
+            "visibility": "Select a relevant user role. Staff can view every comment."
         }
         widgets = {
-            'visibility': forms.RadioSelect(),
-            'message': PagedownWidget(),
+            "visibility": forms.RadioSelect(),
+            "message": PagedownWidget(),
         }
 
     def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.visibility_choices = self._meta.model.visibility_choices_for(user)
-        visibility = self.fields['visibility']
+        visibility = self.fields["visibility"]
         # Set default visibility to "Applicant" for staff and staff can view everything.
         visibility.initial = self.visibility_choices[0]
         if len(self.visibility_choices) > 1:

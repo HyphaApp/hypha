@@ -26,29 +26,34 @@ class AssignedReviewersQuerySet(models.QuerySet):
             models.When(type__name=review_type, then=models.Value(i))
             for i, review_type in enumerate(review_order)
         ]
-        return self.exclude(
-            # Remove people from the list who are opinionated but
-            # didn't submit a review, they appear elsewhere
-            Q(opinions__isnull=False) &
-            Q(Q(review__isnull=True) | Q(review__is_draft=True))
-        ).annotate(
-            type_order=models.Case(
-                *ordering,
-                output_field=models.IntegerField(),
-            ),
-            has_review=models.Case(
-                models.When(review__isnull=True, then=models.Value(1)),
-                models.When(review__is_draft=True, then=models.Value(1)),
-                default=models.Value(0),
-                output_field=models.IntegerField(),
+        return (
+            self.exclude(
+                # Remove people from the list who are opinionated but
+                # didn't submit a review, they appear elsewhere
+                Q(opinions__isnull=False)
+                & Q(Q(review__isnull=True) | Q(review__is_draft=True))
             )
-        ).order_by(
-            'type_order',
-            'has_review',
-            F('role__order').asc(nulls_last=True),
-        ).select_related(
-            'reviewer',
-            'role',
+            .annotate(
+                type_order=models.Case(
+                    *ordering,
+                    output_field=models.IntegerField(),
+                ),
+                has_review=models.Case(
+                    models.When(review__isnull=True, then=models.Value(1)),
+                    models.When(review__is_draft=True, then=models.Value(1)),
+                    default=models.Value(0),
+                    output_field=models.IntegerField(),
+                ),
+            )
+            .order_by(
+                "type_order",
+                "has_review",
+                F("role__order").asc(nulls_last=True),
+            )
+            .select_related(
+                "reviewer",
+                "role",
+            )
         )
 
     def with_roles(self):
@@ -59,8 +64,8 @@ class AssignedReviewersQuerySet(models.QuerySet):
 
     def reviewed(self):
         return self.filter(
-            Q(opinions__opinion=AGREE) |
-            Q(Q(review__isnull=False) & Q(review__is_draft=False))
+            Q(opinions__opinion=AGREE)
+            | Q(Q(review__isnull=False) & Q(review__is_draft=False))
         ).distinct()
 
     def draft_reviewed(self):
@@ -85,7 +90,9 @@ class AssignedReviewersQuerySet(models.QuerySet):
         return self.filter(type__name=STAFF_GROUP_NAME)
 
     def get_or_create_for_user(self, submission, reviewer):
-        groups = set(reviewer.groups.values_list('name', flat=True)) & set(REVIEW_GROUPS)
+        groups = set(reviewer.groups.values_list("name", flat=True)) & set(
+            REVIEW_GROUPS
+        )
         if len(groups) > 1:
             if COMMUNITY_REVIEWER_GROUP_NAME in groups:
                 groups = {COMMUNITY_REVIEWER_GROUP_NAME}
@@ -104,7 +111,7 @@ class AssignedReviewersQuerySet(models.QuerySet):
         return self.get_or_create(
             submission=submission,
             reviewer=reviewer,
-            defaults={'type': group},
+            defaults={"type": group},
         )
 
     def get_or_create_staff(self, submission, reviewer):
@@ -123,14 +130,17 @@ class AssignedReviewersQuerySet(models.QuerySet):
                     role=None,
                     reviewer=reviewer,
                     type=group,
-                ) for reviewer in reviewers
+                )
+                for reviewer in reviewers
             ],
-            ignore_conflicts=True
+            ignore_conflicts=True,
         )
 
     def update_role(self, role, reviewer, *submissions):
         # Remove role who didn't review
-        self.filter(submission__in=submissions, role=role).never_tried_to_review().delete()
+        self.filter(
+            submission__in=submissions, role=role
+        ).never_tried_to_review().delete()
         # Anyone else we remove their role
         self.filter(submission__in=submissions, role=role).update(role=None)
         # Create/update the new role reviewers
@@ -139,12 +149,11 @@ class AssignedReviewersQuerySet(models.QuerySet):
             self.update_or_create(
                 submission=submission,
                 reviewer=reviewer,
-                defaults={'role': role, 'type': group},
+                defaults={"role": role, "type": group},
             )
 
 
 class AssignedReviewers(models.Model):
-
     wagtail_reference_index_ignore = True
 
     reviewer = models.ForeignKey(
@@ -153,17 +162,15 @@ class AssignedReviewers(models.Model):
         limit_choices_to=LIMIT_TO_REVIEWER_GROUPS,
     )
     type = models.ForeignKey(
-        'auth.Group',
+        "auth.Group",
         on_delete=models.PROTECT,
     )
     submission = models.ForeignKey(
-        'funds.ApplicationSubmission',
-        related_name='assigned',
-        on_delete=models.CASCADE
+        "funds.ApplicationSubmission", related_name="assigned", on_delete=models.CASCADE
     )
     role = models.ForeignKey(
-        'funds.ReviewerRole',
-        related_name='+',
+        "funds.ReviewerRole",
+        related_name="+",
         on_delete=models.SET_NULL,
         null=True,
     )
@@ -171,13 +178,13 @@ class AssignedReviewers(models.Model):
     objects = AssignedReviewersQuerySet.as_manager()
 
     class Meta:
-        unique_together = (('submission', 'role'), ('submission', 'reviewer'))
+        unique_together = (("submission", "role"), ("submission", "reviewer"))
 
     def __hash__(self):
         return hash(self.pk)
 
     def __str__(self):
-        return f'{self.reviewer}'
+        return f"{self.reviewer}"
 
     def __eq__(self, other):
         if not isinstance(other, models.Model):
@@ -187,7 +194,9 @@ class AssignedReviewers(models.Model):
         my_pk = self.pk
         if my_pk is None:
             return self is other
-        return all([
-            self.reviewer_id == other.reviewer_id,
-            self.role_id == other.role_id,
-        ])
+        return all(
+            [
+                self.reviewer_id == other.reviewer_id,
+                self.role_id == other.role_id,
+            ]
+        )

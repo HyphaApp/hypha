@@ -35,93 +35,117 @@ logger = logging.getLogger(__name__)
 
 
 class EmailAdapter(AdapterBase):
-    adapter_type = 'Email'
+    adapter_type = "Email"
     messages = {
-        MESSAGES.NEW_SUBMISSION: 'messages/email/submission_confirmation.html',
-        MESSAGES.DRAFT_SUBMISSION: 'messages/email/submission_confirmation.html',
-        MESSAGES.COMMENT: 'notify_comment',
-        MESSAGES.EDIT_SUBMISSION: 'messages/email/submission_edit.html',
-        MESSAGES.TRANSITION: 'handle_transition',
-        MESSAGES.BATCH_TRANSITION: 'handle_batch_transition',
-        MESSAGES.DETERMINATION_OUTCOME: 'handle_determination',
-        MESSAGES.BATCH_DETERMINATION_OUTCOME: 'handle_batch_determination',
-        MESSAGES.INVITED_TO_PROPOSAL: 'messages/email/invited_to_proposal.html',
-        MESSAGES.BATCH_READY_FOR_REVIEW: 'handle_batch_ready_for_review',
-        MESSAGES.READY_FOR_REVIEW: 'handle_ready_for_review',
-        MESSAGES.REVIEWERS_UPDATED: 'handle_ready_for_review',
-        MESSAGES.BATCH_REVIEWERS_UPDATED: 'handle_batch_ready_for_review',
-        MESSAGES.PARTNERS_UPDATED: 'partners_updated_applicant',
-        MESSAGES.PARTNERS_UPDATED_PARTNER: 'partners_updated_partner',
-        MESSAGES.UPLOAD_CONTRACT: 'messages/email/contract_uploaded.html',
-        MESSAGES.SUBMIT_CONTRACT_DOCUMENTS: 'messages/email/submit_contract_documents.html',
-        MESSAGES.CREATED_PROJECT: 'handle_project_created',
-        MESSAGES.UPDATED_VENDOR: 'handle_vendor_updated',
-        MESSAGES.SENT_TO_COMPLIANCE: 'messages/email/sent_to_compliance.html',
-        MESSAGES.SEND_FOR_APPROVAL: 'messages/email/paf_for_approval.html',
-        MESSAGES.REQUEST_PROJECT_CHANGE: 'messages/email/project_request_change.html',
-        MESSAGES.ASSIGN_PAF_APPROVER: 'messages/email/assign_paf_approvers.html',
-        MESSAGES.APPROVE_PAF: 'messages/email/paf_for_approval.html',
-        MESSAGES.UPDATE_INVOICE: 'handle_invoice_updated',
-        MESSAGES.UPDATE_INVOICE_STATUS: 'handle_invoice_status_updated',
-        MESSAGES.APPROVE_INVOICE: 'messages/email/invoice_approved.html',
-        MESSAGES.SUBMIT_REPORT: 'messages/email/report_submitted.html',
-        MESSAGES.SKIPPED_REPORT: 'messages/email/report_skipped.html',
-        MESSAGES.REPORT_FREQUENCY_CHANGED: 'messages/email/report_frequency.html',
-        MESSAGES.REPORT_NOTIFY: 'messages/email/report_notify.html',
-        MESSAGES.REVIEW_REMINDER: 'messages/email/ready_to_review.html',
-        MESSAGES.PROJECT_TRANSITION: 'handle_project_transition',
+        MESSAGES.NEW_SUBMISSION: "messages/email/submission_confirmation.html",
+        MESSAGES.DRAFT_SUBMISSION: "messages/email/submission_confirmation.html",
+        MESSAGES.COMMENT: "notify_comment",
+        MESSAGES.EDIT_SUBMISSION: "messages/email/submission_edit.html",
+        MESSAGES.TRANSITION: "handle_transition",
+        MESSAGES.BATCH_TRANSITION: "handle_batch_transition",
+        MESSAGES.DETERMINATION_OUTCOME: "handle_determination",
+        MESSAGES.BATCH_DETERMINATION_OUTCOME: "handle_batch_determination",
+        MESSAGES.INVITED_TO_PROPOSAL: "messages/email/invited_to_proposal.html",
+        MESSAGES.BATCH_READY_FOR_REVIEW: "handle_batch_ready_for_review",
+        MESSAGES.READY_FOR_REVIEW: "handle_ready_for_review",
+        MESSAGES.REVIEWERS_UPDATED: "handle_ready_for_review",
+        MESSAGES.BATCH_REVIEWERS_UPDATED: "handle_batch_ready_for_review",
+        MESSAGES.PARTNERS_UPDATED: "partners_updated_applicant",
+        MESSAGES.PARTNERS_UPDATED_PARTNER: "partners_updated_partner",
+        MESSAGES.UPLOAD_CONTRACT: "messages/email/contract_uploaded.html",
+        MESSAGES.SUBMIT_CONTRACT_DOCUMENTS: "messages/email/submit_contract_documents.html",
+        MESSAGES.CREATED_PROJECT: "handle_project_created",
+        MESSAGES.UPDATED_VENDOR: "handle_vendor_updated",
+        MESSAGES.SENT_TO_COMPLIANCE: "messages/email/sent_to_compliance.html",
+        MESSAGES.SEND_FOR_APPROVAL: "messages/email/paf_for_approval.html",
+        MESSAGES.REQUEST_PROJECT_CHANGE: "messages/email/project_request_change.html",
+        MESSAGES.ASSIGN_PAF_APPROVER: "messages/email/assign_paf_approvers.html",
+        MESSAGES.APPROVE_PAF: "messages/email/paf_for_approval.html",
+        MESSAGES.UPDATE_INVOICE: "handle_invoice_updated",
+        MESSAGES.UPDATE_INVOICE_STATUS: "handle_invoice_status_updated",
+        MESSAGES.APPROVE_INVOICE: "messages/email/invoice_approved.html",
+        MESSAGES.SUBMIT_REPORT: "messages/email/report_submitted.html",
+        MESSAGES.SKIPPED_REPORT: "messages/email/report_skipped.html",
+        MESSAGES.REPORT_FREQUENCY_CHANGED: "messages/email/report_frequency.html",
+        MESSAGES.REPORT_NOTIFY: "messages/email/report_notify.html",
+        MESSAGES.REVIEW_REMINDER: "messages/email/ready_to_review.html",
+        MESSAGES.PROJECT_TRANSITION: "handle_project_transition",
     }
 
     def get_subject(self, message_type, source):
-        if source and hasattr(source, 'title'):
+        if source and hasattr(source, "title"):
             if is_ready_for_review(message_type) or is_reviewer_update(message_type):
-                subject = _('Application ready to review: {source.title}').format(
+                subject = _("Application ready to review: {source.title}").format(
                     source=source
                 )
                 if message_type in {
                     MESSAGES.BATCH_READY_FOR_REVIEW,
                     MESSAGES.BATCH_REVIEWERS_UPDATED,
                 }:
-                    subject = _('Multiple applications are now ready for your review')
+                    subject = _("Multiple applications are now ready for your review")
             elif message_type in {MESSAGES.REVIEW_REMINDER}:
                 subject = _(
-                    'Reminder: Application ready to review: {source.title}'
+                    "Reminder: Application ready to review: {source.title}"
                 ).format(source=source)
-            elif message_type in [MESSAGES.SENT_TO_COMPLIANCE, MESSAGES.APPROVE_PAF, MESSAGES.SEND_FOR_APPROVAL]:
-                subject = _('Project is waiting for approval: {source.title}').format(source=source)
+            elif message_type in [
+                MESSAGES.SENT_TO_COMPLIANCE,
+                MESSAGES.APPROVE_PAF,
+                MESSAGES.SEND_FOR_APPROVAL,
+            ]:
+                subject = _("Project is waiting for approval: {source.title}").format(
+                    source=source
+                )
             elif message_type == MESSAGES.UPLOAD_CONTRACT:
-                subject = _('Contract uploaded for the project: {source.title}').format(source=source)
+                subject = _("Contract uploaded for the project: {source.title}").format(
+                    source=source
+                )
             elif message_type == MESSAGES.SUBMIT_CONTRACT_DOCUMENTS:
-                subject = _('Contract Documents required approval for the project: {source.title}').format(source=source)
+                subject = _(
+                    "Contract Documents required approval for the project: {source.title}"
+                ).format(source=source)
             elif message_type == MESSAGES.PROJECT_TRANSITION:
                 from hypha.apply.projects.models.project import (
                     CONTRACTING,
                     INVOICING_AND_REPORTING,
                 )
+
                 if source.status == CONTRACTING:
-                    subject = _('Project is waiting for the contract: {source.title}').format(source=source)
+                    subject = _(
+                        "Project is waiting for the contract: {source.title}"
+                    ).format(source=source)
                 elif source.status == INVOICING_AND_REPORTING:
-                    subject = _('Project is ready for invoicing: {source.title}').format(source=source)
+                    subject = _(
+                        "Project is ready for invoicing: {source.title}"
+                    ).format(source=source)
                 else:
-                    subject = _('Project status has changed to {project_status}: {source.title}').format(project_status=display_project_status(source, source.user), source=source)
+                    subject = _(
+                        "Project status has changed to {project_status}: {source.title}"
+                    ).format(
+                        project_status=display_project_status(source, source.user),
+                        source=source,
+                    )
             elif message_type == MESSAGES.REQUEST_PROJECT_CHANGE:
                 subject = _("Project has been rejected, please update and resubmit")
             elif message_type == MESSAGES.ASSIGN_PAF_APPROVER:
-                subject = _("Project documents are ready to be assigned for approval: {source.title}".format(source=source))
+                subject = _(
+                    "Project documents are ready to be assigned for approval: {source.title}".format(
+                        source=source
+                    )
+                )
             else:
                 try:
                     subject = source.page.specific.subject or _(
-                        'Your application to {org_long_name}: {source.title}'
+                        "Your application to {org_long_name}: {source.title}"
                     ).format(org_long_name=settings.ORG_LONG_NAME, source=source)
                 except AttributeError:
-                    subject = _('Your {org_long_name} Project: {source.title}').format(
+                    subject = _("Your {org_long_name} Project: {source.title}").format(
                         org_long_name=settings.ORG_LONG_NAME, source=source
                     )
             return subject
 
     def extra_kwargs(self, message_type, source, sources, **kwargs):
         return {
-            'subject': self.get_subject(message_type, source),
+            "subject": self.get_subject(message_type, source),
         }
 
     def handle_transition(self, old_phase, source, **kwargs):
@@ -135,7 +159,7 @@ class EmailAdapter(AdapterBase):
 
         if is_forward:
             return self.render_message(
-                'messages/email/transition.html',
+                "messages/email/transition.html",
                 source=submission,
                 old_phase=old_phase,
                 **kwargs,
@@ -143,7 +167,7 @@ class EmailAdapter(AdapterBase):
 
     def handle_batch_transition(self, transitions, sources, **kwargs):
         submissions = sources
-        kwargs.pop('source')
+        kwargs.pop("source")
         for submission in submissions:
             old_phase = transitions[submission.id]
             return self.handle_transition(
@@ -155,46 +179,47 @@ class EmailAdapter(AdapterBase):
             CONTRACTING,
             INVOICING_AND_REPORTING,
         )
+
         if source.status == CONTRACTING:
             return self.render_message(
-                'messages/email/ready_for_contracting.html',
+                "messages/email/ready_for_contracting.html",
                 source=source,
                 **kwargs,
             )
 
         if source.status == INVOICING_AND_REPORTING:
             return self.render_message(
-                'messages/email/ready_for_invoicing.html',
+                "messages/email/ready_for_invoicing.html",
                 source=source,
                 **kwargs,
             )
 
     def handle_invoice_status_updated(self, related, **kwargs):
         return self.render_message(
-            'messages/email/invoice_status_updated.html',
+            "messages/email/invoice_status_updated.html",
             has_changes_requested=related.has_changes_requested,
             **kwargs,
         )
 
     def handle_invoice_updated(self, **kwargs):
         return self.render_message(
-            'messages/email/invoice_updated.html',
+            "messages/email/invoice_updated.html",
             **kwargs,
         )
 
     def handle_project_created(self, source, **kwargs):
         from hypha.apply.projects.models import ProjectSettings
 
-        request = kwargs.get('request')
+        request = kwargs.get("request")
         project_settings = ProjectSettings.for_request(request)
         if project_settings.vendor_setup_required:
             return self.render_message(
-                'messages/email/vendor_setup_needed.html', source=source, **kwargs
+                "messages/email/vendor_setup_needed.html", source=source, **kwargs
             )
 
     def handle_vendor_updated(self, source, **kwargs):
         return self.render_message(
-            'messages/email/vendor_updated.html',
+            "messages/email/vendor_updated.html",
             source=source,
             **kwargs,
         )
@@ -203,7 +228,7 @@ class EmailAdapter(AdapterBase):
         submission = source
         if determination.send_notice:
             return self.render_message(
-                'messages/email/determination.html',
+                "messages/email/determination.html",
                 source=submission,
                 determination=determination,
                 **kwargs,
@@ -211,11 +236,11 @@ class EmailAdapter(AdapterBase):
 
     def handle_batch_determination(self, determinations, sources, **kwargs):
         submissions = sources
-        kwargs.pop('source')
+        kwargs.pop("source")
         for submission in submissions:
             determination = determinations[submission.id]
             return self.render_message(
-                'messages/email/determination.html',
+                "messages/email/determination.html",
                 source=submission,
                 determination=determination,
                 **kwargs,
@@ -224,7 +249,7 @@ class EmailAdapter(AdapterBase):
     def handle_ready_for_review(self, request, source, **kwargs):
         if settings.SEND_READY_FOR_REVIEW:
             return self.render_message(
-                'messages/email/ready_to_review.html',
+                "messages/email/ready_to_review.html",
                 source=source,
                 request=request,
                 **kwargs,
@@ -233,17 +258,17 @@ class EmailAdapter(AdapterBase):
     def handle_batch_ready_for_review(self, request, sources, **kwargs):
         if settings.SEND_READY_FOR_REVIEW:
             return self.render_message(
-                'messages/email/batch_ready_to_review.html',
+                "messages/email/batch_ready_to_review.html",
                 sources=sources,
                 request=request,
                 **kwargs,
             )
 
     def notify_comment(self, **kwargs):
-        comment = kwargs['comment']
-        source = kwargs['source']
+        comment = kwargs["comment"]
+        source = kwargs["source"]
         if not comment.priviledged and not comment.user == source.user:
-            return self.render_message('messages/email/comment.html', **kwargs)
+            return self.render_message("messages/email/comment.html", **kwargs)
 
     def recipients(self, message_type, source, user, **kwargs):
         if is_ready_for_review(message_type):
@@ -265,46 +290,79 @@ class EmailAdapter(AdapterBase):
                 return []
 
         if message_type == MESSAGES.PARTNERS_UPDATED_PARTNER:
-            partners = kwargs['added']
+            partners = kwargs["added"]
             return [partner.email for partner in partners]
 
         if message_type in [MESSAGES.SEND_FOR_APPROVAL, MESSAGES.APPROVE_PAF]:
             from hypha.apply.projects.models.project import ProjectSettings
+
             # notify the assigned approvers
-            request = kwargs.get('request')
+            request = kwargs.get("request")
             project_settings = ProjectSettings.for_request(request)
             if project_settings.paf_approval_sequential:
                 next_paf_approval = source.paf_approvals.filter(approved=False).first()
                 if next_paf_approval and next_paf_approval.user:
                     return [next_paf_approval.user.email]
-            return list(filter(lambda approver: approver is not None, source.paf_approvals.filter(approved=False).values_list('user__email', flat=True)))
+            return list(
+                filter(
+                    lambda approver: approver is not None,
+                    source.paf_approvals.filter(approved=False).values_list(
+                        "user__email", flat=True
+                    ),
+                )
+            )
 
         if message_type == MESSAGES.ASSIGN_PAF_APPROVER:
             from hypha.apply.projects.models.project import ProjectSettings
+
             # notify PAFReviewerRole's groups' users to assign approvers
-            request = kwargs.get('request')
+            request = kwargs.get("request")
             project_settings = ProjectSettings.for_request(request)
             if project_settings.paf_approval_sequential:
                 next_paf_approval = source.paf_approvals.filter(approved=False).first()
                 if next_paf_approval and not next_paf_approval.user:
-                    assigners = get_users_for_groups(list(next_paf_approval.paf_reviewer_role.user_roles.all()), exact_match=True)
+                    assigners = get_users_for_groups(
+                        list(next_paf_approval.paf_reviewer_role.user_roles.all()),
+                        exact_match=True,
+                    )
                     return [assigner.email for assigner in assigners]
 
             assigners_emails = []
             if user == source.lead:
-                for approval in source.paf_approvals.filter(approved=False, user__isnull=True):
-                    assigners_emails.extend([assigner.email for assigner in get_users_for_groups(list(approval.paf_reviewer_role.user_roles.all()), exact_match=True)])
+                for approval in source.paf_approvals.filter(
+                    approved=False, user__isnull=True
+                ):
+                    assigners_emails.extend(
+                        [
+                            assigner.email
+                            for assigner in get_users_for_groups(
+                                list(approval.paf_reviewer_role.user_roles.all()),
+                                exact_match=True,
+                            )
+                        ]
+                    )
             else:
-                assigners_emails.extend([assigner.email for assigner in
-                                         get_users_for_groups(list(user.groups.all()),
-                                                              exact_match=True)])
+                assigners_emails.extend(
+                    [
+                        assigner.email
+                        for assigner in get_users_for_groups(
+                            list(user.groups.all()), exact_match=True
+                        )
+                    ]
+                )
             return set(assigners_emails)
 
         if message_type == MESSAGES.REQUEST_PROJECT_CHANGE:
             return [source.lead.email]
 
         if message_type == MESSAGES.SENT_TO_COMPLIANCE:
-            return get_compliance_email(target_user_gps=[CONTRACTING_GROUP_NAME, FINANCE_GROUP_NAME, STAFF_GROUP_NAME])
+            return get_compliance_email(
+                target_user_gps=[
+                    CONTRACTING_GROUP_NAME,
+                    FINANCE_GROUP_NAME,
+                    STAFF_GROUP_NAME,
+                ]
+            )
 
         if message_type == MESSAGES.SUBMIT_CONTRACT_DOCUMENTS:
             return get_compliance_email(target_user_gps=[STAFF_GROUP_NAME])
@@ -318,7 +376,7 @@ class EmailAdapter(AdapterBase):
             return self.reviewers(source)
 
         if message_type == MESSAGES.UPDATE_INVOICE_STATUS:
-            related = kwargs.get('related', None)
+            related = kwargs.get("related", None)
             if related:
                 if related.status in {CHANGES_REQUESTED_BY_STAFF, DECLINED}:
                     return [source.user.email]
@@ -329,6 +387,7 @@ class EmailAdapter(AdapterBase):
                 CONTRACTING,
                 INVOICING_AND_REPORTING,
             )
+
             if source.status == CONTRACTING:
                 return get_compliance_email(target_user_gps=[CONTRACTING_GROUP_NAME])
             if source.status == INVOICING_AND_REPORTING:
@@ -338,8 +397,12 @@ class EmailAdapter(AdapterBase):
             if user.is_apply_staff:
                 return get_compliance_email(target_user_gps=[FINANCE_GROUP_NAME])
             if settings.INVOICE_EXTENDED_WORKFLOW and user.is_finance_level_1:
-                finance_2_users_email = User.objects.active().filter(groups__name=FINANCE_GROUP_NAME).\
-                    filter(groups__name=APPROVER_GROUP_NAME).values_list('email', flat=True)
+                finance_2_users_email = (
+                    User.objects.active()
+                    .filter(groups__name=FINANCE_GROUP_NAME)
+                    .filter(groups__name=APPROVER_GROUP_NAME)
+                    .values_list("email", flat=True)
+                )
                 return finance_2_users_email
             return []
 
@@ -362,8 +425,8 @@ class EmailAdapter(AdapterBase):
 
         return [
             {
-                'recipients': [reviewer],
-                'sources': sources,
+                "recipients": [reviewer],
+                "sources": sources,
             }
             for reviewer, sources in reviewers_to_message.items()
         ]
@@ -379,19 +442,18 @@ class EmailAdapter(AdapterBase):
     def partners_updated_applicant(self, added, removed, **kwargs):
         if added:
             return self.render_message(
-                'messages/email/partners_update_applicant.html', added=added, **kwargs
+                "messages/email/partners_update_applicant.html", added=added, **kwargs
             )
 
     def partners_updated_partner(self, added, removed, **kwargs):
         for _partner in added:
             return self.render_message(
-                'messages/email/partners_update_partner.html', **kwargs
+                "messages/email/partners_update_partner.html", **kwargs
             )
 
     def render_message(self, template, **kwargs):
-
         with language(settings.LANGUAGE_CODE):
-            text = render_to_string(template, kwargs, kwargs['request'])
+            text = render_to_string(template, kwargs, kwargs["request"])
 
         return remove_extra_empty_lines(text)
 
@@ -407,4 +469,4 @@ class EmailAdapter(AdapterBase):
         try:
             send_mail(subject, message, from_email, [recipient], logs=logs)
         except Exception as e:
-            return 'Error: ' + str(e)
+            return "Error: " + str(e)

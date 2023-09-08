@@ -41,14 +41,16 @@ class TestFundModel(TestCase):
         self.fund = FundTypeFactory(parent=None)
 
     def test_can_access_workflow_class(self):
-        self.assertEqual(self.fund.workflow_name, 'single')
+        self.assertEqual(self.fund.workflow_name, "single")
         self.assertEqual(self.fund.workflow, Request)
 
     def test_no_open_rounds(self):
         self.assertIsNone(self.fund.open_round)
 
     def test_open_ended_round(self):
-        open_round = RoundFactory(start_date=date.today(), end_date=None, parent=self.fund)
+        open_round = RoundFactory(
+            start_date=date.today(), end_date=None, parent=self.fund
+        )
         self.assertEqual(self.fund.open_round, open_round)
 
     def test_normal_round(self):
@@ -87,7 +89,7 @@ class TestRoundModelDates(TestCase):
         self.fund = FundTypeFactory(parent=None)
 
     def make_round(self, **kwargs):
-        data = {'parent': self.fund}
+        data = {"parent": self.fund}
         data.update(kwargs)
         return RoundFactory(**data)
 
@@ -171,7 +173,9 @@ class TestRoundModelWorkflowAndForms(TestCase):
 
     def test_forms_are_copied_to_new_rounds(self):
         self.round.save()
-        for round_form, fund_form in itertools.zip_longest(self.round.forms.all(), self.fund.forms.all()):
+        for round_form, fund_form in itertools.zip_longest(
+            self.round.forms.all(), self.fund.forms.all()
+        ):
             self.assertEqual(round_form.fields, fund_form.fields)
             self.assertEqual(round_form.sort_order, fund_form.sort_order)
 
@@ -184,18 +188,20 @@ class TestRoundModelWorkflowAndForms(TestCase):
         new_field = CustomFormFieldsFactory.generate(None, {})
         form.form_fields = new_field
         form.save()
-        for round_form, fund_form in itertools.zip_longest(self.round.forms.all(), self.fund.forms.all()):
+        for round_form, fund_form in itertools.zip_longest(
+            self.round.forms.all(), self.fund.forms.all()
+        ):
             self.assertNotEqual(round_form, fund_form)
 
 
-@override_settings(ROOT_URLCONF='hypha.apply.urls')
+@override_settings(ROOT_URLCONF="hypha.apply.urls")
 @override_settings(FORCE_LOGIN_FOR_APPLICATION=False)
 class TestFormSubmission(TestCase):
     def setUp(self):
         self.User = get_user_model()
 
-        self.email = 'test@test.com'
-        self.name = 'My Name'
+        self.email = "test@test.com"
+        self.name = "My Name"
 
         fund = FundTypeFactory()
 
@@ -204,7 +210,15 @@ class TestFormSubmission(TestCase):
         self.round_page = RoundFactory(parent=fund, now=True)
         self.lab_page = LabFactory(lead=self.round_page.lead)
 
-    def submit_form(self, page=None, email=None, name=None, draft=None, user=None, ignore_errors=False):
+    def submit_form(
+        self,
+        page=None,
+        email=None,
+        name=None,
+        draft=None,
+        user=None,
+        ignore_errors=False,
+    ):
         user = user or AnonymousUser()
         page = page or self.round_page
 
@@ -218,9 +232,9 @@ class TestFormSubmission(TestCase):
             if isinstance(field.block, FullNameBlock):
                 data[field.id] = self.name if name is None else name
             if draft:
-                data['draft'] = 'Save draft'
+                data["draft"] = "Save draft"
 
-        request = make_request(user, data, method='post', site=self.site)
+        request = make_request(user, data, method="post", site=self.site)
 
         if page.get_parent().id != self.site.root_page.id:
             # Its a fund
@@ -230,7 +244,7 @@ class TestFormSubmission(TestCase):
 
         if not ignore_errors:
             # Check the data we submit is correct
-            self.assertNotContains(response, 'errors')
+            self.assertNotContains(response, "errors")
         return response
 
     def test_workflow_and_draft(self):
@@ -290,7 +304,7 @@ class TestFormSubmission(TestCase):
         self.assertEqual(ApplicationSubmission.objects.first().user, user)
 
     def test_associated_if_another_user_exists(self):
-        email = 'another@email.com'
+        email = "another@email.com"
         self.submit_form()
         # Someone else submits a form
         self.submit_form(email=email)
@@ -298,13 +312,17 @@ class TestFormSubmission(TestCase):
         # Lead + 2 x applicant
         self.assertEqual(self.User.objects.count(), 3)
 
-        first_user, second_user = self.User.objects.get(email=self.email), self.User.objects.get(email=email)
+        first_user, second_user = self.User.objects.get(
+            email=self.email
+        ), self.User.objects.get(email=email)
         self.assertEqual(ApplicationSubmission.objects.count(), 2)
         self.assertEqual(ApplicationSubmission.objects.first().user, first_user)
         self.assertEqual(ApplicationSubmission.objects.last().user, second_user)
 
     def test_associated_if_logged_in(self):
-        user, _ = self.User.objects.get_or_create(email=self.email, defaults={'full_name': self.name})
+        user, _ = self.User.objects.get_or_create(
+            email=self.email, defaults={"full_name": self.name}
+        )
 
         # Lead + Applicant
         self.assertEqual(self.User.objects.count(), 2)
@@ -319,12 +337,14 @@ class TestFormSubmission(TestCase):
 
     # This will need to be updated when we hide user information contextually
     def test_can_submit_if_blank_user_data_even_if_logged_in(self):
-        user, _ = self.User.objects.get_or_create(email=self.email, defaults={'full_name': self.name})
+        user, _ = self.User.objects.get_or_create(
+            email=self.email, defaults={"full_name": self.name}
+        )
 
         # Lead + applicant
         self.assertEqual(self.User.objects.count(), 2)
 
-        response = self.submit_form(email='', name='', user=user, ignore_errors=True)
+        response = self.submit_form(email="", name="", user=user, ignore_errors=True)
         self.assertEqual(response.status_code, 200)
 
         # Lead + applicant
@@ -338,9 +358,9 @@ class TestFormSubmission(TestCase):
         self.assertEqual(submission.user.email, self.email)
 
     def test_valid_email(self):
-        email = 'not_a_valid_email@'
+        email = "not_a_valid_email@"
         response = self.submit_form(email=email, ignore_errors=True)
-        self.assertContains(response, 'Enter a valid email address')
+        self.assertContains(response, "Enter a valid email address")
 
     @override_settings(SEND_MESSAGES=True)
     def test_email_sent_to_user_on_submission_fund(self):
@@ -365,7 +385,7 @@ class TestApplicationSubmission(TestCase):
         return instance.__class__.objects.get(id=instance.id)
 
     def test_can_get_required_block_names(self):
-        email = 'test@test.com'
+        email = "test@test.com"
         submission = self.make_submission(user__email=email)
         self.assertEqual(submission.email, email)
 
@@ -375,7 +395,7 @@ class TestApplicationSubmission(TestCase):
         submission_b = self.make_submission(round=submission_a.round)
         submissions = [submission_a, submission_b]
         self.assertEqual(
-            list(ApplicationSubmission.objects.order_by('id')),
+            list(ApplicationSubmission.objects.order_by("id")),
             submissions,
         )
 
@@ -384,28 +404,30 @@ class TestApplicationSubmission(TestCase):
         submission_b = self.make_submission(round=submission_a.round)
         submissions = [submission_b, submission_a]
         self.assertEqual(
-            list(ApplicationSubmission.objects.order_by('-id')),
+            list(ApplicationSubmission.objects.order_by("-id")),
             submissions,
         )
 
     def test_richtext_in_char_is_removed_for_search(self):
-        text = 'I am text'
-        rich_text = f'<b>{text}</b>'
+        text = "I am text"
+        rich_text = f"<b>{text}</b>"
         submission = self.make_submission(form_data__char=rich_text)
         self.assertNotIn(rich_text, submission.search_data)
         self.assertIn(text, submission.search_data)
 
     def test_richtext_is_removed_for_search(self):
-        text = 'I am text'
-        rich_text = f'<b>{text}</b>'
+        text = "I am text"
+        rich_text = f"<b>{text}</b>"
         submission = self.make_submission(form_data__rich_text=rich_text)
         self.assertNotIn(rich_text, submission.search_data)
         self.assertIn(text, submission.search_data)
 
     def test_choices_added_for_search(self):
-        choices = ['blah', 'foo']
-        submission = self.make_submission(form_fields__radios__choices=choices, form_data__radios=['blah'])
-        self.assertIn('blah', submission.search_data)
+        choices = ["blah", "foo"]
+        submission = self.make_submission(
+            form_fields__radios__choices=choices, form_data__radios=["blah"]
+        )
+        self.assertIn("blah", submission.search_data)
 
     def test_number_not_in_search(self):
         value = 12345
@@ -413,9 +435,9 @@ class TestApplicationSubmission(TestCase):
         self.assertNotIn(str(value), submission.search_data)
 
     def test_file_gets_uploaded(self):
-        filename = 'file_name.png'
+        filename = "file_name.png"
         submission = self.make_submission(form_data__image__filename=filename)
-        path = os.path.join(settings.MEDIA_ROOT, 'submission', str(submission.id))
+        path = os.path.join(settings.MEDIA_ROOT, "submission", str(submission.id))
 
         # Check we created the top level folder
         self.assertTrue(os.path.isdir(path))
@@ -432,14 +454,13 @@ class TestApplicationSubmission(TestCase):
 
         def check_generated_file_path(file_to_test, file_id):
             file_path_generated = file_to_test.generate_filename()
-            file_path_required = os.path.join('submission', str(submission.id), str(file_id), file_to_test.basename)
+            file_path_required = os.path.join(
+                "submission", str(submission.id), str(file_id), file_to_test.basename
+            )
 
             self.assertEqual(file_path_generated, file_path_required)
 
         for file_id in submission.file_field_ids:
-
-
-
             file_response = submission.data(file_id)
             if isinstance(file_response, list):
                 for stream_file in file_response:
@@ -455,7 +476,7 @@ class TestApplicationSubmission(TestCase):
 
     def test_create_revision_on_data_change(self):
         submission = ApplicationSubmissionFactory()
-        submission.form_data['title'] = 'My Awesome Title'
+        submission.form_data["title"] = "My Awesome Title"
         new_data = submission.form_data
         submission.create_revision()
         submission = self.refresh(submission)
@@ -474,8 +495,8 @@ class TestApplicationSubmission(TestCase):
 
     def test_can_get_draft_data(self):
         submission = ApplicationSubmissionFactory()
-        title = 'My new title'
-        submission.form_data['title'] = title
+        title = "My new title"
+        submission.form_data["title"] = title
         submission.create_revision(draft=True)
         self.assertEqual(submission.revisions.count(), 2)
 
@@ -492,13 +513,13 @@ class TestApplicationSubmission(TestCase):
 
     def test_draft_updated(self):
         submission = ApplicationSubmissionFactory()
-        title = 'My new title'
-        submission.form_data['title'] = title
+        title = "My new title"
+        submission.form_data["title"] = title
         submission.create_revision(draft=True)
         self.assertEqual(submission.revisions.count(), 2)
 
-        title = 'My even newer title'
-        submission.form_data['title'] = title
+        title = "My even newer title"
+        submission.form_data["title"] = title
 
         submission.create_revision(draft=True)
         self.assertEqual(submission.revisions.count(), 2)
@@ -511,14 +532,14 @@ class TestApplicationSubmission(TestCase):
         self.assertTrue(submission.in_final_stage)
 
 
-@override_settings(ROOT_URLCONF='hypha.apply.urls')
+@override_settings(ROOT_URLCONF="hypha.apply.urls")
 class TestSubmissionRenderMethods(TestCase):
     def test_named_blocks_not_included_in_answers(self):
         submission = ApplicationSubmissionFactory()
         answers = submission.output_answers()
         for name in submission.named_blocks:
             field = submission.field(name)
-            self.assertNotIn(field.value['field_label'], answers)
+            self.assertNotIn(field.value["field_label"], answers)
 
     def test_normal_answers_included_in_answers(self):
         submission = ApplicationSubmissionFactory()
@@ -526,10 +547,10 @@ class TestSubmissionRenderMethods(TestCase):
         for field_name in submission.question_field_ids:
             if field_name not in submission.named_blocks:
                 field = submission.field(field_name)
-                self.assertIn(field.value['field_label'], answers)
+                self.assertIn(field.value["field_label"], answers)
 
     def test_paragraph_not_rendered_in_answers(self):
-        rich_text_label = 'My rich text label!'
+        rich_text_label = "My rich text label!"
         submission = ApplicationSubmissionFactory(
             form_fields__text_markup__value=rich_text_label
         )
@@ -540,13 +561,13 @@ class TestSubmissionRenderMethods(TestCase):
         submission = ApplicationSubmissionFactory()
 
         # the user didn't respond
-        del submission.form_data['value']
+        del submission.form_data["value"]
 
         # value doesnt sneak into raw_data
-        self.assertTrue('value' not in submission.raw_data)
+        self.assertTrue("value" not in submission.raw_data)
 
         # value field_id gone
-        field_id = submission.get_definitive_id('value')
+        field_id = submission.get_definitive_id("value")
         self.assertTrue(field_id not in submission.raw_data)
 
         # value attr is None
@@ -558,11 +579,12 @@ class TestSubmissionRenderMethods(TestCase):
 
         def file_url_in_answers(file_to_test, file_id):
             url = reverse(
-                'apply:submissions:serve_private_media', kwargs={
-                    'pk': submission.pk,
-                    'field_id': file_id,
-                    'file_name': file_to_test.basename,
-                }
+                "apply:submissions:serve_private_media",
+                kwargs={
+                    "pk": submission.pk,
+                    "field_id": file_id,
+                    "file_name": file_to_test.basename,
+                },
             )
             self.assertIn(url, answers)
 
@@ -581,16 +603,16 @@ class TestRequestForPartners(TestCase):
         rfp = RequestForPartnersFactory()
         request = make_request(site=rfp.get_site())
         response = rfp.serve(request)
-        self.assertContains(response, 'not accepting')
-        self.assertNotContains(response, 'Submit')
+        self.assertContains(response, "not accepting")
+        self.assertNotContains(response, "Submit")
 
     def test_form_when_round(self):
         rfp = RequestForPartnersFactory()
         TodayRoundFactory(parent=rfp)
         request = make_request(site=rfp.get_site())
         response = rfp.serve(request)
-        self.assertNotContains(response, 'not accepting')
-        self.assertContains(response, 'Submit')
+        self.assertNotContains(response, "not accepting")
+        self.assertContains(response, "Submit")
 
 
 class TestForTableQueryset(TestCase):
@@ -635,8 +657,12 @@ class TestForTableQueryset(TestCase):
         submission = ApplicationSubmissionFactory()
         review_one = ReviewFactory(submission=submission)
         review_two = ReviewFactory(submission=submission)
-        ReviewOpinionFactory(opinion_disagree=True, review=review_one, author__reviewer=staff)
-        ReviewOpinionFactory(opinion_agree=True, review=review_two, author__reviewer=staff)
+        ReviewOpinionFactory(
+            opinion_disagree=True, review=review_one, author__reviewer=staff
+        )
+        ReviewOpinionFactory(
+            opinion_agree=True, review=review_two, author__reviewer=staff
+        )
         qs = ApplicationSubmission.objects.for_table(user=staff)
         submission = qs[0]
         self.assertEqual(submission.opinion_disagree, 1)
@@ -649,12 +675,19 @@ class TestForTableQueryset(TestCase):
         staff = StaffFactory()
         submission = ApplicationSubmissionFactory()
 
-        review = ReviewFactory(submission=submission, author__reviewer=staff, author__staff=True)
+        review = ReviewFactory(
+            submission=submission, author__reviewer=staff, author__staff=True
+        )
         opinion = ReviewOpinionFactory(opinion_disagree=True, review=review)
 
         # Another pair of review/opinion
         review_two = ReviewFactory(author=opinion.author, submission=submission)
-        ReviewOpinionFactory(opinion_disagree=True, author__reviewer=staff, author__staff=True, review=review_two)
+        ReviewOpinionFactory(
+            opinion_disagree=True,
+            author__reviewer=staff,
+            author__staff=True,
+            review=review_two,
+        )
 
         qs = ApplicationSubmission.objects.for_table(user=staff)
         submission = qs[0]
@@ -672,7 +705,7 @@ class TestForTableQueryset(TestCase):
 
         ReviewFactory(submission=submission_two)
 
-        qs = ApplicationSubmission.objects.order_by('pk').for_table(user=staff)
+        qs = ApplicationSubmission.objects.order_by("pk").for_table(user=staff)
         submission = qs[0]
         self.assertEqual(submission, submission_one)
         self.assertEqual(submission.opinion_disagree, 1)
@@ -690,7 +723,6 @@ class TestForTableQueryset(TestCase):
 
 
 class TestReminderModel(TestCase):
-
     def test_can_save_reminder(self):
         submission = ApplicationSubmissionFactory()
         reminder = ReminderFactory(submission=submission)
@@ -703,7 +735,10 @@ class TestReminderModel(TestCase):
 
     def test_reminder_action_message(self):
         reminder = ReminderFactory()
-        self.assertEqual(reminder.action_message, Reminder.ACTION_MESSAGE[f'{reminder.action}-{reminder.medium}'])
+        self.assertEqual(
+            reminder.action_message,
+            Reminder.ACTION_MESSAGE[f"{reminder.action}-{reminder.medium}"],
+        )
 
 
 class TestAssignedReviewersQuerySet(TestCase):

@@ -17,13 +17,14 @@ from wagtail.models import Page
 
 class VerboseLabelModelChoiceField(forms.ModelChoiceField):
     def label_from_instance(str, obj):
-        return '[{}] {}'.format(obj._meta.verbose_name, obj.title)
+        return "[{}] {}".format(obj._meta.verbose_name, obj.title)
 
 
 class FundChooserForm(ParentChooserForm):
-    """Changes the default chooser to be fund orientated """
+    """Changes the default chooser to be fund orientated"""
+
     parent_page = VerboseLabelModelChoiceField(
-        label=_('Fund or RFP'),
+        label=_("Fund or RFP"),
         required=True,
         empty_label=None,
         queryset=Page.objects.none(),
@@ -42,15 +43,18 @@ class ButtonsWithPreview(PageButtonHelper):
         classnames = self.copy_button_classnames + classnames_add
         cn = self.finalise_classname(classnames, classnames_exclude)
         return {
-            'url': reverse('wagtailadmin_pages:view_draft', args=(obj.id,)),
-            'label': 'Preview',
-            'classname': cn,
-            'title': 'Preview this %s' % self.verbose_name,
+            "url": reverse("wagtailadmin_pages:view_draft", args=(obj.id,)),
+            "label": "Preview",
+            "classname": cn,
+            "title": "Preview this %s" % self.verbose_name,
         }
 
-    def get_buttons_for_obj(self, obj, exclude=None, classnames_add=None,
-                            classnames_exclude=None):
-        btns = super().get_buttons_for_obj(obj, exclude, classnames_add, classnames_exclude)
+    def get_buttons_for_obj(
+        self, obj, exclude=None, classnames_add=None, classnames_exclude=None
+    ):
+        btns = super().get_buttons_for_obj(
+            obj, exclude, classnames_add, classnames_exclude
+        )
 
         # Put preview before delete
         btns.insert(-1, self.preview_button(obj, classnames_add, classnames_exclude))
@@ -59,39 +63,39 @@ class ButtonsWithPreview(PageButtonHelper):
 
 
 class FormsFundRoundListFilter(admin.SimpleListFilter):
-    title = 'usage'
-    parameter_name = 'form-usage'
+    title = "usage"
+    parameter_name = "form-usage"
 
     def lookups(self, request, model_admin):
         return (
-            ('applicationbase', _('Funds & RFP')),
-            ('roundbase', _('Rounds and Sealed Rounds')),
-            ('labbase', _('Labs')),
+            ("applicationbase", _("Funds & RFP")),
+            ("roundbase", _("Rounds and Sealed Rounds")),
+            ("labbase", _("Labs")),
         )
 
     def queryset(self, request, queryset):
         value = self.value()
         if value:
-            query = {f'{value}form__isnull': False}
+            query = {f"{value}form__isnull": False}
             return queryset.filter(**query).distinct()
         return queryset
 
 
 class RoundStateListFilter(admin.SimpleListFilter):
-    title = 'state'
-    parameter_name = 'form-state'
+    title = "state"
+    parameter_name = "form-state"
 
     def lookups(self, request, model_admin):
         return (
-            ('open', _('Open')),
-            ('closed', _('Closed')),
+            ("open", _("Open")),
+            ("closed", _("Closed")),
         )
 
     def queryset(self, request, queryset):
         value = self.value()
-        if value == 'open':
+        if value == "open":
             return queryset.open()
-        elif value == 'closed':
+        elif value == "closed":
             return queryset.closed()
         return queryset
 
@@ -106,14 +110,14 @@ class ApplicationFormButtonHelper(ButtonHelper):
     def copy_form_button(self, pk, form_name, **kwargs):
         classnames = self.prepare_classnames(
             start=self.edit_button_classnames,
-            add=kwargs.get('classnames_add'),
-            exclude=kwargs.get('classnames_exclude')
+            add=kwargs.get("classnames_add"),
+            exclude=kwargs.get("classnames_exclude"),
         )
         return {
-            'classname': classnames,
-            'label': 'Copy',
-            'title': f'Copy {form_name}',
-            'url': self.url_helper.get_action_url('copy_form', admin.utils.quote(pk)),
+            "classname": classnames,
+            "label": "Copy",
+            "title": f"Copy {form_name}",
+            "url": self.url_helper.get_action_url("copy_form", admin.utils.quote(pk)),
         }
 
     def get_buttons_for_obj(self, obj, exclude=None, *args, **kwargs):
@@ -121,9 +125,7 @@ class ApplicationFormButtonHelper(ButtonHelper):
         buttons = super().get_buttons_for_obj(obj, *args, **kwargs)
 
         copy_form_button = self.copy_form_button(
-            pk=getattr(obj, self.opts.pk.attname),
-            form_name=obj.name,
-            **kwargs
+            pk=getattr(obj, self.opts.pk.attname), form_name=obj.name, **kwargs
         )
         buttons.append(copy_form_button)
 
@@ -135,5 +137,5 @@ class RoundAdminURLHelper(PageAdminURLHelper):
     def index_url(self):
         # By default set open filter and sort on end date
         # for Round listing page's index URL
-        params = {'form-state': 'open', 'o': '-3'}
+        params = {"form-state": "open", "o": "-3"}
         return f"{self.get_action_url('index')}?{urlencode(params)}"

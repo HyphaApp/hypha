@@ -7,20 +7,24 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('funds', '0008_add_date_to_round'),
+        ("funds", "0008_add_date_to_round"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='round',
-            name='end_date',
-            field=models.DateField(blank=True, default=datetime.date.today, help_text='When no end date is provided the round will remain open indefinitely.', null=True),
+            model_name="round",
+            name="end_date",
+            field=models.DateField(
+                blank=True,
+                default=datetime.date.today,
+                help_text="When no end date is provided the round will remain open indefinitely.",
+                null=True,
+            ),
         ),
         migrations.AlterField(
-            model_name='round',
-            name='start_date',
+            model_name="round",
+            name="start_date",
             field=models.DateField(default=datetime.date.today),
         ),
     ]

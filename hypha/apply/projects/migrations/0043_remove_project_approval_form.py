@@ -4,13 +4,12 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('application_projects', '0042_delete_project_approval_form'),
+        ("application_projects", "0042_delete_project_approval_form"),
     ]
 
     operations = [
         migrations.DeleteModel(
-            name='ProjectApprovalForm',
+            name="ProjectApprovalForm",
         ),
     ]

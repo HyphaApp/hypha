@@ -53,6 +53,13 @@ The corrosponding locale dir is named: en, en_GB, en_US
 
     PASSWORD_PAGE_TIMEOUT = env.int('PASSWORD_PAGE_TIMEOUT', 120)
 
+### The age of session cookies, in seconds.
+
+This determines the length of time for which the user will remain logged in. The default value is 2 weeks.
+
+    SESSION_COOKIE_AGE = env.int('SESSION_COOKIE_AGE', 60 * 60 * 24 * 7 * 2)
+
+
 
 ## Hypha custom settings
 

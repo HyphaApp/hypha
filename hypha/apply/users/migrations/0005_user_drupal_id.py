@@ -6,15 +6,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('users', '0004_drop_first_last_names'),
+        ("users", "0004_drop_first_last_names"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='user',
-            name='drupal_id',
+            model_name="user",
+            name="drupal_id",
             field=models.IntegerField(blank=True, editable=False, null=True),
         ),
     ]

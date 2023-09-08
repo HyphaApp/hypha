@@ -3,23 +3,25 @@
 
 <div id="projects-in-contracting" class="wrapper wrapper--bottom-space" x-data="{ tab: '{% trans "Waiting for contract" %}' }">
     <section class="section section--with-options">
-        <h4 class="heading heading--normal heading--no-margin">{% trans 'Projects in contracting' %}</h4>
+        <h2 class="text-xl mb-2">
+            {% trans 'Projects in contracting' %}
+        </h2>
         <nav>
             <a class="tab__item tab__item--alt"
-                role="tab"
-                href="#"
-                id="tab-contract-awaiting"
-                aria-controls="panel-contract-awaiting"
-                :class="{ 'tab__item--active': tab === '{% trans "Waiting for contract" %}' }"
-                @click.prevent="tab = '{% trans "Waiting for contract" %}'"
+               role="tab"
+               href="#"
+               id="tab-contract-awaiting"
+               aria-controls="panel-contract-awaiting"
+               :class="{ 'tab__item--active': tab === '{% trans "Waiting for contract" %}' }"
+               @click.prevent="tab = '{% trans "Waiting for contract" %}'"
             >{% trans "Waiting for contract" %}</a>
             <a class="tab__item tab__item--alt"
-                role="tab"
-                href="#"
-                id="tab-contract-approval"
-                aria-controls="panel-contract-approval"
-                :class="{ 'tab__item--active': tab === '{% trans "Waiting for contract approval" %}' }"
-                @click.prevent="tab = '{% trans "Waiting for contract approval" %}'"
+               role="tab"
+               href="#"
+               id="tab-contract-approval"
+               aria-controls="panel-contract-approval"
+               :class="{ 'tab__item--active': tab === '{% trans "Waiting for contract approval" %}' }"
+               @click.prevent="tab = '{% trans "Waiting for contract approval" %}'"
             >{% trans "Waiting for contract approval" %}</a>
         </nav>
     </section>
@@ -28,14 +30,18 @@
         {% if projects_in_contracting.waiting_for_contract.count %}
             {% render_table projects_in_contracting.waiting_for_contract.table %}
         {% else %}
-            {% trans "No project is waiting for contract" %}
+            <div class="border px-2 py-4">
+                {% trans "No project is waiting for contract" %}
+            </div>
         {% endif %}
     </div>
     <div x-show="tab === '{% trans "Waiting for contract approval" %}'" role="tabpanel" tabindex="0" aria-labelledby="tab-contract-approval" id="panel-contract-approval">
         {% if projects_in_contracting.waiting_for_contract_approval.count %}
             {% render_table projects_in_contracting.waiting_for_contract_approval.table %}
         {% else %}
-            {% trans "No project is waiting for contract approval " %}
+            <div class="border px-2 py-4">
+                {% trans "No project is waiting for contract approval " %}
+            </div>
         {% endif %}
     </div>
 

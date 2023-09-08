@@ -1,9 +1,9 @@
 {% load render_table from django_tables2 %}
 {% load i18n %}
 
-<h4 class="text-xl font-medium mb-1">
-    {% trans "Submissions waiting for your review" %} <span class="bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">{{ in_review_count }}</span>
-</h4>
+<h2 class="text-xl mb-2">
+    {% trans "Submissions waiting for your review" %} <span class="bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded">{{ in_review_count }}</span>
+</h2>
 
 {% if my_review.data %}
     {% render_table my_review %}

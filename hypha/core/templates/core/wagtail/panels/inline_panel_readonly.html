@@ -17,11 +17,11 @@
 
     {% for child in self.children %}
         <li data-inline-panel-child id="inline_child_{{ child.form.prefix }}" data-contentpath-disabled>
-        {{ child.render_form_content }}
+            {{ child.render_form_content }}
         </li>
     {% empty %}
-    <li>
-    ---
-    </li>
+        <li>
+            ---
+        </li>
     {% endfor %}
 </ul>

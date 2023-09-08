@@ -7,7 +7,7 @@
     text-shadow: none !important;
     filter: none !important;
     -ms-filter: none !important;
-    font-family: 'Garamond Premier Pro', serif !important;
+    font-family: "Garamond Premier Pro", serif !important;
     font-style: normal !important;
     letter-spacing: normal !important;
     text-align: left !important;
@@ -37,15 +37,15 @@ body {
 }
 
 // Add visible URL after links.
-a[href^='http:']::after,
-a[href^='https:']::after {
-    content: ' (' attr(href) ')';
+a[href^="http:"]::after,
+a[href^="https:"]::after {
+    content: " (" attr(href) ")";
 }
 
 abbr[title] {
     // Add visible title after abbreviations.
     &::after {
-        content: ' (' attr(title) ')';
+        content: " (" attr(title) ")";
     }
 }
 
