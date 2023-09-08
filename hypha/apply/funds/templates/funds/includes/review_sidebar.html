@@ -4,9 +4,11 @@
     <span>
         {{ recommendation|traffic_light }}
     </span>
-    <span class="font-medium">
-        {% trans 'Avg. Score'%}: {{assigned_reviewers|average_review_score|floatformat:'1'}}
-    </span>
+    {% with assigned_reviewers|average_review_score as average %}
+        <span class="font-medium">
+            {{ assigned_reviewers|average_review_score }}
+        </span>
+    {% endwith %}
 </div>
 
 <ul class="reviews-sidebar mt-4" x-data='{showHiddenReviewers: false}'>

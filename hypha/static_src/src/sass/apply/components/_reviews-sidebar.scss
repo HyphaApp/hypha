@@ -22,7 +22,7 @@
         @supports (display: grid) {
             display: grid;
             grid-template-columns: 45% 25% 15% 15%;
-            grid-gap: 5px;
+            gap: 5px;
         }
 
         &--decision {
@@ -56,6 +56,18 @@
 
         &.no-response {
             color: $color--black-20;
+        }
+
+        .yes {
+            color: $color--green;
+        }
+
+        .maybe {
+            color: $color--mustard;
+        }
+
+        .no {
+            color: $color--tomato;
         }
     }
 

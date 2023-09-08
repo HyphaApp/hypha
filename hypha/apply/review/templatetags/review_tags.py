@@ -1,5 +1,6 @@
 from django import template
 from django.utils.safestring import mark_safe
+from django.utils.translation import gettext_lazy as _
 
 from ..models import MAYBE, NO, YES
 from ..options import NA
@@ -54,8 +55,7 @@ def average_review_score(reviewers):
             and not reviewer.review.score == NA
         ]
         if len(scores) > 0:
-            return sum(scores) / len(scores)
-        else:
-            return 0
-    else:
-        return reviewers
+            return _("Avg. score: {average}").format(
+                average=round(sum(scores) / len(scores), 1)
+            )
+    return ""

@@ -28,8 +28,10 @@
                 {% if reviewer.role %}{% image reviewer.role.icon max-12x12 %}{% endif %}
             </div>
         {% endif %}
-        <div>{{ reviewer.review.get_recommendation_display }}</div>
-        <div>{{ reviewer.review.get_score_display }}</div>
+        {% with reviewer.review.get_recommendation_display as recommendation and reviewer.review.get_score_display as score %}
+            <div class="{{ recommendation|slugify }}">{{ recommendation }}</div>
+            <div class="{{ recommendation|slugify }}">{{ score }}</div>
+        {% endwith %}
     {% endif %}
 </li>
 
@@ -45,7 +47,7 @@
             {% endwith %}
         </div>
         <div></div>
-        <div class="reviews-sidebar__outcome {{ opinion.get_opinion_display|lower }}">{{ opinion.get_opinion_display}}</div>
+        <div class="reviews-sidebar__outcome {{ opinion.get_opinion_display|slugify }}">{{ opinion.get_opinion_display}}</div>
     </li>
     {% if forloop.last %}
         </ul>

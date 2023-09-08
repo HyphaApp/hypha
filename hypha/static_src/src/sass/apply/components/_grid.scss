@@ -28,7 +28,7 @@
     .grid {
         display: grid;
         margin-bottom: 1rem;
-        grid-gap: 10px;
+        gap: 10px;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 
         > * {
@@ -39,7 +39,7 @@
 
         &--two {
             grid-template-columns: 100%;
-            grid-gap: 0.25rem;
+            gap: 0.25rem;
 
             @include media-query(tablet-portrait) {
                 grid-template-columns: 1fr 1fr;
@@ -51,7 +51,7 @@
 
             .form--comments & {
                 margin: 20px 0 0;
-                grid-gap: 10px;
+                gap: 10px;
                 grid-template-columns: 100px 100px;
             }
 
@@ -70,7 +70,7 @@
 
         &--proposal-info {
             grid-template-columns: 100%;
-            grid-gap: 10px;
+            gap: 10px;
             margin: 0 0 1rem;
 
             @include media-query(mob-landscape) {
