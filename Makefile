@@ -51,11 +51,10 @@ endif
 lint:
 	@echo "Checking python code style with ruff"
 	ruff .
-	# black . --check
+	black . --check
 	@echo "Checking js and css code style."
 	npm run lint
-	# @TODO: enable once we have a consistent code style
-	# npx prettier . --check
+	npx prettier . --check
 
 
 .PHONY: lint-fix
