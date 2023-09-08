@@ -5,19 +5,16 @@
 {% block title %}{% trans "Dashboard" %}{% endblock %}
 
 {% block content %}
-<div class="admin-bar">
-    <div class="admin-bar__inner wrapper--applicant-dashboard">
-        <div>
-            <h3 class="heading heading--no-margin">{% trans "Dashboard" %}</h3>
-            <h5>{% trans "An overview of active and past submissions and projects" %}</h5>
-        </div>
+    {% adminbar %}
+        {% slot header %}{% trans "Dashboard" %}{% endslot %}
+        {% slot sub_heading %}{% trans "An overview of active and past submissions and projects" %}{% endslot %}
+
         <div class="wrapper wrapper--cta-box">
-            <h4 class="heading heading--no-margin">{% trans "Submit a new application" %}</h4>
-            <h5 class="heading heading--normal">{% trans "Apply now for our open rounds" %}</h5>
+            <h3 class="text-xl mb-0">{% trans "Submit a new application" %}</h3>
+            <p class="mt-0 mb-4 text-fg-muted text-sm">{% trans "Apply now for our open rounds" %}</p>
             <a class="button button--primary" href="{% pageurl APPLY_SITE.root_page %}" class="button">{% trans "Apply" %}</a>
         </div>
-    </div>
-</div>
+    {% endadminbar %}
 
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
     <h3>{% trans "Your active submissions" %}</h3>

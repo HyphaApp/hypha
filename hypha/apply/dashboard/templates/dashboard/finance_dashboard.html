@@ -5,17 +5,15 @@
 {% block title %}{% trans "Dashboard" %}{% endblock %}
 
 {% block content %}
-    <div class="admin-bar">
-        <div class="admin-bar__inner admin-bar__inner--with-button">
-            {% block page_header %}
-                <h1 class="gamma heading heading--no-margin heading--bold">{% trans "Dashboard" %}</h1>
-            {% endblock %}
-            <a href="{% url 'wagtailadmin_home' %}" class="button button--primary button--arrow-pixels-white">
-                {% trans "Apply admin" %}
-                <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
-            </a>
-        </div>
-    </div>
+
+    {% adminbar %}
+        {% slot header %}{% trans "Dashboard" %}{% endslot %}
+        <a href="{% url 'wagtailadmin_home' %}" class="button button--primary button--arrow-pixels-white">
+            {% trans "Apply admin" %}
+            <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
+        </a>
+    {% endadminbar %}
+
     <div class="wrapper wrapper--large wrapper--inner-space-medium">
         <div class="wrapper wrapper--bottom-space"
             role="tablist" aria-label="Invoice Tabs"

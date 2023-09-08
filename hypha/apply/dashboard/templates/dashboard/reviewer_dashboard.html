@@ -9,13 +9,10 @@
 {% block title %}{% trans "Dashboard" %}{% endblock %}
 
 {% block content %}
-<div class="admin-bar">
-    <div class="admin-bar__inner">
-        {% block page_header %}
-            <h1 class="gamma heading heading--no-margin heading--bold">{% trans "Dashboard" %}</h1>
-        {% endblock %}
-    </div>
-</div>
+
+    {% adminbar %}
+        {% slot header %}{% trans "Dashboard" %}{% endslot %}
+    {% endadminbar %}
 
 <div class="wrapper wrapper--large wrapper--inner-space-medium">
 
