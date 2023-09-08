@@ -464,7 +464,7 @@ if env.bool("BASIC_AUTH_ENABLED", False):
 # https://docs.djangoproject.com/en/stable/ref/settings/#sessions
 
 # The age of session cookies, in seconds.
-SESSION_COOKIE_AGE = env.int('SESSION_COOKIE_AGE', 60 * 60 * 24 * 7 * 2)  # 2 weeks
+SESSION_COOKIE_AGE = env.int("SESSION_COOKIE_AGE", 60 * 60 * 24 * 7 * 2)  # 2 weeks
 
 # This is used by Wagtail's email notifications for constructing absolute URLs.
 PRIMARY_HOST = env.str("PRIMARY_HOST", None)
