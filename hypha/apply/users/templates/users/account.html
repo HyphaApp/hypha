@@ -16,7 +16,7 @@
 
 <div class="profile">
     <div class="profile__column">
-        <h3 class="text-2xl">{% trans "Profile" %}</h3>
+        <h2 class="text-2xl">{% trans "Profile" %}</h2>
         <form action="" method="post" class="form">
             {% csrf_token %}
             {% for field in form %}
@@ -30,15 +30,15 @@
 
     {% if show_change_password and user.has_usable_password and not backends.associated %}
         <div class="profile__column">
-            <h3 class="text-2xl">{% trans "Account Security" %}</h3>
-            <h4 class="text-xl">{% trans "Password" %}</h4>
+            <h2 class="text-2xl">{% trans "Account Security" %}</h2>
+            <h3 class="text-base">{% trans "Password" %}</h3>
             <p><a class="button button--primary" href="{% url 'users:password_change' %}">{% trans "Update password" %}</a></p>
 
-            <h4 class="text-xl mt-8">{% trans "Two-Factor Authentication (2FA)" %}</h4>
+            <h4 class="text-base mt-8">{% trans "Two-Factor Authentication (2FA)" %}</h4>
             {% if default_device %}
                 <div>
                     <p><a class="button button--primary" href="{% url 'users:backup_tokens_password' %}">{% trans "Backup codes" %}</a></p>
-                    <p><a class="button button--primary" href="{% url 'two_factor:disable' %}">{% trans "Disable 2FA" %}</a></p>
+                    <p><a class="button button--primary button--warning" href="{% url 'two_factor:disable' %}">{% trans "Disable 2FA" %}</a></p>
                 </div>
             {% else %}
                 <p><a class="button button--primary" href="{% url 'two_factor:setup' %}">{% trans "Enable 2FA" %}</a></p>
@@ -50,7 +50,7 @@
     {% if swappable_form %}
     <div class="profile__column">
         {% if swappable_form %}
-            <h3 class="text-2xl">{% trans "Become" %}:</h3>
+            <h2 class="text-2xl">{% trans "Become" %}:</h2>
             <form action="{% url 'users:become' %}" method="post" class="form">
                 {{ swappable_form.media }}
                 {% csrf_token %}

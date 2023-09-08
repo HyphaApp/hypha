@@ -3,7 +3,9 @@
 
 <div id="paf-awaiting-approval" class="wrapper wrapper--bottom-space" x-data="{ tab: '{% trans "Awaiting your approval" %}' }">
     <section class="section section--with-options">
-        <h4 class="heading heading--normal heading--no-margin">{% trans 'PAF waiting for internal approval' %}</h4>
+        <h2 class="text-xl mb-2">
+            {% trans 'PAF waiting for internal approval' %}
+        </h2>
         <nav>
             <a class="tab__item tab__item--alt"
                 role="tab"
@@ -28,14 +30,18 @@
         {% if paf_waiting_for_approval.awaiting_your_approval.count %}
             {% render_table paf_waiting_for_approval.awaiting_your_approval.table %}
         {% else %}
-            {% trans "You have approved all PAFs, no PAF is waiting for your Approval " %}
+            <div class="border px-2 py-4">
+                {% trans "You have approved all PAFs, no PAF is waiting for your Approval " %}
+            </div>
         {% endif %}
     </div>
     <div x-show="tab === '{% trans "Approved by you" %}'" role="tabpanel" tabindex="0" aria-labelledby="tab-paf-approved" id="panel-paf-approved">
         {% if paf_waiting_for_approval.approved_by_you.count %}
             {% render_table paf_waiting_for_approval.approved_by_you.table %}
         {% else %}
-            {% trans "No PAF is approved by you yet " %}
+            <div class="border px-2 py-4">
+                {% trans "No PAF is approved by you yet " %}
+            </div>
         {% endif %}
     </div>
 

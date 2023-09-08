@@ -1,6 +1,6 @@
 {% extends "base-apply.html" %}
 {% load render_table from django_tables2 %}
-{% load i18n static wagtailcore_tags workflow_tags statusbar_tags %}
+{% load i18n static wagtailcore_tags workflow_tags statusbar_tags heroicons %}
 
 {% block title %}{% trans "Dashboard" %}{% endblock %}
 
@@ -16,49 +16,67 @@
         </div>
     {% endadminbar %}
 
-<div class="wrapper wrapper--large wrapper--inner-space-medium">
-    <h3>{% trans "Your active submissions" %}</h3>
+<div class="wrapper wrapper--large wrapper--inner-space-medium mb-4">
+    <h2 class="text-xl mb-2">
+        {% trans "Your active submissions" %}
+    </h2>
+    <div class="">
     {% for submission in my_active_submissions %}
         <div class="wrapper wrapper--status-bar-outer">
             <div class="wrapper wrapper--status-bar-inner">
-                <div>
-                    <h5 class="heading heading--no-margin"><a class="link link--underlined" href="{% url 'funds:submissions:detail' submission.id %}">{{ submission.title }}</a></h5>
-                    <h6 class="heading heading--no-margin heading--submission-meta"><span>{% trans "Submitted" %}:</span> {{ submission.submit_time.date }} {% trans "by" %} {{ submission.user.get_full_name }}</h6>
+                <div class="flex max-w-sm sm:max-w-lg flex-col gap-2 md:flex-row md:justify-between md:w-full md:max-w-none lg:flex-col lg:justify-start lg:w-auto lg:max-w-sm">
+                    <div>
+                        <h3 class="heading heading--no-margin text-base font-bold">
+                            <a class="link link--underlined" href="{% url 'funds:submissions:detail' submission.id %}">
+                                {{ submission.title }}
+                            </a>
+                        </h3>
+                        <p class="heading heading--no-margin text-fg-muted text-sm">
+                            {% trans "Submitted" %}: {{ submission.submit_time.date }} {% trans "by" %} {{ submission.user.get_full_name }}
+                        </p>
+                    </div>
+                    {% if request.user|has_edit_perm:submission %}
+                    <div>
+                        <a class="button button--primary" href="{% url 'funds:submissions:edit' submission.id %}">
+                            {% if submission.status == 'draft_proposal' %}
+                                {% trans "Start your" %} {{ submission.stage }} {% trans "application" %}
+                            {% else %}
+                                <span class="whitespace-nowrap">
+                                    {% heroicon_mini "pencil-square" size=18 class="inline mr-1 align-text-bottom" aria_hidden=true %}
+                                    {% trans "Edit" %}
+                                </span>
+                            {% endif %}
+                        </a>
+                    </div>
+                    {% endif %}
+
                 </div>
                 {% status_bar submission.workflow submission.phase request.user css_class="status-bar--small" %}
             </div>
-            {% if request.user|has_edit_perm:submission %}
-                <a class="button button--primary" href="{% url 'funds:submissions:edit' submission.id %}">
-                    {% if submission.status == 'draft_proposal' %}
-                        {% trans "Start your" %} {{ submission.stage }} {% trans "application" %}
-                    {% else %}
-                        {% trans "Edit" %}
-                    {% endif %}
-                </a>
-            {% endif %}
         </div>
     {% empty %}
         {% trans "No active submissions" %}
     {% endfor %}
+    </div>
 </div>
 
 {% if active_projects.count %}
-<div class="wrapper wrapper--large wrapper--inner-space-medium">
-    <h3>{% trans "Your active projects" %}</h3>
+<div class="wrapper wrapper--large wrapper--inner-space-medium mb-8">
+    <h2 class="text-xl mb-2">{% trans "Your active projects" %}</h2>
     {% render_table active_projects.table %}
 </div>
 {% endif %}
 
 {% if historical_submissions.count %}
-<div class="wrapper wrapper--large wrapper--inner-space-medium">
-    <h3>{% trans "Submission history" %}</h3>
+<div class="wrapper wrapper--large wrapper--inner-space-medium mb-8">
+    <h2 class="text-xl mb-2">{% trans "Submission history" %}</h3>
     {% render_table historical_submissions.table %}
 </div>
 {% endif %}
 
 {% if historical_projects.count %}
-<div class="wrapper wrapper--large wrapper--inner-space-medium">
-    <h3>{% trans "Project history" %}</h3>
+<div class="wrapper wrapper--large wrapper--inner-space-medium mb-8">
+    <h2 class="text-xl mb-2">{% trans "Project history" %}</h2>
     {% render_table historical_projects.table %}
 </div>
 {% endif %}

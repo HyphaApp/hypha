@@ -54,7 +54,9 @@
                 {% if active_invoices.count %}
                     {% render_table active_invoices.table %}
                 {% else %}
-                    {% trans "No Active Invoices" %}
+                    <div class="border px-2 py-4">
+                        {% trans "No Active Invoices" %}
+                    </div>
                 {% endif %}
             </div>
 
@@ -63,7 +65,9 @@
                 {% if invoices_for_approval.count %}
                     {% render_table invoices_for_approval.table %}
                 {% else %}
-                    {% trans "No Invoices for Approval " %}
+                    <div class="border px-2 py-4">
+                        {% trans "No Invoices for Approval " %}
+                    </div>
                 {% endif %}
             </div>
 
@@ -72,7 +76,9 @@
                 {% if invoices_to_convert.count %}
                     {% render_table invoices_to_convert.table %}
                 {% else %}
-                    {% trans "No Invoices for Conversion " %}
+                    <div class="border px-2 py-4">
+                        {% trans "No Invoices for Conversion " %}
+                    </div>
                 {% endif %}
             </div>
 
