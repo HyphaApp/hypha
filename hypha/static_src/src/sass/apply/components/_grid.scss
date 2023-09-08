@@ -27,7 +27,7 @@
 @supports (display: grid) {
     .grid {
         display: grid;
-        margin: 30px 0;
+        margin-bottom: 1rem;
         grid-gap: 10px;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 
@@ -39,7 +39,7 @@
 
         &--two {
             grid-template-columns: 100%;
-            grid-gap: .25rem;
+            grid-gap: 0.25rem;
 
             @include media-query(tablet-portrait) {
                 grid-template-columns: 1fr 1fr;

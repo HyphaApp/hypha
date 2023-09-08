@@ -1,6 +1,6 @@
 // stylelint-disable selector-max-compound-selectors
 
-@use 'sass:math';
+@use "sass:math";
 
 .form {
     $root: &;
@@ -11,7 +11,7 @@
 
             label {
                 display: block;
-                margin-bottom: .5em;
+                margin-bottom: 0.5em;
                 font-weight: $weight--bold;
             }
         }
@@ -34,7 +34,8 @@
 
     &__group {
         position: relative;
-        margin-top: 1.5rem;
+        margin-top: 0.5rem;
+        margin-bottom: 1.5rem;
 
         &:nth-of-type(1) {
             margin-top: 0;
@@ -80,12 +81,12 @@
                 &__item {
                     display: flex;
                     align-items: center;
-                    gap: .5em;
+                    gap: 0.5em;
                 }
             }
         }
 
-        input[type='date']:last-child {
+        input[type="date"]:last-child {
             max-width: 385px;
         }
     }
@@ -104,7 +105,8 @@
             @include button($color--light-blue, $color--darkest-blue);
             max-width: 290px;
             text-align: center;
-            background: url('./../../images/upload.svg') $color--light-blue no-repeat 20px center;
+            background: url("./../../images/upload.svg") $color--light-blue
+                no-repeat 20px center;
             border: 0;
 
             .no-js & {
@@ -116,7 +118,8 @@
             }
 
             &:hover {
-                background: url('./../../images/upload.svg') $color--dark-blue no-repeat 20px center;
+                background: url("./../../images/upload.svg") $color--dark-blue
+                    no-repeat 20px center;
 
                 .no-js & {
                     background: none;
@@ -133,7 +136,7 @@
 
     &__file-list {
         ul {
-            margin: .5rem 0;
+            margin: 0.5rem 0;
         }
     }
 
@@ -154,7 +157,7 @@
 
             &.is-active {
                 font-weight: $weight--normal;
-                background-color: transparentize($color--primary, .9);
+                background-color: transparentize($color--primary, 0.9);
                 border-color: $color--mid-grey;
             }
 
@@ -279,7 +282,7 @@
     &__help {
         margin: 0;
         color: var(--color-fg-muted);
-        font-size: .875rem;
+        font-size: 0.875rem;
         line-height: 1.25rem;
 
         .profile & {
@@ -288,7 +291,7 @@
     }
 
     &__help-link {
-        font-size: .875rem;
+        font-size: 0.875rem;
         line-height: 1.25rem;
 
         a {
@@ -308,7 +311,7 @@
 
     &__item {
         position: relative;
-        padding-top: .5rem;
+        padding-top: 0.5rem;
     }
 
     &__select {
@@ -332,7 +335,7 @@
             }
         }
 
-        select[multiple='multiple'] {
+        select[multiple="multiple"] {
             display: block;
         }
 
@@ -348,14 +351,14 @@
     }
 
     select,
-    input[type='url'],
-    input[type='text']:not(.input--secondary),
-    input[type='date'],
-    input[type='time'],
-    input[type='email'],
-    input[type='number'],
-    input[type='password'],
-    input[type='datetime-local'] {
+    input[type="url"],
+    input[type="text"]:not(.input--secondary),
+    input[type="date"],
+    input[type="time"],
+    input[type="email"],
+    input[type="number"],
+    input[type="password"],
+    input[type="datetime-local"] {
         width: 100%;
         max-width: 385px;
 
@@ -368,14 +371,14 @@
     &__error {
         select,
         textarea,
-        input[type='url'],
-        input[type='text'],
-        input[type='date'],
-        input[type='time'],
-        input[type='email'],
-        input[type='number'],
-        input[type='password'],
-        input[type='datetime-local'] {
+        input[type="url"],
+        input[type="text"],
+        input[type="date"],
+        input[type="time"],
+        input[type="email"],
+        input[type="number"],
+        input[type="password"],
+        input[type="datetime-local"] {
             border: 2px solid $color--error;
         }
     }
@@ -402,21 +405,21 @@
                 border-color: transparent $color--error transparent transparent;
                 border-style: solid;
                 border-width: 5px 10px 5px 0;
-                content: '';
+                content: "";
             }
         }
     }
 
     // make date & time input siblings inline
-    input[type='date'] {
+    input[type="date"] {
         max-width: calc(385px - 100px);
     }
 
-    input[type='date'] + input[type='time'] {
+    input[type="date"] + input[type="time"] {
         width: 100px;
     }
 
-    input[type='file'] {
+    input[type="file"] {
         @extend %off-screen;
 
         .no-js & {
@@ -428,7 +431,7 @@
     &__textarea {
         display: block;
         width: 100%;
-        padding: .4em;
+        padding: 0.4em;
         border: 1px solid $color--mid-grey;
         line-height: math.div($base-line-height, $base-font-size);
     }
@@ -443,12 +446,12 @@
 
     &__comments {
         display: grid;
-        grid-template-areas: 'message' 'visibility' 'actions';
+        grid-template-areas: "message" "visibility" "actions";
         grid-template-rows: auto auto auto;
         grid-template-columns: 1fr;
 
         @include media-query(tablet-landscape) {
-            grid-template-areas: 'message visibility' 'actions actions';
+            grid-template-areas: "message visibility" "actions actions";
             grid-template-rows: auto auto;
             grid-template-columns: 2fr 1fr;
             column-gap: 2rem;
@@ -460,7 +463,8 @@
             }
         }
 
-        .id_message { // stylelint-disable-line selector-class-pattern
+        .id_message {
+            // stylelint-disable-line selector-class-pattern
             grid-area: message;
 
             > label {
@@ -468,7 +472,8 @@
             }
         }
 
-        .id_visibility_0 { // stylelint-disable-line selector-class-pattern
+        .id_visibility_0 {
+            // stylelint-disable-line selector-class-pattern
             grid-area: visibility;
         }
 
@@ -479,34 +484,35 @@
         }
     }
 
-
     // Radio + Checkbox
-    [type='radio'],
-    [type='checkbox'] {
+    [type="radio"],
+    [type="checkbox"] {
         & + label {
-            padding-inline-start: .25rem;
+            padding-inline-start: 0.25rem;
             cursor: pointer;
         }
     }
 
     .errorlist {
         padding: 5px;
-        margin-bottom: .2em;
+        margin-bottom: 0.2em;
         background: $color--light-pink;
         border: 1px solid $color--tomato;
     }
 
     .address {
-        padding: .4em;
-        border: 1px solid #cfcfcf8f;  // stylelint-disable-line color-no-hex
+        padding: 0.4em;
+        border: 1px solid #cfcfcf8f; // stylelint-disable-line color-no-hex
         max-width: 410px;
 
-        .form__group {               // stylelint-disable-line selector-class-pattern
-            margin-top: .5rem;
+        .form__group {
+            // stylelint-disable-line selector-class-pattern
+            margin-top: 0.5rem;
         }
 
-        .form__question {             // stylelint-disable-line selector-class-pattern
-            margin-bottom: .25rem;
+        .form__question {
+            // stylelint-disable-line selector-class-pattern
+            margin-bottom: 0.25rem;
             font-size: 1rem;
             line-height: 1.25rem;
 
@@ -539,5 +545,7 @@
 }
 
 @keyframes flash {
-    50% { background-color: $color--mustard; }
+    50% {
+        background-color: $color--mustard;
+    }
 }
