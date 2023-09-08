@@ -10,6 +10,7 @@ from hypha.apply.funds.models import (
     ReviewerSettings,
     RoundsAndLabs,
 )
+from hypha.apply.funds.permissions import can_export_submissions
 from hypha.apply.funds.tables import (
     ReviewerSubmissionsTable,
     SubmissionFilterAndSearch,
@@ -86,6 +87,7 @@ class AdminDashboardView(MyFlaggedMixin, TemplateView):
             {
                 "active_invoices": self.active_invoices(),
                 "awaiting_reviews": self.awaiting_reviews(submissions),
+                "can_export": can_export_submissions(self.request.user),
                 "my_reviewed": self.my_reviewed(submissions),
                 "projects": self.projects(),
                 "paf_waiting_for_approval": self.paf_waiting_for_approval(),

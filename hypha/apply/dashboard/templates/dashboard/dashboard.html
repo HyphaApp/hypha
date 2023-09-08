@@ -69,7 +69,7 @@
         {% endif %}
 
         {% if rounds.closed or rounds.open %}
-            {% include "funds/includes/round-block.html" with closed_rounds=rounds.closed open_rounds=rounds.open title="Your rounds and labs" page_type='dashboard' %}
+            {% include "funds/includes/round-block.html" with can_export=can_export closed_rounds=rounds.closed open_rounds=rounds.open title="Your rounds and labs" page_type='dashboard' %}
         {% endif %}
 
         {% if paf_waiting_for_approval.count %}

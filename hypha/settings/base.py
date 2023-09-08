@@ -112,6 +112,14 @@ SUBMISSIONS_DRAFT_ACCESS_STAFF_ADMIN = env.bool(
     "SUBMISSIONS_DRAFT_ACCESS_STAFF_ADMIN", False
 )
 
+# Should staff be able to export submissions.
+SUBMISSIONS_EXPORT_ACCESS_STAFF = env.bool("SUBMISSIONS_EXPORT_ACCESS_STAFF", True)
+
+# Should staff admins be able to export submissions.
+SUBMISSIONS_EXPORT_ACCESS_STAFF_ADMIN = env.bool(
+    "SUBMISSIONS_EXPORT_ACCESS_STAFF_ADMIN", True
+)
+
 # Columns to exclude from the submission tables.
 # Possible values are: fund, round, status, lead, reviewers, screening_statuses, category_options, meta_terms, organization_name
 SUBMISSIONS_TABLE_EXCLUDED_FIELDS = env.list(
