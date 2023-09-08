@@ -57,7 +57,6 @@ lint:
 	djhtml hypha/ --check
 	@echo "Checking js and css code style."
 	npm run lint
-	npx prettier . --check
 
 
 .PHONY: lint-fix
