@@ -4,25 +4,24 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('application_projects', '0069_contractpacketfile_contractdocumentcategory'),
+        ("application_projects", "0069_contractpacketfile_contractdocumentcategory"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='contract',
-            name='updated_at',
+            model_name="contract",
+            name="updated_at",
             field=models.DateTimeField(null=True),
         ),
         migrations.AddField(
-            model_name='contract',
-            name='uploaded_by_applicant_at',
+            model_name="contract",
+            name="uploaded_by_applicant_at",
             field=models.DateTimeField(null=True),
         ),
         migrations.AddField(
-            model_name='contract',
-            name='uploaded_by_contractor_at',
+            model_name="contract",
+            name="uploaded_by_contractor_at",
             field=models.DateTimeField(null=True),
         ),
     ]

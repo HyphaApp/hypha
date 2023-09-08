@@ -8,10 +8,10 @@ from .admin_views import CustomGroupViewSet, index
 from .utils import send_activation_email
 
 
-@hooks.register('register_admin_urls')
+@hooks.register("register_admin_urls")
 def register_admin_urls():
     return [
-        re_path(r'^users/$', index, name='index'),
+        re_path(r"^users/$", index, name="index"),
     ]
 
 
@@ -20,7 +20,7 @@ def register_viewset():
     return CustomGroupViewSet("groups", url_prefix="groups")
 
 
-@hooks.register('after_create_user')
+@hooks.register("after_create_user")
 def notify_after_create_user(request, user):
     messenger(
         MESSAGES.STAFF_ACCOUNT_CREATED,
@@ -32,13 +32,14 @@ def notify_after_create_user(request, user):
     site = Site.find_for_request(request)
     send_activation_email(user, site)
 
-@hooks.register('after_edit_user')
+
+@hooks.register("after_edit_user")
 def notify_after_edit_user(request, user):
-    roles = list(user.groups.values_list('name', flat=True))
+    roles = list(user.groups.values_list("name", flat=True))
     if user.is_superuser:
-        roles.append('Administrator')
+        roles.append("Administrator")
     if roles:
-        roles = ', '.join(roles)
+        roles = ", ".join(roles)
         messenger(
             MESSAGES.STAFF_ACCOUNT_EDITED,
             request=request,

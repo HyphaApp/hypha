@@ -7,28 +7,62 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('funds', '0032_make_reviewers_optional_in_all_instances'),
+        ("funds", "0032_make_reviewers_optional_in_all_instances"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Determination',
+            name="Determination",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('determination_data', django.contrib.postgres.fields.jsonb.JSONField()),
-                ('determination', models.IntegerField(choices=[(0, 'Unapproved'), (1, 'Undetermined'), (2, 'Approved')], default=0, verbose_name='Determination')),
-                ('is_draft', models.BooleanField(default=False, verbose_name='Draft')),
-                ('author', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to=settings.AUTH_USER_MODEL)),
-                ('submission', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='determination', to='funds.ApplicationSubmission')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "determination_data",
+                    django.contrib.postgres.fields.jsonb.JSONField(),
+                ),
+                (
+                    "determination",
+                    models.IntegerField(
+                        choices=[
+                            (0, "Unapproved"),
+                            (1, "Undetermined"),
+                            (2, "Approved"),
+                        ],
+                        default=0,
+                        verbose_name="Determination",
+                    ),
+                ),
+                ("is_draft", models.BooleanField(default=False, verbose_name="Draft")),
+                (
+                    "author",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "submission",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="determination",
+                        to="funds.ApplicationSubmission",
+                    ),
+                ),
             ],
         ),
         migrations.AlterUniqueTogether(
-            name='determination',
-            unique_together={('author', 'submission')},
+            name="determination",
+            unique_together={("author", "submission")},
         ),
     ]

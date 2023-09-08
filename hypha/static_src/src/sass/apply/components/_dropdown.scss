@@ -31,7 +31,11 @@
 }
 
 /* Change color of dropdown links on hover */
-.dropdown-content a:hover { background-color: $color--mid-grey; }
+.dropdown-content a:hover {
+    background-color: $color--mid-grey;
+}
 
 /* Show the dropdown menu */
-.show { display: block; }
+.show {
+    display: block;
+}

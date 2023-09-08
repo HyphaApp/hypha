@@ -5,15 +5,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('review', '0023_add_score_without_text_block'),
+        ("review", "0023_add_score_without_text_block"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='review',
-            name='form_data',
-            field=models.JSONField(default=dict, encoder=django.core.serializers.json.DjangoJSONEncoder),
+            model_name="review",
+            name="form_data",
+            field=models.JSONField(
+                default=dict, encoder=django.core.serializers.json.DjangoJSONEncoder
+            ),
         ),
     ]

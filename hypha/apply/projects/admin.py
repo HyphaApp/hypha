@@ -21,41 +21,53 @@ from .models import (
 
 class DocumentCategoryAdmin(ModelAdmin):
     model = DocumentCategory
-    menu_icon = 'doc-full'
-    list_display = ('name', 'required',)
+    menu_icon = "doc-full"
+    list_display = (
+        "name",
+        "required",
+    )
 
 
 class ContractDocumentCategoryAdmin(ModelAdmin):
     model = ContractDocumentCategory
-    menu_icon = 'doc-full'
-    list_display = ('name', 'required',)
+    menu_icon = "doc-full"
+    list_display = (
+        "name",
+        "required",
+    )
 
 
 class ProjectApprovalFormAdmin(ListRelatedMixin, ModelAdmin):
     model = ProjectApprovalForm
-    menu_label = 'Approval Forms'
-    menu_icon = 'form'
-    list_display = ('name', 'used_by',)
+    menu_label = "Approval Forms"
+    menu_icon = "form"
+    list_display = (
+        "name",
+        "used_by",
+    )
     create_view_class = CreateProjectApprovalFormView
     edit_view_class = EditProjectApprovalFormView
 
     related_models = [
-        ('applicationbaseprojectapprovalform', 'application'),
-        ('labbaseprojectapprovalform', 'lab'),
+        ("applicationbaseprojectapprovalform", "application"),
+        ("labbaseprojectapprovalform", "lab"),
     ]
 
 
 class ProjectSOWFormAdmin(ListRelatedMixin, ModelAdmin):
     model = ProjectSOWForm
-    menu_label = 'SOW Forms'
-    menu_icon = 'form'
-    list_display = ('name', 'used_by',)
+    menu_label = "SOW Forms"
+    menu_icon = "form"
+    list_display = (
+        "name",
+        "used_by",
+    )
     create_view_class = CreateProjectSOWFormView
     edit_view_class = EditProjectSOWFormView
 
     related_models = [
-        ('applicationbaseprojectsowform', 'application'),
-        ('labbaseprojectsowform', 'lab'),
+        ("applicationbaseprojectsowform", "application"),
+        ("labbaseprojectsowform", "lab"),
     ]
 
 
@@ -68,8 +80,8 @@ class VendorFormSettingsAdmin(SettingModelAdmin):
 
 
 class ProjectAdminGroup(ModelAdminGroup):
-    menu_label = 'Projects'
-    menu_icon = 'duplicate'
+    menu_label = "Projects"
+    menu_icon = "duplicate"
     items = (
         ContractDocumentCategoryAdmin,
         DocumentCategoryAdmin,

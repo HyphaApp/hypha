@@ -4,16 +4,15 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('activity', '0006_message'),
+        ("activity", "0006_message"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='message',
-            name='status',
-            field=models.TextField(default=''),
+            model_name="message",
+            name="status",
+            field=models.TextField(default=""),
             preserve_default=False,
         ),
     ]

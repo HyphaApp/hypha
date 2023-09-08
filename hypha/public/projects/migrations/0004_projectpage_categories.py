@@ -6,15 +6,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('projects', '0003_projectpage_status'),
+        ("projects", "0003_projectpage_status"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='projectpage',
-            name='categories',
-            field=models.TextField(default='{}', blank=True),
+            model_name="projectpage",
+            name="categories",
+            field=models.TextField(default="{}", blank=True),
         ),
     ]

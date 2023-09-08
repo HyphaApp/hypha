@@ -15,5 +15,4 @@ class Migration(migrations.Migration):
         ("wagtailcore", "0078_referenceindex"),
     ]
 
-    operations = [
-    ]
+    operations = []

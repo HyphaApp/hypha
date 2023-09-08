@@ -16,35 +16,35 @@
 
     <div class="wrapper wrapper--large wrapper--inner-space-medium">
         <div class="wrapper wrapper--bottom-space"
-            role="tablist" aria-label="Invoice Tabs"
-            x-data="{ tab: '{% trans "Active" %}' }"
+             role="tablist" aria-label="Invoice Tabs"
+             x-data="{ tab: '{% trans "Active" %}' }"
         >
             <section class="section section--with-options">
                 <h4 class="heading heading--normal heading--no-margin">{% trans 'Invoices' %} </h4>
                 <nav>
                     <a class="tab__item tab__item--alt"
-                        role="tab"
-                        href="#"
-                        id="tab-invoices-active"
-                        aria-controls="panel-invoices-active"
-                        :class="{ 'tab__item--active': tab === '{% trans "Active" %}' }"
-                        @click.prevent="tab = '{% trans "Active" %}'"
+                       role="tab"
+                       href="#"
+                       id="tab-invoices-active"
+                       aria-controls="panel-invoices-active"
+                       :class="{ 'tab__item--active': tab === '{% trans "Active" %}' }"
+                       @click.prevent="tab = '{% trans "Active" %}'"
                     >{% trans "Active Invoices" %}</a>
                     <a class="tab__item tab__item--alt"
-                        role="tab"
-                        href="#"
-                        id="tab-invoices-for-approval"
-                        aria-controls="panel-invoices-for-approval"
-                        :class="{ 'tab__item--active': tab === '{% trans "For Approval" %}' }"
-                        @click.prevent="tab = '{% trans "For Approval" %}'"
+                       role="tab"
+                       href="#"
+                       id="tab-invoices-for-approval"
+                       aria-controls="panel-invoices-for-approval"
+                       :class="{ 'tab__item--active': tab === '{% trans "For Approval" %}' }"
+                       @click.prevent="tab = '{% trans "For Approval" %}'"
                     >{% trans "For Approval" %}</a>
                     <a class="tab__item tab__item--alt"
-                        role="tab"
-                        href="#"
-                        id="tab-invoices-for-conversion"
-                        aria-controls="panel-invoices-for-conversion"
-                        :class="{ 'tab__item--active': tab === '{% trans "For Conversion" %}' }"
-                        @click.prevent="tab = '{% trans "For Conversion" %}'"
+                       role="tab"
+                       href="#"
+                       id="tab-invoices-for-conversion"
+                       aria-controls="panel-invoices-for-conversion"
+                       :class="{ 'tab__item--active': tab === '{% trans "For Conversion" %}' }"
+                       @click.prevent="tab = '{% trans "For Conversion" %}'"
                     >{% trans "For Conversion" %}</a>
                 </nav>
             </section>
@@ -84,16 +84,16 @@
 
         </div>
 
-    {% if paf_waiting_for_approval.count %}
-        {% include "dashboard/includes/paf_waiting_for_approval.html" with paf_waiting_for_approval=paf_waiting_for_approval %}
-    {% endif %}
+        {% if paf_waiting_for_approval.count %}
+            {% include "dashboard/includes/paf_waiting_for_approval.html" with paf_waiting_for_approval=paf_waiting_for_approval %}
+        {% endif %}
 
-    {% if paf_waiting_for_assignment.count %}
-        <div id="paf_waiting_for_assignment" class="wrapper wrapper--bottom-space">
-            <h4 class="heading heading--normal">{% trans "PAF waiting for assignee" %}</h4>
-            {% render_table paf_waiting_for_assignment.table %}
-        </div>
-    {% endif %}
+        {% if paf_waiting_for_assignment.count %}
+            <div id="paf_waiting_for_assignment" class="wrapper wrapper--bottom-space">
+                <h4 class="heading heading--normal">{% trans "PAF waiting for assignee" %}</h4>
+                {% render_table paf_waiting_for_assignment.table %}
+            </div>
+        {% endif %}
     </div>
 {% endblock %}
 

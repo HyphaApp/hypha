@@ -8,16 +8,27 @@ import wagtail.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('home', '0004_add_related_models_to_homepage'),
+        ("home", "0004_add_related_models_to_homepage"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='homepage',
-            name='our_work',
-            field=wagtail.fields.StreamField((('work', wagtail.blocks.ListBlock(wagtail.blocks.StreamBlock((('title', wagtail.blocks.CharBlock()),)))),), default=[]),
+            model_name="homepage",
+            name="our_work",
+            field=wagtail.fields.StreamField(
+                (
+                    (
+                        "work",
+                        wagtail.blocks.ListBlock(
+                            wagtail.blocks.StreamBlock(
+                                (("title", wagtail.blocks.CharBlock()),)
+                            )
+                        ),
+                    ),
+                ),
+                default=[],
+            ),
             preserve_default=False,
         ),
     ]

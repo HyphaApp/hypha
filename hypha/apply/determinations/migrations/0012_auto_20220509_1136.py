@@ -5,55 +5,60 @@ import wagtail.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('determinations', '0011_auto_20220111_1314'),
+        ("determinations", "0011_auto_20220111_1314"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='determinationmessagesettings',
-            name='concept_accepted',
-            field=wagtail.fields.RichTextField(blank=True, verbose_name='Approved'),
+            model_name="determinationmessagesettings",
+            name="concept_accepted",
+            field=wagtail.fields.RichTextField(blank=True, verbose_name="Approved"),
         ),
         migrations.AlterField(
-            model_name='determinationmessagesettings',
-            name='concept_more_info',
-            field=wagtail.fields.RichTextField(blank=True, verbose_name='Needs more info'),
+            model_name="determinationmessagesettings",
+            name="concept_more_info",
+            field=wagtail.fields.RichTextField(
+                blank=True, verbose_name="Needs more info"
+            ),
         ),
         migrations.AlterField(
-            model_name='determinationmessagesettings',
-            name='concept_rejected',
-            field=wagtail.fields.RichTextField(blank=True, verbose_name='Dismissed'),
+            model_name="determinationmessagesettings",
+            name="concept_rejected",
+            field=wagtail.fields.RichTextField(blank=True, verbose_name="Dismissed"),
         ),
         migrations.AlterField(
-            model_name='determinationmessagesettings',
-            name='proposal_accepted',
-            field=wagtail.fields.RichTextField(blank=True, verbose_name='Approved'),
+            model_name="determinationmessagesettings",
+            name="proposal_accepted",
+            field=wagtail.fields.RichTextField(blank=True, verbose_name="Approved"),
         ),
         migrations.AlterField(
-            model_name='determinationmessagesettings',
-            name='proposal_more_info',
-            field=wagtail.fields.RichTextField(blank=True, verbose_name='Needs more info'),
+            model_name="determinationmessagesettings",
+            name="proposal_more_info",
+            field=wagtail.fields.RichTextField(
+                blank=True, verbose_name="Needs more info"
+            ),
         ),
         migrations.AlterField(
-            model_name='determinationmessagesettings',
-            name='proposal_rejected',
-            field=wagtail.fields.RichTextField(blank=True, verbose_name='Dismissed'),
+            model_name="determinationmessagesettings",
+            name="proposal_rejected",
+            field=wagtail.fields.RichTextField(blank=True, verbose_name="Dismissed"),
         ),
         migrations.AlterField(
-            model_name='determinationmessagesettings',
-            name='request_accepted',
-            field=wagtail.fields.RichTextField(blank=True, verbose_name='Approved'),
+            model_name="determinationmessagesettings",
+            name="request_accepted",
+            field=wagtail.fields.RichTextField(blank=True, verbose_name="Approved"),
         ),
         migrations.AlterField(
-            model_name='determinationmessagesettings',
-            name='request_more_info',
-            field=wagtail.fields.RichTextField(blank=True, verbose_name='Needs more info'),
+            model_name="determinationmessagesettings",
+            name="request_more_info",
+            field=wagtail.fields.RichTextField(
+                blank=True, verbose_name="Needs more info"
+            ),
         ),
         migrations.AlterField(
-            model_name='determinationmessagesettings',
-            name='request_rejected',
-            field=wagtail.fields.RichTextField(blank=True, verbose_name='Dismissed'),
+            model_name="determinationmessagesettings",
+            name="request_rejected",
+            field=wagtail.fields.RichTextField(blank=True, verbose_name="Dismissed"),
         ),
     ]

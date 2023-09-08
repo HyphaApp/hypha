@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('application_projects', '0037_add_project_invoicing'),
+        ("application_projects", "0037_add_project_invoicing"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='invoice',
-            name='message_for_pm',
-            field=models.TextField(blank=True, verbose_name='Message'),
+            model_name="invoice",
+            name="message_for_pm",
+            field=models.TextField(blank=True, verbose_name="Message"),
         ),
     ]

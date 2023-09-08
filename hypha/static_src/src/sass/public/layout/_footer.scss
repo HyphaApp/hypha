@@ -2,7 +2,11 @@
     color: $color--white;
 
     @include media-query(tablet-portrait) {
-        background: linear-gradient(to right, $color--dark-blue 50%, $color--light-blue 50%);
+        background: linear-gradient(
+            to right,
+            $color--dark-blue 50%,
+            $color--light-blue 50%
+        );
     }
 
     a {
@@ -46,8 +50,8 @@
     }
 
     input {
-        &[type='text'],
-        &[type='email'] {
+        &[type="text"],
+        &[type="email"] {
             width: 100%;
             max-width: 390px;
             margin-bottom: 1rem;

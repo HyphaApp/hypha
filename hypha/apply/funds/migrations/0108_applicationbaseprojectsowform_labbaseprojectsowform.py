@@ -6,37 +6,84 @@ import modelcluster.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('application_projects', '0066_projectsowform'),
-        ('funds', '0107_add_additional_fields_to_funds_labs'),
+        ("application_projects", "0066_projectsowform"),
+        ("funds", "0107_add_additional_fields_to_funds_labs"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='LabBaseProjectSOWForm',
+            name="LabBaseProjectSOWForm",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('sort_order', models.IntegerField(blank=True, editable=False, null=True)),
-                ('form', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='application_projects.projectsowform')),
-                ('lab', modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.CASCADE, related_name='sow_forms', to='funds.labbase')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "sort_order",
+                    models.IntegerField(blank=True, editable=False, null=True),
+                ),
+                (
+                    "form",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="application_projects.projectsowform",
+                    ),
+                ),
+                (
+                    "lab",
+                    modelcluster.fields.ParentalKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="sow_forms",
+                        to="funds.labbase",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['sort_order'],
-                'abstract': False,
+                "ordering": ["sort_order"],
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='ApplicationBaseProjectSOWForm',
+            name="ApplicationBaseProjectSOWForm",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('sort_order', models.IntegerField(blank=True, editable=False, null=True)),
-                ('application', modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.CASCADE, related_name='sow_forms', to='funds.applicationbase')),
-                ('form', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='application_projects.projectsowform')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "sort_order",
+                    models.IntegerField(blank=True, editable=False, null=True),
+                ),
+                (
+                    "application",
+                    modelcluster.fields.ParentalKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="sow_forms",
+                        to="funds.applicationbase",
+                    ),
+                ),
+                (
+                    "form",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="application_projects.projectsowform",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['sort_order'],
-                'abstract': False,
+                "ordering": ["sort_order"],
+                "abstract": False,
             },
         ),
     ]

@@ -29,21 +29,20 @@ from .options import ACCEPTED, DETERMINATION_CHOICES, REJECTED
 class DeterminationQuerySet(models.QuerySet):
     def staff(self):
         # Designed to be used with a queryset related to submissions
-        return self.all().order_by('-updated_at')
+        return self.all().order_by("-updated_at")
 
     def active(self):
         # Designed to be used with a queryset related to submissions
         return self.get(is_draft=True)
 
     def submitted(self):
-        return self.filter(is_draft=False).order_by('-updated_at')
+        return self.filter(is_draft=False).order_by("-updated_at")
 
     def final(self):
         return self.submitted().filter(outcome__in=[ACCEPTED, REJECTED])
 
 
 class DeterminationFormFieldsMixin(models.Model):
-
     wagtail_reference_index_ignore = True
 
     class Meta:
@@ -86,8 +85,8 @@ class DeterminationForm(DeterminationFormFieldsMixin, models.Model):
     name = models.CharField(max_length=255)
 
     panels = [
-        FieldPanel('name'),
-        FieldPanel('form_fields'),
+        FieldPanel("name"),
+        FieldPanel("form_fields"),
     ]
 
     def __str__(self):
@@ -96,16 +95,18 @@ class DeterminationForm(DeterminationFormFieldsMixin, models.Model):
 
 class Determination(DeterminationFormFieldsMixin, AccessFormData, models.Model):
     submission = models.ForeignKey(
-        'funds.ApplicationSubmission',
+        "funds.ApplicationSubmission",
         on_delete=models.CASCADE,
-        related_name='determinations'
+        related_name="determinations",
     )
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
     )
 
-    outcome = models.IntegerField(verbose_name=_("Determination"), choices=DETERMINATION_CHOICES, default=1)
+    outcome = models.IntegerField(
+        verbose_name=_("Determination"), choices=DETERMINATION_CHOICES, default=1
+    )
     message = models.TextField(verbose_name=_("Determination message"), blank=True)
 
     # Stores old determination forms data
@@ -114,9 +115,13 @@ class Determination(DeterminationFormFieldsMixin, AccessFormData, models.Model):
     # Stores data submitted via streamfield determination forms
     form_data = models.JSONField(default=dict, encoder=DjangoJSONEncoder)
     is_draft = models.BooleanField(default=False, verbose_name=_("Draft"))
-    created_at = models.DateTimeField(verbose_name=_('Creation time'), auto_now_add=True)
-    updated_at = models.DateTimeField(verbose_name=_('Update time'), auto_now=True)
-    send_notice = models.BooleanField(default=True, verbose_name=_("Send message to applicant"))
+    created_at = models.DateTimeField(
+        verbose_name=_("Creation time"), auto_now_add=True
+    )
+    updated_at = models.DateTimeField(verbose_name=_("Update time"), auto_now=True)
+    send_notice = models.BooleanField(
+        default=True, verbose_name=_("Send message to applicant")
+    )
 
     # Meta: used for migration purposes only
     drupal_id = models.IntegerField(null=True, blank=True, editable=False)
@@ -132,17 +137,20 @@ class Determination(DeterminationFormFieldsMixin, AccessFormData, models.Model):
         return self.get_outcome_display()
 
     def get_absolute_url(self):
-        return reverse('apply:submissions:determinations:detail', args=(self.submission.id, self.id))
+        return reverse(
+            "apply:submissions:determinations:detail",
+            args=(self.submission.id, self.id),
+        )
 
     @property
     def submitted(self):
         return not self.is_draft
 
     def __str__(self):
-        return f'Determination for {self.submission.title} by {self.author!s}'
+        return f"Determination for {self.submission.title} by {self.author!s}"
 
     def __repr__(self):
-        return f'<{self.__class__.__name__}: {str(self.form_data)}>'
+        return f"<{self.__class__.__name__}: {str(self.form_data)}>"
 
     @property
     def use_new_determination_form(self):
@@ -162,13 +170,14 @@ class Determination(DeterminationFormFieldsMixin, AccessFormData, models.Model):
     def detailed_data(self):
         if not self.use_new_determination_form:
             from .views import get_form_for_stage
+
             return get_form_for_stage(self.submission).get_detailed_response(self.data)
         return self.get_detailed_response()
 
     def get_detailed_response(self):
         data = {}
         group = 0
-        data.setdefault(group, {'title': None, 'questions': []})
+        data.setdefault(group, {"title": None, "questions": []})
         for field in self.form_fields:
             if issubclass(
                 field.block.__class__, DeterminationMustIncludeFieldBlock
@@ -178,21 +187,18 @@ class Determination(DeterminationFormFieldsMixin, AccessFormData, models.Model):
                 value = self.form_data[field.id]
             except KeyError:
                 group = group + 1
-                data.setdefault(group, {'title': field.value.source, 'questions': []})
+                data.setdefault(group, {"title": field.value.source, "questions": []})
             else:
-                data[group]['questions'].append(
-                    (field.value.get('field_label'), value)
-                )
+                data[group]["questions"].append((field.value.get("field_label"), value))
         return data
 
 
 @register_setting
 class DeterminationMessageSettings(BaseSiteSetting):
-
     wagtail_reference_index_ignore = True
 
     class Meta:
-        verbose_name = 'determination messages'
+        verbose_name = "determination messages"
 
     request_accepted = RichTextField("Approved", blank=True)
     request_rejected = RichTextField("Dismissed", blank=True)
@@ -216,151 +222,242 @@ class DeterminationMessageSettings(BaseSiteSetting):
 
         for field in self._meta.get_fields():
             if prefix in field.name:
-                key = field.name.replace(prefix, '')
+                key = field.name.replace(prefix, "")
                 message_templates[key] = getattr(self, field.name)
 
         return message_templates
 
     request_tab_panels = [
-        FieldPanel('request_accepted'),
-        FieldPanel('request_rejected'),
-        FieldPanel('request_more_info'),
+        FieldPanel("request_accepted"),
+        FieldPanel("request_rejected"),
+        FieldPanel("request_more_info"),
     ]
 
     concept_tab_panels = [
-        FieldPanel('concept_accepted'),
-        FieldPanel('concept_rejected'),
-        FieldPanel('concept_more_info'),
+        FieldPanel("concept_accepted"),
+        FieldPanel("concept_rejected"),
+        FieldPanel("concept_more_info"),
     ]
     proposal_tab_panels = [
-        FieldPanel('proposal_accepted'),
-        FieldPanel('proposal_rejected'),
-        FieldPanel('proposal_more_info'),
+        FieldPanel("proposal_accepted"),
+        FieldPanel("proposal_rejected"),
+        FieldPanel("proposal_more_info"),
     ]
 
-    edit_handler = TabbedInterface([
-        ObjectList(request_tab_panels, heading=_('Request')),
-        ObjectList(concept_tab_panels, heading=_('Concept note')),
-        ObjectList(proposal_tab_panels, heading=_('Proposal')),
-    ])
+    edit_handler = TabbedInterface(
+        [
+            ObjectList(request_tab_panels, heading=_("Request")),
+            ObjectList(concept_tab_panels, heading=_("Concept note")),
+            ObjectList(proposal_tab_panels, heading=_("Proposal")),
+        ]
+    )
 
 
 @register_setting
 class DeterminationFormSettings(BaseSiteSetting):
     class Meta:
-        verbose_name = 'determination form settings'
+        verbose_name = "determination form settings"
 
-    concept_principles_label = models.CharField('label', default='Goals and principles', max_length=255)
-    concept_principles_help_text = models.TextField('help text', blank=True)
-    concept_technical_label = models.CharField('label', default='Technical merit', max_length=255)
-    concept_technical_help_text = models.TextField('help text', blank=True)
-    concept_sustainable_label = models.CharField('label', default='Reasonable, realistic and sustainable', max_length=255)
-    concept_sustainable_help_text = models.TextField('help text', blank=True)
+    concept_principles_label = models.CharField(
+        "label", default="Goals and principles", max_length=255
+    )
+    concept_principles_help_text = models.TextField("help text", blank=True)
+    concept_technical_label = models.CharField(
+        "label", default="Technical merit", max_length=255
+    )
+    concept_technical_help_text = models.TextField("help text", blank=True)
+    concept_sustainable_label = models.CharField(
+        "label", default="Reasonable, realistic and sustainable", max_length=255
+    )
+    concept_sustainable_help_text = models.TextField("help text", blank=True)
 
-    proposal_liked_label = models.CharField('label', default='Positive aspects', max_length=255)
-    proposal_liked_help_text = models.TextField('help text', blank=True)
-    proposal_concerns_label = models.CharField('label', default='Concerns', max_length=255)
-    proposal_concerns_help_text = models.TextField('help text', blank=True)
-    proposal_red_flags_label = models.CharField('label', default='Items that must be addressed', max_length=255)
-    proposal_red_flags_help_text = models.TextField('help text', blank=True)
-    proposal_overview_label = models.CharField('label', default='Project overview questions and comments', max_length=255)
-    proposal_overview_help_text = models.TextField('help text', blank=True)
-    proposal_objectives_label = models.CharField('label', default='Objectives questions and comments', max_length=255)
-    proposal_objectives_help_text = models.TextField('help text', blank=True)
-    proposal_strategy_label = models.CharField('label', default='Methods and strategy questions and comments', max_length=255)
-    proposal_strategy_help_text = models.TextField('help text', blank=True)
-    proposal_technical_label = models.CharField('label', default='Technical feasibility questions and comments', max_length=255)
-    proposal_technical_help_text = models.TextField('help text', blank=True)
-    proposal_alternative_label = models.CharField('label', default='Alternative analysis - "red teaming" questions and comments', max_length=255)
-    proposal_alternative_help_text = models.TextField('help text', blank=True)
-    proposal_usability_label = models.CharField('label', default='Usability questions and comments', max_length=255)
-    proposal_usability_help_text = models.TextField('help text', blank=True)
-    proposal_sustainability_label = models.CharField('label', default='Sustainability questions and comments', max_length=255)
-    proposal_sustainability_help_text = models.TextField('help text', blank=True)
-    proposal_collaboration_label = models.CharField('label', default='Collaboration questions and comments', max_length=255)
-    proposal_collaboration_help_text = models.TextField('help text', blank=True)
-    proposal_realism_label = models.CharField('label', default='Cost realism questions and comments', max_length=255)
-    proposal_realism_help_text = models.TextField('help text', blank=True)
-    proposal_qualifications_label = models.CharField('label', default='Qualifications questions and comments', max_length=255)
-    proposal_qualifications_help_text = models.TextField('help text', blank=True)
-    proposal_evaluation_label = models.CharField('label', default='Evaluation questions and comments', max_length=255)
-    proposal_evaluation_help_text = models.TextField('help text', blank=True)
+    proposal_liked_label = models.CharField(
+        "label", default="Positive aspects", max_length=255
+    )
+    proposal_liked_help_text = models.TextField("help text", blank=True)
+    proposal_concerns_label = models.CharField(
+        "label", default="Concerns", max_length=255
+    )
+    proposal_concerns_help_text = models.TextField("help text", blank=True)
+    proposal_red_flags_label = models.CharField(
+        "label", default="Items that must be addressed", max_length=255
+    )
+    proposal_red_flags_help_text = models.TextField("help text", blank=True)
+    proposal_overview_label = models.CharField(
+        "label", default="Project overview questions and comments", max_length=255
+    )
+    proposal_overview_help_text = models.TextField("help text", blank=True)
+    proposal_objectives_label = models.CharField(
+        "label", default="Objectives questions and comments", max_length=255
+    )
+    proposal_objectives_help_text = models.TextField("help text", blank=True)
+    proposal_strategy_label = models.CharField(
+        "label", default="Methods and strategy questions and comments", max_length=255
+    )
+    proposal_strategy_help_text = models.TextField("help text", blank=True)
+    proposal_technical_label = models.CharField(
+        "label", default="Technical feasibility questions and comments", max_length=255
+    )
+    proposal_technical_help_text = models.TextField("help text", blank=True)
+    proposal_alternative_label = models.CharField(
+        "label",
+        default='Alternative analysis - "red teaming" questions and comments',
+        max_length=255,
+    )
+    proposal_alternative_help_text = models.TextField("help text", blank=True)
+    proposal_usability_label = models.CharField(
+        "label", default="Usability questions and comments", max_length=255
+    )
+    proposal_usability_help_text = models.TextField("help text", blank=True)
+    proposal_sustainability_label = models.CharField(
+        "label", default="Sustainability questions and comments", max_length=255
+    )
+    proposal_sustainability_help_text = models.TextField("help text", blank=True)
+    proposal_collaboration_label = models.CharField(
+        "label", default="Collaboration questions and comments", max_length=255
+    )
+    proposal_collaboration_help_text = models.TextField("help text", blank=True)
+    proposal_realism_label = models.CharField(
+        "label", default="Cost realism questions and comments", max_length=255
+    )
+    proposal_realism_help_text = models.TextField("help text", blank=True)
+    proposal_qualifications_label = models.CharField(
+        "label", default="Qualifications questions and comments", max_length=255
+    )
+    proposal_qualifications_help_text = models.TextField("help text", blank=True)
+    proposal_evaluation_label = models.CharField(
+        "label", default="Evaluation questions and comments", max_length=255
+    )
+    proposal_evaluation_help_text = models.TextField("help text", blank=True)
 
     concept_help_text_tab_panels = [
-        MultiFieldPanel([
-            FieldPanel('concept_principles_label'),
-            FieldPanel('concept_principles_help_text'),
-        ], 'concept principles'),
-        MultiFieldPanel([
-            FieldPanel('concept_technical_label'),
-            FieldPanel('concept_technical_help_text'),
-        ], 'concept technical'),
-        MultiFieldPanel([
-            FieldPanel('concept_sustainable_label'),
-            FieldPanel('concept_sustainable_help_text'),
-        ], 'concept sustainable'),
+        MultiFieldPanel(
+            [
+                FieldPanel("concept_principles_label"),
+                FieldPanel("concept_principles_help_text"),
+            ],
+            "concept principles",
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel("concept_technical_label"),
+                FieldPanel("concept_technical_help_text"),
+            ],
+            "concept technical",
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel("concept_sustainable_label"),
+                FieldPanel("concept_sustainable_help_text"),
+            ],
+            "concept sustainable",
+        ),
     ]
 
     proposal_help_text_tab_panels = [
-        MultiFieldPanel([
-            FieldPanel('proposal_liked_label'),
-            FieldPanel('proposal_liked_help_text'),
-        ], 'proposal liked'),
-        MultiFieldPanel([
-            FieldPanel('proposal_concerns_label'),
-            FieldPanel('proposal_concerns_help_text'),
-        ], 'proposal concerns'),
-        MultiFieldPanel([
-            FieldPanel('proposal_red_flags_label'),
-            FieldPanel('proposal_red_flags_help_text'),
-        ], 'proposal red flags'),
-        MultiFieldPanel([
-            FieldPanel('proposal_overview_label'),
-            FieldPanel('proposal_overview_help_text'),
-        ], 'proposal overview'),
-        MultiFieldPanel([
-            FieldPanel('proposal_objectives_label'),
-            FieldPanel('proposal_objectives_help_text'),
-        ], 'proposal objectives'),
-        MultiFieldPanel([
-            FieldPanel('proposal_strategy_label'),
-            FieldPanel('proposal_strategy_help_text'),
-        ], 'proposal strategy'),
-        MultiFieldPanel([
-            FieldPanel('proposal_technical_label'),
-            FieldPanel('proposal_technical_help_text'),
-        ], 'proposal technical'),
-        MultiFieldPanel([
-            FieldPanel('proposal_alternative_label'),
-            FieldPanel('proposal_alternative_help_text'),
-        ], 'proposal alternative'),
-        MultiFieldPanel([
-            FieldPanel('proposal_usability_label'),
-            FieldPanel('proposal_usability_help_text'),
-        ], 'proposal usability'),
-        MultiFieldPanel([
-            FieldPanel('proposal_sustainability_label'),
-            FieldPanel('proposal_sustainability_help_text'),
-        ], 'proposal sustainability'),
-        MultiFieldPanel([
-            FieldPanel('proposal_collaboration_label'),
-            FieldPanel('proposal_collaboration_help_text'),
-        ], 'proposal collaboration'),
-        MultiFieldPanel([
-            FieldPanel('proposal_realism_label'),
-            FieldPanel('proposal_realism_help_text'),
-        ], 'proposal realism'),
-        MultiFieldPanel([
-            FieldPanel('proposal_qualifications_label'),
-            FieldPanel('proposal_qualifications_help_text'),
-        ], 'proposal qualifications'),
-        MultiFieldPanel([
-            FieldPanel('proposal_evaluation_label'),
-            FieldPanel('proposal_evaluation_help_text'),
-        ], 'proposal evaluation'),
+        MultiFieldPanel(
+            [
+                FieldPanel("proposal_liked_label"),
+                FieldPanel("proposal_liked_help_text"),
+            ],
+            "proposal liked",
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel("proposal_concerns_label"),
+                FieldPanel("proposal_concerns_help_text"),
+            ],
+            "proposal concerns",
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel("proposal_red_flags_label"),
+                FieldPanel("proposal_red_flags_help_text"),
+            ],
+            "proposal red flags",
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel("proposal_overview_label"),
+                FieldPanel("proposal_overview_help_text"),
+            ],
+            "proposal overview",
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel("proposal_objectives_label"),
+                FieldPanel("proposal_objectives_help_text"),
+            ],
+            "proposal objectives",
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel("proposal_strategy_label"),
+                FieldPanel("proposal_strategy_help_text"),
+            ],
+            "proposal strategy",
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel("proposal_technical_label"),
+                FieldPanel("proposal_technical_help_text"),
+            ],
+            "proposal technical",
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel("proposal_alternative_label"),
+                FieldPanel("proposal_alternative_help_text"),
+            ],
+            "proposal alternative",
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel("proposal_usability_label"),
+                FieldPanel("proposal_usability_help_text"),
+            ],
+            "proposal usability",
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel("proposal_sustainability_label"),
+                FieldPanel("proposal_sustainability_help_text"),
+            ],
+            "proposal sustainability",
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel("proposal_collaboration_label"),
+                FieldPanel("proposal_collaboration_help_text"),
+            ],
+            "proposal collaboration",
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel("proposal_realism_label"),
+                FieldPanel("proposal_realism_help_text"),
+            ],
+            "proposal realism",
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel("proposal_qualifications_label"),
+                FieldPanel("proposal_qualifications_help_text"),
+            ],
+            "proposal qualifications",
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel("proposal_evaluation_label"),
+                FieldPanel("proposal_evaluation_help_text"),
+            ],
+            "proposal evaluation",
+        ),
     ]
 
-    edit_handler = TabbedInterface([
-        ObjectList(concept_help_text_tab_panels, heading=_('Concept form')),
-        ObjectList(proposal_help_text_tab_panels, heading=_('Proposal form')),
-    ])
+    edit_handler = TabbedInterface(
+        [
+            ObjectList(concept_help_text_tab_panels, heading=_("Concept form")),
+            ObjectList(proposal_help_text_tab_panels, heading=_("Proposal form")),
+        ]
+    )

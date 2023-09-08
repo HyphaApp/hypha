@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('application_projects', '0057_alter_report_config'),
+        ("application_projects", "0057_alter_report_config"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='project',
-            name='ready_for_final_approval',
+            model_name="project",
+            name="ready_for_final_approval",
             field=models.BooleanField(blank=True, default=False),
         ),
     ]

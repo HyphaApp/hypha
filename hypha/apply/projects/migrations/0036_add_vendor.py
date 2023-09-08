@@ -8,123 +8,460 @@ import wagtail.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('application_projects', '0035_add_heading_block_to_form_fields_block'),
+        ("application_projects", "0035_add_heading_block_to_form_fields_block"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='BankInformation',
+            name="BankInformation",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('account_holder_name', models.CharField(max_length=150)),
-                ('account_routing_number', models.CharField(max_length=10)),
-                ('account_number', models.CharField(max_length=20)),
-                ('account_currency', models.CharField(max_length=10)),
-                ('need_extra_info', models.BooleanField(default=False)),
-                ('branch_address', models.TextField(blank=True, verbose_name='Address')),
-                ('nid_type', models.CharField(blank=True, max_length=25, verbose_name='National Identity Document Type')),
-                ('nid_number', models.CharField(blank=True, max_length=20, verbose_name='National Identity Document Number')),
-                ('iba_info', models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='bank_info', to='application_projects.BankInformation', verbose_name='Intermediary Bank Account Information')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("account_holder_name", models.CharField(max_length=150)),
+                ("account_routing_number", models.CharField(max_length=10)),
+                ("account_number", models.CharField(max_length=20)),
+                ("account_currency", models.CharField(max_length=10)),
+                ("need_extra_info", models.BooleanField(default=False)),
+                (
+                    "branch_address",
+                    models.TextField(blank=True, verbose_name="Address"),
+                ),
+                (
+                    "nid_type",
+                    models.CharField(
+                        blank=True,
+                        max_length=25,
+                        verbose_name="National Identity Document Type",
+                    ),
+                ),
+                (
+                    "nid_number",
+                    models.CharField(
+                        blank=True,
+                        max_length=20,
+                        verbose_name="National Identity Document Number",
+                    ),
+                ),
+                (
+                    "iba_info",
+                    models.OneToOneField(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="bank_info",
+                        to="application_projects.BankInformation",
+                        verbose_name="Intermediary Bank Account Information",
+                    ),
+                ),
             ],
         ),
         migrations.RemoveField(
-            model_name='project',
-            name='contact_address',
+            model_name="project",
+            name="contact_address",
         ),
         migrations.RemoveField(
-            model_name='project',
-            name='contact_email',
+            model_name="project",
+            name="contact_email",
         ),
         migrations.RemoveField(
-            model_name='project',
-            name='contact_legal_name',
+            model_name="project",
+            name="contact_legal_name",
         ),
         migrations.RemoveField(
-            model_name='project',
-            name='contact_phone',
+            model_name="project",
+            name="contact_phone",
         ),
         migrations.AddField(
-            model_name='projectsettings',
-            name='vendor_setup_required',
+            model_name="projectsettings",
+            name="vendor_setup_required",
             field=models.BooleanField(default=True),
         ),
         migrations.CreateModel(
-            name='VendorFormSettings',
+            name="VendorFormSettings",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name_label', models.TextField(default='1. What is the name of the person/organisation on the contract?', verbose_name='label')),
-                ('name_help_text', wagtail.fields.RichTextField(blank=True, default='This is the party name in the contract.', verbose_name='help text')),
-                ('contractor_name_label', models.TextField(default="2. What is the individual's name who is signing the contract?", verbose_name='label')),
-                ('contractor_name_help_text', wagtail.fields.RichTextField(blank=True, default='This person is is authorised to sign contract on behalf of the person or organization named above.', verbose_name='help text')),
-                ('type_label', models.TextField(default='3. Is the bank account owned by the person or organisation in the Question 1 above?', verbose_name='label')),
-                ('type_help_text', wagtail.fields.RichTextField(blank=True, default='The name of the bank account must be the same as on the contract.', verbose_name='help text')),
-                ('required_to_pay_taxes_label', models.TextField(default='Is the organisation required to pay US taxes?', verbose_name='label')),
-                ('required_to_pay_taxes_help_text', wagtail.fields.RichTextField(blank=True, default='', verbose_name='help text')),
-                ('due_diligence_documents_label', models.TextField(default='Due Diligence Documents', verbose_name='label')),
-                ('due_diligence_documents_help_text', wagtail.fields.RichTextField(blank=True, default='Upload Due Diligence Documents. E.g. w8/w9 forms.', verbose_name='help text')),
-                ('account_holder_name_label', models.TextField(default='Bank Account Holder name', verbose_name='label')),
-                ('account_holder_name_help_text', wagtail.fields.RichTextField(blank=True, default='This name must be same as the person or organisation that signed the contract. This person is authorised to sign contracts on behalf of the person or organisation named above.', verbose_name='help text')),
-                ('account_routing_number_label', models.TextField(default='Bank Account Routing number', verbose_name='label')),
-                ('account_routing_number_help_text', wagtail.fields.RichTextField(blank=True, default='Depending on your country, this might be called the ACH, SWIFT, BIC or ABA number.', verbose_name='help text')),
-                ('account_number_label', models.TextField(default='Bank Account Number', verbose_name='label')),
-                ('account_number_help_text', wagtail.fields.RichTextField(blank=True, default='Depending on your country, this might be called the account number, IBAN, or BBAN number.', verbose_name='help text')),
-                ('account_currency_label', models.TextField(default='Bank Account Currency', verbose_name='label')),
-                ('account_currency_help_text', wagtail.fields.RichTextField(blank=True, default='This is the currency of this bank account.', verbose_name='help text')),
-                ('need_extra_info_label', models.TextField(default='Do you need to provide us with extra information?', verbose_name='label')),
-                ('need_extra_info_help_text', wagtail.fields.RichTextField(blank=True, default='', verbose_name='help text')),
-                ('branch_address_label', models.TextField(default='Bank Account Branch Address', verbose_name='label')),
-                ('branch_address_help_text', models.TextField(blank=True, default='The address of the bank branch where you have the bank account located(not the bank account holder address)', verbose_name='help text')),
-                ('ib_account_routing_number_label', models.TextField(default='Intermediary Bank Account Routing Number', verbose_name='label')),
-                ('ib_account_routing_number_help_text', wagtail.fields.RichTextField(blank=True, default='Depending on your country, this might be called ACH, SWIFT, BIC or ABA number', verbose_name='help text')),
-                ('ib_account_number_label', models.TextField(default='Intermediary Bank Account Number', verbose_name='label')),
-                ('ib_account_number_help_text', wagtail.fields.RichTextField(blank=True, default='Depending on your country, this might be called the account number, IBAN, or BBAN number', verbose_name='help text')),
-                ('ib_account_currency_label', models.TextField(default='Intermediary Bank Account Currency', verbose_name='label')),
-                ('ib_account_currency_help_text', wagtail.fields.RichTextField(blank=True, default='This is the currency of this bank account', verbose_name='help text')),
-                ('ib_branch_address_label', models.TextField(default='Intermediary Bank Branch Address', verbose_name='label')),
-                ('ib_branch_address_help_text', wagtail.fields.RichTextField(blank=True, default='Bank branch address(not the bank account holder address)', verbose_name='help text')),
-                ('nid_type_label', models.TextField(default='Account Holder National Identity Document Type', verbose_name='label')),
-                ('nid_type_help_text', wagtail.fields.RichTextField(blank=True, default='This could be a passport, a National Identity number, or other national identity document.', verbose_name='help text')),
-                ('nid_number_label', models.TextField(default='Account Holder National Identity Document Number', verbose_name='label')),
-                ('nid_number_help_text', wagtail.fields.RichTextField(blank=True, default='', verbose_name='help text')),
-                ('other_info_label', models.TextField(default='Other Information', verbose_name='label')),
-                ('other_info_help_text', wagtail.fields.RichTextField(blank=True, default='If you need to include other information not listed above, provide it here.', verbose_name='help text')),
-                ('site', models.OneToOneField(editable=False, on_delete=django.db.models.deletion.CASCADE, to='wagtailcore.Site')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "name_label",
+                    models.TextField(
+                        default="1. What is the name of the person/organisation on the contract?",
+                        verbose_name="label",
+                    ),
+                ),
+                (
+                    "name_help_text",
+                    wagtail.fields.RichTextField(
+                        blank=True,
+                        default="This is the party name in the contract.",
+                        verbose_name="help text",
+                    ),
+                ),
+                (
+                    "contractor_name_label",
+                    models.TextField(
+                        default="2. What is the individual's name who is signing the contract?",
+                        verbose_name="label",
+                    ),
+                ),
+                (
+                    "contractor_name_help_text",
+                    wagtail.fields.RichTextField(
+                        blank=True,
+                        default="This person is is authorised to sign contract on behalf of the person or organization named above.",
+                        verbose_name="help text",
+                    ),
+                ),
+                (
+                    "type_label",
+                    models.TextField(
+                        default="3. Is the bank account owned by the person or organisation in the Question 1 above?",
+                        verbose_name="label",
+                    ),
+                ),
+                (
+                    "type_help_text",
+                    wagtail.fields.RichTextField(
+                        blank=True,
+                        default="The name of the bank account must be the same as on the contract.",
+                        verbose_name="help text",
+                    ),
+                ),
+                (
+                    "required_to_pay_taxes_label",
+                    models.TextField(
+                        default="Is the organisation required to pay US taxes?",
+                        verbose_name="label",
+                    ),
+                ),
+                (
+                    "required_to_pay_taxes_help_text",
+                    wagtail.fields.RichTextField(
+                        blank=True, default="", verbose_name="help text"
+                    ),
+                ),
+                (
+                    "due_diligence_documents_label",
+                    models.TextField(
+                        default="Due Diligence Documents", verbose_name="label"
+                    ),
+                ),
+                (
+                    "due_diligence_documents_help_text",
+                    wagtail.fields.RichTextField(
+                        blank=True,
+                        default="Upload Due Diligence Documents. E.g. w8/w9 forms.",
+                        verbose_name="help text",
+                    ),
+                ),
+                (
+                    "account_holder_name_label",
+                    models.TextField(
+                        default="Bank Account Holder name", verbose_name="label"
+                    ),
+                ),
+                (
+                    "account_holder_name_help_text",
+                    wagtail.fields.RichTextField(
+                        blank=True,
+                        default="This name must be same as the person or organisation that signed the contract. This person is authorised to sign contracts on behalf of the person or organisation named above.",
+                        verbose_name="help text",
+                    ),
+                ),
+                (
+                    "account_routing_number_label",
+                    models.TextField(
+                        default="Bank Account Routing number", verbose_name="label"
+                    ),
+                ),
+                (
+                    "account_routing_number_help_text",
+                    wagtail.fields.RichTextField(
+                        blank=True,
+                        default="Depending on your country, this might be called the ACH, SWIFT, BIC or ABA number.",
+                        verbose_name="help text",
+                    ),
+                ),
+                (
+                    "account_number_label",
+                    models.TextField(
+                        default="Bank Account Number", verbose_name="label"
+                    ),
+                ),
+                (
+                    "account_number_help_text",
+                    wagtail.fields.RichTextField(
+                        blank=True,
+                        default="Depending on your country, this might be called the account number, IBAN, or BBAN number.",
+                        verbose_name="help text",
+                    ),
+                ),
+                (
+                    "account_currency_label",
+                    models.TextField(
+                        default="Bank Account Currency", verbose_name="label"
+                    ),
+                ),
+                (
+                    "account_currency_help_text",
+                    wagtail.fields.RichTextField(
+                        blank=True,
+                        default="This is the currency of this bank account.",
+                        verbose_name="help text",
+                    ),
+                ),
+                (
+                    "need_extra_info_label",
+                    models.TextField(
+                        default="Do you need to provide us with extra information?",
+                        verbose_name="label",
+                    ),
+                ),
+                (
+                    "need_extra_info_help_text",
+                    wagtail.fields.RichTextField(
+                        blank=True, default="", verbose_name="help text"
+                    ),
+                ),
+                (
+                    "branch_address_label",
+                    models.TextField(
+                        default="Bank Account Branch Address", verbose_name="label"
+                    ),
+                ),
+                (
+                    "branch_address_help_text",
+                    models.TextField(
+                        blank=True,
+                        default="The address of the bank branch where you have the bank account located(not the bank account holder address)",
+                        verbose_name="help text",
+                    ),
+                ),
+                (
+                    "ib_account_routing_number_label",
+                    models.TextField(
+                        default="Intermediary Bank Account Routing Number",
+                        verbose_name="label",
+                    ),
+                ),
+                (
+                    "ib_account_routing_number_help_text",
+                    wagtail.fields.RichTextField(
+                        blank=True,
+                        default="Depending on your country, this might be called ACH, SWIFT, BIC or ABA number",
+                        verbose_name="help text",
+                    ),
+                ),
+                (
+                    "ib_account_number_label",
+                    models.TextField(
+                        default="Intermediary Bank Account Number", verbose_name="label"
+                    ),
+                ),
+                (
+                    "ib_account_number_help_text",
+                    wagtail.fields.RichTextField(
+                        blank=True,
+                        default="Depending on your country, this might be called the account number, IBAN, or BBAN number",
+                        verbose_name="help text",
+                    ),
+                ),
+                (
+                    "ib_account_currency_label",
+                    models.TextField(
+                        default="Intermediary Bank Account Currency",
+                        verbose_name="label",
+                    ),
+                ),
+                (
+                    "ib_account_currency_help_text",
+                    wagtail.fields.RichTextField(
+                        blank=True,
+                        default="This is the currency of this bank account",
+                        verbose_name="help text",
+                    ),
+                ),
+                (
+                    "ib_branch_address_label",
+                    models.TextField(
+                        default="Intermediary Bank Branch Address", verbose_name="label"
+                    ),
+                ),
+                (
+                    "ib_branch_address_help_text",
+                    wagtail.fields.RichTextField(
+                        blank=True,
+                        default="Bank branch address(not the bank account holder address)",
+                        verbose_name="help text",
+                    ),
+                ),
+                (
+                    "nid_type_label",
+                    models.TextField(
+                        default="Account Holder National Identity Document Type",
+                        verbose_name="label",
+                    ),
+                ),
+                (
+                    "nid_type_help_text",
+                    wagtail.fields.RichTextField(
+                        blank=True,
+                        default="This could be a passport, a National Identity number, or other national identity document.",
+                        verbose_name="help text",
+                    ),
+                ),
+                (
+                    "nid_number_label",
+                    models.TextField(
+                        default="Account Holder National Identity Document Number",
+                        verbose_name="label",
+                    ),
+                ),
+                (
+                    "nid_number_help_text",
+                    wagtail.fields.RichTextField(
+                        blank=True, default="", verbose_name="help text"
+                    ),
+                ),
+                (
+                    "other_info_label",
+                    models.TextField(default="Other Information", verbose_name="label"),
+                ),
+                (
+                    "other_info_help_text",
+                    wagtail.fields.RichTextField(
+                        blank=True,
+                        default="If you need to include other information not listed above, provide it here.",
+                        verbose_name="help text",
+                    ),
+                ),
+                (
+                    "site",
+                    models.OneToOneField(
+                        editable=False,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="wagtailcore.Site",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='Vendor',
+            name="Vendor",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Creation time')),
-                ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Update time')),
-                ('name', models.CharField(blank=True, max_length=150)),
-                ('contractor_name', models.CharField(blank=True, max_length=150)),
-                ('address', models.TextField(blank=True, verbose_name='Address')),
-                ('type', models.CharField(blank=True, choices=[('organization', 'Yes, the account belongs to the organisation above'), ('personal', 'No, it is a personal bank account')], max_length=15)),
-                ('required_to_pay_taxes', models.BooleanField(default=False)),
-                ('other_info', models.TextField(blank=True)),
-                ('user_has_updated_details', models.BooleanField(default=False)),
-                ('bank_info', models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='application_projects.BankInformation')),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, related_name='vendor', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Creation time"
+                    ),
+                ),
+                (
+                    "updated_at",
+                    models.DateTimeField(auto_now=True, verbose_name="Update time"),
+                ),
+                ("name", models.CharField(blank=True, max_length=150)),
+                ("contractor_name", models.CharField(blank=True, max_length=150)),
+                ("address", models.TextField(blank=True, verbose_name="Address")),
+                (
+                    "type",
+                    models.CharField(
+                        blank=True,
+                        choices=[
+                            (
+                                "organization",
+                                "Yes, the account belongs to the organisation above",
+                            ),
+                            ("personal", "No, it is a personal bank account"),
+                        ],
+                        max_length=15,
+                    ),
+                ),
+                ("required_to_pay_taxes", models.BooleanField(default=False)),
+                ("other_info", models.TextField(blank=True)),
+                ("user_has_updated_details", models.BooleanField(default=False)),
+                (
+                    "bank_info",
+                    models.OneToOneField(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="application_projects.BankInformation",
+                    ),
+                ),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="vendor",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='DueDiligenceDocument',
+            name="DueDiligenceDocument",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('document', models.FileField(storage=django.core.files.storage.FileSystemStorage(), upload_to='due_diligence_documents')),
-                ('vendor', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='due_diligence_documents', to='application_projects.Vendor')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "document",
+                    models.FileField(
+                        storage=django.core.files.storage.FileSystemStorage(),
+                        upload_to="due_diligence_documents",
+                    ),
+                ),
+                (
+                    "vendor",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="due_diligence_documents",
+                        to="application_projects.Vendor",
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='project',
-            name='vendor',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='projects', to='application_projects.Vendor'),
+            model_name="project",
+            name="vendor",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="projects",
+                to="application_projects.Vendor",
+            ),
         ),
     ]

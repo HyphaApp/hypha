@@ -9,8 +9,8 @@ class StreamFieldDataEncoder(DjangoJSONEncoder):
     def default(self, o):
         if isinstance(o, StreamFieldFile):
             return {
-                'name': o.name,
-                'filename': o.filename,
+                "name": o.name,
+                "filename": o.filename,
             }
         return super().default(o)
 
@@ -21,7 +21,10 @@ class StreamFieldFile(File):
 
     see django.db.models.fields.files for the inspiration
     """
-    def __init__(self, instance, field, *args, filename=None, storage=default_storage, **kwargs):
+
+    def __init__(
+        self, instance, field, *args, filename=None, storage=default_storage, **kwargs
+    ):
         super().__init__(*args, **kwargs)
         # Field is the wagtail field that the file was uploaded to
         self.field = field
@@ -46,8 +49,8 @@ class StreamFieldFile(File):
         return other.__eq__(self)
 
     def _get_file(self):
-        if getattr(self, '_file', None) is None:
-            self._file = self.storage.open(self.name, 'rb')
+        if getattr(self, "_file", None) is None:
+            self._file = self.storage.open(self.name, "rb")
         return self._file
 
     def _set_file(self, file):
@@ -85,18 +88,18 @@ class StreamFieldFile(File):
         try:
             modified_time = self.storage.get_modified_time(self.name).date()
         except FileNotFoundError:
-            modified_time = '–'
+            modified_time = "–"
 
         return modified_time
 
     def serialize(self):
         return {
-            'url': self.url,
-            'filename': self.filename,
+            "url": self.url,
+            "filename": self.filename,
         }
 
-    def open(self, mode='rb'):
-        if getattr(self, '_file', None) is None:
+    def open(self, mode="rb"):
+        if getattr(self, "_file", None) is None:
             self.file = self.storage.open(self.name, mode)
         else:
             self.file.open(mode)
@@ -117,7 +120,7 @@ class StreamFieldFile(File):
             return
         # Only close the file if it's already open, which we know by the
         # presence of self._file
-        if hasattr(self, '_file'):
+        if hasattr(self, "_file"):
             self.close()
             del self.file
 
@@ -128,11 +131,11 @@ class StreamFieldFile(File):
 
     @property
     def closed(self):
-        file = getattr(self, '_file', None)
+        file = getattr(self, "_file", None)
         return file is None or file.closed
 
     def close(self):
-        file = getattr(self, '_file', None)
+        file = getattr(self, "_file", None)
         if file is not None:
             file.close()
 

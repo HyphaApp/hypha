@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('application_projects', '0029_report_submitted'),
+        ("application_projects", "0029_report_submitted"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='report',
-            name='skipped',
+            model_name="report",
+            name="skipped",
             field=models.BooleanField(default=False),
         ),
     ]

@@ -25,11 +25,16 @@ from .constants import dimensions_fields_mapping
 class ApiBase:
     """The base class for all API classes."""
 
-    def __init__(self, dimension: str = None, pagesize: int = 2000, post_legacy_method: str = None):
+    def __init__(
+        self,
+        dimension: str = None,
+        pagesize: int = 2000,
+        post_legacy_method: str = None,
+    ):
         self.__sender_id = None
         self.__sender_password = None
         self.__session_id = None
-        self.__api_url = 'https://api.intacct.com/ia/xml/xmlgw.phtml'
+        self.__api_url = "https://api.intacct.com/ia/xml/xmlgw.phtml"
         self.__dimension = dimension
         self.__pagesize = pagesize
         self.__post_legacy_method = post_legacy_method
@@ -50,7 +55,9 @@ class ApiBase:
         """
         self.__sender_password = sender_password
 
-    def get_session_id(self, user_id: str, company_id: str, user_password: str, entity_id: str = None):
+    def get_session_id(
+        self, user_id: str, company_id: str, user_password: str, entity_id: str = None
+    ):
         """
         Sets the session id for APIs
         :param access_token: acceess token (JWT)
@@ -59,45 +66,45 @@ class ApiBase:
 
         timestamp = datetime.datetime.now()
         dict_body = {
-            'request': {
-                'control': {
-                    'senderid': self.__sender_id,
-                    'password': self.__sender_password,
-                    'controlid': timestamp,
-                    'uniqueid': False,
-                    'dtdversion': 3.0,
-                    'includewhitespace': False
+            "request": {
+                "control": {
+                    "senderid": self.__sender_id,
+                    "password": self.__sender_password,
+                    "controlid": timestamp,
+                    "uniqueid": False,
+                    "dtdversion": 3.0,
+                    "includewhitespace": False,
                 },
-                'operation': {
-                    'authentication': {
-                        'login': {
-                            'userid': user_id,
-                            'companyid': company_id,
-                            'password': user_password,
-                            'locationid': entity_id
+                "operation": {
+                    "authentication": {
+                        "login": {
+                            "userid": user_id,
+                            "companyid": company_id,
+                            "password": user_password,
+                            "locationid": entity_id,
                         }
                     },
-                    'content': {
-                        'function': {
-                            '@controlid': str(uuid.uuid4()),
-                            'getAPISession': None
+                    "content": {
+                        "function": {
+                            "@controlid": str(uuid.uuid4()),
+                            "getAPISession": None,
                         }
-                    }
-                }
+                    },
+                },
             }
         }
 
         response = self.__post_request(dict_body, self.__api_url)
 
-        if response['authentication']['status'] == 'success':
-            session_details = response['result']['data']['api']
-            self.__api_url = session_details['endpoint']
-            self.__session_id = session_details['sessionid']
+        if response["authentication"]["status"] == "success":
+            session_details = response["result"]["data"]["api"]
+            self.__api_url = session_details["endpoint"]
+            self.__session_id = session_details["sessionid"]
 
             return self.__session_id
 
         else:
-            raise SageIntacctSDKError('Error: {0}'.format(response['errormessage']))
+            raise SageIntacctSDKError("Error: {0}".format(response["errormessage"]))
 
     def set_session_id(self, session_id: str):
         """
@@ -117,12 +124,12 @@ class ApiBase:
             Error message assignment and type.
         """
         error = {}
-        if isinstance(errormessages['error'], list):
-            error['error'] = errormessages['error'][0]
-            error['type'] = 'list'
-        elif isinstance(errormessages['error'], dict):
-            error['error'] = errormessages['error']
-            error['type'] = 'dict'
+        if isinstance(errormessages["error"], list):
+            error["error"] = errormessages["error"][0]
+            error["type"] = "list"
+        elif isinstance(errormessages["error"], dict):
+            error["error"] = errormessages["error"]
+            error["type"] = "dict"
 
         return error
 
@@ -136,20 +143,20 @@ class ApiBase:
             Same error message with decoded Support ID.
         """
         support_id_msg = self.__support_id_msg(errormessages)
-        data_type = support_id_msg['type']
-        error = support_id_msg['error']
-        if (error and error['description2']):
-            message = error['description2']
-            support_id = re.search('Support ID: (.*)]', message)
+        data_type = support_id_msg["type"]
+        error = support_id_msg["error"]
+        if error and error["description2"]:
+            message = error["description2"]
+            support_id = re.search("Support ID: (.*)]", message)
             if support_id.group(1):
                 decoded_support_id = unquote(support_id.group(1))
                 message = message.replace(support_id.group(1), decoded_support_id)
 
         # Converting dict to list even for single error response
-        if data_type == 'dict':
-            errormessages['error'] = [errormessages['error']]
+        if data_type == "dict":
+            errormessages["error"] = [errormessages["error"]]
 
-        errormessages['error'][0]['description2'] = message if message else None
+        errormessages["error"][0]["description2"] = message if message else None
 
         return errormessages
 
@@ -164,9 +171,7 @@ class ApiBase:
             A response from the request (dict).
         """
 
-        api_headers = {
-            'content-type': 'application/xml'
-        }
+        api_headers = {"content-type": "application/xml"}
         body = xmltodict.unparse(dict_body)
 
         response = requests.post(api_url, headers=api_headers, data=body)
@@ -175,47 +180,69 @@ class ApiBase:
         parsed_response = json.loads(json.dumps(parsed_xml))
 
         if response.status_code == 200:
-            if parsed_response['response']['control']['status'] == 'success':
-                api_response = parsed_response['response']['operation']
+            if parsed_response["response"]["control"]["status"] == "success":
+                api_response = parsed_response["response"]["operation"]
 
-            if parsed_response['response']['control']['status'] == 'failure':
-                exception_msg = self.__decode_support_id(parsed_response['response']['errormessage'])
-                raise WrongParamsError('Some of the parameters are wrong', exception_msg)
+            if parsed_response["response"]["control"]["status"] == "failure":
+                exception_msg = self.__decode_support_id(
+                    parsed_response["response"]["errormessage"]
+                )
+                raise WrongParamsError(
+                    "Some of the parameters are wrong", exception_msg
+                )
 
-            if api_response['authentication']['status'] == 'failure':
-                raise InvalidTokenError('Invalid token / Incorrect credentials', api_response['errormessage'])
+            if api_response["authentication"]["status"] == "failure":
+                raise InvalidTokenError(
+                    "Invalid token / Incorrect credentials",
+                    api_response["errormessage"],
+                )
 
-            if api_response['result']['status'] == 'success':
+            if api_response["result"]["status"] == "success":
                 return api_response
 
-            if api_response['result']['status'] == 'failure':
-                exception_msg = self.__decode_support_id(api_response['result']['errormessage'])
+            if api_response["result"]["status"] == "failure":
+                exception_msg = self.__decode_support_id(
+                    api_response["result"]["errormessage"]
+                )
 
-                for error in exception_msg['error']:
-                    if error['description2'] and 'You do not have permission for API' in error['description2']:
-                        raise InvalidTokenError('The user has insufficient privilege', exception_msg)
+                for error in exception_msg["error"]:
+                    if (
+                        error["description2"]
+                        and "You do not have permission for API"
+                        in error["description2"]
+                    ):
+                        raise InvalidTokenError(
+                            "The user has insufficient privilege", exception_msg
+                        )
 
-                raise WrongParamsError('Error during {0}'.format(api_response['result']['function']), exception_msg)
+                raise WrongParamsError(
+                    "Error during {0}".format(api_response["result"]["function"]),
+                    exception_msg,
+                )
 
         if response.status_code == 400:
-            raise WrongParamsError('Some of the parameters are wrong', parsed_response)
+            raise WrongParamsError("Some of the parameters are wrong", parsed_response)
 
         if response.status_code == 401:
-            raise InvalidTokenError('Invalid token / Incorrect credentials', parsed_response)
+            raise InvalidTokenError(
+                "Invalid token / Incorrect credentials", parsed_response
+            )
 
         if response.status_code == 403:
-            raise NoPrivilegeError('Forbidden, the user has insufficient privilege', parsed_response)
+            raise NoPrivilegeError(
+                "Forbidden, the user has insufficient privilege", parsed_response
+            )
 
         if response.status_code == 404:
-            raise NotFoundItemError('Not found item with ID', parsed_response)
+            raise NotFoundItemError("Not found item with ID", parsed_response)
 
         if response.status_code == 498:
-            raise ExpiredTokenError('Expired token, try to refresh it', parsed_response)
+            raise ExpiredTokenError("Expired token, try to refresh it", parsed_response)
 
         if response.status_code == 500:
-            raise InternalServerError('Internal server error', parsed_response)
+            raise InternalServerError("Internal server error", parsed_response)
 
-        raise SageIntacctSDKError('Error: {0}'.format(parsed_response))
+        raise SageIntacctSDKError("Error: {0}".format(parsed_response))
 
     def format_and_send_request(self, data: Dict):
         """Format data accordingly to convert them to xml.
@@ -231,67 +258,54 @@ class ApiBase:
         timestamp = datetime.datetime.now()
 
         dict_body = {
-            'request': {
-                'control': {
-                    'senderid': self.__sender_id,
-                    'password': self.__sender_password,
-                    'controlid': timestamp,
-                    'uniqueid': False,
-                    'dtdversion': 3.0,
-                    'includewhitespace': False
+            "request": {
+                "control": {
+                    "senderid": self.__sender_id,
+                    "password": self.__sender_password,
+                    "controlid": timestamp,
+                    "uniqueid": False,
+                    "dtdversion": 3.0,
+                    "includewhitespace": False,
                 },
-                'operation': {
-                    'authentication': {
-                        'sessionid': self.__session_id
+                "operation": {
+                    "authentication": {"sessionid": self.__session_id},
+                    "content": {
+                        "function": {"@controlid": str(uuid.uuid4()), key: data[key]}
                     },
-                    'content': {
-                        'function': {
-                            '@controlid': str(uuid.uuid4()),
-                            key: data[key]
-                        }
-                    }
-                }
+                },
             }
         }
 
         response = self.__post_request(dict_body, self.__api_url)
-        return response['result']
+        return response["result"]
 
     def post(self, data: Dict):
-        if self.__dimension in ('CCTRANSACTION', 'EPPAYMENT'):
+        if self.__dimension in ("CCTRANSACTION", "EPPAYMENT"):
             return self.__construct_post_legacy_payload(data)
 
         return self.__construct_post_payload(data)
 
     def __construct_post_payload(self, data: Dict):
-        payload = {
-            'create': {
-                self.__dimension: data
-            }
-        }
+        payload = {"create": {self.__dimension: data}}
 
         return self.format_and_send_request(payload)
 
     def __construct_post_legacy_payload(self, data: Dict):
-        payload = {
-            self.__post_legacy_method: data
-        }
+        payload = {self.__post_legacy_method: data}
 
         return self.format_and_send_request(payload)
 
     def count(self):
         get_count = {
-            'query': {
-                'object': self.__dimension,
-                'select': {
-                    'field': 'RECORDNO'
-                },
-                'pagesize': '1'
+            "query": {
+                "object": self.__dimension,
+                "select": {"field": "RECORDNO"},
+                "pagesize": "1",
             }
         }
 
         response = self.format_and_send_request(get_count)
-        return int(response['data']['@totalcount'])
+        return int(response["data"]["@totalcount"])
 
     def read_by_query(self, fields: list = None):
         """Read by Query from Sage Intacct
@@ -303,11 +317,11 @@ class ApiBase:
             Dict.
         """
         payload = {
-            'readByQuery': {
-                'object': self.__dimension,
-                'fields': ','.join(fields) if fields else '*',
-                'query': None,
-                'pagesize': '1000'
+            "readByQuery": {
+                "object": self.__dimension,
+                "fields": ",".join(fields) if fields else "*",
+                "query": None,
+                "pagesize": "1000",
             }
         }
 
@@ -324,15 +338,15 @@ class ApiBase:
             Dict.
         """
         data = {
-            'readByQuery': {
-                'object': self.__dimension,
-                'fields': ','.join(fields) if fields else '*',
-                'query': "{0} = '{1}'".format(field, value),
-                'pagesize': '1000'
+            "readByQuery": {
+                "object": self.__dimension,
+                "fields": ",".join(fields) if fields else "*",
+                "query": "{0} = '{1}'".format(field, value),
+                "pagesize": "1000",
             }
         }
 
-        return self.format_and_send_request(data)['data']
+        return self.format_and_send_request(data)["data"]
 
     def get_all(self, field: str = None, value: str = None, fields: list = None):
         """Get all data from Sage Intacct
@@ -345,35 +359,37 @@ class ApiBase:
         pagesize = self.__pagesize
         for offset in range(0, count, pagesize):
             data = {
-                'query': {
-                    'object': self.__dimension,
-                    'select': {
-                        'field': fields if fields else dimensions_fields_mapping[self.__dimension]
+                "query": {
+                    "object": self.__dimension,
+                    "select": {
+                        "field": fields
+                        if fields
+                        else dimensions_fields_mapping[self.__dimension]
                     },
-                    'pagesize': pagesize,
-                    'offset': offset
+                    "pagesize": pagesize,
+                    "offset": offset,
                 }
             }
 
             if field and value:
-                data['query']['filter'] = {
-                    'equalto': {
-                        'field': field,
-                        'value': value
-                    }
-                }
+                data["query"]["filter"] = {"equalto": {"field": field, "value": value}}
 
-            paginated_data = self.format_and_send_request(data)['data'][self.__dimension]
+            paginated_data = self.format_and_send_request(data)["data"][
+                self.__dimension
+            ]
             complete_data.extend(paginated_data)
 
         return complete_data
 
     __query_filter = List[Tuple[str, str, str]]
 
-    def get_by_query(self, fields: List[str] = None,
-                     and_filter: __query_filter = None,
-                     or_filter: __query_filter = None,
-                     filter_payload: dict = None):
+    def get_by_query(
+        self,
+        fields: List[str] = None,
+        and_filter: __query_filter = None,
+        or_filter: __query_filter = None,
+        filter_payload: dict = None,
+    ):
         """Get data from Sage Intacct using query method based on filter.
 
         See sage intacct documentation here for query structures:
@@ -390,7 +406,7 @@ class ApiBase:
 
                 Returns:
                     Dict.
-                """
+        """
 
         complete_data = []
         count = self.count()
@@ -398,68 +414,82 @@ class ApiBase:
         offset = 0
         formatted_filter = filter_payload
         data = {
-            'query': {
-                'object': self.__dimension,
-                'select': {
-                    'field': fields if fields else dimensions_fields_mapping[self.__dimension]
+            "query": {
+                "object": self.__dimension,
+                "select": {
+                    "field": fields
+                    if fields
+                    else dimensions_fields_mapping[self.__dimension]
                 },
-                'pagesize': pagesize,
-                'offset': offset
+                "pagesize": pagesize,
+                "offset": offset,
             }
         }
         if and_filter and or_filter:
-            formatted_filter = {'and': {}}
+            formatted_filter = {"and": {}}
             for operator, field, value in and_filter:
-                formatted_filter['and'].setdefault(operator, {}).update({'field': field, 'value': value})
-            formatted_filter['and']['or'] = {}
+                formatted_filter["and"].setdefault(operator, {}).update(
+                    {"field": field, "value": value}
+                )
+            formatted_filter["and"]["or"] = {}
             for operator, field, value in or_filter:
-                formatted_filter['and']['or'].setdefault(operator, {}).update({'field': field, 'value': value})
+                formatted_filter["and"]["or"].setdefault(operator, {}).update(
+                    {"field": field, "value": value}
+                )
 
         elif and_filter:
             if len(and_filter) > 1:
-                formatted_filter = {'and': {}}
+                formatted_filter = {"and": {}}
                 for operator, field, value in and_filter:
-                    formatted_filter['and'].setdefault(operator, {}).update({'field': field, 'value': value})
+                    formatted_filter["and"].setdefault(operator, {}).update(
+                        {"field": field, "value": value}
+                    )
             else:
                 formatted_filter = {}
                 for operator, field, value in and_filter:
-                    formatted_filter.setdefault(operator, {}).update({'field': field, 'value': value})
+                    formatted_filter.setdefault(operator, {}).update(
+                        {"field": field, "value": value}
+                    )
         elif or_filter:
             if len(or_filter) > 1:
-                formatted_filter = {'or': {}}
+                formatted_filter = {"or": {}}
                 for operator, field, value in or_filter:
-                    formatted_filter['or'].setdefault(operator, {}).update({'field': field, 'value': value})
+                    formatted_filter["or"].setdefault(operator, {}).update(
+                        {"field": field, "value": value}
+                    )
             else:
                 formatted_filter = {}
                 for operator, field, value in or_filter:
-                    formatted_filter.setdefault(operator, {}).update({'field': field, 'value': value})
+                    formatted_filter.setdefault(operator, {}).update(
+                        {"field": field, "value": value}
+                    )
 
         if formatted_filter:
-            data['query']['filter'] = formatted_filter
+            data["query"]["filter"] = formatted_filter
 
         for offset in range(0, count, pagesize):
-            data['query']['offset'] = offset
-            paginated_data = self.format_and_send_request(data)['data']
+            data["query"]["offset"] = offset
+            paginated_data = self.format_and_send_request(data)["data"]
             complete_data.extend(paginated_data[self.__dimension])
-            filtered_total = int(paginated_data['@totalcount'])
-            if paginated_data['@numremaining'] == '0':
+            filtered_total = int(paginated_data["@totalcount"])
+            if paginated_data["@numremaining"] == "0":
                 break
         if filtered_total != len(complete_data):
             warn(
-                message='Your data may not be complete. Records returned do not equal total query record count',
+                message="Your data may not be complete. Records returned do not equal total query record count",
                 category=DataIntegrityWarning,
-                stacklevel=2
+                stacklevel=2,
             )
         return complete_data
 
     def get_lookup(self):
-        """ Returns all fields with attributes from the object called on.
+        """Returns all fields with attributes from the object called on.
 
-                Parameters:
-                    self
-                Returns:
-                    Dict.
+        Parameters:
+            self
+        Returns:
+            Dict.
         """
 
-        data = {'lookup': {'object': self.__dimension}}
-        return self.format_and_send_request(data)['data']
+        data = {"lookup": {"object": self.__dimension}}
+        return self.format_and_send_request(data)["data"]

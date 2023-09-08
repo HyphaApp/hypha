@@ -9,91 +9,292 @@ import wagtailcache.cache
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
-        ('images', '0003_customimage_drupal_id'),
-        ('categories', '0006_use_category_options_as_submission_filter'),
-        ('wagtailcore', '0059_apply_collection_ordering'),
-        ('funds', '0087_applicationsettings'),
+        ("images", "0003_customimage_drupal_id"),
+        ("categories", "0006_use_category_options_as_submission_filter"),
+        ("wagtailcore", "0059_apply_collection_ordering"),
+        ("funds", "0087_applicationsettings"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Investment',
+            name="Investment",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=50)),
-                ('year', models.IntegerField(default=hypha.public.partner.models.current_year, help_text='Use format: <YYYY>', validators=[django.core.validators.MinValueValidator(1984), hypha.public.partner.models.max_value_current_year])),
-                ('amount_committed', models.DecimalField(decimal_places=2, default=0, max_digits=11, verbose_name='Ammount Commited US$')),
-                ('description', models.TextField()),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('application', models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='funds.ApplicationSubmission')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=50)),
+                (
+                    "year",
+                    models.IntegerField(
+                        default=hypha.public.partner.models.current_year,
+                        help_text="Use format: <YYYY>",
+                        validators=[
+                            django.core.validators.MinValueValidator(1984),
+                            hypha.public.partner.models.max_value_current_year,
+                        ],
+                    ),
+                ),
+                (
+                    "amount_committed",
+                    models.DecimalField(
+                        decimal_places=2,
+                        default=0,
+                        max_digits=11,
+                        verbose_name="Ammount Commited US$",
+                    ),
+                ),
+                ("description", models.TextField()),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "application",
+                    models.OneToOneField(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="funds.ApplicationSubmission",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='PartnerPage',
+            name="PartnerPage",
             fields=[
-                ('page_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
-                ('social_text', models.CharField(blank=True, max_length=255)),
-                ('listing_title', models.CharField(blank=True, help_text='Override the page title used when this page appears in listings', max_length=255)),
-                ('listing_summary', models.CharField(blank=True, help_text="The text summary used when this page appears in listings. It's also used as the description for search engines if the 'Search description' field above is not defined.", max_length=255)),
-                ('status', models.CharField(choices=[('active', 'Active'), ('inactive', 'Inactive')], default='current_partner', max_length=20)),
-                ('public', models.BooleanField(default=True)),
-                ('description', wagtail.fields.RichTextField(blank=True)),
-                ('web_url', models.URLField(blank=True)),
-                ('header_image', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='images.CustomImage')),
-                ('listing_image', models.ForeignKey(blank=True, help_text='Choose the image you wish to be displayed when this page appears in listings', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='images.CustomImage')),
-                ('logo', models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='images.CustomImage')),
-                ('social_image', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='images.CustomImage')),
+                (
+                    "page_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to="wagtailcore.Page",
+                    ),
+                ),
+                ("social_text", models.CharField(blank=True, max_length=255)),
+                (
+                    "listing_title",
+                    models.CharField(
+                        blank=True,
+                        help_text="Override the page title used when this page appears in listings",
+                        max_length=255,
+                    ),
+                ),
+                (
+                    "listing_summary",
+                    models.CharField(
+                        blank=True,
+                        help_text="The text summary used when this page appears in listings. It's also used as the description for search engines if the 'Search description' field above is not defined.",
+                        max_length=255,
+                    ),
+                ),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[("active", "Active"), ("inactive", "Inactive")],
+                        default="current_partner",
+                        max_length=20,
+                    ),
+                ),
+                ("public", models.BooleanField(default=True)),
+                ("description", wagtail.fields.RichTextField(blank=True)),
+                ("web_url", models.URLField(blank=True)),
+                (
+                    "header_image",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="+",
+                        to="images.CustomImage",
+                    ),
+                ),
+                (
+                    "listing_image",
+                    models.ForeignKey(
+                        blank=True,
+                        help_text="Choose the image you wish to be displayed when this page appears in listings",
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="+",
+                        to="images.CustomImage",
+                    ),
+                ),
+                (
+                    "logo",
+                    models.OneToOneField(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="+",
+                        to="images.CustomImage",
+                    ),
+                ),
+                (
+                    "social_image",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="+",
+                        to="images.CustomImage",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Partner Page',
+                "verbose_name": "Partner Page",
             },
-            bases=(wagtailcache.cache.WagtailCacheMixin, 'wagtailcore.page', models.Model),
+            bases=(
+                wagtailcache.cache.WagtailCacheMixin,
+                "wagtailcore.page",
+                models.Model,
+            ),
         ),
         migrations.CreateModel(
-            name='PartnerIndexPage',
+            name="PartnerIndexPage",
             fields=[
-                ('page_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
-                ('social_text', models.CharField(blank=True, max_length=255)),
-                ('listing_title', models.CharField(blank=True, help_text='Override the page title used when this page appears in listings', max_length=255)),
-                ('listing_summary', models.CharField(blank=True, help_text="The text summary used when this page appears in listings. It's also used as the description for search engines if the 'Search description' field above is not defined.", max_length=255)),
-                ('introduction', models.TextField(blank=True)),
-                ('header_image', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='images.CustomImage')),
-                ('listing_image', models.ForeignKey(blank=True, help_text='Choose the image you wish to be displayed when this page appears in listings', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='images.CustomImage')),
-                ('social_image', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='images.CustomImage')),
+                (
+                    "page_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to="wagtailcore.Page",
+                    ),
+                ),
+                ("social_text", models.CharField(blank=True, max_length=255)),
+                (
+                    "listing_title",
+                    models.CharField(
+                        blank=True,
+                        help_text="Override the page title used when this page appears in listings",
+                        max_length=255,
+                    ),
+                ),
+                (
+                    "listing_summary",
+                    models.CharField(
+                        blank=True,
+                        help_text="The text summary used when this page appears in listings. It's also used as the description for search engines if the 'Search description' field above is not defined.",
+                        max_length=255,
+                    ),
+                ),
+                ("introduction", models.TextField(blank=True)),
+                (
+                    "header_image",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="+",
+                        to="images.CustomImage",
+                    ),
+                ),
+                (
+                    "listing_image",
+                    models.ForeignKey(
+                        blank=True,
+                        help_text="Choose the image you wish to be displayed when this page appears in listings",
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="+",
+                        to="images.CustomImage",
+                    ),
+                ),
+                (
+                    "social_image",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="+",
+                        to="images.CustomImage",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
-            bases=(wagtailcache.cache.WagtailCacheMixin, 'wagtailcore.page', models.Model),
+            bases=(
+                wagtailcache.cache.WagtailCacheMixin,
+                "wagtailcore.page",
+                models.Model,
+            ),
         ),
         migrations.CreateModel(
-            name='InvestmentCategorySettings',
+            name="InvestmentCategorySettings",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('categories', models.ManyToManyField(help_text='Select the categories that should be used in investments.', to='categories.Category')),
-                ('site', models.OneToOneField(editable=False, on_delete=django.db.models.deletion.CASCADE, to='wagtailcore.Site')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "categories",
+                    models.ManyToManyField(
+                        help_text="Select the categories that should be used in investments.",
+                        to="categories.Category",
+                    ),
+                ),
+                (
+                    "site",
+                    models.OneToOneField(
+                        editable=False,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="wagtailcore.Site",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Investment Category Settings',
+                "verbose_name": "Investment Category Settings",
             },
         ),
         migrations.CreateModel(
-            name='InvestmentCategory',
+            name="InvestmentCategory",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(blank=True, max_length=255, null=True)),
-                ('value', models.CharField(blank=True, max_length=255, null=True)),
-                ('investment', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='categories', to='partner.Investment')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(blank=True, max_length=255, null=True)),
+                ("value", models.CharField(blank=True, max_length=255, null=True)),
+                (
+                    "investment",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="categories",
+                        to="partner.Investment",
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='investment',
-            name='partner',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='investments', to='partner.PartnerPage'),
+            model_name="investment",
+            name="partner",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="investments",
+                to="partner.PartnerPage",
+            ),
         ),
     ]

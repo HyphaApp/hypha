@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('application_projects', '0071_add_customformfields_to_paf_and_sow'),
+        ("application_projects", "0071_add_customformfields_to_paf_and_sow"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='pafapprovals',
-            name='approved_at',
+            model_name="pafapprovals",
+            name="approved_at",
             field=models.DateTimeField(blank=True, null=True),
         ),
     ]

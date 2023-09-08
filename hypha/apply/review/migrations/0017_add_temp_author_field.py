@@ -5,21 +5,29 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('review', '0016_review_visibility'),
+        ("review", "0016_review_visibility"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='review',
-            name='author_temp',
-            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='review', to='funds.AssignedReviewers', null=True),
+            model_name="review",
+            name="author_temp",
+            field=models.OneToOneField(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="review",
+                to="funds.AssignedReviewers",
+                null=True,
+            ),
         ),
         migrations.AddField(
-            model_name='reviewopinion',
-            name='author_temp',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='opinions', to='funds.AssignedReviewers', null=True),
+            model_name="reviewopinion",
+            name="author_temp",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="opinions",
+                to="funds.AssignedReviewers",
+                null=True,
+            ),
         ),
-
     ]

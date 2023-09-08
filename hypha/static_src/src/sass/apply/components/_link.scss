@@ -2,7 +2,7 @@
     &:disabled,
     &.is-disabled {
         pointer-events: none;
-        opacity: .5;
+        opacity: 0.5;
     }
 
     &--button {
@@ -120,7 +120,8 @@
         width: 60px;
         height: 60px;
         color: $color--white;
-        background: url('./../../images/speech-bubble-blue.svg') no-repeat center;
+        background: url("./../../images/speech-bubble-blue.svg") no-repeat
+            center;
 
         @include media-query(tablet-portrait) {
             @include button($color--light-blue, $color--dark-blue);
@@ -139,7 +140,7 @@
                 font-size: 30px;
                 border: 2px solid $color--white;
                 border-radius: 50%;
-                content: '+';
+                content: "+";
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -174,7 +175,7 @@
             font-size: 30px;
             border: 2px solid $color--white;
             border-radius: 50%;
-            content: '\2013';
+            content: "\2013";
             display: flex;
             align-items: center;
             justify-content: center;
@@ -269,7 +270,7 @@
 
         &::before {
             @include triangle(top, $color--dark-blue, 7px);
-            margin-right: .7rem;
+            margin-right: 0.7rem;
             transition: transform $transition;
             transform: rotate(180deg);
         }

@@ -4,11 +4,9 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('funds', '0068_link_funds_and_labs_to_paf'),
-        ('funds', '0068_add_help_link_field'),
+        ("funds", "0068_link_funds_and_labs_to_paf"),
+        ("funds", "0068_add_help_link_field"),
     ]
 
-    operations = [
-    ]
+    operations = []

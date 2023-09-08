@@ -38,7 +38,7 @@ def percentage(value, total):
 
     # round using Decimal since we're dealing with currency
     rounded_total = unrounded_total.quantize(
-        decimal.Decimal('0.0'),
+        decimal.Decimal("0.0"),
         rounding=decimal.ROUND_DOWN,
     )
 
@@ -59,7 +59,9 @@ def user_can_view_invoices(project, user):
 
 @register.simple_tag
 def user_can_add_invoices(project, user):
-    if project.status == INVOICING_AND_REPORTING and (user.is_apply_staff or user == project.user):
+    if project.status == INVOICING_AND_REPORTING and (
+        user.is_apply_staff or user == project.user
+    ):
         return True
     return False
 
@@ -73,6 +75,7 @@ def is_vendor_setup(request):
 @register.simple_tag
 def get_invoice_form(invoice, user):
     from hypha.apply.projects.views.payment import ChangeInvoiceStatusForm
+
     form = ChangeInvoiceStatusForm(instance=invoice, user=user)
     if form:
         form.name = "change_invoice_status"
@@ -82,15 +85,17 @@ def get_invoice_form(invoice, user):
 
 @register.simple_tag
 def get_invoice_form_id(form, invoice):
-    return f'{form.name}-{invoice.id}'
+    return f"{form.name}-{invoice.id}"
 
 
 @register.simple_tag
 def extract_status(activity, user):
     if activity and user:
         invoice_activity_message = display_for(activity, user)
-        return invoice_activity_message.replace("Updated Invoice status to: ", "").replace(".", "")
-    return ''
+        return invoice_activity_message.replace(
+            "Updated Invoice status to: ", ""
+        ).replace(".", "")
+    return ""
 
 
 @register.simple_tag

@@ -19,7 +19,7 @@ def can_edit_submission(user, submission):
     if submission.is_archive:
         return False, "Archived Submission"
 
-    return True, ''
+    return True, ""
 
 
 def can_bulk_delete_submissions(user) -> bool:
@@ -83,18 +83,18 @@ def is_user_has_access_to_view_submission(user, submission):
         return False, "Archived Submission"
 
     if user.is_apply_staff or submission.user == user or user.is_reviewer:
-        return True, ''
+        return True, ""
 
     if user.is_partner and submission.partners.filter(pk=user.pk).exists():
-        return True, ''
+        return True, ""
 
     if user.is_community_reviewer and submission.community_review:
-        return True, ''
+        return True, ""
 
-    return False, ''
+    return False, ""
 
 
 permissions_map = {
-    'submission_view': is_user_has_access_to_view_submission,
-    'submission_edit': can_edit_submission,
+    "submission_view": is_user_has_access_to_view_submission,
+    "submission_edit": can_edit_submission,
 }

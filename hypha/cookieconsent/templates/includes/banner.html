@@ -1,16 +1,16 @@
 {% load i18n wagtailcore_tags %}
 
 {% if show_banner %}
-<div class="wrapper wrapper--cookieconsent cookieconsent">
-    <div class="wrapper wrapper--small">
-        <h2 class="cookieconsent__title">{% trans title %}</h2>
-        <div class="cookieconsent__message rich-text">
-            {{ message|richtext }}
-        </div>
-        <div class="cookieconsent__actions">
-            <button class="button button--cookieconsent button--decline" title="{% trans 'Decline tracking cookies.' %}" type="button" data-consent="false">{% trans 'Decline' %}</button>
-            <button class="button button--cookieconsent button--accept button--left-space" title="{% trans 'Accept tracking cookies.' %}" type="button" data-consent="true">{% trans 'Accept' %}</button>
+    <div class="wrapper wrapper--cookieconsent cookieconsent">
+        <div class="wrapper wrapper--small">
+            <h2 class="cookieconsent__title">{% trans title %}</h2>
+            <div class="cookieconsent__message rich-text">
+                {{ message|richtext }}
+            </div>
+            <div class="cookieconsent__actions">
+                <button class="button button--cookieconsent button--decline" title="{% trans 'Decline tracking cookies.' %}" type="button" data-consent="false">{% trans 'Decline' %}</button>
+                <button class="button button--cookieconsent button--accept button--left-space" title="{% trans 'Accept tracking cookies.' %}" type="button" data-consent="true">{% trans 'Accept' %}</button>
+            </div>
         </div>
     </div>
-</div>
 {% endif %}

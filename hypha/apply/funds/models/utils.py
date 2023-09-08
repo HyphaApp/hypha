@@ -27,30 +27,36 @@ REVIEW_GROUPS = [
     REVIEWER_GROUP_NAME,
     COMMUNITY_REVIEWER_GROUP_NAME,
 ]
-LIMIT_TO_STAFF = {'groups__name': STAFF_GROUP_NAME, 'is_active': True}
-LIMIT_TO_REVIEWERS = {'groups__name': REVIEWER_GROUP_NAME, 'is_active': True}
-LIMIT_TO_PARTNERS = {'groups__name': PARTNER_GROUP_NAME, 'is_active': True}
-LIMIT_TO_COMMUNITY_REVIEWERS = {'groups__name': COMMUNITY_REVIEWER_GROUP_NAME, 'is_active': True}
-LIMIT_TO_REVIEWER_GROUPS = {'groups__name__in': REVIEW_GROUPS, 'is_active': True}
+LIMIT_TO_STAFF = {"groups__name": STAFF_GROUP_NAME, "is_active": True}
+LIMIT_TO_REVIEWERS = {"groups__name": REVIEWER_GROUP_NAME, "is_active": True}
+LIMIT_TO_PARTNERS = {"groups__name": PARTNER_GROUP_NAME, "is_active": True}
+LIMIT_TO_COMMUNITY_REVIEWERS = {
+    "groups__name": COMMUNITY_REVIEWER_GROUP_NAME,
+    "is_active": True,
+}
+LIMIT_TO_REVIEWER_GROUPS = {"groups__name__in": REVIEW_GROUPS, "is_active": True}
 
 
 def admin_url(page):
-    return reverse('wagtailadmin_pages:edit', args=(page.id,))
+    return reverse("wagtailadmin_pages:edit", args=(page.id,))
 
 
 class WorkflowHelpers(models.Model):
     """
     Defines the common methods and fields for working with Workflows within Django models
     """
+
     class Meta:
         abstract = True
 
-    WORKFLOW_CHOICES = {
-        name: workflow.name
-        for name, workflow in WORKFLOWS.items()
-    }
+    WORKFLOW_CHOICES = {name: workflow.name for name, workflow in WORKFLOWS.items()}
 
-    workflow_name = models.CharField(choices=WORKFLOW_CHOICES.items(), max_length=100, default='single', verbose_name=_('Workflow'))
+    workflow_name = models.CharField(
+        choices=WORKFLOW_CHOICES.items(),
+        max_length=100,
+        default="single",
+        verbose_name=_("Workflow"),
+    )
 
     @property
     def workflow(self):
@@ -61,6 +67,7 @@ class SubmittableStreamForm(AbstractStreamForm):
     """
     Controls how stream forms are submitted. Any Page allowing submissions should inherit from here.
     """
+
     class Meta:
         abstract = True
 
@@ -92,6 +99,7 @@ class WorkflowStreamForm(WorkflowHelpers, AbstractStreamForm):  # type: ignore
     """
     Defines the common methods and fields for working with Workflows within Wagtail pages
     """
+
     wagtail_reference_index_ignore = True
 
     class Meta:
@@ -125,17 +133,18 @@ class WorkflowStreamForm(WorkflowHelpers, AbstractStreamForm):  # type: ignore
         return super().render_landing_page(request, form_submission, *args, **kwargs)
 
     content_panels = AbstractStreamForm.content_panels + [
-        FieldPanel('workflow_name'),
-        InlinePanel('forms', label=_('Application forms')),
-        InlinePanel('review_forms', label=_('Internal Review Forms')),
+        FieldPanel("workflow_name"),
+        InlinePanel("forms", label=_("Application forms")),
+        InlinePanel("review_forms", label=_("Internal Review Forms")),
         InlinePanel(
-            'external_review_forms',
-            label=_('External Review Forms'), max_num=1,
-            help_text='Add a form to be used by external reviewers.'
+            "external_review_forms",
+            label=_("External Review Forms"),
+            max_num=1,
+            help_text="Add a form to be used by external reviewers.",
         ),
-        InlinePanel('determination_forms', label=_('Determination Forms')),
-        InlinePanel('approval_forms', label=_('Project Approval Form'), max_num=1),
-        InlinePanel('sow_forms', label=_('Project SOW Form'), max_num=1)
+        InlinePanel("determination_forms", label=_("Determination Forms")),
+        InlinePanel("approval_forms", label=_("Project Approval Form"), max_num=1),
+        InlinePanel("sow_forms", label=_("Project SOW Form"), max_num=1),
     ]
 
 
@@ -145,10 +154,14 @@ class EmailForm(AbstractEmailForm):
 
     Email Confirmation Panel should be included to allow admins to make changes.
     """
+
     class Meta:
         abstract = True
 
-    confirmation_text_extra = models.TextField(blank=True, help_text=_('Additional text for the application confirmation message.'))
+    confirmation_text_extra = models.TextField(
+        blank=True,
+        help_text=_("Additional text for the application confirmation message."),
+    )
 
     def send_mail(self, submission):
         # Make sure we don't send emails to users here. Messaging handles that
@@ -157,15 +170,17 @@ class EmailForm(AbstractEmailForm):
     email_confirmation_panels = [
         MultiFieldPanel(
             [
-                FieldRowPanel([
-                    FieldPanel('from_address', classname="col6"),
-                    FieldPanel('to_address', classname="col6"),
-                ]),
-                FieldPanel('subject'),
-                FieldPanel('confirmation_text_extra'),
+                FieldRowPanel(
+                    [
+                        FieldPanel("from_address", classname="col6"),
+                        FieldPanel("to_address", classname="col6"),
+                    ]
+                ),
+                FieldPanel("subject"),
+                FieldPanel("confirmation_text_extra"),
             ],
-            heading=_('Confirmation email'),
+            heading=_("Confirmation email"),
         )
     ]
 
-    email_tab = ObjectList(email_confirmation_panels, heading=_('Confirmation email'))
+    email_tab = ObjectList(email_confirmation_panels, heading=_("Confirmation email"))

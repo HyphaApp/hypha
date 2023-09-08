@@ -2,32 +2,32 @@
 {% load i18n %}
 
 {% block content %}
-<div>
-    <style>
+    <div>
+        <style>
     {# fix for input field alignment #}
-    input[type=radio] {
-        vertical-align: middle;
-    }
-    </style>
-    {% block header %}
-        {% include "wagtailadmin/shared/header_with_locale_selector.html" with title=view.get_page_title subtitle=view.get_page_subtitle icon=view.header_icon %}
-    {% endblock %}
+            input[type=radio] {
+                vertical-align: middle;
+            }
+        </style>
+        {% block header %}
+            {% include "wagtailadmin/shared/header_with_locale_selector.html" with title=view.get_page_title subtitle=view.get_page_subtitle icon=view.header_icon %}
+        {% endblock %}
 
-    <div class="nice-padding">
-        <h2>{% blocktrans %}Choose a Fund{% endblocktrans %}</h2>
-        <p>{% blocktrans %}Rounds must be associated with a Fund or RFP. What are you creating a new Round for?{% endblocktrans %}</p>
+        <div class="nice-padding">
+            <h2>{% blocktrans %}Choose a Fund{% endblocktrans %}</h2>
+            <p>{% blocktrans %}Rounds must be associated with a Fund or RFP. What are you creating a new Round for?{% endblocktrans %}</p>
 
-        <form action="" method="post" novalidate>
-            {% csrf_token %}
+            <form action="" method="post" novalidate>
+                {% csrf_token %}
 
-            <ul class="fields">
-                {% include "wagtailadmin/shared/field_as_li.html" with field=form.parent_page %}
-                <li>
-                    <button type="submit" class="button">{% trans 'Continue' %}</button>
-                </li>
-            </ul>
-        </form>
+                <ul class="fields">
+                    {% include "wagtailadmin/shared/field_as_li.html" with field=form.parent_page %}
+                    <li>
+                        <button type="submit" class="button">{% trans 'Continue' %}</button>
+                    </li>
+                </ul>
+            </form>
 
+        </div>
     </div>
-</div>
 {% endblock %}

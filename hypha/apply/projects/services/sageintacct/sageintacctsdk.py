@@ -7,9 +7,13 @@ class SageIntacctSDK:
     """
 
     def __init__(
-        self, sender_id: str, sender_password: str,
-        user_id: str, company_id: str, user_password: str,
-        entity_id: str = None
+        self,
+        sender_id: str,
+        sender_password: str,
+        user_id: str,
+        company_id: str,
+        user_password: str,
+        entity_id: str = None,
     ):
         """
         Initialize connection to Sage Intacct
@@ -59,10 +63,7 @@ class SageIntacctSDK:
         Update the session id and change it in all API objects.
         """
         self.__session_id = self.api_base.get_session_id(
-            self.__user_id,
-            self.__company_id,
-            self.__user_password,
-            self.__entity_id
+            self.__user_id, self.__company_id, self.__user_password, self.__entity_id
         )
         self.api_base.set_session_id(self.__session_id)
         self.purchasing.set_session_id(self.__session_id)

@@ -14,9 +14,9 @@
             <form class="form" action="" method="post">
                 {% csrf_token %}
                 <p><strong{% blocktrans %}>Are you sure you want to delete "{{ object }}"?{% endblocktrans %}</strong></p>
-                <button class="button button--warning button--submit button--top-space" type="submit">{% trans "Confirm" %}</button>
-            </form>
-        </div>
+            <button class="button button--warning button--submit button--top-space" type="submit">{% trans "Confirm" %}</button>
+        </form>
+    </div>
     </div>
 
 {% endblock %}

@@ -20,12 +20,12 @@ logger = logging.getLogger(__name__)
 def subscribe_to_mailchimp(email: str, data) -> None:
     mailchimp_enabled = settings.MAILCHIMP_API_KEY and settings.MAILCHIMP_LIST_ID
 
-    dummy_key = 'a' * 32
+    dummy_key = "a" * 32
 
     if not mailchimp_enabled:
         raise Exception(
-            f'Incorrect Mailchimp configuration: '
-            f'API_KEY: {settings.MAILCHIMP_API_KEY}, LIST_ID: {settings.MAILCHIMP_LIST_ID}'
+            f"Incorrect Mailchimp configuration: "
+            f"API_KEY: {settings.MAILCHIMP_API_KEY}, LIST_ID: {settings.MAILCHIMP_LIST_ID}"
         )
 
     client = MailChimp(
@@ -38,16 +38,22 @@ def subscribe_to_mailchimp(email: str, data) -> None:
     client.lists.members.create(
         settings.MAILCHIMP_LIST_ID,
         {
-            'email_address': email,
-            'status': 'pending',
-            'merge_fields': data,
+            "email_address": email,
+            "status": "pending",
+            "merge_fields": data,
         },
     )
 
 
-@method_decorator(ratelimit(key='ip', rate=settings.DEFAULT_RATE_LIMIT, method='POST'), name='dispatch')
-@method_decorator(ratelimit(key='post:email', rate=settings.DEFAULT_RATE_LIMIT, method='POST'), name='dispatch')
-@method_decorator(csrf_exempt, name='dispatch')
+@method_decorator(
+    ratelimit(key="ip", rate=settings.DEFAULT_RATE_LIMIT, method="POST"),
+    name="dispatch",
+)
+@method_decorator(
+    ratelimit(key="post:email", rate=settings.DEFAULT_RATE_LIMIT, method="POST"),
+    name="dispatch",
+)
+@method_decorator(csrf_exempt, name="dispatch")
 class MailchimpSubscribeView(FormMixin, RedirectView):
     form_class = NewsletterForm
 
@@ -64,7 +70,7 @@ class MailchimpSubscribeView(FormMixin, RedirectView):
 
     def form_valid(self, form):
         data = form.cleaned_data.copy()
-        email = data.pop('email')
+        email = data.pop("email")
 
         try:
             subscribe_to_mailchimp(email=email, data=data)
@@ -77,27 +83,31 @@ class MailchimpSubscribeView(FormMixin, RedirectView):
     def error(self, form):
         messages.error(
             self.request,
-            _('Sorry, there were errors with your form.') + str(form.errors),
+            _("Sorry, there were errors with your form.") + str(form.errors),
         )
 
     def warning(self, e):
         messages.warning(
-            self.request, _('Sorry, there has been an problem. Please try again later.')
+            self.request, _("Sorry, there has been an problem. Please try again later.")
         )
         # If there is a problem with subscribing uncomment this to get notifications.
         # When things work warnings is only about spam scipts.
         # logger.error(e.args[0])
 
     def success(self):
-        messages.success(self.request, _('Thank you for subscribing'))
+        messages.success(self.request, _("Thank you for subscribing"))
 
     def get_success_url(self):
         # Go back to where you came from, default to front page.
-        origin = self.request.META.get('HTTP_ORIGIN') or self.request.META.get('HTTP_REFERER') or '/'
+        origin = (
+            self.request.META.get("HTTP_ORIGIN")
+            or self.request.META.get("HTTP_REFERER")
+            or "/"
+        )
 
         # Add cache busting query string.
-        return origin + '?newsletter-' + uuid.uuid4().hex
+        return origin + "?newsletter-" + uuid.uuid4().hex
 
     def get_redirect_url(self):
         # We don't know where you came from, go home
-        return '/'
+        return "/"

@@ -12,7 +12,7 @@
 
         &::before {
             display: table-cell;
-            content: '\2022';
+            content: "\2022";
             padding-right: 1rem;
         }
     }
@@ -29,7 +29,7 @@
 
         &::before {
             display: table-cell;
-            content: counter(table-ol) '.';
+            content: counter(table-ol) ".";
             padding-right: 1rem;
             text-align: right;
         }
@@ -44,7 +44,7 @@
         display: list-item;
 
         &::before {
-            content: '';
+            content: "";
             display: inline;
             padding: inherit;
         }

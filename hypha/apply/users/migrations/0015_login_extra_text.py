@@ -5,30 +5,31 @@ import wagtail.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('users', '0014_usersettings'),
+        ("users", "0014_usersettings"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='usersettings',
-            name='extra_text',
+            model_name="usersettings",
+            name="extra_text",
             field=wagtail.fields.RichTextField(blank=True),
         ),
         migrations.AlterField(
-            model_name='usersettings',
-            name='consent_help',
+            model_name="usersettings",
+            name="consent_help",
             field=wagtail.fields.RichTextField(blank=True),
         ),
         migrations.AlterField(
-            model_name='usersettings',
-            name='consent_show',
-            field=models.BooleanField(default=False, verbose_name='Show consent checkbox'),
+            model_name="usersettings",
+            name="consent_show",
+            field=models.BooleanField(
+                default=False, verbose_name="Show consent checkbox"
+            ),
         ),
         migrations.AlterField(
-            model_name='usersettings',
-            name='consent_text',
+            model_name="usersettings",
+            name="consent_text",
             field=models.CharField(blank=True, max_length=255),
         ),
     ]

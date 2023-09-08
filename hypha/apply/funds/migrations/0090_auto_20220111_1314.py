@@ -5,20 +5,23 @@ import hypha.apply.stream_forms.files
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('funds', '0089_remove_project_approval_form_refrences'),
+        ("funds", "0089_remove_project_approval_form_refrences"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='applicationrevision',
-            name='form_data',
-            field=models.JSONField(encoder=hypha.apply.stream_forms.files.StreamFieldDataEncoder),
+            model_name="applicationrevision",
+            name="form_data",
+            field=models.JSONField(
+                encoder=hypha.apply.stream_forms.files.StreamFieldDataEncoder
+            ),
         ),
         migrations.AlterField(
-            model_name='applicationsubmission',
-            name='form_data',
-            field=models.JSONField(encoder=hypha.apply.stream_forms.files.StreamFieldDataEncoder),
+            model_name="applicationsubmission",
+            name="form_data",
+            field=models.JSONField(
+                encoder=hypha.apply.stream_forms.files.StreamFieldDataEncoder
+            ),
         ),
     ]

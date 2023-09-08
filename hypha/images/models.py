@@ -11,8 +11,8 @@ class CustomImage(AbstractImage):
     credit = models.CharField(max_length=255, blank=True)
 
     admin_form_fields = Image.admin_form_fields + (
-        'alt',
-        'credit',
+        "alt",
+        "credit",
     )
 
     # When you save the image, check if alt text has been set. If not, set it as the title.
@@ -25,12 +25,8 @@ class CustomImage(AbstractImage):
 
 class Rendition(AbstractRendition):
     image = models.ForeignKey(
-        'CustomImage',
-        related_name='renditions',
-        on_delete=models.CASCADE
+        "CustomImage", related_name="renditions", on_delete=models.CASCADE
     )
 
     class Meta:
-        unique_together = (
-            ('image', 'filter_spec', 'focal_point_key'),
-        )
+        unique_together = (("image", "filter_spec", "focal_point_key"),)

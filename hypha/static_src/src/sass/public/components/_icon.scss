@@ -54,7 +54,8 @@
             fill: $color--white;
         }
 
-        .header--light-bg.search-open & { // stylelint-disable-line force-element-nesting
+        .header--light-bg.search-open & {
+            // stylelint-disable-line force-element-nesting
             fill: $color--dark-grey;
         }
     }
@@ -112,7 +113,8 @@
     }
 
     &--search {
-        .header--light-bg.search-open & { // stylelint-disable-line force-element-nesting
+        .header--light-bg.search-open & {
+            // stylelint-disable-line force-element-nesting
             fill: $color--white;
         }
     }

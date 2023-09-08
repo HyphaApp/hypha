@@ -47,12 +47,16 @@ class TestReviewerFormQueries(TestCase):
 
         form = UpdateReviewersForm(user=user, instance=submission)
 
-        AssignedWithRoleReviewersFactory(role=roles[0], submission=submission, reviewer=staff[0], staff=True)
-        AssignedWithRoleReviewersFactory(role=roles[1], submission=submission, reviewer=staff[1], staff=True)
+        AssignedWithRoleReviewersFactory(
+            role=roles[0], submission=submission, reviewer=staff[0], staff=True
+        )
+        AssignedWithRoleReviewersFactory(
+            role=roles[1], submission=submission, reviewer=staff[1], staff=True
+        )
 
         data = {}
         for field, user in zip(form.fields, staff, strict=False):
-            if field.startswith('role'):
+            if field.startswith("role"):
                 data[field] = user.id
             else:
                 data[field] = None
@@ -84,7 +88,7 @@ class TestReviewerFormQueries(TestCase):
         AssignedReviewersFactory(submission=submission, reviewer=reviewers[0])
         AssignedReviewersFactory(submission=submission, reviewer=reviewers[1])
 
-        data = {'reviewer_reviewers': [reviewer.id for reviewer in reviewers[2:]]}
+        data = {"reviewer_reviewers": [reviewer.id for reviewer in reviewers[2:]]}
 
         form = UpdateReviewersForm(data, user=user, instance=submission)
 
@@ -109,7 +113,7 @@ class TestReviewerFormQueries(TestCase):
         ReviewFactory(submission=submission, author__reviewer=reviewers[0])
         ReviewFactory(submission=submission, author__reviewer=reviewers[1])
 
-        data = {'reviewer_reviewers': [reviewer.id for reviewer in reviewers[2:]]}
+        data = {"reviewer_reviewers": [reviewer.id for reviewer in reviewers[2:]]}
 
         form = UpdateReviewersForm(data, user=user, instance=submission)
 

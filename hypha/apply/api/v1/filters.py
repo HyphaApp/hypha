@@ -18,46 +18,62 @@ from .utils import (
 
 
 class SubmissionsFilter(filters.FilterSet):
-    round = filters.ModelMultipleChoiceFilter(field_name='round', queryset=get_used_rounds())
+    round = filters.ModelMultipleChoiceFilter(
+        field_name="round", queryset=get_used_rounds()
+    )
     status = filters.MultipleChoiceFilter(choices=PHASES)
-    active = filters.BooleanFilter(method='filter_active', label=_('Active'))
-    submit_date = filters.DateFromToRangeFilter(field_name='submit_time', label=_('Submit date'))
+    active = filters.BooleanFilter(method="filter_active", label=_("Active"))
+    submit_date = filters.DateFromToRangeFilter(
+        field_name="submit_time", label=_("Submit date")
+    )
     fund = filters.ModelMultipleChoiceFilter(
-        field_name='page', label=_('fund'),
-        queryset=Page.objects.type(FundType) | Page.objects.type(LabType)
+        field_name="page",
+        label=_("fund"),
+        queryset=Page.objects.type(FundType) | Page.objects.type(LabType),
     )
     screening_statuses = filters.ModelMultipleChoiceFilter(
-        field_name='screening_statuses',
+        field_name="screening_statuses",
         queryset=get_screening_statuses(),
-        null_label=_('No Screening')
+        null_label=_("No Screening"),
     )
     reviewers = filters.ModelMultipleChoiceFilter(
-        field_name='reviewers',
+        field_name="reviewers",
         queryset=get_all_reviewers(),
     )
     lead = filters.ModelMultipleChoiceFilter(
-        field_name='lead',
+        field_name="lead",
         queryset=get_round_leads(),
     )
     category_options = filters.MultipleChoiceFilter(
-        choices=[], label=_('Category'),
-        method='filter_category_options'
+        choices=[], label=_("Category"), method="filter_category_options"
     )
     id = filters.ModelMultipleChoiceFilter(
-        field_name='id',
-        queryset=ApplicationSubmission.objects.exclude_draft().current().with_latest_update(),
-        method='filter_id'
+        field_name="id",
+        queryset=ApplicationSubmission.objects.exclude_draft()
+        .current()
+        .with_latest_update(),
+        method="filter_id",
     )
 
     class Meta:
         model = ApplicationSubmission
-        fields = ('id', 'status', 'round', 'active', 'submit_date', 'fund', 'screening_statuses', 'reviewers', 'lead')
+        fields = (
+            "id",
+            "status",
+            "round",
+            "active",
+            "submit_date",
+            "fund",
+            "screening_statuses",
+            "reviewers",
+            "lead",
+        )
 
     def __init__(self, *args, exclude=None, limit_statuses=None, **kwargs):
         if exclude is None:
             exclude = []
         super().__init__(*args, **kwargs)
-        self.filters['category_options'].extra['choices'] = [
+        self.filters["category_options"].extra["choices"] = [
             (option.id, option.value)
             for option in Option.objects.filter(category__filter_on_dashboard=True)
         ]
@@ -80,12 +96,14 @@ class SubmissionsFilter(filters.FilterSet):
         And then use those category fields to filter submissions with their form_data.
         """
         query = Q()
-        submission_data = queryset.values('form_fields', 'form_data').distinct()
+        submission_data = queryset.values("form_fields", "form_data").distinct()
         for submission in submission_data:
-            for field in submission['form_fields']:
+            for field in submission["form_fields"]:
                 if isinstance(field.block, CategoryQuestionBlock):
                     try:
-                        category_options = category_ids = submission['form_data'][field.id]
+                        category_options = category_ids = submission["form_data"][
+                            field.id
+                        ]
                     except KeyError:
                         include_in_filter = False
                     else:
@@ -96,7 +114,7 @@ class SubmissionsFilter(filters.FilterSet):
                     # If yes then those submissions should be filtered in the list
                     if include_in_filter:
                         kwargs = {
-                            '{0}__{1}'.format('form_data', field.id): category_ids
+                            "{0}__{1}".format("form_data", field.id): category_ids
                         }
                         query |= Q(**kwargs)
         return queryset.filter(query)
@@ -116,15 +134,15 @@ class NewerThanFilter(filters.ModelChoiceFilter):
 
 
 class CommentFilter(filters.FilterSet):
-    since = filters.DateTimeFilter(field_name="timestamp", lookup_expr='gte')
-    before = filters.DateTimeFilter(field_name="timestamp", lookup_expr='lte')
+    since = filters.DateTimeFilter(field_name="timestamp", lookup_expr="gte")
+    before = filters.DateTimeFilter(field_name="timestamp", lookup_expr="lte")
     newer = NewerThanFilter(queryset=Activity.comments.all())
 
     class Meta:
         model = Activity
-        fields = ['visibility', 'since', 'before', 'newer']
+        fields = ["visibility", "since", "before", "newer"]
 
 
 class AllCommentFilter(CommentFilter):
     class Meta(CommentFilter.Meta):
-        fields = CommentFilter.Meta.fields + ['source_object_id']
+        fields = CommentFilter.Meta.fields + ["source_object_id"]

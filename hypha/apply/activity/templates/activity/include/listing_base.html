@@ -22,10 +22,10 @@
                 </p>
             {% endif %}
 
-                <p class="feed__meta-item feed__meta-item--right" {% if not activity.private %} hidden {% endif %}>
-                    <svg class="icon icon--eye"><use xlink:href="#eye"></use></svg>
-                    <span class="js-comment-visibility">{{ activity.visibility|visibility_display:request.user }}</span>
-                </p>
+            <p class="feed__meta-item feed__meta-item--right" {% if not activity.private %} hidden {% endif %}>
+                <svg class="icon icon--eye"><use xlink:href="#eye"></use></svg>
+                <span class="js-comment-visibility">{{ activity.visibility|visibility_display:request.user }}</span>
+            </p>
         </div>
 
         <p class="feed__heading">
@@ -35,9 +35,9 @@
 
             {% if editable %}
                 <div class="feed__comment js-comment" data-id="{{activity.id}}" data-comment="{{activity|display_for:request.user|to_markdown}}"
-                data-visibility-options="{{activity|visibility_options:activity.user}}"
-                data-visibility="{{activity.visibility}}"
-                data-edit-url="{% url 'api:v1:comments-edit' pk=activity.pk %}">
+                     data-visibility-options="{{activity|visibility_options:activity.user}}"
+                     data-visibility="{{activity.visibility}}"
+                     data-edit-url="{% url 'api:v1:comments-edit' pk=activity.pk %}">
                     {{ activity|display_for:request.user|submission_links|markdown|bleach }}
                 </div>
 
@@ -49,9 +49,9 @@
             {% if not submission_title and activity|user_can_see_related:request.user %}
                 {% with url=activity.related_object.get_absolute_url %}
                     {% if url %}
-                    <a href="{{ url }}" target="_blank" class="feed__related-item">
-                        {% trans "View " %}{{ activity.related_object|model_verbose_name }} <svg class="icon"><use xlink:href="#arrow-head-pixels--solid"></use></svg>
-                    </a>
+                        <a href="{{ url }}" target="_blank" class="feed__related-item">
+                            {% trans "View " %}{{ activity.related_object|model_verbose_name }} <svg class="icon"><use xlink:href="#arrow-head-pixels--solid"></use></svg>
+                        </a>
                     {% endif %}
                 {% endwith %}
             {% endif %}

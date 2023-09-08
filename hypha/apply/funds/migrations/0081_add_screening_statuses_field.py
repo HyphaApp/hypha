@@ -4,15 +4,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('funds', '0080_add_yes_and_default_fields_to_screening_status'),
+        ("funds", "0080_add_yes_and_default_fields_to_screening_status"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='applicationsubmission',
-            name='screening_statuses',
-            field=models.ManyToManyField(blank=True, related_name='submissions', to='funds.ScreeningStatus'),
+            model_name="applicationsubmission",
+            name="screening_statuses",
+            field=models.ManyToManyField(
+                blank=True, related_name="submissions", to="funds.ScreeningStatus"
+            ),
         ),
     ]

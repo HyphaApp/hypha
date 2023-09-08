@@ -1,4 +1,4 @@
-@use 'sass:math';
+@use "sass:math";
 
 // $TYPOGRAPHY
 // Base font
@@ -85,6 +85,6 @@ h6,
 
 small,
 .milli {
-    font-size: .875rem;
+    font-size: 0.875rem;
     line-height: 1.25rem;
 }

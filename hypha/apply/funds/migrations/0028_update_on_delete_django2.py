@@ -6,40 +6,59 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('funds', '0027_applicationsubmission_drupal_id'),
+        ("funds", "0027_applicationsubmission_drupal_id"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='applicationsubmission',
-            name='lead',
-            field=models.ForeignKey(limit_choices_to={'groups__name': 'Staff'}, on_delete=django.db.models.deletion.PROTECT, related_name='submission_lead', to=settings.AUTH_USER_MODEL),
+            model_name="applicationsubmission",
+            name="lead",
+            field=models.ForeignKey(
+                limit_choices_to={"groups__name": "Staff"},
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="submission_lead",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AlterField(
-            model_name='fundform',
-            name='form',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='funds.ApplicationForm'),
+            model_name="fundform",
+            name="form",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT, to="funds.ApplicationForm"
+            ),
         ),
         migrations.AlterField(
-            model_name='labform',
-            name='form',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='funds.ApplicationForm'),
+            model_name="labform",
+            name="form",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT, to="funds.ApplicationForm"
+            ),
         ),
         migrations.AlterField(
-            model_name='labtype',
-            name='lead',
-            field=models.ForeignKey(limit_choices_to={'groups__name': 'Staff'}, on_delete=django.db.models.deletion.PROTECT, related_name='lab_lead', to=settings.AUTH_USER_MODEL),
+            model_name="labtype",
+            name="lead",
+            field=models.ForeignKey(
+                limit_choices_to={"groups__name": "Staff"},
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="lab_lead",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AlterField(
-            model_name='round',
-            name='lead',
-            field=models.ForeignKey(limit_choices_to={'groups__name': 'Staff'}, on_delete=django.db.models.deletion.PROTECT, to=settings.AUTH_USER_MODEL),
+            model_name="round",
+            name="lead",
+            field=models.ForeignKey(
+                limit_choices_to={"groups__name": "Staff"},
+                on_delete=django.db.models.deletion.PROTECT,
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AlterField(
-            model_name='roundform',
-            name='form',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='funds.ApplicationForm'),
+            model_name="roundform",
+            name="form",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT, to="funds.ApplicationForm"
+            ),
         ),
     ]

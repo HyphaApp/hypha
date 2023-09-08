@@ -23,57 +23,57 @@
             </thead>
             <tbody>
                 {% for invoice in object.invoices.not_rejected %}
-                {% display_invoice_status_for_user user invoice as invoice_status %}
-                <tr>
-                    <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Date submitted" %}: </span>{{ invoice.requested_at.date }}</td>
-                    <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Invoice number" %}: </span>{{ invoice.invoice_number }}</td>
-                    <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Status" %}: </span>{{ invoice_status }}</td>
-                    <td class="flex flex-wrap justify-end py-4 px-0">
-                        <a class="data-block__action-icon-link" href="{{ invoice.get_absolute_url }}" target="_blank">
-                            <svg class="icon icon--project-eye"><use xlink:href="#eye"></use></svg>
-                            {% trans "View" %}
-                        </a>
-                        {% can_edit invoice user as user_can_edit_request %}
-                        {% if user_can_edit_request %}
-                        <a class="data-block__action-icon-link" target="_blank" href="{% url "apply:projects:invoice-edit" pk=invoice.project.pk invoice_pk=invoice.pk %}">
-                            <svg class="icon icon--project-pen"><use xlink:href="#pen"></use></svg>
-                            {% trans "Edit" %}
-                        </a>
-                        {% endif %}
-
-                        {% can_delete invoice user as user_can_delete_request %}
-                        {% if user.is_applicant and user_can_delete_request %}
-                        <a class="data-block__action-icon-link data-block__action-icon-link--remove" target="_blank" href="{% url 'apply:projects:invoice-delete' pk=invoice.project.pk invoice_pk=invoice.pk %}">
-                            <svg class="icon icon--delete" style="margin-left:0; margin-right:2px"><use xlink:href="#delete"></use></svg>
-                            {% trans "Delete" %}
-                        </a>
-                        {% endif %}
-                        {% can_change_status invoice user as can_change_invoice_status %}
-                        {% if can_change_invoice_status %}
-                            <a
-                                data-fancybox
-                                data-src="#change-invoice-status-{{ invoice.id }}"
-                                id="update_invoice_status-{{ invoice.id }}"
-                                class="data-block__button button button--primary"
-                                href="#"
-                            >
-                            {% trans "Update Status" %}
+                    {% display_invoice_status_for_user user invoice as invoice_status %}
+                    <tr>
+                        <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Date submitted" %}: </span>{{ invoice.requested_at.date }}</td>
+                        <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Invoice number" %}: </span>{{ invoice.invoice_number }}</td>
+                        <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Status" %}: </span>{{ invoice_status }}</td>
+                        <td class="flex flex-wrap justify-end py-4 px-0">
+                            <a class="data-block__action-icon-link" href="{{ invoice.get_absolute_url }}" target="_blank">
+                                <svg class="icon icon--project-eye"><use xlink:href="#eye"></use></svg>
+                                {% trans "View" %}
                             </a>
-                            <div class="modal" id="change-invoice-status-{{ invoice.id }}">
-                                {% get_invoice_form invoice user as invoice_form %}
-                                {% get_invoice_form_id invoice_form invoice as invoice_form_id %}
-                                <h4 class="modal__project-header-bar">{% trans "Update Invoice status" %}</h4>
-                                <p>{% trans "Current status" %}: {{ invoice_status }}</p>
-                                {% trans "Update Status" as update %}
-                                {% include 'funds/includes/delegated_form_base.html' with form=invoice_form value=update action=invoice.get_absolute_url form_id=invoice_form_id %}
-                            </div>
-                        {% endif %}
-                    </td>
-                </tr>
+                            {% can_edit invoice user as user_can_edit_request %}
+                            {% if user_can_edit_request %}
+                                <a class="data-block__action-icon-link" target="_blank" href="{% url "apply:projects:invoice-edit" pk=invoice.project.pk invoice_pk=invoice.pk %}">
+                                    <svg class="icon icon--project-pen"><use xlink:href="#pen"></use></svg>
+                                    {% trans "Edit" %}
+                                </a>
+                            {% endif %}
+
+                            {% can_delete invoice user as user_can_delete_request %}
+                            {% if user.is_applicant and user_can_delete_request %}
+                                <a class="data-block__action-icon-link data-block__action-icon-link--remove" target="_blank" href="{% url 'apply:projects:invoice-delete' pk=invoice.project.pk invoice_pk=invoice.pk %}">
+                                    <svg class="icon icon--delete" style="margin-left:0; margin-right:2px"><use xlink:href="#delete"></use></svg>
+                                    {% trans "Delete" %}
+                                </a>
+                            {% endif %}
+                            {% can_change_status invoice user as can_change_invoice_status %}
+                            {% if can_change_invoice_status %}
+                                <a
+                                    data-fancybox
+                                    data-src="#change-invoice-status-{{ invoice.id }}"
+                                    id="update_invoice_status-{{ invoice.id }}"
+                                    class="data-block__button button button--primary"
+                                    href="#"
+                                >
+                                    {% trans "Update Status" %}
+                                </a>
+                                <div class="modal" id="change-invoice-status-{{ invoice.id }}">
+                                    {% get_invoice_form invoice user as invoice_form %}
+                                    {% get_invoice_form_id invoice_form invoice as invoice_form_id %}
+                                    <h4 class="modal__project-header-bar">{% trans "Update Invoice status" %}</h4>
+                                    <p>{% trans "Current status" %}: {{ invoice_status }}</p>
+                                    {% trans "Update Status" as update %}
+                                    {% include 'funds/includes/delegated_form_base.html' with form=invoice_form value=update action=invoice.get_absolute_url form_id=invoice_form_id %}
+                                </div>
+                            {% endif %}
+                        </td>
+                    </tr>
                 {% empty %}
-                <tr>
-                    <td colspan="5">{% trans "No active Invoices." %}</td>
-                </tr>
+                    <tr>
+                        <td colspan="5">{% trans "No active Invoices." %}</td>
+                    </tr>
                 {% endfor %}
             </tbody>
         </table>
@@ -94,18 +94,18 @@
                 </thead>
                 <tbody>
                     {% for invoice in object.invoices.rejected %}
-                    {% display_invoice_status_for_user user invoice as invoice_status %}
-                    <tr>
-                        <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Date submitted" %}: </span>{{ invoice.requested_at.date }}</td>
-                        <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Invoice number" %}: </span>{{ invoice.invoice_number }}</td>
-                        <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Status" %}: </span>{{ invoice_status }}</td>
-                        <td class="flex justify-end py-4 px-0">
-                            <a class="data-block__action-icon-link" href="{{ invoice.get_absolute_url }}" target="_blank">
-                                <svg class="icon icon--project-eye"><use xlink:href="#eye"></use></svg>
-                                {% trans "View" %}
-                            </a>
-                        </td>
-                    </tr>
+                        {% display_invoice_status_for_user user invoice as invoice_status %}
+                        <tr>
+                            <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Date submitted" %}: </span>{{ invoice.requested_at.date }}</td>
+                            <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Invoice number" %}: </span>{{ invoice.invoice_number }}</td>
+                            <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Status" %}: </span>{{ invoice_status }}</td>
+                            <td class="flex justify-end py-4 px-0">
+                                <a class="data-block__action-icon-link" href="{{ invoice.get_absolute_url }}" target="_blank">
+                                    <svg class="icon icon--project-eye"><use xlink:href="#eye"></use></svg>
+                                    {% trans "View" %}
+                                </a>
+                            </td>
+                        </tr>
                     {% endfor %}
                 </tbody>
             </table>

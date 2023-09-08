@@ -4,30 +4,43 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('application_projects', '0048_alter_project_value'),
+        ("application_projects", "0048_alter_project_value"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='deliverable',
-            name='external_id',
-            field=models.CharField(blank=True, help_text='ID of this deliverable at integrated payment service.', max_length=30),
+            model_name="deliverable",
+            name="external_id",
+            field=models.CharField(
+                blank=True,
+                help_text="ID of this deliverable at integrated payment service.",
+                max_length=30,
+            ),
         ),
         migrations.AddField(
-            model_name='deliverable',
-            name='extra_information',
-            field=models.JSONField(default=dict, help_text='More details of the deliverable at integrated payment service.'),
+            model_name="deliverable",
+            name="extra_information",
+            field=models.JSONField(
+                default=dict,
+                help_text="More details of the deliverable at integrated payment service.",
+            ),
         ),
         migrations.AddField(
-            model_name='project',
-            name='external_project_information',
-            field=models.JSONField(default=dict, help_text='More details of the project integrated at payment service.'),
+            model_name="project",
+            name="external_project_information",
+            field=models.JSONField(
+                default=dict,
+                help_text="More details of the project integrated at payment service.",
+            ),
         ),
         migrations.AddField(
-            model_name='project',
-            name='external_projectid',
-            field=models.CharField(blank=True, help_text='ID of this project at integrated payment service.', max_length=30),
+            model_name="project",
+            name="external_projectid",
+            field=models.CharField(
+                blank=True,
+                help_text="ID of this project at integrated payment service.",
+                max_length=30,
+            ),
         ),
     ]

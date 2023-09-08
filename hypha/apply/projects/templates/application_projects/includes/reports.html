@@ -2,35 +2,35 @@
 
 {% user_can_update_project_reports object user as can_update_project_reports %}
 {% if can_update_project_reports %}
-<div class="wrapper wrapper--outer-space-large">
-    <div class="data-block">
-        <div class="data-block__header">
-            <p class="data-block__title">{% trans "Reports" %}</p>
-        </div>
-        <div class="data-block__body">
-            {% user_can_update_report_config object user as can_update_report_config %}
-            {% if can_update_report_config %}
-                <div class="data-block__card">
-                    <p class="data-block__card-title">{% trans "Report frequency" %}</p>
-                    <p class="data-block__card-copy">{{ object.report_config.get_frequency_display }}</p>
-                    <p class="data-block__card-copy">
-                        <a data-fancybox data-src="#change-frequency" href="#" class="data-block__action-link">{% if object.report_config.disable_reporting %}{% trans "Enable" %}{% else %}{% trans "Change" %}{% endif %}</a>
-                    </p>
+    <div class="wrapper wrapper--outer-space-large">
+        <div class="data-block">
+            <div class="data-block__header">
+                <p class="data-block__title">{% trans "Reports" %}</p>
+            </div>
+            <div class="data-block__body">
+                {% user_can_update_report_config object user as can_update_report_config %}
+                {% if can_update_report_config %}
+                    <div class="data-block__card">
+                        <p class="data-block__card-title">{% trans "Report frequency" %}</p>
+                        <p class="data-block__card-copy">{{ object.report_config.get_frequency_display }}</p>
+                        <p class="data-block__card-copy">
+                            <a data-fancybox data-src="#change-frequency" href="#" class="data-block__action-link">{% if object.report_config.disable_reporting %}{% trans "Enable" %}{% else %}{% trans "Change" %}{% endif %}</a>
+                        </p>
                     <!-- Change report frequency modal -->
-                    {% include 'application_projects/includes/report_frequency_config.html' with form=update_frequency_form extra_classes="form--report-frequency" config=object.report_config %}
-                </div>
-            {% endif %}
-            <ul class="data-block__list">
-                {% for report in object.report_config.past_due_reports %}
-                    {% include "application_projects/includes/report_line.html" with report=report %}
-                {% endfor %}
-                {% with next_report=object.report_config.current_due_report %}
-                    {% include "application_projects/includes/report_line.html" with report=next_report current=True %}
-                {% endwith %}
-            </ul>
+                        {% include 'application_projects/includes/report_frequency_config.html' with form=update_frequency_form extra_classes="form--report-frequency" config=object.report_config %}
+                    </div>
+                {% endif %}
+                <ul class="data-block__list">
+                    {% for report in object.report_config.past_due_reports %}
+                        {% include "application_projects/includes/report_line.html" with report=report %}
+                    {% endfor %}
+                    {% with next_report=object.report_config.current_due_report %}
+                        {% include "application_projects/includes/report_line.html" with report=next_report current=True %}
+                    {% endwith %}
+                </ul>
+            </div>
         </div>
     </div>
-</div>
 {% endif %}
 
 
@@ -61,10 +61,10 @@
                                 {% if not report.skipped %}
                                     {% user_can_view_report report user as can_view_report %}
                                     {% if can_view_report %}
-                                    <a class="data-block__action-icon-link" href="{% url "apply:projects:reports:detail" pk=report.pk %}">
-                                        <svg class="icon icon--project-eye"><use xlink:href="#eye"></use></svg>
-                                        {% trans "View" %}
-                                    </a>
+                                        <a class="data-block__action-icon-link" href="{% url "apply:projects:reports:detail" pk=report.pk %}">
+                                            <svg class="icon icon--project-eye"><use xlink:href="#eye"></use></svg>
+                                            {% trans "View" %}
+                                        </a>
                                     {% endif %}
 
                                     {% user_can_update_report report user as can_update_report %}
@@ -84,7 +84,7 @@
                                 {% endif %}
                             </td>
                         </tr>
-                        {% empty %}
+                    {% empty %}
                         <tr>
                             <td colspan="3">{% trans "No reports submitted" %}</td>
                         </tr>

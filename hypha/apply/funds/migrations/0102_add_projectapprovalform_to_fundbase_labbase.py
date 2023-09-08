@@ -6,45 +6,92 @@ import modelcluster.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('application_projects', '0055_alter_project_status_add_pafreviewersrole'),
-        ('funds', '0101_auto_20220722_0844'),
+        ("application_projects", "0055_alter_project_status_add_pafreviewersrole"),
+        ("funds", "0101_auto_20220722_0844"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='applicationbase',
-            name='approval_form',
+            model_name="applicationbase",
+            name="approval_form",
         ),
         migrations.RemoveField(
-            model_name='labbase',
-            name='approval_form',
+            model_name="labbase",
+            name="approval_form",
         ),
         migrations.CreateModel(
-            name='LabBaseProjectApprovalForm',
+            name="LabBaseProjectApprovalForm",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('sort_order', models.IntegerField(blank=True, editable=False, null=True)),
-                ('form', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='application_projects.projectapprovalform')),
-                ('lab', modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.CASCADE, related_name='approval_forms', to='funds.labbase')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "sort_order",
+                    models.IntegerField(blank=True, editable=False, null=True),
+                ),
+                (
+                    "form",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="application_projects.projectapprovalform",
+                    ),
+                ),
+                (
+                    "lab",
+                    modelcluster.fields.ParentalKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="approval_forms",
+                        to="funds.labbase",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['sort_order'],
-                'abstract': False,
+                "ordering": ["sort_order"],
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='ApplicationBaseProjectApprovalForm',
+            name="ApplicationBaseProjectApprovalForm",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('sort_order', models.IntegerField(blank=True, editable=False, null=True)),
-                ('application', modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.CASCADE, related_name='approval_forms', to='funds.applicationbase')),
-                ('form', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='application_projects.projectapprovalform')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "sort_order",
+                    models.IntegerField(blank=True, editable=False, null=True),
+                ),
+                (
+                    "application",
+                    modelcluster.fields.ParentalKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="approval_forms",
+                        to="funds.applicationbase",
+                    ),
+                ),
+                (
+                    "form",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="application_projects.projectapprovalform",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['sort_order'],
-                'abstract': False,
+                "ordering": ["sort_order"],
+                "abstract": False,
             },
         ),
     ]

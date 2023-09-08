@@ -5,20 +5,21 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('determinations', '0010_add_determination_stream_field_forms'),
+        ("determinations", "0010_add_determination_stream_field_forms"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='determination',
-            name='data',
+            model_name="determination",
+            name="data",
             field=models.JSONField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='determination',
-            name='form_data',
-            field=models.JSONField(default=dict, encoder=django.core.serializers.json.DjangoJSONEncoder),
+            model_name="determination",
+            name="form_data",
+            field=models.JSONField(
+                default=dict, encoder=django.core.serializers.json.DjangoJSONEncoder
+            ),
         ),
     ]

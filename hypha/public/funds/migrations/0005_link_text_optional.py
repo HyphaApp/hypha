@@ -6,15 +6,18 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('public_funds', '0004_fundpagerelatedpage'),
+        ("public_funds", "0004_fundpagerelatedpage"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='labpage',
-            name='link_text',
-            field=models.CharField(blank=True, help_text='Text to display on the button for external links', max_length=255),
+            model_name="labpage",
+            name="link_text",
+            field=models.CharField(
+                blank=True,
+                help_text="Text to display on the button for external links",
+                max_length=255,
+            ),
         ),
     ]

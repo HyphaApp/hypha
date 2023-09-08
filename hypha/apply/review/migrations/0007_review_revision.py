@@ -5,16 +5,20 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('funds', '0041_roundbasereviewform'),
-        ('review', '0006_remove_review_review'),
+        ("funds", "0041_roundbasereviewform"),
+        ("review", "0006_remove_review_review"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='review',
-            name='revision',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='reviews', to='funds.ApplicationRevision'),
+            model_name="review",
+            name="revision",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="reviews",
+                to="funds.ApplicationRevision",
+            ),
         ),
     ]

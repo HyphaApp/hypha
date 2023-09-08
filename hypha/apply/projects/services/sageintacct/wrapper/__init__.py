@@ -4,8 +4,8 @@ from .project import Project
 from .purchasing import Purchasing
 
 __all__ = [
-    'ApiBase',
-    'Purchasing',
-    'Invoice',
-    'Project',
+    "ApiBase",
+    "Purchasing",
+    "Invoice",
+    "Project",
 ]

@@ -4,9 +4,9 @@
 
 {% if object.is_archive %}
     <a data-fancybox
-        data-src="#unarchive-submission"
-        class="button button--bottom-space button--primary"
-        href="#">
+       data-src="#unarchive-submission"
+       class="button button--bottom-space button--primary"
+       href="#">
         {% heroicon_outline "lock-open" aria_hidden="true" size=16 stroke_width=2 class="inline align-baseline mr-1" %}
         {% trans "Unarchive Submission" %}
     </a>
@@ -14,14 +14,14 @@
 {% else %}
 
     {% if PROJECTS_ENABLED %}
-    {% if object.accepted_for_funding and not object.project %}
-        <a data-fancybox
-            data-src="#create-project"
-            class="button button--bottom-space button--primary button--full-width"
-            href="#">
-            {% trans "Create Project" %}
-        </a>
-    {% endif %}
+        {% if object.accepted_for_funding and not object.project %}
+            <a data-fancybox
+               data-src="#create-project"
+               class="button button--bottom-space button--primary button--full-width"
+               href="#">
+                {% trans "Create Project" %}
+            </a>
+        {% endif %}
     {% endif %}
 
     {% if object.has_default_screening_status_set and not object.can_not_edit_default %}
@@ -44,9 +44,9 @@
 
     {% if object.is_finished %}
         {% with determination=object.determinations.last %}
-        {% if determination %}
-            <a class="button button--primary button--full-width button--bottom-space" href="{% url 'apply:submissions:determinations:detail' submission_pk=object.id pk=determination.id %}">{% trans "View determination" %}</a>
-        {% endif %}
+            {% if determination %}
+                <a class="button button--primary button--full-width button--bottom-space" href="{% url 'apply:submissions:determinations:detail' submission_pk=object.id pk=determination.id %}">{% trans "View determination" %}</a>
+            {% endif %}
         {% endwith %}
     {% endif %}
 

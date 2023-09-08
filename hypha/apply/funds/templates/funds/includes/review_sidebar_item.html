@@ -37,16 +37,16 @@
     {% if forloop.first %}
         <ul class="reviews-sidebar__decision">
     {% endif %}
-            <li class="reviews-sidebar__item reviews-sidebar__item--decision">
-                <div class="reviews-sidebar__name">
-                    <span>{{ opinion.author }}</span>
-                    {% with role=opinion.author.role %}
-                        {% if role %}{% image role.icon max-12x12 %}{% endif %}
-                    {% endwith %}
-                </div>
-                <div></div>
-                <div class="reviews-sidebar__outcome {{ opinion.get_opinion_display|lower }}">{{ opinion.get_opinion_display}}</div>
-            </li>
+    <li class="reviews-sidebar__item reviews-sidebar__item--decision">
+        <div class="reviews-sidebar__name">
+            <span>{{ opinion.author }}</span>
+            {% with role=opinion.author.role %}
+                {% if role %}{% image role.icon max-12x12 %}{% endif %}
+            {% endwith %}
+        </div>
+        <div></div>
+        <div class="reviews-sidebar__outcome {{ opinion.get_opinion_display|lower }}">{{ opinion.get_opinion_display}}</div>
+    </li>
     {% if forloop.last %}
         </ul>
     {% endif %}

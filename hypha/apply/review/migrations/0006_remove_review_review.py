@@ -4,14 +4,13 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('review', '0005_streamform'),
+        ("review", "0005_streamform"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='review',
-            name='review',
+            model_name="review",
+            name="review",
         ),
     ]

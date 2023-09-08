@@ -55,10 +55,14 @@ class UserQuerySet(models.QuerySet):
         return self.filter(groups__name=FINANCE_GROUP_NAME, is_active=True)
 
     def finances_level_1(self):
-        return self.filter(groups__name=FINANCE_GROUP_NAME, is_active=True).exclude(groups__name=APPROVER_GROUP_NAME)
+        return self.filter(groups__name=FINANCE_GROUP_NAME, is_active=True).exclude(
+            groups__name=APPROVER_GROUP_NAME
+        )
 
     def finances_level_2(self):
-        return self.filter(groups__name=FINANCE_GROUP_NAME, is_active=True).filter(groups__name=APPROVER_GROUP_NAME)
+        return self.filter(groups__name=FINANCE_GROUP_NAME, is_active=True).filter(
+            groups__name=APPROVER_GROUP_NAME
+        )
 
     def contracting(self):
         return self.filter(groups__name=CONTRACTING_GROUP_NAME, is_active=True)
@@ -72,7 +76,7 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
         Creates and saves a User with the given username, email and password.
         """
         if not email:
-            raise ValueError('The given email must be set')
+            raise ValueError("The given email must be set")
         email = self.normalize_email(email)
         is_registered, reason = is_user_already_registered(email)
         if is_registered:
@@ -83,18 +87,18 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
         return user
 
     def create_user(self, email, password=None, **extra_fields):
-        extra_fields.setdefault('is_staff', False)
-        extra_fields.setdefault('is_superuser', False)
+        extra_fields.setdefault("is_staff", False)
+        extra_fields.setdefault("is_superuser", False)
         return self._create_user(email, password, **extra_fields)
 
     def create_superuser(self, email, password, **extra_fields):
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
 
-        if extra_fields.get('is_staff') is not True:
-            raise ValueError('Superuser must have is_staff=True.')
-        if extra_fields.get('is_superuser') is not True:
-            raise ValueError('Superuser must have is_superuser=True.')
+        if extra_fields.get("is_staff") is not True:
+            raise ValueError("Superuser must have is_staff=True.")
+        if extra_fields.get("is_superuser") is not True:
+            raise ValueError("Superuser must have is_superuser=True.")
 
         return self._create_user(email, password, **extra_fields)
 
@@ -117,13 +121,17 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
                     invalid_params.append(param)
         if invalid_params:
             raise exceptions.FieldError(
-                "Invalid field name(s) for model %s: '%s'." % (
+                "Invalid field name(s) for model %s: '%s'."
+                % (
                     self.model._meta.object_name,
                     "', '".join(sorted(invalid_params)),
-                ))
+                )
+            )
         return params
 
-    def get_or_create_and_notify(self, defaults: dict | None =None, site=None, **kwargs):
+    def get_or_create_and_notify(
+        self, defaults: dict | None = None, site=None, **kwargs
+    ):
         """Create or get an account for applicant and send activation email to applicant.
 
         Args:
@@ -142,10 +150,10 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
         if defaults is None:
             defaults = {}
 
-        email = kwargs.get('email')
-        redirect_url = ''
-        if 'redirect_url' in kwargs:
-            redirect_url = kwargs.pop('redirect_url')
+        email = kwargs.get("email")
+        redirect_url = ""
+        if "redirect_url" in kwargs:
+            redirect_url = kwargs.pop("redirect_url")
 
         is_registered, _ = is_user_already_registered(email=email)
 
@@ -157,9 +165,9 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
             elif not user.is_active:
                 raise IntegrityError("Found an inactive account")
         else:
-            if 'password' in kwargs:
+            if "password" in kwargs:
                 # Coming from registration without application
-                temp_pass = kwargs.pop('password')
+                temp_pass = kwargs.pop("password")
             else:
                 temp_pass = BaseUserManager().make_random_password(length=32)
 
@@ -167,7 +175,9 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
 
             defaults.update(password=temp_pass_hash)
             try:
-                params = dict(resolve_callables(self._extract_model_params(defaults, **kwargs)))
+                params = dict(
+                    resolve_callables(self._extract_model_params(defaults, **kwargs))
+                )
                 user = self.create(**params)
             except IntegrityError:
                 raise
@@ -183,10 +193,12 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
 
 
 class User(AbstractUser):
-    email = models.EmailField(_('email address'), unique=True)
-    full_name = models.CharField(verbose_name=_('Full name'), max_length=255, blank=True)
+    email = models.EmailField(_("email address"), unique=True)
+    full_name = models.CharField(
+        verbose_name=_("Full name"), max_length=255, blank=True
+    )
     slack = models.CharField(
-        verbose_name=_('Slack name'),
+        verbose_name=_("Slack name"),
         blank=True,
         help_text=_('This is the name we should "@mention" when sending notifications'),
         max_length=50,
@@ -195,7 +207,7 @@ class User(AbstractUser):
     # Meta: used for migration purposes only
     drupal_id = models.IntegerField(null=True, blank=True, editable=False)
 
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
     # Remove the username/first/last name field which is no longer used.
@@ -217,16 +229,16 @@ class User(AbstractUser):
         return self.email
 
     def get_full_name_with_group(self):
-        is_apply_staff = f' ({STAFF_GROUP_NAME})' if self.is_apply_staff else ''
-        is_reviewer = f' ({REVIEWER_GROUP_NAME})' if self.is_reviewer else ''
-        is_applicant = f' ({APPLICANT_GROUP_NAME})' if self.is_applicant else ''
-        is_finance = f' ({FINANCE_GROUP_NAME})' if self.is_finance else ''
-        is_contracting = f' ({CONTRACTING_GROUP_NAME})' if self.is_contracting else ''
-        return f'{self.full_name.strip()}{is_apply_staff}{is_reviewer}{is_applicant}{is_finance}{is_contracting}'
+        is_apply_staff = f" ({STAFF_GROUP_NAME})" if self.is_apply_staff else ""
+        is_reviewer = f" ({REVIEWER_GROUP_NAME})" if self.is_reviewer else ""
+        is_applicant = f" ({APPLICANT_GROUP_NAME})" if self.is_applicant else ""
+        is_finance = f" ({FINANCE_GROUP_NAME})" if self.is_finance else ""
+        is_contracting = f" ({CONTRACTING_GROUP_NAME})" if self.is_contracting else ""
+        return f"{self.full_name.strip()}{is_apply_staff}{is_reviewer}{is_applicant}{is_finance}{is_contracting}"
 
     @cached_property
     def roles(self):
-        return list(self.groups.values_list('name', flat=True))
+        return list(self.groups.values_list("name", flat=True))
 
     @cached_property
     def is_apply_staff(self):
@@ -238,7 +250,9 @@ class User(AbstractUser):
 
     @cached_property
     def is_apply_staff_admin(self):
-        return self.groups.filter(name=TEAMADMIN_GROUP_NAME).exists() or self.is_superuser
+        return (
+            self.groups.filter(name=TEAMADMIN_GROUP_NAME).exists() or self.is_superuser
+        )
 
     @cached_property
     def is_reviewer(self):
@@ -266,14 +280,20 @@ class User(AbstractUser):
 
     @cached_property
     def is_finance_level_1(self):
-        return self.groups.filter(name=FINANCE_GROUP_NAME).exists() and not self.groups.filter(name=APPROVER_GROUP_NAME).exists()
+        return (
+            self.groups.filter(name=FINANCE_GROUP_NAME).exists()
+            and not self.groups.filter(name=APPROVER_GROUP_NAME).exists()
+        )
 
     @cached_property
     def is_finance_level_2(self):
         # disable finance2 user if invoice flow in not extended
         if not settings.INVOICE_EXTENDED_WORKFLOW:
             return False
-        return self.groups.filter(name=FINANCE_GROUP_NAME).exists() & self.groups.filter(name=APPROVER_GROUP_NAME).exists()
+        return (
+            self.groups.filter(name=FINANCE_GROUP_NAME).exists()
+            & self.groups.filter(name=APPROVER_GROUP_NAME).exists()
+        )
 
     @cached_property
     def is_contracting(self):
@@ -281,7 +301,10 @@ class User(AbstractUser):
 
     @cached_property
     def is_contracting_approver(self):
-        return self.groups.filter(name=CONTRACTING_GROUP_NAME).exists() and self.groups.filter(name=APPROVER_GROUP_NAME).exists()
+        return (
+            self.groups.filter(name=CONTRACTING_GROUP_NAME).exists()
+            and self.groups.filter(name=APPROVER_GROUP_NAME).exists()
+        )
 
     def get_absolute_url(self):
         """Used in the activities messages to generate URL for user instances.
@@ -289,13 +312,13 @@ class User(AbstractUser):
         Returns:
            url pointing to the wagtail admin, as there are no public urls for user.
         """
-        return reverse('wagtailusers_users:edit', args=[self.id])
+        return reverse("wagtailusers_users:edit", args=[self.id])
 
     class Meta:
-        ordering = ('full_name', 'email')
+        ordering = ("full_name", "email")
 
     def __repr__(self):
-        return f'<{self.__class__.__name__}: {self.full_name} ({self.email})>'
+        return f"<{self.__class__.__name__}: {self.full_name} ({self.email})>"
 
 
 @register_setting
@@ -303,14 +326,15 @@ class AuthSettings(BaseGenericSetting):
     wagtail_reference_index_ignore = True
 
     class Meta:
-        verbose_name = 'Auth Settings'
+        verbose_name = "Auth Settings"
 
-    consent_show = models.BooleanField(_('Show consent checkbox?'), default=False)
+    consent_show = models.BooleanField(_("Show consent checkbox?"), default=False)
     consent_text = models.CharField(max_length=255, blank=True)
     consent_help = RichTextField(blank=True)
     extra_text = RichTextField(
         _("Login extra text"),
-        blank=True, help_text=_("Displayed along side login form")
+        blank=True,
+        help_text=_("Displayed along side login form"),
     )
     register_extra_text = RichTextField(
         blank=True, help_text=_("Extra text to be displayed on register form")
@@ -319,22 +343,22 @@ class AuthSettings(BaseGenericSetting):
     panels = [
         MultiFieldPanel(
             [
-                FieldPanel('consent_show'),
-                FieldPanel('consent_text'),
-                FieldPanel('consent_help'),
+                FieldPanel("consent_show"),
+                FieldPanel("consent_text"),
+                FieldPanel("consent_help"),
             ],
-            _("User consent on login & register forms")
+            _("User consent on login & register forms"),
         ),
         MultiFieldPanel(
             [
-                FieldPanel('extra_text'),
+                FieldPanel("extra_text"),
             ],
-            _('Login form customizations'),
+            _("Login form customizations"),
         ),
         MultiFieldPanel(
             [
-                FieldPanel('register_extra_text'),
+                FieldPanel("register_extra_text"),
             ],
-            _('Register form customizations'),
+            _("Register form customizations"),
         ),
     ]

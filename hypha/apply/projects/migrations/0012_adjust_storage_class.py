@@ -6,15 +6,17 @@ import hypha.apply.projects.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('application_projects', '0011_add_packet_file'),
+        ("application_projects", "0011_add_packet_file"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='packetfile',
-            name='document',
-            field=models.FileField(storage=django.core.files.storage.FileSystemStorage(), upload_to=hypha.apply.projects.models.project.document_path),
+            model_name="packetfile",
+            name="document",
+            field=models.FileField(
+                storage=django.core.files.storage.FileSystemStorage(),
+                upload_to=hypha.apply.projects.models.project.document_path,
+            ),
         ),
     ]

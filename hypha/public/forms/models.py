@@ -22,22 +22,23 @@ from wagtail.search import index
 
 from hypha.public.utils.models import BasePage
 
-webform_storage = get_storage_class(getattr(settings, 'PRIVATE_FILE_STORAGE', None))()
+webform_storage = get_storage_class(getattr(settings, "PRIVATE_FILE_STORAGE", None))()
 
 
 class FormField(AbstractFormField):
-    FORM_FIELD_CHOICES = FORM_FIELD_CHOICES + (('document', 'Upload Document'),)
+    FORM_FIELD_CHOICES = FORM_FIELD_CHOICES + (("document", "Upload Document"),)
     field_type = models.CharField(
-        verbose_name=_('field type'),
-        max_length=16,
-        choices=FORM_FIELD_CHOICES
+        verbose_name=_("field type"), max_length=16, choices=FORM_FIELD_CHOICES
     )
-    page = ParentalKey('FormPage', on_delete=models.CASCADE, related_name='form_fields')
+    page = ParentalKey("FormPage", on_delete=models.CASCADE, related_name="form_fields")
 
 
 class ExtendedFormBuilder(FormBuilder):
     def create_document_field(self, field, options):
-        return FileField(widget=FileInput(attrs={'accept': settings.FILE_ACCEPT_ATTR_VALUE}), **options)
+        return FileField(
+            widget=FileInput(attrs={"accept": settings.FILE_ACCEPT_ATTR_VALUE}),
+            **options,
+        )
 
     def clean(self):
         cleaned_data = self.cleaned_data
@@ -46,14 +47,17 @@ class ExtendedFormBuilder(FormBuilder):
                 file_data = cleaned_data[name]
                 if file_data:
                     file_name = file_data.name
-                    file_extension = file_name.split('.')[-1]
+                    file_extension = file_name.split(".")[-1]
                     if file_extension not in settings.FILE_ALLOWED_EXTENSIONS:
-                        self.add_error(name, f"File extension '{file_extension}' is not allowed. "
-                                             f"Allowed extensions are: '{', '.join(settings.FILE_ALLOWED_EXTENSIONS)}'")
+                        self.add_error(
+                            name,
+                            f"File extension '{file_extension}' is not allowed. "
+                            f"Allowed extensions are: '{', '.join(settings.FILE_ALLOWED_EXTENSIONS)}'",
+                        )
         return self.cleaned_data
 
 
-@method_decorator(never_cache, name='serve')
+@method_decorator(never_cache, name="serve")
 class FormPage(AbstractEmailForm, BasePage):
     form_builder = ExtendedFormBuilder
     subpage_types = []
@@ -62,20 +66,25 @@ class FormPage(AbstractEmailForm, BasePage):
     thank_you_text = RichTextField(blank=True)
 
     search_fields = BasePage.search_fields + [
-        index.SearchField('intro'),
+        index.SearchField("intro"),
     ]
 
     content_panels = BasePage.content_panels + [
-        FieldPanel('intro', classname="full"),
-        InlinePanel('form_fields', label=_('Form fields')),
-        FieldPanel('thank_you_text', classname="full"),
-        MultiFieldPanel([
-            FieldRowPanel([
-                FieldPanel('from_address', classname="col6"),
-                FieldPanel('to_address', classname="col6"),
-            ]),
-            FieldPanel('subject'),
-        ], "Email"),
+        FieldPanel("intro", classname="full"),
+        InlinePanel("form_fields", label=_("Form fields")),
+        FieldPanel("thank_you_text", classname="full"),
+        MultiFieldPanel(
+            [
+                FieldRowPanel(
+                    [
+                        FieldPanel("from_address", classname="col6"),
+                        FieldPanel("to_address", classname="col6"),
+                    ]
+                ),
+                FieldPanel("subject"),
+            ],
+            "Email",
+        ),
     ]
 
     def get_form(self, *args, **kwargs):
@@ -92,7 +101,7 @@ class FormPage(AbstractEmailForm, BasePage):
                 if file_data:
                     file_name = file_data.name
                     file_name = webform_storage.generate_filename(file_name)
-                    upload_to = os.path.join('webform', str(self.id), file_name)
+                    upload_to = os.path.join("webform", str(self.id), file_name)
                     saved_file_name = webform_storage.save(upload_to, file_data)
                     file_details_dict = {name: webform_storage.url(saved_file_name)}
                     cleaned_data.update(file_details_dict)

@@ -14,7 +14,7 @@
     &:disabled,
     &.is-disabled {
         pointer-events: none;
-        opacity: .5;
+        opacity: 0.5;
     }
 
     &--primary {
@@ -35,7 +35,8 @@
         padding: 15px 20px;
         font-weight: $weight--normal;
         color: $color--default;
-        background: url('./../../images/filters.svg') $color--white no-repeat 93% center;
+        background: url("./../../images/filters.svg") $color--white no-repeat
+            93% center;
         border: 1px solid $color--light-mid-grey;
         transition: none;
         width: 100%;
@@ -46,11 +47,11 @@
             border: 0;
             justify-content: flex-start;
             width: auto;
-            opacity: .7;
+            opacity: 0.7;
 
             &::before {
-                content: '';
-                background-image: url('./../../images/filters.svg');
+                content: "";
+                background-image: url("./../../images/filters.svg");
                 transform: rotate(90deg);
                 background-color: transparent;
                 background-position: left center;
@@ -69,7 +70,7 @@
 
     &--search {
         position: absolute;
-        top: .65em;
+        top: 0.65em;
         right: 10px;
 
         svg {
@@ -169,7 +170,7 @@
                 span {
                     // color of the arrow is inlined hence !important
                     color: $color--white !important; // stylelint-disable-line declaration-no-important
-                    transition: color  $transition;
+                    transition: color $transition;
 
                     .header--light-bg & {
                         color: $color--black !important; // stylelint-disable-line declaration-no-important

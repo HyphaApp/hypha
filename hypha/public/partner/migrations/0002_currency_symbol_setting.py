@@ -4,15 +4,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('partner', '0001_add_investments_table_and_partners_page'),
+        ("partner", "0001_add_investments_table_and_partners_page"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='investment',
-            name='amount_committed',
-            field=models.DecimalField(decimal_places=2, default=0, max_digits=11, verbose_name='Amount Committed ($)'),
+            model_name="investment",
+            name="amount_committed",
+            field=models.DecimalField(
+                decimal_places=2,
+                default=0,
+                max_digits=11,
+                verbose_name="Amount Committed ($)",
+            ),
         ),
     ]

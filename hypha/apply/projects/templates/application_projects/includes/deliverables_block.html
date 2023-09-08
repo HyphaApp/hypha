@@ -6,17 +6,17 @@
         <form id="add-deliverables", action="" data-projectid="{{ project.id }}" data-invoiceid="{{ invoice.id }}">
             <div class="select-deliverables">
                 <select name="deliverables" id="deliverables">
-                <option value="deliverables">{% trans "Invoice Covers Deliverables" %}</option>
-                {% for deliverable in deliverables %}
-                    <option id="{{ deliverable.id }}" value="{{ deliverable.id }}" data-deliverableid="{{ deliverable.id }}" data-availabletoinvoice="{{ deliverable.available_to_invoice }}">{{ deliverable.name }} (${{ deliverable.unit_price }})</option>
-                {% endfor %}
+                    <option value="deliverables">{% trans "Invoice Covers Deliverables" %}</option>
+                    {% for deliverable in deliverables %}
+                        <option id="{{ deliverable.id }}" value="{{ deliverable.id }}" data-deliverableid="{{ deliverable.id }}" data-availabletoinvoice="{{ deliverable.available_to_invoice }}">{{ deliverable.name }} (${{ deliverable.unit_price }})</option>
+                    {% endfor %}
                 </select>
             </div>
             <br>
-                <div class="available-to-invoice">
-                    <b>{% trans "Available to invoice:" %} </b>
-                </div>
-                <br>
+            <div class="available-to-invoice">
+                <b>{% trans "Available to invoice:" %} </b>
+            </div>
+            <br>
             <div class="quantity">
                 <b><label for="quantity">{% trans "Quantity:" %}</label></b>
                 <input type="number" id="quantity" name="quantity" min="1">

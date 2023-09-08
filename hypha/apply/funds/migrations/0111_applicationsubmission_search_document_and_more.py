@@ -9,35 +9,51 @@ import modelcluster.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('funds', '0110_auto_20230418_0644'),
+        ("funds", "0110_auto_20230418_0644"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='applicationsubmission',
-            name='search_document',
+            model_name="applicationsubmission",
+            name="search_document",
             field=django.contrib.postgres.search.SearchVectorField(null=True),
         ),
         migrations.AlterField(
-            model_name='applicationbase',
-            name='reviewers',
-            field=modelcluster.fields.ParentalManyToManyField(blank=True, limit_choices_to={'groups__name': 'Reviewer', 'is_active': True}, related_name='%(class)s_reviewers', to=settings.AUTH_USER_MODEL),
+            model_name="applicationbase",
+            name="reviewers",
+            field=modelcluster.fields.ParentalManyToManyField(
+                blank=True,
+                limit_choices_to={"groups__name": "Reviewer", "is_active": True},
+                related_name="%(class)s_reviewers",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AlterField(
-            model_name='roundbase',
-            name='lead',
-            field=models.ForeignKey(limit_choices_to={'groups__name': 'Staff', 'is_active': True}, on_delete=django.db.models.deletion.PROTECT, related_name='%(class)s_lead', to=settings.AUTH_USER_MODEL),
+            model_name="roundbase",
+            name="lead",
+            field=models.ForeignKey(
+                limit_choices_to={"groups__name": "Staff", "is_active": True},
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="%(class)s_lead",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AlterField(
-            model_name='roundbase',
-            name='reviewers',
-            field=modelcluster.fields.ParentalManyToManyField(blank=True, limit_choices_to={'groups__name': 'Reviewer', 'is_active': True}, related_name='%(class)s_reviewer', to=settings.AUTH_USER_MODEL),
+            model_name="roundbase",
+            name="reviewers",
+            field=modelcluster.fields.ParentalManyToManyField(
+                blank=True,
+                limit_choices_to={"groups__name": "Reviewer", "is_active": True},
+                related_name="%(class)s_reviewer",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AddIndex(
-            model_name='applicationsubmission',
-            index=django.contrib.postgres.indexes.GinIndex(fields=['search_document'], name='funds_appli_search__43a072_gin'),
+            model_name="applicationsubmission",
+            index=django.contrib.postgres.indexes.GinIndex(
+                fields=["search_document"], name="funds_appli_search__43a072_gin"
+            ),
         ),
     ]

@@ -5,7 +5,7 @@ from .models import Event, Message
 
 class MessageInline(admin.TabularInline):
     model = Message
-    readonly_fields = ('type', 'recipient', 'content', 'status', 'external_id')
+    readonly_fields = ("type", "recipient", "content", "status", "external_id")
     can_delete = False
 
     def has_add_permission(self, request, obj):
@@ -13,9 +13,9 @@ class MessageInline(admin.TabularInline):
 
 
 class EventAdmin(admin.ModelAdmin):
-    list_display = ('type', 'by', 'when', 'source')
-    list_filter = ('type', 'when')
-    readonly_fields = ('type', 'source', 'when', 'by')
+    list_display = ("type", "by", "when", "source")
+    list_filter = ("type", "when")
+    readonly_fields = ("type", "source", "when", "by")
     inlines = (MessageInline,)
 
     def has_add_permission(self, request):

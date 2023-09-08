@@ -76,35 +76,39 @@ from .utils import (
 
 
 class JSONOrderable(models.QuerySet):
-    json_field = ''
+    json_field = ""
 
     def order_by(self, *field_names):
         if not self.json_field:
             raise ValueError(
-                'json_field cannot be blank, please provide a field on which to perform the ordering'
+                "json_field cannot be blank, please provide a field on which to perform the ordering"
             )
 
         def build_json_order_by(field):
             try:
-                if field.replace('-', '') not in NAMED_BLOCKS:
+                if field.replace("-", "") not in NAMED_BLOCKS:
                     return field
             except AttributeError:
                 return field
 
-            if field[0] == '-':
+            if field[0] == "-":
                 descending = True
                 field = field[1:]
             else:
                 descending = False
             db_table = self.model._meta.db_table
-            return OrderBy(RawSQL(f'LOWER({db_table}.{self.json_field}->>%s)', (field,)), descending=descending, nulls_last=True)
+            return OrderBy(
+                RawSQL(f"LOWER({db_table}.{self.json_field}->>%s)", (field,)),
+                descending=descending,
+                nulls_last=True,
+            )
 
         field_ordering = [build_json_order_by(field) for field in field_names]
         return super().order_by(*field_ordering)
 
 
 class ApplicationSubmissionQueryset(JSONOrderable):
-    json_field = 'form_data'
+    json_field = "form_data"
 
     def active(self):
         return self.filter(status__in=active_statuses, is_archive=False)
@@ -116,11 +120,12 @@ class ApplicationSubmissionQueryset(JSONOrderable):
         qs = self.filter(
             Q(status__in=COMMUNITY_REVIEW_PHASES),
             ~Q(user=user),
-            ~Q(reviews__author=user) | (
-                Q(reviews__author=user) & Q(reviews__is_draft=True)
-            )
+            ~Q(reviews__author=user)
+            | (Q(reviews__author=user) & Q(reviews__is_draft=True)),
         )
-        qs = qs.exclude(reviews__opinions__opinion=AGREE, reviews__opinions__author=user)
+        qs = qs.exclude(
+            reviews__opinions__opinion=AGREE, reviews__opinions__author=user
+        )
         return qs.distinct()
 
     def in_review(self):
@@ -128,30 +133,32 @@ class ApplicationSubmissionQueryset(JSONOrderable):
 
     def in_review_for(self, user, assigned=True):
         user_review_statuses = get_review_active_statuses(user)
-        qs = self.prefetch_related('reviews__author__reviewer')
+        qs = self.prefetch_related("reviews__author__reviewer")
         qs = qs.filter(
             Q(status__in=user_review_statuses),
-            ~Q(reviews__author__reviewer=user) | (
-                Q(reviews__author__reviewer=user) & Q(reviews__is_draft=True)
-            )
+            ~Q(reviews__author__reviewer=user)
+            | (Q(reviews__author__reviewer=user) & Q(reviews__is_draft=True)),
         )
         if assigned:
             qs = qs.filter(reviewers=user)
             # If this user has agreed with a review, then they have reviewed this submission already
-            qs = qs.exclude(reviews__opinions__opinion=AGREE, reviews__opinions__author__reviewer=user)
+            qs = qs.exclude(
+                reviews__opinions__opinion=AGREE,
+                reviews__opinions__author__reviewer=user,
+            )
         return qs.distinct()
 
     def for_reviewer_settings(self, user, reviewer_settings):
         qs = self
-        if reviewer_settings.submission == 'reviewed':
+        if reviewer_settings.submission == "reviewed":
             qs = qs.reviewed_by(user)
-        if reviewer_settings.state == 'ext_state_or_higher':
+        if reviewer_settings.state == "ext_state_or_higher":
             qs = qs.filter(status__in=ext_or_higher_statuses)
-        if reviewer_settings.state == 'ext_state_only':
+        if reviewer_settings.state == "ext_state_only":
             qs = qs.filter(status__in=ext_review_statuses)
-        if reviewer_settings.outcome == 'accepted':
+        if reviewer_settings.outcome == "accepted":
             qs = qs.filter(status__in=accepted_statuses)
-        if reviewer_settings.outcome == 'all_except_dismissed':
+        if reviewer_settings.outcome == "all_except_dismissed":
             qs = qs.exclude(status__in=dismissed_statuses)
         if reviewer_settings.assigned:
             qs = qs.filter(reviewers=user)
@@ -173,7 +180,11 @@ class ApplicationSubmissionQueryset(JSONOrderable):
         return self.filter(status__in=DETERMINATION_RESPONSE_PHASES).filter(lead=user)
 
     def undetermined(self):
-        determined_submissions = Determination.objects.filter(submission__in=self).final().values('submission')
+        determined_submissions = (
+            Determination.objects.filter(submission__in=self)
+            .final()
+            .values("submission")
+        )
         return self.exclude(pk__in=determined_submissions)
 
     def current(self):
@@ -189,15 +200,17 @@ class ApplicationSubmissionQueryset(JSONOrderable):
 
     def current_accepted(self):
         # Applications which have the current stage active (have not been progressed)
-        return self.filter(status__in=PHASES_MAPPING['accepted']['statuses']).current()
+        return self.filter(status__in=PHASES_MAPPING["accepted"]["statuses"]).current()
 
     def value(self):
         return self.annotate(
-            value=Cast(KeyTextTransform('value', 'form_data'), output_field=FloatField())
+            value=Cast(
+                KeyTextTransform("value", "form_data"), output_field=FloatField()
+            )
         ).aggregate(
-            Count('value'),
-            Avg('value'),
-            Sum('value'),
+            Count("value"),
+            Avg("value"),
+            Sum("value"),
         )
 
     def exclude_draft(self):
@@ -205,30 +218,35 @@ class ApplicationSubmissionQueryset(JSONOrderable):
 
     def with_latest_update(self):
         activities = self.model.activities.rel.model
-        latest_activity = activities.objects.filter(submission=OuterRef('id')).select_related('user')
+        latest_activity = activities.objects.filter(
+            submission=OuterRef("id")
+        ).select_related("user")
         return self.annotate(
-            last_user_update=Subquery(latest_activity[:1].values('user__full_name')),
-            last_update=Subquery(latest_activity.values('timestamp')[:1]),
+            last_user_update=Subquery(latest_activity[:1].values("user__full_name")),
+            last_update=Subquery(latest_activity.values("timestamp")[:1]),
         )
 
     def for_table(self, user):
         roles_for_review = self.model.assigned.field.model.objects.with_roles().filter(
-            submission=OuterRef('id'), reviewer=user)
+            submission=OuterRef("id"), reviewer=user
+        )
 
         qs = annotate_review_recommendation_and_count(self.with_latest_update())
         qs = annotate_comments_count(qs, user)
-        return qs.annotate(
-            role_icon=Subquery(roles_for_review[:1].values('role__icon')),
-        ).select_related(
-            'page',
-            'round',
-            'lead',
-            'user',
-            'previous__page',
-            'previous__round',
-            'previous__lead',
-        ).prefetch_related(
-            'screening_statuses'
+        return (
+            qs.annotate(
+                role_icon=Subquery(roles_for_review[:1].values("role__icon")),
+            )
+            .select_related(
+                "page",
+                "round",
+                "lead",
+                "user",
+                "previous__page",
+                "previous__round",
+                "previous__lead",
+            )
+            .prefetch_related("screening_statuses")
         )
 
 
@@ -253,12 +271,13 @@ def wrap_method(func):
         # Without this using the same method for multiple transitions fails as
         # the fsm wrapping is overwritten
         return func(*args, **kwargs)
+
     return wrapped
 
 
 def transition_id(target, phase):
-    transition_prefix = 'transition'
-    return '__'.join([transition_prefix, phase.stage.name.lower(), phase.name, target])
+    transition_prefix = "transition"
+    return "__".join([transition_prefix, phase.stage.name.lower(), phase.name, target])
 
 
 class AddTransitions(models.base.ModelBase):
@@ -267,18 +286,22 @@ class AddTransitions(models.base.ModelBase):
             for phase, data in workflow.items():
                 for transition_name, action in data.transitions.items():
                     method_name = transition_id(transition_name, data)
-                    permission_name = method_name + '_permission'
-                    permission_func = make_permission_check(action['permissions'])
+                    permission_name = method_name + "_permission"
+                    permission_func = make_permission_check(action["permissions"])
 
                     # Get the method defined on the parent or default to a NOOP
-                    transition_state = wrap_method(attrs.get(action.get('method'), lambda *args, **kwargs: None))
+                    transition_state = wrap_method(
+                        attrs.get(action.get("method"), lambda *args, **kwargs: None)
+                    )
                     # Provide a neat name for graph viz display
-                    transition_state.__name__ = slugify(action['display'])
+                    transition_state.__name__ = slugify(action["display"])
 
-                    conditions = [attrs[condition] for condition in action.get('conditions', [])]
+                    conditions = [
+                        attrs[condition] for condition in action.get("conditions", [])
+                    ]
                     # Wrap with transition decorator
                     transition_func = transition(
-                        attrs['status'],
+                        attrs["status"],
                         source=phase,
                         target=transition_name,
                         permission=permission_func,
@@ -299,17 +322,21 @@ class AddTransitions(models.base.ModelBase):
                 # For the other workflow
                 return None
 
-        attrs['get_transition'] = get_transition
+        attrs["get_transition"] = get_transition
 
         def get_actions_for_user(self, user):
             transitions = self.get_available_user_status_transitions(user)
             actions = [
-                (transition.target, self.phase.transitions[transition.target]['display'])
-                for transition in transitions if self.get_transition(transition.target)
+                (
+                    transition.target,
+                    self.phase.transitions[transition.target]["display"],
+                )
+                for transition in transitions
+                if self.get_transition(transition.target)
             ]
             yield from actions
 
-        attrs['get_actions_for_user'] = get_actions_for_user
+        attrs["get_actions_for_user"] = get_actions_for_user
 
         def perform_transition(self, action, user, request=None, **kwargs):
             transition = self.get_transition(action)
@@ -320,21 +347,23 @@ class AddTransitions(models.base.ModelBase):
                 raise PermissionDenied(f'You do not have permission to "{ action }"')
 
             transition(by=user, request=request, **kwargs)
-            self.save(update_fields=['status'])
+            self.save(update_fields=["status"])
 
             self.progress_stage_when_possible(user, request, **kwargs)
 
-        attrs['perform_transition'] = perform_transition
+        attrs["perform_transition"] = perform_transition
 
         def progress_stage_when_possible(self, user, request, notify=None, **kwargs):
             # Check to see if we can progress to a new stage from the current status
             for stage_transition in STAGE_CHANGE_ACTIONS:
                 try:
-                    self.perform_transition(stage_transition, user, request=request, notify=False, **kwargs)
+                    self.perform_transition(
+                        stage_transition, user, request=request, notify=False, **kwargs
+                    )
                 except PermissionDenied:
                     pass
 
-        attrs['progress_stage_when_possible'] = progress_stage_when_possible
+        attrs["progress_stage_when_possible"] = progress_stage_when_possible
 
         return super().__new__(cls, name, bases, attrs, **kwargs)
 
@@ -346,7 +375,7 @@ class ApplicationSubmissionMetaclass(AddTransitions):
         # We want to access the redered display of the required fields.
         # Treat in similar way to django's get_FIELD_display
         for block_name in NAMED_BLOCKS:
-            partial_method_name = f'_{block_name}_method'
+            partial_method_name = f"_{block_name}_method"
             # We need to generate the partial method and the wrap it in property so
             # we can access the required fields like normal fields. e.g. self.title
             # Partial method requires __get__ to be called in order to bind it to the
@@ -360,66 +389,75 @@ class ApplicationSubmissionMetaclass(AddTransitions):
             )
             setattr(
                 cls,
-                f'{block_name}',
+                f"{block_name}",
                 property(getattr(cls, partial_method_name)),
             )
             setattr(
                 cls,
-                f'get_{block_name}_display',
+                f"get_{block_name}_display",
                 partialmethod(cls._get_REQUIRED_display, name=block_name),
             )
         return cls
 
 
 class ApplicationSubmission(
-        WorkflowHelpers,
-        BaseStreamForm,
-        AccessFormData,
-        AbstractFormSubmission,
-        metaclass=ApplicationSubmissionMetaclass,
+    WorkflowHelpers,
+    BaseStreamForm,
+    AccessFormData,
+    AbstractFormSubmission,
+    metaclass=ApplicationSubmissionMetaclass,
 ):
     form_data = models.JSONField(encoder=StreamFieldDataEncoder)
     form_fields = StreamField(ApplicationCustomFormFieldsBlock(), use_json_field=True)
-    summary = models.TextField(default='', null=True, blank=True)
-    page = models.ForeignKey('wagtailcore.Page', on_delete=models.PROTECT)
-    round = models.ForeignKey('wagtailcore.Page', on_delete=models.PROTECT, related_name='submissions', null=True)
+    summary = models.TextField(default="", null=True, blank=True)
+    page = models.ForeignKey("wagtailcore.Page", on_delete=models.PROTECT)
+    round = models.ForeignKey(
+        "wagtailcore.Page",
+        on_delete=models.PROTECT,
+        related_name="submissions",
+        null=True,
+    )
     lead = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         limit_choices_to=LIMIT_TO_STAFF,
-        related_name='submission_lead',
+        related_name="submission_lead",
         on_delete=models.PROTECT,
     )
-    next = models.OneToOneField('self', on_delete=models.CASCADE, related_name='previous', null=True)
+    next = models.OneToOneField(
+        "self", on_delete=models.CASCADE, related_name="previous", null=True
+    )
     reviewers = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
-        related_name='submissions_reviewer',
+        related_name="submissions_reviewer",
         blank=True,
-        through='AssignedReviewers',
+        through="AssignedReviewers",
     )
     partners = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
-        related_name='submissions_partner',
+        related_name="submissions_partner",
         limit_choices_to=LIMIT_TO_PARTNERS,
         blank=True,
     )
     meta_terms = models.ManyToManyField(
         MetaTerm,
-        related_name='submissions',
+        related_name="submissions",
         blank=True,
     )
     flags = GenericRelation(
         Flag,
-        content_type_field='target_content_type',
-        object_id_field='target_object_id',
-        related_query_name='submission',
+        content_type_field="target_content_type",
+        object_id_field="target_object_id",
+        related_query_name="submission",
     )
     activities = GenericRelation(
-        'activity.Activity',
-        content_type_field='source_content_type',
-        object_id_field='source_object_id',
-        related_query_name='submission',
+        "activity.Activity",
+        content_type_field="source_content_type",
+        object_id_field="source_object_id",
+        related_query_name="submission",
     )
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True
+    )
     search_data = models.TextField()
     search_document = SearchVectorField(null=True)
 
@@ -427,26 +465,26 @@ class ApplicationSubmission(
     status = FSMField(default=INITIAL_STATE, protected=True)
 
     screening_statuses = models.ManyToManyField(
-        'funds.ScreeningStatus',
-        related_name='submissions',
-        blank=True
+        "funds.ScreeningStatus", related_name="submissions", blank=True
     )
 
-    submit_time = models.DateTimeField(verbose_name=_('submit time'), auto_now_add=False)
+    submit_time = models.DateTimeField(
+        verbose_name=_("submit time"), auto_now_add=False
+    )
 
     _is_draft = False
 
     live_revision = models.OneToOneField(
-        'ApplicationRevision',
+        "ApplicationRevision",
         on_delete=models.CASCADE,
-        related_name='live',
+        related_name="live",
         null=True,
         editable=False,
     )
     draft_revision = models.OneToOneField(
-        'ApplicationRevision',
+        "ApplicationRevision",
         on_delete=models.CASCADE,
-        related_name='draft',
+        related_name="draft",
         null=True,
         editable=False,
     )
@@ -463,7 +501,7 @@ class ApplicationSubmission(
 
     class Meta:
         indexes = [
-            GinIndex(fields=['search_document']),
+            GinIndex(fields=["search_document"]),
         ]
 
     @property
@@ -474,8 +512,9 @@ class ApplicationSubmission(
         return not self.next
 
     @transition(
-        status, source='*',
-        target=RETURN_VALUE(INITIAL_STATE, 'draft_proposal', 'invited_to_proposal'),
+        status,
+        source="*",
+        target=RETURN_VALUE(INITIAL_STATE, "draft_proposal", "invited_to_proposal"),
         permission=make_permission_check({UserPermissions.ADMIN}),
     )
     def restart_stage(self, **kwargs):
@@ -487,10 +526,10 @@ class ApplicationSubmission(
             a.restart_stage(by=u)
             a.save()
         """
-        if hasattr(self, 'previous'):
-            return 'draft_proposal'
+        if hasattr(self, "previous"):
+            return "draft_proposal"
         elif self.next:
-            return 'invited_to_proposal'
+            return "invited_to_proposal"
         return INITIAL_STATE
 
     @property
@@ -507,8 +546,8 @@ class ApplicationSubmission(
 
     def ensure_user_has_account(self):
         if self.user and self.user.is_authenticated:
-            self.form_data['email'] = self.user.email
-            self.form_data['full_name'] = self.user.get_full_name()
+            self.form_data["email"] = self.user.email
+            self.form_data["full_name"] = self.user.get_full_name()
             # Ensure applying user should have applicant role
             if not self.user.is_applicant:
                 applicant_group = Group.objects.get(name=APPLICANT_GROUP_NAME)
@@ -516,15 +555,14 @@ class ApplicationSubmission(
                 self.user.save()
         else:
             # Rely on the form having the following must include fields (see blocks.py)
-            email = self.form_data.get('email')
-            full_name = self.form_data.get('full_name')
+            email = self.form_data.get("email")
+            full_name = self.form_data.get("full_name")
 
             User = get_user_model()
-            if 'skip_account_creation_notification' in self.form_data:
-                self.form_data.pop('skip_account_creation_notification', None)
+            if "skip_account_creation_notification" in self.form_data:
+                self.form_data.pop("skip_account_creation_notification", None)
                 self.user, _ = User.objects.get_or_create(
-                    email=email,
-                    defaults={'full_name': full_name}
+                    email=email, defaults={"full_name": full_name}
                 )
                 # Ensure applying user should have applicant role
                 if not self.user.is_applicant:
@@ -535,12 +573,11 @@ class ApplicationSubmission(
                 self.user, _ = User.objects.get_or_create_and_notify(
                     email=email,
                     site=self.page.get_site(),
-                    defaults={'full_name': full_name}
+                    defaults={"full_name": full_name},
                 )
 
     def get_from_parent(self, attribute):
         try:
-
             return getattr(self.round.specific, attribute)
         except AttributeError:
             # We are a lab submission
@@ -557,7 +594,7 @@ class ApplicationSubmission(
         submission or we would still use the old determination forms for backward
         compatibility.
         """
-        return self.get_from_parent('determination_forms').count() > 0
+        return self.get_from_parent("determination_forms").count() > 0
 
     def progress_application(self, **kwargs):
         target = None
@@ -568,15 +605,17 @@ class ApplicationSubmission(
                 # See note in workflow.py
                 target = dict(PHASES)[phase].stage
         if not target:
-            raise ValueError('Incorrect State for transition')
+            raise ValueError("Incorrect State for transition")
 
         submission_in_db = ApplicationSubmission.objects.get(id=self.id)
         prev_meta_terms = submission_in_db.meta_terms.all()
 
         self.id = None
-        proposal_form = kwargs.get('proposal_form')
+        proposal_form = kwargs.get("proposal_form")
         proposal_form = int(proposal_form) if proposal_form else 0
-        self.form_fields = self.get_from_parent('get_defined_fields')(target, form_index=proposal_form)
+        self.form_fields = self.get_from_parent("get_defined_fields")(
+            target, form_index=proposal_form
+        )
 
         self.live_revision = None
         self.draft_revision = None
@@ -593,18 +632,22 @@ class ApplicationSubmission(
 
     def from_draft(self):
         self._is_draft = True
-        self.form_data = self.deserialised_data(self, self.draft_revision.form_data, self.form_fields)
+        self.form_data = self.deserialised_data(
+            self, self.draft_revision.form_data, self.form_fields
+        )
         return self
 
     def create_revision(self, draft=False, force=False, by=None, **kwargs):
         # Will return True/False if the revision was created or not
-        ApplicationRevision = apps.get_model('funds', 'ApplicationRevision')
+        ApplicationRevision = apps.get_model("funds", "ApplicationRevision")
         self.clean_submission()
         current_submission = ApplicationSubmission.objects.get(id=self.id)
         current_data = current_submission.form_data
         if current_data != self.form_data or force:
             if self.live_revision == self.draft_revision:
-                revision = ApplicationRevision.objects.create(submission=self, form_data=self.form_data, author=by)
+                revision = ApplicationRevision.objects.create(
+                    submission=self, form_data=self.form_data, author=by
+                )
             else:
                 revision = self.draft_revision
                 revision.form_data = self.form_data
@@ -615,7 +658,7 @@ class ApplicationSubmission(
                 self.form_data = current_submission.form_data
             else:
                 self.live_revision = revision
-                self.search_data = ' '.join(list(self.prepare_search_values()))
+                self.search_data = " ".join(list(self.prepare_search_values()))
                 self.search_document = self.prepare_search_vector()
 
             self.draft_revision = revision
@@ -641,23 +684,23 @@ class ApplicationSubmission(
     def save(self, *args, update_fields=None, skip_custom=False, **kwargs):
         if update_fields is None:
             update_fields = []
-        if update_fields and 'form_data' not in update_fields:
+        if update_fields and "form_data" not in update_fields:
             # We don't want to use this approach if the user is sending data
             return super().save(*args, update_fields=update_fields, **kwargs)
         elif skip_custom:
             return super().save(*args, **kwargs)
 
         if self._is_draft:
-            raise ValueError('Cannot save with draft data')
+            raise ValueError("Cannot save with draft data")
 
         creating = not self.id
 
         if creating:
             self.submit_time = timezone.now()
             # We are creating the object default to first stage
-            self.workflow_name = self.get_from_parent('workflow_name')
+            self.workflow_name = self.get_from_parent("workflow_name")
             # Copy extra relevant information to the child
-            self.lead = self.get_from_parent('lead')
+            self.lead = self.get_from_parent("lead")
 
             # We need the submission id to correctly save the files
             files = self.extract_files()
@@ -666,18 +709,18 @@ class ApplicationSubmission(
 
         # add a denormed version of the answer for searching
         # @TODO: remove 'search_data' in favour of 'search_document' for FTS
-        self.search_data = ' '.join(self.prepare_search_values())
+        self.search_data = " ".join(self.prepare_search_values())
         self.search_document = self.prepare_search_vector()
 
         super().save(*args, **kwargs)
 
         if creating:
-            AssignedReviewers = apps.get_model('funds', 'AssignedReviewers')
-            ApplicationRevision = apps.get_model('funds', 'ApplicationRevision')
+            AssignedReviewers = apps.get_model("funds", "AssignedReviewers")
+            ApplicationRevision = apps.get_model("funds", "ApplicationRevision")
 
             self.process_file_data(files)
             AssignedReviewers.objects.bulk_create_reviewers(
-                list(self.get_from_parent('reviewers').all()),
+                list(self.get_from_parent("reviewers").all()),
                 self,
             )
             first_revision = ApplicationRevision.objects.create(
@@ -699,7 +742,7 @@ class ApplicationSubmission(
 
     @property
     def missing_reviewers(self):
-        reviewers_submitted = self.assigned.reviewed().values('reviewer')
+        reviewers_submitted = self.assigned.reviewed().values("reviewer")
         reviewers = self.reviewers.exclude(id__in=reviewers_submitted)
         return reviewers
 
@@ -709,7 +752,9 @@ class ApplicationSubmission(
 
     @property
     def reviewers_not_reviewed(self):
-        return self.missing_reviewers.reviewers().exclude(id__in=self.staff_not_reviewed)
+        return self.missing_reviewers.reviewers().exclude(
+            id__in=self.staff_not_reviewed
+        )
 
     def reviewed_by(self, user):
         return self.assigned.reviewed().filter(reviewer=user).exists()
@@ -728,7 +773,12 @@ class ApplicationSubmission(
         if user in self.reviewers_not_reviewed:
             return True
 
-        if user.is_community_reviewer and self.user != user and self.community_review and not self.reviewed_by(user):
+        if (
+            user.is_community_reviewer
+            and self.user != user
+            and self.community_review
+            and not self.reviewed_by(user)
+        ):
             return True
 
         return False
@@ -759,7 +809,7 @@ class ApplicationSubmission(
             value = field.block.get_searchable_content(field.value, data)
             if value:
                 if isinstance(value, list):
-                    contents.append(', '.join(value))
+                    contents.append(", ".join(value))
                 else:
                     contents.append(value)
         return contents
@@ -768,42 +818,41 @@ class ApplicationSubmission(
         values = self.get_searchable_contents()
 
         # Add named fields into the search index
-        for field in ['full_name', 'email', 'title']:
+        for field in ["full_name", "email", "title"]:
             values.append(getattr(self, field))
         return values
 
     def index_components(self):
         return {
-            'A': ' '.join([f'id:{self.id}', self.title]),
-            'C': ' '.join([self.full_name, self.email]),
-            'B': ' '.join(self.get_searchable_contents()),
+            "A": " ".join([f"id:{self.id}", self.title]),
+            "C": " ".join([self.full_name, self.email]),
+            "B": " ".join(self.get_searchable_contents()),
         }
 
     def prepare_search_vector(self):
         search_vectors = []
         for weight, text in self.index_components().items():
-            search_vectors.append(
-                SearchVector(Value(text), weight=weight)
-            )
+            search_vectors.append(SearchVector(Value(text), weight=weight))
         return reduce(operator.add, search_vectors)
 
-
     def get_absolute_url(self):
-        return reverse('funds:submissions:detail', urlconf='hypha.apply.urls', args=(self.id,))
+        return reverse(
+            "funds:submissions:detail", urlconf="hypha.apply.urls", args=(self.id,)
+        )
 
     def __str__(self):
-        return f'{self.title} from {self.full_name} for {self.page.title}'
+        return f"{self.title} from {self.full_name} for {self.page.title}"
 
     def __repr__(self):
-        return f'<{self.__class__.__name__}: {self.user}, {self.round}, {self.page}>'
+        return f"<{self.__class__.__name__}: {self.user}, {self.round}, {self.page}>"
 
     @property
     def ready_for_determination(self):
-        return self.status in PHASES_MAPPING['ready-for-determination']['statuses']
+        return self.status in PHASES_MAPPING["ready-for-determination"]["statuses"]
 
     @property
     def accepted_for_funding(self):
-        accepted = self.status in PHASES_MAPPING['accepted']['statuses']
+        accepted = self.status in PHASES_MAPPING["accepted"]["statuses"]
         return self.in_final_stage and accepted
 
     @property
@@ -819,16 +868,16 @@ class ApplicationSubmission(
 
     @property
     def in_internal_review_phase(self):
-        return self.status in PHASES_MAPPING['internal-review']['statuses']
+        return self.status in PHASES_MAPPING["internal-review"]["statuses"]
 
     @property
     def in_external_review_phase(self):
-        return self.status in PHASES_MAPPING['external-review']['statuses']
+        return self.status in PHASES_MAPPING["external-review"]["statuses"]
 
     @property
     def is_finished(self):
-        accepted = self.status in PHASES_MAPPING['accepted']['statuses']
-        dismissed = self.status in PHASES_MAPPING['dismissed']['statuses']
+        accepted = self.status in PHASES_MAPPING["accepted"]["statuses"]
+        dismissed = self.status in PHASES_MAPPING["dismissed"]["statuses"]
         return accepted or dismissed
 
     # Methods for accessing data on the submission
@@ -836,9 +885,11 @@ class ApplicationSubmission(
     def get_data(self):
         # Updated for JSONField - Not used but base get_data will error
         form_data = self.form_data.copy()
-        form_data.update({
-            'submit_time': self.submit_time,
-        })
+        form_data.update(
+            {
+                "submit_time": self.submit_time,
+            }
+        )
 
         return form_data
 
@@ -867,20 +918,26 @@ class ApplicationSubmission(
 
     @property
     def joined_screening_statuses(self):
-        return ', '.join([s.title for s in self.screening_statuses.all()])
+        return ", ".join([s.title for s in self.screening_statuses.all()])
 
     @property
     def yes_screening_statuses(self):
-        ScreeningStatus = apps.get_model('funds', 'ScreeningStatus')
+        ScreeningStatus = apps.get_model("funds", "ScreeningStatus")
         return json.dumps(
-            {status.title: status.id for status in ScreeningStatus.objects.filter(yes=True)}
+            {
+                status.title: status.id
+                for status in ScreeningStatus.objects.filter(yes=True)
+            }
         )
 
     @property
     def no_screening_statuses(self):
-        ScreeningStatus = apps.get_model('funds', 'ScreeningStatus')
+        ScreeningStatus = apps.get_model("funds", "ScreeningStatus")
         return json.dumps(
-            {status.title: status.id for status in ScreeningStatus.objects.filter(yes=False)}
+            {
+                status.title: status.id
+                for status in ScreeningStatus.objects.filter(yes=False)
+            }
         )
 
     @property
@@ -892,15 +949,15 @@ class ApplicationSubmission(
 
 @receiver(post_transition, sender=ApplicationSubmission)
 def log_status_update(sender, **kwargs):
-    instance = kwargs['instance']
-    old_phase = instance.workflow[kwargs['source']]
+    instance = kwargs["instance"]
+    old_phase = instance.workflow[kwargs["source"]]
 
-    by = kwargs['method_kwargs']['by']
-    request = kwargs['method_kwargs']['request']
-    notify = kwargs['method_kwargs'].get('notify', True)
+    by = kwargs["method_kwargs"]["by"]
+    request = kwargs["method_kwargs"]["request"]
+    notify = kwargs["method_kwargs"].get("notify", True)
 
     if request and notify:
-        if kwargs['source'] == DRAFT_STATE:
+        if kwargs["source"] == DRAFT_STATE:
             messenger(
                 MESSAGES.NEW_SUBMISSION,
                 request=request,

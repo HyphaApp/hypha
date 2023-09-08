@@ -13,7 +13,7 @@ class DelegatedView(DelegatedViewMixin, PatchedUpdateView):
     model = int  # pretend int is a model for the isinstance check
 
     def get_parent_kwargs(self):
-        return {'instance': 3}
+        return {"instance": 3}
 
 
 class TestDelegatedViewMixin(TestCase):

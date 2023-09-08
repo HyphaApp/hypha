@@ -8,8 +8,8 @@ class TestProjectFeatureFlag(TestCase):
     def test_urls_404_when_turned_off(self):
         self.client.force_login(StaffFactory())
 
-        response = self.client.get('/apply/projects/', follow=True)
+        response = self.client.get("/apply/projects/", follow=True)
         self.assertEqual(response.status_code, 404)
 
-        response = self.client.get('/apply/projects/1/', follow=True)
+        response = self.client.get("/apply/projects/1/", follow=True)
         self.assertEqual(response.status_code, 404)

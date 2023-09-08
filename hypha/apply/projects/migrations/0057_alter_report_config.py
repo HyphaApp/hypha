@@ -4,25 +4,28 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('application_projects', '0056_packetfile_created_at'),
+        ("application_projects", "0056_packetfile_created_at"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='reportconfig',
-            name='disable_reporting',
+            model_name="reportconfig",
+            name="disable_reporting",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name='reportconfig',
-            name='does_not_repeat',
+            model_name="reportconfig",
+            name="does_not_repeat",
             field=models.BooleanField(default=False),
         ),
         migrations.AlterField(
-            model_name='reportconfig',
-            name='frequency',
-            field=models.CharField(choices=[('week', 'Weeks'), ('month', 'Months'), ('year', 'Years')], default='month', max_length=6),
+            model_name="reportconfig",
+            name="frequency",
+            field=models.CharField(
+                choices=[("week", "Weeks"), ("month", "Months"), ("year", "Years")],
+                default="month",
+                max_length=6,
+            ),
         ),
     ]

@@ -4,20 +4,21 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('categories', '0003_rename_meta_categories_to_meta_terms'),
-        ('funds', '0069_merge_20190905_0403'),
+        ("categories", "0003_rename_meta_categories_to_meta_terms"),
+        ("funds", "0069_merge_20190905_0403"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='applicationsubmission',
-            name='meta_categories',
+            model_name="applicationsubmission",
+            name="meta_categories",
         ),
         migrations.AddField(
-            model_name='applicationsubmission',
-            name='meta_terms',
-            field=models.ManyToManyField(blank=True, related_name='submissions', to='categories.MetaTerm'),
+            model_name="applicationsubmission",
+            name="meta_terms",
+            field=models.ManyToManyField(
+                blank=True, related_name="submissions", to="categories.MetaTerm"
+            ),
         ),
     ]

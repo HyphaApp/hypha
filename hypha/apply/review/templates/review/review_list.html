@@ -17,22 +17,22 @@
         {% endif %}
     {% endadminbar %}
 
-<div class="wrapper wrapper--reviews-table js-reviews-table">
-    <table class="reviews-list">
-    {% for answers in review_data.values %}
-        <tr class="reviews-list__tr">
-            <th class="reviews-list__th">{{ answers.question }}</th>
-            {% for answer in answers.answers %}
-                {% if forloop.parentloop.first %}
-                    <th class="reviews-list__th reviews-list__th--author">{{ answer|safe }}</th>
-                {% elif answers.question == "Opinions"%}
-                    <td class="reviews-list__td">{{ answer }}</td>
-                {% else %}
-                    <td class="reviews-list__td">{{ answer|bleach }}</td>
-                {% endif %}
+    <div class="wrapper wrapper--reviews-table js-reviews-table">
+        <table class="reviews-list">
+            {% for answers in review_data.values %}
+                <tr class="reviews-list__tr">
+                    <th class="reviews-list__th">{{ answers.question }}</th>
+                    {% for answer in answers.answers %}
+                        {% if forloop.parentloop.first %}
+                            <th class="reviews-list__th reviews-list__th--author">{{ answer|safe }}</th>
+                        {% elif answers.question == "Opinions"%}
+                            <td class="reviews-list__td">{{ answer }}</td>
+                        {% else %}
+                            <td class="reviews-list__td">{{ answer|bleach }}</td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
             {% endfor %}
-        </tr>
-    {% endfor %}
-    </table>
-</div>
+        </table>
+    </div>
 {% endblock %}

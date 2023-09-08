@@ -5,15 +5,30 @@ import django_fsm
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('application_projects', '0049_add_fields_for_finance_integrations'),
+        ("application_projects", "0049_add_fields_for_finance_integrations"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='invoice',
-            name='status',
-            field=django_fsm.FSMField(choices=[('submitted', 'Submitted'), ('resubmitted', 'Resubmitted'), ('changes_requested_staff', 'Changes Requested by Staff'), ('changes_requested_finance_1', 'Changes Requested by Finance 1'), ('changes_requested_finance_2', 'Changes Requested by Finance 2'), ('approved_by_staff', 'Approved by Staff'), ('approved_by_finance_1', 'Approved by Finance 1'), ('approved_by_finance_2', 'Approved by Finance 2'), ('paid', 'Paid'), ('converted', 'Converted'), ('declined', 'Declined')], default='submitted', max_length=50),
+            model_name="invoice",
+            name="status",
+            field=django_fsm.FSMField(
+                choices=[
+                    ("submitted", "Submitted"),
+                    ("resubmitted", "Resubmitted"),
+                    ("changes_requested_staff", "Changes Requested by Staff"),
+                    ("changes_requested_finance_1", "Changes Requested by Finance 1"),
+                    ("changes_requested_finance_2", "Changes Requested by Finance 2"),
+                    ("approved_by_staff", "Approved by Staff"),
+                    ("approved_by_finance_1", "Approved by Finance 1"),
+                    ("approved_by_finance_2", "Approved by Finance 2"),
+                    ("paid", "Paid"),
+                    ("converted", "Converted"),
+                    ("declined", "Declined"),
+                ],
+                default="submitted",
+                max_length=50,
+            ),
         ),
     ]

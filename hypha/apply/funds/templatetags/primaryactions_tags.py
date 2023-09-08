@@ -5,7 +5,9 @@ register = template.Library()
 
 @register.filter
 def should_display_primary_actions_block(user, submission):
-    review_primary_action_displayed = submission.can_review(user) and (submission.in_internal_review_phase or submission.in_external_review_phase)
+    review_primary_action_displayed = submission.can_review(user) and (
+        submission.in_internal_review_phase or submission.in_external_review_phase
+    )
     view_determination_action_displayed = submission.is_finished
 
     if review_primary_action_displayed or view_determination_action_displayed:

@@ -26,12 +26,14 @@ class ScoredAnswerWidget(forms.MultiWidget):
         rendered = []
         # We need to explicitly call the render method on the tinymce widget
         # MultiValueWidget just passes all the context into the template
-        for kwargs, widget in zip(context['widget']['subwidgets'], self.widgets, strict=False):
-            name = kwargs['name']
-            value = kwargs['value']
-            attrs = kwargs['attrs']
+        for kwargs, widget in zip(
+            context["widget"]["subwidgets"], self.widgets, strict=False
+        ):
+            name = kwargs["name"]
+            value = kwargs["value"]
+            attrs = kwargs["attrs"]
             rendered.append(widget.render(name, value, attrs, renderer))
-        return mark_safe(''.join(list(rendered)))
+        return mark_safe("".join(list(rendered)))
 
 
 class ScoredAnswerField(forms.MultiValueField):
@@ -49,4 +51,4 @@ class ScoredAnswerField(forms.MultiValueField):
         if data_list:
             return [data_list[0], int(data_list[1])]
         else:
-            return ['', NA]
+            return ["", NA]

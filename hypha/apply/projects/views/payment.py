@@ -30,13 +30,13 @@ from ..models.project import PROJECT_ACTION_MESSAGE_TAG, Project
 from ..tables import InvoiceListTable
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(login_required, name="dispatch")
 class InvoiceAccessMixin(UserPassesTestMixin):
     model = Invoice
 
     def get_object(self):
-        project = get_object_or_404(Project, pk=self.kwargs['pk'])
-        return get_object_or_404(project.invoices.all(), pk=self.kwargs['invoice_pk'])
+        project = get_object_or_404(Project, pk=self.kwargs["pk"])
+        return get_object_or_404(project.invoices.all(), pk=self.kwargs["invoice_pk"])
 
     def test_func(self):
         if self.request.user.is_apply_staff:
@@ -51,17 +51,19 @@ class InvoiceAccessMixin(UserPassesTestMixin):
         return False
 
 
-@method_decorator(staff_or_finance_required, name='dispatch')
+@method_decorator(staff_or_finance_required, name="dispatch")
 class ChangeInvoiceStatusView(DelegatedViewMixin, InvoiceAccessMixin, UpdateView):
     form_class = ChangeInvoiceStatusForm
-    context_name = 'change_invoice_status'
+    context_name = "change_invoice_status"
     model = Invoice
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        if form.cleaned_data['comment']:
-            invoice_status_change = _('<p>Invoice status updated to: {status}.</p>').format(status=self.object.get_status_display())
-            comment = f'<p>{self.object.comment}.</p>'
+        if form.cleaned_data["comment"]:
+            invoice_status_change = _(
+                "<p>Invoice status updated to: {status}.</p>"
+            ).format(status=self.object.get_status_display())
+            comment = f"<p>{self.object.comment}.</p>"
 
             message = invoice_status_change + comment
 
@@ -75,9 +77,13 @@ class ChangeInvoiceStatusView(DelegatedViewMixin, InvoiceAccessMixin, UpdateView
                 related_object=self.object,
             )
 
-        if (self.request.user.is_apply_staff and self.object.status == APPROVED_BY_STAFF) or \
-            (settings.INVOICE_EXTENDED_WORKFLOW and self.request.user.is_finance_level_1 and
-             self.object.status == APPROVED_BY_FINANCE_1):
+        if (
+            self.request.user.is_apply_staff and self.object.status == APPROVED_BY_STAFF
+        ) or (
+            settings.INVOICE_EXTENDED_WORKFLOW
+            and self.request.user.is_finance_level_1
+            and self.object.status == APPROVED_BY_FINANCE_1
+        ):
             messenger(
                 MESSAGES.APPROVE_INVOICE,
                 request=self.request,
@@ -101,8 +107,8 @@ class DeleteInvoiceView(DeleteView):
     model = Invoice
 
     def get_object(self):
-        project = get_object_or_404(Project, pk=self.kwargs['pk'])
-        return get_object_or_404(project.invoices.all(), pk=self.kwargs['invoice_pk'])
+        project = get_object_or_404(Project, pk=self.kwargs["pk"])
+        return get_object_or_404(project.invoices.all(), pk=self.kwargs["invoice_pk"])
 
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -130,17 +136,16 @@ class DeleteInvoiceView(DeleteView):
 
 
 class InvoiceAdminView(InvoiceAccessMixin, DelegateableView, DetailView):
-    form_views = [
-        ChangeInvoiceStatusView
-    ]
-    template_name_suffix = '_admin_detail'
+    form_views = [ChangeInvoiceStatusView]
+    template_name_suffix = "_admin_detail"
 
     def get_context_data(self, **kwargs):
         invoice = self.get_object()
         project = invoice.project
         deliverables = project.deliverables.all()
-        invoice_activities = Activity.actions.filter(related_content_type__model='invoice',
-                                                     related_object_id=invoice.id).visible_to(self.request.user)
+        invoice_activities = Activity.actions.filter(
+            related_content_type__model="invoice", related_object_id=invoice.id
+        ).visible_to(self.request.user)
         return super().get_context_data(
             **kwargs,
             deliverables=deliverables,
@@ -154,8 +159,9 @@ class InvoiceApplicantView(InvoiceAccessMixin, DelegateableView, DetailView):
 
     def get_context_data(self, **kwargs):
         invoice = self.get_object()
-        invoice_activities = Activity.actions.filter(related_content_type__model='invoice',
-                                                     related_object_id=invoice.id).visible_to(self.request.user)
+        invoice_activities = Activity.actions.filter(
+            related_content_type__model="invoice", related_object_id=invoice.id
+        ).visible_to(self.request.user)
         return super().get_context_data(
             **kwargs,
             latest_activity=invoice_activities.first(),
@@ -174,16 +180,18 @@ class CreateInvoiceView(CreateView):
     form_class = CreateInvoiceForm
 
     def dispatch(self, request, *args, **kwargs):
-        self.project = Project.objects.get(pk=kwargs['pk'])
+        self.project = Project.objects.get(pk=kwargs["pk"])
         if not request.user.is_apply_staff and not self.project.user == request.user:
             return redirect(self.project)
         return super().dispatch(request, *args, **kwargs)
 
     def buttons(self):
-        yield ('submit', 'primary', _('Save'))
+        yield ("submit", "primary", _("Save"))
 
     def get_context_data(self, **kwargs):
-        return super().get_context_data(project=self.project, buttons=self.buttons(), **kwargs)
+        return super().get_context_data(
+            project=self.project, buttons=self.buttons(), **kwargs
+        )
 
     def form_valid(self, form):
         form.instance.project = self.project
@@ -191,8 +199,8 @@ class CreateInvoiceView(CreateView):
 
         response = super().form_valid(form)
 
-        if form.cleaned_data['message_for_pm']:
-            invoice_status_change = _('<p>Invoice added.</p>')
+        if form.cleaned_data["message_for_pm"]:
+            invoice_status_change = _("<p>Invoice added.</p>")
 
             message_for_pm = f'<p>{form.cleaned_data["message_for_pm"]}</p>'
 
@@ -215,7 +223,9 @@ class CreateInvoiceView(CreateView):
             source=self.project,
             related=self.object,
         )
-        messages.success(self.request, _("Invoice added"), extra_tags=PROJECT_ACTION_MESSAGE_TAG)
+        messages.success(
+            self.request, _("Invoice added"), extra_tags=PROJECT_ACTION_MESSAGE_TAG
+        )
 
         # Required for django-file-form: delete temporary files for the new files
         # that are uploaded.
@@ -233,9 +243,9 @@ class EditInvoiceView(InvoiceAccessMixin, UpdateView):
         return super().dispatch(request, *args, **kwargs)
 
     def buttons(self):
-        yield ('submit', 'primary', _('Save'))
+        yield ("submit", "primary", _("Save"))
         if self.object.can_user_delete(self.request.user):
-            yield ('delete', 'warning', _('Delete'))
+            yield ("delete", "warning", _("Delete"))
 
     def get_initial(self):
         initial = super().get_initial()
@@ -245,13 +255,19 @@ class EditInvoiceView(InvoiceAccessMixin, UpdateView):
         return initial
 
     def get_context_data(self, **kwargs):
-        return super().get_context_data(project=self.object.project, buttons=self.buttons(), **kwargs)
+        return super().get_context_data(
+            project=self.object.project, buttons=self.buttons(), **kwargs
+        )
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         form = self.get_form()
-        if 'delete' in form.data:
-            return redirect('apply:projects:invoice-delete', pk=self.object.project.id, invoice_pk=self.object.id)
+        if "delete" in form.data:
+            return redirect(
+                "apply:projects:invoice-delete",
+                pk=self.object.project.id,
+                invoice_pk=self.object.id,
+            )
         if form.is_valid():
             return self.form_valid(form)
         else:
@@ -264,8 +280,10 @@ class EditInvoiceView(InvoiceAccessMixin, UpdateView):
                 self.object.transition_invoice_to_resubmitted()
                 self.object.save()
 
-            if form.cleaned_data['message_for_pm']:
-                invoice_status_change = _('<p>Invoice status updated to: {status}.</p>').format(status=self.object.get_status_display())
+            if form.cleaned_data["message_for_pm"]:
+                invoice_status_change = _(
+                    "<p>Invoice status updated to: {status}.</p>"
+                ).format(status=self.object.get_status_display())
                 message_for_pm = f'<p>{form.cleaned_data["message_for_pm"]}</p>'
                 message = invoice_status_change + message_for_pm
 
@@ -293,20 +311,20 @@ class EditInvoiceView(InvoiceAccessMixin, UpdateView):
         return response
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(login_required, name="dispatch")
 class InvoicePrivateMedia(UserPassesTestMixin, PrivateMediaView):
     raise_exception = True
 
     def dispatch(self, *args, **kwargs):
-        invoice_pk = self.kwargs['invoice_pk']
-        project_pk = self.kwargs['pk']
+        invoice_pk = self.kwargs["invoice_pk"]
+        project_pk = self.kwargs["pk"]
         self.project = get_object_or_404(Project, pk=project_pk)
         self.invoice = get_object_or_404(self.project.invoices.all(), pk=invoice_pk)
 
         return super().dispatch(*args, **kwargs)
 
     def get_media(self, *args, **kwargs):
-        file_pk = kwargs.get('file_pk')
+        file_pk = kwargs.get("file_pk")
         if not file_pk:
             return self.invoice.document
 
@@ -326,9 +344,9 @@ class InvoicePrivateMedia(UserPassesTestMixin, PrivateMediaView):
         return False
 
 
-@method_decorator(staff_or_finance_required, name='dispatch')
+@method_decorator(staff_or_finance_required, name="dispatch")
 class InvoiceListView(SingleTableMixin, FilterView):
     filterset_class = InvoiceListFilter
     model = Invoice
     table_class = InvoiceListTable
-    template_name = 'application_projects/invoice_list.html'
+    template_name = "application_projects/invoice_list.html"

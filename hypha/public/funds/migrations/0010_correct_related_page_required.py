@@ -5,20 +5,27 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('public_funds', '0009_allow_mailto_in_linkfield'),
+        ("public_funds", "0009_allow_mailto_in_linkfield"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='baseapplicationrelatedpage',
-            name='page',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='+', to='wagtailcore.Page'),
+            model_name="baseapplicationrelatedpage",
+            name="page",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="+",
+                to="wagtailcore.Page",
+            ),
         ),
         migrations.AlterField(
-            model_name='labpagerelatedpage',
-            name='page',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='+', to='wagtailcore.Page'),
+            model_name="labpagerelatedpage",
+            name="page",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="+",
+                to="wagtailcore.Page",
+            ),
         ),
     ]

@@ -4,15 +4,17 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('funds', '0097_applicationbaseexternalreviewform_labbaseexternalreviewform_roundbaseexternalreviewform'),
+        (
+            "funds",
+            "0097_applicationbaseexternalreviewform_labbaseexternalreviewform_roundbaseexternalreviewform",
+        ),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='applicationsubmission',
-            name='submit_time',
-            field=models.DateTimeField(verbose_name='submit time'),
+            model_name="applicationsubmission",
+            name="submit_time",
+            field=models.DateTimeField(verbose_name="submit time"),
         ),
     ]

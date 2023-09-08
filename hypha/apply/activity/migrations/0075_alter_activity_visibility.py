@@ -4,15 +4,24 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('activity', '0074_alter_event_type'),
+        ("activity", "0074_alter_event_type"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='activity',
-            name='visibility',
-            field=models.CharField(choices=[('applicant', 'Applicants'), ('team', 'Staff only'), ('reviewers', 'Reviewers'), ('partners', 'Partners'), ('all', 'All')], default='applicant', max_length=30),
+            model_name="activity",
+            name="visibility",
+            field=models.CharField(
+                choices=[
+                    ("applicant", "Applicants"),
+                    ("team", "Staff only"),
+                    ("reviewers", "Reviewers"),
+                    ("partners", "Partners"),
+                    ("all", "All"),
+                ],
+                default="applicant",
+                max_length=30,
+            ),
         ),
     ]

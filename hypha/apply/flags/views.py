@@ -10,12 +10,12 @@ from hypha.apply.funds.models import ApplicationSubmission
 from .models import Flag
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(login_required, name="dispatch")
 class FlagSubmissionCreateView(UserPassesTestMixin, View):
     model = Flag
 
     def post(self, request, type, submission_pk):
-        if request.headers.get('x-requested-with') != 'XMLHttpRequest':
+        if request.headers.get("x-requested-with") != "XMLHttpRequest":
             return HttpResponseNotAllowed()
 
         # Only staff can create staff flags.
@@ -24,7 +24,12 @@ class FlagSubmissionCreateView(UserPassesTestMixin, View):
 
         submission_type = ContentType.objects.get_for_model(ApplicationSubmission)
         # Trying to get a flag from the table, or create a new one
-        flag, created = self.model.objects.get_or_create(user=request.user, target_object_id=submission_pk, target_content_type=submission_type, type=type)
+        flag, created = self.model.objects.get_or_create(
+            user=request.user,
+            target_object_id=submission_pk,
+            target_content_type=submission_type,
+            type=type,
+        )
         # If no new flag has been created,
         # Then we believe that the request was to delete the flag.
         if not created:

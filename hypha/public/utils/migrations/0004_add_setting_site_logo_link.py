@@ -4,15 +4,18 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('utils', '0003_add_site_logo_setting'),
+        ("utils", "0003_add_site_logo_setting"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='systemmessagessettings',
-            name='site_logo_link',
-            field=models.URLField(blank=True, default='', help_text='Link for the site logo, e.g. "https://www.example.org/". If not set, defaults to page with slug set to "home".'),
+            model_name="systemmessagessettings",
+            name="site_logo_link",
+            field=models.URLField(
+                blank=True,
+                default="",
+                help_text='Link for the site logo, e.g. "https://www.example.org/". If not set, defaults to page with slug set to "home".',
+            ),
         ),
     ]

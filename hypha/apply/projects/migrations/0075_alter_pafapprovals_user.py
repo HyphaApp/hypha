@@ -6,16 +6,21 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('application_projects', '0074_update_projects_status_committed_to_draft'),
+        ("application_projects", "0074_update_projects_status_committed_to_draft"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='pafapprovals',
-            name='user',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='paf_approvals', to=settings.AUTH_USER_MODEL),
+            model_name="pafapprovals",
+            name="user",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="paf_approvals",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]

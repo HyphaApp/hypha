@@ -6,25 +6,28 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('funds', '0034_create_revisions_model'),
+        ("funds", "0034_create_revisions_model"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='applicationrevision',
-            name='author',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL),
+            model_name="applicationrevision",
+            name="author",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AddField(
-            model_name='applicationrevision',
-            name='timestamp',
+            model_name="applicationrevision",
+            name="timestamp",
             field=models.DateTimeField(auto_now=True),
         ),
         migrations.AlterModelOptions(
-            name='applicationrevision',
-            options={'ordering': ['-timestamp']},
+            name="applicationrevision",
+            options={"ordering": ["-timestamp"]},
         ),
     ]

@@ -5,7 +5,7 @@
     id="{% if form_id %}{{ form_id }}{% else %}{{ form.name }}{% endif %}"
     enctype="multipart/form-data"
     {% if action %}action="{{ action }}"{% endif %}
-    >
+>
     {% csrf_token %}
 
     {{ form.media }}
@@ -22,13 +22,13 @@
 
     <div class="form__group">
         {% if cancel %}
-        <button
-            type="button"
-            data-fancybox-close=""
-            class="button button--{% if invert %}primary{% else %}white{% endif %}"
-            title="{% trans "Close" %}">
-            {% trans "Cancel" %}
-        </button>
+            <button
+                type="button"
+                data-fancybox-close=""
+                class="button button--{% if invert %}primary{% else %}white{% endif %}"
+                title="{% trans "Close" %}">
+                {% trans "Cancel" %}
+            </button>
         {% endif %}
         {% trans "Delete" as delete %}
         <button

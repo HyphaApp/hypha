@@ -8,7 +8,7 @@ register = template.Library()
 
 @register.simple_tag(takes_context=True)
 def get_query(context, param):
-    url = context.get('request').get_full_path()
+    url = context.get("request").get_full_path()
     parsed_url = urlparse(url)
     captured_value = parse_qs(parsed_url.query)
 
@@ -36,11 +36,13 @@ def modify_query(context, *params_to_remove, **params_to_change):
     """Renders a link with modified current query parameters"""
     only_query_string = False
     if "only_query_string" in params_to_remove:
-        params_to_remove = [param for param in params_to_remove if param != "only_query_string"]
+        params_to_remove = [
+            param for param in params_to_remove if param != "only_query_string"
+        ]
         only_query_string = True
     query_params = []
     for key, value_list in context["request"].GET.lists():
-        if  key not in params_to_remove:
+        if key not in params_to_remove:
             # don't add key-value pairs for params_to_remove
             if key in params_to_change:
                 # update values for keys in params_to_change
@@ -64,7 +66,9 @@ def add_to_query(context, *params_to_remove, **params_to_add):
     """Renders a link with modified current query parameters"""
     only_query_string = False
     if "only_query_string" in params_to_remove:
-        params_to_remove = [param for param in params_to_remove if param != "only_query_string"]
+        params_to_remove = [
+            param for param in params_to_remove if param != "only_query_string"
+        ]
         only_query_string = True
     query_params = []
     # go through current query params..

@@ -7,14 +7,14 @@ from wagtail.models import Page
 
 def reverse_edit(obj):
     if isinstance(obj, Page):
-        return reverse('wagtailadmin_pages:edit', args=(obj.id,))
+        return reverse("wagtailadmin_pages:edit", args=(obj.id,))
 
-    url_name = f'{obj._meta.app_label}_{obj._meta.model_name}_modeladmin_edit'
+    url_name = f"{obj._meta.app_label}_{obj._meta.model_name}_modeladmin_edit"
     return reverse(url_name, args=(obj.id,))
 
 
 class ReadonlyWidget(Widget):
-    template_name = 'funds/admin/widgets/read_only.html'
+    template_name = "funds/admin/widgets/read_only.html"
 
     def format_value(self, value):
         self.value = value
@@ -28,7 +28,7 @@ class ReadonlyWidget(Widget):
         except AttributeError:
             pass
         else:
-            context['widget']['edit_link'] = edit_link
+            context["widget"]["edit_link"] = edit_link
         return context
 
 
@@ -46,14 +46,15 @@ class ReadOnlyPanel(Panel):
         a clone of this panel definition.
         """
         kwargs = super().clone_kwargs()
-        kwargs.update({
-            "attr": self.attr,
-        })
+        kwargs.update(
+            {
+                "attr": self.attr,
+            }
+        )
         return kwargs
 
-
     class BoundPanel(Panel.BoundPanel):
-        template_name = 'wagtailadmin/panels/field_panel.html'
+        template_name = "wagtailadmin/panels/field_panel.html"
 
         def render_html(self, parent_context):
             return render_to_string(self.template_name, self.context())
@@ -72,14 +73,16 @@ class ReadOnlyPanel(Panel):
             if self.instance.id:
                 self.form.initial[self.panel.attr] = value
             else:
-                self.form.initial[self.panel.attr] = '-'
+                self.form.initial[self.panel.attr] = "-"
 
-            self.bound_field = DisplayField().get_bound_field(self.form, self.panel.attr)
+            self.bound_field = DisplayField().get_bound_field(
+                self.form, self.panel.attr
+            )
 
             return {
-                'self': self,
-                'field': self.bound_field,
-                'show_label': False,
+                "self": self,
+                "field": self.bound_field,
+                "show_label": False,
             }
 
 
@@ -93,7 +96,7 @@ class FilteredFieldPanel(FieldPanel):
     def clone(self):
         return self.__class__(
             field_name=self.field_name,
-            widget=self.widget if hasattr(self, 'widget') else None,
+            widget=self.widget if hasattr(self, "widget") else None,
             heading=self.heading,
             classname=self.classname,
             help_text=self.help_text,

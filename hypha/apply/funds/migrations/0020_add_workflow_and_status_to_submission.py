@@ -6,25 +6,28 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('funds', '0019_protect_submission'),
+        ("funds", "0019_protect_submission"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='applicationsubmission',
+            name="applicationsubmission",
             options={},
         ),
         migrations.AddField(
-            model_name='applicationsubmission',
-            name='status',
-            field=models.CharField(default='', max_length=254),
+            model_name="applicationsubmission",
+            name="status",
+            field=models.CharField(default="", max_length=254),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='applicationsubmission',
-            name='workflow',
-            field=models.CharField(choices=[('single', 'Single Stage'), ('double', 'Two Stage')], default='single', max_length=100),
+            model_name="applicationsubmission",
+            name="workflow",
+            field=models.CharField(
+                choices=[("single", "Single Stage"), ("double", "Two Stage")],
+                default="single",
+                max_length=100,
+            ),
         ),
     ]

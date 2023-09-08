@@ -18,7 +18,7 @@ def apply_date_filter(qs, field, values):
     return qs.filter(q_obj)
 
 
-def date_filter_tokens_to_q_obj(tokens: list, field: str)-> Q:
+def date_filter_tokens_to_q_obj(tokens: list, field: str) -> Q:
     """Convert a date tokens parsed using `tokenize_date_filter_value` into a
     Q object that can be used to filter a queryset.
 

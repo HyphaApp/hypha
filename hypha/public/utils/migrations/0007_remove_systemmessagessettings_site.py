@@ -4,14 +4,13 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('utils', '0006_alter_systemmessagessettings_options'),
+        ("utils", "0006_alter_systemmessagessettings_options"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='systemmessagessettings',
-            name='site',
+            model_name="systemmessagessettings",
+            name="site",
         ),
     ]

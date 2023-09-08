@@ -13,17 +13,18 @@ class SubmissionReminderViewSet(
     SubmissionNestedMixin,
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
-    viewsets.GenericViewSet
+    viewsets.GenericViewSet,
 ):
     permission_classes = (
-        permissions.IsAuthenticated, IsApplyStaffUser,
+        permissions.IsAuthenticated,
+        IsApplyStaffUser,
     )
     serializer_class = SubmissionReminderSerializer
     pagination_class = None
 
     def get_queryset(self):
         submission = self.get_submission_object()
-        return Reminder.objects.filter(submission=submission).order_by('-time')
+        return Reminder.objects.filter(submission=submission).order_by("-time")
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user, submission=self.get_submission_object())
@@ -34,7 +35,7 @@ class SubmissionReminderViewSet(
         ser = self.get_serializer(self.get_queryset(), many=True)
         return Response(ser.data)
 
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=["get"])
     def fields(self, request, *args, **kwargs):
         """
         List details of all the form fields that were created by admin for adding reminders.
@@ -51,20 +52,22 @@ class SubmissionReminderViewSet(
                 "id": "description",
                 "type": "textArea",
                 "kwargs": {"label": "Description"},
-                "widget": {
-                    "attrs": {"cols": 40, "rows": 5},
-                    "type": "Textarea"
-                }
+                "widget": {"attrs": {"cols": 40, "rows": 5}, "type": "Textarea"},
             },
             {
                 "id": "time",
                 "kwargs": {"label": "Time", "required": True},
-                "type": "DateTime"
+                "type": "DateTime",
             },
             {
                 "id": "action",
-                "kwargs": {"label": "Action", "required": True, "choices": Reminder.ACTIONS.items(), "initial": Reminder.REVIEW},
-                "type": "Select"
-            }
+                "kwargs": {
+                    "label": "Action",
+                    "required": True,
+                    "choices": Reminder.ACTIONS.items(),
+                    "initial": Reminder.REVIEW,
+                },
+                "type": "Select",
+            },
         ]
         return Response(fields)

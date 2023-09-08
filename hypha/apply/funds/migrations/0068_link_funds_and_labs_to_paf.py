@@ -5,21 +5,32 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('application_projects', '0018_projectapprovalform'),
-        ('funds', '0067_data_migration_for_one_form_per_stage'),
+        ("application_projects", "0018_projectapprovalform"),
+        ("funds", "0067_data_migration_for_one_form_per_stage"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='applicationbase',
-            name='approval_form',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='funds', to='application_projects.ProjectApprovalForm'),
+            model_name="applicationbase",
+            name="approval_form",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="funds",
+                to="application_projects.ProjectApprovalForm",
+            ),
         ),
         migrations.AddField(
-            model_name='labbase',
-            name='approval_form',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='labs', to='application_projects.ProjectApprovalForm'),
+            model_name="labbase",
+            name="approval_form",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="labs",
+                to="application_projects.ProjectApprovalForm",
+            ),
         ),
     ]

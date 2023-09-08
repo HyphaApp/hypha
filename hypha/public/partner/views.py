@@ -11,19 +11,19 @@ class InvestmentTableView(ExportMixin, SingleTableMixin, FilterView):
     model = Investment
     table_class = InvestmentTable
     filterset_class = InvestmentFilterAndSearch
-    filter_action = ''
+    filter_action = ""
     paginator_class = LazyPaginator
-    table_pagination = {'per_page': 25}
-    export_name = 'investments'
-    template_name = 'partner/investments.html'
+    table_pagination = {"per_page": 25}
+    export_name = "investments"
+    template_name = "partner/investments.html"
 
     def get_table_kwargs(self):
         kwargs = super(InvestmentTableView, self).get_table_kwargs()
-        kwargs['request'] = self.request
+        kwargs["request"] = self.request
         return kwargs
 
     def get_context_data(self, **kwargs):
-        search_term = self.request.GET.get('query')
+        search_term = self.request.GET.get("query")
 
         return super().get_context_data(
             search_term=search_term,
