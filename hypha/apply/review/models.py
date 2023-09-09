@@ -248,6 +248,9 @@ class ReviewOpinion(models.Model):
     class Meta:
         unique_together = ("author", "review")
 
+    def __str__(self):
+        return f'Review Opinion for {self.review}'
+
     @property
     def opinion_display(self):
         return self.get_opinion_display()
