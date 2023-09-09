@@ -492,6 +492,7 @@ class ReviewDeleteView(UserPassesTestMixin, DeleteView):
         return reverse_lazy("funds:submissions:detail", args=(review.submission.id,))
 
 
+@method_decorator(login_required, name="dispatch")
 class ReviewOpinionDeleteView(DeleteView):
     model = ReviewOpinion
     raise_exception = True
