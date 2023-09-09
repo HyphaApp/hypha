@@ -249,7 +249,7 @@ class ReviewOpinion(models.Model):
         unique_together = ("author", "review")
 
     def __str__(self):
-        return f'Review Opinion for {self.review}'
+        return f"Review Opinion for {self.review}"
 
     @property
     def opinion_display(self):

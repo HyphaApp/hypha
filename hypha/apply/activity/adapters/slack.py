@@ -74,7 +74,7 @@ class SlackAdapter(AdapterBase):
             "{user} has deleted {review.author} review for <{link}|{source.title}>"
         ),
         MESSAGES.DELETE_REVIEW_OPINION: _(
-            '{user} has deleted {review_opinion.author} review opinion for <{link}|{source.title}>'
+            "{user} has deleted {review_opinion.author} review opinion for <{link}|{source.title}>"
         ),
         MESSAGES.CREATED_PROJECT: _(
             "{user} has created a Project: <{link}|{source.title}>"
