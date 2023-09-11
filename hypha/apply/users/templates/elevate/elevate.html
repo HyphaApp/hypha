@@ -1,0 +1,39 @@
+{% extends "base-apply.html" %}
+{% load i18n wagtailcore_tags %}
+
+{% block title %}{% trans "Confirm access" %}{% endblock %}
+{% block body_class %}bg-white{% endblock %}
+
+{% block content %}
+    <div class="max-w-lg px-4 pt-4 mx-auto md:mt-5 md:py-4">
+
+        <form class="form" method="post" action="./" class="px-4 pt-4">
+            {% csrf_token %}
+            <h2 class="text-2xl">{% trans "Confirm access" %}</h2>
+
+            <p class="px-3 py-2 bg-orange-100 rounded mb-4">
+                Signed in as <strong>{{ request.user }} ({{ request.user.email }})</strong>
+            </p>
+
+            {% if form.non_field_errors %}
+                <div class="wrapper wrapper--error">{{ form.non_field_errors.as_text }}</div>
+            {% endif %}
+
+            {% for field in form %}
+                {% include "forms/includes/field.html" %}
+            {% endfor %}
+
+            <div class="form__group">
+                <button class="button button--primary" type="submit">{% trans "Confirm" %}</button>
+            </div>
+        </form>
+
+        <p class="text-xs text-center max-w-sm mt-8 text-gray-500 mx-auto">
+            {% blocktrans %}
+                <strong>Tip:</strong> You are entering sudo mode. After you've performed a sudo-protected
+                action, you'll only be asked to re-authenticate again after a few hours of inactivity.
+            {% endblocktrans %}
+        </p>
+
+    </div>
+{% endblock %}

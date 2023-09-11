@@ -34,6 +34,7 @@ from django.views.generic.base import TemplateView, View
 from django.views.generic.edit import FormView
 from django_otp import devices_for_user
 from django_ratelimit.decorators import ratelimit
+from elevate.mixins import ElevateMixin
 from hijack.views import AcquireUserView
 from two_factor.forms import AuthenticationTokenForm, BackupTokenForm
 from two_factor.utils import default_device, get_otpauth_url, totp_digits
@@ -475,26 +476,6 @@ class TWOFASetupView(TwoFactorSetupView):
         return context
 
 
-@method_decorator(login_required, name="dispatch")
-@method_decorator(
-    ratelimit(key="user", rate=settings.DEFAULT_RATE_LIMIT, method="POST"),
-    name="dispatch",
-)
-class TWOFABackupTokensPasswordView(TwoFactorBackupTokensView):
-    """
-    Require password to see backup codes
-    """
-
-    form_class = TWOFAPasswordForm
-    success_url = reverse_lazy("two_factor:backup_tokens")
-    template_name = "two_factor/core/backup_tokens_password.html"
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["user"] = self.request.user
-        return kwargs
-
-
 @method_decorator(
     ratelimit(key="user", rate=settings.DEFAULT_RATE_LIMIT, method="POST"),
     name="dispatch",
@@ -556,6 +537,10 @@ class TWOFAAdminDisableView(FormView):
 
 class TWOFARequiredMessageView(TemplateView):
     template_name = "two_factor/core/two_factor_required.html"
+
+
+class BackupTokensView(ElevateMixin, TwoFactorBackupTokensView):
+    pass
 
 
 class PasswordResetConfirmView(DjPasswordResetConfirmView):
