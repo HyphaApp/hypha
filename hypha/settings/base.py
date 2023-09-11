@@ -493,6 +493,7 @@ SECURE_CONTENT_TYPE_NOSNIFF = env.bool("SECURE_CONTENT_TYPE_NOSNIFF", True)
 if env.bool("COOKIE_SECURE", False):
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+    ELEVATE_COOKIE_SECURE = True
 
 # Referrer-policy header settings
 # https://django-referrer-policy.readthedocs.io/en/1.0/
@@ -501,9 +502,17 @@ REFERRER_POLICY = env.str(
     "SECURE_REFERRER_POLICY", "no-referrer-when-downgrade"
 ).strip()
 
+# Django Elevate settings
+# https://django-elevate.readthedocs.io/en/latest/config/index.html
+
+# How long should Elevate mode be active for?
+ELEVATE_COOKIE_AGE = env.int("ELEVATE_COOKIE_AGE", 3600)  # 1 hours
+
+# An extra salt to be added into the cookie signature.
+ELEVATE_COOKIE_SALT = env.str("ELEVATE_COOKIE_SALT", SECRET_KEY)
+
 
 # Rest Framework settings
-
 REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 10,

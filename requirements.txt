@@ -13,6 +13,7 @@ django-anymail==9.0
 django-basic-auth-ip-whitelist==0.3.4
 django-bleach==3.0.1
 django-countries==7.5
+django-elevate==2.0.3
 django-extensions==3.2.1
 django-file-form==3.4.3
 django-filter==2.4.0
