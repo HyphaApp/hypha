@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.core import mail
 from django.test import TestCase, override_settings
 from django.urls import reverse
@@ -70,4 +71,4 @@ class TestRegistration(TestCase):
             make_request(None, {}, method="get", site=fund.get_site())
         )
         assert response.status_code == 302
-        assert response.url == reverse("users_public:login") + "?next=/"
+        assert response.url == reverse(settings.LOGIN_URL) + "?next=/"
