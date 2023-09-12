@@ -56,8 +56,9 @@ from .forms import (
     ProfileForm,
     TWOFAPasswordForm,
 )
+from .models import PendingSignup
 from .services import PasswordlessAuthService
-from .tokens import PasswordlessLoginTokenGenerator
+from .tokens import PasswordlessLoginTokenGenerator, PasswordlessSignupTokenGenerator
 from .utils import get_redirect_url, send_confirmation_email
 
 User = get_user_model()
@@ -695,4 +696,48 @@ class PasswordlessLoginView(TemplateView):
         try:
             return User.objects.get(**{"pk": force_str(urlsafe_base64_decode(uidb64))})
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            return None
+
+
+class PasswordlessSignupView(TemplateView):
+    """This view is used to capture the passwordless login token and log the user in.
+
+    If the token is valid, the user is logged in and redirected to the dashboard.
+    If the token is invalid, the user is shown invalid token page.
+    """
+
+    redirect_field_name = "next"
+
+    def get(self, request, *args, **kwargs):
+        user = self.get_user(kwargs.get("uidb64"))
+
+        if self.is_valid(user, kwargs.get("token")):
+            user.backend = settings.CUSTOM_AUTH_BACKEND
+            login(request, user)
+            if redirect_url := get_redirect_url(request, self.redirect_field_name):
+                return redirect(redirect_url)
+
+            return redirect("dashboard:dashboard")
+
+        return render(request, "users/activation/invalid.html")
+
+    def is_valid(self, user, token):
+        """
+        Verify that the activation token is valid and within the permitted
+        activation time window.
+        """
+
+        token_generator = PasswordlessSignupTokenGenerator()
+        return user is not None and token_generator.check_token(user, token)
+
+    def get_user(self, uidb64):
+        """
+        Given the verified uid, look up and return the corresponding user
+        account if it exists, or `None` if it doesn't.
+        """
+        try:
+            return PendingSignup.objects.get(
+                **{"pk": force_str(urlsafe_base64_decode(uidb64))}
+            )
+        except (TypeError, ValueError, OverflowError, PendingSignup.DoesNotExist):
             return None

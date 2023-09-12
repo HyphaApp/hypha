@@ -362,3 +362,26 @@ class AuthSettings(BaseGenericSetting):
             _("Register form customizations"),
         ),
     ]
+
+
+class PendingSignup(models.Model):
+    """This model tracks pending passwordless self-signups, and is used to
+    generate a  one-time use URLfor each signup.
+
+    The URL is sent to the user via email, and when they click on it, they are
+    redirected to the registration page, where a new is created.
+
+    Once the user is created, the PendingSignup instance is deleted.
+    """
+
+    email = models.EmailField(unique=True)
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+    token = models.CharField(max_length=255, unique=True)
+
+    def __str__(self):
+        return f"{self.email} ({self.created})"
+
+    class Meta:
+        ordering = ("created",)
+        verbose_name_plural = "Pending signups"

@@ -2,20 +2,24 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.http import HttpRequest
 from django.urls import reverse
+from django.utils.crypto import get_random_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from wagtail.models import Site
 
 from hypha.core.mail import MarkdownMail
 
-from .tokens import PasswordlessLoginTokenGenerator
+from .models import PendingSignup
+from .tokens import PasswordlessLoginTokenGenerator, PasswordlessSignupTokenGenerator
 from .utils import get_redirect_url, get_user_by_email
 
 User = get_user_model()
 
 
 class PasswordlessAuthService:
-    token_generator_class = PasswordlessLoginTokenGenerator
+    login_token_generator_class = PasswordlessLoginTokenGenerator
+    signup_token_generator_class = PasswordlessSignupTokenGenerator
+
     next_url = None
 
     def __init__(self, request: HttpRequest, redirect_field_name: str = "next") -> None:
@@ -25,7 +29,7 @@ class PasswordlessAuthService:
         self.site = Site.find_for_request(request)
 
     def _get_login_path(self, user):
-        token = self.token_generator_class().make_token(user)
+        token = self.login_token_generator_class().make_token(user)
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         login_path = reverse(
             "users:do_passwordless_login", kwargs={"uidb64": uid, "token": token}
@@ -35,6 +39,19 @@ class PasswordlessAuthService:
             login_path = f"{login_path}?next={self.next_url}"
 
         return login_path
+
+    def _get_signup_path(self, signup_obj):
+        token = self.signup_token_generator_class().make_token(user=signup_obj)
+        uid = urlsafe_base64_encode(force_bytes(signup_obj.pk))
+
+        signup_path = reverse(
+            "users:do_passwordless_signup", kwargs={"uidb64": uid, "token": token}
+        )
+
+        if self.next_url:
+            signup_path = f"{signup_path}?next={self.next_url}"
+
+        return signup_path
 
     def get_email_context(self) -> dict:
         return {
@@ -60,7 +77,7 @@ class PasswordlessAuthService:
 
     def send_login_email(self, user):
         login_path = self._get_login_path(user)
-        timeout_hours = self.token_generator_class().PASSWORDLESS_LOGIN_TIMEOUT // 3600
+        timeout_hours = self.login_token_generator_class().TIMEOUT // 3600
 
         context = self.get_email_context()
         context.update(
@@ -86,15 +103,14 @@ class PasswordlessAuthService:
             context=context,
         )
 
-    def send_new_account_login_email(self, new_user):
-        login_path = self._get_login_path(new_user)
-        timeout_hours = self.token_generator_class().PASSWORDLESS_LOGIN_TIMEOUT // 3600
+    def send_new_account_login_email(self, signup_obj):
+        signup_path = self._get_signup_path(signup_obj)
+        timeout_hours = self.login_token_generator_class().TIMEOUT // 3600
 
         context = self.get_email_context()
         context.update(
             {
-                "user": new_user,
-                "login_path": login_path,
+                "signup_path": signup_path,
                 "timeout_hours": timeout_hours,
             }
         )
@@ -105,7 +121,7 @@ class PasswordlessAuthService:
 
         email = MarkdownMail("users/emails/passwordless_new_account_login.md")
         email.send(
-            to=new_user.email,
+            to=signup_obj.email,
             subject=subject,
             from_email=settings.DEFAULT_FROM_EMAIL,
             context=context,
@@ -135,11 +151,12 @@ class PasswordlessAuthService:
             return
 
         # Self registration is enabled
-        # @TODO: to end to testing and implementations
-        new_user = User.objects.create(
-            email=email, is_active=False, is_staff=False, is_superuser=False
+        signup_obj, _ = PendingSignup.objects.update_or_create(
+            email=email,
+            defaults={
+                "token": get_random_string(32, "abcdefghijklmnopqrstuvwxyz0123456789")
+            },
         )
-        new_user.set_unusable_password()
-        self.send_new_account_login_email(new_user)
+        self.send_new_account_login_email(signup_obj)
 
         return True
