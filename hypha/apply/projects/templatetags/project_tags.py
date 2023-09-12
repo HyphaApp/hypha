@@ -32,24 +32,45 @@ def user_next_step_on_project(project, user, request=None):
     if project.status == DRAFT:
         if user.is_apply_staff:
             if not project.user_has_updated_details:
-                return _("Fill in the Approval Form(PAF)")
+                return {
+                    "heading": _("To do"),
+                    "text": _("Fill in the Approval Form(PAF)"),
+                }
             if project.paf_approvals.exists():
-                return _("Resubmit project documents for approval")
-            return _("Submit project documents for approval")
+                return {
+                    "heading": _("To do"),
+                    "text": _("Resubmit project documents for approval"),
+                }
+            return {
+                "heading": _("To do"),
+                "text": _("Submit project documents for approval"),
+            }
         elif user.is_applicant:
-            return _(
-                "Awaiting project documents to be created and approved by {org_short_name} internally. "
-                "Please check back when the project has moved to contracting stage."
-            ).format(org_short_name=settings.ORG_SHORT_NAME)
+            return {
+                "heading": _("Waiting for"),
+                "text": _(
+                    "Awaiting project documents to be created and approved by {org_short_name} internally. "
+                    "Please check back when the project has moved to contracting stage."
+                ).format(org_short_name=settings.ORG_SHORT_NAME),
+            }
         if project.paf_approvals.exists():
-            return _("Changes requested. Awaiting documents to be resubmitted.")
-        return _("Awaiting approval form to be created.")
+            return {
+                "heading": _("Waiting for"),
+                "text": _("Changes requested. Awaiting documents to be resubmitted."),
+            }
+        return {
+            "heading": _("Waiting for"),
+            "text": _("Awaiting approval form to be created."),
+        }
     elif project.status == INTERNAL_APPROVAL:
         if user.is_applicant:
-            return _(
-                "Awaiting project documents to be created and approved by {org_short_name} internally. "
-                "Please check back when the project has moved to contracting stage."
-            ).format(org_short_name=settings.ORG_SHORT_NAME)
+            return {
+                "heading": _("Waiting for"),
+                "text": _(
+                    "Awaiting project documents to be created and approved by {org_short_name} internally. "
+                    "Please check back when the project has moved to contracting stage."
+                ).format(org_short_name=settings.ORG_SHORT_NAME),
+            }
 
         if request:
             project_settings = ProjectSettings.for_request(request=request)
@@ -59,12 +80,20 @@ def user_next_step_on_project(project, user, request=None):
                 ).first()
                 if latest_unapproved_approval:
                     if latest_unapproved_approval.user:
-                        return _("Awaiting approval. Assigned to {approver}").format(
-                            approver=latest_unapproved_approval.user
-                        )
-                    return _("Awaiting {reviewer_role} to assign an approver").format(
-                        reviewer_role=latest_unapproved_approval.paf_reviewer_role.label
-                    )
+                        return {
+                            "heading": _("Waiting for"),
+                            "text": _(
+                                "Awaiting approval. Assigned to {approver}"
+                            ).format(approver=latest_unapproved_approval.user),
+                        }
+                    return {
+                        "heading": _("Waiting for"),
+                        "text": _(
+                            "Awaiting {reviewer_role} to assign an approver"
+                        ).format(
+                            reviewer_role=latest_unapproved_approval.paf_reviewer_role.label
+                        ),
+                    }
             else:
                 matched_roles = PAFReviewersRole.objects.annotate(
                     roles_count=Count("user_roles")
@@ -72,57 +101,109 @@ def user_next_step_on_project(project, user, request=None):
                 for group in user.groups.all():
                     matched_roles = matched_roles.filter(user_roles__id=group.id)
                 if not matched_roles:
-                    return _("Awaiting PAF approval form to be approved")
+                    return {
+                        "heading": _("Waiting for"),
+                        "text": _("Awaiting PAF approval form to be approved"),
+                    }
                 else:
                     matched_unapproved_approval = project.paf_approvals.filter(
                         approved=False, paf_reviewer_role__in=matched_roles
                     )
                     if not matched_unapproved_approval.exists():
-                        return _("Awaiting approval from other approvers teams")
+                        return {
+                            "heading": _("Waiting for"),
+                            "text": _("Awaiting approval from other approvers teams"),
+                        }
                     else:
                         if matched_unapproved_approval.first().user:
-                            return _(
-                                "Awaiting approval. Assigned to {approver}"
-                            ).format(approver=matched_unapproved_approval.first().user)
-                        return _(
-                            "Awaiting {reviewer_role} to assign an approver"
-                        ).format(
-                            reviewer_role=matched_unapproved_approval.first().paf_reviewer_role.label
-                        )
+                            return {
+                                "heading": _("Waiting for"),
+                                "text": _(
+                                    "Awaiting approval. Assigned to {approver}"
+                                ).format(
+                                    approver=matched_unapproved_approval.first().user
+                                ),
+                            }
+                        return {
+                            "heading": _("Waiting for"),
+                            "text": _(
+                                "Awaiting {reviewer_role} to assign an approver"
+                            ).format(
+                                reviewer_role=matched_unapproved_approval.first().paf_reviewer_role.label
+                            ),
+                        }
 
-        return _("Awaiting project approval from assigned approvers")
+        return {
+            "heading": _("Waiting for"),
+            "text": _("Awaiting project approval from assigned approvers"),
+        }
     elif project.status == CONTRACTING:
         if not project.contracts.exists():
             if user.is_applicant:
-                return _("Awaiting signed contract from {org_short_name}").format(
-                    org_short_name=settings.ORG_SHORT_NAME
-                )
-            return _("Awaiting signed contract from Contracting team")
+                return {
+                    "heading": _("Waiting for"),
+                    "text": _("Awaiting signed contract from {org_short_name}").format(
+                        org_short_name=settings.ORG_SHORT_NAME
+                    ),
+                }
+            return {
+                "heading": _("Waiting for"),
+                "text": _("Awaiting signed contract from Contracting team"),
+            }
         else:
             contract = project.contracts.order_by("-created_at").first()
             if not contract.signed_by_applicant:
                 if user.is_applicant:
-                    return _("Awaiting contract documents to be submitted by you.")
-                return _("Awaiting countersigned contract from Vendor")
+                    return {
+                        "heading": _("To do"),
+                        "text": _(
+                            "Awaiting contract documents to be submitted by you."
+                        ),
+                    }
+                return {
+                    "heading": _("Waiting for"),
+                    "text": _("Awaiting countersigned contract from Vendor"),
+                }
             elif not project.submitted_contract_documents:
                 if user.is_applicant:
-                    return _("Awaiting contract documents submission by you")
-                return _("Awaiting contract documents submission from Vendor")
+                    return {
+                        "heading": _("To do"),
+                        "text": _("Awaiting contract documents submission by you"),
+                    }
+                return {
+                    "heading": _("Waiting for"),
+                    "text": _("Awaiting contract documents submission from Vendor"),
+                }
             else:
                 if user.is_apply_staff:
-                    return _(
-                        "Review the contract for all relevant details and approve."
-                    )
+                    return {
+                        "heading": _("To do"),
+                        "text": _(
+                            "Review the contract for all relevant details and approve."
+                        ),
+                    }
                 if user.is_applicant:
-                    return _("Awaiting contract approval from {org_short_name}").format(
-                        org_short_name=settings.ORG_SHORT_NAME
-                    )
-                return _("Awaiting contract approval from Staff")
+                    return {
+                        "heading": _("Waiting for"),
+                        "text": _(
+                            "Awaiting contract approval from {org_short_name}"
+                        ).format(org_short_name=settings.ORG_SHORT_NAME),
+                    }
+                return {
+                    "heading": _("Waiting for"),
+                    "text": _("Awaiting contract approval from Staff"),
+                }
     elif project.status == INVOICING_AND_REPORTING:
         if user.is_applicant and not project.invoices.exists():
-            return _("Add invoices")
+            return {
+                "heading": _("To do"),
+                "text": _("Add invoices"),
+            }
         elif user.is_apply_staff or user.is_finance:
-            return _("Review invoice and take action")
+            return {
+                "heading": _("To do"),
+                "text": _("Review invoice and take action"),
+            }
     return False
 
 
