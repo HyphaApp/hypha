@@ -149,13 +149,15 @@
                         {% user_next_step_on_project object user request=request as next_step %}
                         {% if next_step %}
                             {% if mobile %}
-                                <a class="js-actions-toggle button button--white button--full-width button--actions">{% trans "Next Step" %}</a>
+                                <a class="js-actions-toggle button button--white button--full-width button--actions">{{ next_step.heading }}</a>
                             {% endif %}
 
                             <div class="js-actions-sidebar sidebar__inner sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
 
-                                <h5>{% trans "Next Step" %}</h5>
-                                <p>{{ next_step }}</p>
+                                <h5><svg class="icon icon--side-arrow"><use xlink:href="#side-arrow"></use></svg>
+                                    {{ next_step.heading }}
+                                </h5>
+                                <p>{{ next_step.text }}</p>
                                 {% user_next_step_instructions object user as instructions %}
                                 {% if instructions %}
                                     <div class="sidebar__inner--actions--instructions">
