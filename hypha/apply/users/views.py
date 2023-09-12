@@ -709,10 +709,16 @@ class PasswordlessSignupView(TemplateView):
     redirect_field_name = "next"
 
     def get(self, request, *args, **kwargs):
-        user = self.get_user(kwargs.get("uidb64"))
+        pending_signup = self.get_pending_signup(kwargs.get("uidb64"))
 
-        if self.is_valid(user, kwargs.get("token")):
+        if self.is_valid(user=pending_signup, token=kwargs.get("token")):
+            user = User.objects.create(email=pending_signup.email, is_active=True)
+            user.set_unusable_password()
+            user.save()
+            pending_signup.delete()
+
             user.backend = settings.CUSTOM_AUTH_BACKEND
+
             login(request, user)
             if redirect_url := get_redirect_url(request, self.redirect_field_name):
                 return redirect(redirect_url)
@@ -730,7 +736,7 @@ class PasswordlessSignupView(TemplateView):
         token_generator = PasswordlessSignupTokenGenerator()
         return user is not None and token_generator.check_token(user, token)
 
-    def get_user(self, uidb64):
+    def get_pending_signup(self, uidb64):
         """
         Given the verified uid, look up and return the corresponding user
         account if it exists, or `None` if it doesn't.
