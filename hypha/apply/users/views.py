@@ -624,6 +624,14 @@ class PasswordResetConfirmView(DjPasswordResetConfirmView):
     name="dispatch",
 )
 class PasswordLessLoginSignupView(TemplateView):
+    """This view is used to collect the email address for passwordless login/signup.
+
+    If the email address is already associated with an account, an email is sent. If not,
+    if the registration is enabled an email is sent, to allow the user to create an account.
+
+    NOTE: This view should never expose whether an email address is associated with an account.
+    """
+
     template_name = "users/passwordless_login_signup.html"
     redirect_field_name = "next"
 
@@ -649,6 +657,12 @@ class PasswordLessLoginSignupView(TemplateView):
 
 
 class PasswordlessLoginView(TemplateView):
+    """This view is used to capture the passwordless login token and log the user in.
+
+    If the token is valid, the user is logged in and redirected to the dashboard.
+    If the token is invalid, the user is shown invalid token page.
+    """
+
     redirect_field_name = "next"
 
     def get(self, request, *args, **kwargs):
@@ -666,8 +680,8 @@ class PasswordlessLoginView(TemplateView):
 
     def is_valid(self, user, token):
         """
-        Verify that the activation token is valid and within the
-        permitted activation time window.
+        Verify that the activation token is valid and within the permitted
+        activation time window.
         """
 
         token_generator = PasswordlessLoginTokenGenerator()
@@ -675,9 +689,8 @@ class PasswordlessLoginView(TemplateView):
 
     def get_user(self, uidb64):
         """
-        Given the verified uid, look up and return the
-        corresponding user account if it exists, or ``None`` if it
-        doesn't.
+        Given the verified uid, look up and return the corresponding user
+        account if it exists, or `None` if it doesn't.
         """
         try:
             return User.objects.get(**{"pk": force_str(urlsafe_base64_decode(uidb64))})

@@ -5,6 +5,7 @@
     "coreutils",
     "modelcluster",
     "pagedown",
+    "ratelimit",
     "WAGTAILADMIN",
     "wagtailcore"
   ]
