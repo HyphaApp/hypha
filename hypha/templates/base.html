@@ -155,9 +155,6 @@
                             </a>
                         {% endif %}
 
-                        {% if not request.user.is_authenticated and ENABLE_REGISTRATION_WITHOUT_APPLICATION %}
-                            {% include "utils/includes/register_button.html" %}
-                        {% endif %}
                         {% if ENABLE_GOOGLE_TRANSLATE %}
                             <div class="button button--google-translate" id="google_translate_element"></div>
                         {% endif %}
