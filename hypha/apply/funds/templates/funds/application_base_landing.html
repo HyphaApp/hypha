@@ -23,7 +23,7 @@
             {% block extra_text %}{{ settings.funds.ApplicationSettings.extra_text_round|richtext }}{% endblock %}
 
             <p>
-                {% if request.user.is_authenticated %}
+                {% if request.user.is_authenticated and request.user.can_access_dashboard %}
                     <a href="{% url 'dashboard:dashboard' %}"><button class="button button--primary">{% blocktrans %}Go to my dashboard.{% endblocktrans %}</button></a>
                 {% else %}
                     <a href="{% url 'users_public:login' %}"><button class="button button--primary">{% blocktrans %}Log in{% endblocktrans %}</button></a>

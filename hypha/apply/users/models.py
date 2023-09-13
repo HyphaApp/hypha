@@ -282,6 +282,18 @@ class User(AbstractUser):
         )
 
     @cached_property
+    def can_access_dashboard(self):
+        return (
+            self.is_apply_staff
+            or self.is_reviewer
+            or self.is_partner
+            or self.is_community_reviewer
+            or self.is_finance
+            or self.is_contracting
+            or self.is_applicant
+        )
+
+    @cached_property
     def is_finance_level_2(self):
         # disable finance2 user if invoice flow in not extended
         if not settings.INVOICE_EXTENDED_WORKFLOW:

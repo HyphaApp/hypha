@@ -8,10 +8,12 @@
         {% slot header %}{% trans "Welcome" %} {{ user }}{% endslot %}
         {% slot sub_heading %}{% trans "Manage your account details and security." %}{% endslot %}
 
-        <a href="{% url 'dashboard:dashboard' %}" class="button button--primary button--arrow-pixels-white" hx-boost='true'>
-            {% trans "Go to my dashboard" %}
-            <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
-        </a>
+        {% if user.can_access_dashboard %}
+            <a href="{% url 'dashboard:dashboard' %}" class="button button--primary button--arrow-pixels-white" hx-boost='true'>
+                {% trans "Go to my dashboard" %}
+                <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
+            </a>
+        {% endif %}
     {% endadminbar %}
 
     <div class="profile">
