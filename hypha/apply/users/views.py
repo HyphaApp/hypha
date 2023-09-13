@@ -80,7 +80,7 @@ class RegisterView(SuccessURLAllowedHostsMixin, View):
             raise Http404
 
         if request.user.is_authenticated:
-            return redirect("dashboard:dashboard")
+            return redirect(settings.LOGIN_REDIRECT_URL)
 
         ctx = {
             "form": self.form(),
@@ -635,6 +635,12 @@ class PasswordLessLoginSignupView(TemplateView):
 
     template_name = "users/passwordless_login_signup.html"
     redirect_field_name = "next"
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect(settings.LOGIN_REDIRECT_URL)
+
+        return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         ctx = super().get_context_data(**kwargs) or {}
