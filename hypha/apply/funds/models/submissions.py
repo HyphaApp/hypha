@@ -564,17 +564,18 @@ class ApplicationSubmission(
                 self.user, _ = User.objects.get_or_create(
                     email=email, defaults={"full_name": full_name}
                 )
-                # Ensure applying user should have applicant role
-                if not self.user.is_applicant:
-                    applicant_group = Group.objects.get(name=APPLICANT_GROUP_NAME)
-                    self.user.groups.add(applicant_group)
-                    self.user.save()
             else:
                 self.user, _ = User.objects.get_or_create_and_notify(
                     email=email,
                     site=self.page.get_site(),
                     defaults={"full_name": full_name},
                 )
+
+            # Ensure applying user should have applicant role
+            if not self.user.is_applicant:
+                applicant_group = Group.objects.get(name=APPLICANT_GROUP_NAME)
+                self.user.groups.add(applicant_group)
+                self.user.save()
 
     def get_from_parent(self, attribute):
         try:

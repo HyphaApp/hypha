@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth.models import AbstractUser, BaseUserManager, Group
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core import exceptions
 from django.db import IntegrityError, models
 from django.db.models.constants import LOOKUP_SEP
@@ -185,10 +185,6 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
             send_activation_email(user, site, redirect_url=redirect_url)
             _created = True
 
-        applicant_group = Group.objects.get(name=APPLICANT_GROUP_NAME)
-        if applicant_group not in user.groups.all():
-            user.groups.add(applicant_group)
-            user.save()
         return user, _created
 
 
