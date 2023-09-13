@@ -1,4 +1,4 @@
-{% load static cache wagtailcore_tags wagtailimages_tags navigation_tags util_tags cookieconsent_tags %}<!doctype html>
+{% load static cache wagtailcore_tags wagtailimages_tags navigation_tags util_tags cookieconsent_tags i18n %}<!doctype html>
 {% wagtail_site as current_site %}
 <html class="no-js" lang="en">
     <head>
@@ -148,6 +148,13 @@
 
                     <div class="header__button-container">
                         {% include "utils/includes/login_button.html" %}
+
+                        {% if request.user.is_authenticated %}
+                            <a href="{% url 'users_public:logout' %}" class="button button--transparent button--narrow">
+                                {% trans "Log out" %}
+                            </a>
+                        {% endif %}
+
                         {% if not request.user.is_authenticated and ENABLE_REGISTRATION_WITHOUT_APPLICATION %}
                             {% include "utils/includes/register_button.html" %}
                         {% endif %}

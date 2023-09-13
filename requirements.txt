@@ -43,7 +43,7 @@ heroicons==2.2.0
 htmldocx==0.0.6
 lark==1.1.5
 mailchimp3==3.0.17
-mistune==2.0.4
+mistune==3.0.1
 more-itertools==9.0.0
 phonenumberslite==8.13.4
 Pillow==9.4.0

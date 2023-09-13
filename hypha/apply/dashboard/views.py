@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.db.models import Count
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView
@@ -29,6 +29,7 @@ from hypha.apply.projects.tables import (
     ProjectsDashboardTable,
 )
 from hypha.apply.utils.views import ViewDispatcher
+from hypha.public.utils.models import SystemMessagesSettings
 
 
 class MySubmissionContextMixin:
@@ -828,3 +829,18 @@ class DashboardView(ViewDispatcher):
     applicant_view = ApplicantDashboardView
     finance_view = FinanceDashboardView
     contracting_view = ContractingDashboardView
+
+    def dispatch(self, request, *args, **kwargs):
+        response = super().dispatch(request, *args, **kwargs)
+
+        # Handle the case when there is no dashboard for the user
+        # and redirect to the site logo link if it is set or to the home page
+        # Suggestion: create a dedicated dashboard for user without any role.
+        if isinstance(response, HttpResponseForbidden):
+            system_message_settings = SystemMessagesSettings.load(
+                request_or_site=request
+            )
+            redirect_url = system_message_settings.site_logo_link or "/"
+            return HttpResponseRedirect(redirect_url)
+
+        return response

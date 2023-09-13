@@ -4,9 +4,9 @@
 {% if is_active %}
 {% blocktrans %}Login to your account on the {{ org_long_name }} web site by clicking this link or copying and pasting it to your browser:{% endblocktrans %}
 
-[{% if site %}{{ site.root_url }}{% else %}{{ base_url }}{% endif %}{{ login_path }}]({% if site %}{{ site.root_url }}{% else %}{{ base_url }}{% endif %}{{ login_path }})
+{% if site %}{{ site.root_url }}{% else %}{{ base_url }}{% endif %}{{ login_path }}
 
-{% blocktrans %}This link will valid for 2 hours and can be used only once.{% endblocktrans %}
+{% blocktrans %}This link will valid for {{ timeout_hours }} hours and can be used only once.{% endblocktrans %}
 
 {% else %}
 {% blocktrans %}Your account on the {{ org_long_name }} web site is deactivated. Please contact site administrators.{% endblocktrans %}
