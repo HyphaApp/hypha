@@ -37,8 +37,11 @@
                                 {% include "forms/includes/field.html" %}
                             </div>
                         {% endfor %}
+
                         {% if settings.users.AuthSettings.extra_text %}
-                            {{ settings.users.AuthSettings.extra_text|richtext}}
+                            <div class="prose mb-4">
+                                {{ settings.users.AuthSettings.extra_text|richtext}}
+                            </div>
                         {% endif %}
 
                         <div class="form__group">
