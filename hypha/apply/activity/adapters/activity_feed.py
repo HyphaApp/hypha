@@ -47,6 +47,7 @@ class ActivityAdapter(AdapterBase):
             "Lead changed from {old_lead} to {source.lead}"
         ),
         MESSAGES.SEND_FOR_APPROVAL: _("Requested approval"),
+        MESSAGES.APPROVE_PAF: _("PAF assigned to {user}"),
         MESSAGES.APPROVE_PROJECT: _("Approved"),
         MESSAGES.REQUEST_PROJECT_CHANGE: _(
             'Requested changes for acceptance: "{comment}"'
@@ -84,6 +85,7 @@ class ActivityAdapter(AdapterBase):
             MESSAGES.APPROVE_PROJECT,
             MESSAGES.REQUEST_PROJECT_CHANGE,
             MESSAGES.SEND_FOR_APPROVAL,
+            MESSAGES.APPROVE_PAF,
             MESSAGES.NEW_REVIEW,
         ]:
             return {"visibility": TEAM}
