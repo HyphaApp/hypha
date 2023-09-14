@@ -19,9 +19,8 @@
             <div class="card card--solid">
                 <p class="card__text"><b>{% trans "Invoice number" %}:</b> {{ object.invoice_number }}</p>
                 {% is_vendor_setup request as show_vendor_information %}
-                {% if show_vendor_information %}
-                    <p class="card__text"><b>{% trans "Vendor" %}:</b> {{ object.project.vendor.name }}</p>
-                {% endif %}
+                <p class="card__text"><b>{% trans "Vendor" %}:</b>
+                    {% if show_vendor_information %}{{ object.project.vendor.name }}{% else %}{{ object.user }}{% endif %}</p>
                 <p class="card__text"><b>{% trans "Lead" %}:</b> {{ object.project.lead }}</p>
                 <p class="card__text"><b>{% trans "Fund" %}:</b> {{ object.project.submission.page }}</p>
             </div>
