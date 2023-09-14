@@ -67,4 +67,7 @@
     document.querySelectorAll(DeterminationCopy.selector()).forEach((el) => {
         new DeterminationCopy(el);
     });
+    window.addEventListener("load", function (event) {
+        document.querySelector("#id_proposal_form").disabled = true;
+    });
 })();
