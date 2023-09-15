@@ -24,7 +24,7 @@
     {% if page_type == 'dashboard' %}
         {% include "funds/includes/no_round_block_dashboard.html" with rounds=open_rounds display_text="Open until" query=open_query type="Open" %}
     {% else %}
-        {% include "funds/includes/round-block-listing.html" with rounds=open_rounds display_text="Open until" query=open_query type="Open" %}
+        {% include "funds/includes/round-block-listing.html" with can_export=can_export rounds=open_rounds display_text="Open until" query=open_query type="Open" %}
     {% endif %}
 </div>
 

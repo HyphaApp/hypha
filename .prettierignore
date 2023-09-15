@@ -16,5 +16,12 @@ media/**
 .venv/**
 venv/**
 
+# Ignore node files
 node_modules/**
+
+# Ignore htmlcov files
 htmlcov/**
+
+# Ignore Sublime Text files.
+*.sublime-project
+*.sublime-workspace
