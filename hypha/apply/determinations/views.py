@@ -412,7 +412,6 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
                     choices=proposal_form_choices,
                     help_text=proposal_form_help_text,
                     required=True if action == "invited_to_proposal" else False,
-                    disabled=False if action == "invited_to_proposal" else True,
                 )
                 fields.move_to_end("proposal_form", last=False)
         return fields
