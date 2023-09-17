@@ -39,7 +39,6 @@
                 .title {
                     text-align: center;
                     font-size: 22px;
-                    font-weight: bold;
                 }
                 p {
                     font-size: 16px;
@@ -62,37 +61,35 @@
     </head>
     <body>
         <div>
-            {%block page_header%}
-                <h1 class="title"> {{ org_name }}(Project Approval Form | <a href="{{ project_link }}">{{ title }}</a>)</h1>
-            {%endblock%}
 
             {%block content%}
                 <table id="page-width">
 <!--            Project details in table format -->
                     <tr>
-                        <td class="align-left">
+                        <td rowspan="4" align="left" class="align-left">
+                            <p class="title"> <b>{{ org_name|upper }}</b> PROJECT APPROVAL FORM</p>
+                        </td>
+                        <td align="right" class="align-right">
                             <b>Project Title</b>
                         </td>
+                    </tr>
+                    <tr>
+                        <td align="right" class="align-right">
+                            <a href="{{ project_link }}">{{ title }}</a>
+                        </td>
+                    </tr>
+                    <tr>
                         <td align="right" class="align-right">
                             <b>Project ID</b>
                         </td>
                     </tr>
                     <tr>
-                        <td>
-                            {{ title }}
-                        </td>
                         <td align="right" class="align-right">
                             {{ id }}
                         </td>
                     </tr>
-                    <tr></tr>
-
-                    <tr>
-                        <td class="align-left">
-                            <b>Contractor: </b> {{ contractor_name|default:"None" }}
-                        </td>
-                    </tr>
                 </table>
+                <br>
 <!--            PAF fields data in paragraph format-->
                 {% for field_name, field_value in paf_data.items %}
                     <p><b>{{ field_name }}</b></p>
