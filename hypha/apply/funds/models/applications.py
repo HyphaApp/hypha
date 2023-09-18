@@ -576,8 +576,9 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
         return self.live
 
     def get_form(self, *args, **kwargs):
+        draft = kwargs.pop("draft", False)
         user = kwargs.get("user")
-        form_class = self.get_form_class(user=user)
+        form_class = self.get_form_class(draft=draft, user=user)
         form_params = self.get_form_parameters()
         form_params.update(kwargs)
 
@@ -591,10 +592,10 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
             )
 
         if request.method == "POST":
-            form = self.get_form(
-                request.POST, request.FILES, page=self, user=request.user
-            )
             draft = request.POST.get("draft", False)
+            form = self.get_form(
+                request.POST, request.FILES, page=self, user=request.user, draft=draft
+            )
             if form.is_valid():
                 form_submission = SubmittableStreamForm.process_form_submission(
                     self, form, draft=draft
