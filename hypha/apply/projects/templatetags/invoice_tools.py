@@ -1,7 +1,9 @@
 import decimal
+from datetime import timedelta
 
 from django import template
 
+from hypha.apply.activity.models import Activity
 from hypha.apply.activity.templatetags.activity_tags import display_for
 from hypha.apply.projects.models.project import (
     CLOSING,
@@ -103,3 +105,15 @@ def display_invoice_status_for_user(user, invoice):
     if user.is_apply_staff or user.is_contracting or user.is_finance:
         return invoice.status_display
     return get_invoice_public_status(invoice_status=invoice.status)
+
+
+@register.simple_tag
+def get_comment_for_invoice_action(invoice, action):
+    return Activity.comments.filter(
+        timestamp__range=(
+            action.timestamp - timedelta(minutes=1),
+            action.timestamp + timedelta(minutes=1),
+        ),
+        related_content_type__model="invoice",
+        related_object_id=invoice.id,
+    ).first()
