@@ -72,8 +72,8 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.UNARCHIVE_SUBMISSION: _(
             "{user} has unarchived the submission: {source.title}"
         ),
-        MESSAGES.APPROVE_INVOICE: _('Approved an invoice'),
-        MESSAGES.DELETE_INVOICE: _('Deleted an invoice'),
+        MESSAGES.APPROVE_INVOICE: _("Approved an invoice"),
+        MESSAGES.DELETE_INVOICE: _("Deleted an invoice"),
     }
 
     def recipients(self, message_type, **kwargs):
@@ -106,7 +106,7 @@ class ActivityAdapter(AdapterBase):
             MESSAGES.DELETE_INVOICE,
             MESSAGES.CREATE_INVOICE,
         ]:
-            return {'visibility': APPLICANT}
+            return {"visibility": APPLICANT}
 
         source = source or sources[0]
         if is_transition(message_type) and not source.phase.permissions.can_view(
