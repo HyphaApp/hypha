@@ -607,7 +607,7 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
         )
 
         if paf_status == REQUEST_CHANGE:
-            old_stage = self.object.get_status_display()
+            old_stage = self.object.status
             self.object.status = DRAFT
             self.object.save(update_fields=["status"])
             paf_approval.save()
