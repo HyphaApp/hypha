@@ -109,11 +109,12 @@ def display_invoice_status_for_user(user, invoice):
 
 @register.simple_tag
 def get_comment_for_invoice_action(invoice, action):
-    return Activity.comments.filter(
-        timestamp__range=(
-            action.timestamp - timedelta(minutes=1),
-            action.timestamp + timedelta(minutes=1),
-        ),
-        related_content_type__model="invoice",
-        related_object_id=invoice.id,
-    ).first()
+    if action and invoice:
+        return Activity.comments.filter(
+            timestamp__range=(
+                action.timestamp - timedelta(minutes=1),
+                action.timestamp + timedelta(minutes=1),
+            ),
+            related_content_type__model="invoice",
+            related_object_id=invoice.id,
+        ).first()
