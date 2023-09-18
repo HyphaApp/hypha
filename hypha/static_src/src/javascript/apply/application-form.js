@@ -33,7 +33,12 @@
         var $error_fields = $application_form.find(".form__error");
         if ($error_fields.length) {
             // set focus to the first error field
-            $error_fields[0].querySelector("input").focus();
+            const firstErrorField = $error_fields[0];
+            const firstInputEl =
+                firstErrorField.querySelector("input, textarea");
+            if (firstInputEl) {
+                firstInputEl.focus();
+            }
 
             $error_fields.each(function (index, error_field) {
                 const inputEl = error_field.querySelector("input, textarea");
