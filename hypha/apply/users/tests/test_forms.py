@@ -29,7 +29,8 @@ class TestProfileForm(BaseTestProfileForm):
     def test_email_unique(self):
         other_user = UserFactory()
         form = self.submit_form(self.user, email=other_user.email)
-        self.assertFalse(form.is_valid())
+        # form will update the other user's email with same user email, only non exiting email address can be added
+        self.assertTrue(form.is_valid())
         self.user.refresh_from_db()
         self.assertNotEqual(self.user.email, other_user.email)
 
