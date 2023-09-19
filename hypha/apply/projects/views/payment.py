@@ -21,7 +21,7 @@ from hypha.apply.utils.views import DelegateableView, DelegatedViewMixin, ViewDi
 from ..filters import InvoiceListFilter
 from ..forms import ChangeInvoiceStatusForm, CreateInvoiceForm, EditInvoiceForm
 from ..models.payment import (
-    APPROVED_BY_FINANCE_1,
+    APPROVED_BY_FINANCE,
     APPROVED_BY_STAFF,
     INVOICE_TRANISTION_TO_RESUBMITTED,
     Invoice,
@@ -82,7 +82,7 @@ class ChangeInvoiceStatusView(DelegatedViewMixin, InvoiceAccessMixin, UpdateView
         ) or (
             settings.INVOICE_EXTENDED_WORKFLOW
             and self.request.user.is_finance_level_1
-            and self.object.status == APPROVED_BY_FINANCE_1
+            and self.object.status == APPROVED_BY_FINANCE
         ):
             messenger(
                 MESSAGES.APPROVE_INVOICE,

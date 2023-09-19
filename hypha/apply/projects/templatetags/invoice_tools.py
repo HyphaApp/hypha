@@ -2,6 +2,8 @@ import decimal
 from datetime import timedelta
 
 from django import template
+from django.conf import settings
+from django.utils.translation import gettext_lazy as _
 
 from hypha.apply.activity.models import Activity
 from hypha.apply.activity.templatetags.activity_tags import display_for
@@ -94,9 +96,24 @@ def get_invoice_form_id(form, invoice):
 def extract_status(activity, user):
     if activity and user:
         invoice_activity_message = display_for(activity, user)
-        return invoice_activity_message.replace(
+        invoice_status = invoice_activity_message.replace(
             "Updated Invoice status to: ", ""
         ).replace(".", "")
+        if " by " not in str(invoice_status) and not user.is_applicant:
+            if activity.user.is_apply_staff:
+                user_role = "staff"
+            elif (
+                activity.user.is_finance_level_2 and settings.INVOICE_EXTENDED_WORKFLOW
+            ):
+                user_role = "finance2"
+            elif activity.user.is_finance:
+                user_role = "finance"
+            else:
+                user_role = "vendor"
+            return _("{status} by {user_role}").format(
+                status=invoice_status, user_role=user_role
+            )
+        return invoice_status
     return ""
 
 
