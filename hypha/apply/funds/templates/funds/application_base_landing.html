@@ -9,7 +9,9 @@
 
             <p>{% trans "Please note that your application is not submitted for review." %}</p>
 
-            {% if not request.user.is_authenticated %}
+            {% if request.user.is_authenticated %}
+                <p>{% trans "You can access your applications from your dashboard. From there, you can complete and submit them." %}</p>
+            {% else %}
                 <p>{% trans "You can complete your application by following the log-in details emailed to you." %}</p>
             {% endif %}
 
