@@ -176,7 +176,10 @@ class SlackAdapter(AdapterBase):
         # Notify second reviewer when first reviewer is done.
         if message_type in [MESSAGES.NEW_REVIEW, MESSAGES.REVIEW_OPINION] and related:
             submission = source
-            role_reviewers = [role_reviewer.reviewer for role_reviewer in submission.assigned.with_roles()]
+            role_reviewers = [
+                role_reviewer.reviewer
+                for role_reviewer in submission.assigned.with_roles()
+            ]
             if related.author.reviewer in role_reviewers:
                 for reviewer in role_reviewers:
                     if reviewer != related.author.reviewer:

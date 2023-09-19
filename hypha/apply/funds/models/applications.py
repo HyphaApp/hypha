@@ -69,7 +69,9 @@ class ApplicationBaseManager(PageQuerySet):
         return qs.order_by("end_date")
 
 
-@method_decorator(ratelimit(key='ip', rate=settings.DEFAULT_RATE_LIMIT, method='POST'), name='serve')
+@method_decorator(
+    ratelimit(key="ip", rate=settings.DEFAULT_RATE_LIMIT, method="POST"), name="serve"
+)
 class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
     is_createable = False
 
@@ -492,7 +494,9 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
         raise Http404()
 
 
-@method_decorator(ratelimit(key='ip', rate=settings.DEFAULT_RATE_LIMIT, method='POST'), name='serve')
+@method_decorator(
+    ratelimit(key="ip", rate=settings.DEFAULT_RATE_LIMIT, method="POST"), name="serve"
+)
 class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
     is_createable = False
     submission_class = ApplicationSubmission

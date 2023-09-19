@@ -26,7 +26,10 @@ class ActivityContextMixin:
         return super().get_context_data(**extra, **kwargs)
 
 
-@method_decorator(ratelimit(key='user', rate=settings.DEFAULT_RATE_LIMIT, method='POST'), name='dispatch')
+@method_decorator(
+    ratelimit(key="user", rate=settings.DEFAULT_RATE_LIMIT, method="POST"),
+    name="dispatch",
+)
 class CommentFormView(DelegatedViewMixin, CreateView):
     form_class = CommentForm
     context_name = "comment_form"
