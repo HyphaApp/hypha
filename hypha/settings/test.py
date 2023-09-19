@@ -27,3 +27,6 @@ WAGTAILADMIN_BASE_URL = "https://primary-test-host.org"
 
 # Required by django-coverage-plugin to report template coverage
 TEMPLATES[0]["OPTIONS"]["debug"] = True
+
+# An extra salt to be added into the cookie signature.
+ELEVATE_COOKIE_SALT = SECRET_KEY
