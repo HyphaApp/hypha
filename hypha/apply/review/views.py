@@ -27,7 +27,7 @@ from hypha.apply.users.decorators import staff_required
 from hypha.apply.utils.image import generate_image_tag
 from hypha.apply.utils.views import CreateOrUpdateView
 
-from .models import Review
+from .models import Review, ReviewOpinion
 from .options import DISAGREE
 
 
@@ -489,4 +489,31 @@ class ReviewDeleteView(UserPassesTestMixin, DeleteView):
 
     def get_success_url(self):
         review = self.get_object()
+        return reverse_lazy("funds:submissions:detail", args=(review.submission.id,))
+
+
+@method_decorator(login_required, name="dispatch")
+class ReviewOpinionDeleteView(DeleteView):
+    model = ReviewOpinion
+    raise_exception = True
+
+    def dispatch(self, request, *args, **kwargs):
+        self.review_opinion = self.get_object()
+        if self.request.user != self.review_opinion.author.reviewer:
+            raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        messenger(
+            MESSAGES.DELETE_REVIEW_OPINION,
+            user=request.user,
+            request=request,
+            source=self.review_opinion.review.submission,
+            related=self.review_opinion,
+        )
+        response = super().delete(request, *args, **kwargs)
+        return response
+
+    def get_success_url(self):
+        review = self.review_opinion.review
         return reverse_lazy("funds:submissions:detail", args=(review.submission.id,))

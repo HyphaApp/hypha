@@ -41,6 +41,9 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.REVIEW_OPINION: _(
             "{user} {opinion.opinion_display}s with {opinion.review.author}s review of {source}"
         ),
+        MESSAGES.DELETE_REVIEW_OPINION: _(
+            "{user} deleted the opinion for review: {review_opinion.review}"
+        ),
         MESSAGES.CREATED_PROJECT: _("Created"),
         MESSAGES.PROJECT_TRANSITION: "handle_project_transition",
         MESSAGES.UPDATE_PROJECT_LEAD: _(
@@ -80,6 +83,7 @@ class ActivityAdapter(AdapterBase):
             MESSAGES.REVIEWERS_UPDATED,
             MESSAGES.SCREENING,
             MESSAGES.REVIEW_OPINION,
+            MESSAGES.DELETE_REVIEW_OPINION,
             MESSAGES.BATCH_REVIEWERS_UPDATED,
             MESSAGES.PARTNERS_UPDATED,
             MESSAGES.APPROVE_PROJECT,
