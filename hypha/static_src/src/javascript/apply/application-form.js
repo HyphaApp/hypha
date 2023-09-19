@@ -46,27 +46,29 @@
         // Remove the "no javascript" messages
         $(".message-no-js").detach();
 
-        // Wait for a mouse to move, indicating they are human.
-        $("body").mousemove(function () {
-            // Unlock the form.
+        const unlockApplicationForm = function () {
             $application_form.attr("action", "");
             $application_form_button.attr("disabled", false);
-        });
+        };
 
-        // Wait for a touch move event, indicating that they are human.
-        $("body").on("touchmove", function () {
-            // Unlock the form.
-            $application_form.attr("action", "");
-            $application_form_button.attr("disabled", false);
+        // Unlock form on
+        // 1. mouse move
+        // 2. touch move
+        // 3. tab or enter key pressed
+        document.body.addEventListener("mousemove", unlockApplicationForm, {
+            once: true,
         });
-
-        // A tab or enter key pressed can also indicate they are human.
-        $("body").keydown(function (e) {
-            if (e.keyCode === 9 || e.keyCode === 13) {
-                // Unlock the form.
-                $application_form.attr("action", "");
-                $application_form_button.attr("disabled", false);
-            }
+        document.body.addEventListener("touchmove", unlockApplicationForm, {
+            once: true,
         });
+        document.body.addEventListener(
+            "keydown",
+            function (e) {
+                if (e.key === "Tab" || e.key === "Enter") {
+                    unlockApplicationForm();
+                }
+            },
+            { once: true }
+        );
     });
 })(jQuery);
