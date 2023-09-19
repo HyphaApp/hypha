@@ -6,6 +6,7 @@ from .views import (
     ReviewDetailView,
     ReviewEditView,
     ReviewListView,
+    ReviewOpinionDeleteView,
 )
 
 app_name = "reviews"
@@ -16,4 +17,9 @@ urlpatterns = [
     path("reviews/<int:pk>/delete/", ReviewDeleteView.as_view(), name="delete"),
     path("reviews/<int:pk>/edit/", ReviewEditView.as_view(), name="edit"),
     path("review/", ReviewCreateOrUpdateView.as_view(), name="form"),
+    path(
+        "review/opinion/<int:pk>/delete/",
+        ReviewOpinionDeleteView.as_view(),
+        name="delete_opinion",
+    ),
 ]

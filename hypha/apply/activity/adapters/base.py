@@ -16,6 +16,7 @@ neat_related = {
     MESSAGES.SCREENING: "old_status",
     MESSAGES.REVIEW_OPINION: "opinion",
     MESSAGES.DELETE_REVIEW: "review",
+    MESSAGES.DELETE_REVIEW_OPINION: "review_opinion",
     MESSAGES.EDIT_REVIEW: "review",
     MESSAGES.CREATED_PROJECT: "submission",
     MESSAGES.PROJECT_TRANSITION: "old_stage",

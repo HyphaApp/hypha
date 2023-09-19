@@ -1,4 +1,4 @@
-{% load wagtailimages_tags %}
+{% load wagtailimages_tags heroicons %}
 
 <li
     class="reviews-sidebar__item {% if not reviewer.review %}no-response {% endif %}"
@@ -48,6 +48,9 @@
         </div>
         <div></div>
         <div class="reviews-sidebar__outcome {{ opinion.get_opinion_display|slugify }}">{{ opinion.get_opinion_display}}</div>
+        <div class="text-center"><a href="{% url 'apply:submissions:reviews:delete_opinion' submission_pk=opinion.review.submission.id pk=opinion.id %}">
+            {% heroicon_outline "trash" aria_hidden="true" size=14 class="stroke-red-800 align-middle inline" %}</a>
+        </div>
     </li>
     {% if forloop.last %}
         </ul>
