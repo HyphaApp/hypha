@@ -3,10 +3,10 @@ from django.utils.translation import gettext_lazy as _
 
 from .models import Deliverable, Project
 from .models.payment import (
-    APPROVED_BY_FINANCE_1,
+    APPROVED_BY_FINANCE,
     APPROVED_BY_FINANCE_2,
     APPROVED_BY_STAFF,
-    CHANGES_REQUESTED_BY_FINANCE_1,
+    CHANGES_REQUESTED_BY_FINANCE,
     CHANGES_REQUESTED_BY_FINANCE_2,
     CHANGES_REQUESTED_BY_STAFF,
     DECLINED,
@@ -120,13 +120,13 @@ def get_paf_status_display(paf_status):
 def get_invoice_public_status(invoice_status):
     if (
         invoice_status
-        in [SUBMITTED, RESUBMITTED, APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_1]
+        in [SUBMITTED, RESUBMITTED, APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE]
     ) or (
-        invoice_status in [APPROVED_BY_FINANCE_1, CHANGES_REQUESTED_BY_FINANCE_2]
+        invoice_status in [APPROVED_BY_FINANCE, CHANGES_REQUESTED_BY_FINANCE_2]
         and settings.INVOICE_EXTENDED_WORKFLOW
     ):
         return _("Pending Approval")
-    if (invoice_status == APPROVED_BY_FINANCE_1) or (
+    if (invoice_status == APPROVED_BY_FINANCE) or (
         invoice_status == APPROVED_BY_FINANCE_2 and settings.INVOICE_EXTENDED_WORKFLOW
     ):
         return _("Approved")

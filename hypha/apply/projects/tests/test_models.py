@@ -13,10 +13,10 @@ from hypha.apply.users.tests.factories import (
 )
 
 from ..models.payment import (
-    APPROVED_BY_FINANCE_1,
+    APPROVED_BY_FINANCE,
     APPROVED_BY_FINANCE_2,
     APPROVED_BY_STAFF,
-    CHANGES_REQUESTED_BY_FINANCE_1,
+    CHANGES_REQUESTED_BY_FINANCE,
     CHANGES_REQUESTED_BY_FINANCE_2,
     CHANGES_REQUESTED_BY_STAFF,
     DECLINED,
@@ -162,7 +162,7 @@ class TestInvoiceModel(TestCase):
             SUBMITTED,
             RESUBMITTED,
             CHANGES_REQUESTED_BY_STAFF,
-            CHANGES_REQUESTED_BY_FINANCE_1,
+            CHANGES_REQUESTED_BY_FINANCE,
         ]
         user = StaffFactory()
         for status in statuses:
@@ -172,7 +172,7 @@ class TestInvoiceModel(TestCase):
     def test_staff_cant_change_status(self):
         statuses = [
             APPROVED_BY_STAFF,
-            APPROVED_BY_FINANCE_1,
+            APPROVED_BY_FINANCE,
             APPROVED_BY_FINANCE_2,
             CHANGES_REQUESTED_BY_FINANCE_2,
             DECLINED,
@@ -193,7 +193,7 @@ class TestInvoiceModel(TestCase):
 
     @override_settings(INVOICE_EXTENDED_WORKFLOW=False)
     def test_finance1_can_change_status(self):
-        statuses = [APPROVED_BY_STAFF, APPROVED_BY_FINANCE_1]
+        statuses = [APPROVED_BY_STAFF, APPROVED_BY_FINANCE]
         user = FinanceFactory()
         for status in statuses:
             invoice = InvoiceFactory(status=status)
@@ -202,10 +202,10 @@ class TestInvoiceModel(TestCase):
     @override_settings(INVOICE_EXTENDED_WORKFLOW=True)
     def test_finance1_cant_change_status_with_extended_flow(self):
         statuses = [
-            APPROVED_BY_FINANCE_1,
+            APPROVED_BY_FINANCE,
             APPROVED_BY_FINANCE_2,
             CHANGES_REQUESTED_BY_STAFF,
-            CHANGES_REQUESTED_BY_FINANCE_1,
+            CHANGES_REQUESTED_BY_FINANCE,
             DECLINED,
             PAID,
             RESUBMITTED,
@@ -220,7 +220,7 @@ class TestInvoiceModel(TestCase):
     def test_finance1_cant_change_status(self):
         statuses = [
             CHANGES_REQUESTED_BY_STAFF,
-            CHANGES_REQUESTED_BY_FINANCE_1,
+            CHANGES_REQUESTED_BY_FINANCE,
             DECLINED,
             PAID,
             RESUBMITTED,
@@ -233,7 +233,7 @@ class TestInvoiceModel(TestCase):
 
     @override_settings(INVOICE_EXTENDED_WORKFLOW=True)
     def test_finance2_can_change_status_with_extended_flow(self):
-        statuses = [APPROVED_BY_FINANCE_1, APPROVED_BY_FINANCE_2]
+        statuses = [APPROVED_BY_FINANCE, APPROVED_BY_FINANCE_2]
         user = Finance2Factory()
         for status in statuses:
             invoice = InvoiceFactory(status=status)
@@ -243,7 +243,7 @@ class TestInvoiceModel(TestCase):
     def test_finance2_cant_change_status(self):
         statuses = [
             APPROVED_BY_STAFF,
-            CHANGES_REQUESTED_BY_FINANCE_1,
+            CHANGES_REQUESTED_BY_FINANCE,
             CHANGES_REQUESTED_BY_FINANCE_2,
             CHANGES_REQUESTED_BY_STAFF,
             DECLINED,
@@ -265,10 +265,10 @@ class TestInvoiceModel(TestCase):
 
     def test_applicant_cant_edit_invoice(self):
         statuses = [
-            APPROVED_BY_FINANCE_1,
+            APPROVED_BY_FINANCE,
             APPROVED_BY_FINANCE_2,
             APPROVED_BY_STAFF,
-            CHANGES_REQUESTED_BY_FINANCE_1,
+            CHANGES_REQUESTED_BY_FINANCE,
             CHANGES_REQUESTED_BY_FINANCE_2,
             DECLINED,
             PAID,
@@ -279,7 +279,7 @@ class TestInvoiceModel(TestCase):
             self.assertFalse(invoice.can_user_edit(user))
 
     def test_staff_can_edit_invoice(self):
-        statuses = [SUBMITTED, RESUBMITTED, CHANGES_REQUESTED_BY_FINANCE_1]
+        statuses = [SUBMITTED, RESUBMITTED, CHANGES_REQUESTED_BY_FINANCE]
         user = StaffFactory()
         for status in statuses:
             invoice = InvoiceFactory(status=status)
@@ -287,7 +287,7 @@ class TestInvoiceModel(TestCase):
 
     def test_staff_cant_edit_invoice(self):
         statuses = [
-            APPROVED_BY_FINANCE_1,
+            APPROVED_BY_FINANCE,
             APPROVED_BY_FINANCE_2,
             APPROVED_BY_STAFF,
             CHANGES_REQUESTED_BY_FINANCE_2,
@@ -306,8 +306,8 @@ class TestInvoiceModel(TestCase):
             RESUBMITTED,
             CHANGES_REQUESTED_BY_STAFF,
             APPROVED_BY_STAFF,
-            CHANGES_REQUESTED_BY_FINANCE_1,
-            APPROVED_BY_FINANCE_1,
+            CHANGES_REQUESTED_BY_FINANCE,
+            APPROVED_BY_FINANCE,
             CHANGES_REQUESTED_BY_FINANCE_2,
             APPROVED_BY_FINANCE_2,
             DECLINED,
@@ -319,7 +319,7 @@ class TestInvoiceModel(TestCase):
             self.assertFalse(invoice.can_user_edit_deliverables(user))
 
     def test_staff_can_edit_deliverables(self):
-        statuses = [SUBMITTED, RESUBMITTED, CHANGES_REQUESTED_BY_FINANCE_1]
+        statuses = [SUBMITTED, RESUBMITTED, CHANGES_REQUESTED_BY_FINANCE]
         user = StaffFactory()
         for status in statuses:
             invoice = InvoiceFactory(status=status)
@@ -327,7 +327,7 @@ class TestInvoiceModel(TestCase):
 
     def test_staff_cant_edit_deliverables(self):
         statuses = [
-            APPROVED_BY_FINANCE_1,
+            APPROVED_BY_FINANCE,
             APPROVED_BY_FINANCE_2,
             APPROVED_BY_STAFF,
             CHANGES_REQUESTED_BY_FINANCE_2,
@@ -358,9 +358,9 @@ class TestInvoiceModel(TestCase):
 
     def test_finance1_cant_edit_deliverables(self):
         statuses = [
-            APPROVED_BY_FINANCE_1,
+            APPROVED_BY_FINANCE,
             APPROVED_BY_FINANCE_2,
-            CHANGES_REQUESTED_BY_FINANCE_1,
+            CHANGES_REQUESTED_BY_FINANCE,
             CHANGES_REQUESTED_BY_STAFF,
             DECLINED,
             PAID,
@@ -374,7 +374,7 @@ class TestInvoiceModel(TestCase):
 
     @override_settings(INVOICE_EXTENDED_WORKFLOW=True)
     def test_finance2_can_edit_deliverables(self):
-        statuses = [APPROVED_BY_FINANCE_1]
+        statuses = [APPROVED_BY_FINANCE]
         user = Finance2Factory()
         for status in statuses:
             invoice = InvoiceFactory(status=status)
@@ -385,7 +385,7 @@ class TestInvoiceModel(TestCase):
         statuses = [
             APPROVED_BY_FINANCE_2,
             APPROVED_BY_STAFF,
-            CHANGES_REQUESTED_BY_FINANCE_1,
+            CHANGES_REQUESTED_BY_FINANCE,
             CHANGES_REQUESTED_BY_FINANCE_2,
             CHANGES_REQUESTED_BY_STAFF,
             DECLINED,
@@ -412,7 +412,7 @@ class TestInvoiceQueryset(TestCase):
     def test_in_progress(self):
         InvoiceFactory(status=SUBMITTED)
         InvoiceFactory(status=APPROVED_BY_STAFF)
-        InvoiceFactory(status=CHANGES_REQUESTED_BY_FINANCE_1)
+        InvoiceFactory(status=CHANGES_REQUESTED_BY_FINANCE)
         InvoiceFactory(status=DECLINED)
         self.assertEqual(Invoice.objects.in_progress().count(), 3)
 
@@ -421,7 +421,7 @@ class TestInvoiceQueryset(TestCase):
         self.assertEqual(Invoice.objects.approved_by_staff().count(), 1)
 
     def test_approved_by_finance_1(self):
-        InvoiceFactory(status=APPROVED_BY_FINANCE_1)
+        InvoiceFactory(status=APPROVED_BY_FINANCE)
         self.assertEqual(Invoice.objects.approved_by_finance_1().count(), 1)
 
     @override_settings(INVOICE_EXTENDED_WORKFLOW=True)
@@ -434,7 +434,7 @@ class TestInvoiceQueryset(TestCase):
     @override_settings(INVOICE_EXTENDED_WORKFLOW=False)
     def test_for_finance_1(self):
         InvoiceFactory(status=APPROVED_BY_STAFF)
-        InvoiceFactory(status=APPROVED_BY_FINANCE_1)
+        InvoiceFactory(status=APPROVED_BY_FINANCE)
         InvoiceFactory(status=SUBMITTED)
         self.assertEqual(Invoice.objects.for_finance_1().count(), 2)
 

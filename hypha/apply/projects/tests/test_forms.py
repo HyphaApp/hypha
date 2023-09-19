@@ -28,10 +28,10 @@ from ..forms.project import (
     UploadContractForm,
 )
 from ..models.payment import (
-    APPROVED_BY_FINANCE_1,
+    APPROVED_BY_FINANCE,
     APPROVED_BY_FINANCE_2,
     APPROVED_BY_STAFF,
-    CHANGES_REQUESTED_BY_FINANCE_1,
+    CHANGES_REQUESTED_BY_FINANCE,
     CHANGES_REQUESTED_BY_FINANCE_2,
     CHANGES_REQUESTED_BY_STAFF,
     DECLINED,
@@ -176,7 +176,7 @@ class TestChangeInvoiceStatusFormForm(TestCase):
 
         expected = set(
             filter_request_choices(
-                [CHANGES_REQUESTED_BY_FINANCE_1, APPROVED_BY_FINANCE_1],
+                [CHANGES_REQUESTED_BY_FINANCE, APPROVED_BY_FINANCE],
                 invoice_status_user_choices(user),
             )
         )
@@ -190,7 +190,7 @@ class TestChangeInvoiceStatusFormForm(TestCase):
 
         expected = set(
             filter_request_choices(
-                [CHANGES_REQUESTED_BY_FINANCE_1, APPROVED_BY_FINANCE_1],
+                [CHANGES_REQUESTED_BY_FINANCE, APPROVED_BY_FINANCE],
                 invoice_status_user_choices(user),
             )
         )
@@ -204,7 +204,7 @@ class TestChangeInvoiceStatusFormForm(TestCase):
 
         expected = set(
             filter_request_choices(
-                [CHANGES_REQUESTED_BY_FINANCE_1, APPROVED_BY_FINANCE_1],
+                [CHANGES_REQUESTED_BY_FINANCE, APPROVED_BY_FINANCE],
                 invoice_status_user_choices(user),
             )
         )
@@ -212,7 +212,7 @@ class TestChangeInvoiceStatusFormForm(TestCase):
         self.assertEqual(expected, actual)
 
     def test_staff_choices_with_changes_requested_by_finance1_status(self):
-        invoice = InvoiceFactory(status=CHANGES_REQUESTED_BY_FINANCE_1)
+        invoice = InvoiceFactory(status=CHANGES_REQUESTED_BY_FINANCE)
         user = StaffFactory()
         form = ChangeInvoiceStatusForm(instance=invoice, user=user)
 
@@ -226,7 +226,7 @@ class TestChangeInvoiceStatusFormForm(TestCase):
         self.assertEqual(expected, actual)
 
     def test_finance1_choices_with_changes_requested_by_finance1_status(self):
-        invoice = InvoiceFactory(status=CHANGES_REQUESTED_BY_FINANCE_1)
+        invoice = InvoiceFactory(status=CHANGES_REQUESTED_BY_FINANCE)
         user = FinanceFactory()
         form = ChangeInvoiceStatusForm(instance=invoice, user=user)
 
@@ -240,7 +240,7 @@ class TestChangeInvoiceStatusFormForm(TestCase):
         self.assertEqual(expected, actual)
 
     def test_finance2_choices_with_changes_requested_by_finance1_status(self):
-        invoice = InvoiceFactory(status=CHANGES_REQUESTED_BY_FINANCE_1)
+        invoice = InvoiceFactory(status=CHANGES_REQUESTED_BY_FINANCE)
         user = Finance2Factory()
         form = ChangeInvoiceStatusForm(instance=invoice, user=user)
 
@@ -254,7 +254,7 @@ class TestChangeInvoiceStatusFormForm(TestCase):
         self.assertEqual(expected, actual)
 
     def test_staff_choices_with_approved_by_finance1_status(self):
-        invoice = InvoiceFactory(status=APPROVED_BY_FINANCE_1)
+        invoice = InvoiceFactory(status=APPROVED_BY_FINANCE)
         user = StaffFactory()
         form = ChangeInvoiceStatusForm(instance=invoice, user=user)
 
@@ -269,7 +269,7 @@ class TestChangeInvoiceStatusFormForm(TestCase):
 
     @override_settings(INVOICE_EXTENDED_WORKFLOW=True)
     def test_finance1_choices_with_approved_by_finance1_status_with_extended_flow(self):
-        invoice = InvoiceFactory(status=APPROVED_BY_FINANCE_1)
+        invoice = InvoiceFactory(status=APPROVED_BY_FINANCE)
         user = FinanceFactory()
         form = ChangeInvoiceStatusForm(instance=invoice, user=user)
 
@@ -284,7 +284,7 @@ class TestChangeInvoiceStatusFormForm(TestCase):
 
     @override_settings(INVOICE_EXTENDED_WORKFLOW=False)
     def test_finance1_choices_with_approved_by_finance1_status(self):
-        invoice = InvoiceFactory(status=APPROVED_BY_FINANCE_1)
+        invoice = InvoiceFactory(status=APPROVED_BY_FINANCE)
         user = FinanceFactory()
         form = ChangeInvoiceStatusForm(instance=invoice, user=user)
 
@@ -296,7 +296,7 @@ class TestChangeInvoiceStatusFormForm(TestCase):
 
     @override_settings(INVOICE_EXTENDED_WORKFLOW=True)
     def test_finance2_choices_with_approved_by_finance1_status(self):
-        invoice = InvoiceFactory(status=APPROVED_BY_FINANCE_1)
+        invoice = InvoiceFactory(status=APPROVED_BY_FINANCE)
         user = Finance2Factory()
         form = ChangeInvoiceStatusForm(instance=invoice, user=user)
 
@@ -317,7 +317,7 @@ class TestChangeInvoiceStatusFormForm(TestCase):
 
         expected = set(
             filter_request_choices(
-                [CHANGES_REQUESTED_BY_FINANCE_1, APPROVED_BY_FINANCE_1],
+                [CHANGES_REQUESTED_BY_FINANCE, APPROVED_BY_FINANCE],
                 invoice_status_user_choices(user),
             )
         )
@@ -332,7 +332,7 @@ class TestChangeInvoiceStatusFormForm(TestCase):
 
         expected = set(
             filter_request_choices(
-                [CHANGES_REQUESTED_BY_FINANCE_1, APPROVED_BY_FINANCE_1],
+                [CHANGES_REQUESTED_BY_FINANCE, APPROVED_BY_FINANCE],
                 invoice_status_user_choices(user),
             )
         )
@@ -347,7 +347,7 @@ class TestChangeInvoiceStatusFormForm(TestCase):
 
         expected = set(
             filter_request_choices(
-                [CHANGES_REQUESTED_BY_FINANCE_1, APPROVED_BY_FINANCE_1],
+                [CHANGES_REQUESTED_BY_FINANCE, APPROVED_BY_FINANCE],
                 invoice_status_user_choices(user),
             )
         )
