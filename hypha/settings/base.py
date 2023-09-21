@@ -134,13 +134,9 @@ TRANSITION_AFTER_ASSIGNED = env.bool("TRANSITION_AFTER_ASSIGNED", False)
 TRANSITION_AFTER_REVIEWS = env.bool("TRANSITION_AFTER_REVIEWS", False)
 
 # Forces users to log in first in order to make an application.  This is particularly useful in conjunction
-# with ENABLE_REGISTRATION_WITHOUT_APPLICATION
+# with ENABLE_PUBLIC_SIGNUP
 FORCE_LOGIN_FOR_APPLICATION = env.bool("FORCE_LOGIN_FOR_APPLICATION", False)
 
-# Enable users to create accounts without submitting an application.
-ENABLE_REGISTRATION_WITHOUT_APPLICATION = env.bool(
-    "ENABLE_REGISTRATION_WITHOUT_APPLICATION", False
-)
 
 # Project settings.
 
@@ -168,6 +164,9 @@ PASSWORD_RESET_TIMEOUT = env.int("PASSWORD_RESET_TIMEOUT", 259200)
 # Timeout for passwordless login links (default 900, 15 minutes).
 PASSWORDLESS_LOGIN_TIMEOUT = env.int("PASSWORDLESS_LOGIN_TIMEOUT", 900)  # 15 minutes
 
+# Enable users to create accounts without submitting an application.
+ENABLE_PUBLIC_SIGNUP = env.bool("ENABLE_PUBLIC_SIGNUP", False)
+
 # Timeout for passwordless signup links (default 900, 15 minutes).
 PASSWORDLESS_SIGNUP_TIMEOUT = env.int("PASSWORDLESS_SIGNUP_TIMEOUT", 900)  # 15 minutes
 
@@ -175,7 +174,6 @@ PASSWORDLESS_SIGNUP_TIMEOUT = env.int("PASSWORDLESS_SIGNUP_TIMEOUT", 900)  # 15 
 PASSWORD_PAGE_TIMEOUT = env.int("PASSWORD_PAGE_TIMEOUT", 120)
 
 #  Template engines and options to be used with Django.
-
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",

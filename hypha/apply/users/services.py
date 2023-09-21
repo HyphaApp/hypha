@@ -146,7 +146,7 @@ class PasswordlessAuthService:
             return
 
         # No account found
-        if not settings.ENABLE_REGISTRATION_WITHOUT_APPLICATION:
+        if not settings.ENABLE_PUBLIC_SIGNUP:
             self.send_email_no_account_found(email)
             return
 

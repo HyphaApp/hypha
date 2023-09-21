@@ -78,7 +78,7 @@ class RegisterView(SuccessURLAllowedHostsMixin, View):
         # We keep /register in the urls in order to test (where we turn on/off
         # the setting per test), but when disabled, we want to pretend it doesn't
         # exist va 404
-        if not settings.ENABLE_REGISTRATION_WITHOUT_APPLICATION:
+        if not settings.ENABLE_PUBLIC_SIGNUP:
             raise Http404
 
         if request.user.is_authenticated:
@@ -92,7 +92,7 @@ class RegisterView(SuccessURLAllowedHostsMixin, View):
 
     def post(self, request):
         # See comment in get() above about doing this here rather than in urls
-        if not settings.ENABLE_REGISTRATION_WITHOUT_APPLICATION:
+        if not settings.ENABLE_PUBLIC_SIGNUP:
             raise Http404
 
         form = self.form(data=request.POST)
@@ -355,10 +355,7 @@ class ActivationView(SuccessURLAllowedHostsMixin, TemplateView):
         if self.valid(user, kwargs.get("token")):
             user.backend = settings.CUSTOM_AUTH_BACKEND
             login(request, user)
-            if (
-                settings.WAGTAILUSERS_PASSWORD_ENABLED
-                and settings.ENABLE_REGISTRATION_WITHOUT_APPLICATION
-            ):
+            if settings.WAGTAILUSERS_PASSWORD_ENABLED and settings.ENABLE_PUBLIC_SIGNUP:
                 # In this case, the user entered a password while registering,
                 # and so they shouldn't need to activate a password
                 return redirect("users:account")

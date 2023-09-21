@@ -9,17 +9,17 @@ from hypha.apply.utils.testing import make_request
 
 @override_settings(ROOT_URLCONF="hypha.apply.urls")
 class TestRegistration(TestCase):
-    @override_settings(ENABLE_REGISTRATION_WITHOUT_APPLICATION=False)
+    @override_settings(ENABLE_PUBLIC_SIGNUP=False)
     def test_registration_enabled_has_no_link(self):
         response = self.client.get("/", follow=True)
         self.assertNotContains(response, reverse("users_public:register"))
 
-    @override_settings(ENABLE_REGISTRATION_WITHOUT_APPLICATION=True)
+    @override_settings(ENABLE_PUBLIC_SIGNUP=True)
     def test_registration_enabled_has_link(self):
         response = self.client.get("/", follow=True)
         self.assertContains(response, reverse("users_public:register"))
 
-    @override_settings(ENABLE_REGISTRATION_WITHOUT_APPLICATION=True)
+    @override_settings(ENABLE_PUBLIC_SIGNUP=True)
     def test_registration(self):
         response = self.client.post(
             reverse("users_public:register"),
@@ -36,7 +36,7 @@ class TestRegistration(TestCase):
         assert response.status_code == 302
         assert reverse("users_public:register-success") in response.url
 
-    @override_settings(ENABLE_REGISTRATION_WITHOUT_APPLICATION=True)
+    @override_settings(ENABLE_PUBLIC_SIGNUP=True)
     def test_duplicate_registration_fails(self):
         response = self.client.post(
             reverse("users_public:register"),
@@ -62,9 +62,7 @@ class TestRegistration(TestCase):
         assert len(mail.outbox) == 0
         self.assertContains(response, "A user with that email already exists")
 
-    @override_settings(
-        FORCE_LOGIN_FOR_APPLICATION=True, ENABLE_REGISTRATION_WITHOUT_APPLICATION=False
-    )
+    @override_settings(FORCE_LOGIN_FOR_APPLICATION=True, ENABLE_PUBLIC_SIGNUP=False)
     def test_force_login(self):
         fund = FundTypeFactory()
         response = fund.serve(

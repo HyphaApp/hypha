@@ -61,7 +61,7 @@
                         {% endif %}
 
                         <div class="inline-flex gap-8 w-full mt-4">
-                            {% if ENABLE_REGISTRATION_WITHOUT_APPLICATION %}
+                            {% if ENABLE_PUBLIC_SIGNUP %}
                                 <a href="{% url 'users_public:register' %}{% if redirect_url %}?next={{ redirect_url }}{% endif %}" hx-boost="true"> {% trans "Create account" %}</a>
                             {% endif %}
                             <a class="link" href="{% url 'users:password_reset' %}{% if redirect_url %}?next={{ redirect_url }}{% endif %}" hx-boost="true">{% trans "Forgot your password?" %}</a>

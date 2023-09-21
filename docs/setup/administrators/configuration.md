@@ -77,7 +77,7 @@ This determines the length of time for which the user will remain logged in. The
 
 ### If users should be able to register accounts without first creating applications
 
-    ENABLE_REGISTRATION_WITHOUT_APPLICATION = env.bool('ENABLE_REGISTRATION_WITHOUT_APPLICATION', False)
+    ENABLE_PUBLIC_SIGNUP = env.bool('ENABLE_PUBLIC_SIGNUP', False)
 
 ### If users are forced to log in before creating applications
 
