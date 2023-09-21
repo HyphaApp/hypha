@@ -1,7 +1,7 @@
 {% if request.user.is_authenticated %}
     <nav role="navigation" aria-label="Primary">
         <ul class="nav nav--primary" role="menubar">
-            {% if can_access_dashboard %}
+            {% if request.user.can_access_dashboard %}
                 {% include "navigation/primarynav-apply-item.html" with name="My dashboard" url="dashboard:dashboard" %}
             {% endif %}
             {% if request.user.is_apply_staff %}
