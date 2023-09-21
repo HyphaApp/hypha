@@ -30,23 +30,32 @@
             </form>
         </div>
 
-        {% if show_change_password and user.has_usable_password and not backends.associated %}
-            <div class="profile__column">
-                <h2 class="text-2xl">{% trans "Account Security" %}</h2>
-                <h3 class="text-base">{% trans "Password" %}</h3>
-                <p><a class="button button--primary" href="{% url 'users:password_change' %}">{% trans "Update password" %}</a></p>
 
-                <h4 class="text-base mt-8">{% trans "Two-Factor Authentication (2FA)" %}</h4>
-                {% if default_device %}
-                    <div>
-                        <p><a class="button button--primary" href="{% url 'users:backup_tokens_password' %}">{% trans "Backup codes" %}</a></p>
-                        <p><a class="button button--primary button--warning" href="{% url 'two_factor:disable' %}">{% trans "Disable 2FA" %}</a></p>
-                    </div>
-                {% else %}
-                    <p><a class="button button--primary" href="{% url 'two_factor:setup' %}">{% trans "Enable 2FA" %}</a></p>
-                {% endif %}
-            </div>
-        {% endif %}
+        <div class="profile__column">
+            <h2 class="text-2xl">{% trans "Account Security" %}</h2>
+
+            {% if show_change_password and user.has_usable_password and not backends.associated %}
+                <div class="block_manage_password mb-8">
+                    <h3 class="text-base">{% trans "Password" %}</h3>
+                    <p>
+                        <a class="button button--primary" href="{% url 'users:password_change' %}">
+                            {% trans "Update password" %}
+                        </a>
+                    </p>
+                </div>
+            {% endif %}
+
+            <h3 class="text-base">{% trans "Two-Factor Authentication (2FA)" %}</h3>
+            {% if default_device %}
+                <div>
+                    <p><a class="button button--primary" href="{% url 'users:backup_tokens_password' %}">{% trans "Backup codes" %}</a></p>
+                    <p><a class="button button--primary button--warning" href="{% url 'two_factor:disable' %}">{% trans "Disable 2FA" %}</a></p>
+                </div>
+            {% else %}
+                <a class="button button--primary" href="{% url 'two_factor:setup' %}">{% trans "Enable 2FA" %}</a>
+            {% endif %}
+        </div>
+
 
 
         {% if swappable_form %}
