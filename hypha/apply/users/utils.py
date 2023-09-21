@@ -53,7 +53,13 @@ def can_use_oauth_check(user):
     return False
 
 
-def send_activation_email(user, site=None, redirect_url=""):
+def send_activation_email(
+    user,
+    site=None,
+    email_template="users/activation/email.txt",
+    email_subject_template="users/activation/email_subject.txt",
+    redirect_url="",
+):
     """
     Send the activation email. The activation key is the username,
     signed using TimestampSigner.
@@ -82,10 +88,10 @@ def send_activation_email(user, site=None, redirect_url=""):
     if site:
         context.update(site=site)
 
-    subject = "Account details for {username} at {org_long_name}".format(**context)
+    subject = render_to_string(email_subject_template, context)
     # Force subject to a single line to avoid header-injection issues.
     subject = "".join(subject.splitlines())
-    message = render_to_string("users/activation/email.txt", context)
+    message = render_to_string(email_template, context)
     user.email_user(subject, message, settings.DEFAULT_FROM_EMAIL)
 
 

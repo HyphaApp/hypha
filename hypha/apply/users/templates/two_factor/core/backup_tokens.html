@@ -87,18 +87,21 @@
 
     {# Instantiate clipboard by passing a HTML element, uses clipboard.js #}
         var clipboardBtn = document.querySelector('.btn-copy-to-clipboard');
-        var clipboard = new ClipboardJS(clipboardBtn);
-        var tooltip = tippy(clipboardBtn, {
-            trigger: 'manual',
-            animation: 'fade'
-        });
+        if (clipboardBtn) {
+            var clipboard = new ClipboardJS(clipboardBtn);
+            var tooltip = tippy(clipboardBtn, {
+                trigger: 'manual',
+                animation: 'fade'
+            });
 
-        clipboard.on('success', function (e) {
-            tooltip.show();
-        });
-        clipboard.on('error', function (e) {
-            tooltip.setContent("Use ctrl/cmd + C to copy the backup codes.")
-            tooltip.show();
-        });
+            clipboard.on('success', function (e) {
+                tooltip.show();
+            });
+            clipboard.on('error', function (e) {
+                tooltip.setContent("Use ctrl/cmd + C to copy the backup codes.")
+                tooltip.show();
+            });
+        }
+
     </script>
 {% endblock %}

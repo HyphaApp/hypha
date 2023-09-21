@@ -19,7 +19,7 @@ from django.contrib.auth.views import PasswordResetView as DjPasswordResetView
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import PermissionDenied
 from django.core.signing import BadSignature, Signer, TimestampSigner, dumps, loads
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import Http404, get_object_or_404, redirect, render, resolve_url
 from django.template.loader import render_to_string
 from django.template.response import TemplateResponse
@@ -61,7 +61,7 @@ from .forms import (
 from .models import PendingSignup
 from .services import PasswordlessAuthService
 from .tokens import PasswordlessLoginTokenGenerator, PasswordlessSignupTokenGenerator
-from .utils import get_redirect_url, send_confirmation_email
+from .utils import get_redirect_url, send_activation_email, send_confirmation_email
 
 User = get_user_model()
 
@@ -753,3 +753,18 @@ class PasswordlessSignupView(TemplateView):
             )
         except (TypeError, ValueError, OverflowError, PendingSignup.DoesNotExist):
             return None
+
+
+@login_required
+def set_password_view(request):
+    """Sent password set view for user that has been created by an admin."""
+    site = Site.find_for_request(request)
+
+    if not request.user.has_usable_password():
+        send_activation_email(
+            user=request.user,
+            site=site,
+            email_template="users/emails/set_password.txt",
+            email_subject_template="users/emails/set_password_subject.txt",
+        )
+        return HttpResponse("✓ Check your email for password set link.")
