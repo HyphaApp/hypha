@@ -74,6 +74,7 @@ INSTALLED_APPS = [
     "wagtail_purge",
     "django_file_form",
     "hijack",
+    "elevate",  # https://django-elevate.readthedocs.io/
     "pagedown",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -92,6 +93,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "elevate.middleware.ElevateMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -203,6 +205,10 @@ AUTH_USER_MODEL = "users.User"
 
 LOGIN_URL = "users_public:passwordless_login_signup"
 LOGIN_REDIRECT_URL = "dashboard:dashboard"
+
+# https://django-elevate.readthedocs.io/en/latest/config/index.html#configuration
+ELEVATE_URL = "users:elevate"
+ELEVATE_REDIRECT_URL = LOGIN_REDIRECT_URL
 
 CUSTOM_AUTH_BACKEND = "hypha.apply.users.backends.CustomModelBackend"
 

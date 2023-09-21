@@ -2,10 +2,12 @@ from django.conf import settings
 from django.contrib.auth import views as auth_views
 from django.urls import include, path, reverse_lazy
 from django_ratelimit.decorators import ratelimit
+from elevate.views import elevate as elevate_view
 
 from .views import (
     AccountView,
     ActivationView,
+    BackupTokensView,
     EmailChangeConfirmationView,
     EmailChangeDoneView,
     EmailChangePasswordView,
@@ -18,7 +20,6 @@ from .views import (
     RegisterView,
     RegistrationSuccessView,
     TWOFAAdminDisableView,
-    TWOFABackupTokensPasswordView,
     TWOFADisableView,
     TWOFARequiredMessageView,
     TWOFASetupView,
@@ -137,7 +138,7 @@ urlpatterns = [
                 path("two_factor/setup/", TWOFASetupView.as_view(), name="setup"),
                 path(
                     "two_factor/backup_tokens/password/",
-                    TWOFABackupTokensPasswordView.as_view(),
+                    BackupTokensView.as_view(),
                     name="backup_tokens_password",
                 ),
                 path("two_factor/disable/", TWOFADisableView.as_view(), name="disable"),
@@ -155,6 +156,12 @@ urlpatterns = [
                     "auth/<uidb64>/<token>/",
                     PasswordlessLoginView.as_view(),
                     name="do_passwordless_login",
+                ),
+                path(
+                    "sessions/trusted-device/",
+                    elevate_view,
+                    {"template_name": "elevate/elevate.html"},
+                    name="elevate",
                 ),
             ]
         ),

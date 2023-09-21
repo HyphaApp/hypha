@@ -247,3 +247,15 @@ See <https://github.com/tm-kn/django-basic-auth-ip-whitelist>
     BASIC_AUTH_PASSWORD = env.str('BASIC_AUTH_PASSWORD', None)
     BASIC_AUTH_WHITELISTED_HTTP_HOSTS = env.list('BASIC_AUTH_WHITELISTED_HTTP_HOSTS', [])
     BASIC_AUTH_WHITELISTED_IP_NETWORKS = env.list('BASIC_AUTH_WHITELISTED_IP_NETWORKS', [])
+
+## Django Elevate settings
+
+[How this works?](https://django-elevate.readthedocs.io/en/latest/how/index.html) 
+
+How long should Elevate mode be active for?
+
+    ELEVATE_COOKIE_AGE = env.int("ELEVATE_COOKIE_AGE", 3600)  # 1 hours
+
+# An extra salt to be added into the cookie signature.
+    
+    ELEVATE_COOKIE_SALT = env.str("ELEVATE_COOKIE_SALT", SECRET_KEY)

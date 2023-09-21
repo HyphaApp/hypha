@@ -21,6 +21,7 @@ from django.core.exceptions import PermissionDenied
 from django.core.signing import BadSignature, Signer, TimestampSigner, dumps, loads
 from django.http import HttpResponseRedirect
 from django.shortcuts import Http404, get_object_or_404, redirect, render, resolve_url
+from django.template.loader import render_to_string
 from django.template.response import TemplateResponse
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
@@ -34,6 +35,7 @@ from django.views.generic.base import TemplateView, View
 from django.views.generic.edit import FormView
 from django_otp import devices_for_user
 from django_ratelimit.decorators import ratelimit
+from elevate.mixins import ElevateMixin
 from hijack.views import AcquireUserView
 from two_factor.forms import AuthenticationTokenForm, BackupTokenForm
 from two_factor.utils import default_device, get_otpauth_url, totp_digits
@@ -167,7 +169,7 @@ class AccountView(UpdateView):
         name = form.cleaned_data["full_name"]
         slack = form.cleaned_data.get("slack", "")
         user = get_object_or_404(User, id=self.request.user.id)
-        if updated_email and updated_email != user.email:
+        if updated_email:
             base_url = reverse("users:email_change_confirm_password")
             query_dict = {"updated_email": updated_email, "name": name, "slack": slack}
 
@@ -246,11 +248,28 @@ class EmailChangePasswordView(FormView):
             return redirect("users:account")
         value = loads(unsigned_value)
         form.save(**value)
-        send_confirmation_email(
-            self.request.user,
-            signer.sign(dumps(value["updated_email"])),
-            updated_email=value["updated_email"],
-            site=Site.find_for_request(self.request),
+        user = self.request.user
+        if user.email != value["updated_email"]:
+            send_confirmation_email(
+                user,
+                signer.sign(dumps(value["updated_email"])),
+                updated_email=value["updated_email"],
+                site=Site.find_for_request(self.request),
+            )
+        # alert email
+        user.email_user(
+            subject="Alert! An attempt to update your email.",
+            message=render_to_string(
+                "users/email_change/update_info_email.html",
+                {
+                    "name": user.get_full_name(),
+                    "username": user.get_username(),
+                    "org_email": settings.ORG_EMAIL,
+                    "org_short_name": settings.ORG_SHORT_NAME,
+                    "org_long_name": settings.ORG_LONG_NAME,
+                },
+            ),
+            from_email=settings.DEFAULT_FROM_EMAIL,
         )
         return super(EmailChangePasswordView, self).form_valid(form)
 
@@ -478,26 +497,6 @@ class TWOFASetupView(TwoFactorSetupView):
         return context
 
 
-@method_decorator(login_required, name="dispatch")
-@method_decorator(
-    ratelimit(key="user", rate=settings.DEFAULT_RATE_LIMIT, method="POST"),
-    name="dispatch",
-)
-class TWOFABackupTokensPasswordView(TwoFactorBackupTokensView):
-    """
-    Require password to see backup codes
-    """
-
-    form_class = TWOFAPasswordForm
-    success_url = reverse_lazy("two_factor:backup_tokens")
-    template_name = "two_factor/core/backup_tokens_password.html"
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["user"] = self.request.user
-        return kwargs
-
-
 @method_decorator(
     ratelimit(key="user", rate=settings.DEFAULT_RATE_LIMIT, method="POST"),
     name="dispatch",
@@ -559,6 +558,10 @@ class TWOFAAdminDisableView(FormView):
 
 class TWOFARequiredMessageView(TemplateView):
     template_name = "two_factor/core/two_factor_required.html"
+
+
+class BackupTokensView(ElevateMixin, TwoFactorBackupTokensView):
+    pass
 
 
 class PasswordResetConfirmView(DjPasswordResetConfirmView):
