@@ -169,7 +169,7 @@ class AccountView(UpdateView):
         name = form.cleaned_data["full_name"]
         slack = form.cleaned_data.get("slack", "")
         user = get_object_or_404(User, id=self.request.user.id)
-        if updated_email:
+        if user.email != updated_email:
             base_url = reverse("users:email_change_confirm_password")
             query_dict = {"updated_email": updated_email, "name": name, "slack": slack}
 
