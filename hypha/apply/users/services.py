@@ -77,7 +77,7 @@ class PasswordlessAuthService:
 
     def send_login_email(self, user):
         login_path = self._get_login_path(user)
-        timeout_hours = self.login_token_generator_class().TIMEOUT // 3600
+        timeout_minutes = self.login_token_generator_class().TIMEOUT // 60
 
         context = self.get_email_context()
         context.update(
@@ -87,7 +87,7 @@ class PasswordlessAuthService:
                 "name": user.get_full_name(),
                 "username": user.get_username(),
                 "login_path": login_path,
-                "timeout_hours": timeout_hours,
+                "timeout_minutes": timeout_minutes,
             }
         )
 
@@ -105,13 +105,13 @@ class PasswordlessAuthService:
 
     def send_new_account_login_email(self, signup_obj):
         signup_path = self._get_signup_path(signup_obj)
-        timeout_hours = self.login_token_generator_class().TIMEOUT // 3600
+        timeout_minutes = self.login_token_generator_class().TIMEOUT // 60
 
         context = self.get_email_context()
         context.update(
             {
                 "signup_path": signup_path,
-                "timeout_hours": timeout_hours,
+                "timeout_minutes": timeout_minutes,
             }
         )
 

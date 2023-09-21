@@ -39,6 +39,7 @@ class PasswordlessLoginTokenGenerator(PasswordResetTokenGenerator):
 
 class PasswordlessSignupTokenGenerator(PasswordlessLoginTokenGenerator):
     key_salt = "hypha.apply.users.tokens.PasswordlessSignupTokenGenerator"
+    TIMEOUT = settings.PASSWORDLESS_SIGNUP_TIMEOUT
 
     def _make_hash_value(self, user, timestamp):
         """

@@ -6,7 +6,7 @@
 
 {% if site %}{{ site.root_url }}{% else %}{{ base_url }}{% endif %}{{ login_path }}
 
-{% blocktrans %}This link will valid for {{ timeout_hours }} hours and can be used only once.{% endblocktrans %}
+{% blocktrans %}This link will valid for {{ timeout_minutes }} minutes and can be used only once.{% endblocktrans %}
 
 {% else %}
 {% blocktrans %}Your account on the {{ org_long_name }} web site is deactivated. Please contact site administrators.{% endblocktrans %}
