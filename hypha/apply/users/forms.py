@@ -65,18 +65,21 @@ class ProfileForm(forms.ModelForm):
         fields = ["full_name", "email", "slack"]
 
     def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop("request", None)
         super().__init__(*args, **kwargs)
         if not self.instance.is_apply_staff_or_finance:
             del self.fields["slack"]
 
-        if not self.instance.has_usable_password():
-            # User is registered with oauth - no password change allowed
-            email_field = self.fields["email"]
-            email_field.disabled = True
-            email_field.required = False
-            email_field.help_text = _(
-                "You are registered using OAuth, please contact an admin if you need to change your email address."
-            )
+        if self.request is not None:
+            backend = self.request.session["_auth_user_backend"]
+            if "social_core.backends" in backend:
+                # User is registered with oauth - no password change allowed
+                email_field = self.fields["email"]
+                email_field.disabled = True
+                email_field.required = False
+                email_field.help_text = _(
+                    "You are registered using OAuth, please contact an admin if you need to change your email address."
+                )
 
     def clean_slack(self):
         slack = self.cleaned_data["slack"]

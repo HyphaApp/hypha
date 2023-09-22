@@ -35,8 +35,8 @@ from django.views.generic.base import TemplateView, View
 from django.views.generic.edit import FormView
 from django_otp import devices_for_user
 from django_ratelimit.decorators import ratelimit
-from elevate.decorators import elevate_required
 from elevate.mixins import ElevateMixin
+from elevate.views import redirect_to_elevate
 from hijack.views import AcquireUserView
 from two_factor.forms import AuthenticationTokenForm, BackupTokenForm
 from two_factor.utils import default_device, get_otpauth_url, totp_digits
@@ -164,6 +164,11 @@ class AccountView(UpdateView):
     def get_object(self):
         return self.request.user
 
+    def get_form_kwargs(self) -> dict[str, Any]:
+        kwargs = super().get_form_kwargs()
+        kwargs["request"] = self.request
+        return kwargs
+
     def form_valid(self, form):
         updated_email = form.cleaned_data["email"]
         name = form.cleaned_data["full_name"]
@@ -202,8 +207,10 @@ class AccountView(UpdateView):
 
 
 @login_required
-@elevate_required
 def account_email_change(request):
+    if request.user.has_usable_password() and not request.is_elevated():
+        return redirect_to_elevate(request.get_full_path())
+
     signer = TimestampSigner()
     try:
         unsigned_value = signer.unsign(

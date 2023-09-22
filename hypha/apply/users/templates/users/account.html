@@ -80,13 +80,13 @@
                     </form>
                 {% endif %}
 
-        {# Remove the comment block tags below when such need arises. e.g. adding new providers #}
-        {% comment %}
-        {% can_use_oauth as show_oauth_link %}
-        {% if show_oauth_link %}
-            <a href="{% url 'users:oauth' %}">{% trans "Manage OAuth" %}</a>
-        {% endif %}
-        {% endcomment %}
+                {# Remove the comment block tags below when such need arises. e.g. adding new providers #}
+                {% comment %}
+                {% can_use_oauth as show_oauth_link %}
+                {% if show_oauth_link %}
+                    <a href="{% url 'users:oauth' %}">{% trans "Manage OAuth" %}</a>
+                {% endif %}
+                {% endcomment %}
             </div>
         {% endif %}
     </div>
