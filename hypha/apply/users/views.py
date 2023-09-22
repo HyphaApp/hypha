@@ -732,7 +732,10 @@ class PasswordlessSignupView(TemplateView):
 
 @login_required
 def set_password_view(request):
-    """Sent password set view for user that has been created by an admin."""
+    """Sends email with link to set password to user that doesn't have usable password.
+
+    This will the case when the user signed up using passwordless signup or using oauth.
+    """
     site = Site.find_for_request(request)
 
     if not request.user.has_usable_password():
