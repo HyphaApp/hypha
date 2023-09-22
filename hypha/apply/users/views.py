@@ -18,7 +18,7 @@ from django.contrib.auth.views import (
 from django.contrib.auth.views import PasswordResetView as DjPasswordResetView
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import PermissionDenied
-from django.core.signing import BadSignature, Signer, TimestampSigner, dumps, loads
+from django.core.signing import TimestampSigner, dumps, loads
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import Http404, get_object_or_404, redirect, render, resolve_url
 from django.template.loader import render_to_string
@@ -35,6 +35,7 @@ from django.views.generic.base import TemplateView, View
 from django.views.generic.edit import FormView
 from django_otp import devices_for_user
 from django_ratelimit.decorators import ratelimit
+from elevate.decorators import elevate_required
 from elevate.mixins import ElevateMixin
 from hijack.views import AcquireUserView
 from two_factor.forms import AuthenticationTokenForm, BackupTokenForm
@@ -54,7 +55,6 @@ from .forms import (
     BecomeUserForm,
     CustomAuthenticationForm,
     CustomUserCreationForm,
-    EmailChangePasswordForm,
     ProfileForm,
     TWOFAPasswordForm,
 )
@@ -175,17 +175,12 @@ class AccountView(UpdateView):
 
             signer = TimestampSigner()
             signed_value = signer.sign(dumps(query_dict))
-            # Using session variables for redirect validation
-            token_signer = Signer()
-            self.request.session["signed_token"] = token_signer.sign(user.email)
             return redirect(
                 "{}?{}".format(base_url, urlencode({"value": signed_value}))
             )
-        return super(AccountView, self).form_valid(form)
+        return super().form_valid(form)
 
-    def get_success_url(
-        self,
-    ):
+    def get_success_url(self):
         return reverse_lazy("users:account")
 
     def get_context_data(self, **kwargs):
@@ -206,72 +201,52 @@ class AccountView(UpdateView):
         )
 
 
-@method_decorator(login_required, name="dispatch")
-class EmailChangePasswordView(FormView):
-    form_class = EmailChangePasswordForm
-    template_name = "users/email_change/confirm_password.html"
-    success_url = reverse_lazy("users:confirm_link_sent")
-    title = _("Enter Password")
-
-    def get_initial(self):
-        """
-        Validating the redirection from account via session variable
-        """
-        if "signed_token" not in self.request.session:
-            raise Http404
-        signer = Signer()
-        try:
-            signer.unsign(self.request.session["signed_token"])
-        except BadSignature as e:
-            raise Http404 from e
-        return super(EmailChangePasswordView, self).get_initial()
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["user"] = self.request.user
-        return kwargs
-
-    def form_valid(self, form):
-        # Make sure redirection url is inaccessible after email is sent
-        if "signed_token" in self.request.session:
-            del self.request.session["signed_token"]
-        signer = TimestampSigner()
-        try:
-            unsigned_value = signer.unsign(
-                self.request.GET.get("value"), max_age=settings.PASSWORD_PAGE_TIMEOUT
-            )
-        except Exception:
-            messages.error(
-                self.request,
-                _("Password Page timed out. Try changing the email again."),
-            )
-            return redirect("users:account")
-        value = loads(unsigned_value)
-        form.save(**value)
-        user = self.request.user
-        if user.email != value["updated_email"]:
-            send_confirmation_email(
-                user,
-                signer.sign(dumps(value["updated_email"])),
-                updated_email=value["updated_email"],
-                site=Site.find_for_request(self.request),
-            )
-        # alert email
-        user.email_user(
-            subject="Alert! An attempt to update your email.",
-            message=render_to_string(
-                "users/email_change/update_info_email.html",
-                {
-                    "name": user.get_full_name(),
-                    "username": user.get_username(),
-                    "org_email": settings.ORG_EMAIL,
-                    "org_short_name": settings.ORG_SHORT_NAME,
-                    "org_long_name": settings.ORG_LONG_NAME,
-                },
-            ),
-            from_email=settings.DEFAULT_FROM_EMAIL,
+@login_required
+@elevate_required
+def account_email_change(request):
+    signer = TimestampSigner()
+    try:
+        unsigned_value = signer.unsign(
+            request.GET.get("value"), max_age=settings.PASSWORD_PAGE_TIMEOUT
         )
-        return super(EmailChangePasswordView, self).form_valid(form)
+    except Exception:
+        messages.error(
+            request,
+            _("Password Page timed out. Try changing the email again."),
+        )
+        return redirect("users:account")
+    value = loads(unsigned_value)
+
+    if slack := value["slack"] is not None:
+        request.user.slack = slack
+
+    request.user.full_name = value["name"]
+    request.user.save()
+
+    if request.user.email != value["updated_email"]:
+        send_confirmation_email(
+            request.user,
+            signer.sign(dumps(value["updated_email"])),
+            updated_email=value["updated_email"],
+            site=Site.find_for_request(request),
+        )
+
+    # alert email
+    request.user.email_user(
+        subject="Alert! An attempt to update your email.",
+        message=render_to_string(
+            "users/email_change/update_info_email.html",
+            {
+                "name": request.user.get_full_name(),
+                "username": request.user.get_username(),
+                "org_email": settings.ORG_EMAIL,
+                "org_short_name": settings.ORG_SHORT_NAME,
+                "org_long_name": settings.ORG_LONG_NAME,
+            },
+        ),
+        from_email=settings.DEFAULT_FROM_EMAIL,
+    )
+    return redirect("users:confirm_link_sent")
 
 
 @method_decorator(login_required, name="dispatch")

@@ -10,7 +10,6 @@ from .views import (
     BackupTokensView,
     EmailChangeConfirmationView,
     EmailChangeDoneView,
-    EmailChangePasswordView,
     LoginView,
     PasswordLessLoginSignupView,
     PasswordlessLoginView,
@@ -23,6 +22,7 @@ from .views import (
     TWOFADisableView,
     TWOFARequiredMessageView,
     TWOFASetupView,
+    account_email_change,
     become,
     create_password,
     oauth,
@@ -60,14 +60,14 @@ account_urls = [
         name="account",
     ),
     path(
+        "change-email/",
+        account_email_change,
+        name="email_change_confirm_password",
+    ),
+    path(
         "password/",
         include(
             [
-                path(
-                    "",
-                    EmailChangePasswordView.as_view(),
-                    name="email_change_confirm_password",
-                ),
                 path(
                     "change/",
                     ratelimit(
