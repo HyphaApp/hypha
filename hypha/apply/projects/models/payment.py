@@ -27,16 +27,16 @@ PAID = "paid"
 DECLINED = "declined"
 
 INVOICE_STATUS_BG_COLORS = {
-    'Submitted': 'bg-gray-200',
-    'Paid': 'bg-green-200',
-    'Resubmitted': 'bg-cyan-200',
-    'Approved by Finance 2': 'bg-blue-200',
-    'Approved by Finance 1': 'bg-blue-100',
-    'Approved by Staff': 'bg-yellow-100',
-    'Changes Requested by Finance 2': 'bg-yellow-200',
-    'Changes Requested by Staff': 'bg-rose-200',
-    'Changes Requested by Finance 1': 'bg-rose-100',
-    'Declined': 'bg-red-200',
+    "Submitted": "gray",
+    "Paid": "green",
+    "Resubmitted": "stone",
+    "Approved by Finance 2": "cyan",
+    "Approved by Finance 1": "blue",
+    "Approved by Staff": "violet",
+    "Changes Requested by Finance 2": "orange",
+    "Changes Requested by Staff": "rose",
+    "Changes Requested by Finance 1": "pink",
+    "Declined": "red",
 }
 
 INVOICE_STATUS_CHOICES = [

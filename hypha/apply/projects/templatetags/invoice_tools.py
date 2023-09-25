@@ -3,13 +3,13 @@ import decimal
 from django import template
 
 from hypha.apply.activity.templatetags.activity_tags import display_for
+from hypha.apply.projects.models.payment import INVOICE_STATUS_BG_COLORS
 from hypha.apply.projects.models.project import (
     CLOSING,
     COMPLETE,
     INVOICING_AND_REPORTING,
     ProjectSettings,
 )
-from hypha.apply.projects.models.payment import INVOICE_STATUS_BG_COLORS
 from hypha.apply.projects.utils import get_invoice_public_status
 
 register = template.Library()
@@ -107,5 +107,5 @@ def display_invoice_status_for_user(user, invoice):
 
 
 @register.filter
-def invoice_status_bg_colour(invoice_status):
-    return INVOICE_STATUS_BG_COLORS.get(invoice_status, 'bg-gray-200')
+def invoice_status_colour(invoice_status):
+    return INVOICE_STATUS_BG_COLORS.get(invoice_status, "gray")
