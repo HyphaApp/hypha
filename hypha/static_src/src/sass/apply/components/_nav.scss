@@ -24,7 +24,7 @@
 
     &__item {
         @include media-query(tablet-portrait) {
-            margin-right: 75px;
+            margin-right: 50px;
 
             &:last-child {
                 margin-right: 0;

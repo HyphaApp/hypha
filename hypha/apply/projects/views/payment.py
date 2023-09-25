@@ -345,8 +345,23 @@ class InvoicePrivateMedia(UserPassesTestMixin, PrivateMediaView):
 
 
 @method_decorator(staff_or_finance_required, name="dispatch")
-class InvoiceListView(SingleTableMixin, FilterView):
+class InvoiceListAdminView(SingleTableMixin, FilterView):
     filterset_class = InvoiceListFilter
     model = Invoice
     table_class = InvoiceListTable
     template_name = "application_projects/invoice_list.html"
+
+
+class InvoiceListApplicantView(SingleTableMixin, FilterView):
+    filterset_class = InvoiceListFilter
+    table_class = InvoiceListTable
+    template_name = "application_projects/invoice_list.html"
+
+    def get_queryset(self):
+        return Invoice.objects.filter(project__user=self.request.user)
+
+
+class InvoiceListView(ViewDispatcher):
+    admin_view = InvoiceListAdminView
+    finance_view = InvoiceListAdminView
+    applicant_view = InvoiceListApplicantView

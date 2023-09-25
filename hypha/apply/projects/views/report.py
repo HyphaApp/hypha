@@ -11,7 +11,7 @@ from django_tables2 import SingleTableMixin
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.users.decorators import staff_or_finance_required, staff_required
 from hypha.apply.utils.storage import PrivateMediaView
-from hypha.apply.utils.views import DelegatedViewMixin
+from hypha.apply.utils.views import DelegatedViewMixin, ViewDispatcher
 
 from ..filters import ReportListFilter
 from ..forms import ReportEditForm, ReportFrequencyForm
@@ -233,8 +233,29 @@ class ReportFrequencyUpdate(DelegatedViewMixin, UpdateView):
 
 
 @method_decorator(staff_or_finance_required, name="dispatch")
-class ReportListView(SingleTableMixin, FilterView):
+class ReportListAdminView(SingleTableMixin, FilterView):
     queryset = Report.objects.submitted().for_table()
     filterset_class = ReportListFilter
     table_class = ReportListTable
     template_name = "application_projects/report_list.html"
+
+
+@method_decorator(login_required, name="dispatch")
+class ReportListApplicantView(SingleTableMixin, FilterView):
+    filterset_class = ReportListFilter
+    table_class = ReportListTable
+    template_name = "application_projects/report_list.html"
+
+    def get_queryset(self):
+        return (
+            Report.objects.filter(project__user=self.request.user)
+            .submitted()
+            .for_table()
+        )
+
+
+@method_decorator(login_required, name="dispatch")
+class ReportListView(ViewDispatcher):
+    admin_view = ReportListAdminView
+    finance_view = ReportListAdminView
+    applicant_view = ReportListApplicantView

@@ -1,0 +1,18 @@
+{% load dashboard_statusbar_tags %}
+<div class="status-bar {{ class }}">
+    {% for status, text in statuses %}
+        {% if forloop.counter0 == current_status_index %}
+            {% include "funds/includes/status_bar_item.html" with is_current=True is_complete=False label=text %}
+        {% elif forloop.counter0 < current_status_index %}
+            {% include "funds/includes/status_bar_item.html" with is_current=False is_complete=True label=text %}
+        {% else %}
+            {% include "funds/includes/status_bar_item.html" with is_current=False is_complete=False label=text %}
+        {% endif %}
+    {% endfor %}
+</div>
+
+<div class="status-bar--mobile">
+    <h6 class="status-bar__subheading">
+        {{ object.get_status_display }}
+    </h6>
+</div>
