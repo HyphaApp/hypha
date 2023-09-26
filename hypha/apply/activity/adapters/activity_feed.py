@@ -71,7 +71,6 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.UNARCHIVE_SUBMISSION: _(
             "{user} has unarchived the submission: {source.title}"
         ),
-        MESSAGES.APPROVE_INVOICE: _("Approved an invoice"),
         MESSAGES.DELETE_INVOICE: _("Deleted an invoice"),
     }
 
