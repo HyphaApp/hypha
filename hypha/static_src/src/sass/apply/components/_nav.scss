@@ -17,15 +17,18 @@
         @include media-query(tablet-portrait) {
             flex-direction: row;
             justify-content: center;
+            gap: 2rem;
             margin-top: 0;
             text-transform: none;
+        }
+
+        @include media-query(tablet-landscape) {
+            gap: 3rem;
         }
     }
 
     &__item {
         @include media-query(tablet-portrait) {
-            margin-right: 75px;
-
             &:last-child {
                 margin-right: 0;
             }
