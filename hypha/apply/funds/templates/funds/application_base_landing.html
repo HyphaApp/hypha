@@ -6,29 +6,57 @@
     <div class="wrapper max-w-2xl mt-8">
         {% if form_submission.status == 'draft' %}
             <h3>{% trans "Your application is saved as a draft." %}</h3>
+
+            <p>{% trans "Please note that your application is not submitted for review." %}</p>
+
+            {% if request.user.is_authenticated %}
+                <p>{% trans "You can access your applications from your dashboard. From there, you can complete and submit them." %}</p>
+            {% else %}
+                <p>{% trans "You can complete your application by following the log-in details emailed to you." %}</p>
+            {% endif %}
+
         {% else %}
             <h3>{% blocktrans %}Thank you for your submission to the {{ ORG_LONG_NAME }}.{% endblocktrans %}</h3>
-        {% endif %}
-        <div class="rich-text">
-            {% if form_submission.status == 'draft' %}
-                <p>{% trans "Please note that it is not submitted for review. You can complete your application by following the log-in details emailed to you." %}</p>
-            {% else %}
-                <p>{% trans "An e-mail with more information has been sent to the address you entered." %}</p>
-            {% endif %}
-            <p>
-                {% blocktrans with email=ORG_EMAIL|urlize %}If you do not receive an e-mail within 15 minutes please check your spam folder and contact {{ email }} for further assistance.{% endblocktrans %}</p>
 
-            {% with email_context=page.specific %}<p>{{ email_context.confirmation_text_extra|urlize }}</p>{% endwith %}
-
-            {% block extra_text %}{{ settings.funds.ApplicationSettings.extra_text_round|richtext }}{% endblock %}
+            <p>{% trans "An e-mail with more information has been sent to the address you entered." %}</p>
 
             <p>
-                {% if request.user.is_authenticated %}
-                    <a href="{% url 'dashboard:dashboard' %}"><button class="button button--primary">{% blocktrans %}Go to my dashboard.{% endblocktrans %}</button></a>
-                {% else %}
-                    <a href="{% url 'users_public:login' %}"><button class="button button--primary">{% blocktrans %}Log in{% endblocktrans %}</button></a>
-                {% endif %}
+                {% blocktrans with email=ORG_EMAIL|urlize %}
+                    If you do not receive an e-mail within 15 minutes
+                    please check your spam folder and contact {{ email }}
+                    for further assistance.
+                {% endblocktrans %}
             </p>
+
+            {% with email_context=page.specific %}
+                <p>{{ email_context.confirmation_text_extra|urlize }}</p>
+            {% endwith %}
+
+            {% block extra_text %}
+                <div class="prose">
+                    {{ settings.funds.ApplicationSettings.extra_text_round|richtext }}
+                </div>
+            {% endblock %}
+
+        {% endif %}
+
+        <div class="mt-4">
+            {% if request.user.is_authenticated %}
+                <a
+                    class="button button--primary"
+                    href="{% url 'dashboard:dashboard' %}"
+                >
+                    {% trans "Go to your dashboard" %}
+                </a>
+            {% else %}
+                <a
+                    class="button button--primary"
+                    href="{% url 'users_public:login' %}"
+                >
+                    {% trans "Log in" %}
+                </a>
+            {% endif %}
         </div>
+
     </div>
 {% endblock %}
