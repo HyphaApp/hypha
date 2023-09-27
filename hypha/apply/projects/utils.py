@@ -125,7 +125,7 @@ def get_invoice_public_status(invoice_status):
         invoice_status in [APPROVED_BY_FINANCE, CHANGES_REQUESTED_BY_FINANCE_2]
         and settings.INVOICE_EXTENDED_WORKFLOW
     ):
-        return _("Pending Approval")
+        return _("Pending approval")
     if (invoice_status == APPROVED_BY_FINANCE) or (
         invoice_status == APPROVED_BY_FINANCE_2 and settings.INVOICE_EXTENDED_WORKFLOW
     ):
