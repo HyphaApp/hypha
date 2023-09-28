@@ -13,7 +13,7 @@ from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
-from hypha.apply.activity.models import ALL, COMMENT, Activity
+from hypha.apply.activity.models import APPLICANT, COMMENT, Activity
 from hypha.apply.users.decorators import staff_or_finance_required
 from hypha.apply.utils.storage import PrivateMediaView
 from hypha.apply.utils.views import DelegateableView, DelegatedViewMixin, ViewDispatcher
@@ -73,7 +73,7 @@ class ChangeInvoiceStatusView(DelegatedViewMixin, InvoiceAccessMixin, UpdateView
                 source=self.object.project,
                 timestamp=timezone.now(),
                 message=message,
-                visibility=ALL,
+                visibility=APPLICANT,
                 related_object=self.object,
             )
 
@@ -212,7 +212,7 @@ class CreateInvoiceView(CreateView):
                 source=self.project,
                 timestamp=timezone.now(),
                 message=message,
-                visibility=ALL,
+                visibility=APPLICANT,
                 related_object=self.object,
             )
 
@@ -293,7 +293,7 @@ class EditInvoiceView(InvoiceAccessMixin, UpdateView):
                     source=self.object.project,
                     timestamp=timezone.now(),
                     message=message,
-                    visibility=ALL,
+                    visibility=APPLICANT,
                     related_object=self.object,
                 )
 
