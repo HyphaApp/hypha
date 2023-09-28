@@ -32,7 +32,7 @@
         <div class="wrapper wrapper--large wrapper--tabs">
             <div class="wrapper wrapper--sidebar">
                 <article class="wrapper--sidebar--inner">
-                    <h4>{% trans "Project Information" %}</h4>
+                    <h4 class="mb-2">{% trans "Project Information" %}</h4>
                     <div class="card card--solid">
 
                         {% if object.output_answers %}
@@ -49,7 +49,7 @@
                         {% endif %}
                     </div>
 
-                    <h4>{% trans "Approvals" %}</h4>
+                    <h4 class="mb-2">{% trans "Approvals" %}</h4>
                     <div class="card card--solid">
                         {% for approval in project.paf_approvals.all %}
                             {% if approval.approved %}
@@ -60,7 +60,7 @@
                         {% endfor %}
                     </div>
 
-                    <h4>{% trans "Review" %}</h4>
+                    <h4 class="mb-2">{% trans "Review" %}</h4>
                     <div class="card card--solid">
                         <p class="font-bold mb-0 mt-0">{% trans "Submission lead" %}</p>
                         <p class="mt-2 mb-0">{{ project.submission.lead }}</p>
@@ -87,7 +87,7 @@
                         {% endfor %}
                     </div>
 
-                    <h4>{% trans "Supporting Documents" %}</h4>
+                    <h4 class="mb-2">{% trans "Supporting Documents" %}</h4>
                     <div class="card card--solid">
                         <p><a href="{% url 'apply:submissions:simplified' pk=object.submission_id %}">{% trans "Submission" %}</a></p>
                         {% for packet_file in object.packet_files.all %}
