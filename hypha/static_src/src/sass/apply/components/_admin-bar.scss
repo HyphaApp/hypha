@@ -48,6 +48,10 @@
         }
     }
 
+    &__tabs {
+        padding: 20px 20px 0px 20px;
+    }
+
     .app-open & .submissions-count {
         display: none;
     }

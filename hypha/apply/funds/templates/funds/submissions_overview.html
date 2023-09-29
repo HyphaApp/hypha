@@ -5,41 +5,25 @@
 
 {% block content %}
 
-    {% adminbar %}
-        {% slot header %}{% trans "Submissions" %}{% endslot %}
-        {% slot sub_heading %}{% trans "Track and explore recent submissions" %}{% endslot %}
-
-        {% if request.user.is_apply_staff %}
-            <div class="flex mt-2 md:m-0 gap-3 justify-center items-center font-medium uppercase">
-                <a class="px-3 py-2 text-gray-300 transition-colors hover:bg-slate-50 rounded hover:text-gray-800"
-                   href="{% url 'apply:submissions:list' %}"
-                   title="Goto all submissions list page"
-                >
-                    {% trans "All" %}
-                </a>
-                <a class="px-3 py-2 text-gray-300 transition-colors hover:bg-slate-50 rounded hover:text-gray-800"
-                   href="{% url 'apply:submissions:staff_assignments' %}"
-                >
-                    {% trans "Staff assignments" %}
-                </a>
-                <a class="px-3 py-2 text-gray-300 transition-colors hover:bg-slate-50 rounded hover:text-gray-800"
-                   href="{% url 'apply:submissions:reviewer_leaderboard' %}"
-                >
-                    {% trans "Reviews" %}
-                </a>
-                <a class="px-3 py-2 text-gray-300 transition-colors hover:bg-slate-50 rounded hover:text-gray-800"
-                   href="{% url 'apply:submissions:result' %}">
-                    {% trans "Results" %}
-                </a>
+    <div class="admin-bar admin-bar__tabs bg-arsenic text-white pb-0">
+        <div class="admin-bar__inner text-center md:justify-between">
+            <div>
+                <h1 class="text-2xl mb-0 md:text-3xl font-bold md:m-0">{% trans "Submissions" %}</h1>
             </div>
-        {% endif %}
 
-    {% endadminbar %}
+            {% if request.user.is_applicant %}
+                <div class="flex mt-4">
+                    <a class="flex-1 text-right mr-5 text-white" href="#active">{% trans "Active submissions" %}</a>
+                    <a class="flex-1 text-left text-white" href="#past">{% trans "Past submissions" %}</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
 
     <div class="wrapper wrapper--large wrapper--inner-space-medium">
 
         {% if not request.user.is_applicant %}
-        {% include "funds/includes/status-block.html" with type="Applications" %}
+            {% include "funds/includes/status-block.html" with type="Applications" %}
         {% endif %}
 
         {% if closed_rounds or open_rounds %}
@@ -53,9 +37,9 @@
 
                 {% render_table table %}
                 {% if not request.user.is_applicant %}
-                <div class="all-submissions-table__more">
-                    <a href="{% url 'apply:submissions:list' %}">{% trans "Show all" %}</a>
-                </div>
+                    <div class="all-submissions-table__more">
+                        <a href="{% url 'apply:submissions:list' %}">{% trans "Show all" %}</a>
+                    </div>
                 {% endif %}
             </div>
 
