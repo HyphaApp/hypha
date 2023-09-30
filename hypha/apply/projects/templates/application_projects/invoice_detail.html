@@ -19,9 +19,8 @@
             <div class="card card--solid">
                 <p class="card__text"><b>{% trans "Invoice number" %}:</b> {{ object.invoice_number }}</p>
                 {% is_vendor_setup request as show_vendor_information %}
-                {% if show_vendor_information %}
-                    <p class="card__text"><b>{% trans "Vendor" %}:</b> {{ object.project.vendor.name }}</p>
-                {% endif %}
+                <p class="card__text"><b>{% trans "Vendor" %}:</b>
+                    {% if show_vendor_information %}{{ object.project.vendor.name }}{% else %}{{ object.project.user }}{% endif %}</p>
                 <p class="card__text"><b>{% trans "Lead" %}:</b> {{ object.project.lead }}</p>
                 <p class="card__text"><b>{% trans "Fund" %}:</b> {{ object.project.submission.page }}</p>
             </div>
@@ -29,18 +28,32 @@
                 <div class="flex-none">
                     <p><b>{% trans "Status" %}: </b></p>
                 </div>
-                <div class="flex-1 pl-2">
+                <div class="pl-2">
                     {% extract_status latest_activity user as latest_activity_status %}
-                    <p>{{ latest_activity_status }} ({{ latest_activity.user }})</p>
+                    {% get_comment_for_invoice_action object latest_activity as latest_activity_comment %}
+                    <p>{{ latest_activity_status }} {% if user.is_applicant and latest_activity.user != user %} ({{ ORG_SHORT_NAME }}){% else %}({{ latest_activity.user }}){% endif %}
+                        <span class="text-gray-400">{{ latest_activity.timestamp }}</span>
+                        {% if latest_activity_comment %}
+                            <svg class="icon icon--request-changes"><use xlink:href="#request-changes"></use></svg>
+                            <a href="{% url 'apply:projects:detail' pk=object.project.id %}#communications#{{ latest_activity_comment.id }}" class="font-bold" target="_blank">View comment</a>
+                        {% endif %}
+                    </p>
                     {% for activity in activities %}
                         {% extract_status activity user as activity_status %}
-                        <p x-show="!collapsed">{{ activity_status }} ({{ activity.user }})</p>
+                        {% get_comment_for_invoice_action object activity as activity_comment %}
+                        <p x-show="!collapsed">{{ activity_status }} {% if user.is_applicant and activity.user != user %} ({{ ORG_SHORT_NAME }}){% else %}({{ activity.user }}){% endif %}
+                            <span class="text-gray-400">{{ activity.timestamp }}</span>
+                            {% if activity_comment %}
+                                <svg class="icon icon--request-changes"><use xlink:href="#request-changes"></use></svg>
+                                <a href="{% url 'apply:projects:detail' pk=object.project.id %}#communications#{{ activity_comment.id }}" class="font-bold" target="_blank">View comment</a>
+                            {% endif %}
+                        </p>
                     {% endfor %}
                 </div>
                 <div class="flex-1 text-right" x-on:click="collapsed = ! collapsed" role="button">
-                    <p class="font-bold text-light-blue" x-show="collapsed">{% trans "View status history" %}
+                    <p class="font-bold text-light-blue" x-show="collapsed">{% trans "View" %}
                         <svg class="icon icon--arrow-down top-1"  aria-hidden=true><use xlink:href="#arrow-down"></use></svg></p>
-                    <p class="font-bold text-light-blue" x-show="!collapsed">{% trans "Hide status history" %}
+                    <p class="font-bold text-light-blue" x-show="!collapsed">{% trans "Hide" %}
                         <svg class="icon icon--arrow-up top-1" aria-hidden=true><use xlink:href="#arrow-up"></use></svg></p>
 
                 </div>

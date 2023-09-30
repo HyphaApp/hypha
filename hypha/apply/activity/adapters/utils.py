@@ -7,7 +7,7 @@ from django.utils.translation import gettext as _
 from hypha.apply.activity.options import MESSAGES
 from hypha.apply.projects.models import ProjectSettings
 from hypha.apply.projects.models.payment import (
-    APPROVED_BY_FINANCE_1,
+    APPROVED_BY_FINANCE,
     APPROVED_BY_FINANCE_2,
     CHANGES_REQUESTED_BY_STAFF,
     DECLINED,
@@ -64,10 +64,7 @@ def is_invoice_public_transition(invoice):
         PAID,
     ]:
         return True
-    if (
-        not settings.INVOICE_EXTENDED_WORKFLOW
-        and invoice.status == APPROVED_BY_FINANCE_1
-    ):
+    if not settings.INVOICE_EXTENDED_WORKFLOW and invoice.status == APPROVED_BY_FINANCE:
         return True
     return False
 

@@ -8,7 +8,7 @@ from .models import Invoice, Project, Report
 
 
 class BaseInvoiceTable(tables.Table):
-    vendor_document_number = tables.LinkColumn(
+    invoice_number = tables.LinkColumn(
         "funds:projects:invoice-detail",
         verbose_name=_("Invoice Number"),
         args=[tables.utils.A("project__pk"), tables.utils.A("pk")],

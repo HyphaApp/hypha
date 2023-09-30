@@ -154,7 +154,12 @@
     }
 
     &__paf_answers {
+        section {
+            margin: 0 0 1.5rem;
+        }
+
         h4 {
+            margin: 0;
             font-size: 16px;
         }
     }

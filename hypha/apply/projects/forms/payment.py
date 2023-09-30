@@ -11,15 +11,16 @@ from django_file_form.forms import FileFormMixin
 from hypha.apply.stream_forms.fields import MultiFileField, SingleFileField
 
 from ..models.payment import (
-    APPROVED_BY_FINANCE_1,
+    APPROVED_BY_FINANCE,
     APPROVED_BY_FINANCE_2,
     APPROVED_BY_STAFF,
-    CHANGES_REQUESTED_BY_FINANCE_1,
+    CHANGES_REQUESTED_BY_FINANCE,
     CHANGES_REQUESTED_BY_FINANCE_2,
     CHANGES_REQUESTED_BY_STAFF,
     DECLINED,
     INVOICE_STATUS_CHOICES,
     PAID,
+    PAYMENT_FAILED,
     RESUBMITTED,
     SUBMITTED,
     Invoice,
@@ -59,27 +60,29 @@ class ChangeInvoiceStatusForm(forms.ModelForm):
             ),
             APPROVED_BY_STAFF: filter_request_choices(
                 [
-                    CHANGES_REQUESTED_BY_FINANCE_1,
-                    APPROVED_BY_FINANCE_1,
+                    CHANGES_REQUESTED_BY_FINANCE,
+                    APPROVED_BY_FINANCE,
                 ],
                 user_choices,
             ),
-            CHANGES_REQUESTED_BY_FINANCE_1: filter_request_choices(
+            CHANGES_REQUESTED_BY_FINANCE: filter_request_choices(
                 [CHANGES_REQUESTED_BY_STAFF, DECLINED], user_choices
             ),
-            APPROVED_BY_FINANCE_1: filter_request_choices([PAID], user_choices),
+            APPROVED_BY_FINANCE: filter_request_choices([PAID], user_choices),
+            PAID: filter_request_choices([PAYMENT_FAILED], user_choices),
+            PAYMENT_FAILED: filter_request_choices([PAID], user_choices),
         }
         if settings.INVOICE_EXTENDED_WORKFLOW:
             possible_status_transitions_lut.update(
                 {
                     CHANGES_REQUESTED_BY_FINANCE_2: filter_request_choices(
                         [
-                            CHANGES_REQUESTED_BY_FINANCE_1,
-                            APPROVED_BY_FINANCE_1,
+                            CHANGES_REQUESTED_BY_FINANCE,
+                            APPROVED_BY_FINANCE,
                         ],
                         user_choices,
                     ),
-                    APPROVED_BY_FINANCE_1: filter_request_choices(
+                    APPROVED_BY_FINANCE: filter_request_choices(
                         [CHANGES_REQUESTED_BY_FINANCE_2, APPROVED_BY_FINANCE_2],
                         user_choices,
                     ),
