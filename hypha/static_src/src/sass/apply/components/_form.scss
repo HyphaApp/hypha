@@ -103,10 +103,8 @@
         &--single_file_field,
         &--file_field {
             @include button($color--light-blue, $color--darkest-blue);
-            max-width: 290px;
+            max-width: 15rem;
             text-align: center;
-            background: url("./../../images/upload.svg") $color--light-blue
-                no-repeat 20px center;
             border: 0;
 
             .no-js & {
@@ -118,9 +116,6 @@
             }
 
             &:hover {
-                background: url("./../../images/upload.svg") $color--dark-blue
-                    no-repeat 20px center;
-
                 .no-js & {
                     background: none;
                 }

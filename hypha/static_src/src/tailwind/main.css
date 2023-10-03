@@ -6,6 +6,7 @@
 @import "tailwindcss/components";
 @import "./components/choices.css";
 @import "./components/daterangepicker.css";
+@import "./components/django-file-field.css";
 
 @import "tailwindcss/utilities";
 /* @import "./custom-utilities.css"; */
