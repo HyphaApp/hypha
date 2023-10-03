@@ -4,11 +4,10 @@
 {% block title %}{% trans "Deleting" %}: {{object.title }}{% endblock %}
 
 {% block content %}
-    <div class="admin-bar">
-        <div class="admin-bar__inner">
-            <h2 class="heading heading--no-margin">{% trans "Deleting" %}: {{ object.title }}</h2>
-        </div>
-    </div>
+
+    {% adminbar %}
+        {% slot header %}{% trans "Deleting" %}: {{ object.title }}{% endslot %}
+    {% endadminbar %}
 
     <div class="wrapper wrapper--light-grey-bg wrapper--form wrapper--sidebar">
         <div class="wrapper--sidebar--inner">
