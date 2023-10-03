@@ -3,11 +3,11 @@
 
 {% block title %}{% trans "Contractor Setup Completed" %}{% endblock %}
 {% block content %}
-    <div class="admin-bar">
-        <div class="admin-bar__inner">
-            <h2 class="heading heading--no-margin">{% trans "Contractor Setup Completed" %}</h2>
-        </div>
-    </div>
+
+    {% adminbar %}
+        {% slot header %}{% trans "Contractor Setup Completed" %}{% endslot %}
+    {% endadminbar %}
+
     <div class="wrapper wrapper--small">
         <h3>{% trans "Thank you for submitting your information." %}</h3>
         <p>{% trans "Your {{ ORG_SHORT_NAME }} Programme Manager will be in touch with you if there are any issues." %}</p>
