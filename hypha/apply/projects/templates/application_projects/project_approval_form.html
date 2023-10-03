@@ -2,14 +2,15 @@
 {% load i18n static %}
 {% block title %}{% trans "Editing" %}: {{object.title }}{% endblock %}
 {% block content %}
-    <div class="admin-bar">
-        <div class="admin-bar__inner">
+
+    {% adminbar %}
+        {% slot back_link %}
             <a class="simplified__projects-link" href="{{ object.get_absolute_url }}">
                 {% trans "View project page" %}
             </a>
-            <h2 class="heading heading--no-margin">{% trans "Editing" %}: {{ object.title }}</h2>
-        </div>
-    </div>
+        {% endslot %}
+        {% slot header %}{% trans "Editing" %}: {{ object.title }}{% endslot %}
+    {% endadminbar %}
 
     {% if approval_form_exists %}
 
