@@ -1,6 +1,6 @@
 {% extends "base-apply.html" %}
 {% load render_table from django_tables2 %}
-{% load i18n static wagtailcore_tags workflow_tags statusbar_tags heroicons dashboard_statusbar_tags %}
+{% load i18n static wagtailcore_tags workflow_tags statusbar_tags heroicons dashboard_statusbar_tags apply_tags invoice_tools %}
 
 {% block title %}{% trans "Dashboard" %}{% endblock %}
 
@@ -76,6 +76,35 @@
                         {% endfor %}
                     </div>
                 {% endif %}
+                <div class="mb-10">
+                    <div class="flex">
+                        <h2 class="font-light flex-1">{% trans "My active invoices" %}</h2>
+                    </div>
+                    {% for invoice in active_invoices.data %}
+                        <div class="wrapper wrapper--status-bar-outer">
+                            <div class="wrapper wrapper--status-bar-inner pl-4 pr-4">
+                                <div class="max-w-[33%] w-full text-left my-auto">
+                                    <h4 class="heading heading--no-margin font-bold"><a class="link link--underlined" href="{{ invoice.get_absolute_url }}">
+                                        {% if invoice.invoice_number %}{{ invoice.invoice_number }}{% else %}{{ invoice.vendor_document_number }}{% endif %}
+                                    </a></h4>
+                                    <p class="m-0 text-gray-400">{% trans "Date added: " %} {{ invoice.requested_at }}</p>
+                                </div>
+                                <div class="max-w-[33%] w-full text-center my-auto">
+                                    <p class="text-2xl">{% if invoice.invoice_amount %}{{ invoice.invoice_amount | format_number_as_currency }}{% else %}-{% endif %}</p>
+                                </div>
+                                <div class="max-w-[33%] w-full flex my-auto">
+                                    {% display_invoice_table_status_for_user invoice.status request.user as invoice_status %}
+                                    <div class="w-full flex-1"></div>
+                                    <div class="max-w-fit w-full text-right">
+                                        <p class="{{ invoice_status|invoice_status_bg_color }} text-base py-2 px-3 {{ invoice_status|invoice_status_fg_color }}">{{ invoice_status }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        {% trans "No active invoices" %}
+                    {% endfor %}
+                </div>
             </div>
 
             {% if historical_submissions.count %}
