@@ -60,6 +60,20 @@
         }
     }
 
+    // This is a hack to make sure a copy pasted table with width property on it
+    // doesn't break the layout. The margin from the table is removed and transferred
+    // to the parent element, because the table is wrapped in a div with overflow: auto
+    &__table {
+        overflow: auto;
+        margin-top: 1.25em;
+        margin-bottom: 1.25em;
+
+        > table {
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+    }
+
     ul {
         &.remove-list-style {
             padding: 0;
