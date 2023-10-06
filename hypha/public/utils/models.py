@@ -320,6 +320,12 @@ class SystemMessagesSettings(BaseGenericSetting):
         ),
     )
 
+    header_content = models.TextField(
+        "Header content",
+        help_text=_("This will overwrite the default header, html tags is allowed."),
+        blank=True
+    )
+
     footer_content = models.TextField(
         "Footer content",
         default="<p>Configure this text in Wagtail admin -> Settings -> System settings.</p>",
@@ -345,6 +351,7 @@ class SystemMessagesSettings(BaseGenericSetting):
             ],
             "Site logo",
         ),
+        FieldPanel("header_content"),
         FieldPanel("footer_content"),
         MultiFieldPanel(
             [
