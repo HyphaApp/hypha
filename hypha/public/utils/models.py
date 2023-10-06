@@ -323,7 +323,7 @@ class SystemMessagesSettings(BaseGenericSetting):
     header_content = models.TextField(
         "Header content",
         help_text=_("This will overwrite the default header, html tags is allowed."),
-        blank=True
+        blank=True,
     )
 
     footer_content = models.TextField(

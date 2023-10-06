@@ -4,15 +4,18 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('utils', '0007_remove_systemmessagessettings_site'),
+        ("utils", "0007_remove_systemmessagessettings_site"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='systemmessagessettings',
-            name='header_content',
-            field=models.TextField(blank=True, help_text='This will overwrite the default header, html tags is allowed.', verbose_name='Header content'),
+            model_name="systemmessagessettings",
+            name="header_content",
+            field=models.TextField(
+                blank=True,
+                help_text="This will overwrite the default header, html tags is allowed.",
+                verbose_name="Header content",
+            ),
         ),
     ]
