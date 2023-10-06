@@ -164,6 +164,13 @@
         stroke: $color--light-blue;
     }
 
+    &--side-arrow {
+        position: relative;
+        align-self: center;
+        width: 8px;
+        height: 30px;
+    }
+
     &--arrow-up-short-bar {
         position: relative;
         align-self: center;

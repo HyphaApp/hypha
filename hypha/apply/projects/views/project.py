@@ -37,7 +37,7 @@ from xhtml2pdf import pisa
 
 from hypha.apply.activity.adapters.utils import get_users_for_groups
 from hypha.apply.activity.messaging import MESSAGES, messenger
-from hypha.apply.activity.models import ACTION, ALL, COMMENT, Activity
+from hypha.apply.activity.models import ACTION, ALL, COMMENT, TEAM, Activity
 from hypha.apply.activity.views import ActivityContextMixin, CommentFormView
 from hypha.apply.stream_forms.models import BaseStreamForm
 from hypha.apply.users.decorators import (
@@ -535,13 +535,6 @@ class UploadContractDocumentView(DelegatedViewMixin, CreateView):
         form.instance.project = project
         response = super().form_valid(form)
 
-        messenger(
-            MESSAGES.UPLOAD_DOCUMENT,
-            request=self.request,
-            user=self.request.user,
-            source=project,
-        )
-
         messages.success(
             self.request,
             _("Contracting document has been uploaded"),
@@ -610,10 +603,11 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
             source=self.object,
             timestamp=timezone.now(),
             message=paf_status_update_message,
-            visibility=ALL,
+            visibility=TEAM,
         )
 
         if paf_status == REQUEST_CHANGE:
+            old_stage = self.object.status
             self.object.status = DRAFT
             self.object.save(update_fields=["status"])
             paf_approval.save()
@@ -628,6 +622,13 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
                 user=self.request.user,
                 source=self.object,
                 comment=comment,
+            )
+            messenger(
+                MESSAGES.PROJECT_TRANSITION,
+                request=self.request,
+                user=self.request.user,
+                source=self.object,
+                related=old_stage,
             )
             messages.success(
                 self.request,
@@ -673,7 +674,7 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
                 source=self.object,
                 timestamp=timezone.now(),
                 message=message,
-                visibility=ALL,
+                visibility=TEAM,
             )
 
         if self.object.is_approved_by_all_paf_reviewers:
@@ -1130,7 +1131,7 @@ class ContractDocumentPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
 
 @method_decorator(staff_or_finance_or_contracting_required, name="dispatch")
 class ProjectDetailApprovalView(DelegateableView, DetailView):
-    form_views = [ChangePAFStatusView]
+    form_views = [ChangePAFStatusView, UpdateAssignApproversView]
     model = Project
     template_name_suffix = "_approval_detail"
 

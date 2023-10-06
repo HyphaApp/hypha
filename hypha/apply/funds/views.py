@@ -1271,6 +1271,16 @@ class BaseSubmissionEditView(UpdateView):
         yield ("save", "white", _("Save draft"))
 
     def get_form_kwargs(self):
+        """
+        Returns the keyword arguments for instantiating the form.
+
+        This method is called by the form mixin during form instantiation.
+        It returns a dictionary of keyword arguments that will be passed to
+        the form's constructor.
+
+        Returns:
+            dict: A dictionary of keyword arguments for the form constructor.
+        """
         kwargs = super().get_form_kwargs()
         instance = kwargs.pop("instance").from_draft()
         initial = instance.raw_data
@@ -1292,13 +1302,36 @@ class BaseSubmissionEditView(UpdateView):
             for f in initial_file
         ]
 
+    def save_draft_and_refresh_page(self, form) -> HttpResponseRedirect:
+        self.object.create_revision(draft=True, by=self.request.user)
+        form.delete_temporary_files()
+        messages.success(self.request, _("Draft saved"))
+        return HttpResponseRedirect(
+            reverse_lazy("funds:submissions:edit", args=(self.object.id,))
+        )
+
     def get_context_data(self, **kwargs):
         return super().get_context_data(buttons=self.buttons(), **kwargs)
 
     def get_form_class(self):
-        draft = self.request.POST.get("save", False)
+        """
+        Returns the form class for the view.
+
+        This method is called by the view during form instantiation. It returns
+        the form class that will be used to render the form.
+
+        When trying to save as draft, this method will return a version of form
+        class that doesn't validate required fields while saving.
+
+        The method also disables any group toggle fields in the form, as they
+        are not supported on edit forms.
+
+        Returns:
+            class: The form class for the view.
+        """
+        is_draft = True if "save" in self.request.POST else False
         form_fields = self.object.get_form_fields(
-            draft, self.object.raw_data, user=self.request.user
+            draft=is_draft, form_data=self.object.raw_data, user=self.request.user
         )
         field_blocks = self.object.get_defined_fields()
         for field_block in field_blocks:
@@ -1316,8 +1349,7 @@ class AdminSubmissionEditView(BaseSubmissionEditView):
         self.object.new_data(form.cleaned_data)
 
         if "save" in self.request.POST:
-            self.object.create_revision(draft=True, by=self.request.user)
-            return self.form_invalid(form)
+            return self.save_draft_and_refresh_page(form=form)
 
         if "submit" in self.request.POST:
             revision = self.object.create_revision(by=self.request.user)
@@ -1370,9 +1402,7 @@ class ApplicantSubmissionEditView(BaseSubmissionEditView):
             self.object.save(update_fields=["submit_time", "round"])
 
         if "save" in self.request.POST:
-            self.object.create_revision(draft=True, by=self.request.user)
-            messages.success(self.request, _("Submission saved successfully"))
-            return self.form_invalid(form)
+            return self.save_draft_and_refresh_page(form=form)
 
         revision = self.object.create_revision(by=self.request.user)
         submitting_proposal = self.object.phase.name in STAGE_CHANGE_ACTIONS

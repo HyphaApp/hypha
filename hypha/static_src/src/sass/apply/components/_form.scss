@@ -134,6 +134,10 @@
         // stylelint-enable selector-class-pattern
     }
 
+    &__file-label {
+        padding-bottom: 0.5rem;
+    }
+
     &__file-list {
         ul {
             margin: 0.5rem 0;

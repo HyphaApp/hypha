@@ -13,7 +13,7 @@ from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
-from hypha.apply.activity.models import ALL, COMMENT, Activity
+from hypha.apply.activity.models import APPLICANT, COMMENT, Activity
 from hypha.apply.users.decorators import staff_or_finance_required
 from hypha.apply.utils.storage import PrivateMediaView
 from hypha.apply.utils.views import DelegateableView, DelegatedViewMixin, ViewDispatcher
@@ -21,7 +21,7 @@ from hypha.apply.utils.views import DelegateableView, DelegatedViewMixin, ViewDi
 from ..filters import InvoiceListFilter
 from ..forms import ChangeInvoiceStatusForm, CreateInvoiceForm, EditInvoiceForm
 from ..models.payment import (
-    APPROVED_BY_FINANCE_1,
+    APPROVED_BY_FINANCE,
     APPROVED_BY_STAFF,
     INVOICE_TRANISTION_TO_RESUBMITTED,
     Invoice,
@@ -73,7 +73,7 @@ class ChangeInvoiceStatusView(DelegatedViewMixin, InvoiceAccessMixin, UpdateView
                 source=self.object.project,
                 timestamp=timezone.now(),
                 message=message,
-                visibility=ALL,
+                visibility=APPLICANT,
                 related_object=self.object,
             )
 
@@ -82,7 +82,7 @@ class ChangeInvoiceStatusView(DelegatedViewMixin, InvoiceAccessMixin, UpdateView
         ) or (
             settings.INVOICE_EXTENDED_WORKFLOW
             and self.request.user.is_finance_level_1
-            and self.object.status == APPROVED_BY_FINANCE_1
+            and self.object.status == APPROVED_BY_FINANCE
         ):
             messenger(
                 MESSAGES.APPROVE_INVOICE,
@@ -212,7 +212,7 @@ class CreateInvoiceView(CreateView):
                 source=self.project,
                 timestamp=timezone.now(),
                 message=message,
-                visibility=ALL,
+                visibility=APPLICANT,
                 related_object=self.object,
             )
 
@@ -293,7 +293,7 @@ class EditInvoiceView(InvoiceAccessMixin, UpdateView):
                     source=self.object.project,
                     timestamp=timezone.now(),
                     message=message,
-                    visibility=ALL,
+                    visibility=APPLICANT,
                     related_object=self.object,
                 )
 

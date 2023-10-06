@@ -55,9 +55,8 @@
                        hx-target="#tab-3 .feed"
                        hx-trigger="open-tab-3 once"
                        data-tab="tab-3"
-                       x-data
+                       x-init="$nextTick(() => { location.hash === '#activity-feed' ? $dispatch('open-tab-3') : '' })"
                        @hashchange.window="location.hash === '#activity-feed' ? $dispatch('open-tab-3') : ''"
-                       x-init="location.hash === '#activity-feed' ? $dispatch('open-tab-3') : ''"
                     >
                         {% trans "Activity feed" %}
                     </a>

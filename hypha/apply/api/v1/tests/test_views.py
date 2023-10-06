@@ -5,7 +5,7 @@ from rest_framework.exceptions import ErrorDetail
 from hypha.apply.activity.models import ALL, APPLICANT, Activity
 from hypha.apply.activity.tests.factories import CommentFactory
 from hypha.apply.projects.models.payment import (
-    APPROVED_BY_FINANCE_1,
+    APPROVED_BY_FINANCE,
     APPROVED_BY_FINANCE_2,
     APPROVED_BY_STAFF,
     SUBMITTED,
@@ -183,7 +183,7 @@ class TestInvoiceDeliverableViewset(TestCase):
     def test_finance2_can_add_deliverables(self):
         user = Finance2Factory()
         project = ProjectFactory()
-        invoice = InvoiceFactory(project=project, status=APPROVED_BY_FINANCE_1)
+        invoice = InvoiceFactory(project=project, status=APPROVED_BY_FINANCE)
         deliverable = DeliverableFactory(project=project)
         self.client.force_login(user)
 
@@ -241,7 +241,7 @@ class TestInvoiceDeliverableViewset(TestCase):
     def test_finance1_cant_remove_deliverables_after_finance1_approval(self):
         user = FinanceFactory()
         project = ProjectFactory()
-        invoice = InvoiceFactory(project=project, status=APPROVED_BY_FINANCE_1)
+        invoice = InvoiceFactory(project=project, status=APPROVED_BY_FINANCE)
         deliverable = DeliverableFactory(project=project)
         invoice_deliverable = InvoiceDeliverableFactory(deliverable=deliverable)
         invoice.deliverables.add(invoice_deliverable)
@@ -254,7 +254,7 @@ class TestInvoiceDeliverableViewset(TestCase):
     def test_finance2_can_remove_deliverables(self):
         user = Finance2Factory()
         project = ProjectFactory()
-        invoice = InvoiceFactory(project=project, status=APPROVED_BY_FINANCE_1)
+        invoice = InvoiceFactory(project=project, status=APPROVED_BY_FINANCE)
         deliverable = DeliverableFactory(project=project)
         invoice_deliverable = InvoiceDeliverableFactory(deliverable=deliverable)
         invoice.deliverables.add(invoice_deliverable)
