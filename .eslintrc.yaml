@@ -5,6 +5,11 @@ env:
   browser: true
   commonjs: true
   es6: true
+
+ignorePatterns:
+  - "*.min.js"
+  - "**/esm/*.js"
+
 globals:
   jQuery: true
 rules:
