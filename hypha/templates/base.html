@@ -73,7 +73,7 @@
 
         {% block header %}
             {% if settings.utils.SystemMessagesSettings.header_content %}
-                {{ settings.utils.SystemMessagesSettings.header_content|safe}}
+                {{ settings.utils.SystemMessagesSettings.header_content|safe }}
             {% else %}
                 {% if page.header_image %}
                     {% image page.header_image fill-2560x410 as header_image %}
@@ -115,10 +115,9 @@
                         </div>
 
                         <section class="header__menus header__menus--desktop">
-                                {% cache 3600 navigation__primary current_site %}
-                                    {% primarynav %}
-                                {% endcache %}
-                            {% endif %}
+                            {% cache 3600 navigation__primary current_site %}
+                                {% primarynav %}
+                            {% endcache %}
 
                             <button class="button button--contains-icons button--left-space js-search-toggle" aria-haspopup="true" aria-label="Toggle desktop search">
                                 <svg class="header__icon header__icon--open-search icon"><use xlink:href="#magnifying-glass"></use></svg>
@@ -145,13 +144,9 @@
                                     </button>
                                 </div>
                             </div>
-                            {% if settings.utils.SystemMessagesSettings.header_content %}
-                                {{ settings.utils.SystemMessagesSettings.header_content }}
-                            {% else %}
-                                {% cache 3600 navigation__primary current_site %}
-                                    {% primarynav %}
-                                {% endcache %}
-                            {% endif %}
+                            {% cache 3600 navigation__primary current_site %}
+                                {% primarynav %}
+                            {% endcache %}
                         </section>
 
                         <div class="header__button-container">
@@ -183,6 +178,7 @@
                     <svg class="header__icon header__icon--pixels header__icon--pixels-left"><use xlink:href="#hero-standard-left-pixels"></use></svg>
                     <svg class="header__icon header__icon--pixels header__icon--pixels-right"><use xlink:href="#hero-standard-right-pixels"></use></svg>
                 </header>
+            {% endif %}
         {% endblock %}
 
         <main class="wrapper wrapper--large wrapper--main {% block main_class %}{% endblock %}">
