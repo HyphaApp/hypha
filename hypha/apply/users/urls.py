@@ -36,13 +36,7 @@ public_urlpatterns = [
     path(
         "auth/", PasswordLessLoginSignupView.as_view(), name="passwordless_login_signup"
     ),
-    path(
-        "login/",
-        LoginView.as_view(
-            template_name="users/login.html", redirect_authenticated_user=True
-        ),
-        name="login",
-    ),
+    path("login/", LoginView.as_view(), name="login"),
     # Log out
     path("logout/", auth_views.LogoutView.as_view(next_page="/"), name="logout"),
     path("register/", RegisterView.as_view(), name="register"),

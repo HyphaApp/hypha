@@ -1,4 +1,5 @@
 import datetime
+import time
 from typing import Any
 from urllib.parse import urlencode
 
@@ -141,6 +142,10 @@ class LoginView(TwoFactorLoginView):
         ("token", AuthenticationTokenForm),
         ("backup", BackupTokenForm),
     )
+
+    redirect_field_name = "next"
+    redirect_authenticated_user = True
+    template_name = "users/login.html"
 
     def get_context_data(self, form, **kwargs):
         context_data = super(LoginView, self).get_context_data(form, **kwargs)
@@ -645,21 +650,35 @@ class PasswordLessLoginSignupView(TemplateView):
         )
 
 
-class PasswordlessLoginView(TemplateView):
+class PasswordlessLoginView(LoginView):
     """This view is used to capture the passwordless login token and log the user in.
 
     If the token is valid, the user is logged in and redirected to the dashboard.
     If the token is invalid, the user is shown invalid token page.
+
+    This view inherits from LoginView to reuse the 2FA views, if a mfa device is added
+    to the user.
     """
 
-    redirect_field_name = "next"
+    def get(self, request, uidb64, token, *args, **kwargs):
+        try:
+            user = User.objects.get(pk=force_str(urlsafe_base64_decode(uidb64)))
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            user = None
 
-    def get(self, request, *args, **kwargs):
-        user = self.get_user(kwargs.get("uidb64"))
-
-        if self.is_valid(user, kwargs.get("token")):
+        if user and self.check_token(user, token):
             user.backend = settings.CUSTOM_AUTH_BACKEND
+
+            if default_device(user):
+                # User has mfa, set the user details and redirect to 2fa login
+                self.storage.reset()
+                self.storage.authenticated_user = user
+                self.storage.data["authentication_time"] = int(time.time())
+                return self.render_goto_step("token")
+
+            # No mfa, log the user in
             login(request, user)
+
             if redirect_url := get_redirect_url(request, self.redirect_field_name):
                 return redirect(redirect_url)
 
@@ -667,24 +686,9 @@ class PasswordlessLoginView(TemplateView):
 
         return render(request, "users/activation/invalid.html")
 
-    def is_valid(self, user, token):
-        """
-        Verify that the activation token is valid and within the permitted
-        activation time window.
-        """
-
+    def check_token(self, user, token):
         token_generator = PasswordlessLoginTokenGenerator()
-        return user is not None and token_generator.check_token(user, token)
-
-    def get_user(self, uidb64):
-        """
-        Given the verified uid, look up and return the corresponding user
-        account if it exists, or `None` if it doesn't.
-        """
-        try:
-            return User.objects.get(**{"pk": force_str(urlsafe_base64_decode(uidb64))})
-        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-            return None
+        return token_generator.check_token(user, token)
 
 
 class PasswordlessSignupView(TemplateView):
@@ -706,8 +710,8 @@ class PasswordlessSignupView(TemplateView):
             pending_signup.delete()
 
             user.backend = settings.CUSTOM_AUTH_BACKEND
-
             login(request, user)
+
             if redirect_url := get_redirect_url(request, self.redirect_field_name):
                 return redirect(redirect_url)
 
