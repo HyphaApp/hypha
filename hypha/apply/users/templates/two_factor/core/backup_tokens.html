@@ -14,7 +14,7 @@
                   cols="8"
                   rows="{{ device.token_set.count }}"
                   id="list-backup-tokens"
-                  class="border"
+                  class="font-mono pr-0 font-medium leading-tight bg-orange-100 resize-none"
         >{% for token in device.token_set.all %}{{ token.token }}{% if not forloop.last %}&#013;&#010;{% endif %}{% endfor %}</textarea>
 
         <form method="post" class="actions actions-footer">{% csrf_token %}{{ form }}
@@ -34,11 +34,14 @@
             <p class="hide-print">{% blocktrans %}Once done, acknowledge you have stored the codes securely and then click "Finish".{% endblocktrans %}</p>
             <div class="form">
                 <ul class="errorlist hidden error-action-agree"><li>Please confirm you have stored the codes securely below.</li></ul>
-                <div class="form__group form__group--checkbox">
+                <div class="form__item mb-4">
                     <input type="checkbox" id="action_agree" name="action_agree" value="action_agree">
-                    <label for="action_agree"> I have stored the backup codes securely.</label><br><br>
+                    <label for="action_agree"> I have stored the backup codes securely.</label>
                 </div>
-                <a class="btn btn-link btn-finish" href="{% url 'users:account' %}">{% trans "Finish" %}</a>
+                <div class="form__item">
+                    <a class="btn btn-link btn-finish" href="{% url 'users:account' %}">{% trans "Finish" %}</a>
+                </div>
+
             </div>
         </form>
     {% else %}

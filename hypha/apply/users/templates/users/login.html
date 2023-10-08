@@ -72,7 +72,7 @@
                             {{ wizard.form }}
                         </div>
 
-                    {# hidden submit button to enable [enter] key #}
+                        {# hidden submit button to enable [enter] key #}
                         <div class="sr-only"><input type="submit" value=""/></div>
 
                         {% if other_devices %}
@@ -93,7 +93,7 @@
                         {% if backup_tokens %}
                             <p>{% trans "As a last resort, you can use a backup codes:" %}
                                 <button name="wizard_goto_step" type="submit" value="backup"
-                                        class="link link--button link--button-tertiary">{% trans "Use Backup Code" %}</button>
+                                        class="button button--transparent">{% trans "Use Backup Code" %}</button>
                             </p>
                         {% endif %}
                     {% endif %}

@@ -1,22 +1,24 @@
 <!--Custom template to enforce 2FA and Copied from two_factor/core/otp_required.html-->
-
 {% extends "two_factor/_base_focus.html" %}
 {% load i18n %}
 
 {% block content %}
   <h1>{% block title %}{% trans "Permission Denied" %}{% endblock %}</h1>
 
-  <p>{% blocktrans trimmed %}The page you requested, enforces users to verify using
-    two-factor authentication for security reasons. You need to set up these
-    security features in order to access this page. Without setting up these security features,
-    You can only access the account(Profile section) or can logout from the system.{% endblocktrans %}</p>
+  <div class="prose mb-4">
+    <p>{% blocktrans trimmed %}The page you requested, enforces users to verify using
+      two-factor authentication for security reasons. You need to set up these
+      security features in order to access this page. Without setting up these security features,
+      You can only access the account (Profile section) or can logout from the system.{% endblocktrans %}</p>
 
-  <p>{% blocktrans trimmed %}Two-factor authentication is not already set up for your
-    account. Set up two-factor authentication for enhanced account
-    security.{% endblocktrans %}</p>
+    <p>{% blocktrans trimmed %}Two-factor authentication is not already set up for your
+      account. Set up two-factor authentication for enhanced account
+      security.{% endblocktrans %}</p>
+  </div>
 
-  <p>
-    <a href="{% url 'two_factor:setup' %}" class="btn btn-primary">
-      {% trans "Set up Two-Factor Authentication (2FA)" %}</a>
-  </p>
+
+  <a href="{% url 'two_factor:setup' %}" class="btn btn-primary">
+    {% trans "Set up Two-Factor Authentication (2FA)" %}
+  </a>
+
 {% endblock %}
