@@ -1,21 +1,24 @@
 from django.conf import settings
+from django.utils.translation import gettext_lazy as _
 
 # INT refers Invoice table
-INT_STAFF_PENDING = "Staff pending"
-INT_FINANCE_PENDING = "Finance pending"
-INT_VENDOR_PENDING = "Vendor pending"
+INT_STAFF_PENDING = _("Staff pending")
+INT_FINANCE_PENDING = _("Finance pending")
+INT_VENDOR_PENDING = _("Vendor pending")
 
 # duplicate statuses
-INT_DECLINED = "Declined"
-INT_PAID = "Paid"
-INT_PAYMENT_FAILED = "Payment failed"
+INT_DECLINED = _("Declined")
+INT_PAID = _("Paid")
+INT_PAYMENT_FAILED = _("Payment failed")
 
-# INVOICE_TABLE_STATUSES = [STAFF_PENDING, FINANCE_PENDING, VENDOR_PENDING, DECLINED, PAID, PAYMENT_FAILED]
+# INVOICE_TABLE_STATUSES = [INT_STAFF_PENDING, INT_FINANCE_PENDING, INT_VENDOR_PENDING, INT_DECLINED,
+#                           INT_PAID, INT_PAYMENT_FAILED]
 
-INT_ORG_PENDING = "{} pending".format(settings.ORG_SHORT_NAME)
-INT_REQUEST_FOR_CHANGE = "Request for change"
+INT_ORG_PENDING = _("{} pending").format(settings.ORG_SHORT_NAME)
+INT_REQUEST_FOR_CHANGE = _("Request for change")
 
-# INVOICE_TABLE_PUBLIC_STATUSES = [ORG_PENDING, REQUEST_CHANGE, DECLINED, PAID, PAYMENT_FAILED]
+# INVOICE_TABLE_PUBLIC_STATUSES = [INT_ORG_PENDING, INT_REQUEST_FOR_CHANGE,
+#                                  INT_DECLINED, INT_PAID, INT_PAYMENT_FAILED]
 
 
 INVOICE_STATUS_BG_COLORS = {
