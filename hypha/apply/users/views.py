@@ -712,6 +712,11 @@ class PasswordlessSignupView(TemplateView):
             user.backend = settings.CUSTOM_AUTH_BACKEND
             login(request, user)
 
+            redirect_url = get_redirect_url(request, self.redirect_field_name)
+
+            if settings.ENFORCE_TWO_FACTOR:
+                return redirect(reverse("two_factor:setup") + f"?next={redirect_url}")
+
             if redirect_url := get_redirect_url(request, self.redirect_field_name):
                 return redirect(redirect_url)
 
