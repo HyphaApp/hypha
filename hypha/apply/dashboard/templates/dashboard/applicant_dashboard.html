@@ -17,6 +17,41 @@
     {% endadminbar %}
 
     <div class="wrapper wrapper--large wrapper--inner-space-medium mb-4">
+
+        {% if my_tasks.count %}
+            <div class="w-8/12 m-auto mb-10">
+                <h2 class="text-center font-light">{% trans "My tasks" %}</h2>
+                {% for project in my_tasks.tasks.projects_waiting_for_contract %}
+                    <div class="bg-white p-1 flex mb-1 items-center">
+                        <svg class="icon icon--dashboard-tasks"><use xlink:href="#dashboard-contract"></use></svg>
+                        <p class="flex-1">{% trans "Project " %}'<a href="{{ project.get_absolute_url }}">{{ project.title }}</a>'{% trans " is waiting for contract" %}</p>
+                        <a class="button button-primary m-2" href="{{ project.get_absolute_url }}">View</a>
+                    </div>
+                {% endfor %}
+                {% for project in my_tasks.tasks.projects_waiting_for_contract_documents %}
+                    <div class="bg-white p-1 flex mb-1 items-center">
+                        <svg class="icon icon--dashboard-tasks"><use xlink:href="#dashboard-document"></use></svg>
+                        <p class="flex-1">{% trans "Project " %}'<a href="{{ project.get_absolute_url }}">{{ project.title }}</a>'{% trans " is waiting for contract document submissions" %}</p>
+                        <a class="button button-primary m-2" href="{{ project.get_absolute_url }}">View</a>
+                    </div>
+                {% endfor %}
+                {% for invoice in my_tasks.tasks.invoices_require_updates %}
+                    <div class="bg-white p-1 flex mb-1 items-center">
+                        <svg class="icon icon--dashboard-tasks"><use xlink:href="#dashboard-invoice"></use></svg>
+                        <p class="flex-1">{% trans "Changes requested for invoice " %}'<a href="{{ invoice.get_absolute_url }}">{{ invoice.invoice_number }}</a>'</p>
+                        <a class="button button-primary m-2" href="{{ invoice.get_absolute_url }}">View</a>
+                    </div>
+                {% endfor %}
+                {% for report in my_tasks.tasks.reports_due %}
+                    <div class="bg-white p-1 flex mb-1 items-center">
+                        <svg class="icon icon--dashboard-tasks"><use xlink:href="#dashboard-report"></use></svg>
+                        <p class="flex-1">{% trans "Report for project " %}'<a href="{{ report.project.get_absolute_url }}">{{ report.project }}</a>'{% trans " is due" %}</p>
+                        <a class="button button-primary m-2" href="{{ report.project.get_absolute_url }}">View</a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
         <h2 class="text-xl mb-2">
             {% trans "Your active submissions" %}
         </h2>

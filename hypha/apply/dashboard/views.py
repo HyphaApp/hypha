@@ -21,7 +21,14 @@ from hypha.apply.funds.tables import (
     review_filter_for_user,
 )
 from hypha.apply.projects.filters import ProjectListFilter
-from hypha.apply.projects.models import Invoice, PAFApprovals, Project, ProjectSettings
+from hypha.apply.projects.models import (
+    Invoice,
+    PAFApprovals,
+    Project,
+    ProjectSettings,
+    Report,
+)
+from hypha.apply.projects.models.payment import CHANGES_REQUESTED_BY_STAFF
 from hypha.apply.projects.models.project import INTERNAL_APPROVAL
 from hypha.apply.projects.permissions import has_permission
 from hypha.apply.projects.tables import (
@@ -771,10 +778,65 @@ class ApplicantDashboardView(TemplateView):
 
         context = super().get_context_data(**kwargs)
         context["my_active_submissions"] = my_active_submissions
+        context["my_tasks"] = self.my_tasks()
         context["active_projects"] = self.active_project_data()
         context["historical_projects"] = self.historical_project_data()
         context["historical_submissions"] = self.historical_submission_data()
         return context
+
+    def my_tasks(self):
+        """Tasks list:
+        1. Project waiting for counter-signed contract
+        2. Project waiting for contract document submissions.
+        3. Changes requested for invoices.
+        4. Reports due
+        5. Submissions: More information requested
+        6. Submissions: Proposal application for two step workflow
+        """
+        user_projects = Project.objects.filter(
+            user=self.request.user
+        )  # applicant's projects
+        projects_waiting_for_contract = (
+            user_projects.in_contracting()
+            .filter(contracts__isnull=False, contracts__signed_by_applicant=False)
+            .distinct()
+        )
+        projects_waiting_for_contract_documents = (
+            user_projects.in_contracting()
+            .filter(
+                contracts__isnull=False,
+                contracts__signed_by_applicant=True,
+                submitted_contract_documents=False,
+            )
+            .distinct()
+        )
+        invoices_require_updates = Invoice.objects.filter(
+            project__id__in=user_projects.values_list("id", flat=True),
+            status=CHANGES_REQUESTED_BY_STAFF,
+        ).distinct()
+
+        reports_due = (
+            Report.objects.to_do()
+            .filter(project__id__in=user_projects.values_list("id", flat=True))
+            .distinct()
+        )
+
+        # :todo: add data for submissions
+
+        return {
+            "count": (
+                projects_waiting_for_contract.count()
+                + projects_waiting_for_contract_documents.count()
+                + invoices_require_updates.count()
+                + reports_due.count()
+            ),
+            "tasks": {
+                "projects_waiting_for_contract": projects_waiting_for_contract,
+                "projects_waiting_for_contract_documents": projects_waiting_for_contract_documents,
+                "invoices_require_updates": invoices_require_updates,
+                "reports_due": reports_due,
+            },
+        }
 
     def active_project_data(self):
         active_projects = (
