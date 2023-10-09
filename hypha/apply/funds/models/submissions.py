@@ -571,7 +571,7 @@ class ApplicationSubmission(
                     defaults={"full_name": full_name},
                 )
 
-        # Ensure applying user should have applicant role
+        # Make sure the user is in the applicant group
         if not self.user.is_applicant:
             applicant_group = Group.objects.get(name=APPLICANT_GROUP_NAME)
             self.user.groups.add(applicant_group)
