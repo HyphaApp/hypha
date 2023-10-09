@@ -23,6 +23,33 @@ class CustomAuthenticationForm(AuthenticationForm):
             )
 
 
+class PasswordlessAuthForm(forms.Form):
+    """Form to collect the email for passwordless login or signup (if enabled)
+
+    Adds login extra text and user content to the form, if configured in the
+    wagtail auth settings.
+    """
+
+    email = forms.EmailField(
+        label=_("Email Address"),
+        required=True,
+        max_length=254,
+        widget=forms.EmailInput(attrs={"autofocus": True, "autocomplete": "email"}),
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.request = kwargs.pop("request", None)
+        self.user_settings = AuthSettings.load(request_or_site=self.request)
+        self.extra_text = self.user_settings.extra_text
+        if self.user_settings.consent_show:
+            self.fields["consent"] = forms.BooleanField(
+                label=self.user_settings.consent_text,
+                help_text=self.user_settings.consent_help,
+                required=True,
+            )
+
+
 class CustomUserAdminFormBase:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

@@ -56,6 +56,7 @@ from .forms import (
     BecomeUserForm,
     CustomAuthenticationForm,
     CustomUserCreationForm,
+    PasswordlessAuthForm,
     ProfileForm,
     TWOFAPasswordForm,
 )
@@ -611,7 +612,7 @@ class PasswordResetConfirmView(DjPasswordResetConfirmView):
     ratelimit(key="post:email", rate=settings.DEFAULT_RATE_LIMIT, method="POST"),
     name="dispatch",
 )
-class PasswordLessLoginSignupView(TemplateView):
+class PasswordLessLoginSignupView(FormView):
     """This view is used to collect the email address for passwordless login/signup.
 
     If the email address is already associated with an account, an email is sent. If not,
@@ -622,6 +623,8 @@ class PasswordLessLoginSignupView(TemplateView):
 
     template_name = "users/passwordless_login_signup.html"
     redirect_field_name = "next"
+    http_method_names = ["get", "post"]
+    form_class = PasswordlessAuthForm
 
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
@@ -630,24 +633,31 @@ class PasswordLessLoginSignupView(TemplateView):
         return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        ctx = super().get_context_data(**kwargs) or {}
+        ctx = super().get_context_data(**kwargs)
+        if self.request.htmx:
+            ctx["base_template"] = "includes/_partial-main.html"
+        else:
+            ctx["base_template"] = "base-apply.html"
         ctx["redirect_url"] = get_redirect_url(self.request, self.redirect_field_name)
         return ctx
 
     def post(self, request):
-        email = request.POST.get("email")
-        email = email.strip() if email else None
+        form = self.get_form()
+        if form.is_valid():
+            service = PasswordlessAuthService(
+                request, redirect_field_name=self.redirect_field_name
+            )
 
-        service = PasswordlessAuthService(
-            request, redirect_field_name=self.redirect_field_name
-        )
-        service.initiate_login_signup(email=email)
+            email = form.cleaned_data["email"]
+            service.initiate_login_signup(email=email)
 
-        ctx = self.get_context_data()
-
-        return TemplateResponse(
-            request, "users/partials/passwordless_login_signup_sent.html", ctx
-        )
+            return TemplateResponse(
+                self.request,
+                "users/partials/passwordless_login_signup_sent.html",
+                self.get_context_data(),
+            )
+        else:
+            return self.render_to_response(self.get_context_data(form=form))
 
 
 class PasswordlessLoginView(LoginView):
