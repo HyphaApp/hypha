@@ -320,7 +320,7 @@ class SystemMessagesSettings(BaseGenericSetting):
         ),
     )
 
-    header_content = models.TextField(
+    nav_content = models.TextField(
         "Front page navigation content",
         help_text=_(
             "This will overwrite the default front page navigation bar, html tags is allowed."
@@ -353,7 +353,7 @@ class SystemMessagesSettings(BaseGenericSetting):
             ],
             "Site logo",
         ),
-        FieldPanel("header_content"),
+        FieldPanel("nav_content"),
         FieldPanel("footer_content"),
         MultiFieldPanel(
             [

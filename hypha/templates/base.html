@@ -112,8 +112,8 @@
                     </div>
 
                     <section class="header__menus header__menus--desktop">
-                        {% if settings.utils.SystemMessagesSettings.header_content %}
-                            {{ settings.utils.SystemMessagesSettings.header_content|safe }}
+                        {% if settings.utils.SystemMessagesSettings.nav_content %}
+                            {{ settings.utils.SystemMessagesSettings.nav_content|safe }}
                         {% else %}
                             {% cache 3600 navigation__primary current_site %}
                                 {% primarynav %}
@@ -144,8 +144,8 @@
                                 </button>
                             </div>
                         </div>
-                        {% if settings.utils.SystemMessagesSettings.header_content %}
-                            {{ settings.utils.SystemMessagesSettings.header_content|safe }}
+                        {% if settings.utils.SystemMessagesSettings.nav_content %}
+                            {{ settings.utils.SystemMessagesSettings.nav_content|safe }}
                         {% else %}
                             {% cache 3600 navigation__primary current_site %}
                                 {% primarynav %}

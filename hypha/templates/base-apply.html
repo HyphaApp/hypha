@@ -102,8 +102,8 @@
                 </div>
 
                 <section class="header__menus header__menus--desktop">
-                    {% if settings.utils.SystemMessagesSettings.header_content|safe and not request.user.is_authenticated %}
-                        {{ settings.utils.SystemMessagesSettings.header_content|safe }}
+                    {% if settings.utils.SystemMessagesSettings.nav_content|safe and not request.user.is_authenticated %}
+                        {{ settings.utils.SystemMessagesSettings.nav_content|safe }}
                     {% else %}
                         {% include "navigation/primarynav-apply.html" %}
                     {% endif %}
@@ -127,8 +127,8 @@
                         </div>
                     </div>
 
-                    {% if settings.utils.SystemMessagesSettings.header_content|safe and not request.user.is_authenticated %}
-                        {{ settings.utils.SystemMessagesSettings.header_content|safe }}
+                    {% if settings.utils.SystemMessagesSettings.nav_content|safe and not request.user.is_authenticated %}
+                        {{ settings.utils.SystemMessagesSettings.nav_content|safe }}
                     {% else %}
                         {% include "navigation/primarynav-apply.html" %}
                     {% endif %}
