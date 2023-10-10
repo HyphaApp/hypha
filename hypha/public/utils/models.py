@@ -321,8 +321,10 @@ class SystemMessagesSettings(BaseGenericSetting):
     )
 
     header_content = models.TextField(
-        "Header content",
-        help_text=_("This will overwrite the default header, html tags is allowed."),
+        "Front page navigation content",
+        help_text=_(
+            "This will overwrite the default front page navigation bar, html tags is allowed."
+        ),
         blank=True,
     )
 
