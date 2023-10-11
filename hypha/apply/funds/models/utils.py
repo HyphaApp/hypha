@@ -145,6 +145,7 @@ class WorkflowStreamForm(WorkflowHelpers, AbstractStreamForm):  # type: ignore
         InlinePanel("determination_forms", label=_("Determination Forms")),
         InlinePanel("approval_forms", label=_("Project Approval Form"), max_num=1),
         InlinePanel("sow_forms", label=_("Project SOW Form"), max_num=1),
+        InlinePanel("report_forms", label=_("Project Report Form")),
     ]
 
 

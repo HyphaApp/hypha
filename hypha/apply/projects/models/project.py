@@ -482,6 +482,26 @@ class ProjectSOWForm(ProjectBaseStreamForm):
     pass
 
 
+class ProjectReportForm(ProjectBaseStreamForm):
+    """An Applicant Report Form can be attached to a Fund to collect reports from Applicants aka Grantees during the
+    Project. It is only relevant for accepted or granted Submissions which is why it is attached to Project. It is
+    similar to the other Forms (PAF, SOW) in that it uses StreamForm to allow maximum flexibility in form creation."""
+    pass
+
+
+# Instead of the following, the data and fields belong to ReportVersion
+# class ProjectApplicantReport(BaseStreamForm, AccessFormData, models.Model):
+#     """An Applicant (aka Grantee now that this is a Project) Report is a report requested by the Grantor."""
+#     project = models.OneToOneField(
+#         Project, on_delete=models.CASCADE
+#     )
+#     form_data = models.JSONField(encoder=StreamFieldDataEncoder, default=dict)
+#     form_fields = StreamField(
+#         # Re-use the PAF Custom Form Fields like ProjectSOW. The original fields should be required.
+#         ProjectApprovalFormCustomFormFieldsBlock(), use_json_field=True
+#     )
+
+
 class PAFReviewersRole(Orderable, ClusterableModel):
     label = models.CharField(max_length=200)
     user_roles = ParentalManyToManyField(

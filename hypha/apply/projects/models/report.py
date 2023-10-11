@@ -12,7 +12,12 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
+from wagtail.fields import StreamField
 
+from hypha.apply.funds.models.mixins import AccessFormData
+from hypha.apply.projects.blocks import ProjectApprovalFormCustomFormFieldsBlock
+from hypha.apply.stream_forms.files import StreamFieldDataEncoder
+from hypha.apply.stream_forms.models import BaseStreamForm
 from hypha.apply.utils.storage import PrivateStorage
 
 
@@ -166,13 +171,21 @@ class Report(models.Model):
         return self.project.start_date
 
 
-class ReportVersion(models.Model):
+class ReportVersion(BaseStreamForm, AccessFormData, models.Model):
     report = models.ForeignKey(
         "Report", on_delete=models.CASCADE, related_name="versions"
     )
     submitted = models.DateTimeField()
-    public_content = models.TextField()
-    private_content = models.TextField()
+
+    # Removed in favor of stream form fields form_fields, form_data:
+    # public_content = models.TextField()
+    form_fields = StreamField(
+        # Re-use the PAF Custom Form class. The original fields (used at the time of response) should be required.
+        ProjectApprovalFormCustomFormFieldsBlock(), use_json_field=True
+    )
+    form_data = models.JSONField(encoder=StreamFieldDataEncoder, default=dict)
+    # Removed in favor of stream form fields form_fields, form_data:
+    # private_content = models.TextField()
     draft = models.BooleanField()
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -230,6 +243,16 @@ class ReportConfig(models.Model):
     def get_frequency_display(self):
         if self.disable_reporting:
             return _("Reporting Disabled")
+        # Without the following, when skipping to 'invoicing_and_reporting', we can get various errors such as:
+        # hypha/apply/projects/models/report.py", line 267, in get_frequency_display
+        #     day_of_month = ordinal(next_report.end_date.day)
+        #                            ^^^^^^^^^^^^^^^^^^^^
+        # AttributeError: 'NoneType' object has no attribute 'end_date'
+        if not self.last_report() and not self.current_due_report():
+            return _("No reports populated")
+        # The above change makes the project display, finally, but with some nonsense around report frequency. Not good.
+        # We could nerf or disable reporting and use a separate "simple reporting" but that seems clunky. Integrating it
+        # would make a lot more sense.
         if self.does_not_repeat:
             last_report = self.last_report()
             if last_report:

@@ -1,24 +1,29 @@
 from django import forms
 from django.db import transaction
 from django.utils import timezone
-from django.utils.translation import gettext_lazy as _
-from django_file_form.forms import FileFormMixin
+
+from wagtail.fields import StreamField
 
 from hypha.apply.stream_forms.fields import MultiFileField
-from hypha.apply.utils.fields import RichTextField
+from ..blocks import ProjectApprovalFormCustomFormFieldsBlock
+from ..models import ProjectReportForm
 
 from ..models.report import Report, ReportConfig, ReportPrivateFiles, ReportVersion
+from ...funds.models.forms import ApplicationBaseProjectReportForm
+from ...review.forms import MixedMetaClass
+from ...stream_forms.files import StreamFieldDataEncoder
+from ...stream_forms.forms import StreamBaseForm
 
 
-class ReportEditForm(FileFormMixin, forms.ModelForm):
-    public_content = RichTextField(
-        help_text=_(
-            "This section of the report will be shared with the broader community."
-        )
+class ReportEditForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass):
+    # The fields need to be populated from the associated fund form. Should that happen in init?
+    form_fields = StreamField(
+        ProjectApprovalFormCustomFormFieldsBlock(),
+        use_json_field=True,
+        # TODO: this will not be "first()" but one selected by submission id via ApplicationBaseProjectReportForm
+        default=ProjectReportForm.objects.first(),
     )
-    private_content = RichTextField(
-        help_text=_("This section of the report will be shared with staff only.")
-    )
+    form_data = forms.JSONField(encoder=StreamFieldDataEncoder)
     file_list = forms.ModelMultipleChoiceField(
         widget=forms.CheckboxSelectMultiple(attrs={"class": "delete"}),
         queryset=ReportPrivateFiles.objects.all(),
@@ -30,8 +35,6 @@ class ReportEditForm(FileFormMixin, forms.ModelForm):
     class Meta:
         model = Report
         fields = (
-            "public_content",
-            "private_content",
             "file_list",
             "files",
         )
@@ -45,18 +48,20 @@ class ReportEditForm(FileFormMixin, forms.ModelForm):
         )
         super().__init__(*args, initial=initial, **kwargs)
         self.fields["file_list"].queryset = self.report_files
+        # Need to populate form_fields, right?
+        # ApplicationBaseProjectReportForm is where the link between the ProjectReportForm and Submission lives.
+        #self.fields["form_fields"].queryset = queryset=ApplicationBaseProjectReportForm.objects.all() #.filter(
+        #application=self.instance.project.submission.round.id
+        #).first().form.form_fields
         self.user = user
 
     def clean(self):
         cleaned_data = super().clean()
-        public = cleaned_data["public_content"]
-        private = cleaned_data["private_content"]
-        if not private and not public:
-            missing_content = _(
-                "Must include either public or private content when submitting a report."
-            )
-            self.add_error("public_content", missing_content)
-            self.add_error("private_content", missing_content)
+        cleaned_data["form_data"] = {
+            key: value
+            for key, value in cleaned_data.items()
+            if key not in self._meta.fields
+        }
         return cleaned_data
 
     @transaction.atomic
@@ -65,8 +70,8 @@ class ReportEditForm(FileFormMixin, forms.ModelForm):
 
         version = ReportVersion.objects.create(
             report=self.instance,
-            public_content=self.cleaned_data["public_content"],
-            private_content=self.cleaned_data["private_content"],
+            form_fields=self.form_fields,
+            form_data=self.cleaned_data["form_data"],
             submitted=timezone.now(),
             draft=is_draft,
             author=self.user,

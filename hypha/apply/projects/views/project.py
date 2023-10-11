@@ -959,11 +959,17 @@ class AdminProjectDetailView(
                     "startDate": self.object.report_config.current_due_report().start_date,
                     "projectEndDate": self.object.end_date,
                 }
-            else:
+            elif self.object.report_config.last_report():
                 context["report_data"] = {
                     "startDate": self.object.report_config.last_report().start_date,
                     "projectEndDate": self.object.end_date,
                 }
+            # In cases of simpler reporting, there will be no last_report.
+            # Without the "else" becoming "elif" we get this error when viewing the project:
+            # hypha-tracker/hypha/apply/projects/views/project.py", line 964, in get_context_data
+            #     "startDate": self.object.report_config.last_report().start_date,
+            #                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            # AttributeError: 'NoneType' object has no attribute 'start_date'
         return context
 
 

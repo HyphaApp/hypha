@@ -6,6 +6,7 @@ from wagtail.models import Orderable
 
 from ..blocks import ApplicationCustomFormFieldsBlock
 from ..edit_handlers import FilteredFieldPanel
+from ...projects.models.project import ProjectReportForm
 
 
 class ApplicationForm(models.Model):
@@ -268,3 +269,24 @@ class LabBaseProjectApprovalForm(AbstractRelatedProjectApprovalForm):
 
 class LabBaseProjectSOWForm(AbstractRelatedProjectSOWForm):
     lab = ParentalKey("LabBase", related_name="sow_forms")
+
+
+class ApplicationBaseProjectReportForm(AbstractRelatedProjectApprovalForm):
+    form = models.ForeignKey(
+        to=ProjectReportForm, on_delete=models.PROTECT
+    )
+    application = ParentalKey("ApplicationBase", related_name="report_forms")
+
+
+class LabBaseProjectReportForm(AbstractRelatedProjectApprovalForm):
+    """Without this class and model, when trying to add InlinePanel to utils.py, an error occurs on `makemigration`:
+    venv/hypha/lib/python3.11/site-packages/wagtail/admin/panels/inline_panel.py", line 78, in on_model_bound
+    manager = getattr(self.model, self.relation_name)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: type object 'LabBase' has no attribute 'report_forms'
+    But it is not clear why it must be associated with a lab as well as an application.
+    """
+    form = models.ForeignKey(
+        to=ProjectReportForm, on_delete=models.PROTECT
+    )
+    lab = ParentalKey("LabBase", related_name="report_forms")

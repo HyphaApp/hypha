@@ -79,8 +79,8 @@ class ReportUpdateView(UpdateView):
 
         if current:
             return {
-                "public_content": current.public_content,
-                "private_content": current.private_content,
+                "form_fields": current.form_fields,
+                "form_data": current.form_data,
                 "file_list": current.files.all(),
             }
 
@@ -183,10 +183,16 @@ class ReportFrequencyUpdate(DelegatedViewMixin, UpdateView):
                 kwargs["initial"] = {
                     "start": instance.current_due_report().end_date,
                 }
-            else:
+            elif instance.last_report():
                 kwargs["initial"] = {
                     "start": instance.last_report().end_date,
                 }
+            # If we skip some stages, e.g. go straight to INVOICING_AND_REPORTING, there may be no last_report.
+            # There may be no project start date either. If we did not change "else" to "elif" we get this:
+            # hypha/apply/projects/views/report.py", line 188, in get_form_kwargs
+            #     "start": instance.last_report().end_date,
+            #              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            # AttributeError: 'NoneType' object has no attribute 'end_date'
         else:
             kwargs["initial"] = {
                 "start": project.start_date,

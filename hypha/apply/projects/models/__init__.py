@@ -8,6 +8,7 @@ from .project import (
     PacketFile,
     PAFApprovals,
     Project,
+    ProjectReportForm,
     ProjectApprovalForm,
     ProjectSettings,
     ProjectSOWForm,
@@ -17,6 +18,7 @@ from .vendor import BankInformation, DueDiligenceDocument, Vendor, VendorFormSet
 
 __all__ = [
     "Project",
+    "ProjectReportForm",
     "ProjectApprovalForm",
     "ProjectSOWForm",
     "ProjectSettings",

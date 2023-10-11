@@ -4,14 +4,17 @@ from hypha.apply.utils.admin import ListRelatedMixin
 from hypha.core.wagtail.admin import SettingModelAdmin
 
 from .admin_views import (
+    CreateProjectReportFormView,
     CreateProjectApprovalFormView,
     CreateProjectSOWFormView,
+    EditProjectReportFormView,
     EditProjectApprovalFormView,
     EditProjectSOWFormView,
 )
 from .models import (
     ContractDocumentCategory,
     DocumentCategory,
+    ProjectReportForm,
     ProjectApprovalForm,
     ProjectSettings,
     ProjectSOWForm,
@@ -71,6 +74,22 @@ class ProjectSOWFormAdmin(ListRelatedMixin, ModelAdmin):
     ]
 
 
+class ProjectReportFormAdmin(ListRelatedMixin, ModelAdmin):
+    model = ProjectReportForm
+    menu_label = "Report Forms"
+    menu_icon = "form"
+    list_display = (
+        "name",
+        "used_by",
+    )
+    create_view_class = CreateProjectReportFormView
+    edit_view_class = EditProjectReportFormView
+
+    related_models = [
+        ("applicationbaseprojectreportform", "application"),
+    ]
+
+
 class ProjectSettingsAdmin(SettingModelAdmin):
     model = ProjectSettings
 
@@ -85,6 +104,7 @@ class ProjectAdminGroup(ModelAdminGroup):
     items = (
         ContractDocumentCategoryAdmin,
         DocumentCategoryAdmin,
+        ProjectReportFormAdmin,
         ProjectApprovalFormAdmin,
         ProjectSOWFormAdmin,
         VendorFormSettingsAdmin,
