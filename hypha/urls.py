@@ -10,7 +10,8 @@ from wagtail.contrib.sitemaps.views import sitemap
 from wagtail.documents import urls as wagtaildocs_urls
 from wagtail.images.views.serve import ServeView
 
-from hypha.apply.users.urls import public_urlpatterns as user_urls
+from hypha.apply.users.urls import public_urlpatterns as public_user_urls
+from hypha.apply.users.urls import urlpatterns as user_urls
 from hypha.apply.utils.views import custom_wagtail_page_delete
 from hypha.public import urls as public_urls
 
@@ -28,7 +29,8 @@ urlpatterns = [
     path("documents/", include(wagtaildocs_urls)),
     path("sitemap.xml", sitemap),
     path("upload/", include(django_file_form_urls)),
-    path("", include((user_urls, "users_public"))),
+    path("", include((public_user_urls, "users_public"))),
+    path("", include((user_urls, "users"))),
     path("", include(public_urls)),
     path("", include("social_django.urls", namespace="social")),
     path("tinymce/", include("tinymce.urls")),
