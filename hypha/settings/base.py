@@ -84,7 +84,7 @@ SEND_MESSAGES = env.bool("SEND_MESSAGES", False)
 SEND_READY_FOR_REVIEW = env.bool("SEND_READY_FOR_REVIEW", True)
 
 # Staff can upload the contract
-STAFF_UPLOAD_CONTRACT = env.bool("STAFF_UPLOAD_CONTRACT", True)
+STAFF_UPLOAD_CONTRACT = env.bool("STAFF_UPLOAD_CONTRACT", False)
 
 # Slack settings.
 SLACK_TOKEN = env.str("SLACK_TOKEN", None)
