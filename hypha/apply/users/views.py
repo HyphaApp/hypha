@@ -544,6 +544,11 @@ class TWOFAAdminDisableView(FormView):
 def mfa_failure_view(
     request, reason, template_name="two_factor/core/two_factor_required.html"
 ):
+    """Renders a template asking the user to setup 2FA.
+
+    Used by hypha.apply.users.middlewares.TwoFactorAuthenticationMiddleware,
+    if ENFORCE_TWO_FACTOR is enabled.
+    """
     ctx = {
         "reason": reason,
     }
