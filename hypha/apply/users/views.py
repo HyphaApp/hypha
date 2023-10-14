@@ -541,8 +541,13 @@ class TWOFAAdminDisableView(FormView):
         return ctx
 
 
-class TWOFARequiredMessageView(TemplateView):
-    template_name = "two_factor/core/two_factor_required.html"
+def mfa_failure_view(
+    request, reason, template_name="two_factor/core/two_factor_required.html"
+):
+    ctx = {
+        "reason": reason,
+    }
+    return render(request, template_name, ctx)
 
 
 class BackupTokensView(ElevateMixin, TwoFactorBackupTokensView):

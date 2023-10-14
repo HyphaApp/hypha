@@ -20,7 +20,6 @@ from .views import (
     RegistrationSuccessView,
     TWOFAAdminDisableView,
     TWOFADisableView,
-    TWOFARequiredMessageView,
     TWOFASetupView,
     account_email_change,
     become,
@@ -120,12 +119,7 @@ account_urls = [
     ),
     path("activate/", create_password, name="activate_password"),
     path("oauth", oauth, name="oauth"),
-    # Two factor redirect
-    path(
-        "two_factor/required/",
-        TWOFARequiredMessageView.as_view(),
-        name="two_factor_required",
-    ),
+    # 2FA
     path("two_factor/setup/", TWOFASetupView.as_view(), name="setup"),
     path(
         "two_factor/backup_tokens/password/",

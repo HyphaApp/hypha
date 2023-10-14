@@ -1,15 +1,25 @@
+import logging
+
 from django.conf import settings
-from django.shortcuts import redirect
+from django.core.exceptions import MiddlewareNotUsed
+from django.urls import set_urlconf
+from django.utils.log import log_response
+from django.utils.translation import gettext_lazy as _
 from social_core.exceptions import AuthForbidden
 from social_django.middleware import (
     SocialAuthExceptionMiddleware as _SocialAuthExceptionMiddleware,
 )
 
+from hypha.apply.users.views import mfa_failure_view
+
 ALLOWED_SUBPATH_FOR_UNVERIFIED_USERS = [
-    "login/",
-    "logout/",
-    "account/",
+    "/auth/",
+    "/login/",
+    "/logout/",
+    "/account/",
 ]
+
+logger = logging.getLogger("django.security.mfa")
 
 
 class SocialAuthExceptionMiddleware(_SocialAuthExceptionMiddleware):
@@ -34,28 +44,48 @@ class TwoFactorAuthenticationMiddleware:
     Except the request made on the url paths listed in ALLOWED_SUBPATH_FOR_UNVERIFIED_USERS.
     """
 
+    reason = _("Two factor authentication required")
+
     def __init__(self, get_response):
+        if not settings.ENFORCE_TWO_FACTOR:
+            raise MiddlewareNotUsed()
+
         self.get_response = get_response
 
+    def _accept(self, request):
+        return self.get_response(request)
+
+    def _reject(self, request, reason):
+        set_urlconf("hypha.apply.urls")
+        response = mfa_failure_view(request, reason=reason)
+        log_response(
+            "Forbidden (%s): %s",
+            reason,
+            request.path,
+            response=response,
+            request=request,
+            logger=logger,
+        )
+        return response
+
     def is_path_allowed(self, path):
+        if path == "/":
+            return True
         for sub_path in ALLOWED_SUBPATH_FOR_UNVERIFIED_USERS:
-            if sub_path in path:
+            if path.startswith(sub_path):
                 return True
         return False
 
     def __call__(self, request):
+        if self.is_path_allowed(request.path):
+            return self._accept(request)
+
         # code to execute before the view
         user = request.user
-        if settings.ENFORCE_TWO_FACTOR:
-            if (
-                user.is_authenticated
-                and not user.is_verified()
-                and not user.social_auth.exists()
-            ):
-                if not self.is_path_allowed(request.path):
-                    return redirect("/account/two_factor/required/")
+        if user.is_authenticated:
+            if user.social_auth.exists() or user.is_verified():
+                return self._accept(request)
 
-        response = self.get_response(request)
+            return self._reject(request, self.reason)
 
-        # code to execute after view
-        return response
+        return self._accept(request)

@@ -3,22 +3,36 @@
 {% load i18n %}
 
 {% block content %}
-  <h1>{% block title %}{% trans "Permission Denied" %}{% endblock %}</h1>
+    <h1>{% block title %}{% trans "Permission Denied" %}: {{ reason }}{% endblock %}</h1>
 
-  <div class="prose mb-4">
-    <p>{% blocktrans trimmed %}The page you requested, enforces users to verify using
-      two-factor authentication for security reasons. You need to set up these
-      security features in order to access this page. Without setting up these security features,
-      You can only access the account (Profile section) or can logout from the system.{% endblocktrans %}</p>
+    <div class="prose mb-4">
+        <p>
+            {% blocktrans trimmed %}
+                The page you are trying to access requires users to verify their
+                identity using two-factor authentication for security reasons.
+            {% endblocktrans %}
+        </p>
 
-    <p>{% blocktrans trimmed %}Two-factor authentication is not already set up for your
-      account. Set up two-factor authentication for enhanced account
-      security.{% endblocktrans %}</p>
-  </div>
+        <p>
+            {% blocktrans trimmed %}
+                In order to access this page, you need to set up these security
+                features. Without setting them up, you will only be able to access
+                your account's profile section or log out from the system.
+            {% endblocktrans %}
+        </p>
+
+        <p>
+            {% blocktrans trimmed %}
+                Two-factor authentication has not been set up
+                for your account yet. Please set it up to enhance
+                the security of your account.
+            {% endblocktrans %}
+        </p>
+    </div>
 
 
-  <a href="{% url 'two_factor:setup' %}" class="btn btn-primary">
-    {% trans "Set up Two-Factor Authentication (2FA)" %}
-  </a>
+    <a href="{% url 'two_factor:setup' %}?next={{request.path}}" class="btn btn-primary">
+        {% trans "Set up Two-Factor Authentication (2FA)" %}
+    </a>
 
 {% endblock %}
