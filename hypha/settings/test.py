@@ -30,3 +30,5 @@ TEMPLATES[0]["OPTIONS"]["debug"] = True
 
 # An extra salt to be added into the cookie signature.
 ELEVATE_COOKIE_SALT = SECRET_KEY
+
+ENFORCE_TWO_FACTOR = False

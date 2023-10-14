@@ -12,14 +12,19 @@ from social_django.middleware import (
 
 from hypha.apply.users.views import mfa_failure_view
 
-ALLOWED_SUBPATH_FOR_UNVERIFIED_USERS = [
+logger = logging.getLogger("django.security.two_factor")
+
+TWO_FACTOR_EXEMPTED_PATH_PREFIXES = [
     "/auth/",
     "/login/",
     "/logout/",
     "/account/",
 ]
 
-logger = logging.getLogger("django.security.mfa")
+
+def get_page_path(wagtail_page):
+    _, _, page_path = wagtail_page.get_url_parts()
+    return page_path
 
 
 class SocialAuthExceptionMiddleware(_SocialAuthExceptionMiddleware):
@@ -41,7 +46,7 @@ class TwoFactorAuthenticationMiddleware:
     To activate this middleware set env variable ENFORCE_TWO_FACTOR as True.
 
     This will redirect all request from unverified users to enable 2FA first.
-    Except the request made on the url paths listed in ALLOWED_SUBPATH_FOR_UNVERIFIED_USERS.
+    Except the request made on the url paths listed in TWO_FACTOR_EXEMPTED_PATH_PREFIXES.
     """
 
     reason = _("Two factor authentication required")
@@ -68,22 +73,45 @@ class TwoFactorAuthenticationMiddleware:
         )
         return response
 
-    def is_path_allowed(self, path):
+    def whitelisted_paths(self, path):
         if path == "/":
             return True
-        for sub_path in ALLOWED_SUBPATH_FOR_UNVERIFIED_USERS:
+
+        for sub_path in TWO_FACTOR_EXEMPTED_PATH_PREFIXES:
             if path.startswith(sub_path):
                 return True
         return False
 
+    def get_urls_open_rounds(self):
+        from hypha.apply.funds.models import ApplicationBase
+
+        return map(
+            get_page_path, ApplicationBase.objects.order_by_end_date().specific()
+        )
+
+    def get_urls_open_labs(self):
+        from hypha.apply.funds.models import LabBase
+
+        return map(
+            get_page_path,
+            LabBase.objects.public().live().specific(),
+        )
+
     def __call__(self, request):
-        if self.is_path_allowed(request.path):
+        if self.whitelisted_paths(request.path):
             return self._accept(request)
 
         # code to execute before the view
         user = request.user
         if user.is_authenticated:
             if user.social_auth.exists() or user.is_verified():
+                return self._accept(request)
+
+            # Allow rounds and lab detail pages
+            if request.path in self.get_urls_open_rounds():
+                return self._accept(request)
+
+            if request.path in self.get_urls_open_labs():
                 return self._accept(request)
 
             return self._reject(request, self.reason)

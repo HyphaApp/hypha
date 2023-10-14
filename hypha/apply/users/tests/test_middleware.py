@@ -4,7 +4,7 @@ from django.urls import reverse
 
 from hypha.apply.users.tests.factories import UserFactory
 
-from ..middleware import ALLOWED_SUBPATH_FOR_UNVERIFIED_USERS
+from ..middleware import TWO_FACTOR_EXEMPTED_PATH_PREFIXES
 
 
 @override_settings(ROOT_URLCONF="hypha.apply.urls", ENFORCE_TWO_FACTOR=True)
@@ -17,14 +17,10 @@ class TestTwoFactorAuthenticationMiddleware(TestCase):
         self.client.force_login(user)
 
         response = self.client.get(settings.LOGIN_REDIRECT_URL, follow=True)
-        self.assertRedirects(
-            response, reverse("users:two_factor_required"), status_code=301
-        )
+        assert "Permission Denied" in response.content.decode("utf-8")
 
         response = self.client.get(reverse("funds:submissions:list"), follow=True)
-        self.assertRedirects(
-            response, reverse("users:two_factor_required"), status_code=301
-        )
+        assert "Permission Denied" in response.content.decode("utf-8")
 
     def test_verified_user_redirect(self):
         user = UserFactory()
@@ -40,6 +36,6 @@ class TestTwoFactorAuthenticationMiddleware(TestCase):
         user = UserFactory()
         self.client.force_login(user)
 
-        for path in ALLOWED_SUBPATH_FOR_UNVERIFIED_USERS:
+        for path in TWO_FACTOR_EXEMPTED_PATH_PREFIXES:
             response = self.client.get(path, follow=True)
             self.assertEqual(response.status_code, 200)
