@@ -724,11 +724,13 @@ class PasswordlessSignupView(TemplateView):
 
             redirect_url = get_redirect_url(request, self.redirect_field_name)
 
-            if settings.ENFORCE_TWO_FACTOR:
-                return redirect(reverse("two_factor:setup") + f"?next={redirect_url}")
-
-            if redirect_url := get_redirect_url(request, self.redirect_field_name):
+            if redirect_url:
                 return redirect(redirect_url)
+
+            # If 2FA is enabled, redirect to setup page instead of dashboard
+            if settings.ENFORCE_TWO_FACTOR:
+                redirect_url = redirect_url or reverse("dashboard:dashboard")
+                return redirect(reverse("two_factor:setup") + f"?next={redirect_url}")
 
             return redirect("dashboard:dashboard")
 
