@@ -2,17 +2,20 @@
 {% load i18n bleach_tags submission_tags %}
 {% block title %}{% trans "Review for" %} {{ review.submission.title }}{% endblock %}
 {% block content %}
-    <div class="admin-bar">
-        <div class="admin-bar__inner">
-            <a class="simplified__submissions-link" href="{{ review.submission.get_absolute_url }}">
-                {% trans "Back to submission" %}
-            </a>
-            <h1 class="beta heading heading--no-margin heading--bold">{% trans "Review" %}</h1>
-            <h5>{% trans "For" %}: {{ review.submission.title }} {% trans "by" %} {{ review.author }} {% trans "at" %} {{ review.created_at|date:"SHORT_DATE_FORMAT" }} {% if review.is_updated %}<small>({% trans "Last updated" %}: {{ review.updated_at|date:"SHORT_DATE_FORMAT" }})</small>{% endif %}</h5>
 
-            {% include 'review/includes/review_opinions_list.html' with opinions=review.opinions.all %}
-        </div>
-    </div>
+    {% adminbar %}
+        {% slot back_link %}
+            <a class="simplified__submissions-link" href="{{ review.submission.get_absolute_url }}">
+                {% trans "View submission" %}
+            </a>
+        {% endslot %}
+        {% slot header %}{% trans "Review" %}{% endslot %}
+        {% slot sub_heading %}
+            {% trans "For" %}: {{ review.submission.title }} {% trans "by" %} {{ review.author }} {% trans "at" %} {{ review.created_at|date:"SHORT_DATE_FORMAT" }} {% if review.is_updated %}<small>({% trans "Last updated" %}: {{ review.updated_at|date:"SHORT_DATE_FORMAT" }})</small>{% endif %}
+        {% endslot %}
+
+        {% include 'review/includes/review_opinions_list.html' with opinions=review.opinions.all %}
+    {% endadminbar %}
 
     <div style="display: flex; gap: 2rem; padding-top: 2rem;">
         <div>

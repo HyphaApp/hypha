@@ -3,11 +3,10 @@
 
 {% block title %}{% trans "Update Contracting Information" %}{% endblock %}
 {% block content %}
-    <div class="admin-bar">
-        <div class="admin-bar__inner">
-            <h2 class="heading heading--no-margin">{% trans "Update Contracting Information" %}</h2>
-        </div>
-    </div>
+
+    {% adminbar %}
+        {% slot header %}{% trans "Update Contracting Information" %}{% endslot %}
+    {% endadminbar %}
 
     {% include "forms/includes/form_errors.html" with form=form %}
 

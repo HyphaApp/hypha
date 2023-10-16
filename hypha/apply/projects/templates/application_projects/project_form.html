@@ -5,11 +5,10 @@
 {% block title %}{% trans "Editing" %}: {{ object.title }}{% endblock %}
 
 {% block content %}
-    <div class="admin-bar">
-        <div class="admin-bar__inner">
-            <h2 class="heading heading--no-margin">{% trans "Editing" %}: {{ object.title}}</h2>
-        </div>
-    </div>
+
+    {% adminbar %}
+        {% slot header %}{% trans "Editing" %}: {{ object.title}}{% endslot %}
+    {% endadminbar %}
 
     {% include "forms/includes/form_errors.html" with form=form %}
 

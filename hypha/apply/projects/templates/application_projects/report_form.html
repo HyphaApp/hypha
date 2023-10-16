@@ -8,15 +8,16 @@
 
 {% block title %}{% trans "Edit Report" %} | {{ object.project.title }}{% endblock %}
 {% block content %}
-    <div class="admin-bar">
-        <div class="admin-bar__inner">
+
+    {% adminbar %}
+        {% slot back_link %}
             <a class="admin-bar__back-link" href="{{ object.project.get_absolute_url }}">
                 {% trans "View project page" %}
             </a>
-            <h2 class="heading heading--no-margin">{{ object.project.title }}</h2>
-            <h5 class="heading heading--no-margin">{% trans "Submit a report" %}</h5>
-        </div>
-    </div>
+        {% endslot %}
+        {% slot header %}{{ object.project.title }}{% endslot %}
+        {% slot sub_heading %}{% trans "Submit a report" %}{% endslot %}
+    {% endadminbar %}
 
     {% include "forms/includes/form_errors.html" with form=form %}
 

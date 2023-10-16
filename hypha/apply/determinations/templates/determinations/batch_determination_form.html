@@ -7,11 +7,9 @@
 {% endblock %}
 
 {% block header %}
-    <div class="admin-bar">
-        <div class="admin-bar__inner">
-            <h2 class="heading heading--no-margin">{% trans "Add Batch Determination" %} - {{ action_name }}</h2>
-        </div>
-    </div>
+    {% adminbar %}
+        {% slot header %}{% trans "Add Batch Determination" %} - {{ action_name }}{% endslot %}
+    {% endadminbar %}
 {% endblock %}
 
 {% block determination_information %}
