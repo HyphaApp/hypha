@@ -101,7 +101,6 @@ class ActivityAdapter(AdapterBase):
             MESSAGES.APPROVE_CONTRACT,
             MESSAGES.UPLOAD_CONTRACT,
             MESSAGES.SUBMIT_CONTRACT_DOCUMENTS,
-            MESSAGES.UPDATE_INVOICE_STATUS,
             MESSAGES.DELETE_INVOICE,
             MESSAGES.CREATE_INVOICE,
         ]:
@@ -118,6 +117,7 @@ class ActivityAdapter(AdapterBase):
             invoice = kwargs.get("invoice", None)
             if invoice and not is_invoice_public_transition(invoice):
                 return {"visibility": TEAM}
+            return {"visibility": APPLICANT}
         return {}
 
     def reviewers_updated(self, added=None, removed=None, **kwargs):
