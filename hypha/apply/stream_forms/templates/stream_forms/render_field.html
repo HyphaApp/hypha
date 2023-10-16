@@ -1,9 +1,9 @@
 {% if include_question %}
-    <section>
-        <h4 class="question">{{ value.field_label }}</h4>
+    <section class="">
+        <h4 class="question text-xl font-bold border-b mb-2 py-2">{{ value.field_label }}</h4>
 {% endif %}
 
-<div class="answer">
+<div class="answer prose max-w-none">
     {% block data_display %}<p>{{ data }}</p>{% endblock %}
 </div>
 

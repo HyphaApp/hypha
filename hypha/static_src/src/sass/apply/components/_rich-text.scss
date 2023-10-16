@@ -18,25 +18,38 @@
     }
 
     h1 {
-        font-size: 20px;
-        font-family: $font--primary;
+        font-size: 1.296rem;
+        margin-bottom: 1em;
+        font-weight: 600;
+        line-height: 1.3333;
+    }
+
+    h1:not(:first-child) {
+        margin-top: 2em;
     }
 
     h2 {
-        font-size: 18px;
-        font-family: $font--primary;
+        font-size: 1.215rem;
+        margin-top: 1.6em;
+        margin-bottom: 0.6em;
+        line-height: 1.6;
+        font-weight: 600;
     }
 
     h3,
-    h4:not(.question),
-    h5,
-    h6 {
-        font-size: 16px;
-        font-family: $font--primary;
+    h4:not(.question) {
+        font-size: 1.138rem;
+        margin-top: 1.5em;
+        margin-bottom: 0.5em;
+        line-height: 1.5;
     }
 
-    .question {
-        margin: 0;
+    h5,
+    h6 {
+        font-size: 1.067rem;
+        margin-top: 1.4em;
+        margin-bottom: 0.4em;
+        line-height: 1.4;
     }
 
     &--hidden {
@@ -47,22 +60,25 @@
         }
     }
 
+    // This is a hack to make sure a copy pasted table with width property on it
+    // doesn't break the layout. The margin from the table is removed and transferred
+    // to the parent element, because the table is wrapped in a div with overflow: auto
     &__table {
         overflow: auto;
+        margin-top: 1.25em;
+        margin-bottom: 1.25em;
+
+        > table {
+            margin-top: 0;
+            margin-bottom: 0;
+        }
     }
 
     ul {
-        padding-left: 20px;
-        list-style: outside disc;
-
         &.remove-list-style {
             padding: 0;
             list-style: none;
         }
-    }
-
-    ol {
-        list-style: inside decimal;
     }
 }
 

@@ -60,7 +60,9 @@
     <div class="rich-text rich-text--answers">
         {{ object.get_comments_display|submission_links }}
 
-        {{ object.output_answers|submission_links }}
+        <div class="prose">
+            {{ object.output_answers|submission_links }}
+        </div>
     </div>
 
     {% if form %}
