@@ -4,15 +4,16 @@
 {% block title %} {% trans "Invoice" %}: {{ object.project.title }}{% endblock %}
 {% block content %}
     {% display_invoice_status_for_user user object as invoice_status %}
-    <div class="admin-bar">
-        <div class="admin-bar__inner">
+
+    {% adminbar %}
+        {% slot back_link %}
             <a class="simplified__projects-link" href="{{ object.project.get_absolute_url }}">
                 {% trans "View project page" %}
             </a>
-            <h2 class="heading heading--no-margin">{% trans "Delete Invoice" %}</h2>
-            <h5 class="heading heading--no-margin">{% trans "For" %}: {{ object.project.title }}</h5>
-        </div>
-    </div>
+        {% endslot %}
+        {% slot header %}{% trans "Delete Invoice" %}{% endslot %}
+        {% slot sub_heading %}{% trans "For" %}: {{ object.project.title }}{% endslot %}
+    {% endadminbar %}
 
     <div class="wrapper wrapper--sidebar wrapper--outer-space-medium">
         <div class="wrapper--sidebar--inner">

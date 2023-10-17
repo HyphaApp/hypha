@@ -4,14 +4,15 @@
 {% block title %}{% trans "Contracting Information for" %} {{ project.title }} {% endblock %}
 
 {% block content %}
-    <div class="admin-bar">
-        <div class="admin-bar__inner">
+
+    {% adminbar %}
+        {% slot back_link %}
             <a class="simplified__projects-link" href="{{ project.get_absolute_url }}">
                 {% trans "View project page" %}
             </a>
-            <h2 class="heading heading--no-margin">{% trans "Contracting Information for" %} {{ project.title }}</h2>
-        </div>
-    </div>
+        {% endslot %}
+        {% slot header %}{% trans "Contracting Information for" %} {{ project.title }}{% endslot %}
+    {% endadminbar %}
 
     <div class="grid">
         <div>

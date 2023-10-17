@@ -30,7 +30,7 @@
         {% endif %}
     </div>
 
-    <div class="rich-text rich-text--answers">
+    <div class="rich-text rich-text--answers prose">
         <h4>{% trans "Determination message" %}</h4>
         {{ determination.message|bleach }}
         {% for group in determination.detailed_data.values %}

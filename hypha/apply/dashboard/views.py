@@ -779,11 +779,14 @@ class ApplicantDashboardView(TemplateView):
 
     def active_project_data(self):
         active_projects = (
-            Project.objects.filter(user=self.request.user).active().for_table()
+            Project.objects.filter(user=self.request.user)
+            .active()
+            .order_by("-created_at")
+            .for_table()
         )
         return {
             "count": active_projects.count(),
-            "table": ProjectsDashboardTable(data=active_projects),
+            "data": active_projects,
         }
 
     def my_active_submissions(self, user):

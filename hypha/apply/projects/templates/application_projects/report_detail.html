@@ -4,15 +4,16 @@
 {% block title %}{% trans "Report" %} | {{ object.project.title }}{% endblock %}
 {% block body_class %}{% endblock %}
 {% block content %}
-    <div class="admin-bar">
-        <div class="admin-bar__inner">
+
+    {% adminbar %}
+        {% slot back_link %}
             <a class="admin-bar__back-link" href="{{ object.project.get_absolute_url }}">
                 {% trans "View project page" %}
             </a>
-            <h2 class="heading heading--no-margin">{{ object.project.title }}</h2>
-            <h5 class="heading heading--no-margin">{% trans "View report" %}</h5>
-        </div>
-    </div>
+        {% endslot %}
+        {% slot header %}{{ object.project.title }}{% endslot %}
+        {% slot sub_heading %}{% trans "View report" %}{% endslot %}
+    {% endadminbar %}
 
     <div class="wrapper wrapper--sidebar wrapper--outer-space-medium">
         <div class="wrapper--sidebar--inner">
