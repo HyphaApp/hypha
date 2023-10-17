@@ -6,15 +6,39 @@ import wagtail.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('utils', '0004_add_setting_site_logo_link'),
+        ("utils", "0004_add_setting_site_logo_link"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='calltoactionsnippet',
-            name='link',
-            field=wagtail.fields.StreamField([('external_link', wagtail.blocks.StructBlock([('url', wagtail.blocks.URLBlock()), ('title', wagtail.blocks.CharBlock())], icon='link')), ('internal_link', wagtail.blocks.StructBlock([('page', wagtail.blocks.PageChooserBlock()), ('title', wagtail.blocks.CharBlock(required=False))], icon='link'))], blank=True, use_json_field=True),
+            model_name="calltoactionsnippet",
+            name="link",
+            field=wagtail.fields.StreamField(
+                [
+                    (
+                        "external_link",
+                        wagtail.blocks.StructBlock(
+                            [
+                                ("url", wagtail.blocks.URLBlock()),
+                                ("title", wagtail.blocks.CharBlock()),
+                            ],
+                            icon="link",
+                        ),
+                    ),
+                    (
+                        "internal_link",
+                        wagtail.blocks.StructBlock(
+                            [
+                                ("page", wagtail.blocks.PageChooserBlock()),
+                                ("title", wagtail.blocks.CharBlock(required=False)),
+                            ],
+                            icon="link",
+                        ),
+                    ),
+                ],
+                blank=True,
+                use_json_field=True,
+            ),
         ),
     ]

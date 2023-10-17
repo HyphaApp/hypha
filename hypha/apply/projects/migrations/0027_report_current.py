@@ -5,15 +5,19 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('application_projects', '0026_data_contract_approved_date'),
+        ("application_projects", "0026_data_contract_approved_date"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='report',
-            name='current',
-            field=models.OneToOneField(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='live_for_report', to='application_projects.ReportVersion'),
+            model_name="report",
+            name="current",
+            field=models.OneToOneField(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="live_for_report",
+                to="application_projects.ReportVersion",
+            ),
         ),
     ]

@@ -4,36 +4,37 @@ from django.contrib import messages
 from hypha.apply.activity.options import MESSAGES
 
 neat_related = {
-    MESSAGES.DETERMINATION_OUTCOME: 'determination',
-    MESSAGES.BATCH_DETERMINATION_OUTCOME: 'determinations',
-    MESSAGES.UPDATE_LEAD: 'old_lead',
-    MESSAGES.NEW_REVIEW: 'review',
-    MESSAGES.TRANSITION: 'old_phase',
-    MESSAGES.BATCH_TRANSITION: 'transitions',
-    MESSAGES.APPLICANT_EDIT: 'revision',
-    MESSAGES.EDIT_SUBMISSION: 'revision',
-    MESSAGES.COMMENT: 'comment',
-    MESSAGES.SCREENING: 'old_status',
-    MESSAGES.REVIEW_OPINION: 'opinion',
-    MESSAGES.DELETE_REVIEW: 'review',
-    MESSAGES.EDIT_REVIEW: 'review',
-    MESSAGES.CREATED_PROJECT: 'submission',
-    MESSAGES.PROJECT_TRANSITION: 'old_stage',
-    MESSAGES.UPDATE_PROJECT_LEAD: 'old_lead',
-    MESSAGES.APPROVE_CONTRACT: 'contract',
-    MESSAGES.UPLOAD_CONTRACT: 'contract',
-    MESSAGES.CREATE_INVOICE: 'create_invoice',
-    MESSAGES.UPDATE_INVOICE_STATUS: 'invoice',
-    MESSAGES.APPROVE_INVOICE: 'invoice',
-    MESSAGES.DELETE_INVOICE: 'invoice',
-    MESSAGES.UPDATE_INVOICE: 'invoice',
-    MESSAGES.SUBMIT_REPORT: 'report',
-    MESSAGES.SKIPPED_REPORT: 'report',
-    MESSAGES.REPORT_FREQUENCY_CHANGED: 'config',
-    MESSAGES.REPORT_NOTIFY: 'report',
-    MESSAGES.CREATE_REMINDER: 'reminder',
-    MESSAGES.DELETE_REMINDER: 'reminder',
-    MESSAGES.REVIEW_REMINDER: 'reminder',
+    MESSAGES.DETERMINATION_OUTCOME: "determination",
+    MESSAGES.BATCH_DETERMINATION_OUTCOME: "determinations",
+    MESSAGES.UPDATE_LEAD: "old_lead",
+    MESSAGES.NEW_REVIEW: "review",
+    MESSAGES.TRANSITION: "old_phase",
+    MESSAGES.BATCH_TRANSITION: "transitions",
+    MESSAGES.APPLICANT_EDIT: "revision",
+    MESSAGES.EDIT_SUBMISSION: "revision",
+    MESSAGES.COMMENT: "comment",
+    MESSAGES.SCREENING: "old_status",
+    MESSAGES.REVIEW_OPINION: "opinion",
+    MESSAGES.DELETE_REVIEW: "review",
+    MESSAGES.DELETE_REVIEW_OPINION: "review_opinion",
+    MESSAGES.EDIT_REVIEW: "review",
+    MESSAGES.CREATED_PROJECT: "submission",
+    MESSAGES.PROJECT_TRANSITION: "old_stage",
+    MESSAGES.UPDATE_PROJECT_LEAD: "old_lead",
+    MESSAGES.APPROVE_CONTRACT: "contract",
+    MESSAGES.UPLOAD_CONTRACT: "contract",
+    MESSAGES.CREATE_INVOICE: "create_invoice",
+    MESSAGES.UPDATE_INVOICE_STATUS: "invoice",
+    MESSAGES.APPROVE_INVOICE: "invoice",
+    MESSAGES.DELETE_INVOICE: "invoice",
+    MESSAGES.UPDATE_INVOICE: "invoice",
+    MESSAGES.SUBMIT_REPORT: "report",
+    MESSAGES.SKIPPED_REPORT: "report",
+    MESSAGES.REPORT_FREQUENCY_CHANGED: "config",
+    MESSAGES.REPORT_NOTIFY: "report",
+    MESSAGES.CREATE_REMINDER: "reminder",
+    MESSAGES.DELETE_REMINDER: "reminder",
+    MESSAGES.REVIEW_REMINDER: "reminder",
 }
 
 
@@ -87,8 +88,8 @@ class AdapterBase:
         # receive a message under normal conditions
         return [
             {
-                'recipients': self.recipients(message_type, source=source, **kwargs),
-                'sources': [source],
+                "recipients": self.recipients(message_type, source=source, **kwargs),
+                "sources": [source],
             }
             for source in sources
         ]
@@ -100,8 +101,8 @@ class AdapterBase:
         for recipient in self.batch_recipients(
             message_type, sources, user=user, **kwargs
         ):
-            recipients = recipient['recipients']
-            sources = recipient['sources']
+            recipients = recipient["recipients"]
+            sources = recipient["sources"]
             events = [events_by_source[source.id] for source in sources]
             self.process_send(
                 message_type,
@@ -119,7 +120,12 @@ class AdapterBase:
         self, message_type, event, request, user, source, related=None, **kwargs
     ):
         recipients = self.recipients(
-            message_type, source=source, related=related, user=user, request=request, **kwargs
+            message_type,
+            source=source,
+            related=related,
+            user=user,
+            request=request,
+            **kwargs,
         )
         self.process_send(
             message_type,
@@ -153,11 +159,11 @@ class AdapterBase:
             pass
 
         kwargs = {
-            'request': request,
-            'user': user,
-            'source': source,
-            'sources': sources,
-            'related': related,
+            "request": request,
+            "user": user,
+            "source": source,
+            "sources": sources,
+            "related": related,
             **kwargs,
         }
         kwargs.update(self.get_neat_related(message_type, related))
@@ -175,17 +181,17 @@ class AdapterBase:
                     message, recipient=recipient, logs=message_logs, **kwargs
                 )
             else:
-                status = 'Message not sent as SEND_MESSAGES==FALSE'
+                status = "Message not sent as SEND_MESSAGES==FALSE"
 
             message_logs.update_status(status)
 
             if not settings.SEND_MESSAGES:
                 if recipient:
-                    debug_message = '{} [to: {}]: {}'.format(
+                    debug_message = "{} [to: {}]: {}".format(
                         self.adapter_type, recipient, message
                     )
                 else:
-                    debug_message = '{}: {}'.format(self.adapter_type, message)
+                    debug_message = "{}: {}".format(self.adapter_type, message)
                 messages.add_message(request, messages.DEBUG, debug_message)
 
     def create_logs(self, message, recipient, *events):
@@ -198,10 +204,10 @@ class AdapterBase:
 
     def log_kwargs(self, message, recipient, event):
         return {
-            'type': self.adapter_type,
-            'content': message,
-            'recipient': recipient or '',
-            'event': event,
+            "type": self.adapter_type,
+            "content": message,
+            "recipient": recipient or "",
+            "event": event,
         }
 
     def send_message(self, message, **kwargs):

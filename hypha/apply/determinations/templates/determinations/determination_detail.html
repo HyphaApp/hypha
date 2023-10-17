@@ -1,45 +1,46 @@
 {% extends "base-apply.html" %}
-{% load i18n bleach_tags %}
+{% load i18n bleach_tags heroicons %}
 
 {% block title %}{% trans "Determination for" %} {{ determination.submission.title }}{% endblock %}
 
 {% block content %}
-<div class="admin-bar">
-    <div class="admin-bar__inner">
-        <a class="simplified__submissions-link" href="{{ determination.submission.get_absolute_url }}">
-            {% trans "Back to submission" %}
-        </a>
-        <h2 class="heading heading--no-margin">{% trans "Determination" %} {% if determination.is_draft %}[{% trans "DRAFT" %}]{% endif %}
-        </h2>
-        <h5>{% trans "For" %}: {{ determination.submission.title }}</h5>
-    </div>
-</div>
-
-<div class="grid">
-    <div>
-        <h5 class="determination-outcome">{% trans "Determination" %}: {{ determination.get_outcome_display }}</h5>
-    </div>
-    {% if request.user.is_apply_staff %}
-        <div>
-            <a class="link link--edit-determination is-active" href="{% url 'apply:submissions:determinations:edit' submission_pk=determination.submission.id pk=determination.id %}">
-                {% trans "Edit" %}
-            <svg class="icon icon--pen"><use xlink:href="#pen"></use></svg>
+    {% adminbar %}
+        {% slot back_link %}
+            <a class="simplified__submissions-link" href="{{ determination.submission.get_absolute_url }}">
+                {% trans "View submission" %}
             </a>
-        </div>
-    {% endif %}
-</div>
+        {% endslot %}
 
-<div class="rich-text rich-text--answers">
-    <h4>{% trans "Determination message" %}</h4>
-    {{ determination.message|bleach }}
-    {% for group in determination.detailed_data.values %}
-        {% if group.title %}
-            <h4>{{ group.title|bleach }}</h4>
+        {% slot header %} {% trans "Determination" %} {% if determination.is_draft %}[{% trans "DRAFT" %}] {% endif %}{% endslot %}
+        {% slot sub_heading %}{% trans "For" %} <a class="text-blue-300 hover:underline" href="{% url "funds:submissions:detail" determination.submission.id %}">{{ determination.submission.title }}</a>{% endslot %}
+
+    {% endadminbar %}
+
+    <div class="flex justify-between pt-2 mb-2 mt-2 max-w-[50em] border-b">
+
+        <h5 class="determination-outcome mb-4">
+            {% trans "Determination" %}: {{ determination.get_outcome_display }}
+        </h5>
+        {% if request.user.is_apply_staff %}
+            <a class="text-blue-500 hover:underline" href="{% url 'apply:submissions:determinations:edit' submission_pk=determination.submission.id pk=determination.id %}">
+                <span class="whitespace-nowrap">
+                    {% trans "Edit" %}{% heroicon_mini "pencil-square" size=18 class="inline ml-1 align-text-bottom" aria_hidden=true %}
+                </span>
+            </a>
         {% endif %}
-        {% for question, answer in group.questions %}
-            <h5>{{ question }}</h5>
-            {% if answer %}{% if answer == True %}{{ answer|yesno:"Agree,Disagree" }}{% else %}{{ answer|bleach }}{% endif %}{% else %}-{% endif %}
+    </div>
+
+    <div class="rich-text rich-text--answers prose">
+        <h4>{% trans "Determination message" %}</h4>
+        {{ determination.message|bleach }}
+        {% for group in determination.detailed_data.values %}
+            {% if group.title %}
+                <h4>{{ group.title|bleach }}</h4>
+            {% endif %}
+            {% for question, answer in group.questions %}
+                <h5>{{ question }}</h5>
+                {% if answer %}{% if answer == True %}{{ answer|yesno:"Agree,Disagree" }}{% else %}{{ answer|bleach }}{% endif %}{% else %}-{% endif %}
+            {% endfor %}
         {% endfor %}
-    {% endfor %}
-</div>
+    </div>
 {% endblock %}

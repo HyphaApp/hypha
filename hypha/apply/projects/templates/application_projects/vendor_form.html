@@ -3,31 +3,30 @@
 
 {% block title %}{% trans "Update Contracting Information" %}{% endblock %}
 {% block content %}
-<div class="admin-bar">
-    <div class="admin-bar__inner">
-        <h2 class="heading heading--no-margin">{% trans "Update Contracting Information" %}</h2>
-    </div>
-</div>
 
-{% include "forms/includes/form_errors.html" with form=form %}
+    {% adminbar %}
+        {% slot header %}{% trans "Update Contracting Information" %}{% endslot %}
+    {% endadminbar %}
 
-<div class="wrapper wrapper--light-grey-bg wrapper--form wrapper--sidebar">
-    <div class="wrapper--sidebar--inner">
-        <form class="form" id="multi-step-vendor" action="" method="post" enctype="multipart/form-data">
-            {{ wizard.management_form }}
-            {% csrf_token %}
-            {{ form.media }}
-            {% for field in form %}
-                {% if field.field %}
-                    {% include "forms/includes/field.html" %}
-                {% else %}
-                    {{ field }}
-                {% endif %}
-            {% endfor %}
-            <button class="button button--submit button--top-space button--primary" type="submit" name="save">{% if wizard.steps.step1 == 6 %}{% trans "Submit" %}{% else %}{% trans "Save and continue" %}{% endif %}</button>
-        </form>
+    {% include "forms/includes/form_errors.html" with form=form %}
+
+    <div class="wrapper wrapper--light-grey-bg wrapper--form wrapper--sidebar">
+        <div class="wrapper--sidebar--inner">
+            <form class="form" id="multi-step-vendor" action="" method="post" enctype="multipart/form-data">
+                {{ wizard.management_form }}
+                {% csrf_token %}
+                {{ form.media }}
+                {% for field in form %}
+                    {% if field.field %}
+                        {% include "forms/includes/field.html" %}
+                    {% else %}
+                        {{ field }}
+                    {% endif %}
+                {% endfor %}
+                <button class="button button--submit button--top-space button--primary" type="submit" name="save">{% if wizard.steps.step1 == 6 %}{% trans "Submit" %}{% else %}{% trans "Save and continue" %}{% endif %}</button>
+            </form>
+        </div>
     </div>
-</div>
 {% endblock %}
 
 {% block extra_css %}

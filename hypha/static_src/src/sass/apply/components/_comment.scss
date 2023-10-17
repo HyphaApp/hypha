@@ -23,10 +23,6 @@
         margin: 0;
     }
 
-    &__time {
-        font-size: map-get($font-sizes, milli);
-    }
-
     &__user {
         font-weight: $weight--semibold;
     }

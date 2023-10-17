@@ -5,15 +5,17 @@ import hypha.apply.stream_forms.files
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('application_projects', '0046_add_required_checks_field'),
+        ("application_projects", "0046_add_required_checks_field"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='project',
-            name='form_data',
-            field=models.JSONField(default=dict, encoder=hypha.apply.stream_forms.files.StreamFieldDataEncoder),
+            model_name="project",
+            name="form_data",
+            field=models.JSONField(
+                default=dict,
+                encoder=hypha.apply.stream_forms.files.StreamFieldDataEncoder,
+            ),
         ),
     ]

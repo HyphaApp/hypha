@@ -4,15 +4,23 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('application_projects', '0014_add_payment_related_models'),
+        ("application_projects", "0014_add_payment_related_models"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='paymentrequest',
-            name='status',
-            field=models.TextField(choices=[('submitted', 'Submitted'), ('changes_requested', 'Changes Requested'), ('under_review', 'Under Review'), ('paid', 'Paid'), ('declined', 'Declined')], default='submitted'),
+            model_name="paymentrequest",
+            name="status",
+            field=models.TextField(
+                choices=[
+                    ("submitted", "Submitted"),
+                    ("changes_requested", "Changes Requested"),
+                    ("under_review", "Under Review"),
+                    ("paid", "Paid"),
+                    ("declined", "Declined"),
+                ],
+                default="submitted",
+            ),
         ),
     ]

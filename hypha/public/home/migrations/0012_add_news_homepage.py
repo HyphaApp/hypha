@@ -5,26 +5,31 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('wagtailcore', '0045_assign_unlock_grouppagepermission'),
-        ('home', '0011_correct_related_page_behaviour'),
+        ("wagtailcore", "0045_assign_unlock_grouppagepermission"),
+        ("home", "0011_correct_related_page_behaviour"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='homepage',
-            name='news_link',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to='wagtailcore.Page'),
+            model_name="homepage",
+            name="news_link",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to="wagtailcore.Page",
+            ),
         ),
         migrations.AddField(
-            model_name='homepage',
-            name='news_link_text',
+            model_name="homepage",
+            name="news_link_text",
             field=models.CharField(blank=True, max_length=255),
         ),
         migrations.AddField(
-            model_name='homepage',
-            name='news_title',
+            model_name="homepage",
+            name="news_title",
             field=models.CharField(blank=True, max_length=255),
         ),
     ]

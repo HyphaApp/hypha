@@ -1,15 +1,14 @@
 from .options import DETERMINATION_TO_OUTCOME, TRANSITION_DETERMINATION
 
-OUTCOME_TO_DETERMINATION = {
-    v: k
-    for k, v in DETERMINATION_TO_OUTCOME.items()
-}
+OUTCOME_TO_DETERMINATION = {v: k for k, v in DETERMINATION_TO_OUTCOME.items()}
 
 
 def outcome_from_actions(actions):
     outcomes = [TRANSITION_DETERMINATION[action] for action in actions]
     if len(set(outcomes)) != 1:
-        raise ValueError('Mixed determination transitions selected - please contact an admin')
+        raise ValueError(
+            "Mixed determination transitions selected - please contact an admin"
+        )
     outcome = outcomes[0]
     return OUTCOME_TO_DETERMINATION[outcome]
 

@@ -25,11 +25,12 @@ class InvoiceDeliverableViewSet(
     ProjectNestedMixin,
     mixins.CreateModelMixin,
     mixins.DestroyModelMixin,
-    viewsets.GenericViewSet
+    viewsets.GenericViewSet,
 ):
     permission_classes = (
-        permissions.IsAuthenticated, HasDeliverableEditPermission,
-        IsApplyStaffUser | IsFinance1User | IsFinance2User
+        permissions.IsAuthenticated,
+        HasDeliverableEditPermission,
+        IsApplyStaffUser | IsFinance1User | IsFinance2User,
     )
     serializer_class = InvoiceDeliverableListSerializer
     pagination_class = None
@@ -42,27 +43,29 @@ class InvoiceDeliverableViewSet(
         ser = DeliverableSerializer(data=request.data)
         ser.is_valid(raise_exception=True)
         project = self.get_project_object()
-        deliverable_id = ser.validated_data['id']
+        deliverable_id = ser.validated_data["id"]
         if not project.deliverables.filter(id=deliverable_id).exists():
-            raise ValidationError({'detail': _("Not Found")})
+            raise ValidationError({"detail": _("Not Found")})
         invoice = self.get_invoice_object()
-        deliverable = get_object_or_404(
-            Deliverable, id=deliverable_id
-        )
+        deliverable = get_object_or_404(Deliverable, id=deliverable_id)
         if invoice.deliverables.filter(deliverable=deliverable).exists():
-            raise ValidationError({'detail': _("Invoice Already has this deliverable")})
-        quantity = ser.validated_data['quantity']
+            raise ValidationError({"detail": _("Invoice Already has this deliverable")})
+        quantity = ser.validated_data["quantity"]
         if deliverable.available_to_invoice < quantity:
-            raise ValidationError({'detail': _("Required quantity is more than available")})
+            raise ValidationError(
+                {"detail": _("Required quantity is more than available")}
+            )
         invoice_deliverable = InvoiceDeliverable.objects.create(
-            deliverable=deliverable,
-            quantity=ser.validated_data['quantity']
+            deliverable=deliverable, quantity=ser.validated_data["quantity"]
         )
         invoice.deliverables.add(invoice_deliverable)
         ser = self.get_serializer(invoice.deliverables.all(), many=True)
         return Response(
-            {'deliverables': ser.data, 'total': invoice.deliverables_total_amount['total']},
-            status=status.HTTP_201_CREATED
+            {
+                "deliverables": ser.data,
+                "total": invoice.deliverables_total_amount["total"],
+            },
+            status=status.HTTP_201_CREATED,
         )
 
     def get_serializer_context(self):
@@ -76,5 +79,8 @@ class InvoiceDeliverableViewSet(
         invoice.deliverables.remove(deliverable)
         ser = self.get_serializer(invoice.deliverables.all(), many=True)
         return Response(
-            {'deliverables': ser.data, 'total': invoice.deliverables_total_amount['total']},
+            {
+                "deliverables": ser.data,
+                "total": invoice.deliverables_total_amount["total"],
+            },
         )

@@ -13,32 +13,32 @@ from hypha.public.people.models import PersonType
 
 class NewsTypeModelAdmin(ModelAdmin):
     model = NewsType
-    menu_icon = 'tag'
+    menu_icon = "tag"
 
 
 class PersonTypeModelAdmin(ModelAdmin):
     model = PersonType
-    menu_icon = 'tag'
+    menu_icon = "tag"
 
 
 class TaxonomiesModelAdminGroup(ModelAdminGroup):
     menu_label = "Taxonomies"
     items = (NewsTypeModelAdmin, PersonTypeModelAdmin)
-    menu_icon = 'tag'
+    menu_icon = "tag"
 
 
 modeladmin_register(TaxonomiesModelAdminGroup)
 
 
-@hooks.register('insert_editor_css')
+@hooks.register("insert_editor_css")
 def editor_css():
     link = '<link rel="stylesheet" href="{}">\n'
-    path = static('css/apply/wagtail_editor.css')
+    path = static("css/apply/wagtail_editor.css")
     return link.format(path)
 
 
-@hooks.register('after_create_page')
-@hooks.register('after_edit_page')
+@hooks.register("after_create_page")
+@hooks.register("after_edit_page")
 def clear_wagtailcache(request, page):
     if page.live:
         clear_cache()

@@ -5,23 +5,49 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
-        ('wagtailcore', '0045_assign_unlock_grouppagepermission'),
+        ("wagtailcore", "0045_assign_unlock_grouppagepermission"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='PDFPageSettings',
+            name="PDFPageSettings",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('download_page_size', models.CharField(choices=[('A4', 'A4'), ('legal', 'Legal'), ('letter', 'Letter')], default='legal', help_text='Page size of downloadable Project and Submission PDFs', max_length=6)),
-                ('site', models.OneToOneField(editable=False, on_delete=django.db.models.deletion.CASCADE, to='wagtailcore.Site')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "download_page_size",
+                    models.CharField(
+                        choices=[
+                            ("A4", "A4"),
+                            ("legal", "Legal"),
+                            ("letter", "Letter"),
+                        ],
+                        default="legal",
+                        help_text="Page size of downloadable Project and Submission PDFs",
+                        max_length=6,
+                    ),
+                ),
+                (
+                    "site",
+                    models.OneToOneField(
+                        editable=False,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="wagtailcore.Site",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'pdf settings',
+                "verbose_name": "pdf settings",
             },
         ),
     ]

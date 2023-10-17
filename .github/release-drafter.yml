@@ -1,44 +1,44 @@
-name-template: '$RESOLVED_VERSION'
-tag-template: 'v$RESOLVED_VERSION'
+name-template: "$RESOLVED_VERSION"
+tag-template: "v$RESOLVED_VERSION"
 version-resolver:
   major:
     labels:
-      - 'Type: Major'
-      - 'major'
+      - "Type: Major"
+      - "major"
   minor:
     labels:
-      - 'Type: Minor'
-      - 'minor'
+      - "Type: Minor"
+      - "minor"
   patch:
     labels:
-      - 'Type: Patch'
-      - 'patch'
+      - "Type: Patch"
+      - "patch"
   default: patch
 categories:
-  - title: '🚀 Features'
+  - title: "🚀 Features"
     labels:
-      - 'Type: Feature'
-      - 'feature'
-  - title: '⚙️ Enhancements'
+      - "Type: Feature"
+      - "feature"
+  - title: "⚙️ Enhancements"
     labels:
-      - 'Type: Enhancement'
-      - 'enhancement'
-  - title: '🐛 Bug Fixes'
+      - "Type: Enhancement"
+      - "enhancement"
+  - title: "🐛 Bug Fixes"
     labels:
-      - 'Type: Bug'
-      - 'fix'
-      - 'bugfix'
-      - 'bug'
-  - title: '🔧 Maintenance'
+      - "Type: Bug"
+      - "fix"
+      - "bugfix"
+      - "bug"
+  - title: "🔧 Maintenance"
     labels:
-      - 'Type: Maintenance'
-      - 'Type: Dependencies'
-      - 'dependencies'
-      - 'maintenance'
-  - title: '📜 Documentation'
+      - "Type: Maintenance"
+      - "Type: Dependencies"
+      - "dependencies"
+      - "maintenance"
+  - title: "📜 Documentation"
     labels:
-      - 'Type: Documentation'
-      - 'documentation'
+      - "Type: Documentation"
+      - "documentation"
 template: |
   ## Changes
 

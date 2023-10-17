@@ -6,15 +6,22 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('activity', '0002_activity_type'),
+        ("activity", "0002_activity_type"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='activity',
-            name='visibility',
-            field=models.CharField(choices=[('public', 'Public'), ('reviewers', 'Reviewers'), ('internal', 'Internal')], default='public', max_length=10),
+            model_name="activity",
+            name="visibility",
+            field=models.CharField(
+                choices=[
+                    ("public", "Public"),
+                    ("reviewers", "Reviewers"),
+                    ("internal", "Internal"),
+                ],
+                default="public",
+                max_length=10,
+            ),
         ),
     ]

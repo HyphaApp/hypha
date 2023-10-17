@@ -15,12 +15,16 @@ class Command(BaseCommand):
     groups = Group.objects.all()
 
     def add_arguments(self, parser):
-        parser.add_argument('source', type=argparse.FileType('r'), help="Migration source JSON file")
-        parser.add_argument('--anonymize', action='store_true', help="Anonymizes non-OTF emails")
+        parser.add_argument(
+            "source", type=argparse.FileType("r"), help="Migration source JSON file"
+        )
+        parser.add_argument(
+            "--anonymize", action="store_true", help="Anonymizes non-OTF emails"
+        )
 
     @transaction.atomic
     def handle(self, *args, **options):
-        with options['source'] as json_data:
+        with options["source"] as json_data:
             User = get_user_model()
             users = json.load(json_data)
 
@@ -30,12 +34,12 @@ class Command(BaseCommand):
                 full_name = self.get_full_name(user)
                 slack_name = self.get_slack_name(user)
                 user_object, created = User.objects.get_or_create(
-                    email=self.get_email(user, options['anonymize']),
+                    email=self.get_email(user, options["anonymize"]),
                     defaults={
-                        'full_name': full_name,
-                        'slack': slack_name,
-                        'drupal_id': uid,
-                    }
+                        "full_name": full_name,
+                        "slack": slack_name,
+                        "drupal_id": uid,
+                    },
                 )
 
                 operation = "Imported" if created else "Processed"
@@ -54,33 +58,35 @@ class Command(BaseCommand):
                 self.stdout.write(f"{operation} user {uid} ({full_name})")
 
     def get_full_name(self, user):
-        full_name = user.get('field_otf_real_name', None)
+        full_name = user.get("field_otf_real_name", None)
         try:
-            full_name = full_name['safe_value']
+            full_name = full_name["safe_value"]
         except (KeyError, TypeError):
-            full_name = user['name']
+            full_name = user["name"]
 
         return full_name
 
     def get_slack_name(self, user):
-        slack_name = user.get('field_otf_slack_name', None)
+        slack_name = user.get("field_otf_slack_name", None)
         try:
             slack_name = f"@{slack_name['safe_value']}"
         except (KeyError, TypeError):
-            slack_name = ''
+            slack_name = ""
 
         return slack_name
 
     def get_user_groups(self, user):
         groups = []
         role_map = {
-            'council': 'Reviewer',
+            "council": "Reviewer",
         }
 
-        if self.is_staff(user['mail']):
+        if self.is_staff(user["mail"]):
             groups.append(self.groups.filter(name=STAFF_GROUP_NAME).first())
 
-        roles = [role for role in user.get('roles').values() if role != "authenticated user"]
+        roles = [
+            role for role in user.get("roles").values() if role != "authenticated user"
+        ]
 
         for role in roles:
             group_name = role_map.get(role)
@@ -90,12 +96,12 @@ class Command(BaseCommand):
         return groups
 
     def get_email(self, user, anonymize=False):
-        email = user['mail']
+        email = user["mail"]
         if not anonymize or self.is_staff(email):
             return email
 
         return f"aeon+{user['uid']}@torchbox.com"
 
     def is_staff(self, email):
-        _, email_domain = email.split('@')
+        _, email_domain = email.split("@")
         return email_domain in settings.STAFF_EMAIL_DOMAINS

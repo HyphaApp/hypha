@@ -1,14 +1,14 @@
-<div class="rich-text section-head">
-    <{{ self.size }} tabindex="-1" class="group">
+<div class="section-head mb-4">
+    <{{ self.size }} tabindex="-1" class="p-2 mb-2 bg-light-blue text-white">
 
-        {{ value.heading_text }}
-        <a id="{{ value.heading_text|slugify }}"
-            class="anchor hidden group-hover:inline-block text-gray-700"
-            href="#{{ value.heading_text|slugify }}"
-            aria-hidden='true'>
-            <svg class="icon icon--anchor-link">
-                <use xlink:href="#anchor-link"></use>
-            </svg>
-        </a>
-    </{{ self.size }}>
+    {{ value.heading_text }}
+    <a id="{{ value.heading_text|slugify }}"
+       class="anchor hidden group-hover:inline-block text-gray-700"
+       href="#{{ value.heading_text|slugify }}"
+       aria-hidden='true'>
+        <svg class="icon icon--anchor-link">
+            <use xlink:href="#anchor-link"></use>
+        </svg>
+    </a>
+</{{ self.size }}>
 </div>

@@ -49,41 +49,46 @@ from .utils import (
 
 class SubmissionViewSet(viewsets.ReadOnlyModelViewSet, viewsets.GenericViewSet):
     permission_classes = (
-        permissions.IsAuthenticated, IsApplyStaffUser,
+        permissions.IsAuthenticated,
+        IsApplyStaffUser,
     )
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = SubmissionsFilter
     pagination_class = StandardResultsSetPagination
 
     def get_serializer_class(self):
-        if self.action == 'list':
+        if self.action == "list":
             return SubmissionListSerializer
         return SubmissionDetailSerializer
 
     def get_queryset(self):
-        if self.action == 'list':
-            return ApplicationSubmission.objects.exclude_draft().current().with_latest_update()
+        if self.action == "list":
+            return (
+                ApplicationSubmission.objects.exclude_draft()
+                .current()
+                .with_latest_update()
+            )
         return ApplicationSubmission.objects.exclude_draft().prefetch_related(
-            Prefetch('reviews', Review.objects.submitted()),
+            Prefetch("reviews", Review.objects.submitted()),
         )
 
-    @action(detail=True, methods=['put'])
+    @action(detail=True, methods=["put"])
     def set_summary(self, request, pk=None):
         submission = self.get_object()
         serializer = SubmissionSummarySerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        summary = serializer.validated_data['summary']
+        summary = serializer.validated_data["summary"]
         submission.summary = summary
-        submission.save(update_fields=['summary'])
+        submission.save(update_fields=["summary"])
         serializer = self.get_serializer(submission)
         return Response(serializer.data)
 
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=["post"])
     def meta_terms(self, request, pk=None):
         submission = self.get_object()
         serializer = SubmissionMetaTermsSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        meta_terms_ids = serializer.validated_data['meta_terms']
+        meta_terms_ids = serializer.validated_data["meta_terms"]
         submission.meta_terms.set(meta_terms_ids)
         serializer = self.get_serializer(submission)
         return Response(serializer.data)
@@ -91,63 +96,100 @@ class SubmissionViewSet(viewsets.ReadOnlyModelViewSet, viewsets.GenericViewSet):
 
 class SubmissionFilters(APIView):
     permission_classes = (
-        permissions.IsAuthenticated, IsApplyStaffUser,
+        permissions.IsAuthenticated,
+        IsApplyStaffUser,
     )
 
     def filter_unique_options(self, options):
-        unique_items = [dict(item) for item in {tuple(option.items()) for option in options}]
+        unique_items = [
+            dict(item) for item in {tuple(option.items()) for option in options}
+        ]
         return list(filter(lambda x: len(x.get("label")), unique_items))
 
     def format(self, filterKey, label, options):
         if label == "Screenings":
             options.insert(0, {"key": None, "label": "No Screening"})
-        return {
-            "filterKey": filterKey,
-            "label": label,
-            "options": options
-        }
+        return {"filterKey": filterKey, "label": label, "options": options}
 
     def get(self, request, format=None):
         filter_options = [
-            self.format("fund", "Funds", [
-                {"key": fund.get("id"), "label": fund.get("title")}
-                for fund in get_used_funds().values()
-            ]),
-            self.format("round", "Rounds", [
-                {"key": round.get("id"), "label": round.get("title")}
-                for round in get_used_rounds().values()
-            ]),
-            self.format("status", "Statuses", [
-                {'key': list(STATUSES.get(label)), 'label': label}
-                for label in dict(STATUSES)
-            ]),
-            self.format("screening_statuses", "Screenings", self.filter_unique_options([
-                {"key": screening.get("id"), "label": screening.get("title")}
-                for screening in get_screening_statuses().values()
-            ])),
-            self.format("lead", "Leads", [
-                {"key": lead.get('id'), "label": lead.get('full_name') or lead.get('email')}
-                for lead in get_round_leads().values()
-            ]),
-            self.format("reviewers", "Reviewers", self.filter_unique_options([
-                {"key": reviewer.get('id'), "label": reviewer.get('full_name') or reviewer.get('email')}
-                for reviewer in get_all_reviewers().values()
-            ])),
-            self.format("category_options", "Category", self.filter_unique_options([
-                {"key": option.get('id'), "label": option.get('value')}
-                for option in get_category_options().values()
-            ])),
+            self.format(
+                "fund",
+                "Funds",
+                [
+                    {"key": fund.get("id"), "label": fund.get("title")}
+                    for fund in get_used_funds().values()
+                ],
+            ),
+            self.format(
+                "round",
+                "Rounds",
+                [
+                    {"key": round.get("id"), "label": round.get("title")}
+                    for round in get_used_rounds().values()
+                ],
+            ),
+            self.format(
+                "status",
+                "Statuses",
+                [
+                    {"key": list(STATUSES.get(label)), "label": label}
+                    for label in dict(STATUSES)
+                ],
+            ),
+            self.format(
+                "screening_statuses",
+                "Screenings",
+                self.filter_unique_options(
+                    [
+                        {"key": screening.get("id"), "label": screening.get("title")}
+                        for screening in get_screening_statuses().values()
+                    ]
+                ),
+            ),
+            self.format(
+                "lead",
+                "Leads",
+                [
+                    {
+                        "key": lead.get("id"),
+                        "label": lead.get("full_name") or lead.get("email"),
+                    }
+                    for lead in get_round_leads().values()
+                ],
+            ),
+            self.format(
+                "reviewers",
+                "Reviewers",
+                self.filter_unique_options(
+                    [
+                        {
+                            "key": reviewer.get("id"),
+                            "label": reviewer.get("full_name") or reviewer.get("email"),
+                        }
+                        for reviewer in get_all_reviewers().values()
+                    ]
+                ),
+            ),
+            self.format(
+                "category_options",
+                "Category",
+                self.filter_unique_options(
+                    [
+                        {"key": option.get("id"), "label": option.get("value")}
+                        for option in get_category_options().values()
+                    ]
+                ),
+            ),
         ]
         return Response(filter_options)
 
 
-class SubmissionActionViewSet(
-    SubmissionNestedMixin,
-    viewsets.GenericViewSet
-):
+class SubmissionActionViewSet(SubmissionNestedMixin, viewsets.GenericViewSet):
     serializer_class = SubmissionActionSerializer
     permission_classes = (
-        permissions.IsAuthenticated, IsApplyStaffUser,
+        permissions.IsAuthenticated,
+        IsApplyStaffUser,
     )
 
     def get_object(self):
@@ -174,54 +216,62 @@ class SubmissionActionViewSet(
         {"action": "internal_review"}
         ```
         """
-        action = request.data.get('action')
+        action = request.data.get("action")
         if not action:
-            raise ValidationError('Action must be provided.')
+            raise ValidationError("Action must be provided.")
         obj = self.get_object()
 
-        redirect = DeterminationCreateOrUpdateView.should_redirect(
-            request, obj, action)
+        redirect = DeterminationCreateOrUpdateView.should_redirect(request, obj, action)
         if redirect:
-            raise NotFound({
-                'detail': 'The action should be performed at the determination view',
-                'target': redirect.url,
-            })
+            raise NotFound(
+                {
+                    "detail": "The action should be performed at the determination view",
+                    "target": redirect.url,
+                }
+            )
         try:
             obj.perform_transition(action, self.request.user, request=self.request)
         except DjangoPermissionDenied as e:
             raise PermissionDenied(str(e)) from e
         # refresh_from_db() raises errors for particular actions.
         obj = self.get_object()
-        serializer = SubmissionDetailSerializer(obj, context={
-            'request': request,
-        })
-        return Response({
-            'id': serializer.data['id'],
-            'status': serializer.data['status'],
-            'actions': serializer.data['actions'],
-            'phase': serializer.data['phase'],
-        })
+        serializer = SubmissionDetailSerializer(
+            obj,
+            context={
+                "request": request,
+            },
+        )
+        return Response(
+            {
+                "id": serializer.data["id"],
+                "status": serializer.data["status"],
+                "actions": serializer.data["actions"],
+                "phase": serializer.data["phase"],
+            }
+        )
 
 
 class RoundViewSet(
-    mixins.RetrieveModelMixin,
-    mixins.ListModelMixin,
-    viewsets.GenericViewSet
+    mixins.RetrieveModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet
 ):
     queryset = RoundsAndLabs.objects.all()
     serializer_class = RoundLabSerializer
     permission_classes = (
-        permissions.IsAuthenticated, IsApplyStaffUser,
+        permissions.IsAuthenticated,
+        IsApplyStaffUser,
     )
     permission_classes_by_action = {
-        'open': [HasAPIKey | permissions.IsAuthenticated, HasAPIKey | IsApplyStaffUser, ],
+        "open": [
+            HasAPIKey | permissions.IsAuthenticated,
+            HasAPIKey | IsApplyStaffUser,
+        ],
     }
     pagination_class = StandardResultsSetPagination
 
     def get_serializer_class(self):
-        if self.action == 'list':
+        if self.action == "list":
             return RoundLabSerializer
-        elif self.action == 'open':
+        elif self.action == "open":
             return OpenRoundLabSerializer
         return RoundLabDetailSerializer
 
@@ -232,12 +282,15 @@ class RoundViewSet(
     def get_permissions(self):
         try:
             # return permission_classes depending on `action`
-            return [permission() for permission in self.permission_classes_by_action[self.action]]
+            return [
+                permission()
+                for permission in self.permission_classes_by_action[self.action]
+            ]
         except KeyError:
             # action is not set return default permission_classes
             return [permission() for permission in self.permission_classes]
 
-    @action(methods=['get'], detail=False)
+    @action(methods=["get"], detail=False)
     def open(self, request):
         queryset = RoundsAndLabs.objects.open()
         page = self.paginate_queryset(queryset)
@@ -252,24 +305,29 @@ class SubmissionCommentViewSet(
     SubmissionNestedMixin,
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
-    viewsets.GenericViewSet
+    viewsets.GenericViewSet,
 ):
     """
     List all the comments on a submission.
     """
-    queryset = Activity.comments.all().select_related('user')
+
+    queryset = Activity.comments.all().select_related("user")
     serializer_class = CommentCreateSerializer
     permission_classes = (
-        permissions.IsAuthenticated, IsApplyStaffUser,
+        permissions.IsAuthenticated,
+        IsApplyStaffUser,
     )
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = CommentFilter
     pagination_class = StandardResultsSetPagination
 
     def get_queryset(self):
-        return super().get_queryset().filter(
-            submission=self.get_submission_object()
-        ).visible_to(self.request.user)
+        return (
+            super()
+            .get_queryset()
+            .filter(submission=self.get_submission_object())
+            .visible_to(self.request.user)
+        )
 
     def perform_create(self, serializer):
         """
@@ -279,7 +337,7 @@ class SubmissionCommentViewSet(
             timestamp=timezone.now(),
             type=COMMENT,
             user=self.request.user,
-            source=self.get_submission_object()
+            source=self.get_submission_object(),
         )
         messenger(
             MESSAGES.COMMENT,
@@ -290,28 +348,24 @@ class SubmissionCommentViewSet(
         )
 
 
-class CommentViewSet(
-        mixins.ListModelMixin,
-        viewsets.GenericViewSet,
-):
+class CommentViewSet(viewsets.GenericViewSet):
     """
     Edit a comment.
     """
-    queryset = Activity.comments.all().select_related('user')
+
+    queryset = Activity.comments.all().select_related("user")
     serializer_class = CommentEditSerializer
-    permission_classes = (
-        permissions.IsAuthenticated, IsAuthor
-    )
+    permission_classes = (permissions.IsAuthenticated, IsAuthor)
 
     def get_serializer_class(self):
-        if self.action == 'list':
+        if self.action == "list":
             return CommentSerializer
         return CommentEditSerializer
 
     def get_queryset(self):
         return super().get_queryset().visible_to(self.request.user)
 
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=["post"])
     def edit(self, request, *args, **kwargs):
         return self.edit_comment(request, *args, **kwargs)
 
@@ -327,7 +381,9 @@ class CommentViewSet(
         serializer = self.get_serializer(comment_to_edit, data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        if (serializer.validated_data['message'] != comment_to_update.message) or (serializer.validated_data['visibility'] != comment_to_update.visibility):
+        if (serializer.validated_data["message"] != comment_to_update.message) or (
+            serializer.validated_data["visibility"] != comment_to_update.visibility
+        ):
             self.perform_create(serializer)
             comment_to_update.current = False
             comment_to_update.save()
@@ -351,8 +407,10 @@ class MetaTermsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     """
     List all the Meta Terms
     """
+
     queryset = MetaTerm.get_root_nodes()
     serializer_class = MetaTermsSerializer
     permission_classes = (
-        permissions.IsAuthenticated, IsApplyStaffUser,
+        permissions.IsAuthenticated,
+        IsApplyStaffUser,
     )

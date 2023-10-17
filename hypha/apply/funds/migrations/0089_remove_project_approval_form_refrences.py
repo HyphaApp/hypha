@@ -4,22 +4,21 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('funds', '0088_auto_20210423_1257'),
+        ("funds", "0088_auto_20210423_1257"),
     ]
 
     run_before = [
-        ('application_projects', '0043_remove_project_approval_form'),
+        ("application_projects", "0043_remove_project_approval_form"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='applicationbase',
-            name='approval_form',
+            model_name="applicationbase",
+            name="approval_form",
         ),
         migrations.RemoveField(
-            model_name='labbase',
-            name='approval_form',
+            model_name="labbase",
+            name="approval_form",
         ),
     ]

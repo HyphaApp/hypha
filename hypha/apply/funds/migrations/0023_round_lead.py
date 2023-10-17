@@ -8,17 +8,20 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('funds', '0022_applicationsubmission_form_fields'),
+        ("funds", "0022_applicationsubmission_form_fields"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='round',
-            name='lead',
-            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
+            model_name="round",
+            name="lead",
+            field=models.ForeignKey(
+                default=1,
+                on_delete=django.db.models.deletion.CASCADE,
+                to=settings.AUTH_USER_MODEL,
+            ),
             preserve_default=False,
         ),
     ]

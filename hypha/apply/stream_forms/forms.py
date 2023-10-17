@@ -15,6 +15,7 @@ class MixedFieldMetaclass(DeclarativeFieldsMetaclass):
     This allows the form to be rendered when Field-like blocks are passed
     in as part of the definition
     """
+
     def __new__(mcs, name, bases, attrs):
         display = attrs.copy()
         new_class = super(MixedFieldMetaclass, mcs).__new__(mcs, name, bases, attrs)
@@ -31,6 +32,7 @@ class StreamBaseForm(FileFormMixin, forms.Form, metaclass=MixedFieldMetaclass):
             self.fields = self.display
             yield from func(self, *args, **kwargs)
             self.fields = fields
+
         return wrapped
 
     @swap_fields_for_display
@@ -45,9 +47,48 @@ class StreamBaseForm(FileFormMixin, forms.Form, metaclass=MixedFieldMetaclass):
         # No hidden fields are returned by default because of MixedFieldMetaclass
         return [self[f] for f in self.fields.keys() if self[f].is_hidden]
 
+    def _update_files_data(self):
+        """
+        Overridden method of django_file_form's FileFormMixin, to handle multiple forms on the same page.
+        """
+        # handle two form_id, use case PAF and SOW
+        form_id = self.data.getlist(self.add_prefix("form_id"))
+
+        if not form_id:
+            return
+
+        form_id = form_id[0]
+        for field_name in self._file_form_field_names():
+            field = self.fields[field_name]
+            prefixed_field_name = self.add_prefix(field_name)
+
+            file_data = field.get_file_data(prefixed_field_name, form_id)
+
+            if file_data:
+                # NB: django-formtools wizard uses dict instead of MultiValueDict
+                if isinstance(file_data, list) and hasattr(self.files, "setlist"):
+                    self.files.setlist(prefixed_field_name, file_data)
+                else:
+                    self.files[prefixed_field_name] = file_data
+
+    def delete_temporary_files(self):
+        """
+        Overridden method of django_file_form's FileFormMixin, to handle multiple forms on the same page.
+        """
+        form_id = self.data.getlist(self.add_prefix("form_id"))
+
+        if not form_id:
+            return
+
+        form_id = form_id[0]
+        for field_name, field in self.fields.items():
+            if hasattr(field, "delete_file_data"):
+                prefixed_field_name = self.add_prefix(field_name)
+                field.delete_file_data(prefixed_field_name, form_id)
+
 
 class PageStreamBaseForm(BaseForm, StreamBaseForm):
-    """ Adds page and user reference to the form class"""
+    """Adds page and user reference to the form class"""
 
     def clean(self):
         cleaned_data = super().clean()
@@ -56,30 +97,41 @@ class PageStreamBaseForm(BaseForm, StreamBaseForm):
             if isinstance(value, EmailField):
                 email = self.data.get(field)
                 if email:
-                    is_registered, _ = is_user_already_registered(email=self.data.get(field))
+                    is_registered, _ = is_user_already_registered(
+                        email=self.data.get(field)
+                    )
                     if is_registered:
                         user = get_user_by_email(email=email)
                         if not user:
-                            self.add_error(field, 'Found multiple account')
-                            raise ValidationError(mark_safe('Found multiple account for the same email. '
-                                                            'Please login with the correct credentials or '
-                                                            '<a href="mailto:{}">'
-                                                            'contact to the support team'
-                                                            '</a>.'.format(settings.ORG_EMAIL)))
+                            self.add_error(field, "Found multiple account")
+                            raise ValidationError(
+                                mark_safe(
+                                    "Found multiple account for the same email. "
+                                    "Please login with the correct credentials or "
+                                    '<a href="mailto:{}">'
+                                    "contact to the support team"
+                                    "</a>.".format(settings.ORG_EMAIL)
+                                )
+                            )
 
                         elif not user.is_active:
-                            self.add_error(field, 'Found an inactive account')
-                            raise ValidationError(mark_safe('Found an inactive account for the same email. '
-                                                            'Please use different email or '
-                                                            '<a href="mailto:{}">'
-                                                            'contact to the support team'
-                                                            '</a>.'.format(settings.ORG_EMAIL)))
+                            self.add_error(field, "Found an inactive account")
+                            raise ValidationError(
+                                mark_safe(
+                                    "Found an inactive account for the same email. "
+                                    "Please use different email or "
+                                    '<a href="mailto:{}">'
+                                    "contact to the support team"
+                                    "</a>.".format(settings.ORG_EMAIL)
+                                )
+                            )
 
         return cleaned_data
 
 
 class BlockFieldWrapper:
     """Wraps stream blocks so that they can be rendered as a field within a form"""
+
     is_hidden = False
     label = None
     help_text = None

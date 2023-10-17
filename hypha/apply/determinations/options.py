@@ -7,15 +7,15 @@ NEEDS_MORE_INFO = 1
 ACCEPTED = 2
 
 DETERMINATION_CHOICES = (
-    (REJECTED, _('Dismissed')),
-    (NEEDS_MORE_INFO, _('More information requested')),
-    (ACCEPTED, _('Approved')),
+    (REJECTED, _("Dismissed")),
+    (NEEDS_MORE_INFO, _("More information requested")),
+    (ACCEPTED, _("Approved")),
 )
 
 DETERMINATION_TO_OUTCOME = {
-    'rejected': REJECTED,
-    'accepted': ACCEPTED,
-    'more_info': NEEDS_MORE_INFO,
+    "rejected": REJECTED,
+    "accepted": ACCEPTED,
+    "more_info": NEEDS_MORE_INFO,
 }
 
 TRANSITION_DETERMINATION = {

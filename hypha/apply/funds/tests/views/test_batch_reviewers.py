@@ -9,8 +9,8 @@ from hypha.apply.utils.testing.tests import BaseViewTestCase
 
 
 class BaseBatchReviewerTestCase(BaseViewTestCase):
-    url_name = 'funds:submissions:{}'
-    base_view_name = 'list'
+    url_name = "funds:submissions:{}"
+    base_view_name = "list"
     submissions = []
     staff = None
     reviewers = []
@@ -25,13 +25,13 @@ class BaseBatchReviewerTestCase(BaseViewTestCase):
 
     def data(self, reviewer_roles, submissions):
         data = {
-            'form-submitted-batch_reviewer_form': 'Update',
-            'submissions': ','.join([str(submission.id) for submission in submissions]),
+            "form-submitted-batch_reviewer_form": "Update",
+            "submissions": ",".join([str(submission.id) for submission in submissions]),
         }
 
         data.update(
             **{
-                f'role_reviewer_{str(role.id)}': reviewer.id
+                f"role_reviewer_{str(role.id)}": reviewer.id
                 for role, reviewer in zip(self.roles, reviewer_roles, strict=False)
             }
         )
@@ -51,8 +51,12 @@ class StaffTestCase(BaseBatchReviewerTestCase):
             self.assertEqual(submission.assigned.first().role, self.roles[0])
 
     def test_can_reassign_role_reviewers(self):
-        AssignedWithRoleReviewersFactory(reviewer=self.staff[1], submission=self.submissions[0], role=self.roles[0])
-        AssignedWithRoleReviewersFactory(reviewer=self.staff[1], submission=self.submissions[1], role=self.roles[0])
+        AssignedWithRoleReviewersFactory(
+            reviewer=self.staff[1], submission=self.submissions[0], role=self.roles[0]
+        )
+        AssignedWithRoleReviewersFactory(
+            reviewer=self.staff[1], submission=self.submissions[1], role=self.roles[0]
+        )
         submissions = self.submissions[0:2]
         reviewer_roles = [self.staff[0]]
         self.post_page(data=self.data(reviewer_roles, submissions))
@@ -62,8 +66,12 @@ class StaffTestCase(BaseBatchReviewerTestCase):
             self.assertEqual(submission.assigned.first().role, self.roles[0])
 
     def test_can_reassign_from_other_role_reviewers(self):
-        AssignedWithRoleReviewersFactory(reviewer=self.staff[0], submission=self.submissions[0], role=self.roles[1])
-        AssignedWithRoleReviewersFactory(reviewer=self.staff[0], submission=self.submissions[1], role=self.roles[1])
+        AssignedWithRoleReviewersFactory(
+            reviewer=self.staff[0], submission=self.submissions[0], role=self.roles[1]
+        )
+        AssignedWithRoleReviewersFactory(
+            reviewer=self.staff[0], submission=self.submissions[1], role=self.roles[1]
+        )
         submissions = self.submissions[0:2]
         reviewer_roles = [self.staff[0]]
         self.post_page(data=self.data(reviewer_roles, submissions))
@@ -73,14 +81,26 @@ class StaffTestCase(BaseBatchReviewerTestCase):
             self.assertEqual(submission.assigned.first().role, self.roles[0])
 
     def test_doesnt_remove_if_already_reviewed(self):
-        AssignedWithRoleReviewersFactory(reviewer=self.staff[1], submission=self.submissions[0], role=self.roles[0])
-        ReviewFactory(author__reviewer=self.staff[1], author__staff=True, submission=self.submissions[0], draft=False)
-        ReviewFactory(author__reviewer=self.staff[1], author__staff=True, submission=self.submissions[1], draft=False)
+        AssignedWithRoleReviewersFactory(
+            reviewer=self.staff[1], submission=self.submissions[0], role=self.roles[0]
+        )
+        ReviewFactory(
+            author__reviewer=self.staff[1],
+            author__staff=True,
+            submission=self.submissions[0],
+            draft=False,
+        )
+        ReviewFactory(
+            author__reviewer=self.staff[1],
+            author__staff=True,
+            submission=self.submissions[1],
+            draft=False,
+        )
         submissions = self.submissions[0:2]
         reviewer_roles = [self.staff[0]]
         self.post_page(data=self.data(reviewer_roles, submissions))
         for submission in submissions:
             self.assertEqual(submission.assigned.count(), 2)
-            reviewers = submission.assigned.values_list('reviewer', flat=True)
+            reviewers = submission.assigned.values_list("reviewer", flat=True)
             self.assertIn(self.staff[0].pk, reviewers)
             self.assertIn(self.staff[1].pk, reviewers)

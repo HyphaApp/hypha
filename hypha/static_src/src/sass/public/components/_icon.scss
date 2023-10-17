@@ -8,7 +8,8 @@
         fill: $color--dark-grey;
     }
 
-    .header__menus--mobile.is-visible & { // stylelint-disable-line selector-class-pattern
+    // stylelint-disable-next-line selector-class-pattern
+    .header__menus--mobile.is-visible & {
         fill: $color--white;
     }
 
@@ -53,7 +54,8 @@
             fill: $color--white;
         }
 
-        .header--light-bg.search-open & { // stylelint-disable-line force-element-nesting
+        .header--light-bg.search-open & {
+            // stylelint-disable-line force-element-nesting
             fill: $color--dark-grey;
         }
     }
@@ -111,7 +113,8 @@
     }
 
     &--search {
-        .header--light-bg.search-open & { // stylelint-disable-line force-element-nesting
+        .header--light-bg.search-open & {
+            // stylelint-disable-line force-element-nesting
             fill: $color--white;
         }
     }

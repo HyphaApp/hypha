@@ -6,16 +6,15 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('funds', '0023_round_lead'),
+        ("funds", "0023_round_lead"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='applicationsubmission',
-            name='search_data',
-            field=models.TextField(default=''),
+            model_name="applicationsubmission",
+            name="search_data",
+            field=models.TextField(default=""),
             preserve_default=False,
         ),
     ]

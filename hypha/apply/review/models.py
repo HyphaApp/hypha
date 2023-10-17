@@ -37,7 +37,6 @@ from .options import (
 
 
 class ReviewFormFieldsMixin(models.Model):
-
     wagtail_reference_index_ignore = True
 
     class Meta:
@@ -84,8 +83,8 @@ class ReviewForm(ReviewFormFieldsMixin, models.Model):
     name = models.CharField(max_length=255)
 
     panels = [
-        FieldPanel('name'),
-        FieldPanel('form_fields'),
+        FieldPanel("name"),
+        FieldPanel("form_fields"),
     ]
 
     def __str__(self):
@@ -97,7 +96,7 @@ class ReviewQuerySet(models.QuerySet):
         return self.filter(is_draft=False)
 
     def _by_group(self, group):
-        return self.select_related('author__type').filter(author__type__name=group)
+        return self.select_related("author__type").filter(author__type__name=group)
 
     def by_staff(self):
         return self.submitted()._by_group(STAFF_GROUP_NAME)
@@ -109,7 +108,7 @@ class ReviewQuerySet(models.QuerySet):
         return self.submitted()._by_group(PARTNER_GROUP_NAME)
 
     def by_user(self, user):
-        return self.submitted().filter(author__reviewer=user).order_by('-created_at')
+        return self.submitted().filter(author__reviewer=user).order_by("-created_at")
 
     def staff_score(self):
         return self.by_staff().score()
@@ -124,15 +123,15 @@ class ReviewQuerySet(models.QuerySet):
         return self.by_reviewers().recommendation()
 
     def score(self):
-        return self.exclude(score=NA).aggregate(models.Avg('score'))['score__avg']
+        return self.exclude(score=NA).aggregate(models.Avg("score"))["score__avg"]
 
     def recommendation(self):
-        opinions = self.values_list('opinions__opinion', flat=True)
+        opinions = self.values_list("opinions__opinion", flat=True)
 
         if any(opinion == DISAGREE for opinion in opinions):
             return MAYBE
 
-        recommendations = self.values_list('recommendation', flat=True)
+        recommendations = self.values_list("recommendation", flat=True)
         try:
             recommendation = sum(recommendations) / len(recommendations)
         except ZeroDivisionError:
@@ -145,26 +144,42 @@ class ReviewQuerySet(models.QuerySet):
             return MAYBE
 
     def opinions(self):
-        return ReviewOpinion.objects.filter(review__id__in=self.values_list('id'))
+        return ReviewOpinion.objects.filter(review__id__in=self.values_list("id"))
 
 
 class Review(ReviewFormFieldsMixin, BaseStreamForm, AccessFormData, models.Model):
-    submission = models.ForeignKey('funds.ApplicationSubmission', on_delete=models.CASCADE, related_name='reviews')
-    revision = models.ForeignKey('funds.ApplicationRevision', on_delete=models.SET_NULL, related_name='reviews', null=True)
+    submission = models.ForeignKey(
+        "funds.ApplicationSubmission", on_delete=models.CASCADE, related_name="reviews"
+    )
+    revision = models.ForeignKey(
+        "funds.ApplicationRevision",
+        on_delete=models.SET_NULL,
+        related_name="reviews",
+        null=True,
+    )
     author = models.OneToOneField(
-        'funds.AssignedReviewers',
-        related_name='review',
+        "funds.AssignedReviewers",
+        related_name="review",
         on_delete=models.CASCADE,
     )
 
     form_data = models.JSONField(default=dict, encoder=DjangoJSONEncoder)
 
-    recommendation = models.IntegerField(verbose_name=_("Recommendation"), choices=RECOMMENDATION_CHOICES, default=0)
+    recommendation = models.IntegerField(
+        verbose_name=_("Recommendation"), choices=RECOMMENDATION_CHOICES, default=0
+    )
     score = models.DecimalField(max_digits=10, decimal_places=1, default=0)
     is_draft = models.BooleanField(default=False, verbose_name=_("Draft"))
-    created_at = models.DateTimeField(verbose_name=_("Creation time"), auto_now_add=True)
+    created_at = models.DateTimeField(
+        verbose_name=_("Creation time"), auto_now_add=True
+    )
     updated_at = models.DateTimeField(verbose_name=_("Update time"), auto_now=True)
-    visibility = models.CharField(verbose_name=_("Visibility"), choices=VISIBILITY.items(), default=PRIVATE, max_length=10)
+    visibility = models.CharField(
+        verbose_name=_("Visibility"),
+        choices=VISIBILITY.items(),
+        default=PRIVATE,
+        max_length=10,
+    )
 
     # Meta: used for migration purposes only
     drupal_id = models.IntegerField(null=True, blank=True, editable=False)
@@ -172,27 +187,35 @@ class Review(ReviewFormFieldsMixin, BaseStreamForm, AccessFormData, models.Model
     objects = ReviewQuerySet.as_manager()
 
     class Meta:
-        unique_together = ('author', 'submission')
+        unique_together = ("author", "submission")
 
     @property
     def outcome(self):
         return self.get_recommendation_display()
 
     def get_comments_display(self, include_question=True):
-        return self.render_answer(self.comment_field.id, include_question=include_question)
+        return self.render_answer(
+            self.comment_field.id, include_question=include_question
+        )
 
     @property
     def get_score_display(self):
-        return '{:.1f}'.format(self.score) if self.score != NA else 'NA'
+        return "{:.1f}".format(self.score) if self.score != NA else "-"
 
     def get_absolute_url(self):
-        return reverse('apply:submissions:reviews:review', args=(self.submission.pk, self.id,))
+        return reverse(
+            "apply:submissions:reviews:review",
+            args=(
+                self.submission.pk,
+                self.id,
+            ),
+        )
 
     def __str__(self):
-        return f'Review for {self.submission.title} by {self.author!s}'
+        return f"Review for {self.submission.title} by {self.author!s}"
 
     def __repr__(self):
-        return f'<{self.__class__.__name__}: {str(self.form_data)}>'
+        return f"<{self.__class__.__name__}: {str(self.form_data)}>"
 
     @property
     def for_latest(self):
@@ -212,16 +235,21 @@ class Review(ReviewFormFieldsMixin, BaseStreamForm, AccessFormData, models.Model
 
 
 class ReviewOpinion(models.Model):
-    review = models.ForeignKey(Review, on_delete=models.CASCADE, related_name='opinions')
+    review = models.ForeignKey(
+        Review, on_delete=models.CASCADE, related_name="opinions"
+    )
     author = models.ForeignKey(
-        'funds.AssignedReviewers',
-        related_name='opinions',
+        "funds.AssignedReviewers",
+        related_name="opinions",
         on_delete=models.CASCADE,
     )
     opinion = models.IntegerField(choices=OPINION_CHOICES)
 
     class Meta:
-        unique_together = ('author', 'review')
+        unique_together = ("author", "review")
+
+    def __str__(self):
+        return f"Review Opinion for {self.review}"
 
     @property
     def opinion_display(self):

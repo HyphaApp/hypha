@@ -5,53 +5,75 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('images', '0001_initial'),
-        ('wagtailcore', '0040_page_draft_title'),
-        ('public_funds', '0006_fundindex_introduction'),
+        ("images", "0001_initial"),
+        ("wagtailcore", "0040_page_draft_title"),
+        ("public_funds", "0006_fundindex_introduction"),
     ]
 
     operations = [
         migrations.RenameModel(
-            old_name='FundPageRelatedPage',
-            new_name='BaseApplicationRelatedPage',
+            old_name="FundPageRelatedPage",
+            new_name="BaseApplicationRelatedPage",
         ),
         migrations.RenameModel(
-            old_name='FundPage',
-            new_name='BaseApplicationPage',
+            old_name="FundPage",
+            new_name="BaseApplicationPage",
         ),
-
         migrations.RenameField(
-            model_name='baseapplicationpage',
-            old_name='fund_type',
-            new_name='application_type',
+            model_name="baseapplicationpage",
+            old_name="fund_type",
+            new_name="application_type",
         ),
         migrations.AlterField(
-            model_name='baseapplicationpage',
-            name='application_type',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='application_public', to='wagtailcore.Page'),
-        ),
-
-        migrations.CreateModel(
-            name='FundPage',
-            fields=[
-                ('baseapplicationpage_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='public_funds.BaseApplicationPage')),
-            ],
-            options={
-                'abstract': False,
-            },
-            bases=('public_funds.baseapplicationpage',),
+            model_name="baseapplicationpage",
+            name="application_type",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="application_public",
+                to="wagtailcore.Page",
+            ),
         ),
         migrations.CreateModel(
-            name='RFPPage',
+            name="FundPage",
             fields=[
-                ('baseapplicationpage_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='public_funds.BaseApplicationPage')),
+                (
+                    "baseapplicationpage_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to="public_funds.BaseApplicationPage",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
-            bases=('public_funds.baseapplicationpage',),
+            bases=("public_funds.baseapplicationpage",),
         ),
-
+        migrations.CreateModel(
+            name="RFPPage",
+            fields=[
+                (
+                    "baseapplicationpage_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to="public_funds.BaseApplicationPage",
+                    ),
+                ),
+            ],
+            options={
+                "abstract": False,
+            },
+            bases=("public_funds.baseapplicationpage",),
+        ),
     ]

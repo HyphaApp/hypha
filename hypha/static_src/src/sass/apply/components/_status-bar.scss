@@ -19,7 +19,6 @@
         width: 100%;
         max-width: 800px;
         margin-right: 40px;
-        color: $color--white;
     }
 
     &__subheading {
@@ -71,7 +70,7 @@
             background: $color--dark-grey;
             border: 5px solid $color--mid-grey;
             border-radius: 50%;
-            content: '';
+            content: "";
 
             .status-bar--small & {
                 background: $color--white;
@@ -107,7 +106,7 @@
                 background: $color--white;
                 border: 5px solid $color--error;
                 border-radius: 50%;
-                content: '';
+                content: "";
             }
         }
 
@@ -139,7 +138,7 @@
         width: 20px;
         height: 20px;
         border-radius: 50%;
-        opacity: 0;
+        opacity: 1;
         transition: opacity $transition;
 
         .status-bar__item:first-of-type & {
@@ -150,15 +149,12 @@
             opacity: 1;
         }
 
-        // triangle
         &::before {
-            @include triangle(top, $color--error, 5px);
-            position: absolute;
-            bottom: -10px;
-            left: 5px;
-
-            .status-bar__item--is-complete & {
-                @include triangle(top, $color--primary, 5px);
+            .status-bar__item--is-current & {
+                @include triangle(top, $color--error, 5px);
+                position: absolute;
+                bottom: -10px;
+                left: 5px;
             }
         }
 
@@ -167,6 +163,7 @@
             position: absolute;
             top: 30px;
             left: -25px;
+            text-align: center;
             display: block;
             padding: 5px 10px;
             font-size: 12px;
@@ -196,13 +193,20 @@
                 }
             }
 
-            .status-bar__item--is-complete & {
-                background-color: $color--primary;
+            .status-bar__item & {
+                background-color: inherit;
+                color: $color--mid-grey;
             }
-        }
 
-        &:hover {
-            opacity: 1;
+            .status-bar__item--is-complete & {
+                background-color: inherit;
+                color: $color--primary;
+            }
+
+            .status-bar__item--is-current & {
+                background-color: $color--tomato;
+                color: $color--white;
+            }
         }
     }
 }

@@ -10,15 +10,15 @@ def increment_stage_in_forms(forms):
     """
     for index, form in enumerate(forms.all(), 1):
         form.stage = index
-        form.save(update_fields=['stage'])
+        form.save(update_fields=["stage"])
 
 
 def one_application_form_per_stage(apps, schema_editor):
-    Fund = apps.get_model('funds', 'FundType')
-    RequestForPartners = apps.get_model('funds', 'RequestForPartners')
-    Round = apps.get_model('funds', 'Round')
-    SealedRound = apps.get_model('funds', 'SealedRound')
-    LabType = apps.get_model('funds', 'LabType')
+    Fund = apps.get_model("funds", "FundType")
+    RequestForPartners = apps.get_model("funds", "RequestForPartners")
+    Round = apps.get_model("funds", "Round")
+    SealedRound = apps.get_model("funds", "SealedRound")
+    LabType = apps.get_model("funds", "LabType")
 
     for fund in Fund.objects.all():
         if fund.forms.count() > 1:
@@ -42,9 +42,8 @@ def one_application_form_per_stage(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('funds', '0066_add_stage_to_selected_forms'),
+        ("funds", "0066_add_stage_to_selected_forms"),
     ]
 
     operations = [

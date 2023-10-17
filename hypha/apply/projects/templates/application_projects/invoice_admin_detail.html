@@ -22,22 +22,22 @@
         {% trans "Update Invoice Status" %}
     </a>
     {% if user_can_change_status %}
-    <div class="modal" id="change-status">
-        <h4 class="modal__project-header-bar">{% trans "Update Invoice status" %}</h4>
-        <p>{% trans "Current status" %}: {{ object.get_status_display }}</p>
-        {% trans "Update Status" as update %}
-        {% include 'funds/includes/delegated_form_base.html' with form=change_invoice_status value=update %}
-    </div>
+        <div class="modal" id="change-status">
+            <h4 class="modal__project-header-bar">{% trans "Update Invoice status" %}</h4>
+            <p>{% trans "Current status" %}: {{ object.status_display }}</p>
+            {% trans "Update Status" as update %}
+            {% include 'funds/includes/delegated_form_base.html' with form=change_invoice_status value=update %}
+        </div>
     {% endif %}
 {% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/apply/fancybox.css' %}">
+    <link rel="stylesheet" href="{% static 'css/apply/fancybox.css' %}">
 {% endblock %}
 
 {% block extra_js %}
-{{ block.super }}
-<script src="{% static 'js/apply/jquery.fancybox.min.js' %}"></script>
-<script src="{% static 'js/apply/fancybox-global.js' %}"></script>
-<script src="{% static 'js/apply/deliverables.js' %}"></script>
+    {{ block.super }}
+    <script src="{% static 'js/apply/jquery.fancybox.min.js' %}"></script>
+    <script src="{% static 'js/apply/fancybox-global.js' %}"></script>
+    <script src="{% static 'js/apply/deliverables.js' %}"></script>
 {% endblock %}

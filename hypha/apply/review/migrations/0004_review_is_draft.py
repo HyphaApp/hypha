@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('review', '0003_review_json_field'),
+        ("review", "0003_review_json_field"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='review',
-            name='is_draft',
-            field=models.BooleanField(default=False, verbose_name='Draft'),
+            model_name="review",
+            name="is_draft",
+            field=models.BooleanField(default=False, verbose_name="Draft"),
         ),
     ]

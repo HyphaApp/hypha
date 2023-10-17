@@ -55,7 +55,7 @@ class Command(MigrateCommand):
                 "postal_code": "postalcode",
                 "thoroughfare": "thoroughfare",
                 "premise": "premise",
-            }
+            },
         },
         "field_proposal_summary": {
             "id": "a7502e97-5f2e-417f-b08c-588d367e40e5",

@@ -6,13 +6,13 @@ from hypha.apply.activity.models import ACTION, TEAM, ALL
 
 
 def update_visibility_options(apps, schema_editor):
-    Activity = apps.get_model('activity', 'Activity')
+    Activity = apps.get_model("activity", "Activity")
     for activity in Activity.objects.filter(type=ACTION):
         updated = False
-        if activity.visibility == 'public':
+        if activity.visibility == "public":
             activity.visibility = ALL
             updated = True
-        elif activity.visibility == 'internal':
+        elif activity.visibility == "internal":
             activity.visibility = TEAM
             updated = True
 
@@ -21,9 +21,8 @@ def update_visibility_options(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('activity', '0026_update_visibility_options'),
+        ("activity", "0026_update_visibility_options"),
     ]
 
     operations = [

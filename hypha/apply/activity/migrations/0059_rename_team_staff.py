@@ -4,15 +4,24 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('activity', '0058_add_project_invoicing'),
+        ("activity", "0058_add_project_invoicing"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='activity',
-            name='visibility',
-            field=models.CharField(choices=[('applicant', 'Applicant(s)'), ('team', 'Staff'), ('reviewers', 'Reviewers'), ('partners', 'Partners'), ('all', 'All')], default='applicant', max_length=30),
+            model_name="activity",
+            name="visibility",
+            field=models.CharField(
+                choices=[
+                    ("applicant", "Applicant(s)"),
+                    ("team", "Staff"),
+                    ("reviewers", "Reviewers"),
+                    ("partners", "Partners"),
+                    ("all", "All"),
+                ],
+                default="applicant",
+                max_length=30,
+            ),
         ),
     ]

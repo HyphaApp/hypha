@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('determinations', '0004_change_labels'),
+        ("determinations", "0004_change_labels"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='determination',
-            name='drupal_id',
+            model_name="determination",
+            name="drupal_id",
             field=models.IntegerField(blank=True, editable=False, null=True),
         ),
     ]

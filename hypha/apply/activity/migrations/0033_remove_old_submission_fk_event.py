@@ -4,14 +4,13 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('activity', '0032_migrate_submission_to_generic_event'),
+        ("activity", "0032_migrate_submission_to_generic_event"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='event',
-            name='submission',
+            model_name="event",
+            name="submission",
         ),
     ]

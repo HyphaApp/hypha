@@ -4,15 +4,23 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('funds', '0083_remove_screening_status_field'),
+        ("funds", "0083_remove_screening_status_field"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='reviewersettings',
-            name='outcome',
-            field=models.CharField(choices=[('all', 'All Outcomes'), ('all_except_dismissed', 'All Outcomes Except Dismissed'), ('accepted', 'Only Accepted')], default='all', help_text='Submissions outcomes for which reviewers should have access to', max_length=20),
+            model_name="reviewersettings",
+            name="outcome",
+            field=models.CharField(
+                choices=[
+                    ("all", "All Outcomes"),
+                    ("all_except_dismissed", "All Outcomes Except Dismissed"),
+                    ("accepted", "Only Accepted"),
+                ],
+                default="all",
+                help_text="Submissions outcomes for which reviewers should have access to",
+                max_length=20,
+            ),
         ),
     ]

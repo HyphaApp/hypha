@@ -5,25 +5,36 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('home', '0010_add_rfp_to_homepage'),
+        ("home", "0010_add_rfp_to_homepage"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='promotedfunds',
-            name='page',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='+', to='wagtailcore.Page'),
+            model_name="promotedfunds",
+            name="page",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="+",
+                to="wagtailcore.Page",
+            ),
         ),
         migrations.AlterField(
-            model_name='promotedlabs',
-            name='page',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='+', to='wagtailcore.Page'),
+            model_name="promotedlabs",
+            name="page",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="+",
+                to="wagtailcore.Page",
+            ),
         ),
         migrations.AlterField(
-            model_name='promotedrfps',
-            name='page',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='+', to='wagtailcore.Page'),
+            model_name="promotedrfps",
+            name="page",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="+",
+                to="wagtailcore.Page",
+            ),
         ),
     ]

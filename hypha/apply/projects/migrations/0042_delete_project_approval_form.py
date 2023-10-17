@@ -9,9 +9,8 @@ def migrate_label_and_relations(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('application_projects', '0041_payment_requests_cleanup'),
+        ("application_projects", "0041_payment_requests_cleanup"),
     ]
 
     operations = [

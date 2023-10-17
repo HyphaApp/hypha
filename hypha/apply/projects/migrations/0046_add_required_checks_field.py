@@ -4,20 +4,21 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('application_projects', '0045_use_fsm_field_for_status'),
+        ("application_projects", "0045_use_fsm_field_for_status"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='invoice',
-            name='valid_checks',
-            field=models.BooleanField(default=False, help_text='Valid OFAC, SAM, W8/W9 on file'),
+            model_name="invoice",
+            name="valid_checks",
+            field=models.BooleanField(
+                default=False, help_text="Valid OFAC, SAM, W8/W9 on file"
+            ),
         ),
         migrations.AddField(
-            model_name='invoice',
-            name='valid_checks_link',
-            field=models.URLField(blank=True, help_text='Link to SAM/OFAC/W8/W9'),
+            model_name="invoice",
+            name="valid_checks_link",
+            field=models.URLField(blank=True, help_text="Link to SAM/OFAC/W8/W9"),
         ),
     ]

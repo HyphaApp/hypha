@@ -1,9 +1,9 @@
 {% load render_table from django_tables2 %}
 {% load i18n %}
 
-<h4 class="heading heading--normal">
+<h2 class="text-xl mb-2">
     {% trans "Your Flagged Submissions" %}
-</h4>
+</h2>
 
 {% if my_flagged.data %}
     {% render_table my_flagged %}

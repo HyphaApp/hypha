@@ -6,15 +6,18 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('funds', '0016_roundform'),
+        ("funds", "0016_roundform"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='round',
-            name='workflow',
-            field=models.CharField(choices=[('single', 'Single Stage'), ('double', 'Two Stage')], default='single', max_length=100),
+            model_name="round",
+            name="workflow",
+            field=models.CharField(
+                choices=[("single", "Single Stage"), ("double", "Two Stage")],
+                default="single",
+                max_length=100,
+            ),
         ),
     ]

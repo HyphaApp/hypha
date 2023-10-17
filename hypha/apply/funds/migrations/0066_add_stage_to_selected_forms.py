@@ -4,28 +4,33 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('funds', '0065_applicationsubmission_meta_categories'),
+        ("funds", "0065_applicationsubmission_meta_categories"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='applicationbaseform',
-            name='stage',
-            field=models.PositiveSmallIntegerField(choices=[(1, '1st Stage'), (2, '2nd Stage')], default=1),
+            model_name="applicationbaseform",
+            name="stage",
+            field=models.PositiveSmallIntegerField(
+                choices=[(1, "1st Stage"), (2, "2nd Stage")], default=1
+            ),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='labbaseform',
-            name='stage',
-            field=models.PositiveSmallIntegerField(choices=[(1, '1st Stage'), (2, '2nd Stage')], default=1),
+            model_name="labbaseform",
+            name="stage",
+            field=models.PositiveSmallIntegerField(
+                choices=[(1, "1st Stage"), (2, "2nd Stage")], default=1
+            ),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='roundbaseform',
-            name='stage',
-            field=models.PositiveSmallIntegerField(choices=[(1, '1st Stage'), (2, '2nd Stage')], default=1),
+            model_name="roundbaseform",
+            name="stage",
+            field=models.PositiveSmallIntegerField(
+                choices=[(1, "1st Stage"), (2, "2nd Stage")], default=1
+            ),
             preserve_default=False,
         ),
     ]

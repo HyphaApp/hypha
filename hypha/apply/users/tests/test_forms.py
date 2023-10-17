@@ -13,7 +13,9 @@ class BaseTestProfileForm(TestCase):
         return data
 
     def submit_form(self, instance, **extra_data):
-        form = ProfileForm(instance=instance, data=self.form_data(instance, **extra_data))
+        form = ProfileForm(
+            instance=instance, data=self.form_data(instance, **extra_data)
+        )
         if form.is_valid():
             form.save()
 
@@ -27,18 +29,19 @@ class TestProfileForm(BaseTestProfileForm):
     def test_email_unique(self):
         other_user = UserFactory()
         form = self.submit_form(self.user, email=other_user.email)
-        self.assertFalse(form.is_valid())
+        # form will update the other user's email with same user email, only non exiting email address can be added
+        self.assertTrue(form.is_valid())
         self.user.refresh_from_db()
         self.assertNotEqual(self.user.email, other_user.email)
 
     def test_can_change_email(self):
-        new_email = 'me@another.com'
+        new_email = "me@another.com"
         self.submit_form(self.user, email=new_email)
         self.user.refresh_from_db()
         self.assertEqual(self.user.email, new_email)
 
     def test_cant_set_slack_name(self):
-        slack_name = '@foobar'
+        slack_name = "@foobar"
         self.submit_form(self.user, slack=slack_name)
         self.user.refresh_from_db()
         self.assertNotEqual(self.user.slack, slack_name)
@@ -49,27 +52,27 @@ class TestStaffProfileForm(BaseTestProfileForm):
         self.staff = StaffFactory()
 
     def test_cant_change_email(self):
-        new_email = 'me@this.com'
+        new_email = "me@this.com"
         self.submit_form(self.staff, email=new_email)
         self.staff.refresh_from_db()
         self.assertNotEqual(new_email, self.staff.email)
 
     def test_can_set_slack_name(self):
-        slack_name = '@foobar'
+        slack_name = "@foobar"
         self.submit_form(self.staff, slack=slack_name)
 
         self.staff.refresh_from_db()
         self.assertEqual(self.staff.slack, slack_name)
 
     def test_can_set_slack_name_with_trailing_space(self):
-        slack_name = '@foobar'
+        slack_name = "@foobar"
         self.submit_form(self.staff, slack=slack_name)
 
         self.staff.refresh_from_db()
         self.assertEqual(self.staff.slack, slack_name)
 
     def test_cant_set_slack_name_with_space(self):
-        slack_name = '@ foobar'
+        slack_name = "@ foobar"
         form = self.submit_form(self.staff, slack=slack_name)
         self.assertFalse(form.is_valid())
 
@@ -77,14 +80,14 @@ class TestStaffProfileForm(BaseTestProfileForm):
         self.assertNotEqual(self.staff.slack, slack_name)
 
     def test_auto_prepend_at(self):
-        slack_name = 'foobar'
+        slack_name = "foobar"
         self.submit_form(self.staff, slack=slack_name)
 
         self.staff.refresh_from_db()
-        self.assertEqual(self.staff.slack, '@' + slack_name)
+        self.assertEqual(self.staff.slack, "@" + slack_name)
 
     def test_can_clear_slack_name(self):
-        slack_name = ''
+        slack_name = ""
         self.submit_form(self.staff, slack=slack_name)
 
         self.staff.refresh_from_db()
@@ -97,10 +100,10 @@ class TestEmailChangePasswordForm(TestCase):
 
     def test_doesnt_error_on_null_slack_field(self):
         form = EmailChangePasswordForm(self.user)
-        form.save('', '', None)
+        form.save("", "", None)
 
     def test_can_update_slack(self):
-        slack_name = 'foobar'
+        slack_name = "foobar"
         form = EmailChangePasswordForm(self.user)
-        form.save('', '', slack_name)
+        form.save("", "", slack_name)
         self.assertEqual(self.user.slack, slack_name)

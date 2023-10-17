@@ -6,20 +6,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('home', '0007_add_labs_and_funds_homepage'),
+        ("home", "0007_add_labs_and_funds_homepage"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='homepage',
-            name='funds_intro',
+            model_name="homepage",
+            name="funds_intro",
             field=models.TextField(blank=True),
         ),
         migrations.AddField(
-            model_name='homepage',
-            name='labs_intro',
+            model_name="homepage",
+            name="labs_intro",
             field=models.TextField(blank=True),
         ),
     ]

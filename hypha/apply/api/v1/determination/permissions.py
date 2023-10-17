@@ -10,6 +10,7 @@ class HasDeterminationCreatePermission(permissions.BasePermission):
     """
     Custom permission that user should have for creating determination.
     """
+
     def has_permission(self, request, view):
         try:
             submission = view.get_submission_object()
@@ -22,6 +23,7 @@ class HasDeterminationDraftPermission(permissions.BasePermission):
     """
     Custom permission that user should have for editing determination.
     """
+
     def has_object_permission(self, request, view, obj):
         submission = view.get_submission_object()
         return can_edit_determination(request.user, obj, submission)

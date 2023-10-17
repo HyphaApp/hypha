@@ -25,7 +25,7 @@ class ActivityFactory(factory.django.DjangoModelFactory):
 
     source = factory.SubFactory(ApplicationSubmissionFactory)
     user = factory.SubFactory(UserFactory)
-    message = factory.Faker('sentence')
+    message = factory.Faker("sentence")
     timestamp = factory.LazyFunction(timezone.now)
 
 
@@ -48,8 +48,8 @@ class MessageFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Message
 
-    type = 'Email'
-    content = factory.Faker('sentence')
-    recipient = factory.Faker('email')
+    type = "Email"
+    content = factory.Faker("sentence")
+    recipient = factory.Faker("email")
     event = factory.SubFactory(EventFactory)
-    external_id = factory.LazyFunction(lambda: '<{}>'.format(uuid.uuid4()))
+    external_id = factory.LazyFunction(lambda: "<{}>".format(uuid.uuid4()))

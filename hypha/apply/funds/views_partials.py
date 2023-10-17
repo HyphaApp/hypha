@@ -30,28 +30,28 @@ User = get_user_model()
 
 
 @login_required
-@require_http_methods(['GET'])
+@require_http_methods(["GET"])
 def sub_menu_funds(request):
     selected_funds = request.GET.getlist("fund")
 
     # Funds Filter Options
     funds = [
-        {'id': f.id, 'selected': str(f.id) in selected_funds, 'title': f.title}
+        {"id": f.id, "selected": str(f.id) in selected_funds, "title": f.title}
         for f in Page.objects.filter(applicationsubmission__isnull=False)
         .order_by("title")
         .distinct()
     ]
 
     ctx = {
-        'funds': funds,
-        'selected_funds': selected_funds,
+        "funds": funds,
+        "selected_funds": selected_funds,
     }
 
     return render(request, "submissions/submenu/funds.html", ctx)
 
 
 @login_required
-@require_http_methods(['GET'])
+@require_http_methods(["GET"])
 def sub_menu_leads(
     request, template_name="submissions/submenu/leads.html"
 ) -> HttpResponse:
@@ -59,10 +59,10 @@ def sub_menu_leads(
 
     leads = [
         {
-            'id': item.id,
-            'selected': str(item.id) in selected_leads,
-            'title': str(item),
-            'slack': item.slack,
+            "id": item.id,
+            "selected": str(item.id) in selected_leads,
+            "title": str(item),
+            "slack": item.slack,
         }
         for item in User.objects.filter(submission_lead__isnull=False)
         .order_by()
@@ -72,20 +72,20 @@ def sub_menu_leads(
     # show selected and current user first
     leads = sorted(
         leads,
-        key=lambda x: (not x['selected'], x['id'] != request.user.id, x['title']),
+        key=lambda x: (not x["selected"], x["id"] != request.user.id, x["title"]),
         reverse=False,
     )
 
     ctx = {
-        'leads': leads,
-        'selected_leads': selected_leads,
+        "leads": leads,
+        "selected_leads": selected_leads,
     }
 
     return render(request, template_name, ctx)
 
 
 @login_required
-@require_http_methods(['GET'])
+@require_http_methods(["GET"])
 def sub_menu_rounds(request):
     selected_rounds = request.GET.getlist("round")
     selected_fund = request.GET.get("fund")
@@ -96,39 +96,39 @@ def sub_menu_rounds(request):
         qs = Round.objects.child_of(fund)
 
     open_rounds = [
-        {'id': item.id, 'selected': str(item.id) in selected_rounds, 'title': str(item)}
-        for item in qs.open().order_by('-end_date').distinct()
+        {"id": item.id, "selected": str(item.id) in selected_rounds, "title": str(item)}
+        for item in qs.open().order_by("-end_date").distinct()
     ]
 
     closed_rounds = [
-        {'id': item.id, 'selected': str(item.id) in selected_rounds, 'title': str(item)}
+        {"id": item.id, "selected": str(item.id) in selected_rounds, "title": str(item)}
         for item in qs.closed()
         .filter(submissions__isnull=False)
-        .order_by('-end_date')
+        .order_by("-end_date")
         .distinct()
     ]
 
     ctx = {
-        'open_rounds': open_rounds,
-        'closed_rounds': closed_rounds,
-        'selected_rounds': selected_rounds,
+        "open_rounds": open_rounds,
+        "closed_rounds": closed_rounds,
+        "selected_rounds": selected_rounds,
     }
 
     return render(request, "submissions/submenu/rounds.html", ctx)
 
 
 @login_required
-@require_http_methods(['GET'])
+@require_http_methods(["GET"])
 def sub_menu_reviewers(request):
     selected_reviewers = request.GET.getlist("reviewers")
     qs = get_all_reviewers()
 
     reviewers = [
         {
-            'id': item.id,
-            'selected': str(item.id) in selected_reviewers,
-            'title': str(item),
-            'slack': item.slack,
+            "id": item.id,
+            "selected": str(item.id) in selected_reviewers,
+            "title": str(item),
+            "slack": item.slack,
         }
         for item in qs.order_by().distinct()
     ]
@@ -136,88 +136,88 @@ def sub_menu_reviewers(request):
     # show selected and current user first
     reviewers = sorted(
         reviewers,
-        key=lambda t: t['selected'] or t['id'] == request.user.id,
+        key=lambda t: t["selected"] or t["id"] == request.user.id,
         reverse=True,
     )
 
     ctx = {
-        'reviewers': reviewers,
-        'selected_reviewers': selected_reviewers,
+        "reviewers": reviewers,
+        "selected_reviewers": selected_reviewers,
     }
 
     return render(request, "submissions/submenu/reviewers.html", ctx)
 
 
 @login_required
-@require_http_methods(['GET'])
+@require_http_methods(["GET"])
 def sub_menu_meta_terms(request):
     selected_meta_terms = request.GET.getlist("meta_terms")
 
     terms_qs = MetaTerm.objects.filter(
         filter_on_dashboard=True,
         id__in=ApplicationSubmission.objects.all()
-        .values('meta_terms__id')
-        .distinct('meta_terms__id'),
+        .values("meta_terms__id")
+        .distinct("meta_terms__id"),
     ).exclude(depth=1)
 
     meta_terms = [
         {
-            'id': item.id,
-            'selected': str(item.id) in selected_meta_terms,
-            'title': str(item),
-            'depth_range': range((item.depth - 2) * 2),
-            'depth': item.depth - 1,
+            "id": item.id,
+            "selected": str(item.id) in selected_meta_terms,
+            "title": str(item),
+            "depth_range": range((item.depth - 2) * 2),
+            "depth": item.depth - 1,
         }
         for item in terms_qs
     ]
 
     ctx = {
-        'meta_terms': meta_terms,
-        'selected_meta_terms': selected_meta_terms,
+        "meta_terms": meta_terms,
+        "selected_meta_terms": selected_meta_terms,
     }
 
     return render(request, "submissions/submenu/meta-terms.html", ctx)
 
 
 @login_required
-@require_http_methods(['GET'])
+@require_http_methods(["GET"])
 def sub_menu_category_options(request):
     selected_category_options = request.GET.getlist("category_options")
 
-    qs = Option.objects.filter(category__filter_on_dashboard=True).values('id', 'value')
+    qs = Option.objects.filter(category__filter_on_dashboard=True).values("id", "value")
 
     items = [
         {
-            'id': item['id'],
-            'selected': str(item['id']) in selected_category_options,
-            'title': item['value'],
+            "id": item["id"],
+            "selected": str(item["id"]) in selected_category_options,
+            "title": item["value"],
         }
         for item in qs
     ]
 
-    items = sorted(items, key=lambda t: t['selected'], reverse=True)
+    items = sorted(items, key=lambda t: t["selected"], reverse=True)
 
     ctx = {
-        'category_options': items,
-        'selected_category_options': selected_category_options,
+        "category_options": items,
+        "selected_category_options": selected_category_options,
     }
 
     return render(request, "submissions/submenu/category.html", ctx)
 
 
 @login_required
-@require_http_methods(['GET'])
+@require_http_methods(["GET"])
 def partial_submission_activities(request, pk):
     submission = get_object_or_404(ApplicationSubmission, pk=pk)
     has_permission(
-        'submission_view', request.user, object=submission, raise_exception=True
+        "submission_view", request.user, object=submission, raise_exception=True
     )
-    ctx = {'actions': get_related_actions_for_user(submission, request.user)}
-    return render(request, 'activity/include/action_list.html', ctx)
+    ctx = {"actions": get_related_actions_for_user(submission, request.user)}
+    return render(request, "activity/include/action_list.html", ctx)
 
 
 @login_required
-@require_http_methods(['GET'])
+@require_http_methods(["GET"])
 def partial_reviews_card(request: HttpRequest, pk: str) -> HttpResponse:
     """Returns a partial html for the submission reviews box on the submission
     detail page and hovercard on the submissison list page.
@@ -240,19 +240,19 @@ def partial_reviews_card(request: HttpRequest, pk: str) -> HttpResponse:
     recommendation = submission.reviews.by_staff().recommendation()
 
     ctx = {
-        'hidden_types': [REVIEWER_GROUP_NAME],
-        'staff_reviewers_exist': assigned_reviewers.staff().exists(),
-        'assigned_reviewers': assigned_reviewers,
-        'recommendation': recommendation,
+        "hidden_types": [REVIEWER_GROUP_NAME],
+        "staff_reviewers_exist": assigned_reviewers.staff().exists(),
+        "assigned_reviewers": assigned_reviewers,
+        "recommendation": recommendation,
     }
 
     return render(request, "funds/includes/review_sidebar.html", ctx)
 
 
 @login_required
-@require_http_methods(['GET'])
+@require_http_methods(["GET"])
 def partial_reviews_decisions(request: HttpRequest) -> HttpResponse:
-    submission_ids = request.GET.get('ids')
+    submission_ids = request.GET.get("ids")
     if submission_ids:
         submission_ids = [x for x in submission_ids.split(",") if x]
 
@@ -260,7 +260,7 @@ def partial_reviews_decisions(request: HttpRequest) -> HttpResponse:
     qs = annotate_review_recommendation_and_count(qs)
 
     ctx = {
-        'submissions': qs,
+        "submissions": qs,
     }
 
     return render(
@@ -269,9 +269,9 @@ def partial_reviews_decisions(request: HttpRequest) -> HttpResponse:
 
 
 @login_required
-@require_http_methods(['GET', 'POST'])
+@require_http_methods(["GET", "POST"])
 def sub_menu_update_status(request: HttpRequest) -> HttpResponse:
-    submission_ids = request.GET.getlist('selectedSubmissionIds')
+    submission_ids = request.GET.getlist("selectedSubmissionIds")
     qs = ApplicationSubmission.objects.filter(id__in=submission_ids)
 
     list_of_actions_list = [s.get_actions_for_user(request.user) for s in qs]
@@ -283,17 +283,17 @@ def sub_menu_update_status(request: HttpRequest) -> HttpResponse:
     )
 
     ctx = {
-        'statuses': {slugify(a): a for a in common_actions}.items(),
+        "statuses": {slugify(a): a for a in common_actions}.items(),
     }
 
     return render(request, "submissions/submenu/change-status.html", ctx)
 
 
 @login_required
-@require_http_methods(['GET', 'POST'])
+@require_http_methods(["GET", "POST"])
 def sub_menu_bulk_update_lead(request: HttpRequest) -> HttpResponse:
-    if request.method == 'POST':
-        submission_ids = request.POST.getlist('selectedSubmissionIds')
+    if request.method == "POST":
+        submission_ids = request.POST.getlist("selectedSubmissionIds")
         lead = request.POST.get("lead")
 
         submissions = ApplicationSubmission.objects.filter(id__in=submission_ids)
@@ -306,9 +306,9 @@ def sub_menu_bulk_update_lead(request: HttpRequest) -> HttpResponse:
 
     leads = [
         {
-            'id': item.id,
-            'title': str(item),
-            'slack': item.slack,
+            "id": item.id,
+            "title": str(item),
+            "slack": item.slack,
         }
         for item in User.objects.staff()
     ]
@@ -316,29 +316,29 @@ def sub_menu_bulk_update_lead(request: HttpRequest) -> HttpResponse:
     # sort by lead names and put current user first
     leads = sorted(
         leads,
-        key=lambda x: (x['id'] != request.user.id, x['title']),
+        key=lambda x: (x["id"] != request.user.id, x["title"]),
         reverse=False,
     )
 
     ctx = {
-        'leads': leads,
+        "leads": leads,
     }
 
     return render(request, "submissions/submenu/bulk-update-lead.html", ctx)
 
 
 @login_required
-@require_http_methods(['GET', 'POST'])
+@require_http_methods(["GET", "POST"])
 def sub_menu_bulk_update_reviewers(request: HttpRequest) -> HttpResponse:
-    if request.method == 'POST':
-        submission_ids = request.POST.getlist('selectedSubmissionIds')
+    if request.method == "POST":
+        submission_ids = request.POST.getlist("selectedSubmissionIds")
         submissions = ApplicationSubmission.objects.filter(id__in=submission_ids)
         external_reviewers_ids = request.POST.getlist("external_reviewers")
         external_reviewers = User.objects.filter(id__in=external_reviewers_ids)
 
         assigned_roles = {}
         for field, value in request.POST.items():
-            if field.startswith('role_reviewer_'):
+            if field.startswith("role_reviewer_"):
                 if value:
                     role = ReviewerRole.objects.get(id=field[14:])
                     user = User.objects.staff().get(id=value)
@@ -354,7 +354,7 @@ def sub_menu_bulk_update_reviewers(request: HttpRequest) -> HttpResponse:
         )
         return HttpResponseClientRefresh()
 
-    submission_ids = request.GET.getlist('selectedSubmissionIds')
+    submission_ids = request.GET.getlist("selectedSubmissionIds")
     form = BatchUpdateReviewersForm(user=request.user)
 
     show_external_reviewers = False
@@ -366,8 +366,8 @@ def sub_menu_bulk_update_reviewers(request: HttpRequest) -> HttpResponse:
         )
 
     ctx = {
-        'form': form,
-        'show_external_reviewers': show_external_reviewers,
+        "form": form,
+        "show_external_reviewers": show_external_reviewers,
     }
 
     return render(request, "submissions/submenu/bulk-update-reviewers.html", ctx)

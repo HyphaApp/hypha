@@ -4,61 +4,64 @@
 {% block title %}{% trans "Account" %}{% endblock %}
 
 {% block content %}
-<div class="admin-bar" xmlns="http://www.w3.org/1999/html">
-    <div class="admin-bar__inner admin-bar__inner--with-button">
-        <h3 class="admin-bar__heading">{% trans "Welcome" %} {{ user }}</h3>
+    {% adminbar %}
+        {% slot header %}{% trans "Welcome" %} {{ user }}{% endslot %}
+        {% slot sub_heading %}{% trans "Manage your account details and security." %}{% endslot %}
+
         <a href="{% url 'dashboard:dashboard' %}" class="button button--primary button--arrow-pixels-white" hx-boost='true'>
             {% trans "Go to my dashboard" %}
             <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
         </a>
-    </div>
-</div>
+    {% endadminbar %}
 
-<div class="profile">
-    <div class="profile__column">
-        <h3>{% trans "Profile" %}</h3>
-        <form action="" method="post" class="form">
-            {% csrf_token %}
-            {% for field in form %}
-                {% include "forms/includes/field.html" %}
-            {% endfor %}
-            <button class="button button--primary" type="submit">{% trans "Update Profile" %}</button>
-        </form>
-    </div>
-
-    {% if show_change_password and user.has_usable_password and not backends.associated %}
-        <br>
-        <hr>
+    <div class="profile">
         <div class="profile__column">
-            <h3>{% trans "Account Security" %}</h3>
-            <h4>{% trans "Password" %}</h4>
-            <p><a class="button button--primary" href="{% url 'users:password_change' %}">{% trans "Update password" %}</a></p>
-
-            <h4>{% trans "Two-Factor Authentication (2FA)" %}</h4>
-            {% if default_device %}
-                <div>
-                    <p><a class="button button--primary" href="{% url 'users:backup_tokens_password' %}">{% trans "Backup codes" %}</a></p>
-                    <p><a class="button button--primary" href="{% url 'two_factor:disable' %}">{% trans "Disable 2FA" %}</a></p>
-                </div>
-            {% else %}
-                <p><a class="button button--primary" href="{% url 'two_factor:setup' %}">{% trans "Enable 2FA" %}</a></p>
-            {% endif %}
-        </div>
-    {% endif %}
-
-
-    <div class="profile__column">
-        {% if swappable_form %}
-            <h3>{% trans "Become" %}:</h3>
-            <form action="{% url 'users:become' %}" method="post" class="form">
-                {{ swappable_form.media }}
+            <h2 class="text-2xl">{% trans "Profile" %}</h2>
+            <form action="" method="post" class="form">
                 {% csrf_token %}
-                {% for field in swappable_form %}
+                {% for field in form %}
                     {% include "forms/includes/field.html" %}
                 {% endfor %}
-                <button class="button button--primary" type="submit">{% trans "Become" %}</button>
+                <div class="form__group">
+                    <button class="button button--primary" type="submit">{% trans "Update Profile" %}</button>
+                </div>
             </form>
+        </div>
+
+        {% if show_change_password and user.has_usable_password and not backends.associated %}
+            <div class="profile__column">
+                <h2 class="text-2xl">{% trans "Account Security" %}</h2>
+                <h3 class="text-base">{% trans "Password" %}</h3>
+                <p><a class="button button--primary" href="{% url 'users:password_change' %}">{% trans "Update password" %}</a></p>
+
+                <h4 class="text-base mt-8">{% trans "Two-Factor Authentication (2FA)" %}</h4>
+                {% if default_device %}
+                    <div>
+                        <p><a class="button button--primary" href="{% url 'users:backup_tokens_password' %}">{% trans "Backup codes" %}</a></p>
+                        <p><a class="button button--primary button--warning" href="{% url 'two_factor:disable' %}">{% trans "Disable 2FA" %}</a></p>
+                    </div>
+                {% else %}
+                    <p><a class="button button--primary" href="{% url 'two_factor:setup' %}">{% trans "Enable 2FA" %}</a></p>
+                {% endif %}
+            </div>
         {% endif %}
+
+
+        {% if swappable_form %}
+            <div class="profile__column">
+                {% if swappable_form %}
+                    <h2 class="text-2xl">{% trans "Become" %}:</h2>
+                    <form action="{% url 'users:become' %}" method="post" class="form">
+                        {{ swappable_form.media }}
+                        {% csrf_token %}
+                        {% for field in swappable_form %}
+                            {% include "forms/includes/field.html" %}
+                        {% endfor %}
+                        <div class="form__group">
+                            <button class="button button--primary" type="submit">{% trans "Become" %}</button>
+                        </div>
+                    </form>
+                {% endif %}
 
         {# Remove the comment block tags below when such need arises. e.g. adding new providers #}
         {% comment %}
@@ -67,6 +70,7 @@
             <a href="{% url 'users:oauth' %}">{% trans "Manage OAuth" %}</a>
         {% endif %}
         {% endcomment %}
+            </div>
+        {% endif %}
     </div>
-</div>
 {% endblock %}

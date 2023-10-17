@@ -19,9 +19,11 @@ from ..views import get_form_for_stage
 class DeterminationDataFactory(factory.DictFactory):
     @classmethod
     def _build(cls, model_class, *args, **kwargs):
-        submission = kwargs.pop('submission')
-        action = kwargs.pop('action')
-        form = get_form_for_stage(submission)(user=submission.lead, action=action, submission=submission)
+        submission = kwargs.pop("submission")
+        action = kwargs.pop("action")
+        form = get_form_for_stage(submission)(
+            user=submission.lead, action=action, submission=submission
+        )
         form_fields = {}
 
         form_fields = {
@@ -44,14 +46,17 @@ class DeterminationFactory(factory.django.DjangoModelFactory):
         submitted = factory.Trait(is_draft=False)
 
     submission = factory.SubFactory(ApplicationSubmissionFactory)
-    author = factory.SelfAttribute('submission.lead')
+    author = factory.SelfAttribute("submission.lead")
 
     outcome = NEEDS_MORE_INFO
-    message = factory.Faker('sentence')
-    data = factory.Dict({
-        'submission': factory.SelfAttribute('..submission'),
-        'action': factory.SelfAttribute('..outcome'),
-    }, dict_factory=DeterminationDataFactory)
+    message = factory.Faker("sentence")
+    data = factory.Dict(
+        {
+            "submission": factory.SelfAttribute("..submission"),
+            "action": factory.SelfAttribute("..outcome"),
+        },
+        dict_factory=DeterminationDataFactory,
+    )
 
     is_draft = True
 
@@ -75,18 +80,20 @@ class SendNoticeBlockFactory(FormFieldBlockFactory):
         model = SendNoticeBlock
 
 
-DeterminationFormFieldsFactory = StreamFieldUUIDFactory({
-    'char': CharFieldBlockFactory,
-    'text': RichTextFieldBlockFactory,
-    'send_notice': SendNoticeBlockFactory,
-    'determination': DeterminationBlockFactory,
-    'message': DeterminationMessageBlockFactory,
-})
+DeterminationFormFieldsFactory = StreamFieldUUIDFactory(
+    {
+        "char": CharFieldBlockFactory,
+        "text": RichTextFieldBlockFactory,
+        "send_notice": SendNoticeBlockFactory,
+        "determination": DeterminationBlockFactory,
+        "message": DeterminationMessageBlockFactory,
+    }
+)
 
 
 class DeterminationFormFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = DeterminationForm
 
-    name = factory.Faker('word')
+    name = factory.Faker("word")
     form_fields = DeterminationFormFieldsFactory

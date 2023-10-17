@@ -69,9 +69,9 @@ def slack_message_to_markdown(msg):
 
     def to_href(match_obj):
         if match_obj.group() is not None:
-            return f'[{match_obj.group(2)}]({match_obj.group(1)})'
+            return f"[{match_obj.group(2)}]({match_obj.group(1)})"
 
-    return re.sub(r'<(.*)\|(.*)>', to_href, msg)
+    return re.sub(r"<(.*)\|(.*)>", to_href, msg)
 
 
 def prepare_and_send_activity_digest_email(to, subject, slack_messages):
@@ -84,19 +84,19 @@ def prepare_and_send_activity_digest_email(to, subject, slack_messages):
     messages = [m for m in slack_messages if m.id not in exclude_ids]
     total_count = len(slack_messages)
     ctx = {
-        'messages': messages,
-        'submissions': submissions,
-        'comments': comments,
-        'reviews': reviews,
-        'has_main_sections': bool(exclude_ids),
-        'total_count': total_count,
-        'ORG_LONG_NAME': settings.ORG_LONG_NAME,
-        'ORG_SHORT_NAME': settings.ORG_SHORT_NAME,
-        'ORG_URL': settings.ORG_URL,
+        "messages": messages,
+        "submissions": submissions,
+        "comments": comments,
+        "reviews": reviews,
+        "has_main_sections": bool(exclude_ids),
+        "total_count": total_count,
+        "ORG_LONG_NAME": settings.ORG_LONG_NAME,
+        "ORG_SHORT_NAME": settings.ORG_SHORT_NAME,
+        "ORG_URL": settings.ORG_URL,
     }
 
     if total_count:
-        email = MarkdownMail('messages/email/activity_summary.md')
+        email = MarkdownMail("messages/email/activity_summary.md")
         email.send(
             to=to,
             subject=subject,
@@ -105,7 +105,7 @@ def prepare_and_send_activity_digest_email(to, subject, slack_messages):
         )
         logger.info(f"Sent activity digest email to {to}")
     else:
-        logger.info('No email generated/sent, as there are no new activities.')
+        logger.info("No email generated/sent, as there are no new activities.")
 
 
 class Command(BaseCommand):
@@ -120,14 +120,14 @@ class Command(BaseCommand):
     to that fund or lab to that email.
     """
 
-    help = 'Sent email digest of all unsent activities (last 7 days) in hypha'
+    help = "Sent email digest of all unsent activities (last 7 days) in hypha"
     IGNORE_DAYS_BEFORE = 7
 
     def handle(self, *args, **options):
         slack_messages = (
             Message.objects.filter(type=SlackAdapter.adapter_type)
-            .select_related('event')
-            .order_by('-event__when')
+            .select_related("event")
+            .order_by("-event__when")
             .filter(sent_in_email_digest=False)
             .filter(
                 event__when__gte=(
@@ -143,7 +143,7 @@ class Command(BaseCommand):
         if settings.ACTIVITY_DIGEST_RECIPIENT_EMAILS:
             prepare_and_send_activity_digest_email(
                 to=settings.ACTIVITY_DIGEST_RECIPIENT_EMAILS,
-                subject=settings.EMAIL_SUBJECT_PREFIX + _('Summary of all activities'),
+                subject=settings.EMAIL_SUBJECT_PREFIX + _("Summary of all activities"),
                 slack_messages=slack_messages,
             )
         else:
@@ -154,12 +154,12 @@ class Command(BaseCommand):
         # Send digest of for funds that has "activity_digest_recipient_emails" set.
         for _id, messages in groupby_fund_lab_id(slack_messages):
             emails = extract_fund_or_lab_property(
-                messages[0].event, 'activity_digest_recipient_emails'
+                messages[0].event, "activity_digest_recipient_emails"
             )
             if not emails:
                 continue
-            title = extract_fund_or_lab_property(messages[0].event, 'title')
-            subject = settings.EMAIL_SUBJECT_PREFIX + _('Activities Summary - ') + title
+            title = extract_fund_or_lab_property(messages[0].event, "title")
+            subject = settings.EMAIL_SUBJECT_PREFIX + _("Activities Summary - ") + title
 
             prepare_and_send_activity_digest_email(
                 subject=subject,

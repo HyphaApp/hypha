@@ -5,13 +5,14 @@
     transition: fill $transition;
     fill: $color--dark-grey;
 
-    .header__menus--mobile.is-visible & { // stylelint-disable-line force-element-nesting, selector-class-pattern
+    // stylelint-disable-next-line force-element-nesting, selector-class-pattern
+    .header__menus--mobile.is-visible & {
         fill: $color--white;
     }
 
     &--anchor-link {
         line-height: 1;
-        height: .8em;
+        height: 0.8em;
         vertical-align: middle;
     }
 
@@ -67,7 +68,8 @@
     &--speech-bubble {
         fill: $color--white;
 
-        .activity-feed__header & { // stylelint-disable-line selector-class-pattern
+        // stylelint-disable-next-line selector-class-pattern
+        .activity-feed__header & {
             margin-left: 10px;
         }
     }
@@ -93,7 +95,7 @@
 
     &--eye {
         position: relative;
-        top: .25em;
+        top: 0.25em;
         align-self: center;
         width: 1em;
         height: 1em;
@@ -130,7 +132,7 @@
 
     &--caret-down {
         position: relative;
-        top: .4em;
+        top: 0.4em;
         align-self: center;
         width: 1em;
         height: 1em;
@@ -139,7 +141,7 @@
 
     &--caret-up {
         position: relative;
-        top: .4em;
+        top: 0.4em;
         align-self: center;
         width: 1em;
         height: 1em;
@@ -148,11 +150,25 @@
 
     &--arrow-up {
         position: relative;
-        top: .1em;
         align-self: center;
-        width: 1.4em;
-        height: 1.4em;
-        fill: $color--light-blue;
+        width: 16px;
+        height: 17px;
+        stroke: $color--light-blue;
+    }
+
+    &--arrow-down {
+        position: relative;
+        align-self: center;
+        width: 16px;
+        height: 17px;
+        stroke: $color--light-blue;
+    }
+
+    &--side-arrow {
+        position: relative;
+        align-self: center;
+        width: 8px;
+        height: 30px;
     }
 
     &--arrow-up-short-bar {

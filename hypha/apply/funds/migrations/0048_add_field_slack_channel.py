@@ -4,20 +4,27 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('funds', '0047_add_markdown'),
+        ("funds", "0047_add_markdown"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='applicationbase',
-            name='slack_channel',
-            field=models.CharField(blank=True, help_text='The slack #channel for notifications.', max_length=128),
+            model_name="applicationbase",
+            name="slack_channel",
+            field=models.CharField(
+                blank=True,
+                help_text="The slack #channel for notifications.",
+                max_length=128,
+            ),
         ),
         migrations.AddField(
-            model_name='labbase',
-            name='slack_channel',
-            field=models.CharField(blank=True, help_text='The slack #channel for notifications.', max_length=128),
+            model_name="labbase",
+            name="slack_channel",
+            field=models.CharField(
+                blank=True,
+                help_text="The slack #channel for notifications.",
+                max_length=128,
+            ),
         ),
     ]

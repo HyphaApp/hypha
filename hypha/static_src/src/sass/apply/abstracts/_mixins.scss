@@ -1,12 +1,12 @@
 // stylelint-disable
 
-@use 'sass:math';
+@use "sass:math";
 
 // Media queries
 @mixin media-query($queries...) {
     @each $query in $queries {
         @each $breakpoint in $breakpoints {
-            $name:        nth($breakpoint, 1);
+            $name: nth($breakpoint, 1);
             $declaration: nth($breakpoint, 2);
 
             @if $query == $name and $declaration {
@@ -20,11 +20,21 @@
 
 //   Placeholder text
 @mixin placeholder-text {
-    &.placeholder { @content; }
-    &:-moz-placeholder { @content; }
-    &::-moz-placeholder { @content; }
-    &:-ms-input-placeholder { @content; }
-    &::-webkit-input-placeholder { @content; }
+    &.placeholder {
+        @content;
+    }
+    &:-moz-placeholder {
+        @content;
+    }
+    &::-moz-placeholder {
+        @content;
+    }
+    &:-ms-input-placeholder {
+        @content;
+    }
+    &::-webkit-input-placeholder {
+        @content;
+    }
 }
 
 // Hide text
@@ -45,14 +55,12 @@
 
 // Output a rem value for the given property
 @mixin rem($property, $values) {
-
     $rem: ();
 
     @each $value in $values {
         @if $value == 0 or $value == auto or $value == inherit {
             $rem: append($rem, $value);
-        }
-        @else {
+        } @else {
             $rem: append($rem, rem(strip-unit($value)));
         }
     }
@@ -70,15 +78,14 @@
 
     @if $size == null {
         @warn 'Font size ‘#{$keyword}’ does not exist';
-    }
-    @else {
+    } @else {
         @include rem-font-size($size);
     }
 }
 
 // Button mixin
 @mixin button($bg, $hover-bg) {
-    padding: .5em 50px;
+    padding: 0.5em 50px;
     font-weight: $weight--bold;
     color: $color--white;
     text-align: center;
@@ -88,7 +95,7 @@
 
     @include media-query(mob-landscape) {
         width: auto;
-        text-align: left;
+        // text-align: left;
     }
 
     &:hover,
@@ -121,18 +128,20 @@
 // Wide button mixin
 @mixin button--wide {
     @include media-query(tablet-landscape) {
-        padding: .5em 80px;
+        padding: 0.5em 80px;
     }
 }
 
 // Viewport sized typography mixin that takes a min and max pixel-based value
 @mixin responsive-font-sizes($min, $max) {
-
-    $vw-context: (1260 * .1) * 1px;
+    $vw-context: (1260 * 0.1) * 1px;
     $responsive: math.div($max, $vw-context) * 10vw;
 
-    $responsive-unitless: math.div($responsive, ($responsive - $responsive + 1));
-    $dimension: if(unit($responsive) == 'vh', 'height', 'width');
+    $responsive-unitless: math.div(
+        $responsive,
+        ($responsive - $responsive + 1)
+    );
+    $dimension: if(unit($responsive) == "vh", "height", "width");
     $min-breakpoint: math.div($min, $responsive-unitless) * 100;
 
     @media (max-#{$dimension}: #{$min-breakpoint}) {
@@ -159,7 +168,7 @@
 
     width: 0;
     height: 0;
-    content: '';
+    content: "";
     border-#{opposite-direction($direction)}: ($size * 1.5) solid $color;
 
     $perpendicular-borders: $size solid transparent;
@@ -167,12 +176,11 @@
     @if $direction == top or $direction == bottom {
         border-right: $perpendicular-borders;
         border-left: $perpendicular-borders;
-    }
-    @else if $direction == right or $direction == left {
+    } @else if $direction == right or $direction == left {
         border-top: $perpendicular-borders;
         border-bottom: $perpendicular-borders;
     }
-  }
+}
 
 // used for the submission list items in the react app
 @mixin submission-list-item {
@@ -216,7 +224,7 @@
 }
 
 @mixin table-checkbox {
-    input[type='checkbox'] {
+    input[type="checkbox"] {
         margin: 0 auto;
         display: block;
         width: 1.1rem;

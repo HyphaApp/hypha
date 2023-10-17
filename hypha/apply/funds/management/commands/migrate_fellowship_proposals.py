@@ -17,13 +17,11 @@ class Command(MigrateCommand):
             "type": "value",
             "key": "safe_value",
         },
-
         "field_proposal_host_text": {
             "id": "bc03235e-3c78-4770-9fc2-97feb93c2c8c",
             "type": "value",
             "key": "safe_value",
         },
-
         "field_proposal_start_date": {
             "id": "672cb6f1-335c-4005-a0f1-46c414feda06",
             "type": "value",

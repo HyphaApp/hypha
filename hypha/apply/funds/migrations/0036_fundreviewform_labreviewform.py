@@ -6,37 +6,84 @@ import modelcluster.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('review', '0005_streamform'),
-        ('funds', '0035_author_timestamp_revision'),
+        ("review", "0005_streamform"),
+        ("funds", "0035_author_timestamp_revision"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='FundReviewForm',
+            name="FundReviewForm",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('sort_order', models.IntegerField(blank=True, editable=False, null=True)),
-                ('form', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='review.ReviewForm')),
-                ('fund', modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.CASCADE, related_name='review_forms', to='funds.FundType')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "sort_order",
+                    models.IntegerField(blank=True, editable=False, null=True),
+                ),
+                (
+                    "form",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="review.ReviewForm",
+                    ),
+                ),
+                (
+                    "fund",
+                    modelcluster.fields.ParentalKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="review_forms",
+                        to="funds.FundType",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['sort_order'],
-                'abstract': False,
+                "ordering": ["sort_order"],
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='LabReviewForm',
+            name="LabReviewForm",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('sort_order', models.IntegerField(blank=True, editable=False, null=True)),
-                ('form', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='review.ReviewForm')),
-                ('lab', modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.CASCADE, related_name='review_forms', to='funds.LabType')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "sort_order",
+                    models.IntegerField(blank=True, editable=False, null=True),
+                ),
+                (
+                    "form",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="review.ReviewForm",
+                    ),
+                ),
+                (
+                    "lab",
+                    modelcluster.fields.ParentalKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="review_forms",
+                        to="funds.LabType",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['sort_order'],
-                'abstract': False,
+                "ordering": ["sort_order"],
+                "abstract": False,
             },
         ),
     ]

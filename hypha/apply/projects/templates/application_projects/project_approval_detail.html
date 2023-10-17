@@ -4,181 +4,167 @@
 {% block title %}{{ object.title }}{% endblock %}
 
 {% block extra_css %}
-        <link rel="stylesheet" href="{% static 'css/apply/fancybox.css' %}">
-        {{ reviewer_form.media.css }}
+    <link rel="stylesheet" href="{% static 'css/apply/fancybox.css' %}">
+    {{ reviewer_form.media.css }}
 {% endblock %}
 
-{% block body_class %}light-grey-bg{% endblock %}
-
 {% block content %}
-<div class="simplified">
-    <div class="simplified__admin-bar">
-        <div class="simplified__admin-bar-inner-project">
-            <div>
-                <a class="simplified__projects-link" href="{{ object.get_absolute_url }}">
-                    {% trans "View project page" %}
-                </a>
-                <h1 class="simplified__heading">{{ object.title }}</h1>
-                <h5 class="simplified__subheading">
-                    <span>{{ object.submission.page }}</span>
-                    <span>{{ object.submission.round }}</span>
-                    <span>{% trans "Lead" %}: {{ object.lead }}</span>
-                </h5>
+    {% adminbar %}
+        {% slot back_link %}
+            <a class="simplified__projects-link" href="{{ object.get_absolute_url }}" rel="noopener">
+                {% trans "Back to Project" %}
+            </a>
+        {% endslot %}
+
+        {% slot header %}
+            {{ object.title }}
+        {% endslot %}
+        {% slot sub_heading %}
+            <div class="heading heading--meta text-sm mt-1">
+                <span>{{ object.submission.page }}</span>
+                <span>{{ object.submission.round }}</span>
+                <span>{% trans "Lead" %}: {{ object.lead }}</span>
             </div>
+        {% endslot %}
+    {% endadminbar %}
 
-        </div>
-    </div>
-    <div class="wrapper wrapper--large wrapper--tabs">
-        <div class="wrapper wrapper--sidebar">
-            <article class="wrapper--sidebar--inner">
-                <h4>{% trans "Project Information" %}</h4>
-                <div class="card card--solid">
-                    <div class="grid grid--proposal-info">
-                        <div>
-                            <p class="font-bold">{% trans "Proposed start date" %}</p>
-                            <p>{{ object.proposed_start|date:"DATE_FORMAT"|default:"-" }}</p>
-                        </div>
+    <div class="simplified">
+        <div class="wrapper wrapper--large wrapper--tabs">
+            <div class="wrapper wrapper--sidebar">
+                <article class="wrapper--sidebar--inner">
+                    <h4 class="mb-2">{% trans "Project Information" %}</h4>
+                    <div class="card card--solid">
 
-                        <div>
-                            <p class="font-bold">{% trans "Project Proposed end date" %}</p>
-                            <p>{{ object.proposed_end|date:"DATE_FORMAT"|default:"-" }}</p>
-                        </div>
-
-                        <div>
-                            <p class="font-bold">{% trans "Legal name" %}</p>
-                            <p>{{ object.contact_legal_name|default:"-" }}</p>
-                        </div>
-
-                        <div>
-                            <p class="font-bold">{% trans "E-mail" %}</p>
-                            <p>{{ object.contact_email|default:"-" }}</p>
-                        </div>
-
-                        <div>
-                            <p class="font-bold">{% trans "Address" %}</p>
-                            <p>{{ object.get_address_display|default:"-"}}</p>
-                        </div>
-
-                        <div>
-                            <p class="font-bold">{% trans "Phone" %}</p>
-                            <p>{{ object.phone|default:"-" }}</p>
-                        </div>
-
-                        <div>
-                            <h5>{% trans "Value" %}</h5>
-                            <p>{{ object.value|default:"-"|format_number_as_currency }}</p>
-                        </div>
-
-                        {% if object.sent_to_compliance_at %}
-                        <div>
-                            <p class="font-bold">{% trans "Sent to Compliance" %}</p>
-                            <p>{{ object.sent_to_compliance_at|date:"DATE_FORMAT" }}</p>
-                        </div>
+                        {% if object.output_answers %}
+                            <div class="simplified__paf_answers">
+                                {{ object.output_answers }}
+                            </div>
                         {% endif %}
 
+                        {% has_project_sow_form object as project_sow %}
+                        {% if project_sow and object.sow.output_answers %}
+                            <div class="simplified__paf_answers">
+                                {{ object.sow.output_answers }}
+                            </div>
+                        {% endif %}
                     </div>
 
-                    {% if object.output_answers %}
-                        <div class="simplified__paf_answers">
-                            {{ object.output_answers }}
-                        </div>
-                    {% endif %}
-
-                    {% has_project_sow_form object as project_sow %}
-                    {% if project_sow and object.sow.output_answers %}
-                        <div class="simplified__paf_answers">
-                            {{ object.sow.output_answers }}
-                        </div>
-                    {% endif %}
-                </div>
-
-                <h4>{% trans "Approvals" %}</h4>
-                <div class="card card--solid">
-                    {% for approval in project.paf_approvals.all %}
-                        {% if approval.approved %}
-                            <p><b>{{ approval.paf_reviewer_role.label }}</b> - {{ approval.user }} ({{ approval.approved_at|date:"DATE_FORMAT" }})</p>
-                        {% else %}
-                            <p><b>{{ approval.paf_reviewer_role.label }}</b> {% trans " - Pending" %}</p>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-
-                <h4>{% trans "Review" %}</h4>
-                <div class="card card--solid">
-                    <p class="font-bold mb-0 mt-0">{% trans "Submission lead" %}</p>
-                    <p class="mt-2 mb-0">{{ project.submission.lead }}</p>
-
-                    <p class="font-bold mt-6 mb-0">{% trans "Staff reviewers" %}</p>
-                    {% for review in project.submission.reviews.by_staff %}
-                        <p class="mt-2 mb-0">
-                            {{ review.author }}
-                            {% if review.author.role %}
-                                {% trans "as" %} {{ review.author.role }}
+                    <h4 class="mb-2">{% trans "Approvals" %}</h4>
+                    <div class="card card--solid">
+                        {% for approval in project.paf_approvals.all %}
+                            {% if approval.approved %}
+                                <p><b>{{ approval.paf_reviewer_role.label }}</b> - {{ approval.user }} ({{ approval.approved_at|date:"DATE_FORMAT" }})</p>
+                            {% else %}
+                                <p><b>{{ approval.paf_reviewer_role.label }}</b> {% trans " - Pending" %}</p>
                             {% endif %}
-                            - {{ review.created_at|date:"DATE_FORMAT" }}
-                        </p>
-                    {% empty %}
-                        <p class="mt-2 mb-0">{% trans "No reviews" %}</p>
-                    {% endfor %}
-                    <p class="font-bold mb-0 mt-6">{% trans "Advisory council" %}</p>
-                    {% for review in project.submission.reviews.by_reviewers %}
+                        {% endfor %}
+                    </div>
+
+                    <h4 class="mb-2">{% trans "Review" %}</h4>
+                    <div class="card card--solid">
+                        <p class="font-bold mb-0 mt-0">{% trans "Submission lead" %}</p>
+                        <p class="mt-2 mb-0">{{ project.submission.lead }}</p>
+
+                        <p class="font-bold mt-6 mb-0">{% trans "Staff reviewers" %}</p>
+                        {% for review in project.submission.reviews.by_staff %}
+                            <p class="mt-2 mb-0">
+                                {{ review.author }}
+                                {% if review.author.role %}
+                                    {% trans "as" %} {{ review.author.role }}
+                                {% endif %}
+                                - {{ review.created_at|date:"DATE_FORMAT" }}
+                            </p>
+                        {% empty %}
+                            <p class="mt-2 mb-0">{% trans "No reviews" %}</p>
+                        {% endfor %}
+                        <p class="font-bold mb-0 mt-6">{% trans "Advisory council" %}</p>
+                        {% for review in project.submission.reviews.by_reviewers %}
                             <p class="mt-2 mb-0">
                                 {{ review.author }} - {{ review.created_at|date:"DATE_FORMAT" }}
                             </p>
-                    {% empty %}
-                        <p class="mt-2 mb-0">{% trans "No reviews" %}</p>
-                    {% endfor %}
-                </div>
+                        {% empty %}
+                            <p class="mt-2 mb-0">{% trans "No reviews" %}</p>
+                        {% endfor %}
+                    </div>
 
-                <h4>{% trans "Supporting Documents" %}</h4>
-                <div class="card card--solid">
-                    <p><a href="{% url 'apply:submissions:simplified' pk=object.submission_id %}">{% trans "Submission" %}</a></p>
-                    {% for packet_file in object.packet_files.all %}
-                        <p><a href="{% url 'apply:projects:document' pk=object.pk file_pk=packet_file.pk %}">{{ packet_file.title }}</a></p>
-                    {% endfor %}
-                </div>
-            </article>
-            {% user_can_update_paf_status object user request=request as can_update_paf_status %}
-            {% user_can_take_actions object user as can_take_actions %}
-            {% if can_take_actions %}
-            <aside class="sidebar sidebar__project">
-                {% if mobile %}
-                    <a class="js-actions-toggle button button--white button--full-width button--actions">{% trans "Actions to take" %}</a>
+                    <h4 class="mb-2">{% trans "Supporting Documents" %}</h4>
+                    <div class="card card--solid">
+                        <p><a href="{% url 'apply:submissions:simplified' pk=object.submission_id %}">{% trans "Submission" %}</a></p>
+                        {% for packet_file in object.packet_files.all %}
+                            <p><a href="{% url 'apply:projects:document' pk=object.pk file_pk=packet_file.pk %}">{{ packet_file.title }}</a></p>
+                        {% endfor %}
+                    </div>
+                </article>
+                {% user_can_update_paf_status object user request=request as can_update_paf_status %}
+                {% user_can_take_actions object user as can_take_actions %}
+                {% if can_take_actions %}
+                    <aside class="sidebar sidebar__project">
+                        {% if mobile %}
+                            <a class="js-actions-toggle button button--white button--full-width button--actions">{% trans "Actions to take" %}</a>
+                        {% endif %}
+
+                        <div class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
+                            <h5>{% trans "Actions to take" %}</h5>
+                            {% user_can_edit_project object user as can_edit_project %}
+                            {% if can_edit_project %}
+                                <a class="button button--bottom-space button--primary button--full-width {% if user_can_approve %} is-disabled {% endif %}" href="{% url 'apply:projects:edit' pk=object.pk %}">{% trans "Edit PAF" %}</a>
+                            {% endif %}
+                            <div class="dropdown">
+                                <button class="button button--project-action--paf-download dropbtn button--bottom-space button--full-width" type="button" data-dropdown-target="#dropdown-content-download">
+                                    {% trans 'Download Approval Form' %}
+                                </button>
+                                <div id="dropdown-content-download" class="dropdown-content">
+                                    <a class="dropdown-item" href="{% url 'apply:projects:download' pk=object.pk export_type='pdf' %}">
+                                        {% trans 'Download as PDF' %}</a>
+                                    <a class="dropdown-item" href="{% url 'apply:projects:download' pk=object.pk export_type='docx' %}">
+                                        {% trans 'Download as DOCX' %}</a>
+                                </div>
+                            </div>
+                            {% user_can_update_paf_approvers object user request as can_update_paf_approvers %}
+                            {% if can_update_paf_approvers %}
+                                {% if user != project.lead %}
+                                    <a data-fancybox
+                                       data-src="#change-assigned-paf-approvers"
+                                       class="button button--bottom-space button--white button--full-width"
+                                       href="#">
+                                        {% trans "Change approver" %}
+                                    </a>
+                                    <div class="modal" id="change-assigned-paf-approvers">
+                                        <h4 class="modal__project-header-bar">{% trans "Change Approver" %}</h4>
+                                        <p>{% trans "Selected approver will be notified. On unselecting, every listed member here will be notified." %} </p>
+                                        {% trans "Submit" as submit %}
+                                        {% include 'funds/includes/delegated_form_base.html' with form=assign_approvers_form value=submit %}
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+                            {% user_can_assign_approvers_to_project object user request as can_assign_paf_approvers %}
+                            {% if can_assign_paf_approvers %}
+                                <a data-fancybox data-src="#assign-paf-approvers" class="button button--bottom-space button--primary button--full-width" href="#">
+                                    {% trans "Assign approver" %}
+                                </a>
+                                <div class="modal" id="assign-paf-approvers">
+                                    <h4 class="modal__project-header-bar">{% trans "Assign Approver" %}</h4>
+                                    <p>{% trans "Selected approver will be notified. On unselecting, every listed member here will be notified." %} </p>
+                                    {% trans "Submit" as submit %}
+                                    {% include 'funds/includes/delegated_form_base.html' with form=assign_approvers_form value=submit %}
+                                </div>
+                            {% endif %}
+                            {% if can_update_paf_status %}
+                                <a data-fancybox data-src="#change-status" class="button button--primary button--full-width {% if user_can_approve %} is-disabled {% endif %}" href="#">{% trans "Update Status" %}</a>
+                                <div class="modal" id="change-status">
+                                    <h4 class="modal__project-header-bar">{% trans "Update status" %}</h4>
+                                    <p>{% trans "Project's current status" %}: {{ object.get_status_display }}</p>
+                                    {% trans "Update Status" as update %}
+                                    {% include 'funds/includes/delegated_form_base.html' with form=change_paf_status value=update %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                    </aside>
                 {% endif %}
-
-                <div class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
-                    <h5>{% trans "Actions to take" %}</h5>
-                    {% user_can_edit_project object user as can_edit_project %}
-                    {% if can_edit_project %}
-                        <a class="button button--bottom-space button--primary button--full-width {% if user_can_approve %} is-disabled {% endif %}" href="{% url 'apply:projects:edit' pk=object.pk %}">{% trans "Edit PAF" %}</a>
-                    {% endif %}
-                    <div class="dropdown">
-                      <button class="button button--project-action--paf-download dropbtn button--bottom-space button--full-width" type="button" data-dropdown-target="#dropdown-content-download">
-                          {% trans 'Download Approval Form' %}
-                      </button>
-                      <div id="dropdown-content-download" class="dropdown-content">
-                        <a class="dropdown-item" href="{% url 'apply:projects:download' pk=object.pk export_type='pdf' %}">
-                            {% trans 'Download as PDF' %}</a>
-                        <a class="dropdown-item" href="{% url 'apply:projects:download' pk=object.pk export_type='docx' %}">
-                            {% trans 'Download as DOCX' %}</a>
-                      </div>
-                    </div>
-                    {% if can_update_paf_status %}
-                    <a data-fancybox data-src="#change-status" class="button button--primary button--full-width {% if user_can_approve %} is-disabled {% endif %}" href="#">{% trans "Update Status" %}</a>
-                    <div class="modal" id="change-status">
-                        <h4 class="modal__project-header-bar">{% trans "Update status" %}</h4>
-                        <p>{% trans "Project's current status" %}: {{ object.get_status_display }}</p>
-                        {% trans "Update Status" as update %}
-                        {% include 'funds/includes/delegated_form_base.html' with form=change_paf_status value=update %}
-                    </div>
-                    {% endif %}
-                </div>
-
-            </aside>
-            {% endif %}
+            </div>
         </div>
     </div>
-</div>
 {% endblock content %}
 
 {% block extra_js %}

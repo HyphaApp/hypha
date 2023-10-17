@@ -7,28 +7,29 @@ def recreate_objects(apps, schema_editor):
     # We removed the old definition of these objects, need to create
     # a new object with a pointer back to that object, the underlying
     # data structure was unaffected
-    ContentType = apps.get_model('contenttypes.ContentType')
-
+    ContentType = apps.get_model("contenttypes.ContentType")
 
     for model_name, new_model_name in [
-            ('FundType', 'ApplicationBase'),
-            ('LabType', 'LabBase'),
-            ('Round', 'RoundBase'),
+        ("FundType", "ApplicationBase"),
+        ("LabType", "LabBase"),
+        ("Round", "RoundBase"),
     ]:
-        content_type, _ = ContentType.objects.get_or_create(model=model_name.lower(), app_label='funds')
+        content_type, _ = ContentType.objects.get_or_create(
+            model=model_name.lower(), app_label="funds"
+        )
 
-        model = apps.get_model('funds', model_name)
-        new_model = apps.get_model('funds', new_model_name)
+        model = apps.get_model("funds", model_name)
+        new_model = apps.get_model("funds", new_model_name)
         for obj in new_model.objects.all():
             field_values = {}
             for field in obj._meta.fields:
-                if field.name not in ['page_ptr']:
+                if field.name not in ["page_ptr"]:
                     field_values[field.name] = getattr(obj, field.name)
 
             kwargs = {
-                f'{new_model_name.lower()}_ptr': obj,
-                'draft_title': obj.draft_title,
-                'content_type': content_type,
+                f"{new_model_name.lower()}_ptr": obj,
+                "draft_title": obj.draft_title,
+                "content_type": content_type,
             }
             field_values.update(**kwargs)
             new_obj = model(**field_values)
@@ -36,9 +37,8 @@ def recreate_objects(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('funds', '0037_refactor_funds_models'),
+        ("funds", "0037_refactor_funds_models"),
     ]
 
     operations = [

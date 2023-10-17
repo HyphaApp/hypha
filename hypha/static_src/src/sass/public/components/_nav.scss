@@ -121,7 +121,7 @@
                 border-top: 5px solid transparent;
                 border-bottom: 5px solid transparent;
                 border-left: 5px solid $color--white;
-                content: '';
+                content: "";
 
                 .listing & {
                     margin-left: 0;
@@ -150,13 +150,16 @@
         padding: 20px 10px;
         color: $color--white;
         border-bottom: 1px solid transparent;
-        transition: color, border $transition;
+        transition:
+            color,
+            border $transition;
 
         .header--light-bg & {
             color: $color--default;
         }
 
-        .header__menus--mobile & { // stylelint-disable-line selector-class-pattern
+        // stylelint-disable-next-line selector-class-pattern
+        .header__menus--mobile & {
             color: $color--white;
         }
 

@@ -4,15 +4,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('application_projects', '0062_auto_20230228_1218'),
+        ("application_projects", "0062_auto_20230228_1218"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='projectsettings',
-            name='paf_approval_sequential',
-            field=models.BooleanField(default=True, help_text='Uncheck it to approve PAF parallely'),
+            model_name="projectsettings",
+            name="paf_approval_sequential",
+            field=models.BooleanField(
+                default=True, help_text="Uncheck it to approve PAF parallely"
+            ),
         ),
     ]

@@ -16,39 +16,39 @@ from .screening import ScreeningStatus
 from .submissions import ApplicationSubmission
 
 __all__ = [
-    'ApplicationForm',
-    'ApplicationRevision',
-    'ApplicationSettings',
-    'ApplicationSubmission',
-    'AssignedReviewers',
-    'Reminder',
-    'ReviewerRole',
-    'ReviewerSettings',
-    'RoundsAndLabs',
-    'ScreeningStatus',
+    "ApplicationForm",
+    "ApplicationRevision",
+    "ApplicationSettings",
+    "ApplicationSubmission",
+    "AssignedReviewers",
+    "Reminder",
+    "ReviewerRole",
+    "ReviewerSettings",
+    "RoundsAndLabs",
+    "ScreeningStatus",
 ]
 
 
 class FundType(ApplicationBase):
-    subpage_types = ['funds.Round']
+    subpage_types = ["funds.Round"]
 
     class Meta:
         verbose_name = _("Fund")
 
 
 class RequestForPartners(ApplicationBase):
-    subpage_types = ['funds.Round', 'funds.SealedRound']
+    subpage_types = ["funds.Round", "funds.SealedRound"]
 
     class Meta:
         verbose_name = _("RFP")
 
 
 class Round(RoundBase):
-    parent_page_types = ['funds.FundType', 'funds.RequestForPartners']
+    parent_page_types = ["funds.FundType", "funds.RequestForPartners"]
 
 
 class SealedRound(RoundBase):
-    parent_page_types = ['funds.RequestForPartners']
+    parent_page_types = ["funds.RequestForPartners"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

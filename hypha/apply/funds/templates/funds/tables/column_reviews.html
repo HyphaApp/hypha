@@ -4,7 +4,7 @@
     <tr class="reviews-summary__tr">
         <td class="reviews-summary__td">
             <div class="reviews-summary__td-width">
-                {{ record.review_submitted_count|default:'0' }} 
+                {{ record.review_submitted_count|default:'0' }}
                 <span class="counts-separator">/</span>
                 {% if record.stage.has_external_review %}
                     {{ record.review_count|default:'0' }}

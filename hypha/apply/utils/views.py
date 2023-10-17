@@ -16,13 +16,13 @@ from wagtail.admin.views.pages.delete import delete
 from wagtail.models import Page
 
 
-def page_not_found(request, exception=None, template_name='apply/404.html'):
+def page_not_found(request, exception=None, template_name="apply/404.html"):
     if not request.user.is_authenticated:
-        template_name = '404.html'
+        template_name = "404.html"
     return defaults.page_not_found(request, exception, template_name)
 
 
-@method_decorator(login_required, name='dispatch')
+@method_decorator(login_required, name="dispatch")
 class ViewDispatcher(View):
     admin_view: View = None
     reviewer_view: View = None
@@ -82,7 +82,8 @@ class DelegatableBase(ContextMixin):
     `DelegateableViews` objects should contain form views that inherit from `DelegatedViewMixin`
     and `FormView`
     """
-    form_prefix = 'form-submitted-'
+
+    form_prefix = "form-submitted-"
 
     def __init__(self, *args, **kwargs):
         self._form_views = {
@@ -109,8 +110,8 @@ class DelegatableBase(ContextMixin):
 
     def post(self, request, *args, **kwargs):
         # Information to pretend we originate from this view
-        kwargs['context'] = self.get_context_data()
-        kwargs['template_names'] = self.get_template_names()
+        kwargs["context"] = self.get_context_data()
+        kwargs["template_names"] = self.get_template_names()
 
         for form_key, form_view in self._form_views.items():
             if form_key in request.POST:
@@ -123,14 +124,14 @@ class DelegatableBase(ContextMixin):
 class DelegateableView(DelegatableBase):
     def get_form_kwargs(self):
         return {
-            'user': self.request.user,
-            'instance': self.object,
+            "user": self.request.user,
+            "instance": self.object,
         }
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
 
-        kwargs['object'] = self.object
+        kwargs["object"] = self.object
 
         return super().post(request, *args, **kwargs)
 
@@ -138,7 +139,7 @@ class DelegateableView(DelegatableBase):
 class DelegateableListView(DelegatableBase):
     def get_form_kwargs(self):
         return {
-            'user': self.request.user,
+            "user": self.request.user,
         }
 
     def post(self, request, *args, **kwargs):
@@ -161,7 +162,7 @@ class DelegatedViewMixin(View):
         # value we work with on the class.
         # If we don't have self.object, bind the parent instance to it. This value will then
         # be used by the form. Any further calls to get_object will get a new instance of the object
-        if not hasattr(self, 'object'):
+        if not hasattr(self, "object"):
             parent_object = self.get_parent_object()
             if isinstance(parent_object, self.model):
                 return parent_object
@@ -169,14 +170,14 @@ class DelegatedViewMixin(View):
         return super().get_object()
 
     def get_template_names(self):
-        return self.kwargs['template_names']
+        return self.kwargs["template_names"]
 
     def get_form_name(self):
         return self.context_name
 
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
-        form_kwargs['user'] = self.request.user
+        form_kwargs["user"] = self.request.user
         form_kwargs.update(**self.get_parent_kwargs())
         return form_kwargs
 
@@ -184,10 +185,10 @@ class DelegatedViewMixin(View):
         try:
             return self.parent.get_form_kwargs()
         except AttributeError:
-            return self.kwargs['parent'].get_form_kwargs()
+            return self.kwargs["parent"].get_form_kwargs()
 
     def get_parent_object(self):
-        return self.get_parent_kwargs()['instance']
+        return self.get_parent_kwargs()["instance"]
 
     def get_form(self, *args, **kwargs):
         form = super().get_form(*args, **kwargs)
@@ -196,8 +197,8 @@ class DelegatedViewMixin(View):
 
     def get_context_data(self, **kwargs):
         # Use the previous context but override the validated form
-        form = kwargs.pop('form')
-        kwargs.update(self.kwargs['context'])
+        form = kwargs.pop("form")
+        kwargs.update(self.kwargs["context"])
         kwargs.update(**{self.context_name: form})
         return super().get_context_data(**kwargs)
 
@@ -211,9 +212,9 @@ class DelegatedViewMixin(View):
         # We do not want to bind any forms generated this way
         # pretend we are doing a get request to avoid passing data to forms
         old_method = None
-        if self.request.method in ('POST', 'PUT'):
+        if self.request.method in ("POST", "PUT"):
             old_method = self.request.method
-            self.request.method = 'GET'
+            self.request.method = "GET"
 
         form = self.get_form()
 
@@ -224,12 +225,13 @@ class DelegatedViewMixin(View):
     def get_success_url(self):
         query = self.request.GET.urlencode()
         if query:
-            query = '?' + query
+            query = "?" + query
         return self.request.path + query
 
 
-class CreateOrUpdateView(SingleObjectTemplateResponseMixin, ModelFormMixin, ProcessFormView):
-
+class CreateOrUpdateView(
+    SingleObjectTemplateResponseMixin, ModelFormMixin, ProcessFormView
+):
     def get(self, request, *args, **kwargs):
         try:
             self.object = self.get_object()
@@ -262,7 +264,10 @@ def custom_wagtail_page_delete(request, page_id):
         protected_details = ", ".join([str(obj) for obj in e.protected_objects])
         page = get_object_or_404(Page, id=page_id).specific
         parent_id = page.get_parent().id
-        messages.warning(request, _("Page '{0}' can't be deleted because is in use in '{1}'.").format(
-            page.get_admin_display_title(), protected_details
-        ))
-        return redirect('wagtailadmin_explore', parent_id)
+        messages.warning(
+            request,
+            _("Page '{0}' can't be deleted because is in use in '{1}'.").format(
+                page.get_admin_display_title(), protected_details
+            ),
+        )
+        return redirect("wagtailadmin_explore", parent_id)

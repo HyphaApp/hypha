@@ -1,34 +1,40 @@
 {% load i18n wagtailusers_tags workflow_tags %}
-<h3>{% trans "Proposal Information" %}</h3>
+<h3 class="text-xl border-b pb-2 font-bold">{% trans "Proposal Information" %}</h3>
 <div class="grid grid--proposal-info">
     {% if object.get_value_display != "-" %}
-    <div>
-        <h5>{% trans "Requested Funding" %}</h5>
-        {{ object.get_value_display }}
-    </div>
+        <div>
+            <h5 class="text-base">{% trans "Requested Funding" %}</h5>
+            {{ object.get_value_display }}
+        </div>
     {% endif %}
 
     {% if object.get_duration_display != "-" %}
-    <div>
-        <h5>{% trans "Project Duration" %}</h5>
-        {{ object.get_duration_display }}
-    </div>
+        <div>
+            <h5 class="text-base">{% trans "Project Duration" %}</h5>
+            {{ object.get_duration_display }}
+        </div>
     {% endif %}
 
     <div>
-        <h5>{% trans "Legal Name" %}</h5>
-        {{ object.get_full_name_display }}{% if request.user.is_apply_staff %} (<a href="{% url 'wagtailusers_users:edit' object.user_id %}">{% trans "Edit account" %}</a>){% endif %}
+        <h5 class="text-base inline">{% trans "Legal Name" %}</h5>{% if request.user.is_apply_staff %} <span class="text-sm">(<a class="underline" href="{% url 'wagtailusers_users:edit' object.user_id %}">{% trans "Edit" %}</a>)</span>{% endif %}
+        {{ object.get_full_name_display }}
     </div>
 
     <div>
-        <h5>{% trans "E-mail" %}</h5>
+        <h5 class="text-base">{% trans "E-mail" %}</h5>
         {{ object.get_email_display }}
     </div>
     {% if object.get_address_display != "-" %}
-    <div class="grid__cell--span-two">
-        <h5>{% trans "Address" %}</h5>
-        {{ object.get_address_display }}
-    </div>
+        <div class="grid__cell--span-two">
+            <h5 class="text-base">{% trans "Address" %}</h5>
+            {{ object.get_address_display }}
+        </div>
+    {% endif %}
+    {% if object.get_organization_name_display != "-" %}
+        <div class="grid__cell--span-two">
+            <h5 class="text-base">{% trans "Organization name" %}</h5>
+            {{ object.get_organization_name_display }}
+        </div>
     {% endif %}
 </div>
 

@@ -1,160 +1,145 @@
 <html>
-<head>
-    <title>{{ title|default:"" }}</title>
+    <head>
+        <title>{{ title|default:"" }}</title>
 
-    {% block style_base %}
+        {% block style_base %}
         {% comment %}
             See DEFAULT_CSS in https://github.com/chrisglass/xhtml2pdf/blob/master/xhtml2pdf/default.py
             for base style.
         {% endcomment %}
 
-        {% block layout_style %}
-            <style type="text/css">
-                @page {
-                    size: {{ pagesize|default:"A4" }};
-                    margin-left: 2cm;
-                    margin-right: 2cm;
-                    margin-top: 1cm;
-                    margin-bottom: 2cm;
-
-                    @frame header {
-                        -pdf-frame-content: page-header;
-                        margin-top: 3cm;
-                        margin-right: 2mm;
+            {% block layout_style %}
+                <style type="text/css">
+                    @page {
+                        size: {{ pagesize|default:"A4" }};
+                        margin-left: 2cm;
+                        margin-right: 2cm;
+                        margin-top: 1cm;
                         margin-bottom: 2cm;
-                        margin-left: 1.2cm;
-                    }
 
-                    @frame footer {
-                        -pdf-frame-content: page-footer;
-                        bottom: 0cm;
-                        margin-left: 1cm;
-                        margin-right: 1cm;
-                        height: 1cm;
+                        @frame header {
+                            -pdf-frame-content: page-header;
+                            margin-top: 3cm;
+                            margin-right: 2mm;
+                            margin-bottom: 2cm;
+                            margin-left: 1.2cm;
+                        }
+
+                        @frame footer {
+                            -pdf-frame-content: page-footer;
+                            bottom: 0cm;
+                            margin-left: 1cm;
+                            margin-right: 1cm;
+                            height: 1cm;
+                        }
                     }
+                </style>
+            {%endblock%}
+            <style type="text/css">
+                .title {
+                    text-align: center;
+                    font-size: 22px;
+                }
+                p {
+                    font-size: 16px;
+                }
+                #page-width {
+                    width: 100%;
+                    font-size: 16px;
+                }
+                .align-left {
+                    display: inline-block;
+                    padding-left: 100px;
+                }
+                .align-right {
+                    display: inline-block;
+                    padding-right: 100px;
                 }
             </style>
-        {%endblock%}
-        <style type="text/css">
-            .title {
-                text-align: center;
-                font-size: 22px;
-                font-weight: bold;
-            }
-            p {
-                font-size: 16px;
-            }
-            #page-width {
-                width: 100%;
-                font-size: 16px;
-            }
-            .align-left {
-                display: inline-block;
-                padding-left: 100px;
-            }
-            .align-right {
-                display: inline-block;
-                padding-right: 100px;
-            }
-        </style>
-        {% block extra_style %}{% endblock %}
-    {% endblock %}
-</head>
-<body>
-    <div>
-        {%block page_header%}
-            <h1 class="title"> {{ org_name }}(Project Approval Form | <a href="{{ project_link }}">{{ title }}</a>)</h1>
-        {%endblock%}
+            {% block extra_style %}{% endblock %}
+        {% endblock %}
+    </head>
+    <body>
+        <div>
 
-        {%block content%}
-        <table id="page-width">
+            {%block content%}
+                <table id="page-width">
 <!--            Project details in table format -->
-            <tr>
-                <td class="align-left">
-                    <b>Project Title</b>
-                </td>
-                <td align="right" class="align-right">
-                    <b>Project ID</b>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    {{ title }}
-                </td>
-                <td align="right" class="align-right">
-                    {{ id }}
-                </td>
-            </tr>
-            <tr></tr>
-
-            <tr>
-                <td class="align-left">
-                    <b>Proposed Start Date: </b> {{ proposed_start_date|default:"None" }}
-                </td>
-                <td align="right" class="align-right">
-                    <b>Proposed End Date: </b> {{ proposed_end_date|default:"None" }}
-                </td>
-            </tr>
-            <tr></tr>
-            <tr>
-                <td class="align-left">
-                    <b>Contractor: </b> {{ contractor_name|default:"None" }}
-                </td>
-                <td align="right" class="align-right">
-                    <b>Total Amount: </b> {{ total_amount|default:"None" }}
-                </td>
-            </tr>
-        </table>
+                    <tr>
+                        <td rowspan="4" align="left" class="align-left">
+                            <p class="title"> <b>{{ org_name|upper }}</b> PROJECT APPROVAL FORM</p>
+                        </td>
+                        <td align="right" class="align-right">
+                            <b>Project Title</b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right" class="align-right">
+                            <a href="{{ project_link }}">{{ title }}</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right" class="align-right">
+                            <b>Project ID</b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="right" class="align-right">
+                            {{ id }}
+                        </td>
+                    </tr>
+                </table>
+                <br>
 <!--            PAF fields data in paragraph format-->
-            {% for field_name, field_value in paf_data.items %}
-                <p><b>{{ field_name }}</b></p>
-                <p>{{ field_value|default:"-" }}</p>
-            {% endfor %}
+                {% for field_name, field_value in paf_data.items %}
+                    <p><b>{{ field_name }}</b></p>
+                    <p>{{ field_value|default:"-" }}</p>
+                {% endfor %}
 <!--            SOW fields data in paragraph format-->
-            {% for field_name, field_value in sow_data.items %}
-                <p><b>{{ field_name }}</b></p>
-                <p>{{ field_value|default:"-" }}</p>
-            {% endfor %}
+                {% for field_name, field_value in sow_data.items %}
+                    <p><b>{{ field_name }}</b></p>
+                    <p>{{ field_value|default:"-" }}</p>
+                {% endfor %}
 <!--            Approvers data in paragraph format-->
-            <p><b> Approvals </b></p>
-            {% if approvals %}
-                {% for approval in approvals %}
+                <p><b> Approvals </b></p>
+                {% if approvals %}
+                    {% for approval in approvals %}
                         <p>{{ approval.paf_reviewer_role.label }} - {% if approval.approved %} Approved {% else %} Pending{% endif %}
                             {% if approval.user %}({{ approval.user }}){% endif %}</p>
-                {% endfor %}
-            {% else %}
-                <p>-</p>
-            {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <p>-</p>
+                {% endif %}
 <!--            Supporting Documents with links-->
                 <p> <b>Supporting Documents </b></p>
-            {% if supporting_documents %}
-                {% for document, document_link in supporting_documents.items %}
+                {% if supporting_documents %}
+                    {% for document, document_link in supporting_documents.items %}
                         <p><a href="{{ document_link }}">{{ document }}</a></p>
-                {% endfor %}
-            {% else %}
-                <p>-</p>
-            {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <p>-</p>
+                {% endif %}
 <!--           Submission title with link-->
                 <p><b>Submission</b></p>
                 <p><a href="{{ submission_link }}">{{ submission }}</a></p>
 
-        {%endblock%}
-    </div>
-
-    {% if show_footer %}
-        <div id="page-footer">
-            {%block page_foot%}
-                <table>
-                    <tr>
-                        <td>Exported by {{ export_user }} on {{ export_date }}</td>
-                        <td align="right">
-                            Page: <pdf:pagenumber />
-                        </td>
-                    </tr>
-                </table>
             {%endblock%}
         </div>
-    {% endif %}
-</body>
+
+        {% if show_footer %}
+            <div id="page-footer">
+                {%block page_foot%}
+                    <table>
+                        <tr>
+                            <td>Exported by {{ export_user }} on {{ export_date }}</td>
+                            <td align="right">
+                                Page: <pdf:pagenumber />
+                            </td>
+                        </tr>
+                    </table>
+                {%endblock%}
+            </div>
+        {% endif %}
+    </body>
 
 </html>

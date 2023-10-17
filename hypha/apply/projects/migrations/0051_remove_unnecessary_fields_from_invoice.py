@@ -4,22 +4,21 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('application_projects', '0050_add_new_invoice_status'),
+        ("application_projects", "0050_add_new_invoice_status"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='invoice',
-            name='amount',
+            model_name="invoice",
+            name="amount",
         ),
         migrations.RemoveField(
-            model_name='invoice',
-            name='date_from',
+            model_name="invoice",
+            name="date_from",
         ),
         migrations.RemoveField(
-            model_name='invoice',
-            name='date_to',
+            model_name="invoice",
+            name="date_to",
         ),
     ]

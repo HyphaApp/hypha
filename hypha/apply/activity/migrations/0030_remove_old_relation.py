@@ -4,14 +4,13 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('activity', '0029_migrate_old_submission_relation'),
+        ("activity", "0029_migrate_old_submission_relation"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='activity',
-            name='submission',
+            model_name="activity",
+            name="submission",
         ),
     ]

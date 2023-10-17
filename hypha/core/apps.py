@@ -7,6 +7,6 @@ class CoreAppConfig(AppConfig):
 
     def ready(self):
         from . import components  # noqa
+
         component.register("adminbar", component=components.AdminBar)
         component.register("dropdown_menu", component=components.DropdownMenu)
-

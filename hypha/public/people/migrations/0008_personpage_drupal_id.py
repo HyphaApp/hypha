@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('people', '0007_allow_blank_source'),
+        ("people", "0007_allow_blank_source"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='personpage',
-            name='drupal_id',
+            model_name="personpage",
+            name="drupal_id",
             field=models.IntegerField(blank=True, editable=False, null=True),
         ),
     ]

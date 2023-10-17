@@ -159,7 +159,7 @@ class Command(MigrateCommand):
                 "postal_code": "postalcode",
                 "thoroughfare": "thoroughfare",
                 "premise": "premise",
-            }
+            },
         },
         "field_application_questions": {
             "id": "1889de86-0a0d-4abf-9916-4db87a499d35",

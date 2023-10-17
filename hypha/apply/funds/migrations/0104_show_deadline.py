@@ -4,15 +4,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('funds', '0103_alter_screeningstatus'),
+        ("funds", "0103_alter_screeningstatus"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='applicationbase',
-            name='show_deadline',
-            field=models.BooleanField(default=True, help_text='Should the deadline date be visible for users.'),
+            model_name="applicationbase",
+            name="show_deadline",
+            field=models.BooleanField(
+                default=True, help_text="Should the deadline date be visible for users."
+            ),
         ),
     ]

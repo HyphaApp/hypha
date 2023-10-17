@@ -20,22 +20,22 @@ from hypha.apply.funds.workflow import INITIAL_STATE
 
 
 class MigrationStorage(S3Boto3Storage):
-    if hasattr(settings, 'AWS_MIGRATION_BUCKET_NAME'):
+    if hasattr(settings, "AWS_MIGRATION_BUCKET_NAME"):
         bucket_name = settings.AWS_MIGRATION_BUCKET_NAME
 
-    if hasattr(settings, 'AWS_MIGRATION_ACCESS_KEY_ID'):
+    if hasattr(settings, "AWS_MIGRATION_ACCESS_KEY_ID"):
         access_key = settings.AWS_MIGRATION_ACCESS_KEY_ID
 
-    if hasattr(settings, 'AWS_MIGRATION_SECRET_ACCESS_KEY'):
+    if hasattr(settings, "AWS_MIGRATION_SECRET_ACCESS_KEY"):
         secret_key = settings.AWS_MIGRATION_SECRET_ACCESS_KEY
 
-    bucket_acl = 'private'
+    bucket_acl = "private"
     custom_domain = False
-    default_acl = 'private'
+    default_acl = "private"
     encryption = True
     file_overwrite = False
     querystring_auth = True
-    url_protocol = 'https:'
+    url_protocol = "https:"
 
 
 migration_storage = MigrationStorage()
@@ -51,17 +51,21 @@ class MigrateCommand(BaseCommand):
     ApplicationSubmission.status = patched_status_field
 
     def add_arguments(self, parser):
-        parser.add_argument('source', type=argparse.FileType('r'), help='Migration source JSON file')
+        parser.add_argument(
+            "source", type=argparse.FileType("r"), help="Migration source JSON file"
+        )
 
     @transaction.atomic
     def handle(self, *args, **options):
         # Prepare the list of categories.
         for item in CATEGORIES:
-            category, _ = Category.objects.get_or_create(name=item['category'])
-            option, _ = Option.objects.get_or_create(value=item['name'], category=category)
-            self.terms[item['tid']] = option
+            category, _ = Category.objects.get_or_create(name=item["category"])
+            option, _ = Option.objects.get_or_create(
+                value=item["name"], category=category
+            )
+            self.terms[item["tid"]] = option
 
-        with options['source'] as json_data:
+        with options["source"] as json_data:
             self.data = json.load(json_data)
 
             counter = 0
@@ -75,9 +79,9 @@ class MigrateCommand(BaseCommand):
         node = self.data[id]
 
         try:
-            submission = ApplicationSubmission.objects.get(drupal_id=node['nid'])
+            submission = ApplicationSubmission.objects.get(drupal_id=node["nid"])
         except ApplicationSubmission.DoesNotExist:
-            submission = ApplicationSubmission(drupal_id=node['nid'])
+            submission = ApplicationSubmission(drupal_id=node["nid"])
 
         # Disable auto_* on date fields so imported dates are used.
         for field in submission._meta.local_fields:
@@ -85,8 +89,10 @@ class MigrateCommand(BaseCommand):
                 field.auto_now_add = False
 
         # TODO timezone?
-        submission.submit_time = datetime.fromtimestamp(int(node['created']), timezone.utc)
-        submission.user = self.get_user(node['uid'])
+        submission.submit_time = datetime.fromtimestamp(
+            int(node["created"]), timezone.utc
+        )
+        submission.user = self.get_user(node["uid"])
 
         if self.CONTENT_TYPE == "fund":
             FUND = FundType.objects.get(title=self.FUND_NAME)
@@ -108,21 +114,25 @@ class MigrateCommand(BaseCommand):
 
         submission.status = self.get_workflow_state(node)
 
-        if 'proposal_nid' in node:
+        if "proposal_nid" in node:
             try:
-                submission.next = ApplicationSubmission.objects.get(drupal_id=node['proposal_nid'])
+                submission.next = ApplicationSubmission.objects.get(
+                    drupal_id=node["proposal_nid"]
+                )
             except ApplicationSubmission.DoesNotExist:
-                self.stdout.write("No related proposal found, please import proposals before applications.")
+                self.stdout.write(
+                    "No related proposal found, please import proposals before applications."
+                )
                 pass
 
         form_data = {
-            'skip_account_creation_notification': True,
+            "skip_account_creation_notification": True,
         }
 
         for field in node:
             if field in self.STREAMFIELD_MAP:
                 try:
-                    id = self.STREAMFIELD_MAP[field]['id']
+                    id = self.STREAMFIELD_MAP[field]["id"]
                     form_data[id] = self.get_field_value(field, node)
                 except TypeError:
                     pass
@@ -134,7 +144,7 @@ class MigrateCommand(BaseCommand):
             form_data["duration"] = "1"
 
         if "email" not in form_data or not form_data["email"]:
-            if hasattr(submission.user, 'email'):
+            if hasattr(submission.user, "email"):
                 form_data["email"] = submission.user.email
             else:
                 form_data["email"] = f"user+{node['uid']}@example.com"
@@ -145,7 +155,9 @@ class MigrateCommand(BaseCommand):
             submission.save()
             self.stdout.write(f"Processed \"{node['title']}\" ({node['nid']})")
         except IntegrityError:
-            self.stdout.write(f"*** Skipped \"{node['title']}\" ({node['nid']}) due to IntegrityError")
+            self.stdout.write(
+                f"*** Skipped \"{node['title']}\" ({node['nid']}) due to IntegrityError"
+            )
 
     def get_user(self, uid):
         try:
@@ -164,41 +176,43 @@ class MigrateCommand(BaseCommand):
         field: [{value|target_id|tid: VALUE},]
         """
         mapping = self.STREAMFIELD_MAP[field]
-        mapping_type = mapping['type']
-        key = mapping.get('key', 'value')
+        mapping_type = mapping["type"]
+        key = mapping.get("key", "value")
         source_value = node[field]
         value = None
 
         if mapping_type == "direct":
             value = source_value
-        elif mapping_type == 'value':
+        elif mapping_type == "value":
             if key in source_value:
-                value = self.nl2br(source_value[key]) if source_value else ''
+                value = self.nl2br(source_value[key]) if source_value else ""
             else:
-                value = self.nl2br(source_value['value']) if source_value else ''
-        elif mapping_type == 'merge_value':
+                value = self.nl2br(source_value["value"]) if source_value else ""
+        elif mapping_type == "merge_value":
             values = []
             i = 0
             for item in source_value:
-                question = self.REQUEST_QUESTION_MAP[node['field_application_request']['target_id']]
+                question = self.REQUEST_QUESTION_MAP[
+                    node["field_application_request"]["target_id"]
+                ]
                 values.append(f"<strong>{question[i]}</strong>{item[key]}<br>\n")
                 i += 1
-            merged_values = ''.join(values)
-            value = self.nl2br(merged_values) if source_value else ''
-        elif mapping_type == 'map' and 'map' in 'mapping':
-            value = mapping['map'].get(source_value[key])
-        elif mapping_type == 'address' and 'map' in mapping:
+            merged_values = "".join(values)
+            value = self.nl2br(merged_values) if source_value else ""
+        elif mapping_type == "map" and "map" in "mapping":
+            value = mapping["map"].get(source_value[key])
+        elif mapping_type == "address" and "map" in mapping:
             try:
-                value_map = mapping['map']
+                value_map = mapping["map"]
                 value = {}
                 for item in value_map:
                     value[value_map[item]] = source_value[item]
                 value = json.dumps(value)
             except TypeError:
                 value = {}
-        elif mapping_type == 'boolean':
-            value = source_value[key] == '1' if source_value else False
-        elif mapping_type == 'category':
+        elif mapping_type == "boolean":
+            value = source_value[key] == "1" if source_value else False
+        elif mapping_type == "category":
             if not source_value:
                 value = []
             else:
@@ -211,7 +225,7 @@ class MigrateCommand(BaseCommand):
                         option = self.get_referenced_term(item[key])
                         if option:
                             value.append(option)
-        elif mapping_type == 'file':
+        elif mapping_type == "file":
             value = self.process_file(source_value)
 
         return value
@@ -241,7 +255,7 @@ class MigrateCommand(BaseCommand):
             "invited_for_proposal": "accepted",
             "dropped_concept_note": "rejected",
             "dropped": "rejected",
-            "dropped_without_review": "rejected"
+            "dropped_without_review": "rejected",
         }
 
         states_concept = {
@@ -255,7 +269,7 @@ class MigrateCommand(BaseCommand):
             "invited_for_proposal": "invited_to_proposal",
             "dropped_concept_note": "concept_rejected",
             "dropped": "concept_rejected",
-            "dropped_without_review": "concept_rejected"
+            "dropped_without_review": "concept_rejected",
         }
 
         states_proposal = {
@@ -269,22 +283,28 @@ class MigrateCommand(BaseCommand):
             "invited_for_proposal": "proposal_accepted",
             "dropped_concept_note": "proposal_rejected",
             "dropped": "proposal_rejected",
-            "dropped_without_review": "proposal_rejected"
+            "dropped_without_review": "proposal_rejected",
         }
 
         if self.APPLICATION_TYPE == "request":
-            workflow_state = states_request.get(node['workbench_moderation']['current']['state'], "in_discussion")
+            workflow_state = states_request.get(
+                node["workbench_moderation"]["current"]["state"], "in_discussion"
+            )
         elif self.APPLICATION_TYPE == "concept":
-            workflow_state = states_concept.get(node['workbench_moderation']['current']['state'], "in_discussion")
+            workflow_state = states_concept.get(
+                node["workbench_moderation"]["current"]["state"], "in_discussion"
+            )
         elif self.APPLICATION_TYPE == "proposal":
-            workflow_state = states_proposal.get(node['workbench_moderation']['current']['state'], "draft_proposal")
+            workflow_state = states_proposal.get(
+                node["workbench_moderation"]["current"]["state"], "draft_proposal"
+            )
         else:
             workflow_state = None
 
         return workflow_state
 
     def nl2br(self, value):
-        return value.replace('\r\n', '<br>\n')
+        return value.replace("\r\n", "<br>\n")
 
     def process_file(self, value):
         if isinstance(value, dict):
@@ -293,10 +313,12 @@ class MigrateCommand(BaseCommand):
         files = []
 
         for file_data in value:
-            parts = urlsplit(file_data['uri'])
-            file_path = os.path.join('files', 'private', parts.netloc, *parts.path.split('/'))
+            parts = urlsplit(file_data["uri"])
+            file_path = os.path.join(
+                "files", "private", parts.netloc, *parts.path.split("/")
+            )
             saved_file = migration_storage.open(file_path)
-            saved_file.name = file_data['filename']
+            saved_file.name = file_data["filename"]
             files.append(saved_file)
 
         return files

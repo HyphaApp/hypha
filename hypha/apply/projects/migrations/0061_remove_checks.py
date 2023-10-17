@@ -4,18 +4,17 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('application_projects', '0060_auto_20230116_0712'),
+        ("application_projects", "0060_auto_20230116_0712"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='invoice',
-            name='valid_checks',
+            model_name="invoice",
+            name="valid_checks",
         ),
         migrations.RemoveField(
-            model_name='invoice',
-            name='valid_checks_link',
+            model_name="invoice",
+            name="valid_checks_link",
         ),
     ]

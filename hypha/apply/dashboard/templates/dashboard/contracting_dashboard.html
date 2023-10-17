@@ -5,34 +5,31 @@
 {% block title %}{% trans "Dashboard" %}{% endblock %}
 
 {% block content %}
-<div class="admin-bar">
-    <div class="admin-bar__inner admin-bar__inner--with-button">
-        {% block page_header %}
-            <h1 class="gamma heading heading--no-margin heading--bold">{% trans "Dashboard" %}</h1>
-        {% endblock %}
+    {% adminbar %}
+        {% slot header %}{% trans "Dashboard" %}{% endslot %}
+
         <a href="{% url 'wagtailadmin_home' %}" class="button button--primary button--arrow-pixels-white">
             {% trans "Apply admin" %}
             <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
         </a>
+    {% endadminbar %}
+
+    <div class="wrapper wrapper--large wrapper--inner-space-medium">
+        {% if paf_waiting_for_approval.count %}
+            {% include "dashboard/includes/paf_waiting_for_approval.html" with paf_waiting_for_approval=paf_waiting_for_approval %}
+        {% endif %}
+
+        {% if paf_waiting_for_assignment.count %}
+            <div id="paf_waiting_for_assignment" class="wrapper wrapper--bottom-space">
+                <h4 class="heading heading--normal">{% trans "PAF waiting for assignee" %}</h4>
+                {% render_table paf_waiting_for_assignment.table %}
+            </div>
+        {% endif %}
+
+        {% if projects_in_contracting.count %}
+            {% include "dashboard/includes/projects_in_contracting.html" with projects_in_contracting=projects_in_contracting %}
+        {% endif %}
     </div>
-</div>
-
-<div class="wrapper wrapper--large wrapper--inner-space-medium">
-    {% if paf_waiting_for_approval.count %}
-        {% include "dashboard/includes/paf_waiting_for_approval.html" with paf_waiting_for_approval=paf_waiting_for_approval %}
-    {% endif %}
-
-    {% if paf_waiting_for_assignment.count %}
-     <div id="paf_waiting_for_assignment" class="wrapper wrapper--bottom-space">
-        <h4 class="heading heading--normal">{% trans "PAF waiting for assignee" %}</h4>
-        {% render_table paf_waiting_for_assignment.table %}
-    </div>
-    {% endif %}
-
-    {% if projects_in_contracting.count %}
-        {% include "dashboard/includes/projects_in_contracting.html" with projects_in_contracting=projects_in_contracting %}
-    {% endif %}
-</div>
 {% endblock %}
 
 {% block extra_js %}

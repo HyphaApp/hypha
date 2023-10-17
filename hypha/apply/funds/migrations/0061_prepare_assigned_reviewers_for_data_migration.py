@@ -6,26 +6,38 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('auth', '0009_alter_user_last_name_max_length'),
+        ("auth", "0009_alter_user_last_name_max_length"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('funds', '0060_add_duration_type_in_duration_block'),
+        ("funds", "0060_add_duration_type_in_duration_block"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='assignedreviewers',
-            name='type',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, to='auth.Group'),
+            model_name="assignedreviewers",
+            name="type",
+            field=models.ForeignKey(
+                null=True, on_delete=django.db.models.deletion.PROTECT, to="auth.Group"
+            ),
         ),
         migrations.AlterField(
-            model_name='assignedreviewers',
-            name='reviewer',
-            field=models.ForeignKey(limit_choices_to={'groups__name__in': ['Staff', 'Reviewer', 'Community reviewer', 'Partner']}, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
+            model_name="assignedreviewers",
+            name="reviewer",
+            field=models.ForeignKey(
+                limit_choices_to={
+                    "groups__name__in": [
+                        "Staff",
+                        "Reviewer",
+                        "Community reviewer",
+                        "Partner",
+                    ]
+                },
+                on_delete=django.db.models.deletion.CASCADE,
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AlterUniqueTogether(
-            name='assignedreviewers',
-            unique_together={('submission', 'role'), ('submission', 'reviewer')},
+            name="assignedreviewers",
+            unique_together={("submission", "role"), ("submission", "reviewer")},
         ),
     ]

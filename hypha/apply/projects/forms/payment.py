@@ -11,15 +11,16 @@ from django_file_form.forms import FileFormMixin
 from hypha.apply.stream_forms.fields import MultiFileField, SingleFileField
 
 from ..models.payment import (
-    APPROVED_BY_FINANCE_1,
+    APPROVED_BY_FINANCE,
     APPROVED_BY_FINANCE_2,
     APPROVED_BY_STAFF,
-    CHANGES_REQUESTED_BY_FINANCE_1,
+    CHANGES_REQUESTED_BY_FINANCE,
     CHANGES_REQUESTED_BY_FINANCE_2,
     CHANGES_REQUESTED_BY_STAFF,
     DECLINED,
     INVOICE_STATUS_CHOICES,
     PAID,
+    PAYMENT_FAILED,
     RESUBMITTED,
     SUBMITTED,
     Invoice,
@@ -30,75 +31,100 @@ from ..models.project import PacketFile
 
 
 def filter_request_choices(choices, user_choices):
-    return [(k, v) for k, v in INVOICE_STATUS_CHOICES if k in choices and k in user_choices]
+    return [
+        (k, v) for k, v in INVOICE_STATUS_CHOICES if k in choices and k in user_choices
+    ]
 
 
 class ChangeInvoiceStatusForm(forms.ModelForm):
-    name_prefix = 'change_invoice_status_form'
+    name_prefix = "change_invoice_status_form"
 
     class Meta:
-        fields = ['status', 'comment']
+        fields = ["status", "comment"]
         model = Invoice
 
     def __init__(self, instance, user, *args, **kwargs):
         super().__init__(*args, **kwargs, instance=instance)
-        self.initial['comment'] = ''
-        status_field = self.fields['status']
+        self.initial["comment"] = ""
+        status_field = self.fields["status"]
         user_choices = invoice_status_user_choices(user)
         possible_status_transitions_lut = {
-            SUBMITTED: filter_request_choices([CHANGES_REQUESTED_BY_STAFF, APPROVED_BY_STAFF, DECLINED], user_choices),
-            RESUBMITTED: filter_request_choices([CHANGES_REQUESTED_BY_STAFF, APPROVED_BY_STAFF, DECLINED], user_choices),
-            CHANGES_REQUESTED_BY_STAFF: filter_request_choices([DECLINED], user_choices),
+            SUBMITTED: filter_request_choices(
+                [CHANGES_REQUESTED_BY_STAFF, APPROVED_BY_STAFF, DECLINED], user_choices
+            ),
+            RESUBMITTED: filter_request_choices(
+                [CHANGES_REQUESTED_BY_STAFF, APPROVED_BY_STAFF, DECLINED], user_choices
+            ),
+            CHANGES_REQUESTED_BY_STAFF: filter_request_choices(
+                [DECLINED], user_choices
+            ),
             APPROVED_BY_STAFF: filter_request_choices(
                 [
-                    CHANGES_REQUESTED_BY_FINANCE_1, APPROVED_BY_FINANCE_1,
+                    CHANGES_REQUESTED_BY_FINANCE,
+                    APPROVED_BY_FINANCE,
                 ],
-                user_choices
+                user_choices,
             ),
-            CHANGES_REQUESTED_BY_FINANCE_1: filter_request_choices([CHANGES_REQUESTED_BY_STAFF, DECLINED], user_choices),
-            APPROVED_BY_FINANCE_1: filter_request_choices([PAID], user_choices),
+            CHANGES_REQUESTED_BY_FINANCE: filter_request_choices(
+                [CHANGES_REQUESTED_BY_STAFF, DECLINED], user_choices
+            ),
+            APPROVED_BY_FINANCE: filter_request_choices([PAID], user_choices),
+            PAID: filter_request_choices([PAYMENT_FAILED], user_choices),
+            PAYMENT_FAILED: filter_request_choices([PAID], user_choices),
         }
         if settings.INVOICE_EXTENDED_WORKFLOW:
-            possible_status_transitions_lut.update({
-                CHANGES_REQUESTED_BY_FINANCE_2: filter_request_choices(
-                    [
-                        CHANGES_REQUESTED_BY_FINANCE_1, APPROVED_BY_FINANCE_1,
-                    ],
-                    user_choices
-                ),
-                APPROVED_BY_FINANCE_1: filter_request_choices([CHANGES_REQUESTED_BY_FINANCE_2, APPROVED_BY_FINANCE_2],
-                                                              user_choices),
-                APPROVED_BY_FINANCE_2: filter_request_choices([PAID], user_choices),
-            })
+            possible_status_transitions_lut.update(
+                {
+                    CHANGES_REQUESTED_BY_FINANCE_2: filter_request_choices(
+                        [
+                            CHANGES_REQUESTED_BY_FINANCE,
+                            APPROVED_BY_FINANCE,
+                        ],
+                        user_choices,
+                    ),
+                    APPROVED_BY_FINANCE: filter_request_choices(
+                        [CHANGES_REQUESTED_BY_FINANCE_2, APPROVED_BY_FINANCE_2],
+                        user_choices,
+                    ),
+                    APPROVED_BY_FINANCE_2: filter_request_choices([PAID], user_choices),
+                }
+            )
         status_field.choices = possible_status_transitions_lut.get(instance.status, [])
 
 
 class InvoiceBaseForm(forms.ModelForm):
     class Meta:
-        fields = ['document', 'message_for_pm']
+        fields = ["invoice_number", "invoice_amount", "document", "message_for_pm"]
         model = Invoice
 
     def __init__(self, user=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.initial['message_for_pm'] = ''
+        self.initial["message_for_pm"] = ""
 
 
 class CreateInvoiceForm(FileFormMixin, InvoiceBaseForm):
     document = SingleFileField(
-        label='Invoice File', required=True,
-        help_text=_('The invoice must be a PDF.')
+        label="Invoice File", required=True, help_text=_("The invoice must be a PDF.")
     )
     supporting_documents = MultiFileField(
         required=False,
-        help_text=_('Files that are related to the invoice. They could be xls, microsoft office documents, open office documents, pdfs, txt files.')
+        help_text=_(
+            "Files that are related to the invoice. They could be xls, microsoft office documents, open office documents, pdfs, txt files."
+        ),
     )
 
-    field_order = ['document', 'supporting_documents', 'message_for_pm']
+    field_order = [
+        "invoice_number",
+        "invoice_amount",
+        "document",
+        "supporting_documents",
+        "message_for_pm",
+    ]
 
     def save(self, commit=True):
         invoice = super().save(commit=commit)
 
-        supporting_documents = self.cleaned_data['supporting_documents'] or []
+        supporting_documents = self.cleaned_data["supporting_documents"] or []
 
         SupportingDocument.objects.bulk_create(
             SupportingDocument(invoice=invoice, document=document)
@@ -109,16 +135,23 @@ class CreateInvoiceForm(FileFormMixin, InvoiceBaseForm):
 
 
 class EditInvoiceForm(FileFormMixin, InvoiceBaseForm):
-    document = SingleFileField(label=_('Invoice File'), required=True)
+    document = SingleFileField(label=_("Invoice File"), required=True)
     supporting_documents = MultiFileField(required=False)
 
-    field_order = ['document', 'supporting_documents', 'message_for_pm']
+    field_order = [
+        "invoice_number",
+        "invoice_amount",
+        "document",
+        "supporting_documents",
+        "message_for_pm",
+    ]
 
     @transaction.atomic
     def save(self, commit=True):
         invoice = super().save(commit=commit)
         not_deleted_original_filenames = [
-            file['name'] for file in json.loads(self.cleaned_data['supporting_documents-uploads'])
+            file["name"]
+            for file in json.loads(self.cleaned_data["supporting_documents-uploads"])
         ]
         for f in invoice.supporting_documents.all():
             if f.document.name not in not_deleted_original_filenames:
@@ -136,13 +169,12 @@ class EditInvoiceForm(FileFormMixin, InvoiceBaseForm):
 
 class SelectDocumentForm(forms.ModelForm):
     document = forms.ChoiceField(
-        label="Document",
-        widget=forms.Select(attrs={'id': 'from_submission'})
+        label="Document", widget=forms.Select(attrs={"id": "from_submission"})
     )
 
     class Meta:
         model = PacketFile
-        fields = ['category', 'document']
+        fields = ["category", "document"]
 
     def __init__(self, existing_files, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -151,16 +183,16 @@ class SelectDocumentForm(forms.ModelForm):
 
         choices = [(f.url, f.filename) for f in self.files]
 
-        self.fields['document'].choices = choices
+        self.fields["document"].choices = choices
 
     def clean_document(self):
-        file_url = self.cleaned_data['document']
+        file_url = self.cleaned_data["document"]
         for file in self.files:
             if file.url == file_url:
                 new_file = ContentFile(file.read())
                 new_file.name = file.filename
                 return new_file
-        raise forms.ValidationError(_('File not found on submission'))
+        raise forms.ValidationError(_("File not found on submission"))
 
     @transaction.atomic()
     def save(self, *args, **kwargs):

@@ -13,6 +13,7 @@ django-anymail==9.0
 django-basic-auth-ip-whitelist==0.5
 django-bleach==3.0.1
 django-countries==7.5
+django-elevate==2.0.3
 django-extensions==3.2.1
 django-file-form==3.4.3
 django-filter==2.4.0
@@ -41,6 +42,7 @@ drf-yasg==1.21.4
 environs==9.5.0
 gunicorn==20.1.0
 heroicons==2.2.0
+python-docx<1.0.0
 htmldocx==0.0.6
 lark==1.1.5
 mailchimp3==3.0.17
@@ -50,7 +52,7 @@ phonenumberslite==8.13.4
 Pillow==9.4.0
 psycopg2-binary
 qrcode==7.4.2
-reportlab==3.6.12
+reportlab==3.6.13
 social_auth_app_django==5.0.0
 tablib==3.3.0
 tomd==0.1.3

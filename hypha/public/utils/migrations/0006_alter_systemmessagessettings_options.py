@@ -4,14 +4,13 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('utils', '0005_alter_calltoactionsnippet_link'),
+        ("utils", "0005_alter_calltoactionsnippet_link"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='systemmessagessettings',
-            options={'verbose_name': 'System settings'},
+            name="systemmessagessettings",
+            options={"verbose_name": "System settings"},
         ),
     ]

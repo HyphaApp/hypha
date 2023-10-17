@@ -15,8 +15,8 @@ class ApplicationForm(models.Model):
     form_fields = StreamField(ApplicationCustomFormFieldsBlock(), use_json_field=True)
 
     panels = [
-        FieldPanel('name'),
-        FieldPanel('form_fields'),
+        FieldPanel("name"),
+        FieldPanel("form_fields"),
     ]
 
     def __str__(self):
@@ -27,15 +27,15 @@ class AbstractRelatedForm(Orderable):
     FIRST_STAGE = 1
     SECOND_STAGE = 2
     STAGE_CHOICES = [
-        (FIRST_STAGE, '1st Stage'),
-        (SECOND_STAGE, '2nd Stage'),
+        (FIRST_STAGE, "1st Stage"),
+        (SECOND_STAGE, "2nd Stage"),
     ]
-    form = models.ForeignKey('ApplicationForm', on_delete=models.PROTECT)
+    form = models.ForeignKey("ApplicationForm", on_delete=models.PROTECT)
     stage = models.PositiveSmallIntegerField(choices=STAGE_CHOICES)
 
     panels = [
-        FilteredFieldPanel('form', filter_query={'roundbaseform__isnull': True}),
-        FieldPanel('stage'),
+        FilteredFieldPanel("form", filter_query={"roundbaseform__isnull": True}),
+        FieldPanel("stage"),
     ]
 
     @property
@@ -49,7 +49,7 @@ class AbstractRelatedForm(Orderable):
         try:
             if self.fields == other.fields and self.sort_order == other.sort_order:
                 # If the objects are saved to db. pk should also be compared
-                if hasattr(other, 'pk') and hasattr(self, 'pk'):
+                if hasattr(other, "pk") and hasattr(self, "pk"):
                     return self.pk == other.pk
                 return True
             return False
@@ -65,15 +65,15 @@ class AbstractRelatedForm(Orderable):
 
 
 class ApplicationBaseForm(AbstractRelatedForm):
-    application = ParentalKey('ApplicationBase', related_name='forms')
+    application = ParentalKey("ApplicationBase", related_name="forms")
 
 
 class RoundBaseForm(AbstractRelatedForm):
-    round = ParentalKey('RoundBase', related_name='forms')
+    round = ParentalKey("RoundBase", related_name="forms")
 
 
 class LabBaseForm(AbstractRelatedForm):
-    lab = ParentalKey('LabBase', related_name='forms')
+    lab = ParentalKey("LabBase", related_name="forms")
 
 
 class AbstractRelatedDeterminationForm(Orderable):
@@ -81,13 +81,16 @@ class AbstractRelatedDeterminationForm(Orderable):
         abstract = True
 
     form = models.ForeignKey(
-        'determinations.DeterminationForm', on_delete=models.PROTECT
+        "determinations.DeterminationForm", on_delete=models.PROTECT
     )
 
     panels = [
-        FilteredFieldPanel('form', filter_query={
-            'roundbasedeterminationform__isnull': True,
-        })
+        FilteredFieldPanel(
+            "form",
+            filter_query={
+                "roundbasedeterminationform__isnull": True,
+            },
+        )
     ]
 
     @property
@@ -98,7 +101,7 @@ class AbstractRelatedDeterminationForm(Orderable):
         try:
             if self.fields == other.fields and self.sort_order == other.sort_order:
                 # If the objects are saved to db. pk should also be compared
-                if hasattr(other, 'pk') and hasattr(self, 'pk'):
+                if hasattr(other, "pk") and hasattr(self, "pk"):
                     return self.pk == other.pk
                 return True
             return False
@@ -117,12 +120,15 @@ class AbstractRelatedReviewForm(Orderable):
     class Meta(Orderable.Meta):
         abstract = True
 
-    form = models.ForeignKey('review.ReviewForm', on_delete=models.PROTECT)
+    form = models.ForeignKey("review.ReviewForm", on_delete=models.PROTECT)
 
     panels = [
-        FilteredFieldPanel('form', filter_query={
-            'roundbasereviewform__isnull': True,
-        })
+        FilteredFieldPanel(
+            "form",
+            filter_query={
+                "roundbasereviewform__isnull": True,
+            },
+        )
     ]
 
     @property
@@ -133,7 +139,7 @@ class AbstractRelatedReviewForm(Orderable):
         try:
             if self.fields == other.fields and self.sort_order == other.sort_order:
                 # If the objects are saved to db. pk should also be compared
-                if hasattr(other, 'pk') and hasattr(self, 'pk'):
+                if hasattr(other, "pk") and hasattr(self, "pk"):
                     return self.pk == other.pk
                 return True
             return False
@@ -149,46 +155,48 @@ class AbstractRelatedReviewForm(Orderable):
 
 
 class ApplicationBaseReviewForm(AbstractRelatedReviewForm):
-    application = ParentalKey('ApplicationBase', related_name='review_forms')
+    application = ParentalKey("ApplicationBase", related_name="review_forms")
 
 
 class ApplicationBaseExternalReviewForm(AbstractRelatedReviewForm):
-    application = ParentalKey('ApplicationBase', related_name='external_review_forms')
+    application = ParentalKey("ApplicationBase", related_name="external_review_forms")
 
 
 class RoundBaseReviewForm(AbstractRelatedReviewForm):
-    round = ParentalKey('RoundBase', related_name='review_forms')
+    round = ParentalKey("RoundBase", related_name="review_forms")
 
 
 class RoundBaseExternalReviewForm(AbstractRelatedReviewForm):
-    round = ParentalKey('RoundBase', related_name='external_review_forms')
+    round = ParentalKey("RoundBase", related_name="external_review_forms")
 
 
 class LabBaseReviewForm(AbstractRelatedReviewForm):
-    lab = ParentalKey('LabBase', related_name='review_forms')
+    lab = ParentalKey("LabBase", related_name="review_forms")
 
 
 class LabBaseExternalReviewForm(AbstractRelatedReviewForm):
-    lab = ParentalKey('LabBase', related_name='external_review_forms')
+    lab = ParentalKey("LabBase", related_name="external_review_forms")
 
 
 class ApplicationBaseDeterminationForm(AbstractRelatedDeterminationForm):
-    application = ParentalKey('ApplicationBase', related_name='determination_forms')
+    application = ParentalKey("ApplicationBase", related_name="determination_forms")
 
 
 class RoundBaseDeterminationForm(AbstractRelatedDeterminationForm):
-    round = ParentalKey('RoundBase', related_name='determination_forms')
+    round = ParentalKey("RoundBase", related_name="determination_forms")
 
 
 class LabBaseDeterminationForm(AbstractRelatedDeterminationForm):
-    lab = ParentalKey('LabBase', related_name='determination_forms')
+    lab = ParentalKey("LabBase", related_name="determination_forms")
 
 
 class AbstractRelatedProjectApprovalForm(Orderable):
     class Meta(Orderable.Meta):
         abstract = True
 
-    form = models.ForeignKey('application_projects.ProjectApprovalForm', on_delete=models.PROTECT)
+    form = models.ForeignKey(
+        "application_projects.ProjectApprovalForm", on_delete=models.PROTECT
+    )
 
     @property
     def fields(self):
@@ -198,7 +206,7 @@ class AbstractRelatedProjectApprovalForm(Orderable):
         try:
             if self.fields == other.fields and self.sort_order == other.sort_order:
                 # If the objects are saved to db. pk should also be compared
-                if hasattr(other, 'pk') and hasattr(self, 'pk'):
+                if hasattr(other, "pk") and hasattr(self, "pk"):
                     return self.pk == other.pk
                 return True
             return False
@@ -214,11 +222,14 @@ class AbstractRelatedProjectApprovalForm(Orderable):
 
 
 class AbstractRelatedProjectSOWForm(Orderable):
-    """ Abstract class for SOW Form to use it in Funds and Labs, similar to the other forms liks ReviewForms etc """
+    """Abstract class for SOW Form to use it in Funds and Labs, similar to the other forms liks ReviewForms etc"""
+
     class Meta(Orderable.Meta):
         abstract = True
 
-    form = models.ForeignKey('application_projects.ProjectSOWForm', on_delete=models.PROTECT)
+    form = models.ForeignKey(
+        "application_projects.ProjectSOWForm", on_delete=models.PROTECT
+    )
 
     @property
     def fields(self):
@@ -228,7 +239,7 @@ class AbstractRelatedProjectSOWForm(Orderable):
         try:
             if self.fields == other.fields and self.sort_order == other.sort_order:
                 # If the objects are saved to db. pk should also be compared
-                if hasattr(other, 'pk') and hasattr(self, 'pk'):
+                if hasattr(other, "pk") and hasattr(self, "pk"):
                     return self.pk == other.pk
                 return True
             return False
@@ -244,16 +255,16 @@ class AbstractRelatedProjectSOWForm(Orderable):
 
 
 class ApplicationBaseProjectApprovalForm(AbstractRelatedProjectApprovalForm):
-    application = ParentalKey('ApplicationBase', related_name='approval_forms')
+    application = ParentalKey("ApplicationBase", related_name="approval_forms")
 
 
 class ApplicationBaseProjectSOWForm(AbstractRelatedProjectSOWForm):
-    application = ParentalKey('ApplicationBase', related_name='sow_forms')
+    application = ParentalKey("ApplicationBase", related_name="sow_forms")
 
 
 class LabBaseProjectApprovalForm(AbstractRelatedProjectApprovalForm):
-    lab = ParentalKey('LabBase', related_name='approval_forms')
+    lab = ParentalKey("LabBase", related_name="approval_forms")
 
 
 class LabBaseProjectSOWForm(AbstractRelatedProjectSOWForm):
-    lab = ParentalKey('LabBase', related_name='sow_forms')
+    lab = ParentalKey("LabBase", related_name="sow_forms")

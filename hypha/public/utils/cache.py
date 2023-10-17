@@ -8,4 +8,4 @@ def purge_cache_on_all_sites(path):
         return
 
     for site in Site.objects.all():
-        purge_url_from_cache('%s%s' % (site.root_url.rstrip('/'), path))
+        purge_url_from_cache("%s%s" % (site.root_url.rstrip("/"), path))

@@ -5,35 +5,54 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('funds', '0038_recreate_objects_that_exist'),
+        ("funds", "0038_recreate_objects_that_exist"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='RequestForPartners',
+            name="RequestForPartners",
             fields=[
-                ('applicationbase_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='funds.ApplicationBase')),
+                (
+                    "applicationbase_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to="funds.ApplicationBase",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'RFP',
+                "verbose_name": "RFP",
             },
-            bases=('funds.applicationbase',),
+            bases=("funds.applicationbase",),
         ),
         migrations.CreateModel(
-            name='SealedRound',
+            name="SealedRound",
             fields=[
-                ('roundbase_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='funds.RoundBase')),
+                (
+                    "roundbase_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to="funds.RoundBase",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
-            bases=('funds.roundbase',),
+            bases=("funds.roundbase",),
         ),
         migrations.AddField(
-            model_name='roundbase',
-            name='sealed',
+            model_name="roundbase",
+            name="sealed",
             field=models.BooleanField(default=False),
         ),
     ]

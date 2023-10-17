@@ -6,9 +6,9 @@
     <span class="inline-block" style="margin-left:{{ depth }}em; font-size:{% if depth is 1 %}90{% elif depth is 2 %}80{% else %}100{% endif %}%;"></span>
     <i class="icon icon-fa-level-up icon-fa-rotate-90" style="display: inline-block;"></i>
     {% if is_archived %}
-        <span style="color: LightGray">{{ name }} ({% trans "archived" %})</span>
+      <span style="color: LightGray">{{ name }} ({% trans "archived" %})</span>
     {% else %}
-        {{ name }}
+      {{ name }}
     {% endif %}
   </span>
 {% endif %}

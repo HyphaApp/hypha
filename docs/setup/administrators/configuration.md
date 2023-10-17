@@ -53,6 +53,13 @@ The corrosponding locale dir is named: en, en_GB, en_US
 
     PASSWORD_PAGE_TIMEOUT = env.int('PASSWORD_PAGE_TIMEOUT', 120)
 
+### The age of session cookies, in seconds.
+
+This determines the length of time for which the user will remain logged in. The default value is 2 weeks.
+
+    SESSION_COOKIE_AGE = env.int('SESSION_COOKIE_AGE', 60 * 60 * 24 * 7 * 2)
+
+
 
 ## Hypha custom settings
 
@@ -135,9 +142,21 @@ Good for testing, might not be a good idea in production.
 
     SUBMISSIONS_DRAFT_ACCESS_STAFF = env.bool('SUBMISSIONS_DRAFT_ACCESS_STAFF', False)
 
+### Should staff admins be able to access/see draft submissions.
+
+    SUBMISSIONS_DRAFT_ACCESS_STAFF_ADMIN = env.bool('SUBMISSIONS_DRAFT_ACCESS_STAFF_ADMIN', False)
+
+### Should staff be able to export submissions.
+
+    SUBMISSIONS_EXPORT_ACCESS_STAFF = env.bool('SUBMISSIONS_EXPORT_ACCESS_STAFF', True)
+
+### Should staff admins be able to export submissions.
+
+    SUBMISSIONS_EXPORT_ACCESS_STAFF_ADMIN = env.bool('SUBMISSIONS_EXPORT_ACCESS_STAFF_ADMIN', True)
+
 ### Columns to exclude from the submission tables.
 
-Possible values are: fund, round, status, lead, reviewers, screening_statuses, category_options, meta_terms
+Possible values are: fund, round, status, lead, reviewers, screening_statuses, category_options, meta_terms, organization_name
 
     SUBMISSIONS_TABLE_EXCLUDED_FIELDS = env.list('SUBMISSIONS_TABLE_EXCLUDED_FIELDS', [])
 
@@ -228,3 +247,15 @@ See <https://github.com/tm-kn/django-basic-auth-ip-whitelist>
     BASIC_AUTH_PASSWORD = env.str('BASIC_AUTH_PASSWORD', None)
     BASIC_AUTH_WHITELISTED_HTTP_HOSTS = env.list('BASIC_AUTH_WHITELISTED_HTTP_HOSTS', [])
     BASIC_AUTH_WHITELISTED_IP_NETWORKS = env.list('BASIC_AUTH_WHITELISTED_IP_NETWORKS', [])
+
+## Django Elevate settings
+
+[How this works?](https://django-elevate.readthedocs.io/en/latest/how/index.html) 
+
+How long should Elevate mode be active for?
+
+    ELEVATE_COOKIE_AGE = env.int("ELEVATE_COOKIE_AGE", 3600)  # 1 hours
+
+# An extra salt to be added into the cookie signature.
+    
+    ELEVATE_COOKIE_SALT = env.str("ELEVATE_COOKIE_SALT", SECRET_KEY)

@@ -10,34 +10,55 @@ import wagtail.images.blocks
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('wagtailcore', '0040_page_draft_title'),
-        ('home', '0005_homepage_our_work'),
+        ("wagtailcore", "0040_page_draft_title"),
+        ("home", "0005_homepage_our_work"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='homepage',
-            name='our_work_link',
-            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='wagtailcore.Page'),
+            model_name="homepage",
+            name="our_work_link",
+            field=models.ForeignKey(
+                default=1,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="+",
+                to="wagtailcore.Page",
+            ),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='homepage',
-            name='our_work_link_text',
-            field=models.CharField(max_length=255, default=''),
+            model_name="homepage",
+            name="our_work_link_text",
+            field=models.CharField(max_length=255, default=""),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='homepage',
-            name='our_work_title',
-            field=models.CharField(max_length=255, default=''),
+            model_name="homepage",
+            name="our_work_title",
+            field=models.CharField(max_length=255, default=""),
             preserve_default=False,
         ),
         migrations.AlterField(
-            model_name='homepage',
-            name='our_work',
-            field=wagtail.fields.StreamField((('work', wagtail.blocks.StructBlock((('icon', wagtail.images.blocks.ImageChooserBlock()), ('description', wagtail.blocks.TextBlock(help_text='The first word will be bold'))))),)),
+            model_name="homepage",
+            name="our_work",
+            field=wagtail.fields.StreamField(
+                (
+                    (
+                        "work",
+                        wagtail.blocks.StructBlock(
+                            (
+                                ("icon", wagtail.images.blocks.ImageChooserBlock()),
+                                (
+                                    "description",
+                                    wagtail.blocks.TextBlock(
+                                        help_text="The first word will be bold"
+                                    ),
+                                ),
+                            )
+                        ),
+                    ),
+                )
+            ),
         ),
     ]

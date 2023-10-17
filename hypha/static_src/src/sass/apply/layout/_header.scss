@@ -1,7 +1,8 @@
 .header {
     position: relative;
     padding: 20px;
-    background-color: $color--white;
+    background-color: var(--color-header-bg);
+    border-bottom: 1px solid rgb(136 146 171 / 10%);
 
     &__inner {
         position: relative;
@@ -94,9 +95,9 @@
             background: $color--dark-grey;
             opacity: 0;
             transform: translate3d(0, -100%, 0);
-            transition-duration: .25s;
+            transition-duration: 0.25s;
             transition-property: transform, opacity;
-            transition-timing-function: cubic-bezier(.65, .05, .36, 1);
+            transition-timing-function: cubic-bezier(0.65, 0.05, 0.36, 1);
 
             &.is-visible {
                 opacity: 1;

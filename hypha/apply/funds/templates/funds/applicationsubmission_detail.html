@@ -5,196 +5,195 @@
 {% block title %}{{ object.title }}{% endblock %}
 {% block body_class %}{% endblock %}
 {% block content %}
-{% if object.round.specific.is_sealed %}
-<ul class="messages">
-    {% trans "This submission is sealed" as warning_message %}
-    {% include "includes/message_item.html" with message=warning_message tag="warning" close=False %}
-    }
-</ul>
-{% endif %}
-<div class="admin-bar">
-    <div class="admin-bar__inner">
-        {% if request.GET.ref == 'all-beta' %}
-        <a class="simplified__submissions-link"
-            hx-boost="true"
-            href="{% url "funds:submissions:list-beta" %}"
-        >
-            {% trans "Back to submissions" %}
-        </a>
-        {% endif %}
-        <h1 class="beta heading heading--no-margin heading--bold">{{ object.title }}</h1>
-        <h5 class="heading heading--meta">
-            <span>{{ object.stage }}</span>
-            <span>{% if public_page %}<a class="link--transparent link--underlined" href="{% pageurl public_page %}" >{{ object.page }}</a>{% else %}{{ object.page }}{% endif %}</span>
-            {% if request.user.is_apply_staff and object.round %}
-                <span><a class="link--transparent link--underlined" href="{% url 'apply:rounds:detail' pk=object.round.pk %}">{{ object.round }}</a></span>
-            {% else %}
-                <span>{{ object.round }}</span>
-            {% endif %}
-            {% if request.user.is_apply_staff %}
-                <span>{% trans "Lead" %}: <a class="link--transparent link--underlined" href="{% url 'apply:submissions:list' %}?lead={{ object.lead.id }}">{{ object.lead }}</a></span>
-            {% else %}
-                <span>{% trans "Lead" %}: {{ object.lead }}</span>
-            {% endif %}
-        </h5>
-        {% status_bar object.workflow object.phase request.user author=object.user same_stage=True %}
-
-        <div class="tabs js-tabs">
-            <div class="tabs__container">
-                <a class="tab__item" href="#submission-details" data-tab="tab-1">
-                    {% trans "Submission details" %}
-                </a>
-
-                <a class="tab__item" href="#communications" data-tab="tab-2">
-                    {% trans "Communications" %}
-                </a>
-
-                <a class="tab__item"
-                    href="#activity-feed"
-                    hx-get="{% url 'funds:submissions:partial-activities' object.id %}"
-                    hx-target="#tab-3 .feed"
-                    hx-trigger="open-tab-3 once"
-                    data-tab="tab-3"
-                    x-data
-                    @hashchange.window="location.hash === '#activity-feed' ? $dispatch('open-tab-3') : ''"
-                    x-init="location.hash === '#activity-feed' ? $dispatch('open-tab-3') : ''"
+    {% if object.round.specific.is_sealed %}
+        <ul class="messages">
+            {% trans "This submission is sealed" as warning_message %}
+            {% include "includes/message_item.html" with message=warning_message tag="warning" close=False %}
+            }
+        </ul>
+    {% endif %}
+    <div class="admin-bar">
+        <div class="admin-bar__inner">
+            {% if request.GET.ref == 'all-beta' %}
+                <a class="simplified__submissions-link"
+                   hx-boost="true"
+                   href="{% url "funds:submissions:list-beta" %}"
                 >
-                    {% trans "Activity feed" %}
+                    {% trans "Back to submissions" %}
                 </a>
-                {% if request.user.is_apply_staff_admin %}
-                <a class="tab__item tab__item--right js-tabs-off" href="{% url 'admin:activity_event_changelist' %}?submission__id={{ object.id }}">
-                    {% trans "View message log" %}
-                </a>
+            {% endif %}
+            <h1 class="mb-0 mt-2 font-medium">{{ object.title }}</h1>
+            <div class="heading heading--meta text-sm mt-1 font-medium">
+                <span>{{ object.stage }}</span>
+                <span>{{ object.page }}</span>
+                {% if request.user.is_apply_staff and object.round %}
+                    <span><a class="link--transparent link--underlined" href="{% url 'apply:rounds:detail' pk=object.round.pk %}">{{ object.round }}</a></span>
+                {% else %}
+                    <span>{{ object.round }}</span>
                 {% endif %}
+                {% if request.user.is_apply_staff %}
+                    <span>{% trans "Lead" %}: <a class="link--transparent link--underlined" href="{% url 'apply:submissions:list' %}?lead={{ object.lead.id }}">{{ object.lead }}</a></span>
+                {% else %}
+                    <span>{% trans "Lead" %}: {{ object.lead }}</span>
+                {% endif %}
+            </div>
+            {% status_bar object.workflow object.phase request.user author=object.user same_stage=True %}
+
+            <div class="tabs js-tabs">
+                <div class="tabs__container">
+                    <a class="tab__item" href="#submission-details" data-tab="tab-1">
+                        {% trans "Submission details" %}
+                    </a>
+
+                    <a class="tab__item" href="#communications" data-tab="tab-2">
+                        {% trans "Communications" %}
+                    </a>
+
+                    <a class="tab__item"
+                       href="#activity-feed"
+                       hx-get="{% url 'funds:submissions:partial-activities' object.id %}"
+                       hx-target="#tab-3 .feed"
+                       hx-trigger="open-tab-3 once"
+                       data-tab="tab-3"
+                       x-init="$nextTick(() => { location.hash === '#activity-feed' ? $dispatch('open-tab-3') : '' })"
+                       @hashchange.window="location.hash === '#activity-feed' ? $dispatch('open-tab-3') : ''"
+                    >
+                        {% trans "Activity feed" %}
+                    </a>
+                    {% if request.user.is_apply_staff_admin %}
+                        <a class="tab__item tab__item--right js-tabs-off" href="{% url 'admin:activity_event_changelist' %}?submission__id={{ object.id }}">
+                            {% trans "View message log" %}
+                        </a>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-{% if object.is_archive %}
-<div class="py-2 bg-red-600 text-white font-bold text-center">
-    {% heroicon_outline "lock-closed" aria_hidden="true" size=16 stroke_width=2 class="inline align-baseline mr-1" %}
-    {% trans "This submission has been archived." %}
-</div>
-{% endif %}
+    {% if object.is_archive %}
+        <div class="py-2 bg-red-600 text-white font-bold text-center">
+            {% heroicon_outline "lock-closed" aria_hidden="true" size=16 stroke_width=2 class="inline align-baseline mr-1" %}
+            {% trans "This submission has been archived." %}
+        </div>
+    {% endif %}
 
-<div class="wrapper wrapper--large wrapper--tabs js-tabs-content">
+    <div class="wrapper wrapper--large wrapper--tabs js-tabs-content">
     {# Tab 1 #}
-    <div class="tabs__content" id="tab-1">
-        {% block mobile_actions %}
-        {% endblock %}
-        <div class="wrapper wrapper--sidebar">
-            {% if request.user|has_edit_perm:object and object.status == 'draft_proposal' and not request.user.is_apply_staff %}
-                <div class="wrapper--sidebar--inner">
-                    <h4>{% trans "Congratulations!" %}</h4>
-                    <h5>{% blocktrans with stage=object.previous.stage %}Your {{ stage }} application has been accepted.{% endblocktrans %}</h5>
-                    <a class="button button--primary" href="{% url 'funds:submissions:edit' object.id %}">{% blocktrans with stage=object.stage %}Start your {{ stage }} application.{% endblocktrans %}</a>
-                </div>
-            {% else %}
-                <article class="wrapper--sidebar--inner">
-                    <header class="heading heading--submission-meta heading-text zeta">
-                        <span>{% trans "Submitted" %} <strong><relative-time datetime={{ object.submit_time|date:"c" }}>{{ object.submit_time|date:"SHORT_DATETIME_FORMAT" }}</relative-time></strong> {% trans "by" %} <strong>{{ object.user.get_full_name }}</strong></span>
-                        <span>{% trans "Updated" %} <strong><relative-time datetime={{ object.live_revision.timestamp|date:"c" }}>{{ object.live_revision.timestamp|date:"SHORT_DATETIME_FORMAT" }}</relative-time></strong> {% trans "by" %} <strong>{{ object.user.get_full_name }}</strong></span>
-                        <div class="wrapper wrapper--submission-actions">
-                            {% if perms.funds.delete_applicationsubmission %}
-                                <a class="link link--delete-submission is-active" href="{% url 'funds:submissions:delete' object.id %}">
-                                    {% trans "Delete" %}
-                                    <svg class="icon icon--delete"><use xlink:href="#delete"></use></svg>
-                                </a>
-                            {% endif %}
-                            {% if request.user|has_edit_perm:object %}
-                                <a class="link link--edit-submission is-active" href="{% url 'funds:submissions:edit' object.id %}">
-                                    {% trans "Edit" %}
-                                    <svg class="icon icon--pen"><use xlink:href="#pen"></use></svg>
-                                </a>
-                            {% endif %}
-                        </div>
-                    </header>
+        <div class="tabs__content" id="tab-1">
+            {% block mobile_actions %}
+            {% endblock %}
+            <div class="wrapper wrapper--sidebar">
+                {% if request.user|has_edit_perm:object and object.status == 'draft_proposal' and not request.user.is_apply_staff %}
+                    <div class="wrapper--sidebar--inner">
+                        <h4>{% trans "Congratulations!" %}</h4>
+                        <h5>{% blocktrans with stage=object.previous.stage %}Your {{ stage }} application has been accepted.{% endblocktrans %}</h5>
+                        <a class="button button--primary" href="{% url 'funds:submissions:edit' object.id %}">{% blocktrans with stage=object.stage %}Start your {{ stage }} application.{% endblocktrans %}</a>
+                    </div>
+                {% else %}
+                    <article class="wrapper--sidebar--inner">
+                        <header class="heading heading--submission-meta heading-text zeta">
+                            <span>{% trans "Submitted" %} <strong><relative-time datetime={{ object.submit_time|date:"c" }}>{{ object.submit_time|date:"SHORT_DATETIME_FORMAT" }}</relative-time></strong> {% trans "by" %} <strong>{{ object.user.get_full_name }}</strong></span>
+                            <span>{% trans "Updated" %} <strong><relative-time datetime={{ object.live_revision.timestamp|date:"c" }}>{{ object.live_revision.timestamp|date:"SHORT_DATETIME_FORMAT" }}</relative-time></strong> {% trans "by" %} <strong>{{ object.user.get_full_name }}</strong></span>
+                            <div class="wrapper wrapper--submission-actions">
+                                {% if perms.funds.delete_applicationsubmission %}
+                                    <a class="link link--delete-submission is-active" href="{% url 'funds:submissions:delete' object.id %}">
+                                        {% trans "Delete" %}
+                                        <svg class="icon icon--delete"><use xlink:href="#delete"></use></svg>
+                                    </a>
+                                {% endif %}
+                                {% if request.user|has_edit_perm:object %}
+                                    <a class="link link--edit-submission is-active" href="{% url 'funds:submissions:edit' object.id %}">
+                                        {% trans "Edit" %}
+                                        <svg class="icon icon--pen"><use xlink:href="#pen"></use></svg>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </header>
 
-                    {% include "funds/includes/rendered_answers.html" %}
+                        {% include "funds/includes/rendered_answers.html" %}
 
-                </article>
-            {% endif %}
-
-            <aside class="sidebar">
-                {% block sidebar_top %}
-                    {% include "funds/includes/generic_primary_actions.html" %}
-                {% endblock %}
-
-                {% if object.project and PROJECTS_ENABLED %}
-                    {% include 'funds/includes/project_block.html' %}
+                    </article>
                 {% endif %}
 
-                {% block screening_status %}
-                {% endblock %}
+                <aside class="sidebar">
+                    {% block sidebar_top %}
+                        {% include "funds/includes/generic_primary_actions.html" %}
+                    {% endblock %}
 
-                {% block determination %}
-                    {% if object.determinations.submitted.count %}
-                        {% include 'determinations/includes/applicant_determination_block.html' with submission=object %}
+                    {% if object.project and PROJECTS_ENABLED %}
+                        {% include 'funds/includes/project_block.html' %}
                     {% endif %}
-                {% endblock %}
 
-                {% block reviews %}
-                {% endblock %}
+                    {% block screening_status %}
+                    {% endblock %}
 
-                {% block flags %}
-                {% endblock %}
+                    {% block determination %}
+                        {% if object.determinations.submitted.count %}
+                            {% include 'determinations/includes/applicant_determination_block.html' with submission=object %}
+                        {% endif %}
+                    {% endblock %}
 
-                {% block meta_terms %}
-                {% endblock %}
+                    {% block reviews %}
+                    {% endblock %}
 
-                {% block reminders %}
-                {% endblock %}
+                    {% block flags %}
+                    {% endblock %}
 
-                {% block related %}
-                    {% if other_submissions or object.previous or object.next %}
-                        <div class="sidebar__inner related-sidebar">
-                            <h5>{% trans "Related submissions" %}</h5>
-                            {% if object.previous %}
-                                <p><a class="link link--underlined link--bold" href="{% url 'funds:submissions:detail' object.previous.id %}">{% trans "View linked" %} {{ object.previous.stage }}</a></p>
-                            {% endif %}
+                    {% block meta_terms %}
+                    {% endblock %}
 
-                            {% if object.next %}
-                                <p><a class="link link--underlined link--bold" href="{% url 'funds:submissions:detail' object.next.id %}">{% trans "View linked" %} {{ object.next.stage }}</a></p>
-                            {% endif %}
+                    {% block reminders %}
+                    {% endblock %}
 
-                            {% for submission in other_submissions %}
-                                {% if forloop.first %}
-                                <h6 class="heading heading--light-grey heading--uppercase">{% trans "Past Submissions" %}</h6>
-                                <ul>
+                    {% block related %}
+                        {% if other_submissions or object.previous or object.next %}
+                            <div class="sidebar__inner related-sidebar">
+                                <h5>{% trans "Related submissions" %}</h5>
+                                {% if object.previous %}
+                                    <p><a class="link link--underlined link--bold" href="{% url 'funds:submissions:detail' object.previous.id %}">{% trans "View linked" %} {{ object.previous.stage }}</a></p>
                                 {% endif %}
-                                <li><a class="link link--underlined link--bold" href="{% url 'funds:submissions:detail' submission.id %}">{{ submission.title }}</a></li>
-                                {% if forloop.last %}
-                                </ul>
+
+                                {% if object.next %}
+                                    <p><a class="link link--underlined link--bold" href="{% url 'funds:submissions:detail' object.next.id %}">{% trans "View linked" %} {{ object.next.stage }}</a></p>
                                 {% endif %}
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                {% endblock %}
-            </aside>
+
+                                {% for submission in other_submissions %}
+                                    {% if forloop.first %}
+                                        <h6 class="heading heading--light-grey heading--uppercase">{% trans "Past Submissions" %}</h6>
+                                        <ul>
+                                    {% endif %}
+                                    <li><a class="link link--underlined link--bold" href="{% url 'funds:submissions:detail' submission.id %}">{{ submission.title }}</a></li>
+                                    {% if forloop.last %}
+                                        </ul>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endblock %}
+                </aside>
+            </div>
         </div>
-    </div>
 
     {# Tab 2 #}
-    <div class="tabs__content" id="tab-2">
-        <div class="feed">
-            {% if not object.is_archive %}
-                {% include "activity/include/comment_form.html" %}
-                {% include "activity/include/comment_list.html" with editable=True %}
-            {% else %}
-                {% include "activity/include/comment_list.html" with editable=False %}
-            {% endif %}
+        <div class="tabs__content" id="tab-2">
+            <div class="feed">
+                {% if not object.is_archive %}
+                    {% include "activity/include/comment_form.html" %}
+                    {% include "activity/include/comment_list.html" with editable=True %}
+                {% else %}
+                    {% include "activity/include/comment_list.html" with editable=False %}
+                {% endif %}
+            </div>
         </div>
-    </div>
 
     {# Tab 3 #}
-    <div class="tabs__content" id="tab-3">
-        <div class="feed">
+        <div class="tabs__content" id="tab-3">
+            <div class="feed">
             {% comment %} Loaded using the htmx via alpine's custom event "open-tab-3"{% endcomment %}
-            <p>Loading...</p>
+                <p>Loading...</p>
+            </div>
         </div>
     </div>
-</div>
 {% endblock %}
 
 {% block extra_js %}

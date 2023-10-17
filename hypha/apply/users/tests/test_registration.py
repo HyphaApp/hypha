@@ -6,18 +6,17 @@ from hypha.apply.funds.tests.factories import FundTypeFactory
 from hypha.apply.utils.testing import make_request
 
 
-@override_settings(ROOT_URLCONF='hypha.apply.urls')
+@override_settings(ROOT_URLCONF="hypha.apply.urls")
 class TestRegistration(TestCase):
-
     @override_settings(ENABLE_REGISTRATION_WITHOUT_APPLICATION=False)
     def test_registration_enabled_has_no_link(self):
         response = self.client.get("/", follow=True)
-        self.assertNotContains(response, reverse('users_public:register'))
+        self.assertNotContains(response, reverse("users_public:register"))
 
     @override_settings(ENABLE_REGISTRATION_WITHOUT_APPLICATION=True)
     def test_registration_enabled_has_link(self):
         response = self.client.get("/", follow=True)
-        self.assertContains(response, reverse('users_public:register'))
+        self.assertContains(response, reverse("users_public:register"))
 
     @override_settings(ENABLE_REGISTRATION_WITHOUT_APPLICATION=True)
     def test_registration(self):
@@ -28,10 +27,13 @@ class TestRegistration(TestCase):
                 "first_name": "Not used - see full_name",
                 "last_name": "Not used - see full_name",
             },
-            secure=True)
+            secure=True,
+        )
         assert len(mail.outbox) == 1
-        assert 'Activate your account on the' in mail.outbox[0].body
-        self.assertContains(response, 'Please check your email to activate the account.')
+        assert "Activate your account on the" in mail.outbox[0].body
+
+        assert response.status_code == 302
+        assert reverse("users_public:register-success") in response.url
 
     @override_settings(ENABLE_REGISTRATION_WITHOUT_APPLICATION=True)
     def test_duplicate_registration_fails(self):
@@ -42,7 +44,8 @@ class TestRegistration(TestCase):
                 "first_name": "Not used - see full_name",
                 "last_name": "Not used - see full_name",
             },
-            secure=True)
+            secure=True,
+        )
         mail.outbox.clear()
 
         response = self.client.post(
@@ -52,14 +55,19 @@ class TestRegistration(TestCase):
                 "first_name": "Not used - see full_name",
                 "last_name": "Not used - see full_name",
             },
-            secure=True)
+            secure=True,
+        )
 
         assert len(mail.outbox) == 0
         self.assertContains(response, "A user with that email already exists")
 
-    @override_settings(FORCE_LOGIN_FOR_APPLICATION=True, ENABLE_REGISTRATION_WITHOUT_APPLICATION=False)
+    @override_settings(
+        FORCE_LOGIN_FOR_APPLICATION=True, ENABLE_REGISTRATION_WITHOUT_APPLICATION=False
+    )
     def test_force_login(self):
         fund = FundTypeFactory()
-        response = fund.serve(make_request(None, {}, method='get', site=fund.get_site()))
+        response = fund.serve(
+            make_request(None, {}, method="get", site=fund.get_site())
+        )
         assert response.status_code == 302
-        assert response.url == reverse('users_public:login') + '?next=/'
+        assert response.url == reverse("users_public:login") + "?next=/"

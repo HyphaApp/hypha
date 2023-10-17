@@ -4,15 +4,16 @@
 {% block title %}{% trans "Report" %} | {{ object.project.title }}{% endblock %}
 {% block body_class %}{% endblock %}
 {% block content %}
-    <div class="admin-bar">
-        <div class="admin-bar__inner">
+
+    {% adminbar %}
+        {% slot back_link %}
             <a class="admin-bar__back-link" href="{{ object.project.get_absolute_url }}">
                 {% trans "View project page" %}
             </a>
-            <h2 class="heading heading--no-margin">{{ object.project.title }}</h2>
-            <h5 class="heading heading--no-margin">{% trans "View report" %}</h5>
-        </div>
-    </div>
+        {% endslot %}
+        {% slot header %}{{ object.project.title }}{% endslot %}
+        {% slot sub_heading %}{% trans "View report" %}{% endslot %}
+    {% endadminbar %}
 
     <div class="wrapper wrapper--sidebar wrapper--outer-space-medium">
         <div class="wrapper--sidebar--inner">
@@ -51,29 +52,29 @@
         </div>
         <aside class="sidebar">
             {% if request.user.is_apply_staff or report.previous or report.next %}
-            <div class="sidebar__inner sidebar__inner--light-blue sidebar__inner--actions">
-                {% if request.user.is_apply_staff %}
-                    <a
-                        class="button button--bottom-space button--primary button--full-width"
-                        href="{% url "apply:projects:reports:edit" pk=report.pk %}">
-                        {% trans "Edit" %}
-                    </a>
-                {% endif %}
-                {% if report.previous %}
-                    <a
-                        class="button button--bottom-space button--primary button--full-width"
-                        href="{% url "apply:projects:reports:detail" pk=report.previous.pk %}">
-                        {% trans "View previous report" %}
-                    </a>
-                {% endif %}
-                {% if report.next %}
-                    <a
-                        class="button button--bottom-space button--primary button--full-width"
-                        href="{% url "apply:projects:reports:detail" pk=report.next.pk %}">
-                        {% trans "View next report" %}
-                    </a>
-                {% endif %}
-            </div>
+                <div class="sidebar__inner sidebar__inner--light-blue sidebar__inner--actions">
+                    {% if request.user.is_apply_staff %}
+                        <a
+                            class="button button--bottom-space button--primary button--full-width"
+                            href="{% url "apply:projects:reports:edit" pk=report.pk %}">
+                            {% trans "Edit" %}
+                        </a>
+                    {% endif %}
+                    {% if report.previous %}
+                        <a
+                            class="button button--bottom-space button--primary button--full-width"
+                            href="{% url "apply:projects:reports:detail" pk=report.previous.pk %}">
+                            {% trans "View previous report" %}
+                        </a>
+                    {% endif %}
+                    {% if report.next %}
+                        <a
+                            class="button button--bottom-space button--primary button--full-width"
+                            href="{% url "apply:projects:reports:detail" pk=report.next.pk %}">
+                            {% trans "View next report" %}
+                        </a>
+                    {% endif %}
+                </div>
             {% endif %}
         </aside>
     </div>

@@ -1,4 +1,4 @@
-{% load static cache wagtailuserbar wagtailcore_tags wagtailimages_tags navigation_tags util_tags cookieconsent_tags %}<!doctype html>
+{% load static cache wagtailcore_tags wagtailimages_tags navigation_tags util_tags cookieconsent_tags %}<!doctype html>
 {% wagtail_site as current_site %}
 <html class="no-js" lang="en">
     <head>
@@ -31,10 +31,10 @@
         <meta name="twitter:title" content="{{ page.title }}" />
         <meta name="twitter:description" content="{{ page|social_text:current_site }}">
         {% if page.social_image  %}
-        {% image page.social_image width-320 as social_img %}
-        <meta name="twitter:image" content="{% if page.social_image.is_stored_locally %}{{ current_site.root_url }}{% endif %}{{ social_img.url }}">
+            {% image page.social_image width-320 as social_img %}
+            <meta name="twitter:image" content="{% if page.social_image.is_stored_locally %}{{ current_site.root_url }}{% endif %}{{ social_img.url }}">
         {% else %}
-        <meta name="twitter:image" content="{{ current_site.root_url }}{% static 'images/otf_social.jpg' %}">
+            <meta name="twitter:image" content="{{ current_site.root_url }}{% static 'images/otf_social.jpg' %}">
         {% endif %}
 
         <!--facebook opengraph tags-->
@@ -43,9 +43,9 @@
         <meta property="og:url" content="{{ page.url }}" />
         <meta property="og:title" content="{{ page.title }}" />
         {% if page.social_image %}
-        <meta property="og:image" content="{% if page.social_image.is_stored_locally %}{{ current_site.root_url }}{% endif %}{{ social_img.url }}" />
+            <meta property="og:image" content="{% if page.social_image.is_stored_locally %}{{ current_site.root_url }}{% endif %}{{ social_img.url }}" />
         {% else %}
-        <meta property="og:image" content="{{ current_site.root_url }}{% static 'images/otf_social.jpg' %}" />
+            <meta property="og:image" content="{{ current_site.root_url }}{% static 'images/otf_social.jpg' %}" />
         {% endif %}
         <meta property="og:description" content="{{ page|social_text:current_site }}" />
         <meta property="og:site_name" content="{{ settings.utils.SocialMediaSettings.site_name }}" />
@@ -69,8 +69,6 @@
 
         {% include "includes/sprites.html" %}
 
-        {% wagtailuserbar %}
-
         {% include 'includes/messages.html' %}
 
         {% block header %}
@@ -86,21 +84,21 @@
                 {% endblock %}
 
                 <div class="header__inner wrapper wrapper--large">
-                    <a href="{% site_logo_link current_site %}" aria-label="Home link">
-                    {% if settings.utils.SystemMessagesSettings.site_logo_default %}
-                        {% image settings.utils.SystemMessagesSettings.site_logo_default width-215 as logo_default %}
-                        <img class="header__logo header__logo--desktop" src="{{ logo_default.url }}">
-                        {% if settings.utils.SystemMessagesSettings.site_logo_mobile %}
-                            {% image settings.utils.SystemMessagesSettings.site_logo_mobile width-60 as logo_mobile %}
-                            <img class="header__logo header__logo--mobile" src="{{ logo_mobile.url }}">
+                    <a href="{{ settings.utils.SystemMessagesSettings.site_logo_link|default:"/" }}" aria-label="Home link">
+                        {% if settings.utils.SystemMessagesSettings.site_logo_default %}
+                            {% image settings.utils.SystemMessagesSettings.site_logo_default width-215 as logo_default %}
+                            <img class="header__logo header__logo--desktop" src="{{ logo_default.url }}">
+                            {% if settings.utils.SystemMessagesSettings.site_logo_mobile %}
+                                {% image settings.utils.SystemMessagesSettings.site_logo_mobile width-60 as logo_mobile %}
+                                <img class="header__logo header__logo--mobile" src="{{ logo_mobile.url }}">
+                            {% else %}
+                                <img class="header__logo header__logo--mobile" src="{{ logo_default.url }}">
+                            {% endif %}
                         {% else %}
-                            <img class="header__logo header__logo--mobile" src="{{ logo_default.url }}">
+                            <svg class="header__logo header__logo--desktop header__logo--desktop-light"><use xlink:href="#logo-desktop"></use></svg>
+                            <svg class="header__logo header__logo--desktop header__logo--desktop-dark"><use xlink:href="#logo-desktop--dark"></use></svg>
+                            <svg class="header__logo header__logo--mobile"><use xlink:href="#logo-mobile"></use></svg>
                         {% endif %}
-                    {% else %}
-                        <svg class="header__logo header__logo--desktop header__logo--desktop-light"><use xlink:href="#logo-desktop"></use></svg>
-                        <svg class="header__logo header__logo--desktop header__logo--desktop-dark"><use xlink:href="#logo-desktop--dark"></use></svg>
-                        <svg class="header__logo header__logo--mobile"><use xlink:href="#logo-mobile"></use></svg>
-                    {% endif %}
                     </a>
 
                     <div class="header__inner header__inner--mobile-buttons">
@@ -126,13 +124,13 @@
 
                     <section class="header__menus header__menus--mobile">
                         <div class="header__inner header__inner--menu-open">
-                            <a href="{% site_logo_link current_site %}" aria-label="Home link">
-                            {% if settings.utils.SystemMessagesSettings.site_logo_mobile %}
-                                {% image settings.utils.SystemMessagesSettings.site_logo_mobile width-60 as logo_mobile %}
-                                <img class="header__logo header__logo--mobile" src="{{ logo_mobile.url }}">
-                            {% else %}
-                                <svg class="header__logo header__logo--mobile"><use xlink:href="#logo-mobile"></use></svg>
-                            {% endif %}
+                            <a href="{{ settings.utils.SystemMessagesSettings.site_logo_link|default:"/" }}" aria-label="Home link">
+                                {% if settings.utils.SystemMessagesSettings.site_logo_mobile %}
+                                    {% image settings.utils.SystemMessagesSettings.site_logo_mobile width-60 as logo_mobile %}
+                                    <img class="header__logo header__logo--mobile" src="{{ logo_mobile.url }}">
+                                {% else %}
+                                    <svg class="header__logo header__logo--mobile"><use xlink:href="#logo-mobile"></use></svg>
+                                {% endif %}
                             </a>
                             <div class="header__inner header__inner--mobile-buttons">
                                 <button class="button js-mobile-search-toggle" aria-haspopup="true" aria-label="Toggle mobile search">
@@ -153,7 +151,9 @@
                         {% if not request.user.is_authenticated and ENABLE_REGISTRATION_WITHOUT_APPLICATION %}
                             {% include "utils/includes/register_button.html" %}
                         {% endif %}
-                        <div class="button button--google-translate" id="google_translate_element"></div>
+                        {% if ENABLE_GOOGLE_TRANSLATE %}
+                            <div class="button button--google-translate" id="google_translate_element"></div>
+                        {% endif %}
                     </div>
                 </div>
 
@@ -183,9 +183,11 @@
 
         <footer class="footer">
             <div class="grid grid--two wrapper wrapper--large">
-                <div class="footer__inner">
-                    {% include "mailchimp/newsletter_signup.html" %}
-                </div>
+                {% if newsletter_enabled %}
+                    <div class="footer__inner">
+                        {% include "mailchimp/newsletter_signup.html" %}
+                    </div>
+                {% endif %}
 
                 <div class="footer__inner">
                     <div class="footer__social-links">
@@ -204,35 +206,38 @@
 
         {% cookie_banner %}
 
-        <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-        <script>
-            function googleTranslateElementInit() {
-              new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE, autoDisplay: false}, 'google_translate_element');
-            }
-        </script>
+        {% if ENABLE_GOOGLE_TRANSLATE %}
+            <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+            <script>
+                function googleTranslateElementInit() {
+                    new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE, autoDisplay: false}, 'google_translate_element');
+                }
+            </script>
+        {% endif %}
+
         <script src="{% static 'js/js.cookie.min.js' %}"></script>
         <script src="{% static 'js/main.js' %}"></script>
         <script src="{% static 'js/cookieconsent.js' %}"></script>
         {% block extra_js %}{% endblock %}
 
         {% block sentry_sdk %}
-        {% if SENTRY_PUBLIC_KEY %}
-        <script
-            src="https://js.sentry-cdn.com/{{ SENTRY_PUBLIC_KEY }}.min.js"
-            crossorigin="anonymous"
-        ></script>
-        <script>
-            Sentry.onLoad(function() {
-                Sentry.init({
-                    environment: "{{ SENTRY_ENVIRONMENT }}",
-                    debug: {% if SENTRY_DEBUG %}true{% else %}false{% endif %},
-                    integrations: [new BrowserTracing()],
-                    denyUrls: {{ SENTRY_DENY_URLS|safe }},
-                    tracesSampleRate: {{ SENTRY_TRACES_SAMPLE_RATE }}
-                });
-             });
-        </script>
-        {% endif %}
+            {% if SENTRY_PUBLIC_KEY %}
+                <script
+                    src="https://js.sentry-cdn.com/{{ SENTRY_PUBLIC_KEY }}.min.js"
+                    crossorigin="anonymous"
+                ></script>
+                <script>
+                    Sentry.onLoad(function() {
+                        Sentry.init({
+                            environment: "{{ SENTRY_ENVIRONMENT }}",
+                            debug: {% if SENTRY_DEBUG %}true{% else %}false{% endif %},
+                            integrations: [new BrowserTracing()],
+                            denyUrls: {{ SENTRY_DENY_URLS|safe }},
+                            tracesSampleRate: {{ SENTRY_TRACES_SAMPLE_RATE }}
+                        });
+                    });
+                </script>
+            {% endif %}
         {% endblock sentry_sdk %}
     </body>
 </html>

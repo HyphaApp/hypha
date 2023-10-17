@@ -3,79 +3,109 @@
 
 {% block title %}{% trans "Invoice" %}: {{ object.project.title }}{% endblock %}
 {% block content %}
-<div class="admin-bar">
-    <div class="admin-bar__inner">
-        <a class="simplified__projects-link" href="{{ object.project.get_absolute_url }}">
-            {% trans "View project page" %}
-        </a>
-        <h2 class="heading heading--no-margin">{% trans "Invoice" %}</h2>
-        <h5 class="heading heading--no-margin">{% trans "For" %}: {{ object.project.title }}</h5>
-    </div>
-</div>
+    {% display_invoice_status_for_user user object as invoice_status %}
 
-<div class="wrapper wrapper--sidebar wrapper--outer-space-medium">
-    <div class="wrapper--sidebar--inner">
-        <div class="card card--solid">
-            <p class="card__text"><b>{% trans "Status" %}:</b> {{ object.get_status_display }}</p>
-            {% is_vendor_setup request as show_vendor_information %}
-            {% if show_vendor_information %}
-            <p class="card__text"><b>{% trans "Vendor" %}:</b> {{ object.project.vendor.name }}</p>
-            {% endif %}
-            <p class="card__text"><b>{% trans "Invoice Number" %}:</b> {{ object.vendor_document_number }}</p>
-        </div>
+    {% adminbar %}
+        {% slot back_link %}
+            <a class="simplified__projects-link" href="{{ object.project.get_absolute_url }}">
+                {% trans "View project page" %}
+            </a>
+        {% endslot %}
+        {% slot header %}{% trans "Invoice" %}{% endslot %}
+        {% slot sub_heading %}{% trans "For" %}: {{ object.project.title }}{% endslot %}
+    {% endadminbar %}
 
-        <div class="card card--solid">
-            <div class="card__inner">
-                <h5 class="card__heading">{% trans "Invoice" %}</h5>
-                <p class="card__text"><a target="_blank" href="{% url "apply:projects:invoice-document" pk=object.project.pk invoice_pk=object.pk %}">{{object.filename}}</a></p>
-                <embed src="{% url "apply:projects:invoice-document" pk=object.project.pk invoice_pk=object.pk %}" width="800px" height="800px" />
+    <div class="wrapper wrapper--sidebar wrapper--outer-space-medium">
+        <div class="wrapper--sidebar--inner">
+            <div class="card card--solid">
+                <p class="card__text"><b>{% trans "Invoice number" %}:</b> {{ object.invoice_number }}</p>
+                {% is_vendor_setup request as show_vendor_information %}
+                <p class="card__text"><b>{% trans "Vendor" %}:</b>
+                    {% if show_vendor_information %}{{ object.project.vendor.name }}{% else %}{{ object.project.user }}{% endif %}</p>
+                <p class="card__text"><b>{% trans "Lead" %}:</b> {{ object.project.lead }}</p>
+                <p class="card__text"><b>{% trans "Fund" %}:</b> {{ object.project.submission.page }}</p>
             </div>
-            <div class="card__inner">
-                <h5 class="card__heading">{% trans "Supporting Documents" %}</h5>
-                {% for document in object.supporting_documents.all %}
-                    <p class="card__text"><a href="{% url "apply:projects:invoice-supporting-document" pk=object.project.pk invoice_pk=object.pk file_pk=document.pk %}">{{document.filename}}</a></p>
-                {% endfor %}
+            <div class="card card--solid flex" x-data="{ collapsed: true }">
+                <div class="flex-none">
+                    <p><b>{% trans "Status" %}: </b></p>
+                </div>
+                <div class="pl-2">
+                    {% extract_status latest_activity user as latest_activity_status %}
+                    {% get_comment_for_invoice_action object latest_activity as latest_activity_comment %}
+                    <p>{{ latest_activity_status }} {% if user.is_applicant and latest_activity.user != user %} ({{ ORG_SHORT_NAME }}){% else %}({{ latest_activity.user }}){% endif %}
+                        <span class="text-gray-400">{{ latest_activity.timestamp }}</span>
+                        {% if latest_activity_comment %}
+                            <svg class="icon icon--request-changes"><use xlink:href="#request-changes"></use></svg>
+                            <a href="{% url 'apply:projects:detail' pk=object.project.id %}#communications#{{ latest_activity_comment.id }}" class="font-bold" target="_blank">View comment</a>
+                        {% endif %}
+                    </p>
+                    {% for activity in activities %}
+                        {% extract_status activity user as activity_status %}
+                        {% get_comment_for_invoice_action object activity as activity_comment %}
+                        <p x-show="!collapsed">{{ activity_status }} {% if user.is_applicant and activity.user != user %} ({{ ORG_SHORT_NAME }}){% else %}({{ activity.user }}){% endif %}
+                            <span class="text-gray-400">{{ activity.timestamp }}</span>
+                            {% if activity_comment %}
+                                <svg class="icon icon--request-changes"><use xlink:href="#request-changes"></use></svg>
+                                <a href="{% url 'apply:projects:detail' pk=object.project.id %}#communications#{{ activity_comment.id }}" class="font-bold" target="_blank">View comment</a>
+                            {% endif %}
+                        </p>
+                    {% endfor %}
+                </div>
+                <div class="flex-1 text-right" x-on:click="collapsed = ! collapsed" role="button">
+                    <p class="font-bold text-light-blue" x-show="collapsed">{% trans "View" %}
+                        <svg class="icon icon--arrow-down top-1"  aria-hidden=true><use xlink:href="#arrow-down"></use></svg></p>
+                    <p class="font-bold text-light-blue" x-show="!collapsed">{% trans "Hide" %}
+                        <svg class="icon icon--arrow-up top-1" aria-hidden=true><use xlink:href="#arrow-up"></use></svg></p>
+
+                </div>
+            </div>
+
+            <div class="card card--solid">
+                <div class="card__inner">
+                    <h5 class="card__heading">{% trans "Invoice" %}</h5>
+                    <p class="card__text"><a target="_blank" href="{% url "apply:projects:invoice-document" pk=object.project.pk invoice_pk=object.pk %}">{{object.filename}}</a></p>
+                    <embed src="{% url "apply:projects:invoice-document" pk=object.project.pk invoice_pk=object.pk %}" width="800px" height="800px" />
+                </div>
+                <div class="card__inner">
+                    <h5 class="card__heading">{% trans "Supporting Documents" %}</h5>
+                    {% for document in object.supporting_documents.all %}
+                        <p class="card__text"><a href="{% url "apply:projects:invoice-supporting-document" pk=object.project.pk invoice_pk=object.pk file_pk=document.pk %}">{{document.filename}}</a></p>
+                    {% endfor %}
+                </div>
             </div>
         </div>
-    </div>
-    <aside class="sidebar">
-        {% block deliverables %}
-        {% endblock %}
-        <div class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions">
-            <h5>{% trans "Actions to take" %}</h5>
-            {% block actions %}
-                {% can_edit object user as user_can_edit_request %}
-                {% if user.is_apply_staff or user.is_applicant %}
-                <a
-                    {% if not user_can_edit_request %}
-                        data-tooltip="{% trans "Only editable when 'Submitted' or you have been requested to make changes" %}"
-                    {% endif %}
-                    class="button button--bottom-space button--primary button--full-width{% if not user_can_edit_request %} button--tooltip-disabled{% endif %}"
-                    href={% if user_can_edit_request %}
-                        "{% url "apply:projects:invoice-edit" pk=object.project.pk invoice_pk=object.pk %}"
-                    {% else %}
-                        "#"
-                    {% endif %}
-                >
-                    {% trans "Edit Invoice" %}
-                </a>
-                {% endif %}
-                {% can_delete object user as user_can_delete_request %}
-                {% if user_can_delete_request %}
-                <a
-                    class="button button--bottom-space button--primary button--full-width"
-                    href="{% url 'apply:projects:invoice-delete' pk=object.project.pk invoice_pk=object.pk %}">
-                    {% trans "Delete Invoice" %}
-                </a>
-            {% endif %}
+        <aside class="sidebar">
+            {% block deliverables %}
             {% endblock %}
-        </div>
-        <div class="js-actions-sidebar sidebar__inner sidebar__inner--actions">
-            <h5>{% trans "Activity Feed" %}</h5>
-            {% for activity in activities %}
-                <p>{{ activity.message }} - {{ activity.user }}</p>
-            {% endfor %}
-        </div>
-    </aside>
-</div>
+            <div class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions sticky top-8">
+                <h5>{% trans "Actions to take" %}</h5>
+                {% block actions %}
+                    {% can_edit object user as user_can_edit_request %}
+                    {% if user.is_apply_staff or user.is_applicant %}
+                        <a
+                            {% if not user_can_edit_request %}
+                                data-tooltip="{% trans "Only editable when 'Submitted' or you have been requested to make changes" %}"
+                            {% endif %}
+                            class="button button--bottom-space button--primary button--full-width{% if not user_can_edit_request %} button--tooltip-disabled{% endif %}"
+                            href={% if user_can_edit_request %}
+                                 "{% url "apply:projects:invoice-edit" pk=object.project.pk invoice_pk=object.pk %}"
+                            {% else %}
+                                 "#"
+                            {% endif %}
+                        >
+                            {% trans "Edit Invoice" %}
+                        </a>
+                    {% endif %}
+                    {% can_delete object user as user_can_delete_request %}
+                    {% if user_can_delete_request %}
+                        <a
+                            class="button button--bottom-space button--primary button--full-width"
+                            href="{% url 'apply:projects:invoice-delete' pk=object.project.pk invoice_pk=object.pk %}">
+                            {% trans "Delete Invoice" %}
+                        </a>
+                    {% endif %}
+                {% endblock %}
+            </div>
+        </aside>
+    </div>
 {% endblock %}

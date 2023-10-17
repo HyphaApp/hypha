@@ -4,15 +4,23 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('funds', '0094_auto_20220406_0800'),
+        ("funds", "0094_auto_20220406_0800"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='reviewersettings',
-            name='state',
-            field=models.CharField(choices=[('all', 'All States'), ('ext_state_or_higher', 'Only External review and higher'), ('ext_state_only', 'Only External review')], default='all', help_text='Submissions states for which reviewers should have access to', max_length=20),
+            model_name="reviewersettings",
+            name="state",
+            field=models.CharField(
+                choices=[
+                    ("all", "All States"),
+                    ("ext_state_or_higher", "Only External review and higher"),
+                    ("ext_state_only", "Only External review"),
+                ],
+                default="all",
+                help_text="Submissions states for which reviewers should have access to",
+                max_length=20,
+            ),
         ),
     ]

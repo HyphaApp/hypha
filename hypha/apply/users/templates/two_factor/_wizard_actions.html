@@ -13,9 +13,9 @@
 <button type="submit" class="button button--primary">{{ button_text }}</button>
 
 <script>
-var lbl = document.querySelector("label[for=id_generator-token]");
-if (lbl) {
-    lbl.textContent = "{% trans "Verification code" %}:";
-}
+    var lbl = document.querySelector("label[for=id_generator-token]");
+    if (lbl) {
+        lbl.textContent = "{% trans "Verification code" %}:";
+    }
 
 </script>

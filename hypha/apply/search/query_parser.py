@@ -44,7 +44,7 @@ class QueryTransformer(Transformer):
 
 # Define the grammar
 parser = Lark(
-    r'''
+    r"""
     ?start: expression
 
     expression: (filter_expression | search_term)*
@@ -63,10 +63,10 @@ parser = Lark(
     %import common.NUMBER
     %import common.ESCAPED_STRING
     %ignore /\s+/
-''',
-    start='start',
-    parser='lalr',
-    transformer=QueryTransformer()
+""",
+    start="start",
+    parser="lalr",
+    transformer=QueryTransformer(),
 )
 
 

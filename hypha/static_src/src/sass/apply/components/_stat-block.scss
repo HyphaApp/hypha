@@ -37,12 +37,12 @@
     }
 
     &__text {
-        font-weight: $weight--bold;
-        margin: .5rem 0;
-        color: $color--dark-grey;
+        // font-weight: $weight--bold;
+        margin: 0.5rem 0;
+        color: var(--color-fg-default);
 
         @include media-query(small-tablet) {
-            margin: .5rem 0;
+            margin: 0.5rem 0;
         }
     }
 

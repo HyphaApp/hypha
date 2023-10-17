@@ -2,51 +2,33 @@
 {% load i18n static %}
 {% block title %}{% trans "Editing" %}: {{object.title }}{% endblock %}
 {% block content %}
-<div class="admin-bar">
-    <div class="admin-bar__inner">
-        <a class="simplified__projects-link" href="{{ object.get_absolute_url }}">
-            {% trans "View project page" %}
-        </a>
-        <h2 class="heading heading--no-margin">{% trans "Editing" %}: {{ object.title }}</h2>
-    </div>
-</div>
 
-{% if approval_form_exists %}
+    {% adminbar %}
+        {% slot back_link %}
+            <a class="simplified__projects-link" href="{{ object.get_absolute_url }}">
+                {% trans "View project page" %}
+            </a>
+        {% endslot %}
+        {% slot header %}{% trans "Editing" %}: {{ object.title }}{% endslot %}
+    {% endadminbar %}
 
-    {% include "forms/includes/form_errors.html" with form=paf_form %}
-    {% if sow_form_exists %}
-        {% include "forms/includes/form_errors.html" with form=sow_form %}
-    {% endif %}
+    {% if approval_form_exists %}
 
-    <div class="wrapper wrapper--light-grey-bg wrapper--form wrapper--sidebar">
-        <div class="wrapper--sidebar--inner">
-            <form class="form application-form" action="" method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                {{ paf_form.media }}
-                {% if sow_form_exists %}
-                    {{ sow_form.media }}
-                {% endif %}
+        {% include "forms/includes/form_errors.html" with form=paf_form %}
+        {% if sow_form_exists %}
+            {% include "forms/includes/form_errors.html" with form=sow_form %}
+        {% endif %}
 
-                {% for field in paf_form %}
-                    {% if field.field %}
-                        {% if field.field.multi_input_field %}
-                            {% include "forms/includes/multi_input_field.html" %}
-                        {% else %}
-                            {% include "forms/includes/field.html" %}
-                        {% endif %}
-                    {% else %}
-                        {{ field.block }}
+        <div class="wrapper wrapper--light-grey-bg wrapper--sidebar pt-8 pl-20 pb-8 mt-4 mb-12 mx-auto ">
+            <div class="wrapper--sidebar--inner">
+                <form class="form application-form" action="" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ paf_form.media }}
+                    {% if sow_form_exists %}
+                        {{ sow_form.media }}
                     {% endif %}
-                {% endfor %}
 
-                {# Hidden fields needed e.g. for django-file-form. See `StreamBaseForm.hidden_fields` #}
-                {% for hidden_field in paf_form.hidden_fields %}
-                    {{ hidden_field }}
-                {% endfor %}
-
-                {% if sow_form_exists %}
-                    <hr>
-                    {% for field in sow_form %}
+                    {% for field in paf_form %}
                         {% if field.field %}
                             {% if field.field.multi_input_field %}
                                 {% include "forms/includes/multi_input_field.html" %}
@@ -58,39 +40,67 @@
                         {% endif %}
                     {% endfor %}
 
-
-                    {% for hidden_field in sow_form.hidden_fields %}
+                {# Hidden fields needed e.g. for django-file-form. See `StreamBaseForm.hidden_fields` #}
+                    {% for hidden_field in paf_form.hidden_fields %}
                         {{ hidden_field }}
                     {% endfor %}
-                {% endif %}
 
-                {% trans "Save draft" as save_draft %}
-                {% for button_name, button_type, button_value in buttons %}
-                    <button class="button button--submit button--top-space button--{{ button_type }}" type="submit" name="{{ button_name }}" {% if button_value == save_draft %}formnovalidate{% endif %}>{{ button_value }}</button>
-                {% endfor %}
-            </form>
+                    {% if sow_form_exists %}
+                        <hr class="mt-6 border-2 border-dotted">
+                        {% for field in sow_form %}
+                            {% if field.field %}
+                                {% if field.field.multi_input_field %}
+                                    {% include "forms/includes/multi_input_field.html" %}
+                                {% else %}
+                                    {% include "forms/includes/field.html" %}
+                                {% endif %}
+                            {% else %}
+                                {{ field.block }}
+                            {% endif %}
+                        {% endfor %}
+
+
+                        {% for hidden_field in sow_form.hidden_fields %}
+                            {{ hidden_field }}
+                        {% endfor %}
+                    {% endif %}
+
+                    {% trans "Save draft" as save_draft %}
+                    {% for button_name, button_type, button_value in buttons %}
+                        <button class="button button--submit button--top-space button--{{ button_type }}" type="submit" name="{{ button_name }}" {% if button_value == save_draft %}formnovalidate{% endif %}>{{ button_value }}</button>
+                    {% endfor %}
+                </form>
+            </div>
+            <aside class="sidebar sidebar__project">
+                <div class="js-actions-sidebar sidebar__inner sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
+                    <h5>{% trans "Proposal attachments" %}</h5>
+                    {% for file in submissions_attachments %}
+                        <p><b><a href="{{ file.url }}" target="_blank">{{ file.filename }}</a></b></p>
+                    {% endfor %}
+                </div>
+            </aside>
         </div>
-    </div>
 
-{% else %}
-    <div class="wrapper wrapper--light-grey-bg wrapper--form wrapper--sidebar">
-        <div class="wrapper--sidebar--inner">
-            <p>
-                {% trans "Approval form not configured. Please add an approval form in the" %}
-                <a href="{% url 'wagtailadmin_pages:edit' object.submission.page.id %}" target="_blank">{% trans "fund settings" %}</a>.
-            </p>
+    {% else %}
+        <div class="wrapper wrapper--light-grey-bg wrapper--form wrapper--sidebar">
+            <div class="wrapper--sidebar--inner">
+                <p>
+                    {% trans "Approval form not configured. Please add an approval form in the" %}
+                    <a href="{% url 'wagtailadmin_pages:edit' object.submission.page.id %}" target="_blank">{% trans "fund settings" %}</a>.
+                </p>
+            </div>
         </div>
-    </div>
 
-{% endif %}
+    {% endif %}
 
 {% endblock %}
 
 {% block extra_js %}
+    <script src="{% static 'js/apply/file-uploads.js' %}"></script>
     <script src="{% static 'js/apply/tinymce-word-count.js' %}"></script>
     <script src="{% static 'js/apply/multi-input-fields.js' %}"></script>
     <script src="{% static 'js/apply/application-form-links-new-window.js' %}"></script>
     {% if not show_all_group_fields %}
-    <script src="{% static 'js/apply/form-group-toggle.js' %}"></script>
+        <script src="{% static 'js/apply/form-group-toggle.js' %}"></script>
     {% endif %}
 {% endblock %}

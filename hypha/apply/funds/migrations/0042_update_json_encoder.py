@@ -6,20 +6,23 @@ import hypha.apply.stream_forms.files
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('funds', '0041_roundbasereviewform'),
+        ("funds", "0041_roundbasereviewform"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='applicationrevision',
-            name='form_data',
-            field=django.contrib.postgres.fields.jsonb.JSONField(encoder=hypha.apply.stream_forms.files.StreamFieldDataEncoder),
+            model_name="applicationrevision",
+            name="form_data",
+            field=django.contrib.postgres.fields.jsonb.JSONField(
+                encoder=hypha.apply.stream_forms.files.StreamFieldDataEncoder
+            ),
         ),
         migrations.AlterField(
-            model_name='applicationsubmission',
-            name='form_data',
-            field=django.contrib.postgres.fields.jsonb.JSONField(encoder=hypha.apply.stream_forms.files.StreamFieldDataEncoder),
+            model_name="applicationsubmission",
+            name="form_data",
+            field=django.contrib.postgres.fields.jsonb.JSONField(
+                encoder=hypha.apply.stream_forms.files.StreamFieldDataEncoder
+            ),
         ),
     ]

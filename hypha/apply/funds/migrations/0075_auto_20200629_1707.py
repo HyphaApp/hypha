@@ -4,15 +4,18 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('funds', '0074_add_word_limit_to_text_blocks'),
+        ("funds", "0074_add_word_limit_to_text_blocks"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='applicationbase',
-            name='slack_channel',
-            field=models.CharField(blank=True, help_text='The slack #channel for notifications. If left empty, notifications will go to the default channel.', max_length=128),
+            model_name="applicationbase",
+            name="slack_channel",
+            field=models.CharField(
+                blank=True,
+                help_text="The slack #channel for notifications. If left empty, notifications will go to the default channel.",
+                max_length=128,
+            ),
         ),
     ]

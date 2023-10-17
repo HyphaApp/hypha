@@ -5,38 +5,45 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('review', '0018_migrate_author_data'),
+        ("review", "0018_migrate_author_data"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='review',
-            name='author',
+            model_name="review",
+            name="author",
         ),
         migrations.RenameField(
-            model_name='review',
-            old_name='author_temp',
-            new_name='author',
+            model_name="review",
+            old_name="author_temp",
+            new_name="author",
         ),
         migrations.AlterField(
-            model_name='review',
-            name='author',
-            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='review', to='funds.AssignedReviewers'),
+            model_name="review",
+            name="author",
+            field=models.OneToOneField(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="review",
+                to="funds.AssignedReviewers",
+            ),
         ),
         migrations.RemoveField(
-            model_name='reviewopinion',
-            name='author',
+            model_name="reviewopinion",
+            name="author",
         ),
         migrations.RenameField(
-            model_name='reviewopinion',
-            old_name='author_temp',
-            new_name='author',
+            model_name="reviewopinion",
+            old_name="author_temp",
+            new_name="author",
         ),
         migrations.AlterField(
-            model_name='reviewopinion',
-            name='author',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='opinions', to='funds.AssignedReviewers'),
+            model_name="reviewopinion",
+            name="author",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="opinions",
+                to="funds.AssignedReviewers",
+            ),
         ),
     ]

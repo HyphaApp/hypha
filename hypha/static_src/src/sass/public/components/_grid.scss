@@ -60,7 +60,7 @@
     .grid {
         display: grid;
         margin: 30px 0;
-        grid-gap: 10px;
+        gap: 10px;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 
         > * {
@@ -82,12 +82,12 @@
 
         &--one {
             grid-template-columns: 1fr;
-            grid-gap: 30px;
+            gap: 30px;
         }
 
         &--two {
             grid-template-columns: 100%;
-            grid-gap: 0;
+            gap: 0;
 
             @include media-query(tablet-portrait) {
                 grid-template-columns: 1fr 1fr;
@@ -96,7 +96,7 @@
 
         &--max-three {
             grid-template-columns: 1fr;
-            grid-gap: 30px;
+            gap: 30px;
 
             @include media-query(small-tablet) {
                 grid-template-columns: repeat(2, 1fr);
@@ -108,11 +108,11 @@
         }
 
         &--medium-gap {
-            grid-gap: 35px;
+            gap: 35px;
         }
 
         &--small-gap {
-            grid-gap: 20px;
+            gap: 20px;
         }
 
         &--no-margin {
@@ -124,7 +124,7 @@
             margin: 0 0 30px;
             border-bottom: 1px solid $color--mid-grey;
             grid-template-columns: 100%;
-            grid-gap: 10px;
+            gap: 10px;
 
             @include media-query(mob-landscape) {
                 margin: 0 0 30px;
@@ -138,7 +138,7 @@
 
         &--focus-areas {
             margin: 20px 0;
-            grid-gap: 20px;
+            gap: 20px;
             grid-template-columns: 1fr;
 
             @include media-query(small-tablet) {
@@ -150,7 +150,7 @@
                 margin: 3rem 0;
                 text-align: center;
                 grid-template-columns: repeat(4, 1fr);
-                grid-gap: 35px;
+                gap: 35px;
             }
         }
     }

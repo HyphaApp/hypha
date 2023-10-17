@@ -6,24 +6,47 @@ import modelcluster.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('review', '0006_remove_review_review'),
-        ('funds', '0040_add_duration_stream_to_streamfield_definition'),
+        ("review", "0006_remove_review_review"),
+        ("funds", "0040_add_duration_stream_to_streamfield_definition"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='RoundBaseReviewForm',
+            name="RoundBaseReviewForm",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('sort_order', models.IntegerField(blank=True, editable=False, null=True)),
-                ('form', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='review.ReviewForm')),
-                ('round', modelcluster.fields.ParentalKey(on_delete=django.db.models.deletion.CASCADE, related_name='review_forms', to='funds.RoundBase')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "sort_order",
+                    models.IntegerField(blank=True, editable=False, null=True),
+                ),
+                (
+                    "form",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="review.ReviewForm",
+                    ),
+                ),
+                (
+                    "round",
+                    modelcluster.fields.ParentalKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="review_forms",
+                        to="funds.RoundBase",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['sort_order'],
-                'abstract': False,
+                "ordering": ["sort_order"],
+                "abstract": False,
             },
         ),
     ]

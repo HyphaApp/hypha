@@ -7,25 +7,32 @@ from django.core.exceptions import ObjectDoesNotExist
 # importing and creating a future dependency. Changes to Group names should
 # be handled in another migration
 
-STAFF_GROUP_NAME = 'Staff'
-REVIEWER_GROUP_NAME = 'Reviewer'
-PARTNER_GROUP_NAME = 'Partner'
-COMMUNITY_REVIEWER_GROUP_NAME = 'Community reviewer'
+STAFF_GROUP_NAME = "Staff"
+REVIEWER_GROUP_NAME = "Reviewer"
+PARTNER_GROUP_NAME = "Partner"
+COMMUNITY_REVIEWER_GROUP_NAME = "Community reviewer"
 
-REVIEWER_GROUPS = {STAFF_GROUP_NAME,
+REVIEWER_GROUPS = {
+    STAFF_GROUP_NAME,
     REVIEWER_GROUP_NAME,
     COMMUNITY_REVIEWER_GROUP_NAME,
-    PARTNER_GROUP_NAME,}
+    PARTNER_GROUP_NAME,
+}
 
 
 def add_to_assigned_reviewers(apps, schema_editor):
-    Review = apps.get_model('review', 'Review')
-    AssignedReviewer = apps.get_model('funds', 'AssignedReviewers')
-    Group = apps.get_model('auth', 'Group')
-    for review in Review.objects.select_related('author'):
-        groups = set(review.author.groups.values_list('name', flat=True)) & REVIEWER_GROUPS
+    Review = apps.get_model("review", "Review")
+    AssignedReviewer = apps.get_model("funds", "AssignedReviewers")
+    Group = apps.get_model("auth", "Group")
+    for review in Review.objects.select_related("author"):
+        groups = (
+            set(review.author.groups.values_list("name", flat=True)) & REVIEWER_GROUPS
+        )
         if len(groups) > 1:
-            if PARTNER_GROUP_NAME in groups and review.author in review.submission.partners.all():
+            if (
+                PARTNER_GROUP_NAME in groups
+                and review.author in review.submission.partners.all()
+            ):
                 groups = {PARTNER_GROUP_NAME}
             elif COMMUNITY_REVIEWER_GROUP_NAME in groups:
                 groups = {COMMUNITY_REVIEWER_GROUP_NAME}
@@ -44,22 +51,22 @@ def add_to_assigned_reviewers(apps, schema_editor):
         assignment, _ = AssignedReviewer.objects.update_or_create(
             submission=review.submission,
             reviewer=review.author,
-            defaults={'type': group},
+            defaults={"type": group},
         )
         review.author_temp = assignment
         review.save()
-        for opinion in review.opinions.select_related('author'):
+        for opinion in review.opinions.select_related("author"):
             opinion_assignment, _ = AssignedReviewer.objects.update_or_create(
                 submission=review.submission,
                 reviewer=opinion.author,
-                defaults={'type': Group.objects.get(name=STAFF_GROUP_NAME)},
+                defaults={"type": Group.objects.get(name=STAFF_GROUP_NAME)},
             )
             opinion.author_temp = opinion_assignment
             opinion.save()
 
 
 def add_to_review_and_opinion(apps, schema_editor):
-    AssignedReviewer = apps.get_model('funds', 'AssignedReviewers')
+    AssignedReviewer = apps.get_model("funds", "AssignedReviewers")
     for assigned in AssignedReviewer.objects.all():
         try:
             assigned.review.author = assigned.reviewer
@@ -73,11 +80,10 @@ def add_to_review_and_opinion(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('review', '0017_add_temp_author_field'),
-        ('funds', '0063_make_reviewer_type_required'),
-        ('users', '0010_add_community_reviewer_group'),
+        ("review", "0017_add_temp_author_field"),
+        ("funds", "0063_make_reviewer_type_required"),
+        ("users", "0010_add_community_reviewer_group"),
     ]
 
     operations = [

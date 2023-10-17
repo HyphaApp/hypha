@@ -5,15 +5,18 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('determinations', '0005_determination_drupal_id'),
+        ("determinations", "0005_determination_drupal_id"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='determination',
-            name='submission',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='determinations', to='funds.ApplicationSubmission'),
+            model_name="determination",
+            name="submission",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="determinations",
+                to="funds.ApplicationSubmission",
+            ),
         ),
     ]

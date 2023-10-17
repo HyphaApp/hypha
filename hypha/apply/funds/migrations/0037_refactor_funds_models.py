@@ -7,119 +7,157 @@ import modelcluster.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('wagtailcore', '0040_page_draft_title'),
+        ("wagtailcore", "0040_page_draft_title"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('review', '0006_remove_review_review'),
-        ('funds', '0036_fundreviewform_labreviewform'),
+        ("review", "0006_remove_review_review"),
+        ("funds", "0036_fundreviewform_labreviewform"),
     ]
 
     operations = [
         # Rename all the existing models as required
         migrations.RenameModel(
-            old_name='FundType',
-            new_name='ApplicationBase',
+            old_name="FundType",
+            new_name="ApplicationBase",
         ),
         migrations.RenameModel(
-            old_name='Round',
-            new_name='RoundBase',
+            old_name="Round",
+            new_name="RoundBase",
         ),
         migrations.RenameModel(
-            old_name='LabType',
-            new_name='LabBase',
+            old_name="LabType",
+            new_name="LabBase",
         ),
         migrations.RenameModel(
-            old_name='FundForm',
-            new_name='ApplicationBaseForm',
+            old_name="FundForm",
+            new_name="ApplicationBaseForm",
         ),
         migrations.RenameModel(
-            old_name='FundReviewForm',
-            new_name='ApplicationBaseReviewForm',
+            old_name="FundReviewForm",
+            new_name="ApplicationBaseReviewForm",
         ),
         migrations.RenameModel(
-            old_name='LabForm',
-            new_name='LabBaseForm',
+            old_name="LabForm",
+            new_name="LabBaseForm",
         ),
         migrations.RenameModel(
-            old_name='LabReviewForm',
-            new_name='LabBaseReviewForm',
+            old_name="LabReviewForm",
+            new_name="LabBaseReviewForm",
         ),
         migrations.RenameModel(
-            old_name='RoundForm',
-            new_name='RoundBaseForm',
+            old_name="RoundForm",
+            new_name="RoundBaseForm",
         ),
-
         # Add all the new models
         migrations.CreateModel(
-            name='FundType',
+            name="FundType",
             fields=[
-                ('applicationbase_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='funds.ApplicationBase')),
+                (
+                    "applicationbase_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to="funds.ApplicationBase",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Fund',
+                "verbose_name": "Fund",
             },
-            bases=('funds.applicationbase',),
+            bases=("funds.applicationbase",),
         ),
         migrations.CreateModel(
-            name='LabType',
+            name="LabType",
             fields=[
-                ('labbase_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='funds.LabBase')),
+                (
+                    "labbase_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to="funds.LabBase",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Lab',
+                "verbose_name": "Lab",
             },
-            bases=('funds.labbase',),
+            bases=("funds.labbase",),
         ),
         migrations.CreateModel(
-            name='Round',
+            name="Round",
             fields=[
-                ('roundbase_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='funds.RoundBase')),
+                (
+                    "roundbase_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to="funds.RoundBase",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
-            bases=('funds.roundbase',),
+            bases=("funds.roundbase",),
         ),
-
-
         # Remove options - django
         migrations.AlterModelOptions(
-            name='applicationbase',
+            name="applicationbase",
             options={},
         ),
         migrations.AlterModelOptions(
-            name='labbase',
+            name="labbase",
             options={},
         ),
-
         # Rename fields as required - non essential
         migrations.RenameField(
-            model_name='applicationbaseform',
-            old_name='fund',
-            new_name='application',
+            model_name="applicationbaseform",
+            old_name="fund",
+            new_name="application",
         ),
         migrations.RenameField(
-            model_name='applicationbasereviewform',
-            old_name='fund',
-            new_name='application',
+            model_name="applicationbasereviewform",
+            old_name="fund",
+            new_name="application",
         ),
-
         # Alter related name based on the classname - non essential just being tidy
         migrations.AlterField(
-            model_name='applicationbase',
-            name='reviewers',
-            field=modelcluster.fields.ParentalManyToManyField(blank=True, limit_choices_to={'groups__name': 'Reviewer'}, related_name='applicationbase_reviewers', to=settings.AUTH_USER_MODEL),
+            model_name="applicationbase",
+            name="reviewers",
+            field=modelcluster.fields.ParentalManyToManyField(
+                blank=True,
+                limit_choices_to={"groups__name": "Reviewer"},
+                related_name="applicationbase_reviewers",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AlterField(
-            model_name='roundbase',
-            name='lead',
-            field=models.ForeignKey(limit_choices_to={'groups__name': 'Staff'}, on_delete=django.db.models.deletion.PROTECT, related_name='roundbase_lead', to=settings.AUTH_USER_MODEL),
+            model_name="roundbase",
+            name="lead",
+            field=models.ForeignKey(
+                limit_choices_to={"groups__name": "Staff"},
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="roundbase_lead",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AlterField(
-            model_name='roundbase',
-            name='reviewers',
-            field=modelcluster.fields.ParentalManyToManyField(blank=True, limit_choices_to={'groups__name': 'Reviewer'}, related_name='roundbase_reviewer', to=settings.AUTH_USER_MODEL),
+            model_name="roundbase",
+            name="reviewers",
+            field=modelcluster.fields.ParentalManyToManyField(
+                blank=True,
+                limit_choices_to={"groups__name": "Reviewer"},
+                related_name="roundbase_reviewer",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
-
     ]

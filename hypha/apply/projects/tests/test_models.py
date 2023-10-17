@@ -13,10 +13,10 @@ from hypha.apply.users.tests.factories import (
 )
 
 from ..models.payment import (
-    APPROVED_BY_FINANCE_1,
+    APPROVED_BY_FINANCE,
     APPROVED_BY_FINANCE_2,
     APPROVED_BY_STAFF,
-    CHANGES_REQUESTED_BY_FINANCE_1,
+    CHANGES_REQUESTED_BY_FINANCE,
     CHANGES_REQUESTED_BY_FINANCE_2,
     CHANGES_REQUESTED_BY_STAFF,
     DECLINED,
@@ -24,6 +24,7 @@ from ..models.payment import (
     INVOICE_STATUS_FINANCE_2_CHOICES,
     INVOICE_STATUS_PM_CHOICES,
     PAID,
+    PAYMENT_FAILED,
     RESUBMITTED,
     SUBMITTED,
     Invoice,
@@ -33,11 +34,8 @@ from ..models.project import Project
 from ..models.report import Report, ReportConfig
 from .factories import (
     DeliverableFactory,
-    DocumentCategoryFactory,
     InvoiceDeliverableFactory,
     InvoiceFactory,
-    PacketFileFactory,
-    ProjectFactory,
     ReportConfigFactory,
     ReportFactory,
 )
@@ -52,49 +50,6 @@ class TestProjectModel(TestCase):
         self.assertEqual(project.submission, submission)
         self.assertEqual(project.title, submission.title)
         self.assertEqual(project.user, submission.user)
-
-    def test_get_missing_document_categories_with_enough_documents(self):
-        project = ProjectFactory()
-        category = DocumentCategoryFactory(recommended_minimum=1)
-        PacketFileFactory(project=project, category=category)
-
-        self.assertEqual(project.packet_files.count(), 1)
-
-        missing = list(project.get_missing_document_categories())
-
-        self.assertEqual(len(missing), 0)
-
-    def test_get_missing_document_categories_with_no_documents(self):
-        project = ProjectFactory()
-        category = DocumentCategoryFactory(recommended_minimum=1)
-
-        self.assertEqual(project.packet_files.count(), 0)
-
-        missing = list(project.get_missing_document_categories())
-
-        self.assertEqual(len(missing), 1)
-        self.assertEqual(missing[0]['category'], category)
-        self.assertEqual(missing[0]['difference'], 1)
-
-    def test_get_missing_document_categories_with_some_documents(self):
-        project = ProjectFactory()
-
-        category1 = DocumentCategoryFactory(recommended_minimum=5)
-        PacketFileFactory(project=project, category=category1)
-        PacketFileFactory(project=project, category=category1)
-
-        category2 = DocumentCategoryFactory(recommended_minimum=3)
-        PacketFileFactory(project=project, category=category2)
-
-        self.assertEqual(project.packet_files.count(), 3)
-
-        missing = list(project.get_missing_document_categories())
-
-        self.assertEqual(len(missing), 2)
-        self.assertEqual(missing[0]['category'], category1)
-        self.assertEqual(missing[0]['difference'], 3)
-        self.assertEqual(missing[1]['category'], category2)
-        self.assertEqual(missing[1]['difference'], 2)
 
 
 class TestInvoiceModel(TestCase):
@@ -179,30 +134,37 @@ class TestInvoiceModel(TestCase):
         invoice = InvoiceFactory(
             paid_value=None,
         )
-        self.assertNotEqual(invoice.value, Decimal('1'))
+        self.assertNotEqual(invoice.value, Decimal("1"))
 
     def test_paid_value_overrides_paid_value(self):
         invoice = InvoiceFactory(
-            paid_value=Decimal('2'),
+            paid_value=Decimal("2"),
         )
-        self.assertEqual(invoice.value, Decimal('2'))
+        self.assertEqual(invoice.value, Decimal("2"))
 
         invoice = InvoiceFactory(
-            paid_value=Decimal('2'),
+            paid_value=Decimal("2"),
         )
-        self.assertEqual(invoice.value, Decimal('2'))
+        self.assertEqual(invoice.value, Decimal("2"))
 
     def test_deliverables_total_amount(self):
         deliverable = DeliverableFactory(unit_price=100)
-        invoice_deliverable = InvoiceDeliverableFactory(deliverable=deliverable, quantity=2)
+        invoice_deliverable = InvoiceDeliverableFactory(
+            deliverable=deliverable, quantity=2
+        )
         self.assertEqual(invoice_deliverable.deliverable.unit_price, 100.00)
 
         invoice = InvoiceFactory(status=APPROVED_BY_STAFF)
         invoice.deliverables.add(invoice_deliverable)
-        self.assertEqual(invoice.deliverables_total_amount['total'], 200.00)
+        self.assertEqual(invoice.deliverables_total_amount["total"], 200.00)
 
     def test_staff_can_change_status(self):
-        statuses = [SUBMITTED, RESUBMITTED, CHANGES_REQUESTED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_1]
+        statuses = [
+            SUBMITTED,
+            RESUBMITTED,
+            CHANGES_REQUESTED_BY_STAFF,
+            CHANGES_REQUESTED_BY_FINANCE,
+        ]
         user = StaffFactory()
         for status in statuses:
             invoice = InvoiceFactory(status=status)
@@ -210,8 +172,12 @@ class TestInvoiceModel(TestCase):
 
     def test_staff_cant_change_status(self):
         statuses = [
-            APPROVED_BY_STAFF, APPROVED_BY_FINANCE_1, APPROVED_BY_FINANCE_2,
-            CHANGES_REQUESTED_BY_FINANCE_2, DECLINED, PAID
+            APPROVED_BY_STAFF,
+            APPROVED_BY_FINANCE,
+            APPROVED_BY_FINANCE_2,
+            CHANGES_REQUESTED_BY_FINANCE_2,
+            DECLINED,
+            PAID,
         ]
         user = StaffFactory()
         for status in statuses:
@@ -228,7 +194,7 @@ class TestInvoiceModel(TestCase):
 
     @override_settings(INVOICE_EXTENDED_WORKFLOW=False)
     def test_finance1_can_change_status(self):
-        statuses = [APPROVED_BY_STAFF, APPROVED_BY_FINANCE_1]
+        statuses = [APPROVED_BY_STAFF, APPROVED_BY_FINANCE, PAID, PAYMENT_FAILED]
         user = FinanceFactory()
         for status in statuses:
             invoice = InvoiceFactory(status=status)
@@ -237,8 +203,14 @@ class TestInvoiceModel(TestCase):
     @override_settings(INVOICE_EXTENDED_WORKFLOW=True)
     def test_finance1_cant_change_status_with_extended_flow(self):
         statuses = [
-            APPROVED_BY_FINANCE_1, APPROVED_BY_FINANCE_2, CHANGES_REQUESTED_BY_STAFF,
-            CHANGES_REQUESTED_BY_FINANCE_1, DECLINED, PAID, RESUBMITTED, SUBMITTED
+            APPROVED_BY_FINANCE,
+            APPROVED_BY_FINANCE_2,
+            CHANGES_REQUESTED_BY_STAFF,
+            CHANGES_REQUESTED_BY_FINANCE,
+            DECLINED,
+            PAID,
+            RESUBMITTED,
+            SUBMITTED,
         ]
         user = FinanceFactory()
         for status in statuses:
@@ -248,8 +220,11 @@ class TestInvoiceModel(TestCase):
     @override_settings(INVOICE_EXTENDED_WORKFLOW=False)
     def test_finance1_cant_change_status(self):
         statuses = [
-            CHANGES_REQUESTED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_1,
-            DECLINED, PAID, RESUBMITTED, SUBMITTED
+            CHANGES_REQUESTED_BY_STAFF,
+            CHANGES_REQUESTED_BY_FINANCE,
+            DECLINED,
+            RESUBMITTED,
+            SUBMITTED,
         ]
         user = FinanceFactory()
         for status in statuses:
@@ -258,7 +233,7 @@ class TestInvoiceModel(TestCase):
 
     @override_settings(INVOICE_EXTENDED_WORKFLOW=True)
     def test_finance2_can_change_status_with_extended_flow(self):
-        statuses = [APPROVED_BY_FINANCE_1, APPROVED_BY_FINANCE_2]
+        statuses = [APPROVED_BY_FINANCE, APPROVED_BY_FINANCE_2, PAID, PAYMENT_FAILED]
         user = Finance2Factory()
         for status in statuses:
             invoice = InvoiceFactory(status=status)
@@ -267,8 +242,13 @@ class TestInvoiceModel(TestCase):
     @override_settings(INVOICE_EXTENDED_WORKFLOW=True)
     def test_finance2_cant_change_status(self):
         statuses = [
-            APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_1, CHANGES_REQUESTED_BY_FINANCE_2,
-            CHANGES_REQUESTED_BY_STAFF, DECLINED, PAID, RESUBMITTED, SUBMITTED
+            APPROVED_BY_STAFF,
+            CHANGES_REQUESTED_BY_FINANCE,
+            CHANGES_REQUESTED_BY_FINANCE_2,
+            CHANGES_REQUESTED_BY_STAFF,
+            DECLINED,
+            RESUBMITTED,
+            SUBMITTED,
         ]
         user = Finance2Factory()
         for status in statuses:
@@ -284,8 +264,13 @@ class TestInvoiceModel(TestCase):
 
     def test_applicant_cant_edit_invoice(self):
         statuses = [
-            APPROVED_BY_FINANCE_1, APPROVED_BY_FINANCE_2, APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_1,
-            CHANGES_REQUESTED_BY_FINANCE_2, DECLINED, PAID
+            APPROVED_BY_FINANCE,
+            APPROVED_BY_FINANCE_2,
+            APPROVED_BY_STAFF,
+            CHANGES_REQUESTED_BY_FINANCE,
+            CHANGES_REQUESTED_BY_FINANCE_2,
+            DECLINED,
+            PAID,
         ]
         user = ApplicantFactory()
         for status in statuses:
@@ -293,7 +278,7 @@ class TestInvoiceModel(TestCase):
             self.assertFalse(invoice.can_user_edit(user))
 
     def test_staff_can_edit_invoice(self):
-        statuses = [SUBMITTED, RESUBMITTED, CHANGES_REQUESTED_BY_FINANCE_1]
+        statuses = [SUBMITTED, RESUBMITTED, CHANGES_REQUESTED_BY_FINANCE]
         user = StaffFactory()
         for status in statuses:
             invoice = InvoiceFactory(status=status)
@@ -301,8 +286,13 @@ class TestInvoiceModel(TestCase):
 
     def test_staff_cant_edit_invoice(self):
         statuses = [
-            APPROVED_BY_FINANCE_1, APPROVED_BY_FINANCE_2, APPROVED_BY_STAFF,
-            CHANGES_REQUESTED_BY_FINANCE_2, CHANGES_REQUESTED_BY_STAFF, DECLINED, PAID
+            APPROVED_BY_FINANCE,
+            APPROVED_BY_FINANCE_2,
+            APPROVED_BY_STAFF,
+            CHANGES_REQUESTED_BY_FINANCE_2,
+            CHANGES_REQUESTED_BY_STAFF,
+            DECLINED,
+            PAID,
         ]
         user = StaffFactory()
         for status in statuses:
@@ -311,8 +301,16 @@ class TestInvoiceModel(TestCase):
 
     def test_applicant_cant_edit_deliverables(self):
         statuses = [
-            SUBMITTED, RESUBMITTED, CHANGES_REQUESTED_BY_STAFF, APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_1,
-            APPROVED_BY_FINANCE_1, CHANGES_REQUESTED_BY_FINANCE_2, APPROVED_BY_FINANCE_2, DECLINED, PAID
+            SUBMITTED,
+            RESUBMITTED,
+            CHANGES_REQUESTED_BY_STAFF,
+            APPROVED_BY_STAFF,
+            CHANGES_REQUESTED_BY_FINANCE,
+            APPROVED_BY_FINANCE,
+            CHANGES_REQUESTED_BY_FINANCE_2,
+            APPROVED_BY_FINANCE_2,
+            DECLINED,
+            PAID,
         ]
         user = ApplicantFactory()
         for status in statuses:
@@ -320,7 +318,7 @@ class TestInvoiceModel(TestCase):
             self.assertFalse(invoice.can_user_edit_deliverables(user))
 
     def test_staff_can_edit_deliverables(self):
-        statuses = [SUBMITTED, RESUBMITTED, CHANGES_REQUESTED_BY_FINANCE_1]
+        statuses = [SUBMITTED, RESUBMITTED, CHANGES_REQUESTED_BY_FINANCE]
         user = StaffFactory()
         for status in statuses:
             invoice = InvoiceFactory(status=status)
@@ -328,8 +326,13 @@ class TestInvoiceModel(TestCase):
 
     def test_staff_cant_edit_deliverables(self):
         statuses = [
-            APPROVED_BY_FINANCE_1, APPROVED_BY_FINANCE_2, APPROVED_BY_STAFF,
-            CHANGES_REQUESTED_BY_FINANCE_2, CHANGES_REQUESTED_BY_STAFF, DECLINED, PAID
+            APPROVED_BY_FINANCE,
+            APPROVED_BY_FINANCE_2,
+            APPROVED_BY_STAFF,
+            CHANGES_REQUESTED_BY_FINANCE_2,
+            CHANGES_REQUESTED_BY_STAFF,
+            DECLINED,
+            PAID,
         ]
         user = StaffFactory()
         for status in statuses:
@@ -354,8 +357,14 @@ class TestInvoiceModel(TestCase):
 
     def test_finance1_cant_edit_deliverables(self):
         statuses = [
-            APPROVED_BY_FINANCE_1, APPROVED_BY_FINANCE_2, CHANGES_REQUESTED_BY_FINANCE_1, CHANGES_REQUESTED_BY_STAFF,
-            DECLINED, PAID, SUBMITTED, RESUBMITTED,
+            APPROVED_BY_FINANCE,
+            APPROVED_BY_FINANCE_2,
+            CHANGES_REQUESTED_BY_FINANCE,
+            CHANGES_REQUESTED_BY_STAFF,
+            DECLINED,
+            PAID,
+            SUBMITTED,
+            RESUBMITTED,
         ]
         user = FinanceFactory()
         for status in statuses:
@@ -364,7 +373,7 @@ class TestInvoiceModel(TestCase):
 
     @override_settings(INVOICE_EXTENDED_WORKFLOW=True)
     def test_finance2_can_edit_deliverables(self):
-        statuses = [APPROVED_BY_FINANCE_1]
+        statuses = [APPROVED_BY_FINANCE]
         user = Finance2Factory()
         for status in statuses:
             invoice = InvoiceFactory(status=status)
@@ -373,8 +382,15 @@ class TestInvoiceModel(TestCase):
     @override_settings(INVOICE_EXTENDED_WORKFLOW=True)
     def test_finance2_cant_edit_deliverables(self):
         statuses = [
-            APPROVED_BY_FINANCE_2, APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_1,
-            CHANGES_REQUESTED_BY_FINANCE_2, CHANGES_REQUESTED_BY_STAFF, DECLINED, PAID, SUBMITTED, RESUBMITTED
+            APPROVED_BY_FINANCE_2,
+            APPROVED_BY_STAFF,
+            CHANGES_REQUESTED_BY_FINANCE,
+            CHANGES_REQUESTED_BY_FINANCE_2,
+            CHANGES_REQUESTED_BY_STAFF,
+            DECLINED,
+            PAID,
+            SUBMITTED,
+            RESUBMITTED,
         ]
         user = Finance2Factory()
         for status in statuses:
@@ -395,7 +411,7 @@ class TestInvoiceQueryset(TestCase):
     def test_in_progress(self):
         InvoiceFactory(status=SUBMITTED)
         InvoiceFactory(status=APPROVED_BY_STAFF)
-        InvoiceFactory(status=CHANGES_REQUESTED_BY_FINANCE_1)
+        InvoiceFactory(status=CHANGES_REQUESTED_BY_FINANCE)
         InvoiceFactory(status=DECLINED)
         self.assertEqual(Invoice.objects.in_progress().count(), 3)
 
@@ -404,7 +420,7 @@ class TestInvoiceQueryset(TestCase):
         self.assertEqual(Invoice.objects.approved_by_staff().count(), 1)
 
     def test_approved_by_finance_1(self):
-        InvoiceFactory(status=APPROVED_BY_FINANCE_1)
+        InvoiceFactory(status=APPROVED_BY_FINANCE)
         self.assertEqual(Invoice.objects.approved_by_finance_1().count(), 1)
 
     @override_settings(INVOICE_EXTENDED_WORKFLOW=True)
@@ -417,7 +433,7 @@ class TestInvoiceQueryset(TestCase):
     @override_settings(INVOICE_EXTENDED_WORKFLOW=False)
     def test_for_finance_1(self):
         InvoiceFactory(status=APPROVED_BY_STAFF)
-        InvoiceFactory(status=APPROVED_BY_FINANCE_1)
+        InvoiceFactory(status=APPROVED_BY_FINANCE)
         InvoiceFactory(status=SUBMITTED)
         self.assertEqual(Invoice.objects.for_finance_1().count(), 2)
 
@@ -508,12 +524,16 @@ class TestReportConfig(TestCase):
         # length (31st Oct to 30th Nov)
         # combined => 31th + 1 month = 30th - 1 day = 29th (wrong)
         # separate => 31th - 1 day = 30th + 1 month = 30th (correct)
-        next_due = report.project.start_date - relativedelta(days=1) + relativedelta(months=1)
+        next_due = (
+            report.project.start_date - relativedelta(days=1) + relativedelta(months=1)
+        )
         self.assertEqual(Report.objects.count(), 1)
         self.assertEqual(report.end_date, next_due)
 
     def test_no_report_creates_report_not_in_past(self):
-        config = ReportConfigFactory(schedule_start=self.today - relativedelta(months=3))
+        config = ReportConfigFactory(
+            schedule_start=self.today - relativedelta(months=3)
+        )
         report = config.current_due_report()
         self.assertEqual(Report.objects.count(), 1)
         self.assertEqual(report.end_date, self.today)
@@ -533,7 +553,9 @@ class TestReportConfig(TestCase):
 
     def test_past_due_report_creates_report(self):
         config = ReportConfigFactory(schedule_start=self.today - relativedelta(days=2))
-        ReportFactory(project=config.project, end_date=self.today - relativedelta(days=1))
+        ReportFactory(
+            project=config.project, end_date=self.today - relativedelta(days=1)
+        )
 
         # Separate day from month for case where start date + 1 month would exceed next month
         # length (31st Oct to 30th Nov)
@@ -551,7 +573,9 @@ class TestReportConfig(TestCase):
 
     def test_past_due_report_future_schedule_creates_report(self):
         config = ReportConfigFactory(schedule_start=self.today + relativedelta(days=3))
-        ReportFactory(project=config.project, end_date=self.today - relativedelta(days=1))
+        ReportFactory(
+            project=config.project, end_date=self.today - relativedelta(days=1)
+        )
 
         report = config.current_due_report()
         self.assertEqual(Report.objects.count(), 2)
@@ -559,19 +583,27 @@ class TestReportConfig(TestCase):
 
     def test_submitted_report_unaffected(self):
         config = ReportConfigFactory()
-        report = ReportFactory(is_submitted=True, project=config.project, end_date=self.today + relativedelta(days=1))
+        report = ReportFactory(
+            is_submitted=True,
+            project=config.project,
+            end_date=self.today + relativedelta(days=1),
+        )
         next_report = config.current_due_report()
         self.assertNotEqual(report, next_report)
 
     def test_past_due(self):
         report = ReportFactory(past_due=True)
         config = report.project.report_config
-        self.assertQuerysetEqual(config.past_due_reports(), [report], transform=lambda x: x)
+        self.assertQuerysetEqual(
+            config.past_due_reports(), [report], transform=lambda x: x
+        )
 
     def test_past_due_has_drafts(self):
         report = ReportFactory(past_due=True, is_draft=True)
         config = report.project.report_config
-        self.assertQuerysetEqual(config.past_due_reports(), [report], transform=lambda x: x)
+        self.assertQuerysetEqual(
+            config.past_due_reports(), [report], transform=lambda x: x
+        )
 
     def test_past_due_no_submitted(self):
         report = ReportFactory(is_submitted=True, past_due=True)

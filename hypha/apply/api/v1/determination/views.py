@@ -34,24 +34,33 @@ from .utils import get_fields_for_stage, outcome_choices_for_phase
 
 
 class SubmissionDeterminationViewSet(
-    BaseStreamForm,
-    WagtailSerializer,
-    SubmissionNestedMixin,
-    viewsets.GenericViewSet
+    BaseStreamForm, WagtailSerializer, SubmissionNestedMixin, viewsets.GenericViewSet
 ):
     permission_classes = (
-        permissions.IsAuthenticated, IsApplyStaffUser,
+        permissions.IsAuthenticated,
+        IsApplyStaffUser,
     )
     permission_classes_by_action = {
-        'create': [permissions.IsAuthenticated, HasDeterminationCreatePermission, IsApplyStaffUser, ],
-        'draft': [permissions.IsAuthenticated, HasDeterminationDraftPermission, IsApplyStaffUser, ],
+        "create": [
+            permissions.IsAuthenticated,
+            HasDeterminationCreatePermission,
+            IsApplyStaffUser,
+        ],
+        "draft": [
+            permissions.IsAuthenticated,
+            HasDeterminationDraftPermission,
+            IsApplyStaffUser,
+        ],
     }
     serializer_class = SubmissionDeterminationSerializer
 
     def get_permissions(self):
         try:
             # return permission_classes depending on `action`
-            return [permission() for permission in self.permission_classes_by_action[self.action]]
+            return [
+                permission()
+                for permission in self.permission_classes_by_action[self.action]
+            ]
         except KeyError:
             # action is not set return default permission_classes
             return [permission() for permission in self.permission_classes]
@@ -62,7 +71,7 @@ class SubmissionDeterminationViewSet(
 
         These form fields will be used to get respective serializer fields.
         """
-        if self.action in ['retrieve', 'update']:
+        if self.action in ["retrieve", "update"]:
             # For detail and edit api form fields used while submitting
             # determination should be used.
             determination = self.get_object()
@@ -76,13 +85,13 @@ class SubmissionDeterminationViewSet(
         if the request is to save as draft or the determination submitted
         is saved as draft.
         """
-        if self.action == 'retrieve':
+        if self.action == "retrieve":
             determination = self.get_object()
             draft = determination.is_draft
-        elif self.action == 'draft':
+        elif self.action == "draft":
             draft = True
         else:
-            draft = self.request.data.get('is_draft', False)
+            draft = self.request.data.get("is_draft", False)
         return super().get_serializer_class(draft)
 
     def get_queryset(self):
@@ -94,7 +103,7 @@ class SubmissionDeterminationViewSet(
         Get the determination object by id. If not found raise 404.
         """
         queryset = self.get_queryset()
-        obj = get_object_or_404(queryset, id=self.kwargs['pk'])
+        obj = get_object_or_404(queryset, id=self.kwargs["pk"])
         self.check_object_permissions(self.request, obj)
         return obj
 
@@ -109,8 +118,8 @@ class SubmissionDeterminationViewSet(
                 determination_data[field_block.id] = determination.outcome
             if isinstance(field_block.block, RichTextBlock):
                 determination_data[field_block.id] = field_block.value.source
-        determination_data['id'] = determination.id
-        determination_data['is_draft'] = determination.is_draft
+        determination_data["id"] = determination.id
+        determination_data["is_draft"] = determination.is_draft
         return determination_data
 
     def retrieve(self, request, *args, **kwargs):
@@ -118,9 +127,7 @@ class SubmissionDeterminationViewSet(
         Get details of a determination on a submission
         """
         determination = self.get_object()
-        ser = self.get_serializer(
-            self.get_determination_data(determination)
-        )
+        ser = self.get_serializer(self.get_determination_data(determination))
         return Response(ser.data)
 
     def get_form_fields(self):
@@ -132,17 +139,19 @@ class SubmissionDeterminationViewSet(
                 outcome_choices = outcome_choices_for_phase(
                     submission, self.request.user
                 )
-                if self.action == 'update':
+                if self.action == "update":
                     # Outcome can not be edited after being set once, so we do not
                     # need to render this field.
                     # form_fields.pop(field_block.id)
-                    form_fields[field_block.id].widget = forms.TextInput(attrs={'readonly': 'readonly'})
+                    form_fields[field_block.id].widget = forms.TextInput(
+                        attrs={"readonly": "readonly"}
+                    )
                 else:
                     # Outcome field choices need to be set according to the phase.
                     form_fields[field_block.id].choices = outcome_choices
         return form_fields
 
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=["get"])
     def fields(self, request, *args, **kwargs):
         """
         List details of all the form fields that were created by admin for adding determinations.
@@ -156,13 +165,15 @@ class SubmissionDeterminationViewSet(
     def get_draft_determination(self):
         submission = self.get_submission_object()
         try:
-            determination = Determination.objects.get(submission=submission, is_draft=True)
+            determination = Determination.objects.get(
+                submission=submission, is_draft=True
+            )
         except Determination.DoesNotExist:
             return
         else:
             return determination
 
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=["get"])
     def draft(self, request, *args, **kwargs):
         """
         Returns the draft determination submitted on a submission by current user.
@@ -170,9 +181,7 @@ class SubmissionDeterminationViewSet(
         determination = self.get_draft_determination()
         if not determination:
             return Response({})
-        ser = self.get_serializer(
-            self.get_determination_data(determination)
-        )
+        ser = self.get_serializer(self.get_determination_data(determination))
         return Response(ser.data)
 
     def create(self, request, *args, **kwargs):
@@ -193,9 +202,9 @@ class SubmissionDeterminationViewSet(
         ser = self.get_serializer(data=request.data)
         ser.is_valid(raise_exception=True)
         if has_final_determination(submission):
-            return ValidationError({
-                'detail': 'A final determination has already been submitted.'
-            })
+            return ValidationError(
+                {"detail": "A final determination has already been submitted."}
+            )
         determination = self.get_draft_determination()
         if determination is None:
             determination = Determination.objects.create(
@@ -205,9 +214,7 @@ class SubmissionDeterminationViewSet(
         determination.save()
         ser.update(determination, ser.validated_data)
         if determination.is_draft:
-            ser = self.get_serializer(
-                self.get_determination_data(determination)
-            )
+            ser = self.get_serializer(self.get_determination_data(determination))
             return Response(ser.data, status=status.HTTP_201_CREATED)
         with transaction.atomic():
             messenger(
@@ -217,7 +224,7 @@ class SubmissionDeterminationViewSet(
                 submission=submission,
                 related=determination,
             )
-            proposal_form = ser.validated_data.get('proposal_form')
+            proposal_form = ser.validated_data.get("proposal_form")
             transition = transition_from_outcome(int(determination.outcome), submission)
 
             if determination.outcome == NEEDS_MORE_INFO:
@@ -247,9 +254,7 @@ class SubmissionDeterminationViewSet(
             source=submission,
             related=determination,
         )
-        ser = self.get_serializer(
-            self.get_determination_data(determination)
-        )
+        ser = self.get_serializer(self.get_determination_data(determination))
         return Response(ser.data, status=status.HTTP_201_CREATED)
 
     def update(self, request, *args, **kwargs):
@@ -268,7 +273,5 @@ class SubmissionDeterminationViewSet(
             source=determination.submission,
             related=determination,
         )
-        ser = self.get_serializer(
-            self.get_determination_data(determination)
-        )
+        ser = self.get_serializer(self.get_determination_data(determination))
         return Response(ser.data)

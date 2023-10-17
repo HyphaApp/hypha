@@ -2,71 +2,76 @@
 {% load i18n bleach_tags submission_tags %}
 {% block title %}{% trans "Review for" %} {{ review.submission.title }}{% endblock %}
 {% block content %}
-<div class="admin-bar">
-    <div class="admin-bar__inner">
-        <a class="simplified__submissions-link" href="{{ review.submission.get_absolute_url }}">
-            {% trans "Back to submission" %}
-        </a>
-        <h1 class="beta heading heading--no-margin heading--bold">{% trans "Review" %}</h1>
-        <h5>{% trans "For" %}: {{ review.submission.title }} {% trans "by" %} {{ review.author }} {% trans "at" %} {{ review.created_at|date:"SHORT_DATE_FORMAT" }} {% if review.is_updated %}<small>({% trans "Last updated" %}: {{ review.updated_at|date:"SHORT_DATE_FORMAT" }})</small>{% endif %}</h5>
+
+    {% adminbar %}
+        {% slot back_link %}
+            <a class="simplified__submissions-link" href="{{ review.submission.get_absolute_url }}">
+                {% trans "View submission" %}
+            </a>
+        {% endslot %}
+        {% slot header %}{% trans "Review" %}{% endslot %}
+        {% slot sub_heading %}
+            {% trans "For" %}: {{ review.submission.title }} {% trans "by" %} {{ review.author }} {% trans "at" %} {{ review.created_at|date:"SHORT_DATE_FORMAT" }} {% if review.is_updated %}<small>({% trans "Last updated" %}: {{ review.updated_at|date:"SHORT_DATE_FORMAT" }})</small>{% endif %}
+        {% endslot %}
 
         {% include 'review/includes/review_opinions_list.html' with opinions=review.opinions.all %}
-    </div>
-</div>
+    {% endadminbar %}
 
-<div style="display: flex; gap: 2rem; padding-top: 2rem;">
-    <div>
-        <h5>{% trans "Recommendation" %}</h5>
-        <p>{{ review.get_recommendation_display }}</p>
-    </div>
-    <div>
-        <h5>{% trans "Score" %}</h5>
-        <p>{{ review.get_score_display }}</p>
-    </div>
-    <div style="flex-grow: 1"></div>
-    <div>
-        <svg class="icon icon--eye"><use xlink:href="#eye"></use></svg>
-        {{ review.get_visibility_display }}
-    </div>
-    {% if perms.funds.delete_review or request.user == review.author.reviewer %}
+    <div style="display: flex; gap: 2rem; padding-top: 2rem;">
         <div>
-            <a class="link link--delete-review is-active" href="{% url 'apply:submissions:reviews:delete' submission_pk=object.submission.id pk=object.id %}">
-                {% trans "Delete" %}
-                <svg class="icon icon--delete"><use xlink:href="#delete"></use></svg>
-            </a>
+            <h5>{% trans "Recommendation" %}</h5>
+            <p>{{ review.get_recommendation_display }}</p>
         </div>
-    {% endif %}
-    {% if perms.funds.change_review or request.user == review.author.reviewer %}
         <div>
-            <a class="link link--edit-review is-active" href="{% url 'apply:submissions:reviews:edit' submission_pk=object.submission.id pk=object.id %}">
-                {% trans "Edit" %}
-                <svg class="icon icon--pen"><use xlink:href="#pen"></use></svg>
-            </a>
+            <h5>{% trans "Score" %}</h5>
+            <p>{{ review.get_score_display }}</p>
         </div>
-    {% endif %}
-    {% if not review.for_latest %}
+        <div style="flex-grow: 1"></div>
         <div>
-            <h5>{% trans "Review was not against the latest version" %}:</h5>
-            <p>
-                <a class="button button--primary" href="{{ review.get_compare_url }}">{% trans "Compare" %}</a>
-            </p>
+            <svg class="icon icon--eye"><use xlink:href="#eye"></use></svg>
+            {{ review.get_visibility_display }}
         </div>
+        {% if perms.funds.delete_review or request.user == review.author.reviewer %}
+            <div>
+                <a class="link link--delete-review is-active" href="{% url 'apply:submissions:reviews:delete' submission_pk=object.submission.id pk=object.id %}">
+                    {% trans "Delete" %}
+                    <svg class="icon icon--delete"><use xlink:href="#delete"></use></svg>
+                </a>
+            </div>
+        {% endif %}
+        {% if perms.funds.change_review or request.user == review.author.reviewer %}
+            <div>
+                <a class="link link--edit-review is-active" href="{% url 'apply:submissions:reviews:edit' submission_pk=object.submission.id pk=object.id %}">
+                    {% trans "Edit" %}
+                    <svg class="icon icon--pen"><use xlink:href="#pen"></use></svg>
+                </a>
+            </div>
+        {% endif %}
+        {% if not review.for_latest %}
+            <div>
+                <h5>{% trans "Review was not against the latest version" %}:</h5>
+                <p>
+                    <a class="button button--primary" href="{{ review.get_compare_url }}">{% trans "Compare" %}</a>
+                </p>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="rich-text rich-text--answers">
+        {{ object.get_comments_display|submission_links }}
+
+        <div class="prose">
+            {{ object.output_answers|submission_links }}
+        </div>
+    </div>
+
+    {% if form %}
+        <form method="post">
+            {% csrf_token %}
+            {{ form }}
+        </form>
+
+        <P>{% trans "An opinion is a replacement for a review. You will no longer be able to submit a review for this application." %}</P>
     {% endif %}
-</div>
-
-<div class="rich-text rich-text--answers">
-    {{ object.get_comments_display|submission_links }}
-
-    {{ object.output_answers|submission_links }}
-</div>
-
-{% if form %}
-    <form method="post">
-        {% csrf_token %}
-        {{ form }}
-    </form>
-
-    <P>{% trans "An opinion is a replacement for a review. You will no longer be able to submit a review for this application." %}</P>
-{% endif %}
 
 {% endblock %}

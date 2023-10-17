@@ -4,20 +4,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('funds', '0087_applicationsettings'),
+        ("funds", "0087_applicationsettings"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='reminder',
-            name='description',
+            model_name="reminder",
+            name="description",
             field=models.TextField(blank=True),
         ),
         migrations.AddField(
-            model_name='reminder',
-            name='title',
-            field=models.CharField(default='', max_length=60),
+            model_name="reminder",
+            name="title",
+            field=models.CharField(default="", max_length=60),
         ),
     ]

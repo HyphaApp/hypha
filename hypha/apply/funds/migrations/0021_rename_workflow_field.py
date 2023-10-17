@@ -6,50 +6,69 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('funds', '0020_add_workflow_and_status_to_submission'),
+        ("funds", "0020_add_workflow_and_status_to_submission"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='applicationsubmission',
-            old_name='workflow',
-            new_name='workflow_name',
+            model_name="applicationsubmission",
+            old_name="workflow",
+            new_name="workflow_name",
         ),
         migrations.RenameField(
-            model_name='fundtype',
-            old_name='workflow',
-            new_name='workflow_name',
+            model_name="fundtype",
+            old_name="workflow",
+            new_name="workflow_name",
         ),
         migrations.RenameField(
-            model_name='labtype',
-            old_name='workflow',
-            new_name='workflow_name',
+            model_name="labtype",
+            old_name="workflow",
+            new_name="workflow_name",
         ),
         migrations.RenameField(
-            model_name='round',
-            old_name='workflow',
-            new_name='workflow_name',
+            model_name="round",
+            old_name="workflow",
+            new_name="workflow_name",
         ),
         migrations.AlterField(
-            model_name='applicationsubmission',
-            name='workflow_name',
-            field=models.CharField(choices=[('single', 'Single Stage'), ('double', 'Two Stage')], default='single', max_length=100, verbose_name='Workflow'),
+            model_name="applicationsubmission",
+            name="workflow_name",
+            field=models.CharField(
+                choices=[("single", "Single Stage"), ("double", "Two Stage")],
+                default="single",
+                max_length=100,
+                verbose_name="Workflow",
+            ),
         ),
         migrations.AlterField(
-            model_name='fundtype',
-            name='workflow_name',
-            field=models.CharField(choices=[('single', 'Single Stage'), ('double', 'Two Stage')], default='single', max_length=100, verbose_name='Workflow'),
+            model_name="fundtype",
+            name="workflow_name",
+            field=models.CharField(
+                choices=[("single", "Single Stage"), ("double", "Two Stage")],
+                default="single",
+                max_length=100,
+                verbose_name="Workflow",
+            ),
         ),
         migrations.AlterField(
-            model_name='labtype',
-            name='workflow_name',
-            field=models.CharField(choices=[('single', 'Single Stage'), ('double', 'Two Stage')], default='single', max_length=100, verbose_name='Workflow'),
+            model_name="labtype",
+            name="workflow_name",
+            field=models.CharField(
+                choices=[("single", "Single Stage"), ("double", "Two Stage")],
+                default="single",
+                max_length=100,
+                verbose_name="Workflow",
+            ),
         ),
         migrations.AlterField(
-            model_name='round',
-            name='workflow_name',
-            field=models.CharField(choices=[('single', 'Single Stage'), ('double', 'Two Stage')], default='single', max_length=100, verbose_name='Workflow'),
+            model_name="round",
+            name="workflow_name",
+            field=models.CharField(
+                choices=[("single", "Single Stage"), ("double", "Two Stage")],
+                default="single",
+                max_length=100,
+                verbose_name="Workflow",
+            ),
         ),
     ]

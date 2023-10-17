@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.postgres.search import SearchQuery, SearchRank
+from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.db import models
 from django.http import HttpRequest, HttpResponse, HttpResponseForbidden
@@ -14,9 +15,10 @@ from django.views.decorators.http import require_http_methods
 from django_htmx.http import HttpResponseClientRedirect, HttpResponseClientRefresh
 from wagtail.models import Page
 
+from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.determinations.views import BatchDeterminationCreateView
 from hypha.apply.funds.models.screening import ScreeningStatus
-from hypha.apply.funds.workflow import PHASES, get_action_mapping
+from hypha.apply.funds.workflow import PHASES, get_action_mapping, review_statuses
 from hypha.apply.search.filters import apply_date_filter
 from hypha.apply.search.query_parser import parse_search_query
 from hypha.apply.users.decorators import is_apply_staff
@@ -36,42 +38,42 @@ User = get_user_model()
 def screening_decision_context(selected_screening_statuses: list) -> dict:
     screening_options = [
         {
-            'slug': 'null',
-            'title': _('No screening'),
-            'selected': 'null' in selected_screening_statuses,
+            "slug": "null",
+            "title": _("No screening"),
+            "selected": "null" in selected_screening_statuses,
         },
     ] + [
         {
-            'slug': str(item.id),
-            'title': item.title,
-            'selected': str(item.id) in selected_screening_statuses,
+            "slug": str(item.id),
+            "title": item.title,
+            "selected": str(item.id) in selected_screening_statuses,
         }
         for item in ScreeningStatus.objects.filter(
             id__in=ApplicationSubmission.objects.all()
-            .values('screening_statuses__id')
-            .distinct('screening_statuses__id')
+            .values("screening_statuses__id")
+            .distinct("screening_statuses__id")
         )
     ]
 
     selected_screening_statuses_objects = filter(
-        lambda x: x['selected'] is True, screening_options
+        lambda x: x["selected"] is True, screening_options
     )
     return {
-        'selected_screening_statuses_objects': selected_screening_statuses_objects,
-        'screening_options': screening_options,
+        "selected_screening_statuses_objects": selected_screening_statuses_objects,
+        "screening_options": screening_options,
     }
 
 
 @login_required
 @user_passes_test(is_apply_staff)
 def submission_all_beta(
-    request: HttpRequest, template_name='submissions/all.html'
+    request: HttpRequest, template_name="submissions/all.html"
 ) -> HttpResponse:
-    search_query = request.GET.get('query') or ""
+    search_query = request.GET.get("query") or ""
     parsed_query = parse_search_query(search_query)
-    search_term, search_filters = parsed_query['text'], parsed_query['filters']
+    search_term, search_filters = parsed_query["text"], parsed_query["filters"]
 
-    show_archived = request.GET.get("archived", False) == 'on'
+    show_archived = request.GET.get("archived", False) == "on"
     selected_funds = request.GET.getlist("fund")
     selected_rounds = request.GET.getlist("round")
     selected_leads = request.GET.getlist("lead")
@@ -109,38 +111,42 @@ def submission_all_beta(
         qs = qs.exclude_draft()
 
     if "submitted" in search_filters:
-        qs = apply_date_filter(qs=qs, field='submit_time', values=search_filters['submitted'])
+        qs = apply_date_filter(
+            qs=qs, field="submit_time", values=search_filters["submitted"]
+        )
 
     if "updated" in search_filters:
-        qs = apply_date_filter(qs=qs, field='last_update', values=search_filters['updated'])
+        qs = apply_date_filter(
+            qs=qs, field="last_update", values=search_filters["updated"]
+        )
 
     if "flagged" in search_filters:
-        if "@me" in search_filters['flagged']:
+        if "@me" in search_filters["flagged"]:
             qs = qs.flagged_by(request.user)
 
     if "lead" in search_filters:
-        if "@me" in search_filters['lead']:
+        if "@me" in search_filters["lead"]:
             qs = qs.filter(lead=request.user)
 
     if "reviewer" in search_filters:
-        if "@me" in search_filters['reviewer']:
+        if "@me" in search_filters["reviewer"]:
             qs = qs.filter(reviewers=request.user)
 
     if "id" in search_filters:
-        qs = qs.filter(id__in=search_filters['id'])
+        qs = qs.filter(id__in=search_filters["id"])
 
     if "is" in search_filters:
-        if "archived" in search_filters['is']:
+        if "archived" in search_filters["is"]:
             qs = qs.filter(is_archive=True)
 
     if search_term:
-        query = SearchQuery(search_term, search_type='websearch')
-        rank_annotation = SearchRank(models.F('search_document'), query)
+        query = SearchQuery(search_term, search_type="websearch")
+        rank_annotation = SearchRank(models.F("search_document"), query)
         qs = qs.filter(search_document=query)
         qs = qs.annotate(rank=rank_annotation)
 
     filter_extras = {
-        'exclude': settings.SUBMISSIONS_TABLE_EXCLUDED_FIELDS,
+        "exclude": settings.SUBMISSIONS_TABLE_EXCLUDED_FIELDS,
     }
 
     if selected_funds:
@@ -155,24 +161,24 @@ def submission_all_beta(
 
     # Status Filter Options
     STATUS_MAP = dict(PHASES)
-    for row in qs.order_by().values('status').annotate(n=models.Count('status')):
-        phase = STATUS_MAP[row['status']]
+    for row in qs.order_by().values("status").annotate(n=models.Count("status")):
+        phase = STATUS_MAP[row["status"]]
         display_name = phase.display_name
         try:
-            count = status_count_raw[display_name]['count']
+            count = status_count_raw[display_name]["count"]
         except KeyError:
             count = 0
         status_count_raw[display_name] = {
-            'count': count + row['n'],
-            'title': display_name,
-            'bg_color': phase.bg_color,
-            'slug': phase.display_slug,
-            'selected': phase.display_slug in selected_statuses,
+            "count": count + row["n"],
+            "title": display_name,
+            "bg_color": phase.bg_color,
+            "slug": phase.display_slug,
+            "selected": phase.display_slug in selected_statuses,
         }
 
     status_counts = sorted(
         status_count_raw.values(),
-        key=lambda t: (t['selected'], t['count']),
+        key=lambda t: (t["selected"], t["count"]),
         reverse=True,
     )
 
@@ -194,30 +200,30 @@ def submission_all_beta(
     )
 
     qs = filters.qs
-    qs = qs.prefetch_related('meta_terms')
+    qs = qs.prefetch_related("meta_terms")
 
     sort_options_raw = {
-        "submitted-desc": ("-submit_time", _('Newest')),
-        "submitted-asc": ("submit_time", _('Oldest')),
-        "comments-desc": ("-comment_count", _('Most Commented')),
-        "comments-asc": ("comment_count", _('Least Commented')),
-        "updated-desc": ("-last_update", _('Recently Updated')),
-        "updated-asc": ("last_update", _('Least Recently Updated')),
-        "relevance-desc": ("-rank", _('Best Match')),
+        "submitted-desc": ("-submit_time", _("Newest")),
+        "submitted-asc": ("submit_time", _("Oldest")),
+        "comments-desc": ("-comment_count", _("Most Commented")),
+        "comments-asc": ("comment_count", _("Least Commented")),
+        "updated-desc": ("-last_update", _("Recently Updated")),
+        "updated-asc": ("last_update", _("Least Recently Updated")),
+        "relevance-desc": ("-rank", _("Best Match")),
     }
 
     sort_options = [
-        {'name': v[1], 'param': k, 'selected': selected_sort == k}
+        {"name": v[1], "param": k, "selected": selected_sort == k}
         for k, v in sort_options_raw.items()
     ]
 
     if selected_sort and selected_sort in sort_options_raw.keys():
-        if not search_query and selected_sort == 'relevance-desc':
-            qs = qs.order_by('-submit_time')
+        if not search_query and selected_sort == "relevance-desc":
+            qs = qs.order_by("-submit_time")
         else:
             qs = qs.order_by(sort_options_raw[selected_sort][0])
     elif search_term:
-        qs = qs.order_by('-rank')
+        qs = qs.order_by("-rank")
     else:
         qs = qs.order_by("-submit_time")
 
@@ -226,31 +232,31 @@ def submission_all_beta(
     page = Paginator(qs, per_page=60, orphans=20).page(page)
 
     ctx = {
-        'base_template': base_template,
-        'search_query': search_query,
-        'filters': filters,
-        'page': page,
-        'submissions': page.object_list,
-        'submission_ids': [x.id for x in page.object_list],
-        'show_archived': show_archived,
-        'selected_funds': selected_funds,
-        'selected_fund_objects': selected_fund_objects,
-        'selected_rounds': selected_rounds,
-        'selected_round_objects': selected_round_objects,
-        'selected_leads': selected_leads,
-        'selected_applicants': selected_applicants,
-        'selected_reviewers': selected_reviewers,
-        'selected_meta_terms': selected_meta_terms,
-        'selected_category_options': selected_category_options,
-        'status_counts': status_counts,
-        'sort_options': sort_options,
-        'selected_sort': selected_sort,
-        'selected_statuses': selected_statuses,
-        'is_filtered': is_filtered,
-        'duration': end - start,
-        'can_view_archive': can_view_archives,
-        'can_bulk_archive': permissions.can_bulk_archive_submissions(request.user),
-        'can_bulk_delete': permissions.can_bulk_delete_submissions(request.user),
+        "base_template": base_template,
+        "search_query": search_query,
+        "filters": filters,
+        "page": page,
+        "submissions": page.object_list,
+        "submission_ids": [x.id for x in page.object_list],
+        "show_archived": show_archived,
+        "selected_funds": selected_funds,
+        "selected_fund_objects": selected_fund_objects,
+        "selected_rounds": selected_rounds,
+        "selected_round_objects": selected_round_objects,
+        "selected_leads": selected_leads,
+        "selected_applicants": selected_applicants,
+        "selected_reviewers": selected_reviewers,
+        "selected_meta_terms": selected_meta_terms,
+        "selected_category_options": selected_category_options,
+        "status_counts": status_counts,
+        "sort_options": sort_options,
+        "selected_sort": selected_sort,
+        "selected_statuses": selected_statuses,
+        "is_filtered": is_filtered,
+        "duration": end - start,
+        "can_view_archive": can_view_archives,
+        "can_bulk_archive": permissions.can_bulk_archive_submissions(request.user),
+        "can_bulk_delete": permissions.can_bulk_delete_submissions(request.user),
     } | screening_decision_context(selected_screening_statuses)
     return render(request, template_name, ctx)
 
@@ -296,17 +302,59 @@ def bulk_delete_submissions(request):
 @user_passes_test(is_apply_staff)
 @require_http_methods(["POST"])
 def bulk_update_submissions_status(request: HttpRequest) -> HttpResponse:
-    submission_ids = request.POST.getlist('selectedSubmissionIds')
-    action = request.GET.get('action')
-    transitions = get_action_mapping(workflow=None)[action]['transitions']
+    submission_ids = request.POST.getlist("selectedSubmissionIds")
+    action = request.POST.get("action")
 
-    qs = ApplicationSubmission.objects.filter(id__in=submission_ids)
+    transitions = get_action_mapping(workflow=None)[action]["transitions"]
 
-    redirect: HttpResponse = BatchDeterminationCreateView.should_redirect(request, qs, transitions)  # type: ignore
+    submissions = ApplicationSubmission.objects.filter(id__in=submission_ids)
+
+    redirect: HttpResponse = BatchDeterminationCreateView.should_redirect(request, submissions, transitions)  # type: ignore
     if redirect:
         return HttpResponseClientRedirect(redirect.url)
 
-    for submission in qs:
-        submission.perform_transition(action, request.user, request=request)
+    failed = []
+    phase_changes = {}
+    for submission in submissions:
+        valid_actions = {
+            action for action, _ in submission.get_actions_for_user(request.user)
+        }
+        old_phase = submission.phase
+        try:
+            transition = (valid_actions & set(transitions)).pop()
+            submission.perform_transition(
+                transition,
+                request.user,
+                request=request,
+                notify=False,
+            )
+        except (PermissionDenied, KeyError):
+            failed.append(submission)
+        else:
+            phase_changes[submission.id] = old_phase
+
+    if failed:
+        messages.warning(
+            request,
+            _("Failed to update: ")
+            + ", ".join(str(submission) for submission in failed),
+        )
+
+    if succeeded_submissions := submissions.exclude(id__in=(s.id for s in failed)):
+        messenger(
+            MESSAGES.BATCH_TRANSITION,
+            user=request.user,
+            request=request,
+            sources=succeeded_submissions,
+            related=phase_changes,
+        )
+
+    if ready_for_review := filter(lambda phase: phase in review_statuses, transitions):
+        messenger(
+            MESSAGES.BATCH_READY_FOR_REVIEW,
+            user=request.user,
+            request=request,
+            sources=succeeded_submissions.filter(status__in=ready_for_review),
+        )
 
     return HttpResponseClientRefresh()

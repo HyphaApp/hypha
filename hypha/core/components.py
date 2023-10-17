@@ -13,6 +13,4 @@ class DropdownMenu(component.Component):
     template_name = "components/dropdown-menu.html"
 
     def get_context_data(self, **kwargs) -> dict:
-        return {
-            'id': str(uuid.uuid4())
-        }
+        return {"id": str(uuid.uuid4())}

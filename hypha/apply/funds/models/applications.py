@@ -22,9 +22,11 @@ from django.db.models.functions import Coalesce, Left, Length
 from django.http import Http404
 from django.shortcuts import redirect, render
 from django.template.response import TemplateResponse
+from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
+from django_ratelimit.decorators import ratelimit
 from modelcluster.fields import ParentalManyToManyField
 from wagtail.admin.panels import (
     FieldPanel,
@@ -58,11 +60,18 @@ class ApplicationBaseManager(PageQuerySet):
     def order_by_end_date(self):
         # OutRef path__startswith with find all descendants of the parent
         # We only have children, so no issues at this time
-        rounds = RoundBase.objects.open().filter(path__startswith=OuterRef('path'))
-        qs = self.public().live().annotate(end_date=Subquery(rounds.values('end_date')[:1]))
-        return qs.order_by('end_date')
+        rounds = RoundBase.objects.open().filter(path__startswith=OuterRef("path"))
+        qs = (
+            self.public()
+            .live()
+            .annotate(end_date=Subquery(rounds.values("end_date")[:1]))
+        )
+        return qs.order_by("end_date")
 
 
+@method_decorator(
+    ratelimit(key="ip", rate=settings.DEFAULT_RATE_LIMIT, method="POST"), name="serve"
+)
 class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
     is_createable = False
 
@@ -71,38 +80,58 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
 
     reviewers = ParentalManyToManyField(
         settings.AUTH_USER_MODEL,
-        related_name='%(class)s_reviewers',
+        related_name="%(class)s_reviewers",
         limit_choices_to=LIMIT_TO_REVIEWERS,
         blank=True,
     )
 
-    image = models.ForeignKey('images.CustomImage', null=True, blank=True, on_delete=models.SET_NULL, related_name='+')
+    image = models.ForeignKey(
+        "images.CustomImage",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+    )
 
     description = models.TextField(null=True, blank=True)
 
     # higher the weight means top priority, 100th will be on top.
-    weight = models.PositiveIntegerField(default=1, blank=True, validators=[MinValueValidator(1), MaxValueValidator(100)])
-
-    guide_link = models.URLField(blank=True, max_length=255, help_text=_('Link to the apply guide.'))
-
-    slack_channel = models.CharField(blank=True, max_length=128, help_text=_('The slack #channel for notifications. If left empty, notifications will go to the default channel.'))
-    activity_digest_recipient_emails = ArrayField(
-        models.EmailField(default=''),
-        blank=True,
-        null=True,
-        help_text=_('Comma separated list of emails where a summary of all the activities related to this fund will be sent.')
+    weight = models.PositiveIntegerField(
+        default=1, blank=True, validators=[MinValueValidator(1), MaxValueValidator(100)]
     )
 
-    show_deadline = models.BooleanField(default=True, help_text=_('Should the deadline date be visible for users.'))
+    guide_link = models.URLField(
+        blank=True, max_length=255, help_text=_("Link to the apply guide.")
+    )
+
+    slack_channel = models.CharField(
+        blank=True,
+        max_length=128,
+        help_text=_(
+            "The slack #channel for notifications. If left empty, notifications will go to the default channel."
+        ),
+    )
+    activity_digest_recipient_emails = ArrayField(
+        models.EmailField(default=""),
+        blank=True,
+        null=True,
+        help_text=_(
+            "Comma separated list of emails where a summary of all the activities related to this fund will be sent."
+        ),
+    )
+
+    show_deadline = models.BooleanField(
+        default=True, help_text=_("Should the deadline date be visible for users.")
+    )
 
     objects = PageManager.from_queryset(ApplicationBaseManager)()
 
-    parent_page_types = ['apply_home.ApplyHomePage']
+    parent_page_types = ["apply_home.ApplyHomePage"]
 
     def get_template(self, request, *args, **kwargs):
         # We want to force children to use our base template
         # template attribute is ignored by children
-        return 'funds/application_base.html'
+        return "funds/application_base.html"
 
     def detail(self):
         # The location to find out more information
@@ -122,9 +151,11 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
     def serve(self, request):
         # Manually do what the login_required decorator does so that we can check settings
         if not request.user.is_authenticated and settings.FORCE_LOGIN_FOR_APPLICATION:
-            return redirect('%s?next=%s' % (settings.WAGTAIL_FRONTEND_LOGIN_URL, request.path))
+            return redirect(
+                "%s?next=%s" % (settings.WAGTAIL_FRONTEND_LOGIN_URL, request.path)
+            )
 
-        if hasattr(request, 'is_preview') or not self.open_round:
+        if hasattr(request, "is_preview") or not self.open_round:
             return super().serve(request)
 
         # delegate to the open_round to use the latest form instances
@@ -132,29 +163,31 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
         return self.open_round.serve(request)
 
     content_panels = WorkflowStreamForm.content_panels + [
-        FieldPanel('reviewers', widget=forms.CheckboxSelectMultiple),
-        FieldPanel('guide_link'),
-        FieldPanel('description'),
-        FieldPanel('image'),
-        FieldPanel('weight'),
-        FieldPanel('slack_channel'),
-        FieldPanel('activity_digest_recipient_emails'),
-        FieldPanel('show_deadline'),
+        FieldPanel("reviewers", widget=forms.CheckboxSelectMultiple),
+        FieldPanel("guide_link"),
+        FieldPanel("description"),
+        FieldPanel("image"),
+        FieldPanel("weight"),
+        FieldPanel("slack_channel"),
+        FieldPanel("activity_digest_recipient_emails"),
+        FieldPanel("show_deadline"),
     ]
 
-    edit_handler = TabbedInterface([
-        ObjectList(content_panels, heading=_('Content')),
-        EmailForm.email_tab,
-        ObjectList(WorkflowStreamForm.promote_panels, heading=_('Promote')),
-    ])
+    edit_handler = TabbedInterface(
+        [
+            ObjectList(content_panels, heading=_("Content")),
+            EmailForm.email_tab,
+            ObjectList(WorkflowStreamForm.promote_panels, heading=_("Promote")),
+        ]
+    )
 
 
 class RoundBaseManager(PageQuerySet):
     def open(self):
         rounds = self.live().public().specific()
         rounds = rounds.filter(
-            Q(start_date__lte=date.today()) &
-            Q(Q(end_date__isnull=True) | Q(end_date__gte=date.today()))
+            Q(start_date__lte=date.today())
+            & Q(Q(end_date__isnull=True) | Q(end_date__gte=date.today()))
         )
         return rounds
 
@@ -178,12 +211,12 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
     lead = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         limit_choices_to=LIMIT_TO_STAFF,
-        related_name='%(class)s_lead',
+        related_name="%(class)s_lead",
         on_delete=models.PROTECT,
     )
     reviewers = ParentalManyToManyField(
         settings.AUTH_USER_MODEL,
-        related_name='%(class)s_reviewer',
+        related_name="%(class)s_reviewer",
         limit_choices_to=LIMIT_TO_REVIEWERS,
         blank=True,
     )
@@ -192,63 +225,72 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
         blank=True,
         null=True,
         default=date.today,
-        help_text=_('When no end date is provided the round will remain open indefinitely.')
+        help_text=_(
+            "When no end date is provided the round will remain open indefinitely."
+        ),
     )
     sealed = models.BooleanField(default=False)
 
     content_panels = SubmittableStreamForm.content_panels + [
-        FieldPanel('lead'),
-        MultiFieldPanel([
-            FieldRowPanel([
-                FieldPanel('start_date'),
-                FieldPanel('end_date'),
-            ]),
-        ], heading=_('Dates')),
-        FieldPanel('reviewers', widget=forms.CheckboxSelectMultiple),
+        FieldPanel("lead"),
+        MultiFieldPanel(
+            [
+                FieldRowPanel(
+                    [
+                        FieldPanel("start_date"),
+                        FieldPanel("end_date"),
+                    ]
+                ),
+            ],
+            heading=_("Dates"),
+        ),
+        FieldPanel("reviewers", widget=forms.CheckboxSelectMultiple),
         ReadOnlyPanel(
-            'get_workflow_name_display',
-            heading=_('Workflow'),
-            help_text=_('Copied from the fund.'),
+            "get_workflow_name_display",
+            heading=_("Workflow"),
+            help_text=_("Copied from the fund."),
         ),
         # Forms comes from parental key in models/forms.py
         ReadOnlyInlinePanel(
-            'forms',
+            "forms",
             panels=[ReadOnlyPanel("name")],
-            heading=_('Application forms'),
-            help_text=_('Copied from the fund.'),
+            heading=_("Application forms"),
+            help_text=_("Copied from the fund."),
         ),
         ReadOnlyInlinePanel(
-            'review_forms',
+            "review_forms",
             panels=[ReadOnlyPanel("name")],
-            heading=_('Internal Review Form'),
-            help_text=_('Copied from the fund.'),
+            heading=_("Internal Review Form"),
+            help_text=_("Copied from the fund."),
         ),
         ReadOnlyInlinePanel(
-            'external_review_forms',
+            "external_review_forms",
             panels=[ReadOnlyPanel("name")],
-            help_text=_('Copied from the fund.'),
-            heading=_('External Review Form'),
+            help_text=_("Copied from the fund."),
+            heading=_("External Review Form"),
         ),
         ReadOnlyInlinePanel(
-            'determination_forms',
+            "determination_forms",
             panels=[ReadOnlyPanel("name")],
-            help_text=_('Copied from the fund.'),
-            heading=_('Determination Form'),
+            help_text=_("Copied from the fund."),
+            heading=_("Determination Form"),
         ),
     ]
 
-    edit_handler = TabbedInterface([
-        ObjectList(content_panels, heading=_('Content')),
-        ObjectList(SubmittableStreamForm.promote_panels, heading=_('Promote')),
-    ])
+    edit_handler = TabbedInterface(
+        [
+            ObjectList(content_panels, heading=_("Content")),
+            ObjectList(SubmittableStreamForm.promote_panels, heading=_("Promote")),
+        ]
+    )
 
     def get_template(self, request, *args, **kwargs):
         # Make sure all children use the shared template
-        return 'funds/round.html'
+        return "funds/round.html"
 
     def get_landing_page_template(self, request, *args, **kwargs):
         # Make sure all children use the shared template
-        return 'funds/round_landing.html'
+        return "funds/round_landing.html"
 
     @cached_property
     def fund(self):
@@ -264,19 +306,19 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
 
     def save(self, *args, **kwargs):
         is_new = not self.id
-        if is_new and hasattr(self, 'parent_page'):
+        if is_new and hasattr(self, "parent_page"):
             parent_page = self.parent_page[self.__class__][self.title]
             self.workflow_name = parent_page.workflow_name
             self.reviewers = parent_page.reviewers.all()
 
         super().save(*args, **kwargs)
 
-        if is_new and hasattr(self, 'parent_page'):
+        if is_new and hasattr(self, "parent_page"):
             # Would be nice to do this using model clusters as part of the __init__
-            self._copy_forms('forms')
-            self._copy_forms('review_forms')
-            self._copy_forms('external_review_forms')
-            self._copy_forms('determination_forms')
+            self._copy_forms("forms")
+            self._copy_forms("review_forms")
+            self._copy_forms("external_review_forms")
+            self._copy_forms("determination_forms")
 
     def _copy_forms(self, field):
         for form in getattr(self.get_parent().specific, field).all():
@@ -287,9 +329,11 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
         # Create a copy of the existing form object
         new_form = form.form
         new_form.id = None
-        new_form.name = '{} for {} ({})'.format(new_form.name, self.title, self.get_parent().title)
+        new_form.name = "{} for {} ({})".format(
+            new_form.name, self.title, self.get_parent().title
+        )
         new_form.save()
-        if hasattr(form, 'stage'):
+        if hasattr(form, "stage"):
             new_class.objects.create(round=self, form=new_form, stage=form.stage)
         else:
             new_class.objects.create(round=self, form=new_form)
@@ -307,47 +351,52 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
         conflict_query = ()
 
         if self.start_date and self.end_date and self.start_date > self.end_date:
-            raise ValidationError({
-                'end_date': 'End date must come after the start date',
-            })
+            raise ValidationError(
+                {
+                    "end_date": "End date must come after the start date",
+                }
+            )
 
         if self.start_date and self.end_date:
             conflict_query = (
-                Q(start_date__range=[self.start_date, self.end_date]) |
-                Q(end_date__range=[self.start_date, self.end_date]) |
-                Q(start_date__lte=self.start_date, end_date__gte=self.end_date)
+                Q(start_date__range=[self.start_date, self.end_date])
+                | Q(end_date__range=[self.start_date, self.end_date])
+                | Q(start_date__lte=self.start_date, end_date__gte=self.end_date)
             )
         elif self.start_date:
-            conflict_query = (
-                Q(start_date__lte=self.start_date, end_date__isnull=True) |
-                Q(end_date__gte=self.start_date)
-            )
+            conflict_query = Q(
+                start_date__lte=self.start_date, end_date__isnull=True
+            ) | Q(end_date__gte=self.start_date)
 
-        if not self.id and hasattr(self, 'parent_page'):
+        if not self.id and hasattr(self, "parent_page"):
             # Check if the create hook has added the parent page, we aren't an object yet.
             # Ensures we can access related objects during the clean phase instead of save.
-            base_query = RoundBase.objects.child_of(self.parent_page[self.__class__][self.title])
+            base_query = RoundBase.objects.child_of(
+                self.parent_page[self.__class__][self.title]
+            )
         else:
             # don't need parent page, we are an actual object now.
             base_query = RoundBase.objects.sibling_of(self)
 
         if conflict_query:
-            conflicting_rounds = base_query.filter(
-                conflict_query
-            ).exclude(id=self.id)
+            conflicting_rounds = base_query.filter(conflict_query).exclude(id=self.id)
 
             if conflicting_rounds.exists():
-                error_message = mark_safe('Overlaps with the following rounds:<br> {}'.format(
-                    '<br>'.join([
-                        f'<a href="{admin_url(round)}">{round.title}</a>: {round.start_date} - {round.end_date}'
-                        for round in conflicting_rounds]
+                error_message = mark_safe(
+                    "Overlaps with the following rounds:<br> {}".format(
+                        "<br>".join(
+                            [
+                                f'<a href="{admin_url(round)}">{round.title}</a>: {round.start_date} - {round.end_date}'
+                                for round in conflicting_rounds
+                            ]
+                        )
                     )
-                ))
+                )
                 error = {
-                    'start_date': error_message,
+                    "start_date": error_message,
                 }
                 if self.end_date:
-                    error['end_date'] = error_message
+                    error["end_date"] = error_message
 
                 raise ValidationError(error)
 
@@ -357,11 +406,14 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
         try:
             submission_class = self.get_submission_class()
             submission = submission_class.objects.get(id=submission_id)
-            if submission.status in OPEN_CALL_PHASES and self.get_parent() == submission.page:
-                title_block_id = submission.named_blocks.get('title')
+            if (
+                submission.status in OPEN_CALL_PHASES
+                and self.get_parent() == submission.page
+            ):
+                title_block_id = submission.named_blocks.get("title")
                 if title_block_id:
                     field_data = submission.data(title_block_id)
-                    initial_values[title_block_id] = field_data + ' (please edit)'
+                    initial_values[title_block_id] = field_data + " (please edit)"
 
                 for field_id in submission.first_group_normal_text_blocks:
                     field_data = submission.data(field_id)
@@ -370,9 +422,11 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
                 # Select first item in the Group toggle blocks
                 for toggle_block_id, toggle_field in submission.group_toggle_blocks:
                     try:
-                        initial_values[toggle_block_id] = toggle_field.value['choices'][0]
+                        initial_values[toggle_block_id] = toggle_field.value["choices"][
+                            0
+                        ]
                     except IndexError:
-                        initial_values[toggle_block_id] = 'yes'
+                        initial_values[toggle_block_id] = "yes"
                     except KeyError:
                         pass
 
@@ -387,53 +441,62 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
         if submission_id:
             initial_values = self.get_initial_data_open_call_submission(submission_id)
             if initial_values:
-                form_parameters['initial'] = initial_values
+                form_parameters["initial"] = initial_values
 
         return form_parameters
 
     def get_form(self, *args, **kwargs):
-        draft = kwargs.pop('draft', False)
-        user = kwargs.get('user')
+        draft = kwargs.pop("draft", False)
+        user = kwargs.get("user")
         try:
             form_class = self.get_form_class(draft, args[0], user=user)
         except IndexError:
             form_class = self.get_form_class(draft, user=user)
-        submission_id = kwargs.pop('submission_id', None)
+        submission_id = kwargs.pop("submission_id", None)
         form_params = self.get_form_parameters(submission_id=submission_id)
         form_params.update(kwargs)
         return form_class(*args, **form_params)
 
     def serve(self, request, *args, **kwargs):
-        if hasattr(request, 'is_preview') or hasattr(request, 'show_round'):
+        if hasattr(request, "is_preview") or hasattr(request, "show_round"):
             # Overriding serve method to pass submission id to get_form method
-            copy_open_submission = request.GET.get('open_call_submission')
-            if request.method == 'POST':
-                draft = request.POST.get('draft', False)
-                form = self.get_form(request.POST, request.FILES, page=self, user=request.user, draft=draft)
+            copy_open_submission = request.GET.get("open_call_submission")
+            if request.method == "POST":
+                draft = request.POST.get("draft", False)
+                form = self.get_form(
+                    request.POST,
+                    request.FILES,
+                    page=self,
+                    user=request.user,
+                    draft=draft,
+                )
 
                 if form.is_valid():
                     form_submission = self.process_form_submission(form, draft=draft)
                     # Required for django-file-form: delete temporary files for the new files
                     # that are uploaded.
                     form.delete_temporary_files()
-                    return self.render_landing_page(request, form_submission, *args, **kwargs)
+                    return self.render_landing_page(
+                        request, form_submission, *args, **kwargs
+                    )
             else:
-                form = self.get_form(page=self, user=request.user, submission_id=copy_open_submission)
+                form = self.get_form(
+                    page=self, user=request.user, submission_id=copy_open_submission
+                )
 
             context = self.get_context(request)
-            context['form'] = form
-            context['show_all_group_fields'] = True if copy_open_submission else False
-            return render(
-                request,
-                self.get_template(request),
-                context
-            )
+            context["form"] = form
+            context["show_all_group_fields"] = True if copy_open_submission else False
+            return render(request, self.get_template(request), context)
 
         # We hide the round as only the open round is used which is displayed through the
         # fund page
         raise Http404()
 
 
+@method_decorator(
+    ratelimit(key="ip", rate=settings.DEFAULT_RATE_LIMIT, method="POST"), name="serve"
+)
 class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
     is_createable = False
     submission_class = ApplicationSubmission
@@ -444,51 +507,67 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
     lead = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         limit_choices_to=LIMIT_TO_STAFF,
-        related_name='lab_lead',
+        related_name="lab_lead",
         on_delete=models.PROTECT,
     )
     reviewers = ParentalManyToManyField(
         settings.AUTH_USER_MODEL,
-        related_name='labs_reviewer',
+        related_name="labs_reviewer",
         limit_choices_to=LIMIT_TO_REVIEWERS,
         blank=True,
     )
 
-    image = models.ForeignKey('images.CustomImage', null=True, blank=True, on_delete=models.SET_NULL, related_name='+')
+    image = models.ForeignKey(
+        "images.CustomImage",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+    )
 
     description = models.TextField(null=True, blank=True)
 
     # higher the weight means top priority, 100th will be on top.
-    weight = models.PositiveIntegerField(default=1, blank=True, validators=[MinValueValidator(1), MaxValueValidator(100)])
+    weight = models.PositiveIntegerField(
+        default=1, blank=True, validators=[MinValueValidator(1), MaxValueValidator(100)]
+    )
 
-    guide_link = models.URLField(blank=True, max_length=255, help_text=_('Link to the apply guide.'))
+    guide_link = models.URLField(
+        blank=True, max_length=255, help_text=_("Link to the apply guide.")
+    )
 
-    slack_channel = models.CharField(blank=True, max_length=128, help_text=_('The slack #channel for notifications.'))
+    slack_channel = models.CharField(
+        blank=True, max_length=128, help_text=_("The slack #channel for notifications.")
+    )
     activity_digest_recipient_emails = ArrayField(
-        models.EmailField(default=''),
+        models.EmailField(default=""),
         blank=True,
         null=True,
-        help_text=_('Comma separated list of emails where a summary of all the activities related to this lab will be sent.')
+        help_text=_(
+            "Comma separated list of emails where a summary of all the activities related to this lab will be sent."
+        ),
     )
-    parent_page_types = ['apply_home.ApplyHomePage']
+    parent_page_types = ["apply_home.ApplyHomePage"]
     subpage_types = []  # type: ignore
 
     content_panels = WorkflowStreamForm.content_panels + [
-        FieldPanel('lead'),
-        FieldPanel('reviewers', widget=forms.CheckboxSelectMultiple),
-        FieldPanel('guide_link'),
-        FieldPanel('description'),
-        FieldPanel('image'),
-        FieldPanel('weight'),
-        FieldPanel('slack_channel'),
-        FieldPanel('activity_digest_recipient_emails'),
+        FieldPanel("lead"),
+        FieldPanel("reviewers", widget=forms.CheckboxSelectMultiple),
+        FieldPanel("guide_link"),
+        FieldPanel("description"),
+        FieldPanel("image"),
+        FieldPanel("weight"),
+        FieldPanel("slack_channel"),
+        FieldPanel("activity_digest_recipient_emails"),
     ]
 
-    edit_handler = TabbedInterface([
-        ObjectList(content_panels, heading=_('Content')),
-        EmailForm.email_tab,
-        ObjectList(WorkflowStreamForm.promote_panels, heading=_('Promote')),
-    ])
+    edit_handler = TabbedInterface(
+        [
+            ObjectList(content_panels, heading=_("Content")),
+            EmailForm.email_tab,
+            ObjectList(WorkflowStreamForm.promote_panels, heading=_("Promote")),
+        ]
+    )
 
     def detail(self):
         # The location to find out more information
@@ -505,8 +584,9 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
         return self.live
 
     def get_form(self, *args, **kwargs):
-        user = kwargs.get('user')
-        form_class = self.get_form_class(user=user)
+        draft = kwargs.pop("draft", False)
+        user = kwargs.get("user")
+        form_class = self.get_form_class(draft=draft, user=user)
         form_params = self.get_form_parameters()
         form_params.update(kwargs)
 
@@ -515,24 +595,28 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
     def serve(self, request, *args, **kwargs):
         # Manually do what the login_required decorator does so that we can check settings
         if not request.user.is_authenticated and settings.FORCE_LOGIN_FOR_APPLICATION:
-            return redirect('%s?next=%s' % (settings.WAGTAIL_FRONTEND_LOGIN_URL, request.path))
+            return redirect(
+                "%s?next=%s" % (settings.WAGTAIL_FRONTEND_LOGIN_URL, request.path)
+            )
 
-        if request.method == 'POST':
-            form = self.get_form(request.POST, request.FILES, page=self, user=request.user)
-            draft = request.POST.get('draft', False)
+        if request.method == "POST":
+            draft = request.POST.get("draft", False)
+            form = self.get_form(
+                request.POST, request.FILES, page=self, user=request.user, draft=draft
+            )
             if form.is_valid():
-                form_submission = SubmittableStreamForm.process_form_submission(self, form, draft=draft)
-                return self.render_landing_page(request, form_submission, *args, **kwargs)
+                form_submission = SubmittableStreamForm.process_form_submission(
+                    self, form, draft=draft
+                )
+                return self.render_landing_page(
+                    request, form_submission, *args, **kwargs
+                )
         else:
             form = self.get_form(page=self, user=request.user)
 
         context = self.get_context(request)
-        context['form'] = form
-        return TemplateResponse(
-            request,
-            self.get_template(request),
-            context
-        )
+        context["form"] = form
+        return TemplateResponse(request, self.get_template(request), context)
 
 
 class RoundsAndLabsQueryset(PageQuerySet):
@@ -540,7 +624,10 @@ class RoundsAndLabsQueryset(PageQuerySet):
         return self.filter(start_date__gt=date.today())
 
     def open(self):
-        return self.filter(Q(end_date__gte=date.today(), start_date__lte=date.today()) | Q(end_date__isnull=True))
+        return self.filter(
+            Q(end_date__gte=date.today(), start_date__lte=date.today())
+            | Q(end_date__isnull=True)
+        )
 
     def closed(self):
         return self.filter(end_date__lt=date.today())
@@ -559,49 +646,68 @@ class RoundsAndLabsProgressQueryset(RoundsAndLabsQueryset):
 
 class RoundsAndLabsManager(PageManager):
     def get_queryset(self, base_queryset=RoundsAndLabsQueryset):
-        funds = ApplicationBase.objects.filter(path=OuterRef('parent_path'))
+        funds = ApplicationBase.objects.filter(path=OuterRef("parent_path"))
 
-        return base_queryset(self.model, using=self._db).type(SubmittableStreamForm).annotate(
-            lead=Coalesce(
-                F('roundbase__lead__full_name'),
-                F('labbase__lead__full_name'),
-            ),
-            start_date=F('roundbase__start_date'),
-            end_date=F('roundbase__end_date'),
-            parent_path=Left(F('path'), Length('path') - ApplicationBase.steplen, output_field=CharField()),
-            fund=Subquery(funds.values('title')[:1]),
-            lead_pk=Coalesce(
-                F('roundbase__lead__pk'),
-                F('labbase__lead__pk'),
-            ),
+        return (
+            base_queryset(self.model, using=self._db)
+            .type(SubmittableStreamForm)
+            .annotate(
+                lead=Coalesce(
+                    F("roundbase__lead__full_name"),
+                    F("labbase__lead__full_name"),
+                ),
+                start_date=F("roundbase__start_date"),
+                end_date=F("roundbase__end_date"),
+                parent_path=Left(
+                    F("path"),
+                    Length("path") - ApplicationBase.steplen,
+                    output_field=CharField(),
+                ),
+                fund=Subquery(funds.values("title")[:1]),
+                lead_pk=Coalesce(
+                    F("roundbase__lead__pk"),
+                    F("labbase__lead__pk"),
+                ),
+            )
         )
 
     def with_progress(self):
-        submissions = ApplicationSubmission.objects.filter(Q(round=OuterRef('pk')) | Q(page=OuterRef('pk'))).current()
+        submissions = ApplicationSubmission.objects.filter(
+            Q(round=OuterRef("pk")) | Q(page=OuterRef("pk"))
+        ).current()
         closed_submissions = submissions.inactive()
 
-        return self.get_queryset(RoundsAndLabsProgressQueryset).annotate(
-            total_submissions=Coalesce(
-                Subquery(
-                    submissions.exclude_draft().values('round').annotate(count=Count('pk')).values('count'),
-                    output_field=IntegerField(),
+        return (
+            self.get_queryset(RoundsAndLabsProgressQueryset)
+            .annotate(
+                total_submissions=Coalesce(
+                    Subquery(
+                        submissions.exclude_draft()
+                        .values("round")
+                        .annotate(count=Count("pk"))
+                        .values("count"),
+                        output_field=IntegerField(),
+                    ),
+                    0,
                 ),
-                0,
-            ),
-            closed_submissions=Coalesce(
-                Subquery(
-                    closed_submissions.exclude_draft().values('round').annotate(count=Count('pk')).values('count'),
-                    output_field=IntegerField(),
+                closed_submissions=Coalesce(
+                    Subquery(
+                        closed_submissions.exclude_draft()
+                        .values("round")
+                        .annotate(count=Count("pk"))
+                        .values("count"),
+                        output_field=IntegerField(),
+                    ),
+                    0,
                 ),
-                0,
-            ),
-        ).annotate(
-            progress=Case(
-                When(total_submissions=0, then=None),
-                default=(F('closed_submissions') * 100) / F('total_submissions'),
-                output_fields=FloatField(),
             )
-
+            .annotate(
+                progress=Case(
+                    When(total_submissions=0, then=None),
+                    default=(F("closed_submissions") * 100) / F("total_submissions"),
+                    output_fields=FloatField(),
+                )
+            )
         )
 
     def open(self):
@@ -622,6 +728,7 @@ class RoundsAndLabs(Page):
     This behaves as a useful way to get all the rounds and labs that are defined
     in the project regardless of how they are implemented (lab/round/sealed_round)
     """
+
     class Meta:
         proxy = True
 
@@ -641,23 +748,25 @@ class RoundsAndLabs(Page):
     objects = RoundsAndLabsManager()
 
     def save(self, *args, **kwargs):
-        raise NotImplementedError('Do not save through this model')
+        raise NotImplementedError("Do not save through this model")
 
 
 @register_setting
 class ApplicationSettings(BaseSiteSetting):
-
     wagtail_reference_index_ignore = True
 
     class Meta:
-        verbose_name = 'application settings'
+        verbose_name = "application settings"
 
     extra_text_round = RichTextField(blank=True)
     extra_text_lab = RichTextField(blank=True)
 
     panels = [
-        MultiFieldPanel([
-            FieldPanel('extra_text_round'),
-            FieldPanel('extra_text_lab'),
-        ], 'extra text on application landing page'),
+        MultiFieldPanel(
+            [
+                FieldPanel("extra_text_round"),
+                FieldPanel("extra_text_lab"),
+            ],
+            "extra text on application landing page",
+        ),
     ]

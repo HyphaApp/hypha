@@ -5,15 +5,19 @@ import hypha.public.funds.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('public_funds', '0008_recreate_pages'),
+        ("public_funds", "0008_recreate_pages"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='labpage',
-            name='lab_link',
-            field=models.CharField(blank=True, max_length=255, validators=[hypha.public.funds.models.MailToAndURLValidator()], verbose_name='External link'),
+            model_name="labpage",
+            name="lab_link",
+            field=models.CharField(
+                blank=True,
+                max_length=255,
+                validators=[hypha.public.funds.models.MailToAndURLValidator()],
+                verbose_name="External link",
+            ),
         ),
     ]

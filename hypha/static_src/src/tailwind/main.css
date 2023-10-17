@@ -1,8 +1,12 @@
 @import "tailwindcss/base";
+@import "./base/variables.css";
+@import "./base/core.css";
 @import "./base/forms.css";
 
 @import "tailwindcss/components";
-@import "./components/main.css";
+@import "./components/choices.css";
+@import "./components/daterangepicker.css";
+@import "./components/django-file-field.css";
 
 @import "tailwindcss/utilities";
 /* @import "./custom-utilities.css"; */

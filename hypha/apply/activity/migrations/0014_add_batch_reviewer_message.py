@@ -4,15 +4,33 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('activity', '0013_add_new_event_type_screening'),
+        ("activity", "0013_add_new_event_type_screening"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='event',
-            name='type',
-            field=models.CharField(choices=[('UPDATE_LEAD', 'Update Lead'), ('EDIT', 'Edit'), ('APPLICANT_EDIT', 'Applicant Edit'), ('NEW_SUBMISSION', 'New Submission'), ('SCREENING', 'Screening'), ('TRANSITION', 'Transition'), ('DETERMINATION_OUTCOME', 'Determination Outcome'), ('INVITED_TO_PROPOSAL', 'Invited To Proposal'), ('REVIEWERS_UPDATED', 'Reviewers Updated'), ('BATCH_REVIEWERS_UPDATED', 'Batch Reviewers Updated'), ('READY_FOR_REVIEW', 'Ready For Review'), ('NEW_REVIEW', 'New Review'), ('COMMENT', 'Comment'), ('PROPOSAL_SUBMITTED', 'Proposal Submitted'), ('OPENED_SEALED', 'Opened Sealed Submission')], max_length=50),
+            model_name="event",
+            name="type",
+            field=models.CharField(
+                choices=[
+                    ("UPDATE_LEAD", "Update Lead"),
+                    ("EDIT", "Edit"),
+                    ("APPLICANT_EDIT", "Applicant Edit"),
+                    ("NEW_SUBMISSION", "New Submission"),
+                    ("SCREENING", "Screening"),
+                    ("TRANSITION", "Transition"),
+                    ("DETERMINATION_OUTCOME", "Determination Outcome"),
+                    ("INVITED_TO_PROPOSAL", "Invited To Proposal"),
+                    ("REVIEWERS_UPDATED", "Reviewers Updated"),
+                    ("BATCH_REVIEWERS_UPDATED", "Batch Reviewers Updated"),
+                    ("READY_FOR_REVIEW", "Ready For Review"),
+                    ("NEW_REVIEW", "New Review"),
+                    ("COMMENT", "Comment"),
+                    ("PROPOSAL_SUBMITTED", "Proposal Submitted"),
+                    ("OPENED_SEALED", "Opened Sealed Submission"),
+                ],
+                max_length=50,
+            ),
         ),
     ]

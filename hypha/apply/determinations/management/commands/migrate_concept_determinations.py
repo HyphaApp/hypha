@@ -44,11 +44,13 @@ class Command(BaseCommand):
     }
 
     def add_arguments(self, parser):
-        parser.add_argument('source', type=argparse.FileType('r'), help='Migration source JSON file')
+        parser.add_argument(
+            "source", type=argparse.FileType("r"), help="Migration source JSON file"
+        )
 
     @transaction.atomic
     def handle(self, *args, **options):
-        with options['source'] as json_data:
+        with options["source"] as json_data:
             self.data = json.load(json_data)
 
             blacklist = {"8104"}
@@ -62,9 +64,9 @@ class Command(BaseCommand):
         form_data = {}
 
         try:
-            determination = Determination.objects.get(drupal_id=node['nid'])
+            determination = Determination.objects.get(drupal_id=node["nid"])
         except Determination.DoesNotExist:
-            determination = Determination(drupal_id=node['nid'])
+            determination = Determination(drupal_id=node["nid"])
 
         # Disable auto_* on date fields so imported dates are used.
         for field in determination._meta.local_fields:
@@ -74,18 +76,24 @@ class Command(BaseCommand):
                 field.auto_now = False
 
         # TODO timezone?
-        determination.created_at = datetime.fromtimestamp(int(node['created']), timezone.utc)
-        determination.updated_at = datetime.fromtimestamp(int(node['changed']), timezone.utc)
-        determination.author = self.get_user(node['uid'])
+        determination.created_at = datetime.fromtimestamp(
+            int(node["created"]), timezone.utc
+        )
+        determination.updated_at = datetime.fromtimestamp(
+            int(node["changed"]), timezone.utc
+        )
+        determination.author = self.get_user(node["uid"])
         determination.submission = self.get_submission(node)
         determination.outcome = self.get_determination(node)
-        determination.message = self.get_field_value('field_cnsr_determination_message', node)
+        determination.message = self.get_field_value(
+            "field_cnsr_determination_message", node
+        )
 
         for field in node:
             if field in self.STREAMFIELD_MAP:
                 try:
-                    id = self.STREAMFIELD_MAP[field]['id']
-                    if id != 'message':
+                    id = self.STREAMFIELD_MAP[field]["id"]
+                    if id != "message":
                         form_data[id] = self.get_field_value(field, node)
                 except TypeError:
                     pass
@@ -96,7 +104,9 @@ class Command(BaseCommand):
             determination.save()
             self.stdout.write(f"Processed \"{node['title']}\" ({node['nid']})")
         except IntegrityError:
-            self.stdout.write(f"Skipped \"{node['title']}\" ({node['nid']}) due to IntegrityError")
+            self.stdout.write(
+                f"Skipped \"{node['title']}\" ({node['nid']}) due to IntegrityError"
+            )
             pass
 
     def get_field_value(self, field, node):
@@ -109,32 +119,32 @@ class Command(BaseCommand):
         field: [{value|target_id|tid: VALUE},]
         """
         mapping = self.STREAMFIELD_MAP[field]
-        mapping_type = mapping['type']
-        key = mapping.get('key', 'value')
+        mapping_type = mapping["type"]
+        key = mapping.get("key", "value")
         source_value = node[field]
         value = None
 
         if mapping_type == "direct":
             value = source_value
-        elif mapping_type == 'value':
+        elif mapping_type == "value":
             if key in source_value:
-                value = self.nl2br(source_value[key]) if source_value else ''
+                value = self.nl2br(source_value[key]) if source_value else ""
             else:
-                value = self.nl2br(source_value['value']) if source_value else ''
-        elif mapping_type == 'map' and 'map' in 'mapping':
-            value = mapping['map'].get(source_value[key])
-        elif mapping_type == 'address' and 'map' in mapping:
+                value = self.nl2br(source_value["value"]) if source_value else ""
+        elif mapping_type == "map" and "map" in "mapping":
+            value = mapping["map"].get(source_value[key])
+        elif mapping_type == "address" and "map" in mapping:
             try:
-                value_map = mapping['map']
+                value_map = mapping["map"]
                 value = {}
                 for item in value_map:
                     value[value_map[item]] = source_value[item]
                 value = json.dumps(value)
             except TypeError:
                 value = {}
-        elif mapping_type == 'boolean':
-            value = source_value[key] == '1' if source_value else False
-        elif mapping_type == 'category':
+        elif mapping_type == "boolean":
+            value = source_value[key] == "1" if source_value else False
+        elif mapping_type == "category":
             if not source_value:
                 value = []
             else:
@@ -147,7 +157,7 @@ class Command(BaseCommand):
                         option = self.get_referenced_term(item[key])
                         if option:
                             value.append(option)
-        elif mapping_type == 'file':
+        elif mapping_type == "file":
             # TODO finish mapping. Requires access to the files.
             value = {}
 
@@ -162,10 +172,10 @@ class Command(BaseCommand):
 
     def get_submission(self, node):
         try:
-            nid = node['field_submission_concept_note']['target_id']
+            nid = node["field_submission_concept_note"]["target_id"]
             return ApplicationSubmission.objects.get(drupal_id=nid)
         except ApplicationSubmission.DoesNotExist:
-            return 'None'
+            return "None"
 
     def get_determination(self, node):
         choices = {
@@ -173,15 +183,15 @@ class Command(BaseCommand):
             "approved": 2,
             "dropped": 0,
             "unapproved": 0,
-            "undetermined": 1
+            "undetermined": 1,
         }
 
         try:
-            determination = choices.get(node['field_cnsr_determination']['value'], 1)
+            determination = choices.get(node["field_cnsr_determination"]["value"], 1)
         except TypeError:
             determination = 1
 
         return determination
 
     def nl2br(self, value):
-        return value.replace('\r\n', '<br>\n')
+        return value.replace("\r\n", "<br>\n")

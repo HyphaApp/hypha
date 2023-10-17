@@ -5,30 +5,33 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('activity', '0021_add_review_delete_event'),
+        ("activity", "0021_add_review_delete_event"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='activity',
-            name='timestamp',
+            model_name="activity",
+            name="timestamp",
             field=models.DateTimeField(),
         ),
         migrations.AddField(
-            model_name='activity',
-            name='current',
+            model_name="activity",
+            name="current",
             field=models.BooleanField(default=True),
         ),
         migrations.AddField(
-            model_name='activity',
-            name='edited',
+            model_name="activity",
+            name="edited",
             field=models.DateTimeField(default=None, null=True),
         ),
         migrations.AddField(
-            model_name='activity',
-            name='previous',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='activity.Activity'),
+            model_name="activity",
+            name="previous",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="activity.Activity",
+            ),
         ),
     ]
