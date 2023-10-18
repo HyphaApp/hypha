@@ -165,17 +165,18 @@ class ActivityAdapter(AdapterBase):
         )
 
     def handle_paf_assignment(self, source, paf_approvals, **kwargs):
-        users = ", ".join(
-            [
-                paf_approval.user.full_name
-                if paf_approval.user.full_name
-                else paf_approval.user.username
-                for paf_approval in paf_approvals
-            ]
-        )  # paf_approvals has to be a list
-        users_sentence = " and".join(users.rsplit(",", 1))
-
-        return _("PAF assigned to {}").format(users_sentence)
+        if hasattr(paf_approvals, "__iter__"):  # paf_approvals has to be iterable
+            users = ", ".join(
+                [
+                    paf_approval.user.full_name
+                    if paf_approval.user.full_name
+                    else paf_approval.user.username
+                    for paf_approval in paf_approvals
+                ]
+            )
+            users_sentence = " and".join(users.rsplit(",", 1))
+            return _("PAF assigned to {}").format(users_sentence)
+        return None
 
     def handle_transition(self, old_phase, source, **kwargs):
         submission = source
