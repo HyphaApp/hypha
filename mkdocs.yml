@@ -40,6 +40,7 @@ theme:
 plugins:
   - awesome-pages
   - search
+  - macros
   - git-revision-date-localized:
       type: timeago
 
@@ -97,3 +98,33 @@ extra:
     - icon: material/github
       link: https://github.com/HyphaApp/
       name: GitHub Org
+
+  versions:
+    python: 
+      version: 3.11
+      packages:
+        macos: python@3.11
+    node:
+      version: 16
+    nvm:
+      version: 0.39.5
+      packages:
+        debian: https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh
+        fedora: https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh
+        macos: https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh
+    postgres:
+      version: 14
+      packages: 
+        debian: postgresql-server-dev-14
+        fedora: postgresql-server
+        macos: postgres@14
+    postgres_devel:
+      packages:
+        debian: libpq-dev
+        fedora: libpq5-devel
+    tested_ubuntu:
+      version: 22.04 LTS
+    tested_macos:
+      version: Ventura 13.5.2
+    tested_fedora:
+      version: Workstation 38

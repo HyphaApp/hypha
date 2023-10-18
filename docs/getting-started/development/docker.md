@@ -19,18 +19,18 @@ OBS! All examples from now on will use the `hypha.test` domains.
 
 ## Get the code
 
-```
-$ git clone https://github.com/HyphaApp/hypha.git hypha
+```console
+git clone https://github.com/HyphaApp/hypha.git hypha
 
-$ cd hypha
+cd hypha
 ```
 
 ## Create media directory
 
 In production media is stored on AWS S3 but for local development you need a "media" directory.
 
-```
-$ mkdir media
+```console
+mkdir media
 ```
 
 ## Docker
@@ -41,8 +41,8 @@ Run the docker compose command to build the images. This will take some time.
 
 If you need to rebuild the images to get a later version just run the "build" again.
 
-```
-$ docker-compose --file docker/docker-compose.yaml build
+```console
+docker-compose --file docker/docker-compose.yaml build
 ```
 
 The build command needs to be run from Hypha root so it can copy needed files. The other commands are easier to run directly from the "docker" sub directory.
@@ -51,14 +51,14 @@ The build command needs to be run from Hypha root so it can copy needed files. T
 
 Move to the "docker" directory.
 
-```
-$ cd docker
+```console
+cd docker
 ```
 
 To start the docker containers you use the "up" command. This command you will use each time you want to start up and use this docker environment.
 
-```
-$ docker-compose up
+```console
+docker-compose up
 ```
 
 ### Access the docker environment
@@ -69,7 +69,7 @@ Go to [http://hypha.test:8090/](http://hypha.test:8090/)
 
 To get bash shell on the container that runs the Django app, use this command.
 
-```
+```console
 docker-compose exec py bash
 ```
 
@@ -79,7 +79,7 @@ Here you can issue django commands as normal. You might want to change the user 
 
 To get a shell on the container that runs Postgres, use this command.
 
-```
+```console
 docker-compose exec db bash
 ```
 
@@ -93,7 +93,7 @@ We will use the "public/sandbox\_db.dump" for this example. That is a good start
 
 First get a shell on the db container.
 
-```
+```console
 docker-compose exec db bash
 ```
 
@@ -131,5 +131,5 @@ After restoring the sandbox db run the migrate command inside the py container.
 
 ```
 docker-compose exec py bash
-python manage.py migrate
+python3 manage.py migrate
 ```

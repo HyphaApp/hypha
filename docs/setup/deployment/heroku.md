@@ -37,7 +37,7 @@ Then so the following steps for each environment.
 Generate secret key with:
 
 ```text
-python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
+python3 -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
 ```
 
 1. Add Heroku Postgres as a add-on. "Hobby dev" or "Hobby basic" works for dev and test and "Standard 0" is a good start for production.
@@ -48,10 +48,10 @@ python -c "from django.core.management.utils import get_random_secret_key; print
 6. Run the following commands from the command line with the help of heroku-cli. If it's the first time you use heroku-cli you first need to login with `heroku login`.
 
 ```text
-$ heroku run python manage.py migrate -a [name-of-app]
-$ heroku run python manage.py createcachetable -a [name-of-app]
-$ heroku run python manage.py createsuperuser -a [name-of-app]
-$ heroku run python manage.py wagtailsiteupdate [the-public-address] [the-apply-address] 443  -a [name-of-app]
+heroku run python3 manage.py migrate -a [name-of-app]
+heroku run python3 manage.py createcachetable -a [name-of-app]
+heroku run python3 manage.py createsuperuser -a [name-of-app]
+heroku run python3 manage.py wagtailsiteupdate [the-public-address] [the-apply-address] 443  -a [name-of-app]
 ```
 
 1. Now add the "release" step back to the "Procfile" and deploy again.

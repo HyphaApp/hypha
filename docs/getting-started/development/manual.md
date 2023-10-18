@@ -8,9 +8,9 @@ minimal setup, the setup may vary slightly for your base operating systems.
 Make sure you have these things installed on your system:
 
 * Git – [Installation Guide](https://git-scm.com/downloads)
-* Python 3.11.x
-* Node 18.x
-* PostgreSQL 14.x (with `libpq-dev` on Linux)
+* Python {{ versions.python.version }}.x
+* Node {{ versions.node.version }}.x
+* PostgreSQL {{ versions.postgres.version }} (with `libpq-dev` on Linux)
 
 !!! info
     On Linux install them with your normal package manager. On macOS [Homebrew] is an excellent option. For Windows [Chocolatey](https://chocolatey.org/) seems popular but we have no experience with Windows. 
@@ -23,14 +23,14 @@ Make sure you have these things installed on your system:
 Use `git` to fetch the code, this will create a `hypha/` directory.
 
 ```console
-$ git clone https://github.com/HyphaApp/hypha.git hypha
+git clone https://github.com/HyphaApp/hypha.git hypha
 ```
 
 Now, create some local directories.
 
 ```console
-$ cd hypha
-$ mkdir -p var/log media
+cd hypha
+mkdir -p var/log media
 ```
 
 NOTE: In production media is stored on AWS S3 but for local development you need a "media" directory. The `var/log` is used to store local logs, if configured.
@@ -43,15 +43,15 @@ NOTE: In production media is stored on AWS S3 but for local development you need
 Create and activate [python virtual environment](https://docs.python.org/3.11/library/venv.html):
 
 ```console
-$ python -m venv venv/
-$ source venv/bin/activate
+python3 -m venv venv/
+source venv/bin/activate
 ```
 
 Install Python & Node packages:
 
 ```console
-$ pip install -r requirements-dev.txt
-$ npm install
+pip install -r requirements-dev.txt
+npm install
 ```
 
 ## Compile JS & SCSS
@@ -59,7 +59,7 @@ $ npm install
 Build all JS/CSS assets for development:
 
 ```console
-$ npm run dev:build
+npm run dev:build
 ```
 
 !!! info
@@ -100,7 +100,7 @@ Hypha supports configuration via either a `local.py` or a `.env` file:
     Copy the provided `local.py.example` file and rename it to `local.py`.
 
     ```console
-    $ cp -p hypha/settings/local.py.example hypha/settings/local.py
+    cp -p hypha/settings/local.py.example hypha/settings/local.py
     ```
 
     ```hl_lines="10 11"
@@ -128,7 +128,7 @@ Hypha supports configuration via either a `local.py` or a `.env` file:
 Create an empty database:
 
 ```console
-$ createdb hypha
+createdb hypha
 ```
 
 Ensure database name `hypha` is added to your `hypha/settings/local.py` or `.env`.
@@ -141,39 +141,39 @@ There are two ways to about it, you can either load demo data from  `/public/san
     To load demo data run:
 
     ```console
-    $ pg_restore --verbose --clean  --if-exists --no-acl --no-owner \
+    pg_restore --verbose --clean  --if-exists --no-acl --no-owner \
                  --dbname=hypha public/sandbox_db.dump
     ```
 
     It's not always completely up to date so run:
     
     ```console
-    $ python manage.py migrate
+    python3 manage.py migrate
     ```
 
 === "From Scratch"
     Create the cache tables.
 
     ```text
-    $ python manage.py createcachetable
+    python3 manage.py createcachetable
     ```
 
     Run all migrations to set up the database tables.
 
     ```text
-    $ python manage.py migrate
+    python3 manage.py migrate
     ```
 
 !!! tip "Tips"
 
     - If `createdb`and `dropdb` are not available you will need to add the Postgres bin directory to your `path` or call the commands with complete path.
-    - If you need to delete/drop the database, you can use `$ dropdb hypha`
+    - If you need to delete/drop the database, you can use `dropdb hypha`
     - On Linux you might need to run as the "postgres" user first when setting up Postgres. Use it to create the database and set up a database user.For local development I suggest creating a user with the same name as your account, then you will not need to specify it on every command.
 
         ```console
-        $ su - postgres
-        $ createdb hypha
-        $ createuser [your-account-name]
+        su - postgres
+        createdb hypha
+        createuser [your-account-name]
         ```
 
 ## Setup Sites
@@ -183,7 +183,7 @@ You will need two domain to run this app, used to serve the public and apply sit
 First, add these sites to the database:
 
 ```console
-$ python manage.py wagtailsiteupdate hypha.test apply.hypha.test 9001
+python3 manage.py wagtailsiteupdate hypha.test apply.hypha.test 9001
 ```
 
 Then, add this to your `/etc/hosts` file.
@@ -202,16 +202,16 @@ Here we are setting the public site be served at http://hypha.test:9001 and appl
 ## Create Login credentials
 
 ```console
-$ python manage.py createsuperuser
+python3 manage.py createsuperuser
 ```
 
 ## Run Development Server
 
 ```console
-$ python manage.py runserver 0.0.0.0:9001 --settings=hypha.settings.dev
+python3 manage.py runserver 0.0.0.0:9001 --settings=hypha.settings.dev
 ```
 
-Alternatively, you can also use `$ make serve-django`
+Alternatively, you can also use `make serve-django`
 
 
 Now you should be able to access the sites:
@@ -227,20 +227,20 @@ To live preview of documentation, while you writing it.
 Activate your virtual environment and install dependencies:
 
 ```console
-$ source venv/bin/activate
-$ python -m pip install -r requirements-dev.txt
+source venv/bin/activate
+python3 -m pip install -r requirements-dev.txt
 ```
 
 Run:
 ```console
-$ make serve-docs
+make serve-docs
 ```
 
 Open http://localhost:9100/ to preview the documentation site.
 
 
 !!! tip
-    You can use `$ make serve` command to run Django Development Server, watch and compile frontend changes and preview docs all at once.
+    You can use `make serve` command to run Django Development Server, watch and compile frontend changes and preview docs all at once.
 
 
 ## Coding Style
@@ -261,13 +261,13 @@ For frontend code, stylelint and eslint is used.
 Run the test with:
 
 ```console
-$ make test
+make test
 ```
 
 For lint the code and not run the full test suite you can use:
 
 ```console
-$ make lint
+make lint
 ```
 
 ## Helpful URLs

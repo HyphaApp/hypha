@@ -17,9 +17,9 @@ You will need two domain to run this app. One for the public site and one for th
 ## Get the code
 
 ```text
-$ git clone https://github.com/HyphaApp/hypha.git hypha
+git clone https://github.com/HyphaApp/hypha.git hypha
 
-$ cd hypha
+cd hypha
 ```
 
 Everything from now on will happen inside the hypha directory.
@@ -41,7 +41,7 @@ There are several files you will need to modify before you run docker-compose.
 Move to the "docker" directory.
 
 ```text
-$ cd docker
+cd docker
 ```
 
 Run the docker compose command to build the images. This will take some time.
@@ -49,7 +49,7 @@ Run the docker compose command to build the images. This will take some time.
 If you need to rebuild the images to get a later version just run the "build" again.
 
 ```text
-$ docker-compose build
+docker-compose build
 ```
 
 ### Start the docker environment
@@ -57,7 +57,7 @@ $ docker-compose build
 To start the docker containers you use the "up" command. This command you will use each time you want to start up and use this docker environment.
 
 ```text
-$ docker-compose up
+docker-compose up
 ```
 
 ### Access the docker environment

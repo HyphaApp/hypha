@@ -2,28 +2,71 @@
 
 ## Standalone Server/VPS
 
-This process was tested on Ubuntu 18.04LTS. It should work on any Debian-based system.
-
 ### Get the code
 
-`git clone https://github.com/HyphaApp/hypha.git [your-site-directory]`
+```console
+git clone https://github.com/HyphaApp/hypha.git # <your site directory>
+```
 
-### Basic installation steps.
 
-These are the basic packages needed before you can start the installation process.
+### Basic installation steps
 
-* python3-pip and python3-venv - install using  `sudo apt-get install python3-pip python3-venv`
-* postgresql \(version 12.x\) use `sudo apt-get install postgresql postgresql-contrib postgresql-server-dev-12`
-* to install nodejs \(version v16.x\), use nodesource. Add the PPA to your sources list by running this script: `curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -` then `sudo apt-get install nodejs`
+=== "Debian"
+
+    This process was tested on **Ubuntu {{ versions.tested_ubuntu.version }}**. It should work on any Debian-based system.
+
+    Install Python pip, venv & PostgreSQL:
+
+    ```console
+    sudo apt install \
+    python3-pip python3-venv \
+    postgresql postgresql-contrib {{ versions.postgres.packages.debian }}
+    ```
+
+=== "Fedora"
+
+    This process was tested on **Fedora {{ versions.tested_fedora.version }}**. It should work on RHEL as well.
+
+    Install Python pip, venv & PostgreSQL:
+
+    ```console
+    sudo dnf install python3-pip 
+    sudo dnf module -y reset postgresql
+    sudo dnf module -y enable postgresql:{{ versions.postgres.version }}
+    sudo dnf install -y {{ versions.postgres.packages.fedora }} postgresql-contrib {{ versions.postgres_devel.packages.fedora }}
+    ```
+
+
+=== "macOS"
+
+    This process was tested on **macOS {{ versions.tested_macos.version }}**.
+
+    Install Python pip, venv & PostgreSQL:
+
+    ```console
+    brew install {{ versions.python.packages.macos }} 
+    brew install {{ versions.postgres.packages.macos }}
+    brew services start {{ versions.postgres.packages.macos }}
+    ```
+
+### Installing Node Version Manager
+
+NodeJS versions have potential to change. To allow for ease of upgrading, it is recommended to use [Node Version Manager (nvm)](https://github.com/nvm-sh/nvm)
+
+```console
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
+nvm install {{ versions.node.version }}
+nvm use {{ versions.node.version }}
+```
 
 ### Python virtual environment
 
 Create the virtual environment, specify the python binary to use and the directory. Then source the activate script to activate the virtual environment. The last line tells Django what settings to use.
 
-```text
-$ python3 -m venv venv/hypha
-$ source venv/hypha/bin/activate
-$ export DJANGO_SETTINGS_MODULE=hypha.settings.production
+```console
+python3 -m venv venv/hypha
+source venv/hypha/bin/activate
+export DJANGO_SETTINGS_MODULE=hypha.settings.production
 ```
 
 Inside your activated virtual environment you will use plain `python` and `pip` commands. Everything inside the virtual environment is python 3 since we specified that when we created it.
@@ -32,8 +75,8 @@ Inside your activated virtual environment you will use plain `python` and `pip` 
 
 Next, install the required packages using:
 
-```text
-$ pip install -r requirements.txt
+```console
+python3 -m pip install -r requirements.txt
 ```
 
 ### Install Node packages
@@ -41,7 +84,7 @@ $ pip install -r requirements.txt
 All the needed Node packages are listed in `package.json`. Install them with this command.
 
 ```text
-$ npm install
+npm install
 ```
 
 ### The Postgres database
@@ -62,14 +105,18 @@ To begin with, set the `export SECURE_SSL_REDIRECT=false` to prevent SSL redirec
 
 Then use the following commands to test run the server:
 
-* `npm run build`
-* `python manage.py collectstatic --noinput`
-* `python manage.py createcachetable`
-* `python manage.py migrate --noinput`
-* `python manage.py clear_cache --cache=default --cache=wagtailcache`
-* `python manage.py createsuperuser`
-* `python manage.py wagtailsiteupdate server.domain apply.server.domain 80`
-* `python manage.py runserver` \(runs development server at [http://127.0.0.1:8000](http://127.0.0.1:8000)\)
+```console
+npm run build
+python manage.py collectstatic --noinput
+python manage.py createcachetable
+python manage.py migrate --noinput
+python manage.py clear_cache --cache=default --cache=wagtailcache
+python manage.py createsuperuser
+python manage.py wagtailsiteupdate server.domain apply.server.domain 80
+python manage.py runserver
+```
+
+\(runs development server at [http://127.0.0.1:8000](http://127.0.0.1:8000)\)
 
 You should see the home page of the server. That's great. You can stop the server, and then we can then take the next steps.
 

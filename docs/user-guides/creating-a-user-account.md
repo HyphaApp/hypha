@@ -3,7 +3,7 @@
 ### Creating superuser
 
 ```
-python manage.py createsuperuser
+python3 manage.py createsuperuser
 ```
 
 The user created is an "administrator" role, a default Django role that bypasses any access restrictions, like 'root' on a Unix server.
