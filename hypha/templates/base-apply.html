@@ -102,7 +102,7 @@
                 </div>
 
                 <section class="header__menus header__menus--desktop">
-                    {% if settings.utils.SystemMessagesSettings.nav_content|safe and not request.user.is_authenticated %}
+                    {% if settings.utils.SystemMessagesSettings.nav_content %}
                         {{ settings.utils.SystemMessagesSettings.nav_content|safe }}
                     {% else %}
                         {% include "navigation/primarynav-apply.html" %}
@@ -127,7 +127,7 @@
                         </div>
                     </div>
 
-                    {% if settings.utils.SystemMessagesSettings.nav_content|safe and not request.user.is_authenticated %}
+                    {% if settings.utils.SystemMessagesSettings.nav_content %}
                         {{ settings.utils.SystemMessagesSettings.nav_content|safe }}
                     {% else %}
                         {% include "navigation/primarynav-apply.html" %}
@@ -143,7 +143,7 @@
                 </section>
 
                 <div class="header__button-container">
-                    {% if latest_notifications %}.
+                    {% if latest_notifications %}
                         <div x-data="{open: false}">
                             <a href="{% url "activity:notifications" %}"
                                class="button button--contains-icons notifications__bell"
