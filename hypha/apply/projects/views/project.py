@@ -123,6 +123,13 @@ class SendForApprovalView(DelegatedViewMixin, UpdateView):
                         user=self.request.user,
                         source=self.object,
                     )
+                    messenger(
+                        MESSAGES.APPROVE_PAF,
+                        request=self.request,
+                        user=self.request.user,
+                        source=self.object,
+                        related=[paf_approvals.first()],
+                    )
                 else:
                     messenger(
                         MESSAGES.ASSIGN_PAF_APPROVER,
@@ -137,6 +144,13 @@ class SendForApprovalView(DelegatedViewMixin, UpdateView):
                     request=self.request,
                     user=self.request.user,
                     source=self.object,
+                )
+                messenger(
+                    MESSAGES.APPROVE_PAF,
+                    request=self.request,
+                    user=self.request.user,
+                    source=self.object,
+                    related=paf_approvals.filter(user__isnull=False),
                 )
             if paf_approvals.filter(user__isnull=True).exists():
                 messenger(
@@ -643,12 +657,16 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
             if project_settings.paf_approval_sequential:
                 # notify next approver
                 if self.object.paf_approvals.filter(approved=False).exists():
-                    if self.object.paf_approvals.filter(approved=False).first().user:
+                    next_paf_approval = self.object.paf_approvals.filter(
+                        approved=False
+                    ).first()
+                    if next_paf_approval.user:
                         messenger(
                             MESSAGES.APPROVE_PAF,
                             request=self.request,
                             user=self.request.user,
                             source=self.object,
+                            related=[next_paf_approval],
                         )
                     else:
                         messenger(
@@ -776,6 +794,7 @@ class UpdateAssignApproversView(DelegatedViewMixin, UpdateView):
                 request=self.request,
                 user=self.request.user,
                 source=self.object,
+                related=[paf_approval],
             )
         else:
             messenger(
@@ -831,6 +850,7 @@ class UpdatePAFApproversView(DelegatedViewMixin, UpdateView):
                         request=self.request,
                         user=self.request.user,
                         source=self.object,
+                        related=[paf_approvals.first()],
                     )
                 elif not user:
                     messenger(
@@ -846,6 +866,7 @@ class UpdatePAFApproversView(DelegatedViewMixin, UpdateView):
                         request=self.request,
                         user=self.request.user,
                         source=self.object,
+                        related=paf_approvals.filter(user__isnull=False),
                     )
                 if paf_approvals.filter(user__isnull=True).exists():
                     messenger(
@@ -861,6 +882,7 @@ class UpdatePAFApproversView(DelegatedViewMixin, UpdateView):
                     request=self.request,
                     user=self.request.user,
                     source=self.object,
+                    related=paf_approvals.filter(user__isnull=False),
                 )
             if paf_approvals.filter(user__isnull=True).exists():
                 messenger(

@@ -50,7 +50,7 @@ class ActivityAdapter(AdapterBase):
             "Lead changed from {old_lead} to {source.lead}"
         ),
         MESSAGES.SEND_FOR_APPROVAL: _("Requested approval"),
-        MESSAGES.APPROVE_PAF: _("PAF assigned to {user}"),
+        MESSAGES.APPROVE_PAF: "handle_paf_assignment",
         MESSAGES.APPROVE_PROJECT: _("Approved"),
         MESSAGES.REQUEST_PROJECT_CHANGE: _(
             'Requested changes for acceptance: "{comment}"'
@@ -163,6 +163,19 @@ class ActivityAdapter(AdapterBase):
         return _("Successfully archived submissions: {title}").format(
             title=submissions_text
         )
+
+    def handle_paf_assignment(self, source, paf_approvals, **kwargs):
+        users = ", ".join(
+            [
+                paf_approval.user.full_name
+                if paf_approval.user.full_name
+                else paf_approval.user.username
+                for paf_approval in paf_approvals
+            ]
+        )  # paf_approvals has to be a list
+        users_sentence = " and".join(users.rsplit(",", 1))
+
+        return _("PAF assigned to {}").format(users_sentence)
 
     def handle_transition(self, old_phase, source, **kwargs):
         submission = source
