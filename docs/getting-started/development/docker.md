@@ -8,7 +8,7 @@ You will need two domain to run this app. One for the public site and one for th
 
 Add this to your `/etc/hosts` file.
 
-```
+```text
 127.0.0.1 hypha.test
 127.0.0.1 apply.hypha.test
 ```
@@ -75,7 +75,9 @@ docker-compose exec py bash
 
 Here you can issue django commands as normal. You might want to change the user - the default is circleci, but most of the code is owned by the user 'node'. To do that:
 
-`docker-compose exec -u node py bash`
+```console
+docker-compose exec -u node py bash
+```
 
 To get a shell on the container that runs Postgres, use this command.
 
@@ -99,29 +101,31 @@ docker-compose exec db bash
 
 Then in that shell you need to install `wget` to download the db dump.
 
-```
+```console
 apt update
 apt install wget
 ```
 
 Then download the sandbox db dump from Github.
 
-```
+```console
 wget https://github.com/HyphaApp/hypha/raw/sandbox/public/sandbox_db.dump
 ```
 
 Before being able to work on this database, you have to drop and prevent any other connections to it.
 
-```
+```console
 psql
-# REVOKE CONNECT ON DATABASE hypha FROM public;
-# SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = 'hypha';
-# \q
+```
+
+```psql
+REVOKE CONNECT ON DATABASE hypha FROM public;
+SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = 'hypha';
 ```
 
 With this done, drop and then create the hypha database and run the pg restore command like this.
 
-```
+```console
 dropdb --user=hypha hypha
 createdb --user=hypha hypha
 pg_restore --verbose --clean --if-exists --no-acl --no-owner --dbname=hypha --username=hypha sandbox_db.dump
@@ -129,7 +133,7 @@ pg_restore --verbose --clean --if-exists --no-acl --no-owner --dbname=hypha --us
 
 After restoring the sandbox db run the migrate command inside the py container.
 
-```
+```console
 docker-compose exec py bash
 python3 manage.py migrate
 ```

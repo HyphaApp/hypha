@@ -50,7 +50,7 @@ source venv/bin/activate
 Install Python & Node packages:
 
 ```console
-pip install -r requirements-dev.txt
+python3 -m pip install -r requirements-dev.txt
 npm install
 ```
 
@@ -249,7 +249,7 @@ Hypha's coding style is enforced by black, ruff and prettier and comes pre-confi
 
 Install pre-commit to auto-format the code before each commit:
 
-```
+```console
 pre-commit install
 ```
 

@@ -10,7 +10,7 @@ We use pull requests for all changes. No commits are done directly in to the mai
 
 4. **Link the PR to the corresponding issue** - A common way is to add "Fixes \#1234" at the top of the PR description. See [Linking a pull request to an issue](https://help.github.com/en/github/managing-your-work-on-github/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword)
 
-5. **Add a reviewer** - If noting else has been agreed upon add Fredrik Jonsson [@frjo](https://github.com/frjo).
+5. **Add a reviewer** - If nothing else has been agreed upon add Fredrik Jonsson [@frjo](https://github.com/frjo).
 
 ## Git command examples
 
@@ -20,7 +20,7 @@ First check out master and do a git pull ot get all the latest updates.
 
 Then create a new branch and do a checkout of it.
 
-```console
+```bash
 git checkout master
 git pull
 git checkout -b fix/gh-1234-fixing-thing-a
