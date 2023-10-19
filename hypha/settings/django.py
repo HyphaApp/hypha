@@ -221,7 +221,7 @@ AUTHENTICATION_BACKENDS = (
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # The full Python import path to your root URLconf.
-ROOT_URLCONF = "hypha.urls"
+ROOT_URLCONF = "hypha.apply.urls"
 
 # The class that renders form widgets
 FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
