@@ -1679,7 +1679,6 @@ class TestUserReminderDeleteView(BaseProjectDeleteTestCase):
         self.assertEqual(response.status_code, 403)
 
 
-@override_settings(ROOT_URLCONF="hypha.apply.urls")
 class TestReviewerLeaderboard(TestCase):
     def test_applicant_cannot_access_reviewer_leaderboard(self):
         self.client.force_login(ApplicantFactory())

@@ -7,7 +7,6 @@ from hypha.apply.utils.testing.tests import BaseViewTestCase
 from .factories import OAuthUserFactory, StaffFactory, SuperUserFactory, UserFactory
 
 
-@override_settings(ROOT_URLCONF="hypha.apply.urls")
 class BaseTestProfielView(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -67,7 +66,6 @@ class TestPasswordReset(BaseViewTestCase):
         )
 
 
-@override_settings(ROOT_URLCONF="hypha.apply.urls")
 class TestBecome(TestCase):
     def setUp(self):
         self.staff = StaffFactory()

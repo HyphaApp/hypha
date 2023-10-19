@@ -5,6 +5,7 @@ from hypha.apply.users.tests.factories import StaffFactory
 
 class TestProjectFeatureFlag(TestCase):
     @override_settings(PROJECTS_ENABLED=False)
+    @override_settings(ROOT_URLCONF="hypha.urls")
     def test_urls_404_when_turned_off(self):
         self.client.force_login(StaffFactory())
 

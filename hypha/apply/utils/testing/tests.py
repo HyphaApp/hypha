@@ -18,7 +18,6 @@ def make_request(user=None, data=None, method="get", site=None):
     return request
 
 
-@override_settings(ROOT_URLCONF="hypha.apply.urls")
 class BaseViewTestCase(TestCase):
     """
     Provides a basic framework for working with views. It works on the

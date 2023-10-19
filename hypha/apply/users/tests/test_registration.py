@@ -6,7 +6,6 @@ from hypha.apply.funds.tests.factories import FundTypeFactory
 from hypha.apply.utils.testing import make_request
 
 
-@override_settings(ROOT_URLCONF="hypha.apply.urls")
 class TestRegistration(TestCase):
     @override_settings(ENABLE_REGISTRATION_WITHOUT_APPLICATION=False)
     def test_registration_enabled_has_no_link(self):

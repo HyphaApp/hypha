@@ -1,4 +1,5 @@
 import re
+import pytest
 from unittest import mock
 from urllib import parse
 
@@ -7,7 +8,7 @@ from django.urls import reverse
 
 any_url = re.compile(".")
 
-
+@pytest.skip(reason="To be removed when public site is implemented", allow_module_level=True)
 class TestNewsletterView(TestCase):
     url = reverse("newsletter:subscribe")
 
