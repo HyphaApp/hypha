@@ -19,6 +19,7 @@ TWO_FACTOR_EXEMPTED_PATH_PREFIXES = [
     "/login/",
     "/logout/",
     "/account/",
+    "/apply/submissions/success/",
 ]
 
 
