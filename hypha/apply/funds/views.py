@@ -1561,7 +1561,7 @@ class SubmissionDeleteView(DeleteView):
             request=self.request,
             source=submission,
         )
-        
+
         # Delete NEW_SUBMISSION event for this particular submission
         Event.objects.filter(
             type=MESSAGES.NEW_SUBMISSION, object_id=submission.id
