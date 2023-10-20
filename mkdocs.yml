@@ -25,6 +25,7 @@ theme:
     - content.action.edit
     - content.action.view
     - content.code.copy
+    - content.tabs.link
     - header.autohide
     - navigation.expand
     - navigation.indexes
@@ -105,7 +106,7 @@ extra:
       packages:
         macos: python@3.11
     node:
-      version: 16
+      version: 18
     nvm:
       version: 0.39.5
       packages:
