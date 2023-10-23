@@ -51,7 +51,7 @@ endif
 .PHONY: lint
 lint:
 	@echo "Checking python code style with ruff"
-	ruff .
+	ruff check .
 	black . --check
 	@echo "Checking html file indendation."
 	djhtml hypha/ --check
