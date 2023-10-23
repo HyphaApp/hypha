@@ -27,7 +27,6 @@ theme:
     - content.code.copy
     - content.tabs.link
     - header.autohide
-    - navigation.expand
     - navigation.indexes
     - navigation.instant
     - navigation.footer
@@ -122,7 +121,7 @@ extra:
     postgres_devel:
       packages:
         debian: libpq-dev
-        fedora: libpq5-devel
+        fedora: libpq-devel
     tested_ubuntu:
       version: 22.04 LTS
     tested_macos:
