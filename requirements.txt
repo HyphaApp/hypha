@@ -25,7 +25,7 @@ django-htmx==1.13.0
 django-pagedown==2.2.1
 # django-pwned-passwords==4.1.0
 https://github.com/slinkymanbyday/django-pwned-passwords/archive/58c7b832df7360a21fd8edeaaf9f897c7517baf1.zip
-django-ratelimit==4.0.0
+django-ratelimit==4.1.0
 django-referrer-policy==1.0
 django-select2==8.0.0
 django-slack==5.18.0
