@@ -92,7 +92,7 @@ class CategoryQuestionBlock(OptionalFormFieldBlock):
         for field in category_fields.keys():
             if not value.get(field):
                 category = value["category"]
-                if isinstance(category, int):
+                if isinstance(category, int) or isinstance(category, str):
                     category = self.get_instance(id=category)
                 value[field] = getattr(category, category_fields[field])
         return super().render(value, context)
