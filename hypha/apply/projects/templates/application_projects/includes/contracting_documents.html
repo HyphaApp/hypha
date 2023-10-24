@@ -81,7 +81,8 @@
                                     {% if not contract.uploaded_by_contractor_at %}{% trans "Pending signed contract by " %}{% else %}{% trans "Signed contract by " %}{% endif %}{% if user == object.user %}{{ ORG_SHORT_NAME }}{% else %}{% trans "Contracting team " %} {% endif %}
                                     <i>{% if contract.uploaded_by_contractor_at %}({{ contract.uploaded_by_contractor_at }}){% endif %}</i></p>
                             </div>
-                            {% if can_upload_contract and user.is_contracting %}
+                            {% user_can_initiate_contract user as can_initiate_contract %}
+                            {% if can_upload_contract and can_initiate_contract  %}
                                 <div class="docs-block__row-inner docs-block__row-inner__contract-upload-row">
                                     <a data-fancybox class="font-bold flex items-center w-auto text-left bg-light-blue text-white mr-0 p-2.5 border-none" href="#" data-src="#upload-contract">
                                         <svg class="icon icon--arrow-up-short-bar icon--arrow-up-short-bar--contract-upload"><use xlink:href="#arrow-up-short-bar"></use></svg>

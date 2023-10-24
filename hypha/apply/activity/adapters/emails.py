@@ -387,6 +387,10 @@ class EmailAdapter(AdapterBase):
             )
 
             if source.status == CONTRACTING:
+                if settings.STAFF_UPLOAD_CONTRACT:
+                    return get_compliance_email(
+                        target_user_gps=[CONTRACTING_GROUP_NAME, STAFF_GROUP_NAME]
+                    )
                 return get_compliance_email(target_user_gps=[CONTRACTING_GROUP_NAME])
             if source.status == INVOICING_AND_REPORTING:
                 return [source.user.email]
