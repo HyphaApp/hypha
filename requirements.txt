@@ -49,7 +49,7 @@ mailchimp3==3.0.17
 mistune==2.0.4
 more-itertools==9.0.0
 phonenumberslite==8.13.23
-Pillow==9.4.0
+Pillow>=10.0.1
 psycopg2-binary
 qrcode==7.4.2
 reportlab==3.6.13
