@@ -48,6 +48,7 @@ class ValueBlock(ApplicationSingleIncludeFieldBlock):
 
     class Meta:
         label = _("Requested amount")
+        icon = "decimal"
 
     def prepare_data(self, value, data, serialize):
         return format_number_as_currency(str(data))
