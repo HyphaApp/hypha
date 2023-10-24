@@ -81,7 +81,7 @@ class VendorFormSettingsAdmin(SettingModelAdmin):
 
 class ProjectAdminGroup(ModelAdminGroup):
     menu_label = "Projects"
-    menu_icon = "duplicate"
+    menu_icon = "folder-open-1"
     items = (
         ContractDocumentCategoryAdmin,
         DocumentCategoryAdmin,
