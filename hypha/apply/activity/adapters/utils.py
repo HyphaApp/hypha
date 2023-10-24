@@ -12,6 +12,7 @@ from hypha.apply.projects.models.payment import (
     CHANGES_REQUESTED_BY_STAFF,
     DECLINED,
     PAID,
+    PAYMENT_FAILED,
     RESUBMITTED,
     SUBMITTED,
 )
@@ -62,6 +63,7 @@ def is_invoice_public_transition(invoice):
         APPROVED_BY_FINANCE_2,
         DECLINED,
         PAID,
+        PAYMENT_FAILED,
     ]:
         return True
     if not settings.INVOICE_EXTENDED_WORKFLOW and invoice.status == APPROVED_BY_FINANCE:
