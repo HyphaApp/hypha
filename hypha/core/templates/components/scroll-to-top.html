@@ -1,0 +1,14 @@
+{% load heroicons %}
+
+<template x-teleport="body" x-data="{scrollBackTop: false}">
+    <button
+        x-show="scrollBackTop"
+        x-transition
+        x-transition:enter-end="opacity-70 scale-100"
+        x-on:scroll.window.throttle.50ms="scrollBackTop = (window.pageYOffset > window.outerHeight * 0.5) ? true : false"
+        @click="window.scrollTo({top: 0, behavior: 'smooth'})"
+        aria-label="Back to top"
+        class="fixed top-0 right-1/2 px-3 py-2 mt-10 -mr-[64px] text-white bg-light-blue/80 hover:bg-light-blue hover:text-white duration-500 hover:shadow-lg transition-all focus:outline-none cursor-pointer shadow rounded-2xl">
+        {% heroicon_mini "arrow-long-up" class="inline align-text-bottom" size=18 %} Back to top
+    </button>
+</template>
