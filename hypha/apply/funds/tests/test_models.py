@@ -347,7 +347,7 @@ class TestFormSubmission(TestCase):
         self.assertEqual(self.User.objects.count(), 2)
 
         response = self.submit_form(email="", name="", user=user, ignore_errors=True)
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 302 and "success" in response.url
 
         # Lead + applicant
         self.assertEqual(self.User.objects.count(), 2)
