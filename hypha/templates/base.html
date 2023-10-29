@@ -112,10 +112,13 @@
                     </div>
 
                     <section class="header__menus header__menus--desktop">
-                        {% cache 3600 navigation__primary current_site %}
-                            {% primarynav %}
-                        {% endcache %}
-
+                        {% if settings.utils.SystemMessagesSettings.nav_content %}
+                            {{ settings.utils.SystemMessagesSettings.nav_content|safe }}
+                        {% else %}
+                            {% cache 3600 navigation__primary current_site %}
+                                {% primarynav %}
+                            {% endcache %}
+                        {% endif %}
                         <button class="button button--contains-icons button--left-space js-search-toggle" aria-haspopup="true" aria-label="Toggle desktop search">
                             <svg class="header__icon header__icon--open-search icon"><use xlink:href="#magnifying-glass"></use></svg>
                             <svg class="header__icon header__icon--close-search icon"><use xlink:href="#cross"></use></svg>
@@ -141,9 +144,13 @@
                                 </button>
                             </div>
                         </div>
-                        {% cache 3600 navigation__primary current_site %}
-                            {% primarynav %}
-                        {% endcache %}
+                        {% if settings.utils.SystemMessagesSettings.nav_content %}
+                            {{ settings.utils.SystemMessagesSettings.nav_content|safe }}
+                        {% else %}
+                            {% cache 3600 navigation__primary current_site %}
+                                {% primarynav %}
+                            {% endcache %}
+                        {% endif %}
                     </section>
 
                     <div class="header__button-container">

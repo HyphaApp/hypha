@@ -57,7 +57,6 @@ class EmailAdapter(AdapterBase):
         MESSAGES.CREATED_PROJECT: "handle_project_created",
         MESSAGES.UPDATED_VENDOR: "handle_vendor_updated",
         MESSAGES.SENT_TO_COMPLIANCE: "messages/email/sent_to_compliance.html",
-        MESSAGES.SEND_FOR_APPROVAL: "messages/email/paf_for_approval.html",
         MESSAGES.REQUEST_PROJECT_CHANGE: "messages/email/project_request_change.html",
         MESSAGES.ASSIGN_PAF_APPROVER: "messages/email/assign_paf_approvers.html",
         MESSAGES.APPROVE_PAF: "messages/email/paf_for_approval.html",
@@ -90,7 +89,6 @@ class EmailAdapter(AdapterBase):
             elif message_type in [
                 MESSAGES.SENT_TO_COMPLIANCE,
                 MESSAGES.APPROVE_PAF,
-                MESSAGES.SEND_FOR_APPROVAL,
             ]:
                 subject = _("Project is waiting for approval: {source.title}").format(
                     source=source
@@ -293,7 +291,7 @@ class EmailAdapter(AdapterBase):
             partners = kwargs["added"]
             return [partner.email for partner in partners]
 
-        if message_type in [MESSAGES.SEND_FOR_APPROVAL, MESSAGES.APPROVE_PAF]:
+        if message_type == MESSAGES.APPROVE_PAF:
             from hypha.apply.projects.models.project import ProjectSettings
 
             # notify the assigned approvers
@@ -389,6 +387,10 @@ class EmailAdapter(AdapterBase):
             )
 
             if source.status == CONTRACTING:
+                if settings.STAFF_UPLOAD_CONTRACT:
+                    return get_compliance_email(
+                        target_user_gps=[CONTRACTING_GROUP_NAME, STAFF_GROUP_NAME]
+                    )
                 return get_compliance_email(target_user_gps=[CONTRACTING_GROUP_NAME])
             if source.status == INVOICING_AND_REPORTING:
                 return [source.user.email]

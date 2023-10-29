@@ -11,6 +11,7 @@ from .models.payment import (
     CHANGES_REQUESTED_BY_STAFF,
     DECLINED,
     PAID,
+    PAYMENT_FAILED,
     RESUBMITTED,
     SUBMITTED,
 )
@@ -136,6 +137,8 @@ def get_invoice_public_status(invoice_status):
         return _("Declined")
     if invoice_status == PAID:
         return _("Paid")
+    if invoice_status == PAYMENT_FAILED:
+        return _("Payment failed")
 
 
 def get_project_status_display_value(project_status):
