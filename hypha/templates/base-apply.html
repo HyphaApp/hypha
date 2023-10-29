@@ -37,6 +37,19 @@
                 document.addEventListener("htmx:beforeRequest", function() { NProgress.start(); });
                 document.addEventListener("htmx:afterRequest", function() { NProgress.done(); });
             });
+            {% comment %}
+            If the htmx response is either 403, 404, or 500, display the error page.
+            Please note that the error replaces the entire page, rather than displaying
+            the error response in the target element.
+            https://stackoverflow.com/a/74823597/782901
+            {% endcomment %}
+            document.addEventListener("htmx:beforeOnLoad", function (event) {
+                const xhr = event.detail.xhr
+                if (xhr.status == 500 || xhr.status == 403 || xhr.status == 404) {
+                    event.stopPropagation() // Tell htmx not to process these requests
+                    document.children[0].innerHTML = xhr.response // Swap in body of response instead
+                }
+            });
         </script>
         <!-- htmx end -->
 
