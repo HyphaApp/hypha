@@ -18,6 +18,7 @@ INSTALLED_APPS = [
     "hypha.apply.review",
     "hypha.apply.determinations",
     "hypha.apply.stream_forms",
+    "hypha.apply.tasks",
     "hypha.apply.utils.apps.UtilsConfig",
     "hypha.apply.projects.apps.ProjectsConfig",
     "hypha.public.funds",
