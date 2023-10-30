@@ -1,9 +1,12 @@
+import string
+
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.urls import reverse
+from django.utils.crypto import get_random_string
 from django.utils.encoding import force_bytes
 from django.utils.http import url_has_allowed_host_and_scheme, urlsafe_base64_encode
 from django.utils.translation import gettext_lazy as _
@@ -163,3 +166,11 @@ def get_redirect_url(
         require_https=request.is_secure(),
     )
     return redirect_to if url_is_safe else ""
+
+
+def generate_numeric_token(length=6):
+    """
+    Generate a random 6 digit string of numbers.
+    We use this formatting to allow leading 0s.
+    """
+    return get_random_string(length, allowed_chars=string.digits)

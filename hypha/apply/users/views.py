@@ -25,6 +25,7 @@ from django.shortcuts import Http404, get_object_or_404, redirect, render, resol
 from django.template.loader import render_to_string
 from django.template.response import TemplateResponse
 from django.urls import reverse, reverse_lazy
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
@@ -34,9 +35,11 @@ from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import UpdateView
 from django.views.generic.base import TemplateView, View
 from django.views.generic.edit import FormView
+from django_htmx.http import HttpResponseClientRedirect
 from django_otp import devices_for_user
 from django_ratelimit.decorators import ratelimit
 from elevate.mixins import ElevateMixin
+from elevate.utils import grant_elevated_privileges
 from elevate.views import redirect_to_elevate
 from hijack.views import AcquireUserView
 from two_factor.forms import AuthenticationTokenForm, BackupTokenForm
@@ -50,6 +53,7 @@ from wagtail.models import Site
 from wagtail.users.views.users import change_user_perm
 
 from hypha.apply.home.models import ApplyHomePage
+from hypha.core.mail import MarkdownMail
 
 from .decorators import require_oauth_whitelist
 from .forms import (
@@ -60,10 +64,15 @@ from .forms import (
     ProfileForm,
     TWOFAPasswordForm,
 )
-from .models import PendingSignup
+from .models import ConfirmAccessToken, PendingSignup
 from .services import PasswordlessAuthService
 from .tokens import PasswordlessLoginTokenGenerator, PasswordlessSignupTokenGenerator
-from .utils import get_redirect_url, send_activation_email, send_confirmation_email
+from .utils import (
+    generate_numeric_token,
+    get_redirect_url,
+    send_activation_email,
+    send_confirmation_email,
+)
 
 User = get_user_model()
 
@@ -487,7 +496,7 @@ class TWOFASetupView(TwoFactorSetupView):
     name="dispatch",
 )
 @method_decorator(login_required, name="dispatch")
-class TWOFADisableView(TwoFactorDisableView):
+class TWOFADisableView(ElevateMixin, TwoFactorDisableView):
     """
     View for disabling two-factor for a user's account.
     """
@@ -766,6 +775,66 @@ class PasswordlessSignupView(TemplateView):
             )
         except (TypeError, ValueError, OverflowError, PendingSignup.DoesNotExist):
             return None
+
+
+@login_required
+def send_confirm_access_email_view(request):
+    """Sends email with link to login in an elevated mode."""
+    token_obj, _ = ConfirmAccessToken.objects.update_or_create(
+        user=request.user, token=generate_numeric_token
+    )
+    email_context = {
+        "org_long_name": settings.ORG_LONG_NAME,
+        "org_email": settings.ORG_EMAIL,
+        "org_short_name": settings.ORG_SHORT_NAME,
+        "token": token_obj.token,
+        "username": request.user.email,
+        "site": Site.find_for_request(request),
+        "user": request.user,
+        "timeout_minutes": settings.PASSWORDLESS_LOGIN_TIMEOUT // 60,
+    }
+    subject = "Confirmation code for {org_long_name}: {token}".format(**email_context)
+    email = MarkdownMail("users/emails/confirm_access.md")
+    email.send(
+        to=request.user.email,
+        subject=subject,
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        context=email_context,
+    )
+    return render(
+        request,
+        "users/partials/confirmation_code_sent.html",
+        {"redirect_url": get_redirect_url(request, "next")},
+    )
+
+
+@never_cache
+@login_required
+@ratelimit(key="user", rate=settings.DEFAULT_RATE_LIMIT)
+def elevate_check_code_view(request):
+    """Checks if the code is correct and if so, elevates the user session."""
+    token = request.POST.get("code")
+
+    def validate_token_and_age(token):
+        try:
+            token_obj = ConfirmAccessToken.objects.get(user=request.user, token=token)
+            token_age_in_seconds = (timezone.now() - token_obj.modified).total_seconds()
+            if token_age_in_seconds <= settings.PASSWORDLESS_LOGIN_TIMEOUT:
+                token_obj.delete()
+                return True
+        except ConfirmAccessToken.DoesNotExist:
+            return False
+
+    redirect_url = get_redirect_url(request, "next")
+    if token and validate_token_and_age(token):
+        grant_elevated_privileges(request)
+        return HttpResponseClientRedirect(redirect_url)
+
+    return render(
+        request,
+        "users/partials/confirmation_code_sent.html",
+        {"error": True, "redirect_url": redirect_url},
+    )
 
 
 @login_required

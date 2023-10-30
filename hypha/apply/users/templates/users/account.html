@@ -56,7 +56,7 @@
 
             <h3 class="text-base mb-2">{% trans "Two-Factor Authentication (2FA)" %}</h3>
             {% if default_device %}
-                <a class="button button--primary mb-2" href="{% url 'users:backup_tokens_password' %}">{% trans "Backup codes" %}</a>
+                <a class="button button--primary mb-2" href="{% url 'users:backup_tokens' %}">{% trans "Backup codes" %}</a>
                 <a class="button button--primary button--warning mb-2" href="{% url 'two_factor:disable' %}">{% trans "Disable 2FA" %}</a>
             {% else %}
                 <a class="button button--primary" href="{% url 'two_factor:setup' %}">{% trans "Enable 2FA" %}</a>

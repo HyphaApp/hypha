@@ -32,6 +32,18 @@
         }
     }
 
+    &--error-inline {
+        // stylelint-disable-next-line selector-class-pattern
+        .form__error-text {
+            position: relative;
+            max-width: 100%;
+
+            &::before {
+                display: none;
+            }
+        }
+    }
+
     &__group {
         position: relative;
         margin-top: 0.5rem;

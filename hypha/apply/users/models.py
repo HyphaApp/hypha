@@ -23,7 +23,11 @@ from .groups import (
     STAFF_GROUP_NAME,
     TEAMADMIN_GROUP_NAME,
 )
-from .utils import get_user_by_email, is_user_already_registered, send_activation_email
+from .utils import (
+    get_user_by_email,
+    is_user_already_registered,
+    send_activation_email,
+)
 
 
 class UserQuerySet(models.QuerySet):
@@ -393,3 +397,21 @@ class PendingSignup(models.Model):
     class Meta:
         ordering = ("created",)
         verbose_name_plural = "Pending signups"
+
+
+class ConfirmAccessToken(models.Model):
+    """
+    Once the user is created, the PendingSignup instance is deleted.
+    """
+
+    token = models.CharField(max_length=6)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"ConfirmAccessToken: {self.user.email} ({self.created})"
+
+    class Meta:
+        ordering = ("modified",)
+        verbose_name_plural = "Confirm Access Tokens"

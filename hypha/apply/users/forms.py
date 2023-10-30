@@ -170,21 +170,22 @@ class EmailChangePasswordForm(forms.Form):
 
 
 class TWOFAPasswordForm(forms.Form):
-    password = forms.CharField(
-        label=_("Please type your password to confirm"),
-        strip=False,
-        widget=forms.PasswordInput(attrs={"autofocus": True}),
+    confirmation_text = forms.CharField(
+        label=_("Please type 'disable' below before continuing:"),
+        strip=True,
+        # add widget with autofocus to avoid password autofill
+        widget=forms.TextInput(attrs={"autofocus": True, "autocomplete": "off"}),
     )
 
     def __init__(self, user, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.user = user
 
-    def clean_password(self):
-        password = self.cleaned_data["password"]
-        if not self.user.check_password(password):
+    def clean_confirmation_text(self):
+        text = self.cleaned_data["confirmation_text"]
+        if text != "disable":
             raise forms.ValidationError(
-                _("Incorrect password. Please try again."),
-                code="password_incorrect",
+                _("Incorrect input."),
+                code="confirmation_text_incorrect",
             )
-        return password
+        return text

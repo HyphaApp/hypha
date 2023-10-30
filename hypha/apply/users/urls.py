@@ -24,7 +24,9 @@ from .views import (
     account_email_change,
     become,
     create_password,
+    elevate_check_code_view,
     oauth,
+    send_confirm_access_email_view,
     set_password_view,
 )
 
@@ -122,9 +124,9 @@ account_urls = [
     # 2FA
     path("two_factor/setup/", TWOFASetupView.as_view(), name="setup"),
     path(
-        "two_factor/backup_tokens/password/",
+        "two_factor/backup_tokens/",
         BackupTokensView.as_view(),
-        name="backup_tokens_password",
+        name="backup_tokens",
     ),
     path("two_factor/disable/", TWOFADisableView.as_view(), name="disable"),
     path(
@@ -152,6 +154,16 @@ account_urls = [
         elevate_view,
         {"template_name": "elevate/elevate.html"},
         name="elevate",
+    ),
+    path(
+        "sessions/send-confirm-access-email/",
+        send_confirm_access_email_view,
+        name="elevate_send_confirm_access_email",
+    ),
+    path(
+        "sessions/verify-confirmation-code/",
+        elevate_check_code_view,
+        name="elevate_check_code",
     ),
 ]
 
