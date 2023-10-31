@@ -6,6 +6,7 @@
     "modelcluster",
     "pagedown",
     "ratelimit",
+    "SIGNUP",
     "WAGTAILADMIN",
     "wagtailcore"
   ]

@@ -77,11 +77,11 @@ This determines the length of time for which the user will remain logged in. The
 
 ### If users should be able to register accounts without first creating applications
 
-    ENABLE_PUBLIC_SIGNUP = env.bool('ENABLE_PUBLIC_SIGNUP', False)
+    ENABLE_PUBLIC_SIGNUP = env.bool('ENABLE_PUBLIC_SIGNUP', True)
 
 ### If users are forced to log in before creating applications
 
-    FORCE_LOGIN_FOR_APPLICATION = env.bool('FORCE_LOGIN_FOR_APPLICATION', False)
+    FORCE_LOGIN_FOR_APPLICATION = env.bool('FORCE_LOGIN_FOR_APPLICATION', True)
 
 ### Set the allowed file extension for all uploads fields.
 
