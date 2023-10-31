@@ -1,0 +1,18 @@
+// Abstracts
+@import "abstracts/functions";
+@import "abstracts/mixins";
+@import "abstracts/variables";
+
+.help-text {
+    font-size: smaller;
+    padding-left: 15px;
+    color: var(--w-color-grey-400);
+}
+
+.form {
+    &__label {
+        p {
+            margin: 0;
+        }
+    }
+}
