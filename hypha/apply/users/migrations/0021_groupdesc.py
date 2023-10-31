@@ -16,18 +16,28 @@ def add_desc_groups(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('auth', '0012_alter_user_first_name_max_length'),
-        ('users', '0020_auto_20230625_1825'),
+        ("auth", "0012_alter_user_first_name_max_length"),
+        ("users", "0020_auto_20230625_1825"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='GroupDesc',
+            name="GroupDesc",
             fields=[
-                ('group', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, primary_key=True, serialize=False, to='auth.group')),
-                ('help_text', models.CharField(max_length=255, verbose_name='Help Text')),
+                (
+                    "group",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        primary_key=True,
+                        serialize=False,
+                        to="auth.group",
+                    ),
+                ),
+                (
+                    "help_text",
+                    models.CharField(max_length=255, verbose_name="Help Text"),
+                ),
             ],
         ),
         migrations.RunPython(add_desc_groups),

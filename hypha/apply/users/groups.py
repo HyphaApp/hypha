@@ -10,13 +10,27 @@ APPROVER_GROUP_NAME = _("Approver")
 FINANCE_GROUP_NAME = _("Finance")
 CONTRACTING_GROUP_NAME = _("Contracting")
 
-APPLICANT_HELP_TEXT = _("Can access their own application and communicate via the communication tab.")
-STAFF_HELP_TEXT = _("View and edit all submissions, submit reviews, send determinations, and set up applications.")
-REVIEWER_HELP_TEXT = _("Has a dashboard and can submit reviews. Advisory Council Members are typically assigned this role.")
-PARTNER_HELP_TEXT = _("Can view, edit, and comment on a specific application they are assigned to.")
-APPROVER_HELP_TEXT = _("Can review/approve PAF, and access compliance documents. Must also be in group: Staff, Contracting, or Finance.")
-FINANCE_HELP_TEXT = _("Can review/approve the PAF, access documents associated with contracting, and access invoices approved by Staff.")
-CONTRACTING_HELP_TEXT = _("Can review/approve the PAF and access documents associated with contracting.")
+APPLICANT_HELP_TEXT = _(
+    "Can access their own application and communicate via the communication tab."
+)
+STAFF_HELP_TEXT = _(
+    "View and edit all submissions, submit reviews, send determinations, and set up applications."
+)
+REVIEWER_HELP_TEXT = _(
+    "Has a dashboard and can submit reviews. Advisory Council Members are typically assigned this role."
+)
+PARTNER_HELP_TEXT = _(
+    "Can view, edit, and comment on a specific application they are assigned to."
+)
+APPROVER_HELP_TEXT = _(
+    "Can review/approve PAF, and access compliance documents. Must also be in group: Staff, Contracting, or Finance."
+)
+FINANCE_HELP_TEXT = _(
+    "Can review/approve the PAF, access documents associated with contracting, and access invoices approved by Staff."
+)
+CONTRACTING_HELP_TEXT = _(
+    "Can review/approve the PAF and access documents associated with contracting."
+)
 
 
 GROUPS = [

@@ -51,13 +51,18 @@ class GroupsModelMultipleChoiceField(forms.ModelMultipleChoiceField):
     def group_desc_mapping(self):
         """
         Return a dict of {<Group Name>: <Group Help Text>} to prevent unneeded queries to the DB
-        every label call retrieval. 
-        
-        This was implemented as a property function as when storing this as a regular variable 
+        every label call retrieval.
+
+        This was implemented as a property function as when storing this as a regular variable
         property interfered with Django's migration/makemigration functionality.
         """
         if self._group_desc_mapping is None:
-            self._group_desc_mapping = dict([(group_desc.group.name, group_desc.help_text) for group_desc in GroupDesc.objects.all()])
+            self._group_desc_mapping = dict(
+                [
+                    (group_desc.group.name, group_desc.help_text)
+                    for group_desc in GroupDesc.objects.all()
+                ]
+            )
 
         return self._group_desc_mapping
 
@@ -85,12 +90,12 @@ class GroupsModelMultipleChoiceField(forms.ModelMultipleChoiceField):
         help_text = self.group_desc_mapping.get(group_obj.name)
         if help_text:
             # return mark_safe(f"<p class=\"group-label\">{group_obj.name}</p><p class=\"help-text\">{help_text}</p>")
-            return mark_safe(f"{group_obj.name}<p class=\"help-text\">{help_text}</p>")
+            return mark_safe(f'{group_obj.name}<p class="help-text">{help_text}</p>')
         return group_obj.name
 
 
 class CustomUserEditForm(CustomUserAdminFormBase, UserEditForm):
-#    pass
+    #    pass
     """
     A custom UserEditForm used to provide custom fields (ie. custom group fields)
     """
@@ -121,7 +126,7 @@ class CustomUserCreationForm(CustomUserAdminFormBase, UserCreationForm):
                 help_text=self.user_settings.consent_help,
                 required=True,
             )
-        
+
         # Overwrite the existing group's ModelMultipleChoiceField with the custom GroupsModelMultipleChoiceField that will provide the help text
         self.fields["groups"] = GroupsModelMultipleChoiceField.get_group_mmcf(
             self.fields["groups"]
