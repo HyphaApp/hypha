@@ -1,11 +1,15 @@
 from django import forms
+from django.db import models
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.contrib.auth.forms import AuthenticationForm
 from django.utils.translation import gettext_lazy as _
+from django.template.defaultfilters import mark_safe
 from django_select2.forms import Select2Widget
 from wagtail.users.forms import UserCreationForm, UserEditForm
+from itertools import chain
 
-from .models import AuthSettings
+from .models import AuthSettings, GroupDesc
 
 User = get_user_model()
 
@@ -36,8 +40,68 @@ class CustomUserAdminFormBase:
         )
 
 
+class GroupsModelMultipleChoiceField(forms.ModelMultipleChoiceField):
+    """
+    A custom ModelMultipleChoiceField utilized to provide a custom label for the group prompts
+    """
+
+    _group_desc_mapping = None
+
+    @property
+    def group_desc_mapping(self):
+        """
+        Return a dict of {<Group Name>: <Group Help Text>} to prevent unneeded queries to the DB
+        every label call retrieval. 
+        
+        This was implemented as a property function as when storing this as a regular variable 
+        property interfered with Django's migration/makemigration functionality.
+        """
+        if self._group_desc_mapping is None:
+            self._group_desc_mapping = dict([(group_desc.group.name, group_desc.help_text) for group_desc in GroupDesc.objects.all()])
+
+        return self._group_desc_mapping
+
+    @classmethod
+    def get_group_mmcf(
+        cls, model_mulitple_choice_field: forms.ModelMultipleChoiceField
+    ):  # Handle the insertion of group help text
+        group_field_dict = model_mulitple_choice_field.__dict__
+        queryset = group_field_dict[
+            "_queryset"
+        ]  # Pull the queryset form the group field
+        unneeded_keys = ("empty_label", "_queryset")
+        for key in unneeded_keys:
+            group_field_dict.pop(
+                key, None
+            )  # Pop unneeded keys/values, ignore if they don't exist.
+
+        # Overwrite the existing group's ModelMultipleChoiceField with the custom GroupsModelMultipleChoiceField that will provide the help text
+        return GroupsModelMultipleChoiceField(queryset=queryset, **group_field_dict)
+
+    def label_from_instance(self, group_obj):
+        """
+        Overwriting ModelMultipleChoiceField's label from instance to provide help_text (if it exists)
+        """
+        help_text = self.group_desc_mapping.get(group_obj.name)
+        if help_text:
+            # return mark_safe(f"<p class=\"group-label\">{group_obj.name}</p><p class=\"help-text\">{help_text}</p>")
+            return mark_safe(f"{group_obj.name}<p class=\"help-text\">{help_text}</p>")
+        return group_obj.name
+
+
 class CustomUserEditForm(CustomUserAdminFormBase, UserEditForm):
-    pass
+#    pass
+    """
+    A custom UserEditForm used to provide custom fields (ie. custom group fields)
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Overwrite the existing group's ModelMultipleChoiceField with the custom GroupsModelMultipleChoiceField that will provide the help text
+        self.fields["groups"] = GroupsModelMultipleChoiceField.get_group_mmcf(
+            self.fields["groups"]
+        )
 
 
 class CustomUserCreationForm(CustomUserAdminFormBase, UserCreationForm):
@@ -57,6 +121,11 @@ class CustomUserCreationForm(CustomUserAdminFormBase, UserCreationForm):
                 help_text=self.user_settings.consent_help,
                 required=True,
             )
+        
+        # Overwrite the existing group's ModelMultipleChoiceField with the custom GroupsModelMultipleChoiceField that will provide the help text
+        self.fields["groups"] = GroupsModelMultipleChoiceField.get_group_mmcf(
+            self.fields["groups"]
+        )
 
 
 class ProfileForm(forms.ModelForm):

@@ -2,6 +2,7 @@
 {% extends "wagtailusers/users/edit.html" %}
 {% load wagtailimages_tags %}
 {% load users_tags %}
+{% load  static %}
 {% load i18n %}
 {% block content %}
 
@@ -106,6 +107,7 @@
 {% endblock %}
 
 {% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/apply/wagtail_groups_list.css' %}">
     {{ block.super }}
     {{ form.media.css }}
 {% endblock %}

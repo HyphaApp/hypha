@@ -362,3 +362,11 @@ class AuthSettings(BaseGenericSetting):
             _("Register form customizations"),
         ),
     ]
+
+
+class GroupDesc(models.Model):
+    group = models.OneToOneField(Group, on_delete=models.CASCADE, primary_key=True)
+    help_text = models.CharField(verbose_name="Help Text", max_length=255)
+
+    def __str__(self):
+        return self.help_text
