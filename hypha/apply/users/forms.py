@@ -1,13 +1,10 @@
 from django import forms
-from django.db import models
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
 from django.contrib.auth.forms import AuthenticationForm
-from django.utils.translation import gettext_lazy as _
 from django.template.defaultfilters import mark_safe
+from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2Widget
 from wagtail.users.forms import UserCreationForm, UserEditForm
-from itertools import chain
 
 from .models import AuthSettings, GroupDesc
 
@@ -57,12 +54,10 @@ class GroupsModelMultipleChoiceField(forms.ModelMultipleChoiceField):
         property interfered with Django's migration/makemigration functionality.
         """
         if self._group_desc_mapping is None:
-            self._group_desc_mapping = dict(
-                [
-                    (group_desc.group.name, group_desc.help_text)
-                    for group_desc in GroupDesc.objects.all()
-                ]
-            )
+            self._group_desc_mapping = {
+                group_desc.group.name: group_desc.help_text
+                for group_desc in GroupDesc.objects.all()
+            }
 
         return self._group_desc_mapping
 
