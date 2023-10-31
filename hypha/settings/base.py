@@ -136,10 +136,6 @@ TRANSITION_AFTER_ASSIGNED = env.bool("TRANSITION_AFTER_ASSIGNED", False)
 # Possible values are: False, 1,2,3,…
 TRANSITION_AFTER_REVIEWS = env.bool("TRANSITION_AFTER_REVIEWS", False)
 
-# Forces users to log in first in order to make an application.  This is particularly useful in conjunction
-# with ENABLE_PUBLIC_SIGNUP
-FORCE_LOGIN_FOR_APPLICATION = env.bool("FORCE_LOGIN_FOR_APPLICATION", False)
-
 
 # Project settings.
 
@@ -168,7 +164,12 @@ PASSWORD_RESET_TIMEOUT = env.int("PASSWORD_RESET_TIMEOUT", 259200)
 PASSWORDLESS_LOGIN_TIMEOUT = env.int("PASSWORDLESS_LOGIN_TIMEOUT", 900)  # 15 minutes
 
 # Enable users to create accounts without submitting an application.
-ENABLE_PUBLIC_SIGNUP = env.bool("ENABLE_PUBLIC_SIGNUP", False)
+ENABLE_PUBLIC_SIGNUP = env.bool("ENABLE_PUBLIC_SIGNUP", True)
+
+# Forces users to log in first in order to make an application.  This is particularly useful in conjunction
+# with ENABLE_PUBLIC_SIGNUP
+# @deprecated: This setting is deprecated and will be removed in a future release.
+FORCE_LOGIN_FOR_APPLICATION = env.bool("FORCE_LOGIN_FOR_APPLICATION", True)
 
 # Timeout for passwordless signup links (default 900, 15 minutes).
 PASSWORDLESS_SIGNUP_TIMEOUT = env.int("PASSWORDLESS_SIGNUP_TIMEOUT", 900)  # 15 minutes
