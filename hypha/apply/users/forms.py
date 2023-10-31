@@ -90,7 +90,9 @@ class GroupsModelMultipleChoiceField(forms.ModelMultipleChoiceField):
         help_text = self.group_desc_mapping.get(group_obj.name)
         if help_text:
             # return mark_safe(f"<p class=\"group-label\">{group_obj.name}</p><p class=\"help-text\">{help_text}</p>")
-            return mark_safe(f'{group_obj.name}<p class="help-text">{help_text}</p>')
+            return mark_safe(
+                f'{group_obj.name}<p class="group-help-text">{help_text}</p>'
+            )
         return group_obj.name
 
 
