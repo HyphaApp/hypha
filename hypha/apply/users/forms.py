@@ -171,7 +171,7 @@ class EmailChangePasswordForm(forms.Form):
 
 class TWOFAPasswordForm(forms.Form):
     confirmation_text = forms.CharField(
-        label=_("Please type 'disable' below before continuing:"),
+        label=_('To proceed, type "disable" below and then click on "confirm":'),
         strip=True,
         # add widget with autofocus to avoid password autofill
         widget=forms.TextInput(attrs={"autofocus": True, "autocomplete": "off"}),
