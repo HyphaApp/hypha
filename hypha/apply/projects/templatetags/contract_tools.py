@@ -1,4 +1,5 @@
 from django import template
+from django.conf import settings
 
 from hypha.apply.projects.models.project import CONTRACTING
 
@@ -57,6 +58,15 @@ def user_can_upload_contract(project, user):
         "contract_upload", user, object=project, raise_exception=False
     )
     return can_upload
+
+
+@register.simple_tag
+def user_can_initiate_contract(user):
+    if user.is_contracting:
+        return True
+    if user.is_apply_staff and settings.STAFF_UPLOAD_CONTRACT:
+        return True
+    return False
 
 
 @register.simple_tag

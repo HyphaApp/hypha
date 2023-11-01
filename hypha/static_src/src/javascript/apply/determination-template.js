@@ -68,6 +68,9 @@
         new DeterminationCopy(el);
     });
     window.addEventListener("load", function (event) {
-        document.querySelector("#id_proposal_form").disabled = true;
+        const proposal_form_field = document.querySelector("#id_proposal_form");
+        if (!proposal_form_field.value) {
+            proposal_form_field.disabled = true;
+        }
     });
 })();
