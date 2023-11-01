@@ -19,9 +19,17 @@ STAFF_HELP_TEXT = _(
 REVIEWER_HELP_TEXT = _(
     "Has a dashboard and can submit reviews. Advisory Council Members are typically assigned this role."
 )
+
+TEAMADMIN_HELP_TEXT = _("Placeholder...")
+
 PARTNER_HELP_TEXT = _(
     "Can view, edit, and comment on a specific application they are assigned to."
 )
+
+COMMUNITY_REVIEWER_HELP_TEXT = _(
+    "An applicant with access to other applications utilizing the community review (peer review) workflow."
+)
+
 APPROVER_HELP_TEXT = _(
     "Can review/approve PAF, and access compliance documents. Must also be in group: Staff, Contracting, or Finance."
 )
@@ -52,6 +60,7 @@ GROUPS = [
     {
         "name": TEAMADMIN_GROUP_NAME,
         "permissions": [],
+        "help_text": TEAMADMIN_HELP_TEXT,
     },
     {
         "name": PARTNER_GROUP_NAME,
@@ -61,6 +70,7 @@ GROUPS = [
     {
         "name": COMMUNITY_REVIEWER_GROUP_NAME,
         "permissions": [],
+        "help_text": COMMUNITY_REVIEWER_HELP_TEXT,
     },
     {
         "name": APPROVER_GROUP_NAME,
