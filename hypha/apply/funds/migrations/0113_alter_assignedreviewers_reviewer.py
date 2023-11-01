@@ -6,16 +6,22 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('funds', '0112_add_organization_name'),
+        ("funds", "0112_add_organization_name"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='assignedreviewers',
-            name='reviewer',
-            field=models.ForeignKey(limit_choices_to={'groups__name__in': ['Staff', 'Reviewer', 'Community Reviewer'], 'is_active': True}, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
+            model_name="assignedreviewers",
+            name="reviewer",
+            field=models.ForeignKey(
+                limit_choices_to={
+                    "groups__name__in": ["Staff", "Reviewer", "Community Reviewer"],
+                    "is_active": True,
+                },
+                on_delete=django.db.models.deletion.CASCADE,
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]
