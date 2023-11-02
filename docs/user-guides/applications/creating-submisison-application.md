@@ -6,19 +6,19 @@ All admin actions associated with applications can be access through the “Appl
 
 There are several types of Forms in the WagTail Amin. Forms are used to create a Fund.
 
-![](/assets/setup_form-1.png)
+![](../../assets/setup_form-1.png)
 
 **Application Form**
 
-![](/assets/setup_form-2.png)
+![](../../assets/setup_form-2.png)
 
 **Review Form**
 
-![](/assets/setup_form-3.png)
+![](../../assets/setup_form-3.png)
 
 **Determination Form**
 
-![](/assets/setup_form-4.png)
+![](../../assets/setup_form-4.png)
 
 
 ****
@@ -51,7 +51,7 @@ Currently users can copy, clone, or duplicate a Fund before creating a new form.
 1. Open Apply and click the bird icon on the bottom-right corner, then click the “Go to Wagtail admin” pop-up
 2. Click `Apply` > `Rounds`
 
-![](/assets/setup_round-select-round-from-nav.png)
+![](../../assets/setup_round-select-round-from-nav.png)
 
 3\. Go to the round and click the Edit button:
 
@@ -63,14 +63,12 @@ Currently users can copy, clone, or duplicate a Fund before creating a new form.
 
 6\. Enter the Lead's name
 
-![](/assets/setup_round-enter-lead-name.jpeg)
+![](../../assets/setup_round-enter-lead-name.jpeg)
 
 7\. Check to ensure the correct reviewers are highlighted
 
-![](/assets/setup_round-select-reviewers.png)
+![](../../assets/setup_round-select-reviewers.png)
 
 8\. You could save a draft or publish. Publish means the application will be publicly visible to applicants.
 
-![](/assets/setup_round-publish-options.png)
-
-
+![](../../assets/setup_round-publish-options.png)
