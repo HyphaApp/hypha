@@ -20,7 +20,9 @@ REVIEWER_HELP_TEXT = _(
     "Has a dashboard and can submit reviews. Advisory Council Members are typically assigned this role."
 )
 
-TEAMADMIN_HELP_TEXT = _("Placeholder...")
+TEAMADMIN_HELP_TEXT = _(
+    "Can view application message log. Must also be in group Staff."
+)
 
 PARTNER_HELP_TEXT = _(
     "Can view, edit, and comment on a specific application they are assigned to."
