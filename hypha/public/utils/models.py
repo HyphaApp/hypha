@@ -320,6 +320,14 @@ class SystemMessagesSettings(BaseGenericSetting):
         ),
     )
 
+    nav_content = models.TextField(
+        "Front page navigation content",
+        help_text=_(
+            "This will overwrite the default front page navigation bar, html tags is allowed."
+        ),
+        blank=True,
+    )
+
     footer_content = models.TextField(
         "Footer content",
         default="<p>Configure this text in Wagtail admin -> Settings -> System settings.</p>",
@@ -345,6 +353,7 @@ class SystemMessagesSettings(BaseGenericSetting):
             ],
             "Site logo",
         ),
+        FieldPanel("nav_content"),
         FieldPanel("footer_content"),
         MultiFieldPanel(
             [

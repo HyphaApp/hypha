@@ -22,8 +22,8 @@
                     {% trans "Back to submissions" %}
                 </a>
             {% endif %}
-            <h1 class="mb-0 mt-2 font-normal">{{ object.title }}</h1>
-            <div class="heading heading--meta text-sm mt-1">
+            <h1 class="mb-0 mt-2 font-medium">{{ object.title }}</h1>
+            <div class="heading heading--meta text-sm mt-1 font-medium">
                 <span>{{ object.stage }}</span>
                 <span>{{ object.page }}</span>
                 {% if request.user.is_apply_staff and object.round %}
@@ -46,7 +46,7 @@
                     </a>
 
                     <a class="tab__item" href="#communications" data-tab="tab-2">
-                        {% trans "Communications" %}
+                        {% trans "Communications" %} ({{ comments.count }})
                     </a>
 
                     <a class="tab__item"

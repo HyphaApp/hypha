@@ -50,7 +50,7 @@ class ActivityAdapter(AdapterBase):
             "Lead changed from {old_lead} to {source.lead}"
         ),
         MESSAGES.SEND_FOR_APPROVAL: _("Requested approval"),
-        MESSAGES.APPROVE_PAF: _("PAF assigned to {user}"),
+        MESSAGES.APPROVE_PAF: "handle_paf_assignment",
         MESSAGES.APPROVE_PROJECT: _("Approved"),
         MESSAGES.REQUEST_PROJECT_CHANGE: _(
             'Requested changes for acceptance: "{comment}"'
@@ -101,7 +101,6 @@ class ActivityAdapter(AdapterBase):
             MESSAGES.APPROVE_CONTRACT,
             MESSAGES.UPLOAD_CONTRACT,
             MESSAGES.SUBMIT_CONTRACT_DOCUMENTS,
-            MESSAGES.UPDATE_INVOICE_STATUS,
             MESSAGES.DELETE_INVOICE,
             MESSAGES.CREATE_INVOICE,
         ]:
@@ -118,6 +117,7 @@ class ActivityAdapter(AdapterBase):
             invoice = kwargs.get("invoice", None)
             if invoice and not is_invoice_public_transition(invoice):
                 return {"visibility": TEAM}
+            return {"visibility": APPLICANT}
         return {}
 
     def reviewers_updated(self, added=None, removed=None, **kwargs):
@@ -163,6 +163,20 @@ class ActivityAdapter(AdapterBase):
         return _("Successfully archived submissions: {title}").format(
             title=submissions_text
         )
+
+    def handle_paf_assignment(self, source, paf_approvals, **kwargs):
+        if hasattr(paf_approvals, "__iter__"):  # paf_approvals has to be iterable
+            users = ", ".join(
+                [
+                    paf_approval.user.full_name
+                    if paf_approval.user.full_name
+                    else paf_approval.user.username
+                    for paf_approval in paf_approvals
+                ]
+            )
+            users_sentence = " and".join(users.rsplit(",", 1))
+            return _("PAF assigned to {}").format(users_sentence)
+        return None
 
     def handle_transition(self, old_phase, source, **kwargs):
         submission = source

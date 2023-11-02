@@ -1,11 +1,5 @@
-Hypha consists of three distinctive components:
 
-1. First is the **Apply Site**, where people seeking for funds can apply by submitting their applications, the submission goes through different stages before it being approved for funding. After the applications are approved, they can be converted to a project. Apply site allows to manage the lifecycle of a project starting from a PAF to contracting to invoicing.
-
-2. Then the **Admin or Wagtail Admin**, is used to create custom forms, setup funds/labs and workflow around them. Think of it as the back-office of for your submissions and projects.
-
-3. Hypha also provides capability to build landing pages and display available funds and labs through **public site**.
-
+## Diagram
 
 ```
                             Integrations                           
@@ -18,37 +12,33 @@ Hypha consists of three distinctive components:
                                                                     
                                                                     
 
-    ┌────────────┐
-    │PUBLIC SITE │◀────┐                            Databases
-    └────────────┘     │      ┌────────────┐        ┌ ─ ─ ─ ─ ─ ─ ─ ─
-    ┌────────────┐     │      │  Django /  │          ┌────────────┐ │
-    │ APPLY SITE │◀────┼──────│  Wagtail   │◀───────│ │ PostgreSQL │
-    └────────────┘     │      └────────────┘          └────────────┘ │
-    ┌────────────┐     │                            │
-    │  WAGTAIL   │     │                             ─ ─ ─ ─ ─ ─ ─ ─ ┘
-    │   ADMIN    │◀────┘
+    ┌────────────┐                                  Databases
+    │ APPLY SITE │◀────┐                            ┌ ─ ─ ─ ─ ─ ─ ─ ─┐
+    └────────────┘     │      ┌────────────┐        ╎ ┌────────────┐ ╎
+                       ├──────│  Django /  │◀───────╎ │ PostgreSQL │ ╎
+    ┌────────────┐     │      │  Wagtail   │        ╎ └────────────┘ ╎
+    │   WAGTAIL  │◀────┘      └────────────┘        └─ ─ ─ ─ ─ ─ ─ ─ ┘
+    │   ADMIN    │                                  
     └────────────┘
 ```
 
-## Public site
+-----------
 
-!!! warning Public Site is depreciated and will be removed
-    The public is due for removal. Read more at https://github.com/HyphaApp/hypha/pull/3110
+## Main Components
 
-The Public site is intended to be a heavily cached public site with no behaviour that requires authentication, excluding the Wagtail Admin. The ultimate aim would be to serve this site statically.
+### Apply Site
 
-The coupling between the Public and Apply sites has been done in such as way as to minimise the interaction between the two sites and facilitate a means of separation should the need arise. Their relationship is defined in the Public fund models:
+Where people seeking for funds can apply by submitting their applications, the submission goes through different stages before it being approved for funding. After the applications are approved, they can be converted to a project. Apply site allows to manage the lifecycle of a project starting from a PAF to contracting to invoicing.
 
-## Apply site
+### Wagtail Admin
 
-@TODO
+Used to create custom forms, setup funds/labs and workflow around them. Think of it as the back-office of for your submissions and projects.
 
-## Wagtail Admin
+-----------
 
-@TODO
+## Under The Hood
 
-
-## Django
+### Django
 
 Hypha is built on top of the Django Web Framework. All the pages are rendered server side. It uses wagtail CMS for creating and managing custom application forms, public pages and settings.
 
@@ -77,6 +67,7 @@ The default url configuration is for the Public site which are shared by the Pub
 
 The Public site has access to the "public authentication" urls, this enables reverse lookup of the url in templates, such as the [login button](https://github.com/HyphaApp/hypha/blob/main/hypha/public/utils/templates/utils/includes/login_button.html), but the user is redirected to the apply site. Visiting [https:///login](https:///login) will present a login screen.
 
+-----------
 
 ## External Integrations
 

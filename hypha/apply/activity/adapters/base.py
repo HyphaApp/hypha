@@ -20,6 +20,7 @@ neat_related = {
     MESSAGES.EDIT_REVIEW: "review",
     MESSAGES.CREATED_PROJECT: "submission",
     MESSAGES.PROJECT_TRANSITION: "old_stage",
+    MESSAGES.APPROVE_PAF: "paf_approvals",  # expect a list
     MESSAGES.UPDATE_PROJECT_LEAD: "old_lead",
     MESSAGES.APPROVE_CONTRACT: "contract",
     MESSAGES.UPLOAD_CONTRACT: "contract",

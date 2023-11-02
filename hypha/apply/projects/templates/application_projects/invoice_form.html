@@ -3,15 +3,29 @@
 
 {% block title %}{% if object %}{% trans "Edit" %}{% else %}{% trans "Add" %}{% endif %} {% trans "Invoice" %}: {% if object %}{{ object.project.title }}{% else %}{{ project.title }}{% endif %}{% endblock %}
 {% block content %}
-    <div class="admin-bar">
-        <div class="admin-bar__inner">
+
+    {% adminbar %}
+        {% slot back_link %}
             <a class="simplified__projects-link" href="{{ project.get_absolute_url }}">
                 {% trans "View project page" %}
             </a>
-            <h2 class="heading heading--no-margin">{% if object %}{% trans "Editing" %}{% else %}{% trans "Add" %}{% endif %} {% trans "Invoice" %}</h2>
-            <h5 class="heading heading--no-margin">{% if object %}{{ object.project.title }}{% else %}{% trans "For" %}: {{ project.title }}{% endif %}</h5>
-        </div>
-    </div>
+        {% endslot %}
+        {% slot header %}
+            {% if object %}
+                {% trans "Editing" %}
+            {% else %}
+                {% trans "Add" %}
+            {% endif %}
+            {% trans "Invoice" %}
+        {% endslot %}
+        {% slot sub_heading %}
+            {% if object %}
+                {{ object.project.title }}
+            {% else %}
+                {% trans "For" %}: {{ project.title }}
+            {% endif %}
+        {% endslot %}
+    {% endadminbar %}
 
     {% include "forms/includes/form_errors.html" with form=form %}
 

@@ -1,0 +1,15 @@
+.dff-uploader .dff-files {
+    @apply !m-0 shadow-inner !outline-dashed rounded-sm;
+}
+
+.dff-uploader .dff-files .dff-filesize {
+    @apply text-fg-muted text-sm;
+}
+
+.dff-uploader .dff-files.dff-dropping {
+    @apply !ring-2 ring-offset-4;
+}
+
+.dff-uploader .dff-files .dff-delete {
+    @apply !text-red-500 font-medium before:content-['•'] before:mr-2;
+}
