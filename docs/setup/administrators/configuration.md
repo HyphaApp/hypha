@@ -160,6 +160,12 @@ Possible values are: fund, round, status, lead, reviewers, screening_statuses, c
 
     SUBMISSIONS_TABLE_EXCLUDED_FIELDS = env.list('SUBMISSIONS_TABLE_EXCLUDED_FIELDS', [])
 
+### Score diplayed on reviews page.
+
+If 'sum' sum of score will be displayed, if 'avg' average of score will be displayed, empty string is for use-cases where no final summary is desired by any setup.
+
+    REVIEWS_FINAL_SCORE_METHOD: Literal['sum', 'avg', ''] = env.str('REVIEWS_FINAL_SCORE_METHOD', default='avg')
+
 ### Should submission automatically transition after all reviewer roles are assigned.
 
     TRANSITION_AFTER_ASSIGNED = env.bool('TRANSITION_AFTER_ASSIGNED', False)
