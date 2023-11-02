@@ -1,5 +1,5 @@
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import Q
+from django.db.models import Count
 
 from .models import Task
 from .options import get_task_template
@@ -11,6 +11,7 @@ def add_task_to_user(code, user, related_obj):
 
 
 def add_task_to_user_group(code, user_group, related_obj):
+    # :todo: fix direct assignment of user_group
     task = Task.objects.create(
         code=code, user_group=user_group, related_object=related_obj
     )
@@ -28,6 +29,7 @@ def remove_tasks_for_user(code, user, related_obj):
 
 
 def remove_tasks_for_user_group(code, user_group, related_obj):
+    # :todo: fix direct assignment for user group(many to many)
     Task.objects.filter(
         code=code,
         user=user_group,
@@ -38,10 +40,14 @@ def remove_tasks_for_user_group(code, user_group, related_obj):
 
 
 def get_tasks_for_user(user):
-    tasks = Task.objects.filter(
-        Q(user=user) | Q(user_group=user.groups.all())
-    )  # :todo: exact lookup for user group
-    return tasks
+    user_tasks = Task.objects.filter(user=user)
+    user_group_tasks = Task.objects.annotate(group_count=Count("user_group")).filter(
+        group_count=len(user.groups.all())
+    )
+    for group in user.groups.all():
+        user_group_tasks = user_group_tasks.filter(user_group__id=group.id)
+
+    return user_tasks.union(user_group_tasks).order_by("-created_at")
 
 
 def render_task_templates_for_user(request, user):
