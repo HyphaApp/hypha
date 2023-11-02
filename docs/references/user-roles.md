@@ -51,11 +51,11 @@ The **Partner** role could be access, edit, and communicate about a specific app
 
 The Partner could only review applications that has been assigned to them. Applications assigned to the Partner are available on their dashboard.
 
-![](/assets/partner_dashboard_assign_submission.png)
+![](../assets/partner_dashboard_assign_submission.png)
 
 The Partner role could be associated or assigned to an application by clicking on Partner button in the **Actions to take** > Assign.
 
-![](/assets/submission_how-to-assign-partner.png)
+![](../assets/submission_how-to-assign-partner.png)
 
 ## Reviewer
 
@@ -86,7 +86,7 @@ An **Applicant** can:
 * Contact staff regarding own application
 * Track the status of their application(s) on their platform
 
-![](/assets/staff_applicant_dashboard.png)
+![](../assets/staff_applicant_dashboard.png)
 
 
 ## Additional Roles
