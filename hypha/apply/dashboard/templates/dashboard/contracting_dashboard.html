@@ -15,6 +15,14 @@
     {% endadminbar %}
 
     <div class="wrapper wrapper--large wrapper--inner-space-medium">
+
+        {% if paf_for_review.count %}
+            <div id="paf_for_review" class="wrapper wrapper--bottom-space">
+                <h4 class="heading heading--normal">{% trans "PAFs for review" %}</h4>
+                {% render_table paf_for_review.table %}
+            </div>
+        {% endif %}
+
         {% if paf_waiting_for_approval.count %}
             {% include "dashboard/includes/paf_waiting_for_approval.html" with paf_waiting_for_approval=paf_waiting_for_approval %}
         {% endif %}

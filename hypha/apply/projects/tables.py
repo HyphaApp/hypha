@@ -4,7 +4,7 @@ import django_tables2 as tables
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
-from .models import Invoice, Project, Report
+from .models import Invoice, PAFApprovals, Project, Report
 
 
 class BaseInvoiceTable(tables.Table):
@@ -122,6 +122,40 @@ class ProjectsAssigneeDashboardTable(BaseProjectsTable):
         orderable = False
         exclude = ["status"]
         attrs = {"class": "projects-table"}
+
+
+class PAFForReviewDashboardTable(tables.Table):
+    date_requested = tables.DateColumn(
+        verbose_name=_("Date requested"), accessor="updated_at"
+    )
+    title = tables.LinkColumn(
+        "funds:projects:detail",
+        text=lambda r: textwrap.shorten(r.project.title, width=30, placeholder="..."),
+        accessor="project__title",
+        args=[tables.utils.A("project__pk")],
+    )
+    status = tables.Column(
+        verbose_name=_("Status"),
+        accessor="project__get_status_display",
+        order_by=("status",),
+    )
+    fund = tables.Column(verbose_name=_("Fund"), accessor="project__submission__page")
+
+    assignee = tables.Column(verbose_name=_("Assignee"), accessor="user")
+
+    class Meta:
+        fields = ["date_requested", "title", "status", "fund", "assignee"]
+        model = PAFApprovals
+        orderable = True
+        order_by = ("date_requested",)
+        attrs = {"class": "projects-table"}
+
+    def order_date_requested(self, qs, is_descending):
+        direction = "-" if is_descending else ""
+
+        qs = qs.order_by(f"{direction}updated_at")
+
+        return qs, True
 
 
 class ProjectsListTable(BaseProjectsTable):

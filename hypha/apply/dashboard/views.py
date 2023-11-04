@@ -27,10 +27,13 @@ from hypha.apply.projects.models.project import INTERNAL_APPROVAL
 from hypha.apply.projects.permissions import has_permission
 from hypha.apply.projects.tables import (
     InvoiceDashboardTable,
+    PAFForReviewDashboardTable,
     ProjectsAssigneeDashboardTable,
     ProjectsDashboardTable,
 )
 from hypha.apply.utils.views import ViewDispatcher
+
+from .utils import get_paf_for_review
 
 
 class MySubmissionContextMixin:
@@ -95,10 +98,25 @@ class AdminDashboardView(MyFlaggedMixin, TemplateView):
                 "rounds": self.rounds(),
                 "my_flagged": self.my_flagged(submissions),
                 "paf_waiting_for_assignment": self.paf_waiting_for_approver_assignment(),
+                "paf_for_review": self.paf_for_review(),
             }
         )
 
         return context
+
+    def paf_for_review(self):
+        if not self.request.user.is_apply_staff:
+            return {"count": None, "table": None}
+        project_settings = ProjectSettings.for_request(self.request)
+
+        paf_approvals = get_paf_for_review(
+            user=self.request.user, project_settings=project_settings
+        )
+
+        return {
+            "count": paf_approvals.count(),
+            "table": PAFForReviewDashboardTable(paf_approvals),
+        }
 
     def awaiting_reviews(self, submissions):
         submissions = submissions.in_review_for(self.request.user).order_by(
@@ -291,10 +309,25 @@ class FinanceDashboardView(MyFlaggedMixin, TemplateView):
                 "invoices_to_convert": self.invoices_to_convert(),
                 "paf_waiting_for_approval": self.paf_waiting_for_approval(),
                 "paf_waiting_for_assignment": self.paf_waiting_for_approver_assignment(),
+                "paf_for_review": self.paf_for_review(),
             }
         )
 
         return context
+
+    def paf_for_review(self):
+        if not self.request.user.is_finance:
+            return {"count": None, "table": None}
+        project_settings = ProjectSettings.for_request(self.request)
+
+        paf_approvals = get_paf_for_review(
+            user=self.request.user, project_settings=project_settings
+        )
+
+        return {
+            "count": paf_approvals.count(),
+            "table": PAFForReviewDashboardTable(paf_approvals),
+        }
 
     def active_invoices(self):
         if self.request.user.is_finance_level_2:
@@ -586,10 +619,25 @@ class ContractingDashboardView(MyFlaggedMixin, TemplateView):
                 "paf_waiting_for_approval": self.paf_waiting_for_approval(),
                 "projects_in_contracting": self.projects_in_contracting(),
                 "paf_waiting_for_assignment": self.paf_waiting_for_approver_assignment(),
+                "paf_for_review": self.paf_for_review(),
             }
         )
 
         return context
+
+    def paf_for_review(self):
+        if not self.request.user.is_contracting:
+            return {"count": None, "table": None}
+        project_settings = ProjectSettings.for_request(self.request)
+
+        paf_approvals = get_paf_for_review(
+            user=self.request.user, project_settings=project_settings
+        )
+
+        return {
+            "count": paf_approvals.count(),
+            "table": PAFForReviewDashboardTable(paf_approvals),
+        }
 
     def paf_waiting_for_approval(self):
         if (

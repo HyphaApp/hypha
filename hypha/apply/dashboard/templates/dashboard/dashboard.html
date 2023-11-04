@@ -72,6 +72,13 @@
             {% include "funds/includes/round-block.html" with can_export=can_export closed_rounds=rounds.closed open_rounds=rounds.open title="Your rounds and labs" page_type='dashboard' %}
         {% endif %}
 
+        {% if paf_for_review.count %}
+            <div id="paf_for_review" class="wrapper wrapper--bottom-space">
+                <h4 class="heading heading--normal">{% trans "PAFs for review" %}</h4>
+                {% render_table paf_for_review.table %}
+            </div>
+        {% endif %}
+
         {% if paf_waiting_for_approval.count %}
             {% include "dashboard/includes/paf_waiting_for_approval.html" with paf_waiting_for_approval=paf_waiting_for_approval %}
         {% endif %}
@@ -125,6 +132,7 @@
 {% block extra_js %}
     {{ my_reviewed.filterset.form.media.js }}
     <script src="{% static 'js/apply/url-search-params.js' %}"></script>
+    <script src="{% static 'js/apply/all-submissions-table.js' %}"></script>
     <script src="{% static 'js/apply/submission-filters.js' %}"></script>
     <script src="{% static 'js/apply/tabs.js' %}"></script>
     <script src="{% static 'js/apply/flag.js' %}"></script>
