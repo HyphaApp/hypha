@@ -21,6 +21,7 @@ def get_categories_as_choices():
 class CategoryQuestionBlock(OptionalFormFieldBlock):
     class Meta:
         template = "stream_forms/render_list_field.html"
+        icon = "folder-open-1"
 
     category = ModelChooserBlock(required=True, choices=get_categories_as_choices)
     multi = BooleanBlock(label=_("Multi select"), required=False)
