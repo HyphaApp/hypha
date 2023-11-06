@@ -62,6 +62,7 @@ from hypha.apply.utils.views import (
     ViewDispatcher,
 )
 
+from ..users.groups import STAFF_GROUP_NAME, TEAMADMIN_GROUP_NAME
 from . import services
 from .differ import compare
 from .files import generate_submission_file_path
@@ -119,8 +120,6 @@ from .workflow import (
     active_statuses,
     review_statuses,
 )
-
-from ..users.groups import STAFF_GROUP_NAME, TEAMADMIN_GROUP_NAME
 
 User = get_user_model()
 
