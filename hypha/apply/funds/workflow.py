@@ -1212,7 +1212,7 @@ for key, value in PHASES:
 active_statuses = [
     status
     for status, _ in PHASES
-    if "accepted" not in status and "rejected" not in status and "invited" not in status
+    if "accepted" not in status and "rejected" not in status and "invited" not in status and "withdrawn" not in status
 ]
 
 
