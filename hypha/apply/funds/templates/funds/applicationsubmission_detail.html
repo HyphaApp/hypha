@@ -73,7 +73,7 @@
     {% if object.is_archive %}
         <div class="py-2 bg-red-600 text-white font-bold text-center">
             {% heroicon_outline "lock-closed" aria_hidden="true" size=16 stroke_width=2 class="inline align-baseline mr-1" %}
-            {% trans "This submission has been archived." %}
+            {{ archive_string }}
         </div>
     {% endif %}
 
