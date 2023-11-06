@@ -1086,7 +1086,7 @@ class AdminSubmissionDetailView(ActivityContextMixin, DelegateableView, DetailVi
             )
 
         # The default archive visibility is superuser
-        archive_vis_groups = ["Administrator"]
+        archive_vis_groups = [_("Administrator")]
 
         if settings.SUBMISSIONS_ARCHIVED_ACCESS_STAFF:
             archive_vis_groups.append(STAFF_GROUP_NAME)
