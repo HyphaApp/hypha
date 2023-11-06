@@ -7,10 +7,10 @@ Babel==2.11.0
 bleach==5.0.0
 boto3==1.28.68
 celery==5.2.7
-dj-database-url==0.5.0
 click==8.1.7
+dj-database-url==2.1.0
 django-anymail==9.0
-django-basic-auth-ip-whitelist==0.3.4
+django-basic-auth-ip-whitelist==0.5
 django-bleach==3.0.1
 django-countries==7.5.1
 django-elevate==2.0.3
@@ -23,17 +23,18 @@ django-heroku==0.3.1
 django-hijack==3.2.6
 django-htmx==1.17.0
 django-pagedown==2.2.1
-django-pwned-passwords==4.1.0
-django-ratelimit==4.0.0
+# django-pwned-passwords==4.1.0
+https://github.com/slinkymanbyday/django-pwned-passwords/archive/58c7b832df7360a21fd8edeaaf9f897c7517baf1.zip
+django-ratelimit==4.1.0
 django-referrer-policy==1.0
 django-select2==8.0.0
 django-slack==5.18.0
 django-storages==1.13.2
 django-tables2==2.5.1
 django-tinymce==3.5.0
-django-two-factor-auth==1.14.0
+django-two-factor-auth==1.15.5
 django-web-components==0.1.1
-django==3.2.23
+django==4.1.13
 djangorestframework-api-key==2.3.0
 djangorestframework==3.14.0
 drf-nested-routers==0.93.4
@@ -56,7 +57,7 @@ social_auth_app_django==5.0.0
 tablib==3.5.0
 tomd==0.1.3
 wagtail-cache==2.2.0
-wagtail-purge==0.2
+wagtail-purge==0.3.0
 wagtail==4.2.2
 whitenoise==5.3.0
 xhtml2pdf==0.2.11

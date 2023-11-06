@@ -475,17 +475,16 @@ class ReviewDeleteView(UserPassesTestMixin, DeleteView):
             or self.request.user == review.author.reviewer
         )
 
-    def delete(self, request, *args, **kwargs):
+    def form_valid(self, form):
         review = self.get_object()
         messenger(
             MESSAGES.DELETE_REVIEW,
-            user=request.user,
-            request=request,
+            user=self.request.user,
+            request=self.request,
             source=review.submission,
             related=review,
         )
-        response = super().delete(request, *args, **kwargs)
-        return response
+        return super().form_valid(form)
 
     def get_success_url(self):
         review = self.get_object()
