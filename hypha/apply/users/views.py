@@ -9,10 +9,7 @@ from django.contrib.auth import get_user_model, login, update_session_auth_hash
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.forms import AdminPasswordChangeForm
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.contrib.auth.views import (
-    INTERNAL_RESET_SESSION_TOKEN,
-    SuccessURLAllowedHostsMixin,
-)
+from django.contrib.auth.views import INTERNAL_RESET_SESSION_TOKEN
 from django.contrib.auth.views import (
     PasswordResetConfirmView as DjPasswordResetConfirmView,
 )
@@ -81,7 +78,7 @@ User = get_user_model()
     ratelimit(key="ip", rate=settings.DEFAULT_RATE_LIMIT, method="POST"),
     name="dispatch",
 )
-class RegisterView(SuccessURLAllowedHostsMixin, View):
+class RegisterView(View):
     redirect_field_name = "next"
     form = CustomUserCreationForm
 
@@ -343,7 +340,7 @@ class EmailChangeConfirmationView(TemplateView):
             return None
 
 
-class ActivationView(SuccessURLAllowedHostsMixin, TemplateView):
+class ActivationView(TemplateView):
     redirect_field_name = "next"
 
     def get(self, request, *args, **kwargs):

@@ -30,5 +30,5 @@ class MyTestCase(TestCase):
   pass
 ```
 
-This is implemented by default for the [BaseViewTestCase](testing.md#test-class-helpers)
+This is implemented by default for the `BaseViewTestCase`
 

@@ -178,11 +178,11 @@
             </div>
         </header>
 
-        <main class="wrapper wrapper--large wrapper--main" id="main">
-            {% block content_wrapper %}
+        {% block content_wrapper %}
+            <main class="wrapper wrapper--large wrapper--main" id="main">
                 {% block content %}{% endblock %}
-            {% endblock %}
-        </main>
+            </main>
+        {% endblock %}
 
         <footer class="footer"></footer>
 

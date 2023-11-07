@@ -127,6 +127,7 @@ class CharFieldBlock(OptionalFormFieldBlock):
 
     class Meta:
         label = _("Text field (single line)")
+        icon = "minus"
         template = "stream_forms/render_unsafe_field.html"
 
     def get_field_class(self, struct_value):
@@ -149,6 +150,7 @@ class MultiInputCharFieldBlock(CharFieldBlock):
 
     class Meta:
         label = _("Text field (single line) (multiple inputs)")
+        icon = "bars"
 
 
 class TextFieldBlock(OptionalFormFieldBlock):
@@ -159,6 +161,7 @@ class TextFieldBlock(OptionalFormFieldBlock):
 
     class Meta:
         label = _("Text field (multi line)")
+        icon = "edit"
         template = "stream_forms/render_unsafe_field.html"
 
     def get_searchable_content(self, value, data):
@@ -172,6 +175,7 @@ class NumberFieldBlock(OptionalFormFieldBlock):
 
     class Meta:
         label = _("Number field")
+        icon = "decimal"
 
     def get_searchable_content(self, value, data):
         return None
@@ -256,7 +260,7 @@ class DropdownFieldBlock(RadioButtonsFieldBlock):
 
     class Meta:
         label = _("Dropdown field")
-        icon = "arrow-down-big"
+        icon = "arrow-down"
 
     def get_field_kwargs(self, struct_value):
         kwargs = super().get_field_kwargs(struct_value)
@@ -272,7 +276,7 @@ class CheckboxesFieldBlock(OptionalFormFieldBlock):
 
     class Meta:
         label = _("Multiple checkboxes field")
-        icon = "list-ul"
+        icon = "tasks"
         template = "stream_forms/render_list_field.html"
 
     def get_field_kwargs(self, struct_value):

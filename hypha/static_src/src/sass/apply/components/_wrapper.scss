@@ -222,7 +222,7 @@
     }
 
     &--cta-box {
-        width: 385px;
+        width: 500px;
         padding: 20px;
         color: $color--default;
         background-color: $color--white;
@@ -232,10 +232,6 @@
         display: flex;
         flex-wrap: wrap;
         justify-content: space-between;
-
-        @include media-query(tablet-portrait) {
-            padding: 20px;
-        }
     }
 
     &--status-bar-outer {
