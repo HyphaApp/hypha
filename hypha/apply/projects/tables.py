@@ -126,7 +126,7 @@ class ProjectsAssigneeDashboardTable(BaseProjectsTable):
 
 class PAFForReviewDashboardTable(tables.Table):
     date_requested = tables.DateColumn(
-        verbose_name=_("Date requested"), accessor="updated_at"
+        verbose_name=_("Date requested"), accessor="created_at"
     )
     title = tables.LinkColumn(
         "funds:projects:detail",
@@ -149,7 +149,7 @@ class PAFForReviewDashboardTable(tables.Table):
     def order_date_requested(self, qs, is_descending):
         direction = "-" if is_descending else ""
 
-        qs = qs.order_by(f"{direction}updated_at")
+        qs = qs.order_by(f"{direction}created_at")
 
         return qs, True
 
