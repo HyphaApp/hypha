@@ -1,5 +1,8 @@
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
+from django.utils.translation import gettext_lazy as _
+
+from ..users.groups import STAFF_GROUP_NAME, TEAMADMIN_GROUP_NAME
 
 
 def has_permission(action, user, object=None, raise_exception=True):
@@ -28,10 +31,27 @@ def can_bulk_delete_submissions(user) -> bool:
     return False
 
 
+def get_archive_access_groups() -> list:
+    """
+    Returns a list of groups that can access archived submissions
+    """
+
+    archive_access_groups = [_("Administrator")]
+
+    if settings.SUBMISSIONS_ARCHIVED_ACCESS_STAFF:
+        archive_access_groups.append(STAFF_GROUP_NAME)
+    if settings.SUBMISSIONS_ARCHIVED_ACCESS_STAFF_ADMIN:
+        archive_access_groups.append(TEAMADMIN_GROUP_NAME)
+
+    return archive_access_groups
+
+
 def can_access_archived_submissions(user):
-    if user.is_apply_staff and settings.SUBMISSIONS_ARCHIVED_ACCESS_STAFF:
+    archive_access_groups = get_archive_access_groups()
+
+    if user.is_apply_staff and STAFF_GROUP_NAME in archive_access_groups:
         return True
-    if user.is_apply_staff_admin and settings.SUBMISSIONS_ARCHIVED_ACCESS_STAFF_ADMIN:
+    if user.is_apply_staff_admin and TEAMADMIN_GROUP_NAME in archive_access_groups:
         return True
     return False
 

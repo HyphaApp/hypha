@@ -62,7 +62,6 @@ from hypha.apply.utils.views import (
     ViewDispatcher,
 )
 
-from ..users.groups import STAFF_GROUP_NAME, TEAMADMIN_GROUP_NAME
 from . import services
 from .differ import compare
 from .files import generate_submission_file_path
@@ -97,6 +96,7 @@ from .permissions import (
     can_access_archived_submissions,
     can_access_drafts,
     can_export_submissions,
+    get_archive_access_groups,
     has_permission,
 )
 from .tables import (
@@ -1076,32 +1076,11 @@ class AdminSubmissionDetailView(ActivityContextMixin, DelegateableView, DetailVi
         public_page = self.object.get_from_parent("detail")()
         default_screening_statuses = get_default_screening_statues()
 
-        if not self.get_object().is_archive:
-            return super().get_context_data(
-                other_submissions=other_submissions,
-                public_page=public_page,
-                default_screening_statuses=default_screening_statuses,
-                **kwargs,
-            )
-
-        # The default archive visibility is superuser
-        archive_vis_groups = [_("Administrator")]
-
-        if settings.SUBMISSIONS_ARCHIVED_ACCESS_STAFF:
-            archive_vis_groups.append(STAFF_GROUP_NAME)
-
-        if settings.SUBMISSIONS_ARCHIVED_ACCESS_STAFF_ADMIN:
-            archive_vis_groups.append(TEAMADMIN_GROUP_NAME)
-
-        archive_string = _(
-            "This submission has been archived. This is visible to the roles: {roles}."
-        ).format(roles=", ".join(archive_vis_groups))
-
         return super().get_context_data(
-            archive_string=archive_string,
             other_submissions=other_submissions,
             public_page=public_page,
             default_screening_statuses=default_screening_statuses,
+            archive_access_groups=get_archive_access_groups(),
             **kwargs,
         )
 

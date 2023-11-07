@@ -1,5 +1,5 @@
 {% extends "base-apply.html" %}
-{% load i18n static workflow_tags wagtailcore_tags statusbar_tags %}
+{% load i18n static workflow_tags wagtailcore_tags statusbar_tags archive_tags %}
 {% load heroicons %}
 
 {% block title %}{{ object.title }}{% endblock %}
@@ -9,7 +9,6 @@
         <ul class="messages">
             {% trans "This submission is sealed" as warning_message %}
             {% include "includes/message_item.html" with message=warning_message tag="warning" close=False %}
-            }
         </ul>
     {% endif %}
     <div class="admin-bar">
@@ -73,7 +72,7 @@
     {% if object.is_archive %}
         <div class="py-2 bg-red-600 text-white font-bold text-center">
             {% heroicon_outline "lock-closed" aria_hidden="true" size=16 stroke_width=2 class="inline align-baseline mr-1" %}
-            {{ archive_string }}
+            {% trans "This submission has been archived. This is visible to the roles " %} {{ archive_access_groups|join_with_commas }}
         </div>
     {% endif %}
 
