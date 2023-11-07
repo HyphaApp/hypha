@@ -95,7 +95,7 @@ class CustomFormFieldsBlock(StreamBlock):
         try:
             value = super().clean(value)
         except ValidationError as e:
-            error_dict = e.params
+            error_dict = e.params or {}
         else:
             error_dict = {}
 

@@ -157,9 +157,13 @@ ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", [])
 APP_NAME = env.str("APP_NAME", "hypha")
 DATABASES = {
     "default": dj_database_url.config(
-        conn_max_age=600, default=f"postgres:///{APP_NAME}"
+        default=f"postgres:///{APP_NAME}", conn_max_age=600, conn_health_checks=True
     )
 }
+
+# https://docs.djangoproject.com/en/4.1/ref/settings/#conn-health-checks
+# Setting this to True, as we are using a non-zero valve for conn_max_age in dj_database_url.config
+CONN_HEALTH_CHECKS = env.bool("CONN_HEALTH_CHECKS", True)
 
 # Language code in standard language id format: en, en-gb, en-us
 # The corrosponding locale dir is named: en, en_GB, en_US
