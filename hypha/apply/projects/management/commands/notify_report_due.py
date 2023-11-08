@@ -6,15 +6,16 @@ from django.http import HttpRequest
 from django.utils import timezone
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
-from hypha.apply.projects.models import Project
+from hypha.apply.projects.models import (
+    Project,
+    ProjectReminderFrequency,
+    ProjectSettings,
+)
 from hypha.home.models import ApplyHomePage
 
 
 class Command(BaseCommand):
     help = "Notify users that they have a report due soon"
-
-    def add_arguments(self, parser):
-        parser.add_argument("days_before", type=int)
 
     def handle(self, *args, **options):
         site = ApplyHomePage.objects.first().get_site()
@@ -29,22 +30,41 @@ class Command(BaseCommand):
         request._messages = FallbackStorage(request)
 
         today = timezone.now().date()
-        due_date = today + relativedelta(days=options["days_before"])
-        for project in Project.objects.in_progress():
-            next_report = project.report_config.current_due_report()
-            due_soon = next_report.end_date == due_date
-            not_notified_today = (
-                not next_report.notified or next_report.notified.date() != today
+
+        project_settings = ProjectSettings.objects.filter(site=site).first()
+        if not project_settings:
+            return
+
+        for frequency in project_settings.reminder_frequencies.all():
+            multiplier = (
+                -1
+                if frequency.relation
+                == ProjectReminderFrequency.FrequencyRelation.AFTER
+                else 1
             )
-            if due_soon and not_notified_today:
-                messenger(
-                    MESSAGES.REPORT_NOTIFY,
-                    request=request,
-                    user=None,
-                    source=project,
-                    related=next_report,
+            delta = frequency.num_days * multiplier
+
+            due_date = today + relativedelta(days=delta)
+            for project in Project.objects.in_progress():
+                next_report = project.report_config.current_due_report()
+                if not next_report:
+                    continue
+
+                due_soon = next_report.end_date == due_date
+                not_notified_today = (
+                    not next_report.notified or next_report.notified.date() != today
                 )
-                # Notify about the due report
-                next_report.notified = timezone.now()
-                next_report.save()
-                self.stdout.write(self.style.SUCCESS(f"Notified project: {project.id}"))
+                if due_soon and not_notified_today:
+                    messenger(
+                        MESSAGES.REPORT_NOTIFY,
+                        request=request,
+                        user=None,
+                        source=project,
+                        related=next_report,
+                    )
+                    # Notify about the due report
+                    next_report.notified = timezone.now()
+                    next_report.save()
+                    self.stdout.write(
+                        self.style.SUCCESS(f"Notified project: {project.id}")
+                    )
