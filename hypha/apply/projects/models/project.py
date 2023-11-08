@@ -516,6 +516,26 @@ class PAFReviewersRole(Orderable, ClusterableModel):
         return str(self.label)
 
 
+class ProjectReminderFrequency(Orderable, ClusterableModel):
+    num_days = models.IntegerField()
+    page = ParentalKey("ProjectSettings", related_name="reminder_frequencies")
+
+    class FrequencyRelation(models.TextChoices):
+        BEFORE = "BE", _("Before")
+        AFTER = "AF", _("After")
+
+    relation = models.CharField(
+        max_length=2,
+        choices=FrequencyRelation.choices,
+        default=FrequencyRelation.BEFORE,
+    )
+
+    panels = [
+        FieldPanel("num_days", heading=_("Number of Days")),
+        FieldPanel("relation", heading=_("Relation to Project Due Date")),
+    ]
+
+
 @register_setting
 class ProjectSettings(BaseSiteSetting, ClusterableModel):
     contracting_gp_email = models.TextField(
@@ -546,6 +566,11 @@ class ProjectSettings(BaseSiteSetting, ClusterableModel):
                 "Delete all roles to skip internal approval process and "
                 "to move all internal approval projects back to the 'Draft' stage with all approvals removed."
             ),
+        ),
+        InlinePanel(
+            "reminder_frequencies",
+            label=_("Report Reminder Frequency"),
+            heading=_("Report Reminder Frequency"),
         ),
     ]
 
