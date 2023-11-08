@@ -33,7 +33,7 @@ from hypha.apply.projects.tables import (
 )
 from hypha.apply.utils.views import ViewDispatcher
 
-from .utils import get_paf_for_review
+from .services import get_paf_for_review
 
 
 class MySubmissionContextMixin:
@@ -110,7 +110,8 @@ class AdminDashboardView(MyFlaggedMixin, TemplateView):
         project_settings = ProjectSettings.for_request(self.request)
 
         paf_approvals = get_paf_for_review(
-            user=self.request.user, project_settings=project_settings
+            user=self.request.user,
+            is_paf_approval_sequential=project_settings.paf_approval_sequential,
         )
 
         return {
@@ -321,7 +322,8 @@ class FinanceDashboardView(MyFlaggedMixin, TemplateView):
         project_settings = ProjectSettings.for_request(self.request)
 
         paf_approvals = get_paf_for_review(
-            user=self.request.user, project_settings=project_settings
+            user=self.request.user,
+            is_paf_approval_sequential=project_settings.paf_approval_sequential,
         )
 
         return {
@@ -631,7 +633,8 @@ class ContractingDashboardView(MyFlaggedMixin, TemplateView):
         project_settings = ProjectSettings.for_request(self.request)
 
         paf_approvals = get_paf_for_review(
-            user=self.request.user, project_settings=project_settings
+            user=self.request.user,
+            is_paf_approval_sequential=project_settings.paf_approval_sequential,
         )
 
         return {
