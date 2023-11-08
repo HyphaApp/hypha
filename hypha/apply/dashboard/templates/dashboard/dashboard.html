@@ -39,15 +39,6 @@
                         <div class="stat-block__view">{% trans "View" %}</div>
                     {% endif %}
                 </a>
-                {% if not paf_waiting_for_approval.count is None%}
-                    <a href="#paf-awaiting-approval" class="stat-block__item border">
-                        <p class="stat-block__number">{{ paf_waiting_for_approval.count }}</p>
-                        <p class="stat-block__text">{% trans "Projects awaiting approval" %}</p>
-                        {% if paf_waiting_for_approval.count %}
-                            <div class="stat-block__view">{% trans "View" %}</div>
-                        {% endif %}
-                    </a>
-                {% endif %}
                 <a href="#active-invoices" class="stat-block__item border">
                     <p class="stat-block__number">{{ active_invoices.count }}</p>
                     <p class="stat-block__text">{% trans "Requests for invoices requiring your attention" %}</p>
@@ -76,17 +67,6 @@
             <div id="paf_for_review" class="wrapper wrapper--bottom-space">
                 <h4 class="heading heading--normal">{% trans "PAFs for review" %}</h4>
                 {% render_table paf_for_review.table %}
-            </div>
-        {% endif %}
-
-        {% if paf_waiting_for_approval.count %}
-            {% include "dashboard/includes/paf_waiting_for_approval.html" with paf_waiting_for_approval=paf_waiting_for_approval %}
-        {% endif %}
-
-        {% if paf_waiting_for_assignment.count %}
-            <div id="paf_waiting_for_assignment" class="wrapper wrapper--bottom-space">
-                <h4 class="heading heading--normal">{% trans "PAF waiting for assignee" %}</h4>
-                {% render_table paf_waiting_for_assignment.table %}
             </div>
         {% endif %}
 
