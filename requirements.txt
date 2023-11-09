@@ -28,7 +28,7 @@ https://github.com/slinkymanbyday/django-pwned-passwords/archive/58c7b832df7360a
 django-ratelimit==4.1.0
 django-referrer-policy==1.0
 django-select2==8.0.0
-django-slack==5.18.0
+django-slack==5.19.0
 django-storages==1.13.2
 django-tables2==2.5.1
 django-tinymce==3.5.0
