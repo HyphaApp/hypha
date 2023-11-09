@@ -119,7 +119,9 @@ jobs:
         run: venv/bin/python manage.py check
 
       - name: Check Django Migrations
-        run: venv/bin/python manage.py makemigrations --check --noinput --verbosity=1
+        run: |
+          venv/bin/python manage.py makemigrations --dry-run --verbosity=3
+          venv/bin/python manage.py makemigrations --check
 
       - name: Run collect static
         run: venv/bin/python manage.py collectstatic --noinput --no-post-process --verbosity=1
