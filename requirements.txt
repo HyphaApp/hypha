@@ -20,7 +20,7 @@ django-filter==2.4.0
 django-formtools==2.4.1
 django-fsm==2.8.1
 django-heroku==0.3.1
-django-hijack==3.2.6
+django-hijack==3.4.2
 django-htmx==1.17.0
 django-pagedown==2.2.1
 # django-pwned-passwords==4.1.0
