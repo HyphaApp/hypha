@@ -4,6 +4,7 @@
     $root: &;
     display: none;
     padding: 30px 10px 80px;
+    margin-right: 16px;
 
     @include media-query(tablet-portrait) {
         display: flex;
