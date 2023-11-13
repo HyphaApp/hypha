@@ -2,7 +2,7 @@ from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.utils.translation import gettext_lazy as _
 
-from ..users.groups import STAFF_GROUP_NAME, TEAMADMIN_GROUP_NAME
+from ..users.groups import STAFF_GROUP_NAME, TEAMADMIN_GROUP_NAME, SUPERADMIN
 
 
 def has_permission(action, user, object=None, raise_exception=True):
@@ -31,12 +31,40 @@ def can_bulk_delete_submissions(user) -> bool:
     return False
 
 
-def get_archive_access_groups() -> list:
+def get_archive_view_groups() -> list:
     """
-    Returns a list of groups that can access archived submissions
+    Returns a list of groups that can view archived submissions
     """
 
-    archive_access_groups = [_("Administrator")]
+    archive_access_view_groups = [SUPERADMIN]
+
+    if settings.SUBMISSIONS_ARCHIVED_VIEW_ACCESS_STAFF:
+        archive_access_view_groups.append(STAFF_GROUP_NAME)
+    if settings.SUBMISSIONS_ARCHIVED_VIEW_ACCESS_STAFF_ADMIN:
+        archive_access_view_groups.append(TEAMADMIN_GROUP_NAME)
+
+    return archive_access_view_groups
+
+
+def can_view_archived_submissions(user) -> bool:
+    """
+    Return a boolean based on if a user can view archived submissions
+    """
+    archive_view_groups = get_archive_view_groups()
+
+    if user.is_apply_staff and STAFF_GROUP_NAME in archive_view_groups:
+        return True
+    if user.is_apply_staff_admin and TEAMADMIN_GROUP_NAME in archive_view_groups:
+        return True
+    return False
+
+
+def get_archive_alter_groups() -> list:
+    """
+    Returns a list of groups that can archive & unarchive submissions
+    """
+
+    archive_access_groups = [SUPERADMIN]
 
     if settings.SUBMISSIONS_ARCHIVED_ACCESS_STAFF:
         archive_access_groups.append(STAFF_GROUP_NAME)
@@ -46,8 +74,11 @@ def get_archive_access_groups() -> list:
     return archive_access_groups
 
 
-def can_access_archived_submissions(user):
-    archive_access_groups = get_archive_access_groups()
+def can_alter_archived_submissions(user) -> bool:
+    """
+    Return a boolean based on if a user can alter archived submissions
+    """
+    archive_access_groups = get_archive_alter_groups()
 
     if user.is_apply_staff and STAFF_GROUP_NAME in archive_access_groups:
         return True
@@ -57,7 +88,7 @@ def can_access_archived_submissions(user):
 
 
 def can_bulk_archive_submissions(user) -> bool:
-    if can_access_archived_submissions(user) and can_bulk_delete_submissions(user):
+    if can_alter_archived_submissions(user) and can_bulk_delete_submissions(user):
         return True
 
     return False
@@ -107,7 +138,7 @@ def is_user_has_access_to_view_submission(user, submission):
     if not user.is_authenticated:
         return False, "Login Required"
 
-    if submission.is_archive and not can_access_archived_submissions(user):
+    if submission.is_archive and not can_view_archived_submissions(user):
         return False, "Archived Submission"
 
     if user.is_apply_staff or submission.user == user or user.is_reviewer:

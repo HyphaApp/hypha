@@ -1,3 +1,6 @@
+from django.utils.translation import gettext_lazy as _
+
+SUPERADMIN = _("Administrator")
 APPLICANT_GROUP_NAME = "Applicant"
 STAFF_GROUP_NAME = "Staff"
 REVIEWER_GROUP_NAME = "Reviewer"

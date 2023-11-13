@@ -93,10 +93,12 @@ from .models import (
     RoundsAndLabs,
 )
 from .permissions import (
-    can_access_archived_submissions,
+    can_view_archived_submissions,
+    can_alter_archived_submissions,
+    can_bulk_archive_submissions,
     can_access_drafts,
     can_export_submissions,
-    get_archive_access_groups,
+    get_archive_view_groups,
     has_permission,
 )
 from .tables import (
@@ -281,6 +283,10 @@ class BatchArchiveSubmissionView(DelegatedViewMixin, FormView):
     context_name = "batch_archive_submission_form"
 
     def form_valid(self, form):
+        # If a user without archive edit access is somehow able to access batch archive submissions
+        # (ie. they were looking at the submission list when permissions changed) "refresh" the page 
+        if not can_alter_archived_submissions(self.request.user):
+            return HttpResponseRedirect(self.request.path)
         submissions = form.cleaned_data["submissions"]
         services.bulk_archive_submissions(
             submissions=submissions,
@@ -531,10 +537,12 @@ class SubmissionAdminListView(BaseAdminSubmissionsTable, DelegateableListView):
         return submissions
 
     def get_context_data(self, **kwargs):
-        show_archive = can_access_archived_submissions(self.request.user)
+        show_archive = can_view_archived_submissions(self.request.user)
+        can_archive = can_bulk_archive_submissions(self.request.user)
 
         return super().get_context_data(
             show_archive=show_archive,
+            can_bulk_archive=can_archive,
             **kwargs,
         )
 
@@ -813,6 +821,10 @@ class UnarchiveSubmissionView(DelegatedViewMixin, UpdateView):
     context_name = "unarchive_form"
 
     def form_valid(self, form):
+         # If a user without archive edit access is somehow able to access "Unarchive Submission"
+         # (ie. they were looking at the submission when permissions changed) "refresh" the page 
+        if not can_alter_archived_submissions(self.request.user):
+            return HttpResponseRedirect(self.request.path)
         response = super().form_valid(form)
         # Record activity
         messenger(
@@ -834,6 +846,10 @@ class ArchiveSubmissionView(DelegatedViewMixin, UpdateView):
     context_name = "archive_form"
 
     def form_valid(self, form):
+         # If a user without archive edit access is somehow able to access "Archive Submission"
+         # (ie. they were looking at the submission when permissions changed) "refresh" the page 
+        if not can_alter_archived_submissions(self.request.user):
+            return HttpResponseRedirect(self.request.path)
         response = super().form_valid(form)
         submission = self.get_object()
         # Record activity
@@ -1080,7 +1096,8 @@ class AdminSubmissionDetailView(ActivityContextMixin, DelegateableView, DetailVi
             other_submissions=other_submissions,
             public_page=public_page,
             default_screening_statuses=default_screening_statuses,
-            archive_access_groups=get_archive_access_groups(),
+            archive_access_groups=get_archive_view_groups(),
+            can_archive=can_alter_archived_submissions(self.request.user),
             **kwargs,
         )
 
