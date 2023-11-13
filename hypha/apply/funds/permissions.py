@@ -1,8 +1,7 @@
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
-from django.utils.translation import gettext_lazy as _
 
-from ..users.groups import STAFF_GROUP_NAME, TEAMADMIN_GROUP_NAME, SUPERADMIN
+from ..users.groups import STAFF_GROUP_NAME, SUPERADMIN, TEAMADMIN_GROUP_NAME
 
 
 def has_permission(action, user, object=None, raise_exception=True):

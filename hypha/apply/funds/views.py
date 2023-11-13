@@ -93,11 +93,11 @@ from .models import (
     RoundsAndLabs,
 )
 from .permissions import (
-    can_view_archived_submissions,
+    can_access_drafts,
     can_alter_archived_submissions,
     can_bulk_archive_submissions,
-    can_access_drafts,
     can_export_submissions,
+    can_view_archived_submissions,
     get_archive_view_groups,
     has_permission,
 )
@@ -284,7 +284,7 @@ class BatchArchiveSubmissionView(DelegatedViewMixin, FormView):
 
     def form_valid(self, form):
         # If a user without archive edit access is somehow able to access batch archive submissions
-        # (ie. they were looking at the submission list when permissions changed) "refresh" the page 
+        # (ie. they were looking at the submission list when permissions changed) "refresh" the page
         if not can_alter_archived_submissions(self.request.user):
             return HttpResponseRedirect(self.request.path)
         submissions = form.cleaned_data["submissions"]
@@ -821,8 +821,8 @@ class UnarchiveSubmissionView(DelegatedViewMixin, UpdateView):
     context_name = "unarchive_form"
 
     def form_valid(self, form):
-         # If a user without archive edit access is somehow able to access "Unarchive Submission"
-         # (ie. they were looking at the submission when permissions changed) "refresh" the page 
+        # If a user without archive edit access is somehow able to access "Unarchive Submission"
+        # (ie. they were looking at the submission when permissions changed) "refresh" the page
         if not can_alter_archived_submissions(self.request.user):
             return HttpResponseRedirect(self.request.path)
         response = super().form_valid(form)
@@ -846,8 +846,8 @@ class ArchiveSubmissionView(DelegatedViewMixin, UpdateView):
     context_name = "archive_form"
 
     def form_valid(self, form):
-         # If a user without archive edit access is somehow able to access "Archive Submission"
-         # (ie. they were looking at the submission when permissions changed) "refresh" the page 
+        # If a user without archive edit access is somehow able to access "Archive Submission"
+        # (ie. they were looking at the submission when permissions changed) "refresh" the page
         if not can_alter_archived_submissions(self.request.user):
             return HttpResponseRedirect(self.request.path)
         response = super().form_valid(form)
