@@ -1,4 +1,4 @@
-# Without Docker
+# Stand Alone
 
 In order to have get started with developing hypha locally, you'll need these
 minimal setup, the setup may vary slightly for your base operating systems.

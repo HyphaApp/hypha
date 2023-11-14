@@ -1,4 +1,4 @@
-# With Docker
+# Docker
 
 Require most recent version of [Docker](https://www.docker.com/get-started).
 
