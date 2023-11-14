@@ -121,6 +121,21 @@
         }
     }
 
+    &--blue-white {
+        @include button($color--white, $color--light-blue);
+        display: inline-block;
+        color: $color--light-blue;
+        border: 1px solid $color--light-blue;
+
+        &:focus {
+            color: $color--light-blue;
+        }
+
+        &:hover {
+            color: $color--white;
+        }
+    }
+
     &-danger,
     &--warning {
         @include button($color--error, $color--error);

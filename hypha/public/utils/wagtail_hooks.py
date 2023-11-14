@@ -1,4 +1,3 @@
-from django.templatetags.static import static
 from wagtail import hooks
 from wagtail.contrib.modeladmin.options import (
     ModelAdmin,
@@ -28,13 +27,6 @@ class TaxonomiesModelAdminGroup(ModelAdminGroup):
 
 
 modeladmin_register(TaxonomiesModelAdminGroup)
-
-
-@hooks.register("insert_editor_css")
-def editor_css():
-    link = '<link rel="stylesheet" href="{}">\n'
-    path = static("css/apply/wagtail_editor.css")
-    return link.format(path)
 
 
 @hooks.register("after_create_page")

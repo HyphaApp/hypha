@@ -179,7 +179,7 @@ class ReviewerSettingAdmin(SettingModelAdmin):
 
 class ApplyAdminGroup(ModelAdminGroup):
     menu_label = "Apply"
-    menu_icon = "folder-open-inverse"
+    menu_icon = "folder-inverse"
     items = (
         RoundAdmin,
         SealedRoundAdmin,

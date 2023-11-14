@@ -1038,17 +1038,16 @@ class ReminderDeleteView(DeleteView):
         )
         return reverse_lazy("funds:submissions:detail", args=(submission.id,))
 
-    def delete(self, request, *args, **kwargs):
+    def form_valid(self, form):
         reminder = self.get_object()
         messenger(
             MESSAGES.DELETE_REMINDER,
-            user=request.user,
-            request=request,
+            user=self.request.user,
+            request=self.request,
             source=reminder.submission,
             related=reminder,
         )
-        response = super().delete(request, *args, **kwargs)
-        return response
+        return super().form_valid(form)
 
 
 class AdminSubmissionDetailView(ActivityContextMixin, DelegateableView, DetailView):
@@ -1574,21 +1573,22 @@ class SubmissionDeleteView(DeleteView):
     model = ApplicationSubmission
     success_url = reverse_lazy("funds:submissions:list")
 
-    def delete(self, request, *args, **kwargs):
+    def form_valid(self, form):
         submission = self.get_object()
         messenger(
             MESSAGES.DELETE_SUBMISSION,
-            user=request.user,
-            request=request,
+            user=self.request.user,
+            request=self.request,
             source=submission,
         )
-        # delete NEW_SUBMISSION event for this particular submission
+
+        # Delete NEW_SUBMISSION event for this particular submission
         Event.objects.filter(
             type=MESSAGES.NEW_SUBMISSION, object_id=submission.id
         ).delete()
-        # delete submission
-        response = super().delete(request, *args, **kwargs)
-        return response
+
+        # delete submission and redirect to success url
+        return super().form_valid(form)
 
 
 @method_decorator(login_required, name="dispatch")
