@@ -1,3 +1,5 @@
+import copy
+
 from django.utils.translation import gettext as _
 
 from hypha.apply.activity.adapters.utils import link_to
@@ -39,95 +41,95 @@ template_map = {
     # PROJECT actions
     # draft state (staff action)
     PROJECT_WAITING_PAF: {
-        "text": _("Project <{link}|{related.title}> is waiting for PAF"),
-        "icon": "",
+        "text": _("Project [{related.title}]({link}) is waiting for PAF"),
+        "icon": "dashboard-paf",
         "url": "{link}",
         "type": _("project"),
     },
     PROJECT_SUBMIT_PAF: {
-        "text": _("Project <{link}|{related.title}> is waiting for PAF submission"),
-        "icon": "",
+        "text": _("Project [{related.title}]({link}) is waiting for PAF submission"),
+        "icon": "dashboard-paf",
         "url": "{link}",
         "type": _("project"),
     },
     PAF_REQUIRED_CHANGES: {
         "text": _(
-            "PAF for project <{link}|{related.title}> required changes or more information"
+            "PAF for project [{related.title}]({link}) required changes or more information"
         ),
-        "icon": "",
+        "icon": "dashboard-paf",
         "url": "{link}",
         "type": _("project"),
     },
     # internal approval state (approvers/finance... action)
     PAF_WAITING_ASSIGNEE: {
-        "text": _("PAF for project <{link}|{related.title}> is waiting for assignee"),
-        "icon": "",
+        "text": _("PAF for project [{related.title}]({link}) is waiting for assignee"),
+        "icon": "dashboard-paf",
         "url": "{link}",
         "type": _("project"),
     },
     PAF_WAITING_APPROVAL: {
         "text": _(
-            "PAF for project <{link}|{related.title}> is waiting for your approval"
+            "PAF for project [{related.title}]({link}) is waiting for your approval"
         ),
-        "icon": "",
+        "icon": "dashboard-paf",
         "url": "{link}",
         "type": _("project"),
     },
     # contracting state (vendor/staff/contracting team action)
     PROJECT_WAITING_CONTRACT: {
-        "text": _("Project <{link}|{related.title}> is waiting for contract"),
-        "icon": "",
+        "text": _("Project [{related.title}]({link}) is waiting for contract"),
+        "icon": "dashboard-contract",
         "url": "{link}",
         "type": _("project"),
     },
     PROJECT_WAITING_CONTRACT_DOCUMENT: {
         "text": _(
-            "Project <{link}|{related.title}> is waiting for contracting documents"
+            "Project [{related.title}]({link}) is waiting for contracting documents"
         ),
-        "icon": "",
+        "icon": "dashboard-document",
         "url": "{link}",
         "type": _("project"),
     },
     PROJECT_WAITING_CONTRACT_REVIEW: {
         "text": _(
-            "Contract for project <{link}|{related.title}> is waiting for review"
+            "Contract for project [{related.title}]({link}) is waiting for review"
         ),
-        "icon": "",
+        "icon": "dashboard-contract",
         "url": "{link}",
         "type": _("project"),
     },
     # invoicing and reporting (vendor/staff/finance team action)
     PROJECT_WAITING_INVOICE: {
-        "text": _("Project <{link}|{related.title}> is waiting for invoice"),
-        "icon": "",
+        "text": _("Project [{related.title}]({link}) is waiting for invoice"),
+        "icon": "dashboard-invoice",
         "url": "{link}",
         "type": _("project"),
     },
     INVOICE_REQUIRED_CHANGES: {
         "text": _(
-            "Invoice <{link}|{related.invoice_number}> required changes or more information"
+            "Invoice [{related.invoice_number}]({link}) required changes or more information"
         ),
-        "icon": "",
+        "icon": "dashboard-invoice",
         "url": "{link}",
         "type": _("project"),
     },
     INVOICE_WAITING_APPROVAL: {
         "text": _(
-            "Invoice <{link}|{related.invoice_number}> is waiting for your approval"
+            "Invoice [{related.invoice_number}]({link}) is waiting for your approval"
         ),
-        "icon": "",
+        "icon": "dashboard-invoice",
         "url": "{link}",
         "type": _("project"),
     },
     INVOICE_WAITING_PAID: {
-        "text": _("Invoice <{link}|{related.invoice_number}> is waiting to be paid"),
-        "icon": "",
+        "text": _("Invoice [{related.invoice_number}]({link}) is waiting to be paid"),
+        "icon": "dashboard-invoice",
         "url": "{link}",
         "type": _("project"),
     },
     REPORT_DUE: {
-        "text": _("Report for project <{link}|{related.title}> is due"),
-        "icon": "",
+        "text": _("Report for project [{related.title}]({link}) is due"),
+        "icon": "dashboard-report",
         "url": "{link}",
         "type": _("project"),
     },
@@ -135,8 +137,9 @@ template_map = {
 
 
 def get_task_template(request, code, related_obj, **kwargs):
+    templates = copy.deepcopy(template_map)
     try:
-        template = template_map[code]
+        template = templates[code]
     except KeyError:
         # Unregistered code
         return

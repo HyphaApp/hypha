@@ -3,6 +3,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.validators import ValidationError
 from django.db import models
 
+from hypha.apply.activity.adapters.utils import get_users_for_groups
 from hypha.apply.users.models import Group, User
 
 from .options import TASKS_CODE_CHOICES
@@ -39,6 +40,10 @@ class Task(models.Model):
             )
 
     def validate_unique(self, exclude=None):
+        """
+        code + related_object + user/user_group should be unique together.
+        """
+        # todo: no need to raise ValidationError in this method just abort the save.
         matching_tasks = Task.objects.filter(
             code=self.code,
             related_content_type=ContentType.objects.get_for_model(
@@ -73,26 +78,16 @@ class Task(models.Model):
             if user_group_matching_tasks.exists():
                 raise ValidationError("Task is already assigned to the user group")
 
-            # :todo: if a user with exact user group already assigned for same task then it should get removed for the user and only get assigned to the user group
+            # user with exact user group already assigned for same task
+            users = get_users_for_groups(
+                list(self.user_group.all()), exact_match=True
+            )  # users with provided user_group
 
-            # if Task.objects.filter(
-            #     code=self.code,
-            #     user__groups=self.user_group,
-            #     related_content_type=ContentType.objects.get_for_model(
-            #         self.related_object
-            #     ).id,
-            #     related_object_id=self.related_object.id,
-            # ).eixsts():
-            #     # removed same task for individual and add it to a user group
-            #     Task.objects.filter(
-            #         code=self.code,
-            #         user__groups=self.user_group,
-            #         related_content_type=ContentType.objects.get_for_model(
-            #             self.related_object
-            #         ).id,
-            #         related_object_id=self.related_object.id,
-            #     ).delete()
-            #     pass
+            for user in users:
+                if matching_tasks.filter(user=user).exists():
+                    Task.objects.filter(
+                        id=matching_tasks.id
+                    ).delete()  # delete the user's tasks
 
     def save(self, **kwargs):
         self.validate_unique()

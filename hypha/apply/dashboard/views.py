@@ -28,6 +28,7 @@ from hypha.apply.projects.tables import (
     PAFForReviewDashboardTable,
     ProjectsDashboardTable,
 )
+from hypha.apply.tasks.views import render_task_templates_for_user
 from hypha.apply.utils.views import ViewDispatcher
 
 from .services import get_paf_for_review
@@ -94,6 +95,7 @@ class AdminDashboardView(MyFlaggedMixin, TemplateView):
                 "rounds": self.rounds(),
                 "my_flagged": self.my_flagged(submissions),
                 "paf_for_review": self.paf_for_review(),
+                "my_tasks": self.my_tasks(),
             }
         )
 
@@ -116,6 +118,13 @@ class AdminDashboardView(MyFlaggedMixin, TemplateView):
         return {
             "count": paf_approvals.count(),
             "table": paf_table,
+        }
+
+    def my_tasks(self):
+        tasks = render_task_templates_for_user(self.request, self.request.user)
+        return {
+            "count": len(tasks),
+            "data": tasks,
         }
 
     def awaiting_reviews(self, submissions):

@@ -47,13 +47,27 @@ def get_tasks_for_user(user):
     for group in user.groups.all():
         user_group_tasks = user_group_tasks.filter(user_group__id=group.id)
 
-    return user_tasks.union(user_group_tasks).order_by("-created_at")
+    # todo: test union for merging user and user_group querysets
+
+    return user_tasks
 
 
 def render_task_templates_for_user(request, user):
+    """
+    input: request (HttpRequest)
+    input: user   (User object)
+
+    output: [{
+                 "text":"",
+                 "icon":"",
+                 "url":"",
+                 "type":"",
+             },
+            ]
+    """
     tasks = get_tasks_for_user(user)
     templates = [
-        get_task_template(request, code=task.code, related_object=task.related_object)
+        get_task_template(request, code=task.code, related_obj=task.related_object)
         for task in tasks
     ]
     return templates
