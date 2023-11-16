@@ -1,6 +1,8 @@
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Count
 
+from hypha.apply.users.models import Group
+
 from .models import Task
 from .options import get_task_template
 
@@ -11,10 +13,9 @@ def add_task_to_user(code, user, related_obj):
 
 
 def add_task_to_user_group(code, user_group, related_obj):
-    # :todo: fix direct assignment of user_group
-    task = Task.objects.create(
-        code=code, user_group=user_group, related_object=related_obj
-    )
+    task = Task.objects.create(code=code, related_object=related_obj)
+    groups = [Group.objects.filter(id=group.id).first() for group in user_group]
+    task.user_group.add(*groups)
     return task
 
 
@@ -25,31 +26,38 @@ def remove_tasks_for_user(code, user, related_obj):
         related_content_type=ContentType.objects.get_for_model(related_obj).id,
         related_object_id=related_obj.id,
     ).first().delete()
-    return
+    return None
 
 
 def remove_tasks_for_user_group(code, user_group, related_obj):
-    # :todo: fix direct assignment for user group(many to many)
-    Task.objects.filter(
+    matching_tasks = Task.objects.filter(
         code=code,
-        user=user_group,
         related_content_type=ContentType.objects.get_for_model(related_obj).id,
         related_object_id=related_obj.id,
-    ).first().delete()
-    return
+    )
+    user_group_matching_tasks = matching_tasks.annotate(
+        group_count=Count("user_group")
+    ).filter(group_count=len(user_group.all()))
+    for group in user_group.all():
+        user_group_matching_tasks = user_group_matching_tasks.filter(
+            user_group__id=group.id
+        )
+    if user_group_matching_tasks.exists():
+        user_group_matching_tasks.delete()
+    return None
 
 
 def get_tasks_for_user(user):
-    user_tasks = Task.objects.filter(user=user)
+    user_tasks = Task.objects.filter(user=user).annotate(
+        group_count=Count("user_group")
+    )
     user_group_tasks = Task.objects.annotate(group_count=Count("user_group")).filter(
         group_count=len(user.groups.all())
     )
     for group in user.groups.all():
         user_group_tasks = user_group_tasks.filter(user_group__id=group.id)
 
-    # todo: test union for merging user and user_group querysets
-
-    return user_tasks
+    return user_tasks.union(user_group_tasks)
 
 
 def render_task_templates_for_user(request, user):
