@@ -31,21 +31,36 @@
 
                     {% if wizard.steps.current == 'auth' %}
 
+                        <style>
+                            .id_auth-password {
+                                margin-bottom: 0.25rem;
+                            }
+                        </style>
+
                         <h2 class="text-2xl">Log in to {{ ORG_SHORT_NAME }}</h2>
                         {% for field in form %}
-                            <div class="form__group">
+                            <div class="relative max-w-sm {% if field.auto_id == "id_auth-password" %}mb-4{% endif %}">
                                 {% include "forms/includes/field.html" %}
+                                {% if field.auto_id == "id_auth-password" %}
+                                    <div class="text-right">
+                                        <a class="link text-sm hover:opacity-75" href="{% url 'users:password_reset' %}{% if redirect_url %}?next={{ redirect_url }}{% endif %}" hx-boost="true">{% trans "Forgot your password?" %}</a>
+                                    </div>
+                                {% endif %}
                             </div>
                         {% endfor %}
 
                         {% if settings.users.AuthSettings.extra_text %}
-                            <div class="prose mb-4">
+                            <div class="prose prose-sm mb-6 rounded-sm bg-slate-50 p-4">
                                 {{ settings.users.AuthSettings.extra_text|richtext}}
                             </div>
                         {% endif %}
 
-                        <div class="form__group">
+                        <div class="form__group max-w-sm flex items-center justify-between gap-4">
                             <button class="link link--button link--button-secondary" type="submit">{% trans "Log in" %}</button>
+
+                            {% if ENABLE_PUBLIC_SIGNUP %}
+                                <a class="hover:opacity-75" href="{% url 'users_public:register' %}{% if redirect_url %}?next={{ redirect_url }}{% endif %}" hx-boost="true"> {% trans "Create account" %}</a>
+                            {% endif %}
                         </div>
 
                         {% if GOOGLE_OAUTH2 %}
@@ -59,13 +74,6 @@
                                 <a class="link link--button link--button-tertiary" href="{% url "social:begin" "google-oauth2" %}{% if next %}?next={{ next }}{% endif %}">{% blocktrans %}Log in with your {{ ORG_SHORT_NAME }} email{% endblocktrans %}</a>
                             </div>
                         {% endif %}
-
-                        <div class="inline-flex gap-8 w-full mt-4">
-                            {% if ENABLE_PUBLIC_SIGNUP %}
-                                <a href="{% url 'users_public:register' %}{% if redirect_url %}?next={{ redirect_url }}{% endif %}" hx-boost="true"> {% trans "Create account" %}</a>
-                            {% endif %}
-                            <a class="link" href="{% url 'users:password_reset' %}{% if redirect_url %}?next={{ redirect_url }}{% endif %}" hx-boost="true">{% trans "Forgot your password?" %}</a>
-                        </div>
                     {% else %}
 
                         <div class="form__group">
