@@ -146,6 +146,11 @@ def user_next_step_on_project(project, user, request=None):
                         org_short_name=settings.ORG_SHORT_NAME
                     ),
                 }
+            if settings.STAFF_UPLOAD_CONTRACT:
+                return {
+                    "heading": _("Waiting for"),
+                    "text": _("Awaiting signed contract from Staff/Contracting team"),
+                }
             return {
                 "heading": _("Waiting for"),
                 "text": _("Awaiting signed contract from Contracting team"),
