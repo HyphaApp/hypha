@@ -5,21 +5,56 @@ from hypha.apply.users.models import Group
 
 from .models import Task
 from .options import get_task_template
+from .services import validate_user_groups_uniqueness, validate_user_uniquness
 
 
 def add_task_to_user(code, user, related_obj):
-    task = Task.objects.create(code=code, user=user, related_object=related_obj)
-    return task
+    """
+    Add task for a user
+    input:
+        code: TASKS_CODE_CHOICES.keys()
+        user: User object
+        related_obj: Object - Submission, Project, Invoice, Report
+    output: task - Task object / None in case of no creation
+    """
+    user_uniqueness = validate_user_uniquness(
+        code=code, user=user, related_obj=related_obj
+    )
+    if user_uniqueness:
+        task = Task.objects.create(code=code, user=user, related_object=related_obj)
+        return task
+    return None
 
 
 def add_task_to_user_group(code, user_group, related_obj):
-    task = Task.objects.create(code=code, related_object=related_obj)
-    groups = [Group.objects.filter(id=group.id).first() for group in user_group]
-    task.user_group.add(*groups)
-    return task
+    """
+    Add task for user_groups
+    input:
+        code: TASKS_CODE_CHOICES.keys()
+        user_group: Queryset - Group objects
+        related_obj: Object - Submission, Project, Invoice, Report
+    output: task - Task object / None in case of no creation
+    """
+    user_groups_uniqueness = validate_user_groups_uniqueness(
+        code=code, user_groups=user_group, related_obj=related_obj
+    )
+    if user_groups_uniqueness:
+        task = Task.objects.create(code=code, related_object=related_obj)
+        groups = [Group.objects.filter(id=group.id).first() for group in user_group]
+        task.user_group.add(*groups)
+        return task
+    return None
 
 
 def remove_tasks_for_user(code, user, related_obj):
+    """
+    Remove task for a user
+    input:
+        code: TASKS_CODE_CHOICES.keys()
+        user: User object
+        related_obj: Object - Submission, Project, Invoice, Report
+    output: None
+    """
     Task.objects.filter(
         code=code,
         user=user,
@@ -30,6 +65,14 @@ def remove_tasks_for_user(code, user, related_obj):
 
 
 def remove_tasks_for_user_group(code, user_group, related_obj):
+    """
+    Remove task for user_groups
+    input:
+        code: TASKS_CODE_CHOICES.keys()
+        user_group: Queryset - Group objects
+        related_obj: Object - Submission, Project, Invoice, Report
+    output: None
+    """
     matching_tasks = Task.objects.filter(
         code=code,
         related_content_type=ContentType.objects.get_for_model(related_obj).id,
