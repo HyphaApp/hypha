@@ -728,8 +728,10 @@ class PasswordlessSignupView(TemplateView):
 
     def get(self, request, *args, **kwargs):
         pending_signup = self.get_pending_signup(kwargs.get("uidb64"))
+        token = kwargs.get("token")
+        token_generator = PasswordlessSignupTokenGenerator()
 
-        if self.is_valid(user=pending_signup, token=kwargs.get("token")):
+        if pending_signup and token_generator.check_token(pending_signup, token):
             user = User.objects.create(email=pending_signup.email, is_active=True)
             user.set_unusable_password()
             user.save()
@@ -751,15 +753,6 @@ class PasswordlessSignupView(TemplateView):
             return redirect("dashboard:dashboard")
 
         return render(request, "users/activation/invalid.html")
-
-    def is_valid(self, user, token):
-        """
-        Verify that the activation token is valid and within the permitted
-        activation time window.
-        """
-
-        token_generator = PasswordlessSignupTokenGenerator()
-        return user is not None and token_generator.check_token(user, token)
 
     def get_pending_signup(self, uidb64):
         """

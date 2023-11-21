@@ -5,6 +5,7 @@
     "coreutils",
     "modelcluster",
     "pagedown",
+    "pytestmark",
     "ratelimit",
     "SIGNUP",
     "WAGTAILADMIN",

@@ -5,12 +5,19 @@ from django.utils.http import base36_to_int
 
 
 class PasswordlessLoginTokenGenerator(PasswordResetTokenGenerator):
-    key_salt = "hypha.apply.users.tokens.PasswordlessLoginTokenGenerator"
-    TIMEOUT = settings.PASSWORDLESS_LOGIN_TIMEOUT
+    key_salt = None
+    TIMEOUT = None
+
+    def __init__(self) -> None:
+        self.key_salt = (
+            self.key_salt or "hypha.apply.users.tokens.PasswordlessLoginTokenGenerator"
+        )
+        self.TIMEOUT = self.TIMEOUT or settings.PASSWORDLESS_LOGIN_TIMEOUT
+        super().__init__()
 
     def check_token(self, user, token):
         """
-        Check that a password reset token is correct for a given user.
+        Check that a token is correct for a given user.
         """
         if not (user and token):
             return False
@@ -43,19 +50,26 @@ class PasswordlessLoginTokenGenerator(PasswordResetTokenGenerator):
 
 
 class PasswordlessSignupTokenGenerator(PasswordlessLoginTokenGenerator):
-    key_salt = "hypha.apply.users.tokens.PasswordlessSignupTokenGenerator"
-    TIMEOUT = settings.PASSWORDLESS_SIGNUP_TIMEOUT
+    key_salt = None
+    TIMEOUT = None
+
+    def __init__(self) -> None:
+        self.key_salt = (
+            self.key_salt or "hypha.apply.users.tokens.PasswordlessLoginTokenGenerator"
+        )
+        self.TIMEOUT = self.TIMEOUT or settings.PASSWORDLESS_SIGNUP_TIMEOUT
+        super().__init__()
 
     def _make_hash_value(self, user, timestamp):
         """
         Hash the signup request's primary key, email, and some user state
-        that's sure to change after a password reset to produce a token that is
-        invalidated when it's used:
+        that's sure to change after a signup is completed produce a token that is
+        invalidated when it's used.
 
         The token field and modified field will be updated after creating or
         updating the signup request.
 
-        Failing those things, settings.PASSWORDLESS_LOGIN_TIMEOUT eventually
+        Failing those things, settings.PASSWORDLESS_SIGNUP_TIMEOUT eventually
         invalidates the token.
 
         Running this data through salted_hmac() prevents password cracking
