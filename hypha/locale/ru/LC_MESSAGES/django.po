@@ -8,15 +8,17 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-11-14 08:53+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2023-11-22 11:03+0000\n"
+"Last-Translator: Ksenia <ksenia@equalit.ie>\n"
+"Language-Team: Russian <https://hosted.weblate.org/projects/hypha/hypha-core/"
+"ru/>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"X-Generator: Weblate 5.2\n"
 
 #: hypha/apply/activity/adapters/activity_feed.py:25
 #, python-brace-format
@@ -46,15 +48,15 @@ msgstr ""
 
 #: hypha/apply/activity/adapters/activity_feed.py:34
 msgid "Invited to submit a proposal"
-msgstr ""
+msgstr "Предложено подать заявку"
 
 #: hypha/apply/activity/adapters/activity_feed.py:38
 msgid "Submitted a review"
-msgstr ""
+msgstr "Подал(а) ревью"
 
 #: hypha/apply/activity/adapters/activity_feed.py:39
 msgid "Opened the submission while still sealed"
-msgstr ""
+msgstr "Открыл(а) заявку которая была запечатанной"
 
 #: hypha/apply/activity/adapters/activity_feed.py:42
 #, python-brace-format
@@ -66,84 +68,84 @@ msgstr ""
 #: hypha/apply/activity/adapters/activity_feed.py:45
 #, python-brace-format
 msgid "{user} deleted the opinion for review: {review_opinion.review}"
-msgstr ""
+msgstr "{user} удалил мнение по поводу ревью: {review_opinion.review}"
 
 #: hypha/apply/activity/adapters/activity_feed.py:47
 msgid "Created project"
-msgstr ""
+msgstr "Создал(а) проект"
 
 #: hypha/apply/activity/adapters/activity_feed.py:52
 msgid "Requested approval"
-msgstr ""
+msgstr "Запрошено одобрение"
 
 #: hypha/apply/activity/adapters/activity_feed.py:54
 #: hypha/apply/determinations/options.py:12 hypha/apply/projects/utils.py:133
 msgid "Approved"
-msgstr ""
+msgstr "Одобрено"
 
 #: hypha/apply/activity/adapters/activity_feed.py:56
 #, python-brace-format
 msgid "Requested changes for acceptance: \"{comment}\""
-msgstr ""
+msgstr "Запрошены изменения по принятой заявке: \"{comment}\""
 
 #: hypha/apply/activity/adapters/activity_feed.py:58
 msgid "Submitted Contract Documents"
-msgstr ""
+msgstr "Поданы контрактные документы"
 
 #: hypha/apply/activity/adapters/activity_feed.py:59
 #, python-brace-format
 msgid "Uploaded a {contract.state} contract"
-msgstr ""
+msgstr "Загружен {contract.state} контракт"
 
 #: hypha/apply/activity/adapters/activity_feed.py:60
 msgid "Approved contract"
-msgstr ""
+msgstr "Контракт одобрен"
 
 #: hypha/apply/activity/adapters/activity_feed.py:62
 #: hypha/apply/projects/views/payment.py:227
 msgid "Invoice added"
-msgstr ""
+msgstr "Добавлен инвойс"
 
 #: hypha/apply/activity/adapters/activity_feed.py:63
 msgid "Submitted a report"
-msgstr ""
+msgstr "Отчет подан"
 
 #: hypha/apply/activity/adapters/activity_feed.py:66
 #: hypha/apply/activity/adapters/django_messages.py:20
 msgid "Reporting disabled"
-msgstr ""
+msgstr "Подача отчетов отключена"
 
 #: hypha/apply/activity/adapters/activity_feed.py:70
 #: hypha/apply/activity/adapters/slack.py:131
 #, python-brace-format
 msgid "{user} has archived the submission: {source.title}"
-msgstr ""
+msgstr "{user} архивировал заявку: {source.title}"
 
 #: hypha/apply/activity/adapters/activity_feed.py:73
 #: hypha/apply/activity/adapters/slack.py:134
 #, python-brace-format
 msgid "{user} has unarchived the submission: {source.title}"
-msgstr ""
+msgstr "{user} разархивировал заявку: {source.title}"
 
 #: hypha/apply/activity/adapters/activity_feed.py:75
 msgid "Deleted an invoice"
-msgstr ""
+msgstr "Удалил инвойс"
 
 #: hypha/apply/activity/adapters/activity_feed.py:124
 msgid "Reviewers updated."
-msgstr ""
+msgstr "Ревьюеры обновлены."
 
 #: hypha/apply/activity/adapters/activity_feed.py:126
 #: hypha/apply/activity/adapters/activity_feed.py:246
 #: hypha/apply/activity/adapters/slack.py:241
 msgid "Added:"
-msgstr ""
+msgstr "Добавлен:"
 
 #: hypha/apply/activity/adapters/activity_feed.py:130
 #: hypha/apply/activity/adapters/activity_feed.py:250
 #: hypha/apply/activity/adapters/slack.py:245
 msgid "Removed:"
-msgstr ""
+msgstr "Удален:"
 
 #: hypha/apply/activity/adapters/activity_feed.py:136
 msgid "Batch Reviewers Updated."
@@ -152,17 +154,17 @@ msgstr ""
 #: hypha/apply/activity/adapters/activity_feed.py:139
 #, python-brace-format
 msgid "{user} as {name}."
-msgstr ""
+msgstr "{user} в качестве {name}."
 
 #: hypha/apply/activity/adapters/activity_feed.py:156
 #, python-brace-format
 msgid "Successfully deleted submissions: {title}"
-msgstr ""
+msgstr "Успешно удалены заявки: {title}"
 
 #: hypha/apply/activity/adapters/activity_feed.py:163
 #, python-brace-format
 msgid "Successfully archived submissions: {title}"
-msgstr ""
+msgstr "Успешно заархивированы заявки: {title}"
 
 #: hypha/apply/activity/adapters/activity_feed.py:178
 msgid "PAF assigned to {}"
@@ -172,11 +174,11 @@ msgstr ""
 #: hypha/apply/activity/adapters/activity_feed.py:215
 #, python-brace-format
 msgid "Progressed from {old_display} to {new_display}"
-msgstr ""
+msgstr "Переведено из {old_display} в {new_display}"
 
 #: hypha/apply/activity/adapters/activity_feed.py:244
 msgid "Partners updated."
-msgstr ""
+msgstr "Партнеры обновлены"
 
 #: hypha/apply/activity/adapters/activity_feed.py:258
 #, python-brace-format
@@ -184,39 +186,41 @@ msgid ""
 "Updated reporting frequency. New schedule is: {new_schedule} starting on "
 "{schedule_start}"
 msgstr ""
+"Обновлена частота отчетов. Новое расписание: {new_schedule} начинающееся "
+"{schedule_start}"
 
 #: hypha/apply/activity/adapters/activity_feed.py:268
 #, python-brace-format
 msgid "Updated Invoice status to: {invoice_status}."
-msgstr ""
+msgstr "Обновлен статус инвойса: {invoice_status}."
 
 #: hypha/apply/activity/adapters/activity_feed.py:311
 #, python-brace-format
 msgid "Screening decision from {old_status} to {new_status}"
-msgstr ""
+msgstr "Решение по отбору от {old_status} в {new_status}"
 
 #: hypha/apply/activity/adapters/django_messages.py:17
 msgid "Successfully removed document"
-msgstr ""
+msgstr "Документ успешно удален"
 
 #: hypha/apply/activity/adapters/django_messages.py:21
 msgid "Reminder created"
-msgstr ""
+msgstr "Напоминание создано"
 
 #: hypha/apply/activity/adapters/django_messages.py:22
 msgid "Reminder deleted"
-msgstr ""
+msgstr "Напоминание удалено"
 
 #: hypha/apply/activity/adapters/django_messages.py:28
 #: hypha/apply/activity/adapters/slack.py:266
 #, python-brace-format
 msgid "{user} as {name},"
-msgstr ""
+msgstr "{user} в качестве {name},"
 
 #: hypha/apply/activity/adapters/django_messages.py:34
 #, python-brace-format
 msgid "Batch reviewers added: {reviewers_text} to "
-msgstr ""
+msgstr "Групповые ревьюеры добавлены: {reviewers_text} to "
 
 #: hypha/apply/activity/adapters/django_messages.py:41
 #, python-brace-format
@@ -224,6 +228,8 @@ msgid ""
 "Successfully updated reporting frequency. They will now report "
 "{new_schedule} starting on {schedule_start}"
 msgstr ""
+"Частота подачи отчетов успешно обновлена. Теперь они будут подавать отчеты "
+"по {new_schedule} начиная с {schedule_start}"
 
 #: hypha/apply/activity/adapters/django_messages.py:47
 #, python-brace-format
@@ -238,31 +244,31 @@ msgstr ""
 #: hypha/apply/activity/adapters/django_messages.py:72
 #, python-brace-format
 msgid "Successfully determined as {outcome}: "
-msgstr ""
+msgstr "Успешно вынесено решение {outcome}: "
 
 #: hypha/apply/activity/adapters/emails.py:77
 #, python-brace-format
 msgid "Application ready to review: {source.title}"
-msgstr ""
+msgstr "Заявка готова для ревью: {source.title}"
 
 #: hypha/apply/activity/adapters/emails.py:84
 msgid "Multiple applications are now ready for your review"
-msgstr ""
+msgstr "Несколько заявок ожидают вашего ревью"
 
 #: hypha/apply/activity/adapters/emails.py:87
 #, python-brace-format
 msgid "Reminder: Application ready to review: {source.title}"
-msgstr ""
+msgstr "Напоминание: Заявка ожидает ревью: {source.title}"
 
 #: hypha/apply/activity/adapters/emails.py:93
 #, python-brace-format
 msgid "Project is waiting for approval: {source.title}"
-msgstr ""
+msgstr "Проект ожидает одобрения: {source.title}"
 
 #: hypha/apply/activity/adapters/emails.py:97
 #, python-brace-format
 msgid "Contract uploaded for the project: {source.title}"
-msgstr ""
+msgstr "Контракт загружен для проекта: {source.title}"
 
 #: hypha/apply/activity/adapters/emails.py:102
 #, python-brace-format
@@ -272,36 +278,37 @@ msgstr ""
 #: hypha/apply/activity/adapters/emails.py:112
 #, python-brace-format
 msgid "Project is waiting for the contract: {source.title}"
-msgstr ""
+msgstr "Проект в ожидании контракта: {source.title}"
 
 #: hypha/apply/activity/adapters/emails.py:116
 #, python-brace-format
 msgid "Project is ready for invoicing: {source.title}"
-msgstr ""
+msgstr "Проект готов к инвойсу: {source.title}"
 
 #: hypha/apply/activity/adapters/emails.py:120
 #, python-brace-format
 msgid "Project status has changed to {project_status}: {source.title}"
-msgstr ""
+msgstr "Статус проекта поменялся на {project_status}: {source.title}"
 
 #: hypha/apply/activity/adapters/emails.py:126
 msgid "Project has been rejected, please update and resubmit"
-msgstr ""
+msgstr "Проект был отклонен, пожалуйста отредактируйте и подайте заново"
 
 #: hypha/apply/activity/adapters/emails.py:129
 #, python-brace-format
 msgid "Project documents are ready to be assigned for approval: {source.title}"
 msgstr ""
+"Документы по проекту готовы для передачи на согласование: {source.title}"
 
 #: hypha/apply/activity/adapters/emails.py:136
 #, python-brace-format
 msgid "Your application to {org_long_name}: {source.title}"
-msgstr ""
+msgstr "Ваша заявка в {org_long_name}: {source.title}"
 
 #: hypha/apply/activity/adapters/emails.py:139
 #, python-brace-format
 msgid "Your {org_long_name} Project: {source.title}"
-msgstr ""
+msgstr "Ваш {org_long_name} проект: {source.title}"
 
 #: hypha/apply/activity/adapters/slack.py:34
 #, python-brace-format
@@ -309,6 +316,8 @@ msgid ""
 "A new submission has been submitted for {source.page.title}: <{link}|{source."
 "title}> by {user}"
 msgstr ""
+"Новая заявка была подана для {source.page.title}: <{link}|{source.title}> "
+"пользователем {user}"
 
 #: hypha/apply/activity/adapters/slack.py:37
 #, python-brace-format
@@ -323,17 +332,19 @@ msgid ""
 "A new {comment.visibility} comment has been posted on <{link}|{source.title}"
 "> by {user}"
 msgstr ""
+"Новый {comment.visibility} был опубликован на <{link}|{source.title}> "
+"пользователем {user}"
 
 #: hypha/apply/activity/adapters/slack.py:43
 #: hypha/apply/activity/adapters/slack.py:44
 #, python-brace-format
 msgid "{user} has edited <{link}|{source.title}>"
-msgstr ""
+msgstr "{user} отредактировал <{link}|{source.title}>"
 
 #: hypha/apply/activity/adapters/slack.py:48
 #, python-brace-format
 msgid "{user} has updated the partners on <{link}|{source.title}>"
-msgstr ""
+msgstr "{user} обновил партнеров в <{link}|{source.title}>"
 
 #: hypha/apply/activity/adapters/slack.py:51
 #, python-brace-format
@@ -341,11 +352,13 @@ msgid ""
 "{user} has updated the status of <{link}|{source.title}>: {old_phase."
 "display_name} → {source.phase}"
 msgstr ""
+"{user} обновил статус <{link}|{source.title}>: {old_phase.display_name} → "
+"{source.phase}"
 
 #: hypha/apply/activity/adapters/slack.py:57
 #, python-brace-format
 msgid "A proposal has been submitted for review: <{link}|{source.title}>"
-msgstr ""
+msgstr "Проект был отозван от ревью: <{link}|{source.title}>"
 
 #: hypha/apply/activity/adapters/slack.py:60
 #, python-brace-format
@@ -353,6 +366,7 @@ msgid ""
 "<{link}|{source.title}> by {source.user} has been invited to submit a "
 "proposal"
 msgstr ""
+"<{link}|{source.title}> от {source.user} получил предложение подать заявку"
 
 #: hypha/apply/activity/adapters/slack.py:63
 #, python-brace-format
@@ -360,11 +374,13 @@ msgid ""
 "{user} has submitted a review for <{link}|{source.title}>. Outcome: {review."
 "outcome},  Score: {review.get_score_display}"
 msgstr ""
+"{user} подал заявку для <{link}|{source.title}>. Итог: {review.outcome},  "
+"Баллы: {review.get_score_display}"
 
 #: hypha/apply/activity/adapters/slack.py:67
 #, python-brace-format
 msgid "{user} has opened the sealed submission: <{link}|{source.title}>"
-msgstr ""
+msgstr "{user} открыл запечатанную заявку: <{link}|{source.title}>"
 
 #: hypha/apply/activity/adapters/slack.py:70
 #, python-brace-format
@@ -372,16 +388,18 @@ msgid ""
 "{user} {opinion.opinion_display}s with {opinion.review.author}s review of "
 "<{link}|{source.title}>"
 msgstr ""
+"{user} {opinion.opinion_display} с ревью {opinion.review.author} "
+"<{link}|{source.title}>"
 
 #: hypha/apply/activity/adapters/slack.py:73
 #, python-brace-format
 msgid "{user} has deleted {source.title}"
-msgstr ""
+msgstr "{user} удалил {source.title}"
 
 #: hypha/apply/activity/adapters/slack.py:75
 #, python-brace-format
 msgid "{user} has deleted {review.author} review for <{link}|{source.title}>"
-msgstr ""
+msgstr "{user} удалил ревью {review.author} на проект <{link}|{source.title}>"
 
 #: hypha/apply/activity/adapters/slack.py:78
 #, python-brace-format
@@ -389,11 +407,13 @@ msgid ""
 "{user} has deleted {review_opinion.author} review opinion for <{link}|"
 "{source.title}>"
 msgstr ""
+"{user} удалил мнение {review_opinion.author} по проекту <{link}|{source."
+"title}>"
 
 #: hypha/apply/activity/adapters/slack.py:81
 #, python-brace-format
 msgid "{user} has created a Project: <{link}|{source.title}>"
-msgstr ""
+msgstr "{user} создал Проект: <{link}|{source.title}>"
 
 #: hypha/apply/activity/adapters/slack.py:84
 #, python-brace-format
@@ -406,16 +426,17 @@ msgstr ""
 #, python-brace-format
 msgid "{user} has edited {review.author} review for <{link}|{source.title}>"
 msgstr ""
+"{user} отредактировал ревью {review.author} на проект <{link}|{source.title}>"
 
 #: hypha/apply/activity/adapters/slack.py:90
 #, python-brace-format
 msgid "{user} has requested approval on project <{link}|{source.title}>"
-msgstr ""
+msgstr "{user} запросил одобрение по проекту <{link}|{source.title}>"
 
 #: hypha/apply/activity/adapters/slack.py:93
 #, python-brace-format
 msgid "{user} has approved project <{link}|{source.title}>"
-msgstr ""
+msgstr "{user} одобрил проект <{link}|{source.title}>"
 
 #: hypha/apply/activity/adapters/slack.py:96
 #, python-brace-format
@@ -423,28 +444,29 @@ msgid ""
 "{user} has requested changes for project acceptance on <{link}|{source.title}"
 ">"
 msgstr ""
+"{user} запросил изменения по статусу одобрения заявки <{link}|{source.title}>"
 
 #: hypha/apply/activity/adapters/slack.py:99
 #, python-brace-format
 msgid "{user} has uploaded a contract for <{link}|{source.title}>"
-msgstr ""
+msgstr "{user} обновил контракт для <{link}|{source.title}>"
 
 #: hypha/apply/activity/adapters/slack.py:102
 #, python-brace-format
 msgid ""
 "{user} has submitted the contracting document for project <{link}|{source."
 "title}>"
-msgstr ""
+msgstr "{user} отозвал контрактные документы по проекту <{link}|{source.title}>"
 
 #: hypha/apply/activity/adapters/slack.py:105
 #, python-brace-format
 msgid "{user} has approved contract for <{link}|{source.title}>"
-msgstr ""
+msgstr "{user} одобрил контракт для <{link}|{source.title}>"
 
 #: hypha/apply/activity/adapters/slack.py:108
 #, python-brace-format
 msgid "{user} has created invoice for <{link}|{source.title}>"
-msgstr ""
+msgstr "{user} создал инвойс для <{link}|{source.title}>"
 
 #: hypha/apply/activity/adapters/slack.py:111
 #, python-brace-format
@@ -452,26 +474,28 @@ msgid ""
 "{user} has changed the status of <{link_related}|invoice> on <{link}|{source."
 "title}> to {invoice.status_display}"
 msgstr ""
+"{user} изменил статус <{link_related}|invoice> на проект <{link}|{source."
+"title}> на {invoice.status_display}"
 
 #: hypha/apply/activity/adapters/slack.py:114
 #, python-brace-format
 msgid "{user} has deleted invoice from <{link}|{source.title}>"
-msgstr ""
+msgstr "{user} удалил инвойс от проекта <{link}|{source.title}>"
 
 #: hypha/apply/activity/adapters/slack.py:117
 #, python-brace-format
 msgid "{user} has updated invoice for <{link}|{source.title}>"
-msgstr ""
+msgstr "{user} обновил инвойс для проекта <{link}|{source.title}>"
 
 #: hypha/apply/activity/adapters/slack.py:120
 #, python-brace-format
 msgid "{user} has submitted a report for <{link}|{source.title}>"
-msgstr ""
+msgstr "{user} подал отчет по проекту <{link}|{source.title}>"
 
 #: hypha/apply/activity/adapters/slack.py:124
 #, python-brace-format
 msgid "{user} has created a new account for <{link}|{source}>"
-msgstr ""
+msgstr "{user} создал новый аккаунт для <{link}|{source}>"
 
 #: hypha/apply/activity/adapters/slack.py:127
 #, python-brace-format
@@ -479,11 +503,13 @@ msgid ""
 "{user} has edited account for <{link}|{source}> that now has following "
 "roles: {roles}"
 msgstr ""
+"{user} изменил аккаунт для <{link}|{source}> у которого теперь следующая "
+"роль: {roles}"
 
 #: hypha/apply/activity/adapters/slack.py:235
 #, python-brace-format
 msgid "{user} has updated the reviewers on <{link}|{title}>"
-msgstr ""
+msgstr "{user} обновил ревьюеров по проекту <{link}|{title}>"
 
 #: hypha/apply/activity/adapters/slack.py:254
 #, python-brace-format
