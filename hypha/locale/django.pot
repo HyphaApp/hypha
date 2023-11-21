@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-01 17:19+0000\n"
+"POT-Creation-Date: 2023-11-14 08:53+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -820,7 +820,7 @@ msgstr ""
 
 #: hypha/apply/activity/templates/activity/include/comment_form.html:5
 #: hypha/apply/determinations/templates/determinations/base_determination_form.html:44
-#: hypha/apply/funds/views.py:1270 hypha/apply/funds/workflow.py:249
+#: hypha/apply/funds/views.py:1269 hypha/apply/funds/workflow.py:249
 #: hypha/apply/funds/workflow.py:277 hypha/apply/funds/workflow.py:327
 #: hypha/apply/funds/workflow.py:388 hypha/apply/funds/workflow.py:414
 #: hypha/apply/funds/workflow.py:459 hypha/apply/funds/workflow.py:502
@@ -856,7 +856,7 @@ msgid "No comments available"
 msgstr ""
 
 #: hypha/apply/activity/templates/activity/include/listing_base.html:15
-#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:39
+#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:48
 #: hypha/apply/dashboard/templates/dashboard/community_dashboard.html:69
 #: hypha/apply/dashboard/templates/dashboard/partner_dashboard.html:46
 #: hypha/apply/dashboard/templates/dashboard/reviewer_dashboard.html:63
@@ -1404,27 +1404,27 @@ msgstr ""
 msgid "Required quantity is more than available"
 msgstr ""
 
-#: hypha/apply/categories/blocks.py:26
+#: hypha/apply/categories/blocks.py:27
 msgid "Multi select"
 msgstr ""
 
-#: hypha/apply/categories/blocks.py:30 hypha/apply/funds/blocks.py:31
-#: hypha/apply/funds/blocks.py:69 hypha/apply/funds/blocks.py:113
+#: hypha/apply/categories/blocks.py:31 hypha/apply/funds/blocks.py:31
+#: hypha/apply/funds/blocks.py:70 hypha/apply/funds/blocks.py:114
 #: hypha/apply/stream_forms/blocks.py:36
 msgid "Label"
 msgstr ""
 
-#: hypha/apply/categories/blocks.py:32
+#: hypha/apply/categories/blocks.py:33
 msgid "Leave blank to use the default Category label"
 msgstr ""
 
-#: hypha/apply/categories/blocks.py:35 hypha/apply/funds/blocks.py:35
-#: hypha/apply/funds/blocks.py:73 hypha/apply/funds/blocks.py:116
+#: hypha/apply/categories/blocks.py:36 hypha/apply/funds/blocks.py:35
+#: hypha/apply/funds/blocks.py:74 hypha/apply/funds/blocks.py:117
 #: hypha/apply/stream_forms/blocks.py:37
 msgid "Help text"
 msgstr ""
 
-#: hypha/apply/categories/blocks.py:37
+#: hypha/apply/categories/blocks.py:38
 msgid "Leave blank to use the default Category help text"
 msgstr ""
 
@@ -1459,7 +1459,6 @@ msgid "archived"
 msgstr ""
 
 #: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:5
-#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:9
 #: hypha/apply/dashboard/templates/dashboard/community_dashboard.html:5
 #: hypha/apply/dashboard/templates/dashboard/community_dashboard.html:10
 #: hypha/apply/dashboard/templates/dashboard/contracting_dashboard.html:5
@@ -1475,36 +1474,40 @@ msgstr ""
 msgid "Dashboard"
 msgstr ""
 
-#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:10
+#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:13
+msgid "My dashboard"
+msgstr ""
+
+#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:14
 msgid "An overview of active and past submissions and projects"
 msgstr ""
 
-#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:13
+#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:18
 #: hypha/apply/dashboard/templates/dashboard/community_dashboard.html:14
 msgid "Submit a new application"
 msgstr ""
 
-#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:14
+#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:19
 #: hypha/apply/dashboard/templates/dashboard/community_dashboard.html:15
 msgid "Apply now for our open rounds"
 msgstr ""
 
-#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:15
+#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:22
 #: hypha/apply/dashboard/templates/dashboard/community_dashboard.html:16
 #: hypha/apply/home/templates/apply_home/includes/apply_listing.html:31
 #: hypha/templates/includes/apply_button.html:2
 msgid "Apply"
 msgstr ""
 
-#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:23
+#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:32
 msgid "My active submissions"
 msgstr ""
 
-#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:30
+#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:39
 msgid "Submitted on "
 msgstr ""
 
-#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:30
+#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:39
 #: hypha/apply/dashboard/templates/dashboard/community_dashboard.html:58
 #: hypha/apply/dashboard/templates/dashboard/partner_dashboard.html:37
 #: hypha/apply/dashboard/templates/dashboard/reviewer_dashboard.html:54
@@ -1520,46 +1523,46 @@ msgstr ""
 msgid "by"
 msgstr ""
 
-#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:37
+#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:46
 #: hypha/apply/dashboard/templates/dashboard/community_dashboard.html:65
 #: hypha/apply/dashboard/templates/dashboard/partner_dashboard.html:44
 #: hypha/apply/dashboard/templates/dashboard/reviewer_dashboard.html:61
 msgid "Start your"
 msgstr ""
 
-#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:37
+#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:46
 #: hypha/apply/dashboard/templates/dashboard/community_dashboard.html:65
 #: hypha/apply/dashboard/templates/dashboard/partner_dashboard.html:44
 #: hypha/apply/dashboard/templates/dashboard/reviewer_dashboard.html:61
 msgid "application"
 msgstr ""
 
-#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:45
+#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:54
 #: hypha/apply/dashboard/templates/dashboard/community_dashboard.html:81
 #: hypha/apply/dashboard/templates/dashboard/partner_dashboard.html:52
 msgid "No active submissions"
 msgstr ""
 
-#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:53
+#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:62
 msgid "My active projects"
 msgstr ""
 
-#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:60
+#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:69
 msgid "Project start date: "
 msgstr ""
 
-#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:66
+#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:75
 msgid "No active projects"
 msgstr ""
 
-#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:74
+#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:83
 #: hypha/apply/dashboard/templates/dashboard/community_dashboard.html:88
 #: hypha/apply/dashboard/templates/dashboard/partner_dashboard.html:58
 #: hypha/apply/dashboard/templates/dashboard/reviewer_dashboard.html:84
 msgid "Submission history"
 msgstr ""
 
-#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:81
+#: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:90
 msgid "Project history"
 msgstr ""
 
@@ -1794,15 +1797,11 @@ msgstr ""
 #: hypha/apply/determinations/blocks.py:77
 #: hypha/apply/determinations/blocks.py:78
 #: hypha/apply/determinations/blocks.py:79
-#: hypha/apply/determinations/blocks.py:80 hypha/apply/funds/blocks.py:207
+#: hypha/apply/determinations/blocks.py:80 hypha/apply/funds/blocks.py:208
 #: hypha/apply/review/blocks.py:168 hypha/apply/review/blocks.py:169
 #: hypha/apply/review/blocks.py:170 hypha/apply/review/blocks.py:171
 #: hypha/apply/review/blocks.py:172 hypha/apply/review/blocks.py:173
-#: hypha/apply/review/blocks.py:174 hypha/apply/stream_forms/blocks.py:463
-#: hypha/apply/stream_forms/blocks.py:464
-#: hypha/apply/stream_forms/blocks.py:465
-#: hypha/apply/stream_forms/blocks.py:466
-#: hypha/apply/stream_forms/blocks.py:467
+#: hypha/apply/review/blocks.py:174 hypha/apply/stream_forms/blocks.py:467
 #: hypha/apply/stream_forms/blocks.py:468
 #: hypha/apply/stream_forms/blocks.py:469
 #: hypha/apply/stream_forms/blocks.py:470
@@ -1811,13 +1810,17 @@ msgstr ""
 #: hypha/apply/stream_forms/blocks.py:473
 #: hypha/apply/stream_forms/blocks.py:474
 #: hypha/apply/stream_forms/blocks.py:475
-#: hypha/apply/stream_forms/blocks.py:476 hypha/apply/utils/blocks.py:74
+#: hypha/apply/stream_forms/blocks.py:476
+#: hypha/apply/stream_forms/blocks.py:477
+#: hypha/apply/stream_forms/blocks.py:478
+#: hypha/apply/stream_forms/blocks.py:479
+#: hypha/apply/stream_forms/blocks.py:480 hypha/apply/utils/blocks.py:74
 #: hypha/apply/utils/blocks.py:75
 msgid "Fields"
 msgstr ""
 
 #: hypha/apply/determinations/blocks.py:78 hypha/apply/review/blocks.py:170
-#: hypha/apply/stream_forms/blocks.py:461
+#: hypha/apply/stream_forms/blocks.py:465
 msgid "Paragraph"
 msgstr ""
 
@@ -2028,7 +2031,7 @@ msgstr ""
 #: hypha/apply/determinations/templates/determinations/base_determination_form.html:42
 #: hypha/apply/funds/templates/funds/application_base.html:71
 #: hypha/apply/funds/templates/funds/applicationsubmission_form.html:37
-#: hypha/apply/funds/views.py:1271
+#: hypha/apply/funds/views.py:1270
 #: hypha/apply/projects/templates/application_projects/project_approval_form.html:68
 #: hypha/apply/review/templates/review/review_edit_form.html:41
 #: hypha/apply/review/templates/review/review_form.html:42
@@ -2216,21 +2219,21 @@ msgstr ""
 msgid "Requested amount"
 msgstr ""
 
-#: hypha/apply/funds/blocks.py:62
+#: hypha/apply/funds/blocks.py:63
 #: hypha/apply/funds/templates/funds/includes/rendered_answers.html:35
 msgid "Organization name"
 msgstr ""
 
-#: hypha/apply/funds/blocks.py:69
+#: hypha/apply/funds/blocks.py:70
 msgid "What email address should we use to contact you?"
 msgstr ""
 
-#: hypha/apply/funds/blocks.py:75
+#: hypha/apply/funds/blocks.py:76
 msgid ""
 "We will use this email address to communicate with you about your proposal."
 msgstr ""
 
-#: hypha/apply/funds/blocks.py:93
+#: hypha/apply/funds/blocks.py:94
 #: hypha/apply/funds/templates/funds/includes/rendered_answers.html:29
 #: hypha/apply/funds/templates/funds/includes/revision_diff_table.html:17
 #: hypha/apply/projects/models/vendor.py:18
@@ -2238,22 +2241,22 @@ msgstr ""
 msgid "Address"
 msgstr ""
 
-#: hypha/apply/funds/blocks.py:113
+#: hypha/apply/funds/blocks.py:114
 msgid "What is your name?"
 msgstr ""
 
-#: hypha/apply/funds/blocks.py:118
+#: hypha/apply/funds/blocks.py:119
 msgid "We will use this name when we communicate with you about your proposal."
 msgstr ""
 
-#: hypha/apply/funds/blocks.py:123 hypha/apply/users/models.py:198
+#: hypha/apply/funds/blocks.py:124 hypha/apply/users/models.py:198
 msgid "Full name"
 msgstr ""
 
-#: hypha/apply/funds/blocks.py:206 hypha/apply/stream_forms/blocks.py:461
-#: hypha/apply/stream_forms/blocks.py:462
-#: hypha/apply/stream_forms/blocks.py:477
-#: hypha/apply/stream_forms/blocks.py:478 hypha/apply/utils/blocks.py:85
+#: hypha/apply/funds/blocks.py:207 hypha/apply/stream_forms/blocks.py:465
+#: hypha/apply/stream_forms/blocks.py:466
+#: hypha/apply/stream_forms/blocks.py:481
+#: hypha/apply/stream_forms/blocks.py:482 hypha/apply/utils/blocks.py:85
 msgid "Custom"
 msgstr ""
 
@@ -2568,7 +2571,7 @@ msgstr ""
 msgid "Determined"
 msgstr ""
 
-#: hypha/apply/funds/tables.py:637 hypha/apply/users/groups.py:5
+#: hypha/apply/funds/tables.py:637
 msgid "Reviewer"
 msgstr ""
 
@@ -2576,7 +2579,7 @@ msgstr ""
 msgid "No reviews available"
 msgstr ""
 
-#: hypha/apply/funds/tables.py:693 hypha/apply/users/groups.py:4
+#: hypha/apply/funds/tables.py:693
 msgid "Staff"
 msgstr ""
 
@@ -3578,7 +3581,7 @@ msgstr ""
 msgid "Project Created!"
 msgstr ""
 
-#: hypha/apply/funds/views.py:1308
+#: hypha/apply/funds/views.py:1307
 msgid "Draft saved"
 msgstr ""
 
@@ -4019,7 +4022,7 @@ msgid "Internal approval"
 msgstr ""
 
 #: hypha/apply/projects/models/project.py:77
-#: hypha/apply/projects/models/project.py:85 hypha/apply/users/groups.py:11
+#: hypha/apply/projects/models/project.py:85
 msgid "Contracting"
 msgstr ""
 
@@ -4420,8 +4423,8 @@ msgstr ""
 #: hypha/apply/projects/views/payment.py:189
 #: hypha/apply/projects/views/payment.py:246
 #: hypha/apply/projects/views/project.py:1395
-#: hypha/apply/users/templates/wagtailusers/users/edit.html:70
-#: hypha/apply/users/templates/wagtailusers/users/edit.html:98
+#: hypha/apply/users/templates/wagtailusers/users/edit.html:69
+#: hypha/apply/users/templates/wagtailusers/users/edit.html:97
 msgid "Save"
 msgstr ""
 
@@ -5385,7 +5388,7 @@ msgid "Help link"
 msgstr ""
 
 #: hypha/apply/stream_forms/blocks.py:115
-#: hypha/apply/stream_forms/blocks.py:213
+#: hypha/apply/stream_forms/blocks.py:217
 msgid "Required"
 msgstr ""
 
@@ -5402,8 +5405,8 @@ msgid "Format"
 msgstr ""
 
 #: hypha/apply/stream_forms/blocks.py:126
-#: hypha/apply/stream_forms/blocks.py:155
-#: hypha/apply/stream_forms/blocks.py:169
+#: hypha/apply/stream_forms/blocks.py:157
+#: hypha/apply/stream_forms/blocks.py:172
 msgid "Default value"
 msgstr ""
 
@@ -5411,76 +5414,76 @@ msgstr ""
 msgid "Text field (single line)"
 msgstr ""
 
-#: hypha/apply/stream_forms/blocks.py:147
+#: hypha/apply/stream_forms/blocks.py:148
 msgid "Max number of inputs"
 msgstr ""
 
-#: hypha/apply/stream_forms/blocks.py:148
+#: hypha/apply/stream_forms/blocks.py:149
 msgid "Add new item"
 msgstr ""
 
-#: hypha/apply/stream_forms/blocks.py:151
+#: hypha/apply/stream_forms/blocks.py:152
 msgid "Text field (single line) (multiple inputs)"
 msgstr ""
 
-#: hypha/apply/stream_forms/blocks.py:156
+#: hypha/apply/stream_forms/blocks.py:158
 msgid "Word limit"
 msgstr ""
 
-#: hypha/apply/stream_forms/blocks.py:161
+#: hypha/apply/stream_forms/blocks.py:163
 msgid "Text field (multi line)"
 msgstr ""
 
-#: hypha/apply/stream_forms/blocks.py:174
+#: hypha/apply/stream_forms/blocks.py:177
 msgid "Number field"
 msgstr ""
 
-#: hypha/apply/stream_forms/blocks.py:186
+#: hypha/apply/stream_forms/blocks.py:190
 msgid "Checkbox field"
 msgstr ""
 
-#: hypha/apply/stream_forms/blocks.py:197
-#: hypha/apply/stream_forms/blocks.py:215
+#: hypha/apply/stream_forms/blocks.py:201
+#: hypha/apply/stream_forms/blocks.py:219
 msgid "Choice"
 msgstr ""
 
-#: hypha/apply/stream_forms/blocks.py:203
+#: hypha/apply/stream_forms/blocks.py:207
 msgid "Radio buttons"
 msgstr ""
 
-#: hypha/apply/stream_forms/blocks.py:227
+#: hypha/apply/stream_forms/blocks.py:231
 msgid "Group fields"
 msgstr ""
 
-#: hypha/apply/stream_forms/blocks.py:258
+#: hypha/apply/stream_forms/blocks.py:262
 msgid "Dropdown field"
 msgstr ""
 
-#: hypha/apply/stream_forms/blocks.py:268
+#: hypha/apply/stream_forms/blocks.py:272
 msgid "Checkbox"
 msgstr ""
 
-#: hypha/apply/stream_forms/blocks.py:274
+#: hypha/apply/stream_forms/blocks.py:278
 msgid "Multiple checkboxes field"
 msgstr ""
 
-#: hypha/apply/stream_forms/blocks.py:313
+#: hypha/apply/stream_forms/blocks.py:317
 msgid "Date field"
 msgstr ""
 
-#: hypha/apply/stream_forms/blocks.py:335
+#: hypha/apply/stream_forms/blocks.py:339
 msgid "Time field"
 msgstr ""
 
-#: hypha/apply/stream_forms/blocks.py:367
+#: hypha/apply/stream_forms/blocks.py:371
 msgid "Date+time field"
 msgstr ""
 
-#: hypha/apply/stream_forms/blocks.py:399
+#: hypha/apply/stream_forms/blocks.py:403
 msgid "Image field"
 msgstr ""
 
-#: hypha/apply/stream_forms/blocks.py:412
+#: hypha/apply/stream_forms/blocks.py:416
 msgid "Single File field"
 msgstr ""
 
@@ -5488,11 +5491,11 @@ msgstr ""
 msgid "Multiple File field"
 msgstr ""
 
-#: hypha/apply/stream_forms/blocks.py:462
+#: hypha/apply/stream_forms/blocks.py:466
 msgid "Section header"
 msgstr ""
 
-#: hypha/apply/stream_forms/blocks.py:481 hypha/public/forms/models.py:74
+#: hypha/apply/stream_forms/blocks.py:485 hypha/public/forms/models.py:74
 msgid "Form fields"
 msgstr ""
 
@@ -5515,109 +5518,40 @@ msgstr ""
 msgid "Search users"
 msgstr ""
 
-#: hypha/apply/users/forms.py:111
+#: hypha/apply/users/forms.py:45
 msgid "A user with that email already exists."
 msgstr ""
 
-#: hypha/apply/users/forms.py:112
+#: hypha/apply/users/forms.py:46
 msgid "The two password fields didn't match."
 msgstr ""
 
-#: hypha/apply/users/forms.py:149
+#: hypha/apply/users/forms.py:78
 msgid ""
 "You are registered using OAuth, please contact an admin if you need to "
 "change your email address."
 msgstr ""
 
-#: hypha/apply/users/forms.py:176
+#: hypha/apply/users/forms.py:105
 msgid "Only includes active, non-superusers"
 msgstr ""
 
-#: hypha/apply/users/forms.py:185
+#: hypha/apply/users/forms.py:114
 #: hypha/apply/users/templates/users/account.html:34
 #: hypha/apply/users/templates/users/activation/email.txt:13
 msgid "Password"
 msgstr ""
 
-#: hypha/apply/users/forms.py:186
+#: hypha/apply/users/forms.py:115
 msgid "Email change requires you to put password."
 msgstr ""
 
-#: hypha/apply/users/forms.py:199 hypha/apply/users/forms.py:228
+#: hypha/apply/users/forms.py:128 hypha/apply/users/forms.py:157
 msgid "Incorrect password. Please try again."
 msgstr ""
 
-#: hypha/apply/users/forms.py:215
+#: hypha/apply/users/forms.py:144
 msgid "Please type your password to confirm"
-msgstr ""
-
-#: hypha/apply/users/groups.py:6
-msgid "Staff Admin"
-msgstr ""
-
-#: hypha/apply/users/groups.py:7 hypha/public/partner/tables.py:108
-msgid "Partner"
-msgstr ""
-
-#: hypha/apply/users/groups.py:8
-msgid "Community Reviewer"
-msgstr ""
-
-#: hypha/apply/users/groups.py:9
-msgid "Approver"
-msgstr ""
-
-#: hypha/apply/users/groups.py:10
-msgid "Finance"
-msgstr ""
-
-#: hypha/apply/users/groups.py:14
-msgid ""
-"Can access their own application and communicate via the communication tab."
-msgstr ""
-
-#: hypha/apply/users/groups.py:17
-msgid ""
-"View and edit all submissions, submit reviews, send determinations, and set "
-"up applications."
-msgstr ""
-
-#: hypha/apply/users/groups.py:20
-msgid ""
-"Has a dashboard and can submit reviews. Advisory Council Members are "
-"typically assigned this role."
-msgstr ""
-
-#: hypha/apply/users/groups.py:23
-msgid "Placeholder..."
-msgstr ""
-
-#: hypha/apply/users/groups.py:26
-msgid ""
-"Can view, edit, and comment on a specific application they are assigned to."
-msgstr ""
-
-#: hypha/apply/users/groups.py:30
-msgid ""
-"An applicant with access to other applications utilizing the community "
-"review (peer review) workflow."
-msgstr ""
-
-#: hypha/apply/users/groups.py:34
-msgid ""
-"Can review/approve PAF, and access compliance documents. Must also be in "
-"group: Staff, Contracting, or Finance."
-msgstr ""
-
-#: hypha/apply/users/groups.py:37
-msgid ""
-"Can review/approve the PAF, access documents associated with contracting, "
-"and access invoices approved by Staff."
-msgstr ""
-
-#: hypha/apply/users/groups.py:40
-msgid ""
-"Can review/approve the PAF and access documents associated with contracting."
 msgstr ""
 
 #: hypha/apply/users/models.py:196
@@ -5723,7 +5657,7 @@ msgstr ""
 
 #: hypha/apply/users/templates/two_factor/admin/disable.html:23
 #: hypha/apply/users/templates/users/account.html:41
-#: hypha/apply/users/templates/wagtailusers/users/edit.html:77
+#: hypha/apply/users/templates/wagtailusers/users/edit.html:76
 msgid "Disable 2FA"
 msgstr ""
 
@@ -6150,7 +6084,7 @@ msgstr ""
 
 #: hypha/apply/users/templates/users/email_change/confirm_password.html:4
 #: hypha/apply/users/templates/users/email_change/confirm_password.html:5
-#: hypha/apply/users/views.py:211
+#: hypha/apply/users/views.py:208
 msgid "Enter Password"
 msgstr ""
 
@@ -6159,7 +6093,7 @@ msgid "Check your email"
 msgstr ""
 
 #: hypha/apply/users/templates/users/email_change/done.html:5
-#: hypha/apply/users/views.py:277
+#: hypha/apply/users/views.py:274
 msgid "Verify Email"
 msgstr ""
 
@@ -6417,15 +6351,15 @@ msgstr ""
 msgid "Email is already in use."
 msgstr ""
 
-#: hypha/apply/users/views.py:243
+#: hypha/apply/users/views.py:240
 msgid "Password Page timed out. Try changing the email again."
 msgstr ""
 
-#: hypha/apply/users/views.py:283
+#: hypha/apply/users/views.py:280
 msgid "Hijack feature is not enabled."
 msgstr ""
 
-#: hypha/apply/users/views.py:316
+#: hypha/apply/users/views.py:313
 #, python-brace-format
 msgid "Your email has been successfully updated to {email}!"
 msgstr ""
@@ -6652,6 +6586,10 @@ msgstr ""
 
 #: hypha/public/partner/tables.py:65
 msgid "Per page"
+msgstr ""
+
+#: hypha/public/partner/tables.py:108
+msgid "Partner"
 msgstr ""
 
 #: hypha/public/partner/tables.py:112
