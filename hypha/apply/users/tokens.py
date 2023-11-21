@@ -26,12 +26,17 @@ class PasswordlessLoginTokenGenerator(PasswordResetTokenGenerator):
             return False
 
         # Check that the timestamp/uid has not been tampered with
-        if not constant_time_compare(self._make_token_with_timestamp(user, ts), token):
+        for secret in [self.secret, *self.secret_fallbacks]:
+            if constant_time_compare(
+                self._make_token_with_timestamp(user, ts, secret),
+                token,
+            ):
+                break
+        else:
             return False
 
-        now = self._now()
         # Check the timestamp is within limit.
-        if (self._num_seconds(now) - ts) > self.TIMEOUT:
+        if (self._num_seconds(self._now()) - ts) > self.TIMEOUT:
             return False
 
         return True
