@@ -28,7 +28,7 @@ from hypha.apply.projects.tables import (
     PAFForReviewDashboardTable,
     ProjectsDashboardTable,
 )
-from hypha.apply.tasks.views import render_task_templates_for_user
+from hypha.apply.todo.views import render_task_templates_for_user
 from hypha.apply.utils.views import ViewDispatcher
 
 from .services import get_paf_for_review

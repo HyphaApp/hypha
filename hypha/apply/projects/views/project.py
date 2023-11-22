@@ -40,7 +40,7 @@ from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import ACTION, ALL, COMMENT, TEAM, Activity
 from hypha.apply.activity.views import ActivityContextMixin, CommentFormView
 from hypha.apply.stream_forms.models import BaseStreamForm
-from hypha.apply.tasks.options import (
+from hypha.apply.todo.options import (
     PAF_REQUIRED_CHANGES,
     PAF_WAITING_APPROVAL,
     PAF_WAITING_ASSIGNEE,
@@ -51,7 +51,7 @@ from hypha.apply.tasks.options import (
     PROJECT_WAITING_INVOICE,
     PROJECT_WAITING_PAF,
 )
-from hypha.apply.tasks.views import (
+from hypha.apply.todo.views import (
     add_task_to_user,
     add_task_to_user_group,
     remove_tasks_for_user,

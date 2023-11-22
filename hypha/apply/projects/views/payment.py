@@ -14,13 +14,13 @@ from django_tables2 import SingleTableMixin
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import APPLICANT, COMMENT, Activity
-from hypha.apply.tasks.options import (
+from hypha.apply.todo.options import (
     INVOICE_REQUIRED_CHANGES,
     INVOICE_WAITING_APPROVAL,
     INVOICE_WAITING_PAID,
     PROJECT_WAITING_INVOICE,
 )
-from hypha.apply.tasks.views import (
+from hypha.apply.todo.views import (
     add_task_to_user,
     add_task_to_user_group,
     remove_tasks_for_user,

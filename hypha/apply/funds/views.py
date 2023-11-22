@@ -52,8 +52,8 @@ from hypha.apply.projects.forms import CreateProjectForm
 from hypha.apply.projects.models import Project
 from hypha.apply.review.models import Review
 from hypha.apply.stream_forms.blocks import GroupToggleBlock
-from hypha.apply.tasks.options import PROJECT_WAITING_PAF
-from hypha.apply.tasks.views import add_task_to_user_group
+from hypha.apply.todo.options import PROJECT_WAITING_PAF
+from hypha.apply.todo.views import add_task_to_user_group
 from hypha.apply.users.decorators import staff_or_finance_required, staff_required
 from hypha.apply.users.groups import STAFF_GROUP_NAME
 from hypha.apply.users.models import Group
