@@ -30,7 +30,6 @@ from hypha.apply.projects.tables import (
     ProjectsDashboardTable,
 )
 from hypha.apply.utils.views import ViewDispatcher
-from hypha.public.utils.models import SystemMessagesSettings
 
 
 class MySubmissionContextMixin:
@@ -839,13 +838,9 @@ class DashboardView(ViewDispatcher):
         response = super().dispatch(request, *args, **kwargs)
 
         # Handle the case when there is no dashboard for the user
-        # and redirect to the site logo link if it is set or to the home page
+        # and redirect them to the home page of apply site.
         # Suggestion: create a dedicated dashboard for user without any role.
         if isinstance(response, HttpResponseForbidden):
-            system_message_settings = SystemMessagesSettings.load(
-                request_or_site=request
-            )
-            redirect_url = system_message_settings.site_logo_link or "/"
-            return HttpResponseRedirect(redirect_url)
+            return HttpResponseRedirect("/")
 
         return response
