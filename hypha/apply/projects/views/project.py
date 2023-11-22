@@ -40,10 +40,29 @@ from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import ACTION, ALL, COMMENT, TEAM, Activity
 from hypha.apply.activity.views import ActivityContextMixin, CommentFormView
 from hypha.apply.stream_forms.models import BaseStreamForm
+from hypha.apply.tasks.options import (
+    PAF_REQUIRED_CHANGES,
+    PAF_WAITING_APPROVAL,
+    PAF_WAITING_ASSIGNEE,
+    PROJECT_SUBMIT_PAF,
+    PROJECT_WAITING_CONTRACT,
+    PROJECT_WAITING_CONTRACT_DOCUMENT,
+    PROJECT_WAITING_CONTRACT_REVIEW,
+    PROJECT_WAITING_INVOICE,
+    PROJECT_WAITING_PAF,
+)
+from hypha.apply.tasks.views import (
+    add_task_to_user,
+    add_task_to_user_group,
+    remove_tasks_for_user,
+    remove_tasks_for_user_group,
+)
 from hypha.apply.users.decorators import (
     staff_or_finance_or_contracting_required,
     staff_required,
 )
+from hypha.apply.users.groups import CONTRACTING_GROUP_NAME, STAFF_GROUP_NAME
+from hypha.apply.users.models import Group
 from hypha.apply.utils.models import PDFPageSettings
 from hypha.apply.utils.storage import PrivateMediaView
 from hypha.apply.utils.views import DelegateableView, DelegatedViewMixin, ViewDispatcher
@@ -108,6 +127,20 @@ class SendForApprovalView(DelegatedViewMixin, UpdateView):
 
         response = super().form_valid(form)
 
+        # remove PAF submission task for staff group
+        remove_tasks_for_user_group(
+            code=PROJECT_SUBMIT_PAF,
+            user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+            related_obj=self.object,
+        )
+
+        # remove PAF rejection task for staff if exists
+        remove_tasks_for_user_group(
+            code=PAF_REQUIRED_CHANGES,
+            user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+            related_obj=self.object,
+        )
+
         project_settings = ProjectSettings.for_request(self.request)
 
         paf_approvals = self.object.paf_approvals.filter(approved=False)
@@ -130,12 +163,22 @@ class SendForApprovalView(DelegatedViewMixin, UpdateView):
                         source=self.object,
                         related=[paf_approvals.first()],
                     )
+                    # add PAF waiting approval task for paf_approval user
+                    add_task_to_user(
+                        code=PAF_WAITING_APPROVAL, user=user, related_obj=self.object
+                    )
                 else:
                     messenger(
                         MESSAGES.ASSIGN_PAF_APPROVER,
                         request=self.request,
                         user=self.request.user,
                         source=self.object,
+                    )
+                    # add PAF waiting assignee task for paf_approval reviewer_roles
+                    add_task_to_user_group(
+                        code=PAF_WAITING_ASSIGNEE,
+                        user_group=paf_approvals.first().paf_reviewer_role.user_roles.all(),
+                        related_obj=self.object,
                     )
         else:
             if paf_approvals.filter(user__isnull=False).exists():
@@ -152,6 +195,13 @@ class SendForApprovalView(DelegatedViewMixin, UpdateView):
                     source=self.object,
                     related=paf_approvals.filter(user__isnull=False),
                 )
+                # add PAF waiting approval task for paf_approvals users
+                for paf_approval in paf_approvals.filter(user__isnull=False):
+                    add_task_to_user(
+                        code=PAF_WAITING_APPROVAL,
+                        user=paf_approval.user,
+                        related_obj=self.object,
+                    )
             if paf_approvals.filter(user__isnull=True).exists():
                 messenger(
                     MESSAGES.ASSIGN_PAF_APPROVER,
@@ -159,6 +209,13 @@ class SendForApprovalView(DelegatedViewMixin, UpdateView):
                     user=self.request.user,
                     source=self.object,
                 )
+                # add PAF waiting assignee task for paf_approvals reviewer_roles
+                for paf_approval in paf_approvals.filter(user__isnull=True):
+                    add_task_to_user_group(
+                        code=PAF_WAITING_ASSIGNEE,
+                        user_group=paf_approval.paf_reviewer_role.user_roles.all(),
+                        related_obj=self.object,
+                    )
 
         project.status = INTERNAL_APPROVAL
         project.save(update_fields=["status"])
@@ -407,6 +464,12 @@ class ApproveContractView(DelegatedViewMixin, UpdateView):
                 source=self.project,
                 related=self.object,
             )
+            # remove Project waiting contract review task for staff
+            remove_tasks_for_user_group(
+                code=PROJECT_WAITING_CONTRACT_REVIEW,
+                user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+                related_obj=self.project,
+            )
 
             self.project.status = INVOICING_AND_REPORTING
             self.project.save(update_fields=["status"])
@@ -417,6 +480,12 @@ class ApproveContractView(DelegatedViewMixin, UpdateView):
                 user=self.request.user,
                 source=self.project,
                 related=old_stage,
+            )
+            # add Project waiting invoice task for applicant
+            add_task_to_user(
+                code=PROJECT_WAITING_INVOICE,
+                user=self.project.user,
+                related_obj=self.project,
             )
 
         messages.success(
@@ -468,6 +537,7 @@ class UploadContractView(DelegatedViewMixin, CreateView):
                 extra_tags=PROJECT_ACTION_MESSAGE_TAG,
             )
         elif self.request.user.is_contracting:
+            # :todo: update same date when staff uploads the contract(with STAFF_UPLOAD_CONTRACT setting)
             form.instance.uploaded_by_contractor_at = timezone.now()
             messages.success(
                 self.request,
@@ -484,6 +554,25 @@ class UploadContractView(DelegatedViewMixin, CreateView):
                 user=self.request.user,
                 source=project,
                 related=form.instance,
+            )
+            # remove Project waiting contract task for contracting/staff group
+            if settings.STAFF_UPLOAD_CONTRACT:
+                remove_tasks_for_user_group(
+                    code=PROJECT_WAITING_CONTRACT,
+                    user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+                    related_obj=project,
+                )
+            else:
+                remove_tasks_for_user_group(
+                    code=PROJECT_WAITING_CONTRACT,
+                    user_group=Group.objects.filter(name=CONTRACTING_GROUP_NAME),
+                    related_obj=project,
+                )
+            # add Project waiting contract document task for applicant
+            add_task_to_user(
+                code=PROJECT_WAITING_CONTRACT_DOCUMENT,
+                user=project.user,
+                related_obj=project,
             )
 
         return response
@@ -523,6 +612,18 @@ class SubmitContractDocumentsView(DelegatedViewMixin, UpdateView):
             request=self.request,
             user=self.request.user,
             source=project,
+        )
+        # remove project waiting contract documents task for applicant
+        remove_tasks_for_user(
+            code=PROJECT_WAITING_CONTRACT_DOCUMENT,
+            user=project.user,
+            related_obj=project,
+        )
+        # add project waiting contract review task for staff
+        add_task_to_user_group(
+            code=PROJECT_WAITING_CONTRACT_REVIEW,
+            user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+            related_obj=project,
         )
 
         messages.success(
@@ -626,6 +727,35 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
             self.object.save(update_fields=["status"])
             paf_approval.save()
 
+            # remove PAF waiting assignee/approval task for paf approval user/reviewer roles.
+            if project_settings.paf_approval_sequential:
+                if paf_approval.user:
+                    remove_tasks_for_user(
+                        code=PAF_WAITING_APPROVAL,
+                        user=paf_approval.user,
+                        related_obj=self.object,
+                    )
+                else:
+                    remove_tasks_for_user_group(
+                        code=PAF_WAITING_ASSIGNEE,
+                        user_group=paf_approval.paf_reviewer_role.user_roles.all(),
+                        related_obj=self.object,
+                    )
+            else:
+                for approval in self.object.paf_approvals.filter(approved=False):
+                    if approval.user:
+                        remove_tasks_for_user(
+                            code=PAF_WAITING_APPROVAL,
+                            user=approval.user,
+                            related_obj=self.object,
+                        )
+                    else:
+                        remove_tasks_for_user_group(
+                            code=PAF_WAITING_ASSIGNEE,
+                            user_group=approval.paf_reviewer_role.user_roles.all(),
+                            related_obj=self.object,
+                        )
+
             if not paf_approval.user:
                 paf_approval.user = self.request.user
                 paf_approval.save(update_fields=["user"])
@@ -644,12 +774,32 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
                 source=self.object,
                 related=old_stage,
             )
+            # add PAF required changes task to staff user group
+            add_task_to_user_group(
+                code=PAF_REQUIRED_CHANGES,
+                user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+                related_obj=self.object,
+            )
+
             messages.success(
                 self.request,
                 _("PAF status has been updated"),
                 extra_tags=PROJECT_ACTION_MESSAGE_TAG,
             )
         elif paf_status == APPROVE:
+            # remove task for paf approval user/user_group related to this paf_approval of project
+            if paf_approval.user:
+                remove_tasks_for_user(
+                    code=PAF_WAITING_APPROVAL,
+                    user=paf_approval.user,
+                    related_obj=self.object,
+                )
+            else:
+                remove_tasks_for_user_group(
+                    code=PAF_WAITING_ASSIGNEE,
+                    user_group=paf_approval.paf_reviewer_role.user_roles.all(),
+                    related_obj=self.object,
+                )
             paf_approval.approved = True
             paf_approval.approved_at = timezone.now()
             paf_approval.user = self.request.user
@@ -668,12 +818,24 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
                             source=self.object,
                             related=[next_paf_approval],
                         )
+                        # add PAF waiting approval task for next paf approval user
+                        add_task_to_user(
+                            code=PAF_WAITING_APPROVAL,
+                            user=next_paf_approval.user,
+                            related_obj=self.object,
+                        )
                     else:
                         messenger(
                             MESSAGES.ASSIGN_PAF_APPROVER,
                             request=self.request,
                             user=self.request.user,
                             source=self.object,
+                        )
+                        # add PAF waiting assignee task for nex paf approval reviewer roles
+                        add_task_to_user_group(
+                            code=PAF_WAITING_ASSIGNEE,
+                            user_group=next_paf_approval.paf_reviewer_role.user_roles.all(),
+                            related_obj=self.object,
                         )
             messages.success(
                 self.request,
@@ -708,6 +870,19 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
                 source=self.object,
                 related=old_stage,
             )
+            # add project waiting contract task to staff/contracting groups
+            if settings.STAFF_UPLOAD_CONTRACT:
+                add_task_to_user_group(
+                    code=PROJECT_WAITING_CONTRACT,
+                    user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+                    related_obj=self.object,
+                )
+            else:
+                add_task_to_user_group(
+                    code=PROJECT_WAITING_CONTRACT,
+                    user_group=Group.objects.filter(name=CONTRACTING_GROUP_NAME),
+                    related_obj=self.object,
+                )
         return response
 
 
@@ -782,7 +957,25 @@ class UpdateAssignApproversView(DelegatedViewMixin, UpdateView):
 
         project = self.kwargs["object"]
 
+        old_paf_approval = get_latest_project_paf_approval_via_roles(
+            project=project, roles=self.request.user.groups.all()
+        )
+
         response = super().form_valid(form)
+
+        # remove current task of user/user_group related to latest paf_approval of project
+        if old_paf_approval.user:
+            remove_tasks_for_user(
+                code=PAF_WAITING_APPROVAL,
+                user=old_paf_approval.user,
+                related_obj=project,
+            )
+        else:
+            remove_tasks_for_user_group(
+                code=PAF_WAITING_ASSIGNEE,
+                user_group=old_paf_approval.paf_reviewer_role.user_roles.all(),
+                related_obj=project,
+            )
 
         paf_approval = get_latest_project_paf_approval_via_roles(
             project=project, roles=self.request.user.groups.all()
@@ -796,12 +989,24 @@ class UpdateAssignApproversView(DelegatedViewMixin, UpdateView):
                 source=self.object,
                 related=[paf_approval],
             )
+            # add PAF waiting approval task to updated paf_approval user
+            add_task_to_user(
+                code=PAF_WAITING_APPROVAL,
+                user=paf_approval.user,
+                related_obj=self.object,
+            )
         else:
             messenger(
                 MESSAGES.ASSIGN_PAF_APPROVER,
                 request=self.request,
                 user=self.request.user,
                 source=self.object,
+            )
+            # add paf waiting for assignee task
+            add_task_to_user_group(
+                code=PAF_WAITING_ASSIGNEE,
+                user_group=paf_approval.paf_reviewer_role.user_roles.all(),
+                related_obj=self.object,
             )
 
         return response
@@ -834,6 +1039,35 @@ class UpdatePAFApproversView(DelegatedViewMixin, UpdateView):
                     "user__id", flat=True
                 )
             )
+        # remove PAF waiting assignee/approval task for paf approval user/reviewer roles.
+        if project_settings.paf_approval_sequential:
+            paf_approval = project.paf_approvals.filter(approved=False).first()
+            if paf_approval.user:
+                remove_tasks_for_user(
+                    code=PAF_WAITING_APPROVAL,
+                    user=paf_approval.user,
+                    related_obj=project,
+                )
+            else:
+                remove_tasks_for_user_group(
+                    code=PAF_WAITING_ASSIGNEE,
+                    user_group=paf_approval.paf_reviewer_role.user_roles.all(),
+                    related_obj=project,
+                )
+        else:
+            for approval in project.paf_approvals.filter(approved=False):
+                if approval.user:
+                    remove_tasks_for_user(
+                        code=PAF_WAITING_APPROVAL,
+                        user=approval.user,
+                        related_obj=project,
+                    )
+                else:
+                    remove_tasks_for_user_group(
+                        code=PAF_WAITING_ASSIGNEE,
+                        user_group=approval.paf_reviewer_role.user_roles.all(),
+                        related_obj=project,
+                    )
 
         response = super().form_valid(form)
 
@@ -852,12 +1086,22 @@ class UpdatePAFApproversView(DelegatedViewMixin, UpdateView):
                         source=self.object,
                         related=[paf_approvals.first()],
                     )
+                    # add PAF waiting approval task to paf_approval user
+                    add_task_to_user(
+                        code=PAF_WAITING_APPROVAL, user=user, related_obj=self.object
+                    )
                 elif not user:
                     messenger(
                         MESSAGES.ASSIGN_PAF_APPROVER,
                         request=self.request,
                         user=self.request.user,
                         source=self.object,
+                    )
+                    # add PAF waiting assignee to paf_approvals reviewer roles
+                    add_task_to_user_group(
+                        code=PAF_WAITING_ASSIGNEE,
+                        user_group=paf_approvals.first().paf_reviewer_role.user_roles.all(),
+                        related_obj=self.object,
                     )
             else:
                 if paf_approvals.filter(user__isnull=False).exists():
@@ -868,6 +1112,13 @@ class UpdatePAFApproversView(DelegatedViewMixin, UpdateView):
                         source=self.object,
                         related=paf_approvals.filter(user__isnull=False),
                     )
+                    # add PAF waiting approval task for paf_approvals users
+                    for paf_approval in paf_approvals.filter(user__isnull=False):
+                        add_task_to_user(
+                            code=PAF_WAITING_APPROVAL,
+                            user=paf_approval.user,
+                            related_obj=self.object,
+                        )
                 if paf_approvals.filter(user__isnull=True).exists():
                     messenger(
                         MESSAGES.ASSIGN_PAF_APPROVER,
@@ -875,7 +1126,15 @@ class UpdatePAFApproversView(DelegatedViewMixin, UpdateView):
                         user=self.request.user,
                         source=self.object,
                     )
+                    # add PAF waiting assignee task for paf_approvals reviewer_roles
+                    for paf_approval in paf_approvals.filter(user__isnull=True):
+                        add_task_to_user_group(
+                            code=PAF_WAITING_ASSIGNEE,
+                            user_group=paf_approval.paf_reviewer_role.user_roles.all(),
+                            related_obj=self.object,
+                        )
         elif paf_approvals:
+            # :todo: check if this is covering any case(might be a duplicate of SendForApprovalView)
             if paf_approvals.filter(user__isnull=False).exists():
                 messenger(
                     MESSAGES.APPROVE_PAF,
@@ -884,6 +1143,13 @@ class UpdatePAFApproversView(DelegatedViewMixin, UpdateView):
                     source=self.object,
                     related=paf_approvals.filter(user__isnull=False),
                 )
+                # add PAF waiting approval task for paf_approvals users
+                for paf_approval in paf_approvals.filter(user__isnull=False):
+                    add_task_to_user(
+                        code=PAF_WAITING_APPROVAL,
+                        user=paf_approval.user,
+                        related_obj=self.object,
+                    )
             if paf_approvals.filter(user__isnull=True).exists():
                 messenger(
                     MESSAGES.ASSIGN_PAF_APPROVER,
@@ -891,6 +1157,13 @@ class UpdatePAFApproversView(DelegatedViewMixin, UpdateView):
                     user=self.request.user,
                     source=self.object,
                 )
+                # add PAF waiting assignee task for paf_approvals reviewer_roles
+                for paf_approval in paf_approvals.filter(user__isnull=True):
+                    add_task_to_user_group(
+                        code=PAF_WAITING_ASSIGNEE,
+                        user_group=paf_approval.paf_reviewer_role.user_roles.all(),
+                        related_obj=self.object,
+                    )
 
         messages.success(
             self.request,
@@ -1542,6 +1815,18 @@ class ProjectApprovalFormEditView(BaseStreamForm, UpdateView):
                 self.sow_form.save(sow_form_fields=sow_form_fields, project=self.object)
                 self.paf_form.delete_temporary_files()
                 self.sow_form.delete_temporary_files()
+                # remove PAF addition task for staff group
+                remove_tasks_for_user_group(
+                    code=PROJECT_WAITING_PAF,
+                    user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+                    related_obj=self.object,
+                )
+                # add PAF submission task for staff group
+                add_task_to_user_group(
+                    code=PROJECT_SUBMIT_PAF,
+                    user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+                    related_obj=self.object,
+                )
                 return HttpResponseRedirect(self.get_success_url())
             else:
                 if not self.paf_form.is_valid():
@@ -1556,6 +1841,18 @@ class ProjectApprovalFormEditView(BaseStreamForm, UpdateView):
                     paf_form_fields = []
                 self.paf_form.save(paf_form_fields=paf_form_fields)
                 self.paf_form.delete_temporary_files()
+                # remove PAF addition task for staff group
+                remove_tasks_for_user_group(
+                    code=PROJECT_WAITING_PAF,
+                    user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+                    related_obj=self.object,
+                )
+                # add PAF submission task for staff group
+                add_task_to_user_group(
+                    code=PROJECT_SUBMIT_PAF,
+                    user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+                    related_obj=self.object,
+                )
                 return HttpResponseRedirect(self.get_success_url())
             else:
                 return self.form_invalid(self.paf_form)

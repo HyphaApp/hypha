@@ -219,6 +219,7 @@ class FinanceDashboardView(MyFlaggedMixin, TemplateView):
                 "invoices_for_approval": self.invoices_for_approval(),
                 "invoices_to_convert": self.invoices_to_convert(),
                 "paf_for_review": self.paf_for_review(),
+                "my_tasks": self.my_tasks(),
             }
         )
 
@@ -233,10 +234,21 @@ class FinanceDashboardView(MyFlaggedMixin, TemplateView):
             user=self.request.user,
             is_paf_approval_sequential=project_settings.paf_approval_sequential,
         )
+        paf_table = PAFForReviewDashboardTable(
+            paf_approvals, prefix="paf-review-", order_by="-date_requested"
+        )
+        RequestConfig(self.request, paginate=False).configure(paf_table)
 
         return {
             "count": paf_approvals.count(),
-            "table": PAFForReviewDashboardTable(paf_approvals),
+            "table": paf_table,
+        }
+
+    def my_tasks(self):
+        tasks = render_task_templates_for_user(self.request, self.request.user)
+        return {
+            "count": len(tasks),
+            "data": tasks,
         }
 
     def active_invoices(self):
@@ -389,6 +401,7 @@ class ContractingDashboardView(MyFlaggedMixin, TemplateView):
             {
                 "projects_in_contracting": self.projects_in_contracting(),
                 "paf_for_review": self.paf_for_review(),
+                "my_tasks": self.my_tasks(),
             }
         )
 
@@ -403,10 +416,21 @@ class ContractingDashboardView(MyFlaggedMixin, TemplateView):
             user=self.request.user,
             is_paf_approval_sequential=project_settings.paf_approval_sequential,
         )
+        paf_table = PAFForReviewDashboardTable(
+            paf_approvals, prefix="paf-review-", order_by="-date_requested"
+        )
+        RequestConfig(self.request, paginate=False).configure(paf_table)
 
         return {
             "count": paf_approvals.count(),
-            "table": PAFForReviewDashboardTable(paf_approvals),
+            "table": paf_table,
+        }
+
+    def my_tasks(self):
+        tasks = render_task_templates_for_user(self.request, self.request.user)
+        return {
+            "count": len(tasks),
+            "data": tasks,
         }
 
     def projects_in_contracting(self):
@@ -496,7 +520,15 @@ class ApplicantDashboardView(TemplateView):
         context["active_invoices"] = self.active_invoices()
         context["historical_projects"] = self.historical_project_data()
         context["historical_submissions"] = self.historical_submission_data()
+        context["my_tasks"] = self.my_tasks()
         return context
+
+    def my_tasks(self):
+        tasks = render_task_templates_for_user(self.request, self.request.user)
+        return {
+            "count": len(tasks),
+            "data": tasks,
+        }
 
     def active_project_data(self):
         active_projects = (

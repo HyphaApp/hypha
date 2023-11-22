@@ -55,12 +55,14 @@ def remove_tasks_for_user(code, user, related_obj):
         related_obj: Object - Submission, Project, Invoice, Report
     output: None
     """
-    Task.objects.filter(
+    task = Task.objects.filter(
         code=code,
         user=user,
         related_content_type=ContentType.objects.get_for_model(related_obj).id,
         related_object_id=related_obj.id,
-    ).first().delete()
+    ).first()
+    if task:
+        task.delete()
     return None
 
 

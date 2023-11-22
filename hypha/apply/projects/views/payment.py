@@ -14,7 +14,25 @@ from django_tables2 import SingleTableMixin
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import APPLICANT, COMMENT, Activity
+from hypha.apply.tasks.options import (
+    INVOICE_REQUIRED_CHANGES,
+    INVOICE_WAITING_APPROVAL,
+    INVOICE_WAITING_PAID,
+    PROJECT_WAITING_INVOICE,
+)
+from hypha.apply.tasks.views import (
+    add_task_to_user,
+    add_task_to_user_group,
+    remove_tasks_for_user,
+    remove_tasks_for_user_group,
+)
 from hypha.apply.users.decorators import staff_or_finance_required
+from hypha.apply.users.groups import (
+    APPROVER_GROUP_NAME,
+    FINANCE_GROUP_NAME,
+    STAFF_GROUP_NAME,
+)
+from hypha.apply.users.models import Group
 from hypha.apply.utils.storage import PrivateMediaView
 from hypha.apply.utils.views import DelegateableView, DelegatedViewMixin, ViewDispatcher
 
@@ -22,12 +40,143 @@ from ..filters import InvoiceListFilter
 from ..forms import ChangeInvoiceStatusForm, CreateInvoiceForm, EditInvoiceForm
 from ..models.payment import (
     APPROVED_BY_FINANCE,
+    APPROVED_BY_FINANCE_2,
     APPROVED_BY_STAFF,
+    CHANGES_REQUESTED_BY_FINANCE,
+    CHANGES_REQUESTED_BY_FINANCE_2,
+    CHANGES_REQUESTED_BY_STAFF,
     INVOICE_TRANISTION_TO_RESUBMITTED,
+    RESUBMITTED,
+    SUBMITTED,
     Invoice,
 )
 from ..models.project import PROJECT_ACTION_MESSAGE_TAG, Project
 from ..tables import InvoiceListTable
+
+
+def handle_tasks_on_invoice_update(old_status, invoice):
+    if old_status in [SUBMITTED, RESUBMITTED]:
+        # remove invoice waiting approval task for staff
+        remove_tasks_for_user_group(
+            code=INVOICE_WAITING_APPROVAL,
+            user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+            related_obj=invoice,
+        )
+        if invoice.status == CHANGES_REQUESTED_BY_STAFF:
+            # add invoice required changes task for applicant
+            add_task_to_user(
+                code=INVOICE_REQUIRED_CHANGES,
+                user=invoice.project.user,
+                related_obj=invoice,
+            )
+        elif invoice.status == APPROVED_BY_STAFF:
+            # add invoice waiting approval task for finance group
+            add_task_to_user_group(
+                code=INVOICE_WAITING_APPROVAL,
+                user_group=Group.objects.filter(name=FINANCE_GROUP_NAME),
+                related_obj=invoice,
+            )
+    if old_status == APPROVED_BY_STAFF:
+        # remove invoice waiting approval task for finance group
+        remove_tasks_for_user_group(
+            code=INVOICE_WAITING_APPROVAL,
+            user_group=Group.objects.filter(name=FINANCE_GROUP_NAME),
+            related_obj=invoice,
+        )
+        if invoice.status == CHANGES_REQUESTED_BY_FINANCE:
+            # add invoice required changes task for staff
+            add_task_to_user_group(
+                code=INVOICE_REQUIRED_CHANGES,
+                user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+                related_obj=invoice,
+            )
+        elif invoice.status == APPROVED_BY_FINANCE:
+            if settings.INVOICE_EXTENDED_WORKFLOW:
+                # add invoice waiting approval task for finance2 group
+                add_task_to_user_group(
+                    code=INVOICE_WAITING_APPROVAL,
+                    user_group=Group.objects.filter(name=FINANCE_GROUP_NAME).filter(
+                        name=APPROVER_GROUP_NAME
+                    ),
+                    related_obj=invoice,
+                )
+            else:
+                # add invoice waiting paid task for finance
+                add_task_to_user_group(
+                    code=INVOICE_WAITING_PAID,
+                    user_group=Group.objects.filter(name=FINANCE_GROUP_NAME),
+                    related_obj=invoice,
+                )
+    if old_status == CHANGES_REQUESTED_BY_FINANCE:
+        # remove invoice required changes task for staff
+        remove_tasks_for_user_group(
+            code=INVOICE_REQUIRED_CHANGES,
+            user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+            related_obj=invoice,
+        )
+        if invoice.status == CHANGES_REQUESTED_BY_STAFF:
+            # add invoice required changes task for applicant
+            add_task_to_user(
+                code=INVOICE_REQUIRED_CHANGES,
+                user=invoice.project.user,
+                related_obj=invoice,
+            )
+    if not settings.INVOICE_EXTENDED_WORKFLOW and old_status == APPROVED_BY_FINANCE:
+        # remove invoice waiting paid task for finance group
+        remove_tasks_for_user_group(
+            code=INVOICE_WAITING_PAID,
+            user_group=Group.objects.filter(name=FINANCE_GROUP_NAME),
+            related_obj=invoice,
+        )
+    if settings.INVOICE_EXTENDED_WORKFLOW:
+        if old_status == APPROVED_BY_FINANCE:
+            # remove invoice waiting approval task for finance2 group
+            remove_tasks_for_user_group(
+                code=INVOICE_WAITING_APPROVAL,
+                user_group=Group.objects.filter(name=FINANCE_GROUP_NAME).filter(
+                    name=APPROVER_GROUP_NAME
+                ),
+                related_obj=invoice,
+            )
+            if invoice.status == CHANGES_REQUESTED_BY_FINANCE_2:
+                # add invoice required changes task for finance
+                add_task_to_user_group(
+                    code=INVOICE_REQUIRED_CHANGES,
+                    user_group=Group.objects.filter(name=FINANCE_GROUP_NAME),
+                    related_obj=invoice,
+                )
+            elif invoice.status == APPROVED_BY_FINANCE_2:
+                # add invoice waiting paid task for finance2
+                add_task_to_user_group(
+                    code=INVOICE_WAITING_PAID,
+                    user_group=Group.objects.filter(name=FINANCE_GROUP_NAME).filter(
+                        name=APPROVER_GROUP_NAME
+                    ),
+                    related_obj=invoice,
+                )
+        if old_status == CHANGES_REQUESTED_BY_FINANCE_2:
+            # remove invoice required changes task for finance
+            remove_tasks_for_user_group(
+                code=INVOICE_REQUIRED_CHANGES,
+                user_group=Group.objects.filter(name=FINANCE_GROUP_NAME),
+                related_obj=invoice,
+            )
+            if invoice.status == CHANGES_REQUESTED_BY_FINANCE:
+                # add invoice required changes task for staff
+                add_task_to_user_group(
+                    code=INVOICE_REQUIRED_CHANGES,
+                    user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+                    related_obj=invoice,
+                )
+        if old_status == APPROVED_BY_FINANCE_2:
+            # remove invoice waiting paid task for finance2
+            remove_tasks_for_user_group(
+                code=INVOICE_WAITING_PAID,
+                user_group=Group.objects.filter(name=FINANCE_GROUP_NAME).filter(
+                    name=APPROVER_GROUP_NAME
+                ),
+                related_obj=invoice,
+            )
 
 
 @method_decorator(login_required, name="dispatch")
@@ -58,6 +207,10 @@ class ChangeInvoiceStatusView(DelegatedViewMixin, InvoiceAccessMixin, UpdateView
     model = Invoice
 
     def form_valid(self, form):
+        invoice = get_object_or_404(
+            Invoice, pk=self.kwargs["invoice_pk"]
+        )  # to get the old status
+        old_status = invoice.status
         response = super().form_valid(form)
         if form.cleaned_data["comment"]:
             invoice_status_change = _(
@@ -99,6 +252,8 @@ class ChangeInvoiceStatusView(DelegatedViewMixin, InvoiceAccessMixin, UpdateView
             source=self.object.project,
             related=self.object,
         )
+
+        handle_tasks_on_invoice_update(old_status=old_status, invoice=self.object)
 
         return response
 
@@ -223,6 +378,22 @@ class CreateInvoiceView(CreateView):
             source=self.project,
             related=self.object,
         )
+
+        if len(self.project.invoices.all()) == 1:
+            # remove Project waiting invoices task for applicant on first invoice
+            remove_tasks_for_user(
+                code=PROJECT_WAITING_INVOICE,
+                user=self.project.user,
+                related_obj=self.project,
+            )
+
+        # add Invoice waiting approval task for Staff group
+        add_task_to_user_group(
+            code=INVOICE_WAITING_APPROVAL,
+            user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+            related_obj=self.object,
+        )
+
         messages.success(
             self.request, _("Invoice added"), extra_tags=PROJECT_ACTION_MESSAGE_TAG
         )
@@ -274,7 +445,9 @@ class EditInvoiceView(InvoiceAccessMixin, UpdateView):
             return self.form_invalid(form)
 
     def form_valid(self, form):
+        old_status = self.object.status
         response = super().form_valid(form)
+
         if form.cleaned_data:
             if self.object.status in INVOICE_TRANISTION_TO_RESUBMITTED:
                 self.object.transition_invoice_to_resubmitted()
@@ -304,6 +477,38 @@ class EditInvoiceView(InvoiceAccessMixin, UpdateView):
             source=self.object.project,
             related=self.object,
         )
+
+        if self.request.user.is_applicant and old_status == CHANGES_REQUESTED_BY_STAFF:
+            # remove invoice required changes task for applicant
+            remove_tasks_for_user(
+                code=INVOICE_REQUIRED_CHANGES,
+                user=self.object.project.user,
+                related_obj=self.object,
+            )
+
+            # add invoice waiting approval task for staff group
+            add_task_to_user_group(
+                code=INVOICE_WAITING_APPROVAL,
+                user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+                related_obj=self.object,
+            )
+
+        if (
+            self.request.user.is_apply_staff
+            and old_status == CHANGES_REQUESTED_BY_FINANCE
+        ):
+            # remove invoice required changes task for staff group
+            remove_tasks_for_user_group(
+                code=INVOICE_REQUIRED_CHANGES,
+                user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+                related_obj=self.object,
+            )
+            # add invoice waiting approval task for staff group
+            add_task_to_user_group(
+                code=INVOICE_WAITING_APPROVAL,
+                user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+                related_obj=self.object,
+            )
 
         # Required for django-file-form: delete temporary files for the new files
         # that are uploaded.
