@@ -2836,7 +2836,7 @@ msgstr ""
 #: hypha/apply/projects/templates/application_projects/project_approval_form.html:12
 #: hypha/apply/projects/templates/application_projects/project_form.html:5
 #: hypha/apply/projects/templates/application_projects/project_form.html:10
-#: hypha/apply/users/templates/wagtailusers/users/edit.html:9
+#: hypha/apply/users/templates/wagtailusers/users/edit.html:8
 msgid "Editing"
 msgstr ""
 
@@ -3388,7 +3388,6 @@ msgid "There are %(count)s results for: %(search_term)s"
 msgstr ""
 
 #: hypha/apply/funds/templates/funds/tables/table.html:21
-#: hypha/apply/users/groups.py:3
 msgid "Applicant"
 msgstr ""
 
@@ -5487,7 +5486,7 @@ msgstr ""
 msgid "Single File field"
 msgstr ""
 
-#: hypha/apply/stream_forms/blocks.py:429
+#: hypha/apply/stream_forms/blocks.py:433
 msgid "Multiple File field"
 msgstr ""
 
@@ -5951,7 +5950,7 @@ msgid "Enable Two-Factor Authentication"
 msgstr ""
 
 #: hypha/apply/users/templates/users/account.html:4
-#: hypha/apply/users/templates/wagtailusers/users/edit.html:22
+#: hypha/apply/users/templates/wagtailusers/users/edit.html:21
 msgid "Account"
 msgstr ""
 
@@ -6296,20 +6295,20 @@ msgstr ""
 msgid "Already have an account?"
 msgstr ""
 
-#: hypha/apply/users/templates/wagtailusers/users/edit.html:24
+#: hypha/apply/users/templates/wagtailusers/users/edit.html:23
 msgid "Roles"
 msgstr ""
 
-#: hypha/apply/users/templates/wagtailusers/users/edit.html:72
-#: hypha/apply/users/templates/wagtailusers/users/edit.html:100
+#: hypha/apply/users/templates/wagtailusers/users/edit.html:71
+#: hypha/apply/users/templates/wagtailusers/users/edit.html:99
 msgid "Delete user"
 msgstr ""
 
-#: hypha/apply/users/templates/wagtailusers/users/edit.html:79
+#: hypha/apply/users/templates/wagtailusers/users/edit.html:78
 msgid "This account do not have 2FA enabled."
 msgstr ""
 
-#: hypha/apply/users/templates/wagtailusers/users/edit.html:79
+#: hypha/apply/users/templates/wagtailusers/users/edit.html:78
 msgid "2FA already disabled"
 msgstr ""
 
