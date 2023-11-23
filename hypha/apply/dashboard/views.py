@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.db.models import Count
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView
@@ -843,3 +843,14 @@ class DashboardView(ViewDispatcher):
     applicant_view = ApplicantDashboardView
     finance_view = FinanceDashboardView
     contracting_view = ContractingDashboardView
+
+    def dispatch(self, request, *args, **kwargs):
+        response = super().dispatch(request, *args, **kwargs)
+
+        # Handle the case when there is no dashboard for the user
+        # and redirect them to the home page of apply site.
+        # Suggestion: create a dedicated dashboard for user without any role.
+        if isinstance(response, HttpResponseForbidden):
+            return HttpResponseRedirect("/")
+
+        return response

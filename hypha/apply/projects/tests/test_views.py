@@ -2,6 +2,7 @@ import json
 from io import BytesIO
 
 from dateutil.relativedelta import relativedelta
+from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import PermissionDenied
 from django.test import RequestFactory, TestCase, override_settings
@@ -771,7 +772,7 @@ class TestAnonPacketView(BasePacketFileViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.redirect_chain), 2)
         for path, _ in response.redirect_chain:
-            self.assertIn(reverse("users_public:login"), path)
+            self.assertIn(reverse(settings.LOGIN_URL), path)
 
 
 class TestProjectDetailApprovalView(TestCase):

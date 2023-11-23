@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth.models import AbstractUser, BaseUserManager, Group
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core import exceptions
 from django.db import IntegrityError, models
 from django.db.models.constants import LOOKUP_SEP
@@ -23,7 +23,11 @@ from .groups import (
     STAFF_GROUP_NAME,
     TEAMADMIN_GROUP_NAME,
 )
-from .utils import get_user_by_email, is_user_already_registered, send_activation_email
+from .utils import (
+    get_user_by_email,
+    is_user_already_registered,
+    send_activation_email,
+)
 
 
 class UserQuerySet(models.QuerySet):
@@ -185,10 +189,6 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
             send_activation_email(user, site, redirect_url=redirect_url)
             _created = True
 
-        applicant_group = Group.objects.get(name=APPLICANT_GROUP_NAME)
-        if applicant_group not in user.groups.all():
-            user.groups.add(applicant_group)
-            user.save()
         return user, _created
 
 
@@ -286,6 +286,18 @@ class User(AbstractUser):
         )
 
     @cached_property
+    def can_access_dashboard(self):
+        return (
+            self.is_apply_staff
+            or self.is_reviewer
+            or self.is_partner
+            or self.is_community_reviewer
+            or self.is_finance
+            or self.is_contracting
+            or self.is_applicant
+        )
+
+    @cached_property
     def is_finance_level_2(self):
         # disable finance2 user if invoice flow in not extended
         if not settings.INVOICE_EXTENDED_WORKFLOW:
@@ -362,3 +374,44 @@ class AuthSettings(BaseGenericSetting):
             _("Register form customizations"),
         ),
     ]
+
+
+class PendingSignup(models.Model):
+    """This model tracks pending passwordless self-signups, and is used to
+    generate a  one-time use URLfor each signup.
+
+    The URL is sent to the user via email, and when they click on it, they are
+    redirected to the registration page, where a new is created.
+
+    Once the user is created, the PendingSignup instance is deleted.
+    """
+
+    email = models.EmailField(unique=True)
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+    token = models.CharField(max_length=255, unique=True)
+
+    def __str__(self):
+        return f"{self.email} ({self.created})"
+
+    class Meta:
+        ordering = ("created",)
+        verbose_name_plural = "Pending signups"
+
+
+class ConfirmAccessToken(models.Model):
+    """
+    Once the user is created, the PendingSignup instance is deleted.
+    """
+
+    token = models.CharField(max_length=6)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"ConfirmAccessToken: {self.user.email} ({self.created})"
+
+    class Meta:
+        ordering = ("modified",)
+        verbose_name_plural = "Confirm Access Tokens"

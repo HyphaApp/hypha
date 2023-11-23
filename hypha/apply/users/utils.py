@@ -1,9 +1,12 @@
+import string
+
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.urls import reverse
+from django.utils.crypto import get_random_string
 from django.utils.encoding import force_bytes
 from django.utils.http import url_has_allowed_host_and_scheme, urlsafe_base64_encode
 from django.utils.translation import gettext_lazy as _
@@ -53,7 +56,13 @@ def can_use_oauth_check(user):
     return False
 
 
-def send_activation_email(user, site=None, redirect_url=""):
+def send_activation_email(
+    user,
+    site=None,
+    email_template="users/activation/email.txt",
+    email_subject_template="users/activation/email_subject.txt",
+    redirect_url="",
+):
     """
     Send the activation email. The activation key is the username,
     signed using TimestampSigner.
@@ -82,10 +91,10 @@ def send_activation_email(user, site=None, redirect_url=""):
     if site:
         context.update(site=site)
 
-    subject = "Account details for {username} at {org_long_name}".format(**context)
+    subject = render_to_string(email_subject_template, context)
     # Force subject to a single line to avoid header-injection issues.
     subject = "".join(subject.splitlines())
-    message = render_to_string("users/activation/email.txt", context)
+    message = render_to_string(email_template, context)
     user.email_user(subject, message, settings.DEFAULT_FROM_EMAIL)
 
 
@@ -157,3 +166,11 @@ def get_redirect_url(
         require_https=request.is_secure(),
     )
     return redirect_to if url_is_safe else ""
+
+
+def generate_numeric_token(length=6):
+    """
+    Generate a random 6 digit string of numbers.
+    We use this formatting to allow leading 0s.
+    """
+    return get_random_string(length, allowed_chars=string.digits)

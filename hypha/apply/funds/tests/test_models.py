@@ -243,8 +243,10 @@ class TestFormSubmission(TestCase):
             response = page.serve(request)
 
         if not ignore_errors:
-            # Check the data we submit is correct
-            self.assertNotContains(response, "errors")
+            # check it is redirected
+            self.assertEqual(response.status_code, 302)
+            # check "success" is present in the redirect url location
+            self.assertIn("success", response.url)
         return response
 
     def test_workflow_and_draft(self):
@@ -345,7 +347,7 @@ class TestFormSubmission(TestCase):
         self.assertEqual(self.User.objects.count(), 2)
 
         response = self.submit_form(email="", name="", user=user, ignore_errors=True)
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 302 and "success" in response.url
 
         # Lead + applicant
         self.assertEqual(self.User.objects.count(), 2)

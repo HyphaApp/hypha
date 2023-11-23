@@ -27,6 +27,7 @@ from .views import (
     SubmissionSealedView,
     SubmissionStaffFlaggedView,
     SubmissionUserFlaggedView,
+    submission_success,
 )
 from .views_beta import (
     bulk_archive_submissions,
@@ -74,6 +75,7 @@ app_name = "funds"
 submission_urls = (
     [
         path("", SubmissionOverviewView.as_view(), name="overview"),
+        path("success/<int:pk>/", submission_success, name="success"),
         path("all/", SubmissionListView.as_view(), name="list"),
         path("all-beta/", submission_all_beta, name="list-beta"),
         path("all-beta/bulk_archive/", bulk_archive_submissions, name="bulk-archive"),
