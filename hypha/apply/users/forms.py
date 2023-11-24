@@ -51,6 +51,11 @@ class PasswordlessAuthForm(forms.Form):
 
 
 class CustomUserAdminFormBase:
+    error_messages = {
+        "duplicate_username": _("A user with that email already exists."),
+        "password_mismatch": _("The two password fields didn't match."),
+    }
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -67,12 +72,11 @@ class CustomUserEditForm(CustomUserAdminFormBase, UserEditForm):
     pass
 
 
-class CustomUserCreationForm(CustomUserAdminFormBase, UserCreationForm):
-    error_messages = {
-        "duplicate_username": _("A user with that email already exists."),
-        "password_mismatch": _("The two password fields didn't match."),
-    }
+class CustomWagtailUserCreationForm(CustomUserAdminFormBase, UserCreationForm):
+    pass
 
+
+class CustomUserCreationForm(CustomUserAdminFormBase, UserCreationForm):
     def __init__(self, request=None, *args, **kwargs):
         self.request = request
         super().__init__(*args, **kwargs)
