@@ -4,8 +4,6 @@ Hypha consists of three distinctive components:
 
 2. Then the **Admin or Wagtail Admin**, is used to create custom forms, setup funds/labs and workflow around them. Think of it as the back-office of for your submissions and projects.
 
-3. Hypha also provides capability to build landing pages and display available funds and labs through **public site**.
-
 
 ```
                             Integrations                           
@@ -18,35 +16,14 @@ Hypha consists of three distinctive components:
                                                                     
                                                                     
 
-    ┌────────────┐
-    │PUBLIC SITE │◀────┐                            Databases
-    └────────────┘     │      ┌────────────┐        ┌ ─ ─ ─ ─ ─ ─ ─ ─
-    ┌────────────┐     │      │  Django /  │          ┌────────────┐ │
-    │ APPLY SITE │◀────┼──────│  Wagtail   │◀───────│ │ PostgreSQL │
-    └────────────┘     │      └────────────┘          └────────────┘ │
-    ┌────────────┐     │                            │
-    │  WAGTAIL   │     │                             ─ ─ ─ ─ ─ ─ ─ ─ ┘
-    │   ADMIN    │◀────┘
-    └────────────┘
+        ┌───────────┐                                            
+        │APPLY SITE │◀───┐    ┌───────────┐                      
+        └───────────┘    │    │  DJANGO   │         ┌───────────┐
+                         ├────│  BACKEND  │◀────────│PostgresSQL│
+        ┌───────────┐    │    └───────────┘         └───────────┘
+        │   ADMIN   │◀───┘                                       
+        └───────────┘                                            
 ```
-
-## Public site
-
-!!! warning Public Site is depreciated and will be removed
-    The public is due for removal. Read more at https://github.com/HyphaApp/hypha/pull/3110
-
-The Public site is intended to be a heavily cached public site with no behaviour that requires authentication, excluding the Wagtail Admin. The ultimate aim would be to serve this site statically.
-
-The coupling between the Public and Apply sites has been done in such as way as to minimise the interaction between the two sites and facilitate a means of separation should the need arise. Their relationship is defined in the Public fund models:
-
-## Apply site
-
-@TODO
-
-## Wagtail Admin
-
-@TODO
-
 
 ## Django
 
