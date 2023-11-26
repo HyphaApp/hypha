@@ -92,6 +92,19 @@ def remove_tasks_for_user_group(code, user_group, related_obj):
     return None
 
 
+def remove_tasks_of_related_obj(related_obj):
+    """
+    Remove all tasks of a related object irrespective of their code and users
+    input:
+        related_obj: Object - Submission, Project, Invoice, Report
+    """
+    Task.objects.filter(
+        related_content_type=ContentType.objects.get_for_model(related_obj).id,
+        related_object_id=related_obj.id,
+    ).delete()
+    return None
+
+
 def get_tasks_for_user(user):
     user_tasks = Task.objects.filter(user=user).annotate(
         group_count=Count("user_group")

@@ -25,6 +25,7 @@ from hypha.apply.todo.views import (
     add_task_to_user_group,
     remove_tasks_for_user,
     remove_tasks_for_user_group,
+    remove_tasks_of_related_obj,
 )
 from hypha.apply.users.decorators import staff_or_finance_required
 from hypha.apply.users.groups import (
@@ -274,6 +275,9 @@ class DeleteInvoiceView(DeleteView):
 
     @transaction.atomic()
     def form_valid(self, form):
+        # remove all tasks related to this invoice irrespective of code and users/user_group
+        remove_tasks_of_related_obj(related_obj=self.object)
+
         response = super().form_valid(form)
 
         messenger(
