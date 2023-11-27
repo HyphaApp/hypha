@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.core import mail
 from django.test import TestCase, override_settings
 from django.urls import reverse
@@ -25,7 +26,7 @@ class TestProfileView(BaseTestProfielView):
         # Initial redirect will be via to https through a 301
         self.assertRedirects(
             response,
-            reverse("users_public:login") + "?next=" + self.url,
+            reverse(settings.LOGIN_URL) + "?next=" + self.url,
             status_code=301,
         )
 

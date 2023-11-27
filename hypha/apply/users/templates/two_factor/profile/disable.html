@@ -1,39 +1,40 @@
+
 {% extends "two_factor/_base_focus.html" %}
 {% load i18n %}
 
 {% block content %}
-    <p><a href="{% url 'users:account'%}"
-          class="btn btn-link">{% trans "Back to account" %}</a></p>
     <h1>{% block title %}{% trans "Disable Two-factor Authentication" %}{% endblock %}</h1>
-    <p>{% blocktrans trimmed %}Disabling Two-factor authentication weakens your account security.
+    <p class="mb-4">{% blocktrans trimmed %}Disabling Two-factor authentication weakens your account security.
         We recommend reenabling it when you can.{% endblocktrans %}</p>
-    <div class="wrapper wrapper--small wrapper--inner-space-medium">
-        <form class="form" action="" method="POST" novalidate>
-            {% if form.non_field_errors %}
-                <ul class="errorlist">
-                    {% for error in form.non_field_errors %}
-                        <li>{{ error }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
 
-            {% if form.errors %}
-                <ul class="errorlist">
-                    {% blocktrans trimmed count counter=form.errors.items|length %}
-                        <li>Please correct the error below.</li>
-                    {% plural %}
-                        <li>Please correct the errors below.</li>
-                    {% endblocktrans %}
-                </ul>
-            {% endif %}
+    <form class="form" action="" method="POST" novalidate>
+        {% if form.non_field_errors %}
+            <ul class="errorlist">
+                {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
 
-            {% csrf_token %}
+        {% if form.errors %}
+            <ul class="errorlist">
+                {% blocktrans trimmed count counter=form.errors.items|length %}
+                    <li>Please correct the error below.</li>
+                {% plural %}
+                    <li>Please correct the errors below.</li>
+                {% endblocktrans %}
+            </ul>
+        {% endif %}
 
-            {% for field in form %}
-                {% include "forms/includes/field.html" %}
-            {% endfor %}
+        {% csrf_token %}
 
-            <button class="btn btn-danger" type="submit">{% trans 'Disable Two-factor Authentication' %}</button>
-        </form>
-    </div>
+        {% for field in form %}
+            {% include "forms/includes/field.html" %}
+        {% endfor %}
+
+        <button class="btn btn-danger" type="submit">
+            {% trans 'Confirm' %}
+        </button>
+    </form>
+
 {% endblock %}

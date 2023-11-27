@@ -5,7 +5,7 @@ STAFF_GROUP_NAME = _("Staff")
 REVIEWER_GROUP_NAME = _("Reviewer")
 TEAMADMIN_GROUP_NAME = _("Staff Admin")
 PARTNER_GROUP_NAME = _("Partner")
-COMMUNITY_REVIEWER_GROUP_NAME = _("Community Reviewer")
+COMMUNITY_REVIEWER_GROUP_NAME = _("Community reviewer")
 APPROVER_GROUP_NAME = _("Approver")
 FINANCE_GROUP_NAME = _("Finance")
 CONTRACTING_GROUP_NAME = _("Contracting")
@@ -29,7 +29,7 @@ PARTNER_HELP_TEXT = _(
 )
 
 COMMUNITY_REVIEWER_HELP_TEXT = _(
-    "An applicant with access to other applications utilizing the community review (peer review) workflow."
+    "An applicant with access to other applications utilizing the community/peer review workflow."
 )
 
 APPROVER_HELP_TEXT = _(

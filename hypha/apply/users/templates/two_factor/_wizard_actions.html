@@ -1,7 +1,7 @@
 {% load i18n %}
 
 {% if wizard.steps.current == 'token' %}
-    {% trans "Login" as button_text %}
+    {% trans "Submit" as button_text %}
 {% elif wizard.steps.current == 'generator' %}
     {% trans "Next" as button_text %}
 {% elif wizard.steps.current == 'welcome' %}
@@ -10,12 +10,22 @@
     {% trans "Next" as button_text %}
 {% endif %}
 
-<button type="submit" class="button button--primary">{{ button_text }}</button>
+<button
+    type="submit"
+    class="button button--primary mb-4"
+>
+    {{ button_text }}
+</button>
 
 <script>
-    var lbl = document.querySelector("label[for=id_generator-token]");
+    const lbl = document.querySelector("label[for=id_generator-token]");
+    const otpInput = document.querySelector("#id_token-otp_token");
     if (lbl) {
         lbl.textContent = "{% trans "Verification code" %}:";
+    }
+    if(otpInput){
+        // set max-width to 6 characters
+        otpInput.style.maxWidth = "10ch";
     }
 
 </script>

@@ -1,34 +1,73 @@
 {% extends "base-apply.html" %}
-{% load i18n wagtailcore_tags %}
+{% load i18n wagtailcore_tags heroicons %}
 
 {% block title %}{% trans "Confirm access" %}{% endblock %}
 {% block body_class %}bg-white{% endblock %}
 
 {% block content %}
-    <div class="max-w-lg px-4 pt-4 mx-auto md:mt-5 md:py-4">
+    <div class="max-w-md px-4 pt-4 mx-auto md:mt-5 md:py-4">
 
-        <form class="form" method="post" action="./" class="px-4 pt-4">
-            {% csrf_token %}
-            <h2 class="text-2xl">{% trans "Confirm access" %}</h2>
+        <h2 class="text-2xl text-center">{% trans "Confirm access" %}</h2>
 
-            <p class="px-3 py-2 bg-orange-100 rounded mb-4">
-                Signed in as <strong>{{ request.user }} ({{ request.user.email }})</strong>
-            </p>
+        <p class="text-center mb-4">
+            Signed in as <strong>{% if request.user.full_name %} {{ request.user.full_name }} ({{ request.user.email }}) {% else %}{{ request.user.email }} {% endif %}</strong>
+        </p>
 
-            {% if form.non_field_errors %}
-                <div class="wrapper wrapper--error">{{ form.non_field_errors.as_text }}</div>
+        <section id="section-form">
+
+            {% if request.user.has_usable_password %}
+                <form
+                    class="form form--error-inline mb-4 px-4 pt-4 border rounded-sm bg-gray-50"
+                    method="post"
+                    action="./"
+                    data-test-id="section-password-input"
+                    id="form-password-input"
+                >
+                    {% for field in form %}
+                        {% include "forms/includes/field.html" %}
+                    {% endfor %}
+
+                    <div class="form__group">
+                        <button class="button button--primary" type="submit">{% trans "Confirm" %}</button>
+                    </div>
+                </form>
+            {% else %}
+                <section data-test-id="section-confirm" id="confirm-code-input" class="mb-4 px-4 pt-4 text-center">
+
+                    <button
+                        class="button button--primary"
+                        type="submit"
+                        hx-post="{% url 'users:elevate_send_confirm_access_email' %}{% if request.GET.next %}?next={{request.GET.next}}{% endif %}"
+                        hx-swap="outerHTML"
+                        hx-target="#confirm-code-input"
+                    >
+                        {% trans "Send a confirmation code to your email" %}
+                    </button>
+                </section>
             {% endif %}
 
-            {% for field in form %}
-                {% include "forms/includes/field.html" %}
-            {% endfor %}
+            {% if request.user.has_usable_password %}
+                <section data-test-id="section-send-email" class="px-4 border pt-2 pb-4">
+                    <p>{% trans "Having problems?" %}</p>
+                    <ul class="list-disc ml-4">
+                        <li>
+                            <a
+                                class="m-0"
+                                type="submit"
+                                hx-post="{% url 'users:elevate_send_confirm_access_email' %}{% if request.GET.next %}?next={{request.GET.next}}{% endif %}"
+                                hx-target="#section-form"
+                            >
+                                {% trans "Send a confirmation code to your email" %}
+                            </a>
+                        </li>
+                    </ul>
+                </section>
+            {% endif %}
 
-            <div class="form__group">
-                <button class="button button--primary" type="submit">{% trans "Confirm" %}</button>
-            </div>
-        </form>
+        </section>
 
-        <p class="text-xs text-center max-w-sm mt-8 text-gray-500 mx-auto">
+
+        <p class="text-xs text-center max-w-xs mt-8 text-gray-500 mx-auto leading-relaxed">
             {% blocktrans %}
                 <strong>Tip:</strong> You are entering sudo mode. After you've performed a sudo-protected
                 action, you'll only be asked to re-authenticate again after a few hours of inactivity.

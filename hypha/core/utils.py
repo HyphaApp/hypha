@@ -19,6 +19,6 @@ def markdown_to_html(text: str) -> str:
         escape=False,
         hard_wrap=True,
         renderer="html",
-        plugins=["strikethrough", "footnotes", "table"],
+        plugins=["strikethrough", "footnotes", "table", "url"],
     )
     return md(text)
