@@ -1,8 +1,9 @@
+from django.contrib.auth.models import Group
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
-from hypha.apply.users.models import Group, User
+from hypha.apply.users.models import User
 
 from .options import TASKS_CODE_CHOICES
 

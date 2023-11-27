@@ -6,6 +6,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.auth.models import Group
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.db import transaction
 from django.db.models import Count, Q
@@ -62,7 +63,6 @@ from hypha.apply.users.decorators import (
     staff_required,
 )
 from hypha.apply.users.groups import CONTRACTING_GROUP_NAME, STAFF_GROUP_NAME
-from hypha.apply.users.models import Group
 from hypha.apply.utils.models import PDFPageSettings
 from hypha.apply.utils.storage import PrivateMediaView
 from hypha.apply.utils.views import DelegateableView, DelegatedViewMixin, ViewDispatcher

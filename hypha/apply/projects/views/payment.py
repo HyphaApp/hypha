@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.auth.models import Group
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect
@@ -27,7 +28,6 @@ from hypha.apply.todo.views import (
 )
 from hypha.apply.users.decorators import staff_or_finance_required
 from hypha.apply.users.groups import STAFF_GROUP_NAME
-from hypha.apply.users.models import Group
 from hypha.apply.utils.storage import PrivateMediaView
 from hypha.apply.utils.views import DelegateableView, DelegatedViewMixin, ViewDispatcher
 

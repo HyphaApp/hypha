@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.auth.models import Group
 
 from hypha.apply.todo.options import (
     INVOICE_REQUIRED_CHANGES,
@@ -15,7 +16,6 @@ from hypha.apply.users.groups import (
     FINANCE_GROUP_NAME,
     STAFF_GROUP_NAME,
 )
-from hypha.apply.users.models import Group
 
 from .models.payment import (
     APPROVED_BY_FINANCE,
