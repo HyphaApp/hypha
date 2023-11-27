@@ -382,6 +382,8 @@ class GroupDesc(models.Model):
 
     def __str__(self):
         return self.help_text
+
+
 class PendingSignup(models.Model):
     """This model tracks pending passwordless self-signups, and is used to
     generate a  one-time use URLfor each signup.
