@@ -1,6 +1,16 @@
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
+from .constants import (
+    INT_DECLINED,
+    INT_FINANCE_PENDING,
+    INT_ORG_PENDING,
+    INT_PAID,
+    INT_PAYMENT_FAILED,
+    INT_REQUEST_FOR_CHANGE,
+    INT_STAFF_PENDING,
+    INT_VENDOR_PENDING,
+)
 from .models import Deliverable, Project
 from .models.payment import (
     APPROVED_BY_FINANCE,
@@ -147,3 +157,31 @@ def get_project_status_display_value(project_status):
 
 def get_project_public_status(project_status):
     return dict(PROJECT_PUBLIC_STATUSES)[project_status]
+
+
+def get_invoice_table_status(invoice_status, user):
+    if invoice_status in [SUBMITTED, RESUBMITTED]:
+        if user.is_applicant:
+            return INT_ORG_PENDING
+        return INT_STAFF_PENDING
+    if invoice_status == CHANGES_REQUESTED_BY_STAFF:
+        if user.is_applicant:
+            return INT_REQUEST_FOR_CHANGE
+        return INT_VENDOR_PENDING
+    if invoice_status in [APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE]:
+        if user.is_applicant:
+            return INT_ORG_PENDING
+        return INT_FINANCE_PENDING
+    if settings.INVOICE_EXTENDED_WORKFLOW and invoice_status in [
+        APPROVED_BY_FINANCE,
+        CHANGES_REQUESTED_BY_FINANCE_2,
+    ]:
+        if user.is_applicant:
+            return INT_ORG_PENDING
+        return INT_FINANCE_PENDING
+    if invoice_status == PAID:
+        return INT_PAID
+    if invoice_status == DECLINED:
+        return INT_DECLINED
+    if invoice_status == PAYMENT_FAILED:
+        return INT_PAYMENT_FAILED

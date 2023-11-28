@@ -7,13 +7,20 @@ from django.utils.translation import gettext_lazy as _
 
 from hypha.apply.activity.models import Activity
 from hypha.apply.activity.templatetags.activity_tags import display_for
+from hypha.apply.projects.constants import (
+    INVOICE_STATUS_BG_COLORS,
+    INVOICE_STATUS_FG_COLORS,
+)
 from hypha.apply.projects.models.project import (
     CLOSING,
     COMPLETE,
     INVOICING_AND_REPORTING,
     ProjectSettings,
 )
-from hypha.apply.projects.utils import get_invoice_public_status
+from hypha.apply.projects.utils import (
+    get_invoice_public_status,
+    get_invoice_table_status,
+)
 
 register = template.Library()
 
@@ -135,3 +142,18 @@ def get_comment_for_invoice_action(invoice, action):
             related_content_type__model="invoice",
             related_object_id=invoice.id,
         ).first()
+
+
+@register.filter
+def invoice_status_bg_color(invoice_status):
+    return INVOICE_STATUS_BG_COLORS.get(invoice_status, "bg-gray-100")
+
+
+@register.filter
+def invoice_status_fg_color(invoice_status):
+    return INVOICE_STATUS_FG_COLORS.get(invoice_status, "text-gray-700")
+
+
+@register.simple_tag
+def display_invoice_table_status_for_user(status, user):
+    return get_invoice_table_status(status, user)

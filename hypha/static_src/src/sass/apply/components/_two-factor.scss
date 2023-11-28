@@ -24,24 +24,6 @@ label[for="id_generator-token"] {
     font-size: 1.2em;
 }
 
-#list-backup-tokens {
-    border: $color--mid-grey;
-    padding: 1em;
-    line-height: 1.4em;
-    font-size: larger;
-    font-family: monospace;
-    resize: none;
-    font-style: bold;
-}
-
-.d-none {
-    display: none;
-}
-
-.bg-white {
-    background-color: $color--white;
-}
-
 // 2FA token field.
 #id_generator-token {
     -moz-appearance: textfield;

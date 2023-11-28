@@ -144,14 +144,6 @@ TRANSITION_AFTER_ASSIGNED = env.bool("TRANSITION_AFTER_ASSIGNED", False)
 # Possible values are: False, 1,2,3,…
 TRANSITION_AFTER_REVIEWS = env.bool("TRANSITION_AFTER_REVIEWS", False)
 
-# Forces users to log in first in order to make an application.  This is particularly useful in conjunction
-# with ENABLE_REGISTRATION_WITHOUT_APPLICATION
-FORCE_LOGIN_FOR_APPLICATION = env.bool("FORCE_LOGIN_FOR_APPLICATION", False)
-
-# Enable users to create accounts without submitting an application.
-ENABLE_REGISTRATION_WITHOUT_APPLICATION = env.bool(
-    "ENABLE_REGISTRATION_WITHOUT_APPLICATION", False
-)
 
 # Project settings.
 
@@ -180,11 +172,24 @@ LANGUAGE_CODE = env.str("LANGUAGE_CODE", "en")
 # Number of seconds that password reset and account activation links are valid (default 259200, 3 days).
 PASSWORD_RESET_TIMEOUT = env.int("PASSWORD_RESET_TIMEOUT", 259200)
 
+# Timeout for passwordless login links (default 900, 15 minutes).
+PASSWORDLESS_LOGIN_TIMEOUT = env.int("PASSWORDLESS_LOGIN_TIMEOUT", 900)  # 15 minutes
+
+# Enable users to create accounts without submitting an application.
+ENABLE_PUBLIC_SIGNUP = env.bool("ENABLE_PUBLIC_SIGNUP", True)
+
+# Forces users to log in first in order to make an application.  This is particularly useful in conjunction
+# with ENABLE_PUBLIC_SIGNUP
+# @deprecated: This setting is deprecated and will be removed in a future release.
+FORCE_LOGIN_FOR_APPLICATION = env.bool("FORCE_LOGIN_FOR_APPLICATION", True)
+
+# Timeout for passwordless signup links (default 900, 15 minutes).
+PASSWORDLESS_SIGNUP_TIMEOUT = env.int("PASSWORDLESS_SIGNUP_TIMEOUT", 900)  # 15 minutes
+
 # Seconds to enter password on password page while email change/2FA change (default 120).
 PASSWORD_PAGE_TIMEOUT = env.int("PASSWORD_PAGE_TIMEOUT", 120)
 
 #  Template engines and options to be used with Django.
-
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -288,12 +293,12 @@ MEDIA_URL = env.str("MEDIA_URL", "/media/")
 # Wagtail settings
 
 WAGTAIL_CACHE_TIMEOUT = CACHE_CONTROL_MAX_AGE
-WAGTAIL_FRONTEND_LOGIN_URL = "/login/"
+WAGTAIL_FRONTEND_LOGIN_URL = "/auth/"
 WAGTAIL_SITE_NAME = "hypha"
 WAGTAILIMAGES_IMAGE_MODEL = "images.CustomImage"
 WAGTAILIMAGES_FEATURE_DETECTION_ENABLED = False
 WAGTAIL_USER_EDIT_FORM = "hypha.apply.users.forms.CustomUserEditForm"
-WAGTAIL_USER_CREATION_FORM = "hypha.apply.users.forms.CustomUserCreationForm"
+WAGTAIL_USER_CREATION_FORM = "hypha.apply.users.forms.CustomWagtailUserCreationForm"
 WAGTAIL_USER_CUSTOM_FIELDS = ["full_name"]
 WAGTAIL_PASSWORD_MANAGEMENT_ENABLED = False
 WAGTAILUSERS_PASSWORD_ENABLED = False

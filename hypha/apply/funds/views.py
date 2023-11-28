@@ -13,7 +13,7 @@ from django.contrib.humanize.templatetags.humanize import intcomma
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count, F, Q
 from django.http import FileResponse, Http404, HttpResponse, HttpResponseRedirect
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -124,6 +124,17 @@ from .workflow import (
 )
 
 User = get_user_model()
+
+
+def submission_success(request, pk):
+    submission = get_object_or_404(ApplicationSubmission, pk=pk)
+    return render(
+        request,
+        "funds/submission-success.html",
+        {
+            "form_submission": submission,
+        },
+    )
 
 
 class SubmissionStatsMixin:

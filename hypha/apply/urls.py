@@ -21,9 +21,7 @@ urlpatterns = [
     # page and advances user to download backup code page.
     path(
         "account/two_factor/setup/complete/",
-        RedirectView.as_view(
-            url=reverse_lazy("users:backup_tokens_password"), permanent=False
-        ),
+        RedirectView.as_view(url=reverse_lazy("users:backup_tokens"), permanent=False),
         name="two_factor:setup_complete",
     ),
     path("", include(tf_urls, "two_factor")),

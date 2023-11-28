@@ -1,4 +1,5 @@
 from django.db import models
+from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import (
@@ -130,7 +131,7 @@ class WorkflowStreamForm(WorkflowHelpers, AbstractStreamForm):  # type: ignore
                 source=form_submission,
             )
 
-        return super().render_landing_page(request, form_submission, *args, **kwargs)
+        return redirect("apply:submissions:success", pk=form_submission.id)
 
     content_panels = AbstractStreamForm.content_panels + [
         FieldPanel("workflow_name"),

@@ -1,11 +1,21 @@
-{% extends "base.html" %}
+{% extends "base-apply.html" %}
 {% load i18n %}
-{% block header_modifier %}header--light-bg{% endblock %}
-{% block page_title %}{% trans "Check your email" %}{% endblock %}
+{% block page_title %}{% trans "Email Change - Verify Email" %}{% endblock %}
 {% block title %}{% trans "Verify Email" %}{% endblock %}
 
 {% block content %}
-    <div class="wrapper wrapper--small wrapper--bottom-space">
-        <p>{% trans "To start using the new email, please click on the confirmation link that has been sent to you on your new email." %}</p>
+
+    {% adminbar %}
+        {% slot header %}{% trans "Email Update" %}{% endslot %}
+    {% endadminbar %}
+
+    <div class="wrapper mt-6 prose">
+        <h2>{% trans "Confirm &amp; verify your new email!" %} </h2>
+        <p>
+            {% trans "We have sent a confirmation link to your new email." %}
+        </p>
+        <p>
+            {% trans "To start using the new email, please click on the confirmation link that has been sent to you on your new email." %}
+        </p>
     </div>
 {% endblock %}

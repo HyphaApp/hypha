@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.db.models import Count
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView
@@ -22,6 +22,7 @@ from hypha.apply.funds.tables import (
 )
 from hypha.apply.projects.filters import ProjectListFilter
 from hypha.apply.projects.models import Invoice, PAFApprovals, Project, ProjectSettings
+from hypha.apply.projects.models.payment import DECLINED, PAID
 from hypha.apply.projects.models.project import INTERNAL_APPROVAL
 from hypha.apply.projects.permissions import has_permission
 from hypha.apply.projects.tables import (
@@ -772,6 +773,7 @@ class ApplicantDashboardView(TemplateView):
         context = super().get_context_data(**kwargs)
         context["my_active_submissions"] = my_active_submissions
         context["active_projects"] = self.active_project_data()
+        context["active_invoices"] = self.active_invoices()
         context["historical_projects"] = self.historical_project_data()
         context["historical_submissions"] = self.historical_submission_data()
         return context
@@ -800,6 +802,14 @@ class ApplicantDashboardView(TemplateView):
 
         for submission in active_subs:
             yield submission.from_draft()
+
+    def active_invoices(self):
+        active_invoices = (
+            Invoice.objects.filter(project__user=self.request.user)
+            .exclude(status__in=[PAID, DECLINED])
+            .order_by("-requested_at")
+        )
+        return {"count": active_invoices.count(), "data": active_invoices}
 
     def historical_project_data(self):
         historical_projects = (
@@ -833,3 +843,14 @@ class DashboardView(ViewDispatcher):
     applicant_view = ApplicantDashboardView
     finance_view = FinanceDashboardView
     contracting_view = ContractingDashboardView
+
+    def dispatch(self, request, *args, **kwargs):
+        response = super().dispatch(request, *args, **kwargs)
+
+        # Handle the case when there is no dashboard for the user
+        # and redirect them to the home page of apply site.
+        # Suggestion: create a dedicated dashboard for user without any role.
+        if isinstance(response, HttpResponseForbidden):
+            return HttpResponseRedirect("/")
+
+        return response

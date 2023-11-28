@@ -74,9 +74,15 @@ class BaseStreamForm:
                     "You are logged in so this information is fetched from your user account."
                 )
                 if isinstance(block, FullNameBlock) and user and user.is_authenticated:
-                    field_from_block.disabled = True
-                    field_from_block.initial = user.full_name
-                    field_from_block.help_text = disabled_help_text
+                    if user.full_name:
+                        field_from_block.disabled = True
+                        field_from_block.initial = user.full_name
+                        field_from_block.help_text = disabled_help_text
+                    else:
+                        field_from_block.help_text = _(
+                            "You are logged in but your user account does not have a "
+                            "full name. We'll update your user account with the name you provide here."
+                        )
                 if isinstance(block, EmailBlock) and user and user.is_authenticated:
                     field_from_block.disabled = True
                     field_from_block.initial = user.email

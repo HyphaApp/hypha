@@ -23,7 +23,39 @@ class CustomAuthenticationForm(AuthenticationForm):
             )
 
 
+class PasswordlessAuthForm(forms.Form):
+    """Form to collect the email for passwordless login or signup (if enabled)
+
+    Adds login extra text and user content to the form, if configured in the
+    wagtail auth settings.
+    """
+
+    email = forms.EmailField(
+        label=_("Email Address"),
+        required=True,
+        max_length=254,
+        widget=forms.EmailInput(attrs={"autofocus": True, "autocomplete": "email"}),
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.request = kwargs.pop("request", None)
+        self.user_settings = AuthSettings.load(request_or_site=self.request)
+        self.extra_text = self.user_settings.extra_text
+        if self.user_settings.consent_show:
+            self.fields["consent"] = forms.BooleanField(
+                label=self.user_settings.consent_text,
+                help_text=self.user_settings.consent_help,
+                required=True,
+            )
+
+
 class CustomUserAdminFormBase:
+    error_messages = {
+        "duplicate_username": _("A user with that email already exists."),
+        "password_mismatch": _("The two password fields didn't match."),
+    }
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -40,12 +72,11 @@ class CustomUserEditForm(CustomUserAdminFormBase, UserEditForm):
     pass
 
 
-class CustomUserCreationForm(CustomUserAdminFormBase, UserCreationForm):
-    error_messages = {
-        "duplicate_username": _("A user with that email already exists."),
-        "password_mismatch": _("The two password fields didn't match."),
-    }
+class CustomWagtailUserCreationForm(CustomUserAdminFormBase, UserCreationForm):
+    pass
 
+
+class CustomUserCreationForm(CustomUserAdminFormBase, UserCreationForm):
     def __init__(self, request=None, *args, **kwargs):
         self.request = request
         super().__init__(*args, **kwargs)
@@ -65,18 +96,21 @@ class ProfileForm(forms.ModelForm):
         fields = ["full_name", "email", "slack"]
 
     def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop("request", None)
         super().__init__(*args, **kwargs)
         if not self.instance.is_apply_staff_or_finance:
             del self.fields["slack"]
 
-        if not self.instance.has_usable_password():
-            # User is registered with oauth - no password change allowed
-            email_field = self.fields["email"]
-            email_field.disabled = True
-            email_field.required = False
-            email_field.help_text = _(
-                "You are registered using OAuth, please contact an admin if you need to change your email address."
-            )
+        if self.request is not None:
+            backend = self.request.session["_auth_user_backend"]
+            if "social_core.backends" in backend:
+                # User is registered with oauth - no password change allowed
+                email_field = self.fields["email"]
+                email_field.disabled = True
+                email_field.required = False
+                email_field.help_text = _(
+                    "You are registered using OAuth, please contact an admin if you need to change your email address."
+                )
 
     def clean_slack(self):
         slack = self.cleaned_data["slack"]
@@ -140,21 +174,22 @@ class EmailChangePasswordForm(forms.Form):
 
 
 class TWOFAPasswordForm(forms.Form):
-    password = forms.CharField(
-        label=_("Please type your password to confirm"),
-        strip=False,
-        widget=forms.PasswordInput(attrs={"autofocus": True}),
+    confirmation_text = forms.CharField(
+        label=_('To proceed, type "disable" below and then click on "confirm":'),
+        strip=True,
+        # add widget with autofocus to avoid password autofill
+        widget=forms.TextInput(attrs={"autofocus": True, "autocomplete": "off"}),
     )
 
     def __init__(self, user, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.user = user
 
-    def clean_password(self):
-        password = self.cleaned_data["password"]
-        if not self.user.check_password(password):
+    def clean_confirmation_text(self):
+        text = self.cleaned_data["confirmation_text"]
+        if text != "disable":
             raise forms.ValidationError(
-                _("Incorrect password. Please try again."),
-                code="password_incorrect",
+                _("Incorrect input."),
+                code="confirmation_text_incorrect",
             )
-        return password
+        return text

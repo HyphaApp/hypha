@@ -1,4 +1,5 @@
 import datetime
+import time
 from typing import Any
 from urllib.parse import urlencode
 
@@ -15,12 +16,13 @@ from django.contrib.auth.views import (
 from django.contrib.auth.views import PasswordResetView as DjPasswordResetView
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import PermissionDenied
-from django.core.signing import BadSignature, Signer, TimestampSigner, dumps, loads
-from django.http import HttpResponseRedirect
+from django.core.signing import TimestampSigner, dumps, loads
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import Http404, get_object_or_404, redirect, render, resolve_url
 from django.template.loader import render_to_string
 from django.template.response import TemplateResponse
 from django.urls import reverse, reverse_lazy
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
@@ -30,9 +32,12 @@ from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import UpdateView
 from django.views.generic.base import TemplateView, View
 from django.views.generic.edit import FormView
+from django_htmx.http import HttpResponseClientRedirect
 from django_otp import devices_for_user
 from django_ratelimit.decorators import ratelimit
 from elevate.mixins import ElevateMixin
+from elevate.utils import grant_elevated_privileges
+from elevate.views import redirect_to_elevate
 from hijack.views import AcquireUserView
 from two_factor.forms import AuthenticationTokenForm, BackupTokenForm
 from two_factor.utils import default_device, get_otpauth_url, totp_digits
@@ -45,17 +50,26 @@ from wagtail.models import Site
 from wagtail.users.views.users import change_user_perm
 
 from hypha.apply.home.models import ApplyHomePage
+from hypha.core.mail import MarkdownMail
 
 from .decorators import require_oauth_whitelist
 from .forms import (
     BecomeUserForm,
     CustomAuthenticationForm,
     CustomUserCreationForm,
-    EmailChangePasswordForm,
+    PasswordlessAuthForm,
     ProfileForm,
     TWOFAPasswordForm,
 )
-from .utils import get_redirect_url, send_confirmation_email
+from .models import ConfirmAccessToken, PendingSignup
+from .services import PasswordlessAuthService
+from .tokens import PasswordlessLoginTokenGenerator, PasswordlessSignupTokenGenerator
+from .utils import (
+    generate_numeric_token,
+    get_redirect_url,
+    send_activation_email,
+    send_confirmation_email,
+)
 
 User = get_user_model()
 
@@ -72,11 +86,11 @@ class RegisterView(View):
         # We keep /register in the urls in order to test (where we turn on/off
         # the setting per test), but when disabled, we want to pretend it doesn't
         # exist va 404
-        if not settings.ENABLE_REGISTRATION_WITHOUT_APPLICATION:
+        if not settings.ENABLE_PUBLIC_SIGNUP:
             raise Http404
 
         if request.user.is_authenticated:
-            return redirect("dashboard:dashboard")
+            return redirect(settings.LOGIN_REDIRECT_URL)
 
         ctx = {
             "form": self.form(),
@@ -86,7 +100,7 @@ class RegisterView(View):
 
     def post(self, request):
         # See comment in get() above about doing this here rather than in urls
-        if not settings.ENABLE_REGISTRATION_WITHOUT_APPLICATION:
+        if not settings.ENABLE_PUBLIC_SIGNUP:
             raise Http404
 
         form = self.form(data=request.POST)
@@ -136,6 +150,10 @@ class LoginView(TwoFactorLoginView):
         ("backup", BackupTokenForm),
     )
 
+    redirect_field_name = "next"
+    redirect_authenticated_user = True
+    template_name = "users/login.html"
+
     def get_context_data(self, form, **kwargs):
         context_data = super(LoginView, self).get_context_data(form, **kwargs)
         context_data["is_public_site"] = True
@@ -158,28 +176,28 @@ class AccountView(UpdateView):
     def get_object(self):
         return self.request.user
 
+    def get_form_kwargs(self) -> dict[str, Any]:
+        kwargs = super().get_form_kwargs()
+        kwargs["request"] = self.request
+        return kwargs
+
     def form_valid(self, form):
         updated_email = form.cleaned_data["email"]
         name = form.cleaned_data["full_name"]
         slack = form.cleaned_data.get("slack", "")
         user = get_object_or_404(User, id=self.request.user.id)
-        if updated_email:
+        if user.email != updated_email:
             base_url = reverse("users:email_change_confirm_password")
             query_dict = {"updated_email": updated_email, "name": name, "slack": slack}
 
             signer = TimestampSigner()
             signed_value = signer.sign(dumps(query_dict))
-            # Using session variables for redirect validation
-            token_signer = Signer()
-            self.request.session["signed_token"] = token_signer.sign(user.email)
             return redirect(
                 "{}?{}".format(base_url, urlencode({"value": signed_value}))
             )
-        return super(AccountView, self).form_valid(form)
+        return super().form_valid(form)
 
-    def get_success_url(
-        self,
-    ):
+    def get_success_url(self):
         return reverse_lazy("users:account")
 
     def get_context_data(self, **kwargs):
@@ -200,72 +218,54 @@ class AccountView(UpdateView):
         )
 
 
-@method_decorator(login_required, name="dispatch")
-class EmailChangePasswordView(FormView):
-    form_class = EmailChangePasswordForm
-    template_name = "users/email_change/confirm_password.html"
-    success_url = reverse_lazy("users:confirm_link_sent")
-    title = _("Enter Password")
+@login_required
+def account_email_change(request):
+    if request.user.has_usable_password() and not request.is_elevated():
+        return redirect_to_elevate(request.get_full_path())
 
-    def get_initial(self):
-        """
-        Validating the redirection from account via session variable
-        """
-        if "signed_token" not in self.request.session:
-            raise Http404
-        signer = Signer()
-        try:
-            signer.unsign(self.request.session["signed_token"])
-        except BadSignature as e:
-            raise Http404 from e
-        return super(EmailChangePasswordView, self).get_initial()
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["user"] = self.request.user
-        return kwargs
-
-    def form_valid(self, form):
-        # Make sure redirection url is inaccessible after email is sent
-        if "signed_token" in self.request.session:
-            del self.request.session["signed_token"]
-        signer = TimestampSigner()
-        try:
-            unsigned_value = signer.unsign(
-                self.request.GET.get("value"), max_age=settings.PASSWORD_PAGE_TIMEOUT
-            )
-        except Exception:
-            messages.error(
-                self.request,
-                _("Password Page timed out. Try changing the email again."),
-            )
-            return redirect("users:account")
-        value = loads(unsigned_value)
-        form.save(**value)
-        user = self.request.user
-        if user.email != value["updated_email"]:
-            send_confirmation_email(
-                user,
-                signer.sign(dumps(value["updated_email"])),
-                updated_email=value["updated_email"],
-                site=Site.find_for_request(self.request),
-            )
-        # alert email
-        user.email_user(
-            subject="Alert! An attempt to update your email.",
-            message=render_to_string(
-                "users/email_change/update_info_email.html",
-                {
-                    "name": user.get_full_name(),
-                    "username": user.get_username(),
-                    "org_email": settings.ORG_EMAIL,
-                    "org_short_name": settings.ORG_SHORT_NAME,
-                    "org_long_name": settings.ORG_LONG_NAME,
-                },
-            ),
-            from_email=settings.DEFAULT_FROM_EMAIL,
+    signer = TimestampSigner()
+    try:
+        unsigned_value = signer.unsign(
+            request.GET.get("value"), max_age=settings.PASSWORD_PAGE_TIMEOUT
         )
-        return super(EmailChangePasswordView, self).form_valid(form)
+    except Exception:
+        messages.error(
+            request,
+            _("Password Page timed out. Try changing the email again."),
+        )
+        return redirect("users:account")
+    value = loads(unsigned_value)
+
+    if slack := value["slack"] is not None:
+        request.user.slack = slack
+
+    request.user.full_name = value["name"]
+    request.user.save()
+
+    if request.user.email != value["updated_email"]:
+        send_confirmation_email(
+            request.user,
+            signer.sign(dumps(value["updated_email"])),
+            updated_email=value["updated_email"],
+            site=Site.find_for_request(request),
+        )
+
+    # alert email
+    request.user.email_user(
+        subject="Alert! An attempt to update your email.",
+        message=render_to_string(
+            "users/email_change/update_info_email.html",
+            {
+                "name": request.user.get_full_name(),
+                "username": request.user.get_username(),
+                "org_email": settings.ORG_EMAIL,
+                "org_short_name": settings.ORG_SHORT_NAME,
+                "org_long_name": settings.ORG_LONG_NAME,
+            },
+        ),
+        from_email=settings.DEFAULT_FROM_EMAIL,
+    )
+    return redirect("users:confirm_link_sent")
 
 
 @method_decorator(login_required, name="dispatch")
@@ -349,10 +349,7 @@ class ActivationView(TemplateView):
         if self.valid(user, kwargs.get("token")):
             user.backend = settings.CUSTOM_AUTH_BACKEND
             login(request, user)
-            if (
-                settings.WAGTAILUSERS_PASSWORD_ENABLED
-                and settings.ENABLE_REGISTRATION_WITHOUT_APPLICATION
-            ):
+            if settings.WAGTAILUSERS_PASSWORD_ENABLED and settings.ENABLE_PUBLIC_SIGNUP:
                 # In this case, the user entered a password while registering,
                 # and so they shouldn't need to activate a password
                 return redirect("users:account")
@@ -496,7 +493,7 @@ class TWOFASetupView(TwoFactorSetupView):
     name="dispatch",
 )
 @method_decorator(login_required, name="dispatch")
-class TWOFADisableView(TwoFactorDisableView):
+class TWOFADisableView(ElevateMixin, TwoFactorDisableView):
     """
     View for disabling two-factor for a user's account.
     """
@@ -550,8 +547,18 @@ class TWOFAAdminDisableView(FormView):
         return ctx
 
 
-class TWOFARequiredMessageView(TemplateView):
-    template_name = "two_factor/core/two_factor_required.html"
+def mfa_failure_view(
+    request, reason, template_name="two_factor/core/two_factor_required.html"
+):
+    """Renders a template asking the user to setup 2FA.
+
+    Used by hypha.apply.users.middlewares.TwoFactorAuthenticationMiddleware,
+    if ENFORCE_TWO_FACTOR is enabled.
+    """
+    ctx = {
+        "reason": reason,
+    }
+    return render(request, template_name, ctx)
 
 
 class BackupTokensView(ElevateMixin, TwoFactorBackupTokensView):
@@ -611,3 +618,228 @@ class PasswordResetConfirmView(DjPasswordResetConfirmView):
                         redirect_url = f"{redirect_url}?next={next_path}"
 
                     return HttpResponseRedirect(redirect_url)
+
+
+@method_decorator(
+    ratelimit(key="ip", rate=settings.DEFAULT_RATE_LIMIT, method="POST"),
+    name="dispatch",
+)
+@method_decorator(
+    ratelimit(key="post:email", rate=settings.DEFAULT_RATE_LIMIT, method="POST"),
+    name="dispatch",
+)
+class PasswordLessLoginSignupView(FormView):
+    """This view is used to collect the email address for passwordless login/signup.
+
+    If the email address is already associated with an account, an email is sent. If not,
+    if the registration is enabled an email is sent, to allow the user to create an account.
+
+    NOTE: This view should never expose whether an email address is associated with an account.
+    """
+
+    template_name = "users/passwordless_login_signup.html"
+    redirect_field_name = "next"
+    http_method_names = ["get", "post"]
+    form_class = PasswordlessAuthForm
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect(settings.LOGIN_REDIRECT_URL)
+
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        ctx = super().get_context_data(**kwargs)
+        if self.request.htmx:
+            ctx["base_template"] = "includes/_partial-main.html"
+        else:
+            ctx["base_template"] = "base-apply.html"
+        ctx["redirect_url"] = get_redirect_url(self.request, self.redirect_field_name)
+        return ctx
+
+    def post(self, request):
+        form = self.get_form()
+        if form.is_valid():
+            service = PasswordlessAuthService(
+                request, redirect_field_name=self.redirect_field_name
+            )
+
+            email = form.cleaned_data["email"]
+            service.initiate_login_signup(email=email)
+
+            return TemplateResponse(
+                self.request,
+                "users/partials/passwordless_login_signup_sent.html",
+                self.get_context_data(),
+            )
+        else:
+            return self.render_to_response(self.get_context_data(form=form))
+
+
+class PasswordlessLoginView(LoginView):
+    """This view is used to capture the passwordless login token and log the user in.
+
+    If the token is valid, the user is logged in and redirected to the dashboard.
+    If the token is invalid, the user is shown invalid token page.
+
+    This view inherits from LoginView to reuse the 2FA views, if a mfa device is added
+    to the user.
+    """
+
+    def get(self, request, uidb64, token, *args, **kwargs):
+        try:
+            user = User.objects.get(pk=force_str(urlsafe_base64_decode(uidb64)))
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            user = None
+
+        if user and self.check_token(user, token):
+            user.backend = settings.CUSTOM_AUTH_BACKEND
+
+            if default_device(user):
+                # User has mfa, set the user details and redirect to 2fa login
+                self.storage.reset()
+                self.storage.authenticated_user = user
+                self.storage.data["authentication_time"] = int(time.time())
+                return self.render_goto_step("token")
+
+            # No mfa, log the user in
+            login(request, user)
+
+            if redirect_url := get_redirect_url(request, self.redirect_field_name):
+                return redirect(redirect_url)
+
+            return redirect("dashboard:dashboard")
+
+        return render(request, "users/activation/invalid.html")
+
+    def check_token(self, user, token):
+        token_generator = PasswordlessLoginTokenGenerator()
+        return token_generator.check_token(user, token)
+
+
+class PasswordlessSignupView(TemplateView):
+    """This view is used to capture the passwordless login token and log the user in.
+
+    If the token is valid, the user is logged in and redirected to the dashboard.
+    If the token is invalid, the user is shown invalid token page.
+    """
+
+    redirect_field_name = "next"
+
+    def get(self, request, *args, **kwargs):
+        pending_signup = self.get_pending_signup(kwargs.get("uidb64"))
+        token = kwargs.get("token")
+        token_generator = PasswordlessSignupTokenGenerator()
+
+        if pending_signup and token_generator.check_token(pending_signup, token):
+            user = User.objects.create(email=pending_signup.email, is_active=True)
+            user.set_unusable_password()
+            user.save()
+            pending_signup.delete()
+
+            user.backend = settings.CUSTOM_AUTH_BACKEND
+            login(request, user)
+
+            redirect_url = get_redirect_url(request, self.redirect_field_name)
+
+            if redirect_url:
+                return redirect(redirect_url)
+
+            # If 2FA is enabled, redirect to setup page instead of dashboard
+            if settings.ENFORCE_TWO_FACTOR:
+                redirect_url = redirect_url or reverse("dashboard:dashboard")
+                return redirect(reverse("two_factor:setup") + f"?next={redirect_url}")
+
+            return redirect("dashboard:dashboard")
+
+        return render(request, "users/activation/invalid.html")
+
+    def get_pending_signup(self, uidb64):
+        """
+        Given the verified uid, look up and return the corresponding user
+        account if it exists, or `None` if it doesn't.
+        """
+        try:
+            return PendingSignup.objects.get(
+                **{"pk": force_str(urlsafe_base64_decode(uidb64))}
+            )
+        except (TypeError, ValueError, OverflowError, PendingSignup.DoesNotExist):
+            return None
+
+
+@login_required
+def send_confirm_access_email_view(request):
+    """Sends email with link to login in an elevated mode."""
+    token_obj, _ = ConfirmAccessToken.objects.update_or_create(
+        user=request.user, token=generate_numeric_token
+    )
+    email_context = {
+        "org_long_name": settings.ORG_LONG_NAME,
+        "org_email": settings.ORG_EMAIL,
+        "org_short_name": settings.ORG_SHORT_NAME,
+        "token": token_obj.token,
+        "username": request.user.email,
+        "site": Site.find_for_request(request),
+        "user": request.user,
+        "timeout_minutes": settings.PASSWORDLESS_LOGIN_TIMEOUT // 60,
+    }
+    subject = "Confirmation code for {org_long_name}: {token}".format(**email_context)
+    email = MarkdownMail("users/emails/confirm_access.md")
+    email.send(
+        to=request.user.email,
+        subject=subject,
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        context=email_context,
+    )
+    return render(
+        request,
+        "users/partials/confirmation_code_sent.html",
+        {"redirect_url": get_redirect_url(request, "next")},
+    )
+
+
+@never_cache
+@login_required
+@ratelimit(key="user", rate=settings.DEFAULT_RATE_LIMIT)
+def elevate_check_code_view(request):
+    """Checks if the code is correct and if so, elevates the user session."""
+    token = request.POST.get("code")
+
+    def validate_token_and_age(token):
+        try:
+            token_obj = ConfirmAccessToken.objects.get(user=request.user, token=token)
+            token_age_in_seconds = (timezone.now() - token_obj.modified).total_seconds()
+            if token_age_in_seconds <= settings.PASSWORDLESS_LOGIN_TIMEOUT:
+                token_obj.delete()
+                return True
+        except ConfirmAccessToken.DoesNotExist:
+            return False
+
+    redirect_url = get_redirect_url(request, "next")
+    if token and validate_token_and_age(token):
+        grant_elevated_privileges(request)
+        return HttpResponseClientRedirect(redirect_url)
+
+    return render(
+        request,
+        "users/partials/confirmation_code_sent.html",
+        {"error": True, "redirect_url": redirect_url},
+    )
+
+
+@login_required
+def set_password_view(request):
+    """Sends email with link to set password to user that doesn't have usable password.
+
+    This will the case when the user signed up using passwordless signup or using oauth.
+    """
+    site = Site.find_for_request(request)
+
+    if not request.user.has_usable_password():
+        send_activation_email(
+            user=request.user,
+            site=site,
+            email_template="users/emails/set_password.txt",
+            email_subject_template="users/emails/set_password_subject.txt",
+        )
+        return HttpResponse("✓ Check your email for password set link.")
