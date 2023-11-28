@@ -37,3 +37,4 @@ urlpatterns += base_urlpatterns
 
 
 handler404 = "hypha.apply.utils.views.page_not_found"
+handler403 = "hypha.apply.utils.views.permission_denied"
