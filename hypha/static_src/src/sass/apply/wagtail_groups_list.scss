@@ -1,3 +1,4 @@
+// Stylings used for the Wagtail admin "roles" tab when creating/editing a user
 .form {
     &__label {
         p {
@@ -8,6 +9,18 @@
             font-size: smaller;
             padding-left: 10px;
             color: var(--w-color-grey-400);
+        }
+    }
+}
+
+// Stylings used for the Wagtail admin groups view
+.title-wrapper {
+    a {
+        .group-help-text {
+            font-size: smaller;
+            padding-left: 10px;
+            font-weight: normal;
+            display: inline;
         }
     }
 }

@@ -74,25 +74,6 @@ class GroupsModelMultipleChoiceField(forms.ModelMultipleChoiceField):
     A custom ModelMultipleChoiceField utilized to provide a custom label for the group prompts
     """
 
-    _group_desc_mapping = None
-
-    @property
-    def group_desc_mapping(self):
-        """
-        Return a dict of {<Group Name>: <Group Help Text>} to prevent unneeded queries to the DB
-        every label call retrieval.
-
-        This was implemented as a property function as when storing this as a regular variable
-        property interfered with Django's migration/makemigration functionality.
-        """
-        if self._group_desc_mapping is None:
-            self._group_desc_mapping = {
-                group_desc.group.name: group_desc.help_text
-                for group_desc in GroupDesc.objects.all()
-            }
-
-        return self._group_desc_mapping
-
     @classmethod
     def get_group_mmcf(
         cls, model_mulitple_choice_field: forms.ModelMultipleChoiceField
@@ -114,9 +95,8 @@ class GroupsModelMultipleChoiceField(forms.ModelMultipleChoiceField):
         """
         Overwriting ModelMultipleChoiceField's label from instance to provide help_text (if it exists)
         """
-        help_text = self.group_desc_mapping.get(group_obj.name)
+        help_text = GroupDesc.get_from_group(group_obj)
         if help_text:
-            # return mark_safe(f"<p class=\"group-label\">{group_obj.name}</p><p class=\"help-text\">{help_text}</p>")
             return mark_safe(
                 f'{group_obj.name}<p class="group-help-text">{help_text}</p>'
             )
