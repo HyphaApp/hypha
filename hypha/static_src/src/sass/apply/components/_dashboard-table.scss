@@ -1,0 +1,30 @@
+.paf-review-table {
+    @include table-ordering-styles;
+
+    thead {
+        th {
+            // ordering - adjust alignment
+            &.desc {
+                position: relative;
+                color: $color--dark-grey;
+
+                &::after {
+                    position: absolute;
+                    top: 40%;
+                    margin-left: 5px;
+                }
+            }
+
+            &.asc {
+                position: relative;
+                color: $color--dark-grey;
+
+                &::after {
+                    position: absolute;
+                    top: 50%;
+                    margin-left: 5px;
+                }
+            }
+        }
+    }
+}

@@ -126,25 +126,30 @@ class ProjectsAssigneeDashboardTable(BaseProjectsTable):
 
 class PAFForReviewDashboardTable(tables.Table):
     date_requested = tables.DateColumn(
-        verbose_name=_("Date requested"), accessor="created_at"
+        verbose_name=_("Date requested"),
+        accessor="created_at",
+        orderable=True,
     )
     title = tables.LinkColumn(
         "funds:projects:detail",
         text=lambda r: textwrap.shorten(r.project.title, width=30, placeholder="..."),
         accessor="project__title",
         args=[tables.utils.A("project__pk")],
+        orderable=False,
     )
-    status = tables.Column(verbose_name=_("Status"), accessor="pk")
-    fund = tables.Column(verbose_name=_("Fund"), accessor="project__submission__page")
+    status = tables.Column(verbose_name=_("Status"), accessor="pk", orderable=False)
+    fund = tables.Column(
+        verbose_name=_("Fund"), accessor="project__submission__page", orderable=False
+    )
 
-    assignee = tables.Column(verbose_name=_("Assignee"), accessor="user")
+    assignee = tables.Column(
+        verbose_name=_("Assignee"), accessor="user", orderable=False
+    )
 
     class Meta:
         fields = ["date_requested", "title", "fund", "status", "assignee"]
         model = PAFApprovals
-        orderable = True
-        order_by = ("date_requested",)
-        attrs = {"class": "projects-table"}
+        attrs = {"class": "paf-review-table"}
 
     def order_date_requested(self, qs, is_descending):
         direction = "-" if is_descending else ""

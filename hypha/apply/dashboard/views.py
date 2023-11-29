@@ -3,6 +3,7 @@ from django.http import HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView
+from django_tables2 import RequestConfig
 
 from hypha.apply.funds.models import (
     ApplicationSubmission,
@@ -107,10 +108,14 @@ class AdminDashboardView(MyFlaggedMixin, TemplateView):
             user=self.request.user,
             is_paf_approval_sequential=project_settings.paf_approval_sequential,
         )
+        paf_table = PAFForReviewDashboardTable(
+            paf_approvals, prefix="paf-review-", order_by="-date_requested"
+        )
+        RequestConfig(self.request).configure(paf_table)
 
         return {
             "count": paf_approvals.count(),
-            "table": PAFForReviewDashboardTable(paf_approvals),
+            "table": paf_table,
         }
 
     def awaiting_reviews(self, submissions):
