@@ -1,3 +1,8 @@
+.group-help-text {
+    font-size: smaller;
+    padding-left: 10px;
+}
+
 // Stylings used for the Wagtail admin "roles" tab when creating/editing a user
 .form {
     &__label {
@@ -6,8 +11,6 @@
         }
 
         .group-help-text {
-            font-size: smaller;
-            padding-left: 10px;
             color: var(--w-color-grey-400);
         }
     }
@@ -17,8 +20,6 @@
 .title-wrapper {
     a {
         .group-help-text {
-            font-size: smaller;
-            padding-left: 10px;
             font-weight: normal;
             display: inline;
         }
