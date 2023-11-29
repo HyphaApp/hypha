@@ -1,10 +1,15 @@
 // stylelint-disable  selector-class-pattern
 
 .status-bar {
+    --bar: 3px;
+    --dot: 20px;
+    --triangle: 5px;
+    --tooltip-padding: 10px;
+    --tooltip-max-width: 12ch;
+    --tooltip-margin-top: 17px;
+
     $root: &;
     display: none;
-    padding: 30px 10px 80px;
-    margin-right: 16px;
 
     @include media-query(tablet-portrait) {
         display: flex;
@@ -26,189 +31,127 @@
     &__subheading {
         display: inline-block;
         padding: 5px 10px;
-        margin: 10px 0 0;
         color: $color--white;
         background-color: $color--tomato;
     }
 
-    &__icon {
-        position: absolute;
-        top: -10px;
-        left: 0;
-        z-index: 30;
-        display: none;
-        width: 20px;
-        height: 20px;
-
-        .status-bar__item--is-current &,
-        .status-bar__item--is-complete & {
-            display: block;
-
-            .status-bar--small & {
-                display: block;
-                border-radius: 50%;
-                box-shadow: 0 1px 9px 0 $color--black-50;
-            }
-        }
-
-        .status-bar__item:first-of-type & {
-            left: -10px;
-        }
+    &__text {
+        font-size: map-get($font-sizes, milli);
+        font-weight: $weight--bold;
     }
 
     &__item {
-        position: relative;
         flex: 1;
-        height: 3px;
-        background: $color--mid-grey;
+        position: relative;
+        padding-block-start: var(--tooltip-margin-top);
+        border-block-start: var(--bar) solid $color--mid-grey;
 
         // every items dot
         &::before {
+            display: flex;
+            place-items: center;
             position: absolute;
-            top: -10px;
-            left: 0;
-            width: 20px;
-            height: 20px;
+            top: calc(-1 * var(--dot) / 2);
+            left: calc(-1 * var(--dot) / 2);
+            width: var(--dot);
+            height: var(--dot);
             background: $color--dark-grey;
-            border: 5px solid $color--mid-grey;
+            border: calc(var(--dot) / 4) solid $color--mid-grey;
             border-radius: 50%;
             content: "";
 
-            .status-bar--small & {
+            #{$root}--small & {
                 background: $color--white;
             }
         }
 
-        // last items dont have a dot
-        &:last-of-type {
-            flex: 0;
-            height: 0;
+        &--is-current {
+            &::before {
+                background: $color--white;
+                border: calc(var(--dot) / 4) solid $color--tomato;
+            }
+        }
 
-            &.status-bar__item--is-complete {
-                &::after {
-                    display: none;
+        &--is-complete {
+            border-color: $color--primary;
+
+            &::before {
+                background: $color--primary;
+                border-color: $color--primary;
+                content: "✔";
+
+                #{$root}--small & {
+                    background: $color--primary;
                 }
             }
         }
 
         &:first-of-type {
             &::before {
-                left: -10px;
+                left: 0;
             }
         }
 
-        &--is-current {
-            &::before {
-                position: absolute;
-                top: -10px;
-                right: -20px;
-                z-index: 10;
-                width: 20px;
-                height: 20px;
-                background: $color--white;
-                border: 5px solid $color--error;
-                border-radius: 50%;
-                content: "";
-            }
+        &:nth-last-of-type(2) {
+            flex: 0;
         }
 
-        &--is-complete {
-            background: $color--primary;
-
-            &:last-of-type {
-                &::after {
-                    background: $color--primary;
-                }
-            }
+        &:last-of-type {
+            flex: 0;
 
             &::before {
-                background: $color--primary;
-                border-color: $color--primary;
-
-                .status-bar--small & {
-                    background: $color--primary;
-                }
+                left: auto;
+                right: 0;
             }
         }
     }
 
     &__tooltip {
-        // tooltip hover area - not visibile
-        position: absolute;
-        top: -10px;
-        z-index: 100;
-        width: 20px;
-        height: 20px;
-        border-radius: 50%;
-        opacity: 1;
-        transition: opacity $transition;
+        --tooltip-width: min(var(--tooltip-max-width), var(--tooltip-chars));
+        width: var(--tooltip-width);
+        margin-inline-start: calc(-1 * var(--tooltip-width) / 2 - 5px);
+        text-align: center;
+        padding-block: var(--tooltip-padding);
+        color: $color--mid-grey;
 
-        .status-bar__item:first-of-type & {
-            left: -10px;
+        #{$root}__item--is-complete & {
+            color: $color--primary;
         }
 
-        .status-bar__item--is-current & {
-            opacity: 1;
+        #{$root}__item--is-current & {
+            width: calc(var(--tooltip-width) + var(--tooltip-padding));
+            position: relative;
+            color: $color--white;
+            background-color: $color--tomato;
+            padding-inline: var(--tooltip-padding);
         }
 
         &::before {
-            .status-bar__item--is-current & {
-                @include triangle(top, $color--error, 5px);
+            #{$root}__item--is-current & {
+                @include triangle(top, $color--tomato, 5px);
                 position: absolute;
-                bottom: -10px;
-                left: 5px;
+                top: calc(-1 * var(--triangle) - 2px);
+                left: calc(50% - var(--triangle));
+            }
+
+            #{$root}__item--is-current:first-of-type & {
+                left: var(--triangle);
+            }
+
+            #{$root}__item--is-current:last-of-type & {
+                left: initial;
+                right: var(--triangle);
             }
         }
 
-        // tooltip contents
-        &::after {
-            position: absolute;
-            top: 30px;
-            left: -25px;
-            text-align: center;
-            display: block;
-            padding: 5px 10px;
-            font-size: 12px;
-            font-weight: $weight--bold;
-            background-color: $color--error;
-            content: attr(data-title);
+        #{$root}__item:first-of-type & {
+            margin-inline-start: initial;
+            text-align: start;
+        }
 
-            // prevent first tooltip hitting viewport edge
-            .status-bar__item:first-of-type & {
-                left: 0;
-
-                @include media-query(desktop) {
-                    left: -25px;
-                }
-            }
-
-            // prevent last tooltip hitting viewport edge
-            .status-bar__item:last-of-type & {
-                left: -45px;
-
-                @include media-query(tablet-portrait) {
-                    left: -60px;
-                }
-
-                @include media-query(desktop-medium) {
-                    left: -35px;
-                }
-            }
-
-            .status-bar__item & {
-                background-color: inherit;
-                color: $color--mid-grey;
-            }
-
-            .status-bar__item--is-complete & {
-                background-color: inherit;
-                color: $color--primary;
-            }
-
-            .status-bar__item--is-current & {
-                background-color: $color--tomato;
-                color: $color--white;
-            }
+        #{$root}__item:last-of-type & {
+            margin-inline-start: initial;
+            text-align: end;
         }
     }
 }
