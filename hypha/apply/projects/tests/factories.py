@@ -24,6 +24,7 @@ from ..models.project import (
     PAFReviewersRole,
     Project,
     ProjectApprovalForm,
+    ProjectReportForm,
     ProjectSOWForm,
 )
 from ..models.report import Report, ReportConfig, ReportVersion
@@ -82,6 +83,13 @@ class ProjectSOWFormFactory(factory.django.DjangoModelFactory):
 
 class ProjectApprovalFormDataFactory(FormDataFactory):
     field_factory = FormFieldsBlockFactory
+
+
+class ProjectReportFormFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = ProjectReportForm
+    name = factory.Faker("word")
+    form_fields = FormFieldsBlockFactory
 
 
 class ProjectFactory(factory.django.DjangoModelFactory):

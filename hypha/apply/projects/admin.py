@@ -5,14 +5,17 @@ from hypha.core.wagtail.admin import SettingModelAdmin
 
 from .admin_views import (
     CreateProjectApprovalFormView,
+    CreateProjectReportFormView,
     CreateProjectSOWFormView,
     EditProjectApprovalFormView,
+    EditProjectReportFormView,
     EditProjectSOWFormView,
 )
 from .models import (
     ContractDocumentCategory,
     DocumentCategory,
     ProjectApprovalForm,
+    ProjectReportForm,
     ProjectSettings,
     ProjectSOWForm,
     VendorFormSettings,
@@ -71,6 +74,23 @@ class ProjectSOWFormAdmin(ListRelatedMixin, ModelAdmin):
     ]
 
 
+class ProjectReportFormAdmin(ListRelatedMixin, ModelAdmin):
+    model = ProjectReportForm
+    menu_label = "Report Forms"
+    menu_icon = "form"
+    list_display = (
+        "name",
+        "used_by",
+    )
+    create_view_class = CreateProjectReportFormView
+    edit_view_class = EditProjectReportFormView
+
+    related_models = [
+        ("applicationbaseprojectreportform", "application"),
+        ("labbaseprojectreportform", "lab"),
+    ]
+
+
 class ProjectSettingsAdmin(SettingModelAdmin):
     model = ProjectSettings
 
@@ -86,6 +106,7 @@ class ProjectAdminGroup(ModelAdminGroup):
         ContractDocumentCategoryAdmin,
         DocumentCategoryAdmin,
         ProjectApprovalFormAdmin,
+        ProjectReportFormAdmin,
         ProjectSOWFormAdmin,
         VendorFormSettingsAdmin,
         ProjectSettingsAdmin,
