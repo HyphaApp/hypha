@@ -76,7 +76,7 @@ from hypha.apply.utils.views import (
 
 from . import services
 from .differ import compare
-from .files import generate_submission_file_path
+from .files import generate_private_file_path
 from .forms import (
     ArchiveSubmissionForm,
     BatchArchiveSubmissionForm,
@@ -1701,7 +1701,7 @@ class SubmissionPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
     def get_media(self, *args, **kwargs):
         field_id = kwargs["field_id"]
         file_name = kwargs["file_name"]
-        path_to_file = generate_submission_file_path(
+        path_to_file = generate_private_file_path(
             self.submission.pk, field_id, file_name
         )
         return self.storage.open(path_to_file)

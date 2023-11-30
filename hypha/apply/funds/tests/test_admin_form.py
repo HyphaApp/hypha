@@ -5,6 +5,7 @@ from hypha.apply.determinations.tests.factories import DeterminationFormFactory
 from hypha.apply.funds.models import FundType
 from hypha.apply.projects.tests.factories import (
     ProjectApprovalFormFactory,
+    ProjectReportFormFactory,
     ProjectSOWFormFactory,
 )
 from hypha.apply.review.tests.factories import ReviewFormFactory
@@ -55,6 +56,7 @@ def form_data(
     stages=1,
     same_forms=False,
     form_stage_info=None,
+    num_project_report_forms=0,
 ):
     if form_stage_info is None:
         form_stage_info = [1]
@@ -101,12 +103,19 @@ def form_data(
         same=same_forms,
         factory=ProjectSOWFormFactory,
     )
-
+    project_report_form_data = formset_base(
+        "report_forms",
+        num_project_report_forms,
+        False,
+        same=same_forms,
+        factory=ProjectReportFormFactory,
+    )
     form_data.update(review_form_data)
     form_data.update(external_review_form_data)
     form_data.update(determination_form_data)
     form_data.update(project_approval_form_data)
     form_data.update(project_sow_form_data)
+    form_data.update(project_report_form_data)
 
     fund_data = factory.build(dict, FACTORY_CLASS=FundTypeFactory)
     fund_data["workflow_name"] = workflow_for_stages(stages)
@@ -232,3 +241,7 @@ class TestWorkflowFormAdminForm(TestCase):
             form_data(1, 1, 1, 0, num_project_approval_form=2, stages=2)
         )
         self.assertFalse(form.is_valid(), form.errors.as_text())
+
+    def test_validates_with_project_report_form(self):
+        form = self.submit_data(form_data(1, 1, 1, 0, 1, 0, 0, 1, False, None, 1))
+        self.assertTrue(form.is_valid(), form.errors.as_text())

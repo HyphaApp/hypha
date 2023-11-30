@@ -318,7 +318,7 @@ class StreamFieldUUIDFactory(wagtail_factories.StreamFieldFactory):
         return flatten_for_form(data)
 
 
-BLOCK_FACTORY_DEFINITION = {
+NON_FILE_BLOCK_FACTORY_DEFINITION = {
     "text_markup": ParagraphBlockFactory,
     "char": CharFieldBlockFactory,
     "text": TextFieldBlockFactory,
@@ -330,11 +330,20 @@ BLOCK_FACTORY_DEFINITION = {
     "date": DateFieldBlockFactory,
     "time": TimeFieldBlockFactory,
     "datetime": DateTimeFieldBlockFactory,
+}
+
+BLOCK_FACTORY_DEFINITION = {
+    **NON_FILE_BLOCK_FACTORY_DEFINITION,
     "image": ImageFieldBlockFactory,
     "file": FileFieldBlockFactory,
     "multi_file": MultiFileFieldBlockFactory,
 }
 
+# There are two here, because some tests will fail due to JSON serialization errors
+# if SimpleUploadedFile is included in the factory (most notably Project ReportVersion tests)
+NonFileFormFieldsBlockFactory = StreamFieldUUIDFactory(
+    NON_FILE_BLOCK_FACTORY_DEFINITION
+)
 FormFieldsBlockFactory = StreamFieldUUIDFactory(BLOCK_FACTORY_DEFINITION)
 
 

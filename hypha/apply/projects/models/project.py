@@ -30,7 +30,7 @@ from hypha.apply.stream_forms.files import StreamFieldDataEncoder
 from hypha.apply.stream_forms.models import BaseStreamForm
 from hypha.apply.utils.storage import PrivateStorage
 
-from ..blocks import ProjectApprovalFormCustomFormFieldsBlock
+from ..blocks import ProjectFormCustomFormFieldsBlock
 from .vendor import Vendor
 
 logger = logging.getLogger(__name__)
@@ -219,7 +219,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
 
     form_data = models.JSONField(encoder=StreamFieldDataEncoder, default=dict)
     form_fields = StreamField(
-        ProjectApprovalFormCustomFormFieldsBlock(), null=True, use_json_field=True
+        ProjectFormCustomFormFieldsBlock(), null=True, use_json_field=True
     )
 
     # tracks read/write state of the Project
@@ -321,7 +321,6 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         )
         if not first_approved_contract:
             return None
-
         return first_approved_contract.approved_at.date()
 
     @property
@@ -455,15 +454,13 @@ class ProjectSOW(BaseStreamForm, AccessFormData, models.Model):
     )
     form_data = models.JSONField(encoder=StreamFieldDataEncoder, default=dict)
     form_fields = StreamField(
-        ProjectApprovalFormCustomFormFieldsBlock(), null=True, use_json_field=True
+        ProjectFormCustomFormFieldsBlock(), null=True, use_json_field=True
     )
 
 
 class ProjectBaseStreamForm(BaseStreamForm, models.Model):
     name = models.CharField(max_length=255)
-    form_fields = StreamField(
-        ProjectApprovalFormCustomFormFieldsBlock(), use_json_field=True
-    )
+    form_fields = StreamField(ProjectFormCustomFormFieldsBlock(), use_json_field=True)
 
     panels = [
         FieldPanel("name"),
@@ -482,6 +479,17 @@ class ProjectApprovalForm(ProjectBaseStreamForm):
 
 
 class ProjectSOWForm(ProjectBaseStreamForm):
+    pass
+
+
+class ProjectReportForm(ProjectBaseStreamForm):
+    """
+    An Applicant Report Form can be attached to a Fund to collect reports from Applicants aka Grantees during the
+    Project. It is only relevant for accepted or granted Submissions which is why it is attached to Project. It is
+    similar to the other Forms (PAF, SOW) in that it uses StreamForm to allow maximum flexibility in form creation.
+    See Also ReportVersion where the fields from the form get copied and the response data gets filled in.
+    """
+
     pass
 
 
