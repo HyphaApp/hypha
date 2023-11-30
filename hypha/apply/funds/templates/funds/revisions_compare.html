@@ -17,7 +17,39 @@
 
     {% endadminbar %}
 
-    <div class="wrapper wrapper--large wrapper--tabs">
-        {% include "funds/includes/revision_diff_table.html" %}
-    </div>
+    <table class="revision-diff-table prose prose-h4:mt-0 max-w-none mb-8">
+        <tr>
+            <td>
+                <h3>{% trans "Proposal Information (Old)" %}</h3>
+                <p>{% trans "Submitted" %}: <strong>{{ timestamps.0|date:"DATETIME_FORMAT"}}</strong></p>
+            </td>
+            <td>
+                <h3>{% trans "Proposal Information (New)" %}</h3>
+                <p>{% trans "Submitted" %}: <strong>{{ timestamps.1|date:"DATETIME_FORMAT"}}</strong></p>
+            </td>
+        </tr>
+
+        {% for from_field, to_field in required_fields %}
+            {% if forloop.first %}
+                <tr><td><h4>{% trans "Title" %}</h4>{{ from_field }}</td><td><h4>{% trans "Title" %}</h4>{{ to_field }}</td></tr>
+            {% elif forloop.counter == 2 %}
+                <tr><td><h4>{% trans "Legal Name" %}</h4>{{ from_field }}</td><td><h4>{% trans "Legal Name" %}</h4>{{ to_field }}</td></tr>
+            {% elif forloop.counter == 3 %}
+                <tr><td><h4>{% trans "E-mail" %}</h4>{{ from_field }}</td><td><h4>{% trans "E-mail" %}</h4>{{ to_field }}</td></tr>
+            {% elif forloop.counter == 4 %}
+                <tr><td><h4>{% trans "Address" %}</h4>{{ from_field }}</td><td><h4>{% trans "Address" %}</h4>{{ to_field }}</td></tr>
+            {% elif forloop.counter == 5 %}
+                <tr><td><h4>{% trans "Project Duration" %}</h4>{{ from_field }}</td><td><h4>{% trans "Project Duration" %}</h4>{{ to_field }}</td></tr>
+            {% elif forloop.counter == 6 %}
+                <tr><td><h4>{% trans "Requested Funding" %}</h4>{{ from_field }}</td><td><h4>{% trans "Requested Funding" %}</h4>{{ to_field }}</td></tr>
+
+            {% else %}
+                <tr><td>{{ from_field }}</td><td>{{ to_field }}</td></tr>
+            {% endif %}
+        {% endfor %}
+        {% for from_field, to_field in stream_fields %}
+            <tr><td>{{ from_field }}</td><td>{{ to_field }}</td></tr>
+        {% endfor %}
+    </table>
+
 {% endblock %}
