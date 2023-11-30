@@ -117,18 +117,13 @@ class CustomUserEditForm(CustomUserAdminFormBase, UserEditForm):
             self.fields["groups"]
         )
 
-
-class CustomWagtailUserCreationForm(CustomUserAdminFormBase, UserCreationForm):
-    pass
-
-
 class CustomUserCreationForm(CustomUserAdminFormBase, UserCreationForm):
-    def __init__(self, request=None, *args, **kwargs):
+    def __init__(self, register_view=False, request=None, *args, **kwargs):
         self.request = request
         super().__init__(*args, **kwargs)
 
         self.user_settings = AuthSettings.load(request_or_site=self.request)
-        if self.user_settings.consent_show:
+        if register_view and self.user_settings.consent_show:
             self.fields["consent"] = forms.BooleanField(
                 label=self.user_settings.consent_text,
                 help_text=self.user_settings.consent_help,
