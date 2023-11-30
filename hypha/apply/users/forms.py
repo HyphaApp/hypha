@@ -117,6 +117,7 @@ class CustomUserEditForm(CustomUserAdminFormBase, UserEditForm):
             self.fields["groups"]
         )
 
+
 class CustomUserCreationForm(CustomUserAdminFormBase, UserCreationForm):
     def __init__(self, register_view=False, request=None, *args, **kwargs):
         self.request = request
