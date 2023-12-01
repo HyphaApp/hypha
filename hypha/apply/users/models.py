@@ -6,6 +6,7 @@ from django.db import IntegrityError, models
 from django.db.models.constants import LOOKUP_SEP
 from django.db.models.utils import resolve_callables
 from django.urls import reverse
+from django.utils.crypto import get_random_string
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
@@ -173,7 +174,7 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
                 # Coming from registration without application
                 temp_pass = kwargs.pop("password")
             else:
-                temp_pass = BaseUserManager().make_random_password(length=32)
+                temp_pass = get_random_string(length=32)
 
             temp_pass_hash = make_password(temp_pass)
 
