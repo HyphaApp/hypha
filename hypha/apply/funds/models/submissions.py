@@ -547,11 +547,11 @@ class ApplicationSubmission(
     def ensure_user_has_account(self):
         if self.user and self.user.is_authenticated:
             self.form_data["email"] = self.user.email
-            self.form_data["full_name"] = self.user.get_full_name()
-            # Ensure applying user should have applicant role
-            if not self.user.is_applicant:
-                applicant_group = Group.objects.get(name=APPLICANT_GROUP_NAME)
-                self.user.groups.add(applicant_group)
+            if name := self.user.get_full_name():
+                self.form_data["full_name"] = name
+            else:
+                # user doesn't have name set, so use the one from the form
+                self.user.full_name = self.form_data["full_name"]
                 self.user.save()
         else:
             # Rely on the form having the following must include fields (see blocks.py)
@@ -564,17 +564,18 @@ class ApplicationSubmission(
                 self.user, _ = User.objects.get_or_create(
                     email=email, defaults={"full_name": full_name}
                 )
-                # Ensure applying user should have applicant role
-                if not self.user.is_applicant:
-                    applicant_group = Group.objects.get(name=APPLICANT_GROUP_NAME)
-                    self.user.groups.add(applicant_group)
-                    self.user.save()
             else:
                 self.user, _ = User.objects.get_or_create_and_notify(
                     email=email,
                     site=self.page.get_site(),
                     defaults={"full_name": full_name},
                 )
+
+        # Make sure the user is in the applicant group
+        if not self.user.is_applicant:
+            applicant_group = Group.objects.get(name=APPLICANT_GROUP_NAME)
+            self.user.groups.add(applicant_group)
+            self.user.save()
 
     def get_from_parent(self, attribute):
         try:

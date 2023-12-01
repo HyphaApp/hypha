@@ -203,7 +203,7 @@ DATETIME_INPUT_FORMATS = [
 
 AUTH_USER_MODEL = "users.User"
 
-LOGIN_URL = "users_public:login"
+LOGIN_URL = "users_public:passwordless_login_signup"
 LOGIN_REDIRECT_URL = "dashboard:dashboard"
 
 # https://django-elevate.readthedocs.io/en/latest/config/index.html#configuration

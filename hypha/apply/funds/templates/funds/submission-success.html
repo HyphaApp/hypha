@@ -29,25 +29,46 @@
             </p>
 
             {% with email_context=page.specific %}
-                <p>{{ email_context.confirmation_text_extra|urlize }}</p>
+                {% if email_context.confirmation_text_extra %}
+                    <p data-testid="db-confirmation-text-extra">{{ email_context.confirmation_text_extra|urlize }}</p>
+                {% endif %}
             {% endwith %}
 
-            {% block extra_text %}
-                <div class="prose">
+            {% if form_submission.round and settings.funds.ApplicationSettings.extra_text_round %}
+                <div class="prose" data-testid="db-extra-text">
                     {{ settings.funds.ApplicationSettings.extra_text_round|richtext }}
                 </div>
-            {% endblock %}
+            {% elif settings.funds.ApplicationSettings.extra_text_lab %}
+                <div class="prose" data-testid="db-extra-text">
+                    {{ settings.funds.ApplicationSettings.extra_text_lab|richtext }}
+                </div>
+            {% endif %}
 
         {% endif %}
 
-        <div class="mt-4">
-            {% if request.user.is_authenticated %}
+        <div class="mt-4 space-x-2">
+            {% if request.user.is_authenticated and request.user.can_access_dashboard%}
                 <a
                     class="button button--primary"
                     href="{% url 'dashboard:dashboard' %}"
                 >
                     {% trans "Go to your dashboard" %}
                 </a>
+                {% if form_submission.status == 'draft' %}
+                    <a
+                        class="button button--secondary"
+                        href="{% url 'apply:submissions:edit' form_submission.id %}"
+                    >
+                        {% trans "Continue editing" %}
+                    </a>
+                {% else %}
+                    <a
+                        class="button button--secondary"
+                        href="{% url 'apply:submissions:detail' form_submission.id %}"
+                    >
+                        {% trans "View your submission" %}
+                    </a>
+                {% endif %}
             {% else %}
                 <a
                     class="button button--primary"
