@@ -27,6 +27,9 @@
         {% block extra_css %}{% endblock %}
         <link rel="stylesheet" href="{% static 'css/print.css' %}" media="print">
 
+        {% comment %}Detect if javascript is enabled; helps with styling{% endcomment %}
+        <script>document.querySelector("html").classList.replace("no-js", "js")</script>
+
         <!-- htmx start: installed with npm -->
         <script src="{% static 'js/apply/vendor/htmx.min.js' %}"></script>
         <script src="{% static 'js/apply/vendor/htmx-ext-multi-swap.min.js' %}"></script>
@@ -55,7 +58,6 @@
 
         <script src="{% static 'js/jquery.min.js' %}"></script>
         <script src="{% static 'js/js.cookie.min.js' %}"></script>
-        <script src="{% static 'js/main-top.js' %}"></script>
 
         <!-- alpine js start -->
         <style> [x-cloak] {display: none !important} </style>
