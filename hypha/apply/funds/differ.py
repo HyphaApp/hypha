@@ -5,6 +5,7 @@ from typing import Tuple
 import nh3
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
+from html_diff import diff as html_diff
 
 
 def wrap_deleted(text):
