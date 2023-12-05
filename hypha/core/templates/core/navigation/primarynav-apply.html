@@ -1,0 +1,37 @@
+{% load i18n applynav_tags %}
+{% if request.user.is_authenticated %}
+    <nav role="navigation" aria-label="Primary" class="w-full">
+        <ul class="nav nav--primary" role="menubar">
+            {% apply_nav_items request.user as nav_items %}
+            {% for item in nav_items %}
+                {% url item.url as target_url%}
+                <li class="nav__item" role="presentation">
+                    {% if item.categories %}
+                        <div class="relative inline-block" x-data="{open: false}">
+                            <a class="nav__link {% if target_url in request.path %}nav__link--active{% endif %}"
+                               href="{% url item.url %}"
+                               aria-label="{% trans "Menu Item" %}"
+                               aria-haspopup="menu"
+                               aria-expanded="false"
+                               role="menuitem"
+                               @click.prevent="open = ! open">
+                                {{ item.title }}
+                            </a>
+                            <div x-cloak x-show="open" x-transition @click.outside="open = false" class="absolute block bg-white min-w-max shadow-lg z-1 mt-7 ">
+                                {% for category in item.categories %}
+                                    <a class="text-black px-4 py-3 block font-normal hover:bg-mid-grey" href="{% url category.url %}">
+                                        {{ category.title }}
+                                    </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% else %}
+                        <a class="nav__link {% if target_url in request.path %}nav__link--active{% endif %}" href="{{ target_url }}" role="menuitem">
+                            {{ item.title }}
+                        </a>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    </nav>
+{% endif %}
