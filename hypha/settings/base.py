@@ -54,10 +54,18 @@ FILE_ACCEPT_ATTR_VALUE = ", ".join(["." + ext for ext in FILE_ALLOWED_EXTENSIONS
 # Only effects setting external reviewers for now.
 GIVE_STAFF_LEAD_PERMS = env.bool("GIVE_STAFF_LEAD_PERMS", False)
 
-# Provide permissions for Archived submissions
+# Provide permissions for viewing archived submissions
+SUBMISSIONS_ARCHIVED_VIEW_ACCESS_STAFF = env.bool(
+    "SUBMISSIONS_ARCHIVED_ACCESS_STAFF", False
+)
+SUBMISSIONS_ARCHIVED_VIEW_ACCESS_STAFF_ADMIN = env.bool(
+    "SUBMISSIONS_ARCHIVED_ACCESS_STAFF_ADMIN", True
+)
+
+# Provide permissions for archiving submissions
 SUBMISSIONS_ARCHIVED_ACCESS_STAFF = env.bool("SUBMISSIONS_ARCHIVED_ACCESS_STAFF", False)
 SUBMISSIONS_ARCHIVED_ACCESS_STAFF_ADMIN = env.bool(
-    "SUBMISSIONS_ARCHIVED_ACCESS_STAFF_ADMIN", False
+    "SUBMISSIONS_ARCHIVED_ACCESS_STAFF_ADMIN", True
 )
 
 # Enable staff to "hijack" (become) other users.

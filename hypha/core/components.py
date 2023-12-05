@@ -14,3 +14,8 @@ class DropdownMenu(component.Component):
 
     def get_context_data(self, **kwargs) -> dict:
         return {"id": str(uuid.uuid4())}
+
+
+@component.register("scroll-to-top")
+class ScrollToTop(component.Component):
+    template_name = "components/scroll-to-top.html"

@@ -109,15 +109,22 @@ jobs:
       - name: install python dependencies
         run: |
           python3 -m venv venv
-          . venv/bin/activate
+          source venv/bin/activate
           mkdir hypha/static_compiled
           pip install --upgrade pip
           pip install wheel
           pip install -r requirements-dev.txt
-      - name: run python tests
+
+      - name: Run django checks
+        run: venv/bin/python manage.py check
+
+      - name: Check Django Migrations
         run: |
-          . venv/bin/activate
-          python manage.py check
-          python manage.py makemigrations --check --noinput --verbosity=1
-          python manage.py collectstatic --noinput --no-post-process --verbosity=1
-          pytest --cov --cov-report term:skip-covered --splits 3 --group ${{ matrix.group }}
+          venv/bin/python manage.py makemigrations --dry-run --verbosity=3
+          venv/bin/python manage.py makemigrations --check
+
+      - name: Run collect static
+        run: venv/bin/python manage.py collectstatic --noinput --no-post-process --verbosity=1
+
+      - name: Run pytest
+        run: venv/bin/pytest --cov --cov-report term:skip-covered --splits 3 --group ${{ matrix.group }}

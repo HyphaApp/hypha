@@ -1,6 +1,7 @@
 {% load i18n static wagtailcore_tags wagtailimages_tags navigation_tags util_tags hijack cookieconsent_tags %}<!doctype html>
 {% wagtail_site as current_site %}
-<html class="no-js" lang="en">
+{% get_current_language as LANGUAGE_CODE %}
+<html class="no-js" lang="{{ LANGUAGE_CODE }}">
     <head>
         {# TODO fallbacks if page is not defined e.g. for 404 page #}
         <meta charset="utf-8" />
@@ -26,6 +27,9 @@
         <link rel="stylesheet" href="{% static 'css/apply/main.css' %}">
         {% block extra_css %}{% endblock %}
         <link rel="stylesheet" href="{% static 'css/print.css' %}" media="print">
+
+        {% comment %}Detect if javascript is enabled; helps with styling{% endcomment %}
+        <script>document.querySelector("html").classList.replace("no-js", "js")</script>
 
         <!-- htmx start: installed with npm -->
         <script src="{% static 'js/apply/vendor/htmx.min.js' %}"></script>
@@ -55,7 +59,6 @@
 
         <script src="{% static 'js/jquery.min.js' %}"></script>
         <script src="{% static 'js/js.cookie.min.js' %}"></script>
-        <script src="{% static 'js/main-top.js' %}"></script>
 
         <!-- alpine js start -->
         <style> [x-cloak] {display: none !important} </style>
@@ -198,6 +201,10 @@
         {% endblock %}
 
         <footer class="footer"></footer>
+
+        {% block scroll_to_top %}
+            {% #scroll-to-top %}
+        {% endblock scroll_to_top %}
 
         {% cookie_banner %}
 

@@ -156,6 +156,12 @@
         text-decoration: underline;
         color: $color--primary;
         word-break: normal;
+        transition-property: opacity;
+        transition-duration: 150ms;
+
+        &:hover {
+            opacity: 0.75;
+        }
 
         &:last-child {
             margin: 0;
@@ -168,8 +174,14 @@
         display: flex;
         align-items: center;
         margin-right: 1rem;
-        color: $color--primary;
         word-break: normal;
+
+        transition-property: opacity;
+        transition-duration: 150ms;
+
+        &:hover {
+            opacity: 0.75;
+        }
 
         &:last-child {
             margin: 0;

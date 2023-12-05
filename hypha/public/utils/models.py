@@ -344,6 +344,16 @@ class SystemMessagesSettings(BaseGenericSetting):
         default="<p>You may be trying to find a page that doesn&rsquo;t exist or has been moved.</p>",
     )
 
+    title_403 = models.CharField(
+        "Title",
+        max_length=255,
+        default="Permission Denied",
+    )
+    body_403 = RichTextField(
+        "Text",
+        default="<p>You might not have access to the requested resource.</p>",
+    )
+
     panels = [
         MultiFieldPanel(
             [
@@ -361,6 +371,13 @@ class SystemMessagesSettings(BaseGenericSetting):
                 FieldPanel("body_404"),
             ],
             "404 page",
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel("title_403"),
+                FieldPanel("body_403"),
+            ],
+            "403 page",
         ),
     ]
 

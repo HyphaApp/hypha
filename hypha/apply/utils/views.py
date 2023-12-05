@@ -22,6 +22,12 @@ def page_not_found(request, exception=None, template_name="apply/404.html"):
     return defaults.page_not_found(request, exception, template_name)
 
 
+def permission_denied(request, exception=None, template_name="apply/403.html"):
+    if not request.user.is_authenticated:
+        template_name = "403.html"
+    return defaults.permission_denied(request, exception, template_name)
+
+
 @method_decorator(login_required, name="dispatch")
 class ViewDispatcher(View):
     admin_view: View = None
