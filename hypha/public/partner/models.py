@@ -8,7 +8,6 @@ from django.db import models
 from django.http import Http404
 from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _
-from pagedown.widgets import PagedownWidget
 from wagtail.admin.forms import WagtailAdminModelForm
 from wagtail.admin.panels import FieldPanel
 from wagtail.contrib.settings.models import BaseSiteSetting
@@ -19,6 +18,7 @@ from wagtail.search import index
 from hypha.apply.categories.models import Category, Option
 from hypha.apply.funds.models import ApplicationSubmission
 from hypha.core.wagtail.admin import register_public_site_setting
+from hypha.core.widgets import PagedownWidget
 from hypha.public.utils.models import BasePage
 
 

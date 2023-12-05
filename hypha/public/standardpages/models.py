@@ -3,11 +3,11 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
-from pagedown.widgets import PagedownWidget
 from wagtail.admin.panels import FieldPanel, InlinePanel
 from wagtail.fields import StreamField
 from wagtail.search import index
 
+from hypha.core.widgets import PagedownWidget
 from hypha.public.utils.blocks import StoryBlock
 from hypha.public.utils.models import BasePage, RelatedPage
 

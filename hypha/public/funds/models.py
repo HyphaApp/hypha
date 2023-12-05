@@ -6,7 +6,6 @@ from django.db import models
 from django.utils.deconstruct import deconstructible
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
-from pagedown.widgets import PagedownWidget
 from wagtail.admin.panels import (
     FieldPanel,
     FieldRowPanel,
@@ -19,6 +18,7 @@ from wagtail.search import index
 
 from hypha.apply.funds.models import ApplicationSubmission
 from hypha.apply.funds.workflow import OPEN_CALL_PHASES
+from hypha.core.widgets import PagedownWidget
 from hypha.public.utils.models import BasePage, RelatedPage
 
 from .blocks import FundBlock, LabBlock
