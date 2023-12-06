@@ -149,6 +149,9 @@ class PAFForReviewDashboardTable(tables.Table):
     class Meta:
         fields = ["date_requested", "title", "fund", "status", "assignee"]
         model = PAFApprovals
+        template_name = (
+            "funds/tables/table.html"  # todo: update it with Project table template
+        )
         attrs = {"class": "paf-review-table"}
 
     def order_date_requested(self, qs, is_descending):

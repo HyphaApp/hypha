@@ -111,7 +111,7 @@ class AdminDashboardView(MyFlaggedMixin, TemplateView):
         paf_table = PAFForReviewDashboardTable(
             paf_approvals, prefix="paf-review-", order_by="-date_requested"
         )
-        RequestConfig(self.request).configure(paf_table)
+        RequestConfig(self.request, paginate=False).configure(paf_table)
 
         return {
             "count": paf_approvals.count(),
