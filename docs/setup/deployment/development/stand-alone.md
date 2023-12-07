@@ -18,30 +18,11 @@ Make sure you have these things installed on your system:
     This project ships with `.python-version` and `.nvmrc` to support **[pyenv]** and **[nvm]**. You can use it to setup the correct versions of Python and Node required for this project.
 
 
-## Get the code
-
-Use `git` to fetch the code, this will create a `hypha/` directory.
-
-```console
-git clone https://github.com/HyphaApp/hypha.git hypha
-cd hypha
-```
-
-Now, create some local directories.
-
-```console
-cd hypha
-mkdir -p var/log media
-```
-
-NOTE: In production media is stored on AWS S3 but for local development you need a "media" directory. The `var/log` is used to store local logs, if configured.
-
-**OBS! Everything from now on will happen inside the `hypha/` directory.**
-
-
 ### Basic installation steps
 
 <!-- Before updating the install steps here, ensure they are reflected in the production install as well -->
+
+[Git Installation Guide](https://git-scm.com/downloads)
 
 === "Debian"
 
@@ -83,6 +64,44 @@ NOTE: In production media is stored on AWS S3 but for local development you need
     brew services start {{ versions.postgres.packages.macos }}
     ```
 
+----
+
+## Get the code
+
+Use `git` to fetch the code, this will create a `hypha/` directory.
+
+```console
+git clone https://github.com/HyphaApp/hypha.git hypha
+cd hypha
+```
+
+Now, create some local directories.
+
+```console
+cd hypha
+mkdir -p var/log media
+```
+
+NOTE: In production media is stored on AWS S3 but for local development you need a "media" directory. The `var/log` is used to store local logs, if configured.
+
+!!! info
+    Everything from now on will happen inside the `hypha/` directory.
+
+
+### Installing Node Version Manager
+
+NodeJS versions have potential to change. To allow for ease of upgrading, it is recommended to use [Node Version Manager (nvm)](https://github.com/nvm-sh/nvm).
+
+The following commands will install nvm and proceed to setup Node based off of the content of `.nvmrc`.
+
+```console
+wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+nvm install     # Install the Node version in .nvmrc
+nvm use         # Use the Node version in .nvmrc
+```
 
 ## Compile JS & SCSS
 

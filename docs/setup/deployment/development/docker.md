@@ -15,7 +15,8 @@ Add this to your `/etc/hosts` file.
 
 The "[test](https://en.wikipedia.org/wiki/.test)" TLD is safe to use, it's reserved for testing purposes.
 
-OBS! All examples from now on will use the `hypha.test` domains.
+!!! info
+    All examples from now on will use the `hypha.test` domains.
 
 ## Get the code
 

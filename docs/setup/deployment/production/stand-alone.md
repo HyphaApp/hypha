@@ -2,18 +2,24 @@
 
 ## Standalone Server/VPS
 
-### Get the code
 
-Use `git` to fetch the code, this will create a `hypha/` directory.
+## System Dependencies
 
-```console
-git clone https://github.com/HyphaApp/hypha.git hypha
-cd hypha
-```
+* Git
+* Python {{ versions.python.version }}.x
+* Node {{ versions.node.version }}.x
+* PostgreSQL {{ versions.postgres.version }}
 
-### Basic installation steps
+!!! info
+    On Linux install them with your normal package manager. On macOS [Homebrew] is an excellent option. For Windows [Chocolatey](https://chocolatey.org/) seems popular but we have no experience with Windows. 
+    
+    This project ships with `.python-version` and `.nvmrc` to support **[pyenv]** and **[nvm]**. You can use it to setup the correct versions of Python and Node required for this project.
 
-<!-- Before updating the install steps here, ensure they are reflected in the production install as well -->
+## Basic installation steps
+
+<!-- Before updating the install steps here, ensure they are reflected in the development install as well -->
+
+[Git Installation Guide](https://git-scm.com/downloads)
 
 === "Debian"
 
@@ -55,6 +61,17 @@ cd hypha
     brew services start {{ versions.postgres.packages.macos }}
     ```
 
+----
+
+### Get the code
+
+Use `git` to fetch the code, this will create a `hypha/` directory.
+
+```console
+git clone https://github.com/HyphaApp/hypha.git hypha
+cd hypha
+```
+
 ### Installing Node Version Manager
 
 NodeJS versions have potential to change. To allow for ease of upgrading, it is recommended to use [Node Version Manager (nvm)](https://github.com/nvm-sh/nvm).
@@ -66,8 +83,8 @@ wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-nvm install
-nvm use 
+nvm install     # Install the Node version in .nvmrc
+nvm use         # Use the Node version in .nvmrc
 ```
 
 ### Python virtual environment
