@@ -55,7 +55,6 @@ qrcode==7.4.2
 reportlab==3.6.13
 social_auth_app_django==5.0.0
 tablib==3.5.0
-tomd==0.1.3
 wagtail-cache==2.3.0
 wagtail-purge==0.3.0
 wagtail==5.1.3
