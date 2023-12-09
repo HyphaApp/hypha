@@ -2,7 +2,7 @@
 
 black==23.11.0
 coverage==7.3.2
-django-browser-reload==1.12.0
+django-browser-reload==1.12.1
 django-coverage-plugin==3.1.0
 django-debug-toolbar==4.2.0
 django-dynamic-fixture==4.0.1
@@ -17,7 +17,7 @@ pytest-django==4.7.0
 pytest-split==0.8.1
 pytest-xdist[psutil]==3.3.1
 responses==0.23.3
-ruff==0.1.5
+ruff==0.1.7
 time-machine==2.13.0
 wagtail-factories==2.1.0
 Werkzeug==3.0.1

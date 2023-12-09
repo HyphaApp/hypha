@@ -47,10 +47,10 @@ htmldocx==0.0.6
 lark==1.1.8
 mailchimp3==3.0.17
 mistune==3.0.1
-more-itertools==9.0.0
-phonenumberslite==8.13.23
+more-itertools==10.1.0
+phonenumberslite==8.13.26
 Pillow>=10.0.1
-psycopg[binary]==3.1.12
+psycopg[binary]==3.1.14
 qrcode==7.4.2
 reportlab==3.6.13
 social_auth_app_django==5.0.0
