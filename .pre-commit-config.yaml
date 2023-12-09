@@ -2,17 +2,11 @@ repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.1.1
     hooks:
+      # Run the linter.
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix]
-  - repo: https://github.com/psf/black
-    rev: 23.10.0
-    hooks:
-      - id: black
-        # It is recommended to specify the latest version of Python
-        # supported by your project here, or alternatively use
-        # pre-commit's default_language_version, see
-        # https://pre-commit.com/#top_level-default_language_version
-        language_version: python3.11
+      # Run the formatter.
+      - id: ruff-format
   - repo: https://github.com/rtts/djhtml
     rev: "3.0.6"
     hooks:
