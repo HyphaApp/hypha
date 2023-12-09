@@ -1,6 +1,5 @@
-from django.urls import include, path
+from django.urls import path
 
-from .mailchimp import urls as newsletter_urls
 from .news import feeds as news_feeds
 from .partner import views as partner_views
 from .search import views as search_views
@@ -11,7 +10,6 @@ urlpatterns = [
     path(
         "news/<int:news_type>/feed/", news_feeds.NewsTypeFeed(), name="news_type_feed"
     ),
-    path("newsletter/", include(newsletter_urls)),
     path(
         "about/portfolio/",
         partner_views.InvestmentTableView.as_view(),

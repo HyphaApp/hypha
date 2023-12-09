@@ -27,7 +27,7 @@ CURRENCY_LOCALE = env.str("CURRENCY_LOCALE", "en_US")
 DEFAULT_PER_PAGE = 20
 
 # Form Rate-Limit Configuration
-# DEFAULT_RATE_LIMIT is used by login, password, 2FA and Mailchimp forms.
+# DEFAULT_RATE_LIMIT is used by login, password, 2FA, etc
 DEFAULT_RATE_LIMIT = env.str("DEFAULT_RATE_LIMIT", "5/m")
 
 # IF Hypha should enforce 2FA for all users.
@@ -469,14 +469,7 @@ AWS_MIGRATION_BUCKET_NAME = env.str("AWS_MIGRATION_BUCKET_NAME", "")
 AWS_MIGRATION_ACCESS_KEY_ID = env.str("AWS_MIGRATION_ACCESS_KEY_ID", "")
 AWS_MIGRATION_SECRET_ACCESS_KEY = env.str("AWS_MIGRATION_SECRET_ACCESS_KEY", "")
 
-# Mailchimp settings.
-
-MAILCHIMP_API_KEY = env.str("MAILCHIMP_API_KEY", None)
-MAILCHIMP_LIST_ID = env.str("MAILCHIMP_LIST_ID", None)
-
-
 # Basic auth settings
-
 if env.bool("BASIC_AUTH_ENABLED", False):
     MIDDLEWARE.insert(0, "baipw.middleware.BasicAuthIPWhitelistMiddleware")
     BASIC_AUTH_LOGIN = env.str("BASIC_AUTH_LOGIN", None)
