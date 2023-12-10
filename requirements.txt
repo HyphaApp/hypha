@@ -3,8 +3,8 @@ scout-apm==2.26.1
 sentry-sdk==1.16.0
 
 # Production dependencies
-Babel==2.11.0
 bleach==5.0.0
+Babel==2.13.1
 boto3==1.28.82
 celery==5.2.7
 click==8.1.7
