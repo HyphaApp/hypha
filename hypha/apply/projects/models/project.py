@@ -206,7 +206,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         blank=True,
         related_name="projects",
     )
-    value = models.PositiveIntegerField(default=0)
+    value = models.DecimalField(default=0, max_digits=20, decimal_places=2, validators=[MinValueValidator(limit_value=0)])
     proposed_start = models.DateTimeField(_("Proposed Start Date"), null=True)
     proposed_end = models.DateTimeField(_("Proposed End Date"), null=True)
 
