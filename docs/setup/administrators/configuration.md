@@ -158,18 +158,6 @@ If automatic e-mails should be sent out to reviewers when submissions are ready 
 
 ----
 
-Slack settings.
-
-    SLACK_TOKEN = env.str('SLACK_TOKEN', None)
-    SLACK_USERNAME = env.str('SLACK_USERNAME', 'Hypha')
-    SLACK_DESTINATION_ROOM = env.str('SLACK_DESTINATION_ROOM', None)
-    SLACK_DESTINATION_ROOM_COMMENTS = env.str('SLACK_DESTINATION_ROOM_COMMENTS', None)
-    SLACK_TYPE_COMMENTS = env.list('SLACK_TYPE_COMMENTS', [])
-    SLACK_ENDPOINT_URL = env.str('SLACK_ENDPOINT_URL', 'https://slack.com/api/chat.postMessage')
-    SLACK_BACKEND = 'django_slack.backends.CeleryBackend'  # UrllibBackend can be used for sync
-
-----
-
 Staff e-mail domain. Used for OAUTH2 whitelist default value and staff account creation.
 
     STAFF_EMAIL_DOMAINS = env.list('STAFF_EMAIL_DOMAINS', [])
@@ -234,6 +222,17 @@ Set this to enable Djangos settings for secure cookies.
 
     COOKIE_SECURE = env.bool('COOKIE_SECURE', False)
 
+## Slack settings
+
+    SLACK_TOKEN = env.str('SLACK_TOKEN', None)
+    SLACK_USERNAME = env.str('SLACK_USERNAME', 'Hypha')
+    SLACK_DESTINATION_ROOM = env.str('SLACK_DESTINATION_ROOM', None)
+    SLACK_DESTINATION_ROOM_COMMENTS = env.str('SLACK_DESTINATION_ROOM_COMMENTS', None)
+    SLACK_TYPE_COMMENTS = env.list('SLACK_TYPE_COMMENTS', [])
+    SLACK_ENDPOINT_URL = env.str('SLACK_ENDPOINT_URL', 'https://slack.com/api/chat.postMessage')
+    SLACK_BACKEND = 'django_slack.backends.CeleryBackend'  # UrllibBackend can be used for sync
+
+----
 
 ## E-mail settings
 
