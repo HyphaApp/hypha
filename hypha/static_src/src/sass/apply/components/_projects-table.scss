@@ -1,3 +1,5 @@
+// stylelint-disable selector-max-compound-selectors
+
 .projects-table {
     @include table-ordering-styles;
 
