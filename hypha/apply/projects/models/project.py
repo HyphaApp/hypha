@@ -388,9 +388,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         return False
 
     def get_absolute_url(self):
-        if settings.PROJECTS_ENABLED:
-            return reverse("apply:projects:detail", args=[self.id])
-        return "#"
+        return reverse("apply:projects:detail", args=[self.id])
 
     @property
     def can_make_approval(self):
