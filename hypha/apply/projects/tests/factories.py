@@ -208,11 +208,19 @@ class ReportConfigFactory(factory.django.DjangoModelFactory):
         )
 
 
+class ReportVersionDataFactory(FormDataFactory):
+    field_factory = FormFieldsBlockFactory
+
+
 class ReportVersionFactory(factory.django.DjangoModelFactory):
     report = factory.SubFactory("hypha.apply.projects.tests.factories.ReportFactory")
     submitted = factory.LazyFunction(timezone.now)
-    public_content = factory.Faker("paragraph")
-    private_content = factory.Faker("paragraph")
+    form_fields = FormFieldsBlockFactory
+    # TODO: is it better to keep the following link between form_data and form_fields or to remove it?
+    form_data = factory.SubFactory(
+        ReportVersionDataFactory,
+        form_fields=factory.SelfAttribute("..form_fields"),
+    )
     draft = True
 
     class Meta:
