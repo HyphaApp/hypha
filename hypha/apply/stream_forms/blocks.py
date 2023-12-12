@@ -1,5 +1,5 @@
 # Credit to https://github.com/BertrandBordage for initial implementation
-import bleach
+import nh3
 from anyascii import anyascii
 from dateutil.parser import isoparse, parse
 from django import forms
@@ -141,7 +141,7 @@ class CharFieldBlock(OptionalFormFieldBlock):
     def get_searchable_content(self, value, data):
         # CharField acts as a fallback. Force data to string
         data = str(data)
-        return bleach.clean(data or "", tags=[], strip=True)
+        return nh3.clean(data or "", tags=set())
 
 
 class MultiInputCharFieldBlock(CharFieldBlock):
@@ -165,7 +165,7 @@ class TextFieldBlock(OptionalFormFieldBlock):
         template = "stream_forms/render_unsafe_field.html"
 
     def get_searchable_content(self, value, data):
-        return bleach.clean(data or "", tags=[], strip=True)
+        return nh3.clean(data or "", tags=set())
 
 
 class NumberFieldBlock(OptionalFormFieldBlock):

@@ -1,7 +1,7 @@
 import re
 from difflib import SequenceMatcher
 
-from bleach.sanitizer import Cleaner
+import nh3
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 
@@ -22,11 +22,10 @@ def wrap_added(text):
 
 def compare(answer_a, answer_b, should_bleach=True):
     if should_bleach:
-        cleaner = Cleaner(tags=["h4"], attributes={}, strip=True)
         answer_a = re.sub("(<li[^>]*>)", r"\1● ", answer_a)
         answer_b = re.sub("(<li[^>]*>)", r"\1● ", answer_b)
-        answer_a = cleaner.clean(answer_a)
-        answer_b = cleaner.clean(answer_b)
+        answer_a = nh3.clean(answer_a, tags=set("h4"), attributes={})
+        answer_b = nh3.clean(answer_a, tags=set("h4"), attributes={})
 
     diff = SequenceMatcher(None, answer_a, answer_b)
     from_diff = []
