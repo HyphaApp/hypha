@@ -12,7 +12,12 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
+from wagtail.fields import StreamField
 
+from hypha.apply.funds.models.mixins import AccessFormData
+from hypha.apply.projects.blocks import ProjectFormCustomFormFieldsBlock
+from hypha.apply.stream_forms.files import StreamFieldDataEncoder
+from hypha.apply.stream_forms.models import BaseStreamForm
 from hypha.apply.utils.storage import PrivateStorage
 
 
@@ -166,13 +171,17 @@ class Report(models.Model):
         return self.project.start_date
 
 
-class ReportVersion(models.Model):
+class ReportVersion(BaseStreamForm, AccessFormData, models.Model):
     report = models.ForeignKey(
         "Report", on_delete=models.CASCADE, related_name="versions"
     )
     submitted = models.DateTimeField()
-    public_content = models.TextField()
-    private_content = models.TextField()
+    form_fields = StreamField(
+        # Re-use the Project Custom Form class. The original fields (used at the time of response) should be required.
+        ProjectFormCustomFormFieldsBlock(),
+        use_json_field=True,
+    )
+    form_data = models.JSONField(encoder=StreamFieldDataEncoder, default=dict)
     draft = models.BooleanField()
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,

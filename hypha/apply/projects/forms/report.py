@@ -1,76 +1,73 @@
 from django import forms
 from django.db import transaction
 from django.utils import timezone
-from django.utils.translation import gettext_lazy as _
-from django_file_form.forms import FileFormMixin
 
-from hypha.apply.stream_forms.fields import MultiFileField
-from hypha.apply.utils.fields import RichTextField
-
-from ..models.report import Report, ReportConfig, ReportPrivateFiles, ReportVersion
+from ...review.forms import MixedMetaClass
+from ...stream_forms.forms import StreamBaseForm
+from ..models.report import Report, ReportConfig, ReportVersion
 
 
-class ReportEditForm(FileFormMixin, forms.ModelForm):
-    public_content = RichTextField(
-        help_text=_(
-            "This section of the report will be shared with the broader community."
-        )
-    )
-    private_content = RichTextField(
-        help_text=_("This section of the report will be shared with staff only.")
-    )
-    file_list = forms.ModelMultipleChoiceField(
-        widget=forms.CheckboxSelectMultiple(attrs={"class": "delete"}),
-        queryset=ReportPrivateFiles.objects.all(),
-        required=False,
-        label=_("Files"),
-    )
-    files = MultiFileField(required=False, label="")
-
+class ReportEditForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass):
     class Meta:
         model = Report
-        fields = (
-            "public_content",
-            "private_content",
-            "file_list",
-            "files",
-        )
+        fields: list = []
 
     def __init__(self, *args, user=None, initial=None, **kwargs):
         if initial is None:
             initial = {}
-        self.report_files = initial.pop(
-            "file_list",
-            ReportPrivateFiles.objects.none(),
-        )
+        # Need to populate form_fields, right?
+        # No: The form_fields got populated from the view which instantiated this Form.
+        # Yes: they don't seem to be here.
+        # No: this is not where the magic happens.
+        # self.form_fields = kwargs.pop("form_fields", {})
+        # Need to populate form_data, right? Yes. No. IDK. Appears no.
+        # self.form_data = kwargs.pop("form_data", {})
+        # OK, both yes and no. If there is an existing value it will come via "initial", so if present there, use them.
+        # if initial["form_fields"] is not None:
+        #     self.form_fields = initial["form_fields"]
+        # if initial["form_data"] is not None:
+        #     self.form_data = initial["form_data"]
+        # But this should not be needed because super().__init__ will already take these initial values and use them.
         super().__init__(*args, initial=initial, **kwargs)
-        self.fields["file_list"].queryset = self.report_files
         self.user = user
 
     def clean(self):
         cleaned_data = super().clean()
-        public = cleaned_data["public_content"]
-        private = cleaned_data["private_content"]
-        if not private and not public:
-            missing_content = _(
-                "Must include either public or private content when submitting a report."
-            )
-            self.add_error("public_content", missing_content)
-            self.add_error("private_content", missing_content)
+        cleaned_data["form_data"] = {
+            key: value
+            for key, value in cleaned_data.items()
+            if key not in self._meta.fields
+        }
         return cleaned_data
 
     @transaction.atomic
-    def save(self, commit=True):
+    def save(self, commit=True, form_fields=dict):
         is_draft = "save" in self.data
-
         version = ReportVersion.objects.create(
             report=self.instance,
-            public_content=self.cleaned_data["public_content"],
-            private_content=self.cleaned_data["private_content"],
+            form_fields=form_fields,
+            # Save a ReportVersion first then edit/update the form_data below.
+            form_data={},
             submitted=timezone.now(),
             draft=is_draft,
             author=self.user,
         )
+        # We need to save the fields first, not attempt to save form_data on first save, then update the form_data next.
+        # Otherwise, we don't get access to the generator method "question_field_ids" which we use to prevent temp file
+        # fields from getting into the saved form_data.
+        # Inspired by ProjectApprovalForm.save and ProjectSOWForm.save but enhanced to support multi-answer fields.
+        version.form_data = {
+            field: self.cleaned_data["form_data"][field]
+            for field in self.cleaned_data["form_data"]
+            # Where do we get question_field_ids? On the version, but only when it exists, thus the create-then-update.
+            # The split-on-underscore supports the use of multi-answer fields such as MultiInputCharFieldBlock.
+            if field.split("_")[0] in version.question_field_ids
+        }
+
+        # In case there are stream form file fields, process those here.
+        version.process_file_data(self.cleaned_data["form_data"])
+        # Because ReportVersion is a separate entity from Project, super().save will not save ReportVersion: save here.
+        version.save()
 
         if is_draft:
             self.instance.draft = version
@@ -83,21 +80,6 @@ class ReportEditForm(FileFormMixin, forms.ModelForm):
             self.instance.draft = None
 
         instance = super().save(commit)
-
-        removed_files = self.cleaned_data["file_list"]
-        ReportPrivateFiles.objects.bulk_create(
-            ReportPrivateFiles(report=version, document=file.document)
-            for file in self.report_files
-            if file not in removed_files
-        )
-
-        added_files = self.cleaned_data["files"]
-        if added_files:
-            ReportPrivateFiles.objects.bulk_create(
-                ReportPrivateFiles(report=version, document=file)
-                for file in added_files
-            )
-
         return instance
 
 
