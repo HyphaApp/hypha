@@ -4,7 +4,7 @@ from wagtail.models import Site
 
 
 class Command(BaseCommand):
-    help = "Wagtail site update script. Requires a public hostname, a apply hostname and a port number in that order."
+    help = "Wagtail site update script. Requires an apply hostname and a port number in that order."
 
     def add_arguments(self, parser):
         parser.add_argument("apply", type=str, help="Hostname for the apply site.")
