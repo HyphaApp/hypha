@@ -16,9 +16,6 @@ class Command(BaseCommand):
             "Provide the details below to initialize Hypha. Press enter to keep the default value.\n"
         )
 
-        PUBLIC_SITE_DOMAIN = click.prompt(
-            "Domain of public site ", default="hypha.test"
-        )
         APPLY_SITE_DOMAIN = click.prompt(
             "Domain of apply site ", default="apply.hypha.test"
         )
@@ -42,19 +39,10 @@ class Command(BaseCommand):
             f">>> Created superuser with email {SUPER_ADMIN_EMAIL}.", fg="green"
         )
 
-        # Set site port and domain
-        click.secho(
-            f">>> Set public site to {PUBLIC_SITE_DOMAIN}:{SITE_PORT}", fg="green"
-        )
-        site_public = Site.objects.get(id=2)
-        site_public.hostname = PUBLIC_SITE_DOMAIN
-        site_public.port = SITE_PORT
-        site_public.save()
-
         click.secho(
             f">>> Set apply site to {APPLY_SITE_DOMAIN}:{SITE_PORT}", fg="green"
         )
-        site_apply = Site.objects.get(id=3)
+        site_apply = Site.objects.get(id=2)
         site_apply.hostname = APPLY_SITE_DOMAIN
         site_apply.port = SITE_PORT
         site_apply.save()

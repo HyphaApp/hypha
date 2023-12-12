@@ -29,7 +29,7 @@ def create_homepage(apps, schema_editor):
 
     # Create a site with the new homepage set as the root
     Site.objects.create(
-        hostname="apply.localhost", root_page=applyhomepage, is_default_site=False
+        id=2, hostname="apply.localhost", root_page=applyhomepage, is_default_site=False
     )
 
 
