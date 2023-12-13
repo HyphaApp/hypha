@@ -1,5 +1,5 @@
 # Credit to https://github.com/BertrandBordage for initial implementation
-import bleach
+import nh3
 from anyascii import anyascii
 from dateutil.parser import isoparse, parse
 from django import forms

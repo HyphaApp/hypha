@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 from io import BytesIO
 from urllib.parse import urlsplit
 
-import bleach
+import nh3
 import requests
 from django.core.files.images import ImageFile
 from django.core.management.base import BaseCommand
