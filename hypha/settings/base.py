@@ -85,6 +85,10 @@ PROJECTS_ENABLED = env.bool("PROJECTS_ENABLED", False)
 # Auto create projects for approved applications.
 PROJECTS_AUTO_CREATE = env.bool("PROJECTS_AUTO_CREATE", False)
 
+# On Project creation, assuming PROJECTS_ENABLED is True, skip ahead to the given Project status. Use a lower-case
+# string. See valid values in PROJECT_STATUS_CHOICES (the value of the keys) in apply/projects/models/project.py.
+PROJECTS_INITIAL_STATUS = env.str("PROJECTS_INITIAL_STATUS", None)
+
 # Send out e-mail, slack messages etc. from Hypha. Set to true for production.
 SEND_MESSAGES = env.bool("SEND_MESSAGES", False)
 
