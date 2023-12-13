@@ -130,7 +130,7 @@ class Determination(DeterminationFormFieldsMixin, AccessFormData, models.Model):
 
     @property
     def stripped_message(self):
-        return bleach.clean(self.message, tags=[], strip=True)
+        return nh3.clean(self.message, tags=set())
 
     @property
     def clean_outcome(self):

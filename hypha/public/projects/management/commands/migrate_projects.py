@@ -129,7 +129,7 @@ class Command(BaseCommand):
             project.body = [("paragraph", RichText(cleaned_body))]
         else:
             # Use the first sentence of the body as an intro
-            very_clean_body = bleach.clean(cleaned_body, strip=True)
+            very_clean_body = nh3.clean(cleaned_body, tags=set())
             introduction = very_clean_body.split(".")[0] + "."
             project.introduction = introduction
             body_without_intro = cleaned_body.replace(introduction, "").strip()

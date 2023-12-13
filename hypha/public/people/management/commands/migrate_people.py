@@ -166,7 +166,7 @@ class Command(BaseCommand):
         cleaned_body = self.whitelister.clean(self.get_field(node, "body"))
 
         # Use the first sentence of the body as an intro
-        very_clean_body = bleach.clean(cleaned_body, strip=True)
+        very_clean_body = nh3.clean(cleaned_body, tags=set())
         very_clean_body = very_clean_body.replace(".\n", ". ")
         parts = very_clean_body.split(". ")
         introduction = ""

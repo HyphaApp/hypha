@@ -447,7 +447,7 @@ def make_role_reviewer_fields():
     staff_reviewers = User.objects.staff().only("full_name", "pk")
 
     for role in ReviewerRole.objects.all().order_by("order"):
-        role_name = bleach.clean(role.name, strip=True)
+        role_name = nh3.clean(role.name, tags=set())
         field_name = f"role_reviewer_{role.id}"
         field = forms.ModelChoiceField(
             queryset=staff_reviewers,
