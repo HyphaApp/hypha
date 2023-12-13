@@ -4,7 +4,6 @@ from django.db import models
 from django.db.models.functions import Coalesce
 from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey
-from pagedown.widgets import PagedownWidget
 from wagtail.admin.panels import FieldPanel, InlinePanel, PageChooserPanel
 from wagtail.contrib.settings.models import BaseSiteSetting
 from wagtail.fields import StreamField
@@ -12,6 +11,7 @@ from wagtail.models import Orderable
 from wagtail.search import index
 
 from hypha.core.wagtail.admin import register_public_site_setting
+from hypha.core.widgets import PagedownWidget
 from hypha.public.utils.models import BasePage, RelatedPage
 
 from .blocks import NewsStoryBlock
