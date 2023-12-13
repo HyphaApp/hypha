@@ -93,7 +93,7 @@ class RegisterView(View):
             return redirect(settings.LOGIN_REDIRECT_URL)
 
         ctx = {
-            "form": self.form(),
+            "form": self.form(register_view=True),
             "redirect_url": get_redirect_url(request, self.redirect_field_name),
         }
         return render(request, "users/register.html", ctx)
@@ -103,7 +103,7 @@ class RegisterView(View):
         if not settings.ENABLE_PUBLIC_SIGNUP:
             raise Http404
 
-        form = self.form(data=request.POST)
+        form = self.form(register_view=True, data=request.POST)
         context = {}
         if form.is_valid():
             # If using wagtail password management

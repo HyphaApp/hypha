@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.contrib.auth.models import AbstractUser, BaseUserManager, Group
 from django.core import exceptions
 from django.db import IntegrityError, models
 from django.db.models.constants import LOOKUP_SEP
@@ -375,6 +375,27 @@ class AuthSettings(BaseGenericSetting):
             _("Register form customizations"),
         ),
     ]
+
+
+class GroupDesc(models.Model):
+    group = models.OneToOneField(Group, on_delete=models.CASCADE, primary_key=True)
+    help_text = models.CharField(verbose_name="Help Text", max_length=255)
+
+    @staticmethod
+    def get_from_group(group_obj: Group) -> str | None:
+        """
+        Get the group description/help text string from a Group object. Returns None if group doesn't have a help text entry.
+
+        Args:
+            group_obj (Group): The group to retrieve the description of.
+        """
+        try:
+            return GroupDesc.objects.get(group_id=group_obj.id).help_text
+        except (exceptions.ObjectDoesNotExist, exceptions.FieldError):
+            return None
+
+    def __str__(self):
+        return self.help_text
 
 
 class PendingSignup(models.Model):

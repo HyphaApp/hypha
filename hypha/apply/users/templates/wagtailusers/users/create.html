@@ -1,4 +1,5 @@
 {% extends "wagtailusers/users/create.html" %}
+{% load  static %}
 
 {% block fields %}
     {% if form.separate_username_field %}
@@ -24,3 +25,7 @@
         {% include "wagtailadmin/shared/field_as_li.html" with field=form.is_active %}
     {% endif %}
 {% endblock fields %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/apply/wagtail_groups_list.css' %}">
+{% endblock %}

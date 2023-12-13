@@ -1,11 +1,12 @@
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm
+from django.template.defaultfilters import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2Widget
 from wagtail.users.forms import UserCreationForm, UserEditForm
 
-from .models import AuthSettings
+from .models import AuthSettings, GroupDesc
 
 User = get_user_model()
 
@@ -68,26 +69,72 @@ class CustomUserAdminFormBase:
         )
 
 
+class GroupsModelMultipleChoiceField(forms.ModelMultipleChoiceField):
+    """
+    A custom ModelMultipleChoiceField utilized to provide a custom label for the group prompts
+    """
+
+    @classmethod
+    def get_group_mmcf(
+        cls, model_mulitple_choice_field: forms.ModelMultipleChoiceField
+    ):  # Handle the insertion of group help text
+        group_field_dict = model_mulitple_choice_field.__dict__
+        queryset = group_field_dict[
+            "_queryset"
+        ]  # Pull the queryset form the group field
+        unneeded_keys = ("empty_label", "_queryset")
+        for key in unneeded_keys:
+            group_field_dict.pop(
+                key, None
+            )  # Pop unneeded keys/values, ignore if they don't exist.
+
+        # Overwrite the existing group's ModelMultipleChoiceField with the custom GroupsModelMultipleChoiceField that will provide the help text
+        return GroupsModelMultipleChoiceField(queryset=queryset, **group_field_dict)
+
+    def label_from_instance(self, group_obj):
+        """
+        Overwriting ModelMultipleChoiceField's label from instance to provide help_text (if it exists)
+        """
+        help_text = GroupDesc.get_from_group(group_obj)
+        if help_text:
+            return mark_safe(
+                f'{group_obj.name}<p class="group-help-text">{help_text}</p>'
+            )
+        return group_obj.name
+
+
 class CustomUserEditForm(CustomUserAdminFormBase, UserEditForm):
-    pass
+    #    pass
+    """
+    A custom UserEditForm used to provide custom fields (ie. custom group fields)
+    """
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-class CustomWagtailUserCreationForm(CustomUserAdminFormBase, UserCreationForm):
-    pass
+        # Overwrite the existing group's ModelMultipleChoiceField with the custom GroupsModelMultipleChoiceField that will provide the help text
+        self.fields["groups"] = GroupsModelMultipleChoiceField.get_group_mmcf(
+            self.fields["groups"]
+        )
 
 
 class CustomUserCreationForm(CustomUserAdminFormBase, UserCreationForm):
-    def __init__(self, request=None, *args, **kwargs):
+    def __init__(self, register_view=False, request=None, *args, **kwargs):
         self.request = request
         super().__init__(*args, **kwargs)
 
         self.user_settings = AuthSettings.load(request_or_site=self.request)
-        if self.user_settings.consent_show:
+        if register_view and self.user_settings.consent_show:
             self.fields["consent"] = forms.BooleanField(
                 label=self.user_settings.consent_text,
                 help_text=self.user_settings.consent_help,
                 required=True,
             )
+
+        # Overwrite the existing group's ModelMultipleChoiceField with the custom GroupsModelMultipleChoiceField that will provide the help text
+        self.fields["groups"] = GroupsModelMultipleChoiceField.get_group_mmcf(
+            self.fields["groups"]
+        )
 
 
 class ProfileForm(forms.ModelForm):
