@@ -3,11 +3,13 @@ from django.utils.translation import gettext as _
 
 NA = 99
 
+
 def get_rate_choices(choices):
-    rate_choices = [(i, _('{}. {}'.format(i, s))) for i, s in enumerate(choices)]
-    rate_choices.append((NA, _('n/a - choose not to answer')))
+    rate_choices = [(i, _("{}. {}".format(i, s))) for i, s in enumerate(choices)]
+    rate_choices.append((NA, _("n/a - choose not to answer")))
 
     return rate_choices
+
 
 RATE_CHOICES = tuple(get_rate_choices(settings.RATE_CHOICES))
 RATE_CHOICES_DICT = dict(RATE_CHOICES)

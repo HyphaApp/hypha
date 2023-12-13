@@ -612,11 +612,14 @@ if SENTRY_DSN:
         integrations=[DjangoIntegration()],
     )
 
-RATE_CHOICES = env.list('RATE_CHOCICES', [
-    "Need more info",
-    "Poor",
-    "Not so good",
-    "Is o.k.",
-    "Good",
-    "Excellent",
-])
+RATE_CHOICES = env.list(
+    "RATE_CHOCICES",
+    [
+        "Need more info",
+        "Poor",
+        "Not so good",
+        "Is o.k.",
+        "Good",
+        "Excellent",
+    ],
+)
