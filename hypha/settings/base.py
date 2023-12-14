@@ -18,7 +18,6 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 
 
 # Hypha custom settings
-REVIEW_VISIBILITY_DEFAULT = env.str('REVIEW_VISIBILITY_DEFAULT', 'private')
 
 # Set the currency symbol to be used.
 CURRENCY_CODE = env.str("CURRENCY_CODE", "USD")
@@ -144,6 +143,9 @@ TRANSITION_AFTER_ASSIGNED = env.bool("TRANSITION_AFTER_ASSIGNED", False)
 # Should submission automatically transition after n number of reviews.
 # Possible values are: False, 1,2,3,…
 TRANSITION_AFTER_REVIEWS = env.bool("TRANSITION_AFTER_REVIEWS", False)
+
+# Default visibility for reviews.
+REVIEW_VISIBILITY_DEFAULT = env.str("REVIEW_VISIBILITY_DEFAULT", "private")
 
 
 # Project settings.
