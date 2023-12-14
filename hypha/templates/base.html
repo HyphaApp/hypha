@@ -104,10 +104,6 @@
                     </a>
 
                     <div class="header__inner header__inner--mobile-buttons">
-                        <button class="button js-search-toggle" aria-haspopup="true">
-                            <svg class="header__icon header__icon--open-search header__icon--open-search-menu-closed icon icon--mobile-menu"><use xlink:href="#magnifying-glass"></use></svg>
-                            <svg class="header__icon header__icon--close-search header__icon--close-search-menu-closed icon icon--mobile-menu"><use xlink:href="#cross"></use></svg>
-                        </button>
                         <button class="button button--left-space js-mobile-menu-toggle" aria-haspopup="true">
                             <svg class="icon icon--mobile-menu"><use xlink:href="#mobile-menu-toggle"></use></svg>
                         </button>
@@ -121,10 +117,6 @@
                                 {% primarynav %}
                             {% endcache %}
                         {% endif %}
-                        <button class="button button--contains-icons button--left-space js-search-toggle" aria-haspopup="true" aria-label="Toggle desktop search">
-                            <svg class="header__icon header__icon--open-search icon"><use xlink:href="#magnifying-glass"></use></svg>
-                            <svg class="header__icon header__icon--close-search icon"><use xlink:href="#cross"></use></svg>
-                        </button>
                     </section>
 
                     <section class="header__menus header__menus--mobile">
@@ -137,14 +129,6 @@
                                     <svg class="header__logo header__logo--mobile"><use xlink:href="#logo-mobile"></use></svg>
                                 {% endif %}
                             </a>
-                            <div class="header__inner header__inner--mobile-buttons">
-                                <button class="button js-mobile-search-toggle" aria-haspopup="true" aria-label="Toggle mobile search">
-                                    <svg class="header__icon header__icon--open-search icon icon--mobile-menu"><use xlink:href="#magnifying-glass"></use></svg>
-                                </button>
-                                <button class="button button--left-space js-mobile-menu-close">
-                                    <svg class="header__icon header__icon--cross icon icon--mobile-menu"><use xlink:href="#cross"></use></svg>
-                                </button>
-                            </div>
                         </div>
                         {% if settings.utils.SystemMessagesSettings.nav_content %}
                             {{ settings.utils.SystemMessagesSettings.nav_content|safe }}
@@ -168,15 +152,6 @@
                             <div class="button button--google-translate" id="google_translate_element"></div>
                         {% endif %}
                     </div>
-                </div>
-
-                <div class="header__search">
-                    <form action="{{ PUBLIC_SITE.root_url }}{% url 'search' %}" method="get" role="search" class="form form--header-search-desktop">
-                        <button class="button" type="submit" aria-label="Search">
-                            <svg class="icon icon--magnifying-glass icon--search"><use xlink:href="#magnifying-glass"></use></svg>
-                        </button>
-                        <input class="input input--transparent input--secondary" type="text" placeholder="Search…" name="query"{% if search_query %} value="{{ search_query }}{% endif %}" aria-label="Search input">
-                    </form>
                 </div>
 
                 <div class="wrapper wrapper--small wrapper--page-title">

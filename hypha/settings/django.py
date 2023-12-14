@@ -27,7 +27,6 @@ INSTALLED_APPS = [
     "hypha.public.news",
     "hypha.public.people",
     "hypha.public.projects",
-    "hypha.public.search",
     "hypha.public.standardpages",
     "hypha.public.forms",
     "hypha.public.utils",
