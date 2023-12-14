@@ -1,11 +1,11 @@
 {% extends "base.html" %}
-{% load wagtailcore_tags wagtailimages_tags navigation_tags static markdown_tags bleach_tags %}
+{% load wagtailcore_tags wagtailimages_tags navigation_tags static markdown_tags nh3_tags %}
 {% block body_class %}light-grey-bg{% endblock %}
 {% block main_class %}wrapper--bottom-space{% endblock %}
 {% block content %}
     <div class="wrapper">
         <section class="section section--main">
-            <h4 class="heading heading--introduction">{{ page.introduction|markdown|bleach }}</h4>
+            <h4 class="heading heading--introduction">{{ page.introduction|markdown|nh3 }}</h4>
 
             {% if subpages.paginator.count %}
                 <div class="grid grid--one grid--no-margin">

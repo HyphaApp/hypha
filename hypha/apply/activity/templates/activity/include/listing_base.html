@@ -1,4 +1,4 @@
-{% load i18n activity_tags bleach_tags markdown_tags submission_tags apply_tags %}
+{% load i18n activity_tags nh3_tags markdown_tags submission_tags apply_tags %}
 <div class="feed__item feed__item--{{ activity.type }}" id="communications#{{ activity.id }}">
     <div class="feed__pre-content">
         <p class="feed__label feed__label--{{ activity.type }}">{{ activity.type|capfirst }}</p>
@@ -38,12 +38,12 @@
                      data-visibility-options="{{activity|visibility_options:activity.user}}"
                      data-visibility="{{activity.visibility}}"
                      data-edit-url="{% url 'api:v1:comments-edit' pk=activity.pk %}">
-                    {{ activity|display_for:request.user|submission_links|markdown|bleach }}
+                    {{ activity|display_for:request.user|submission_links|markdown|nh3 }}
                 </div>
 
                 <div class="js-edit-block" aria-live="polite"></div>
             {% else %}
-                {{ activity|display_for:request.user|submission_links|markdown|bleach }}
+                {{ activity|display_for:request.user|submission_links|markdown|nh3 }}
             {% endif %}
 
             {% if not submission_title and activity|user_can_see_related:request.user %}

@@ -11,7 +11,7 @@ from django.utils.encoding import force_str
 from django.utils.html import conditional_escape
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
-from django_bleach.templatetags.bleach_tags import bleach_value
+from django_nh3.templatetags.nh3_tags import nh3_value
 from wagtail.blocks import (
     BooleanBlock,
     CharBlock,
@@ -89,7 +89,7 @@ class FormFieldBlock(StructBlock):
         }
 
     def prepare_data(self, value, data, serialize=False):
-        return bleach_value(str(data))
+        return nh3_value(str(data))
 
     def render(self, value, context):
         data = context.get("data")
