@@ -103,7 +103,7 @@ MIDDLEWARE = [
     "hijack.middleware.HijackUserMiddleware",
     "hypha.apply.users.middleware.SocialAuthExceptionMiddleware",
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
-    "hypha.apply.middleware.apply_url_conf_middleware",
+    # "hypha.apply.middleware.apply_url_conf_middleware",
     "hypha.apply.middleware.HandleProtectionErrorMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
 ]

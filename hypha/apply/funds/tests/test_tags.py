@@ -4,7 +4,7 @@ from django.test import TestCase, override_settings
 from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
 
 
-@override_settings(ROOT_URLCONF="hypha.apply.urls")
+
 class TestTemplateTags(TestCase):
     def test_markdown_tags(self):
         template = Template("{% load markdown_tags %}{{ content|markdown|safe }}")

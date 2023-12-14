@@ -9,7 +9,7 @@ from ..projects.serializers import DeliverableSerializer
 from ..serializers import ReviewSummarySerializer
 
 
-@override_settings(ROOT_URLCONF="hypha.apply.urls")
+
 class TestReviewSummarySerializer(TestCase):
     def test_handles_no_reviews(self):
         submission = ApplicationSubmissionFactory()

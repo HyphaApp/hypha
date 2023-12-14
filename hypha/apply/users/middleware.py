@@ -62,7 +62,6 @@ class TwoFactorAuthenticationMiddleware:
         return self.get_response(request)
 
     def _reject(self, request, reason):
-        set_urlconf("hypha.apply.urls")
         response = mfa_failure_view(request, reason=reason)
         log_response(
             "Forbidden (%s): %s",

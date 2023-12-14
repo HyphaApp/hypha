@@ -168,7 +168,7 @@ urlpatterns = [
                         ),
                     ),
                 ],
-                "reports",
+                "vendor_reports",
             )
         ),
     ),

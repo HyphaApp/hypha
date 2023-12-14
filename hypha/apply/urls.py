@@ -3,8 +3,6 @@ from django.urls import include, path, reverse_lazy
 from django.views.generic import RedirectView
 from two_factor.urls import urlpatterns as tf_urls
 
-from hypha.urls import base_urlpatterns
-
 from .api import urls as api_urls
 from .dashboard import urls as dashboard_urls
 from .users import urls as users_urls
@@ -22,7 +20,7 @@ urlpatterns = [
     path(
         "account/two_factor/setup/complete/",
         RedirectView.as_view(url=reverse_lazy("users:backup_tokens"), permanent=False),
-        name="two_factor:setup_complete",
+        name="two_factor-setup_complete",
     ),
     path("", include(tf_urls, "two_factor")),
 ]
@@ -32,8 +30,6 @@ if settings.DEBUG:
         # Add views for testing 404 and 500 templates
         path("test404/", views.page_not_found),
     ]
-
-urlpatterns += base_urlpatterns
 
 
 handler404 = "hypha.apply.utils.views.page_not_found"

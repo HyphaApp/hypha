@@ -48,7 +48,7 @@ class TestAdapter(AdapterBase):
         pass
 
 
-@override_settings(ROOT_URLCONF="hypha.apply.urls")
+
 class AdapterMixin(TestCase):
     adapter = None
     source_factory = None
