@@ -22,7 +22,6 @@ INSTALLED_APPS = [
     "hypha.apply.projects.apps.ProjectsConfig",
     "hypha.public.funds",
     "hypha.public.home",
-    "hypha.public.mailchimp",
     "hypha.public.navigation",
     "hypha.public.news",
     "hypha.public.people",

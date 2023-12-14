@@ -201,8 +201,6 @@ BASIC_AUTH_PASSWORD:                           [PASS]
 BASIC_AUTH_WHITELISTED_HTTP_HOSTS:             www.example.org,apply.example.org
 CLOUDFLARE_API_ZONEID:                         [KEY]
 CLOUDFLARE_BEARER_TOKEN:                       [KEY]
-MAILCHIMP_API_KEY:                             [KEY]-us10
-MAILCHIMP_LIST_ID:                             [ID]
 MAILGUN_API_KEY:                               [KEY]
 SEND_READY_FOR_REVIEW:                         false
 SLACK_DESTINATION_ROOM:                        #notify
