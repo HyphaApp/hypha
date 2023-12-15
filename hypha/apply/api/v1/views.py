@@ -55,7 +55,7 @@ class SubmissionViewSet(viewsets.ReadOnlyModelViewSet, viewsets.GenericViewSet):
     filter_backends = (filters.DjangoFilterBackend,)
     pagination_class = StandardResultsSetPagination
 
-    def __init__(self, **kwargs: Any) -> None:
+    def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
         self.filter_class = SubmissionsFilter
 
@@ -270,7 +270,7 @@ class RoundViewSet(
     }
     pagination_class = StandardResultsSetPagination
 
-    def __init__(self, **kwargs: Any) -> None:
+    def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
         self.queryset = RoundsAndLabs.objects.all()
 
@@ -326,7 +326,7 @@ class SubmissionCommentViewSet(
     filter_backends = (filters.DjangoFilterBackend,)
     pagination_class = StandardResultsSetPagination
 
-    def __init__(self, **kwargs: Any) -> None:
+    def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
         self.filter_class = CommentFilter
 
