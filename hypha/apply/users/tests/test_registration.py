@@ -7,7 +7,6 @@ from hypha.apply.funds.tests.factories import FundTypeFactory
 from hypha.apply.utils.testing import make_request
 
 
-
 class TestRegistration(TestCase):
     @override_settings(ENABLE_PUBLIC_SIGNUP=False)
     def test_registration_enabled_has_no_link(self):

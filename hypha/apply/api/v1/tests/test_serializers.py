@@ -1,4 +1,4 @@
-from django.test import TestCase, override_settings
+from django.test import TestCase
 from rest_framework.exceptions import ErrorDetail
 
 from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
@@ -7,7 +7,6 @@ from hypha.apply.review.tests.factories import ReviewFactory
 
 from ..projects.serializers import DeliverableSerializer
 from ..serializers import ReviewSummarySerializer
-
 
 
 class TestReviewSummarySerializer(TestCase):

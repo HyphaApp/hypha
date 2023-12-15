@@ -25,7 +25,6 @@ from hypha.apply.users.tests.factories import (
 )
 
 
-
 class TestCommentEdit(TestCase):
     def post_to_edit(self, comment_pk, message="my message"):
         return self.client.post(
@@ -110,7 +109,6 @@ class TestCommentEdit(TestCase):
         self.assertEqual(response_one.status_code, 200, response_one.json())
         self.assertEqual(response_two.status_code, 404, response_two.json())
         self.assertEqual(Activity.objects.count(), 2)
-
 
 
 class TestInvoiceDeliverableViewset(TestCase):

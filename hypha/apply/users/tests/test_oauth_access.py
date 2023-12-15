@@ -4,7 +4,6 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 
 
-
 class TestOAuthAccess(TestCase):
     def login(self):
         email = "test@email.com"

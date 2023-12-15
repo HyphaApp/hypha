@@ -1,8 +1,7 @@
 from django.template import Context, Template
-from django.test import TestCase, override_settings
+from django.test import TestCase
 
 from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
-
 
 
 class TestTemplateTags(TestCase):

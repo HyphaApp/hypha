@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import PermissionDenied
 from django.http import Http404
-from django.test import RequestFactory, TestCase, override_settings
+from django.test import RequestFactory, TestCase
 from django.urls import reverse
 from django.utils import timezone
 
@@ -1678,7 +1678,6 @@ class TestUserReminderDeleteView(BaseProjectDeleteTestCase):
         reminder = ReminderFactory()
         response = self.get_page(reminder)
         self.assertEqual(response.status_code, 403)
-
 
 
 class TestReviewerLeaderboard(TestCase):

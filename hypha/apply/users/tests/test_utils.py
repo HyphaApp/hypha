@@ -1,10 +1,9 @@
 from django.core import mail
-from django.test import TestCase, override_settings
+from django.test import TestCase
 
 from hypha.apply.users.tests.factories import UserFactory
 
 from ..utils import get_user_by_email, is_user_already_registered, send_activation_email
-
 
 
 class TestActivationEmail(TestCase):
@@ -13,7 +12,6 @@ class TestActivationEmail(TestCase):
         assert len(mail.outbox) == 1
         email_body = mail.outbox[0].body
         assert "password reset form at: https://primary-test-host.org" in email_body
-
 
 
 class TestGetUserByEmail(TestCase):
@@ -33,7 +31,6 @@ class TestGetUserByEmail(TestCase):
 
         assert get_user_by_email(email="abc@gmail.com").id == user1.id
         assert get_user_by_email(email="Abc@gmail.com").id == user2.id
-
 
 
 class TestUserAlreadyRegistered(TestCase):

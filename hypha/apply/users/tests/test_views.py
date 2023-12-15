@@ -1,12 +1,11 @@
 from django.conf import settings
 from django.core import mail
-from django.test import TestCase, override_settings
+from django.test import TestCase
 from django.urls import reverse
 
 from hypha.apply.utils.testing.tests import BaseViewTestCase
 
 from .factories import OAuthUserFactory, StaffFactory, SuperUserFactory, UserFactory
-
 
 
 class BaseTestProfielView(TestCase):
@@ -68,7 +67,7 @@ class TestPasswordReset(BaseViewTestCase):
         )
 
 
-# 
+#
 class TestBecome(TestCase):
     def setUp(self):
         self.staff = StaffFactory()

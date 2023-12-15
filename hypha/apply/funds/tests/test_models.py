@@ -194,7 +194,6 @@ class TestRoundModelWorkflowAndForms(TestCase):
             self.assertNotEqual(round_form, fund_form)
 
 
-
 @override_settings(FORCE_LOGIN_FOR_APPLICATION=False)
 class TestFormSubmission(TestCase):
     def setUp(self):
@@ -314,9 +313,10 @@ class TestFormSubmission(TestCase):
         # Lead + 2 x applicant
         self.assertEqual(self.User.objects.count(), 3)
 
-        first_user, second_user = self.User.objects.get(
-            email=self.email
-        ), self.User.objects.get(email=email)
+        first_user, second_user = (
+            self.User.objects.get(email=self.email),
+            self.User.objects.get(email=email),
+        )
         self.assertEqual(ApplicationSubmission.objects.count(), 2)
         self.assertEqual(ApplicationSubmission.objects.first().user, first_user)
         self.assertEqual(ApplicationSubmission.objects.last().user, second_user)
@@ -532,7 +532,6 @@ class TestApplicationSubmission(TestCase):
 
         submission = InvitedToProposalFactory()
         self.assertTrue(submission.in_final_stage)
-
 
 
 class TestSubmissionRenderMethods(TestCase):

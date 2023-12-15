@@ -48,7 +48,6 @@ class TestAdapter(AdapterBase):
         pass
 
 
-
 class AdapterMixin(TestCase):
     adapter = None
     source_factory = None
