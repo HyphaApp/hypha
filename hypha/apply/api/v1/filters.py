@@ -29,7 +29,7 @@ class SubmissionsFilter(filters.FilterSet):
     fund = filters.ModelMultipleChoiceFilter(
         field_name="page",
         label=_("fund"),
-        queryset=Page.objects.type(FundType) | Page.objects.type(LabType),
+        queryset=Page.objects.none(),
     )
     screening_statuses = filters.ModelMultipleChoiceFilter(
         field_name="screening_statuses",
@@ -77,6 +77,14 @@ class SubmissionsFilter(filters.FilterSet):
             (option.id, option.value)
             for option in Option.objects.filter(category__filter_on_dashboard=True)
         ]
+
+        # HACK: when the querset of the fund attribute is populated outside of __init__, it causes database operations (ie. migrate)
+        # to fail with the error "django.db.utils.ProgrammingError: relation "django_content_type" does not exist"
+        self.fund = filters.ModelMultipleChoiceFilter(
+            field_name="page",
+            label=_("fund"),
+            queryset=Page.objects.type(FundType) | Page.objects.type(LabType),
+        )
 
     def filter_active(self, qs, name, value):
         if value is None:

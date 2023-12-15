@@ -53,8 +53,11 @@ class SubmissionViewSet(viewsets.ReadOnlyModelViewSet, viewsets.GenericViewSet):
         IsApplyStaffUser,
     )
     filter_backends = (filters.DjangoFilterBackend,)
-    filter_class = SubmissionsFilter
     pagination_class = StandardResultsSetPagination
+
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self.filter_class = SubmissionsFilter
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -254,7 +257,6 @@ class SubmissionActionViewSet(SubmissionNestedMixin, viewsets.GenericViewSet):
 class RoundViewSet(
     mixins.RetrieveModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet
 ):
-    queryset = RoundsAndLabs.objects.all()
     serializer_class = RoundLabSerializer
     permission_classes = (
         permissions.IsAuthenticated,
@@ -267,6 +269,10 @@ class RoundViewSet(
         ],
     }
     pagination_class = StandardResultsSetPagination
+
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self.queryset = RoundsAndLabs.objects.all()
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -318,8 +324,11 @@ class SubmissionCommentViewSet(
         IsApplyStaffUser,
     )
     filter_backends = (filters.DjangoFilterBackend,)
-    filter_class = CommentFilter
     pagination_class = StandardResultsSetPagination
+
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self.filter_class = CommentFilter
 
     def get_queryset(self):
         return (
