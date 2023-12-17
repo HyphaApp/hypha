@@ -15,6 +15,7 @@ from django_tables2 import SingleTableMixin
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import APPLICANT, COMMENT, Activity
 from hypha.apply.users.decorators import staff_or_finance_required
+from hypha.apply.utils.pdfs import html_to_pdf, merge_pdf
 from hypha.apply.utils.storage import PrivateMediaView
 from hypha.apply.utils.views import DelegateableView, DelegatedViewMixin, ViewDispatcher
 
@@ -324,12 +325,31 @@ class InvoicePrivateMedia(UserPassesTestMixin, PrivateMediaView):
         return super().dispatch(*args, **kwargs)
 
     def get_media(self, *args, **kwargs):
-        file_pk = kwargs.get("file_pk")
-        if not file_pk:
-            return self.invoice.document
+        # check if the request is for a supporting document
+        if file_pk := kwargs.get("file_pk"):
+            document = get_object_or_404(self.invoice.supporting_documents, pk=file_pk)
+            return document.document
 
-        document = get_object_or_404(self.invoice.supporting_documents, pk=file_pk)
-        return document.document
+        # if not, then it's for invoice document
+        if (
+            self.invoice.status == APPROVED_BY_STAFF
+            and self.invoice.document.file.name.endswith(".pdf")
+        ):
+            # TODO: add timestamp for approval?
+            # NOTE: The timestamp for approval is stored in the activity log.
+            # which makes it hard to retrieve. A nice idea would be to storee
+            # the approved_time in the invoice object itself.
+            status_html = """
+                <h2>Invoice approved by Staff</h2>
+                <hr />
+                <p><small>Generated: {time}</small></p>
+            """.format(
+                time=timezone.now().isoformat()
+            )
+            pdf = html_to_pdf(status_html)
+            return merge_pdf(self.invoice.document.file, pdf)
+
+        return self.invoice.document
 
     def test_func(self):
         if self.request.user.is_apply_staff:
