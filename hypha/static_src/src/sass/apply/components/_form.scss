@@ -114,10 +114,21 @@
         &--multi_file_field,
         &--single_file_field,
         &--file_field {
-            @include button($color--light-blue, $color--darkest-blue);
+            @include button($color--white, $color--light-blue);
+            display: inline-block;
+            color: $color--light-blue;
+            border: 1px solid $color--mid-grey;
+
+            &:focus {
+                color: $color--light-blue;
+            }
+
+            &:hover {
+                color: $color--white;
+            }
+
             max-width: 15rem;
             text-align: center;
-            border: 0;
 
             .no-js & {
                 display: none;
@@ -456,22 +467,28 @@
     }
 
     &__comments {
-        display: grid;
-        grid-template-areas: "message" "visibility" "actions";
-        grid-template-rows: auto auto auto;
-        grid-template-columns: 1fr;
+        .fields--visible {
+            display: grid;
+            grid-template-areas: "message" "attachments" "visibility" "actions";
+            grid-template-rows: auto auto auto auto;
+            grid-template-columns: 1fr;
 
-        @include media-query(tablet-landscape) {
-            grid-template-areas: "message visibility" "actions actions";
-            grid-template-rows: auto auto;
-            grid-template-columns: 2fr 1fr;
-            column-gap: 2rem;
+            @include media-query(tablet-landscape) {
+                grid-template-areas: "message attachments" "message visibility";
+                grid-template-rows: auto auto;
+                grid-template-columns: 2fr 1fr;
+                column-gap: 2rem;
 
-            .wmd-input,
-            .wmd-preview {
-                max-width: 100%;
-                margin-bottom: 0;
+                .wmd-input,
+                .wmd-preview {
+                    max-width: 100%;
+                    margin-bottom: 0;
+                }
             }
+        }
+
+        .id_attachments {
+            grid-area: attachments;
         }
 
         // stylelint-disable-next-line selector-class-pattern

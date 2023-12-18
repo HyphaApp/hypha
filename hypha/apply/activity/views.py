@@ -1,16 +1,18 @@
 from django.conf import settings
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.generic import CreateView, ListView
 from django_ratelimit.decorators import ratelimit
 
 from hypha.apply.users.decorators import staff_required
+from hypha.apply.utils.storage import PrivateMediaView
 from hypha.apply.utils.views import DelegatedViewMixin
 
 from .filters import NotificationFilter
 from .forms import CommentForm
 from .messaging import MESSAGES, messenger
-from .models import COMMENT, Activity
+from .models import COMMENT, Activity, ActivityAttachment
 from .services import get_related_comments_for_user
 
 
@@ -58,6 +60,19 @@ class CommentFormView(DelegatedViewMixin, CreateView):
         kwargs = super().get_form_kwargs()
         kwargs.pop("instance")
         return kwargs
+
+
+class AttachmentView(PrivateMediaView):
+    model = ActivityAttachment
+
+    def dispatch(self, *args, **kwargs):
+        file_pk = kwargs.get("file_pk")
+        self.instance = get_object_or_404(ActivityAttachment, uuid=file_pk)
+
+        return super().dispatch(*args, **kwargs)
+
+    def get_media(self, *args, **kwargs):
+        return self.instance.file
 
 
 @method_decorator(staff_required, name="dispatch")
