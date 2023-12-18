@@ -5,6 +5,7 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect
+from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
@@ -85,6 +86,9 @@ class ChangeInvoiceStatusView(DelegatedViewMixin, InvoiceAccessMixin, UpdateView
             and self.request.user.is_finance_level_1
             and self.object.status == APPROVED_BY_FINANCE
         ):
+            self.object.approved_by = self.request.user
+            self.object.approved_at = timezone.now()
+            self.object.save()
             messenger(
                 MESSAGES.APPROVE_INVOICE,
                 request=self.request,
@@ -339,14 +343,16 @@ class InvoicePrivateMedia(UserPassesTestMixin, PrivateMediaView):
             # NOTE: The timestamp for approval is stored in the activity log.
             # which makes it hard to retrieve. A nice idea would be to storee
             # the approved_time in the invoice object itself.
-            status_html = """
-                <h2>Invoice approved by Staff</h2>
-                <hr />
-                <p><small>Generated: {time}</small></p>
-            """.format(
-                time=timezone.now().isoformat()
+            pdf = html_to_pdf(
+                render_to_string(
+                    "application_projects/pdf_invoce_approved_page.html",
+                    context={
+                        "invoice": self.invoice,
+                        "now": timezone.now(),
+                    },
+                    request=self.request,
+                )
             )
-            pdf = html_to_pdf(status_html)
             return merge_pdf(self.invoice.document.file, pdf)
 
         return self.invoice.document
