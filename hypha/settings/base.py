@@ -144,6 +144,9 @@ TRANSITION_AFTER_ASSIGNED = env.bool("TRANSITION_AFTER_ASSIGNED", False)
 # Possible values are: False, 1,2,3,…
 TRANSITION_AFTER_REVIEWS = env.bool("TRANSITION_AFTER_REVIEWS", False)
 
+# Default visibility for reviews.
+REVIEW_VISIBILITY_DEFAULT = env.str("REVIEW_VISIBILITY_DEFAULT", "private")
+
 
 # Project settings.
 
