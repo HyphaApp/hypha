@@ -133,16 +133,6 @@
             .no-js & {
                 display: none;
             }
-
-            .form__required {
-                color: $color--white;
-            }
-
-            &:hover {
-                .no-js & {
-                    background: none;
-                }
-            }
         }
 
         &--boolean_field {
@@ -485,30 +475,25 @@
                     margin-bottom: 0;
                 }
             }
-        }
 
-        .id_attachments {
-            grid-area: attachments;
-        }
-
-        // stylelint-disable-next-line selector-class-pattern
-        .id_message {
-            grid-area: message;
-
-            > label {
-                @include hidden;
+            // stylelint-disable-next-line selector-class-pattern
+            .id_attachments {
+                grid-area: attachments;
             }
-        }
 
-        // stylelint-disable-next-line selector-class-pattern
-        .id_visibility_0 {
-            grid-area: visibility;
-        }
+            // stylelint-disable-next-line selector-class-pattern
+            .id_message {
+                grid-area: message;
 
-        .button {
-            grid-area: actions;
-            max-width: 210px;
-            text-align: center;
+                > label {
+                    @include hidden;
+                }
+            }
+
+            // stylelint-disable-next-line selector-class-pattern
+            .id_visibility_0 {
+                grid-area: visibility;
+            }
         }
     }
 
