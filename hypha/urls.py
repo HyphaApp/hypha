@@ -27,7 +27,7 @@ urlpatterns = [
     path("admin/", include(wagtailadmin_urls)),
     path("documents/", include(wagtaildocs_urls)),
     path("sitemap.xml", sitemap),
-    path("", include(django_file_form_urls)),
+    path("upload/", include(django_file_form_urls)),
     path("", include(apply_urls)),
     path("", include((user_urls, "users_public"))),
     path("", include("social_django.urls", namespace="social")),
