@@ -339,10 +339,6 @@ class InvoicePrivateMedia(UserPassesTestMixin, PrivateMediaView):
             self.invoice.status == APPROVED_BY_STAFF
             and self.invoice.document.file.name.endswith(".pdf")
         ):
-            # TODO: add timestamp for approval?
-            # NOTE: The timestamp for approval is stored in the activity log.
-            # which makes it hard to retrieve. A nice idea would be to storee
-            # the approved_time in the invoice object itself.
             pdf = html_to_pdf(
                 render_to_string(
                     "application_projects/pdf_invoce_approved_page.html",
