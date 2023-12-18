@@ -1,0 +1,11 @@
+<h1>Invoice Approved</h1>
+<p>
+    {% if invoice.approved_by %}
+        Approved By: {{ invoice.approved_by }}</br>
+    {% endif %}
+    {% if invoice.approved_at %}
+        Approved At: {{ invoice.approved_at }}</br>
+    {% endif %}
+</p>
+<hr>
+<small>Generated: {{ generated_at|date:"c" }}</small>

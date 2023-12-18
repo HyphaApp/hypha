@@ -1,8 +1,10 @@
-import io
 import os
+from io import BytesIO
 from itertools import cycle
 
 from bs4 import BeautifulSoup, NavigableString
+from django.core.files import File
+from pypdf import PdfReader, PdfWriter
 from reportlab.lib import pagesizes
 from reportlab.lib.colors import Color, white
 from reportlab.lib.styles import ParagraphStyle as PS
@@ -23,6 +25,7 @@ from reportlab.platypus import (
     Table,
     TableStyle,
 )
+from xhtml2pdf import pisa
 
 STYLES = {
     "Question": PS(
@@ -164,7 +167,7 @@ class ReportDocTemplate(BaseDocTemplate):
 
 def make_pdf(title, sections, pagesize):
     prepare_fonts()
-    buffer = io.BytesIO()
+    buffer = BytesIO()
     page_width, page_height = getattr(pagesizes, pagesize)
 
     doc = ReportDocTemplate(
@@ -460,3 +463,39 @@ def draw_project_content(content):
         paragraphs.extend(flowables)
 
     return paragraphs
+
+
+def html_to_pdf(html_body: str) -> BytesIO:
+    """Convert HTML to PDF.
+
+    Args:
+        html_body: The body of the html as string
+
+    Returns:
+        BytesIO: PDF file
+    """
+    packet = BytesIO()
+    source_html = f"<html><body>{html_body}</body></html>"
+    pisa.CreatePDF(source_html, dest=packet, raise_exception=True, encoding="utf-8")
+    packet.seek(0)
+    return packet
+
+
+def merge_pdf(origin_pdf: BytesIO, input_pdf: BytesIO) -> File:
+    """Given two PDFs, merge them together.
+
+    Args:
+        origin_pdf: a file-like object containing a PDF
+        input_pdf: a file-like object containing a PDF
+
+    Returns:
+        Return a File object containing the merged PDF and with the same name as the
+        original PDF.
+    """
+    merger = PdfWriter(clone_from=BytesIO(origin_pdf.read()))
+    merger.append(PdfReader(input_pdf))
+
+    output_pdf = BytesIO()
+    merger.write(output_pdf)
+    output_pdf.seek(0)
+    return File(output_pdf, name=origin_pdf.name)

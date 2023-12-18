@@ -183,6 +183,13 @@ class Invoice(models.Model):
         verbose_name=_("Invoice amount"),
     )
     status = FSMField(default=SUBMITTED, choices=INVOICE_STATUS_CHOICES)
+    approved_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+    approved_at = models.DateTimeField(null=True, blank=True)
     deliverables = ManyToManyField("InvoiceDeliverable", related_name="invoices")
     objects = InvoiceQueryset.as_manager()
 
