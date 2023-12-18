@@ -344,7 +344,7 @@ class InvoicePrivateMedia(UserPassesTestMixin, PrivateMediaView):
                     "application_projects/pdf_invoce_approved_page.html",
                     context={
                         "invoice": self.invoice,
-                        "now": timezone.now(),
+                        "generated_at": timezone.now(),
                     },
                     request=self.request,
                 )
