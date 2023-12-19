@@ -380,7 +380,7 @@ SOCIAL_AUTH_PIPELINE = (
 
 # Bleach Settings
 
-BLEACH_ALLOWED_TAGS = [
+NH3_ALLOWED_TAGS = [
     "a",
     "b",
     "big",
@@ -421,18 +421,21 @@ BLEACH_ALLOWED_TAGS = [
     "tr",
     "ul",
 ]
-BLEACH_ALLOWED_ATTRIBUTES = [
-    "class",
-    "colspan",
-    "href",
-    "rowspan",
-    "target",
-    "title",
-    "width",
-]
-BLEACH_ALLOWED_STYLES = []
-BLEACH_STRIP_TAGS = True
-BLEACH_STRIP_COMMENTS = True
+
+NH3_ALLOWED_ATTRIBUTES = {
+    "*": 
+    [
+        "class",
+        "colspan",
+        "href",
+        "rowspan",
+        "target",
+        "title",
+        "width",
+    ]
+}
+
+NH3_STRIP_COMMENTS = True
 
 
 # Hijack Settings
