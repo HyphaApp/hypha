@@ -423,8 +423,7 @@ NH3_ALLOWED_TAGS = [
 ]
 
 NH3_ALLOWED_ATTRIBUTES = {
-    "*": 
-    [
+    "*": [
         "class",
         "colspan",
         "href",
