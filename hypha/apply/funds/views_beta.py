@@ -86,7 +86,7 @@ def submission_all_beta(
     selected_sort = request.GET.get("sort")
     page = request.GET.get("page", 1)
 
-    can_view_archives = permissions.can_access_archived_submissions(request.user)
+    can_view_archives = permissions.can_view_archived_submissions(request.user)
 
     selected_fund_objects = (
         Page.objects.filter(id__in=selected_funds) if selected_funds else []

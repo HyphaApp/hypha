@@ -54,10 +54,18 @@ FILE_ACCEPT_ATTR_VALUE = ", ".join(["." + ext for ext in FILE_ALLOWED_EXTENSIONS
 # Only effects setting external reviewers for now.
 GIVE_STAFF_LEAD_PERMS = env.bool("GIVE_STAFF_LEAD_PERMS", False)
 
-# Provide permissions for Archived submissions
+# Provide permissions for viewing archived submissions
+SUBMISSIONS_ARCHIVED_VIEW_ACCESS_STAFF = env.bool(
+    "SUBMISSIONS_ARCHIVED_ACCESS_STAFF", False
+)
+SUBMISSIONS_ARCHIVED_VIEW_ACCESS_STAFF_ADMIN = env.bool(
+    "SUBMISSIONS_ARCHIVED_ACCESS_STAFF_ADMIN", True
+)
+
+# Provide permissions for archiving submissions
 SUBMISSIONS_ARCHIVED_ACCESS_STAFF = env.bool("SUBMISSIONS_ARCHIVED_ACCESS_STAFF", False)
 SUBMISSIONS_ARCHIVED_ACCESS_STAFF_ADMIN = env.bool(
-    "SUBMISSIONS_ARCHIVED_ACCESS_STAFF_ADMIN", False
+    "SUBMISSIONS_ARCHIVED_ACCESS_STAFF_ADMIN", True
 )
 
 # Enable staff to "hijack" (become) other users.
@@ -135,6 +143,9 @@ TRANSITION_AFTER_ASSIGNED = env.bool("TRANSITION_AFTER_ASSIGNED", False)
 # Should submission automatically transition after n number of reviews.
 # Possible values are: False, 1,2,3,…
 TRANSITION_AFTER_REVIEWS = env.bool("TRANSITION_AFTER_REVIEWS", False)
+
+# Default visibility for reviews.
+REVIEW_VISIBILITY_DEFAULT = env.str("REVIEW_VISIBILITY_DEFAULT", "private")
 
 
 # Project settings.
@@ -290,7 +301,7 @@ WAGTAIL_SITE_NAME = "hypha"
 WAGTAILIMAGES_IMAGE_MODEL = "images.CustomImage"
 WAGTAILIMAGES_FEATURE_DETECTION_ENABLED = False
 WAGTAIL_USER_EDIT_FORM = "hypha.apply.users.forms.CustomUserEditForm"
-WAGTAIL_USER_CREATION_FORM = "hypha.apply.users.forms.CustomWagtailUserCreationForm"
+WAGTAIL_USER_CREATION_FORM = "hypha.apply.users.forms.CustomUserCreationForm"
 WAGTAIL_USER_CUSTOM_FIELDS = ["full_name"]
 WAGTAIL_PASSWORD_MANAGEMENT_ENABLED = False
 WAGTAILUSERS_PASSWORD_ENABLED = False
