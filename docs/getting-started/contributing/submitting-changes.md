@@ -20,7 +20,7 @@ First check out master and do a git pull ot get all the latest updates.
 
 Then create a new branch and do a checkout of it.
 
-```bash
+```console
 git checkout master
 git pull
 git checkout -b fix/gh-1234-fixing-thing-a

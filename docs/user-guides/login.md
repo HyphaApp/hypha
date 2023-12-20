@@ -1,12 +1,40 @@
 # How to login
 
-**Step 1**: Navigate to the organization's homepage.
+## Using Passwordless Authentication
 
-**Step 2**: Click the "My \[Organization Name]" button in the upper-right corner of the screen.
+**Step 1**: Navigate to the organization's apply homepage.
 
-![Screenshot of the main page of sandbox.opentech.fund.  Top banner of the page has "Hypha" logo in upper left, across top are links to "Funds," "Labs," "Results," "News," "About" and "Search" (a magnifying glass icon).  Two buttons in the upper right show "(person icon) My SB" and "Select Language (dropdown arrow)". The main portion of the page has a blue pixellated background with white sans serif large text that reads "SANDBOX TEST SITE" and in smaller text below "It will reset every 24h. So test all you want.  Below this text is clickable text that says "Learn more how to use it".  Pinned to the footer of the window in the right-hand corner is a button labeled "Apply"](../assets/how-to-login-nav.png)
+**Step 2**: Click "Login" in the upper-right corner of the screen.
+
+![Screenshot of the apply site. Top banner of the page has "Hypha" logo in upper left, across top are links to "Funds," "Labs," "Results," "News," "About".  Two buttons in the upper right show "Login" and "Select Language (dropdown arrow)". A large red arrow is pointing to the "Login button".](../assets/how-to-login-nav.png)
+
+**Step 3**: Enter a valid email in the "Email Address" field.
+
+![Screenshot of the login/signup page. The page heading says "Login of Signup to ACME" (Acme being an organization placeholder name). Under that is an "Email Address" text-entry box. Under that is "Lorem Ipsum" test text, and a consent box saying "I consent to something or another". Under that are three buttons that say "Next", "Login with ACME Email", and "(key icon) Login with Password"](../assets/how-to-login-wo-pw-page.png)
+
+**Step 4**: Select the consent boxes (if any) and click the "Next" button.
+
+**Step 5**: Check the email that was entered for an authenticator URL and click it.
+
+**Step 6**: Confirm the login was successful!
 
 
-**Step 3**: Enter your credentials in the "Email address" and "Password" fields & click "Login"
+## Using a Password
 
-![Screenshot of the login page of sandbox.opentech.fund, as above, but with "Email address" and "Password" text-entry boxes filled in with "staff@example.com"](../assets/how-to-login-login-page.png)
+**Step 1**: Navigate to the organization's apply homepage.
+
+**Step 2**: Click "Login" in the upper-right corner of the screen.
+
+![Screenshot of the apply site. Top banner of the page has "Hypha" logo in upper left, across top are links to "Funds," "Labs," "Results," "News," "About".  Two buttons in the upper right show "Login" and "Select Language (dropdown arrow)". A large red arrow is pointing to the "Login button".](../assets/how-to-login-nav.png)
+
+**Step 3**: Click "Login with password"
+
+![Screenshot of the login/signup page. The page heading says "Login of Signup to ACME" (Acme being an organization placeholder name). Under that is an "Email Address" text-entry box. Under that is "Lorem Ipsum" test text, and a consent box saying "I consent to something or another". Under that are three buttons that say "Next", "Login with ACME Email", and "(key icon) Login with Password". The "Login with Password" button has a red arrow pointing to it.](../assets/how-to-login-w-pass-btn.png)
+
+**Step 4**: Enter your credentials in the "Email Address" and "Password" fields.
+
+![Screenshot of the login with password page. There is a heading that says "Login to ACME" (Acme being an organization placeholder name) with "Email Address" and "Password" text entry boxes. Under that is "Lorem Ipsum" test text, and a consent box saying "I consent to something or another". There is a button under that labeled "Log In"](../assets/how-to-login-w-pass-prompt.png)
+
+**Step 5**: Click the "Log in" button.
+
+**Step 6**: Confirm the login was successful!
