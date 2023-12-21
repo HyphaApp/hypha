@@ -35,7 +35,7 @@
         position: absolute;
         top: -10px;
         left: 0;
-        z-index: 30;
+        z-index: 4;
         display: none;
         width: 20px;
         height: 20px;
@@ -136,7 +136,7 @@
         // tooltip hover area - not visibile
         position: absolute;
         top: -10px;
-        z-index: 100;
+        z-index: 4;
         width: 20px;
         height: 20px;
         border-radius: 50%;
