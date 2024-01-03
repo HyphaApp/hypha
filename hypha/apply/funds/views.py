@@ -9,6 +9,7 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.auth.models import Group
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count, F, Q
@@ -52,7 +53,10 @@ from hypha.apply.projects.forms import CreateProjectForm
 from hypha.apply.projects.models import Project
 from hypha.apply.review.models import Review
 from hypha.apply.stream_forms.blocks import GroupToggleBlock
+from hypha.apply.todo.options import PROJECT_WAITING_PAF
+from hypha.apply.todo.views import add_task_to_user_group
 from hypha.apply.users.decorators import staff_or_finance_required, staff_required
+from hypha.apply.users.groups import STAFF_GROUP_NAME
 from hypha.apply.utils.models import PDFPageSettings
 from hypha.apply.utils.pdfs import draw_submission_content, make_pdf
 from hypha.apply.utils.storage import PrivateMediaView
@@ -786,6 +790,12 @@ class CreateProjectView(DelegatedViewMixin, CreateView):
             user=self.request.user,
             source=self.object,
             related=self.object.submission,
+        )
+        # add task for staff to add PAF to the project
+        add_task_to_user_group(
+            code=PROJECT_WAITING_PAF,
+            user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+            related_obj=self.object,
         )
         return response
 

@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.auth.models import Group
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect
@@ -14,7 +15,19 @@ from django_tables2 import SingleTableMixin
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import APPLICANT, COMMENT, Activity
+from hypha.apply.todo.options import (
+    INVOICE_REQUIRED_CHANGES,
+    INVOICE_WAITING_APPROVAL,
+    PROJECT_WAITING_INVOICE,
+)
+from hypha.apply.todo.views import (
+    add_task_to_user_group,
+    remove_tasks_for_user,
+    remove_tasks_for_user_group,
+    remove_tasks_of_related_obj,
+)
 from hypha.apply.users.decorators import staff_or_finance_required
+from hypha.apply.users.groups import STAFF_GROUP_NAME
 from hypha.apply.utils.storage import PrivateMediaView
 from hypha.apply.utils.views import DelegateableView, DelegatedViewMixin, ViewDispatcher
 
@@ -23,10 +36,13 @@ from ..forms import ChangeInvoiceStatusForm, CreateInvoiceForm, EditInvoiceForm
 from ..models.payment import (
     APPROVED_BY_FINANCE,
     APPROVED_BY_STAFF,
+    CHANGES_REQUESTED_BY_FINANCE,
+    CHANGES_REQUESTED_BY_STAFF,
     INVOICE_TRANISTION_TO_RESUBMITTED,
     Invoice,
 )
 from ..models.project import PROJECT_ACTION_MESSAGE_TAG, Project
+from ..services import handle_tasks_on_invoice_update
 from ..tables import InvoiceListTable
 
 
@@ -58,6 +74,10 @@ class ChangeInvoiceStatusView(DelegatedViewMixin, InvoiceAccessMixin, UpdateView
     model = Invoice
 
     def form_valid(self, form):
+        invoice = get_object_or_404(
+            Invoice, pk=self.kwargs["invoice_pk"]
+        )  # to get the old status
+        old_status = invoice.status
         response = super().form_valid(form)
         if form.cleaned_data["comment"]:
             invoice_status_change = _(
@@ -100,6 +120,8 @@ class ChangeInvoiceStatusView(DelegatedViewMixin, InvoiceAccessMixin, UpdateView
             related=self.object,
         )
 
+        handle_tasks_on_invoice_update(old_status=old_status, invoice=self.object)
+
         return response
 
 
@@ -119,6 +141,9 @@ class DeleteInvoiceView(DeleteView):
 
     @transaction.atomic()
     def form_valid(self, form):
+        # remove all tasks related to this invoice irrespective of code and users/user_group
+        remove_tasks_of_related_obj(related_obj=self.object)
+
         response = super().form_valid(form)
 
         messenger(
@@ -223,6 +248,22 @@ class CreateInvoiceView(CreateView):
             source=self.project,
             related=self.object,
         )
+
+        if len(self.project.invoices.all()) == 1:
+            # remove Project waiting invoices task for applicant on first invoice
+            remove_tasks_for_user(
+                code=PROJECT_WAITING_INVOICE,
+                user=self.project.user,
+                related_obj=self.project,
+            )
+
+        # add Invoice waiting approval task for Staff group
+        add_task_to_user_group(
+            code=INVOICE_WAITING_APPROVAL,
+            user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+            related_obj=self.object,
+        )
+
         messages.success(
             self.request, _("Invoice added"), extra_tags=PROJECT_ACTION_MESSAGE_TAG
         )
@@ -274,7 +315,9 @@ class EditInvoiceView(InvoiceAccessMixin, UpdateView):
             return self.form_invalid(form)
 
     def form_valid(self, form):
+        old_status = self.object.status
         response = super().form_valid(form)
+
         if form.cleaned_data:
             if self.object.status in INVOICE_TRANISTION_TO_RESUBMITTED:
                 self.object.transition_invoice_to_resubmitted()
@@ -304,6 +347,38 @@ class EditInvoiceView(InvoiceAccessMixin, UpdateView):
             source=self.object.project,
             related=self.object,
         )
+
+        if self.request.user.is_applicant and old_status == CHANGES_REQUESTED_BY_STAFF:
+            # remove invoice required changes task for applicant
+            remove_tasks_for_user(
+                code=INVOICE_REQUIRED_CHANGES,
+                user=self.object.project.user,
+                related_obj=self.object,
+            )
+
+            # add invoice waiting approval task for staff group
+            add_task_to_user_group(
+                code=INVOICE_WAITING_APPROVAL,
+                user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+                related_obj=self.object,
+            )
+
+        if (
+            self.request.user.is_apply_staff
+            and old_status == CHANGES_REQUESTED_BY_FINANCE
+        ):
+            # remove invoice required changes task for staff group
+            remove_tasks_for_user_group(
+                code=INVOICE_REQUIRED_CHANGES,
+                user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+                related_obj=self.object,
+            )
+            # add invoice waiting approval task for staff group
+            add_task_to_user_group(
+                code=INVOICE_WAITING_APPROVAL,
+                user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+                related_obj=self.object,
+            )
 
         # Required for django-file-form: delete temporary files for the new files
         # that are uploaded.
