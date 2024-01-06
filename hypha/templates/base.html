@@ -1,4 +1,4 @@
-{% load static cache wagtailcore_tags wagtailimages_tags util_tags cookieconsent_tags i18n %}<!doctype html>
+{% load static cache wagtailcore_tags wagtailimages_tags cookieconsent_tags i18n heroicons %}<!doctype html>
 {% wagtail_site as current_site %}
 {% get_current_language as LANGUAGE_CODE %}
 {% get_current_language_bidi as LANGUAGE_BIDI %}
@@ -110,7 +110,7 @@
 
                     <div class="header__inner header__inner--mobile-buttons">
                         <button class="button button--left-space js-mobile-menu-toggle" aria-haspopup="true">
-                            <svg class="icon icon--mobile-menu"><use xlink:href="#mobile-menu-toggle"></use></svg>
+                            {% heroicon_outline "bars-3" size=32 stroke_width=2 class="inline" aria_hidden=true %}
                         </button>
                     </div>
 

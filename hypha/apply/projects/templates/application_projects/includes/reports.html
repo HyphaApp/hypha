@@ -1,4 +1,4 @@
-{% load i18n project_tags %}
+{% load i18n project_tags heroicons %}
 
 {% user_can_update_project_reports object user as can_update_project_reports %}
 {% if can_update_project_reports %}
@@ -70,7 +70,7 @@
                                     {% user_can_update_report report user as can_update_report %}
                                     {% if can_update_report %}
                                         <a class="data-block__action-icon-link" href="{% url "apply:projects:reports:edit" pk=report.pk %}">
-                                            <svg class="icon icon--project-pen"><use xlink:href="#pen"></use></svg>
+                                            {% heroicon_micro "pencil-square" class="inline mr-1" aria_hidden=true %}
                                             {% trans "Edit" %}
                                         </a>
                                     {% endif %}

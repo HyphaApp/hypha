@@ -92,10 +92,12 @@
     background: $bg;
     border: 1px solid $color--white;
     transition: color, background, border, $transition;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     @include media-query(mob-landscape) {
         width: auto;
-        // text-align: left;
     }
 
     &:hover,
@@ -107,11 +109,12 @@
 
 // Narrow button mixin
 @mixin button--narrow {
-    padding: 5px;
+    padding: 0.25rem 0.75rem;
     font-size: 15px;
+    vertical-align: middle;
 
     @include media-query(tablet-landscape) {
-        padding: 5px 15px;
+        padding: 0.25rem 0.75rem;
     }
 }
 

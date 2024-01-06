@@ -38,7 +38,12 @@
         {% endif %}
 
         {% if field.field.help_link %}
-            <p class="form__help-link"><a href="{{ field.field.help_link }}" target="_blank" rel="noopener noreferrer">{% trans "See help guide for more information." %}<svg class="form__open-icon"><use xlink:href="#open-in-new-tab"></use></svg></a></p>
+            <p class="form__help-link">
+                <a href="{{ field.field.help_link }}" target="_blank" rel="noopener noreferrer">
+                    {% trans "See help guide for more information." %}
+                    {% heroicon_micro "arrow-top-right-on-square" class="inline align-text-bottom w-4 h-4" aria_hidden=true %}
+                </a>
+            </p>
         {% endif %}
 
         {% if not field.is_hidden %}

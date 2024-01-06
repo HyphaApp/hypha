@@ -1,5 +1,5 @@
 {% extends "determinations/base_determination_form.html" %}
-{% load i18n static %}
+{% load i18n static heroicons %}
 
 {% block extra_css %}
     {{ block.super }}
@@ -22,9 +22,7 @@
             {% for submission in submissions %}
                 <a href="{% url "funds:submissions:detail" submission.id %}" class="list-reveal__item" target="_blank" rel="noopener noreferrer" title="{{ submission.title }}">
                     {{ submission.title }}
-                    <svg class="list-reveal__open-icon">
-                        <use xlink:href="#open-in-new-tab"></use>
-                    </svg>
+                    {% heroicon_micro "arrow-top-right-on-square" class="inline align-text-bottom w-4 h-4" aria_hidden=true %}
                 </a>
             {% endfor %}
         </div>
