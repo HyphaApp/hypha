@@ -33,13 +33,6 @@
         );
     });
 
-    // Close the message
-    $(".js-close-message").click((e) => {
-        e.preventDefault();
-        var message = e.target.closest(".js-message");
-        message.classList.add("messages__text--hide");
-    });
-
     // reset mobile filters if they're open past the tablet breakpoint
     $(window)
         .resize(function resize() {

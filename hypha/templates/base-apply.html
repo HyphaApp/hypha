@@ -80,10 +80,12 @@
         hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
         class="antialiased {% block body_class %}template-{{ page.get_verbose_name|slugify }}{% endblock %}"
     >
-
         {% include "includes/sprites.html" %}
 
-        {% include 'includes/messages.html' %}
+        {% if messages %}
+            {% include 'includes/messages.html' %}
+        {% endif %}
+
         <header class="header">
 
             <div class="header__inner wrapper wrapper--large">

@@ -1,35 +1,20 @@
 .messages {
     position: fixed;
-    top: 0;
+    top: 2px;
     left: 0;
     right: 0;
     z-index: 25;
     pointer-events: none;
 
     &__actions {
-        border: 0.01px ridge $color--black;
         display: flex;
         align-items: center;
         max-width: 450px;
         margin: 0 auto;
-        padding: 15px 20px;
         color: $color--black;
-        opacity: 1;
-        transition: opacity, max-height, $transition;
         pointer-events: all;
         max-height: 1000px;
         background: $color--cream;
-
-        @include media-query(desktop) {
-            padding: 15px 30px;
-        }
-
-        &--hide {
-            opacity: 0;
-            pointer-events: none;
-            max-height: 0;
-            padding: 0;
-        }
     }
 
     &__text {
@@ -60,13 +45,6 @@
         &--debug {
             background: darken($color--pink, 30%);
         }
-
-        &--hide {
-            opacity: 0;
-            pointer-events: none;
-            max-height: 0;
-            padding: 0;
-        }
     }
 
     &__inner {
@@ -90,12 +68,5 @@
         display: inline-block;
         font-weight: $weight--bold;
         padding: 2px 20px;
-    }
-
-    &__icon {
-        width: 25px;
-        height: 25px;
-        fill: $color--white;
-        margin-right: 10px;
     }
 }

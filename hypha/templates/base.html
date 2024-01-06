@@ -56,7 +56,9 @@
 
         {% include "includes/sprites.html" %}
 
-        {% include 'includes/messages.html' %}
+        {% if messages %}
+            {% include 'includes/messages.html' %}
+        {% endif %}
 
         {% block header %}
             {% if page.header_image %}
