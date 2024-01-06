@@ -44,9 +44,11 @@
         flex: 1;
         position: relative;
         padding-block-start: var(--tooltip-margin-top);
+
+        // The bar for each item.
         border-block-start: var(--bar) solid $color--mid-grey;
 
-        // every items dot
+        // The dot for each item.
         &::before {
             display: flex;
             place-items: center;
@@ -69,6 +71,11 @@
             &::before {
                 background: $color--white;
                 border: calc(var(--dot) / 4) solid $color--tomato;
+            }
+
+            // Fill the bar all the way on accepted/declined.
+            &:last-of-type {
+                border-color: $color--primary;
             }
         }
 
