@@ -72,15 +72,6 @@
         margin-left: 20px;
     }
 
-    &--contains-icons {
-        display: flex;
-        align-items: center;
-
-        .header & {
-            margin-right: 20px;
-        }
-    }
-
     &--transparent {
         @include button(transparent, $color--black);
         @include button--narrow;
@@ -431,5 +422,25 @@
         @include button($color--light-blue, $color--dark-blue);
         display: inline-block;
         line-height: 1.15;
+    }
+
+    &--js-like-active {
+        font-weight: 600;
+        cursor: not-allowed;
+
+        svg {
+            fill: $color--dark-blue;
+            cursor: not-allowed;
+        }
+    }
+
+    &--js-dislike-active {
+        font-weight: 600;
+        cursor: not-allowed;
+
+        svg {
+            fill: $color--tomato;
+            cursor: not-allowed;
+        }
     }
 }

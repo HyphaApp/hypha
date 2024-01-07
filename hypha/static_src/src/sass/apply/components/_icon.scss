@@ -138,32 +138,4 @@
         margin-right: 4px;
         margin-top: 2px;
     }
-
-    &--like {
-        fill: $color--dark-grey;
-        cursor: pointer;
-    }
-
-    &--dislike {
-        fill: $color--dark-grey;
-        cursor: pointer;
-    }
-
-    &--like-yes {
-        fill: $color--dark-blue;
-        cursor: not-allowed;
-    }
-
-    &--dislike-no {
-        fill: $color--tomato;
-        cursor: not-allowed;
-    }
-
-    &--like-disable {
-        cursor: not-allowed;
-    }
-
-    &--dislike-disable {
-        cursor: not-allowed;
-    }
 }
