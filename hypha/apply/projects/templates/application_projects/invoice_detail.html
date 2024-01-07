@@ -1,5 +1,5 @@
 {% extends "base-apply.html" %}
-{% load i18n humanize invoice_tools %}
+{% load i18n humanize invoice_tools heroicons %}
 
 {% block title %}{% trans "Invoice" %}: {{ object.invoice_number }} - {{ object.project.title }}{% endblock %}
 {% block body_class %}bg-light-grey{% endblock %}
@@ -52,13 +52,21 @@
                         </p>
                     {% endfor %}
                 </div>
-                <div class="flex-1 text-right" x-on:click="collapsed = ! collapsed" role="button">
-                    <p class="font-bold text-light-blue" x-show="collapsed">{% trans "View" %}
-                        <svg class="icon icon--arrow-down top-1"  aria-hidden=true><use xlink:href="#arrow-down"></use></svg></p>
-                    <p class="font-bold text-light-blue" x-show="!collapsed">{% trans "Hide" %}
-                        <svg class="icon icon--arrow-up top-1" aria-hidden=true><use xlink:href="#arrow-up"></use></svg></p>
+                <button
+                    type="button"
+                    class="font-bold text-light-blue flex-1 text-right hover:opacity-70 transition-opacity"
+                    x-on:click="collapsed = ! collapsed"
+                >
+                    <span x-show="collapsed">
+                        {% trans "Show" %}
+                        {% heroicon_mini "arrow-down" class="inline align-text-bottom" aria_hidden=true %}
+                    </span>
+                    <span x-show="!collapsed">
+                        {% trans "Hide" %}
+                        {% heroicon_mini "arrow-up" class="inline align-text-bottom" aria_hidden=true %}
+                    </span>
 
-                </div>
+                </button>
             </div>
 
             <div class="card card--solid">
