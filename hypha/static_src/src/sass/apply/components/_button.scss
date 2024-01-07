@@ -293,7 +293,7 @@
         position: relative;
 
         &:hover {
-            opacity: 1;
+            opacity: 0.7;
         }
 
         &:disabled {
@@ -335,6 +335,10 @@
                 z-index: 10;
             }
 
+            &::hover {
+                opacity: 1;
+            }
+
             svg {
                 fill: $color--mid-dark-grey;
             }
@@ -359,14 +363,8 @@
             fill: $color--light-blue;
             width: 1em;
             height: 1em;
-            margin-right: 10px;
+            margin-right: 0.5rem;
             pointer-events: none;
-        }
-    }
-
-    &--change-status {
-        svg {
-            transform: rotate(90deg);
         }
     }
 

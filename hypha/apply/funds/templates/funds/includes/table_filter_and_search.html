@@ -31,9 +31,9 @@
                         data-fancybox
                         type="button"
                         data-src="#batch-progress"
-                        class="button button--action button--change-status js-batch-button js-batch-progress"
+                        class="button button--action js-batch-button js-batch-progress"
                     >
-                        <svg><use xlink:href="#arrow-split"></use></svg>
+                        {% heroicon_mini "arrows-right-left" class="inline" aria_hidden=true %}
                         {% trans "Status" %}
                     </button>
 
@@ -48,13 +48,13 @@
                     </button>
 
                     <button data-fancybox data-src="#batch-delete-submission" class="button button--action js-batch-button" type="button">
-                        {% heroicon_micro "trash" class="inline mr-1" aria_hidden=true %}
+                        {% heroicon_micro "trash" class="inline" aria_hidden=true %}
                         {% trans "Delete" %}
                     </button>
 
                     {% if can_bulk_archive %}
                         <button data-fancybox data-src="#batch-archive-submission" class="button button--action js-batch-button" type="button">
-                            {% heroicon_micro "archive-box-arrow-down" class="inline mr-1" aria_hidden=true %}
+                            {% heroicon_micro "archive-box-arrow-down" class="inline" aria_hidden=true %}
                             {% trans "Archive" %}
                         </button>
                     {% endif %}
