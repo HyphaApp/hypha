@@ -28,28 +28,12 @@
         <!-- Twitter summary card - see https://dev.twitter.com/cards/types/summary -->
         <!--  and https://dev.twitter.com/cards/getting-started -->
         <meta name="twitter:card" content="summary">
-        <meta name="twitter:site" content="@{{ settings.utils.SocialMediaSettings.twitter_handle }}">
         <meta name="twitter:title" content="{{ page.title }}">
-        <meta name="twitter:description" content="{{ page|social_text:current_site }}">
-        {% if page.social_image  %}
-            {% image page.social_image width-320 as social_img %}
-            <meta name="twitter:image" content="{% if page.social_image.is_stored_locally %}{{ current_site.root_url }}{% endif %}{{ social_img.url }}">
-        {% else %}
-            <meta name="twitter:image" content="{{ current_site.root_url }}{% static 'images/social.jpg' %}">
-        {% endif %}
 
         <!--facebook opengraph tags-->
-        <meta property="fb:app_id" content="{{ settings.utils.SocialMediaSettings.facebook_app_id }}">
         <meta property="og:type" content="website">
         <meta property="og:url" content="{{ page.url }}">
         <meta property="og:title" content="{{ page.title }}">
-        {% if page.social_image %}
-            <meta property="og:image" content="{% if page.social_image.is_stored_locally %}{{ current_site.root_url }}{% endif %}{{ social_img.url }}">
-        {% else %}
-            <meta property="og:image" content="{{ current_site.root_url }}{% static 'images/social.jpg' %}">
-        {% endif %}
-        <meta property="og:description" content="{{ page|social_text:current_site }}">
-        <meta property="og:site_name" content="{{ settings.utils.SocialMediaSettings.site_name }}">
 
         <link rel="stylesheet" href="{% static 'css/normalize.css' %}">
         <link rel="stylesheet" href="{% static 'css/public/main.css' %}">
@@ -201,18 +185,9 @@
         <footer class="footer">
             <div class="grid grid--two wrapper wrapper--large">
                 <div class="footer__inner">
-                    <div class="footer__social-links">
-                        {% if settings.utils.SocialMediaSettings.twitter_handle %}
-                            <a href="https://twitter.com/{{ settings.utils.SocialMediaSettings.twitter_handle }}">
-                                <svg class="icon icon--footer-social"><use xlink:href="#twitter"></use></svg>
-                                <h4 class="heading heading--no-margin">@{{ settings.utils.SocialMediaSettings.twitter_handle }}</h4>
-                            </a>
-                        {% endif %}
-                    </div>
                     {{ settings.utils.SystemMessagesSettings.footer_content|safe }}
                 </div>
             </div>
-
         </footer>
 
         {% cookie_banner %}

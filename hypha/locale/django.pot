@@ -6627,22 +6627,6 @@ msgid ""
 "is not defined."
 msgstr ""
 
-#: hypha/public/utils/models.py:268
-msgid "Your Twitter username without the @, e.g. katyperry"
-msgstr ""
-
-#: hypha/public/utils/models.py:273
-msgid "Your Facebook app ID."
-msgstr ""
-
-#: hypha/public/utils/models.py:279
-msgid "Default sharing text to use if social text has not been set on a page."
-msgstr ""
-
-#: hypha/public/utils/models.py:286
-msgid "Site name, used by Open Graph."
-msgstr ""
-
 #: hypha/public/utils/models.py:303
 msgid "Default site logo"
 msgstr ""
@@ -6693,22 +6677,6 @@ msgstr ""
 
 #: hypha/templates/includes/relatedcontent.html:2
 msgid "You might also like…"
-msgstr ""
-
-#: hypha/templates/includes/share.html:4
-msgid "Share"
-msgstr ""
-
-#: hypha/templates/includes/share.html:8
-msgid "Share on Twitter"
-msgstr ""
-
-#: hypha/templates/includes/share.html:14
-msgid "Share on LinkedIn"
-msgstr ""
-
-#: hypha/templates/includes/share.html:21
-msgid "Share on Facebook"
 msgstr ""
 
 #: hypha/templates/password_required.html:4
