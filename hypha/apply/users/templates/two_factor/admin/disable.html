@@ -10,22 +10,21 @@
     <form class="form" action="" method="POST" novalidate>
         <div class="tab-content">
             {% csrf_token %}
-
             <section id="account" class="active nice-padding">
-                <p>{% trans "Are you sure you want to disable the Two Factor Authentication for this user? Please type your password to confirm." %}</p>
+                <p>{% trans "Are you sure you want to disable the Two Factor Authentication for this user?" %}</p>
 
                 <ul class="fields">
                     {% block fields %}
-                        {% include "wagtailadmin/shared/field_as_li.html" with field=form.password %}
+                        {% include "wagtailadmin/shared/field_as_li.html" with field=form.confirmation_text %}
                     {% endblock %}
 
                     <li>
-                        <button class="button button--primary" type="submit">{% trans 'Disable 2FA' %}</button>
+                        <button class="button button--primary" type="submit">{% trans 'Confirm' %}</button>
                     </li>
                 </ul>
+
             </section>
         </div>
     </form>
-
 
 {% endblock %}

@@ -220,17 +220,13 @@ class EmailChangePasswordForm(forms.Form):
         return self.user
 
 
-class TWOFAPasswordForm(forms.Form):
+class Disable2FAConfirmationForm(forms.Form):
     confirmation_text = forms.CharField(
         label=_('To proceed, type "disable" below and then click on "confirm":'),
         strip=True,
         # add widget with autofocus to avoid password autofill
         widget=forms.TextInput(attrs={"autofocus": True, "autocomplete": "off"}),
     )
-
-    def __init__(self, user, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.user = user
 
     def clean_confirmation_text(self):
         text = self.cleaned_data["confirmation_text"]
