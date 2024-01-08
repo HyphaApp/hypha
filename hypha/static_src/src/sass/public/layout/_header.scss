@@ -170,23 +170,13 @@
     }
 
     &__logo {
-        fill: $color--white;
+        max-width: none;
 
         &--mobile {
             width: 60px;
-            height: 60px;
 
             @include media-query(tablet-landscape) {
                 display: none;
-            }
-
-            .header--light-bg & {
-                fill: $color--dark-grey;
-            }
-
-            // stylelint-disable-next-line selector-class-pattern
-            .header__menus--mobile.is-visible & {
-                fill: $color--white;
             }
         }
 
@@ -196,27 +186,6 @@
             @include media-query(tablet-landscape) {
                 display: block;
                 width: 215px;
-                height: 50px;
-            }
-        }
-
-        &--desktop-light {
-            @include media-query(tablet-landscape) {
-                display: block;
-            }
-
-            .header--light-bg & {
-                display: none;
-            }
-        }
-
-        &--desktop-dark {
-            display: none;
-
-            .header--light-bg & {
-                @include media-query(tablet-landscape) {
-                    display: block;
-                }
             }
         }
     }
