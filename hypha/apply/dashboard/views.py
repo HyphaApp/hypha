@@ -168,7 +168,7 @@ class AdminDashboardView(MyFlaggedMixin, TemplateView):
         return {
             "count": projects.count(),
             "filterset": filterset,
-            "table": ProjectsDashboardTable(projects[:limit]),
+            "table": ProjectsDashboardTable(data=projects[:limit], prefix="project-"),
             "display_more": projects.count() > limit,
             "url": reverse("apply:projects:all"),
         }
@@ -457,11 +457,16 @@ class ContractingDashboardView(MyFlaggedMixin, TemplateView):
             "count": projects_in_contracting.count(),
             "waiting_for_contract": {
                 "count": waiting_for_contract.count(),
-                "table": ProjectsDashboardTable(data=waiting_for_contract),
+                "table": ProjectsDashboardTable(
+                    data=waiting_for_contract, prefix="project-waiting-contract-"
+                ),
             },
             "waiting_for_contract_approval": {
                 "count": waiting_for_contract_approval.count(),
-                "table": ProjectsDashboardTable(data=waiting_for_contract_approval),
+                "table": ProjectsDashboardTable(
+                    data=waiting_for_contract_approval,
+                    prefix="project-waiting-approval-",
+                ),
             },
         }
 
@@ -569,7 +574,9 @@ class ApplicantDashboardView(TemplateView):
         )
         return {
             "count": historical_projects.count(),
-            "table": ProjectsDashboardTable(data=historical_projects),
+            "table": ProjectsDashboardTable(
+                data=historical_projects, prefix="past-project-"
+            ),
         }
 
     def historical_submission_data(self):

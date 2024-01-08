@@ -32,6 +32,7 @@ class InvoiceDashboardTable(BaseInvoiceTable):
         ]
         model = Invoice
         order_by = ["-requested_at"]
+        template_name = "application_projects/tables/table.html"
         attrs = {"class": "invoices-table"}
 
 
@@ -51,6 +52,7 @@ class InvoiceListTable(BaseInvoiceTable):
         model = Invoice
         orderable = True
         order_by = ["-requested_at"]
+        template_name = "application_projects/tables/table.html"
         attrs = {"class": "invoices-table"}
 
 
@@ -104,6 +106,7 @@ class ProjectsDashboardTable(BaseProjectsTable):
             "end_date",
         ]
         model = Project
+        template_name = "application_projects/tables/table.html"
         orderable = False
         attrs = {"class": "projects-table"}
 
@@ -206,7 +209,8 @@ class ReportListTable(tables.Table):
         ]
         sequence = ["project", "report_period", "..."]
         model = Report
-        attrs = {"class": "responsive-table"}
+        template_name = "application_projects/tables/table.html"
+        attrs = {"class": "projects-table"}
 
     def render_report_period(self, record):
         return f"{record.start} to {record.end_date}"

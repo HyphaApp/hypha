@@ -1,6 +1,19 @@
 {% extends 'django_tables2/table.html' %}
 {% load django_tables2 table_tags review_tags wagtailimages_tags i18n %}
 
+{% block table.tbody.row %}
+    <tr {{ row.attrs.as_html }}>
+        {% for column, cell in row.items %}
+            <td {{ column.attrs.td.as_html }}>
+                {% if column.name != "selected" %}
+                    <span class="mobile-label {{ column.attrs.td.class }}">{{ column.header }}: </span>
+                {% endif %}
+                {% if column.localize == None %}{{ cell }}{% else %}{% if column.localize %}{{ cell|localize }}{% else %}{{ cell|unlocalize }}{% endif %}{% endif %}
+            </td>
+        {% endfor %}
+    </tr>
+{% endblock %}
+
 {% block pagination %}
     {% if table.page and table.paginator.num_pages > 0 %}
         <div class="pagination--wrapper">
