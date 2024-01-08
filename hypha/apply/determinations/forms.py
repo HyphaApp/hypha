@@ -520,8 +520,11 @@ class DeterminationModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMet
             self.fields[field].disabled = True
 
         if self.draft_button_name in self.data:
-            for field in self.fields.values():
-                field.required = False
+            # A determination must be set for saving a draft,
+            # this forces outcome to be validated.
+            unreq_fields = [name for name in self.fields if name != "outcome"]
+            for name in unreq_fields:
+                self.fields[name].required = False
 
         if edit:
             self.fields.pop("outcome")
@@ -548,8 +551,8 @@ class DeterminationModelForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMet
             self.instance.outcome = int(
                 self.cleaned_data[self.instance.determination_field.id]
             )
-            # Need to catch KeyError as outcome field would not exist in case of edit.
         except KeyError:
+            # Need to catch KeyError as outcome field would not exist in case of edit.
             pass
         self.instance.is_draft = self.draft_button_name in self.data
         self.instance.form_data = self.cleaned_data["form_data"]
