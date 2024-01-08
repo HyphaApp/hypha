@@ -83,6 +83,7 @@
             border-color: $color--primary;
 
             &::before {
+                color: $color--white;
                 background: $color--primary;
                 border-color: $color--primary;
                 content: "✔";
