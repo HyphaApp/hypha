@@ -1,11 +1,18 @@
+import os
+import uuid
+
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models import Case, Value, When
 from django.db.models.functions import Concat
+from django.urls import reverse
 from django.utils import timezone
+from django.utils.text import get_valid_filename
 from django.utils.translation import gettext as _
+
+from hypha.apply.utils.storage import PrivateStorage
 
 from .options import MESSAGES
 
@@ -93,6 +100,33 @@ class ActionQueryset(BaseActivityQuerySet):
 
 class ActionManager(ActivityBaseManager):
     type = ACTION
+
+
+def get_attachment_upload_path(instance, filename):
+    return f"activity/attachments/{instance.id}/{get_valid_filename(filename)}"
+
+
+class ActivityAttachment(models.Model):
+    wagtail_reference_index_ignore = True
+
+    uuid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
+
+    activity = models.ForeignKey(
+        "Activity", on_delete=models.CASCADE, related_name="attachments"
+    )
+    file = models.FileField(
+        upload_to=get_attachment_upload_path, storage=PrivateStorage()
+    )
+
+    @property
+    def filename(self):
+        return os.path.basename(self.file.name)
+
+    def __str__(self):
+        return self.filename
+
+    def get_absolute_url(self):
+        return reverse("activity:attachment", kwargs={"file_pk": str(self.uuid)})
 
 
 class Activity(models.Model):

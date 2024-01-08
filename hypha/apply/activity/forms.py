@@ -1,10 +1,17 @@
 from django import forms
+from django.db import transaction
+from django.utils.translation import gettext_lazy as _
+from django_file_form.forms import FileFormMixin
 from pagedown.widgets import PagedownWidget
 
-from .models import Activity
+from hypha.apply.stream_forms.fields import MultiFileField
+
+from .models import Activity, ActivityAttachment
 
 
-class CommentForm(forms.ModelForm):
+class CommentForm(FileFormMixin, forms.ModelForm):
+    attachments = MultiFileField(label=_("Attachments"), required=False)
+
     class Meta:
         model = Activity
         fields = ("message", "visibility")
@@ -33,3 +40,14 @@ class CommentForm(forms.ModelForm):
             visibility.choices = self.visibility_choices
             visibility.initial = visibility.initial[0]
             visibility.widget = forms.HiddenInput()
+
+    @transaction.atomic
+    def save(self, commit=True):
+        instance = super().save(commit=True)
+        added_files = self.cleaned_data["attachments"]
+        if added_files:
+            ActivityAttachment.objects.bulk_create(
+                ActivityAttachment(activity=instance, file=file) for file in added_files
+            )
+
+        return instance

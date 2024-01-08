@@ -177,6 +177,7 @@
         <div class="tabs__content" id="tab-2">
             <div class="feed">
                 {% if not object.is_archive %}
+                    <h4 class="m-0">{% trans "Add communication" %}</h4>
                     {% include "activity/include/comment_form.html" %}
                     {% include "activity/include/comment_list.html" with editable=True %}
                 {% else %}
