@@ -13,15 +13,12 @@ from wagtail.admin.panels import (
 )
 from wagtail.contrib.settings.models import (
     BaseGenericSetting,
-    BaseSiteSetting,
     register_setting,
 )
 from wagtail.fields import RichTextField, StreamField
 from wagtail.models import Orderable, Page
 from wagtail.snippets.models import register_snippet
 from wagtailcache.cache import WagtailCacheMixin, cache_page
-
-from hypha.core.wagtail.admin import register_public_site_setting
 
 
 class LinkFields(models.Model):
@@ -115,31 +112,6 @@ class RelatedPage(Orderable, models.Model):
 
     panels = [
         PageChooserPanel("page"),
-    ]
-
-
-# Generic social fields abstract class to add social image/text to any new content type easily.
-class SocialFields(models.Model):
-    social_image = models.ForeignKey(
-        "images.CustomImage",
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name="+",
-    )
-    social_text = models.CharField(max_length=255, blank=True)
-
-    class Meta:
-        abstract = True
-
-    promote_panels = [
-        MultiFieldPanel(
-            [
-                FieldPanel("social_image"),
-                FieldPanel("social_text"),
-            ],
-            "Social networks",
-        ),
     ]
 
 
@@ -260,33 +232,6 @@ class CallToActionSnippet(models.Model):
         return self.title
 
 
-@register_public_site_setting
-class SocialMediaSettings(BaseSiteSetting):
-    twitter_handle = models.CharField(
-        max_length=255,
-        blank=True,
-        help_text=_("Your Twitter username without the @, e.g. katyperry"),
-    )
-    facebook_app_id = models.CharField(
-        max_length=255,
-        blank=True,
-        help_text=_("Your Facebook app ID."),
-    )
-    default_sharing_text = models.CharField(
-        max_length=255,
-        blank=True,
-        help_text=_(
-            "Default sharing text to use if social text has not been set on a page."
-        ),
-    )
-    site_name = models.CharField(
-        max_length=255,
-        blank=True,
-        default="hypha",
-        help_text=_("Site name, used by Open Graph."),
-    )
-
-
 @register_setting
 class SystemMessagesSettings(BaseGenericSetting):
     wagtail_reference_index_ignore = True
@@ -383,7 +328,7 @@ class SystemMessagesSettings(BaseGenericSetting):
 
 
 @method_decorator(cache_page, name="serve")
-class BasePage(WagtailCacheMixin, SocialFields, ListingFields, Page):
+class BasePage(WagtailCacheMixin, ListingFields, Page):
     wagtail_reference_index_ignore = True
     show_in_menus_default = True
 
@@ -400,9 +345,7 @@ class BasePage(WagtailCacheMixin, SocialFields, ListingFields, Page):
 
     content_panels = Page.content_panels + [FieldPanel("header_image")]
 
-    promote_panels = (
-        Page.promote_panels + SocialFields.promote_panels + ListingFields.promote_panels
-    )
+    promote_panels = Page.promote_panels + ListingFields.promote_panels
 
     def cache_control(self):
         return f"public, s-maxage={settings.CACHE_CONTROL_S_MAXAGE}"

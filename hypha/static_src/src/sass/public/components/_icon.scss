@@ -13,12 +13,6 @@
         fill: $color--white;
     }
 
-    &--footer-social {
-        @include media-query(tablet-portrait) {
-            margin-right: 10px;
-        }
-    }
-
     &--mobile-menu {
         width: 32px;
         height: 28px;
