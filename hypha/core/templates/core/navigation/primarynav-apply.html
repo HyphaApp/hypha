@@ -6,7 +6,7 @@
             {% for item in nav_items %}
                 {% url item.url as target_url%}
                 <li class="nav__item" role="presentation">
-                    {% if item.categories %}
+                    {% if item.sub_items %}
                         <div class="relative inline-block" x-data="{open: false}">
                             <a class="nav__link {% if target_url in request.path %}nav__link--active{% endif %}"
                                href="{% url item.url %}"
@@ -17,10 +17,10 @@
                                @click.prevent="open = ! open">
                                 {{ item.title }}
                             </a>
-                            <div x-cloak x-show="open" x-transition @click.outside="open = false" class="absolute block bg-white min-w-max shadow-lg z-1 mt-7 ">
-                                {% for category in item.categories %}
-                                    <a class="text-black px-4 py-3 block font-normal hover:bg-mid-grey" href="{% url category.url %}">
-                                        {{ category.title }}
+                            <div x-cloak x-trap="open" x-on:keydown.escape="open = false" x-show="open" x-transition @click.outside="open = false" class="absolute block bg-white min-w-max shadow-lg z-1 mt-7 ">
+                                {% for sub_item in item.sub_items %}
+                                    <a class="text-black px-4 py-3 block font-normal hover:bg-mid-grey" href="{% url sub_item.url %}">
+                                        {{ sub_item.title }}
                                     </a>
                                 {% endfor %}
                             </div>

@@ -39,6 +39,12 @@ def is_apply_staff_or_finance(user):
     return True
 
 
+def is_apply_staff_or_reviewer_required(user):
+    if not (user.is_apply_staff or user.is_reviewer):
+        raise PermissionDenied
+    return True
+
+
 def is_apply_staff_or_finance_or_contracting(user):
     if not (user.is_apply_staff or user.is_finance or user.is_contracting):
         raise PermissionDenied
@@ -63,6 +69,11 @@ staff_admin_required = [login_required, user_passes_test(is_apply_staff_admin)]
 
 finance_required = [login_required, user_passes_test(is_finance)]
 
+staff_or_reviewer_required = [
+    login_required,
+    user_passes_test(is_apply_staff_or_reviewer_required),
+]
+
 staff_or_finance_required = [
     login_required,
     user_passes_test(is_apply_staff_or_finance),
@@ -84,3 +95,7 @@ contracting_approver_required = [
 def superuser_decorator(fn):
     check = user_passes_test(lambda user: user.is_superuser)
     return check(fn)
+
+
+def has_dashboard_access(user):
+    return user.can_access_dashboard

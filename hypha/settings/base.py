@@ -473,6 +473,12 @@ AWS_MIGRATION_BUCKET_NAME = env.str("AWS_MIGRATION_BUCKET_NAME", "")
 AWS_MIGRATION_ACCESS_KEY_ID = env.str("AWS_MIGRATION_ACCESS_KEY_ID", "")
 AWS_MIGRATION_SECRET_ACCESS_KEY = env.str("AWS_MIGRATION_SECRET_ACCESS_KEY", "")
 
+# Apply nav items settings
+
+APPLY_NAV_MENU_ITEMS = env.json("APPLY_NAV_MENU_ITEMS", "{}")
+APPLY_NAV_SUBMISSIONS_ITEMS = env.json("APPLY_NAV_SUBMISSIONS_ITEMS", "{}")
+APPLY_NAV_PROJECTS_ITEMS = env.json("APPLY_NAV_PROJECTS_ITEMS", "{}")
+
 # Basic auth settings
 if env.bool("BASIC_AUTH_ENABLED", False):
     MIDDLEWARE.insert(0, "baipw.middleware.BasicAuthIPWhitelistMiddleware")
