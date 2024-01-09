@@ -70,7 +70,7 @@
         &--is-current {
             &::before {
                 background: $color--white;
-                border: calc(var(--dot) / 4) solid $color--tomato;
+                border-color: $color--tomato;
             }
 
             // Fill the bar all the way on accepted/declined.
@@ -83,10 +83,11 @@
             border-color: $color--primary;
 
             &::before {
-                color: $color--white;
+                font-size: map-get($font-sizes, zeta);
+                font-weight: bold;
                 background: $color--primary;
                 border-color: $color--primary;
-                content: "✔";
+                content: "✓";
 
                 #{$root}--small & {
                     background: $color--primary;
