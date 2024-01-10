@@ -3,7 +3,6 @@
 import django.core.validators
 from django.db import migrations, models
 import django.db.models.deletion
-import hypha.public.partner.models
 import wagtail.fields
 import wagtailcache.cache
 
@@ -35,12 +34,8 @@ class Migration(migrations.Migration):
                 (
                     "year",
                     models.IntegerField(
-                        default=hypha.public.partner.models.current_year,
+                        default=0,
                         help_text="Use format: <YYYY>",
-                        validators=[
-                            django.core.validators.MinValueValidator(1984),
-                            hypha.public.partner.models.max_value_current_year,
-                        ],
                     ),
                 ),
                 (
