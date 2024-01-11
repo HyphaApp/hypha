@@ -211,7 +211,6 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "wagtail.contrib.settings.context_processors.settings",
-                "hypha.public.utils.context_processors.global_vars",
                 "social_django.context_processors.backends",
                 "social_django.context_processors.login_redirect",
                 "hypha.apply.projects.context_processors.projects_enabled",
@@ -365,7 +364,7 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env.str("SOCIAL_AUTH_GOOGLE_OAUTH2_KEY", "")
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env.str("SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET", "")
 
 SOCIAL_AUTH_URL_NAMESPACE = "social"
-SOCIAL_AUTH_LOGIN_ERROR_URL = "users_public:login"
+SOCIAL_AUTH_LOGIN_ERROR_URL = "users:login"
 SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL = "users:account"
 
 # For pipelines, see http://python-social-auth.readthedocs.io/en/latest/pipeline.html?highlight=pipelines#authentication-pipeline

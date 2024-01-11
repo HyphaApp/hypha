@@ -1137,7 +1137,6 @@ class TestApplicantSupportingDocumentPrivateMedia(BaseViewTestCase):
         self.assertEqual(response.status_code, 403)
 
 
-@override_settings(ROOT_URLCONF="hypha.apply.urls")
 class TestProjectListView(TestCase):
     def test_staff_can_access_project_list_page(self):
         ProjectFactory(status=CONTRACTING)

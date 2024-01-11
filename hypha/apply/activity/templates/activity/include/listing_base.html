@@ -70,7 +70,7 @@
                     {% with url=activity.related_object.get_absolute_url %}
                         {% if url %}
                             <a href="{{ url }}" target="_blank" class="feed__related-item">
-                                {% trans "View " %}{{ activity.related_object|model_verbose_name }} <svg class="icon"><use xlink:href="#arrow-head-pixels--solid"></use></svg>
+                                {% trans "View " %}{{ activity.related_object|model_verbose_name }} <svg class="icon inline"><use xlink:href="#arrow-head-pixels--solid"></use></svg>
                             </a>
                         {% endif %}
                     {% endwith %}

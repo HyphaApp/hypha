@@ -837,9 +837,7 @@ class ApplicationSubmission(
         return reduce(operator.add, search_vectors)
 
     def get_absolute_url(self):
-        return reverse(
-            "funds:submissions:detail", urlconf="hypha.apply.urls", args=(self.id,)
-        )
+        return reverse("funds:submissions:detail", args=(self.id,))
 
     def __str__(self):
         return f"{self.title} from {self.full_name} for {self.page.title}"

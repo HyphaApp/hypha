@@ -2,7 +2,6 @@ import logging
 
 from django.conf import settings
 from django.core.exceptions import MiddlewareNotUsed
-from django.urls import set_urlconf
 from django.utils.log import log_response
 from django.utils.translation import gettext_lazy as _
 from social_core.exceptions import AuthForbidden
@@ -62,7 +61,6 @@ class TwoFactorAuthenticationMiddleware:
         return self.get_response(request)
 
     def _reject(self, request, reason):
-        set_urlconf("hypha.apply.urls")
         response = mfa_failure_view(request, reason=reason)
         log_response(
             "Forbidden (%s): %s",
