@@ -133,10 +133,6 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
         # template attribute is ignored by children
         return "funds/application_base.html"
 
-    def detail(self):
-        # The location to find out more information
-        return self.application_public.first()
-
     @cached_property
     def open_round(self):
         return RoundBase.objects.child_of(self).open().first()
@@ -568,10 +564,6 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
             ObjectList(WorkflowStreamForm.promote_panels, heading=_("Promote")),
         ]
     )
-
-    def detail(self):
-        # The location to find out more information
-        return self.lab_public.first()
 
     def get_submit_meta_data(self, **kwargs):
         return super().get_submit_meta_data(

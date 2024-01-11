@@ -11,8 +11,6 @@ import wagtail.embeds.blocks
 import wagtail.images.blocks
 import wagtail.snippets.blocks
 
-import hypha
-
 
 class Migration(migrations.Migration):
     initial = True
@@ -190,11 +188,6 @@ class Migration(migrations.Migration):
                                         ),
                                     )
                                 ),
-                            ),
-                            ("project_list", hypha.public.funds.blocks.ProjectsBlock()),
-                            (
-                                "reviewer_list",
-                                hypha.public.funds.blocks.ReviewersBlock(),
                             ),
                         )
                     ),

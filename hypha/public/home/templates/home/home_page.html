@@ -56,48 +56,10 @@
         <div class="wrapper wrapper--medium wrapper--page-title">
             <h1 class="header__title header__title--homepage">{% block page_title %}{{ page.title }}{% endblock %}</h1>
             <p class="header__strapline">{{ page.strapline }}</p>
-            <a class="link link--button header__link" href="{% pageurl page.strapline_link %}">{{ page.strapline_link_text }}</a>
         </div>
-        <svg class="header__icon header__icon--pixels header__icon--pixels-left-home"><use xlink:href="#hero-home-left-pixels"></use></svg>
-        <svg class="header__icon header__icon--pixels header__icon--pixels-right-home"><use xlink:href="#hero-home-right-pixels"></use></svg>
     </header>
 {% endblock %}
 
 {% block content %}
-    {% if page.news_title and page.news_link and page.news_link_text %}
-        <div class="wrapper wrapper--inner-space-large">
-            <h2 class="heading heading--center heading--focus-areas">{{ page.news_title }}</h2>
-            <div class="wrapper wrapper--center">
-                <h5 class="heading heading--contains-link">
-                    <a class="link link--arrow-pixels-blue" href="{% pageurl page.news_link %}">
-                        {{ page.news_link_text }}
-                        <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
-                    </a>
-                </h5>
-            </div>
-        </div>
-    {% endif %}
-    <div class="wrapper wrapper--inner-space-large">
-        <h2 class="heading heading--center heading--focus-areas">{{ page.our_work_title }}</h2>
-        <div class="grid grid--focus-areas">
-            {% for block in page.our_work %}
-                {% include_block block %}
-            {% endfor %}
-        </div>
-        <div class="wrapper wrapper--center">
-            <h5 class="heading heading--contains-link">
-                <a class="link link--arrow-pixels-blue" href="{% pageurl page.our_work_link %}">
-                    {{ page.our_work_link_text }}
-                    <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
-                </a>
-            </h5>
-        </div>
-    </div>
-
-    {% include "home/includes/list_block.html" with bg_color="dark" arrow_color="white" title=page.funds_title intro=page.funds_intro link=page.funds_link link_text=page.funds_link_text listing=fund_list %}
-
-    {% include "home/includes/list_block.html" with bg_color="light-grey" arrow_color="blue" card_modifier="card--lab" title=page.labs_title intro=page.labs_intro link=page.labs_link link_text=page.labs_link_text listing=lab_list %}
-
-    {% include "home/includes/list_block.html" with bg_color="dark" arrow_color="white" title=page.rfps_title intro=page.rfps_intro listing=rfps_list %}
 
 {% endblock %}
