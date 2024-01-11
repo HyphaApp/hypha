@@ -35,8 +35,6 @@ Wagtail is used in Hypha to construct and manage forms, pages, users and user ro
 
 **Hooks**: modifying the view-level behavior. Used in Hypha for copied round pages
 
-**Blocks**: components used to build the views and input fields for webpages. Wagtail blocks are used to construct the main `streamfield` block to be inherited by Pages (`StoryBlock`) — composed of: `ImageBlock`, `DocumentBlock`, `QuoteBlock`, `BoxBlock`, `MoreBlock`, `ApplyLinkBlock`
-
 ### Media
 
 Media is encouraged to be split into two distinct storage locations. A Public and a Private location, applicant media should exist only in the Private location. 
