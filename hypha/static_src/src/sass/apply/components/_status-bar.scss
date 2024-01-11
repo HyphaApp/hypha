@@ -22,6 +22,7 @@
     }
 
     &--small {
+        --tooltip-max-width: 10ch;
         width: 100%;
         max-width: 750px;
         margin-right: 30px;
@@ -83,8 +84,9 @@
             border-color: $color--primary;
 
             &::before {
-                font-size: map-get($font-sizes, zeta);
-                font-weight: bold;
+                font-size: map-get($font-sizes, milli);
+                font-weight: $weight--bold;
+                color: $color--white;
                 background: $color--primary;
                 border-color: $color--primary;
                 content: "✓";
