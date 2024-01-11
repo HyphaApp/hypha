@@ -26,15 +26,10 @@
     }
 
     &__logo {
-        fill: $color--default;
+        max-width: none;
 
         &--mobile {
             width: 60px;
-            height: 60px;
-
-            .is-visible & {
-                fill: $color--white;
-            }
 
             @include media-query(tablet-landscape) {
                 display: none;
@@ -46,8 +41,7 @@
 
             @include media-query(tablet-landscape) {
                 display: block;
-                width: 160px;
-                height: 40px;
+                width: 215px;
             }
         }
     }

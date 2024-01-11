@@ -9,6 +9,7 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
+from django.template.defaultfilters import mark_safe
 from django.template.response import TemplateResponse
 from django.utils.translation import gettext as _
 from django.views.decorators.vary import vary_on_headers
@@ -16,7 +17,9 @@ from wagtail.admin.auth import any_permission_required
 from wagtail.admin.filters import WagtailFilterSet
 from wagtail.admin.forms.search import SearchForm
 from wagtail.compat import AUTH_USER_APP_LABEL, AUTH_USER_MODEL_NAME
-from wagtail.users.views.groups import GroupViewSet
+from wagtail.users.views.groups import GroupViewSet, IndexView
+
+from .models import GroupDesc
 
 User = get_user_model()
 
@@ -200,12 +203,48 @@ def index(request, *args):
         )
 
 
+class CustomGroupIndexView(IndexView):
+    """
+    Overriding of wagtail.users.views.groups.IndexView to allow for the addition of help text to the displayed group names. This is done utilizing the get_queryset method
+    """
+
+    def get_queryset(self):
+        """
+        Overriding the normal queryset that would return all Group objects, this returnd an iterable of groups with custom names containing HTML help text.
+        """
+        group_qs = super().get_queryset()
+
+        custom_groups = []
+
+        for group in group_qs:
+            help_text = GroupDesc.get_from_group(group)
+            if help_text:
+                group.name = mark_safe(
+                    f"{group.name}<p class=group-help-text>{help_text}</p>"
+                )
+
+            custom_groups.append(group)
+
+        return custom_groups
+
+
 class CustomGroupViewSet(GroupViewSet):
     """
     Overriding the wagtail.users.views.groups.GroupViewSet just to use custom users view(index)
     when getting all users for a group.
     """
 
+    index_view_class = CustomGroupIndexView
+
     @property
     def users_view(self):
         return index
+
+    def __init__(self, name, **kwargs):
+        super().__init__(name, **kwargs)
+
+    @property
+    def index_view(self):
+        return self.index_view_class.as_view(
+            **self.get_index_view_kwargs(),
+        )

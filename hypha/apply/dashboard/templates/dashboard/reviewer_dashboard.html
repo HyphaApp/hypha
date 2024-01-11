@@ -69,15 +69,6 @@
             </div>
         {% endif %}
 
-        {% if paf_waiting_for_assignment.count %}
-            <div id="paf_waiting_for_assignment" class="wrapper wrapper--bottom-space">
-                <h2 class="text-xl mb-2">
-                    {% trans "PAF waiting for assignee" %}
-                </h2>
-                {% render_table paf_waiting_for_assignment.table %}
-            </div>
-        {% endif %}
-
         {% if my_inactive_submissions.data %}
             <div class="wrapper wrapper--bottom-space">
                 <h2 class="text-xl mb-2">

@@ -3,15 +3,14 @@ scout-apm==2.26.1
 sentry-sdk==1.16.0
 
 # Production dependencies
-Babel==2.11.0
-bleach==5.0.0
+Babel==2.13.1
 boto3==1.28.82
 celery==5.2.7
 click==8.1.7
 dj-database-url==2.1.0
 django-anymail==10.2
 django-basic-auth-ip-whitelist==0.5
-django-bleach==3.0.1
+django-bleach==3.1.0
 django-countries==7.5.1
 django-elevate==2.0.3
 django-extensions==3.2.3
@@ -34,7 +33,7 @@ django-tables2==2.5.1
 django-tinymce==3.5.0
 django-two-factor-auth==1.15.5
 django-web-components==0.1.1
-django==4.2.8
+django==4.2.9
 djangorestframework-api-key==2.3.0
 djangorestframework==3.14.0
 drf-nested-routers==0.93.4
@@ -45,12 +44,11 @@ heroicons==2.5.0
 python-docx<1.0.0
 htmldocx==0.0.6
 lark==1.1.8
-mailchimp3==3.0.17
 mistune==3.0.1
-more-itertools==9.0.0
-phonenumberslite==8.13.23
+more-itertools==10.1.0
+phonenumberslite==8.13.26
 Pillow>=10.0.1
-psycopg[binary]==3.1.12
+psycopg[binary]==3.1.14
 qrcode==7.4.2
 reportlab==3.6.13
 social_auth_app_django==5.0.0

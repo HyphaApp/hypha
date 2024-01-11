@@ -1,5 +1,29 @@
+// stylelint-disable selector-max-compound-selectors
+
 .projects-table {
     @include table-ordering-styles;
+
+    thead {
+        display: none;
+
+        @include media-query($table-breakpoint) {
+            display: table-header-group;
+        }
+    }
+
+    tbody {
+        td {
+            // stylelint-disable-next-line force-element-nesting
+            > span.mobile-label {
+                display: inline-block;
+                width: 90px;
+
+                @include media-query($table-breakpoint) {
+                    display: none;
+                }
+            }
+        }
+    }
 
     .reporting {
         .icon {
@@ -13,4 +37,26 @@
 
 .invoices-table {
     @include table-ordering-styles;
+
+    thead {
+        display: none;
+
+        @include media-query($table-breakpoint) {
+            display: table-header-group;
+        }
+    }
+
+    tbody {
+        td {
+            // stylelint-disable-next-line force-element-nesting
+            > span.mobile-label {
+                display: inline-block;
+                width: 90px;
+
+                @include media-query($table-breakpoint) {
+                    display: none;
+                }
+            }
+        }
+    }
 }

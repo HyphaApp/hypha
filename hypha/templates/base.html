@@ -4,10 +4,10 @@
 <html class="no-js" lang="{{ LANGUAGE_CODE }}">
     <head>
         {# TODO fallbacks if page is not defined e.g. for 404 page #}
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
         <title>{% block title_prefix %}{% if current_site.site_name %}{{ current_site.site_name }} | {% endif %}{% endblock %}{% block title %}{% if page.seo_title %}{{ page.seo_title }}{% else %}{{ page.title }}{% endif %}{% endblock %}{% block title_suffix %}{{ TITLE_SUFFIX }}{% endblock %}</title>
-        <meta name="description" content="{% if page.search_description %}{{ page.search_description }}{% else %}{{ page.listing_summary }}{% endif %}" />
+        <meta name="description" content="{% if page.search_description %}{{ page.search_description }}{% else %}{{ page.listing_summary }}{% endif %}">
         {% block feedlinks %}{% endblock %}
 
         <!-- favicons -->
@@ -27,29 +27,13 @@
 
         <!-- Twitter summary card - see https://dev.twitter.com/cards/types/summary -->
         <!--  and https://dev.twitter.com/cards/getting-started -->
-        <meta name="twitter:card" content="summary" />
-        <meta name="twitter:site" content="@{{ settings.utils.SocialMediaSettings.twitter_handle }}" />
-        <meta name="twitter:title" content="{{ page.title }}" />
-        <meta name="twitter:description" content="{{ page|social_text:current_site }}">
-        {% if page.social_image  %}
-            {% image page.social_image width-320 as social_img %}
-            <meta name="twitter:image" content="{% if page.social_image.is_stored_locally %}{{ current_site.root_url }}{% endif %}{{ social_img.url }}">
-        {% else %}
-            <meta name="twitter:image" content="{{ current_site.root_url }}{% static 'images/otf_social.jpg' %}">
-        {% endif %}
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:title" content="{{ page.title }}">
 
         <!--facebook opengraph tags-->
-        <meta property="fb:app_id" content="{{ settings.utils.SocialMediaSettings.facebook_app_id }}" />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="{{ page.url }}" />
-        <meta property="og:title" content="{{ page.title }}" />
-        {% if page.social_image %}
-            <meta property="og:image" content="{% if page.social_image.is_stored_locally %}{{ current_site.root_url }}{% endif %}{{ social_img.url }}" />
-        {% else %}
-            <meta property="og:image" content="{{ current_site.root_url }}{% static 'images/otf_social.jpg' %}" />
-        {% endif %}
-        <meta property="og:description" content="{{ page|social_text:current_site }}" />
-        <meta property="og:site_name" content="{{ settings.utils.SocialMediaSettings.site_name }}" />
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="{{ page.url }}">
+        <meta property="og:title" content="{{ page.title }}">
 
         <link rel="stylesheet" href="{% static 'css/normalize.css' %}">
         <link rel="stylesheet" href="{% static 'css/public/main.css' %}">
@@ -89,25 +73,41 @@
                     <a href="{{ settings.utils.SystemMessagesSettings.site_logo_link|default:"/" }}" aria-label="Home link">
                         {% if settings.utils.SystemMessagesSettings.site_logo_default %}
                             {% image settings.utils.SystemMessagesSettings.site_logo_default width-215 as logo_default %}
-                            <img class="header__logo header__logo--desktop" src="{{ logo_default.url }}">
+                            <img class="header__logo header__logo--desktop"
+                                 width="215"
+                                 src="{{ logo_default.url }}"
+                                 alt="{{ settings.utils.SystemMessagesSettings.site_logo_default.alt }}"
+                            >
                             {% if settings.utils.SystemMessagesSettings.site_logo_mobile %}
                                 {% image settings.utils.SystemMessagesSettings.site_logo_mobile width-60 as logo_mobile %}
-                                <img class="header__logo header__logo--mobile" src="{{ logo_mobile.url }}">
+                                <img class="header__logo header__logo--mobile"
+                                     width="60"
+                                     src="{{ logo_mobile.url }}"
+                                     alt="{{ settings.utils.SystemMessagesSettings.site_logo_mobile.alt }}"
+                                >
                             {% else %}
-                                <img class="header__logo header__logo--mobile" src="{{ logo_default.url }}">
+                                <img class="header__logo header__logo--mobile"
+                                     width="60"
+                                     src="{{ logo_default.url }}"
+                                     alt="{{ settings.utils.SystemMessagesSettings.site_logo_default.alt }}"
+                                >
                             {% endif %}
                         {% else %}
-                            <svg class="header__logo header__logo--desktop header__logo--desktop-light"><use xlink:href="#logo-desktop"></use></svg>
-                            <svg class="header__logo header__logo--desktop header__logo--desktop-dark"><use xlink:href="#logo-desktop--dark"></use></svg>
-                            <svg class="header__logo header__logo--mobile"><use xlink:href="#logo-mobile"></use></svg>
+                            <img class="header__logo header__logo--desktop"
+                                 width="215"
+                                 height="40"
+                                 src="{% static 'images/logo.png' %}"
+                                 alt="Hypha logo"
+                            >
+                            <img class="header__logo header__logo--mobile"
+                                 width="60" height="60"
+                                 src="{% static 'images/logo-small.png' %}"
+                                 alt="Hypha logo"
+                            >
                         {% endif %}
                     </a>
 
                     <div class="header__inner header__inner--mobile-buttons">
-                        <button class="button js-search-toggle" aria-haspopup="true">
-                            <svg class="header__icon header__icon--open-search header__icon--open-search-menu-closed icon icon--mobile-menu"><use xlink:href="#magnifying-glass"></use></svg>
-                            <svg class="header__icon header__icon--close-search header__icon--close-search-menu-closed icon icon--mobile-menu"><use xlink:href="#cross"></use></svg>
-                        </button>
                         <button class="button button--left-space js-mobile-menu-toggle" aria-haspopup="true">
                             <svg class="icon icon--mobile-menu"><use xlink:href="#mobile-menu-toggle"></use></svg>
                         </button>
@@ -121,10 +121,6 @@
                                 {% primarynav %}
                             {% endcache %}
                         {% endif %}
-                        <button class="button button--contains-icons button--left-space js-search-toggle" aria-haspopup="true" aria-label="Toggle desktop search">
-                            <svg class="header__icon header__icon--open-search icon"><use xlink:href="#magnifying-glass"></use></svg>
-                            <svg class="header__icon header__icon--close-search icon"><use xlink:href="#cross"></use></svg>
-                        </button>
                     </section>
 
                     <section class="header__menus header__menus--mobile">
@@ -132,19 +128,20 @@
                             <a href="{{ settings.utils.SystemMessagesSettings.site_logo_link|default:"/" }}" aria-label="Home link">
                                 {% if settings.utils.SystemMessagesSettings.site_logo_mobile %}
                                     {% image settings.utils.SystemMessagesSettings.site_logo_mobile width-60 as logo_mobile %}
-                                    <img class="header__logo header__logo--mobile" src="{{ logo_mobile.url }}">
+                                    <img class="header__logo header__logo--mobile"
+                                         width="60"
+                                         src="{{ logo_mobile.url }}"
+                                         alt="{{ settings.utils.SystemMessagesSettings.site_logo_mobile.alt }}"
+                                    >
                                 {% else %}
-                                    <svg class="header__logo header__logo--mobile"><use xlink:href="#logo-mobile"></use></svg>
+                                    <img class="header__logo header__logo--mobile"
+                                         width="60"
+                                         height="60"
+                                         src="{% static 'images/logo-small.png' %}"
+                                         alt="Hypha logo"
+                                    >
                                 {% endif %}
                             </a>
-                            <div class="header__inner header__inner--mobile-buttons">
-                                <button class="button js-mobile-search-toggle" aria-haspopup="true" aria-label="Toggle mobile search">
-                                    <svg class="header__icon header__icon--open-search icon icon--mobile-menu"><use xlink:href="#magnifying-glass"></use></svg>
-                                </button>
-                                <button class="button button--left-space js-mobile-menu-close">
-                                    <svg class="header__icon header__icon--cross icon icon--mobile-menu"><use xlink:href="#cross"></use></svg>
-                                </button>
-                            </div>
                         </div>
                         {% if settings.utils.SystemMessagesSettings.nav_content %}
                             {{ settings.utils.SystemMessagesSettings.nav_content|safe }}
@@ -170,15 +167,6 @@
                     </div>
                 </div>
 
-                <div class="header__search">
-                    <form action="{{ PUBLIC_SITE.root_url }}{% url 'search' %}" method="get" role="search" class="form form--header-search-desktop">
-                        <button class="button" type="submit" aria-label="Search">
-                            <svg class="icon icon--magnifying-glass icon--search"><use xlink:href="#magnifying-glass"></use></svg>
-                        </button>
-                        <input class="input input--transparent input--secondary" type="text" placeholder="Search…" name="query"{% if search_query %} value="{{ search_query }}{% endif %}" aria-label="Search input">
-                    </form>
-                </div>
-
                 <div class="wrapper wrapper--small wrapper--page-title">
                     {% block breadcrumbs %}
                         {% include "navigation/breadcrumbs.html" %}
@@ -196,25 +184,10 @@
 
         <footer class="footer">
             <div class="grid grid--two wrapper wrapper--large">
-                {% if newsletter_enabled %}
-                    <div class="footer__inner">
-                        {% include "mailchimp/newsletter_signup.html" %}
-                    </div>
-                {% endif %}
-
                 <div class="footer__inner">
-                    <div class="footer__social-links">
-                        {% if settings.utils.SocialMediaSettings.twitter_handle %}
-                            <a href="https://twitter.com/{{ settings.utils.SocialMediaSettings.twitter_handle }}">
-                                <svg class="icon icon--footer-social"><use xlink:href="#twitter"></use></svg>
-                                <h4 class="heading heading--no-margin">@{{ settings.utils.SocialMediaSettings.twitter_handle }}</h4>
-                            </a>
-                        {% endif %}
-                    </div>
                     {{ settings.utils.SystemMessagesSettings.footer_content|safe }}
                 </div>
             </div>
-
         </footer>
 
         {% cookie_banner %}

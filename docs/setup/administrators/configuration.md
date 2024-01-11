@@ -160,6 +160,14 @@ Possible values are: fund, round, status, lead, reviewers, screening_statuses, c
 
     SUBMISSIONS_TABLE_EXCLUDED_FIELDS = env.list('SUBMISSIONS_TABLE_EXCLUDED_FIELDS', [])
 
+### Default visibility for reviews.
+
+Possible values are: 'reviewers' or 'private'. 
+Private: Visible only to staff.
+Reviewers: Visible to other reviewers and staff.
+
+    REVIEW_VISIBILITY_DEFAULT = env.str('REVIEW_VISIBILITY_DEFAULT', 'private')
+
 ### Should submission automatically transition after all reviewer roles are assigned.
 
     TRANSITION_AFTER_ASSIGNED = env.bool('TRANSITION_AFTER_ASSIGNED', False)

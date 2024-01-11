@@ -6473,38 +6473,6 @@ msgstr ""
 msgid "Promoted RFPs"
 msgstr ""
 
-#: hypha/public/mailchimp/forms.py:6
-msgid "Email Address"
-msgstr ""
-
-#: hypha/public/mailchimp/forms.py:7
-msgid "First Name"
-msgstr ""
-
-#: hypha/public/mailchimp/forms.py:8
-msgid "Last Name"
-msgstr ""
-
-#: hypha/public/mailchimp/models.py:18
-msgid "The title of the newsletter signup form."
-msgstr ""
-
-#: hypha/public/mailchimp/templates/mailchimp/newsletter_signup.html:16
-msgid "Sign up"
-msgstr ""
-
-#: hypha/public/mailchimp/views.py:86
-msgid "Sorry, there were errors with your form."
-msgstr ""
-
-#: hypha/public/mailchimp/views.py:91
-msgid "Sorry, there has been an problem. Please try again later."
-msgstr ""
-
-#: hypha/public/mailchimp/views.py:98
-msgid "Thank you for subscribing"
-msgstr ""
-
 #: hypha/public/navigation/models.py:14
 msgid "Leave blank to use the page's own title"
 msgstr ""
@@ -6659,22 +6627,6 @@ msgid ""
 "is not defined."
 msgstr ""
 
-#: hypha/public/utils/models.py:268
-msgid "Your Twitter username without the @, e.g. katyperry"
-msgstr ""
-
-#: hypha/public/utils/models.py:273
-msgid "Your Facebook app ID."
-msgstr ""
-
-#: hypha/public/utils/models.py:279
-msgid "Default sharing text to use if social text has not been set on a page."
-msgstr ""
-
-#: hypha/public/utils/models.py:286
-msgid "Site name, used by Open Graph."
-msgstr ""
-
 #: hypha/public/utils/models.py:303
 msgid "Default site logo"
 msgstr ""
@@ -6725,22 +6677,6 @@ msgstr ""
 
 #: hypha/templates/includes/relatedcontent.html:2
 msgid "You might also like…"
-msgstr ""
-
-#: hypha/templates/includes/share.html:4
-msgid "Share"
-msgstr ""
-
-#: hypha/templates/includes/share.html:8
-msgid "Share on Twitter"
-msgstr ""
-
-#: hypha/templates/includes/share.html:14
-msgid "Share on LinkedIn"
-msgstr ""
-
-#: hypha/templates/includes/share.html:21
-msgid "Share on Facebook"
 msgstr ""
 
 #: hypha/templates/password_required.html:4
