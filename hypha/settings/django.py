@@ -37,7 +37,6 @@ INSTALLED_APPS = [
     "django_web_components",
     "wagtail.contrib.modeladmin",
     "wagtail.contrib.settings",
-    "wagtail.contrib.search_promotions",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
     "wagtail.embeds",
