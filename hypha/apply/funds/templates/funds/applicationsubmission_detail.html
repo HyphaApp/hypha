@@ -91,7 +91,14 @@
                 {% else %}
                     <article class="wrapper--sidebar--inner">
                         <header class="heading heading--submission-meta heading-text zeta">
-                            <span>{% trans "Submitted" %} <strong><relative-time datetime={{ object.submit_time|date:"c" }}>{{ object.submit_time|date:"SHORT_DATETIME_FORMAT" }}</relative-time></strong> {% trans "by" %} <strong>{{ object.user.get_full_name }}</strong></span>
+                            <span>
+                                {% if object.is_draft %}
+                                    {% trans "Drafted " %}
+                                {% else %}
+                                    {% trans "Submitted " %}
+                                {% endif %}
+                                <strong><relative-time datetime={{ object.submit_time|date:"c" }}>{{ object.submit_time|date:"SHORT_DATETIME_FORMAT" }}</relative-time></strong> {% trans "by" %} <strong>{{ object.user.get_full_name }}</strong>
+                            </span>
                             <span>{% trans "Updated" %} <strong><relative-time datetime={{ object.live_revision.timestamp|date:"c" }}>{{ object.live_revision.timestamp|date:"SHORT_DATETIME_FORMAT" }}</relative-time></strong> {% trans "by" %} <strong>{{ object.user.get_full_name }}</strong></span>
                             <div class="wrapper wrapper--submission-actions">
                                 {% if perms.funds.delete_applicationsubmission %}

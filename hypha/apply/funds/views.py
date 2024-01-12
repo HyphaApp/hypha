@@ -1429,6 +1429,10 @@ class ApplicantSubmissionEditView(BaseSubmissionEditView):
             return assigned_fund.open_round
         return False
 
+    def buttons(self):
+        yield from super().buttons()
+        yield ("preview", "white", _("Preview"))
+
     def form_valid(self, form):
         self.object.new_data(form.cleaned_data)
 
@@ -1440,6 +1444,13 @@ class ApplicantSubmissionEditView(BaseSubmissionEditView):
                 if current_round:
                     self.object.round = current_round
             self.object.save(update_fields=["submit_time", "round"])
+
+        if self.object.status == DRAFT_STATE and "preview" in self.request.POST:
+            self.object.create_revision(draft=True, by=self.request.user)
+            form.delete_temporary_files()
+            # messages.success(self.request, _("Draft saved"))
+            context = self.get_context_data()
+            return render(self.request, "funds/application_preview.html", context)
 
         if "save" in self.request.POST:
             return self.save_draft_and_refresh_page(form=form)
