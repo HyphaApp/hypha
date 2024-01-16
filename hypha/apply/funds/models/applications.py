@@ -93,14 +93,6 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
         related_name="+",
     )
 
-    preview_required = models.BooleanField(
-        verbose_name="Require Preview Before Submitting",
-        default=False,
-        help_text=_(
-            "Require the applicant to view a preview of their application before submitting."
-        ),
-    )
-
     description = models.TextField(null=True, blank=True)
 
     # higher the weight means top priority, 100th will be on top.
@@ -179,7 +171,6 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
         FieldPanel("slack_channel"),
         FieldPanel("activity_digest_recipient_emails"),
         FieldPanel("show_deadline"),
-        FieldPanel("preview_required"),
     ]
 
     edit_handler = TabbedInterface(
@@ -508,8 +499,8 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
             context = self.get_context(request)
             context["form"] = form
             context["show_all_group_fields"] = True if copy_open_submission else False
-            # Since the `preview_required` bool is stored in the fund, we need to go a level up to get it
-            context["preview_required"] = self.get_parent().specific.preview_required
+            # Check if a preview is required before submitting the application
+            context["require_preview"] = settings.REQUIRE_PREVIEW
             return render(request, self.get_template(request), context)
 
         # We hide the round as only the open round is used which is displayed through the
@@ -548,14 +539,6 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
         related_name="+",
     )
 
-    preview_required = models.BooleanField(
-        verbose_name="Require Preview Before Submitting",
-        default=False,
-        help_text=_(
-            "Require the applicant to view a preview of their application before submitting."
-        ),
-    )
-
     description = models.TextField(null=True, blank=True)
 
     # higher the weight means top priority, 100th will be on top.
@@ -590,7 +573,6 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
         FieldPanel("weight"),
         FieldPanel("slack_channel"),
         FieldPanel("activity_digest_recipient_emails"),
-        FieldPanel("preview_required"),
     ]
 
     edit_handler = TabbedInterface(
@@ -658,8 +640,8 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
 
         context = self.get_context(request)
         context["form"] = form
-        # Since labs don't require a round like funds do, the object contains the `preview_required` bool
-        context["preview_required"] = self.specific.preview_required
+        # Check if a preview is required before submitting the application
+        context["require_preview"] = settings.REQUIRE_PREVIEW
         return TemplateResponse(request, self.get_template(request), context)
 
 

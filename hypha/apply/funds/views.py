@@ -1430,8 +1430,12 @@ class ApplicantSubmissionEditView(BaseSubmissionEditView):
         return False
 
     def buttons(self):
-        yield from super().buttons()
-        yield ("preview", "white", _("Preview"))
+        if settings.REQUIRE_PREVIEW:
+            yield ("preview", "primary", _("Preview and submit"))
+            yield ("save", "white", _("Save draft"))
+        else:
+            yield from super().buttons()
+            yield ("preview", "white", _("Preview"))
 
     def form_valid(self, form):
         self.object.new_data(form.cleaned_data)
