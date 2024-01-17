@@ -15,17 +15,12 @@
                     <a class="listing" href="{% pageurl subpage %}">
                         {% if subpage.icon %}
                             {% image subpage.icon fill-180x180 class="listing__image" %}
-                        {% else %}
-                            <div class="listing__image listing__image--default">
-                                <svg><use xlink:href="#logo-mobile-no-text"></use></svg>
-                            </div>
                         {% endif %}
 
                         {% if subpage.can_open %}
                             <p class="listing__deadline">
                                 {% if subpage.is_open %}
                                     {% if subpage.deadline and False %}
-                                        <svg class="icon icon--calendar icon--small"><use xlink:href="#calendar"></use></svg>
                                         <span>Next deadline: {{ subpage.deadline|date:"M j, Y" }}</span>
                                     {% else %}
                                         Open
