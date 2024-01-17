@@ -132,7 +132,7 @@
                     {% endif %}
                     {% if object.user_has_updated_details and not user.is_applicant %}
                         <a class="docs-block__icon-link" href="{% url 'apply:projects:approval' pk=project.pk %}">
-                            <svg class="icon icon--project-eye"><use xlink:href="#eye"></use></svg>
+                            {% heroicon_micro "eye" class="inline mr-1 w-4 h-4" aria_hidden=true %}
                             {% trans "View" %}
                         </a>
                     {% endif %}
