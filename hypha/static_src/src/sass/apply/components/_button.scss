@@ -98,6 +98,7 @@
 
     &--cookieconsent {
         @include button(transparent, $color--white);
+        display: inline;
 
         &:focus,
         &:hover {
