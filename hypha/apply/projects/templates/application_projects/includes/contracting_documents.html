@@ -3,10 +3,17 @@
 
 <div class="docs-block wrapper--outer-space-large" {% if collapsible_header %} x-data="{ collapsed: true }" {% endif %}>
     <div class="docs-block__header" id="contract-documents-section" {% if collapsible_header %} x-on:click="collapsed = ! collapsed" role="button" aria-label="Toggle Contract documents visibility" aria-controls="contract-documents-elements" {% endif %}>
-        <div class="docs-block__heading" >{% trans "Contracting documents" %}
+        <div class="flex justify-between w-full" >
+            <h2 class="text-lg font-semibold m-0">
+                {% trans "Contracting documents" %}
+            </h2>
+
             {% if collapsible_header %}
-                <svg class="icon icon--caret-up" x-show="!collapsed" aria-hidden=true><use xlink:href="#caret-up"></use></svg>
-                <svg class="icon icon--caret-down" x-show="collapsed" aria-hidden=true><use xlink:href="#caret-down"></use></svg>
+                <button class="align-middle ml-1 transform transition-transform" x-bind:class="collapsed ? '': '-rotate-90' ">
+                    {% heroicon_outline 'chevron-left' size=20 stroke_width=2 aria_hidden=true %}
+
+                    <span class="sr-only" x-text="collapsed ? 'expand' : 'collapse'">expand</span>
+                </button>
             {% endif %}
         </div>
         {% user_can_upload_contract object request.user as can_upload_contract %}
