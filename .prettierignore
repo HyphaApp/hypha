@@ -11,10 +11,12 @@
 # Ignore all files in the static & media directory.
 static_compiled/**
 media/**
+/static/**
 
 # Ignore all files in the virtualenv directory.
 .venv/**
 venv/**
+.ruff_cache/**
 
 # Ignore node files
 node_modules/**

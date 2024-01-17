@@ -67,11 +67,11 @@ jobs:
         with:
           python-version-file: ".python-version"
       - name: Install python dependencies
-        run: pip install `grep -E "ruff|djhtml|black" requirements-dev.txt`
-      - name: Run ruff
+        run: pip install `grep -E "ruff|djhtml" requirements-dev.txt`
+      - name: Run linting
         run: ruff check --output-format=github .
-      - name: Run black
-        run: black . --check
+      - name: Run formating check
+        run: ruff format --check .
       - name: Run djhtml
         run: djhtml hypha/ --check
 

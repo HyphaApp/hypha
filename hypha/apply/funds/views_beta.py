@@ -309,7 +309,9 @@ def bulk_update_submissions_status(request: HttpRequest) -> HttpResponse:
 
     submissions = ApplicationSubmission.objects.filter(id__in=submission_ids)
 
-    redirect: HttpResponse = BatchDeterminationCreateView.should_redirect(request, submissions, transitions)  # type: ignore
+    redirect: HttpResponse = BatchDeterminationCreateView.should_redirect(
+        request, submissions, transitions
+    )
     if redirect:
         return HttpResponseClientRedirect(redirect.url)
 

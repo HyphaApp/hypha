@@ -176,7 +176,19 @@ class BaseAdminSubmissionsTable(SubmissionsTable):
     organization_name = tables.Column()
 
     class Meta(SubmissionsTable.Meta):
-        fields = ("title", "phase", "stage", "fund", "round", "lead", "submit_time", "last_update", "screening_status", "reviews_stats", "organization_name")  # type: ignore
+        fields = (
+            "title",
+            "phase",
+            "stage",
+            "fund",
+            "round",
+            "lead",
+            "submit_time",
+            "last_update",
+            "screening_status",
+            "reviews_stats",
+            "organization_name",
+        )
         sequence = fields + ("comments",)
 
     def render_lead(self, value):
