@@ -607,7 +607,7 @@ class TestRequestForPartners(TestCase):
         request = make_request(site=rfp.get_site())
         response = rfp.serve(request)
         self.assertContains(response, "not accepting")
-        self.assertNotContains(response, "Preview and submit")
+        self.assertNotContains(response, "Submit")
 
     def test_form_when_round(self):
         rfp = RequestForPartnersFactory()
@@ -615,7 +615,7 @@ class TestRequestForPartners(TestCase):
         request = make_request(site=rfp.get_site())
         response = rfp.serve(request)
         self.assertNotContains(response, "not accepting")
-        self.assertContains(response, "Preview and submit")
+        self.assertContains(response, "Submit")
 
 
 class TestForTableQueryset(TestCase):
