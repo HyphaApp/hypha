@@ -1,1 +1,81 @@
-// stylelint-disable no-empty-source
+// stylelint-disable
+.link--button-secondary {
+    white-space: nowrap;
+    padding: 0.5em 30px;
+}
+
+.header__menus--mobile.is-visible {
+    a,
+    button {
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+.link {
+    &--button {
+        @include button($color--mid-dark-grey, $color--dark-grey);
+    }
+
+    &--button-secondary {
+        @include button($color--eq, darken($color--eq, 20%));
+    }
+
+    &--button-tertiary {
+        @include button(transparent, darken($color--eq, 20%));
+        color: $color--eq;
+        border-color: $color--eq;
+    }
+
+    &--button-transparent {
+        @include button(transparent, $color--eq);
+    }
+
+    &--fixed-apply {
+        @include button($color--eq, darken($color--eq, 20%));
+    }
+
+    &--arrow-pixels-blue {
+        @include pixel-link($color--eq);
+    }
+}
+
+.footer {
+    @include media-query(tablet-portrait) {
+        background: linear-gradient(to right,
+                $color--mid-grey 50%,
+                $color--mid-dark-grey 50%);
+    }
+
+    &__inner {
+        &:first-child {
+            background: $color--mid-dark-grey;
+        }
+
+        &:last-child {
+            background: $color--mid-dark-grey;
+        }
+    }
+}
+
+.header--light-bg {
+      background: $color--mid-dark-grey;
+}
+
+.icon {
+    &--body-pixels-right {
+        fill: $color--eq;
+    }
+
+    &--body-pixels-left {
+        fill: $color--white;
+    }
+}
+
+.listing {
+    &__button {
+        @include button(transparent, $color--eq);
+        color: $color--eq;
+        border-color: $color--eq;
+    }
+}
