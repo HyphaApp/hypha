@@ -500,7 +500,7 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
             context["form"] = form
             context["show_all_group_fields"] = True if copy_open_submission else False
             # Check if a preview is required before submitting the application
-            context["require_preview"] = settings.REQUIRE_PREVIEW
+            context["require_preview"] = settings.SUBMISSION_PREVIEW_REQUIRED
             return render(request, self.get_template(request), context)
 
         # We hide the round as only the open round is used which is displayed through the
@@ -641,7 +641,7 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
         context = self.get_context(request)
         context["form"] = form
         # Check if a preview is required before submitting the application
-        context["require_preview"] = settings.REQUIRE_PREVIEW
+        context["require_preview"] = settings.SUBMISSION_PREVIEW_REQUIRED
         return TemplateResponse(request, self.get_template(request), context)
 
 

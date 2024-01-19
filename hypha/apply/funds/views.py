@@ -1430,7 +1430,7 @@ class ApplicantSubmissionEditView(BaseSubmissionEditView):
         return False
 
     def buttons(self):
-        if settings.REQUIRE_PREVIEW:
+        if settings.SUBMISSION_PREVIEW_REQUIRED:
             yield ("preview", "primary", _("Preview and submit"))
             yield ("save", "white", _("Save draft"))
         else:

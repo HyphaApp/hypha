@@ -85,7 +85,7 @@ This determines the length of time for which the user will remain logged in. The
 
 ### If applicants should be forced to preview their application before submitting
 
-    REQUIRE_PREVIEW = env.bool('REQUIRE_PREVIEW', True)
+    SUBMISSION_PREVIEW_REQUIRED = env.bool('SUBMISSION_PREVIEW_REQUIRED', True)
 
 ### Set the allowed file extension for all uploads fields.
 
