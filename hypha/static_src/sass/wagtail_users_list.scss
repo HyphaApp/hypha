@@ -1,38 +1,54 @@
-// Abstracts
-@import "abstracts/functions";
-@import "abstracts/mixins";
-@import "abstracts/variables";
-
 .users-list {
-    display: grid;
-    grid-template-columns: auto;
-    grid-column-gap: 50px;
+    padding-left: 1rem;
+    padding-right: 1rem;
 
-    &--has-filters {
-        grid-template-columns: auto 250px;
+    li:has(input[type="radio"]) {
+        display: flex;
+        align-items: center;
+        padding-top: 0.25rem;
+        padding-bottom: 0.25rem;
     }
 
     &__results {
-        grid-column-start: col-start 1 col-end 2;
+        flex: 1;
     }
 
-    &__filters {
-        grid-column-start: col-start -2 col-end -1;
+    &--has-filters {
+        display: flex;
+        flex-direction: column-reverse;
 
-        button[type="submit"] {
-            display: block;
-            margin-block-start: 20px;
+        @media screen and (min-width: 1000px) {
+            gap: 2rem;
+            flex-direction: row;
         }
     }
 
-    &__export {
-        button {
-            display: block;
-            margin-block-start: 20px;
-        }
+    .filterable {
+        &__filters {
+            h2 {
+                display: none;
+            }
 
-        a {
-            color: $color--white;
+            form {
+                display: flex;
+                flex-direction: row-reverse;
+                gap: 1rem;
+                align-items: center;
+                flex-wrap: wrap;
+                justify-content: flex-end;
+            }
+
+            @media screen and (min-width: 1000px) {
+                h2 {
+                    display: block;
+                }
+
+                form {
+                    flex-direction: column-reverse;
+                    align-items: flex-start;
+                    gap: 0;
+                }
+            }
         }
     }
 }
