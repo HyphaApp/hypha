@@ -45,7 +45,21 @@ plugins:
       default_handler: python
       handlers:
         python:
-          paths: [hypha]
+          options:
+            docstring_style: google
+            show_root_heading: true
+            show_if_no_docstring: true
+            inherited_members: true
+            members_order: source
+            separate_signature: true
+            unwrap_annotated: true
+            filters:
+              - "!^_"
+            docstring_section_style: list
+            merge_init_into_class: true
+            signature_crossrefs: true
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
   - git-revision-date-localized:
       type: timeago
   - gen-files:
@@ -91,7 +105,6 @@ markdown_extensions:
 
 nav:
   - Home: index.md
-  - Ref: hypha-reference.md
   - ...
   - Issues: https://github.com/HyphaApp/hypha/issues
 
