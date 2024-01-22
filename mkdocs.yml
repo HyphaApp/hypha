@@ -41,8 +41,17 @@ plugins:
   - awesome-pages
   - search
   - macros
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          paths: [hypha]
   - git-revision-date-localized:
       type: timeago
+  - gen-files:
+      scripts:
+        - docs/scripts/gen_ref_pages.py
+  - section-index
 
 markdown_extensions:
   - admonition
@@ -82,6 +91,7 @@ markdown_extensions:
 
 nav:
   - Home: index.md
+  - Ref: hypha-reference.md
   - ...
   - Issues: https://github.com/HyphaApp/hypha/issues
 
@@ -100,7 +110,7 @@ extra:
       name: GitHub Org
 
   versions:
-    python: 
+    python:
       version: 3.11
       packages:
         macos: python@3.11
@@ -114,7 +124,7 @@ extra:
         macos: https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh
     postgres:
       version: 14
-      packages: 
+      packages:
         debian: postgresql-server-dev-14
         fedora: postgresql-server
         macos: postgres@14
