@@ -1,13 +1,15 @@
 """
 Generate reference pages for the API
 
-
+For more info on how this is done, see:
+https://mkdocstrings.github.io/recipes/#automatic-code-reference-pages
 """
 
 from pathlib import Path
 
 import mkdocs_gen_files
 
+# The code source directory
 src = Path(__file__).parent.parent.parent / "hypha"
 
 for path in sorted(src.rglob("*.py")):
@@ -17,6 +19,7 @@ for path in sorted(src.rglob("*.py")):
 
     parts = tuple(module_path.parts)
 
+    # Don't document any code in public/ or tests/ directories
     if "public" in parts or "tests" in parts:
         continue
 
@@ -27,6 +30,8 @@ for path in sorted(src.rglob("*.py")):
     elif parts[-1] in ["__main__"]:
         continue
 
+    # Create the required files on build with mkdocs_gen_files, see:
+    # https://oprypin.github.io/mkdocs-gen-files/
     if len(parts) > 0:
         with mkdocs_gen_files.open(full_doc_path, "w") as fd:
             identifier = f"::: hypha.{'.'.join(parts)}"
