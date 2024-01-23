@@ -192,6 +192,7 @@ def get_invoice_table_status(invoice_status, is_applicant=False):
     if invoice_status == PAYMENT_FAILED:
         return INT_PAYMENT_FAILED
 
+
 def get_placeholder_file(initial_file):
     if not isinstance(initial_file, list):
         return PlaceholderUploadedFile(

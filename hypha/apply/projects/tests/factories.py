@@ -88,6 +88,7 @@ class ProjectApprovalFormDataFactory(FormDataFactory):
 class ProjectReportFormFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = ProjectReportForm
+
     name = factory.Faker("word")
     form_fields = FormFieldsBlockFactory
 

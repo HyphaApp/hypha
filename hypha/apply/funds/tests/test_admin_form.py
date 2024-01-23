@@ -243,7 +243,5 @@ class TestWorkflowFormAdminForm(TestCase):
         self.assertFalse(form.is_valid(), form.errors.as_text())
 
     def test_validates_with_project_report_form(self):
-        form = self.submit_data(
-            form_data(1, 1, 1, 0, 0, 0, 0, 1, False, None, 1)
-        )
+        form = self.submit_data(form_data(1, 1, 1, 0, 0, 0, 0, 1, False, None, 1))
         self.assertTrue(form.is_valid(), form.errors.as_text())
