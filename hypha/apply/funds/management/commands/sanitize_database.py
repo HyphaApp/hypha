@@ -30,6 +30,7 @@ from hypha.apply.review.options import (
 )
 from hypha.apply.stream_forms.blocks import (
     CharFieldBlock,
+    CheckboxFieldBlock,
     DropdownFieldBlock,
     MultiFileFieldBlock,
     RadioButtonsFieldBlock,
@@ -140,6 +141,7 @@ class Command(BaseCommand):
                 type(form_field.block)
                 in [
                     RadioButtonsFieldBlock,  # If it's a radio button, then it doesn't really need to be randomized
+                    CheckboxFieldBlock,  # Similar to above
                     DurationBlock,  # Hopefully no one is encoding some super specific PII in a duration :)
                     CategoryQuestionBlock,  # Similarly, what Category should not be changed (what it if affects something else)
                     VisibilityBlock,  # Visility of reviews can remain
