@@ -17,9 +17,7 @@
 
 ## Basic installation steps
 
-<!-- Before updating the install steps here, ensure they are reflected in the development install as well -->
-
-[Git Installation Guide](https://git-scm.com/downloads)
+<!-- NOTE! Before updating the install steps here, ensure they are reflected in the development install as well -->
 
 === "Debian"
 
