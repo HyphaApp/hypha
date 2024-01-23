@@ -330,9 +330,9 @@ BLOCK_FACTORY_DEFINITION = {
     "date": DateFieldBlockFactory,
     "time": TimeFieldBlockFactory,
     "datetime": DateTimeFieldBlockFactory,
-    # "image": ImageFieldBlockFactory,
-    # "file": FileFieldBlockFactory,
-    # "multi_file": MultiFileFieldBlockFactory,
+    "image": ImageFieldBlockFactory,
+    "file": FileFieldBlockFactory,
+    "multi_file": MultiFileFieldBlockFactory,
 }
 
 FormFieldsBlockFactory = StreamFieldUUIDFactory(BLOCK_FACTORY_DEFINITION)
