@@ -58,13 +58,13 @@ from .factories import (
 FORM_FIELDS = [
     {
         "id": "012a4f29-0882-4b1c-b567-aede1b601d4a",
-        "type": "number", "value":
-        {
+        "type": "number",
+        "value": {
             "required": True,
             "help_text": "",
             "field_label": "How many folks did you reach?",
-            "default_value": ""
-        }
+            "default_value": "",
+        },
     }
 ]
 
@@ -1251,12 +1251,17 @@ class TestStaffSubmitReport(BaseViewTestCase):
             application_id=report.project.submission.page.specific.id,
             form_id=self.report_form_id,
         )
-        response = self.post_page(report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "11"})
+        response = self.post_page(
+            report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "11"}
+        )
         report.refresh_from_db()
         self.assertRedirects(
             response, self.absolute_url(report.project.get_absolute_url())
         )
-        self.assertEqual(report.versions.first().form_data, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "11"})
+        self.assertEqual(
+            report.versions.first().form_data,
+            {"012a4f29-0882-4b1c-b567-aede1b601d4a": "11"},
+        )
         self.assertEqual(report.versions.first(), report.current)
         self.assertEqual(report.current.author, self.user)
         self.assertIsNone(report.draft)
@@ -1267,7 +1272,9 @@ class TestStaffSubmitReport(BaseViewTestCase):
             application_id=report.project.submission.page.specific.id,
             form_id=self.report_form_id,
         )
-        response = self.post_page(report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "13"})
+        response = self.post_page(
+            report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "13"}
+        )
         self.assertEqual(response.status_code, 403)
 
         report = ReportFactory(project__status=COMPLETE)
@@ -1275,7 +1282,9 @@ class TestStaffSubmitReport(BaseViewTestCase):
             application_id=report.project.submission.page.specific.id,
             form_id=self.report_form_id,
         )
-        response = self.post_page(report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "13"})
+        response = self.post_page(
+            report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "13"}
+        )
         self.assertEqual(response.status_code, 403)
 
     def test_submit_private_report(self):
@@ -1285,10 +1294,15 @@ class TestStaffSubmitReport(BaseViewTestCase):
             application_id=report.project.submission.page.specific.id,
             form_id=self.report_form_id,
         )
-        response = self.post_page(report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "17"})
+        response = self.post_page(
+            report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "17"}
+        )
         report.refresh_from_db()
         self.assertEquals(response.status_code, 200)
-        self.assertEqual(report.versions.first().form_data, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "17"})
+        self.assertEqual(
+            report.versions.first().form_data,
+            {"012a4f29-0882-4b1c-b567-aede1b601d4a": "17"},
+        )
         self.assertEqual(report.versions.first(), report.current)
         self.assertEqual(report.current.author, self.user)
         self.assertIsNone(report.draft)
@@ -1310,10 +1324,15 @@ class TestStaffSubmitReport(BaseViewTestCase):
             application_id=report.project.submission.page.specific.id,
             form_id=self.report_form_id,
         )
-        response = self.post_page(report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "19", "save": "Save"})
+        response = self.post_page(
+            report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "19", "save": "Save"}
+        )
         report.refresh_from_db()
         self.assertEquals(response.status_code, 200)
-        self.assertEqual(report.versions.first().form_data, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "19"})
+        self.assertEqual(
+            report.versions.first().form_data,
+            {"012a4f29-0882-4b1c-b567-aede1b601d4a": "19"},
+        )
         self.assertEqual(report.versions.first(), report.draft)
         self.assertIsNone(report.current)
 
@@ -1324,10 +1343,15 @@ class TestStaffSubmitReport(BaseViewTestCase):
             form_id=self.report_form_id,
         )
         self.assertEqual(report.versions.first(), report.draft)
-        response = self.post_page(report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "23"})
+        response = self.post_page(
+            report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "23"}
+        )
         report.refresh_from_db()
         self.assertEquals(response.status_code, 200)
-        self.assertEqual(report.versions.last().form_data, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "23"})
+        self.assertEqual(
+            report.versions.last().form_data,
+            {"012a4f29-0882-4b1c-b567-aede1b601d4a": "23"},
+        )
         self.assertEqual(report.versions.last(), report.current)
         self.assertIsNone(report.draft)
 
@@ -1347,7 +1371,10 @@ class TestStaffSubmitReport(BaseViewTestCase):
         self.assertRedirects(
             response, self.absolute_url(report.project.get_absolute_url())
         )
-        self.assertEqual(report.versions.last().form_data["012a4f29-0882-4b1c-b567-aede1b601d4a"], "29")
+        self.assertEqual(
+            report.versions.last().form_data["012a4f29-0882-4b1c-b567-aede1b601d4a"],
+            "29",
+        )
         self.assertEqual(report.versions.last(), report.draft)
         self.assertEqual(report.versions.first(), report.current)
 
@@ -1366,12 +1393,17 @@ class TestStaffSubmitReport(BaseViewTestCase):
         report.save()
         self.assertEqual(report.submitted, yesterday)
         self.assertEqual(report.versions.first(), report.current)
-        response = self.post_page(report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "31"})
+        response = self.post_page(
+            report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "31"}
+        )
         report.refresh_from_db()
         self.assertRedirects(
             response, self.absolute_url(report.project.get_absolute_url())
         )
-        self.assertEqual(report.versions.last().form_data, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "31"})
+        self.assertEqual(
+            report.versions.last().form_data,
+            {"012a4f29-0882-4b1c-b567-aede1b601d4a": "31"},
+        )
         self.assertEqual(report.versions.last(), report.current)
         self.assertIsNone(report.draft)
         self.assertEqual(report.submitted.date(), yesterday.date())
@@ -1391,7 +1423,9 @@ class TestStaffSubmitReport(BaseViewTestCase):
             end_date=timezone.now() + relativedelta(days=3),
             project=submitted_report.project,
         )
-        response = self.post_page(future_report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "37"})
+        response = self.post_page(
+            future_report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "37"}
+        )
         self.assertEqual(response.status_code, 403)
 
 
@@ -1459,12 +1493,17 @@ class TestApplicantSubmitReport(BaseViewTestCase):
             application_id=report.project.submission.page.specific.id,
             form_id=self.report_form_id,
         )
-        response = self.post_page(report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "37"})
+        response = self.post_page(
+            report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "37"}
+        )
         report.refresh_from_db()
         self.assertRedirects(
             response, self.absolute_url(report.project.get_absolute_url())
         )
-        self.assertEqual(report.versions.first().form_data, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "37"})
+        self.assertEqual(
+            report.versions.first().form_data,
+            {"012a4f29-0882-4b1c-b567-aede1b601d4a": "37"},
+        )
         self.assertEqual(report.versions.first(), report.current)
         self.assertEqual(report.current.author, self.user)
 
@@ -1476,10 +1515,15 @@ class TestApplicantSubmitReport(BaseViewTestCase):
             application_id=report.project.submission.page.specific.id,
             form_id=self.report_form_id,
         )
-        response = self.post_page(report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "41"})
+        response = self.post_page(
+            report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "41"}
+        )
         report.refresh_from_db()
         self.assertEquals(response.status_code, 200)
-        self.assertEqual(report.versions.first().form_data, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "41"})
+        self.assertEqual(
+            report.versions.first().form_data,
+            {"012a4f29-0882-4b1c-b567-aede1b601d4a": "41"},
+        )
         self.assertEqual(report.versions.first(), report.current)
         self.assertEqual(report.current.author, self.user)
         self.assertIsNone(report.draft)
@@ -1512,7 +1556,10 @@ class TestApplicantSubmitReport(BaseViewTestCase):
         self.assertRedirects(
             response, self.absolute_url(report.project.get_absolute_url())
         )
-        self.assertEqual(report.versions.first().form_data, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "43"})
+        self.assertEqual(
+            report.versions.first().form_data,
+            {"012a4f29-0882-4b1c-b567-aede1b601d4a": "43"},
+        )
         self.assertEqual(report.versions.first(), report.draft)
         self.assertIsNone(report.current)
 
@@ -1527,12 +1574,17 @@ class TestApplicantSubmitReport(BaseViewTestCase):
             form_id=self.report_form_id,
         )
         self.assertEqual(report.versions.first(), report.draft)
-        response = self.post_page(report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "47"})
+        response = self.post_page(
+            report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "47"}
+        )
         report.refresh_from_db()
         self.assertRedirects(
             response, self.absolute_url(report.project.get_absolute_url())
         )
-        self.assertEqual(report.versions.last().form_data, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "47"})
+        self.assertEqual(
+            report.versions.last().form_data,
+            {"012a4f29-0882-4b1c-b567-aede1b601d4a": "47"},
+        )
         self.assertEqual(report.versions.last(), report.current)
         self.assertIsNone(report.draft)
 
@@ -1559,7 +1611,9 @@ class TestApplicantSubmitReport(BaseViewTestCase):
             application_id=report.project.submission.page.specific.id,
             form_id=self.report_form_id,
         )
-        response = self.post_page(report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "53"})
+        response = self.post_page(
+            report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "53"}
+        )
         self.assertEqual(response.status_code, 403)
 
 

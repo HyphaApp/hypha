@@ -1,7 +1,6 @@
 import decimal
 import json
 import logging
-import re
 import warnings
 
 from django import forms
@@ -32,9 +31,9 @@ from hypha.apply.stream_forms.files import StreamFieldDataEncoder
 from hypha.apply.stream_forms.models import BaseStreamForm
 from hypha.apply.utils.storage import PrivateStorage
 
+from ...determinations.options import ACCEPTED
 from ..blocks import ProjectFormCustomFormFieldsBlock
 from .vendor import Vendor
-from ...determinations.options import ACCEPTED
 
 logger = logging.getLogger(__name__)
 
@@ -356,7 +355,8 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         # If neither an approved contract nor an accepted determination are found, something is wrong and a meaningful
         # error or warning may be appreciated by future developers.
         warnings.warn(
-            "No related contracts or determinations were approved/accepted, so no date can be found."
+            "No related contracts or determinations were approved/accepted, so no date can be found.",
+            stacklevel=2,
         )
         return None
 
