@@ -3,10 +3,7 @@
 
     const comment = ".js-comment";
     const pageDown = ".js-pagedown";
-    const feedMeta = ".js-feed-meta";
     const editBlock = ".js-edit-block";
-    const lastEdited = ".js-last-edited";
-    const commentVisibility = ".js-comment-visibility";
     const editButton = ".js-edit-comment";
     const feedContent = ".js-feed-content";
     const commentError = ".js-comment-error";
@@ -22,10 +19,6 @@
         const editBlockWrapper = $(this).closest(feedContent).find(editBlock);
         const commentWrapper = $(this).closest(feedContent).find(comment);
         const commentContents = $(commentWrapper).attr("data-comment");
-        const visibilityOptions = $.parseJSON(
-            $(commentWrapper).attr("data-visibility-options")
-        );
-        const currentVisibility = $(commentWrapper).attr("data-visibility");
 
         // hide the edit link and original comment
         $(this).parent().hide();
@@ -36,23 +29,8 @@
                 <div id="wmd-button-bar-edit-comment" class="wmd-button-bar"></div>
                 <textarea id="wmd-input-edit-comment" class="wmd-input" rows="10">${commentContents}</textarea>
                 <div id="wmd-preview-edit-comment" class="wmd-preview"></div>
-                <br>
-                <div>Visible to:</div>
             </div>
         `;
-
-        const radioButtonsDiv = '<div id="edit-comment-visibility"></div>';
-        let key = "";
-        let label = "";
-        let radioButtons = "";
-
-        $.each(visibilityOptions, function (idx, value) {
-            key = value[0];
-            label = value[1];
-            radioButtons += `
-            <input type="radio" name='radio-visibility' value=${key} id='visible-to-${key}' />
-            <label for="visible-to-${key}">${label}</label><br>`;
-        });
 
         const buttons = `
                 <div class="wrapper--outer-space-medium">
@@ -62,10 +40,8 @@
         `;
 
         // add the comment to the editor
-        const markupEditor = $(markup).append(radioButtonsDiv).append(buttons);
+        const markupEditor = $(markup).append(buttons);
         $(editBlockWrapper).append(markupEditor);
-        $("#edit-comment-visibility").html(radioButtons);
-        $(`#visible-to-${currentVisibility}`).prop("checked", true); // ensure current visibility is checked
 
         // run the editor
         initEditor();
@@ -88,9 +64,7 @@
             .closest(pageDown)
             .find(".wmd-preview")
             .html();
-        const editedVisibility = $(
-            'input[name="radio-visibility"]:checked'
-        ).val();
+        // const editedVisibility = $('input[name="radio-visibility"]:checked').val();
         const commentMD = $(this).closest(editBlock).find("textarea").val();
         const editUrl = $(commentContainer).attr("data-edit-url");
 
@@ -102,7 +76,7 @@
             },
             body: JSON.stringify({
                 message: editedComment,
-                visibility: editedVisibility,
+                // visibility: editedVisibility
             }),
         })
             .then((response) => {
@@ -124,8 +98,6 @@
                     data.edit_url,
                     commentMD
                 );
-                updateVisibility(this, data.visibility);
-                updateLastEdited(this, data.edited);
                 showComment(this);
                 showEditButton(this);
                 hidePageDownEditor(this);
@@ -164,12 +136,7 @@
     };
 
     const showEditButton = (el) => {
-        $(el)
-            .closest(editBlock)
-            .siblings(feedMeta)
-            .find(editButton)
-            .parent()
-            .show();
+        $(editButton).parent().show();
     };
 
     const hidePageDownEditor = (el) => {
@@ -178,44 +145,6 @@
 
     const showComment = (el) => {
         $(el).closest(editBlock).siblings(comment).show();
-    };
-
-    const updateVisibility = (el, visibility) => {
-        if (visibility !== "all") {
-            $(el)
-                .closest(feedContent)
-                .find(commentVisibility)
-                .parent()
-                .attr("hidden", false);
-            $(el).closest(feedContent).find(commentVisibility).text(visibility);
-        } else {
-            $(el)
-                .closest(feedContent)
-                .find(commentVisibility)
-                .parent()
-                .attr("hidden", true);
-            $(el)
-                .closest(feedContent)
-                .find(commentVisibility)
-                .html(`${visibility}`);
-        }
-    };
-
-    const updateLastEdited = (el, date) => {
-        const parsedDate = new Date(date).toISOString().split("T")[0];
-        const time = new Date(date).toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-        });
-        $(el)
-            .closest(feedContent)
-            .find(lastEdited)
-            .parent()
-            .attr("hidden", false);
-        $(el)
-            .closest(feedContent)
-            .find(lastEdited)
-            .html(`${parsedDate} ${time}`);
     };
 
     const updateComment = (
@@ -240,12 +169,4 @@
     };
 
     const hideError = () => $(commentError).remove();
-
-    window.addEventListener("beforeunload", (e) => {
-        if ($(submitEditButton).length) {
-            e.preventDefault();
-            e.returnValue =
-                "It looks like you're still editing a comment. Are you sure you want to leave?";
-        }
-    });
 })(jQuery);

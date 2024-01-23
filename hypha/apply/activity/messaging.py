@@ -35,7 +35,7 @@ class MessengerBackend:
                     user=user,
                     source=source,
                     related=related,
-                    **kwargs
+                    **kwargs,
                 )
 
         elif sources:
@@ -51,7 +51,7 @@ class MessengerBackend:
                     user=user,
                     sources=sources,
                     related=related,
-                    **kwargs
+                    **kwargs,
                 )
 
 

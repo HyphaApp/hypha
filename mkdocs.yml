@@ -1,7 +1,7 @@
 site_name: Hypha Documentation
 site_url: https://docs.hypha.app/
 site_description: "Documentation for Hypha, an open source submission management platform."
-copyright: Copyright &copy; 2018 - 2023 - Open Technology Fund
+copyright: Copyright &copy; 2018 - 2024 - Open Technology Fund
 repo_name: HyphaApp/hypha
 repo_url: https://github.com/HyphaApp/hypha
 edit_uri: edit/main/docs/

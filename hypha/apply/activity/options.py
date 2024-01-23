@@ -14,8 +14,9 @@ class MESSAGES(TextChoices):
     TRANSITION = "TRANSITION", _("transitioned")
     BATCH_TRANSITION = "BATCH_TRANSITION", _("batch transitioned")
     DETERMINATION_OUTCOME = "DETERMINATION_OUTCOME", _("sent determination outcome")
-    BATCH_DETERMINATION_OUTCOME = "BATCH_DETERMINATION_OUTCOME", _(
-        "sent batch determination outcome"
+    BATCH_DETERMINATION_OUTCOME = (
+        "BATCH_DETERMINATION_OUTCOME",
+        _("sent batch determination outcome"),
     )
     INVITED_TO_PROPOSAL = "INVITED_TO_PROPOSAL", _("invited to proposal")
     REVIEWERS_UPDATED = "REVIEWERS_UPDATED", _("updated reviewers")
@@ -23,8 +24,9 @@ class MESSAGES(TextChoices):
     PARTNERS_UPDATED = "PARTNERS_UPDATED", _("updated partners")
     PARTNERS_UPDATED_PARTNER = "PARTNERS_UPDATED_PARTNER", _("partners updated partner")
     READY_FOR_REVIEW = "READY_FOR_REVIEW", _("marked ready for review")
-    BATCH_READY_FOR_REVIEW = "BATCH_READY_FOR_REVIEW", _(
-        "marked batch ready for review"
+    BATCH_READY_FOR_REVIEW = (
+        "BATCH_READY_FOR_REVIEW",
+        _("marked batch ready for review"),
     )
     NEW_REVIEW = "NEW_REVIEW", _("added new review")
     COMMENT = "COMMENT", _("added comment")
@@ -44,8 +46,9 @@ class MESSAGES(TextChoices):
     APPROVE_PAF = "APPROVE_PAF", _("approved paf")
     PROJECT_TRANSITION = "PROJECT_TRANSITION", _("transitioned project")
     REQUEST_PROJECT_CHANGE = "REQUEST_PROJECT_CHANGE", _("requested project change")
-    SUBMIT_CONTRACT_DOCUMENTS = "SUBMIT_CONTRACT_DOCUMENTS", _(
-        "submitted contract documents"
+    SUBMIT_CONTRACT_DOCUMENTS = (
+        "SUBMIT_CONTRACT_DOCUMENTS",
+        _("submitted contract documents"),
     )
     UPLOAD_DOCUMENT = "UPLOAD_DOCUMENT", _("uploaded document to project")
     REMOVE_DOCUMENT = "REMOVE_DOCUMENT", _("removed document from project")
@@ -66,8 +69,9 @@ class MESSAGES(TextChoices):
     DELETE_REMINDER = "DELETE_REMINDER", _("deleted reminder")
     REVIEW_REMINDER = "REVIEW_REMINDER", _("reminder to review")
     BATCH_DELETE_SUBMISSION = "BATCH_DELETE_SUBMISSION", _("batch deleted submissions")
-    BATCH_ARCHIVE_SUBMISSION = "BATCH_ARCHIVE_SUBMISSION", _(
-        "batch archive submissions"
+    BATCH_ARCHIVE_SUBMISSION = (
+        "BATCH_ARCHIVE_SUBMISSION",
+        _("batch archive submissions"),
     )
     STAFF_ACCOUNT_CREATED = "STAFF_ACCOUNT_CREATED", _("created new account")
     STAFF_ACCOUNT_EDITED = "STAFF_ACCOUNT_EDITED", _("edited account")
