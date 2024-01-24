@@ -52,13 +52,17 @@
             {% contract_uploaded_by_contracting object as contract_uploaded %}
             <li class="docs-block__row">
                 <div class="docs-block__row-inner">
-                    <svg class="icon docs-block__icon {% if object.submitted_contract_documents %}is-complete{% endif %}"><use xlink:href="#tick"></use></svg>
+                    {% if object.submitted_contract_documents %}
+                        {% heroicon_outline "check-circle" class="stroke-light-blue me-1" aria_hidden=true %}
+                    {% else %}
+                        {% heroicon_outline "check-circle" class="stroke-gray-400 me-1" aria_hidden=true %}
+                    {% endif %}
                     <p class="docs-block__title">{% trans "Contract" %}</p>
                 </div>
                 {% if contract_uploaded %}
                     <div class="docs-block__row-inner">
                         <a class="font-bold flex items-center w-auto text-left bg-white text-light-blue mr-0 mb-1 p-2.5 border-solid border border-light-blue focus:text-light-blue hover:bg-light-blue hover:text-white" href="{% url 'apply:projects:contract' pk=project.pk file_pk=contract.pk %}" target="_blank">
-                            {% heroicon_micro "eye" class="inline mr-1 w-4 h-4" aria_hidden=true %}
+                            {% heroicon_micro "eye" class="inline me-1 w-4 h-4" aria_hidden=true %}
                             {% trans "View" %}
                         </a>
                     </div>
@@ -128,9 +132,11 @@
             {% if contracting_documents_configured and contract_uploaded %}
                 <li class="docs-block__row">
                     <div class="docs-block__row-inner">
-                        <svg class="icon docs-block__icon{% if not remaining_contract_document_categories %} is-complete{% endif %}">
-                            <use xlink:href="#tick"></use>
-                        </svg>
+                        {% if not remaining_contract_document_categories %}
+                            {% heroicon_outline "check-circle" class="stroke-light-blue me-1" aria_hidden=true %}
+                        {% else %}
+                            {% heroicon_outline "check-circle" class="stroke-gray-400 me-1" aria_hidden=true %}
+                        {% endif %}
                         <p class="docs-block__title">{% trans "Contracting documents" %}</p>
                     </div>
                     {% can_update_contracting_documents object user as can_update_documents %}

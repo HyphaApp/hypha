@@ -77,10 +77,6 @@
         @include media-query(tablet-landscape) {
             margin-right: 1rem;
         }
-
-        &.is-complete {
-            stroke: $color--light-blue;
-        }
     }
 
     &__link {
