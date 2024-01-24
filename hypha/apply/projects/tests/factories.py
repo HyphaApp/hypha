@@ -8,6 +8,7 @@ from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
 from hypha.apply.stream_forms.testing.factories import (
     FormDataFactory,
     FormFieldsBlockFactory,
+    NonFileFormFieldsBlockFactory,
 )
 from hypha.apply.users.groups import APPROVER_GROUP_NAME, STAFF_GROUP_NAME
 from hypha.apply.users.tests.factories import GroupFactory, StaffFactory, UserFactory
@@ -210,13 +211,13 @@ class ReportConfigFactory(factory.django.DjangoModelFactory):
 
 
 class ReportVersionDataFactory(FormDataFactory):
-    field_factory = FormFieldsBlockFactory
+    field_factory = NonFileFormFieldsBlockFactory
 
 
 class ReportVersionFactory(factory.django.DjangoModelFactory):
     report = factory.SubFactory("hypha.apply.projects.tests.factories.ReportFactory")
     submitted = factory.LazyFunction(timezone.now)
-    form_fields = FormFieldsBlockFactory
+    form_fields = NonFileFormFieldsBlockFactory
     # TODO: is it better to keep the following link between form_data and form_fields or to remove it?
     form_data = factory.SubFactory(
         ReportVersionDataFactory,
