@@ -1357,7 +1357,9 @@ class TestStaffSubmitReport(BaseViewTestCase):
 
     def test_edit_submitted_report(self):
         report = ReportFactory(
-            is_submitted=True, project__status=INVOICING_AND_REPORTING
+            is_submitted=True,
+            project__status=INVOICING_AND_REPORTING,
+            version__form_fields=json.dumps(FORM_FIELDS),
         )
         ApplicationBaseProjectReportForm.objects.get_or_create(
             application_id=report.project.submission.page.specific.id,
@@ -1381,7 +1383,9 @@ class TestStaffSubmitReport(BaseViewTestCase):
     def test_resubmit_submitted_report(self):
         yesterday = timezone.now() - relativedelta(days=1)
         version = ReportVersionFactory(
-            report__project__status=INVOICING_AND_REPORTING, submitted=yesterday
+            report__project__status=INVOICING_AND_REPORTING,
+            submitted=yesterday,
+            form_fields=json.dumps(FORM_FIELDS),
         )
         report = version.report
         ApplicationBaseProjectReportForm.objects.get_or_create(
@@ -1400,10 +1404,7 @@ class TestStaffSubmitReport(BaseViewTestCase):
         self.assertRedirects(
             response, self.absolute_url(report.project.get_absolute_url())
         )
-        self.assertEqual(
-            report.versions.last().form_data,
-            {"012a4f29-0882-4b1c-b567-aede1b601d4a": "31"},
-        )
+        self.assertEqual(report.versions.last().form_data["012a4f29-0882-4b1c-b567-aede1b601d4a"], "31")
         self.assertEqual(report.versions.last(), report.current)
         self.assertIsNone(report.draft)
         self.assertEqual(report.submitted.date(), yesterday.date())
