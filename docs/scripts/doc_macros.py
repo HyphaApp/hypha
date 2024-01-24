@@ -92,8 +92,6 @@ def get_node_version() -> str:
 def valid_semver(version: str) -> bool:
     """
     Uses the suggested semver regex pattern to validate that the given version string is valid.
-
-    Raises InvalidVersionException if
     """
     regex_match = re.match(SEMVER_REGEX, version)
 
