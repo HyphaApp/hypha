@@ -48,6 +48,11 @@ urlpatterns = [
                 ),
                 path("edit/", ProjectApprovalFormEditView.as_view(), name="edit"),
                 path(
+                    "documents/<int:file_pk>",
+                    ProjectPrivateMediaView.as_view(),
+                    name="document",
+                ),
+                path(
                     "documents/<uuid:field_id>/<str:file_name>",
                     ProjectPrivateMediaView.as_view(),
                     name="document",

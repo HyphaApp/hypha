@@ -1327,12 +1327,18 @@ class ProjectPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
         return super().dispatch(*args, **kwargs)
 
     def get_media(self, *args, **kwargs):
-        field_id = kwargs["field_id"]
-        file_name = kwargs["file_name"]
-        path_to_file = generate_private_file_path(
-            self.project.pk, field_id, file_name, path_start="project"
-        )
-        return self.storage.open(path_to_file)
+        if "file_pk" in kwargs:
+            document = PacketFile.objects.get(pk=kwargs["file_pk"])
+            if document.project != self.project:
+                raise Http404
+            return document.document
+        else:
+            field_id = kwargs["field_id"]
+            file_name = kwargs["file_name"]
+            path_to_file = generate_private_file_path(
+                self.project.pk, field_id, file_name, path_start="project"
+            )
+            return self.storage.open(path_to_file)
 
     def test_func(self):
         if self.request.user.is_apply_staff:
