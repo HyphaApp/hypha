@@ -7,7 +7,7 @@
             <span class="form__question form__file-label">{{ field.label }}</span>
             <label for="{{ field.id_for_label }}" class="mb-2 form__question form__question--{{ field_type }} {{ widget_type }}" {% if field.field.required %}required{% endif %}>
                 <span class="whitespace-nowrap">
-                    {% heroicon_mini "arrow-up-tray" size=18 class="inline mr-1" aria_hidden="true" %}
+                    {% heroicon_mini "arrow-up-tray" size=18 class="inline me-1" aria_hidden="true" %}
                     {% trans "Upload" %}
                 </span>
                 {% if field.field.required %}

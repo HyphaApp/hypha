@@ -62,7 +62,7 @@
                                     {% user_can_view_report report user as can_view_report %}
                                     {% if can_view_report %}
                                         <a class="data-block__action-icon-link" href="{% url "apply:projects:reports:detail" pk=report.pk %}">
-                                            {% heroicon_micro "eye" class="inline mr-1 w-4 h-4" aria_hidden=true %}
+                                            {% heroicon_micro "eye" class="inline me-1 w-4 h-4" aria_hidden=true %}
                                             {% trans "View" %}
                                         </a>
                                     {% endif %}
@@ -70,7 +70,7 @@
                                     {% user_can_update_report report user as can_update_report %}
                                     {% if can_update_report %}
                                         <a class="data-block__action-icon-link" href="{% url "apply:projects:reports:edit" pk=report.pk %}">
-                                            {% heroicon_micro "pencil-square" class="inline mr-1" aria_hidden=true %}
+                                            {% heroicon_micro "pencil-square" class="inline me-1" aria_hidden=true %}
                                             {% trans "Edit" %}
                                         </a>
                                     {% endif %}

@@ -108,7 +108,7 @@
                         {% endif %}
                         {% if project.vendor.user_has_updated_details %}
                             <a class="docs-block__icon-link" href="{% url 'apply:projects:vendor-detail' pk=project.pk vendor_pk=project.vendor.pk %}">
-                                {% heroicon_micro "eye" class="inline mr-1 w-4 h-4" aria_hidden=true %}
+                                {% heroicon_micro "eye" class="inline me-1 w-4 h-4" aria_hidden=true %}
                                 {% trans "View" %}
                             </a>
                         {% endif %}
@@ -138,21 +138,21 @@
                     {% endif %}
                     {% if object.user_has_updated_details and not user.is_applicant %}
                         <a class="docs-block__icon-link" href="{% url 'apply:projects:approval' pk=project.pk %}">
-                            {% heroicon_micro "eye" class="inline mr-1 w-4 h-4" aria_hidden=true %}
+                            {% heroicon_micro "eye" class="inline me-1 w-4 h-4" aria_hidden=true %}
                             {% trans "View" %}
                         </a>
                     {% endif %}
                 </div>
                 {% has_project_sow_form object as project_sow %}
                 {% if project_sow and object.user_has_updated_details and not user.is_applicant %}
-                    <ul class="mt-4 w-full pl-9">
+                    <ul class="mt-2 w-full ps-7">
                         <li class="docs-block__document">
                             <div class="docs-block__document-inner">
                                 <p class="docs-block__document-info">{% trans "Scope of work (SOW)" %}</p>
                             </div>
                             <div class="docs-block__document-inner__actions">
                                 <a class="docs-block__icon-link" href="{% url 'apply:projects:sow' pk=project.pk %}">
-                                    {% heroicon_micro "eye" class="inline mr-1 w-4 h-4" aria_hidden=true %}
+                                    {% heroicon_micro "eye" class="inline me-1 w-4 h-4" aria_hidden=true %}
                                     {% trans "View" %}
                                 </a>
                             </div>
@@ -189,7 +189,7 @@
                                                     >
                                                         <span class="border-b-2 border-dashed">
                                                             {% trans "View template" %}
-                                                        </span>{% heroicon_mini "information-circle" class="fill-light-blue inline align-middle mr-1" aria_hidden=true %}
+                                                        </span>{% heroicon_mini "information-circle" class="fill-light-blue inline align-middle me-1" aria_hidden=true %}
                                                     </a>
                                                 {% endif %}
                                             </p>
@@ -205,7 +205,7 @@
                                                    onclick="handleCategory({{ document_category.id }})"
                                                    href="#"
                                                 >
-                                                    {% heroicon_micro "arrow-up-tray" class="inline mr-1 w-4 h-4" aria_hidden="true" %}
+                                                    {% heroicon_micro "arrow-up-tray" class="inline me-1 w-4 h-4" aria_hidden="true" %}
                                                     {% trans "Upload" %}
                                                 </a>
 
@@ -215,13 +215,13 @@
                                             {% if latest_file %}
                                                 <div class="docs-block__row-inner">
                                                     <a class="docs-block__icon-link" href="{% url 'apply:projects:document' pk=object.pk file_pk=latest_file.pk %}" target="_blank">
-                                                        {% heroicon_micro "eye" class="inline mr-1" aria_hidden=true %}
+                                                        {% heroicon_micro "eye" class="inline me-1" aria_hidden=true %}
                                                         {% trans "View" %}
                                                     </a>
                                                     {% user_can_remove_supporting_documents object user as can_remove_supporting_doc %}
                                                     {% if can_remove_supporting_doc %}
                                                         <form method="POST" id="{{ remove_document_form.name }}-{{ latest_file.pk }}" class="docs-block__icon-link">
-                                                            {% heroicon_micro "trash" class="inline mr-1 fill-red-500" aria_hidden=true %}
+                                                            {% heroicon_micro "trash" class="inline me-1 fill-red-500" aria_hidden=true %}
                                                             {% csrf_token %}
                                                             {{ latest_file.get_remove_form }}
                                                             <input

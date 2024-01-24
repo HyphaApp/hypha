@@ -72,7 +72,7 @@
                                 <div class="docs-block__row-inner">
                                 </div>
                                 <div class="docs-block__row-inner">
-                                    {% heroicon_mini "information-circle" class="fill-light-blue inline align-middle mr-1" aria_hidden=true %}
+                                    {% heroicon_mini "information-circle" class="fill-light-blue inline align-middle me-1" aria_hidden=true %}
                                     <a class="docs-block__icon-link" href="#communications" target="_blank">
                                         <span>{% trans "Corrections/amendments?" %}</span>
                                     </a>
@@ -96,7 +96,7 @@
                             {% if can_upload_contract and can_initiate_contract  %}
                                 <div class="docs-block__row-inner docs-block__row-inner__contract-upload-row">
                                     <a data-fancybox class="font-bold flex items-center w-auto text-left bg-light-blue text-white mr-0 p-2.5 border-none" href="#" data-src="#upload-contract">
-                                        {% heroicon_micro "arrow-up-tray" size=18 class="inline mr-1" aria_hidden="true" %}
+                                        {% heroicon_micro "arrow-up-tray" size=18 class="inline me-1" aria_hidden="true" %}
                                         {% if not contract %}
                                             {% trans "Upload" %}
                                         {% elif not contract.approver %}
@@ -115,7 +115,7 @@
                             {% if can_upload_contract and user.is_applicant %}
                                 <div class="docs-block__row-inner docs-block__row-inner__contract-upload-row">
                                     <a data-fancybox class="font-bold flex items-center w-auto text-left bg-light-blue text-white mr-0 p-2.5 border-none" href="#" data-src="#upload-contract">
-                                        {% heroicon_mini "arrow-up-tray" size=18 class="inline mr-1" aria_hidden="true" %}
+                                        {% heroicon_mini "arrow-up-tray" size=18 class="inline me-1" aria_hidden="true" %}
                                         {% if not contract.signed_by_applicant %}
                                             {% trans "Upload" %}
                                         {% elif not contract.approver %}
@@ -170,7 +170,7 @@
                                         {% if document_category in remaining_contract_document_categories and can_update_documents %}
                                             <div class="docs-block__document-inner__actions">
                                                 <a data-fancybox data-src="#upload-contracting-doc" class="font-bold flex items-center mr-0" onclick="handleCategory({{ document_category.id }})" href="#">
-                                                    {% heroicon_mini "arrow-up-tray" size=18 class="inline mr-1" aria_hidden="true" %}
+                                                    {% heroicon_mini "arrow-up-tray" size=18 class="inline me-1" aria_hidden="true" %}
                                                     {% trans "Upload" %}
                                                 </a>
                                             </div>
@@ -179,12 +179,12 @@
                                             {% if latest_file %}
                                                 <div class="docs-block__row-inner">
                                                     <a class="docs-block__icon-link" href="{% url 'apply:projects:contract_document' pk=object.pk file_pk=latest_file.pk %}" target="_blank">
-                                                        {% heroicon_micro "eye" class="inline mr-1 w-4 h-4" aria_hidden=true %}
+                                                        {% heroicon_micro "eye" class="inline me-1 w-4 h-4" aria_hidden=true %}
                                                         {% trans "View" %}
                                                     </a>
                                                     {% if can_update_documents %}
                                                         <form method="POST" id="{{ remove_contract_document_form.name }}-{{ latest_file.pk }}" class="docs-block__icon-link">
-                                                            {% heroicon_micro "trash" class="inline mr-1 fill-red-500" aria_hidden=true %}
+                                                            {% heroicon_micro "trash" class="inline me-1 fill-red-500" aria_hidden=true %}
                                                             {% csrf_token %}
                                                             {{ latest_file.get_remove_form }}
                                                             <input

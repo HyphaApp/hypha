@@ -6,7 +6,7 @@
             class="button button--transparent button--contains-icons {{ class }}"
             href="{{ APPLY_SITE.root_url }}{% url 'dashboard:dashboard' %}"
         >
-            {% heroicon_micro "user" class="inline align-text-bottom w-4 h-4 mr-1" aria_hidden=true %}
+            {% heroicon_micro "user" class="inline align-text-bottom w-4 h-4 me-1" aria_hidden=true %}
 
             My {{ ORG_SHORT_NAME }}
         </a>
@@ -16,7 +16,7 @@
             href="{{ APPLY_SITE.root_url }}{% url 'users:account' %}"
             title="Goto your account"
         >
-            {% heroicon_micro "user" class="inline align-text-bottom w-4 h-4 mr-1" aria_hidden=true %}
+            {% heroicon_micro "user" class="inline align-text-bottom w-4 h-4 me-1" aria_hidden=true %}
             {{ request.user }}
         </a>
     {% endif %}
@@ -25,7 +25,7 @@
         class="button button--transparent button--contains-icons {{ class }}"
         href="{{ APPLY_SITE.root_url }}{% url 'users_public:passwordless_login_signup' %}{% if redirect_url %}?next={{ redirect_url }}{% endif %}"
     >
-        {% heroicon_micro "user" class="inline align-text-bottom w-4 h-4 mr-1" aria_hidden=true %}
+        {% heroicon_micro "user" class="inline align-text-bottom w-4 h-4 me-1" aria_hidden=true %}
         {% trans "Login" %}
     </a>
 {% endif %}

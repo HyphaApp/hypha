@@ -74,12 +74,12 @@
             {% endif %}
             {% if filter_classes != 'filters-open' %}
                 <button class="button button--filters js-toggle-filters">
-                    {% heroicon_mini "adjustments-horizontal" class="inline mr-1 text-dark-blue align-text-bottom" aria_hidden=true %}
+                    {% heroicon_mini "adjustments-horizontal" class="inline me-1 text-dark-blue align-text-bottom" aria_hidden=true %}
                     {% trans "Filters" %}</button>
             {% endif %}
 
             <button class="button button--filters js-toggle-filters" id="show-filters-button">
-                {% heroicon_mini "adjustments-horizontal" class="inline mr-1 text-dark-blue align-text-bottom" aria_hidden=true %}
+                {% heroicon_mini "adjustments-horizontal" class="inline me-1 text-dark-blue align-text-bottom" aria_hidden=true %}
                 {% trans "Filters" %}
             </button>
             {% if use_search|default:False %}

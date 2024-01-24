@@ -177,7 +177,7 @@
 
                     {% if request.user.is_authenticated %}
                         <a href="{% url 'users:account' %}" class="link link--button-transparent link--mobile-standout">
-                            {% heroicon_micro "user" class="inline align-middle w-4 h-4 mr-1" aria_hidden=true %}
+                            {% heroicon_micro "user" class="inline align-middle w-4 h-4 me-1" aria_hidden=true %}
                             {{ request.user }}
                         </a>
                         <a href="{% url 'users_public:logout' %}" class="link link--button-transparent link--mobile-standout text-center">
@@ -197,7 +197,7 @@
                                role="button"
                                @click.prevent="open = ! open"
                             >
-                                {% heroicon_outline "bell-alert" class="inline mr-1 text-black" aria_hidden="true" %}
+                                {% heroicon_outline "bell-alert" class="inline me-1 text-black" aria_hidden="true" %}
                             </a>
                             <div x-cloak x-show="open" x-transition @click.outside="open = false">{% include "activity/include/notifications_dropdown.html" %}</div>
                         </div>
@@ -208,7 +208,7 @@
                            hx-boost="true"
                            title="{% trans "Goto profile page" %}"
                         >
-                            {% heroicon_micro "user" class="inline align-text-bottom w-4 h-4 mr-1" aria_hidden=true %}
+                            {% heroicon_micro "user" class="inline align-text-bottom w-4 h-4 me-1" aria_hidden=true %}
                             {{ request.user }}
                         </a>
                         <a href="{% url 'users_public:logout' %}" class="button button--transparent">
