@@ -40,7 +40,8 @@ theme:
 plugins:
   - awesome-pages
   - search
-  - macros
+  - macros:
+      module_name: docs/scripts/doc_macros
   - mkdocstrings:
       default_handler: python
       handlers:
@@ -122,13 +123,15 @@ extra:
       link: https://github.com/HyphaApp/
       name: GitHub Org
 
+  # Versioning for Python & Node happen automatically via docs/scripts/doc_macros.py reading
+  # ".python-version" and ".nvmrc". Updates here will overwrite the automatic versioning.
   versions:
     python:
-      version: 3.11
+      version:
       packages:
-        macos: python@3.11
+        macos:
     node:
-      version: 18
+      version:
     nvm:
       version: 0.39.5
       packages:

@@ -8,8 +8,8 @@ minimal setup, the setup may vary slightly for your base operating systems.
 Make sure you have these things installed on your system:
 
 * Git – [Installation Guide](https://git-scm.com/downloads)
-* Python {{ versions.python.version }}.x
-* Node {{ versions.node.version }}.x
+* Python {{ versions.python.version }}
+* Node {{ versions.node.version }}
 * PostgreSQL {{ versions.postgres.version }} (with `libpq-dev` on Linux)
 
 !!! info

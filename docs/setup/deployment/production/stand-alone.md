@@ -6,8 +6,8 @@
 ## System Dependencies
 
 * Git
-* Python {{ versions.python.version }}.x
-* Node {{ versions.node.version }}.x
+* Python {{ versions.python.version }}
+* Node {{ versions.node.version }}
 * PostgreSQL {{ versions.postgres.version }}
 
 !!! info
