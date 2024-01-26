@@ -25,7 +25,7 @@
 
     Install Python pip, venv & PostgreSQL:
 
-    ```console
+    ```shell
     sudo apt install -y \
         python3-pip python3-venv \
         postgresql postgresql-contrib {{ versions.postgres.packages.debian }}
@@ -37,7 +37,7 @@
 
     Install Python pip, venv & PostgreSQL:
 
-    ```console
+    ```shell
     sudo dnf module -y reset postgresql
     sudo dnf module -y enable postgresql:{{ versions.postgres.version }}
     sudo dnf install -y \
@@ -53,7 +53,7 @@
 
     Install Python pip, venv & PostgreSQL:
 
-    ```console
+    ```shell
     brew install {{ versions.python.packages.macos }} 
     brew install {{ versions.postgres.packages.macos }}
     brew services start {{ versions.postgres.packages.macos }}
@@ -65,7 +65,7 @@
 
 Use `git` to fetch the code, this will create a `hypha/` directory.
 
-```console
+```shell
 git clone https://github.com/HyphaApp/hypha.git hypha
 cd hypha
 ```
@@ -76,7 +76,7 @@ NodeJS versions have potential to change. To allow for ease of upgrading, it is 
 
 The following commands will install nvm and proceed to setup Node based off of the content of `.nvmrc`.
 
-```console
+```shell
 wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
@@ -89,7 +89,7 @@ nvm use         # Use the Node version in .nvmrc
 
 Create the virtual environment, specify the python binary to use and the directory. Then source the activate script to activate the virtual environment. The last line tells Django what settings to use.
 
-```console
+```shell
 python3 -m venv venv/hypha
 source venv/hypha/bin/activate
 export DJANGO_SETTINGS_MODULE=hypha.settings.production
@@ -101,7 +101,7 @@ Inside your activated virtual environment you will use plain `python` and `pip` 
 
 Next, install the required packages using:
 
-```console
+```shell
 python3 -m pip install -r requirements.txt
 ```
 
@@ -117,14 +117,14 @@ npm install
 
 Postgresql is the database used. The following commands will start the Postgresql service and login to the postgres superuser:
 
-```console
+```shell
 sudo service postgresql start
 sudo su - postgres
 ```
 
 then, enter the postgresql cli with:
 
-```console
+```shell
 psql
 ```
 
@@ -147,7 +147,7 @@ To begin with, set the `export SECURE_SSL_REDIRECT=false` to prevent SSL redirec
 
 Then use the following commands to test run the server:
 
-```console
+```shell
 npm run build
 python manage.py collectstatic --noinput
 python manage.py createcachetable

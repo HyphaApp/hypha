@@ -20,7 +20,7 @@ First check out master and do a git pull ot get all the latest updates.
 
 Then create a new branch and do a checkout of it.
 
-```console
+```shell
 git checkout master
 git pull
 git checkout -b fix/gh-1234-fixing-thing-a
@@ -28,7 +28,7 @@ git checkout -b fix/gh-1234-fixing-thing-a
 
 ### Adding commits
 
-```console
+```shell
 git add
 git commit -m "A good commit message."
 ```
@@ -39,7 +39,7 @@ First make sure we are in the correct branch. Then push the branch to origin, i.
 
 (Pushing to `HEAD` is equivalent to pushing to a remote branch having the same name as your current branch.)
 
-```console
+```shell
 git checkout fix/gh-1234-fixing-thing-a
 git push -u origin HEAD
 ```
@@ -50,7 +50,7 @@ The message in the Terminal will contain the URL to create an PR. On most system
 
 Checkout master and update it. Checkout the branch you are working on and issue the command to rebase it from master. If that resulted in any changes you will then need to do a force push to GitHub.
 
-```console
+```shell
 git checkout master
 git pull
 git checkout fix/gh-1234-fixing-thing-a

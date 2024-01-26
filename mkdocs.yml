@@ -43,6 +43,7 @@ plugins:
   - macros:
       module_name: docs/scripts/doc_macros
   - mkdocstrings:
+      enabled: !ENV [GEN_REF_PAGES, false]
       default_handler: python
       handlers:
         python:
@@ -66,7 +67,6 @@ plugins:
   - gen-files:
       scripts:
         - docs/scripts/gen_ref_pages.py
-  - section-index
 
 markdown_extensions:
   - admonition

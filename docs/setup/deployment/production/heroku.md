@@ -38,7 +38,7 @@ Set these settings as a minimum:
 
 Generate secret key with:
 
-```console
+```shell
 python3 -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
 ```
 
@@ -49,7 +49,7 @@ python3 -c "from django.core.management.utils import get_random_secret_key; prin
 5. Activate dynos to run your app. For dev and test the "Hobby" level works well. For production a "Standard-2X" with a dyno count of 2 and WEB\_CONCURRENCY set to 3 performance well.
 6. Run the following commands from the command line with the help of heroku-cli. If it's the first time you use heroku-cli you first need to login with `heroku login`:
 
-    ```console
+    ```shell
     heroku run python3 manage.py migrate -a [name-of-app]
     heroku run python3 manage.py createcachetable -a [name-of-app]
     heroku run python3 manage.py createsuperuser -a [name-of-app]

@@ -28,7 +28,7 @@ Make sure you have these things installed on your system:
 
     Install Python pip, venv & PostgreSQL:
 
-    ```console
+    ```shell
     sudo apt install -y \
         python3-pip python3-venv \
         postgresql postgresql-contrib {{ versions.postgres.packages.debian }}
@@ -40,7 +40,7 @@ Make sure you have these things installed on your system:
 
     Install Python pip, venv & PostgreSQL:
 
-    ```console
+    ```shell
     sudo dnf module -y reset postgresql
     sudo dnf module -y enable postgresql:{{ versions.postgres.version }}
     sudo dnf install -y \
@@ -56,7 +56,7 @@ Make sure you have these things installed on your system:
 
     Install Python pip, venv & PostgreSQL:
 
-    ```console
+    ```shell
     brew install {{ versions.python.packages.macos }} 
     brew install {{ versions.postgres.packages.macos }}
     brew services start {{ versions.postgres.packages.macos }}
@@ -68,14 +68,14 @@ Make sure you have these things installed on your system:
 
 Use `git` to fetch the code, this will create a `hypha/` directory.
 
-```console
+```shell
 git clone https://github.com/HyphaApp/hypha.git hypha
 cd hypha
 ```
 
 Now, create some local directories.
 
-```console
+```shell
 cd hypha
 mkdir -p var/log media
 ```
@@ -92,7 +92,7 @@ NodeJS versions have potential to change. To allow for ease of upgrading, it is 
 
 The following commands will install nvm and proceed to setup Node based off of the content of `.nvmrc`.
 
-```console
+```shell
 wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
@@ -105,7 +105,7 @@ nvm use         # Use the Node version in .nvmrc
 
 Build all JS/CSS assets for development:
 
-```console
+```shell
 npm run dev:build
 ```
 
@@ -146,7 +146,7 @@ Hypha supports configuration via either a `local.py` or a `.env` file:
 
     Copy the provided `local.py.example` file and rename it to `local.py`.
 
-    ```console
+    ```shell
     cp -p hypha/settings/local.py.example hypha/settings/local.py
     ```
 
@@ -174,7 +174,7 @@ Hypha supports configuration via either a `local.py` or a `.env` file:
 
 Create an empty database:
 
-```console
+```shell
 createdb hypha
 ```
 
@@ -187,14 +187,14 @@ There are two ways to about it, you can either load demo data from  `/public/san
 === "Load Demo Data"
     To load demo data run:
 
-    ```console
+    ```shell
     pg_restore --verbose --clean  --if-exists --no-acl --no-owner \
                  --dbname=hypha public/sandbox_db.dump
     ```
 
     It's not always completely up to date so run:
     
-    ```console
+    ```shell
     python3 manage.py migrate
     ```
 
@@ -217,7 +217,7 @@ There are two ways to about it, you can either load demo data from  `/public/san
     - If you need to delete/drop the database, you can use `dropdb hypha`
     - On Linux you might need to run as the "postgres" user first when setting up Postgres. Use it to create the database and set up a database user.For local development I suggest creating a user with the same name as your account, then you will not need to specify it on every command.
 
-        ```console
+        ```shell
         su - postgres
         createdb hypha
         createuser [your-account-name]
@@ -229,7 +229,7 @@ You will need two domain to run this app, used to serve the public and apply sit
 
 First, add these sites to the database:
 
-```console
+```shell
 python3 manage.py wagtailsiteupdate hypha.test apply.hypha.test 9001
 ```
 
@@ -248,13 +248,13 @@ Here we are setting the public site be served at http://hypha.test:9001 and appl
 
 ## Create Login credentials
 
-```console
+```shell
 python3 manage.py createsuperuser
 ```
 
 ## Run Development Server
 
-```console
+```shell
 python3 manage.py runserver 0.0.0.0:9001 --settings=hypha.settings.dev
 ```
 
@@ -273,13 +273,13 @@ To live preview of documentation, while you writing it.
 
 Activate your virtual environment and install dependencies:
 
-```console
+```shell
 source venv/bin/activate
 python3 -m pip install -r requirements-dev.txt
 ```
 
 Run:
-```console
+```shell
 make serve-docs
 ```
 
@@ -296,7 +296,7 @@ Hypha's coding style is enforced by black, ruff and prettier and comes pre-confi
 
 Install pre-commit to auto-format the code before each commit:
 
-```console
+```shell
 pre-commit install
 ```
 
@@ -307,13 +307,13 @@ For frontend code, stylelint and eslint is used.
 
 Run the test with:
 
-```console
+```shell
 make test
 ```
 
 For lint the code and not run the full test suite you can use:
 
-```console
+```shell
 make lint
 ```
 

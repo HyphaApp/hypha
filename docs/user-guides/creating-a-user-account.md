@@ -3,7 +3,7 @@
 ### Creating superuser
 
 
-```console
+```shell
 python3 manage.py createsuperuser
 ```
 
