@@ -101,6 +101,17 @@ class DateRangeInputWidget(filters.widgets.SuffixedMultiWidget):
         return [None, None]
 
 
+class ReportingFilter(filters.FilterSet):
+    current_report_status = Select2MultipleChoiceFilter(
+        label=_("Status"),
+        choices=[
+            ("Not started", "Not started"),
+            ("In progress", "In progress"),
+            ("Submitted", "Submitted"),
+        ],
+    )
+
+
 class ReportListFilter(filters.FilterSet):
     reporting_period = filters.DateFromToRangeFilter(
         label=_("Reporting Period"),

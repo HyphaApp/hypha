@@ -23,6 +23,7 @@ from .views import (
     ProjectSOWView,
     RemoveDocumentView,
     ReportDetailView,
+    ReportingView,
     ReportListView,
     ReportPrivateMedia,
     ReportSkipView,
@@ -48,6 +49,7 @@ urlpatterns = [
     path("all/", ProjectListView.as_view(), name="all"),
     path("statuses/", get_project_status_counts, name="projects_status_counts"),
     path("invoices/", InvoiceListView.as_view(), name="invoices"),
+    path("reporting/", ReportingView.as_view(), name="reporting"),
     path(
         "invoices/statuses/", get_invoices_status_counts, name="invoices_status_counts"
     ),

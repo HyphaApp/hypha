@@ -46,6 +46,7 @@ from .project_partials import (
 from .report import (
     ReportDetailView,
     ReportFrequencyUpdate,
+    ReportingView,
     ReportListView,
     ReportPrivateMedia,
     ReportSkipView,
@@ -92,6 +93,7 @@ __all__ = [
     "ReportSkipView",
     "ReportFrequencyUpdate",
     "ReportListView",
+    "ReportingView",
     "CreateInvoiceView",
     "InvoiceListView",
     "InvoiceView",

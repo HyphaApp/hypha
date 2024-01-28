@@ -85,3 +85,23 @@
         }
     }
 }
+
+.reporting-table {
+    @include table-ordering-styles;
+
+    tbody {
+        td {
+            &.status {
+                span {
+                    display: inline-block;
+                    padding: 5px;
+                    font-size: 13px;
+                    font-weight: $weight--bold;
+                    color: $color--white;
+                    text-align: center;
+                    background-color: $color--dark-blue;
+                }
+            }
+        }
+    }
+}

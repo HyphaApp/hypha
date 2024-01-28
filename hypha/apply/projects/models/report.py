@@ -360,6 +360,18 @@ class ReportConfig(models.Model):
         )
         return report
 
+    def current_report(self):
+        """This is different from current_due_report as it will return a completed report
+        if that one is the current one."""
+        today = timezone.now().date()
+
+        last_report = self.last_report()
+
+        if last_report and last_report.end_date >= today:
+            return last_report
+
+        return self.current_due_report()
+
     def next_date(self, last_date):
         delta_frequency = self.frequency + "s"
         delta = relativedelta(**{delta_frequency: self.occurrence})
