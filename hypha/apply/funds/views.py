@@ -1109,12 +1109,10 @@ class AdminSubmissionDetailView(ActivityContextMixin, DelegateableView, DetailVi
         if self.object.next:
             other_submissions = other_submissions.exclude(id=self.object.next.id)
 
-        public_page = self.object.get_from_parent("detail")()
         default_screening_statuses = get_default_screening_statues()
 
         return super().get_context_data(
             other_submissions=other_submissions,
-            public_page=public_page,
             default_screening_statuses=default_screening_statuses,
             archive_access_groups=get_archive_view_groups(),
             can_archive=can_alter_archived_submissions(self.request.user),

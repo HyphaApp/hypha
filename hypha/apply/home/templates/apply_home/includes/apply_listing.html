@@ -1,32 +1,23 @@
-{% load i18n wagtailcore_tags %}
+{% load i18n bleach_tags markdown_tags wagtailcore_tags %}
 
-{% with details=page.detail %}
-    {% if page.open_round %}
-        <div class="listing listing--not-a-link">
-            <div>
-                <h4 class="listing__title listing__title--link">
-                    {% if page.next_deadline and page.show_deadline %}
-                        <p class="listing__deadline">
-                            <svg class="icon icon--calendar icon--small"><use xlink:href="#calendar"></use></svg>
-                            <span>{% trans "Next deadline" %}: {{ page.next_deadline|date:"M j, Y" }}</span>
-                        </p>
-                    {% endif %}
-              {% comment %} {% if details %}
-                  <a href="{% pageurl details %}">
-              {% endif %} {% endcomment %}
-
-                    {{ page.title }}
-
-              {% comment %} {% if details %}
-                  </a>
-              {% endif %} {% endcomment %}
-                </h4>
-
-                {% if details.listing_summary or details.introduction %}
-                    <h6 class="listing__teaser">{{ details.listing_summary|default:details.introduction|truncatechars_html:120 }}</h6>
+{% if page.open_round %}
+    <div class="listing listing--not-a-link">
+        <div>
+            <h4 class="listing__title listing__title--link">
+                {% if page.next_deadline and page.show_deadline %}
+                    <p class="listing__deadline">
+                        <svg class="icon icon--calendar icon--small"><use xlink:href="#calendar"></use></svg>
+                        <span>{% trans "Next deadline" %}: {{ page.next_deadline|date:"M j, Y" }}</span>
+                    </p>
                 {% endif %}
-            </div>
-            <a class="listing__button" href="{% pageurl page %}">{% trans "Apply" %}</a>
+                {{ page.title }}
+            </h4>
+            {% if page.description %}
+                <h6 class="listing__teaser">
+                    {{ page.description|markdown|bleach }}
+                </h6>
+            {% endif %}
         </div>
-    {% endif %}
-{% endwith %}
+        <a class="listing__button" href="{% pageurl page %}">{% trans "Apply" %}</a>
+    </div>
+{% endif %}
