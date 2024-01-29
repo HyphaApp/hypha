@@ -12,7 +12,6 @@ from wagtail.images.views.serve import ServeView
 
 from hypha.apply.users.urls import public_urlpatterns as user_urls
 from hypha.apply.utils.views import custom_wagtail_page_delete
-from hypha.public import urls as public_urls
 
 urlpatterns = [
     path("django-admin/", admin.site.urls),
@@ -29,7 +28,6 @@ urlpatterns = [
     path("sitemap.xml", sitemap),
     path("upload/", include(django_file_form_urls)),
     path("", include((user_urls, "users_public"))),
-    path("", include(public_urls)),
     path("", include("social_django.urls", namespace="social")),
     path("tinymce/", include("tinymce.urls")),
     path("select2/", include("django_select2.urls")),

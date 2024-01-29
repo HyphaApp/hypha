@@ -35,7 +35,6 @@ The WagTail Admin is your "back office" for setting up form applications and pub
 - Site history: Generates a report of user action logs.
 - Aging page
 - Public Site
-- Investments
 - Images
 - Documents: Store documents like reports for blog posts 
 - Snippets: Snippets allow you to create elements on a website once and reuse them in multiple places. Then, if you want to change something on the snippet, you only need to change it once, and it will change across all the occurrences of the snippet. How snippets are used can vary widely between websites. 
