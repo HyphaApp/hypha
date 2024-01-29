@@ -103,6 +103,7 @@
                            aria-haspopup="activity"
                            aria-expanded="false"
                            role="button"
+                           title="Click to open your notifications"
                            @click.prevent="open = ! open"
                         >
                             {% heroicon_outline "bell-alert" class="inline me-1 text-black" aria_hidden="true" %}
@@ -110,22 +111,16 @@
                         <div x-cloak x-show="open" x-transition @click.outside="open = false">{% include "activity/include/notifications_dropdown.html" %}</div>
                     </div>
                 {% endif %}
+
+                {% if request.path != '/auth/' %}
+                    {% include "includes/login_button.html" %}
+                {% endif %}
+
                 {% if request.user.is_authenticated %}
-                    <a href="{% url 'users:account' %}"
-                       class="button button--transparent"
-                       hx-boost="true"
-                       title="{% trans "Goto profile page" %}"
-                    >
-                        {% heroicon_micro "user" class="inline align-text-bottom w-4 h-4 me-1" aria_hidden=true %}
-                        {{ request.user }}
-                    </a>
                     <a href="{% url 'users:logout' %}" class="button button--transparent">
                         {% trans "Log out" %}
                     </a>
                 {% else %}
-                    {% if request.path != '/auth/' %}
-                        {% include "includes/login_button.html" %}
-                    {% endif %}
                     {% if ENABLE_PUBLIC_SIGNUP and request.path != '/register/' %}
                         {% include "includes/register_button.html" %}
                     {% endif %}

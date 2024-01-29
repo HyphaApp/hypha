@@ -1,7 +1,7 @@
 {% load i18n heroicons %}
 
 {% if request.user.is_authenticated %}
-    {% if request.user.can_access_dashboard %}
+    {% if request.path == "/" and request.user.can_access_dashboard %}
         <a
             class="button button--transparent {{ class }}"
             href="{{ APPLY_SITE.root_url }}{% url 'dashboard:dashboard' %}"

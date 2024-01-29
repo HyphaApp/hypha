@@ -23,7 +23,13 @@
     </div>
 
     <div>
-      <a class="button button--primary" href="{% pageurl page %}" title="Click to apply for {{ page.title }}">{% trans 'Apply' %}</a>
+      <a
+        class="button button--primary"
+        href="{% pageurl page %}"
+        title="Click to apply for {{ page.title }}"
+      >
+        {% trans 'Apply' %}
+      </a>
     </div>
   </div>
 {% endif %}
