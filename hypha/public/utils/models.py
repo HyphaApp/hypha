@@ -3,31 +3,13 @@ from django.utils.translation import gettext_lazy as _
 from wagtail.admin.panels import (
     FieldPanel,
     MultiFieldPanel,
-    PageChooserPanel,
 )
 from wagtail.contrib.settings.models import (
     BaseGenericSetting,
     register_setting,
 )
 from wagtail.fields import RichTextField
-from wagtail.models import Orderable, Page
-
-
-# Related pages
-class RelatedPage(Orderable, models.Model):
-    page = models.ForeignKey(
-        "wagtailcore.Page",
-        on_delete=models.CASCADE,
-        related_name="+",
-    )
-
-    class Meta:
-        abstract = True
-        ordering = ["sort_order"]
-
-    panels = [
-        PageChooserPanel("page"),
-    ]
+from wagtail.models import Page
 
 
 @register_setting
