@@ -16,9 +16,7 @@ class Command(BaseCommand):
             "Provide the details below to initialize Hypha. Press enter to keep the default value.\n"
         )
 
-        APPLY_SITE_DOMAIN = click.prompt(
-            "Domain of apply site ", default="apply.hypha.test"
-        )
+        APPLY_SITE_DOMAIN = click.prompt("Site Domain", default="hypha.test")
         SUPER_ADMIN_EMAIL = click.prompt(
             "Superadmin Email ", default="superadmin@hypha.test"
         )

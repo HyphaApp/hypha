@@ -4,7 +4,7 @@ FROM cimg/python:3.11.1-node
 WORKDIR /usr/local/hypha
 
 # Set environment variables.
-ENV API_BASE_URL http://apply.hypha.test:8090/api
+ENV API_BASE_URL http://hypha.test:8090/api
 ENV DATABASE_URL postgres://hypha:hypha@db:5432/hypha
 ENV DJANGO_SETTINGS_MODULE hypha.settings.dev
 ENV PYTHONDONTWRITEBYTECODE 1
