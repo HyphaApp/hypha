@@ -1,4 +1,4 @@
-{% load i18n wagtailcore_tags %}
+{% load i18n bleach_tags markdown_tags wagtailcore_tags %}
 
 {% if page.open_round %}
     <div class="listing listing--not-a-link">
@@ -14,7 +14,7 @@
             </h4>
             {% if page.description %}
                 <h6 class="listing__teaser">
-                    {{ page.description|truncatechars_html:120 }}
+                    {{ page.description|markdown|bleach }}
                 </h6>
             {% endif %}
         </div>
