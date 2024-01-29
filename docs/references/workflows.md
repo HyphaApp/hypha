@@ -1,22 +1,31 @@
-A workflow describes the process from a submitted application, through various stages of review, to acceptance of an application.
+The **Workflow** defines the stages and processes that the application should undertake. Creating a new Fund or Lab requires you to select one of these workflows.
 
-> ℹ️ _Hypha covers more than just the application phase, but workflows are used in the application process only._
+Each workflow has a predetermined amount of stages (e.g. request, proposal), application forms, review forms, and determination forms associated with this Fund or Lab.
+
+Each workflow offers different statuses (e.g. External Review, Ready for Determination), and different actions (e.g Invite to proposal).
+
+!!! info
+    Hypha covers more than just the application phase, but workflows are used in the application process only.
 
 
 ## What are the 4 workflows?
 
-1. Request
-2. Request with external review
-3. Request with community review
-4. Concept and proposal
+1. [Request](#request)
+2. [Request with external review](#request-with-external-review)
+3. [Request with community review](#request-with-community-review)
+4. [Concept and Proposal](#concept-and-proposal)
 
 All workflows begin with applicant drafting, revising and submitting an application (`DRAFT_STATE`) — only transition available is to `INITIAL_STATE`, upon applicant taking the action to submit their application/request.
 
-### Request
+### 💁 Request
 
-The request workflow is a single stage process with no advisory council review.
+The request workflow is a single stage process with no advisory council review. This application process requires less time and effort than the other workflow processes.
 
-Proposal Persona: Funding organization offers a rapid response fund or another type of grantmaking that requires a streamline process that does not require an external review process. This application process could also be used for in-kind services like coaching, security audits, etc.
+**Proposal Persona:**
+
+Funding organization offers a rapid response fund or another type of grantmaking that requires a streamline process that does not require an external review process. This application process could also be used for in-kind services like coaching, security audits, etc.
+
+![Screenshot 2022-09-06 8 10 17 PM](https://user-images.githubusercontent.com/20019656/188733678-a926ebdd-8b8d-46a6-bfb7-a35dbe376ec1.png)
 
 ![Request workflow flowchart](../assets/workflow1.png)
 
@@ -31,13 +40,15 @@ Once an application is submitted (`INITIAL_STATE`) — it can transition into th
 - Accepted (`accepted`) — application accepted. Staff can still edit this submission.
 - Rejected (`rejected`) — application rejected. Permissions removed from all roles.
 
-### Request with external review
+### 👳 Request with external review
 
 This workflow is a single stage process with an advisory council review or external review stage -- includes functionalties for external reviewers like advisory board members to access applications and submit reviews.
 
 Proposal Persona: This funding organization relies on external partners for evaluations. Proposals submitted to this workflow are reviewed by staff members and an advisory board that is made up of trusted community members.
 
-![Request workflow flowchart](../assets/workflow2.png)
+![Screenshot 2022-09-06 10 40 41 PM](https://user-images.githubusercontent.com/20019656/188733916-d2133858-ee47-49d3-a63c-a78001be75c5.png)
+
+![Flow chart of Request with external review workflow](../assets/workflow2.png)
 
 Once an application is submitted (`INITIAL_STATE`) — it can transition into the following:
 
@@ -53,11 +64,15 @@ Once an application is submitted (`INITIAL_STATE`) — it can transition into th
 - Accepted (`ext_accepted`) — application accepted. Staff can still edit this submission.
 - Rejected (`ext_rejected`) — application rejected. Permissions removed from all roles.
 
-### Request with community review
+### 👪 Request with community review
 
-This workflow is a single stage process with an advisory council review or external review stage.
+This workflow is a single stage application process with functionalties for external reviewers, including applicants to carry out peer review of each other applications.
 
-Proposal Persona: This funding organization works with the community to co-design a meaningful definition of success. Applications are reviewed by staff members and an advisory board that is made up of trusted community members.
+**Proposal Persona:** 
+
+This funding organization works with the community to co-design a meaningful definition of success. Applications are reviewed by staff members and an advisory board that is made up of trusted community members.
+
+![Screenshot 2022-09-06 10 41 24 PM](https://user-images.githubusercontent.com/20019656/188734015-69b4890c-d9f9-4b60-b326-88acedff3f76.png)
 
 ![Request workflow flowchart](../assets/workflow3.png)
 
@@ -77,15 +92,27 @@ Once an application is submitted (`INITIAL_STATE`) — it can transition into th
 - Accept application but additional information is required (`com_almost`) — can transition to accepting application (`com_accepted`) or revert back to ready for discussion (`com_post_external_review_discussion`)
 - Reject application (`com_rejected`)
 
-### Concept and Proposal
+### 💡 Concept and Proposal
 
 This workflow is a two-stage process: the first stage is the request and the second stage includes an advisory council review or external review stage.
 
-Proposal Persona: This application process is continually informed by feedback from grantee partners and community members. Applicants could use the workflow to follow the trajectory of the submission process as this workflow is transparent from the concept note (first stage) all the way to the proposal (second stage) with prospective and current applicants about funding priorities and decisions.
+**Proposal Persona:** 
+
+This application process is continually informed by feedback from grantee partners and community members. Applicants could use the workflow to follow the trajectory of the submission process as this workflow is transparent from the concept note (first stage) all the way to the proposal (second stage) with prospective and current applicants about funding priorities and decisions.
 The proposal stage has functionalities for applications to be reviewed by staff members and an advisory board that is made up of trusted community members.
+
 
 ![Request workflow flowchart](../assets/workflow4.1.png)
 ![Request workflow flowchart](../assets/workflow4.2.png)
+
+**Stage 1**
+
+![Screenshot 2022-09-06 10 41 55 PM](https://user-images.githubusercontent.com/20019656/188734145-34091645-7d43-4c04-bbae-85aaec84fa44.png)
+
+**Stage 2**
+
+![Screenshot 2022-09-06 10 42 11 PM](https://user-images.githubusercontent.com/20019656/188734136-aca2acae-8d42-4c39-8dd0-b77b58bb5b9e.png)
+
 
 Once an application is submitted (`INITIAL_STATE`) — it can transition into the following:
 
@@ -109,59 +136,3 @@ Once an application is submitted (`INITIAL_STATE`) — it can transition into th
 - Proposal accepted (`proposal_accepted`)
 - Proposal accepted but additional info required (`proposal_almost`)
 - Proposal rejected (`proposal_rejected`)
-
-
-# Select a Workflow
-
-The **Workflow** defines the stages and processes that the application should undertake with OTF. Creating a new Fund or Lab requires you to select one of these workflows.
-
-Each workflow has a predetermined amount of stages (e.g. request, proposal), application forms, review forms, and determination forms associated with this Fund or Lab.
-
-Each workflow offers different statuses (e.g. External Review, Ready for Determination), and different actions (e.g Invite to proposal).
-
-The four hard-coded workflows are: Request, Request with external review, Request with community review, Concept & Proposal.
-
-### 💁 Request
-
-This application process requires less time and effort than the other workflow processes. This workflow has only a single stage with no external review. 
-
-**Proposal Persona**
-Funding organization offers a rapid response fund or another type of grantmaking that requires a streamline process that does not require an external review process. This application process could also be used for in-kind services like coaching, security audits, etc. 
-
-
-![Screenshot 2022-09-06 8 10 17 PM](https://user-images.githubusercontent.com/20019656/188733678-a926ebdd-8b8d-46a6-bfb7-a35dbe376ec1.png)
-
-
-### 👳 Request with External Reviewer
-
-The Request - External Reviewer workflow is a single stage application process with functionalties for external reviewers like advisory board members to access applications and submit reviews.
-
-**Proposal Persona**
-This funding organization relies on external partners for evaluations. Proposals submitted to this workflow are reviewed by staff members and an advisory board that is made up of trusted community members. 
-
-![Screenshot 2022-09-06 10 40 41 PM](https://user-images.githubusercontent.com/20019656/188733916-d2133858-ee47-49d3-a63c-a78001be75c5.png)
-
-
-### 👪 Request with Community Review
-
-The Request with Community Review workflow is a single stage application process with functionalties for external reviewers, including applicants to carry out peer review of each other applications.
-
-**Proposal Persona**
-This funding organization works with the community to co-design a meaningful definition of success. Applications are reviewed by staff members and an advisory board that is made up of trusted community members.
-
-![Screenshot 2022-09-06 10 41 24 PM](https://user-images.githubusercontent.com/20019656/188734015-69b4890c-d9f9-4b60-b326-88acedff3f76.png)
-
-
-### 💡Concept and Proposal
-
-**Proposal Persona**
-Applicants could use this workflow to follow the trajectory of the submission process as this workflow is transparent from the concept note (first stage) all the way to the proposal (second stage) with prospective and current applicants about funding priorities and decisions. The proposal stage has functionalities for applications to be reviewed by staff members and an advisory board that is made up of trusted community members.
-
-**Stage 1**
-
-![Screenshot 2022-09-06 10 41 55 PM](https://user-images.githubusercontent.com/20019656/188734145-34091645-7d43-4c04-bbae-85aaec84fa44.png)
-
-**Stage 2**
-
-![Screenshot 2022-09-06 10 42 11 PM](https://user-images.githubusercontent.com/20019656/188734136-aca2acae-8d42-4c39-8dd0-b77b58bb5b9e.png)
-

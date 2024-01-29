@@ -285,6 +285,8 @@ class CheckboxesFieldBlock(OptionalFormFieldBlock):
         return kwargs
 
     def prepare_data(self, value, data, serialize=False):
+        if not data:
+            return data
         base_prepare = super().prepare_data
         return [base_prepare(value, item, serialize) for item in data]
 
@@ -443,7 +445,9 @@ class MultiFileFieldBlock(UploadableMediaBlock):
 
     def prepare_data(self, value, data, serialize):
         if serialize:
-            return [file.serialize() for file in data]
+            if data:
+                return [file.serialize() for file in data]
+            return None
         return data
 
     def no_response(self):
