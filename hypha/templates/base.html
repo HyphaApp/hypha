@@ -1,7 +1,8 @@
 {% load static cache wagtailcore_tags wagtailimages_tags util_tags cookieconsent_tags i18n %}<!doctype html>
 {% wagtail_site as current_site %}
 {% get_current_language as LANGUAGE_CODE %}
-<html class="no-js" lang="{{ LANGUAGE_CODE }}">
+{% get_current_language_bidi as LANGUAGE_BIDI %}
+<html class="no-js" lang="{{ LANGUAGE_CODE }}" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
     <head>
         {# TODO fallbacks if page is not defined e.g. for 404 page #}
         <meta charset="utf-8">
