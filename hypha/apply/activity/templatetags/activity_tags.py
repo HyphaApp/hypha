@@ -50,27 +50,51 @@ def display_for(activity, user):
         if not isinstance(message_data, (dict, list)):
             return activity.message
 
-    visibile_for_user = activity.visibility_for(user)
+    visible_for_user = activity.visibility_for(user)
 
-    if set(visibile_for_user) & {TEAM, REVIEWER}:
+    if set(visible_for_user) & {TEAM, REVIEWER}:
         return message_data[TEAM]
 
     return message_data[ALL]
 
 
 @register.filter
-def visibility_options(activity, user):
-    choices = activity.visibility_choices_for(user)
+def visibility_options(activity, user) -> str:
+    """Gets all visibility choices for the specified user
+
+    Args:
+        activity: An [`Activity`][hypha.apply.activity.models.Activity] object
+        user: A [`User`][hypha.apply.users.models.User] object
+
+    Returns:
+        A JSON string of visibility options
+    """
+    has_partners = len(activity.source.partners.all()) > 0
+    choices = activity.visibility_choices_for(user, has_partners)
     return json.dumps(choices)
 
 
 @register.filter
-def visibility_display(visibility, user):
+def visibility_display(visibility: str, user) -> str:
+    """Creates a formatted visibility string based on given visibility string and user role.
+
+    Args:
+        visibility: A visibility string (likely a constant from [activity models][hypha.apply.activity.models])
+        user: The [`User`][hypha.apply.users.models.User] being shown the formatted string
+
+    Returns:
+        A formatted visibility string (ie. "ACME team" if visibility is "team" or "All" if visibility is "all").
+    """
     if not user.is_apply_staff and not user.is_finance and not user.is_contracting:
-        return f"{visibility} + {settings.ORG_SHORT_NAME} team"
-    if visibility != TEAM:
-        return f"{visibility} + team"
-    return visibility
+        if visibility == TEAM:
+            return f"{settings.ORG_SHORT_NAME} team"
+        elif visibility != ALL:
+            return f"{visibility.capitalize()} + {settings.ORG_SHORT_NAME} team"
+
+    if visibility not in (TEAM, ALL):
+        return f"{visibility.capitalize()} + team"
+
+    return visibility.capitalize()
 
 
 @register.filter

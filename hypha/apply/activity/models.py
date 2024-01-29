@@ -1,11 +1,12 @@
 import os
 import uuid
+from typing import Optional
 
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from django.db.models import Case, Value, When
+from django.db.models import Case, Q, Value, When
 from django.db.models.functions import Concat
 from django.urls import reverse
 from django.utils import timezone
@@ -24,12 +25,14 @@ ACTIVITY_TYPES = {
     ACTION: "Action",
 }
 
+# Visibility strings
 APPLICANT = "applicant"
 TEAM = "team"
 REVIEWER = "reviewers"
 PARTNER = "partners"
 ALL = "all"
 
+# Visibility choice strings
 VISIBILITY = {
     APPLICANT: "Applicants",
     TEAM: "Staff only",
@@ -46,12 +49,16 @@ class BaseActivityQuerySet(models.QuerySet):
         from .messaging import ActivityAdapter
 
         messages = ActivityAdapter.messages
+
+        # There are scenarios where users will have activities in which they wouldn't have visibility just using Activity.visibility_for. Thus, the queryset should include activity in which they author (ie. A comment made only to staff from an applicant).
         if user.is_applicant:
             return self.exclude(message=messages.get(MESSAGES.NEW_REVIEW)).filter(
-                visibility__in=self.model.visibility_for(user)
+                Q(visibility__in=self.model.visibility_for(user)) | Q(user=user)
             )
 
-        return self.filter(visibility__in=self.model.visibility_for(user))
+        return self.filter(
+            Q(visibility__in=self.model.visibility_for(user)) | Q(user=user)
+        )
 
     def newer(self, activity):
         return self.filter(timestamp__gt=activity.timestamp)
@@ -207,8 +214,13 @@ class Activity(models.Model):
         return [ALL]
 
     @classmethod
-    def visibility_choices_for(cls, user):
-        if user.is_applicant or user.is_partner:
+    def visibility_choices_for(
+        cls, user, submission_has_partner: Optional[bool] = False
+    ):
+        if submission_has_partner:
+            if user.is_partner or user.is_applicant:
+                return [(ALL, VISIBILITY[ALL]), (TEAM, VISIBILITY[TEAM])]
+        if user.is_applicant:
             return [(APPLICANT, VISIBILITY[APPLICANT])]
         if user.is_reviewer:
             return [(REVIEWER, VISIBILITY[REVIEWER])]
@@ -221,6 +233,7 @@ class Activity(models.Model):
             ]
         if user.is_finance or user.is_contracting:
             return [(TEAM, VISIBILITY[TEAM]), (APPLICANT, VISIBILITY[APPLICANT])]
+
         return [(ALL, VISIBILITY[ALL])]
 
 
