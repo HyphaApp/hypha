@@ -4,75 +4,85 @@
 
 {% block content %}
 
-    <div class="wrapper wrapper--medium wrapper--form">
+    <div class="wrapper wrapper--light-grey-bg wrapper--form wrapper--sidebar">
+        <div class="wrapper--sidebar--inner">
 
-        {% if page.end_date and page.get_parent.specific.show_deadline %}
-            <p>
-                {% heroicon_mini "calendar-days" aria_hidden="true" class="inline mr-1 fill-fg-muted" %}
-                <span class="font-bold text-fg-muted">{% trans "Next deadline" %}: {{ page.end_date }}</span>
-            </p>
-        {% endif %}
-        <h1 class="text-5xl font-bold">{{ page.title }}</h1>
-        {% if form.errors or form.non_field_errors %}
-            <div class="wrapper wrapper--error">
-                {% heroicon_solid "exclamation-triangle" aria_hidden="true" class="inline mr-2 fill-red-500" %}
-                {% if form.non_field_errors %}
-                    <ul>
-                        {% for error in form.non_field_errors %}
-                            <li class="error">{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                    <h5 class="heading heading--no-margin heading--regular">{% trans "There were some errors with your form. Please amend the fields highlighted below" %}</h5>
-                {% endif %}
-            </div>
-        {% endif %}
-
-        {% if not page.open_round and not page.start_date and not request.is_preview %}
-        {# the page has no open rounds and we arent on a round page #}
-            <h3>{% blocktrans %}Sorry this {{ page|verbose_name }} is not accepting applications at the moment{% endblocktrans %}</h3>
-        {% else%}
-            {% if page.get_parent.specific.guide_link %}
-                <a href="{{ page.get_parent.specific.guide_link }}" class="link link--fixed-apply" target="_blank" rel="noopener noreferrer">
-                    {% trans "Application guide" %}
-                </a>
+            {% if page.end_date and page.get_parent.specific.show_deadline %}
+                <p>
+                    {% heroicon_mini "calendar-days" aria_hidden="true" class="inline mr-1 fill-fg-muted" %}
+                    <span class="font-bold text-fg-muted">{% trans "Next deadline" %}: {{ page.end_date }}</span>
+                </p>
             {% endif %}
-            <form class="form application-form" action="/test500/" method="POST" enctype="multipart/form-data">
-                {{ form.media }}
-                {% csrf_token %}
-
-                {% for field in form %}
-                    {% if field.field %}
-                        {% if field.field.multi_input_field %}
-                            {% include "forms/includes/multi_input_field.html" with is_application=True %}
-                        {% else %}
-                            {% include "forms/includes/field.html" with is_application=True %}
-                        {% endif %}
+            <h1 class="text-5xl font-bold">{{ page.title }}</h1>
+            {% if form.errors or form.non_field_errors %}
+                <div class="wrapper wrapper--error">
+                    {% heroicon_solid "exclamation-triangle" aria_hidden="true" class="inline mr-2 fill-red-500" %}
+                    {% if form.non_field_errors %}
+                        <ul>
+                            {% for error in form.non_field_errors %}
+                                <li class="error">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
                     {% else %}
-                        {% if field.group_number > 1 %}
-                            <div class="field-group-{{ field.group_number }}">
-                                {{ field.block }}
-                            </div>
-                        {% else %}
-                            <div class="field-block prose max-w-none">
-                                {{ field.block }}
-                            </div>
-                        {% endif %}
+                        <h5 class="heading heading--no-margin heading--regular">{% trans "There were some errors with your form. Please amend the fields highlighted below" %}</h5>
                     {% endif %}
-                {% endfor %}
-
-            {# Hidden fields needed e.g. for django-file-form. See `StreamBaseForm.hidden_fields` #}
-                {% for hidden_field in form.hidden_fields %}
-                    {{ hidden_field }}
-                {% endfor %}
-
-                <div class="form__group">
-                    <button class="button button--primary" type="submit" disabled>{% trans "Submit for review" %}</button>
-                    <button class="button button--secondary" type="submit" name="draft" value="Save draft" formnovalidate>{% trans "Save draft" %}</button>
                 </div>
-            </form>
-            <p class="wrapper--error message-no-js js-hidden">{% trans "You must have Javascript enabled to use this form." %}</p>
-        {% endif %}
+            {% endif %}
+
+            {% if not page.open_round and not page.start_date and not request.is_preview %}
+            {# the page has no open rounds and we arent on a round page #}
+                <h3>{% blocktrans %}Sorry this {{ page|verbose_name }} is not accepting applications at the moment{% endblocktrans %}</h3>
+            {% else%}
+                {% if page.get_parent.specific.guide_link %}
+                    <a href="{{ page.get_parent.specific.guide_link }}" class="link link--fixed-apply" target="_blank" rel="noopener noreferrer">
+                        {% trans "Application guide" %}
+                    </a>
+                {% endif %}
+                <form class="form application-form" action="/test500/" method="POST" enctype="multipart/form-data">
+                    {{ form.media }}
+                    {% csrf_token %}
+
+                    {% for field in form %}
+                        {% if field.field %}
+                            {% if field.field.multi_input_field %}
+                                {% include "forms/includes/multi_input_field.html" with is_application=True %}
+                            {% else %}
+                                {% include "forms/includes/field.html" with is_application=True %}
+                            {% endif %}
+                        {% else %}
+                            {% if field.group_number > 1 %}
+                                <div class="field-group-{{ field.group_number }}">
+                                    {{ field.block }}
+                                </div>
+                            {% else %}
+                                <div class="field-block prose max-w-none">
+                                    {{ field.block }}
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+
+                {# Hidden fields needed e.g. for django-file-form. See `StreamBaseForm.hidden_fields` #}
+                    {% for hidden_field in form.hidden_fields %}
+                        {{ hidden_field }}
+                    {% endfor %}
+
+                    <div class="form__group">
+                        {# If a preview is required for this application, don't allow submitting yet (via name="preview"). At the moment, this functionality only works if a user is logged in. #}
+                        {% if require_preview and request.user.is_authenticated %}
+                            <button class="button button--submit button--primary" type="submit" name="preview" disabled>{% trans "Preview and submit" %}</button>
+                        {% else %}
+                            <button class="button button--submit button--primary" type="submit" disabled>{% trans "Submit for review" %}</button>
+                        {% endif %}
+                        <button class="button button--submit button--white" type="submit" name="draft" value="Save draft" formnovalidate>{% trans "Save draft" %}</button>
+                        {% if not require_preview and request.user.is_authenticated %}
+                            <button class="button button--submit button--white" type="submit" name="preview">{% trans "Preview" %}</button>
+                        {% endif %}
+                    </div>
+                </form>
+                <p class="wrapper--error message-no-js js-hidden">{% trans "You must have Javascript enabled to use this form." %}</p>
+            {% endif %}
+        </div>
     </div>
 {% endblock %}
 

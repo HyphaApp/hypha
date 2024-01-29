@@ -147,6 +147,8 @@ TRANSITION_AFTER_REVIEWS = env.bool("TRANSITION_AFTER_REVIEWS", False)
 # Default visibility for reviews.
 REVIEW_VISIBILITY_DEFAULT = env.str("REVIEW_VISIBILITY_DEFAULT", "private")
 
+# Require an applicant to view their rendered application before submitting
+SUBMISSION_PREVIEW_REQUIRED = env.bool("SUBMISSION_PREVIEW_REQUIRED", True)
 
 # Project settings.
 
@@ -561,6 +563,7 @@ INTACCT_USER_PASSWORD = env.str("INTACCT_USER_PASSWORD", "")
 
 # Finance extension to finance2 for Project Invoicing
 INVOICE_EXTENDED_WORKFLOW = env.bool("INVOICE_EXTENDED_WORKFLOW", True)
+
 
 # Misc settings
 
