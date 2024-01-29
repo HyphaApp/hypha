@@ -1,9 +1,5 @@
-Hypha consists of three distinctive components:
 
-1. First is the **Apply Site**, where people seeking for funds can apply by submitting their applications, the submission goes through different stages before it being approved for funding. After the applications are approved, they can be converted to a project. Apply site allows to manage the lifecycle of a project starting from a PAF to contracting to invoicing.
-
-2. Then the **Admin or Wagtail Admin**, is used to create custom forms, setup funds/labs and workflow around them. Think of it as the back-office of for your submissions and projects.
-
+## Diagram
 
 ```
                             Integrations                           
@@ -16,16 +12,33 @@ Hypha consists of three distinctive components:
                                                                     
                                                                     
 
-        ┌───────────┐                                            
-        │APPLY SITE │◀───┐    ┌───────────┐                      
-        └───────────┘    │    │  DJANGO   │         ┌───────────┐
-                         ├────│  BACKEND  │◀────────│PostgresSQL│
-        ┌───────────┐    │    └───────────┘         └───────────┘
-        │   ADMIN   │◀───┘                                       
-        └───────────┘                                            
+    ┌────────────┐                                  Databases
+    │ APPLY SITE │◀────┐                            ┌ ─ ─ ─ ─ ─ ─ ─ ─┐
+    └────────────┘     │      ┌────────────┐        ╎ ┌────────────┐ ╎
+                       ├──────│  Django /  │◀───────╎ │ PostgreSQL │ ╎
+    ┌────────────┐     │      │  Wagtail   │        ╎ └────────────┘ ╎
+    │   WAGTAIL  │◀────┘      └────────────┘        └─ ─ ─ ─ ─ ─ ─ ─ ┘
+    │   ADMIN    │                                  
+    └────────────┘
 ```
 
-## Django
+-----------
+
+## Main Components
+
+### Apply Site
+
+Where people seeking for funds can apply by submitting their applications, the submission goes through different stages before it being approved for funding. After the applications are approved, they can be converted to a project. Apply site allows to manage the lifecycle of a project starting from a PAF to contracting to invoicing.
+
+### Wagtail Admin
+
+Used to create custom forms, setup funds/labs and workflow around them. Think of it as the back-office of for your submissions and projects.
+
+-----------
+
+## Under The Hood
+
+### Django
 
 Hypha is built on top of the Django Web Framework. All the pages are rendered server side. It uses wagtail CMS for creating and managing custom application forms, public pages and settings.
 

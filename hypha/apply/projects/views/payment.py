@@ -42,7 +42,7 @@ from ..models.payment import (
     Invoice,
 )
 from ..models.project import PROJECT_ACTION_MESSAGE_TAG, Project
-from ..services import handle_tasks_on_invoice_update
+from ..service_utils import handle_tasks_on_invoice_update
 from ..tables import InvoiceListTable
 
 

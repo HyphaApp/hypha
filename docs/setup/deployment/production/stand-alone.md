@@ -2,28 +2,97 @@
 
 ## Standalone Server/VPS
 
-This process was tested on Ubuntu 18.04LTS. It should work on any Debian-based system.
+
+## System Dependencies
+
+* Git
+* Python {{ versions.python.version }}
+* Node {{ versions.node.version }}
+* PostgreSQL {{ versions.postgres.version }}
+
+!!! info
+    On Linux install them with your normal package manager. On macOS [Homebrew] is an excellent option. For Windows [Chocolatey](https://chocolatey.org/) seems popular but we have no experience with Windows. 
+    
+    This project ships with `.python-version` and `.nvmrc` to support **[pyenv]** and **[nvm]**. You can use it to setup the correct versions of Python and Node required for this project.
+
+## Basic installation steps
+
+<!-- NOTE! Before updating the install steps here, ensure they are reflected in the development install as well -->
+
+=== "Debian"
+
+    This process was tested on **Ubuntu {{ versions.tested_ubuntu.version }}**. It should work on any Debian-based system.
+
+    Install Python pip, venv & PostgreSQL:
+
+    ```shell
+    sudo apt install -y \
+        python3-pip python3-venv \
+        postgresql postgresql-contrib {{ versions.postgres.packages.debian }}
+    ```
+
+=== "Fedora"
+
+    This process was tested on **Fedora {{ versions.tested_fedora.version }}**. It should work on RHEL as well.
+
+    Install Python pip, venv & PostgreSQL:
+
+    ```shell
+    sudo dnf module -y reset postgresql
+    sudo dnf module -y enable postgresql:{{ versions.postgres.version }}
+    sudo dnf install -y \
+        python3-pip gcc python3-devel \
+        {{ versions.postgres.packages.fedora }} postgresql-contrib {{ versions.postgres_devel.packages.fedora }}
+    sudo /usr/bin/postgresql-setup --initdb
+    ```
+
+
+=== "macOS"
+
+    This process was tested on **macOS {{ versions.tested_macos.version }}**.
+
+    Install Python pip, venv & PostgreSQL:
+
+    ```shell
+    brew install {{ versions.python.packages.macos }} 
+    brew install {{ versions.postgres.packages.macos }}
+    brew services start {{ versions.postgres.packages.macos }}
+    ```
+
+----
 
 ### Get the code
 
-`git clone https://github.com/HyphaApp/hypha.git [your-site-directory]`
+Use `git` to fetch the code, this will create a `hypha/` directory.
 
-### Basic installation steps.
+```shell
+git clone https://github.com/HyphaApp/hypha.git hypha
+cd hypha
+```
 
-These are the basic packages needed before you can start the installation process.
+### Installing Node Version Manager
 
-* python3-pip and python3-venv - install using  `sudo apt-get install python3-pip python3-venv`
-* postgresql \(version 12.x\) use `sudo apt-get install postgresql postgresql-contrib postgresql-server-dev-12`
-* to install nodejs \(version v16.x\), use nodesource. Add the PPA to your sources list by running this script: `curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -` then `sudo apt-get install nodejs`
+NodeJS versions have potential to change. To allow for ease of upgrading, it is recommended to use [Node Version Manager (nvm)](https://github.com/nvm-sh/nvm).
+
+The following commands will install nvm and proceed to setup Node based off of the content of `.nvmrc`.
+
+```shell
+wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+nvm install     # Install the Node version in .nvmrc
+nvm use         # Use the Node version in .nvmrc
+```
 
 ### Python virtual environment
 
 Create the virtual environment, specify the python binary to use and the directory. Then source the activate script to activate the virtual environment. The last line tells Django what settings to use.
 
-```text
-$ python3 -m venv venv/hypha
-$ source venv/hypha/bin/activate
-$ export DJANGO_SETTINGS_MODULE=hypha.settings.production
+```shell
+python3 -m venv venv/hypha
+source venv/hypha/bin/activate
+export DJANGO_SETTINGS_MODULE=hypha.settings.production
 ```
 
 Inside your activated virtual environment you will use plain `python` and `pip` commands. Everything inside the virtual environment is python 3 since we specified that when we created it.
@@ -32,8 +101,8 @@ Inside your activated virtual environment you will use plain `python` and `pip` 
 
 Next, install the required packages using:
 
-```text
-$ pip install -r requirements.txt
+```shell
+python3 -m pip install -r requirements.txt
 ```
 
 ### Install Node packages
@@ -41,18 +110,34 @@ $ pip install -r requirements.txt
 All the needed Node packages are listed in `package.json`. Install them with this command.
 
 ```text
-$ npm install
+npm install
 ```
 
 ### The Postgres database
 
-Postgresql is the database used. Start the server you installed above using `sudo service postgresql start`, then log into the postgres superuser, `sudo su - postgres` and enter the postgresql cli with `psql`. In the CLI, use these commands:
+Postgresql is the database used. The following commands will start the Postgresql service and login to the postgres superuser:
 
-* `CREATE DATABASE hypha;`
-* `CREATE USER [linux username] WITH SUPERUSER LOGIN;`
-* Also, make sure that this user has trust access in pg\_hba.conf.
+```shell
+sudo service postgresql start
+sudo su - postgres
+```
 
-These settings can be restricted later as required.
+then, enter the postgresql cli with:
+
+```shell
+psql
+```
+
+In the CLI use these commands to create the initial hypha database, and add a superuser (replacing `replace_with_username` with the user account that will be running hypha):
+
+```sql
+CREATE DATABASE hypha;
+CREATE USER replace_with_username WITH SUPERUSER LOGIN;
+```
+
+Confirm that this user has trust access in `pg\_hba.conf`. These settings can be restricted later as required.
+
+To exit out of both the psql interface & the postgres user session, do `Ctrl + D` twice.
 
 ### Running the app
 
@@ -62,14 +147,18 @@ To begin with, set the `export SECURE_SSL_REDIRECT=false` to prevent SSL redirec
 
 Then use the following commands to test run the server:
 
-* `npm run build`
-* `python manage.py collectstatic --noinput`
-* `python manage.py createcachetable`
-* `python manage.py migrate --noinput`
-* `python manage.py clear_cache --cache=default --cache=wagtailcache`
-* `python manage.py createsuperuser`
-* `python manage.py wagtailsiteupdate server.domain apply.server.domain 80`
-* `python manage.py runserver` \(runs development server at [http://127.0.0.1:8000](http://127.0.0.1:8000)\)
+```shell
+npm run build
+python manage.py collectstatic --noinput
+python manage.py createcachetable
+python manage.py migrate --noinput
+python manage.py clear_cache --cache=default --cache=wagtailcache
+python manage.py createsuperuser
+python manage.py wagtailsiteupdate server.domain apply.server.domain 80
+python manage.py runserver
+```
+
+\(runs development server at [http://127.0.0.1:8000](http://127.0.0.1:8000)\)
 
 You should see the home page of the server. That's great. You can stop the server, and then we can then take the next steps.
 
