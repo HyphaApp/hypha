@@ -1307,8 +1307,13 @@ class BaseSubmissionEditView(UpdateView):
         return super().dispatch(request, *args, **kwargs)
 
     def buttons(self):
-        yield ("submit", "primary", _("Submit"))
-        yield ("save", "white", _("Save draft"))
+        if settings.SUBMISSION_PREVIEW_REQUIRED:
+            yield ("preview", "primary", _("Preview and submit"))
+            yield ("save", "white", _("Save draft"))
+        else:
+            yield ("submit", "primary", _("Submit"))
+            yield ("save", "white", _("Save draft"))
+            yield ("preview", "white", _("Preview"))
 
     def get_form_kwargs(self):
         """
@@ -1428,14 +1433,6 @@ class ApplicantSubmissionEditView(BaseSubmissionEditView):
         if assigned_fund.open_round:
             return assigned_fund.open_round
         return False
-
-    def buttons(self):
-        if settings.SUBMISSION_PREVIEW_REQUIRED:
-            yield ("preview", "primary", _("Preview and submit"))
-            yield ("save", "white", _("Save draft"))
-        else:
-            yield from super().buttons()
-            yield ("preview", "white", _("Preview"))
 
     def form_valid(self, form):
         self.object.new_data(form.cleaned_data)
