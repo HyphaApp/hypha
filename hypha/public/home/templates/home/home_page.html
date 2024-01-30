@@ -21,8 +21,17 @@
                         <img class="header__logo header__logo--mobile" src="{{ logo_default.url }}">
                     {% endif %}
                 {% else %}
-                    <svg class="header__logo header__logo--desktop"><use xlink:href="#logo-desktop--dark-alt"></use></svg>
-                    <svg class="header__logo header__logo--mobile"><use xlink:href="#logo-mobile-dark"></use></svg>
+                    <img class="header__logo header__logo--desktop"
+                         width="215"
+                         height="40"
+                         src="{% static 'images/logo.png' %}"
+                         alt="Hypha logo"
+                    >
+                    <img class="header__logo header__logo--mobile"
+                         width="60" height="60"
+                         src="{% static 'images/logo-small.png' %}"
+                         alt="Hypha logo"
+                    >
                 {% endif %}
             </a>
 
@@ -38,8 +47,6 @@
                         {% if settings.utils.SystemMessagesSettings.site_logo_mobile %}
                             {% image settings.utils.SystemMessagesSettings.site_logo_mobile width-60 as logo_mobile %}
                             <img class="header__logo header__logo--mobile" src="{{ logo_mobile.url }}">
-                        {% else %}
-                            <svg class="header__logo header__logo--mobile"><use xlink:href="#logo-mobile"></use></svg>
                         {% endif %}
                     </a>
                 </div>

@@ -40,7 +40,7 @@ drf-nested-routers==0.93.4
 drf-yasg==1.21.4
 environs==9.5.0
 gunicorn==21.2.0
-heroicons==2.5.0
+heroicons==2.6.0
 python-docx<1.0.0
 htmldocx==0.0.6
 lark==1.1.8

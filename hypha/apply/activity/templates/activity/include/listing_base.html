@@ -1,4 +1,5 @@
 {% load i18n activity_tags bleach_tags markdown_tags submission_tags apply_tags heroicons %}
+
 <div class="feed__item feed__item--{{ activity.type }} border shadow-sm rounded-sm pb-2 " id="communications#{{ activity.id }}">
     <div class="feed__pre-content hidden lg:block">
         <p class="feed__label lg:py-2 feed__label--{{ activity.type }}">
@@ -23,14 +24,14 @@
             {% if editable and activity.user == request.user %}
                 <p class="feed__meta-item feed__meta-item--edit-button">
                     <a class="link link--edit-submission is-active js-edit-comment" href="#">
+                        {% heroicon_mini "pencil-square" size=18 class="inline me-1" aria_hidden=true %}
                         {% trans "Edit" %}
-                        <svg class="icon icon--pen"><use xlink:href="#pen"></use></svg>
                     </a>
                 </p>
             {% endif %}
 
-            <p class="feed__meta-item feed__meta-item--right" {% if not activity.private %} hidden {% endif %}>
-                {% heroicon_mini "eye" size=17 class="inline align-text-bottom fill-fg-muted mr-1" aria_hidden=true %}
+            <p class="feed__meta-item feed__meta-item--right flex items-center" {% if not activity.private %} hidden {% endif %}>
+                {% heroicon_micro "eye" class="fill-fg-muted inline me-1 w-4 h-4" aria_hidden=true %}
                 <span class="js-comment-visibility">{{ activity.visibility|visibility_display:request.user }}</span>
             </p>
         </div>

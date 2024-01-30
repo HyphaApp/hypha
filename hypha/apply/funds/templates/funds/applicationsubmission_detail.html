@@ -71,7 +71,7 @@
 
     {% if object.is_archive %}
         <div class="py-2 bg-red-600 text-white font-bold text-center">
-            {% heroicon_outline "lock-closed" aria_hidden="true" size=16 stroke_width=2 class="inline align-baseline mr-1" %}
+            {% heroicon_outline "lock-closed" aria_hidden="true" size=16 stroke_width=2 class="inline align-baseline me-1" %}
             {% trans "This submission has been archived. This is visible to the roles " %} {{ archive_access_groups|join_with_commas }}
         </div>
     {% endif %}
@@ -100,17 +100,23 @@
                                 <strong><relative-time datetime={{ object.submit_time|date:"c" }}>{{ object.submit_time|date:"SHORT_DATETIME_FORMAT" }}</relative-time></strong> {% trans "by" %} <strong>{{ object.user.get_full_name }}</strong>
                             </span>
                             <span>{% trans "Updated" %} <strong><relative-time datetime={{ object.live_revision.timestamp|date:"c" }}>{{ object.live_revision.timestamp|date:"SHORT_DATETIME_FORMAT" }}</relative-time></strong> {% trans "by" %} <strong>{{ object.user.get_full_name }}</strong></span>
-                            <div class="wrapper wrapper--submission-actions">
+                            <div class="flex gap-4 justify-end flex-1 items-center">
                                 {% if perms.funds.delete_applicationsubmission %}
-                                    <a class="link link--delete-submission is-active" href="{% url 'funds:submissions:delete' object.id %}">
+                                    <a
+                                        class="font-bold text-red-600 flex items-center hover:opacity-70 transition-opacity"
+                                        href="{% url 'funds:submissions:delete' object.id %}"
+                                    >
+                                        {% heroicon_micro "trash" class="inline me-1 fill-red-600" aria_hidden=true %}
                                         {% trans "Delete" %}
-                                        <svg class="icon icon--delete"><use xlink:href="#delete"></use></svg>
                                     </a>
                                 {% endif %}
                                 {% if request.user|has_edit_perm:object %}
-                                    <a class="link link--edit-submission is-active" href="{% url 'funds:submissions:edit' object.id %}">
+                                    <a
+                                        class="font-bold flex items-center hover:opacity-70 transition-opacity"
+                                        href="{% url 'funds:submissions:edit' object.id %}"
+                                    >
+                                        {% heroicon_micro "pencil-square" class="inline me-1" aria_hidden=true %}
                                         {% trans "Edit" %}
-                                        <svg class="icon icon--pen"><use xlink:href="#pen"></use></svg>
                                     </a>
                                 {% endif %}
                             </div>

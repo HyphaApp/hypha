@@ -38,6 +38,7 @@ htmlcov/
 # Cache
 .mypy_cache/
 .pytest_cache/
+__pycache__/
 
 # Compiled language files
 *.mo

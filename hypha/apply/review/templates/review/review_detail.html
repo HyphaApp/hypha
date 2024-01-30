@@ -1,5 +1,5 @@
 {% extends "base-apply.html" %}
-{% load i18n bleach_tags submission_tags %}
+{% load i18n bleach_tags submission_tags heroicons %}
 {% block title %}{% trans "Review for" %} {{ review.submission.title }}{% endblock %}
 {% block content %}
 
@@ -17,44 +17,54 @@
         {% include 'review/includes/review_opinions_list.html' with opinions=review.opinions.all %}
     {% endadminbar %}
 
-    <div style="display: flex; gap: 2rem; padding-top: 2rem;">
-        <div>
-            <h5>{% trans "Recommendation" %}</h5>
-            <p>{{ review.get_recommendation_display }}</p>
-        </div>
-        <div>
-            <h5>{% trans "Score" %}</h5>
-            <p>{{ review.get_score_display }}</p>
-        </div>
-        <div style="flex-grow: 1"></div>
-        <div>
-            <svg class="icon icon--eye"><use xlink:href="#eye"></use></svg>
-            {{ review.get_visibility_display }}
-        </div>
-        {% if perms.funds.delete_review or request.user == review.author.reviewer %}
+    <div class="flex justify-between mt-8 mb-8">
+        <div class="flex gap-8">
             <div>
-                <a class="link link--delete-review is-active" href="{% url 'apply:submissions:reviews:delete' submission_pk=object.submission.id pk=object.id %}">
-                    {% trans "Delete" %}
-                    <svg class="icon icon--delete"><use xlink:href="#delete"></use></svg>
-                </a>
+                <h5>{% trans "Recommendation" %}</h5>
+                <p>{{ review.get_recommendation_display }}</p>
             </div>
-        {% endif %}
-        {% if perms.funds.change_review or request.user == review.author.reviewer %}
             <div>
-                <a class="link link--edit-review is-active" href="{% url 'apply:submissions:reviews:edit' submission_pk=object.submission.id pk=object.id %}">
-                    {% trans "Edit" %}
-                    <svg class="icon icon--pen"><use xlink:href="#pen"></use></svg>
-                </a>
+                <h5>{% trans "Score" %}</h5>
+                <p>{{ review.get_score_display }}</p>
             </div>
-        {% endif %}
-        {% if not review.for_latest %}
-            <div>
-                <h5>{% trans "Review was not against the latest version" %}:</h5>
-                <p>
-                    <a class="button button--primary" href="{{ review.get_compare_url }}">{% trans "Compare" %}</a>
+        </div>
+
+        <div class="flex gap-4 flex-col items-end">
+            <div class="flex gap-4 items-start justify-end">
+                <span class="flex items-center">
+                    {% heroicon_micro "eye" class="inline me-1 w-4 h-4" aria_hidden=true %}
+                    {{ review.get_visibility_display }}
+                </span>
+                {% if perms.funds.delete_review or request.user == review.author.reviewer %}
+                    <a
+                        class="font-bold flex text-red-500 items-center hover:opacity-70 transition-opacity"
+                        href="{% url 'apply:submissions:reviews:delete' submission_pk=object.submission.id pk=object.id %}"
+                    >
+                        {% heroicon_micro "trash" class="inline me-1 w-4 h-4" aria_hidden=true %}
+                        {% trans "Delete" %}
+                    </a>
+                {% endif %}
+
+                {% if perms.funds.change_review or request.user == review.author.reviewer %}
+                    <a
+                        class="font-bold flex items-center hover:opacity-70 transition-opacity"
+                        href="{% url 'apply:submissions:reviews:edit' submission_pk=object.submission.id pk=object.id %}"
+                    >
+                        {% heroicon_micro "pencil-square" class="inline me-1 w-4 h-4" aria_hidden=true %}
+                        {% trans "Edit" %}
+                    </a>
+                {% endif %}
+            </div>
+            {% comment %} {% if not review.for_latest %} {% endcomment %}
+            <div class="text-right">
+                <p class="text-xs">
+                    * {% trans "Review was not against the latest version" %}<br>
                 </p>
+                <a class="button button-primary" href="{{ review.get_compare_url }}">{% trans "Compare" %}</a>
             </div>
-        {% endif %}
+        {% comment %} {% endif %} {% endcomment %}
+        </div>
+
     </div>
 
     <div class="rich-text rich-text--answers">

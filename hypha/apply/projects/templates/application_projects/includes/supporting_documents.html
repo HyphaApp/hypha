@@ -1,13 +1,19 @@
-{% load i18n approval_tools project_tags %}
+{% load i18n approval_tools project_tags heroicons %}
 {% user_can_edit_project object request.user as editable %}
 {% allow_collapsible_header object header_type='project_documents' as collapsible_header %}
 
 <div class="docs-block wrapper--outer-space-large" {% if collapsible_header %} x-data="{ collapsed: true }" {% endif %}>
     <div class="docs-block__header" id="project-documents-section" {% if collapsible_header %} x-on:click="collapsed = ! collapsed" role="button" aria-label="Toggle Project documents visibility" aria-controls="project-documents-elements" {% endif %}>
-        <div class="docs-block__heading">{% trans "Project documents" %}
+        <div class="flex justify-between w-full" >
+            <h2 class="text-lg font-semibold m-0">
+                {% trans "Project documents" %}
+            </h2>
+
             {% if collapsible_header %}
-                <svg class="icon icon--caret-up" x-show="!collapsed" aria-hidden=true><use xlink:href="#caret-up"></use></svg>
-                <svg class="icon icon--caret-down" x-show="collapsed" aria-hidden=true><use xlink:href="#caret-down"></use></svg>
+                <button class="align-middle ml-1 transform transition-transform" x-bind:class="collapsed ? '': '-rotate-90' ">
+                    {% heroicon_outline 'chevron-left' size=20 stroke_width=2 aria_hidden=true %}
+                    <span class="sr-only" x-text="collapsed ? 'expand' : 'collapse'">expand</span>
+                </button>
             {% endif %}
         </div>
         <div>
@@ -67,34 +73,33 @@
 
             <li class="docs-block__row">
                 <div class="docs-block__row-inner">
-                    <svg class="icon docs-block__icon is-complete"><use xlink:href="#tick"></use></svg>
+                    {% heroicon_outline "check-circle" class="stroke-light-blue me-1" aria_hidden=true %}
                     <p class="docs-block__title">{% trans "Proposal" %}</p>
                 </div>
                 <div class="docs-block__row-inner">
-                    {% if user.is_applicant %}
-                        <a class="docs-block__icon-link" href="{{ project.submission.get_absolute_url }}">
-                            <svg class="icon icon--project-eye"><use xlink:href="#eye"></use></svg>
-                            {% trans "View" %}
-                        </a>
-                    {% else %}
-                        <a class="docs-block__icon-link" href="{% url 'apply:submissions:simplified' pk=project.submission.pk %}">
-                            <svg class="icon icon--project-eye"><use xlink:href="#eye"></use></svg>
-                            {% trans "View" %}
-                        </a>
-                    {% endif %}
+                    <a class="docs-block__icon-link hover:opacity-70 transition-opacity"
+                       href="{% if user.is_applicant %}{{ project.submission.get_absolute_url }}{% else %}{% url 'apply:submissions:simplified' pk=project.submission.pk %}{% endif %}"
+                    >
+                        {% heroicon_micro "eye" class="inline me-1 w-4 h-4" aria_hidden=true %}
+                        {% trans "View" %}
+                    </a>
                 </div>
             </li>
             {% if settings.application_projects.ProjectSettings.vendor_setup_required and project.vendor %}
                 <li class="docs-block__row">
                     <div class="docs-block__row-inner">
-                        <svg class="icon docs-block__icon{% if project.vendor.user_has_updated_details %} is-complete{% endif %}"><use xlink:href="#tick"></use></svg>
+                        {% if project.vendor.user_has_updated_details %}
+                            {% heroicon_outline "check-circle" class="stroke-light-blue me-1" aria_hidden=true %}
+                        {% else %}
+                            {% heroicon_outline "check-circle" class="stroke-gray-400 me-1" aria_hidden=true %}
+                        {% endif %}
                         <p class="docs-block__title">{% trans "Contracting Information" %}</p>
                     </div>
                     <div class="docs-block__row-inner">
                         {% if editable %}
                             <a class="{% if not project.vendor.user_has_updated_details %}button button--project-action{% else %}docs-block__icon-link{% endif %}" href="{% url 'apply:projects:vendor' pk=project.pk %}">
                                 {% if project.vendor.user_has_updated_details %}
-                                    <svg class="icon icon--project-pen"><use xlink:href="#pen"></use></svg>
+                                    {% heroicon_micro "pencil-square" class="inline me-1 w-4 h-4" aria_hidden=true %}
                                     {% trans "Edit" %}
                                 {% else %}
                                     {% trans "Fill in" %}
@@ -103,7 +108,7 @@
                         {% endif %}
                         {% if project.vendor.user_has_updated_details %}
                             <a class="docs-block__icon-link" href="{% url 'apply:projects:vendor-detail' pk=project.pk vendor_pk=project.vendor.pk %}">
-                                <svg class="icon icon--project-eye"><use xlink:href="#eye"></use></svg>
+                                {% heroicon_micro "eye" class="inline me-1 w-4 h-4" aria_hidden=true %}
                                 {% trans "View" %}
                             </a>
                         {% endif %}
@@ -113,16 +118,18 @@
 
             <li class="docs-block__row">
                 <div class="docs-block__row-inner">
-                    <svg class="icon docs-block__icon{% if object.user_has_updated_details %} is-complete{% endif %}">
-                        <use xlink:href="#tick"></use>
-                    </svg>
+                    {% if object.user_has_updated_details %}
+                        {% heroicon_outline "check-circle" class="stroke-light-blue me-1" aria_hidden=true %}
+                    {% else %}
+                        {% heroicon_outline "check-circle" class="stroke-gray-400 me-1" aria_hidden=true %}
+                    {% endif %}
                     <p class="docs-block__title">{% trans "Approval Form" %}</p>
                 </div>
                 <div class="docs-block__row-inner">
                     {% if editable and not user.is_applicant %}
                         <a class="{% if not object.user_has_updated_details %}button button--project-action{% else %}docs-block__icon-link{% endif %}" href="{% url 'apply:projects:edit' pk=object.pk %}">
                             {% if object.user_has_updated_details %}
-                                <svg class="icon icon--project-pen"><use xlink:href="#pen"></use></svg>
+                                {% heroicon_micro "pencil-square" class="inline me-1 w-4 h-4" aria_hidden=true %}
                                 {% trans "Edit" %}
                             {% else %}
                                 {% trans "Fill in" %}
@@ -131,21 +138,21 @@
                     {% endif %}
                     {% if object.user_has_updated_details and not user.is_applicant %}
                         <a class="docs-block__icon-link" href="{% url 'apply:projects:approval' pk=project.pk %}">
-                            <svg class="icon icon--project-eye"><use xlink:href="#eye"></use></svg>
+                            {% heroicon_micro "eye" class="inline me-1 w-4 h-4" aria_hidden=true %}
                             {% trans "View" %}
                         </a>
                     {% endif %}
                 </div>
                 {% has_project_sow_form object as project_sow %}
                 {% if project_sow and object.user_has_updated_details and not user.is_applicant %}
-                    <ul class="mt-4 w-full pl-9">
+                    <ul class="mt-2 w-full ps-7">
                         <li class="docs-block__document">
                             <div class="docs-block__document-inner">
                                 <p class="docs-block__document-info">{% trans "Scope of work (SOW)" %}</p>
                             </div>
                             <div class="docs-block__document-inner__actions">
                                 <a class="docs-block__icon-link" href="{% url 'apply:projects:sow' pk=project.pk %}">
-                                    <svg class="icon icon--project-eye"><use xlink:href="#eye"></use></svg>
+                                    {% heroicon_micro "eye" class="inline me-1 w-4 h-4" aria_hidden=true %}
                                     {% trans "View" %}
                                 </a>
                             </div>
@@ -157,9 +164,11 @@
             {% if supporting_documents_configured %}
                 <li class="docs-block__row">
                     <div class="docs-block__row-inner">
-                        <svg class="icon docs-block__icon{% if not remaining_document_categories %} is-complete{% endif %}">
-                            <use xlink:href="#tick"></use>
-                        </svg>
+                        {% if remaining_document_categories %}
+                            {% heroicon_outline "check-circle" class="stroke-gray-400 me-1" aria_hidden=true %}
+                        {% else %}
+                            {% heroicon_outline "check-circle" class="stroke-light-blue me-1" aria_hidden=true %}
+                        {% endif %}
                         <p class="docs-block__title">{% trans "Supporting documents" %}</p>
                     </div>
 
@@ -174,8 +183,14 @@
                                             <p class="docs-block__document-info">{{ document_category.name }}
                                                 {% if document_category.required %}<span class="text-red-700">*</span>{% endif %}
                                                 {% if document_category.template %}
-                                                    <a class="pl-2 font-bold underline decoration-dashed" href="{% url 'apply:projects:category_template' pk=object.pk type='project_document' category_pk=document_category.pk %}" target="_blank">{% trans "View template" %}</a>
-                                                    <svg class="icon icon--info-circle pl-0.5"><use xlink:href="#info-circle-fill"></use></svg>
+                                                    <a class="font-bold hover:opacity-70 transition-opacity"
+                                                       href="{% url 'apply:projects:category_template' pk=object.pk type='project_document' category_pk=document_category.pk %}"
+                                                       target="_blank"
+                                                    >
+                                                        <span class="border-b-2 border-dashed">
+                                                            {% trans "View template" %}
+                                                        </span>{% heroicon_mini "information-circle" class="fill-light-blue inline align-middle me-1" aria_hidden=true %}
+                                                    </a>
                                                 {% endif %}
                                             </p>
                                             {% if document_category not in remaining_document_categories %}
@@ -185,8 +200,12 @@
                                         </div>
                                         {% if document_category in remaining_document_categories %}
                                             <div class="docs-block__document-inner__actions">
-                                                <a data-fancybox data-src="#upload-supporting-doc" class="font-bold flex items-center mr-0" onclick="handleCategory({{ document_category.id }})" href="#">
-                                                    <svg class="icon icon--arrow-up-short-bar"><use xlink:href="#arrow-up-short-bar"></use></svg>
+                                                <a data-fancybox data-src="#upload-supporting-doc"
+                                                   class="font-bold flex items-center mr-0 hover:opacity-70 transition-opacity"
+                                                   onclick="handleCategory({{ document_category.id }})"
+                                                   href="#"
+                                                >
+                                                    {% heroicon_micro "arrow-up-tray" class="inline me-1 w-4 h-4" aria_hidden="true" %}
                                                     {% trans "Upload" %}
                                                 </a>
 
@@ -196,13 +215,13 @@
                                             {% if latest_file %}
                                                 <div class="docs-block__row-inner">
                                                     <a class="docs-block__icon-link" href="{% url 'apply:projects:document' pk=object.pk file_pk=latest_file.pk %}" target="_blank">
-                                                        <svg class="icon icon--project-eye"><use xlink:href="#eye"></use></svg>
+                                                        {% heroicon_micro "eye" class="inline me-1" aria_hidden=true %}
                                                         {% trans "View" %}
                                                     </a>
                                                     {% user_can_remove_supporting_documents object user as can_remove_supporting_doc %}
                                                     {% if can_remove_supporting_doc %}
                                                         <form method="POST" id="{{ remove_document_form.name }}-{{ latest_file.pk }}" class="docs-block__icon-link">
-                                                            <svg class="icon icon--delete" style="margin-left:0; margin-right:2px"><use xlink:href="#delete"></use></svg>
+                                                            {% heroicon_micro "trash" class="inline me-1 fill-red-500" aria_hidden=true %}
                                                             {% csrf_token %}
                                                             {{ latest_file.get_remove_form }}
                                                             <input

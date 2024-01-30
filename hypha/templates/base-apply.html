@@ -1,4 +1,4 @@
-{% load i18n static wagtailcore_tags wagtailimages_tags util_tags hijack cookieconsent_tags %}<!doctype html>
+{% load i18n static wagtailcore_tags wagtailimages_tags hijack cookieconsent_tags heroicons %}<!doctype html>
 {% wagtail_site as current_site %}
 {% get_current_language as LANGUAGE_CODE %}
 {% get_current_language_bidi as LANGUAGE_BIDI %}
@@ -80,10 +80,12 @@
         hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
         class="antialiased {% block body_class %}template-{{ page.get_verbose_name|slugify }}{% endblock %}"
     >
-
         {% include "includes/sprites.html" %}
 
-        {% include 'includes/messages.html' %}
+        {% if messages %}
+            {% include 'includes/messages.html' %}
+        {% endif %}
+
         <header class="header">
 
             <div class="header__inner wrapper wrapper--large">
@@ -126,7 +128,8 @@
 
                 <div class="header__inner header__inner--mobile-buttons">
                     <button class="button button--left-space js-mobile-menu-toggle" aria-haspopup="true">
-                        <svg class="icon icon--mobile-menu"><use xlink:href="#mobile-menu-toggle"></use></svg>
+                        <span class="sr-only">{% trans "Open Menu" %}</span>
+                        {% heroicon_outline "bars-3" size=32 stroke_width=2 class="inline" aria_hidden="true" %}
                     </button>
                 </div>
 
@@ -160,7 +163,8 @@
                         </a>
                         <div class="header__inner header__inner--mobile-buttons">
                             <button class="button button--left-space js-mobile-menu-close">
-                                <svg class="header__icon header__icon--cross icon icon--mobile-menu"><use xlink:href="#cross"></use></svg>
+                                <span class="sr-only">{% trans "Close" %}</span>
+                                {% heroicon_outline "x-mark" size=32 stroke_width=2 class="inline text-white" aria_hidden="true" %}
                             </button>
                         </div>
                     </div>
@@ -173,35 +177,41 @@
 
                     {% if request.user.is_authenticated %}
                         <a href="{% url 'users:account' %}" class="link link--button-transparent link--mobile-standout">
-                            <svg class="icon"><use xlink:href="#person-icon"></use></svg>
+                            {% heroicon_micro "user" class="inline align-middle w-4 h-4 me-1" aria_hidden=true %}
                             {{ request.user }}
                         </a>
-                        <a href="{% url 'users_public:logout' %}" class="link link--button-transparent link--mobile-standout">{% trans "Log out" %}</a>
+                        <a href="{% url 'users_public:logout' %}" class="link link--button-transparent link--mobile-standout text-center">
+                            {% trans "Log out" %}
+                        </a>
                     {% endif %}
                 </section>
 
-                <div class="header__button-container">
+                <div class="header__button-container flex gap-4">
                     {% if latest_notifications %}
                         <div x-data="{open: false}">
                             <a href="{% url "activity:notifications" %}"
-                               class="button button--contains-icons notifications__bell"
+                               class="p-2 flex items-center hover:opacity-70 transition-opacity"
                                aria-label="{% trans "Notifications" %}"
                                aria-haspopup="activity"
                                aria-expanded="false"
                                role="button"
                                @click.prevent="open = ! open"
                             >
-                                <svg class="icon"><use xlink:href="#bell-icon"></use></svg>
+                                {% heroicon_outline "bell-alert" class="inline me-1 text-black" aria_hidden="true" %}
                             </a>
                             <div x-cloak x-show="open" x-transition @click.outside="open = false">{% include "activity/include/notifications_dropdown.html" %}</div>
                         </div>
                     {% endif %}
                     {% if request.user.is_authenticated %}
-                        <a href="{% url 'users:account' %}" class="button button--transparent button--narrow button--contains-icons" hx-boost="true">
-                            <svg class="icon icon--person"><use xlink:href="#person-icon"></use></svg>
+                        <a href="{% url 'users:account' %}"
+                           class="button button--transparent"
+                           hx-boost="true"
+                           title="{% trans "Goto profile page" %}"
+                        >
+                            {% heroicon_micro "user" class="inline align-text-bottom w-4 h-4 me-1" aria_hidden=true %}
                             {{ request.user }}
                         </a>
-                        <a href="{% url 'users_public:logout' %}" class="button button--transparent button--narrow">
+                        <a href="{% url 'users_public:logout' %}" class="button button--transparent">
                             {% trans "Log out" %}
                         </a>
                     {% else %}

@@ -1,12 +1,13 @@
-{% load i18n %}
+{% load i18n heroicons %}
 
-{% if user.is_authenticated %}
-    {% if user.can_access_dashboard %}
+{% if request.user.is_authenticated %}
+    {% if request.user.can_access_dashboard %}
         <a
             class="button button--transparent button--contains-icons {{ class }}"
             href="{{ APPLY_SITE.root_url }}{% url 'dashboard:dashboard' %}"
         >
-            <svg class="icon icon--person"><use xlink:href="#person-icon"></use></svg>
+            {% heroicon_micro "user" class="inline align-text-bottom w-4 h-4 me-1" aria_hidden=true %}
+
             My {{ ORG_SHORT_NAME }}
         </a>
     {% else %}
@@ -15,8 +16,8 @@
             href="{{ APPLY_SITE.root_url }}{% url 'users:account' %}"
             title="Goto your account"
         >
-            <svg class="icon icon--person"><use xlink:href="#person-icon"></use></svg>
-            {{ user }}
+            {% heroicon_micro "user" class="inline align-text-bottom w-4 h-4 me-1" aria_hidden=true %}
+            {{ request.user }}
         </a>
     {% endif %}
 {% else %}
@@ -24,7 +25,7 @@
         class="button button--transparent button--contains-icons {{ class }}"
         href="{{ APPLY_SITE.root_url }}{% url 'users_public:passwordless_login_signup' %}{% if redirect_url %}?next={{ redirect_url }}{% endif %}"
     >
-        <svg class="icon icon--person"><use xlink:href="#person-icon"></use></svg>
+        {% heroicon_micro "user" class="inline align-text-bottom w-4 h-4 me-1" aria_hidden=true %}
         {% trans "Login" %}
     </a>
 {% endif %}

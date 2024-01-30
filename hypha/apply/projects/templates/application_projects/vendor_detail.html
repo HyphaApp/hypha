@@ -1,5 +1,5 @@
 {% extends "base-apply.html" %}
-{% load bleach_tags i18n approval_tools %}
+{% load bleach_tags i18n approval_tools heroicons %}
 {% user_can_edit_project object request.user as editable %}
 {% block title %}{% trans "Contracting Information for" %} {{ project.title }} {% endblock %}
 
@@ -21,8 +21,8 @@
         {% if editable %}
             <div>
                 <a class="link link--edit-vendor is-active" href="{% url 'apply:projects:vendor' pk=project.pk %}">
+                    {% heroicon_micro "pencil-square" class="inline me-1" aria_hidden=true %}
                     {% trans "Edit" %}
-                    <svg class="icon icon--pen"><use xlink:href="#pen"></use></svg>
                 </a>
             </div>
         {% endif %}

@@ -1,4 +1,4 @@
-{% load i18n bleach_tags markdown_tags wagtailcore_tags %}
+{% load i18n bleach_tags wagtailcore_tags markdown_tags heroicons %}
 
 {% if page.open_round %}
     <div class="listing listing--not-a-link">
@@ -6,7 +6,7 @@
             <h4 class="listing__title listing__title--link">
                 {% if page.next_deadline and page.show_deadline %}
                     <p class="listing__deadline">
-                        <svg class="icon icon--calendar icon--small"><use xlink:href="#calendar"></use></svg>
+                        {% heroicon_mini "calendar-days" class="inline me-1" aria_hidden=true %}
                         <span>{% trans "Next deadline" %}: {{ page.next_deadline|date:"M j, Y" }}</span>
                     </p>
                 {% endif %}

@@ -72,15 +72,6 @@
         margin-left: 20px;
     }
 
-    &--contains-icons {
-        display: flex;
-        align-items: center;
-
-        .header & {
-            margin-right: 20px;
-        }
-    }
-
     &--transparent {
         @include button(transparent, $color--black);
         @include button--narrow;
@@ -153,8 +144,6 @@
         padding: 15px 20px;
         font-weight: $weight--normal;
         color: $color--default;
-        background: url("./../../images/filters.svg") $color--white no-repeat
-            93% center;
         border: 1px solid $color--light-mid-grey;
         transition: none;
         width: 100%;
@@ -166,19 +155,6 @@
             justify-content: flex-start;
             width: auto;
             opacity: 0.7;
-
-            &::before {
-                content: "";
-                background-image: url("./../../images/filters.svg");
-                transform: rotate(90deg);
-                background-color: transparent;
-                background-position: left center;
-                background-size: 20px;
-                width: 20px;
-                height: 20px;
-                display: inline-block;
-                margin-right: 10px;
-            }
         }
     }
 
@@ -308,7 +284,7 @@
         position: relative;
 
         &:hover {
-            opacity: 1;
+            opacity: 0.7;
         }
 
         &:disabled {
@@ -374,14 +350,8 @@
             fill: $color--light-blue;
             width: 1em;
             height: 1em;
-            margin-right: 10px;
+            margin-right: 0.5rem;
             pointer-events: none;
-        }
-    }
-
-    &--change-status {
-        svg {
-            transform: rotate(90deg);
         }
     }
 
@@ -448,5 +418,25 @@
         @include button($color--light-blue, $color--dark-blue);
         display: inline-block;
         line-height: 1.15;
+    }
+
+    &--js-like-active {
+        font-weight: 600;
+        cursor: not-allowed;
+
+        svg {
+            fill: $color--dark-blue;
+            cursor: not-allowed;
+        }
+    }
+
+    &--js-dislike-active {
+        font-weight: 600;
+        cursor: not-allowed;
+
+        svg {
+            fill: $color--tomato;
+            cursor: not-allowed;
+        }
     }
 }

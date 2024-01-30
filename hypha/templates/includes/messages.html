@@ -1,15 +1,21 @@
-{% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-            {% if 'project_action_message' in message.tags %}
-                <li class="messages__actions" x-data="{ show: true }" x-show="show">
-                    <svg class="icon icon--action-tick"><use xlink:href="#line-tick"></use></svg>
-                    <p class="messages__copy">{{ message }}</p>
-                    <svg class="icon icon--action-cross" x-on:click="show = !show"><use xlink:href="#line-cross"></use></svg>
-                </li>
-            {% else %}
-                {% include "includes/message_item.html" with message=message tag=message.tags close=True %}
-            {% endif %}
-        {% endfor %}
-    </ul>
-{% endif %}
+{% load heroicons %}
+<ul class="messages">
+    {% for message in messages %}
+        {% if 'project_action_message' in message.tags %}
+            <li class="messages__actions border px-3 py-2 shadow-md rounded"
+                x-data="{ show: true }"
+                x-show="show"
+                x-transition
+            >
+                {% heroicon_outline "check" stroke_width=2 class="inline-block me-1 w-4 h-4" aria_hidden=true %}
+                <p class="messages__copy">{{ message }}</p>
+                <button type="button" class="p-2 hover:opacity-70" x-on:click="show = !show">
+                    <span class="sr-only">Close</span>
+                    {% heroicon_outline "x-mark" stroke_width=2 class="inline" aria_hidden=true %}
+                </button>
+            </li>
+        {% else %}
+            {% include "includes/message_item.html" with message=message tag=message.tags close=True %}
+        {% endif %}
+    {% endfor %}
+</ul>

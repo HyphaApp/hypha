@@ -1,4 +1,4 @@
-{% load static cache wagtailcore_tags wagtailimages_tags util_tags cookieconsent_tags i18n %}<!doctype html>
+{% load static cache wagtailcore_tags wagtailimages_tags cookieconsent_tags i18n heroicons %}<!doctype html>
 {% wagtail_site as current_site %}
 {% get_current_language as LANGUAGE_CODE %}
 {% get_current_language_bidi as LANGUAGE_BIDI %}
@@ -56,7 +56,9 @@
 
         {% include "includes/sprites.html" %}
 
-        {% include 'includes/messages.html' %}
+        {% if messages %}
+            {% include 'includes/messages.html' %}
+        {% endif %}
 
         {% block header %}
             {% if page.header_image %}
@@ -110,7 +112,7 @@
 
                     <div class="header__inner header__inner--mobile-buttons">
                         <button class="button button--left-space js-mobile-menu-toggle" aria-haspopup="true">
-                            <svg class="icon icon--mobile-menu"><use xlink:href="#mobile-menu-toggle"></use></svg>
+                            {% heroicon_outline "bars-3" size=32 stroke_width=2 class="inline" aria_hidden=true %}
                         </button>
                     </div>
 
@@ -163,8 +165,6 @@
                 <div class="wrapper wrapper--small wrapper--page-title">
                     <h1 class="header__title">{% block page_title %}{{ page.title }}{% endblock %}</h1>
                 </div>
-                <svg class="header__icon header__icon--pixels header__icon--pixels-left"><use xlink:href="#hero-standard-left-pixels"></use></svg>
-                <svg class="header__icon header__icon--pixels header__icon--pixels-right"><use xlink:href="#hero-standard-right-pixels"></use></svg>
             </header>
         {% endblock %}
 
