@@ -1,6 +1,6 @@
 import os
 import uuid
-from typing import Optional
+from typing import List, Optional, Tuple
 
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -31,6 +31,7 @@ TEAM = "team"
 REVIEWER = "reviewers"
 PARTNER = "partners"
 ALL = "all"
+APPLICANT_PARTNERS = f"{APPLICANT} {PARTNER}"
 
 # Visibility choice strings
 VISIBILITY = {
@@ -39,18 +40,32 @@ VISIBILITY = {
     REVIEWER: "Reviewers",
     PARTNER: "Partners",
     ALL: "All",
+    APPLICANT_PARTNERS: "Applicants & Partners",
 }
 
 
 class BaseActivityQuerySet(models.QuerySet):
-    def visible_to(self, user):
+    def visible_to(self, user) -> models.QuerySet:
+        """Get a QuerySet of all items that are visible to the given user.
+
+        Args:
+            user:
+                [`User`][hypha.apply.users.models.User] to filter visibility of
+
+        Returns:
+            A QuerySet containing all items visible to the specified user
+        """
+
         # To hide reviews from the applicant's activity feed
         # Todo: It is just for historic data and not be needed for new data after this.
         from .messaging import ActivityAdapter
 
         messages = ActivityAdapter.messages
 
-        # There are scenarios where users will have activities in which they wouldn't have visibility just using Activity.visibility_for. Thus, the queryset should include activity in which they author (ie. A comment made only to staff from an applicant).
+        # There are scenarios where users will have activities in which they
+        # wouldn't have visibility just using Activity.visibility_for. Thus,
+        # the queryset should include activity in which they author
+        # (ie. A comment made only to staff from a partner).
         if user.is_applicant:
             return self.exclude(message=messages.get(MESSAGES.NEW_REVIEW)).filter(
                 Q(visibility__in=self.model.visibility_for(user)) | Q(user=user)
@@ -196,7 +211,16 @@ class Activity(models.Model):
         return '{}: for "{}"'.format(self.get_type_display(), self.source)
 
     @classmethod
-    def visibility_for(cls, user):
+    def visibility_for(cls, user) -> List[str]:
+        """Gets activity visibility for a specified user
+
+        Args:
+            user:
+                [`User`][hypha.apply.users.models.User] to get visibility for
+
+        Returns:
+            A list of visibility strings
+        """
         if user.is_apply_staff:
             return [TEAM, APPLICANT, REVIEWER, PARTNER, ALL]
         if user.is_reviewer:
@@ -204,33 +228,72 @@ class Activity(models.Model):
         if user.is_finance or user.is_contracting:
             # for project part
             return [TEAM, APPLICANT, REVIEWER, PARTNER, ALL]
-        if user.is_applicant or user.is_partner:
-            return [
-                APPLICANT,
-                PARTNER,
-                ALL,
-            ]  # using partner just for existing activities.
+        if user.is_applicant:
+            return [APPLICANT, ALL, APPLICANT_PARTNERS]
+        if user.is_partner:
+            return [PARTNER, ALL, APPLICANT_PARTNERS]
 
         return [ALL]
 
     @classmethod
     def visibility_choices_for(
         cls, user, submission_has_partner: Optional[bool] = False
-    ):
+    ) -> List[Tuple[str, str]]:
+        """Gets activity visibility choices for the specified user
+
+        Args:
+            user:
+                The [`User`][hypha.apply.users.models.User] being given
+                visibility choices
+            submission_has_partner:
+                An optional boolean that indicates if partner should be
+                included in visibility options
+
+        Returns:
+            A list of tuples in the format of:
+
+            [(<visibility string>, <visibility display string>), ...]
+        """
         if submission_has_partner:
-            if user.is_partner or user.is_applicant:
-                return [(ALL, VISIBILITY[ALL]), (TEAM, VISIBILITY[TEAM])]
+            if user.is_applicant:
+                return [
+                    (APPLICANT_PARTNERS, VISIBILITY[PARTNER]),
+                    (APPLICANT, VISIBILITY[TEAM]),
+                ]
+            if user.is_partner:
+                return [
+                    (ALL, VISIBILITY[ALL]),
+                    (PARTNER, VISIBILITY[PARTNER]),
+                    (APPLICANT_PARTNERS, VISIBILITY[APPLICANT_PARTNERS]),
+                    (TEAM, VISIBILITY[TEAM]),
+                ]
+
         if user.is_applicant:
             return [(APPLICANT, VISIBILITY[APPLICANT])]
+
         if user.is_reviewer:
             return [(REVIEWER, VISIBILITY[REVIEWER])]
+
         if user.is_apply_staff:
-            return [
-                (TEAM, VISIBILITY[TEAM]),
-                (APPLICANT, VISIBILITY[APPLICANT]),
-                (REVIEWER, VISIBILITY[REVIEWER]),
-                (ALL, VISIBILITY[ALL]),
-            ]
+            if not submission_has_partner:
+                choices = [
+                    (TEAM, VISIBILITY[TEAM]),
+                    (APPLICANT, VISIBILITY[APPLICANT]),
+                    (REVIEWER, VISIBILITY[REVIEWER]),
+                    (ALL, VISIBILITY[ALL]),
+                ]
+            else:
+                choices = [
+                    (TEAM, VISIBILITY[TEAM]),
+                    (APPLICANT, VISIBILITY[APPLICANT]),
+                    (PARTNER, VISIBILITY[PARTNER]),
+                    (APPLICANT_PARTNERS, VISIBILITY[APPLICANT_PARTNERS]),
+                    (REVIEWER, VISIBILITY[REVIEWER]),
+                    (ALL, VISIBILITY[ALL]),
+                ]
+
+            return choices
+
         if user.is_finance or user.is_contracting:
             return [(TEAM, VISIBILITY[TEAM]), (APPLICANT, VISIBILITY[APPLICANT])]
 

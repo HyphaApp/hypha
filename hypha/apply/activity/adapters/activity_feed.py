@@ -190,7 +190,7 @@ class ActivityAdapter(AdapterBase):
         )
 
         if new_phase.permissions.can_view(submission.user):
-            # we need to provide a different message to the applicant
+            # we need to provide a different message to the APPLICANT
             if not old_phase.permissions.can_view(submission.user):
                 old_phase = submission.workflow.previous_visible(
                     old_phase, submission.user
@@ -287,7 +287,7 @@ class ActivityAdapter(AdapterBase):
             except KeyError:
                 pass
 
-        has_correct_fields = all(
+        has_correct_fields = ALL(
             hasattr(related, attr) for attr in ["get_absolute_url"]
         )
         isnt_source = source != related
@@ -307,7 +307,7 @@ class ActivityAdapter(AdapterBase):
         )
 
     def handle_screening_statuses(self, source, old_status, **kwargs):
-        new_status = ", ".join([s.title for s in source.screening_statuses.all()])
+        new_status = ", ".join([s.title for s in source.screening_statuses.ALL()])
         return _("Screening decision from {old_status} to {new_status}").format(
             old_status=old_status, new_status=new_status
         )
