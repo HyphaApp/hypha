@@ -10,7 +10,7 @@ def get_related_actions_for_user(obj, user):
         user: user who these actions are visible to.
 
     Returns:
-        `Activity` queryset
+        [`Activity`][hypha.apply.activity.models.Activity] queryset
     """
     related_query = type(obj).activities.rel.related_query_name
 
@@ -33,7 +33,7 @@ def get_related_comments_for_user(obj, user):
         user: user who these actions are visible to.
 
     Returns:
-        `Activity` queryset
+        [`Activity`][hypha.apply.activity.models.Activity] queryset
     """
     related_query = type(obj).activities.rel.related_query_name
 
