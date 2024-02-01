@@ -25,22 +25,24 @@ ACTIVITY_TYPES = {
     ACTION: "Action",
 }
 
-# Visibility strings
-APPLICANT = "applicant"
-TEAM = "team"
-REVIEWER = "reviewers"
-PARTNER = "partners"
-ALL = "all"
+# Visibility strings. Used to determine visibility states but are also
+# sometimes shown to users.
+# (ie. hypha.apply.activity.templatetags.activity_tags.py)
+APPLICANT = _("applicant")
+TEAM = _("team")
+REVIEWER = _("reviewers")
+PARTNER = _("partners")
+ALL = _("all")
 APPLICANT_PARTNERS = f"{APPLICANT} {PARTNER}"
 
 # Visibility choice strings
 VISIBILITY = {
-    APPLICANT: "Applicants",
-    TEAM: "Staff only",
-    REVIEWER: "Reviewers",
-    PARTNER: "Partners",
-    ALL: "All",
-    APPLICANT_PARTNERS: "Applicants & Partners",
+    APPLICANT: _("Applicants"),
+    TEAM: _("Staff only"),
+    REVIEWER: _("Reviewers"),
+    PARTNER: _("Partners"),
+    ALL: _("All"),
+    APPLICANT_PARTNERS: _("Applicants & Partners"),
 }
 
 
@@ -255,10 +257,6 @@ class Activity(models.Model):
             [(<visibility string>, <visibility display string>), ...]
         """
         if submission_has_partner:
-            print("IS PARTNER:")
-            print(user.is_partner)
-            print("IS APPLICANT:")
-            print(user.is_applicant)
             if user.is_applicant:
                 return [
                     (APPLICANT_PARTNERS, VISIBILITY[PARTNER]),

@@ -31,7 +31,7 @@
             {% endif %}
 
             <p class="feed__meta-item feed__meta-item--right flex items-center">
-                {% heroicon_micro "eye" class="fill-fg-muted inline me-1 w-4 h-4 py-2" aria_hidden=true %}
+                {% heroicon_micro "eye" class="fill-fg-muted inline me-1 w-4 h-4 mr-1" aria_hidden=true %}
                 <span class="js-comment-visibility">{{ activity.visibility|visibility_display:request.user }}</span>
             </p>
         </div>

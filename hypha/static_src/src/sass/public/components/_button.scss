@@ -35,8 +35,6 @@
         padding: 15px 20px;
         font-weight: $weight--normal;
         color: $color--default;
-        background: url("./../../images/filters.svg") $color--white no-repeat
-            93% center;
         border: 1px solid $color--light-mid-grey;
         transition: none;
         width: 100%;
@@ -48,19 +46,6 @@
             justify-content: flex-start;
             width: auto;
             opacity: 0.7;
-
-            &::before {
-                content: "";
-                background-image: url("./../../images/filters.svg");
-                transform: rotate(90deg);
-                background-color: transparent;
-                background-position: left center;
-                background-size: 20px;
-                width: 20px;
-                height: 20px;
-                display: inline-block;
-                margin-right: 10px;
-            }
         }
     }
 
