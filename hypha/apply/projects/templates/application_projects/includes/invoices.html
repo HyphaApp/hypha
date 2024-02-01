@@ -30,14 +30,14 @@
                             <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Invoice number" %}: </span>{{ invoice.invoice_number }}</td>
                             <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Status" %}: </span>{{ invoice_status }}</td>
                             <td class="flex flex-wrap justify-center py-4 px-0 gap-2 xl:flex-nowrap">
-                                <a class="data-block__action-icon-link " href="{{ invoice.get_absolute_url }}" >
-                                    {% heroicon_mini "eye" size=16 aria_hidden=true class="mr-1" %}
+                                <a class="data-block__action-icon-link" href="{{ invoice.get_absolute_url }}" >
+                                    {% heroicon_micro "eye" aria_hidden=true class="me-1" %}
                                     {% trans "View" %}
                                 </a>
                                 {% can_edit invoice user as user_can_edit_request %}
                                 {% if user_can_edit_request %}
                                     <a class="data-block__action-icon-link" href="{% url "apply:projects:invoice-edit" pk=invoice.project.pk invoice_pk=invoice.pk %}">
-                                        {% heroicon_mini "pencil-square" size=16 aria_hidden=true class="mr-1" %}
+                                        {% heroicon_micro "pencil-square" aria_hidden=true class="me-1" %}
                                         {% trans "Edit" %}
                                     </a>
                                 {% endif %}
@@ -45,7 +45,7 @@
                                 {% can_delete invoice user as user_can_delete_request %}
                                 {% if user.is_applicant and user_can_delete_request %}
                                     <a class="data-block__action-icon-link text-red-500" href="{% url 'apply:projects:invoice-delete' pk=invoice.project.pk invoice_pk=invoice.pk %}">
-                                        {% heroicon_mini "trash" size=16 aria_hidden=true class="mr-1" %}
+                                        {% heroicon_micro "trash" aria_hidden=true class="me-1" %}
                                         {% trans "Delete" %}
                                     </a>
                                 {% endif %}
@@ -101,7 +101,7 @@
                             <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Status" %}: </span>{{ invoice_status }}</td>
                             <td class="flex justify-end py-4 px-0">
                                 <a class="data-block__action-icon-link" href="{{ invoice.get_absolute_url }}" >
-                                    {% heroicon_mini "eye" size=16 aria_hidden=true class="mr-1" %}
+                                    {% heroicon_mini "eye" size=16 aria_hidden=true class="me-1" %}
                                     {% trans "View" %}
                                 </a>
                             </td>

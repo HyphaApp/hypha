@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n heroicons %}
 <li class="data-block__list-item">
     <div class="data-block__info">
         {% if current %}
@@ -8,7 +8,7 @@
         {% endif %}
         <b>{{ report.start_date }}</b> {% trans "to" %} <b>{{ report.end_date }}</b>
         {% if report.is_very_late %}
-            <svg class="icon data-block__icon"><use xlink:href="#exclamation-point"></use></svg>
+            {% heroicon_outline 'exclamation-circle' stroke_width=2 size=22 class="inline me-1 stroke-red-500" aria_hidden=true %}
         {% endif %}
     </div>
 

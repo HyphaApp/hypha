@@ -31,30 +31,30 @@
                         data-fancybox
                         type="button"
                         data-src="#batch-progress"
-                        class="button button--action button--change-status js-batch-button js-batch-progress"
+                        class="button button--action js-batch-button js-batch-progress"
                     >
-                        <svg><use xlink:href="#arrow-split"></use></svg>
+                        {% heroicon_mini "arrows-right-left" class="inline" aria_hidden=true %}
                         {% trans "Status" %}
                     </button>
 
                     <button data-fancybox data-src="#batch-update-lead" class="button button--action js-batch-button" type="button">
-                        <svg><use xlink:href="#add-person"></use></svg>
+                        {% heroicon_micro "user-plus" class="inline" aria_hidden=true %}
                         {% trans "Lead" %}
                     </button>
 
                     <button data-fancybox data-src="#batch-update-reviewers" class="button button--action js-batch-button" type="button">
-                        <svg><use xlink:href="#add-person"></use></svg>
+                        {% heroicon_micro "user-plus" class="inline" aria_hidden=true %}
                         {% trans "Reviewers" %}
                     </button>
 
                     <button data-fancybox data-src="#batch-delete-submission" class="button button--action js-batch-button" type="button">
-                        <svg class="icon icon--delete"><use xlink:href="#delete-submissions"></use></svg>
+                        {% heroicon_micro "trash" class="inline" aria_hidden=true %}
                         {% trans "Delete" %}
                     </button>
 
                     {% if can_bulk_archive %}
                         <button data-fancybox data-src="#batch-archive-submission" class="button button--action js-batch-button" type="button">
-                            <svg class="icon icon--archive"><use xlink:href="#archive"></use></svg>
+                            {% heroicon_micro "archive-box-arrow-down" class="inline" aria_hidden=true %}
                             {% trans "Archive" %}
                         </button>
                     {% endif %}
@@ -73,14 +73,20 @@
                 {% endif %}
             {% endif %}
             {% if filter_classes != 'filters-open' %}
-                <button class="button button--filters js-toggle-filters">{% trans "Filters" %}</button>
+                <button class="button button--filters js-toggle-filters">
+                    {% heroicon_mini "adjustments-horizontal" class="inline me-1 text-dark-blue align-text-bottom" aria_hidden=true %}
+                    {% trans "Filters" %}</button>
             {% endif %}
 
-            <button class="button button--filters js-toggle-filters" id="show-filters-button">{% trans "Filters" %}</button>
+            <button class="button button--filters js-toggle-filters" id="show-filters-button">
+                {% heroicon_mini "adjustments-horizontal" class="inline me-1 text-dark-blue align-text-bottom" aria_hidden=true %}
+                {% trans "Filters" %}
+            </button>
             {% if use_search|default:False %}
                 <form action="{{ search_action }}" method="get" role="search" class="form form--search-desktop">
-                    <button class="button button--search" type="submit" aria-label="{% trans 'Search' %}">
-                        <svg class="icon icon--magnifying-glass icon--search"><use xlink:href="#magnifying-glass"></use></svg>
+                    <button class="button button--search" type="submit">
+                        <span class="sr-only">Search</span>
+                        {% heroicon_mini "magnifying-glass" size=20 class="text-fg-muted" aria_hidden=true %}
                     </button>
                     {% if show_archive and archived_param is not None %}
                         <input type="hidden" value="{{ archived_param }}" name="archived">

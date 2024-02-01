@@ -10,12 +10,6 @@
         fill: $color--white;
     }
 
-    &--anchor-link {
-        line-height: 1;
-        height: 0.8em;
-        vertical-align: middle;
-    }
-
     &--person {
         width: 15px;
         height: 15px;
@@ -32,16 +26,6 @@
         height: 40px;
         padding: 10px;
         margin-right: 5px;
-    }
-
-    &--calendar {
-        fill: $color--pink;
-    }
-
-    &--error {
-        width: 25px;
-        height: 25px;
-        margin-right: 10px;
     }
 
     &--close {
@@ -74,25 +58,6 @@
         }
     }
 
-    &--to-top {
-        display: flex;
-        align-items: center;
-        width: 45px;
-        height: 45px;
-        padding: 12px;
-        margin: 0 0 5px;
-        background-color: $color--white;
-        border: 2px solid $color--black-50;
-        border-radius: 50%;
-        fill: $color--black-50;
-
-        @include media-query(small-tablet) {
-            width: 65px;
-            height: 65px;
-            padding: 20px;
-        }
-    }
-
     &--eye {
         position: relative;
         top: 0.25em;
@@ -100,14 +65,6 @@
         width: 1em;
         height: 1em;
         stroke: $color--black;
-    }
-
-    &--action-tick {
-        stroke: $color--black;
-        fill: transparent;
-        margin-right: 8px;
-        width: 16px;
-        height: 16px;
     }
 
     &--dashboard-tasks {
@@ -137,47 +94,6 @@
         }
     }
 
-    &--caret-down {
-        position: relative;
-        top: 0.4em;
-        align-self: center;
-        width: 1em;
-        height: 1em;
-        margin-left: 10px;
-    }
-
-    &--caret-up {
-        position: relative;
-        top: 0.4em;
-        align-self: center;
-        width: 1em;
-        height: 1em;
-        margin-left: 10px;
-    }
-
-    &--arrow-up {
-        position: relative;
-        align-self: center;
-        width: 16px;
-        height: 17px;
-        stroke: $color--light-blue;
-    }
-
-    &--arrow-down {
-        position: relative;
-        align-self: center;
-        width: 16px;
-        height: 17px;
-        stroke: $color--light-blue;
-    }
-
-    &--side-arrow {
-        position: relative;
-        align-self: center;
-        width: 8px;
-        height: 30px;
-    }
-
     &--arrow-up-short-bar {
         position: relative;
         align-self: center;
@@ -191,69 +107,10 @@
         }
     }
 
-    &--project-pen {
-        width: 12px;
-        margin-right: 3px;
-        fill: $color--light-blue;
-    }
-
-    &--pen {
-        width: 12px;
-        margin-left: 7px;
-        fill: $color--light-blue;
-    }
-
     &--request-changes {
         width: 20px;
         height: 20px;
         margin-right: 4px;
         margin-top: 2px;
-    }
-
-    &--padlock {
-        width: 12px;
-        margin-left: 7px;
-        stroke: $color--mid-grey;
-    }
-
-    &--delete {
-        margin-left: 7px;
-        fill: $color--tomato;
-    }
-
-    &--like {
-        fill: $color--dark-grey;
-        cursor: pointer;
-    }
-
-    &--dislike {
-        fill: $color--dark-grey;
-        cursor: pointer;
-    }
-
-    &--like-yes {
-        fill: $color--dark-blue;
-        cursor: not-allowed;
-    }
-
-    &--dislike-no {
-        fill: $color--tomato;
-        cursor: not-allowed;
-    }
-
-    &--like-disable {
-        cursor: not-allowed;
-    }
-
-    &--dislike-disable {
-        cursor: not-allowed;
-    }
-
-    &--info-circle {
-        width: 18px;
-        height: 18px;
-        cursor: pointer;
-        margin-right: 3px;
-        vertical-align: middle;
     }
 }

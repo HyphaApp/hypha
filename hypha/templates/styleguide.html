@@ -49,8 +49,17 @@
                             <img class="header__logo header__logo--mobile" src="{{ logo_default.url }}">
                         {% endif %}
                     {% else %}
-                        <svg class="header__logo header__logo--desktop"><use xlink:href="#logo-desktop--dark"></use></svg>
-                        <svg class="header__logo header__logo--mobile"><use xlink:href="#logo-mobile"></use></svg>
+                        <img class="header__logo header__logo--desktop"
+                             width="215"
+                             height="40"
+                             src="{% static 'images/logo.png' %}"
+                             alt="Hypha logo"
+                        >
+                        <img class="header__logo header__logo--mobile"
+                             width="60" height="60"
+                             src="{% static 'images/logo-small.png' %}"
+                             alt="Hypha logo"
+                        >
                     {% endif %}
                 </a>
 

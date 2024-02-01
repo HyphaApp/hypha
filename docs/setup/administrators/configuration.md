@@ -83,6 +83,10 @@ This determines the length of time for which the user will remain logged in. The
 
     FORCE_LOGIN_FOR_APPLICATION = env.bool('FORCE_LOGIN_FOR_APPLICATION', True)
 
+### If applicants should be forced to preview their application before submitting
+
+    SUBMISSION_PREVIEW_REQUIRED = env.bool('SUBMISSION_PREVIEW_REQUIRED', True)
+
 ### Set the allowed file extension for all uploads fields.
 
     FILE_ALLOWED_EXTENSIONS = ['doc', 'docx', 'odp', 'ods', 'odt', 'pdf', 'ppt', 'pptx', 'rtf', 'txt', 'xls', 'xlsx']

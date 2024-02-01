@@ -1,24 +1,26 @@
-{% load i18n submission_tags %}
+{% load i18n submission_tags heroicons %}
+
 {% can_screen object as screen_able %}
+
 <div class="sidebar__inner">
 
     <h5>{% trans "Screening decision" %}</h5>
     {% if object.supports_default_screening %}
-        <div class="sidebar__screening-thumbs screening-status-box">
+        <div class="flex justify-evenly">
             <div class="sidebar__screening-status-yes">
-                <div class="thumb thumbs-up" data-id="{{ object.id }}" data-yes="true" style="align-self: center;">
-                    <svg class="icon icon--like {% if object.has_yes_default_screening_status_set %}icon--like-yes{% endif %} {% if object.has_yes_default_screening_status_set %}icon--like-disable{% endif %}"><use xlink:href="#like"></use></svg>
-                </div>
-                <div>
-                    {{ default_yes }}
+                <div class="thumb thumbs-up" data-id="{{ object.id }}" data-yes="true">
+                    <button class="js-like p-2 flex flex-col items-center {% if object.has_yes_default_screening_status_set %}button--js-like-active{% endif %}">
+                        {% heroicon_solid "hand-thumb-up" size=30 class="mb-2 transition-colors" aria_hidden=true %}
+                        {{ default_yes }}
+                    </button>
                 </div>
             </div>
             <div class="sidebar__screening-status-no">
                 <div class="thumb thumbs-down" data-id="{{ object.id }}" data-yes="false" style="align-self: center;">
-                    <svg class="icon icon--dislike {% if object.has_no_default_screening_status_set %}icon--dislike-no{% endif %} {% if object.has_no_default_screening_status_set %}icon--dislike-disable{% endif %}"><use xlink:href="#dislike"></use></svg>
-                </div>
-                <div>
-                    {{ default_no }}
+                    <button class="js-dislike  p-2 flex flex-col items-center {% if object.has_no_default_screening_status_set %}button--js-dislike-active{% endif %}">
+                        {% heroicon_solid "hand-thumb-down" size=30 class="mb-2 transition-colors" aria_hidden=true %}
+                        {{ default_no }}
+                    </button>
                 </div>
             </div>
         </div>

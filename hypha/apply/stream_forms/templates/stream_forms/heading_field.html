@@ -1,14 +1,15 @@
-<div class="section-head mb-4">
+{% load heroicons %}
+<div class="section-head mb-4 group" id="{{ value.heading_text|slugify }}">
     <{{ self.size }} tabindex="-1" class="p-2 mb-2 bg-light-blue text-white">
 
     {{ value.heading_text }}
-    <a id="{{ value.heading_text|slugify }}"
-       class="anchor hidden group-hover:inline-block text-gray-700"
-       href="#{{ value.heading_text|slugify }}"
-       aria-hidden='true'>
-        <svg class="icon icon--anchor-link">
-            <use xlink:href="#anchor-link"></use>
-        </svg>
+    <a
+        class="hidden p-1 hover:opacity-70 transition-opacity group-hover:inline-block float-right text-white"
+        href="#{{ value.heading_text|slugify }}"
+        aria-hidden='true'
+        tabindex="-1"
+    >
+        {% heroicon_solid "link" class="inline me-1" stroke_width=2 aria_hidden=true %}
     </a>
 </{{ self.size }}>
 </div>

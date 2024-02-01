@@ -1,6 +1,7 @@
 {% extends "base-apply.html" %}
 
 {% load i18n contract_tools static wagtailcore_tags approval_tools invoice_tools project_tags %}
+{% load heroicons %}
 
 {% block title %}{{ object.title }}{% endblock %}
 
@@ -23,7 +24,12 @@
 
                 {% if request.user.is_apply_staff and object.submission.round %}
                     <span>
-                        <a class="link--transparent link--underlined" href="{% url 'apply:rounds:detail' pk=object.submission.round.pk %}">{{ object.submission.round }}</a>
+                        <a
+                            class="link--transparent link--underlined hover:opacity-70 transition-opacity"
+                            href="{% url 'apply:rounds:detail' pk=object.submission.round.pk %}"
+                        >
+                            {{ object.submission.round }}
+                        </a>
                     </span>
                 {% else %}
                     <span>{{ object.submission.round }}</span>
@@ -33,10 +39,11 @@
                     {% if request.user.is_apply_staff %}
                         <a data-fancybox
                            data-src="#assign-lead"
-                           class="link link--edit-lead is-active link--transparent"
-                           href="#">
+                           class="link link--edit-lead is-active link--transparent hover:opacity-70 transition-opacity"
+                           href="#"
+                        >
                             <u>{% trans "Lead" %}: {{ object.lead }}</u>
-                            <svg class="icon icon--pen"><use xlink:href="#pen"></use></svg>
+                            {% heroicon_micro "pencil-square" class="inline ml-1" aria_hidden=true %}
                         </a>
                         <div class="modal" id="assign-lead">
                             <h4 class="modal__project-header-bar">{% trans "Assign Lead" %}</h4>
@@ -152,12 +159,12 @@
                                 <a class="js-actions-toggle button button--white button--full-width button--actions">{{ next_step.heading }}</a>
                             {% endif %}
 
-                            <div class="js-actions-sidebar sidebar__inner sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
-
-                                <h5><svg class="icon icon--side-arrow"><use xlink:href="#side-arrow"></use></svg>
+                            <div class="bg-yellow-100 shadow js-actions-sidebar px-5 py-3 mb-8 sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
+                                <h5 class="border-b pb-2 border-b-orange-200">
+                                    {% heroicon_solid "sparkles" class="inline me-1 fill-orange-500 align-text-top" aria_hidden=true %}
                                     {{ next_step.heading }}
                                 </h5>
-                                <p>{{ next_step.text }}</p>
+                                <p class="">{{ next_step.text }}</p>
                                 {% user_next_step_instructions object user as instructions %}
                                 {% if instructions %}
                                     <div class="sidebar__inner--actions--instructions">

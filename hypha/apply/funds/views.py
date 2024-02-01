@@ -1109,12 +1109,10 @@ class AdminSubmissionDetailView(ActivityContextMixin, DelegateableView, DetailVi
         if self.object.next:
             other_submissions = other_submissions.exclude(id=self.object.next.id)
 
-        public_page = self.object.get_from_parent("detail")()
         default_screening_statuses = get_default_screening_statues()
 
         return super().get_context_data(
             other_submissions=other_submissions,
-            public_page=public_page,
             default_screening_statuses=default_screening_statuses,
             archive_access_groups=get_archive_view_groups(),
             can_archive=can_alter_archived_submissions(self.request.user),
@@ -1307,8 +1305,13 @@ class BaseSubmissionEditView(UpdateView):
         return super().dispatch(request, *args, **kwargs)
 
     def buttons(self):
-        yield ("submit", "primary", _("Submit"))
-        yield ("save", "white", _("Save draft"))
+        if settings.SUBMISSION_PREVIEW_REQUIRED:
+            yield ("preview", "primary", _("Preview and submit"))
+            yield ("save", "white", _("Save draft"))
+        else:
+            yield ("submit", "primary", _("Submit"))
+            yield ("save", "white", _("Save draft"))
+            yield ("preview", "white", _("Preview"))
 
     def get_form_kwargs(self):
         """
@@ -1440,6 +1443,13 @@ class ApplicantSubmissionEditView(BaseSubmissionEditView):
                 if current_round:
                     self.object.round = current_round
             self.object.save(update_fields=["submit_time", "round"])
+
+        if self.object.status == DRAFT_STATE and "preview" in self.request.POST:
+            self.object.create_revision(draft=True, by=self.request.user)
+            form.delete_temporary_files()
+            # messages.success(self.request, _("Draft saved"))
+            context = self.get_context_data()
+            return render(self.request, "funds/application_preview.html", context)
 
         if "save" in self.request.POST:
             return self.save_draft_and_refresh_page(form=form)

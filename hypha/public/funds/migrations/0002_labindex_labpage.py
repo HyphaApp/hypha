@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 import django.db.models.deletion
-import hypha.public.funds.blocks
 import wagtail.blocks
 import wagtail.fields
 import wagtail.documents.blocks
@@ -196,10 +195,6 @@ class Migration(migrations.Migration):
                                         ),
                                     )
                                 ),
-                            ),
-                            (
-                                "reviewer_list",
-                                hypha.public.funds.blocks.ReviewersBlock(),
                             ),
                         )
                     ),

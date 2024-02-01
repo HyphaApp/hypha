@@ -59,21 +59,6 @@
         margin-bottom: 1em;
     }
 
-    &__screening-thumbs {
-        display: flex;
-        justify-content: space-evenly;
-    }
-
-    &__screening-status-yes {
-        display: flex;
-        flex-direction: column;
-    }
-
-    &__screening-status-no {
-        display: flex;
-        flex-direction: column;
-    }
-
     &__screening-option {
         margin: 0.3em;
         border: 1px solid $color--black-20;
