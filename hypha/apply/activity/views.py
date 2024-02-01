@@ -5,6 +5,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic import CreateView, ListView
 from django_ratelimit.decorators import ratelimit
 
+from hypha.apply.funds.models.submissions import ApplicationSubmission
 from hypha.apply.users.decorators import staff_required
 from hypha.apply.utils.storage import PrivateMediaView
 from hypha.apply.utils.views import DelegatedViewMixin
@@ -62,7 +63,9 @@ class CommentFormView(DelegatedViewMixin, CreateView):
             A dict of kwargs to be passed to [`CommentForm`][hypha.apply.activity.forms.CommentForm]. The submission instance is removed from this return, while a boolean of `has_partners` is added based off the submission.
         """
         kwargs = super().get_form_kwargs()
-        kwargs["has_partners"] = len(kwargs.pop("instance").partners.all()) > 0
+        instance = kwargs.pop("instance")
+        if isinstance(instance, ApplicationSubmission):
+            kwargs["has_partners"] = len(instance.partners.all()) > 0
         return kwargs
 
 
