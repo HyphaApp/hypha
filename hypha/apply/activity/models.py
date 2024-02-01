@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from django.db.models import Case, Value, When
+from django.db.models import Case, Q, Value, When
 from django.db.models.functions import Concat
 from django.urls import reverse
 from django.utils import timezone
@@ -25,6 +25,7 @@ ACTIVITY_TYPES = {
     ACTION: "Action",
 }
 
+# Visibility strings
 APPLICANT = "applicant"
 TEAM = "team"
 REVIEWER = "reviewers"
@@ -32,6 +33,7 @@ PARTNER = "partners"
 ALL = "all"
 APPLICANT_PARTNERS = f"{APPLICANT} {PARTNER}"
 
+# Visibility choice strings
 VISIBILITY = {
     APPLICANT: "Applicants",
     TEAM: "Staff only",
@@ -66,10 +68,12 @@ class BaseActivityQuerySet(models.QuerySet):
         # (ie. A comment made only to staff from a partner).
         if user.is_applicant:
             return self.exclude(message=messages.get(MESSAGES.NEW_REVIEW)).filter(
-                visibility__in=self.model.visibility_for(user)
+                Q(visibility__in=self.model.visibility_for(user)) | Q(user=user)
             )
 
-        return self.filter(visibility__in=self.model.visibility_for(user))
+        return self.filter(
+            Q(visibility__in=self.model.visibility_for(user)) | Q(user=user)
+        )
 
     def newer(self, activity):
         return self.filter(timestamp__gt=activity.timestamp)
@@ -251,12 +255,17 @@ class Activity(models.Model):
             [(<visibility string>, <visibility display string>), ...]
         """
         if submission_has_partner:
+            print("IS PARTNER:")
+            print(user.is_partner)
+            print("IS APPLICANT:")
+            print(user.is_applicant)
             if user.is_applicant:
                 return [
                     (APPLICANT_PARTNERS, VISIBILITY[PARTNER]),
                     (APPLICANT, VISIBILITY[TEAM]),
                 ]
             if user.is_partner:
+                print("RETURNING PARTNER OPTIONS")
                 return [
                     (ALL, VISIBILITY[ALL]),
                     (PARTNER, VISIBILITY[PARTNER]),
@@ -292,6 +301,7 @@ class Activity(models.Model):
 
         if user.is_finance or user.is_contracting:
             return [(TEAM, VISIBILITY[TEAM]), (APPLICANT, VISIBILITY[APPLICANT])]
+
         return [(ALL, VISIBILITY[ALL])]
 
 

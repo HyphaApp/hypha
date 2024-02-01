@@ -63,9 +63,9 @@ def display_for(activity, user):
         if not isinstance(message_data, (dict, list)):
             return activity.message
 
-    visibile_for_user = activity.visibility_for(user)
+    visible_for_user = activity.visibility_for(user)
 
-    if set(visibile_for_user) & {TEAM, REVIEWER}:
+    if set(visible_for_user) & {TEAM, REVIEWER}:
         return message_data[TEAM]
 
     return message_data[ALL]

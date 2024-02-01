@@ -55,10 +55,14 @@ class CommentFormView(DelegatedViewMixin, CreateView):
     def get_success_url(self):
         return self.object.source.get_absolute_url() + "#communications"
 
-    def get_form_kwargs(self):
-        # We dont want to pass the submission as the instance
+    def get_form_kwargs(self) -> dict:
+        """Get the kwargs for the [`CommentForm`][hypha.apply.activity.forms.CommentForm].
+
+        Returns:
+            A dict of kwargs to be passed to [`CommentForm`][hypha.apply.activity.forms.CommentForm]. The submission instance is removed from this return, while a boolean of `has_partners` is added based off the submission.
+        """
         kwargs = super().get_form_kwargs()
-        kwargs.pop("instance")
+        kwargs["has_partners"] = len(kwargs.pop("instance").partners.all()) > 0
         return kwargs
 
 
