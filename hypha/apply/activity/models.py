@@ -243,17 +243,18 @@ class Activity(models.Model):
     ) -> List[Tuple[str, str]]:
         """Gets activity visibility choices for the specified user
 
+        Uses the given user (and partner query set if provided) to give
+        the specified user activity visibility choices.
+
         Args:
             user:
                 The [`User`][hypha.apply.users.models.User] being given
                 visibility choices
             submission_has_partner:
-                An optional boolean that indicates if partner should be
-                included in visibility options
-
+                An optional QuerySet of partners
+                ([`Users`][hypha.apply.users.models.User])
         Returns:
             A list of tuples in the format of:
-
             [(<visibility string>, <visibility display string>), ...]
         """
         has_partner = submission_partner_list and len(submission_partner_list) > 0
