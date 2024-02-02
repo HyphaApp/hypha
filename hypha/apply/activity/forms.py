@@ -28,14 +28,14 @@ class CommentForm(FileFormMixin, forms.ModelForm):
         }
 
     def __init__(self, *args, user=None, **kwargs):
-        # Get `has_partners` kwarg and remove it before initializing parent.
-        submission_has_partners = False
-        if "has_partners" in kwargs:
-            submission_has_partners = kwargs.pop("has_partners")
+        # Get `submission_partner_list` kwarg and remove it before initializing parent.
+        submission_partner_list = None
+        if "submission_partner_list" in kwargs:
+            submission_partner_list = kwargs.pop("submission_partner_list")
 
         super().__init__(*args, **kwargs)
         self.visibility_choices = self._meta.model.visibility_choices_for(
-            user, submission_has_partners
+            user, submission_partner_list
         )
         visibility = self.fields["visibility"]
         # Set default visibility to "Applicant" for staff and staff can view everything.

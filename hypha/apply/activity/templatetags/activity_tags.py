@@ -84,8 +84,8 @@ def visibility_options(activity, user) -> str:
     Returns:
         A JSON string of visibility options
     """
-    has_partners = len(activity.source.partners.all()) > 0
-    choices = activity.visibility_choices_for(user, has_partners)
+    submission_partner_list = activity.source.partners.all()
+    choices = activity.visibility_choices_for(user, submission_partner_list)
     return json.dumps(choices)
 
 

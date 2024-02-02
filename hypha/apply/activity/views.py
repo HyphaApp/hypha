@@ -65,7 +65,7 @@ class CommentFormView(DelegatedViewMixin, CreateView):
         kwargs = super().get_form_kwargs()
         instance = kwargs.pop("instance")
         if isinstance(instance, ApplicationSubmission):
-            kwargs["has_partners"] = len(instance.partners.all()) > 0
+            kwargs["submission_partner_list"] = instance.partners.all()
         return kwargs
 
 

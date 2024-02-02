@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from django.db.models import Case, Q, Value, When
+from django.db.models import Case, Q, QuerySet, Value, When
 from django.db.models.functions import Concat
 from django.urls import reverse
 from django.utils import timezone
@@ -239,7 +239,7 @@ class Activity(models.Model):
 
     @classmethod
     def visibility_choices_for(
-        cls, user, submission_has_partner: Optional[bool] = False
+        cls, user, submission_partner_list: Optional[QuerySet] = None
     ) -> List[Tuple[str, str]]:
         """Gets activity visibility choices for the specified user
 
@@ -256,18 +256,20 @@ class Activity(models.Model):
 
             [(<visibility string>, <visibility display string>), ...]
         """
-        if submission_has_partner:
-            if user.is_applicant:
-                return [
-                    (APPLICANT_PARTNERS, VISIBILITY[PARTNER]),
-                    (APPLICANT, VISIBILITY[TEAM]),
-                ]
-            if user.is_partner:
-                return [
-                    (APPLICANT_PARTNERS, VISIBILITY[APPLICANT_PARTNERS]),
-                    (PARTNER, VISIBILITY[PARTNER]),
-                    (TEAM, VISIBILITY[TEAM]),
-                ]
+        has_partner = submission_partner_list and len(submission_partner_list) > 0
+
+        if user.is_partner and has_partner and submission_partner_list.contains(user):
+            return [
+                (APPLICANT_PARTNERS, VISIBILITY[APPLICANT_PARTNERS]),
+                (PARTNER, VISIBILITY[PARTNER]),
+                (TEAM, VISIBILITY[TEAM]),
+            ]
+
+        if user.is_applicant and has_partner:
+            return [
+                (APPLICANT_PARTNERS, VISIBILITY[PARTNER]),
+                (APPLICANT, VISIBILITY[TEAM]),
+            ]
 
         if user.is_applicant:
             return [(APPLICANT, VISIBILITY[APPLICANT])]
@@ -276,7 +278,7 @@ class Activity(models.Model):
             return [(REVIEWER, VISIBILITY[REVIEWER])]
 
         if user.is_apply_staff:
-            if not submission_has_partner:
+            if not has_partner:
                 choices = [
                     (TEAM, VISIBILITY[TEAM]),
                     (APPLICANT, VISIBILITY[APPLICANT]),
