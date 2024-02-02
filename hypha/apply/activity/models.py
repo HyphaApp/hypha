@@ -263,11 +263,9 @@ class Activity(models.Model):
                     (APPLICANT, VISIBILITY[TEAM]),
                 ]
             if user.is_partner:
-                print("RETURNING PARTNER OPTIONS")
                 return [
-                    (ALL, VISIBILITY[ALL]),
-                    (PARTNER, VISIBILITY[PARTNER]),
                     (APPLICANT_PARTNERS, VISIBILITY[APPLICANT_PARTNERS]),
+                    (PARTNER, VISIBILITY[PARTNER]),
                     (TEAM, VISIBILITY[TEAM]),
                 ]
 
