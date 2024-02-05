@@ -254,7 +254,6 @@ class SubmissionActionViewSet(SubmissionNestedMixin, viewsets.GenericViewSet):
 class RoundViewSet(
     mixins.RetrieveModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet
 ):
-    queryset = RoundsAndLabs.objects.all()
     serializer_class = RoundLabSerializer
     permission_classes = (
         permissions.IsAuthenticated,
@@ -267,6 +266,10 @@ class RoundViewSet(
         ],
     }
     pagination_class = StandardResultsSetPagination
+
+    @property
+    def queryset():
+        return RoundsAndLabs.objects.all()
 
     def get_serializer_class(self):
         if self.action == "list":
