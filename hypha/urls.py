@@ -37,6 +37,7 @@ urlpatterns = [
     path("dashboard/", include(dashboard_urls)),
     path("sitemap.xml", sitemap),
     path("upload/", include(django_file_form_urls)),
+    path("", include("social_django.urls", namespace="social")),
     path("", include((user_urls, "users"))),
     path("tinymce/", include("tinymce.urls")),
     path("select2/", include("django_select2.urls")),
