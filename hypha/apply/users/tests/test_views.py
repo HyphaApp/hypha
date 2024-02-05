@@ -75,7 +75,7 @@ class TestBecome(TestCase):
 
     def become_request(self, user, target):
         self.client.force_login(user)
-        url = reverse("users:become")
+        url = reverse("hijack-become")
         response = self.client.post(
             url, {"user_pk": target.pk}, follow=True, secure=True
         )
