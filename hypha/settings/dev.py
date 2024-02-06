@@ -16,7 +16,6 @@ ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
     "hypha.test",
-    "apply.hypha.test",
 ]
 
 WAGTAILADMIN_BASE_URL = "http://localhost:8000"

@@ -154,7 +154,7 @@ python manage.py createcachetable
 python manage.py migrate --noinput
 python manage.py clear_cache --cache=default --cache=wagtailcache
 python manage.py createsuperuser
-python manage.py wagtailsiteupdate server.domain apply.server.domain 80
+python manage.py wagtailsiteupdate server.domain 80
 python manage.py runserver
 ```
 
@@ -168,42 +168,13 @@ Make sure gunicorn is installed \(it should be\). Do a test run with gunicorn: `
 
 To make gunicorn start automatically with systemd see [https://docs.gunicorn.org/en/stable/deploy.html\#systemd](https://docs.gunicorn.org/en/stable/deploy.html#systemd).
 
-Set up DNS so that server.domain and apply.server.domain point to the server you've installed the application. Install nginx if you haven't already \(`sudo apt-get install nginx`\). You'll need to add two new config files for nginx in /etc/nginx/sites-available:
+Set up DNS so that server.domain point to the server you've installed the application. Install nginx if you haven't already \(`sudo apt-get install nginx`\). You'll need to add a new config file for nginx in /etc/nginx/sites-available:
 
-public
 
 ```text
 server {
     listen 80;
     server_name server.domain;
-
-    client_max_body_size 2621440;
-
-    location /media/ {
-        alias /path/to/application/hypha/media/;
-    }
-
-    location /static/ {
-        alias /path/to/application/hypha/static/;
-    }
-
-    location / {
-        proxy_set_header Host $http_host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_pass http://unix:/run/gunicorn.sock;
-    }
-
-}
-```
-
-apply
-
-```text
-server {
-    listen 80;
-    server_name apply.server.domain;
 
     client_max_body_size 2621440;
 
@@ -229,7 +200,7 @@ The `client_max_body_size` configuration directive is very important. Hypha uplo
 
 Symbolically link these to sites-enabled: `sudo ln -s /etc/nginx/sites-available/public /etc/nginx/sites-enabled && sudo ln -s /etc/nginx/sites-available/apply /etc/nginx/sites-enabled`. Then restart nginx using `sudo systemctl restart nginx`.
 
-**You should then be able to access your application at** [http://server.domain](http://server.domain) **and** [http://apply.server.domain](http://apply.server.domain)**.**
+**You should then be able to access your application at **[http://server.domain](http://server.domain)**
 
 ### Adding SSL using a Let's Encrypt certificate.
 
@@ -241,9 +212,9 @@ Follow the instructions, and you're done.
 
 ### Administration
 
-The Django Administration panel is connected to the 'apply' domain: so access that via [http://apply.server.domain/django-admin/](http://apply.server.domain/django-admin/) \(use the email address and password you set in the `python manage.py createsuperuser` step above.\)
+The Django Administration panel can be accessed via [http://server.domain/django-admin/](http://server.domain/django-admin/) \(use the email address and password you set in the `python manage.py createsuperuser` step above.\)
 
-The Apply dashboard is here: [http://apply.server.domain/dashboard/](http://apply.server.domain/dashboard/). The Apply Wagtail admin: [http://apply.server.domain/admin](http://apply.server.domain/admin)
+The Apply dashboard is here: [http://server.domain/dashboard/](http://server.domain/dashboard/). The Wagtail admin: [http://server.domain/admin](http://server.domain/admin)
 
 ### settings
 
@@ -252,11 +223,11 @@ Here is a list of settings that can be set as environment variables or in a `hyp
 **None optional:**
 
 ```text
-API_BASE_URL:                                  https://apply.example.org/api
+API_BASE_URL:                                  https://example.org/api
 CACHE_CONTROL_MAX_AGE:                         14400
 COOKIE_SECURE:                                 true
 DJANGO_SETTINGS_MODULE:                        hypha.settings.production
-EMAIL_HOST:                                    apply.example.org
+EMAIL_HOST:                                    example.org
 ORG_EMAIL:                                     hello@example.org
 ORG_GUIDE_URL:                                 https://guide.example.org/
 ORG_LONG_NAME:                                 Long name of your organisation
@@ -266,7 +237,7 @@ PROJECTS_AUTO_CREATE:                          false
 PROJECTS_ENABLED:                              true
 SECRET_KEY:                                    [KEY]
 SEND_MESSAGES:                                 true
-SERVER_EMAIL:                                  app@apply.example.org
+SERVER_EMAIL:                                  app@example.org
 ```
 
 **Optional:**
@@ -287,7 +258,7 @@ AWS_STORAGE_BUCKET_NAME:                       public.example.org
 BASIC_AUTH_ENABLED:                            true
 BASIC_AUTH_LOGIN:                              [USER]
 BASIC_AUTH_PASSWORD:                           [PASS]
-BASIC_AUTH_WHITELISTED_HTTP_HOSTS:             www.example.org,apply.example.org
+BASIC_AUTH_WHITELISTED_HTTP_HOSTS:             example.org
 CLOUDFLARE_API_ZONEID:                         [KEY]
 CLOUDFLARE_BEARER_TOKEN:                       [KEY]
 MAILGUN_API_KEY:                               [KEY]

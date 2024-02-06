@@ -1,5 +1,5 @@
 {% extends "base-apply.html" %}
-{% load i18n static bleach_tags %}
+{% load i18n static bleach_tags heroicons %}
 
 {% block title %}{% trans "Report" %} | {{ object.project.title }}{% endblock %}
 {% block body_class %}{% endblock %}
@@ -18,8 +18,8 @@
     <div class="wrapper wrapper--sidebar wrapper--outer-space-medium">
         <div class="wrapper--sidebar--inner">
             <div class="alert">
-                <svg class="alert__icon"><use xlink:href="#exclamation-point"></use></svg>
-                <p class="alert__text">{% trans "This report is for the period" %} {{ report.start_date }} {% trans "to" %} {{ report.end_date }}</p>
+                {% heroicon_outline 'exclamation-circle' stroke_width=2 size=22 class="inline me-1 stroke-dark-blue" aria_hidden=true %}
+                <p class="alert__text">{% trans "This report is for the period" %} <strong>{{ report.start_date }}</strong> {% trans "to" %} <strong>{{ report.end_date }}</strong></p>
             </div>
 
             <div class="card card--solid">

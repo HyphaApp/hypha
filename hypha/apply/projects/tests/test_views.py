@@ -5,7 +5,7 @@ from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import PermissionDenied
-from django.test import RequestFactory, TestCase, override_settings
+from django.test import RequestFactory, TestCase
 from django.urls import reverse
 from django.utils import timezone
 
@@ -1137,7 +1137,6 @@ class TestApplicantSupportingDocumentPrivateMedia(BaseViewTestCase):
         self.assertEqual(response.status_code, 403)
 
 
-@override_settings(ROOT_URLCONF="hypha.apply.urls")
 class TestProjectListView(TestCase):
     def test_staff_can_access_project_list_page(self):
         ProjectFactory(status=CONTRACTING)
@@ -1162,7 +1161,6 @@ class TestProjectListView(TestCase):
         self.assertEqual(response.status_code, 403)
 
 
-@override_settings(ROOT_URLCONF="hypha.apply.urls")
 class TestProjectOverviewView(TestCase):
     def test_staff_can_access(self):
         ProjectFactory(status=CONTRACTING)

@@ -37,15 +37,17 @@
                         .remove();
                     $(".show-screening-options").append(screeningOptions);
                     if (yes === true) {
-                        $(".icon--dislike").removeClass("icon--dislike-no");
-                        $(".icon--dislike").removeClass(
-                            "icon--dislike-disable"
+                        $(".js-dislike").removeClass(
+                            "button--js-dislike-active"
                         );
-                        $current.find(".icon").addClass("icon--like-yes");
+                        $current
+                            .find("button")
+                            .addClass("button--js-like-active");
                     } else {
-                        $(".icon--like").removeClass("icon--like-yes");
-                        $(".icon--like").removeClass("icon--like-disable");
-                        $current.find(".icon").addClass("icon--dislike-no");
+                        $(".js-like").removeClass("button--js-like-active");
+                        $current
+                            .find("button")
+                            .addClass("button--js-dislike-active");
                     }
                 }
             },

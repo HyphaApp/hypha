@@ -536,7 +536,6 @@ class TestEditInvoiceForm(TestCase):
         self.assertEqual(invoice.supporting_documents.count(), 1)
 
 
-@override_settings(ROOT_URLCONF="hypha.apply.urls")
 class TestSelectDocumentForm(TestCase):
     def test_copying_files(self):
         category = DocumentCategoryFactory()

@@ -12,7 +12,7 @@ def register_dashboard_menu_item():
     apply_home = ApplyHomePage.objects.first()
     return MenuItem(
         "Apply Dashboard",
-        urljoin(apply_home.url, reverse("dashboard:dashboard", "hypha.apply.urls")),
+        urljoin(apply_home.url, reverse("dashboard:dashboard", "hypha.urls")),
         classnames="icon icon-arrow-left",
         order=100000,
     )

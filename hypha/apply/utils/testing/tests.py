@@ -1,6 +1,6 @@
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.messages.storage.fallback import FallbackStorage
-from django.test import RequestFactory, TestCase, override_settings
+from django.test import RequestFactory, TestCase
 from django.urls import reverse
 
 request_factory = RequestFactory()
@@ -18,7 +18,6 @@ def make_request(user=None, data=None, method="get", site=None):
     return request
 
 
-@override_settings(ROOT_URLCONF="hypha.apply.urls")
 class BaseViewTestCase(TestCase):
     """
     Provides a basic framework for working with views. It works on the

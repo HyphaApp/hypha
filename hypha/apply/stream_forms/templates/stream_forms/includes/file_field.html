@@ -1,8 +1,20 @@
-<a class="link link--download" href="{{ file.url }}" target="_blank" rel="noopener noreferrer">
-    <div>
-        <svg><use xlink:href="#file"></use></svg>
-        <span>{{ file.modification_time }}</span>
-        <span>{{ file.filename }}</span>
-    </div>
-    <svg><use xlink:href="#download"></use></svg>
+{% load i18n heroicons apply_tags %}
+
+<a class="not-prose mb-2 flex justify-between items-center max-w-2xl border rounded px-3 py-2 font-medium bg-slate-50 hover:bg-slate-200 transition-colors"
+   href="{{ file.url }}"
+   target="_blank" rel="noopener noreferrer"
+   title="View file - {{ file.filename }}"
+>
+    <span class="truncate text-sm">
+        {% heroicon_mini "document-text" class="inline align-text-bottom" aria_hidden=true %}
+        {{ file.filename|truncatechars_middle:45 }}
+        <span class="text-fg-muted text-xs">
+            <span class="sr-only">{% trans "uploaded" %}</span>
+            <span aria-hidden>•</span>
+            <relative-time datetime={{ file.modification_time|date:"c" }}>{{ file.modification_time|date:"SHORT_DATE_FORMAT" }}</relative-time>
+        </span>
+    </span>
+    <span>
+        {% heroicon_mini "arrow-down" class="inline align-text-bottom rounded" aria_hidden=true %}
+    </span>
 </a>

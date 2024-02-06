@@ -29,7 +29,6 @@ class SubmissionsFilter(filters.FilterSet):
     fund = filters.ModelMultipleChoiceFilter(
         field_name="page",
         label=_("fund"),
-        queryset=Page.objects.type(FundType) | Page.objects.type(LabType),
     )
     screening_statuses = filters.ModelMultipleChoiceFilter(
         field_name="screening_statuses",
@@ -77,6 +76,8 @@ class SubmissionsFilter(filters.FilterSet):
             (option.id, option.value)
             for option in Option.objects.filter(category__filter_on_dashboard=True)
         ]
+
+        self.fund.queryset = (Page.objects.type(FundType) | Page.objects.type(LabType),)
 
     def filter_active(self, qs, name, value):
         if value is None:

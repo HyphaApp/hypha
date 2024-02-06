@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import PermissionDenied
 from django.http import Http404
-from django.test import RequestFactory, TestCase, override_settings
+from django.test import RequestFactory, TestCase
 from django.urls import reverse
 from django.utils import timezone
 
@@ -1680,7 +1680,6 @@ class TestUserReminderDeleteView(BaseProjectDeleteTestCase):
         self.assertEqual(response.status_code, 403)
 
 
-@override_settings(ROOT_URLCONF="hypha.apply.urls")
 class TestReviewerLeaderboard(TestCase):
     def test_applicant_cannot_access_reviewer_leaderboard(self):
         self.client.force_login(ApplicantFactory())

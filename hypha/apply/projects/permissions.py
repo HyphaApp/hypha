@@ -34,7 +34,7 @@ def can_approve_contract(user, project, **kwargs):
     if not user.is_authenticated:
         return False, "Login Required"
 
-    if user.is_apply_staff and not user.is_contracting and not user.is_applicant:
+    if user.is_apply_staff and not user.is_applicant:
         return True, "Only Staff can approve the contract"
 
     return False, "Forbidden Error"

@@ -2,7 +2,7 @@ from io import StringIO
 
 from dateutil.relativedelta import relativedelta
 from django.core.management import call_command
-from django.test import TestCase, override_settings
+from django.test import TestCase
 from django.utils import timezone
 
 from hypha.apply.home.models import ApplyHomePage
@@ -10,7 +10,6 @@ from hypha.apply.home.models import ApplyHomePage
 from .factories import ProjectFactory, ReportConfigFactory, ReportFactory
 
 
-@override_settings(ROOT_URLCONF="hypha.apply.urls")
 class TestNotifyReportDue(TestCase):
     def test_notify_report_due_in_7_days(self):
         in_a_week = timezone.now() + relativedelta(days=7)

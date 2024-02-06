@@ -101,6 +101,12 @@ If users are forced to log in before creating applications
 
 ----
 
+If applicants should be forced to preview their application before submitting
+
+    SUBMISSION_PREVIEW_REQUIRED = env.bool('SUBMISSION_PREVIEW_REQUIRED', True)
+
+----
+
 Set the allowed file extension for all uploads fields.
 
     FILE_ALLOWED_EXTENSIONS = ['doc', 'docx', 'odp', 'ods', 'odt', 'pdf', 'ppt', 'pptx', 'rtf', 'txt', 'xls', 'xlsx']
