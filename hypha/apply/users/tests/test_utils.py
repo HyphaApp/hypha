@@ -1,12 +1,11 @@
 from django.core import mail
-from django.test import TestCase, override_settings
+from django.test import TestCase
 
 from hypha.apply.users.tests.factories import UserFactory
 
 from ..utils import get_user_by_email, is_user_already_registered, send_activation_email
 
 
-@override_settings(ROOT_URLCONF="hypha.apply.urls")
 class TestActivationEmail(TestCase):
     def test_activation_email_includes_link(self):
         send_activation_email(UserFactory())
@@ -15,7 +14,6 @@ class TestActivationEmail(TestCase):
         assert "password reset form at: https://primary-test-host.org" in email_body
 
 
-@override_settings(ROOT_URLCONF="hypha.apply.urls")
 class TestGetUserByEmail(TestCase):
     def test_no_account(self):
         assert get_user_by_email(email="abc@gmail.com") is None
@@ -35,7 +33,6 @@ class TestGetUserByEmail(TestCase):
         assert get_user_by_email(email="Abc@gmail.com").id == user2.id
 
 
-@override_settings(ROOT_URLCONF="hypha.apply.urls")
 class TestUserAlreadyRegistered(TestCase):
     def test_no_account(self):
         assert is_user_already_registered(email="abc@gmail.com") == (False, "")

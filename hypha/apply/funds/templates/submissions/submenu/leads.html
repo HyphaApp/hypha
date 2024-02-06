@@ -21,7 +21,7 @@
                 aria-selected="{% if user.selected %}true{% else %}false{% endif %}"
             >
                 {% if user.selected %}
-                    {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 mr-1" %}
+                    {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
                 {% endif %}
                 <strong class="font-bold">{{ user.title }}</strong>
                 {% if user.slack %} <span class="text-fg-muted font-light ml-1">{{ user.slack }}</span>{% endif %}

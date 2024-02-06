@@ -12,13 +12,16 @@
     {% for hidden in form.hidden_fields %}
         {{ hidden }}
     {% endfor %}
-    {% for field in form.visible_fields %}
-        {% if field.field %}
-            {% include "forms/includes/field.html" %}
-        {% else %}
-            {{ field }}
-        {% endif %}
-    {% endfor %}
+
+    <div class="fields--visible">
+        {% for field in form.visible_fields %}
+            {% if field.field %}
+                {% include "forms/includes/field.html" %}
+            {% else %}
+                {{ field }}
+            {% endif %}
+        {% endfor %}
+    </div>
 
     <div class="form__group">
         {% if cancel %}

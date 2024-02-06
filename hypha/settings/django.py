@@ -18,16 +18,15 @@ INSTALLED_APPS = [
     "hypha.apply.review",
     "hypha.apply.determinations",
     "hypha.apply.stream_forms",
+    "hypha.apply.todo",
     "hypha.apply.utils.apps.UtilsConfig",
     "hypha.apply.projects.apps.ProjectsConfig",
     "hypha.public.funds",
     "hypha.public.home",
-    "hypha.public.mailchimp",
     "hypha.public.navigation",
     "hypha.public.news",
     "hypha.public.people",
     "hypha.public.projects",
-    "hypha.public.search",
     "hypha.public.standardpages",
     "hypha.public.forms",
     "hypha.public.utils",
@@ -38,7 +37,6 @@ INSTALLED_APPS = [
     "django_web_components",
     "wagtail.contrib.modeladmin",
     "wagtail.contrib.settings",
-    "wagtail.contrib.search_promotions",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
     "wagtail.embeds",
@@ -106,7 +104,6 @@ MIDDLEWARE = [
     "hijack.middleware.HijackUserMiddleware",
     "hypha.apply.users.middleware.SocialAuthExceptionMiddleware",
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
-    "hypha.apply.middleware.apply_url_conf_middleware",
     "hypha.apply.middleware.HandleProtectionErrorMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
 ]
@@ -204,7 +201,7 @@ DATETIME_INPUT_FORMATS = [
 
 AUTH_USER_MODEL = "users.User"
 
-LOGIN_URL = "users_public:passwordless_login_signup"
+LOGIN_URL = "users:passwordless_login_signup"
 LOGIN_REDIRECT_URL = "dashboard:dashboard"
 
 # https://django-elevate.readthedocs.io/en/latest/config/index.html#configuration

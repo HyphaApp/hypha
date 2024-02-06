@@ -133,10 +133,6 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
         # template attribute is ignored by children
         return "funds/application_base.html"
 
-    def detail(self):
-        # The location to find out more information
-        return self.application_public.first()
-
     @cached_property
     def open_round(self):
         return RoundBase.objects.child_of(self).open().first()
@@ -462,7 +458,8 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
             # Overriding serve method to pass submission id to get_form method
             copy_open_submission = request.GET.get("open_call_submission")
             if request.method == "POST":
-                draft = request.POST.get("draft", False)
+                preview = "preview" in request.POST
+                draft = request.POST.get("draft", preview)
                 form = self.get_form(
                     request.POST,
                     request.FILES,
@@ -476,6 +473,17 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
                     # Required for django-file-form: delete temporary files for the new files
                     # that are uploaded.
                     form.delete_temporary_files()
+
+                    # If a preview is specified in form submission, render the applicant's answers rather than the landing page.
+                    # At the moment ALL previews are drafted first and then shown
+                    if preview and draft:
+                        context = self.get_context(request)
+                        context["object"] = form_submission
+                        context["form"] = form
+                        return render(
+                            request, "funds/application_preview.html", context
+                        )
+
                     return self.render_landing_page(
                         request, form_submission, *args, **kwargs
                     )
@@ -487,6 +495,8 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
             context = self.get_context(request)
             context["form"] = form
             context["show_all_group_fields"] = True if copy_open_submission else False
+            # Check if a preview is required before submitting the application
+            context["require_preview"] = settings.SUBMISSION_PREVIEW_REQUIRED
             return render(request, self.get_template(request), context)
 
         # We hide the round as only the open round is used which is displayed through the
@@ -569,10 +579,6 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
         ]
     )
 
-    def detail(self):
-        # The location to find out more information
-        return self.lab_public.first()
-
     def get_submit_meta_data(self, **kwargs):
         return super().get_submit_meta_data(
             page=self,
@@ -600,7 +606,8 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
             )
 
         if request.method == "POST":
-            draft = request.POST.get("draft", False)
+            preview = "preview" in request.POST
+            draft = request.POST.get("draft", preview)
             form = self.get_form(
                 request.POST, request.FILES, page=self, user=request.user, draft=draft
             )
@@ -608,6 +615,15 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
                 form_submission = SubmittableStreamForm.process_form_submission(
                     self, form, draft=draft
                 )
+
+                # If a preview is specified in form submission, render the applicant's answers rather than the landing page.
+                # At the moment ALL previews are drafted first and then shown
+                if preview and draft:
+                    context = self.get_context(request)
+                    context["object"] = form_submission
+                    context["form"] = form
+                    return render(request, "funds/application_preview.html", context)
+
                 return self.render_landing_page(
                     request, form_submission, *args, **kwargs
                 )
@@ -616,6 +632,8 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
 
         context = self.get_context(request)
         context["form"] = form
+        # Check if a preview is required before submitting the application
+        context["require_preview"] = settings.SUBMISSION_PREVIEW_REQUIRED
         return TemplateResponse(request, self.get_template(request), context)
 
 

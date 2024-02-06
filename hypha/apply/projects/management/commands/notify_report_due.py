@@ -3,7 +3,6 @@ from django.conf import settings
 from django.contrib.messages.storage.fallback import FallbackStorage
 from django.core.management.base import BaseCommand
 from django.http import HttpRequest
-from django.urls import set_urlconf
 from django.utils import timezone
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
@@ -19,7 +18,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         site = ApplyHomePage.objects.first().get_site()
-        set_urlconf("hypha.apply.urls")
 
         # Mock a HTTPRequest in order to pass the site settings into the
         # templates

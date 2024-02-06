@@ -1,12 +1,19 @@
-{% load i18n contract_tools project_tags %}
+{% load i18n contract_tools project_tags heroicons %}
 {% allow_collapsible_header object header_type='contracting_documents' as collapsible_header %}
 
 <div class="docs-block wrapper--outer-space-large" {% if collapsible_header %} x-data="{ collapsed: true }" {% endif %}>
     <div class="docs-block__header" id="contract-documents-section" {% if collapsible_header %} x-on:click="collapsed = ! collapsed" role="button" aria-label="Toggle Contract documents visibility" aria-controls="contract-documents-elements" {% endif %}>
-        <div class="docs-block__heading" >{% trans "Contracting documents" %}
+        <div class="flex justify-between w-full" >
+            <h2 class="text-lg font-semibold m-0">
+                {% trans "Contracting documents" %}
+            </h2>
+
             {% if collapsible_header %}
-                <svg class="icon icon--caret-up" x-show="!collapsed" aria-hidden=true><use xlink:href="#caret-up"></use></svg>
-                <svg class="icon icon--caret-down" x-show="collapsed" aria-hidden=true><use xlink:href="#caret-down"></use></svg>
+                <button class="align-middle ml-1 transform transition-transform" x-bind:class="collapsed ? '': '-rotate-90' ">
+                    {% heroicon_outline 'chevron-left' size=20 stroke_width=2 aria_hidden=true %}
+
+                    <span class="sr-only" x-text="collapsed ? 'expand' : 'collapse'">expand</span>
+                </button>
             {% endif %}
         </div>
         {% user_can_upload_contract object request.user as can_upload_contract %}
@@ -45,13 +52,17 @@
             {% contract_uploaded_by_contracting object as contract_uploaded %}
             <li class="docs-block__row">
                 <div class="docs-block__row-inner">
-                    <svg class="icon docs-block__icon {% if object.submitted_contract_documents %}is-complete{% endif %}"><use xlink:href="#tick"></use></svg>
+                    {% if object.submitted_contract_documents %}
+                        {% heroicon_outline "check-circle" class="stroke-light-blue me-1" aria_hidden=true %}
+                    {% else %}
+                        {% heroicon_outline "check-circle" class="stroke-gray-400 me-1" aria_hidden=true %}
+                    {% endif %}
                     <p class="docs-block__title">{% trans "Contract" %}</p>
                 </div>
                 {% if contract_uploaded %}
                     <div class="docs-block__row-inner">
                         <a class="font-bold flex items-center w-auto text-left bg-white text-light-blue mr-0 mb-1 p-2.5 border-solid border border-light-blue focus:text-light-blue hover:bg-light-blue hover:text-white" href="{% url 'apply:projects:contract' pk=project.pk file_pk=contract.pk %}" target="_blank">
-                            <svg class="icon icon--project-eye"><use xlink:href="#eye"></use></svg>
+                            {% heroicon_micro "eye" class="inline me-1 w-4 h-4" aria_hidden=true %}
                             {% trans "View" %}
                         </a>
                     </div>
@@ -61,7 +72,7 @@
                                 <div class="docs-block__row-inner">
                                 </div>
                                 <div class="docs-block__row-inner">
-                                    <svg class="icon icon--info-circle"><use xlink:href="#info-circle-fill"></use></svg>
+                                    {% heroicon_mini "information-circle" class="fill-light-blue inline align-middle me-1" aria_hidden=true %}
                                     <a class="docs-block__icon-link" href="#communications" target="_blank">
                                         <span>{% trans "Corrections/amendments?" %}</span>
                                     </a>
@@ -85,7 +96,7 @@
                             {% if can_upload_contract and can_initiate_contract  %}
                                 <div class="docs-block__row-inner docs-block__row-inner__contract-upload-row">
                                     <a data-fancybox class="font-bold flex items-center w-auto text-left bg-light-blue text-white mr-0 p-2.5 border-none" href="#" data-src="#upload-contract">
-                                        <svg class="icon icon--arrow-up-short-bar icon--arrow-up-short-bar--contract-upload"><use xlink:href="#arrow-up-short-bar"></use></svg>
+                                        {% heroicon_micro "arrow-up-tray" size=18 class="inline me-1" aria_hidden="true" %}
                                         {% if not contract %}
                                             {% trans "Upload" %}
                                         {% elif not contract.approver %}
@@ -104,7 +115,7 @@
                             {% if can_upload_contract and user.is_applicant %}
                                 <div class="docs-block__row-inner docs-block__row-inner__contract-upload-row">
                                     <a data-fancybox class="font-bold flex items-center w-auto text-left bg-light-blue text-white mr-0 p-2.5 border-none" href="#" data-src="#upload-contract">
-                                        <svg class="icon icon--arrow-up-short-bar icon--arrow-up-short-bar--contract-upload"><use xlink:href="#arrow-up-short-bar"></use></svg>
+                                        {% heroicon_mini "arrow-up-tray" size=18 class="inline me-1" aria_hidden="true" %}
                                         {% if not contract.signed_by_applicant %}
                                             {% trans "Upload" %}
                                         {% elif not contract.approver %}
@@ -121,9 +132,11 @@
             {% if contracting_documents_configured and contract_uploaded %}
                 <li class="docs-block__row">
                     <div class="docs-block__row-inner">
-                        <svg class="icon docs-block__icon{% if not remaining_contract_document_categories %} is-complete{% endif %}">
-                            <use xlink:href="#tick"></use>
-                        </svg>
+                        {% if not remaining_contract_document_categories %}
+                            {% heroicon_outline "check-circle" class="stroke-light-blue me-1" aria_hidden=true %}
+                        {% else %}
+                            {% heroicon_outline "check-circle" class="stroke-gray-400 me-1" aria_hidden=true %}
+                        {% endif %}
                         <p class="docs-block__title">{% trans "Contracting documents" %}</p>
                     </div>
                     {% can_update_contracting_documents object user as can_update_documents %}
@@ -145,8 +158,8 @@
                                                 {% endif %}
                                                 {% if document_category.required %}<span class="text-red-700">*</span>{% endif %}
                                                 {% if document_category.template %}
-                                                    <svg class="icon icon--info-circle"><use xlink:href="#info-circle-fill"></use></svg>
-                                                    <a class="font-bold underline decoration-dashed" href="{% url 'apply:projects:category_template' pk=object.pk type='contract_document' category_pk=document_category.pk %}" target="_blank">{% trans "View template" %}</a>
+                                                    {% heroicon_mini "information-circle" class="fill-light-blue inline align-middle" aria_hidden=true %}
+                                                    <a class="font-bold border-b-2 border-dashed" href="{% url 'apply:projects:category_template' pk=object.pk type='contract_document' category_pk=document_category.pk %}" target="_blank">{% trans "View template" %}</a>
                                                 {% endif %}
                                             </p>
                                             {% if document_category not in remaining_contract_document_categories %}
@@ -157,7 +170,7 @@
                                         {% if document_category in remaining_contract_document_categories and can_update_documents %}
                                             <div class="docs-block__document-inner__actions">
                                                 <a data-fancybox data-src="#upload-contracting-doc" class="font-bold flex items-center mr-0" onclick="handleCategory({{ document_category.id }})" href="#">
-                                                    <svg class="icon icon--arrow-up-short-bar"><use xlink:href="#arrow-up-short-bar"></use></svg>
+                                                    {% heroicon_mini "arrow-up-tray" size=18 class="inline me-1" aria_hidden="true" %}
                                                     {% trans "Upload" %}
                                                 </a>
                                             </div>
@@ -166,12 +179,12 @@
                                             {% if latest_file %}
                                                 <div class="docs-block__row-inner">
                                                     <a class="docs-block__icon-link" href="{% url 'apply:projects:contract_document' pk=object.pk file_pk=latest_file.pk %}" target="_blank">
-                                                        <svg class="icon icon--project-eye"><use xlink:href="#eye"></use></svg>
+                                                        {% heroicon_micro "eye" class="inline me-1 w-4 h-4" aria_hidden=true %}
                                                         {% trans "View" %}
                                                     </a>
                                                     {% if can_update_documents %}
                                                         <form method="POST" id="{{ remove_contract_document_form.name }}-{{ latest_file.pk }}" class="docs-block__icon-link">
-                                                            <svg class="icon icon--delete" style="margin-left:0; margin-right:2px"><use xlink:href="#delete"></use></svg>
+                                                            {% heroicon_micro "trash" class="inline me-1 fill-red-500" aria_hidden=true %}
                                                             {% csrf_token %}
                                                             {{ latest_file.get_remove_form }}
                                                             <input

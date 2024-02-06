@@ -60,8 +60,8 @@ encrypted data and decrypt it.
 
 6. Low-privileged user able to purge CDN and cache 
     - Staff members (high-privileged users), editors and moderators do not see the purge CDN and cache functionality in the UI but are still able to use the functionality by using the following URLs:
-        - `http://apply.hypha.test:8090/admin/cache/`
-        - `http://apply.hypha.test:8090/admin/purge/`
+        - `http://hypha.test:8090/admin/cache/`
+        - `http://hypha.test:8090/admin/purge/`
 
 7. XSS in `Used By`
     - The `Used By` field incorrectly validates input that results in XSS. This XSS can only be created and triggered by high-privileged users (staff and admin), which makes it low impact. However it is recommended to not allow XSS in the first place, since a successful attack could lead to session hijack, credential stealing, or infecting systems with malware.  

@@ -32,7 +32,7 @@
             </form>
 
             <div class="mt-4">
-                <a href="{% url 'users_public:login' %}{% if redirect_url %}?next={{ redirect_url }}{% endif %}" hx-boost="true">
+                <a href="{% url 'users:login' %}{% if redirect_url %}?next={{ redirect_url }}{% endif %}" hx-boost="true">
                     {% trans "Log in" %}
                 </a>
             </div>

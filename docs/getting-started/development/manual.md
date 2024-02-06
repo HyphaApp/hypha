@@ -89,7 +89,7 @@ Hypha supports configuration via either a `local.py` or a `.env` file:
     Open `.env` file and add your config:
 
     ```bash title="./.env"
-    ALLOWED_HOSTS=apply.hypha.test,hypha.test
+    ALLOWED_HOSTS=hypha.test
     BASE_URL=http://hypha.test
     SECRET_KEY=<put-in-long-random-string>
     DATABASE_URL=postgres://localhost/hypha
@@ -183,17 +183,16 @@ You will need two domain to run this app, used to serve the public and apply sit
 First, add these sites to the database:
 
 ```console
-$ python manage.py wagtailsiteupdate hypha.test apply.hypha.test 9001
+$ python manage.py wagtailsiteupdate hypha.test 9001
 ```
 
 Then, add this to your `/etc/hosts` file.
 
 ```text title="/etc/hosts"
 127.0.0.1 hypha.test
-127.0.0.1 apply.hypha.test
 ```
 
-Here we are setting the public site be served at http://hypha.test:9001 and apply site to http://apply.hypha.test:9001.
+Here we are setting the public site be served at http://hypha.test:9001.
 
 !!! question "Is it safe to use .test?"
      The "[.test](https://en.wikipedia.org/wiki/.test)" TLD is safe to use, it's reserved for testing purposes. Feel free to use another name but then remember to use it in all the commands below.
@@ -216,8 +215,7 @@ Alternatively, you can also use `$ make serve-django`
 
 Now you should be able to access the sites:
 
-1. Public Site: [http://hypha.test:9001/](http://hypha.test:9001/) 
-2. Apply Site: [http://apply.hypha.test:9001/](http://apply.hypha.test:9001/)
+2. Apply Site: [http://hypha.test:9001/](http://hypha.test:9001/)
 
 
 ## Documentation
@@ -272,9 +270,9 @@ $ make lint
 
 ## Helpful URLs
 
-* The Apply dashboard: [http://apply.hypha.test:9001/dashboard/](http://apply.hypha.test:9001/dashboard/)
-* The Apply Wagtail admin: [http://apply.hypha.test:9001/admin/](http://apply.hypha.test:9001/admin/)
-* The Django Administration panel: [http://apply.hypha.test:9001/django-admin/](http://apply.hypha.test:9001/django-admin/)
+* The Apply dashboard: [http://hypha.test:9001/dashboard/](http://hypha.test:9001/dashboard/)
+* The Apply Wagtail admin: [http://hypha.test:9001/admin/](http://hypha.test:9001/admin/)
+* The Django Administration panel: [http://hypha.test:9001/django-admin/](http://hypha.test:9001/django-admin/)
 
 Use the email address and password you set in the `createsuperuser` step above to login.
 

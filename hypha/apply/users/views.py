@@ -57,9 +57,9 @@ from .forms import (
     BecomeUserForm,
     CustomAuthenticationForm,
     CustomUserCreationForm,
+    Disable2FAConfirmationForm,
     PasswordlessAuthForm,
     ProfileForm,
-    TWOFAPasswordForm,
 )
 from .models import ConfirmAccessToken, PendingSignup
 from .services import PasswordlessAuthService
@@ -124,9 +124,7 @@ class RegisterView(View):
                 params = {"name": user.full_name, "email": user.email}
                 # redirect to success page with params as query params
                 return HttpResponseRedirect(
-                    resolve_url("users_public:register-success")
-                    + "?"
-                    + urlencode(params)
+                    resolve_url("users:register-success") + "?" + urlencode(params)
                 )
         return render(request, "users/register.html", {"form": form})
 
@@ -500,38 +498,26 @@ class TWOFADisableView(ElevateMixin, TwoFactorDisableView):
 
     template_name = "two_factor/profile/disable.html"
     success_url = reverse_lazy("users:account")
-    form_class = TWOFAPasswordForm
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["user"] = self.request.user
-        return kwargs
+    form_class = Disable2FAConfirmationForm
 
 
 @method_decorator(
     permission_required(change_user_perm, raise_exception=True), name="dispatch"
 )
-class TWOFAAdminDisableView(FormView):
+class TWOFAAdminDisableView(ElevateMixin, FormView):
     """
     View for PasswordForm to confirm the Disable 2FA process on wagtail admin.
     """
 
-    form_class = TWOFAPasswordForm
+    form_class = Disable2FAConfirmationForm
     template_name = "two_factor/admin/disable.html"
     user = None
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        # pass request's user to form to validate the password
-        kwargs["user"] = self.request.user
         # store the user from url for redirecting to the same user's account edit page
         self.user = get_object_or_404(User, pk=self.kwargs.get("user_id"))
         return kwargs
-
-    def get_form(self, form_class=None):
-        form = super(TWOFAAdminDisableView, self).get_form(form_class=form_class)
-        form.fields["password"].label = "Password"
-        return form
 
     def form_valid(self, form):
         for device in devices_for_user(self.user):
@@ -542,7 +528,7 @@ class TWOFAAdminDisableView(FormView):
         return reverse("wagtailusers_users:edit", args=[self.user.id])
 
     def get_context_data(self, **kwargs):
-        ctx = super(TWOFAAdminDisableView, self).get_context_data(**kwargs)
+        ctx = super().get_context_data(**kwargs)
         ctx["user"] = self.user
         return ctx
 

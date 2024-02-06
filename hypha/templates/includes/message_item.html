@@ -1,10 +1,21 @@
-{% load i18n %}
-<li class="messages__text{% if tag %} messages__text--{{ tag }}{% endif %}{% if close %} js-message{% endif %}">
+{% load i18n heroicons %}
+<li
+    class="shadow-md messages__text{% if tag %} messages__text--{{ tag }}{% endif %}"
+    x-data="{ show: true }"
+    x-transition
+    x-show="show"
+>
     <div class="messages__inner">
-        <svg class="messages__icon"><use xlink:href="#exclamation-point"></use></svg>
+        {% heroicon_outline "exclamation-circle" class="inline me-1" aria_hidden=true %}
         <p class="messages__copy">{{ message }}</p>
         {% if close %}
-            <a href="#" class="messages__button js-close-message">{% trans "Ok" %}</a>
+            <button
+                type="button"
+                class="messages__button hover:opacity-70 transition-opacity"
+                @click="show = false"
+            >
+                {% trans "Ok" %}
+            </button>
         {% endif %}
     </div>
 </li>

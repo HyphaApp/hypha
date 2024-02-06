@@ -1,60 +1,104 @@
-{% load i18n activity_tags nh3_tags markdown_tags submission_tags apply_tags %}
-<div class="feed__item feed__item--{{ activity.type }}" id="communications#{{ activity.id }}">
-    <div class="feed__pre-content">
-        <p class="feed__label feed__label--{{ activity.type }}">{{ activity.type|capfirst }}</p>
+{% load i18n activity_tags nh3_tags markdown_tags submission_tags apply_tags heroicons %}
+
+<div class="feed__item feed__item--{{ activity.type }} border shadow-sm rounded-sm pb-2 " id="communications#{{ activity.id }}">
+    <div class="feed__pre-content hidden lg:block">
+        <p class="feed__label lg:py-2 feed__label--{{ activity.type }}">
+            {% if  activity.type == 'comment' %}
+                {% heroicon_mini "chat-bubble-left" class="inline align-text-bottom mr-2" aria_hidden=true %}
+            {% else %}
+                {{ activity.type|capfirst }}
+            {% endif %}
+        </p>
     </div>
     <div class="feed__content js-feed-content">
-        <div class="feed__meta js-feed-meta">
-            <p class="feed__label feed__label--{{ activity.type }} feed__label--mobile">{{ activity.type|capfirst }}</p>
-            <p class="feed__meta-item"><span>{{ activity|display_author:request.user }}</span> <relative-time class="text-fg-muted text-sm" datetime={{ activity.timestamp|date:"c" }}>{{ activity.timestamp|date:"SHORT_DATETIME_FORMAT" }}</relative-time> </p>
-
-            {% if editable %}
-                {% if activity.user == request.user %}
-                    <p class="feed__meta-item feed__meta-item--edit-button">
-                        <a class="link link--edit-submission is-active js-edit-comment" href="#">
-                            {% trans "Edit" %}
-                            <svg class="icon icon--pen"><use xlink:href="#pen"></use></svg>
-                        </a>
-                    </p>
+        <div class="feed__meta js-feed-meta py-2 bg-slate-50 shadow-sm">
+            <p class="feed__meta-item pl-3">
+                <span>{{ activity|display_author:request.user }}</span>
+                <relative-time class="text-fg-muted text-sm" data-tippy-content="{{ activity.timestamp|date:"SHORT_DATETIME_FORMAT" }}" datetime={{ activity.timestamp|date:"c" }}>{{ activity.timestamp|date:"SHORT_DATETIME_FORMAT" }}</relative-time>
+                {% if activity.edited %}
+                    •
+                    <span class="js-last-edited text-fg-muted text-sm" data-tippy-content="{{ activity.edited|date:"SHORT_DATETIME_FORMAT" }}">{% trans "edited" %}</span>
                 {% endif %}
-                <p class="feed__meta-item feed__meta-item--last-edited" {% if not activity.edited %} hidden {% endif %}>
-                    ({% trans "Last edited" %}: <span class="js-last-edited">{{ activity.edited|date:"SHORT_DATETIME_FORMAT" }}</span>)
+            </p>
+
+            {% if editable and activity.user == request.user %}
+                <p class="feed__meta-item feed__meta-item--edit-button">
+                    <a class="link link--edit-submission is-active js-edit-comment" href="#">
+                        {% heroicon_mini "pencil-square" size=18 class="inline me-1" aria_hidden=true %}
+                        {% trans "Edit" %}
+                    </a>
                 </p>
             {% endif %}
 
-            <p class="feed__meta-item feed__meta-item--right" {% if not activity.private %} hidden {% endif %}>
-                <svg class="icon icon--eye"><use xlink:href="#eye"></use></svg>
+            <p class="feed__meta-item feed__meta-item--right flex items-center" {% if not activity.private %} hidden {% endif %}>
+                {% heroicon_micro "eye" class="fill-fg-muted inline me-1 w-4 h-4" aria_hidden=true %}
                 <span class="js-comment-visibility">{{ activity.visibility|visibility_display:request.user }}</span>
             </p>
         </div>
 
-        <p class="feed__heading">
+        <div class="feed__heading">
             {% if submission_title %}
                 {% trans "updated" %} <a href="{{ activity.source.get_absolute_url }}">{{ activity.source.title }}</a>
             {% endif %}
 
             {% if editable %}
-                <div class="feed__comment js-comment" data-id="{{activity.id}}" data-comment="{{activity|display_for:request.user|to_markdown}}"
+                <div class="feed__comment js-comment px-3 prose"
+                     data-id="{{activity.id}}" data-comment="{{activity|display_for:request.user|to_markdown}}"
                      data-visibility-options="{{activity|visibility_options:activity.user}}"
                      data-visibility="{{activity.visibility}}"
-                     data-edit-url="{% url 'api:v1:comments-edit' pk=activity.pk %}">
+                     data-edit-url="{% url 'api:v1:comments-edit' pk=activity.pk %}"
+                >
                     {{ activity|display_for:request.user|submission_links|markdown|nh3 }}
                 </div>
-
-                <div class="js-edit-block" aria-live="polite"></div>
+                <style>
+                    @media only screen and (min-width: 1024px){
+                        .js-edit-block .form .wmd-preview, .js-edit-block .form .wmd-input {
+                            max-width: 70%;
+                        }
+                    }
+                </style>
+                <div class="js-edit-block pr-3" aria-live="polite"></div>
             {% else %}
-                {{ activity|display_for:request.user|submission_links|markdown|nh3 }}
+                <div class="px-3 prose">
+                    {{ activity|display_for:request.user|submission_links|markdown|nh3 }}
+                </div>
             {% endif %}
+
 
             {% if not submission_title and activity|user_can_see_related:request.user %}
-                {% with url=activity.related_object.get_absolute_url %}
-                    {% if url %}
-                        <a href="{{ url }}" target="_blank" class="feed__related-item">
-                            {% trans "View " %}{{ activity.related_object|model_verbose_name }} <svg class="icon"><use xlink:href="#arrow-head-pixels--solid"></use></svg>
-                        </a>
-                    {% endif %}
-                {% endwith %}
+                <div class="px-3">
+                    {% with url=activity.related_object.get_absolute_url %}
+                        {% if url %}
+                            <a href="{{ url }}" target="_blank" class="feed__related-item">
+                                {% trans "View " %}{{ activity.related_object|model_verbose_name }} <svg class="icon inline"><use xlink:href="#arrow-head-pixels--solid"></use></svg>
+                            </a>
+                        {% endif %}
+                    {% endwith %}
+                </div>
             {% endif %}
-        </p>
+
+        </div>
+        {% with activity.attachments.all as attachments %}
+            {% if attachments %}
+                <div class="section-attachments flex gap-2 flex-col max-w-xl mt-4 px-3 pb-2">
+                    {% for attachment in attachments %}
+                        <a href="{{attachment.get_absolute_url }}"
+                           class="flex justify-between border rounded px-3 py-2 font-medium bg-slate-50 hover:bg-slate-200 transition-colors"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           title="{{ attachment.filename }}"
+                        >
+                            <span class="truncate text-sm">
+                                {% heroicon_mini "paper-clip" class="inline align-text-bottom" aria_hidden=true %}
+                                {{ attachment.filename|truncatechars_middle:45 }}
+                            </span>
+                            <span>
+                                {% heroicon_mini "arrow-small-down" class="inline align-text-bottom rounded" aria_hidden=true %}
+                            </span>
+                        </a>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
     </div>
 </div>

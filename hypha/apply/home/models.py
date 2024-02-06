@@ -30,12 +30,6 @@ class ApplyHomePage(WagtailCacheMixin, Page):
 
     def get_context(self, *args, **kwargs):
         context = super().get_context(*args, **kwargs)
-        context["open_funds"] = (
-            ApplicationBase.objects.order_by_end_date()
-            .prefetch_related("application_public")
-            .specific()
-        )
-        context["open_labs"] = (
-            LabBase.objects.public().live().prefetch_related("lab_public").specific()
-        )
+        context["open_funds"] = ApplicationBase.objects.order_by_end_date().specific()
+        context["open_labs"] = LabBase.objects.public().live().specific()
         return context

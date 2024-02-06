@@ -1,4 +1,4 @@
-{% load i18n project_tags %}
+{% load i18n project_tags heroicons %}
 
 {% user_can_update_project_reports object user as can_update_project_reports %}
 {% if can_update_project_reports %}
@@ -57,12 +57,12 @@
                             <td class="py-4 px-2.5">
                                 <span class="data-block__mobile-label">{% trans "Submitted" %}: </span>{{ report.submitted_date|default:"Skipped" }}
                             </td>
-                            <td class="data-block__links">
+                            <td class="data-block__links py-4 px-2.5">
                                 {% if not report.skipped %}
                                     {% user_can_view_report report user as can_view_report %}
                                     {% if can_view_report %}
                                         <a class="data-block__action-icon-link" href="{% url "apply:projects:reports:detail" pk=report.pk %}">
-                                            <svg class="icon icon--project-eye"><use xlink:href="#eye"></use></svg>
+                                            {% heroicon_micro "eye" class="inline me-1 w-4 h-4" aria_hidden=true %}
                                             {% trans "View" %}
                                         </a>
                                     {% endif %}
@@ -70,7 +70,7 @@
                                     {% user_can_update_report report user as can_update_report %}
                                     {% if can_update_report %}
                                         <a class="data-block__action-icon-link" href="{% url "apply:projects:reports:edit" pk=report.pk %}">
-                                            <svg class="icon icon--project-pen"><use xlink:href="#pen"></use></svg>
+                                            {% heroicon_micro "pencil-square" class="inline me-1" aria_hidden=true %}
                                             {% trans "Edit" %}
                                         </a>
                                     {% endif %}

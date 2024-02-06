@@ -27,7 +27,7 @@ CURRENCY_LOCALE = env.str("CURRENCY_LOCALE", "en_US")
 DEFAULT_PER_PAGE = 20
 
 # Form Rate-Limit Configuration
-# DEFAULT_RATE_LIMIT is used by login, password, 2FA and Mailchimp forms.
+# DEFAULT_RATE_LIMIT is used by login, password, 2FA, etc
 DEFAULT_RATE_LIMIT = env.str("DEFAULT_RATE_LIMIT", "5/m")
 
 # IF Hypha should enforce 2FA for all users.
@@ -144,6 +144,11 @@ TRANSITION_AFTER_ASSIGNED = env.bool("TRANSITION_AFTER_ASSIGNED", False)
 # Possible values are: False, 1,2,3,…
 TRANSITION_AFTER_REVIEWS = env.bool("TRANSITION_AFTER_REVIEWS", False)
 
+# Default visibility for reviews.
+REVIEW_VISIBILITY_DEFAULT = env.str("REVIEW_VISIBILITY_DEFAULT", "private")
+
+# Require an applicant to view their rendered application before submitting
+SUBMISSION_PREVIEW_REQUIRED = env.bool("SUBMISSION_PREVIEW_REQUIRED", True)
 
 # Project settings.
 
@@ -206,7 +211,6 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "wagtail.contrib.settings.context_processors.settings",
-                "hypha.public.utils.context_processors.global_vars",
                 "social_django.context_processors.backends",
                 "social_django.context_processors.login_redirect",
                 "hypha.apply.projects.context_processors.projects_enabled",
@@ -360,7 +364,7 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env.str("SOCIAL_AUTH_GOOGLE_OAUTH2_KEY", "")
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env.str("SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET", "")
 
 SOCIAL_AUTH_URL_NAMESPACE = "social"
-SOCIAL_AUTH_LOGIN_ERROR_URL = "users_public:login"
+SOCIAL_AUTH_LOGIN_ERROR_URL = "users:login"
 SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL = "users:account"
 
 # For pipelines, see http://python-social-auth.readthedocs.io/en/latest/pipeline.html?highlight=pipelines#authentication-pipeline
@@ -471,14 +475,7 @@ AWS_MIGRATION_BUCKET_NAME = env.str("AWS_MIGRATION_BUCKET_NAME", "")
 AWS_MIGRATION_ACCESS_KEY_ID = env.str("AWS_MIGRATION_ACCESS_KEY_ID", "")
 AWS_MIGRATION_SECRET_ACCESS_KEY = env.str("AWS_MIGRATION_SECRET_ACCESS_KEY", "")
 
-# Mailchimp settings.
-
-MAILCHIMP_API_KEY = env.str("MAILCHIMP_API_KEY", None)
-MAILCHIMP_LIST_ID = env.str("MAILCHIMP_LIST_ID", None)
-
-
 # Basic auth settings
-
 if env.bool("BASIC_AUTH_ENABLED", False):
     MIDDLEWARE.insert(0, "baipw.middleware.BasicAuthIPWhitelistMiddleware")
     BASIC_AUTH_LOGIN = env.str("BASIC_AUTH_LOGIN", None)
@@ -567,6 +564,7 @@ INTACCT_USER_PASSWORD = env.str("INTACCT_USER_PASSWORD", "")
 
 # Finance extension to finance2 for Project Invoicing
 INVOICE_EXTENDED_WORKFLOW = env.bool("INVOICE_EXTENDED_WORKFLOW", True)
+
 
 # Misc settings
 

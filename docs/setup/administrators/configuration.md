@@ -83,6 +83,10 @@ This determines the length of time for which the user will remain logged in. The
 
     FORCE_LOGIN_FOR_APPLICATION = env.bool('FORCE_LOGIN_FOR_APPLICATION', True)
 
+### If applicants should be forced to preview their application before submitting
+
+    SUBMISSION_PREVIEW_REQUIRED = env.bool('SUBMISSION_PREVIEW_REQUIRED', True)
+
 ### Set the allowed file extension for all uploads fields.
 
     FILE_ALLOWED_EXTENSIONS = ['doc', 'docx', 'odp', 'ods', 'odt', 'pdf', 'ppt', 'pptx', 'rtf', 'txt', 'xls', 'xlsx']
@@ -159,6 +163,14 @@ Good for testing, might not be a good idea in production.
 Possible values are: fund, round, status, lead, reviewers, screening_statuses, category_options, meta_terms, organization_name
 
     SUBMISSIONS_TABLE_EXCLUDED_FIELDS = env.list('SUBMISSIONS_TABLE_EXCLUDED_FIELDS', [])
+
+### Default visibility for reviews.
+
+Possible values are: 'reviewers' or 'private'. 
+Private: Visible only to staff.
+Reviewers: Visible to other reviewers and staff.
+
+    REVIEW_VISIBILITY_DEFAULT = env.str('REVIEW_VISIBILITY_DEFAULT', 'private')
 
 ### Should submission automatically transition after all reviewer roles are assigned.
 

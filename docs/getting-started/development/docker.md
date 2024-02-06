@@ -10,7 +10,6 @@ Add this to your `/etc/hosts` file.
 
 ```
 127.0.0.1 hypha.test
-127.0.0.1 apply.hypha.test
 ```
 
 The "[test](https://en.wikipedia.org/wiki/.test)" TLD is safe to use, it's reserved for testing purposes.

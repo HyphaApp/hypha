@@ -51,6 +51,8 @@ class ValueBlock(ApplicationSingleIncludeFieldBlock):
         icon = "decimal"
 
     def prepare_data(self, value, data, serialize):
+        if not data:
+            return data
         return format_number_as_currency(str(data))
 
 
@@ -99,6 +101,8 @@ class AddressFieldBlock(ApplicationSingleIncludeFieldBlock):
         return ", ".join(data[field] for field in ADDRESS_FIELDS_ORDER if data[field])
 
     def prepare_data(self, value, data, serialize):
+        if not data:
+            return data
         data = json.loads(data)
         data = {field: data[field] for field in ADDRESS_FIELDS_ORDER}
 
@@ -193,6 +197,8 @@ class DurationBlock(ApplicationSingleIncludeFieldBlock):
         return field_kwargs
 
     def prepare_data(self, value, data, serialize):
+        if not data:
+            return data
         if value["duration_type"] == self.DAYS:
             return self.DURATION_DAY_OPTIONS[int(data)]
         if value["duration_type"] == self.WEEKS:

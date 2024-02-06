@@ -33,7 +33,7 @@ build:
 fmt:
 	@echo "run code formatters on all code."
 	python -m ruff --fix .
-	python -m black .
+	python -m ruff format .
 	npx prettier . --write
 	djhtml hypha/
 
@@ -52,7 +52,7 @@ endif
 lint:
 	@echo "Checking python code style with ruff"
 	ruff check .
-	black . --check
+	ruff format --check .
 	@echo "Checking html file indendation."
 	djhtml hypha/ --check
 	@echo "Checking js and css code style."

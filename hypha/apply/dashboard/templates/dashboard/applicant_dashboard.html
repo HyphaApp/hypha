@@ -1,6 +1,6 @@
 {% extends "base-apply.html" %}
 {% load render_table from django_tables2 %}
-{% load i18n static wagtailcore_tags workflow_tags statusbar_tags heroicons dashboard_statusbar_tags apply_tags invoice_tools %}
+{% load i18n static wagtailcore_tags workflow_tags statusbar_tags heroicons dashboard_statusbar_tags apply_tags invoice_tools markdown_tags bleach_tags %}
 {% block body_class %}bg-light-grey{% endblock %}
 
 {% block title %}{% trans "Dashboard" %}{% endblock %}
@@ -25,6 +25,19 @@
     </div>
 
     <div class="wrapper wrapper--large wrapper--inner-space-medium">
+        {% if my_tasks.count %}
+            <div class="w-8/12 m-auto mb-10">
+                <h2 class="text-center font-light">{% trans "My tasks" %}</h2>
+                {% for task in my_tasks.data %}
+                    <div class="bg-white p-1 flex mb-1 items-center">
+                        <svg class="icon icon--dashboard-tasks"><use xlink:href="#{{ task.icon }}"></use></svg>
+                        <div class="flex-1">{{ task.text|markdown|bleach }}</div>
+                        <a class="button button-primary m-2" href="{{ task.url }}">View</a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
         {% if my_active_submissions %}
             <div class="mb-10">
                 <div class="flex">
@@ -35,7 +48,14 @@
                         <div class="wrapper wrapper--status-bar-inner">
                             <div class="mt-5 ml-4 lg:max-w-[30%]">
                                 <h4 class="heading mb-2 font-bold line-clamp-3 hover:line-clamp-none"><a class="link" href="{% url 'funds:submissions:detail' submission.id %}">{{ submission.title }}</a></h4>
-                                <p class="m-0 text-gray-400">{% trans "Submitted on " %} {{ submission.submit_time.date }} {% trans "by" %} {{ submission.user.get_full_name }}</p>
+                                <p class="m-0 text-gray-400">
+                                    {% if submission.is_draft %}
+                                        {% trans "Drafted on " %}
+                                    {% else %}
+                                        {% trans "Submitted on " %}
+                                    {% endif %}
+                                    {{ submission.submit_time.date }} {% trans "by" %} {{ submission.user.get_full_name }}
+                                </p>
                             </div>
                             {% status_bar submission.workflow submission.phase request.user css_class="status-bar--small" %}
                         </div>

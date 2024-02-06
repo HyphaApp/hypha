@@ -25,7 +25,6 @@ from hypha.apply.users.tests.factories import (
 )
 
 
-@override_settings(ROOT_URLCONF="hypha.apply.urls")
 class TestCommentEdit(TestCase):
     def post_to_edit(self, comment_pk, message="my message"):
         return self.client.post(
@@ -112,7 +111,6 @@ class TestCommentEdit(TestCase):
         self.assertEqual(Activity.objects.count(), 2)
 
 
-@override_settings(ROOT_URLCONF="hypha.apply.urls")
 class TestInvoiceDeliverableViewset(TestCase):
     def post_to_add(self, project_id, invoice_id, deliverable_id, quantity=1):
         return self.client.post(

@@ -59,7 +59,7 @@
                             <button class="link link--button link--button-secondary" type="submit">{% trans "Log in" %}</button>
 
                             {% if ENABLE_PUBLIC_SIGNUP %}
-                                <a class="hover:opacity-75" href="{% url 'users_public:register' %}{% if redirect_url %}?next={{ redirect_url }}{% endif %}" hx-boost="true"> {% trans "Create account" %}</a>
+                                <a class="hover:opacity-75" href="{% url 'users:register' %}{% if redirect_url %}?next={{ redirect_url }}{% endif %}" hx-boost="true"> {% trans "Create account" %}</a>
                             {% endif %}
                         </div>
 

@@ -115,7 +115,7 @@
                 data-tippy-placement="left"
                 class="block truncate"
             >
-                {% heroicon_outline "user-circle" aria_hidden="true" size=16 class="stroke-1.5 inline-block mr-1" %}
+                {% heroicon_outline "user-circle" aria_hidden="true" size=16 class="stroke-1.5 inline-block me-1" %}
                 <a
                     href="?lead={{ s.lead.id }}"
                     hx-get="?lead={{ s.lead.id }}"
@@ -160,7 +160,7 @@
         <span class="inline-block w-10">
             {% if s.comment_count %}
                 <span class="flex items-center">
-                    {% heroicon_outline "chat-bubble-left" aria_hidden="true" size=16 class="stroke-2 mr-1 inline-block" %}
+                    {% heroicon_outline "chat-bubble-left" aria_hidden="true" size=16 class="stroke-2 me-1 inline-block" %}
                     <span class="inline-block font-medium">{{ s.comment_count }}</span>
                 </span>
             {% endif %}

@@ -7,7 +7,7 @@
             <span class="form__question form__file-label">{{ field.label }}</span>
             <label for="{{ field.id_for_label }}" class="mb-2 form__question form__question--{{ field_type }} {{ widget_type }}" {% if field.field.required %}required{% endif %}>
                 <span class="whitespace-nowrap">
-                    {% heroicon_mini "arrow-up-tray" size=18 class="inline mr-1" aria_hidden="true" %}
+                    {% heroicon_mini "arrow-up-tray" size=18 class="inline me-1" aria_hidden="true" %}
                     {% trans "Upload" %}
                 </span>
                 {% if field.field.required %}
@@ -38,7 +38,12 @@
         {% endif %}
 
         {% if field.field.help_link %}
-            <p class="form__help-link"><a href="{{ field.field.help_link }}" target="_blank" rel="noopener noreferrer">{% trans "See help guide for more information." %}<svg class="form__open-icon"><use xlink:href="#open-in-new-tab"></use></svg></a></p>
+            <p class="form__help-link">
+                <a href="{{ field.field.help_link }}" target="_blank" rel="noopener noreferrer">
+                    {% trans "See help guide for more information." %}
+                    {% heroicon_micro "arrow-top-right-on-square" class="inline align-text-bottom w-4 h-4" aria_hidden=true %}
+                </a>
+            </p>
         {% endif %}
 
         {% if not field.is_hidden %}
