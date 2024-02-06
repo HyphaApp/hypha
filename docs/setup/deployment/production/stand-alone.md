@@ -154,7 +154,7 @@ python manage.py createcachetable
 python manage.py migrate --noinput
 python manage.py clear_cache --cache=default --cache=wagtailcache
 python manage.py createsuperuser
-python manage.py wagtailsiteupdate server.domain 80
+python manage.py wagtailsiteupdate apply.server.domain 80
 python manage.py runserver
 ```
 
@@ -168,13 +168,13 @@ Make sure gunicorn is installed \(it should be\). Do a test run with gunicorn: `
 
 To make gunicorn start automatically with systemd see [https://docs.gunicorn.org/en/stable/deploy.html\#systemd](https://docs.gunicorn.org/en/stable/deploy.html#systemd).
 
-Set up DNS so that server.domain point to the server you've installed the application. Install nginx if you haven't already \(`sudo apt-get install nginx`\). You'll need to add a new config file for nginx in /etc/nginx/sites-available:
+Set up DNS so that apply.server.domain points to the server you've installed the application. Install nginx if you haven't already \(`sudo apt-get install nginx`\). You'll need to add a new config file for nginx in /etc/nginx/sites-available:
 
 
 ```text
 server {
     listen 80;
-    server_name server.domain;
+    server_name apply.server.domain;
 
     client_max_body_size 2621440;
 
@@ -200,7 +200,7 @@ The `client_max_body_size` configuration directive is very important. Hypha uplo
 
 Symbolically link these to sites-enabled: `sudo ln -s /etc/nginx/sites-available/public /etc/nginx/sites-enabled && sudo ln -s /etc/nginx/sites-available/apply /etc/nginx/sites-enabled`. Then restart nginx using `sudo systemctl restart nginx`.
 
-**You should then be able to access your application at **[http://server.domain](http://server.domain)**
+**You should then be able to access your application at **[http://apply.server.domain](http://apply.server.domain)**
 
 ### Adding SSL using a Let's Encrypt certificate.
 
@@ -212,9 +212,9 @@ Follow the instructions, and you're done.
 
 ### Administration
 
-The Django Administration panel can be accessed via [http://server.domain/django-admin/](http://server.domain/django-admin/) \(use the email address and password you set in the `python manage.py createsuperuser` step above.\)
+The Django Administration panel can be accessed via [http://apply.server.domain/django-admin/](http://sapply.erver.domain/django-admin/) \(use the email address and password you set in the `python manage.py createsuperuser` step above.\)
 
-The Apply dashboard is here: [http://server.domain/dashboard/](http://server.domain/dashboard/). The Wagtail admin: [http://server.domain/admin](http://server.domain/admin)
+The Apply dashboard is here: [http://apply.server.domain/dashboard/](http://apply.server.domain/dashboard/). The Wagtail admin: [http://apply.server.domain/admin](http://apply.server.domain/admin)
 
 ### settings
 
