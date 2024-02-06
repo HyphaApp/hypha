@@ -115,7 +115,7 @@ class MetaTerm(index.Indexed, MP_Node):
     get_parent.short_description = "Parent"
 
     search_fields = [
-        index.SearchField("name", partial_match=True),
+        index.SearchField("name"),
     ]
 
     def delete(self):
