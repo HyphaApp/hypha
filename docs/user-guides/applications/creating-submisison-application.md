@@ -4,7 +4,7 @@ All admin actions associated with applications can be access through the “Appl
 
 ## Setup a form
 
-There are several types of Forms in the WagTail Amin. Forms are used to create a Fund.
+There are several types of Forms in the WagTail Admin. Forms are used to create a Fund.
 
 ![](../../assets/setup_form-1.png)
 
