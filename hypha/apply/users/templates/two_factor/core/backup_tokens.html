@@ -14,7 +14,7 @@
                   cols="8"
                   rows="{{ device.token_set.count }}"
                   id="list-backup-tokens"
-                  class="font-mono pr-0 font-medium leading-tight bg-orange-100 resize-none"
+                  class="font-mono pe-0 font-medium leading-tight bg-orange-100 resize-none"
         >{% for token in device.token_set.all %}{{ token.token }}{% if not forloop.last %}&#013;&#010;{% endif %}{% endfor %}</textarea>
 
         <form method="post" class="actions actions-footer">{% csrf_token %}{{ form }}

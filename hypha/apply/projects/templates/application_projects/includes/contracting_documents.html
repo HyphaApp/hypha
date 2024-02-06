@@ -9,7 +9,7 @@
             </h2>
 
             {% if collapsible_header %}
-                <button class="align-middle ml-1 transform transition-transform" x-bind:class="collapsed ? '': '-rotate-90' ">
+                <button class="align-middle ms-1 transform transition-transform" x-bind:class="collapsed ? '': '-rotate-90' ">
                     {% heroicon_outline 'chevron-left' size=20 stroke_width=2 aria_hidden=true %}
 
                     <span class="sr-only" x-text="collapsed ? 'expand' : 'collapse'">expand</span>
@@ -61,13 +61,13 @@
                 </div>
                 {% if contract_uploaded %}
                     <div class="docs-block__row-inner">
-                        <a class="font-bold flex items-center w-auto text-left bg-white text-light-blue mr-0 mb-1 p-2.5 border-solid border border-light-blue focus:text-light-blue hover:bg-light-blue hover:text-white" href="{% url 'apply:projects:contract' pk=project.pk file_pk=contract.pk %}" target="_blank">
+                        <a class="font-bold flex items-center w-auto text-start bg-white text-light-blue me-0 mb-1 p-2.5 border-solid border border-light-blue focus:text-light-blue hover:bg-light-blue hover:text-white" href="{% url 'apply:projects:contract' pk=project.pk file_pk=contract.pk %}" target="_blank">
                             {% heroicon_micro "eye" class="inline me-1 w-4 h-4" aria_hidden=true %}
                             {% trans "View" %}
                         </a>
                     </div>
                     {% if not is_contract_approved %}
-                        <ul class="mt-0 w-full pl-9">
+                        <ul class="mt-0 w-full ps-9">
                             <li class="docs-block__document">
                                 <div class="docs-block__row-inner">
                                 </div>
@@ -85,7 +85,7 @@
                 {% show_contract_upload_row object user as show_contract_row %}
                 {% if show_contract_row %}
                     {% contract_reuploaded_by_applicant object as contract_reuploaded %}
-                    <ul class="mt-2 w-full pl-9">
+                    <ul class="mt-2 w-full ps-9">
                         <li class="docs-block__document">
                             <div class="docs-block__row-inner">
                                 <p class="docs-block__title">
@@ -95,7 +95,7 @@
                             {% user_can_initiate_contract user as can_initiate_contract %}
                             {% if can_upload_contract and can_initiate_contract  %}
                                 <div class="docs-block__row-inner docs-block__row-inner__contract-upload-row">
-                                    <a data-fancybox class="font-bold flex items-center w-auto text-left bg-light-blue text-white mr-0 p-2.5 border-none" href="#" data-src="#upload-contract">
+                                    <a data-fancybox class="font-bold flex items-center w-auto text-start bg-light-blue text-white me-0 p-2.5 border-none" href="#" data-src="#upload-contract">
                                         {% heroicon_micro "arrow-up-tray" size=18 class="inline me-1" aria_hidden="true" %}
                                         {% if not contract %}
                                             {% trans "Upload" %}
@@ -114,7 +114,7 @@
                             </div>
                             {% if can_upload_contract and user.is_applicant %}
                                 <div class="docs-block__row-inner docs-block__row-inner__contract-upload-row">
-                                    <a data-fancybox class="font-bold flex items-center w-auto text-left bg-light-blue text-white mr-0 p-2.5 border-none" href="#" data-src="#upload-contract">
+                                    <a data-fancybox class="font-bold flex items-center w-auto text-start bg-light-blue text-white me-0 p-2.5 border-none" href="#" data-src="#upload-contract">
                                         {% heroicon_mini "arrow-up-tray" size=18 class="inline me-1" aria_hidden="true" %}
                                         {% if not contract.signed_by_applicant %}
                                             {% trans "Upload" %}
@@ -143,7 +143,7 @@
 
                     {% if all_contract_document_categories %}
 
-                        <div class="w-full pl-9">
+                        <div class="w-full ps-9">
                             <p></p>
                             <ul>
                                 {% for document_category in all_contract_document_categories %}
@@ -169,7 +169,7 @@
                                         </div>
                                         {% if document_category in remaining_contract_document_categories and can_update_documents %}
                                             <div class="docs-block__document-inner__actions">
-                                                <a data-fancybox data-src="#upload-contracting-doc" class="font-bold flex items-center mr-0" onclick="handleCategory({{ document_category.id }})" href="#">
+                                                <a data-fancybox data-src="#upload-contracting-doc" class="font-bold flex items-center me-0" onclick="handleCategory({{ document_category.id }})" href="#">
                                                     {% heroicon_mini "arrow-up-tray" size=18 class="inline me-1" aria_hidden="true" %}
                                                     {% trans "Upload" %}
                                                 </a>

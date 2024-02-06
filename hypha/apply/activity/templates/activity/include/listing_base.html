@@ -4,7 +4,7 @@
     <div class="feed__pre-content hidden lg:block">
         <p class="feed__label lg:py-2 feed__label--{{ activity.type }}">
             {% if  activity.type == 'comment' %}
-                {% heroicon_mini "chat-bubble-left" class="inline align-text-bottom mr-2" aria_hidden=true %}
+                {% heroicon_mini "chat-bubble-left" class="inline align-text-bottom me-2" aria_hidden=true %}
             {% else %}
                 {{ activity.type|capfirst }}
             {% endif %}
@@ -12,7 +12,7 @@
     </div>
     <div class="feed__content js-feed-content">
         <div class="feed__meta js-feed-meta py-2 bg-slate-50 shadow-sm">
-            <p class="feed__meta-item pl-3">
+            <p class="feed__meta-item ps-3">
                 <span>{{ activity|display_author:request.user }}</span>
                 <relative-time class="text-fg-muted text-sm" data-tippy-content="{{ activity.timestamp|date:"SHORT_DATETIME_FORMAT" }}" datetime={{ activity.timestamp|date:"c" }}>{{ activity.timestamp|date:"SHORT_DATETIME_FORMAT" }}</relative-time>
                 {% if activity.edited %}
@@ -57,7 +57,7 @@
                         }
                     }
                 </style>
-                <div class="js-edit-block pr-3" aria-live="polite"></div>
+                <div class="js-edit-block pe-3" aria-live="polite"></div>
             {% else %}
                 <div class="px-3 prose">
                     {{ activity|display_for:request.user|submission_links|markdown|bleach }}

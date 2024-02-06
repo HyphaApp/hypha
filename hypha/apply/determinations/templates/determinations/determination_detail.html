@@ -24,7 +24,7 @@
         {% if request.user.is_apply_staff %}
             <a class="text-blue-500 hover:underline" href="{% url 'apply:submissions:determinations:edit' submission_pk=determination.submission.id pk=determination.id %}">
                 <span class="whitespace-nowrap">
-                    {% trans "Edit" %}{% heroicon_mini "pencil-square" size=18 class="inline ml-1 align-text-bottom" aria_hidden=true %}
+                    {% trans "Edit" %}{% heroicon_mini "pencil-square" size=18 class="inline ms-1 align-text-bottom" aria_hidden=true %}
                 </span>
             </a>
         {% endif %}
