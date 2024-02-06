@@ -40,13 +40,13 @@
             transition: box-shadow 0.15s ease;
 
             @include media-query($table-breakpoint) {
-                border-top: 0;
-                border-right: 0;
-                border-bottom: 1px solid $color--light-mid-grey;
-                border-left: 0;
+                border-block-start: 0;
+                border-inline-end: 0;
+                border-block-end: 1px solid $color--light-mid-grey;
+                border-inline-start: 0;
 
                 &.is-expanded {
-                    border-bottom: 1px solid $color--light-grey;
+                    border-block-end: 1px solid $color--light-grey;
 
                     .lead {
                         span {
@@ -78,7 +78,7 @@
                             position: relative;
                             z-index: 1;
                             display: block;
-                            padding-right: 5px;
+                            padding-inline-end: 5px;
                             overflow: hidden;
                             text-overflow: ellipsis;
 
@@ -108,7 +108,7 @@
             }
 
             &.title {
-                padding-left: 20px;
+                padding-inline-start: 20px;
             }
         }
     }

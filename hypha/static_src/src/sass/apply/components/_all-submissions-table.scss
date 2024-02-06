@@ -44,7 +44,7 @@
 
                 @include media-query($table-breakpoint) {
                     width: 50px;
-                    padding-right: 0;
+                    padding-inline-end: 0;
                 }
             }
 
@@ -79,7 +79,7 @@
             // project title
             &.title {
                 position: relative;
-                padding-top: 15px;
+                padding-block-start: 15px;
                 font-weight: $weight--bold;
 
                 @include media-query($table-breakpoint) {
@@ -136,7 +136,7 @@
             &.selected {
                 @include table-checkbox;
                 display: none;
-                padding-right: 0;
+                padding-inline-end: 0;
 
                 @include media-query($table-breakpoint) {
                     display: table-cell;
@@ -151,7 +151,7 @@
 
             &.organization_name {
                 @include media-query($table-breakpoint) {
-                    padding-left: 15px;
+                    padding-inline-start: 15px;
                 }
             }
 
@@ -161,7 +161,7 @@
                     @include triangle(right, $color--primary, 6px);
                     position: relative;
                     display: inline-block;
-                    margin-right: 10px;
+                    margin-inline-end: 10px;
                     transform: rotate(0);
                     transition: transform $transition;
 
@@ -191,10 +191,10 @@
     &__parent {
         &.is-expanded {
             background-color: $color--mist;
-            border-bottom: 1px solid $color--light-mid-grey;
+            border-block-end: 1px solid $color--light-mid-grey;
 
             + #{$root}__child {
-                border-bottom: 1px solid $color--light-mid-grey;
+                border-block-end: 1px solid $color--light-mid-grey;
             }
 
             + #{$root}__child,
@@ -215,7 +215,7 @@
         vertical-align: top;
         background-color: $color--mist;
         border: 0;
-        border-bottom: 2px solid $color--light-grey;
+        border-block-end: 2px solid $color--light-grey;
 
         &:hover {
             box-shadow: none;
@@ -254,9 +254,9 @@
         background-color: $color--white;
         padding: 20px 25px;
         min-height: auto;
-        border-bottom: 1px solid $color--light-mid-grey;
-        border-left: 1px solid $color--light-mid-grey;
-        border-right: 1px solid $color--light-mid-grey;
+        border-block-end: 1px solid $color--light-mid-grey;
+        border-inline-start: 1px solid $color--light-mid-grey;
+        border-inline-end: 1px solid $color--light-mid-grey;
 
         a {
             margin: 0;

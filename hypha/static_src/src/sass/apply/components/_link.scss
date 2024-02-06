@@ -27,7 +27,7 @@
     }
 
     &--left-space {
-        margin-left: 20px;
+        margin-inline-start: 20px;
     }
 
     &--download {
@@ -35,7 +35,7 @@
         align-items: center;
         justify-content: space-between;
         padding: 15px 20px;
-        margin-top: 5px;
+        margin-block-start: 5px;
         color: $color--white;
         background: $color--light-blue;
         transition: background-color, $transition;
@@ -52,7 +52,7 @@
 
         span {
             @extend %h5;
-            margin-left: 10px;
+            margin-inline-start: 10px;
             font-weight: $weight--bold;
         }
 
@@ -147,14 +147,14 @@
     }
 
     &--delete-submission {
-        margin-right: 1rem;
-        padding-right: 1rem;
-        border-right: 2px solid $color--mid-grey;
+        margin-inline-end: 1rem;
+        padding-inline-end: 1rem;
+        border-inline-end: 2px solid $color--mid-grey;
 
         &:only-child {
-            border-right: 0;
-            padding-right: 0;
-            margin-right: 0;
+            border-inline-end: 0;
+            padding-inline-end: 0;
+            margin-inline-end: 0;
         }
     }
 
@@ -170,7 +170,7 @@
 
         &::before {
             @include triangle(top, $color--dark-blue, 7px);
-            margin-right: 0.7rem;
+            margin-inline-end: 0.7rem;
             transition: transform $transition;
             transform: rotate(180deg);
         }
@@ -184,6 +184,6 @@
 
     &--secondary-change {
         font-size: 95%;
-        margin-left: 5px;
+        margin-inline-start: 5px;
     }
 }

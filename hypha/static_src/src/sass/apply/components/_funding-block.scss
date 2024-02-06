@@ -2,7 +2,7 @@
     background-color: $color--light-blue;
     color: $color--white;
     padding: 1rem;
-    margin-bottom: 1rem;
+    margin-block-end: 1rem;
 
     @include media-query(mob-landscape) {
         padding: 2rem;

@@ -2,22 +2,22 @@
 
 .reviews-sidebar {
     $root: &;
-    margin-bottom: 20px;
+    margin-block-end: 20px;
     font-weight: $weight--bold;
 
     &__decision {
         position: relative;
         font-size: 14px;
-        border-top: 1px solid $color--mid-grey;
-        border-bottom: 1px solid $color--mid-grey;
-        margin-bottom: 20px;
-        padding-top: 10px;
+        border-block-start: 1px solid $color--mid-grey;
+        border-block-end: 1px solid $color--mid-grey;
+        margin-block-end: 20px;
+        padding-block-start: 10px;
     }
 
     &__item {
         display: flex;
         justify-content: space-between;
-        margin-bottom: 20px;
+        margin-block-end: 20px;
 
         @supports (display: grid) {
             display: grid;
@@ -26,7 +26,7 @@
         }
 
         &--decision {
-            margin-bottom: 10px;
+            margin-block-end: 10px;
             font-weight: $weight--semibold;
 
             &:first-child {
@@ -34,13 +34,13 @@
                     &::before,
                     &::after {
                         position: absolute;
-                        top: -23px;
-                        left: 5px;
+                        inset-block-start: -23px;
+                        inset-inline-start: 5px;
                     }
 
                     &::after {
                         @include triangle(top, $color--white, 8px);
-                        top: -21px;
+                        inset-block-start: -21px;
                     }
 
                     &::before {
@@ -94,7 +94,7 @@
         }
 
         img {
-            margin-left: 7px;
+            margin-inline-start: 7px;
         }
     }
 
@@ -111,6 +111,6 @@
     }
 
     &__split {
-        margin-bottom: 20px;
+        margin-block-end: 20px;
     }
 }

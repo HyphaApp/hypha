@@ -11,20 +11,20 @@
 
             label {
                 display: block;
-                margin-bottom: 0.5em;
+                margin-block-end: 0.5em;
                 font-weight: $weight--bold;
             }
         }
 
         button {
-            margin-top: 1.5rem;
+            margin-block-start: 1.5rem;
         }
     }
 
     &--search-desktop {
         position: relative;
         max-width: 300px;
-        margin-top: $mobile-gutter;
+        margin-block-start: $mobile-gutter;
 
         @include media-query(tablet-landscape) {
             max-width: 280px;
@@ -46,17 +46,17 @@
 
     &__group {
         position: relative;
-        margin-top: 0.5rem;
-        margin-bottom: 1.5rem;
+        margin-block-start: 0.5rem;
+        margin-block-end: 1.5rem;
 
         &:nth-of-type(1) {
-            margin-top: 0;
+            margin-block-start: 0;
         }
 
         &:last-child {
             .locality & {
                 // remove margin from last item in address field set
-                margin-bottom: 0;
+                margin-block-end: 0;
             }
         }
 
@@ -137,13 +137,13 @@
 
         &--boolean_field {
             display: inline;
-            margin-bottom: 0;
+            margin-block-end: 0;
         }
         // stylelint-enable selector-class-pattern
     }
 
     &__file-label {
-        padding-bottom: 0.5rem;
+        padding-block-end: 0.5rem;
     }
 
     &__file-list {
@@ -165,7 +165,7 @@
     &__filters {
         #{$filter-dropdown} {
             border: 0;
-            border-top: 1px solid $color--mid-grey;
+            border-block-start: 1px solid $color--mid-grey;
 
             &.is-active {
                 font-weight: $weight--normal;
@@ -211,7 +211,7 @@
                 flex-basis: 225px;
 
                 &:not(:last-child) {
-                    margin-right: 10px;
+                    margin-inline-end: 10px;
                 }
             }
         }
@@ -298,7 +298,7 @@
         line-height: 1.25rem;
 
         .profile & {
-            margin-top: 0;
+            margin-block-start: 0;
         }
     }
 
@@ -323,7 +323,7 @@
 
     &__item {
         position: relative;
-        padding-top: 0.5rem;
+        padding-block-start: 0.5rem;
     }
 
     &__select {
@@ -334,7 +334,7 @@
         }
 
         .form--scoreable & {
-            margin-top: 20px;
+            margin-block-start: 20px;
         }
 
         .form {
@@ -405,15 +405,15 @@
 
         @include media-query(tablet-landscape) {
             position: absolute;
-            top: 0;
-            right: 0;
+            inset-block-start: 0;
+            inset-inline-end: 0;
             max-width: auto;
             margin: 0;
 
             &::before {
                 position: absolute;
-                top: 12px;
-                left: -10px;
+                inset-block-start: 12px;
+                inset-inline-start: -10px;
                 border-color: transparent $color--error transparent transparent;
                 border-style: solid;
                 border-width: 5px 10px 5px 0;
@@ -472,7 +472,7 @@
                 .wmd-input,
                 .wmd-preview {
                     max-width: 100%;
-                    margin-bottom: 0;
+                    margin-block-end: 0;
                 }
             }
 
@@ -508,7 +508,7 @@
 
     .errorlist {
         padding: 5px;
-        margin-bottom: 0.2em;
+        margin-block-end: 0.2em;
         background: $color--light-pink;
         border: 1px solid $color--tomato;
     }
@@ -520,17 +520,17 @@
 
         // stylelint-disable-next-line selector-class-pattern
         .form__group {
-            margin-top: 0.5rem;
+            margin-block-start: 0.5rem;
         }
 
         // stylelint-disable-next-line selector-class-pattern
         .form__question {
-            margin-bottom: 0.25rem;
+            margin-block-end: 0.25rem;
             font-size: 1rem;
             line-height: 1.25rem;
 
             &:nth-of-type(1) {
-                margin-top: 0;
+                margin-block-start: 0;
             }
         }
     }
@@ -549,7 +549,7 @@
     }
 
     .password-reset {
-        margin-top: -1em;
+        margin-block-start: -1em;
     }
 }
 

@@ -17,7 +17,7 @@
         text-align: center;
 
         &--no-bottom-space {
-            margin-bottom: 0;
+            margin-block-end: 0;
         }
     }
 
@@ -29,7 +29,7 @@
         text-align: left;
 
         &--no-bottom-space {
-            margin-bottom: 0;
+            margin-block-end: 0;
         }
     }
 
@@ -38,13 +38,13 @@
         overflow: scroll;
         margin: 0 -24px 20px;
         padding: 0;
-        border-bottom: 2px solid $color--light-mid-grey;
+        border-block-end: 2px solid $color--light-mid-grey;
         box-shadow: inset 0 -10px 20px -10px $color--mid-grey;
         transition: max-height $transition;
 
         &.is-closed {
             max-height: 0;
-            border-bottom: 0;
+            border-block-end: 0;
         }
     }
 
@@ -52,7 +52,7 @@
         display: block;
         font-size: map-get($font-sizes, zeta);
         padding: 12px 28px;
-        border-bottom: 2px solid $color--light-mid-grey;
+        border-block-end: 2px solid $color--light-mid-grey;
         margin: 0;
         color: $color--default;
 

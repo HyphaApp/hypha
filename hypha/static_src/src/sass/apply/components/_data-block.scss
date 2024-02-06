@@ -1,6 +1,6 @@
 .data-block {
     $root: &;
-    margin-bottom: 1rem;
+    margin-block-end: 1rem;
     border: 1px solid $color--light-blue;
 
     &__header {
@@ -46,10 +46,10 @@
         }
 
         #{$root}__links & {
-            margin-right: 1rem;
+            margin-inline-end: 1rem;
 
             &:only-child {
-                margin-right: 0;
+                margin-inline-end: 0;
             }
         }
     }
@@ -86,7 +86,7 @@
     &__table {
         thead {
             display: none;
-            border-top: 2px solid $color--light-mid-grey;
+            border-block-start: 2px solid $color--light-mid-grey;
 
             @include media-query(tablet-landscape) {
                 display: table-header-group;
@@ -112,7 +112,7 @@
 
         tr {
             border: 0;
-            border-bottom: 2px solid $color--light-grey;
+            border-block-end: 2px solid $color--light-grey;
 
             &:hover {
                 box-shadow: none;
@@ -152,7 +152,7 @@
         font-size: map-get($font-sizes, zeta);
         font-weight: $weight--bold;
         display: inline-block;
-        margin-right: 1rem;
+        margin-inline-end: 1rem;
         text-decoration: underline;
         color: $color--primary;
         word-break: normal;
@@ -173,7 +173,7 @@
         font-weight: $weight--bold;
         display: flex;
         align-items: center;
-        margin-right: 1rem;
+        margin-inline-end: 1rem;
         word-break: normal;
 
         transition-property: opacity;
@@ -193,7 +193,7 @@
     }
 
     &__list-item {
-        border-bottom: 2px solid $color--light-grey;
+        border-block-end: 2px solid $color--light-grey;
         padding: 1rem 0;
 
         @include media-query(tablet-landscape) {
@@ -203,11 +203,11 @@
         }
 
         &:first-child {
-            padding-top: 0;
+            padding-block-start: 0;
         }
 
         &:last-child {
-            border-bottom: 0;
+            border-block-end: 0;
         }
 
         &:only-child {
@@ -234,9 +234,9 @@
     }
 
     &__card {
-        padding-bottom: 1rem;
+        padding-block-end: 1rem;
         position: relative;
-        margin-bottom: 2rem;
+        margin-block-end: 2rem;
 
         &::after {
             content: "";
@@ -245,12 +245,12 @@
             height: 2px;
             display: block;
             background: $color--mid-grey;
-            left: -1rem;
-            bottom: 0;
+            inset-inline-start: -1rem;
+            inset-block-end: 0;
 
             @include media-query(mob-landscape) {
                 width: calc(100% + 4rem);
-                left: -2rem;
+                inset-inline-start: -2rem;
             }
         }
     }

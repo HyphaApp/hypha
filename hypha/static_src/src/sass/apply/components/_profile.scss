@@ -1,27 +1,27 @@
 .profile {
-    margin-top: $mobile-gutter;
+    margin-block-start: $mobile-gutter;
 
     @include media-query(tablet-portrait) {
         display: flex;
-        margin-top: 2rem;
+        margin-block-start: 2rem;
     }
 
     &__column {
-        padding-bottom: 2rem;
-        margin-bottom: 2rem;
-        border-bottom: 1px solid $color--light-mid-grey;
+        padding-block-end: 2rem;
+        margin-block-end: 2rem;
+        border-block-end: 1px solid $color--light-mid-grey;
 
         @include media-query(tablet-portrait) {
             width: 50%;
-            padding-right: 3rem;
+            padding-inline-end: 3rem;
             margin: 0 3rem 0 0;
-            border-right: 1px solid $color--light-mid-grey;
-            border-bottom: 0;
+            border-inline-end: 1px solid $color--light-mid-grey;
+            border-block-end: 0;
 
             &:last-child {
-                padding-right: 0;
-                margin-right: 0;
-                border-right: 0;
+                padding-inline-end: 0;
+                margin-inline-end: 0;
+                border-inline-end: 0;
             }
         }
     }

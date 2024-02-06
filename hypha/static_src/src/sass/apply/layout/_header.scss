@@ -2,7 +2,7 @@
     position: relative;
     padding: 20px;
     background-color: var(--color-header-bg);
-    border-bottom: 1px solid rgb(136 146 171 / 10%);
+    border-block-end: 1px solid rgb(136 146 171 / 10%);
 
     &__inner {
         position: relative;
@@ -81,8 +81,8 @@
 
         &--mobile {
             position: fixed;
-            top: 0;
-            left: 0;
+            inset-block-start: 0;
+            inset-inline-start: 0;
             z-index: 10;
             width: 100%;
             height: 100%;

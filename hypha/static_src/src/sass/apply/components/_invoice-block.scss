@@ -1,6 +1,6 @@
 .invoice-block {
     padding: 1rem;
-    margin-bottom: 1rem;
+    margin-block-end: 1rem;
     border: 1px solid $color--dark-blue;
 
     @include media-query(mob-landscape) {
@@ -10,7 +10,7 @@
     }
 
     &__item {
-        margin-bottom: 1rem;
+        margin-block-end: 1rem;
 
         &:last-child {
             margin: 0;

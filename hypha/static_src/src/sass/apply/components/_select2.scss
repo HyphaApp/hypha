@@ -25,13 +25,13 @@
             }
 
             .select2-selection__rendered {
-                padding-left: 15px;
-                padding-right: 30px;
+                padding-inline-start: 15px;
+                padding-inline-end: 30px;
                 line-height: $dropdown-height;
             }
 
             .select2-selection__arrow {
-                right: 15px;
+                inset-inline-end: 15px;
                 height: $dropdown-height;
                 pointer-events: none;
                 background: url("./../../images/dropdown.svg") transparent
@@ -64,7 +64,7 @@
 
     .select2-dropdown {
         border: 0;
-        border-bottom: 1px solid $color--mid-grey;
+        border-block-end: 1px solid $color--mid-grey;
         border-radius: 0;
 
         @include media-query(small-tablet) {
@@ -80,7 +80,7 @@
         &::before {
             min-width: 20px;
             height: 20px;
-            margin-right: 10px;
+            margin-inline-end: 10px;
             background: $color--white;
             border: 1px solid $color--mid-grey;
             content: "";

@@ -9,13 +9,13 @@
 
     &__item {
         padding: 20px;
-        border-bottom: 1px solid $color--light-mid-grey;
+        border-block-end: 1px solid $color--light-mid-grey;
         background-color: $color--white;
         transition: background-color $quick-transition;
 
         @include media-query(tablet-landscape) {
-            border-bottom: 0;
-            border-right: 1px solid $color--light-mid-grey;
+            border-block-end: 0;
+            border-inline-end: 1px solid $color--light-mid-grey;
             width: 100%;
             padding: 10px;
             display: flex;
@@ -36,7 +36,7 @@
         }
 
         &:last-child {
-            border-right: 0;
+            border-inline-end: 0;
         }
     }
 
@@ -50,7 +50,7 @@
         color: $color--dark-blue;
 
         @include media-query(tablet-landscape) {
-            margin-top: auto;
+            margin-block-start: auto;
         }
     }
 

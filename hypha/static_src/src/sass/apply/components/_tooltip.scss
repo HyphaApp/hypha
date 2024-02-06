@@ -13,8 +13,8 @@
     pointer-events: none;
     transition: opacity, bottom, $transition;
     position: absolute;
-    bottom: 110%;
-    margin-bottom: 5px;
+    inset-block-end: 110%;
+    margin-block-end: 5px;
     padding: 7px;
     background-color: $color--dark-grey;
     color: $color--white;
@@ -26,5 +26,5 @@
 [data-tooltip]:hover::before {
     visibility: visible;
     opacity: 1;
-    bottom: 130%;
+    inset-block-end: 130%;
 }

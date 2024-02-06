@@ -1,5 +1,5 @@
 .rich-text {
-    margin-bottom: 2rem;
+    margin-block-end: 2rem;
     word-break: break-word;
     max-width: $max-text-line-length;
 
@@ -8,7 +8,7 @@
             margin: 0 0 2rem;
 
             p:first-of-type {
-                margin-top: 0;
+                margin-block-start: 0;
             }
 
             p:empty {
@@ -19,19 +19,19 @@
 
     h1 {
         font-size: 1.296rem;
-        margin-bottom: 1em;
+        margin-block-end: 1em;
         font-weight: 600;
         line-height: 1.3333;
     }
 
     h1:not(:first-child) {
-        margin-top: 2em;
+        margin-block-start: 2em;
     }
 
     h2 {
         font-size: 1.215rem;
-        margin-top: 1.6em;
-        margin-bottom: 0.6em;
+        margin-block-start: 1.6em;
+        margin-block-end: 0.6em;
         line-height: 1.6;
         font-weight: 600;
     }
@@ -39,16 +39,16 @@
     h3,
     h4:not(.question) {
         font-size: 1.138rem;
-        margin-top: 1.5em;
-        margin-bottom: 0.5em;
+        margin-block-start: 1.5em;
+        margin-block-end: 0.5em;
         line-height: 1.5;
     }
 
     h5,
     h6 {
         font-size: 1.067rem;
-        margin-top: 1.4em;
-        margin-bottom: 0.4em;
+        margin-block-start: 1.4em;
+        margin-block-end: 0.4em;
         line-height: 1.4;
     }
 
@@ -65,12 +65,12 @@
     // to the parent element, because the table is wrapped in a div with overflow: auto
     &__table {
         overflow: auto;
-        margin-top: 1.25em;
-        margin-bottom: 1.25em;
+        margin-block-start: 1.25em;
+        margin-block-end: 1.25em;
 
         > table {
-            margin-top: 0;
-            margin-bottom: 0;
+            margin-block-start: 0;
+            margin-block-end: 0;
         }
     }
 
@@ -84,8 +84,8 @@
 
 .tox-statusbar {
     &__wordcount {
-        padding-left: 10px;
-        padding-right: 10px;
+        padding-inline-start: 10px;
+        padding-inline-end: 10px;
 
         &::after {
             content: attr(data-after-word-count);

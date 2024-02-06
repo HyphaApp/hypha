@@ -6,7 +6,7 @@
     --triangle: 5px;
     --tooltip-padding: 10px;
     --tooltip-max-width: 12ch;
-    --tooltip-margin-top: 17px;
+    --tooltip-margin-block-start: 17px;
 
     $root: &;
     display: none;
@@ -25,8 +25,8 @@
         --tooltip-max-width: 10ch;
         width: 100%;
         max-width: 750px;
-        margin-right: 30px;
-        margin-left: 16px;
+        margin-inline-end: 30px;
+        margin-inline-start: 16px;
     }
 
     &__subheading {
@@ -54,8 +54,8 @@
             display: flex;
             place-items: center;
             position: absolute;
-            top: calc(-1 * var(--dot) / 2);
-            left: calc(-1 * var(--dot) / 2);
+            inset-block-start: calc(-1 * var(--dot) / 2);
+            inset-inline-start: calc(-1 * var(--dot) / 2);
             width: var(--dot);
             height: var(--dot);
             background: $color--dark-grey;
@@ -99,7 +99,7 @@
 
         &:first-of-type {
             &::before {
-                left: 0;
+                inset-inline-start: 0;
             }
         }
 
@@ -111,8 +111,8 @@
             flex: 0;
 
             &::before {
-                left: auto;
-                right: 0;
+                inset-inline-start: auto;
+                inset-inline-end: 0;
             }
         }
     }
@@ -141,17 +141,17 @@
             #{$root}__item--is-current & {
                 @include triangle(top, $color--tomato, 5px);
                 position: absolute;
-                top: calc(-1 * var(--triangle) - 2px);
-                left: calc(50% - var(--triangle));
+                inset-block-start: calc(-1 * var(--triangle) - 2px);
+                inset-inline-start: calc(50% - var(--triangle));
             }
 
             #{$root}__item--is-current:first-of-type & {
-                left: var(--triangle);
+                inset-inline-start: var(--triangle);
             }
 
             #{$root}__item--is-current:last-of-type & {
-                left: initial;
-                right: var(--triangle);
+                inset-inline-start: initial;
+                inset-inline-end: var(--triangle);
             }
         }
 

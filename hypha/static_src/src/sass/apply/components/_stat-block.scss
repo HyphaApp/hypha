@@ -19,7 +19,7 @@
         }
 
         &:last-child {
-            margin-right: 0;
+            margin-inline-end: 0;
         }
 
         &:only-child {
@@ -53,8 +53,8 @@
 
         @include media-query(tablet-portrait) {
             position: absolute;
-            top: 1rem;
-            right: 1rem;
+            inset-block-start: 1rem;
+            inset-inline-end: 1rem;
             opacity: 0;
 
             #{$root}__item:hover & {
