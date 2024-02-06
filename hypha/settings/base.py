@@ -382,7 +382,7 @@ SOCIAL_AUTH_PIPELINE = (
     "hypha.apply.users.pipeline.make_otf_staff",
 )
 
-# Bleach Settings
+# NH3 Settings
 
 NH3_ALLOWED_TAGS = [
     "a",

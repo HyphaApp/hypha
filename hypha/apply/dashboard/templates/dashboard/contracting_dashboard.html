@@ -1,6 +1,6 @@
 {% extends "base-apply.html" %}
 {% load render_table from django_tables2 %}
-{% load i18n static markdown_tags bleach_tags %}
+{% load i18n static markdown_tags nh3_tags %}
 
 {% block title %}{% trans "Dashboard" %}{% endblock %}
 
@@ -21,7 +21,7 @@
                 {% for task in my_tasks.data %}
                     <div class="bg-white p-1 flex mb-1 items-center">
                         <svg class="icon icon--dashboard-tasks"><use xlink:href="#{{ task.icon }}"></use></svg>
-                        <div class="flex-1">{{ task.text|markdown|bleach }}</div>
+                        <div class="flex-1">{{ task.text|markdown|nh3 }}</div>
                         <a class="button button-primary m-2" href="{{ task.url }}">View</a>
                     </div>
                 {% endfor %}
