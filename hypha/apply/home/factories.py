@@ -4,6 +4,9 @@ from .models import ApplyHomePage
 
 
 class ApplySiteFactory(wagtail_factories.SiteFactory):
+    hostname = "apply.localhost"
+    is_default_site = True
+
     class Meta:
         django_get_or_create = ("hostname",)
 

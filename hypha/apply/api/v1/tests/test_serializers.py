@@ -1,4 +1,4 @@
-from django.test import TestCase, override_settings
+from django.test import TestCase
 from rest_framework.exceptions import ErrorDetail
 
 from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
@@ -9,7 +9,6 @@ from ..projects.serializers import DeliverableSerializer
 from ..serializers import ReviewSummarySerializer
 
 
-@override_settings(ROOT_URLCONF="hypha.apply.urls")
 class TestReviewSummarySerializer(TestCase):
     def test_handles_no_reviews(self):
         submission = ApplicationSubmissionFactory()

@@ -1,21 +1,24 @@
-{% extends "base.html" %}
+{% extends "base-apply.html" %}
+% load wagtailcore_tags static %}
 
-{% load wagtailcore_tags static %}
-{# Dont include fixed apply button on this page #}
-{% block apply_button %}{% endblock %}
-{% block header_modifier %}header--light-bg{% endblock %}
+{% block header_menu %}
+    <section class="header__menus header__menus--desktop">
+        {% if settings.utils.SystemMessagesSettings.nav_content %}
+            {{ settings.utils.SystemMessagesSettings.nav_content|safe }}
+        {% else %}
+            {% include "includes/primarynav-apply.html" %}
+        {% endif %}
+    </section>
+{% endblock %}
+
 
 {% block content %}
-    <div class="wrapper wrapper--small">
+    <div class="py-8 lg:py-16  max-w-3xl mx-auto">
         {% if page.strapline %}
-            <h4 class="heading heading--regular">{{ page.strapline }}</h4>
+            <h1 class="font-bold mb-8">{{ page.strapline }}</h1>
         {% endif %}
 
-        <div class="wrapper wrapper--breakout">
-            <svg class="icon icon--body-pixels-right"><use xlink:href="#body-pixels-right"></use></svg>
-        </div>
-
-        <div class="wrapper wrapper--listings">
+        <div class="divide-y">
             {% for fund in open_funds %}
                 {% include "apply_home/includes/apply_listing.html" with page=fund %}
             {% endfor %}
@@ -24,8 +27,5 @@
             {% endfor %}
         </div>
 
-        <div class="wrapper wrapper--breakout">
-            <svg class="icon icon--body-pixels-left"><use xlink:href="#body-pixels-left"></use></svg>
-        </div>
     </div>
 {% endblock %}

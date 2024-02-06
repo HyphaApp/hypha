@@ -25,7 +25,7 @@
         {% for phone in backup_phones %}
           <li>
             {{ phone.generate_challenge_button_title }}
-            <form method="post" action="{% url 'two_factor:phone_delete' phone.id %}"
+            <form method="post" action="{% url 'users:two_factor:phone_delete' phone.id %}"
                   onsubmit="return confirm({% trans 'Are you sure?' %})">
               {% csrf_token %}
               <button class="btn btn-sm btn-warning"
@@ -34,7 +34,7 @@
           </li>
         {% endfor %}
       </ul>
-      <p><a href="{% url 'two_factor:phone_create' %}"
+      <p><a href="{% url 'users:two_factor:phone_create' %}"
             class="btn btn-info">{% trans "Add Phone Number" %}</a></p>
     {% endif %}
 
@@ -54,13 +54,13 @@
     <h2>{% trans "Disable Two-Factor Authentication" %}</h2>
     <p>{% blocktrans trimmed %}However we strongly discourage you to do so, you can
       also disable two-factor authentication for your account.{% endblocktrans %}</p>
-    <p><a class="btn btn-default" href="{% url 'two_factor:disable' %}">
+    <p><a class="btn btn-default" href="{% url 'users:two_factor:disable' %}">
       {% trans "Disable Two-Factor Authentication" %}</a></p>
   {% else %}
     <p>{% blocktrans trimmed %}Two-factor authentication is not enabled for your
       account. Enable two-factor authentication for enhanced account
       security.{% endblocktrans %}</p>
-    <p><a href="{% url 'two_factor:setup' %}" class="btn btn-primary">
+    <p><a href="{% url 'users:two_factor:setup' %}" class="btn btn-primary">
       {% trans "Enable Two-Factor Authentication" %}</a>
     </p>
   {% endif %}

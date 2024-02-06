@@ -8,7 +8,7 @@
     <div class="w-full grid md:mt-5 md:py-4">
         <section>
             <div class="px-4 pt-4">
-                <form class="form" method="post" action="{% url 'users_public:register' %}">
+                <form class="form" method="post" action="{% url 'users:register' %}">
                     {% csrf_token %}
                     {% if redirect_url %}
                         <input type="hidden" value="{{ redirect_url }}" name="next">
@@ -29,7 +29,7 @@
                     </div>
                 </form>
                 <p class="mt-4">
-                    {% trans "Already have an account?" %}<a href="{% url 'users_public:login' %}{% if redirect_url %}?next={{ redirect_url }}{% endif %}" hx-boost="true"> {% trans "Log in" %}</a>
+                    {% trans "Already have an account?" %}<a href="{% url 'users:login' %}{% if redirect_url %}?next={{ redirect_url }}{% endif %}" hx-boost="true"> {% trans "Log in" %}</a>
                 </p>
             </div>
         </section>

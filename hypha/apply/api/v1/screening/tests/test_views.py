@@ -9,7 +9,6 @@ from hypha.apply.funds.tests.factories.models import ApplicationSubmissionFactor
 from hypha.apply.users.tests.factories import ReviewerFactory, StaffFactory, UserFactory
 
 
-@override_settings(ROOT_URLCONF="hypha.apply.urls")
 @override_settings(SECURE_SSL_REDIRECT=False)
 class ScreeningStatusViewSetTests(APITestCase):
     def setUp(self):
@@ -56,7 +55,6 @@ class ScreeningStatusViewSetTests(APITestCase):
 
 
 @override_settings(SECURE_SSL_REDIRECT=False)
-@override_settings(ROOT_URLCONF="hypha.apply.urls")
 class SubmissionScreeningStatusViewSetTests(APITestCase):
     def setUp(self):
         ScreeningStatus.objects.all().delete()

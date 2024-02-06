@@ -10,5 +10,5 @@
 
 --
 {{ ORG_LONG_NAME }}
-{% if PUBLIC_SITE.root_url %}{{ PUBLIC_SITE.root_url }}{% elif ORG_URL %}{{ ORG_URL }}{% endif %}
+{% if ORG_URL %}{{ ORG_URL }}{% endif %}
 {% block post_signature_content %}{% endblock %}

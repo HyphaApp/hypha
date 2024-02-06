@@ -194,7 +194,6 @@ class TestRoundModelWorkflowAndForms(TestCase):
             self.assertNotEqual(round_form, fund_form)
 
 
-@override_settings(ROOT_URLCONF="hypha.apply.urls")
 @override_settings(FORCE_LOGIN_FOR_APPLICATION=False)
 class TestFormSubmission(TestCase):
     def setUp(self):
@@ -535,7 +534,6 @@ class TestApplicationSubmission(TestCase):
         self.assertTrue(submission.in_final_stage)
 
 
-@override_settings(ROOT_URLCONF="hypha.apply.urls")
 class TestSubmissionRenderMethods(TestCase):
     def test_named_blocks_not_included_in_answers(self):
         submission = ApplicationSubmissionFactory()

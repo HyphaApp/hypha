@@ -10,10 +10,19 @@ from wagtail.contrib.sitemaps.views import sitemap
 from wagtail.documents import urls as wagtaildocs_urls
 from wagtail.images.views.serve import ServeView
 
-from hypha.apply.users.urls import public_urlpatterns as user_urls
+from hypha.apply.api import urls as api_urls
+from hypha.apply.dashboard import urls as dashboard_urls
+from hypha.apply.users.urls import urlpatterns as user_urls
+from hypha.apply.users.views import become
 from hypha.apply.utils.views import custom_wagtail_page_delete
 
+handler404 = "hypha.apply.utils.views.page_not_found"
+handler403 = "hypha.apply.utils.views.permission_denied"
+
 urlpatterns = [
+    path("apply/", include("hypha.apply.funds.urls", "apply")),
+    path("activity/", include("hypha.apply.activity.urls", "activity")),
+    path("api/", include(api_urls)),
     path("django-admin/", admin.site.urls),
     path(
         "admin/login/",
@@ -25,14 +34,20 @@ urlpatterns = [
     path("admin/pages/<int:page_id>/delete/", custom_wagtail_page_delete),
     path("admin/", include(wagtailadmin_urls)),
     path("documents/", include(wagtaildocs_urls)),
+    path("dashboard/", include(dashboard_urls)),
     path("sitemap.xml", sitemap),
     path("upload/", include(django_file_form_urls)),
-    path("", include((user_urls, "users_public"))),
     path("", include("social_django.urls", namespace="social")),
+    path("", include((user_urls, "users"))),
     path("tinymce/", include("tinymce.urls")),
     path("select2/", include("django_select2.urls")),
 ]
 
+if settings.HIJACK_ENABLE:
+    urlpatterns = [
+        path("hijack/", include("hijack.urls", "hijack")),
+        path("account/become/", become, name="hijack-become"),
+    ] + urlpatterns
 
 if settings.DEBUG:
     from django.conf.urls.static import static

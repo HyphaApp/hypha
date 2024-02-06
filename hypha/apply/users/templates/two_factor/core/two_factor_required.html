@@ -31,7 +31,7 @@
     </div>
 
 
-    <a href="{% url 'two_factor:setup' %}?next={{request.path}}" class="btn btn-primary">
+    <a href="{% url 'users:two_factor:setup' %}?next={{request.path}}" class="btn btn-primary">
         {% trans "Set up Two-Factor Authentication (2FA)" %}
     </a>
 

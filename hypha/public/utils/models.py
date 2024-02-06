@@ -9,7 +9,6 @@ from wagtail.contrib.settings.models import (
     register_setting,
 )
 from wagtail.fields import RichTextField
-from wagtail.models import Page
 
 
 @register_setting
@@ -57,6 +56,7 @@ class SystemMessagesSettings(BaseGenericSetting):
         "Footer content",
         default="<p>Configure this text in Wagtail admin -> Settings -> System settings.</p>",
         help_text=_("This will be added to the footer, html tags is allowed."),
+        blank=True,
     )
 
     title_404 = models.CharField(
@@ -105,22 +105,3 @@ class SystemMessagesSettings(BaseGenericSetting):
             "403 page",
         ),
     ]
-
-
-class BasePage(Page):
-    show_in_menus_default = True
-
-    header_image = models.ForeignKey(
-        "images.CustomImage",
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name="+",
-    )
-
-    class Meta:
-        abstract = True
-
-    content_panels = Page.content_panels + [FieldPanel("header_image")]
-
-    promote_panels = Page.promote_panels
