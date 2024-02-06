@@ -124,9 +124,7 @@ class RegisterView(View):
                 params = {"name": user.full_name, "email": user.email}
                 # redirect to success page with params as query params
                 return HttpResponseRedirect(
-                    resolve_url("users_public:register-success")
-                    + "?"
-                    + urlencode(params)
+                    resolve_url("users:register-success") + "?" + urlencode(params)
                 )
         return render(request, "users/register.html", {"form": form})
 

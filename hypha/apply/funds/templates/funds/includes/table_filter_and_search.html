@@ -73,9 +73,10 @@
                 {% endif %}
             {% endif %}
             {% if filter_classes != 'filters-open' %}
-                <button class="button button--filters js-toggle-filters">
+                <button class="button js-toggle-filters">
                     {% heroicon_mini "adjustments-horizontal" class="inline me-1 text-dark-blue align-text-bottom" aria_hidden=true %}
-                    {% trans "Filters" %}</button>
+                    {% trans "Filters" %}
+                </button>
             {% endif %}
 
             <button class="button button--filters js-toggle-filters" id="show-filters-button">

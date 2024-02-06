@@ -2,9 +2,6 @@ from django.contrib import messages
 from django.db.models.deletion import ProtectedError
 from django.http import HttpResponseRedirect
 from django.utils.translation import gettext as _
-from wagtail.models import Site
-
-from .home.models import ApplyHomePage
 
 
 class HandleProtectionErrorMiddleware:
@@ -26,20 +23,3 @@ class HandleProtectionErrorMiddleware:
     def __call__(self, request):
         response = self.get_response(request)
         return response
-
-
-def apply_url_conf_middleware(get_response):
-    # If we are on a page which belongs to the same site as an ApplyHomePage
-    # we change the url conf to one that includes links to all the logged
-    # in functionality. Login and Logout are included with the global package
-    # of urls
-    def middleware(request):
-        site = Site.find_for_request(request)
-        homepage = site.root_page.specific
-        if isinstance(homepage, ApplyHomePage):
-            request.urlconf = "hypha.apply.urls"
-
-        response = get_response(request)
-        return response
-
-    return middleware

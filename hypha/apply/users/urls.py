@@ -1,8 +1,10 @@
 from django.conf import settings
 from django.contrib.auth import views as auth_views
 from django.urls import include, path, reverse_lazy
+from django.views.generic import RedirectView
 from django_ratelimit.decorators import ratelimit
 from elevate.views import elevate as elevate_view
+from two_factor.urls import urlpatterns as tf_urls
 
 from .views import (
     AccountView,
@@ -22,7 +24,6 @@ from .views import (
     TWOFADisableView,
     TWOFASetupView,
     account_email_change,
-    become,
     create_password,
     elevate_check_code_view,
     oauth,
@@ -38,7 +39,6 @@ public_urlpatterns = [
         "auth/", PasswordLessLoginSignupView.as_view(), name="passwordless_login_signup"
     ),
     path("login/", LoginView.as_view(), name="login"),
-    # Log out
     path("logout/", auth_views.LogoutView.as_view(next_page="/"), name="logout"),
     path("register/", RegisterView.as_view(), name="register"),
     path(
@@ -167,9 +167,15 @@ account_urls = [
     ),
 ]
 
-urlpatterns = [path("account/", include(account_urls))]
-
-if settings.HIJACK_ENABLE:
-    urlpatterns += [
-        path("account/become/", become, name="become"),
-    ]
+urlpatterns = public_urlpatterns + [
+    path("account/", include(account_urls)),
+    # this must be above two factor include, this skip displaying the success
+    # page and advances user to download backup code page.
+    path(
+        "account/two_factor/setup/complete/",
+        RedirectView.as_view(url=reverse_lazy("users:backup_tokens"), permanent=False),
+        name="two_factor:setup_complete",
+    ),
+    path("", include(tf_urls, "two_factor")),
+    path("", include("social_django.urls", namespace="social")),
+]

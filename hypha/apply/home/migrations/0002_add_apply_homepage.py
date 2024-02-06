@@ -8,7 +8,11 @@ def create_homepage(apps, schema_editor):
     # Get models
     ContentType = apps.get_model("contenttypes.ContentType")
     Site = apps.get_model("wagtailcore.Site")
+    Page = apps.get_model("wagtailcore.Page")
     ApplyHomePage = apps.get_model("apply_home.ApplyHomePage")
+
+    # Delete the default homepage
+    Page.objects.get(id=2).delete()
 
     # Create content type for homepage model
     homepage_content_type, created = ContentType.objects.get_or_create(
@@ -29,7 +33,7 @@ def create_homepage(apps, schema_editor):
 
     # Create a site with the new homepage set as the root
     Site.objects.create(
-        hostname="apply.localhost", root_page=applyhomepage, is_default_site=False
+        hostname="apply.localhost", root_page=applyhomepage, is_default_site=True
     )
 
 

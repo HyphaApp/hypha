@@ -7,22 +7,21 @@ from hypha.apply.funds.tests.factories import FundTypeFactory
 from hypha.apply.utils.testing import make_request
 
 
-@override_settings(ROOT_URLCONF="hypha.apply.urls")
 class TestRegistration(TestCase):
     @override_settings(ENABLE_PUBLIC_SIGNUP=False)
     def test_registration_enabled_has_no_link(self):
         response = self.client.get("/", follow=True)
-        self.assertNotContains(response, reverse("users_public:register"))
+        self.assertNotContains(response, reverse("users:register"))
 
     @override_settings(ENABLE_PUBLIC_SIGNUP=True)
     def test_registration_enabled_has_link(self):
         response = self.client.get("/", follow=True)
-        self.assertContains(response, reverse("users_public:register"))
+        self.assertContains(response, reverse("users:register"))
 
     @override_settings(ENABLE_PUBLIC_SIGNUP=True)
     def test_registration(self):
         response = self.client.post(
-            reverse("users_public:register"),
+            reverse("users:register"),
             data={
                 "email": "test@test.com",
                 "first_name": "Not used - see full_name",
@@ -34,12 +33,12 @@ class TestRegistration(TestCase):
         assert "Activate your account on the" in mail.outbox[0].body
 
         assert response.status_code == 302
-        assert reverse("users_public:register-success") in response.url
+        assert reverse("users:register-success") in response.url
 
     @override_settings(ENABLE_PUBLIC_SIGNUP=True)
     def test_duplicate_registration_fails(self):
         response = self.client.post(
-            reverse("users_public:register"),
+            reverse("users:register"),
             data={
                 "email": "test@test.com",
                 "first_name": "Not used - see full_name",
@@ -50,7 +49,7 @@ class TestRegistration(TestCase):
         mail.outbox.clear()
 
         response = self.client.post(
-            reverse("users_public:register"),
+            reverse("users:register"),
             data={
                 "email": "test@test.com",
                 "first_name": "Not used - see full_name",

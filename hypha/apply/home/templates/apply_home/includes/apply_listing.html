@@ -1,23 +1,35 @@
 {% load i18n bleach_tags wagtailcore_tags markdown_tags heroicons %}
 
 {% if page.open_round %}
-    <div class="listing listing--not-a-link">
-        <div>
-            <h4 class="listing__title listing__title--link">
-                {% if page.next_deadline and page.show_deadline %}
-                    <p class="listing__deadline">
-                        {% heroicon_mini "calendar-days" class="inline me-1" aria_hidden=true %}
-                        <span>{% trans "Next deadline" %}: {{ page.next_deadline|date:"M j, Y" }}</span>
-                    </p>
-                {% endif %}
-                {{ page.title }}
-            </h4>
-            {% if page.description %}
-                <h6 class="listing__teaser">
-                    {{ page.description|markdown|bleach }}
-                </h6>
-            {% endif %}
-        </div>
-        <a class="listing__button" href="{% pageurl page %}">{% trans "Apply" %}</a>
+  <div class="flex justify-between items-center py-8 gap-4">
+
+    <div>
+      <h2>{{ page.title }}</h2>
+
+      {% if page.next_deadline and page.show_deadline %}
+        <p class="mb-4">
+          <span class="bg-orange-100 px-3 py-2 text-sm rounded">
+            {% heroicon_micro 'calendar-days' class='inline align-text-bottom' aria_hidden=true %}
+            <span class="font-medium">{% trans 'Next deadline' %}: {{ page.next_deadline|date:'M j, Y' }}</span>
+          </span>
+        </p>
+      {% endif %}
+
+      {% if page.description %}
+        <p>
+          {{ page.description|markdown|bleach }}
+        </p>
+      {% endif %}
     </div>
+
+    <div>
+      <a
+        class="button button--primary"
+        href="{% pageurl page %}"
+        title="Click to apply for {{ page.title }}"
+      >
+        {% trans 'Apply' %}
+      </a>
+    </div>
+  </div>
 {% endif %}

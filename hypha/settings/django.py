@@ -103,7 +103,6 @@ MIDDLEWARE = [
     "hijack.middleware.HijackUserMiddleware",
     "hypha.apply.users.middleware.SocialAuthExceptionMiddleware",
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
-    "hypha.apply.middleware.apply_url_conf_middleware",
     "hypha.apply.middleware.HandleProtectionErrorMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
 ]
@@ -201,7 +200,7 @@ DATETIME_INPUT_FORMATS = [
 
 AUTH_USER_MODEL = "users.User"
 
-LOGIN_URL = "users_public:passwordless_login_signup"
+LOGIN_URL = "users:passwordless_login_signup"
 LOGIN_REDIRECT_URL = "dashboard:dashboard"
 
 # https://django-elevate.readthedocs.io/en/latest/config/index.html#configuration

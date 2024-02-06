@@ -1,15 +1,14 @@
-{% load static cache wagtailcore_tags wagtailimages_tags cookieconsent_tags i18n heroicons %}<!doctype html>
+{% load i18n static wagtailcore_tags wagtailimages_tags hijack cookieconsent_tags heroicons %}<!doctype html>
 {% wagtail_site as current_site %}
 {% get_current_language as LANGUAGE_CODE %}
 {% get_current_language_bidi as LANGUAGE_BIDI %}
-<html class="no-js" lang="{{ LANGUAGE_CODE }}" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
+<html class="no-js h-full" lang="{{ LANGUAGE_CODE }}" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
     <head>
         {# TODO fallbacks if page is not defined e.g. for 404 page #}
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width">
         <title>{% block title_prefix %}{% if current_site.site_name %}{{ current_site.site_name }} | {% endif %}{% endblock %}{% block title %}{% if page.seo_title %}{{ page.seo_title }}{% else %}{{ page.title }}{% endif %}{% endblock %}{% block title_suffix %}{{ TITLE_SUFFIX }}{% endblock %}</title>
         <meta name="description" content="{% if page.search_description %}{{ page.search_description }}{% else %}{{ page.listing_summary }}{% endif %}">
-        {% block feedlinks %}{% endblock %}
 
         <!-- favicons -->
         {% comment %}
@@ -25,175 +24,100 @@
         <link rel="mask-icon" href="{% static 'images/favicons/safari-pinned-tab.svg' %}" color="#5bbad5">
         <link rel="shortcut icon" href="{% static 'images/favicons/favicon.ico' %}">
 
-
-        <!-- Twitter summary card - see https://dev.twitter.com/cards/types/summary -->
-        <!--  and https://dev.twitter.com/cards/getting-started -->
-        <meta name="twitter:card" content="summary">
-        <meta name="twitter:title" content="{{ page.title }}">
-
-        <!--facebook opengraph tags-->
-        <meta property="og:type" content="website">
-        <meta property="og:url" content="{{ page.url }}">
-        <meta property="og:title" content="{{ page.title }}">
-
-        <link rel="stylesheet" href="{% static 'css/normalize.css' %}">
-        <link rel="stylesheet" href="{% static 'css/public/main.css' %}">
+        <link rel="stylesheet" href="{% static 'css/tailwind-output.css' %}">
+        <link rel="stylesheet" href="{% static 'css/apply/main.css' %}">
         {% block extra_css %}{% endblock %}
         <link rel="stylesheet" href="{% static 'css/print.css' %}" media="print">
 
+        {% comment %}Detect if javascript is enabled; helps with styling{% endcomment %}
         <script>document.querySelector("html").classList.replace("no-js", "js")</script>
 
-        <!-- alpine js start -->
-        <script defer src="{% static 'js/apply/vendor/alpine.min.js' %}"></script>
-        <style> [x-cloak] {display: none !important} </style>
-        <!-- apline.js end -->
-
+        <!-- htmx start: installed with npm -->
+        <script src="{% static 'js/apply/vendor/htmx.min.js' %}"></script>
+        <script src="{% static 'js/apply/vendor/htmx-ext-multi-swap.min.js' %}"></script>
+        {% comment %} <script src="{% static 'js/apply/vendor/htmx-ext-alpine-morph.min.js' %}" defer></script> {% endcomment %}
+        <script src="{% static 'js/apply/vendor/nprogress-2.0.0.min.js' %}" defer></script>
+        <script>
+            window.addEventListener('DOMContentLoaded', (event) => {
+                document.addEventListener("htmx:beforeRequest", function() { NProgress.start(); });
+                document.addEventListener("htmx:afterRequest", function() { NProgress.done(); });
+            });
+            {% comment %}
+            If the htmx response is either 403, 404, or 500, display the error page.
+            Please note that the error replaces the entire page, rather than displaying
+            the error response in the target element.
+            https://stackoverflow.com/a/74823597/782901
+            {% endcomment %}
+            document.addEventListener("htmx:beforeOnLoad", function (event) {
+                const xhr = event.detail.xhr
+                if (xhr.status == 500 || xhr.status == 403 || xhr.status == 404) {
+                    event.stopPropagation() // Tell htmx not to process these requests
+                    document.children[0].innerHTML = xhr.response // Swap in body of response instead
+                }
+            });
+        </script>
+        <!-- htmx end -->
 
         <script src="{% static 'js/jquery.min.js' %}"></script>
+        <script src="{% static 'js/js.cookie.min.js' %}"></script>
+
+        <!-- alpine js start -->
+        <style> [x-cloak] {display: none !important} </style>
+        <!-- Alpine Plugins: installed with npm -->
+        <script defer src="{% static 'js/apply/vendor/alpine-focus.min.js' %}"></script>
+
+        <!-- Alpine Core: installed with npm  -->
+        <script defer src="{% static 'js/apply/vendor/alpine.min.js' %}"></script>
+        <!-- alpine.js end -->
+
+        <!-- modules -->
+        <script type="module" src="{% static 'js/esm/github-relative-time-element-4-3-0.js' %}"></script>
+        <script type="module" src="{% static 'js/esm/github-filter-input-element-0-1-1.js' %}"></script>
     </head>
 
-    <body class="{% block body_class %}template-{{ page.get_verbose_name|slugify }}{% endblock %}">
-
+    <body
+        hx-ext="multi-swap"
+        hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+        class="antialiased min-h-full flex flex-col {% block body_class %}template-{{ page.get_verbose_name|slugify }}{% endblock %}"
+    >
         {% include "includes/sprites.html" %}
 
         {% if messages %}
             {% include 'includes/messages.html' %}
         {% endif %}
 
-        {% block header %}
-            {% if page.header_image %}
-                {% image page.header_image fill-2560x410 as header_image %}
-            {% elif page.get_parent.specific.header_image %}
-                {% image page.get_parent.specific.header_image fill-2560x410 as header_image %}
-            {% endif %}
-            <header class="header header--standard {% if page.header_image %}header--has-bg-image{% endif %} {% block header_modifier %}{% endblock %}" {% if header_image %}style="background-image:url('{{ header_image.url }}')"{% endif %}>
+        {% block header %}{% endblock header %}
 
-                {% block apply_button %}
-                    {% include "includes/apply_button.html" %}
-                {% endblock %}
-
-                <div class="header__inner wrapper wrapper--large">
-                    <a href="{{ settings.utils.SystemMessagesSettings.site_logo_link|default:"/" }}" aria-label="Home link">
-                        {% if settings.utils.SystemMessagesSettings.site_logo_default %}
-                            {% image settings.utils.SystemMessagesSettings.site_logo_default width-215 as logo_default %}
-                            <img class="header__logo header__logo--desktop"
-                                 width="215"
-                                 src="{{ logo_default.url }}"
-                                 alt="{{ settings.utils.SystemMessagesSettings.site_logo_default.alt }}"
-                            >
-                            {% if settings.utils.SystemMessagesSettings.site_logo_mobile %}
-                                {% image settings.utils.SystemMessagesSettings.site_logo_mobile width-60 as logo_mobile %}
-                                <img class="header__logo header__logo--mobile"
-                                     width="60"
-                                     src="{{ logo_mobile.url }}"
-                                     alt="{{ settings.utils.SystemMessagesSettings.site_logo_mobile.alt }}"
-                                >
-                            {% else %}
-                                <img class="header__logo header__logo--mobile"
-                                     width="60"
-                                     src="{{ logo_default.url }}"
-                                     alt="{{ settings.utils.SystemMessagesSettings.site_logo_default.alt }}"
-                                >
-                            {% endif %}
-                        {% else %}
-                            <img class="header__logo header__logo--desktop"
-                                 width="215"
-                                 height="40"
-                                 src="{% static 'images/logo.png' %}"
-                                 alt="Hypha logo"
-                            >
-                            <img class="header__logo header__logo--mobile"
-                                 width="60" height="60"
-                                 src="{% static 'images/logo-small.png' %}"
-                                 alt="Hypha logo"
-                            >
-                        {% endif %}
-                    </a>
-
-                    <div class="header__inner header__inner--mobile-buttons">
-                        <button class="button button--left-space js-mobile-menu-toggle" aria-haspopup="true">
-                            {% heroicon_outline "bars-3" size=32 stroke_width=2 class="inline" aria_hidden=true %}
-                        </button>
-                    </div>
-
-                    <section class="header__menus header__menus--desktop">
-                        {% if settings.utils.SystemMessagesSettings.nav_content %}
-                            {{ settings.utils.SystemMessagesSettings.nav_content|safe }}
-                        {% endif %}
-                    </section>
-
-                    <section class="header__menus header__menus--mobile">
-                        <div class="header__inner header__inner--menu-open">
-                            <a href="{{ settings.utils.SystemMessagesSettings.site_logo_link|default:"/" }}" aria-label="Home link">
-                                {% if settings.utils.SystemMessagesSettings.site_logo_mobile %}
-                                    {% image settings.utils.SystemMessagesSettings.site_logo_mobile width-60 as logo_mobile %}
-                                    <img class="header__logo header__logo--mobile"
-                                         width="60"
-                                         src="{{ logo_mobile.url }}"
-                                         alt="{{ settings.utils.SystemMessagesSettings.site_logo_mobile.alt }}"
-                                    >
-                                {% else %}
-                                    <img class="header__logo header__logo--mobile"
-                                         width="60"
-                                         height="60"
-                                         src="{% static 'images/logo-small.png' %}"
-                                         alt="Hypha logo"
-                                    >
-                                {% endif %}
-                            </a>
-                        </div>
-                        {% if settings.utils.SystemMessagesSettings.nav_content %}
-                            {{ settings.utils.SystemMessagesSettings.nav_content|safe }}
-                        {% endif %}
-                    </section>
-
-                    <div class="header__button-container">
-                        {% include "utils/includes/login_button.html" %}
-
-                        {% if request.user.is_authenticated %}
-                            <a href="{% url 'users_public:logout' %}" class="button button--transparent button--narrow">
-                                {% trans "Log out" %}
-                            </a>
-                        {% endif %}
-
-                        {% if ENABLE_GOOGLE_TRANSLATE %}
-                            <div class="button button--google-translate" id="google_translate_element"></div>
-                        {% endif %}
-                    </div>
-                </div>
-
-                <div class="wrapper wrapper--small wrapper--page-title">
-                    <h1 class="header__title">{% block page_title %}{{ page.title }}{% endblock %}</h1>
-                </div>
-            </header>
+        {% block content_wrapper %}
+            <main class="wrapper wrapper--large wrapper--main grow" id="main">
+                {% block content %}{% endblock %}
+            </main>
         {% endblock %}
 
-        <main class="wrapper wrapper--large wrapper--main {% block main_class %}{% endblock %}">
-            {% block content %}{% endblock %}
-        </main>
+        {% block footer %}{% endblock footer %}
 
-        <footer class="footer">
-            <div class="grid grid--two wrapper wrapper--large">
-                <div class="footer__inner">
-                    {{ settings.utils.SystemMessagesSettings.footer_content|safe }}
-                </div>
-            </div>
-        </footer>
+        {% block scroll_to_top %}
+            {% #scroll-to-top %}
+        {% endblock scroll_to_top %}
 
         {% cookie_banner %}
 
-        {% if ENABLE_GOOGLE_TRANSLATE %}
-            <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-            <script>
-                function googleTranslateElementInit() {
-                    new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE, autoDisplay: false}, 'google_translate_element');
-                }
-            </script>
-        {% endif %}
-
-        <script src="{% static 'js/js.cookie.min.js' %}"></script>
         <script src="{% static 'js/main.js' %}"></script>
         <script src="{% static 'js/cookieconsent.js' %}"></script>
+        <!-- Tooltips -->
+        <script src="{% static 'js/tooltips/popper.min.js' %}"></script>
+        <script src="{% static 'js/tooltips/tippy.min.js' %}"></script>
+        <script>
+            htmx.onLoad(function() {
+                tippy('[data-tippy-content]');
+            });
+        </script>
+        <!-- Tooltips end -->
+
+        <!-- Datetime picker-->
+        <script src="{% static 'js/apply/vendor/moment.min.js' %}"></script>
+        <script src="{% static 'js/apply/vendor/daterangepicker.min.js' %}"></script>
+
         {% block extra_js %}{% endblock %}
 
         {% block sentry_sdk %}

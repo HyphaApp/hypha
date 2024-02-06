@@ -1,9 +1,9 @@
 {% load i18n heroicons %}
 
 {% if request.user.is_authenticated %}
-    {% if request.user.can_access_dashboard %}
+    {% if request.path == "/" and request.user.can_access_dashboard %}
         <a
-            class="button button--transparent button--contains-icons {{ class }}"
+            class="button button--transparent {{ class }}"
             href="{{ APPLY_SITE.root_url }}{% url 'dashboard:dashboard' %}"
         >
             {% heroicon_micro "user" class="inline align-text-bottom w-4 h-4 me-1" aria_hidden=true %}
@@ -12,7 +12,7 @@
         </a>
     {% else %}
         <a
-            class="button button--transparent button--contains-icons {{ class }}"
+            class="button button--transparent {{ class }}"
             href="{{ APPLY_SITE.root_url }}{% url 'users:account' %}"
             title="Goto your account"
         >
@@ -22,8 +22,8 @@
     {% endif %}
 {% else %}
     <a
-        class="button button--transparent button--contains-icons {{ class }}"
-        href="{{ APPLY_SITE.root_url }}{% url 'users_public:passwordless_login_signup' %}{% if redirect_url %}?next={{ redirect_url }}{% endif %}"
+        class="button button--transparent {{ class }}"
+        href="{{ APPLY_SITE.root_url }}{% url 'users:passwordless_login_signup' %}{% if redirect_url %}?next={{ redirect_url }}{% endif %}"
     >
         {% heroicon_micro "user" class="inline align-text-bottom w-4 h-4 me-1" aria_hidden=true %}
         {% trans "Login" %}
