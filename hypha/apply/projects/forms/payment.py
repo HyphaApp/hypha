@@ -28,12 +28,57 @@ from ..models.payment import (
     invoice_status_user_choices,
 )
 from ..models.project import PacketFile
+from ..utils import get_invoice_status_display_value
 
 
 def filter_request_choices(choices, user_choices):
     return [
         (k, v) for k, v in INVOICE_STATUS_CHOICES if k in choices and k in user_choices
     ]
+
+
+def get_invoice_possible_transition_for_user(user, invoice):
+    user_choices = invoice_status_user_choices(user)
+    possible_status_transitions_lut = {
+        SUBMITTED: filter_request_choices(
+            [CHANGES_REQUESTED_BY_STAFF, APPROVED_BY_STAFF, DECLINED], user_choices
+        ),
+        RESUBMITTED: filter_request_choices(
+            [CHANGES_REQUESTED_BY_STAFF, APPROVED_BY_STAFF, DECLINED], user_choices
+        ),
+        CHANGES_REQUESTED_BY_STAFF: filter_request_choices([DECLINED], user_choices),
+        APPROVED_BY_STAFF: filter_request_choices(
+            [
+                CHANGES_REQUESTED_BY_FINANCE,
+                APPROVED_BY_FINANCE,
+            ],
+            user_choices,
+        ),
+        CHANGES_REQUESTED_BY_FINANCE: filter_request_choices(
+            [CHANGES_REQUESTED_BY_STAFF, DECLINED], user_choices
+        ),
+        APPROVED_BY_FINANCE: filter_request_choices([PAID], user_choices),
+        PAID: filter_request_choices([PAYMENT_FAILED], user_choices),
+        PAYMENT_FAILED: filter_request_choices([PAID], user_choices),
+    }
+    if settings.INVOICE_EXTENDED_WORKFLOW:
+        possible_status_transitions_lut.update(
+            {
+                CHANGES_REQUESTED_BY_FINANCE_2: filter_request_choices(
+                    [
+                        CHANGES_REQUESTED_BY_FINANCE,
+                        APPROVED_BY_FINANCE,
+                    ],
+                    user_choices,
+                ),
+                APPROVED_BY_FINANCE: filter_request_choices(
+                    [CHANGES_REQUESTED_BY_FINANCE_2, APPROVED_BY_FINANCE_2],
+                    user_choices,
+                ),
+                APPROVED_BY_FINANCE_2: filter_request_choices([PAID], user_choices),
+            }
+        )
+    return possible_status_transitions_lut.get(invoice.status, [])
 
 
 class ChangeInvoiceStatusForm(forms.ModelForm):
@@ -47,49 +92,10 @@ class ChangeInvoiceStatusForm(forms.ModelForm):
         super().__init__(*args, **kwargs, instance=instance)
         self.initial["comment"] = ""
         status_field = self.fields["status"]
-        user_choices = invoice_status_user_choices(user)
-        possible_status_transitions_lut = {
-            SUBMITTED: filter_request_choices(
-                [CHANGES_REQUESTED_BY_STAFF, APPROVED_BY_STAFF, DECLINED], user_choices
-            ),
-            RESUBMITTED: filter_request_choices(
-                [CHANGES_REQUESTED_BY_STAFF, APPROVED_BY_STAFF, DECLINED], user_choices
-            ),
-            CHANGES_REQUESTED_BY_STAFF: filter_request_choices(
-                [DECLINED], user_choices
-            ),
-            APPROVED_BY_STAFF: filter_request_choices(
-                [
-                    CHANGES_REQUESTED_BY_FINANCE,
-                    APPROVED_BY_FINANCE,
-                ],
-                user_choices,
-            ),
-            CHANGES_REQUESTED_BY_FINANCE: filter_request_choices(
-                [CHANGES_REQUESTED_BY_STAFF, DECLINED], user_choices
-            ),
-            APPROVED_BY_FINANCE: filter_request_choices([PAID], user_choices),
-            PAID: filter_request_choices([PAYMENT_FAILED], user_choices),
-            PAYMENT_FAILED: filter_request_choices([PAID], user_choices),
-        }
-        if settings.INVOICE_EXTENDED_WORKFLOW:
-            possible_status_transitions_lut.update(
-                {
-                    CHANGES_REQUESTED_BY_FINANCE_2: filter_request_choices(
-                        [
-                            CHANGES_REQUESTED_BY_FINANCE,
-                            APPROVED_BY_FINANCE,
-                        ],
-                        user_choices,
-                    ),
-                    APPROVED_BY_FINANCE: filter_request_choices(
-                        [CHANGES_REQUESTED_BY_FINANCE_2, APPROVED_BY_FINANCE_2],
-                        user_choices,
-                    ),
-                    APPROVED_BY_FINANCE_2: filter_request_choices([PAID], user_choices),
-                }
-            )
-        status_field.choices = possible_status_transitions_lut.get(instance.status, [])
+
+        status_field.choices = get_invoice_possible_transition_for_user(
+            user, invoice=instance
+        )
 
 
 class InvoiceBaseForm(forms.ModelForm):
@@ -199,3 +205,29 @@ class SelectDocumentForm(forms.ModelForm):
     @transaction.atomic()
     def save(self, *args, **kwargs):
         return super().save(*args, **kwargs)
+
+
+class BatchUpdateInvoiceStatusForm(forms.Form):
+    invoice_action = forms.ChoiceField(label=_("Status"))
+    invoices = forms.CharField(
+        widget=forms.HiddenInput(attrs={"class": "js-invoices-id"})
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user")
+        super().__init__(*args, **kwargs)
+        if self.user.is_apply_staff:
+            self.fields["invoice_action"].choices = [
+                (DECLINED, get_invoice_status_display_value(DECLINED))
+            ]
+        elif self.user.is_finance:
+            self.fields["invoice_action"].choices = [
+                (DECLINED, get_invoice_status_display_value(DECLINED)),
+                (PAID, get_invoice_status_display_value(PAID)),
+                (PAYMENT_FAILED, get_invoice_status_display_value(PAYMENT_FAILED)),
+            ]
+
+    def clean_invoices(self):
+        value = self.cleaned_data["invoices"]
+        invoice_ids = [int(invoice) for invoice in value.split(",")]
+        return Invoice.objects.filter(id__in=invoice_ids)
