@@ -60,10 +60,10 @@
                             </button>
                         {% endif %}
                     {% elif invoice_actions %}
-                            <button data-fancybox data-src="#batch_update_invoice_status" class="button button--action js-batch-button js-batch-invoice-progress" type="button">
-                                {% heroicon_mini "arrows-right-left" class="inline" aria_hidden=true %}
-                                {% trans "Status" %}
-                            </button>
+                        <button data-fancybox data-src="#batch_update_invoice_status" class="button button--action js-batch-button js-batch-invoice-progress" type="button">
+                            {% heroicon_mini "arrows-right-left" class="inline" aria_hidden=true %}
+                            {% trans "Status" %}
+                        </button>
                     {% endif %}
                 </div>
             {% endif %}
@@ -131,4 +131,9 @@
     {% include "funds/includes/batch_progress_form.html" %}
     {% include "funds/includes/batch_delete_submission_form.html" %}
     {% include "funds/includes/batch_archive_submission_form.html" %}
+    {% if project_actions %}
+        {% if invoice_actions %}
+            {% include "application_projects/includes/batch_invoice_status_update.html" %}
+        {% endif %}
+    {% endif %}
 {% endif %}
