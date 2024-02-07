@@ -24,6 +24,7 @@ jobs:
       - name: Deploy docs
         uses: mhausenblas/mkdocs-deploy-gh-pages@master
         env:
+          GEN_REF_PAGES: true
           GITHUB_TOKEN: ${{ github.token }}
           CUSTOM_DOMAIN: docs.hypha.app
           CONFIG_FILE: mkdocs.yml

@@ -57,7 +57,7 @@ We are grateful to organizations that have chosen to implement Hypha and appreci
 - [Remote Inning](https://www.remoteinning.com/)
 - [Maxwell Pearl](https://maxwellpearl.com/)
 - [Psycle](https://psycle.com/)                                                    
-- [Simply Secure](https://simplysecure.org/)
+- [Superbloom](https://superbloom.design/)
 - [Throneless Technology](https://throneless.tech/)
 - [Torchbox](https://www.torchbox.com/)
 
@@ -75,4 +75,4 @@ We are grateful to organizations that have chosen to implement Hypha and appreci
 * Community forum (Discourse): https://we.hypha.app/
 * Chat (Zulip): https://chat.hypha.app/
 * Why Hypha? [Hyphae](https://en.wikipedia.org/wiki/Mycorrhizal_network):** long, branching ecosystem enriching organisms that form interconnected networks to collectively exchange resources. Hopefully, Hypha helps it's users do the same.
-* Copyright (C) 2021 - Open Technology Fund
+* Copyright (C) 2024 - Open Technology Fund

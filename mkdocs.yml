@@ -25,8 +25,8 @@ theme:
     - content.action.edit
     - content.action.view
     - content.code.copy
+    - content.tabs.link
     - header.autohide
-    - navigation.expand
     - navigation.indexes
     - navigation.instant
     - navigation.footer
@@ -40,8 +40,33 @@ theme:
 plugins:
   - awesome-pages
   - search
+  - macros:
+      module_name: docs/scripts/doc_macros
+  - mkdocstrings:
+      enabled: !ENV [GEN_REF_PAGES, false]
+      default_handler: python
+      handlers:
+        python:
+          options:
+            docstring_style: google
+            show_root_heading: true
+            show_if_no_docstring: true
+            inherited_members: true
+            members_order: source
+            separate_signature: true
+            unwrap_annotated: true
+            filters:
+              - "!^_"
+            docstring_section_style: list
+            merge_init_into_class: true
+            signature_crossrefs: true
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
   - git-revision-date-localized:
       type: timeago
+  - gen-files:
+      scripts:
+        - docs/scripts/gen_ref_pages.py
 
 markdown_extensions:
   - admonition
@@ -97,3 +122,35 @@ extra:
     - icon: material/github
       link: https://github.com/HyphaApp/
       name: GitHub Org
+
+  # Versioning for Python & Node happen automatically via docs/scripts/doc_macros.py reading
+  # ".python-version" and ".nvmrc". Updates here will overwrite the automatic versioning.
+  versions:
+    python:
+      version:
+      packages:
+        macos:
+    node:
+      version:
+    nvm:
+      version: 0.39.5
+      packages:
+        debian: https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh
+        fedora: https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh
+        macos: https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh
+    postgres:
+      version: 14
+      packages:
+        debian: postgresql-server-dev-14
+        fedora: postgresql-server
+        macos: postgres@14
+    postgres_devel:
+      packages:
+        debian: libpq-dev
+        fedora: libpq-devel
+    tested_ubuntu:
+      version: 22.04 LTS
+    tested_macos:
+      version: Ventura 13.5.2
+    tested_fedora:
+      version: Workstation 38
