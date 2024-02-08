@@ -6,7 +6,7 @@
         {% if settings.utils.SystemMessagesSettings.nav_content %}
             {{ settings.utils.SystemMessagesSettings.nav_content|safe }}
         {% else %}
-            {% include "includes/primarynav-apply.html" %}
+            {% include "core/navigation/primarynav-apply.html" %}
         {% endif %}
     </section>
 {% endblock %}
