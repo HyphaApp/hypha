@@ -44,6 +44,7 @@
         @include media-query($table-breakpoint) {
             display: table-header-group;
         }
+
         th {
             &.selected {
                 @include table-checkbox;
