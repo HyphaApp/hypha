@@ -444,11 +444,28 @@ class BatchUpdateInvoiceStatusView(DelegatedViewMixin, FormView):
     def form_valid(self, form):
         new_status = form.cleaned_data["invoice_action"]
         invoices = form.cleaned_data["invoices"]
+        invoices_old_statuses = {invoice: invoice.status for invoice in invoices}
         batch_update_invoices_status(
             invoices=invoices,
             user=self.request.user,
             status=new_status,
         )
+
+        # add activity feed for batch update invoice status
+        projects = Project.objects.filter(
+            id__in=[invoice.project.id for invoice in invoices]
+        )
+        messenger(
+            MESSAGES.BATCH_UPDATE_INVOICE_STATUS,
+            request=self.request,
+            user=self.request.user,
+            sources=projects,
+            related=invoices,
+        )
+
+        # update tasks for selected invoices
+        for invoice, old_status in invoices_old_statuses.items():
+            handle_tasks_on_invoice_update(old_status, invoice)
         return super().form_valid(form)
 
     def form_invalid(self, form):

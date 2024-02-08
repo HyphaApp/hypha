@@ -158,4 +158,3 @@ def batch_update_invoices_status(invoices, user, status):
     for invoice in invoices:
         invoice.status = status
         invoice.save(update_fields=["status"])
-    # notify about batch invoice status update
