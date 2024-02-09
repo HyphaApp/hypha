@@ -1,5 +1,5 @@
 {% extends 'base-apply.html' %}
-{% load i18n users_tags %}
+{% load i18n users_tags wagtailcore_tags %}
 
 {% block title %}{% trans "Account" %}{% endblock %}
 
@@ -13,6 +13,17 @@
                 {% trans "Go to my dashboard" %}
                 <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
             </a>
+        {% else %}
+            <div class="wrapper wrapper--cta-box flex items-center">
+                <div class="flex-1">
+                    <h3 class="heading heading--no-margin font-bold">{% trans "Submit a new application" %}</h3>
+                    <p class="text-base m-0">{% trans "Apply now for our open rounds" %}</p>
+                </div>
+                <div>
+                    <a class="button button--blue-white" href="{% pageurl APPLY_SITE.root_page %}" class="button">{% trans "Apply" %}</a>
+                </div>
+            </div>
+
         {% endif %}
     {% endadminbar %}
 
