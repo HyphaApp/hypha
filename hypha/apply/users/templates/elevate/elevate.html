@@ -23,6 +23,7 @@
                     data-test-id="section-password-input"
                     id="form-password-input"
                 >
+                    {% csrf_token %}
                     {% for field in form %}
                         {% include "forms/includes/field.html" %}
                     {% endfor %}

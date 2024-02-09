@@ -1,8 +1,8 @@
-
-{% extends "two_factor/_base_focus.html" %}
+{% extends "two_factor/_base.html" %}
 {% load i18n %}
 
-{% block content %}
+{% block content_inner %}
+
     <h1>{% block title %}{% trans "Disable Two-factor Authentication" %}{% endblock %}</h1>
     <p class="mb-4">{% blocktrans trimmed %}Disabling Two-factor authentication weakens your account security.
         We recommend reenabling it when you can.{% endblocktrans %}</p>

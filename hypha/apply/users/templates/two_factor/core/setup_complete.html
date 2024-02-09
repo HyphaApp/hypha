@@ -1,27 +1,31 @@
-{% extends "two_factor/_base_focus.html" %}
+{% extends "two_factor/_base.html" %}
 {% load i18n %}
 
-{% block content %}
-  <p><a href="{% url 'users:account' %}" class="link link--bold">{% trans "Back to Account" %}</a></p>
+{% block content_inner %}
 
+  <div class="mb-4">
+    <p>{% blocktrans trimmed %}Congratulations, you've successfully enabled two-factor
+      authentication.{% endblocktrans %}</p>
 
-  <h1>{% block title %}{% trans "Two-Factor Authentication(2FA)" %}{% endblock %}</h1>
-
-  <p>{% blocktrans trimmed %}Congratulations, you've successfully enabled two-factor
-    authentication.{% endblocktrans %}</p>
-  <p>{% blocktrans trimmed %}We strongly recommend you to save the backup codes.
-    To get the backup codes you can continue to Show Codes.{% endblocktrans %}</p>
+    <p>{% blocktrans trimmed %}We strongly recommend you to save the backup codes.
+      To get the backup codes you can continue to Show Codes.{% endblocktrans %}</p>
+  </div>
 
   {% if not phone_methods %}
     <a href="{% url 'users:backup_tokens' %}" class="btn btn-link">{% trans "Show Codes" %}</a>
+
   {% else %}
     <p>{% blocktrans trimmed %}However, it might happen that you don't have access to
       your primary token device. To enable account recovery, add a phone
       number.{% endblocktrans %}</p>
 
     <p><a href="{% url 'users:backup_tokens' %}" class="btn btn-block">{% trans "Show Codes" %}</a></p>
-    <p><a href="{% url 'users:two_factor:phone_create' %}"
-          class="btn btn-success">{% trans "Add Phone Number" %}</a></p>
+
+    <p>
+      <a href="{% url 'two_factor:phone_create' %}"
+         class="btn btn-success">{% trans "Add Phone Number" %}
+      </a>
+    </p>
   {% endif %}
 
 {% endblock %}

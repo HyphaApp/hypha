@@ -4,7 +4,6 @@ from django.urls import include, path, reverse_lazy
 from django.views.generic import RedirectView
 from django_ratelimit.decorators import ratelimit
 from elevate.views import elevate as elevate_view
-from two_factor.urls import urlpatterns as tf_urls
 
 from .views import (
     AccountView,
@@ -176,6 +175,4 @@ urlpatterns = public_urlpatterns + [
         RedirectView.as_view(url=reverse_lazy("users:backup_tokens"), permanent=False),
         name="two_factor:setup_complete",
     ),
-    path("", include(tf_urls, "two_factor")),
-    path("", include("social_django.urls", namespace="social")),
 ]
