@@ -30,8 +30,8 @@
                 </p>
             {% endif %}
 
-            <p class="feed__meta-item feed__meta-item--right flex items-center" {% if not activity.private %} hidden {% endif %}>
-                {% heroicon_micro "eye" class="fill-fg-muted inline me-1 w-4 h-4" aria_hidden=true %}
+            <p class="feed__meta-item feed__meta-item--right flex items-center">
+                {% heroicon_micro "eye" class="fill-fg-muted inline me-1 w-4 h-4 mr-1" aria_hidden=true %}
                 <span class="js-comment-visibility">{{ activity.visibility|visibility_display:request.user }}</span>
             </p>
         </div>

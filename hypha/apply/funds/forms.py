@@ -5,6 +5,7 @@ from operator import methodcaller
 
 import bleach
 from django import forms
+from django.db.models import Q
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from wagtail.signal_handlers import disable_reference_index_auto_update
@@ -490,8 +491,10 @@ class UpdatePartnersForm(ApplicationSubmissionModelForm):
         )
 
         partner_field = self.fields["partner_reviewers"]
+
+        # If applicant is also a partner, they should not be allowed to be a partner on their own application
         partner_field.queryset = partner_field.queryset.exclude(
-            id__in=self.submitted_partners
+            Q(id__in=self.submitted_partners) | Q(id=self.instance.user.id)
         )
         partner_field.initial = partners
 
