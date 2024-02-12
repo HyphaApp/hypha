@@ -1,18 +1,32 @@
 {% extends 'base-apply.html' %}
-{% load i18n %}
+{% load i18n static %}
 
-{% block content_wrapper %}
-    <div class="admin-bar">
-        <div class="admin-bar__inner admin-bar__inner--with-button">
-            <h3 class="admin-bar__heading">{% trans "Welcome" %} {{ user }}</h3>
+{% block content %}
+    {% adminbar %}
+
+        {% slot back_link %}
+            <a href="/account/" class="simplified__submissions-link"> {% trans "Back to Account" %}</a>
+        {% endslot %}
+
+        {% slot header %}
+            {% trans "Two-Factor Authentication (2FA)" %}
+        {% endslot %}
+        {% comment %} {% slot sub_heading %}{% trans "All submissions ready for discussion." %}{% endslot %} {% endcomment %}
+
+        {% if user.can_access_dashboard %}
             <a href="{% url 'dashboard:dashboard' %}" class="button button--primary button--arrow-pixels-white" hx-boost='true'>
                 {% trans "Go to my dashboard" %}
                 <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
             </a>
-        </div>
-    </div>
+        {% endif %}
+    {% endadminbar %}
 
-    <div class="wrapper wrapper--small wrapper--inner-space-medium two-factor">
-        {% block content %}{% endblock %}
+    <div class="wrapper wrapper--inner-space-medium max-w-2xl  two-factor">
+        {% block content_inner %}{% endblock %}
     </div>
+{% endblock %}
+
+{% block extra_js %}
+    {{ block.super }}
+    <script src="{% static 'js/apply/two-factor-focus.js' %}"></script>
 {% endblock %}

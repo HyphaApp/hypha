@@ -19,7 +19,7 @@ class TestProfileView(BaseTestProfielView):
         self.user = UserFactory()
         self.client.force_login(self.user)
 
-    def test_cant_acces_if_not_logged_in(self):
+    def test_cant_access_if_not_logged_in(self):
         self.client.logout()
         response = self.client.get(self.url, follow=True)
         # Initial redirect will be via to https through a 301
@@ -29,18 +29,28 @@ class TestProfileView(BaseTestProfielView):
             status_code=301,
         )
 
-    def test_includes_change_password(self):
+    def test_has_required_text_and_buttons(self):
         response = self.client.get(self.url, follow=True)
         self.assertContains(response, reverse("users:password_change"))
+        self.assertContains(response, "Enable 2FA")
+        self.assertContains(response, reverse("two_factor:setup"))
+        self.assertNotContains(response, "Slack name")
 
     def test_doesnt_includes_change_password_for_oauth(self):
         self.client.force_login(OAuthUserFactory())
         response = self.client.get(self.url, follow=True)
         self.assertNotContains(response, reverse("users:password_change"))
 
-    def test_cant_set_slack_name(self):
-        response = self.client.get(self.url, follow=True)
-        self.assertNotContains(response, "Slack name")
+    def test_2fa_setup_view(self):
+        response = self.client.get(reverse("two_factor:setup"), follow=True)
+        self.assertContains(response, "I've installed a 2FA App")
+
+        response = self.client.post(
+            reverse("two_factor:setup"),
+            follow=True,
+            data={"setup_view-current_step": "welcome"},
+        )
+        assert "Verification code:" in response.content.decode("utf-8")
 
 
 class TestStaffProfileView(BaseTestProfielView):

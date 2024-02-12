@@ -96,10 +96,6 @@
     align-items: center;
     justify-content: center;
 
-    @include media-query(mob-landscape) {
-        width: auto;
-    }
-
     &:hover,
     &:active {
         cursor: pointer;

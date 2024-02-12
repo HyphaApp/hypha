@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.urls import include, path, re_path
 from django.views.generic import TemplateView
 from django_file_form import urls as django_file_form_urls
+from two_factor.urls import urlpatterns as tf_urls
 from two_factor.views import LoginView
 from wagtail import urls as wagtail_urls
 from wagtail.admin import urls as wagtailadmin_urls
@@ -38,6 +39,7 @@ urlpatterns = [
     path("sitemap.xml", sitemap),
     path("upload/", include(django_file_form_urls)),
     path("", include("social_django.urls", namespace="social")),
+    path("", include(tf_urls, "two_factor")),
     path("", include((user_urls, "users"))),
     path("tinymce/", include("tinymce.urls")),
     path("select2/", include("django_select2.urls")),
