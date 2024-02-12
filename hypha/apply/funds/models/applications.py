@@ -120,6 +120,10 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
         ),
     )
 
+    list_on_front_page = models.BooleanField(
+        default=True, help_text=_("Should the fund be listed on the front page.")
+    )
+
     show_deadline = models.BooleanField(
         default=True, help_text=_("Should the deadline date be visible for users.")
     )
@@ -166,6 +170,7 @@ class ApplicationBase(EmailForm, WorkflowStreamForm):  # type: ignore
         FieldPanel("weight"),
         FieldPanel("slack_channel"),
         FieldPanel("activity_digest_recipient_emails"),
+        FieldPanel("list_on_front_page"),
         FieldPanel("show_deadline"),
     ]
 
@@ -549,6 +554,7 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
     slack_channel = models.CharField(
         blank=True, max_length=128, help_text=_("The slack #channel for notifications.")
     )
+
     activity_digest_recipient_emails = ArrayField(
         models.EmailField(default=""),
         blank=True,
@@ -557,6 +563,11 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
             "Comma separated list of emails where a summary of all the activities related to this lab will be sent."
         ),
     )
+
+    list_on_front_page = models.BooleanField(
+        default=True, help_text=_("Should the lab be listed on the front page.")
+    )
+
     parent_page_types = ["apply_home.ApplyHomePage"]
     subpage_types = []  # type: ignore
 
@@ -569,6 +580,7 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
         FieldPanel("weight"),
         FieldPanel("slack_channel"),
         FieldPanel("activity_digest_recipient_emails"),
+        FieldPanel("list_on_front_page"),
     ]
 
     edit_handler = TabbedInterface(

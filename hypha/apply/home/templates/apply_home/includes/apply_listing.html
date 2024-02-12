@@ -1,6 +1,6 @@
 {% load i18n bleach_tags wagtailcore_tags markdown_tags heroicons %}
 
-{% if page.open_round %}
+{% if page.open_round and page.list_on_front_page %}
   <div class="flex justify-between items-center px-4 py-8 gap-4 hover:bg-slate-50 transition-colors">
 
     <div>
