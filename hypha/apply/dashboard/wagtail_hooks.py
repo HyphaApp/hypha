@@ -4,7 +4,7 @@ from django.urls import reverse
 from wagtail import hooks
 from wagtail.admin.menu import MenuItem
 
-from hypha.apply.home.models import ApplyHomePage
+from hypha.home.models import ApplyHomePage
 
 
 @hooks.register("register_admin_menu_item")

@@ -49,8 +49,8 @@ from wagtail.admin.views.account import password_management_enabled
 from wagtail.models import Site
 from wagtail.users.views.users import change_user_perm
 
-from hypha.apply.home.models import ApplyHomePage
 from hypha.core.mail import MarkdownMail
+from hypha.home.models import ApplyHomePage
 
 from .decorators import require_oauth_whitelist
 from .forms import (

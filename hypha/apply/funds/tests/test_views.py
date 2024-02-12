@@ -26,7 +26,6 @@ from hypha.apply.funds.tests.factories import (
     SealedSubmissionFactory,
 )
 from hypha.apply.funds.workflow import INITIAL_STATE
-from hypha.apply.home.factories import ApplySiteFactory
 from hypha.apply.projects.models import Project
 from hypha.apply.projects.tests.factories import ProjectFactory
 from hypha.apply.review.tests.factories import ReviewFactory
@@ -40,6 +39,7 @@ from hypha.apply.users.tests.factories import (
 )
 from hypha.apply.utils.testing import make_request
 from hypha.apply.utils.testing.tests import BaseViewTestCase
+from hypha.home.factories import ApplySiteFactory
 
 from ..models import (
     ApplicationRevision,

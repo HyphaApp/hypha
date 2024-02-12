@@ -1,6 +1,6 @@
 from django.conf import settings
 
-from hypha.apply.home.models import ApplyHomePage
+from hypha.home.models import ApplyHomePage
 
 
 def global_vars(request):

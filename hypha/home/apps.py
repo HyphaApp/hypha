@@ -2,5 +2,5 @@ from django.apps import AppConfig
 
 
 class HomeConfig(AppConfig):
-    name = "hypha.apply.home"
+    name = "hypha.home"
     label = "apply_home"

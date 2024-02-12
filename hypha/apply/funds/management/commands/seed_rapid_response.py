@@ -11,9 +11,9 @@ from hypha.apply.funds.models.forms import (
     ApplicationBaseForm,
     ApplicationBaseReviewForm,
 )
-from hypha.apply.home.models import ApplyHomePage
 from hypha.apply.review.models import ReviewForm
 from hypha.apply.users.groups import STAFF_GROUP_NAME
+from hypha.home.models import ApplyHomePage
 
 RR_ROUND_TITLE = "Rapid Response (archive round)"
 RR_FUND_TITLE = "Rapid Response (archive fund)"
