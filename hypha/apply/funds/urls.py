@@ -1,4 +1,5 @@
 from django.urls import include, path
+from django.views.generic import RedirectView
 
 from hypha.apply.projects import urls as projects_urls
 
@@ -19,7 +20,6 @@ from .views import (
     SubmissionDetailView,
     SubmissionEditView,
     SubmissionListView,
-    SubmissionOverviewView,
     SubmissionPrivateMediaView,
     SubmissionResultView,
     SubmissionsByRound,
@@ -74,7 +74,11 @@ app_name = "funds"
 
 submission_urls = (
     [
-        path("", SubmissionOverviewView.as_view(), name="overview"),
+        path(
+            "",
+            RedirectView.as_view(pattern_name="funds:submissions:list"),
+            name="overview",
+        ),
         path("success/<int:pk>/", submission_success, name="success"),
         path("all/", SubmissionListView.as_view(), name="list"),
         path("all-beta/", submission_all_beta, name="list-beta"),

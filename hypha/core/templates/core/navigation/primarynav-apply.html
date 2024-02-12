@@ -1,0 +1,38 @@
+{% load i18n applynav_tags heroicons %}
+{% if request.user.is_authenticated %}
+    <nav role="navigation" aria-label="Primary" class="w-full">
+        <ul class="nav nav--primary" role="menubar">
+            {% apply_nav_items request.user as nav_items %}
+            {% for item in nav_items %}
+                {% url item.url as target_url%}
+                <li class="nav__item" role="presentation">
+                    {% if item.sub_items %}
+                        <div class="relative inline-block" x-data="{open: false}">
+                            <a class="nav__link {% if target_url in request.path %}nav__link--active{% endif %}"
+                               href="{% url item.url %}"
+                               aria-label="{% trans "Menu Item" %}"
+                               aria-haspopup="menu"
+                               aria-expanded="false"
+                               role="menuitem"
+                               @click.prevent="open = ! open">
+                                {{ item.title }}
+                                {% heroicon_outline "chevron-down" aria_hidden="true" size=16 stroke_width=3 class="inline align-baseline mr-1" %}
+                            </a>
+                            <div x-cloak x-trap="open" x-on:keydown.escape="open = false" x-show="open" x-transition @click.outside="open = false" class="absolute block bg-white min-w-max shadow-lg z-1 mt-7 ">
+                                {% for sub_item in item.sub_items %}
+                                    <a class="text-black px-4 py-3 block font-normal hover:bg-mid-grey focus-visible:ring-2" href="{% url sub_item.url %}">
+                                        {{ sub_item.title }}
+                                    </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% else %}
+                        <a class="nav__link {% if target_url in request.path %}nav__link--active{% endif %}" href="{{ target_url }}" role="menuitem">
+                            {{ item.title }}
+                        </a>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    </nav>
+{% endif %}

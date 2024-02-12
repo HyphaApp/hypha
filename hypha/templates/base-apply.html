@@ -50,7 +50,7 @@
 
             {% block header_menu %}
                 <section class="header__menus header__menus--desktop">
-                    {% include "includes/primarynav-apply.html" %}
+                    {% include "core/navigation/primarynav-apply.html" %}
                 </section>
             {% endblock header_menu %}
 
@@ -81,7 +81,7 @@
                     </div>
                 </div>
 
-                {% include "includes/primarynav-apply.html" %}
+                {% include "core/navigation/primarynav-apply.html" %}
 
                 {% if request.user.is_authenticated %}
                     <a href="{% url 'users:account' %}" class="link link--button-transparent link--mobile-standout">
