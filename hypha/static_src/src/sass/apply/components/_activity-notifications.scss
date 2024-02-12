@@ -6,9 +6,9 @@
 
     &__content {
         position: absolute;
-        right: 1em;
-        margin-top: 0.5rem;
-        padding-bottom: 0.25rem;
+        inset-inline-end: 1em;
+        margin-block-start: 0.5rem;
+        padding-block-end: 0.25rem;
         background-color: $color--white;
         border: 1px solid $color--light-grey;
         min-width: 400px;
@@ -21,7 +21,7 @@
         padding: 0.75rem 1rem;
         display: flex;
         justify-content: space-between;
-        border-bottom: 1px solid $color--light-grey;
+        border-block-end: 1px solid $color--light-grey;
         font-weight: $weight--semibold;
         background-color: $color--light-grey;
     }
@@ -33,11 +33,11 @@
     &__item {
         margin: 0;
         padding: 0.75rem 1rem;
-        border-bottom: 1px solid $color--light-grey;
+        border-block-end: 1px solid $color--light-grey;
 
         &:last-child {
-            margin-bottom: 0;
-            border-bottom: 0;
+            margin-block-end: 0;
+            border-block-end: 0;
         }
     }
 
@@ -49,16 +49,16 @@
 
         label {
             font-weight: $weight--semibold;
-            padding-right: 1em;
+            padding-inline-end: 1em;
         }
 
         select {
-            padding-right: 1em;
+            padding-inline-end: 1em;
         }
 
         .form {
             &__select {
-                margin-right: 1em;
+                margin-inline-end: 1em;
             }
         }
     }

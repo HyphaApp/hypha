@@ -3,10 +3,10 @@
 
     &.filters-open {
         position: fixed;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
+        inset-inline-start: 0;
+        inset-inline-end: 0;
+        inset-block-start: 0;
+        inset-block-end: 0;
         z-index: 9;
         display: block;
         width: 100%;
@@ -23,10 +23,10 @@
 
         &.filters-open {
             position: relative;
-            top: auto;
-            left: auto;
-            right: auto;
-            bottom: auto;
+            inset-inline-start: auto;
+            inset-inline-end: auto;
+            inset-block-start: auto;
+            inset-block-end: auto;
             height: auto;
             background: transparent;
             max-height: 85px;

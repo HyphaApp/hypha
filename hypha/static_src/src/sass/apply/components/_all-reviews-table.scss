@@ -24,8 +24,8 @@
         td {
             &.title {
                 position: relative;
-                padding-top: 15px;
-                padding-left: 10px;
+                padding-block-start: 15px;
+                padding-inline-start: 10px;
                 font-weight: $weight--bold;
 
                 @include media-query($table-breakpoint) {

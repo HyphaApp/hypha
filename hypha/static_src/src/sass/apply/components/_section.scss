@@ -4,8 +4,8 @@
         margin: $mobile-gutter 0;
 
         @include media-query(tablet-portrait) {
-            padding-right: 20px;
-            margin-bottom: 0;
+            padding-inline-end: 20px;
+            margin-block-end: 0;
         }
     }
 

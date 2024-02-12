@@ -47,7 +47,7 @@
                             <div class="relative max-w-sm {% if field.auto_id == "id_auth-password" %}mb-4{% endif %}">
                                 {% include "forms/includes/field.html" %}
                                 {% if field.auto_id == "id_auth-password" %}
-                                    <div class="text-right">
+                                    <div class="text-end">
                                         <a class="link text-sm hover:opacity-75" href="{% url 'users:password_reset' %}{% if redirect_url %}?next={{ redirect_url }}{% endif %}" hx-boost="true">{% trans "Forgot your password?" %}</a>
                                     </div>
                                 {% endif %}

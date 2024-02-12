@@ -76,12 +76,12 @@ h3 {
 
 .admin-bar {
     position: static;
-    right: auto;
-    left: auto;
+    inset-inline-end: auto;
+    inset-inline-start: auto;
     width: auto;
     padding: 0;
-    margin-right: 0;
-    margin-left: 0;
+    margin-inline-end: 0;
+    margin-inline-start: 0;
 }
 
 nav,

@@ -8,8 +8,8 @@
 
         position: fixed;
         z-index: 1031;
-        top: 0;
-        left: 0;
+        inset-block-start: 0;
+        inset-inline-start: 0;
 
         width: 100%;
         height: 2px;
@@ -19,7 +19,7 @@
     .peg {
         display: block;
         position: absolute;
-        right: 0px;
+        inset-inline-end: 0px;
         width: 100px;
         height: 100%;
         box-shadow:
@@ -35,8 +35,8 @@
         display: block;
         position: fixed;
         z-index: 1031;
-        top: 15px;
-        right: 15px;
+        inset-block-start: 15px;
+        inset-inline-end: 15px;
     }
 
     .spinner-icon {

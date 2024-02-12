@@ -9,12 +9,12 @@
                 hx-include="[name=selectedSubmissionIds]"
                 hx-confirm='{% blocktrans %}Are you sure you want to change the status of the selected submissions to "{{ value }}"?{% endblocktrans %}'
                 title="Change status to {{ value }}"
-                class="flex pl-4 pr-3 py-2 text-gray-600 items-center hover:bg-gray-100 focus:bg-gray-100">
+                class="flex ps-4 pe-3 py-2 text-gray-600 items-center hover:bg-gray-100 focus:bg-gray-100">
                 <strong class="font-bold">{{ value }}</strong>
             </a>
         </li>
     {% empty %}
-        <li class="pl-4 pr-3 py-2 text-gray-600 max-w-xs">
+        <li class="ps-4 pe-3 py-2 text-gray-600 max-w-xs">
             {% trans "No status found for currently selected submissions." %}
         </li>
     {% endfor %}

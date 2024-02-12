@@ -6,7 +6,7 @@
     &--meta {
         display: flex;
         flex-wrap: wrap;
-        margin-top: 0.25rem;
+        margin-block-start: 0.25rem;
 
         span {
             &::after {
@@ -25,17 +25,17 @@
     &--submission-meta {
         display: flex;
         flex-direction: column;
-        margin-top: 20px;
+        margin-block-start: 20px;
         font-weight: $weight--normal;
         color: transparentize($color--dark-grey, 0.5);
 
         @include media-query(tablet-landscape) {
             flex-direction: row;
-            margin-top: 0;
+            margin-block-start: 0;
         }
 
         span {
-            margin-right: 15px;
+            margin-inline-end: 15px;
         }
     }
 
@@ -55,7 +55,7 @@
         font-weight: 500;
         font-size: 1.25rem;
         line-height: 1.75rem;
-        margin-bottom: 0.25rem;
+        margin-block-end: 0.25rem;
     }
 
     &--bold {

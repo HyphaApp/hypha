@@ -3,20 +3,20 @@
 
     &--small {
         max-width: $wrapper--small;
-        margin-left: auto;
-        margin-right: auto;
+        margin-inline-start: auto;
+        margin-inline-end: auto;
     }
 
     &--medium {
         max-width: $wrapper--medium;
-        margin-left: auto;
-        margin-right: auto;
+        margin-inline-start: auto;
+        margin-inline-end: auto;
     }
 
     &--large {
         max-width: $site-width;
-        margin-left: auto;
-        margin-right: auto;
+        margin-inline-start: auto;
+        margin-inline-end: auto;
     }
 
     &--main {
@@ -30,14 +30,14 @@
 
     &--blockquote {
         padding: 1rem 0;
-        margin-top: 2rem;
-        margin-bottom: 2rem;
+        margin-block-start: 2rem;
+        margin-block-end: 2rem;
         background: $color--light-grey;
 
         @include media-query(tablet-portrait) {
             padding: 4rem 0;
-            margin-top: 4rem;
-            margin-bottom: 4rem;
+            margin-block-start: 4rem;
+            margin-block-end: 4rem;
         }
 
         svg {
@@ -52,14 +52,14 @@
             }
 
             &:first-child {
-                top: 0;
-                left: 0;
+                inset-block-start: 0;
+                inset-inline-start: 0;
                 transform: rotate(90deg);
             }
 
             &:last-child {
-                right: 0;
-                bottom: 0;
+                inset-inline-end: 0;
+                inset-block-end: 0;
                 transform: rotate(-90deg);
             }
         }
@@ -118,12 +118,12 @@
     }
 
     &--bottom-space {
-        padding-bottom: 20px;
-        margin-bottom: 20px;
+        padding-block-end: 20px;
+        margin-block-end: 20px;
 
         @include media-query(tablet-portrait) {
-            padding-bottom: 3rem;
-            margin-bottom: 0;
+            padding-block-end: 3rem;
+            margin-block-end: 0;
         }
     }
 
@@ -197,12 +197,12 @@
             flex: 1;
 
             @include media-query(tablet-portrait) {
-                padding-right: 20px;
+                padding-inline-end: 20px;
             }
         }
 
         .card:first-child {
-            margin-top: 0;
+            margin-block-start: 0;
         }
     }
 
@@ -237,17 +237,17 @@
     &--status-bar-outer {
         padding: 20px 0;
         background-color: $color--white;
-        border-bottom: 3px solid $color--light-grey;
+        border-block-end: 3px solid $color--light-grey;
     }
 
     &--status-bar-inner {
         display: flex;
         flex-wrap: wrap;
         justify-content: space-between;
-        margin-bottom: 20px;
+        margin-block-end: 20px;
 
         @include media-query(tablet-portrait) {
-            margin-bottom: 0;
+            margin-block-end: 0;
         }
     }
 
@@ -257,21 +257,21 @@
 
     &--activity-feed {
         padding: 0 20px;
-        margin-top: 50px;
+        margin-block-start: 50px;
 
         @include media-query(tablet-landscape) {
-            margin-top: 70px;
+            margin-block-start: 70px;
         }
     }
 
     &--comments {
-        padding-bottom: 15px;
-        margin-bottom: 15px;
-        border-bottom: 1px solid $color--mid-grey;
+        padding-block-end: 15px;
+        margin-block-end: 15px;
+        border-block-end: 1px solid $color--mid-grey;
 
         @include media-query(tablet-portrait) {
-            padding-bottom: 35px;
-            margin-bottom: 35px;
+            padding-block-end: 35px;
+            margin-block-end: 35px;
         }
 
         .helptext {
@@ -299,13 +299,13 @@
     }
 
     &--submission-actions {
-        margin-left: auto;
+        margin-inline-start: auto;
         display: flex;
-        margin-top: 1rem;
+        margin-block-start: 1rem;
         align-items: flex-start;
 
         @include media-query(tablet-landscape) {
-            margin-top: 0;
+            margin-block-start: 0;
             justify-content: flex-end;
             flex: 1;
         }

@@ -2,12 +2,12 @@
 .simplified {
     &__admin-bar {
         position: relative;
-        right: 50%;
-        left: 50%;
+        inset-inline-end: 50%;
+        inset-inline-start: 50%;
         width: 100vw;
         padding: $mobile-gutter;
-        margin-right: -50vw;
-        margin-left: -50vw;
+        margin-inline-end: -50vw;
+        margin-inline-start: -50vw;
         color: $color--white;
         background-color: $color--dark-grey;
     }
@@ -35,7 +35,7 @@
 
         &::before {
             @include triangle(top, currentColor, 5px);
-            margin-right: 0.5rem;
+            margin-inline-end: 0.5rem;
             transform: rotate(-90deg);
         }
     }
@@ -48,7 +48,7 @@
 
         &::before {
             @include triangle(top, currentColor, 5px);
-            margin-right: 0.5rem;
+            margin-inline-end: 0.5rem;
             transform: rotate(-90deg);
         }
     }
@@ -65,7 +65,7 @@
         margin: 0;
 
         @include media-query(tablet-portrait) {
-            margin-bottom: 1rem;
+            margin-block-end: 1rem;
         }
 
         span {
@@ -96,33 +96,33 @@
         @include font-size(zeta);
         display: flex;
         flex-direction: column;
-        margin-top: $mobile-gutter;
+        margin-block-start: $mobile-gutter;
         font-weight: $weight--normal;
         color: transparentize($color--dark-grey, 0.5);
 
         @include media-query(tablet-landscape) {
             flex-direction: row;
-            margin-top: 0;
+            margin-block-start: 0;
         }
     }
 
     &__meta-item {
-        margin-right: 15px;
+        margin-inline-end: 15px;
 
         &:last-child {
-            margin-right: 0;
+            margin-inline-end: 0;
         }
     }
 
     &__rich-text {
-        margin-bottom: 2rem;
+        margin-block-end: 2rem;
         word-break: break-word;
 
         > section {
             margin: 0 0 2rem;
 
             p:first-of-type {
-                margin-top: 0;
+                margin-block-start: 0;
             }
 
             p:empty {

@@ -46,7 +46,7 @@
                 {% for submission in my_active_submissions %}
                     <div class="wrapper wrapper--status-bar-outer">
                         <div class="wrapper wrapper--status-bar-inner">
-                            <div class="mt-5 ml-4 lg:max-w-[30%]">
+                            <div class="mt-5 ms-4 lg:max-w-[30%]">
                                 <h4 class="heading mb-2 font-bold line-clamp-3 hover:line-clamp-none"><a class="link" href="{% url 'funds:submissions:detail' submission.id %}">{{ submission.title }}</a></h4>
                                 <p class="m-0 text-gray-400">
                                     {% if submission.is_draft %}
@@ -60,7 +60,7 @@
                             {% status_bar submission.workflow submission.phase request.user css_class="status-bar--small" %}
                         </div>
                         {% if request.user|has_edit_perm:submission %}
-                            <a class="button button--primary ml-4" href="{% url 'funds:submissions:edit' submission.id %}">
+                            <a class="button button--primary ms-4" href="{% url 'funds:submissions:edit' submission.id %}">
                                 {% if submission.status == 'draft_proposal' %}
                                     {% trans "Start your" %} {{ submission.stage }} {% trans "application" %}
                                 {% else %}
@@ -83,7 +83,7 @@
                 {% for project in active_projects.data %}
                     <div class="wrapper wrapper--status-bar-outer">
                         <div class="wrapper wrapper--status-bar-inner">
-                            <div class="mt-5 ml-4 lg:max-w-[30%]">
+                            <div class="mt-5 ms-4 lg:max-w-[30%]">
                                 <h4 class="heading mb-2 font-bold line-clamp-3 hover:line-clamp-none"><a class="link" href="{% url 'apply:projects:detail' project.id %}">{{ project.title }}</a></h4>
                                 <p class="m-0 text-gray-400">{% trans "Project start date: " %} {{ project.created_at.date }}</p>
                             </div>
@@ -103,8 +103,8 @@
                 </div>
                 {% for invoice in active_invoices.data %}
                     <div class="wrapper wrapper--status-bar-outer">
-                        <div class="wrapper wrapper--status-bar-inner pl-4 pr-4">
-                            <div class="max-w-[33%] w-full text-left my-auto">
+                        <div class="wrapper wrapper--status-bar-inner ps-4 pe-4">
+                            <div class="max-w-[33%] w-full text-start my-auto">
                                 <h4 class="heading heading--no-margin font-bold"><a class="link" href="{{ invoice.get_absolute_url }}">
                                     {% if invoice.invoice_number %}{{ invoice.invoice_number }}{% else %}{{ invoice.vendor_document_number }}{% endif %}
                                 </a></h4>
@@ -116,7 +116,7 @@
                             <div class="max-w-[33%] w-full flex my-auto">
                                 {% display_invoice_table_status_for_user invoice.status request.user as invoice_status %}
                                 <div class="w-full flex-1"></div>
-                                <div class="max-w-fit w-full text-right">
+                                <div class="max-w-fit w-full text-end">
                                     <p class="{{ invoice_status|invoice_status_bg_color }} text-base py-2 px-3 {{ invoice_status|invoice_status_fg_color }}">{{ invoice_status }}</p>
                                 </div>
                             </div>

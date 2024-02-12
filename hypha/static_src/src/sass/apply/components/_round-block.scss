@@ -9,13 +9,13 @@
         align-items: center;
         background-color: $color--white;
         border: 1px solid $color--light-mid-grey;
-        border-bottom: 0;
+        border-block-end: 0;
         padding: 25px;
         transition: background-color $quick-transition;
         min-height: 80px;
 
         &:last-child {
-            border-bottom: 1px solid $color--light-mid-grey;
+            border-block-end: 1px solid $color--light-mid-grey;
         }
 
         @include media-query(tablet-landscape) {
@@ -35,7 +35,7 @@
         &--more {
             padding: 20px 25px;
             justify-content: center;
-            border-bottom: 1px solid $color--light-mid-grey;
+            border-block-end: 1px solid $color--light-mid-grey;
             min-height: auto;
 
             &:hover {

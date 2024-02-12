@@ -1,20 +1,20 @@
 .comment {
-    padding-bottom: 20px;
-    margin-bottom: 20px;
-    border-bottom: 1px solid $color--light-mid-grey;
+    padding-block-end: 20px;
+    margin-block-end: 20px;
+    border-block-end: 1px solid $color--light-mid-grey;
 
     @include media-query(tablet-portrait) {
         max-width: 60%;
     }
 
     &:first-of-type {
-        margin-top: 20px;
+        margin-block-start: 20px;
     }
 
     &:last-of-type {
-        padding-bottom: 0;
-        margin-bottom: 0;
-        border-bottom: 0;
+        padding-block-end: 0;
+        margin-block-end: 0;
+        border-block-end: 0;
     }
 
     &__time,

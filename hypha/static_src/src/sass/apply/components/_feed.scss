@@ -2,10 +2,10 @@
     &__item {
         position: relative;
         display: flex;
-        margin-bottom: 1.5em;
+        margin-block-end: 1.5em;
 
         &:last-child {
-            border-bottom: 0;
+            border-block-end: 0;
         }
 
         &--collaps {
@@ -15,7 +15,7 @@
         }
 
         ul {
-            padding-left: 20px;
+            padding-inline-start: 20px;
             list-style: outside disc;
         }
 
@@ -57,7 +57,7 @@
 
         &--mobile {
             display: block;
-            margin-right: 10px;
+            margin-inline-end: 10px;
 
             @include media-query(small-tablet) {
                 display: none;
@@ -80,7 +80,7 @@
         flex-wrap: wrap;
 
         @include media-query(small-tablet) {
-            margin-bottom: 10px;
+            margin-block-end: 10px;
         }
     }
 
@@ -96,12 +96,12 @@
         }
 
         &--edit-button {
-            border-left: 2px solid $color--mid-grey;
-            padding-left: 15px;
+            border-inline-start: 2px solid $color--mid-grey;
+            padding-inline-start: 15px;
         }
 
         &--last-edited {
-            margin-right: 5px;
+            margin-inline-end: 5px;
             color: $color--mid-dark-grey;
 
             span {
@@ -110,7 +110,7 @@
         }
 
         &--right {
-            margin-left: auto;
+            margin-inline-start: auto;
 
             span {
                 font-weight: $weight--normal;
@@ -152,14 +152,14 @@
         svg {
             width: 10px;
             height: 14px;
-            margin-left: 10px;
-            margin-top: 0.35em;
+            margin-inline-start: 10px;
+            margin-block-start: 0.35em;
             fill: $color--dark-blue;
         }
     }
 
     &__heading {
-        margin-bottom: 0;
+        margin-block-end: 0;
 
         @include media-query(small-tablet) {
             width: 90%;
@@ -183,8 +183,8 @@
 
     &__show-button {
         position: absolute;
-        bottom: 0;
-        left: 0;
+        inset-block-end: 0;
+        inset-inline-start: 0;
         width: 100%;
         text-align: center;
         margin: 0;

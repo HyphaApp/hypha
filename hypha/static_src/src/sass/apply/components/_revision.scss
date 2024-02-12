@@ -11,7 +11,7 @@
         flex-direction: column;
         padding: 15px;
         background: $color--white;
-        border-bottom: 1px dashed $color--mid-grey;
+        border-block-end: 1px dashed $color--mid-grey;
 
         @include media-query(tablet-portrait) {
             flex-direction: row;
@@ -23,7 +23,7 @@
         }
 
         &:last-child {
-            border-bottom: 0;
+            border-block-end: 0;
         }
     }
 

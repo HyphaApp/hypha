@@ -5,21 +5,21 @@ body.fancybox-active {
 
 body.fancybox-iosfix {
     position: fixed;
-    left: 0;
-    right: 0;
+    inset-inline-start: 0;
+    inset-inline-end: 0;
 }
 
 .fancybox-is-hidden {
     position: absolute;
-    top: -9999px;
-    left: -9999px;
+    inset-block-start: -9999px;
+    inset-inline-start: -9999px;
     visibility: hidden;
 }
 
 .fancybox-container {
     position: fixed;
-    top: 0;
-    left: 0;
+    inset-block-start: 0;
+    inset-inline-start: 0;
     width: 100%;
     height: 100%;
     z-index: 99992;
@@ -36,10 +36,10 @@ body.fancybox-iosfix {
 .fancybox-bg,
 .fancybox-stage {
     position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
+    inset-block-start: 0;
+    inset-inline-end: 0;
+    inset-block-end: 0;
+    inset-inline-start: 0;
 }
 
 .fancybox-outer {
@@ -85,8 +85,8 @@ body.fancybox-iosfix {
 }
 
 .fancybox-infobar {
-    top: 0;
-    left: 0;
+    inset-block-start: 0;
+    inset-inline-start: 0;
     font-size: 13px;
     padding: 0 10px;
     height: 44px;
@@ -103,8 +103,8 @@ body.fancybox-iosfix {
 }
 
 .fancybox-toolbar {
-    top: 0;
-    right: 0;
+    inset-block-start: 0;
+    inset-inline-end: 0;
     margin: 0;
     padding: 0;
 }
@@ -122,8 +122,8 @@ body.fancybox-iosfix {
 
 .fancybox-slide {
     position: absolute;
-    top: 0;
-    left: 0;
+    inset-block-start: 0;
+    inset-inline-start: 0;
     width: 100%;
     height: 100%;
     margin: 0;
@@ -201,8 +201,8 @@ body.fancybox-iosfix {
 
 .fancybox-slide .fancybox-image-wrap {
     position: absolute;
-    top: 0;
-    left: 0;
+    inset-block-start: 0;
+    inset-inline-start: 0;
     margin: 0;
     padding: 0;
     border: 0;
@@ -237,8 +237,8 @@ body.fancybox-iosfix {
 .fancybox-image,
 .fancybox-spaceball {
     position: absolute;
-    top: 0;
-    left: 0;
+    inset-block-start: 0;
+    inset-inline-start: 0;
     width: 100%;
     height: 100%;
     margin: 0;
@@ -367,7 +367,7 @@ body.fancybox-iosfix {
 
 .fancybox-navigation button {
     position: absolute;
-    top: 50%;
+    inset-block-start: 50%;
     margin: -50px 0 0 0;
     z-index: 99997;
     background: transparent;
@@ -379,27 +379,27 @@ body.fancybox-iosfix {
 .fancybox-navigation button:before {
     content: "";
     position: absolute;
-    top: 30px;
-    right: 10px;
+    inset-block-start: 30px;
+    inset-inline-end: 10px;
     width: 40px;
     height: 40px;
     background: rgba(30, 30, 30, 0.6);
 }
 
 .fancybox-navigation .fancybox-button--arrow_left {
-    left: 0;
+    inset-inline-start: 0;
 }
 
 .fancybox-navigation .fancybox-button--arrow_right {
-    right: 0;
+    inset-inline-end: 0;
 }
 
 /* Close button on the top right corner of html content */
 
 .fancybox-close-small {
     position: absolute;
-    top: 5px;
-    right: 5px;
+    inset-block-start: 5px;
+    inset-inline-end: 5px;
     width: 40px;
     height: 40px;
     padding: 0;
@@ -426,8 +426,8 @@ body.fancybox-iosfix {
 
 .fancybox-slide--image .fancybox-close-small,
 .fancybox-slide--iframe .fancybox-close-small {
-    top: 0;
-    right: -40px;
+    inset-block-start: 0;
+    inset-inline-end: -40px;
 }
 
 .fancybox-slide--image .fancybox-close-small:after,
@@ -450,9 +450,9 @@ body.fancybox-iosfix {
 /* Caption */
 
 .fancybox-caption-wrap {
-    bottom: 0;
-    left: 0;
-    right: 0;
+    inset-block-end: 0;
+    inset-inline-start: 0;
+    inset-inline-end: 0;
     padding: 60px 2vw 0 2vw;
     background: linear-gradient(
         to bottom,
@@ -467,7 +467,7 @@ body.fancybox-iosfix {
 
 .fancybox-caption {
     padding: 30px 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.4);
+    border-block-start: 1px solid rgba(255, 255, 255, 0.4);
     font-size: 14px;
     color: #fff;
     line-height: 20px;
@@ -490,17 +490,17 @@ body.fancybox-iosfix {
 
 .fancybox-slide > .fancybox-loading {
     border: 6px solid rgba(100, 100, 100, 0.4);
-    border-top: 6px solid rgba(255, 255, 255, 0.6);
+    border-block-start: 6px solid rgba(255, 255, 255, 0.6);
     border-radius: 100%;
     height: 50px;
     width: 50px;
     animation: fancybox-rotate 0.8s infinite linear;
     background: transparent;
     position: absolute;
-    top: 50%;
-    left: 50%;
-    margin-top: -30px;
-    margin-left: -30px;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    margin-block-start: -30px;
+    margin-inline-start: -30px;
     z-index: 99999;
 }
 

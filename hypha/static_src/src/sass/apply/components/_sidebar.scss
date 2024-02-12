@@ -5,7 +5,7 @@
 
     &__inner {
         padding: 20px;
-        margin-bottom: 20px;
+        margin-block-end: 20px;
         border: 1px solid $color--mid-grey;
 
         &--light-blue {
@@ -19,8 +19,8 @@
                 display: block;
 
                 &--instructions {
-                    margin-top: 10px;
-                    margin-left: 10px;
+                    margin-block-start: 10px;
+                    margin-inline-start: 10px;
                 }
             }
         }
@@ -30,7 +30,7 @@
 
             &.is-visible {
                 display: block;
-                border-top: 0;
+                border-block-start: 0;
             }
         }
     }
@@ -40,7 +40,7 @@
         position: -webkit-sticky; /* for Safari */
         position: sticky;
         align-self: flex-start;
-        top: 0;
+        inset-block-start: 0;
     }
 
     &__paf-approvals {
@@ -56,7 +56,7 @@
     &__screening-selected-options {
         display: flex;
         flex-wrap: wrap;
-        margin-bottom: 1em;
+        margin-block-end: 1em;
     }
 
     &__screening-option {
@@ -64,8 +64,8 @@
         border: 1px solid $color--black-20;
         border-radius: 16px;
         padding: 6px;
-        padding-right: 12px;
-        padding-left: 12px;
+        padding-inline-end: 12px;
+        padding-inline-start: 12px;
         font-size: 0.8125rem;
     }
 
@@ -78,8 +78,8 @@
 
         &::after {
             position: absolute;
-            top: 50%;
-            right: 0;
+            inset-block-start: 50%;
+            inset-inline-end: 0;
             width: calc(100% - 60px);
             height: 1px;
             background-color: $color--black-20;

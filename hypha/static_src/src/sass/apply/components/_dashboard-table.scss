@@ -18,8 +18,8 @@
 
                 &::after {
                     position: absolute;
-                    top: 40%;
-                    margin-left: 5px;
+                    inset-block-start: 40%;
+                    margin-inline-start: 5px;
                 }
             }
 
@@ -29,8 +29,8 @@
 
                 &::after {
                     position: absolute;
-                    top: 50%;
-                    margin-left: 5px;
+                    inset-block-start: 50%;
+                    margin-inline-start: 5px;
                 }
             }
         }

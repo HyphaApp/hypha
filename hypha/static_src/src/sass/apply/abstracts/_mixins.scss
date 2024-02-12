@@ -173,18 +173,18 @@
     $perpendicular-borders: $size solid transparent;
 
     @if $direction == top or $direction == bottom {
-        border-right: $perpendicular-borders;
-        border-left: $perpendicular-borders;
+        border-inline-end: $perpendicular-borders;
+        border-inline-start: $perpendicular-borders;
     } @else if $direction == right or $direction == left {
-        border-top: $perpendicular-borders;
-        border-bottom: $perpendicular-borders;
+        border-block-start: $perpendicular-borders;
+        border-block-end: $perpendicular-borders;
     }
 }
 
 // used for the submission list items in the react app
 @mixin submission-list-item {
-    border-bottom: 2px solid $color--light-mid-grey;
-    border-right: 2px solid $color--light-mid-grey;
+    border-block-end: 2px solid $color--light-mid-grey;
+    border-inline-end: 2px solid $color--light-mid-grey;
 }
 
 @mixin table-ordering-styles {
@@ -198,8 +198,8 @@
 
                 &::after {
                     position: absolute;
-                    top: 50%;
-                    margin-left: 3px;
+                    inset-block-start: 50%;
+                    margin-inline-start: 3px;
                 }
 
                 a {

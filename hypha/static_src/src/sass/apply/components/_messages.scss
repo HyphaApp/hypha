@@ -1,8 +1,8 @@
 .messages {
     position: fixed;
-    top: 2px;
-    left: 0;
-    right: 0;
+    inset-block-start: 2px;
+    inset-inline-start: 0;
+    inset-inline-end: 0;
     z-index: 25;
     pointer-events: none;
 
@@ -55,14 +55,14 @@
     }
 
     &__copy {
-        padding-right: 20px;
+        padding-inline-end: 20px;
         margin: 0;
         flex: 1;
         word-break: break-word;
     }
 
     &__button {
-        margin-left: auto;
+        margin-inline-start: auto;
         color: $color--dark-blue;
         background-color: $color--white;
         display: inline-block;

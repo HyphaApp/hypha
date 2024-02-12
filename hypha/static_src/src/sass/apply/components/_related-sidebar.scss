@@ -1,7 +1,7 @@
 .related-sidebar {
     ul {
         list-style-type: circle;
-        padding-left: 20px;
+        padding-inline-start: 20px;
     }
 
     &--collaps {
@@ -12,8 +12,8 @@
 
     &__show-button {
         position: absolute;
-        bottom: 0;
-        left: 0;
+        inset-block-end: 0;
+        inset-inline-start: 0;
         width: 100%;
         text-align: center;
         margin: 0;

@@ -21,9 +21,9 @@
     }
 
     &__row {
-        padding-bottom: 1rem;
-        margin-bottom: 1rem;
-        border-bottom: 1px solid $color--mid-grey;
+        padding-block-end: 1rem;
+        margin-block-end: 1rem;
+        border-block-end: 1px solid $color--mid-grey;
 
         @include media-query(tablet-portrait) {
             display: flex;
@@ -33,9 +33,9 @@
         }
 
         &:last-child {
-            border-bottom: 0;
-            padding-bottom: 0;
-            margin-bottom: 0;
+            border-block-end: 0;
+            padding-block-end: 0;
+            margin-block-end: 0;
         }
     }
 
@@ -44,7 +44,7 @@
         align-items: center;
 
         &:first-child {
-            margin-bottom: 1rem;
+            margin-block-end: 1rem;
         }
 
         @include media-query(tablet-portrait) {
@@ -72,16 +72,16 @@
         height: 20px;
         stroke: $color--mid-grey;
         fill: transparent;
-        margin-right: 0.5rem;
+        margin-inline-end: 0.5rem;
 
         @include media-query(tablet-landscape) {
-            margin-right: 1rem;
+            margin-inline-end: 1rem;
         }
     }
 
     &__link {
         font-weight: $weight--bold;
-        margin-right: 1rem;
+        margin-inline-end: 1rem;
 
         &:disabled,
         &.is-disabled {
@@ -90,7 +90,7 @@
         }
 
         &:last-child {
-            margin-right: 0;
+            margin-inline-end: 0;
         }
     }
 
@@ -98,7 +98,7 @@
         font-weight: $weight--bold;
         display: flex;
         align-items: center;
-        margin-right: 1rem;
+        margin-inline-end: 1rem;
 
         &:disabled,
         &.is-disabled {
@@ -107,14 +107,14 @@
         }
 
         &:last-child {
-            margin-right: 0;
+            margin-inline-end: 0;
         }
     }
 
     &__info-text {
         @include media-query(tablet-landscape) {
             max-width: 65%;
-            margin-left: 3rem;
+            margin-inline-start: 3rem;
         }
     }
 
@@ -133,21 +133,21 @@
 
     &__document-list {
         width: 100%;
-        margin-top: 1rem;
-        padding-left: 0;
+        margin-block-start: 1rem;
+        padding-inline-start: 0;
     }
 
     &__document {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding-bottom: 1rem;
+        padding-block-end: 1rem;
         flex-wrap: wrap;
 
         &:last-child {
-            padding-bottom: 0;
+            padding-block-end: 0;
             margin: 0;
-            border-bottom: 0;
+            border-block-end: 0;
         }
     }
 
@@ -173,10 +173,10 @@
     }
 
     &__document-link {
-        margin-right: 1rem;
+        margin-inline-end: 1rem;
 
         &:last-child {
-            margin-right: 0;
+            margin-inline-end: 0;
         }
     }
 

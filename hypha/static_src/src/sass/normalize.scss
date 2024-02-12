@@ -86,7 +86,7 @@ a {
  */
 
 abbr[title] {
-    border-bottom: none; /* 1 */
+    border-block-end: none; /* 1 */
     text-decoration: underline; /* 2 */
     text-decoration: underline dotted; /* 2 */
 }
@@ -134,11 +134,11 @@ sup {
 }
 
 sub {
-    bottom: -0.25em;
+    inset-block-end: -0.25em;
 }
 
 sup {
-    top: -0.5em;
+    inset-block-start: -0.5em;
 }
 
 /* Embedded content

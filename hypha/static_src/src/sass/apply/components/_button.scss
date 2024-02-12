@@ -69,7 +69,7 @@
     }
 
     &--left-space {
-        margin-left: 20px;
+        margin-inline-start: 20px;
     }
 
     &--transparent {
@@ -163,8 +163,8 @@
 
     &--search {
         position: absolute;
-        top: 0.65em;
-        right: 10px;
+        inset-block-start: 0.65em;
+        inset-inline-end: 10px;
 
         svg {
             fill: $color--primary;
@@ -181,18 +181,18 @@
         width: 50%;
         padding: 10px;
         text-align: center;
-        margin-right: 20px;
+        margin-inline-end: 20px;
 
         &:last-child {
-            margin-right: 0;
+            margin-inline-end: 0;
         }
     }
 
     &--bottom-space {
-        margin-bottom: 10px;
+        margin-block-end: 10px;
 
         &:last-child {
-            margin-bottom: 0;
+            margin-block-end: 0;
         }
     }
 
@@ -207,8 +207,8 @@
 
         &::after {
             position: absolute;
-            top: 0;
-            right: 15px;
+            inset-block-start: 0;
+            inset-inline-end: 15px;
             font-size: 30px;
             content: "+";
             line-height: 1.2;
@@ -219,7 +219,7 @@
             background: $color--light-blue-90;
 
             &::after {
-                top: -12px;
+                inset-block-start: -12px;
                 content: "_";
             }
         }
@@ -230,19 +230,19 @@
     }
 
     &--top-space {
-        margin-top: 20px;
+        margin-block-start: 20px;
     }
 
     &--submit {
         min-width: 200px;
-        margin-right: 10px;
+        margin-inline-end: 10px;
         text-align: center;
     }
 
     &--compare {
         width: 75px;
         padding: 3px;
-        margin-top: 10px;
+        margin-block-start: 10px;
         font-size: 12px;
         font-weight: $weight--bold;
         text-align: center;
@@ -251,7 +251,7 @@
         transition: background-color, color, border, $quick-transition;
 
         @include media-query(tablet-portrait) {
-            margin-top: 0;
+            margin-block-start: 0;
         }
 
         &:focus,
@@ -269,7 +269,7 @@
         svg {
             width: 10px;
             height: 14px;
-            margin-left: 10px;
+            margin-inline-start: 10px;
             fill: $color--white;
         }
     }
@@ -304,8 +304,8 @@
                 background: $color--light-blue;
                 opacity: 0;
                 transition: opacity $transition;
-                bottom: 45px;
-                left: 50%;
+                inset-block-end: 45px;
+                inset-inline-start: 50%;
                 transform: translateX(-50%);
                 color: $color--white;
                 text-align: left;
@@ -317,8 +317,8 @@
             &::after {
                 @include triangle(bottom, $color--primary, 7px);
                 position: absolute;
-                top: -22px;
-                left: 50%;
+                inset-block-start: -22px;
+                inset-inline-start: 50%;
                 transform: translateX(-50%);
                 opacity: 0;
                 transition: opacity $transition;
@@ -349,7 +349,7 @@
             fill: $color--light-blue;
             width: 1em;
             height: 1em;
-            margin-right: 0.5rem;
+            margin-inline-end: 0.5rem;
             pointer-events: none;
         }
     }
@@ -379,8 +379,8 @@
                 content: "\2691";
                 color: $color--tomato;
                 position: absolute;
-                top: 4px;
-                padding-left: 5px;
+                inset-block-start: 4px;
+                padding-inline-start: 5px;
                 font-size: map-get($font-sizes, delta);
                 line-height: 1;
             }
@@ -390,16 +390,16 @@
     &--unflag {
         @include button($color--light-blue, $color--dark-blue);
         @include button--small;
-        padding-right: 18px;
+        padding-inline-end: 18px;
 
         @include media-query(tablet-landscape) {
-            padding-right: 18px;
+            padding-inline-end: 18px;
         }
 
         &.flagged {
             &::after {
-                top: 2px;
-                padding-left: 3px;
+                inset-block-start: 2px;
+                padding-inline-start: 3px;
                 font-size: map-get($font-sizes, zeta);
             }
         }
@@ -407,8 +407,8 @@
 
     &--float {
         position: absolute;
-        top: 2px;
-        right: 2px;
+        inset-block-start: 2px;
+        inset-inline-end: 2px;
     }
 
     // Two-factor

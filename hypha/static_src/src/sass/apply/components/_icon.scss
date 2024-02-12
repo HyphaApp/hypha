@@ -13,7 +13,7 @@
     &--person {
         width: 15px;
         height: 15px;
-        margin-right: 5px;
+        margin-inline-end: 5px;
         transition: fill $transition;
 
         .button:hover & {
@@ -25,7 +25,7 @@
         width: 40px;
         height: 40px;
         padding: 10px;
-        margin-right: 5px;
+        margin-inline-end: 5px;
     }
 
     &--close {
@@ -54,13 +54,13 @@
 
         // stylelint-disable-next-line selector-class-pattern
         .activity-feed__header & {
-            margin-left: 10px;
+            margin-inline-start: 10px;
         }
     }
 
     &--eye {
         position: relative;
-        top: 0.25em;
+        inset-block-start: 0.25em;
         align-self: center;
         width: 1em;
         height: 1em;
@@ -68,8 +68,8 @@
     }
 
     &--dashboard-tasks {
-        margin-left: 4px;
-        margin-right: 8px;
+        margin-inline-start: 4px;
+        margin-inline-end: 8px;
         width: 24px;
         height: 24px;
     }
@@ -86,7 +86,7 @@
         align-self: center;
         width: 1em;
         height: 1em;
-        margin-right: 2px;
+        margin-inline-end: 2px;
         stroke: $color--light-blue;
 
         .border:hover & {
@@ -98,7 +98,7 @@
         position: relative;
         align-self: center;
         height: 1.4em;
-        margin-right: 3px;
+        margin-inline-end: 3px;
         fill: $color--light-blue;
         stroke: $color--light-blue;
 
@@ -110,7 +110,7 @@
     &--request-changes {
         width: 20px;
         height: 20px;
-        margin-right: 4px;
-        margin-top: 2px;
+        margin-inline-end: 4px;
+        margin-block-start: 2px;
     }
 }

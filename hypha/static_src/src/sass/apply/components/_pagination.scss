@@ -2,8 +2,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 60px;
-    margin-top: 30px;
+    margin-block-end: 60px;
+    margin-block-start: 30px;
 
     .per-page {
         a.current {
@@ -42,8 +42,8 @@
 
             &::after {
                 position: absolute;
-                top: 18.5px;
-                left: 22.5px;
+                inset-block-start: 18.5px;
+                inset-inline-start: 22.5px;
             }
         }
     }
