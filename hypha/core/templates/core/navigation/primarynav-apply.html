@@ -50,7 +50,10 @@
                             </div>
                         </div>
                     {% else %}
-                        <a class="nav__link {% if target_url in request.path %}nav__link--active{% endif %}" href="{{ item.url }}" role="menuitem">
+                        <a class="nav__link {% if item.url in request.path %}nav__link--active{% endif %}"
+                           href="{{ item.url }}"
+                           role="menuitem"
+                        >
                             {{ item.title }}
                         </a>
                     {% endif %}
