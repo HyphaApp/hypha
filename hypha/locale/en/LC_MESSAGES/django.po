@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-06 18:00+0000\n"
+"POT-Creation-Date: 2024-02-12 08:55+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -570,7 +570,56 @@ msgstr ""
 msgid "Activities Summary - "
 msgstr ""
 
-#: hypha/apply/activity/models.py:233
+#: hypha/apply/activity/models.py:31
+msgid "applicant"
+msgstr ""
+
+#: hypha/apply/activity/models.py:32
+msgid "team"
+msgstr ""
+
+#: hypha/apply/activity/models.py:33
+msgid "reviewers"
+msgstr ""
+
+#: hypha/apply/activity/models.py:34
+msgid "partners"
+msgstr ""
+
+#: hypha/apply/activity/models.py:35
+msgid "all"
+msgstr ""
+
+#: hypha/apply/activity/models.py:40
+msgid "Applicants"
+msgstr ""
+
+#: hypha/apply/activity/models.py:41
+msgid "Staff only"
+msgstr ""
+
+#: hypha/apply/activity/models.py:42 hypha/apply/funds/tables.py:363
+#: hypha/apply/funds/tables.py:620
+#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:59
+#: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:47
+msgid "Reviewers"
+msgstr ""
+
+#: hypha/apply/activity/models.py:43 hypha/apply/funds/forms.py:477
+#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:60
+msgid "Partners"
+msgstr ""
+
+#: hypha/apply/activity/models.py:44
+#: hypha/apply/funds/templates/funds/includes/submission_stats.html:20
+msgid "All"
+msgstr ""
+
+#: hypha/apply/activity/models.py:45
+msgid "Applicants & Partners"
+msgstr ""
+
+#: hypha/apply/activity/models.py:313
 msgid "verb"
 msgstr ""
 
@@ -1489,18 +1538,20 @@ msgstr ""
 
 #: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:17
 #: hypha/apply/dashboard/templates/dashboard/community_dashboard.html:14
+#: hypha/apply/users/templates/users/account.html:19
 msgid "Submit a new application"
 msgstr ""
 
 #: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:18
 #: hypha/apply/dashboard/templates/dashboard/community_dashboard.html:15
+#: hypha/apply/users/templates/users/account.html:20
 msgid "Apply now for our open rounds"
 msgstr ""
 
 #: hypha/apply/dashboard/templates/dashboard/applicant_dashboard.html:21
 #: hypha/apply/dashboard/templates/dashboard/community_dashboard.html:16
 #: hypha/apply/home/templates/apply_home/includes/apply_listing.html:31
-#: hypha/templates/includes/apply_button.html:2
+#: hypha/apply/users/templates/users/account.html:23
 msgid "Apply"
 msgstr ""
 
@@ -1646,7 +1697,6 @@ msgstr ""
 
 #: hypha/apply/dashboard/templates/dashboard/dashboard.html:15
 #: hypha/apply/dashboard/templates/dashboard/partner_dashboard.html:12
-#: hypha/apply/users/templates/two_factor/_base.html:7
 #: hypha/apply/users/templates/users/account.html:8
 msgid "Welcome"
 msgstr ""
@@ -1693,8 +1743,8 @@ msgstr ""
 #: hypha/apply/dashboard/templates/dashboard/includes/submissions-waiting-for-review.html:13
 #: hypha/apply/dashboard/templates/dashboard/reviewer_dashboard.html:38
 #: hypha/apply/funds/templates/funds/includes/round-block-listing.html:30
-#: hypha/apply/funds/templates/funds/submissions_overview.html:54
-#: hypha/apply/funds/templates/funds/submissions_overview.html:64
+#: hypha/apply/funds/templates/funds/submissions_overview.html:29
+#: hypha/apply/funds/templates/funds/submissions_overview.html:39
 #: hypha/apply/projects/templates/application_projects/overview.html:34
 #: hypha/apply/projects/templates/application_projects/overview.html:48
 #: hypha/apply/projects/templates/application_projects/overview.html:63
@@ -2176,13 +2226,11 @@ msgstr ""
 #: hypha/apply/funds/admin_helpers.py:90 hypha/apply/funds/tables.py:591
 #: hypha/apply/funds/templates/funds/includes/round-block-listing.html:13
 #: hypha/apply/funds/templates/funds/includes/round-block.html:13
-#: hypha/templates/includes/relatedcontent_card.html:8
 msgid "Open"
 msgstr ""
 
 #: hypha/apply/funds/admin_helpers.py:91
 #: hypha/apply/funds/templates/funds/includes/round-block.html:18
-#: hypha/templates/includes/relatedcontent_card.html:10
 msgid "Closed"
 msgstr ""
 
@@ -2253,16 +2301,16 @@ msgstr ""
 msgid "Custom"
 msgstr ""
 
-#: hypha/apply/funds/forms.py:62 hypha/apply/funds/forms.py:81
+#: hypha/apply/funds/forms.py:63 hypha/apply/funds/forms.py:82
 msgid "Take action"
 msgstr ""
 
-#: hypha/apply/funds/forms.py:147 hypha/apply/projects/forms/project.py:421
+#: hypha/apply/funds/forms.py:148 hypha/apply/projects/forms/project.py:421
 #, python-brace-format
 msgid "Update lead from {lead} to"
 msgstr ""
 
-#: hypha/apply/funds/forms.py:186
+#: hypha/apply/funds/forms.py:187
 #: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:34
 #: hypha/apply/funds/templates/funds/applicationsubmission_detail.html:36
 #: hypha/apply/funds/templates/funds/applicationsubmission_simplified_detail.html:24
@@ -2280,43 +2328,38 @@ msgstr ""
 msgid "Lead"
 msgstr ""
 
-#: hypha/apply/funds/forms.py:242 hypha/apply/funds/forms.py:383
+#: hypha/apply/funds/forms.py:243 hypha/apply/funds/forms.py:384
 msgid "External Reviewers"
 msgstr ""
 
-#: hypha/apply/funds/forms.py:317
+#: hypha/apply/funds/forms.py:318
 msgid "Can't unassign, just change, because review already submitted"
 msgstr ""
 
-#: hypha/apply/funds/forms.py:323 hypha/apply/funds/forms.py:434
+#: hypha/apply/funds/forms.py:324 hypha/apply/funds/forms.py:435
 msgid "Users cannot be assigned to multiple roles."
 msgstr ""
 
-#: hypha/apply/funds/forms.py:422
+#: hypha/apply/funds/forms.py:423
 msgid ""
 "Make sure all submissions support external reviewers and you are lead for "
 "all the selected submissions."
 msgstr ""
 
-#: hypha/apply/funds/forms.py:454
+#: hypha/apply/funds/forms.py:455
 msgid "---"
 msgstr ""
 
-#: hypha/apply/funds/forms.py:458
+#: hypha/apply/funds/forms.py:459
 #, python-brace-format
 msgid "{role_name} Reviewer"
 msgstr ""
 
-#: hypha/apply/funds/forms.py:476
-#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:60
-msgid "Partners"
-msgstr ""
-
-#: hypha/apply/funds/forms.py:545
+#: hypha/apply/funds/forms.py:548
 msgid "Meta terms"
 msgstr ""
 
-#: hypha/apply/funds/forms.py:548
+#: hypha/apply/funds/forms.py:551
 msgid "Meta terms are hierarchical in nature."
 msgstr ""
 
@@ -2548,12 +2591,6 @@ msgstr ""
 msgid "No Status"
 msgstr ""
 
-#: hypha/apply/funds/tables.py:363 hypha/apply/funds/tables.py:620
-#: hypha/apply/funds/templates/funds/includes/admin_primary_actions.html:59
-#: hypha/apply/funds/templates/funds/includes/table_filter_and_search.html:47
-msgid "Reviewers"
-msgstr ""
-
 #: hypha/apply/funds/tables.py:369
 msgid "Terms"
 msgstr ""
@@ -2713,7 +2750,7 @@ msgstr ""
 #: hypha/apply/projects/templates/application_projects/invoice_confirm_delete.html:33
 #: hypha/apply/review/templates/review/review_confirm_delete.html:17
 #: hypha/apply/review/templates/review/reviewopinion_confirm_delete.html:17
-#: hypha/apply/users/templates/elevate/elevate.html:31
+#: hypha/apply/users/templates/elevate/elevate.html:32
 #: hypha/apply/users/templates/two_factor/admin/disable.html:22
 #: hypha/apply/users/templates/two_factor/profile/disable.html:36
 #: hypha/apply/users/templates/users/partials/confirmation_code_sent.html:43
@@ -3122,22 +3159,10 @@ msgstr ""
 
 #: hypha/apply/funds/templates/funds/includes/submission_stats.html:18
 #: hypha/apply/funds/templates/funds/reviewer_leaderboard.html:5
-#: hypha/apply/funds/templates/funds/reviewer_leaderboard.html:25
 #: hypha/apply/funds/templates/funds/reviewer_leaderboard_detail.html:5
-#: hypha/apply/funds/templates/funds/staff_assignments.html:22
-#: hypha/apply/funds/templates/funds/submissions_overview.html:28
-#: hypha/apply/funds/templates/funds/submissions_result.html:20
 #: hypha/apply/review/templates/review/review_list.html:4
 #: hypha/apply/review/templates/review/review_list.html:10
 msgid "Reviews"
-msgstr ""
-
-#: hypha/apply/funds/templates/funds/includes/submission_stats.html:20
-#: hypha/apply/funds/templates/funds/reviewer_leaderboard.html:19
-#: hypha/apply/funds/templates/funds/staff_assignments.html:16
-#: hypha/apply/funds/templates/funds/submissions_overview.html:18
-#: hypha/apply/funds/templates/funds/submissions_result.html:14
-msgid "All"
 msgstr ""
 
 #: hypha/apply/funds/templates/funds/includes/submission_stats.html:20
@@ -3225,23 +3250,7 @@ msgstr ""
 msgid "Track and explore the reviews"
 msgstr ""
 
-#: hypha/apply/funds/templates/funds/reviewer_leaderboard.html:22
-#: hypha/apply/funds/templates/funds/staff_assignments.html:5
-#: hypha/apply/funds/templates/funds/staff_assignments.html:10
-#: hypha/apply/funds/templates/funds/staff_assignments.html:19
-#: hypha/apply/funds/templates/funds/submissions_overview.html:23
-#: hypha/apply/funds/templates/funds/submissions_result.html:17
-msgid "Staff assignments"
-msgstr ""
-
-#: hypha/apply/funds/templates/funds/reviewer_leaderboard.html:28
-#: hypha/apply/funds/templates/funds/staff_assignments.html:25
-#: hypha/apply/funds/templates/funds/submissions_overview.html:32
-#: hypha/apply/funds/templates/funds/submissions_result.html:23
-msgid "Results"
-msgstr ""
-
-#: hypha/apply/funds/templates/funds/reviewer_leaderboard.html:36
+#: hypha/apply/funds/templates/funds/reviewer_leaderboard.html:16
 msgid "All reviewers"
 msgstr ""
 
@@ -3268,6 +3277,11 @@ msgstr ""
 
 #: hypha/apply/funds/templates/funds/rounds.html:16
 msgid "Explore current and past rounds"
+msgstr ""
+
+#: hypha/apply/funds/templates/funds/staff_assignments.html:5
+#: hypha/apply/funds/templates/funds/staff_assignments.html:10
+msgid "Staff assignments"
 msgstr ""
 
 #: hypha/apply/funds/templates/funds/staff_assignments.html:11
@@ -3327,7 +3341,7 @@ msgid "View your submission"
 msgstr ""
 
 #: hypha/apply/funds/templates/funds/submission-success.html:77
-#: hypha/apply/users/templates/users/login.html:59
+#: hypha/apply/users/templates/users/login.html:64
 #: hypha/apply/users/templates/users/password_reset/complete.html:13
 #: hypha/apply/users/templates/users/password_reset/form.html:36
 #: hypha/apply/users/templates/users/register.html:32
@@ -3361,7 +3375,7 @@ msgid "View application"
 msgstr ""
 
 #: hypha/apply/funds/templates/funds/submissions.html:11
-#: hypha/apply/funds/templates/funds/submissions_overview.html:49
+#: hypha/apply/funds/templates/funds/submissions_overview.html:24
 #: hypha/apply/funds/templates/submissions/all.html:12
 msgid "All Submissions"
 msgstr ""
@@ -3382,7 +3396,7 @@ msgstr ""
 msgid "Track and explore recent submissions"
 msgstr ""
 
-#: hypha/apply/funds/templates/funds/submissions_overview.html:60
+#: hypha/apply/funds/templates/funds/submissions_overview.html:35
 #: hypha/apply/funds/templates/funds/submissions_staff_flagged.html:6
 msgid "Staff Flagged Submissions"
 msgstr ""
@@ -3396,27 +3410,27 @@ msgstr ""
 msgid "Track and explore submission results"
 msgstr ""
 
-#: hypha/apply/funds/templates/funds/submissions_result.html:32
+#: hypha/apply/funds/templates/funds/submissions_result.html:15
 msgid "Summary"
 msgstr ""
 
-#: hypha/apply/funds/templates/funds/submissions_result.html:36
+#: hypha/apply/funds/templates/funds/submissions_result.html:19
 msgid "Filter submissions to calculate values"
 msgstr ""
 
-#: hypha/apply/funds/templates/funds/submissions_result.html:39
+#: hypha/apply/funds/templates/funds/submissions_result.html:22
 msgid "Number of submission"
 msgstr ""
 
-#: hypha/apply/funds/templates/funds/submissions_result.html:40
+#: hypha/apply/funds/templates/funds/submissions_result.html:23
 msgid "Average value"
 msgstr ""
 
-#: hypha/apply/funds/templates/funds/submissions_result.html:41
+#: hypha/apply/funds/templates/funds/submissions_result.html:24
 msgid "Total value"
 msgstr ""
 
-#: hypha/apply/funds/templates/funds/submissions_result.html:44
+#: hypha/apply/funds/templates/funds/submissions_result.html:27
 msgid "Some submissions lack values and are not included."
 msgstr ""
 
@@ -4588,7 +4602,6 @@ msgid "No reports submitted"
 msgstr ""
 
 #: hypha/apply/projects/templates/application_projects/includes/reports.html:96
-#: hypha/templates/blocks/more_block.html:6
 msgid "Show more"
 msgstr ""
 
@@ -5717,7 +5730,7 @@ msgid "Only includes active, non-superusers"
 msgstr ""
 
 #: hypha/apply/users/forms.py:195
-#: hypha/apply/users/templates/users/account.html:39
+#: hypha/apply/users/templates/users/account.html:50
 #: hypha/apply/users/templates/users/activation/email.txt:13
 msgid "Password"
 msgstr ""
@@ -5860,17 +5873,17 @@ msgstr ""
 msgid "Confirm access"
 msgstr ""
 
-#: hypha/apply/users/templates/elevate/elevate.html:44
-#: hypha/apply/users/templates/elevate/elevate.html:60
+#: hypha/apply/users/templates/elevate/elevate.html:45
+#: hypha/apply/users/templates/elevate/elevate.html:61
 msgid "Send a confirmation code to your email"
 msgstr ""
 
-#: hypha/apply/users/templates/elevate/elevate.html:51
+#: hypha/apply/users/templates/elevate/elevate.html:52
 #: hypha/apply/users/templates/users/partials/confirmation_code_sent.html:59
 msgid "Having problems?"
 msgstr ""
 
-#: hypha/apply/users/templates/elevate/elevate.html:71
+#: hypha/apply/users/templates/elevate/elevate.html:72
 msgid ""
 "\n"
 "                <strong>Tip:</strong> You are entering sudo mode. After "
@@ -5880,20 +5893,18 @@ msgid ""
 "            "
 msgstr ""
 
-#: hypha/apply/users/templates/two_factor/_base.html:9
-#: hypha/apply/users/templates/two_factor/_base_focus.html:19
-#: hypha/apply/users/templates/users/account.html:13
-msgid "Go to my dashboard"
-msgstr ""
-
-#: hypha/apply/users/templates/two_factor/_base_focus.html:8
-#: hypha/apply/users/templates/two_factor/core/setup_complete.html:5
+#: hypha/apply/users/templates/two_factor/_base.html:8
 msgid "Back to Account"
 msgstr ""
 
-#: hypha/apply/users/templates/two_factor/_base_focus.html:12
-#: hypha/apply/users/templates/users/account.html:57
+#: hypha/apply/users/templates/two_factor/_base.html:12
+#: hypha/apply/users/templates/users/account.html:68
 msgid "Two-Factor Authentication (2FA)"
+msgstr ""
+
+#: hypha/apply/users/templates/two_factor/_base.html:19
+#: hypha/apply/users/templates/users/account.html:13
+msgid "Go to my dashboard"
 msgstr ""
 
 #: hypha/apply/users/templates/two_factor/_wizard_actions.html:6
@@ -6064,23 +6075,18 @@ msgid ""
 "below. Your YubiKey will be linked to your account."
 msgstr ""
 
-#: hypha/apply/users/templates/two_factor/core/setup_complete.html:8
-msgid "Two-Factor Authentication(2FA)"
-msgstr ""
-
-#: hypha/apply/users/templates/two_factor/core/setup_complete.html:10
+#: hypha/apply/users/templates/two_factor/core/setup_complete.html:7
 msgid "Congratulations, you've successfully enabled two-factor authentication."
 msgstr ""
 
-#: hypha/apply/users/templates/two_factor/core/setup_complete.html:12
+#: hypha/apply/users/templates/two_factor/core/setup_complete.html:10
 msgid ""
 "We strongly recommend you to save the backup codes. To get the backup codes "
 "you can continue to Show Codes."
 msgstr ""
 
-#: hypha/apply/users/templates/two_factor/core/setup_complete.html:16
+#: hypha/apply/users/templates/two_factor/core/setup_complete.html:15
 #: hypha/apply/users/templates/two_factor/core/setup_complete.html:22
-#: hypha/apply/users/templates/two_factor/profile/profile.html:52
 msgid "Show Codes"
 msgstr ""
 
@@ -6090,8 +6096,7 @@ msgid ""
 "device. To enable account recovery, add a phone number."
 msgstr ""
 
-#: hypha/apply/users/templates/two_factor/core/setup_complete.html:24
-#: hypha/apply/users/templates/two_factor/profile/profile.html:38
+#: hypha/apply/users/templates/two_factor/core/setup_complete.html:26
 msgid "Add Phone Number"
 msgstr ""
 
@@ -6132,84 +6137,6 @@ msgid ""
 "recommend reenabling it when you can."
 msgstr ""
 
-#: hypha/apply/users/templates/two_factor/profile/profile.html:6
-#: hypha/apply/users/templates/users/change_password.html:11
-msgid "Back to account"
-msgstr ""
-
-#: hypha/apply/users/templates/two_factor/profile/profile.html:9
-msgid "Two-Factor Authentication"
-msgstr ""
-
-#: hypha/apply/users/templates/two_factor/profile/profile.html:13
-msgid "Tokens will be generated by your token generator."
-msgstr ""
-
-#: hypha/apply/users/templates/two_factor/profile/profile.html:15
-#, python-format
-msgid "Primary method: %(primary)s"
-msgstr ""
-
-#: hypha/apply/users/templates/two_factor/profile/profile.html:17
-msgid "Tokens will be generated by your YubiKey."
-msgstr ""
-
-#: hypha/apply/users/templates/two_factor/profile/profile.html:21
-msgid "Backup Phone Numbers"
-msgstr ""
-
-#: hypha/apply/users/templates/two_factor/profile/profile.html:22
-msgid ""
-"If your primary method is not available, we are able to send backup tokens "
-"to the phone numbers listed below."
-msgstr ""
-
-#: hypha/apply/users/templates/two_factor/profile/profile.html:29
-msgid "Are you sure?"
-msgstr ""
-
-#: hypha/apply/users/templates/two_factor/profile/profile.html:32
-msgid "Unregister"
-msgstr ""
-
-#: hypha/apply/users/templates/two_factor/profile/profile.html:41
-msgid "Backup Tokens"
-msgstr ""
-
-#: hypha/apply/users/templates/two_factor/profile/profile.html:43
-msgid ""
-"If you don't have any device with you, you can access your account using "
-"backup tokens."
-msgstr ""
-
-#: hypha/apply/users/templates/two_factor/profile/profile.html:45
-#, python-format
-msgid "You have only one backup token remaining."
-msgid_plural "You have %(counter)s backup tokens remaining."
-msgstr[0] ""
-msgstr[1] ""
-
-#: hypha/apply/users/templates/two_factor/profile/profile.html:54
-#: hypha/apply/users/templates/two_factor/profile/profile.html:58
-msgid "Disable Two-Factor Authentication"
-msgstr ""
-
-#: hypha/apply/users/templates/two_factor/profile/profile.html:55
-msgid ""
-"However we strongly discourage you to do so, you can also disable two-factor "
-"authentication for your account."
-msgstr ""
-
-#: hypha/apply/users/templates/two_factor/profile/profile.html:60
-msgid ""
-"Two-factor authentication is not enabled for your account. Enable two-factor "
-"authentication for enhanced account security."
-msgstr ""
-
-#: hypha/apply/users/templates/two_factor/profile/profile.html:64
-msgid "Enable Two-Factor Authentication"
-msgstr ""
-
 #: hypha/apply/users/templates/users/account.html:4
 #: hypha/apply/users/templates/wagtailusers/users/edit.html:22
 msgid "Account"
@@ -6219,42 +6146,42 @@ msgstr ""
 msgid "Manage your account details and security."
 msgstr ""
 
-#: hypha/apply/users/templates/users/account.html:21
+#: hypha/apply/users/templates/users/account.html:32
 msgid "Profile"
 msgstr ""
 
-#: hypha/apply/users/templates/users/account.html:28
+#: hypha/apply/users/templates/users/account.html:39
 msgid "Update Profile"
 msgstr ""
 
-#: hypha/apply/users/templates/users/account.html:35
+#: hypha/apply/users/templates/users/account.html:46
 msgid "Account Security"
 msgstr ""
 
-#: hypha/apply/users/templates/users/account.html:43
+#: hypha/apply/users/templates/users/account.html:54
 #: hypha/apply/users/templates/users/change_password.html:3
 msgid "Update password"
 msgstr ""
 
-#: hypha/apply/users/templates/users/account.html:50
+#: hypha/apply/users/templates/users/account.html:61
 msgid "Set Password"
 msgstr ""
 
-#: hypha/apply/users/templates/users/account.html:59
+#: hypha/apply/users/templates/users/account.html:71
 msgid "Backup codes"
 msgstr ""
 
-#: hypha/apply/users/templates/users/account.html:60
+#: hypha/apply/users/templates/users/account.html:72
 #: hypha/apply/users/templates/wagtailusers/users/edit.html:77
 msgid "Disable 2FA"
 msgstr ""
 
-#: hypha/apply/users/templates/users/account.html:62
+#: hypha/apply/users/templates/users/account.html:74
 msgid "Enable 2FA"
 msgstr ""
 
-#: hypha/apply/users/templates/users/account.html:70
-#: hypha/apply/users/templates/users/account.html:78
+#: hypha/apply/users/templates/users/account.html:83
+#: hypha/apply/users/templates/users/account.html:91
 msgid "Become"
 msgstr ""
 
@@ -6341,6 +6268,10 @@ msgstr ""
 
 #: hypha/apply/users/templates/users/change_password.html:8
 msgid "Change Password"
+msgstr ""
+
+#: hypha/apply/users/templates/users/change_password.html:11
+msgid "Back to account"
 msgstr ""
 
 #: hypha/apply/users/templates/users/email_change/confirm_email.txt:4
@@ -6446,44 +6377,41 @@ msgid ""
 "App."
 msgstr ""
 
-#: hypha/apply/users/templates/users/login.html:24
-msgid ""
-"Please enter one of the backup codes to login to your account. Those codes "
-"were generated for you during 2FA setup to print or keep safe in a password "
-"manager."
+#: hypha/apply/users/templates/users/login.html:26
+msgid "Please enter one of the backup codes to login to your account."
 msgstr ""
 
-#: hypha/apply/users/templates/users/login.html:46
+#: hypha/apply/users/templates/users/login.html:51
 msgid "Forgot your password?"
 msgstr ""
 
-#: hypha/apply/users/templates/users/login.html:62
+#: hypha/apply/users/templates/users/login.html:67
 msgid "Create account"
 msgstr ""
 
-#: hypha/apply/users/templates/users/login.html:74
+#: hypha/apply/users/templates/users/login.html:79
 #: hypha/apply/users/templates/users/passwordless_login_signup.html:54
 #, python-format
 msgid "Log in with your %(ORG_SHORT_NAME)s email"
 msgstr ""
 
-#: hypha/apply/users/templates/users/login.html:87
+#: hypha/apply/users/templates/users/login.html:92
 msgid "Or, alternatively, use one of your backup phones:"
 msgstr ""
 
-#: hypha/apply/users/templates/users/login.html:102
-msgid "As a last resort, you can use a backup codes:"
+#: hypha/apply/users/templates/users/login.html:107
+msgid "As a last resort, you can use a backup codes: "
 msgstr ""
 
-#: hypha/apply/users/templates/users/login.html:104
-msgid "Use Backup Code"
+#: hypha/apply/users/templates/users/login.html:115
+msgid "Use a Backup Code"
 msgstr ""
 
-#: hypha/apply/users/templates/users/login.html:117
+#: hypha/apply/users/templates/users/login.html:129
 msgid "Verification Code"
 msgstr ""
 
-#: hypha/apply/users/templates/users/login.html:121
+#: hypha/apply/users/templates/users/login.html:133
 msgid "Backup Code"
 msgstr ""
 
@@ -6744,6 +6672,10 @@ msgstr ""
 msgid "Accept tracking cookies."
 msgstr ""
 
+#: hypha/core/templates/core/navigation/primarynav-apply.html:13
+msgid "Menu Item"
+msgstr ""
+
 #: hypha/public/utils/models.py:27
 msgid "Default site logo"
 msgstr ""
@@ -6776,10 +6708,6 @@ msgstr ""
 msgid "Log out"
 msgstr ""
 
-#: hypha/templates/blocks/apply_link_block.html:4
-msgid "Apply for the"
-msgstr ""
-
 #: hypha/templates/django/forms/widgets/number.html:11
 msgid "This must be a number"
 msgstr ""
@@ -6790,10 +6718,6 @@ msgstr ""
 
 #: hypha/templates/includes/register_button.html:3
 msgid "Sign up"
-msgstr ""
-
-#: hypha/templates/includes/relatedcontent.html:2
-msgid "You might also like…"
 msgstr ""
 
 #: hypha/templates/password_required.html:4
