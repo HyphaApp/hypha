@@ -5,7 +5,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("activity", "0078_activityattachment"),
+        ("activity", "0079_alter_activity_visibility"),
     ]
 
     operations = [
