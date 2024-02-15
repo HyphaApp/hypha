@@ -31,17 +31,17 @@
                                 x-show="open"
                                 x-transition
                                 @click.outside="open = false"
-                                class="min-w-48 absolute block bg-white shadow-xl z-20 mt-4 border rounded-sm"
+                                class="min-w-48 absolute block bg-white shadow-xl z-20 mt-4 border-y rounded-sm"
                             >
                                 {% for sub_item in item.sub_items %}
                                     <a
                                         href="{{ sub_item.url }}"
                                         class="pr-4 py-3 block font-normal hover:bg-slate-100
-                                               focus-visible:outline-dashed outline-1 border-dark-blue transition-colors
+                                               focus-visible:outline-dashed outline-1 transition-colors
                                                {% if sub_item.url == request.path %}
-                                                   pl-3 border-l-4 text-dark-blue font-semibold
+                                                   border-l-dark-blue bg-slate-100 pl-3 border-l-4 border-r text-dark-blue font-semibold
                                                {% else %}
-                                                   pl-4 text-black hover:text-dark-blue hover:font-semibold
+                                                   border-x pl-4 text-black hover:text-dark-blue hover:font-semibold
                                                {% endif %}"
                                     >
                                         {{ sub_item.title }}
