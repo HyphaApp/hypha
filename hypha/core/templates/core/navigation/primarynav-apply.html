@@ -29,7 +29,13 @@
                                 x-trap.noautofocus="open"
                                 x-on:keydown.escape="open = false"
                                 x-show="open"
-                                x-transition
+                                x-transition:enter="transition ease-out duration-250"
+                                x-transition:enter-start="transform opacity-0 scale-95 -translate-y-3"
+                                x-transition:enter-end="transform opacity-100 scale-100 translate-y-0"
+                                x-transition:leave="transition ease-in duration-75"
+                                x-transition:leave-start="transform opacity-100 scale-100 translate-y-0"
+                                x-transition:leave-end="transform opacity-0 scale-95 -translate-y-3"
+                                {% comment %} x-transition {% endcomment %}
                                 @click.outside="open = false"
                                 class="min-w-48 absolute block bg-white shadow-xl z-20 mt-4 border-y rounded-sm"
                             >
