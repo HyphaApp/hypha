@@ -21,3 +21,11 @@ class CreateProjectSOWFormView(CreateProjectApprovalFormView):
 
 class EditProjectSOWFormView(EditProjectApprovalFormView):
     pass
+
+
+class CreateProjectReportFormView(CreateProjectApprovalFormView):
+    pass
+
+
+class EditProjectReportFormView(EditProjectApprovalFormView):
+    pass

@@ -4,6 +4,7 @@ from wagtail.admin.panels import FieldPanel
 from wagtail.fields import StreamField
 from wagtail.models import Orderable
 
+from ...projects.models.project import ProjectReportForm
 from ..blocks import ApplicationCustomFormFieldsBlock
 from ..edit_handlers import FilteredFieldPanel
 
@@ -268,3 +269,40 @@ class LabBaseProjectApprovalForm(AbstractRelatedProjectApprovalForm):
 
 class LabBaseProjectSOWForm(AbstractRelatedProjectSOWForm):
     lab = ParentalKey("LabBase", related_name="sow_forms")
+
+
+class AbstractRelatedProjectReportForm(Orderable):
+    class Meta(Orderable.Meta):
+        abstract = True
+
+    form = models.ForeignKey(to=ProjectReportForm, on_delete=models.PROTECT)
+
+    @property
+    def fields(self):
+        return self.form.form_fields
+
+    def __eq__(self, other):
+        try:
+            if self.fields == other.fields and self.sort_order == other.sort_order:
+                # If the objects are saved to db. pk should also be compared
+                if hasattr(other, "pk") and hasattr(self, "pk"):
+                    return self.pk == other.pk
+                return True
+            return False
+        except AttributeError:
+            return False
+
+    def __hash__(self):
+        fields = [field.id for field in self.fields]
+        return hash((tuple(fields), self.sort_order, self.pk))
+
+    def __str__(self):
+        return self.form.name
+
+
+class ApplicationBaseProjectReportForm(AbstractRelatedProjectReportForm):
+    application = ParentalKey("ApplicationBase", related_name="report_forms")
+
+
+class LabBaseProjectReportForm(AbstractRelatedProjectReportForm):
+    lab = ParentalKey("LabBase", related_name="report_forms")

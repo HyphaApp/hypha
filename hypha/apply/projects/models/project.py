@@ -1,6 +1,7 @@
 import decimal
 import json
 import logging
+import warnings
 
 from django import forms
 from django.apps import apps
@@ -30,7 +31,8 @@ from hypha.apply.stream_forms.files import StreamFieldDataEncoder
 from hypha.apply.stream_forms.models import BaseStreamForm
 from hypha.apply.utils.storage import PrivateStorage
 
-from ..blocks import ProjectApprovalFormCustomFormFieldsBlock
+from ...determinations.options import ACCEPTED
+from ..blocks import ProjectFormCustomFormFieldsBlock
 from .vendor import Vendor
 
 logger = logging.getLogger(__name__)
@@ -87,6 +89,8 @@ PROJECT_PUBLIC_STATUSES = [
     (CLOSING, _("Closing")),
     (COMPLETE, _("Complete")),
 ]
+
+DEFAULT_PROJECT_STATUS = DRAFT
 
 
 class ProjectQuerySet(models.QuerySet):
@@ -215,11 +219,13 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
     proposed_start = models.DateTimeField(_("Proposed Start Date"), null=True)
     proposed_end = models.DateTimeField(_("Proposed End Date"), null=True)
 
-    status = models.TextField(choices=PROJECT_STATUS_CHOICES, default=DRAFT)
+    status = models.TextField(
+        choices=PROJECT_STATUS_CHOICES, default=DEFAULT_PROJECT_STATUS
+    )
 
     form_data = models.JSONField(encoder=StreamFieldDataEncoder, default=dict)
     form_fields = StreamField(
-        ProjectApprovalFormCustomFormFieldsBlock(), null=True, use_json_field=True
+        ProjectFormCustomFormFieldsBlock(), null=True, use_json_field=True
     )
 
     # tracks read/write state of the Project
@@ -290,6 +296,15 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
             )
             return None
 
+        # The PROJECTS_INITIAL_STATUS env var allows a funder to skip straight to a given Project stage aka status.
+        # Note this is case-sensitive and all the choice keys are lower case. So use a lower-case string setting.
+        status = DEFAULT_PROJECT_STATUS
+        if settings.PROJECTS_INITIAL_STATUS and any(
+            CHOICE[0] == str(settings.PROJECTS_INITIAL_STATUS)
+            for CHOICE in PROJECT_STATUS_CHOICES
+        ):
+            status = settings.PROJECTS_INITIAL_STATUS
+
         # OneToOne relations on the targetted model cannot be accessed without
         # an exception when the relation doesn't exist (is None).  Since we
         # want to fail fast here, we can use hasattr instead.
@@ -311,6 +326,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
             vendor=vendor,
             lead=lead if lead else None,
             value=submission.form_data.get("value", 0),
+            status=status,
         )
 
     @property
@@ -319,10 +335,30 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         first_approved_contract = (
             self.contracts.approved().order_by("approved_at").first()
         )
-        if not first_approved_contract:
-            return None
 
-        return first_approved_contract.approved_at.date()
+        if first_approved_contract:
+            return first_approved_contract.approved_at.date()
+
+        # Failing that, assume a project starts with the first determination that accepted the submission.
+        first_accepted_determination = (
+            self.submission.determinations.filter(
+                outcome=ACCEPTED,
+                is_draft=False,
+            )
+            .order_by("created_at")
+            .first()
+        )
+
+        if first_accepted_determination:
+            return first_accepted_determination.created_at.date()
+
+        # If neither an approved contract nor an accepted determination are found, something is wrong and a meaningful
+        # error or warning may be appreciated by future developers.
+        warnings.warn(
+            "No related contracts or determinations were approved/accepted, so no date can be found.",
+            stacklevel=2,
+        )
+        return None
 
     @property
     def end_date(self):
@@ -455,15 +491,13 @@ class ProjectSOW(BaseStreamForm, AccessFormData, models.Model):
     )
     form_data = models.JSONField(encoder=StreamFieldDataEncoder, default=dict)
     form_fields = StreamField(
-        ProjectApprovalFormCustomFormFieldsBlock(), null=True, use_json_field=True
+        ProjectFormCustomFormFieldsBlock(), null=True, use_json_field=True
     )
 
 
 class ProjectBaseStreamForm(BaseStreamForm, models.Model):
     name = models.CharField(max_length=255)
-    form_fields = StreamField(
-        ProjectApprovalFormCustomFormFieldsBlock(), use_json_field=True
-    )
+    form_fields = StreamField(ProjectFormCustomFormFieldsBlock(), use_json_field=True)
 
     panels = [
         FieldPanel("name"),
@@ -482,6 +516,17 @@ class ProjectApprovalForm(ProjectBaseStreamForm):
 
 
 class ProjectSOWForm(ProjectBaseStreamForm):
+    pass
+
+
+class ProjectReportForm(ProjectBaseStreamForm):
+    """
+    An Applicant Report Form can be attached to a Fund to collect reports from Applicants aka Grantees during the
+    Project. It is only relevant for accepted or granted Submissions which is why it is attached to Project. It is
+    similar to the other Forms (PAF, SOW) in that it uses StreamForm to allow maximum flexibility in form creation.
+    See Also ReportVersion where the fields from the form get copied and the response data gets filled in.
+    """
+
     pass
 
 
