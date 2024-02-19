@@ -73,6 +73,7 @@
         <!-- modules -->
         <script type="module" src="{% static 'js/esm/github-relative-time-element-4-3-0.js' %}"></script>
         <script type="module" src="{% static 'js/esm/github-filter-input-element-0-1-1.js' %}"></script>
+        {% include "includes/head_end.html" %}
     </head>
 
     <body
@@ -139,5 +140,6 @@
                 </script>
             {% endif %}
         {% endblock sentry_sdk %}
+        {% include "includes/body_end.html" %}
     </body>
 </html>
