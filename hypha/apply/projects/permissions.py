@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.core.exceptions import PermissionDenied
 
 from hypha.apply.activity.adapters.utils import get_users_for_groups
@@ -54,8 +53,17 @@ def can_upload_contract(user, project, **kwargs):
     if user.is_contracting:
         return True, "Contracting team can upload the contract"
 
-    if user.is_apply_staff and settings.STAFF_UPLOAD_CONTRACT:
-        return True, "Staff can upload contract as set in settings"
+    request = kwargs.get("request", None)
+
+    if request is not None:
+        project_settings = ProjectSettings.for_request(request)
+
+        if (
+            user.is_apply_staff
+            and project_settings is not None
+            and project_settings.staff_upload_contract
+        ):
+            return True, "Staff can upload contract because wagtail settings allow it."
 
     return False, "Forbidden Error"
 

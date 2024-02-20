@@ -1,4 +1,4 @@
-from django.test import TestCase
+from django.test import RequestFactory, TestCase
 
 from hypha.apply.users.tests.factories import (
     ApplicantFactory,
@@ -30,69 +30,72 @@ from .factories import ContractFactory, InvoiceFactory, ProjectFactory
 class TestContractTools(TestCase):
     def test_staff_cant_upload_contract(self):
         staff = StaffFactory()
+        request = RequestFactory().post(path="apply/projects/13")
 
         project = ProjectFactory(status=DRAFT)
-        self.assertFalse(user_can_upload_contract(project, staff))
+        self.assertFalse(user_can_upload_contract(project, staff, request))
 
         project = ProjectFactory(status=INTERNAL_APPROVAL)
-        self.assertFalse(user_can_upload_contract(project, staff))
+        self.assertFalse(user_can_upload_contract(project, staff, request))
 
         project = ProjectFactory(status=CONTRACTING)
-        self.assertFalse(user_can_upload_contract(project, staff))
+        self.assertFalse(user_can_upload_contract(project, staff, request))
 
         project = ProjectFactory(status=INVOICING_AND_REPORTING)
-        self.assertFalse(user_can_upload_contract(project, staff))
+        self.assertFalse(user_can_upload_contract(project, staff, request))
 
         project = ProjectFactory(status=COMPLETE)
-        self.assertFalse(user_can_upload_contract(project, staff))
+        self.assertFalse(user_can_upload_contract(project, staff, request))
 
         project = ProjectFactory(status=CLOSING)
-        self.assertFalse(user_can_upload_contract(project, staff))
+        self.assertFalse(user_can_upload_contract(project, staff, request))
 
     def test_owner_can_only_upload_during_contracting(self):
         applicant = ApplicantFactory()
+        request = RequestFactory().post(path="apply/projects/17")
 
         project = ProjectFactory(status=DRAFT, user=applicant)
-        self.assertFalse(user_can_upload_contract(project, applicant))
+        self.assertFalse(user_can_upload_contract(project, applicant, request))
 
         project = ProjectFactory(status=INTERNAL_APPROVAL, user=applicant)
-        self.assertFalse(user_can_upload_contract(project, applicant))
+        self.assertFalse(user_can_upload_contract(project, applicant, request))
 
         project = ProjectFactory(status=CONTRACTING, user=applicant)
         ContractFactory(project=project)
-        self.assertTrue(user_can_upload_contract(project, applicant))
+        self.assertTrue(user_can_upload_contract(project, applicant, request))
 
         project = ProjectFactory(status=INVOICING_AND_REPORTING, user=applicant)
-        self.assertFalse(user_can_upload_contract(project, applicant))
+        self.assertFalse(user_can_upload_contract(project, applicant, request))
 
         project = ProjectFactory(status=COMPLETE, user=applicant)
-        self.assertFalse(user_can_upload_contract(project, applicant))
+        self.assertFalse(user_can_upload_contract(project, applicant, request))
 
         project = ProjectFactory(status=CLOSING, user=applicant)
-        self.assertFalse(user_can_upload_contract(project, applicant))
+        self.assertFalse(user_can_upload_contract(project, applicant, request))
 
     def test_only_owner_or_contracting_can_upload_contract(self):
         applicant = ApplicantFactory()
         staff = StaffFactory()
         finance = FinanceFactory()
         contracting = ContractingFactory()
+        request = RequestFactory().post(path="apply/projects/19", host="localhost")
 
         # owner can upload
         project = ProjectFactory(status=CONTRACTING, user=applicant)
         ContractFactory(project=project)
-        self.assertTrue(user_can_upload_contract(project, applicant))
+        self.assertTrue(user_can_upload_contract(project, applicant, request))
 
         project = ProjectFactory(status=CONTRACTING, user=staff)
-        self.assertFalse(user_can_upload_contract(project, applicant))
+        self.assertFalse(user_can_upload_contract(project, applicant, request))
 
         project = ProjectFactory(status=CONTRACTING, user=applicant)
-        self.assertFalse(user_can_upload_contract(project, staff))
+        self.assertFalse(user_can_upload_contract(project, staff, request))
 
         project = ProjectFactory(status=CONTRACTING, user=applicant)
-        self.assertTrue(user_can_upload_contract(project, contracting))
+        self.assertTrue(user_can_upload_contract(project, contracting, request))
 
         project = ProjectFactory(status=CONTRACTING, user=applicant)
-        self.assertFalse(user_can_upload_contract(project, finance))
+        self.assertFalse(user_can_upload_contract(project, finance, request))
 
 
 class TestInvoiceTools(TestCase):

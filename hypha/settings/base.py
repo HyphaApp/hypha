@@ -91,8 +91,7 @@ SEND_MESSAGES = env.bool("SEND_MESSAGES", False)
 # If automatic e-mails should be sent out to reviewers when submissions are ready for review.
 SEND_READY_FOR_REVIEW = env.bool("SEND_READY_FOR_REVIEW", True)
 
-# Staff can upload the contract
-STAFF_UPLOAD_CONTRACT = env.bool("STAFF_UPLOAD_CONTRACT", False)
+# Former STAFF_UPLOAD_CONTRACT is now wagtail ProjectSettings.staff_upload_contract.
 
 # Slack settings.
 SLACK_TOKEN = env.str("SLACK_TOKEN", None)

@@ -387,7 +387,14 @@ class EmailAdapter(AdapterBase):
             )
 
             if source.status == CONTRACTING:
-                if settings.STAFF_UPLOAD_CONTRACT:
+                from hypha.apply.projects.models.project import ProjectSettings
+
+                request = kwargs.get("request", None)
+                project_settings = ProjectSettings.for_request(request)
+                if (
+                    project_settings is not None
+                    and project_settings.staff_upload_contract
+                ):
                     return get_compliance_email(
                         target_user_gps=[CONTRACTING_GROUP_NAME, STAFF_GROUP_NAME]
                     )

@@ -545,7 +545,9 @@ class UploadContractView(DelegatedViewMixin, CreateView):
 
     def dispatch(self, request, *args, **kwargs):
         project = self.kwargs["object"]
-        permission, _ = has_permission("contract_upload", request.user, object=project)
+        permission, _ = has_permission(
+            "contract_upload", request.user, object=project, request=request
+        )
         if permission:
             return super().dispatch(request, *args, **kwargs)
 
@@ -588,6 +590,7 @@ class UploadContractView(DelegatedViewMixin, CreateView):
         response = super().form_valid(form)
 
         contract_signed_and_approved = form.cleaned_data.get("signed_and_approved")
+        project_settings = ProjectSettings.for_request(self.request)
         if contract_signed_and_approved:
             form.instance.approver = self.request.user
             form.instance.approved_at = timezone.now()
@@ -608,7 +611,7 @@ class UploadContractView(DelegatedViewMixin, CreateView):
                 related=old_stage,
             )
             # remove Project waiting contract task for contracting/staff group
-            if settings.STAFF_UPLOAD_CONTRACT:
+            if project_settings is not None and project_settings.staff_upload_contract:
                 remove_tasks_for_user_group(
                     code=PROJECT_WAITING_CONTRACT,
                     user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
@@ -636,7 +639,10 @@ class UploadContractView(DelegatedViewMixin, CreateView):
                     related=form.instance,
                 )
                 # remove Project waiting contract task for contracting/staff group
-                if settings.STAFF_UPLOAD_CONTRACT:
+                if (
+                    project_settings is not None
+                    and project_settings.staff_upload_contract
+                ):
                     remove_tasks_for_user_group(
                         code=PROJECT_WAITING_CONTRACT,
                         user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
@@ -678,7 +684,8 @@ class SkipPAFApprovalProcessView(DelegatedViewMixin, UpdateView):
             related=old_stage,
         )
         # add project waiting contract task to staff/contracting groups
-        if settings.STAFF_UPLOAD_CONTRACT:
+        project_settings = ProjectSettings.for_request(self.request)
+        if project_settings is not None and project_settings.staff_upload_contract:
             add_task_to_user_group(
                 code=PROJECT_WAITING_CONTRACT,
                 user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
@@ -986,7 +993,7 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
                 related=old_stage,
             )
             # add project waiting contract task to staff/contracting groups
-            if settings.STAFF_UPLOAD_CONTRACT:
+            if project_settings is not None and project_settings.staff_upload_contract:
                 add_task_to_user_group(
                     code=PROJECT_WAITING_CONTRACT,
                     user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
