@@ -24,7 +24,6 @@ from ..forms.payment import (
 from ..forms.project import (
     ChangePAFStatusForm,
     ProjectForm,
-    StaffUploadContractForm,
     UploadContractForm,
 )
 from ..models.payment import (
@@ -567,12 +566,12 @@ class TestStaffContractUploadForm(TestCase):
     mock_file = SimpleUploadedFile("contract.pdf", BytesIO(b"somebinarydata").read())
 
     def test_staff_can_upload_unsigned(self):
-        form = StaffUploadContractForm(data={}, files={"file": self.mock_file})
+        form = UploadContractForm(data={}, files={"file": self.mock_file})
         self.assertTrue(form.is_valid(), form.errors)
         self.assertFalse(form.cleaned_data.get("signed_by_applicant"))
 
     def test_staff_can_upload_signed(self):
-        form = StaffUploadContractForm(
+        form = UploadContractForm(
             data={"signed_by_applicant": True}, files={"file": self.mock_file}
         )
         self.assertTrue(form.is_valid(), form.errors)

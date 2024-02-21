@@ -530,6 +530,11 @@ class ProjectSettings(BaseSiteSetting, ClusterableModel):
     staff_upload_contract = models.BooleanField(
         default=False, help_text="Check to allow the Staff role to upload contracts."
     )
+    upload_countersigned_contract = models.BooleanField(
+        default=False,
+        help_text="Check to require that uploaded contracts already be signed (countersigned) by all parties. "
+        + "In effect, this means two contract upload steps are reduced to a single step.",
+    )
 
     panels = [
         FieldPanel("staff_gp_email"),
@@ -545,7 +550,13 @@ class ProjectSettings(BaseSiteSetting, ClusterableModel):
             ],
             heading=_("PAF Reviewers Roles"),
         ),
-        FieldPanel("staff_upload_contract"),
+        MultiFieldPanel(
+            [
+                FieldPanel("staff_upload_contract"),
+                FieldPanel("upload_countersigned_contract"),
+            ],
+            heading=_("Contract Uploads"),
+        ),
     ]
 
 

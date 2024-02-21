@@ -559,19 +559,39 @@ class UploadContractView(DelegatedViewMixin, CreateView):
 
     def get_form(self, *args, **kwargs):
         form = super().get_form(*args, **kwargs)
+        project_settings = ProjectSettings.for_request(self.request)
+        if (
+            project_settings is not None
+            and project_settings.upload_countersigned_contract
+        ):
+            form.fields.get("signed_and_approved").initial = True
         if self.request.user.is_applicant:
             form.fields.pop("signed_and_approved")
         return form
 
     def form_valid(self, form):
         project = self.kwargs["object"]
+        project_settings = ProjectSettings.for_request(self.request)
+        upload_countersigned_contract = (
+            project_settings is not None
+            and project_settings.upload_countersigned_contract
+        )
 
         if project.contracts.exists():
             form.instance = project.contracts.order_by("created_at").first()
 
         form.instance.project = project
 
-        if self.request.user == project.user:
+        if upload_countersigned_contract:
+            now = timezone.now()
+            form.instance.uploaded_by_applicant_at = now
+            form.instance.uploaded_by_contractor_at = now
+            messages.success(
+                self.request,
+                _("Signed and countersigned contract uploaded"),
+                extra_tags=PROJECT_ACTION_MESSAGE_TAG,
+            )
+        elif self.request.user == project.user:
             form.instance.signed_by_applicant = True
             form.instance.uploaded_by_applicant_at = timezone.now()
             messages.success(
@@ -719,6 +739,7 @@ class SubmitContractDocumentsView(DelegatedViewMixin, UpdateView):
             object=project,
             raise_exception=True,
             contract=contract,
+            request=request,
         )
         return super().dispatch(request, *args, **kwargs)
 
@@ -1334,6 +1355,7 @@ class AdminProjectDetailView(
         ChangeProjectstatusView,
         ChangeInvoiceStatusView,
         SkipPAFApprovalProcessView,
+        SubmitContractDocumentsView,
     ]
     model = Project
     template_name_suffix = "_admin_detail"
@@ -1341,7 +1363,11 @@ class AdminProjectDetailView(
     def dispatch(self, *args, **kwargs):
         project = self.get_object()
         permission, _ = has_permission(
-            "project_access", self.request.user, object=project, raise_exception=True
+            "project_access",
+            self.request.user,
+            object=project,
+            raise_exception=True,
+            request=self.request,
         )
         return super().dispatch(*args, **kwargs)
 
@@ -1409,7 +1435,11 @@ class ApplicantProjectDetailView(
     def dispatch(self, request, *args, **kwargs):
         project = self.get_object()
         permission, _ = has_permission(
-            "project_access", request.user, object=project, raise_exception=True
+            "project_access",
+            request.user,
+            object=project,
+            raise_exception=True,
+            request=request,
         )
         return super().dispatch(request, *args, **kwargs)
 

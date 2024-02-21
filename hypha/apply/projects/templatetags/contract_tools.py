@@ -40,13 +40,14 @@ def contract_reuploaded_by_applicant(project):
 
 
 @register.simple_tag
-def user_can_submit_contract(project, user, contract):
+def user_can_submit_contract(project, user, contract, request):
     can_submit, _ = has_permission(
         "submit_contract_documents",
         user,
         object=project,
         raise_exception=False,
         contract=contract,
+        request=request,
     )
     return can_submit
 

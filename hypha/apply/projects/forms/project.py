@@ -384,14 +384,6 @@ class UploadContractForm(FileFormMixin, forms.ModelForm):
         return super().save(commit=True)
 
 
-class StaffUploadContractForm(FileFormMixin, forms.ModelForm):
-    file = SingleFileField(label=_("Contract"), required=True)
-
-    class Meta:
-        fields = ["file", "signed_by_applicant"]
-        model = Contract
-
-
 class UploadDocumentForm(FileFormMixin, forms.ModelForm):
     document = SingleFileField(label=_("Document"), required=True)
 
