@@ -3,7 +3,7 @@
 
 {% block extra_css %}
     {{ block.super }}
-    <link rel="stylesheet" href="{% static 'css/apply/fancybox.css' %}">
+    <link rel="stylesheet" href="{% static 'css/fancybox.css' %}">
 {% endblock %}
 
 {% block title %}{% trans "Edit Report" %} | {{ object.project.title }}{% endblock %}
@@ -73,6 +73,6 @@
 {% endblock %}
 
 {% block extra_js %}
-    <script src="{% static 'js/apply/jquery.fancybox.min.js' %}"></script>
-    <script src="{% static 'js/apply/fancybox-global.js' %}"></script>
+    <script src="{% static 'js/jquery.fancybox.min.js' %}"></script>
+    <script src="{% static 'js/fancybox-global.js' %}"></script>
 {% endblock %}

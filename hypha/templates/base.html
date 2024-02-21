@@ -25,7 +25,7 @@
         <link rel="shortcut icon" href="{% static 'images/favicons/favicon.ico' %}">
 
         <link rel="stylesheet" href="{% static 'css/tailwind-output.css' %}">
-        <link rel="stylesheet" href="{% static 'css/apply/main.css' %}">
+        <link rel="stylesheet" href="{% static 'css/main.css' %}">
         {% block extra_css %}{% endblock %}
         <link rel="stylesheet" href="{% static 'css/print.css' %}" media="print">
 
@@ -33,10 +33,10 @@
         <script>document.querySelector("html").classList.replace("no-js", "js")</script>
 
         <!-- htmx start: installed with npm -->
-        <script src="{% static 'js/apply/vendor/htmx.min.js' %}"></script>
-        <script src="{% static 'js/apply/vendor/htmx-ext-multi-swap.min.js' %}"></script>
-        {% comment %} <script src="{% static 'js/apply/vendor/htmx-ext-alpine-morph.min.js' %}" defer></script> {% endcomment %}
-        <script src="{% static 'js/apply/vendor/nprogress-2.0.0.min.js' %}" defer></script>
+        <script src="{% static 'js/vendor/htmx.min.js' %}"></script>
+        <script src="{% static 'js/vendor/htmx-ext-multi-swap.min.js' %}"></script>
+        {% comment %} <script src="{% static 'js/vendor/htmx-ext-alpine-morph.min.js' %}" defer></script> {% endcomment %}
+        <script src="{% static 'js/vendor/nprogress-2.0.0.min.js' %}" defer></script>
         <script>
             window.addEventListener('DOMContentLoaded', (event) => {
                 document.addEventListener("htmx:beforeRequest", function() { NProgress.start(); });
@@ -64,10 +64,10 @@
         <!-- alpine js start -->
         <style> [x-cloak] {display: none !important} </style>
         <!-- Alpine Plugins: installed with npm -->
-        <script defer src="{% static 'js/apply/vendor/alpine-focus.min.js' %}"></script>
+        <script defer src="{% static 'js/vendor/alpine-focus.min.js' %}"></script>
 
         <!-- Alpine Core: installed with npm  -->
-        <script defer src="{% static 'js/apply/vendor/alpine.min.js' %}"></script>
+        <script defer src="{% static 'js/vendor/alpine.min.js' %}"></script>
         <!-- alpine.js end -->
 
         <!-- modules -->
@@ -116,8 +116,8 @@
         <!-- Tooltips end -->
 
         <!-- Datetime picker-->
-        <script src="{% static 'js/apply/vendor/moment.min.js' %}"></script>
-        <script src="{% static 'js/apply/vendor/daterangepicker.min.js' %}"></script>
+        <script src="{% static 'js/vendor/moment.min.js' %}"></script>
+        <script src="{% static 'js/vendor/daterangepicker.min.js' %}"></script>
 
         {% block extra_js %}{% endblock %}
 

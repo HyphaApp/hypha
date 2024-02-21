@@ -2,7 +2,7 @@
 {% load i18n static workflow_tags review_tags determination_tags %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/apply/fancybox.css' %}">
+    <link rel="stylesheet" href="{% static 'css/fancybox.css' %}">
     {{ reviewer_form.media.css }}
 {% endblock %}
 
@@ -85,8 +85,8 @@
     {{ comment_form.media.js }}
     {{ partner_form.media.js }}
     {{ block.super }}
-    <script src="{% static 'js/apply/jquery.fancybox.min.js' %}"></script>
-    <script src="{% static 'js/apply/fancybox-global.js' %}"></script>
-    <script src="{% static 'js/apply/toggle-actions-panel.js' %}"></script>
-    <script src="{% static 'js/apply/toggle-related.js' %}"></script>
+    <script src="{% static 'js/jquery.fancybox.min.js' %}"></script>
+    <script src="{% static 'js/fancybox-global.js' %}"></script>
+    <script src="{% static 'js/toggle-actions-panel.js' %}"></script>
+    <script src="{% static 'js/toggle-related.js' %}"></script>
 {% endblock %}
