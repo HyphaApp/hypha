@@ -1,4 +1,6 @@
 from django.conf import settings
+from django.db.models import Count
+from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
 from .constants import (
@@ -20,10 +22,12 @@ from .models.payment import (
     CHANGES_REQUESTED_BY_FINANCE_2,
     CHANGES_REQUESTED_BY_STAFF,
     DECLINED,
+    INVOICE_STATUS_CHOICES,
     PAID,
     PAYMENT_FAILED,
     RESUBMITTED,
     SUBMITTED,
+    Invoice,
 )
 from .models.project import (
     PAF_STATUS_CHOICES,
@@ -159,24 +163,24 @@ def get_project_public_status(project_status):
     return dict(PROJECT_PUBLIC_STATUSES)[project_status]
 
 
-def get_invoice_table_status(invoice_status, user):
+def get_invoice_table_status(invoice_status, is_applicant=False):
     if invoice_status in [SUBMITTED, RESUBMITTED]:
-        if user.is_applicant:
+        if is_applicant:
             return INT_ORG_PENDING
         return INT_STAFF_PENDING
     if invoice_status == CHANGES_REQUESTED_BY_STAFF:
-        if user.is_applicant:
+        if is_applicant:
             return INT_REQUEST_FOR_CHANGE
         return INT_VENDOR_PENDING
     if invoice_status in [APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE]:
-        if user.is_applicant:
+        if is_applicant:
             return INT_ORG_PENDING
         return INT_FINANCE_PENDING
     if settings.INVOICE_EXTENDED_WORKFLOW and invoice_status in [
         APPROVED_BY_FINANCE,
         CHANGES_REQUESTED_BY_FINANCE_2,
     ]:
-        if user.is_applicant:
+        if is_applicant:
             return INT_ORG_PENDING
         return INT_FINANCE_PENDING
     if invoice_status == PAID:
@@ -185,3 +189,55 @@ def get_invoice_table_status(invoice_status, user):
         return INT_DECLINED
     if invoice_status == PAYMENT_FAILED:
         return INT_PAYMENT_FAILED
+
+
+def get_project_status_counts(current_url_queries):
+    project_status_url_query = current_url_queries.get("project_status")
+    project_status_counts = dict(
+        Project.objects.all()
+        .values("status")
+        .annotate(
+            count=Count("status"),
+        )
+        .values_list(
+            "status",
+            "count",
+        )
+    )
+    return {
+        key: {
+            "name": display,
+            "count": project_status_counts.get(key, 0),
+            "url": reverse_lazy("funds:projects:all") + "?project_status=" + key,
+            "is_active": True
+            if project_status_url_query and key in project_status_url_query
+            else False,
+        }
+        for key, display in PROJECT_STATUS_CHOICES
+    }
+
+
+def get_invoices_status_counts(current_url_queries):
+    invoice_status_url_query = current_url_queries.get("status")
+    invoices_status_counts = dict(
+        Invoice.objects.all()
+        .values("status")
+        .annotate(
+            count=Count("status"),
+        )
+        .values_list(
+            "status",
+            "count",
+        )
+    )
+    return {
+        key: {
+            "name": display,
+            "count": invoices_status_counts.get(key, 0),
+            "url": reverse_lazy("funds:projects:invoices") + "?status=" + key,
+            "is_active": True
+            if invoice_status_url_query and key in invoice_status_url_query
+            else False,
+        }
+        for key, display in INVOICE_STATUS_CHOICES
+    }

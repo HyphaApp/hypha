@@ -31,6 +31,10 @@
             padding: 15px 15px 25px;
         }
 
+        &--active {
+            border-block-end: 4px solid;
+        }
+
         &:hover {
             background-color: $color--light-grey;
         }
@@ -46,8 +50,7 @@
     }
 
     &__info {
-        @include font-size(zeta);
-        color: $color--dark-blue;
+        @include font-size(epsilon);
 
         @include media-query(tablet-landscape) {
             margin-block-start: auto;
