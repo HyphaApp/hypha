@@ -191,8 +191,8 @@
             {% endfor %}
             {% for s in selected_category_options %}
                 <span class="inline-flex items-center px-2 py-1 me-2 text-xs select-none font-medium text-blue-800 bg-blue-100 rounded">
-                    Category:{{ s }}
-                    <a href="{% remove_from_query category_options=s %}" role="button" class="inline-flex items-center p-0.5 ms-1 text-xs text-blue-400 bg-transparent rounded-sm hover:bg-blue-200 hover:text-blue-900 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
+                    Category:{{ s.value }}
+                    <a href="{% remove_from_query category_options=s.id %}" role="button" class="inline-flex items-center p-0.5 ms-1 text-xs text-blue-400 bg-transparent rounded-sm hover:bg-blue-200 hover:text-blue-900 dark:hover:bg-blue-800 dark:hover:text-blue-300" aria-label="Remove">
                         {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
                         <span class="sr-only">Remove category filter</span>
                     </a>
