@@ -6,9 +6,9 @@ from django.urls import reverse
 from wagtail.test.utils import WagtailTestUtils
 
 from hypha.apply.funds.models.forms import ApplicationForm
-from hypha.apply.home.factories import ApplyHomePageFactory
 from hypha.apply.users.groups import STAFF_GROUP_NAME
 from hypha.apply.users.tests.factories import SuperUserFactory
+from hypha.home.factories import ApplyHomePageFactory
 
 from .factories.models import RoundFactory
 from .test_admin_form import form_data

@@ -10,7 +10,6 @@ from django.urls import reverse
 from django.utils import timezone
 
 from hypha.apply.funds.tests.factories import LabSubmissionFactory
-from hypha.apply.home.factories import ApplySiteFactory
 from hypha.apply.users.tests.factories import (
     ApplicantFactory,
     ApproverFactory,
@@ -22,6 +21,7 @@ from hypha.apply.users.tests.factories import (
     UserFactory,
 )
 from hypha.apply.utils.testing.tests import BaseViewTestCase
+from hypha.home.factories import ApplySiteFactory
 
 from ..files import get_files
 from ..forms import SetPendingForm
