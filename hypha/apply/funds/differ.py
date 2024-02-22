@@ -1,5 +1,6 @@
 import re
 from difflib import SequenceMatcher
+from typing import Tuple
 
 import nh3
 from django.utils.html import format_html
@@ -16,8 +17,22 @@ def wrap_added(text):
     return format_html('<span class="bg-green-200">{}</span>', mark_safe(text))
 
 
-def compare(answer_a, answer_b, should_bleach=True):
-    if should_bleach:
+def compare(answer_a: str, answer_b: str, should_clean: bool = True) -> Tuple[str, str]:
+    """Compare two strings, populate diff HTML and insert it, and return a tuple of the given strings.
+
+    Args:
+        answer_a:
+            The original string
+        answer_b:
+            The string to compare to the original
+        should_clean:
+            Optional boolean to determine if the string should be sanitized with NH3 (default=True)
+
+    Returns:
+        A tuple of the original strings with diff HTML inserted.
+    """
+
+    if should_clean:
         answer_a = re.sub("(<li[^>]*>)", r"\1◦ ", answer_a)
         answer_b = re.sub("(<li[^>]*>)", r"\1◦ ", answer_b)
         answer_a = nh3.clean(answer_a, tags={"h4"}, attributes={})
