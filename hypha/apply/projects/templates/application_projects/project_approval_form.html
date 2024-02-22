@@ -96,11 +96,11 @@
 {% endblock %}
 
 {% block extra_js %}
-    <script src="{% static 'js/apply/file-uploads.js' %}"></script>
-    <script src="{% static 'js/apply/tinymce-word-count.js' %}"></script>
-    <script src="{% static 'js/apply/multi-input-fields.js' %}"></script>
-    <script src="{% static 'js/apply/application-form-links-new-window.js' %}"></script>
+    <script src="{% static 'js/file-uploads.js' %}"></script>
+    <script src="{% static 'js/tinymce-word-count.js' %}"></script>
+    <script src="{% static 'js/multi-input-fields.js' %}"></script>
+    <script src="{% static 'js/application-form-links-new-window.js' %}"></script>
     {% if not show_all_group_fields %}
-        <script src="{% static 'js/apply/form-group-toggle.js' %}"></script>
+        <script src="{% static 'js/form-group-toggle.js' %}"></script>
     {% endif %}
 {% endblock %}

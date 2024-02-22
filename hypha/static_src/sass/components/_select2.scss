@@ -34,7 +34,7 @@
                 inset-inline-end: 15px;
                 height: $dropdown-height;
                 pointer-events: none;
-                background: url("./../../images/dropdown.svg") transparent
+                background: url("./../images/dropdown.svg") transparent
                     no-repeat 95% center;
                 background-size: 8px;
                 width: 8px;
@@ -88,8 +88,8 @@
 
         &[aria-selected="true"] {
             &::before {
-                background: url("./../../images/tick.svg") $color--dark-blue
-                    center no-repeat;
+                background: url("./../images/tick.svg") $color--dark-blue center
+                    no-repeat;
                 background-size: 12px;
                 border: 1px solid $color--dark-blue;
                 content: "";

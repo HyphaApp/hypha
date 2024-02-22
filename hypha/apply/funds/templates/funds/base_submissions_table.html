@@ -3,7 +3,7 @@
 {% load render_table from django_tables2 %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/apply/fancybox.css' %}">
+    <link rel="stylesheet" href="{% static 'css/fancybox.css' %}">
     {{ filter.form.media.css }}
 {% endblock %}
 
@@ -17,13 +17,13 @@
 
 {% block extra_js %}
     {{ filter.form.media.js }}
-    <script src="{% static 'js/apply/jquery.fancybox.min.js' %}"></script>
-    <script src="{% static 'js/apply/fancybox-global.js' %}"></script>
-    <script src="{% static 'js/apply/all-submissions-table.js' %}"></script>
-    <script src="{% static 'js/apply/symbol-es6.min.js' %}"></script>
-    <script src="{% static 'js/apply/url-search-params.js' %}"></script>
-    <script src="{% static 'js/apply/submission-filters.js' %}"></script>
-    <script src="{% static 'js/apply/tabs.js' %}"></script>
-    <script src="{% static 'js/apply/batch-actions.js' %}"></script>
-    <script src="{% static 'js/apply/flag.js' %}"></script>
+    <script src="{% static 'js/jquery.fancybox.min.js' %}"></script>
+    <script src="{% static 'js/fancybox-global.js' %}"></script>
+    <script src="{% static 'js/all-submissions-table.js' %}"></script>
+    <script src="{% static 'js/symbol-es6.min.js' %}"></script>
+    <script src="{% static 'js/url-search-params.js' %}"></script>
+    <script src="{% static 'js/submission-filters.js' %}"></script>
+    <script src="{% static 'js/tabs.js' %}"></script>
+    <script src="{% static 'js/batch-actions.js' %}"></script>
+    <script src="{% static 'js/flag.js' %}"></script>
 {% endblock %}
