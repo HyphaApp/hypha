@@ -4,30 +4,62 @@
         <ul class="nav nav--primary" role="menubar">
             {% apply_nav_items request.user as nav_items %}
             {% for item in nav_items %}
-                {% url item.url as target_url%}
-                <li class="nav__item" role="presentation">
+                <li class="nav__item"
+                    role="presentation"
+                    x-data="{open: false}"
+                    x-on:mouseover.away="open = false"
+                >
                     {% if item.sub_items %}
-                        <div class="relative inline-block" x-data="{open: false}">
-                            <a class="nav__link {% if target_url in request.path %}nav__link--active{% endif %}"
-                               href="{% url item.url %}"
+                        <div class="relative inline-block">
+                            <a class="nav__link {% if item.url in request.path %}nav__link--active{% endif %}"
+                               href="{{item.url}}"
                                aria-label="{% trans "Menu Item" %}"
                                aria-haspopup="menu"
                                aria-expanded="false"
                                role="menuitem"
+                               @mouseover="open = true"
                                @click.prevent="open = ! open">
                                 {{ item.title }}
-                                {% heroicon_outline "chevron-down" aria_hidden="true" size=16 stroke_width=3 class="inline align-baseline mr-1" %}
+                                <span :class="open ? '[&>svg]:translate-y-1': ''">
+                                    {% heroicon_outline "chevron-down" aria_hidden="true" size=16 stroke_width=3 class="inline align-baseline mr-1 transition-transform" %}
+                                </span>
                             </a>
-                            <div x-cloak x-trap="open" x-on:keydown.escape="open = false" x-show="open" x-transition @click.outside="open = false" class="absolute block bg-white min-w-max shadow-lg z-1 mt-7 ">
+                            <div
+                                x-cloak
+                                x-trap.noautofocus="open"
+                                x-on:keydown.escape="open = false"
+                                x-show="open"
+                                x-transition:enter="transition ease-out duration-250"
+                                x-transition:enter-start="transform opacity-0 scale-95 -translate-y-3"
+                                x-transition:enter-end="transform opacity-100 scale-100 translate-y-0"
+                                x-transition:leave="transition ease-in duration-75"
+                                x-transition:leave-start="transform opacity-100 scale-100 translate-y-0"
+                                x-transition:leave-end="transform opacity-0 scale-95 -translate-y-3"
+                                {% comment %} x-transition {% endcomment %}
+                                @click.outside="open = false"
+                                class="min-w-48 absolute block bg-white shadow-xl z-20 mt-4 border-y rounded-sm"
+                            >
                                 {% for sub_item in item.sub_items %}
-                                    <a class="text-black px-4 py-3 block font-normal hover:bg-mid-grey focus-visible:ring-2" href="{% url sub_item.url %}">
+                                    <a
+                                        href="{{ sub_item.url }}"
+                                        class="pr-4 py-3 block font-normal hover:bg-slate-100
+                                               focus-visible:outline-dashed outline-1 transition-colors
+                                               {% if sub_item.url == request.path %}
+                                                   border-l-dark-blue bg-slate-100 pl-3 border-l-4 border-r text-dark-blue font-semibold
+                                               {% else %}
+                                                   border-x pl-4 text-black hover:text-dark-blue hover:font-semibold
+                                               {% endif %}"
+                                    >
                                         {{ sub_item.title }}
                                     </a>
                                 {% endfor %}
                             </div>
                         </div>
                     {% else %}
-                        <a class="nav__link {% if target_url in request.path %}nav__link--active{% endif %}" href="{{ target_url }}" role="menuitem">
+                        <a class="nav__link {% if item.url in request.path %}nav__link--active{% endif %}"
+                           href="{{ item.url }}"
+                           role="menuitem"
+                        >
                             {{ item.title }}
                         </a>
                     {% endif %}

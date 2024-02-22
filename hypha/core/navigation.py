@@ -1,56 +1,60 @@
 from django.conf import settings
+from django.urls import reverse_lazy
+from django.utils.translation import gettext_lazy as _
 
 nav_items = [
     {
-        "title": "My Dashboard",
-        "url": "dashboard:dashboard",
+        "title": _("My Dashboard"),
+        "url": reverse_lazy("dashboard:dashboard"),
         "permission_method": "has_dashboard_access",
     },
     {
-        "title": "Submissions",
-        "url": "apply:submissions:overview",  # kind of basic url to figure out active tab
+        "title": _("Submissions"),
+        # kind of basic url to figure out active tab
+        "url": reverse_lazy("apply:submissions:overview"),
         "permission_method": "is_apply_staff_or_reviewer_required",
         "sub_items": [
             {
-                "title": "All Submissions",
-                "url": "apply:submissions:list",
+                "title": _("All Submissions"),
+                "url": reverse_lazy("apply:submissions:list"),
                 "permission_method": "is_apply_staff_or_reviewer_required",
             },
             {
-                "title": "Staff Assignments",
-                "url": "apply:submissions:staff_assignments",
+                "title": _("Staff Assignments"),
+                "url": reverse_lazy("apply:submissions:staff_assignments"),
                 "permission_method": "is_apply_staff",
             },
             {
-                "title": "Reviews",
-                "url": "apply:submissions:reviewer_leaderboard",
+                "title": _("Reviews"),
+                "url": reverse_lazy("apply:submissions:reviewer_leaderboard"),
                 "permission_method": "is_apply_staff",
             },
             {
-                "title": "Results",
-                "url": "apply:submissions:result",
+                "title": _("Results"),
+                "url": reverse_lazy("apply:submissions:result"),
                 "permission_method": "is_apply_staff",
             },
         ],
     },
     {
-        "title": "Projects",
-        "url": "apply:projects:overview",  # kind of basic url to figure out active tab
+        "title": _("Projects"),
+        # kind of basic url to figure out active tab
+        "url": reverse_lazy("apply:projects:overview"),
         "permission_method": "is_apply_staff_or_finance_or_contracting",
         "sub_items": [
             {
-                "title": "All Projects",
-                "url": "apply:projects:all",
+                "title": _("All Projects"),
+                "url": reverse_lazy("apply:projects:all"),
                 "permission_method": "is_apply_staff_or_finance_or_contracting",
             },
             {
-                "title": "Invoices",
-                "url": "apply:projects:invoices",
+                "title": _("Invoices"),
+                "url": reverse_lazy("apply:projects:invoices"),
                 "permission_method": "is_apply_staff_or_finance",
             },
             {
-                "title": "Reports",
-                "url": "apply:projects:reports:all",
+                "title": _("Reports"),
+                "url": reverse_lazy("apply:projects:reports:all"),
                 "permission_method": "is_apply_staff_or_finance",
             },
         ],
