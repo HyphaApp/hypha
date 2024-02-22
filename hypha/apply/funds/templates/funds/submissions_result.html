@@ -7,23 +7,6 @@
     {% adminbar %}
         {% slot header %}{% trans "Submissions results" %}{% endslot %}
         {% slot sub_heading %}{% trans "Track and explore submission results" %}{% endslot %}
-
-        {% if request.user.is_apply_staff %}
-            <div class="flex mt-2 md:m-0 gap-3 justify-center items-center font-medium uppercase" hx-boost="true">
-                <a class="px-3 py-2 text-gray-300 transition-colors hover:bg-slate-50 rounded hover:text-gray-800" href="{% url 'apply:submissions:list' %}">
-                    {% trans "All" %}
-                </a>
-                <a class="px-3 py-2 text-gray-300 transition-colors hover:bg-slate-50 rounded hover:text-gray-800" href="{% url 'apply:submissions:staff_assignments' %}">
-                    {% trans "Staff assignments" %}
-                </a>
-                <a class="px-3 py-2 text-gray-300 transition-colors hover:bg-slate-50 rounded hover:text-gray-800" href="{% url 'apply:submissions:reviewer_leaderboard' %}">
-                    {% trans "Reviews" %}
-                </a>
-                <a class="px-3 py-2 bg-slate-50 rounded text-gray-800" href="{% url 'apply:submissions:result' %}" aria-current="page">
-                    {% trans "Results" %}
-                </a>
-            </div>
-        {% endif %}
     {% endadminbar %}
 
 

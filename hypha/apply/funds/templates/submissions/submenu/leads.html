@@ -17,18 +17,18 @@
                 href="{% url "apply:submissions:list-beta" %}{% modify_query "only_query_string" "page" lead=user.id %}"
                 hx-get="{% url "apply:submissions:list-beta" %}{% modify_query "only_query_string" "page" lead=user.id %}"
                 hx-push-url="true"
-                class="flex {% if user.selected %}pl-2 font-medium bg-gray-100{% else %}pl-8{% endif %} pr-3 py-2 text-gray-600 items-center hover:bg-gray-100 focus:bg-gray-100"
+                class="flex {% if user.selected %}ps-2 font-medium bg-gray-100{% else %}ps-8{% endif %} pe-3 py-2 text-gray-600 items-center hover:bg-gray-100 focus:bg-gray-100"
                 aria-selected="{% if user.selected %}true{% else %}false{% endif %}"
             >
                 {% if user.selected %}
                     {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
                 {% endif %}
                 <strong class="font-bold">{{ user.title }}</strong>
-                {% if user.slack %} <span class="text-fg-muted font-light ml-1">{{ user.slack }}</span>{% endif %}
+                {% if user.slack %} <span class="text-fg-muted font-light ms-1">{{ user.slack }}</span>{% endif %}
             </a>
         </li>
     {% empty %}
-        <li class="pl-4 pr-3 py-2 text-gray-600 max-w-xs">
+        <li class="ps-4 pe-3 py-2 text-gray-600 max-w-xs">
             {% trans "No leads found." %}
         </li>
     {% endfor %}

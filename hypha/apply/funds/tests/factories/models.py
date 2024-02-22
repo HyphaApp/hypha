@@ -27,7 +27,6 @@ from hypha.apply.funds.models.forms import (
     RoundBaseReviewForm,
 )
 from hypha.apply.funds.workflow import ConceptProposal, Request, RequestExternal
-from hypha.apply.home.factories import ApplyHomePageFactory
 from hypha.apply.stream_forms.testing.factories import FormDataFactory
 from hypha.apply.users.groups import REVIEWER_GROUP_NAME, STAFF_GROUP_NAME
 from hypha.apply.users.tests.factories import (
@@ -35,6 +34,7 @@ from hypha.apply.users.tests.factories import (
     GroupFactory,
     StaffFactory,
 )
+from hypha.home.factories import ApplyHomePageFactory
 
 from . import blocks
 

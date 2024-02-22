@@ -1,5 +1,5 @@
 <!--Custom template to enforce 2FA and Copied from two_factor/core/otp_required.html-->
-{% extends "two_factor/_base_focus.html" %}
+{% extends "two_factor/_base.html" %}
 {% load i18n %}
 
 {% block content %}
@@ -31,7 +31,7 @@
     </div>
 
 
-    <a href="{% url 'users:two_factor:setup' %}?next={{request.path}}" class="btn btn-primary">
+    <a href="{% url 'two_factor:setup' %}?next={{request.path}}" class="btn btn-primary">
         {% trans "Set up Two-Factor Authentication (2FA)" %}
     </a>
 

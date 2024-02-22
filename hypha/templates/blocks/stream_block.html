@@ -1,8 +1,0 @@
-{% load wagtailcore_tags %}
-{% for block in value %}
-    {% if block.block_type == 'heading' %}
-        <h2>{{ block.value }}</h2>
-    {% else %}
-        {% include_block block %}
-    {% endif %}
-{% endfor %}

@@ -1,0 +1,102 @@
+.grid {
+    display: flex;
+    flex-wrap: wrap;
+
+    > * {
+        flex-basis: calc(100% - 20px);
+        margin: 10px;
+
+        @media all and (min-width: 480px) {
+            flex-basis: calc(50% - 20px);
+        }
+
+        @media all and (min-width: 1024px) {
+            flex-basis: calc(30% - 20px);
+        }
+    }
+
+    &--narrow {
+        text-align: center;
+
+        @include media-query(tablet-portrait) {
+            text-align: left;
+        }
+    }
+}
+
+@supports (display: grid) {
+    .grid {
+        display: grid;
+        margin-block-end: 1rem;
+        gap: 10px;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+
+        > * {
+            flex-basis: initial;
+            width: auto;
+            margin: 0;
+        }
+
+        &--two {
+            grid-template-columns: 100%;
+            gap: 0.25rem;
+
+            @include media-query(tablet-portrait) {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            &.delete {
+                grid-template-columns: 1fr;
+            }
+
+            .form--comments & {
+                margin: 20px 0 0;
+                gap: 10px;
+                grid-template-columns: 100px 100px;
+            }
+
+            .wrapper--comments & {
+                grid-template-columns: 1fr;
+            }
+
+            + br {
+                display: none;
+            }
+        }
+
+        &--no-margin {
+            margin: 0;
+        }
+
+        &--proposal-info {
+            grid-template-columns: 100%;
+            gap: 10px;
+            margin: 0 0 1rem;
+
+            @include media-query(mob-landscape) {
+                margin: 0 0 1.5rem;
+                grid-template-columns: 1fr 1fr;
+            }
+
+            * {
+                margin: 0;
+            }
+        }
+
+        &--status-update {
+            grid-template-columns: 100%;
+
+            @include media-query(mob-landscape) {
+                grid-template-columns: 100%;
+            }
+        }
+
+        &__cell {
+            &--span-two {
+                @include media-query(mob-landscape) {
+                    grid-column: auto / span 2;
+                }
+            }
+        }
+    }
+}

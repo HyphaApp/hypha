@@ -1,18 +1,6 @@
 # Deployment
 
-## Considering Hypha?
+!!! info
+    The domain settings between the development & production deployment tutorial differ: **Production** assumes Hypha will be running on a subdomain (ie. `apply.server.domain`). **Development** assumes Hypha will be running locally using `hypha.test`.
 
-If you are considering deploying Hypha, there are several ways to deploy it. It includes a Django web application \(python\), and requires a PostgreSQL database server, and Nginx \(or Apache\) web server.
-
-### Stand Alone
-
-This requires a Linux server (It has been tested with Ubuntu, but should work with any flavor\).
-
-### Heroku
-
-This is the primary way Hypha has been deployed so far. It is fairly straightforward and well-tested
-
-### Docker
-
-This deployment so far has been tested and used only for development purposes, but should theoretically work for production deployment.
-
+    These settings can be configured, just ensure they are consistent throughout.

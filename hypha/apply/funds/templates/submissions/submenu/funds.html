@@ -23,7 +23,7 @@
                     hx-get="{% url "apply:submissions:list-beta" %}{% modify_query "only_query_string" "page" fund=f.id %}"
                 {% endif %}
                 hx-push-url="true"
-                class="flex {% if f.selected %}pl-2 font-medium{% else %}pl-8{% endif %} pr-3 py-2 text-gray-600 items-center hover:bg-gray-100 focus:bg-gray-100{% if f.selected %}bg-gray-100{% endif %}">
+                class="flex {% if f.selected %}ps-2 font-medium{% else %}ps-8{% endif %} pe-3 py-2 text-gray-600 items-center hover:bg-gray-100 focus:bg-gray-100{% if f.selected %}bg-gray-100{% endif %}">
                 {% if f.selected %}
                     {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
                 {% endif %}
@@ -31,7 +31,7 @@
             </a>
         </li>
     {% empty %}
-        <li class="pl-4 pr-3 py-2 text-gray-600 max-w-xs">
+        <li class="ps-4 pe-3 py-2 text-gray-600 max-w-xs">
             {% trans "No funds found." %}
         </li>
     {% endfor %}

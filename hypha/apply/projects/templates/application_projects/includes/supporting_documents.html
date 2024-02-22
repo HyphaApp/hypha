@@ -10,7 +10,7 @@
             </h2>
 
             {% if collapsible_header %}
-                <button class="align-middle ml-1 transform transition-transform" x-bind:class="collapsed ? '': '-rotate-90' ">
+                <button class="align-middle ms-1 transform transition-transform" x-bind:class="collapsed ? '': '-rotate-90' ">
                     {% heroicon_outline 'chevron-left' size=20 stroke_width=2 aria_hidden=true %}
                     <span class="sr-only" x-text="collapsed ? 'expand' : 'collapse'">expand</span>
                 </button>
@@ -36,14 +36,14 @@
                 {% if user == project.lead %}
                     <a data-fancybox
                        data-src="#update-paf-approvers"
-                       class="button button--project-action button--project-action--white ml-2"
+                       class="button button--project-action button--project-action--white ms-2"
                        href="#">
                         {% trans "View/Update Approvers" %}
                     </a>
                 {% else %}
                     <a data-fancybox
                        data-src="#change-assigned-paf-approvers"
-                       class="button button--project-action button--project-action--white ml-2"
+                       class="button button--project-action button--project-action--white ms-2"
                        href="#">
                         {% trans "Change approver" %}
                     </a>
@@ -52,7 +52,7 @@
             {% if can_assign_paf_approvers %}
                 <a data-fancybox
                    data-src="#assign-paf-approvers"
-                   class="button button--project-action ml-2"
+                   class="button button--project-action ms-2"
                    href="#">
                     {% trans "Assign approver" %}
                 </a>
@@ -61,7 +61,7 @@
             {% if object.can_make_approval and can_update_paf_status %}
                 <a data-fancybox
                    data-src="#update-paf-status"
-                   class="button button--project-action ml-2"
+                   class="button button--project-action ms-2"
                    href="#">
                     {% trans "Update Status" %}
                 </a>
@@ -174,7 +174,7 @@
 
                     {% if all_document_categories %}
 
-                        <div class="w-full pl-9">
+                        <div class="w-full ps-9">
                             <p></p>
                             <ul>
                                 {% for document_category in all_document_categories %}
@@ -201,7 +201,7 @@
                                         {% if document_category in remaining_document_categories %}
                                             <div class="docs-block__document-inner__actions">
                                                 <a data-fancybox data-src="#upload-supporting-doc"
-                                                   class="font-bold flex items-center mr-0 hover:opacity-70 transition-opacity"
+                                                   class="font-bold flex items-center me-0 hover:opacity-70 transition-opacity"
                                                    onclick="handleCategory({{ document_category.id }})"
                                                    href="#"
                                                 >
@@ -281,7 +281,7 @@
 
             <p>{% trans "By default all the members are notified when an approver is not selected. Optionally, you may select specific approvers to assign and notify them." %}</p>
             <div class="flex items-center text-sm">
-                <p class="flex-shrink font-bold text-slate-500 pr-2 mb-0">Optional</p>
+                <p class="flex-shrink font-bold text-slate-500 pe-2 mb-0">Optional</p>
                 <p class="flex-grow h-px bg-mid-grey mb-0"></p>
             </div>
 

@@ -1,6 +1,6 @@
 DJANGO_PORT = 9001
-JS_VENDOR_DIR = ./hypha/static_src/src/javascript/apply/vendor
-CSS_VENDOR_DIR = ./hypha/static_src/src/javascript/apply/vendor
+JS_VENDOR_DIR = ./hypha/static_src/src/javascript/vendor
+CSS_VENDOR_DIR = ./hypha/static_src/src/javascript/vendor
 JS_ESM_DIR = ./hypha/static_src/src/javascript/esm
 
 .PHONY: help

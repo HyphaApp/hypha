@@ -13,7 +13,7 @@ INSTALLED_APPS = [
     "hypha.apply.funds",
     "hypha.apply.dashboard",
     "hypha.apply.flags",
-    "hypha.apply.home",
+    "hypha.home",
     "hypha.apply.users",
     "hypha.apply.review",
     "hypha.apply.determinations",

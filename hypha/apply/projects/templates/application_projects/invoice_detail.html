@@ -30,7 +30,7 @@
                 <div class="flex-none">
                     <p><b>{% trans "Status" %}: </b></p>
                 </div>
-                <div class="pl-2">
+                <div class="ps-2">
                     {% extract_status latest_activity user as latest_activity_status %}
                     {% get_comment_for_invoice_action object latest_activity as latest_activity_comment %}
                     <p>{{ latest_activity_status }} {% if user.is_applicant and latest_activity.user != user %} ({{ ORG_SHORT_NAME }}){% else %}({{ latest_activity.user }}){% endif %}
@@ -54,7 +54,7 @@
                 </div>
                 <button
                     type="button"
-                    class="font-bold text-light-blue flex-1 text-right hover:opacity-70 transition-opacity"
+                    class="font-bold text-light-blue flex-1 text-end hover:opacity-70 transition-opacity"
                     x-on:click="collapsed = ! collapsed"
                 >
                     <span x-show="collapsed">

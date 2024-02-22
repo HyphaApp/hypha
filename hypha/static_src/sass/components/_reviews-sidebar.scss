@@ -1,0 +1,116 @@
+// stylelint-disable max-nesting-depth
+
+.reviews-sidebar {
+    $root: &;
+    margin-block-end: 20px;
+    font-weight: $weight--bold;
+
+    &__decision {
+        position: relative;
+        font-size: 14px;
+        border-block-start: 1px solid $color--mid-grey;
+        border-block-end: 1px solid $color--mid-grey;
+        margin-block-end: 20px;
+        padding-block-start: 10px;
+    }
+
+    &__item {
+        display: flex;
+        justify-content: space-between;
+        margin-block-end: 20px;
+
+        @supports (display: grid) {
+            display: grid;
+            grid-template-columns: 45% 25% 15% 15%;
+            gap: 5px;
+        }
+
+        &--decision {
+            margin-block-end: 10px;
+            font-weight: $weight--semibold;
+
+            &:first-child {
+                #{$root}__outcome {
+                    &::before,
+                    &::after {
+                        position: absolute;
+                        inset-block-start: -23px;
+                        inset-inline-start: 5px;
+                    }
+
+                    &::after {
+                        @include triangle(top, $color--white, 8px);
+                        inset-block-start: -21px;
+                    }
+
+                    &::before {
+                        @include triangle(top, $color--mid-grey, 8px);
+                    }
+                }
+            }
+        }
+
+        &.is-hidden {
+            display: none;
+        }
+
+        &.no-response {
+            color: $color--black-20;
+        }
+
+        .yes {
+            color: $color--green;
+        }
+
+        .maybe {
+            color: $color--mustard;
+        }
+
+        .no {
+            color: $color--tomato;
+        }
+    }
+
+    &__date {
+        @include font-size(milli);
+    }
+
+    &__no-reviews {
+        color: $color--mid-grey;
+    }
+
+    &__name {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        background: $color--white;
+
+        &:hover {
+            display: inline-flex;
+            overflow: visible;
+        }
+
+        img {
+            margin-inline-start: 7px;
+        }
+    }
+
+    &__outcome {
+        position: relative;
+
+        &.agree {
+            color: $color--green;
+        }
+
+        &.disagree {
+            color: $color--tomato;
+        }
+    }
+
+    &__split {
+        margin-block-end: 20px;
+    }
+}

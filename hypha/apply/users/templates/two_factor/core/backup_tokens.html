@@ -1,7 +1,7 @@
-{% extends "two_factor/_base_focus.html" %}
+{% extends "two_factor/_base.html" %}
 {% load static i18n users_tags %}
 
-{% block content %}
+{% block content_inner %}
     <h1>{% block title %}{% trans "Backup Codes" %}{% endblock %}</h1>
 
     <p class="hide-print">
@@ -14,7 +14,7 @@
                   cols="8"
                   rows="{{ device.token_set.count }}"
                   id="list-backup-tokens"
-                  class="font-mono pr-0 font-medium leading-tight bg-orange-100 resize-none"
+                  class="font-mono pe-0 font-medium leading-tight bg-orange-100 resize-none"
         >{% for token in device.token_set.all %}{{ token.token }}{% if not forloop.last %}&#013;&#010;{% endif %}{% endfor %}</textarea>
 
         <form method="post" class="actions actions-footer">{% csrf_token %}{{ form }}
@@ -45,7 +45,7 @@
             </div>
         </form>
     {% else %}
-        <p>{% trans "You don't have any backup codes yet." %}</p>
+        <p class="mb-4">{% trans "You don't have any backup codes yet." %}</p>
         <form method="post">{% csrf_token %}{{ form }}
             <button class="btn btn-primary" type="submit">{% trans "Generate Codes" %}</button>
         </form>

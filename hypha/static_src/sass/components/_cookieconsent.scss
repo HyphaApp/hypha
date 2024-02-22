@@ -1,0 +1,17 @@
+.cookieconsent {
+    position: fixed;
+    inset-block-end: 0;
+    color: $color--white;
+    background-color: $color--dark-blue;
+    border-block-start: 4px solid $color--light-blue;
+    transform: translateY(100vh);
+    transition: all $transition;
+
+    a {
+        color: inherit;
+    }
+}
+
+.js-cookieconsent-open {
+    transform: translateY(0);
+}

@@ -11,6 +11,6 @@ python3 manage.py migrate
 python3 manage.py wagtailsiteupdate hypha.test 8090
 
 # Start gunicorn server.
-gunicorn hypha.wsgi:application --env DJANGO_SETTINGS_MODULE=hypha.settings.dev --reload  --bind 0.0.0.0:9001
+gunicorn hypha.wsgi:application --env DJANGO_SETTINGS_MODULE=hypha.settings.dev --threads 3 --reload  --bind 0.0.0.0:9001
 
 exec "$@"

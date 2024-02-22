@@ -1,0 +1,27 @@
+.reviews-summary {
+    display: none;
+    background-color: transparent;
+
+    @include media-query(tablet-landscape) {
+        display: table;
+    }
+
+    &__tr {
+        vertical-align: top;
+        border-block-end: 0;
+    }
+
+    &__td {
+        padding: 10px;
+        vertical-align: middle;
+        text-align: center;
+    }
+
+    &__td-width {
+        width: max-content;
+    }
+}
+
+.counts-separator {
+    color: $color--mid-grey;
+}

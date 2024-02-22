@@ -1,0 +1,74 @@
+/* stylelint-disable selector-max-id, length-zero-no-unit -- CSS from https://github.com/rstacruz/nprogress */
+#nprogress {
+    /* Make clicks pass-through */
+    pointer-events: none;
+
+    .bar {
+        background: $color--dark-blue;
+
+        position: fixed;
+        z-index: 1031;
+        inset-block-start: 0;
+        inset-inline-start: 0;
+
+        width: 100%;
+        height: 2px;
+    }
+
+    /* Fancy blur effect */
+    .peg {
+        display: block;
+        position: absolute;
+        inset-inline-end: 0px;
+        width: 100px;
+        height: 100%;
+        box-shadow:
+            0 0 10px $color--dark-blue,
+            0 0 5px $color--dark-blue;
+        opacity: 1;
+
+        transform: rotate(3deg) translate(0px, -4px);
+    }
+
+    /* Remove these to get rid of the spinner */
+    .spinner {
+        display: block;
+        position: fixed;
+        z-index: 1031;
+        inset-block-start: 15px;
+        inset-inline-end: 15px;
+    }
+
+    .spinner-icon {
+        width: 18px;
+        height: 18px;
+        box-sizing: border-box;
+
+        border: solid 2px transparent;
+        border-top-color: $color--dark-blue;
+        border-left-color: $color--dark-blue;
+        border-radius: 50%;
+
+        animation: nprogress-spinner 400ms linear infinite;
+    }
+}
+
+.nprogress-custom-parent {
+    overflow: hidden;
+    position: relative;
+
+    #nprogress .spinner,
+    #nprogress .bar {
+        position: absolute;
+    }
+}
+
+@keyframes nprogress-spinner {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}

@@ -1,0 +1,52 @@
+// stylelint-disable selector-max-compound-selectors
+
+.paf-review-table {
+    @include table-ordering-styles;
+
+    thead {
+        display: none;
+
+        @include media-query($table-breakpoint) {
+            display: table-header-group;
+        }
+
+        th {
+            // ordering - adjust alignment
+            &.desc {
+                position: relative;
+                color: $color--dark-grey;
+
+                &::after {
+                    position: absolute;
+                    inset-block-start: 40%;
+                    margin-inline-start: 5px;
+                }
+            }
+
+            &.asc {
+                position: relative;
+                color: $color--dark-grey;
+
+                &::after {
+                    position: absolute;
+                    inset-block-start: 50%;
+                    margin-inline-start: 5px;
+                }
+            }
+        }
+    }
+
+    tbody {
+        td {
+            // stylelint-disable-next-line force-element-nesting
+            > span.mobile-label {
+                display: inline-block;
+                width: 90px;
+
+                @include media-query($table-breakpoint) {
+                    display: none;
+                }
+            }
+        }
+    }
+}

@@ -1,4 +1,5 @@
 from django.urls import include, path
+from django.views.generic import RedirectView
 
 from .views import (
     CategoryTemplatePrivateMediaView,
@@ -16,7 +17,6 @@ from .views import (
     ProjectDetailDownloadView,
     ProjectDetailView,
     ProjectListView,
-    ProjectOverviewView,
     ProjectPrivateMediaView,
     ProjectSOWDownloadView,
     ProjectSOWView,
@@ -33,7 +33,7 @@ from .views import (
 app_name = "projects"
 
 urlpatterns = [
-    path("", ProjectOverviewView.as_view(), name="overview"),
+    path("", RedirectView.as_view(pattern_name="apply:projects:all"), name="overview"),
     path("all/", ProjectListView.as_view(), name="all"),
     path("invoices/", InvoiceListView.as_view(), name="invoices"),
     path(
@@ -122,32 +122,6 @@ urlpatterns = [
     ),
     path(
         "reports/",
-        include(
-            (
-                [
-                    path("", ReportListView.as_view(), name="all"),
-                    path(
-                        "<int:pk>/",
-                        include(
-                            [
-                                path("", ReportDetailView.as_view(), name="detail"),
-                                path("skip/", ReportSkipView.as_view(), name="skip"),
-                                path("edit/", ReportUpdateView.as_view(), name="edit"),
-                                path(
-                                    "documents/<int:file_pk>/",
-                                    ReportPrivateMedia.as_view(),
-                                    name="document",
-                                ),
-                            ]
-                        ),
-                    ),
-                ],
-                "reports",
-            )
-        ),
-    ),
-    path(
-        "vendor/",
         include(
             (
                 [

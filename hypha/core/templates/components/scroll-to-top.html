@@ -8,7 +8,7 @@
         x-on:scroll.window.throttle.50ms="scrollBackTop = (window.pageYOffset < lastScrollTop && window.pageYOffset > window.outerHeight * 0.4) ? true : false; lastScrollTop = window.pageYOffset;"
         @click="window.scrollTo({top: 0, behavior: 'smooth'})"
         aria-label="Back to top"
-        class="fixed top-0 right-1/2 px-3 py-2 mt-10 -mr-[64px] text-white bg-light-blue/80 z-30 hover:bg-light-blue hover:text-white hover:shadow-lg transition-all focus:outline-none cursor-pointer shadow-lg rounded-2xl">
+        class="fixed top-0 end-1/2 px-3 py-2 mt-10 -me-[64px] text-white bg-light-blue/80 z-30 hover:bg-light-blue hover:text-white hover:shadow-lg transition-all focus:outline-none cursor-pointer shadow-lg rounded-2xl">
         {% heroicon_mini "arrow-long-up" class="inline align-text-bottom" size=18 aria_hidden=true %} Back to top
     </button>
 </template>

@@ -1,7 +1,7 @@
-{% extends "two_factor/_base_focus.html" %}
+{% extends "two_factor/_base.html" %}
 {% load i18n %}
 
-{% block content %}
+{% block content_inner %}
   {% if wizard.steps.current == 'welcome' %}
     <p>{% blocktrans trimmed %}2FA is an extra layer of security used to make sure that people trying to gain access to an
       online account are who they say they are. We recommend using Authy or another

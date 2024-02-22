@@ -1,0 +1,106 @@
+.rich-text {
+    margin-block-end: 2rem;
+    word-break: break-word;
+    max-width: $max-text-line-length;
+
+    &--answers {
+        > section {
+            margin: 0 0 2rem;
+
+            p:first-of-type {
+                margin-block-start: 0;
+            }
+
+            p:empty {
+                margin: 0;
+            }
+        }
+    }
+
+    h1 {
+        font-size: 1.296rem;
+        margin-block-end: 1em;
+        font-weight: 600;
+        line-height: 1.3333;
+    }
+
+    h1:not(:first-child) {
+        margin-block-start: 2em;
+    }
+
+    h2 {
+        font-size: 1.215rem;
+        margin-block-start: 1.6em;
+        margin-block-end: 0.6em;
+        line-height: 1.6;
+        font-weight: 600;
+    }
+
+    h3,
+    h4:not(.question) {
+        font-size: 1.138rem;
+        margin-block-start: 1.5em;
+        margin-block-end: 0.5em;
+        line-height: 1.5;
+    }
+
+    h5,
+    h6 {
+        font-size: 1.067rem;
+        margin-block-start: 1.4em;
+        margin-block-end: 0.4em;
+        line-height: 1.4;
+    }
+
+    &--hidden {
+        display: none;
+
+        &.is-open {
+            display: block;
+        }
+    }
+
+    // This is a hack to make sure a copy pasted table with width property on it
+    // doesn't break the layout. The margin from the table is removed and transferred
+    // to the parent element, because the table is wrapped in a div with overflow: auto
+    &__table {
+        overflow: auto;
+        margin-block-start: 1.25em;
+        margin-block-end: 1.25em;
+
+        > table {
+            margin-block-start: 0;
+            margin-block-end: 0;
+        }
+    }
+
+    ul {
+        &.remove-list-style {
+            padding: 0;
+            list-style: none;
+        }
+    }
+}
+
+.tox-statusbar {
+    &__wordcount {
+        padding-inline-start: 10px;
+        padding-inline-end: 10px;
+
+        &::after {
+            content: attr(data-after-word-count);
+        }
+
+        &.word-count-warning,
+        &.word-count-warning-2 {
+            background-color: $color--pastel-red;
+            font-weight: bold;
+            text-shadow: none;
+            color: $color--black;
+        }
+
+        &.word-count-warning-2 {
+            background-color: $color--tomato;
+        }
+    }
+}

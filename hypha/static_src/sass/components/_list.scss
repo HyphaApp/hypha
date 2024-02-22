@@ -1,0 +1,83 @@
+.list {
+    $root: &;
+    max-width: 290px;
+
+    &--no-margin {
+        margin: 0;
+    }
+
+    &--opinion {
+        position: relative;
+        font-size: 14px;
+        border-block-start: 1px solid $color--mid-grey;
+        border-block-end: 1px solid $color--mid-grey;
+        margin: 10px 0;
+        padding: 5px 0;
+
+        #{$root}__item--opinion:first-child {
+            span:last-child {
+                &::before,
+                &::after {
+                    position: absolute;
+                    inset-block-start: -15px;
+                    inset-inline-end: 5px;
+                }
+
+                &::after {
+                    @include triangle(top, $color--mist, 6px);
+                    inset-block-start: -13px;
+                }
+
+                &::before {
+                    @include triangle(top, $color--mid-grey, 6px);
+                }
+            }
+        }
+    }
+
+    &__item {
+        &--reviewer {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        &--reviewer-name {
+            max-width: 190px;
+            overflow: hidden;
+            font-weight: $weight--bold;
+            text-overflow: ellipsis;
+            display: flex;
+            align-items: center;
+
+            > img {
+                margin-inline-start: 10px;
+            }
+
+            // show truncated emails on hover
+            &:hover {
+                position: absolute;
+                max-width: initial;
+                overflow: visible;
+                background-color: $color--mist;
+
+                + #{$root}__item--reviewer-outcome {
+                    width: 100%;
+                    text-align: right;
+                }
+            }
+
+            #{$root}__item--opinion & {
+                font-weight: $weight--normal;
+            }
+        }
+
+        &--reviewer-outcome {
+            color: $color--tomato;
+            position: relative;
+
+            &.agree {
+                color: $color--green;
+            }
+        }
+    }
+}

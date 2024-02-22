@@ -1,0 +1,95 @@
+.tabs {
+    margin: 1.5rem 0 -20px;
+
+    &__container {
+        display: flex;
+    }
+
+    &__content {
+        display: none;
+
+        &--current {
+            display: inherit;
+        }
+    }
+}
+
+.tab {
+    &__item {
+        $root: &;
+
+        @include responsive-font-sizes(12px, 15px);
+        position: relative;
+        padding: 10px;
+        font-weight: $weight--bold;
+        hyphens: auto;
+        color: $color--mid-grey;
+        text-transform: uppercase;
+        transition:
+            color,
+            background-color,
+            0.1s ease-out;
+
+        @include media-query(mob-landscape) {
+            width: 33%;
+            padding: 15px;
+        }
+
+        @include media-query(small-tablet) {
+            width: auto;
+            padding: 0.75rem 1rem;
+        }
+
+        &:hover {
+            color: $color--light-blue;
+            background-color: rgba(
+                #fff,
+                0.8
+            ); // stylelint-disable-line color-no-hex
+        }
+
+        &--alt {
+            font-size: map-get($font-sizes, zeta);
+            font-weight: $weight--semibold;
+            padding: 0.5rem 1rem;
+            text-transform: none;
+            display: inline-block;
+            border-block-end: 3px solid transparent;
+            color: $color--mid-dark-grey;
+            width: auto;
+
+            &:hover {
+                color: $color--default;
+            }
+
+            &#{$root}--active {
+                background-color: transparent;
+                border-block-end: 3px solid $color--primary;
+
+                &:hover {
+                    color: $color--default;
+                    background-color: transparent;
+                }
+            }
+        }
+
+        &--active {
+            color: $color--default;
+            cursor: default;
+            background-color: $color--white;
+
+            &:hover {
+                background-color: $color--white;
+            }
+        }
+
+        &--right {
+            display: none;
+
+            @include media-query(small-tablet) {
+                display: block;
+                margin-inline-start: auto;
+            }
+        }
+    }
+}

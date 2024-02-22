@@ -1,0 +1,90 @@
+// stylelint-disable property-no-vendor-prefix
+body {
+    overflow-x: hidden;
+
+    &.no-scroll {
+        overflow-y: hidden;
+    }
+}
+
+// Prevent empty space below images appearing
+img,
+svg {
+    vertical-align: top;
+}
+
+a {
+    color: $color--primary;
+    text-decoration: none;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+p {
+    margin-block: 0.5rem;
+}
+
+details > summary {
+    cursor: pointer;
+    margin-block-end: 10px;
+
+    &:focus {
+        outline: none;
+    }
+}
+
+.is-invisible,
+%is-invisible {
+    z-index: -1;
+    opacity: 0;
+    transition: opacity, z-index, $transition;
+}
+
+.is-visible,
+%is-visible {
+    z-index: 5;
+    opacity: 1;
+    transition: opacity, z-index, $transition;
+}
+
+.is-hidden,
+%is-hidden {
+    display: none;
+}
+
+.js-hidden,
+%js-hidden {
+    html.js & {
+        @extend %is-hidden;
+    }
+}
+
+.no-js-hidden,
+%no-js-hidden {
+    html.no-js & {
+        @extend %is-hidden;
+    }
+}
+
+.is-unhidden,
+%is-unhidden {
+    display: block;
+}
+
+.off-screen,
+%off-screen {
+    position: absolute;
+    inset-inline-start: -9999px;
+}
+
+.on-screen,
+%on-screen {
+    position: relative;
+    inset-inline-start: 0;
+}
+
+.mid-grey-text {
+    color: $color--mid-dark-grey;
+}

@@ -19,7 +19,7 @@
             {% include "forms/includes/form_errors.html" with form=sow_form %}
         {% endif %}
 
-        <div class="wrapper wrapper--light-grey-bg wrapper--sidebar pt-8 pl-20 pb-8 mt-4 mb-12 mx-auto ">
+        <div class="wrapper wrapper--light-grey-bg wrapper--sidebar pt-8 ps-20 pb-8 mt-4 mb-12 mx-auto ">
             <div class="wrapper--sidebar--inner">
                 <form class="form application-form" action="" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
@@ -96,11 +96,11 @@
 {% endblock %}
 
 {% block extra_js %}
-    <script src="{% static 'js/apply/file-uploads.js' %}"></script>
-    <script src="{% static 'js/apply/tinymce-word-count.js' %}"></script>
-    <script src="{% static 'js/apply/multi-input-fields.js' %}"></script>
-    <script src="{% static 'js/apply/application-form-links-new-window.js' %}"></script>
+    <script src="{% static 'js/file-uploads.js' %}"></script>
+    <script src="{% static 'js/tinymce-word-count.js' %}"></script>
+    <script src="{% static 'js/multi-input-fields.js' %}"></script>
+    <script src="{% static 'js/application-form-links-new-window.js' %}"></script>
     {% if not show_all_group_fields %}
-        <script src="{% static 'js/apply/form-group-toggle.js' %}"></script>
+        <script src="{% static 'js/form-group-toggle.js' %}"></script>
     {% endif %}
 {% endblock %}

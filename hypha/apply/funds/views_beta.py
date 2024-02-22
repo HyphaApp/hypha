@@ -16,6 +16,7 @@ from django_htmx.http import HttpResponseClientRedirect, HttpResponseClientRefre
 from wagtail.models import Page
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
+from hypha.apply.categories.models import Option
 from hypha.apply.determinations.views import BatchDeterminationCreateView
 from hypha.apply.funds.models.screening import ScreeningStatus
 from hypha.apply.funds.workflow import PHASES, get_action_mapping, review_statuses
@@ -230,6 +231,11 @@ def submission_all_beta(
     end = time.time()
 
     page = Paginator(qs, per_page=60, orphans=20).page(page)
+
+    # Pair the category ID with it's respective label
+    selected_category_options = Option.objects.filter(
+        pk__in=selected_category_options
+    ).values("id", "value")
 
     ctx = {
         "base_template": base_template,

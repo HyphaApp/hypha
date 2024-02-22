@@ -1,0 +1,441 @@
+.btn,
+.button {
+    padding: 0;
+    background-color: transparent;
+    background-image: none;
+    border: 0;
+    box-shadow: none;
+
+    &:hover {
+        cursor: pointer;
+    }
+
+    &:disabled,
+    &.is-disabled {
+        pointer-events: none;
+        opacity: 0.5;
+    }
+
+    &-default,
+    &-primary,
+    &--primary {
+        @include button($color--light-blue, $color--dark-blue);
+        display: inline-block;
+        border: 1px solid $color--light-blue;
+
+        .form--filters & {
+            width: 100%;
+            text-align: center;
+            height: 45px;
+        }
+    }
+
+    &--project-action {
+        @include button($color--light-blue, $color--dark-blue);
+        display: inline-block;
+        padding: 0.5rem 1.2rem;
+
+        &--white {
+            @include button($color--white, $color--light-blue);
+            display: inline-block;
+            color: $color--light-blue;
+            border: 1px solid $color--mid-grey;
+            padding: 0.5rem 1.2rem;
+
+            &:focus {
+                color: $color--light-blue;
+            }
+
+            &:hover {
+                color: $color--white;
+            }
+        }
+
+        &--paf-download {
+            @include button($color--white, $color--light-blue);
+            display: inline-block;
+            color: $color--light-blue;
+            border: 1px solid $color--mid-grey;
+            padding: 0.5rem 3.3rem;
+
+            &:focus {
+                color: $color--light-blue;
+            }
+
+            &:hover {
+                color: $color--white;
+            }
+        }
+    }
+
+    &--left-space {
+        margin-inline-start: 20px;
+    }
+
+    &--transparent {
+        @include button(transparent, $color--black);
+        @include button--narrow;
+        color: $color--black;
+        border: 1px solid $color--black;
+
+        &:focus {
+            color: $color--black;
+        }
+
+        &:hover {
+            color: $color--white;
+        }
+    }
+
+    &--cookieconsent {
+        @include button(transparent, $color--white);
+        display: inline;
+
+        &:focus,
+        &:hover {
+            color: $color--dark-blue;
+        }
+    }
+
+    &--secondary,
+    &--white {
+        @include button($color--white, $color--light-blue);
+        display: inline-block;
+        color: $color--light-blue;
+        border: 1px solid $color--mid-grey;
+
+        &:focus {
+            color: $color--light-blue;
+        }
+
+        &:hover {
+            color: $color--white;
+        }
+    }
+
+    &--blue-white {
+        @include button($color--white, $color--light-blue);
+        display: inline-block;
+        color: $color--light-blue;
+        border: 1px solid $color--light-blue;
+
+        &:focus {
+            color: $color--light-blue;
+        }
+
+        &:hover {
+            color: $color--white;
+        }
+    }
+
+    &-danger,
+    &--warning {
+        @include button($color--error, $color--error);
+
+        &:focus {
+            background-color: $color--pastel-red;
+        }
+    }
+
+    &--filters {
+        display: flex;
+        justify-content: space-between;
+        max-width: 300px;
+        padding: 15px 20px;
+        font-weight: $weight--normal;
+        color: $color--default;
+        border: 1px solid $color--light-mid-grey;
+        transition: none;
+        width: 100%;
+
+        @include media-query(tablet-landscape) {
+            background: none;
+            padding: 10px;
+            border: 0;
+            justify-content: flex-start;
+            opacity: 0.7;
+        }
+    }
+
+    &--filters-header {
+        display: flex;
+    }
+
+    &--search {
+        position: absolute;
+        inset-block-start: 0.65em;
+        inset-inline-end: 10px;
+
+        svg {
+            fill: $color--primary;
+            height: 24px;
+        }
+    }
+
+    &--full-width {
+        width: 100%;
+        text-align: center;
+    }
+
+    &--half-width {
+        width: 50%;
+        padding: 10px;
+        text-align: center;
+        margin-inline-end: 20px;
+
+        &:last-child {
+            margin-inline-end: 0;
+        }
+    }
+
+    &--bottom-space {
+        margin-block-end: 10px;
+
+        &:last-child {
+            margin-block-end: 0;
+        }
+    }
+
+    &--actions {
+        position: relative;
+        display: block;
+        background-color: $color--white;
+
+        &:active {
+            background: $color--light-blue-90;
+        }
+
+        &::after {
+            position: absolute;
+            inset-block-start: 0;
+            inset-inline-end: 15px;
+            font-size: 30px;
+            content: "+";
+            line-height: 1.2;
+        }
+
+        &.is-active {
+            color: $color--dark-blue;
+            background: $color--light-blue-90;
+
+            &::after {
+                inset-block-start: -12px;
+                content: "_";
+            }
+        }
+
+        @include media-query(tablet-portrait) {
+            display: none;
+        }
+    }
+
+    &--top-space {
+        margin-block-start: 20px;
+    }
+
+    &--submit {
+        min-width: 200px;
+        margin-inline-end: 10px;
+        text-align: center;
+    }
+
+    &--compare {
+        width: 75px;
+        padding: 3px;
+        margin-block-start: 10px;
+        font-size: 12px;
+        font-weight: $weight--bold;
+        text-align: center;
+        text-transform: uppercase;
+        border: 1px solid currentcolor;
+        transition: background-color, color, border, $quick-transition;
+
+        @include media-query(tablet-portrait) {
+            margin-block-start: 0;
+        }
+
+        &:focus,
+        &:hover {
+            color: $color--white;
+            background-color: $color--light-blue;
+            border: 1px solid $color--light-blue;
+        }
+    }
+
+    &--arrow-pixels-white {
+        display: flex;
+        align-items: center;
+
+        svg {
+            width: 10px;
+            height: 14px;
+            margin-inline-start: 10px;
+            fill: $color--white;
+        }
+    }
+
+    &--action {
+        display: flex;
+        color: $color--default;
+        align-items: center;
+        transition: opacity $transition;
+        font-weight: $weight--semibold;
+        position: relative;
+
+        &:hover {
+            opacity: 0.7;
+        }
+
+        &:disabled {
+            color: $color--mid-dark-grey;
+            cursor: not-allowed;
+            pointer-events: all; // to show the tooltip on hover
+
+            // tooltip
+            &::before {
+                content: attr(data-tooltip);
+                pointer-events: none;
+                position: absolute;
+                width: 200px;
+                padding: 12px;
+                font-size: 12px;
+                font-weight: $weight--normal;
+                white-space: normal;
+                background: $color--light-blue;
+                opacity: 0;
+                transition: opacity $transition;
+                inset-block-end: 45px;
+                inset-inline-start: 50%;
+                transform: translateX(-50%);
+                color: $color--white;
+                text-align: left;
+                line-height: 1rem;
+                border: 1px solid $color--white;
+                border-radius: 3px;
+            }
+
+            &::after {
+                @include triangle(bottom, $color--primary, 7px);
+                position: absolute;
+                inset-block-start: -22px;
+                inset-inline-start: 50%;
+                transform: translateX(-50%);
+                opacity: 0;
+                transition: opacity $transition;
+                z-index: 10;
+            }
+
+            svg {
+                fill: $color--mid-dark-grey;
+            }
+
+            &:hover {
+                opacity: 1;
+
+                // show tooltip
+                &::before {
+                    pointer-events: all;
+                    z-index: 10;
+                    opacity: 1;
+                }
+
+                &::after {
+                    opacity: 1;
+                }
+            }
+        }
+
+        svg {
+            fill: $color--light-blue;
+            width: 1em;
+            height: 1em;
+            margin-inline-end: 0.5rem;
+            pointer-events: none;
+        }
+    }
+
+    &--link {
+        color: $color--primary;
+    }
+
+    &--remove {
+        color: $color--tomato;
+    }
+
+    &--tooltip-disabled {
+        background-color: $color--button-disabled;
+
+        &:hover {
+            cursor: default;
+            background-color: $color--button-disabled;
+        }
+    }
+
+    &--flag {
+        &.flagged {
+            position: relative;
+
+            &::after {
+                content: "\2691";
+                color: $color--tomato;
+                position: absolute;
+                inset-block-start: 4px;
+                padding-inline-start: 5px;
+                font-size: map-get($font-sizes, delta);
+                line-height: 1;
+            }
+        }
+    }
+
+    &--unflag {
+        @include button($color--light-blue, $color--dark-blue);
+        @include button--small;
+        padding-inline-end: 18px;
+
+        @include media-query(tablet-landscape) {
+            padding-inline-end: 18px;
+        }
+
+        &.flagged {
+            &::after {
+                inset-block-start: 2px;
+                padding-inline-start: 3px;
+                font-size: map-get($font-sizes, zeta);
+            }
+        }
+    }
+
+    &--float {
+        position: absolute;
+        inset-block-start: 2px;
+        inset-inline-end: 2px;
+    }
+
+    // Two-factor
+    &-info,
+    &-link {
+        @include button($color--light-blue, $color--dark-blue);
+        display: inline-block;
+        line-height: 1.15;
+    }
+
+    &--js-like-active {
+        font-weight: 600;
+        cursor: not-allowed;
+
+        svg {
+            fill: $color--dark-blue;
+            cursor: not-allowed;
+        }
+    }
+
+    &--js-dislike-active {
+        font-weight: 600;
+        cursor: not-allowed;
+
+        svg {
+            fill: $color--tomato;
+            cursor: not-allowed;
+        }
+    }
+}

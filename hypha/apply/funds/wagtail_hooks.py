@@ -37,3 +37,13 @@ def register_permissions():
             "delete_applicationsubmission",
         ],
     )
+
+
+@hooks.register("construct_main_menu")
+def hide_forms_menu_item(request, menu_items):
+    """Hides the "Forms" menu item from the main menu.
+
+    The "Forms" menu item is added by wagtail.contrib.forms.
+    """
+    menu_items[:] = [item for item in menu_items if item.name != "forms"]
+    return menu_items

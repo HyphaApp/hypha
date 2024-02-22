@@ -1,0 +1,33 @@
+{% extends "base-apply.html" %}
+% load wagtailcore_tags static %}
+
+{% block header_menu %}
+    <section class="header__menus header__menus--desktop">
+        {% if settings.utils.SystemMessagesSettings.nav_content %}
+            {{ settings.utils.SystemMessagesSettings.nav_content|safe }}
+        {% else %}
+            {% include "core/navigation/primarynav-apply.html" %}
+        {% endif %}
+    </section>
+{% endblock %}
+
+
+{% block content %}
+    <div class="py-8 lg:py-16  max-w-3xl mx-auto">
+        <h1 class="font-bold text-5xl text-balance">{{ page.title }}</h1>
+
+        {% if page.strapline %}
+            <p class="mb-8 text-fg-muted text-pretty">{{ page.strapline }}</p>
+        {% endif %}
+
+        <div class="divide-y">
+            {% for fund in open_funds %}
+                {% include "apply_home/includes/apply_listing.html" with page=fund %}
+            {% endfor %}
+            {% for lab in open_labs %}
+                {% include "apply_home/includes/apply_listing.html" with page=lab %}
+            {% endfor %}
+        </div>
+
+    </div>
+{% endblock %}

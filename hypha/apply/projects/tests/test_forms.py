@@ -5,13 +5,13 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.http import QueryDict
 from django.test import TestCase, override_settings
 
-from hypha.apply.home.factories import ApplySiteFactory
 from hypha.apply.users.tests.factories import (
     Finance2Factory,
     FinanceFactory,
     StaffFactory,
     UserFactory,
 )
+from hypha.home.factories import ApplySiteFactory
 
 from ..files import get_files
 from ..forms.payment import (

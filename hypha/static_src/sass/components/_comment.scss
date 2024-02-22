@@ -1,0 +1,29 @@
+.comment {
+    padding-block-end: 20px;
+    margin-block-end: 20px;
+    border-block-end: 1px solid $color--light-mid-grey;
+
+    @include media-query(tablet-portrait) {
+        max-width: 60%;
+    }
+
+    &:first-of-type {
+        margin-block-start: 20px;
+    }
+
+    &:last-of-type {
+        padding-block-end: 0;
+        margin-block-end: 0;
+        border-block-end: 0;
+    }
+
+    &__time,
+    &__user,
+    &__copy {
+        margin: 0;
+    }
+
+    &__user {
+        font-weight: $weight--semibold;
+    }
+}

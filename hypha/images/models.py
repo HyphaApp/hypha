@@ -2,9 +2,12 @@ from django.db import models
 from wagtail.images.models import AbstractImage, AbstractRendition, Image
 
 
-# We define our own custom image class to replace wagtailimages.Image,
-# providing various additional data fields
 class CustomImage(AbstractImage):
+    """
+    Custom image class to replace wagtailimages.Image, providing various
+    additional data fields
+    """
+
     drupal_id = models.IntegerField(null=True, blank=True, editable=False)
 
     alt = models.CharField(max_length=255, blank=True)

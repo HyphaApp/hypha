@@ -5,7 +5,7 @@ from django.core.management import call_command
 from django.test import TestCase
 from django.utils import timezone
 
-from hypha.apply.home.models import ApplyHomePage
+from hypha.home.models import ApplyHomePage
 
 from .factories import ProjectFactory, ReportConfigFactory, ReportFactory
 

@@ -1,0 +1,28 @@
+.profile {
+    margin-block-start: $mobile-gutter;
+
+    @include media-query(tablet-portrait) {
+        display: flex;
+        margin-block-start: 2rem;
+    }
+
+    &__column {
+        padding-block-end: 2rem;
+        margin-block-end: 2rem;
+        border-block-end: 1px solid $color--light-mid-grey;
+
+        @include media-query(tablet-portrait) {
+            width: 50%;
+            padding-inline-end: 3rem;
+            margin: 0 3rem 0 0;
+            border-inline-end: 1px solid $color--light-mid-grey;
+            border-block-end: 0;
+
+            &:last-child {
+                padding-inline-end: 0;
+                margin-inline-end: 0;
+                border-inline-end: 0;
+            }
+        }
+    }
+}

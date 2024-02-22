@@ -6,8 +6,8 @@ from django.http import HttpRequest
 from django.utils import timezone
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
-from hypha.apply.home.models import ApplyHomePage
 from hypha.apply.projects.models import Project
+from hypha.home.models import ApplyHomePage
 
 
 class Command(BaseCommand):
