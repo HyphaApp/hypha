@@ -364,7 +364,7 @@
                     {% slot "url" %}{% url "apply:submissions:submenu-rounds" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
                 {% enddropdown_menu %}
 
-                {% dropdown_menu title="Category" heading="Filter by Category" enable_search=True position="right" %}
+                {% dropdown_menu title="Category" heading="Filter by Category" enable_search=True %}
                     {% slot "url" %}{% url "apply:submissions:submenu-category-options" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
                 {% enddropdown_menu %}
 
@@ -372,7 +372,7 @@
                     {% slot "url" %}{% url "apply:submissions:submenu-meta-terms" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
                 {% enddropdown_menu %}
 
-                {% dropdown_menu title="Lead" heading="Filter by Lead" enable_search=True %}
+                {% dropdown_menu title="Lead" heading="Filter by Lead" enable_search=True position="right" %}
                     {% slot "url" %}{% url "apply:submissions:submenu-leads" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
                 {% enddropdown_menu %}
 
