@@ -9,8 +9,10 @@ from django.views.decorators.http import require_GET
 from hypha.apply.activity.services import (
     get_related_actions_for_user,
 )
+from hypha.apply.funds.utils import get_statuses_as_params
 
-from ..models.payment import INVOICE_STATUS_CHOICES, Invoice
+from ..constants import statuses_and_table_statuses_mapping
+from ..models.payment import Invoice
 from ..models.project import PROJECT_STATUS_CHOICES, Project
 from ..permissions import has_permission
 
@@ -81,15 +83,16 @@ def get_invoices_status_counts(request):
         )
     )
     status_counts = {
-        key: {
-            "name": display,
-            "count": invoices_status_counts.get(key, 0),
-            "url": reverse_lazy("funds:projects:invoices") + "?status=" + key,
+        name: {
+            "name": name,
+            "count": sum(invoices_status_counts.get(status, 0) for status in statuses),
+            "url": reverse_lazy("funds:projects:invoices")
+            + get_statuses_as_params(statuses),
             "is_active": True
-            if invoice_status_url_query and key in invoice_status_url_query
+            if invoice_status_url_query and statuses == invoice_status_url_query
             else False,
         }
-        for key, display in INVOICE_STATUS_CHOICES
+        for name, statuses in statuses_and_table_statuses_mapping.items()
     }
     return render(
         request,

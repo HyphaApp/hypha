@@ -1,6 +1,18 @@
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
+from .models.payment import (
+    APPROVED_BY_FINANCE,
+    APPROVED_BY_STAFF,
+    CHANGES_REQUESTED_BY_FINANCE,
+    CHANGES_REQUESTED_BY_STAFF,
+    DECLINED,
+    PAID,
+    PAYMENT_FAILED,
+    RESUBMITTED,
+    SUBMITTED,
+)
+
 # INT refers Invoice table
 INT_STAFF_PENDING = _("Staff pending")
 INT_FINANCE_PENDING = _("Finance pending")
@@ -35,4 +47,14 @@ INVOICE_STATUS_FG_COLORS = {
     INT_REQUEST_FOR_CHANGE: "text-blue-700",
     INT_PAYMENT_FAILED: "text-red-700",
     INT_DECLINED: "text-pink-700",
+}
+
+
+statuses_and_table_statuses_mapping = {
+    INT_FINANCE_PENDING: [APPROVED_BY_STAFF, APPROVED_BY_FINANCE],
+    INT_STAFF_PENDING: [SUBMITTED, RESUBMITTED, CHANGES_REQUESTED_BY_FINANCE],
+    INT_VENDOR_PENDING: [CHANGES_REQUESTED_BY_STAFF],
+    INT_PAID: [PAID],
+    INT_DECLINED: [DECLINED],
+    INT_PAYMENT_FAILED: [PAYMENT_FAILED],
 }
