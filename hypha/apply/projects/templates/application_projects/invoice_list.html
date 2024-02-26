@@ -13,7 +13,7 @@
     {% endadminbar %}
 
     <div class="wrapper wrapper--large wrapper--inner-space-medium">
-        <div hx-get="{% url 'apply:projects:status_counts' type='invoices' %}" hx-trigger="load delay:50"></div>
+        <div hx-get="{% url 'apply:projects:invoices_status_counts' %}" hx-trigger="load delay:50"></div>
 
         {% if table %}
             {% trans "invoices" as search_placeholder %}

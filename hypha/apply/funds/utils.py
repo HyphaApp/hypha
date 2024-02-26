@@ -1,14 +1,8 @@
 from itertools import chain
 
-from django.db.models import Count
-from django.urls import reverse_lazy
-from django.utils.text import slugify
-
 from hypha.apply.utils.image import generate_image_tag
 
-from .models.applications import ApplicationSubmission
 from .models.screening import ScreeningStatus
-from .workflow import STATUSES
 
 
 def render_icon(image):
@@ -76,27 +70,25 @@ def model_form_initial(instance, fields=None, exclude=None):
     return data
 
 
-def get_applications_status_counts(current_url_queries):
-    application_status_url_query = current_url_queries.get("status")
-    status_counts = dict(
-        ApplicationSubmission.objects.current()
-        .values("status")
-        .annotate(
-            count=Count("status"),
-        )
-        .values_list("status", "count")
-    )
+status_and_phases_mapping = {
+    "received": ["need-screening", "proposal-received"],
+    "in-discussion": ["ready-for-discussion"],
+    "internal-review": ["internal-review"],
+    "more-information": ["more-information-required"],
+    "invited-for-proposal": ["invited-for-proposal"],
+    "external-review": ["external-review"],
+    "ready-for-determination": [
+        "ready-for-determination",
+        "ready-for-preliminary-determination",
+        "ready-for-final-determination",
+    ],
+    "accepted": ["accepted"],
+    "dismissed": ["dismissed"],
+}
 
-    grouped_statuses = {
-        name: {
-            "name": name,
-            "count": sum(status_counts.get(status, 0) for status in statuses),
-            "url": reverse_lazy("funds:submissions:list") + "?status=" + slugify(name),
-            "is_active": True
-            if application_status_url_query
-            and slugify(name) in application_status_url_query
-            else False,
-        }
-        for name, statuses in STATUSES.items()
-    }
-    return grouped_statuses
+
+def get_statuses_as_params(statuses):
+    params = "?"
+    for status in statuses:
+        params += "status=" + status + "&"
+    return params
