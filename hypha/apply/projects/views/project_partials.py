@@ -45,7 +45,7 @@ def get_project_status_counts(request):
     )
     status_counts = {
         key: {
-            "name": display,
+            "name": display.replace(" and ", " & "),
             "count": project_status_counts.get(key, 0),
             "url": reverse_lazy("funds:projects:all") + "?project_status=" + key,
             "is_active": True
