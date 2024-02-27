@@ -329,27 +329,7 @@
                     <p class="m-0 px-3 py-2 text-fg-muted" data-filter-empty-state hidden>{% trans "No statuses found. Sorry about that." %}</p>
                 {% enddropdown_menu %}
 
-                {% dropdown_menu title="Fund" heading="Filter by Fund &amp; Labs" enable_search=True %}
-                    {% slot "url" %}{% url "apply:submissions:submenu-funds" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
-                {% enddropdown_menu %}
-
-                {% dropdown_menu title="Round" heading="Filter by Round" enable_search=True %}
-                    {% slot "url" %}{% url "apply:submissions:submenu-rounds" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
-                {% enddropdown_menu %}
-
-                {% dropdown_menu title="Lead" heading="Filter by Lead" enable_search=True %}
-                    {% slot "url" %}{% url "apply:submissions:submenu-leads" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
-                {% enddropdown_menu %}
-
-                {% dropdown_menu title="Reviewers" heading="Filter by Reviewer" enable_search=True %}
-                    {% slot "url" %}{% url "apply:submissions:submenu-reviewers" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
-                {% enddropdown_menu %}
-
-                {% dropdown_menu title="Category" heading="Filter by Category" enable_search=True position="right" %}
-                    {% slot "url" %}{% url "apply:submissions:submenu-category-options" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
-                {% enddropdown_menu %}
-
-                {% dropdown_menu title="Screening" heading="Filter by screening decision" position="right" %}
+                {% dropdown_menu title="Screening" heading="Filter by screening decision"  %}
                     <ul
                         class="flex flex-col overflow-scroll divide-y max-h-80 text-gray-700"
                     >
@@ -376,10 +356,30 @@
                     </ul>
                 {% enddropdown_menu %}
 
+                {% dropdown_menu title="Fund" heading="Filter by Fund &amp; Labs" enable_search=True %}
+                    {% slot "url" %}{% url "apply:submissions:submenu-funds" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
+                {% enddropdown_menu %}
+
+                {% dropdown_menu title="Round" heading="Filter by Round" enable_search=True %}
+                    {% slot "url" %}{% url "apply:submissions:submenu-rounds" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
+                {% enddropdown_menu %}
+
+                {% dropdown_menu title="Category" heading="Filter by Category" enable_search=True %}
+                    {% slot "url" %}{% url "apply:submissions:submenu-category-options" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
+                {% enddropdown_menu %}
 
                 {% dropdown_menu title="Terms" heading="Filter by Terms" enable_search=True position="right" %}
                     {% slot "url" %}{% url "apply:submissions:submenu-meta-terms" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
                 {% enddropdown_menu %}
+
+                {% dropdown_menu title="Lead" heading="Filter by Lead" enable_search=True position="right" %}
+                    {% slot "url" %}{% url "apply:submissions:submenu-leads" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
+                {% enddropdown_menu %}
+
+                {% dropdown_menu title="Reviewers" heading="Filter by Reviewer" enable_search=True position="right" %}
+                    {% slot "url" %}{% url "apply:submissions:submenu-reviewers" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
+                {% enddropdown_menu %}
+
 
                 {% dropdown_menu title="Sort" heading="Sort by" position="right" %}
                     {% for sort_option in sort_options %}
