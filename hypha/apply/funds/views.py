@@ -1311,7 +1311,8 @@ class BaseSubmissionEditView(UpdateView):
         else:
             yield ("submit", "primary", _("Submit"))
             yield ("save", "white", _("Save draft"))
-            yield ("preview", "white", _("Preview"))
+            # TODO Fix preview bugs before reactivating.
+            # yield ("preview", "white", _("Preview"))
 
     def get_form_kwargs(self):
         """
