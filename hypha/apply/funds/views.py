@@ -1724,10 +1724,16 @@ class SubmissionResultView(SubmissionStatsMixin, FilterView):
 
     def get_context_data(self, **kwargs):
         search_term = self.request.GET.get("query")
-        submission_values = self.object_list.value()
-        count_values = submission_values.get("value__count")
-        total_value = intcomma(submission_values.get("value__sum"))
-        average_value = intcomma(round(submission_values.get("value__avg")))
+
+        if self.object_list:
+            submission_values = self.object_list.value()
+            count_values = submission_values.get("value__count")
+            total_value = intcomma(submission_values.get("value__sum"))
+            average_value = intcomma(round(submission_values.get("value__avg")))
+        else:
+            count_values = 0
+            total_value = 0
+            average_value = 0
 
         return super().get_context_data(
             search_term=search_term,
