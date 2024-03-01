@@ -628,9 +628,11 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
                     self, form, draft=draft
                 )
 
-                # If a preview is specified in form submission, render the applicant's answers rather than the landing page.
-                # At the moment ALL previews are drafted first and then shown
-                if preview and draft:
+                form.delete_temporary_files()
+
+                # If a preview is specified in form submission, render the
+                # applicant's answers rather than the landing page.
+                if preview:
                     context = self.get_context(request)
                     context["object"] = form_submission
                     context["form"] = form
