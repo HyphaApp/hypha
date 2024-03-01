@@ -517,11 +517,16 @@ class ApplicantDashboardView(TemplateView):
     template_name = "dashboard/applicant_dashboard.html"
 
     def get_context_data(self, **kwargs):
-        my_active_submissions = list(self.my_active_submissions(self.request.user))
-
         context = super().get_context_data(**kwargs)
-        context["my_active_submissions"] = my_active_submissions
-        context["active_projects"] = self.active_project_data()
+        context["my_submissions_exists"] = ApplicationSubmission.objects.filter(
+            user=self.request.user
+        ).exists()
+        context["per_section_items"] = range(
+            5
+        )  # it is just for animation, nothing to do with no of items there.
+        context["my_projects_exists"] = Project.objects.filter(
+            user=self.request.user
+        ).exists()
         context["active_invoices"] = self.active_invoices()
         context["historical_projects"] = self.historical_project_data()
         context["historical_submissions"] = self.historical_submission_data()
@@ -534,31 +539,6 @@ class ApplicantDashboardView(TemplateView):
             "count": len(tasks),
             "data": tasks,
         }
-
-    def active_project_data(self):
-        active_projects = (
-            Project.objects.filter(user=self.request.user)
-            .active()
-            .order_by("-created_at")
-            .for_table()
-        )
-        return {
-            "count": active_projects.count(),
-            "data": active_projects,
-        }
-
-    def my_active_submissions(self, user):
-        active_subs = (
-            ApplicationSubmission.objects.filter(
-                user=user,
-            )
-            .active()
-            .current()
-            .select_related("draft_revision")
-        )
-
-        for submission in active_subs:
-            yield submission.from_draft()
 
     def active_invoices(self):
         active_invoices = (
