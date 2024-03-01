@@ -50,15 +50,12 @@
     }
 
     &__info {
-        @include font-size(epsilon);
-
         @include media-query(tablet-landscape) {
             margin-block-start: auto;
         }
     }
 
     &__title {
-        font-weight: 500;
         width: 100%;
         hyphens: auto;
     }
