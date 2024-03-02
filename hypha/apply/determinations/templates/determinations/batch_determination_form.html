@@ -6,11 +6,9 @@
     <link rel="stylesheet" href="{% static 'css/fancybox.css' %}">
 {% endblock %}
 
-{% block header %}
-    {% adminbar %}
-        {% slot header %}{% trans "Add Batch Determination" %} - {{ action_name }}{% endslot %}
-    {% endadminbar %}
-{% endblock %}
+{% adminbar %}
+    {% slot header %}{% trans "Add Batch Determination" %} - {{ action_name }}{% endslot %}
+{% endadminbar %}
 
 {% block determination_information %}
     <div class="list-reveal list-reveal--determination">
