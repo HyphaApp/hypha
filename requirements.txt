@@ -33,7 +33,7 @@ django-tables2==2.5.1
 django-tinymce==3.5.0
 django-two-factor-auth==1.15.5
 django-web-components==0.1.1
-django==4.2.10
+django==4.2.11
 djangorestframework-api-key==2.3.0
 djangorestframework==3.14.0
 drf-nested-routers==0.93.4
