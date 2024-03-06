@@ -68,3 +68,27 @@ def model_form_initial(instance, fields=None, exclude=None):
             continue
         data[f.name] = f.value_from_object(instance)
     return data
+
+
+status_and_phases_mapping = {
+    "received": ["need-screening", "proposal-received"],
+    "in-discussion": ["ready-for-discussion"],
+    "internal-review": ["internal-review"],
+    "more-information": ["more-information-required"],
+    "invited-for-proposal": ["invited-for-proposal"],
+    "external-review": ["external-review"],
+    "ready-for-determination": [
+        "ready-for-determination",
+        "ready-for-preliminary-determination",
+        "ready-for-final-determination",
+    ],
+    "accepted": ["accepted"],
+    "dismissed": ["dismissed"],
+}
+
+
+def get_statuses_as_params(statuses):
+    params = "?"
+    for status in statuses:
+        params += "status=" + status + "&"
+    return params

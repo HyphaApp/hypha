@@ -27,6 +27,8 @@ from .views import (
     ReportUpdateView,
     VendorDetailView,
     VendorPrivateMediaView,
+    get_invoices_status_counts,
+    get_project_status_counts,
     partial_project_activities,
 )
 
@@ -35,7 +37,11 @@ app_name = "projects"
 urlpatterns = [
     path("", RedirectView.as_view(pattern_name="apply:projects:all"), name="overview"),
     path("all/", ProjectListView.as_view(), name="all"),
+    path("statuses/", get_project_status_counts, name="projects_status_counts"),
     path("invoices/", InvoiceListView.as_view(), name="invoices"),
+    path(
+        "invoices/statuses/", get_invoices_status_counts, name="invoices_status_counts"
+    ),
     path(
         "<int:pk>/",
         include(
