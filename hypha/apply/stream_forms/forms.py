@@ -7,6 +7,7 @@ from django.utils.safestring import mark_safe
 from django_file_form.forms import FileFormMixin
 from wagtail.contrib.forms.forms import BaseForm
 
+from hypha.apply.funds.blocks import ValueBlock
 from hypha.apply.users.utils import get_user_by_email, is_user_already_registered
 
 
@@ -125,6 +126,15 @@ class PageStreamBaseForm(BaseForm, StreamBaseForm):
                                     "</a>.".format(settings.ORG_EMAIL)
                                 )
                             )
+            elif value.label == ValueBlock._meta_class.label:
+                amount = self.data.get(field)
+                if amount:
+                    try:
+                        amount = float(amount)
+                        cleaned_data[field] = amount
+                    except ValueError:
+                        self.add_error(field, "Invalid number")
+                        pass
 
         return cleaned_data
 
