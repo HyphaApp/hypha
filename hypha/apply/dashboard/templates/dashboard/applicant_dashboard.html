@@ -58,7 +58,7 @@
         {% if my_projects_exists %}
             <div class="mb-10">
                 <div class="flex">
-                    <h2 class="font-light flex-1">{% trans "My active projects" %}</h2>
+                    <h2 class="font-light flex-1">{% trans "My projects" %}</h2>
                 </div>
                 <div hx-get="{% url 'dashboard:applicant_projects' %}" hx-trigger="load delay:50" id="projects_list">
                     {% for dummy_item in per_section_items %}

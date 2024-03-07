@@ -41,9 +41,7 @@ def applicant_submissions(request):
 @login_required
 @require_GET
 def applicant_projects(request):
-    active_projects = (
-        Project.objects.filter(user=request.user).active().order_by("-created_at")
-    )
+    active_projects = Project.objects.filter(user=request.user).order_by("-created_at")
     page = request.GET.get("page", 1)
     page = Paginator(active_projects, per_page=5, orphans=3).page(page)
     return render(
