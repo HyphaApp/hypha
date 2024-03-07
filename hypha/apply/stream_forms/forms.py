@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 from django.forms.fields import EmailField
 from django.forms.forms import DeclarativeFieldsMetaclass
 from django.utils.safestring import mark_safe
+from django.utils.translation import gettext as _
 from django_file_form.forms import FileFormMixin
 from wagtail.contrib.forms.forms import BaseForm
 
@@ -98,32 +99,36 @@ class PageStreamBaseForm(BaseForm, StreamBaseForm):
             if isinstance(value, EmailField):
                 email = self.data.get(field)
                 if email:
-                    is_registered, _ = is_user_already_registered(
+                    is_registered, reason = is_user_already_registered(
                         email=self.data.get(field)
                     )
                     if is_registered:
                         user = get_user_by_email(email=email)
                         if not user:
-                            self.add_error(field, "Found multiple account")
+                            self.add_error(field, _("Found multiple account"))
                             raise ValidationError(
                                 mark_safe(
-                                    "Found multiple account for the same email. "
-                                    "Please login with the correct credentials or "
-                                    '<a href="mailto:{}">'
-                                    "contact to the support team"
-                                    "</a>.".format(settings.ORG_EMAIL)
+                                    _(
+                                        "Found multiple account for the same email. "
+                                        "Please login with the correct credentials or "
+                                        '<a href="mailto:{}">'
+                                        "contact to the support team"
+                                        "</a>."
+                                    ).format(settings.ORG_EMAIL)
                                 )
                             )
 
                         elif not user.is_active:
-                            self.add_error(field, "Found an inactive account")
+                            self.add_error(field, _("Found an inactive account"))
                             raise ValidationError(
                                 mark_safe(
-                                    "Found an inactive account for the same email. "
-                                    "Please use different email or "
-                                    '<a href="mailto:{}">'
-                                    "contact to the support team"
-                                    "</a>.".format(settings.ORG_EMAIL)
+                                    _(
+                                        "Found an inactive account for the same email. "
+                                        "Please use different email or "
+                                        '<a href="mailto:{}">'
+                                        "contact to the support team"
+                                        "</a>."
+                                    ).format(settings.ORG_EMAIL)
                                 )
                             )
             elif value.label == ValueBlock._meta_class.label:
@@ -133,7 +138,7 @@ class PageStreamBaseForm(BaseForm, StreamBaseForm):
                         amount = float(amount)
                         cleaned_data[field] = amount
                     except ValueError:
-                        self.add_error(field, "Invalid number")
+                        self.add_error(field, _("Invalid number"))
                         pass
 
         return cleaned_data
