@@ -3,12 +3,10 @@
 {% block title %}{% if object %}{% trans "Edit a Determination" %} {% if object.is_draft %}{% trans "draft" %}{% endif %}{% else %}{% trans "Create a Determination" %}{% endif %}{% endblock %}
 {% block content %}
 
-    {% block header %}
-        {% adminbar %}
-            {% slot header %}{% if object %}{% trans "Update Determination draft" %}{% else %}{% trans "Create Determination" %}{% endif %}{% endslot %}
-            {% slot sub_heading %}{% trans "For" %} <a href="{% url "funds:submissions:detail" submission.id %}">{{ submission.title }}</a>{% endslot %}
-        {% endadminbar %}
-    {% endblock %}
+    {% adminbar %}
+        {% slot header %}{% if object %}{% trans "Update Determination draft" %}{% else %}{% trans "Create Determination" %}{% endif %}{% endslot %}
+        {% slot sub_heading %}{% if submission %}{% trans "For" %} <a href="{% url "funds:submissions:detail" submission.id %}">{{ submission.title }}</a>{% endif %}{% endslot %}
+    {% endadminbar %}
 
     {% block form %}
         <section class="my-8">
