@@ -1567,12 +1567,23 @@ class RevisionListView(ListView):
     model = ApplicationRevision
 
     def get_queryset(self):
+        """Get a queryset of all valid `ApplicationRevision`s that can be compared for the current submission
+
+        This excludes draft & preview revisions
+
+        Returns:
+            An [`ApplicationRevision`][hypha.apply.funds.models.ApplicationRevision] QuerySet
+        """
         self.submission = get_object_or_404(
             ApplicationSubmission, id=self.kwargs["submission_pk"]
         )
         self.queryset = self.model.objects.filter(
-            submission=self.submission, is_preview=False
-        ).exclude(draft__isnull=False, live__isnull=True)
+            submission=self.submission,
+            is_preview=False,
+            draft__isnull=True,
+            live__isnull=False,
+        )
+
         return super().get_queryset()
 
     def get_context_data(self, **kwargs):

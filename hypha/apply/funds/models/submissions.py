@@ -640,8 +640,21 @@ class ApplicationSubmission(
 
     def create_revision(
         self, draft=False, force=False, by=None, preview=False, **kwargs
-    ):
-        # Will return True/False if the revision was created or not
+    ) -> None | models.Model:
+        """Create a new revision on the submission
+
+        This is used to save drafts, track changes when an RFI is made and
+        save changes before rendering a preview
+
+        Args:
+            draft: if the revision is a draft
+            force: force a revision even if form data is the same
+            by: the author of the revision
+            preview: if the revision is being used to save befor a preview
+
+        Returns:
+            Returns the [`ApplicationRevision`][hypha.apply.funds.models.ApplicationRevision] if it was created, otherwise returns `None`
+        """
         ApplicationRevision = apps.get_model("funds", "ApplicationRevision")
         self.clean_submission()
         current_submission = ApplicationSubmission.objects.get(id=self.id)
