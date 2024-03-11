@@ -1,4 +1,4 @@
-{% load i18n activity_tags bleach_tags markdown_tags submission_tags apply_tags heroicons %}
+{% load i18n activity_tags nh3_tags markdown_tags submission_tags apply_tags heroicons %}
 
 <div class="feed__item feed__item--{{ activity.type }} border shadow-sm rounded-sm pb-2 " id="communications#{{ activity.id }}">
     <div class="feed__pre-content hidden lg:block">
@@ -48,7 +48,7 @@
                      data-visibility="{{activity.visibility}}"
                      data-edit-url="{% url 'api:v1:comments-edit' pk=activity.pk %}"
                 >
-                    {{ activity|display_for:request.user|submission_links|markdown|bleach }}
+                    {{ activity|display_for:request.user|submission_links|markdown|nh3 }}
                 </div>
                 <style>
                     @media only screen and (min-width: 1024px){
@@ -60,7 +60,7 @@
                 <div class="js-edit-block pe-3" aria-live="polite"></div>
             {% else %}
                 <div class="px-3 prose">
-                    {{ activity|display_for:request.user|submission_links|markdown|bleach }}
+                    {{ activity|display_for:request.user|submission_links|markdown|nh3 }}
                 </div>
             {% endif %}
 

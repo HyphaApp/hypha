@@ -1,13 +1,13 @@
 {% extends "stream_forms/render_field.html" %}
-{% load bleach_tags %}
+{% load nh3_tags %}
 {% block data_display %}
     {% if data %}
         {% if value.format == 'url' %}
-            <a class="link" href="{{ data|bleach }}" target="_blank" rel="noopener noreferrer">{{ data|bleach }}</a>
+            <a class="link" href="{{ data|nh3 }}" target="_blank" rel="noopener noreferrer">{{ data|nh3 }}</a>
         {% elif value.format == 'email' %}
-            <a class="u-email" href="mailto:{{ data|bleach }}">{{ data|bleach }}</a>
+            <a class="u-email" href="mailto:{{ data|nh3 }}">{{ data|nh3 }}</a>
         {% else %}
-            <p>{{ data|bleach }}</p>
+            <p>{{ data|nh3 }}</p>
         {% endif %}
     {% else %}
         {{ block.super }}

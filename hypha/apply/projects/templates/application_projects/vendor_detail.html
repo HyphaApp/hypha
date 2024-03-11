@@ -1,5 +1,5 @@
 {% extends "base-apply.html" %}
-{% load bleach_tags i18n approval_tools heroicons %}
+{% load nh3_tags i18n approval_tools heroicons %}
 {% user_can_edit_project object request.user as editable %}
 {% block title %}{% trans "Contracting Information for" %} {{ project.title }} {% endblock %}
 
@@ -31,7 +31,7 @@
     <div class="rich-text rich-text--answers">
         {% for group in vendor_detailed_response.values %}
             {% if group.title %}
-                <h1>{{ group.title|bleach }}</h4>
+                <h1>{{ group.title|nh3 }}</h4>
             {% endif %}
             {% for question, answer in group.questions %}
                 <h5>{{ question }}</h5>
@@ -44,7 +44,7 @@
                         </div>
                     </div>
                 {% else %}
-                    <p>{% if answer == True or answer == False %}{{ answer|yesno:"Yes,No" }}{% else %}{% if answer %}{{ answer|bleach }}{% else %}-{% endif %}{% endif %}</p>
+                    <p>{% if answer == True or answer == False %}{{ answer|yesno:"Yes,No" }}{% else %}{% if answer %}{{ answer|nh3 }}{% else %}-{% endif %}{% endif %}</p>
                 {% endif %}
             {% endfor %}
         {% endfor %}

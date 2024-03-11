@@ -57,7 +57,7 @@ INSTALLED_APPS = [
     "django_filters",
     "django_select2",
     "addressfield",
-    "django_bleach",
+    "django_nh3",
     "django_fsm",
     "django_pwned_passwords",
     "django_slack",

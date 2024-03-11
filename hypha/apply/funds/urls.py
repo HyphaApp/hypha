@@ -36,6 +36,7 @@ from .views_beta import (
     submission_all_beta,
 )
 from .views_partials import (
+    get_applications_status_counts,
     partial_reviews_card,
     partial_reviews_decisions,
     partial_submission_activities,
@@ -81,6 +82,11 @@ submission_urls = (
         ),
         path("success/<int:pk>/", submission_success, name="success"),
         path("all/", SubmissionListView.as_view(), name="list"),
+        path(
+            "statuses/",
+            get_applications_status_counts,
+            name="applications_status_counts",
+        ),
         path("all-beta/", submission_all_beta, name="list-beta"),
         path("all-beta/bulk_archive/", bulk_archive_submissions, name="bulk-archive"),
         path("all-beta/bulk_delete/", bulk_delete_submissions, name="bulk-delete"),

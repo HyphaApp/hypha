@@ -1,8 +1,8 @@
-{% load bleach_tags %}
+{% load nh3_tags %}
 {% block data_display %}
     <div>
         <h5>{{ value.field_label }}</h5>
         <div>{{ score }}</div>
-        <div>{{ comment|bleach }}</div>
+        <div>{{ comment|nh3 }}</div>
     </div>
 {% endblock %}
