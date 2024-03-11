@@ -1577,11 +1577,8 @@ class RevisionListView(ListView):
         self.submission = get_object_or_404(
             ApplicationSubmission, id=self.kwargs["submission_pk"]
         )
-        self.queryset = self.model.objects.filter(
-            submission=self.submission,
-            is_preview=False,
-            draft__isnull=True,
-            live__isnull=False,
+        self.queryset = self.model.objects.filter(submission=self.submission).exclude(
+            is_preview=True, draft__isnull=False, live__isnull=True
         )
 
         return super().get_queryset()
