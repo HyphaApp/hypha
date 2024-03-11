@@ -12,11 +12,10 @@ from wagtail.fields import RichTextField
 
 
 @register_setting
-class SystemMessagesSettings(BaseGenericSetting):
-    wagtail_reference_index_ignore = True
-
+class SystemSettings(BaseGenericSetting):
     class Meta:
         verbose_name = "System settings"
+        db_table = "system_settings"
 
     site_logo_default = models.ForeignKey(
         "images.CustomImage",
