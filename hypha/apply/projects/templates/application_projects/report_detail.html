@@ -1,5 +1,5 @@
 {% extends "base-apply.html" %}
-{% load i18n static bleach_tags heroicons %}
+{% load i18n static nh3_tags heroicons %}
 
 {% block title %}{% trans "Report" %} | {{ object.project.title }}{% endblock %}
 {% block body_class %}{% endblock %}
@@ -28,12 +28,12 @@
                 {% else %}
                     <h4>{% trans "Public Report" %}</h4>
                     <div class="rich-text">
-                        {{ object.current.public_content|bleach|safe }}
+                        {{ object.current.public_content|nh3|safe }}
                     </div>
 
                     <h4>{% trans "Private Report" %}</h4>
                     <div class="rich-text">
-                        {{ object.current.private_content|bleach|safe }}
+                        {{ object.current.private_content|nh3|safe }}
                     </div>
                     {% for file in object.current.files.all %}
                         {% if forloop.first %}

@@ -1,6 +1,6 @@
 from collections import Counter
 
-import bleach
+import nh3
 from django.core.exceptions import ValidationError
 from django.forms.utils import ErrorList
 from django.utils.safestring import mark_safe
@@ -48,7 +48,7 @@ class RichTextFieldBlock(TextFieldBlock):
         icon = "form"
 
     def get_searchable_content(self, value, data):
-        return bleach.clean(data or "", tags=[], strip=True)
+        return nh3.clean(data or "", tags=set())
 
     def no_response(self):
         return "<p>-</p>"
@@ -64,7 +64,7 @@ class MarkdownTextFieldBlock(TextFieldBlock):
         template = "stream_forms/render_markdown_field.html"
 
     def get_searchable_content(self, value, data):
-        return bleach.clean(data or "", tags=[], strip=True)
+        return nh3.clean(data or "", tags=set())
 
     def no_response(self):
         return "<p>-</p>"

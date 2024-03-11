@@ -1,5 +1,5 @@
 {% extends "base-apply.html" %}
-{% load i18n bleach_tags heroicons %}
+{% load i18n nh3_tags heroicons %}
 
 {% block title %}{% trans "Determination for" %} {{ determination.submission.title }}{% endblock %}
 
@@ -32,14 +32,14 @@
 
     <div class="rich-text rich-text--answers prose">
         <h4>{% trans "Determination message" %}</h4>
-        {{ determination.message|bleach }}
+        {{ determination.message|nh3 }}
         {% for group in determination.detailed_data.values %}
             {% if group.title %}
-                <h4>{{ group.title|bleach }}</h4>
+                <h4>{{ group.title|nh3 }}</h4>
             {% endif %}
             {% for question, answer in group.questions %}
                 <h5>{{ question }}</h5>
-                {% if answer %}{% if answer == True %}{{ answer|yesno:"Agree,Disagree" }}{% else %}{{ answer|bleach }}{% endif %}{% else %}-{% endif %}
+                {% if answer %}{% if answer == True %}{{ answer|yesno:"Agree,Disagree" }}{% else %}{{ answer|nh3 }}{% endif %}{% else %}-{% endif %}
             {% endfor %}
         {% endfor %}
     </div>

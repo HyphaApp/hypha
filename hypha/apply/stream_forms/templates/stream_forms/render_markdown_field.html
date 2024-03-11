@@ -1,8 +1,8 @@
 {% extends "stream_forms/render_field.html" %}
-{% load bleach_tags markdown_tags %}
+{% load nh3_tags markdown_tags %}
 {% block data_display %}
     {% if data %}
-        {{ data|markdown|bleach }}
+        {{ data|markdown|nh3 }}
     {% else %}
         {{ block.super }}
     {% endif %}

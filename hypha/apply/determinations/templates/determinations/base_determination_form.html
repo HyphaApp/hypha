@@ -1,5 +1,5 @@
 {% extends "base-apply.html" %}
-{% load i18n static bleach_tags %}
+{% load i18n static nh3_tags %}
 {% block title %}{% if object %}{% trans "Edit a Determination" %} {% if object.is_draft %}{% trans "draft" %}{% endif %}{% else %}{% trans "Create a Determination" %}{% endif %}{% endblock %}
 {% block content %}
 

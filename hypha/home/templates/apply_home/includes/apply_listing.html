@@ -1,4 +1,4 @@
-{% load i18n bleach_tags wagtailcore_tags markdown_tags heroicons %}
+{% load i18n nh3_tags wagtailcore_tags markdown_tags heroicons %}
 
 {% if page.open_round and page.list_on_front_page %}
   <div class="flex justify-between items-center px-4 py-8 gap-4 hover:bg-slate-50 transition-colors">
@@ -17,7 +17,7 @@
 
       {% if page.description %}
         <p>
-          {{ page.description|markdown|bleach }}
+          {{ page.description|markdown|nh3 }}
         </p>
       {% endif %}
     </div>

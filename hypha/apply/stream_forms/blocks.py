@@ -1,5 +1,5 @@
 # Credit to https://github.com/BertrandBordage for initial implementation
-import bleach
+import nh3
 from anyascii import anyascii
 from dateutil.parser import isoparse, parse
 from django import forms
@@ -11,7 +11,7 @@ from django.utils.encoding import force_str
 from django.utils.html import conditional_escape
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
-from django_bleach.templatetags.bleach_tags import bleach_value
+from django_nh3.templatetags.nh3_tags import nh3_value
 from wagtail.blocks import (
     BooleanBlock,
     CharBlock,
@@ -89,7 +89,7 @@ class FormFieldBlock(StructBlock):
         }
 
     def prepare_data(self, value, data, serialize=False):
-        return bleach_value(str(data))
+        return nh3_value(str(data))
 
     def render(self, value, context):
         data = context.get("data")
@@ -141,7 +141,7 @@ class CharFieldBlock(OptionalFormFieldBlock):
     def get_searchable_content(self, value, data):
         # CharField acts as a fallback. Force data to string
         data = str(data)
-        return bleach.clean(data or "", tags=[], strip=True)
+        return nh3.clean(data or "", tags=set())
 
 
 class MultiInputCharFieldBlock(CharFieldBlock):
@@ -165,7 +165,7 @@ class TextFieldBlock(OptionalFormFieldBlock):
         template = "stream_forms/render_unsafe_field.html"
 
     def get_searchable_content(self, value, data):
-        return bleach.clean(data or "", tags=[], strip=True)
+        return nh3.clean(data or "", tags=set())
 
 
 class NumberFieldBlock(OptionalFormFieldBlock):
