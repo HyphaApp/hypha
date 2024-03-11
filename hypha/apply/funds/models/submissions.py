@@ -638,7 +638,9 @@ class ApplicationSubmission(
         )
         return self
 
-    def create_revision(self, draft=False, force=False, by=None, **kwargs):
+    def create_revision(
+        self, draft=False, force=False, by=None, preview=False, **kwargs
+    ):
         # Will return True/False if the revision was created or not
         ApplicationRevision = apps.get_model("funds", "ApplicationRevision")
         self.clean_submission()
@@ -647,7 +649,10 @@ class ApplicationSubmission(
         if current_data != self.form_data or force:
             if self.live_revision == self.draft_revision:
                 revision = ApplicationRevision.objects.create(
-                    submission=self, form_data=self.form_data, author=by
+                    submission=self,
+                    form_data=self.form_data,
+                    author=by,
+                    is_preview=preview,
                 )
             else:
                 revision = self.draft_revision

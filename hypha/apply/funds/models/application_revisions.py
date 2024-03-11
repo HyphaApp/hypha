@@ -22,6 +22,9 @@ class ApplicationRevision(BaseStreamForm, AccessFormData, models.Model):
         settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True
     )
 
+    # Is the revision being used to save an application before it's previewed
+    is_preview = models.BooleanField(default=False)
+
     class Meta:
         ordering = ["-timestamp"]
 

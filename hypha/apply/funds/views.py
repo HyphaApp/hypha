@@ -1326,7 +1326,7 @@ class BaseSubmissionEditView(UpdateView):
 
         is_draft = self.object.status == DRAFT_STATE
 
-        self.object.create_revision(draft=is_draft, by=request.user)
+        self.object.create_revision(draft=is_draft, by=request.user, preview=True)
         messages.success(self.request, _("Draft saved"))
 
         # Required for django-file-form: delete temporary files for the new files
@@ -1403,7 +1403,7 @@ class BaseSubmissionEditView(UpdateView):
         if "save" in self.request.POST:
             return self.save_draft_and_refresh_page(form=form)
 
-        revision = self.object.create_revision(by=self.request.user)
+        revision = self.object.create_revision(draft=is_draft, by=self.request.user)
         submitting_proposal = self.object.phase.name in STAGE_CHANGE_ACTIONS
 
         if submitting_proposal:
@@ -1571,11 +1571,8 @@ class RevisionListView(ListView):
             ApplicationSubmission, id=self.kwargs["submission_pk"]
         )
         self.queryset = self.model.objects.filter(
-            submission=self.submission,
-        ).exclude(
-            draft__isnull=False,
-            live__isnull=True,
-        )
+            submission=self.submission, is_preview=False
+        ).exclude(draft__isnull=False, live__isnull=True)
         return super().get_queryset()
 
     def get_context_data(self, **kwargs):
