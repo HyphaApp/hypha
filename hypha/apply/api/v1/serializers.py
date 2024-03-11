@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from django_bleach.templatetags.bleach_tags import bleach_value
+from django_nh3.templatetags.nh3_tags import nh3_value
 from rest_framework import serializers
 
 from hypha.apply.activity.models import Activity
@@ -416,7 +416,7 @@ class CommentSerializer(serializers.ModelSerializer):
         )
 
     def get_message(self, obj):
-        return bleach_value(markdown_to_html(obj.message))
+        return nh3_value(markdown_to_html(obj.message))
 
     def get_editable(self, obj):
         return self.context["request"].user == obj.user

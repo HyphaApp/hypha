@@ -3,11 +3,10 @@
     <section class="section">
         <ul class="status-block">
             {% for status, data in status_counts.items %}
-                <li class="status-block__item">
-                    <h5 class="status-block__title">{{ data.name }}</h5>
-                    <p class="status-block__info">{{ data.count }} {{ type }}</p>
-                    <a class="status-block__link" href="{{ data.url }}">{% trans "View" %}</a>
-                </li>
+                <a class="status-block__item {% if data.is_active %}status-block__item--active{% endif %}" href="{{ data.url }}">
+                    <p class="status-block__title text-black"><strong>{{ data.name }}</strong></p>
+                    <p class="status-block__info text-gray-400">{{ data.count }} {{ type }}</p>
+                </a>
             {% endfor %}
         </ul>
     </section>

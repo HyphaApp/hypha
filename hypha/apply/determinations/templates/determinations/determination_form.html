@@ -1,11 +1,9 @@
 {% extends "determinations/base_determination_form.html" %}
 {% load i18n %}
 
-{% block header %}
-    {% adminbar %}
-        {% slot header %}
-            {% if object %}{% trans "Edit determination" %} {% if object.is_draft %}{% trans "draft" %}{% endif %}{% else %}{% trans "Create Determination" %}{% endif %}
-        {% endslot %}
-        {% slot sub_heading %}{% trans "For" %} <a class="text-blue-300 hover:underline" href="{% url "funds:submissions:detail" submission.id %}">{{ submission.title }}</a>{% endslot %}
-    {% endadminbar %}
-{% endblock %}
+{% adminbar %}
+    {% slot header %}
+        {% if object %}{% trans "Edit determination" %} {% if object.is_draft %}{% trans "draft" %}{% endif %}{% else %}{% trans "Create Determination" %}{% endif %}
+    {% endslot %}
+    {% slot sub_heading %}{% trans "For" %} <a class="text-blue-300 hover:underline" href="{% url "funds:submissions:detail" submission.id %}">{{ submission.title }}</a>{% endslot %}
+{% endadminbar %}

@@ -21,6 +21,13 @@
     {% endadminbar %}
 
     <div class="wrapper wrapper--large wrapper--inner-space-medium">
+        <div hx-get="{% url 'apply:submissions:applications_status_counts' %}" hx-trigger="load delay:50">
+            <div class="animate-pulse min-h-50">
+                <div class="w-full h-16 bg-gray-200 mb-5"></div>
+                <div class="w-full h-6 bg-gray-200 mb-5"></div>
+            </div>
+        </div>
+
         {% block table %}
             {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term use_search=True filter_action=filter_action use_batch_actions=True filter_classes="filters-open" show_archive=show_archive %}
 

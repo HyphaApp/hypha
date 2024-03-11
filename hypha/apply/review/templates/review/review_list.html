@@ -1,5 +1,5 @@
 {% extends "base-apply.html" %}
-{% load i18n bleach_tags review_tags workflow_tags %}
+{% load i18n nh3_tags review_tags workflow_tags %}
 
 {% block title %}{% trans "Reviews" %}{% endblock %}
 
@@ -28,7 +28,7 @@
                         {% elif answers.question == "Opinions"%}
                             <td class="reviews-list__td">{{ answer }}</td>
                         {% else %}
-                            <td class="reviews-list__td">{{ answer|bleach }}</td>
+                            <td class="reviews-list__td">{{ answer|nh3 }}</td>
                         {% endif %}
                     {% endfor %}
                 </tr>

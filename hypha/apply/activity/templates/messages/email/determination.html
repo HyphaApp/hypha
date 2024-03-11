@@ -1,8 +1,8 @@
 {% extends "messages/email/applicant_base.html" %}
-{% load bleach_tags i18n %}
+{% load nh3_tags i18n %}
 
 {% block content %}{% trans "Your application has been reviewed and the outcome is" %}: {{ determination.clean_outcome }}
 
-    {{ determination.message|bleach|striptags }}
+    {{ determination.message|nh3|striptags }}
 
     {% trans "Read the full determination here" %}: {{ request.scheme }}://{{ request.get_host }}{{ determination.get_absolute_url }}{% endblock %}

@@ -159,24 +159,24 @@ def get_project_public_status(project_status):
     return dict(PROJECT_PUBLIC_STATUSES)[project_status]
 
 
-def get_invoice_table_status(invoice_status, user):
+def get_invoice_table_status(invoice_status, is_applicant=False):
     if invoice_status in [SUBMITTED, RESUBMITTED]:
-        if user.is_applicant:
+        if is_applicant:
             return INT_ORG_PENDING
         return INT_STAFF_PENDING
     if invoice_status == CHANGES_REQUESTED_BY_STAFF:
-        if user.is_applicant:
+        if is_applicant:
             return INT_REQUEST_FOR_CHANGE
         return INT_VENDOR_PENDING
     if invoice_status in [APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE]:
-        if user.is_applicant:
+        if is_applicant:
             return INT_ORG_PENDING
         return INT_FINANCE_PENDING
     if settings.INVOICE_EXTENDED_WORKFLOW and invoice_status in [
         APPROVED_BY_FINANCE,
         CHANGES_REQUESTED_BY_FINANCE_2,
     ]:
-        if user.is_applicant:
+        if is_applicant:
             return INT_ORG_PENDING
         return INT_FINANCE_PENDING
     if invoice_status == PAID:
