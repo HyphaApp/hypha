@@ -101,7 +101,7 @@ jobs:
           python-version-file: ".python-version"
           cache: "pip"
           cache-dependency-path: "**/requirements*.txt"
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
       - name: install python dependencies
         run: |
           python3 -m venv venv
