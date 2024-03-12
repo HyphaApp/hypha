@@ -167,7 +167,12 @@ class ActivityAdapter(AdapterBase):
         )
 
     def handle_batch_update_invoice_status(self, sources, invoices, **kwargs):
-        invoice_numbers = ", ".join([invoice.invoice_number for invoice in invoices])
+        invoice_numbers = ", ".join(
+            [
+                invoice.invoice_number if invoice.invoice_number else ""
+                for invoice in invoices
+            ]
+        )
         invoice_status = invoices[0].status if invoices else ""
         return _(
             "Successfully updated status to {invoice_status} for invoices: {invoice_numbers}"
