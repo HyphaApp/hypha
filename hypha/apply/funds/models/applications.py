@@ -1,4 +1,5 @@
 from datetime import date
+from typing import Optional
 
 from django import forms
 from django.conf import settings
@@ -232,6 +233,18 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
     )
     sealed = models.BooleanField(default=False)
 
+    def get_url(self) -> Optional[str]:
+        """Generates the live url, primarily used in the wagtail admin for the "view live" button.
+
+        Returns:
+            str: The live url of the page, or None if the page is not live.
+        """
+        if self.is_open:
+            return self.fund.url
+        return None
+
+    url = property(get_url)
+
     content_panels = SubmittableStreamForm.content_panels + [
         FieldPanel("lead"),
         MultiFieldPanel(
@@ -302,8 +315,19 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
         return self.sealed and self.is_open
 
     @property
-    def is_open(self):
-        return self.start_date <= date.today() <= self.end_date
+    def is_open(self) -> bool:
+        """
+        Checks if the application is open based on the current date.
+
+        The application is considered open if the current date is between the start and end dates (inclusive).
+        If the end date is not set, the application is considered open if the current date is on or after the start date.
+
+        Returns:
+            bool: True if the application is open, False otherwise.
+        """
+        if self.start_date and self.end_date:
+            return self.start_date <= date.today() <= self.end_date
+        return self.start_date <= date.today()
 
     def save(self, *args, **kwargs):
         is_new = not self.id
