@@ -86,7 +86,7 @@
             {% if use_search|default:False %}
                 <form action="{{ search_action }}" method="get" role="search" class="form form--search-desktop">
                     <button class="button button--search" type="submit">
-                        <span class="sr-only">Search</span>
+                        <span class="sr-only">{% trans "Search" %}</span>
                         {% heroicon_mini "magnifying-glass" size=20 class="text-fg-muted" aria_hidden=true %}
                     </button>
                     {% if show_archive and archived_param is not None %}

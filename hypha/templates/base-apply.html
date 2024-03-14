@@ -4,7 +4,7 @@
 {% block header %}
     <header class="header">
         <div class="header__inner wrapper wrapper--large">
-            <a href="{{ settings.utils.SystemMessagesSettings.site_logo_link|default:"/" }}" aria-label="Home link">
+            <a href="{{ settings.utils.SystemMessagesSettings.site_logo_link|default:"/" }}" aria-label="{% trans "Home link" %}">
                 {% if settings.utils.SystemMessagesSettings.site_logo_default %}
                     {% image settings.utils.SystemMessagesSettings.site_logo_default width-215 as logo_default %}
                     <img class="header__logo header__logo--desktop"
@@ -31,12 +31,12 @@
                          width="215"
                          height="40"
                          src="{% static 'images/logo.png' %}"
-                         alt="Hypha logo"
+                         alt="{% trans "Hypha logo" %}"
                     >
                     <img class="header__logo header__logo--mobile"
                          width="60" height="60"
                          src="{% static 'images/logo-small.png' %}"
-                         alt="Hypha logo"
+                         alt="{% trans "Hypha logo" %}"
                     >
                 {% endif %}
             </a>
@@ -44,7 +44,7 @@
             <div class="header__inner header__inner--mobile-buttons">
                 {% if request.user.is_authenticated %}
                     <button class="button button--left-space js-mobile-menu-toggle" aria-haspopup="true">
-                        <span class="sr-only">{% trans "Open Menu" %}</span>
+                        <span class="sr-only">{% trans "Open menu" %}</span>
                         {% heroicon_outline "bars-3" size=32 stroke_width=2 class="inline" aria_hidden="true" %}
                     </button>
                 {% else %}
@@ -78,7 +78,7 @@
                                  width="60"
                                  height="60"
                                  src="{% static 'images/logo-small.png' %}"
-                                 alt="Hypha logo"
+                                 alt="{% trans "Hypha logo" %}"
                             >
                         {% endif %}
                     </a>
@@ -112,7 +112,7 @@
                            aria-haspopup="activity"
                            aria-expanded="false"
                            role="button"
-                           title="Click to open your notifications"
+                           title="{% trans "Click to open your notifications" %}"
                            @click.prevent="open = ! open"
                         >
                             {% heroicon_outline "bell-alert" class="inline me-1 text-black" aria_hidden="true" %}

@@ -17,7 +17,7 @@
                             </div>
                             <a class="link reminder-delete" href="{% url 'funds:submissions:reminders:delete' object.id reminder.id %}">
                                 {% heroicon_micro "trash" class="inline me-1 align-middle fill-red-500" aria_hidden=true %}
-                                <span class="sr-only">Delete</span>
+                                <span class="sr-only">{% trans "Delete" %}</span>
                             </a>
                         </li>
                     {% endfor %}

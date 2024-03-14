@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
+from django.utils.translation import gettext as _
 from django.views.decorators.http import require_GET
 
 from hypha.apply.activity.services import (
@@ -60,7 +61,7 @@ def get_project_status_counts(request):
         "funds/includes/status-block.html",
         {
             "status_counts": status_counts,
-            "type": "Projects",
+            "type": _("Projects"),
         },
     )
 
@@ -99,6 +100,6 @@ def get_invoices_status_counts(request):
         "funds/includes/status-block.html",
         {
             "status_counts": status_counts,
-            "type": "Invoices",
+            "type": _("Invoices"),
         },
     )

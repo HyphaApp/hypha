@@ -381,7 +381,7 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
             request=self.request,
             user=self.request.user,
             source=project,
-            related=old_lead or "Unassigned",
+            related=old_lead or _("Unassigned"),
         )
 
         messages.success(

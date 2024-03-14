@@ -1,4 +1,4 @@
-{% load heroicons %}
+{% load heroicons i18n %}
 <ul class="messages">
     {% for message in messages %}
         {% if 'project_action_message' in message.tags %}
@@ -10,7 +10,7 @@
                 {% heroicon_outline "check" stroke_width=2 class="inline-block me-1 w-4 h-4" aria_hidden=true %}
                 <p class="messages__copy">{{ message }}</p>
                 <button type="button" class="p-2 hover:opacity-70" x-on:click="show = !show">
-                    <span class="sr-only">Close</span>
+                    <span class="sr-only">{% trans "Close" %}</span>
                     {% heroicon_outline "x-mark" stroke_width=2 class="inline" aria_hidden=true %}
                 </button>
             </li>
