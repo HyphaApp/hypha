@@ -5,6 +5,7 @@ from django import forms
 from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
+from django.core.handlers.wsgi import WSGIRequest
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import (
@@ -233,7 +234,7 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
     )
     sealed = models.BooleanField(default=False)
 
-    def get_url(self) -> Optional[str]:
+    def get_url(self, request: Optional[WSGIRequest] = None) -> Optional[str]:
         """Generates the live url, primarily used in the wagtail admin for the "view live" button.
 
         Returns:
