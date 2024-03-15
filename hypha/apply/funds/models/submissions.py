@@ -473,8 +473,6 @@ class ApplicationSubmission(
         verbose_name=_("submit time"), auto_now_add=False
     )
 
-    # _is_draft = False
-
     live_revision = models.OneToOneField(
         "ApplicationRevision",
         on_delete=models.CASCADE,
