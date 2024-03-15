@@ -32,7 +32,8 @@
     }
 
     &__date,
-    &__current {
+    &__current,
+    &__draft {
         font-weight: $weight--semibold;
     }
 }

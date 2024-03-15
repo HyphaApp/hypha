@@ -1575,9 +1575,18 @@ class RevisionListView(ListView):
         self.submission = get_object_or_404(
             ApplicationSubmission, id=self.kwargs["submission_pk"]
         )
-        self.queryset = self.model.objects.filter(
-            submission=self.submission, is_draft=False
-        ).exclude(draft__isnull=False, live__isnull=True)
+        revisions = self.model.objects.filter(submission=self.submission).exclude(
+            draft__isnull=False, live__isnull=True
+        )
+
+        filtered_revisions = revisions.filter(is_draft=False)
+
+        # An edge case for when an instance has `SUBMISSIONS_DRAFT_ACCESS_STAFF=True`
+        # and a staff member tries to view the revisions of the draft.
+        if len(filtered_revisions) < 1:
+            self.queryset = self.model.objects.filter(id=revisions.last().id)
+        else:
+            self.queryset = filtered_revisions
 
         return super().get_queryset()
 
