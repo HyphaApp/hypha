@@ -42,10 +42,19 @@
             </a>
 
             <div class="header__inner header__inner--mobile-buttons">
-                <button class="button button--left-space js-mobile-menu-toggle" aria-haspopup="true">
-                    <span class="sr-only">{% trans "Open Menu" %}</span>
-                    {% heroicon_outline "bars-3" size=32 stroke_width=2 class="inline" aria_hidden="true" %}
-                </button>
+                {% if request.user.is_authenticated %}
+                    <button class="button button--left-space js-mobile-menu-toggle" aria-haspopup="true">
+                        <span class="sr-only">{% trans "Open Menu" %}</span>
+                        {% heroicon_outline "bars-3" size=32 stroke_width=2 class="inline" aria_hidden="true" %}
+                    </button>
+                {% else %}
+                    {% if request.path != '/auth/' %}
+                        {% include "includes/login_button.html" %}
+                    {% endif %}
+                    {% if ENABLE_PUBLIC_SIGNUP and request.path == '/auth/' %}
+                        {% include "includes/register_button.html" %}
+                    {% endif %}
+                {% endif %}
             </div>
 
             {% block header_menu %}
