@@ -1565,9 +1565,11 @@ class RevisionListView(ListView):
     model = ApplicationRevision
 
     def get_queryset(self):
-        """Get a queryset of all valid `ApplicationRevision`s that can be compared for the current submission
+        """Get a queryset of all valid `ApplicationRevision`s that can be
+        compared for the current submission
 
-        This excludes draft & preview revisions
+        This excludes draft & preview revisions unless draft(s) are the only
+        existing revisions, in which the last draft will be returned in a QuerySet
 
         Returns:
             An [`ApplicationRevision`][hypha.apply.funds.models.ApplicationRevision] QuerySet
