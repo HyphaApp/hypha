@@ -1324,9 +1324,7 @@ class BaseSubmissionEditView(UpdateView):
             An `HttpResponse` containing a preview of the given form
         """
 
-        is_draft = self.object.status == DRAFT_STATE
-
-        self.object.create_revision(draft=is_draft, by=request.user, preview=True)
+        self.object.create_revision(draft=True, by=request.user)
         messages.success(self.request, _("Draft saved"))
 
         # Required for django-file-form: delete temporary files for the new files
@@ -1373,7 +1371,7 @@ class BaseSubmissionEditView(UpdateView):
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
         """Handle the form returned from a `SubmissionEditView`.
 
-        Determing whether to return a form preview, save the drafted edits,
+        Determing whether to return a form preview, draft the new edits,
         or submit and transition the `ApplicationSubmission` object
 
         Args:
@@ -1383,15 +1381,18 @@ class BaseSubmissionEditView(UpdateView):
             An `HttpResponse` depending on the actions taken in the edit view
         """
 
-        self.object.new_data(form.cleaned_data)
+        self.object.form_data = form.cleaned_data
 
         is_draft = self.object.status == DRAFT_STATE
 
-        # Handle the need for a preview
+        # Handle a preview or a save (aka a draft)
         if "preview" in self.request.POST:
             return self.render_preview(self.request, form)
 
-        # Update submit_time only when application is getting submitted from the Draft State for the first time.
+        if "save" in self.request.POST:
+            return self.save_draft_and_refresh_page(form=form)
+
+        # Handle an application being submitted from a DRAFT_STATE. This includes updating submit_time
         if is_draft and "submit" in self.request.POST:
             self.object.submit_time = timezone.now()
             if self.object.round:
@@ -1400,10 +1401,7 @@ class BaseSubmissionEditView(UpdateView):
                     self.object.round = current_round
             self.object.save(update_fields=["submit_time", "round"])
 
-        if "save" in self.request.POST:
-            return self.save_draft_and_refresh_page(form=form)
-
-        revision = self.object.create_revision(draft=is_draft, by=self.request.user)
+        revision = self.object.create_revision(by=self.request.user)
         submitting_proposal = self.object.phase.name in STAGE_CHANGE_ACTIONS
 
         if submitting_proposal:
@@ -1577,9 +1575,9 @@ class RevisionListView(ListView):
         self.submission = get_object_or_404(
             ApplicationSubmission, id=self.kwargs["submission_pk"]
         )
-        self.queryset = self.model.objects.filter(submission=self.submission).exclude(
-            is_preview=True, draft__isnull=False, live__isnull=True
-        )
+        self.queryset = self.model.objects.filter(
+            submission=self.submission, is_draft=False
+        ).exclude(draft__isnull=False, live__isnull=True)
 
         return super().get_queryset()
 

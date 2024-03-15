@@ -459,6 +459,9 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
         return form_class(*args, **form_params)
 
     def serve(self, request, *args, **kwargs):
+        # NOTE: `is_preview` is referring to the Wagtail admin preview
+        # functionality, while `preview` refers to the applicant rendering
+        # a preview of their application.
         if hasattr(request, "is_preview") or hasattr(request, "show_round"):
             # Overriding serve method to pass submission id to get_form method
             copy_open_submission = request.GET.get("open_call_submission")
@@ -479,9 +482,10 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
                     # that are uploaded.
                     form.delete_temporary_files()
 
-                    # If a preview is specified in form submission, render the applicant's answers rather than the landing page.
-                    # At the moment ALL previews are drafted first and then shown
-                    if preview and draft:
+                    # If a preview is specified in form submission, render the
+                    # applicant's answers rather than the landing page.
+                    # Previews are drafted first and then shown
+                    if preview:
                         context = self.get_context(request)
                         context["object"] = form_submission
                         context["form"] = form
