@@ -5,7 +5,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("funds", "0116_applicationrevision_is_preview"),
+        ("funds", "0115_list_on_front_page"),
     ]
 
     operations = [
