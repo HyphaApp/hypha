@@ -1,0 +1,49 @@
+{% load i18n dashboard_statusbar_tags statusbar_tags workflow_tags %}
+
+{% for submission in page.object_list %}
+    <div class="wrapper wrapper--status-bar-outer">
+        <div class="wrapper wrapper--status-bar-inner">
+            <div class="mt-5 ms-4 lg:max-w-[30%]">
+                <h4 class="heading mb-2 font-bold line-clamp-3 hover:line-clamp-none"><a class="link {% if not submission.is_active %} text-gray-400 {% endif %}" href="{% url 'funds:submissions:detail' submission.id %}">{{ submission.title }}</a></h4>
+                <p class="m-0 text-gray-400">
+                    {% if submission.is_draft %}
+                        {% trans "Drafted on " %}
+                    {% else %}
+                        {% trans "Submitted on " %}
+                    {% endif %}
+                    {{ submission.submit_time.date }} {% trans "by" %} {{ submission.user.get_full_name }}
+                </p>
+            </div>
+            {% status_bar submission.workflow submission.phase request.user css_class="status-bar--small" %}
+        </div>
+        {% if request.user|has_edit_perm:submission %}
+            <a class="button button--primary ms-4" href="{% url 'funds:submissions:edit' submission.id %}">
+                {% if submission.status == 'draft_proposal' %}
+                    {% trans "Start your" %} {{ submission.stage }} {% trans "application" %}
+                {% else %}
+                    {% trans "Edit" %}
+                {% endif %}
+            </a>
+        {% endif %}
+    </div>
+{% empty %}
+    {% trans "No active submissions" %}
+{% endfor %}
+
+<nav class="mt-5 mb-20" aria-label="Pagination">
+    <span class="step-links flex gap-2 justify-center items-center">
+        {% if page.has_previous %}
+            <a href="#" hx-get="{% url 'dashboard:applicant_submissions' %}?page=1" hx-target="#submissions_list" class="px-3 py-2 border hover:bg-slate-300">&laquo;</a>
+            <a href="#" hx-get="{% url 'dashboard:applicant_submissions' %}?page={{ page.previous_page_number }}" hx-target="#submissions_list" class="px-3 py-2 border hover:bg-slate-300">&lsaquo;</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ page.number }} of {{ page.paginator.num_pages }}.
+        </span>
+
+        {% if page.has_next %}
+            <a href="#" hx-get="{% url 'dashboard:applicant_submissions' %}?page={{ page.next_page_number }}" hx-target="#submissions_list" class="px-3 py-2 border hover:bg-slate-300">&rsaquo;</a>
+            <a href="#" hx-get="{% url 'dashboard:applicant_submissions' %}?page={{ page.paginator.num_pages }}" hx-target="#submissions_list" class="px-3 py-2 border hover:bg-slate-300">&raquo;</a>
+        {% endif %}
+    </span>
+</nav>

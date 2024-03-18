@@ -38,61 +38,36 @@
             </div>
         {% endif %}
 
-        {% if my_active_submissions %}
+        {% if my_submissions_exists %}
             <div class="mb-10">
                 <div class="flex">
-                    <h2 class="font-light flex-1">{% trans "My active submissions" %}</h2>
+                    <h2 class="font-light flex-1">{% trans "My submissions" %}</h2>
                 </div>
-                {% for submission in my_active_submissions %}
-                    <div class="wrapper wrapper--status-bar-outer">
-                        <div class="wrapper wrapper--status-bar-inner">
-                            <div class="mt-5 ms-4 lg:max-w-[30%]">
-                                <h4 class="heading mb-2 font-bold line-clamp-3 hover:line-clamp-none"><a class="link" href="{% url 'funds:submissions:detail' submission.id %}">{{ submission.title }}</a></h4>
-                                <p class="m-0 text-gray-400">
-                                    {% if submission.is_draft %}
-                                        {% trans "Drafted on " %}
-                                    {% else %}
-                                        {% trans "Submitted on " %}
-                                    {% endif %}
-                                    {{ submission.submit_time.date }} {% trans "by" %} {{ submission.user.get_full_name }}
-                                </p>
-                            </div>
-                            {% status_bar submission.workflow submission.phase request.user css_class="status-bar--small" %}
+
+                <div hx-get="{% url 'dashboard:applicant_submissions' %}" hx-trigger="load delay:1000" id="submissions_list">
+                    {% for dummy_item in per_section_items %}
+                        <div class="wrapper wrapper--status-bar-outer animate-pulse min-h-40">
+                            <div class="mt-5 ms-4 lg:max-w-[30%] h-9 bg-gray-200 "></div>
                         </div>
-                        {% if request.user|has_edit_perm:submission %}
-                            <a class="button button--primary ms-4" href="{% url 'funds:submissions:edit' submission.id %}">
-                                {% if submission.status == 'draft_proposal' %}
-                                    {% trans "Start your" %} {{ submission.stage }} {% trans "application" %}
-                                {% else %}
-                                    {% trans "Edit" %}
-                                {% endif %}
-                            </a>
-                        {% endif %}
-                    </div>
-                {% empty %}
-                    {% trans "No active submissions" %}
-                {% endfor %}
+                    {% endfor %}
+
+                </div>
             </div>
         {% endif %}
 
-        {% if active_projects.count %}
+        {% if my_projects_exists %}
             <div class="mb-10">
                 <div class="flex">
-                    <h2 class="font-light flex-1">{% trans "My active projects" %}</h2>
+                    <h2 class="font-light flex-1">{% trans "My projects" %}</h2>
                 </div>
-                {% for project in active_projects.data %}
-                    <div class="wrapper wrapper--status-bar-outer">
-                        <div class="wrapper wrapper--status-bar-inner">
-                            <div class="mt-5 ms-4 lg:max-w-[30%]">
-                                <h4 class="heading mb-2 font-bold line-clamp-3 hover:line-clamp-none"><a class="link" href="{% url 'apply:projects:detail' project.id %}">{{ project.title }}</a></h4>
-                                <p class="m-0 text-gray-400">{% trans "Project start date: " %} {{ project.created_at.date }}</p>
-                            </div>
-                            {% project_status_bar project.status request.user css_class="status-bar--small" %}
+                <div hx-get="{% url 'dashboard:applicant_projects' %}" hx-trigger="load delay:50" id="projects_list">
+                    {% for dummy_item in per_section_items %}
+                        <div class="wrapper wrapper--status-bar-outer animate-pulse min-h-40">
+                            <div class="mt-5 ms-4 lg:max-w-[30%] h-9 bg-gray-200 "></div>
                         </div>
-                    </div>
-                {% empty %}
-                    {% trans "No active projects" %}
-                {% endfor %}
+                    {% endfor %}
+
+                </div>
             </div>
         {% endif %}
 

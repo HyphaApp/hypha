@@ -1,0 +1,33 @@
+{% load i18n dashboard_statusbar_tags statusbar_tags workflow_tags %}
+
+{% for project in page.object_list %}
+    <div class="wrapper wrapper--status-bar-outer">
+        <div class="wrapper wrapper--status-bar-inner">
+            <div class="mt-5 ms-4 lg:max-w-[30%]">
+                <h4 class="heading mb-2 font-bold line-clamp-3 hover:line-clamp-none"><a class="link" href="{% url 'apply:projects:detail' project.id %}">{{ project.title }}</a></h4>
+                <p class="m-0 text-gray-400">{% trans "Project start date: " %} {{ project.created_at.date }}</p>
+            </div>
+            {% project_status_bar project.status request.user css_class="status-bar--small" %}
+        </div>
+    </div>
+{% empty %}
+    {% trans "No active projects" %}
+{% endfor %}
+
+<nav class="mt-5 mb-20" aria-label="Pagination">
+    <span class="step-links flex gap-2 justify-center items-center">
+        {% if page.has_previous %}
+            <a href="#" hx-get="{% url 'dashboard:applicant_projects' %}?page=1" hx-target="#projects_list" class="px-3 py-2 border hover:bg-slate-300">&laquo;</a>
+            <a href="#" hx-get="{% url 'dashboard:applicant_projects' %}?page={{ page.previous_page_number }}" hx-target="#projects_list" class="px-3 py-2 border hover:bg-slate-300">&lsaquo;</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ page.number }} of {{ page.paginator.num_pages }}.
+        </span>
+
+        {% if page.has_next %}
+            <a href="#" hx-get="{% url 'dashboard:applicant_projects' %}?page={{ page.next_page_number }}" hx-target="#projects_list" class="px-3 py-2 border hover:bg-slate-300">&rsaquo;</a>
+            <a href="#" hx-get="{% url 'dashboard:applicant_projects' %}?page={{ page.paginator.num_pages }}" hx-target="#projects_list" class="px-3 py-2 border hover:bg-slate-300">&raquo;</a>
+        {% endif %}
+    </span>
+</nav>
