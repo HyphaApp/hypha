@@ -44,7 +44,7 @@
                     <h2 class="font-light flex-1">{% trans "My submissions" %}</h2>
                 </div>
 
-                <div hx-get="{% url 'dashboard:applicant_submissions' %}" hx-trigger="load delay:1000" id="submissions_list">
+                <div hx-get="{% url 'dashboard:applicant_submissions' %}" hx-trigger="load" id="submissions_list">
                     {% for dummy_item in per_section_items %}
                         <div class="wrapper wrapper--status-bar-outer animate-pulse min-h-40">
                             <div class="mt-5 ms-4 lg:max-w-[30%] h-9 bg-gray-200 "></div>
