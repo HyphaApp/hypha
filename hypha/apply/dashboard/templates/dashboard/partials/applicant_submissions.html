@@ -18,7 +18,7 @@
                         {% if submission.status == 'draft_proposal' %}
                             {% trans "Start your" %} {{ submission.stage }} {% trans "application" %}
                         {% else %}
-                            {% heroicon_micro "pencil" class="w-4 h-4 me-1 inline align-middle" %}
+                            {% heroicon_micro "pencil" class="w-4 h-4 me-1 inline align-middle" aria_hidden=true %}
                             {% trans "Edit" %}
                         {% endif %}
                     </a>
