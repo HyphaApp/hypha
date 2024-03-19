@@ -15,9 +15,9 @@ def submission_links(value):
     links = {}
     if matches:
         for submission in ApplicationSubmission.objects.filter(id__in=matches):
-            links[
-                rf"\#{submission.id}"
-            ] = f'<a href="{submission.get_absolute_url()}">{submission.title} <span class="mid-grey-text">#{submission.id}</span></a>'
+            links[rf"\#{submission.id}"] = (
+                f'<a href="{submission.get_absolute_url()}">{submission.title} <span class="mid-grey-text">#{submission.id}</span></a>'
+            )
 
     if links:
         for sid, link in links.items():

@@ -215,13 +215,13 @@ class CreateVendorView(CreateVendorAccessMixin, SessionWizardView):
                 }
                 iba_info = bank_info.iba_info
                 if iba_info:
-                    initial_dict["other"][
-                        "ib_account_routing_number"
-                    ] = iba_info.account_routing_number
+                    initial_dict["other"]["ib_account_routing_number"] = (
+                        iba_info.account_routing_number
+                    )
                     initial_dict["other"]["ib_account_number"] = iba_info.account_number
-                    initial_dict["other"][
-                        "ib_account_currency"
-                    ] = iba_info.account_currency
+                    initial_dict["other"]["ib_account_currency"] = (
+                        iba_info.account_currency
+                    )
                     initial_dict["other"]["ib_branch_address"] = iba_info.branch_address
         return initial_dict.get(step, {})
 

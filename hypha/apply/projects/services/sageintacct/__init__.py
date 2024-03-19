@@ -1,6 +1,7 @@
 """
 Sage Intacct init
 """
+
 from .exceptions import (
     ExpiredTokenError,
     InternalServerError,
