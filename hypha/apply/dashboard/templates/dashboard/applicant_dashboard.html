@@ -83,7 +83,7 @@
                                 <h4 class="heading heading--no-margin font-bold"><a class="link" href="{{ invoice.get_absolute_url }}">
                                     {% if invoice.invoice_number %}{{ invoice.invoice_number }}{% else %}{{ invoice.vendor_document_number }}{% endif %}
                                 </a></h4>
-                                <p class="m-0 text-gray-400">{% trans "Date added: " %} {{ invoice.requested_at }}</p>
+                                <p class="m-0 text-fg-muted text-sm">{% trans "Date added: " %} {{ invoice.requested_at }}</p>
                             </div>
                             <div class="max-w-[33%] w-full text-center my-auto">
                                 <p class="text-2xl">{% if invoice.invoice_amount %}{{ invoice.invoice_amount | format_number_as_currency }}{% else %}-{% endif %}</p>
