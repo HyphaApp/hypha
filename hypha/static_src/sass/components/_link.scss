@@ -12,6 +12,16 @@
         &--narrow {
             @include button--narrow;
         }
+
+        &--login {
+            @include media-query("mob-landscape") {
+                width: 20rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            width: 100%;
+        }
     }
 
     &--underlined {
