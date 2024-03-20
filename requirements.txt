@@ -22,8 +22,6 @@ django-heroku==0.3.1
 django-hijack==3.4.2
 django-htmx==1.17.0
 django-pagedown==2.2.1
-# django-pwned-passwords==4.1.0
-https://github.com/slinkymanbyday/django-pwned-passwords/archive/58c7b832df7360a21fd8edeaaf9f897c7517baf1.zip
 django-ratelimit==4.1.0
 django-referrer-policy==1.0
 django-select2==8.0.0
@@ -49,6 +47,7 @@ more-itertools==10.1.0
 phonenumberslite==8.13.26
 Pillow>=10.0.1
 psycopg[binary]==3.1.14
+pwned-passwords-django==2.1
 qrcode==7.4.2
 reportlab==3.6.13
 social_auth_app_django==5.0.0
