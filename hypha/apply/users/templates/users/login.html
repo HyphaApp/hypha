@@ -26,7 +26,7 @@
                         {% blocktrans trimmed %}Please enter one of the backup codes to log in to your account.{% endblocktrans %}
                     </p>
                     <p class="text-sm mb-4 text-fg-muted">
-                        Those codes were generated for you during 2FA setup to print or keep safe in a password manager.
+                        {% blocktrans trimmed %}Those codes were generated for you during 2FA setup to print or keep safe in a password manager.{% endblocktrans %}
                     </p>
                 {% endif %}
 
@@ -61,10 +61,10 @@
                         {% endif %}
 
                         <div class="form__group max-w-sm flex items-center justify-between gap-4">
-                            <button class="link link--button link--button-secondary" type="submit">{% trans "Log in" %}</button>
+                            <button class="link link--button link--button--login" type="submit">{% trans "Log in" %}</button>
                         </div>
 
-                        <div class="flex items-center justify-center sm:justify-start relative mb-4">
+                        <div class="flex items-center justify-center min-[465px]:justify-start relative mb-4">
                             <hr class="inline w-32 h-px my-6 bg-gray-300 border-0">
                             <span class="px-3 text-gray-400 font-medium">{% trans "or" %}</span>
                             <hr class="inline w-32 h-px my-6 bg-gray-300 border-0">

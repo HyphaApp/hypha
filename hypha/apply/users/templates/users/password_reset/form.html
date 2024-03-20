@@ -28,14 +28,8 @@
                 <p>{{ form.email.label_tag }}</p>
                 <p>{{ form.email }}</p>
 
-                <button class="btn btn-primary" type="submit">{% trans "Send reset email" %}</button>
+                <button class="link link--button link--button--login" type="submit">{% trans "Send reset email" %}</button>
             </form>
-
-            <div class="mt-4">
-                <a href="{% url 'users:login' %}{% if redirect_url %}?next={{ redirect_url }}{% endif %}" hx-boost="true">
-                    {% trans "Log in" %}
-                </a>
-            </div>
         </div>
     </section>
 {% endblock %}
