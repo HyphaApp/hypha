@@ -1735,12 +1735,22 @@ class ProjectApprovalFormEditView(BaseStreamForm, UpdateView):
             **kwargs,
         }
 
+    def get_paf_form_fields(self):
+        return self.object.form_fields or self.approval_form.form.form_fields
+
+    def get_sow_form_fields(self):
+        if hasattr(self.object, "sow"):
+            return (
+                self.object.sow.form_fields or self.approval_sow_form.form.form_fields
+            )
+        return self.approval_sow_form.form.form_fields
+
     def get_defined_fields(self):
         approval_form = self.approval_form
         if approval_form and not self.paf_form:
-            return approval_form.form.form_fields
+            return self.get_paf_form_fields()
         if self.approval_sow_form and self.paf_form and not self.sow_form:
-            return self.approval_sow_form.form.form_fields
+            return self.get_sow_form_fields()
         return self.object.get_defined_fields()
 
     def get_paf_form_kwargs(self):
@@ -1803,11 +1813,11 @@ class ProjectApprovalFormEditView(BaseStreamForm, UpdateView):
             if self.paf_form.is_valid() and self.sow_form.is_valid():
                 # if both forms exists, both needs to be valid together
                 try:
-                    paf_form_fields = self.approval_form.form.form_fields
+                    paf_form_fields = self.get_paf_form_fields()
                 except AttributeError:
                     paf_form_fields = []
                 try:
-                    sow_form_fields = self.approval_sow_form.form.form_fields
+                    sow_form_fields = self.get_sow_form_fields()
                 except AttributeError:
                     sow_form_fields = []
 
@@ -1836,7 +1846,7 @@ class ProjectApprovalFormEditView(BaseStreamForm, UpdateView):
             if self.paf_form.is_valid():
                 # paf can exist alone also, it needs to be valid
                 try:
-                    paf_form_fields = self.approval_form.form.form_fields
+                    paf_form_fields = self.get_paf_form_fields()
                 except AttributeError:
                     paf_form_fields = []
                 self.paf_form.save(paf_form_fields=paf_form_fields)
