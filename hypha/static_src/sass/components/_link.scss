@@ -17,11 +17,13 @@
         }
 
         &--login {
+            /* stylelint-disable-next-line media-query-no-invalid */
             @media (min-width: $input-box-max-width) {
                 width: 20rem;
             }
         }
 
+        /* stylelint-disable-next-line media-query-no-invalid */
         @media (max-width: $input-box-max-width) {
             width: 100%;
         }
