@@ -521,9 +521,10 @@ class ApplicantDashboardView(TemplateView):
         context["my_submissions_exists"] = ApplicationSubmission.objects.filter(
             user=self.request.user
         ).exists()
-        context["per_section_items"] = range(
-            5
-        )  # it is just for animation, nothing to do with no of items there.
+
+        # Number of items to show in skeleton in each section of lazy loading
+        context["per_section_items"] = range(3)
+
         context["my_projects_exists"] = Project.objects.filter(
             user=self.request.user
         ).exists()
