@@ -104,7 +104,9 @@ class InvoiceBaseForm(forms.ModelForm):
 
 class CreateInvoiceForm(FileFormMixin, InvoiceBaseForm):
     document = SingleFileField(
-        label="Invoice File", required=True, help_text=_("The invoice must be a PDF.")
+        label=_("Invoice file"),
+        required=True,
+        help_text=_("The invoice must be a PDF."),
     )
     supporting_documents = MultiFileField(
         required=False,
@@ -169,7 +171,7 @@ class EditInvoiceForm(FileFormMixin, InvoiceBaseForm):
 
 class SelectDocumentForm(forms.ModelForm):
     document = forms.ChoiceField(
-        label="Document", widget=forms.Select(attrs={"id": "from_submission"})
+        label=_("Document"), widget=forms.Select(attrs={"id": "from_submission"})
     )
 
     class Meta:

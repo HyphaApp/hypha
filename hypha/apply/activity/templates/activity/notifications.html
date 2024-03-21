@@ -71,7 +71,7 @@
                                 {% if activity.related_object %}
                                     <p>
                                         <a href="{{ activity.related_object.get_absolute_url }}" class="uppercase font-bold hover:opacity-70 transition-opacity">
-                                            <span>View {{ activity.related_object|model_verbose_name }}</span>
+                                            <span>{% trans "View" %} {{ activity.related_object|model_verbose_name }}</span>
                                             {% heroicon_outline "arrow-right" size=12 class="inline align-baseline" stroke_width=4 %}
                                         </a>
                                     </p>

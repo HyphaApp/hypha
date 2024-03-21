@@ -265,7 +265,7 @@ class VendorDetailView(DetailVendorAccessMixin, DetailView):
                 vendor_form_settings.required_to_pay_taxes_label,
                 vendor.required_to_pay_taxes,
             ),
-            ("Due Diligence Documents", ""),
+            (_("Due Diligence Documents"), ""),
         ]
         group = group + 1
         data.setdefault(

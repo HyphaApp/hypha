@@ -23,7 +23,7 @@ class ReportEditForm(FileFormMixin, forms.ModelForm):
         widget=forms.CheckboxSelectMultiple(attrs={"class": "delete"}),
         queryset=ReportPrivateFiles.objects.all(),
         required=False,
-        label="Files",
+        label=_("Files"),
     )
     files = MultiFileField(required=False, label="")
 

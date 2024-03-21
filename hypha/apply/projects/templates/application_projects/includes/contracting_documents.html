@@ -12,7 +12,7 @@
                 <button class="align-middle ms-1 transform transition-transform" x-bind:class="collapsed ? '': '-rotate-90' ">
                     {% heroicon_outline 'chevron-left' size=20 stroke_width=2 aria_hidden=true %}
 
-                    <span class="sr-only" x-text="collapsed ? 'expand' : 'collapse'">expand</span>
+                    <span class="sr-only" x-text="collapsed ? 'expand' : 'collapse'">{% trans "expand" %}</span>
                 </button>
             {% endif %}
         </div>

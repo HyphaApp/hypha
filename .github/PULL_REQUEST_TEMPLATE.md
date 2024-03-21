@@ -4,11 +4,10 @@ Thanks for contributing to Hypha!
 Please ensure your contributions pass all necessary linting/testing and that the appropriate documentation has been updated.
 -->
 
-## Description
 <!--
 Describe briefly what your pull request changes. If this is resoving an issue, please specify below via "Fixes #<Github Issue ID>"
 -->
-Fixes #ISSUEID.
+Fixes #ISSUEID
 
 
 ## Test Steps
@@ -21,4 +20,4 @@ Give a brief overview of the steps required for a user/dev to test this contribu
  - Langauge that can be understood by non-technical testers if being tested by users
 -->
 
- - [ ] ...
+ - [ ] …

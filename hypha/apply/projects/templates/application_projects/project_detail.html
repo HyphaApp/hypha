@@ -198,7 +198,7 @@
                                                     <p class="sidebar__paf-approvals--approved m-0">{% trans "Request changes or more information by " %}{{ paf_approval.user }}</p>
                                                     {% get_comment_for_requested_approval paf_approval as rejected_comment %}
                                                     {% if rejected_comment %}
-                                                        <a href="#communications#{{ rejected_comment.id }}" class="font-bold" target="_blank">View comment</a>
+                                                        <a href="#communications#{{ rejected_comment.id }}" class="font-bold" target="_blank">{% trans "View comment" %}</a>
                                                     {% endif %}
                                                 </div>
                                             </div>
@@ -236,7 +236,7 @@
         <div class="tabs__content" id="tab-3">
             <div class="feed">
             {% comment %} Loaded using the htmx via alpine's custom event "open-tab-3"{% endcomment %}
-                <p>Loading...</p>
+                <p>{% trans "Loading…" %}</p>
             </div>
         </div>
     </div>
