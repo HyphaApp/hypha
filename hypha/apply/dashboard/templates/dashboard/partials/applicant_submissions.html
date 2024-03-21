@@ -1,11 +1,11 @@
-{% load i18n dashboard_statusbar_tags statusbar_tags workflow_tags %}
+{% load i18n dashboard_statusbar_tags statusbar_tags workflow_tags heroicons %}
 
 {% for submission in page.object_list %}
     <div class="wrapper wrapper--status-bar-outer">
         <div class="wrapper wrapper--status-bar-inner">
             <div class="mt-5 ms-4 lg:max-w-[30%]">
-                <h4 class="heading mb-2 font-bold line-clamp-3 hover:line-clamp-none"><a class="link {% if not submission.is_active %} text-gray-400 {% endif %}" href="{% url 'funds:submissions:detail' submission.id %}">{{ submission.title }}</a></h4>
-                <p class="m-0 text-gray-400">
+                <h4 class="heading mb-0 font-bold line-clamp-3 hover:line-clamp-none"><a class="link {% if not submission.is_active %} text-gray-400 {% endif %}" href="{% url 'funds:submissions:detail' submission.id %}">{{ submission.title }}</a></h4>
+                <p class="m-0 text-fg-muted mb-4 text-sm">
                     {% if submission.is_draft %}
                         {% trans "Drafted on " %}
                     {% else %}
@@ -13,18 +13,19 @@
                     {% endif %}
                     {{ submission.submit_time.date }} {% trans "by" %} {{ submission.user.get_full_name }}
                 </p>
+                {% if request.user|has_edit_perm:submission %}
+                    <a class="button button--primary" href="{% url 'funds:submissions:edit' submission.id %}">
+                        {% if submission.status == 'draft_proposal' %}
+                            {% trans "Start your" %} {{ submission.stage }} {% trans "application" %}
+                        {% else %}
+                            {% heroicon_micro "pencil" class="w-4 h-4 me-1 inline align-middle" aria_hidden=true %}
+                            {% trans "Edit" %}
+                        {% endif %}
+                    </a>
+                {% endif %}
             </div>
             {% status_bar submission.workflow submission.phase request.user css_class="status-bar--small" %}
         </div>
-        {% if request.user|has_edit_perm:submission %}
-            <a class="button button--primary ms-4" href="{% url 'funds:submissions:edit' submission.id %}">
-                {% if submission.status == 'draft_proposal' %}
-                    {% trans "Start your" %} {{ submission.stage }} {% trans "application" %}
-                {% else %}
-                    {% trans "Edit" %}
-                {% endif %}
-            </a>
-        {% endif %}
     </div>
 {% empty %}
     {% trans "No active submissions" %}
