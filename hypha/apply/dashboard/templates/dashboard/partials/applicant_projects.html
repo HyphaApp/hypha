@@ -2,8 +2,8 @@
 
 {% for project in page.object_list %}
     <div class="wrapper wrapper--status-bar-outer">
-        <div class="wrapper wrapper--status-bar-inner">
-            <div class="mt-5 ms-4 lg:max-w-[30%]">
+        <div class="wrapper wrapper--status-bar-inner ms-4">
+            <div class="mt-5 lg:max-w-[30%]">
                 <h4 class="heading mb-0 font-bold line-clamp-3 hover:line-clamp-none"><a class="link" href="{% url 'apply:projects:detail' project.id %}">{{ project.title }}</a></h4>
                 <p class="m-0 text-fg-muted text-sm">{% trans "Project start date: " %} {{ project.created_at.date }}</p>
             </div>
