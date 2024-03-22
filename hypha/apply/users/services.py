@@ -63,7 +63,7 @@ class PasswordlessAuthService:
 
     def send_email_no_account_found(self, to):
         context = self.get_email_context()
-        subject = "Login attempt at {org_long_name}".format(**context)
+        subject = "Log in attempt at {org_long_name}".format(**context)
         # Force subject to a single line to avoid header-injection issues.
         subject = "".join(subject.splitlines())
 
@@ -91,7 +91,7 @@ class PasswordlessAuthService:
             }
         )
 
-        subject = "Login to {username} at {org_long_name}".format(**context)
+        subject = "Log in to {username} at {org_long_name}".format(**context)
         # Force subject to a single line to avoid header-injection issues.
         subject = "".join(subject.splitlines())
 

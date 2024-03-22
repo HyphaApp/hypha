@@ -48,11 +48,8 @@
                         {% heroicon_outline "bars-3" size=32 stroke_width=2 class="inline" aria_hidden="true" %}
                     </button>
                 {% else %}
-                    {% if request.path != '/auth/' %}
+                    {% if request.path != '/auth/' and request.path != '/login/' %}
                         {% include "includes/login_button.html" %}
-                    {% endif %}
-                    {% if ENABLE_PUBLIC_SIGNUP and request.path == '/auth/' %}
-                        {% include "includes/register_button.html" %}
                     {% endif %}
                 {% endif %}
             </div>
@@ -121,7 +118,7 @@
                     </div>
                 {% endif %}
 
-                {% if request.path != '/auth/' %}
+                {% if request.path != '/auth/' and request.path != '/login/' %}
                     {% include "includes/login_button.html" %}
                 {% endif %}
 
@@ -129,10 +126,6 @@
                     <a href="{% url 'users:logout' %}" class="button button--transparent">
                         {% trans "Log out" %}
                     </a>
-                {% else %}
-                    {% if ENABLE_PUBLIC_SIGNUP and request.path != '/register/' %}
-                        {% include "includes/register_button.html" %}
-                    {% endif %}
                 {% endif %}
             </div>
         </div>

@@ -18,7 +18,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import PermissionDenied
 from django.core.signing import TimestampSigner, dumps, loads
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import Http404, get_object_or_404, redirect, render, resolve_url
+from django.shortcuts import Http404, get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.template.response import TemplateResponse
 from django.urls import reverse, reverse_lazy
@@ -30,7 +30,7 @@ from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import never_cache
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import UpdateView
-from django.views.generic.base import TemplateView, View
+from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 from django_htmx.http import HttpResponseClientRedirect
 from django_otp import devices_for_user
@@ -56,7 +56,6 @@ from .decorators import require_oauth_whitelist
 from .forms import (
     BecomeUserForm,
     CustomAuthenticationForm,
-    CustomUserCreationForm,
     Disable2FAConfirmationForm,
     PasswordlessAuthForm,
     ProfileForm,
@@ -72,65 +71,6 @@ from .utils import (
 )
 
 User = get_user_model()
-
-
-@method_decorator(
-    ratelimit(key="ip", rate=settings.DEFAULT_RATE_LIMIT, method="POST"),
-    name="dispatch",
-)
-class RegisterView(View):
-    redirect_field_name = "next"
-    form = CustomUserCreationForm
-
-    def get(self, request):
-        # We keep /register in the urls in order to test (where we turn on/off
-        # the setting per test), but when disabled, we want to pretend it doesn't
-        # exist va 404
-        if not settings.ENABLE_PUBLIC_SIGNUP:
-            raise Http404
-
-        if request.user.is_authenticated:
-            return redirect(settings.LOGIN_REDIRECT_URL)
-
-        ctx = {
-            "form": self.form(register_view=True),
-            "redirect_url": get_redirect_url(request, self.redirect_field_name),
-        }
-        return render(request, "users/register.html", ctx)
-
-    def post(self, request):
-        # See comment in get() above about doing this here rather than in urls
-        if not settings.ENABLE_PUBLIC_SIGNUP:
-            raise Http404
-
-        form = self.form(register_view=True, data=request.POST)
-        context = {}
-        if form.is_valid():
-            # If using wagtail password management
-            if "password1" in form.cleaned_data:
-                context["password"] = form.cleaned_data["password1"]
-
-            site = Site.find_for_request(self.request)
-            user, created = User.objects.get_or_create_and_notify(
-                email=form.cleaned_data["email"],
-                site=site,
-                redirect_url=get_redirect_url(request, self.redirect_field_name),
-                defaults={
-                    "full_name": form.cleaned_data["full_name"],
-                },
-                **context,
-            )
-            if created:
-                params = {"name": user.full_name, "email": user.email}
-                # redirect to success page with params as query params
-                return HttpResponseRedirect(
-                    resolve_url("users:register-success") + "?" + urlencode(params)
-                )
-        return render(request, "users/register.html", {"form": form})
-
-
-class RegistrationSuccessView(TemplateView):
-    template_name = "users/register-success.html"
 
 
 @method_decorator(

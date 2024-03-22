@@ -1,11 +1,11 @@
 {% extends "base-apply.html" %}
-{% load i18n wagtailcore_tags %}
+{% load i18n wagtailcore_tags heroicons %}
 
-{% block title %}{% trans "Login" %}{% endblock %}
+{% block title %}{% trans "Log in" %}{% endblock %}
 {% block body_class %}bg-white{% endblock %}
 
 {% block content %}
-    <div class="w-full grid bg-white mt-5 md:py-4">
+    <div class="max-w-2xl grid bg-white mt-5 md:py-4">
 
         <section>
             <div class="px-4 pt-4">
@@ -23,10 +23,10 @@
                 {% elif wizard.steps.current == 'backup' %}
                     <h2 class="text-2xl">{% trans "Two factor verification" %}</h2>
                     <p>
-                        {% blocktrans trimmed %}Please enter one of the backup codes to login to your account.{% endblocktrans %}
+                        {% blocktrans trimmed %}Please enter one of the backup codes to log in to your account.{% endblocktrans %}
                     </p>
                     <p class="text-sm mb-4 text-fg-muted">
-                        Those codes were generated for you during 2FA setup to print or keep safe in a password manager.
+                        {% blocktrans trimmed %}Those codes were generated for you during 2FA setup to print or keep safe in a password manager.{% endblocktrans %}
                     </p>
                 {% endif %}
 
@@ -61,24 +61,21 @@
                         {% endif %}
 
                         <div class="form__group max-w-sm flex items-center justify-between gap-4">
-                            <button class="link link--button link--button-secondary" type="submit">{% trans "Log in" %}</button>
-
-                            {% if ENABLE_PUBLIC_SIGNUP %}
-                                <a class="hover:opacity-75" href="{% url 'users:register' %}{% if redirect_url %}?next={{ redirect_url }}{% endif %}" hx-boost="true"> {% trans "Create account" %}</a>
-                            {% endif %}
+                            <button class="link link--button link--button--login" type="submit">{% trans "Log in" %}</button>
                         </div>
 
-                        {% if GOOGLE_OAUTH2 %}
-                            <div class="flex items-center justify-start relative">
-                                <hr class="inline w-32 h-px my-6 bg-gray-300 border-0">
-                                <span class="px-3 text-gray-400 font-medium">{% trans "or" %}</span>
-                                <hr class="inline w-32 h-px my-6 bg-gray-300 border-0">
-                            </div>
+                        <div class="flex items-center justify-center min-[465px]:justify-start relative mb-4">
+                            <hr class="inline w-32 h-px my-6 bg-gray-300 border-0">
+                            <span class="px-3 text-gray-400 font-medium">{% trans "or" %}</span>
+                            <hr class="inline w-32 h-px my-6 bg-gray-300 border-0">
+                        </div>
 
-                            <div class="">
-                                <a class="link link--button link--button-tertiary" href="{% url "social:begin" "google-oauth2" %}{% if next %}?next={{ next }}{% endif %}">{% blocktrans %}Log in with your {{ ORG_SHORT_NAME }} email{% endblocktrans %}</a>
-                            </div>
-                        {% endif %}
+                        <section class="space-y-0.5">
+                            {% if GOOGLE_OAUTH2 %}
+                                {% include "includes/org_login_button.html" %}
+                            {% endif %}
+                            {% include "includes/passwordless_login_button.html" %}
+                            </section
                     {% else %}
 
                         <div class="form__group">

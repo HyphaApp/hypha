@@ -8,7 +8,7 @@
         >
             {% heroicon_micro "user" class="inline align-text-bottom w-4 h-4 me-1" aria_hidden=true %}
 
-            My {{ ORG_SHORT_NAME }}
+            {% blocktrans %}My {{ ORG_SHORT_NAME }}{% endblocktrans %}
         </a>
     {% else %}
         <a
@@ -26,6 +26,6 @@
         href="{{ APPLY_SITE.root_url }}{% url 'users:passwordless_login_signup' %}{% if redirect_url %}?next={{ redirect_url }}{% endif %}"
     >
         {% heroicon_micro "user" class="inline align-text-bottom w-4 h-4 me-1" aria_hidden=true %}
-        {% trans "Login" %}
+        {% trans "Log in" %} {% if ENABLE_PUBLIC_SIGNUP %} {% trans " or Sign up" %} {% endif %}
     </a>
 {% endif %}
