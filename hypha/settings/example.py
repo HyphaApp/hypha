@@ -18,5 +18,6 @@ be stored in the DEFAULT_FILE_STORAGE. This may be acceptable if the correct
 access permissions exist to prevent access to the sub-directory of applicant
 media.
 """
+
 DEFAULT_FILE_STORAGE = "path.to.my.StorageClass"
 PRIVATE_FILE_STORAGE = "path.to.my.PrivateStorageClass"

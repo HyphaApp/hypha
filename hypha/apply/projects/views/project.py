@@ -1234,13 +1234,13 @@ class AdminProjectDetailView(
         context["remaining_document_categories"] = DocumentCategory.objects.filter(
             ~Q(packet_files__project=self.object)
         )
-        context[
-            "all_contract_document_categories"
-        ] = ContractDocumentCategory.objects.all()
-        context[
-            "remaining_contract_document_categories"
-        ] = ContractDocumentCategory.objects.filter(
-            ~Q(contract_packet_files__project=self.object)
+        context["all_contract_document_categories"] = (
+            ContractDocumentCategory.objects.all()
+        )
+        context["remaining_contract_document_categories"] = (
+            ContractDocumentCategory.objects.filter(
+                ~Q(contract_packet_files__project=self.object)
+            )
         )
 
         if (
@@ -1295,13 +1295,13 @@ class ApplicantProjectDetailView(
         context["current_status_index"] = [
             status for status, _ in PROJECT_PUBLIC_STATUSES
         ].index(self.object.status)
-        context[
-            "all_contract_document_categories"
-        ] = ContractDocumentCategory.objects.all()
-        context[
-            "remaining_contract_document_categories"
-        ] = ContractDocumentCategory.objects.filter(
-            ~Q(contract_packet_files__project=self.object)
+        context["all_contract_document_categories"] = (
+            ContractDocumentCategory.objects.all()
+        )
+        context["remaining_contract_document_categories"] = (
+            ContractDocumentCategory.objects.filter(
+                ~Q(contract_packet_files__project=self.object)
+            )
         )
         return context
 

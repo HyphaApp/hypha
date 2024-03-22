@@ -34,9 +34,9 @@ def define_env(env):
         env.variables.versions["python"]["version"] = ".".join(py_ver.split(".")[:-1])
 
         if env.variables.versions["python"]["packages"]["macos"] is None:
-            env.variables.versions["python"]["packages"][
-                "macos"
-            ] = f"python@{'.'.join(py_ver.split('.')[:-1])}"
+            env.variables.versions["python"]["packages"]["macos"] = (
+                f"python@{'.'.join(py_ver.split('.')[:-1])}"
+            )
 
     if env.variables.versions["node"]["version"] is None:
         node_ver = get_node_version()

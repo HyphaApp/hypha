@@ -106,9 +106,9 @@ class BaseStreamForm:
                 if isinstance(block, MultiInputCharFieldBlock):
                     number_of_inputs = struct_value.get("number_of_inputs")
                     for index in range(number_of_inputs):
-                        form_fields[
-                            struct_child.id + "_" + str(index)
-                        ] = field_from_block
+                        form_fields[struct_child.id + "_" + str(index)] = (
+                            field_from_block
+                        )
                         field_from_block.multi_input_id = struct_child.id
                         field_from_block.add_button_text = struct_value.get(
                             "add_button_text"
