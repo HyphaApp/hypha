@@ -1,23 +1,15 @@
-import csv
-import os
-
 import django_filters
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
-from django.core.paginator import Paginator
-from django.db.models import Q
-from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
+from django.db.models import CharField, Q, Value
+from django.db.models.functions import Coalesce, Lower, NullIf
 from django.template.defaultfilters import mark_safe
-from django.template.response import TemplateResponse
-from django.utils.translation import gettext as _
-from django.views.decorators.vary import vary_on_headers
-from wagtail.admin.auth import any_permission_required
 from wagtail.admin.filters import WagtailFilterSet
-from wagtail.admin.forms.search import SearchForm
 from wagtail.compat import AUTH_USER_APP_LABEL, AUTH_USER_MODEL_NAME
-from wagtail.users.views.groups import GroupViewSet, IndexView
+from wagtail.users.views.groups import GroupViewSet
+from wagtail.users.views.groups import IndexView as GroupIndexView
+from wagtail.users.views.users import Index as UserIndexView
+from wagtail.users.views.users import get_users_filter_query
 
 from .models import GroupDesc
 
@@ -35,40 +27,6 @@ delete_user_perm = "{0}.delete_{1}".format(
 )
 
 
-def create_csv(users_list):
-    base_path = os.path.join(settings.PROJECT_DIR, "../media")
-    filename = "users.csv"
-    with open(os.path.join(base_path + "/" + filename), "w+") as file:
-        fieldnames = ["full_name", "email", "status", "role"]
-        writer = csv.DictWriter(file, fieldnames=fieldnames)
-        writer.writeheader()
-        for user in users_list:
-            writer.writerow(user)
-    return base_path + "/" + filename
-
-
-def export(users):
-    users_list = []
-    for user in users:
-        if user.is_superuser:
-            user.roles.insert(0, "Admin")
-        roles = ",".join(user.roles)
-        user_data = {
-            "full_name": user.full_name,
-            "email": user.email,
-            "status": "Active" if user.is_active else "Inactive",
-            "role": roles,
-        }
-        users_list.append(user_data)
-    filepath = create_csv(users_list)
-    with open(filepath, "rb") as file:
-        response = HttpResponse(file.read(), content_type="text/csv")
-        response["Content-Disposition"] = "inline; filename=" + os.path.basename(
-            filepath
-        )
-        return response
-
-
 class UserFilterSet(WagtailFilterSet):
     STATUS_CHOICES = (
         ("inactive", "INACTIVE"),
@@ -83,7 +41,7 @@ class UserFilterSet(WagtailFilterSet):
 
     class Meta:
         model = User
-        fields = ["roles", "status"]
+        fields = ["roles", "status", "is_superuser"]
 
     def filter_by_roles(self, queryset, name, value):
         queryset = queryset.filter(groups__name=value)
@@ -97,116 +55,95 @@ class UserFilterSet(WagtailFilterSet):
         return queryset
 
 
-@any_permission_required(add_user_perm, change_user_perm, delete_user_perm)
-@vary_on_headers("X-Requested-With")
-def index(request, *args):
+class CustomUserIndexView(UserIndexView):
     """
-    Override wagtail's users index view to filter by full_name
-    https://github.com/wagtail/wagtail/blob/af69cb4a544a1b9be1339546be62ff54b389730e/wagtail/users/views/users.py#L47
+    Override wagtail's users index view to filter by full_name. This view
+    also allows for the addition of custom fields to the list_export
+    and list filtering.
     """
-    q = None
-    is_searching = False
 
-    group = None
-    group_filter = Q()
-    if args:
-        group = get_object_or_404(Group, id=args[0])
-        group_filter = Q(groups=group) if args else Q()
+    list_export = [
+        "email",
+        "full_name",
+        "slack",
+        "roles",
+        "is_superuser",
+        "is_active",
+        "date_joined",
+        "last_login",
+    ]
 
-    model_fields = [f.name for f in User._meta.get_fields()]
+    default_ordering = "name"
+    list_filter = ("is_active",)
 
-    if "q" in request.GET:
-        form = SearchForm(request.GET, placeholder=_("Search users"))
-        if form.is_valid():
-            q = form.cleaned_data["q"]
-            is_searching = True
-            conditions = Q()
+    filterset_class = UserFilterSet
 
-            for term in q.split():
-                if "username" in model_fields:
-                    conditions |= Q(username__icontains=term)
+    def get_context_data(self, *args, object_list=None, **kwargs):
+        ctx = super().get_context_data(*args, object_list=object_list, **kwargs)
+        ctx["filters"] = self.get_filterset_class()(
+            self.request.GET, queryset=self.get_queryset(), request=self.request
+        )
+        return ctx
 
-                if "first_name" in model_fields:
-                    conditions |= Q(first_name__icontains=term)
+    def get_queryset(self):
+        """
+        Override the original queryset to filter by full_name, mostly copied from
+        super().get_queryset() with the addition of the custom code
+        """
+        model_fields = set(self.model_fields)
+        if self.is_searching:
+            conditions = get_users_filter_query(self.search_query, model_fields)
 
-                if "last_name" in model_fields:
-                    conditions |= Q(last_name__icontains=term)
-
-                if "email" in model_fields:
-                    conditions |= Q(email__icontains=term)
-
-                # filter by full_name
+            # == custom code
+            for term in self.search_query.split():
                 if "full_name" in model_fields:
                     conditions |= Q(full_name__icontains=term)
+            # == custom code end
 
-            users = User.objects.filter(group_filter & conditions)
-    else:
-        form = SearchForm(placeholder=_("Search users"))
+            users = User.objects.filter(self.group_filter & conditions)
+        else:
+            users = User.objects.filter(self.group_filter)
 
-    if not is_searching:
-        users = User.objects.filter(group_filter).order_by("-is_active", "full_name")
+        if self.locale:
+            users = users.filter(locale=self.locale)
 
-    filters = None
-    if not group:
-        filters = UserFilterSet(request.GET, queryset=users, request=request)
-        users = filters.qs
+        users = users.annotate(
+            display_name=Coalesce(
+                NullIf("full_name", Value("")), "email", output_field=CharField()
+            ),
+        )
 
-    if "export" in request.GET:
-        file = export(users)
-        return file
+        if "wagtail_userprofile" in model_fields:
+            users = users.select_related("wagtail_userprofile")
 
-    if "ordering" in request.GET:
-        ordering = request.GET["ordering"]
+        # == custom code
+        if "full_name" in model_fields:
+            users = users.order_by(Lower("display_name"))
+        # == custom code end
 
-        if ordering == "username":
+        if self.get_ordering() == "username":
             users = users.order_by(User.USERNAME_FIELD)
-        elif ordering == "status":
-            users = users.order_by("is_active")
-    else:
-        ordering = "name"
 
-    user_count = users.count()
-    paginator = Paginator(users.select_related("wagtail_userprofile"), per_page=20)
-    users = paginator.get_page(request.GET.get("p"))
+        if self.get_ordering() == "name":
+            users = users.order_by(Lower("display_name"))
 
-    if request.headers.get("x-requested-with") == "XMLHttpRequest":
-        return TemplateResponse(
-            request,
-            "wagtailusers/users/results.html",
-            {
-                "users": users,
-                "user_count": user_count,
-                "is_searching": is_searching,
-                "query_string": q,
-                "filters": filters,
-                "ordering": ordering,
-                "app_label": User._meta.app_label,
-                "model_name": User._meta.model_name,
-            },
-        )
-    else:
-        return TemplateResponse(
-            request,
-            "wagtailusers/users/index.html",
-            {
-                "group": group,
-                "search_form": form,
-                "users": users,
-                "user_count": user_count,
-                "is_searching": is_searching,
-                "ordering": ordering,
-                "query_string": q,
-                "filters": filters,
-                "app_label": User._meta.app_label,
-                "model_name": User._meta.model_name,
-            },
-        )
+        # == custom code
+        if not self.group:
+            filterset_class = self.get_filterset_class()
+            users = filterset_class(
+                self.request.GET, queryset=users, request=self.request
+            ).qs
+        # == end custom code
+
+        return users
 
 
-class CustomGroupIndexView(IndexView):
+class CustomGroupIndexView(GroupIndexView):
     """
     Overriding of wagtail.users.views.groups.IndexView to allow for the addition of help text to the displayed group names. This is done utilizing the get_queryset method
     """
+
+    model = Group
 
     def get_queryset(self):
         """
@@ -238,13 +175,11 @@ class CustomGroupViewSet(GroupViewSet):
 
     @property
     def users_view(self):
-        return index
+        return CustomUserIndexView.as_view()
+
+    @property
+    def users_results_view(self):
+        return CustomUserIndexView.as_view(results_only=True)
 
     def __init__(self, name, **kwargs):
         super().__init__(name, **kwargs)
-
-    @property
-    def index_view(self):
-        return self.index_view_class.as_view(
-            **self.get_index_view_kwargs(),
-        )
