@@ -657,7 +657,9 @@ class DeterminationEditView(BaseStreamForm, UpdateView):
 
     def get_defined_fields(self):
         determination = self.get_object()
-        return get_fields_for_stage(determination.submission)
+        return determination.form_fields or get_fields_for_stage(
+            determination.submission
+        )
 
     def get_form_kwargs(self):
         determiantion = self.get_object()
