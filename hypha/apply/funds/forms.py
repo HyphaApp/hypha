@@ -310,7 +310,7 @@ class UpdateReviewersForm(ApplicationSubmissionModelForm):
             ).last()
             if (
                 assigned_reviewer
-                and not cleaned_data[field]
+                and (not cleaned_data[field] and assigned_reviewer.reviewer.is_active)
                 and assigned_reviewer.reviewer in self.submitted_reviewers
             ):
                 self.add_error(
