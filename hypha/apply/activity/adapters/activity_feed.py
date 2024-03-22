@@ -8,6 +8,7 @@ from hypha.apply.activity.models import ALL, APPLICANT, TEAM
 from hypha.apply.activity.options import MESSAGES
 from hypha.apply.projects.utils import (
     get_invoice_public_status,
+    get_invoice_status_display_value,
     get_project_public_status,
     get_project_status_display_value,
 )
@@ -66,6 +67,7 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.DISABLED_REPORTING: _("Reporting disabled"),
         MESSAGES.BATCH_DELETE_SUBMISSION: "handle_batch_delete_submission",
         MESSAGES.BATCH_ARCHIVE_SUBMISSION: "handle_batch_archive_submission",
+        MESSAGES.BATCH_UPDATE_INVOICE_STATUS: "handle_batch_update_invoice_status",
         MESSAGES.ARCHIVE_SUBMISSION: _(
             "{user} has archived the submission: {source.title}"
         ),
@@ -162,6 +164,21 @@ class ActivityAdapter(AdapterBase):
         submissions_text = ", ".join([submission.title for submission in submissions])
         return _("Successfully archived submissions: {title}").format(
             title=submissions_text
+        )
+
+    def handle_batch_update_invoice_status(self, sources, invoices, **kwargs):
+        invoice_numbers = ", ".join(
+            [
+                invoice.invoice_number if invoice.invoice_number else ""
+                for invoice in invoices
+            ]
+        )
+        invoice_status = invoices[0].status if invoices else ""
+        return _(
+            "Successfully updated status to {invoice_status} for invoices: {invoice_numbers}"
+        ).format(
+            invoice_status=get_invoice_status_display_value(invoice_status),
+            invoice_numbers=invoice_numbers,
         )
 
     def handle_paf_assignment(self, source, paf_approvals, **kwargs):

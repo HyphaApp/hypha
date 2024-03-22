@@ -22,7 +22,7 @@
 
         {% if table %}
             {% trans "invoices" as search_placeholder %}
-            {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term use_search=True filter_action=filter_action use_batch_actions=True search_placeholder=search_placeholder %}
+            {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term use_search=True filter_action=filter_action use_batch_actions=True project_actions=True invoice_actions=True search_placeholder=search_placeholder %}
             {% render_table table %}
         {% else %}
             <p>{% trans "No Invoices available" %}</p>
@@ -38,5 +38,8 @@
 
 {% block extra_js %}
     {{ filter.form.media.js }}
+    <script src="{% static 'js/jquery.fancybox.min.js' %}"></script>
+    <script src="{% static 'js/fancybox-global.js' %}"></script>
     <script src="{% static 'js/submission-filters.js' %}"></script>
+    <script src="{% static 'js/batch-actions.js' %}"></script>
 {% endblock %}

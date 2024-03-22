@@ -1,4 +1,5 @@
 from .payment import (
+    BatchUpdateInvoiceStatusForm,
     ChangeInvoiceStatusForm,
     CreateInvoiceForm,
     EditInvoiceForm,
@@ -39,6 +40,7 @@ __all__ = [
     "ApproveContractForm",
     "ApproversForm",
     "AssignApproversForm",
+    "BatchUpdateInvoiceStatusForm",
     "ChangePAFStatusForm",
     "ChangeProjectStatusForm",
     "CreateProjectForm",

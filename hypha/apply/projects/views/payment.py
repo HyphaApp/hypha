@@ -8,8 +8,15 @@ from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
 from django.utils.decorators import method_decorator
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
-from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    FormView,
+    UpdateView,
+)
 from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
 
@@ -29,10 +36,20 @@ from hypha.apply.todo.views import (
 from hypha.apply.users.decorators import staff_or_finance_required
 from hypha.apply.users.groups import STAFF_GROUP_NAME
 from hypha.apply.utils.storage import PrivateMediaView
-from hypha.apply.utils.views import DelegateableView, DelegatedViewMixin, ViewDispatcher
+from hypha.apply.utils.views import (
+    DelegateableListView,
+    DelegateableView,
+    DelegatedViewMixin,
+    ViewDispatcher,
+)
 
 from ..filters import InvoiceListFilter
-from ..forms import ChangeInvoiceStatusForm, CreateInvoiceForm, EditInvoiceForm
+from ..forms import (
+    BatchUpdateInvoiceStatusForm,
+    ChangeInvoiceStatusForm,
+    CreateInvoiceForm,
+    EditInvoiceForm,
+)
 from ..models.payment import (
     APPROVED_BY_FINANCE,
     APPROVED_BY_STAFF,
@@ -42,8 +59,8 @@ from ..models.payment import (
     Invoice,
 )
 from ..models.project import PROJECT_ACTION_MESSAGE_TAG, Project
-from ..service_utils import handle_tasks_on_invoice_update
-from ..tables import InvoiceListTable
+from ..service_utils import batch_update_invoices_status, handle_tasks_on_invoice_update
+from ..tables import AdminInvoiceListTable
 
 
 @method_decorator(login_required, name="dispatch")
@@ -420,8 +437,51 @@ class InvoicePrivateMedia(UserPassesTestMixin, PrivateMediaView):
 
 
 @method_decorator(staff_or_finance_required, name="dispatch")
-class InvoiceListView(SingleTableMixin, FilterView):
+class BatchUpdateInvoiceStatusView(DelegatedViewMixin, FormView):
+    form_class = BatchUpdateInvoiceStatusForm
+    context_name = "batch_invoice_status_form"
+
+    def form_valid(self, form):
+        new_status = form.cleaned_data["invoice_action"]
+        invoices = form.cleaned_data["invoices"]
+        invoices_old_statuses = {invoice: invoice.status for invoice in invoices}
+        batch_update_invoices_status(
+            invoices=invoices,
+            user=self.request.user,
+            status=new_status,
+        )
+
+        # add activity feed for batch update invoice status
+        projects = Project.objects.filter(
+            id__in=[invoice.project.id for invoice in invoices]
+        )
+        messenger(
+            MESSAGES.BATCH_UPDATE_INVOICE_STATUS,
+            request=self.request,
+            user=self.request.user,
+            sources=projects,
+            related=invoices,
+        )
+
+        # update tasks for selected invoices
+        for invoice, old_status in invoices_old_statuses.items():
+            handle_tasks_on_invoice_update(old_status, invoice)
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(
+            self.request,
+            mark_safe(_("Sorry something went wrong") + form.errors.as_ul()),
+        )
+        return super().form_invalid(form)
+
+
+@method_decorator(staff_or_finance_required, name="dispatch")
+class InvoiceListView(SingleTableMixin, FilterView, DelegateableListView):
+    form_views = [
+        BatchUpdateInvoiceStatusView,
+    ]
     filterset_class = InvoiceListFilter
     model = Invoice
-    table_class = InvoiceListTable
+    table_class = AdminInvoiceListTable
     template_name = "application_projects/invoice_list.html"
