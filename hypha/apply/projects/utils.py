@@ -20,6 +20,7 @@ from .models.payment import (
     CHANGES_REQUESTED_BY_FINANCE_2,
     CHANGES_REQUESTED_BY_STAFF,
     DECLINED,
+    INVOICE_STATUS_CHOICES,
     PAID,
     PAYMENT_FAILED,
     RESUBMITTED,
@@ -157,6 +158,10 @@ def get_project_status_display_value(project_status):
 
 def get_project_public_status(project_status):
     return dict(PROJECT_PUBLIC_STATUSES)[project_status]
+
+
+def get_invoice_status_display_value(invoice_status):
+    return dict(INVOICE_STATUS_CHOICES)[invoice_status]
 
 
 def get_invoice_table_status(invoice_status, is_applicant=False):

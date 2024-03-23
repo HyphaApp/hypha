@@ -1,10 +1,22 @@
+import json
 import textwrap
 
 import django_tables2 as tables
 from django.utils.safestring import mark_safe
+from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
+from django_tables2.utils import A
 
+from hypha.apply.funds.tables import LabeledCheckboxColumn
+
+from .forms.payment import get_invoice_possible_transition_for_user
 from .models import Invoice, PAFApprovals, Project, Report
+
+
+def render_invoice_actions(table, record):
+    user = table.context["user"]
+    actions = get_invoice_possible_transition_for_user(user, invoice=record)
+    return json.dumps([str(slugify(action)) for action, _ in actions])
 
 
 class BaseInvoiceTable(tables.Table):
@@ -12,9 +24,23 @@ class BaseInvoiceTable(tables.Table):
         "funds:projects:invoice-detail",
         verbose_name=_("Invoice Number"),
         args=[tables.utils.A("project__pk"), tables.utils.A("pk")],
+        attrs={
+            "td": {
+                "class": "js-title",  # using title as class because of batch-actions.js
+            },
+            "a": {
+                "data-tippy-content": lambda record: record.invoice_number,
+                "data-tippy-placement": "top",
+                # Use after:content-[''] after:block to hide the default browser tooltip on Safari
+                # https://stackoverflow.com/a/43915246
+                "class": "truncate inline-block w-[calc(100%-2rem)] after:content-[''] after:block",
+            },
+        },
     )
     project = tables.Column(verbose_name=_("Project Name"))
-    status = tables.Column()
+    status = tables.Column(
+        attrs={"td": {"data-actions": render_invoice_actions, "class": "js-actions"}},
+    )
     requested_at = tables.DateColumn(verbose_name=_("Submitted"))
 
     def render_project(self, value):
@@ -54,6 +80,34 @@ class InvoiceListTable(BaseInvoiceTable):
         order_by = ["-requested_at"]
         template_name = "application_projects/tables/table.html"
         attrs = {"class": "invoices-table"}
+
+
+class AdminInvoiceListTable(BaseInvoiceTable):
+    selected = LabeledCheckboxColumn(
+        accessor=A("pk"),
+        attrs={
+            "input": {"class": "js-batch-select"},
+            "th__input": {"class": "js-batch-select-all"},
+        },
+    )
+
+    class Meta:
+        fields = [
+            "selected",
+            "requested_at",
+            "invoice_number",
+            "status",
+            "project",
+        ]
+        model = Invoice
+        orderable = True
+        sequence = fields
+        order_by = ["-requested_at"]
+        template_name = "application_projects/tables/table.html"
+        attrs = {"class": "invoices-table"}
+        row_attrs = {
+            "data-record-id": lambda record: record.id,
+        }
 
 
 class BaseProjectsTable(tables.Table):

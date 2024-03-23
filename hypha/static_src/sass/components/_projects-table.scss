@@ -44,6 +44,17 @@
         @include media-query($table-breakpoint) {
             display: table-header-group;
         }
+
+        th {
+            &.selected {
+                @include table-checkbox;
+
+                @include media-query($table-breakpoint) {
+                    width: 50px;
+                    padding-right: 0;
+                }
+            }
+        }
     }
 
     tbody {
@@ -55,6 +66,17 @@
 
                 @include media-query($table-breakpoint) {
                     display: none;
+                }
+            }
+
+            // batch action checkboxes
+            &.selected {
+                @include table-checkbox;
+                display: none;
+                padding-right: 0;
+
+                @include media-query($table-breakpoint) {
+                    display: table-cell;
                 }
             }
         }

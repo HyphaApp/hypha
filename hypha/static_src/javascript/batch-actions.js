@@ -6,10 +6,13 @@
     const $allCheckboxInput = $(".js-batch-select-all");
     const $batchButtons = $(".js-batch-button");
     const $batchProgress = $(".js-batch-progress");
+    const $batchInvoiceProgress = $(".js-batch-invoice-progress");
     const $actionOptions = $("#id_action option");
+    const $actionInvoiceOptions = $("#id_invoice_action option");
     const $batchTitlesList = $(".js-batch-titles");
     const $batchTitleCount = $(".js-batch-title-count");
     const $hiddenIDlist = $(".js-submissions-id");
+    const $hiddenInvoiceIDlist = $(".js-invoices-id");
     const $batchDetermineSend = $(".js-batch-determine-send");
     const $batchDetermineConfirm = $(".js-batch-determine-confirm");
     const $batchDetermineForm = $batchDetermineSend.parent("form");
@@ -48,6 +51,7 @@
         toggleBatchActions();
         updateCount();
         updateProgressButton();
+        updateInvoiceProgressButton();
     });
 
     $checkbox.change(function () {
@@ -63,6 +67,7 @@
         }
 
         updateProgressButton();
+        updateInvoiceProgressButton();
     });
 
     // append selected project titles to batch update reviewer modal
@@ -74,6 +79,9 @@
 
     $batchProgress.click(function () {
         updateProgressButton();
+    });
+    $batchInvoiceProgress.click(function () {
+        updateInvoiceProgressButton();
     });
 
     // show/hide the list of actions
@@ -116,6 +124,41 @@
 
         $batchTitleCount.append(`${selectedIDs.length} submissions selected`);
         $hiddenIDlist.val(selectedIDs.join(","));
+        $hiddenInvoiceIDlist.val(selectedIDs.join(","));
+    }
+
+    function updateInvoiceProgressButton() {
+        var actions = $actionInvoiceOptions
+            .map(function () {
+                return this.value;
+            })
+            .get();
+        $checkbox.filter(":checked").each(function () {
+            let newActions = $(this)
+                .parents("tr")
+                .find(".js-actions")
+                .data("actions");
+            actions = actions.filter((action) => newActions.includes(action));
+        });
+
+        $actionInvoiceOptions.each(function () {
+            if (!actions.includes(this.value)) {
+                $(this).attr("disabled", "disabled");
+            } else {
+                $(this).removeAttr("disabled");
+            }
+        });
+        $actionInvoiceOptions.filter(":enabled:first").prop("selected", true);
+        if (actions.length === 0) {
+            $batchInvoiceProgress.attr("disabled", "disabled");
+            $batchInvoiceProgress.attr(
+                "data-tooltip",
+                "Status changes can't be applied to Invoices with this combination of statuses"
+            );
+        } else {
+            $batchInvoiceProgress.removeAttr("disabled");
+            $batchInvoiceProgress.removeAttr("data-tooltip");
+        }
     }
 
     function updateProgressButton() {

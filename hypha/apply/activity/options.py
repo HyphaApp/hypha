@@ -73,6 +73,10 @@ class MESSAGES(TextChoices):
         "BATCH_ARCHIVE_SUBMISSION",
         _("batch archive submissions"),
     )
+    BATCH_UPDATE_INVOICE_STATUS = (
+        "BATCH_INVOICE_STATUS_UPDATE",
+        _("batch update invoice status"),
+    )
     STAFF_ACCOUNT_CREATED = "STAFF_ACCOUNT_CREATED", _("created new account")
     STAFF_ACCOUNT_EDITED = "STAFF_ACCOUNT_EDITED", _("edited account")
     ARCHIVE_SUBMISSION = "ARCHIVE_SUBMISSION", _("archived submission")
