@@ -6,8 +6,8 @@
 
 {% block header_menu %}
     <section class="header__menus header__menus--desktop">
-        {% if settings.utils.SystemMessagesSettings.nav_content %}
-            {{ settings.utils.SystemMessagesSettings.nav_content|safe }}
+        {% if settings.core.SystemSettings.nav_content %}
+            {{ settings.core.SystemSettings.nav_content|safe }}
         {% else %}
             {% include "core/navigation/primarynav-apply.html" %}
         {% endif %}

@@ -37,7 +37,7 @@
         </div>
         {% if invoice.deliverables_total_amount.total %}
             <div class="total">
-                <b>...</b><br>
+                <b>…</b><br>
                 <b>{% trans "Total:" %} {{ invoice.deliverables_total_amount.total|format_number_as_currency }}</b>
             </div>
         {% endif %}

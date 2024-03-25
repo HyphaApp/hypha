@@ -1,3 +1,5 @@
+{% load i18n %}
+
 <html>
     <head>
         <title>{{ title|default:"" }}</title>
@@ -70,7 +72,7 @@
                             <p class="title"> <b>{{ org_name|upper }}</b> PROJECT APPROVAL FORM</p>
                         </td>
                         <td align="right" class="align-right">
-                            <b>Project Title</b>
+                            <b>{% trans "Project title" %}</b>
                         </td>
                     </tr>
                     <tr>
@@ -80,7 +82,7 @@
                     </tr>
                     <tr>
                         <td align="right" class="align-right">
-                            <b>Project ID</b>
+                            <b>{% trans "Project ID" %}</b>
                         </td>
                     </tr>
                     <tr>
@@ -111,7 +113,7 @@
                     <p>-</p>
                 {% endif %}
 <!--            Supporting Documents with links-->
-                <p> <b>Supporting Documents </b></p>
+                <p> <b>{% trans "Supporting Documents" %}</b></p>
                 {% if supporting_documents %}
                     {% for document, document_link in supporting_documents.items %}
                         <p><a href="{{ document_link }}">{{ document }}</a></p>
@@ -120,7 +122,7 @@
                     <p>-</p>
                 {% endif %}
 <!--           Submission title with link-->
-                <p><b>Submission</b></p>
+                <p><b>{% trans "Submission" %}</b></p>
                 <p><a href="{{ submission_link }}">{{ submission }}</a></p>
 
             {%endblock%}
@@ -131,7 +133,7 @@
                 {%block page_foot%}
                     <table>
                         <tr>
-                            <td>Exported by {{ export_user }} on {{ export_date }}</td>
+                            <td>{% blocktrans %}Exported by {{ export_user }} on {{ export_date }}{% endblocktrans %}</td>
                             <td align="right">
                                 Page: <pdf:pagenumber />
                             </td>

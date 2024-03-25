@@ -3,17 +3,18 @@
     background-color: $color--white;
     border: 1px solid $color--light-mid-grey;
 
-    @include media-query(tablet-landscape) {
+    @include media-query($table-breakpoint) {
         display: flex;
     }
 
     &__item {
-        padding: 20px;
+        display: block;
+        padding: 10px 20px;
         border-block-end: 1px solid $color--light-mid-grey;
         background-color: $color--white;
         transition: background-color $quick-transition;
 
-        @include media-query(tablet-landscape) {
+        @include media-query($table-breakpoint) {
             border-block-end: 0;
             border-inline-end: 1px solid $color--light-mid-grey;
             width: 100%;
@@ -50,7 +51,7 @@
     }
 
     &__info {
-        @include media-query(tablet-landscape) {
+        @include media-query($table-breakpoint) {
             margin-block-start: auto;
         }
     }
@@ -58,21 +59,5 @@
     &__title {
         width: 100%;
         hyphens: auto;
-    }
-
-    &__link {
-        text-transform: uppercase;
-        font-weight: $weight--semibold;
-        transition: opacity $quick-transition;
-
-        @include media-query(tablet-landscape) {
-            opacity: 0;
-            pointer-events: none;
-
-            #{$root}__item:hover & {
-                opacity: 1;
-                pointer-events: all;
-            }
-        }
     }
 }

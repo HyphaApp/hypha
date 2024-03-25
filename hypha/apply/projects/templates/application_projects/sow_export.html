@@ -1,3 +1,5 @@
+{% load i18n %}
+
 <html>
     <head>
         <title>{{ title|default:"" }}</title>
@@ -80,7 +82,7 @@
                 {%block page_foot%}
                     <table>
                         <tr>
-                            <td>Exported by {{ export_user }} on {{ export_date }}</td>
+                            <td>{% blocktrans %}Exported by {{ export_user }} on {{ export_date }}{% endblocktrans %}</td>
                             <td align="right">
                                 Page: <pdf:pagenumber />
                             </td>

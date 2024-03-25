@@ -31,7 +31,7 @@
                         <div class="bg-white p-1 flex mb-1 items-center">
                             <svg class="icon icon--dashboard-tasks"><use xlink:href="#{{ task.icon }}"></use></svg>
                             <div class="flex-1">{{ task.text|markdown|nh3 }}</div>
-                            <a class="button button-primary m-2" href="{{ task.url }}">View</a>
+                            <a class="button button-primary m-2" href="{{ task.url }}">{% trans "View" %}</a>
                         </div>
                     {% endfor %}
                 </div>

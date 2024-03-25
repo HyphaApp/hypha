@@ -72,6 +72,14 @@
                     width: initial;
                 }
 
+                &.selected {
+                    display: none;
+
+                    @include media-query($table-breakpoint) {
+                        display: table-cell;
+                    }
+                }
+
                 &.lead {
                     span {
                         @include media-query($table-breakpoint) {

@@ -21,8 +21,8 @@ COMMENT = "comment"
 ACTION = "action"
 
 ACTIVITY_TYPES = {
-    COMMENT: "Comment",
-    ACTION: "Action",
+    COMMENT: _("Comment"),
+    ACTION: _("Action"),
 }
 
 # Visibility strings. Used to determine visibility states but are also

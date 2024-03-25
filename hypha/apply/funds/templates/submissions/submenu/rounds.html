@@ -25,14 +25,14 @@
                     <span @click="tab = 'closed_rounds'"
                           role="tab"
                           :class="{ 'border-x border-t border-b-transparent': tab === 'closed_rounds' }"
-                          class="text-center bg-white inline-block px-4 py-2 border-b rounded-t-lg cursor-pointer hover:text-gray-900">Closed</span>
+                          class="text-center bg-white inline-block px-4 py-2 border-b rounded-t-lg cursor-pointer hover:text-gray-900">{% trans "Closed" %}</span>
                 {% endif %}
 
                 {% if open_rounds %}
                     <span @click="tab = 'open_rounds'"
                           role="tab"
                           :class="{ 'border-x border-t border-b-transparent': tab === 'open_rounds' }"
-                          class="text-center bg-white inline-block px-4 py-2 border-b rounded-t-lg round cursor-pointer hover:text-gray-900">Open</span>
+                          class="text-center bg-white inline-block px-4 py-2 border-b rounded-t-lg round cursor-pointer hover:text-gray-900">{% trans "Open" %}</span>
                 {% endif %}
             </nav>
 

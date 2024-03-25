@@ -14,9 +14,9 @@ def before_create_page(request, parent_page, page_class):
     if issubclass(page_class, RoundBase) and request.POST:
         if not hasattr(page_class, "parent_page"):
             page_class.parent_page = {}
-        page_class.parent_page.setdefault(page_class, {})[
-            request.POST["title"]
-        ] = parent_page
+        page_class.parent_page.setdefault(page_class, {})[request.POST["title"]] = (
+            parent_page
+        )
     return page_class
 
 

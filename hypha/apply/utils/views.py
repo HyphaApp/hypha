@@ -5,7 +5,6 @@ from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
-from django.views import defaults
 from django.views.generic import View
 from django.views.generic.base import ContextMixin
 from django.views.generic.detail import SingleObjectTemplateResponseMixin
@@ -14,18 +13,6 @@ from wagtail.admin import messages
 from wagtail.admin.auth import require_admin_access
 from wagtail.admin.views.pages.delete import delete
 from wagtail.models import Page
-
-
-def page_not_found(request, exception=None, template_name="apply/404.html"):
-    if not request.user.is_authenticated:
-        template_name = "404.html"
-    return defaults.page_not_found(request, exception, template_name)
-
-
-def permission_denied(request, exception=None, template_name="apply/403.html"):
-    if not request.user.is_authenticated:
-        template_name = "403.html"
-    return defaults.permission_denied(request, exception, template_name)
 
 
 @method_decorator(login_required, name="dispatch")

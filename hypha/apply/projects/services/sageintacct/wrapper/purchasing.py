@@ -1,6 +1,7 @@
 """
 Sage Intacct purchasing
 """
+
 from .api_base import ApiBase
 
 

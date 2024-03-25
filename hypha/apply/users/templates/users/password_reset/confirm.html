@@ -8,7 +8,7 @@
     <div class="wrapper max-w-xl mt-12">
         {% if validlink %}
 
-            <h2 class="text-2xl">Reset Password</h2>
+            <h2 class="text-2xl">{% trans "Reset password" %}</h2>
             <p>{% trans "Please enter your new password twice so we can verify you typed it in correctly." %}</p>
 
             <form class="form" method="post" novalidate>
@@ -44,7 +44,7 @@
                 </div>
             </form>
         {% else %}
-            <p>{% trans "The password reset link was invalid, possibly because it has already been used.  Please request a new password reset." %}</p>
+            <p>{% trans "The password reset link was invalid, possibly because it has already been used. Please request a new password reset." %}</p>
         {% endif %}
     </div>
 {% endblock %}

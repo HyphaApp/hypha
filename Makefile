@@ -32,7 +32,7 @@ build:
 .PHONY: fmt
 fmt:
 	@echo "run code formatters on all code."
-	python -m ruff --fix .
+	python -m ruff check --fix .
 	python -m ruff format .
 	npx prettier . --write
 	djhtml hypha/
@@ -62,7 +62,7 @@ lint:
 .PHONY: lint-fix
 lint-fix:
 	@echo "Try fixing plausible python linting issues."
-	ruff --fix .
+	ruff check --fix .
 
 .PHONY: py-test
 py-test:

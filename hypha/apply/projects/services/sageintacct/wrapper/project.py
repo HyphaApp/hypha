@@ -1,6 +1,7 @@
 """
 Sage Intacct contract
 """
+
 from .api_base import ApiBase
 
 

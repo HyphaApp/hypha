@@ -12,7 +12,7 @@
             {% if collapsible_header %}
                 <button class="align-middle ms-1 transform transition-transform" x-bind:class="collapsed ? '': '-rotate-90' ">
                     {% heroicon_outline 'chevron-left' size=20 stroke_width=2 aria_hidden=true %}
-                    <span class="sr-only" x-text="collapsed ? 'expand' : 'collapse'">expand</span>
+                    <span class="sr-only" x-text="collapsed ? 'expand' : 'collapse'">{% trans "expand" %}</span>
                 </button>
             {% endif %}
         </div>
@@ -281,7 +281,7 @@
 
             <p>{% trans "By default all the members are notified when an approver is not selected. Optionally, you may select specific approvers to assign and notify them." %}</p>
             <div class="flex items-center text-sm">
-                <p class="flex-shrink font-bold text-slate-500 pe-2 mb-0">Optional</p>
+                <p class="flex-shrink font-bold text-slate-500 pe-2 mb-0">{% trans "Optional" %}</p>
                 <p class="flex-grow h-px bg-mid-grey mb-0"></p>
             </div>
 
