@@ -4,10 +4,10 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
 
-class Flag(models.Model):
+class Bookmark(models.Model):
     STAFF = "staff"
     USER = "user"
-    FLAG_TYPES = {
+    BOOKMARK_TYPES = {
         STAFF: "Staff",
         USER: "User",
     }
@@ -16,7 +16,7 @@ class Flag(models.Model):
     target = GenericForeignKey("target_content_type", "target_object_id")
     timestamp = models.DateTimeField(auto_now_add=True)
     type = models.CharField(
-        choices=FLAG_TYPES.items(),
+        choices=BOOKMARK_TYPES.items(),
         default="user",
         max_length=15,
     )

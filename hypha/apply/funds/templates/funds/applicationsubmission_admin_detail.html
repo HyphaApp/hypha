@@ -36,8 +36,8 @@
     {% include "funds/includes/create_reminder_form.html" %}
 {% endblock %}
 
-{% block flags %}
-    {% include 'flags/flags.html' with submission=object user=request.user %}
+{% block bookmarks %}
+    {% include 'bookmarks/bookmarks.html' with submission=object user=request.user %}
 {% endblock %}
 
 {% block reviews %}

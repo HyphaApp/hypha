@@ -59,26 +59,28 @@ class MySubmissionContextMixin:
         )
 
 
-class MyFlaggedMixin:
-    def my_flagged(self, submissions):
-        submissions = submissions.flagged_by(self.request.user).order_by("-submit_time")
+class MyBookmarkedMixin:
+    def my_bookmarked(self, submissions):
+        submissions = submissions.bookmarked_by(self.request.user).order_by(
+            "-submit_time"
+        )
         row_attrs = dict(
-            {"data-flag-type": "user"}, **SummarySubmissionsTable._meta.row_attrs
+            {"data-bookmark-type": "user"}, **SummarySubmissionsTable._meta.row_attrs
         )
 
         limit = 5
         return {
             "table": SummarySubmissionsTable(
                 submissions[:limit],
-                prefix="my-flagged-",
-                attrs={"class": "all-submissions-table flagged-table"},
+                prefix="my-bookmarked-",
+                attrs={"class": "all-submissions-table bookmarked-table"},
                 row_attrs=row_attrs,
             ),
             "display_more": submissions.count() > limit,
         }
 
 
-class AdminDashboardView(MyFlaggedMixin, TemplateView):
+class AdminDashboardView(MyBookmarkedMixin, TemplateView):
     template_name = "dashboard/dashboard.html"
 
     def get_context_data(self, **kwargs):
@@ -93,7 +95,7 @@ class AdminDashboardView(MyFlaggedMixin, TemplateView):
                 "my_reviewed": self.my_reviewed(submissions),
                 "projects": self.projects(),
                 "rounds": self.rounds(),
-                "my_flagged": self.my_flagged(submissions),
+                "my_bookmarked": self.my_bookmarked(submissions),
                 "paf_for_review": self.paf_for_review(),
                 "my_tasks": self.my_tasks(),
             }
@@ -207,7 +209,7 @@ class AdminDashboardView(MyFlaggedMixin, TemplateView):
         }
 
 
-class FinanceDashboardView(MyFlaggedMixin, TemplateView):
+class FinanceDashboardView(MyBookmarkedMixin, TemplateView):
     template_name = "dashboard/finance_dashboard.html"
 
     def get_context_data(self, **kwargs):
@@ -283,7 +285,7 @@ class FinanceDashboardView(MyFlaggedMixin, TemplateView):
         }
 
 
-class ReviewerDashboardView(MyFlaggedMixin, MySubmissionContextMixin, TemplateView):
+class ReviewerDashboardView(MyBookmarkedMixin, MySubmissionContextMixin, TemplateView):
     template_name = "dashboard/reviewer_dashboard.html"
 
     def get(self, request, *args, **kwargs):
@@ -320,7 +322,7 @@ class ReviewerDashboardView(MyFlaggedMixin, MySubmissionContextMixin, TemplateVi
             {
                 "awaiting_reviews": self.awaiting_reviews(submissions),
                 "my_reviewed": self.my_reviewed(submissions),
-                "my_flagged": self.my_flagged(submissions),
+                "my_bookmarked": self.my_bookmarked(submissions),
             }
         )
 
@@ -392,7 +394,7 @@ class PartnerDashboardView(MySubmissionContextMixin, TemplateView):
         return partner_submissions, partner_submissions_table
 
 
-class ContractingDashboardView(MyFlaggedMixin, TemplateView):
+class ContractingDashboardView(MyBookmarkedMixin, TemplateView):
     template_name = "dashboard/contracting_dashboard.html"
 
     def get_context_data(self, **kwargs):

@@ -181,11 +181,6 @@
         width: 50%;
         padding: 10px;
         text-align: center;
-        margin-inline-end: 20px;
-
-        &:last-child {
-            margin-inline-end: 0;
-        }
     }
 
     &--bottom-space {
@@ -371,15 +366,17 @@
         }
     }
 
-    &--flag {
-        &.flagged {
+    &--bookmark {
+        &.bookmarked {
             position: relative;
+            padding-inline-end: 1rem;
 
             &::after {
                 content: "\2691";
                 color: $color--tomato;
                 position: absolute;
                 inset-block-start: 4px;
+                inset-inline-end: 4px;
                 padding-inline-start: 5px;
                 font-size: map-get($font-sizes, delta);
                 line-height: 1;
@@ -387,7 +384,7 @@
         }
     }
 
-    &--unflag {
+    &--unbookmark {
         @include button($color--light-blue, $color--dark-blue);
         @include button--small;
         padding-inline-end: 18px;
@@ -396,9 +393,10 @@
             padding-inline-end: 18px;
         }
 
-        &.flagged {
+        &.bookmarked {
             &::after {
                 inset-block-start: 2px;
+                inset-inline-end: 2px;
                 padding-inline-start: 3px;
                 font-size: map-get($font-sizes, zeta);
             }
