@@ -1,8 +1,21 @@
-{% extends "funds/submissions.html" %}
+{% extends "funds/base_submissions_table.html" %}
 {% load i18n %}
+{% load render_table from django_tables2 %}
 
-{% block page_header %}
-    <div>
-        <h1 class="gamma heading heading--no-margin heading--bold">{% trans "Your bookmarked submissions" %}</h1>
+
+{% block title %}{% trans "User bookmarked submissions" %}{% endblock %}
+
+{% block content %}
+    {% adminbar %}
+        {% slot header %}{% trans "User bookmarked submissions" %}<span class="submissions-count"> ({{ table.rows|length }})</span>{% endslot %}
+        {% slot sub_heading %}{% trans "All submission with user bookmark" %}{% endslot %}
+    {% endadminbar %}
+
+    <div class="wrapper wrapper--large wrapper--inner-space-medium">
+        {% block table %}
+            {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term use_search=True filter_action=filter_action use_batch_actions=True filter_classes="filters-open" %}
+
+            {% render_table table %}
+        {% endblock %}
     </div>
 {% endblock %}

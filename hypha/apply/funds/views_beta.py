@@ -124,6 +124,8 @@ def submission_all_beta(
     if "bookmarked" in search_filters:
         if "@me" in search_filters["bookmarked"]:
             qs = qs.bookmarked_by(request.user)
+        if "@staff" in search_filters["bookmarked"]:
+            qs = qs.bookmarked_staff()
 
     if "lead" in search_filters:
         if "@me" in search_filters["lead"]:
