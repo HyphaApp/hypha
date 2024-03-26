@@ -2,6 +2,8 @@
 Django settings for hypha project.
 """
 
+from django.utils.translation import gettext_lazy as _
+
 # Application definition
 INSTALLED_APPS = [
     "scout_apm.django",
@@ -59,7 +61,6 @@ INSTALLED_APPS = [
     "addressfield",
     "django_nh3",
     "django_fsm",
-    "django_pwned_passwords",
     "django_slack",
     "django_otp",
     "django_otp.plugins.otp_totp",
@@ -166,7 +167,15 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        "NAME": "django_pwned_passwords.password_validation.PWNEDPasswordValidator",
+        "NAME": "pwned_passwords_django.validators.PwnedPasswordsValidator",
+        "OPTIONS": {
+            "error_message": _(
+                "This password has previously appeared in a data breach and should not be used. Please choose a different password."
+            ),
+            "help_message": _(
+                "Your password must not have been detected in a major security breach."
+            ),
+        },
     },
 ]
 
