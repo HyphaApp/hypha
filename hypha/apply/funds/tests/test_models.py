@@ -505,10 +505,6 @@ class TestApplicationSubmission(TestCase):
         draft_submission = submission.from_draft()
         self.assertDictEqual(draft_submission.form_data, submission.form_data)
         self.assertEqual(draft_submission.title, title)
-        self.assertTrue(draft_submission._is_draft, True)
-
-        with self.assertRaises(ValueError):
-            draft_submission.save()
 
         submission = self.refresh(submission)
         self.assertNotEqual(submission.title, title)

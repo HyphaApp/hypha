@@ -1,11 +1,12 @@
 import json
 import operator
 from functools import partialmethod, reduce
+from typing import Optional, Self
 
 from django.apps import apps
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import AbstractBaseUser, AnonymousUser, Group
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVector, SearchVectorField
@@ -472,8 +473,6 @@ class ApplicationSubmission(
         verbose_name=_("submit time"), auto_now_add=False
     )
 
-    _is_draft = False
-
     live_revision = models.OneToOneField(
         "ApplicationRevision",
         on_delete=models.CASCADE,
@@ -626,20 +625,40 @@ class ApplicationSubmission(
         submission_in_db.next = self
         submission_in_db.save()
 
-    def new_data(self, data):
-        self._is_draft = False
-        self.form_data = data
-        return self
+    def from_draft(self) -> Self:
+        """Sets current `form_data` to the `form_data` from the draft revision.
 
-    def from_draft(self):
-        self._is_draft = True
+        Returns:
+            Self with the `form_data` attribute updated.
+        """
         self.form_data = self.deserialised_data(
             self, self.draft_revision.form_data, self.form_fields
         )
+
         return self
 
-    def create_revision(self, draft=False, force=False, by=None, **kwargs):
-        # Will return True/False if the revision was created or not
+    # TODO: It would be nice to extract this to a services.py and potentially break this into smaller, more logical functions.
+    def create_revision(
+        self,
+        draft=False,
+        force=False,
+        by: Optional[AnonymousUser | AbstractBaseUser] = None,
+        **kwargs,
+    ) -> Optional[models.Model]:
+        """Create a new revision on the submission
+
+        This is used to save drafts, track changes when an RFI is made and
+        save changes before rendering a preview
+
+        Args:
+            draft: if the revision is a draft
+            force: force a revision even if form data is the same
+            by: the author of the revision
+            preview: if the revision is being used to save befor a preview
+
+        Returns:
+            Returns the [`ApplicationRevision`][hypha.apply.funds.models.ApplicationRevision] if it was created, otherwise returns `None`
+        """
         ApplicationRevision = apps.get_model("funds", "ApplicationRevision")
         self.clean_submission()
         current_submission = ApplicationSubmission.objects.get(id=self.id)
@@ -647,7 +666,10 @@ class ApplicationSubmission(
         if current_data != self.form_data or force:
             if self.live_revision == self.draft_revision:
                 revision = ApplicationRevision.objects.create(
-                    submission=self, form_data=self.form_data, author=by
+                    submission=self,
+                    form_data=self.form_data,
+                    author=by,
+                    is_draft=draft,
                 )
             else:
                 revision = self.draft_revision
@@ -658,6 +680,10 @@ class ApplicationSubmission(
             if draft:
                 self.form_data = current_submission.form_data
             else:
+                # Move the revision state out of draft as it is being submitted
+                if revision.is_draft:
+                    revision.is_draft = False
+                    revision.save()
                 self.live_revision = revision
                 self.search_data = " ".join(list(self.prepare_search_values()))
                 self.search_document = self.prepare_search_vector()
@@ -665,6 +691,22 @@ class ApplicationSubmission(
             self.draft_revision = revision
             self.save(skip_custom=True)
             return revision
+        else:
+            revision = self.draft_revision
+
+            # Utilized when the user has previously saved a draft,
+            # then doesn't edit the draft but submits it straight
+            # from the edit view
+            if not draft and revision.is_draft:
+                revision.is_draft = False
+                revision.save()
+                self.live_revision = revision
+                self.search_data = " ".join(list(self.prepare_search_values()))
+                self.search_document = self.prepare_search_vector()
+                self.save(skip_custom=True)
+
+                return revision
+
         return None
 
     def clean_submission(self):
@@ -691,9 +733,6 @@ class ApplicationSubmission(
         elif skip_custom:
             return super().save(*args, **kwargs)
 
-        if self._is_draft:
-            raise ValueError("Cannot save with draft data")
-
         creating = not self.id
 
         if creating:
@@ -715,6 +754,7 @@ class ApplicationSubmission(
 
         super().save(*args, **kwargs)
 
+        # TODO: This functionality should be extracted and moved to a seperate function, too hidden here
         if creating:
             AssignedReviewers = apps.get_model("funds", "AssignedReviewers")
             ApplicationRevision = apps.get_model("funds", "ApplicationRevision")
@@ -724,10 +764,12 @@ class ApplicationSubmission(
                 list(self.get_from_parent("reviewers").all()),
                 self,
             )
+            # TODO: This functionality should be implemented into `ApplicationSubmission.create_revision`
             first_revision = ApplicationRevision.objects.create(
                 submission=self,
                 form_data=self.form_data,
                 author=self.user,
+                is_draft=self.is_draft,
             )
             self.live_revision = first_revision
             self.draft_revision = first_revision
