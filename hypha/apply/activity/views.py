@@ -88,11 +88,21 @@ class NotificationsView(ListView):
     template_name = "activity/notifications.html"
     filterset_class = NotificationFilter
 
+    def get_template_names(self):
+        if self.request.htmx and self.request.GET.get("type") == "header_dropdown":
+            return ["activity/include/notifications_dropdown.html"]
+        return super().get_template_names()
+
     def get_queryset(self):
         # List only last 30 days' activities
         queryset = Activity.objects.filter(current=True).latest()
+
         self.filterset = self.filterset_class(self.request.GET, queryset=queryset)
-        return self.filterset.qs.distinct().order_by("-timestamp")
+        qs = self.filterset.qs.distinct().order_by("-timestamp")
+
+        if self.request.htmx and self.request.GET.get("type") == "header_dropdown":
+            qs = qs[:5]
+        return qs
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(NotificationsView, self).get_context_data()
