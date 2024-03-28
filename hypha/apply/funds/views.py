@@ -484,7 +484,7 @@ class SubmissionOverviewView(BaseAdminSubmissionsTable):
             for status, data in PHASES_MAPPING.items()
         }
 
-        staff_flagged = self.get_staff_flagged()
+        staff_bookmarked = self.get_staff_bookmarked()
 
         return super().get_context_data(
             open_rounds=open_rounds,
@@ -494,22 +494,22 @@ class SubmissionOverviewView(BaseAdminSubmissionsTable):
             closed_query=closed_query,
             rounds_title=rounds_title,
             status_counts=grouped_statuses,
-            staff_flagged=staff_flagged,
+            staff_bookmarked=staff_bookmarked,
             **kwargs,
         )
 
-    def get_staff_flagged(self):
-        qs = super().get_queryset().flagged_staff().order_by("-submit_time")
+    def get_staff_bookmarked(self):
+        qs = super().get_queryset().bookmarked_staff().order_by("-submit_time")
         row_attrs = dict(
-            {"data-flag-type": "staff"}, **SummarySubmissionsTable._meta.row_attrs
+            {"data-bookmark-type": "staff"}, **SummarySubmissionsTable._meta.row_attrs
         )
 
         limit = 5
         return {
             "table": SummarySubmissionsTable(
                 qs[:limit],
-                prefix="staff-flagged-",
-                attrs={"class": "all-submissions-table flagged-table"},
+                prefix="staff-bookmarked-",
+                attrs={"class": "all-submissions-table bookmarked-table"},
                 row_attrs=row_attrs,
             ),
             "display_more": qs.count() > limit,
@@ -581,27 +581,27 @@ class SubmissionListView(ViewDispatcher):
 
 
 @method_decorator(staff_required, name="dispatch")
-class SubmissionStaffFlaggedView(BaseAdminSubmissionsTable):
-    template_name = "funds/submissions_staff_flagged.html"
+class SubmissionStaffBookmarkedView(BaseAdminSubmissionsTable):
+    template_name = "funds/submissions_staff_bookmarked.html"
 
     def get_queryset(self):
         return (
             self.filterset_class._meta.model.objects.current()
             .for_table(self.request.user)
-            .flagged_staff()
+            .bookmarked_staff()
             .order_by("-submit_time")
         )
 
 
 @method_decorator(login_required, name="dispatch")
-class SubmissionUserFlaggedView(UserPassesTestMixin, BaseAdminSubmissionsTable):
-    template_name = "funds/submissions_user_flagged.html"
+class SubmissionUserBookmarkedView(UserPassesTestMixin, BaseAdminSubmissionsTable):
+    template_name = "funds/submissions_user_bookmarked.html"
 
     def get_queryset(self):
         return (
             self.filterset_class._meta.model.objects.current()
             .for_table(self.request.user)
-            .flagged_by(self.request.user)
+            .bookmarked_by(self.request.user)
             .order_by("-submit_time")
         )
 

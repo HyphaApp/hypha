@@ -25,8 +25,8 @@ from .views import (
     SubmissionsByRound,
     SubmissionsByStatus,
     SubmissionSealedView,
-    SubmissionStaffFlaggedView,
-    SubmissionUserFlaggedView,
+    SubmissionStaffBookmarkedView,
+    SubmissionUserBookmarkedView,
     submission_success,
 )
 from .views_beta import (
@@ -134,14 +134,14 @@ submission_urls = (
         path("summary/", GroupingApplicationsListView.as_view(), name="summary"),
         path("result/", SubmissionResultView.as_view(), name="result"),
         path(
-            "flagged/",
+            "bookmarked/",
             include(
                 [
-                    path("", SubmissionUserFlaggedView.as_view(), name="flagged"),
+                    path("", SubmissionUserBookmarkedView.as_view(), name="bookmarked"),
                     path(
                         "staff/",
-                        SubmissionStaffFlaggedView.as_view(),
-                        name="staff_flagged",
+                        SubmissionStaffBookmarkedView.as_view(),
+                        name="staff_bookmarked",
                     ),
                 ]
             ),
@@ -223,7 +223,7 @@ submission_urls = (
         path(
             "", include("hypha.apply.determinations.urls", namespace="determinations")
         ),
-        path("", include("hypha.apply.flags.urls", namespace="flags")),
+        path("", include("hypha.apply.bookmarks.urls", namespace="bookmarks")),
         path("<slug:status>/", SubmissionsByStatus.as_view(), name="status"),
     ],
     "submissions",

@@ -1,0 +1,11 @@
+{% load i18n bookmark_tags %}
+<div class="sidebar__inner">
+    <h5>{% trans "Bookmarks" %}</h5>
+    <div class="wrapper wrapper--sidebar-buttons">
+        <button class="button button--primary button--half-width button--bookmark {% if submission.is_archive %}is-disabled{% endif %} {% if submission|bookmarked_by:user %} bookmarked{% endif %}" data-id="{{ submission.id }}" data-type="user">{% trans "Bookmark" %}</button>
+
+        {% if request.user.is_apply_staff %}
+            <button class="button button--primary button--half-width button--bookmark {% if submission.is_archive %}is-disabled{% endif %} {% if submission|bookmarked_staff %} bookmarked{% endif %}" data-id="{{ submission.id }}" data-type="staff">{% trans "Staff bookmark" %}</button>
+        {% endif %}
+    </div>
+</div>

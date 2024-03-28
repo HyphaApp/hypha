@@ -121,9 +121,11 @@ def submission_all_beta(
             qs=qs, field="last_update", values=search_filters["updated"]
         )
 
-    if "flagged" in search_filters:
-        if "@me" in search_filters["flagged"]:
-            qs = qs.flagged_by(request.user)
+    if "bookmarked" in search_filters:
+        if "@me" in search_filters["bookmarked"]:
+            qs = qs.bookmarked_by(request.user)
+        if "@staff" in search_filters["bookmarked"]:
+            qs = qs.bookmarked_staff()
 
     if "lead" in search_filters:
         if "@me" in search_filters["lead"]:

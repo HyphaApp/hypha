@@ -7,7 +7,7 @@ You can use advanced filters to search for application submissions that meet spe
 - Filter archived applications submission: `is:archived`. You must have access to archived submissions and have show archived submissions turned on.
 - Filter when applications were submitted: `submitted:2023-09-01`, `submitted:>2023-01`, `submitted:<=2023`
 - Filter when applications was last updated: `updated:2023-09-01`, `updated:>2023-01`, `updated:<=2023`
-- Filter your flagged submissions: `flagged:@me`
+- Filter your bookmarked submissions: `bookmarked:@me`
 
 
 ## Sharing Filters

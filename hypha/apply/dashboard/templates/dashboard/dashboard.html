@@ -66,9 +66,9 @@
             {% include "dashboard/includes/submissions-waiting-for-review.html" with in_review_count=awaiting_reviews.count my_review=awaiting_reviews.table display_more=awaiting_reviews.display_more active_statuses_filter=awaiting_reviews.active_statuses_filter %}
         </div>
 
-        {% if my_flagged.table.data %}
-            <div id="submissions-flagged" class="wrapper wrapper--bottom-space">
-                {% include "dashboard/includes/flagged.html" with my_flagged=my_flagged.table display_more=my_flagged.display_more %}
+        {% if my_bookmarked.table.data %}
+            <div id="submissions-bookmarked" class="wrapper wrapper--bottom-space">
+                {% include "dashboard/includes/bookmarked.html" with my_bookmarked=my_bookmarked.table display_more=my_bookmarked.display_more %}
             </div>
         {% endif %}
 
@@ -128,5 +128,5 @@
     <script src="{% static 'js/all-submissions-table.js' %}"></script>
     <script src="{% static 'js/submission-filters.js' %}"></script>
     <script src="{% static 'js/tabs.js' %}"></script>
-    <script src="{% static 'js/flag.js' %}"></script>
+    <script src="{% static 'js/bookmark.js' %}"></script>
 {% endblock %}

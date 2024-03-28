@@ -196,7 +196,7 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
     action_buttons = serializers.SerializerMethodField()
     is_determination_form_attached = serializers.BooleanField(read_only=True)
     is_user_staff = serializers.SerializerMethodField()
-    flags = serializers.SerializerMethodField()
+    bookmarks = serializers.SerializerMethodField()
     reminders = serializers.SerializerMethodField()
 
     class Meta:
@@ -219,7 +219,7 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
             "is_determination_form_attached",
             "is_user_staff",
             "screening",
-            "flags",
+            "bookmarks",
             "reminders",
         )
 
@@ -271,13 +271,16 @@ class SubmissionDetailSerializer(serializers.ModelSerializer):
         }
         return screening
 
-    def get_flags(self, obj):
-        flags = [
-            {"type": "user", "selected": obj.flagged_by(self.context["request"].user)},
-            {"type": "staff", "selected": obj.flagged_staff},
+    def get_bookmarks(self, obj):
+        bookmarks = [
+            {
+                "type": "user",
+                "selected": obj.bookmarked_by(self.context["request"].user),
+            },
+            {"type": "staff", "selected": obj.bookmarked_staff},
         ]
 
-        return flags
+        return bookmarks
 
     def get_questions(self, obj):
         return self.serialize_questions(obj, obj.normal_blocks)

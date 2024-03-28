@@ -12,7 +12,7 @@ INSTALLED_APPS = [
     "hypha.apply.categories",
     "hypha.apply.funds",
     "hypha.apply.dashboard",
-    "hypha.apply.flags",
+    "hypha.apply.bookmarks",
     "hypha.home",
     "hypha.apply.users",
     "hypha.apply.review",
