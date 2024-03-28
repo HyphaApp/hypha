@@ -174,3 +174,22 @@ def generate_numeric_token(length=6):
     We use this formatting to allow leading 0s.
     """
     return get_random_string(length, allowed_chars=string.digits)
+
+
+def update_is_staff(request, user):
+    """Determine if the user should have `is_staff`
+
+    Django Admin is the only use for `is_staff`
+
+    Args:
+        request: The edit request object (unused)
+        user: [`User`][hypha.apply.users.models.User] to modify
+
+    """
+
+    if not user.is_staff and user.is_apply_staff_admin:
+        user.is_staff = True
+        user.save()
+    elif user.is_staff and not user.is_apply_staff_admin:
+        user.is_staff = False
+        user.save()
