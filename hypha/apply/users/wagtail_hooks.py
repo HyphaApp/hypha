@@ -7,6 +7,7 @@ from hypha.apply.activity.messaging import MESSAGES, messenger
 from .admin_views import CustomGroupViewSet, CustomUserIndexView
 from .utils import send_activation_email, update_is_staff
 
+
 @hooks.register("register_admin_urls")
 def register_admin_urls():
     return [
