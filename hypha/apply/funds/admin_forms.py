@@ -2,6 +2,7 @@ from collections import Counter
 
 from django.apps import apps
 from django.conf import settings
+from django.utils.translation import gettext as _
 from wagtail.admin.forms import WagtailAdminModelForm, WagtailAdminPageForm
 
 from .models.submissions import ApplicationSubmission
@@ -102,7 +103,7 @@ class WorkflowFormAdminForm(WagtailAdminPageForm):
         if forms.is_valid():
             valid_forms = [form for form in forms if not form.cleaned_data["DELETE"]]
             if settings.PROJECTS_ENABLED and not valid_forms:
-                self.add_error(None, "Please provide Project Approval Form.")
+                self.add_error(None, _("Please provide Project Approval Form."))
 
 
 class RoundBasePageAdminForm(WagtailAdminPageForm):
