@@ -12,11 +12,46 @@
 
     <div class="wrapper wrapper--large wrapper--inner-space-medium">
         <div class="wrapper wrapper--bottom-space">
-            <h4 class="heading heading--normal">{% trans "Summary" %}</h4>
-            {% include "funds/includes/submission_stats.html" %}
+            <h3>{% trans "Summary" %}</h3>
+            <div class="prose max-w-none"><div class="flex flex-wrap gap-4">
+                <div class="border p-4 shadow">
+                    <h5>{% trans "Amounts" %}</h5>
+                    <table class="mb-0 mt-2">
+                        <tr><th class="pe-4">{% trans "Applied" %} ({{ ""|format_number_as_currency }})</th><th>{% trans "Accepted" %}  ({{ ""|format_number_as_currency }})</th></tr>
+                        <tr><td>{{ submission_sum|default:"0" }}</td><td>{{ submission_accepted_sum|default:"0" }}</td></tr>
+                    </table>
+                </div>
+                <div class="border p-4 shadow">
+                    <h5>{% trans "Submissions" %}</h5>
+                    <table class="mb-0 mt-2">
+                        <tr>
+                            <th class="pe-4">{% trans "Applied" %}</th>
+                            <th class="pe-4">{% trans "Accepted" %}</th>
+                            <th>{% trans "Pending" %}</th>
+                        </tr>
+                        <tr>
+                            <td>{{ object_list.count }}</td>
+                            <td>{{ submission_accepted_count|default:"0" }}</td>
+                            <td>{{ submission_undetermined_count|default:"0" }}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="border p-4 shadow">
+                    <h5>{% trans "Reviews" %}</h5>
+                    <table class="mb-0 mt-2">
+                        <tr>
+                            <th class="pe-4">{% trans "All" %}</th>
+                            <th class="pe-4">{% trans "You" %}</th>
+                            <th>{% trans "Your avg. score" %}</th></tr>
+                        <tr><td>{{ review_count|default:"0" }}</td><td>{{ review_my_count|default:"0" }}</td><td>{{ review_my_score|floatformat:"0"|default:"0" }}</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            </div>
         </div>
 
-        <h4 class="heading heading--normal">{% trans "Filter submissions to calculate values" %}</h4>
+        <h3>{% trans "Filter submissions to calculate values" %}</h3>
         {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term use_search=True filter_action=filter_action use_batch_actions=False filter_classes="filters-open" %}
         <div class="grid">
             <div><strong>{% trans "Number of submission" %}:</strong> {{ count_values }}{% if not count_values == object_list.count %} ({{ object_list.count }}){% endif %}</div>
