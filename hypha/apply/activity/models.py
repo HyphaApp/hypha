@@ -224,7 +224,7 @@ class Activity(models.Model):
             A list of visibility strings
         """
         if user.is_apply_staff:
-            return [TEAM, APPLICANT, REVIEWER, PARTNER, ALL]
+            return [TEAM, APPLICANT, REVIEWER, APPLICANT_PARTNERS, PARTNER, ALL]
         if user.is_reviewer:
             return [REVIEWER, ALL]
         if user.is_finance or user.is_contracting:
@@ -259,6 +259,25 @@ class Activity(models.Model):
         """
         has_partner = submission_partner_list and len(submission_partner_list) > 0
 
+        if user.is_apply_staff:
+            if not has_partner:
+                choices = [
+                    (TEAM, VISIBILITY[TEAM]),
+                    (APPLICANT, VISIBILITY[APPLICANT]),
+                    (REVIEWER, VISIBILITY[REVIEWER]),
+                    (ALL, VISIBILITY[ALL]),
+                ]
+            else:
+                choices = [
+                    (TEAM, VISIBILITY[TEAM]),
+                    (APPLICANT, VISIBILITY[APPLICANT]),
+                    (PARTNER, VISIBILITY[PARTNER]),
+                    (APPLICANT_PARTNERS, VISIBILITY[APPLICANT_PARTNERS]),
+                    (REVIEWER, VISIBILITY[REVIEWER]),
+                    (ALL, VISIBILITY[ALL]),
+                ]
+            return choices
+
         if user.is_partner and has_partner and submission_partner_list.contains(user):
             return [
                 (APPLICANT_PARTNERS, VISIBILITY[APPLICANT_PARTNERS]),
@@ -277,26 +296,6 @@ class Activity(models.Model):
 
         if user.is_reviewer:
             return [(REVIEWER, VISIBILITY[REVIEWER])]
-
-        if user.is_apply_staff:
-            if not has_partner:
-                choices = [
-                    (TEAM, VISIBILITY[TEAM]),
-                    (APPLICANT, VISIBILITY[APPLICANT]),
-                    (REVIEWER, VISIBILITY[REVIEWER]),
-                    (ALL, VISIBILITY[ALL]),
-                ]
-            else:
-                choices = [
-                    (TEAM, VISIBILITY[TEAM]),
-                    (APPLICANT, VISIBILITY[APPLICANT]),
-                    (PARTNER, VISIBILITY[PARTNER]),
-                    (APPLICANT_PARTNERS, VISIBILITY[APPLICANT_PARTNERS]),
-                    (REVIEWER, VISIBILITY[REVIEWER]),
-                    (ALL, VISIBILITY[ALL]),
-                ]
-
-            return choices
 
         if user.is_finance or user.is_contracting:
             return [(TEAM, VISIBILITY[TEAM]), (APPLICANT, VISIBILITY[APPLICANT])]
