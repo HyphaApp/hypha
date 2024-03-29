@@ -34,6 +34,11 @@ nav_items = [
                 "url": reverse_lazy("apply:submissions:result"),
                 "permission_method": "is_apply_staff",
             },
+            {
+                "title": _("Staff flagged"),
+                "url": reverse_lazy("apply:submissions:staff_flagged"),
+                "permission_method": "is_apply_staff",
+            },
         ],
     },
     {

@@ -16,8 +16,8 @@ from hypha.apply.funds.tables import (
     SubmissionFilterAndSearch,
     SubmissionReviewerFilterAndSearch,
     SubmissionsTable,
-    SummarySubmissionsTable,
     SummarySubmissionsTableWithRole,
+    UserFlaggedSubmissionsTable,
     review_filter_for_user,
 )
 from hypha.apply.projects.filters import ProjectListFilter
@@ -62,17 +62,12 @@ class MySubmissionContextMixin:
 class MyFlaggedMixin:
     def my_flagged(self, submissions):
         submissions = submissions.flagged_by(self.request.user).order_by("-submit_time")
-        row_attrs = dict(
-            {"data-flag-type": "user"}, **SummarySubmissionsTable._meta.row_attrs
-        )
 
         limit = 5
         return {
-            "table": SummarySubmissionsTable(
+            "table": UserFlaggedSubmissionsTable(
                 submissions[:limit],
                 prefix="my-flagged-",
-                attrs={"class": "all-submissions-table flagged-table"},
-                row_attrs=row_attrs,
             ),
             "display_more": submissions.count() > limit,
         }
