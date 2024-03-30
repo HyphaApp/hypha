@@ -27,35 +27,42 @@
                 <div class="actions-bar__inner actions-bar__inner--batch-actions">
                     <p class="actions-bar__total"><span class="js-total-actions">0</span> {% trans "Selected" %}</p>
 
-                    <button
-                        data-fancybox
-                        type="button"
-                        data-src="#batch-progress"
-                        class="button button--action js-batch-button js-batch-progress"
-                    >
-                        {% heroicon_mini "arrows-right-left" class="inline" aria_hidden=true %}
-                        {% trans "Status" %}
-                    </button>
+                    {% if not project_actions %}
+                        <button
+                            data-fancybox
+                            type="button"
+                            data-src="#batch-progress"
+                            class="button button--action js-batch-button js-batch-progress"
+                        >
+                            {% heroicon_mini "arrows-right-left" class="inline" aria_hidden=true %}
+                            {% trans "Status" %}
+                        </button>
 
-                    <button data-fancybox data-src="#batch-update-lead" class="button button--action js-batch-button" type="button">
-                        {% heroicon_micro "user-plus" class="inline" aria_hidden=true %}
-                        {% trans "Lead" %}
-                    </button>
+                        <button data-fancybox data-src="#batch-update-lead" class="button button--action js-batch-button" type="button">
+                            {% heroicon_micro "user-plus" class="inline" aria_hidden=true %}
+                            {% trans "Lead" %}
+                        </button>
 
-                    <button data-fancybox data-src="#batch-update-reviewers" class="button button--action js-batch-button" type="button">
-                        {% heroicon_micro "user-plus" class="inline" aria_hidden=true %}
-                        {% trans "Reviewers" %}
-                    </button>
+                        <button data-fancybox data-src="#batch-update-reviewers" class="button button--action js-batch-button" type="button">
+                            {% heroicon_micro "user-plus" class="inline" aria_hidden=true %}
+                            {% trans "Reviewers" %}
+                        </button>
 
-                    <button data-fancybox data-src="#batch-delete-submission" class="button button--action js-batch-button" type="button">
-                        {% heroicon_micro "trash" class="inline" aria_hidden=true %}
-                        {% trans "Delete" %}
-                    </button>
+                        <button data-fancybox data-src="#batch-delete-submission" class="button button--action js-batch-button" type="button">
+                            {% heroicon_micro "trash" class="inline" aria_hidden=true %}
+                            {% trans "Delete" %}
+                        </button>
 
-                    {% if can_bulk_archive %}
-                        <button data-fancybox data-src="#batch-archive-submission" class="button button--action js-batch-button" type="button">
-                            {% heroicon_micro "archive-box-arrow-down" class="inline" aria_hidden=true %}
-                            {% trans "Archive" %}
+                        {% if can_bulk_archive %}
+                            <button data-fancybox data-src="#batch-archive-submission" class="button button--action js-batch-button" type="button">
+                                {% heroicon_micro "archive-box-arrow-down" class="inline" aria_hidden=true %}
+                                {% trans "Archive" %}
+                            </button>
+                        {% endif %}
+                    {% elif invoice_actions %}
+                        <button data-fancybox data-src="#batch_update_invoice_status" class="button button--action js-batch-button js-batch-invoice-progress" type="button">
+                            {% heroicon_mini "arrows-right-left" class="inline" aria_hidden=true %}
+                            {% trans "Status" %}
                         </button>
                     {% endif %}
                 </div>
@@ -124,4 +131,9 @@
     {% include "funds/includes/batch_progress_form.html" %}
     {% include "funds/includes/batch_delete_submission_form.html" %}
     {% include "funds/includes/batch_archive_submission_form.html" %}
+    {% if project_actions %}
+        {% if invoice_actions %}
+            {% include "application_projects/includes/batch_invoice_status_update.html" %}
+        {% endif %}
+    {% endif %}
 {% endif %}
