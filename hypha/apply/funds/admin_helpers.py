@@ -40,8 +40,8 @@ class RoundFundChooserView(ChooseParentView):
 
 class ButtonsWithPreview(PageButtonHelper):
     def preview_button(self, obj, classnames_add, classnames_exclude):
-        classnames = self.copy_button_classnames + classnames_add
-        cn = self.finalise_classname(classnames, classnames_exclude)
+        classname = self.copy_button_classnames + classnames_add
+        cn = self.finalise_classname(classname, classnames_exclude)
         return {
             "url": reverse("wagtailadmin_pages:view_draft", args=(obj.id,)),
             "label": "Preview",
@@ -102,19 +102,19 @@ class RoundStateListFilter(admin.SimpleListFilter):
 
 class ApplicationFormButtonHelper(ButtonHelper):
     def prepare_classnames(self, start=None, add=None, exclude=None):
-        """Parse classname sets into final css classess list."""
-        classnames = start or []
-        classnames.extend(add or [])
-        return self.finalise_classname(classnames, exclude or [])
+        """Parse classname sets into final css classes list."""
+        classname = start or []
+        classname.extend(add or [])
+        return self.finalise_classname(classname, exclude or [])
 
     def copy_form_button(self, pk, form_name, **kwargs):
-        classnames = self.prepare_classnames(
+        classname = self.prepare_classnames(
             start=self.edit_button_classnames,
             add=kwargs.get("classnames_add"),
             exclude=kwargs.get("classnames_exclude"),
         )
         return {
-            "classname": classnames,
+            "classname": classname,
             "label": "Copy",
             "title": f"Copy {form_name}",
             "url": self.url_helper.get_action_url("copy_form", admin.utils.quote(pk)),

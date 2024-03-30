@@ -55,7 +55,7 @@ tablib==3.5.0
 tomd==0.1.3
 wagtail-cache==2.4.0
 wagtail-purge==0.3.0
-wagtail==5.1.3
+wagtail==5.2.3
 whitenoise==6.6.0
 xhtml2pdf==0.2.15
 xmltodict==0.13.0

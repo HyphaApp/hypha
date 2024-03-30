@@ -4,14 +4,14 @@ from wagtail.models import Site
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 
-from .admin_views import CustomGroupViewSet, index
+from .admin_views import CustomGroupViewSet, CustomUserIndexView
 from .utils import send_activation_email
 
 
 @hooks.register("register_admin_urls")
 def register_admin_urls():
     return [
-        re_path(r"^users/$", index, name="index"),
+        re_path(r"^users/$", CustomUserIndexView.as_view(), name="index"),
     ]
 
 
