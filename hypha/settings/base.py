@@ -216,7 +216,6 @@ TEMPLATES = [
                 "social_django.context_processors.login_redirect",
                 "hypha.apply.projects.context_processors.projects_enabled",
                 "hypha.cookieconsent.context_processors.cookies_accepted",
-                "hypha.apply.activity.context_processors.notification_context",
                 "hypha.core.context_processors.global_vars",
             ],
             "builtins": [
