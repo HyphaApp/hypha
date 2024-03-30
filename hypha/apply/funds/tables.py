@@ -4,6 +4,7 @@ import re
 import django_filters as filters
 import django_tables2 as tables
 from django import forms
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db.models import F, Q
 from django.urls import reverse
@@ -97,7 +98,7 @@ class SubmissionsTable(tables.Table):
     class Meta:
         model = ApplicationSubmission
         order_by = ("-last_update",)
-        fields = (
+        fields = [
             "title",
             "phase",
             "stage",
@@ -105,8 +106,10 @@ class SubmissionsTable(tables.Table):
             "round",
             "submit_time",
             "last_update",
-        )
-        sequence = fields + ("comments",)
+        ]
+        sequence = fields + [
+            "comments",
+        ]
         template_name = "funds/tables/table.html"
         row_attrs = {
             "class": make_row_class,
@@ -176,7 +179,7 @@ class BaseAdminSubmissionsTable(SubmissionsTable):
     organization_name = tables.Column()
 
     class Meta(SubmissionsTable.Meta):
-        fields = (
+        fields = [
             "title",
             "phase",
             "stage",
@@ -188,8 +191,16 @@ class BaseAdminSubmissionsTable(SubmissionsTable):
             "screening_status",
             "reviews_stats",
             "organization_name",
-        )
-        sequence = fields + ("comments",)
+        ]
+
+        # Remove fields that have been added to the exclude fields settings.
+        fields = [
+            x for x in fields if x not in settings.SUBMISSIONS_TABLE_EXCLUDED_FIELDS
+        ]
+
+        sequence = fields + [
+            "comments",
+        ]
 
     def render_lead(self, value):
         return format_html("<span>{}</span>", value)
@@ -215,7 +226,7 @@ class AdminSubmissionsTable(BaseAdminSubmissionsTable):
     )
 
     class Meta(BaseAdminSubmissionsTable.Meta):
-        fields = ("selected", *BaseAdminSubmissionsTable.Meta.fields)
+        fields = ["selected", *BaseAdminSubmissionsTable.Meta.fields]
         sequence = fields
 
 
@@ -230,7 +241,7 @@ class SummarySubmissionsTableWithRole(BaseAdminSubmissionsTable):
     role_icon = tables.Column(verbose_name=_("Role"))
 
     class Meta(BaseAdminSubmissionsTable.Meta):
-        sequence = BaseAdminSubmissionsTable.Meta.fields + ("role_icon", "comments")
+        sequence = BaseAdminSubmissionsTable.Meta.fields + ["role_icon", "comments"]
         orderable = False
 
     def render_role_icon(self, value):
@@ -387,7 +398,7 @@ class SubmissionFilter(filters.FilterSet):
 
     class Meta:
         model = ApplicationSubmission
-        fields = ("status", "fund", "round")
+        fields = ["status", "fund", "round"]
 
     def __init__(self, *args, exclude=None, limit_statuses=None, **kwargs):
         if exclude is None:
@@ -492,7 +503,7 @@ class SubmissionDashboardFilter(filters.FilterSet):
 
     class Meta:
         model = ApplicationSubmission
-        fields = ("fund", "round")
+        fields = ["fund", "round"]
 
     def __init__(self, *args, exclude=None, limit_statuses=None, **kwargs):
         if exclude is None:
@@ -526,7 +537,7 @@ class RoundsTable(tables.Table):
     progress = tables.Column(verbose_name=_("Determined"))
 
     class Meta:
-        fields = ("title", "fund", "lead", "start_date", "end_date", "progress")
+        fields = ["title", "fund", "lead", "start_date", "end_date", "progress"]
         attrs = {"class": "responsive-table"}
 
     def render_lead(self, value):
