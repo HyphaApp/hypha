@@ -1,6 +1,8 @@
 from collections import Counter
 
 from django.apps import apps
+from django.conf import settings
+from django.utils.translation import gettext as _
 from wagtail.admin.forms import WagtailAdminModelForm, WagtailAdminPageForm
 
 from .models.submissions import ApplicationSubmission
@@ -16,6 +18,7 @@ class WorkflowFormAdminForm(WagtailAdminPageForm):
         review_forms = self.formsets["review_forms"]
         external_review_forms = self.formsets["external_review_forms"]
         determination_forms = self.formsets["determination_forms"]
+        paf_forms = self.formsets["approval_forms"]
         number_of_stages = len(workflow.stages)
 
         self.validate_application_forms(workflow, application_forms)
@@ -30,6 +33,7 @@ class WorkflowFormAdminForm(WagtailAdminPageForm):
         self.validate_stages_equal_forms(
             workflow, determination_forms, form_type="Determination form"
         )
+        self.validate_paf_form(paf_forms)
 
         return cleaned_data
 
@@ -94,6 +98,12 @@ class WorkflowFormAdminForm(WagtailAdminPageForm):
                         "form",
                         "Exceeds required number of forms for stage, please remove.",
                     )
+
+    def validate_paf_form(self, forms):
+        if forms.is_valid():
+            valid_forms = [form for form in forms if not form.cleaned_data["DELETE"]]
+            if settings.PROJECTS_ENABLED and not valid_forms:
+                self.add_error(None, _("Please provide Project Approval Form."))
 
 
 class RoundBasePageAdminForm(WagtailAdminPageForm):
