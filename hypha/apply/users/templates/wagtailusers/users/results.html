@@ -17,7 +17,7 @@
             {% include "wagtailusers/users/list.html" %}
 
             {# call pagination_nav with no linkurl, to generate general-purpose links like <a href="?p=2"> #}
-            {% include "wagtailadmin/shared/pagination_nav.html" with items=users %}
+            {% include "wagtailadmin/shared/pagination_nav.html" with items=page_obj %}
         {% else %}
             {% if is_searching %}
                 <h2 role="alert">{% blocktrans trimmed %}Sorry, no users match "<em>{{ query_string }}</em>"{% endblocktrans %}</h2>
@@ -36,21 +36,6 @@
         {% endif %}
     </div>
     {% if filters %}
-        <div class="users-list__filters">
-            <h2>{% trans 'Filter' %}</h2>
-            <form method="get">
-                {% for filter in filters.form %}
-                    {{ filter.label_tag }}
-                    {{ filter }}
-                    {{ filter.errors }}
-                {% endfor %}
-                <button class="button button-longrunning" type="submit">{% icon name="spinner" %}{% trans 'Apply filters' %}</button>
-            </form>
-            {%with request.get_full_path as path%}
-                <div class="users-list__export">
-                    <button class="button"><a href="{{path}}{% if '?' in path %}&{%else%}?{% endif %}export=true">{% trans 'Export Users' %}</a></button>
-                </div>
-            {%endwith%}
-        </div>
+        {% include "wagtailadmin/shared/filters.html" %}
     {% endif %}
 </div>
