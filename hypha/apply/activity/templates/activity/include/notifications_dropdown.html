@@ -1,20 +1,15 @@
 {% load i18n activity_tags nh3_tags markdown_tags submission_tags apply_tags %}
 
-<div class="notifications notifications--dropdown">
-    <div class="notifications__content zeta" role="activity">
-        <div class="notifications__header">
-            <span>{% trans "Notifications" %}</span>
-            <a class="notifications__more" href="{% url "activity:notifications" %}">{% trans "Show All" %}</a>
-        </div>
+{% for activity in object_list %}
+    <p class="notifications__item">
+        <strong>{{ activity.source_content_type.name|source_type }} </strong>
+        <a href="{{ activity.source.get_absolute_url }}{% if activity.type == 'comment' %}#communications{% endif %}">{{ activity.source.title|capfirst|truncatechars:15 }}</a>
+        : {{ activity.user.get_full_name }} {% if activity.type == 'comment' %}{% trans "made a comment" %}{% else %} {{ activity|display_for:request.user }}{% endif %}
+        {% if activity.related_object %}<a href="{{ activity.related_object.get_absolute_url }}">{{ activity.related_object|model_verbose_name }}</a>{% endif %}
+    </p>
+{% empty %}
+    <p class="notifications__item">
+        {% trans "No notifications available." %}
+    </p>
+{% endfor %}
 
-        {% for activity in latest_notifications %}
-            <p class="notifications__item">
-                <strong>{{ activity.source_content_type.name|source_type }} </strong>
-                <a href="{{ activity.source.get_absolute_url }}{% if activity.type == 'comment' %}#communications{% endif %}">{{ activity.source.title|capfirst|truncatechars:15 }}</a>
-                : {{ activity.user.get_full_name }} {% if activity.type == 'comment' %}{% trans "made a comment" %}{% else %} {{ activity|display_for:request.user }}{% endif %}
-                {% if activity.related_object %}<a href="{{ activity.related_object.get_absolute_url }}">{{ activity.related_object|model_verbose_name }}</a>{% endif %}
-            </p>
-        {% endfor %}
-
-    </div>
-</div>
