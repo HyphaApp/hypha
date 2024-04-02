@@ -74,6 +74,11 @@
                             {% trans "View message log" %}
                         </a>
                     {% endif %}
+                    {% if object.project and PROJECTS_ENABLED %}
+                        <a class="tab__link" href="{% url 'apply:submissions:submission_project_detail' submission_pk=object.id rest='' %}">
+                            {% trans "Go to Project" %}
+                        </a>
+                    {% endif %}
                 </div>
             </div>
         </div>

@@ -15,6 +15,17 @@
 }
 
 .tab {
+    &__link {
+        @include responsive-font-sizes(12px, 15px);
+        position: relative;
+        padding: 10px;
+        font-weight: $weight--bold;
+        hyphens: auto;
+        color: $color--mid-grey;
+        text-transform: uppercase;
+        text-decoration: underline;
+    }
+
     &__item {
         $root: &;
 

@@ -97,10 +97,6 @@
                         {% trans "Details" %}
                     </a>
 
-                    <a class="tab__item" href="#communications" data-tab="tab-2">
-                        {% trans "Communications" %}
-                    </a>
-
                     <a
                         class="tab__item"
                         href="#activity-feed"
@@ -115,6 +111,13 @@
                     >
                         {% trans "Activity Feed" %}
                     </a>
+
+                    {% if not request.user.is_applicant %}
+                        <a class="tab__link" href="{% url 'apply:submissions:detail' object.submission.id %}#comments">
+                            {% trans "Submission Comments" %}
+                        </a>
+                    {% endif %}
+
                 </div>
             </div>
         </div>
