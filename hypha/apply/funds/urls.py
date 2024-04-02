@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.urls import include, path
+from django.urls import include, path, re_path
 from django.views.generic import RedirectView
 
 from hypha.apply.projects import urls as projects_urls
@@ -9,6 +9,7 @@ from .views import (
     CreateProjectView,
     GroupingApplicationsListView,
     ProgressSubmissionView,
+    ProjectDispatcher,
     ReminderCreateView,
     ReminderDeleteView,
     ReviewerLeaderboard,
@@ -261,6 +262,11 @@ submission_urls = (
                     path("", include("hypha.apply.review.urls", namespace="reviews")),
                     path("revisions/", include(revision_urls, namespace="revisions")),
                     path("reminders/", include(reminders_urls, namespace="reminders")),
+                    re_path(
+                        r"^project/(?P<rest>.*)$",
+                        ProjectDispatcher.as_view(),
+                        name="submission_project_detail",
+                    ),
                 ]
             ),
         ),

@@ -80,6 +80,7 @@ from hypha.apply.utils.views import (
     ViewDispatcher,
 )
 
+from ..projects.models import Project
 from . import services
 from .differ import compare
 from .files import generate_private_file_path
@@ -1978,3 +1979,21 @@ class StaffAssignments(SingleTableMixin, ListView):
         return {
             "extra_columns": extra_columns,
         }
+
+
+class ProjectDispatcher(View):
+    def dispatch(self, request, *args, **kwargs):
+        submission = get_object_or_404(
+            ApplicationSubmission, pk=kwargs["submission_pk"]
+        )
+        try:
+            project = Project.objects.get(submission=submission)
+        except Project.DoesNotExist:
+            raise Http404(_("No project for submission")) from None
+
+        from django.urls import resolve
+
+        resolved = resolve(
+            "/apply/projects/%s/%s" % (project.pk, kwargs.get("rest", ""))
+        )
+        return resolved.func(request, *resolved.args, **resolved.kwargs)

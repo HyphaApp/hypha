@@ -2,6 +2,6 @@
 <div class="sidebar__inner">
     <h5>{% trans "Project" %}</h5>
     <p>
-        <a href="{% url 'apply:projects:detail' pk=object.project.id %}">{{ object.project.title }}</a>
+        <a href="{% url 'apply:submissions:submission_project_detail' submission_pk=object.id rest='' %}">{{ object.project.title }}</a>
     </p>
 </div>

@@ -111,10 +111,13 @@ class AdminInvoiceListTable(BaseInvoiceTable):
 
 
 class BaseProjectsTable(tables.Table):
+    submission_id = tables.Column(
+        verbose_name=_("Submission #"),
+    )
     title = tables.LinkColumn(
-        "funds:projects:detail",
+        "funds:submissions:submission_project_detail",
         text=lambda r: textwrap.shorten(r.title, width=30, placeholder="..."),
-        args=[tables.utils.A("pk")],
+        args=[tables.utils.A("submission__pk"), ""],
     )
     status = tables.Column(
         verbose_name=_("Status"), accessor="get_status_display", order_by=("status",)
@@ -152,6 +155,7 @@ class BaseProjectsTable(tables.Table):
 class ProjectsDashboardTable(BaseProjectsTable):
     class Meta:
         fields = [
+            "submission_id",
             "title",
             "status",
             "fund",
@@ -168,6 +172,7 @@ class ProjectsDashboardTable(BaseProjectsTable):
 class ProjectsAssigneeDashboardTable(BaseProjectsTable):
     class Meta:
         fields = [
+            "submission_id",
             "title",
             "fund",
             "lead",
@@ -228,6 +233,7 @@ class PAFForReviewDashboardTable(tables.Table):
 class ProjectsListTable(BaseProjectsTable):
     class Meta:
         fields = [
+            "submission_id",
             "title",
             "status",
             "lead",
