@@ -45,7 +45,7 @@ lark==1.1.9
 mistune==3.0.2
 more-itertools==10.2.0
 phonenumberslite==8.13.32
-Pillow==10.2.0
+Pillow==10.3.0
 psycopg[binary]==3.1.18
 pwned-passwords-django==2.1
 qrcode==7.4.2
