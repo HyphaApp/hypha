@@ -91,6 +91,21 @@ def remove_tasks_for_user_group(code, user_group, related_obj):
     return None
 
 
+def remove_tasks_of_related_obj_for_specific_code(code, related_obj):
+    """
+    Remove all tasks of a related object with the provide code irrespective to their users
+    input:
+        code: TASKS_CODE_CHOICES.keys()
+        related_obj: Object - Submission, Project, Invoice, Report
+    """
+    Task.objects.filter(
+        code=code,
+        related_content_type=ContentType.objects.get_for_model(related_obj).id,
+        related_object_id=related_obj.id,
+    ).delete()
+    return None
+
+
 def remove_tasks_of_related_obj(related_obj):
     """
     Remove all tasks of a related object irrespective of their code and users
