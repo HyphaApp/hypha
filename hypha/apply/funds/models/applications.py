@@ -503,9 +503,6 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
 
                 if form.is_valid():
                     form_submission = self.process_form_submission(form, draft=draft)
-                    # Required for django-file-form: delete temporary files for the new files
-                    # that are uploaded.
-                    form.delete_temporary_files()
 
                     # If a preview is specified in form submission, render the
                     # applicant's answers rather than the landing page.
@@ -517,6 +514,10 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
                         return render(
                             request, "funds/application_preview.html", context
                         )
+
+                    # Required for django-file-form: delete temporary files for the new files
+                    # that are uploaded.
+                    form.delete_temporary_files()
 
                     return self.render_landing_page(
                         request, form_submission, *args, **kwargs
@@ -667,7 +668,7 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
 
                 # Required for django-file-form: delete temporary files for the new files
                 # that are uploaded.
-                # form.delete_temporary_files()
+                form.delete_temporary_files()
 
                 return self.render_landing_page(
                     request, form_submission, *args, **kwargs
