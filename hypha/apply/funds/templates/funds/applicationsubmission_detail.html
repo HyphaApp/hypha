@@ -13,10 +13,10 @@
     {% endif %}
     <div class="admin-bar">
         <div class="admin-bar__inner">
-            {% if request.GET.ref == 'all-beta' %}
+            {% if request.GET.ref == 'all-alt' %}
                 <a class="simplified__submissions-link"
                    hx-boost="true"
-                   href="{% url "funds:submissions:list-beta" %}"
+                   href="{% url "funds:submissions:list-alt" %}"
                 >
                     {% trans "Back to submissions" %}
                 </a>

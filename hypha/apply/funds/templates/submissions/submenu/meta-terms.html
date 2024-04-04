@@ -3,8 +3,8 @@
 <ul class="text-gray-700 divide-y" aria-labelledby="dropdown-meta-terms" data-filter-list>
     {% if selected_meta_terms %}
         <li data-filter-item-text>
-            <a href="{% url "apply:submissions:list-beta" %}{% remove_from_query "only_query_string" "page" "meta_terms" %}"
-               hx-get="{% url "apply:submissions:list-beta" %}{% remove_from_query "only_query_string" "page" "meta_terms" %}"
+            <a href="{% url "apply:submissions:list-alt" %}{% remove_from_query "only_query_string" "page" "meta_terms" %}"
+               hx-get="{% url "apply:submissions:list-alt" %}{% remove_from_query "only_query_string" "page" "meta_terms" %}"
                hx-push-url="true"
                class="flex px-3 py-2 text-gray-600 items-center hover:bg-gray-100 focus:bg-gray-100{% if s.selected %}bg-gray-100{% endif %}">
                 {% trans "All Meta Terms" %}
@@ -15,12 +15,12 @@
         <li data-filter-item-text>
             <a
                 {% if meta_term.selected %}
-                    href="{% url "apply:submissions:list-beta" %}{% remove_from_query "only_query_string" "page" meta_terms=meta_term.id %}"
-                    hx-get="{% url "apply:submissions:list-beta" %}{% remove_from_query "only_query_string" "page" meta_terms=meta_term.id %}"
+                    href="{% url "apply:submissions:list-alt" %}{% remove_from_query "only_query_string" "page" meta_terms=meta_term.id %}"
+                    hx-get="{% url "apply:submissions:list-alt" %}{% remove_from_query "only_query_string" "page" meta_terms=meta_term.id %}"
                     title="Remove {{ meta_term.title }} from current filters"
                 {% else %}
-                    href="{% url "apply:submissions:list-beta" %}{% add_to_query "only_query_string" "page" meta_terms=meta_term.id %}"
-                    hx-get="{% url "apply:submissions:list-beta" %}{% add_to_query "only_query_string" "page" meta_terms=meta_term.id %}"
+                    href="{% url "apply:submissions:list-alt" %}{% add_to_query "only_query_string" "page" meta_terms=meta_term.id %}"
+                    hx-get="{% url "apply:submissions:list-alt" %}{% add_to_query "only_query_string" "page" meta_terms=meta_term.id %}"
                     title="Add {{ meta_term.title }} to current filters"
                 {% endif %}
                 hx-push-url="true"
