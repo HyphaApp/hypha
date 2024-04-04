@@ -243,6 +243,22 @@ class SummarySubmissionsTableWithRole(BaseAdminSubmissionsTable):
         return ""
 
 
+class StaffFlaggedSubmissionsTable(SummarySubmissionsTable):
+    class Meta(SummarySubmissionsTable.Meta):
+        row_attrs = dict(
+            {"data-flag-type": "staff"}, **SummarySubmissionsTable._meta.row_attrs
+        )
+        attrs = {"class": "all-submissions-table flagged-table"}
+
+
+class UserFlaggedSubmissionsTable(SummarySubmissionsTable):
+    class Meta(SummarySubmissionsTable.Meta):
+        row_attrs = dict(
+            {"data-flag-type": "user"}, **SummarySubmissionsTable._meta.row_attrs
+        )
+        attrs = {"class": "all-submissions-table flagged-table"}
+
+
 def get_used_rounds(request):
     return Round.objects.filter(submissions__isnull=False).distinct()
 

@@ -66,7 +66,7 @@ class CreateVendorFormStep1(BaseVendorForm, forms.Form):
 
 class CreateVendorFormStep2(BaseVendorForm, forms.Form):
     required_to_pay_taxes = forms.TypedChoiceField(
-        choices=((False, "No"), (True, "Yes")),
+        choices=((False, _("No")), (True, _("Yes"))),
         coerce=lambda x: x == "True",
         widget=forms.RadioSelect,
         required=True,

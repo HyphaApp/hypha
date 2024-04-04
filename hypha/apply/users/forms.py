@@ -32,7 +32,7 @@ class PasswordlessAuthForm(forms.Form):
     """
 
     email = forms.EmailField(
-        label=_("Email Address"),
+        label=_("Email address"),
         required=True,
         max_length=254,
         widget=forms.EmailInput(attrs={"autofocus": True, "autocomplete": "email"}),

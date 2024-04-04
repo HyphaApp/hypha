@@ -8,6 +8,7 @@ You can use advanced filters to search for application submissions that meet spe
 - Filter when applications were submitted: `submitted:2023-09-01`, `submitted:>2023-01`, `submitted:<=2023`
 - Filter when applications was last updated: `updated:2023-09-01`, `updated:>2023-01`, `updated:<=2023`
 - Filter your flagged submissions: `flagged:@me`
+- Filter staff flagged submissions: `flagged:@staff`
 
 
 ## Sharing Filters

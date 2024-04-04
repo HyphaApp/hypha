@@ -10,11 +10,11 @@ class MetaTermButtonHelper(ButtonHelper):
             return
         return super().delete_button(pk, *args, **kwargs)
 
-    def prepare_classnames(self, start=None, add=None, exclude=None):
-        """Parse classname sets into final css classess list."""
-        classnames = start or []
-        classnames.extend(add or [])
-        return self.finalise_classname(classnames, exclude or [])
+    def prepare_classname(self, start=None, add=None, exclude=None):
+        """Parse classname sets into final css classes list."""
+        classname = start or []
+        classname.extend(add or [])
+        return self.finalise_classname(classname, exclude or [])
 
     def add_child_button(self, pk, child_verbose_name, **kwargs):
         """Build a add child button, to easily add a child under meta term."""
@@ -26,13 +26,13 @@ class MetaTermButtonHelper(ButtonHelper):
         ):
             return
 
-        classnames = self.prepare_classnames(
+        classname = self.prepare_classname(
             start=self.edit_button_classnames + ["icon", "icon-plus"],
             add=kwargs.get("classnames_add"),
             exclude=kwargs.get("classnames_exclude"),
         )
         return {
-            "classname": classnames,
+            "classname": classname,
             "label": "Add %s %s" % (child_verbose_name, self.verbose_name),
             "title": "Add %s %s under this one"
             % (child_verbose_name, self.verbose_name),

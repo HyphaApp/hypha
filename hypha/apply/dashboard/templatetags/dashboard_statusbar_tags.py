@@ -22,5 +22,6 @@ def project_status_bar(current_status, user, author=False, css_class=""):
         "current_status_index": [status for status, _ in PROJECT_STATUS_CHOICES].index(
             current_status
         ),
+        "current_status": current_status,
         "class": css_class,
     }

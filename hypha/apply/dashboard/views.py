@@ -16,8 +16,8 @@ from hypha.apply.funds.tables import (
     SubmissionFilterAndSearch,
     SubmissionReviewerFilterAndSearch,
     SubmissionsTable,
-    SummarySubmissionsTable,
     SummarySubmissionsTableWithRole,
+    UserFlaggedSubmissionsTable,
     review_filter_for_user,
 )
 from hypha.apply.projects.filters import ProjectListFilter
@@ -62,17 +62,12 @@ class MySubmissionContextMixin:
 class MyFlaggedMixin:
     def my_flagged(self, submissions):
         submissions = submissions.flagged_by(self.request.user).order_by("-submit_time")
-        row_attrs = dict(
-            {"data-flag-type": "user"}, **SummarySubmissionsTable._meta.row_attrs
-        )
 
         limit = 5
         return {
-            "table": SummarySubmissionsTable(
+            "table": UserFlaggedSubmissionsTable(
                 submissions[:limit],
                 prefix="my-flagged-",
-                attrs={"class": "all-submissions-table flagged-table"},
-                row_attrs=row_attrs,
             ),
             "display_more": submissions.count() > limit,
         }
@@ -517,11 +512,17 @@ class ApplicantDashboardView(TemplateView):
     template_name = "dashboard/applicant_dashboard.html"
 
     def get_context_data(self, **kwargs):
-        my_active_submissions = list(self.my_active_submissions(self.request.user))
-
         context = super().get_context_data(**kwargs)
-        context["my_active_submissions"] = my_active_submissions
-        context["active_projects"] = self.active_project_data()
+        context["my_submissions_exists"] = ApplicationSubmission.objects.filter(
+            user=self.request.user
+        ).exists()
+
+        # Number of items to show in skeleton in each section of lazy loading
+        context["per_section_items"] = range(3)
+
+        context["my_projects_exists"] = Project.objects.filter(
+            user=self.request.user
+        ).exists()
         context["active_invoices"] = self.active_invoices()
         context["historical_projects"] = self.historical_project_data()
         context["historical_submissions"] = self.historical_submission_data()
@@ -534,31 +535,6 @@ class ApplicantDashboardView(TemplateView):
             "count": len(tasks),
             "data": tasks,
         }
-
-    def active_project_data(self):
-        active_projects = (
-            Project.objects.filter(user=self.request.user)
-            .active()
-            .order_by("-created_at")
-            .for_table()
-        )
-        return {
-            "count": active_projects.count(),
-            "data": active_projects,
-        }
-
-    def my_active_submissions(self, user):
-        active_subs = (
-            ApplicationSubmission.objects.filter(
-                user=user,
-            )
-            .active()
-            .current()
-            .select_related("draft_revision")
-        )
-
-        for submission in active_subs:
-            yield submission.from_draft()
 
     def active_invoices(self):
         active_invoices = (

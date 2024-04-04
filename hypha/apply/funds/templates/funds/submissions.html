@@ -8,14 +8,14 @@
 
     {% adminbar %}
         {% slot header %}
-            {% trans "All Submissions" %}<span class="submissions-count"> ({{ table.rows|length }})
-                <a class="text-sm text-lime-300 border-b border-transparent hover:opacity-70 transition-all"
-                   hx-boost="true"
-                   href="{% url 'apply:submissions:list-beta' %}"
-                >
-                    {% heroicon_outline "rocket-launch" aria_hidden="true" size=15 stroke_width="2" class="inline align-text-bottom" %}
-                    {% trans "Try newer version" %}
-                </a>
+            {% trans "All Submissions" %}<span class="submissions-count"> ({{ table.rows|length }})</span>
+            <a class="text-sm text-lime-300 border-b border-transparent hover:opacity-70 transition-all"
+               hx-boost="true"
+               href="{% url 'apply:submissions:list-beta' %}"
+            >
+                {% heroicon_outline "rocket-launch" aria_hidden="true" size=15 stroke_width="2" class="inline align-text-bottom" %}
+                {% trans "Try newer version" %}
+            </a>
         {% endslot %}
         {% slot sub_heading %}{% trans "Search and filter all submissions" %}{% endslot %}
     {% endadminbar %}

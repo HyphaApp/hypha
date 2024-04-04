@@ -28,21 +28,22 @@ class TestApplicantDashboard(BaseViewTestCase):
     user_factory = ApplicantFactory
     url_name = "dashboard:{}"
     base_view_name = "dashboard"
+    partial_submissions_view_name = "applicant_submissions"
 
-    def test_can_access_dashboard_with_active(self):
+    def test_can_access_submissions_partials_with_active(self):
         application = ApplicationSubmissionFactory(
             user=self.user, form_data__title="Improve the internet"
         )
-        response = self.get_page()
+        response = self.get_page(view_name=self.partial_submissions_view_name)
         self.assertContains(response, application.title)
         self.assertNotContains(response, "Submission history")
 
-    def test_can_have_draft_titles_on_dashboard(self):
+    def test_can_have_draft_titles_on_submissions_partials(self):
         submission = ApplicationSubmissionFactory(user=self.user)
         draft_revision = ApplicationRevisionFactory(submission=submission)
         submission.draft_revision = draft_revision
         submission.save()
-        response = self.get_page()
+        response = self.get_page(view_name=self.partial_submissions_view_name)
         self.assertNotContains(response, submission.title)
         self.assertContains(response, submission.from_draft().title)
         self.assertNotContains(response, "Submission history")
@@ -53,16 +54,16 @@ class TestApplicantDashboard(BaseViewTestCase):
         self.assertNotContains(response, application.title)
         self.assertNotContains(response, "Submission history")
 
-    def test_gets_invite_if_invited_to_proposal(self):
+    def test_submissions_partials_gets_invite_if_invited_to_proposal(self):
         InvitedToProposalFactory(user=self.user, draft=True)
-        response = self.get_page()
+        response = self.get_page(view_name=self.partial_submissions_view_name)
         self.assertContains(response, "Start your ")
 
-    def test_no_invite_if_can_edit(self):
+    def test_submissions_partials_no_invite_if_can_edit(self):
         ApplicationSubmissionFactory(
             user=self.user, status="concept_more_info", workflow_stages=2
         )
-        response = self.get_page()
+        response = self.get_page(view_name=self.partial_submissions_view_name)
         self.assertNotContains(response, "Start your ")
         self.assertContains(response, "Edit", 1)
 

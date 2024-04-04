@@ -183,7 +183,7 @@ class ProjectSOWForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass):
 class ChangePAFStatusForm(forms.ModelForm):
     name_prefix = "change_paf_status_form"
     paf_status = forms.ChoiceField(
-        label="PAF status", choices=PAF_STATUS_CHOICES, widget=forms.RadioSelect()
+        label=_("PAF status"), choices=PAF_STATUS_CHOICES, widget=forms.RadioSelect()
     )
     comment = forms.CharField(required=False, widget=forms.Textarea)
 
@@ -323,15 +323,15 @@ class AssignApproversForm(forms.ModelForm):
                 list(current_paf_reviewer_role.user_roles.all()), exact_match=True
             )
 
-            self.fields[
-                slugify(current_paf_reviewer_role.label)
-            ] = forms.ModelChoiceField(
-                queryset=users,
-                required=False,
-                blank=True,
-                label=current_paf_reviewer_role.label,
-                initial=paf_approval.user,
-                disabled=paf_approval.approved,
+            self.fields[slugify(current_paf_reviewer_role.label)] = (
+                forms.ModelChoiceField(
+                    queryset=users,
+                    required=False,
+                    blank=True,
+                    label=current_paf_reviewer_role.label,
+                    initial=paf_approval.user,
+                    disabled=paf_approval.approved,
+                )
             )
 
     def save(self, commit=True):

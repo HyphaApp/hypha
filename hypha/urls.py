@@ -17,9 +17,6 @@ from hypha.apply.users.urls import urlpatterns as user_urls
 from hypha.apply.users.views import become
 from hypha.apply.utils.views import custom_wagtail_page_delete
 
-handler404 = "hypha.apply.utils.views.page_not_found"
-handler403 = "hypha.apply.utils.views.permission_denied"
-
 urlpatterns = [
     path("apply/", include("hypha.apply.funds.urls", "apply")),
     path("activity/", include("hypha.apply.activity.urls", "activity")),
@@ -54,15 +51,31 @@ if settings.HIJACK_ENABLE:
 if settings.DEBUG:
     from django.conf.urls.static import static
     from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+    from django.urls import get_callable
+    from django.views import defaults as dj_default_views
 
     # Serve static and media files from development server
     urlpatterns += staticfiles_urlpatterns()
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
     urlpatterns += [
-        # Add views for testing 404 and 500 templates
-        path("test404/", TemplateView.as_view(template_name="404.html")),
-        path("test500/", TemplateView.as_view(template_name="500.html")),
+        path(
+            "test400/",
+            dj_default_views.bad_request,
+            kwargs={"exception": Exception("Bad Request!")},
+        ),
+        path(
+            "test403/",
+            dj_default_views.permission_denied,
+            kwargs={"exception": Exception("Permission Denied!")},
+        ),
+        path("test403_csrf/", get_callable(settings.CSRF_FAILURE_VIEW)),
+        path(
+            "test404/",
+            dj_default_views.page_not_found,
+            kwargs={"exception": Exception("Not Found!")},
+        ),
+        path("test500/", dj_default_views.server_error),
     ]
 
 if settings.DEBUG or settings.ENABLE_STYLEGUIDE:

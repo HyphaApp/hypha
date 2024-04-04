@@ -132,7 +132,8 @@ class BaseBatchDeterminationForm(BaseDeterminationForm, forms.Form):
         widget=forms.ModelMultipleChoiceField.hidden_widget,
     )
     author = forms.ModelChoiceField(
-        queryset=User.objects.staff(),
+        # Permissions should be handled by the view rather than the QuerySet here.
+        queryset=User.objects.active(),
         widget=forms.ModelChoiceField.hidden_widget,
         required=True,
     )
@@ -569,7 +570,8 @@ class BatchDeterminationForm(StreamBaseForm, forms.Form, metaclass=FormMixedMeta
         widget=forms.ModelMultipleChoiceField.hidden_widget,
     )
     author = forms.ModelChoiceField(
-        queryset=User.objects.staff(),
+        # Permissions should be handled by the view rather than the QuerySet here.
+        queryset=User.objects.active(),
         widget=forms.ModelChoiceField.hidden_widget,
         required=True,
     )
@@ -627,7 +629,8 @@ class BatchDeterminationForm(StreamBaseForm, forms.Form, metaclass=FormMixedMeta
     def _post_clean(self):
         submissions = self.cleaned_data["submissions"].undetermined()
         data = {
-            field: self.cleaned_data[field]
+            # If one of these keys is not set, we should get a validation error on the page rather than `KeyError`.
+            field: self.cleaned_data.get(field)
             for field in ["author", "form_data", "outcome"]
         }
 

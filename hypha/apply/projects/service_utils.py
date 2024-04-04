@@ -152,3 +152,9 @@ def handle_tasks_on_invoice_update(old_status, invoice):
                 ),
                 related_obj=invoice,
             )
+
+
+def batch_update_invoices_status(invoices, user, status):
+    for invoice in invoices:
+        invoice.status = status
+        invoice.save(update_fields=["status"])

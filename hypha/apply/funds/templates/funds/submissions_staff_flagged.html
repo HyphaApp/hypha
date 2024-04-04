@@ -1,8 +1,29 @@
-{% extends "funds/submissions.html" %}
-{% load i18n %}
+{% extends "funds/base_submissions_table.html" %}
+{% load i18n static %}
+{% load render_table from django_tables2 %}
 
-{% block page_header %}
-    <div>
-        <h1 class="gamma heading heading--no-margin heading--bold">{% trans "Staff Flagged Submissions" %}</h1>
+{% block title %}{% trans "Staff flagged submissions" %}{% endblock %}
+
+{% block content %}
+
+    {% adminbar %}
+        {% slot header %}
+            {% trans "Staff flagged submissions" %}<span class="submissions-count"> ({{ table.rows|length }})</span>
+        {% endslot %}
+        {% slot sub_heading %}{% trans "Submissions flagged by staff" %}{% endslot %}
+    {% endadminbar %}
+
+
+    <div class="wrapper wrapper--large wrapper--inner-space-medium">
+        {% block table %}
+            {% render_table table %}
+        {% endblock %}
     </div>
+{% endblock %}
+
+{% block extra_js %}
+    {{ filter.form.media.js }}
+    <script src="{% static 'js/all-submissions-table.js' %}"></script>
+    <script src="{% static 'js/symbol-es6.min.js' %}"></script>
+    <script src="{% static 'js/flag.js' %}"></script>
 {% endblock %}

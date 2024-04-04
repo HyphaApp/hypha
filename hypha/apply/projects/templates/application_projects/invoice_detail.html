@@ -37,7 +37,7 @@
                         <span class="text-gray-400">{{ latest_activity.timestamp }}</span>
                         {% if latest_activity_comment %}
                             <svg class="icon icon--request-changes"><use xlink:href="#request-changes"></use></svg>
-                            <a href="{% url 'apply:projects:detail' pk=object.project.id %}#communications#{{ latest_activity_comment.id }}" class="font-bold" target="_blank">View comment</a>
+                            <a href="{% url 'apply:projects:detail' pk=object.project.id %}#communications#{{ latest_activity_comment.id }}" class="font-bold" target="_blank">{% trans "View comment" %}</a>
                         {% endif %}
                     </p>
                     {% for activity in activities %}
@@ -47,7 +47,7 @@
                             <span class="text-gray-400">{{ activity.timestamp }}</span>
                             {% if activity_comment %}
                                 <svg class="icon icon--request-changes"><use xlink:href="#request-changes"></use></svg>
-                                <a href="{% url 'apply:projects:detail' pk=object.project.id %}#communications#{{ activity_comment.id }}" class="font-bold" target="_blank">View comment</a>
+                                <a href="{% url 'apply:projects:detail' pk=object.project.id %}#communications#{{ activity_comment.id }}" class="font-bold" target="_blank">{% trans "View comment" %}</a>
                             {% endif %}
                         </p>
                     {% endfor %}

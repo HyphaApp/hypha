@@ -45,6 +45,7 @@ class ValueBlock(ApplicationSingleIncludeFieldBlock):
     name = "value"
     description = "The value of the project"
     widget = forms.NumberInput(attrs={"min": 0})
+    field_class = forms.FloatField
 
     class Meta:
         label = _("Requested amount")

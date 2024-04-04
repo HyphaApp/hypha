@@ -1,5 +1,5 @@
 import factory
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
 from hypha.apply.determinations.tests.factories import DeterminationFormFactory
 from hypha.apply.funds.models import FundType
@@ -209,11 +209,19 @@ class TestWorkflowFormAdminForm(TestCase):
         )
         self.assertTrue(form.is_valid(), form.errors.as_text())
 
+    @override_settings(PROJECTS_ENABLED=False)
     def test_does_validates_without_project_approval_form(self):
         form = self.submit_data(
             form_data(1, 1, 1, 0, num_project_approval_form=0, stages=1)
         )
         self.assertTrue(form.is_valid(), form.errors.as_text())
+
+    @override_settings(PROJECTS_ENABLED=True)
+    def test_dosnt_validates_without_project_approval_form_for_projects_enabled(self):
+        form = self.submit_data(
+            form_data(1, 1, 1, 0, num_project_approval_form=0, stages=1)
+        )
+        self.assertFalse(form.is_valid(), form.errors.as_text())
 
     def test_doesnt_validates_with_multiple_project_approval_form(self):
         form = self.submit_data(

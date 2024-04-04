@@ -17,8 +17,6 @@ from .views import (
     PasswordlessSignupView,
     PasswordResetConfirmView,
     PasswordResetView,
-    RegisterView,
-    RegistrationSuccessView,
     TWOFAAdminDisableView,
     TWOFADisableView,
     TWOFASetupView,
@@ -39,10 +37,6 @@ public_urlpatterns = [
     ),
     path("login/", LoginView.as_view(), name="login"),
     path("logout/", auth_views.LogoutView.as_view(next_page="/"), name="logout"),
-    path("register/", RegisterView.as_view(), name="register"),
-    path(
-        "register-success/", RegistrationSuccessView.as_view(), name="register-success"
-    ),
 ]
 
 account_urls = [
