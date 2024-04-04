@@ -657,8 +657,6 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
                     self, form, draft=draft
                 )
 
-                form.delete_temporary_files()
-
                 # If a preview is specified in form submission, render the
                 # applicant's answers rather than the landing page.
                 if preview:
@@ -666,6 +664,10 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
                     context["object"] = form_submission
                     context["form"] = form
                     return render(request, "funds/application_preview.html", context)
+
+                # Required for django-file-form: delete temporary files for the new files
+                # that are uploaded.
+                # form.delete_temporary_files()
 
                 return self.render_landing_page(
                     request, form_submission, *args, **kwargs

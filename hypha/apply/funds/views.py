@@ -1375,7 +1375,7 @@ class BaseSubmissionEditView(UpdateView):
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
         """Handle the form returned from a `SubmissionEditView`.
 
-        Determing whether to return a form preview, draft the new edits,
+        Determine whether to return a form preview, draft the new edits,
         or submit and transition the `ApplicationSubmission` object
 
         Args:
