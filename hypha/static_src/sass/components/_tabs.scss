@@ -24,6 +24,16 @@
         color: $color--mid-grey;
         text-transform: uppercase;
         text-decoration: underline;
+
+        @include media-query(mob-landscape) {
+            width: 33%;
+            padding: 15px;
+        }
+
+        @include media-query(small-tablet) {
+            width: auto;
+            padding: 0.75rem 1rem;
+        }
     }
 
     &__item {
