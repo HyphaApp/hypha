@@ -114,9 +114,11 @@ from .tables import (
     RoundsFilter,
     RoundsTable,
     StaffAssignmentsTable,
+    StaffFlaggedSubmissionsTable,
     SubmissionFilterAndSearch,
     SubmissionReviewerFilterAndSearch,
     SummarySubmissionsTable,
+    UserFlaggedSubmissionsTable,
 )
 from .utils import get_default_screening_statues
 from .workflow import (
@@ -582,6 +584,7 @@ class SubmissionListView(ViewDispatcher):
 
 @method_decorator(staff_required, name="dispatch")
 class SubmissionStaffFlaggedView(BaseAdminSubmissionsTable):
+    table_class = StaffFlaggedSubmissionsTable
     template_name = "funds/submissions_staff_flagged.html"
 
     def get_queryset(self):
@@ -595,6 +598,7 @@ class SubmissionStaffFlaggedView(BaseAdminSubmissionsTable):
 
 @method_decorator(login_required, name="dispatch")
 class SubmissionUserFlaggedView(UserPassesTestMixin, BaseAdminSubmissionsTable):
+    table_class = UserFlaggedSubmissionsTable
     template_name = "funds/submissions_user_flagged.html"
 
     def get_queryset(self):
