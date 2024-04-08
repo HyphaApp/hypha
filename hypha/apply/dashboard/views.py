@@ -316,10 +316,18 @@ class ReviewerDashboardView(MyFlaggedMixin, MySubmissionContextMixin, TemplateVi
                 "awaiting_reviews": self.awaiting_reviews(submissions),
                 "my_reviewed": self.my_reviewed(submissions),
                 "my_flagged": self.my_flagged(submissions),
+                "my_tasks": self.my_tasks(),
             }
         )
 
         return context
+
+    def my_tasks(self):
+        tasks = render_task_templates_for_user(self.request, self.request.user)
+        return {
+            "count": len(tasks),
+            "data": tasks,
+        }
 
     def awaiting_reviews(self, submissions):
         submissions = submissions.in_review_for(self.request.user).order_by(
