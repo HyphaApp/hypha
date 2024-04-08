@@ -1,6 +1,6 @@
 {% load i18n %}
 {% load querystrings %}
-<ul class="text-gray-700 divide-y" aria-labelledby="dropdown-change-status">
+<ul class="text-gray-700 divide-y max-h-80 overflow-scroll" aria-labelledby="dropdown-change-status">
     {% for slug, value in statuses %}
         <li data-filter-for="change-status-filter-field">
             <a
