@@ -119,6 +119,12 @@ class TestForRound(BaseRoundsAndLabTestCase, TestCase):
         fetched_obj = RoundsAndLabs.objects.closed().first()
         self.assertEqual(fetched_obj, round)
 
+    def test_unpublished(self):
+        round = self.base_factory()
+        round.unpublish()
+        fetched_obj = RoundsAndLabs.objects.closed().first()
+        self.assertEqual(fetched_obj, round)
+
     def test_open(self):
         obj = self.base_factory(now=True)
         fetched_obj = RoundsAndLabs.objects.open().first()

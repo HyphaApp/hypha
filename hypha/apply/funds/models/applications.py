@@ -195,9 +195,10 @@ class RoundBaseManager(PageQuerySet):
         return rounds
 
     def closed(self):
-        rounds = self.live().public().specific()
-        rounds = rounds.filter(end_date__lt=date.today())
-        return rounds
+        rounds = self.public()
+        ended_rounds = rounds.live().specific().filter(end_date__lt=date.today())
+        unpublished_rounds = rounds.not_live().specific()
+        return ended_rounds | unpublished_rounds
 
 
 class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
@@ -685,7 +686,9 @@ class RoundsAndLabsQueryset(PageQuerySet):
         )
 
     def closed(self):
-        return self.filter(end_date__lt=date.today())
+        closed = self.filter(end_date__lt=date.today())
+        unpublished = self.not_live().specific()
+        return closed | unpublished
 
     def by_lead(self, user):
         return self.filter(lead_pk=user.pk)
