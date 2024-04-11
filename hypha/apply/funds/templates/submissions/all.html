@@ -9,15 +9,17 @@
 {% block content %}{% spaceless %}
     {% adminbar %}
         {% slot header %}
-            {% trans "All Submissions" %}
-            <span class="submissions-count"> ({{ page.paginator.count }})</span>
-            <a class="text-sm text-lime-300 border-b border-transparent hover:opacity-70 transition-all"
+            {% trans "All Submissions" %}<span class="submissions-count"> ({{ page.paginator.count }})</span>
+        {% endslot %}
+        {% slot sub_heading %}{% trans "Search and filter all submissions" %}{% endslot %}
+
+        {% slot buttons %}
+            <a class="tab__item tab__item--right"
                href="{% url 'apply:submissions:list' %}"
             >
-                {% trans "View older version" %}
+                {% trans "Switch to grid view" %}
             </a>
         {% endslot %}
-
     {% endadminbar %}
 
 
@@ -28,8 +30,8 @@
 
         {% dropdown_menu title="Filters" heading="Filter submissions" %}
             <a
-                href="{% url "apply:submissions:list-beta" %}?query=lead:@me"
-                hx-get="{% url "apply:submissions:list-beta" %}?query=lead:@me"
+                href="{% url "apply:submissions:list-alt" %}?query=lead:@me"
+                hx-get="{% url "apply:submissions:list-alt" %}?query=lead:@me"
                 hx-push-url="true"
                 hx-target="#main"
                 hx-swap="outerHTML"
@@ -40,8 +42,8 @@
                 {% trans "Your assigned submissions" %} {{ request.GET.lead }}
             </a>
             <a
-                href="{% url "apply:submissions:list-beta" %}?query=flagged:@me"
-                hx-get="{% url "apply:submissions:list-beta" %}?query=flagged:@me"
+                href="{% url "apply:submissions:list-alt" %}?query=flagged:@me"
+                hx-get="{% url "apply:submissions:list-alt" %}?query=flagged:@me"
                 hx-push-url="true"
                 hx-target="#main"
                 hx-swap="outerHTML"
@@ -52,8 +54,8 @@
                 {% trans "Your flagged submissions" %}
             </a>
             <a
-                href="{% url "apply:submissions:list-beta" %}?query=flagged:@staff"
-                hx-get="{% url "apply:submissions:list-beta" %}?query=flagged:@staff"
+                href="{% url "apply:submissions:list-alt" %}?query=flagged:@staff"
+                hx-get="{% url "apply:submissions:list-alt" %}?query=flagged:@staff"
                 hx-push-url="true"
                 hx-target="#main"
                 hx-swap="outerHTML"
@@ -64,8 +66,8 @@
                 {% trans "Staff flagged submissions" %}
             </a>
             <a
-                href="{% url "apply:submissions:list-beta" %}?query=reviewer:@me"
-                href="{% url "apply:submissions:list-beta" %}?query=reviewer:@me"
+                href="{% url "apply:submissions:list-alt" %}?query=reviewer:@me"
+                href="{% url "apply:submissions:list-alt" %}?query=reviewer:@me"
                 hx-push-url="true"
                 hx-target="#main"
                 hx-swap="outerHTML"

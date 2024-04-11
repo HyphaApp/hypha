@@ -3,8 +3,8 @@
 <ul class="text-gray-700 divide-y dark:text-gray-200" aria-labelledby="dropdown-reviewers" data-filter-list>
     {% if selected_reviewers %}
         <li data-filter-item-text>
-            <a href="{% url "apply:submissions:list-beta" %}{% remove_from_query "only_query_string" "page" "reviewers" %}"
-               hx-get="{% url "apply:submissions:list-beta" %}{% remove_from_query "only_query_string" "page" "reviewers" %}"
+            <a href="{% url "apply:submissions:list-alt" %}{% remove_from_query "only_query_string" "page" "reviewers" %}"
+               hx-get="{% url "apply:submissions:list-alt" %}{% remove_from_query "only_query_string" "page" "reviewers" %}"
                hx-push-url="true"
                class="flex px-3 py-2 text-gray-600 items-center hover:bg-gray-100 focus:bg-gray-100{% if s.selected %}bg-gray-100{% endif %}">
                 {% trans "All Reviewers" %}
@@ -15,12 +15,12 @@
         <li data-filter-item-text>
             <a
                 {% if user.selected %}
-                    href="{% url "apply:submissions:list-beta" %}{% remove_from_query "only_query_string" "page" reviewers=user.id %}"
-                    hx-get="{% url "apply:submissions:list-beta" %}{% remove_from_query "only_query_string" "page" reviewers=user.id %}"
+                    href="{% url "apply:submissions:list-alt" %}{% remove_from_query "only_query_string" "page" reviewers=user.id %}"
+                    hx-get="{% url "apply:submissions:list-alt" %}{% remove_from_query "only_query_string" "page" reviewers=user.id %}"
                     title="Remove {{ user.title }} from current filters"
                 {% else %}
-                    href="{% url "apply:submissions:list-beta" %}{% add_to_query "only_query_string" "page" reviewers=user.id %}"
-                    hx-get="{% url "apply:submissions:list-beta" %}{% add_to_query "only_query_string" "page" reviewers=user.id %}"
+                    href="{% url "apply:submissions:list-alt" %}{% add_to_query "only_query_string" "page" reviewers=user.id %}"
+                    hx-get="{% url "apply:submissions:list-alt" %}{% add_to_query "only_query_string" "page" reviewers=user.id %}"
                     title="Add {{ user.title }} to current filters"
                 {% endif %}
                 hx-push-url="true"

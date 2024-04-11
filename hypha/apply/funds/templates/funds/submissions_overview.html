@@ -22,7 +22,7 @@
         {% block table %}
             <div class="wrapper wrapper--bottom-space">
                 {% trans "All Submissions" as all_submissions %}
-                {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term use_search=True filter_action=filter_action search_action=search_action use_batch_actions=False heading=all_submissions show_try_new_submissions_link=True%}
+                {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term use_search=True filter_action=filter_action search_action=search_action use_batch_actions=False heading=all_submissions %}
 
                 {% render_table table %}
                 <div class="all-submissions-table__more">
