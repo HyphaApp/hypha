@@ -1,7 +1,7 @@
 {% load i18n %}
 <div class="wrapper wrapper--bottom-space"
-     x-data="{ activeTab: 'closed-rounds' }"
-     x-init="activeTab = window.location.hash && ['#open-rounds', '#closed-rounds'].includes(window.location.hash) ? window.location.hash.substring(1) : 'closed-rounds'"
+     x-data="{ activeTab: 'open-rounds' }"
+     x-init="activeTab = window.location.hash && ['#open-rounds', '#closed-rounds'].includes(window.location.hash) ? window.location.hash.substring(1) : activeTab"
 >
     <section class="section section--with-options">
         <h4 class="heading heading--normal heading--no-margin">{{ title }}</a></h4>

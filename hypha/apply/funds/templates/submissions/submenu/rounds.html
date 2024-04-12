@@ -17,22 +17,26 @@
 
         <div
             role="tablist"
-            x-data="{tab: 'closed_rounds'}"
+            {% if open_rounds %}
+                x-data="{tab: 'open_rounds'}"
+            {% else %}
+                x-data="{tab: 'closed_rounds'}"
+            {% endif %}
         >
             <nav class="flex px-3 pt-2" style="box-shadow: inset 0 -1px 0 #e5e7eb">
-
-                {% if closed_rounds %}
-                    <span @click="tab = 'closed_rounds'"
-                          role="tab"
-                          :class="{ 'border-x border-t border-b-transparent': tab === 'closed_rounds' }"
-                          class="text-center bg-white inline-block px-4 py-2 border-b rounded-t-lg cursor-pointer hover:text-gray-900">{% trans "Closed" %}</span>
-                {% endif %}
 
                 {% if open_rounds %}
                     <span @click="tab = 'open_rounds'"
                           role="tab"
                           :class="{ 'border-x border-t border-b-transparent': tab === 'open_rounds' }"
                           class="text-center bg-white inline-block px-4 py-2 border-b rounded-t-lg round cursor-pointer hover:text-gray-900">{% trans "Open" %}</span>
+                {% endif %}
+
+                {% if closed_rounds %}
+                    <span @click="tab = 'closed_rounds'"
+                          role="tab"
+                          :class="{ 'border-x border-t border-b-transparent': tab === 'closed_rounds' }"
+                          class="text-center bg-white inline-block px-4 py-2 border-b rounded-t-lg cursor-pointer hover:text-gray-900">{% trans "Closed" %}</span>
                 {% endif %}
             </nav>
 
