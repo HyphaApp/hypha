@@ -135,4 +135,5 @@ def render_task_templates_for_user(request, user):
         get_task_template(request, code=task.code, related_obj=task.related_object)
         for task in tasks
     ]
-    return templates
+
+    return list(filter(None, templates))

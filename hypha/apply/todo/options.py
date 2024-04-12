@@ -137,12 +137,16 @@ template_map = {
 
 
 def get_task_template(request, code, related_obj, **kwargs):
+    # if related_object is none/deleted and task remain there(edge case, avoiding 500)
+    if not related_obj:
+        return None
+
     templates = copy.deepcopy(template_map)
     try:
         template = templates[code]
     except KeyError:
         # Unregistered code
-        return
+        return None
     template_kwargs = {
         "related": related_obj,
         "link": link_to(related_obj, request),
