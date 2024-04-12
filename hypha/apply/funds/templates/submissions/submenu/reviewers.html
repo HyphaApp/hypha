@@ -1,6 +1,6 @@
 {% load i18n %}
 {% load querystrings %}
-<ul class="text-gray-700 divide-y dark:text-gray-200" aria-labelledby="dropdown-reviewers" data-filter-list>
+<ul class="text-gray-700 divide-y max-h-80 overflow-scroll" aria-labelledby="dropdown-reviewers" data-filter-list>
     {% if selected_reviewers %}
         <li data-filter-item-text>
             <a href="{% url "apply:submissions:list-alt" %}{% remove_from_query "only_query_string" "page" "reviewers" %}"

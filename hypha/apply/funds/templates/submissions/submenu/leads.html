@@ -1,6 +1,6 @@
 {% load i18n %}
 {% load querystrings heroicons %}
-<ul class="text-gray-700 divide-y" aria-labelledby="dropdownBgHoverButton" data-filter-list>
+<ul class="text-gray-700 divide-y max-h-80 overflow-scroll" aria-labelledby="dropdownBgHoverButton" data-filter-list>
     {% if selected_leads %}
         <li data-filter-item-text>
             <a href="{% url "apply:submissions:list-alt" %}{% remove_from_query "only_query_string" "page" "lead" %}"
