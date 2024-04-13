@@ -1,6 +1,6 @@
 {% extends "base-apply.html" %}
 {% load render_table from django_tables2 %}
-{% load i18n static markdown_tags nh3_tags %}
+{% load i18n static markdown_tags nh3_tags heroicons %}
 
 {% block title %}{% trans "Dashboard" %}{% endblock %}
 
@@ -8,9 +8,8 @@
 
     {% adminbar %}
         {% slot header %}{% trans "Dashboard" %}{% endslot %}
-        <a href="{% url 'wagtailadmin_home' %}" class="button button--primary button--arrow-pixels-white">
-            {% trans "Apply admin" %}
-            <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
+        <a href="{% url 'wagtailadmin_home' %}" class="button button--primary">
+            {% trans "Admin" %}
         </a>
     {% endadminbar %}
 
