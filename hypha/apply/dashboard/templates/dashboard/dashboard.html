@@ -31,9 +31,7 @@
                         <div class="bg-white p-1 flex mb-1 items-center">
                             <svg class="icon icon--dashboard-tasks"><use xlink:href="#{{ task.icon }}"></use></svg>
                             <div class="flex flex-1 items-center">
-                                <div class="grow">
-                                    {{ task.text|markdown|nh3 }}
-                                </div>
+                                {{ task.text|markdown|nh3 }}
                                 {% if task.type == "Draft" %}
                                     <span class="bg-red-200 hover:opacity-70 transition-opacity rounded-full whitespace-nowrap inline-block ms-1 my-2 px-2 pt-0.5 pb-1 text-sm font-medium text-gray-800">{{ task.type }}</span>
                                 {% endif %}
