@@ -7,9 +7,11 @@
 {% endblock %}
 
 {% block mobile_actions %}
-    <a class="js-actions-toggle button button--white button--full-width button--actions">{% trans "Actions to take" %}</a>
-    <div class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions sidebar__inner--mobile">
-        {% include "funds/includes/admin_primary_actions.html"  %}
+    <div x-data="{ show: false }">
+        <button x-on:click="show = ! show" class="button button--white button--full-width button--actions">{% trans "Actions to take" %}</button>
+        <div x-show="show" x-transition class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue">
+            {% include "funds/includes/admin_primary_actions.html"  %}
+        </div>
     </div>
 {% endblock %}
 
@@ -87,6 +89,5 @@
     {{ block.super }}
     <script src="{% static 'js/jquery.fancybox.min.js' %}"></script>
     <script src="{% static 'js/fancybox-global.js' %}"></script>
-    <script src="{% static 'js/toggle-actions-panel.js' %}"></script>
     <script src="{% static 'js/toggle-related.js' %}"></script>
 {% endblock %}
