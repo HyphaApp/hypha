@@ -1,26 +1,26 @@
-(function ($) {
+(function () {
     "use strict";
 
-    // Collaps long comments in activity feed.
-    $(".related-sidebar").each(function () {
-        var $content = $(this).find("ul");
-        var content_height = $content.outerHeight();
-        if (content_height > 300) {
-            $(this).addClass("related-sidebar--collaps");
-            $(this).append(
-                '<p class="related-sidebar__show-button"><a class="link link--button link--button--narrow" href="#">Show</a></p>'
-            );
-        }
-    });
+    const related_sidebar = document.querySelector(".related-sidebar");
+    const content_height = related_sidebar
+        .querySelector("ul")
+        .getBoundingClientRect().height;
 
-    // Allow users to show full comment.
-    $(".related-sidebar__show-button")
-        .find(".link")
-        .click(function (e) {
-            e.preventDefault();
-            $(this)
-                .parents(".related-sidebar")
-                .removeClass("related-sidebar--collaps");
-            $(this).parent().detach();
-        });
-})(jQuery);
+    let button_show = document.createElement("button");
+    button_show.classList.add("link", "link--button", "link--button--narrow");
+    button_show.textContent = "Show";
+
+    let button_wrapper = document.createElement("p");
+    button_wrapper.classList.add("related-sidebar__show-button");
+    button_wrapper.appendChild(button_show);
+
+    if (content_height > 300) {
+        related_sidebar.classList.add("related-sidebar--collaps");
+        related_sidebar.append(button_wrapper);
+    }
+
+    button_show.addEventListener("click", function (e) {
+        related_sidebar.classList.remove("related-sidebar--collaps");
+        button_wrapper.remove();
+    });
+})();
