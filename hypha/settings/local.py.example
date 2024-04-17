@@ -25,9 +25,6 @@ CACHES = {
 # Write e-mails to local files.
 # LOCAL_FILE_EMAIL = True
 
-# Enable the styleguide.
-# ENABLE_STYLEGUIDE = True
-
 # SECRET_KEY = 'CHANGEME!!!'
 
 # Enable Wagtail Cache.

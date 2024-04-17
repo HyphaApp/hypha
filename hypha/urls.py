@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path, re_path
-from django.views.generic import TemplateView
 from django_file_form import urls as django_file_form_urls
 from two_factor.urls import urlpatterns as tf_urls
 from two_factor.views import LoginView
@@ -76,12 +75,6 @@ if settings.DEBUG:
             kwargs={"exception": Exception("Not Found!")},
         ),
         path("test500/", dj_default_views.server_error),
-    ]
-
-if settings.DEBUG or settings.ENABLE_STYLEGUIDE:
-    urlpatterns += [
-        # Add styleguide
-        path("styleguide/", TemplateView.as_view(template_name="styleguide.html")),
     ]
 
 urlpatterns += [
