@@ -75,8 +75,7 @@
                             <button class="button button--submit button--primary" type="submit" disabled>{% trans "Submit for review" %}</button>
                         {% endif %}
                         <button class="button button--submit button--white" type="submit" name="draft" value="Save draft" formnovalidate>{% trans "Save draft" %}</button>
-                        {# TODO Fix preview bugs before reactivating. #}
-                        {% if False and not require_preview and request.user.is_authenticated %}
+                        {% if not require_preview and request.user.is_authenticated %}
                             <button class="button button--submit button--white" type="submit" name="preview">{% trans "Preview" %}</button>
                         {% endif %}
                     </div>

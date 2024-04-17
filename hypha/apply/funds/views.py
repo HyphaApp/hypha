@@ -2,6 +2,7 @@ import csv
 from copy import copy
 from datetime import timedelta
 from io import StringIO
+from typing import Generator, Tuple
 
 import django_tables2 as tables
 from django.conf import settings
@@ -13,7 +14,14 @@ from django.contrib.auth.models import Group
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count, F, Q
-from django.http import FileResponse, Http404, HttpResponse, HttpResponseRedirect
+from django.forms import BaseModelForm
+from django.http import (
+    FileResponse,
+    Http404,
+    HttpRequest,
+    HttpResponse,
+    HttpResponseRedirect,
+)
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
 from django.utils import timezone
@@ -1297,6 +1305,39 @@ class BaseSubmissionEditView(UpdateView):
 
     model = ApplicationSubmission
 
+    @property
+    def transitions(self):
+        transitions = self.object.get_available_user_status_transitions(
+            self.request.user
+        )
+        return {transition.name: transition for transition in transitions}
+
+    def render_preview(self, request: HttpRequest, form: BaseModelForm) -> HttpResponse:
+        """Gets a rendered preview of a form
+
+        Creates a new revision on the `ApplicationSubmission`, removes the
+        forms temporary files
+
+        Args:
+            request:
+                Request used to trigger the preview to be used in the render
+            form:
+                Form to be rendered
+
+        Returns:
+            An `HttpResponse` containing a preview of the given form
+        """
+
+        self.object.create_revision(draft=True, by=request.user)
+        messages.success(self.request, _("Draft saved"))
+
+        # Required for django-file-form: delete temporary files for the new files
+        # uploaded while edit.
+        form.delete_temporary_files()
+
+        context = self.get_context_data()
+        return render(request, "funds/application_preview.html", context)
+
     def dispatch(self, request, *args, **kwargs):
         permission, _ = has_permission(
             "submission_edit",
@@ -1308,15 +1349,99 @@ class BaseSubmissionEditView(UpdateView):
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
-    def buttons(self):
+    def buttons(
+        self,
+    ) -> Generator[Tuple[str, str, str], Tuple[str, str, str], Tuple[str, str, str]]:
+        """The buttons to be presented to the in the EditView
+
+        Returns:
+            A generator returning a tuple strings in the format of:
+            (<button type>, <button styling>, <button label>)
+        """
         if settings.SUBMISSION_PREVIEW_REQUIRED:
             yield ("preview", "primary", _("Preview and submit"))
             yield ("save", "white", _("Save draft"))
         else:
             yield ("submit", "primary", _("Submit"))
             yield ("save", "white", _("Save draft"))
-            # TODO Fix preview bugs before reactivating.
-            # yield ("preview", "white", _("Preview"))
+            yield ("preview", "white", _("Preview"))
+
+    def get_object_fund_current_round(self):
+        assigned_fund = self.object.round.get_parent().specific
+        if assigned_fund.open_round:
+            return assigned_fund.open_round
+        return False
+
+    def form_valid(self, form: BaseModelForm) -> HttpResponse:
+        """Handle the form returned from a `SubmissionEditView`.
+
+        Determine whether to return a form preview, draft the new edits,
+        or submit and transition the `ApplicationSubmission` object
+
+        Args:
+            form: The valid form
+
+        Returns:
+            An `HttpResponse` depending on the actions taken in the edit view
+        """
+
+        self.object.form_data = form.cleaned_data
+
+        is_draft = self.object.status == DRAFT_STATE
+
+        # Handle a preview or a save (aka a draft)
+        if "preview" in self.request.POST:
+            return self.render_preview(self.request, form)
+
+        if "save" in self.request.POST:
+            return self.save_draft_and_refresh_page(form=form)
+
+        # Handle an application being submitted from a DRAFT_STATE. This includes updating submit_time
+        if is_draft and "submit" in self.request.POST:
+            self.object.submit_time = timezone.now()
+            if self.object.round:
+                current_round = self.get_object_fund_current_round()
+                if current_round:
+                    self.object.round = current_round
+            self.object.save(update_fields=["submit_time", "round"])
+
+        revision = self.object.create_revision(by=self.request.user)
+        submitting_proposal = self.object.phase.name in STAGE_CHANGE_ACTIONS
+
+        if submitting_proposal:
+            messenger(
+                MESSAGES.PROPOSAL_SUBMITTED,
+                request=self.request,
+                user=self.request.user,
+                source=self.object,
+            )
+        elif revision and not self.object.status == DRAFT_STATE:
+            messenger(
+                MESSAGES.APPLICANT_EDIT,
+                request=self.request,
+                user=self.request.user,
+                source=self.object,
+                related=revision,
+            )
+
+        action = set(self.request.POST.keys()) & set(self.transitions.keys())
+        try:
+            transition = self.transitions[action.pop()]
+        except KeyError:
+            pass
+        else:
+            self.object.perform_transition(
+                transition.target,
+                self.request.user,
+                request=self.request,
+                notify=not (revision or submitting_proposal)
+                or self.object.status == DRAFT_STATE,  # Use the other notification
+            )
+
+        # Required for django-file-form: delete temporary files for the new files
+        # uploaded while edit.
+        form.delete_temporary_files()
+        return HttpResponseRedirect(self.get_success_url())
 
     def get_form_kwargs(self):
         """
@@ -1393,27 +1518,20 @@ class BaseSubmissionEditView(UpdateView):
 
 @method_decorator(staff_required, name="dispatch")
 class AdminSubmissionEditView(BaseSubmissionEditView):
-    def form_valid(self, form):
-        self.object.new_data(form.cleaned_data)
+    def buttons(
+        self,
+    ) -> Generator[Tuple[str, str, str], Tuple[str, str, str], Tuple[str, str, str]]:
+        """The buttons to be presented in the `AdminSubmissionEditView`
 
-        if "save" in self.request.POST:
-            return self.save_draft_and_refresh_page(form=form)
+        Admins shouldn't be required to preview, but should have the option.
 
-        if "submit" in self.request.POST:
-            revision = self.object.create_revision(by=self.request.user)
-            if revision:
-                messenger(
-                    MESSAGES.EDIT_SUBMISSION,
-                    request=self.request,
-                    user=self.request.user,
-                    source=self.object,
-                    related=revision,
-                )
-
-        # Required for django-file-form: delete temporary files for the new files
-        # uploaded while edit.
-        form.delete_temporary_files()
-        return HttpResponseRedirect(self.get_success_url())
+        Returns:
+            A generator returning a tuple strings in the format of:
+            (<button type>, <button styling>, <button label>)
+        """
+        yield ("submit", "primary", _("Submit"))
+        yield ("save", "white", _("Save draft"))
+        yield ("preview", "white", _("Preview"))
 
 
 @method_decorator(login_required, name="dispatch")
@@ -1423,79 +1541,6 @@ class ApplicantSubmissionEditView(BaseSubmissionEditView):
         if request.user != submission.user:
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
-
-    @property
-    def transitions(self):
-        transitions = self.object.get_available_user_status_transitions(
-            self.request.user
-        )
-        return {transition.name: transition for transition in transitions}
-
-    def get_object_fund_current_round(self):
-        assigned_fund = self.object.round.get_parent().specific
-        if assigned_fund.open_round:
-            return assigned_fund.open_round
-        return False
-
-    def form_valid(self, form):
-        self.object.new_data(form.cleaned_data)
-
-        # Update submit_time only when application is getting submitted from the Draft State for the first time.
-        if self.object.status == DRAFT_STATE and "submit" in self.request.POST:
-            self.object.submit_time = timezone.now()
-            if self.object.round:
-                current_round = self.get_object_fund_current_round()
-                if current_round:
-                    self.object.round = current_round
-            self.object.save(update_fields=["submit_time", "round"])
-
-        if self.object.status == DRAFT_STATE and "preview" in self.request.POST:
-            self.object.create_revision(draft=True, by=self.request.user)
-            form.delete_temporary_files()
-            # messages.success(self.request, _("Draft saved"))
-            context = self.get_context_data()
-            return render(self.request, "funds/application_preview.html", context)
-
-        if "save" in self.request.POST:
-            return self.save_draft_and_refresh_page(form=form)
-
-        revision = self.object.create_revision(by=self.request.user)
-        submitting_proposal = self.object.phase.name in STAGE_CHANGE_ACTIONS
-
-        if submitting_proposal:
-            messenger(
-                MESSAGES.PROPOSAL_SUBMITTED,
-                request=self.request,
-                user=self.request.user,
-                source=self.object,
-            )
-        elif revision and not self.object.status == DRAFT_STATE:
-            messenger(
-                MESSAGES.APPLICANT_EDIT,
-                request=self.request,
-                user=self.request.user,
-                source=self.object,
-                related=revision,
-            )
-
-        action = set(self.request.POST.keys()) & set(self.transitions.keys())
-        try:
-            transition = self.transitions[action.pop()]
-        except KeyError:
-            pass
-        else:
-            self.object.perform_transition(
-                transition.target,
-                self.request.user,
-                request=self.request,
-                notify=not (revision or submitting_proposal)
-                or self.object.status == DRAFT_STATE,  # Use the other notification
-            )
-
-        # Required for django-file-form: delete temporary files for the new files
-        # uploaded while edit.
-        form.delete_temporary_files()
-        return HttpResponseRedirect(self.get_success_url())
 
 
 @method_decorator(login_required, name="dispatch")
@@ -1524,15 +1569,31 @@ class RevisionListView(ListView):
     model = ApplicationRevision
 
     def get_queryset(self):
+        """Get a queryset of all valid `ApplicationRevision`s that can be
+        compared for the current submission
+
+        This excludes draft & preview revisions unless draft(s) are the only
+        existing revisions, in which the last draft will be returned in a QuerySet
+
+        Returns:
+            An [`ApplicationRevision`][hypha.apply.funds.models.ApplicationRevision] QuerySet
+        """
         self.submission = get_object_or_404(
             ApplicationSubmission, id=self.kwargs["submission_pk"]
         )
-        self.queryset = self.model.objects.filter(
-            submission=self.submission,
-        ).exclude(
-            draft__isnull=False,
-            live__isnull=True,
+        revisions = self.model.objects.filter(submission=self.submission).exclude(
+            draft__isnull=False, live__isnull=True
         )
+
+        filtered_revisions = revisions.filter(is_draft=False)
+
+        # An edge case for when an instance has `SUBMISSIONS_DRAFT_ACCESS_STAFF=True`
+        # and a staff member tries to view the revisions of the draft.
+        if len(filtered_revisions) < 1:
+            self.queryset = self.model.objects.filter(id=revisions.last().id)
+        else:
+            self.queryset = filtered_revisions
+
         return super().get_queryset()
 
     def get_context_data(self, **kwargs):

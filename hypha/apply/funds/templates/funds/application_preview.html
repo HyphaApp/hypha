@@ -12,10 +12,11 @@
     <div class="wrapper wrapper--medium wrapper--form">
         {% include "funds/includes/rendered_answers.html" %}
 
-        <form id="preview-form-submit" class="form application-form" action="{% url 'funds:submissions:edit' object.id %}" method="POST" enctype="multipart/form-data">
+        <form id="preview-form-submit" class="form application-form" action="{% url 'funds:submissions:edit' object.id %}" method="POST" enctype="multipart/form-data" novalidate>
             {% csrf_token %}
 
-            <div class="preview-hidden-form" hidden>
+            {# Hidden form fields to allow for POSTing to funds:submissions:edit on submit/edit #}
+            <div hidden>
                 {% for field in form %}
                     {% if field.field %}
                         {% if field.field.multi_input_field %}
@@ -27,8 +28,12 @@
                         {{ field.block }}
                     {% endif %}
                 {% endfor %}
+
+                {# Hidden fields needed e.g. for django-file-form. See `StreamBaseForm.hidden_fields` #}
+                {% for hidden_field in form.hidden_fields %}
+                    {{ hidden_field }}
+                {% endfor %}
             </div>
-            <!-- <button class="button button--primary" name="submit" type="submit">{% trans "Submit for review" %}</button> -->
         </form>
 
         <form id="preview-form-edit" class="form application-form" action="{% url 'funds:submissions:edit' object.id %}">

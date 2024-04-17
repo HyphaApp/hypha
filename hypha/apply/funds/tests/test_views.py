@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import PermissionDenied
 from django.http import Http404
-from django.test import RequestFactory, TestCase
+from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 
@@ -581,7 +581,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         )
         assert_view_determination_not_displayed(submission)
 
-    def test_cant_see_application_draft_status(self):
+    def test_staff_cant_see_application_draft_status(self):
         factory = RequestFactory()
         submission = ApplicationSubmissionFactory(status="draft")
         ProjectFactory(submission=submission)
@@ -591,6 +591,18 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
 
         with self.assertRaises(Http404):
             SubmissionDetailView.as_view()(request, pk=submission.pk)
+
+    @override_settings(SUBMISSIONS_DRAFT_ACCESS_STAFF=True)
+    def test_staff_can_see_application_draft_status(self):
+        factory = RequestFactory()
+        submission = ApplicationSubmissionFactory(status="draft")
+        ProjectFactory(submission=submission)
+
+        request = factory.get(f"/submission/{submission.pk}")
+        request.user = StaffFactory()
+
+        response = SubmissionDetailView.as_view()(request, pk=submission.pk)
+        self.assertEqual(response.status_code, 200)
 
     def test_applicant_can_see_application_draft_status(self):
         factory = RequestFactory()
