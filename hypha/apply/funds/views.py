@@ -1117,6 +1117,7 @@ class AdminSubmissionDetailView(ActivityContextMixin, DelegateableView, DetailVi
             self.model.objects.filter(user=self.object.user)
             .current()
             .exclude(id=self.object.id)
+            .order_by("-submit_time")
         )
         if self.object.next:
             other_submissions = other_submissions.exclude(id=self.object.next.id)
