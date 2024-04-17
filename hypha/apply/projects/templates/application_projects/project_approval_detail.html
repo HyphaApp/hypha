@@ -110,11 +110,11 @@
                             {% if can_edit_project %}
                                 <a class="button button--bottom-space button--primary button--full-width {% if user_can_approve %} is-disabled {% endif %}" href="{% url 'apply:projects:edit' pk=object.pk %}">{% trans "Edit PAF" %}</a>
                             {% endif %}
-                            <div class="dropdown">
-                                <button class="button button--project-action--paf-download dropbtn button--bottom-space button--full-width" type="button" data-dropdown-target="#dropdown-content-download">
+                            <div x-data="{ show: false }" class="dropdown">
+                                <button x-on:click="show = ! show" class="button button--project-action--paf-download dropbtn button--bottom-space button--full-width" type="button">
                                     {% trans 'Download Approval Form' %}
                                 </button>
-                                <div id="dropdown-content-download" class="dropdown-content">
+                                <div x-show="show" x-transition class="dropdown-content">
                                     <a class="dropdown-item" href="{% url 'apply:projects:download' pk=object.pk export_type='pdf' %}">
                                         {% trans 'Download as PDF' %}</a>
                                     <a class="dropdown-item" href="{% url 'apply:projects:download' pk=object.pk export_type='docx' %}">
@@ -173,5 +173,4 @@
     {{ block.super }}
     <script src="{% static 'js/jquery.fancybox.min.js' %}"></script>
     <script src="{% static 'js/fancybox-global.js' %}"></script>
-    <script src="{% static 'js/dropdown.js' %}"></script>
 {% endblock %}

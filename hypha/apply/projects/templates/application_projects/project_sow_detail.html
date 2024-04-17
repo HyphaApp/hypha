@@ -19,11 +19,11 @@
                     </h5>
                 </div>
 
-                <div class="dropdown">
-                    <button class="button button--primary dropbtn" type="button" data-dropdown-target="#dropdown-content-download">
+                <div x-data="{ show: false }" class="dropdown">
+                    <button x-on:click="show = ! show" class="button button--primary dropbtn" type="button">
                         {% trans 'Download SOW' %}
                     </button>
-                    <div id="dropdown-content-download" class="dropdown-content">
+                    <div x-show="show" x-transition class="dropdown-content">
                         <a class="dropdown-item" href="{% url 'apply:projects:download-sow' pk=object.pk export_type='pdf' %}">
                             {% trans 'Download as PDF' %}</a>
                         <a class="dropdown-item" href="{% url 'apply:projects:download-sow' pk=object.pk export_type='docx' %}">
