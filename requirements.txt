@@ -37,7 +37,7 @@ djangorestframework==3.15.0
 drf-nested-routers==0.93.5
 drf-yasg==1.21.7
 environs==11.0.0
-gunicorn==21.2.0
+gunicorn==22.0.0
 heroicons==2.6.0
 python-docx==1.1.0
 htmldocx==0.0.6
