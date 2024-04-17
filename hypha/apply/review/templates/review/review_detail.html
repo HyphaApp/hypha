@@ -81,7 +81,10 @@
             {{ form }}
         </form>
 
-        <P>{% trans "An opinion is a replacement for a review. You will no longer be able to submit a review for this application." %}</P>
+        <em class='text-fg-muted flex items-center mb-8'>
+            {% heroicon_micro "information-circle" class="mr-1 w-4 h-4 fill-fg-muted" aria_hidden=true %}
+            <span>{% trans "An opinion is a replacement for a review. You will no longer be able to submit a review for this application." %}</span>
+        </em>
     {% endif %}
 
 {% endblock %}
