@@ -56,7 +56,11 @@
 
                 {{ field }}
 
-                {% if field.errors %}<h6 class="form__error-text">{{ field.errors.as_text|linebreaksbr }}</h6>{% endif %}
+                {% if field.errors %}
+                    <p class="form__error-text">
+                        {{ field.errors.as_text|linebreaksbr }}
+                    </p>
+                {% endif %}
                 {% if widget_type == 'clearable_file_input' or widget_type == 'multi_file_input' %}
                     <output class="form__file-list"></output>
                 {% endif %}
