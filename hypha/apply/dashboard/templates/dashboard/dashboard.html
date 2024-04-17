@@ -30,7 +30,12 @@
                     {% for task in my_tasks.data %}
                         <div class="bg-white p-1 flex mb-1 items-center border border-gray-600">
                             <svg class="icon icon--dashboard-tasks"><use xlink:href="#{{ task.icon }}"></use></svg>
-                            <div class="flex-1">{{ task.text|markdown|nh3 }}</div>
+                            <div class="flex flex-1 items-center">
+                                {{ task.text|markdown|nh3 }}
+                                {% if task.type == "Draft" %}
+                                    <span class="bg-red-200 hover:opacity-70 transition-opacity rounded-full whitespace-nowrap inline-block ms-1 my-2 px-2 pt-0.5 pb-1 text-sm font-medium text-gray-800">{{ task.type }}</span>
+                                {% endif %}
+                            </div>
                             <a class="button button-primary m-2" href="{{ task.url }}">{% trans "View" %}</a>
                         </div>
                     {% endfor %}

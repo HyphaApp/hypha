@@ -21,6 +21,12 @@ from hypha.apply.funds.models import ApplicationSubmission
 from hypha.apply.funds.workflow import DETERMINATION_OUTCOMES, Concept
 from hypha.apply.projects.models import Project
 from hypha.apply.stream_forms.models import BaseStreamForm
+from hypha.apply.todo.options import DETERMINATION_DRAFT
+from hypha.apply.todo.views import (
+    add_task_to_user,
+    remove_tasks_for_user,
+    remove_tasks_of_related_obj_for_specific_code,
+)
 from hypha.apply.users.decorators import staff_required
 from hypha.apply.utils.views import CreateOrUpdateView, ViewDispatcher
 
@@ -425,6 +431,11 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
 
         super().form_valid(form)
         if self.object.is_draft:
+            add_task_to_user(
+                code=DETERMINATION_DRAFT,
+                user=self.object.author,
+                related_obj=self.object,
+            )
             return HttpResponseRedirect(self.submission.get_absolute_url())
 
         with transaction.atomic():
@@ -459,6 +470,16 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
 
             if self.submission.accepted_for_funding and settings.PROJECTS_AUTO_CREATE:
                 Project.create_from_submission(self.submission)
+
+        # remove current users's task for determination
+        remove_tasks_for_user(
+            code=DETERMINATION_DRAFT, user=self.object.author, related_obj=self.object
+        )
+
+        # remove all current determination tasks for the submission
+        remove_tasks_of_related_obj_for_specific_code(
+            code=DETERMINATION_DRAFT, related_obj=self.object
+        )
 
         messenger(
             MESSAGES.DETERMINATION_OUTCOME,
