@@ -5,7 +5,7 @@ from wagtail.models import Site
 from hypha.apply.activity.messaging import MESSAGES, messenger
 
 from .admin_views import CustomGroupViewSet, CustomUserIndexView
-from .utils import send_activation_email
+from .utils import send_activation_email, update_is_staff
 
 
 @hooks.register("register_admin_urls")
@@ -47,3 +47,8 @@ def notify_after_edit_user(request, user):
             source=user,
             roles=roles,
         )
+
+
+# Handle setting of `is_staff` after updating a user
+hooks.register("after_create_user", update_is_staff)
+hooks.register("after_edit_user", update_is_staff)
