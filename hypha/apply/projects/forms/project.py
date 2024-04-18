@@ -359,6 +359,16 @@ class SubmitContractDocumentsForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
 
+class SkipPAFApprovalProcessForm(forms.ModelForm):
+    class Meta:
+        fields = ["id"]
+        model = Project
+        widgets = {"id": forms.HiddenInput()}
+
+    def __init__(self, user=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
 class UploadContractForm(FileFormMixin, forms.ModelForm):
     file = SingleFileField(label=_("Contract"), required=True)
 

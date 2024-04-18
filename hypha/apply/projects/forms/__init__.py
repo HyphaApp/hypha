@@ -17,6 +17,7 @@ from .project import (
     RemoveContractDocumentForm,
     RemoveDocumentForm,
     SetPendingForm,
+    SkipPAFApprovalProcessForm,
     StaffUploadContractForm,
     SubmitContractDocumentsForm,
     UpdateProjectLeadForm,
@@ -37,6 +38,7 @@ from .vendor import (
 __all__ = [
     "SelectDocumentForm",
     "SubmitContractDocumentsForm",
+    "SkipPAFApprovalProcessForm",
     "ApproveContractForm",
     "ApproversForm",
     "AssignApproversForm",

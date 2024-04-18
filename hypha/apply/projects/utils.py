@@ -28,9 +28,11 @@ from .models.payment import (
     SUBMITTED,
 )
 from .models.project import (
+    INTERNAL_APPROVAL,
     PAF_STATUS_CHOICES,
     PROJECT_PUBLIC_STATUSES,
     PROJECT_STATUS_CHOICES,
+    PAFReviewersRole,
 )
 
 
@@ -105,6 +107,26 @@ def fetch_and_save_project_details(project_id, external_projectid):
 
         data = fetch_project_details(external_projectid)
         save_project_details(project_id, data)
+
+
+def no_pafreviewer_role():
+    """
+    Return True if no PAFReviewerRoles exists
+    """
+    return not (PAFReviewersRole.objects.exists())
+
+
+def get_project_status_choices():
+    """
+    Return available Project status choices by removing the disabled ones
+    """
+    if no_pafreviewer_role():
+        return [
+            (status, label)
+            for status, label in PROJECT_STATUS_CHOICES
+            if status != INTERNAL_APPROVAL
+        ]
+    return PROJECT_STATUS_CHOICES
 
 
 def save_project_details(project_id, data):

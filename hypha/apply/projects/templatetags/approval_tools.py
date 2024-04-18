@@ -3,6 +3,7 @@ from datetime import timedelta
 from django import template
 
 from ..permissions import has_permission
+from ..utils import no_pafreviewer_role
 
 register = template.Library()
 
@@ -19,7 +20,11 @@ def user_has_approved(project, user):
 
 @register.simple_tag
 def user_can_send_for_approval(project, user):
-    return user.is_apply_staff and project.can_send_for_approval
+    return (
+        user.is_apply_staff
+        and project.can_send_for_approval
+        and not (no_pafreviewer_role())
+    )
 
 
 @register.simple_tag
