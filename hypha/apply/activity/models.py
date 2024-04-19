@@ -2,6 +2,7 @@ import os
 import uuid
 from typing import List, Optional, Tuple
 
+from django.apps import apps
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
@@ -64,18 +65,58 @@ class BaseActivityQuerySet(models.QuerySet):
 
         messages = ActivityAdapter.messages
 
+        user_qs = Q(user=user)
+
         # There are scenarios where users will have activities in which they
         # wouldn't have visibility just using Activity.visibility_for. Thus,
-        # the queryset should include activity in which they author
-        # (ie. A comment made only to staff from a partner).
+        # the queryset should include activity in which they author via
+        # `user_qs` (ie. A comment made only to staff from a partner).
         if user.is_applicant:
-            return self.exclude(message=messages.get(MESSAGES.NEW_REVIEW)).filter(
-                Q(visibility__in=self.model.visibility_for(user)) | Q(user=user)
-            )
+            # Handle the edge case where a partner or reviewer is also an
+            # applicant. Ensures that any applications/projects the user
+            # authored will have comment visibility of applicant while others
+            # will get the appropriate role.
+            if user.is_partner or user.is_reviewer:
+                ApplicationSubmission = apps.get_model("funds", "ApplicationSubmission")
+                Project = apps.get_model("application_projects", "Project")
 
-        return self.filter(
-            Q(visibility__in=self.model.visibility_for(user)) | Q(user=user)
-        )
+                app_content_type = ContentType.objects.get_for_model(
+                    ApplicationSubmission
+                )
+                proj_content_type = ContentType.objects.get_for_model(Project)
+
+                authored_apps = ApplicationSubmission.objects.filter(user_qs).values(
+                    "id"
+                )
+                authored_projs = Project.objects.filter(user_qs).values("id")
+
+                proj_app_qs = (
+                    Q(source_content_type=app_content_type)
+                    & Q(source_object_id__in=authored_apps)
+                ) | (
+                    Q(source_content_type=proj_content_type)
+                    & Q(source_object_id__in=authored_projs)
+                )
+
+                # Activities the user is the author of the source submission
+                applicant_activity = self.filter(
+                    proj_app_qs
+                    & Q(
+                        Q(visibility__in=self.model.visibility_for(user, True))
+                        | user_qs
+                    )
+                )
+                # All other activities
+                other_activity = self.exclude(
+                    Q(message=messages.get(MESSAGES.NEW_REVIEW)) | proj_app_qs
+                ).filter(Q(visibility__in=self.model.visibility_for(user)) | user_qs)
+                return applicant_activity | other_activity
+            else:
+                return self.exclude(message=messages.get(MESSAGES.NEW_REVIEW)).filter(
+                    Q(visibility__in=self.model.visibility_for(user)) | user_qs
+                )
+
+        return self.filter(Q(visibility__in=self.model.visibility_for(user)) | user_qs)
 
     def newer(self, activity):
         return self.filter(timestamp__gt=activity.timestamp)
@@ -213,27 +254,38 @@ class Activity(models.Model):
         return '{}: for "{}"'.format(self.get_type_display(), self.source)
 
     @classmethod
-    def visibility_for(cls, user) -> List[str]:
+    def visibility_for(
+        cls, user, is_submission_author: Optional[bool] = False
+    ) -> List[str]:
         """Gets activity visibility for a specified user
+
+        Takes an optional boolean that is used to determine the visibility of
+        an application comment. This was mainly implemented to allow partners
+        also holding the role of applicant to have a proper visibility.
+
+        ie. Prevent someone with the role of partner & applicant looking at
+        comments on their own application and seeing partner visibility
 
         Args:
             user:
                 [`User`][hypha.apply.users.models.User] to get visibility for
+            is_submission_author:
+                boolean used when the `user` is the applicant of the source activity
 
         Returns:
             A list of visibility strings
         """
         if user.is_apply_staff:
             return [TEAM, APPLICANT, REVIEWER, APPLICANT_PARTNERS, PARTNER, ALL]
-        if user.is_reviewer:
+        if user.is_reviewer and not is_submission_author:
             return [REVIEWER, ALL]
         if user.is_finance or user.is_contracting:
             # for project part
             return [TEAM, APPLICANT, REVIEWER, PARTNER, ALL]
+        if user.is_partner and not is_submission_author:
+            return [PARTNER, ALL, APPLICANT_PARTNERS]
         if user.is_applicant:
             return [APPLICANT, ALL, APPLICANT_PARTNERS]
-        if user.is_partner:
-            return [PARTNER, ALL, APPLICANT_PARTNERS]
 
         return [ALL]
 
