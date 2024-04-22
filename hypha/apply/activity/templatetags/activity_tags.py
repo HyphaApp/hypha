@@ -35,7 +35,7 @@ def display_author(activity, user) -> str:
         return settings.ORG_LONG_NAME
     if isinstance(activity.related_object, Review) and activity.source.user == user:
         return "Reviewer"
-    return activity.user.get_full_name_with_group()
+    return activity.user.get_display_name_with_group()
 
 
 @register.filter
