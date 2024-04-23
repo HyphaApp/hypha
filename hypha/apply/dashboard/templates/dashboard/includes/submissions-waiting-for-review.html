@@ -15,7 +15,7 @@
     {% endif %}
 
 {% else %}
-    <div class="border py-10 bg-white w-full text-center px-2">
+    <div class="border shadow-sm py-10 bg-white w-full text-center px-2">
         <p class="text-base my-2">{% trans "Nice! You're all caught up. 🎉" %}</p>
         <a class="button button--primary" href="{% url 'apply:submissions:list' %}" hx-boost='true'>{% trans "Find new applications to review" %}</a>
     </div>

@@ -15,17 +15,9 @@
     {% endadminbar %}
 
     <div class="wrapper wrapper--large wrapper--inner-space-medium">
+
         {% if my_tasks.count %}
-            <div class="w-8/12 m-auto mb-10">
-                <h2 class="text-center font-light">{% trans "My tasks" %}</h2>
-                {% for task in my_tasks.data %}
-                    <div class="bg-white p-1 flex mb-1 items-center">
-                        <svg class="icon icon--dashboard-tasks"><use xlink:href="#{{ task.icon }}"></use></svg>
-                        <div class="flex-1">{{ task.text|markdown|nh3 }}</div>
-                        <a class="button button-primary m-2" href="{{ task.url }}">{% trans "View" %}</a>
-                    </div>
-                {% endfor %}
-            </div>
+            {% include "dashboard/includes/my-tasks.html" with mytasks=mytasks %}
         {% endif %}
 
         {% if paf_for_review.count %}
