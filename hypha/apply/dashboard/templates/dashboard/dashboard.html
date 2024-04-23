@@ -36,20 +36,35 @@
                         <div class="stat-block__view">{% trans "View" %}</div>
                     {% endif %}
                 </a>
-                <a href="#active-projects" class="stat-block__item border shadow-sm">
-                    <p class="stat-block__number">{{ projects.count }}</p>
-                    <p class="stat-block__text">{% trans "Live projects under your management" %}</p>
-                    {% if projects.count %}
-                        <div class="stat-block__view">{% trans "View" %}</div>
+                {% if PROJECTS_ENABLED %}
+                    <a href="#active-projects" class="stat-block__item border shadow-sm">
+                        <p class="stat-block__number">{{ projects.count }}</p>
+                        <p class="stat-block__text">{% trans "Live projects under your management" %}</p>
+                        {% if projects.count %}
+                            <div class="stat-block__view">{% trans "View" %}</div>
+                        {% endif %}
+                    </a>
+                    <a href="#active-invoices" class="stat-block__item border shadow-sm">
+                        <p class="stat-block__number">{{ active_invoices.count }}</p>
+                        <p class="stat-block__text">{% trans "Requests for invoices requiring your attention" %}</p>
+                        {% if active_invoices.count %}
+                            <div class="stat-block__view">{% trans "View" %}</div>
+                        {% endif %}
+                    </a>
+                {% else %}
+                    {% if my_flagged.table.data %}
+                        <a href="#submissions-flagged" class="stat-block__item border shadow-sm">
+                            <p class="stat-block__number">{{ my_flagged.table.rows|length }}</p>
+                            <p class="stat-block__text">Your flagged submissions</p>
+                        </a>
                     {% endif %}
-                </a>
-                <a href="#active-invoices" class="stat-block__item border shadow-sm">
-                    <p class="stat-block__number">{{ active_invoices.count }}</p>
-                    <p class="stat-block__text">{% trans "Requests for invoices requiring your attention" %}</p>
-                    {% if active_invoices.count %}
-                        <div class="stat-block__view">{% trans "View" %}</div>
+                    {% if my_reviewed.table.data %}
+                        <a href="#my-review" class="stat-block__item border shadow-sm">
+                            <p class="stat-block__number">{{ my_reviewed.table.rows|length }}</p>
+                            <p class="stat-block__text">Your previous reviews</p>
+                        </a>
                     {% endif %}
-                </a>
+                {% endif %}
             </div>
         </div>
 
@@ -67,14 +82,14 @@
             {% include "funds/includes/round-block.html" with can_export=can_export closed_rounds=rounds.closed open_rounds=rounds.open title="Your rounds and labs" page_type='dashboard' %}
         {% endif %}
 
-        {% if paf_for_review.count %}
+        {% if PROJECTS_ENABLED and paf_for_review.count %}
             <div id="paf_for_review" class="wrapper wrapper--bottom-space">
                 <h4 class="heading heading--normal">{% trans "PAFs for review" %}</h4>
                 {% render_table paf_for_review.table %}
             </div>
         {% endif %}
 
-        {% if projects.table.data %}
+        {% if PROJECTS_ENABLED and projects.table.data %}
             <div id="active-projects" class="wrapper wrapper--bottom-space">
                 {% trans "Your projects" as project_heading %}
                 {% include "funds/includes/table_filter_and_search.html" with filter=projects.filterset filter_action=projects.url search_term=search_term search_action=projects.url search_placeholder="projects" use_search=True use_batch_actions=False heading="Your projects" %}
@@ -85,11 +100,10 @@
                         <a href="{{ projects.url }}?lead={{ request.user.pk }}">{% trans "Show all" %}</a>
                     </div>
                 {% endif %}
-
             </div>
         {% endif %}
 
-        {% if active_invoices.count %}
+        {% if PROJECTS_ENABLED and active_invoices.count %}
             <div id="active-invoices" class="wrapper wrapper--bottom-space">
                 <h4 class="heading heading--normal">{% trans "Active Invoices" %}</h4>
                 {% render_table active_invoices.table %}

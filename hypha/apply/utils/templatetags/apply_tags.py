@@ -3,6 +3,8 @@ from django import template
 from django.conf import settings
 from django.template.defaultfilters import stringfilter
 
+from hypha.core.navigation import get_primary_navigation_items
+
 register = template.Library()
 
 
@@ -38,3 +40,8 @@ def truncatechars_middle(value, arg):
         return value
     else:
         return "{}...{}".format(value[: ln // 2], value[-((ln + 1) // 2) :])
+
+
+@register.simple_tag
+def primary_navigation_items(user):
+    return get_primary_navigation_items(user)
