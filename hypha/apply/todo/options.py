@@ -44,7 +44,7 @@ template_map = {
     # :todo: actions for mupltiple stages of submission
     DETERMINATION_DRAFT: {
         "text": _(
-            'Determination draft for submission [<span class=" truncate inline-block w-32 align-bottom ">{related.submission.title}</span>]({link} "{related.submission.title}") is waiting to be submitted',
+            'Determination draft for submission [<span class=" truncate inline-block max-w-32 align-bottom ">{related.submission.title}</span>]({link} "{related.submission.title}") is waiting to be submitted',
         ),
         "icon": "edit-draft",
         "url": "{link}",
@@ -52,7 +52,7 @@ template_map = {
     },
     REVIEW_DRAFT: {
         "text": _(
-            "Review draft for submission [{related.submission.title}]({link}) is waiting to be submitted"
+            'Review draft for submission [<span class=" truncate inline-block max-w-32 align-bottom ">{related.submission.title}</span>]({link} "{related.submission.title}") is waiting to be submitted'
         ),
         "icon": "edit-draft",
         "url": "{link}",
