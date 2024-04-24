@@ -91,6 +91,7 @@ status_and_phases_mapping = {
     ],
     "accepted": ["accepted"],
     "dismissed": ["dismissed"],
+    "withdrawn": ["withdrawn"],
 }
 
 
