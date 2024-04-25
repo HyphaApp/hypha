@@ -149,7 +149,7 @@ class WorkflowStreamForm(WorkflowHelpers, AbstractStreamForm):  # type: ignore
 
     if settings.PROJECTS_ENABLED:
         content_panels += [
-            InlinePanel("approval_forms", label=_("Project Approval Form"), max_num=1),
+            InlinePanel("approval_forms", label=_("Project Form"), max_num=1),
             InlinePanel("sow_forms", label=_("Project SOW Form"), max_num=1),
             # The models technically allow for multiple Report forms but to start we permit only one in the UIs.
             InlinePanel("report_forms", label=_("Project Report Form"), max_num=1),

@@ -685,7 +685,7 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
             project=self.object, approved=False
         ).first()
         if not paf_approval:
-            # get paf approval form for not-assigned case
+            # get paf project form for not-assigned case
             if project_settings.paf_approval_sequential:
                 paf_approval = self.object.paf_approvals.filter(approved=False).first()
             else:
@@ -1433,7 +1433,7 @@ class ContractDocumentPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
         return False
 
 
-# PROJECT APPROVAL FORM VIEWS
+# PROJECT FORM VIEWS
 
 
 @method_decorator(staff_or_finance_or_contracting_required, name="dispatch")

@@ -107,7 +107,7 @@
                             {% endif %}
                             <div x-data="{ show: false }" class="dropdown">
                                 <button x-on:click="show = ! show" class="button button--primary" type="button">
-                                    {% trans 'Download Approval Form' %}
+                                    {% trans 'Download Project Form' %}
                                 </button>
                                 <div x-show="show" x-transition class="dropdown__content">
                                     <a href="{% url 'apply:projects:download' pk=object.pk export_type='pdf' %}">

@@ -42,7 +42,7 @@ class ContractDocumentCategoryAdmin(ModelAdmin):
 
 class ProjectApprovalFormAdmin(ListRelatedMixin, ModelAdmin):
     model = ProjectApprovalForm
-    menu_label = "Approval Forms"
+    menu_label = "Project Forms"
     menu_icon = "form"
     list_display = (
         "name",
