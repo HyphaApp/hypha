@@ -1,22 +1,31 @@
-(function ($) {
+(function () {
     "use strict";
 
-    // add the toggle arrow before the submission titles
-    $(".all-submissions-table__parent td.title").prepend(
-        '<span class="all-submissions-table__toggle js-toggle-submission"><span class="arrow"></span></span>'
-    );
+    let submission_arrow = document.createElement("span");
+    submission_arrow.classList.add("arrow");
 
-    // grab all the toggles
-    const children = Array.prototype.slice.call(
-        document.querySelectorAll(".js-toggle-submission")
+    let submission_toggle = document.createElement("span");
+    submission_toggle.classList.add(
+        "all-submissions-table__toggle",
+        "js-toggle-submission"
     );
+    submission_toggle.appendChild(submission_arrow);
 
-    // show/hide the submission child rows
+    // Add the toggle arrow before the submission titles.
+    const submission_titles = document.querySelectorAll(
+        ".all-submissions-table__parent > td.title"
+    );
+    submission_titles.forEach(function (title) {
+        title.prepend(submission_toggle.cloneNode(true));
+    });
+
+    // Show/hide the submission child rows.
+    const children = document.querySelectorAll(".js-toggle-submission");
     children.forEach(function (child) {
         child.addEventListener("click", (e) => {
-            $(e.target)
+            e.target
                 .closest(".all-submissions-table__parent")
-                .toggleClass("is-expanded");
+                .classList.toggle("is-expanded");
         });
     });
-})(jQuery);
+})();

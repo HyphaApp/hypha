@@ -50,22 +50,6 @@
                 color: $color--white;
             }
         }
-
-        &--paf-download {
-            @include button($color--white, $color--light-blue);
-            display: inline-block;
-            color: $color--light-blue;
-            border: 1px solid $color--mid-grey;
-            padding: 0.5rem 3.3rem;
-
-            &:focus {
-                color: $color--light-blue;
-            }
-
-            &:hover {
-                color: $color--white;
-            }
-        }
     }
 
     &--left-space {

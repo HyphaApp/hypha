@@ -1,41 +1,31 @@
 {% extends "application_projects/project_approval_detail.html" %}
-{% load i18n static approval_tools %}
-
-{% block title %}{{ object.title }}{% endblock %}
+{% load i18n static approval_tools project_tags apply_tags %}
 
 {% block content %}
-    <div class="simplified">
-        <div class="simplified__admin-bar">
-            <div class="simplified__admin-bar-inner-project">
-                <div>
-                    <a class="simplified__projects-link" href="{{ object.get_absolute_url }}">
-                        {% trans "View project page" %}
-                    </a>
-                    <h1 class="simplified__heading">{{ object.title }}</h1>
-                    <h5 class="simplified__subheading">
-                        <span>{{ object.submission.page }}</span>
-                        <span>{{ object.submission.round }}</span>
-                        <span>{% trans "Lead" %}: {{ object.lead }}</span>
-                    </h5>
-                </div>
+    {% adminbar %}
+        {% slot back_link %}
+            <a class="simplified__projects-link" href="{{ object.get_absolute_url }}" rel="noopener">
+                {% trans "Back to Project" %}
+            </a>
+        {% endslot %}
 
-                <div class="dropdown">
-                    <button class="button button--primary dropbtn" type="button" data-dropdown-target="#dropdown-content-download">
-                        {% trans 'Download SOW' %}
-                    </button>
-                    <div id="dropdown-content-download" class="dropdown-content">
-                        <a class="dropdown-item" href="{% url 'apply:projects:download-sow' pk=object.pk export_type='pdf' %}">
-                            {% trans 'Download as PDF' %}</a>
-                        <a class="dropdown-item" href="{% url 'apply:projects:download-sow' pk=object.pk export_type='docx' %}">
-                            {% trans 'Download as DOCX' %}</a>
-                    </div>
-                </div>
+        {% slot header %}
+            {{ object.title }}
+        {% endslot %}
+        {% slot sub_heading %}
+            <div class="heading heading--meta text-sm mt-1">
+                <span>{{ object.submission.page }}</span>
+                <span>{{ object.submission.round }}</span>
+                <span>{% trans "Lead" %}: {{ object.lead }}</span>
             </div>
-        </div>
+        {% endslot %}
+    {% endadminbar %}
+
+    <div class="simplified">
         <div class="wrapper wrapper--large wrapper--tabs">
             <div class="wrapper wrapper--sidebar">
-                <article class="wrapper--sidebar--inner simplified__wrapper">
-                    <h4>{% trans "Project scope of work(SOW)" %}</h4>
+                <article class="wrapper--sidebar--inner">
+                    <h4 class="mb-2">{% trans "Project scope of work(SOW)" %}</h4>
                     <div class="card card--solid">
                         {% if object.sow.output_answers %}
                             <div class="simplified__paf_answers">
@@ -44,6 +34,26 @@
                         {% endif %}
                     </div>
                 </article>
+                {% user_can_take_actions object user as can_take_actions %}
+                {% if can_take_actions %}
+                    <aside class="sidebar sidebar__project">
+                        <div class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
+                            <h5>{% trans "Actions to take" %}</h5>
+                            <div x-data="{ show: false }" class="dropdown">
+                                <button x-on:click="show = ! show" class="button button--primary" type="button">
+                                    {% trans 'Download SOW' %}
+                                </button>
+                                <div x-show="show" x-transition class="dropdown__content">
+                                    <a href="{% url 'apply:projects:download-sow' pk=object.pk export_type='pdf' %}">
+                                        {% trans 'Download as PDF' %}</a>
+                                    <a href="{% url 'apply:projects:download-sow' pk=object.pk export_type='docx' %}">
+                                        {% trans 'Download as DOCX' %}</a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </aside>
+                {% endif %}
             </div>
         </div>
     </div>

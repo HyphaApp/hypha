@@ -35,7 +35,6 @@
                 <article class="wrapper--sidebar--inner">
                     <h4 class="mb-2">{% trans "Project Information" %}</h4>
                     <div class="card card--solid">
-
                         {% if object.output_answers %}
                             <div class="simplified__paf_answers">
                                 {{ object.output_answers }}
@@ -100,24 +99,20 @@
                 {% user_can_take_actions object user as can_take_actions %}
                 {% if can_take_actions %}
                     <aside class="sidebar sidebar__project">
-                        {% if mobile %}
-                            <a class="js-actions-toggle button button--white button--full-width button--actions">{% trans "Actions to take" %}</a>
-                        {% endif %}
-
                         <div class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
                             <h5>{% trans "Actions to take" %}</h5>
                             {% user_can_edit_project object user as can_edit_project %}
                             {% if can_edit_project %}
                                 <a class="button button--bottom-space button--primary button--full-width {% if user_can_approve %} is-disabled {% endif %}" href="{% url 'apply:projects:edit' pk=object.pk %}">{% trans "Edit PAF" %}</a>
                             {% endif %}
-                            <div class="dropdown">
-                                <button class="button button--project-action--paf-download dropbtn button--bottom-space button--full-width" type="button" data-dropdown-target="#dropdown-content-download">
+                            <div x-data="{ show: false }" class="dropdown">
+                                <button x-on:click="show = ! show" class="button button--primary" type="button">
                                     {% trans 'Download Approval Form' %}
                                 </button>
-                                <div id="dropdown-content-download" class="dropdown-content">
-                                    <a class="dropdown-item" href="{% url 'apply:projects:download' pk=object.pk export_type='pdf' %}">
+                                <div x-show="show" x-transition class="dropdown__content">
+                                    <a href="{% url 'apply:projects:download' pk=object.pk export_type='pdf' %}">
                                         {% trans 'Download as PDF' %}</a>
-                                    <a class="dropdown-item" href="{% url 'apply:projects:download' pk=object.pk export_type='docx' %}">
+                                    <a href="{% url 'apply:projects:download' pk=object.pk export_type='docx' %}">
                                         {% trans 'Download as DOCX' %}</a>
                                 </div>
                             </div>
@@ -160,7 +155,6 @@
                                 </div>
                             {% endif %}
                         </div>
-
                     </aside>
                 {% endif %}
             </div>
@@ -173,5 +167,4 @@
     {{ block.super }}
     <script src="{% static 'js/jquery.fancybox.min.js' %}"></script>
     <script src="{% static 'js/fancybox-global.js' %}"></script>
-    <script src="{% static 'js/dropdown.js' %}"></script>
 {% endblock %}
