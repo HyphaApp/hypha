@@ -1,3 +1,5 @@
+import copy
+import functools
 import importlib
 
 from django.conf import settings
@@ -70,7 +72,7 @@ DEFAULT_NAV_ITEMS = [
 ]
 
 
-def resolve_and_check_permission(user, method: str) -> bool:
+def _check_permission(user, method: str) -> bool:
     """Resolve the method path and check if the user has permission.
 
     Args:
@@ -88,34 +90,33 @@ def resolve_and_check_permission(user, method: str) -> bool:
         return False
 
 
+@functools.cache
 def get_primary_navigation_items(user):
     """Get the primary navigation items based on user permissions."""
-    nav_items = DEFAULT_NAV_ITEMS.copy()
-    if settings.APPLY_NAV_MENU_ITEMS:
-        nav_items = settings.APPLY_NAV_MENU_ITEMS
+    original_nav_items = copy.deepcopy(
+        settings.APPLY_NAV_MENU_ITEMS or DEFAULT_NAV_ITEMS
+    )
 
-    if settings.APPLY_NAV_SUBMISSIONS_ITEMS:
-        nav_items[1]["sub_items"] = settings.APPLY_NAV_SUBMISSIONS_ITEMS
+    nav_items = []
 
-    if settings.PROJECTS_ENABLED:
-        if settings.APPLY_NAV_PROJECTS_ITEMS:
-            nav_items[2]["sub_items"] = settings.APPLY_NAV_PROJECTS_ITEMS
-    else:
-        nav_items.pop(2)
+    for item in original_nav_items:
+        nav_item = item.copy()
 
-    temp_nav = nav_items.copy()
-    item_count = 0
-    for item in nav_items:
-        item_count += 1
-        removed = False
-        if not resolve_and_check_permission(user, item["permission_method"]):
-            temp_nav.remove(item)
-            removed = True
-            item_count -= 1
-        if not removed and "sub_items" in item.keys():
-            for sub_item in item["sub_items"]:
-                if not resolve_and_check_permission(
-                    user, sub_item["permission_method"]
-                ):
-                    temp_nav[item_count]["sub_items"].remove(sub_item)
-    return temp_nav
+        if item["title"] == "Projects" and not settings.PROJECTS_ENABLED:
+            continue
+
+        if item["title"] == "Submissions" and settings.APPLY_NAV_SUBMISSIONS_ITEMS:
+            nav_item["sub_items"] = settings.APPLY_NAV_SUBMISSIONS_ITEMS
+
+        if not _check_permission(user, nav_item["permission_method"]):
+            continue
+        if sub_items := nav_item.get("sub_items"):
+            nav_item["sub_items"] = list(
+                filter(
+                    lambda x: _check_permission(user, x["permission_method"]),
+                    sub_items,
+                )
+            )
+        nav_items.append(nav_item)
+
+    return nav_items
