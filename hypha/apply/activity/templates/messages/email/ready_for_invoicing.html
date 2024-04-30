@@ -1,11 +1,16 @@
 {% extends "messages/email/applicant_base.html" %}
 
 {% load i18n %}
-{% block content %}{% blocktrans with title=source.title %}The contract for your project "{{ title }}" has approved. Now, your project is ready for invoicing.{% endblocktrans %}{% endblock %}
 
-{% block more_info %}{% trans "Link to your project" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
-    {% trans "If you have any questions, please submit them here" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}#communications
+{% block content %}{# fmt:off #}
+{% blocktrans with title=source.title %}The contract for your project "{{ title }}" has approved. Now, your project is ready for invoicing.{% endblocktrans %}
+{% endblock %}
 
-    {% trans "See our guide for more information" %}: {{ ORG_GUIDE_URL }}
+{% block more_info %}
+{% trans "Link to your project" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
+{% trans "If you have any questions, please submit them here" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}#communications
 
-    {% blocktrans %}If you have any issues accessing the project or other general inquiries, please email us at {{ ORG_EMAIL }}{% endblocktrans %}{% endblock %}
+{% trans "See our guide for more information" %}: {{ ORG_GUIDE_URL }}
+
+{% blocktrans %}If you have any issues accessing the project or other general inquiries, please email us at {{ ORG_EMAIL }}{% endblocktrans %}
+{% endblock %}{# fmt:on #}

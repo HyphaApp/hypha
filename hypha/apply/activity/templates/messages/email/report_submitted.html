@@ -1,11 +1,12 @@
 {% extends "messages/email/applicant_base.html" %}
 
 {% load i18n %}
-{% block content %}
-    {% blocktrans with title=source.title start_date=report.start_date end_date=report.end_date %}An {{ ORG_SHORT_NAME }} staff member has submitted a report for {{ title }} for period {{ start_date }} to {{ end_date }}.{% endblocktrans %}
 
-    {% trans "You can review the report here" %}: {{ request.scheme }}://{{ request.get_host }}{{ report.get_absolute_url }}
+{% block content %}{# fmt:off #}
+{% blocktrans with title=source.title start_date=report.start_date end_date=report.end_date %}An {{ ORG_SHORT_NAME }} staff member has submitted a report for {{ title }} for period {{ start_date }} to {{ end_date }}.{% endblocktrans %}
 
-    {% trans "Project" %}: {{ source.title }}
-    {% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
-{% endblock %}
+{% trans "You can review the report here" %}: {{ request.scheme }}://{{ request.get_host }}{{ report.get_absolute_url }}
+
+{% trans "Project" %}: {{ source.title }}
+{% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
+{% endblock %}{# fmt:on #}

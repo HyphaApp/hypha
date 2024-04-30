@@ -1,11 +1,10 @@
 {% extends "messages/email/applicant_base.html" %}
 
 {% load i18n %}
-{% block content %}
 
-    {% blocktrans with title=source.title end_date=report.end_date %}A report is due for {{ title }} on {{ end_date }}.{% endblocktrans %}
+{% block content %}{# fmt:off #}
+{% blocktrans with title=source.title end_date=report.end_date %}A report is due for {{ title }} on {{ end_date }}.{% endblocktrans %}
 
-    {% blocktrans %}More information can be found on the project page:{% endblocktrans %}
-    {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
-
-{% endblock %}
+{% blocktrans %}More information can be found on the project page:{% endblocktrans %}
+{{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
+{% endblock %}{# fmt:on #}

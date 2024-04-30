@@ -1,6 +1,7 @@
 {% extends "messages/email/applicant_base.html" %}
 
 {% load i18n %}
-{% block content %}
-    {% trans "Your submission has been edited by a member of staff." %}
-{% endblock %}
+
+{% block content %}{# fmt:off #}
+{% trans "Your submission has been edited by a member of staff." %}
+{% endblock %}{# fmt:on #}

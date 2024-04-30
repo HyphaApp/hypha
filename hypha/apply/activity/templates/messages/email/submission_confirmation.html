@@ -1,18 +1,21 @@
 {% extends "messages/email/base.html" %}
 
 {% load i18n %}
-{% block content %}{% blocktrans with title=source.title %}We appreciate your {{ title }} application submission to the {{ ORG_LONG_NAME }}.{% endblocktrans %}
 
-    {% if source.is_draft %}{% trans "Please note that it is not submitted for review because it's still in draft." %} {% trans "You can access the draft at" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}{% else %}{% trans "We will review and reply to your submission as quickly as possible." %}{% endif %}
+{% block content %}{# fmt:off #}
+{% blocktrans with title=source.title %}We appreciate your {{ title }} application submission to the {{ ORG_LONG_NAME }}.{% endblocktrans %}
 
-    {% trans "If you have any questions, please submit them here" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}#communications
+{% if source.is_draft %}{% trans "Please note that it is not submitted for review because it's still in draft." %} {% trans "You can access the draft at" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}{% else %}{% trans "We will review and reply to your submission as quickly as possible." %}{% endif %}
 
-    {% blocktrans %}If you have issues accessing the submission system or general inquiries, please email us at {{ ORG_EMAIL }}.{% endblocktrans %}
+{% trans "If you have any questions, please submit them here" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}#communications
 
-    {% blocktrans %}For more information about our support options, review process, and selection criteria, please visit our website at {{ ORG_URL }}.{% endblocktrans %}
+{% blocktrans %}If you have issues accessing the submission system or general inquiries, please email us at {{ ORG_EMAIL }}.{% endblocktrans %}
 
-    {% with email_context=source.page.specific %}{{ email_context.confirmation_text_extra }}{% endwith %}
+{% blocktrans %}For more information about our support options, review process, and selection criteria, please visit our website at {{ ORG_URL }}.{% endblocktrans %}
 
-    {% trans "Project name" %}: {{ source.title }}
-    {% trans "Contact name" %}: {{ source.user.get_full_name }}
-    {% trans "Contact email" %}: {{ source.user.email }}{% endblock %}
+{% with email_context=source.page.specific %}{{ email_context.confirmation_text_extra }}{% endwith %}
+
+{% trans "Project name" %}: {{ source.title }}
+{% trans "Contact name" %}: {{ source.user.get_full_name }}
+{% trans "Contact email" %}: {{ source.user.email }}
+{% endblock %}{# fmt:on #}

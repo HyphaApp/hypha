@@ -3,12 +3,11 @@
 {% load i18n %}
 {% block salutation %}{% trans "Dear Reviewer," %}{% endblock %}
 
-{% block content %}
-    {% trans "New applications have been added to your review list." %}
-    {% for submission in sources %}
+{% block content %}{# fmt:off #}
+{% trans "New applications have been added to your review list." %}
+{% for submission in sources %}
+{% trans "Title" %}: {{ submission.title }}
+{% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ submission.get_absolute_url }}
+{% endfor %}
 
-        {% trans "Title" %}: {{ submission.title }}
-        {% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ submission.get_absolute_url }}
-    {% endfor %}
-
-{% endblock %}
+{% endblock %}{# fmt:on #}
