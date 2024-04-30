@@ -27,7 +27,7 @@ def project_can_have_report(project):
 
 @register.simple_tag
 def user_can_skip_pafapproval_process(project, user):
-    if project.status == DRAFT and user.is_apply_staff:
+    if project.status == DRAFT and (user.is_apply_staff or user.is_apply_staff_admin):
         return no_pafreviewer_role()
     return False
 
@@ -46,7 +46,7 @@ def user_next_step_on_project(project, user, request=None):
             if no_pafreviewer_role:
                 return {
                     "heading": _("To do"),
-                    "text": _("Move project to next phase"),
+                    "text": _("Move project to next stage"),
                 }
             else:
                 if project.paf_approvals.exists():
