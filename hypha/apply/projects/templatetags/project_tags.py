@@ -43,7 +43,7 @@ def user_next_step_on_project(project, user, request=None):
                     "heading": _("To do"),
                     "text": _("Fill in the Approval Form(PAF)"),
                 }
-            if no_pafreviewer_role:
+            if no_pafreviewer_role():
                 return {
                     "heading": _("To do"),
                     "text": _("Move project to next stage"),
