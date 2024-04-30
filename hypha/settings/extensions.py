@@ -1,4 +1,4 @@
 # Add enabled extensions here
-EXTENSIONS_APPS = []
+EXTENSION_APPS = ["extensions.ots.message_configuration"]
 
 # Add configuration for extensions below here
