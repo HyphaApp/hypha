@@ -1795,7 +1795,10 @@ class SubmissionResultView(SubmissionStatsMixin, FilterView):
             submission_values = self.object_list.value()
             count_values = submission_values.get("value__count")
             total_value = intcomma(submission_values.get("value__sum"))
-            average_value = intcomma(round(submission_values.get("value__avg")))
+            if value := submission_values.get("value__avg"):
+                average_value = intcomma(round(value))
+            else:
+                average_value = 0
         else:
             count_values = 0
             total_value = 0
