@@ -3,9 +3,9 @@
 {% load i18n %}
 {% block salutation %}{% trans "Dear Partner," %}{% endblock %}
 
-{% block content %}
-    {% trans "You have been added as a partner the following submission." %}
+{% block content %}{# fmt:off #}
+{% trans "You have been added as a partner the following submission." %}
 
-    {% trans "Title" %}: {{ submission.title }}
-    {% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ submission.get_absolute_url }}
-{% endblock %}
+{% trans "Title" %}: {{ submission.title }}
+{% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ submission.get_absolute_url }}
+{% endblock %}{# fmt:on #}

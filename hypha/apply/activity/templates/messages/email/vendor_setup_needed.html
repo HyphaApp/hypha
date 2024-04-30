@@ -1,12 +1,13 @@
 {% extends "messages/email/applicant_base.html" %}
 
 {% load i18n %}
-{% block content %}
-    {% blocktrans %}A Project has been created for your submission on {{ ORG_SHORT_NAME }}.{% endblocktrans %}
 
-    {% trans "Next step is to complete Contracting Information by visiting project detail page." %}
+{% block content %}{# fmt:off #}
+{% blocktrans %}A Project has been created for your submission on {{ ORG_SHORT_NAME }}.{% endblocktrans %}
 
-    {% trans "Project" %}: {{ source.title }}
-    {% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
-    {% trans "Submission" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.submission.get_absolute_url }}
-{% endblock %}
+{% trans "Next step is to complete Contracting Information by visiting project detail page." %}
+
+{% trans "Project" %}: {{ source.title }}
+{% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
+{% trans "Submission" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.submission.get_absolute_url }}
+{% endblock %}{# fmt:on #}

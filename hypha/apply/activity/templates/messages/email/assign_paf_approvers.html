@@ -3,12 +3,12 @@
 {% load i18n %}
 {% block salutation %}{% endblock %}
 
-{% block content %}
-    {% trans "Project documents are ready to be assigned for approval." %}
+{% block content %}{# fmt:off #}
+{% trans "Project documents are ready to be assigned for approval." %}
 
-    {% trans "Title" %}: {{ source.title }}
-    {% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{% url 'apply:projects:approval' pk=source.pk %}
-    {% trans "Original Submission" %}: {{ request.scheme }}://{{ request.get_host }}{% url 'apply:submissions:simplified' pk=source.submission.pk %}
+{% trans "Title" %}: {{ source.title }}
+{% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{% url 'apply:projects:approval' pk=source.pk %}
+{% trans "Original Submission" %}: {{ request.scheme }}://{{ request.get_host }}{% url 'apply:submissions:simplified' pk=source.submission.pk %}
 
-    {% blocktrans with lead=source.lead email=source.lead.email %}Please contact {{ lead }} - {{ email }} if you have any questions.{% endblocktrans %}
-{% endblock %}
+{% blocktrans with lead=source.lead email=source.lead.email %}Please contact {{ lead }} - {{ email }} if you have any questions.{% endblocktrans %}
+{% endblock %}{# fmt:on #}

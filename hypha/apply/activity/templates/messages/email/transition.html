@@ -1,6 +1,9 @@
 {% extends "messages/email/applicant_base.html" %}
 
 {% load i18n %}
-{% block content %}{% blocktrans with old_status=old_phase.public_name new_status=source.phase.public_name %}Your application is now in "{{ new_status }}" status (progressed from "{{ old_status }}").{% endblocktrans %}
 
-    {% trans "Please submit any questions related to your application here" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}#communications{% endblock %}
+{% block content %}{# fmt:off #}
+{% blocktrans with old_status=old_phase.public_name new_status=source.phase.public_name %}Your application is now in "{{ new_status }}" status (progressed from "{{ old_status }}").{% endblocktrans %}
+
+{% trans "Please submit any questions related to your application here" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}#communications
+{% endblock %}{# fmt:on #}

@@ -1,19 +1,20 @@
 {% extends "messages/email/applicant_base.html" %}
 
 {% load i18n invoice_tools %}
-{% block content %}
-    {% display_invoice_status_for_user source.user invoice as invoice_status %}
-    {% blocktrans with title=source.title date_from=invoice.date_from date_to=invoice.date_to %}An {{ ORG_SHORT_NAME }} staff member has updated your invoice for {{ title }} for period {{ date_from }} to {{ date_to }}.{% endblocktrans %}
 
-    {% blocktrans %}It is now {{ invoice_status }}.{% endblocktrans %}
+{% block content %}{# fmt:off #}
+{% display_invoice_status_for_user source.user invoice as invoice_status %}
+{% blocktrans with title=source.title date_from=invoice.date_from date_to=invoice.date_to %}An {{ ORG_SHORT_NAME }} staff member has updated your invoice for {{ title }} for period {{ date_from }} to {{ date_to }}.{% endblocktrans %}
 
-    {% if has_changes_requested and invoice.comment %}
-        {% trans "The staff member left this comment" %}:
+{% blocktrans %}It is now {{ invoice_status }}.{% endblocktrans %}
 
-        {{ invoice.comment }}
-    {% endif %}
+{% if has_changes_requested and invoice.comment %}
+{% trans "The staff member left this comment" %}:
 
-    {% trans "Invoice Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ invoice.get_absolute_url }}
-    {% trans "Title" %}: {{ source.title }}
-    {% trans "Project Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
-{% endblock %}
+>  {{ invoice.comment }}
+{% endif %}
+
+{% trans "Invoice Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ invoice.get_absolute_url }}
+{% trans "Title" %}: {{ source.title }}
+{% trans "Project Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
+{% endblock %}{# fmt:on #}

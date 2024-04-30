@@ -1,14 +1,14 @@
 {% extends "messages/email/applicant_base.html" %}
 
 {% load i18n %}
-{% block content %}
 
-    {% blocktrans %}An {{ ORG_SHORT_NAME }} staff member has marked a report as {% endblocktrans %}{% if report.skipped %}{% trans "no longer required" %}{% else %}{% trans "required" %}{% endif %}{% blocktrans with title=source.title start_date=report.start_date end_date=report.end_date %} for {{ title }} for period {{ start_date }} to {{ end_date }}.{% endblocktrans %}
+{% block content %}{# fmt:off #}
+{% blocktrans %}An {{ ORG_SHORT_NAME }} staff member has marked a report as {% endblocktrans %}{% if report.skipped %}{% trans "no longer required" %}{% else %}{% trans "required" %}{% endif %}{% blocktrans with title=source.title start_date=report.start_date end_date=report.end_date %} for {{ title }} for period {{ start_date }} to {{ end_date }}.{% endblocktrans %}
 
-    {% if not report.skipped %}
-        {% trans "This report was previously not required. Please ensure you now complete the report." %}
-    {% endif %}
+{% if not report.skipped %}
+    {% trans "This report was previously not required. Please ensure you now complete the report." %}
+{% endif %}
 
-    {% trans "Title" %}: {{ source.title }}
-    {% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
-{% endblock %}
+{% trans "Title" %}: {{ source.title }}
+{% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
+{% endblock %}{# fmt:on #}
