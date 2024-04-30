@@ -30,21 +30,6 @@
                     {% endif %}
                 </a>
             {% endif %}
-            {% user_can_skip_pafapproval_process project user as can_skip_paf_process %}
-            {% if can_skip_paf_process %}
-                <a data-fancybox
-                   data-src="#continue-to-next-phase"
-                   class="button button--project-action"
-                   href="#">
-                    {% trans "Continue to next phase" %}
-                </a>
-                <div class="modal" id="continue-to-next-phase">
-                    <h4 class="modal__project-header-bar">{% trans "Continue to next phase" %}</h4>
-                    <p>{% trans "Are you done with PAF and sure to move to the next phase, this action can not be reverted" %}</p>
-                    {% trans "Continue" as submit %}
-                    {% include 'funds/includes/delegated_form_base.html' with form=skip_paf_approval_form value=submit %}
-                </div>
-            {% endif %}
             {% user_can_update_paf_approvers object user request as can_update_paf_approvers %}
             {% user_can_assign_approvers_to_project object user request as can_assign_paf_approvers %}
             {% if can_update_paf_approvers %}
