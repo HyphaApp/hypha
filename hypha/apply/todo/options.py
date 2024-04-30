@@ -4,6 +4,7 @@ from django.utils.translation import gettext as _
 
 from hypha.apply.activity.adapters.utils import link_to
 
+SUBMISSION_DRAFT = "submission_draft"
 DETERMINATION_DRAFT = "determination_draft"
 REVIEW_DRAFT = "review_draft"
 PROJECT_WAITING_PAF = "project_waiting_paf"
@@ -21,6 +22,7 @@ INVOICE_WAITING_PAID = "invoice_waiting_paid"
 REPORT_DUE = "report_due"
 
 TASKS_CODE_CHOICES = (
+    (SUBMISSION_DRAFT, "Submission Draft"),
     (DETERMINATION_DRAFT, "Determination draft"),
     (REVIEW_DRAFT, "Review Draft"),
     (PROJECT_WAITING_PAF, "Project waiting PAF"),
@@ -42,6 +44,14 @@ TASKS_CODE_CHOICES = (
 template_map = {
     # SUBMISSIONS ACTIONS
     # :todo: actions for mupltiple stages of submission
+    SUBMISSION_DRAFT: {
+        "text": _(
+            'A Submission draft [<span class=" truncate inline-block w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting to be submitted'
+        ),
+        "icon": "edit-draft",
+        "url": "{link}",
+        "type": _("Draft"),
+    },
     DETERMINATION_DRAFT: {
         "text": _(
             'Determination draft for submission [<span class=" truncate inline-block max-w-32 align-bottom ">{related.submission.title}</span>]({link} "{related.submission.title}") is waiting to be submitted',
