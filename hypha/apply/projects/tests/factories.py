@@ -8,6 +8,7 @@ from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
 from hypha.apply.stream_forms.testing.factories import (
     FormDataFactory,
     FormFieldsBlockFactory,
+    NonFileFormFieldsBlockFactory,
 )
 from hypha.apply.users.groups import APPROVER_GROUP_NAME, STAFF_GROUP_NAME
 from hypha.apply.users.tests.factories import GroupFactory, StaffFactory, UserFactory
@@ -24,6 +25,7 @@ from ..models.project import (
     PAFReviewersRole,
     Project,
     ProjectApprovalForm,
+    ProjectReportForm,
     ProjectSOWForm,
 )
 from ..models.report import Report, ReportConfig, ReportVersion
@@ -82,6 +84,14 @@ class ProjectSOWFormFactory(factory.django.DjangoModelFactory):
 
 class ProjectApprovalFormDataFactory(FormDataFactory):
     field_factory = FormFieldsBlockFactory
+
+
+class ProjectReportFormFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = ProjectReportForm
+
+    name = factory.Faker("word")
+    form_fields = FormFieldsBlockFactory
 
 
 class ProjectFactory(factory.django.DjangoModelFactory):
@@ -200,11 +210,19 @@ class ReportConfigFactory(factory.django.DjangoModelFactory):
         )
 
 
+class ReportVersionDataFactory(FormDataFactory):
+    field_factory = NonFileFormFieldsBlockFactory
+
+
 class ReportVersionFactory(factory.django.DjangoModelFactory):
     report = factory.SubFactory("hypha.apply.projects.tests.factories.ReportFactory")
     submitted = factory.LazyFunction(timezone.now)
-    public_content = factory.Faker("paragraph")
-    private_content = factory.Faker("paragraph")
+    form_fields = NonFileFormFieldsBlockFactory
+    # TODO: is it better to keep the following link between form_data and form_fields or to remove it?
+    form_data = factory.SubFactory(
+        ReportVersionDataFactory,
+        form_fields=factory.SelfAttribute("..form_fields"),
+    )
     draft = True
 
     class Meta:

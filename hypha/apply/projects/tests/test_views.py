@@ -1,6 +1,7 @@
 import json
 from io import BytesIO
 
+import factory
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
@@ -23,6 +24,7 @@ from hypha.apply.users.tests.factories import (
 from hypha.apply.utils.testing.tests import BaseViewTestCase
 from hypha.home.factories import ApplySiteFactory
 
+from ...funds.models.forms import ApplicationBaseProjectReportForm
 from ..files import get_files
 from ..forms import SetPendingForm
 from ..models.payment import CHANGES_REQUESTED_BY_STAFF, SUBMITTED
@@ -35,6 +37,7 @@ from ..models.project import (
     INTERNAL_APPROVAL,
     INVOICING_AND_REPORTING,
     REQUEST_CHANGE,
+    ProjectReportForm,
     ProjectSettings,
 )
 from ..views.project import ContractsMixin, ProjectDetailApprovalView
@@ -50,6 +53,20 @@ from .factories import (
     ReportVersionFactory,
     SupportingDocumentFactory,
 )
+
+# A boilerplate stream form for Project Report tests below.
+FORM_FIELDS = [
+    {
+        "id": "012a4f29-0882-4b1c-b567-aede1b601d4a",
+        "type": "number",
+        "value": {
+            "required": True,
+            "help_text": "",
+            "field_label": "How many folks did you reach?",
+            "default_value": "",
+        },
+    }
+]
 
 
 class TestUpdateLeadView(BaseViewTestCase):
@@ -1189,6 +1206,15 @@ class TestStaffSubmitReport(BaseViewTestCase):
     base_view_name = "edit"
     url_name = "funds:projects:reports:{}"
     user_factory = StaffFactory
+    report_form_id = None
+
+    def setUp(self):
+        super().setUp()
+        report_form, _ = ProjectReportForm.objects.get_or_create(
+            name=factory.Faker("word"),
+            form_fields=FORM_FIELDS,
+        )
+        self.report_form_id = report_form.id
 
     def get_kwargs(self, instance):
         return {
@@ -1197,11 +1223,19 @@ class TestStaffSubmitReport(BaseViewTestCase):
 
     def test_get_page_for_inprogress_project(self):
         report = ReportFactory(project__status=INVOICING_AND_REPORTING)
+        ApplicationBaseProjectReportForm.objects.get_or_create(
+            application_id=report.project.submission.page.specific.id,
+            form_id=self.report_form_id,
+        )
         response = self.get_page(report)
         self.assertContains(response, report.project.title)
 
     def test_cant_get_page_for_closing_and_complete_project(self):
         report = ReportFactory(project__status=CLOSING)
+        ApplicationBaseProjectReportForm.objects.get_or_create(
+            application_id=report.project.submission.page.specific.id,
+            form_id=self.report_form_id,
+        )
         response = self.get_page(report)
         self.assertEqual(response.status_code, 403)
 
@@ -1211,39 +1245,72 @@ class TestStaffSubmitReport(BaseViewTestCase):
 
     def test_submit_report(self):
         report = ReportFactory(project__status=INVOICING_AND_REPORTING)
-        response = self.post_page(report, {"public_content": "Some text"})
+        ApplicationBaseProjectReportForm.objects.get_or_create(
+            application_id=report.project.submission.page.specific.id,
+            form_id=self.report_form_id,
+        )
+        response = self.post_page(
+            report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "11"}
+        )
         report.refresh_from_db()
         self.assertRedirects(
             response, self.absolute_url(report.project.get_absolute_url())
         )
-        self.assertEqual(report.versions.first().public_content, "Some text")
+        self.assertEqual(
+            report.versions.first().form_data,
+            {"012a4f29-0882-4b1c-b567-aede1b601d4a": "11"},
+        )
         self.assertEqual(report.versions.first(), report.current)
         self.assertEqual(report.current.author, self.user)
         self.assertIsNone(report.draft)
 
     def test_cant_submit_report_for_closing_and_complete_project(self):
         report = ReportFactory(project__status=CLOSING)
-        response = self.post_page(report, {"public_content": "Some text"})
+        ApplicationBaseProjectReportForm.objects.get_or_create(
+            application_id=report.project.submission.page.specific.id,
+            form_id=self.report_form_id,
+        )
+        response = self.post_page(
+            report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "13"}
+        )
         self.assertEqual(response.status_code, 403)
 
         report = ReportFactory(project__status=COMPLETE)
-        response = self.post_page(report, {"public_content": "Some text"})
+        ApplicationBaseProjectReportForm.objects.get_or_create(
+            application_id=report.project.submission.page.specific.id,
+            form_id=self.report_form_id,
+        )
+        response = self.post_page(
+            report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "13"}
+        )
         self.assertEqual(response.status_code, 403)
 
     def test_submit_private_report(self):
         report = ReportFactory(project__status=INVOICING_AND_REPORTING)
-        response = self.post_page(report, {"private_content": "Some text"})
-        report.refresh_from_db()
-        self.assertRedirects(
-            response, self.absolute_url(report.project.get_absolute_url())
+        # Link the single-field report_form to the Fund associated with this Submission.
+        ApplicationBaseProjectReportForm.objects.get_or_create(
+            application_id=report.project.submission.page.specific.id,
+            form_id=self.report_form_id,
         )
-        self.assertEqual(report.versions.first().private_content, "Some text")
+        response = self.post_page(
+            report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "17"}
+        )
+        report.refresh_from_db()
+        self.assertEquals(response.status_code, 200)
+        self.assertEqual(
+            report.versions.first().form_data,
+            {"012a4f29-0882-4b1c-b567-aede1b601d4a": "17"},
+        )
         self.assertEqual(report.versions.first(), report.current)
         self.assertEqual(report.current.author, self.user)
         self.assertIsNone(report.draft)
 
     def test_cant_submit_blank_report(self):
         report = ReportFactory(project__status=INVOICING_AND_REPORTING)
+        ApplicationBaseProjectReportForm.objects.get_or_create(
+            application_id=report.project.submission.page.specific.id,
+            form_id=self.report_form_id,
+        )
         response = self.post_page(report, {})
         report.refresh_from_db()
         self.assertEqual(response.status_code, 200)
@@ -1251,62 +1318,94 @@ class TestStaffSubmitReport(BaseViewTestCase):
 
     def test_save_report_draft(self):
         report = ReportFactory(project__status=INVOICING_AND_REPORTING)
+        ApplicationBaseProjectReportForm.objects.get_or_create(
+            application_id=report.project.submission.page.specific.id,
+            form_id=self.report_form_id,
+        )
         response = self.post_page(
-            report, {"public_content": "Some text", "save": "Save"}
+            report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "19", "save": "Save"}
         )
         report.refresh_from_db()
-        self.assertRedirects(
-            response, self.absolute_url(report.project.get_absolute_url())
+        self.assertEquals(response.status_code, 200)
+        self.assertEqual(
+            report.versions.first().form_data,
+            {"012a4f29-0882-4b1c-b567-aede1b601d4a": "19"},
         )
-        self.assertEqual(report.versions.first().public_content, "Some text")
         self.assertEqual(report.versions.first(), report.draft)
         self.assertIsNone(report.current)
 
     def test_save_report_with_draft(self):
         report = ReportFactory(is_draft=True, project__status=INVOICING_AND_REPORTING)
-        self.assertEqual(report.versions.first(), report.draft)
-        response = self.post_page(report, {"public_content": "Some text"})
-        report.refresh_from_db()
-        self.assertRedirects(
-            response, self.absolute_url(report.project.get_absolute_url())
+        ApplicationBaseProjectReportForm.objects.get_or_create(
+            application_id=report.project.submission.page.specific.id,
+            form_id=self.report_form_id,
         )
-        self.assertEqual(report.versions.last().public_content, "Some text")
+        self.assertEqual(report.versions.first(), report.draft)
+        response = self.post_page(
+            report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "23"}
+        )
+        report.refresh_from_db()
+        self.assertEquals(response.status_code, 200)
+        self.assertEqual(
+            report.versions.last().form_data,
+            {"012a4f29-0882-4b1c-b567-aede1b601d4a": "23"},
+        )
         self.assertEqual(report.versions.last(), report.current)
         self.assertIsNone(report.draft)
 
     def test_edit_submitted_report(self):
         report = ReportFactory(
-            is_submitted=True, project__status=INVOICING_AND_REPORTING
+            is_submitted=True,
+            project__status=INVOICING_AND_REPORTING,
+            version__form_fields=json.dumps(FORM_FIELDS),
+        )
+        ApplicationBaseProjectReportForm.objects.get_or_create(
+            application_id=report.project.submission.page.specific.id,
+            form_id=self.report_form_id,
         )
         self.assertEqual(report.versions.first(), report.current)
         response = self.post_page(
-            report, {"public_content": "Some text", "save": " Save"}
+            report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "29", "save": " Save"}
         )
         report.refresh_from_db()
         self.assertRedirects(
             response, self.absolute_url(report.project.get_absolute_url())
         )
-        self.assertEqual(report.versions.last().public_content, "Some text")
+        self.assertEqual(
+            report.versions.last().form_data["012a4f29-0882-4b1c-b567-aede1b601d4a"],
+            "29",
+        )
         self.assertEqual(report.versions.last(), report.draft)
         self.assertEqual(report.versions.first(), report.current)
 
     def test_resubmit_submitted_report(self):
         yesterday = timezone.now() - relativedelta(days=1)
         version = ReportVersionFactory(
-            report__project__status=INVOICING_AND_REPORTING, submitted=yesterday
+            report__project__status=INVOICING_AND_REPORTING,
+            submitted=yesterday,
+            form_fields=json.dumps(FORM_FIELDS),
         )
         report = version.report
+        ApplicationBaseProjectReportForm.objects.get_or_create(
+            application_id=report.project.submission.page.specific.id,
+            form_id=self.report_form_id,
+        )
         report.current = version
         report.submitted = version.submitted
         report.save()
         self.assertEqual(report.submitted, yesterday)
         self.assertEqual(report.versions.first(), report.current)
-        response = self.post_page(report, {"public_content": "Some text"})
+        response = self.post_page(
+            report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "31"}
+        )
         report.refresh_from_db()
         self.assertRedirects(
             response, self.absolute_url(report.project.get_absolute_url())
         )
-        self.assertEqual(report.versions.last().public_content, "Some text")
+        self.assertEqual(
+            report.versions.last().form_data,
+            {"012a4f29-0882-4b1c-b567-aede1b601d4a": "31"},
+        )
         self.assertEqual(report.versions.last(), report.current)
         self.assertIsNone(report.draft)
         self.assertEqual(report.submitted.date(), yesterday.date())
@@ -1318,11 +1417,17 @@ class TestStaffSubmitReport(BaseViewTestCase):
             is_submitted=True,
             project__status=INVOICING_AND_REPORTING,
         )
+        ApplicationBaseProjectReportForm.objects.get_or_create(
+            application_id=submitted_report.project.submission.page.specific.id,
+            form_id=self.report_form_id,
+        )
         future_report = ReportFactory(
             end_date=timezone.now() + relativedelta(days=3),
             project=submitted_report.project,
         )
-        response = self.post_page(future_report, {"public_content": "Some text"})
+        response = self.post_page(
+            future_report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "37"}
+        )
         self.assertEqual(response.status_code, 403)
 
 
@@ -1330,6 +1435,15 @@ class TestApplicantSubmitReport(BaseViewTestCase):
     base_view_name = "edit"
     url_name = "funds:projects:reports:{}"
     user_factory = ApplicantFactory
+    report_form_id = None
+
+    def setUp(self):
+        super().setUp()
+        report_form, _ = ProjectReportForm.objects.get_or_create(
+            name=factory.Faker("word"),
+            form_fields=FORM_FIELDS,
+        )
+        self.report_form_id = report_form.id
 
     def get_kwargs(self, instance):
         return {
@@ -1340,20 +1454,36 @@ class TestApplicantSubmitReport(BaseViewTestCase):
         report = ReportFactory(
             project__status=INVOICING_AND_REPORTING, project__user=self.user
         )
+        ApplicationBaseProjectReportForm.objects.get_or_create(
+            application_id=report.project.submission.page.specific.id,
+            form_id=self.report_form_id,
+        )
         response = self.get_page(report)
         self.assertContains(response, report.project.title)
 
     def test_cant_get_own_report_for_closing_and_complete_project(self):
         report = ReportFactory(project__status=CLOSING, project__user=self.user)
+        ApplicationBaseProjectReportForm.objects.get_or_create(
+            application_id=report.project.submission.page.specific.id,
+            form_id=self.report_form_id,
+        )
         response = self.get_page(report)
         self.assertEqual(response.status_code, 403)
 
         report = ReportFactory(project__status=COMPLETE, project__user=self.user)
+        ApplicationBaseProjectReportForm.objects.get_or_create(
+            application_id=report.project.submission.page.specific.id,
+            form_id=self.report_form_id,
+        )
         response = self.get_page(report)
         self.assertEqual(response.status_code, 403)
 
     def test_cant_get_other_report(self):
         report = ReportFactory(project__status=INVOICING_AND_REPORTING)
+        ApplicationBaseProjectReportForm.objects.get_or_create(
+            application_id=report.project.submission.page.specific.id,
+            form_id=self.report_form_id,
+        )
         response = self.get_page(report)
         self.assertEqual(response.status_code, 403)
 
@@ -1361,12 +1491,21 @@ class TestApplicantSubmitReport(BaseViewTestCase):
         report = ReportFactory(
             project__status=INVOICING_AND_REPORTING, project__user=self.user
         )
-        response = self.post_page(report, {"public_content": "Some text"})
+        ApplicationBaseProjectReportForm.objects.get_or_create(
+            application_id=report.project.submission.page.specific.id,
+            form_id=self.report_form_id,
+        )
+        response = self.post_page(
+            report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "37"}
+        )
         report.refresh_from_db()
         self.assertRedirects(
             response, self.absolute_url(report.project.get_absolute_url())
         )
-        self.assertEqual(report.versions.first().public_content, "Some text")
+        self.assertEqual(
+            report.versions.first().form_data,
+            {"012a4f29-0882-4b1c-b567-aede1b601d4a": "37"},
+        )
         self.assertEqual(report.versions.first(), report.current)
         self.assertEqual(report.current.author, self.user)
 
@@ -1374,12 +1513,19 @@ class TestApplicantSubmitReport(BaseViewTestCase):
         report = ReportFactory(
             project__status=INVOICING_AND_REPORTING, project__user=self.user
         )
-        response = self.post_page(report, {"private_content": "Some text"})
-        report.refresh_from_db()
-        self.assertRedirects(
-            response, self.absolute_url(report.project.get_absolute_url())
+        ApplicationBaseProjectReportForm.objects.get_or_create(
+            application_id=report.project.submission.page.specific.id,
+            form_id=self.report_form_id,
         )
-        self.assertEqual(report.versions.first().private_content, "Some text")
+        response = self.post_page(
+            report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "41"}
+        )
+        report.refresh_from_db()
+        self.assertEquals(response.status_code, 200)
+        self.assertEqual(
+            report.versions.first().form_data,
+            {"012a4f29-0882-4b1c-b567-aede1b601d4a": "41"},
+        )
         self.assertEqual(report.versions.first(), report.current)
         self.assertEqual(report.current.author, self.user)
         self.assertIsNone(report.draft)
@@ -1387,6 +1533,10 @@ class TestApplicantSubmitReport(BaseViewTestCase):
     def test_cant_submit_blank_report(self):
         report = ReportFactory(
             project__status=INVOICING_AND_REPORTING, project__user=self.user
+        )
+        ApplicationBaseProjectReportForm.objects.get_or_create(
+            application_id=report.project.submission.page.specific.id,
+            form_id=self.report_form_id,
         )
         response = self.post_page(report, {})
         report.refresh_from_db()
@@ -1397,14 +1547,21 @@ class TestApplicantSubmitReport(BaseViewTestCase):
         report = ReportFactory(
             project__status=INVOICING_AND_REPORTING, project__user=self.user
         )
+        ApplicationBaseProjectReportForm.objects.get_or_create(
+            application_id=report.project.submission.page.specific.id,
+            form_id=self.report_form_id,
+        )
         response = self.post_page(
-            report, {"public_content": "Some text", "save": "Save"}
+            report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "43", "save": "Save"}
         )
         report.refresh_from_db()
         self.assertRedirects(
             response, self.absolute_url(report.project.get_absolute_url())
         )
-        self.assertEqual(report.versions.first().public_content, "Some text")
+        self.assertEqual(
+            report.versions.first().form_data,
+            {"012a4f29-0882-4b1c-b567-aede1b601d4a": "43"},
+        )
         self.assertEqual(report.versions.first(), report.draft)
         self.assertIsNone(report.current)
 
@@ -1414,13 +1571,22 @@ class TestApplicantSubmitReport(BaseViewTestCase):
             is_draft=True,
             project__user=self.user,
         )
+        ApplicationBaseProjectReportForm.objects.get_or_create(
+            application_id=report.project.submission.page.specific.id,
+            form_id=self.report_form_id,
+        )
         self.assertEqual(report.versions.first(), report.draft)
-        response = self.post_page(report, {"public_content": "Some text"})
+        response = self.post_page(
+            report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "47"}
+        )
         report.refresh_from_db()
         self.assertRedirects(
             response, self.absolute_url(report.project.get_absolute_url())
         )
-        self.assertEqual(report.versions.last().public_content, "Some text")
+        self.assertEqual(
+            report.versions.last().form_data,
+            {"012a4f29-0882-4b1c-b567-aede1b601d4a": "47"},
+        )
         self.assertEqual(report.versions.last(), report.current)
         self.assertIsNone(report.draft)
 
@@ -1431,6 +1597,10 @@ class TestApplicantSubmitReport(BaseViewTestCase):
             is_submitted=True,
             project__user=self.user,
         )
+        ApplicationBaseProjectReportForm.objects.get_or_create(
+            application_id=report.project.submission.page.specific.id,
+            form_id=self.report_form_id,
+        )
         self.assertEqual(report.versions.first(), report.current)
         response = self.post_page(
             report, {"public_content": "Some text", "save": " Save"}
@@ -1439,7 +1609,13 @@ class TestApplicantSubmitReport(BaseViewTestCase):
 
     def test_cant_submit_other_report(self):
         report = ReportFactory(project__status=INVOICING_AND_REPORTING)
-        response = self.post_page(report, {"public_content": "Some text"})
+        ApplicationBaseProjectReportForm.objects.get_or_create(
+            application_id=report.project.submission.page.specific.id,
+            form_id=self.report_form_id,
+        )
+        response = self.post_page(
+            report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "53"}
+        )
         self.assertEqual(response.status_code, 403)
 
 

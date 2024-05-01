@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
+from django_file_form.uploaded_file import PlaceholderUploadedFile
 
 from .constants import (
     INT_DECLINED,
@@ -190,3 +191,14 @@ def get_invoice_table_status(invoice_status, is_applicant=False):
         return INT_DECLINED
     if invoice_status == PAYMENT_FAILED:
         return INT_PAYMENT_FAILED
+
+
+def get_placeholder_file(initial_file):
+    if not isinstance(initial_file, list):
+        return PlaceholderUploadedFile(
+            initial_file.filename, size=initial_file.size, file_id=initial_file.name
+        )
+    return [
+        PlaceholderUploadedFile(f.filename, size=f.size, file_id=f.name)
+        for f in initial_file
+    ]

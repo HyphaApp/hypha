@@ -1,6 +1,6 @@
+import copy
 import datetime
 import io
-from copy import copy
 
 from django.conf import settings
 from django.contrib import messages
@@ -29,7 +29,6 @@ from django.views.generic import (
     UpdateView,
 )
 from django.views.generic.detail import SingleObjectMixin
-from django_file_form.models import PlaceholderUploadedFile
 from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
 from docx import Document
@@ -67,6 +66,7 @@ from hypha.apply.utils.models import PDFPageSettings
 from hypha.apply.utils.storage import PrivateMediaView
 from hypha.apply.utils.views import DelegateableView, DelegatedViewMixin, ViewDispatcher
 
+from ...funds.files import generate_private_file_path
 from ..files import get_files
 from ..filters import InvoiceListFilter, ProjectListFilter, ReportListFilter
 from ..forms import (
@@ -110,7 +110,7 @@ from ..models.project import (
 from ..models.report import Report
 from ..permissions import has_permission
 from ..tables import InvoiceListTable, ProjectsListTable, ReportListTable
-from ..utils import get_paf_status_display
+from ..utils import get_paf_status_display, get_placeholder_file
 from ..views.payment import ChangeInvoiceStatusView
 from .report import ReportFrequencyUpdate, ReportingMixin
 
@@ -371,7 +371,7 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
 
     def form_valid(self, form):
         # Fetch the old lead from the database
-        old_lead = copy(self.get_object().lead)
+        old_lead = copy.copy(self.get_object().lead)
 
         response = super().form_valid(form)
         project = form.instance
@@ -1315,6 +1315,10 @@ class ProjectDetailView(ViewDispatcher):
 
 @method_decorator(login_required, name="dispatch")
 class ProjectPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
+    """
+    See also hypha/apply/funds/files.py
+    """
+
     raise_exception = True
 
     def dispatch(self, *args, **kwargs):
@@ -1323,10 +1327,18 @@ class ProjectPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
         return super().dispatch(*args, **kwargs)
 
     def get_media(self, *args, **kwargs):
-        document = PacketFile.objects.get(pk=kwargs["file_pk"])
-        if document.project != self.project:
-            raise Http404
-        return document.document
+        if "file_pk" in kwargs:
+            document = PacketFile.objects.get(pk=kwargs["file_pk"])
+            if document.project != self.project:
+                raise Http404
+            return document.document
+        else:
+            field_id = kwargs["field_id"]
+            file_name = kwargs["file_name"]
+            path_to_file = generate_private_file_path(
+                self.project.pk, field_id, file_name, path_start="project"
+            )
+            return self.storage.open(path_to_file)
 
     def test_func(self):
         if self.request.user.is_apply_staff:
@@ -1765,21 +1777,9 @@ class ProjectApprovalFormEditView(BaseStreamForm, UpdateView):
         initial = self.object.raw_data
         for field_id in self.object.file_field_ids:
             initial.pop(field_id + "-uploads", False)
-            initial[field_id] = self.get_placeholder_file(
-                self.object.raw_data.get(field_id)
-            )
+            initial[field_id] = get_placeholder_file(self.object.raw_data.get(field_id))
         kwargs["initial"].update(initial)
         return kwargs
-
-    def get_placeholder_file(self, initial_file):
-        if not isinstance(initial_file, list):
-            return PlaceholderUploadedFile(
-                initial_file.filename, size=initial_file.size, file_id=initial_file.name
-            )
-        return [
-            PlaceholderUploadedFile(f.filename, size=f.size, file_id=f.name)
-            for f in initial_file
-        ]
 
     def get_sow_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -1792,7 +1792,7 @@ class ProjectApprovalFormEditView(BaseStreamForm, UpdateView):
                 initial = sow_instance.raw_data
                 for field_id in sow_instance.file_field_ids:
                     initial.pop(field_id + "-uploads", False)
-                    initial[field_id] = self.get_placeholder_file(
+                    initial[field_id] = get_placeholder_file(
                         sow_instance.raw_data.get(field_id)
                     )
                 initial["project"] = self.object

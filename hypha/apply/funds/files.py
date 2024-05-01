@@ -5,36 +5,57 @@ from django.urls import reverse
 from hypha.apply.stream_forms.files import StreamFieldFile
 
 
-def generate_submission_file_path(submission_id, field_id, file_name):
-    path = os.path.join("submission", str(submission_id), str(field_id))
+def generate_private_file_path(entity_id, field_id, file_name, path_start="submission"):
+    path = os.path.join(path_start, str(entity_id), str(field_id))
     if file_name.startswith(path):
         return file_name
 
     return os.path.join(path, file_name)
 
 
-class SubmissionStreamFieldFile(StreamFieldFile):
-    def get_submission_id(self):
-        from hypha.apply.funds.models import ApplicationRevision
+class PrivateStreamFieldFile(StreamFieldFile):
+    """
+    Represents a file from a Wagtail/Hypha Stream Form block.
+    Aside: with imports in their usual place, there could be circular imports. Deferring or delaying import to methods
+    resolves the issue.
+    """
 
-        submission_id = self.instance.pk
+    def get_entity_id(self):
+        from hypha.apply.funds.models import ApplicationRevision
+        from hypha.apply.projects.models import ReportVersion
+
+        entity_id = self.instance.pk
 
         if isinstance(self.instance, ApplicationRevision):
-            submission_id = self.instance.submission.pk
-        return submission_id
+            entity_id = self.instance.submission.pk
+        elif isinstance(self.instance, ReportVersion):
+            # Reports are project documents.
+            entity_id = self.instance.report.project.pk
+        return entity_id
 
     def generate_filename(self):
-        return generate_submission_file_path(
-            self.get_submission_id(), self.field.id, self.name
+        from hypha.apply.projects.models import ReportVersion
+
+        path_start = "submission"
+        if isinstance(self.instance, ReportVersion):
+            path_start = "project"
+        return generate_private_file_path(
+            self.get_entity_id(),
+            self.field.id,
+            self.name,
+            path_start=path_start,
         )
 
     @property
     def url(self):
-        return reverse(
-            "apply:submissions:serve_private_media",
-            kwargs={
-                "pk": self.get_submission_id(),
-                "field_id": self.field.id,
-                "file_name": self.basename,
-            },
-        )
+        from hypha.apply.projects.models import ReportVersion
+
+        view_name = "apply:submissions:serve_private_media"
+        kwargs = {
+            "pk": self.get_entity_id(),
+            "field_id": self.field.id,
+            "file_name": self.basename,
+        }
+        if isinstance(self.instance, ReportVersion):
+            view_name = "apply:projects:document"
+        return reverse(viewname=view_name, kwargs=kwargs)

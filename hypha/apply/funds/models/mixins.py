@@ -14,7 +14,7 @@ from hypha.apply.stream_forms.blocks import (
 from hypha.apply.utils.blocks import SingleIncludeMixin
 from hypha.apply.utils.storage import PrivateStorage
 
-from ..files import SubmissionStreamFieldFile
+from ..files import PrivateStreamFieldFile
 
 __all__ = ["AccessFormData"]
 
@@ -31,7 +31,7 @@ class AccessFormData:
          - form_fields > streamfield containing the original form fields
     """
 
-    stream_file_class = SubmissionStreamFieldFile
+    stream_file_class = PrivateStreamFieldFile
     storage_class = PrivateStorage
 
     @property
