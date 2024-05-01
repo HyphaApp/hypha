@@ -1,0 +1,13 @@
+{% load i18n %}
+
+{% trans "Variables that will get replaced:" %}
+
+<ul>
+  <li>{% trans "SUBMISSION_URL: When the submission is the subject of the email, this will be the URL in the hypha system" %}
+</ul>
+
+{% for id, default in self.email_messages.items %}
+<div class="is-hidden" attr-email-id="{{ id }}">
+  {{ default }}
+</div>
+{% endfor %}

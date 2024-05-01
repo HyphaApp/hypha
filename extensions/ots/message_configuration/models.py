@@ -1,11 +1,32 @@
 from django.db import models
+from django.template.loader import get_template
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
-from wagtail.admin.panels import FieldPanel
+from wagtail.admin.panels import FieldPanel, HelpPanel, InlinePanel
 from wagtail.contrib.settings.models import BaseSiteSetting, register_setting
 from wagtail.models import Orderable
 
 from hypha.apply.activity.options import MESSAGES
+
+
+class MessagingHelpPanel(HelpPanel):
+    messages = {
+        MESSAGES.NEW_SUBMISSION: "messages/email_defaults/new_submission.html",
+    }
+
+    def __init__(self, *args, **kwargs):
+        self.email_messages = {}
+        for message in MESSAGES:
+            if message in MessagingHelpPanel.messages:
+                self.email_messages[message] = get_template(
+                    MessagingHelpPanel.messages[message]
+                ).render()
+        super().__init__("", "messaging_help.html", classname="messaging_help_panel")
+
+    class BoundPanel(HelpPanel.BoundPanel):
+        def __init__(self, **kwargs):
+            super().__init__(**kwargs)
+            self.email_messages = self.panel.email_messages
 
 
 @register_setting
@@ -22,6 +43,18 @@ class MessagingSetting(BaseSiteSetting, ClusterableModel):
 
     class Meta:
         verbose_name = "Messaging Settings"
+
+    panels = [
+        MessagingHelpPanel(),
+        FieldPanel("email_default_send"),
+        FieldPanel("slack_default_send"),
+        FieldPanel("email_header"),
+        FieldPanel("email_footer"),
+        InlinePanel(
+            "messaging_settings",
+            classname="all_messaging_settings",
+        ),
+    ]
 
 
 class MessagingSettings(Orderable):
