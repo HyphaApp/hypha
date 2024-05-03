@@ -2,6 +2,7 @@ import json
 
 from django import template
 from django.conf import settings
+from django.utils.translation import gettext as _
 
 from hypha.apply.determinations.models import Determination
 from hypha.apply.projects.models import Contract
@@ -136,3 +137,24 @@ def source_type(value) -> str:
     if value and "submission" in value:
         return "Submission"
     return str(value).capitalize()
+
+
+@register.simple_tag(takes_context=True)
+def comment_saluatation_name(context: dict) -> str:
+    """Get the salutation name for comment notification emails
+
+    Args:
+        context: the context dict containing the activity source and recipient [`User`][hypha.apply.users.models.User] object.
+
+    Returns:
+        A salutation display name, defaults to user's full name if set otherwise uses role.
+    """
+    source = context["source"]
+    recipient = context["recipient"]
+    full_name = recipient.get_full_name()
+    if full_name:
+        return full_name
+    if recipient == source.user:
+        return _("applicant")
+    elif recipient in source.partners.all():
+        return _("partner")

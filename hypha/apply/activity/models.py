@@ -243,7 +243,7 @@ class Activity(models.Model):
     @property
     def priviledged(self):
         # Not visible to applicant
-        return self.visibility not in [APPLICANT, ALL]
+        return self.visibility not in [APPLICANT, PARTNER, APPLICANT_PARTNERS, ALL]
 
     @property
     def private(self):

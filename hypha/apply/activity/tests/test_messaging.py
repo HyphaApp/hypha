@@ -18,6 +18,7 @@ from hypha.apply.projects.tests.factories import InvoiceFactory, ProjectFactory
 from hypha.apply.review.tests.factories import ReviewFactory
 from hypha.apply.users.tests.factories import (
     ApplicantFactory,
+    PartnerFactory,
     ReviewerFactory,
     StaffFactory,
     UserFactory,
@@ -27,7 +28,16 @@ from hypha.apply.utils.testing import make_request
 from ..adapters import ActivityAdapter, AdapterBase, EmailAdapter, SlackAdapter
 from ..adapters.base import neat_related
 from ..messaging import MessengerBackend
-from ..models import ALL, TEAM, Activity, Event, Message
+from ..models import (
+    ALL,
+    APPLICANT,
+    APPLICANT_PARTNERS,
+    PARTNER,
+    TEAM,
+    Activity,
+    Event,
+    Message,
+)
 from ..options import MESSAGES
 from .factories import CommentFactory, EventFactory, MessageFactory
 
@@ -497,13 +507,63 @@ class TestEmailAdapter(AdapterMixin, TestCase):
         self.assertEqual(len(mail.outbox), 0)
 
     def test_no_email_own_comment(self):
-        application = ApplicationSubmissionFactory()
-        comment = CommentFactory(user=application.user, source=application)
+        submission = ApplicationSubmissionFactory()
+        comment = CommentFactory(user=submission.user, source=submission)
 
         self.adapter_process(
             MESSAGES.COMMENT, related=comment, user=comment.user, source=comment.source
         )
         self.assertEqual(len(mail.outbox), 0)
+
+    def test_email_partner_for_comments(self):
+        partners = PartnerFactory.create_batch(2)
+        submission = ApplicationSubmissionFactory()
+        submission.partners.set(partners)
+        comment = CommentFactory(
+            user=submission.user, source=submission, visibility=PARTNER
+        )
+
+        self.adapter_process(
+            MESSAGES.COMMENT, related=comment, user=comment.user, source=comment.source
+        )
+        self.assertEqual(len(mail.outbox), 2)
+        partner_emails = [partner.email for partner in partners]
+        outbox_emails = [email.to[0] for email in mail.outbox]
+        self.assertCountEqual(partner_emails, outbox_emails)
+
+    def test_email_applicant_partners_for_comments(self):
+        staff_commenter = StaffFactory()
+        partners = PartnerFactory.create_batch(2)
+        submission = ApplicationSubmissionFactory()
+        submission.partners.set(partners)
+        comment = CommentFactory(
+            user=staff_commenter, source=submission, visibility=APPLICANT_PARTNERS
+        )
+
+        self.adapter_process(
+            MESSAGES.COMMENT, related=comment, user=comment.user, source=comment.source
+        )
+        self.assertEqual(len(mail.outbox), 3)
+        applicant_partner_emails = [partner.email for partner in partners] + [
+            submission.user.email
+        ]
+        outbox_emails = [email.to[0] for email in mail.outbox]
+        self.assertCountEqual(applicant_partner_emails, outbox_emails)
+
+    def test_email_applicant_for_comments(self):
+        staff_commenter = StaffFactory()
+        partners = PartnerFactory.create_batch(2)
+        submission = ApplicationSubmissionFactory()
+        submission.partners.set(partners)
+        comment = CommentFactory(
+            user=staff_commenter, source=submission, visibility=APPLICANT
+        )
+
+        self.adapter_process(
+            MESSAGES.COMMENT, related=comment, user=comment.user, source=comment.source
+        )
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(submission.user.email, mail.outbox[0].to[0])
 
     def test_reviewers_email(self):
         reviewers = ReviewerFactory.create_batch(4)

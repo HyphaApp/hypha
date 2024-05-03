@@ -22,6 +22,21 @@ class MessengerBackend:
     ):
         from .models import Event
 
+        print("SEND CALL")
+        print("MESSAGE TYPE:")
+        print(message_type)
+        print("REQUEST:")
+        print(request)
+        print("USER:")
+        print(user)
+        print("RELATED:")
+        print(related)
+        print("SOURCE:")
+        print(source)
+        print("SOURCES:")
+        print(sources)
+        print()
+
         if sources is None:
             sources = []
 
