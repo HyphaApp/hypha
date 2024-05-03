@@ -111,7 +111,11 @@ from ..models.project import (
 from ..models.report import Report
 from ..permissions import has_permission
 from ..tables import InvoiceListTable, ProjectsListTable, ReportListTable
-from ..utils import get_paf_status_display, get_placeholder_file, get_project_status_choices
+from ..utils import (
+    get_paf_status_display,
+    get_placeholder_file,
+    get_project_status_choices,
+)
 from ..views.payment import ChangeInvoiceStatusView
 from .report import ReportFrequencyUpdate, ReportingMixin
 
