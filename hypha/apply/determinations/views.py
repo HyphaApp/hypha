@@ -20,8 +20,9 @@ from hypha.apply.activity.models import Activity
 from hypha.apply.funds.models import ApplicationSubmission
 from hypha.apply.funds.workflow import DETERMINATION_OUTCOMES, Concept
 from hypha.apply.projects.models import Project
+from hypha.apply.review.models import Review
 from hypha.apply.stream_forms.models import BaseStreamForm
-from hypha.apply.todo.options import DETERMINATION_DRAFT
+from hypha.apply.todo.options import DETERMINATION_DRAFT, REVIEW_DRAFT
 from hypha.apply.todo.views import (
     add_task_to_user,
     remove_tasks_for_user,
@@ -480,6 +481,14 @@ class DeterminationCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
         remove_tasks_of_related_obj_for_specific_code(
             code=DETERMINATION_DRAFT, related_obj=self.object
         )
+
+        # remove all review draft tasks for the submission's draft reviews
+        for review in Review.objects.filter(
+            submission=self.object.submission, is_draft=True
+        ):
+            remove_tasks_of_related_obj_for_specific_code(
+                code=REVIEW_DRAFT, related_obj=review
+            )
 
         messenger(
             MESSAGES.DETERMINATION_OUTCOME,

@@ -5,6 +5,7 @@ from django.utils.translation import gettext as _
 from hypha.apply.activity.adapters.utils import link_to
 
 DETERMINATION_DRAFT = "determination_draft"
+REVIEW_DRAFT = "review_draft"
 PROJECT_WAITING_PAF = "project_waiting_paf"
 PROJECT_SUBMIT_PAF = "project_submit_paf"
 PAF_REQUIRED_CHANGES = "paf_required_changes"
@@ -21,6 +22,7 @@ REPORT_DUE = "report_due"
 
 TASKS_CODE_CHOICES = (
     (DETERMINATION_DRAFT, "Determination draft"),
+    (REVIEW_DRAFT, "Review Draft"),
     (PROJECT_WAITING_PAF, "Project waiting PAF"),
     (PROJECT_SUBMIT_PAF, "Project submit PAF"),
     (PAF_REQUIRED_CHANGES, "PAF required changes"),
@@ -42,7 +44,15 @@ template_map = {
     # :todo: actions for mupltiple stages of submission
     DETERMINATION_DRAFT: {
         "text": _(
-            'Determination draft for submission [<span class=" truncate inline-block w-32 align-bottom ">{related.submission.title}</span>]({link} "{related.submission.title}") is waiting to be submitted'
+            'Determination draft for submission [<span class=" truncate inline-block max-w-32 align-bottom ">{related.submission.title}</span>]({link} "{related.submission.title}") is waiting to be submitted',
+        ),
+        "icon": "edit-draft",
+        "url": "{link}",
+        "type": _("Draft"),
+    },
+    REVIEW_DRAFT: {
+        "text": _(
+            'Review draft for submission [<span class=" truncate inline-block max-w-32 align-bottom ">{related.submission.title}</span>]({link} "{related.submission.title}") is waiting to be submitted'
         ),
         "icon": "edit-draft",
         "url": "{link}",

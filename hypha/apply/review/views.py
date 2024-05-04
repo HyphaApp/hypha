@@ -23,6 +23,8 @@ from hypha.apply.funds.workflow import INITIAL_STATE
 from hypha.apply.review.blocks import RecommendationBlock, RecommendationCommentsBlock
 from hypha.apply.review.forms import ReviewModelForm, ReviewOpinionForm
 from hypha.apply.stream_forms.models import BaseStreamForm
+from hypha.apply.todo.options import REVIEW_DRAFT
+from hypha.apply.todo.views import add_task_to_user, remove_tasks_for_user
 from hypha.apply.users.decorators import staff_required
 from hypha.apply.utils.image import generate_image_tag
 from hypha.apply.utils.views import CreateOrUpdateView
@@ -168,7 +170,17 @@ class ReviewCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
 
         response = super().form_valid(form)
 
+        if self.object.is_draft:
+            if self.request.user.is_apply_staff:
+                add_task_to_user(
+                    code=REVIEW_DRAFT, user=self.request.user, related_obj=self.object
+                )
+
         if not self.object.is_draft:
+            if self.request.user.is_apply_staff:
+                remove_tasks_for_user(
+                    code=REVIEW_DRAFT, user=self.request.user, related_obj=self.object
+                )
             messenger(
                 MESSAGES.NEW_REVIEW,
                 request=self.request,
