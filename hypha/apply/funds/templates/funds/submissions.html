@@ -17,7 +17,8 @@
                hx-boost="true"
                href="{% url 'apply:submissions:list-alt' %}"
             >
-                {% trans "Switch to list view" %}
+                {% heroicon_mini "queue-list" aria_hidden="true" size=16 class="inline align-text-bottom" %}
+                {% trans "List view" %}
             </a>
         {% endslot %}
     {% endadminbar %}

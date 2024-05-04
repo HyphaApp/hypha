@@ -17,7 +17,8 @@
             <a class="tab__item tab__item--right"
                href="{% url 'apply:submissions:list' %}"
             >
-                {% trans "Switch to grid view" %}
+                {% heroicon_mini "table-cells" aria_hidden="true" size=16 class="inline align-text-bottom" %}
+                {% trans "Table view" %}
             </a>
         {% endslot %}
     {% endadminbar %}
