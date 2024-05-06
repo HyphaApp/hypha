@@ -193,13 +193,21 @@ class BaseAdminSubmissionsTable(SubmissionsTable):
             "organization_name",
         ]
 
-        # Remove fields that have been added to the exclude fields settings.
-        fields = [
-            x for x in fields if x not in settings.SUBMISSIONS_TABLE_EXCLUDED_FIELDS
-        ]
-
         sequence = fields + [
             "comments",
+        ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        excluded_columns = getattr(settings, "SUBMISSIONS_TABLE_EXCLUDED_FIELDS", [])
+        for column_name in excluded_columns:
+            if column_name in self.base_columns:
+                del self.base_columns[column_name]
+        self.sequence = [
+            column_name
+            for column_name in self._meta.fields
+            if column_name not in excluded_columns
         ]
 
     def render_lead(self, value):
