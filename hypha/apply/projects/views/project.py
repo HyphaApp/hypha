@@ -75,7 +75,7 @@ from ..forms import (
     AssignApproversForm,
     ChangePAFStatusForm,
     ChangeProjectStatusForm,
-    ProjectApprovalForm,
+    ProjectForm,
     ProjectSOWForm,
     RemoveContractDocumentForm,
     RemoveDocumentForm,
@@ -1669,7 +1669,7 @@ class ProjectDetailDownloadView(SingleObjectMixin, View):
 
 
 @method_decorator(staff_or_finance_or_contracting_required, name="dispatch")
-class ProjectApprovalFormEditView(BaseStreamForm, UpdateView):
+class ProjectFormEditView(BaseStreamForm, UpdateView):
     model = Project
     template_name = "application_projects/project_approval_form.html"
     # Remember to assign paf_form first and then sow_form, else get_defined_fields method may provide unexpected results
@@ -1715,7 +1715,7 @@ class ProjectApprovalFormEditView(BaseStreamForm, UpdateView):
 
     def get_paf_form(self, form_class=None):
         if form_class is None:
-            form_class = self.get_form_class(ProjectApprovalForm)
+            form_class = self.get_form_class(ProjectForm)
         return form_class(**self.get_paf_form_kwargs())
 
     def get_sow_form(self, form_class=None):

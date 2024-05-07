@@ -474,12 +474,14 @@ class ProjectBaseStreamForm(BaseStreamForm, models.Model):
         return self.name
 
 
-class ProjectApprovalForm(ProjectBaseStreamForm):
-    pass
+class ProjectForm(ProjectBaseStreamForm):
+    class Meta:
+        db_table = "project_form"
 
 
 class ProjectSOWForm(ProjectBaseStreamForm):
-    pass
+    class Meta:
+        db_table = "project_sow_form"
 
 
 class ProjectReportForm(ProjectBaseStreamForm):

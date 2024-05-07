@@ -24,7 +24,7 @@ from ..models.project import (
     PAFApprovals,
     PAFReviewersRole,
     Project,
-    ProjectApprovalForm,
+    ProjectForm,
     ProjectReportForm,
     ProjectSOWForm,
 )
@@ -66,9 +66,9 @@ class DocumentCategoryFactory(factory.django.DjangoModelFactory):
         model = DocumentCategory
 
 
-class ProjectApprovalFormFactory(factory.django.DjangoModelFactory):
+class ProjectFormFactory(factory.django.DjangoModelFactory):
     class Meta:
-        model = ProjectApprovalForm
+        model = ProjectForm
 
     name = factory.Faker("word")
     form_fields = FormFieldsBlockFactory
@@ -82,7 +82,7 @@ class ProjectSOWFormFactory(factory.django.DjangoModelFactory):
     form_fields = FormFieldsBlockFactory
 
 
-class ProjectApprovalFormDataFactory(FormDataFactory):
+class ProjectFormDataFactory(FormDataFactory):
     field_factory = FormFieldsBlockFactory
 
 
@@ -108,7 +108,7 @@ class ProjectFactory(factory.django.DjangoModelFactory):
 
     form_fields = FormFieldsBlockFactory
     form_data = factory.SubFactory(
-        ProjectApprovalFormDataFactory,
+        ProjectFormDataFactory,
         form_fields=factory.SelfAttribute("..form_fields"),
     )
 
