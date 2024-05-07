@@ -19,4 +19,4 @@ responses==0.25.0
 ruff==0.3.3
 time-machine==2.14.0
 wagtail-factories==2.1.0
-Werkzeug==3.0.1
+Werkzeug==3.0.3
