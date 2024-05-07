@@ -23,9 +23,9 @@ class EditProjectSOWFormView(EditProjectFormView):
     pass
 
 
-class CreateProjectReportFormView(CreateProjectApprovalFormView):
+class CreateProjectReportFormView(CreateProjectFormView):
     pass
 
 
-class EditProjectReportFormView(EditProjectApprovalFormView):
+class EditProjectReportFormView(EditProjectFormView):
     pass

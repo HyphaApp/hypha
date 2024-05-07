@@ -55,7 +55,7 @@ class ReportEditForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass):
         # We need to save the fields first, not attempt to save form_data on first save, then update the form_data next.
         # Otherwise, we don't get access to the generator method "question_field_ids" which we use to prevent temp file
         # fields from getting into the saved form_data.
-        # Inspired by ProjectApprovalForm.save and ProjectSOWForm.save but enhanced to support multi-answer fields.
+        # Inspired by ProjectForm.save and ProjectSOWForm.save but enhanced to support multi-answer fields.
         version.form_data = {
             field: self.cleaned_data["form_data"][field]
             for field in self.cleaned_data["form_data"]
