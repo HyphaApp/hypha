@@ -226,21 +226,26 @@ class User(AbstractUser):
     def get_full_name(self):
         return self.full_name.strip()
 
-    def get_short_name(self):
-        return self.email
+    def get_short_name(self) -> str:
+        """Gets the local-part (username) of the user's email
+
+        ie. hyphaiscool@hypha.app returns "hyphaiscool"
+        """
+        return self.email.split("@")[0]
 
     def get_display_name_with_group(self) -> str:
         """Gets the user's display name, along with their role in parenthesis
 
         If the user has a full name set that will be used, otherwise pulls the email.
         """
-        display_name = self.full_name if self.full_name else self.email
+        display_name = str(self)
         is_apply_staff = f" ({STAFF_GROUP_NAME})" if self.is_apply_staff else ""
         is_reviewer = f" ({REVIEWER_GROUP_NAME})" if self.is_reviewer else ""
+        is_partner = f" ({PARTNER_GROUP_NAME})" if self.is_applicant else ""
         is_applicant = f" ({APPLICANT_GROUP_NAME})" if self.is_applicant else ""
         is_finance = f" ({FINANCE_GROUP_NAME})" if self.is_finance else ""
         is_contracting = f" ({CONTRACTING_GROUP_NAME})" if self.is_contracting else ""
-        return f"{display_name.strip()}{is_apply_staff}{is_reviewer}{is_applicant}{is_finance}{is_contracting}"
+        return f"{display_name}{is_apply_staff}{is_reviewer}{is_applicant}{is_partner}{is_finance}{is_contracting}"
 
     @cached_property
     def roles(self):
