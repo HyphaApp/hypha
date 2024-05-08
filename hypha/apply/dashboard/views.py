@@ -82,17 +82,18 @@ class AdminDashboardView(MyFlaggedMixin, TemplateView):
 
         context.update(
             {
-                "active_invoices": self.active_invoices(),
                 "awaiting_reviews": self.awaiting_reviews(submissions),
                 "can_export": can_export_submissions(self.request.user),
                 "my_reviewed": self.my_reviewed(submissions),
-                "projects": self.projects(),
                 "rounds": self.rounds(),
                 "my_flagged": self.my_flagged(submissions),
-                "paf_for_review": self.paf_for_review(),
                 "my_tasks": self.my_tasks(),
             }
         )
+        if settings.PROJECTS_ENABLED:
+            context["projects"] = self.projects()
+            context["active_invoices"] = self.active_invoices()
+            context["paf_for_review"] = self.paf_for_review()
 
         return context
 

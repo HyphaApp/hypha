@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.urls import include, path
 from django.views.generic import RedirectView
 
@@ -238,9 +239,12 @@ rounds_urls = (
     "rounds",
 )
 
-
 urlpatterns = [
     path("submissions/", include(submission_urls)),
     path("rounds/", include(rounds_urls)),
-    path("projects/", include(projects_urls)),
 ]
+
+if settings.PROJECTS_ENABLED:
+    urlpatterns += [
+        path("projects/", include(projects_urls)),
+    ]
