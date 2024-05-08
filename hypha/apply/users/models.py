@@ -241,7 +241,7 @@ class User(AbstractUser):
         display_name = str(self)
         is_apply_staff = f" ({STAFF_GROUP_NAME})" if self.is_apply_staff else ""
         is_reviewer = f" ({REVIEWER_GROUP_NAME})" if self.is_reviewer else ""
-        is_partner = f" ({PARTNER_GROUP_NAME})" if self.is_applicant else ""
+        is_partner = f" ({PARTNER_GROUP_NAME})" if self.is_partner else ""
         is_applicant = f" ({APPLICANT_GROUP_NAME})" if self.is_applicant else ""
         is_finance = f" ({FINANCE_GROUP_NAME})" if self.is_finance else ""
         is_contracting = f" ({CONTRACTING_GROUP_NAME})" if self.is_contracting else ""
