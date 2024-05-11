@@ -1,5 +1,5 @@
 from anymail.signals import tracking
-from django.dispatch import receiver
+from django.dispatch import Signal, receiver
 
 from .models import Message
 
@@ -10,3 +10,6 @@ def handle_event(sender, event, esp_name, **kwargs):
     if event.description:
         status += " " + event.description
     Message.objects.get(external_id=event.message_id).update_status(status)
+
+
+message_hook = Signal()
