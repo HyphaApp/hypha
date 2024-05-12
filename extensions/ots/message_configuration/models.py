@@ -12,6 +12,14 @@ from hypha.apply.activity.options import MESSAGES
 class MessagingHelpPanel(HelpPanel):
     messages = {
         MESSAGES.NEW_SUBMISSION: "messages/email_defaults/new_submission.html",
+        MESSAGES.DRAFT_SUBMISSION: "messages/email_defaults/draft_submission.html",
+        MESSAGES.DETERMINATION_OUTCOME: "messages/email_defaults/determination_outcome.html",
+        MESSAGES.INVITED_TO_PROPOSAL: "messages/email_defaults/invited_to_proposal.html",
+        MESSAGES.READY_FOR_REVIEW: "messages/email_defaults/ready_for_review.html",
+        MESSAGES.REVIEWERS_UPDATED: "messages/email_defaults/reviewers_updated.html",
+        MESSAGES.REVIEW_REMINDER: "messages/email_defaults/review_reminder.html",
+        MESSAGES.APPROVE_PAF: "messages/email_defaults/approve_paf.html",
+        MESSAGES.APPROVE_INVOICE: "messages/email_defaults/approve_invoice.html",
     }
 
     def __init__(self, *args, **kwargs):

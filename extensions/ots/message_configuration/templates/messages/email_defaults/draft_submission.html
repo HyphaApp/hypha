@@ -1,0 +1,16 @@
+{% load i18n %}
+{% block content %}{% blocktrans %}We appreciate your SUBMISSION_TITLE application submission to the ORG_LONG_NAME.{% endblocktrans %}
+
+    {% trans "Please note that it is not submitted for review because it's still in draft." %} {% trans "You can access the draft at" %}: SUBMISSION_URL
+
+    {% trans "If you have any questions, please submit them here" %}: SUBMISSION_URL#communications
+
+    {% blocktrans %}If you have issues accessing the submission system or general inquiries, please email us at ORG_EMAIL.{% endblocktrans %}
+
+    {% blocktrans %}For more information about our support options, review process, and selection criteria, please visit our website at ORG_URL.{% endblocktrans %}
+
+    SUBMISSION_CONFIRMATION_TEXT_EXTRA
+
+    {% trans "Project name" %}: SUBMISSION_TITLE
+    {% trans "Contact name" %}: SUBMISSION_USER_NAME
+    {% trans "Contact email" %}: SUBMISSION_USER_EMAIL{% endblock %}
