@@ -372,6 +372,14 @@ def can_edit_paf(user, project):
     return False, "You are not allowed to edit the project at this time"
 
 
+def can_edit_vendor_details(user, project):
+    if project.status == COMPLETE:
+        return False, "Only active project's details can be edited"
+    if user.is_apply_staff or user == project.lead:
+        return True, "Lead and staff can edit vendor details for any active project"
+    return False, "Forbidden Error"
+
+
 permissions_map = {
     "contract_approve": can_approve_contract,
     "contract_upload": can_upload_contract,
@@ -387,4 +395,5 @@ permissions_map = {
     "submit_contract_documents": can_submit_contract_documents,
     "project_access": can_access_project,
     "paf_edit": can_edit_paf,
+    "vendor_edit": can_edit_vendor_details,
 }

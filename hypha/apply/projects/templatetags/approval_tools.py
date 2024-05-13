@@ -67,8 +67,9 @@ def user_can_update_paf_status(project, user, **kwargs):
 
 
 @register.simple_tag
-def user_can_edit_project(project, user):
-    return project.editable_by(user)
+def user_can_edit_vendor_details(project, user):
+    permission, _ = has_permission("vendor_edit", user, project, raise_exception=False)
+    return permission
 
 
 @register.simple_tag
