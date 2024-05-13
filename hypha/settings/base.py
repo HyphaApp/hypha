@@ -622,3 +622,8 @@ if SENTRY_DSN:
         debug=SENTRY_DEBUG,
         integrations=[DjangoIntegration()],
     )
+
+# We import so we can override settings in base.py
+from .extensions import *  # noqa
+
+INSTALLED_APPS.extend(EXTENSION_APPS)
