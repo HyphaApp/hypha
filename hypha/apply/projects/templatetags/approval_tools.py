@@ -72,6 +72,12 @@ def user_can_edit_project(project, user):
 
 
 @register.simple_tag
+def user_can_edit_paf(project, user):
+    permission, _ = has_permission("paf_edit", user, project, raise_exception=False)
+    return permission
+
+
+@register.simple_tag
 def project_rejected_by_user(project, user):
     """Using for paf approvals sidebar section"""
     # todo: need to find a better way to know request change action on PAF.

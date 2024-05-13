@@ -364,6 +364,14 @@ def can_access_project(user, project):
     return False, "Forbidden Error"
 
 
+def can_edit_paf(user, project):
+    if no_pafreviewer_role() and project.status != COMPLETE:
+        return True, "Paf is editable for active projects if no reviewer roles"
+    if project.editable_by(user):
+        return True, "PAF is editable in Draft by this user"
+    return False, "You are not allowed to edit the project at this time"
+
+
 permissions_map = {
     "contract_approve": can_approve_contract,
     "contract_upload": can_upload_contract,
@@ -378,4 +386,5 @@ permissions_map = {
     "report_view": can_view_report,
     "submit_contract_documents": can_submit_contract_documents,
     "project_access": can_access_project,
+    "paf_edit": can_edit_paf,
 }

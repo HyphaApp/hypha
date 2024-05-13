@@ -1722,11 +1722,12 @@ class ProjectFormEditView(BaseStreamForm, UpdateView):
 
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
-        if not self.object.editable_by(request.user):
-            messages.info(
-                self.request, _("You are not allowed to edit the project at this time")
-            )
-            return redirect(self.object)
+
+        permission, msg = has_permission(
+            "paf_edit", self.request.user, self.object, raise_exception=True
+        )
+        if not permission:
+            messages.info(self.request, msg)
         return super().dispatch(request, *args, **kwargs)
 
     @cached_property
