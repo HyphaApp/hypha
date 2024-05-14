@@ -23,6 +23,10 @@
             }
         }
 
+        &--primary {
+            background-color: $color--purple;
+        }
+
         /* stylelint-disable-next-line media-query-no-invalid */
         @media (max-width: $input-box-max-width) {
             width: 100%;

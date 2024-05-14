@@ -12,6 +12,23 @@ User = get_user_model()
 
 
 class CustomAuthenticationForm(AuthenticationForm):
+    """Form to collect the email and password for login.
+
+    Add "Remember me" checkbox that extends session time."
+
+    Adds login extra text and user content to the form, if configured in the
+    wagtail auth settings.
+    """
+
+    remember_me = forms.BooleanField(
+        label=_("Remember me"),
+        help_text=_(
+            "On trusted devices only, keeps you logged in for a longer period."
+        ),
+        required=False,
+        widget=forms.CheckboxInput(),
+    )
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.user_settings = AuthSettings.load(request_or_site=self.request)
@@ -25,7 +42,7 @@ class CustomAuthenticationForm(AuthenticationForm):
 
 
 class PasswordlessAuthForm(forms.Form):
-    """Form to collect the email for passwordless login or signup (if enabled)
+    """Form to collect the email for passwordless login or signup (if enabled).
 
     Adds login extra text and user content to the form, if configured in the
     wagtail auth settings.
