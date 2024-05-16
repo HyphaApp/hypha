@@ -52,6 +52,13 @@
         }
     }
 
+    &--login {
+        /* stylelint-disable-next-line media-query-no-invalid */
+        @media (min-width: $input-box-max-width) {
+            width: 20rem;
+        }
+    }
+
     &--left-space {
         margin-inline-start: 20px;
     }

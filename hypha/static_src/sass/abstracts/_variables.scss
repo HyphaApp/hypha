@@ -99,6 +99,9 @@ $wrapper--small: 790px;
 // Text line length
 $max-text-line-length: 50em;
 
+// The custom width of 465px allow the buttons to scale with the input field
+$input-box-max-width: 465px;
+
 // Breakpoints
 $breakpoints: (
     "mob-portrait" "(min-width: 320px)",

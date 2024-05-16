@@ -70,6 +70,7 @@ The age of session cookies when users check "Remember me" etc., in seconds. The 
 
     SESSION_COOKIE_AGE_LONG = env.int("SESSION_COOKIE_AGE_LONG", 60 * 60 * 24 * 7 * 2)
 
+If both session value are equal the "Remember me" feature are disabled.
 
 ## Hypha custom settings
 
