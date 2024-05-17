@@ -1,0 +1,14 @@
+{% load i18n nh3_tags markdown_tags submission_tags apply_tags %}
+
+{% for task in object_list %}
+    <div class="m-0 p-3 border-b-2 border-light-grey last:border-b-0 flex">
+        <a href="{{ task.url }}" class="mt-2">
+            <b>{{ task.type }}: </b>
+            <span class="ms-1">{{ task.text|markdown|nh3 }} </span>
+        </a>
+    </div>
+{% empty %}
+    <p class="m-0 p-3 border-b-2 border-light-grey last:border-b-0">
+        {% trans "No pending task." %}
+    </p>
+{% endfor %}

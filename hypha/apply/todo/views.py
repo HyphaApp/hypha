@@ -1,10 +1,24 @@
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Count
+from django.utils.decorators import method_decorator
+from django.views.generic import ListView
+
+from hypha.apply.users.decorators import staff_required
 
 from .models import Task
 from .options import get_task_template
 from .services import validate_user_groups_uniqueness, validate_user_uniquness
+
+
+@method_decorator(staff_required, name="dispatch")
+class TodoListView(ListView):
+    model = Task
+    template_name = "todolist_dropdown.html"
+
+    def get_queryset(self):
+        tasks = render_task_templates_for_user(self.request, self.request.user)
+        return tasks
 
 
 def add_task_to_user(code, user, related_obj):

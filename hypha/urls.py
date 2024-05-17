@@ -19,6 +19,7 @@ from hypha.apply.utils.views import custom_wagtail_page_delete
 urlpatterns = [
     path("apply/", include("hypha.apply.funds.urls", "apply")),
     path("activity/", include("hypha.apply.activity.urls", "activity")),
+    path("todo/", include("hypha.apply.todo.urls", "todo")),
     path("api/", include(api_urls)),
     path("django-admin/", admin.site.urls),
     path(
