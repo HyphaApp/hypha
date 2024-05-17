@@ -1,4 +1,4 @@
-{% load i18n static wagtailcore_tags wagtailimages_tags hijack cookieconsent_tags heroicons %}<!doctype html>
+{% load i18n static wagtailcore_tags wagtailimages_tags hijack cookieconsent_tags heroicons hooks_tags %}<!doctype html>
 {% wagtail_site as current_site %}
 {% get_current_language as LANGUAGE_CODE %}
 {% get_current_language_bidi as LANGUAGE_BIDI %}
@@ -73,6 +73,7 @@
         <!-- modules -->
         <script type="module" src="{% static 'js/esm/github-relative-time-element-4-3-0.js' %}"></script>
         <script type="module" src="{% static 'js/esm/github-filter-input-element-0-1-1.js' %}"></script>
+        {% hook 'hypha_extension_head' %}
         {% include "includes/head_end.html" %}
     </head>
 
