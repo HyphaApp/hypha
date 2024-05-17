@@ -17,8 +17,6 @@
         opacity: 0.5;
     }
 
-    &-default,
-    &-primary,
     &--primary {
         @include button($color--light-blue, $color--dark-blue);
         display: inline-block;
@@ -60,22 +58,26 @@
         }
     }
 
-    &--left-space {
-        margin-inline-start: 20px;
-    }
-
     &--transparent {
         @include button(transparent, $color--black);
-        @include button--narrow;
         color: $color--black;
         border: 1px solid $color--black;
 
-        &:focus {
-            color: $color--black;
-        }
-
+        &:active,
+        &:focus,
         &:hover {
             color: $color--white;
+        }
+    }
+
+    &--mobile-standout {
+        color: $color--white;
+        border-color: $color--white;
+        max-width: 250px;
+        margin: 1rem auto 0;
+
+        @include media-query(tablet-portrait) {
+            display: none;
         }
     }
 
@@ -162,6 +164,18 @@
             fill: $color--primary;
             height: 24px;
         }
+    }
+
+    &--left-space {
+        margin-inline-start: 20px;
+    }
+
+    &--narrow {
+        @include button--narrow;
+    }
+
+    &--wide {
+        @include button--wide;
     }
 
     &--full-width {

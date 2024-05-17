@@ -40,17 +40,12 @@
 // Hide text
 @mixin hidden {
     position: absolute;
-    width: 1px;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
     height: 1px;
+    width: 1px;
     overflow: hidden;
-    clip: rect(1px, 1px, 1px, 1px);
-}
-
-// iOS Native vertical scroll
-@mixin native-vertical-scroll {
-    overflow-x: hidden;
-    overflow-y: scroll;
-    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
 }
 
 // Output a rem value for the given property
@@ -97,6 +92,7 @@
     justify-content: center;
 
     &:hover,
+    &:focus,
     &:active {
         cursor: pointer;
         background: $hover-bg;
@@ -179,12 +175,6 @@
         border-block-start: $perpendicular-borders;
         border-block-end: $perpendicular-borders;
     }
-}
-
-// used for the submission list items in the react app
-@mixin submission-list-item {
-    border-block-end: 2px solid $color--light-mid-grey;
-    border-inline-end: 2px solid $color--light-mid-grey;
 }
 
 @mixin table-ordering-styles {

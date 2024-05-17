@@ -11,7 +11,7 @@
 
 {% if field.field.multi_input_add_button %}
     <button
-        class="link link--button link--button--narrow multi-input-add-btn mt-2{% if is_application and field.field.group_number > 1 %} field-group field-group-{{ field.field.group_number }}{% endif %}"
+        class="button button--primary button--narrow multi-input-add-btn my-2{% if is_application and field.field.group_number > 1 %} field-group field-group-{{ field.field.group_number }}{% endif %}"
         type="button" data-multi-field-id="{{ field.field.multi_input_id }}"
         data-multi-visibility-index="{{ field.field.visibility_index }}"
         data-multi-max-index="{{ field.field.max_index }}"

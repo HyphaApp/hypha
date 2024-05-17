@@ -90,11 +90,11 @@
                 {% include "core/navigation/primarynav-apply.html" %}
 
                 {% if request.user.is_authenticated %}
-                    <a href="{% url 'users:account' %}" class="link link--button-transparent link--mobile-standout">
+                    <a href="{% url 'users:account' %}" class="button button--transparent button--mobile-standout">
                         {% heroicon_micro "user" class="inline align-middle w-4 h-4 me-1" aria_hidden=true %}
                         {{ request.user }}
                     </a>
-                    <a href="{% url 'users:logout' %}" class="link link--button-transparent link--mobile-standout text-center">
+                    <a href="{% url 'users:logout' %}" class="button button--transparent button--mobile-standout text-center">
                         {% trans "Log out" %}
                     </a>
                 {% endif %}
@@ -159,7 +159,7 @@
                 {% endif %}
 
                 {% if request.user.is_authenticated %}
-                    <a href="{% url 'users:logout' %}" class="button button--transparent">
+                    <a href="{% url 'users:logout' %}" class="button button--transparent button--narrow">
                         {% trans "Log out" %}
                     </a>
                 {% endif %}
