@@ -5,6 +5,7 @@
     background-image: none;
     border: 0;
     box-shadow: none;
+    border-radius: $rounded-sm;
 
     &:hover {
         cursor: pointer;
@@ -302,7 +303,7 @@
                 text-align: left;
                 line-height: 1rem;
                 border: 1px solid $color--white;
-                border-radius: 3px;
+                border-radius: $rounded-sm;
             }
 
             &::after {
