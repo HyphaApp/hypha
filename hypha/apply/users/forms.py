@@ -21,7 +21,7 @@ class CustomAuthenticationForm(AuthenticationForm):
     wagtail auth settings.
     """
 
-    if settings.SESSION_COOKIE_AGE < settings.SESSION_COOKIE_AGE_LONG:
+    if settings.SESSION_COOKIE_AGE <= settings.SESSION_COOKIE_AGE_LONG:
         remember_me = forms.BooleanField(
             label=_("Remember me"),
             help_text=_(
