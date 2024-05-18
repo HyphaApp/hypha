@@ -412,6 +412,9 @@ class ApplicationSubmission(
 ):
     form_data = models.JSONField(encoder=StreamFieldDataEncoder)
     form_fields = StreamField(ApplicationCustomFormFieldsBlock(), use_json_field=True)
+    public_id = models.CharField(
+        max_length=255, null=True, blank=True, unique=True, db_index=True
+    )
     summary = models.TextField(default="", null=True, blank=True)
     page = models.ForeignKey("wagtailcore.Page", on_delete=models.PROTECT)
     round = models.ForeignKey(
@@ -508,6 +511,10 @@ class ApplicationSubmission(
     @property
     def is_draft(self):
         return self.status == DRAFT_STATE
+
+    @property
+    def title_with_id(self):
+        return f"{self.title} (#{self.public_id or self.id})"
 
     def not_progressed(self):
         return not self.next
@@ -613,6 +620,7 @@ class ApplicationSubmission(
         prev_meta_terms = submission_in_db.meta_terms.all()
 
         self.id = None
+        self.public_id = None
         proposal_form = kwargs.get("proposal_form")
         proposal_form = int(proposal_form) if proposal_form else 0
         self.form_fields = self.get_from_parent("get_defined_fields")(
@@ -756,10 +764,15 @@ class ApplicationSubmission(
 
         super().save(*args, **kwargs)
 
-        # TODO: This functionality should be extracted and moved to a seperate function, too hidden here
+        # TODO: This functionality should be extracted and moved to a separate function, too hidden here
         if creating:
             AssignedReviewers = apps.get_model("funds", "AssignedReviewers")
             ApplicationRevision = apps.get_model("funds", "ApplicationRevision")
+
+            if not self.public_id:
+                self.public_id = (
+                    f"{self.get_from_parent('submission_id_prefix')}{self.id}"
+                )
 
             self.process_file_data(files)
             AssignedReviewers.objects.bulk_create_reviewers(
@@ -863,13 +876,14 @@ class ApplicationSubmission(
         values = self.get_searchable_contents()
 
         # Add named fields into the search index
-        for field in ["full_name", "email", "title"]:
-            values.append(getattr(self, field))
+        for field in ["full_name", "email", "title", "public_id"]:
+            if value := getattr(self, field):
+                values.append(value)
         return values
 
     def index_components(self):
         return {
-            "A": " ".join([f"id:{self.id}", self.title]),
+            "A": " ".join([f"id:{self.public_id or self.id}", self.title]),
             "C": " ".join([self.full_name, self.email]),
             "B": " ".join(self.get_searchable_contents()),
         }
@@ -884,7 +898,7 @@ class ApplicationSubmission(
         return reverse("funds:submissions:detail", args=(self.id,))
 
     def __str__(self):
-        return f"{self.title} from {self.full_name} for {self.page.title}"
+        return f"{self.title_with_id} from {self.full_name} for {self.page.title}"
 
     def __repr__(self):
         return f"<{self.__class__.__name__}: {self.user}, {self.round}, {self.page}>"

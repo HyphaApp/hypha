@@ -50,8 +50,9 @@
                         <div class="flex max-w-sm sm:max-w-lg flex-col gap-2 md:flex-row md:justify-between md:w-full md:max-w-none lg:flex-col lg:justify-start lg:w-auto lg:max-w-sm">
                             <div>
                                 <h3 class="heading heading--no-margin text-base font-bold">
-                                    <a class="link link--underlined" href="{% url 'funds:submissions:detail' submission.id %}">
+                                    <a class="{% if not submission.is_active %} text-slate-500 {% endif %} hover:underline" href="{% url 'funds:submissions:detail' submission.id %}">
                                         {{ submission.title }}
+                                        <span class="text-gray-400">#{{ submission.public_id|default:submission.id }}</span>
                                     </a>
                                 </h3>
                                 <p class="heading heading--no-margin text-fg-muted text-sm">

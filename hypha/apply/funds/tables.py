@@ -50,9 +50,9 @@ def render_actions(table, record):
 
 def render_title(record):
     try:
-        title = record.title
+        title = record.title_with_id
     except AttributeError:
-        title = record.submission.title
+        title = record.submission.title_with_id
     return title
 
 
@@ -73,7 +73,7 @@ class SubmissionsTable(tables.Table):
                 "class": "js-title",
             },
             "a": {
-                "data-tippy-content": lambda record: record.title,
+                "data-tippy-content": lambda record: render_title(record),
                 "data-tippy-placement": "top",
                 # Use after:content-[''] after:block to hide the default browser tooltip on Safari
                 # https://stackoverflow.com/a/43915246
@@ -692,7 +692,7 @@ class ReviewerLeaderboardDetailTable(tables.Table):
                 "class": "js-title",
             },
             "a": {
-                "data-tippy-content": lambda record: record.submission.title,
+                "data-tippy-content": lambda record: render_title(record),
                 "data-tippy-placement": "top",
                 # Use after:content-[''] after:block to hide the default browser tooltip on Safari
                 # https://stackoverflow.com/a/43915246

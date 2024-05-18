@@ -8,7 +8,7 @@
 {% block content %}
     {% adminbar %}
         {% slot header %}{% trans "Reviews" %}{% endslot %}
-        {% slot sub_heading %}{% trans "For" %} <a class="text-blue-200" href="{% url "funds:submissions:detail" submission.id %}">{{ submission.title }}</a>{% endslot %}
+        {% slot sub_heading %}{% trans "For" %} <a class="text-blue-200" href="{% url "funds:submissions:detail" submission.id %}">{{ submission.title_with_id }}</a>{% endslot %}
 
         {% if request.user|has_review_perm:submission %}
             {% if request.user|has_draft:submission or request.user|can_review:submission %}

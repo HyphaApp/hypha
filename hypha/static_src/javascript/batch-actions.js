@@ -108,7 +108,7 @@
         $checkbox.filter(":checked").each(function () {
             const link = $(this).parents("tr").find(".js-title").find("a");
             const href = link.attr("href");
-            const title = link.data("tippy-content");
+            const title = link.text();
 
             $batchTitlesList.append(`
                 <a href="${href}" class="list-reveal__item" target="_blank" rel="noopener noreferrer" title="${title}">

@@ -147,7 +147,7 @@ class Determination(DeterminationFormFieldsMixin, AccessFormData, models.Model):
         return not self.is_draft
 
     def __str__(self):
-        return f"Determination for {self.submission.title} by {self.author!s}"
+        return f"Determination for {self.submission.title_with_id} by {self.author!s}"
 
     def __repr__(self):
         return f"<{self.__class__.__name__}: {str(self.form_data)}>"

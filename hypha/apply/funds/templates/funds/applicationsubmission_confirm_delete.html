@@ -1,19 +1,19 @@
 {% extends "base-apply.html" %}
 {% load i18n static %}
 
-{% block title %}{% trans "Deleting" %}: {{object.title }}{% endblock %}
+{% block title %}{% trans "Deleting" %}: {{object.title_with_id }}{% endblock %}
 
 {% block content %}
 
     {% adminbar %}
-        {% slot header %}{% trans "Deleting" %}: {{ object.title }}{% endslot %}
+        {% slot header %}{% trans "Deleting" %}: {{ object.title }} <span class="text-gray-400">#{{object.public_id|default:object.id}}</span>{% endslot %}
     {% endadminbar %}
 
     <div class="wrapper wrapper--light-grey-bg wrapper--form wrapper--sidebar">
         <div class="wrapper--sidebar--inner">
             <form class="form" action="" method="post">
                 {% csrf_token %}
-                <p><strong>{% blocktrans %}Are you sure you want to delete "{{ object }}"?{% endblocktrans %}</strong></p>
+                <p><strong>{% blocktrans %}Are you sure you want to delete {{ object }}?{% endblocktrans %}</strong></p>
                 <p>{% trans "All content related to this submission will also be deleted. This includes reviews, determinations and comments." %}</p>
                 <button class="button button--warning button--submit button--top-space" type="submit">{% trans "Confirm" %}</button>
             </form>

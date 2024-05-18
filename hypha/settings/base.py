@@ -433,6 +433,7 @@ NH3_ALLOWED_ATTRIBUTES = {
         "target",
         "title",
         "width",
+        "data-tippy-content",
     ]
 }
 
