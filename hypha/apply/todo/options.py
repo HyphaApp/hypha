@@ -46,7 +46,7 @@ template_map = {
     # :todo: actions for mupltiple stages of submission
     SUBMISSION_DRAFT: {
         "text": _(
-            'A Submission draft [<span class=" truncate inline-block w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting to be submitted'
+            'A Submission draft [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting to be submitted'
         ),
         "icon": "edit-draft",
         "url": "{link}",
@@ -54,7 +54,7 @@ template_map = {
     },
     DETERMINATION_DRAFT: {
         "text": _(
-            'Determination draft for submission [<span class=" truncate inline-block max-w-32 align-bottom ">{related.submission.title}</span>]({link} "{related.submission.title}") is waiting to be submitted',
+            'Determination draft for submission [<span class="truncate inline-block max-w-32 align-bottom ">{related.submission.title}</span>]({link} "{related.submission.title}") is waiting to be submitted',
         ),
         "icon": "edit-draft",
         "url": "{link}",
@@ -62,7 +62,7 @@ template_map = {
     },
     REVIEW_DRAFT: {
         "text": _(
-            'Review draft for submission [<span class=" truncate inline-block max-w-32 align-bottom ">{related.submission.title}</span>]({link} "{related.submission.title}") is waiting to be submitted'
+            'Review draft for submission [<span class="truncate inline-block max-w-32 align-bottom ">{related.submission.title}</span>]({link} "{related.submission.title}") is waiting to be submitted'
         ),
         "icon": "edit-draft",
         "url": "{link}",
@@ -71,20 +71,24 @@ template_map = {
     # PROJECT actions
     # draft state (staff action)
     PROJECT_WAITING_PAF: {
-        "text": _("Project [{related.title}]({link}) is waiting for PAF"),
+        "text": _(
+            'Project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting for PAF'
+        ),
         "icon": "dashboard-paf",
         "url": "{link}",
         "type": _("project"),
     },
     PROJECT_SUBMIT_PAF: {
-        "text": _("Project [{related.title}]({link}) is waiting for PAF submission"),
+        "text": _(
+            'Project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting for PAF submission'
+        ),
         "icon": "dashboard-paf",
         "url": "{link}",
         "type": _("project"),
     },
     PAF_REQUIRED_CHANGES: {
         "text": _(
-            "PAF for project [{related.title}]({link}) required changes or more information"
+            'PAF for project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") required changes or more information'
         ),
         "icon": "dashboard-paf",
         "url": "{link}",
@@ -92,14 +96,16 @@ template_map = {
     },
     # internal approval state (approvers/finance... action)
     PAF_WAITING_ASSIGNEE: {
-        "text": _("PAF for project [{related.title}]({link}) is waiting for assignee"),
+        "text": _(
+            'PAF for project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting for assignee'
+        ),
         "icon": "dashboard-paf",
         "url": "{link}",
         "type": _("project"),
     },
     PAF_WAITING_APPROVAL: {
         "text": _(
-            "PAF for project [{related.title}]({link}) is waiting for your approval"
+            'PAF for project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting for your approval'
         ),
         "icon": "dashboard-paf",
         "url": "{link}",
@@ -107,14 +113,16 @@ template_map = {
     },
     # contracting state (vendor/staff/contracting team action)
     PROJECT_WAITING_CONTRACT: {
-        "text": _("Project [{related.title}]({link}) is waiting for contract"),
+        "text": _(
+            'Project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting for contract'
+        ),
         "icon": "dashboard-contract",
         "url": "{link}",
         "type": _("project"),
     },
     PROJECT_WAITING_CONTRACT_DOCUMENT: {
         "text": _(
-            "Project [{related.title}]({link}) is waiting for contracting documents"
+            'Project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting for contracting documents'
         ),
         "icon": "dashboard-document",
         "url": "{link}",
@@ -122,7 +130,7 @@ template_map = {
     },
     PROJECT_WAITING_CONTRACT_REVIEW: {
         "text": _(
-            "Contract for project [{related.title}]({link}) is waiting for review"
+            'Contract for project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting for review'
         ),
         "icon": "dashboard-contract",
         "url": "{link}",
@@ -130,7 +138,9 @@ template_map = {
     },
     # invoicing and reporting (vendor/staff/finance team action)
     PROJECT_WAITING_INVOICE: {
-        "text": _("Project [{related.title}]({link}) is waiting for invoice"),
+        "text": _(
+            'Project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting for invoice'
+        ),
         "icon": "dashboard-invoice",
         "url": "{link}",
         "type": _("project"),
@@ -158,7 +168,9 @@ template_map = {
         "type": _("project"),
     },
     REPORT_DUE: {
-        "text": _("Report for project [{related.title}]({link}) is due"),
+        "text": _(
+            'Report for project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is due'
+        ),
         "icon": "dashboard-report",
         "url": "{link}",
         "type": _("project"),
