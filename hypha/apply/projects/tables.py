@@ -37,18 +37,15 @@ class BaseInvoiceTable(tables.Table):
             },
         },
     )
-    project = tables.Column(verbose_name=_("Project Name"))
     status = tables.Column(
         attrs={"td": {"data-actions": render_invoice_actions, "class": "js-actions"}},
     )
     requested_at = tables.DateColumn(verbose_name=_("Submitted"))
 
-    def render_project(self, value):
-        text = (textwrap.shorten(value.title, width=30, placeholder="..."),)
-        return text[0]
-
 
 class InvoiceDashboardTable(BaseInvoiceTable):
+    project = tables.Column(verbose_name=_("Project Name"))
+
     class Meta:
         fields = [
             "requested_at",
@@ -61,8 +58,46 @@ class InvoiceDashboardTable(BaseInvoiceTable):
         template_name = "application_projects/tables/table.html"
         attrs = {"class": "invoices-table"}
 
+    def render_project(self, value):
+        text = (textwrap.shorten(value.title, width=30, placeholder="..."),)
+        return text[0]
+
+
+class FinanceInvoiceTable(BaseInvoiceTable):
+    vendor_name = tables.Column(verbose_name=_("Vendor Name"), empty_values=())
+    selected = LabeledCheckboxColumn(
+        accessor=A("pk"),
+        attrs={
+            "input": {"class": "js-batch-select"},
+            "th__input": {"class": "js-batch-select-all"},
+        },
+    )
+
+    class Meta:
+        fields = [
+            "selected",
+            "requested_at",
+            "invoice_number",
+            "status",
+        ]
+        model = Invoice
+        orderable = True
+        sequence = fields
+        order_by = ["-requested_at"]
+        template_name = "application_projects/tables/table.html"
+        attrs = {"class": "invoices-table"}
+        row_attrs = {
+            "data-record-id": lambda record: record.id,
+        }
+
+    def render_vendor_name(self, record):
+        if record.project.vendor:
+            return record.project.vendor
+        return record.project.user
+
 
 class InvoiceListTable(BaseInvoiceTable):
+    project = tables.Column(verbose_name=_("Project Name"))
     fund = tables.Column(verbose_name=_("Fund"), accessor="project__submission__page")
     lead = tables.Column(verbose_name=_("Lead"), accessor="project__lead")
 
@@ -81,8 +116,13 @@ class InvoiceListTable(BaseInvoiceTable):
         template_name = "application_projects/tables/table.html"
         attrs = {"class": "invoices-table"}
 
+    def render_project(self, value):
+        text = (textwrap.shorten(value.title, width=30, placeholder="..."),)
+        return text[0]
+
 
 class AdminInvoiceListTable(BaseInvoiceTable):
+    project = tables.Column(verbose_name=_("Project Name"))
     selected = LabeledCheckboxColumn(
         accessor=A("pk"),
         attrs={
@@ -108,6 +148,10 @@ class AdminInvoiceListTable(BaseInvoiceTable):
         row_attrs = {
             "data-record-id": lambda record: record.id,
         }
+
+    def render_project(self, value):
+        text = (textwrap.shorten(value.title, width=30, placeholder="..."),)
+        return text[0]
 
 
 class BaseProjectsTable(tables.Table):

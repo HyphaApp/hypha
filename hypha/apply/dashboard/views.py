@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.http import HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
@@ -210,9 +209,6 @@ class FinanceDashboardView(MyFlaggedMixin, TemplateView):
 
         context.update(
             {
-                "active_invoices": self.active_invoices(),
-                "invoices_for_approval": self.invoices_for_approval(),
-                "invoices_to_convert": self.invoices_to_convert(),
                 "paf_for_review": self.paf_for_review(),
                 "my_tasks": self.my_tasks(),
             }
@@ -244,37 +240,6 @@ class FinanceDashboardView(MyFlaggedMixin, TemplateView):
         return {
             "count": len(tasks),
             "data": tasks,
-        }
-
-    def active_invoices(self):
-        if self.request.user.is_finance_level_2:
-            invoices = Invoice.objects.for_finance_2()
-        else:
-            invoices = Invoice.objects.for_finance_1()
-
-        return {
-            "count": invoices.count(),
-            "table": InvoiceDashboardTable(invoices),
-        }
-
-    def invoices_for_approval(self):
-        if self.request.user.is_finance_level_2:
-            invoices = Invoice.objects.approved_by_finance_1()
-        else:
-            invoices = Invoice.objects.approved_by_staff()
-
-        return {"count": invoices.count(), "table": InvoiceDashboardTable(invoices)}
-
-    def invoices_to_convert(self):
-        if settings.INVOICE_EXTENDED_WORKFLOW and self.request.user.is_finance_level_1:
-            return {
-                "count": None,
-                "table": None,
-            }
-        invoices = Invoice.objects.waiting_to_convert()
-        return {
-            "count": invoices.count(),
-            "table": InvoiceDashboardTable(invoices),
         }
 
 
