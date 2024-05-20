@@ -1,134 +1,144 @@
 {% load i18n activity_tags nh3_tags markdown_tags submission_tags apply_tags heroicons users_tags %}
 
-<div class="flex pb-2 max-w-3xl {% if activity.type != 'comment' %}ml-14 mb-1 {% else %}mb-4{% endif %} " id="communications#{{ activity.id }}">
-    <div class="relative pe-4 hidden sm:inline-flex justify-center items-start">
-        {% comment %} <p class="feed__label lg:py-2 feed__label--{{ activity.type }}">
-            {% if  activity.type == 'comment' %}
-                {% heroicon_mini "chat-bubble-left" class="inline align-text-bottom me-2" aria_hidden=true %}
-            {% else %}
-                {{ activity.type|capfirst }}
-            {% endif %}
-        </p> {% endcomment %}
-        <div class="relative border rounded-full inline-flex items-center justify-center {% if activity.user.is_staff %}bg-blue-100 {% else %}bg-gray-100{% endif %}" >
-            {% if activity.type == 'comment' %}
-                <div class="p-2">
-                    {% user_image activity.user size=25 %}
-                </div>
-            {% else %}
-                <div class="w-6 h-6 inline-flex items-center justify-center">
-                    {% heroicon_micro "pencil-square" class="fill-gray-400 inline" aria_hidden=true %}
-                </div>
-            {% endif %}
-                {% comment %} {% if  activity.type == 'comment' %}
-                    {% heroicon_outline "chat-bubble-left" class="absolute -top-2 -right-4 stroke-gray-400 fill-white inline align-text-bottom me-2" aria_hidden=true %}
-                {% endif %} {% endcomment %}
-        </div>
-
-    </div>
-    {% if activity.type == 'comment' %}
-        <div class="feed__content js-feed-content border drop-shadow-sm rounded pb-2 bg-white">
-            <div class="feed__meta js-feed-meta py-2 bg-slate-50 shadow-sm">
-                <div class="ps-3">
-                    <span class="font-bold">{{ activity|display_author:request.user }}</span>
-
-                    {% if  activity.type == 'comment' %}
-                        <span class="text-fg-muted text-sm">commented</span>
-                    {% endif %}
-
-                    <relative-time class="text-fg-muted text-sm" data-tippy-content="{{ activity.timestamp|date:"SHORT_DATETIME_FORMAT" }}" datetime={{ activity.timestamp|date:"c" }}>{{ activity.timestamp|date:"SHORT_DATETIME_FORMAT" }}</relative-time>
-                    {% if activity.edited %}
-                        •
-                        <span class="js-last-edited text-fg-muted text-sm" data-tippy-content="{{ activity.edited|date:"SHORT_DATETIME_FORMAT" }}">{% trans "edited" %}</span>
-                    {% endif %}
-                </div>
-
-                {% if editable and activity.user == request.user %}
-                    <p class="feed__meta-item feed__meta-item--edit-button">
-                        <a class="link link--edit-submission is-active js-edit-comment" href="#">
-                            {% heroicon_mini "pencil-square" size=18 class="inline me-1" aria_hidden=true %}
-                            {% trans "Edit" %}
-                        </a>
-                    </p>
-                {% endif %}
-
-                <p class="feed__meta-item feed__meta-item--right flex items-center">
-                    {% heroicon_micro "eye" class="fill-fg-muted inline me-1 w-4 h-4 mr-1" aria_hidden=true %}
-                    <span class="js-comment-visibility">{{ activity.visibility|visibility_display:request.user }}</span>
-                </p>
-            </div>
-
-            <div class="feed__heading">
-                {% if submission_title %}
-                    {% trans "updated" %} <a href="{{ activity.source.get_absolute_url }}">{{ activity.source.title }}</a>
-                {% endif %}
-
-                {% if editable %}
-                    <div class="feed__comment js-comment px-3 prose"
-                         data-id="{{activity.id}}" data-comment="{{activity|display_for:request.user|to_markdown}}"
-                         data-visibility-options="{{activity|visibility_options:activity.user}}"
-                         data-visibility="{{activity.visibility}}"
-                         data-edit-url="{% url 'api:v1:comments-edit' pk=activity.pk %}"
-                    >
-                        {{ activity|display_for:request.user|submission_links|markdown|nh3 }}
+<div class="timeline-item relative">
+    <div id="communications#{{ activity.id }}"
+         class="flex {% if activity.type == 'comment' %}py-3 -ml-20{% else %}py-2 -ml-3{% endif %} before:block before:absolute before:top-0 before:bottom-0 before:left-0 before:w-0.5 before:bg-slate-300" >
+        <div class="relative pe-4 hidden sm:inline-flex justify-center items-start">
+            <div class="relative border rounded-full inline-flex items-center justify-center {% if activity.user.is_staff %}bg-blue-100 {% else %}bg-gray-100{% endif %}" >
+                {% if activity.type == 'comment' %}
+                    <div class="p-2">
+                        {% user_image activity.user size=25 %}
                     </div>
-                    <style>
-                        @media only screen and (min-width: 1024px){
-                            .js-edit-block .form .wmd-preview, .js-edit-block .form .wmd-input {
-                                max-width: 70%;
-                            }
-                        }
-                    </style>
-                    <div class="js-edit-block pe-3" aria-live="polite"></div>
                 {% else %}
-                    <div class="px-3 prose">
-                        {{ activity|display_for:request.user|submission_links|markdown|nh3 }}
+                    <div class="w-6 h-6 inline-flex items-center justify-center">
+                        {% heroicon_micro "pencil-square" class="fill-gray-400 inline" aria_hidden=true %}
                     </div>
                 {% endif %}
-
-
-                {% if not submission_title and activity|user_can_see_related:request.user %}
-                    <div class="px-3">
-                        {% with url=activity.related_object.get_absolute_url %}
-                            {% if url %}
-                                <a href="{{ url }}" target="_blank" class="feed__related-item">
-                                    {% trans "View " %}{{ activity.related_object|model_verbose_name }} <svg class="icon inline"><use xlink:href="#arrow-head-pixels--solid"></use></svg>
-                                </a>
-                            {% endif %}
-                        {% endwith %}
-                    </div>
-                {% endif %}
-
+                    {% comment %} {% if  activity.type == 'comment' %}
+                        {% heroicon_outline "chat-bubble-left" class="absolute -top-2 -right-4 stroke-gray-400 fill-white inline align-text-bottom me-2" aria_hidden=true %}
+                    {% endif %} {% endcomment %}
             </div>
-            {% with activity.attachments.all as attachments %}
-                {% if attachments %}
-                    <div class="section-attachments flex gap-2 flex-col max-w-xl mt-4 px-3 pb-2">
-                        {% for attachment in attachments %}
-                            <a href="{{attachment.get_absolute_url }}"
-                               class="flex justify-between border rounded px-3 py-2 font-medium bg-slate-50 hover:bg-slate-200 transition-colors"
-                               target="_blank"
-                               rel="noopener noreferrer"
-                               title="{{ attachment.filename }}"
-                            >
-                                <span class="truncate text-sm">
-                                    {% heroicon_mini "paper-clip" class="inline align-text-bottom" aria_hidden=true %}
-                                    {{ attachment.filename|truncatechars_middle:45 }}
-                                </span>
-                                <span>
-                                    {% heroicon_mini "arrow-small-down" class="inline align-text-bottom rounded" aria_hidden=true %}
-                                </span>
+
+        </div>
+        {% if activity.type == 'comment' %}
+            <div class="feed__content js-feed-content border border-slate-200 drop-shadow rounded pb-2 bg-white">
+                <div class="feed__meta js-feed-meta p-2 rounded-t bg-slate-100 flex gap-2">
+                    <span>
+                        <span class="font-bold">{{ activity|display_author:request.user }}</span>
+
+                        {% if  activity.type == 'comment' %}
+                            <span class="text-fg-muted text-sm">commented</span>
+                        {% endif %}
+
+                        <relative-time class="text-fg-muted text-sm" data-tippy-content="{{ activity.timestamp|date:"SHORT_DATETIME_FORMAT" }}" datetime={{ activity.timestamp|date:"c" }}>{{ activity.timestamp|date:"SHORT_DATETIME_FORMAT" }}</relative-time>
+                        {% if activity.edited %}
+                            •
+                            <span class="js-last-edited text-fg-muted text-sm" data-tippy-content="{{ activity.edited|date:"SHORT_DATETIME_FORMAT" }}">{% trans "edited" %}</span>
+                        {% endif %}
+                    </span>
+
+                    <span class="flex items-center rounded-full px-2 bg-slate-200">
+                        {% heroicon_micro "eye" class="fill-slate-400 inline me-1 w-4 h-4 mr-1" aria_hidden=true %}
+                        <span class="text-gray-600">{{ activity.visibility|visibility_display:request.user }}</span>
+                    </span>
+
+                    {% if editable and activity.user == request.user %}
+                        <span class="feed__meta-item feed__meta-item--edit-button">
+                            <a class="link link--edit-submission is-active js-edit-comment" href="#" title="Edit Comment">
+                                {% heroicon_mini "pencil-square" size=18 class="inline me-1" aria_hidden=true %}
+                                <span class="sr-only">{% trans "Edit" %}</span>
                             </a>
+                        </span>
+                    {% endif %}
+
+                    <span class="flex-1"></span>
+
+                    <span>
+                        {% for role in activity.user.get_role_names  %}
+                            <span class="inline-block rounded-full px-2 bg-slate-200 text-sm border">
+                                <span class="text-gray-600">{{ role }}</span>
+                            </span>
                         {% endfor %}
-                    </div>
-                {% endif %}
-            {% endwith %}
-        </div>
-    {% else %}
-        <div class="text-sm">
-            <span class="font-medium">{{ activity|display_author:request.user }}</span>
-            <span class="text-fg-muted">
-                {{ activity|display_for:request.user|striptags }}
-                <relative-time data-tippy-content="{{ activity.timestamp|date:"SHORT_DATETIME_FORMAT" }}" datetime={{ activity.timestamp|date:"c" }}>{{ activity.timestamp|date:"SHORT_DATETIME_FORMAT" }}</relative-time>
-            </span>
-        </div>
-    {% endif %}
+                    </span>
+
+
+
+
+                </div>
+
+                <div class="feed__heading">
+                    {% if submission_title %}
+                        {% trans "updated" %} <a href="{{ activity.source.get_absolute_url }}">{{ activity.source.title }}</a>
+                    {% endif %}
+
+                    {% if editable %}
+                        <div class="feed__comment js-comment px-3 prose"
+                             data-id="{{activity.id}}" data-comment="{{activity|display_for:request.user|to_markdown}}"
+                             data-visibility-options="{{activity|visibility_options:activity.user}}"
+                             data-visibility="{{activity.visibility}}"
+                             data-edit-url="{% url 'api:v1:comments-edit' pk=activity.pk %}"
+                        >
+                            {{ activity|display_for:request.user|submission_links|markdown|nh3 }}
+                        </div>
+                        <style>
+                            @media only screen and (min-width: 1024px){
+                                .js-edit-block .form .wmd-preview, .js-edit-block .form .wmd-input {
+                                    max-width: 70%;
+                                }
+                            }
+                        </style>
+                        <div class="js-edit-block pe-3" aria-live="polite"></div>
+                    {% else %}
+                        <div class="px-3 prose">
+                            {{ activity|display_for:request.user|submission_links|markdown|nh3 }}
+                        </div>
+                    {% endif %}
+
+
+                    {% if not submission_title and activity|user_can_see_related:request.user %}
+                        <div class="px-3">
+                            {% with url=activity.related_object.get_absolute_url %}
+                                {% if url %}
+                                    <a href="{{ url }}" target="_blank" class="feed__related-item">
+                                        {% trans "View " %}{{ activity.related_object|model_verbose_name }} <svg class="icon inline"><use xlink:href="#arrow-head-pixels--solid"></use></svg>
+                                    </a>
+                                {% endif %}
+                            {% endwith %}
+                        </div>
+                    {% endif %}
+
+                </div>
+                {% with activity.attachments.all as attachments %}
+                    {% if attachments %}
+                        <div class="section-attachments flex gap-2 flex-col max-w-xl mt-4 px-3 pb-2">
+                            {% for attachment in attachments %}
+                                <a href="{{attachment.get_absolute_url }}"
+                                   class="flex justify-between border rounded px-3 py-2 font-medium bg-slate-50 hover:bg-slate-200 transition-colors"
+                                   target="_blank"
+                                   rel="noopener noreferrer"
+                                   title="{{ attachment.filename }}"
+                                >
+                                    <span class="truncate text-sm">
+                                        {% heroicon_mini "paper-clip" class="inline align-text-bottom" aria_hidden=true %}
+                                        {{ attachment.filename|truncatechars_middle:45 }}
+                                    </span>
+                                    <span>
+                                        {% heroicon_mini "arrow-small-down" class="inline align-text-bottom rounded" aria_hidden=true %}
+                                    </span>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+            </div>
+        {% else %}
+            <div class="text-sm">
+                <span class="font-medium">{{ activity|display_author:request.user }}</span>
+                <span class="text-fg-muted">
+                    {{ activity|display_for:request.user|striptags }}
+                    <relative-time data-tippy-content="{{ activity.timestamp|date:"SHORT_DATETIME_FORMAT" }}" datetime={{ activity.timestamp|date:"c" }}>{{ activity.timestamp|date:"SHORT_DATETIME_FORMAT" }}</relative-time>
+                </span>
+            </div>
+        {% endif %}
+    </div>
 </div>
