@@ -1,0 +1,17 @@
+{% load invoice_tools i18n %}
+
+
+<h1>{% trans "Invoice Status" %}</h1>
+
+<ul>
+    {% for activity in activities %}
+        {% extract_status activity request.user as activity_status %}
+        <li><strong> {{ activity_status }} ({{ activity.user.email }})</strong> on {{ activity.timestamp }}</li>
+    {% endfor %}
+</ul>
+
+<p style="border-top: 1px solid #ccc; margin-top: 1.5em; padding-top: 0.5em; color: #656d76;">
+    <small>
+        {% trans "Generated" %}: {{ generated_at|date:"c" }} &middot; {{ request.scheme }}://{{ request.get_host }}{{ invoice.get_absolute_url}}
+    </small>
+</p>

@@ -6,6 +6,7 @@ from django.contrib.auth.models import Group
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect
+from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.safestring import mark_safe
@@ -35,6 +36,7 @@ from hypha.apply.todo.views import (
 )
 from hypha.apply.users.decorators import staff_or_finance_required
 from hypha.apply.users.groups import STAFF_GROUP_NAME
+from hypha.apply.utils.pdfs import html_to_pdf, merge_pdf
 from hypha.apply.utils.storage import PrivateMediaView
 from hypha.apply.utils.views import (
     DelegateableListView,
@@ -121,6 +123,7 @@ class ChangeInvoiceStatusView(DelegatedViewMixin, InvoiceAccessMixin, UpdateView
             and self.request.user.is_finance_level_1
             and self.object.status == APPROVED_BY_FINANCE
         ):
+            self.object.save()
             messenger(
                 MESSAGES.APPROVE_INVOICE,
                 request=self.request,
@@ -416,12 +419,35 @@ class InvoicePrivateMedia(UserPassesTestMixin, PrivateMediaView):
         return super().dispatch(*args, **kwargs)
 
     def get_media(self, *args, **kwargs):
-        file_pk = kwargs.get("file_pk")
-        if not file_pk:
-            return self.invoice.document
+        # check if the request is for a supporting document
+        if file_pk := kwargs.get("file_pk"):
+            document = get_object_or_404(self.invoice.supporting_documents, pk=file_pk)
+            return document.document
 
-        document = get_object_or_404(self.invoice.supporting_documents, pk=file_pk)
-        return document.document
+        # if not, then it's for invoice document
+        if (
+            self.invoice.status == APPROVED_BY_STAFF
+            and self.invoice.document.file.name.endswith(".pdf")
+        ):
+            if activities := Activity.actions.filter(
+                related_content_type__model="invoice",
+                related_object_id=self.invoice.id,
+                message__icontains="Approved by",
+            ).visible_to(self.request.user):
+                approval_pdf_page = html_to_pdf(
+                    render_to_string(
+                        "application_projects/pdf_invoce_approved_page.html",
+                        context={
+                            "invoice": self.invoice,
+                            "generated_at": timezone.now(),
+                            "activities": activities,
+                        },
+                        request=self.request,
+                    )
+                )
+                return merge_pdf(self.invoice.document.file, approval_pdf_page)
+
+        return self.invoice.document
 
     def test_func(self):
         if self.request.user.is_apply_staff:
