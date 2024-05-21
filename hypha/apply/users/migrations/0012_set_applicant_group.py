@@ -11,7 +11,7 @@ from hypha.apply.users.groups import APPLICANT_GROUP_NAME
 def set_group(apps, schema_editor):
     User = get_user_model()
     applicant_group = Group.objects.get(name=APPLICANT_GROUP_NAME)
-    applicants = User.objects.exclude(applicationsubmission=None)
+    applicants = User.objects.exclude(applicationsubmission=None).only("groups")
     for user in applicants:
         if not user.is_apply_staff:
             user.groups.add(applicant_group)
@@ -21,7 +21,9 @@ def set_group(apps, schema_editor):
 def unset_group(apps, schema_editor):
     User = get_user_model()
     applicant_group = Group.objects.get(name=APPLICANT_GROUP_NAME)
-    applicants = User.objects.filter(groups__name=APPLICANT_GROUP_NAME).all()
+    applicants = (
+        User.objects.filter(groups__name=APPLICANT_GROUP_NAME).all().only("groups")
+    )
     for user in applicants:
         user.groups.remove(applicant_group)
         user.save()
