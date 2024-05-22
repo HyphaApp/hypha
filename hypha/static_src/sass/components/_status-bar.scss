@@ -135,6 +135,7 @@
             color: $color--white;
             background-color: $color--tomato;
             padding-inline: var(--tooltip-padding);
+            border-radius: $rounded-sm;
         }
 
         &::before {

@@ -349,9 +349,6 @@ class AuthSettings(BaseGenericSetting):
         blank=True,
         help_text=_("Displayed along side login form"),
     )
-    register_extra_text = RichTextField(
-        blank=True, help_text=_("Extra text to be displayed on register form")
-    )
 
     panels = [
         MultiFieldPanel(
@@ -367,12 +364,6 @@ class AuthSettings(BaseGenericSetting):
                 FieldPanel("extra_text"),
             ],
             _("Login form customizations"),
-        ),
-        MultiFieldPanel(
-            [
-                FieldPanel("register_extra_text"),
-            ],
-            _("Register form customizations"),
         ),
     ]
 

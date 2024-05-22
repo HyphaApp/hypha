@@ -99,6 +99,9 @@ $wrapper--small: 790px;
 // Text line length
 $max-text-line-length: 50em;
 
+// The custom width of 465px allow the buttons to scale with the input field
+$input-box-max-width: 465px;
+
 // Breakpoints
 $breakpoints: (
     "mob-portrait" "(min-width: 320px)",
@@ -131,3 +134,10 @@ $table-breakpoint: "tablet-landscape";
 
 // Dropdown height
 $dropdown-height: 45px;
+
+// Border radius
+$rounded-sm: 0.125rem;
+$rounded: 0.25rem;
+$rounded-md: 0.375rem;
+$rounded-lg: 0.5rem;
+$rounded-full: 9999px;

@@ -1,4 +1,5 @@
 from django import forms
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 from django.template.defaultfilters import mark_safe
@@ -12,6 +13,24 @@ User = get_user_model()
 
 
 class CustomAuthenticationForm(AuthenticationForm):
+    """Form to collect the email and password for login.
+
+    Add "Remember me" checkbox that extends session time.
+
+    Adds login extra text and user content to the form, if configured in the
+    wagtail auth settings.
+    """
+
+    if settings.SESSION_COOKIE_AGE <= settings.SESSION_COOKIE_AGE_LONG:
+        remember_me = forms.BooleanField(
+            label=_("Remember me"),
+            help_text=_(
+                "On trusted devices only, keeps you logged in for a longer period."
+            ),
+            required=False,
+            widget=forms.CheckboxInput(),
+        )
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.user_settings = AuthSettings.load(request_or_site=self.request)
@@ -25,7 +44,7 @@ class CustomAuthenticationForm(AuthenticationForm):
 
 
 class PasswordlessAuthForm(forms.Form):
-    """Form to collect the email for passwordless login or signup (if enabled)
+    """Form to collect the email for passwordless login or signup (if enabled).
 
     Adds login extra text and user content to the form, if configured in the
     wagtail auth settings.

@@ -62,10 +62,15 @@ Seconds to enter password on password page while email change/2FA change (defaul
 
 The age of session cookies, in seconds.
 
-This determines the length of time for which the user will remain logged in. The default value is 2 weeks.
+This determines the length of time for which the user will remain logged in. The default value is 12 hours.
 
-    SESSION_COOKIE_AGE = env.int('SESSION_COOKIE_AGE', 60 * 60 * 24 * 7 * 2)
+    SSESSION_COOKIE_AGE = env.int("SESSION_COOKIE_AGE", 60 * 60 * 12)
 
+The age of session cookies when users check "Remember me" etc., in seconds. The default value is 2 weeks.
+
+    SESSION_COOKIE_AGE_LONG = env.int("SESSION_COOKIE_AGE_LONG", 60 * 60 * 24 * 7 * 2)
+
+If both session value are equal the "Remember me" feature are disabled.
 
 ## Hypha custom settings
 

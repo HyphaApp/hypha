@@ -50,7 +50,6 @@ from wagtail.models import Site
 from wagtail.users.views.users import change_user_perm
 
 from hypha.core.mail import MarkdownMail
-from hypha.home.models import ApplyHomePage
 
 from .decorators import require_oauth_whitelist
 from .forms import (
@@ -94,16 +93,16 @@ class LoginView(TwoFactorLoginView):
 
     def get_context_data(self, form, **kwargs):
         context_data = super(LoginView, self).get_context_data(form, **kwargs)
-        context_data["is_public_site"] = True
         context_data["redirect_url"] = get_redirect_url(
             self.request, self.redirect_field_name
         )
-        if (
-            Site.find_for_request(self.request)
-            == ApplyHomePage.objects.first().get_site()
-        ):
-            context_data["is_public_site"] = False
         return context_data
+
+    def post(self, *args, **kwargs):
+        # Set longer session time if Remember me is checked.
+        if bool(self.request.POST.get("auth-remember_me", None) == "on"):
+            self.request.session.set_expiry(settings.SESSION_COOKIE_AGE_LONG)
+        return super().post(*args, **kwargs)
 
 
 @method_decorator(login_required, name="dispatch")

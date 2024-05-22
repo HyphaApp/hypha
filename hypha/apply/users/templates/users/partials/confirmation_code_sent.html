@@ -33,7 +33,7 @@
 
     <div>
         <button
-            class="button button-primary block mb-4"
+            class="button button--primary block mb-4"
             type="submit"
             hx-post="{% url 'users:elevate_check_code' %}{% if redirect_url %}?next={{ redirect_url }}{% endif %}"
             hx-validate="true"

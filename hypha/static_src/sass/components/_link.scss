@@ -5,30 +5,6 @@
         opacity: 0.5;
     }
 
-    &--button {
-        @include button($color--light-blue, $color--dark-blue);
-        display: inline-block;
-
-        // The custom width of 465px allow the buttons to scale with the input field
-        $input-box-max-width: 465px;
-
-        &--narrow {
-            @include button--narrow;
-        }
-
-        &--login {
-            /* stylelint-disable-next-line media-query-no-invalid */
-            @media (min-width: $input-box-max-width) {
-                width: 20rem;
-            }
-        }
-
-        /* stylelint-disable-next-line media-query-no-invalid */
-        @media (max-width: $input-box-max-width) {
-            width: 100%;
-        }
-    }
-
     &--underlined {
         text-decoration: underline;
     }
@@ -97,32 +73,6 @@
         @include media-query(tablet-portrait) {
             display: none;
         }
-    }
-
-    &--button-transparent {
-        @include button(transparent, $color--darkest-blue);
-        color: $color--white;
-
-        &:focus,
-        &:hover {
-            border: 1px solid transparent;
-        }
-    }
-
-    &--button-long-text {
-        padding: 10px;
-
-        @include media-query(tablet-portrait) {
-            padding: 10px 60px;
-        }
-    }
-
-    &--button-narrow {
-        @include button--narrow;
-    }
-
-    &--button-wide {
-        @include button--wide;
     }
 
     &--edit-lead {

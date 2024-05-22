@@ -7,7 +7,7 @@
         .getBoundingClientRect().height;
 
     let button_show = document.createElement("button");
-    button_show.classList.add("link", "link--button", "link--button--narrow");
+    button_show.classList.add("button", "button--primary", "button--narrow");
     button_show.textContent = "Show";
 
     let button_wrapper = document.createElement("p");

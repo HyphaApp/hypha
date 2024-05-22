@@ -95,7 +95,7 @@
         var $button = $("<button/>")
             .text("Copy questions to clipboard")
             .addClass(
-                "link link--button link--button--narrow js-clipboard-button"
+                "button button--primary button--narrow my-2 js-clipboard-button"
             )
             .attr(
                 "title",
@@ -106,9 +106,7 @@
             .clone()
             .css({ display: "block", "margin-left": "auto" })
             .insertBefore($application_form);
-        $button
-            .css({ "margin-left": "20px" })
-            .insertAfter($application_form.find("button").last());
+        $button.insertAfter($application_form.find("button").last());
 
         $(".js-clipboard-button").on("click", function (e) {
             e.preventDefault();
