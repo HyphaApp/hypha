@@ -289,6 +289,16 @@ class TestStaffProjectDetailView(BaseProjectDetailTestCase):
 class TestFinanceProjectDetailView(BaseProjectDetailTestCase):
     user_factory = FinanceFactory
 
+    def setUp(self):
+        super().setUp()
+        apply_site = ApplySiteFactory()
+        self.project_setting, _ = ProjectSettings.objects.get_or_create(
+            site_id=apply_site.id
+        )
+        self.project_setting.use_settings = True
+        self.project_setting.save()
+        self.role = PAFReviewerRoleFactory(page=self.project_setting)
+
     def test_has_access(self):
         project = ProjectFactory(status=INTERNAL_APPROVAL)
         response = self.get_page(project)

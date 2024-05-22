@@ -13,7 +13,7 @@ from hypha.apply.projects.models.project import (
     INVOICING_AND_REPORTING,
 )
 from hypha.apply.projects.permissions import has_permission
-from hypha.apply.projects.utils import get_project_public_status
+from hypha.apply.projects.utils import get_project_public_status, no_pafreviewer_role
 
 register = template.Library()
 
@@ -22,6 +22,13 @@ register = template.Library()
 def project_can_have_report(project):
     if project.status in [COMPLETE, CLOSING, INVOICING_AND_REPORTING]:
         return True
+    return False
+
+
+@register.simple_tag
+def user_can_skip_pafapproval_process(project, user):
+    if project.status == DRAFT and (user.is_apply_staff or user.is_apply_staff_admin):
+        return no_pafreviewer_role()
     return False
 
 
@@ -36,15 +43,21 @@ def user_next_step_on_project(project, user, request=None):
                     "heading": _("To do"),
                     "text": _("Fill in the Project Form"),
                 }
-            if project.paf_approvals.exists():
+            if no_pafreviewer_role():
                 return {
                     "heading": _("To do"),
-                    "text": _("Resubmit project documents for approval"),
+                    "text": _("Move project to next stage"),
                 }
-            return {
-                "heading": _("To do"),
-                "text": _("Submit project documents for approval"),
-            }
+            else:
+                if project.paf_approvals.exists():
+                    return {
+                        "heading": _("To do"),
+                        "text": _("Resubmit project documents for approval"),
+                    }
+                return {
+                    "heading": _("To do"),
+                    "text": _("Submit project documents for approval"),
+                }
         elif user.is_applicant:
             return {
                 "heading": _("Waiting for"),

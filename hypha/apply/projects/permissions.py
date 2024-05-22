@@ -12,6 +12,7 @@ from .models.project import (
     INVOICING_AND_REPORTING,
     ProjectSettings,
 )
+from .utils import no_pafreviewer_role
 
 
 def has_permission(action, user, object=None, raise_exception=True, **kwargs):
@@ -249,14 +250,18 @@ def can_update_paf_status(user, project, **kwargs):
 
 
 def can_update_project_status(user, project, **kwargs):
-    if project.status not in [COMPLETE, CLOSING, INVOICING_AND_REPORTING]:
+    if project.status not in [DRAFT, COMPLETE, CLOSING, INVOICING_AND_REPORTING]:
         return False, "Forbidden Error"
 
     if not user.is_authenticated:
         return False, "Login Required"
 
     if user.is_apply_staff or user.is_apply_staff_admin:
-        return True, "Staff and Staff Admin can update status"
+        if project.status == DRAFT:
+            if no_pafreviewer_role():
+                return True, "Staff and Staff Admin can skip the PAF approval process"
+        else:
+            return True, "Staff and Staff Admin can update status"
 
     return False, "Forbidden Error"
 

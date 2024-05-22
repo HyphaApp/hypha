@@ -81,6 +81,7 @@ from ..forms import (
     RemoveDocumentForm,
     SelectDocumentForm,
     SetPendingForm,
+    SkipPAFApprovalProcessForm,
     SubmitContractDocumentsForm,
     UpdateProjectLeadForm,
     UploadContractDocumentForm,
@@ -110,7 +111,11 @@ from ..models.project import (
 from ..models.report import Report
 from ..permissions import has_permission
 from ..tables import InvoiceListTable, ProjectsListTable, ReportListTable
-from ..utils import get_paf_status_display, get_placeholder_file
+from ..utils import (
+    get_paf_status_display,
+    get_placeholder_file,
+    get_project_status_choices,
+)
 from ..views.payment import ChangeInvoiceStatusView
 from .report import ReportFrequencyUpdate, ReportingMixin
 
@@ -575,6 +580,41 @@ class UploadContractView(DelegatedViewMixin, CreateView):
                 related_obj=project,
             )
 
+        return response
+
+
+class SkipPAFApprovalProcessView(DelegatedViewMixin, UpdateView):
+    context_name = "skip_paf_approval_form"
+    model = Project
+    form_class = SkipPAFApprovalProcessForm
+
+    def form_valid(self, form):
+        project = self.kwargs["object"]
+        old_stage = project.status
+        project.is_locked = True
+        project.status = CONTRACTING
+        response = super().form_valid(form)
+
+        messenger(
+            MESSAGES.PROJECT_TRANSITION,
+            request=self.request,
+            user=self.request.user,
+            source=self.object,
+            related=old_stage,
+        )
+        # add project waiting contract task to staff/contracting groups
+        if settings.STAFF_UPLOAD_CONTRACT:
+            add_task_to_user_group(
+                code=PROJECT_WAITING_CONTRACT,
+                user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+                related_obj=self.object,
+            )
+        else:
+            add_task_to_user_group(
+                code=PROJECT_WAITING_CONTRACT,
+                user_group=Group.objects.filter(name=CONTRACTING_GROUP_NAME),
+                related_obj=self.object,
+            )
         return response
 
 
@@ -1176,9 +1216,9 @@ class UpdatePAFApproversView(DelegatedViewMixin, UpdateView):
 class BaseProjectDetailView(ReportingMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["statuses"] = PROJECT_STATUS_CHOICES
+        context["statuses"] = get_project_status_choices()
         context["current_status_index"] = [
-            status for status, _ in PROJECT_STATUS_CHOICES
+            status for status, _ in get_project_status_choices()
         ].index(self.object.status)
         context["supporting_documents_configured"] = (
             True if DocumentCategory.objects.count() else False
@@ -1210,6 +1250,7 @@ class AdminProjectDetailView(
         ChangePAFStatusView,
         ChangeProjectstatusView,
         ChangeInvoiceStatusView,
+        SkipPAFApprovalProcessView,
     ]
     model = Project
     template_name_suffix = "_admin_detail"
@@ -1223,9 +1264,9 @@ class AdminProjectDetailView(
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["statuses"] = PROJECT_STATUS_CHOICES
+        context["statuses"] = get_project_status_choices()
         context["current_status_index"] = [
-            status for status, _ in PROJECT_STATUS_CHOICES
+            status for status, _ in get_project_status_choices()
         ].index(self.object.status)
         project_settings = ProjectSettings.for_request(self.request)
         context["project_settings"] = project_settings

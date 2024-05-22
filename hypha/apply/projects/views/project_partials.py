@@ -14,8 +14,9 @@ from hypha.apply.funds.utils import get_statuses_as_params
 
 from ..constants import statuses_and_table_statuses_mapping
 from ..models.payment import Invoice
-from ..models.project import PROJECT_STATUS_CHOICES, Project
+from ..models.project import Project
 from ..permissions import has_permission
+from ..utils import get_project_status_choices
 
 
 @login_required
@@ -53,7 +54,7 @@ def get_project_status_counts(request):
             if project_status_url_query and key in project_status_url_query
             else False,
         }
-        for key, display in PROJECT_STATUS_CHOICES
+        for key, display in get_project_status_choices()
     }
 
     return render(

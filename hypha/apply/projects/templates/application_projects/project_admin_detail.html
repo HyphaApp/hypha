@@ -4,14 +4,24 @@
 
 
 {% block admin_assignments %}
-    {% if object.is_in_progress %}
+    {% user_can_update_project_status object user as can_update_status %}
+    {% if can_update_status %}
         <div class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
 
             <h5>{% trans "Actions to take" %}</h5>
 
-            {% user_can_update_project_status project user as can_update_status %}
+            {% user_can_skip_pafapproval_process project user as can_skip_paf %}
+            {% if can_skip_paf %}
+                <a data-fancybox data-src="#continue-to-next-phase" class="button button--white button--full-width button--bottom-space" href="#">{% trans "Continue to next status" %}</a>
+
+                <div class="modal" id="continue-to-next-phase">
+                    <h4 class="modal__project-header-bar">{% trans "Continue to next stage" %}</h4>
+                    <p>{% trans "Please ensure the Project Form is completed and you are ready to proceed to the next stage. This action cannot be reverted." %}</p>
+                    {% trans "Continue" as submit %}
+                    {% include 'funds/includes/delegated_form_base.html' with form=skip_paf_approval_form value=submit %}
+                </div>
+            {% else %}
     <!-- Move the condition below to link if add more than one link to 'More Actions'-->
-            {% if can_update_status %}
                 <details>
                     <summary class="sidebar__separator sidebar__separator--medium">{% trans "More actions" %}</summary>
 
