@@ -161,7 +161,6 @@
                     @include triangle(right, $color--primary, 6px);
                     position: relative;
                     display: inline-block;
-                    margin-inline-end: 10px;
                     transform: rotate(0);
                     transition: transform $transition;
 
@@ -245,7 +244,14 @@
     }
 
     &__toggle {
-        padding: 5px 0 5px 5px;
+        padding: 0.5em;
+        margin-top: -0.5em;
+        cursor: pointer;
+        vertical-align: top;
+
+        &:hover {
+            opacity: 0.7;
+        }
     }
 
     &__more {

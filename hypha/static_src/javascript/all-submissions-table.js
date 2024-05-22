@@ -4,11 +4,12 @@
     let submission_arrow = document.createElement("span");
     submission_arrow.classList.add("arrow");
 
-    let submission_toggle = document.createElement("span");
+    let submission_toggle = document.createElement("button");
     submission_toggle.classList.add(
         "all-submissions-table__toggle",
         "js-toggle-submission"
     );
+    submission_toggle.setAttribute("title", "Show submission details");
     submission_toggle.appendChild(submission_arrow);
 
     // Add the toggle arrow before the submission titles.
