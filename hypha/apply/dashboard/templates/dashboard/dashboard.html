@@ -9,7 +9,6 @@
 {% block title %}{% trans "Dashboard" %}{% endblock %}
 
 {% block content %}
-
     {% adminbar %}
         {% slot header %}{% trans "Dashboard" %}{% endslot %}
         {% slot sub_heading %}{% trans "Welcome" %}, {{ request.user }}!{% endslot %}

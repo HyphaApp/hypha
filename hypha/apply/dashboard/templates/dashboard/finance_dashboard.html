@@ -5,12 +5,15 @@
 {% block title %}{% trans "Dashboard" %}{% endblock %}
 
 {% block content %}
-
     {% adminbar %}
         {% slot header %}{% trans "Dashboard" %}{% endslot %}
-        <a href="{% url 'wagtailadmin_home' %}" class="button button--primary">
-            {% trans "Admin" %}
-        </a>
+
+        {% if perms.wagtailadmin.access_admin %}
+            <a href="{% url 'wagtailadmin_home' %}" class="button button--primary">
+                {% heroicon_mini "wrench-screwdriver" size=20 class="mr-1 inline align-text-bottom" %}
+                {% trans "Admin" %}
+            </a>
+        {% endif %}
     {% endadminbar %}
 
     <div class="wrapper wrapper--large wrapper--inner-space-medium">
