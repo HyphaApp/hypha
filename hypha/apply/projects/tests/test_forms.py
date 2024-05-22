@@ -23,7 +23,7 @@ from ..forms.payment import (
 )
 from ..forms.project import (
     ChangePAFStatusForm,
-    ProjectApprovalForm,
+    ProjectForm,
     StaffUploadContractForm,
     UploadContractForm,
 )
@@ -386,7 +386,7 @@ class TestChangePAFStatusForm(TestCase):
         self.assertEqual(form.errors, {})
 
 
-class TestProjectApprovalForm(TestCase):
+class TestProjectForm(TestCase):
     def test_updating_fields_sets_changed_flag(self):
         project = ProjectFactory()
 
@@ -404,7 +404,7 @@ class TestProjectApprovalForm(TestCase):
             }
         )
         data.update(address_to_form_data())
-        form = ProjectApprovalForm(instance=project, data=data)
+        form = ProjectForm(instance=project, data=data)
         self.assertTrue(form.is_valid(), form.errors.as_text())
 
         form.save()

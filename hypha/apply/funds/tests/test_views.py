@@ -272,7 +272,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         self.post_page(
             self.submission,
             {
-                "form-submitted-project_form": "",
+                "form-submitted-project_create_form": "",
                 "project_lead": self.user.id,
                 "submission": self.submission.id,
             },

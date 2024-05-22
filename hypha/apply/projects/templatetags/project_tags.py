@@ -34,7 +34,7 @@ def user_next_step_on_project(project, user, request=None):
             if not project.user_has_updated_details:
                 return {
                     "heading": _("To do"),
-                    "text": _("Fill in the Approval Form(PAF)"),
+                    "text": _("Fill in the Project Form"),
                 }
             if project.paf_approvals.exists():
                 return {
@@ -60,7 +60,7 @@ def user_next_step_on_project(project, user, request=None):
             }
         return {
             "heading": _("Waiting for"),
-            "text": _("Awaiting approval form to be created."),
+            "text": _("Awaiting project form to be created."),
         }
     elif project.status == INTERNAL_APPROVAL:
         if user.is_applicant:
@@ -103,7 +103,7 @@ def user_next_step_on_project(project, user, request=None):
                 if not matched_roles:
                     return {
                         "heading": _("Waiting for"),
-                        "text": _("Awaiting PAF approval form to be approved"),
+                        "text": _("Awaiting project form to be approved"),
                     }
                 else:
                     matched_unapproved_approval = project.paf_approvals.filter(
@@ -135,7 +135,7 @@ def user_next_step_on_project(project, user, request=None):
 
         return {
             "heading": _("Waiting for"),
-            "text": _("Awaiting project approval from assigned approvers"),
+            "text": _("Awaiting project from assigned approvers"),
         }
     elif project.status == CONTRACTING:
         if not project.contracts.exists():

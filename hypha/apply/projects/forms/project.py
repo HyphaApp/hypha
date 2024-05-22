@@ -75,7 +75,7 @@ class ApproveContractForm(forms.Form):
         return self.instance
 
 
-class CreateProjectForm(forms.Form):
+class ProjectCreateForm(forms.Form):
     submission = forms.ModelChoiceField(
         queryset=ApplicationSubmission.objects.filter(project__isnull=True),
         widget=forms.HiddenInput(),
@@ -114,7 +114,7 @@ class MixedMetaClass(type(StreamBaseForm), type(forms.ModelForm)):
     pass
 
 
-class ProjectApprovalForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass):
+class ProjectForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass):
     class Meta:
         fields = [
             "title",

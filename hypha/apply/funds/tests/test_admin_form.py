@@ -4,7 +4,7 @@ from django.test import TestCase, override_settings
 from hypha.apply.determinations.tests.factories import DeterminationFormFactory
 from hypha.apply.funds.models import FundType
 from hypha.apply.projects.tests.factories import (
-    ProjectApprovalFormFactory,
+    ProjectFormFactory,
     ProjectReportFormFactory,
     ProjectSOWFormFactory,
 )
@@ -94,7 +94,7 @@ def form_data(
         num_project_approval_form,
         False,
         same=same_forms,
-        factory=ProjectApprovalFormFactory,
+        factory=ProjectFormFactory,
     )
     project_sow_form_data = formset_base(
         "sow_forms",

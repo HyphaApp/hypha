@@ -137,7 +137,7 @@ class ReportUpdateView(BaseStreamForm, UpdateView):
         # current here is a ReportVersion which should already have the data associated.
         if current:
             # The following allows existing data to populate the form. This code was inspired by (aka copied from)
-            # ProjectApprovalFormEditView.get_paf_form_kwargs().
+            # ProjectFormEditView.get_paf_form_kwargs().
             initial = current.raw_data
             # Is the following needed to see the file in a friendly URL? Does not appear so. But needed to not blow up.
             for field_id in current.file_field_ids:

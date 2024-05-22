@@ -57,7 +57,7 @@ from hypha.apply.determinations.views import (
     BatchDeterminationCreateView,
     DeterminationCreateOrUpdateView,
 )
-from hypha.apply.projects.forms import CreateProjectForm
+from hypha.apply.projects.forms import ProjectCreateForm
 from hypha.apply.projects.models import Project
 from hypha.apply.review.models import Review
 from hypha.apply.stream_forms.blocks import GroupToggleBlock
@@ -777,8 +777,8 @@ class ProgressSubmissionView(DelegatedViewMixin, UpdateView):
 
 @method_decorator(staff_required, name="dispatch")
 class CreateProjectView(DelegatedViewMixin, CreateView):
-    context_name = "project_form"
-    form_class = CreateProjectForm
+    context_name = "project_create_form"
+    form_class = ProjectCreateForm
     model = Project
 
     def dispatch(self, request, *args, **kwargs):

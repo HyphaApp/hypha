@@ -191,12 +191,12 @@ class LabBaseDeterminationForm(AbstractRelatedDeterminationForm):
     lab = ParentalKey("LabBase", related_name="determination_forms")
 
 
-class AbstractRelatedProjectApprovalForm(Orderable):
+class AbstractRelatedProjectForm(Orderable):
     class Meta(Orderable.Meta):
         abstract = True
 
     form = models.ForeignKey(
-        "application_projects.ProjectApprovalForm", on_delete=models.PROTECT
+        "application_projects.ProjectForm", on_delete=models.PROTECT
     )
 
     @property
@@ -255,7 +255,7 @@ class AbstractRelatedProjectSOWForm(Orderable):
         return self.form.name
 
 
-class ApplicationBaseProjectApprovalForm(AbstractRelatedProjectApprovalForm):
+class ApplicationBaseProjectForm(AbstractRelatedProjectForm):
     application = ParentalKey("ApplicationBase", related_name="approval_forms")
 
 
@@ -263,7 +263,7 @@ class ApplicationBaseProjectSOWForm(AbstractRelatedProjectSOWForm):
     application = ParentalKey("ApplicationBase", related_name="sow_forms")
 
 
-class LabBaseProjectApprovalForm(AbstractRelatedProjectApprovalForm):
+class LabBaseProjectForm(AbstractRelatedProjectForm):
     lab = ParentalKey("LabBase", related_name="approval_forms")
 
 
