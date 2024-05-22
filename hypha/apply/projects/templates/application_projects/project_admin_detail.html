@@ -16,7 +16,7 @@
 
                 <div class="modal" id="continue-to-next-phase">
                     <h4 class="modal__project-header-bar">{% trans "Continue to next stage" %}</h4>
-                    <p>{% trans "Have you filled the PAF and sure to move to the next stage, this action can not be reverted" %}</p>
+                    <p>{% trans "Please ensure the Project Form is completed and you are ready to proceed to the next stage. This action cannot be reverted." %}</p>
                     {% trans "Continue" as submit %}
                     {% include 'funds/includes/delegated_form_base.html' with form=skip_paf_approval_form value=submit %}
                 </div>
