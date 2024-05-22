@@ -66,15 +66,14 @@
 
 
             {% if not submission_title and activity|user_can_see_related:request.user %}
-                <div class="px-3">
-                    {% with url=activity.related_object.get_absolute_url %}
-                        {% if url %}
-                            <a href="{{ url }}" target="_blank" class="feed__related-item">
-                                {% trans "View " %}{{ activity.related_object|model_verbose_name }} <svg class="icon inline"><use xlink:href="#arrow-head-pixels--solid"></use></svg>
-                            </a>
-                        {% endif %}
-                    {% endwith %}
-                </div>
+                {% with url=activity.related_object.get_absolute_url %}
+                    {% if url %}
+                        <a href="{{ url }}" class="p-1 ms-2 mt-2 text-sm inline-flex items-center hover:opacity-70 transition-opacity font-bold">
+                            <span class="uppercase">{% trans "View " %}{{ activity.related_object|model_verbose_name }}</span>
+                            {% heroicon_micro "chevron-double-right" class="inline w-4 h-4 ms-1" aria_hidden=true %}
+                        </a>
+                    {% endif %}
+                {% endwith %}
             {% endif %}
 
         </div>

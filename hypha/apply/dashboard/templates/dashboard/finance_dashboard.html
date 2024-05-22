@@ -1,17 +1,19 @@
 {% extends "base-apply.html" %}
 {% load render_table from django_tables2 %}
-{% load i18n static markdown_tags nh3_tags %}
+{% load i18n static markdown_tags nh3_tags heroicons %}
 
 {% block title %}{% trans "Dashboard" %}{% endblock %}
 
 {% block content %}
-
     {% adminbar %}
         {% slot header %}{% trans "Dashboard" %}{% endslot %}
-        <a href="{% url 'wagtailadmin_home' %}" class="button button--primary button--arrow-pixels-white">
-            {% trans "Apply admin" %}
-            <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
-        </a>
+
+        {% if perms.wagtailadmin.access_admin %}
+            <a href="{% url 'wagtailadmin_home' %}" class="button button--primary">
+                {% heroicon_mini "wrench-screwdriver" size=20 class="mr-1 inline align-text-bottom" %}
+                {% trans "Admin" %}
+            </a>
+        {% endif %}
     {% endadminbar %}
 
     <div class="wrapper wrapper--large wrapper--inner-space-medium">

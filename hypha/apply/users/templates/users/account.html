@@ -1,5 +1,5 @@
 {% extends 'base-apply.html' %}
-{% load i18n users_tags wagtailcore_tags %}
+{% load i18n users_tags wagtailcore_tags heroicons %}
 
 {% block title %}{% trans "Account" %}{% endblock %}
 
@@ -8,23 +8,31 @@
         {% slot header %}{% trans "Welcome" %} {{ user }}{% endslot %}
         {% slot sub_heading %}{% trans "Manage your account details and security." %}{% endslot %}
 
-        {% if user.can_access_dashboard %}
-            <a href="{% url 'dashboard:dashboard' %}" class="button button--primary button--arrow-pixels-white" hx-boost='true'>
-                {% trans "Go to my dashboard" %}
-                <svg><use xlink:href="#arrow-head-pixels--solid"></use></svg>
-            </a>
-        {% else %}
-            <div class="wrapper wrapper--cta-box flex items-center">
-                <div class="flex-1">
-                    <h3 class="heading heading--no-margin font-bold">{% trans "Submit a new application" %}</h3>
-                    <p class="text-base m-0">{% trans "Apply now for our open rounds" %}</p>
+        <span class="flex gap-4">
+            {% if user.can_access_dashboard %}
+                <a href="{% url 'dashboard:dashboard' %}" class="button button--primary">
+                    {% heroicon_mini "squares-2x2" size=20 class="mr-1 inline align-text-bottom" %}
+                    {% trans "Go to my dashboard" %}
+                </a>
+            {% else %}
+                <div class="wrapper wrapper--cta-box flex items-center">
+                    <div class="flex-1">
+                        <h3 class="heading heading--no-margin font-bold">{% trans "Submit a new application" %}</h3>
+                        <p class="text-base m-0">{% trans "Apply now for our open rounds" %}</p>
+                    </div>
+                    <div>
+                        <a class="button button--blue-white" href="{% pageurl APPLY_SITE.root_page %}" class="button">{% trans "Apply" %}</a>
+                    </div>
                 </div>
-                <div>
-                    <a class="button button--blue-white" href="{% pageurl APPLY_SITE.root_page %}" class="button">{% trans "Apply" %}</a>
-                </div>
-            </div>
 
-        {% endif %}
+            {% endif %}
+            {% if perms.wagtailadmin.access_admin %}
+                <a href="{% url 'wagtailadmin_home' %}" id="wagtail-admin-button" class="button button--primary">
+                    {% heroicon_mini "wrench-screwdriver" size=20 class="mr-1 inline align-text-bottom" %}
+                    {% trans "Admin" %}
+                </a>
+            {% endif %}
+        </span>
     {% endadminbar %}
 
     <div class="profile">
