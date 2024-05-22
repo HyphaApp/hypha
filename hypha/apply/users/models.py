@@ -229,13 +229,22 @@ class User(AbstractUser):
     def get_short_name(self):
         return self.email
 
-    def get_full_name_with_group(self):
-        is_apply_staff = f" ({STAFF_GROUP_NAME})" if self.is_apply_staff else ""
-        is_reviewer = f" ({REVIEWER_GROUP_NAME})" if self.is_reviewer else ""
-        is_applicant = f" ({APPLICANT_GROUP_NAME})" if self.is_applicant else ""
-        is_finance = f" ({FINANCE_GROUP_NAME})" if self.is_finance else ""
-        is_contracting = f" ({CONTRACTING_GROUP_NAME})" if self.is_contracting else ""
-        return f"{self.full_name.strip()}{is_apply_staff}{is_reviewer}{is_applicant}{is_finance}{is_contracting}"
+    def get_display_name(self):
+        return self.full_name.strip() if self.full_name else self.email.split("@")[0]
+
+    def get_role_names(self):
+        roles = []
+        if self.is_apply_staff:
+            roles.append(STAFF_GROUP_NAME)
+        if self.is_reviewer:
+            roles.append(REVIEWER_GROUP_NAME)
+        if self.is_applicant:
+            roles.append(APPLICANT_GROUP_NAME)
+        if self.is_finance:
+            roles.append(FINANCE_GROUP_NAME)
+        if self.is_contracting:
+            roles.append(CONTRACTING_GROUP_NAME)
+        return roles
 
     @cached_property
     def roles(self):

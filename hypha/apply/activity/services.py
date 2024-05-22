@@ -38,7 +38,7 @@ def get_related_comments_for_user(obj, user):
     related_query = type(obj).activities.rel.related_query_name
 
     return (
-        Activity.comments.filter(**{related_query: obj})
+        Activity.objects.filter(**{related_query: obj})
         .select_related("user")
         .prefetch_related(
             "related_object",

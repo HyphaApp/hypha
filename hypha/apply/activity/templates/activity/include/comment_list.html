@@ -1,9 +1,13 @@
 {% load i18n %}
 
-{% for comment in comments %}
-    {% include "activity/include/listing_base.html" with activity=comment %}
-{% endfor %}
+<div class="border-b-2 border-b-slate-300">
+    <div class="max-w-3xl md:ml-20">
+        {% for comment in comments %}
+            {% include "activity/include/listing_base.html" with activity=comment %}
+        {% endfor %}
 
-{% if not comments %}
-    {% trans "No comments available" %}
-{% endif %}
+        {% if not comments %}
+            {% trans "No comments available" %}
+        {% endif %}
+    </div>
+</div>
