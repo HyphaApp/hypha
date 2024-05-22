@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db.models import ProtectedError
 from django.forms.models import ModelForm
@@ -57,9 +58,9 @@ class ViewDispatcher(View):
             view = self.partner_view
         elif self.community_check(request):
             view = self.community_view
-        elif self.finance_check(request):
+        elif settings.PROJECTS_ENABLED and self.finance_check(request):
             view = self.finance_view
-        elif self.contracting_check(request):
+        elif settings.PROJECTS_ENABLED and self.contracting_check(request):
             view = self.contracting_view
         elif self.applicant_check(request):
             view = self.applicant_view

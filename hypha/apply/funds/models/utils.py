@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -144,11 +145,15 @@ class WorkflowStreamForm(WorkflowHelpers, AbstractStreamForm):  # type: ignore
             help_text="Add a form to be used by external reviewers.",
         ),
         InlinePanel("determination_forms", label=_("Determination Forms")),
-        InlinePanel("approval_forms", label=_("Project Approval Form"), max_num=1),
-        InlinePanel("sow_forms", label=_("Project SOW Form"), max_num=1),
-        # The models technically allow for multiple Report forms but to start we permit only one in the UIs.
-        InlinePanel("report_forms", label=_("Project Report Form"), max_num=1),
     ]
+
+    if settings.PROJECTS_ENABLED:
+        content_panels += [
+            InlinePanel("approval_forms", label=_("Project Approval Form"), max_num=1),
+            InlinePanel("sow_forms", label=_("Project SOW Form"), max_num=1),
+            # The models technically allow for multiple Report forms but to start we permit only one in the UIs.
+            InlinePanel("report_forms", label=_("Project Report Form"), max_num=1),
+        ]
 
 
 class EmailForm(AbstractEmailForm):
