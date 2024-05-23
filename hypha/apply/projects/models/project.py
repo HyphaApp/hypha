@@ -10,7 +10,7 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.db.models import Count, F, Max, OuterRef, Subquery, Sum, Value
+from django.db.models import Count, F, Max, OuterRef, Q, Subquery, Sum, Value
 from django.db.models.functions import Cast, Coalesce
 from django.db.models.signals import post_delete
 from django.dispatch.dispatcher import receiver
@@ -580,7 +580,9 @@ class PAFApprovals(models.Model):
 
 class ContractQuerySet(models.QuerySet):
     def approved(self):
-        return self.filter(signed_by_applicant=True, approver__isnull=False)
+        return self.filter(
+            Q(signed_by_applicant=True) | Q(signed_and_approved=True)
+        ).filter(approver__isnull=False)
 
 
 class Contract(models.Model):
@@ -595,6 +597,8 @@ class Contract(models.Model):
     )
 
     file = models.FileField(upload_to=contract_path, storage=PrivateStorage())
+
+    signed_and_approved = models.BooleanField("Signed and Approved", default=False)
 
     signed_by_applicant = models.BooleanField("Counter Signed?", default=False)
     uploaded_by_contractor_at = models.DateTimeField(null=True)
