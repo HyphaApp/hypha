@@ -373,10 +373,8 @@ class VendorPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
     raise_exception = True
 
     def dispatch(self, *args, **kwargs):
-        pk = self.kwargs["pk"]
-        vendor_pk = self.kwargs["vendor_pk"]
-        self.vendor = get_object_or_404(Vendor, pk=vendor_pk)
-        self.project = get_object_or_404(Project, pk=pk)
+        self.vendor = get_object_or_404(Vendor, pk=self.kwargs["vendor_pk"])
+        self.project = get_object_or_404(Project, submission__id=self.kwargs["pk"])
 
         return super().dispatch(*args, **kwargs)
 

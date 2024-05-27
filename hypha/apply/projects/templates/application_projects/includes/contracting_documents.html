@@ -61,7 +61,8 @@
                 </div>
                 {% if contract_uploaded %}
                     <div class="docs-block__row-inner">
-                        <a class="font-bold flex items-center w-auto text-start bg-white text-light-blue me-0 mb-1 p-2.5 border-solid border border-light-blue focus:text-light-blue hover:bg-light-blue hover:text-white" href="{% url 'apply:projects:contract' pk=project.pk file_pk=contract.pk %}" target="_blank">
+                        <a class="font-bold flex items-center w-auto text-start bg-white text-light-blue me-0 mb-1 px-3 py-1 border-solid border border-light-blue hover:bg-light-blue hover:text-white focus:ring transition-colors"
+                           href="{{ contract.get_absolute_url }}" target="_blank">
                             {% heroicon_micro "eye" class="inline me-1 w-4 h-4" aria_hidden=true %}
                             {% trans "View" %}
                         </a>
@@ -159,7 +160,13 @@
                                                 {% if document_category.required %}<span class="text-red-700">*</span>{% endif %}
                                                 {% if document_category.template %}
                                                     {% heroicon_mini "information-circle" class="fill-light-blue inline align-middle" aria_hidden=true %}
-                                                    <a class="font-bold border-b-2 border-dashed" href="{% url 'apply:projects:category_template' pk=object.pk type='contract_document' category_pk=document_category.pk %}" target="_blank">{% trans "View template" %}</a>
+                                                    <a
+                                                        class="font-bold border-b-2 border-dashed"
+                                                        href="{% url 'apply:projects:category_template' pk=object.public_id type='contract_document' category_pk=document_category.pk %}"
+                                                        target="_blank"
+                                                    >
+                                                        {% trans "View template" %}
+                                                    </a>
                                                 {% endif %}
                                             </p>
                                             {% if document_category not in remaining_contract_document_categories %}
@@ -178,7 +185,7 @@
                                             {% contract_category_latest_file project document_category as latest_file %}
                                             {% if latest_file %}
                                                 <div class="docs-block__row-inner">
-                                                    <a class="docs-block__icon-link" href="{% url 'apply:projects:contract_document' pk=object.pk file_pk=latest_file.pk %}" target="_blank">
+                                                    <a class="docs-block__icon-link" href="{% url 'apply:projects:contract_document' pk=object.public_id file_pk=latest_file.pk %}" target="_blank">
                                                         {% heroicon_micro "eye" class="inline me-1 w-4 h-4" aria_hidden=true %}
                                                         {% trans "View" %}
                                                     </a>

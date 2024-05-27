@@ -32,7 +32,7 @@
     <div id="list-deliverables">
         <div class="deliverables">
             {% for deliverable in invoice.deliverables.all %}
-                <b>{{ deliverable.deliverable.name }} ({{ deliverable.quantity }} {{ deliverable.deliverable.unit_price|format_number_as_currency }})</b>{% if user_can_edit_deliverables %}<a href="{% url "api:v1:remove-deliverables" pk=deliverable.pk invoice_pk=invoice.pk project_pk=project.pk %}"> {% trans "Remove" %}</a>{% endif %}<br>
+                <b>{{ deliverable.deliverable.name }} ({{ deliverable.quantity }} {{ deliverable.deliverable.unit_price|format_number_as_currency }})</b>{% if user_can_edit_deliverables %}<a href="{% url "api:v1:remove-deliverables" pk=deliverable.pk invoice_pk=invoice.pk project_pk=project.public_id %}"> {% trans "Remove" %}</a>{% endif %}<br>
             {% endfor %}
         </div>
         {% if invoice.deliverables_total_amount.total %}

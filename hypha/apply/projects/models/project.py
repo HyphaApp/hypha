@@ -1,6 +1,7 @@
 import decimal
 import json
 import logging
+from functools import cached_property
 
 from django import forms
 from django.apps import apps
@@ -381,6 +382,10 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
                 return True
         return False
 
+    @cached_property
+    def public_id(self):
+        return self.submission.id
+
     @property
     def editable(self):
         if self.is_locked:
@@ -392,7 +397,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         return False
 
     def get_absolute_url(self):
-        return reverse("apply:projects:detail", args=[self.id])
+        return reverse("apply:projects:detail", args=[self.public_id])
 
     @property
     def can_make_approval(self):
@@ -619,7 +624,9 @@ class Contract(models.Model):
         )
 
     def get_absolute_url(self):
-        return reverse("apply:projects:contract", args=[self.project.pk, self.pk])
+        return reverse(
+            "apply:projects:contract", args=[self.project.public_id, self.pk]
+        )
 
 
 class PacketFile(models.Model):

@@ -20,7 +20,7 @@
         </div>
         {% if editable %}
             <div>
-                <a class="link link--edit-vendor is-active" href="{% url 'apply:projects:vendor' pk=project.pk %}">
+                <a class="link link--edit-vendor is-active" href="{% url 'apply:projects:vendor' pk=project.public_id %}">
                     {% heroicon_micro "pencil-square" class="inline me-1" aria_hidden=true %}
                     {% trans "Edit" %}
                 </a>
@@ -39,7 +39,7 @@
                     <div class="card card--solid">
                         <div class="card__inner">
                             {% for document in due_diligence_documents %}
-                                <p class="card__text"><a href="{% url "apply:projects:vendor-documents" pk=project.pk vendor_pk=project.vendor.pk file_pk=document.pk %}">{{ document.document.name }}</a></p>
+                                <p class="card__text"><a href="{% url "apply:projects:vendor-documents" pk=project.public_id vendor_pk=project.vendor.pk file_pk=document.pk %}">{{ document.document.name }}</a></p>
                             {% endfor %}
                         </div>
                     </div>
