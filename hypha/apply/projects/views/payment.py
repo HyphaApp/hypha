@@ -77,7 +77,7 @@ class InvoiceAccessMixin(UserPassesTestMixin):
     model = Invoice
 
     def get_object(self):
-        project = get_object_or_404(Project, pk=self.kwargs["pk"])
+        project = get_object_or_404(Project, submission__pk=self.kwargs["pk"])
         return get_object_or_404(project.invoices.all(), pk=self.kwargs["invoice_pk"])
 
     def test_func(self):
@@ -251,7 +251,7 @@ class CreateInvoiceView(SuccessMessageMixin, CreateView):
     success_message = _("Invoice added")
 
     def dispatch(self, request, *args, **kwargs):
-        self.project = Project.objects.get(pk=kwargs["pk"])
+        self.project = get_object_or_404(Project, submission__id=kwargs["pk"])
         if not request.user.is_apply_staff and not self.project.user == request.user:
             return redirect(self.project)
         return super().dispatch(request, *args, **kwargs)
@@ -348,7 +348,7 @@ class EditInvoiceView(InvoiceAccessMixin, UpdateView):
         if "delete" in form.data:
             return redirect(
                 "apply:projects:invoice-delete",
-                pk=self.object.project.id,
+                pk=self.object.project.public_id,
                 invoice_pk=self.object.id,
             )
         if form.is_valid():
@@ -434,8 +434,7 @@ class InvoicePrivateMedia(UserPassesTestMixin, PrivateMediaView):
 
     def dispatch(self, *args, **kwargs):
         invoice_pk = self.kwargs["invoice_pk"]
-        project_pk = self.kwargs["pk"]
-        self.project = get_object_or_404(Project, pk=project_pk)
+        self.project = get_object_or_404(Project, submission__id=self.kwargs["pk"])
         self.invoice = get_object_or_404(self.project.invoices.all(), pk=invoice_pk)
 
         return super().dispatch(*args, **kwargs)
