@@ -2,23 +2,53 @@
 
 {% if request.user.is_authenticated %}
     {% if request.path == "/" and request.user.can_access_dashboard %}
-        <a
-            class="button button--transparent button--narrow {{ class }}"
-            href="{{ APPLY_SITE.root_url }}{% url 'dashboard:dashboard' %}"
-        >
-            {% heroicon_micro "user" class="inline align-text-bottom w-4 h-4 me-1" aria_hidden=true %}
-
-            {% blocktrans %}My {{ ORG_SHORT_NAME }}{% endblocktrans %}
-        </a>
+        <div x-data="{ show: false }" class="relative flex">
+            <button x-on:click="show = ! show" class="button font-bold button--transparent button--narrow" type="button">
+                {% heroicon_micro "user" class="inline align-text-bottom w-4 h-4 me-1" aria_hidden=true %}
+                {% blocktrans %}My {{ ORG_SHORT_NAME }}{% endblocktrans %}
+            </button>
+            <div x-show="show" x-transition @click.outside="show = false" class="dropdown__content end-0 top-10">
+                <a href="{% url 'users:account' %}">
+                    {% trans 'My account' %}</a>
+                {% if request.user.is_apply_staff %}
+                    <a href="{% url 'activity:notifications' %}" class="border-b border-gray-300" >
+                        {% trans "Activity feed" %}</a>
+                    <a href="{% url 'apply:submissions:flagged' %}" class="border-b border-gray-300">
+                        {% trans "My flagged" %}</a>
+                    <a href="{% url 'wagtailadmin_home' %}" class="border-b border-gray-300">
+                        {% trans "Wagtail admin" %}</a>
+                {% endif %}
+                <a href="{% url 'users:logout' %}" >
+                    {% trans "Log out" %}
+                </a>
+            </div>
+        </div>
     {% else %}
-        <a
-            class="button button--transparent button--narrow {{ class }}"
-            href="{{ APPLY_SITE.root_url }}{% url 'users:account' %}"
-            title="Goto your account"
-        >
-            {% heroicon_micro "user" class="inline align-text-bottom w-4 h-4 me-1" aria_hidden=true %}
-            {{ request.user }}
-        </a>
+        <div x-data="{ show: false }" class="relative flex">
+<!--            <button x-on:click="show = ! show" class="button font-bold button&#45;&#45;narrow text-center flex items-center justify-center hover:bg-black hover:text-white active:bg-black active:text-white focus:bg-black focus:text-white" type="button">-->
+            <button x-on:click="show = ! show" class="button font-bold button--narrow text-center flex items-center justify-center " type="button">
+<!--                {% heroicon_micro "user" class="inline align-text-bottom w-4 h-4 me-1" aria_hidden=true %}-->
+                {% heroicon_micro "user-circle" class="inline align-text-bottom w-8 h-8 me-1" aria_hidden=true %}
+            </button>
+            <div x-show="show" x-transition @click.outside="show = false" class="dropdown__content end-0 top-10">
+                <div class="py-1 px-4 font-bold bg-gray-300">
+                    <span>{{ request.user }}</span>
+                </div>
+
+                <a href="{% url 'users:account' %}" title="Goto your account" class="border-b border-gray-300">
+                    {% trans 'My account' %}</a>
+                {% if request.user.is_apply_staff %}
+                    <a href="{% url 'activity:notifications' %}" class="border-b border-gray-300" >
+                        {% trans "Activity feed" %}</a>
+                    <a href="{% url 'apply:submissions:flagged' %}" class="border-b border-gray-300">
+                        {% trans "My flagged" %}</a>
+                    <a href="{% url 'wagtailadmin_home' %}" class="border-b border-gray-300">
+                        {% trans "Wagtail admin" %}</a>
+                {% endif %}
+                <a href="{% url 'users:logout' %}" >
+                    {% trans "Log out" %}</a>
+            </div>
+        </div>
     {% endif %}
 {% else %}
     <a

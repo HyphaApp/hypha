@@ -100,7 +100,7 @@
                 {% endif %}
             </section>
 
-            <div class="header__button-container flex gap-4">
+            <div class="header__button-container flex h-10 gap-4">
                 {% comment %} Todo List {% endcomment %}
                 {% if request.user.is_authenticated and request.user.is_apply_staff %}
                     <div
@@ -155,12 +155,6 @@
 
                 {% if request.path != '/auth/' and request.path != '/login/' %}
                     {% include "includes/login_button.html" %}
-                {% endif %}
-
-                {% if request.user.is_authenticated %}
-                    <a href="{% url 'users:logout' %}" class="button button--transparent button--narrow">
-                        {% trans "Log out" %}
-                    </a>
                 {% endif %}
             </div>
         </div>
