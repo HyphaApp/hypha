@@ -7,7 +7,7 @@
 {% trans "A Project is waiting for contract" %}
 
 {% trans "Title" %}: {{ source.title }}
-{% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{% url 'apply:projects:detail' pk=source.pk %}
+{% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}
 {% trans "Project Form" %}: {{ request.scheme }}://{{ request.get_host }}{% url 'apply:projects:approval' pk=source.pk %}
 
 {% blocktrans with lead=source.lead email=source.lead.email %}Please contact {{ lead }} - {{ email }} if you have any questions.{% endblocktrans %}

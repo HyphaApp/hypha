@@ -8,7 +8,7 @@
 
     {% adminbar %}
         {% slot back_link %}
-            <a class="admin-bar__back-link" href="{% url 'apply:projects:detail' object.project.id %}">
+            <a class="admin-bar__back-link" href="{{ object.project.get_absolute_url }}">
                 {% trans "View project page" %}
             </a>
         {% endslot %}
@@ -39,14 +39,18 @@
             <div class="card card--solid">
                 <div class="card__inner">
                     <h5 class="card__heading">{% trans "Invoice" %}</h5>
-                    <p class="card__text"><a target="_blank" href="{% url "apply:projects:invoice-document" pk=object.project.pk invoice_pk=object.pk %}">{{object.filename}}</a></p>
-                    <embed src="{% url "apply:projects:invoice-document" pk=object.project.pk invoice_pk=object.pk %}" width="800px" height="800px" />
+                    <p class="card__text"><a target="_blank" href="{% url "apply:projects:invoice-document" pk=object.project.public_id invoice_pk=object.pk %}">{{object.filename}}</a></p>
+                    <embed src="{% url "apply:projects:invoice-document" pk=object.project.public_id invoice_pk=object.pk %}" width="800px" height="800px" />
                 </div>
                 {% if object.supporting_documents.exists %}
                     <div class="card__inner">
                         <h5 class="card__heading">{% trans "Supporting Documents" %}</h5>
                         {% for document in object.supporting_documents.all %}
-                            <p class="card__text"><a href="{% url "apply:projects:invoice-supporting-document" pk=object.project.pk invoice_pk=object.pk file_pk=document.pk %}">{{document.filename}}</a></p>
+                            <p class="card__text">
+                                <a href="{{ document.get_absolute_url }}">
+                                    {{document.filename}}
+                                </a>
+                            </p>
                         {% endfor %}
                     </div>
                 {% endif %}
