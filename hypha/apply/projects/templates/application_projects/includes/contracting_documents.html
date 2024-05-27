@@ -42,8 +42,15 @@
         {% endif %}
     </div>
 
-    <ul class="docs-block__inner" id="contract-documents-elements" {% if collapsible_header %} x-show="!collapsed" role="region"
-            aria-labelledby="contract-documents-section" {% endif %}>
+    <ul
+        class="docs-block__inner"
+        id="contract-documents-elements"
+        {% if collapsible_header %}
+        x-show="!collapsed"
+        role="region"
+        aria-labelledby="contract-documents-section"
+        {% endif %}
+    >
 
             {% is_project_contract_approved object as is_contract_approved %}
             {% contract_uploaded_by_contracting object as contract_uploaded %}
@@ -58,7 +65,11 @@
                 </div>
                 {% if contract_uploaded %}
                     <div class="docs-block__row-inner">
-                        <a class="flex items-center p-2.5 mb-1 w-auto font-bold bg-white border border-solid hover:text-white text-start text-light-blue me-0 border-light-blue hover:bg-light-blue focus:text-light-blue" href="{% url 'apply:projects:contract' pk=project.pk file_pk=contract.pk %}" target="_blank">
+                        <a
+                            class="flex items-center p-2.5 mb-1 w-auto font-bold bg-white border border-solid hover:text-white text-start text-light-blue me-0 border-light-blue hover:bg-light-blue focus:text-light-blue"
+                            href="{{ contract.get_absolute_url }}"
+                            target="_blank"
+                        >
                             {% heroicon_micro "eye" class="inline w-4 h-4 me-1" aria_hidden=true %}
                             {% trans "View" %}
                         </a>
