@@ -1,0 +1,16 @@
+{% load i18n markdown_tags nh3_tags %}
+
+<div class="bg-white p-2 flex items-center">
+    <svg class="icon icon--dashboard-tasks"><use xlink:href="#{{ task.icon }}"></use></svg>
+    <div class="flex flex-1 items-center">
+        <span>{{ task.text|markdown|nh3 }}</span>
+        {% if task.type == "Draft" %}
+            <span
+                class="bg-red-200 rounded-full whitespace-nowrap inline-block ms-1 my-2 px-2 pt-0.5 pb-1 text-sm font-medium text-gray-800"
+            >
+                {{ task.type }}
+            </span>
+        {% endif %}
+    </div>
+    <a class="button button--primary" href="{{ task.url }}">{% trans "View" %}</a>
+</div>

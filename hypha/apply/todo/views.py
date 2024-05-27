@@ -14,7 +14,7 @@ from .services import validate_user_groups_uniqueness, validate_user_uniquness
 @method_decorator(staff_required, name="dispatch")
 class TodoListView(ListView):
     model = Task
-    template_name = "todolist_dropdown.html"
+    template_name = "todo/todolist_dropdown.html"
 
     def get_queryset(self):
         tasks = render_task_templates_for_user(self.request, self.request.user)
