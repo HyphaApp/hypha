@@ -12,7 +12,7 @@
 
         {% slot header %}{% trans "Comparing revisions" %}{% endslot %}
         {% slot sub_heading %}
-            {% trans "For" %} <a class="text-blue-300 hover:underline" href="{% url "funds:submissions:detail" object.id %}">{{ object.title_with_id }}</a>
+            {% trans "For" %} <a class="text-blue-300 hover:underline" href="{% url "funds:submissions:detail" object.id %}">{{ object.title_text_display }}</a>
         {% endslot %}
 
     {% endadminbar %}

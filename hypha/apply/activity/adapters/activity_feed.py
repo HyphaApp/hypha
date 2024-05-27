@@ -24,7 +24,7 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.TRANSITION: "handle_transition",
         MESSAGES.BATCH_TRANSITION: "handle_batch_transition",
         MESSAGES.NEW_SUBMISSION: _(
-            "Submitted {source.title_with_id} for {source.page.title}"
+            "Submitted {source.title_text_display} for {source.page.title}"
         ),
         MESSAGES.EDIT_SUBMISSION: _("Edited"),
         MESSAGES.APPLICANT_EDIT: _("Edited"),
@@ -71,10 +71,10 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.BATCH_ARCHIVE_SUBMISSION: "handle_batch_archive_submission",
         MESSAGES.BATCH_UPDATE_INVOICE_STATUS: "handle_batch_update_invoice_status",
         MESSAGES.ARCHIVE_SUBMISSION: _(
-            "{user} has archived the submission: {source.title_with_id}"
+            "{user} has archived the submission: {source.title_text_display}"
         ),
         MESSAGES.UNARCHIVE_SUBMISSION: _(
-            "{user} has unarchived the submission: {source.title_with_id}"
+            "{user} has unarchived the submission: {source.title_text_display}"
         ),
         MESSAGES.DELETE_INVOICE: _("Deleted an invoice"),
     }
@@ -157,7 +157,7 @@ class ActivityAdapter(AdapterBase):
     def handle_batch_delete_submission(self, sources, **kwargs):
         submissions = sources
         submissions_text = ", ".join(
-            [submission.title_with_id for submission in submissions]
+            [submission.title_text_display for submission in submissions]
         )
         return _("Successfully deleted submissions: {title}").format(
             title=submissions_text
@@ -166,7 +166,7 @@ class ActivityAdapter(AdapterBase):
     def handle_batch_archive_submission(self, sources, **kwargs):
         submissions = sources
         submissions_text = ", ".join(
-            [submission.title_with_id for submission in submissions]
+            [submission.title_text_display for submission in submissions]
         )
         return _("Successfully archived submissions: {title}").format(
             title=submissions_text

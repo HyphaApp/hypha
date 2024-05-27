@@ -5,7 +5,7 @@
 
     {% adminbar %}
         {% slot header %}{% if object %}{% trans "Update Determination draft" %}{% else %}{% trans "Create Determination" %}{% endif %}{% endslot %}
-        {% slot sub_heading %}{% if submission %}{% trans "For" %} <a class="text-blue-300 hover:underline" href="{% url "funds:submissions:detail" submission.id %}">{{ submission.title_with_id }}</a>{% endif %}{% endslot %}
+        {% slot sub_heading %}{% if submission %}{% trans "For" %} <a class="text-blue-300 hover:underline" href="{% url "funds:submissions:detail" submission.id %}">{{ submission.title_text_display }}</a>{% endif %}{% endslot %}
     {% endadminbar %}
 
     {% block form %}

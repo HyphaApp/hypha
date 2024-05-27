@@ -33,7 +33,7 @@
                 <div class="wrapper wrapper--status-bar-outer">
                     <div class="wrapper wrapper--status-bar-inner">
                         <div>
-                            <h5 class="heading heading--no-margin"><a class="link link--underlined" href="{% url 'funds:submissions:detail' submission.id %}">{{ submission.title_with_id }}</a></h5>
+                            <h5 class="heading heading--no-margin"><a class="link link--underlined" href="{% url 'funds:submissions:detail' submission.id %}">{{ submission.title_text_display }}</a></h5>
                             <h6 class="heading heading--no-margin heading--submission-meta"><span>{% trans "Submitted" %}:</span> {{ submission.submit_time.date }} {% trans "by" %} {{ submission.user.get_full_name }}</h6>
                         </div>
                         {% status_bar submission.workflow submission.phase request.user css_class="status-bar--small" %}

@@ -5,7 +5,7 @@
 {% block content %}
     {% adminbar %}
         {% slot header %}{% trans "Revisions" %}{% endslot %}
-        {% slot sub_heading %}{% trans "For" %} <a class="text-blue-300 hover:underline" href="{% url "funds:submissions:detail" submission.id %}">{{ submission.title_with_id }}</a>{% endslot %}
+        {% slot sub_heading %}{% trans "For" %} <a class="text-blue-300 hover:underline" href="{% url "funds:submissions:detail" submission.id %}">{{ submission.title_text_display }}</a>{% endslot %}
     {% endadminbar %}
 
     <div class="wrapper wrapper--medium">

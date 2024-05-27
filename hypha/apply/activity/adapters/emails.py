@@ -75,7 +75,7 @@ class EmailAdapter(AdapterBase):
         if source and hasattr(source, "title"):
             if is_ready_for_review(message_type) or is_reviewer_update(message_type):
                 subject = _(
-                    "Application ready to review: {source.title_with_id}"
+                    "Application ready to review: {source.title_text_display}"
                 ).format(source=source)
                 if message_type in {
                     MESSAGES.BATCH_READY_FOR_REVIEW,
@@ -84,7 +84,7 @@ class EmailAdapter(AdapterBase):
                     subject = _("Multiple applications are now ready for your review")
             elif message_type in {MESSAGES.REVIEW_REMINDER}:
                 subject = _(
-                    "Reminder: Application ready to review: {source.title_with_id}"
+                    "Reminder: Application ready to review: {source.title_text_display}"
                 ).format(source=source)
             elif message_type in [
                 MESSAGES.SENT_TO_COMPLIANCE,
@@ -133,7 +133,7 @@ class EmailAdapter(AdapterBase):
             else:
                 try:
                     subject = source.page.specific.subject or _(
-                        "Your application to {org_long_name}: {source.title_with_id}"
+                        "Your application to {org_long_name}: {source.title_text_display}"
                     ).format(org_long_name=settings.ORG_LONG_NAME, source=source)
                 except AttributeError:
                     subject = _("Your {org_long_name} Project: {source.title}").format(

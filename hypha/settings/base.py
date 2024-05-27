@@ -62,6 +62,11 @@ SUBMISSIONS_ARCHIVED_VIEW_ACCESS_STAFF_ADMIN = env.bool(
     "SUBMISSIONS_ARCHIVED_ACCESS_STAFF_ADMIN", True
 )
 
+# Possible values are: "public_id" and "title"
+SUBMISSION_TITLE_TEXT_TEMPLATE = env(
+    "SUBMISSION_TITLE_TEMPLATE", default="{title} (#{public_id})"
+)
+
 # Provide permissions for archiving submissions
 SUBMISSIONS_ARCHIVED_ACCESS_STAFF = env.bool("SUBMISSIONS_ARCHIVED_ACCESS_STAFF", False)
 SUBMISSIONS_ARCHIVED_ACCESS_STAFF_ADMIN = env.bool(

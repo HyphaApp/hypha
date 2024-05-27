@@ -28,6 +28,7 @@ from django.db.models.functions import Cast
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.html import strip_tags
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from django_fsm import RETURN_VALUE, FSMField, can_proceed, transition
@@ -513,8 +514,16 @@ class ApplicationSubmission(
         return self.status == DRAFT_STATE
 
     @property
-    def title_with_id(self):
-        return f"{self.title} (#{self.public_id or self.id})"
+    def title_text_display(self):
+        """Return the title text for display across the site.
+
+        Use SUBMISSION_TITLE_TEXT_TEMPLATE setting to change format.
+        """
+        ctx = {
+            "title": self.title,
+            "public_id": self.public_id or self.id,
+        }
+        return strip_tags(settings.SUBMISSION_TITLE_TEXT_TEMPLATE.format(**ctx))
 
     def not_progressed(self):
         return not self.next
@@ -898,7 +907,7 @@ class ApplicationSubmission(
         return reverse("funds:submissions:detail", args=(self.id,))
 
     def __str__(self):
-        return f"{self.title_with_id} from {self.full_name} for {self.page.title}"
+        return f"{self.title_text_display} from {self.full_name} for {self.page.title}"
 
     def __repr__(self):
         return f"<{self.__class__.__name__}: {self.user}, {self.round}, {self.page}>"

@@ -50,9 +50,9 @@ def render_actions(table, record):
 
 def render_title(record):
     try:
-        title = record.title_with_id
+        title = record.title_text_display
     except AttributeError:
-        title = record.submission.title_with_id
+        title = record.submission.title_text_display
     return title
 
 

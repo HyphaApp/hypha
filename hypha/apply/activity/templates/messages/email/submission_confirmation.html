@@ -3,7 +3,7 @@
 {% load i18n %}
 
 {% block content %}{# fmt:off #}
-{% blocktrans with title=source.title_with_id %}We appreciate your {{ title }} application submission to the {{ ORG_LONG_NAME }}.{% endblocktrans %}
+{% blocktrans with title=source.title_text_display %}We appreciate your {{ title }} application submission to the {{ ORG_LONG_NAME }}.{% endblocktrans %}
 
 {% if source.is_draft %}{% trans "Please note that it is not submitted for review because it's still in draft." %} {% trans "You can access the draft at" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}{% else %}{% trans "We will review and reply to your submission as quickly as possible." %}{% endif %}
 
