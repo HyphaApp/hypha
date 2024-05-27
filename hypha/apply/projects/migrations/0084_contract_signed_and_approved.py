@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             model_name="contract",
             name="signed_and_approved",
             field=models.BooleanField(
-                default=False, verbose_name="Signed and Approved"
+                default=False, verbose_name="Signed and approved"
             ),
         ),
     ]

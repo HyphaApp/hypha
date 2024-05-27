@@ -598,7 +598,7 @@ class Contract(models.Model):
 
     file = models.FileField(upload_to=contract_path, storage=PrivateStorage())
 
-    signed_and_approved = models.BooleanField("Signed and Approved", default=False)
+    signed_and_approved = models.BooleanField("Signed and approved", default=False)
 
     signed_by_applicant = models.BooleanField("Counter Signed?", default=False)
     uploaded_by_contractor_at = models.DateTimeField(null=True)

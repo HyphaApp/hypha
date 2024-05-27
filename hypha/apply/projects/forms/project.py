@@ -362,7 +362,7 @@ class SubmitContractDocumentsForm(forms.ModelForm):
 class UploadContractForm(FileFormMixin, forms.ModelForm):
     file = SingleFileField(label=_("Contract"), required=True)
     signed_and_approved = forms.BooleanField(
-        label=_("Signed and Approved"), required=False
+        label=_("Signed and approved"), required=False
     )
 
     class Meta:
