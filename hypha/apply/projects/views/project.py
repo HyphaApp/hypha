@@ -555,6 +555,12 @@ class UploadContractView(DelegatedViewMixin, CreateView):
         kwargs.pop("user")
         return kwargs
 
+    def get_form(self, *args, **kwargs):
+        form = super().get_form(*args, **kwargs)
+        if self.request.user.is_applicant:
+            form.fields.pop("signed_and_approved")
+        return form
+
     def form_valid(self, form):
         project = self.kwargs["object"]
 
@@ -571,8 +577,7 @@ class UploadContractView(DelegatedViewMixin, CreateView):
                 _("Countersigned contract uploaded"),
                 extra_tags=PROJECT_ACTION_MESSAGE_TAG,
             )
-        elif self.request.user.is_contracting:
-            # :todo: update same date when staff uploads the contract(with STAFF_UPLOAD_CONTRACT setting)
+        elif self.request.user.is_contracting or self.request.user.is_apply_staff:
             form.instance.uploaded_by_contractor_at = timezone.now()
             messages.success(
                 self.request,
@@ -582,13 +587,25 @@ class UploadContractView(DelegatedViewMixin, CreateView):
 
         response = super().form_valid(form)
 
-        if self.request.user != project.user:
+        contract_signed_and_approved = form.cleaned_data.get("signed_and_approved")
+        if contract_signed_and_approved:
+            form.instance.approver = self.request.user
+            form.instance.approved_at = timezone.now()
+            form.instance.signed_and_approved = contract_signed_and_approved
+            form.instance.save(
+                update_fields=["approver", "approved_at", "signed_and_approved"]
+            )
+
+            project.status = INVOICING_AND_REPORTING
+            project.save(update_fields=["status"])
+            old_stage = CONTRACTING
+
             messenger(
-                MESSAGES.UPLOAD_CONTRACT,
+                MESSAGES.PROJECT_TRANSITION,
                 request=self.request,
                 user=self.request.user,
                 source=project,
-                related=form.instance,
+                related=old_stage,
             )
             # remove Project waiting contract task for contracting/staff group
             if settings.STAFF_UPLOAD_CONTRACT:
@@ -603,12 +620,40 @@ class UploadContractView(DelegatedViewMixin, CreateView):
                     user_group=Group.objects.filter(name=CONTRACTING_GROUP_NAME),
                     related_obj=project,
                 )
-            # add Project waiting contract document task for applicant
+            # add Project waiting invoice task for applicant
             add_task_to_user(
-                code=PROJECT_WAITING_CONTRACT_DOCUMENT,
+                code=PROJECT_WAITING_INVOICE,
                 user=project.user,
                 related_obj=project,
             )
+        else:
+            if self.request.user != project.user:
+                messenger(
+                    MESSAGES.UPLOAD_CONTRACT,
+                    request=self.request,
+                    user=self.request.user,
+                    source=project,
+                    related=form.instance,
+                )
+                # remove Project waiting contract task for contracting/staff group
+                if settings.STAFF_UPLOAD_CONTRACT:
+                    remove_tasks_for_user_group(
+                        code=PROJECT_WAITING_CONTRACT,
+                        user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+                        related_obj=project,
+                    )
+                else:
+                    remove_tasks_for_user_group(
+                        code=PROJECT_WAITING_CONTRACT,
+                        user_group=Group.objects.filter(name=CONTRACTING_GROUP_NAME),
+                        related_obj=project,
+                    )
+                # add Project waiting contract document task for applicant
+                add_task_to_user(
+                    code=PROJECT_WAITING_CONTRACT_DOCUMENT,
+                    user=project.user,
+                    related_obj=project,
+                )
 
         return response
 

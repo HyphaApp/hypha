@@ -371,9 +371,12 @@ class SkipPAFApprovalProcessForm(forms.ModelForm):
 
 class UploadContractForm(FileFormMixin, forms.ModelForm):
     file = SingleFileField(label=_("Contract"), required=True)
+    signed_and_approved = forms.BooleanField(
+        label=_("Signed and approved"), required=False
+    )
 
     class Meta:
-        fields = ["file"]
+        fields = ["file", "signed_and_approved"]
         model = Contract
 
     def save(self, commit=True):
