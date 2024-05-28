@@ -115,7 +115,7 @@ ACTIVITY_DIGEST_RECIPIENT_EMAILS = env.list(
 # Staff e-mail domain. Used for OAUTH2 whitelist default value and staff account creation.
 STAFF_EMAIL_DOMAINS = env.list("STAFF_EMAIL_DOMAINS", [])
 
-# Should staff identities be obscured (ie. comments will be ORG_LONG_NAME rather than John Doe).
+# Should staff identities be obscured from Applicants & Partners (ie. comments will be ORG_LONG_NAME rather than John Doe).
 HIDE_STAFF_IDENTITY = env.bool("HIDE_STAFF_IDENTITY", False)
 
 # Should staff be able to access/see draft submissions.

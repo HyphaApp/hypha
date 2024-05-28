@@ -28,12 +28,7 @@ def display_author(activity, user) -> str:
         comment from staff viewed by an applicant will return the org name).
     """
     if settings.HIDE_STAFF_IDENTITY and (
-        (user.is_applicant or user.is_partner)
-        and (
-            activity.user.is_apply_staff
-            or activity.user.is_finance
-            or activity.user.is_contracting
-        )
+        (user.is_applicant or user.is_partner) and activity.user.is_org_faculty
     ):
         return settings.ORG_LONG_NAME
     if isinstance(activity.related_object, Review) and activity.source.user == user:
