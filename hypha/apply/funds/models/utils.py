@@ -15,6 +15,8 @@ from wagtail.contrib.forms.models import AbstractEmailForm
 from hypha.apply.activity.messaging import messenger
 from hypha.apply.activity.options import MESSAGES
 from hypha.apply.stream_forms.models import AbstractStreamForm
+from hypha.apply.todo.options import SUBMISSION_DRAFT
+from hypha.apply.todo.views import add_task_to_user
 from hypha.apply.users.groups import (
     COMMUNITY_REVIEWER_GROUP_NAME,
     PARTNER_GROUP_NAME,
@@ -116,13 +118,19 @@ class WorkflowStreamForm(WorkflowHelpers, AbstractStreamForm):  # type: ignore
 
     def render_landing_page(self, request, form_submission=None, *args, **kwargs):
         # We only reach this page after creation of a new submission
-        # Hook in to notify about new applications
+        # Hook in to notify about new applications and add task for draft submissions
         if form_submission.status == DRAFT_STATE:
             messenger(
                 MESSAGES.DRAFT_SUBMISSION,
                 request=request,
                 user=form_submission.user,
                 source=form_submission,
+            )
+            # add a task of draft submission to applicant dashboard
+            add_task_to_user(
+                code=SUBMISSION_DRAFT,
+                user=form_submission.user,
+                related_obj=form_submission,
             )
         else:
             messenger(

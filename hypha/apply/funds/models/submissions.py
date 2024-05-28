@@ -46,6 +46,8 @@ from hypha.apply.funds.services import (
 from hypha.apply.review.options import AGREE
 from hypha.apply.stream_forms.files import StreamFieldDataEncoder
 from hypha.apply.stream_forms.models import BaseStreamForm
+from hypha.apply.todo.options import SUBMISSION_DRAFT
+from hypha.apply.todo.views import remove_tasks_for_user
 from hypha.apply.users.groups import APPLICANT_GROUP_NAME
 
 from ..blocks import NAMED_BLOCKS, ApplicationCustomFormFieldsBlock
@@ -999,6 +1001,9 @@ def log_status_update(sender, **kwargs):
 
     if request and notify:
         if kwargs["source"] == DRAFT_STATE:
+            # remove task from applicant dashboard for this instance
+            remove_tasks_for_user(code=SUBMISSION_DRAFT, user=by, related_obj=instance)
+            # notify for a new submission
             messenger(
                 MESSAGES.NEW_SUBMISSION,
                 request=request,

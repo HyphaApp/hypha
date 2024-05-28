@@ -4,6 +4,7 @@ from django.utils.translation import gettext as _
 
 from hypha.apply.activity.adapters.utils import link_to
 
+SUBMISSION_DRAFT = "submission_draft"
 DETERMINATION_DRAFT = "determination_draft"
 REVIEW_DRAFT = "review_draft"
 PROJECT_WAITING_PAF = "project_waiting_paf"
@@ -21,6 +22,7 @@ INVOICE_WAITING_PAID = "invoice_waiting_paid"
 REPORT_DUE = "report_due"
 
 TASKS_CODE_CHOICES = (
+    (SUBMISSION_DRAFT, "Submission Draft"),
     (DETERMINATION_DRAFT, "Determination draft"),
     (REVIEW_DRAFT, "Review Draft"),
     (PROJECT_WAITING_PAF, "Project waiting PAF"),
@@ -42,9 +44,17 @@ TASKS_CODE_CHOICES = (
 template_map = {
     # SUBMISSIONS ACTIONS
     # :todo: actions for mupltiple stages of submission
+    SUBMISSION_DRAFT: {
+        "text": _(
+            'A Submission draft [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting to be submitted'
+        ),
+        "icon": "edit-draft",
+        "url": "{link}",
+        "type": _("Draft"),
+    },
     DETERMINATION_DRAFT: {
         "text": _(
-            'Determination draft for submission [<span class=" truncate inline-block max-w-32 align-bottom ">{related.submission.title}</span>]({link} "{related.submission.title}") is waiting to be submitted',
+            'Determination draft for submission [<span class="truncate inline-block max-w-32 align-bottom ">{related.submission.title}</span>]({link} "{related.submission.title}") is waiting to be submitted',
         ),
         "icon": "edit-draft",
         "url": "{link}",
@@ -52,7 +62,7 @@ template_map = {
     },
     REVIEW_DRAFT: {
         "text": _(
-            'Review draft for submission [<span class=" truncate inline-block max-w-32 align-bottom ">{related.submission.title}</span>]({link} "{related.submission.title}") is waiting to be submitted'
+            'Review draft for submission [<span class="truncate inline-block max-w-32 align-bottom ">{related.submission.title}</span>]({link} "{related.submission.title}") is waiting to be submitted'
         ),
         "icon": "edit-draft",
         "url": "{link}",
@@ -61,20 +71,24 @@ template_map = {
     # PROJECT actions
     # draft state (staff action)
     PROJECT_WAITING_PAF: {
-        "text": _("Project [{related.title}]({link}) is waiting for PAF"),
+        "text": _(
+            'Project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting for PAF'
+        ),
         "icon": "dashboard-paf",
         "url": "{link}",
         "type": _("project"),
     },
     PROJECT_SUBMIT_PAF: {
-        "text": _("Project [{related.title}]({link}) is waiting for PAF submission"),
+        "text": _(
+            'Project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting for PAF submission'
+        ),
         "icon": "dashboard-paf",
         "url": "{link}",
         "type": _("project"),
     },
     PAF_REQUIRED_CHANGES: {
         "text": _(
-            "PAF for project [{related.title}]({link}) required changes or more information"
+            'PAF for project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") required changes or more information'
         ),
         "icon": "dashboard-paf",
         "url": "{link}",
@@ -82,14 +96,16 @@ template_map = {
     },
     # internal approval state (approvers/finance... action)
     PAF_WAITING_ASSIGNEE: {
-        "text": _("PAF for project [{related.title}]({link}) is waiting for assignee"),
+        "text": _(
+            'PAF for project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting for assignee'
+        ),
         "icon": "dashboard-paf",
         "url": "{link}",
         "type": _("project"),
     },
     PAF_WAITING_APPROVAL: {
         "text": _(
-            "PAF for project [{related.title}]({link}) is waiting for your approval"
+            'PAF for project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting for your approval'
         ),
         "icon": "dashboard-paf",
         "url": "{link}",
@@ -97,14 +113,16 @@ template_map = {
     },
     # contracting state (vendor/staff/contracting team action)
     PROJECT_WAITING_CONTRACT: {
-        "text": _("Project [{related.title}]({link}) is waiting for contract"),
+        "text": _(
+            'Project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting for contract'
+        ),
         "icon": "dashboard-contract",
         "url": "{link}",
         "type": _("project"),
     },
     PROJECT_WAITING_CONTRACT_DOCUMENT: {
         "text": _(
-            "Project [{related.title}]({link}) is waiting for contracting documents"
+            'Project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting for contracting documents'
         ),
         "icon": "dashboard-document",
         "url": "{link}",
@@ -112,7 +130,7 @@ template_map = {
     },
     PROJECT_WAITING_CONTRACT_REVIEW: {
         "text": _(
-            "Contract for project [{related.title}]({link}) is waiting for review"
+            'Contract for project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting for review'
         ),
         "icon": "dashboard-contract",
         "url": "{link}",
@@ -120,7 +138,9 @@ template_map = {
     },
     # invoicing and reporting (vendor/staff/finance team action)
     PROJECT_WAITING_INVOICE: {
-        "text": _("Project [{related.title}]({link}) is waiting for invoice"),
+        "text": _(
+            'Project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting for invoice'
+        ),
         "icon": "dashboard-invoice",
         "url": "{link}",
         "type": _("project"),
@@ -148,7 +168,9 @@ template_map = {
         "type": _("project"),
     },
     REPORT_DUE: {
-        "text": _("Report for project [{related.title}]({link}) is due"),
+        "text": _(
+            'Report for project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is due'
+        ),
         "icon": "dashboard-report",
         "url": "{link}",
         "type": _("project"),
