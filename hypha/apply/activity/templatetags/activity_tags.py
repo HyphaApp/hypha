@@ -27,10 +27,13 @@ def display_author(activity, user) -> str:
         A string with the formatted author depending on the user role (ie. a
         comment from staff viewed by an applicant will return the org name).
     """
-    if (user.is_applicant or user.is_partner) and (
-        activity.user.is_apply_staff
-        or activity.user.is_finance
-        or activity.user.is_contracting
+    if settings.HIDE_STAFF_IDENTITY and (
+        (user.is_applicant or user.is_partner)
+        and (
+            activity.user.is_apply_staff
+            or activity.user.is_finance
+            or activity.user.is_contracting
+        )
     ):
         return settings.ORG_LONG_NAME
     if isinstance(activity.related_object, Review) and activity.source.user == user:

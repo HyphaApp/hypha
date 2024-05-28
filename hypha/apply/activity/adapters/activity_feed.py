@@ -95,6 +95,8 @@ class ActivityAdapter(AdapterBase):
             MESSAGES.APPROVE_PAF,
             MESSAGES.NEW_REVIEW,
             MESSAGES.UPDATE_PROJECT_LEAD,
+            MESSAGES.UPDATE_LEAD,
+            MESSAGES.BATCH_UPDATE_LEAD,
         ]:
             return {"visibility": TEAM}
 
