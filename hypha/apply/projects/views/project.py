@@ -84,6 +84,7 @@ from ..forms import (
     SkipPAFApprovalProcessForm,
     SubmitContractDocumentsForm,
     UpdateProjectLeadForm,
+    UpdateProjectTitleForm,
     UploadContractDocumentForm,
     UploadContractForm,
     UploadDocumentForm,
@@ -392,6 +393,35 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
         messages.success(
             self.request,
             _("Lead has been updated"),
+            extra_tags=PROJECT_ACTION_MESSAGE_TAG,
+        )
+        return response
+
+
+@method_decorator(staff_required, name="dispatch")
+class UpdateProjectTitleView(DelegatedViewMixin, UpdateView):
+    model = Project
+    form_class = UpdateProjectTitleForm
+    context_name = "title_form"
+
+    def form_valid(self, form):
+        # Fetch the old lead from the database
+        old_title = copy.copy(self.get_object().title)
+
+        response = super().form_valid(form)
+        project = form.instance
+
+        messenger(
+            MESSAGES.UPDATE_PROJECT_TITLE,
+            request=self.request,
+            user=self.request.user,
+            source=project,
+            related=old_title,
+        )
+
+        messages.success(
+            self.request,
+            _("Title has been updated"),
             extra_tags=PROJECT_ACTION_MESSAGE_TAG,
         )
         return response
@@ -1244,6 +1274,7 @@ class AdminProjectDetailView(
         UpdatePAFApproversView,
         ReportFrequencyUpdate,
         UpdateLeadView,
+        UpdateProjectTitleView,
         UploadContractView,
         UploadDocumentView,
         UpdateAssignApproversView,

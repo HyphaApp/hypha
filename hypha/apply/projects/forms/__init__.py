@@ -21,6 +21,7 @@ from .project import (
     StaffUploadContractForm,
     SubmitContractDocumentsForm,
     UpdateProjectLeadForm,
+    UpdateProjectTitleForm,
     UploadContractDocumentForm,
     UploadContractForm,
     UploadDocumentForm,
@@ -36,6 +37,7 @@ from .vendor import (
 )
 
 __all__ = [
+    "UpdateProjectTitleForm",
     "SelectDocumentForm",
     "SubmitContractDocumentsForm",
     "SkipPAFApprovalProcessForm",

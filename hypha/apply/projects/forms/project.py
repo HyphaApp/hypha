@@ -438,3 +438,12 @@ class UpdateProjectLeadForm(forms.ModelForm):
             .filter(qwargs)
             .distinct()
         )
+
+
+class UpdateProjectTitleForm(forms.ModelForm):
+    class Meta:
+        fields = ["title"]
+        model = Project
+
+    def __init__(self, user=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)

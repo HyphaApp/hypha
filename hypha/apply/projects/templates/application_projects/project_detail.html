@@ -17,7 +17,22 @@
     {% endif %}
     <div class="admin-bar">
         <div class="admin-bar__inner">
-            <h1 class="mb-0 font-medium">{{ object.title }}</h1>
+            <h1 class="mb-0 font-medium">{{ object.title }}
+                {% if request.user.is_apply_staff %}
+                    <a data-fancybox
+                       data-src="#update-title"
+                       class="link is-active link--transparent hover:opacity-70 transition-opacity"
+                       href="#">
+                        {% heroicon_solid "pencil-square" class="inline ms-1 mt-2" aria_hidden=true %}
+                    </a>
+                    <div class="modal" id="update-title">
+                        <h4 class="modal__project-header-bar">{% trans "Update Title" %}</h4>
+                        {% trans "Update" as update %}
+                        {% include 'funds/includes/delegated_form_base.html' with form=title_form value=update %}
+                    </div>
+                {% endif %}
+            </h1>
+
             <div class="heading heading--meta text-sm mt-1 font-medium">
 
                 <span>{{ object.submission.page }}</span>
