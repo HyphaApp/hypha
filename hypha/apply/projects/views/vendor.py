@@ -13,7 +13,7 @@ from django.views.generic.detail import DetailView
 from formtools.wizard.views import SessionWizardView
 from wagtail.models import Site
 
-from addressfield.fields import ADDRESS_FIELDS_ORDER
+from hypha.addressfield.fields import ADDRESS_FIELDS_ORDER
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.projects.models.vendor import VendorFormSettings
 from hypha.apply.utils.storage import PrivateMediaView, PrivateStorage

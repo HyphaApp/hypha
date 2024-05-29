@@ -58,7 +58,7 @@ INSTALLED_APPS = [
     "django_tables2",
     "django_filters",
     "django_select2",
-    "addressfield",
+    "hypha.addressfield",
     "django_nh3",
     "django_fsm",
     "django_slack",
