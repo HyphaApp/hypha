@@ -424,8 +424,7 @@ class EmailAdapter(AdapterBase):
             recipients: List[str] = []
 
             comment = kwargs["related"]
-            partners = self.partners(source)
-            if partners:
+            if partners := [*source.partners.values_list("email", flat=True)]:
                 if comment.visibility == PARTNER:
                     recipients = partners
                 elif comment.visibility in [APPLICANT_PARTNERS, ALL]:
@@ -470,14 +469,6 @@ class EmailAdapter(AdapterBase):
             if source.phase.permissions.can_review(reviewer)
             and not reviewer.is_apply_staff
         ]
-
-    def partners(self, source) -> List[str]:
-        """Get all partner emails from the source (if any)
-
-        Returns:
-            list: emails of all partners on the source
-        """
-        return [partner.email for partner in source.partners.all()]
 
     def partners_updated_applicant(self, added, removed, **kwargs):
         if added:
