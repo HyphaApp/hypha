@@ -29,10 +29,3 @@ def submission_links(value):
             value = re.sub(rf"(?<!\w){sid}(?!\w)", link, value)
 
     return mark_safe(value)
-
-
-@register.simple_tag
-def can_screen(submission):
-    if submission.is_archive:
-        return False
-    return True
