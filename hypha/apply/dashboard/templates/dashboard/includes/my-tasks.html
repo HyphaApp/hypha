@@ -5,7 +5,7 @@
 
     <div class="task--list border divide-y shadow-sm">
         {% for task in my_tasks.data %}
-            {% include "todo/todolist_item.html" %}
+            {% include "todo/todolist_item.html" with button_type_class="button--primary" %}
         {% endfor %}
     </div>
 </div>
