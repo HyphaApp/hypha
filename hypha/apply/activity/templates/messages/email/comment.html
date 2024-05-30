@@ -1,10 +1,13 @@
 {% extends "messages/email/applicant_base.html" %}
 
-{% load i18n %}
+{% load i18n activity_tags%}
 {% block salutation %}{% trans "Dear" %} {{ recipient }},{% endblock %}
 
 {% block content %}{# fmt:off #}
-{% blocktrans with title=source.title user=comment.user %}There has been a new comment on "{{ title }}" by {{ user }}.{% endblocktrans %}
+
+
+{% display_name_for_email user as display_user %}
+{% blocktrans with title=source.title user=comment.user %}There has been a new comment on "{{ title }}" by {{ display_user }}.{% endblocktrans %}
 
 {% trans "Read the full comment here" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}#communications
 {% endblock %}

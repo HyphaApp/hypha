@@ -50,74 +50,75 @@
                     <span>{{ object.submission.round }}</span>
                 {% endif %}
 
-                <span>
-                    {% if request.user.is_apply_staff %}
-                        <a data-fancybox
-                           data-src="#assign-lead"
-                           class="link link--edit-lead is-active link--transparent hover:opacity-70 transition-opacity"
-                           href="#"
-                        >
-                            <u>{% trans "Lead" %}: {{ object.lead }}</u>
-                            {% heroicon_micro "pencil-square" class="inline ms-1" aria_hidden=true %}
-                        </a>
-                        <div class="modal" id="assign-lead">
-                            <h4 class="modal__project-header-bar">{% trans "Assign Lead" %}</h4>
-                            {% trans "Update" as update %}
-                            {% include 'funds/includes/delegated_form_base.html' with form=lead_form value=update %}
-                        </div>
-                    {% else %}
-                        <span>{% trans "Lead" %}: {{ object.lead }}</span>
-                    {% endif %}
-                </button>
-            </span>
-
-        </div>
-
-        <div class="status-bar">
-            {% for status, text in statuses %}
-                {% if forloop.counter0 == current_status_index %}
-                    {% include "funds/includes/status_bar_item.html" with is_current=True is_complete=False label=text %}
-                {% elif forloop.counter0 < current_status_index %}
-                    {% include "funds/includes/status_bar_item.html" with is_current=False is_complete=True label=text %}
-                {% else %}
-                    {% include "funds/includes/status_bar_item.html" with is_current=False is_complete=False label=text %}
+                {% if not HIDE_STAFF_IDENTITY or request.user.is_apply_staff %}
+                    <span>
+                        {% if request.user.is_apply_staff %}
+                            <a data-fancybox
+                               data-src="#assign-lead"
+                               class="link link--edit-lead is-active link--transparent hover:opacity-70 transition-opacity"
+                               href="#"
+                            >
+                                <u>{% trans "Lead" %}: {{ object.lead }}</u>
+                                {% heroicon_micro "pencil-square" class="inline ms-1" aria_hidden=true %}
+                            </a>
+                            <div class="modal" id="assign-lead">
+                                <h4 class="modal__project-header-bar">{% trans "Assign Lead" %}</h4>
+                                {% trans "Update" as update %}
+                                {% include 'funds/includes/delegated_form_base.html' with form=lead_form value=update %}
+                            </div>
+                        {% else %}
+                            <span>{% trans "Lead" %}: {{ object.lead }}</span>
+                        {% endif %}
+                    </span>
                 {% endif %}
-            {% endfor %}
-        </div>
 
-        <div class="status-bar--mobile">
-            <h6 class="status-bar__subheading">
-                {{ project_status }}
-            </h6>
-        </div>
+            </div>
 
-        <div class="tabs js-tabs">
-            <div class="tabs__container">
-                <a class="tab__item" href="#details" data-tab="tab-1">
-                    {% trans "Details" %}
-                </a>
+            <div class="status-bar">
+                {% for status, text in statuses %}
+                    {% if forloop.counter0 == current_status_index %}
+                        {% include "funds/includes/status_bar_item.html" with is_current=True is_complete=False label=text %}
+                    {% elif forloop.counter0 < current_status_index %}
+                        {% include "funds/includes/status_bar_item.html" with is_current=False is_complete=True label=text %}
+                    {% else %}
+                        {% include "funds/includes/status_bar_item.html" with is_current=False is_complete=False label=text %}
+                    {% endif %}
+                {% endfor %}
+            </div>
 
-                <a class="tab__item" href="#communications" data-tab="tab-2">
-                    {% trans "Communications" %}
-                </a>
+            <div class="status-bar--mobile">
+                <h6 class="status-bar__subheading">
+                    {{ project_status }}
+                </h6>
+            </div>
 
-                <a
-                    class="tab__item"
-                    href="#activity-feed"
-                    data-tab="tab-3"
-                    hx-get="{% url 'apply:projects:partial-activities' object.id %}"
-                    hx-target="#tab-3 .feed"
-                    hx-trigger="open-tab-3 once"
-                    data-tab="tab-3"
-                    x-data
-                    @hashchange.window="location.hash === '#activity-feed' ? $dispatch('open-tab-3') : ''"
-                    x-init="location.hash === '#activity-feed' ? $dispatch('open-tab-3') : ''"
-                >
-                    {% trans "Activity Feed" %}
-                </a>
+            <div class="tabs js-tabs">
+                <div class="tabs__container">
+                    <a class="tab__item" href="#details" data-tab="tab-1">
+                        {% trans "Details" %}
+                    </a>
+
+                    <a class="tab__item" href="#communications" data-tab="tab-2">
+                        {% trans "Communications" %}
+                    </a>
+
+                    <a
+                        class="tab__item"
+                        href="#activity-feed"
+                        data-tab="tab-3"
+                        hx-get="{% url 'apply:projects:partial-activities' object.id %}"
+                        hx-target="#tab-3 .feed"
+                        hx-trigger="open-tab-3 once"
+                        data-tab="tab-3"
+                        x-data
+                        @hashchange.window="location.hash === '#activity-feed' ? $dispatch('open-tab-3') : ''"
+                        x-init="location.hash === '#activity-feed' ? $dispatch('open-tab-3') : ''"
+                    >
+                        {% trans "Activity Feed" %}
+                    </a>
+                </div>
             </div>
         </div>
-    </div>
     </div>
 
     <div class="wrapper wrapper--large wrapper--tabs js-tabs-content">
