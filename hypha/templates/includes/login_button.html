@@ -8,27 +8,27 @@
                 {% blocktrans %}My {{ ORG_SHORT_NAME }}{% endblocktrans %}
             </button>
             <div x-show="show" x-transition @click.outside="show = false" class="min-w-36 absolute block bg-white shadow-xl z-20 border-y rounded-sm end-0 top-10">
-                <a href="{% url 'users:account' %}" class="pr-4 py-3 block text-black pl-3
-                                                           focus-visible:outline-dashed outline-1 transition-colors border-r
-                                                           hover:bg-slate-100 hover:text-dark-blue hover:font-semibold">
+                <a href="{% url 'users:account' %}" title="Goto your account" class="pr-4 py-3 block text-black pl-3
+                                                                                     focus-visible:outline-dashed outline-1 transition-colors border-r
+                                                                                     hover:bg-slate-100 hover:text-dark-blue hover:font-semibold">
                     {% trans 'My account' %}</a>
                 {% if request.user.is_apply_staff %}
-                    <a href="{% url 'activity:notifications' %}" class="pr-4 py-3 block text-black pl-3
-                                                                        focus-visible:outline-dashed outline-1 transition-colors border-r
-                                                                        hover:bg-slate-100 hover:text-dark-blue hover:font-semibold" >
+                    <a href="{% url 'activity:notifications' %}" title="Check latest notifications" class="pr-4 py-3 block text-black pl-3
+                                                                                                           focus-visible:outline-dashed outline-1 transition-colors border-r
+                                                                                                           hover:bg-slate-100 hover:text-dark-blue hover:font-semibold" >
                         {% trans "Activity feed" %}</a>
-                    <a href="{% url 'apply:submissions:flagged' %}" class="pr-4 py-3 block text-black pl-3
-                                                                           focus-visible:outline-dashed outline-1 transition-colors border-r
-                                                                           hover:bg-slate-100 hover:text-dark-blue hover:font-semibold">
+                    <a href="{% url 'apply:submissions:flagged' %}" title="Goto your flagged submissions" class="pr-4 py-3 block text-black pl-3
+                                                                                                                 focus-visible:outline-dashed outline-1 transition-colors border-r
+                                                                                                                 hover:bg-slate-100 hover:text-dark-blue hover:font-semibold">
                         {% trans "My flagged" %}</a>
-                    <a href="{% url 'wagtailadmin_home' %}" class="pr-4 py-3 block text-black pl-3
-                                                                   focus-visible:outline-dashed outline-1 transition-colors border-r
-                                                                   hover:bg-slate-100 hover:text-dark-blue hover:font-semibold">
+                    <a href="{% url 'wagtailadmin_home' %}" title="Goto wagtail admin" class="pr-4 py-3 block text-black pl-3
+                                                                                              focus-visible:outline-dashed outline-1 transition-colors border-r
+                                                                                              hover:bg-slate-100 hover:text-dark-blue hover:font-semibold">
                         {% trans "Wagtail admin" %}</a>
                 {% endif %}
-                <a href="{% url 'users:logout' %}" class="pr-4 py-3 block text-black pl-3
-                                                          focus-visible:outline-dashed outline-1 transition-colors border-r
-                                                          hover:bg-slate-100 hover:text-dark-blue hover:font-semibold">
+                <a href="{% url 'users:logout' %}" title="Log out" class="pr-4 py-3 block text-black pl-3
+                                                                          focus-visible:outline-dashed outline-1 transition-colors border-r
+                                                                          hover:bg-slate-100 hover:text-dark-blue hover:font-semibold">
                     {% trans "Log out" %}
                 </a>
             </div>
@@ -45,22 +45,22 @@
                                                                                      hover:bg-slate-100 hover:text-dark-blue hover:font-semibold">
                     {% trans 'My account' %}</a>
                 {% if request.user.is_apply_staff %}
-                    <a href="{% url 'activity:notifications' %}" class="pr-4 py-3 block text-black pl-3
-                                                                        focus-visible:outline-dashed outline-1 transition-colors border-r
-                                                                        hover:bg-slate-100 hover:text-dark-blue hover:font-semibold">
+                    <a href="{% url 'activity:notifications' %}" title="Check latest notifications" class="pr-4 py-3 block text-black pl-3
+                                                                                                           focus-visible:outline-dashed outline-1 transition-colors border-r
+                                                                                                           hover:bg-slate-100 hover:text-dark-blue hover:font-semibold">
                         {% trans "Activity feed" %}</a>
-                    <a href="{% url 'apply:submissions:flagged' %}" class="pr-4 py-3 block text-black pl-3
-                                                                           focus-visible:outline-dashed outline-1 transition-colors border-r
-                                                                           hover:bg-slate-100 hover:text-dark-blue hover:font-semibold">
+                    <a href="{% url 'apply:submissions:flagged' %}" title="Goto your flagged submissions" class="pr-4 py-3 block text-black pl-3
+                                                                                                                 focus-visible:outline-dashed outline-1 transition-colors border-r
+                                                                                                                 hover:bg-slate-100 hover:text-dark-blue hover:font-semibold">
                         {% trans "My flagged" %}</a>
-                    <a href="{% url 'wagtailadmin_home' %}" class="pr-4 py-3 block text-black pl-3
-                                                                   focus-visible:outline-dashed outline-1 transition-colors border-r
-                                                                   hover:bg-slate-100 hover:text-dark-blue hover:font-semibold">
+                    <a href="{% url 'wagtailadmin_home' %}" title="Goto wagtail admin" class="pr-4 py-3 block text-black pl-3
+                                                                                              focus-visible:outline-dashed outline-1 transition-colors border-r
+                                                                                              hover:bg-slate-100 hover:text-dark-blue hover:font-semibold">
                         {% trans "Wagtail admin" %}</a>
                 {% endif %}
-                <a href="{% url 'users:logout' %}" class="pr-4 py-3 block text-black pl-3 focus-visible:outline-dashed
-                                                          outline-1 transition-colors border-r
-                                                          hover:bg-slate-100 hover:text-dark-blue hover:font-semibold">
+                <a href="{% url 'users:logout' %}" title="Log out" class="pr-4 py-3 block text-black pl-3 focus-visible:outline-dashed
+                                                                          outline-1 transition-colors border-r
+                                                                          hover:bg-slate-100 hover:text-dark-blue hover:font-semibold">
                     {% trans "Log out" %}</a>
             </div>
         </div>
