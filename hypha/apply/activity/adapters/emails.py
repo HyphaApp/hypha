@@ -418,26 +418,31 @@ class EmailAdapter(AdapterBase):
             return user.email
 
         ApplicationSubmission = apps.get_model("funds", "ApplicationSubmission")
-        if message_type == MESSAGES.COMMENT and isinstance(
-            source, ApplicationSubmission
-        ):
-            recipients: List[str] = []
+        Project = apps.get_model("application_projects", "Project")
+        if message_type == MESSAGES.COMMENT:
+            # Comment handling for Submissions
+            if isinstance(source, ApplicationSubmission):
+                recipients: List[str] = []
 
-            comment = kwargs["related"]
-            if partners := [*source.partners.values_list("email", flat=True)]:
-                if comment.visibility == PARTNER:
-                    recipients = partners
-                elif comment.visibility in [APPLICANT_PARTNERS, ALL]:
-                    recipients = partners + [source.user.email]
-                else:
-                    recipients = [source.user.email]
+                comment = kwargs["related"]
+                if partners := [*source.partners.values_list("email", flat=True)]:
+                    if comment.visibility == PARTNER:
+                        recipients = partners
+                    elif comment.visibility in [APPLICANT_PARTNERS, ALL]:
+                        recipients = partners + [source.user.email]
+                    else:
+                        recipients = [source.user.email]
 
-            try:
-                recipients.remove(comment.user.email)
-            except ValueError:
-                pass
+                try:
+                    recipients.remove(comment.user.email)
+                except ValueError:
+                    pass
 
-            return recipients
+                return recipients
+
+            # Comment handling for Projects
+            if isinstance(source, Project) and user == source.user:
+                return []
 
         return [source.user.email]
 

@@ -506,7 +506,7 @@ class TestEmailAdapter(AdapterMixin, TestCase):
         self.adapter_process(MESSAGES.COMMENT, related=comment, source=comment.source)
         self.assertEqual(len(mail.outbox), 0)
 
-    def test_no_email_own_comment(self):
+    def test_no_email_own_submission_comment(self):
         submission = ApplicationSubmissionFactory()
         comment = CommentFactory(user=submission.user, source=submission)
 
@@ -515,7 +515,29 @@ class TestEmailAdapter(AdapterMixin, TestCase):
         )
         self.assertEqual(len(mail.outbox), 0)
 
-    def test_email_partner_for_comments(self):
+    def test_no_email_own_project_comment(self):
+        project = ProjectFactory()
+        comment = CommentFactory(user=project.user, source=project)
+
+        self.adapter_process(
+            MESSAGES.COMMENT, related=comment, user=comment.user, source=comment.source
+        )
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_email_staff_project_comments(self):
+        staff_commenter = StaffFactory()
+        project = ProjectFactory()
+        comment = CommentFactory(
+            user=staff_commenter, source=project, visibility=APPLICANT
+        )
+
+        self.adapter_process(
+            MESSAGES.COMMENT, related=comment, user=comment.user, source=comment.source
+        )
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertCountEqual(mail.outbox[0].to, [project.user.email])
+
+    def test_email_partner_for_submission_comments(self):
         partners = PartnerFactory.create_batch(2)
         submission = ApplicationSubmissionFactory()
         submission.partners.set(partners)
@@ -531,7 +553,7 @@ class TestEmailAdapter(AdapterMixin, TestCase):
         outbox_emails = [email.to[0] for email in mail.outbox]
         self.assertCountEqual(partner_emails, outbox_emails)
 
-    def test_email_applicant_partners_for_comments(self):
+    def test_email_applicant_partners_for_submission_comments(self):
         staff_commenter = StaffFactory()
         partners = PartnerFactory.create_batch(2)
         submission = ApplicationSubmissionFactory()
@@ -550,7 +572,7 @@ class TestEmailAdapter(AdapterMixin, TestCase):
         outbox_emails = [email.to[0] for email in mail.outbox]
         self.assertCountEqual(applicant_partner_emails, outbox_emails)
 
-    def test_email_applicant_for_comments(self):
+    def test_email_applicant_for_submission_comments(self):
         staff_commenter = StaffFactory()
         partners = PartnerFactory.create_batch(2)
         submission = ApplicationSubmissionFactory()
