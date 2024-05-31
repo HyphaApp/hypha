@@ -524,6 +524,19 @@ class TestEmailAdapter(AdapterMixin, TestCase):
         )
         self.assertEqual(len(mail.outbox), 0)
 
+    def test_email_staff_submission_comments(self):
+        staff_commenter = StaffFactory()
+        submission = ApplicationSubmissionFactory()
+        comment = CommentFactory(
+            user=staff_commenter, source=submission, visibility=APPLICANT
+        )
+
+        self.adapter_process(
+            MESSAGES.COMMENT, related=comment, user=comment.user, source=comment.source
+        )
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertCountEqual(mail.outbox[0].to, [submission.user.email])
+
     def test_email_staff_project_comments(self):
         staff_commenter = StaffFactory()
         project = ProjectFactory()

@@ -422,16 +422,14 @@ class EmailAdapter(AdapterBase):
         if message_type == MESSAGES.COMMENT:
             # Comment handling for Submissions
             if isinstance(source, ApplicationSubmission):
-                recipients: List[str] = []
+                recipients: List[str] = [source.user.email]
 
                 comment = kwargs["related"]
                 if partners := [*source.partners.values_list("email", flat=True)]:
                     if comment.visibility == PARTNER:
                         recipients = partners
                     elif comment.visibility in [APPLICANT_PARTNERS, ALL]:
-                        recipients = partners + [source.user.email]
-                    else:
-                        recipients = [source.user.email]
+                        recipients += partners
 
                 try:
                     recipients.remove(comment.user.email)
