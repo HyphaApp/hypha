@@ -2,7 +2,7 @@
 
 <div class="sidebar__inner" id="screening-status-{{ object.id }}">
     <h2 class="text-lg font-medium">
-        {% trans "Screening decision" %}{% if current_yes or current_no %}: <span class="font-bold">{{ current_yes|default:current_no }}</span>{% endif %}
+        {% trans "Screening decision" %}
     </h2>
     <div class="grid grid-cols-2 gap-4">
         <!-- thumbs-up -->
