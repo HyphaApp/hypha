@@ -24,10 +24,6 @@
         {% endif %}
     {% endif %}
 
-    {% if object.has_default_screening_status_set and not object.can_not_edit_default %}
-        <a data-fancybox data-src="#screen-application" class="button button--bottom-space button--primary button--full-width is-not-disabled" href="#">{% trans "Screen application" %}</a>
-    {% endif %}
-
     {% if object.ready_for_determination %}
         {% trans "Complete draft determination" as determination_draft %}
         {% include 'determinations/includes/determination_button.html' with submission=object class="button--bottom-space" draft_text=determination_draft %}

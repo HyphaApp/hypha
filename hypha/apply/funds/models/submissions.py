@@ -1,4 +1,3 @@
-import json
 import operator
 from functools import partialmethod, reduce
 from typing import Optional, Self
@@ -966,51 +965,14 @@ class ApplicationSubmission(
     def _get_REQUIRED_value(self, name):
         return self.data(name)
 
-    @property
-    def has_default_screening_status_set(self):
-        return self.screening_statuses.filter(default=True).exists()
+    def get_current_screening_status(self):
+        return self.screening_statuses.first()
 
-    @property
-    def has_yes_default_screening_status_set(self):
-        return self.screening_statuses.filter(default=True, yes=True).exists()
+    def get_yes_screening_status(self):
+        return self.screening_statuses.filter(yes=True).exists()
 
-    @property
-    def has_no_default_screening_status_set(self):
-        return self.screening_statuses.filter(default=True, yes=False).exists()
-
-    @property
-    def can_not_edit_default(self):
-        return self.screening_statuses.all().count() > 1
-
-    @property
-    def joined_screening_statuses(self):
-        return ", ".join([s.title for s in self.screening_statuses.all()])
-
-    @property
-    def yes_screening_statuses(self):
-        ScreeningStatus = apps.get_model("funds", "ScreeningStatus")
-        return json.dumps(
-            {
-                status.title: status.id
-                for status in ScreeningStatus.objects.filter(yes=True)
-            }
-        )
-
-    @property
-    def no_screening_statuses(self):
-        ScreeningStatus = apps.get_model("funds", "ScreeningStatus")
-        return json.dumps(
-            {
-                status.title: status.id
-                for status in ScreeningStatus.objects.filter(yes=False)
-            }
-        )
-
-    @property
-    def supports_default_screening(self):
-        if self.screening_statuses.exists():
-            return self.screening_statuses.filter(default=True).exists()
-        return True
+    def get_no_screening_status(self):
+        return self.screening_statuses.filter(yes=False).first()
 
 
 @receiver(post_transition, sender=ApplicationSubmission)

@@ -21,17 +21,14 @@
             {% trans "Archived Submission" as text_archived %}
             {% heroicon_outline "lock-closed" aria_hidden="true" size=21 class="inline stroke-red-800 stroke-1.5 -mt-1 align-text-bottom" data_tippy_placement='right' data_tippy_content=text_archived data_tippy_delay=200 %}
             <span class="sr-only">{% trans "Archived" %}</span>
-        {% else %}
-            {% if s.has_yes_default_screening_status_set %}
-                {% heroicon_mini "hand-thumb-up" aria_hidden="true" size=21 class="inline fill-green-400 stroke-1.5 -mt-1 align-text-bottom" data_tippy_placement='right' data_tippy_content="Screening Status: Yes" data_tippy_delay=200 %}
+        {% elif s.get_current_screening_status %}
+            {% if s.get_yes_screening_status %}
+                {% heroicon_mini "hand-thumb-up" aria_hidden="true" size=21 class="inline fill-green-400 stroke-1.5 -mt-1 align-text-bottom" data_tippy_placement='right' data_tippy_content=s.get_current_screening_status data_tippy_delay=200 %}
             {% else %}
-                {% if s.has_no_default_screening_status_set %}
-                    {% heroicon_mini "hand-thumb-down" aria_hidden="true" size=21 class="inline fill-red-400 stroke-1.5 -mt-1 align-text-bottom" data_tippy_placement='right' data_tippy_content="Screening Status: No" data_tippy_delay=200 %}
-                {% else %}
-                    {% heroicon_outline "question-mark-circle" aria_hidden="true" size=21 class="inline stroke-slate-300 stroke-1.5 -mt-1 align-text-bottom" data_tippy_placement='right' data_tippy_content="Awaiting Screening" data_tippy_delay=200 %}
-                    <span class="sr-only">{% trans "Archived" %}</span>
-                {% endif %}
+                {% heroicon_mini "hand-thumb-down" aria_hidden="true" size=21 class="inline fill-red-400 stroke-1.5 -mt-1 align-text-bottom" data_tippy_placement='right' data_tippy_content=s.get_current_screening_status data_tippy_delay=200 %}
             {% endif %}
+        {% else %}
+            {% heroicon_outline "question-mark-circle" aria_hidden="true" size=21 class="inline stroke-slate-300 stroke-1.5 -mt-1 align-text-bottom" data_tippy_placement='right' data_tippy_content="Awaiting Screening" data_tippy_delay=200 %}
         {% endif %}
     </span>
 
