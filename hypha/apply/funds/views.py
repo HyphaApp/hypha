@@ -1130,9 +1130,14 @@ def partial_screening_card(request, pk):
 
     yes_screening_statuses = ScreeningStatus.objects.filter(yes=True)
     no_screening_statuses = ScreeningStatus.objects.filter(yes=False)
+
+    if not yes_screening_statuses or not no_screening_statuses:
+        return HttpResponse(status=204)
+
     default_yes, default_no = get_or_create_default_screening_statuses(
         yes_screening_statuses, no_screening_statuses
     )
+
     ctx = {
         "default_yes": default_yes,
         "default_no": default_no,
