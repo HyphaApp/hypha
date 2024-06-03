@@ -1105,10 +1105,14 @@ class AdminSubmissionDetailView(ActivityContextMixin, DelegateableView, DetailVi
 def partial_screening_card(request, pk):
     submission = get_object_or_404(ApplicationSubmission, pk=pk)
 
-    permission, _ = has_permission("submission_view", request.user, submission)
-    can_edit, _ = has_permission("submission_edit", request.user, submission)
+    view_permission, _ = has_permission(
+        "can_view_submission_screening", request.user, submission, raise_exception=False
+    )
+    can_edit, _ = has_permission(
+        "submission_edit", request.user, submission, raise_exception=False
+    )
 
-    if not permission:
+    if not view_permission:
         return HttpResponse(status=204)
 
     if can_edit and request.method == "POST":
