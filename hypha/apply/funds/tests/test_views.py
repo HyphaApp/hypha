@@ -1294,14 +1294,14 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
         assert_view_determination_not_displayed(submission)
 
     @override_settings(HIDE_STAFF_IDENTITY=True)
-    def test_applicant_cant_see_hidden_lead_hidden(self):
+    def test_applicant_cant_see_hidden_lead(self):
         lead = StaffFactory()
         submission = ApplicationSubmissionFactory(user=self.user, lead=lead)
         DeterminationFactory(submission=submission, accepted=True, submitted=True)
         response = self.get_page(submission)
         self.assertNotContains(response, str(lead))
 
-    def test_can_see_lead(self):
+    def test_applicant_can_see_lead(self):
         lead = StaffFactory()
         submission = ApplicationSubmissionFactory(user=self.user, lead=lead)
         response = self.get_page(submission)
