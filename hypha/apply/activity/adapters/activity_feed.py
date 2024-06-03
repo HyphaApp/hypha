@@ -97,6 +97,9 @@ class ActivityAdapter(AdapterBase):
             MESSAGES.UPDATE_PROJECT_LEAD,
             MESSAGES.UPDATE_LEAD,
             MESSAGES.BATCH_UPDATE_LEAD,
+            MESSAGES.ARCHIVE_SUBMISSION,
+            MESSAGES.UNARCHIVE_SUBMISSION,
+            MESSAGES.BATCH_ARCHIVE_SUBMISSION,
         ]:
             return {"visibility": TEAM}
 
