@@ -425,7 +425,7 @@ class EmailAdapter(AdapterBase):
                 recipients: List[str] = [source.user.email]
 
                 comment = kwargs["related"]
-                if partners := [*source.partners.values_list("email", flat=True)]:
+                if partners := list(source.partners.values_list("email", flat=True)):
                     if comment.visibility == PARTNER:
                         recipients = partners
                     elif comment.visibility in [APPLICANT_PARTNERS, ALL]:
