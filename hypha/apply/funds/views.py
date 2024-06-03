@@ -1118,10 +1118,12 @@ def partial_screening_card(request, pk):
     if can_edit and request.method == "POST":
         action = request.POST.get("action")
         old_status_str = str(submission.get_current_screening_status() or "-")
-        submission.screening_statuses.clear()
         if action and action.isdigit():
+            submission.screening_statuses.clear()
             screening_status = ScreeningStatus.objects.get(id=action)
             submission.screening_statuses.add(screening_status)
+        elif action == "clear":
+            submission.screening_statuses.clear()
 
         # Record activity
         messenger(
