@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.core.exceptions import PermissionDenied
 
 from hypha.apply.activity.adapters.utils import get_users_for_groups
@@ -54,8 +53,17 @@ def can_upload_contract(user, project, **kwargs):
     if user.is_contracting:
         return True, "Contracting team can upload the contract"
 
-    if user.is_apply_staff and settings.STAFF_UPLOAD_CONTRACT:
-        return True, "Staff can upload contract as set in settings"
+    request = kwargs.get("request", None)
+
+    if request is not None:
+        project_settings = ProjectSettings.for_request(request)
+
+        if (
+            user.is_apply_staff
+            and project_settings is not None
+            and project_settings.staff_upload_contract
+        ):
+            return True, "Staff can upload contract because wagtail settings allow it."
 
     return False, "Forbidden Error"
 
@@ -63,12 +71,28 @@ def can_upload_contract(user, project, **kwargs):
 def can_submit_contract_documents(user, project, **kwargs):
     if project.status != CONTRACTING:
         return False, "Project is not in Contracting State"
-    if user != project.user:
-        return False, "Only Vendor can submit contracting documents"
     if not kwargs.get("contract", None):
         return False, "Can not submit without contract"
+
+    if user != project.user:
+        request = kwargs.get("request", None)
+        project_settings = None
+        if request is not None:
+            project_settings = ProjectSettings.for_request(request)
+
+        # When setting to upload a countersigned contract is True, it follows that if you upload it then you submit it.
+        upload_countersigned_contract = (
+            project_settings is not None
+            and project_settings.upload_countersigned_contract
+        )
+        if upload_countersigned_contract:
+            if not can_upload_contract(user, project, **kwargs):
+                return False, "User cannot submit when user cannot upload."
+            # Implicit here is the fall-through to True at the bottom of the function.
+        else:
+            return False, "Only Vendor can submit contracting documents"
     if not project.submitted_contract_documents:
-        return True, "Vendor can submit contracting documents"
+        return True, "Can submit contracting documents"
 
     return False, "Forbidden Error"
 
@@ -328,7 +352,7 @@ def can_view_report(user, report, **kwargs):
     return False, "Forbidden Error"
 
 
-def can_access_project(user, project):
+def can_access_project(user, project, **kwargs):
     if not user.is_authenticated:
         return False, "Login Required"
 

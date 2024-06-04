@@ -1,7 +1,6 @@
 from django import template
-from django.conf import settings
 
-from hypha.apply.projects.models.project import CONTRACTING
+from hypha.apply.projects.models.project import CONTRACTING, ProjectSettings
 
 from ..permissions import has_permission
 
@@ -41,30 +40,37 @@ def contract_reuploaded_by_applicant(project):
 
 
 @register.simple_tag
-def user_can_submit_contract(project, user, contract):
+def user_can_submit_contract(project, user, contract, request):
     can_submit, _ = has_permission(
         "submit_contract_documents",
         user,
         object=project,
         raise_exception=False,
         contract=contract,
+        request=request,
     )
     return can_submit
 
 
 @register.simple_tag
-def user_can_upload_contract(project, user):
+def user_can_upload_contract(project, user, request):
     can_upload, _ = has_permission(
-        "contract_upload", user, object=project, raise_exception=False
+        "contract_upload", user, object=project, raise_exception=False, request=request
     )
     return can_upload
 
 
 @register.simple_tag
-def user_can_initiate_contract(user):
+def user_can_initiate_contract(user, request):
     if user.is_contracting:
         return True
-    if user.is_apply_staff and settings.STAFF_UPLOAD_CONTRACT:
+    project_settings = ProjectSettings.for_request(request)
+
+    if (
+        user.is_apply_staff
+        and project_settings is not None
+        and project_settings.staff_upload_contract
+    ):
         return True
     return False
 

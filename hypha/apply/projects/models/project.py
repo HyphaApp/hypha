@@ -527,6 +527,14 @@ class ProjectSettings(BaseSiteSetting, ClusterableModel):
     paf_approval_sequential = models.BooleanField(
         default=True, help_text="Uncheck it to approve PAF parallely"
     )
+    staff_upload_contract = models.BooleanField(
+        default=False, help_text="Check to allow the Staff role to upload contracts."
+    )
+    upload_countersigned_contract = models.BooleanField(
+        default=False,
+        help_text="Check to require that uploaded contracts already be signed (countersigned) by all parties. "
+        + "In effect, this means two contract upload steps are reduced to a single step.",
+    )
 
     panels = [
         FieldPanel("staff_gp_email"),
@@ -541,6 +549,13 @@ class ProjectSettings(BaseSiteSetting, ClusterableModel):
                 InlinePanel("paf_reviewers_roles", label=_("PAF Reviewers Roles")),
             ],
             heading=_("PAF Reviewers Roles"),
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel("staff_upload_contract"),
+                FieldPanel("upload_countersigned_contract"),
+            ],
+            heading=_("Contract Uploads"),
         ),
     ]
 
