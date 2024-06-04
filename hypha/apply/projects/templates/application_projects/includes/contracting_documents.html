@@ -16,7 +16,7 @@
                 </button>
             {% endif %}
         </div>
-        {% user_can_upload_contract object request.user as can_upload_contract %}
+        {% user_can_upload_contract object request.user request as can_upload_contract %}
         {% user_can_submit_contract object user contract as can_submit_contract %}
         {% if can_submit_contract %}
             <a data-fancybox
@@ -92,7 +92,7 @@
                                     {% if not contract.uploaded_by_contractor_at %}{% trans "Pending signed contract by " %}{% else %}{% trans "Signed contract by " %}{% endif %}{% if user == object.user %}{{ ORG_SHORT_NAME }}{% else %}{% trans "Contracting team " %} {% endif %}
                                     <i>{% if contract.uploaded_by_contractor_at %}({{ contract.uploaded_by_contractor_at }}){% endif %}</i></p>
                             </div>
-                            {% user_can_initiate_contract user as can_initiate_contract %}
+                            {% user_can_initiate_contract user request as can_initiate_contract %}
                             {% if can_upload_contract and can_initiate_contract  %}
                                 <div class="docs-block__row-inner docs-block__row-inner__contract-upload-row">
                                     <a data-fancybox class="font-bold flex items-center w-auto text-start bg-light-blue text-white me-0 p-2.5 border-none" href="#" data-src="#upload-contract">

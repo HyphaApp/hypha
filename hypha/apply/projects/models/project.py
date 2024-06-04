@@ -527,6 +527,9 @@ class ProjectSettings(BaseSiteSetting, ClusterableModel):
     paf_approval_sequential = models.BooleanField(
         default=True, help_text="Uncheck it to approve PAF parallely"
     )
+    staff_upload_contract = models.BooleanField(
+        default=False, help_text="Check to allow the Staff role to upload contracts."
+    )
 
     panels = [
         FieldPanel("staff_gp_email"),
@@ -542,6 +545,7 @@ class ProjectSettings(BaseSiteSetting, ClusterableModel):
             ],
             heading=_("PAF Reviewers Roles"),
         ),
+        FieldPanel("staff_upload_contract"),
     ]
 
 
