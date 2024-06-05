@@ -8,6 +8,7 @@ from .views import (
     AwaitingReviewSubmissionsListView,
     ExportSubmissionsByRound,
     GroupingApplicationsListView,
+    MyReviewedSubmissionListView,
     ReminderDeleteView,
     ReviewerLeaderboard,
     ReviewerLeaderboardDetail,
@@ -166,6 +167,9 @@ submission_urls = (
             "awaiting_review/",
             AwaitingReviewSubmissionsListView.as_view(),
             name="awaiting_review",
+        ),
+        path(
+            "my_reviewed/", MyReviewedSubmissionListView.as_view(), name="my_reviewed"
         ),
         path(
             "assignments/",

@@ -404,11 +404,6 @@ class BaseReviewerSubmissionsTable(BaseAdminSubmissionsTable):
     filterset_class = SubmissionReviewerFilterAndSearch
 
     def get_queryset(self):
-        """
-        If use_settings variable is set for ReviewerSettings use settings
-        parameters to filter submissions or return only reviewed_by as it
-        was by default.
-        """
         reviewer_settings = ReviewerSettings.for_request(self.request)
         if reviewer_settings.use_settings:
             return (
@@ -418,6 +413,9 @@ class BaseReviewerSubmissionsTable(BaseAdminSubmissionsTable):
                 .order_by("-submit_time")
             )
         return super().get_queryset().reviewed_by(self.request.user)
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(page_heading="My Reviewed", **kwargs)
 
 
 @method_decorator(login_required, name="dispatch")
@@ -581,13 +579,13 @@ class GroupingApplicationsListView(TemplateView):
     template_name = "funds/grouped_application_list.html"
 
 
-class SubmissionReviewerListView(BaseReviewerSubmissionsTable):
+class MyReviewedSubmissionListView(BaseReviewerSubmissionsTable):
     template_name = "funds/submissions.html"
 
 
 class SubmissionListView(ViewDispatcher):
     admin_view = SubmissionAdminListView
-    reviewer_view = SubmissionReviewerListView
+    reviewer_view = SubmissionAdminListView
 
 
 @method_decorator(staff_required, name="dispatch")
