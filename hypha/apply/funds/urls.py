@@ -27,6 +27,7 @@ from .views import (
     SubmissionsByStatus,
     SubmissionSealedView,
     partial_screening_card,
+    UpdateLeadView,
     submission_success,
 )
 from .views_beta import (
@@ -173,6 +174,7 @@ submission_urls = (
                         partial_submission_activities,
                         name="partial-activities",
                     ),
+                    path("lead/update/", UpdateLeadView.as_view(), name="lead_update"),
                     path(
                         "partial/screening-card/",
                         partial_screening_card,

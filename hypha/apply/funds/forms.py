@@ -111,7 +111,6 @@ class UpdateSubmissionLeadForm(ApplicationSubmissionModelForm):
         fields = ("lead",)
 
     def __init__(self, *args, **kwargs):
-        kwargs.pop("user")
         super().__init__(*args, **kwargs)
         lead_field = self.fields["lead"]
         lead_field.label = _("Update lead from {lead} to").format(
