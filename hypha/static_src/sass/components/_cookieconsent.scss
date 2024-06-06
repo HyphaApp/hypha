@@ -6,12 +6,68 @@
     border-block-start: 4px solid $color--light-blue;
     transform: translateY(100vh);
     transition: all $transition;
+    overflow: hidden;
 
     a {
         color: inherit;
+        text-decoration-line: underline;
+    }
+
+    @include media-query(tablet-landscape) {
+        max-height: 302px;
+    }
+
+    &__content {
+        width: 200%;
+        margin-left: 0;
+        transition: all $transition;
+    }
+
+    &__content > div {
+        width: 50%;
+        height: 100%;
+        float: left;
+        display: flex;
+        justify-content: center;
+
+        & > div {
+            width: 50%;
+        }
+    }
+
+    &__title,
+    &__actions {
+        width: fit-content;
+    }
+
+    &__info-wrapper {
+        display: flex;
+        flex-direction: row;
+        margin-block-end: 1rem;
+    }
+
+    &__info {
+        display: flex;
+        flex-direction: column;
+        justify-content: left;
+        min-width: 250px;
+        & > p {
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+        }
     }
 }
 
-.js-cookieconsent-open {
-    transform: translateY(0);
+.js-cookieconsent {
+    &-open {
+        transform: translateY(0);
+    }
+
+    &-show-learnmore-expand {
+        max-height: 700px;
+    }
+
+    &-show-learnmore {
+        margin-left: -100%;
+    }
 }
