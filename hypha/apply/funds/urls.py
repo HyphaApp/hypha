@@ -5,9 +5,13 @@ from django.views.generic import RedirectView
 from hypha.apply.projects import urls as projects_urls
 
 from .views import (
+    ArchiveSubmissionView,
     AwaitingReviewSubmissionsListView,
+    CreateProjectView,
     ExportSubmissionsByRound,
     GroupingApplicationsListView,
+    ProgressSubmissionView,
+    ReminderCreateView,
     ReminderDeleteView,
     ReviewerLeaderboard,
     ReviewerLeaderboardDetail,
@@ -26,6 +30,11 @@ from .views import (
     SubmissionsByRound,
     SubmissionsByStatus,
     SubmissionSealedView,
+    UnarchiveSubmissionView,
+    UpdateLeadView,
+    UpdateMetaTermsView,
+    UpdatePartnersView,
+    UpdateReviewersView,
     partial_screening_card,
     submission_success,
 )
@@ -173,10 +182,45 @@ submission_urls = (
                         partial_submission_activities,
                         name="partial-activities",
                     ),
+                    path("lead/update/", UpdateLeadView.as_view(), name="lead_update"),
+                    path("archive/", ArchiveSubmissionView.as_view(), name="archive"),
+                    path(
+                        "unarchive/",
+                        UnarchiveSubmissionView.as_view(),
+                        name="unarchive",
+                    ),
                     path(
                         "partial/screening-card/",
                         partial_screening_card,
                         name="partial-screening-card",
+                    ),
+                    path(
+                        "project/create/",
+                        CreateProjectView.as_view(),
+                        name="create_project",
+                    ),
+                    path(
+                        "reminder/create/",
+                        ReminderCreateView.as_view(),
+                        name="create_reminder",
+                    ),
+                    path(
+                        "progress/", ProgressSubmissionView.as_view(), name="progress"
+                    ),
+                    path(
+                        "reviewers/update/",
+                        UpdateReviewersView.as_view(),
+                        name="reviewers_update",
+                    ),
+                    path(
+                        "partners/update/",
+                        UpdatePartnersView.as_view(),
+                        name="partners_update",
+                    ),
+                    path(
+                        "metaterms/update/",
+                        UpdateMetaTermsView.as_view(),
+                        name="metaterms_update",
                     ),
                     path(
                         "partial/reviews-card/",

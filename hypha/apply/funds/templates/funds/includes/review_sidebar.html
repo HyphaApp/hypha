@@ -11,7 +11,7 @@
     {% endwith %}
 </div>
 
-<ul class="reviews-sidebar mt-4" x-data='{showHiddenReviewers: false}'>
+<ul class="reviews-sidebar mt-4" id="id_reviewers" x-data='{showHiddenReviewers: false}'>
     {% if not staff_reviewers_exist %}
         <li class="reviews-sidebar__no-reviews">{% trans "No staff reviewers yet" %}</li>
         <hr class="reviews-sidebar__split">

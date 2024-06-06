@@ -73,17 +73,17 @@ def get_archive_alter_groups() -> list:
     return archive_access_groups
 
 
-def can_alter_archived_submissions(user) -> bool:
+def can_alter_archived_submissions(user, submission=None) -> (bool, str):
     """
     Return a boolean based on if a user can alter archived submissions
     """
     archive_access_groups = get_archive_alter_groups()
 
     if user.is_apply_staff and STAFF_GROUP_NAME in archive_access_groups:
-        return True
+        return True, "Staff is set to alter archive"
     if user.is_apply_staff_admin and TEAMADMIN_GROUP_NAME in archive_access_groups:
-        return True
-    return False
+        return True, "Staff Admin is set to alter archive"
+    return False, "Forbidden Error"
 
 
 def can_bulk_archive_submissions(user) -> bool:
@@ -165,4 +165,5 @@ permissions_map = {
     "submission_view": is_user_has_access_to_view_submission,
     "submission_edit": can_edit_submission,
     "can_view_submission_screening": can_view_submission_screening,
+    "archive_alter": can_alter_archived_submissions,
 }

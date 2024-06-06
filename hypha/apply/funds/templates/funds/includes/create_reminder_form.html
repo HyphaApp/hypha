@@ -1,6 +1,5 @@
 {% load i18n %}
-<div class="modal" id="create-reminder">
-    <h4 class="modal__header-bar">{% trans "Create Reminder" %}</h4>
-    {% trans "Create" as create %}
-    {% include 'funds/includes/delegated_form_base.html' with form=reminder_form value=create extra_classes='form__reminder' %}
+<div class="p-6 z-20">
+    {% url 'funds:submissions:create_reminder' pk=object.pk as reminder_creation_url %}
+    {% include 'funds/includes/dialog_form_base.html' with form=form value=value url=reminder_creation_url target="#id_reminders" data_var="reminderUpdated" %}
 </div>
