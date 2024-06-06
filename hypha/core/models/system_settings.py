@@ -53,7 +53,7 @@ class SystemSettings(BaseGenericSetting):
 
     footer_content = models.TextField(
         "Footer content",
-        default="<p>Configure this text in Wagtail admin -> Settings -> System settings.</p>",
+        default='<p>Configure this text in Wagtail admin -> Settings -> System settings.</p>\n<br>\n<a href="#" onclick="openConsentPrompt()">Cookie Settings</a>',
         help_text=_("This will be added to the footer, html tags is allowed."),
         blank=True,
     )
