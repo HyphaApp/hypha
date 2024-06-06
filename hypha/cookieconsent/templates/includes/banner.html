@@ -2,14 +2,53 @@
 
 {% if show_banner %}
     <div class="wrapper wrapper--cookieconsent cookieconsent">
-        <div class="wrapper wrapper--small">
-            <h2 class="cookieconsent__title">{% trans title %}</h2>
-            <div class="cookieconsent__message rich-text">
-                {{ message|richtext }}
+        <div class="cookieconsent__content">
+            <div class="cookieconsent__brief">
+                <div>
+                    <h2 class="cookieconsent__title">{% trans settings.cookieconsent_title %}</h2>
+                    <div class="cookieconsent__message rich-text">
+                        {{ settings.cookieconsent_message|richtext }}
+                    </div>
+                    <div class="cookieconsent__actions">
+                        {% if settings.cookieconsent_analytics %}
+                            <button class="button button--cookieconsent button--decline" title="{% trans 'Decline tracking cookies.' %}" type="button" data-consent="decline">{% trans 'Essential only' %}</button>
+                            <button class="button button--cookieconsent button--accept button--left-space" title="{% trans 'Accept tracking cookies.' %}" type="button" data-consent="accept">{% trans 'Accept all' %}</button>
+                        {% else %}
+                            <button class="button button--cookieconsent button--accept" data-consent="ack">{% trans 'Ok' %}</button>
+                        {% endif %}
+                        <button class="button button--cookieconsent button--learn-more button--left-space" title="{% trans 'Learn more about specific cookies used.' %}" show-learn-more="true">{% trans 'Learn More' %}</button>
+                    </div>
+                </div>
             </div>
-            <div class="cookieconsent__actions">
-                <button class="button button--cookieconsent button--decline" title="{% trans 'Decline tracking cookies.' %}" type="button" data-consent="false">{% trans 'Decline' %}</button>
-                <button class="button button--cookieconsent button--accept button--left-space" title="{% trans 'Accept tracking cookies.' %}" type="button" data-consent="true">{% trans 'Accept' %}</button>
+            <div class="cookieconsent__learnmore">
+                <div>
+                    <div class="cookieconsent__statement">
+                        <p>This Website uses cookies.  Below you can select the categories of cookies to allow when you use our website and services.  For more information, please see our Privacy Policy.</p>
+                    </div>
+                    <div class="cookieconsent__info-wrapper">
+                        <div class="cookieconsent__info">
+                            <p class="font-semibold">{% trans 'Essential Cookies' %}</p>
+                            {{ settings.cookieconsent_essential_about|richtext }}
+                            <span class="text-green-500">Always enabled.</span>
+                        </div>
+                        {% if settings.cookieconsent_analytics %}
+                            <div class="cookieconsent__info pl-10">
+                                <p class="font-semibold">{% trans 'Analytics Cookies' %}</p>
+                                {{ settings.cookieconsent_analytics_about|richtext }}
+                                <div>
+                                    <label class="inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" value="" class="sr-only peer analytics-toggle">
+                                        <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500" title="{% trans 'Toggle analytics cookies.' %}"></div>
+                                    </label>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <button class="button button--cookieconsent button--learn-more" show-learn-more="false">{% trans 'Back' %}</button>
+                        <button class="button button--cookieconsent button--left-space button--close" title="{% trans 'Save cookie preferences.' %}">{% trans 'Ok' %}</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
