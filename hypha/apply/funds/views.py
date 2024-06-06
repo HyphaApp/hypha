@@ -40,6 +40,9 @@ from django.views.generic.base import TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from django_file_form.models import PlaceholderUploadedFile
 from django_filters.views import FilterView
+from django_htmx.http import (
+    HttpResponseClientRefresh,
+)
 from django_tables2.paginators import LazyPaginator
 from django_tables2.views import SingleTableMixin
 from wagtail.models import Page
@@ -737,33 +740,48 @@ class ArchiveSubmissionView(DelegatedViewMixin, UpdateView):
 
 
 @method_decorator(staff_required, name="dispatch")
-class UpdateLeadView(DelegatedViewMixin, UpdateView):
+class UpdateLeadView(View):
     model = ApplicationSubmission
     form_class = UpdateSubmissionLeadForm
     context_name = "lead_form"
 
     def dispatch(self, request, *args, **kwargs):
-        submission = self.get_object()
+        self.object = get_object_or_404(ApplicationSubmission, id=kwargs.get("pk"))
         permission, reason = has_permission(
-            "submission_edit", request.user, object=submission, raise_exception=False
+            "submission_edit", request.user, object=self.object, raise_exception=False
         )
         if not permission:
             messages.warning(self.request, reason)
-            return HttpResponseRedirect(submission.get_absolute_url())
+            return HttpResponseRedirect(self.object.get_absolute_url())
         return super(UpdateLeadView, self).dispatch(request, *args, **kwargs)
 
-    def form_valid(self, form):
-        # Fetch the old lead from the database
-        old = copy(self.get_object())
-        response = super().form_valid(form)
-        messenger(
-            MESSAGES.UPDATE_LEAD,
-            request=self.request,
-            user=self.request.user,
-            source=form.instance,
-            related=old.lead,
+    def get(self, *args, **kwargs):
+        lead_form = UpdateSubmissionLeadForm(instance=self.object)
+        return render(
+            self.request,
+            "funds/includes/update_lead_form.html",
+            context={"form": lead_form, "value": _("Update"), "object": self.object},
         )
-        return response
+
+    def post(self, *args, **kwargs):
+        form = UpdateSubmissionLeadForm(self.request.POST, instance=self.object)
+        old_lead = copy(self.object.lead)
+        if form.is_valid():
+            form.save()
+            messenger(
+                MESSAGES.UPDATE_LEAD,
+                request=self.request,
+                user=self.request.user,
+                source=form.instance,
+                related=old_lead,
+            )
+            return HttpResponseClientRefresh()
+        return render(
+            self.request,
+            "funds/includes/update_lead_form.html",
+            context={"form": form, "value": _("Update"), "object": self.object},
+            status=404,
+        )
 
 
 @method_decorator(staff_required, name="dispatch")
@@ -929,7 +947,6 @@ class AdminSubmissionDetailView(ActivityContextMixin, DelegateableView, DetailVi
         ProgressSubmissionView,
         ReminderCreateView,
         CommentFormView,
-        UpdateLeadView,
         UpdateReviewersView,
         UpdatePartnersView,
         CreateProjectView,
