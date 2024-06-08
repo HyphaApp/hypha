@@ -51,7 +51,7 @@
 
                 @include media-query($table-breakpoint) {
                     width: 50px;
-                    padding-right: 0;
+                    padding-inline-end: 0;
                 }
             }
         }
@@ -73,7 +73,7 @@
             &.selected {
                 @include table-checkbox;
                 display: none;
-                padding-right: 0;
+                padding-inline-end: 0;
 
                 @include media-query($table-breakpoint) {
                     display: table-cell;
