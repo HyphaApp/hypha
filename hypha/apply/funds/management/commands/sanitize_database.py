@@ -7,10 +7,12 @@ from faker import Faker
 
 from hypha.apply.categories.blocks import CategoryQuestionBlock
 from hypha.apply.funds.blocks import (
+    AddressFieldBlock,
     DurationBlock,
     EmailBlock,
     FullNameBlock,
     TitleBlock,
+    ValueBlock,
 )
 from hypha.apply.funds.models import (
     ApplicationRevision,
@@ -19,6 +21,7 @@ from hypha.apply.funds.models import (
 from hypha.apply.review.blocks import (
     RecommendationBlock,
     RecommendationCommentsBlock,
+    ScoreFieldBlock,
     ScoreFieldWithoutTextBlock,
     VisibilityBlock,
 )
@@ -26,6 +29,7 @@ from hypha.apply.review.models import (
     Review,
 )
 from hypha.apply.review.options import (
+    RATE_CHOICES,
     RECOMMENDATION_CHOICES,
 )
 from hypha.apply.stream_forms.blocks import (
@@ -63,6 +67,9 @@ class Command(BaseCommand):
                 data = form_holder.form_data[form_field.id]
                 key = form_field.id
 
+            if data is None:
+                continue
+
             def update_data(new_data):
                 if not data:  # noqa: B023
                     # Don't replace non data with data!!
@@ -83,7 +90,10 @@ class Command(BaseCommand):
                 update_data(self.f.company())
             elif form_field.value["field_label"].lower() == "contact phone number":
                 update_data(self.f.phone_number())
-            elif form_field.value["field_label"].lower() == "organization address":
+            elif (
+                form_field.value["field_label"].lower() == "organization address"
+                or type(form_field.block) == AddressFieldBlock
+            ):
                 try:
                     address = json.loads(data)
                     address["country"] = self.f.country_code()
@@ -124,12 +134,16 @@ class Command(BaseCommand):
                 update_data([])
             elif type(form_field.block) == RecommendationBlock:
                 update_data(random.choice(RECOMMENDATION_CHOICES)[0])
+            elif type(form_field.block) == ScoreFieldBlock:
+                update_data(random.choice(RATE_CHOICES)[0])
             elif type(form_field.block) == ScoreFieldWithoutTextBlock:
                 update_data(
                     random.randint(form_field.value["min"], form_field.value["max"])
                 )
             elif type(form_field.block) == DropdownFieldBlock:
-                update_data(random.choice(form_field.value["choices"]))
+                update_data(random.choice(form_field.value["choices"][1]))
+            elif type(form_field.block) == ValueBlock:
+                update_data(random.randint(0, 10000000))
             elif type(form_field.block) in [
                 TextFieldBlock,
                 CharFieldBlock,
