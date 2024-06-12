@@ -7,6 +7,7 @@ from hypha.apply.projects import urls as projects_urls
 from .views import (
     ArchiveSubmissionView,
     AwaitingReviewSubmissionsListView,
+    CreateProjectView,
     ExportSubmissionsByRound,
     GroupingApplicationsListView,
     ReminderDeleteView,
@@ -187,6 +188,11 @@ submission_urls = (
                         "partial/screening-card/",
                         partial_screening_card,
                         name="partial-screening-card",
+                    ),
+                    path(
+                        "project/create/",
+                        CreateProjectView.as_view(),
+                        name="create_project",
                     ),
                     path(
                         "partial/reviews-card/",

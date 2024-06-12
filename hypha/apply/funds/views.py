@@ -60,7 +60,6 @@ from hypha.apply.determinations.views import (
 )
 from hypha.apply.funds.models.screening import ScreeningStatus
 from hypha.apply.projects.forms import ProjectCreateForm
-from hypha.apply.projects.models import Project
 from hypha.apply.review.models import Review
 from hypha.apply.stream_forms.blocks import GroupToggleBlock
 from hypha.apply.todo.options import PROJECT_WAITING_PAF
@@ -647,45 +646,57 @@ class ProgressSubmissionView(DelegatedViewMixin, UpdateView):
 
 
 @method_decorator(staff_required, name="dispatch")
-class CreateProjectView(DelegatedViewMixin, CreateView):
-    context_name = "project_create_form"
-    form_class = ProjectCreateForm
-    model = Project
-
+class CreateProjectView(View):
     def dispatch(self, request, *args, **kwargs):
-        submission = self.get_parent_object()
+        self.submission = get_object_or_404(ApplicationSubmission, id=kwargs.get("pk"))
         permission, reason = has_permission(
-            "submission_edit", request.user, object=submission, raise_exception=False
+            "submission_edit",
+            request.user,
+            object=self.submission,
+            raise_exception=False,
         )
         if not permission:
             messages.warning(self.request, reason)
-            return HttpResponseRedirect(submission.get_absolute_url())
+            return HttpResponseRedirect(self.submission.get_absolute_url())
         return super(CreateProjectView, self).dispatch(request, *args, **kwargs)
 
-    def get_success_url(self):
-        return self.object.get_absolute_url()
-
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        messenger(
-            MESSAGES.CREATED_PROJECT,
-            request=self.request,
-            user=self.request.user,
-            source=self.object,
-            related=self.object.submission,
+    def get(self, *args, **kwargs):
+        project_creation_form = ProjectCreateForm(instance=self.submission)
+        return render(
+            self.request,
+            "funds/includes/create_project_form.html",
+            context={
+                "form": project_creation_form,
+                "value": _("Confirm"),
+                "object": self.submission,
+            },
         )
-        # add task for staff to add PAF to the project
-        add_task_to_user_group(
-            code=PROJECT_WAITING_PAF,
-            user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
-            related_obj=self.object,
-        )
-        return response
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["action_message"] = _("Project Created!")
-        return context
+    def post(self, *args, **kwargs):
+        form = ProjectCreateForm(self.request.POST, instance=self.submission)
+        if form.is_valid():
+            project = form.save()
+            # Record activity
+            messenger(
+                MESSAGES.CREATED_PROJECT,
+                request=self.request,
+                user=self.request.user,
+                source=project,
+                related=project.submission,
+            )
+            # add task for staff to add PAF to the project
+            add_task_to_user_group(
+                code=PROJECT_WAITING_PAF,
+                user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+                related_obj=project,
+            )
+            return HttpResponseClientRefresh()
+        return render(
+            self.request,
+            "funds/includes/create_project_form.html",
+            context={"form": form, "value": _("Confirm"), "object": self.object},
+            status=400,
+        )
 
 
 @method_decorator(staff_required, name="dispatch")
@@ -983,7 +994,6 @@ class AdminSubmissionDetailView(ActivityContextMixin, DelegateableView, DetailVi
         CommentFormView,
         UpdateReviewersView,
         UpdatePartnersView,
-        CreateProjectView,
         UpdateMetaTermsView,
     ]
 

@@ -1,9 +1,7 @@
 {% load i18n %}
-<div class="modal" id="create-project">
-    <h4 class="modal__project-header-bar">{% trans "Create Project" %}</h4>
-    <p>{% trans "This will create a new project. This cannot be undone." %}</p>
-    <p>{% trans "A lead is required to create a project, select the lead below." %}</p>
-
-    {% trans "Confirm" as confirm %}
-    {% include 'funds/includes/delegated_form_base.html' with form=project_create_form value=confirm %}
+<div class="p-6 z-20">
+    <p class="mt-0">{% trans "This will create a new project. This cannot be undone." %}</p>
+    <p class="mb-2">{% trans "A lead is required to create a project, select the lead below." %}</p>
+    {% url 'funds:submissions:create_project' pk=object.pk as project_creation_url %}
+    {% include 'funds/includes/dialog_form_base.html' with form=form value=value url=project_creation_url %}
 </div>
