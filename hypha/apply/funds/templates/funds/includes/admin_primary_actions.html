@@ -1,5 +1,5 @@
 {% load i18n %}
-{% load heroicons %}
+{% load heroicons primaryactions_tags %}
 <h5>{% trans "Actions to take" %}</h5>
 
 {% if object.is_archive %}
@@ -68,8 +68,24 @@
         {% endwith %}
     {% endif %}
 
-    <a data-fancybox data-src="#update-status" class="button button--primary button--full-width {% if progress_form.should_show %}is-not-disabled{% else %}is-disabled{% endif %}" href="#">{% trans "Update status" %}</a>
-
+    {% show_progress_button request.user object as show_progress_form %}
+    <div x-data="{ progressForm: false }">
+        <a class="button button--primary button--full-width {% if show_progress_form %}is-not-disabled{% else %}is-disabled{% endif %}" @click="progressForm = true" hx-get="{% url 'funds:submissions:progress' pk=object.pk %}" hx-target="#progress_form">
+            {% trans "Update status" %}
+        </a>
+        <dialog x-show="progressForm" x-htmldialog.noscroll="progressForm = false" class="w-[580px]">
+            <div class="dialog-header flex justify-between items-center border-block-end bg-light-blue p-4 align-middle">
+                <span class="font-bold text-lg text-white">{% trans "Update status" %}</span>
+                <button @click="progressForm = false" class="text-white font-bold">X</button>
+            </div>
+            <div id="progress_form">
+                <div class="animate-pulse">
+                    <div class="w-full h-16 bg-gray-200 mb-5"></div>
+                    <div class="w-full h-6 bg-gray-200 mb-5"></div>
+                </div>
+            </div>
+        </dialog>
+    </div>
 
     <div class="sidebar__separator mt-4">{% trans "Assign" %}</div>
 
