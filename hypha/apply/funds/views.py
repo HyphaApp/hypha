@@ -1087,7 +1087,11 @@ class ReminderCreateView(View):
             "funds/includes/create_reminder_form.html",
             context={
                 "form": reminder_form,
+<<<<<<< HEAD
                 "value": _("Create Reminder"),
+=======
+                "value": _("Create"),
+>>>>>>> 331f5b0a2 (Use htmx and dialog for create reminder form)
                 "object": self.submission,
             },
         )
@@ -1105,6 +1109,7 @@ class ReminderCreateView(View):
                 source=self.submission,
                 related=reminder,
             )
+<<<<<<< HEAD
             return HttpResponse(
                 status=204,
                 headers={
@@ -1113,6 +1118,9 @@ class ReminderCreateView(View):
                     ),
                 },
             )
+=======
+            return HttpResponseClientRefresh()
+>>>>>>> 331f5b0a2 (Use htmx and dialog for create reminder form)
         return render(
             self.request,
             "funds/includes/create_reminder_form.html",
