@@ -85,7 +85,7 @@ class ProjectCreateForm(forms.Form):
         label=_("Select Project Lead"), queryset=User.objects.all()
     )
 
-    def __init__(self, instance=None, user=None, *args, **kwargs):
+    def __init__(self, *args, instance=None, **kwargs):
         super().__init__(*args, **kwargs)
 
         if instance:
