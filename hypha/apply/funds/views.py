@@ -689,54 +689,89 @@ class CreateProjectView(DelegatedViewMixin, CreateView):
 
 
 @method_decorator(staff_required, name="dispatch")
-class UnarchiveSubmissionView(DelegatedViewMixin, UpdateView):
-    model = ApplicationSubmission
-    form_class = UnarchiveSubmissionForm
-    context_name = "unarchive_form"
-
-    def form_valid(self, form):
-        # If a user without archive edit access is somehow able to access "Unarchive Submission"
-        # (ie. they were looking at the submission when permissions changed) "refresh" the page
-        if not can_alter_archived_submissions(self.request.user):
-            return HttpResponseRedirect(self.request.path)
-        response = super().form_valid(form)
-        # Record activity
-        messenger(
-            MESSAGES.UNARCHIVE_SUBMISSION,
-            request=self.request,
-            user=self.request.user,
-            source=self.object,
+class UnarchiveSubmissionView(View):
+    def dispatch(self, request, *args, **kwargs):
+        self.object = get_object_or_404(ApplicationSubmission, id=kwargs.get("pk"))
+        permission, reason = has_permission(
+            "archive_alter", request.user, object=self.object, raise_exception=False
         )
-        return response
+        if not permission:
+            HttpResponseRedirect(self.request.path)
+        return super(UnarchiveSubmissionView, self).dispatch(request, *args, **kwargs)
 
-    def get_success_url(self):
-        return self.object.get_absolute_url()
+    def get(self, *args, **kwargs):
+        unarchive_form = UnarchiveSubmissionForm(instance=self.object)
+        return render(
+            self.request,
+            "funds/includes/unarchive_submission_form.html",
+            context={
+                "form": unarchive_form,
+                "value": _("Confirm"),
+                "object": self.object,
+            },
+        )
+
+    def post(self, *args, **kwargs):
+        form = UnarchiveSubmissionForm(self.request.POST, instance=self.object)
+        if form.is_valid():
+            form.save()
+            # Record activity
+            messenger(
+                MESSAGES.UNARCHIVE_SUBMISSION,
+                request=self.request,
+                user=self.request.user,
+                source=self.object,
+            )
+            return HttpResponseClientRefresh()
+        return render(
+            self.request,
+            "funds/includes/unarchive_submission_form.html",
+            context={"form": form, "value": _("Confirm"), "object": self.object},
+            status=400,
+        )
 
 
 @method_decorator(staff_required, name="dispatch")
-class ArchiveSubmissionView(DelegatedViewMixin, UpdateView):
-    model = ApplicationSubmission
-    form_class = ArchiveSubmissionForm
-    context_name = "archive_form"
-
-    def form_valid(self, form):
-        # If a user without archive edit access is somehow able to access "Archive Submission"
-        # (ie. they were looking at the submission when permissions changed) "refresh" the page
-        if not can_alter_archived_submissions(self.request.user):
-            return HttpResponseRedirect(self.request.path)
-        response = super().form_valid(form)
-        submission = self.get_object()
-        # Record activity
-        messenger(
-            MESSAGES.ARCHIVE_SUBMISSION,
-            request=self.request,
-            user=self.request.user,
-            source=submission,
+class ArchiveSubmissionView(View):
+    def dispatch(self, request, *args, **kwargs):
+        self.object = get_object_or_404(ApplicationSubmission, id=kwargs.get("pk"))
+        permission, reason = has_permission(
+            "archive_alter", request.user, object=self.object, raise_exception=False
         )
-        return response
+        if not permission:
+            HttpResponseRedirect(self.request.path)
+        return super(ArchiveSubmissionView, self).dispatch(request, *args, **kwargs)
 
-    def get_success_url(self):
-        return self.object.get_absolute_url()
+    def get(self, *args, **kwargs):
+        archive_form = ArchiveSubmissionForm(instance=self.object)
+        return render(
+            self.request,
+            "funds/includes/archive_submission_form.html",
+            context={
+                "form": archive_form,
+                "value": _("Confirm"),
+                "object": self.object,
+            },
+        )
+
+    def post(self, *args, **kwargs):
+        form = ArchiveSubmissionForm(self.request.POST, instance=self.object)
+        if form.is_valid():
+            form.save()
+            # Record activity
+            messenger(
+                MESSAGES.ARCHIVE_SUBMISSION,
+                request=self.request,
+                user=self.request.user,
+                source=self.object,
+            )
+            return HttpResponseClientRefresh()
+        return render(
+            self.request,
+            "funds/includes/archive_submission_form.html",
+            context={"form": form, "value": _("Confirm"), "object": self.object},
+            status=400,
+        )
 
 
 @method_decorator(staff_required, name="dispatch")
@@ -780,7 +815,7 @@ class UpdateLeadView(View):
             self.request,
             "funds/includes/update_lead_form.html",
             context={"form": form, "value": _("Update"), "object": self.object},
-            status=404,
+            status=400,
         )
 
 
@@ -943,7 +978,6 @@ class AdminSubmissionDetailView(ActivityContextMixin, DelegateableView, DetailVi
     template_name_suffix = "_admin_detail"
     model = ApplicationSubmission
     form_views = [
-        ArchiveSubmissionView,
         ProgressSubmissionView,
         ReminderCreateView,
         CommentFormView,
@@ -951,7 +985,6 @@ class AdminSubmissionDetailView(ActivityContextMixin, DelegateableView, DetailVi
         UpdatePartnersView,
         CreateProjectView,
         UpdateMetaTermsView,
-        UnarchiveSubmissionView,
     ]
 
     def dispatch(self, request, *args, **kwargs):

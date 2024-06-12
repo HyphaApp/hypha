@@ -126,10 +126,6 @@ class UnarchiveSubmissionForm(ApplicationSubmissionModelForm):
         model = ApplicationSubmission
         fields = ("unarchive",)
 
-    def __init__(self, *args, **kwargs):
-        kwargs.pop("user")
-        super().__init__(*args, **kwargs)
-
     def save(self, commit=True):
         self.instance.is_archive = False
         return super(UnarchiveSubmissionForm, self).save()
@@ -141,10 +137,6 @@ class ArchiveSubmissionForm(ApplicationSubmissionModelForm):
     class Meta:
         model = ApplicationSubmission
         fields = ("archive",)
-
-    def __init__(self, *args, **kwargs):
-        kwargs.pop("user")
-        super().__init__(*args, **kwargs)
 
     def save(self, commit=True):
         self.instance.is_archive = True

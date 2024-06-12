@@ -1,52 +1,6 @@
 {% load i18n %}
 <div class="p-6 z-20">
     {% trans "Update" as update %}
-    {% comment %} customized delegated_form_base.html {% endcomment %}
-    <form
-        class="form {{ extra_classes }}"
-        method="post"
-        hx-post="{% url 'funds:submissions:lead_update' pk=object.pk %}"
-        hx-target="this"
-        hx-swap="outerHTML"
-        id="{% if form_id %}{{ form_id }}{% else %}{{ form.name }}{% endif %}"
-        enctype="multipart/form-data"
-        {% if action %}action="{{ action }}"{% endif %}
-    >
-        {% csrf_token %}
-
-        {{ form.media }}
-        {% for hidden in form.hidden_fields %}
-            {{ hidden }}
-        {% endfor %}
-
-        <div class="fields--visible">
-            {% for field in form.visible_fields %}
-                {% if field.field %}
-                    {% include "forms/includes/field.html" %}
-                {% else %}
-                    {{ field }}
-                {% endif %}
-            {% endfor %}
-        </div>
-
-        <div class="form__group">
-            {% if cancel %}
-                <button
-                    type="button"
-                    data-fancybox-close=""
-                    class="button button--{% if invert %}primary{% else %}white{% endif %}"
-                    title="{% trans "Close" %}">
-                    {% trans "Cancel" %}
-                </button>
-            {% endif %}
-            {% trans "Delete" as delete %}
-            <button
-                class="button button--{% if invert %}white{% elif value == delete %}warning{% else %}primary{% endif %}"
-                type="submit">
-                {{ value }}
-            </button>
-        </div>
-
-    </form>
-
+    {% url 'funds:submissions:lead_update' pk=object.pk as lead_update_url %}
+    {% include 'funds/includes/dialog_form_base.html' with form=form value=value url=lead_update_url %}
 </div>
