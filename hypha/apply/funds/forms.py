@@ -530,7 +530,7 @@ class CreateReminderForm(forms.ModelForm):
     )
     time = forms.DateField()
 
-    def __init__(self, instance=None, user=None, *args, **kwargs):
+    def __init__(self, *args, instance=None, user=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.user = user
 

@@ -10,6 +10,7 @@ from .views import (
     CreateProjectView,
     ExportSubmissionsByRound,
     GroupingApplicationsListView,
+    ReminderCreateView,
     ReminderDeleteView,
     ReviewerLeaderboard,
     ReviewerLeaderboardDetail,
@@ -193,6 +194,11 @@ submission_urls = (
                         "project/create/",
                         CreateProjectView.as_view(),
                         name="create_project",
+                    ),
+                    path(
+                        "reminder/create/",
+                        ReminderCreateView.as_view(),
+                        name="create_reminder",
                     ),
                     path(
                         "partial/reviews-card/",
