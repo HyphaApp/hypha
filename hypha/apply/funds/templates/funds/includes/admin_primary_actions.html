@@ -113,13 +113,25 @@
         </dialog>
     </div>
 
-    <details class="mt-4" x-data="{ archiveForm: false }">
+    <details class="mt-4" x-data="{ archiveForm: false, reminderForm: false }">
         <summary class="sidebar__separator sidebar__separator--medium">{% trans "More actions" %}</summary>
         <a class="button button--white button--full-width button--bottom-space" href="{% url 'funds:submissions:revisions:list' submission_pk=object.id %}">{% trans "Revisions" %}</a>
 
         <a data-fancybox data-src="#update-meta-terms" class="button button--white button--full-width button--bottom-space" href="#">{% trans "Meta Terms" %}</a>
 
-        <a data-fancybox data-src="#create-reminder" class="button button--white button--full-width button--bottom-space" href="#">{% trans "Create Reminder" %}</a>
+        <a class="button button--white button--full-width button--bottom-space" @click="reminderForm = true" hx-get="{% url 'funds:submissions:create_reminder' pk=object.pk %}" hx-target="#reminder_form">{% trans "Create Reminder" %}</a>
+        <dialog x-show="reminderForm" x-htmldialog.noscroll="reminderForm = false" class="w-[580px]">
+            <div class="dialog-header flex justify-between items-center border-block-end bg-light-blue p-4 align-middle">
+                <span class="font-bold text-lg text-white">{% trans "Create Reminder" %}</span>
+                <button @click="reminderForm = false" class="text-white font-bold">X</button>
+            </div>
+            <div id="reminder_form">
+                <div class="animate-pulse">
+                    <div class="w-full h-16 bg-gray-200 mb-5"></div>
+                    <div class="w-full h-6 bg-gray-200 mb-5"></div>
+                </div>
+            </div>
+        </dialog>
 
         {% if can_archive %}
             <a class="button button--white button--full-width button--bottom-space" @click="archiveForm = true" hx-get="{% url 'funds:submissions:archive' pk=object.pk %}" hx-target="#archive_form">
