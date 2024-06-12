@@ -40,6 +40,7 @@ from django.views.generic.detail import SingleObjectMixin
 from django_file_form.models import PlaceholderUploadedFile
 from django_filters.views import FilterView
 from django_htmx.http import (
+    HttpResponseClientRedirect,
     HttpResponseClientRefresh,
 )
 from django_tables2.paginators import LazyPaginator
@@ -617,31 +618,57 @@ class SubmissionsByStatus(BaseAdminSubmissionsTable, DelegateableListView):
 
 @method_decorator(staff_required, name="dispatch")
 class ProgressSubmissionView(DelegatedViewMixin, UpdateView):
-    model = ApplicationSubmission
-    form_class = ProgressSubmissionForm
-    context_name = "progress_form"
-
     def dispatch(self, request, *args, **kwargs):
-        submission = self.get_object()
+        self.submission = get_object_or_404(ApplicationSubmission, id=kwargs.get("pk"))
         permission, reason = has_permission(
-            "submission_edit", request.user, object=submission, raise_exception=False
+            "submission_edit",
+            request.user,
+            object=self.submission,
+            raise_exception=False,
         )
         if not permission:
             messages.warning(self.request, reason)
-            return HttpResponseRedirect(submission.get_absolute_url())
+            return HttpResponseRedirect(self.submission.get_absolute_url())
         return super(ProgressSubmissionView, self).dispatch(request, *args, **kwargs)
 
-    def form_valid(self, form):
-        action = form.cleaned_data.get("action")
-        # Defer to the determination form for any of the determination transitions
-        redirect = DeterminationCreateOrUpdateView.should_redirect(
-            self.request, self.object, action
+    def get(self, *args, **kwargs):
+        project_creation_form = ProgressSubmissionForm(
+            instance=self.submission, user=self.request.user
         )
-        if redirect:
-            return redirect
+        return render(
+            self.request,
+            "funds/includes/progress_form.html",
+            context={
+                "form": project_creation_form,
+                "value": _("Progress"),
+                "object": self.submission,
+            },
+        )
 
-        self.object.perform_transition(action, self.request.user, request=self.request)
-        return super().form_valid(form)
+    def post(self, *args, **kwargs):
+        form = ProgressSubmissionForm(
+            self.request.POST, instance=self.submission, user=self.request.user
+        )
+        if form.is_valid():
+            action = form.cleaned_data.get("action")
+            redirect = DeterminationCreateOrUpdateView.should_redirect(
+                self.request, self.submission, action
+            )
+            if redirect:
+                return HttpResponseClientRedirect(redirect.url)
+
+            self.submission.perform_transition(
+                action, self.request.user, request=self.request
+            )
+            form.save()
+
+            return HttpResponseClientRefresh()
+        return render(
+            self.request,
+            "funds/includes/progress_form.html",
+            context={"form": form, "value": _("Progress"), "object": self.submission},
+            status=400,
+        )
 
 
 @method_decorator(staff_required, name="dispatch")
@@ -1007,8 +1034,6 @@ class AdminSubmissionDetailView(ActivityContextMixin, DelegateableView, DetailVi
     template_name_suffix = "_admin_detail"
     model = ApplicationSubmission
     form_views = [
-        ProgressSubmissionView,
-        ReminderCreateView,
         CommentFormView,
         UpdateReviewersView,
         UpdatePartnersView,

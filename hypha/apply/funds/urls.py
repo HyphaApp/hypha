@@ -10,6 +10,7 @@ from .views import (
     CreateProjectView,
     ExportSubmissionsByRound,
     GroupingApplicationsListView,
+    ProgressSubmissionView,
     ReminderCreateView,
     ReminderDeleteView,
     ReviewerLeaderboard,
@@ -199,6 +200,9 @@ submission_urls = (
                         "reminder/create/",
                         ReminderCreateView.as_view(),
                         name="create_reminder",
+                    ),
+                    path(
+                        "progress/", ProgressSubmissionView.as_view(), name="progress"
                     ),
                     path(
                         "partial/reviews-card/",
