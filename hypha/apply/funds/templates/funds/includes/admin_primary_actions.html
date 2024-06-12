@@ -3,13 +3,24 @@
 <h5>{% trans "Actions to take" %}</h5>
 
 {% if object.is_archive %}
-    <a data-fancybox
-       data-src="#unarchive-submission"
-       class="button button--bottom-space button--primary"
-       href="#">
-        {% heroicon_outline "lock-open" aria_hidden="true" size=16 stroke_width=2 class="inline align-baseline me-1" %}
-        {% trans "Unarchive Submission" %}
-    </a>
+    <div x-data="{ unarchiveForm: false }">
+        <a class="button button--bottom-space button--primary" @click="unarchiveForm = true" hx-get="{% url 'funds:submissions:unarchive' pk=object.pk %}" hx-target="#unarchive_form">
+            {% heroicon_outline "lock-open" aria_hidden="true" size=16 stroke_width=2 class="inline align-baseline me-1" %}
+            {% trans "Unarchive Submission" %}
+        </a>
+        <dialog x-show="unarchiveForm" x-htmldialog.noscroll="unarchiveForm = false" class="w-[580px]">
+            <div class="dialog-header flex justify-between items-center border-block-end bg-light-blue p-4 align-middle">
+                <span class="font-bold text-lg text-white">{% trans "Unarchive Submission" %}</span>
+                <button @click="unarchiveForm = false" class="text-white font-bold">X</button>
+            </div>
+            <div id="unarchive_form">
+                <div class="animate-pulse">
+                    <div class="w-full h-16 bg-gray-200 mb-5"></div>
+                    <div class="w-full h-6 bg-gray-200 mb-5"></div>
+                </div>
+            </div>
+        </dialog>
+    </div>
 
 {% else %}
 
@@ -76,13 +87,13 @@
             </div>
         </dialog>
 
-        <a class="button button--half-width button--white" @click="leadForm = true" hx-get="{% url 'funds:submissions:lead_update' pk=object.pk %}" hx-target="#leadform">Lead</a>
+        <a class="button button--half-width button--white" @click="leadForm = true" hx-get="{% url 'funds:submissions:lead_update' pk=object.pk %}" hx-target="#lead_form">{% trans "Lead" %}</a>
         <dialog x-show="leadForm" x-htmldialog.noscroll="leadForm = false" class="w-[580px]">
             <div class="dialog-header flex justify-between items-center border-block-end bg-light-blue p-4 align-middle">
                 <span class="font-bold text-lg text-white">{% trans "Assign Lead" %}</span>
                 <button @click="leadForm = false" class="text-white font-bold">X</button>
             </div>
-            <div id="leadform">
+            <div id="lead_form">
                 <div class="animate-pulse">
                     <div class="w-full h-16 bg-gray-200 mb-5"></div>
                     <div class="w-full h-6 bg-gray-200 mb-5"></div>
@@ -91,7 +102,7 @@
         </dialog>
     </div>
 
-    <details class="mt-4">
+    <details class="mt-4" x-data="{ archiveForm: false }">
         <summary class="sidebar__separator sidebar__separator--medium">{% trans "More actions" %}</summary>
         <a class="button button--white button--full-width button--bottom-space" href="{% url 'funds:submissions:revisions:list' submission_pk=object.id %}">{% trans "Revisions" %}</a>
 
@@ -100,10 +111,23 @@
         <a data-fancybox data-src="#create-reminder" class="button button--white button--full-width button--bottom-space" href="#">{% trans "Create Reminder" %}</a>
 
         {% if can_archive %}
-            <a data-fancybox data-src="#archive-submission" class="button button--white button--full-width button--bottom-space" href="#">
+            <a class="button button--white button--full-width button--bottom-space" @click="archiveForm = true" hx-get="{% url 'funds:submissions:archive' pk=object.pk %}" hx-target="#archive_form">
                 {% heroicon_outline "lock-closed" aria_hidden="true" size=15 stroke_width=2 class="inline align-baseline me-1" %}
                 {% trans "Archive Submission" %}
             </a>
+
+            <dialog x-show="archiveForm" x-htmldialog.noscroll="archiveForm = false" class="w-[580px]">
+                <div class="dialog-header flex justify-between items-center border-block-end bg-light-blue p-4 align-middle">
+                    <span class="font-bold text-lg text-white">{% trans "Archive Submission" %}</span>
+                    <button @click="archiveForm = false" class="text-white font-bold">X</button>
+                </div>
+                <div id="archive_form">
+                    <div class="animate-pulse">
+                        <div class="w-full h-16 bg-gray-200 mb-5"></div>
+                        <div class="w-full h-6 bg-gray-200 mb-5"></div>
+                    </div>
+                </div>
+            </dialog>
         {% endif %}
     </details>
 {% endif %}

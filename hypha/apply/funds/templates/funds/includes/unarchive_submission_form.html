@@ -1,7 +1,6 @@
 {% load i18n %}
-<div class="modal" id="unarchive-submission">
-    <h4 class="modal__header-bar">{% trans "Unarchive Submission" %}</h4>
-    <p>{% trans "Are you sure you want to Unarchive this submission." %}</p>
-    {% trans "Confirm" as confirm %}
-    {% include 'funds/includes/delegated_form_base.html' with form=unarchive_form value=confirm %}
+<div class="p-6 z-20">
+    <p class="mb-2 mt-0">{% trans "Are you sure you want to unarchive this submission." %}</p>
+    {% url 'funds:submissions:unarchive' pk=object.pk as unarchive_url %}
+    {% include 'funds/includes/dialog_form_base.html' with form=form value=value url=unarchive_url %}
 </div>
