@@ -29,7 +29,6 @@ from django.utils.translation import gettext as _
 from django.views import View
 from django.views.decorators.cache import cache_page
 from django.views.generic import (
-    CreateView,
     DeleteView,
     DetailView,
     FormView,
@@ -934,33 +933,52 @@ class UpdateMetaTermsView(DelegatedViewMixin, UpdateView):
 
 
 @method_decorator(staff_required, name="dispatch")
-class ReminderCreateView(DelegatedViewMixin, CreateView):
-    context_name = "reminder_form"
-    form_class = CreateReminderForm
-    model = Reminder
-
+class ReminderCreateView(View):
     def dispatch(self, request, *args, **kwargs):
-        submission = self.get_parent_object()
+        self.submission = get_object_or_404(ApplicationSubmission, id=kwargs.get("pk"))
         permission, reason = has_permission(
-            "submission_edit", request.user, object=submission, raise_exception=False
+            "submission_edit",
+            request.user,
+            object=self.submission,
+            raise_exception=False,
         )
         if not permission:
             messages.warning(self.request, reason)
-            return HttpResponseRedirect(submission.get_absolute_url())
+            return HttpResponseRedirect(self.submission.get_absolute_url())
         return super(ReminderCreateView, self).dispatch(request, *args, **kwargs)
 
-    def form_valid(self, form):
-        response = super().form_valid(form)
-
-        messenger(
-            MESSAGES.CREATE_REMINDER,
-            request=self.request,
-            user=self.request.user,
-            source=self.object.submission,
-            related=self.object,
+    def get(self, *args, **kwargs):
+        reminder_form = CreateReminderForm(instance=self.submission)
+        return render(
+            self.request,
+            "funds/includes/create_reminder_form.html",
+            context={
+                "form": reminder_form,
+                "value": _("Create"),
+                "object": self.submission,
+            },
         )
 
-        return response
+    def post(self, *args, **kwargs):
+        form = CreateReminderForm(
+            self.request.POST, instance=self.submission, user=self.request.user
+        )
+        if form.is_valid():
+            reminder = form.save()
+            messenger(
+                MESSAGES.CREATE_REMINDER,
+                request=self.request,
+                user=self.request.user,
+                source=self.submission,
+                related=reminder,
+            )
+            return HttpResponseClientRefresh()
+        return render(
+            self.request,
+            "funds/includes/create_reminder_form.html",
+            context={"form": form, "value": _("Create"), "object": self.submission},
+            status=400,
+        )
 
 
 @method_decorator(staff_required, name="dispatch")
