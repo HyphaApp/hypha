@@ -26,12 +26,23 @@
 
     {% if PROJECTS_ENABLED %}
         {% if object.accepted_for_funding and not object.project %}
-            <a data-fancybox
-               data-src="#create-project"
-               class="button button--bottom-space button--primary button--full-width"
-               href="#">
-                {% trans "Create Project" %}
-            </a>
+            <div x-data="{ projectForm: false }">
+                <a class="button button--bottom-space button--primary button--full-width" @click="projectForm = true" hx-get="{% url 'funds:submissions:create_project' pk=object.pk %}" hx-target="#project_form">
+                    {% trans "Create Project" %}
+                </a>
+                <dialog x-show="projectForm" x-htmldialog.noscroll="projectForm = false" class="w-[580px]">
+                    <div class="dialog-header flex justify-between items-center border-block-end bg-light-blue p-4 align-middle">
+                        <span class="font-bold text-lg text-white">{% trans "Create Project" %}</span>
+                        <button @click="projectForm = false" class="text-white font-bold">X</button>
+                    </div>
+                    <div id="project_form">
+                        <div class="animate-pulse">
+                            <div class="w-full h-16 bg-gray-200 mb-5"></div>
+                            <div class="w-full h-6 bg-gray-200 mb-5"></div>
+                        </div>
+                    </div>
+                </dialog>
+            </div>
         {% endif %}
     {% endif %}
 
