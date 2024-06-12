@@ -224,14 +224,13 @@ class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
             search_term=search_term,
             search_action=self.search_action,
             filter_action=self.filter_action,
+            can_export=can_export_submissions(self.request.user),
             **kwargs,
         )
 
     def dispatch(self, request, *args, **kwargs):
         disp = super().dispatch(request, *args, **kwargs)
-        if "export" in request.GET and (
-            self.request.user.is_staff or self.request.user.is_apply_staff
-        ):
+        if "export" in request.GET and can_export_submissions(request.user):
             csv_data = export_submissions_to_csv(self.object_list)
             response = HttpResponse(csv_data.readlines(), content_type="text/csv")
             response["Content-Disposition"] = "attachment; filename=submissions.csv"
