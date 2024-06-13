@@ -15,7 +15,6 @@
     const CLASS_COOKIEBRIEF = "cookieconsent__brief";
     const CLASS_COOKIECONTENT = "cookieconsent__content";
     const CLASS_JS_CONSENT_OPEN = "js-cookieconsent-open";
-    const CLASS_JS_CONSENT_CLOSE = "js-cookieconsent-close";
     const CLASS_JS_LEARNMORE = "js-cookieconsent-show-learnmore";
     const CLASS_JS_LEARNMORE_EXPAND = `${CLASS_JS_LEARNMORE}-expand`;
 
@@ -53,7 +52,7 @@
     }
 
     function closeConsentPrompt() {
-        cookieconsent.classList.remove(CLASS_JS_CONSENT_CLOSE);
+        cookieconsent.classList.remove(CLASS_JS_CONSENT_OPEN);
     }
 
     // Expose consent prompt opening/closing globally (ie. to use in a footer)
