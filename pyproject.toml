@@ -50,4 +50,4 @@ select = [
 "*migrations/*.py" = ["I001"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["hypha", "addressfield"]
+known-first-party = ["hypha"]

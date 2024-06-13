@@ -8,7 +8,7 @@ from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from django_file_form.forms import FileFormMixin
 
-from addressfield.fields import AddressField
+from hypha.addressfield.fields import AddressField
 from hypha.apply.stream_forms.fields import MultiFileField
 
 from ..models.vendor import VendorFormSettings
