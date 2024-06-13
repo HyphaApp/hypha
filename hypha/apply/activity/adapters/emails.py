@@ -1,11 +1,14 @@
 import logging
 from collections import defaultdict
+from typing import List
 
+from django.apps import apps
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.template.loader import render_to_string
 from django.utils.translation import gettext as _
 
+from hypha.apply.activity.models import ALL, APPLICANT_PARTNERS, PARTNER
 from hypha.apply.projects.models.payment import CHANGES_REQUESTED_BY_STAFF, DECLINED
 from hypha.apply.projects.templatetags.project_tags import display_project_status
 from hypha.apply.users.groups import (
@@ -264,8 +267,11 @@ class EmailAdapter(AdapterBase):
 
     def notify_comment(self, **kwargs):
         comment = kwargs["comment"]
-        source = kwargs["source"]
-        if not comment.priviledged and not comment.user == source.user:
+        recipient = kwargs["recipient"]
+        # Pass the user object to render_message rather than the email string
+        recipient_obj = User.objects.get(email__exact=recipient)
+        kwargs["recipient"] = recipient_obj
+        if not comment.priviledged:
             return self.render_message("messages/email/comment.html", **kwargs)
 
     def recipients(self, message_type, source, user, **kwargs):
@@ -410,6 +416,32 @@ class EmailAdapter(AdapterBase):
 
         if isinstance(source, get_user_model()):
             return user.email
+
+        ApplicationSubmission = apps.get_model("funds", "ApplicationSubmission")
+        Project = apps.get_model("application_projects", "Project")
+        if message_type == MESSAGES.COMMENT:
+            # Comment handling for Submissions
+            if isinstance(source, ApplicationSubmission):
+                recipients: List[str] = [source.user.email]
+
+                comment = kwargs["related"]
+                if partners := list(source.partners.values_list("email", flat=True)):
+                    if comment.visibility == PARTNER:
+                        recipients = partners
+                    elif comment.visibility in [APPLICANT_PARTNERS, ALL]:
+                        recipients += partners
+
+                try:
+                    recipients.remove(comment.user.email)
+                except ValueError:
+                    pass
+
+                return recipients
+
+            # Comment handling for Projects
+            if isinstance(source, Project) and user == source.user:
+                return []
+
         return [source.user.email]
 
     def batch_recipients(self, message_type, sources, **kwargs):
@@ -448,7 +480,12 @@ class EmailAdapter(AdapterBase):
             )
 
     def partners_updated_partner(self, added, removed, **kwargs):
-        for _partner in added:
+        if added:
+            recipient = kwargs["recipient"]
+            # Pass the user object to render_message rather than the email string
+            recipient_obj = User.objects.get(email__exact=recipient)
+            kwargs["recipient"] = recipient_obj
+
             return self.render_message(
                 "messages/email/partners_update_partner.html", **kwargs
             )

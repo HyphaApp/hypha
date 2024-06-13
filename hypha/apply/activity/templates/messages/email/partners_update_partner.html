@@ -1,7 +1,7 @@
 {% extends "messages/email/base.html" %}
 
 {% load i18n %}
-{% block salutation %}{% trans "Dear Partner," %}{% endblock %}
+{% block salutation %}{% trans "Dear" %} {{ recipient }},{% endblock %}
 
 {% block content %}{# fmt:off #}
 {% trans "You have been added as a partner the following submission." %}
