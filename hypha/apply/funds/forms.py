@@ -198,7 +198,7 @@ class BatchArchiveSubmissionForm(forms.Form):
 class UpdateReviewersForm(ApplicationSubmissionModelForm):
     reviewer_reviewers = forms.ModelMultipleChoiceField(
         queryset=User.objects.reviewers().only("pk", "full_name"),
-        widget=Select2MultiCheckboxesWidget(attrs={"data-placeholder": "Reviewers"}),
+        widget=Select2MultiCheckboxesWidget(attrs={"data-placeholder": "Select..."}),
         label=_("External Reviewers"),
         required=False,
     )

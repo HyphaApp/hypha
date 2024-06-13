@@ -33,6 +33,7 @@ from .views import (
     partial_screening_card,
     UnarchiveSubmissionView,
     UpdateLeadView,
+    UpdateReviewersView,
     submission_success,
 )
 from .views_beta import (
@@ -203,6 +204,11 @@ submission_urls = (
                     ),
                     path(
                         "progress/", ProgressSubmissionView.as_view(), name="progress"
+                    ),
+                    path(
+                        "reviewers/update/",
+                        UpdateReviewersView.as_view(),
+                        name="reviewers_update",
                     ),
                     path(
                         "partial/reviews-card/",
