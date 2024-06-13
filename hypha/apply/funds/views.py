@@ -920,48 +920,73 @@ class UpdateReviewersView(View):
 
 
 @method_decorator(staff_required, name="dispatch")
-class UpdatePartnersView(DelegatedViewMixin, UpdateView):
+class UpdatePartnersView(View):
     model = ApplicationSubmission
     form_class = UpdatePartnersForm
     context_name = "partner_form"
 
     def dispatch(self, request, *args, **kwargs):
-        submission = self.get_object()
+        self.submission = get_object_or_404(ApplicationSubmission, id=kwargs.get("pk"))
         permission, reason = has_permission(
-            "submission_edit", request.user, object=submission, raise_exception=False
+            "submission_edit",
+            request.user,
+            object=self.submission,
+            raise_exception=False,
         )
         if not permission:
             messages.warning(self.request, reason)
-            return HttpResponseRedirect(submission.get_absolute_url())
+            return HttpResponseRedirect(self.submission.get_absolute_url())
         return super(UpdatePartnersView, self).dispatch(request, *args, **kwargs)
 
-    def form_valid(self, form):
-        old_partners = set(self.get_object().partners.all())
-        response = super().form_valid(form)
-        new_partners = set(form.instance.partners.all())
-
-        added = new_partners - old_partners
-        removed = old_partners - new_partners
-
-        messenger(
-            MESSAGES.PARTNERS_UPDATED,
-            request=self.request,
-            user=self.request.user,
-            source=self.kwargs["object"],
-            added=added,
-            removed=removed,
+    def get(self, *args, **kwargs):
+        partner_form = UpdatePartnersForm(
+            user=self.request.user, instance=self.submission
+        )
+        return render(
+            self.request,
+            "funds/includes/update_partner_form.html",
+            context={
+                "form": partner_form,
+                "value": _("Update"),
+                "object": self.submission,
+            },
         )
 
-        messenger(
-            MESSAGES.PARTNERS_UPDATED_PARTNER,
-            request=self.request,
-            user=self.request.user,
-            source=self.kwargs["object"],
-            added=added,
-            removed=removed,
+    def post(self, *args, **kwargs):
+        form = UpdatePartnersForm(
+            self.request.POST, user=self.request.user, instance=self.submission
         )
+        old_partners = set(self.submission.partners.all())
+        if form.is_valid():
+            form.save()
+            new_partners = set(form.instance.partners.all())
 
-        return response
+            added = new_partners - old_partners
+            removed = old_partners - new_partners
+            messenger(
+                MESSAGES.PARTNERS_UPDATED,
+                request=self.request,
+                user=self.request.user,
+                source=self.submission,
+                added=added,
+                removed=removed,
+            )
+
+            messenger(
+                MESSAGES.PARTNERS_UPDATED_PARTNER,
+                request=self.request,
+                user=self.request.user,
+                source=self.submission,
+                added=added,
+                removed=removed,
+            )
+            return HttpResponseClientRefresh()
+        return render(
+            self.request,
+            "funds/includes/update_partner_form.html",
+            context={"form": form, "value": _("Update"), "object": self.submission},
+            status=400,
+        )
 
 
 @method_decorator(staff_required, name="dispatch")
@@ -1057,7 +1082,6 @@ class AdminSubmissionDetailView(ActivityContextMixin, DelegateableView, DetailVi
     model = ApplicationSubmission
     form_views = [
         CommentFormView,
-        UpdatePartnersView,
         UpdateMetaTermsView,
     ]
 
