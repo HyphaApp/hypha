@@ -7,7 +7,6 @@
         hx-swap="outerHTML"
         method="POST"
         hx-post="{% url 'funds:submissions:reviewers_update' pk=object.pk %}"
-        hx-include="[name=selectedSubmissionIds]"
     >
         {% if form.errors %}
             {% for field in form %}

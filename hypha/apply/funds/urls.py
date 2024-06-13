@@ -33,6 +33,7 @@ from .views import (
     partial_screening_card,
     UnarchiveSubmissionView,
     UpdateLeadView,
+    UpdatePartnersView,
     UpdateReviewersView,
     submission_success,
 )
@@ -209,6 +210,11 @@ submission_urls = (
                         "reviewers/update/",
                         UpdateReviewersView.as_view(),
                         name="reviewers_update",
+                    ),
+                    path(
+                        "partners/update/",
+                        UpdatePartnersView.as_view(),
+                        name="partners_update",
                     ),
                     path(
                         "partial/reviews-card/",

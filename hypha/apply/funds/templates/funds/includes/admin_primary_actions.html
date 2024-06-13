@@ -104,15 +104,17 @@
             </div>
         </dialog>
 
-        <a class="button button--half-width button--white" @click="partnerForm = true">{% trans "Partners" %}</a>
+        <a class="button button--half-width button--white" @click="partnerForm = true" hx-get="{% url 'funds:submissions:partners_update' pk=object.pk %}" hx-target="#partners_form">{% trans "Partners" %}</a>
         <dialog x-show="partnerForm" x-htmldialog.noscroll="partnerForm = false" class="w-[580px]">
             <div class="dialog-header flex justify-between items-center border-block-end bg-light-blue p-4 align-middle">
                 <span class="font-bold text-lg text-white">{% trans "Update Partners" %}</span>
                 <button @click="partnerForm = false" class="text-white font-bold">X</button>
             </div>
-            <div class="p-6 z-20">
-                {% trans "Update" as update %}
-                {% include 'funds/includes/delegated_form_base.html' with form=partner_form value=update %}
+            <div id="partners_form">
+                <div class="animate-pulse">
+                    <div class="w-full h-16 bg-gray-200 mb-5"></div>
+                    <div class="w-full h-6 bg-gray-200 mb-5"></div>
+                </div>
             </div>
         </dialog>
 
