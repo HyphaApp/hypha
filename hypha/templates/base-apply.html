@@ -101,34 +101,33 @@
             </section>
 
             <div class="header__button-container flex gap-4">
-                {% comment %} Notifications {% endcomment %}
+                {% comment %} Todo List {% endcomment %}
                 {% if request.user.is_authenticated and request.user.is_apply_staff %}
                     <div
                         x-data="{open: false}"
-                        x-init="$watch('open', value => { if (value) { document.getElementById('id-notification-list').dispatchEvent(new Event('htmx:fetch')); } })"
+                        x-init="$watch('open', value => { if (value) { document.getElementById('id-task-list').dispatchEvent(new Event('htmx:fetch')); } })"
                     >
-                        <a href="{% url "activity:notifications" %}"
+                        <a href="{% url "todo:list" %}"
                            class="p-2 flex items-center hover:opacity-70 transition-opacity"
-                           aria-label="{% trans "Notifications" %}"
-                           aria-haspopup="activity"
+                           aria-label="{% trans "Task List" %}"
+                           aria-haspopup="task_list"
                            aria-expanded="false"
                            role="button"
-                           title="{% trans "Click to open your notifications" %}"
+                           title="{% trans "Click to open your task list" %}"
                            @click.prevent="open = ! open"
                         >
                             {% heroicon_outline "bell-alert" class="inline me-1 text-black" aria_hidden="true" %}
                         </a>
                         <div x-cloak x-show="open" x-transition @click.outside="open = false">
-                            <div class="notifications notifications--dropdown">
-                                <div class="notifications__content zeta" role="activity">
-                                    <div class="notifications__header">
-                                        <span>{% trans "Notifications" %}</span>
-                                        <a class="notifications__more" href="{% url "activity:notifications" %}">{% trans "Show All" %}</a>
+                            <div class="relative z-999999">
+                                <div class="absolute end-4 bg-white border border-gray-200 min-w-[400px] shadow-md max-h-[500px] overflow-y-scroll zeta" role="task_list">
+                                    <div class="p-2 flex justify-between border-b border-gray-100 font-semibold bg-gray-100">
+                                        <span>{% trans "Task List" %}</span>
                                     </div>
 
                                     <div
-                                        id="id-notification-list"
-                                        hx-get="{% url "activity:notifications" %}?type=header_dropdown"
+                                        id="id-task-list"
+                                        hx-get="{% url "todo:list" %}?type=header_dropdown"
                                         hx-swap="innerHTML"
                                         hx-trigger="htmx:fetch"
                                     >
@@ -152,7 +151,7 @@
                         </div>
                     </div>
                 {% endif %}
-                {% comment %} Notifications End{% endcomment %}
+                {% comment %} Todo List End{% endcomment %}
 
                 {% if request.path != '/auth/' and request.path != '/login/' %}
                     {% include "includes/login_button.html" %}
