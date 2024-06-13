@@ -432,7 +432,7 @@ def make_role_reviewer_fields():
 class UpdatePartnersForm(ApplicationSubmissionModelForm):
     partner_reviewers = forms.ModelMultipleChoiceField(
         queryset=User.objects.partners(),
-        widget=Select2MultiCheckboxesWidget(attrs={"data-placeholder": "Partners"}),
+        widget=Select2MultiCheckboxesWidget(attrs={"data-placeholder": "Select..."}),
         label=_("Partners"),
         required=False,
     )
