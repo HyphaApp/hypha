@@ -49,7 +49,7 @@
                     </button>
                 {% else %}
                     {% if request.path != '/auth/' and request.path != '/login/' %}
-                        {% include "includes/login_button.html" %}
+                        {% include "includes/user_menu.html" %}
                     {% endif %}
                 {% endif %}
             </div>
@@ -154,7 +154,7 @@
                 {% comment %} Todo List End{% endcomment %}
 
                 {% if request.path != '/auth/' and request.path != '/login/' %}
-                    {% include "includes/login_button.html" %}
+                    {% include "includes/user_menu.html" %}
                 {% endif %}
             </div>
         </div>
