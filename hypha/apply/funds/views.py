@@ -617,7 +617,7 @@ class SubmissionsByStatus(BaseAdminSubmissionsTable, DelegateableListView):
 
 
 @method_decorator(staff_required, name="dispatch")
-class ProgressSubmissionView(DelegatedViewMixin, UpdateView):
+class ProgressSubmissionView(View):
     def dispatch(self, request, *args, **kwargs):
         self.submission = get_object_or_404(ApplicationSubmission, id=kwargs.get("pk"))
         permission, reason = has_permission(

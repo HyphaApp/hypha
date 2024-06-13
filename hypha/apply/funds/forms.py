@@ -74,7 +74,6 @@ class ProgressSubmissionForm(ApplicationSubmissionModelForm):
         choices.sort(key=lambda k: sort_by.index(k[0]))
         action_field = self.fields["action"]
         action_field.choices = choices
-        self.should_show = bool(choices)
 
 
 class BatchProgressSubmissionForm(forms.Form):
