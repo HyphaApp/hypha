@@ -90,15 +90,17 @@
     <div class="sidebar__separator mt-4">{% trans "Assign" %}</div>
 
     <div class="wrapper wrapper--sidebar-buttons mt-2" x-data="{ leadForm: false, partnerForm: false, reviewerForm:false }">
-        <a class="button button--half-width button--white" @click="reviewerForm = true">{% trans "Reviewers" %}</a>
+        <a class="button button--half-width button--white" @click="reviewerForm = true" hx-get="{% url 'funds:submissions:reviewers_update' pk=object.pk %}" hx-target="#reviewers_form">{% trans "Reviewers" %}</a>
         <dialog x-show="reviewerForm" x-htmldialog.noscroll="reviewerForm = false" class="w-[580px]">
             <div class="dialog-header flex justify-between items-center border-block-end bg-light-blue p-4 align-middle">
-                <span class="font-bold text-lg text-white">{% trans "Update Partners" %}</span>
+                <span class="font-bold text-lg text-white">{% trans "Update Reviewers" %}</span>
                 <button @click="reviewerForm = false" class="text-white font-bold">X</button>
             </div>
-            <div class="p-6 z-20">
-                {% trans "Update" as update %}
-                {% include 'funds/includes/delegated_form_base.html' with form=reviewer_form value=update %}
+            <div id="reviewers_form">
+                <div class="animate-pulse">
+                    <div class="w-full h-16 bg-gray-200 mb-5"></div>
+                    <div class="w-full h-6 bg-gray-200 mb-5"></div>
+                </div>
             </div>
         </dialog>
 

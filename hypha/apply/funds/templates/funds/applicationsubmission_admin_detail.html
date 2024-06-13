@@ -3,7 +3,6 @@
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'css/fancybox.css' %}">
-    {{ reviewer_form.media.css }}
 {% endblock %}
 
 {% block mobile_actions %}
@@ -69,7 +68,6 @@
 {% endblock %}
 
 {% block extra_js %}
-    {{ reviewer_form.media.js }}
     {{ comment_form.media.js }}
     {{ partner_form.media.js }}
     {{ block.super }}
