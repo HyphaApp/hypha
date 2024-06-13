@@ -12,11 +12,11 @@
                     <div class="cookieconsent__actions">
                         {% if settings.cookieconsent_analytics %}
                             <button class="button button--cookieconsent button--decline" title="{% trans 'Decline tracking cookies.' %}" type="button" data-consent="decline">{% trans 'Essential only' %}</button>
-                            <button class="button button--cookieconsent button--accept button--left-space" title="{% trans 'Accept tracking cookies.' %}" type="button" data-consent="accept">{% trans 'Accept all' %}</button>
+                            <button class="button button--cookieconsent button--accept lg:ms-[20px]" title="{% trans 'Accept tracking cookies.' %}" type="button" data-consent="accept">{% trans 'Accept all' %}</button>
                         {% else %}
-                            <button class="button button--cookieconsent button--accept" data-consent="ack">{% trans 'Ok' %}</button>
+                            <button class="button button--cookieconsent button--accept" title="{% trans 'Acknowledge use of essential cookies.' %}" data-consent="ack">{% trans 'Ok' %}</button>
                         {% endif %}
-                        <button class="button button--cookieconsent button--learn-more button--left-space" title="{% trans 'Learn more about specific cookies used.' %}" show-learn-more="true">{% trans 'Learn More' %}</button>
+                        <button class="button button--cookieconsent button--learn-more lg:ms-[20px]" title="{% trans 'Learn more about specific cookies used.' %}" show-learn-more="true">{% trans 'Learn More' %}</button>
                     </div>
                 </div>
             </div>
@@ -32,21 +32,21 @@
                             <span class="text-green-500">Always enabled.</span>
                         </div>
                         {% if settings.cookieconsent_analytics %}
-                            <div class="cookieconsent__info pl-10">
+                            <div class="cookieconsent__info lg:pl-10">
                                 <p class="font-semibold">{% trans 'Analytics Cookies' %}</p>
                                 {{ settings.cookieconsent_analytics_about|richtext }}
                                 <div>
-                                    <label class="inline-flex items-center cursor-pointer">
-                                        <input type="checkbox" value="" class="sr-only peer analytics-toggle">
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" value="" class="sr-only peer analytics-toggle" tabindex="-1">
                                         <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500" title="{% trans 'Toggle analytics cookies.' %}"></div>
                                     </label>
                                 </div>
                             </div>
                         {% endif %}
                     </div>
-                    <div>
-                        <button class="button button--cookieconsent button--learn-more" show-learn-more="false">{% trans 'Back' %}</button>
-                        <button class="button button--cookieconsent button--left-space button--close" title="{% trans 'Save cookie preferences.' %}">{% trans 'Ok' %}</button>
+                    <div class="cookieconsent__actions">
+                        <button class="button button--cookieconsent button--close" title="{% trans 'Save cookie preferences.' %}" tabindex="-1">{% trans 'Ok' %}</button>
+                        <button class="button button--cookieconsent button--learn-more lg:ms-[20px]" title="{% trans 'Return to main cookie menu.' %}" show-learn-more="false" tabindex="-1">{% trans 'Back' %}</button>
                     </div>
                 </div>
             </div>
