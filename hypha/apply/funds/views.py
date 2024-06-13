@@ -857,44 +857,66 @@ class UpdateLeadView(View):
 
 
 @method_decorator(staff_required, name="dispatch")
-class UpdateReviewersView(DelegatedViewMixin, UpdateView):
-    model = ApplicationSubmission
-    form_class = UpdateReviewersForm
-    context_name = "reviewer_form"
-
+class UpdateReviewersView(View):
     def dispatch(self, request, *args, **kwargs):
-        submission = self.get_object()
+        self.submission = get_object_or_404(ApplicationSubmission, id=kwargs.get("pk"))
         permission, reason = has_permission(
-            "submission_edit", request.user, object=submission, raise_exception=False
+            "submission_edit",
+            request.user,
+            object=self.submission,
+            raise_exception=False,
         )
         if not permission:
             messages.warning(self.request, reason)
-            return HttpResponseRedirect(submission.get_absolute_url())
+            return HttpResponseRedirect(self.submission.get_absolute_url())
         return super(UpdateReviewersView, self).dispatch(request, *args, **kwargs)
 
-    def form_valid(self, form):
+    def get(self, *args, **kwargs):
+        reviewer_form = UpdateReviewersForm(
+            user=self.request.user, instance=self.submission
+        )
+        return render(
+            self.request,
+            "funds/includes/update_reviewer_form.html",
+            context={
+                "form": reviewer_form,
+                "value": _("Update"),
+                "object": self.submission,
+            },
+        )
+
+    def post(self, *args, **kwargs):
+        form = UpdateReviewersForm(
+            self.request.POST, user=self.request.user, instance=self.submission
+        )
         old_reviewers = {copy(reviewer) for reviewer in form.instance.assigned.all()}
-        response = super().form_valid(form)
+        if form.is_valid():
+            form.save()
+            new_reviewers = set(form.instance.assigned.all())
+            added = new_reviewers - old_reviewers
+            removed = old_reviewers - new_reviewers
+            messenger(
+                MESSAGES.REVIEWERS_UPDATED,
+                request=self.request,
+                user=self.request.user,
+                source=self.submission,
+                added=added,
+                removed=removed,
+            )
 
-        new_reviewers = set(form.instance.assigned.all())
-        added = new_reviewers - old_reviewers
-        removed = old_reviewers - new_reviewers
-
-        messenger(
-            MESSAGES.REVIEWERS_UPDATED,
-            request=self.request,
-            user=self.request.user,
-            source=self.kwargs["object"],
-            added=added,
-            removed=removed,
+            # Update submission status if needed.
+            services.set_status_after_reviewers_assigned(
+                submission=form.instance,
+                updated_by=self.request.user,
+                request=self.request,
+            )
+            return HttpResponseClientRefresh()
+        return render(
+            self.request,
+            "funds/includes/update_reviewer_form.html",
+            context={"form": form, "value": _("Update"), "object": self.submission},
+            status=400,
         )
-
-        # Update submission status if needed.
-        services.set_status_after_reviewers_assigned(
-            submission=form.instance, updated_by=self.request.user, request=self.request
-        )
-
-        return response
 
 
 @method_decorator(staff_required, name="dispatch")
@@ -1035,7 +1057,6 @@ class AdminSubmissionDetailView(ActivityContextMixin, DelegateableView, DetailVi
     model = ApplicationSubmission
     form_views = [
         CommentFormView,
-        UpdateReviewersView,
         UpdatePartnersView,
         UpdateMetaTermsView,
     ]
