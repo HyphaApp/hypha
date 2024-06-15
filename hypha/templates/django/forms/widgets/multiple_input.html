@@ -1,6 +1,6 @@
 {% with id=widget.attrs.id %}
   <ul
-    class="!mb-0 grid grid--two {% if widget.attrs.class %} {{ widget.attrs.class }} {% endif %}"
+    class="!mb-0 hypha-grid hypha-grid--two {% if widget.attrs.class %} {{ widget.attrs.class }} {% endif %}"
     {% if id %} id="{{ id }}"{% endif %}
   >
     {% for group, options, index in widget.optgroups %}

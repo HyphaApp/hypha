@@ -1,6 +1,6 @@
 {% load i18n wagtailusers_tags workflow_tags %}
 <h3 class="text-xl border-b pb-2 font-bold">{% trans "Proposal Information" %}</h3>
-<div class="grid grid--proposal-info">
+<div class="hypha-grid hypha-grid--proposal-info">
     {% if object.get_value_display != "-" %}
         <div>
             <h5 class="text-base">{% trans "Requested Funding" %}</h5>
@@ -25,13 +25,13 @@
         {{ object.get_email_display }}
     </div>
     {% if object.get_address_display != "-" %}
-        <div>
+        <div class="hypha-grid__cell--span-two">
             <h5 class="text-base">{% trans "Address" %}</h5>
             {{ object.get_address_display }}
         </div>
     {% endif %}
     {% if object.get_organization_name_display != "-" %}
-        <div>
+        <div class="hypha-grid__cell--span-two">
             <h5 class="text-base">{% trans "Organization name" %}</h5>
             {{ object.get_organization_name_display }}
         </div>

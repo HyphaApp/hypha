@@ -28,6 +28,7 @@ from .views import (
     SubmissionSealedView,
     SubmissionStaffFlaggedView,
     SubmissionUserFlaggedView,
+    partial_screening_card,
     submission_success,
 )
 from .views_beta import (
@@ -186,6 +187,11 @@ submission_urls = (
                         "partial/activities/",
                         partial_submission_activities,
                         name="partial-activities",
+                    ),
+                    path(
+                        "partial/screening-card/",
+                        partial_screening_card,
+                        name="partial-screening-card",
                     ),
                     path(
                         "partial/reviews-card/",

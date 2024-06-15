@@ -18,7 +18,6 @@ from .models import (
     AssignedReviewers,
     Reminder,
     ReviewerRole,
-    ScreeningStatus,
 )
 from .permissions import can_change_external_reviewers
 from .utils import model_form_initial, render_icon
@@ -104,36 +103,6 @@ class BatchProgressSubmissionForm(forms.Form):
         value = self.cleaned_data["action"]
         action = self.action_mapping[value]["transitions"]
         return action
-
-
-class ScreeningSubmissionForm(ApplicationSubmissionModelForm):
-    class Meta:
-        model = ApplicationSubmission
-        fields = ("screening_statuses",)
-        labels = {"screening_statuses": "Screening Decisions"}
-
-    def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop("user")
-        super().__init__(*args, **kwargs)
-        instance = kwargs.get("instance")
-        if instance and instance.has_default_screening_status_set:
-            screening_status = instance.screening_statuses.get(default=True)
-            self.fields["screening_statuses"].queryset = ScreeningStatus.objects.filter(
-                yes=screening_status.yes
-            )
-        self.should_show = False
-        if self.user.is_apply_staff:
-            self.should_show = True
-
-    def clean(self):
-        cleaned_data = super().clean()
-        instance = self.instance
-        default_status = instance.screening_statuses.get(default=True)
-        if default_status not in cleaned_data["screening_statuses"]:
-            self.add_error(
-                "screening_statuses", "Can't remove default screening decision."
-            )
-        return cleaned_data
 
 
 class UpdateSubmissionLeadForm(ApplicationSubmissionModelForm):

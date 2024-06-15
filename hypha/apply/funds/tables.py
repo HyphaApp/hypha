@@ -196,11 +196,15 @@ class BaseAdminSubmissionsTable(SubmissionsTable):
 
     def render_screening_status(self, value):
         try:
-            status = value.get(default=True).title
+            status = value.get()
+            classname = "status-yes" if status.yes else "status-no text-red-500"
+            return format_html(
+                f"<span class='font-medium text-xs {classname}'>{'👍' if status.yes else '👎'} {status.title}</span>"
+            )
         except ScreeningStatus.DoesNotExist:
-            return format_html("<span>{}</span>", "Awaiting")
-        else:
-            return format_html("<span>{}</span>", status)
+            return format_html(
+                "<span class='text-xs text-fg-muted'>{}</span>", "Awaiting"
+            )
 
 
 class AdminSubmissionsTable(BaseAdminSubmissionsTable):

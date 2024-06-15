@@ -330,7 +330,20 @@ class ActivityAdapter(AdapterBase):
         )
 
     def handle_screening_statuses(self, source, old_status, **kwargs):
-        new_status = ", ".join([s.title for s in source.screening_statuses.all()])
-        return _("Screening decision from {old_status} to {new_status}").format(
-            old_status=old_status, new_status=new_status
-        )
+        new_status = source.get_current_screening_status()
+
+        if str(new_status) == old_status:
+            return
+
+        if new_status and old_status != "-":
+            return _(
+                'Updated screening decision from "{old_status}" to "{new_status}".'
+            ).format(old_status=old_status, new_status=new_status)
+        elif new_status:
+            return _('Added screening decision to "{new_status}".').format(
+                new_status=new_status
+            )
+        elif old_status != "-":
+            return _('Removed "{old_status}" screening decision.').format(
+                old_status=old_status
+            )

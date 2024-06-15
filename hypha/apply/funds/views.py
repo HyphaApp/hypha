@@ -57,6 +57,7 @@ from hypha.apply.determinations.views import (
     BatchDeterminationCreateView,
     DeterminationCreateOrUpdateView,
 )
+from hypha.apply.funds.models.screening import ScreeningStatus
 from hypha.apply.projects.forms import ProjectCreateForm
 from hypha.apply.projects.models import Project
 from hypha.apply.review.models import Review
@@ -86,7 +87,6 @@ from .forms import (
     BatchUpdateSubmissionLeadForm,
     CreateReminderForm,
     ProgressSubmissionForm,
-    ScreeningSubmissionForm,
     UnarchiveSubmissionForm,
     UpdateMetaTermsForm,
     UpdatePartnersForm,
@@ -128,7 +128,9 @@ from .tables import (
     SummarySubmissionsTable,
     UserFlaggedSubmissionsTable,
 )
-from .utils import get_default_screening_statues
+from .utils import (
+    get_or_create_default_screening_statuses,
+)
 from .workflow import (
     DRAFT_STATE,
     PHASES_MAPPING,
@@ -818,36 +820,6 @@ class CreateProjectView(DelegatedViewMixin, CreateView):
 
 
 @method_decorator(staff_required, name="dispatch")
-class ScreeningSubmissionView(DelegatedViewMixin, UpdateView):
-    model = ApplicationSubmission
-    form_class = ScreeningSubmissionForm
-    context_name = "screening_form"
-
-    def dispatch(self, request, *args, **kwargs):
-        submission = self.get_object()
-        permission, reason = has_permission(
-            "submission_edit", request.user, object=submission, raise_exception=False
-        )
-        if not permission:
-            messages.warning(self.request, reason)
-            return HttpResponseRedirect(submission.get_absolute_url())
-        return super(ScreeningSubmissionView, self).dispatch(request, *args, **kwargs)
-
-    def form_valid(self, form):
-        old = copy(self.get_object())
-        response = super().form_valid(form)
-        # Record activity
-        messenger(
-            MESSAGES.SCREENING,
-            request=self.request,
-            user=self.request.user,
-            source=self.object,
-            related=", ".join([s.title for s in old.screening_statuses.all()]),
-        )
-        return response
-
-
-@method_decorator(staff_required, name="dispatch")
 class UnarchiveSubmissionView(DelegatedViewMixin, UpdateView):
     model = ApplicationSubmission
     form_class = UnarchiveSubmissionForm
@@ -1089,7 +1061,6 @@ class AdminSubmissionDetailView(ActivityContextMixin, DelegateableView, DetailVi
     form_views = [
         ArchiveSubmissionView,
         ProgressSubmissionView,
-        ScreeningSubmissionView,
         ReminderCreateView,
         CommentFormView,
         UpdateLeadView,
@@ -1122,15 +1093,68 @@ class AdminSubmissionDetailView(ActivityContextMixin, DelegateableView, DetailVi
         if self.object.next:
             other_submissions = other_submissions.exclude(id=self.object.next.id)
 
-        default_screening_statuses = get_default_screening_statues()
-
         return super().get_context_data(
             other_submissions=other_submissions,
-            default_screening_statuses=default_screening_statuses,
             archive_access_groups=get_archive_view_groups(),
             can_archive=can_alter_archived_submissions(self.request.user),
             **kwargs,
         )
+
+
+@login_required
+def partial_screening_card(request, pk):
+    submission = get_object_or_404(ApplicationSubmission, pk=pk)
+
+    view_permission, _ = has_permission(
+        "can_view_submission_screening", request.user, submission, raise_exception=False
+    )
+    can_edit, _ = has_permission(
+        "submission_edit", request.user, submission, raise_exception=False
+    )
+
+    if not view_permission:
+        return HttpResponse(status=204)
+
+    if can_edit and request.method == "POST":
+        action = request.POST.get("action")
+        old_status_str = str(submission.get_current_screening_status() or "-")
+        if action and action.isdigit():
+            submission.screening_statuses.clear()
+            screening_status = ScreeningStatus.objects.get(id=action)
+            submission.screening_statuses.add(screening_status)
+        elif action == "clear":
+            submission.screening_statuses.clear()
+
+        # Record activity
+        messenger(
+            MESSAGES.SCREENING,
+            request=request,
+            user=request.user,
+            source=submission,
+            related=old_status_str,
+        )
+
+    yes_screening_statuses = ScreeningStatus.objects.filter(yes=True)
+    no_screening_statuses = ScreeningStatus.objects.filter(yes=False)
+
+    if not yes_screening_statuses or not no_screening_statuses:
+        return HttpResponse(status=204)
+
+    default_yes, default_no = get_or_create_default_screening_statuses(
+        yes_screening_statuses, no_screening_statuses
+    )
+
+    ctx = {
+        "default_yes": default_yes,
+        "default_no": default_no,
+        "object": submission,
+        "can_screen": can_edit,
+        "current_yes": submission.screening_statuses.filter(yes=True).first(),
+        "current_no": submission.screening_statuses.filter(yes=False).first(),
+        "yes_screening_options": yes_screening_statuses,
+        "no_screening_options": no_screening_statuses,
+    }
+    return render(request, "funds/includes/screening_status_block.html", ctx)
 
 
 class ReviewerSubmissionDetailView(ActivityContextMixin, DelegateableView, DetailView):

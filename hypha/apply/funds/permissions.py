@@ -152,7 +152,17 @@ def is_user_has_access_to_view_submission(user, submission):
     return False, ""
 
 
+def can_view_submission_screening(user, submission):
+    submission_view, _ = is_user_has_access_to_view_submission(user, submission)
+    if not submission_view:
+        return False, "No access to view submission"
+    if user.is_applicant:
+        return False, "Applicant cannot view submission screening"
+    return True, ""
+
+
 permissions_map = {
     "submission_view": is_user_has_access_to_view_submission,
     "submission_edit": can_edit_submission,
+    "can_view_submission_screening": can_view_submission_screening,
 }

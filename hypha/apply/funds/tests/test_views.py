@@ -228,15 +228,19 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         screening_outcome2.save()
         self.submission.screening_statuses.clear()
         self.submission.screening_statuses.add(screening_outcome2)
-        self.post_page(
-            self.submission,
-            {
-                "form-submitted-screening_form": "",
-                "screening_statuses": [screening_outcome1.id, screening_outcome2.id],
-            },
+        url = reverse(
+            "funds:submissions:partial-screening-card",
+            kwargs={"pk": self.submission.pk},
+        )
+        self.client.post(
+            url,
+            {"action": screening_outcome1.id},
+            secure=True,
+            follow=True,
         )
         submission = self.refresh(self.submission)
-        self.assertEqual(submission.screening_statuses.count(), 2)
+        status = submission.get_current_screening_status()
+        assert status == screening_outcome1
 
     def test_can_view_submission_screening_block(self):
         ScreeningStatus.objects.all().delete()
@@ -250,17 +254,23 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         screening_outcome2.default = True
         screening_outcome2.save()
         self.submission.screening_statuses.clear()
-        response = self.get_page(self.submission)
+        url = reverse(
+            "funds:submissions:partial-screening-card",
+            kwargs={"pk": self.submission.pk},
+        )
+        response = self.client.get(
+            url,
+            secure=True,
+            follow=True,
+        )
         self.assertContains(response, "Screening decision")
 
-    def test_cant_view_submission_screening_block(self):
-        """
-        If defaults are not set screening decision block is not visible
-        """
+        # if there are no screening statuses, the block should not be visible
         ScreeningStatus.objects.all().delete()
         self.submission.screening_statuses.clear()
-        response = self.get_page(self.submission)
-        self.assertNotContains(response, "Screening decision")
+        response = self.client.get(url, secure=True, follow=True)
+        # it returns 204 status code
+        self.assertEqual(response.status_code, 204)
 
     def test_can_create_project(self):
         # check submission doesn't already have a Project
@@ -343,29 +353,29 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
     def test_screen_application_primary_action_is_displayed(self):
         ScreeningStatus.objects.all().delete()
         # Submission not screened
+        screening_outcome_yes = ScreeningStatusFactory()
+        screening_outcome_yes.yes = False
+        screening_outcome_yes.default = True
+        screening_outcome_yes.save()
         screening_outcome = ScreeningStatusFactory()
-        screening_outcome.yes = False
+        screening_outcome.yes = True
         screening_outcome.default = True
         screening_outcome.save()
         self.submission.screening_statuses.clear()
         self.submission.screening_statuses.add(screening_outcome)
-        response = self.get_page(self.submission)
-        buttons = (
-            BeautifulSoup(response.content, "html5lib")
-            .find(class_="sidebar")
-            .find_all("a", string="Screen application")
+        url = reverse(
+            "funds:submissions:partial-screening-card",
+            kwargs={"pk": self.submission.pk},
         )
-        self.assertEqual(len(buttons), 1)
+        response = self.client.get(
+            url,
+            secure=True,
+            follow=True,
+        )
+        self.assertContains(response, "Screening decision")
+        buttons = BeautifulSoup(response.content, "html5lib").find_all("button")
+        self.assertEqual(len(buttons), 2)
         self.submission.screening_statuses.clear()
-
-    def test_screen_application_primary_action_is_not_displayed(self):
-        response = self.get_page(self.submission)
-        buttons = (
-            BeautifulSoup(response.content, "html5lib")
-            .find(class_="sidebar")
-            .find_all("a", string="Screen application")
-        )
-        self.assertEqual(len(buttons), 0)
 
     def test_can_see_create_review_primary_action(self):
         def assert_create_review_displayed(submission, button_text):
@@ -1151,26 +1161,24 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
         response = self.get_page(submission, "edit")
         self.assertEqual(response.status_code, 403)
 
-    def test_cant_screen_submission(self):
+    def test_cant_see_or_screen_submission(self):
         """
         Test that an applicant cannot set the screening decision
         and that they don't see the screening decision form.
         """
-        screening_outcome = ScreeningStatusFactory()
-        response = self.post_page(
-            self.submission,
-            {
-                "form-submitted-screening_form": "",
-                "screening_statuses": [screening_outcome.id],
-            },
+        outcome = ScreeningStatusFactory()
+        url = reverse(
+            "funds:submissions:partial-screening-card",
+            kwargs={"pk": self.submission.pk},
         )
-        self.assertNotIn("screening_form", response.context_data)
-        submission = self.refresh(self.submission)
-        self.assertNotIn(screening_outcome, submission.screening_statuses.all())
+        response = self.client.get(url, secure=True, follow=True)
+        self.assertEqual(response.status_code, 204)
 
-    def test_cant_see_screening_status_block(self):
-        response = self.get_page(self.submission)
-        self.assertNotContains(response, "Screening decision")
+        # trying to post to the screening decision form
+        response = self.client.post(
+            url, {"action": outcome.id}, secure=True, follow=True
+        )
+        self.assertEqual(response.status_code, 204)
 
     def test_cant_see_add_determination_primary_action(self):
         def assert_add_determination_not_displayed(submission, button_text):
@@ -1533,15 +1541,17 @@ class TestSuperUserSubmissionView(BaseSubmissionViewTestCase):
         screening_outcome2.save()
         self.submission.screening_statuses.clear()
         self.submission.screening_statuses.add(screening_outcome2)
-        self.post_page(
-            self.submission,
-            {
-                "form-submitted-screening_form": "",
-                "screening_statuses": [screening_outcome1.id, screening_outcome2.id],
-            },
+        url = reverse(
+            "funds:submissions:partial-screening-card",
+            kwargs={"pk": self.submission.pk},
         )
-        submission = self.refresh(self.submission)
-        self.assertEqual(submission.screening_statuses.count(), 2)
+        self.client.post(
+            url,
+            data={"action": screening_outcome1.id},
+            secure=True,
+            follow=True,
+        )
+        assert self.submission.get_current_screening_status() == screening_outcome1
 
     def test_can_screen_applications_in_final_status(self):
         """
@@ -1554,25 +1564,28 @@ class TestSuperUserSubmissionView(BaseSubmissionViewTestCase):
         screening_outcome1.yes = True
         screening_outcome1.save()
         screening_outcome2 = ScreeningStatusFactory()
-        screening_outcome2.yes = True
+        screening_outcome2.yes = False
         screening_outcome2.default = True
         screening_outcome2.save()
         submission.screening_statuses.add(screening_outcome2)
-        response = self.post_page(
-            submission,
-            {
-                "form-submitted-screening_form": "",
-                "screening_statuses": [screening_outcome1.id, screening_outcome2.id],
-            },
+        url = reverse(
+            "funds:submissions:partial-screening-card",
+            kwargs={"pk": self.submission.pk},
         )
-        submission = self.refresh(submission)
-        self.assertEqual(response.context_data["screening_form"].should_show, True)
-        self.assertEqual(submission.screening_statuses.count(), 2)
+        response = self.client.post(
+            url,
+            data={"action": screening_outcome1.id},
+            secure=True,
+            follow=True,
+        )
+        assert response.status_code == 200
+        assert self.submission.get_current_screening_status() == screening_outcome1
 
         # Check that an activity was created that should only be viewable internally
         activity = Activity.objects.filter(
-            message__contains="Screening decision"
+            message__icontains="Screening decision"
         ).first()
+        assert activity
         self.assertEqual(activity.visibility, TEAM)
 
 
