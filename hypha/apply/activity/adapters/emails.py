@@ -77,9 +77,9 @@ class EmailAdapter(AdapterBase):
     def get_subject(self, message_type, source):
         if source and hasattr(source, "title"):
             if is_ready_for_review(message_type) or is_reviewer_update(message_type):
-                subject = _("Application ready to review: {source.title}").format(
-                    source=source
-                )
+                subject = _(
+                    "Application ready to review: {source.title_text_display}"
+                ).format(source=source)
                 if message_type in {
                     MESSAGES.BATCH_READY_FOR_REVIEW,
                     MESSAGES.BATCH_REVIEWERS_UPDATED,
@@ -87,7 +87,7 @@ class EmailAdapter(AdapterBase):
                     subject = _("Multiple applications are now ready for your review")
             elif message_type in {MESSAGES.REVIEW_REMINDER}:
                 subject = _(
-                    "Reminder: Application ready to review: {source.title}"
+                    "Reminder: Application ready to review: {source.title_text_display}"
                 ).format(source=source)
             elif message_type in [
                 MESSAGES.SENT_TO_COMPLIANCE,
@@ -136,7 +136,7 @@ class EmailAdapter(AdapterBase):
             else:
                 try:
                     subject = source.page.specific.subject or _(
-                        "Your application to {org_long_name}: {source.title}"
+                        "Your application to {org_long_name}: {source.title_text_display}"
                     ).format(org_long_name=settings.ORG_LONG_NAME, source=source)
                 except AttributeError:
                     subject = _("Your {org_long_name} Project: {source.title}").format(
@@ -153,7 +153,7 @@ class EmailAdapter(AdapterBase):
         from hypha.apply.funds.workflow import PHASES
 
         submission = source
-        # Retrive status index to see if we are going forward or backward.
+        # Retrieve status index to see if we are going forward or backward.
         old_index = list(dict(PHASES).keys()).index(old_phase.name)
         target_index = list(dict(PHASES).keys()).index(submission.status)
         is_forward = old_index < target_index

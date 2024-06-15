@@ -4,7 +4,12 @@
     <div class="wrapper wrapper--status-bar-outer">
         <div class="wrapper wrapper--status-bar-inner ms-4">
             <div class="mt-5 lg:max-w-[30%]">
-                <h4 class="heading mb-0 font-bold line-clamp-3 hover:line-clamp-none"><a class="link {% if not submission.is_active %} text-gray-400 {% endif %}" href="{% url 'funds:submissions:detail' submission.id %}">{{ submission.title }}</a></h4>
+                <h4 class="heading mb-0 font-bold line-clamp-3 hover:line-clamp-none">
+                    <a class="{% if not submission.is_active %} text-slate-500 {% endif %} hover:underline" href="{% url 'funds:submissions:detail' submission.id %}">
+                        {{ submission.title }}
+                        <span class="text-gray-400">#{{ submission.public_id|default:submission.id }}</span>
+                    </a>
+                </h4>
                 <p class="m-0 text-fg-muted mb-4 text-sm">
                     {% if submission.is_draft %}
                         {% trans "Drafted on " %}

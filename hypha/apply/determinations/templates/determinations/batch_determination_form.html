@@ -19,7 +19,7 @@
         <div class="list-reveal__list list-reveal__list--determination js-batch-titles is-closed" aria-live="polite">
             {% for submission in submissions %}
                 <a href="{% url "funds:submissions:detail" submission.id %}" class="list-reveal__item" target="_blank" rel="noopener noreferrer" title="{{ submission.title }}">
-                    {{ submission.title }}
+                    {{ submission.title_text_display }}
                     {% heroicon_micro "arrow-top-right-on-square" class="inline align-text-bottom w-4 h-4" aria_hidden=true %}
                 </a>
             {% endfor %}

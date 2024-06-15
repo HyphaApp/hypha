@@ -31,51 +31,55 @@ class SlackAdapter(AdapterBase):
     always_send = True
     messages = {
         MESSAGES.NEW_SUBMISSION: _(
-            "A new submission has been submitted for {source.page.title}: <{link}|{source.title}> by {user}"
+            "A new submission has been submitted for {source.page.title}: <{link}|{source.title_text_display}> by {user}"
         ),
         MESSAGES.UPDATE_LEAD: _(
-            "The lead of <{link}|{source.title}> has been updated from {old_lead} to {source.lead} by {user}"
+            "The lead of <{link}|{source.title_text_display}> has been updated from {old_lead} to {source.lead} by {user}"
         ),
         MESSAGES.BATCH_UPDATE_LEAD: "handle_batch_lead",
         MESSAGES.COMMENT: _(
             "A new {comment.visibility} comment has been posted on <{link}|{source.title}> by {user}"
         ),
-        MESSAGES.EDIT_SUBMISSION: _("{user} has edited <{link}|{source.title}>"),
-        MESSAGES.APPLICANT_EDIT: _("{user} has edited <{link}|{source.title}>"),
+        MESSAGES.EDIT_SUBMISSION: _(
+            "{user} has edited <{link}|{source.title_text_display}>"
+        ),
+        MESSAGES.APPLICANT_EDIT: _(
+            "{user} has edited <{link}|{source.title_text_display}>"
+        ),
         MESSAGES.REVIEWERS_UPDATED: "reviewers_updated",
         MESSAGES.BATCH_REVIEWERS_UPDATED: "handle_batch_reviewers",
         MESSAGES.PARTNERS_UPDATED: _(
-            "{user} has updated the partners on <{link}|{source.title}>"
+            "{user} has updated the partners on <{link}|{source.title_text_display}>"
         ),
         MESSAGES.TRANSITION: _(
-            "{user} has updated the status of <{link}|{source.title}>: {old_phase.display_name} → {source.phase}"
+            "{user} has updated the status of <{link}|{source.title_text_display}>: {old_phase.display_name} → {source.phase}"
         ),
         MESSAGES.BATCH_TRANSITION: "handle_batch_transition",
         MESSAGES.DETERMINATION_OUTCOME: "handle_determination",
         MESSAGES.BATCH_DETERMINATION_OUTCOME: "handle_batch_determination",
         MESSAGES.PROPOSAL_SUBMITTED: _(
-            "A proposal has been submitted for review: <{link}|{source.title}>"
+            "A proposal has been submitted for review: <{link}|{source.title_text_display}>"
         ),
         MESSAGES.INVITED_TO_PROPOSAL: _(
-            "<{link}|{source.title}> by {source.user} has been invited to submit a proposal"
+            "<{link}|{source.title_text_display}> by {source.user} has been invited to submit a proposal"
         ),
         MESSAGES.NEW_REVIEW: _(
-            "{user} has submitted a review for <{link}|{source.title}>. Outcome: {review.outcome},  Score: {review.get_score_display}"
+            "{user} has submitted a review for <{link}|{source.title_text_display}>. Outcome: {review.outcome},  Score: {review.get_score_display}"
         ),
         MESSAGES.READY_FOR_REVIEW: "notify_reviewers",
         MESSAGES.OPENED_SEALED: _(
-            "{user} has opened the sealed submission: <{link}|{source.title}>"
+            "{user} has opened the sealed submission: <{link}|{source.title_text_display}>"
         ),
         MESSAGES.REVIEW_OPINION: _(
-            "{user} {opinion.opinion_display}s with {opinion.review.author}s review of <{link}|{source.title}>"
+            "{user} {opinion.opinion_display}s with {opinion.review.author}s review of <{link}|{source.title_text_display}>"
         ),
         MESSAGES.BATCH_READY_FOR_REVIEW: "batch_notify_reviewers",
-        MESSAGES.DELETE_SUBMISSION: _("{user} has deleted {source.title}"),
+        MESSAGES.DELETE_SUBMISSION: _("{user} has deleted {source.title_text_display}"),
         MESSAGES.DELETE_REVIEW: _(
-            "{user} has deleted {review.author} review for <{link}|{source.title}>"
+            "{user} has deleted {review.author} review for <{link}|{source.title_text_display}>"
         ),
         MESSAGES.DELETE_REVIEW_OPINION: _(
-            "{user} has deleted {review_opinion.author} review opinion for <{link}|{source.title}>"
+            "{user} has deleted {review_opinion.author} review opinion for <{link}|{source.title_text_display}>"
         ),
         MESSAGES.CREATED_PROJECT: _(
             "{user} has created a Project: <{link}|{source.title}>"
@@ -87,7 +91,7 @@ class SlackAdapter(AdapterBase):
             "The project title has been updated from <{link}|{old_title}> to <{link}|{source.title}> by {user}"
         ),
         MESSAGES.EDIT_REVIEW: _(
-            "{user} has edited {review.author} review for <{link}|{source.title}>"
+            "{user} has edited {review.author} review for <{link}|{source.title_text_display}>"
         ),
         MESSAGES.SEND_FOR_APPROVAL: _(
             "{user} has requested approval on project <{link}|{source.title}>"
@@ -131,10 +135,10 @@ class SlackAdapter(AdapterBase):
         ),
         MESSAGES.BATCH_ARCHIVE_SUBMISSION: "handle_batch_archive_submission",
         MESSAGES.ARCHIVE_SUBMISSION: _(
-            "{user} has archived the submission: {source.title}"
+            "{user} has archived the submission: {source.title_text_display}"
         ),
         MESSAGES.UNARCHIVE_SUBMISSION: _(
-            "{user} has unarchived the submission: {source.title}"
+            "{user} has unarchived the submission: {source.title_text_display}"
         ),
     }
 
@@ -146,7 +150,10 @@ class SlackAdapter(AdapterBase):
         self.comments_type = settings.SLACK_TYPE_COMMENTS
 
     def slack_links(self, links, sources):
-        return ", ".join(f"<{links[source.id]}|{source.title}>" for source in sources)
+        return ", ".join(
+            f"<{links[source.id]}|{getattr(source, 'title_text_display', source.title)}>"
+            for source in sources
+        )
 
     def extra_kwargs(self, message_type, **kwargs):
         source = kwargs["source"]
@@ -236,7 +243,7 @@ class SlackAdapter(AdapterBase):
         submission = source
         message = [
             _("{user} has updated the reviewers on <{link}|{title}>").format(
-                user=user, link=link, title=submission.title
+                user=user, link=link, title=submission.title_text_display
             )
         ]
 
@@ -305,14 +312,14 @@ class SlackAdapter(AdapterBase):
                 "A determination for <{link}|{submission_title}> was sent by email. Outcome: {determination_outcome}"
             ).format(
                 link=link,
-                submission_title=submission.title,
+                submission_title=submission.title_text_display,
                 determination_outcome=determination.clean_outcome,
             )
         return _(
             "A determination for <{link}|{submission_title}> was saved without sending an email. Outcome: {determination_outcome}"
         ).format(
             link=link,
-            submission_title=submission.title,
+            submission_title=submission.title_text_display,
             determination_outcome=determination.clean_outcome,
         )
 
@@ -333,7 +340,9 @@ class SlackAdapter(AdapterBase):
 
     def handle_batch_delete_submission(self, sources, links, user, **kwargs):
         submissions = sources
-        submissions_text = ", ".join([submission.title for submission in submissions])
+        submissions_text = ", ".join(
+            [submission.title_text_display for submission in submissions]
+        )
         return _("{user} has deleted submissions: {title}").format(
             user=user, title=submissions_text
         )
@@ -359,7 +368,7 @@ class SlackAdapter(AdapterBase):
         ).format(
             link=link,
             reviewers=reviewers,
-            title=submission.title,
+            title=submission.title_text_display,
         )
 
     def batch_notify_reviewers(self, sources, links, **kwargs):

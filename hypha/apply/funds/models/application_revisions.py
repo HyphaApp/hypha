@@ -29,7 +29,7 @@ class ApplicationRevision(BaseStreamForm, AccessFormData, models.Model):
         ordering = ["-timestamp"]
 
     def __str__(self):
-        return f"Revision for {self.submission.title} by {self.author} "
+        return f"Revision for {self.submission.title_text_display} by {self.author} "
 
     @property
     def form_fields(self):

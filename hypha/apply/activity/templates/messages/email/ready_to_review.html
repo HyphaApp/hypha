@@ -5,7 +5,7 @@
 {% block content %}{# fmt:off #}
 {% trans "This application is awaiting your review." %}
 
-{% trans "Title" %}: {{ source.title }}
+{% trans "Title" %}: {{ source.title_text_display }}
 {% if related.title %}{% trans "Reminder Title" %}: {{ related.title }}{% endif %}
 {% if related.description %}{% trans "Reminder Description" %}: {{ related.description }}{% endif %}
 {% trans "Link" %}: {{ request.scheme }}://{{ request.get_host }}{{ source.get_absolute_url }}

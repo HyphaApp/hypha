@@ -211,6 +211,17 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
     # Adds validation for making start_date required
     base_form_class = RoundBasePageAdminForm
 
+    submission_id_prefix = models.SlugField(
+        _("Submission ID Prefix"),
+        max_length=10,
+        blank=True,
+        default="",
+        null=False,
+        help_text=_(
+            'Prefix for the submission id. e.g. "HYPHA23-" will result in a submission id of "HYPHA23-1".'
+        ),
+    )
+
     lead = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         limit_choices_to=LIMIT_TO_STAFF,
@@ -260,6 +271,7 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
             heading=_("Dates"),
         ),
         FieldPanel("reviewers", widget=forms.CheckboxSelectMultiple),
+        FieldPanel("submission_id_prefix"),
         ReadOnlyPanel(
             "get_workflow_name_display",
             heading=_("Workflow"),
@@ -555,6 +567,16 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
         related_name="lab_lead",
         on_delete=models.PROTECT,
     )
+    submission_id_prefix = models.SlugField(
+        _("Submission ID Prefix"),
+        max_length=10,
+        blank=True,
+        default="",
+        null=False,
+        help_text=_(
+            'Prefix for the submission id. e.g. "HYPHA23-" will result in a submission id of "HYPHA23-1".'
+        ),
+    )
     reviewers = ParentalManyToManyField(
         settings.AUTH_USER_MODEL,
         related_name="labs_reviewer",
@@ -609,6 +631,7 @@ class LabBase(EmailForm, WorkflowStreamForm, SubmittableStreamForm):  # type: ig
         FieldPanel("image"),
         FieldPanel("weight"),
         FieldPanel("slack_channel"),
+        FieldPanel("submission_id_prefix"),
         FieldPanel("activity_digest_recipient_emails"),
         FieldPanel("list_on_front_page"),
     ]

@@ -70,7 +70,7 @@
 
         <div class="pt-1">
             <p class="text-xs m-0">
-                #{{ s.id }}
+                #{{ s.public_id|default:s.id }}
                 submitted <relative-time datetime="{{ s.submit_time|date:"c" }}">{{ s.submit_time|date:"SHORT_DATE_FORMAT" }}</relative-time>
                 by <a
                     href="?applicants={{ s.user.id }}"
