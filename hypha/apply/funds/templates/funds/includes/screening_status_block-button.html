@@ -2,26 +2,34 @@
 
 <div class="relative"
      x-data="{ isOpen: false, openedWithKeyboard: false, leaveTimeout: null }"
-     @mouseleave.prevent="leaveTimeout = setTimeout(() => { isOpen = false }, 250)"
+     @mouseleave.prevent="leaveTimeout = setTimeout(() => { isOpen = false }, 50)"
      @mouseenter="leaveTimeout ? clearTimeout(leaveTimeout) : true"
      @keydown.esc.prevent="isOpen = false, openedWithKeyboard = false"
      @click.outside="isOpen = false, openedWithKeyboard = false"
 >
     <button
-        class="p-2 w-full h-full inline-flex flex-col items-center rounded-lg transition-colors text-sm
-               {% if current_status %} {% if type == "yes" %}button--like-active bg-light-blue/10 {% else %} button--dislike-active bg-red-100/80{% endif %}  font-bold{% elif can_screen %}hover:bg-slate-100{% endif %}"
+        class="p-2 w-full h-full inline-flex flex-col items-center rounded-lg transition-colors text-sm border
+               hover:border-light-blue focus-visible:border-light-blue
+               {% if current_status %}
+                   font-bold
+                   {% if type == "yes" %}button--like-active bg-light-blue/10{% else %} button--dislike-active bg-tomato/10 border-red-100{% endif %}
+               {% endif %}"
+
+        hx-post="{% url 'funds:submissions:partial-screening-card' submission.id %}"
+        hx-swap="outerHTML"
+        hx-trigger="click"
+        hx-target="#screening-status-{{ submission.id }}"
+        hx-vals='{"action": "{% if not current_status %}{{ default_status.id }}{% else %}clear{% endif %}"}'
+
         {% if can_screen and screening_options.count > 1 %}
             @mouseover="isOpen = true"
             @focus="openedWithKeyboard = true"
             @keydown.space.prevent="openedWithKeyboard = true"
             @keydown.enter.prevent="openedWithKeyboard = true"
             @keydown.down.prevent="openedWithKeyboard = true"
+            :class="isOpen ? 'ring-1' : '{% if type == "yes" %}border-light-blue/10  {% else %} border-tomato/10{% endif %}'"
         {% endif %}
-        hx-post="{% url 'funds:submissions:partial-screening-card' submission.id %}"
-        hx-swap="outerHTML"
-        hx-trigger="click"
-        hx-target="#screening-status-{{ submission.id }}"
-        hx-vals='{"action": "{% if not current_status %}{{ default_status.id }}{% else %}clear{% endif %}"}'
+
         {% if current_status %}
             hx-confirm='Are you sure you want to remove the "{{ current_status }}" screening decision?'
             data-tippy-content="Remove"
@@ -34,20 +42,30 @@
         {% else %}
             {% heroicon_solid "hand-thumb-down" size=30 class="mb-2 transition-colors" aria_hidden=true %}
         {% endif %}
-        {{ current_status|default_if_none:default_status }}
+        <span class="{% if current_status %}{% if type == "yes" %}text-dark-blue{% else %}text-tomato{% endif %}{% endif %} ">
+            {{ current_status|default_if_none:default_status }}
+        </span>
+
     </button>
 
     <!-- panel -->
     {% if can_screen and screening_options.count > 1 %}
-        <div class="bg-white min-w-48 text-sm absolute {% if type == 'yes' %}start-0{% endif %} end-0 divide-y rounded border shadow-lg group-hover:absolute z-20"
-             x-cloak
-             role="menu"
-             x-show="isOpen || openedWithKeyboard"
-             x-transition.origin.top
-             x-trap="openedWithKeyboard"
-             @click.outside="isOpen = false, openedWithKeyboard = false"
-             @keydown.down.prevent="$focus.wrap().next()"
-             @keydown.up.prevent="$focus.wrap().previous()"
+        <div
+            class=" bg-white tras min-w-48 text-sm top absolute {% if type == 'yes' %}md:start-0 {% else %}end-0{% endif %} divide-y rounded border shadow-lg group-hover:absolute z-20"
+            x-cloak
+            role="menu"
+            x-show="isOpen || openedWithKeyboard"
+            {% comment %} x-transition.origin.top {% endcomment %}
+            x-transition:enter="origin-top transition ease-out duration-100"
+            x-transition:enter-start="opacity-0 scale-90 "
+            x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="origin-top transition ease-in duration-100"
+            x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-90"
+            x-trap="openedWithKeyboard"
+            @click.outside="isOpen = false, openedWithKeyboard = false"
+            @keydown.down.prevent="$focus.wrap().next()"
+            @keydown.up.prevent="$focus.wrap().previous()"
         >
             <header class="subheading border-b px-3 py-2 flex justify-between items-center gap-2">
                 <span class="SubMenuHeading font-medium text-inherit">Options</span>
