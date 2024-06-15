@@ -8,7 +8,7 @@
 
     {% adminbar %}
         {% slot back_link %}
-            <a class="simplified__projects-link" href="{% url 'apply:projects:detail' object.project.id %}">
+            <a class="simplified__projects-link" href="{{object.project.get_absolute_url}}">
                 {% trans "View project page" %}
             </a>
         {% endslot %}
@@ -37,7 +37,7 @@
                         <span class="text-gray-400">{{ latest_activity.timestamp }}</span>
                         {% if latest_activity_comment %}
                             <svg class="icon icon--request-changes"><use xlink:href="#request-changes"></use></svg>
-                            <a href="{% url 'apply:projects:detail' pk=object.project.id %}#communications#{{ latest_activity_comment.id }}" class="font-bold" target="_blank">{% trans "View comment" %}</a>
+                            <a href="{{ object.project.get_absolute_url }}#communications#{{ latest_activity_comment.id }}" class="font-bold" target="_blank">{% trans "View comment" %}</a>
                         {% endif %}
                     </p>
                     {% for activity in activities %}
@@ -47,7 +47,7 @@
                             <span class="text-gray-400">{{ activity.timestamp }}</span>
                             {% if activity_comment %}
                                 <svg class="icon icon--request-changes"><use xlink:href="#request-changes"></use></svg>
-                                <a href="{% url 'apply:projects:detail' pk=object.project.id %}#communications#{{ activity_comment.id }}" class="font-bold" target="_blank">{% trans "View comment" %}</a>
+                                <a href="{{ object.project.get_absolute_url }}#communications#{{ activity_comment.id }}" class="font-bold" target="_blank">{% trans "View comment" %}</a>
                             {% endif %}
                         </p>
                     {% endfor %}
@@ -72,14 +72,18 @@
             <div class="card card--solid">
                 <div class="card__inner">
                     <h5 class="card__heading">{% trans "Invoice" %}</h5>
-                    <p class="card__text"><a target="_blank" href="{% url "apply:projects:invoice-document" pk=object.project.pk invoice_pk=object.pk %}">{{object.filename}}</a></p>
-                    <embed src="{% url "apply:projects:invoice-document" pk=object.project.pk invoice_pk=object.pk %}" width="800px" height="800px" />
+                    <p class="card__text"><a target="_blank" href="{% url "apply:projects:invoice-document" pk=object.project.public_id invoice_pk=object.pk %}">{{object.filename}}</a></p>
+                    <embed src="{% url "apply:projects:invoice-document" pk=object.project.public_id invoice_pk=object.pk %}" width="800px" height="800px" />
                 </div>
                 {% if object.supporting_documents.exists %}
                     <div class="card__inner">
                         <h5 class="card__heading">{% trans "Supporting Documents" %}</h5>
                         {% for document in object.supporting_documents.all %}
-                            <p class="card__text"><a href="{% url "apply:projects:invoice-supporting-document" pk=object.project.pk invoice_pk=object.pk file_pk=document.pk %}">{{document.filename}}</a></p>
+                            <p class="card__text">
+                                <a href="{{ document.get_absolute_url }}">
+                                    {{document.filename}}
+                                </a>
+                            </p>
                         {% endfor %}
                     </div>
                 {% endif %}
@@ -99,7 +103,7 @@
                             {% endif %}
                             class="button button--bottom-space button--primary button--full-width{% if not user_can_edit_request %} button--tooltip-disabled{% endif %}"
                             href={% if user_can_edit_request %}
-                                 "{% url "apply:projects:invoice-edit" pk=object.project.pk invoice_pk=object.pk %}"
+                                 "{% url "apply:projects:invoice-edit" pk=object.project.public_id invoice_pk=object.pk %}"
                             {% else %}
                                  "#"
                             {% endif %}
@@ -111,7 +115,7 @@
                     {% if user_can_delete_request %}
                         <a
                             class="button button--bottom-space button--primary button--full-width"
-                            href="{% url 'apply:projects:invoice-delete' pk=object.project.pk invoice_pk=object.pk %}">
+                            href="{% url 'apply:projects:invoice-delete' pk=object.project.public_id invoice_pk=object.pk %}">
                             {% trans "Delete Invoice" %}
                         </a>
                     {% endif %}

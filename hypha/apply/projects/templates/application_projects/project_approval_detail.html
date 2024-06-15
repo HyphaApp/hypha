@@ -103,7 +103,11 @@
                             <h5>{% trans "Actions to take" %}</h5>
                             {% user_can_edit_project object user as can_edit_project %}
                             {% if can_edit_project %}
-                                <a class="button button--bottom-space button--primary button--full-width {% if user_can_approve %} is-disabled {% endif %}" href="{% url 'apply:projects:edit' pk=object.pk %}">{% trans "Edit PAF" %}</a>
+                                <a
+                                    class="button button--bottom-space button--primary button--full-width {% if user_can_approve %} is-disabled {% endif %}"
+                                    href="{% url 'apply:projects:edit' pk=object.public_id %}">
+                                    {% trans "Edit PAF" %}
+                                </a>
                             {% endif %}
                             <div x-data="{ show: false }" class="dropdown">
                                 <button x-on:click="show = ! show" class="button button--primary" type="button">

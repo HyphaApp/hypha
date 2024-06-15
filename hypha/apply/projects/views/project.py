@@ -121,6 +121,11 @@ from ..views.payment import ChangeInvoiceStatusView
 from .report import ReportFrequencyUpdate, ReportingMixin
 
 
+class ProjectGetObjectMixin:
+    def get_object(self):
+        return get_object_or_404(Project, submission__pk=self.kwargs["pk"])
+
+
 @method_decorator(staff_required, name="dispatch")
 class SendForApprovalView(DelegatedViewMixin, UpdateView):
     context_name = "request_approval_form"
@@ -334,7 +339,7 @@ class SelectDocumentView(DelegatedViewMixin, CreateView):
         return bool(self.files)
 
     def dispatch(self, request, *args, **kwargs):
-        self.project = get_object_or_404(Project, pk=self.kwargs["pk"])
+        self.project = get_object_or_404(Project, submission__id=self.kwargs["pk"])
         return super().dispatch(request, *args, **kwargs)
 
     def form_invalid(self, form):
@@ -473,7 +478,7 @@ class ApproveContractView(DelegatedViewMixin, UpdateView):
         return kwargs
 
     def dispatch(self, request, *args, **kwargs):
-        self.project = get_object_or_404(Project, pk=self.kwargs["pk"])
+        self.project = get_object_or_404(Project, submission__id=self.kwargs["pk"])
         return super().dispatch(request, *args, **kwargs)
 
     def form_invalid(self, form):
@@ -1011,7 +1016,7 @@ class ChangeProjectstatusView(DelegatedViewMixin, UpdateView):
     model = Project
 
     def dispatch(self, request, *args, **kwargs):
-        self.project = get_object_or_404(Project, pk=self.kwargs["pk"])
+        self.project = get_object_or_404(Project, submission__id=self.kwargs["pk"])
         permission, _ = has_permission(
             "project_status_update", request.user, self.project, raise_exception=True
         )
@@ -1057,7 +1062,7 @@ class UpdateAssignApproversView(DelegatedViewMixin, UpdateView):
     model = Project
 
     def dispatch(self, request, *args, **kwargs):
-        self.project = get_object_or_404(Project, pk=self.kwargs["pk"])
+        self.project = get_object_or_404(Project, submission__id=self.kwargs["pk"])
         permission, _ = has_permission(
             "update_paf_assigned_approvers",
             request.user,
@@ -1133,7 +1138,7 @@ class UpdatePAFApproversView(DelegatedViewMixin, UpdateView):
     model = Project
 
     def dispatch(self, request, *args, **kwargs):
-        self.project = get_object_or_404(Project, pk=self.kwargs["pk"])
+        self.project = get_object_or_404(Project, submission__id=self.kwargs["pk"])
         permission, _ = has_permission(
             "paf_approvers_update",
             request.user,
@@ -1288,7 +1293,7 @@ class UpdatePAFApproversView(DelegatedViewMixin, UpdateView):
         return response
 
 
-class BaseProjectDetailView(ReportingMixin, DetailView):
+class BaseProjectDetailView(ReportingMixin, ProjectGetObjectMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["statuses"] = get_project_status_choices()
@@ -1439,8 +1444,7 @@ class ProjectPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
     raise_exception = True
 
     def dispatch(self, *args, **kwargs):
-        project_pk = self.kwargs["pk"]
-        self.project = get_object_or_404(Project, pk=project_pk)
+        self.project = get_object_or_404(Project, submission__id=self.kwargs["pk"])
         return super().dispatch(*args, **kwargs)
 
     def get_media(self, *args, **kwargs):
@@ -1477,8 +1481,7 @@ class CategoryTemplatePrivateMediaView(PrivateMediaView):
     raise_exception = True
 
     def dispatch(self, *args, **kwargs):
-        project_pk = self.kwargs["pk"]
-        self.project = get_object_or_404(Project, pk=project_pk)
+        self.project = get_object_or_404(Project, submission__id=self.kwargs["pk"])
         self.category_type = kwargs["type"]
         permission, _ = has_permission(
             "project_access",
@@ -1505,8 +1508,7 @@ class ContractPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
     raise_exception = True
 
     def dispatch(self, *args, **kwargs):
-        project_pk = self.kwargs["pk"]
-        self.project = get_object_or_404(Project, pk=project_pk)
+        self.project = get_object_or_404(Project, submission__id=self.kwargs["pk"])
         return super().dispatch(*args, **kwargs)
 
     def get_media(self, *args, **kwargs):
@@ -1530,8 +1532,7 @@ class ContractDocumentPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
     raise_exception = True
 
     def dispatch(self, *args, **kwargs):
-        project_pk = self.kwargs["pk"]
-        self.project = get_object_or_404(Project, pk=project_pk)
+        self.project = get_object_or_404(Project, submission__id=self.kwargs["pk"])
         return super().dispatch(*args, **kwargs)
 
     def get_media(self, *args, **kwargs):
@@ -1578,7 +1579,7 @@ class ProjectSOWDownloadView(SingleObjectMixin, View):
         context["org_name"] = settings.ORG_LONG_NAME
         context["title"] = self.object.title
         context["project_link"] = self.request.build_absolute_uri(
-            reverse("apply:projects:detail", kwargs={"pk": self.object.id})
+            object.get_absolute_url()
         )
         template_path = "application_projects/sow_export.html"
 
@@ -1722,7 +1723,7 @@ class ProjectDetailDownloadView(SingleObjectMixin, View):
         context["id"] = self.object.id
         context["title"] = self.object.title
         context["project_link"] = self.request.build_absolute_uri(
-            reverse("apply:projects:detail", kwargs={"pk": self.object.id})
+            self.object.get_absolute_url()
         )
         context["contractor_name"] = (
             self.object.vendor.contractor_name if self.object.vendor else None
@@ -1779,7 +1780,7 @@ class ProjectDetailDownloadView(SingleObjectMixin, View):
             documents_dict[packet_file.title] = self.request.build_absolute_uri(
                 reverse(
                     "apply:projects:document",
-                    kwargs={"pk": project.id, "file_pk": packet_file.id},
+                    kwargs={"pk": project.public_id, "file_pk": packet_file.id},
                 )
             )
         return documents_dict

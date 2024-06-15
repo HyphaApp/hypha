@@ -23,7 +23,7 @@ class BaseInvoiceTable(tables.Table):
     invoice_number = tables.LinkColumn(
         "funds:projects:invoice-detail",
         verbose_name=_("Invoice Number"),
-        args=[tables.utils.A("project__pk"), tables.utils.A("pk")],
+        args=[tables.utils.A("project__submission__pk"), tables.utils.A("pk")],
         attrs={
             "td": {
                 "class": "js-title",  # using title as class because of batch-actions.js
@@ -114,7 +114,7 @@ class BaseProjectsTable(tables.Table):
     title = tables.LinkColumn(
         "funds:projects:detail",
         text=lambda r: textwrap.shorten(r.title, width=30, placeholder="..."),
-        args=[tables.utils.A("pk")],
+        args=[tables.utils.A("submission__pk")],
     )
     status = tables.Column(
         verbose_name=_("Status"), accessor="get_status_display", order_by=("status",)
@@ -250,7 +250,7 @@ class ReportListTable(tables.Table):
     project = tables.LinkColumn(
         "funds:projects:reports:detail",
         text=lambda r: textwrap.shorten(r.project.title, width=30, placeholder="..."),
-        args=[tables.utils.A("pk")],
+        args=[tables.utils.A("submission__pk")],
     )
     report_period = tables.Column(accessor="pk")
     submitted = tables.DateColumn()
