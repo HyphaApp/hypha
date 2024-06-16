@@ -100,7 +100,7 @@
                 {% endif %}
             </section>
 
-            <div class="header__button-container flex h-10 gap-4">
+            <div class="header__button-container flex h-10 gap-5">
                 {% comment %} Todo List {% endcomment %}
                 {% if request.user.is_authenticated and request.user.is_apply_staff %}
                     <div
@@ -108,7 +108,7 @@
                         x-init="$watch('open', value => { if (value) { document.getElementById('id-task-list').dispatchEvent(new Event('htmx:fetch')); } })"
                     >
                         <a href="{% url "todo:list" %}"
-                           class="p-2 flex items-center hover:opacity-70 transition-opacity"
+                           class="flex p-2 rounded-full text-black hover:bg-black hover:text-white active:bg-black active:text-white focus:bg-black focus:text-white"
                            aria-label="{% trans "Task List" %}"
                            aria-haspopup="task_list"
                            aria-expanded="false"
@@ -116,7 +116,7 @@
                            title="{% trans "Click to open your task list" %}"
                            @click.prevent="open = ! open"
                         >
-                            {% heroicon_outline "bell-alert" class="inline me-1 text-black" aria_hidden="true" %}
+                            {% heroicon_outline "bell-alert" class="inline" aria_hidden="true" %}
                         </a>
                         <div x-cloak x-show="open" x-transition @click.outside="open = false">
                             <div class="relative z-999999">
