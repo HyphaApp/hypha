@@ -30,11 +30,12 @@ from .views import (
     SubmissionsByRound,
     SubmissionsByStatus,
     SubmissionSealedView,
-    partial_screening_card,
     UnarchiveSubmissionView,
     UpdateLeadView,
+    UpdateMetaTermsView,
     UpdatePartnersView,
     UpdateReviewersView,
+    partial_screening_card,
     submission_success,
 )
 from .views_beta import (
@@ -215,6 +216,11 @@ submission_urls = (
                         "partners/update/",
                         UpdatePartnersView.as_view(),
                         name="partners_update",
+                    ),
+                    path(
+                        "metaterms/update/",
+                        UpdateMetaTermsView.as_view(),
+                        name="metaterms_update",
                     ),
                     path(
                         "partial/reviews-card/",

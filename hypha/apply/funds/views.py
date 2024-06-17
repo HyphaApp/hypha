@@ -990,20 +990,47 @@ class UpdatePartnersView(View):
 
 
 @method_decorator(staff_required, name="dispatch")
-class UpdateMetaTermsView(DelegatedViewMixin, UpdateView):
-    model = ApplicationSubmission
-    form_class = UpdateMetaTermsForm
-    context_name = "meta_terms_form"
-
+class UpdateMetaTermsView(View):
     def dispatch(self, request, *args, **kwargs):
-        submission = self.get_object()
+        self.submission = get_object_or_404(ApplicationSubmission, id=kwargs.get("pk"))
         permission, reason = has_permission(
-            "submission_edit", request.user, object=submission, raise_exception=False
+            "submission_edit",
+            request.user,
+            object=self.submission,
+            raise_exception=False,
         )
         if not permission:
             messages.warning(self.request, reason)
-            return HttpResponseRedirect(submission.get_absolute_url())
+            return HttpResponseRedirect(self.submission.get_absolute_url())
         return super(UpdateMetaTermsView, self).dispatch(request, *args, **kwargs)
+
+    def get(self, *args, **kwargs):
+        metaterms_form = UpdateMetaTermsForm(
+            user=self.request.user, instance=self.submission
+        )
+        return render(
+            self.request,
+            "funds/includes/update_meta_terms_form.html",
+            context={
+                "form": metaterms_form,
+                "value": _("Update"),
+                "object": self.submission,
+            },
+        )
+
+    def post(self, *args, **kwargs):
+        form = UpdateMetaTermsForm(
+            self.request.POST, instance=self.submission, user=self.request.user
+        )
+        if form.is_valid():
+            form.save()
+            return HttpResponseClientRefresh()
+        return render(
+            self.request,
+            "funds/includes/update_meta_terms_form.html",
+            context={"form": form, "value": _("Update"), "object": self.submission},
+            status=400,
+        )
 
 
 @method_decorator(staff_required, name="dispatch")
@@ -1082,7 +1109,6 @@ class AdminSubmissionDetailView(ActivityContextMixin, DelegateableView, DetailVi
     model = ApplicationSubmission
     form_views = [
         CommentFormView,
-        UpdateMetaTermsView,
     ]
 
     def dispatch(self, request, *args, **kwargs):

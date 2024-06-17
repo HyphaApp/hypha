@@ -133,11 +133,23 @@
         </dialog>
     </div>
 
-    <details class="mt-4" x-data="{ archiveForm: false, reminderForm: false }">
+    <details class="mt-4" x-data="{ archiveForm: false, reminderForm: false, metatermsForm: false }">
         <summary class="sidebar__separator sidebar__separator--medium">{% trans "More actions" %}</summary>
         <a class="button button--white button--full-width button--bottom-space" href="{% url 'funds:submissions:revisions:list' submission_pk=object.id %}">{% trans "Revisions" %}</a>
 
-        <a data-fancybox data-src="#update-meta-terms" class="button button--white button--full-width button--bottom-space" href="#">{% trans "Meta Terms" %}</a>
+        <a class="button button--white button--full-width button--bottom-space" @click="metatermsForm = true" hx-get="{% url 'funds:submissions:metaterms_update' pk=object.pk %}" hx-target="#metaterms_form">{% trans "Meta Terms" %}</a>
+        <dialog x-show="metatermsForm" x-htmldialog.noscroll="metatermsForm = false" class="w-[580px]">
+            <div class="dialog-header flex justify-between items-center border-block-end bg-light-blue p-4 align-middle">
+                <span class="font-bold text-lg text-white">{% trans "Update Meta Terms" %}</span>
+                <button @click="metatermsForm = false" class="text-white font-bold">X</button>
+            </div>
+            <div id="metaterms_form">
+                <div class="animate-pulse">
+                    <div class="w-full h-16 bg-gray-200 mb-5"></div>
+                    <div class="w-full h-6 bg-gray-200 mb-5"></div>
+                </div>
+            </div>
+        </dialog>
 
         <a class="button button--white button--full-width button--bottom-space" @click="reminderForm = true" hx-get="{% url 'funds:submissions:create_reminder' pk=object.pk %}" hx-target="#reminder_form">{% trans "Create Reminder" %}</a>
         <dialog x-show="reminderForm" x-htmldialog.noscroll="reminderForm = false" class="w-[580px]">
@@ -158,7 +170,6 @@
                 {% heroicon_outline "lock-closed" aria_hidden="true" size=15 stroke_width=2 class="inline align-baseline me-1" %}
                 {% trans "Archive Submission" %}
             </a>
-
             <dialog x-show="archiveForm" x-htmldialog.noscroll="archiveForm = false" class="w-[580px]">
                 <div class="dialog-header flex justify-between items-center border-block-end bg-light-blue p-4 align-middle">
                     <span class="font-bold text-lg text-white">{% trans "Archive Submission" %}</span>

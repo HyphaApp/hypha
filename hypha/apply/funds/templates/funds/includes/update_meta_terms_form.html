@@ -1,6 +1,61 @@
-{% load i18n %}
-<div class="modal" id="update-meta-terms">
-    <h4 class="modal__header-bar">{% trans "Update Meta Terms" %}</h4>
-    {% trans "Update" as update %}
-    {% include 'funds/includes/delegated_form_base.html' with form=meta_terms_form value=update %}
+{% load i18n static %}
+<div class="p-6 z-20">
+    <form
+        class="form px-3"
+        id="metaterms_form"
+        hx-target="this"
+        hx-swap="outerHTML"
+        method="POST"
+        hx-post="{% url 'funds:submissions:metaterms_update' pk=object.pk %}"
+    >
+        {% if form.errors %}
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <div class="alert alert-danger">
+                        <strong>{{ error|escape }}</strong>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                <div class="alert alert-danger">
+                    <strong>{{ error|escape }}</strong>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% for field in form.visible_fields %}
+            <fieldset class="mt-3">
+                <label for="{{ field.id_for_label }}">
+                    {{ field.label }}
+                </label>
+
+                <div class="mt-2">
+                    {{ field }}
+                </div>
+            </fieldset>
+        {% endfor %}
+
+        <button
+            class="button button--primary mt-6 mb-3"
+            type="submit"
+            @click='open = false'
+        >
+            {% trans "Update" %}
+        </button>
+    </form>
 </div>
+
+<script type="module">
+    {% comment %} Do this here as the select elements for different roles are dynamically generated. {% endcomment %}
+    import Choices from "{% static 'js/esm/choices.js-10-2-0.js' %}";
+
+    const selectElements = document.querySelectorAll('#metaterms_form select');
+
+    // add choices to all select elements
+    selectElements.forEach((selectElement) => {
+        new Choices(selectElement, {
+            removeItemButton: true,
+            allowHTML: true,
+        });
+    });
+</script>
