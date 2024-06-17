@@ -2,7 +2,7 @@
 
 {% if request.user.is_authenticated %}
     <div x-data="{ show: false }" class="relative flex">
-        <button x-on:click="show = ! show" class="button button--narrow font-bold flex items-center px-2 hover:bg-black hover:text-white active:bg-black active:text-white focus:bg-black focus:text-white" type="button">
+        <button x-on:click="show = ! show" class="font-bold flex items-center ps-1 pe-4 hover:bg-black hover:text-white transition-colors rounded-sm" type="button">
             {% heroicon_micro "user-circle" class="inline align-text-bottom w-8 h-8 me-1" aria_hidden=true %}
             <span>{{ request.user }}</span>
         </button>
