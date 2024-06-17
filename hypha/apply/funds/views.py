@@ -654,8 +654,9 @@ class ProgressSubmissionView(View):
             redirect = DeterminationCreateOrUpdateView.should_redirect(
                 self.request, self.submission, action
             )
+            message_storage = messages.get_messages(self.request)
             if redirect:
-                return HttpResponseClientRedirect(redirect.url)
+                return HttpResponseClientRedirect(redirect.url, content=message_storage)
 
             self.submission.perform_transition(
                 action, self.request.user, request=self.request
