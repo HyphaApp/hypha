@@ -9,7 +9,7 @@
     thead {
         display: none;
 
-        @include media-query($table-breakpoint) {
+        @include media-query(lg) {
             display: table-header-group;
         }
 
@@ -24,17 +24,17 @@
 
             // set column widths
             &.title {
-                @include media-query($table-breakpoint) {
+                @include media-query(lg) {
                     width: 130px;
                 }
 
-                @include media-query(desktop) {
+                @include media-query(xl) {
                     width: 260px;
                 }
             }
 
             &.phase {
-                @include media-query($table-breakpoint) {
+                @include media-query(lg) {
                     width: 150px;
                 }
             }
@@ -42,20 +42,20 @@
             &.selected {
                 @include table-checkbox;
 
-                @include media-query($table-breakpoint) {
+                @include media-query(lg) {
                     width: 50px;
                     padding-inline-end: 0;
                 }
             }
 
             &.comments {
-                @include media-query($table-breakpoint) {
+                @include media-query(lg) {
                     width: 110px;
                 }
             }
 
             &.organization_name {
-                @include media-query($table-breakpoint) {
+                @include media-query(lg) {
                     width: 110px;
                 }
             }
@@ -82,12 +82,12 @@
                 padding-block-start: 15px;
                 font-weight: $weight--bold;
 
-                @include media-query($table-breakpoint) {
+                @include media-query(lg) {
                     display: flex;
                     align-items: center;
                 }
 
-                @include media-query(desktop) {
+                @include media-query(xl) {
                     display: table-cell;
                 }
             }
@@ -103,7 +103,7 @@
                     text-align: center;
                     background-color: $color--sky-blue;
 
-                    @include media-query($table-breakpoint) {
+                    @include media-query(lg) {
                         width: 100%;
                     }
                 }
@@ -113,7 +113,7 @@
             &.comments {
                 display: none;
 
-                @include media-query($table-breakpoint) {
+                @include media-query(lg) {
                     display: table-cell;
                     font-size: 13px;
                     text-align: center;
@@ -127,7 +127,7 @@
             &.reviews_stats {
                 display: none;
 
-                @include media-query($table-breakpoint) {
+                @include media-query(lg) {
                     display: table-cell;
                 }
             }
@@ -138,7 +138,7 @@
                 display: none;
                 padding-inline-end: 0;
 
-                @include media-query($table-breakpoint) {
+                @include media-query(lg) {
                     display: table-cell;
                 }
             }
@@ -150,13 +150,13 @@
             }
 
             &.organization_name {
-                @include media-query($table-breakpoint) {
+                @include media-query(lg) {
                     padding-inline-start: 15px;
                 }
             }
 
             // arrow to toggle project info - added via js
-            @include media-query($table-breakpoint) {
+            @include media-query(lg) {
                 .arrow {
                     @include triangle(right, $color--primary, 6px);
                     position: relative;
@@ -180,7 +180,7 @@
                     display: none;
                 }
 
-                @include media-query($table-breakpoint) {
+                @include media-query(lg) {
                     display: none;
                 }
             }

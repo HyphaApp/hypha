@@ -11,12 +11,12 @@
     $root: &;
     display: none;
 
-    @include media-query(tablet-portrait) {
+    @include media-query(md) {
         display: flex;
     }
 
     &--mobile {
-        @include media-query(tablet-portrait) {
+        @include media-query(md) {
             display: none;
         }
     }

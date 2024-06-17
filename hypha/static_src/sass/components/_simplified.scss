@@ -64,7 +64,7 @@
         flex-wrap: wrap;
         margin: 0;
 
-        @include media-query(tablet-portrait) {
+        @include media-query(md) {
             margin-block-end: 1rem;
         }
 
@@ -86,7 +86,7 @@
     &__wrapper {
         padding: $mobile-gutter 0;
 
-        @include media-query(tablet-portrait) {
+        @include media-query(md) {
             padding: 1rem 0;
         }
     }
@@ -100,7 +100,7 @@
         font-weight: $weight--normal;
         color: transparentize($color--dark-grey, 0.5);
 
-        @include media-query(tablet-landscape) {
+        @include media-query(lg) {
             flex-direction: row;
             margin-block-start: 0;
         }

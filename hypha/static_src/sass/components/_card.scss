@@ -32,7 +32,7 @@
         align-items: center;
         margin-block-end: 1rem;
 
-        @include media-query(small-tablet) {
+        @include media-query(sm) {
             margin-inline-start: 1rem;
         }
     }

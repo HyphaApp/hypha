@@ -9,7 +9,7 @@
     thead {
         display: none;
 
-        @include media-query($table-breakpoint) {
+        @include media-query(lg) {
             display: table-header-group;
         }
 
@@ -28,12 +28,12 @@
                 padding-inline-start: 10px;
                 font-weight: $weight--bold;
 
-                @include media-query($table-breakpoint) {
+                @include media-query(lg) {
                     display: flex;
                     align-items: center;
                 }
 
-                @include media-query(desktop) {
+                @include media-query(xl) {
                     display: table-cell;
                 }
 

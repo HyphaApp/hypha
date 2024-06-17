@@ -6,7 +6,7 @@
     thead {
         display: none;
 
-        @include media-query($table-breakpoint) {
+        @include media-query(lg) {
             display: table-header-group;
         }
 
@@ -43,7 +43,7 @@
                 display: inline-block;
                 width: 90px;
 
-                @include media-query($table-breakpoint) {
+                @include media-query(lg) {
                     display: none;
                 }
             }

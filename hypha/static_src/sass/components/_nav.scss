@@ -6,7 +6,7 @@
     height: 100%;
     font-weight: $weight--semibold;
 
-    @include media-query(tablet-portrait) {
+    @include media-query(md) {
         flex-direction: row;
         padding-block-start: 0;
     }
@@ -14,7 +14,7 @@
     &--primary {
         text-transform: uppercase;
 
-        @include media-query(tablet-portrait) {
+        @include media-query(md) {
             flex-direction: row;
             justify-content: center;
             gap: 2rem;
@@ -22,13 +22,13 @@
             text-transform: none;
         }
 
-        @include media-query(tablet-landscape) {
+        @include media-query(lg) {
             gap: 3rem;
         }
     }
 
     &__item {
-        @include media-query(tablet-portrait) {
+        @include media-query(md) {
             &:last-child {
                 margin-inline-end: 0;
             }
@@ -40,7 +40,7 @@
         position: relative;
         display: inline-block;
         padding: 20px 10px;
-        color: $color--white;
+        color: $color--default;
         transition: color $transition;
 
         &:focus,
@@ -48,13 +48,12 @@
             color: $color--light-blue;
         }
 
-        @include media-query(tablet-portrait) {
+        @include media-query(md) {
             display: inline;
             padding: 40px 0;
-            color: $color--default;
         }
 
-        @include media-query(tablet-landscape) {
+        @include media-query(lg) {
             padding: 30px 0;
         }
 
