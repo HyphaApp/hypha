@@ -3,7 +3,7 @@
 
 {% block header %}
     <header class="header">
-        <div class="header__inner wrapper wrapper--large">
+        <div class="header__inner wrapper wrapper--large relative">
             <a href="{{ settings.core.SystemSettings.site_logo_link|default:"/" }}" aria-label="{% trans "Home link" %}">
                 {% if settings.core.SystemSettings.site_logo_default %}
                     {% image settings.core.SystemSettings.site_logo_default width-215 as logo_default %}
@@ -42,15 +42,16 @@
             </a>
 
             {% block header_menu %}
-                <section class="header__menus">
+                <div class="header__menus">
                     {% include "core/navigation/primarynav-apply.html" %}
-                </section>
+                </div>
             {% endblock header_menu %}
 
-            <div class="flex h-10 gap-4">
+            <div class="flex gap-4">
                 {% comment %} Todo List {% endcomment %}
                 {% if request.user.is_authenticated and request.user.is_apply_staff %}
                     <div
+                        class="hidden md:block"
                         x-data="{open: false}"
                         x-init="$watch('open', value => { if (value) { document.getElementById('id-task-list').dispatchEvent(new Event('htmx:fetch')); } })"
                     >
@@ -98,12 +99,13 @@
                         </div>
                     </div>
                 {% endif %}
-                {% comment %} Todo List End{% endcomment %}
+                {% comment %} Todo List End {% endcomment %}
 
                 {% if request.path != '/auth/' and request.path != '/login/' %}
                     {% include "includes/user_menu.html" %}
                 {% endif %}
             </div>
+
         </div>
     </header>
 {% endblock header %}

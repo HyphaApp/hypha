@@ -1,19 +1,27 @@
 .header {
-    position: relative;
-    padding: 20px;
+    padding: $mobile-gutter;
     background-color: var(--color-header-bg);
     border-block-end: 1px solid rgb(136 146 171 / 10%);
 
+    @include media-query(md) {
+        padding: 0 $mobile-gutter;
+    }
+
+    @include media-query(xl) {
+        padding: 0;
+    }
+
     &__inner {
-        position: relative;
         z-index: 10;
         display: flex;
+        gap: 1rem;
+        flex-direction: column;
         align-items: center;
         justify-content: space-between;
         width: 100%;
 
-        &--menu-open {
-            padding: 20px;
+        @include media-query(md) {
+            flex-direction: row;
         }
     }
 
@@ -38,10 +46,7 @@
         }
     }
 
-    &__icon {
-        &--close-search {
-            @extend %is-hidden;
-        }
+    &__buttons {
     }
 
     &__menus {

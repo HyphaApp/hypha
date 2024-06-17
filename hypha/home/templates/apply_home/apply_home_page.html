@@ -1,17 +1,6 @@
 {% extends "base-apply.html" %}
 % load wagtailcore_tags static %}
 
-{% block header_menu %}
-    <section class="header__menus header__menus--desktop">
-        {% if settings.core.SystemSettings.nav_content %}
-            {{ settings.core.SystemSettings.nav_content|safe }}
-        {% else %}
-            {% include "core/navigation/primarynav-apply.html" %}
-        {% endif %}
-    </section>
-{% endblock %}
-
-
 {% block content %}
     <div class="py-8 lg:py-16  max-w-3xl mx-auto">
         <h1 class="font-bold text-5xl text-balance">{{ page.title }}</h1>
