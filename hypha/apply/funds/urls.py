@@ -30,12 +30,12 @@ from .views import (
     SubmissionsByRound,
     SubmissionsByStatus,
     SubmissionSealedView,
-    partial_screening_card,
     UnarchiveSubmissionView,
     UpdateLeadView,
     UpdateMetaTermsView,
     UpdatePartnersView,
     UpdateReviewersView,
+    partial_screening_card,
     submission_success,
 )
 from .views_beta import (
