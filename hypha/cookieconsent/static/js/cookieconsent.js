@@ -27,12 +27,6 @@
     const learnMoreToggles = cookieconsent.querySelectorAll(
         ".button--learn-more"
     );
-    const closePromptBtn = cookieconsent.querySelector(".button--close");
-
-    const analyticsToggle = cookieconsent.querySelector(".analytics-toggle");
-    if (analyticsToggle) {
-        analyticsToggle.checked = getConsentValue() === ACCEPT ? true : false;
-    }
 
     function getConsentValue() {
         return localStorage.getItem(COOKIECONSENT_KEY);
@@ -100,16 +94,5 @@
             const buttonValue = button.getAttribute("show-learn-more");
             toggleLearnMore(buttonValue === "true");
         });
-    });
-
-    closePromptBtn.addEventListener("click", function () {
-        let consent;
-        if (analyticsToggle) {
-            consent = analyticsToggle.checked ? ACCEPT : DECLINE;
-        } else {
-            consent = ACK;
-        }
-        setConsentValue(consent);
-        closeConsentPrompt();
     });
 })();

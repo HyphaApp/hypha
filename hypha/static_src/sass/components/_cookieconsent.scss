@@ -36,12 +36,6 @@
         }
     }
 
-    // &__title {
-    //     @include media-query(tablet-landscape) {
-    //         display: block;
-    //     }
-    // }
-
     &__actions {
         display: flex;
         flex-direction: column;
