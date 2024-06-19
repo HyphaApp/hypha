@@ -1,5 +1,5 @@
 {% load i18n %}
 <div class="p-6 z-20">
     {% url 'funds:submissions:lead_update' pk=object.pk as lead_update_url %}
-    {% include 'funds/includes/dialog_form_base.html' with form=form value=value url=lead_update_url %}
+    {% include 'funds/includes/dialog_form_base.html' with form=form value=value url=lead_update_url target="#id_lead" data_var="leadForm" %}
 </div>
