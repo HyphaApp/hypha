@@ -23,17 +23,17 @@
             <div class="cookieconsent__learnmore">
                 <div>
                     <div class="cookieconsent__statement">
-                        <p>This Website uses cookies.  Below you can select the categories of cookies to allow when you use our website and services.  For more information, please see our Privacy Policy.</p>
+                        <p>{% trans "This Website uses cookies.  Below you can select the categories of cookies to allow when you use our website and services." %}</p>
                     </div>
                     <div class="cookieconsent__info-wrapper">
                         <div class="cookieconsent__info">
-                            <p class="font-semibold">{% trans 'Essential Cookies' %}</p>
+                            <p class="font-semibold">{% trans "Essential Cookies" %}</p>
                             {{ settings.cookieconsent_essential_about|richtext }}
-                            <span class="text-green-500">Always enabled.</span>
+                            <span class="font-bold">{% trans "Always enabled." %}</span>
                         </div>
                         {% if settings.cookieconsent_analytics %}
                             <div class="cookieconsent__info lg:pl-10">
-                                <p class="font-semibold">{% trans 'Analytics Cookies' %}</p>
+                                <p class="font-semibold">{% trans "Analytics Cookies" %}</p>
                                 {{ settings.cookieconsent_analytics_about|richtext }}
                             </div>
                         {% endif %}
