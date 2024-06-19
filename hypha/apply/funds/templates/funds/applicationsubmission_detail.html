@@ -31,7 +31,7 @@
                     <span>{{ object.round }}</span>
                 {% endif %}
                 {% if request.user.is_apply_staff %}
-                    <span>{% trans "Lead" %}: <a class="link--transparent link--underlined" href="{% url 'apply:submissions:list' %}?lead={{ object.lead.id }}">{{ object.lead }}</a></span>
+                    <span>{% trans "Lead" %}: <a class="link--transparent link--underlined" id="id_lead" href="{% url 'apply:submissions:list' %}?lead={{ object.lead.id }}">{{ object.lead }}</a></span>
                 {% else %}
                     <span>{% trans "Lead" %}: {{ object.lead }}</span>
                 {% endif %}
