@@ -1,6 +1,6 @@
 {% extends "messages/email/applicant_base.html" %}
 
-{% load i18n %}
+{% load i18n activity_tags %}
 {% block salutation %}{% trans "Dear" %} {{ recipient }},{% endblock %}
 
 {% block content %}{# fmt:off #}
