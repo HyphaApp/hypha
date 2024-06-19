@@ -1127,7 +1127,13 @@ class UpdateMetaTermsView(View):
         )
         if form.is_valid():
             form.save()
-            return HttpResponseClientRefresh()
+
+            return render(
+                self.request,
+                "funds/includes/meta_terms_block.html",
+                context={"object": self.submission},
+                status=200,
+            )
         return render(
             self.request,
             "funds/includes/update_meta_terms_form.html",
@@ -1176,7 +1182,12 @@ class ReminderCreateView(View):
                 source=self.submission,
                 related=reminder,
             )
-            return HttpResponseClientRefresh()
+            return render(
+                self.request,
+                "funds/includes/reminders_block.html",
+                context={"object": self.submission},
+                status=200,
+            )
         return render(
             self.request,
             "funds/includes/create_reminder_form.html",
