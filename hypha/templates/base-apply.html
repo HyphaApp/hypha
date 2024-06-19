@@ -2,7 +2,7 @@
 {% load i18n static wagtailcore_tags wagtailimages_tags heroicons %}<!doctype html>
 
 {% block header %}
-    <header class="header">
+    <header class="header{% if not request.user.is_authenticated %} header--nomenu{% endif %}">
         <div class="header__inner wrapper wrapper--large relative">
             <a href="{{ settings.core.SystemSettings.site_logo_link|default:"/" }}" aria-label="{% trans "Home link" %}">
                 {% if settings.core.SystemSettings.site_logo_default %}
