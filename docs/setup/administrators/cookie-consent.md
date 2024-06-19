@@ -40,3 +40,5 @@ By default, there is a button in the footer that allows the user to re-open the 
 ```html
 <a href="#" onclick="openConsentPrompt()">Cookie Settings</a>
 ```
+
+This can be further configured in Wagtail Admin under `Settings` -> `System settings` -> `Footer content`.
