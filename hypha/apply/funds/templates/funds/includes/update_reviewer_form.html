@@ -3,8 +3,9 @@
     <form
         class="form px-3"
         id="reviewer_form"
-        hx-target="this"
-        hx-swap="outerHTML"
+        hx-target="#id_reviewers"
+        hx-swap="innerHTML"
+        hx-select="#id_reviewers"
         method="POST"
         hx-post="{% url 'funds:submissions:reviewers_update' pk=object.pk %}"
     >
@@ -42,7 +43,7 @@
         <button
             class="button button--primary mt-6 mb-3"
             type="submit"
-            @click='open = false'
+            @click='reviewerForm = false'
         >
             {% trans "Update" %}
         </button>

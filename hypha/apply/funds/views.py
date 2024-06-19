@@ -65,7 +65,7 @@ from hypha.apply.stream_forms.blocks import GroupToggleBlock
 from hypha.apply.todo.options import PROJECT_WAITING_PAF
 from hypha.apply.todo.views import add_task_to_user_group
 from hypha.apply.users.decorators import staff_or_finance_required, staff_required
-from hypha.apply.users.groups import STAFF_GROUP_NAME
+from hypha.apply.users.groups import REVIEWER_GROUP_NAME, STAFF_GROUP_NAME
 from hypha.apply.utils.models import PDFPageSettings
 from hypha.apply.utils.pdfs import draw_submission_content, make_pdf
 from hypha.apply.utils.storage import PrivateMediaView
@@ -916,7 +916,23 @@ class UpdateReviewersView(View):
                 updated_by=self.request.user,
                 request=self.request,
             )
-            return HttpResponseClientRefresh()
+            assigned_reviewers = self.submission.assigned.review_order()
+
+            if not self.submission.stage.has_external_review:
+                assigned_reviewers = assigned_reviewers.staff()
+            # Calculate the recommendation based on role and staff reviews
+            recommendation = self.submission.reviews.by_staff().recommendation()
+            return render(
+                self.request,
+                "funds/includes/review_sidebar.html",
+                context={
+                    "hidden_types": [REVIEWER_GROUP_NAME],
+                    "staff_reviewers_exist": assigned_reviewers.staff().exists(),
+                    "assigned_reviewers": assigned_reviewers,
+                    "recommendation": recommendation,
+                },
+                status=200,
+            )
         return render(
             self.request,
             "funds/includes/update_reviewer_form.html",
