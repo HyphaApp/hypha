@@ -848,7 +848,12 @@ class UpdateLeadView(View):
                 source=form.instance,
                 related=old_lead,
             )
-            return HttpResponseClientRefresh()
+            return render(
+                self.request,
+                "funds/applicationsubmission_detail.html",
+                context={"object": form.instance},
+                status=200,
+            )
         return render(
             self.request,
             "funds/includes/update_lead_form.html",
@@ -981,7 +986,7 @@ class UpdatePartnersView(View):
                 added=added,
                 removed=removed,
             )
-            return HttpResponseClientRefresh()
+            return HttpResponse("", status=200)
         return render(
             self.request,
             "funds/includes/update_partner_form.html",
