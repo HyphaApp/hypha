@@ -64,7 +64,7 @@ class Command(BaseCommand):
                     submission_value = 0
                 writer.writerow(
                     [
-                        submission.id,
+                        submission.public_id or submission.id,
                         submission.title,
                         submission.full_name,
                         submission.email,
@@ -73,7 +73,7 @@ class Command(BaseCommand):
                         submission_reapplied,
                         submission.stage,
                         submission.phase,
-                        submission.joined_screening_statuses,
+                        submission.get_current_screening_status(),
                         submission.submit_time.strftime("%Y-%m-%d"),
                         submission_region,
                         submission_country,

@@ -1,54 +1,14 @@
 {% load i18n submission_tags heroicons %}
 
-{% can_screen object as screen_able %}
+<div class="sidebar__inner" id="screening-status-{{ object.id }}">
+    <h2 class="text-lg font-medium">
+        {% trans "Screening decision" %}
+    </h2>
+    <div class="grid grid-cols-2 gap-4">
+        <!-- thumbs-up -->
+        {% include "funds/includes/screening_status_block-button.html" with default_status=default_yes current_status=current_yes screening_options=yes_screening_options type="yes" submission=object %}
 
-<div class="sidebar__inner">
-
-    <h5>{% trans "Screening decision" %}</h5>
-    {% if object.supports_default_screening %}
-        <div class="flex justify-evenly">
-            <div class="sidebar__screening-status-yes">
-                <div class="thumb thumbs-up" data-id="{{ object.id }}" data-yes="true">
-                    <button class="js-like p-2 flex flex-col items-center {% if object.has_yes_default_screening_status_set %}button--js-like-active{% endif %}">
-                        {% heroicon_solid "hand-thumb-up" size=30 class="mb-2 transition-colors" aria_hidden=true %}
-                        {{ default_yes }}
-                    </button>
-                </div>
-            </div>
-            <div class="sidebar__screening-status-no">
-                <div class="thumb thumbs-down" data-id="{{ object.id }}" data-yes="false" style="align-self: center;">
-                    <button class="js-dislike  p-2 flex flex-col items-center {% if object.has_no_default_screening_status_set %}button--js-dislike-active{% endif %}">
-                        {% heroicon_solid "hand-thumb-down" size=30 class="mb-2 transition-colors" aria_hidden=true %}
-                        {{ default_no }}
-                    </button>
-                </div>
-            </div>
-        </div>
-    {% endif %}
-
-    <div class="show-screening-options">
-        {% if object.has_default_screening_status_set %}
-            <p id="screening-options-para">
-                {% if object.screening_statuses.all.count > 1 %}
-                    <div class="sidebar__screening-selected-options" id="Options">
-                        {% for status in object.screening_statuses.all%}
-                            <span class="sidebar__screening-option">{{ status }}</span>
-                        {% endfor%}
-                    </div>
-                {% endif %}
-                {% if screen_able %}
-                    <a id="screening-options" data-fancybox="" data-src="#screen-application" data-yes="{% if object.has_yes_default_screening_status_set %}true{% else %}false{% endif %}" class="link link--secondary-change" href="#">{% trans "Screening options" %}</a>
-                {% endif %}
-            </p>
-        {% endif %}
-        {% if not object.supports_default_screening %}
-            <p id="screening-options-para">
-                <div class="sidebar__screening-selected-options">
-                    {% for status in object.screening_statuses.all%}
-                        <span class="sidebar__screening-option">{{ status }}</span>
-                    {% endfor%}
-                </div>
-            </p>
-        {% endif %}
+        <!-- thumbs-down -->
+        {% include "funds/includes/screening_status_block-button.html" with default_status=default_no current_status=current_no screening_options=no_screening_options type="no" submission=object %}
     </div>
 </div>

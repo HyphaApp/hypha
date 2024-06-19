@@ -91,14 +91,11 @@
         {% if PROJECTS_ENABLED and projects.table.data %}
             <div id="active-projects" class="wrapper wrapper--bottom-space">
                 {% trans "Your projects" as project_heading %}
-                {% include "funds/includes/table_filter_and_search.html" with filter=projects.filterset filter_action=projects.url search_term=search_term search_action=projects.url search_placeholder="projects" use_search=True use_batch_actions=False heading="Your projects" %}
                 {% render_table projects.table %}
 
-                {% if projects.display_more %}
-                    <div class="all-submissions-table__more">
-                        <a href="{{ projects.url }}?lead={{ request.user.pk }}">{% trans "Show all" %}</a>
-                    </div>
-                {% endif %}
+                <div class="all-submissions-table__more">
+                    <a href="{{ projects.url }}?lead={{ request.user.pk }}">{% trans "Show all" %}</a>
+                </div>
             </div>
         {% endif %}
 

@@ -50,9 +50,9 @@ def render_actions(table, record):
 
 def render_title(record):
     try:
-        title = record.title
+        title = record.title_text_display
     except AttributeError:
-        title = record.submission.title
+        title = record.submission.title_text_display
     return title
 
 
@@ -73,7 +73,7 @@ class SubmissionsTable(tables.Table):
                 "class": "js-title",
             },
             "a": {
-                "data-tippy-content": lambda record: record.title,
+                "data-tippy-content": lambda record: render_title(record),
                 "data-tippy-placement": "top",
                 # Use after:content-[''] after:block to hide the default browser tooltip on Safari
                 # https://stackoverflow.com/a/43915246
@@ -196,11 +196,15 @@ class BaseAdminSubmissionsTable(SubmissionsTable):
 
     def render_screening_status(self, value):
         try:
-            status = value.get(default=True).title
+            status = value.get()
+            classname = "status-yes" if status.yes else "status-no text-red-500"
+            return format_html(
+                f"<span class='font-medium text-xs {classname}'>{'👍' if status.yes else '👎'} {status.title}</span>"
+            )
         except ScreeningStatus.DoesNotExist:
-            return format_html("<span>{}</span>", "Awaiting")
-        else:
-            return format_html("<span>{}</span>", status)
+            return format_html(
+                "<span class='text-xs text-fg-muted'>{}</span>", "Awaiting"
+            )
 
 
 class AdminSubmissionsTable(BaseAdminSubmissionsTable):
@@ -692,7 +696,7 @@ class ReviewerLeaderboardDetailTable(tables.Table):
                 "class": "js-title",
             },
             "a": {
-                "data-tippy-content": lambda record: record.submission.title,
+                "data-tippy-content": lambda record: render_title(record),
                 "data-tippy-placement": "top",
                 # Use after:content-[''] after:block to hide the default browser tooltip on Safari
                 # https://stackoverflow.com/a/43915246

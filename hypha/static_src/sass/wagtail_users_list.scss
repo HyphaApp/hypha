@@ -1,12 +1,12 @@
 .users-list {
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding-inline-start: 1rem;
+    padding-inline-end: 1rem;
 
     li:has(input[type="radio"]) {
         display: flex;
         align-items: center;
-        padding-top: 0.25rem;
-        padding-bottom: 0.25rem;
+        padding-block-start: 0.25rem;
+        padding-block-end: 0.25rem;
     }
 
     &__results {

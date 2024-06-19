@@ -33,7 +33,9 @@ class DjangoMessagesAdapter(AdapterBase):
 
         return _("Batch reviewers added: {reviewers_text} to ").format(
             reviewers_text=reviewers_text
-        ) + ", ".join(['"{title}"'.format(title=source.title) for source in sources])
+        ) + ", ".join(
+            ['"{title}"'.format(title=source.title_text_display) for source in sources]
+        )
 
     def handle_report_frequency(self, config, **kwargs):
         new_schedule = config.get_frequency_display()
@@ -56,7 +58,7 @@ class DjangoMessagesAdapter(AdapterBase):
         transition = "{submission} [{old_display} → {new_display}]."
         transition_messages = [
             transition.format(
-                submission=submission.title,
+                submission=submission.title_text_display,
                 old_display=transitions[submission.id],
                 new_display=submission.phase,
             )
@@ -72,7 +74,7 @@ class DjangoMessagesAdapter(AdapterBase):
         base_message = _("Successfully determined as {outcome}: ").format(
             outcome=outcome
         )
-        submissions_text = [str(submission.title) for submission in submissions]
+        submissions_text = [submission.title_text_display for submission in submissions]
         return base_message + ", ".join(submissions_text)
 
     def recipients(self, *args, **kwargs):

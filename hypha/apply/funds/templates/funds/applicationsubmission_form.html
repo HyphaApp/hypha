@@ -1,11 +1,11 @@
 {% extends "base-apply.html" %}
 {% load i18n static %}
-{% block title %}{% trans "Editing" %}: {{object.title }}{% endblock %}
+{% block title %}{% trans "Editing" %}: {% if object.public_id %}{{ object.public_id }}: {% endif %}{{object.title }}{% endblock %}
 {% block body_class %}bg-white{% endblock %}
 
 {% block content %}
     {% adminbar %}
-        {% slot header %}{% trans "Editing" %}: {{ object.title }}{% endslot %}
+        {% slot header %}{% trans "Editing" %}: {{ object.title }} <span class="text-gray-400">#{{ object.public_id|default:object.id }}</span>{% endslot %}
     {% endadminbar %}
 
     {% include "forms/includes/form_errors.html" with form=form %}

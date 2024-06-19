@@ -217,7 +217,7 @@ class BatchDeterminationCreateView(BaseStreamForm, CreateView):
                 messages.warning(
                     self.request,
                     'Unable to determine submission "{title}" as already determined'.format(
-                        title=submission.title
+                        title=submission.title_text_display
                     ),
                 )
             else:
@@ -262,7 +262,7 @@ class BatchDeterminationCreateView(BaseStreamForm, CreateView):
                         "A determination already exists for the following submissions and they have been excluded: {submissions}"
                     ).format(
                         submissions=", ".join(
-                            [submission.title for submission in excluded]
+                            [submission.title_text_display for submission in excluded]
                         ),
                     ),
                 )

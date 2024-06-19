@@ -6,7 +6,6 @@ from django.conf import settings
 from hypha.apply.determinations.models import Determination
 from hypha.apply.projects.models import Contract
 from hypha.apply.review.models import Review
-from hypha.apply.users.models import User
 
 from ..models import ALL, APPLICANT_PARTNERS, REVIEWER, TEAM
 
@@ -34,7 +33,7 @@ def display_author(activity, user) -> str:
         return settings.ORG_LONG_NAME
     if isinstance(activity.related_object, Review) and activity.source.user == user:
         return "Reviewer"
-    return activity.user.get_full_name_with_group()
+    return activity.user.get_display_name_with_group()
 
 
 @register.filter
@@ -117,46 +116,3 @@ def visibility_display(visibility: str, user) -> str:
         return f"{visibility} + {team_string}"
 
     return visibility
-
-
-@register.filter
-def source_type(value) -> str:
-    """Formats source type
-
-    For a given source type containing "submission", this will be converted
-    to "Submission" (ie. "application submission" -> "Submission").
-
-    Args:
-        value: the source type to be formatted
-
-    Returns:
-        A source type string with a capitalized first letter
-    """
-    if value and "submission" in value:
-        return "Submission"
-    return str(value).capitalize()
-
-
-@register.simple_tag(takes_context=True)
-def display_name_for_email(context: dict, user: User) -> str:
-    """Gets a user's display name when being used in an email
-
-    Primarily used to hide staff identities
-
-    Args:
-        user: the [`User`][hypha.apply.users.models.User] to get the display name for
-        context: the context provided by the template
-
-    Returns:
-        str: the display name to be used to address the user in question
-    """
-    recipient = context["recipient"]
-
-    if (
-        settings.HIDE_STAFF_IDENTITY
-        and user.is_org_faculty
-        and not recipient.is_org_faculty
-    ):
-        return settings.ORG_LONG_NAME
-    else:
-        return str(user)

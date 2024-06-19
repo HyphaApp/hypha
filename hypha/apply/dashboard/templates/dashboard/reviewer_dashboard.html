@@ -30,14 +30,11 @@
             <div class="wrapper wrapper--bottom-space">
 
                 {% trans "Your previous reviews" as review_heading %}
-                {% include "funds/includes/table_filter_and_search.html" with filter=my_reviewed.filterset filter_action=my_reviewed.url search_term=search_term search_action=my_reviewed.url use_search=True use_batch_actions=False heading=review_heading %}
                 {% render_table my_reviewed.table %}
 
-                {% if my_reviewed.display_more %}
-                    <div class="all-submissions-table__more">
-                        <a href="{{ my_reviewed.url }}?reviewers={{ request.user.pk }}">{% trans "Show all" %}</a>
-                    </div>
-                {% endif %}
+                <div class="all-submissions-table__more">
+                    <a href="{{ my_reviewed.url }}?reviewers={{ request.user.pk }}">{% trans "Show all" %}</a>
+                </div>
             </div>
         {% endif %}
 

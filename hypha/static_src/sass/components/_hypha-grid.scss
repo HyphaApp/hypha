@@ -1,4 +1,4 @@
-.grid {
+.hypha-grid {
     display: flex;
     flex-wrap: wrap;
 
@@ -25,7 +25,7 @@
 }
 
 @supports (display: grid) {
-    .grid {
+    .hypha-grid {
         display: grid;
         margin-block-end: 1rem;
         gap: 10px;

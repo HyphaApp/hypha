@@ -1,6 +1,7 @@
 import re
 
 from django import template
+from django.db.models import Q
 from django.utils.safestring import mark_safe
 
 from hypha.apply.funds.models import ApplicationSubmission
@@ -10,13 +11,17 @@ register = template.Library()
 
 @register.filter
 def submission_links(value):
-    # Match tags in the format #123 that is not preceeded and/or followed by a word character.
-    matches = re.findall(r"(?<![\w\&])\#(\d+)(?!\w)", value)
+    # regex to find #id in a string, which id can be alphanumeric, underscore, hyphen
+    matches = re.findall(r"(?<![\w\&])\#([\w-]+)(?!\w)", value)
     links = {}
     if matches:
-        for submission in ApplicationSubmission.objects.filter(id__in=matches):
-            links[rf"\#{submission.id}"] = (
-                f'<a href="{submission.get_absolute_url()}">{submission.title} <span class="mid-grey-text">#{submission.id}</span></a>'
+        numeric_ids = filter(str.isdigit, matches)
+        qs = ApplicationSubmission.objects.filter(
+            Q(id__in=numeric_ids) | Q(public_id__in=matches)
+        )
+        for submission in qs:
+            links[rf"\#{submission.public_id or submission.id}"] = (
+                f'<a href="{submission.get_absolute_url()}">{submission.title} <span class="text-gray-400">#{submission.public_id or submission.id}</span></a>'
             )
 
     if links:
@@ -24,10 +29,3 @@ def submission_links(value):
             value = re.sub(rf"(?<!\w){sid}(?!\w)", link, value)
 
     return mark_safe(value)
-
-
-@register.simple_tag
-def can_screen(submission):
-    if submission.is_archive:
-        return False
-    return True

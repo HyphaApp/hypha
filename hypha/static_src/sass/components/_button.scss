@@ -425,23 +425,15 @@
         line-height: 1.15;
     }
 
-    &--js-like-active {
-        font-weight: 600;
-        cursor: not-allowed;
-
+    &--like-active {
         svg {
             fill: $color--dark-blue;
-            cursor: not-allowed;
         }
     }
 
-    &--js-dislike-active {
-        font-weight: 600;
-        cursor: not-allowed;
-
+    &--dislike-active {
         svg {
             fill: $color--tomato;
-            cursor: not-allowed;
         }
     }
 }

@@ -23,7 +23,9 @@ class ActivityAdapter(AdapterBase):
     messages = {
         MESSAGES.TRANSITION: "handle_transition",
         MESSAGES.BATCH_TRANSITION: "handle_batch_transition",
-        MESSAGES.NEW_SUBMISSION: _("Submitted {source.title} for {source.page.title}"),
+        MESSAGES.NEW_SUBMISSION: _(
+            "Submitted {source.title_text_display} for {source.page.title}"
+        ),
         MESSAGES.EDIT_SUBMISSION: _("Edited"),
         MESSAGES.APPLICANT_EDIT: _("Edited"),
         MESSAGES.UPDATE_LEAD: _("Lead changed from {old_lead} to {source.lead}"),
@@ -69,10 +71,10 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.BATCH_ARCHIVE_SUBMISSION: "handle_batch_archive_submission",
         MESSAGES.BATCH_UPDATE_INVOICE_STATUS: "handle_batch_update_invoice_status",
         MESSAGES.ARCHIVE_SUBMISSION: _(
-            "{user} has archived the submission: {source.title}"
+            "{user} has archived the submission: {source.title_text_display}"
         ),
         MESSAGES.UNARCHIVE_SUBMISSION: _(
-            "{user} has unarchived the submission: {source.title}"
+            "{user} has unarchived the submission: {source.title_text_display}"
         ),
         MESSAGES.DELETE_INVOICE: _("Deleted an invoice"),
     }
@@ -159,14 +161,18 @@ class ActivityAdapter(AdapterBase):
 
     def handle_batch_delete_submission(self, sources, **kwargs):
         submissions = sources
-        submissions_text = ", ".join([submission.title for submission in submissions])
+        submissions_text = ", ".join(
+            [submission.title_text_display for submission in submissions]
+        )
         return _("Successfully deleted submissions: {title}").format(
             title=submissions_text
         )
 
     def handle_batch_archive_submission(self, sources, **kwargs):
         submissions = sources
-        submissions_text = ", ".join([submission.title for submission in submissions])
+        submissions_text = ", ".join(
+            [submission.title_text_display for submission in submissions]
+        )
         return _("Successfully archived submissions: {title}").format(
             title=submissions_text
         )
@@ -329,7 +335,20 @@ class ActivityAdapter(AdapterBase):
         )
 
     def handle_screening_statuses(self, source, old_status, **kwargs):
-        new_status = ", ".join([s.title for s in source.screening_statuses.all()])
-        return _("Screening decision from {old_status} to {new_status}").format(
-            old_status=old_status, new_status=new_status
-        )
+        new_status = source.get_current_screening_status()
+
+        if str(new_status) == old_status:
+            return
+
+        if new_status and old_status != "-":
+            return _(
+                'Updated screening decision from "{old_status}" to "{new_status}".'
+            ).format(old_status=old_status, new_status=new_status)
+        elif new_status:
+            return _('Added screening decision to "{new_status}".').format(
+                new_status=new_status
+            )
+        elif old_status != "-":
+            return _('Removed "{old_status}" screening decision.').format(
+                old_status=old_status
+            )

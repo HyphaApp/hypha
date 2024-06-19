@@ -1,0 +1,114 @@
+{% load i18n heroicons %}
+
+<div class="relative"
+     x-data="{ isOpen: false, openedWithKeyboard: false, leaveTimeout: null }"
+     @mouseleave.prevent="leaveTimeout = setTimeout(() => { isOpen = false }, 50)"
+     @mouseenter="leaveTimeout ? clearTimeout(leaveTimeout) : true"
+     @keydown.esc.prevent="isOpen = false, openedWithKeyboard = false"
+     @click.outside="isOpen = false, openedWithKeyboard = false"
+>
+    <button
+        class="p-2 w-full h-full inline-flex flex-col items-center rounded-lg transition-colors text-sm border
+               hover:border-light-blue focus-visible:border-light-blue
+               {% if current_status %}
+                   font-bold
+                   {% if type == "yes" %}button--like-active bg-light-blue/10{% else %} button--dislike-active bg-tomato/10 border-red-100{% endif %}
+               {% endif %}"
+
+        hx-post="{% url 'funds:submissions:partial-screening-card' submission.id %}"
+        hx-swap="outerHTML"
+        hx-trigger="click"
+        hx-target="#screening-status-{{ submission.id }}"
+        hx-vals='{"action": "{% if not current_status %}{{ default_status.id }}{% else %}clear{% endif %}"}'
+
+        {% if can_screen and screening_options.count > 1 %}
+            @mouseover="isOpen = true"
+            @focus="openedWithKeyboard = true"
+            @keydown.space.prevent="openedWithKeyboard = true"
+            @keydown.enter.prevent="openedWithKeyboard = true"
+            @keydown.down.prevent="openedWithKeyboard = true"
+            :class="isOpen ? 'ring-1' : '{% if type == "yes" %}border-light-blue/10  {% else %} border-tomato/10{% endif %}'"
+        {% endif %}
+
+        {% if current_status %}
+            hx-confirm='Are you sure you want to remove the "{{ current_status }}" screening decision?'
+            data-tippy-content="Remove"
+        {% else %}
+            data-tippy-content="Mark as {{ default_status }}"
+        {% endif %}
+    >
+        {% if type == "yes" %}
+            {% heroicon_solid "hand-thumb-up" size=30 class="mb-2 transition-colors fill-gray-800" aria_hidden=true %}
+        {% else %}
+            {% heroicon_solid "hand-thumb-down" size=30 class="mb-2 transition-colors" aria_hidden=true %}
+        {% endif %}
+        <span class="{% if current_status %}{% if type == "yes" %}text-dark-blue{% else %}text-tomato{% endif %}{% endif %} ">
+            {{ current_status|default_if_none:default_status }}
+        </span>
+
+    </button>
+
+    <!-- panel -->
+    {% if can_screen and screening_options.count > 1 %}
+        <div
+            class=" bg-white tras min-w-48 text-sm top absolute {% if type == 'yes' %}md:start-0 {% else %}end-0{% endif %} divide-y rounded border shadow-lg group-hover:absolute z-20"
+            x-cloak
+            role="menu"
+            x-show="isOpen || openedWithKeyboard"
+            {% comment %} x-transition.origin.top {% endcomment %}
+            x-transition:enter="origin-top transition ease-out duration-100"
+            x-transition:enter-start="opacity-0 scale-90 "
+            x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="origin-top transition ease-in duration-100"
+            x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-90"
+            x-trap="openedWithKeyboard"
+            @click.outside="isOpen = false, openedWithKeyboard = false"
+            @keydown.down.prevent="$focus.wrap().next()"
+            @keydown.up.prevent="$focus.wrap().previous()"
+        >
+            <header class="subheading border-b px-3 py-2 flex justify-between items-center gap-2">
+                <span class="SubMenuHeading font-medium text-inherit">Options</span>
+                <button type="button" @click='isOpen = false' class="appearance-none">
+                    {% heroicon_mini "x-mark" aria_hidden="true" width=16 height=16 class="stroke-1 hover:stroke-2" %}
+                </button>
+            </header>
+            <div class="divide-y font-semibold text-inherit">
+                {% for status in screening_options  %}
+                    {% if current_status.id == status.id %}
+                        <span class="text-gray-800 flex items-center gap-2 pe-2 py-2 ps-2 font-medium bg-gray-100">
+                            <span class="w-4">
+                                {% heroicon_mini "check" aria_hidden="true" size=18 class="stroke-2 me-1" %}
+                            </span>
+                            <span>{{ status }}</span>
+                        </span>
+                    {% else %}
+                        <a
+                            class="cursor-pointer text-gray-800 flex items-center gap-2 pe-2 py-2 hover:bg-gray-100 focus:bg-gray-100 {% if status.id == current_status.id %}ps-2 font-medium bg-gray-100{% else %} ps-8 font-normal {% endif %}"
+                            role='button'
+                            hx-post="{% url 'funds:submissions:partial-screening-card' object.id %}"
+                            hx-swap="outerHTML"
+                            hx-trigger="click"
+                            hx-target="#screening-status-{{ object.id }}"
+                            hx-vals='{"action": "{% if current_status.id != status.id %}{{ status.id }}{% endif %}"}'
+                        >
+                            <span>{{ status }}</span>
+                        </a>
+                    {% endif %}
+                {% endfor %}
+                {% if current_status %}
+                    <a
+                        class="flex ps-8 pe-3 cursor-pointer hover:bg-light-blue/10 py-3 font-normal text-red-600 whitespace-nowrap"
+                        role='button'
+                        hx-post="{% url 'funds:submissions:partial-screening-card' object.id %}"
+                        hx-swap="outerHTML"
+                        hx-trigger="click"
+                        hx-target="#screening-status-{{ object.id }}"
+                        hx-vals='{"action": "clear"}'
+                    >Remove Decision</a>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+</div>
+
