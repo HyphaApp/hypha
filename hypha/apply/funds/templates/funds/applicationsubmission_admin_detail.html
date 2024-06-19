@@ -36,7 +36,11 @@
 {% endblock %}
 
 {% block flags %}
-    {% include 'flags/flags.html' with submission=object user=request.user %}
+    <div class="sidebar__inner">
+        <h5>{% trans "Flags" %}</h5>
+
+        {% include 'flags/flags.html' with submission=object user=request.user %}
+    </div>
 {% endblock %}
 
 {% block reviews %}

@@ -122,11 +122,9 @@ from .tables import (
     RoundsFilter,
     RoundsTable,
     StaffAssignmentsTable,
-    StaffFlaggedSubmissionsTable,
     SubmissionFilterAndSearch,
     SubmissionReviewerFilterAndSearch,
     SummarySubmissionsTable,
-    UserFlaggedSubmissionsTable,
 )
 from .utils import (
     get_or_create_default_screening_statuses,
@@ -496,8 +494,6 @@ class SubmissionOverviewView(BaseAdminSubmissionsTable):
             for status, data in PHASES_MAPPING.items()
         }
 
-        staff_flagged = self.get_staff_flagged()
-
         return super().get_context_data(
             open_rounds=open_rounds,
             open_query=open_query,
@@ -506,26 +502,8 @@ class SubmissionOverviewView(BaseAdminSubmissionsTable):
             closed_query=closed_query,
             rounds_title=rounds_title,
             status_counts=grouped_statuses,
-            staff_flagged=staff_flagged,
             **kwargs,
         )
-
-    def get_staff_flagged(self):
-        qs = super().get_queryset().flagged_staff().order_by("-submit_time")
-        row_attrs = dict(
-            {"data-flag-type": "staff"}, **SummarySubmissionsTable._meta.row_attrs
-        )
-
-        limit = 5
-        return {
-            "table": SummarySubmissionsTable(
-                qs[:limit],
-                prefix="staff-flagged-",
-                attrs={"class": "all-submissions-table flagged-table"},
-                row_attrs=row_attrs,
-            ),
-            "display_more": qs.count() > limit,
-        }
 
 
 class SubmissionAdminListView(BaseAdminSubmissionsTable, DelegateableListView):
@@ -590,37 +568,6 @@ class SubmissionReviewerListView(BaseReviewerSubmissionsTable):
 class SubmissionListView(ViewDispatcher):
     admin_view = SubmissionAdminListView
     reviewer_view = SubmissionReviewerListView
-
-
-@method_decorator(staff_required, name="dispatch")
-class SubmissionStaffFlaggedView(BaseAdminSubmissionsTable):
-    table_class = StaffFlaggedSubmissionsTable
-    template_name = "funds/submissions_staff_flagged.html"
-
-    def get_queryset(self):
-        return (
-            self.filterset_class._meta.model.objects.current()
-            .for_table(self.request.user)
-            .flagged_staff()
-            .order_by("-submit_time")
-        )
-
-
-@method_decorator(login_required, name="dispatch")
-class SubmissionUserFlaggedView(UserPassesTestMixin, BaseAdminSubmissionsTable):
-    table_class = UserFlaggedSubmissionsTable
-    template_name = "funds/submissions_user_flagged.html"
-
-    def get_queryset(self):
-        return (
-            self.filterset_class._meta.model.objects.current()
-            .for_table(self.request.user)
-            .flagged_by(self.request.user)
-            .order_by("-submit_time")
-        )
-
-    def test_func(self):
-        return self.request.user.is_apply_staff or self.request.user.is_reviewer
 
 
 @method_decorator(login_required, name="dispatch")
