@@ -3,8 +3,9 @@
     <form
         class="form px-3"
         id="metaterms_form"
-        hx-target="this"
+        hx-target="#id_metaterms"
         hx-swap="outerHTML"
+        hx-select="#id_metaterms"
         method="POST"
         hx-post="{% url 'funds:submissions:metaterms_update' pk=object.pk %}"
     >
@@ -38,7 +39,7 @@
         <button
             class="button button--primary mt-6 mb-3"
             type="submit"
-            @click='open = false'
+            @click='metatermsForm = false'
         >
             {% trans "Update" %}
         </button>

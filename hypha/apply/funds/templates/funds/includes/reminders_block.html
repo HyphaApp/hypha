@@ -1,5 +1,5 @@
 {% load i18n heroicons %}
-<div class="sidebar__inner">
+<div class="sidebar__inner" id="id_reminders">
     <h5>{% trans "Reminders" %}</h5>
     {% regroup object.reminders.all by get_action_display as action_list %}
     <ul>
