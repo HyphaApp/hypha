@@ -1,11 +1,54 @@
-{% load i18n flag_tags %}
-<div class="sidebar__inner">
-    <h5>{% trans "Flags" %}</h5>
-    <div class="wrapper wrapper--sidebar-buttons">
-        <button class="button button--primary button--half-width button--flag {% if submission.is_archive %}is-disabled{% endif %} {% if submission|flagged_by:user %} flagged{% endif %}" data-id="{{ submission.id }}" data-type="user">{% trans "Flag" %}</button>
+{% load i18n flag_tags heroicons %}
+<form class="wrapper wrapper--sidebar-buttons flex gap-4" id="submission-flags">
+    {% with submission|flagged_by:user as is_flagged %}
+        <button
+            class="button button--secondary flex items-center gap-4 !px-2 !py-3 w-full"
+            {% if submission.is_archive %}
+                disabled=true
+            {% else %}
+                hx-post="{% url 'apply:submissions:flags:create_submission_flag' submission.id "user" %}"
+                hx-swap="outerHTML"
+                hx-target="#submission-flags"
+                {% if is_flagged %}
+                    data-tippy-content="Remove from your flagged submissions"
+                {% else %}
+                    data-tippy-content="Add to your flagged submissions"
+                {% endif %}
+            {% endif %}
+        >
+            {% if is_flagged %}
+                {% heroicon_solid "flag" class="inline-block align-text-bottom fill-amber-400" size=18 %}
+                <span>{% trans "Flagged" %}</span>
+            {% else %}
+                {% trans "Flag" %}
+            {% endif %}
+        </button>
+    {% endwith %}
 
-        {% if request.user.is_apply_staff %}
-            <button class="button button--primary button--half-width button--flag {% if submission.is_archive %}is-disabled{% endif %} {% if submission|flagged_staff %} flagged{% endif %}" data-id="{{ submission.id }}" data-type="staff">{% trans "Staff flag" %}</button>
-        {% endif %}
-    </div>
-</div>
+    {% if request.user.is_apply_staff %}
+        {% with submission|flagged_staff as is_flagged %}
+            <button
+                class="button button--secondary flex items-center gap-4 !px-2 !py-3 w-full whitespace-nowrap"
+                {% if submission.is_archive %}
+                    disabled=true
+                {% else %}
+                    hx-post="{% url 'apply:submissions:flags:create_submission_flag' submission.id "staff" %}"
+                    hx-swap="outerHTML"
+                    hx-target="#submission-flags"
+                    {% if is_flagged %}
+                        data-tippy-content="Remove staff flag"
+                    {% else %}
+                        data-tippy-content="Flag for staff review"
+                    {% endif %}
+                {% endif %}
+            >
+                {% if is_flagged %}
+                    {% heroicon_solid "flag" class="inline-block align-text-bottom fill-amber-500" size=18 %}
+                    <span>{% trans "Staff Flagged" %}</span>
+                {% else %}
+                    {% trans "Staff Flag" %}
+                {% endif %}
+            </button>
+        {% endwith %}
+    {% endif %}
+</form>
