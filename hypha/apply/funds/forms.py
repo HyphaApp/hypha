@@ -198,7 +198,6 @@ class BatchArchiveSubmissionForm(forms.Form):
 class UpdateReviewersForm(ApplicationSubmissionModelForm):
     reviewer_reviewers = forms.ModelMultipleChoiceField(
         queryset=User.objects.reviewers().only("pk", "full_name"),
-        widget=Select2MultiCheckboxesWidget(attrs={"data-placeholder": "Select..."}),
         label=_("External Reviewers"),
         required=False,
     )
@@ -206,6 +205,8 @@ class UpdateReviewersForm(ApplicationSubmissionModelForm):
     class Meta:
         model = ApplicationSubmission
         fields: list = []
+
+    reviewer_reviewers.widget.attrs.update({"data-placeholder": "Select..."})
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop("user")
@@ -432,10 +433,10 @@ def make_role_reviewer_fields():
 class UpdatePartnersForm(ApplicationSubmissionModelForm):
     partner_reviewers = forms.ModelMultipleChoiceField(
         queryset=User.objects.partners(),
-        widget=Select2MultiCheckboxesWidget(attrs={"data-placeholder": "Select..."}),
         label=_("Partners"),
         required=False,
     )
+    partner_reviewers.widget.attrs.update({"data-placeholder": "Select..."})
 
     class Meta:
         model = ApplicationSubmission
