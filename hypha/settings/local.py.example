@@ -2,9 +2,6 @@ CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
     },
-    'wagtailcache': {
-        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
-    },
     'django_file_form': {
         'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
         'LOCATION': 'database_cache',
@@ -26,9 +23,6 @@ CACHES = {
 # LOCAL_FILE_EMAIL = True
 
 # SECRET_KEY = 'CHANGEME!!!'
-
-# Enable Wagtail Cache.
-# WAGTAIL_CACHE = True
 
 # If you have a problem with 'CSRF cookie not set'.
 # CSRF_COOKIE_SAMESITE = None
