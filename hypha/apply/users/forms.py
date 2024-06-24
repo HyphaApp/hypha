@@ -164,7 +164,7 @@ class ProfileForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request", None)
         super().__init__(*args, **kwargs)
-        if not (self.instance.is_apply_staff or self.instance.is_finance):
+        if not self.instance.is_org_faculty:
             del self.fields["slack"]
 
         if self.request is not None:
