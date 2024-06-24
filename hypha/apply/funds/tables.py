@@ -140,7 +140,7 @@ class SubmissionsTable(tables.Table):
 
 class ReviewerSubmissionsTable(SubmissionsTable):
     class Meta(SubmissionsTable.Meta):
-        orderable = False
+        orderable = True
 
 
 class LabeledCheckboxColumn(tables.CheckBoxColumn):
