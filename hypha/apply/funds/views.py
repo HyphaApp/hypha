@@ -13,7 +13,7 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.models import Group
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.core.exceptions import PermissionDenied
-from django.db.models import Count, F, Q
+from django.db.models import Count, Q
 from django.forms import BaseModelForm
 from django.http import (
     FileResponse,
@@ -124,7 +124,6 @@ from .tables import (
     StaffAssignmentsTable,
     SubmissionFilterAndSearch,
     SubmissionReviewerFilterAndSearch,
-    SummarySubmissionsTable,
 )
 from .utils import (
     get_or_create_default_screening_statuses,
@@ -442,68 +441,6 @@ class AwaitingReviewSubmissionsListView(SingleTableMixin, ListView):
             self.request.user
         ).order_by("-submit_time")
         return submissions.for_table(self.request.user)
-
-
-@method_decorator(staff_required, name="dispatch")
-class SubmissionOverviewView(BaseAdminSubmissionsTable):
-    template_name = "funds/submissions_overview.html"
-    table_class = SummarySubmissionsTable
-    table_pagination = False
-    filter_action = reverse_lazy("funds:submissions:list")
-    search_action = reverse_lazy("funds:submissions:list")
-
-    def get_table_data(self):
-        limit = 5
-        return (
-            super()
-            .get_table_data()
-            .order_by(F("last_update").desc(nulls_last=True))[:limit]
-        )
-
-    def get_context_data(self, **kwargs):
-        limit = 6
-        base_query = (
-            RoundsAndLabs.objects.with_progress().active().order_by("-end_date")
-        )
-        can_export = can_export_submissions(self.request.user)
-        open_rounds = base_query.open()[:limit]
-        open_query = "?round_state=open"
-        closed_rounds = base_query.closed()[:limit]
-        closed_query = "?round_state=closed"
-        rounds_title = "All Rounds and Labs"
-
-        status_counts = dict(
-            ApplicationSubmission.objects.current()
-            .values("status")
-            .annotate(
-                count=Count("status"),
-            )
-            .values_list("status", "count")
-        )
-
-        grouped_statuses = {
-            status: {
-                "name": data["name"],
-                "count": sum(
-                    status_counts.get(status, 0) for status in data["statuses"]
-                ),
-                "url": reverse_lazy(
-                    "funds:submissions:status", kwargs={"status": status}
-                ),
-            }
-            for status, data in PHASES_MAPPING.items()
-        }
-
-        return super().get_context_data(
-            open_rounds=open_rounds,
-            open_query=open_query,
-            can_export=can_export,
-            closed_rounds=closed_rounds,
-            closed_query=closed_query,
-            rounds_title=rounds_title,
-            status_counts=grouped_statuses,
-            **kwargs,
-        )
 
 
 class SubmissionAdminListView(BaseAdminSubmissionsTable, DelegateableListView):
