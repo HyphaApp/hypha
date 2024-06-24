@@ -118,6 +118,7 @@ from .tables import (
     ReviewerLeaderboardDetailTable,
     ReviewerLeaderboardFilter,
     ReviewerLeaderboardTable,
+    ReviewerSubmissionsTable,
     RoundsFilter,
     RoundsTable,
     StaffAssignmentsTable,
@@ -399,7 +400,7 @@ class BatchProgressSubmissionView(DelegatedViewMixin, FormView):
 
 
 class BaseReviewerSubmissionsTable(BaseAdminSubmissionsTable):
-    table_class = AdminSubmissionsTable
+    table_class = ReviewerSubmissionsTable
     filterset_class = SubmissionReviewerFilterAndSearch
 
     def get_queryset(self):
@@ -416,12 +417,7 @@ class BaseReviewerSubmissionsTable(BaseAdminSubmissionsTable):
                 .for_reviewer_settings(self.request.user, reviewer_settings)
                 .order_by("-submit_time")
             )
-        return (
-            super()
-            .get_queryset()
-            .reviewed_by(self.request.user)
-            .order_by("-submit_time")
-        )
+        return super().get_queryset().reviewed_by(self.request.user)
 
 
 @method_decorator(login_required, name="dispatch")
