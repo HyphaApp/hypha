@@ -1,5 +1,5 @@
 {% extends "base-apply.html" %}
-{% load i18n %}
+{% load i18n static %}
 {% block title %}{{ title }}{% endblock %}
 {% block content %}
 
@@ -43,4 +43,7 @@
             <button class="button button--submit button--top-space button--primary" type="submit" name="submit">{% trans "Submit" %}</button>
         </form>
     </div>
+{% endblock %}
+{% block extra_js %}
+    <script src="{% static 'js/review-form-actions.js' %}"></script>
 {% endblock %}
