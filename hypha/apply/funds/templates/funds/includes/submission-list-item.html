@@ -156,10 +156,13 @@
         {% comment %} Comment Count {% endcomment %}
         <span class="inline-block w-10">
             {% if s.comment_count %}
-                <span class="flex items-center">
-                    {% heroicon_outline "chat-bubble-left" aria_hidden="true" size=16 class="stroke-2 me-1 inline-block" %}
+                <a class="flex items-center text-gray-900 group hover:text-light-blue transition-colors"
+                   title="{% trans "View communications" %}"
+                   href="{% url "funds:submissions:detail" s.id %}?ref=all-alt#communications"
+                >
+                    {% heroicon_outline "chat-bubble-left" aria_hidden="true" size=16 class="stroke-2 me-1 inline-block group-hover:stroke-light-blue" %}
                     <span class="inline-block font-medium">{{ s.comment_count }}</span>
-                </span>
+                </a>
             {% endif %}
         </span>
     </div>
