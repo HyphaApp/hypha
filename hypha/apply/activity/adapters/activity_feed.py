@@ -49,6 +49,9 @@ class ActivityAdapter(AdapterBase):
         ),
         MESSAGES.CREATED_PROJECT: _("Created project"),
         MESSAGES.PROJECT_TRANSITION: "handle_project_transition",
+        MESSAGES.UPDATE_PROJECT_TITLE: _(
+            "{user} has updated the project title from {old_title} to {source.title}"
+        ),
         MESSAGES.UPDATE_PROJECT_LEAD: _(
             "Lead changed from {old_lead} to {source.lead}"
         ),
