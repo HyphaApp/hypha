@@ -69,8 +69,6 @@ INSTALLED_APPS = [
     "drf_yasg",
     "rest_framework",
     "rest_framework_api_key",
-    "wagtailcache",
-    "wagtail_purge",
     "django_file_form",
     "hijack",
     "elevate",  # https://django-elevate.readthedocs.io/
