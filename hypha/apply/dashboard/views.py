@@ -74,7 +74,7 @@ class MyFlaggedMixin:
 
 
 class AdminDashboardView(MyFlaggedMixin, TemplateView):
-    template_name = "dashboard/dashboard.html"
+    template_name = "dashboard/staff_dashboard.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
