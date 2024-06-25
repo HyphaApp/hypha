@@ -1,38 +1,98 @@
 (function () {
     "use strict";
 
-    if (typeof Cookies !== "undefined") {
-        const cookieconsent = document.querySelector(".cookieconsent");
+    // Used when an analytics cookie notice is enabled
+    const ACCEPT = "accept";
+    const DECLINE = "decline";
+    const ACK = "ack"; // Only for essential cookies
 
-        if (
-            typeof Cookies.get("cookieconsent") === "undefined" &&
-            cookieconsent
-        ) {
-            cookieconsent.classList.add("js-cookieconsent-open");
-        }
+    // Constant key used for localstorage
+    const COOKIECONSENT_KEY = "cookieconsent";
 
-        const cookie_buttons = Array.prototype.slice.call(
-            document.querySelectorAll("button[data-consent]")
-        );
-        const sitedomain = window.location.hostname.split(".").slice(-2);
-        const cookiedomain = sitedomain.join(".");
-        let cookie_options = [];
-        cookie_options["domain"] = cookiedomain;
-        cookie_options["sameSite"] = "strict";
-        cookie_options["expires"] = 365;
-        if (window.location.protocol === "https:") {
-            cookie_options["secure"] = true;
-        }
+    // Class constants
+    const CLASS_COOKIECONSENT = "cookieconsent";
+    const CLASS_LEARNMORE = "cookieconsent__learnmore";
+    const CLASS_COOKIEBRIEF = "cookieconsent__brief";
+    const CLASS_COOKIECONTENT = "cookieconsent__content";
+    const CLASS_JS_CONSENT_OPEN = "js-cookieconsent-open";
+    const CLASS_JS_LEARNMORE = "js-cookieconsent-show-learnmore";
+    const CLASS_JS_LEARNMORE_EXPAND = `${CLASS_JS_LEARNMORE}-expand`;
 
-        cookie_buttons.forEach(function (button) {
-            button.addEventListener("click", function () {
-                if (button.getAttribute("data-consent") == "true") {
-                    Cookies.set("cookieconsent", "accept", cookie_options);
-                } else {
-                    Cookies.set("cookieconsent", "decline", cookie_options);
-                }
-                cookieconsent.classList.remove("js-cookieconsent-open");
-            });
-        });
+    const cookieconsent = document.querySelector(`.${CLASS_COOKIECONSENT}`);
+    if (!cookieconsent) return;
+
+    const cookieButtons = cookieconsent.querySelectorAll(
+        "button[data-consent]"
+    );
+    const learnMoreToggles = cookieconsent.querySelectorAll(
+        ".button--learn-more"
+    );
+
+    function getConsentValue() {
+        return localStorage.getItem(COOKIECONSENT_KEY);
     }
+
+    function setConsentValue(value) {
+        if ([ACCEPT, DECLINE, ACK].includes(value)) {
+            localStorage.setItem(COOKIECONSENT_KEY, value);
+        } else {
+            // If for whatever reason the value is not in the predefined values, assume decline
+            localStorage.setItem(COOKIECONSENT_KEY, DECLINE);
+        }
+    }
+
+    function openConsentPrompt() {
+        cookieconsent.classList.add(CLASS_JS_CONSENT_OPEN);
+    }
+
+    function closeConsentPrompt() {
+        cookieconsent.classList.remove(CLASS_JS_CONSENT_OPEN);
+    }
+
+    // Expose consent prompt opening/closing globally (ie. to use in a footer)
+    window.openConsentPrompt = openConsentPrompt;
+    window.closeConsentPrompt = closeConsentPrompt;
+
+    function toggleLearnMore(open) {
+        const content = cookieconsent.querySelector(`.${CLASS_COOKIECONTENT}`);
+        if (open) {
+            content.classList.add(CLASS_JS_LEARNMORE);
+            cookieconsent.classList.add(CLASS_JS_LEARNMORE_EXPAND);
+        } else {
+            content.classList.remove(CLASS_JS_LEARNMORE);
+            cookieconsent.classList.remove(CLASS_JS_LEARNMORE_EXPAND);
+        }
+        setInputTabIndex(`.${CLASS_LEARNMORE}`, open ? 0 : -1);
+        setInputTabIndex(`.${CLASS_COOKIEBRIEF}`, open ? -1 : 0);
+    }
+
+    // Adds "tabability" to menu buttons/toggles
+    function setInputTabIndex(wrapperClassSelector, tabValue) {
+        const wrapper = cookieconsent.querySelector(wrapperClassSelector);
+        const tabables = wrapper.querySelectorAll("button, input");
+        tabables.forEach((element) => (element.tabIndex = tabValue));
+    }
+
+    // Open the prompt if consent value is undefined OR if analytics has been added since the user ack'd essential cookies
+    if (
+        getConsentValue() == undefined ||
+        (getConsentValue() === ACK && cookieButtons.length > 1)
+    ) {
+        openConsentPrompt();
+    }
+
+    cookieButtons.forEach(function (button) {
+        button.addEventListener("click", function () {
+            const buttonValue = button.getAttribute("data-consent");
+            setConsentValue(buttonValue);
+            closeConsentPrompt();
+        });
+    });
+
+    learnMoreToggles.forEach(function (button) {
+        button.addEventListener("click", function () {
+            const buttonValue = button.getAttribute("show-learn-more");
+            toggleLearnMore(buttonValue === "true");
+        });
+    });
 })();
