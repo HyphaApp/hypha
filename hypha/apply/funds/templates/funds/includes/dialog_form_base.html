@@ -9,7 +9,6 @@
     id="{% if form_id %}{{ form_id }}{% else %}{{ form.name }}{% endif %}"
     enctype="multipart/form-data"
     {% if action %}action="{{ action }}"{% endif %}>
-<!--    hx-on::after-request="if(event.detail.successful){leadForm = false, console.log(leadForm)}",>-->
 
     {% csrf_token %}
 
@@ -41,13 +40,18 @@
         {% trans "Delete" as delete %}
         <button
             class="button button--{% if invert %}white{% elif value == delete %}warning{% else %}primary{% endif %}"
-            type="submit"
-            {% if data_var %}
-                @click="{{ data_var }}=false"
-            {% endif %}
-        >
+            type="submit">
             {{ value }}
         </button>
     </div>
 
 </form>
+
+<script>
+    document.addEventListener('htmx:afterRequest', function (event) {
+        if (event.detail.requestConfig.verb === 'post' && event.detail.successful) {
+            document.dispatchEvent(new CustomEvent('htmx:{{ data_var }}'));
+        }
+    });
+</script>
+

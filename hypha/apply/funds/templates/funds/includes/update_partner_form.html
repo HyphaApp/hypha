@@ -8,6 +8,12 @@
         method="POST"
         hx-post="{% url 'funds:submissions:partners_update' pk=object.pk %}"
     >
+        {% csrf_token %}
+        {{ form.media }}
+        {% for hidden in form.hidden_fields %}
+            {{ hidden }}
+        {% endfor %}
+
         {% if form.errors %}
             {% for field in form %}
                 {% for error in field.errors %}
@@ -38,7 +44,6 @@
         <button
             class="button button--primary mt-6 mb-3"
             type="submit"
-            @click='partnerForm = false'
         >
             {% trans "Update" %}
         </button>
@@ -58,4 +63,11 @@
             allowHTML: true,
         });
     });
+
+    document.addEventListener('htmx:afterRequest', function (event) {
+        if (event.detail.requestConfig.verb === 'post' && event.detail.successful) {
+            document.dispatchEvent(new CustomEvent('htmx:partnersUpdated'));
+        }
+    });
+
 </script>
