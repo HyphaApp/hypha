@@ -89,12 +89,12 @@
 
     <div class="sidebar__separator mt-4">{% trans "Assign" %}</div>
 
-    <div class="wrapper wrapper--sidebar-buttons mt-2" x-data="{ leadForm: false, partnerForm: false, reviewerForm:false }">
-        <a class="button button--half-width button--white" @click="reviewerForm = true" hx-get="{% url 'funds:submissions:reviewers_update' pk=object.pk %}" hx-target="#reviewers_form">{% trans "Reviewers" %}</a>
-        <dialog x-show="reviewerForm" x-htmldialog.noscroll="reviewerForm = false" class="w-[580px]">
+    <div class="wrapper wrapper--sidebar-buttons mt-2" x-data="{ closeReviewersOutside(e){if (e.currentTarget == e.target){$refs.dialogReviewers.close()}}, closePartnersOutside(e){if (e.currentTarget == e.target){$refs.dialogPartners.close()}}, closeLeadOutside(e){if (e.currentTarget == e.target){$refs.dialogLead.close()}} }">
+        <a class="button button--half-width button--white" @click="$refs.dialogReviewers.showModal()" hx-get="{% url 'funds:submissions:reviewers_update' pk=object.pk %}" hx-target="#reviewers_form">{% trans "Reviewers" %}</a>
+        <dialog x-ref="dialogReviewers" @click="closeReviewersOutside" x-init="document.addEventListener('htmx:reviewersUpdated', (event) => {$refs.dialogReviewers.close()});" class="w-[580px]">
             <div class="dialog-header flex justify-between items-center border-block-end bg-light-blue p-4 align-middle">
                 <span class="font-bold text-lg text-white">{% trans "Update Reviewers" %}</span>
-                <button @click="reviewerForm = false" class="text-white font-bold">X</button>
+                <button @click="$refs.dialogReviewers.close()" class="text-white font-bold">X</button>
             </div>
             <div id="reviewers_form">
                 <div class="animate-pulse">
@@ -104,11 +104,12 @@
             </div>
         </dialog>
 
-        <a class="button button--half-width button--white" @click="partnerForm = true" hx-get="{% url 'funds:submissions:partners_update' pk=object.pk %}" hx-target="#partners_form">{% trans "Partners" %}</a>
-        <dialog x-show="partnerForm" x-htmldialog.noscroll="partnerForm = false" class="w-[580px]">
+
+        <a class="button button--half-width button--white" @click="$refs.dialogPartners.showModal()" hx-get="{% url 'funds:submissions:partners_update' pk=object.pk %}" hx-target="#partners_form">{% trans "Partners" %}</a>
+        <dialog x-ref="dialogPartners" @click="closePartnersOutside" x-init="document.addEventListener('htmx:partnersUpdated', (event) => {$refs.dialogPartners.close()});" class="w-[580px]">
             <div class="dialog-header flex justify-between items-center border-block-end bg-light-blue p-4 align-middle">
                 <span class="font-bold text-lg text-white">{% trans "Update Partners" %}</span>
-                <button @click="partnerForm = false" class="text-white font-bold">X</button>
+                <button @click="$refs.dialogPartners.close()" class="text-white font-bold">X</button>
             </div>
             <div id="partners_form">
                 <div class="animate-pulse">
@@ -118,11 +119,11 @@
             </div>
         </dialog>
 
-        <a class="button button--half-width button--white" @click="leadForm = true" hx-get="{% url 'funds:submissions:lead_update' pk=object.pk %}" hx-target="#lead_form">{% trans "Lead" %}</a>
-        <dialog x-show="leadForm" x-htmldialog.noscroll="leadForm = false" class="w-[580px]">
+        <a class="button button--half-width button--white" @click="$refs.dialogLead.showModal()" hx-get="{% url 'funds:submissions:lead_update' pk=object.pk %}" hx-target="#lead_form">{% trans "Lead" %}</a>
+        <dialog x-ref="dialogLead" @click="closeLeadOutside" x-init="document.addEventListener('htmx:leadForm', (event) => {$refs.dialogLead.close()});" class="w-[580px]">
             <div class="dialog-header flex justify-between items-center border-block-end bg-light-blue p-4 align-middle">
                 <span class="font-bold text-lg text-white">{% trans "Assign Lead" %}</span>
-                <button @click="leadForm = false" class="text-white font-bold">X</button>
+                <button @click="$refs.dialogLead.close()" class="text-white font-bold">X</button>
             </div>
             <div id="lead_form">
                 <div class="animate-pulse">
