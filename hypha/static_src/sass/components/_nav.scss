@@ -5,16 +5,35 @@
     font-weight: $weight--semibold;
 
     &--primary {
+        display: none;
         justify-content: center;
         flex-direction: column;
 
         @include media-query(md) {
+            display: flex;
             gap: 2rem;
             flex-direction: row;
         }
 
         @include media-query(lg) {
             gap: 3rem;
+        }
+    }
+
+    &--mobile {
+        @include media-query(md) {
+            display: none;
+        }
+
+        &[open] {
+            outline: 1px solid $color--light-blue-90;
+        }
+
+        summary {
+            &::-webkit-details-marker,
+            &::marker {
+                display: none;
+            }
         }
     }
 

@@ -1,7 +1,7 @@
 {% load i18n apply_tags heroicons %}
 
 {% if request.user.is_authenticated %}
-    <nav role="navigation" aria-label="Primary">
+    <nav aria-label="Primary">
         <ul class="nav nav--primary" role="menubar">
             {% primary_navigation_items request.user as nav_items %}
             {% for item in nav_items %}
@@ -25,6 +25,7 @@
                             </span>
                         </a>
                         <div
+                            role="presentation"
                             x-cloak
                             x-trap.noautofocus="open"
                             x-on:keydown.escape="open = false"
@@ -42,6 +43,7 @@
                             {% for sub_item in item.sub_items %}
                                 <a
                                     href="{{ sub_item.url }}"
+                                    role="menuitem"
                                     class="pr-4 py-3 block font-normal hover:bg-slate-100
                                            focus-visible:outline-dashed outline-1 transition-colors
                                            {% if sub_item.url == request.path %}
@@ -65,5 +67,39 @@
                 </li>
             {% endfor %}
         </ul>
+
+        <details class="nav nav--mobile p-2">
+            <summary class="text-center">
+                {% trans "Menu" %}
+                {% heroicon_solid "bars-3" aria_hidden="true" class="inline align-bottom ms-1" %}
+            </summary>
+            <ul role="menubar" class="flex flex-col gap-2">
+                {% primary_navigation_items request.user as nav_items %}
+                {% for item in nav_items %}
+                    <li role="presentation">
+                        {% if item.sub_items %}
+                            <a href="{{item.url}}" role="menuitem" class="pb-2 block">
+                                {{ item.title }}
+                            </a>
+                            <ul class="flex flex-col gap-2 ps-4">
+                                {% for sub_item in item.sub_items %}
+                                    <li class="" role="presentation">
+                                        <a class="" href="{{ sub_item.url }}" role="menuitem">
+                                            {{ sub_item.title }}
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <a class="" href="{{ item.url }}" role="menuitem"
+                            >
+                                {{ item.title }}
+                            </a>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </details>
+
     </nav>
 {% endif %}

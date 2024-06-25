@@ -41,10 +41,8 @@
             border: 1px solid $color--mid-grey;
             padding: 0.5rem 1.2rem;
 
-            &:focus {
-                color: $color--light-blue;
-            }
-
+            &:active,
+            &:focus,
             &:hover {
                 color: $color--white;
             }
@@ -98,10 +96,8 @@
         color: $color--light-blue;
         border: 1px solid $color--mid-grey;
 
-        &:focus {
-            color: $color--light-blue;
-        }
-
+        &:active,
+        &:focus,
         &:hover {
             color: $color--white;
         }
