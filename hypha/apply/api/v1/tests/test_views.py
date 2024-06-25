@@ -78,7 +78,7 @@ class TestCommentEdit(TestCase):
 
         self.assertEqual(Activity.objects.count(), 1)
 
-    def test_staff_can_change_visibility(self):
+    def test_staff_can_not_change_visibility(self):
         user = StaffFactory()
         comment = CommentFactory(user=user, visibility=APPLICANT)
         self.client.force_login(user)
@@ -93,7 +93,7 @@ class TestCommentEdit(TestCase):
         )
 
         self.assertEqual(response.status_code, 200, response.json())
-        self.assertEqual(response.json()["visibility"], ALL)
+        self.assertEqual(response.json()["visibility"], APPLICANT)
 
     def test_out_of_order_does_nothing(self):
         user = ApplicantFactory()  # any role assigned user
