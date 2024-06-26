@@ -261,12 +261,6 @@ CACHES = {
         "BACKEND": "django.core.cache.backends.db.DatabaseCache",
         "LOCATION": "database_cache",
     },
-    "wagtailcache": {
-        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
-        "LOCATION": "database_cache",
-        "KEY_PREFIX": "wagtailcache",
-        "TIMEOUT": CACHE_CONTROL_MAX_AGE,
-    },
 }
 
 # Use a more permanent cache for django-file-form.
@@ -300,7 +294,6 @@ MEDIA_URL = env.str("MEDIA_URL", "/media/")
 
 # Wagtail settings
 
-WAGTAIL_CACHE_TIMEOUT = CACHE_CONTROL_MAX_AGE
 WAGTAIL_FRONTEND_LOGIN_URL = "/auth/"
 WAGTAIL_SITE_NAME = "hypha"
 WAGTAILIMAGES_IMAGE_MODEL = "images.CustomImage"
@@ -339,8 +332,6 @@ WAGTAILSEARCH_BACKENDS = {
         "BACKEND": "wagtail.search.backends.database",
     },
 }
-
-WAGTAIL_CACHE_BACKEND = "wagtailcache"
 
 # Cloudflare cache invalidation.
 # See https://docs.wagtail.io/en/v2.8/reference/contrib/frontendcache.html
