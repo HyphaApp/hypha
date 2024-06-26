@@ -3,5 +3,5 @@
     <p class="mt-0">{% trans "This will create a new project. This cannot be undone." %}</p>
     <p class="mb-2">{% trans "A lead is required to create a project, select the lead below." %}</p>
     {% url 'funds:submissions:create_project' pk=object.pk as project_creation_url %}
-    {% include 'funds/includes/dialog_form_base.html' with form=form value=value url=project_creation_url %}
+    {% include 'funds/includes/dialog_form_base.html' with form=form value=value url=project_creation_url data_var="projectCreated" %}
 </div>
