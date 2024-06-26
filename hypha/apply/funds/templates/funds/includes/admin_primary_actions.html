@@ -3,15 +3,15 @@
 <h5>{% trans "Actions to take" %}</h5>
 
 {% if object.is_archive %}
-    <div x-data="{ unarchiveForm: false }">
-        <a class="button button--bottom-space button--primary" @click="unarchiveForm = true" hx-get="{% url 'funds:submissions:unarchive' pk=object.pk %}" hx-target="#unarchive_form">
+    <div x-data="{ closeUnarchiveOutside(e){if (e.currentTarget == e.target){$refs.dialogUnarchive.close()}}}">
+        <a class="button button--bottom-space button--primary" @click="$refs.dialogUnarchive.showModal()" hx-get="{% url 'funds:submissions:unarchive' pk=object.pk %}" hx-target="#unarchive_form">
             {% heroicon_outline "lock-open" aria_hidden="true" size=16 stroke_width=2 class="inline align-baseline me-1" %}
             {% trans "Unarchive Submission" %}
         </a>
-        <dialog x-show="unarchiveForm" x-htmldialog.noscroll="unarchiveForm = false" class="w-[580px]">
+        <dialog x-ref="dialogUnarchive" @click="closeUnarchiveOutside" x-init="document.addEventListener('htmx:unarchived', (event) => {$refs.dialogUnarchive.close()});" class="w-[580px]">
             <div class="dialog-header flex justify-between items-center border-block-end bg-light-blue p-4 align-middle">
                 <span class="font-bold text-lg text-white">{% trans "Unarchive Submission" %}</span>
-                <button @click="unarchiveForm = false" class="text-white font-bold">X</button>
+                <button @click="$refs.dialogUnarchive.close()" class="text-white font-bold">X</button>
             </div>
             <div id="unarchive_form">
                 <div class="animate-pulse">
@@ -26,14 +26,14 @@
 
     {% if PROJECTS_ENABLED %}
         {% if object.accepted_for_funding and not object.project %}
-            <div x-data="{ projectForm: false }">
-                <a class="button button--bottom-space button--primary button--full-width" @click="projectForm = true" hx-get="{% url 'funds:submissions:create_project' pk=object.pk %}" hx-target="#project_form">
+            <div x-data="{ closeProjectFormOutside(e){if (e.currentTarget == e.target){$refs.dialogProjectForm.close()}}}">
+                <a class="button button--bottom-space button--primary button--full-width" @click="$refs.dialogProjectForm.showModal()" hx-get="{% url 'funds:submissions:create_project' pk=object.pk %}" hx-target="#project_form">
                     {% trans "Create Project" %}
                 </a>
-                <dialog x-show="projectForm" x-htmldialog.noscroll="projectForm = false" class="w-[580px]">
+                <dialog x-ref="dialogProjectForm" @click="closeProjectFormOutside" x-init="document.addEventListener('htmx:projectCreated', (event) => {$refs.dialogProjectForm.close()});" class="w-[580px]">
                     <div class="dialog-header flex justify-between items-center border-block-end bg-light-blue p-4 align-middle">
                         <span class="font-bold text-lg text-white">{% trans "Create Project" %}</span>
-                        <button @click="projectForm = false" class="text-white font-bold">X</button>
+                        <button @click="$refs.dialogProjectForm.close()" class="text-white font-bold">X</button>
                     </div>
                     <div id="project_form">
                         <div class="animate-pulse">
@@ -69,14 +69,14 @@
     {% endif %}
 
     {% show_progress_button request.user object as show_progress_form %}
-    <div x-data="{ progressForm: false }">
-        <a class="button button--primary button--full-width {% if show_progress_form %}is-not-disabled{% else %}is-disabled{% endif %}" @click="progressForm = true" hx-get="{% url 'funds:submissions:progress' pk=object.pk %}" hx-target="#progress_form">
+    <div x-data="{ closeProgressFormOutside(e){if (e.currentTarget == e.target){$refs.dialogProgress.close()}}}">
+        <a class="button button--primary button--full-width {% if show_progress_form %}is-not-disabled{% else %}is-disabled{% endif %}" @click="$refs.dialogProgress.showModal()" hx-get="{% url 'funds:submissions:progress' pk=object.pk %}" hx-target="#progress_form">
             {% trans "Update status" %}
         </a>
-        <dialog x-show="progressForm" x-htmldialog.noscroll="progressForm = false" class="w-[580px]">
+        <dialog x-ref="dialogProgress" @click="closeProgressFormOutside" x-init="document.addEventListener('htmx:statusUpdated', (event) => {$refs.dialogProgress.close()});" class="w-[580px]">
             <div class="dialog-header flex justify-between items-center border-block-end bg-light-blue p-4 align-middle">
                 <span class="font-bold text-lg text-white">{% trans "Update status" %}</span>
-                <button @click="progressForm = false" class="text-white font-bold">X</button>
+                <button @click="$refs.dialogProgress.close()" class="text-white font-bold">X</button>
             </div>
             <div id="progress_form">
                 <div class="animate-pulse">
@@ -134,15 +134,15 @@
         </dialog>
     </div>
 
-    <details class="mt-4" x-data="{ archiveForm: false, reminderForm: false, metatermsForm: false }">
+    <details class="mt-4" x-data="{closeArchiveOutside(e){if (e.currentTarget == e.target){$refs.dialogArchive.close()}}, closeReminderOutside(e){if (e.currentTarget == e.target){$refs.dialogReminder.close()}}, closeMetaTermsOutside(e){if (e.currentTarget == e.target){$refs.dialogMetaTerms.close()}} }">
         <summary class="sidebar__separator sidebar__separator--medium">{% trans "More actions" %}</summary>
         <a class="button button--white button--full-width button--bottom-space" href="{% url 'funds:submissions:revisions:list' submission_pk=object.id %}">{% trans "Revisions" %}</a>
 
-        <a class="button button--white button--full-width button--bottom-space" @click="metatermsForm = true" hx-get="{% url 'funds:submissions:metaterms_update' pk=object.pk %}" hx-target="#metaterms_form">{% trans "Meta Terms" %}</a>
-        <dialog x-show="metatermsForm" x-htmldialog.noscroll="metatermsForm = false" class="w-[580px]">
+        <a class="button button--white button--full-width button--bottom-space" @click="$refs.dialogMetaTerms.showModal()" hx-get="{% url 'funds:submissions:metaterms_update' pk=object.pk %}" hx-target="#metaterms_form">{% trans "Meta Terms" %}</a>
+        <dialog x-ref="dialogMetaTerms" @click="closeMetaTermsOutside" x-init="document.addEventListener('htmx:metaTermsUpdated', (event) => {$refs.dialogMetaTerms.close()});" class="w-[580px]">
             <div class="dialog-header flex justify-between items-center border-block-end bg-light-blue p-4 align-middle">
                 <span class="font-bold text-lg text-white">{% trans "Update Meta Terms" %}</span>
-                <button @click="metatermsForm = false" class="text-white font-bold">X</button>
+                <button @click="$refs.dialogMetaTerms.close()" class="text-white font-bold">X</button>
             </div>
             <div id="metaterms_form">
                 <div class="animate-pulse">
@@ -152,11 +152,11 @@
             </div>
         </dialog>
 
-        <a class="button button--white button--full-width button--bottom-space" @click="reminderForm = true" hx-get="{% url 'funds:submissions:create_reminder' pk=object.pk %}" hx-target="#reminder_form">{% trans "Create Reminder" %}</a>
-        <dialog x-show="reminderForm" x-htmldialog.noscroll="reminderForm = false" class="w-[580px]">
+        <a class="button button--white button--full-width button--bottom-space" @click="$refs.dialogReminder.showModal()" hx-get="{% url 'funds:submissions:create_reminder' pk=object.pk %}" hx-target="#reminder_form">{% trans "Create Reminder" %}</a>
+        <dialog x-ref="dialogReminder" @click="closeReminderOutside" x-init="document.addEventListener('htmx:reminderUpdated', (event) => {$refs.dialogReminder.close()});" class="w-[580px]">
             <div class="dialog-header flex justify-between items-center border-block-end bg-light-blue p-4 align-middle">
                 <span class="font-bold text-lg text-white">{% trans "Create Reminder" %}</span>
-                <button @click="reminderForm = false" class="text-white font-bold">X</button>
+                <button @click="$refs.dialogReminder.close()" class="text-white font-bold">X</button>
             </div>
             <div id="reminder_form">
                 <div class="animate-pulse">
@@ -167,14 +167,14 @@
         </dialog>
 
         {% if can_archive %}
-            <a class="button button--white button--full-width button--bottom-space" @click="archiveForm = true" hx-get="{% url 'funds:submissions:archive' pk=object.pk %}" hx-target="#archive_form">
+            <a class="button button--white button--full-width button--bottom-space" @click="$refs.dialogArchive.showModal()" hx-get="{% url 'funds:submissions:archive' pk=object.pk %}" hx-target="#archive_form">
                 {% heroicon_outline "lock-closed" aria_hidden="true" size=15 stroke_width=2 class="inline align-baseline me-1" %}
                 {% trans "Archive Submission" %}
             </a>
-            <dialog x-show="archiveForm" x-htmldialog.noscroll="archiveForm = false" class="w-[580px]">
+            <dialog x-ref="dialogArchive" @click="closeArchiveOutside" x-init="document.addEventListener('htmx:archived', (event) => {$refs.dialogArchive.close()});" class="w-[580px]">
                 <div class="dialog-header flex justify-between items-center border-block-end bg-light-blue p-4 align-middle">
                     <span class="font-bold text-lg text-white">{% trans "Archive Submission" %}</span>
-                    <button @click="archiveForm = false" class="text-white font-bold">X</button>
+                    <button @click="$refs.dialogArchive.close()" class="text-white font-bold">X</button>
                 </div>
                 <div id="archive_form">
                     <div class="animate-pulse">

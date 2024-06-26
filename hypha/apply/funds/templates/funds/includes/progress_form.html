@@ -4,6 +4,6 @@
     <div class="p-6 z-20">
         <p class="mb-2 mt-0">{% trans "Current status" %}: {{ object.phase }}</p>
         {% url 'funds:submissions:progress' pk=object.pk as progress_url %}
-        {% include 'funds/includes/dialog_form_base.html' with form=form value=value url=progress_url %}
+        {% include 'funds/includes/dialog_form_base.html' with form=form value=value url=progress_url data_var="statusUpdated" %}
     </div>
 {% endif %}
