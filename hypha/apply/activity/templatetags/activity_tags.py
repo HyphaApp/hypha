@@ -118,3 +118,18 @@ def visibility_display(visibility: str, user) -> str:
         return f"{visibility} + {team_string}"
 
     return visibility
+
+
+@register.filter
+def source_type(value) -> str:
+    """Formats source type
+    For a given source type containing "submission", this will be converted
+    to "Submission" (ie. "application submission" -> "Submission").
+    Args:
+        value: the source type to be formatted
+    Returns:
+        A source type string with a capitalized first letter
+    """
+    if value and "submission" in value:
+        return "Submission"
+    return str(value).capitalize()
