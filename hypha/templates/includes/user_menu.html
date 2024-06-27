@@ -1,7 +1,7 @@
 {% load i18n heroicons %}
 
 {% if request.user.is_authenticated %}
-    <div x-data="{ show: false }" class="relative flex">
+    <div x-data="{ show: false }" x-on:keydown.escape="show = false" class="relative flex">
         <button
             x-on:click="show = ! show"
             class="font-bold flex items-center transition-all rounded-sm px-1.5 md:border"
