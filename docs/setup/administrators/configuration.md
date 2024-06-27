@@ -183,7 +183,7 @@ Should staff identities be obscured from Applicants & Partners (ie. comments wil
 
 Should Applicant identities be obscured from External Reviewers
 
-    HIDE_APPLICANT_IDENTITY_REVIEWERS = env.bool('HIDE_APPLICANT_IDENTITY_REVIEWERS', False)
+    HIDE_IDENTITY_FROM_REVIEWERS = env.bool('HIDE_IDENTITY_FROM_REVIEWERS', False)
 
 ----
 
