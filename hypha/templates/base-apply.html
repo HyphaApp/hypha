@@ -3,7 +3,7 @@
 
 {% block header %}
     <header
-        class="px-4 flex gap-4 items-center justify-between max-w-7xl mx-auto w-full"
+        class="max-w-[1280px] px-4 flex gap-4 items-center justify-between mx-auto w-full"
         x-data="{'showDesktopMenu': false, isDesktop: false, mm: null}"
         x-init="mm = window.matchMedia(`(min-width: 768px)`); isDesktop = mm.matches; mm.addListener((e) => { isDesktop = e.matches }); "
     >
@@ -36,7 +36,7 @@
                        role="button"
                        title="{% trans "Click to open your task list" %}"
                        @click.prevent="open = ! open"
-                       :class="open ? 'bg-gray-900 text-white' : 'hover:bg-light-blue/30'"
+                       :class="open ? 'bg-gray-900 text-white' : 'hover:bg-slate-200'"
                     >
                         {% heroicon_outline "bell-alert" class="inline group-hover:scale-110 transition-transform" aria_hidden="true" %}
                     </a>
@@ -57,7 +57,7 @@
                             <span class="SubMenuHeading font-medium text-inherit">
                                 {% trans "Your Tasks" %}
                             </span>
-                            <button type="button" @click='open = false' class="appearance-none">
+                            <button type="button" @click='open = false' class="appearance-none opacity-70 hover:opacity-100">
                                 {% heroicon_solid "x-mark" aria_hidden="true" class="" %}
                             </button>
                         </header>

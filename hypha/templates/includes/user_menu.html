@@ -6,7 +6,7 @@
             x-on:click="show = ! show"
             class="font-bold flex items-center transition-all rounded-sm px-1.5 md:border"
             type="button"
-            :class="show ? 'bg-gray-900 text-white' : 'hover:bg-light-blue/30'"
+            :class="show ? 'bg-gray-900 text-white' : 'hover:bg-slate-200'"
         >
             {% heroicon_micro "user-circle" class="inline align-text-bottom w-8 h-8 md:me-1" aria_hidden=true %}
             <span class="hidden md:inline-block truncate max-w-36">{{ request.user }}hello hello hello</span>
