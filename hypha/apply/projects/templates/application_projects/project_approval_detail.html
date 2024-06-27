@@ -101,8 +101,8 @@
                     <aside class="sidebar sidebar__project">
                         <div class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
                             <h5>{% trans "Actions to take" %}</h5>
-                            {% user_can_edit_project object user as can_edit_project %}
-                            {% if can_edit_project %}
+                            {% user_can_edit_paf object user as can_edit_paf %}
+                            {% if can_edit_paf %}
                                 <a class="button button--bottom-space button--primary button--full-width {% if user_can_approve %} is-disabled {% endif %}" href="{% url 'apply:projects:edit' pk=object.pk %}">{% trans "Edit PAF" %}</a>
                             {% endif %}
                             <div x-data="{ show: false }" class="dropdown">

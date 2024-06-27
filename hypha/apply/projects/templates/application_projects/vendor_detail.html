@@ -1,6 +1,6 @@
 {% extends "base-apply.html" %}
 {% load nh3_tags i18n approval_tools heroicons %}
-{% user_can_edit_project object request.user as editable %}
+{% user_can_edit_vendor_details object request.user as can_edit_vendor_details %}
 {% block title %}{% trans "Contracting Information for" %} {{ project.title }} {% endblock %}
 
 {% block content %}
@@ -18,7 +18,7 @@
         <div>
             <h5 class="vendor-info">{% trans "Last Updated" %}: {{ vendor.updated_at|date:'DATE_FORMAT' }}</h5>
         </div>
-        {% if editable %}
+        {% if can_edit_vendor_details %}
             <div>
                 <a class="link link--edit-vendor is-active" href="{% url 'apply:projects:vendor' pk=project.pk %}">
                     {% heroicon_micro "pencil-square" class="inline me-1" aria_hidden=true %}
