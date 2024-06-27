@@ -13,8 +13,13 @@
 
 <ul class="reviews-sidebar mt-4" x-data='{showHiddenReviewers: false}'>
     {% if not staff_reviewers_exist %}
-        <li class="reviews-sidebar__no-reviews">{% trans "No staff reviewers yet" %}</li>
-        <hr class="reviews-sidebar__split">
+        {% if request.user.is_org_faculty %}
+            <li class="reviews-sidebar__no-reviews">{% trans "No staff reviewers yet" %}</li>
+            <hr class="reviews-sidebar__split">
+        {% else %}
+            <li class="reviews-sidebar__no-reviews">{% trans "No public reviews yet" %}</li>
+            <hr class="reviews-sidebar__split">
+        {% endif %}
     {% endif %}
 
     {% regroup assigned_reviewers by type as reviewers_list %}
