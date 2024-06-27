@@ -32,7 +32,7 @@
                 {% endif %}
                 {% if request.user.is_apply_staff %}
                     <span>{% trans "Lead" %}: <a class="link--transparent link--underlined" href="{% url 'apply:submissions:list' %}?lead={{ object.lead.id }}">{{ object.lead }}</a></span>
-                {% else %}
+                {% elif request.user.is_org_faculty or not HIDE_STAFF_IDENTITY %}
                     <span>{% trans "Lead" %}: {{ object.lead }}</span>
                 {% endif %}
             </div>

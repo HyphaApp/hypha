@@ -11,6 +11,7 @@ def global_vars(request):
         "ORG_EMAIL": settings.ORG_EMAIL,
         "ORG_GUIDE_URL": settings.ORG_GUIDE_URL,
         "ORG_URL": settings.ORG_URL,
+        "HIDE_STAFF_IDENTITY": settings.HIDE_STAFF_IDENTITY,
         "GOOGLE_OAUTH2": settings.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY,
         "ENABLE_PUBLIC_SIGNUP": settings.ENABLE_PUBLIC_SIGNUP,
         "ENABLE_GOOGLE_TRANSLATE": settings.ENABLE_GOOGLE_TRANSLATE,
