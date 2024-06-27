@@ -3,7 +3,7 @@
 <nav
     aria-label="Primary"
     x-show="showDesktopMenu || isDesktop"
-    class="fixed md:static top-0 md:top-auto end-0 bottom-0 bg-white z-20 shadow-xl md:shadow-none overflow-y-auto md:overflow-clip"
+    class="fixed md:static top-0 md:top-auto end-0 bottom-0 bg-white z-20 md:z-10 shadow-xl md:shadow-none overflow-y-auto md:overflow-clip"
 >
     <!-- Mobile Menu Opener -->
     <button
@@ -34,7 +34,7 @@
                     >
                         {{ item.title }}
 
-                        <span class="hidden md:block" :class="open ? '[&>svg]:translate-y-1': ''">
+                        <span class="hidden md:block" :class="open ? '[&>svg]:translate-y-0.5': ''">
                             {% heroicon_outline "chevron-down" aria_hidden="true" size=16 stroke_width=3 class="inline align-baseline ms-1 transition-transform" %}
                         </span>
                     </a>
@@ -52,7 +52,6 @@
                         x-transition:leave="transition ease-in duration-75"
                         x-transition:leave-start="transform opacity-100 scale-100 translate-y-0"
                         x-transition:leave-end="transform opacity-0 scale-95 -translate-y-3"
-                        x-transition
                         @click.outside="open = false"
                         class="min-w-48 relative md:absolute block bg-white md:shadow-xl z-20 md:border-y rounded-sm"
                     >
