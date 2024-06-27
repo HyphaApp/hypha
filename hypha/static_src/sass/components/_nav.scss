@@ -20,26 +20,6 @@
         }
     }
 
-    &--mobile {
-        @include media-query(md) {
-            display: none;
-        }
-
-        &[open] {
-            outline: 1px solid $color--light-blue-90;
-        }
-
-        summary {
-            &::-webkit-details-marker,
-            &::marker {
-                display: none;
-            }
-        }
-    }
-
-    &__item {
-    }
-
     &__link {
         @extend %h5;
         display: flex;
@@ -54,8 +34,6 @@
         }
 
         @include media-query(md) {
-            padding-block: 1.5rem;
-
             &::after {
                 position: absolute;
                 inset-block-end: 0;

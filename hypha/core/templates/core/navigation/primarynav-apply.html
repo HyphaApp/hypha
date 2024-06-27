@@ -1,105 +1,86 @@
 {% load i18n apply_tags heroicons %}
 
-{% if request.user.is_authenticated %}
-    <nav aria-label="Primary">
-        <ul class="nav nav--primary" role="menubar">
-            {% primary_navigation_items request.user as nav_items %}
-            {% for item in nav_items %}
-                <li class="nav__item"
-                    role="presentation"
-                    x-data="{open: false}"
-                    x-on:mouseover.away="open = false"
-                >
-                    {% if item.sub_items %}
-                        <a class="nav__link {% if item.url == request.path %}nav__link--active{% endif %}"
-                           href="{{item.url}}"
-                           aria-label="{% trans "Menu Item" %}"
-                           aria-haspopup="menu"
-                           aria-expanded="false"
-                           role="menuitem"
-                           @mouseover="open = true"
-                           @click.prevent="open = ! open">
-                            {{ item.title }}
-                            <span :class="open ? '[&>svg]:translate-y-1': ''">
-                                {% heroicon_outline "chevron-down" aria_hidden="true" size=16 stroke_width=3 class="inline align-baseline mr-1 transition-transform" %}
-                            </span>
-                        </a>
-                        <div
-                            role="presentation"
-                            x-cloak
-                            x-trap.noautofocus="open"
-                            x-on:keydown.escape="open = false"
-                            x-show="open"
-                            x-transition:enter="transition ease-out duration-250"
-                            x-transition:enter-start="transform opacity-0 scale-95 -translate-y-3"
-                            x-transition:enter-end="transform opacity-100 scale-100 translate-y-0"
-                            x-transition:leave="transition ease-in duration-75"
-                            x-transition:leave-start="transform opacity-100 scale-100 translate-y-0"
-                            x-transition:leave-end="transform opacity-0 scale-95 -translate-y-3"
-                            {% comment %} x-transition {% endcomment %}
-                            @click.outside="open = false"
-                            class="min-w-48 absolute block bg-white shadow-xl z-20 border-y rounded-sm"
-                        >
-                            {% for sub_item in item.sub_items %}
-                                <a
-                                    href="{{ sub_item.url }}"
-                                    role="menuitem"
-                                    class="pr-4 py-3 block font-normal hover:bg-slate-100
-                                           focus-visible:outline-dashed outline-1 transition-colors
-                                           {% if sub_item.url == request.path %}
-                                               border-l-dark-blue bg-slate-100 pl-3 border-l-4 border-r text-dark-blue font-semibold
-                                           {% else %}
-                                               border-x pl-4 text-black hover:text-dark-blue hover:font-semibold
-                                           {% endif %}"
-                                >
-                                    {{ sub_item.title }}
-                                </a>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        <a class="nav__link {% if item.url == request.path %}nav__link--active{% endif %}"
-                           href="{{ item.url }}"
-                           role="menuitem"
-                        >
-                            {{ item.title }}
-                        </a>
-                    {% endif %}
-                </li>
-            {% endfor %}
-        </ul>
+<nav
+    aria-label="Primary"
+    x-show="showDesktopMenu || isDesktop"
+    class="fixed md:static top-0 md:top-auto end-0 bottom-0 bg-white z-20 shadow-xl md:shadow-none overflow-y-auto md:overflow-clip"
+>
+    <!-- Mobile Menu Opener -->
+    <button
+        class="absolute top-4 end-4 md:hidden border rounded p-1.5 z-30"
+        @click="showDesktopMenu = false"
+    >
+        {% heroicon_outline "x-mark" aria_hidden="true" size=24 stroke_width=3 class="inline" %}
+    </button>
 
-        <details class="nav nav--mobile p-2">
-            <summary class="text-center">
-                {% trans "Menu" %}
-                {% heroicon_solid "bars-3" aria_hidden="true" class="inline align-bottom ms-1" %}
-            </summary>
-            <ul role="menubar" class="flex flex-col gap-2">
-                {% primary_navigation_items request.user as nav_items %}
-                {% for item in nav_items %}
-                    <li role="presentation">
-                        {% if item.sub_items %}
-                            <a href="{{item.url}}" role="menuitem" class="pb-2 block">
-                                {{ item.title }}
-                            </a>
-                            <ul class="flex flex-col gap-2 ps-4">
-                                {% for sub_item in item.sub_items %}
-                                    <li class="" role="presentation">
-                                        <a class="" href="{{ sub_item.url }}" role="menuitem">
-                                            {{ sub_item.title }}
-                                        </a>
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        {% else %}
-                            <a class="" href="{{ item.url }}" role="menuitem"
+    <!-- Menu -->
+    {% primary_navigation_items request.user as nav_items %}
+    <ul class="flex flex-col md:gap-8 p-4 md:p-0 md:flex-row" role="menubar">
+        {% for item in nav_items %}
+            <li
+                role="presentation"
+                x-data="{open: false}"
+                x-on:mouseover.away="open = false"
+            >
+                {% if item.sub_items %}
+                    <a class="nav__link {% if item.url == request. %}nav__link--active{% endif %}"
+                       href="{{item.url}}"
+                       aria-label="{% trans "Menu Item" %}"
+                       aria-haspopup="menu"
+                       aria-expanded="false"
+                       role="menuitem"
+                       @mouseover="open = true"
+                       @click.prevent="open = ! open"
+                    >
+                        {{ item.title }}
+
+                        <span class="hidden md:block" :class="open ? '[&>svg]:translate-y-1': ''">
+                            {% heroicon_outline "chevron-down" aria_hidden="true" size=16 stroke_width=3 class="inline align-baseline ms-1 transition-transform" %}
+                        </span>
+                    </a>
+
+                    <!-- Submenu -->
+                    <div
+                        role="presentation"
+                        x-cloak
+                        x-trap.noautofocus="open"
+                        x-on:keydown.escape="open = false"
+                        x-show="open || !isDesktop"
+                        x-transition:enter="transition ease-out duration-250"
+                        x-transition:enter-start="transform opacity-0 scale-95 -translate-y-3"
+                        x-transition:enter-end="transform opacity-100 scale-100 translate-y-0"
+                        x-transition:leave="transition ease-in duration-75"
+                        x-transition:leave-start="transform opacity-100 scale-100 translate-y-0"
+                        x-transition:leave-end="transform opacity-0 scale-95 -translate-y-3"
+                        x-transition
+                        @click.outside="open = false"
+                        class="min-w-48 relative md:absolute block bg-white md:shadow-xl z-20 md:border-y rounded-sm"
+                    >
+                        {% for sub_item in item.sub_items %}
+                            <a
+                                href="{{ sub_item.url }}"
+                                role="menuitem"
+                                class="pr-4 py-2 md:py-3 md: block font-normal hover:bg-slate-100
+                                       focus-visible:outline-dashed outline-1 transition-colors
+                                       {% if sub_item.url == request.path %}
+                                           border-l-dark-blue bg-slate-100 pl-3 border-l-4 border-r text-dark-blue font-semibold
+                                       {% else %}
+                                           border-l md:border-r pl-4 text-black hover:text-dark-blue hover:font-semibold
+                                       {% endif %}"
                             >
-                                {{ item.title }}
+                                {{ sub_item.title }}
                             </a>
-                        {% endif %}
-                    </li>
-                {% endfor %}
-            </ul>
-        </details>
-
-    </nav>
-{% endif %}
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <a class="nav__link {% if item.url == request.path %}nav__link--active{% endif %}"
+                       href="{{ item.url }}"
+                       role="menuitem"
+                    >
+                        {{ item.title }}
+                    </a>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+</nav>

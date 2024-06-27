@@ -4,11 +4,12 @@
     <div x-data="{ show: false }" class="relative flex">
         <button
             x-on:click="show = ! show"
-            class="font-bold flex items-center ps-1 pe-4 hover:bg-black hover:text-white transition-colors rounded-sm"
+            class="font-bold flex items-center transition-all rounded-sm px-1"
             type="button"
+            :class="show ? 'bg-gray-900 text-white' : 'hover:bg-light-blue/30'"
         >
-            {% heroicon_micro "user-circle" class="inline align-text-bottom w-8 h-8 me-1" aria_hidden=true %}
-            <span>{{ request.user }}</span>
+            {% heroicon_micro "user-circle" class="inline align-text-bottom w-8 h-8 md:me-1" aria_hidden=true %}
+            <span class="hidden md:inline-block">{{ request.user }}</span>
         </button>
         <div
             x-cloak
