@@ -953,6 +953,23 @@ class TestReviewerSubmissionView(BaseSubmissionViewTestCase):
         )
         assert_view_determination_not_displayed(submission)
 
+    def test_cant_view_sidebar_private_staff_review(self):
+        staff_reviewer = AssignedReviewersFactory(staff=True)
+
+        submission = ApplicationSubmissionFactory(
+            user=self.applicant, reviewers=[self.user]
+        )
+
+        ReviewFactory(
+            submission=submission, visibility_reviewer=True, author=staff_reviewer
+        )
+
+        response = self.get_page(submission)
+
+        print(BeautifulSoup(response.content, "html5lib").find(class_="sidebar"))
+
+        self.assertContains(response, str(staff_reviewer.reviewer))
+
     def test_can_access_any_submission(self):
         """
         Reviewer settings are being used with default values.

@@ -3,7 +3,7 @@ from urllib.parse import parse_qs, urlparse
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
@@ -241,7 +241,9 @@ def partial_reviews_card(request: HttpRequest, pk: str) -> HttpResponse:
 
     if not request.user.is_org_faculty and request.user.is_reviewer:
         # Only show external reviewers info on reviews that have visibility set to REVIEWER
-        assigned_reviewers = assigned_reviewers.filter(review__visibility=REVIEWER)
+        assigned_reviewers = assigned_reviewers.filter(
+            Q(review__visibility=REVIEWER) | Q(reviewer=request.user)
+        )
         recommendation = (
             submission.reviews.by_staff().filter(visibility=REVIEWER).recommendation()
         )

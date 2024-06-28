@@ -11,7 +11,13 @@
         {% endslot %}
         {% slot header %}{% trans "Review" %}{% endslot %}
         {% slot sub_heading %}
-            {% trans "For" %}: {{ review.submission.title }} {% trans "by" %} {{ review.author }} {% trans "at" %} {{ review.created_at|date:"SHORT_DATE_FORMAT" }} {% if review.is_updated %}<small>({% trans "Last updated" %}: {{ review.updated_at|date:"SHORT_DATE_FORMAT" }})</small>{% endif %}
+            {% trans "For" %}: {{ review.submission.title }} {% trans "by" %}
+            {% if HIDE_STAFF_IDENTITY and not request.user.is_org_faculty and not request.user == review.author.reviewer %}
+                {% trans "Reviewer" %}
+            {% else %}
+                {{ review.author }}
+            {% endif %}
+            {% trans "at" %} {{ review.created_at|date:"SHORT_DATE_FORMAT" }} {% if review.is_updated %}<small>({% trans "Last updated" %}: {{ review.updated_at|date:"SHORT_DATE_FORMAT" }})</small>{% endif %}
         {% endslot %}
 
         {% include 'review/includes/review_opinions_list.html' with opinions=review.opinions.all %}
