@@ -1,7 +1,7 @@
 .profile {
     margin-block-start: $mobile-gutter;
 
-    @include media-query(tablet-portrait) {
+    @include media-query(md) {
         display: flex;
         margin-block-start: 2rem;
     }
@@ -11,7 +11,7 @@
         margin-block-end: 2rem;
         border-block-end: 1px solid $color--light-mid-grey;
 
-        @include media-query(tablet-portrait) {
+        @include media-query(md) {
             width: 50%;
             padding-inline-end: 3rem;
             margin: 0 3rem 0 0;

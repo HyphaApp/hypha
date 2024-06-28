@@ -1,7 +1,7 @@
 .actions-bar {
     width: 100%;
 
-    @include media-query(tablet-landscape) {
+    @include media-query(lg) {
         display: flex;
         justify-content: space-between;
     }
@@ -11,7 +11,7 @@
             margin-block-end: 20px;
         }
 
-        @include media-query(tablet-landscape) {
+        @include media-query(lg) {
             display: flex;
             align-items: center;
 
@@ -37,7 +37,7 @@
         &--batch-actions {
             display: none;
 
-            @include media-query(tablet-landscape) {
+            @include media-query(lg) {
                 display: flex;
                 opacity: 0;
                 pointer-events: none;

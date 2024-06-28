@@ -3,7 +3,7 @@
         flex-grow: 1;
         margin: $mobile-gutter 0;
 
-        @include media-query(tablet-portrait) {
+        @include media-query(md) {
             padding-inline-end: 20px;
             margin-block-end: 0;
         }
@@ -13,7 +13,7 @@
         display: flex;
         flex-direction: column;
 
-        @include media-query(small-tablet) {
+        @include media-query(sm) {
             flex-direction: row;
             justify-content: space-between;
             align-items: center;

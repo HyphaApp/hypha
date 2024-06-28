@@ -3,14 +3,3 @@
 {% block page_title %}{{ page.get_parent.title }}{% endblock %}
 
 {% block title %}{{ page.get_parent.title }}{% endblock %}
-
-{% block header_menu %}
-    <section class="header__menus header__menus--desktop">
-        {% if settings.core.SystemSettings.nav_content %}
-            {{ settings.core.SystemSettings.nav_content|safe }}
-        {% else %}
-            {% include "core/navigation/primarynav-apply.html" %}
-        {% endif %}
-    </section>
-{% endblock %}
-

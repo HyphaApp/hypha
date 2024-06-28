@@ -5,7 +5,7 @@
         background-color: $color--white;
         margin-block-end: $mobile-gutter;
 
-        @include media-query(tablet-portrait) {
+        @include media-query(md) {
             max-width: 70%;
         }
     }

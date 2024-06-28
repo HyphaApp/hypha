@@ -105,7 +105,7 @@
     font-size: 15px;
     vertical-align: middle;
 
-    @include media-query(tablet-landscape) {
+    @include media-query(lg) {
         padding: 0.25rem 0.75rem;
     }
 }
@@ -115,14 +115,14 @@
     padding: 2px;
     font-size: 12px;
 
-    @include media-query(tablet-landscape) {
+    @include media-query(lg) {
         padding: 3px 5px;
     }
 }
 
 // Wide button mixin
 @mixin button--wide {
-    @include media-query(tablet-landscape) {
+    @include media-query(lg) {
         padding: 0.5em 80px;
     }
 }

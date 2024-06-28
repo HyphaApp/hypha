@@ -29,10 +29,6 @@ p {
 details > summary {
     cursor: pointer;
     margin-block-end: 10px;
-
-    &:focus {
-        outline: none;
-    }
 }
 
 .is-invisible,

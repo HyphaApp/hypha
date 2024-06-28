@@ -6,7 +6,7 @@
     thead {
         display: none;
 
-        @include media-query($table-breakpoint) {
+        @include media-query(lg) {
             display: table-header-group;
         }
     }
@@ -18,7 +18,7 @@
                 display: inline-block;
                 width: 90px;
 
-                @include media-query($table-breakpoint) {
+                @include media-query(lg) {
                     display: none;
                 }
             }
@@ -41,7 +41,7 @@
     thead {
         display: none;
 
-        @include media-query($table-breakpoint) {
+        @include media-query(lg) {
             display: table-header-group;
         }
 
@@ -49,7 +49,7 @@
             &.selected {
                 @include table-checkbox;
 
-                @include media-query($table-breakpoint) {
+                @include media-query(lg) {
                     width: 50px;
                     padding-inline-end: 0;
                 }
@@ -64,7 +64,7 @@
                 display: inline-block;
                 width: 90px;
 
-                @include media-query($table-breakpoint) {
+                @include media-query(lg) {
                     display: none;
                 }
             }
@@ -75,7 +75,7 @@
                 display: none;
                 padding-inline-end: 0;
 
-                @include media-query($table-breakpoint) {
+                @include media-query(lg) {
                     display: table-cell;
                 }
             }

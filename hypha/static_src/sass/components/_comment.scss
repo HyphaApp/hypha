@@ -3,7 +3,7 @@
     margin-block-end: 20px;
     border-block-end: 1px solid $color--light-mid-grey;
 
-    @include media-query(tablet-portrait) {
+    @include media-query(md) {
         max-width: 60%;
     }
 

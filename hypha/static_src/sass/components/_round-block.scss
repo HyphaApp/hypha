@@ -18,7 +18,7 @@
             border-block-end: 1px solid $color--light-mid-grey;
         }
 
-        @include media-query(tablet-landscape) {
+        @include media-query(lg) {
             display: flex;
 
             &:hover {
@@ -57,7 +57,7 @@
         font-weight: $weight--bold;
         text-transform: uppercase;
 
-        @include media-query(tablet-landscape) {
+        @include media-query(lg) {
             color: transparent;
             flex-basis: auto;
             pointer-events: none;
@@ -83,7 +83,7 @@
         border: 1px solid $color--light-mid-grey;
     }
 
-    @include media-query(tablet-landscape) {
+    @include media-query(lg) {
         &__title {
             flex-basis: 25em;
         }
