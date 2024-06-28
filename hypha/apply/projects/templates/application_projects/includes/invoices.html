@@ -17,6 +17,7 @@
                 <thead>
                     <tr>
                         <th class="data-block__table-date">{% trans "Date submitted" %}</th>
+                        <th class="min-w-[180px] w-[15%]">{% trans "Invoice date" %}</th>
                         <th class="data-block__table-amount">{% trans "Invoice No." %}</th>
                         <th class="data-block__table-status">{% trans "Status" %}</th>
                         <th class="data-block__table-update"></th>
@@ -26,9 +27,10 @@
                     {% for invoice in object.invoices.not_rejected %}
                         {% display_invoice_status_for_user user invoice as invoice_status %}
                         <tr>
-                            <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Date submitted" %}: </span>{{ invoice.requested_at.date }}</td>
-                            <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Invoice number" %}: </span>{{ invoice.invoice_number }}</td>
-                            <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Status" %}: </span>{{ invoice_status }}</td>
+                            <td class="py-4 px-2"><span class="data-block__mobile-label">{% trans "Date submitted" %}: </span>{{ invoice.requested_at.date }}</td>
+                            <td class="py-4 px-2"><span class="data-block__mobile-label">{% trans "Invoice date" %}: </span>{% if invoice.invoice_date %}{{ invoice.invoice_date.date }}{% else %} {{ invoice.requested_at.date }} {% endif %}</td>
+                            <td class="py-4 px-2"><span class="data-block__mobile-label">{% trans "Invoice number" %}: </span>{{ invoice.invoice_number }}</td>
+                            <td class="py-4 px-2"><span class="data-block__mobile-label">{% trans "Status" %}: </span>{{ invoice_status }}</td>
                             <td class="flex flex-wrap justify-center py-4 px-0 gap-2 xl:flex-nowrap">
                                 <a class="data-block__action-icon-link" href="{{ invoice.get_absolute_url }}" >
                                     {% heroicon_micro "eye" aria_hidden=true class="me-1" %}
@@ -87,6 +89,7 @@
                 <thead>
                     <tr>
                         <th class="data-block__table-date">{% trans "Date submitted" %}</th>
+                        <th class="min-w-[180px] w-[15%]">{% trans "Invoice date" %}</th>
                         <th class="data-block__table-amount">{% trans "Invoice number" %}</th>
                         <th class="data-block__table-status">{% trans "Status" %}</th>
                         <th class="data-block__table-update"></th>
@@ -96,9 +99,10 @@
                     {% for invoice in object.invoices.rejected %}
                         {% display_invoice_status_for_user user invoice as invoice_status %}
                         <tr>
-                            <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Date submitted" %}: </span>{{ invoice.requested_at.date }}</td>
-                            <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Invoice number" %}: </span>{{ invoice.invoice_number }}</td>
-                            <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Status" %}: </span>{{ invoice_status }}</td>
+                            <td class="py-4 px-2"><span class="data-block__mobile-label">{% trans "Date submitted" %}: </span>{{ invoice.requested_at.date }}</td>
+                            <td class="py-4 px-2"><span class="data-block__mobile-label">{% trans "Invoice date" %}: </span>{% if invoice.invoice_date %}{{ invoice.invoice_date.date }}{% else %} {{ invoice.requested_at.date }} {% endif %}</td>
+                            <td class="py-4 px-2"><span class="data-block__mobile-label">{% trans "Invoice number" %}: </span>{{ invoice.invoice_number }}</td>
+                            <td class="py-4 px-2"><span class="data-block__mobile-label">{% trans "Status" %}: </span>{{ invoice_status }}</td>
                             <td class="flex justify-end py-4 px-0">
                                 <a class="data-block__action-icon-link" href="{{ invoice.get_absolute_url }}" >
                                     {% heroicon_mini "eye" size=16 aria_hidden=true class="me-1" %}

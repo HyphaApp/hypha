@@ -100,7 +100,13 @@ class ChangeInvoiceStatusForm(forms.ModelForm):
 
 class InvoiceBaseForm(forms.ModelForm):
     class Meta:
-        fields = ["invoice_number", "invoice_amount", "document", "message_for_pm"]
+        fields = [
+            "invoice_number",
+            "invoice_amount",
+            "invoice_date",
+            "document",
+            "message_for_pm",
+        ]
         model = Invoice
 
     def __init__(self, user=None, *args, **kwargs):
@@ -124,6 +130,7 @@ class CreateInvoiceForm(FileFormMixin, InvoiceBaseForm):
     field_order = [
         "invoice_number",
         "invoice_amount",
+        "invoice_date",
         "document",
         "supporting_documents",
         "message_for_pm",
@@ -149,6 +156,7 @@ class EditInvoiceForm(FileFormMixin, InvoiceBaseForm):
     field_order = [
         "invoice_number",
         "invoice_amount",
+        "invoice_date",
         "document",
         "supporting_documents",
         "message_for_pm",
