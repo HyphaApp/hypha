@@ -3,11 +3,17 @@
 <nav
     aria-label="Primary"
     x-show="showDesktopMenu || isDesktop"
-    class="fixed md:static top-0 md:top-auto end-0 bottom-0 bg-white z-20 md:z-10 shadow-xl md:shadow-none overflow-y-auto md:overflow-clip"
+    x-transition:enter="transition ease-out duration-250"
+    x-transition:enter-start="transform opacity-0 translate-x-full"
+    x-transition:enter-end="transform opacity-100 translate-x-0"
+    x-transition:leave="transition ease-in duration-150"
+    x-transition:leave-start="transform opacity-100 translate-x-0"
+    x-transition:leave-end="transform opacity-0 translate-x-full"
+    class="fixed md:static pt-10 md:pt-0 top-0 md:top-auto end-0 bottom-0 bg-white z-20 md:z-10 shadow-xl md:shadow-none overflow-y-auto md:overflow-clip"
 >
     <!-- Mobile Menu Opener -->
     <button
-        class="absolute top-4 end-4 md:hidden border rounded p-1.5 z-30 hover:bg-slate-100 transition-colors"
+        class="absolute top-6 end-4 md:hidden border rounded p-1.5 z-30 hover:bg-slate-100 transition-colors"
         @click="showDesktopMenu = false"
     >
         {% heroicon_outline "x-mark" aria_hidden="true" size=24 stroke_width=3 class="inline" %}
