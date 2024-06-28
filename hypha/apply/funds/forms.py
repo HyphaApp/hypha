@@ -270,7 +270,7 @@ class UpdateReviewersForm(ApplicationSubmissionModelForm):
         role_reviewers = [
             user
             for field, user in self.cleaned_data.items()
-            if field in self.role_fields
+            if field in self.role_fields and user
         ]
 
         for field, role in self.role_fields.items():
