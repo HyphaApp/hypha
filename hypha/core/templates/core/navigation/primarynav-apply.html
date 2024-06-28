@@ -23,7 +23,7 @@
                 x-on:mouseover.away="open = false"
             >
                 {% if item.sub_items %}
-                    <a class="nav__link {% if item.url == request. %}nav__link--active{% endif %}"
+                    <a class="nav__link {% if item.url == request. %}nav__link--active{% endif %} has-[> .nav__link--active]:border"
                        href="{{item.url}}"
                        aria-label="{% trans "Menu Item" %}"
                        aria-haspopup="menu"
