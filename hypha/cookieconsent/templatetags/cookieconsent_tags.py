@@ -13,8 +13,4 @@ def cookie_banner(context):
         "cookieconsent"
     )
 
-    return {
-        "show_banner": show_banner,
-        "title": settings.cookieconsent_title,
-        "message": settings.cookieconsent_message,
-    }
+    return {"show_banner": show_banner, "settings": settings}
