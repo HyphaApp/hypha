@@ -516,6 +516,26 @@ class PAFReviewersRole(Orderable, ClusterableModel):
         return str(self.label)
 
 
+class ProjectReminderFrequency(Orderable, ClusterableModel):
+    num_days = models.IntegerField()
+    page = ParentalKey("ProjectSettings", related_name="reminder_frequencies")
+
+    class FrequencyRelation(models.TextChoices):
+        BEFORE = "BE", _("Before")
+        AFTER = "AF", _("After")
+
+    relation = models.CharField(
+        max_length=2,
+        choices=FrequencyRelation.choices,
+        default=FrequencyRelation.BEFORE,
+    )
+
+    panels = [
+        FieldPanel("num_days", heading=_("Number of Days")),
+        FieldPanel("relation", heading=_("Relation to Project Due Date")),
+    ]
+
+
 @register_setting
 class ProjectSettings(BaseSiteSetting, ClusterableModel):
     contracting_gp_email = models.TextField(
@@ -541,6 +561,11 @@ class ProjectSettings(BaseSiteSetting, ClusterableModel):
                 InlinePanel("paf_reviewers_roles", label=_("PAF Reviewers Roles")),
             ],
             heading=_("PAF Reviewers Roles"),
+        ),
+        InlinePanel(
+            "reminder_frequencies",
+            label=_("Report Reminder Frequency"),
+            heading=_("Report Reminder Frequency"),
         ),
     ]
 
