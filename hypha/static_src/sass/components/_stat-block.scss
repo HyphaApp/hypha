@@ -1,7 +1,7 @@
 .stat-block {
     $root: &;
 
-    @include media-query(tablet-portrait) {
+    @include media-query(md) {
         display: flex;
     }
 
@@ -13,7 +13,7 @@
         display: block;
         margin: 0 0 1rem;
 
-        @include media-query(tablet-portrait) {
+        @include media-query(md) {
             margin: 0 3rem 0 0;
             padding: 1.5rem;
         }
@@ -23,7 +23,7 @@
         }
 
         &:only-child {
-            @include media-query(tablet-portrait) {
+            @include media-query(md) {
                 max-width: calc(100% / 3);
             }
         }
@@ -41,7 +41,7 @@
         margin: 0.5rem 0;
         color: var(--color-fg-default);
 
-        @include media-query(small-tablet) {
+        @include media-query(sm) {
             margin: 0.5rem 0;
         }
     }
@@ -51,7 +51,7 @@
         font-weight: $weight--bold;
         transition: opacity $quick-transition;
 
-        @include media-query(tablet-portrait) {
+        @include media-query(md) {
             position: absolute;
             inset-block-start: 1rem;
             inset-inline-end: 1rem;

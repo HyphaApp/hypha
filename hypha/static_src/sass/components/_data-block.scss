@@ -7,7 +7,7 @@
         padding: 1rem;
         background-color: $color--light-blue-90;
 
-        @include media-query(mob-landscape) {
+        @include media-query(sm) {
             padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
@@ -18,7 +18,7 @@
     &__body {
         padding: 1rem;
 
-        @include media-query(mob-landscape) {
+        @include media-query(sm) {
             padding: 2rem;
         }
     }
@@ -28,7 +28,7 @@
         font-weight: $weight--bold;
         margin: 0 0 1rem;
 
-        @include media-query(mob-landscape) {
+        @include media-query(sm) {
             margin: 0;
         }
     }
@@ -57,7 +57,7 @@
     &__status {
         margin: 0;
 
-        @include media-query(tablet-landscape) {
+        @include media-query(lg) {
             display: block;
             font-weight: $weight--bold;
         }
@@ -78,7 +78,7 @@
         font-weight: $weight--bold;
         white-space: pre;
 
-        @include media-query(tablet-landscape) {
+        @include media-query(lg) {
             display: none;
         }
     }
@@ -88,7 +88,7 @@
             display: none;
             border-block-start: 2px solid $color--light-mid-grey;
 
-            @include media-query(tablet-landscape) {
+            @include media-query(lg) {
                 display: table-header-group;
             }
 
@@ -96,7 +96,7 @@
                 color: $color--mid-dark-grey;
                 padding: 10px;
 
-                @include media-query(tablet-landscape) {
+                @include media-query(lg) {
                     text-align: left;
                 }
             }
@@ -143,7 +143,7 @@
         min-width: 160px;
         width: 25%;
 
-        @include media-query(desktop) {
+        @include media-query(xl) {
             width: 30%;
         }
     }
@@ -196,7 +196,7 @@
         border-block-end: 2px solid $color--light-grey;
         padding: 1rem 0;
 
-        @include media-query(tablet-landscape) {
+        @include media-query(lg) {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -218,7 +218,7 @@
     &__info {
         margin: 0 1rem 1rem 0;
 
-        @include media-query(tablet-landscape) {
+        @include media-query(lg) {
             margin: 0 1rem 0 0;
             flex: 1;
         }
@@ -228,7 +228,7 @@
         display: flex;
         align-items: center;
 
-        @include media-query(tablet-landscape) {
+        @include media-query(lg) {
             justify-content: flex-end;
         }
     }
@@ -248,7 +248,7 @@
             inset-inline-start: -1rem;
             inset-block-end: 0;
 
-            @include media-query(mob-landscape) {
+            @include media-query(sm) {
                 width: calc(100% + 4rem);
                 inset-inline-start: -2rem;
             }

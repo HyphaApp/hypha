@@ -29,7 +29,7 @@
         font-weight: $weight--normal;
         color: transparentize($color--dark-grey, 0.5);
 
-        @include media-query(tablet-landscape) {
+        @include media-query(lg) {
             flex-direction: row;
             margin-block-start: 0;
         }
@@ -67,7 +67,7 @@
         line-height: 1.1;
         text-align: center;
 
-        @include media-query(tablet-portrait) {
+        @include media-query(md) {
             line-height: auto;
             text-align: left;
         }

@@ -3,7 +3,7 @@
     margin-block-end: 1rem;
     border: 1px solid $color--dark-blue;
 
-    @include media-query(mob-landscape) {
+    @include media-query(sm) {
         display: flex;
         justify-content: space-between;
         padding: 2rem;
@@ -16,7 +16,7 @@
             margin: 0;
         }
 
-        @include media-query(mob-landscape) {
+        @include media-query(sm) {
             margin: 0 1rem 0 0;
         }
     }

@@ -25,7 +25,7 @@
         margin-block-end: 1rem;
         border-block-end: 1px solid $color--mid-grey;
 
-        @include media-query(tablet-portrait) {
+        @include media-query(md) {
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -47,7 +47,7 @@
             margin-block-end: 1rem;
         }
 
-        @include media-query(tablet-portrait) {
+        @include media-query(md) {
             &:first-child {
                 margin: 0 1rem 0 0;
                 flex: 1;
@@ -62,7 +62,7 @@
     &__title {
         margin: 0;
 
-        @include media-query(tablet-landscape) {
+        @include media-query(lg) {
             flex: 1;
         }
     }
@@ -74,7 +74,7 @@
         fill: transparent;
         margin-inline-end: 0.5rem;
 
-        @include media-query(tablet-landscape) {
+        @include media-query(lg) {
             margin-inline-end: 1rem;
         }
     }
@@ -112,7 +112,7 @@
     }
 
     &__info-text {
-        @include media-query(tablet-landscape) {
+        @include media-query(lg) {
             max-width: 65%;
             margin-inline-start: 3rem;
         }
@@ -156,7 +156,7 @@
             margin: 0 1rem 1rem 0;
         }
 
-        @include media-query(tablet-portrait) {
+        @include media-query(md) {
             &:first-child {
                 margin: 0 1rem 0 0;
             }

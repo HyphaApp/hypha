@@ -67,7 +67,7 @@
         border-block-end: 1px solid $color--mid-grey;
         border-radius: 0;
 
-        @include media-query(small-tablet) {
+        @include media-query(sm) {
             border: 1px solid $color--mid-grey;
         }
     }
