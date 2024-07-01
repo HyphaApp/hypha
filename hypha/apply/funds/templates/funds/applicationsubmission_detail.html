@@ -31,7 +31,7 @@
                     <span>{{ object.round }}</span>
                 {% endif %}
                 {% if request.user.is_apply_staff %}
-                    <span>{% trans "Lead" %}: <a class="link--transparent link--underlined" href="{% url 'apply:submissions:list' %}?lead={{ object.lead.id }}">{{ object.lead }}</a></span>
+                    <span>{% trans "Lead" %}: <a class="link--transparent link--underlined" id="id_lead" href="{% url 'apply:submissions:list' %}?lead={{ object.lead.id }}">{{ object.lead }}</a></span>
                 {% else %}
                     <span>{% trans "Lead" %}: {{ object.lead }}</span>
                 {% endif %}
@@ -80,8 +80,10 @@
     <div class="wrapper wrapper--large wrapper--tabs js-tabs-content">
     {# Tab 1 #}
         <div class="tabs__content" id="tab-1">
-            {% block mobile_actions %}
-            {% endblock %}
+            {% if request.user_agent.is_mobile %}
+                {% block mobile_actions %}
+                {% endblock %}
+            {% endif %}
             <div class="wrapper wrapper--sidebar">
                 {% if request.user|has_edit_perm:object and object.status == 'draft_proposal' and not request.user.is_apply_staff %}
                     <div class="wrapper--sidebar--inner">

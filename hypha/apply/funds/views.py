@@ -29,7 +29,6 @@ from django.utils.translation import gettext as _
 from django.views import View
 from django.views.decorators.cache import cache_page
 from django.views.generic import (
-    CreateView,
     DeleteView,
     DetailView,
     FormView,
@@ -40,6 +39,10 @@ from django.views.generic.base import TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from django_file_form.models import PlaceholderUploadedFile
 from django_filters.views import FilterView
+from django_htmx.http import (
+    HttpResponseClientRedirect,
+    HttpResponseClientRefresh,
+)
 from django_tables2.paginators import LazyPaginator
 from django_tables2.views import SingleTableMixin
 from wagtail.models import Page
@@ -57,13 +60,12 @@ from hypha.apply.determinations.views import (
 )
 from hypha.apply.funds.models.screening import ScreeningStatus
 from hypha.apply.projects.forms import ProjectCreateForm
-from hypha.apply.projects.models import Project
 from hypha.apply.review.models import Review
 from hypha.apply.stream_forms.blocks import GroupToggleBlock
 from hypha.apply.todo.options import PROJECT_WAITING_PAF
 from hypha.apply.todo.views import add_task_to_user_group
 from hypha.apply.users.decorators import staff_or_finance_required, staff_required
-from hypha.apply.users.groups import STAFF_GROUP_NAME
+from hypha.apply.users.groups import REVIEWER_GROUP_NAME, STAFF_GROUP_NAME
 from hypha.apply.utils.models import PDFPageSettings
 from hypha.apply.utils.pdfs import draw_submission_content, make_pdf
 from hypha.apply.utils.storage import PrivateMediaView
@@ -615,288 +617,502 @@ class SubmissionsByStatus(BaseAdminSubmissionsTable, DelegateableListView):
 
 
 @method_decorator(staff_required, name="dispatch")
-class ProgressSubmissionView(DelegatedViewMixin, UpdateView):
-    model = ApplicationSubmission
-    form_class = ProgressSubmissionForm
-    context_name = "progress_form"
-
+class ProgressSubmissionView(View):
     def dispatch(self, request, *args, **kwargs):
-        submission = self.get_object()
+        self.submission = get_object_or_404(ApplicationSubmission, id=kwargs.get("pk"))
         permission, reason = has_permission(
-            "submission_edit", request.user, object=submission, raise_exception=False
+            "submission_edit",
+            request.user,
+            object=self.submission,
+            raise_exception=False,
         )
         if not permission:
             messages.warning(self.request, reason)
-            return HttpResponseRedirect(submission.get_absolute_url())
+            return HttpResponseRedirect(self.submission.get_absolute_url())
         return super(ProgressSubmissionView, self).dispatch(request, *args, **kwargs)
 
-    def form_valid(self, form):
-        action = form.cleaned_data.get("action")
-        # Defer to the determination form for any of the determination transitions
-        redirect = DeterminationCreateOrUpdateView.should_redirect(
-            self.request, self.object, action
+    def get(self, *args, **kwargs):
+        project_creation_form = ProgressSubmissionForm(
+            instance=self.submission, user=self.request.user
         )
-        if redirect:
-            return redirect
+        return render(
+            self.request,
+            "funds/includes/progress_form.html",
+            context={
+                "form": project_creation_form,
+                "value": _("Progress"),
+                "object": self.submission,
+            },
+        )
 
-        self.object.perform_transition(action, self.request.user, request=self.request)
-        return super().form_valid(form)
+    def post(self, *args, **kwargs):
+        form = ProgressSubmissionForm(
+            self.request.POST, instance=self.submission, user=self.request.user
+        )
+        if form.is_valid():
+            action = form.cleaned_data.get("action")
+            redirect = DeterminationCreateOrUpdateView.should_redirect(
+                self.request, self.submission, action
+            )
+            message_storage = messages.get_messages(self.request)
+            if redirect:
+                return HttpResponseClientRedirect(redirect.url, content=message_storage)
+
+            self.submission.perform_transition(
+                action, self.request.user, request=self.request
+            )
+            form.save()
+
+            return HttpResponseClientRefresh()
+        return render(
+            self.request,
+            "funds/includes/progress_form.html",
+            context={"form": form, "value": _("Progress"), "object": self.submission},
+            status=400,
+        )
 
 
 @method_decorator(staff_required, name="dispatch")
-class CreateProjectView(DelegatedViewMixin, CreateView):
-    context_name = "project_create_form"
-    form_class = ProjectCreateForm
-    model = Project
-
+class CreateProjectView(View):
     def dispatch(self, request, *args, **kwargs):
-        submission = self.get_parent_object()
+        self.submission = get_object_or_404(ApplicationSubmission, id=kwargs.get("pk"))
         permission, reason = has_permission(
-            "submission_edit", request.user, object=submission, raise_exception=False
+            "submission_edit",
+            request.user,
+            object=self.submission,
+            raise_exception=False,
         )
         if not permission:
             messages.warning(self.request, reason)
-            return HttpResponseRedirect(submission.get_absolute_url())
+            return HttpResponseRedirect(self.submission.get_absolute_url())
         return super(CreateProjectView, self).dispatch(request, *args, **kwargs)
 
-    def get_success_url(self):
-        return self.object.get_absolute_url()
-
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        messenger(
-            MESSAGES.CREATED_PROJECT,
-            request=self.request,
-            user=self.request.user,
-            source=self.object,
-            related=self.object.submission,
+    def get(self, *args, **kwargs):
+        project_creation_form = ProjectCreateForm(instance=self.submission)
+        return render(
+            self.request,
+            "funds/includes/create_project_form.html",
+            context={
+                "form": project_creation_form,
+                "value": _("Confirm"),
+                "object": self.submission,
+            },
         )
-        # add task for staff to add PAF to the project
-        add_task_to_user_group(
-            code=PROJECT_WAITING_PAF,
-            user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
-            related_obj=self.object,
-        )
-        return response
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["action_message"] = _("Project Created!")
-        return context
+    def post(self, *args, **kwargs):
+        form = ProjectCreateForm(self.request.POST, instance=self.submission)
+        if form.is_valid():
+            project = form.save()
+            # Record activity
+            messenger(
+                MESSAGES.CREATED_PROJECT,
+                request=self.request,
+                user=self.request.user,
+                source=project,
+                related=project.submission,
+            )
+            # add task for staff to add PAF to the project
+            add_task_to_user_group(
+                code=PROJECT_WAITING_PAF,
+                user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+                related_obj=project,
+            )
+            return HttpResponseClientRefresh()
+        return render(
+            self.request,
+            "funds/includes/create_project_form.html",
+            context={"form": form, "value": _("Confirm"), "object": self.object},
+            status=400,
+        )
 
 
 @method_decorator(staff_required, name="dispatch")
-class UnarchiveSubmissionView(DelegatedViewMixin, UpdateView):
-    model = ApplicationSubmission
-    form_class = UnarchiveSubmissionForm
-    context_name = "unarchive_form"
-
-    def form_valid(self, form):
-        # If a user without archive edit access is somehow able to access "Unarchive Submission"
-        # (ie. they were looking at the submission when permissions changed) "refresh" the page
-        if not can_alter_archived_submissions(self.request.user):
-            return HttpResponseRedirect(self.request.path)
-        response = super().form_valid(form)
-        # Record activity
-        messenger(
-            MESSAGES.UNARCHIVE_SUBMISSION,
-            request=self.request,
-            user=self.request.user,
-            source=self.object,
+class UnarchiveSubmissionView(View):
+    def dispatch(self, request, *args, **kwargs):
+        self.object = get_object_or_404(ApplicationSubmission, id=kwargs.get("pk"))
+        permission, reason = has_permission(
+            "archive_alter", request.user, object=self.object, raise_exception=False
         )
-        return response
+        if not permission:
+            HttpResponseRedirect(self.request.path)
+        return super(UnarchiveSubmissionView, self).dispatch(request, *args, **kwargs)
 
-    def get_success_url(self):
-        return self.object.get_absolute_url()
+    def get(self, *args, **kwargs):
+        unarchive_form = UnarchiveSubmissionForm(instance=self.object)
+        return render(
+            self.request,
+            "funds/includes/unarchive_submission_form.html",
+            context={
+                "form": unarchive_form,
+                "value": _("Confirm"),
+                "object": self.object,
+            },
+        )
+
+    def post(self, *args, **kwargs):
+        form = UnarchiveSubmissionForm(self.request.POST, instance=self.object)
+        if form.is_valid():
+            form.save()
+            # Record activity
+            messenger(
+                MESSAGES.UNARCHIVE_SUBMISSION,
+                request=self.request,
+                user=self.request.user,
+                source=self.object,
+            )
+            return HttpResponseClientRefresh()
+        return render(
+            self.request,
+            "funds/includes/unarchive_submission_form.html",
+            context={"form": form, "value": _("Confirm"), "object": self.object},
+            status=400,
+        )
 
 
 @method_decorator(staff_required, name="dispatch")
-class ArchiveSubmissionView(DelegatedViewMixin, UpdateView):
-    model = ApplicationSubmission
-    form_class = ArchiveSubmissionForm
-    context_name = "archive_form"
-
-    def form_valid(self, form):
-        # If a user without archive edit access is somehow able to access "Archive Submission"
-        # (ie. they were looking at the submission when permissions changed) "refresh" the page
-        if not can_alter_archived_submissions(self.request.user):
-            return HttpResponseRedirect(self.request.path)
-        response = super().form_valid(form)
-        submission = self.get_object()
-        # Record activity
-        messenger(
-            MESSAGES.ARCHIVE_SUBMISSION,
-            request=self.request,
-            user=self.request.user,
-            source=submission,
+class ArchiveSubmissionView(View):
+    def dispatch(self, request, *args, **kwargs):
+        self.object = get_object_or_404(ApplicationSubmission, id=kwargs.get("pk"))
+        permission, reason = has_permission(
+            "archive_alter", request.user, object=self.object, raise_exception=False
         )
-        return response
+        if not permission:
+            HttpResponseRedirect(self.request.path)
+        return super(ArchiveSubmissionView, self).dispatch(request, *args, **kwargs)
 
-    def get_success_url(self):
-        return self.object.get_absolute_url()
+    def get(self, *args, **kwargs):
+        archive_form = ArchiveSubmissionForm(instance=self.object)
+        return render(
+            self.request,
+            "funds/includes/archive_submission_form.html",
+            context={
+                "form": archive_form,
+                "value": _("Confirm"),
+                "object": self.object,
+            },
+        )
+
+    def post(self, *args, **kwargs):
+        form = ArchiveSubmissionForm(self.request.POST, instance=self.object)
+        if form.is_valid():
+            form.save()
+            # Record activity
+            messenger(
+                MESSAGES.ARCHIVE_SUBMISSION,
+                request=self.request,
+                user=self.request.user,
+                source=self.object,
+            )
+            return HttpResponseClientRefresh()
+        return render(
+            self.request,
+            "funds/includes/archive_submission_form.html",
+            context={"form": form, "value": _("Confirm"), "object": self.object},
+            status=400,
+        )
 
 
 @method_decorator(staff_required, name="dispatch")
-class UpdateLeadView(DelegatedViewMixin, UpdateView):
+class UpdateLeadView(View):
     model = ApplicationSubmission
     form_class = UpdateSubmissionLeadForm
     context_name = "lead_form"
 
     def dispatch(self, request, *args, **kwargs):
-        submission = self.get_object()
+        self.object = get_object_or_404(ApplicationSubmission, id=kwargs.get("pk"))
         permission, reason = has_permission(
-            "submission_edit", request.user, object=submission, raise_exception=False
+            "submission_edit", request.user, object=self.object, raise_exception=False
         )
         if not permission:
             messages.warning(self.request, reason)
-            return HttpResponseRedirect(submission.get_absolute_url())
+            return HttpResponseRedirect(self.object.get_absolute_url())
         return super(UpdateLeadView, self).dispatch(request, *args, **kwargs)
 
-    def form_valid(self, form):
-        # Fetch the old lead from the database
-        old = copy(self.get_object())
-        response = super().form_valid(form)
-        messenger(
-            MESSAGES.UPDATE_LEAD,
-            request=self.request,
-            user=self.request.user,
-            source=form.instance,
-            related=old.lead,
+    def get(self, *args, **kwargs):
+        lead_form = UpdateSubmissionLeadForm(instance=self.object)
+        return render(
+            self.request,
+            "funds/includes/update_lead_form.html",
+            context={"form": lead_form, "value": _("Update"), "object": self.object},
         )
-        return response
+
+    def post(self, *args, **kwargs):
+        form = UpdateSubmissionLeadForm(self.request.POST, instance=self.object)
+        old_lead = copy(self.object.lead)
+        if form.is_valid():
+            form.save()
+            messenger(
+                MESSAGES.UPDATE_LEAD,
+                request=self.request,
+                user=self.request.user,
+                source=form.instance,
+                related=old_lead,
+            )
+            return render(
+                self.request,
+                "funds/applicationsubmission_detail.html",
+                context={"object": form.instance},
+                status=200,
+            )
+        return render(
+            self.request,
+            "funds/includes/update_lead_form.html",
+            context={"form": form, "value": _("Update"), "object": self.object},
+            status=400,
+        )
 
 
 @method_decorator(staff_required, name="dispatch")
-class UpdateReviewersView(DelegatedViewMixin, UpdateView):
-    model = ApplicationSubmission
-    form_class = UpdateReviewersForm
-    context_name = "reviewer_form"
-
+class UpdateReviewersView(View):
     def dispatch(self, request, *args, **kwargs):
-        submission = self.get_object()
+        self.submission = get_object_or_404(ApplicationSubmission, id=kwargs.get("pk"))
         permission, reason = has_permission(
-            "submission_edit", request.user, object=submission, raise_exception=False
+            "submission_edit",
+            request.user,
+            object=self.submission,
+            raise_exception=False,
         )
         if not permission:
             messages.warning(self.request, reason)
-            return HttpResponseRedirect(submission.get_absolute_url())
+            return HttpResponseRedirect(self.submission.get_absolute_url())
         return super(UpdateReviewersView, self).dispatch(request, *args, **kwargs)
 
-    def form_valid(self, form):
+    def get(self, *args, **kwargs):
+        reviewer_form = UpdateReviewersForm(
+            user=self.request.user, instance=self.submission
+        )
+        return render(
+            self.request,
+            "funds/includes/update_reviewer_form.html",
+            context={
+                "form": reviewer_form,
+                "value": _("Update"),
+                "object": self.submission,
+            },
+        )
+
+    def post(self, *args, **kwargs):
+        form = UpdateReviewersForm(
+            self.request.POST, user=self.request.user, instance=self.submission
+        )
         old_reviewers = {copy(reviewer) for reviewer in form.instance.assigned.all()}
-        response = super().form_valid(form)
+        if form.is_valid():
+            form.save()
+            new_reviewers = set(form.instance.assigned.all())
+            added = new_reviewers - old_reviewers
+            removed = old_reviewers - new_reviewers
+            messenger(
+                MESSAGES.REVIEWERS_UPDATED,
+                request=self.request,
+                user=self.request.user,
+                source=self.submission,
+                added=added,
+                removed=removed,
+            )
 
-        new_reviewers = set(form.instance.assigned.all())
-        added = new_reviewers - old_reviewers
-        removed = old_reviewers - new_reviewers
+            # Update submission status if needed.
+            services.set_status_after_reviewers_assigned(
+                submission=form.instance,
+                updated_by=self.request.user,
+                request=self.request,
+            )
+            assigned_reviewers = self.submission.assigned.review_order()
 
-        messenger(
-            MESSAGES.REVIEWERS_UPDATED,
-            request=self.request,
-            user=self.request.user,
-            source=self.kwargs["object"],
-            added=added,
-            removed=removed,
+            if not self.submission.stage.has_external_review:
+                assigned_reviewers = assigned_reviewers.staff()
+            # Calculate the recommendation based on role and staff reviews
+            recommendation = self.submission.reviews.by_staff().recommendation()
+            return render(
+                self.request,
+                "funds/includes/review_sidebar.html",
+                context={
+                    "hidden_types": [REVIEWER_GROUP_NAME],
+                    "staff_reviewers_exist": assigned_reviewers.staff().exists(),
+                    "assigned_reviewers": assigned_reviewers,
+                    "recommendation": recommendation,
+                },
+                status=200,
+            )
+        return render(
+            self.request,
+            "funds/includes/update_reviewer_form.html",
+            context={"form": form, "value": _("Update"), "object": self.submission},
+            status=400,
         )
-
-        # Update submission status if needed.
-        services.set_status_after_reviewers_assigned(
-            submission=form.instance, updated_by=self.request.user, request=self.request
-        )
-
-        return response
 
 
 @method_decorator(staff_required, name="dispatch")
-class UpdatePartnersView(DelegatedViewMixin, UpdateView):
+class UpdatePartnersView(View):
     model = ApplicationSubmission
     form_class = UpdatePartnersForm
     context_name = "partner_form"
 
     def dispatch(self, request, *args, **kwargs):
-        submission = self.get_object()
+        self.submission = get_object_or_404(ApplicationSubmission, id=kwargs.get("pk"))
         permission, reason = has_permission(
-            "submission_edit", request.user, object=submission, raise_exception=False
+            "submission_edit",
+            request.user,
+            object=self.submission,
+            raise_exception=False,
         )
         if not permission:
             messages.warning(self.request, reason)
-            return HttpResponseRedirect(submission.get_absolute_url())
+            return HttpResponseRedirect(self.submission.get_absolute_url())
         return super(UpdatePartnersView, self).dispatch(request, *args, **kwargs)
 
-    def form_valid(self, form):
-        old_partners = set(self.get_object().partners.all())
-        response = super().form_valid(form)
-        new_partners = set(form.instance.partners.all())
-
-        added = new_partners - old_partners
-        removed = old_partners - new_partners
-
-        messenger(
-            MESSAGES.PARTNERS_UPDATED,
-            request=self.request,
-            user=self.request.user,
-            source=self.kwargs["object"],
-            added=added,
-            removed=removed,
+    def get(self, *args, **kwargs):
+        partner_form = UpdatePartnersForm(
+            user=self.request.user, instance=self.submission
+        )
+        return render(
+            self.request,
+            "funds/includes/update_partner_form.html",
+            context={
+                "form": partner_form,
+                "value": _("Update"),
+                "object": self.submission,
+            },
         )
 
-        messenger(
-            MESSAGES.PARTNERS_UPDATED_PARTNER,
-            request=self.request,
-            user=self.request.user,
-            source=self.kwargs["object"],
-            added=added,
-            removed=removed,
+    def post(self, *args, **kwargs):
+        form = UpdatePartnersForm(
+            self.request.POST, user=self.request.user, instance=self.submission
         )
+        old_partners = set(self.submission.partners.all())
+        if form.is_valid():
+            form.save()
+            new_partners = set(form.instance.partners.all())
 
-        return response
+            added = new_partners - old_partners
+            removed = old_partners - new_partners
+            messenger(
+                MESSAGES.PARTNERS_UPDATED,
+                request=self.request,
+                user=self.request.user,
+                source=self.submission,
+                added=added,
+                removed=removed,
+            )
+
+            messenger(
+                MESSAGES.PARTNERS_UPDATED_PARTNER,
+                request=self.request,
+                user=self.request.user,
+                source=self.submission,
+                added=added,
+                removed=removed,
+            )
+            return HttpResponse("", status=200)
+        return render(
+            self.request,
+            "funds/includes/update_partner_form.html",
+            context={"form": form, "value": _("Update"), "object": self.submission},
+            status=400,
+        )
 
 
 @method_decorator(staff_required, name="dispatch")
-class UpdateMetaTermsView(DelegatedViewMixin, UpdateView):
-    model = ApplicationSubmission
-    form_class = UpdateMetaTermsForm
-    context_name = "meta_terms_form"
-
+class UpdateMetaTermsView(View):
     def dispatch(self, request, *args, **kwargs):
-        submission = self.get_object()
+        self.submission = get_object_or_404(ApplicationSubmission, id=kwargs.get("pk"))
         permission, reason = has_permission(
-            "submission_edit", request.user, object=submission, raise_exception=False
+            "submission_edit",
+            request.user,
+            object=self.submission,
+            raise_exception=False,
         )
         if not permission:
             messages.warning(self.request, reason)
-            return HttpResponseRedirect(submission.get_absolute_url())
+            return HttpResponseRedirect(self.submission.get_absolute_url())
         return super(UpdateMetaTermsView, self).dispatch(request, *args, **kwargs)
 
+    def get(self, *args, **kwargs):
+        metaterms_form = UpdateMetaTermsForm(
+            user=self.request.user, instance=self.submission
+        )
+        return render(
+            self.request,
+            "funds/includes/update_meta_terms_form.html",
+            context={
+                "form": metaterms_form,
+                "value": _("Update"),
+                "object": self.submission,
+            },
+        )
+
+    def post(self, *args, **kwargs):
+        form = UpdateMetaTermsForm(
+            self.request.POST, instance=self.submission, user=self.request.user
+        )
+        if form.is_valid():
+            form.save()
+
+            return render(
+                self.request,
+                "funds/includes/meta_terms_block.html",
+                context={"object": self.submission},
+                status=200,
+            )
+        return render(
+            self.request,
+            "funds/includes/update_meta_terms_form.html",
+            context={"form": form, "value": _("Update"), "object": self.submission},
+            status=400,
+        )
+
 
 @method_decorator(staff_required, name="dispatch")
-class ReminderCreateView(DelegatedViewMixin, CreateView):
-    context_name = "reminder_form"
-    form_class = CreateReminderForm
-    model = Reminder
-
+class ReminderCreateView(View):
     def dispatch(self, request, *args, **kwargs):
-        submission = self.get_parent_object()
+        self.submission = get_object_or_404(ApplicationSubmission, id=kwargs.get("pk"))
         permission, reason = has_permission(
-            "submission_edit", request.user, object=submission, raise_exception=False
+            "submission_edit",
+            request.user,
+            object=self.submission,
+            raise_exception=False,
         )
         if not permission:
             messages.warning(self.request, reason)
-            return HttpResponseRedirect(submission.get_absolute_url())
+            return HttpResponseRedirect(self.submission.get_absolute_url())
         return super(ReminderCreateView, self).dispatch(request, *args, **kwargs)
 
-    def form_valid(self, form):
-        response = super().form_valid(form)
-
-        messenger(
-            MESSAGES.CREATE_REMINDER,
-            request=self.request,
-            user=self.request.user,
-            source=self.object.submission,
-            related=self.object,
+    def get(self, *args, **kwargs):
+        reminder_form = CreateReminderForm(instance=self.submission)
+        return render(
+            self.request,
+            "funds/includes/create_reminder_form.html",
+            context={
+                "form": reminder_form,
+                "value": _("Create"),
+                "object": self.submission,
+            },
         )
 
-        return response
+    def post(self, *args, **kwargs):
+        form = CreateReminderForm(
+            self.request.POST, instance=self.submission, user=self.request.user
+        )
+        if form.is_valid():
+            reminder = form.save()
+            messenger(
+                MESSAGES.CREATE_REMINDER,
+                request=self.request,
+                user=self.request.user,
+                source=self.submission,
+                related=reminder,
+            )
+            return render(
+                self.request,
+                "funds/includes/reminders_block.html",
+                context={"object": self.submission},
+                status=200,
+            )
+        return render(
+            self.request,
+            "funds/includes/create_reminder_form.html",
+            context={"form": form, "value": _("Create"), "object": self.submission},
+            status=400,
+        )
 
 
 @method_decorator(staff_required, name="dispatch")
@@ -925,16 +1141,7 @@ class AdminSubmissionDetailView(ActivityContextMixin, DelegateableView, DetailVi
     template_name_suffix = "_admin_detail"
     model = ApplicationSubmission
     form_views = [
-        ArchiveSubmissionView,
-        ProgressSubmissionView,
-        ReminderCreateView,
         CommentFormView,
-        UpdateLeadView,
-        UpdateReviewersView,
-        UpdatePartnersView,
-        CreateProjectView,
-        UpdateMetaTermsView,
-        UnarchiveSubmissionView,
     ]
 
     def dispatch(self, request, *args, **kwargs):

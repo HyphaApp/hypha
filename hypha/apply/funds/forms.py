@@ -74,7 +74,6 @@ class ProgressSubmissionForm(ApplicationSubmissionModelForm):
         choices.sort(key=lambda k: sort_by.index(k[0]))
         action_field = self.fields["action"]
         action_field.choices = choices
-        self.should_show = bool(choices)
 
 
 class BatchProgressSubmissionForm(forms.Form):
@@ -111,7 +110,6 @@ class UpdateSubmissionLeadForm(ApplicationSubmissionModelForm):
         fields = ("lead",)
 
     def __init__(self, *args, **kwargs):
-        kwargs.pop("user")
         super().__init__(*args, **kwargs)
         lead_field = self.fields["lead"]
         lead_field.label = _("Update lead from {lead} to").format(
@@ -127,10 +125,6 @@ class UnarchiveSubmissionForm(ApplicationSubmissionModelForm):
         model = ApplicationSubmission
         fields = ("unarchive",)
 
-    def __init__(self, *args, **kwargs):
-        kwargs.pop("user")
-        super().__init__(*args, **kwargs)
-
     def save(self, commit=True):
         self.instance.is_archive = False
         return super(UnarchiveSubmissionForm, self).save()
@@ -142,10 +136,6 @@ class ArchiveSubmissionForm(ApplicationSubmissionModelForm):
     class Meta:
         model = ApplicationSubmission
         fields = ("archive",)
-
-    def __init__(self, *args, **kwargs):
-        kwargs.pop("user")
-        super().__init__(*args, **kwargs)
 
     def save(self, commit=True):
         self.instance.is_archive = True
@@ -208,7 +198,6 @@ class BatchArchiveSubmissionForm(forms.Form):
 class UpdateReviewersForm(ApplicationSubmissionModelForm):
     reviewer_reviewers = forms.ModelMultipleChoiceField(
         queryset=User.objects.reviewers().only("pk", "full_name"),
-        widget=Select2MultiCheckboxesWidget(attrs={"data-placeholder": "Reviewers"}),
         label=_("External Reviewers"),
         required=False,
     )
@@ -216,6 +205,8 @@ class UpdateReviewersForm(ApplicationSubmissionModelForm):
     class Meta:
         model = ApplicationSubmission
         fields: list = []
+
+    reviewer_reviewers.widget.attrs.update({"data-placeholder": "Select..."})
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop("user")
@@ -442,10 +433,10 @@ def make_role_reviewer_fields():
 class UpdatePartnersForm(ApplicationSubmissionModelForm):
     partner_reviewers = forms.ModelMultipleChoiceField(
         queryset=User.objects.partners(),
-        widget=Select2MultiCheckboxesWidget(attrs={"data-placeholder": "Partners"}),
         label=_("Partners"),
         required=False,
     )
+    partner_reviewers.widget.attrs.update({"data-placeholder": "Select..."})
 
     class Meta:
         model = ApplicationSubmission
@@ -539,7 +530,7 @@ class CreateReminderForm(forms.ModelForm):
     )
     time = forms.DateField()
 
-    def __init__(self, instance=None, user=None, *args, **kwargs):
+    def __init__(self, *args, instance=None, user=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.user = user
 
