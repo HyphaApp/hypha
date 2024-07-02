@@ -1,4 +1,8 @@
+import csv
+from io import StringIO
 from itertools import chain
+
+from django.utils.html import strip_tags
 
 from hypha.apply.utils.image import generate_image_tag
 
@@ -92,3 +96,31 @@ def get_statuses_as_params(statuses):
     for status in statuses:
         params += "status=" + status + "&"
     return params
+
+
+def export_submissions_to_csv(submissions_list):
+    csv_stream = StringIO()
+    header_row = ["Application #"]
+    index = 1
+    data_list = []
+    for submission in submissions_list:
+        values = {}
+        values["Application #"] = submission.id
+        for field_id in submission.question_text_field_ids:
+            question_field = submission.serialize(field_id)
+            field_name = question_field["question"]
+            field_value = question_field["answer"]
+            if field_name not in header_row:
+                if field_id not in submission.named_blocks:
+                    header_row.append(field_name)
+                else:
+                    header_row.insert(index, field_name)
+                    index = index + 1
+            values[field_name] = strip_tags(field_value)
+        data_list.append(values)
+    writer = csv.DictWriter(csv_stream, fieldnames=header_row, restval="")
+    writer.writeheader()
+    for data in data_list:
+        writer.writerow(data)
+    csv_stream.seek(0)
+    return csv_stream

@@ -4,7 +4,6 @@ import django.core.validators
 from django.db import migrations, models
 import django.db.models.deletion
 import wagtail.fields
-import wagtailcache.cache
 
 
 class Migration(migrations.Migration):
@@ -149,7 +148,6 @@ class Migration(migrations.Migration):
                 "verbose_name": "Partner Page",
             },
             bases=(
-                wagtailcache.cache.WagtailCacheMixin,
                 "wagtailcore.page",
                 models.Model,
             ),
@@ -222,7 +220,6 @@ class Migration(migrations.Migration):
                 "abstract": False,
             },
             bases=(
-                wagtailcache.cache.WagtailCacheMixin,
                 "wagtailcore.page",
                 models.Model,
             ),

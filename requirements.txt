@@ -33,7 +33,7 @@ django-two-factor-auth==1.16.0
 django-web-components==0.2.0
 django==4.2.11
 djangorestframework-api-key==3.0.0
-djangorestframework==3.15.0
+djangorestframework==3.15.2
 drf-nested-routers==0.93.5
 drf-yasg==1.21.7
 environs==11.0.0
@@ -53,9 +53,7 @@ reportlab==4.0.9
 social_auth_app_django==5.4.1
 tablib==3.5.0
 tomd==0.1.3
-wagtail-cache==2.4.0
-wagtail-purge==0.3.0
-wagtail==5.2.3
+wagtail==5.2.5
 whitenoise==6.6.0
 xhtml2pdf==0.2.15
 xmltodict==0.13.0

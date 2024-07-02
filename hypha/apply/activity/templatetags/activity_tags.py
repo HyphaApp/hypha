@@ -139,3 +139,18 @@ def display_name_for_email(context: dict, user: User) -> str:
         return settings.ORG_LONG_NAME
     else:
         return str(user)
+
+
+@register.filter
+def source_type(value) -> str:
+    """Formats source type
+    For a given source type containing "submission", this will be converted
+    to "Submission" (ie. "application submission" -> "Submission").
+    Args:
+        value: the source type to be formatted
+    Returns:
+        A source type string with a capitalized first letter
+    """
+    if value and "submission" in value:
+        return "Submission"
+    return str(value).capitalize()

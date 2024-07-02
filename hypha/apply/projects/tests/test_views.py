@@ -1215,30 +1215,6 @@ class TestProjectListView(TestCase):
         self.assertEqual(response.status_code, 403)
 
 
-class TestProjectOverviewView(TestCase):
-    def test_staff_can_access(self):
-        ProjectFactory(status=CONTRACTING)
-        ProjectFactory(status=INVOICING_AND_REPORTING)
-
-        self.client.force_login(StaffFactory())
-
-        url = reverse("apply:projects:overview")
-
-        response = self.client.get(url, follow=True)
-        self.assertEqual(response.status_code, 200)
-
-    def test_applicants_cannot_access(self):
-        ProjectFactory(status=CONTRACTING)
-        ProjectFactory(status=INVOICING_AND_REPORTING)
-
-        self.client.force_login(UserFactory())
-
-        url = reverse("apply:projects:overview")
-
-        response = self.client.get(url, follow=True)
-        self.assertEqual(response.status_code, 403)
-
-
 class TestStaffSubmitReport(BaseViewTestCase):
     base_view_name = "edit"
     url_name = "funds:projects:reports:{}"
