@@ -1,3 +1,4 @@
+import datetime
 import json
 from io import BytesIO
 
@@ -417,6 +418,7 @@ class TestCreateInvoiceForm(TestCase):
         data = {
             "invoice_number": "00INV_NUM",
             "invoice_amount": "10",
+            "invoice_date": datetime.date.today(),
             "paid_value": "10",
             "comment": "test comment",
         }
@@ -444,6 +446,7 @@ class TestCreateInvoiceForm(TestCase):
         data = {
             "invoice_number": "00INV_NUM",
             "invoice_amount": "10",
+            "invoice_date": datetime.date.today(),
             "paid_value": "10",
             "comment": "test comment",
         }
@@ -475,6 +478,7 @@ class TestEditInvoiceForm(TestCase):
             data={
                 "invoice_number": invoice.invoice_number,
                 "invoice_amount": invoice.invoice_amount,
+                "invoice_date": invoice.invoice_date,
                 "document": invoice.document,
                 "supporting_documents-uploads": "[]",
             },
@@ -497,6 +501,7 @@ class TestEditInvoiceForm(TestCase):
             data={
                 "invoice_number": invoice.invoice_number,
                 "invoice_amount": invoice.invoice_amount,
+                "invoice_date": invoice.invoice_date,
                 "document": invoice.document,
                 "supporting_documents-uploads": json.dumps(
                     [
@@ -526,6 +531,7 @@ class TestEditInvoiceForm(TestCase):
             data={
                 "invoice_number": invoice.invoice_number,
                 "invoice_amount": invoice.invoice_amount,
+                "invoice_date": invoice.invoice_date,
                 "document": invoice.document,
                 "supporting_documents-uploads": "[]",
             },
