@@ -20,6 +20,7 @@
         <div class="wrapper--sidebar--inner">
             <div class="card card--solid">
                 <p class="card__text"><b>{% trans "Invoice number" %}:</b> {{ object.invoice_number }}</p>
+                <p class="card__text"><b>{% trans "Invoice date" %}:</b> {% if invoice.invoice_date %}{{ invoice.invoice_date.date }}{% else %} {{ invoice.requested_at.date }} {% endif %}</p>
                 {% is_vendor_setup request as show_vendor_information %}
                 <p class="card__text"><b>{% trans "Vendor" %}:</b>
                     {% if show_vendor_information %}{{ object.project.vendor.name }}{% else %}{{ object.project.user }}{% endif %}</p>

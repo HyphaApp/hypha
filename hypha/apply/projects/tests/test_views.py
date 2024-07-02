@@ -908,6 +908,7 @@ class TestApplicantEditInvoiceView(BaseViewTestCase):
             {
                 "invoice_number": invoice.invoice_number,
                 "invoice_amount": invoice.invoice_amount,
+                "invoice_date": invoice.invoice_date,
                 "comment": "test comment",
                 "invoice": "",
                 "supporting_documents-uploads": "[]",
@@ -927,6 +928,7 @@ class TestApplicantEditInvoiceView(BaseViewTestCase):
             {
                 "invoice_number": invoice.invoice_number,
                 "invoice_amount": invoice.invoice_amount,
+                "invoice_date": invoice.invoice_date,
                 "comment": "test comment",
                 "invoice": "",
                 "supporting_documents-uploads": json.dumps(
@@ -972,6 +974,7 @@ class TestStaffEditInvoiceView(BaseViewTestCase):
             {
                 "invoice_number": invoice.invoice_number,
                 "invoice_amount": invoice.invoice_amount,
+                "invoice_date": invoice.invoice_date,
                 "comment": "test comment",
                 "invoice": "",
                 "supporting_documents-uploads": "[]",
