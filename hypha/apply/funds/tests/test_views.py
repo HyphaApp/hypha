@@ -1069,6 +1069,33 @@ class TestReviewerSubmissionView(BaseSubmissionViewTestCase):
         response = self.get_page(submission)
         self.assertEqual(response.status_code, 200)
 
+    def test_can_view_applicant_pii(self):
+        submission = ApplicationSubmissionFactory(
+            with_external_review=True,
+            status="ext_external_review",
+            user=self.applicant,
+            reviewers=[self.user],
+        )
+
+        response = self.get_page(submission)
+
+        self.assertContains(response, str(self.applicant))
+        self.assertContains(response, self.applicant.email)
+
+    @override_settings(HIDE_IDENTITY_FROM_REVIEWERS=True)
+    def test_cant_view_applicant_pii(self):
+        submission = ApplicationSubmissionFactory(
+            with_external_review=True,
+            status="ext_external_review",
+            user=self.applicant,
+            reviewers=[self.user],
+        )
+
+        response = self.get_page(submission)
+
+        self.assertNotContains(response, str(self.applicant))
+        self.assertNotContains(response, self.applicant.email)
+
 
 class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
     user_factory = ApplicantFactory
@@ -1300,6 +1327,20 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
         # Phase: ready-for-determination, draft determination
         DeterminationFactory(submission=submission, accepted=True, submitted=False)
         assert_view_determination_not_displayed(submission)
+
+    @override_settings(HIDE_STAFF_IDENTITY=True)
+    def test_applicant_cant_see_hidden_lead(self):
+        lead = StaffFactory()
+        submission = ApplicationSubmissionFactory(user=self.user, lead=lead)
+        DeterminationFactory(submission=submission, accepted=True, submitted=True)
+        response = self.get_page(submission)
+        self.assertNotContains(response, str(lead))
+
+    def test_applicant_can_see_lead(self):
+        lead = StaffFactory()
+        submission = ApplicationSubmissionFactory(user=self.user, lead=lead)
+        response = self.get_page(submission)
+        self.assertContains(response, str(lead))
 
 
 class TestRevisionsView(BaseSubmissionViewTestCase):

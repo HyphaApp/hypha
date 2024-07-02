@@ -256,10 +256,6 @@ class User(AbstractUser):
         return self.groups.filter(name=STAFF_GROUP_NAME).exists() or self.is_superuser
 
     @cached_property
-    def is_apply_staff_or_finance(self):
-        return self.is_apply_staff or self.is_finance
-
-    @cached_property
     def is_apply_staff_admin(self):
         return (
             self.groups.filter(name=TEAMADMIN_GROUP_NAME).exists() or self.is_superuser
@@ -295,6 +291,10 @@ class User(AbstractUser):
             self.groups.filter(name=FINANCE_GROUP_NAME).exists()
             and not self.groups.filter(name=APPROVER_GROUP_NAME).exists()
         )
+
+    @cached_property
+    def is_org_faculty(self):
+        return self.is_apply_staff or self.is_finance or self.is_contracting
 
     @cached_property
     def can_access_dashboard(self):

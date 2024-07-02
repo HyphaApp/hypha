@@ -6,7 +6,7 @@ from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import PermissionDenied
-from django.test import RequestFactory, TestCase
+from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 
@@ -270,6 +270,33 @@ class BaseProjectDetailTestCase(BaseViewTestCase):
 
     def get_kwargs(self, instance):
         return {"pk": instance.id}
+
+
+class TestApplicantProjectDetailView(BaseProjectDetailTestCase):
+    user_factory = ApplicantFactory
+
+    def test_has_access(self):
+        project = ProjectFactory(user=self.user)
+        response = self.get_page(project)
+        self.assertEqual(response.status_code, 200)
+
+    def test_lab_project_renders(self):
+        project = ProjectFactory(user=self.user, submission=LabSubmissionFactory())
+        response = self.get_page(project)
+        self.assertEqual(response.status_code, 200)
+
+    @override_settings(HIDE_STAFF_IDENTITY=True)
+    def test_applicant_cant_see_hidden_lead(self):
+        lead = StaffFactory()
+        project = ProjectFactory(user=self.user, lead=lead)
+        response = self.get_page(project)
+        self.assertNotContains(response, str(lead))
+
+    def test_applicant_can_see_lead(self):
+        lead = StaffFactory()
+        project = ProjectFactory(user=self.user, lead=lead)
+        response = self.get_page(project)
+        self.assertContains(response, str(lead))
 
 
 class TestStaffProjectDetailView(BaseProjectDetailTestCase):
