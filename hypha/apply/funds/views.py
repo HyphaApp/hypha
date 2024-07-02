@@ -1,7 +1,5 @@
-import csv
 from copy import copy
 from datetime import timedelta
-from io import StringIO
 from typing import Generator, Tuple
 
 import django_tables2 as tables
@@ -13,7 +11,7 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.models import Group
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.core.exceptions import PermissionDenied
-from django.db.models import Count, F, Q
+from django.db.models import Count, Q
 from django.forms import BaseModelForm
 from django.http import (
     FileResponse,
@@ -122,13 +120,11 @@ from .tables import (
     RoundsFilter,
     RoundsTable,
     StaffAssignmentsTable,
-    StaffFlaggedSubmissionsTable,
     SubmissionFilterAndSearch,
     SubmissionReviewerFilterAndSearch,
-    SummarySubmissionsTable,
-    UserFlaggedSubmissionsTable,
 )
 from .utils import (
+    export_submissions_to_csv,
     get_or_create_default_screening_statuses,
 )
 from .workflow import (
@@ -225,8 +221,18 @@ class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
             search_term=search_term,
             search_action=self.search_action,
             filter_action=self.filter_action,
+            can_export=can_export_submissions(self.request.user),
             **kwargs,
         )
+
+    def dispatch(self, request, *args, **kwargs):
+        disp = super().dispatch(request, *args, **kwargs)
+        if "export" in request.GET and can_export_submissions(request.user):
+            csv_data = export_submissions_to_csv(self.object_list)
+            response = HttpResponse(csv_data.readlines(), content_type="text/csv")
+            response["Content-Disposition"] = "attachment; filename=submissions.csv"
+            return response
+        return disp
 
 
 @method_decorator(staff_required, name="dispatch")
@@ -446,88 +452,6 @@ class AwaitingReviewSubmissionsListView(SingleTableMixin, ListView):
         return submissions.for_table(self.request.user)
 
 
-@method_decorator(staff_required, name="dispatch")
-class SubmissionOverviewView(BaseAdminSubmissionsTable):
-    template_name = "funds/submissions_overview.html"
-    table_class = SummarySubmissionsTable
-    table_pagination = False
-    filter_action = reverse_lazy("funds:submissions:list")
-    search_action = reverse_lazy("funds:submissions:list")
-
-    def get_table_data(self):
-        limit = 5
-        return (
-            super()
-            .get_table_data()
-            .order_by(F("last_update").desc(nulls_last=True))[:limit]
-        )
-
-    def get_context_data(self, **kwargs):
-        limit = 6
-        base_query = (
-            RoundsAndLabs.objects.with_progress().active().order_by("-end_date")
-        )
-        can_export = can_export_submissions(self.request.user)
-        open_rounds = base_query.open()[:limit]
-        open_query = "?round_state=open"
-        closed_rounds = base_query.closed()[:limit]
-        closed_query = "?round_state=closed"
-        rounds_title = "All Rounds and Labs"
-
-        status_counts = dict(
-            ApplicationSubmission.objects.current()
-            .values("status")
-            .annotate(
-                count=Count("status"),
-            )
-            .values_list("status", "count")
-        )
-
-        grouped_statuses = {
-            status: {
-                "name": data["name"],
-                "count": sum(
-                    status_counts.get(status, 0) for status in data["statuses"]
-                ),
-                "url": reverse_lazy(
-                    "funds:submissions:status", kwargs={"status": status}
-                ),
-            }
-            for status, data in PHASES_MAPPING.items()
-        }
-
-        staff_flagged = self.get_staff_flagged()
-
-        return super().get_context_data(
-            open_rounds=open_rounds,
-            open_query=open_query,
-            can_export=can_export,
-            closed_rounds=closed_rounds,
-            closed_query=closed_query,
-            rounds_title=rounds_title,
-            status_counts=grouped_statuses,
-            staff_flagged=staff_flagged,
-            **kwargs,
-        )
-
-    def get_staff_flagged(self):
-        qs = super().get_queryset().flagged_staff().order_by("-submit_time")
-        row_attrs = dict(
-            {"data-flag-type": "staff"}, **SummarySubmissionsTable._meta.row_attrs
-        )
-
-        limit = 5
-        return {
-            "table": SummarySubmissionsTable(
-                qs[:limit],
-                prefix="staff-flagged-",
-                attrs={"class": "all-submissions-table flagged-table"},
-                row_attrs=row_attrs,
-            ),
-            "display_more": qs.count() > limit,
-        }
-
-
 class SubmissionAdminListView(BaseAdminSubmissionsTable, DelegateableListView):
     template_name = "funds/submissions.html"
     form_views = [
@@ -592,70 +516,8 @@ class SubmissionListView(ViewDispatcher):
     reviewer_view = SubmissionReviewerListView
 
 
-@method_decorator(staff_required, name="dispatch")
-class SubmissionStaffFlaggedView(BaseAdminSubmissionsTable):
-    table_class = StaffFlaggedSubmissionsTable
-    template_name = "funds/submissions_staff_flagged.html"
-
-    def get_queryset(self):
-        return (
-            self.filterset_class._meta.model.objects.current()
-            .for_table(self.request.user)
-            .flagged_staff()
-            .order_by("-submit_time")
-        )
-
-
-@method_decorator(login_required, name="dispatch")
-class SubmissionUserFlaggedView(UserPassesTestMixin, BaseAdminSubmissionsTable):
-    table_class = UserFlaggedSubmissionsTable
-    template_name = "funds/submissions_user_flagged.html"
-
-    def get_queryset(self):
-        return (
-            self.filterset_class._meta.model.objects.current()
-            .for_table(self.request.user)
-            .flagged_by(self.request.user)
-            .order_by("-submit_time")
-        )
-
-    def test_func(self):
-        return self.request.user.is_apply_staff or self.request.user.is_reviewer
-
-
 @method_decorator(login_required, name="dispatch")
 class ExportSubmissionsByRound(UserPassesTestMixin, BaseAdminSubmissionsTable):
-    def export_submissions(self, round_id):
-        csv_stream = StringIO()
-        writer = csv.writer(csv_stream)
-        header_row, values = [], []
-        index = 0
-        check = False
-
-        for submission in ApplicationSubmission.objects.filter(round=round_id):
-            for field_id in submission.question_text_field_ids:
-                question_field = submission.serialize(field_id)
-                field_name = question_field["question"]
-                field_value = question_field["answer"]
-                if field_id not in submission.named_blocks:
-                    header_row.append(field_name) if not check else header_row
-                    values.append(field_value)
-                else:
-                    header_row.insert(index, field_name) if not check else header_row
-                    values.insert(index, field_value)
-                    index = index + 1
-
-            if not check:
-                writer.writerow(header_row)
-                check = True
-
-            writer.writerow(values)
-            values.clear()
-            index = 0
-
-        csv_stream.seek(0)
-        return csv_stream
-
     def get_queryset(self):
         try:
             self.obj = Page.objects.get(pk=self.kwargs.get("pk")).specific
@@ -668,9 +530,13 @@ class ExportSubmissionsByRound(UserPassesTestMixin, BaseAdminSubmissionsTable):
 
     def get(self, request, pk):
         self.get_queryset()
-        csv_data = self.export_submissions(pk)
+        csv_data = export_submissions_to_csv(
+            ApplicationSubmission.objects.filter(round=pk)
+        )
         response = HttpResponse(csv_data.readlines(), content_type="text/csv")
-        response["Content-Disposition"] = "inline; filename=" + str(self.obj) + ".csv"
+        response["Content-Disposition"] = (
+            "attachment; filename=" + str(self.obj) + ".csv"
+        )
         return response
 
     def test_func(self):

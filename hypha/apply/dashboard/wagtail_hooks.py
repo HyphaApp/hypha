@@ -13,6 +13,6 @@ def register_dashboard_menu_item():
     return MenuItem(
         "Apply Dashboard",
         urljoin(apply_home.url, reverse("dashboard:dashboard", "hypha.urls")),
-        classnames="icon icon-arrow-left",
+        classname="icon icon-arrow-left",
         order=100000,
     )

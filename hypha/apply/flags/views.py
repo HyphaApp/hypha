@@ -1,7 +1,8 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.contenttypes.models import ContentType
-from django.http import HttpResponseNotAllowed, JsonResponse
+from django.http import HttpResponseNotAllowed
+from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views import View
 
@@ -15,13 +16,11 @@ class FlagSubmissionCreateView(UserPassesTestMixin, View):
     model = Flag
 
     def post(self, request, type, submission_pk):
-        if request.headers.get("x-requested-with") != "XMLHttpRequest":
-            return HttpResponseNotAllowed()
-
         # Only staff can create staff flags.
         if type == self.model.STAFF and not self.request.user.is_apply_staff:
             return HttpResponseNotAllowed()
 
+        submission = ApplicationSubmission.objects.get(pk=submission_pk)
         submission_type = ContentType.objects.get_for_model(ApplicationSubmission)
         # Trying to get a flag from the table, or create a new one
         flag, created = self.model.objects.get_or_create(
@@ -35,7 +34,9 @@ class FlagSubmissionCreateView(UserPassesTestMixin, View):
         if not created:
             flag.delete()
 
-        return JsonResponse({"result": created})
+        return render(
+            request, "flags/flags.html", {"flag": flag, "submission": submission}
+        )
 
     def test_func(self):
         return self.request.user.is_apply_staff or self.request.user.is_reviewer

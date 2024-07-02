@@ -26,8 +26,6 @@ from .views import (
     SubmissionsByRound,
     SubmissionsByStatus,
     SubmissionSealedView,
-    SubmissionStaffFlaggedView,
-    SubmissionUserFlaggedView,
     partial_screening_card,
     submission_success,
 )
@@ -135,19 +133,6 @@ submission_urls = (
         ),
         path("summary/", GroupingApplicationsListView.as_view(), name="summary"),
         path("result/", SubmissionResultView.as_view(), name="result"),
-        path(
-            "flagged/",
-            include(
-                [
-                    path("", SubmissionUserFlaggedView.as_view(), name="flagged"),
-                    path(
-                        "staff/",
-                        SubmissionStaffFlaggedView.as_view(),
-                        name="staff_flagged",
-                    ),
-                ]
-            ),
-        ),
         path(
             "reviews/",
             include(

@@ -411,12 +411,6 @@
         }
     }
 
-    &--float {
-        position: absolute;
-        inset-block-start: 2px;
-        inset-inline-end: 2px;
-    }
-
     // Two-factor
     &-info,
     &-link {

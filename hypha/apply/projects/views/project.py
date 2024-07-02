@@ -9,11 +9,11 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.models import Group
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.db import transaction
-from django.db.models import Count, Q
+from django.db.models import Q
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import get_template
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
@@ -25,7 +25,6 @@ from django.views.generic import (
     CreateView,
     DetailView,
     FormView,
-    TemplateView,
     UpdateView,
 )
 from django.views.generic.detail import SingleObjectMixin
@@ -68,7 +67,7 @@ from hypha.apply.utils.views import DelegateableView, DelegatedViewMixin, ViewDi
 
 from ...funds.files import generate_private_file_path
 from ..files import get_files
-from ..filters import InvoiceListFilter, ProjectListFilter, ReportListFilter
+from ..filters import ProjectListFilter
 from ..forms import (
     ApproveContractForm,
     ApproversForm,
@@ -89,7 +88,6 @@ from ..forms import (
     UploadContractForm,
     UploadDocumentForm,
 )
-from ..models.payment import Invoice
 from ..models.project import (
     APPROVE,
     CONTRACTING,
@@ -98,7 +96,6 @@ from ..models.project import (
     INVOICING_AND_REPORTING,
     PROJECT_ACTION_MESSAGE_TAG,
     PROJECT_PUBLIC_STATUSES,
-    PROJECT_STATUS_CHOICES,
     REQUEST_CHANGE,
     Contract,
     ContractDocumentCategory,
@@ -109,9 +106,8 @@ from ..models.project import (
     Project,
     ProjectSettings,
 )
-from ..models.report import Report
 from ..permissions import has_permission
-from ..tables import InvoiceListTable, ProjectsListTable, ReportListTable
+from ..tables import ProjectsListTable
 from ..utils import (
     get_paf_status_display,
     get_placeholder_file,
@@ -1991,82 +1987,3 @@ class ProjectListView(SingleTableMixin, FilterView):
     queryset = Project.objects.for_table()
     table_class = ProjectsListTable
     template_name = "application_projects/project_list.html"
-
-
-@method_decorator(staff_or_finance_or_contracting_required, name="dispatch")
-class ProjectOverviewView(TemplateView):
-    template_name = "application_projects/overview.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["projects"] = self.get_projects(self.request)
-        context["invoices"] = self.get_invoices(self.request)
-        context["reports"] = self.get_reports(self.request)
-        context["status_counts"] = self.get_status_counts()
-        return context
-
-    def get_reports(self, request):
-        if request.user.is_contracting:
-            return {
-                "filterset": None,
-                "table": None,
-                "url": None,
-            }
-        reports = Report.objects.for_table().submitted()[:10]
-        return {
-            "filterset": ReportListFilter(
-                request.GET or None, request=request, queryset=reports
-            ),
-            "table": ReportListTable(reports, order_by=()),
-            "url": reverse("apply:projects:reports:all"),
-        }
-
-    def get_projects(self, request):
-        projects = Project.objects.for_table()[:10]
-
-        return {
-            "filterset": ProjectListFilter(
-                request.GET or None, request=request, queryset=projects
-            ),
-            "table": ProjectsListTable(projects, order_by=()),
-            "url": reverse("apply:projects:all"),
-        }
-
-    def get_invoices(self, request):
-        if request.user.is_contracting:
-            return {
-                "filterset": None,
-                "table": None,
-                "url": None,
-            }
-        invoices = Invoice.objects.order_by("-requested_at")[:10]
-
-        return {
-            "filterset": InvoiceListFilter(
-                request.GET or None, request=request, queryset=invoices
-            ),
-            "table": InvoiceListTable(invoices, order_by=()),
-            "url": reverse("apply:projects:invoices"),
-        }
-
-    def get_status_counts(self):
-        status_counts = dict(
-            Project.objects.all()
-            .values("status")
-            .annotate(
-                count=Count("status"),
-            )
-            .values_list(
-                "status",
-                "count",
-            )
-        )
-
-        return {
-            key: {
-                "name": display,
-                "count": status_counts.get(key, 0),
-                "url": reverse_lazy("funds:projects:all") + "?project_status=" + key,
-            }
-            for key, display in PROJECT_STATUS_CHOICES
-        }
