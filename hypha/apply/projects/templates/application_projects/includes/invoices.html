@@ -70,6 +70,39 @@
                                         {% trans "Update Status" as update %}
                                         {% include 'funds/includes/delegated_form_base.html' with form=invoice_form value=update action=invoice.get_absolute_url form_id=invoice_form_id %}
                                     </div>
+                                    <script>
+                                        document.addEventListener("DOMContentLoaded", function () {
+                                            const invoice_form = document.querySelector('[id^={{ invoice_form_id }}')
+                                            const invoice_status = invoice_form.querySelector('#id_status');
+                                            const paid_field = invoice_form.querySelector('.id_paid_date');
+                                            var paid_date = invoice_form.querySelector('#id_paid_date');
+
+                                            function updatePaidDate(){
+                                                if (invoice_status.value === 'paid') {
+                                                    paid_field.style.display = 'block';
+                                                    if (!paid_date.value) {
+                                                        // Get today's date
+                                                        const now = new Date();
+                                                        const year = now.getFullYear();
+                                                        const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+                                                        const day = String(now.getDate()).padStart(2, '0');
+
+                                                        // Format the date as YYYY-MM-DD
+                                                        const today = `${year}-${month}-${day}`;
+
+                                                        paid_date.value = today;
+                                                    }
+                                                } else {
+                                                    paid_field.style.display = 'none';
+                                                    paid_date.value = '';
+                                                }
+                                            }
+
+                                            updatePaidDate();
+
+                                            invoice_status.onchange = updatePaidDate;
+                                        });
+                                    </script>
                                 {% endif %}
                             </td>
                         </tr>
