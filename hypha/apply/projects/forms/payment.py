@@ -84,8 +84,10 @@ def get_invoice_possible_transition_for_user(user, invoice):
 class ChangeInvoiceStatusForm(forms.ModelForm):
     name_prefix = "change_invoice_status_form"
 
+    paid_date = forms.DateField(required=False)
+
     class Meta:
-        fields = ["status", "comment"]
+        fields = ["status", "paid_date", "comment"]
         model = Invoice
 
     def __init__(self, instance, user, *args, **kwargs):
