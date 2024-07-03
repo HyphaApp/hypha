@@ -26,7 +26,7 @@
         max-width: 300px;
         margin-block-start: $mobile-gutter;
 
-        @include media-query(tablet-landscape) {
+        @include media-query(lg) {
             max-width: 280px;
             margin: 0 0 0 30px;
         }
@@ -174,12 +174,12 @@
                 border-color: $color--mid-grey;
             }
 
-            @include media-query(tablet-landscape) {
+            @include media-query(lg) {
                 border: 1px solid $color--mid-grey;
             }
         }
 
-        @include media-query(tablet-landscape) {
+        @include media-query(lg) {
             display: flex;
             align-items: flex-start;
             padding: 10px 0 30px;
@@ -208,7 +208,7 @@
 
         // so the form can be output in any tag
         > * {
-            @include media-query(tablet-landscape) {
+            @include media-query(lg) {
                 flex-basis: 225px;
 
                 &:not(:last-child) {
@@ -231,7 +231,7 @@
         > li {
             padding: 0 1rem;
 
-            @include media-query(tablet-landscape) {
+            @include media-query(lg) {
                 padding: 0;
             }
 
@@ -240,7 +240,7 @@
                 margin: 0 auto 1rem;
                 max-width: 320px;
 
-                @include media-query(mob-landscape) {
+                @include media-query(sm) {
                     display: flex;
                     max-width: 600px;
 
@@ -251,7 +251,7 @@
                     }
                 }
 
-                @include media-query(tablet-landscape) {
+                @include media-query(lg) {
                     margin: 0 1rem 0 0;
                     max-width: initial;
                 }
@@ -404,7 +404,7 @@
         background: $color--error;
         z-index: 1;
 
-        @include media-query(tablet-landscape) {
+        @include media-query(lg) {
             position: absolute;
             inset-block-start: 0;
             inset-inline-end: 0;
@@ -452,7 +452,7 @@
     .wmd-preview {
         width: 100%;
 
-        @include media-query(tablet-landscape) {
+        @include media-query(lg) {
             max-width: 70%;
         }
     }
@@ -464,7 +464,7 @@
             grid-template-rows: auto auto auto auto;
             grid-template-columns: 1fr;
 
-            @include media-query(tablet-landscape) {
+            @include media-query(lg) {
                 grid-template-areas: "message attachments" "message visibility";
                 grid-template-rows: auto auto;
                 grid-template-columns: 2fr 1fr;

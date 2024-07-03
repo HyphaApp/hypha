@@ -4,7 +4,7 @@
     thead {
         display: none;
 
-        @include media-query($table-breakpoint) {
+        @include media-query(lg) {
             display: table-header-group;
         }
 

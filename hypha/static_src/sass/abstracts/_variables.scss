@@ -104,15 +104,11 @@ $input-box-max-width: 465px;
 
 // Breakpoints
 $breakpoints: (
-    "mob-portrait" "(min-width: 320px)",
-    "mob-landscape" "(min-width: 480px)",
-    "small-tablet" "(min-width: 600px)",
-    "tablet-portrait" "(min-width: 768px)",
-    "tablet-landscape" "(min-width: 1024px)",
-    "laptop-short" "(min-width: 1024px) and (max-height: 1280px)",
-    "desktop" "(min-width: 1320px)",
-    "desktop-medium" "(min-width: 1920px)",
-    "desktop-wide" "(min-width: 2556px)"
+    "sm" "(min-width: 640px)",
+    "md" "(min-width: 768px)",
+    "lg" "(min-width: 1024px)",
+    "xl" "(min-width: 1280px)",
+    "2xl" "(min-width: 1536px)"
 );
 
 // Transition
@@ -128,9 +124,6 @@ $mobile-gutter: 1.25rem;
 
 // Filters
 $filter-dropdown: ".select2 .select2-selection.select2-selection--single";
-
-// Table breakpoint
-$table-breakpoint: "tablet-landscape";
 
 // Dropdown height
 $dropdown-height: 45px;

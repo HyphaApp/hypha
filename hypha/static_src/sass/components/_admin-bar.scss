@@ -14,7 +14,7 @@
         margin: 0 auto;
 
         &--with-button {
-            @include media-query(tablet-portrait) {
+            @include media-query(md) {
                 display: flex;
                 align-items: center;
                 flex-direction: row;
