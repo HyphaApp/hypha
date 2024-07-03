@@ -1,5 +1,5 @@
 {% load i18n approval_tools project_tags heroicons %}
-{% user_can_edit_project object request.user as editable %}
+{% user_can_edit_vendor_details object request.user as can_edit_vendor_details %}
 {% allow_collapsible_header object header_type='project_documents' as collapsible_header %}
 
 <div class="docs-block wrapper--outer-space-large" {% if collapsible_header %} x-data="{ collapsed: true }" {% endif %}>
@@ -96,7 +96,7 @@
                         <p class="docs-block__title">{% trans "Contracting Information" %}</p>
                     </div>
                     <div class="docs-block__row-inner">
-                        {% if editable %}
+                        {% if can_edit_vendor_details %}
                             <a class="{% if not project.vendor.user_has_updated_details %}button button--project-action{% else %}docs-block__icon-link{% endif %}" href="{% url 'apply:projects:vendor' pk=project.pk %}">
                                 {% if project.vendor.user_has_updated_details %}
                                     {% heroicon_micro "pencil-square" class="inline me-1 w-4 h-4" aria_hidden=true %}
@@ -126,7 +126,8 @@
                     <p class="docs-block__title">{% trans "Project Form" %}</p>
                 </div>
                 <div class="docs-block__row-inner">
-                    {% if editable and not user.is_applicant %}
+                    {% user_can_edit_paf object user as can_edit_paf %}
+                    {% if can_edit_paf %}
                         <a class="{% if not object.user_has_updated_details %}button button--project-action{% else %}docs-block__icon-link{% endif %}" href="{% url 'apply:projects:edit' pk=object.pk %}">
                             {% if object.user_has_updated_details %}
                                 {% heroicon_micro "pencil-square" class="inline me-1 w-4 h-4" aria_hidden=true %}
