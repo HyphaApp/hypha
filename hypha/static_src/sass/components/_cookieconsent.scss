@@ -9,7 +9,7 @@
     overflow: hidden;
     max-height: 37.5rem;
 
-    @include media-query(tablet-landscape) {
+    @include media-query(lg) {
         max-height: 19rem;
     }
 
@@ -48,7 +48,7 @@
             width: 100%;
         }
 
-        @include media-query(tablet-landscape) {
+        @include media-query(lg) {
             width: fit-content;
             display: block;
 
@@ -61,7 +61,7 @@
     &__statement {
         display: none;
 
-        @include media-query(tablet-landscape) {
+        @include media-query(lg) {
             display: block;
         }
     }
@@ -70,7 +70,7 @@
         display: flex;
         flex-direction: column;
 
-        @include media-query(tablet-landscape) {
+        @include media-query(lg) {
             flex-direction: row;
             margin-block-end: 1rem;
         }
