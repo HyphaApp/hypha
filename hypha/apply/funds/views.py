@@ -1234,7 +1234,10 @@ class BaseSubmissionEditView(UpdateView):
         )
         field_blocks = self.object.get_defined_fields()
         for field_block in field_blocks:
-            if isinstance(field_block.block, GroupToggleBlock):
+            if (
+                isinstance(field_block.block, GroupToggleBlock)
+                and not self.object.is_draft
+            ):
                 # Disable group toggle field as it is not supported on edit forms.
                 form_fields[field_block.id].disabled = True
         return type(
