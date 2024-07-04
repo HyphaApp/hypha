@@ -541,6 +541,9 @@ class ProjectSettings(BaseSiteSetting, ClusterableModel):
                 InlinePanel("paf_reviewers_roles", label=_("PAF Reviewers Roles")),
             ],
             heading=_("PAF Reviewers Roles"),
+            help_text="Reviewer Roles are needed to move projects to 'Internal Approval' stage. "
+            "Delete all roles to skip internal approval process and "
+            "to move all internal approval projects back to the 'Draft' stage with all approvals removed.",
         ),
     ]
 
