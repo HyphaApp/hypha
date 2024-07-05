@@ -21,17 +21,6 @@
         }
     }
 
-    &--search-desktop {
-        position: relative;
-        max-width: 300px;
-        margin-block-start: $mobile-gutter;
-
-        @include media-query(lg) {
-            max-width: 280px;
-            margin: 0 0 0 30px;
-        }
-    }
-
     &--error-inline {
         // stylelint-disable-next-line selector-class-pattern
         .form__error-text {
