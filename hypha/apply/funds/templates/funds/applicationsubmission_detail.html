@@ -109,7 +109,7 @@
                                         class="flex items-center font-bold text-red-600 transition-opacity hover:opacity-70"
                                         href="{% url 'funds:submissions:delete' object.id %}"
                                         hx-get="{% url 'funds:submissions:delete' object.id %}"
-                                        hx-target="#htmx-dialog"
+                                        hx-target="#htmx-modal"
                                         aria-label="{% trans "Delete Submission" %}"
                                     >
                                         {% heroicon_micro "trash" class="inline me-1 fill-red-600" aria_hidden=true %}
