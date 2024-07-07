@@ -69,12 +69,11 @@
 
     {% show_progress_button request.user object as show_progress_form %}
     <div>
-        <button class="button button--primary button--full-width {% if show_progress_form %}is-not-disabled{% else %}is-disabled{% endif %}"
-                hx-get="{% url 'funds:submissions:progress' pk=object.pk %}"
-                hx-target="#htmx-modal"
-        >
-            {% trans "Update status" %}
-        </button>
+        <button
+            class="button button--primary button--full-width {% if show_progress_form %}is-not-disabled{% else %}is-disabled{% endif %}"
+            hx-get="{% url 'funds:submissions:progress' pk=object.pk %}"
+            hx-target="#htmx-modal"
+        >{% trans "Update status" %}</button>
     </div>
 
     <div class="mt-4 sidebar__separator">{% trans "Assign" %}</div>
