@@ -1,21 +1,21 @@
 {% load i18n static %}
-<div class="p-6 z-20">
-    <form
-        class="form px-3"
-        id="reviewer_form"
-        hx-target="#id_reviewers"
-        hx-swap="innerHTML"
-        hx-select="#id_reviewers"
-        method="POST"
-        hx-post="{% url 'funds:submissions:reviewers_update' pk=object.pk %}"
-    >
+<form
+    class="form"
+    id="reviewer_form"
+    method="POST"
+    hx-post="{{ request.path }}"
+>
+    <h2 class="px-4 py-2 text-white rounded-t bg-dark-blue">
+        {% trans "Update reviewers" %}
+    </h2>
 
-        {% csrf_token %}
-        {{ form.media }}
-        {% for hidden in form.hidden_fields %}
-            {{ hidden }}
-        {% endfor %}
+    {% csrf_token %}
+    {{ form.media }}
+    {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+    {% endfor %}
 
+    <fieldset class="px-4">
         {% if form.errors %}
             {% for field in form %}
                 {% for error in field.errors %}
@@ -30,7 +30,6 @@
                 </div>
             {% endfor %}
         {% endif %}
-
         {% for field in form.visible_fields %}
             {% if field.name == "external_reviewers" and not show_external_reviewers %}
             {% comment %} skip for external reviewer if not allowed {% endcomment %}
@@ -39,22 +38,20 @@
                     <label for="{{ field.id_for_label }}">
                         {{ field.label }}
                     </label>
-
                     <div class="mt-2">
                         {{ field }}
                     </div>
                 </fieldset>
             {% endif %}
         {% endfor %}
-
         <button
-            class="button button--primary mt-6 mb-3"
+            class="mt-6 mb-3 button button--primary"
             type="submit"
         >
             {% trans "Update" %}
         </button>
-    </form>
-</div>
+    </fieldset>
+</form>
 
 <script type="module">
     {% comment %} Do this here as the select elements for different roles are dynamically generated. {% endcomment %}

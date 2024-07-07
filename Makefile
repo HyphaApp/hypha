@@ -109,6 +109,5 @@ copy-npm-scripts:
 	cp node_modules/htmx.org/dist/ext/multi-swap.js $(JS_VENDOR_DIR)/htmx-ext-multi-swap.min.js
 	cp node_modules/alpinejs/dist/cdn.min.js $(JS_VENDOR_DIR)/alpine.min.js
 	cp node_modules/@alpinejs/focus/dist/cdn.min.js $(JS_VENDOR_DIR)/alpine-focus.min.js
-	cp node_modules/@fylgja/alpinejs-dialog/dist/index.min.js $(JS_VENDOR_DIR)/alpine-dialog.min.js
 	cp node_modules/daterangepicker/moment.min.js $(JS_VENDOR_DIR)/moment.min.js
 	cp node_modules/daterangepicker/daterangepicker.js $(JS_VENDOR_DIR)/daterangepicker.min.js

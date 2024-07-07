@@ -32,12 +32,12 @@
     <div class="sidebar__inner">
         <h5>{% trans "Reviews & assignees" %}</h5>
 
-        <div hx-trigger="revealed" hx-get="{% url "funds:submissions:partial-reviews-card" object.id %}" hx-target="this">
+        <div hx-trigger="revealed, reviewerUpdated from:body" hx-get="{% url "funds:submissions:partial-reviews-card" object.id %}" hx-target="this">
             <div class="animate-pulse min-h-30">
-                <div class="w-full h-9 bg-gray-200 mb-3"></div>
-                <div class="w-full h-6 bg-gray-200 mb-1"></div>
-                <div class="w-full h-1 bg-gray-200 mb-3"></div>
-                <div class="w-20 h-6 bg-gray-200 mb-3"></div>
+                <div class="w-full mb-3 bg-gray-200 h-9"></div>
+                <div class="w-full h-6 mb-1 bg-gray-200"></div>
+                <div class="w-full h-1 mb-3 bg-gray-200"></div>
+                <div class="w-20 h-6 mb-3 bg-gray-200"></div>
             </div>
         </div>
 

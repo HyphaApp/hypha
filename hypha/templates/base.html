@@ -2,7 +2,7 @@
 {% wagtail_site as current_site %}
 {% get_current_language as LANGUAGE_CODE %}
 {% get_current_language_bidi as LANGUAGE_BIDI %}
-<html class="no-js h-full" lang="{{ LANGUAGE_CODE }}" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
+<html class="h-full no-js" lang="{{ LANGUAGE_CODE }}" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
     <head>
         {# TODO fallbacks if page is not defined e.g. for 404 page #}
         <meta charset="utf-8">
@@ -65,7 +65,6 @@
         <style> [x-cloak] {display: none !important} </style>
         <!-- Alpine Plugins: installed with npm -->
         <script defer src="{% static 'js/vendor/alpine-focus.min.js' %}"></script>
-        <script defer src="{% static 'js/vendor/alpine-dialog.min.js' %}"></script>
 
         <!-- Alpine Core: installed with npm  -->
         <script defer src="{% static 'js/vendor/alpine.min.js' %}"></script>
@@ -118,7 +117,40 @@
 
         <!-- Datetime picker-->
         <script src="{% static 'js/vendor/moment.min.js' %}"></script>
+        <script src="{% static 'js/toasts.js' %}"></script>
         <script src="{% static 'js/vendor/daterangepicker.min.js' %}"></script>
+
+        <!-- Placeholder for the dialog -->
+        {% include "includes/_dialog-placeholder.html" %}
+
+        <!-- Toast layer -->
+        <div
+            x-data="toastHandler()"
+            class="fixed inset-0 flex flex-col items-end justify-start w-screen h-screen pointer-events-none"
+            @notice.window="add($event.detail)"
+        >
+            <template x-for="toast of toasts" :key="toast.id">
+                <div
+                    x-show="visible.includes(toast)"
+                    x-transition:enter="transition ease-in duration-200"
+                    x-transition:enter-start="transform opacity-0 translate-y-2"
+                    x-transition:enter-end="transform opacity-100"
+                    x-transition:leave="transition ease-out duration-500"
+                    x-transition:leave-start="transform translate-x-0 opacity-100"
+                    x-transition:leave-end="transform translate-x-full opacity-0"
+                    @click="remove(toast.id)"
+                    class="flex items-center justify-center w-56 h-16 mt-4 mr-6 text-lg font-bold text-white rounded shadow-lg cursor-pointer"
+                    :class="{
+                            'bg-green-500': toast.type === 'success',
+                            'bg-blue-500': toast.type === 'info',
+                            'bg-orange-500': toast.type === 'warning',
+                            'bg-red-500': toast.type === 'error',
+                            }"
+                    style="pointer-events:all"
+                    x-text="toast.text">
+                </div>
+            </template>
+        </div>
 
         {% block extra_js %}{% endblock %}
 
