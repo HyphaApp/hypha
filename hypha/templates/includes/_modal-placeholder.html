@@ -1,3 +1,11 @@
+{% comment %}
+How this works:
+- The modal is a placeholder for the modal content.
+- The modal get visible when the modal content is loaded via htmx,
+- use hx-target="#htmx-modal" load the content in the modal and make it visible
+- If any htmx response targetted to this model is empty, the modal get hidden and content is removed.
+{% endcomment %}
+
 <div
     x-data="{ show: false }"
     @keydown.window.escape="show = false"
@@ -6,7 +14,6 @@
     aria-labelledby="modal-title"
     x-ref="dialog"
     aria-modal="true"
-    hx-target="this"
 >
     <!-- Background overlay, show/hide based on modal state. -->
     <div
@@ -37,7 +44,8 @@
                 x-description="Modal panel, show/hide based on modal state."
                 class="relative text-left transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:w-full sm:max-w-lg"
                 @click.away="show = false"
-                id="htmx-dialog"
+                id="htmx-modal"
+                hx-target="this"
                 @htmx:after-swap="show = true"
                 @htmx:before-swap="if(!$event.detail.xhr.response) { show = false; $event.detail.shouldSwap = false;}"
             >

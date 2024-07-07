@@ -71,7 +71,7 @@
     <div>
         <button class="button button--primary button--full-width {% if show_progress_form %}is-not-disabled{% else %}is-disabled{% endif %}"
                 hx-get="{% url 'funds:submissions:progress' pk=object.pk %}"
-                hx-target="#htmx-dialog"
+                hx-target="#htmx-modal"
         >
             {% trans "Update status" %}
         </button>
@@ -83,19 +83,19 @@
         <button
             class="button button--half-width button--white"
             hx-get="{% url 'funds:submissions:reviewers_update' pk=object.pk %}"
-            hx-target="#htmx-dialog"
+            hx-target="#htmx-modal"
         >{% trans "Reviewers" %}</button>
 
         <button
             class="button button--half-width button--white"
             hx-get="{% url 'funds:submissions:partners_update' pk=object.pk %}"
-            hx-target="#htmx-dialog"
+            hx-target="#htmx-modal"
         >{% trans "Partners" %}</button>
 
         <button
             class="button button--half-width button--white"
             hx-get="{% url 'funds:submissions:lead_update' pk=object.pk %}"
-            hx-target="#htmx-dialog"
+            hx-target="#htmx-modal"
         >{% trans "Lead" %}</button>
     </div>
 
@@ -106,13 +106,13 @@
         <button
             class="button button--white button--full-width button--bottom-space"
             hx-get="{% url 'funds:submissions:metaterms_update' pk=object.pk %}"
-            hx-target="#htmx-dialog"
+            hx-target="#htmx-modal"
         >{% trans "Meta Terms" %}</button>
 
         <button
             class="button button--white button--full-width button--bottom-space"
             hx-get="{% url 'funds:submissions:create_reminder' pk=object.pk %}"
-            hx-target="#htmx-dialog"
+            hx-target="#htmx-modal"
         >{% trans "Create Reminder" %}</button>
 
         {% if can_archive %}
