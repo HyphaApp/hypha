@@ -2,15 +2,13 @@
 
 <form
     class="form {{ extra_classes }}"
+    action="{{ action|default:request.path }}"
     method="post"
     hx-post="{{ url }}"
-    hx-target="{{ target }}"
     hx-swap="innerHTML"
-    hx-select="{{ target }}"
     id="{% if form_id %}{{ form_id }}{% else %}{{ form.name }}{% endif %}"
     enctype="multipart/form-data"
-    action="{{ action|default:request.path }}">
-
+>
     {% csrf_token %}
 
     {{ form.media }}
@@ -28,20 +26,18 @@
         {% endfor %}
     </div>
 
-    <div class="flex justify-end gap-4 mt-2">
-        <button
-            type="button"
-            @click="show = false"
-            class="px-4 py-2 text-sm font-medium text-gray-700 transition duration-150 ease-in-out border border-gray-300 rounded-md hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:ring focus:ring-blue-200 active:bg-gray-50 active:text-gray-800"
-            title="{% trans "Close" %}">
-            {% trans "Cancel" %}
-        </button>
-
+    <div class="mt-5 sm:gap-4 sm:mt-4 sm:flex sm:flex-row-reverse">
         {% trans "Delete" as delete %}
         <button
-            class="button button--{% if invert %}white{% elif value == delete %}warning{% else %}primary{% endif %}"
+            class="button button--{% if invert %}white{% elif value == delete %}warning{% else %}primary{% endif %} w-full sm:w-auto"
             type="submit">
             {{ value }}
         </button>
+
+        <button
+            type="button"
+            class="inline-flex items-center justify-center w-full px-3 py-2 mt-3 text-sm font-semibold text-gray-900 bg-white rounded-sm shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+            @click="show = false"
+        >{% trans "Cancel" %}</button>
     </div>
 </form>
