@@ -1,4 +1,5 @@
 {% load i18n %}
+
 <form
     class="form {{ extra_classes }}"
     method="post"
@@ -8,7 +9,7 @@
     hx-select="{{ target }}"
     id="{% if form_id %}{{ form_id }}{% else %}{{ form.name }}{% endif %}"
     enctype="multipart/form-data"
-    {% if action %}action="{{ action }}"{% endif %}>
+    action="{{ action|default:request.path }}">
 
     {% csrf_token %}
 
@@ -27,16 +28,15 @@
         {% endfor %}
     </div>
 
-    <div class="form__group">
-        {% if cancel %}
-            <button
-                type="button"
-                data-fancybox-close=""
-                class="button button--{% if invert %}primary{% else %}white{% endif %}"
-                title="{% trans "Close" %}">
-                {% trans "Cancel" %}
-            </button>
-        {% endif %}
+    <div class="flex justify-end gap-4 mt-2">
+        <button
+            type="button"
+            @click="show = false"
+            class="px-4 py-2 text-sm font-medium text-gray-700 transition duration-150 ease-in-out border border-gray-300 rounded-md hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:ring focus:ring-blue-200 active:bg-gray-50 active:text-gray-800"
+            title="{% trans "Close" %}">
+            {% trans "Cancel" %}
+        </button>
+
         {% trans "Delete" as delete %}
         <button
             class="button button--{% if invert %}white{% elif value == delete %}warning{% else %}primary{% endif %}"
@@ -44,14 +44,4 @@
             {{ value }}
         </button>
     </div>
-
 </form>
-
-<script>
-    document.addEventListener('htmx:afterRequest', function (event) {
-        if (event.detail.requestConfig.verb === 'post' && event.detail.successful) {
-            document.dispatchEvent(new CustomEvent('htmx:{{ data_var }}'));
-        }
-    });
-</script>
-
