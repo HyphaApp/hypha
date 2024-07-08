@@ -53,16 +53,18 @@
                     {% heroicon_outline "flag" size=18 class="stroke-gray-500 inline group-hover:scale-110 group-hover:stroke-2 group-hover:stroke-dark-blue transition-transform" aria_hidden=true %}
                     {% trans "My flagged" %}
                 </a>
-                <a
-                    href="{% url 'wagtailadmin_home' %}"
-                    title="Goto wagtail admin"
-                    class="px-3 py-2 text-black flex items-center gap-2
-                           focus-visible:outline-dashed outline-1 transition-colors border-x
-                           hover:bg-slate-100 hover:text-dark-blue hover:font-semibold group"
-                >
-                    {% heroicon_outline "cog-6-tooth" size=18 class="stroke-gray-500 inline group-hover:scale-110 group-hover:stroke-2 group-hover:stroke-dark-blue transition-transform" aria_hidden=true %}
-                    {% trans "Administration" %}
-                </a>
+                {% if perms.wagtailadmin.access_admin %}
+                    <a
+                        href="{% url 'wagtailadmin_home' %}"
+                        title="Goto wagtail admin"
+                        class="px-3 py-2 text-black flex items-center gap-2
+                               focus-visible:outline-dashed outline-1 transition-colors border-x
+                               hover:bg-slate-100 hover:text-dark-blue hover:font-semibold group"
+                    >
+                        {% heroicon_outline "cog-6-tooth" size=18 class="stroke-gray-500 inline group-hover:scale-110 group-hover:stroke-2 group-hover:stroke-dark-blue transition-transform" aria_hidden=true %}
+                        {% trans "Administration" %}
+                    </a>
+                {% endif %}
             {% endif %}
             <a
                 href="{% url 'users:logout' %}"
