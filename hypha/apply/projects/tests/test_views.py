@@ -1282,7 +1282,7 @@ class TestStaffSubmitReport(BaseViewTestCase):
             report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "17"}
         )
         report.refresh_from_db()
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(
             report.versions.first().form_data,
             {"012a4f29-0882-4b1c-b567-aede1b601d4a": "17"},
@@ -1312,7 +1312,7 @@ class TestStaffSubmitReport(BaseViewTestCase):
             report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "19", "save": "Save"}
         )
         report.refresh_from_db()
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(
             report.versions.first().form_data,
             {"012a4f29-0882-4b1c-b567-aede1b601d4a": "19"},
@@ -1331,7 +1331,7 @@ class TestStaffSubmitReport(BaseViewTestCase):
             report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "23"}
         )
         report.refresh_from_db()
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(
             report.versions.last().form_data,
             {"012a4f29-0882-4b1c-b567-aede1b601d4a": "23"},
@@ -1507,7 +1507,7 @@ class TestApplicantSubmitReport(BaseViewTestCase):
             report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "41"}
         )
         report.refresh_from_db()
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(
             report.versions.first().form_data,
             {"012a4f29-0882-4b1c-b567-aede1b601d4a": "41"},
