@@ -286,15 +286,10 @@ class ActivationView(TemplateView):
         if self.valid(user, kwargs.get("token")):
             user.backend = settings.CUSTOM_AUTH_BACKEND
             login(request, user)
-            if settings.WAGTAILUSERS_PASSWORD_ENABLED and settings.ENABLE_PUBLIC_SIGNUP:
-                # In this case, the user entered a password while registering,
-                # and so they shouldn't need to activate a password
-                return redirect("users:account")
-            else:
-                url = reverse("users:activate_password")
-                if redirect_url := get_redirect_url(request, self.redirect_field_name):
-                    url = f"{url}?next={redirect_url}"
-                return redirect(url)
+            url = reverse("users:activate_password")
+            if redirect_url := get_redirect_url(request, self.redirect_field_name):
+                url = f"{url}?next={redirect_url}"
+            return redirect(url)
 
         return render(request, "users/activation/invalid.html")
 
