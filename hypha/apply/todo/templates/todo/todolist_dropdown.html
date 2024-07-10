@@ -1,9 +1,10 @@
 {% load i18n %}
-
-{% for task in object_list %}
-    {% include "todo/todolist_item.html" with button_type_class=" button--transparent button--narrow" %}
-{% empty %}
-    <p class="m-0 p-3 border-b-2 border-light-grey last:border-b-0">
-        {% trans "No pending task." %}
-    </p>
-{% endfor %}
+<div id="nav-task-list">
+    {% for task in my_tasks.data %}
+        {% include "todo/todolist_item.html" with button_type_class=" button--transparent button--narrow" %}
+    {% empty %}
+        <p class="m-0 p-3 border-b-2 border-light-grey last:border-b-0">
+            {% trans "No pending task." %}
+        </p>
+    {% endfor %}
+</div>
