@@ -38,6 +38,7 @@ neat_related = {
     MESSAGES.DELETE_REMINDER: "reminder",
     MESSAGES.REVIEW_REMINDER: "reminder",
     MESSAGES.BATCH_UPDATE_INVOICE_STATUS: "invoices",
+    MESSAGES.REMOVE_TASK: "task",
 }
 
 

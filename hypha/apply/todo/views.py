@@ -7,6 +7,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic import ListView, View
 from django_htmx.http import HttpResponseClientRefresh
 
+from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.users.decorators import staff_required
 
 from .models import Task
@@ -37,9 +38,27 @@ class TaskRemovalView(View):
             request.user.groups.all()
         ):
             return super().dispatch(request, *args, **kwargs)
-        raise PermissionDenied("You can remove only your own tasks")
+        raise PermissionDenied("You can remove the tasks that are assigned to you.")
 
     def delete(self, *args, **kwargs):
+        source = self.task.related_object
+        from hypha.apply.determinations.models import Determination
+        from hypha.apply.projects.models import Invoice
+        from hypha.apply.review.models import Review
+
+        if isinstance(self.task.related_object, Invoice):
+            source = self.task.related_object.project
+        elif isinstance(self.task.related_object, Determination) or isinstance(
+            self.task.related_object, Review
+        ):
+            source = self.task.related_object.submission
+        messenger(
+            MESSAGES.REMOVE_TASK,
+            user=self.request.user,
+            request=self.request,
+            source=source,
+            related=self.task,
+        )
         self.task.delete()
         # todo: Return tasks and update div/html without reloading the page.
         # tasks = render_task_templates_for_user(self.request, self.request.user)

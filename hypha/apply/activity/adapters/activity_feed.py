@@ -80,6 +80,7 @@ class ActivityAdapter(AdapterBase):
             "{user} has unarchived the submission: {source.title_text_display}"
         ),
         MESSAGES.DELETE_INVOICE: _("Deleted an invoice"),
+        MESSAGES.REMOVE_TASK: "handle_task_removal",
     }
 
     def recipients(self, message_type, **kwargs):
@@ -105,6 +106,7 @@ class ActivityAdapter(AdapterBase):
             MESSAGES.ARCHIVE_SUBMISSION,
             MESSAGES.UNARCHIVE_SUBMISSION,
             MESSAGES.BATCH_ARCHIVE_SUBMISSION,
+            MESSAGES.REMOVE_TASK,
         ]:
             return {"visibility": TEAM}
 
@@ -208,6 +210,22 @@ class ActivityAdapter(AdapterBase):
             users_sentence = " and".join(users.rsplit(",", 1))
             return _("PAF assigned to {}").format(users_sentence)
         return None
+
+    def handle_task_removal(self, source, task, **kwargs):
+        if task.user:
+            return _(
+                "{user} has removed the task {task.code} for {source} from the task list".format(
+                    user=kwargs.get("user"), task=task, source=source
+                )
+            )
+        return _(
+            "{user} has removed the task {task.code} for {source} from whole team's{user_groups} task list.".format(
+                user=kwargs.get("user"),
+                task=task,
+                source=source,
+                user_groups=list(task.user_group.all().values_list("name", flat=True)),
+            )
+        )
 
     def handle_transition(self, old_phase, source, **kwargs):
         submission = source
