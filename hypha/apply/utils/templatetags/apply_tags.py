@@ -16,17 +16,36 @@ def model_verbose_name(instance):
 
 @register.filter
 def format_number_as_currency(amount):
-    try:
-        float(str(amount).replace(",", ""))
-        return babel.numbers.format_currency(
-            str(amount).replace(",", ""),
-            settings.CURRENCY_CODE,
-            locale=settings.CURRENCY_LOCALE,
-        )
-    except ValueError:
-        return babel.numbers.get_currency_symbol(
-            settings.CURRENCY_CODE, locale=settings.CURRENCY_LOCALE
-        )
+    """Formats a number as currency"""
+    return babel.numbers.format_currency(
+        str(amount).replace(",", ""),
+        settings.CURRENCY_CODE,
+        locale=settings.CURRENCY_LOCALE,
+    )
+
+
+@register.simple_tag
+def get_currency_symbol():
+    """Gets the currency symbol based on system settings"""
+    return babel.numbers.get_currency_symbol(
+        settings.CURRENCY_CODE, locale=settings.CURRENCY_LOCALE
+    )
+
+
+@register.filter
+def subtract(total_submissions: int, req_amt_submissions: int) -> int:
+    """Subtracts two numbers
+
+    Primarily used in calculating the the number of submissions to be excluded in the results view
+
+    Args:
+        total_submissions: number to be subtracted from
+        req_amt_submissions: number to subtract
+
+    Returns:
+        int: the difference between the given values
+    """
+    return total_submissions - req_amt_submissions
 
 
 @register.filter(is_safe=True)

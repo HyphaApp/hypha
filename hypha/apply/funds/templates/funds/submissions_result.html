@@ -17,8 +17,8 @@
                 <div class="border p-4 shadow">
                     <h5>{% trans "Amounts" %}</h5>
                     <table class="mb-0 mt-2">
-                        <tr><th class="pe-4">{% trans "Applied" %} ({{ ""|format_number_as_currency }})</th><th>{% trans "Accepted" %}  ({{ ""|format_number_as_currency }})</th></tr>
-                        <tr><td>{{ submission_sum|default:"0" }}</td><td>{{ submission_accepted_sum|default:"0" }}</td></tr>
+                        <tr><th class="pe-4">{% trans "Applied" %} ({% get_currency_symbol %})</th><th>{% trans "Accepted" %}  ({% get_currency_symbol %})</th></tr>
+                        <tr><td>{{ submission_sum|default:"0"|format_number_as_currency }}</td><td>{{ submission_accepted_sum|default:"0"|format_number_as_currency }}</td></tr>
                     </table>
                 </div>
                 <div class="border p-4 shadow">
@@ -51,15 +51,17 @@
             </div>
         </div>
 
-        <h3>{% trans "Filter submissions to calculate values" %}</h3>
-        {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term use_search=True filter_action=filter_action use_batch_actions=False filter_classes="filters-open" %}
+        <h3>{% trans "Submission value totals" %}</h3>
+        {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form search_term=search_term filter_action=filter_action use_batch_actions=False filter_classes="filters-open" %}
         <div class="hypha-grid">
-            <div><strong>{% trans "Number of submission" %}:</strong> {{ count_values }}{% if not count_values == object_list.count %} ({{ object_list.count }}){% endif %}</div>
+            <div><strong>{% trans "Number of submissions" %}:</strong> {{ count_values }}{% if not count_values == object_list.count %}*{% endif %}</div>
             <div><strong>{% trans "Average value" %}:</strong> {{ average_value|format_number_as_currency }}</div>
             <div><strong>{% trans "Total value" %}:</strong> {{ total_value|format_number_as_currency }}</div>
         </div>
         {% if not count_values == object_list.count %}
-            <p>{% trans "Some submissions lack values and are not included." %}</p>
+            {% with object_list.count|subtract:count_values as count_diff %}
+                <p class="text-xs">{% blocktrans %}*{{ count_diff }} submission(s) lack requested amount fields and are not included.{% endblocktrans %}</p>
+            {% endwith %}
         {% endif %}
     </div>
 {% endblock %}
