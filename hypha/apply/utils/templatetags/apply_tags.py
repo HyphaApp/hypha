@@ -18,7 +18,7 @@ def model_verbose_name(instance):
 def format_number_as_currency(amount):
     """Formats a number as currency"""
     return babel.numbers.format_currency(
-        str(amount).replace(",", ""),
+        amount,
         settings.CURRENCY_CODE,
         locale=settings.CURRENCY_LOCALE,
     )

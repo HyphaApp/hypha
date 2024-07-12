@@ -9,7 +9,6 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.models import Group
-from django.contrib.humanize.templatetags.humanize import intcomma
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count, Q
 from django.forms import BaseModelForm
@@ -1708,7 +1707,7 @@ class SubmissionResultView(SubmissionStatsMixin, FilterView):
             count_values = submission_values.get("value__count")
             total_value = format_submission_sum_value(submission_values)
             if value := submission_values.get("value__avg"):
-                average_value = intcomma(round(value))
+                average_value = round(value)
             else:
                 average_value = 0
         else:

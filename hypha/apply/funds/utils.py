@@ -5,7 +5,6 @@ from itertools import chain
 from operator import iconcat
 
 import django_filters as filters
-from django.contrib.humanize.templatetags.humanize import intcomma
 from django.utils.html import strip_tags
 
 from hypha.apply.utils.image import generate_image_tag
@@ -142,7 +141,7 @@ def format_submission_sum_value(submission_value: dict) -> str | None:
 
     value_sum = submission_value.get("value__sum")
 
-    return intcomma(value_sum) if value_sum else None
+    return value_sum if value_sum else None
 
 
 def is_filter_empty(filter: filters.FilterSet) -> bool:
