@@ -5,7 +5,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("application_projects", "0084_contract_signed_and_approved"),
+        ("application_projects", "0085_alter_projectsettings_paf_approval_sequential"),
     ]
 
     operations = [
