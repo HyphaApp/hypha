@@ -7,7 +7,11 @@ import django_tables2 as tables
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import (
+    login_required,
+    permission_required,
+    user_passes_test,
+)
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.models import Group
 from django.contrib.humanize.templatetags.humanize import intcomma
@@ -21,7 +25,7 @@ from django.http import (
     HttpResponse,
     HttpResponseRedirect,
 )
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -29,6 +33,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 from django.views import View
 from django.views.decorators.cache import cache_page
+from django.views.decorators.http import require_http_methods
 from django.views.generic import (
     DeleteView,
     DetailView,
@@ -65,7 +70,11 @@ from hypha.apply.review.models import Review
 from hypha.apply.stream_forms.blocks import GroupToggleBlock
 from hypha.apply.todo.options import PROJECT_WAITING_PAF
 from hypha.apply.todo.views import add_task_to_user_group
-from hypha.apply.users.decorators import staff_or_finance_required, staff_required
+from hypha.apply.users.decorators import (
+    is_apply_staff,
+    staff_or_finance_required,
+    staff_required,
+)
 from hypha.apply.users.groups import STAFF_GROUP_NAME
 from hypha.apply.utils.models import PDFPageSettings
 from hypha.apply.utils.pdfs import draw_submission_content, make_pdf
@@ -80,7 +89,6 @@ from . import services
 from .differ import compare
 from .files import generate_private_file_path
 from .forms import (
-    ArchiveSubmissionForm,
     BatchArchiveSubmissionForm,
     BatchDeleteSubmissionForm,
     BatchProgressSubmissionForm,
@@ -88,7 +96,6 @@ from .forms import (
     BatchUpdateSubmissionLeadForm,
     CreateReminderForm,
     ProgressSubmissionForm,
-    UnarchiveSubmissionForm,
     UpdateMetaTermsForm,
     UpdatePartnersForm,
     UpdateReviewersForm,
@@ -726,90 +733,49 @@ class CreateProjectView(View):
         )
 
 
-@method_decorator(staff_required, name="dispatch")
-class UnarchiveSubmissionView(View):
-    def dispatch(self, request, *args, **kwargs):
-        self.object = get_object_or_404(ApplicationSubmission, id=kwargs.get("pk"))
-        permission, reason = has_permission(
-            "archive_alter", request.user, object=self.object, raise_exception=False
-        )
-        if not permission:
-            HttpResponseRedirect(self.request.path)
-        return super(UnarchiveSubmissionView, self).dispatch(request, *args, **kwargs)
+@login_required
+@user_passes_test(is_apply_staff)
+@require_http_methods(["GET", "POST"])
+def htmx_archive_unarchive_submission(request, pk):
+    submission = get_object_or_404(ApplicationSubmission, id=pk)
+    permission, reason = has_permission(
+        "archive_alter", request.user, object=submission, raise_exception=False
+    )
+    if not permission:
+        return HttpResponse(reason)
 
-    def get(self, *args, **kwargs):
-        unarchive_form = UnarchiveSubmissionForm(instance=self.object)
-        return render(
-            self.request,
-            "funds/includes/unarchive_submission_form.html",
-            context={
-                "form": unarchive_form,
-                "value": _("Confirm"),
-                "object": self.object,
-            },
-        )
+    if submission.is_archive:
+        template = "funds/includes/modal_unarchive_submission_confirm.html"
+    else:
+        template = "funds/includes/modal_archive_submission_confirm.html"
 
-    def post(self, *args, **kwargs):
-        form = UnarchiveSubmissionForm(self.request.POST, instance=self.object)
-        if form.is_valid():
-            form.save()
-            # Record activity
+    if request.method == "POST":
+        if submission.is_archive:
+            submission.is_archive = False
+            submission.save()
             messenger(
                 MESSAGES.UNARCHIVE_SUBMISSION,
-                request=self.request,
-                user=self.request.user,
-                source=self.object,
+                request=request,
+                user=request.user,
+                source=submission,
             )
-            return HttpResponseClientRefresh()
-        return render(
-            self.request,
-            "funds/includes/unarchive_submission_form.html",
-            context={"form": form, "value": _("Confirm"), "object": self.object},
-            status=400,
-        )
-
-
-@method_decorator(staff_required, name="dispatch")
-class ArchiveSubmissionView(View):
-    def dispatch(self, request, *args, **kwargs):
-        self.object = get_object_or_404(ApplicationSubmission, id=kwargs.get("pk"))
-        permission, reason = has_permission(
-            "archive_alter", request.user, object=self.object, raise_exception=False
-        )
-        if not permission:
-            HttpResponseRedirect(self.request.path)
-        return super(ArchiveSubmissionView, self).dispatch(request, *args, **kwargs)
-
-    def get(self, *args, **kwargs):
-        archive_form = ArchiveSubmissionForm(instance=self.object)
-        return render(
-            self.request,
-            "funds/includes/archive_submission_form.html",
-            context={
-                "form": archive_form,
-                "value": _("Confirm"),
-                "object": self.object,
-            },
-        )
-
-    def post(self, *args, **kwargs):
-        form = ArchiveSubmissionForm(self.request.POST, instance=self.object)
-        if form.is_valid():
-            form.save()
-            # Record activity
+        else:
+            submission.is_archive = True
+            submission.save()
             messenger(
                 MESSAGES.ARCHIVE_SUBMISSION,
-                request=self.request,
-                user=self.request.user,
-                source=self.object,
+                request=request,
+                user=request.user,
+                source=submission,
             )
-            return HttpResponseClientRefresh()
-        return render(
-            self.request,
-            "funds/includes/archive_submission_form.html",
-            context={"form": form, "value": _("Confirm"), "object": self.object},
-            status=400,
-        )
+
+        return redirect(submission.get_absolute_url())
+
+    return render(
+        request,
+        template,
+        context={"submission": submission},
+    )
 
 
 @method_decorator(staff_required, name="dispatch")
