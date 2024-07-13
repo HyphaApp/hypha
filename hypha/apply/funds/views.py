@@ -1017,6 +1017,19 @@ class UpdateMetaTermsView(View):
         )
 
 
+@login_required
+@user_passes_test(is_apply_staff)
+@require_http_methods(["GET"])
+def reminder_list(request, pk):
+    submission = get_object_or_404(ApplicationSubmission, id=pk)
+    reminders = Reminder.objects.filter(submission=submission)
+    return render(
+        request,
+        "funds/includes/reminders_block.html",
+        context={"reminders": reminders, "object": submission},
+    )
+
+
 @method_decorator(staff_required, name="dispatch")
 class ReminderCreateView(View):
     def dispatch(self, request, *args, **kwargs):
@@ -1039,7 +1052,7 @@ class ReminderCreateView(View):
             "funds/includes/create_reminder_form.html",
             context={
                 "form": reminder_form,
-                "value": _("Create"),
+                "value": _("Create Reminder"),
                 "object": self.submission,
             },
         )
@@ -1057,11 +1070,13 @@ class ReminderCreateView(View):
                 source=self.submission,
                 related=reminder,
             )
-            return render(
-                self.request,
-                "funds/includes/reminders_block.html",
-                context={"object": self.submission},
-                status=200,
+            return HttpResponse(
+                status=204,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {"remindersUpdated": None, "showMessage": "Reminder created."}
+                    ),
+                },
             )
         return render(
             self.request,
