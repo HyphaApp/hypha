@@ -1,0 +1,36 @@
+{% load i18n static heroicons %}
+
+<form class="px-4 pt-5 pb-4 sm:p-6 form" action="{{ request.path }}" method="POST">
+    {% csrf_token %}
+
+    <div class="sm:flex sm:items-start">
+        <div class="flex items-center justify-center flex-shrink-0 w-12 h-12 mx-auto bg-red-100 rounded-full sm:mx-0 sm:h-10 sm:w-10">
+            {% heroicon_outline "exclamation-triangle" class="w-6 h-6 text-red-600" stroke_width="1.5" aria_hidden="true" %}
+        </div>
+        <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+            <h3 class="text-base font-semibold leading-6 text-gray-900" id="modal-title">
+                {% trans "Unarchive Submission" %}
+            </h3>
+            <div class="mt-2">
+                <p class="text-sm text-gray-500">
+                    {% blocktrans %}
+                        Are you sure you want to unarchive this submission?
+                        This submission will be visible in the main list of submissions and can be edited.
+                    {% endblocktrans %}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+        <button
+            type="submit"
+            class="inline-flex justify-center w-full px-3 py-2 text-sm font-semibold text-white bg-red-600 rounded-sm shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
+        >{% trans "Unarchive" %}</button>
+        <button
+            type="button"
+            class="inline-flex justify-center w-full px-3 py-2 mt-3 text-sm font-semibold text-gray-900 bg-white rounded-sm shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+            @click="show = false"
+        >{% trans "Cancel" %}</button>
+    </div>
+</form>

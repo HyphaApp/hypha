@@ -5,7 +5,6 @@ from django.views.generic import RedirectView
 from hypha.apply.projects import urls as projects_urls
 
 from .views import (
-    ArchiveSubmissionView,
     AwaitingReviewSubmissionsListView,
     CreateProjectView,
     ExportSubmissionsByRound,
@@ -30,11 +29,11 @@ from .views import (
     SubmissionsByRound,
     SubmissionsByStatus,
     SubmissionSealedView,
-    UnarchiveSubmissionView,
     UpdateLeadView,
     UpdateMetaTermsView,
     UpdatePartnersView,
     UpdateReviewersView,
+    htmx_archive_unarchive_submission,
     partial_screening_card,
     submission_success,
 )
@@ -183,12 +182,7 @@ submission_urls = (
                         name="partial-activities",
                     ),
                     path("lead/update/", UpdateLeadView.as_view(), name="lead_update"),
-                    path("archive/", ArchiveSubmissionView.as_view(), name="archive"),
-                    path(
-                        "unarchive/",
-                        UnarchiveSubmissionView.as_view(),
-                        name="unarchive",
-                    ),
+                    path("archive/", htmx_archive_unarchive_submission, name="archive"),
                     path(
                         "partial/screening-card/",
                         partial_screening_card,

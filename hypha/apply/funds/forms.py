@@ -118,30 +118,6 @@ class UpdateSubmissionLeadForm(ApplicationSubmissionModelForm):
         lead_field.queryset = lead_field.queryset.exclude(id=self.instance.lead.id)
 
 
-class UnarchiveSubmissionForm(ApplicationSubmissionModelForm):
-    unarchive = forms.BooleanField(required=False, widget=forms.HiddenInput())
-
-    class Meta:
-        model = ApplicationSubmission
-        fields = ("unarchive",)
-
-    def save(self, commit=True):
-        self.instance.is_archive = False
-        return super(UnarchiveSubmissionForm, self).save()
-
-
-class ArchiveSubmissionForm(ApplicationSubmissionModelForm):
-    archive = forms.BooleanField(required=False, widget=forms.HiddenInput())
-
-    class Meta:
-        model = ApplicationSubmission
-        fields = ("archive",)
-
-    def save(self, commit=True):
-        self.instance.is_archive = True
-        return super(ArchiveSubmissionForm, self).save()
-
-
 class BatchUpdateSubmissionLeadForm(forms.Form):
     lead = forms.ChoiceField(label=_("Lead"))
     submissions = forms.CharField(

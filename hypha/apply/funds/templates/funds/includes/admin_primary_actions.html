@@ -4,24 +4,16 @@
 <h5>{% trans "Actions to take" %}</h5>
 
 {% if object.is_archive %}
-    <div x-data="{ closeUnarchiveOutside(e){if (e.currentTarget == e.target){$refs.dialogUnarchive.close()}}}">
-        <button class="button button--bottom-space button--primary" @click="$refs.dialogUnarchive.showModal()" hx-get="{% url 'funds:submissions:unarchive' pk=object.pk %}" hx-target="#unarchive_form">
-            {% heroicon_outline "lock-open" aria_hidden="true" size=16 stroke_width=2 class="inline align-baseline me-1" %}
-            {% trans "Unarchive Submission" %}
-        </button>
-        <dialog x-ref="dialogUnarchive" @click="closeUnarchiveOutside" x-init="document.addEventListener('htmx:unarchived', (event) => {$refs.dialogUnarchive.close()});" class="w-[580px] overflow-visible">
-            <div class="flex items-center justify-between p-4 align-middle dialog-header border-block-end bg-light-blue">
-                <span class="text-lg font-bold text-white">{% trans "Unarchive Submission" %}</span>
-                <button @click="$refs.dialogUnarchive.close()" class="font-bold text-white">X</button>
-            </div>
-            <div id="unarchive_form">
-                <div class="animate-pulse">
-                    <div class="w-full h-16 mb-5 bg-gray-200"></div>
-                    <div class="w-full h-6 mb-5 bg-gray-200"></div>
-                </div>
-            </div>
-        </dialog>
-    </div>
+    <a
+        class="w-full button button--bottom-space button--primary"
+        href="{% url 'funds:submissions:archive' pk=object.pk %}"
+        hx-get="{% url 'funds:submissions:archive' pk=object.pk %}"
+        hx-target="#htmx-modal"
+        role="button"
+    >
+        {% heroicon_outline "lock-open" aria_hidden="true" size=16 stroke_width=2 class="inline align-baseline me-1" %}
+        {% trans "Unarchive Submission" %}
+    </a>
 {% else %}
     {% if PROJECTS_ENABLED %}
         {% if object.accepted_for_funding and not object.project %}
@@ -115,22 +107,10 @@
         >{% trans "Create Reminder" %}</button>
 
         {% if can_archive %}
-            <button class="button button--white button--full-width button--bottom-space" @click="$refs.dialogArchive.showModal()" hx-get="{% url 'funds:submissions:archive' pk=object.pk %}" hx-target="#archive_form">
+            <button class="button button--white button--full-width button--bottom-space" hx-get="{% url 'funds:submissions:archive' pk=object.pk %}" hx-target="#htmx-modal">
                 {% heroicon_outline "lock-closed" aria_hidden="true" size=15 stroke_width=2 class="inline align-baseline me-1" %}
                 {% trans "Archive Submission" %}
             </button>
-            <dialog x-ref="dialogArchive" @click="closeArchiveOutside" x-init="document.addEventListener('htmx:archived', (event) => {$refs.dialogArchive.close()});" class="w-[580px] overflow-visible">
-                <div class="flex items-center justify-between p-4 align-middle dialog-header border-block-end bg-light-blue">
-                    <span class="text-lg font-bold text-white">{% trans "Archive Submission" %}</span>
-                    <button @click="$refs.dialogArchive.close()" class="font-bold text-white">X</button>
-                </div>
-                <div id="archive_form">
-                    <div class="animate-pulse">
-                        <div class="w-full h-16 mb-5 bg-gray-200"></div>
-                        <div class="w-full h-6 mb-5 bg-gray-200"></div>
-                    </div>
-                </div>
-            </dialog>
         {% endif %}
     </details>
 {% endif %}

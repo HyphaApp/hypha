@@ -1,6 +1,0 @@
-{% load i18n %}
-<div class="p-6 z-20">
-    <p class="mb-2 mt-0">{% trans "Are you sure you want to unarchive this submission." %}</p>
-    {% url 'funds:submissions:unarchive' pk=object.pk as unarchive_url %}
-    {% include 'funds/includes/dialog_form_base.html' with form=form value=value url=unarchive_url data_var="unarchived" %}
-</div>
