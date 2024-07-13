@@ -1,5 +1,5 @@
 {% extends "funds/applicationsubmission_detail.html" %}
-{% load i18n static workflow_tags review_tags determination_tags %}
+{% load i18n static workflow_tags review_tags determination_tags heroicons %}
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'css/fancybox.css' %}">
@@ -63,7 +63,31 @@
 {% endblock %}
 
 {% block reminders %}
-    {% include 'funds/includes/reminders_block.html' with submission=object %}
+    <div class="sidebar__inner">
+        <div class="flex justify-between gap-4 pb-4">
+            <h5 class="m-0">{% trans "Reminders" %}</h5>
+            <button
+                class="flex items-center px-2 py-1 font-bold transition-colors rounded hover:bg-gray-100 text-dark-blue"
+                hx-get="{% url 'funds:submissions:create_reminder' pk=object.pk %}"
+                hx-target="#htmx-modal"
+                role="button"
+                aria-label="{% trans "Create reminder" %}"
+            >
+                {% heroicon_micro "plus" class="inline align-middle me-1" stroke_width=5 aria_hidden=true %}
+                Add
+            </button>
+        </div>
+
+        <div hx-trigger="load, remindersUpdated from:body" hx-get="{% url "funds:submissions:partial-reminder-card" object.id %}" hx-target="this">
+            <div class="animate-pulse min-h-30">
+                <div class="w-full mb-3 bg-gray-200 h-9"></div>
+                <div class="w-full h-6 mb-1 bg-gray-200"></div>
+                <div class="w-full h-1 mb-3 bg-gray-200"></div>
+                <div class="w-20 h-6 mb-3 bg-gray-200"></div>
+            </div>
+        </div>
+    </div>
+    <div ></div>
 {% endblock %}
 
 {% block extra_js %}

@@ -1,31 +1,29 @@
 {% load i18n heroicons %}
-<div class="sidebar__inner" id="id_reminders">
-    <h5>{% trans "Reminders" %}</h5>
-    {% regroup object.reminders.all by get_action_display as action_list %}
-    <ul>
-        {% for action in action_list %}
-            <li><strong>{{ action.grouper }}</strong>
-                <ul class='divide-y'>
-                    {% for reminder in action.list %}
-                        <li class="{% if reminder.is_expired %}expired-reminder{% endif %} reminder-list">
-                            <div class="reminder-title">
-                                {% if reminder.title %}
-                                    {{ reminder.title }}
-                                {% else %}
-                                    {% trans "untitled reminder" %}
-                                {% endif %}
-                            </div>
-                            <a class="link reminder-delete" href="{% url 'funds:submissions:reminders:delete' object.id reminder.id %}">
-                                {% heroicon_micro "trash" class="inline me-1 align-middle fill-red-500" aria_hidden=true %}
-                                <span class="sr-only">{% trans "Delete" %}</span>
-                            </a>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </li>
-            <br>
-        {% empty %}
-            <li>{% trans "No reminders yet." %}</li>
-        {% endfor %}
-    </ul>
-</div>
+
+{% regroup object.reminders.all by get_action_display as action_list %}
+<ul>
+    {% for action in action_list %}
+        <li><strong>{{ action.grouper }}</strong>
+            <ul class='divide-y'>
+                {% for reminder in action.list %}
+                    <li class="{% if reminder.is_expired %}expired-reminder{% endif %} reminder-list">
+                        <div class="reminder-title">
+                            {% if reminder.title %}
+                                {{ reminder.title }}
+                            {% else %}
+                                {% trans "untitled reminder" %}
+                            {% endif %}
+                        </div>
+                        <a class="link reminder-delete" href="{% url 'funds:submissions:reminders:delete' object.id reminder.id %}">
+                            {% heroicon_micro "trash" class="inline align-middle me-1 fill-red-500" aria_hidden=true %}
+                            <span class="sr-only">{% trans "Delete" %}</span>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </li>
+        <br>
+    {% empty %}
+        <li>{% trans "No reminders yet." %}</li>
+    {% endfor %}
+</ul>

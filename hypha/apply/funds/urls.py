@@ -35,6 +35,7 @@ from .views import (
     UpdateReviewersView,
     htmx_archive_unarchive_submission,
     partial_screening_card,
+    reminder_list,
     submission_success,
 )
 from .views_beta import (
@@ -192,6 +193,11 @@ submission_urls = (
                         "project/create/",
                         CreateProjectView.as_view(),
                         name="create_project",
+                    ),
+                    path(
+                        "partial/reminder-card/",
+                        reminder_list,
+                        name="partial-reminder-card",
                     ),
                     path(
                         "reminder/create/",
