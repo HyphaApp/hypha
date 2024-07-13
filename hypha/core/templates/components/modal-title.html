@@ -1,0 +1,21 @@
+{% load components heroicons %}
+
+<header class="flex items-center justify-between gap-4 mb-2 sm:mb-4">
+    <h2 id="model-title" class="m-0 text-xl">
+        {% render_slot slots.inner_block %}
+    </h2>
+
+    <div>
+        <button
+            class="p-1.5 -me-1.5 opacity-70 rounded hover:bg-gray-100 hover:opacity-100"
+            aria-label="Close Modal"
+            @click="show = false"
+            type="button"
+        >
+            {% heroicon_outline "x-mark" stroke_width="1.5" %}
+            <span class="sr-only">Close</span>
+        </button>
+    </div>
+</header>
+
+<hr class="mb-4 -mx-4 shadow sm:-mx-6">

@@ -1,13 +1,11 @@
 {% load i18n static %}
 <form
-    class="px-4 pt-5 pb-4 sm:p-6 form"
+    class="px-4 pt-3 pb-4 sm:pt-5 sm:p-6 form"
     id="reviewer_form"
     method="POST"
     hx-post="{{ request.path }}"
 >
-    <h2 id="model-title">
-        {% trans "Update Reviewers" %}
-    </h2>
+    {% modal_title %}{% trans "Update reviewers" %}{% endmodal_title %}
 
     {% csrf_token %}
     {{ form.media }}

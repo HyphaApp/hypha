@@ -3,8 +3,9 @@
 
 {% if show_progress_form %}
     <div class="px-4 pt-5 pb-4 sm:p-6 ">
-        <h2 class="text-lg font-bold" id="modal-title">{% trans "Update Submission Status" %}</h2>
-        <hr class="-mx-4 sm:-mx-6">
+
+        {% modal_title %}{% trans "Update Submission Status" %}{% endmodal_title %}
+
         <div class="mt-4 mb-4">
             <dl>
                 <dt class="font-bold">{% trans "Current status" %}</dt>
