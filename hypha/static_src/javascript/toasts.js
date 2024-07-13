@@ -24,7 +24,7 @@ function toastHandler() {
 
 (function () {
     htmx.on("showMessage", (e) => {
-        let message_detail = { type: "info", text: "🎬 " + e.detail.value };
+        let message_detail = { type: "info", text: "ℹ️ " + e.detail.value };
         dispatchEvent(
             new CustomEvent("notice", {
                 detail: message_detail,
