@@ -104,6 +104,7 @@ MIDDLEWARE = [
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
     "hypha.apply.middleware.HandleProtectionErrorMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
+    "hypha.core.middleware.htmx.HtmxMessageMiddleware",
     "django_user_agents.middleware.UserAgentMiddleware",
 ]
 
