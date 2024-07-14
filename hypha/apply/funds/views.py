@@ -792,14 +792,18 @@ class UpdateLeadView(View):
         if not permission:
             messages.warning(self.request, reason)
             return HttpResponseRedirect(self.object.get_absolute_url())
-        return super(UpdateLeadView, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def get(self, *args, **kwargs):
         lead_form = UpdateSubmissionLeadForm(instance=self.object)
         return render(
             self.request,
             "funds/includes/update_lead_form.html",
-            context={"form": lead_form, "value": _("Update"), "object": self.object},
+            context={
+                "form": lead_form,
+                "value": _("Update Lead"),
+                "object": self.object,
+            },
         )
 
     def post(self, *args, **kwargs):
@@ -814,11 +818,13 @@ class UpdateLeadView(View):
                 source=form.instance,
                 related=old_lead,
             )
-            return render(
-                self.request,
-                "funds/applicationsubmission_detail.html",
-                context={"object": form.instance},
-                status=200,
+            return HttpResponse(
+                status=204,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {"leadUpdated": None, "showMessage": "Submission Lead updated."}
+                    ),
+                },
             )
         return render(
             self.request,
