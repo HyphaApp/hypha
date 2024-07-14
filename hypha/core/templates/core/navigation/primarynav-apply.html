@@ -9,7 +9,7 @@
     x-transition:leave="transition ease-in duration-150"
     x-transition:leave-start="transform opacity-100 translate-x-0"
     x-transition:leave-end="transform opacity-0 translate-x-full"
-    class="fixed md:static pt-10 md:pt-0 top-0 md:top-auto end-0 bottom-0 bg-white md:bg-transparent z-20 md:z-10 shadow-xl md:shadow-none overflow-y-auto md:overflow-clip"
+    class="fixed top-0 bottom-0 z-20 pt-10 overflow-y-auto bg-white shadow-xl md:static md:bg-transparent md:pt-0 md:top-auto end-0 md:z-auto md:shadow-none md:overflow-clip"
 >
     <!-- Mobile Menu Opener -->
     <button
@@ -21,7 +21,7 @@
 
     <!-- Menu -->
     {% primary_navigation_items request.user as nav_items %}
-    <ul class="flex flex-col md:gap-8 p-4 md:p-0 md:flex-row" role="menubar">
+    <ul class="flex flex-col p-4 md:gap-8 md:p-0 md:flex-row" role="menubar">
         {% for item in nav_items %}
             <li
                 role="presentation"
@@ -42,7 +42,7 @@
                         {{ item.title }}
 
                         <span class="hidden md:block" :class="open ? '[&>svg]:translate-y-0.5': ''">
-                            {% heroicon_outline "chevron-down" aria_hidden="true" size=16 stroke_width=3 class="inline align-baseline ms-1 transition-transform" %}
+                            {% heroicon_outline "chevron-down" aria_hidden="true" size=16 stroke_width=3 class="inline align-baseline transition-transform ms-1" %}
                         </span>
                     </a>
 
@@ -60,7 +60,7 @@
                         x-transition:leave-start="transform opacity-100 scale-100 translate-y-0"
                         x-transition:leave-end="transform opacity-0 scale-95 -translate-y-3"
                         @click.outside="open = false"
-                        class="min-w-48 relative md:absolute block bg-white md:shadow-xl z-20 md:border-y rounded-sm"
+                        class="relative z-20 block bg-white rounded-sm min-w-48 md:absolute md:shadow-xl md:border-y"
                     >
                         {% for sub_item in item.sub_items %}
                             <a

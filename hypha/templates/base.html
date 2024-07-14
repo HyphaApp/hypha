@@ -117,40 +117,11 @@
 
         <!-- Datetime picker-->
         <script src="{% static 'js/vendor/moment.min.js' %}"></script>
-        <script src="{% static 'js/toasts.js' %}"></script>
         <script src="{% static 'js/vendor/daterangepicker.min.js' %}"></script>
 
-        <!-- Placeholder for the modal -->
+        <!-- Placeholder for the htmx modal & toast-->
         {% include "includes/_modal-placeholder.html" %}
-
-        <!-- Toast layer -->
-        <div
-            x-data="toastHandler()"
-            class="fixed inset-0 flex flex-col items-end justify-start w-screen h-screen pointer-events-none"
-            @notice.window="add($event.detail)"
-        >
-            <template x-for="toast of toasts" :key="toast.id">
-                <div
-                    x-show="visible.includes(toast)"
-                    x-transition:enter="transition ease-in duration-200"
-                    x-transition:enter-start="transform opacity-0 translate-y-2"
-                    x-transition:enter-end="transform opacity-100"
-                    x-transition:leave="transition ease-out duration-500"
-                    x-transition:leave-start="transform translate-x-0 opacity-100"
-                    x-transition:leave-end="transform translate-x-full opacity-0"
-                    @click="remove(toast.id)"
-                    class="flex items-center justify-center w-56 h-16 mt-4 mr-6 text-lg font-bold text-white rounded shadow-lg cursor-pointer"
-                    :class="{
-                            'bg-green-500': toast.type === 'success',
-                            'bg-blue-500': toast.type === 'info',
-                            'bg-orange-500': toast.type === 'warning',
-                            'bg-red-500': toast.type === 'error',
-                            }"
-                    style="pointer-events:all"
-                    x-text="toast.text">
-                </div>
-            </template>
-        </div>
+        {% include "includes/_toast-placeholder.html" %}
 
         {% block extra_js %}{% endblock %}
 
