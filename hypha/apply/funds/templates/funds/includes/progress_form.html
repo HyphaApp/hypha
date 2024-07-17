@@ -2,11 +2,10 @@
 {% show_progress_button request.user object as show_progress_form %}
 
 {% if show_progress_form %}
-    <div class="px-4 pt-5 pb-4 sm:p-6 ">
+    {% modal_title %}{% trans "Update Status" %}{% endmodal_title %}
 
-        {% modal_title %}{% trans "Update Submission Status" %}{% endmodal_title %}
-
-        <div class="mt-4 mb-4">
+    <div class="p-4">
+        <div class="mb-4">
             <dl>
                 <dt class="font-bold">{% trans "Current status" %}</dt>
                 <dd>{{ object.phase }}</dd>
