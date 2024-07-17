@@ -724,7 +724,7 @@ class CreateProjectView(View):
                 user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
                 related_obj=project,
             )
-            return HttpResponseClientRefresh()
+            return HttpResponseClientRedirect(project.get_absolute_url())
         return render(
             self.request,
             "funds/includes/create_project_form.html",
@@ -908,6 +908,7 @@ class UpdatePartnersView(View):
     model = ApplicationSubmission
     form_class = UpdatePartnersForm
     context_name = "partner_form"
+    template = "funds/modals/update_partner_form.html"
 
     def dispatch(self, request, *args, **kwargs):
         self.submission = get_object_or_404(ApplicationSubmission, id=kwargs.get("pk"))
@@ -928,7 +929,7 @@ class UpdatePartnersView(View):
         )
         return render(
             self.request,
-            "funds/includes/update_partner_form.html",
+            self.template,
             context={
                 "form": partner_form,
                 "value": _("Update"),
@@ -964,10 +965,22 @@ class UpdatePartnersView(View):
                 added=added,
                 removed=removed,
             )
-            return HttpResponse("", status=200)
+
+            return HttpResponse(
+                status=204,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {
+                            "partnerUpdated": None,
+                            "showMessage": "Partners updated successfully.",
+                        }
+                    ),
+                },
+            )
+
         return render(
             self.request,
-            "funds/includes/update_partner_form.html",
+            self.template,
             context={"form": form, "value": _("Update"), "object": self.submission},
             status=400,
         )

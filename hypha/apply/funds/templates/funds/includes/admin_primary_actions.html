@@ -17,23 +17,9 @@
 {% else %}
     {% if PROJECTS_ENABLED %}
         {% if object.accepted_for_funding and not object.project %}
-            <div x-data="{ closeProjectFormOutside(e){if (e.currentTarget == e.target){$refs.dialogProjectForm.close()}}}">
-                <button class="button button--bottom-space button--primary button--full-width" @click="$refs.dialogProjectForm.showModal()" hx-get="{% url 'funds:submissions:create_project' pk=object.pk %}" hx-target="#project_form">
-                    {% trans "Create Project" %}
-                </button>
-                <dialog x-ref="dialogProjectForm" @click="closeProjectFormOutside" x-init="document.addEventListener('htmx:projectCreated', (event) => {$refs.dialogProjectForm.close()});" class="w-[580px] overflow-visible">
-                    <div class="flex items-center justify-between p-4 align-middle dialog-header border-block-end bg-light-blue">
-                        <span class="text-lg font-bold text-white">{% trans "Create Project" %}</span>
-                        <button @click="$refs.dialogProjectForm.close()" class="font-bold text-white">X</button>
-                    </div>
-                    <div id="project_form">
-                        <div class="animate-pulse">
-                            <div class="w-full h-16 mb-5 bg-gray-200"></div>
-                            <div class="w-full h-6 mb-5 bg-gray-200"></div>
-                        </div>
-                    </div>
-                </dialog>
-            </div>
+            <button class="button button--bottom-space button--primary button--full-width"  hx-get="{% url 'funds:submissions:create_project' pk=object.pk %}" hx-target="#htmx-modal">
+                {% trans "Create Project" %}
+            </button>
         {% endif %}
     {% endif %}
 
