@@ -76,10 +76,10 @@
         &--active {
             color: $color--default;
             cursor: default;
-            background-color: $color--white;
+            background-color: var(--color-bg-default);
 
             &:hover {
-                background-color: $color--white;
+                background-color: var(--color-bg-default);
             }
         }
 
