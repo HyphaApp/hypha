@@ -49,6 +49,7 @@ from .views_partials import (
     partial_reviews_card,
     partial_reviews_decisions,
     partial_submission_activities,
+    partial_submission_lead,
     sub_menu_bulk_update_lead,
     sub_menu_bulk_update_reviewers,
     sub_menu_category_options,
@@ -177,6 +178,11 @@ submission_urls = (
             include(
                 [
                     path("", SubmissionDetailView.as_view(), name="detail"),
+                    path(
+                        "partial/lead/",
+                        partial_submission_lead,
+                        name="partial-get-lead",
+                    ),
                     path(
                         "partial/activities/",
                         partial_submission_activities,

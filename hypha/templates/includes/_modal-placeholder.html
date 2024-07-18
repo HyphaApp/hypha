@@ -7,6 +7,7 @@ How this works:
 {% endcomment %}
 
 <div
+    x-cloak
     x-data="{ show: false }"
     @keydown.window.escape="show = false"
     x-show="show"
@@ -47,10 +48,6 @@ How this works:
                 hx-target="this"
                 @htmx:after-swap="show = true"
                 @htmx:before-swap="if(!$event.detail.xhr.response) { show = false; $event.detail.shouldSwap = false;}"
-                {% comment %}
-                <!-- uncomment this to close the modal when clicked outside -->
-                @click.away="show = false"
-                {% endcomment %}
             >
             </div>
         </div>
