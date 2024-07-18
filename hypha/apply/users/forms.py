@@ -1,5 +1,6 @@
 from re import match
 
+import nh3
 from django import forms
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -159,7 +160,10 @@ class CustomUserCreationForm(CustomUserAdminFormBase, UserCreationForm):
 
 
 class ProfileForm(forms.ModelForm):
-    error_messages = {"invalid_full_name": _("Full Name is Invalid")}
+    error_messages = {
+        "invalid_full_name": _("Full name is invalid"),
+        "no_html": _("Full name may not contain HTML"),
+    }
 
     class Meta:
         model = User
@@ -204,6 +208,8 @@ class ProfileForm(forms.ModelForm):
 
     def clean_full_name(self):
         full_name = self.cleaned_data["full_name"]
+        if nh3.is_html(full_name):
+            raise forms.ValidationError(self.error_messages["no_html"])
         for regex in settings.INVALID_FULL_NAME_REGEXES:
             if match(regex, full_name):
                 raise forms.ValidationError(self.error_messages["invalid_full_name"])
