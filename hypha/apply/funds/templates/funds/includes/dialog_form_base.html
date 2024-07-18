@@ -4,9 +4,9 @@
     class="form {{ extra_classes }}"
     action="{{ action|default:request.path }}"
     method="post"
-    hx-post="{{ url }}"
+    hx-post="{{ action|default:request.path }}"
     hx-swap="innerHTML"
-    id="{% if form_id %}{{ form_id }}{% else %}{{ form.name }}{% endif %}"
+    id="{{ form_id }}"
     enctype="multipart/form-data"
 >
     {% csrf_token %}

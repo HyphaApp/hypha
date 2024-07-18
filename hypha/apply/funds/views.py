@@ -783,6 +783,7 @@ class UpdateLeadView(View):
     model = ApplicationSubmission
     form_class = UpdateSubmissionLeadForm
     context_name = "lead_form"
+    template = "funds/modals/update_lead_form.html"
 
     def dispatch(self, request, *args, **kwargs):
         self.object = get_object_or_404(ApplicationSubmission, id=kwargs.get("pk"))
@@ -798,10 +799,10 @@ class UpdateLeadView(View):
         lead_form = UpdateSubmissionLeadForm(instance=self.object)
         return render(
             self.request,
-            "funds/includes/update_lead_form.html",
+            self.template,
             context={
                 "form": lead_form,
-                "value": _("Update Lead"),
+                "value": _("Submit"),
                 "object": self.object,
             },
         )
@@ -828,7 +829,7 @@ class UpdateLeadView(View):
             )
         return render(
             self.request,
-            "funds/includes/update_lead_form.html",
+            self.template,
             context={"form": form, "value": _("Update"), "object": self.object},
             status=400,
         )

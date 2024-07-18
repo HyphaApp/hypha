@@ -35,6 +35,14 @@ User = get_user_model()
 
 
 @login_required
+def partial_submission_lead(request, pk):
+    submission = get_object_or_404(ApplicationSubmission, pk=pk)
+    return render(
+        request, "submissions/partials/submission-lead.html", {"submission": submission}
+    )
+
+
+@login_required
 @require_http_methods(["GET"])
 def sub_menu_funds(request):
     selected_funds = request.GET.getlist("fund")

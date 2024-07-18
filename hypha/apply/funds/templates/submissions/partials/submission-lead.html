@@ -1,0 +1,12 @@
+{% load i18n %}
+{% if request.user.is_apply_staff %}
+    <span>
+        {% trans "Lead" %}:
+        <a class="link--transparent link--underlined"
+           href="{% url 'apply:submissions:list' %}?lead={{ submission.lead.id }}">
+            {{ submission.lead }}
+        </a>
+    </span>
+{% elif request.user.is_org_faculty or not HIDE_STAFF_IDENTITY %}
+    <span>{% trans "Lead" %}: {{ submission.lead }}</span>
+{% endif %}

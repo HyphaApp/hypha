@@ -25,17 +25,22 @@
             <div class="mt-1 text-sm font-medium heading heading--meta">
                 <span>{{ object.stage }}</span>
                 <span>{{ object.page }}</span>
-                {% if request.user.is_apply_staff and object.round %}
-                    <span><a class="link--transparent link--underlined" href="{% url 'apply:rounds:detail' pk=object.round.pk %}">{{ object.round }}</a></span>
-                {% else %}
-                    <span>{{ object.round }}</span>
+                {% if object.round %}
+                    {% if request.user.is_apply_staff %}
+                        <span><a class="link--transparent link--underlined" href="{% url 'apply:rounds:detail' pk=object.round.pk %}">{{ object.round }}</a></span>
+                    {% else %}
+                        <span>{{ object.round }}</span>
+                    {% endif %}
                 {% endif %}
-                {% if request.user.is_apply_staff %}
-                    <span>{% trans "Lead" %}: <a class="link--transparent link--underlined" href="{% url 'apply:submissions:list' %}?lead={{ object.lead.id }}">{{ object.lead }}</a></span>
-                {% elif request.user.is_org_faculty or not HIDE_STAFF_IDENTITY %}
-                    <span>{% trans "Lead" %}: {{ object.lead }}</span>
-                {% endif %}
+
+                <span
+                    hx-get="{% url "apply:submissions:partial-get-lead" object.id %}"
+                    hx-trigger="load, leadUpdated from:body"
+                >
+                    <span class="inline-block w-24 bg-gray-600 rounded-md animate-pulse"></span>
+                </span>
             </div>
+
             {% status_bar object.workflow object.phase request.user author=object.user same_stage=True %}
 
             <div class="tabs js-tabs">
