@@ -638,6 +638,39 @@ class TestEmailAdapter(AdapterMixin, TestCase):
         sent_message = Message.objects.first()
         self.assertEqual(sent_message.status, "Error: An error occurred")
 
+    @override_settings(HIDE_STAFF_IDENTITY=True)
+    def test_hide_staff_in_email(self):
+        staff_commenter = StaffFactory()
+        submission = ApplicationSubmissionFactory()
+        comment = CommentFactory(
+            user=staff_commenter, source=submission, visibility=APPLICANT
+        )
+
+        self.adapter_process(
+            MESSAGES.COMMENT, related=comment, user=comment.user, source=comment.source
+        )
+
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(submission.user.email, mail.outbox[0].to[0])
+
+        self.assertFalse(str(staff_commenter) in mail.outbox[0].body)
+
+    def test_show_staff_in_email(self):
+        staff_commenter = StaffFactory()
+        submission = ApplicationSubmissionFactory()
+        comment = CommentFactory(
+            user=staff_commenter, source=submission, visibility=APPLICANT
+        )
+
+        self.adapter_process(
+            MESSAGES.COMMENT, related=comment, user=comment.user, source=comment.source
+        )
+
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(submission.user.email, mail.outbox[0].to[0])
+        print(mail.outbox[0].body)
+        self.assertTrue(str(staff_commenter) in mail.outbox[0].body)
+
 
 @override_settings(
     SEND_MESSAGES=True,

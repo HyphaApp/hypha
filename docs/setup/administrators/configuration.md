@@ -175,6 +175,12 @@ Staff e-mail domain. Used for OAUTH2 whitelist default value and staff account c
 
 ----
 
+Should staff identities be obscured from Applicants & Partners (ie. comments will be ORG_LONG_NAME rather than "John Doe").
+
+   HIDE_STAFF_IDENTITY = env.bool('HIDE_STAFF_IDENTITY', False)
+
+----
+
 Should staff be able to access/see draft submissions.
 
     SUBMISSIONS_DRAFT_ACCESS_STAFF = env.bool('SUBMISSIONS_DRAFT_ACCESS_STAFF', False)
