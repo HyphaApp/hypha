@@ -6,7 +6,7 @@
         {# Left #}
         <div class="actions-bar__inner actions-bar__inner--left">
             {% if heading %}
-                <h2 class="text-xl mb-2">{{ heading }}</h2>
+                <h2 class="mb-2 text-xl">{{ heading }}</h2>
             {% endif %}
 
 
@@ -57,33 +57,49 @@
         </div>
 
         {# Right #}
-        <div class="actions-bar__inner actions-bar__inner--right">
+        <div class="flex items-center gap-4">
             {% get_query 'archived' as archived_param %}
             {% if show_archive %}
                 {% if request.GET.archived == '1' %}
-                    <a href="{% modify_query archived='0' %}">{% trans "Hide archived" %}</a>
+                    <a
+                        class="px-3 py-1.5 flex items-center transition-colors rounded hover:bg-gray-100 hover:shadow-sm"
+                        href="{% modify_query archived='0' %}"
+                    >{% trans "Hide Archived" %}</a>
                 {% else %}
-                    <a href="{% modify_query archived='1' %}">{% trans "Show archived" %}</a>
+                    <a
+                        class="px-3 py-1.5 flex items-center transition-colors rounded hover:bg-gray-100 hover:shadow-sm"
+                        href="{% modify_query archived='1' %}"
+                    >{% trans "Show Archived" %}</a>
                 {% endif %}
             {% endif %}
             {% with request.get_full_path as path %}
                 {% if 'submission' in path and can_export %}
-                    <a href="{{path}}{% if '?' in path %}&{%else%}?{% endif %}export=true" class="button button--primary">{% trans 'Export CSV' %}</a>
+                    <a
+                        class="px-2 py-1.5 flex items-center transition-colors border rounded hover:bg-gray-100 shadow-sm"
+                        aria-label="Submissions: Download as CSV"
+                        href="{{path}}{% if '?' in path %}&{%else%}?{% endif %}export=true"
+                        role="button"
+                        data-tippy-content="Export as CSV"
+                    >
+
+                        {% heroicon_mini "arrow-down-tray" class="inline me-1" %}
+                        Export
+                    </a>
                 {% endif %}
             {% endwith %}
             {% if filter_classes != 'filters-open' %}
                 <button class="button js-toggle-filters">
-                    {% heroicon_mini "adjustments-horizontal" class="inline me-1 text-dark-blue align-text-bottom" aria_hidden=true %}
+                    {% heroicon_mini "adjustments-horizontal" class="inline align-text-bottom me-1 text-dark-blue" aria_hidden=true %}
                     {% trans "Filters" %}
                 </button>
             {% endif %}
 
             <button class="button button--filters js-toggle-filters" id="show-filters-button">
-                {% heroicon_mini "adjustments-horizontal" class="inline me-1 text-dark-blue align-text-bottom" aria_hidden=true %}
+                {% heroicon_mini "adjustments-horizontal" class="inline align-text-bottom me-1 text-dark-blue" aria_hidden=true %}
                 {% trans "Filters" %}
             </button>
             {% if use_search|default:False %}
-                <form action="{{ search_action }}" method="get" role="search" class="form form--search-desktop">
+                <form action="{{ search_action }}" method="get" role="search" class="relative form">
                     <button class="button button--search" type="submit">
                         <span class="sr-only">{% trans "Search" %}</span>
                         {% heroicon_mini "magnifying-glass" size=20 class="text-fg-muted" aria_hidden=true %}
@@ -92,7 +108,14 @@
                         <input type="hidden" value="{{ archived_param }}" name="archived">
                     {% endif %}
                     {% trans "submissions" as submissions %}
-                    <input class="input input--search input--secondary" type="text" placeholder="{% trans 'Search' %} {{ search_placeholder|default:submissions }}" name="query"{% if search_term %} value="{{ search_term }}"{% endif %} aria-label="{% trans 'Search input' %}">
+                    <input
+                        class="rounded shadow-sm input input--search input--secondary md:w-48"
+                        type="text"
+                        placeholder="{% trans 'Search' %} {{ search_placeholder|default:submissions }}"
+                        name="query"
+                        {% if search_term %}value="{{ search_term }}"{% endif %}
+                        aria-label="{% trans 'Search input' %}"
+                    >
                 </form>
             {% endif %}
         </div>
