@@ -21,4 +21,5 @@ def markdown_to_html(text: str) -> str:
         renderer="html",
         plugins=["strikethrough", "footnotes", "table", "url"],
     )
+
     return md(text)

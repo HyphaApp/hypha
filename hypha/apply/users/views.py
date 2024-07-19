@@ -581,7 +581,9 @@ class PasswordLessLoginSignupView(FormView):
         form = self.get_form()
         if form.is_valid():
             service = PasswordlessAuthService(
-                request, redirect_field_name=self.redirect_field_name
+                request,
+                redirect_field_name=self.redirect_field_name,
+                extended_session=form.cleaned_data.get("remember_me", False),
             )
 
             email = form.cleaned_data["email"]
@@ -614,6 +616,10 @@ class PasswordlessLoginView(LoginView):
 
         if user and self.check_token(user, token):
             user.backend = settings.CUSTOM_AUTH_BACKEND
+
+            # Check for "?remember-me" query param, set the session age to long if exists
+            if "remember-me" in request.GET:
+                self.request.session.set_expiry(settings.SESSION_COOKIE_AGE_LONG)
 
             if default_device(user):
                 # User has mfa, set the user details and redirect to 2fa login
@@ -656,6 +662,10 @@ class PasswordlessSignupView(TemplateView):
             user.set_unusable_password()
             user.save()
             pending_signup.delete()
+
+            # Check for "?remember-me" query param, set the session age to long if exists
+            if "remember-me" in request.GET:
+                self.request.session.set_expiry(settings.SESSION_COOKIE_AGE_LONG)
 
             user.backend = settings.CUSTOM_AUTH_BACKEND
             login(request, user)
