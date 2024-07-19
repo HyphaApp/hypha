@@ -1,5 +1,3 @@
-from re import match
-
 from django.conf import settings
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser, BaseUserManager, Group
@@ -11,6 +9,7 @@ from django.urls import reverse
 from django.utils.crypto import get_random_string
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
+from nh3 import nh3
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 from wagtail.contrib.settings.models import BaseGenericSetting, register_setting
 from wagtail.fields import RichTextField
@@ -172,10 +171,13 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
             elif not user.is_active:
                 raise IntegrityError("Found an inactive account")
         else:
-            for regex in settings.INVALID_FULL_NAME_REGEXES:
-                if "full_name" in kwargs and match(regex, kwargs["full_name"]):
-                    raise IntegrityError("Invalid Full name")
-
+            if kwargs.get("full_name", False):
+                # Remove all HTML tags. This prohibits HTML without creating hurdles.
+                cleaned_full_name = nh3.clean(kwargs["full_name"], tags=set())
+                # Remove all colons and slashes to nerf URLs regardless of HTML tags.
+                cleaned_full_name = cleaned_full_name.replace(":", "")
+                cleaned_full_name = cleaned_full_name.replace("/", "")
+                kwargs["full_name"] = cleaned_full_name
             if "password" in kwargs:
                 # Coming from registration without application
                 temp_pass = kwargs.pop("password")

@@ -1,5 +1,3 @@
-from re import match
-
 import nh3
 from django import forms
 from django.conf import settings
@@ -160,11 +158,6 @@ class CustomUserCreationForm(CustomUserAdminFormBase, UserCreationForm):
 
 
 class ProfileForm(forms.ModelForm):
-    error_messages = {
-        "invalid_full_name": _("Full name is invalid"),
-        "no_html": _("Full name may not contain HTML"),
-    }
-
     class Meta:
         model = User
         fields = ["full_name", "email", "slack"]
@@ -208,12 +201,12 @@ class ProfileForm(forms.ModelForm):
 
     def clean_full_name(self):
         full_name = self.cleaned_data["full_name"]
-        if nh3.is_html(full_name):
-            raise forms.ValidationError(self.error_messages["no_html"])
-        for regex in settings.INVALID_FULL_NAME_REGEXES:
-            if match(regex, full_name):
-                raise forms.ValidationError(self.error_messages["invalid_full_name"])
-        return full_name
+        # Remove all HTML tags. This prohibits HTML without creating hurdles.
+        cleaned_full_name = nh3.clean(full_name, tags=set())
+        # Remove all colons and slashes to nerf URLs regardless of HTML tags.
+        cleaned_full_name = cleaned_full_name.replace(":", "")
+        cleaned_full_name = cleaned_full_name.replace("/", "")
+        return cleaned_full_name
 
 
 class BecomeUserForm(forms.Form):
