@@ -136,8 +136,8 @@ class MetaTerm(index.Indexed, MP_Node):
         return self.name
 
     class Meta:
-        verbose_name = "Meta Term"
-        verbose_name_plural = "Meta Terms"
+        verbose_name = _("Meta Term")
+        verbose_name_plural = _("Meta Terms")
 
 
 class MetaTermChoiceField(forms.ModelChoiceField):

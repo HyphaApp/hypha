@@ -46,6 +46,7 @@ from .views_beta import (
 )
 from .views_partials import (
     get_applications_status_counts,
+    partial_meta_terms_card,
     partial_reviews_card,
     partial_reviews_decisions,
     partial_submission_activities,
@@ -194,6 +195,11 @@ submission_urls = (
                         "partial/screening-card/",
                         partial_screening_card,
                         name="partial-screening-card",
+                    ),
+                    path(
+                        "partial/meta-terms-card/",
+                        partial_meta_terms_card,
+                        name="partial-meta-terms-card",
                     ),
                     path(
                         "project/create/",

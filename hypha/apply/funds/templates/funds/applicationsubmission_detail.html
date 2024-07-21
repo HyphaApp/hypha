@@ -27,7 +27,12 @@
                 <span>{{ object.page }}</span>
                 {% if object.round %}
                     {% if request.user.is_apply_staff %}
-                        <span><a class="link--transparent link--underlined" href="{% url 'apply:rounds:detail' pk=object.round.pk %}">{{ object.round }}</a></span>
+                        <span>
+                            <a class="link--transparent link--underlined"
+                               href="{% url 'apply:rounds:detail'
+                                     pk=object.round.pk %}"
+                            >{{ object.round }}</a>
+                        </span>
                     {% else %}
                         <span>{{ object.round }}</span>
                     {% endif %}
@@ -85,10 +90,6 @@
     <div class="wrapper wrapper--large wrapper--tabs js-tabs-content">
     {# Tab 1 #}
         <div class="tabs__content" id="tab-1">
-            {% if request.user_agent.is_mobile %}
-                {% block mobile_actions %}
-                {% endblock %}
-            {% endif %}
             <div class="wrapper wrapper--sidebar">
                 {% if request.user|has_edit_perm:object and object.status == 'draft_proposal' and not request.user.is_apply_staff %}
                     <div class="wrapper--sidebar--inner">

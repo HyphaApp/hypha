@@ -13,11 +13,7 @@
         }
 
         &--actions {
-            display: none;
-
             @include media-query(md) {
-                display: block;
-
                 &--instructions {
                     margin-block-start: 10px;
                     margin-inline-start: 10px;
