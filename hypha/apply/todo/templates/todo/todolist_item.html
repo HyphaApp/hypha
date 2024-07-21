@@ -17,37 +17,8 @@
     {% endif %}
     <a class="button {{ button_type_class }} ms-2" href="{{ task.url }}">{% trans "View" %}</a>
     {% if task.user %}
-        <button class="ms-2" data-tooltip="Remove" @click="openTaskRemoval = true">{% heroicon_micro "x-mark" class="inline me-1 fill-red-600" aria_hidden=true %}</button>
+        <button class="ms-2" data-tooltip="Remove" hx-delete="{% url 'todo:delete' pk=task.id %}" hx-confirm='{% trans "Are you sure you want to remove this task? It will remove this task from your task list." %}'>{% heroicon_micro "trash" class="inline me-1 fill-red-600" aria_hidden=true %}</button>
     {% else %}
-        <button class="ms-2" data-tooltip="Remove this task for whole team" @click="openTaskRemoval = true">{% heroicon_micro "x-mark" class="inline me-1 fill-red-300" aria_hidden=true %}</button>
+        <button class="ms-2" data-tooltip="Remove this task for whole team" hx-delete="{% url 'todo:delete' pk=task.id %}" hx-confirm='{% trans "It will remove this task from whole team task list. Are you sure you want to remove this task for whole team?" %}'>{% heroicon_micro "trash" class="inline me-1 fill-red-300" aria_hidden=true %}</button>
     {% endif %}
-    <dialog x-show="openTaskRemoval" x-htmldialog.noscroll="openTaskRemoval = false" @click.outside="openTaskRemoval=false" class="w-[580px]">
-        <div class="dialog-header flex justify-between items-center border-block-end bg-light-blue p-4 align-middle">
-            <span class="font-bold text-lg text-white">{% trans "Remove Task" %}</span>
-        </div>
-        <div class="p-6 z-20">
-            {% if task.user %}
-                <p>{% trans "Are you sure you want to remove this task? It'll remove this task from your task list." %}</p>
-            {% else %}
-                <p>{% trans "It'll remove this task from whole team's task list. Are you sure you want to remove this task for whole team?" %}</p>
-            {% endif %}
-            <div class="flex justify-between">
-                <button
-                    type="button"
-                    class="button button--white"
-                    title="{% trans "Close" %}"
-                    @click="openTaskRemoval = false">
-                    {% trans "Cancel" %}
-                </button>
-                <button
-                    type="button"
-                    class="button button--warning"
-                    title="{% trans "Delete" %}"
-                    hx-delete="{% url 'todo:delete' pk=task.id %}"
-                    @click="openTaskRemoval = false">
-                    {% trans "Delete" %}
-                </button>
-            </div>
-        </div>
-    </dialog>
 </div>
