@@ -2,7 +2,7 @@
 <!-- Notification Bell -->
 <div
     class="relative inline-block"
-    x-data="{open: false}"
+    x-data="{open: false, addTask: false}"
     x-on:keydown.escape="open = false"
     x-init="$watch('open', value => { if (value) { document.getElementById('id-task-list').dispatchEvent(new Event('htmx:fetch')); } })"
 >
@@ -35,9 +35,20 @@
             <span class="SubMenuHeading font-medium text-inherit">
                 {% trans "Your Tasks" %}
             </span>
-            <button type="button" @click='open = false' class="appearance-none opacity-70 hover:opacity-100">
-                {% heroicon_solid "x-mark" aria_hidden="true" class="" %}
+            <button type="button" @click="addTask=true" class="button  button--transparent button--narrow">
+                {% trans "Add task" %}
             </button>
+            <dialog x-show="addTask" @click.outside="addTask=false">
+                <div class="dialog-header flex justify-between items-center border-block-end bg-light-blue p-4 align-middle">
+                    <span class="font-bold text-lg text-white">{% trans "Add Task" %}</span>
+                    <span @click="addTask=false">X</span>
+                </div>
+                <div class="p-6 z-20">
+                    {% trans "Add" as add %}
+                    {% include 'funds/includes/delegated_form_base.html' with form=add_manual_task value=add %}
+                </div>
+            </dialog>
+
         </header>
 
         <div
