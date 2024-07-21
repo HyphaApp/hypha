@@ -989,6 +989,8 @@ class UpdatePartnersView(View):
 
 @method_decorator(staff_required, name="dispatch")
 class UpdateMetaTermsView(View):
+    template = "funds/includes/update_meta_terms_form.html"
+
     def dispatch(self, request, *args, **kwargs):
         self.submission = get_object_or_404(ApplicationSubmission, id=kwargs.get("pk"))
         permission, reason = has_permission(
@@ -1008,7 +1010,7 @@ class UpdateMetaTermsView(View):
         )
         return render(
             self.request,
-            "funds/includes/update_meta_terms_form.html",
+            self.template,
             context={
                 "form": metaterms_form,
                 "value": _("Update"),
@@ -1023,15 +1025,20 @@ class UpdateMetaTermsView(View):
         if form.is_valid():
             form.save()
 
-            return render(
-                self.request,
-                "funds/includes/meta_terms_block.html",
-                context={"object": self.submission},
-                status=200,
+            return HttpResponse(
+                status=204,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {
+                            "metaTermsUpdated": None,
+                            "showMessage": "Meta terms updated successfully.",
+                        }
+                    ),
+                },
             )
         return render(
             self.request,
-            "funds/includes/update_meta_terms_form.html",
+            self.template,
             context={"form": form, "value": _("Update"), "object": self.submission},
             status=400,
         )

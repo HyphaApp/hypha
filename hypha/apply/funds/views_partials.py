@@ -282,6 +282,14 @@ def partial_reviews_decisions(request: HttpRequest) -> HttpResponse:
 
 
 @login_required
+def partial_meta_terms_card(request, pk):
+    submission = get_object_or_404(ApplicationSubmission, pk=pk)
+    meta_terms = submission.meta_terms.all()
+    ctx = {"meta_terms": meta_terms, "submission": submission}
+    return render(request, "submissions/partials/meta-terms-card.html", ctx)
+
+
+@login_required
 @require_http_methods(["GET", "POST"])
 def sub_menu_update_status(request: HttpRequest) -> HttpResponse:
     submission_ids = request.GET.getlist("selectedSubmissionIds")

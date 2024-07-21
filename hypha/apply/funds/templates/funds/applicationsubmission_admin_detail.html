@@ -5,17 +5,9 @@
     <link rel="stylesheet" href="{% static 'css/fancybox.css' %}">
 {% endblock %}
 
-{% block mobile_actions %}
-    <div x-data="{ show: false }">
-        <button x-on:click="show = ! show" class="button button--white button--full-width button--actions">{% trans "Actions to take" %}</button>
-        <div x-show="show" x-transition class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue">
-            {% include "funds/includes/admin_primary_actions.html"  %}
-        </div>
-    </div>
-{% endblock %}
 
 {% block sidebar_top %}
-    <div class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
+    <div class="sidebar__inner sidebar__inner--light-blue sidebar__inner--actions">
         {% include "funds/includes/admin_primary_actions.html" %}
     </div>
 {% endblock %}
@@ -55,7 +47,18 @@
 {% endblock %}
 
 {% block meta_terms %}
-    {% include 'funds/includes/meta_terms_block.html' %}
+    <div class="sidebar__inner"
+         hx-trigger="load, metaTermsUpdated from:body"
+         hx-get="{% url "funds:submissions:partial-meta-terms-card" object.id %}"
+         hx-target="this"
+    >
+        <div class="animate-pulse min-h-30">
+            <div class="w-full mb-3 bg-gray-200 h-9"></div>
+            <div class="w-full h-6 mb-1 bg-gray-200"></div>
+            <div class="w-full h-1 mb-3 bg-gray-200"></div>
+            <div class="w-20 h-6 mb-3 bg-gray-200"></div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block determination %}
@@ -67,7 +70,7 @@
         <div class="flex justify-between gap-4 pb-4">
             <h5 class="m-0">{% trans "Reminders" %}</h5>
             <button
-                class="flex items-center px-2 py-1 font-bold transition-colors rounded hover:bg-gray-100 text-dark-blue"
+                class="flex items-center px-2 py-1 font-bold transition-colors rounded hover:bg-gray-100 text-dark-blue -me-2"
                 hx-get="{% url 'funds:submissions:create_reminder' pk=object.pk %}"
                 hx-target="#htmx-modal"
                 role="button"
@@ -87,7 +90,6 @@
             </div>
         </div>
     </div>
-    <div ></div>
 {% endblock %}
 
 {% block extra_js %}

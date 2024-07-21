@@ -1,54 +1,7 @@
 {% load i18n static %}
-<div class="p-6 z-20">
-    <form
-        class="form px-3"
-        id="metaterms_form"
-        hx-target="#id_metaterms"
-        hx-swap="outerHTML"
-        hx-select="#id_metaterms"
-        method="POST"
-        hx-post="{% url 'funds:submissions:metaterms_update' pk=object.pk %}"
-    >
 
-        {% csrf_token %}
-        {% for hidden in form.hidden_fields %}
-            {{ hidden }}
-        {% endfor %}
-
-        {% if form.errors %}
-            {% for field in form %}
-                {% for error in field.errors %}
-                    <div class="alert alert-danger">
-                        <strong>{{ error|escape }}</strong>
-                    </div>
-                {% endfor %}
-            {% endfor %}
-            {% for error in form.non_field_errors %}
-                <div class="alert alert-danger">
-                    <strong>{{ error|escape }}</strong>
-                </div>
-            {% endfor %}
-        {% endif %}
-
-        {% for field in form.visible_fields %}
-            <fieldset class="mt-3">
-                <label for="{{ field.id_for_label }}">
-                    {{ field.label }}
-                </label>
-
-                <div class="mt-2">
-                    {{ field }}
-                </div>
-            </fieldset>
-        {% endfor %}
-
-        <button
-            class="button button--primary mt-6 mb-3"
-            type="submit"
-        >
-            {% trans "Update" %}
-        </button>
-    </form>
+<div class="p-6">
+    {% include 'funds/includes/dialog_form_base.html' with form=form value=value %}
 </div>
 
 <script type="module">
@@ -63,11 +16,5 @@
             removeItemButton: true,
             allowHTML: true,
         });
-    });
-
-    document.addEventListener('htmx:afterRequest', function (event) {
-        if (event.detail.requestConfig.verb === 'post' && event.detail.successful) {
-            document.dispatchEvent(new CustomEvent('htmx:metaTermsUpdated'));
-        }
     });
 </script>

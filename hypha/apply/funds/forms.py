@@ -478,7 +478,7 @@ class GroupedModelMultipleChoiceField(forms.ModelMultipleChoiceField):
 class UpdateMetaTermsForm(ApplicationSubmissionModelForm):
     meta_terms = GroupedModelMultipleChoiceField(
         queryset=None,  # updated in init method
-        widget=MetaTermSelect2Widget(attrs={"data-placeholder": "Meta terms"}),
+        widget=MetaTermSelect2Widget(attrs={"data-placeholder": "Select..."}),
         label=_("Meta terms"),
         choices_groupby="get_parent",
         required=False,
@@ -495,6 +495,11 @@ class UpdateMetaTermsForm(ApplicationSubmissionModelForm):
         self.fields["meta_terms"].queryset = MetaTerm.get_root_descendants().exclude(
             depth=2
         )
+        # Set initial values for meta_terms based on the instance if available
+        if self.instance.pk:
+            self.fields["meta_terms"].initial = self.instance.meta_terms.values_list(
+                "id", flat=True
+            )
 
 
 class CreateReminderForm(forms.ModelForm):

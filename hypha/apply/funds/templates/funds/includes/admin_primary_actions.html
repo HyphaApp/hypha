@@ -56,7 +56,7 @@
 
     <div class="mt-4 sidebar__separator">{% trans "Assign" %}</div>
 
-    <div class="mt-2 wrapper wrapper--sidebar-buttons">
+    <div class="gap-4 mt-2 wrapper wrapper--sidebar-buttons">
         <button
             class="button button--half-width button--white"
             hx-get="{% url 'funds:submissions:reviewers_update' pk=object.pk %}"
