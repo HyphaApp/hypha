@@ -12,7 +12,6 @@ from rest_framework_api_key.permissions import HasAPIKey
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import COMMENT, Activity
-from hypha.apply.categories.models import MetaTerm
 from hypha.apply.determinations.views import DeterminationCreateOrUpdateView
 from hypha.apply.funds.models import ApplicationSubmission, RoundsAndLabs
 from hypha.apply.funds.reviewers.services import get_all_reviewers
@@ -27,7 +26,6 @@ from .serializers import (
     CommentCreateSerializer,
     CommentEditSerializer,
     CommentSerializer,
-    MetaTermsSerializer,
     OpenRoundLabSerializer,
     RoundLabDetailSerializer,
     RoundLabSerializer,
@@ -402,16 +400,3 @@ class CurrentUser(APIView):
     def get(self, request, format=None):
         ser = UserSerializer(request.user)
         return Response(ser.data)
-
-
-class MetaTermsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-    """
-    List all the Meta Terms
-    """
-
-    queryset = MetaTerm.get_root_nodes()
-    serializer_class = MetaTermsSerializer
-    permission_classes = (
-        permissions.IsAuthenticated,
-        IsApplyStaffUser,
-    )
