@@ -9,11 +9,7 @@
         role="button"
         {% if meta_terms %}
             aria-label="{% trans "Update Meta Terms" %}"
-<<<<<<< HEAD
             title="{% trans "Update Meta Terms" %}"
-=======
-            title="Update meta terms"
->>>>>>> 52c26299a (update meta terms modal and remove mobile actions)
         {% else %}
             aria-label="{% trans "Add Meta Terms" %}"
         {% endif %}
@@ -31,7 +27,6 @@
 {% regroup meta_terms by get_parent as meta_term_groups %}
 <div>
     {% for group in meta_term_groups %}
-<<<<<<< HEAD
         <div class="mb-2">
             <h2 class="inline-block mb-2 text-base font-semibold text-fg-muted">{{ group.grouper }}:</h2>
             <div class="flex flex-wrap gap-2">
@@ -46,27 +41,7 @@
                 {% endfor %}
             </div>
         </div>
-=======
-        <h2 class="mb-2 text-base font-bold">{{ group.grouper }}</h2>
-        <ul class="flex flex-wrap gap-2">
-            {% for meta_term in group.list %}
-                <li class="px-3 py-1 text-sm bg-gray-100 border rounded-md">{{ meta_term.name }}</li>
-            {% endfor %}
-        </ul>
->>>>>>> 52c26299a (update meta terms modal and remove mobile actions)
     {% empty %}
         {% trans "--" %}
     {% endfor %}
 </div>
-<<<<<<< HEAD
-=======
-{% comment %}
-<ul>
-    {% for meta_term in meta_terms %}
-        <h6 class="heading--no-margin">{{ meta_term.get_parent }}</h6>
-        <li>{{ meta_term.name }}</li>
-    {% empty %}
-        {% trans "--" %}
-    {% endfor %}
-</ul> {% endcomment %}
->>>>>>> 52c26299a (update meta terms modal and remove mobile actions)
