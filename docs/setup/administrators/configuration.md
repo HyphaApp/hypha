@@ -330,6 +330,16 @@ See <https://github.com/tm-kn/django-basic-auth-ip-whitelist>
     BASIC_AUTH_WHITELISTED_HTTP_HOSTS = env.list('BASIC_AUTH_WHITELISTED_HTTP_HOSTS', [])
     BASIC_AUTH_WHITELISTED_IP_NETWORKS = env.list('BASIC_AUTH_WHITELISTED_IP_NETWORKS', [])
 
+## Social Auth (OAuth) settings
+
+----
+
+Hypha has custom social auth settings outside of the stock [Python Social Auth configuration options](https://python-social-auth.readthedocs.io/en/latest/configuration/settings.html)
+
+Extend a session authenticated with OAuth to `SESSION_COOKIE_AGE_LONG` (overrides Python Social Auth's [`SOCIAL_AUTH_SESSION_EXPIRATION`](https://python-social-auth.readthedocs.io/en/latest/configuration/settings.html#miscellaneous-settings))
+
+    SOCIAL_AUTH_USE_LONG_SESSION = env.bool('SOCIAL_AUTH_USE_LONG_SESSION', False)
+
 
 ## Django Elevate settings
 
