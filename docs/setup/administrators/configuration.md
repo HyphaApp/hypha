@@ -64,7 +64,7 @@ The age of session cookies, in seconds.
 
 This determines the length of time for which the user will remain logged in. The default value is 12 hours.
 
-    SSESSION_COOKIE_AGE = env.int("SESSION_COOKIE_AGE", 60 * 60 * 12)
+    SESSION_COOKIE_AGE = env.int("SESSION_COOKIE_AGE", 60 * 60 * 12)
 
 The age of session cookies when users check "Remember me" etc., in seconds. The default value is 2 weeks.
 
