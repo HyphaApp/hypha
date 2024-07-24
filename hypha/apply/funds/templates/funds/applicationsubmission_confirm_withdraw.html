@@ -4,20 +4,20 @@
 {% block title %}{% trans "Withdrawing" %}: {{object.title }}{% endblock %}
 
 {% block content %}
-<div class="admin-bar">
-    <div class="admin-bar__inner">
-        <h2 class="heading heading--no-margin">{% trans "Withdrawing" %}: {{ object.title }}</h2>
+    <div class="admin-bar">
+        <div class="admin-bar__inner">
+            <h2 class="heading heading--no-margin">{% trans "Withdrawing" %}: {{ object.title }}</h2>
+        </div>
     </div>
-</div>
 
-<div class="wrapper wrapper--light-grey-bg wrapper--form wrapper--sidebar">
-    <div class="wrapper--sidebar--inner">
-        <form class="form" action="" method="post">
-            {% csrf_token %}
-            <p><strong>{% blocktrans %}Are you sure you want to withdraw "{{ object }}" from consideration?{% endblocktrans %}</strong></p>
-            <button class="button button--warning button--submit button--top-space" type="submit">{% trans "Confirm" %}</button>
-        </form>
+    <div class="wrapper wrapper--light-grey-bg wrapper--form wrapper--sidebar">
+        <div class="wrapper--sidebar--inner">
+            <form class="form" action="" method="post">
+                {% csrf_token %}
+                <p><strong>{% blocktrans %}Are you sure you want to withdraw "{{ object }}" from consideration?{% endblocktrans %}</strong></p>
+                <button class="button button--warning button--submit button--top-space" type="submit">{% trans "Confirm" %}</button>
+            </form>
+        </div>
     </div>
-</div>
 
 {% endblock %}
