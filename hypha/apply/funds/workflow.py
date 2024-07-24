@@ -1381,7 +1381,10 @@ for key, value in PHASES:
 active_statuses = [
     status
     for status, _ in PHASES
-    if "accepted" not in status and "rejected" not in status and "invited" not in status and "withdrawn" not in status
+    if "accepted" not in status
+    and "rejected" not in status
+    and "invited" not in status
+    and "withdrawn" not in status
 ]
 
 
@@ -1463,7 +1466,6 @@ def get_withdrawn_statuses():
     return withdrawn_statuses
 
 
-ext_or_higher_statuses = get_ext_or_higher_statuses()
 review_statuses = get_review_statuses()
 ext_review_statuses = get_ext_review_statuses()
 ext_or_higher_statuses = get_ext_or_higher_statuses()

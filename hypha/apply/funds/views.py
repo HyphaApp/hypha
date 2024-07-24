@@ -1788,10 +1788,11 @@ class SubmissionDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         # delete submission and redirect to success url
         return super().form_valid(form)
 
+
 class SubmissionWithdrawView(SingleObjectTemplateResponseMixin, BaseDetailView):
     model = ApplicationSubmission
-    success_url = reverse_lazy('funds:submissions:list')
-    template_name_suffix = '_confirm_withdraw'
+    success_url = reverse_lazy("funds:submissions:list")
+    template_name_suffix = "_confirm_withdraw"
 
     def post(self, request, *args, **kwargs):
         return self.withdraw(request, *args, **kwargs)
@@ -1805,19 +1806,21 @@ class SubmissionWithdrawView(SingleObjectTemplateResponseMixin, BaseDetailView):
 
         obj = self.get_object()
 
-        withdraw_actions = [action for action in obj.workflow[obj.status].transitions.keys() if 'withdraw' in action]
+        withdraw_actions = [
+            action
+            for action in obj.workflow[obj.status].transitions.keys()
+            if "withdraw" in action
+        ]
 
         if len(withdraw_actions) > 0:
             action = withdraw_actions[0]
             obj.perform_transition(
-                action,
-                self.request.user,
-                request=self.request,
-                notify=False
+                action, self.request.user, request=self.request, notify=False
             )
 
         success_url = obj.get_absolute_url()
         return HttpResponseRedirect(success_url)
+
 
 @method_decorator(login_required, name="dispatch")
 class SubmissionPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
