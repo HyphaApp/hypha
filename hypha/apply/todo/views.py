@@ -1,10 +1,14 @@
+import json
+
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.utils.decorators import method_decorator
-from django.views.generic import CreateView, ListView, View
+from django.utils.translation import gettext as _
+from django.views.generic import ListView, View
 from django_htmx.http import trigger_client_event
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
@@ -32,9 +36,41 @@ class TodoListView(ListView):
 
 
 @method_decorator(staff_required, name="dispatch")
-class TaskCreationView(CreateView):
-    form_class = TaskCreateForm
-    model = Task
+class TaskCreationView(View):
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, *args, **kwargs):
+        task_form = TaskCreateForm()
+        return render(
+            self.request,
+            "todo/includes/add_task_form.html",
+            context={
+                "form": task_form,
+                "value": _("Update"),
+            },
+        )
+
+    def post(self, *args, **kwargs):
+        form = TaskCreateForm(
+            self.request.POST, user=self.request.user, instance=self.submission
+        )
+        if form.is_valid():
+            form.save()
+            return HttpResponse(
+                status=204,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {"taskAdded": None, "showMessage": "Task Added."}
+                    ),
+                },
+            )
+
+        return render(
+            self.request,
+            "todo/includes/add_task_form.html",
+            context={"form": form, "value": _("Update"), "object": self.task},
+        )
 
 
 @method_decorator(staff_required, name="dispatch")
