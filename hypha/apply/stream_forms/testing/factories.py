@@ -229,7 +229,7 @@ class UploadableMediaFactory(FormFieldBlockFactory):
         params = params or {}
         params.setdefault("data", b"this is some content")
         if params.get("filename") is None:
-            params["filename"] = "example.pdf"
+            params["filename"] = "test_example.pdf"
         file_name, file = cls.default_value._make_content(params)
         return SimpleUploadedFile(file_name, file.read())
 
