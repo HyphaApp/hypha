@@ -14,8 +14,8 @@
     </div>
     <a class="button {{ button_type_class }} ms-2" href="{{ task.url }}">{% trans "View" %}</a>
     {% if task.user %}
-        <button class="ms-2" data-tooltip="Remove" hx-delete="{% url 'todo:delete' pk=task.id %}" hx-confirm='{% trans "Are you sure you want to remove this task? It will remove this task from your task list." %}'>{% heroicon_micro "trash" class="inline me-1 fill-red-600" aria_hidden=true %}</button>
+        <button class="ms-2" data-tooltip="Remove" hx-delete="{% url 'todo:delete' pk=task.id %}" hx-target="this" hx-swap="none" hx-confirm='{% trans "Are you sure you want to remove this task? It will remove this task from your task list." %}'>{% heroicon_micro "trash" class="inline me-1 fill-red-600" aria_hidden=true %}</button>
     {% else %}
-        <button class="ms-2" data-tooltip="Remove this task for whole team" hx-delete="{% url 'todo:delete' pk=task.id %}" hx-confirm='{% trans "It will remove this task from whole team task list. Are you sure you want to remove this task for whole team?" %}'>{% heroicon_micro "trash" class="inline me-1 fill-red-300" aria_hidden=true %}</button>
+        <button class="ms-2" data-tooltip="Remove this task for whole team" hx-delete="{% url 'todo:delete' pk=task.id %}" hx-target="this" hx-swap="none" hx-confirm='{% trans "It will remove this task from whole team task list. Are you sure you want to remove this task for whole team?" %}'>{% heroicon_micro "trash" class="inline me-1 fill-red-300" aria_hidden=true %}</button>
     {% endif %}
 </div>

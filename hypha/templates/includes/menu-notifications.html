@@ -44,7 +44,7 @@
             id="id-task-list"
             hx-get="{% url "todo:list" %}?type=header_dropdown"
             hx-swap="innerHTML"
-            hx-trigger="htmx:fetch"
+            hx-trigger="htmx:fetch, taskListUpdated from:body"
         >
             <div class="min-h-4 mx-4 my-3 rounded-lg bg-gray-200 animate-pulse"></div>
             <div class="min-h-4 w-2/3 mx-4 my-3 rounded-lg bg-gray-200 animate-pulse"></div>
