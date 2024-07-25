@@ -178,6 +178,9 @@ class Permissions:
     def can_view(self, user):
         return self.can_do(user, "view")
 
+    def can_withdraw(self, user):
+        return self.can_do(user, "withdraw")
+
 
 staff_can = lambda user: user.is_apply_staff  # NOQA
 
@@ -190,7 +193,7 @@ partner_can = lambda user: user.is_partner  # NOQA
 community_can = lambda user: user.is_community_reviewer  # NOQA
 
 
-def make_permissions(edit=None, review=None, view=None):
+def make_permissions(edit=None, review=None, view=None, withdraw=None):
     return {
         "edit": edit or [],
         "review": review or [],
@@ -201,6 +204,7 @@ def make_permissions(edit=None, review=None, view=None):
             reviewer_can,
             partner_can,
         ],
+        "withdraw": withdraw or [applicant_can],
     }
 
 
