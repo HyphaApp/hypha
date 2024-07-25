@@ -2,10 +2,10 @@ from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, View
-from django_htmx.http import HttpResponseClientRefresh
+from django_htmx.http import trigger_client_event
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.users.decorators import staff_required
@@ -60,9 +60,14 @@ class TaskRemovalView(View):
             related=self.task,
         )
         self.task.delete()
-        # todo: Return tasks and update div/html without reloading the page.
-        # tasks = render_task_templates_for_user(self.request, self.request.user)
-        return HttpResponseClientRefresh()
+        tasks = render_task_templates_for_user(self.request, self.request.user)
+        response = render(
+            self.request,
+            "dashboard/includes/my-tasks.html",
+            context={"my_tasks": {"data": tasks}},
+        )
+        trigger_client_event(response, "taskListUpdated", {})
+        return response
 
 
 def add_task_to_user(code, user, related_obj):
