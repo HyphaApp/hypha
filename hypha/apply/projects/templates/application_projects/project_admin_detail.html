@@ -6,7 +6,7 @@
 {% block admin_assignments %}
     {% user_can_update_project_status object user as can_update_status %}
     {% if can_update_status %}
-        <div class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
+        <div class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}" data-testid="sidebar-primary-actions">
 
             <h5>{% trans "Actions to take" %}</h5>
 
