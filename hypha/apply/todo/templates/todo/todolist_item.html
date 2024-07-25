@@ -1,6 +1,6 @@
 {% load i18n markdown_tags nh3_tags heroicons %}
 
-<div class="bg-white p-2 flex items-center">
+<div class="group bg-white p-2 flex items-center">
     <svg class="icon icon--dashboard-tasks"><use xlink:href="#{{ task.icon }}"></use></svg>
     <div class="flex flex-1 items-center">
         <span>{{ task.text|markdown|nh3 }}</span>
@@ -12,10 +12,8 @@
             </span>
         {% endif %}
     </div>
-    <a class="button {{ button_type_class }} ms-2" href="{{ task.url }}">{% trans "View" %}</a>
     {% if task.user %}
-        <button class="ms-2" data-tooltip="Remove" hx-delete="{% url 'todo:delete' pk=task.id %}" hx-target="this" hx-swap="none" hx-confirm='{% trans "Are you sure you want to remove this task? It will remove this task from your task list." %}'>{% heroicon_micro "trash" class="inline me-1 fill-red-600" aria_hidden=true %}</button>
-    {% else %}
-        <button class="ms-2" data-tooltip="Remove this task for whole team" hx-delete="{% url 'todo:delete' pk=task.id %}" hx-target="this" hx-swap="none" hx-confirm='{% trans "It will remove this task from whole team task list. Are you sure you want to remove this task for whole team?" %}'>{% heroicon_micro "trash" class="inline me-1 fill-red-300" aria_hidden=true %}</button>
+        <button class="ms-2 invisible group-hover:visible" data-tooltip="Remove" hx-delete="{% url 'todo:delete' pk=task.id %}" hx-target="this" hx-swap="none" hx-confirm='{% trans "Are you sure you want to remove this task? It will remove this task from your task list." %}'>{% heroicon_micro "trash" class="inline me-2" aria_hidden=true %}</button>
     {% endif %}
+    <a class="button {{ button_type_class }} ms-2" href="{{ task.url }}">{% trans "View" %}</a>
 </div>
