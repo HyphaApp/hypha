@@ -137,7 +137,7 @@
                                         {% trans "Delete" %}
                                     </a>
                                 {% endif %}
-                                {% if ENABLE_SUBMISSION_WITHDRAWAL and request.user.is_applicant %}
+                                {% if request.user|has_withdraw_perm:object %}
                                     <a
                                         class="link link--withdraw-submission is-active"
                                         href="{% url 'funds:submissions:withdraw' object.id %}">
