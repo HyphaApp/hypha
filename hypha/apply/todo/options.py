@@ -20,8 +20,10 @@ INVOICE_REQUIRED_CHANGES = "invoice_required_changes"
 INVOICE_WAITING_APPROVAL = "invoice_waiting_approval"
 INVOICE_WAITING_PAID = "invoice_waiting_paid"
 REPORT_DUE = "report_due"
+COMMENT_TASK = "comment_task"
 
 TASKS_CODE_CHOICES = (
+    (COMMENT_TASK, "Comment Task"),
     (SUBMISSION_DRAFT, "Submission Draft"),
     (DETERMINATION_DRAFT, "Determination draft"),
     (REVIEW_DRAFT, "Review Draft"),
@@ -42,13 +44,20 @@ TASKS_CODE_CHOICES = (
 
 
 template_map = {
+    # ADD Manual Task
+    COMMENT_TASK: {
+        "text": _("{msg}"),
+        "icon": "comment",
+        "url": "{link}#communications",
+        "type": _("Comment"),
+    },
     # SUBMISSIONS ACTIONS
     # :todo: actions for mupltiple stages of submission
     SUBMISSION_DRAFT: {
         "text": _(
             'A Submission draft [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting to be submitted'
         ),
-        "icon": "edit-draft",
+        "icon": "comment",
         "url": "{link}",
         "type": _("Draft"),
     },
@@ -194,6 +203,7 @@ def get_task_template(request, task, **kwargs):
     template_kwargs = {
         "related": related_obj,
         "link": link_to(related_obj, request),
+        "msg": task.message if task.message else "",
     }
     template["text"] = template["text"].format(**template_kwargs)
     template["url"] = template["url"].format(**template_kwargs)
