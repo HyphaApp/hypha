@@ -441,7 +441,7 @@ class TestApplicantUploadContractView(BaseViewTestCase):
         contract_count = project.contracts.count()
 
         test_doc = BytesIO(b"somebinarydata")
-        test_doc.name = "contract.pdf"
+        test_doc.name = "test_contract.pdf"
 
         response = self.post_page(
             project,
@@ -527,7 +527,7 @@ class TestUploadDocumentView(BaseViewTestCase):
         project = ProjectFactory()
 
         test_doc = BytesIO(b"somebinarydata")
-        test_doc.name = "document.pdf"
+        test_doc.name = "test_document.pdf"
 
         response = self.post_page(
             project,
@@ -1015,7 +1015,7 @@ class TestStaffEditInvoiceView(BaseViewTestCase):
         supporting_document = SupportingDocumentFactory(invoice=invoice)
 
         document = BytesIO(b"somebinarydata")
-        document.name = "invoice.pdf"
+        document.name = "test_invoice.pdf"
 
         response = self.post_page(
             invoice,
