@@ -131,6 +131,21 @@ def add_task_to_user(code, user, related_obj):
     return None
 
 
+def add_manual_task_to_user(code, message, user, related_obj):
+    """
+    Add task for a user
+    input:
+        message: message
+        user: User object
+        related_obj: Object - Submission, Project, Invoice, Report
+    output: task - Task object / None in case of no creation
+    """
+    task = Task.objects.create(
+        code=code, user=user, related_object=related_obj, message=message
+    )
+    return task
+
+
 def add_task_to_user_group(code, user_group, related_obj):
     """
     Add task for user_groups
