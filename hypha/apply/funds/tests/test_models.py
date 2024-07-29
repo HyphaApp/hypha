@@ -437,7 +437,7 @@ class TestApplicationSubmission(TestCase):
         self.assertNotIn(str(value), submission.search_data)
 
     def test_file_gets_uploaded(self):
-        filename = "file_name.png"
+        filename = "test_image.png"
         submission = self.make_submission(form_data__image__filename=filename)
         path = os.path.join(settings.MEDIA_ROOT, "submission", str(submission.id))
 

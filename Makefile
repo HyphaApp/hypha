@@ -19,6 +19,7 @@ help:
 	@echo "  make serve              run Django and docs preview server, also watch and compile frontend changes"
 	@echo "  make watch              watch js and css resources for development"
 	@echo "  make download-esm-modules  download esm modules from npm and copy to static_src"
+	@echo "  make clean-test-files  remove test files during test"
 
 .PHONY: serve
 serve:
@@ -73,8 +74,17 @@ py-test:
 serve-django:
 	python manage.py runserver 0.0.0.0:$(DJANGO_PORT) --settings=hypha.settings.dev
 
+.PHONY: clean-test-files
+clean-test-files:
+	@echo "Removing test files generated during test"
+	find media/ -iname 'test_*.pdf' -delete
+	find media/ -iname 'test_image*' -delete
+	find media/ -iname '*.dat' -delete
+	find media/ -type d -empty -delete
+	rm -rf media/temp_uploads/*
+
 .PHONY: test
-test: lint py-test cov-html
+test: lint py-test cov-html clean-test-files
 
 .PHONY: serve-docs
 serve-docs:
