@@ -9,7 +9,7 @@
     {% endadminbar %}
 
     {% block form %}
-        <section class="my-8">
+        <section class="my-8 flex">
             {% include "forms/includes/form_errors.html" with form=form %}
             {% block determination_information %}
             {% endblock %}
@@ -48,6 +48,17 @@
                     {{ message }}
                 </div>
             {% endfor %}
+            <div class="determination-sidebar">
+                <div class="sidebar__inner">
+                    <h3>{% trans "Proposal Information" %}</h3>
+                    <div>
+                        {{ submission.output_named_blocks_answers }}
+                    </div>
+                    <div class="rich-text rich-text--answers">
+                        {{ submission.output_answers }}
+                    </div>
+                </div>
+            </div>
     {% endblock %}
     </section>
 {% endblock %}
