@@ -391,7 +391,7 @@ SingleStageDefinition = [
         "withdrawn": {
             "display": _("Withdrawn"),
             "stage": Request,
-            "permissions": staff_edit_permissions,
+            "permissions": no_permissions,
         },
     },
 ]
@@ -442,11 +442,6 @@ SingleStageExternalDefinition = [
             "display": _("More information required"),
             "stage": RequestExt,
             "permissions": applicant_edit_permissions,
-        },
-        "ext_withdrawn": {
-            "display": _("Withdrawn"),
-            "stage": RequestExt,
-            "permissions": staff_edit_permissions,
         },
     },
     {
@@ -585,7 +580,7 @@ SingleStageExternalDefinition = [
         "ext_withdrawn": {
             "display": _("Withdrawn"),
             "stage": RequestExt,
-            "permissions": staff_edit_permissions,
+            "permissions": no_permissions,
         },
     },
 ]
@@ -803,7 +798,7 @@ SingleStageCommunityDefinition = [
         "com_withdrawn": {
             "display": _("Withdrawn"),
             "stage": RequestCom,
-            "permissions": staff_edit_permissions,
+            "permissions": no_permissions,
         },
     },
 ]
@@ -1140,7 +1135,7 @@ DoubleStageDefinition = [
         "proposal_withdrawn": {
             "display": _("Withdrawn"),
             "stage": Proposal,
-            "permissions": staff_edit_permissions,
+            "permissions": no_permissions,
         },
     },
 ]
