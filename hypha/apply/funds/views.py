@@ -12,7 +12,7 @@ from django.contrib.auth.decorators import (
     user_passes_test,
 )
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import ImproperlyConfigured, PermissionDenied
 from django.db.models import Count, Q
 from django.forms import BaseModelForm
 from django.http import (
@@ -1807,15 +1807,21 @@ class SubmissionWithdrawView(SingleObjectTemplateResponseMixin, BaseDetailView):
         obj = self.get_object()
 
         withdraw_actions = [
-            action
-            for action in obj.workflow[obj.status].transitions.keys()
-            if "withdraw" in action
+            action for action in obj.workflow.keys() if "withdraw" in action
         ]
 
-        if len(withdraw_actions) > 0:
+        if len(withdraw_actions) == 1:
             action = withdraw_actions[0]
             obj.perform_transition(
                 action, self.request.user, request=self.request, notify=False
+            )
+        elif len(withdraw_actions) > 1:
+            raise ImproperlyConfigured(
+                f'In workflow "{obj.workflow}" too many withdraw actions: "{withdraw_actions}"'
+            )
+        elif len(withdraw_actions) < 1:
+            raise ImproperlyConfigured(
+                f'No withdraw actions found in workflow "{obj.workflow}"'
             )
 
         success_url = obj.get_absolute_url()
