@@ -75,7 +75,7 @@ class CommentForm(FileFormMixin, forms.ModelForm):
                 code=COMMENT_TASK,
                 message=instance.message,
                 user=assigned_user,
-                related_obj=instance.source,
+                related_obj=instance,
             )
         added_files = self.cleaned_data["attachments"]
         if added_files:

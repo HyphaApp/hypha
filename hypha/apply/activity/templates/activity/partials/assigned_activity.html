@@ -1,0 +1,5 @@
+{% load i18n %}
+
+{% if assigned_to %}
+    <p>{% trans "Assigned as task to: " %} {{ assigned_to }}</p>
+{% endif %}

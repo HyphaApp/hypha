@@ -85,6 +85,7 @@ class TaskRemovalView(View):
 
     def delete(self, *args, **kwargs):
         source = self.task.related_object
+        from hypha.apply.activity.models import Activity
         from hypha.apply.determinations.models import Determination
         from hypha.apply.projects.models import Invoice
         from hypha.apply.review.models import Review
@@ -95,6 +96,8 @@ class TaskRemovalView(View):
             self.task.related_object, Review
         ):
             source = self.task.related_object.submission
+        elif isinstance(self.task.related_object, Activity):
+            source = self.task.related_object.source
         messenger(
             MESSAGES.REMOVE_TASK,
             user=self.request.user,

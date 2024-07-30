@@ -1,6 +1,6 @@
 from django.urls import include, path
 
-from .views import AttachmentView, NotificationsView
+from .views import AttachmentView, NotificationsView, get_activity_assgined_user
 
 app_name = "activity"
 
@@ -13,4 +13,5 @@ urlpatterns = [
         AttachmentView.as_view(),
         name="attachment",
     ),
+    path("activity/<int:pk>/assigned/", get_activity_assgined_user, name="assigned"),
 ]

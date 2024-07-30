@@ -245,6 +245,17 @@ class Activity(models.Model):
         # Not visible to applicant
         return self.visibility not in [APPLICANT, PARTNER, APPLICANT_PARTNERS, ALL]
 
+    # @property
+    def get_absolute_url(self):
+        if self.type == COMMENT:
+            return "{source_link}#communications".format(
+                source_link=self.source.get_absolute_url()
+            )
+        else:
+            return "{source_link}#activity_feed".format(
+                source_link=self.source.get_absolute_url()
+            )
+
     @property
     def private(self):
         # not visible to all

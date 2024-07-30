@@ -48,7 +48,7 @@ template_map = {
     COMMENT_TASK: {
         "text": _("{msg}"),
         "icon": "comment",
-        "url": "{link}#communications",
+        "url": "{link}",
         "type": _("Comment"),
     },
     # SUBMISSIONS ACTIONS
