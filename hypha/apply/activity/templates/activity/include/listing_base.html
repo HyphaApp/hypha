@@ -20,6 +20,9 @@
                     <span class="js-last-edited text-fg-muted text-sm" data-tippy-content="{{ activity.edited|date:"SHORT_DATETIME_FORMAT" }}">{% trans "edited" %}</span>
                 {% endif %}
             </p>
+            {% if request.user.is_apply_staff %}
+                <p hx-get="{% url 'activity:assigned' pk=activity.id %}" hx-trigger="revealed" hx-target="this"></p>
+            {% endif %}
 
             {% if editable and activity.user == request.user %}
                 <p class="feed__meta-item feed__meta-item--edit-button">
