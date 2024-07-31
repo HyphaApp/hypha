@@ -1,6 +1,6 @@
 :root {
     --color-fg-muted: #656d76;
     --color-fg-default: #1f2328;
-    --color-bg-default: #f7f7f7; /* tailwind's bg-light-grey */
+    --color-bg-default: #fff;
     --color-header-bg: #fff;
 }
