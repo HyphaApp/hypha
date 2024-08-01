@@ -66,7 +66,7 @@ This determines the length of time for which the user will remain logged in. The
 
     SESSION_COOKIE_AGE = env.int("SESSION_COOKIE_AGE", 60 * 60 * 12)
 
-The age of session cookies when users check "Remember me" etc., in seconds. The default value is 2 weeks.
+The age of session cookies when users login with OAuth or check "Remember me" etc., in seconds. The default value is 2 weeks.
 
     SESSION_COOKIE_AGE_LONG = env.int("SESSION_COOKIE_AGE_LONG", 60 * 60 * 24 * 7 * 2)
 
@@ -329,16 +329,6 @@ See <https://github.com/tm-kn/django-basic-auth-ip-whitelist>
     BASIC_AUTH_PASSWORD = env.str('BASIC_AUTH_PASSWORD', None)
     BASIC_AUTH_WHITELISTED_HTTP_HOSTS = env.list('BASIC_AUTH_WHITELISTED_HTTP_HOSTS', [])
     BASIC_AUTH_WHITELISTED_IP_NETWORKS = env.list('BASIC_AUTH_WHITELISTED_IP_NETWORKS', [])
-
-## Social Auth (OAuth) settings
-
-----
-
-Hypha has custom social auth settings outside of the stock [Python Social Auth configuration options](https://python-social-auth.readthedocs.io/en/latest/configuration/settings.html)
-
-Extend a session authenticated with OAuth to `SESSION_COOKIE_AGE_LONG` (overrides Python Social Auth's [`SOCIAL_AUTH_SESSION_EXPIRATION`](https://python-social-auth.readthedocs.io/en/latest/configuration/settings.html#miscellaneous-settings))
-
-    SOCIAL_AUTH_USE_LONG_SESSION = env.bool('SOCIAL_AUTH_USE_LONG_SESSION', False)
 
 
 ## Django Elevate settings

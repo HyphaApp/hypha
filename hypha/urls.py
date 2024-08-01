@@ -81,15 +81,14 @@ if settings.DEBUG:
         path("test500/", dj_default_views.server_error),
     ]
 
-if settings.SOCIAL_AUTH_USE_LONG_SESSION:
-    # Override the social auth `<SOCIAL_NAMESPACE>:complete` to allow for extending the session
-    urlpatterns = [
-        path(
-            "complete/<str:backend>/",
-            oauth_complete,
-            name=f"{settings.SOCIAL_AUTH_URL_NAMESPACE}:complete",
-        )
-    ] + urlpatterns
+# Override the social auth `<SOCIAL_NAMESPACE>:complete` to allow for extending the OAuth session
+urlpatterns = [
+    path(
+        "complete/<str:backend>/",
+        oauth_complete,
+        name=f"{settings.SOCIAL_AUTH_URL_NAMESPACE}:complete",
+    )
+] + urlpatterns
 
 urlpatterns += [
     re_path(

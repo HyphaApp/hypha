@@ -786,8 +786,7 @@ def oauth_complete(
 ) -> HttpResponseRedirect:
     """View utilized after an OAuth login is successful.
 
-    This is utilized to extend the OAuth session age to the `SESSION_COOKIE_AGE_LONG`
-    when `SOCIAL_AUTH_USE_LONG_SESSION` is set to true.
+    This is utilized to extend the OAuth session age to the `SESSION_COOKIE_AGE_LONG`.
 
     Args:
         request:
@@ -800,9 +799,8 @@ def oauth_complete(
     """
     redirect = complete(request, backend, *args, **kwargs)
 
-    if settings.SOCIAL_AUTH_USE_LONG_SESSION:
-        request.backend.strategy.request.session.set_expiry(
-            settings.SESSION_COOKIE_AGE_LONG
-        )
+    request.backend.strategy.request.session.set_expiry(
+        settings.SESSION_COOKIE_AGE_LONG
+    )
 
     return redirect
