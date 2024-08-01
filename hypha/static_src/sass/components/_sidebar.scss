@@ -1,5 +1,5 @@
 .sidebar {
-    @include media-query(tablet-portrait) {
+    @include media-query(md) {
         width: 345px;
     }
 
@@ -15,7 +15,7 @@
         &--actions {
             display: none;
 
-            @include media-query(tablet-portrait) {
+            @include media-query(md) {
                 display: block;
 
                 &--instructions {

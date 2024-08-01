@@ -33,7 +33,7 @@ class QueryParamsTemplateTagTests(TestCase):
             context={"request": request}, query_params=query_params
         )
 
-        self.assertEquals(
+        self.assertEqual(
             path, "/en/test/?a=1&amp;a=2&amp;b=3&amp;c=OK&amp;d=Hello%2C+World%21"
         )
 
@@ -54,7 +54,7 @@ class QueryParamsTemplateTagTests(TestCase):
             only_query_string=True,
         )
 
-        self.assertEquals(path, "?a=1&amp;a=2&amp;b=3&amp;c=OK&amp;d=Hello%2C+World%21")
+        self.assertEqual(path, "?a=1&amp;a=2&amp;b=3&amp;c=OK&amp;d=Hello%2C+World%21")
 
     def test_modify_query(self):
         request = self.factory.get("/en/test/?a=1&a=2&b=3&c=OK&d=Hello%2C+World%21")
@@ -65,7 +65,7 @@ class QueryParamsTemplateTagTests(TestCase):
         path = modify_query({"request": request}, *params_to_remove, **params_to_change)
 
         # Then we should get the template names saved in context variables
-        self.assertEquals(path, "/en/test/?a=3&amp;b=4&amp;d=Hello%2C+World%21")
+        self.assertEqual(path, "/en/test/?a=3&amp;b=4&amp;d=Hello%2C+World%21")
 
     def test_modify_query_only_query_string(self):
         request = self.factory.get("/en/test/?a=1&a=2&b=3&c=OK&d=Hello%2C+World%21")
@@ -76,7 +76,7 @@ class QueryParamsTemplateTagTests(TestCase):
         path = modify_query({"request": request}, *params_to_remove, **params_to_change)
 
         # Then we should get the template names saved in context variables
-        self.assertEquals(path, "?a=3&amp;b=4&amp;d=Hello%2C+World%21")
+        self.assertEqual(path, "?a=3&amp;b=4&amp;d=Hello%2C+World%21")
 
     def test_add_to_query(self):
         request = self.factory.get("/en/test/?a=1&a=2&b=3&c=OK&d=Hello%2C+World%21")
@@ -87,7 +87,7 @@ class QueryParamsTemplateTagTests(TestCase):
         path = add_to_query({"request": request}, *params_to_remove, **params_to_add)
 
         # Then we should get the template names saved in context variables
-        self.assertEquals(
+        self.assertEqual(
             path,
             "/en/test/?a=1&amp;a=2&amp;a=3&amp;b=3&amp;b=4&amp;d=Hello%2C+World%21",
         )
@@ -101,7 +101,7 @@ class QueryParamsTemplateTagTests(TestCase):
         path = add_to_query({"request": request}, *params_to_remove, **params_to_add)
 
         # Then we should get the template names saved in context variables
-        self.assertEquals(
+        self.assertEqual(
             path,
             "?a=1&amp;a=2&amp;a=3&amp;b=3&amp;b=4&amp;d=Hello%2C+World%21",
         )
@@ -115,7 +115,7 @@ class QueryParamsTemplateTagTests(TestCase):
         path = remove_from_query({"request": request}, *args, **kwargs)
 
         # Then we should get the template names saved in context variables
-        self.assertEquals(path, "/en/test/?a=1&amp;b=3&amp;d=Hello%2C+World%21")
+        self.assertEqual(path, "/en/test/?a=1&amp;b=3&amp;d=Hello%2C+World%21")
 
     def test_remove_from_query_only_query_string(self):
         request = self.factory.get("/en/test/?a=1&a=2&b=3&c=OK&d=Hello%2C+World%21")
@@ -126,4 +126,4 @@ class QueryParamsTemplateTagTests(TestCase):
         path = remove_from_query({"request": request}, *args, **kwargs)
 
         # Then we should get the template names saved in context variables
-        self.assertEquals(path, "?a=1&amp;b=3&amp;d=Hello%2C+World%21")
+        self.assertEqual(path, "?a=1&amp;b=3&amp;d=Hello%2C+World%21")

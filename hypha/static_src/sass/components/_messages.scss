@@ -28,7 +28,7 @@
         max-height: 1000px;
         background: $color--dark-blue;
 
-        @include media-query(desktop) {
+        @include media-query(xl) {
             padding: 15px 30px;
         }
 

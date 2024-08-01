@@ -14,7 +14,7 @@
         background: $color--white;
     }
 
-    @include media-query(tablet-landscape) {
+    @include media-query(lg) {
         display: block;
         max-height: 0;
         transition: max-height $medium-transition;
@@ -40,7 +40,7 @@
         justify-content: space-around;
         padding: 20px 0;
 
-        @include media-query(tablet-landscape) {
+        @include media-query(lg) {
             display: none;
         }
 
@@ -63,7 +63,7 @@
 }
 // stylelint-disable selector-max-id
 #show-filters-button {
-    @include media-query(tablet-landscape) {
+    @include media-query(lg) {
         display: none;
     }
 }

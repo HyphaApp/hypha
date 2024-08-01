@@ -135,7 +135,7 @@ SUBMISSIONS_DRAFT_ACCESS_STAFF_ADMIN = env.bool(
 )
 
 # Should staff be able to export submissions.
-SUBMISSIONS_EXPORT_ACCESS_STAFF = env.bool("SUBMISSIONS_EXPORT_ACCESS_STAFF", True)
+SUBMISSIONS_EXPORT_ACCESS_STAFF = env.bool("SUBMISSIONS_EXPORT_ACCESS_STAFF", False)
 
 # Should staff admins be able to export submissions.
 SUBMISSIONS_EXPORT_ACCESS_STAFF_ADMIN = env.bool(

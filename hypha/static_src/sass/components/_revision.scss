@@ -2,7 +2,7 @@
     margin: 20px 0;
     border: 1px solid $color--mid-grey;
 
-    @include media-query(tablet-portrait) {
+    @include media-query(md) {
         margin: 4rem 0;
     }
 
@@ -13,7 +13,7 @@
         background: $color--white;
         border-block-end: 1px dashed $color--mid-grey;
 
-        @include media-query(tablet-portrait) {
+        @include media-query(md) {
             flex-direction: row;
             justify-content: space-between;
         }

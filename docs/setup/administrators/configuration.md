@@ -201,13 +201,13 @@ Should staff admins be able to access/see draft submissions.
 
 Should staff be able to export submissions.
 
-    SUBMISSIONS_EXPORT_ACCESS_STAFF = env.bool('SUBMISSIONS_EXPORT_ACCESS_STAFF', True)
+    SUBMISSIONS_EXPORT_ACCESS_STAFF = env.bool('SUBMISSIONS_EXPORT_ACCESS_STAFF', False)
 
 ----
 
 Should staff admins be able to export submissions.
 
-    SUBMISSIONS_EXPORT_ACCESS_STAFF_ADMIN = env.bool('SUBMISSIONS_EXPORT_ACCESS_STAFF_ADMIN', True)
+    SUBMISSIONS_EXPORT_ACCESS_STAFF_ADMIN = env.bool('SUBMISSIONS_EXPORT_ACCESS_STAFF_ADMIN', False)
 
 ----
 

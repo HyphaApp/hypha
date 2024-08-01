@@ -37,7 +37,7 @@ def get_primary_navigation_items(user):
         {
             "title": _("Submissions"),
             # kind of basic url to figure out active tab
-            "url": reverse_lazy("apply:submissions:overview"),
+            "url": reverse_lazy("apply:submissions:list"),
             "permission_method": "hypha.apply.users.decorators.is_apply_staff_or_reviewer_required",
             "sub_items": [
                 {
@@ -71,7 +71,7 @@ def get_primary_navigation_items(user):
         {
             "title": _("Projects"),
             # kind of basic url to figure out active tab
-            "url": reverse_lazy("apply:projects:overview"),
+            "url": reverse_lazy("apply:projects:all"),
             "permission_method": "hypha.apply.users.decorators.is_apply_staff_or_finance_or_contracting",
             "sub_items": [
                 {

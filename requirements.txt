@@ -1,6 +1,6 @@
 # Monitor dependencies
 scout-apm==3.1.0
-sentry-sdk==1.42.0
+sentry-sdk==2.8.0
 
 # Production dependencies
 Babel==2.14.0
@@ -28,10 +28,10 @@ django-select2==8.1.2
 django-slack==5.19.0
 django-storages==1.14.2
 django-tables2==2.7.0
-django-tinymce==3.7.1
+django-tinymce==4.1.0
 django-two-factor-auth==1.16.0
 django-web-components==0.2.0
-django==4.2.11
+django==4.2.14
 djangorestframework-api-key==3.0.0
 djangorestframework==3.15.2
 drf-nested-routers==0.93.5
@@ -53,7 +53,8 @@ reportlab==4.0.9
 social_auth_app_django==5.4.1
 tablib==3.5.0
 tomd==0.1.3
-wagtail==5.2.5
+wagtail==5.2.6
 whitenoise==6.6.0
 xhtml2pdf==0.2.15
+python-bidi==0.4.2
 xmltodict==0.13.0

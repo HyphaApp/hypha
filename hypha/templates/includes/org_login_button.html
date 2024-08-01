@@ -1,7 +1,7 @@
 {% load i18n heroicons %}
 <a
-    class="button button--secondary button--login"
-    href="{% url "social:begin" "google-oauth2" %}{% if next %}?next={{ next }}{% endif %}"
+    class="button button--secondary button--login mb-4"
+    href="{% url "social:begin" "google-oauth2" %}{% if redirect_url %}?next={{ redirect_url }}{% endif %}"
 >
     {% heroicon_mini "building-office" size=18 class="inline align-text-bottom me-1" aria_hidden=true %}
     {% blocktrans %}Log in with your {{ ORG_SHORT_NAME }} email{% endblocktrans %}

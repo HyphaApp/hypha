@@ -525,7 +525,7 @@ class ProjectSettings(BaseSiteSetting, ClusterableModel):
     staff_gp_email = models.TextField("Staff Group Email", null=True, blank=True)
     vendor_setup_required = models.BooleanField(default=True)
     paf_approval_sequential = models.BooleanField(
-        default=True, help_text="Uncheck it to approve PAF parallely"
+        default=True, help_text="Uncheck it to approve project parallely"
     )
 
     panels = [
@@ -536,11 +536,16 @@ class ProjectSettings(BaseSiteSetting, ClusterableModel):
         MultiFieldPanel(
             [
                 FieldPanel(
-                    "paf_approval_sequential", heading="Approve PAF Sequentially"
+                    "paf_approval_sequential", heading="Approve Project Sequentially"
                 ),
-                InlinePanel("paf_reviewers_roles", label=_("PAF Reviewers Roles")),
+                InlinePanel("paf_reviewers_roles", label=_("Project Reviewers Roles")),
             ],
-            heading=_("PAF Reviewers Roles"),
+            heading=_("Project Reviewers Roles"),
+            help_text=_(
+                "Reviewer Roles are needed to move projects to 'Internal Approval' stage. "
+                "Delete all roles to skip internal approval process and "
+                "to move all internal approval projects back to the 'Draft' stage with all approvals removed."
+            ),
         ),
     ]
 

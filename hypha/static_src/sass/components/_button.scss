@@ -41,10 +41,8 @@
             border: 1px solid $color--mid-grey;
             padding: 0.5rem 1.2rem;
 
-            &:focus {
-                color: $color--light-blue;
-            }
-
+            &:active,
+            &:focus,
             &:hover {
                 color: $color--white;
             }
@@ -76,7 +74,7 @@
         max-width: 250px;
         margin: 1rem auto 0;
 
-        @include media-query(tablet-portrait) {
+        @include media-query(md) {
             display: none;
         }
     }
@@ -98,10 +96,8 @@
         color: $color--light-blue;
         border: 1px solid $color--mid-grey;
 
-        &:focus {
-            color: $color--light-blue;
-        }
-
+        &:active,
+        &:focus,
         &:hover {
             color: $color--white;
         }
@@ -142,7 +138,7 @@
         transition: none;
         width: 100%;
 
-        @include media-query(tablet-landscape) {
+        @include media-query(lg) {
             background: none;
             padding: 10px;
             border: 0;
@@ -230,7 +226,7 @@
             }
         }
 
-        @include media-query(tablet-portrait) {
+        @include media-query(md) {
             display: none;
         }
     }
@@ -256,7 +252,7 @@
         border: 1px solid currentcolor;
         transition: background-color, color, border, $quick-transition;
 
-        @include media-query(tablet-portrait) {
+        @include media-query(md) {
             margin-block-start: 0;
         }
 
@@ -398,7 +394,7 @@
         @include button--small;
         padding-inline-end: 18px;
 
-        @include media-query(tablet-landscape) {
+        @include media-query(lg) {
             padding-inline-end: 18px;
         }
 

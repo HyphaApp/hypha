@@ -421,9 +421,11 @@ class TestCreateInvoiceForm(TestCase):
             "comment": "test comment",
         }
 
-        document = SimpleUploadedFile("invoice.pdf", BytesIO(b"somebinarydata").read())
+        document = SimpleUploadedFile(
+            "test_invoice.pdf", BytesIO(b"somebinarydata").read()
+        )
         supporting_documents = [
-            SimpleUploadedFile("invoice.pdf", BytesIO(b"somebinarydata").read())
+            SimpleUploadedFile("test_invoice.pdf", BytesIO(b"somebinarydata").read())
         ]
         files = {"document": document, "supporting_documents": supporting_documents}
 
@@ -446,7 +448,9 @@ class TestCreateInvoiceForm(TestCase):
             "comment": "test comment",
         }
 
-        document = SimpleUploadedFile("invoice.pdf", BytesIO(b"somebinarydata").read())
+        document = SimpleUploadedFile(
+            "test_invoice.pdf", BytesIO(b"somebinarydata").read()
+        )
         files = {
             "document": document,
         }
@@ -516,7 +520,7 @@ class TestEditInvoiceForm(TestCase):
         self.assertEqual(invoice.supporting_documents.count(), 0)
 
         supporting_document = [
-            SimpleUploadedFile("invoice.pdf", BytesIO(b"somebinarydata").read())
+            SimpleUploadedFile("test_invoice.pdf", BytesIO(b"somebinarydata").read())
         ]
         form = EditInvoiceForm(
             data={
@@ -564,7 +568,9 @@ class TestSelectDocumentForm(TestCase):
 
 
 class TestStaffContractUploadForm(TestCase):
-    mock_file = SimpleUploadedFile("contract.pdf", BytesIO(b"somebinarydata").read())
+    mock_file = SimpleUploadedFile(
+        "test_contract.pdf", BytesIO(b"somebinarydata").read()
+    )
 
     def test_staff_can_upload_unsigned(self):
         form = StaffUploadContractForm(data={}, files={"file": self.mock_file})
@@ -580,7 +586,9 @@ class TestStaffContractUploadForm(TestCase):
 
 
 class TestContractUploadForm(TestCase):
-    mock_file = SimpleUploadedFile("contract.pdf", BytesIO(b"somebinarydata").read())
+    mock_file = SimpleUploadedFile(
+        "test_contract.pdf", BytesIO(b"somebinarydata").read()
+    )
 
     def test_applicant_cant_upload_unsigned(self):
         form = UploadContractForm(data={}, files={"file": self.mock_file})

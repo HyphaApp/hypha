@@ -19,6 +19,7 @@ from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.categories.models import Option
 from hypha.apply.determinations.views import BatchDeterminationCreateView
 from hypha.apply.funds.models.screening import ScreeningStatus
+from hypha.apply.funds.utils import export_submissions_to_csv
 from hypha.apply.funds.workflow import PHASES, get_action_mapping, review_statuses
 from hypha.apply.search.filters import apply_date_filter
 from hypha.apply.search.query_parser import parse_search_query
@@ -239,6 +240,14 @@ def submission_all_beta(
         pk__in=selected_category_options
     ).values("id", "value")
 
+    if request.GET.get("format") == "csv" and permissions.can_export_submissions(
+        request.user
+    ):
+        csv_data = export_submissions_to_csv(page.object_list)
+        response = HttpResponse(csv_data.readlines(), content_type="text/csv")
+        response["Content-Disposition"] = "attachment; filename=submissions.csv"
+        return response
+
     ctx = {
         "base_template": base_template,
         "search_query": search_query,
@@ -265,6 +274,7 @@ def submission_all_beta(
         "can_view_archive": can_view_archives,
         "can_bulk_archive": permissions.can_bulk_archive_submissions(request.user),
         "can_bulk_delete": permissions.can_bulk_delete_submissions(request.user),
+        "can_export_submissions": permissions.can_export_submissions(request.user),
     } | screening_decision_context(selected_screening_statuses)
     return render(request, template_name, ctx)
 

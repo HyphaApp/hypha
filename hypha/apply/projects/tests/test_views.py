@@ -441,7 +441,7 @@ class TestApplicantUploadContractView(BaseViewTestCase):
         contract_count = project.contracts.count()
 
         test_doc = BytesIO(b"somebinarydata")
-        test_doc.name = "contract.pdf"
+        test_doc.name = "test_contract.pdf"
 
         response = self.post_page(
             project,
@@ -527,7 +527,7 @@ class TestUploadDocumentView(BaseViewTestCase):
         project = ProjectFactory()
 
         test_doc = BytesIO(b"somebinarydata")
-        test_doc.name = "document.pdf"
+        test_doc.name = "test_document.pdf"
 
         response = self.post_page(
             project,
@@ -1015,7 +1015,7 @@ class TestStaffEditInvoiceView(BaseViewTestCase):
         supporting_document = SupportingDocumentFactory(invoice=invoice)
 
         document = BytesIO(b"somebinarydata")
-        document.name = "invoice.pdf"
+        document.name = "test_invoice.pdf"
 
         response = self.post_page(
             invoice,
@@ -1309,7 +1309,7 @@ class TestStaffSubmitReport(BaseViewTestCase):
             report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "17"}
         )
         report.refresh_from_db()
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(
             report.versions.first().form_data,
             {"012a4f29-0882-4b1c-b567-aede1b601d4a": "17"},
@@ -1339,7 +1339,7 @@ class TestStaffSubmitReport(BaseViewTestCase):
             report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "19", "save": "Save"}
         )
         report.refresh_from_db()
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(
             report.versions.first().form_data,
             {"012a4f29-0882-4b1c-b567-aede1b601d4a": "19"},
@@ -1358,7 +1358,7 @@ class TestStaffSubmitReport(BaseViewTestCase):
             report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "23"}
         )
         report.refresh_from_db()
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(
             report.versions.last().form_data,
             {"012a4f29-0882-4b1c-b567-aede1b601d4a": "23"},
@@ -1534,7 +1534,7 @@ class TestApplicantSubmitReport(BaseViewTestCase):
             report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "41"}
         )
         report.refresh_from_db()
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(
             report.versions.first().form_data,
             {"012a4f29-0882-4b1c-b567-aede1b601d4a": "41"},

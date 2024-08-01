@@ -121,6 +121,16 @@
                 </label>
             </span>
         {% endif %}
+        {% if can_export_submissions %}
+            <a
+                class="px-2 py-1.5 transition-colors border rounded hover:bg-gray-100 shadow-sm"
+                aria-label="Submissions: Download as CSV"
+                href="{% modify_query "page" format="csv" %}"
+                data-tippy-content="Export as CSV"
+            >
+                {% heroicon_mini "arrow-down-tray" %}
+            </a>
+        {% endif %}
     </form>
 
     {% if is_filtered %}
