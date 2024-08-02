@@ -20,7 +20,7 @@ from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from modelcluster.models import ClusterableModel
 from wagtail.admin.panels import FieldPanel, InlinePanel, MultiFieldPanel
-from wagtail.contrib.settings.models import BaseSiteSetting, register_setting
+from wagtail.contrib.settings.models import BaseSiteSetting
 from wagtail.fields import StreamField
 from wagtail.models import Orderable
 
@@ -516,7 +516,6 @@ class PAFReviewersRole(Orderable, ClusterableModel):
         return str(self.label)
 
 
-@register_setting
 class ProjectSettings(BaseSiteSetting, ClusterableModel):
     contracting_gp_email = models.TextField(
         "Contracting Group Email", null=True, blank=True
