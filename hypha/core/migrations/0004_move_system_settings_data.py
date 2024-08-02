@@ -11,6 +11,14 @@ def copy_public_system_messages_settings(apps, schema_editor):
     PublicSystemMessages = apps.get_model("utils", "SystemMessagesSettings")
 
     for old_settings in PublicSystemMessages.objects.all():
+        settings_kwargs = {}
+
+        if hasattr(old_settings, "title_403"):
+            settings_kwargs["title_403"] = old_settings.title_403
+
+        if hasattr(old_settings, "body_403"):
+            settings_kwargs["body_403"] = old_settings.body_403
+
         SystemSettings.objects.create(
             site_logo_default=old_settings.site_logo_default,
             site_logo_mobile=old_settings.site_logo_mobile,
@@ -19,8 +27,7 @@ def copy_public_system_messages_settings(apps, schema_editor):
             footer_content=old_settings.footer_content,
             title_404=old_settings.title_404,
             body_404=old_settings.body_404,
-            title_403=old_settings.title_403,
-            body_403=old_settings.body_403,
+            **settings_kwargs,
         )
 
 
