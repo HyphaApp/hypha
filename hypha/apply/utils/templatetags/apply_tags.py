@@ -1,3 +1,5 @@
+import decimal
+
 import babel.numbers
 from django import template
 from django.conf import settings
@@ -15,8 +17,11 @@ def model_verbose_name(instance):
 
 
 @register.filter
-def format_number_as_currency(amount):
+def format_number_as_currency(amount: float | decimal.Decimal | str | None):
     """Formats a number as currency"""
+    if amount is None:
+        amount = 0
+
     return babel.numbers.format_currency(
         amount,
         settings.CURRENCY_CODE,

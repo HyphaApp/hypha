@@ -60,7 +60,7 @@
         </div>
         {% if not count_values == object_list.count %}
             {% with object_list.count|subtract:count_values as count_diff %}
-                <p class="text-xs">{% blocktrans %}*{{ count_diff }} submission(s) lack requested amount fields and are not included.{% endblocktrans %}</p>
+                <p class="text-xs">{% blocktrans %}*{{ count_diff }} submission(s) lack requested amount fields or data and are not included.{% endblocktrans %}</p>
             {% endwith %}
         {% endif %}
     </div>
