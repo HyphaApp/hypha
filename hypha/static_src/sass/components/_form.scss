@@ -454,7 +454,7 @@
             grid-template-columns: 1fr;
 
             @include media-query(lg) {
-                grid-template-areas: "message attachments" "message visibility";
+                grid-template-areas: "message attachments" "message visibility" "message assigned_to";
                 grid-template-rows: auto auto;
                 grid-template-columns: 2fr 1fr;
                 column-gap: 2rem;
@@ -467,7 +467,7 @@
             }
 
             .form__group {
-                margin-block-end: 0;
+                margin-block-end: 0.5rem;
             }
 
             // stylelint-disable-next-line selector-class-pattern
