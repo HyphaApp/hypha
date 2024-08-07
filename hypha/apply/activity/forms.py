@@ -17,10 +17,7 @@ class CommentForm(FileFormMixin, forms.ModelForm):
     assigned_to = forms.ModelChoiceField(
         queryset=User.objects.filter(groups__name=STAFF_GROUP_NAME),
         required=False,
-        label=_("Add as task to(optional)"),
-        help_text=_(
-            "It will assign comment as task to assigned user. Leave it blank if you don't want to create any task"
-        ),
+        label=_("Assign task(optional)"),
     )
 
     class Meta:
@@ -38,7 +35,6 @@ class CommentForm(FileFormMixin, forms.ModelForm):
             "visibility": "Select a relevant user role. Staff can view every comment."
         }
         widgets = {
-            "visibility": forms.RadioSelect(),
             "message": PagedownWidget(),
         }
 

@@ -21,7 +21,7 @@
                 {% endif %}
             </p>
             {% if request.user.is_apply_staff %}
-                <p hx-get="{% url 'activity:assigned' pk=activity.id %}" hx-trigger="revealed" hx-target="this"></p>
+                <p hx-get="{% url 'activity:assigned' pk=activity.id %}" hx-trigger="revealed" hx-target="this" class="feed__meta-item"></p>
             {% endif %}
 
             {% if editable and activity.user == request.user %}
