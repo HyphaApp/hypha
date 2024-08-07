@@ -140,6 +140,7 @@ from .workflow import (
     PHASES_MAPPING,
     STAGE_CHANGE_ACTIONS,
     active_statuses,
+    get_withdraw_action_for_stage,
     review_statuses,
 )
 
@@ -1789,43 +1790,39 @@ class SubmissionDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return super().form_valid(form)
 
 
-class SubmissionWithdrawView(SingleObjectTemplateResponseMixin, BaseDetailView):
+@method_decorator(login_required, name="dispatch")
+class SubmissionWithdrawView(
+    SingleObjectTemplateResponseMixin, UserPassesTestMixin, BaseDetailView
+):
     model = ApplicationSubmission
     success_url = reverse_lazy("funds:submissions:list")
     template_name_suffix = "_confirm_withdraw"
+
+    def dispatch(self, *args, **kwargs):
+        self.submission = self.get_object()
+        return super().dispatch(*args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         return self.withdraw(request, *args, **kwargs)
 
     def withdraw(self, request, *args, **kwargs):
-        if not settings.ENABLE_SUBMISSION_WITHDRAWAL:
-            raise PermissionDenied
+        withdraw_action = get_withdraw_action_for_stage(self.submission.stage)
 
-        if not request.user.is_applicant:
-            raise PermissionDenied
-
-        obj = self.get_object()
-
-        withdraw_actions = [
-            action for action in obj.workflow.keys() if "withdraw" in action
-        ]
-
-        if len(withdraw_actions) == 1:
-            action = withdraw_actions[0]
-            obj.perform_transition(
-                action, self.request.user, request=self.request, notify=False
+        if withdraw_action:
+            self.submission.perform_transition(
+                withdraw_action, self.request.user, request=self.request, notify=False
             )
-        elif len(withdraw_actions) > 1:
+        else:
             raise ImproperlyConfigured(
-                f'In workflow "{obj.workflow}" too many withdraw actions: "{withdraw_actions}"'
-            )
-        elif len(withdraw_actions) < 1:
-            raise ImproperlyConfigured(
-                f'No withdraw actions found in workflow "{obj.workflow}"'
+                f'No withdraw actions found in workflow "{self.submission.workflow}"'
             )
 
-        success_url = obj.get_absolute_url()
-        return HttpResponseRedirect(success_url)
+        return HttpResponseRedirect(self.submission.get_absolute_url())
+
+    def test_func(self):
+        can_withdraw = self.submission.phase.permissions.can_withdraw(self.request.user)
+
+        return settings.ENABLE_SUBMISSION_WITHDRAWAL and can_withdraw
 
 
 @method_decorator(login_required, name="dispatch")

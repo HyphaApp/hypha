@@ -207,7 +207,7 @@ def make_permissions(edit=None, review=None, view=None, withdraw=None):
             reviewer_can,
             partner_can,
         ],
-        "withdraw": withdraw or [applicant_can],
+        "withdraw": withdraw or [],
     }
 
 
@@ -228,7 +228,7 @@ community_review_permissions = make_permissions(
 )
 
 applicant_edit_permissions = make_permissions(
-    edit=[applicant_can, partner_can], review=[staff_can]
+    edit=[applicant_can, partner_can], review=[staff_can], withdraw=[applicant_can]
 )
 
 staff_edit_permissions = make_permissions(edit=[staff_can])
@@ -275,7 +275,11 @@ SingleStageDefinition = [
                 "almost": _("Accept but additional info required"),
                 "accepted": _("Accept"),
                 "rejected": _("Dismiss"),
-                "withdrawn": _("Withdraw"),
+                "withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("Need screening"),
             "public": _("Application Received"),
@@ -299,7 +303,11 @@ SingleStageDefinition = [
                 "almost": _("Accept but additional info required"),
                 "accepted": _("Accept"),
                 "rejected": _("Dismiss"),
-                "withdrawn": _("Withdraw"),
+                "withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("More information required"),
             "stage": Request,
@@ -311,7 +319,11 @@ SingleStageDefinition = [
             "transitions": {
                 "post_review_discussion": _("Close Review"),
                 INITIAL_STATE: _("Need screening (revert)"),
-                "withdrawn": _("Withdraw"),
+                "withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("Internal Review"),
             "public": _("{org_short_name} Review").format(
@@ -330,7 +342,11 @@ SingleStageDefinition = [
                 "almost": _("Accept but additional info required"),
                 "accepted": _("Accept"),
                 "rejected": _("Dismiss"),
-                "withdrawn": _("Withdraw"),
+                "withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("Ready For Discussion"),
             "stage": Request,
@@ -353,7 +369,11 @@ SingleStageDefinition = [
                 "almost": _("Accept but additional info required"),
                 "accepted": _("Accept"),
                 "rejected": _("Dismiss"),
-                "withdrawn": _("Withdraw"),
+                "withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("More information required"),
             "stage": Request,
@@ -367,7 +387,11 @@ SingleStageDefinition = [
                 "almost": _("Accept but additional info required"),
                 "accepted": _("Accept"),
                 "rejected": _("Dismiss"),
-                "withdrawn": _("Withdraw"),
+                "withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("Ready for Determination"),
             "permissions": hidden_from_applicant_permissions,
@@ -385,7 +409,11 @@ SingleStageDefinition = [
             "transitions": {
                 "accepted": _("Accept"),
                 "post_review_discussion": _("Ready For Discussion (revert)"),
-                "withdrawn": _("Withdraw"),
+                "withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("Accepted but additional info required"),
             "stage": Request,
@@ -558,7 +586,11 @@ SingleStageExternalDefinition = [
                 "ext_internal_review": _("Open Review"),
                 "ext_determination": _("Ready For Determination"),
                 "ext_rejected": _("Dismiss"),
-                "ext_withdrawn": _("Withdraw"),
+                "ext_withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("Need screening"),
             "public": _("Application Received"),
@@ -578,7 +610,11 @@ SingleStageExternalDefinition = [
                     "method": "create_revision",
                     "custom": {"trigger_on_submit": True},
                 },
-                "ext_withdrawn": _("Withdraw"),
+                "ext_withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("More information required"),
             "stage": RequestExt,
@@ -589,7 +625,11 @@ SingleStageExternalDefinition = [
         "ext_internal_review": {
             "transitions": {
                 "ext_post_review_discussion": _("Close Review"),
-                "ext_withdrawn": _("Withdraw"),
+                "ext_withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
                 INITIAL_STATE: _("Need screening (revert)"),
             },
             "display": _("Internal Review"),
@@ -608,7 +648,11 @@ SingleStageExternalDefinition = [
                 "ext_determination": _("Ready For Determination"),
                 "ext_internal_review": _("Open Internal Review (revert)"),
                 "ext_rejected": _("Dismiss"),
-                "ext_withdrawn": _("Withdraw"),
+                "ext_withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("Ready For Discussion"),
             "stage": RequestExt,
@@ -627,7 +671,11 @@ SingleStageExternalDefinition = [
                     "method": "create_revision",
                     "custom": {"trigger_on_submit": True},
                 },
-                "ext_withdrawn": _("Withdraw"),
+                "ext_withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("More information required"),
             "stage": RequestExt,
@@ -654,7 +702,11 @@ SingleStageExternalDefinition = [
                 "ext_almost": _("Accept but additional info required"),
                 "ext_accepted": _("Accept"),
                 "ext_rejected": _("Dismiss"),
-                "ext_withdrawn": _("Withdraw"),
+                "ext_withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("Ready For Discussion"),
             "stage": RequestExt,
@@ -673,7 +725,11 @@ SingleStageExternalDefinition = [
                     "method": "create_revision",
                     "custom": {"trigger_on_submit": True},
                 },
-                "ext_withdrawn": _("Withdraw"),
+                "ext_withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("More information required"),
             "stage": RequestExt,
@@ -689,7 +745,11 @@ SingleStageExternalDefinition = [
                 "ext_almost": _("Accept but additional info required"),
                 "ext_accepted": _("Accept"),
                 "ext_rejected": _("Dismiss"),
-                "ext_withdrawn": _("Withdraw"),
+                "ext_withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("Ready for Determination"),
             "permissions": hidden_from_applicant_permissions,
@@ -709,7 +769,11 @@ SingleStageExternalDefinition = [
                 "ext_post_external_review_discussion": _(
                     "Ready For Discussion (revert)"
                 ),
-                "ext_withdrawn": _("Withdraw"),
+                "ext_withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("Accepted but additional info required"),
             "stage": RequestExt,
@@ -754,7 +818,11 @@ SingleStageCommunityDefinition = [
                 "com_community_review": _("Open Community Review"),
                 "com_determination": _("Ready For Determination"),
                 "com_rejected": _("Dismiss"),
-                "com_withdrawn": _("Withdraw"),
+                "com_withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("Need screening"),
             "public": _("Application Received"),
@@ -783,7 +851,11 @@ SingleStageCommunityDefinition = [
             "transitions": {
                 INITIAL_STATE: _("Need screening (revert)"),
                 "com_rejected": _("Dismiss"),
-                "com_withdrawn": _("Withdraw"),
+                "com_withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": "Open Call (public)",
             "stage": RequestCom,
@@ -797,7 +869,11 @@ SingleStageCommunityDefinition = [
                 "com_post_review_discussion": _("Close Review"),
                 INITIAL_STATE: _("Need screening (revert)"),
                 "com_rejected": _("Dismiss"),
-                "com_withdrawn": _("Withdraw"),
+                "com_withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("Internal Review"),
             "public": _("{org_short_name} Review").format(
@@ -811,7 +887,11 @@ SingleStageCommunityDefinition = [
                 "com_post_review_discussion": _("Close Review"),
                 "com_internal_review": _("Open Internal Review (revert)"),
                 "com_rejected": _("Dismiss"),
-                "com_withdrawn": _("Withdraw"),
+                "com_withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("Community Review"),
             "public": _("{org_short_name} Review").format(
@@ -829,7 +909,11 @@ SingleStageCommunityDefinition = [
                 "com_determination": _("Ready For Determination"),
                 "com_internal_review": _("Open Internal Review (revert)"),
                 "com_rejected": _("Dismiss"),
-                "com_withdrawn": _("Withdraw"),
+                "com_withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("Ready For Discussion"),
             "stage": RequestCom,
@@ -848,7 +932,11 @@ SingleStageCommunityDefinition = [
                     "method": "create_revision",
                     "custom": {"trigger_on_submit": True},
                 },
-                "com_withdrawn": _("Withdraw"),
+                "com_withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("More information required"),
             "stage": RequestCom,
@@ -860,7 +948,11 @@ SingleStageCommunityDefinition = [
             "transitions": {
                 "com_post_external_review_discussion": _("Close Review"),
                 "com_post_review_discussion": _("Ready For Discussion (revert)"),
-                "com_withdrawn": _("Withdraw"),
+                "com_withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("External Review"),
             "stage": RequestCom,
@@ -876,7 +968,11 @@ SingleStageCommunityDefinition = [
                 "com_almost": _("Accept but additional info required"),
                 "com_accepted": _("Accept"),
                 "com_rejected": _("Dismiss"),
-                "com_withdrawn": _("Withdraw"),
+                "com_withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("Ready For Discussion"),
             "stage": RequestCom,
@@ -895,7 +991,11 @@ SingleStageCommunityDefinition = [
                     "method": "create_revision",
                     "custom": {"trigger_on_submit": True},
                 },
-                "com_withdrawn": _("Withdraw"),
+                "com_withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("More information required"),
             "stage": RequestCom,
@@ -911,7 +1011,11 @@ SingleStageCommunityDefinition = [
                 "com_almost": _("Accept but additional info required"),
                 "com_accepted": _("Accept"),
                 "com_rejected": _("Dismiss"),
-                "com_withdrawn": _("Withdraw"),
+                "com_withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("Ready for Determination"),
             "permissions": hidden_from_applicant_permissions,
@@ -931,7 +1035,11 @@ SingleStageCommunityDefinition = [
                 "com_post_external_review_discussion": _(
                     "Ready For Discussion (revert)"
                 ),
-                "com_withdrawn": _("Withdraw"),
+                "com_withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("Accepted but additional info required"),
             "stage": RequestCom,
@@ -975,7 +1083,11 @@ DoubleStageDefinition = [
                 "concept_determination": _("Ready For Preliminary Determination"),
                 "invited_to_proposal": _("Invite to Proposal"),
                 "concept_rejected": _("Dismiss"),
-                "concept_withdrawn": _("Withdraw"),
+                "concept_withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("Need screening"),
             "public": _("Concept Note Received"),
@@ -998,7 +1110,11 @@ DoubleStageDefinition = [
                 "concept_rejected": _("Dismiss"),
                 "invited_to_proposal": _("Invite to Proposal"),
                 "concept_determination": _("Ready For Preliminary Determination"),
-                "concept_withdrawn": _("Withdraw"),
+                "concept_withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("More information required"),
             "stage": Concept,
@@ -1011,7 +1127,11 @@ DoubleStageDefinition = [
                 "concept_review_discussion": _("Close Review"),
                 INITIAL_STATE: _("Need screening (revert)"),
                 "invited_to_proposal": _("Invite to Proposal"),
-                "concept_withdrawn": _("Withdraw"),
+                "concept_withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("Internal Review"),
             "public": _("{org_short_name} Review").format(
@@ -1029,7 +1149,11 @@ DoubleStageDefinition = [
                 "concept_internal_review": _("Open Review (revert)"),
                 "invited_to_proposal": _("Invite to Proposal"),
                 "concept_rejected": _("Dismiss"),
-                "concept_withdrawn": _("Withdraw"),
+                "concept_withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("Ready For Discussion"),
             "stage": Concept,
@@ -1049,7 +1173,11 @@ DoubleStageDefinition = [
                     "custom": {"trigger_on_submit": True},
                 },
                 "invited_to_proposal": _("Invite to Proposal"),
-                "concept_withdrawn": _("Withdraw"),
+                "concept_withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("More information required"),
             "stage": Concept,
@@ -1062,7 +1190,11 @@ DoubleStageDefinition = [
                 "concept_review_discussion": _("Ready For Discussion (revert)"),
                 "invited_to_proposal": _("Invite to Proposal"),
                 "concept_rejected": _("Dismiss"),
-                "concept_withdrawn": _("Withdraw"),
+                "concept_withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("Ready for Preliminary Determination"),
             "permissions": hidden_from_applicant_permissions,
@@ -1125,7 +1257,11 @@ DoubleStageDefinition = [
                 "external_review": _("Open External Review"),
                 "proposal_determination": _("Ready For Final Determination"),
                 "proposal_rejected": _("Dismiss"),
-                "proposal_withdrawn": _("Withdraw"),
+                "proposal_withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("Proposal Received"),
             "stage": Proposal,
@@ -1147,7 +1283,11 @@ DoubleStageDefinition = [
                 "external_review": _("Open External Review"),
                 "proposal_determination": _("Ready For Final Determination"),
                 "proposal_rejected": _("Dismiss"),
-                "proposal_withdrawn": _("Withdraw"),
+                "proposal_withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("More information required"),
             "stage": Proposal,
@@ -1159,7 +1299,11 @@ DoubleStageDefinition = [
             "transitions": {
                 "post_proposal_review_discussion": _("Close Review"),
                 "proposal_discussion": _("Proposal Received (revert)"),
-                "proposal_withdrawn": _("Withdraw"),
+                "proposal_withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("Internal Review"),
             "public": _("{org_short_name} Review").format(
@@ -1177,7 +1321,11 @@ DoubleStageDefinition = [
                 "proposal_determination": _("Ready For Final Determination"),
                 "proposal_internal_review": _("Open Internal Review (revert)"),
                 "proposal_rejected": _("Dismiss"),
-                "proposal_withdrawn": _("Withdraw"),
+                "proposal_withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("Ready For Discussion"),
             "stage": Proposal,
@@ -1197,7 +1345,11 @@ DoubleStageDefinition = [
                     "custom": {"trigger_on_submit": True},
                 },
                 "external_review": _("Open External Review"),
-                "proposal_withdrawn": _("Withdraw"),
+                "proposal_withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("More information required"),
             "stage": Proposal,
@@ -1209,7 +1361,11 @@ DoubleStageDefinition = [
             "transitions": {
                 "post_external_review_discussion": _("Close Review"),
                 "post_proposal_review_discussion": _("Ready For Discussion (revert)"),
-                "proposal_withdrawn": _("Withdraw"),
+                "proposal_withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("External Review"),
             "stage": Proposal,
@@ -1225,7 +1381,11 @@ DoubleStageDefinition = [
                 "proposal_almost": _("Accept but additional info required"),
                 "proposal_accepted": _("Accept"),
                 "proposal_rejected": _("Dismiss"),
-                "proposal_withdrawn": _("Withdraw"),
+                "proposal_withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("Ready For Discussion"),
             "stage": Proposal,
@@ -1244,7 +1404,11 @@ DoubleStageDefinition = [
                     "method": "create_revision",
                     "custom": {"trigger_on_submit": True},
                 },
-                "proposal_withdrawn": _("Withdraw"),
+                "proposal_withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("More information required"),
             "stage": Proposal,
@@ -1258,7 +1422,11 @@ DoubleStageDefinition = [
                 "proposal_almost": _("Accept but additional info required"),
                 "proposal_accepted": _("Accept"),
                 "proposal_rejected": _("Dismiss"),
-                "proposal_withdrawn": _("Withdraw"),
+                "proposal_withdrawn": {
+                    "display": _("Withdraw"),
+                    "permissions": {UserPermissions.APPLICANT},
+                    "method": "withdraw",
+                },
             },
             "display": _("Ready for Final Determination"),
             "permissions": hidden_from_applicant_permissions,
@@ -1439,6 +1607,18 @@ def get_ext_or_higher_statuses():
             if step and phase.step >= step:
                 reviews.add(phase.name)
     return reviews
+
+
+def get_withdraw_action_for_stage(stage=None):
+    """
+    Returns the withdraw action for stage.
+    """
+    for workflow in WORKFLOWS.values():
+        for phase in workflow.values():
+            if phase.stage == stage and phase.name in withdrawn_statuses:
+                return phase.name
+
+    return False
 
 
 def get_accepted_statuses():
