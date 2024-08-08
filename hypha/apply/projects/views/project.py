@@ -698,7 +698,7 @@ class SubmitContractDocumentsView(DelegatedViewMixin, UpdateView):
     def dispatch(self, request, *args, **kwargs):
         project = self.get_object()
         if ContractDocumentCategory.objects.filter(
-            ~Q(contract_packet_files__project=project)
+            ~Q(contract_packet_files__project=project) & Q(required=True)
         ).exists():
             raise PermissionDenied
         contract = project.contracts.order_by("-created_at").first()
