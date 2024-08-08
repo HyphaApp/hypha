@@ -213,7 +213,9 @@ def make_permissions(edit=None, review=None, view=None, withdraw=None):
 
 no_permissions = make_permissions()
 
-default_permissions = make_permissions(edit=[staff_can], review=[staff_can])
+default_permissions = make_permissions(
+    edit=[staff_can], review=[staff_can], withdraw=[applicant_can]
+)
 
 hidden_from_applicant_permissions = make_permissions(
     edit=[staff_can], review=[staff_can], view=[staff_can, reviewer_can]
