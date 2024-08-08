@@ -1,7 +1,0 @@
-{% load i18n %}
-<div class="modal" id="archive-submission">
-    <h4 class="modal__header-bar">{% trans "Archive Submission" %}</h4>
-    <p>{% trans "Are you sure you want to archive this submission." %}</p>
-    {% trans "Confirm" as confirm %}
-    {% include 'funds/includes/delegated_form_base.html' with form=archive_form value=confirm %}
-</div>

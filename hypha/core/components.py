@@ -8,6 +8,11 @@ class AdminBar(component.Component):
     template_name = "components/admin_bar.html"
 
 
+@component.register("modal_title")
+class ModalTitle(component.Component):
+    template_name = "components/modal-title.html"
+
+
 @component.register("dropdown-item")
 class DropdownMenu(component.Component):
     template_name = "components/dropdown-menu.html"

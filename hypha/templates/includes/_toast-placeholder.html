@@ -1,0 +1,131 @@
+{% load heroicons static %}
+{% comment %}
+How this works:
+- A htmx response responds with either "showMessage" or "messages" "HX-Trigger" event.
+- htmx traps the event and create another event for the toast layer.
+- The toast layer listens to the event and adds the toast to the list.
+{% endcomment %}
+
+<!-- Toast layer -->
+<script>
+    function toastHandler() {
+        "use strict";
+        const AUTO_HIDE_TIMEOUT = 2500;
+        return {
+            toasts: [],
+            visible: [],
+            id: 0,
+            timeouts: {}, // Object to keep track of timeouts
+            add(toast) {
+                toast.id = Date.now().toString() + this.id++;
+                this.toasts.push(toast);
+                this.fire(toast.id);
+            },
+            fire(id) {
+                this.visible.push(this.toasts.find((toast) => toast.id === id));
+                const timeShown = AUTO_HIDE_TIMEOUT * this.visible.length;
+                const timeout = setTimeout(() => {
+                    this.remove(id);
+                }, timeShown);
+                this.timeouts[id] = { timeout, startTime: Date.now(), remainingTime: timeShown };
+            },
+            remove(id) {
+                const toastIndex = this.visible.findIndex((toast) => toast.id === id);
+                if (toastIndex !== -1) {
+                    this.visible.splice(toastIndex, 1);
+                }
+                clearTimeout(this.timeouts[id]?.timeout);
+                delete this.timeouts[id];
+            },
+            pause(id) {
+                if (this.timeouts[id]) {
+                    const elapsed = Date.now() - this.timeouts[id].startTime;
+                    clearTimeout(this.timeouts[id].timeout);
+                    this.timeouts[id].remainingTime -= elapsed;
+                }
+            },
+            resume(id) {
+                if (this.timeouts[id] && this.timeouts[id].remainingTime > 0) {
+                    const timeout = setTimeout(() => {
+                        this.remove(id);
+                    }, this.timeouts[id].remainingTime);
+                    this.timeouts[id].timeout = timeout;
+                    this.timeouts[id].startTime = Date.now();
+                }
+            },
+        };
+    }
+    htmx.on("showMessage", (e) => {
+        let message_detail = { type: "success", text: e.detail.value };
+        dispatchEvent(
+            new CustomEvent("notice", {
+                detail: message_detail,
+                bubbles: true,
+                cancelable: true,
+                composed: true,
+            })
+        );
+    });
+    htmx.on("messages", (e) => {
+        e.detail.value.forEach((message) => {
+            let message_detail = { type: message.tags, text: message.message };
+            console.log(message_detail);
+            dispatchEvent(
+                new CustomEvent("notice", {
+                    detail: message_detail,
+                    bubbles: true,
+                    cancelable: true,
+                    composed: true,
+                })
+            );
+        });
+    });
+</script>
+
+<div
+    x-data="toastHandler()"
+    class="fixed inset-0 flex flex-col items-end justify-start w-screen h-screen px-4 pointer-events-none"
+    @notice.window="add($event.detail)"
+>
+    <template x-for="toast of toasts" :key="toast.id">
+        <div
+            role="alert"
+            aria-live="assertive"
+            aria-atomic="true"
+            x-show="visible.includes(toast)"
+            x-transition:enter="transition ease-in duration-200"
+            x-transition:enter-start="transform opacity-0 translate-y-2"
+            x-transition:enter-end="transform opacity-100"
+            x-transition:leave="transition ease-out duration-500"
+            x-transition:leave-start="transform translate-x-0 opacity-100"
+            x-transition:leave-end="transform translate-x-full opacity-0"
+            @click="remove(toast.id)"
+            @mouseenter="pause(toast.id)"
+            @mouseleave="resume(toast.id)"
+            class="relative w-full max-w-full px-4 py-3 mt-4 text-sm font-bold text-white rounded-md shadow-xl cursor-pointer sm:max-w-sm sm:w-auto group"
+            :class="{
+                    'bg-gray-500': toast.type === 'debug',
+                    'bg-green-500': toast.type === 'success',
+                    'bg-blue-500': toast.type === 'info',
+                    'bg-orange-500': toast.type === 'warning',
+                    'bg-red-500': toast.type === 'error',
+                    }"
+            style="pointer-events:all"
+        >
+            <div class="flex items-center gap-2">
+                <span x-show="toast.type == 'info'" aria-hidden="true">
+                    {% heroicon_solid "information-circle" size=24 class="inline-block rounded-full" %}
+                </span>
+                <span x-show="toast.type == 'success'" aria-hidden="true">
+                    {% heroicon_solid "check-circle" size=24 class="inline-block rounded-full" %}
+                </span>
+                <span x-text="toast.text"></span>
+            </div>
+            <button class="absolute invisible p-1 transition-all -top-3 -left-3 group-hover:visible">
+                <span class="inline-block p-1 text-white rounded-full shadow-md bg-dark-blue" aria-label="Close">
+                    {% heroicon_mini "x-mark" size=18 class="" %}
+                </span>
+            </button>
+        </div>
+    </template>
+</div>

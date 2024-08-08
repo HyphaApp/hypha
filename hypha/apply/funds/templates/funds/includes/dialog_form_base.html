@@ -1,0 +1,43 @@
+{% load i18n %}
+
+<form
+    class="form {{ extra_classes }}"
+    action="{{ action|default:request.path }}"
+    method="post"
+    hx-post="{{ action|default:request.path }}"
+    hx-swap="innerHTML"
+    id="{{ form_id }}"
+    enctype="multipart/form-data"
+>
+    {% csrf_token %}
+
+    {{ form.media }}
+    {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+    {% endfor %}
+
+    <div class="fields--visible">
+        {% for field in form.visible_fields %}
+            {% if field.field %}
+                {% include "forms/includes/field.html" %}
+            {% else %}
+                {{ field }}
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <div class="mt-5 sm:gap-4 sm:mt-4 sm:flex sm:flex-row-reverse">
+        {% trans "Delete" as delete %}
+        <button
+            class="button button--{% if invert %}white{% elif value == delete %}warning{% else %}primary{% endif %} w-full sm:w-auto"
+            type="submit">
+            {{ value }}
+        </button>
+
+        <button
+            type="button"
+            class="inline-flex items-center justify-center w-full px-3 py-2 mt-3 text-sm font-semibold text-gray-900 bg-white rounded-sm shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+            @click="show = false"
+        >{% trans "Cancel" %}</button>
+    </div>
+</form>

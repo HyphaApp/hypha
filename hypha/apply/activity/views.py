@@ -1,12 +1,15 @@
 from django.conf import settings
-from django.shortcuts import get_object_or_404
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.contenttypes.models import ContentType
+from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.generic import CreateView, ListView
 from django_ratelimit.decorators import ratelimit
 
 from hypha.apply.funds.models.submissions import ApplicationSubmission
-from hypha.apply.users.decorators import staff_required
+from hypha.apply.todo.models import Task
+from hypha.apply.users.decorators import is_apply_staff, staff_required
 from hypha.apply.utils.storage import PrivateMediaView
 from hypha.apply.utils.views import DelegatedViewMixin
 
@@ -108,3 +111,19 @@ class NotificationsView(ListView):
         context = super(NotificationsView, self).get_context_data()
         context["filter"] = self.filterset
         return context
+
+
+@login_required
+@user_passes_test(is_apply_staff)
+def get_activity_assgined_user(request, *args, **kwargs):
+    activity = get_object_or_404(Activity, pk=kwargs.get("pk"))
+    task = Task.objects.filter(
+        related_content_type=ContentType.objects.get_for_model(activity).id,
+        related_object_id=activity.id,
+    ).first()
+    assigned_to = task.user if task else None
+    return render(
+        request,
+        "activity/partials/assigned_activity.html",
+        context={"assigned_to": assigned_to},
+    )

@@ -1,15 +1,20 @@
+import json
+
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.utils.decorators import method_decorator
+from django.utils.translation import gettext as _
 from django.views.generic import ListView, View
 from django_htmx.http import trigger_client_event
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.users.decorators import staff_required
 
+from .forms import TaskCreateForm
 from .models import Task
 from .options import get_task_template
 from .services import validate_user_groups_uniqueness, validate_user_uniquness
@@ -31,6 +36,44 @@ class TodoListView(ListView):
 
 
 @method_decorator(staff_required, name="dispatch")
+class TaskCreationView(View):
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, *args, **kwargs):
+        task_form = TaskCreateForm()
+        return render(
+            self.request,
+            "todo/includes/add_task_form.html",
+            context={
+                "form": task_form,
+                "value": _("Update"),
+            },
+        )
+
+    def post(self, *args, **kwargs):
+        form = TaskCreateForm(
+            self.request.POST, user=self.request.user, instance=self.submission
+        )
+        if form.is_valid():
+            form.save()
+            return HttpResponse(
+                status=204,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {"taskAdded": None, "showMessage": "Task Added."}
+                    ),
+                },
+            )
+
+        return render(
+            self.request,
+            "todo/includes/add_task_form.html",
+            context={"form": form, "value": _("Update"), "object": self.task},
+        )
+
+
+@method_decorator(staff_required, name="dispatch")
 class TaskRemovalView(View):
     def dispatch(self, request, *args, **kwargs):
         self.task = get_object_or_404(Task, id=self.kwargs.get("pk"))
@@ -42,6 +85,7 @@ class TaskRemovalView(View):
 
     def delete(self, *args, **kwargs):
         source = self.task.related_object
+        from hypha.apply.activity.models import Activity
         from hypha.apply.determinations.models import Determination
         from hypha.apply.projects.models import Invoice
         from hypha.apply.review.models import Review
@@ -52,6 +96,8 @@ class TaskRemovalView(View):
             self.task.related_object, Review
         ):
             source = self.task.related_object.submission
+        elif isinstance(self.task.related_object, Activity):
+            source = self.task.related_object.source
         messenger(
             MESSAGES.REMOVE_TASK,
             user=self.request.user,
@@ -86,6 +132,21 @@ def add_task_to_user(code, user, related_obj):
         task = Task.objects.create(code=code, user=user, related_object=related_obj)
         return task
     return None
+
+
+def add_manual_task_to_user(code, message, user, related_obj):
+    """
+    Add task for a user
+    input:
+        message: message
+        user: User object
+        related_obj: Object - Submission, Project, Invoice, Report
+    output: task - Task object / None in case of no creation
+    """
+    task = Task.objects.create(
+        code=code, user=user, related_object=related_obj, message=message
+    )
+    return task
 
 
 def add_task_to_user_group(code, user_group, related_obj):

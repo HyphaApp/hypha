@@ -21,21 +21,31 @@
                     {% trans "Back to submissions" %}
                 </a>
             {% endif %}
-            <h1 class="mb-0 mt-2 font-medium">{{ object.title }}<span class="text-gray-400"> #{{ object.public_id|default:object.id }}</span></h1>
-            <div class="heading heading--meta text-sm mt-1 font-medium">
+            <h1 class="mt-2 mb-0 font-medium">{{ object.title }}<span class="text-gray-400"> #{{ object.public_id|default:object.id }}</span></h1>
+            <div class="mt-1 text-sm font-medium heading heading--meta">
                 <span>{{ object.stage }}</span>
                 <span>{{ object.page }}</span>
-                {% if request.user.is_apply_staff and object.round %}
-                    <span><a class="link--transparent link--underlined" href="{% url 'apply:rounds:detail' pk=object.round.pk %}">{{ object.round }}</a></span>
-                {% else %}
-                    <span>{{ object.round }}</span>
+                {% if object.round %}
+                    {% if request.user.is_apply_staff %}
+                        <span>
+                            <a class="link--transparent link--underlined"
+                               href="{% url 'apply:rounds:detail'
+                                     pk=object.round.pk %}"
+                            >{{ object.round }}</a>
+                        </span>
+                    {% else %}
+                        <span>{{ object.round }}</span>
+                    {% endif %}
                 {% endif %}
-                {% if request.user.is_apply_staff %}
-                    <span>{% trans "Lead" %}: <a class="link--transparent link--underlined" href="{% url 'apply:submissions:list' %}?lead={{ object.lead.id }}">{{ object.lead }}</a></span>
-                {% elif request.user.is_org_faculty or not HIDE_STAFF_IDENTITY %}
-                    <span>{% trans "Lead" %}: {{ object.lead }}</span>
-                {% endif %}
+
+                <span
+                    hx-get="{% url "apply:submissions:partial-get-lead" object.id %}"
+                    hx-trigger="load, leadUpdated from:body"
+                >
+                    <span class="inline-block w-24 bg-gray-600 rounded-md animate-pulse"></span>
+                </span>
             </div>
+
             {% status_bar object.workflow object.phase request.user author=object.user same_stage=True %}
 
             <div class="tabs js-tabs">
@@ -71,7 +81,7 @@
     </div>
 
     {% if object.is_archive %}
-        <div class="py-2 bg-red-600 text-white font-bold text-center">
+        <div class="py-2 font-bold text-center text-white bg-red-600">
             {% heroicon_outline "lock-closed" aria_hidden="true" size=16 stroke_width=2 class="inline align-baseline me-1" %}
             {% trans "This submission has been archived. This is visible to the roles " %} {{ archive_access_groups|join_with_commas }}
         </div>
@@ -80,8 +90,6 @@
     <div class="wrapper wrapper--large wrapper--tabs js-tabs-content">
     {# Tab 1 #}
         <div class="tabs__content" id="tab-1">
-            {% block mobile_actions %}
-            {% endblock %}
             <div class="wrapper wrapper--sidebar">
                 {% if request.user|has_edit_perm:object and object.status == 'draft_proposal' and not request.user.is_apply_staff %}
                     <div class="wrapper--sidebar--inner">
@@ -101,11 +109,14 @@
                                 <strong><relative-time datetime={{ object.submit_time|date:"c" }}>{{ object.submit_time|date:"SHORT_DATETIME_FORMAT" }}</relative-time></strong> {% trans "by" %} <strong>{{ object.user.get_full_name }}</strong>
                             </span>
                             <span>{% trans "Updated" %} <strong><relative-time datetime={{ object.live_revision.timestamp|date:"c" }}>{{ object.live_revision.timestamp|date:"SHORT_DATETIME_FORMAT" }}</relative-time></strong> {% trans "by" %} <strong>{{ object.user.get_full_name }}</strong></span>
-                            <div class="flex gap-4 justify-end flex-1 items-center">
+                            <div class="flex items-center justify-end flex-1 gap-4">
                                 {% if perms.funds.delete_applicationsubmission %}
                                     <a
-                                        class="font-bold text-red-600 flex items-center hover:opacity-70 transition-opacity"
+                                        class="flex items-center font-bold text-red-600 transition-opacity hover:opacity-70"
                                         href="{% url 'funds:submissions:delete' object.id %}"
+                                        hx-get="{% url 'funds:submissions:delete' object.id %}"
+                                        hx-target="#htmx-modal"
+                                        aria-label="{% trans "Delete Submission" %}"
                                     >
                                         {% heroicon_micro "trash" class="inline me-1 fill-red-600" aria_hidden=true %}
                                         {% trans "Delete" %}
@@ -113,7 +124,7 @@
                                 {% endif %}
                                 {% if request.user|has_edit_perm:object %}
                                     <a
-                                        class="font-bold flex items-center hover:opacity-70 transition-opacity"
+                                        class="flex items-center font-bold transition-opacity hover:opacity-70"
                                         href="{% url 'funds:submissions:edit' object.id %}"
                                     >
                                         {% heroicon_micro "pencil-square" class="inline me-1" aria_hidden=true %}
@@ -180,7 +191,7 @@
                                             <span class="link link--bold">
                                                 {{ submission.title }}
                                             </span>
-                                            <span class="text-gray-400 text-sm font-semibold">#{{ submission.public_id|default:submission.id }}</span>
+                                            <span class="text-sm font-semibold text-gray-400">#{{ submission.public_id|default:submission.id }}</span>
                                         </a>
 
                                     </li>

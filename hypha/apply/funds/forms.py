@@ -74,7 +74,6 @@ class ProgressSubmissionForm(ApplicationSubmissionModelForm):
         choices.sort(key=lambda k: sort_by.index(k[0]))
         action_field = self.fields["action"]
         action_field.choices = choices
-        self.should_show = bool(choices)
 
 
 class BatchProgressSubmissionForm(forms.Form):
@@ -111,45 +110,10 @@ class UpdateSubmissionLeadForm(ApplicationSubmissionModelForm):
         fields = ("lead",)
 
     def __init__(self, *args, **kwargs):
-        kwargs.pop("user")
         super().__init__(*args, **kwargs)
         lead_field = self.fields["lead"]
-        lead_field.label = _("Update lead from {lead} to").format(
-            lead=self.instance.lead
-        )
+        lead_field.label = _("New lead")
         lead_field.queryset = lead_field.queryset.exclude(id=self.instance.lead.id)
-
-
-class UnarchiveSubmissionForm(ApplicationSubmissionModelForm):
-    unarchive = forms.BooleanField(required=False, widget=forms.HiddenInput())
-
-    class Meta:
-        model = ApplicationSubmission
-        fields = ("unarchive",)
-
-    def __init__(self, *args, **kwargs):
-        kwargs.pop("user")
-        super().__init__(*args, **kwargs)
-
-    def save(self, commit=True):
-        self.instance.is_archive = False
-        return super(UnarchiveSubmissionForm, self).save()
-
-
-class ArchiveSubmissionForm(ApplicationSubmissionModelForm):
-    archive = forms.BooleanField(required=False, widget=forms.HiddenInput())
-
-    class Meta:
-        model = ApplicationSubmission
-        fields = ("archive",)
-
-    def __init__(self, *args, **kwargs):
-        kwargs.pop("user")
-        super().__init__(*args, **kwargs)
-
-    def save(self, commit=True):
-        self.instance.is_archive = True
-        return super(ArchiveSubmissionForm, self).save()
 
 
 class BatchUpdateSubmissionLeadForm(forms.Form):
@@ -208,7 +172,6 @@ class BatchArchiveSubmissionForm(forms.Form):
 class UpdateReviewersForm(ApplicationSubmissionModelForm):
     reviewer_reviewers = forms.ModelMultipleChoiceField(
         queryset=User.objects.reviewers().only("pk", "full_name"),
-        widget=Select2MultiCheckboxesWidget(attrs={"data-placeholder": "Reviewers"}),
         label=_("External Reviewers"),
         required=False,
     )
@@ -216,6 +179,8 @@ class UpdateReviewersForm(ApplicationSubmissionModelForm):
     class Meta:
         model = ApplicationSubmission
         fields: list = []
+
+    reviewer_reviewers.widget.attrs.update({"data-placeholder": "Select..."})
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop("user")
@@ -442,10 +407,10 @@ def make_role_reviewer_fields():
 class UpdatePartnersForm(ApplicationSubmissionModelForm):
     partner_reviewers = forms.ModelMultipleChoiceField(
         queryset=User.objects.partners(),
-        widget=Select2MultiCheckboxesWidget(attrs={"data-placeholder": "Partners"}),
         label=_("Partners"),
         required=False,
     )
+    partner_reviewers.widget.attrs.update({"data-placeholder": "Select..."})
 
     class Meta:
         model = ApplicationSubmission
@@ -513,7 +478,7 @@ class GroupedModelMultipleChoiceField(forms.ModelMultipleChoiceField):
 class UpdateMetaTermsForm(ApplicationSubmissionModelForm):
     meta_terms = GroupedModelMultipleChoiceField(
         queryset=None,  # updated in init method
-        widget=MetaTermSelect2Widget(attrs={"data-placeholder": "Meta terms"}),
+        widget=MetaTermSelect2Widget(attrs={"data-placeholder": "Select..."}),
         label=_("Meta terms"),
         choices_groupby="get_parent",
         required=False,
@@ -530,6 +495,11 @@ class UpdateMetaTermsForm(ApplicationSubmissionModelForm):
         self.fields["meta_terms"].queryset = MetaTerm.get_root_descendants().exclude(
             depth=2
         )
+        # Set initial values for meta_terms based on the instance if available
+        if self.instance.pk:
+            self.fields["meta_terms"].initial = self.instance.meta_terms.values_list(
+                "id", flat=True
+            )
 
 
 class CreateReminderForm(forms.ModelForm):
@@ -539,7 +509,7 @@ class CreateReminderForm(forms.ModelForm):
     )
     time = forms.DateField()
 
-    def __init__(self, instance=None, user=None, *args, **kwargs):
+    def __init__(self, *args, instance=None, user=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.user = user
 

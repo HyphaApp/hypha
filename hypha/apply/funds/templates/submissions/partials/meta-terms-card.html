@@ -1,0 +1,47 @@
+{% load i18n heroicons %}
+
+<div class="flex justify-between gap-4 pb-4">
+    <h5 class="m-0">{% trans "Meta Terms" %}</h5>
+    <button
+        class="flex items-center px-2 py-1 font-bold transition-colors rounded hover:bg-gray-100 text-dark-blue -me-2"
+        hx-get="{% url 'funds:submissions:metaterms_update' pk=submission.pk %}"
+        hx-target="#htmx-modal"
+        role="button"
+        {% if meta_terms %}
+            aria-label="{% trans "Update Meta Terms" %}"
+            title="{% trans "Update Meta Terms" %}"
+        {% else %}
+            aria-label="{% trans "Add Meta Terms" %}"
+        {% endif %}
+    >
+        {% if meta_terms %}
+            {% heroicon_micro "pencil" class="inline align-middle me-1" stroke_width=5 aria_hidden=true %}
+            <span class="sr-only">{% trans "Update" %}</span>
+        {% else %}
+            {% heroicon_micro "plus" class="inline align-middle me-1" stroke_width=5 aria_hidden=true %}
+            {% trans "Add" %}
+        {% endif %}
+    </button>
+</div>
+
+{% regroup meta_terms by get_parent as meta_term_groups %}
+<div>
+    {% for group in meta_term_groups %}
+        <div class="mb-2">
+            <h2 class="inline-block mb-2 text-base font-semibold text-fg-muted">{{ group.grouper }}:</h2>
+            <div class="flex flex-wrap gap-2">
+                {% for meta_term in group.list %}
+                    <a
+                        class="px-2 py-1 text-sm font-semibold transition-opacity border rounded-lg bg-slate-100 hover:opacity-70"
+                        href="{% url 'apply:submissions:list-alt' %}?meta_terms={{ meta_term.id }}"
+                        hx-boost="true"
+                        hx-target="#main"
+                        hx-select="#main"
+                    >{{ meta_term.name }}</a>
+                {% endfor %}
+            </div>
+        </div>
+    {% empty %}
+        {% trans "--" %}
+    {% endfor %}
+</div>

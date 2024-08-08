@@ -2,7 +2,7 @@
 {% wagtail_site as current_site %}
 {% get_current_language as LANGUAGE_CODE %}
 {% get_current_language_bidi as LANGUAGE_BIDI %}
-<html class="no-js h-full" lang="{{ LANGUAGE_CODE }}" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
+<html class="h-full no-js" lang="{{ LANGUAGE_CODE }}" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
     <head>
         {# TODO fallbacks if page is not defined e.g. for 404 page #}
         <meta charset="utf-8">
@@ -118,6 +118,10 @@
         <!-- Datetime picker-->
         <script src="{% static 'js/vendor/moment.min.js' %}"></script>
         <script src="{% static 'js/vendor/daterangepicker.min.js' %}"></script>
+
+        <!-- Placeholder for the htmx modal & toast-->
+        {% include "includes/_modal-placeholder.html" %}
+        {% include "includes/_toast-placeholder.html" %}
 
         {% block extra_js %}{% endblock %}
 

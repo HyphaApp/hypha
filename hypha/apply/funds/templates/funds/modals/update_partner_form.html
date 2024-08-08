@@ -1,0 +1,32 @@
+{% load i18n static %}
+
+{% modal_title %}Update partners{% endmodal_title %}
+
+<form
+    class="p-4 form"
+    id="partner_form"
+    hx-target="this"
+    hx-swap="outerHTML"
+    method="POST"
+    hx-post="{% url 'funds:submissions:partners_update' pk=object.pk %}"
+>
+    {% csrf_token %}
+
+    {% url 'funds:submissions:partners_update' pk=object.pk as progress_url %}
+    {% include 'funds/includes/dialog_form_base.html' with form=form value=value url=progress_url %}
+</form>
+
+<script type="module">
+    {% comment %} Do this here as the select elements for partners are dynamically generated. {% endcomment %}
+    import Choices from "{% static 'js/esm/choices.js-10-2-0.js' %}";
+
+    const selectElements = document.querySelectorAll('#partner_form select');
+
+    // add choices to all select elements
+    selectElements.forEach((selectElement) => {
+        new Choices(selectElement, {
+            removeItemButton: true,
+            allowHTML: true,
+        });
+    });
+</script>

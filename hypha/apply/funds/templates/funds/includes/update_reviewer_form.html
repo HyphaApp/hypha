@@ -1,6 +1,76 @@
-{% load i18n %}
-<div class="modal" id="update-reviewers">
-    <h4 class="modal__header-bar">{% trans "Update Reviewers" %}</h4>
-    {% trans "Update" as update %}
-    {% include 'funds/includes/delegated_form_base.html' with form=reviewer_form value=update %}
-</div>
+{% load i18n static %}
+{% modal_title %}{% trans "Update reviewers" %}{% endmodal_title %}
+
+<form
+    class="px-4 pb-4 form"
+    id="reviewer_form"
+    method="POST"
+    action="{{ request.path }}"
+    hx-post="{{ request.path }}"
+>
+    {% csrf_token %}
+    {{ form.media }}
+    {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+    {% endfor %}
+
+    <div class="">
+        {% if form.errors %}
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <div class="alert alert-danger">
+                        <strong>{{ error|escape }}</strong>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                <div class="alert alert-danger">
+                    <strong>{{ error|escape }}</strong>
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% for field in form.visible_fields %}
+            {% if field.name == "external_reviewers" and not show_external_reviewers %}
+            {% comment %} skip for external reviewer if not allowed {% endcomment %}
+            {% else %}
+                <fieldset class="mt-3">
+                    <label for="{{ field.id_for_label }}" class="font-semibold">
+                        {{ field.label }}
+                    </label>
+                    <div class="mt-2">
+                        {{ field }}
+                    </div>
+                </fieldset>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <div class="mt-5 sm:gap-4 sm:mt-4 sm:flex sm:flex-row-reverse">
+        <button
+            class="w-full button button--primary sm:w-auto"
+            type="submit">
+            {% trans "Update" %}
+        </button>
+
+        <button
+            type="button"
+            class="inline-flex items-center justify-center w-full px-3 py-2 mt-3 text-sm font-semibold text-gray-900 bg-white rounded-sm shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+            @click="show = false"
+        >{% trans "Cancel" %}</button>
+    </div>
+</form>
+
+<script type="module">
+    {% comment %} Do this here as the select elements for different roles are dynamically generated. {% endcomment %}
+    import Choices from "{% static 'js/esm/choices.js-10-2-0.js' %}";
+
+    const selectElements = document.querySelectorAll('#reviewer_form select');
+
+    // add choices to all select elements
+    selectElements.forEach((selectElement) => {
+        new Choices(selectElement, {
+            removeItemButton: true,
+            allowHTML: true,
+        });
+    });
+</script>

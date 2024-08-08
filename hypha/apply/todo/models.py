@@ -28,6 +28,8 @@ class Task(models.Model):
     )
     related_object_id = models.PositiveIntegerField(blank=True, null=True)
     related_object = GenericForeignKey("related_content_type", "related_object_id")
+    # for manually added tasks
+    message = models.CharField(max_length=250, null=True, blank=True)
 
     class Meta:
         ordering = ("-created_at",)

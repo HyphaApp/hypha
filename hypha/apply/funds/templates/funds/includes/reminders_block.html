@@ -1,31 +1,35 @@
 {% load i18n heroicons %}
-<div class="sidebar__inner">
-    <h5>{% trans "Reminders" %}</h5>
-    {% regroup object.reminders.all by get_action_display as action_list %}
-    <ul>
-        {% for action in action_list %}
-            <li><strong>{{ action.grouper }}</strong>
-                <ul class='divide-y'>
-                    {% for reminder in action.list %}
-                        <li class="{% if reminder.is_expired %}expired-reminder{% endif %} reminder-list">
-                            <div class="reminder-title">
-                                {% if reminder.title %}
-                                    {{ reminder.title }}
-                                {% else %}
-                                    {% trans "untitled reminder" %}
-                                {% endif %}
-                            </div>
-                            <a class="link reminder-delete" href="{% url 'funds:submissions:reminders:delete' object.id reminder.id %}">
-                                {% heroicon_micro "trash" class="inline me-1 align-middle fill-red-500" aria_hidden=true %}
+
+{% regroup object.reminders.all by get_action_display as action_list %}
+<ul>
+    {% for action in action_list %}
+        <li><span class="font-semibold text-fg-muted">{{ action.grouper }}</span>
+            <ul class='pt-1 divide-y'>
+                {% for reminder in action.list %}
+                    <li class="flex justify-between gap-4 py-1">
+                        <span class="{% if reminder.is_expired %}text-red-600{% endif %}">
+                            <span class="font-medium line-clamp-2">{{ reminder.title|default:"untitled reminder" }}</span>
+                            <datetime class="text-xs text-fg-muted" datetime="{{ reminder.time|date:"c" }}">
+                                {{ reminder.time|date:"SHORT_DATE_FORMAT" }}
+                                {% if reminder.is_expired %} - {% trans "Expired" %}{% endif %}
+                            </datetime>
+                        </span>
+
+                        <div>
+                            <a class="inline-flex items-center p-2 rounded hover:bg-gray-100"
+                               title="{% trans "Delete" %}"
+                               href="{% url 'funds:submissions:reminders:delete' object.id reminder.id %}"
+                               role="button"
+                            >
+                                {% heroicon_micro "trash" class="inline-block fill-red-500" aria_hidden=true %}
                                 <span class="sr-only">{% trans "Delete" %}</span>
                             </a>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </li>
-            <br>
-        {% empty %}
-            <li>{% trans "No reminders yet." %}</li>
-        {% endfor %}
-    </ul>
-</div>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </li>
+    {% empty %}
+        <li>{% trans "No reminders yet." %}</li>
+    {% endfor %}
+</ul>
