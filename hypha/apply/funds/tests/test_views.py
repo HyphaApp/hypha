@@ -97,7 +97,9 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
     def test_can_progress_phase(self):
         next_status = "internal_review"
         self.post_page(
-            self.submission, {"form-submitted-progress_form": "", "action": next_status}
+            self.submission,
+            {"form-submitted-progress_form": "", "action": next_status},
+            view_name="progress",
         )
 
         submission = self.refresh(self.submission)
@@ -109,7 +111,8 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         )
         response = self.post_page(
             submission,
-            {"form-submitted-progress_form": "", "action": "invited_to_proposal"},
+            {"progress_form": "", "action": "invited_to_proposal"},
+            view_name="progress",
         )
 
         # Invited for proposal is a a determination, so this will redirect to the determination form.
@@ -117,7 +120,9 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
             "funds:submissions:determinations:form",
             kwargs={"submission_pk": submission.id},
         )
-        self.assertRedirects(response, f"{url}?action=invited_to_proposal")
+        self.assertEqual(
+            self.absolute_url(response.url), f"{url}?action=invited_to_proposal"
+        )
 
     def test_new_form_after_progress(self):
         submission = ApplicationSubmissionFactory(
@@ -157,7 +162,9 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         DeterminationFactory(submission=submission, rejected=True, submitted=True)
 
         self.post_page(
-            submission, {"form-submitted-progress_form": "", "action": "rejected"}
+            submission,
+            {"form-submitted-progress_form": "", "action": "rejected"},
+            view_name="progress",
         )
 
         submission = self.refresh(submission)
@@ -168,7 +175,9 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         DeterminationFactory(submission=submission, accepted=True, submitted=True)
 
         response = self.post_page(
-            submission, {"form-submitted-progress_form": "", "action": "rejected"}
+            submission,
+            {"progress_form": "", "action": "rejected"},
+            view_name="progress",
         )
         self.assertContains(response, "you tried to progress")
 
@@ -282,10 +291,11 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         self.post_page(
             self.submission,
             {
-                "form-submitted-project_create_form": "",
+                "project_create_form": "",
                 "project_lead": self.user.id,
                 "submission": self.submission.id,
             },
+            view_name="create_project",
         )
 
         project = Project.objects.order_by("-pk").first()
@@ -301,7 +311,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
             pattern = re.compile(rf"\s*{button_text}\s*")
             buttons = (
                 BeautifulSoup(response.content, "html5lib")
-                .find(class_="js-actions-sidebar")
+                .find("div", attrs={"data-testid": "sidebar-primary-actions"})
                 .find_all("a", class_="button--primary", string=pattern)
             )
             self.assertEqual(len(buttons), 1)
@@ -326,7 +336,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
             pattern = re.compile(rf"\s*{button_text}\s*")
             buttons = (
                 BeautifulSoup(response.content, "html5lib")
-                .find(class_="js-actions-sidebar")
+                .find("div", attrs={"data-testid": "sidebar-primary-actions"})
                 .find_all("a", class_="button--primary", string=pattern)
             )
             self.assertEqual(len(buttons), 0)
@@ -384,7 +394,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
             pattern = re.compile(rf"\s*{button_text}\s*")
             buttons = (
                 BeautifulSoup(response.content, "html5lib")
-                .find(class_="js-actions-sidebar")
+                .find("div", attrs={"data-testid": "sidebar-primary-actions"})
                 .find_all("a", class_="button--primary", string=pattern)
             )
             self.assertEqual(len(buttons), 1)
@@ -423,7 +433,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
             pattern = re.compile(rf"\s*{button_text}\s*")
             buttons = (
                 BeautifulSoup(response.content, "html5lib")
-                .find(class_="js-actions-sidebar")
+                .find("div", attrs={"data-testid": "sidebar-primary-actions"})
                 .find_all("a", class_="button--primary", string=pattern)
             )
             self.assertEqual(len(buttons), 0)
@@ -523,7 +533,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
             buttons = (
                 BeautifulSoup(response.content, "html5lib")
                 .find(class_="sidebar")
-                .find_all("a", class_="button--white", string="Reviewers")
+                .find_all("button", class_="button--white", string="Reviewers")
             )
             self.assertEqual(len(buttons), 1)
 
@@ -548,7 +558,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
             response = self.get_page(submission)
             buttons = (
                 BeautifulSoup(response.content, "html5lib")
-                .find(class_="js-actions-sidebar")
+                .find("div", attrs={"data-testid": "sidebar-primary-actions"})
                 .find_all("a", class_="button--primary", string="View determination")
             )
             self.assertEqual(len(buttons), 1)
@@ -572,7 +582,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
             response = self.get_page(submission)
             buttons = (
                 BeautifulSoup(response.content, "html5lib")
-                .find(class_="js-actions-sidebar")
+                .find("div", attrs={"data-testid": "sidebar-primary-actions"})
                 .find_all("a", class_="button--primary", string="View determination")
             )
             self.assertEqual(len(buttons), 0)
@@ -642,7 +652,7 @@ class TestReviewersUpdateView(BaseSubmissionViewTestCase):
         if reviewers is None:
             reviewers = []
         data = {
-            "form-submitted-reviewer_form": "",
+            "reviewer_form": "",
             "reviewer_reviewers": [r.id for r in reviewers],
         }
         data.update(
@@ -651,7 +661,7 @@ class TestReviewersUpdateView(BaseSubmissionViewTestCase):
                 for role, reviewer in zip(self.roles, reviewer_roles, strict=False)
             }
         )
-        return self.post_page(submission, data)
+        return self.post_page(submission, data, view_name="reviewers_update")
 
     def test_lead_can_add_staff_single(self):
         submission = ApplicationSubmissionFactory(lead=self.user)
@@ -819,7 +829,7 @@ class TestReviewerSubmissionView(BaseSubmissionViewTestCase):
             pattern = re.compile(rf"\s*{button_text}\s*")
             buttons = (
                 BeautifulSoup(response.content, "html5lib")
-                .find(class_="js-actions-sidebar")
+                .find("div", attrs={"data-testid": "sidebar-primary-actions"})
                 .find_all("a", class_="button--primary", string=pattern)
             )
             self.assertEqual(len(buttons), 1)
@@ -908,7 +918,7 @@ class TestReviewerSubmissionView(BaseSubmissionViewTestCase):
             response = self.get_page(submission)
             buttons = (
                 BeautifulSoup(response.content, "html5lib")
-                .find(class_="js-actions-sidebar")
+                .find("div", attrs={"data-testid": "sidebar-primary-actions"})
                 .find_all("a", class_="button--primary", string="View determination")
             )
             self.assertEqual(len(buttons), 1)
@@ -1291,7 +1301,7 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
             response = self.get_page(submission)
             buttons = (
                 BeautifulSoup(response.content, "html5lib")
-                .find(class_="js-actions-sidebar")
+                .find("div", attrs={"data-testid": "sidebar-primary-actions"})
                 .find_all("a", class_="button--primary", string="View determination")
             )
             self.assertEqual(len(buttons), 1)
@@ -1339,7 +1349,11 @@ class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
     def test_applicant_can_see_lead(self):
         lead = StaffFactory()
         submission = ApplicationSubmissionFactory(user=self.user, lead=lead)
-        response = self.get_page(submission)
+        response = self.client.get(
+            reverse("apply:submissions:partial-get-lead", kwargs={"pk": submission.pk}),
+            secure=True,
+            follow=True,
+        )
         self.assertContains(response, str(lead))
 
 
@@ -1799,7 +1813,7 @@ class TestUpdateReviewersMixin(BaseSubmissionViewTestCase):
         if reviewers is None:
             reviewers = []
         data = {
-            "form-submitted-reviewer_form": "",
+            "reviewer_form": "",
             "reviewer_reviewers": [r.id for r in reviewers],
         }
         data.update(
@@ -1808,7 +1822,7 @@ class TestUpdateReviewersMixin(BaseSubmissionViewTestCase):
                 for role, reviewer in zip(self.roles, reviewer_roles, strict=False)
             }
         )
-        return self.post_page(submission, data)
+        return self.post_page(submission, data, view_name="reviewers_update")
 
     def test_submission_transition_all_reviewer_roles_not_assigned(self):
         submission = ApplicationSubmissionFactory(lead=self.user, status=INITIAL_STATE)

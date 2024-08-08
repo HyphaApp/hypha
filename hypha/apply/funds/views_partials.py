@@ -36,6 +36,14 @@ User = get_user_model()
 
 
 @login_required
+def partial_submission_lead(request, pk):
+    submission = get_object_or_404(ApplicationSubmission, pk=pk)
+    return render(
+        request, "submissions/partials/submission-lead.html", {"submission": submission}
+    )
+
+
+@login_required
 @require_http_methods(["GET"])
 def sub_menu_funds(request):
     selected_funds = request.GET.getlist("fund")
@@ -279,6 +287,14 @@ def partial_reviews_decisions(request: HttpRequest) -> HttpResponse:
     return render(
         request, "submissions/partials/submission-reviews-list-multi.html", ctx
     )
+
+
+@login_required
+def partial_meta_terms_card(request, pk):
+    submission = get_object_or_404(ApplicationSubmission, pk=pk)
+    meta_terms = submission.meta_terms.all()
+    ctx = {"meta_terms": meta_terms, "submission": submission}
+    return render(request, "submissions/partials/meta-terms-card.html", ctx)
 
 
 @login_required

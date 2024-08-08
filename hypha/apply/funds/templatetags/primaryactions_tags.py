@@ -14,3 +14,8 @@ def should_display_primary_actions_block(user, submission):
         return True
     else:
         return False
+
+
+@register.simple_tag
+def show_progress_button(user, submission):
+    return bool(list(submission.get_actions_for_user(user)))

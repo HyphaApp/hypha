@@ -666,6 +666,20 @@ class SkipPAFApprovalProcessView(DelegatedViewMixin, UpdateView):
         project.status = CONTRACTING
         response = super().form_valid(form)
 
+        # remove PAF submission task for staff group
+        remove_tasks_for_user_group(
+            code=PROJECT_SUBMIT_PAF,
+            user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+            related_obj=self.object,
+        )
+
+        # remove PAF rejection task for staff if exists
+        remove_tasks_for_user_group(
+            code=PAF_REQUIRED_CHANGES,
+            user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+            related_obj=self.object,
+        )
+
         messenger(
             MESSAGES.PROJECT_TRANSITION,
             request=self.request,

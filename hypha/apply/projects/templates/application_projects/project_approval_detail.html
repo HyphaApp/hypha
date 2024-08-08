@@ -21,7 +21,7 @@
             {{ object.title }}
         {% endslot %}
         {% slot sub_heading %}
-            <div class="heading heading--meta text-sm mt-1">
+            <div class="mt-1 text-sm heading heading--meta">
                 <span>{{ object.submission.page }}</span>
                 <span>{{ object.submission.round }}</span>
                 <span>{% trans "Lead" %}: {{ object.lead }}</span>
@@ -62,10 +62,10 @@
 
                     <h4 class="mb-2">{% trans "Review" %}</h4>
                     <div class="card card--solid">
-                        <p class="font-bold mb-0 mt-0">{% trans "Submission lead" %}</p>
+                        <p class="mt-0 mb-0 font-bold">{% trans "Submission lead" %}</p>
                         <p class="mt-2 mb-0">{{ project.submission.lead }}</p>
 
-                        <p class="font-bold mt-6 mb-0">{% trans "Staff reviewers" %}</p>
+                        <p class="mt-6 mb-0 font-bold">{% trans "Staff reviewers" %}</p>
                         {% for review in project.submission.reviews.by_staff %}
                             <p class="mt-2 mb-0">
                                 {{ review.author }}
@@ -77,7 +77,7 @@
                         {% empty %}
                             <p class="mt-2 mb-0">{% trans "No reviews" %}</p>
                         {% endfor %}
-                        <p class="font-bold mb-0 mt-6">{% trans "Advisory council" %}</p>
+                        <p class="mt-6 mb-0 font-bold">{% trans "Advisory council" %}</p>
                         {% for review in project.submission.reviews.by_reviewers %}
                             <p class="mt-2 mb-0">
                                 {{ review.author }} - {{ review.created_at|date:"DATE_FORMAT" }}
@@ -99,7 +99,7 @@
                 {% user_can_take_actions object user as can_take_actions %}
                 {% if can_take_actions %}
                     <aside class="sidebar sidebar__project">
-                        <div class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
+                        <div class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}" data-testid="sidebar-primary-actions">
                             <h5>{% trans "Actions to take" %}</h5>
                             {% user_can_edit_paf object user as can_edit_paf %}
                             {% if can_edit_paf %}

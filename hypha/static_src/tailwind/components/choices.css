@@ -3,7 +3,7 @@
 =   For the select component rendered with choices.js
 =============================== */
 .choices {
-    @apply relative overflow-hidden mb-6 text-base focus:outline-none;
+    @apply relative mb-6 overflow-hidden text-base focus:outline-none;
 }
 
 .choices:last-child {
@@ -44,7 +44,7 @@
     background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMjEiIHZpZXdCb3g9IjAgMCAyMSAyMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjMDAwIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0yLjU5Mi4wNDRsMTguMzY0IDE4LjM2NC0yLjU0OCAyLjU0OEwuMDQ0IDIuNTkyeiIvPjxwYXRoIGQ9Ik0wIDE4LjM2NEwxOC4zNjQgMGwyLjU0OCAyLjU0OEwyLjU0OCAyMC45MTJ6Ii8+PC9nPjwvc3ZnPg==");
     background-size: 0.6em;
 
-    @apply w-5 h-5 absolute p-0 right-0 top-1/2 -mt-2 mr-6 opacity-25 focus:opacity-100 hover:opacity-100;
+    @apply absolute right-0 w-5 h-5 p-0 mr-6 -mt-2 opacity-25 top-1/2 focus:opacity-100 hover:opacity-100;
 }
 
 .choices[data-type*="select-one"] .choices__button:focus {
@@ -97,17 +97,19 @@
 .choices[data-type*="text"] .choices__button {
     background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMjEiIHZpZXdCb3g9IjAgMCAyMSAyMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjRkZGIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0yLjU5Mi4wNDRsMTguMzY0IDE4LjM2NC0yLjU0OCAyLjU0OEwuMDQ0IDIuNTkyeiIvPjxwYXRoIGQ9Ik0wIDE4LjM2NEwxOC4zNjQgMGwyLjU0OCAyLjU0OEwyLjU0OCAyMC45MTJ6Ii8+PC9nPjwvc3ZnPg==");
     background-size: 8px;
-    @apply relative inline-block w-2 pl-4 my-0 ml-1 -me-1 opacity-75 hover:opacity-100 focus:opacity-100;
+    @apply relative inline-block w-2 pl-4 my-0 ml-1 opacity-75 -me-1 hover:opacity-100 focus:opacity-100;
 }
 
 .choices__inner {
     min-height: 40px;
-    @apply inline-block w-full align-top p-1 border border-gray-300 rounded-sm text-sm text-gray-900 overflow-hidden;
+    @apply inline-block w-full p-1 overflow-hidden text-sm text-gray-900 align-top border border-gray-300 rounded-sm;
 }
 
-.is-focused .choices__inner,
+.is-focused .choices__inner {
+    @apply border-2 border-blue-500;
+}
 .is-open .choices__inner {
-    @apply ring-1 ring-blue-500 border-blue-500;
+    @apply ring-2;
 }
 
 .is-open .choices__inner {
@@ -119,7 +121,7 @@
 }
 
 .choices__list {
-    @apply m-0 pl-0 list-none;
+    @apply pl-0 m-0 list-none;
 }
 
 .choices__list--single {
@@ -129,7 +131,7 @@
 }
 
 [dir="rtl"] .choices__list--single {
-    @apply pr-1 pl-4;
+    @apply pl-4 pr-1;
 }
 
 .choices__list--single .choices__item {
@@ -167,7 +169,7 @@
     border-bottom-left-radius: 2.5px;
     border-bottom-right-radius: 2.5px;
     will-change: visibility;
-    @apply absolute z-10 top-full invisible w-full overflow-hidden break-all mt-1 border shadow-md bg-white;
+    @apply absolute z-10 invisible w-full mt-1 overflow-hidden break-all bg-white border shadow-md top-full;
 }
 
 .is-active.choices__list--dropdown,
@@ -182,12 +184,12 @@
 
 .is-flipped .choices__list--dropdown,
 .is-flipped .choices__list[aria-expanded] {
-    @apply bottom-full top-auto mt-0 mb-1 rounded-t-sm;
+    @apply top-auto mt-0 mb-1 rounded-t-sm bottom-full;
 }
 
 .choices__list--dropdown .choices__list,
 .choices__list[aria-expanded] .choices__list {
-    @apply relative divide-y overflow-auto;
+    @apply relative overflow-auto divide-y;
     max-height: 300px;
     -webkit-overflow-scrolling: touch;
     will-change: scroll-position;
@@ -195,7 +197,7 @@
 
 .choices__list--dropdown .choices__item,
 .choices__list[aria-expanded] .choices__item {
-    @apply relative py-2 px-3 md:text-sm;
+    @apply relative px-3 py-2 md:text-sm;
 }
 
 [dir="rtl"] .choices__list--dropdown .choices__item,
@@ -259,17 +261,17 @@
 }
 
 .choices__heading {
-    @apply font-semibold text-sm py-2 border-b border-gray-300 text-gray-600;
+    @apply py-2 text-sm font-semibold text-gray-600 border-b border-gray-300;
 }
 
 .choices__button {
     text-indent: -9999px;
-    @apply cursor-pointer bg-center bg-no-repeat bg-transparent border-none appearance-none focus:outline-none;
+    @apply bg-transparent bg-center bg-no-repeat border-none appearance-none cursor-pointer focus:outline-none;
 }
 
 .choices__input {
     padding: 4px 0 4px 2px;
-    @apply text-sm rounded-none max-w-full w-full inline-block align-middle border-none text-gray-700 placeholder-gray-400 bg-transparent;
+    @apply inline-block w-full max-w-full text-sm text-gray-700 placeholder-gray-400 align-middle bg-transparent border-none rounded-none;
 }
 
 .choices__input::-webkit-search-decoration,

@@ -1,0 +1,14 @@
+{% load i18n %}
+{% modal_title %}{% trans "Update Lead" %}{% endmodal_title %}
+
+<div class="p-4">
+    <div>
+        <dl class="mb-4">
+            <dt class="font-semibold">{% trans "Current Lead" %}</dt>
+            <dd class="truncate">{{ object.lead }} &lt;{{object.lead.email}}&gt;</dd>
+        </dl>
+    </div>
+
+    {% url 'funds:submissions:lead_update' pk=object.pk as lead_update_url %}
+    {% include 'funds/includes/dialog_form_base.html' with form=form value=value %}
+</div>

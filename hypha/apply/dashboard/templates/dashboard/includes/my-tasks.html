@@ -1,11 +1,11 @@
 {% load i18n %}
 
-<div class="w-8/12 m-auto mb-10">
-    <h2 class="text-center font-light">{% trans "My tasks" %}</h2>
+<div class="max-w-3xl mx-auto mb-10" id="task-list" hx-swap-oob="true">
+    <h2 class="font-light text-center">{% trans "My tasks" %}</h2>
 
-    <div class="task--list border divide-y shadow-sm">
+    <div class="border divide-y shadow-sm task--list">
         {% for task in my_tasks.data %}
-            {% include "todo/todolist_item.html" with button_type_class="button--primary" %}
+            {% include "todo/todolist_item.html" with button_type_class="button--transparent" %}
         {% endfor %}
     </div>
 </div>
