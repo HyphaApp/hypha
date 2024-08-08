@@ -1,3 +1,4 @@
+import nh3
 from django import forms
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -197,6 +198,15 @@ class ProfileForm(forms.ModelForm):
                 self.instance.email
             )  # updated email to avoid email existing message, fix information leak.
         return email
+
+    def clean_full_name(self):
+        full_name = self.cleaned_data["full_name"]
+        # Remove all HTML tags. This prohibits HTML without creating hurdles.
+        cleaned_full_name = nh3.clean(full_name, tags=set())
+        # Remove all colons and slashes to nerf URLs regardless of HTML tags.
+        cleaned_full_name = cleaned_full_name.replace(":", "")
+        cleaned_full_name = cleaned_full_name.replace("/", "")
+        return cleaned_full_name
 
 
 class BecomeUserForm(forms.Form):
