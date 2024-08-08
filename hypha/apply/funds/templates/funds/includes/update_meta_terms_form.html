@@ -1,6 +1,20 @@
-{% load i18n %}
-<div class="modal" id="update-meta-terms">
-    <h4 class="modal__header-bar">{% trans "Update Meta Terms" %}</h4>
-    {% trans "Update" as update %}
-    {% include 'funds/includes/delegated_form_base.html' with form=meta_terms_form value=update %}
+{% load i18n static %}
+
+<div class="p-6">
+    {% include 'funds/includes/dialog_form_base.html' with form=form value=value %}
 </div>
+
+<script type="module">
+    {% comment %} Do this here as the select elements for different roles are dynamically generated. {% endcomment %}
+    import Choices from "{% static 'js/esm/choices.js-10-2-0.js' %}";
+
+    const selectElements = document.querySelectorAll('#metaterms_form select');
+
+    // add choices to all select elements
+    selectElements.forEach((selectElement) => {
+        new Choices(selectElement, {
+            removeItemButton: true,
+            allowHTML: true,
+        });
+    });
+</script>
