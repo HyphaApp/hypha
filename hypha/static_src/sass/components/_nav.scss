@@ -1,4 +1,6 @@
 .nav {
+    background-color: var(--color-bg-default);
+
     &__link {
         @extend %h5;
         display: flex;

@@ -2,7 +2,6 @@
 {% load i18n humanize invoice_tools heroicons %}
 
 {% block title %}{% trans "Invoice" %}: {{ object.invoice_number }} - {{ object.project.title }}{% endblock %}
-{% block body_class %}bg-light-grey{% endblock %}
 {% block content %}
     {% display_invoice_status_for_user user object as invoice_status %}
 

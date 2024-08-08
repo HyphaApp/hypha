@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% load wagtailcore_tags wagtailimages_tags static markdown_tags nh3_tags %}
 {% block feedlinks %}<link rel="alternate" type="application/rss+xml" title="{{ page.title }}" href="{% url "news_feed" %}">{% endblock %}
-{% block body_class %}light-grey-bg{% endblock %}
 
 {% block content %}
     <div class="wrapper wrapper--small wrapper--inner-space-medium">
