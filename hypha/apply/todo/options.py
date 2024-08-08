@@ -178,7 +178,9 @@ template_map = {
 }
 
 
-def get_task_template(request, code, related_obj, **kwargs):
+def get_task_template(request, task, **kwargs):
+    related_obj = task.related_object
+    code = task.code
     # if related_object is none/deleted and task remain there(edge case, avoiding 500)
     if not related_obj:
         return None
@@ -195,4 +197,7 @@ def get_task_template(request, code, related_obj, **kwargs):
     }
     template["text"] = template["text"].format(**template_kwargs)
     template["url"] = template["url"].format(**template_kwargs)
+    # additional field
+    template["id"] = task.id
+    template["user"] = task.user
     return template
