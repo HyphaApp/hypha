@@ -23,7 +23,7 @@ class TestNotifyReportDue(TestCase):
         cls.project_settings.reminder_frequencies = [
             ProjectReminderFrequency.objects.create(
                 page=cls.project_settings,
-                num_days=7,
+                reminder_days=7,
                 relation=ProjectReminderFrequency.FrequencyRelation.BEFORE,
             ),
         ]

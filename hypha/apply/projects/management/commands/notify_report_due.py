@@ -42,7 +42,7 @@ class Command(BaseCommand):
                 == ProjectReminderFrequency.FrequencyRelation.AFTER
                 else 1
             )
-            delta = frequency.num_days * multiplier
+            delta = frequency.reminder_days * multiplier
 
             due_date = today + relativedelta(days=delta)
             for project in Project.objects.in_progress():

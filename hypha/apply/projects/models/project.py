@@ -489,7 +489,7 @@ class PAFReviewersRole(Orderable, ClusterableModel):
 
 
 class ProjectReminderFrequency(Orderable, ClusterableModel):
-    num_days = models.IntegerField()
+    reminder_days = models.IntegerField()
     page = ParentalKey("ProjectSettings", related_name="reminder_frequencies")
 
     class FrequencyRelation(models.TextChoices):
@@ -503,8 +503,8 @@ class ProjectReminderFrequency(Orderable, ClusterableModel):
     )
 
     panels = [
-        FieldPanel("num_days", heading=_("Number of Days")),
-        FieldPanel("relation", heading=_("Relation to Project Due Date")),
+        FieldPanel("reminder_days", heading=_("Number of days")),
+        FieldPanel("relation", heading=_("Relation to report due date")),
     ]
 
 
@@ -541,8 +541,8 @@ class ProjectSettings(BaseSiteSetting, ClusterableModel):
         ),
         InlinePanel(
             "reminder_frequencies",
-            label=_("Report Reminder Frequency"),
-            heading=_("Report Reminder Frequency"),
+            label=_("Report reminder frequency"),
+            heading=_("Report reminder frequency"),
         ),
     ]
 
