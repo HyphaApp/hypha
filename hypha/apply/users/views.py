@@ -110,7 +110,7 @@ class LoginView(TwoFactorLoginView):
 class AccountView(SuccessMessageMixin, UpdateView):
     form_class = ProfileForm
     template_name = "users/account.html"
-    success_message = _("Profile Updated.")
+    success_message = _("Profile updated.")
 
     def get_object(self):
         return self.request.user
