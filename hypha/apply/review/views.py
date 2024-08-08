@@ -433,7 +433,7 @@ class ReviewListView(ListView):
             author = '<a href="{}"><span>{}</span></a>'.format(
                 review.get_absolute_url(), review.author
             )
-            if review.author.role:
+            if review.author.role and review.author.role.icon:
                 author += generate_image_tag(review.author.role.icon, "12x12")
             author = f"<div>{author}</div>"
 

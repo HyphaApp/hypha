@@ -6,8 +6,11 @@ from hypha.apply.projects import urls as projects_urls
 
 from .views import (
     AwaitingReviewSubmissionsListView,
+    CreateProjectView,
     ExportSubmissionsByRound,
     GroupingApplicationsListView,
+    ProgressSubmissionView,
+    ReminderCreateView,
     ReminderDeleteView,
     ReviewerLeaderboard,
     ReviewerLeaderboardDetail,
@@ -26,7 +29,13 @@ from .views import (
     SubmissionsByRound,
     SubmissionsByStatus,
     SubmissionSealedView,
+    UpdateLeadView,
+    UpdateMetaTermsView,
+    UpdatePartnersView,
+    UpdateReviewersView,
+    htmx_archive_unarchive_submission,
     partial_screening_card,
+    reminder_list,
     submission_success,
 )
 from .views_beta import (
@@ -37,9 +46,11 @@ from .views_beta import (
 )
 from .views_partials import (
     get_applications_status_counts,
+    partial_meta_terms_card,
     partial_reviews_card,
     partial_reviews_decisions,
     partial_submission_activities,
+    partial_submission_lead,
     sub_menu_bulk_update_lead,
     sub_menu_bulk_update_reviewers,
     sub_menu_category_options,
@@ -169,14 +180,59 @@ submission_urls = (
                 [
                     path("", SubmissionDetailView.as_view(), name="detail"),
                     path(
+                        "partial/lead/",
+                        partial_submission_lead,
+                        name="partial-get-lead",
+                    ),
+                    path(
                         "partial/activities/",
                         partial_submission_activities,
                         name="partial-activities",
                     ),
+                    path("lead/update/", UpdateLeadView.as_view(), name="lead_update"),
+                    path("archive/", htmx_archive_unarchive_submission, name="archive"),
                     path(
                         "partial/screening-card/",
                         partial_screening_card,
                         name="partial-screening-card",
+                    ),
+                    path(
+                        "partial/meta-terms-card/",
+                        partial_meta_terms_card,
+                        name="partial-meta-terms-card",
+                    ),
+                    path(
+                        "project/create/",
+                        CreateProjectView.as_view(),
+                        name="create_project",
+                    ),
+                    path(
+                        "partial/reminder-card/",
+                        reminder_list,
+                        name="partial-reminder-card",
+                    ),
+                    path(
+                        "reminder/create/",
+                        ReminderCreateView.as_view(),
+                        name="create_reminder",
+                    ),
+                    path(
+                        "progress/", ProgressSubmissionView.as_view(), name="progress"
+                    ),
+                    path(
+                        "reviewers/update/",
+                        UpdateReviewersView.as_view(),
+                        name="reviewers_update",
+                    ),
+                    path(
+                        "partners/update/",
+                        UpdatePartnersView.as_view(),
+                        name="partners_update",
+                    ),
+                    path(
+                        "metaterms/update/",
+                        UpdateMetaTermsView.as_view(),
+                        name="metaterms_update",
                     ),
                     path(
                         "partial/reviews-card/",

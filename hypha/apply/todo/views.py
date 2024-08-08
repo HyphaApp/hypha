@@ -1,9 +1,13 @@
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import PermissionDenied
 from django.db.models import Count
+from django.shortcuts import get_object_or_404, render
 from django.utils.decorators import method_decorator
-from django.views.generic import ListView
+from django.views.generic import ListView, View
+from django_htmx.http import trigger_client_event
 
+from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.users.decorators import staff_required
 
 from .models import Task
@@ -19,6 +23,51 @@ class TodoListView(ListView):
     def get_queryset(self):
         tasks = render_task_templates_for_user(self.request, self.request.user)
         return tasks
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx["my_tasks"] = {"data": self.get_queryset()}
+        return ctx
+
+
+@method_decorator(staff_required, name="dispatch")
+class TaskRemovalView(View):
+    def dispatch(self, request, *args, **kwargs):
+        self.task = get_object_or_404(Task, id=self.kwargs.get("pk"))
+        if self.task.user == request.user or set(self.task.user_group.all()) == set(
+            request.user.groups.all()
+        ):
+            return super().dispatch(request, *args, **kwargs)
+        raise PermissionDenied("You can remove the tasks that are assigned to you.")
+
+    def delete(self, *args, **kwargs):
+        source = self.task.related_object
+        from hypha.apply.determinations.models import Determination
+        from hypha.apply.projects.models import Invoice
+        from hypha.apply.review.models import Review
+
+        if isinstance(self.task.related_object, Invoice):
+            source = self.task.related_object.project
+        elif isinstance(self.task.related_object, Determination) or isinstance(
+            self.task.related_object, Review
+        ):
+            source = self.task.related_object.submission
+        messenger(
+            MESSAGES.REMOVE_TASK,
+            user=self.request.user,
+            request=self.request,
+            source=source,
+            related=self.task,
+        )
+        self.task.delete()
+        tasks = render_task_templates_for_user(self.request, self.request.user)
+        response = render(
+            self.request,
+            "dashboard/includes/my-tasks.html",
+            context={"my_tasks": {"data": tasks}},
+        )
+        trigger_client_event(response, "taskListUpdated", {})
+        return response
 
 
 def add_task_to_user(code, user, related_obj):
@@ -160,9 +209,6 @@ def render_task_templates_for_user(request, user):
             ]
     """
     tasks = get_tasks_for_user(user)
-    templates = [
-        get_task_template(request, code=task.code, related_obj=task.related_object)
-        for task in tasks
-    ]
+    templates = [get_task_template(request, task=task) for task in tasks]
 
     return list(filter(None, templates))

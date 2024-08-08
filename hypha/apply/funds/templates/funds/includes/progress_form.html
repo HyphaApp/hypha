@@ -1,9 +1,17 @@
-{% load i18n %}
-{% if progress_form.should_show %}
-    <div class="modal" id="update-status">
-        <h4 class="modal__header-bar">{% trans "Update status" %}</h4>
-        <p>{% trans "Current status" %}: {{ object.phase }}</p>
-        {% trans "Progress" as progress %}
-        {% include 'funds/includes/delegated_form_base.html' with form=progress_form value=progress %}
+{% load i18n primaryactions_tags %}
+{% show_progress_button request.user object as show_progress_form %}
+
+{% if show_progress_form %}
+    {% modal_title %}{% trans "Update Status" %}{% endmodal_title %}
+
+    <div class="p-4">
+        <div class="mb-4">
+            <dl>
+                <dt class="font-bold">{% trans "Current status" %}</dt>
+                <dd>{{ object.phase }}</dd>
+            </dl>
+        </div>
+        {% url 'funds:submissions:progress' pk=object.pk as progress_url %}
+        {% include 'funds/includes/dialog_form_base.html' with form=form value=value url=progress_url data_var="statusUpdated" %}
     </div>
 {% endif %}

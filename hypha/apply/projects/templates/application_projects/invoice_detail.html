@@ -27,7 +27,7 @@
                 {% endif %}
                 <p class="card__text"><b>{% trans "Fund" %}:</b> {{ object.project.submission.page }}</p>
             </div>
-            <div class="card card--solid flex" x-data="{ collapsed: true }">
+            <div class="flex card card--solid" x-data="{ collapsed: true }">
                 <div class="flex-none">
                     <p><b>{% trans "Status" %}: </b></p>
                 </div>
@@ -55,7 +55,7 @@
                 </div>
                 <button
                     type="button"
-                    class="font-bold text-light-blue flex-1 text-end hover:opacity-70 transition-opacity"
+                    class="flex-1 font-bold transition-opacity text-light-blue text-end hover:opacity-70"
                     x-on:click="collapsed = ! collapsed"
                 >
                     <span x-show="collapsed">
@@ -89,7 +89,7 @@
         <aside class="sidebar">
             {% block deliverables %}
             {% endblock %}
-            <div class="js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions sticky top-8">
+            <div class="sticky js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions top-8" data-testid="sidebar-primary-actions">
                 <h5>{% trans "Actions to take" %}</h5>
                 {% block actions %}
                     {% can_edit object user as user_can_edit_request %}

@@ -1,17 +1,23 @@
 {% load i18n review_tags %}
 
-<div class="flex items-center justify-around px-2 py-1 bg-gray-100">
-    <span>
-        {{ recommendation|traffic_light }}
-    </span>
+<div class="flex items-center justify-around px-2 bg-gray-100">
+    {% with recommendation|traffic_light as traffic_light_html %}
+        {% if traffic_light_html %}
+            <span class="py-1">
+                {{ recommendation|traffic_light }}
+            </span>
+        {% endif %}
+    {% endwith %}
     {% with assigned_reviewers|average_review_score as average %}
-        <span class="font-medium">
-            {{ assigned_reviewers|average_review_score }}
-        </span>
+        {% if average %}
+            <span class="py-1 font-medium">
+                {{ average }}
+            </span>
+        {% endif %}
     {% endwith %}
 </div>
 
-<ul class="reviews-sidebar mt-4" x-data='{showHiddenReviewers: false}'>
+<ul class="mt-4 reviews-sidebar" id="id_reviewers" x-data='{showHiddenReviewers: false}'>
     {% if not staff_reviewers_exist %}
         <li class="reviews-sidebar__no-reviews">{% trans "No staff reviewers yet" %}</li>
         <hr class="reviews-sidebar__split">

@@ -82,3 +82,4 @@ class MESSAGES(TextChoices):
     STAFF_ACCOUNT_EDITED = "STAFF_ACCOUNT_EDITED", _("edited account")
     ARCHIVE_SUBMISSION = "ARCHIVE_SUBMISSION", _("archived submission")
     UNARCHIVE_SUBMISSION = "UNARCHIVE_SUBMISSION", _("unarchived submission")
+    REMOVE_TASK = "REMOVE_TASK", _("remove task")
