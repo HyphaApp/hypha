@@ -153,3 +153,8 @@ def invoice_status_fg_color(invoice_status):
 @register.simple_tag
 def display_invoice_table_status_for_user(status, user):
     return get_invoice_table_status(status, is_applicant=user.is_applicant)
+
+
+@register.simple_tag
+def invoice_htmx_triggers(invoice) -> str:
+    return f"load, invoiceUpdated-{invoice.id} from:body"

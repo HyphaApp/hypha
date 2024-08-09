@@ -1,9 +1,12 @@
+import json
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
-from django.shortcuts import get_object_or_404, redirect
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -21,6 +24,9 @@ from django_tables2 import SingleTableMixin
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import APPLICANT, COMMENT, Activity
+from hypha.apply.projects.templatetags.invoice_tools import (
+    display_invoice_status_for_user,
+)
 from hypha.apply.todo.options import (
     INVOICE_REQUIRED_CHANGES,
     INVOICE_WAITING_APPROVAL,
@@ -86,12 +92,35 @@ class ChangeInvoiceStatusView(DelegatedViewMixin, InvoiceAccessMixin, UpdateView
     form_class = ChangeInvoiceStatusForm
     context_name = "change_invoice_status"
     model = Invoice
+    template = "application_projects/includes/update_invoice_form.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        self.object = get_object_or_404(Invoice, id=kwargs.get("invoice_pk"))
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, *args, **kwargs):
+        form_instance = self.form_class(instance=self.object, user=self.request.user)
+        form_instance.name = self.context_name
+
+        return render(
+            self.request,
+            self.template,
+            context={
+                "form": form_instance,
+                "form_id": f"{form_instance.name}-{self.object.id}",
+                "invoice_status": display_invoice_status_for_user(
+                    self.request.user, self.object
+                ),
+                "value": _("Update status"),
+                "object": self.object,
+            },
+        )
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(**kwargs)
 
     def form_valid(self, form):
-        invoice = get_object_or_404(
-            Invoice, pk=self.kwargs["invoice_pk"]
-        )  # to get the old status
-        old_status = invoice.status
+        old_status = self.object.status
         response = super().form_valid(form)
         if form.cleaned_data["comment"]:
             invoice_status_change = _(
@@ -132,6 +161,40 @@ class ChangeInvoiceStatusView(DelegatedViewMixin, InvoiceAccessMixin, UpdateView
         handle_tasks_on_invoice_update(old_status=old_status, invoice=self.object)
 
         return response
+
+    def post(self, *args, **kwargs):
+        form = ChangeInvoiceStatusForm(
+            self.request.POST, instance=self.object, user=self.request.user
+        )
+        if form.is_valid():
+            self.form_valid(form)
+            return HttpResponse(
+                status=204,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {
+                            f"invoiceUpdated-{self.object.id}": None,
+                            "showMessage": "Invoice updated.",
+                        }
+                    )
+                },
+            )
+
+        # TODO: get_context_data method to not duplicate code
+        return render(
+            self.request,
+            self.template,
+            context={
+                "form": form,
+                "form_id": f"{form.name}-{self.object.id}",
+                "invoice_status": display_invoice_status_for_user(
+                    self.request.user, self.object
+                ),
+                "value": _("Update status"),
+                "object": self.object,
+            },
+            status=400,
+        )
 
 
 class DeleteInvoiceView(DeleteView):

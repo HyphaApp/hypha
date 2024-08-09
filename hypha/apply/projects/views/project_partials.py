@@ -118,3 +118,13 @@ def get_invoices_status_counts(request):
             "type": _("Invoices"),
         },
     )
+
+
+@login_required
+def partial_get_invoice_status(request, pk, invoice_pk):
+    invoice = get_object_or_404(Invoice, pk=invoice_pk)
+    return render(
+        request,
+        "application_projects/partials/invoice_status.html",
+        context={"invoice": invoice, "user": request.user},
+    )
