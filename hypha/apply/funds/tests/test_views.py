@@ -1079,6 +1079,33 @@ class TestReviewerSubmissionView(BaseSubmissionViewTestCase):
         response = self.get_page(submission)
         self.assertEqual(response.status_code, 200)
 
+    def test_can_view_applicant_pii(self):
+        submission = ApplicationSubmissionFactory(
+            with_external_review=True,
+            status="ext_external_review",
+            user=self.applicant,
+            reviewers=[self.user],
+        )
+
+        response = self.get_page(submission)
+
+        self.assertContains(response, str(self.applicant))
+        self.assertContains(response, self.applicant.email)
+
+    @override_settings(HIDE_IDENTITY_FROM_REVIEWERS=True)
+    def test_cant_view_applicant_pii(self):
+        submission = ApplicationSubmissionFactory(
+            with_external_review=True,
+            status="ext_external_review",
+            user=self.applicant,
+            reviewers=[self.user],
+        )
+
+        response = self.get_page(submission)
+
+        self.assertNotContains(response, str(self.applicant))
+        self.assertNotContains(response, self.applicant.email)
+
 
 class TestApplicantSubmissionView(BaseSubmissionViewTestCase):
     user_factory = ApplicantFactory

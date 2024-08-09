@@ -123,6 +123,9 @@ STAFF_EMAIL_DOMAINS = env.list("STAFF_EMAIL_DOMAINS", [])
 # Should staff identities be obscured from Applicants & Partners (ie. comments will be ORG_LONG_NAME rather than John Doe).
 HIDE_STAFF_IDENTITY = env.bool("HIDE_STAFF_IDENTITY", False)
 
+# Should Applicant identities be obscured from External Reviewers
+HIDE_IDENTITY_FROM_REVIEWERS = env.bool("HIDE_IDENTITY_FROM_REVIEWERS", False)
+
 # Should staff be able to access/see draft submissions.
 SUBMISSIONS_DRAFT_ACCESS_STAFF = env.bool("SUBMISSIONS_DRAFT_ACCESS_STAFF", False)
 
