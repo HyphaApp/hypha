@@ -3,6 +3,7 @@ from django.views.generic import RedirectView
 
 from .views import (
     CategoryTemplatePrivateMediaView,
+    ChangeInvoiceStatusView,
     ContractDocumentPrivateMediaView,
     ContractPrivateMediaView,
     CreateInvoiceView,
@@ -29,6 +30,7 @@ from .views import (
     VendorPrivateMediaView,
     get_invoices_status_counts,
     get_project_status_counts,
+    partial_get_invoice_status,
     partial_project_activities,
 )
 
@@ -111,6 +113,11 @@ urlpatterns = [
                                 "edit/", EditInvoiceView.as_view(), name="invoice-edit"
                             ),
                             path(
+                                "update/",
+                                ChangeInvoiceStatusView.as_view(),
+                                name="invoice-update",
+                            ),
+                            path(
                                 "delete/",
                                 DeleteInvoiceView.as_view(),
                                 name="invoice-delete",
@@ -124,6 +131,11 @@ urlpatterns = [
                                 "documents/supporting/<int:file_pk>/",
                                 InvoicePrivateMedia.as_view(),
                                 name="invoice-supporting-document",
+                            ),
+                            path(
+                                "partial/invoice-status/",
+                                partial_get_invoice_status,
+                                name="partial-invoice-status",
                             ),
                         ]
                     ),
