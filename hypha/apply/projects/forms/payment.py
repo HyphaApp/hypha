@@ -4,6 +4,7 @@ from django import forms
 from django.core.files.base import ContentFile
 from django.db import transaction
 from django.db.models.fields.files import FieldFile
+from django.forms.widgets import RadioSelect
 from django.utils.translation import gettext_lazy as _
 from django_file_form.forms import FileFormMixin
 
@@ -69,15 +70,21 @@ class ChangeInvoiceStatusForm(forms.ModelForm):
     class Meta:
         fields = ["status", "paid_date", "comment"]
         model = Invoice
+        widgets = {"status": RadioSelect}
 
-    def __init__(self, instance, user, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop("user")
+        instance = kwargs.pop("instance")
         super().__init__(*args, **kwargs, instance=instance)
-        self.initial["comment"] = ""
-        status_field = self.fields["status"]
-
-        status_field.choices = get_invoice_possible_transition_for_user(
+        invoice_choices = get_invoice_possible_transition_for_user(
             user, invoice=instance
         )
+
+        self.initial["comment"] = ""
+        if len(invoice_choices) > 4:
+            self.fields["status"] = forms.TypedChoiceField(choices=invoice_choices)
+        else:
+            self.fields["status"].choices = invoice_choices
 
 
 class InvoiceBaseForm(forms.ModelForm):

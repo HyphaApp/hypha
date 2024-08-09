@@ -1,0 +1,13 @@
+{% load i18n %}
+
+{% modal_title %}Update Invoice Status{% endmodal_title %}
+
+<form class="p-4"
+      method="POST"
+      action="{{ request.path }}"
+      hx-post="{{ request.path }}"
+>
+    <p class="mt-0 text-fg-muted">{% trans "Current status" %}: {{ invoice_status }}</p>
+
+    {% include 'funds/includes/dialog_form_base.html' with form=form value=value form_id=form_id %}
+</form>
