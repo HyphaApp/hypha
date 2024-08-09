@@ -18,10 +18,11 @@
         </div>
         {% user_can_upload_contract object request.user as can_upload_contract %}
         {% user_can_submit_contract object user contract as can_submit_contract %}
+        {% required_remaining_contracting_doc_categories remaining_contract_document_categories as required_remaining_contract_document_categories %}
         {% if can_submit_contract %}
             <a data-fancybox
                data-src="#submit-contract-documents"
-               class="button button--project-action {% if remaining_contract_document_categories or not contract.signed_by_applicant %}is-disabled{% endif %}"
+               class="button button--project-action {% if required_remaining_contract_document_categories or not contract.signed_by_applicant %}is-disabled{% endif %}"
                href="#">
                 {% trans "Submit contract documents" %}
             </a>
