@@ -71,9 +71,19 @@
             {% include "dashboard/includes/submissions-waiting-for-review.html" with in_review_count=awaiting_reviews.count my_review=awaiting_reviews.table display_more=awaiting_reviews.display_more active_statuses_filter=awaiting_reviews.active_statuses_filter %}
         </div>
 
-        {% if my_flagged.table.data %}
+        {% if my_flagged.submissions %}
             <div id="submissions-flagged" class="wrapper wrapper--bottom-space">
-                {% include "dashboard/includes/flagged.html" with my_flagged=my_flagged.table display_more=my_flagged.display_more %}
+                <h3 class="text-xl mb-2">
+                    <a href="{% url "apply:submissions:list" %}?query=flagged:@me">Your flagged submissions <span class="text-sm">({{ my_flagged.count }})</span></a>
+                </h3>
+
+                {% include "submissions/partials/submissions-inline.html" with submissions=my_flagged.submissions row_layout="table" %}
+
+                {% if my_flagged.display_more  %}
+                    <div class="border-x border-b flex items-center justify-center py-3 font-semibold">
+                        <a href="{% url "apply:submissions:list" %}?query=flagged:@me">Show All</a>
+                    </div>
+                {% endif %}
             </div>
         {% endif %}
 
@@ -83,14 +93,17 @@
 
         {% if PROJECTS_ENABLED and paf_for_review.count %}
             <div id="paf_for_review" class="wrapper wrapper--bottom-space">
-                <h4 class="heading heading--normal">{% trans "PAFs for review" %}</h4>
+                <h3 class="text-xl mb-2">{% trans "PAFs for review" %}</h3>
                 {% render_table paf_for_review.table %}
             </div>
         {% endif %}
 
         {% if PROJECTS_ENABLED and projects.table.data %}
             <div id="active-projects" class="wrapper wrapper--bottom-space">
-                {% trans "Your projects" as project_heading %}
+                <h3 class="text-xl mb-2">
+                    {% trans "Your projects" %}
+                </h3>
+
                 {% render_table projects.table %}
 
                 <div class="all-submissions-table__more">
