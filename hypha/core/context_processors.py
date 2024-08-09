@@ -21,4 +21,5 @@ def global_vars(request):
         "SENTRY_DENY_URLS": settings.SENTRY_DENY_URLS,
         "SENTRY_DEBUG": settings.SENTRY_DEBUG,
         "SENTRY_PUBLIC_KEY": settings.SENTRY_PUBLIC_KEY,
+        "SUBMISSIONS_TABLE_EXCLUDED_FIELDS": settings.SUBMISSIONS_TABLE_EXCLUDED_FIELDS,
     }

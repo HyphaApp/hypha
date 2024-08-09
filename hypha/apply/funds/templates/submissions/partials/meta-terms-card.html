@@ -33,7 +33,7 @@
                 {% for meta_term in group.list %}
                     <a
                         class="px-2 py-1 text-sm font-semibold transition-opacity border rounded-lg bg-slate-100 hover:opacity-70"
-                        href="{% url 'apply:submissions:list-alt' %}?meta_terms={{ meta_term.id }}"
+                        href="{% url 'apply:submissions:list' %}?meta_terms={{ meta_term.id }}"
                         hx-boost="true"
                         hx-target="#main"
                         hx-select="#main"

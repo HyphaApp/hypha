@@ -247,14 +247,6 @@ class SummarySubmissionsTableWithRole(BaseAdminSubmissionsTable):
         return ""
 
 
-class UserFlaggedSubmissionsTable(SummarySubmissionsTable):
-    class Meta(SummarySubmissionsTable.Meta):
-        row_attrs = dict(
-            {"data-flag-type": "user"}, **SummarySubmissionsTable._meta.row_attrs
-        )
-        attrs = {"class": "all-submissions-table flagged-table"}
-
-
 def get_used_rounds(request):
     return Round.objects.filter(submissions__isnull=False).distinct()
 
@@ -509,11 +501,9 @@ class SubmissionReviewerFilterAndSearch(SubmissionDashboardFilter):
 
 
 class RoundsTable(tables.Table):
-    title = tables.LinkColumn(
-        "funds:rounds:detail",
-        args=[A("pk")],
+    title = tables.Column(
+        linkify=lambda record: record.get_absolute_url(),
         orderable=True,
-        text=lambda record: record.title,
     )
     fund = tables.Column(accessor=A("specific__fund"))
     lead = tables.Column()

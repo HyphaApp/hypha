@@ -1,0 +1,167 @@
+{% load i18n querystrings %}
+{% load heroicons %}
+
+<tr
+    class="relative px-2 py-1 border hover:bg-gray-100"
+>
+    {% if enable_selection %}
+        <td class="hidden p-2 md:table-cell text-center align-top">
+            <!-- select -->
+            <label class="py-2.5">
+                <input id="submission-{{ s.id }}"
+                       type="checkbox"
+                       value="{{ s.id }}"
+                       x-model="selectedSubmissions"
+                       name="selectedSubmissionIds"
+                       class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                >
+                <span class="sr-only">{% trans "Select submission" %} #{{ s.id }}</span>
+            </label>
+        </td>
+    {% endif %}
+
+    <td class="text-center align-top">
+        <div class="py-1" tabindex="-1">
+            {% if s.is_archive %}
+                {% trans "Archived Submission" as text_archived %}
+                {% heroicon_outline "lock-closed" aria_hidden="true" size=21 class="inline stroke-red-800 stroke-1.5 -mt-1 align-text-bottom" data_tippy_placement='right' data_tippy_content=text_archived data_tippy_delay=200 %}
+                <span class="sr-only">{% trans "Archived" %}</span>
+            {% elif s.get_current_screening_status %}
+                {% if s.get_yes_screening_status %}
+                    {% heroicon_mini "hand-thumb-up" aria_hidden="true" size=21 class="inline fill-green-400 stroke-1.5 -mt-1 align-text-bottom" data_tippy_placement='right' data_tippy_content=s.get_current_screening_status data_tippy_delay=200 %}
+                {% else %}
+                    {% heroicon_mini "hand-thumb-down" aria_hidden="true" size=21 class="inline fill-red-400 stroke-1.5 -mt-1 align-text-bottom" data_tippy_placement='right' data_tippy_content=s.get_current_screening_status data_tippy_delay=200 %}
+                {% endif %}
+            {% else %}
+                {% heroicon_outline "question-mark-circle" aria_hidden="true" size=21 class="inline stroke-slate-300 stroke-1.5 -mt-1 align-text-bottom" data_tippy_placement='right' data_tippy_content="Awaiting Screening" data_tippy_delay=200 %}
+            {% endif %}
+        </div>
+    </td>
+
+    <!-- title -->
+    <td class="p-2 align-text-top">
+        <a
+            title="{{ s.form_data.title }}"
+            href="{% url "funds:submissions:detail" s.id %}?ref=table-view"
+            class="font-semibold text-base text-[#404041] hover:text-blue-600 transition-colors break-words line-clamp-2"
+        >{{ s.form_data.title }}</a>
+        <div class="text-xs text-fg-muted">
+            #{{ s.public_id|default:s.id }}
+            submitted <relative-time datetime="{{ s.submit_time|date:"c" }}">{{ s.submit_time|date:"SHORT_DATE_FORMAT" }}</relative-time>
+            • {{ s.stage }}
+        </div>
+    </td>
+
+    <td class="p-2 text-center align-top">
+        <a
+            hx-target="#main"
+            hx-push-url="true"
+            hx-swap="outerHTML"
+            href="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" status=s.phase.display_slug %}"
+            hx-get="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" status=s.phase.display_slug %}"
+            class="{{ s.phase.bg_color }} hover:opacity-70 text-center transition-opacity rounded-full inline-block ms-1 px-2 pt-0.5 pb-1 text-xs font-medium text-gray-800"
+        >{{ s.phase.display_name }}</a>
+    </td>
+
+    <td class="p-2 text-sm align-top">
+        <a
+            href="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" applicants=s.user.id %}"
+            hx-get="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" applicants=s.user.id %}"
+            hx-target="#main"
+            hx-push-url="true"
+            hx-swap="outerHTML"
+            class="text-inherit hover:underline"
+        >
+            {{ s.user }}
+        </a>
+        {% if 'organization_name' not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS and s.form_data.organization_name %}
+            <span class="text-xs text-fg-muted"> / {{ s.form_data.organization_name }}</span>
+        {% endif %}
+    </td>
+
+    {% if "round" not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}
+        <!-- fund -->
+        <td class="p-2 text-sm align-top text-center">
+            {% if s.round %}
+                <a
+                    href="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" round=s.round.id %}"
+                    hx-get="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" round=s.round.id %}"
+                    hx-target="#main"
+                    hx-push-url="true"
+                    hx-swap="outerHTML"
+                    class="text-inherit hover:underline"
+                >{{ s.round }}</a>
+                {% if 'fund' not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}
+                    <span class="text-xs text-fg-muted"> / {{ s.page }}</span>
+                {% endif %}
+            {% else %}
+                <a
+                    href="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" fund=s.page.id %}"
+                    hx-get="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" fund=s.page.id %}"
+                    hx-target="#main"
+                    hx-push-url="true"
+                    hx-swap="outerHTML"
+                    class="text-inherit hover:underline"
+                >
+                    {{ s.page }}
+                </a>
+            {% endif %}
+        </td>
+    {% endif %}
+
+    {% if not 'lead' in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}
+        <td class="p-2 text-sm align-top">
+            <a
+                href="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" lead=s.lead.id %}"
+                hx-get="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" lead=s.lead.id %}"
+                hx-target="#main"
+                hx-push-url="true"
+                hx-swap="outerHTML"
+                class="text-inherit hover:underline"
+            >{{ s.lead }}</a>
+        </td>
+    {% endif %}
+    <td class="p-2 align-top">
+        <div class="flex {% if 'reviews' in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}justify-center{% else %}justify-start{% endif%} gap-2">
+            {% if 'reviews' not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}
+                {% comment %} Reviews {% endcomment %}
+                <span class="inline-block w-16">
+                    <div
+                        class="relative items-center w-full gap-1 text-sm group"
+                        hx-trigger="mouseover once"
+                        hx-get="{% url "funds:submissions:partial-reviews-card" s.id %}"
+                        hx-target="find .review-hovercard"
+                        hx-swap="innerHTML"
+                    >
+                        <span id="r{{s.id}}" class="inline-block w-full">
+                                {% comment %} pre-loading animation {% endcomment %}
+                            <span class="inline-block w-full h-5 bg-gray-200 rounded animate-pulse"
+                            ></span>
+                        </span>
+
+                        <div
+                            class="absolute z-10 hidden w-64 p-2 bg-white border rounded shadow-lg review-hovercard bottom-6 -end-1/2 md:-end-4 group-hover:block"
+                        >
+                                {% comment %} pre-loading animation {% endcomment %}
+                            <div class="animate-pulse min-h-30">
+                                <div class="w-full mb-3 bg-gray-200 h-9"></div>
+                                <div class="w-full h-6 mb-1 bg-gray-200"></div>
+                                <div class="w-full h-1 mb-3 bg-gray-200"></div>
+                                <div class="w-1/2 h-6 mb-3 bg-gray-200"></div>
+                            </div>
+                        </div>
+                    </div>
+                </span>
+            {% endif %}
+            {% if s.comment_count %}
+                <a class="flex items-center text-gray-900 transition-colors group hover:text-light-blue"
+                   title="{% trans "View communications" %}"
+                   href="{% url "funds:submissions:detail" s.id %}?#communications"
+                >
+                    {% heroicon_outline "chat-bubble-left" aria_hidden="true" size=16 class="inline-block stroke-2 me-1 group-hover:stroke-light-blue" %}
+                    <span class="inline-block font-medium">{{ s.comment_count }}</span>
+                </a>
+            {% endif %}
+        </div>
+    </td>
+</tr>

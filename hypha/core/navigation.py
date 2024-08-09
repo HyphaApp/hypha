@@ -46,6 +46,11 @@ def get_primary_navigation_items(user):
                     "permission_method": "hypha.apply.users.decorators.is_apply_staff_or_reviewer_required",
                 },
                 {
+                    "title": _("Rounds & Labs"),
+                    "url": reverse_lazy("apply:rounds:list"),
+                    "permission_method": "hypha.apply.users.decorators.is_apply_staff",
+                },
+                {
                     "title": _("Staff Assignments"),
                     "url": reverse_lazy("apply:submissions:staff_assignments"),
                     "permission_method": "hypha.apply.users.decorators.is_apply_staff",
@@ -62,7 +67,7 @@ def get_primary_navigation_items(user):
                 },
                 {
                     "title": _("Staff flagged"),
-                    "url": reverse_lazy("apply:submissions:list-alt")
+                    "url": reverse_lazy("apply:submissions:list")
                     + "?query=flagged:@staff",
                     "permission_method": "hypha.apply.users.decorators.is_apply_staff",
                 },

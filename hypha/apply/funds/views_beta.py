@@ -226,6 +226,8 @@ def submission_all_beta(
             qs = qs.order_by("-submit_time")
         else:
             qs = qs.order_by(sort_options_raw[selected_sort][0])
+    elif selected_sort in ["title-asc", "title-desc"]:
+        qs = qs.order_by(f"{'-' if selected_sort == 'title-desc' else ''}title")
     elif search_term:
         qs = qs.order_by("-rank")
     else:

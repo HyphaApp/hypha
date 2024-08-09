@@ -12,7 +12,7 @@ from hypha.apply.utils.testing.tests import BaseViewTestCase
 
 class BaseBatchProgressViewTestCase(BaseViewTestCase):
     url_name = "funds:submissions:{}"
-    base_view_name = "list"
+    base_view_name = "list-old"
 
     def data(self, action, submissions):
         return {

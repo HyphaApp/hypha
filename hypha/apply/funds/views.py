@@ -50,7 +50,6 @@ from django_htmx.http import (
 )
 from django_tables2.paginators import LazyPaginator
 from django_tables2.views import SingleTableMixin
-from wagtail.models import Page
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import Event
@@ -104,11 +103,9 @@ from .models import (
     ApplicationRevision,
     ApplicationSubmission,
     AssignedReviewers,
-    LabBase,
     Reminder,
     ReviewerRole,
     ReviewerSettings,
-    RoundBase,
     RoundsAndLabs,
 )
 from .permissions import (
@@ -532,66 +529,6 @@ class SubmissionReviewerListView(BaseReviewerSubmissionsTable):
 class SubmissionListView(ViewDispatcher):
     admin_view = SubmissionAdminListView
     reviewer_view = SubmissionReviewerListView
-
-
-@method_decorator(login_required, name="dispatch")
-class ExportSubmissionsByRound(UserPassesTestMixin, BaseAdminSubmissionsTable):
-    def get_queryset(self):
-        try:
-            self.obj = Page.objects.get(pk=self.kwargs.get("pk")).specific
-        except Page.DoesNotExist as exc:
-            raise Http404(_("No Round or Lab found matching the query")) from exc
-
-        if not isinstance(self.obj, (LabBase, RoundBase)):
-            raise Http404(_("No Round or Lab found matching the query"))
-        return super().get_queryset().filter(Q(round=self.obj) | Q(page=self.obj))
-
-    def get(self, request, pk):
-        self.get_queryset()
-        csv_data = export_submissions_to_csv(
-            ApplicationSubmission.objects.filter(round=pk)
-        )
-        response = HttpResponse(csv_data.readlines(), content_type="text/csv")
-        response["Content-Disposition"] = (
-            "attachment; filename=" + str(self.obj) + ".csv"
-        )
-        return response
-
-    def test_func(self):
-        return can_export_submissions(self.request.user)
-
-
-@method_decorator(staff_required, name="dispatch")
-class SubmissionsByRound(BaseAdminSubmissionsTable, DelegateableListView):
-    template_name = "funds/submissions_by_round.html"
-    form_views = [
-        BatchUpdateLeadView,
-        BatchUpdateReviewersView,
-        BatchProgressSubmissionView,
-        BatchDeleteSubmissionView,
-        BatchArchiveSubmissionView,
-    ]
-
-    excluded_fields = ["round", "fund"] + settings.SUBMISSIONS_TABLE_EXCLUDED_FIELDS
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["round"] = self.obj
-        return kwargs
-
-    def get_queryset(self):
-        # We want to only show lab or Rounds in this view, their base class is Page
-        try:
-            self.obj = Page.objects.get(pk=self.kwargs.get("pk")).specific
-        except Page.DoesNotExist as e:
-            raise Http404(_("No Round or Lab found matching the query")) from e
-
-        if not isinstance(self.obj, (LabBase, RoundBase)):
-            raise Http404(_("No Round or Lab found matching the query"))
-        return super().get_queryset().filter(Q(round=self.obj) | Q(page=self.obj))
-
-    def get_context_data(self, **kwargs):
-        return super().get_context_data(object=self.obj, **kwargs)
 
 
 @method_decorator(staff_required, name="dispatch")

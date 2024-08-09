@@ -16,7 +16,7 @@
             {% if request.GET.ref == 'all-alt' %}
                 <a class="simplified__submissions-link"
                    hx-boost="true"
-                   href="{% url "funds:submissions:list-alt" %}"
+                   href="{% url "funds:submissions:list" %}"
                 >
                     {% trans "Back to submissions" %}
                 </a>
@@ -29,7 +29,7 @@
                     {% if request.user.is_apply_staff %}
                         <span>
                             <a class="link--transparent link--underlined"
-                               href="{% url 'apply:rounds:detail' pk=object.round.pk %}"
+                               href="{% url 'apply:submissions:list' %}?round={{ object.round.pk }}"
                             >{{ object.round }}</a>
                         </span>
                     {% else %}

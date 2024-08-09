@@ -156,7 +156,7 @@ def can_view_submission_screening(user, submission):
     submission_view, _ = is_user_has_access_to_view_submission(user, submission)
     if not submission_view:
         return False, "No access to view submission"
-    if user.is_applicant:
+    if submission.user == user:
         return False, "Applicant cannot view submission screening"
     return True, ""
 
