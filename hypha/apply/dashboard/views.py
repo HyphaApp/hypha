@@ -17,7 +17,6 @@ from hypha.apply.funds.tables import (
     SubmissionReviewerFilterAndSearch,
     SubmissionsTable,
     SummarySubmissionsTableWithRole,
-    UserFlaggedSubmissionsTable,
     review_filter_for_user,
 )
 from hypha.apply.projects.filters import ProjectListFilter
@@ -65,10 +64,8 @@ class MyFlaggedMixin:
 
         limit = 5
         return {
-            "table": UserFlaggedSubmissionsTable(
-                submissions[:limit],
-                prefix="my-flagged-",
-            ),
+            "submissions": submissions[:limit],
+            "count": submissions.count(),
             "display_more": submissions.count() > limit,
         }
 
@@ -197,6 +194,7 @@ class AdminDashboardView(MyFlaggedMixin, TemplateView):
             .order_by("-end_date")
             .by_lead(self.request.user)
         )
+
         return {
             "closed": rounds.closed()[:limit],
             "open": rounds.open()[:limit],

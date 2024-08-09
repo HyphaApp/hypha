@@ -7,8 +7,8 @@
 
         {% if selected_rounds %}
             <a
-                href="{% url "apply:submissions:list-alt" %}{% remove_from_query "only_query_string" "page" "round" %}"
-                hx-get="{% url "apply:submissions:list-alt" %}{% remove_from_query "only_query_string" "page" "round" %}"
+                href="{% url "apply:submissions:list" %}{% remove_from_query "only_query_string" "page" "round" %}"
+                hx-get="{% url "apply:submissions:list" %}{% remove_from_query "only_query_string" "page" "round" %}"
                 hx-push-url="true"
                 class="flex px-3 py-2 text-gray-600 border-b items-center hover:bg-gray-100 focus:bg-gray-100{% if s.selected %}bg-gray-100{% endif %}">
                 {% trans "All Rounds" %}
@@ -49,8 +49,8 @@
                     >
                         {% for f in closed_rounds %}
                             <a data-filter-item-text
-                               href="{% url "apply:submissions:list-alt" %}{% modify_query "only_query_string" "page" round=f.id %}"
-                               hx-get="{% url "apply:submissions:list-alt" %}{% modify_query "only_query_string" "page" round=f.id %}"
+                               href="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" round=f.id %}"
+                               hx-get="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" round=f.id %}"
                                hx-push-url="true"
                                class="flex {% if f.selected %}ps-2 font-medium{% else %}ps-8{% endif %} pe-3 py-2 text-gray-600 items-center hover:bg-gray-100 focus:bg-gray-100{% if f.selected %}bg-gray-100{% endif %}">
                                 {% if f.selected %}
@@ -71,8 +71,8 @@
                         {% for f in open_rounds %}
                             <a
                                 data-filter-item-text
-                                href="{% url "apply:submissions:list-alt" %}{% modify_query "only_query_string" "page" round=f.id %}"
-                                hx-get="{% url "apply:submissions:list-alt" %}{% modify_query "only_query_string" "page" round=f.id %}"
+                                href="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" round=f.id %}"
+                                hx-get="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" round=f.id %}"
                                 hx-push-url="true"
                                 class="flex {% if f.selected %}ps-2 font-medium{% else %}ps-8{% endif %} pe-3 py-2 text-gray-600 items-center hover:bg-gray-100 focus:bg-gray-100{% if f.selected %}bg-gray-100{% endif %}">
                                 {% if f.selected %}
