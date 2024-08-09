@@ -1,4 +1,5 @@
 from django import template
+from django.conf import settings
 
 register = template.Library()
 
@@ -18,3 +19,10 @@ def has_edit_perm(user, submission):
 @register.filter
 def has_review_perm(user, submission):
     return check_permission(user, "review", submission)
+
+
+@register.filter
+def has_withdraw_perm(user, submission):
+    if settings.ENABLE_SUBMISSION_WITHDRAWAL:
+        return check_permission(user, "withdraw", submission)
+    return False
