@@ -53,6 +53,11 @@ def user_can_submit_contract(project, user, contract):
 
 
 @register.simple_tag
+def required_remaining_contracting_doc_categories(remaining_categories):
+    return [category for category in remaining_categories if category.required]
+
+
+@register.simple_tag
 def user_can_upload_contract(project, user):
     can_upload, _ = has_permission(
         "contract_upload", user, object=project, raise_exception=False
