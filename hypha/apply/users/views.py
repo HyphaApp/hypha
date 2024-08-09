@@ -18,7 +18,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import PermissionDenied
 from django.core.signing import TimestampSigner, dumps, loads
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import Http404, get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.template.response import TemplateResponse
@@ -29,6 +29,7 @@ from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import never_cache
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import UpdateView
 from django.views.generic.base import TemplateView
@@ -40,6 +41,8 @@ from elevate.mixins import ElevateMixin
 from elevate.utils import grant_elevated_privileges
 from elevate.views import redirect_to_elevate
 from hijack.views import AcquireUserView
+from social_django.utils import psa
+from social_django.views import complete
 from two_factor.forms import AuthenticationTokenForm, BackupTokenForm
 from two_factor.utils import default_device, get_otpauth_url, totp_digits
 from two_factor.views import BackupTokensView as TwoFactorBackupTokensView
@@ -583,7 +586,9 @@ class PasswordLessLoginSignupView(FormView):
         form = self.get_form()
         if form.is_valid():
             service = PasswordlessAuthService(
-                request, redirect_field_name=self.redirect_field_name
+                request,
+                redirect_field_name=self.redirect_field_name,
+                extended_session=form.cleaned_data.get("remember_me", False),
             )
 
             email = form.cleaned_data["email"]
@@ -616,6 +621,10 @@ class PasswordlessLoginView(LoginView):
 
         if user and self.check_token(user, token):
             user.backend = settings.CUSTOM_AUTH_BACKEND
+
+            # Check for "?remember-me" query param, set the session age to long if exists
+            if "remember-me" in request.GET:
+                self.request.session.set_expiry(settings.SESSION_COOKIE_AGE_LONG)
 
             if default_device(user):
                 # User has mfa, set the user details and redirect to 2fa login
@@ -658,6 +667,10 @@ class PasswordlessSignupView(TemplateView):
             user.set_unusable_password()
             user.save()
             pending_signup.delete()
+
+            # Check for "?remember-me" query param, set the session age to long if exists
+            if "remember-me" in request.GET:
+                self.request.session.set_expiry(settings.SESSION_COOKIE_AGE_LONG)
 
             user.backend = settings.CUSTOM_AUTH_BACKEND
             login(request, user)
@@ -765,3 +778,31 @@ def set_password_view(request):
             email_subject_template="users/emails/set_password_subject.txt",
         )
         return HttpResponse("✓ Check your email for password set link.")
+
+
+@never_cache
+@csrf_exempt
+@psa(f"{settings.SOCIAL_AUTH_URL_NAMESPACE}:complete")
+def oauth_complete(
+    request: HttpRequest, backend: str, *args, **kwargs
+) -> HttpResponseRedirect:
+    """View utilized after an OAuth login is successful.
+
+    This is utilized to extend the OAuth session age to the `SESSION_COOKIE_AGE_LONG`.
+
+    Args:
+        request:
+            The request with a custom `backend` attribute that is populated by the `social_django.utils.psa` decorator
+        backend:
+            String containing the backend being utilized
+
+    Returns:
+        A `HttpResponseRedirect` to bring the user to a landing page or the `next` URL.
+    """
+    redirect = complete(request, backend, *args, **kwargs)
+
+    request.backend.strategy.request.session.set_expiry(
+        settings.SESSION_COOKIE_AGE_LONG
+    )
+
+    return redirect
