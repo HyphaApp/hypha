@@ -14,6 +14,7 @@ from django.contrib.auth.views import (
     PasswordResetConfirmView as DjPasswordResetConfirmView,
 )
 from django.contrib.auth.views import PasswordResetView as DjPasswordResetView
+from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import PermissionDenied
 from django.core.signing import TimestampSigner, dumps, loads
@@ -106,9 +107,10 @@ class LoginView(TwoFactorLoginView):
 
 
 @method_decorator(login_required, name="dispatch")
-class AccountView(UpdateView):
+class AccountView(SuccessMessageMixin, UpdateView):
     form_class = ProfileForm
     template_name = "users/account.html"
+    success_message = _("Profile updated.")
 
     def get_object(self):
         return self.request.user
