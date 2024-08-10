@@ -466,6 +466,7 @@
                 }
             }
 
+            // stylelint-disable-next-line selector-class-pattern
             .form__group {
                 margin-block-end: 0.5rem;
             }
@@ -489,6 +490,7 @@
                 grid-area: visibility;
             }
 
+            // stylelint-disable-next-line selector-class-pattern
             .id_assigned_to {
                 display: flex;
                 align-items: center;
