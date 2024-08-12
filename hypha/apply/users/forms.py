@@ -1,4 +1,3 @@
-import nh3
 from django import forms
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -9,6 +8,7 @@ from django_select2.forms import Select2Widget
 from wagtail.users.forms import UserCreationForm, UserEditForm
 
 from .models import AuthSettings, GroupDesc
+from .utils import strip_html_and_nerf_urls
 
 User = get_user_model()
 
@@ -200,13 +200,7 @@ class ProfileForm(forms.ModelForm):
         return email
 
     def clean_full_name(self):
-        full_name = self.cleaned_data["full_name"]
-        # Remove all HTML tags. This prohibits HTML without creating hurdles.
-        cleaned_full_name = nh3.clean(full_name, tags=set())
-        # Remove all colons and slashes to nerf URLs regardless of HTML tags.
-        cleaned_full_name = cleaned_full_name.replace(":", "")
-        cleaned_full_name = cleaned_full_name.replace("/", "")
-        return cleaned_full_name
+        return strip_html_and_nerf_urls(self.cleaned_data["full_name"])
 
 
 class BecomeUserForm(forms.Form):

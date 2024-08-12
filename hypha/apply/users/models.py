@@ -9,7 +9,6 @@ from django.urls import reverse
 from django.utils.crypto import get_random_string
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
-from nh3 import nh3
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 from wagtail.contrib.settings.models import BaseGenericSetting, register_setting
 from wagtail.fields import RichTextField
@@ -29,6 +28,7 @@ from .utils import (
     get_user_by_email,
     is_user_already_registered,
     send_activation_email,
+    strip_html_and_nerf_urls,
 )
 
 
@@ -172,12 +172,7 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
                 raise IntegrityError("Found an inactive account")
         else:
             if kwargs.get("full_name", False):
-                # Remove all HTML tags. This prohibits HTML without creating hurdles.
-                cleaned_full_name = nh3.clean(kwargs["full_name"], tags=set())
-                # Remove all colons and slashes to nerf URLs regardless of HTML tags.
-                cleaned_full_name = cleaned_full_name.replace(":", "")
-                cleaned_full_name = cleaned_full_name.replace("/", "")
-                kwargs["full_name"] = cleaned_full_name
+                kwargs["full_name"] = strip_html_and_nerf_urls(kwargs["full_name"])
             if "password" in kwargs:
                 # Coming from registration without application
                 temp_pass = kwargs.pop("password")

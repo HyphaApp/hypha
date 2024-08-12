@@ -1,5 +1,6 @@
 import string
 
+import nh3
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
@@ -193,3 +194,12 @@ def update_is_staff(request, user):
     elif user.is_staff and not user.is_apply_staff_admin:
         user.is_staff = False
         user.save()
+
+
+def strip_html_and_nerf_urls(value: str):
+    # Remove all HTML tags. This prohibits HTML without creating hurdles.
+    cleaned_value = nh3.clean(value, tags=set())
+    # Remove all colons and slashes to nerf URLs regardless of HTML tags.
+    cleaned_value = cleaned_value.replace(":", "")
+    cleaned_value = cleaned_value.replace("/", "")
+    return cleaned_value
