@@ -121,10 +121,15 @@ def get_invoices_status_counts(request):
 
 
 @login_required
-def partial_get_invoice_status(request, pk, invoice_pk):
-    invoice = get_object_or_404(Invoice, pk=invoice_pk)
+def partial_get_invoice_status(request, pk: int, rejected: bool):
+    invoices = get_object_or_404(Project, pk=pk).invoices
+
     return render(
         request,
         "application_projects/partials/invoice_status.html",
-        context={"invoice": invoice, "user": request.user},
+        context={
+            "invoices": invoices.rejected if rejected else invoices.not_rejected,
+            "user": request.user,
+            "rejected": rejected,
+        },
     )
