@@ -1,38 +1,6 @@
 (function ($) {
     "use strict";
 
-    let MobileMenu = class {
-        static selector() {
-            return ".js-mobile-menu-toggle";
-        }
-
-        constructor(node, closeButton, mobileMenu, search) {
-            this.node = node;
-            this.closeButton = closeButton;
-            this.mobileMenu = mobileMenu;
-
-            this.bindEventListeners();
-        }
-
-        bindEventListeners() {
-            this.node.click(this.toggle.bind(this));
-            this.closeButton.click(this.toggle.bind(this));
-        }
-
-        toggle() {
-            // toggle mobile menu
-            this.mobileMenu[0].classList.toggle("is-visible");
-        }
-    };
-
-    $(MobileMenu.selector()).each((index, el) => {
-        new MobileMenu(
-            $(el),
-            $(".js-mobile-menu-close"),
-            $(".header__menus--mobile")
-        );
-    });
-
     // reset mobile filters if they're open past the tablet breakpoint
     $(window)
         .resize(function resize() {

@@ -5,11 +5,6 @@
     transition: fill $transition;
     fill: $color--dark-grey;
 
-    // stylelint-disable-next-line force-element-nesting, selector-class-pattern
-    .header__menus--mobile.is-visible & {
-        fill: $color--white;
-    }
-
     &--person {
         width: 15px;
         height: 15px;
