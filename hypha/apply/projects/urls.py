@@ -105,6 +105,18 @@ urlpatterns = [
                     name="vendor-documents",
                 ),
                 path(
+                    "partial/invoice-status/",
+                    partial_get_invoice_status,
+                    {"rejected": False},
+                    name="partial-invoice-status",
+                ),
+                path(
+                    "partial/rejected-invoice-status/",
+                    partial_get_invoice_status,
+                    {"rejected": True},
+                    name="partial-rejected-invoice-status",
+                ),
+                path(
                     "invoices/<int:invoice_pk>/",
                     include(
                         [
@@ -131,11 +143,6 @@ urlpatterns = [
                                 "documents/supporting/<int:file_pk>/",
                                 InvoicePrivateMedia.as_view(),
                                 name="invoice-supporting-document",
-                            ),
-                            path(
-                                "partial/invoice-status/",
-                                partial_get_invoice_status,
-                                name="partial-invoice-status",
                             ),
                         ]
                     ),
