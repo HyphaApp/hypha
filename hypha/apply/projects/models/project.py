@@ -543,6 +543,9 @@ class ProjectSettings(BaseSiteSetting, ClusterableModel):
             "reminder_frequencies",
             label=_("Report reminder frequency"),
             heading=_("Report reminder frequency"),
+            help_text=_(
+                "Set up a cron job to run `notify_report_due.py`. The script will use these reminder settings."
+            ),
         ),
     ]
 
