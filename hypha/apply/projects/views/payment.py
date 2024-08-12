@@ -58,6 +58,7 @@ from ..models.payment import (
     APPROVED_BY_STAFF,
     CHANGES_REQUESTED_BY_FINANCE,
     CHANGES_REQUESTED_BY_STAFF,
+    DECLINED,
     INVOICE_TRANISTION_TO_RESUBMITTED,
     Invoice,
 )
@@ -95,29 +96,26 @@ class ChangeInvoiceStatusView(DelegatedViewMixin, InvoiceAccessMixin, UpdateView
     template = "application_projects/includes/update_invoice_form.html"
 
     def dispatch(self, request, *args, **kwargs):
-        self.object = get_object_or_404(Invoice, id=kwargs.get("invoice_pk"))
+        self.object: Invoice = get_object_or_404(Invoice, id=kwargs.get("invoice_pk"))
         return super().dispatch(request, *args, **kwargs)
 
-    def get(self, *args, **kwargs):
-        form_instance = self.form_class(instance=self.object, user=self.request.user)
-        form_instance.name = self.context_name
-
-        return render(
-            self.request,
-            self.template,
-            context={
-                "form": form_instance,
-                "form_id": f"{form_instance.name}-{self.object.id}",
-                "invoice_status": display_invoice_status_for_user(
-                    self.request.user, self.object
-                ),
-                "value": _("Update status"),
-                "object": self.object,
-            },
-        )
-
     def get_context_data(self, **kwargs):
-        return super().get_context_data(**kwargs)
+        if not (form := kwargs.get("form")):
+            form = self.form_class(instance=self.object, user=self.request.user)
+
+        form.name = self.context_name
+
+        extras = {
+            "form": form,
+            "form_id": f"{form.name}-{self.object.id}",
+            "invoice_status": display_invoice_status_for_user(
+                self.request.user, self.object
+            ),
+            "value": _("Update status"),
+            "object": self.object,
+        }
+
+        return {**kwargs, **extras}
 
     def form_valid(self, form):
         old_status = self.object.status
@@ -126,7 +124,7 @@ class ChangeInvoiceStatusView(DelegatedViewMixin, InvoiceAccessMixin, UpdateView
             invoice_status_change = _(
                 "<p>Invoice status updated to: {status}.</p>"
             ).format(status=self.object.get_status_display())
-            comment = f"<p>{self.object.comment}.</p>"
+            comment = f"<p>{self.object.comment}</p>"
 
             message = invoice_status_change + comment
 
@@ -162,37 +160,29 @@ class ChangeInvoiceStatusView(DelegatedViewMixin, InvoiceAccessMixin, UpdateView
 
         return response
 
+    def get(self, *args, **kwargs):
+        form_instance = self.form_class(instance=self.object, user=self.request.user)
+        form_instance.name = self.context_name
+
+        return render(self.request, self.template, self.get_context_data())
+
     def post(self, *args, **kwargs):
-        form = ChangeInvoiceStatusForm(
+        form = self.form_class(
             self.request.POST, instance=self.object, user=self.request.user
         )
         if form.is_valid():
             self.form_valid(form)
+            htmx_headers = {"invoicesUpdated": None, "showMessage": "Invoice updated."}
+            if self.object.status == DECLINED:
+                htmx_headers.update({"rejectedInvoicesUpdated": None})
             return HttpResponse(
-                status=204,
-                headers={
-                    "HX-Trigger": json.dumps(
-                        {
-                            f"invoiceUpdated-{self.object.id}": None,
-                            "showMessage": "Invoice updated.",
-                        }
-                    )
-                },
+                status=204, headers={"HX-Trigger": json.dumps(htmx_headers)}
             )
 
-        # TODO: get_context_data method to not duplicate code
         return render(
             self.request,
             self.template,
-            context={
-                "form": form,
-                "form_id": f"{form.name}-{self.object.id}",
-                "invoice_status": display_invoice_status_for_user(
-                    self.request.user, self.object
-                ),
-                "value": _("Update status"),
-                "object": self.object,
-            },
+            self.get_context_data(form=form),
             status=400,
         )
 
