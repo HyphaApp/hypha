@@ -33,7 +33,11 @@
         {% include 'review/includes/review_button.html' with submission=object class="button--full-width button--bottom-space" draft_text=review_draft %}
 
         {% if object.in_external_review_phase or not object.has_all_reviewer_roles_assigned %}
-            <a data-fancybox data-src="#update-reviewers" class="button button--bottom-space button--primary button--full-width" href="#">{% trans "Assign reviewers" %}</a>
+            <button
+                class="button button--bottom-space button--primary button--full-width"
+                hx-get="{% url 'funds:submissions:reviewers_update' pk=object.pk %}"
+                hx-target="#htmx-modal"
+            >{% trans "Assign reviewers" %}</button>
         {% endif %}
     {% endif %}
 

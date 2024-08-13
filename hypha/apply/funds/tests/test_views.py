@@ -468,7 +468,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
             buttons = (
                 BeautifulSoup(response.content, "html5lib")
                 .find(class_="sidebar")
-                .find_all("a", class_="button--primary", string="Assign reviewers")
+                .find_all("button", class_="button--primary", string="Assign reviewers")
             )
             self.assertEqual(len(buttons), 1)
 
