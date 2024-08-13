@@ -93,7 +93,6 @@ urlpatterns = [
                 path(
                     "partial/invoice-status/",
                     partial_get_invoice_status,
-                    {"rejected": False},
                     name="partial-invoice-status",
                 ),
                 path(
