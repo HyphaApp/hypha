@@ -11,6 +11,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from hypha.apply.funds.tests.factories import LabSubmissionFactory
+from hypha.apply.projects.utils import get_invoice_status_display_value
 from hypha.apply.users.tests.factories import (
     ApplicantFactory,
     ApproverFactory,
@@ -27,7 +28,7 @@ from hypha.home.factories import ApplySiteFactory
 from ...funds.models.forms import ApplicationBaseProjectReportForm
 from ..files import get_files
 from ..forms import SetPendingForm
-from ..models.payment import CHANGES_REQUESTED_BY_STAFF, SUBMITTED
+from ..models.payment import CHANGES_REQUESTED_BY_STAFF, DECLINED, SUBMITTED
 from ..models.project import (
     APPROVE,
     CLOSING,
@@ -1082,12 +1083,70 @@ class TestStaffChangeInvoiceStatus(BaseViewTestCase):
                 "comment": "this is a comment",
             },
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 204)
+        self.assertTrue("invoicesUpdated" in response.headers.get("HX-Trigger", ""))
         invoice.refresh_from_db()
         self.assertEqual(invoice.status, CHANGES_REQUESTED_BY_STAFF)
 
+    def test_can_view_updated_invoice(self):
+        project = ProjectFactory()
+        invoice = InvoiceFactory(project=project)
+        response = self.post_page(
+            invoice,
+            {
+                "form-submitted-change_invoice_status": "",
+                "status": CHANGES_REQUESTED_BY_STAFF,
+                "comment": "this is a comment",
+            },
+        )
+        self.assertEqual(response.status_code, 204)
+        self.assertTrue("invoicesUpdated" in response.headers.get("HX-Trigger", ""))
+        response = self.client.get(
+            reverse("apply:projects:partial-invoice-status", kwargs={"pk": project.pk}),
+            secure=True,
+            follow=True,
+        )
+        self.assertContains(
+            response, get_invoice_status_display_value(CHANGES_REQUESTED_BY_STAFF)
+        )
 
-class TestApplicantChangeInoviceStatus(BaseViewTestCase):
+    def test_can_view_updated_rejected_invoice(self):
+        project = ProjectFactory()
+        invoice = InvoiceFactory(project=project)
+        response = self.post_page(
+            invoice,
+            {
+                "form-submitted-change_invoice_status": "",
+                "status": DECLINED,
+                "comment": "this is a comment",
+            },
+        )
+        self.assertEqual(response.status_code, 204)
+        self.assertTrue("invoicesUpdated" in response.headers.get("HX-Trigger", ""))
+        self.assertTrue(
+            "rejectedInvoicesUpdated" in response.headers.get("HX-Trigger", "")
+        )
+        response = self.client.get(
+            reverse("apply:projects:partial-invoice-status", kwargs={"pk": project.pk}),
+            secure=True,
+            follow=True,
+        )
+        self.assertNotContains(response, get_invoice_status_display_value(DECLINED))
+
+        rejected_response = self.client.get(
+            reverse(
+                "apply:projects:partial-rejected-invoice-status",
+                kwargs={"pk": project.pk},
+            ),
+            secure=True,
+            follow=True,
+        )
+        self.assertContains(
+            rejected_response, get_invoice_status_display_value(DECLINED)
+        )
+
+
+class TestApplicantChangeInvoiceStatus(BaseViewTestCase):
     base_view_name = "invoice-detail"
     url_name = "funds:projects:{}"
     user_factory = ApplicantFactory
@@ -1122,7 +1181,7 @@ class TestApplicantChangeInoviceStatus(BaseViewTestCase):
         self.assertEqual(invoice.status, SUBMITTED)
 
 
-class TestStaffInoviceDocumentPrivateMedia(BaseViewTestCase):
+class TestStaffInvoiceDocumentPrivateMedia(BaseViewTestCase):
     base_view_name = "invoice-document"
     url_name = "funds:projects:{}"
     user_factory = StaffFactory

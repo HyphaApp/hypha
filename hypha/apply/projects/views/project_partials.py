@@ -1,7 +1,9 @@
+from typing import Optional
 from urllib.parse import parse_qs, urlparse
 
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
+from django.http import HttpRequest
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
 from django.utils.translation import gettext as _
@@ -121,7 +123,20 @@ def get_invoices_status_counts(request):
 
 
 @login_required
-def partial_get_invoice_status(request, pk: int, rejected: bool):
+def partial_get_invoice_status(
+    request: HttpRequest, pk: int, rejected: Optional[bool] = False
+):
+    """
+    Partial to get the invoice status table
+
+    Args:
+        request: request used to retrieve partial
+        pk: PK of the project to retrieve invoices for
+        rejected: retrieve rejected invoices, by default only retrieves not rejected invoices
+
+    Returns:
+        HttpResponse containing the table of requested invoices
+    """
     invoices = get_object_or_404(Project, pk=pk).invoices
 
     return render(
