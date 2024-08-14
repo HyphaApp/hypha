@@ -31,47 +31,9 @@
                 {% endif %}
                 <p class="card__text"><b>{% trans "Fund" %}:</b> {{ object.project.submission.page }}</p>
             </div>
-            <div class="flex card card--solid" x-data="{ collapsed: true }">
-                <div class="flex-none">
-                    <p><b>{% trans "Status" %}: </b></p>
-                </div>
-                <div class="ps-2">
-                    {% extract_status latest_activity user as latest_activity_status %}
-                    {% get_comment_for_invoice_action object latest_activity as latest_activity_comment %}
-                    <p>{{ latest_activity_status }} {% if user.is_applicant and latest_activity.user != user %} ({{ ORG_SHORT_NAME }}){% else %}({{ latest_activity.user }}){% endif %}
-                        <span class="text-gray-400">{{ latest_activity.timestamp }}</span>
-                        {% if latest_activity_comment %}
-                            <svg class="icon icon--request-changes"><use xlink:href="#request-changes"></use></svg>
-                            <a href="{% url 'apply:projects:detail' pk=object.project.id %}#communications#{{ latest_activity_comment.id }}" class="font-bold" target="_blank">{% trans "View comment" %}</a>
-                        {% endif %}
-                    </p>
-                    {% for activity in activities %}
-                        {% extract_status activity user as activity_status %}
-                        {% get_comment_for_invoice_action object activity as activity_comment %}
-                        <p x-show="!collapsed">{{ activity_status }} {% if user.is_applicant and activity.user != user %} ({{ ORG_SHORT_NAME }}){% else %}({{ activity.user }}){% endif %}
-                            <span class="text-gray-400">{{ activity.timestamp }}</span>
-                            {% if activity_comment %}
-                                <svg class="icon icon--request-changes"><use xlink:href="#request-changes"></use></svg>
-                                <a href="{% url 'apply:projects:detail' pk=object.project.id %}#communications#{{ activity_comment.id }}" class="font-bold" target="_blank">{% trans "View comment" %}</a>
-                            {% endif %}
-                        </p>
-                    {% endfor %}
-                </div>
-                <button
-                    type="button"
-                    class="flex-1 font-bold transition-opacity text-light-blue text-end hover:opacity-70"
-                    x-on:click="collapsed = ! collapsed"
-                >
-                    <span x-show="collapsed">
-                        {% trans "Show" %}
-                        {% heroicon_mini "arrow-down" class="inline align-text-bottom" aria_hidden=true %}
-                    </span>
-                    <span x-show="!collapsed">
-                        {% trans "Hide" %}
-                        {% heroicon_mini "arrow-up" class="inline align-text-bottom" aria_hidden=true %}
-                    </span>
-
-                </button>
+            <div hx-get="{% url 'apply:projects:partial-invoice-status' pk=object.project.pk invoice_pk=object.pk %}" hx-trigger="load, invoicesUpdated from:body" class="flex card card--solid" x-data="{ collapsed: true }">
+                <div class="flex-none content-center min-h-10"><div class="h-4 min-w-96 bg-gray-400 rounded-full animate-pulse"></div></div>
+                <div class="ps-2"></div>
             </div>
 
             <div class="card card--solid">
@@ -93,34 +55,8 @@
         <aside class="sidebar">
             {% block deliverables %}
             {% endblock %}
-            <div class="sticky js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions top-8" data-testid="sidebar-primary-actions">
-                <h5>{% trans "Actions to take" %}</h5>
-                {% block actions %}
-                    {% can_edit object user as user_can_edit_request %}
-                    {% if user.is_apply_staff or user.is_applicant %}
-                        <a
-                            {% if not user_can_edit_request %}
-                                data-tooltip="{% trans "Only editable when 'Submitted' or you have been requested to make changes" %}"
-                            {% endif %}
-                            class="button button--bottom-space button--primary button--full-width{% if not user_can_edit_request %} button--tooltip-disabled{% endif %}"
-                            href={% if user_can_edit_request %}
-                                 "{% url "apply:projects:invoice-edit" pk=object.project.pk invoice_pk=object.pk %}"
-                            {% else %}
-                                 "#"
-                            {% endif %}
-                        >
-                            {% trans "Edit Invoice" %}
-                        </a>
-                    {% endif %}
-                    {% can_delete object user as user_can_delete_request %}
-                    {% if user_can_delete_request %}
-                        <a
-                            class="button button--bottom-space button--primary button--full-width"
-                            href="{% url 'apply:projects:invoice-delete' pk=object.project.pk invoice_pk=object.pk %}">
-                            {% trans "Delete Invoice" %}
-                        </a>
-                    {% endif %}
-                {% endblock %}
+            <div hx-get="{% url 'apply:projects:partial-invoice-detail-actions' pk=object.project.pk invoice_pk=object.pk %}" hx-trigger="invoicesUpdated from:body" class="sticky js-actions-sidebar sidebar__inner sidebar__inner--light-blue sidebar__inner--actions top-8" data-testid="sidebar-primary-actions">
+                {% include "application_projects/partials/invoice_detail_actions.html" %}
             </div>
         </aside>
     </div>

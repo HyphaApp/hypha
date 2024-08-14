@@ -9,6 +9,7 @@ from django.urls import reverse_lazy
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_GET
 
+from hypha.apply.activity.models import Activity
 from hypha.apply.activity.services import (
     get_related_actions_for_user,
 )
@@ -123,7 +124,7 @@ def get_invoices_status_counts(request):
 
 
 @login_required
-def partial_get_invoice_status(
+def partial_get_invoice_status_table(
     request: HttpRequest, pk: int, rejected: Optional[bool] = False
 ):
     """
@@ -141,10 +142,64 @@ def partial_get_invoice_status(
 
     return render(
         request,
-        "application_projects/partials/invoice_status.html",
+        "application_projects/partials/invoice_status_table.html",
         context={
             "invoices": invoices.rejected if rejected else invoices.not_rejected,
             "user": request.user,
             "rejected": rejected,
         },
+    )
+
+
+@login_required
+def partial_get_invoice_status(request: HttpRequest, pk: int, invoice_pk: int):
+    """
+    Partial to get the invoice status for invoice detail view
+
+    Args:
+        request: request used to retrieve partial
+        pk: ID of the associated project
+        invoice_pk: ID of the invoice to retrieve the status of
+
+    Returns:
+        HttpResponse containing the status line of requested invoice
+    """
+    invoice = get_object_or_404(Invoice, pk=invoice_pk)
+    user = request.user
+    invoice_activities = Activity.actions.filter(
+        related_content_type__model="invoice", related_object_id=invoice.id
+    ).visible_to(user)
+
+    return render(
+        request,
+        "application_projects/partials/invoice_status.html",
+        context={
+            "object": invoice,
+            "latest_activity": invoice_activities.first(),
+            "activities": invoice_activities[1:],
+            "user": user,
+        },
+    )
+
+
+@login_required
+def partial_get_invoice_detail_actions(request: HttpRequest, pk: int, invoice_pk: int):
+    """
+    Partial to get the actions for the invoice detail view
+
+    Args:
+        request: request used to retrieve partial
+        pk: ID of the associated project
+        invoice_pk: ID of the invoice to retrieve the status of
+
+    Returns:
+        HttpResponse containing the status line of requested invoice
+    """
+    invoice = get_object_or_404(Invoice, pk=invoice_pk)
+    user = request.user
+
+    return render(
+        request,
+        "application_projects/partials/invoice_detail_actions.html",
+        context={"object": invoice, "user": user},
     )

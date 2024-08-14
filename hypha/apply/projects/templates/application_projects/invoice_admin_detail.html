@@ -7,38 +7,8 @@
     {% endif %}
 {% endblock %}
 
-{% block actions %}
-    {{ block.super }}
-    {% can_change_status object user as user_can_change_status %}
-    <a
-        {% if user_can_change_status %}
-            data-fancybox
-            data-src="#change-status"
-        {% endif %}
-        id="update_invoice_status"
-        class="button button--bottom-space button--primary button--full-width{% if not user_can_change_status %} button--tooltip-disabled{% endif %}"
-        href="#"
-    >
-        {% trans "Update Invoice Status" %}
-    </a>
-    {% if user_can_change_status %}
-        <div class="modal" id="change-status">
-            <h4 class="modal__project-header-bar">{% trans "Update Invoice status" %}</h4>
-            <p>{% trans "Current status" %}: {{ object.status_display }}</p>
-            {% trans "Update Status" as update %}
-            {% include 'funds/includes/delegated_form_base.html' with form=change_invoice_status value=update %}
-        </div>
-    {% endif %}
-{% endblock %}
-
-{% block extra_css %}
-    <link rel="stylesheet" href="{% static 'css/fancybox.css' %}">
-{% endblock %}
-
 {% block extra_js %}
     {{ block.super }}
-    <script src="{% static 'js/jquery.fancybox.min.js' %}"></script>
-    <script src="{% static 'js/fancybox-global.js' %}"></script>
     <script src="{% static 'js/deliverables.js' %}"></script>
 
     <script>

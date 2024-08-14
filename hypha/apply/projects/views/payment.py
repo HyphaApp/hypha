@@ -167,6 +167,12 @@ class ChangeInvoiceStatusView(DelegatedViewMixin, InvoiceAccessMixin, UpdateView
         return render(self.request, self.template, self.get_context_data())
 
     def post(self, *args, **kwargs):
+        # Don't process the post request if the user can't change the status
+        if not self.object.can_user_change_status(self.request.user):
+            return render(
+                self.request, self.template, self.get_context_data(), status=403
+            )
+
         form = self.form_class(
             self.request.POST, instance=self.object, user=self.request.user
         )
@@ -180,10 +186,7 @@ class ChangeInvoiceStatusView(DelegatedViewMixin, InvoiceAccessMixin, UpdateView
             )
 
         return render(
-            self.request,
-            self.template,
-            self.get_context_data(form=form),
-            status=400,
+            self.request, self.template, self.get_context_data(form=form), status=400
         )
 
 
@@ -230,30 +233,11 @@ class InvoiceAdminView(InvoiceAccessMixin, DelegateableView, DetailView):
         invoice = self.get_object()
         project = invoice.project
         deliverables = project.deliverables.all()
-        invoice_activities = Activity.actions.filter(
-            related_content_type__model="invoice", related_object_id=invoice.id
-        ).visible_to(self.request.user)
-        return super().get_context_data(
-            **kwargs,
-            deliverables=deliverables,
-            latest_activity=invoice_activities.first(),
-            activities=invoice_activities[1:],
-        )
+        return super().get_context_data(**kwargs, deliverables=deliverables)
 
 
 class InvoiceApplicantView(InvoiceAccessMixin, DelegateableView, DetailView):
     form_views = []
-
-    def get_context_data(self, **kwargs):
-        invoice = self.get_object()
-        invoice_activities = Activity.actions.filter(
-            related_content_type__model="invoice", related_object_id=invoice.id
-        ).visible_to(self.request.user)
-        return super().get_context_data(
-            **kwargs,
-            latest_activity=invoice_activities.first(),
-            activities=invoice_activities[1:],
-        )
 
 
 class InvoiceView(ViewDispatcher):
