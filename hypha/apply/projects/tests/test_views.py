@@ -1088,7 +1088,7 @@ class TestStaffChangeInvoiceStatus(BaseViewTestCase):
         invoice.refresh_from_db()
         self.assertEqual(invoice.status, CHANGES_REQUESTED_BY_STAFF)
 
-    def test_can_view_updated_invoice(self):
+    def test_can_view_updated_invoice_table(self):
         project = ProjectFactory()
         invoice = InvoiceFactory(project=project)
         response = self.post_page(
@@ -1112,7 +1112,7 @@ class TestStaffChangeInvoiceStatus(BaseViewTestCase):
             response, get_invoice_status_display_value(CHANGES_REQUESTED_BY_STAFF)
         )
 
-    def test_can_view_updated_rejected_invoice(self):
+    def test_can_view_updated_rejected_invoice_table(self):
         project = ProjectFactory()
         invoice = InvoiceFactory(project=project)
         response = self.post_page(
@@ -1147,6 +1147,44 @@ class TestStaffChangeInvoiceStatus(BaseViewTestCase):
         )
         self.assertContains(
             rejected_response, get_invoice_status_display_value(DECLINED)
+        )
+
+    def test_can_view_updated_invoice_status(self):
+        project = ProjectFactory()
+        invoice = InvoiceFactory(project=project)
+
+        response = self.client.get(
+            reverse(
+                "apply:projects:partial-invoice-status",
+                kwargs={"pk": project.pk, "invoice_pk": invoice.pk},
+            ),
+            secure=True,
+            follow=True,
+        )
+        self.assertNotContains(
+            response, get_invoice_status_display_value(CHANGES_REQUESTED_BY_STAFF)
+        )
+
+        response = self.post_page(
+            invoice,
+            {
+                "form-submitted-change_invoice_status": "",
+                "status": CHANGES_REQUESTED_BY_STAFF,
+                "comment": "this is a comment",
+            },
+        )
+        self.assertEqual(response.status_code, 204)
+        self.assertTrue("invoicesUpdated" in response.headers.get("HX-Trigger", ""))
+        response = self.client.get(
+            reverse(
+                "apply:projects:partial-invoice-status",
+                kwargs={"pk": project.pk, "invoice_pk": invoice.pk},
+            ),
+            secure=True,
+            follow=True,
+        )
+        self.assertContains(
+            response, get_invoice_status_display_value(CHANGES_REQUESTED_BY_STAFF)
         )
 
 
