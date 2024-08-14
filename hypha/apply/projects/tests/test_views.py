@@ -1092,7 +1092,9 @@ class TestStaffChangeInvoiceStatus(BaseViewTestCase):
         self.assertEqual(response.status_code, 204)
         self.assertTrue("invoicesUpdated" in response.headers.get("HX-Trigger", ""))
         response = self.client.get(
-            reverse("apply:projects:partial-invoice-status", kwargs={"pk": project.pk}),
+            reverse(
+                "apply:projects:partial-invoices-status", kwargs={"pk": project.pk}
+            ),
             secure=True,
             follow=True,
         )
@@ -1117,7 +1119,9 @@ class TestStaffChangeInvoiceStatus(BaseViewTestCase):
             "rejectedInvoicesUpdated" in response.headers.get("HX-Trigger", "")
         )
         response = self.client.get(
-            reverse("apply:projects:partial-invoice-status", kwargs={"pk": project.pk}),
+            reverse(
+                "apply:projects:partial-invoices-status", kwargs={"pk": project.pk}
+            ),
             secure=True,
             follow=True,
         )
@@ -1125,7 +1129,7 @@ class TestStaffChangeInvoiceStatus(BaseViewTestCase):
 
         rejected_response = self.client.get(
             reverse(
-                "apply:projects:partial-rejected-invoice-status",
+                "apply:projects:partial-rejected-invoices-status",
                 kwargs={"pk": project.pk},
             ),
             secure=True,

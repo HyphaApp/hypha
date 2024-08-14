@@ -30,7 +30,9 @@ from .views import (
     VendorPrivateMediaView,
     get_invoices_status_counts,
     get_project_status_counts,
+    partial_get_invoice_detail_actions,
     partial_get_invoice_status,
+    partial_get_invoice_status_table,
     partial_project_activities,
 )
 
@@ -106,14 +108,14 @@ urlpatterns = [
                 ),
                 path(
                     "partial/invoice-status/",
-                    partial_get_invoice_status,
-                    name="partial-invoice-status",
+                    partial_get_invoice_status_table,
+                    name="partial-invoices-status",
                 ),
                 path(
                     "partial/rejected-invoice-status/",
-                    partial_get_invoice_status,
+                    partial_get_invoice_status_table,
                     {"rejected": True},
-                    name="partial-rejected-invoice-status",
+                    name="partial-rejected-invoices-status",
                 ),
                 path(
                     "invoices/<int:invoice_pk>/",
@@ -132,6 +134,16 @@ urlpatterns = [
                                 "delete/",
                                 DeleteInvoiceView.as_view(),
                                 name="invoice-delete",
+                            ),
+                            path(
+                                "partial/status/",
+                                partial_get_invoice_status,
+                                name="partial-invoice-status",
+                            ),
+                            path(
+                                "actions/",
+                                partial_get_invoice_detail_actions,
+                                name="partial-invoice-detail-actions",
                             ),
                             path(
                                 "documents/invoice/",
