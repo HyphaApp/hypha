@@ -1,39 +1,43 @@
 {% load i18n invoice_tools heroicons %}
 
-{% for invoice in invoices %}
-    <tr>
-        {% display_invoice_status_for_user user invoice as invoice_status %}
-        <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Date submitted" %}: </span>{{ invoice.requested_at.date }}</td>
-        <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Invoice number" %}: </span>{{ invoice.invoice_number }}</td>
-        <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Status" %}: </span>{{ invoice_status }}</td>
-        <td class="flex flex-wrap justify-center py-4 px-0 gap-2 xl:flex-nowrap">
-            <a class="data-block__action-icon-link" href="{{ invoice.get_absolute_url }}" >
-                {% heroicon_micro "eye" aria_hidden=true class="me-1" %}
-                {% trans "View" %}
-            </a>
-            {% if not rejected %}
-                {% can_edit invoice user as user_can_edit_request %}
-                {% if user_can_edit_request %}
-                    <a class="data-block__action-icon-link" href="{% url "apply:projects:invoice-edit" pk=invoice.project.pk invoice_pk=invoice.pk %}">
-                        {% heroicon_micro "pencil-square" aria_hidden=true class="me-1" %}
-                        {% trans "Edit" %}
-                    </a>
-                {% endif %}
-
-                {% can_delete invoice user as user_can_delete_request %}
-                {% if user.is_applicant and user_can_delete_request %}
-                    <a class="data-block__action-icon-link text-red-500" href="{% url 'apply:projects:invoice-delete' pk=invoice.project.pk invoice_pk=invoice.pk %}">
-                        {% heroicon_micro "trash" aria_hidden=true class="me-1" %}
-                        {% trans "Delete" %}
-                    </a>
-                {% endif %}
-                {% can_change_status invoice user as can_change_invoice_status %}
-                {% if can_change_invoice_status %}
-                    <button class="data-block__button button button--primary" hx-get="{% url 'apply:projects:invoice-update' pk=invoice.project.pk invoice_pk=invoice.pk %}" hx-target="#htmx-modal">
-                        {% trans "Update Status" %}
-                    </button>
-                {% endif %}
+<div class="flex-none">
+    <p><b>{% trans "Status" %}: </b></p>
+</div>
+<div class="ps-2">
+    {% extract_status latest_activity user as latest_activity_status %}
+    {% get_comment_for_invoice_action object latest_activity as latest_activity_comment %}
+    <p>{{ latest_activity_status }} {% if user.is_applicant and latest_activity.user != user %} ({{ ORG_SHORT_NAME }}){% else %}({{ latest_activity.user }}){% endif %}
+        <span class="text-gray-400">{{ latest_activity.timestamp }}</span>
+        {% if latest_activity_comment %}
+            <svg class="icon icon--request-changes"><use xlink:href="#request-changes"></use></svg>
+            <a href="{% url 'apply:projects:detail' pk=object.project.id %}#communications#{{ latest_activity_comment.id }}" class="font-bold" target="_blank">{% trans "View comment" %}</a>
+        {% endif %}
+    </p>
+    {% for activity in activities %}
+        {% extract_status activity user as activity_status %}
+        {% get_comment_for_invoice_action object activity as activity_comment %}
+        <p x-show="!collapsed">{{ activity_status }} {% if user.is_applicant and activity.user != user %} ({{ ORG_SHORT_NAME }}){% else %}({{ activity.user }}){% endif %}
+            <span class="text-gray-400">{{ activity.timestamp }}</span>
+            {% if activity_comment %}
+                <svg class="icon icon--request-changes"><use xlink:href="#request-changes"></use></svg>
+                <a href="{% url 'apply:projects:detail' pk=object.project.id %}#communications#{{ activity_comment.id }}" class="font-bold" target="_blank">{% trans "View comment" %}</a>
             {% endif %}
-        </td>
-    </tr>
-{% endfor %}
+        </p>
+    {% endfor %}
+</div>
+{% if activities %}
+    <button
+        type="button"
+        class="flex-1 font-bold transition-opacity text-light-blue text-end hover:opacity-70"
+        x-on:click="collapsed = ! collapsed"
+    >
+        <span x-show="collapsed">
+            {% trans "Show" %}
+            {% heroicon_mini "arrow-down" class="inline align-text-bottom" aria_hidden=true %}
+        </span>
+        <span x-show="!collapsed">
+            {% trans "Hide" %}
+            {% heroicon_mini "arrow-up" class="inline align-text-bottom" aria_hidden=true %}
+        </span>
+    </button>
+{% endif %}
