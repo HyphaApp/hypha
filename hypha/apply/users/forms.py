@@ -8,6 +8,7 @@ from django_select2.forms import Select2Widget
 from wagtail.users.forms import UserCreationForm, UserEditForm
 
 from .models import AuthSettings, GroupDesc
+from .utils import strip_html_and_nerf_urls
 
 User = get_user_model()
 
@@ -197,6 +198,9 @@ class ProfileForm(forms.ModelForm):
                 self.instance.email
             )  # updated email to avoid email existing message, fix information leak.
         return email
+
+    def clean_full_name(self):
+        return strip_html_and_nerf_urls(self.cleaned_data["full_name"])
 
 
 class BecomeUserForm(forms.Form):

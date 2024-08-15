@@ -44,6 +44,7 @@ htmldocx==0.0.6
 lark==1.1.9
 mistune==3.0.2
 more-itertools==10.2.0
+nh3==0.2.18
 phonenumberslite==8.13.32
 Pillow==10.3.0
 psycopg[binary]==3.1.18

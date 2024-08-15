@@ -28,6 +28,7 @@ from .utils import (
     get_user_by_email,
     is_user_already_registered,
     send_activation_email,
+    strip_html_and_nerf_urls,
 )
 
 
@@ -170,6 +171,8 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
             elif not user.is_active:
                 raise IntegrityError("Found an inactive account")
         else:
+            if kwargs.get("full_name", False):
+                kwargs["full_name"] = strip_html_and_nerf_urls(kwargs["full_name"])
             if "password" in kwargs:
                 # Coming from registration without application
                 temp_pass = kwargs.pop("password")
