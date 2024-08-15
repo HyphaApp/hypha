@@ -1,5 +1,6 @@
 import copy
 
+from django.conf import settings
 from django.utils.translation import gettext as _
 
 from hypha.apply.activity.adapters.utils import link_to
@@ -179,10 +180,19 @@ template_map = {
 
 
 def get_task_template(request, task, **kwargs):
+    from hypha.apply.projects.models import Invoice, Project
+
     related_obj = task.related_object
     code = task.code
     # if related_object is none/deleted and task remain there(edge case, avoiding 500)
     if not related_obj:
+        return None
+
+    # if project are not enabled
+    if not settings.PROJECTS_ENABLED and (
+        isinstance(task.related_object, Project)
+        or isinstance(task.related_object, Invoice)
+    ):
         return None
 
     templates = copy.deepcopy(template_map)
