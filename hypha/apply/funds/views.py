@@ -13,7 +13,6 @@ from django.contrib.auth.decorators import (
     user_passes_test,
 )
 from django.contrib.auth.mixins import UserPassesTestMixin
-from django.contrib.auth.models import Group
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count, Q
 from django.forms import BaseModelForm
@@ -68,13 +67,12 @@ from hypha.apply.projects.forms import ProjectCreateForm
 from hypha.apply.review.models import Review
 from hypha.apply.stream_forms.blocks import GroupToggleBlock
 from hypha.apply.todo.options import PROJECT_WAITING_PAF
-from hypha.apply.todo.views import add_task_to_user_group
+from hypha.apply.todo.views import add_task_to_user
 from hypha.apply.users.decorators import (
     is_apply_staff,
     staff_or_finance_required,
     staff_required,
 )
-from hypha.apply.users.groups import STAFF_GROUP_NAME
 from hypha.apply.utils.models import PDFPageSettings
 from hypha.apply.utils.pdfs import draw_submission_content, make_pdf
 from hypha.apply.utils.storage import PrivateMediaView
@@ -727,9 +725,9 @@ class CreateProjectView(View):
                 related=project.submission,
             )
             # add task for staff to add PAF to the project
-            add_task_to_user_group(
+            add_task_to_user(
                 code=PROJECT_WAITING_PAF,
-                user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+                user=project.lead,
                 related_obj=project,
             )
             return HttpResponseClientRedirect(project.get_absolute_url())

@@ -9,12 +9,12 @@ from hypha.apply.todo.options import (
 from hypha.apply.todo.views import (
     add_task_to_user,
     add_task_to_user_group,
+    remove_tasks_for_user,
     remove_tasks_for_user_group,
 )
 from hypha.apply.users.groups import (
     APPROVER_GROUP_NAME,
     FINANCE_GROUP_NAME,
-    STAFF_GROUP_NAME,
 )
 
 from .models.payment import (
@@ -32,9 +32,9 @@ from .models.payment import (
 def handle_tasks_on_invoice_update(old_status, invoice):
     if old_status in [SUBMITTED, RESUBMITTED]:
         # remove invoice waiting approval task for staff
-        remove_tasks_for_user_group(
+        remove_tasks_for_user(
             code=INVOICE_WAITING_APPROVAL,
-            user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+            user=invoice.project.lead,
             related_obj=invoice,
         )
         if invoice.status == CHANGES_REQUESTED_BY_STAFF:
@@ -60,9 +60,9 @@ def handle_tasks_on_invoice_update(old_status, invoice):
         )
         if invoice.status == CHANGES_REQUESTED_BY_FINANCE:
             # add invoice required changes task for staff
-            add_task_to_user_group(
+            add_task_to_user(
                 code=INVOICE_REQUIRED_CHANGES,
-                user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+                user=invoice.project.lead,
                 related_obj=invoice,
             )
         elif invoice.status == APPROVED_BY_FINANCE:
@@ -84,9 +84,9 @@ def handle_tasks_on_invoice_update(old_status, invoice):
                 )
     if old_status == CHANGES_REQUESTED_BY_FINANCE:
         # remove invoice required changes task for staff
-        remove_tasks_for_user_group(
+        remove_tasks_for_user(
             code=INVOICE_REQUIRED_CHANGES,
-            user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+            user=invoice.project.lead,
             related_obj=invoice,
         )
         if invoice.status == CHANGES_REQUESTED_BY_STAFF:
@@ -138,9 +138,9 @@ def handle_tasks_on_invoice_update(old_status, invoice):
             )
             if invoice.status == CHANGES_REQUESTED_BY_FINANCE:
                 # add invoice required changes task for staff
-                add_task_to_user_group(
+                add_task_to_user(
                     code=INVOICE_REQUIRED_CHANGES,
-                    user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+                    user=invoice.project.lead,
                     related_obj=invoice,
                 )
         if old_status == APPROVED_BY_FINANCE_2:
