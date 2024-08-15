@@ -29,8 +29,7 @@
                     {% if request.user.is_apply_staff %}
                         <span>
                             <a class="link--transparent link--underlined"
-                               href="{% url 'apply:rounds:detail'
-                                     pk=object.round.pk %}"
+                               href="{% url 'apply:rounds:detail' pk=object.round.pk %}"
                             >{{ object.round }}</a>
                         </span>
                     {% else %}
