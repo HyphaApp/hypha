@@ -376,7 +376,7 @@ class EditInvoiceView(InvoiceAccessMixin, UpdateView):
             # add invoice waiting approval task for staff group
             add_task_to_user(
                 code=INVOICE_WAITING_APPROVAL,
-                user=self.object.lead,
+                user=self.object.project.lead,
                 related_obj=self.object,
             )
 
@@ -393,7 +393,7 @@ class EditInvoiceView(InvoiceAccessMixin, UpdateView):
             # add invoice waiting approval task for staff group
             add_task_to_user(
                 code=INVOICE_WAITING_APPROVAL,
-                user=self.object.lead,
+                user=self.object.project.lead,
                 related_obj=self.object,
             )
 
