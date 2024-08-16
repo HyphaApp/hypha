@@ -2,8 +2,10 @@ import json
 
 from django import template
 from django.conf import settings
+from django.utils.translation import gettext_lazy as _
 
 from hypha.apply.determinations.models import Determination
+from hypha.apply.funds.models.submissions import ApplicationSubmission
 from hypha.apply.projects.models import Contract
 from hypha.apply.review.models import Review
 from hypha.apply.users.models import User
@@ -14,7 +16,7 @@ register = template.Library()
 
 
 @register.filter
-def display_author(activity, user) -> str:
+def display_activity_author(activity, user) -> str:
     """Creates a formatted author string based on the activity and viewer role.
 
     Args:
@@ -28,12 +30,21 @@ def display_author(activity, user) -> str:
         A string with the formatted author depending on the user role (ie. a
         comment from staff viewed by an applicant will return the org name).
     """
-    if settings.HIDE_STAFF_IDENTITY and (
-        (user.is_applicant or user.is_partner) and activity.user.is_org_faculty
+    if (
+        settings.HIDE_STAFF_IDENTITY
+        and not user.is_org_faculty
+        and activity.user.is_org_faculty
     ):
         return settings.ORG_LONG_NAME
     if isinstance(activity.related_object, Review) and activity.source.user == user:
-        return "Reviewer"
+        return _("Reviewer")
+    if (
+        settings.HIDE_IDENTITY_FROM_REVIEWERS
+        and isinstance(activity.source, ApplicationSubmission)
+        and activity.user == activity.source.user
+        and user in activity.source.reviewers.all()
+    ):
+        return _("Applicant")
     return activity.user.get_display_name_with_group()
 
 

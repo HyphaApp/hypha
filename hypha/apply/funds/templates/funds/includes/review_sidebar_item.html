@@ -1,4 +1,4 @@
-{% load wagtailimages_tags heroicons %}
+{% load i18n wagtailimages_tags heroicons %}
 
 <li
     class="reviews-sidebar__item {% if not reviewer.review %}no-response {% endif %}"
@@ -6,7 +6,13 @@
 >
     {% if not reviewer.review or reviewer.review.is_draft %}
         <div class="reviews-sidebar__name">
-            <span>{{ reviewer}}</span>
+            <span>
+                {% if HIDE_STAFF_IDENTITY and not request.user.is_org_faculty and not request.user == reviewer.reviewer %}
+                    {% trans "Reviewer" %}
+                {% else %}
+                    {{ reviewer }}
+                {% endif %}
+            </span>
             {% if reviewer.role %}{% image reviewer.role.icon max-12x12 %}{% endif %}
         </div>
         <div>-</div>
@@ -16,7 +22,13 @@
             <div>
                 <a href="{% url 'apply:submissions:reviews:review' submission_pk=reviewer.submission.id pk=reviewer.review.id %}">
                     <div class="reviews-sidebar__name">
-                        <span>{{ reviewer }}</span>
+                        <span>
+                            {% if HIDE_STAFF_IDENTITY and not request.user.is_org_faculty and not request.user == reviewer.reviewer %}
+                                {% trans "Reviewer" %}
+                            {% else %}
+                                {{ reviewer }}
+                            {% endif %}
+                        </span>
                         {% if reviewer.role %}{% image reviewer.role.icon max-12x12 %}{% endif %}
                     </div>
                 </a>
@@ -24,7 +36,13 @@
             </div>
         {% else %}
             <div class="reviews-sidebar__name">
-                <span>{{ reviewer }}</span>
+                <span>
+                    {% if HIDE_STAFF_IDENTITY and not request.user.is_org_faculty and not request.user == reviewer.reviewer %}
+                        {% trans "Reviewer" %}
+                    {% else %}
+                        {{ reviewer }}
+                    {% endif %}
+                </span>
                 {% if reviewer.role %}{% image reviewer.role.icon max-12x12 %}{% endif %}
             </div>
         {% endif %}

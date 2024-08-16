@@ -3,7 +3,7 @@ from urllib.parse import parse_qs, urlparse
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
@@ -23,6 +23,7 @@ from hypha.apply.funds.models.reviewer_role import ReviewerRole
 from hypha.apply.funds.permissions import has_permission
 from hypha.apply.funds.reviewers.services import get_all_reviewers
 from hypha.apply.funds.services import annotate_review_recommendation_and_count
+from hypha.apply.review.options import REVIEWER
 from hypha.apply.users.groups import REVIEWER_GROUP_NAME
 
 from . import services
@@ -246,11 +247,18 @@ def partial_reviews_card(request: HttpRequest, pk: str) -> HttpResponse:
 
     assigned_reviewers = submission.assigned.review_order()
 
-    if not submission.stage.has_external_review:
-        assigned_reviewers = assigned_reviewers.staff()
-
-    # Calculate the recommendation based on role and staff reviews
-    recommendation = submission.reviews.by_staff().recommendation()
+    if not request.user.is_org_faculty and request.user.is_reviewer:
+        # Only show external reviewers info on reviews that have visibility set to REVIEWER
+        assigned_reviewers = assigned_reviewers.filter(
+            Q(review__visibility=REVIEWER) | Q(reviewer=request.user)
+        )
+        recommendation = (
+            submission.reviews.by_staff().filter(visibility=REVIEWER).recommendation()
+        )
+    else:
+        recommendation = submission.reviews.by_staff().recommendation()
+        if not submission.stage.has_external_review:
+            assigned_reviewers = assigned_reviewers.staff()
 
     ctx = {
         "hidden_types": [REVIEWER_GROUP_NAME],

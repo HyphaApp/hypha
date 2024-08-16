@@ -668,7 +668,6 @@ class TestEmailAdapter(AdapterMixin, TestCase):
 
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(submission.user.email, mail.outbox[0].to[0])
-        print(mail.outbox[0].body)
         self.assertTrue(str(staff_commenter) in mail.outbox[0].body)
 
 

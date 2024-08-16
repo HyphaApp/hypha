@@ -13,7 +13,7 @@
     <div class="feed__content js-feed-content">
         <div class="feed__meta js-feed-meta py-2 bg-slate-50 shadow-sm">
             <p class="feed__meta-item ps-3">
-                <span>{{ activity|display_author:request.user }}</span>
+                <span>{{ activity|display_activity_author:request.user }}</span>
                 <relative-time class="text-fg-muted text-sm" data-tippy-content="{{ activity.timestamp|date:"SHORT_DATETIME_FORMAT" }}" datetime={{ activity.timestamp|date:"c" }}>{{ activity.timestamp|date:"SHORT_DATETIME_FORMAT" }}</relative-time>
                 {% if activity.edited %}
                     •
