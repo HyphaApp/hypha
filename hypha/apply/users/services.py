@@ -1,3 +1,5 @@
+from typing import Optional
+
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.http import HttpRequest
@@ -22,9 +24,24 @@ class PasswordlessAuthService:
 
     next_url = None
 
-    def __init__(self, request: HttpRequest, redirect_field_name: str = "next") -> None:
+    def __init__(
+        self,
+        request: HttpRequest,
+        redirect_field_name: Optional[str] = "next",
+        extended_session: Optional[bool] = False,
+    ) -> None:
+        """The service utilized to handle passwordless auth requests.
+
+        Determines if a user is logging in or signing up, and sends the appropriate magic links.
+
+        Args:
+            request: HttpRequest object.
+            redirect_field: The name of a field containing the redirect URL.
+            extended_session: Include the `remember-me` param in the magic link, defaults to False.
+        """
         self.redirect_field_name = redirect_field_name
         self.next_url = get_redirect_url(request, self.redirect_field_name)
+        self.extended_session = extended_session
         self.request = request
         self.site = Site.find_for_request(request)
 
@@ -35,8 +52,8 @@ class PasswordlessAuthService:
             "users:do_passwordless_login", kwargs={"uidb64": uid, "token": token}
         )
 
-        if self.next_url:
-            login_path = f"{login_path}?next={self.next_url}"
+        if params := self._get_url_params():
+            login_path = f"{login_path}?{params}"
 
         return login_path
 
@@ -48,10 +65,32 @@ class PasswordlessAuthService:
             "users:do_passwordless_signup", kwargs={"uidb64": uid, "token": token}
         )
 
-        if self.next_url:
-            signup_path = f"{signup_path}?next={self.next_url}"
+        if params := self._get_url_params():
+            signup_path = f"{signup_path}?{params}"
 
         return signup_path
+
+    def _get_url_params(self) -> None | str:
+        """Gets a URL encoded string of params for the magic link
+
+        Populates the redirect url & remember me params if they exist
+
+        Returns:
+            A url encoded string if params exist, `None` otherwise.
+        """
+        params = []
+
+        # Utilized this instead of QueryDict to allow `remember-me` to not need a value.
+        # Redundant to have a useless value (ie. `remember-me=1`) when the login view only checks for the key
+        if self.next_url:
+            params.append(f"next={self.next_url}")
+        if self.extended_session:
+            params.append("remember-me")
+
+        if params:
+            return "&".join(params)
+
+        return None
 
     def get_email_context(self) -> dict:
         return {
@@ -135,8 +174,6 @@ class PasswordlessAuthService:
 
         Args:
             email: Email address to send the email to.
-            request: HttpRequest object.
-            next_url: URL to redirect to after login/signup. Defaults to None.
 
         Returns:
             None

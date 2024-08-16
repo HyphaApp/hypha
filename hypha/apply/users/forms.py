@@ -58,6 +58,16 @@ class PasswordlessAuthForm(forms.Form):
         widget=forms.EmailInput(attrs={"autofocus": True, "autocomplete": "email"}),
     )
 
+    if settings.SESSION_COOKIE_AGE <= settings.SESSION_COOKIE_AGE_LONG:
+        remember_me = forms.BooleanField(
+            label=_("Remember me"),
+            help_text=_(
+                "On trusted devices only, keeps you logged in for a longer period."
+            ),
+            required=False,
+            widget=forms.CheckboxInput(),
+        )
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.request = kwargs.pop("request", None)
