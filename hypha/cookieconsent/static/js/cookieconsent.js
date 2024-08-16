@@ -76,7 +76,7 @@
     // Open the prompt if consent value is undefined OR if analytics has been added since the user ack'd essential cookies
     if (
         getConsentValue() == undefined ||
-        (getConsentValue() === ACK && cookieButtons.length > 1)
+        (getConsentValue() === ACK && cookieButtons.length > 2)
     ) {
         openConsentPrompt();
     }
