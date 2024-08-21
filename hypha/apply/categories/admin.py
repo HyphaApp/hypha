@@ -1,6 +1,8 @@
 from django.urls import re_path
 from wagtail.contrib.modeladmin.options import ModelAdmin
 
+from hypha.apply.utils.admin import AdminIcon
+
 from .admin_helpers import MetaTermButtonHelper
 from .admin_views import AddChildMetaTermViewClass
 from .models import Category, MetaTerm
@@ -8,14 +10,14 @@ from .models import Category, MetaTerm
 
 class CategoryAdmin(ModelAdmin):
     menu_label = "Category Questions"
-    menu_icon = "list-ul"
+    menu_icon = str(AdminIcon.CATEGORY)
     model = Category
 
 
 class MetaTermAdmin(ModelAdmin):
     model = MetaTerm
 
-    menu_icon = "tag"
+    menu_icon = str(AdminIcon.META_TERM)
 
     list_per_page = 50
     list_display = ("get_as_listing_header", "get_parent")
