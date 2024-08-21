@@ -588,8 +588,14 @@ class UploadContractView(DelegatedViewMixin, CreateView):
             form.instance.approver = self.request.user
             form.instance.approved_at = timezone.now()
             form.instance.signed_and_approved = contract_signed_and_approved
+            form.instance.signed_by_applicant = True
             form.instance.save(
-                update_fields=["approver", "approved_at", "signed_and_approved"]
+                update_fields=[
+                    "approver",
+                    "approved_at",
+                    "signed_and_approved",
+                    "signed_by_applicant",
+                ]
             )
 
             project.status = INVOICING_AND_REPORTING
