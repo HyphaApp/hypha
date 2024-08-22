@@ -12,8 +12,8 @@
             <table class="w-full relative [&_th]:p-2 [&_td]:p-2">
                 <thead class="bg-gray-50 border">
                     <tr class="">
-                        <th class="md:table-cell hidden" colspan="{% if enable_selection %}2{% else %}1{% endif %}"></th>
-
+                        {% if enable_selection %}<th class="md:table-cell hidden"></th>{% endif %}
+                        <th></th>
                         <th class="min-w-48 font-semibold">
                             Title
                         </th>
