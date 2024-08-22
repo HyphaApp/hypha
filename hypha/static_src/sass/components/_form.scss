@@ -449,12 +449,12 @@
     &__comments {
         .fields--visible {
             display: grid;
-            grid-template-areas: "message" "attachments" "visibility" "actions";
+            grid-template-areas: "message" "attachments" "visibility" "assigned_to" "actions";
             grid-template-rows: auto auto auto auto;
             grid-template-columns: 1fr;
 
             @include media-query(lg) {
-                grid-template-areas: "message attachments" "message visibility" "message assigned_to";
+                grid-template-areas: "message attachments" "message visibility" "message assigned_to" "actions assigned_to";
                 grid-template-rows: auto auto;
                 grid-template-columns: 2fr 1fr;
                 column-gap: 2rem;
@@ -464,6 +464,11 @@
                     max-width: 100%;
                     margin-block-end: 0;
                 }
+            }
+
+            // stylelint-disable-next-line selector-class-pattern
+            .button {
+                max-width: 150px;
             }
 
             // stylelint-disable-next-line selector-class-pattern
@@ -492,9 +497,9 @@
 
             // stylelint-disable-next-line selector-class-pattern
             .id_assigned_to {
+                grid-area: assigned_to;
                 display: flex;
-                align-items: center;
-                gap: 1rem;
+                flex-direction: column;
             }
         }
     }

@@ -1,6 +1,40 @@
 {% load i18n %}
 
 <div class="wrapper wrapper--comments">
-    {% trans "Submit" as submit %}
-    {% include "funds/includes/delegated_form_base.html" with form=comment_form value=submit extra_classes="form__comments" %}
+    {% trans "Submit" as value %}
+    {% load i18n %}
+    <form
+        class="form form__comments"
+        method="post"
+        id="{% if form_id %}{{ form_id }}{% else %}{{ comment_form.name }}{% endif %}"
+        enctype="multipart/form-data"
+        {% if action %}action="{{ action }}"{% endif %}
+    >
+        {% csrf_token %}
+
+        {{ comment_form.media }}
+        {% for hidden in comment_form.hidden_fields %}
+            {{ hidden }}
+        {% endfor %}
+
+        <div class="fields--visible">
+            {% for field in comment_form.visible_fields %}
+                {% if field.field %}
+                    {% include "forms/includes/field.html" %}
+                {% else %}
+                    {{ field }}
+                {% endif %}
+            {% endfor %}
+
+            <button
+                class="button button--primary"
+                id="{{ comment_form.name }}-submit"
+                name="{{ form_prefix }}{{ comment_form.name }}"
+                type="submit"
+                form="{% if form_id %}{{ form_id }}{% else %}{{ comment_form.name }}{% endif %}">
+                {{ value }}
+            </button>
+        </div>
+
+    </form>
 </div>
