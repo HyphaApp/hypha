@@ -1,5 +1,5 @@
 {% extends "base-apply.html" %}
-{% load i18n static workflow_tags wagtailcore_tags statusbar_tags archive_tags %}
+{% load i18n static workflow_tags wagtailcore_tags statusbar_tags archive_tags submission_tags %}
 {% load heroicons %}
 
 {% block title %}#{{ object.public_id|default_if_none:object.id}}: {{ object.title }}{% endblock %}
@@ -119,7 +119,8 @@
                                 </strong>
                             </span>
                             <div class="flex gap-4 justify-end flex-1 items-center">
-                                {% if perms.funds.delete_applicationsubmission %}
+                                {% user_can_delete_submission object request.user as can_delete_submission %}
+                                {% if can_delete_submission %}
                                     <a
                                         class="flex items-center font-bold text-red-600 transition-opacity hover:opacity-70"
                                         href="{% url 'funds:submissions:delete' object.id %}"

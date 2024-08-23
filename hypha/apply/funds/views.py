@@ -9,7 +9,6 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import (
     login_required,
-    permission_required,
     user_passes_test,
 )
 from django.contrib.auth.mixins import UserPassesTestMixin
@@ -1766,13 +1765,20 @@ class RoundListView(SingleTableMixin, FilterView):
         return RoundsAndLabs.objects.with_progress()
 
 
-@method_decorator(
-    permission_required("funds.delete_applicationsubmission", raise_exception=True),
-    name="dispatch",
-)
 class SubmissionDeleteView(DeleteView):
     model = ApplicationSubmission
-    success_url = reverse_lazy("funds:submissions:list")
+
+    def dispatch(self, request, *args, **kwargs):
+        submission = self.get_object()
+        permission, _ = has_permission(
+            "submission_delete", request.user, submission, raise_exception=True
+        )
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_success_url(self):
+        if self.request.user.is_applicant:
+            return reverse_lazy("dashboard:dashboard")
+        return reverse_lazy("funds:submissions:list")
 
     def form_valid(self, form):
         submission = self.get_object()
