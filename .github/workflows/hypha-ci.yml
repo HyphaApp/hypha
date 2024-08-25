@@ -53,19 +53,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version-file: ".python-version"
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: ".nvmrc"
-          cache: "npm"
-
-      - name: install node dependencies
-        run: npm install --quiet
 
       - name: Run pre-commit
         uses: pre-commit/action@v3.0.1
-
-      - name: run scss and js linting
-        run: npm run lint
 
   test-be:
     runs-on: ubuntu-latest
