@@ -92,7 +92,7 @@ class Command(BaseCommand):
                 update_data(self.f.phone_number())
             elif (
                 form_field.value["field_label"].lower() == "organization address"
-                or type(form_field.block) == AddressFieldBlock
+                or type(form_field.block) is AddressFieldBlock
             ):
                 try:
                     address = json.loads(data)
@@ -124,25 +124,25 @@ class Command(BaseCommand):
                 update_data(self.f.ssn())
             elif form_field.value["field_label"].lower() == "additional contact email":
                 update_data(self.f.email())
-            elif type(form_field.block) == FullNameBlock:
+            elif type(form_field.block) is FullNameBlock:
                 update_data(self.f.name())
-            elif type(form_field.block) == EmailBlock:
+            elif type(form_field.block) is EmailBlock:
                 update_data(self.f.email())
-            elif type(form_field.block) == TitleBlock:
+            elif type(form_field.block) is TitleBlock:
                 update_data(self.f.sentence(5))
-            elif type(form_field.block) == MultiFileFieldBlock:
+            elif type(form_field.block) is MultiFileFieldBlock:
                 update_data([])
-            elif type(form_field.block) == RecommendationBlock:
+            elif type(form_field.block) is RecommendationBlock:
                 update_data(random.choice(RECOMMENDATION_CHOICES)[0])
-            elif type(form_field.block) == ScoreFieldBlock:
+            elif type(form_field.block) is ScoreFieldBlock:
                 update_data(random.choice(RATE_CHOICES)[0])
-            elif type(form_field.block) == ScoreFieldWithoutTextBlock:
+            elif type(form_field.block) is ScoreFieldWithoutTextBlock:
                 update_data(
                     random.randint(form_field.value["min"], form_field.value["max"])
                 )
-            elif type(form_field.block) == DropdownFieldBlock:
+            elif type(form_field.block) is DropdownFieldBlock:
                 update_data(random.choice(form_field.value["choices"][1]))
-            elif type(form_field.block) == ValueBlock:
+            elif type(form_field.block) is ValueBlock:
                 update_data(random.randint(0, 10000000))
             elif type(form_field.block) in [
                 TextFieldBlock,

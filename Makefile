@@ -24,19 +24,14 @@ test: lint py-test cov-html  ## Run all tests and generate coverage report
 
 
 .PHONY: fmt
-fmt:  ## Run code formatters on all code
+fmt: .cache/dev-build-fe  ## Run code formatters on all code
 	@pre-commit run --all-files
 
 
 .PHONY: lint
-lint:  ## Run all linters
+lint: .cache/dev-build-fe  ## Run all linters
 	@echo "Checking python code style with ruff"
-	ruff check .
-	ruff format --check .
-	@echo "Checking html file indendation."
-	djhtml hypha/ --check
-	@echo "Checking js and css code style."
-	npm run lint
+	@pre-commit run --all-files
 
 
 .PHONY: py-test

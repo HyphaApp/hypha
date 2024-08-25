@@ -46,34 +46,19 @@ jobs:
           pip install wheel
           pip install -r requirements-dev.txt
 
-  lint-fe:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: ".nvmrc"
-          cache: "npm"
-      - name: install node dependencies
-        run: npm install --quiet
-      - name: run scss and js linting
-        run: npm run lint
-
-  lint-be:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version-file: ".python-version"
-      - name: Install python dependencies
-        run: pip install `grep -E "ruff|djhtml" requirements-dev.txt`
-      - name: Run linting
-        run: ruff check --output-format=github .
-      - name: Run formating check
-        run: ruff format --check .
-      - name: Run djhtml
-        run: djhtml hypha/ --check
+
+      # Fix for mirror-eslint pre-commit hook not able to find "globals" package
+      - run: npm install globals
+
+      - name: Run pre-commit
+        uses: pre-commit/action@v3.0.1
 
   test-be:
     runs-on: ubuntu-latest
