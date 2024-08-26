@@ -19,64 +19,83 @@
         {% slot sub_heading %}{% trans "Submit a report" %}{% endslot %}
     {% endadminbar %}
 
-    {% include "forms/includes/form_errors.html" with form=form %}
+    {% if report_form %}
 
-    <div class="wrapper wrapper--default-bg wrapper--form">
-        <div class="wrapper--sidebar--inner">
+        {% include "forms/includes/form_errors.html" with form=form %}
 
-            <div class="alert">
-                {% heroicon_outline 'exclamation-circle' stroke_width=2 size=22 class="inline me-1 stroke-dark-blue" aria_hidden=true %}
-                <p class="alert__text">{% trans "You are reporting for the period running from" %} <strong>{{ report.start_date }}</strong> {% trans "to" %} <strong>{{ report.end_date }}</strong></p>
-            </div>
+        <div class="wrapper wrapper--default-bg wrapper--form">
+            <div class="wrapper--sidebar--inner">
 
-            <form class="form" action="" method="post" enctype="multipart/form-data" novalidate>
-                {% csrf_token %}
-                {{ form.media }}
+                <div class="alert">
+                    {% heroicon_outline 'exclamation-circle' stroke_width=2 size=22 class="inline me-1 stroke-dark-blue" aria_hidden=true %}
+                    <p class="alert__text">{% trans "You are reporting for the period running from" %} <strong>{{ report.start_date }}</strong> {% trans "to" %} <strong>{{ report.end_date }}</strong></p>
+                </div>
 
-                {% for field in form %}
-                    {% if field.field %}
-                        {% if field.field.multi_input_field %}
-                            {% include "forms/includes/multi_input_field.html" %}
+                <form class="form" action="" method="post" enctype="multipart/form-data" novalidate>
+                    {% csrf_token %}
+                    {{ form.media }}
+
+                    {% for field in form %}
+                        {% if field.field %}
+                            {% if field.field.multi_input_field %}
+                                {% include "forms/includes/multi_input_field.html" %}
+                            {% else %}
+                                {% include "forms/includes/field.html" %}
+                            {% endif %}
                         {% else %}
-                            {% include "forms/includes/field.html" %}
+                            {{ field.block }}
                         {% endif %}
-                    {% else %}
-                        {{ field.block }}
-                    {% endif %}
-                {% endfor %}
+                    {% endfor %}
 
-                {% for hidden_field in form.hidden_fields %}
-                    {{ hidden_field }}
-                {% endfor %}
-                <input type="submit" id="submit-report-form-submit" name="submit" class="is-hidden" />
-                <input type="submit" id="submit-report-form-save" name="save" class="is-hidden" />
-                <button data-fancybox data-src="#save-report" class="button button--submit button--top-space button--white" type="button">{% trans "Save draft" %}</button>
-                <button data-fancybox data-src="#submit-report" class="button  button--submit button--top-space button--primary" type="button">{% trans "Submit" %}</button>
+                    {% for hidden_field in form.hidden_fields %}
+                        {{ hidden_field }}
+                    {% endfor %}
+                    <input type="submit" id="submit-report-form-submit" name="submit" class="is-hidden" />
+                    <input type="submit" id="submit-report-form-save" name="save" class="is-hidden" />
+                    <button data-fancybox data-src="#save-report" class="button button--submit button--top-space button--white" type="button">{% trans "Save draft" %}</button>
+                    <button data-fancybox data-src="#submit-report" class="button  button--submit button--top-space button--primary" type="button">{% trans "Submit" %}</button>
 
-            <!-- Save report modal -->
-                <div class="modal" id="save-report">
-                    <h4 class="modal__project-header-bar">{% trans "Save report" %}</h4>
-                    <div class="modal__copy">
-                        <p>{% trans "Saving a draft means this report will be visible to you and staff from your project page." %}</p>
+                <!-- Save report modal -->
+                    <div class="modal" id="save-report">
+                        <h4 class="modal__project-header-bar">{% trans "Save report" %}</h4>
+                        <div class="modal__copy">
+                            <p>{% trans "Saving a draft means this report will be visible to you and staff from your project page." %}</p>
+                        </div>
+                        <div class="modal__buttons">
+                            <button data-fancybox-close class="button button--submit button--white">{% trans "Cancel" %}</button>
+                            <label class="button button--submit button--top-space button--primary" for="submit-report-form-save" tabindex="0">{% trans "Save" %}</label>
+                        </div>
                     </div>
-                    <div class="modal__buttons">
-                        <button data-fancybox-close class="button button--submit button--white">{% trans "Cancel" %}</button>
-                        <label class="button button--submit button--top-space button--primary" for="submit-report-form-save" tabindex="0">{% trans "Save" %}</label>
-                    </div>
-                </div>
 
-            <!-- Submit report modal -->
-                <div class="modal" id="submit-report">
-                    <h4 class="modal__project-header-bar">{% trans "Submit report" %}</h4>
-                    <p>{% trans "Are you sure you want to submit your report?" %}</p>
-                    <div class="modal__buttons">
-                        <button data-fancybox-close class="button button--submit button--white">{% trans "Cancel" %}</button>
-                        <label class="button button--submit button--top-space button--primary" for="submit-report-form-submit" tabindex="0">{% trans "Submit" %}</label>
+                <!-- Submit report modal -->
+                    <div class="modal" id="submit-report">
+                        <h4 class="modal__project-header-bar">{% trans "Submit report" %}</h4>
+                        <p>{% trans "Are you sure you want to submit your report?" %}</p>
+                        <div class="modal__buttons">
+                            <button data-fancybox-close class="button button--submit button--white">{% trans "Cancel" %}</button>
+                            <label class="button button--submit button--top-space button--primary" for="submit-report-form-submit" tabindex="0">{% trans "Submit" %}</label>
+                        </div>
                     </div>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
-    </div>
+    {% else %}
+        <div class="wrapper wrapper--default-bg wrapper--form wrapper--sidebar">
+            <div class="wrapper--sidebar--inner">
+                {% if request.user.is_apply_staff %}
+                    <p>
+                        {% trans "Project Report Form not configured. Please add a project report form in the" %}
+                        <a href="{% url 'wagtailadmin_pages:edit' object.project.submission.page.id %}" target="_blank">{% trans "fund settings" %}</a>.
+                    </p>
+                {% else %}
+                    <p>
+                        {% trans "Project Report Form not configured yet. Please contact us at " %}
+                        <a href="mailto:{{ ORG_EMAIL }}">{{ ORG_EMAIL }}.</a>
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block extra_js %}
