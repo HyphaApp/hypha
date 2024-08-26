@@ -1,6 +1,56 @@
-{% load i18n %}
+{% load i18n static %}
 
-<div class="wrapper wrapper--comments">
-    {% trans "Submit" as submit %}
-    {% include "funds/includes/delegated_form_base.html" with form=comment_form value=submit extra_classes="form__comments" %}
+<div class="wrapper wrapper--comments pb-4">
+    <form
+        class="form form__comments"
+        method="post"
+        id="{% if form_id %}{{ form_id }}{% else %}{{ comment_form.name }}{% endif %}"
+        enctype="multipart/form-data"
+        {% if action %}action="{{ action }}"{% endif %}
+    >
+        {% csrf_token %}
+
+        {{ comment_form.media }}
+        {% for hidden in comment_form.hidden_fields %}
+            {{ hidden }}
+        {% endfor %}
+
+        <div class="flex flex-wrap gap-4 lg:flex-nowrap lg:gap-8">
+            <div class="w-full lg:flex-1 -mt-4 max-w-[53rem]">
+                {% include "forms/includes/field.html" with field=comment_form.message label_classes="sr-only" %}
+
+                <div class="text-right">
+                    <button
+                        class="button button--primary w-full lg:w-auto"
+                        id="{{ comment_form.name }}-submit"
+                        name="{{ form_prefix }}{{ comment_form.name }}"
+                        type="submit"
+                        form="{% if form_id %}{{ form_id }}{% else %}{{ comment_form.name }}{% endif %}"
+                    >
+                        {% trans "Add Comment" %}
+                    </button>
+                </div>
+            </div>
+
+            <div class="w-full lg:w-auto">
+                {% include "forms/includes/field.html" with field=comment_form.visibility %}
+                {% include "forms/includes/field.html" with field=comment_form.assign_to %}
+                {% include "forms/includes/field.html" with field=comment_form.attachments %}
+            </div>
+        </div>
+    </form>
+    <script type="module">
+        {% comment %} Do this here as the select elements for partners are dynamically generated. {% endcomment %}
+        import Choices from "{% static 'js/esm/choices.js-10-2-0.js' %}";
+
+        const selectElements = document.querySelectorAll('.id_assign_to select');
+
+        // add choices to all select elements
+        selectElements.forEach((selectElement) => {
+            new Choices(selectElement, {
+                removeItemButton: true,
+                allowHTML: true,
+            });
+        });
+    </script>
 </div>

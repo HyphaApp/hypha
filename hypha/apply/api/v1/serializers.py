@@ -1,8 +1,6 @@
 from django.contrib.auth import get_user_model
-from django_nh3.templatetags.nh3_tags import nh3_value
 from rest_framework import serializers
 
-from hypha.apply.activity.models import Activity
 from hypha.apply.categories.models import MetaTerm
 from hypha.apply.determinations.models import Determination
 from hypha.apply.determinations.templatetags.determination_tags import (
@@ -17,7 +15,6 @@ from hypha.apply.funds.models import (
 from hypha.apply.review.models import Review, ReviewOpinion
 from hypha.apply.review.options import RECOMMENDATION_CHOICES
 from hypha.apply.users.groups import PARTNER_GROUP_NAME, STAFF_GROUP_NAME
-from hypha.core.utils import markdown_to_html
 
 User = get_user_model()
 
@@ -392,67 +389,6 @@ class OpenRoundLabSerializer(serializers.ModelSerializer):
         elif hasattr(obj, "labbase"):
             return obj.labbase.get_full_url()
         return None
-
-
-class CommentSerializer(serializers.ModelSerializer):
-    user = serializers.StringRelatedField()
-    message = serializers.SerializerMethodField()
-    edit_url = serializers.HyperlinkedIdentityField(view_name="api:v1:comments-edit")
-    editable = serializers.SerializerMethodField()
-    timestamp = TimestampField(read_only=True)
-    edited = TimestampField(read_only=True)
-
-    class Meta:
-        model = Activity
-        fields = (
-            "id",
-            "timestamp",
-            "user",
-            "message",
-            "visibility",
-            "edited",
-            "edit_url",
-            "editable",
-        )
-
-    def get_message(self, obj):
-        return nh3_value(markdown_to_html(obj.message))
-
-    def get_editable(self, obj):
-        return self.context["request"].user == obj.user
-
-
-class CommentCreateSerializer(serializers.ModelSerializer):
-    user = serializers.StringRelatedField()
-    edit_url = serializers.HyperlinkedIdentityField(view_name="api:v1:comments-edit")
-    editable = serializers.SerializerMethodField()
-    timestamp = TimestampField(read_only=True)
-    edited = TimestampField(read_only=True)
-
-    class Meta:
-        model = Activity
-        fields = (
-            "id",
-            "timestamp",
-            "user",
-            "message",
-            "visibility",
-            "edited",
-            "edit_url",
-            "editable",
-        )
-
-    def get_editable(self, obj):
-        return self.context["request"].user == obj.user
-
-
-class CommentEditSerializer(CommentCreateSerializer):
-    class Meta(CommentCreateSerializer.Meta):
-        read_only_fields = (
-            "timestamp",
-            "visibility",
-            "edited",
-        )
 
 
 class UserSerializer(serializers.Serializer):

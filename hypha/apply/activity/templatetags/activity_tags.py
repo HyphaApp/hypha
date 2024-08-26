@@ -2,6 +2,7 @@ import json
 
 from django import template
 from django.conf import settings
+from django.template.defaultfilters import stringfilter
 from django.utils.translation import gettext_lazy as _
 
 from hypha.apply.determinations.models import Determination
@@ -36,8 +37,10 @@ def display_activity_author(activity, user) -> str:
         and activity.user.is_org_faculty
     ):
         return settings.ORG_LONG_NAME
+
     if isinstance(activity.related_object, Review) and activity.source.user == user:
         return _("Reviewer")
+
     if (
         settings.HIDE_IDENTITY_FROM_REVIEWERS
         and isinstance(activity.source, ApplicationSubmission)
@@ -45,7 +48,8 @@ def display_activity_author(activity, user) -> str:
         and user in activity.source.reviewers.all()
     ):
         return _("Applicant")
-    return activity.user.get_display_name_with_group()
+
+    return activity.user.get_display_name()
 
 
 @register.filter
@@ -165,3 +169,10 @@ def source_type(value) -> str:
     if value and "submission" in value:
         return "Submission"
     return str(value).capitalize()
+
+
+@register.filter(is_safe=True)
+@stringfilter
+def lowerfirst(value):
+    """Lowercase the first character of the value."""
+    return value and value[0].lower() + value[1:]

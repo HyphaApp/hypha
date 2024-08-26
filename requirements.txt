@@ -52,6 +52,7 @@ qrcode==7.4.2
 reportlab==4.0.9
 setuptools==75.1.0
 social_auth_app_django==5.4.1
+svgwrite==1.4.3
 tablib==3.5.0
 tomd==0.1.3
 wagtail==5.2.6

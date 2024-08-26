@@ -265,14 +265,8 @@
     }
 
     &--comments {
-        padding-block-end: 15px;
-        margin-block-end: 15px;
+        margin-block-end: 1rem;
         border-block-end: 1px solid $color--mid-grey;
-
-        @include media-query(md) {
-            padding-block-end: 35px;
-            margin-block-end: 35px;
-        }
 
         .helptext {
             font-size: 15px;
