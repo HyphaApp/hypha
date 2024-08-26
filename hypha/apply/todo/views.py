@@ -12,7 +12,7 @@ from hypha.apply.users.decorators import staff_required
 
 from .models import Task
 from .options import get_task_template
-from .services import validate_user_groups_uniqueness, validate_user_uniquness
+from .services import validate_user_groups_uniqueness, validate_user_uniqueness
 
 
 @method_decorator(staff_required, name="dispatch")
@@ -42,6 +42,7 @@ class TaskRemovalView(View):
 
     def delete(self, *args, **kwargs):
         source = self.task.related_object
+        from hypha.apply.activity.models import Activity
         from hypha.apply.determinations.models import Determination
         from hypha.apply.projects.models import Invoice
         from hypha.apply.review.models import Review
@@ -52,6 +53,8 @@ class TaskRemovalView(View):
             self.task.related_object, Review
         ):
             source = self.task.related_object.submission
+        elif isinstance(self.task.related_object, Activity):
+            source = self.task.related_object.source
         messenger(
             MESSAGES.REMOVE_TASK,
             user=self.request.user,
@@ -79,7 +82,7 @@ def add_task_to_user(code, user, related_obj):
         related_obj: Object - Submission, Project, Invoice, Report
     output: task - Task object / None in case of no creation
     """
-    user_uniqueness = validate_user_uniquness(
+    user_uniqueness = validate_user_uniqueness(
         code=code, user=user, related_obj=related_obj
     )
     if user_uniqueness:
