@@ -50,6 +50,7 @@ from hypha.apply.todo.options import (
     PROJECT_WAITING_INVOICE,
     PROJECT_WAITING_PAF,
 )
+from hypha.apply.todo.utils import get_project_lead_tasks
 from hypha.apply.todo.views import (
     add_task_to_user,
     add_task_to_user_group,
@@ -60,7 +61,7 @@ from hypha.apply.users.decorators import (
     staff_or_finance_or_contracting_required,
     staff_required,
 )
-from hypha.apply.users.groups import CONTRACTING_GROUP_NAME, STAFF_GROUP_NAME
+from hypha.apply.users.groups import CONTRACTING_GROUP_NAME
 from hypha.apply.utils.models import PDFPageSettings
 from hypha.apply.utils.storage import PrivateMediaView
 from hypha.apply.utils.views import DelegateableView, DelegatedViewMixin, ViewDispatcher
@@ -130,16 +131,16 @@ class SendForApprovalView(DelegatedViewMixin, UpdateView):
         response = super().form_valid(form)
 
         # remove PAF submission task for staff group
-        remove_tasks_for_user_group(
+        remove_tasks_for_user(
             code=PROJECT_SUBMIT_PAF,
-            user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+            user=self.object.lead,
             related_obj=self.object,
         )
 
         # remove PAF rejection task for staff if exists
-        remove_tasks_for_user_group(
+        remove_tasks_for_user(
             code=PAF_REQUIRED_CHANGES,
-            user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+            user=self.object.lead,
             related_obj=self.object,
         )
 
@@ -374,9 +375,11 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
     def form_valid(self, form):
         # Fetch the old lead from the database
         old_lead = copy.copy(self.get_object().lead)
+        tasks = get_project_lead_tasks(self.get_object().lead, self.get_object())
 
         response = super().form_valid(form)
         project = form.instance
+        tasks.update(user=project.lead)
 
         messenger(
             MESSAGES.UPDATE_PROJECT_LEAD,
@@ -496,9 +499,9 @@ class ApproveContractView(DelegatedViewMixin, UpdateView):
                 related=self.object,
             )
             # remove Project waiting contract review task for staff
-            remove_tasks_for_user_group(
+            remove_tasks_for_user(
                 code=PROJECT_WAITING_CONTRACT_REVIEW,
-                user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+                user=self.project.lead,
                 related_obj=self.project,
             )
 
@@ -605,9 +608,9 @@ class UploadContractView(DelegatedViewMixin, CreateView):
             )
             # remove Project waiting contract task for contracting/staff group
             if settings.STAFF_UPLOAD_CONTRACT:
-                remove_tasks_for_user_group(
+                remove_tasks_for_user(
                     code=PROJECT_WAITING_CONTRACT,
-                    user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+                    user=project.lead,
                     related_obj=project,
                 )
             else:
@@ -633,9 +636,9 @@ class UploadContractView(DelegatedViewMixin, CreateView):
                 )
                 # remove Project waiting contract task for contracting/staff group
                 if settings.STAFF_UPLOAD_CONTRACT:
-                    remove_tasks_for_user_group(
+                    remove_tasks_for_user(
                         code=PROJECT_WAITING_CONTRACT,
-                        user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+                        user=project.lead,
                         related_obj=project,
                     )
                 else:
@@ -667,16 +670,16 @@ class SkipPAFApprovalProcessView(DelegatedViewMixin, UpdateView):
         response = super().form_valid(form)
 
         # remove PAF submission task for staff group
-        remove_tasks_for_user_group(
+        remove_tasks_for_user(
             code=PROJECT_SUBMIT_PAF,
-            user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+            user=self.object.lead,
             related_obj=self.object,
         )
 
         # remove PAF rejection task for staff if exists
-        remove_tasks_for_user_group(
+        remove_tasks_for_user(
             code=PAF_REQUIRED_CHANGES,
-            user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+            user=self.object.lead,
             related_obj=self.object,
         )
 
@@ -689,9 +692,9 @@ class SkipPAFApprovalProcessView(DelegatedViewMixin, UpdateView):
         )
         # add project waiting contract task to staff/contracting groups
         if settings.STAFF_UPLOAD_CONTRACT:
-            add_task_to_user_group(
+            add_task_to_user(
                 code=PROJECT_WAITING_CONTRACT,
-                user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+                user=self.object.lead,
                 related_obj=self.object,
             )
         else:
@@ -745,9 +748,9 @@ class SubmitContractDocumentsView(DelegatedViewMixin, UpdateView):
             related_obj=project,
         )
         # add project waiting contract review task for staff
-        add_task_to_user_group(
+        add_task_to_user(
             code=PROJECT_WAITING_CONTRACT_REVIEW,
-            user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+            user=project.lead,
             related_obj=project,
         )
 
@@ -900,9 +903,9 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
                 related=old_stage,
             )
             # add PAF required changes task to staff user group
-            add_task_to_user_group(
+            add_task_to_user(
                 code=PAF_REQUIRED_CHANGES,
-                user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+                user=self.object.lead,
                 related_obj=self.object,
             )
 
@@ -997,9 +1000,9 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
             )
             # add project waiting contract task to staff/contracting groups
             if settings.STAFF_UPLOAD_CONTRACT:
-                add_task_to_user_group(
+                add_task_to_user(
                     code=PROJECT_WAITING_CONTRACT,
-                    user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+                    user=self.object.lead,
                     related_obj=self.object,
                 )
             else:
@@ -1954,15 +1957,15 @@ class ProjectFormEditView(BaseStreamForm, UpdateView):
                 self.paf_form.delete_temporary_files()
                 self.sow_form.delete_temporary_files()
                 # remove PAF addition task for staff group
-                remove_tasks_for_user_group(
+                remove_tasks_for_user(
                     code=PROJECT_WAITING_PAF,
-                    user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+                    user=self.object.lead,
                     related_obj=self.object,
                 )
                 # add PAF submission task for staff group
-                add_task_to_user_group(
+                add_task_to_user(
                     code=PROJECT_SUBMIT_PAF,
-                    user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+                    user=self.object.lead,
                     related_obj=self.object,
                 )
                 return HttpResponseRedirect(self.get_success_url())
@@ -1980,15 +1983,15 @@ class ProjectFormEditView(BaseStreamForm, UpdateView):
                 self.paf_form.save(paf_form_fields=paf_form_fields)
                 self.paf_form.delete_temporary_files()
                 # remove PAF addition task for staff group
-                remove_tasks_for_user_group(
+                remove_tasks_for_user(
                     code=PROJECT_WAITING_PAF,
-                    user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+                    user=self.object.lead,
                     related_obj=self.object,
                 )
                 # add PAF submission task for staff group
-                add_task_to_user_group(
+                add_task_to_user(
                     code=PROJECT_SUBMIT_PAF,
-                    user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+                    user=self.object.lead,
                     related_obj=self.object,
                 )
                 return HttpResponseRedirect(self.get_success_url())

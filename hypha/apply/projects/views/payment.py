@@ -2,7 +2,6 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
-from django.contrib.auth.models import Group
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect
@@ -29,13 +28,11 @@ from hypha.apply.todo.options import (
     PROJECT_WAITING_INVOICE,
 )
 from hypha.apply.todo.views import (
-    add_task_to_user_group,
+    add_task_to_user,
     remove_tasks_for_user,
-    remove_tasks_for_user_group,
     remove_tasks_of_related_obj,
 )
 from hypha.apply.users.decorators import staff_or_finance_required
-from hypha.apply.users.groups import STAFF_GROUP_NAME
 from hypha.apply.utils.pdfs import html_to_pdf, merge_pdf
 from hypha.apply.utils.storage import PrivateMediaView
 from hypha.apply.utils.views import (
@@ -278,9 +275,9 @@ class CreateInvoiceView(CreateView):
             )
 
         # add Invoice waiting approval task for Staff group
-        add_task_to_user_group(
+        add_task_to_user(
             code=INVOICE_WAITING_APPROVAL,
-            user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+            user=self.object.project.lead,
             related_obj=self.object,
         )
 
@@ -377,9 +374,9 @@ class EditInvoiceView(InvoiceAccessMixin, UpdateView):
             )
 
             # add invoice waiting approval task for staff group
-            add_task_to_user_group(
+            add_task_to_user(
                 code=INVOICE_WAITING_APPROVAL,
-                user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+                user=self.object.project.lead,
                 related_obj=self.object,
             )
 
@@ -388,15 +385,15 @@ class EditInvoiceView(InvoiceAccessMixin, UpdateView):
             and old_status == CHANGES_REQUESTED_BY_FINANCE
         ):
             # remove invoice required changes task for staff group
-            remove_tasks_for_user_group(
+            remove_tasks_for_user(
                 code=INVOICE_REQUIRED_CHANGES,
-                user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+                user=self.object.project.lead,
                 related_obj=self.object,
             )
             # add invoice waiting approval task for staff group
-            add_task_to_user_group(
+            add_task_to_user(
                 code=INVOICE_WAITING_APPROVAL,
-                user_group=Group.objects.filter(name=STAFF_GROUP_NAME),
+                user=self.object.project.lead,
                 related_obj=self.object,
             )
 
