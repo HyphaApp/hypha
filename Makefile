@@ -12,9 +12,9 @@ help: ## Show this help
 
 
 .PHONY: serve
-serve: .cache/tandem .cache/py-packages .cache/dev-build  ## Run Django and docs preview server, also watch and compile frontend changes
+serve: .cache/tandem .cache/py-packages .cache/dev-build-fe  ## Run Django and docs preview server, also watch and compile frontend changes
 	@.cache/tandem \
-		'python manage.py runserver 0.0.0.0:$(DJANGO_PORT) --settings=$(DJANGO_SETTINGS_MODULE)' \
+		'python manage.py runserver_plus $(DJANGO_PORT) --settings=$(DJANGO_SETTINGS_MODULE)' \
 		'npm:watch:*' \
 		'mkdocs serve'
 
