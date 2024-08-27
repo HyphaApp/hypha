@@ -42,11 +42,12 @@
         display: none;
         background-color: #1d79a8;
         color: #fff;
-        padding: 0.5em 60px;
-        font-weight: 700;
+        padding: 0.5rem 2rem;
+        font-weight: $weight--bold;
         position: sticky;
         top: 0;
-        margin-top: 10px;
+        margin-block-start: 0.5rem;
+        margin-block-end: 1.5rem;
     }
 
     &__group {
