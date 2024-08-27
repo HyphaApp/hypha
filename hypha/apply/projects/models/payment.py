@@ -119,10 +119,10 @@ class InvoiceQueryset(models.QuerySet):
         return []
 
     def rejected(self):
-        return self.filter(status=DECLINED)
+        return self.filter(status=DECLINED).order_by("-requested_at")
 
     def not_rejected(self):
-        return self.exclude(status=DECLINED)
+        return self.exclude(status=DECLINED).order_by("-requested_at")
 
     def total_value(self, field):
         return self.aggregate(
