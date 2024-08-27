@@ -88,7 +88,7 @@ download-esm-modules:  ## Download ESM modules
 
 .cache/npm-packages: package.json  	## Install node packages and copy javascript files to vendor directory
 	@mkdir -p $$(dirname $@)
-	NODE_ENV=developement npm install
+	NODE_ENV=development npm install
 	cp node_modules/htmx.org/dist/htmx.min.js $(JS_VENDOR_DIR)/htmx.min.js
 	cp node_modules/htmx.org/dist/ext/multi-swap.js $(JS_VENDOR_DIR)/htmx-ext-multi-swap.min.js
 	cp node_modules/alpinejs/dist/cdn.min.js $(JS_VENDOR_DIR)/alpine.min.js
