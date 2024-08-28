@@ -1,3 +1,8 @@
+from django.contrib.contenttypes.models import ContentType
+from django.db.models import OuterRef, Subquery
+
+from hypha.apply.todo.models import Task
+
 from .models import Activity
 
 
@@ -36,8 +41,7 @@ def get_related_comments_for_user(obj, user):
         [`Activity`][hypha.apply.activity.models.Activity] queryset
     """
     related_query = type(obj).activities.rel.related_query_name
-
-    return (
+    queryset = (
         Activity.comments.filter(**{related_query: obj})
         .select_related("user")
         .prefetch_related(
@@ -45,3 +49,13 @@ def get_related_comments_for_user(obj, user):
         )
         .visible_to(user)
     )
+
+    if user.is_apply_staff:
+        assigned_to_subquery = Task.objects.filter(
+            related_content_type=ContentType.objects.get_for_model(Activity),
+            related_object_id=OuterRef("id"),
+        ).values("user__full_name")
+
+        queryset = queryset.annotate(assigned_to=Subquery(assigned_to_subquery))
+
+    return queryset
