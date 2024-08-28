@@ -42,6 +42,7 @@ from wagtail.fields import RichTextField
 from wagtail.models import Page, PageManager
 from wagtail.query import PageQuerySet
 
+from hypha.apply.funds.utils import get_copied_form_name
 from hypha.core.wagtail.admin.panels import ReadOnlyInlinePanel
 
 from ..admin_forms import RoundBasePageAdminForm, WorkflowFormAdminForm
@@ -367,9 +368,8 @@ class RoundBase(WorkflowStreamForm, SubmittableStreamForm):  # type: ignore
         # Create a copy of the existing form object
         new_form = form.form
         new_form.id = None
-        new_form.name = "{} for {} ({})".format(
-            new_form.name, self.title, self.get_parent().title
-        )
+        new_form.name = get_copied_form_name(new_form.name)
+
         new_form.save()
         if hasattr(form, "stage"):
             new_class.objects.create(round=self, form=new_form, stage=form.stage)

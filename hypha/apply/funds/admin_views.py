@@ -9,6 +9,7 @@ from wagtail.admin.views.pages.utils import get_valid_next_url_from_request
 from wagtail.contrib.modeladmin.views import CreateView, EditView
 from wagtail.models import Page
 
+from hypha.apply.funds.utils import get_copied_form_name
 from hypha.apply.utils.blocks import show_admin_form_error_messages
 
 
@@ -110,7 +111,7 @@ class CopyApplicationFormViewClass(CreateView):
 
     def get_initial(self):
         return {
-            "name": f"[CHANGE] Copy of {self.form_instance.name}",
+            "name": get_copied_form_name(self.form_instance.name),
             "form_fields": self.form_instance.form_fields,
         }
 
