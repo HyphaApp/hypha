@@ -25,7 +25,7 @@
 
     <section class="my-8 flex justify-between">
         {% if not has_submitted_review %}
-            <form class="form form--with-p-tags form--scoreable max-w-3xl flex-1" action="" method="post">
+            <form id="review-form-edit" class="form form--with-p-tags form--scoreable max-w-3xl flex-1" action="" method="post">
                 {{ form.media }}
                 {% csrf_token %}
 

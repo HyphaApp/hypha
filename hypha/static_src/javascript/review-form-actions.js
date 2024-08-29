@@ -1,44 +1,24 @@
-(function ($) {
+function formContents(f) {
     "use strict";
-    $(document).ready(function () {
-        var form = $("form");
-        var original = form.serialize();
+    // Thanks to https://stackoverflow.com/a/44033425
+    return Array.from(new FormData(f), function (e) {
+        return e.map(encodeURIComponent).join("=");
+    }).join("&");
+}
 
-        window.onbeforeunload = function () {
-            if (form.serialize() !== original) {
-                return "Are you sure you want to leave?";
-            }
-        };
+document.addEventListener("DOMContentLoaded", function () {
+    "use strict";
+    const form = document.getElementById("review-form-edit");
+    const original = formContents(form);
 
-        form.submit(function () {
-            window.onbeforeunload = null;
-        });
-
-        // grab all the selectors
-        let filtered_selectors;
-        const selectors = Array.prototype.slice.call(
-            document.querySelectorAll("select")
-        );
-        if (selectors.length > 1) {
-            document.querySelector(".form--score-box").style.display = "block";
-            // remove recommendation select box from array
-            filtered_selectors = selectors.filter(
-                (selector) => selector[0].text !== "Need More Info"
-            );
-            filtered_selectors.forEach(function (selector) {
-                selector.onchange = calculate_score;
-            });
-            calculate_score();
+    window.onbeforeunload = function () {
+        const formNow = formContents(form);
+        if (formNow !== original) {
+            return "Are you sure you want to leave?";
         }
-        function calculate_score() {
-            let score = 0;
-            filtered_selectors.forEach(function (selector) {
-                const value = parseInt(selector.value);
-                if (!isNaN(value) && value !== 99) {
-                    score += value;
-                }
-            });
-            $(".form--score-box").text("Score: " + score);
-        }
+    };
+
+    form.addEventListener("submit", function () {
+        window.onbeforeunload = null;
     });
-})(jQuery);
+});
