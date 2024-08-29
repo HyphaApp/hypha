@@ -13,7 +13,7 @@
     {% include "forms/includes/form_errors.html" with form=form %}
 
     <div class="wrapper wrapper--medium wrapper--inner-space-medium">
-        <form class="form form--with-p-tags form--scoreable" action="" method="post" novalidate>
+        <form id="review-form-edit" class="form form--with-p-tags form--scoreable" action="" method="post" novalidate>
             {{ form.media }}
             {% csrf_token %}
 
