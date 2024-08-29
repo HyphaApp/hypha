@@ -26,7 +26,7 @@
                 <a class="round-block__view" href="{{round.get_absolute_url}}">{% trans 'View' %}
                 </a>
                 {% if can_export %}
-                    <a class="round-block__view" href="{% url 'apply:submissions:list' %}{% if round.fund %}?round={{round.pk}}{% else %}?fund={{round.pk}}{% endif %}&format=csv" onclick="return confirm('Are you sure you want to download the submissions as a csv file? This file may contain sensitive information, so please handle it carefully.');">{% trans 'Export' %}</a>
+                    <a class="round-block__view" href="{% url 'apply:submissions:list' %}{% if round.fund %}?round={{round.pk}}{% else %}?fund={{round.pk}}{% endif %}&format=csv" onclick="return confirm('{% blocktrans %}Are you sure you want to download the submissions as a csv file? This file may contain sensitive information, so please handle it carefully.{% endblocktrans %}');">{% trans 'Export' %}</a>
                 {% endif %}
             </li>
         {% else %}
