@@ -1,6 +1,5 @@
 from collections import defaultdict
 
-from django.conf import settings
 from django.db.models import Count
 from django.utils.translation import gettext as _
 
@@ -8,7 +7,6 @@ from hypha.apply.activity.options import MESSAGES
 from hypha.apply.projects.models import ProjectSettings
 from hypha.apply.projects.models.payment import (
     APPROVED_BY_FINANCE,
-    APPROVED_BY_FINANCE_2,
     CHANGES_REQUESTED_BY_STAFF,
     DECLINED,
     PAID,
@@ -60,13 +58,12 @@ def is_invoice_public_transition(invoice):
         SUBMITTED,
         RESUBMITTED,
         CHANGES_REQUESTED_BY_STAFF,
-        APPROVED_BY_FINANCE_2,
         DECLINED,
         PAID,
         PAYMENT_FAILED,
     ]:
         return True
-    if not settings.INVOICE_EXTENDED_WORKFLOW and invoice.status == APPROVED_BY_FINANCE:
+    if invoice.status == APPROVED_BY_FINANCE:
         return True
     return False
 

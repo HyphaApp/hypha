@@ -2,7 +2,6 @@ import decimal
 from datetime import timedelta
 
 from django import template
-from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
 from hypha.apply.activity.models import Activity
@@ -109,10 +108,6 @@ def extract_status(activity, user):
         if " by " not in str(invoice_status) and not user.is_applicant:
             if activity.user.is_apply_staff:
                 user_role = "staff"
-            elif (
-                activity.user.is_finance_level_2 and settings.INVOICE_EXTENDED_WORKFLOW
-            ):
-                user_role = "finance2"
             elif activity.user.is_finance:
                 user_role = "finance"
             else:

@@ -574,9 +574,6 @@ INTACCT_USER_ID = env.str("INTACCT_USER_ID", "")
 INTACCT_COMPANY_ID = env.str("INTACCT_COMPANY_ID", "")
 INTACCT_USER_PASSWORD = env.str("INTACCT_USER_PASSWORD", "")
 
-# Finance extension to finance2 for Project Invoicing
-INVOICE_EXTENDED_WORKFLOW = env.bool("INVOICE_EXTENDED_WORKFLOW", True)
-
 
 # Misc settings
 

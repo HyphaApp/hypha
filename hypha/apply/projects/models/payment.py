@@ -19,10 +19,8 @@ SUBMITTED = "submitted"
 RESUBMITTED = "resubmitted"
 CHANGES_REQUESTED_BY_STAFF = "changes_requested_staff"
 CHANGES_REQUESTED_BY_FINANCE = "changes_requested_finance_1"
-CHANGES_REQUESTED_BY_FINANCE_2 = "changes_requested_finance_2"
 APPROVED_BY_STAFF = "approved_by_staff"
 APPROVED_BY_FINANCE = "approved_by_finance_1"
-APPROVED_BY_FINANCE_2 = "approved_by_finance_2"
 PAID = "paid"
 PAYMENT_FAILED = "payment_failed"
 DECLINED = "declined"
@@ -32,10 +30,8 @@ INVOICE_STATUS_CHOICES = [
     (RESUBMITTED, _("Resubmitted")),
     (CHANGES_REQUESTED_BY_STAFF, _("Changes requested by staff")),
     (CHANGES_REQUESTED_BY_FINANCE, _("Changes requested by finance")),
-    (CHANGES_REQUESTED_BY_FINANCE_2, _("Changes requested by finance 2")),
     (APPROVED_BY_STAFF, _("Approved by staff")),
     (APPROVED_BY_FINANCE, _("Approved by finance")),
-    (APPROVED_BY_FINANCE_2, _("Approved by finance 2")),
     (PAID, _("Paid")),
     (PAYMENT_FAILED, _("Payment failed")),
     (DECLINED, _("Declined")),
@@ -47,7 +43,6 @@ INVOICE_TRANISTION_TO_RESUBMITTED = [
     RESUBMITTED,
     CHANGES_REQUESTED_BY_STAFF,
     CHANGES_REQUESTED_BY_FINANCE,
-    CHANGES_REQUESTED_BY_FINANCE_2,
 ]
 
 INVOICE_STATUS_PM_CHOICES = [CHANGES_REQUESTED_BY_STAFF, APPROVED_BY_STAFF, DECLINED]
@@ -58,26 +53,10 @@ INVOICE_STATUS_FINANCE_1_CHOICES = [
     PAID,
     PAYMENT_FAILED,
 ]
-INVOICE_STATUS_FINANCE_2_CHOICES = []
-if settings.INVOICE_EXTENDED_WORKFLOW:
-    INVOICE_STATUS_FINANCE_1_CHOICES = [
-        CHANGES_REQUESTED_BY_FINANCE,
-        APPROVED_BY_FINANCE,
-        DECLINED,
-    ]
-    INVOICE_STATUS_FINANCE_2_CHOICES = [
-        CHANGES_REQUESTED_BY_FINANCE_2,
-        APPROVED_BY_FINANCE_2,
-        DECLINED,
-        PAID,
-        PAYMENT_FAILED,
-    ]
 
 
 def invoice_status_user_choices(user):
-    if user.is_finance_level_2:
-        return INVOICE_STATUS_FINANCE_2_CHOICES
-    if user.is_finance_level_1:
+    if user.is_finance:
         return INVOICE_STATUS_FINANCE_1_CHOICES
     if user.is_apply_staff:
         return INVOICE_STATUS_PM_CHOICES
@@ -98,25 +77,11 @@ class InvoiceQueryset(models.QuerySet):
     def approved_by_finance_1(self):
         return self.filter(status=APPROVED_BY_FINANCE)
 
-    def approved_by_finance_2(self):
-        return self.filter(status=APPROVED_BY_FINANCE_2)
-
     def waiting_to_convert(self):
-        if settings.INVOICE_EXTENDED_WORKFLOW:
-            return self.filter(status=APPROVED_BY_FINANCE_2)
         return self.filter(status=APPROVED_BY_FINANCE)
 
     def for_finance_1(self):
-        if settings.INVOICE_EXTENDED_WORKFLOW:
-            return self.filter(
-                status__in=[APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_2]
-            )
         return self.filter(status__in=[APPROVED_BY_STAFF, APPROVED_BY_FINANCE])
-
-    def for_finance_2(self):
-        if settings.INVOICE_EXTENDED_WORKFLOW:
-            return self.filter(status__in=[APPROVED_BY_FINANCE, APPROVED_BY_FINANCE_2])
-        return []
 
     def rejected(self):
         return self.filter(status=DECLINED).order_by("-requested_at")
@@ -245,12 +210,7 @@ class Invoice(models.Model):
         """
         Check user roles that can tranistion invoice status based on the current status.
         """
-        if not (
-            user.is_contracting
-            or user.is_apply_staff
-            or user.is_finance_level_1
-            or user.is_finance_level_2
-        ):
+        if not (user.is_contracting or user.is_apply_staff or user.is_finance):
             return False  # Users can't change status
 
         if self.status in {DECLINED}:
@@ -269,23 +229,10 @@ class Invoice(models.Model):
             }:
                 return True
 
-        if user.is_finance_level_1:
-            if settings.INVOICE_EXTENDED_WORKFLOW:
-                if self.status in {APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_2}:
-                    return True
-            else:
-                if self.status in {
-                    APPROVED_BY_STAFF,
-                    APPROVED_BY_FINANCE,
-                    PAID,
-                    PAYMENT_FAILED,
-                }:
-                    return True
-
-        if user.is_finance_level_2:
+        if user.is_finance:
             if self.status in {
+                APPROVED_BY_STAFF,
                 APPROVED_BY_FINANCE,
-                APPROVED_BY_FINANCE_2,
                 PAID,
                 PAYMENT_FAILED,
             }:
@@ -294,22 +241,13 @@ class Invoice(models.Model):
         return False
 
     def can_user_edit_deliverables(self, user):
-        if not (
-            user.is_apply_staff or user.is_finance_level_1 or user.is_finance_level_2
-        ):
+        if not (user.is_apply_staff or user.is_finance):
             return False
         if user.is_apply_staff:
             if self.status in {SUBMITTED, RESUBMITTED, CHANGES_REQUESTED_BY_FINANCE}:
                 return True
-        if user.is_finance_level_1:
+        if user.is_finance:
             if self.status in {APPROVED_BY_STAFF}:
-                return True
-            elif settings.INVOICE_EXTENDED_WORKFLOW and self.status in [
-                CHANGES_REQUESTED_BY_FINANCE_2
-            ]:
-                return True
-        if user.is_finance_level_2:
-            if self.status in {APPROVED_BY_FINANCE}:
                 return True
         return False
 

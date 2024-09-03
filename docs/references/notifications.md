@@ -13,10 +13,8 @@ The types of messages are as follows:
 The options for statuses for messages are as follows:
 
 - `APPROVED_BY_FINANCE`
-- `APPROVED_BY_FINANCE_2`
 - `APPROVED_BY_STAFF`
 - `CHANGES_REQUESTED_BY_FINANCE`
-- `CHANGES_REQUESTED_BY_FINANCE_2`
 - `CONVERTED`
 - `PAID`
 - `RESUBMITTED`
