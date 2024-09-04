@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 
+from hypha.apply.funds.models.submissions import DRAFT_STATE
+
 from ..users.groups import STAFF_GROUP_NAME, SUPERADMIN, TEAMADMIN_GROUP_NAME
 
 
@@ -22,6 +24,14 @@ def can_edit_submission(user, submission):
         return False, "Archived Submission"
 
     return True, ""
+
+
+def can_delete_submission(user, submission):
+    if user.has_perm("funds.delete_applicationsubmission"):
+        return True, "User can delete submission"
+    elif user == submission.user and submission.status == DRAFT_STATE:
+        return True, "Applicant can delete draft submissions"
+    return False, "Forbidden Error"
 
 
 def can_bulk_delete_submissions(user) -> bool:
@@ -164,6 +174,7 @@ def can_view_submission_screening(user, submission):
 permissions_map = {
     "submission_view": is_user_has_access_to_view_submission,
     "submission_edit": can_edit_submission,
+    "submission_delete": can_delete_submission,
     "can_view_submission_screening": can_view_submission_screening,
     "archive_alter": can_alter_archived_submissions,
 }

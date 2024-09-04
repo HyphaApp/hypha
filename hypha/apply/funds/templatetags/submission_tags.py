@@ -5,6 +5,7 @@ from django.db.models import Q
 from django.utils.safestring import mark_safe
 
 from hypha.apply.funds.models import ApplicationSubmission
+from hypha.apply.funds.permissions import has_permission
 
 register = template.Library()
 
@@ -29,3 +30,14 @@ def submission_links(value):
             value = re.sub(rf"(?<!\w){sid}(?!\w)", link, value)
 
     return mark_safe(value)
+
+
+@register.simple_tag
+def user_can_delete_submission(submission, user):
+    permission, _ = has_permission(
+        "submission_delete",
+        user=user,
+        object=submission,
+        raise_exception=False,
+    )
+    return permission

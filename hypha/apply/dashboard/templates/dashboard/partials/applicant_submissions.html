@@ -1,4 +1,4 @@
-{% load i18n dashboard_statusbar_tags statusbar_tags workflow_tags heroicons %}
+{% load i18n dashboard_statusbar_tags statusbar_tags workflow_tags heroicons submission_tags %}
 
 {% for submission in page.object_list %}
     <div class="wrapper wrapper--status-bar-outer">
@@ -26,6 +26,13 @@
                             {% heroicon_micro "pencil" class="w-4 h-4 me-1 inline align-middle" aria_hidden=true %}
                             {% trans "Edit" %}
                         {% endif %}
+                    </a>
+                {% endif %}
+                {% user_can_delete_submission submission request.user as can_delete_submission %}
+                {% if can_delete_submission %}
+                    <a class="button button--white" href="{% url 'funds:submissions:delete' submission.id %}" hx-get="{% url 'funds:submissions:delete' submission.id %}" hx-target="#htmx-modal">
+                        {% heroicon_micro "trash" class="inline me-1 mt-1 fill-red-600" aria_hidden=true %}
+                        {% trans "Delete" %}
                     </a>
                 {% endif %}
             </div>

@@ -13,11 +13,18 @@
         <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
             <h3 class="text-base font-semibold leading-6 text-gray-900" id="modal-title">Delete submission</h3>
             <div class="mt-2">
-                <p class="text-sm text-gray-500">
-                    Are you sure you want to delete submission? All of your data
-                    will be permanently removed from our servers forever. This
-                    includes reviews, determinations and comments. This action cannot be undone.
-                </p>
+                {% if request.user.is_applicant %}
+                    <p class="text-sm text-gray-500">
+                        Are you sure you want to delete draft submission? All of your data for this submission
+                        will be permanently removed from our servers forever. This action cannot be undone.
+                    </p>
+                {% else %}
+                    <p class="text-sm text-gray-500">
+                        Are you sure you want to delete submission? All of your data
+                        will be permanently removed from our servers forever. This
+                        includes reviews, determinations and comments. This action cannot be undone.
+                    </p>
+                {% endif %}
             </div>
             <div>
                 <label for="delete-confirmation" class="block mb-2 text-sm font-semibold text-gray-600">Type "<em>delete</em>" below to confirm</label>
