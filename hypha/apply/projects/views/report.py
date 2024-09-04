@@ -74,8 +74,6 @@ class ReportUpdateView(BaseStreamForm, UpdateView):
         """
         Expects self.form_fields to have already been set.
         """
-        if not self.form_fields:
-            raise RuntimeError("Expected self.form_fields to be set")
         # This is where the magic happens.
         fields = self.get_form_fields(draft, form_data, user)
         the_class = type(
@@ -105,6 +103,9 @@ class ReportUpdateView(BaseStreamForm, UpdateView):
         context_data = {
             "form": form,
             "object": self.object,
+            "report_form": True
+            if self.object.project.submission.page.specific.report_forms.first()
+            else False,
             **kwargs,
         }
         return context_data
