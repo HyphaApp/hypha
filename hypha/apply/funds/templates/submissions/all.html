@@ -41,7 +41,7 @@
 
     <form method="GET" action="./" class="flex items-center justify-between gap-2 mt-3 md:gap-4">
         {% for key, value in request.GET.items %}
-            {% if key != 'archived' %}<input type="hidden" class="js-filter-options" value="{{ value}}" name="{{ key }}">{% endif %}
+            {% if key != 'archived' and key != 'drafts' %}<input type="hidden" class="js-filter-options" value="{{ value}}" name="{{ key }}">{% endif %}
         {% endfor %}
 
         {% dropdown_menu title="Filters" heading="Filter submissions" %}
@@ -136,6 +136,27 @@
                 </label>
             </span>
         {% endif %}
+
+        {% if can_access_drafts %}
+            <span>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" {% if show_drafts %}checked{% endif %}
+                           class="sr-only peer"
+                           name="drafts"
+                           hx-push-url="true"
+                           hx-get="./"
+                           hx-swap="outerHTML"
+                           hx-include="input.js-filter-options:not([name=drafts])"
+                           hx-target="#main"
+                    >
+                    <div
+                        class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600">
+                    </div>
+                    <span class="text-sm font-medium text-gray-600 ms-3">{% trans "Drafts" %}</span>
+                </label>
+            </span>
+        {% endif %}
+
         {% if can_export_submissions %}
             <a
                 class="px-2 py-1.5 transition-colors border rounded hover:bg-gray-100 shadow-sm"

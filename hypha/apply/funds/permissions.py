@@ -117,7 +117,7 @@ def can_change_external_reviewers(user, submission) -> bool:
     return False
 
 
-def can_access_drafts(user):
+def can_access_drafts(user) -> bool:
     if user.is_apply_staff and settings.SUBMISSIONS_DRAFT_ACCESS_STAFF:
         return True
     if user.is_apply_staff_admin and settings.SUBMISSIONS_DRAFT_ACCESS_STAFF_ADMIN:
@@ -125,7 +125,7 @@ def can_access_drafts(user):
     return False
 
 
-def can_export_submissions(user):
+def can_export_submissions(user) -> bool:
     if user.is_apply_staff and settings.SUBMISSIONS_EXPORT_ACCESS_STAFF:
         return True
     if user.is_apply_staff_admin and settings.SUBMISSIONS_EXPORT_ACCESS_STAFF_ADMIN:
