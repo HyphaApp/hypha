@@ -412,20 +412,24 @@
                     {% enddropdown_menu %}
                 {% endif %}
 
-                {% dropdown_menu title="Terms" heading="Filter by Terms" enable_search=True position="right" %}
-                    {% slot "url" %}{% url "apply:submissions:submenu-meta-terms" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
-                {% enddropdown_menu %}
+                {% if "meta_terms" not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}
+                    {% dropdown_menu title="Terms" heading="Filter by Terms" enable_search=True position="right" %}
+                        {% slot "url" %}{% url "apply:submissions:submenu-meta-terms" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
+                    {% enddropdown_menu %}
+                {% endif %}
 
-                {% dropdown_menu title="Lead" heading="Filter by Lead" enable_search=True position="right" %}
-                    {% slot "url" %}{% url "apply:submissions:submenu-leads" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
-                {% enddropdown_menu %}
+                {% if 'lead' not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}
+                    {% dropdown_menu title="Lead" heading="Filter by Lead" enable_search=True position="right" %}
+                        {% slot "url" %}{% url "apply:submissions:submenu-leads" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
+                    {% enddropdown_menu %}
+                {% endif %}
 
                 {% dropdown_menu title="Reviewers" heading="Filter by Reviewer" enable_search=True position="right" %}
                     {% slot "url" %}{% url "apply:submissions:submenu-reviewers" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
                 {% enddropdown_menu %}
 
 
-                {% dropdown_menu title="Sort" heading="Sort by" position="right" %}
+                {% dropdown_menu title="Sort" heading="Sort by" position="right" icon="arrows-up-down" %}
                     {% for sort_option in sort_options %}
                         <a
                             {% if sort_option.selected %}
