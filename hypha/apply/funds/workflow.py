@@ -24,12 +24,12 @@ PHASE_BG_COLORS = {
     "Need screening": "bg-cyan-200",
     "Ready for Determination": "bg-blue-200",
     "Ready For Discussion": "bg-blue-100",
-    "Invited for Proposal": "bg-yellow-100",
+    "Invited for Proposal": "bg-green-100",
     "Internal Review": "bg-yellow-200",
     "External Review": "bg-yellow-200",
-    "More information required": "bg-rose-200",
-    "Accepted but additional info required": "bg-rose-100",
-    "Dismissed": "bg-red-200",
+    "More information required": "bg-yellow-100",
+    "Accepted but additional info required": "bg-green-100",
+    "Dismissed": "bg-rose-200",
 }
 
 
