@@ -1106,7 +1106,7 @@ class ReminderCreateView(View):
                 status=204,
                 headers={
                     "HX-Trigger": json.dumps(
-                        {"remindersUpdated": None, "showMessage": "Reminder created."}
+                        {"remindersUpdated": None, "showMessage": _("Reminder created")}
                     ),
                 },
             )
