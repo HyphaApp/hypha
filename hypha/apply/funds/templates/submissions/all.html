@@ -536,20 +536,41 @@
         <nav class="mt-5 mb-20" aria-label="Pagination">
             <span class="flex items-center justify-center gap-2 step-links">
                 {% if page.has_previous %}
-                    <a href="?page=1" class="px-3 py-2 border hover:bg-slate-300">&laquo; First</a>
-                    <a href="?page={{ page.previous_page_number }}" class="px-3 py-2 border hover:bg-slate-300">{% trans "Previous" %}</a>
+                    <a
+                        href="?page=1"
+                        class="px-3 py-2 border hover:bg-slate-300"
+                        aria-label="{% trans "First Page" %}"
+                    >
+                        &laquo; {% trans "First" %}
+                    </a>
+                    <a
+                        href="?page={{ page.previous_page_number }}"
+                        class="px-3 py-2 border hover:bg-slate-300"
+                        aria-label={% trans "Previous Page" %}
+                    >
+                        {% trans "Previous" %}
+                    </a>
                 {% endif %}
 
                 <span class="current">
-                    Page {{ page.number }} of {{ page.paginator.num_pages }}.
+                    {% blocktrans with page_number=page.number total=page.paginator.num_pages %}Page {{ page_number }} of {{ total }}.{% endblocktrans %}
                 </span>
 
                 {% if page.has_next %}
-                    <a href="?page={{ page.next_page_number }}" class="px-3 py-2 border hover:bg-slate-300">
+                    <a
+                        href="?page={{ page.next_page_number }}"
+                        class="px-3 py-2 border hover:bg-slate-300"
+                        aria-label="{% trans "Next Page" %}"
+                    >
                         {% trans "Next" %}
                     </a>
-                    <a href="?page={{ page.paginator.num_pages }}" class="px-3 py-2 border hover:bg-slate-300">
-                        {% trans "Last" %} &raquo;</a>
+                    <a
+                        href="?page={{ page.paginator.num_pages }}"
+                        class="px-3 py-2 border hover:bg-slate-300"
+                        aria-label="{% trans "Last Page" %}"
+                    >
+                        {% trans "Last" %} &raquo;
+                    </a>
                 {% endif %}
             </span>
         </nav>
