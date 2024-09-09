@@ -4,8 +4,8 @@
     data-filter-list>
     {% if selected_category_options %}
         <li data-filter-item-text>
-            <a href="{% url "apply:submissions:list-alt" %}{% remove_from_query "only_query_string" "page" "category_options" %}"
-               hx-get="{% url "apply:submissions:list-alt" %}{% remove_from_query "only_query_string" "page" "category_options" %}"
+            <a href="{% url "apply:submissions:list" %}{% remove_from_query "only_query_string" "page" "category_options" %}"
+               hx-get="{% url "apply:submissions:list" %}{% remove_from_query "only_query_string" "page" "category_options" %}"
                hx-push-url="true"
                class="flex px-3 py-2 text-gray-600 border-b items-center hover:bg-gray-100 focus:bg-gray-100{% if s.selected %}bg-gray-100{% endif %}">
                 {% trans "All Categories" %}
@@ -16,12 +16,12 @@
         <li data-filter-item-text>
             <a
                 {% if item.selected %}
-                    href="{% url "apply:submissions:list-alt" %}{% remove_from_query "only_query_string" "page" category_options=item.id %}"
-                    hx-get="{% url "apply:submissions:list-alt" %}{% remove_from_query "only_query_string" "page" category_options=item.id %}"
+                    href="{% url "apply:submissions:list" %}{% remove_from_query "only_query_string" "page" category_options=item.id %}"
+                    hx-get="{% url "apply:submissions:list" %}{% remove_from_query "only_query_string" "page" category_options=item.id %}"
                     title="Remove {{ item.title }} from current filters"
                 {% else %}
-                    href="{% url "apply:submissions:list-alt" %}{% add_to_query "only_query_string" "page" category_options=item.id %}"
-                    hx-get="{% url "apply:submissions:list-alt" %}{% add_to_query "only_query_string" "page" category_options=item.id %}"
+                    href="{% url "apply:submissions:list" %}{% add_to_query "only_query_string" "page" category_options=item.id %}"
+                    hx-get="{% url "apply:submissions:list" %}{% add_to_query "only_query_string" "page" category_options=item.id %}"
                     title="Add {{ item.title }} to current filters"
                 {% endif %}
                 hx-push-url="true"

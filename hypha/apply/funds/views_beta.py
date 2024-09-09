@@ -76,6 +76,7 @@ def submission_all_beta(
     search_term, search_filters = parsed_query["text"], parsed_query["filters"]
 
     show_archived = request.GET.get("archived", False) == "on"
+    show_drafts = request.GET.get("drafts", False) == "on"
     selected_funds = request.GET.getlist("fund")
     selected_rounds = request.GET.getlist("round")
     selected_leads = request.GET.getlist("lead")
@@ -89,6 +90,7 @@ def submission_all_beta(
     page = request.GET.get("page", 1)
 
     can_view_archives = permissions.can_view_archived_submissions(request.user)
+    can_access_drafts = permissions.can_access_drafts(request.user)
 
     selected_fund_objects = (
         Page.objects.filter(id__in=selected_funds) if selected_funds else []
@@ -109,7 +111,7 @@ def submission_all_beta(
     else:
         qs = ApplicationSubmission.objects.current().for_table(request.user)
 
-    if not permissions.can_access_drafts(request.user):
+    if not can_access_drafts or not show_drafts:
         qs = qs.exclude_draft()
 
     if "submitted" in search_filters:
@@ -226,6 +228,8 @@ def submission_all_beta(
             qs = qs.order_by("-submit_time")
         else:
             qs = qs.order_by(sort_options_raw[selected_sort][0])
+    elif selected_sort in ["title-asc", "title-desc"]:
+        qs = qs.order_by(f"{'-' if selected_sort == 'title-desc' else ''}title")
     elif search_term:
         qs = qs.order_by("-rank")
     else:
@@ -256,6 +260,7 @@ def submission_all_beta(
         "submissions": page.object_list,
         "submission_ids": [x.id for x in page.object_list],
         "show_archived": show_archived,
+        "show_drafts": show_drafts,
         "selected_funds": selected_funds,
         "selected_fund_objects": selected_fund_objects,
         "selected_rounds": selected_rounds,
@@ -272,6 +277,7 @@ def submission_all_beta(
         "is_filtered": is_filtered,
         "duration": end - start,
         "can_view_archive": can_view_archives,
+        "can_access_drafts": can_access_drafts,
         "can_bulk_archive": permissions.can_bulk_archive_submissions(request.user),
         "can_bulk_delete": permissions.can_bulk_delete_submissions(request.user),
         "can_export_submissions": permissions.can_export_submissions(request.user),

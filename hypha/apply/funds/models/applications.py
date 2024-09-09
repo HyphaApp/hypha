@@ -24,6 +24,7 @@ from django.db.models.functions import Coalesce, Left, Length
 from django.http import Http404
 from django.shortcuts import redirect, render
 from django.template.response import TemplateResponse
+from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
@@ -833,6 +834,12 @@ class RoundsAndLabs(Page):
         return my_pk == other.pk
 
     objects = RoundsAndLabsManager()
+
+    def get_absolute_url(self):
+        params = f"fund={self.pk}"
+        if self.fund:
+            params = f"round={self.pk}"
+        return f'{reverse("apply:submissions:list")}?{params}'
 
     def save(self, *args, **kwargs):
         raise NotImplementedError("Do not save through this model")

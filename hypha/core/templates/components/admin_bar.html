@@ -5,7 +5,7 @@
         <div>
             {% render_slot slots.back_link %}
             <h1 class="text-2xl mb-2 font-medium md:text-3xl md:m-0">{% render_slot slots.header %}</h1>
-            {% if slots.sub_heading %}<p class="text-sm hidden md:block m-0">{% render_slot slots.sub_heading %}</p>{% endif %}
+            {% if slots.sub_heading %}<p class="text-sm m-0">{% render_slot slots.sub_heading %}</p>{% endif %}
         </div>
         {% if slots.buttons %}<div class="-mb-5 self-end">{% render_slot slots.buttons %}</div>{% endif %}
         {% render_slot slots.inner_block %}

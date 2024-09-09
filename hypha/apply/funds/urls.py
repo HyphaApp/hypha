@@ -7,7 +7,6 @@ from hypha.apply.projects import urls as projects_urls
 from .views import (
     AwaitingReviewSubmissionsListView,
     CreateProjectView,
-    ExportSubmissionsByRound,
     GroupingApplicationsListView,
     ProgressSubmissionView,
     ReminderCreateView,
@@ -26,7 +25,6 @@ from .views import (
     SubmissionListView,
     SubmissionPrivateMediaView,
     SubmissionResultView,
-    SubmissionsByRound,
     SubmissionsByStatus,
     SubmissionSealedView,
     UpdateLeadView,
@@ -92,53 +90,51 @@ submission_urls = (
             name="overview",
         ),
         path("success/<int:pk>/", submission_success, name="success"),
-        path("all/", SubmissionListView.as_view(), name="list"),
+        path("all/", submission_all_beta, name="list"),
+        path("all/old/", SubmissionListView.as_view(), name="list-old"),
         path(
             "statuses/",
             get_applications_status_counts,
             name="applications_status_counts",
         ),
-        path("all-alt/", submission_all_beta, name="list-alt"),
-        path("all-alt/bulk_archive/", bulk_archive_submissions, name="bulk-archive"),
-        path("all-alt/bulk_delete/", bulk_delete_submissions, name="bulk-delete"),
+        path("all/bulk_archive/", bulk_archive_submissions, name="bulk-archive"),
+        path("all/bulk_delete/", bulk_delete_submissions, name="bulk-delete"),
         path(
-            "all-alt/bulk_update_status/",
+            "all/bulk_update_status/",
             bulk_update_submissions_status,
             name="bulk-update-status",
         ),
-        path("all-alt/submenu/funds/", sub_menu_funds, name="submenu-funds"),
-        path("all-alt/submenu/leads/", sub_menu_leads, name="submenu-leads"),
-        path("all-alt/submenu/rounds/", sub_menu_rounds, name="submenu-rounds"),
+        path("all/submenu/funds/", sub_menu_funds, name="submenu-funds"),
+        path("all/submenu/leads/", sub_menu_leads, name="submenu-leads"),
+        path("all/submenu/rounds/", sub_menu_rounds, name="submenu-rounds"),
+        path("all/submenu/reviewers/", sub_menu_reviewers, name="submenu-reviewers"),
         path(
-            "all-alt/submenu/reviewers/", sub_menu_reviewers, name="submenu-reviewers"
-        ),
-        path(
-            "all-alt/submenu/meta-terms/",
+            "all/submenu/meta-terms/",
             sub_menu_meta_terms,
             name="submenu-meta-terms",
         ),
         path(
-            "all-alt/submenu/bulk-update-status/",
+            "all/submenu/bulk-update-status/",
             sub_menu_update_status,
             name="submenu-update-status",
         ),
         path(
-            "all-alt/submenu/bulk-update-lead/",
+            "all/submenu/bulk-update-lead/",
             sub_menu_bulk_update_lead,
             name="submenu-bulk-update-lead",
         ),
         path(
-            "all-alt/submenu/bulk-update-reviewers/",
+            "all/submenu/bulk-update-reviewers/",
             sub_menu_bulk_update_reviewers,
             name="submenu-bulk-update-reviewers",
         ),
         path(
-            "all-alt/submenu/category-options/",
+            "all/submenu/category-options/",
             sub_menu_category_options,
             name="submenu-category-options",
         ),
         path(
-            "all-alt/partials/review_decisions/",
+            "all/partials/review_decisions/",
             partial_reviews_decisions,
             name="partial-reviews-decisions",
         ),
@@ -280,8 +276,6 @@ submission_urls = (
 rounds_urls = (
     [
         path("", RoundListView.as_view(), name="list"),
-        path("<int:pk>/", SubmissionsByRound.as_view(), name="detail"),
-        path("export/<int:pk>/", ExportSubmissionsByRound.as_view(), name="export"),
     ],
     "rounds",
 )
