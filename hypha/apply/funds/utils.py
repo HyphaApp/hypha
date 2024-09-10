@@ -164,7 +164,7 @@ def is_filter_empty(filter: filters.FilterSet) -> bool:
     return any(reduce(iconcat, [param[1] for param in query.lists()], []))
 
 
-def get_copied_form_name(orignal_form_name: str) -> str:
+def get_copied_form_name(original_form_name: str) -> str:
     """Create the name of the form to be copied
 
     By default, takes the orginal forms name and adds `(Copied on %Y-%m-%d %H:%M:%S.%f)`
@@ -181,10 +181,13 @@ def get_copied_form_name(orignal_form_name: str) -> str:
     copy_str = _("Copied on {copy_time}")
     copy_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-4]
     date_reg = r"(\d{2,4}-?){3} (\d{2}(:|.)?){4}"  # match the strftime pattern of %Y-%m-%d %H:%M:%S.%f
+
+    # Escape the `copy_str` to allow for translations to be matched & replace the
+    # `{copy_time}` var with the `date_reg` regex
     name_reg = r" \({}\)$".format(
         re.escape(copy_str).replace(r"\{copy_time\}", date_reg)
     )
 
     # If a copied timestamp already exists, remove it
-    new_name = re.sub(name_reg, "", orignal_form_name)
+    new_name = re.sub(name_reg, "", original_form_name)
     return f"{new_name} ({copy_str.format(copy_time=copy_time)})"
