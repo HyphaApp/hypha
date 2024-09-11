@@ -142,14 +142,22 @@ class DateFieldBlockFactory(FormFieldBlockFactory):
 
 
 class TimeFieldBlockFactory(FormFieldBlockFactory):
-    default_value = factory.Faker("time_object")
+    default_value = factory.LazyFunction(
+        lambda: factory.Faker("time_object")
+        .evaluate(None, None, {"locale": None})
+        .replace(microsecond=0)
+    )
 
     class Meta:
         model = stream_blocks.TimeFieldBlock
 
 
 class DateTimeFieldBlockFactory(FormFieldBlockFactory):
-    default_value = factory.Faker("date_time")
+    default_value = factory.LazyFunction(
+        lambda: factory.Faker("date_time")
+        .evaluate(None, None, {"locale": None})
+        .replace(microsecond=0)
+    )
 
     class Meta:
         model = stream_blocks.DateTimeFieldBlock
@@ -162,7 +170,7 @@ class DateTimeFieldBlockFactory(FormFieldBlockFactory):
             date_time = super().make_form_answer(params)
         return {
             "date": str(date_time.date()),
-            "time": str(date_time.time()),
+            "time": str(date_time.time().replace(microsecond=0)),
         }
 
 
@@ -262,7 +270,7 @@ class StreamFieldUUIDFactory(wagtail_factories.StreamFieldFactory):
         ret_val = []
         # Convert to JSON so we can add id before create
         for block_name, value in blocks:
-            block = self.factories[block_name]._meta.model()
+            block = self.stream_block_factory[block_name]._meta.model()
             value = block.get_prep_value(value)
             ret_val.append(
                 {"type": block_name, "value": value, "id": str(uuid.uuid4())}
@@ -293,7 +301,7 @@ class StreamFieldUUIDFactory(wagtail_factories.StreamFieldFactory):
 
         form_fields = {}
         field_count = 0
-        for field in self.factories:
+        for field in self.stream_block_factory:
             if field == "text_markup" or field in exclusions:
                 pass
             else:
@@ -309,34 +317,34 @@ class StreamFieldUUIDFactory(wagtail_factories.StreamFieldFactory):
         if not field_values:
             field_values = {}
         data = {
-            field.id: self.factories[field.block.name].make_form_answer(
+            field.id: self.stream_block_factory[field.block.name].make_form_answer(
                 field_values.get(field.id, {})
             )
             for field in fields
-            if hasattr(self.factories[field.block.name], "make_form_answer")
+            if hasattr(self.stream_block_factory[field.block.name], "make_form_answer")
         }
         return flatten_for_form(data)
 
 
 NON_FILE_BLOCK_FACTORY_DEFINITION = {
-    "text_markup": ParagraphBlockFactory,
-    "char": CharFieldBlockFactory,
-    "text": TextFieldBlockFactory,
-    "number": NumberFieldBlockFactory,
-    "checkbox": CheckboxFieldBlockFactory,
-    "radios": RadioFieldBlockFactory,
-    "dropdown": DropdownFieldBlockFactory,
-    "checkboxes": CheckboxesFieldBlockFactory,
-    "date": DateFieldBlockFactory,
-    "time": TimeFieldBlockFactory,
-    "datetime": DateTimeFieldBlockFactory,
+    "text_markup": factory.SubFactory(ParagraphBlockFactory),
+    "char": factory.SubFactory(CharFieldBlockFactory),
+    "text": factory.SubFactory(TextFieldBlockFactory),
+    "number": factory.SubFactory(NumberFieldBlockFactory),
+    "checkbox": factory.SubFactory(CheckboxFieldBlockFactory),
+    "radios": factory.SubFactory(RadioFieldBlockFactory),
+    "dropdown": factory.SubFactory(DropdownFieldBlockFactory),
+    "checkboxes": factory.SubFactory(CheckboxesFieldBlockFactory),
+    "date": factory.SubFactory(DateFieldBlockFactory),
+    "time": factory.SubFactory(TimeFieldBlockFactory),
+    "datetime": factory.SubFactory(DateTimeFieldBlockFactory),
 }
 
 BLOCK_FACTORY_DEFINITION = {
     **NON_FILE_BLOCK_FACTORY_DEFINITION,
-    "image": ImageFieldBlockFactory,
-    "file": FileFieldBlockFactory,
-    "multi_file": MultiFileFieldBlockFactory,
+    "image": factory.SubFactory(ImageFieldBlockFactory),
+    "file": factory.SubFactory(FileFieldBlockFactory),
+    "multi_file": factory.SubFactory(MultiFileFieldBlockFactory),
 }
 
 # There are two here, because some tests will fail due to JSON serialization errors
