@@ -1,3 +1,4 @@
+import datetime
 import decimal
 
 import factory
@@ -177,7 +178,7 @@ class PacketFileFactory(factory.django.DjangoModelFactory):
 class InvoiceFactory(factory.django.DjangoModelFactory):
     invoice_number = factory.Faker("name")
     invoice_amount = decimal.Decimal("10")
-    invoice_date = factory.LazyFunction(timezone.now)
+    invoice_date = factory.LazyFunction(datetime.date.today)
     project = factory.SubFactory(ProjectFactory)
     by = factory.SubFactory(UserFactory)
     document = factory.django.FileField()
