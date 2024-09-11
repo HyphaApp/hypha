@@ -16,31 +16,8 @@ How this works:
             visible: [],
             id: 0,
             timeouts: {}, // Object to keep track of timeouts
-            pendingMessages: new Map(), // To store toasts text temporarily
 
             add(toast) {
-                const existingToast = this.pendingMessages.get(toast.text);
-                if (existingToast) {
-                    // If the toast already exists and is of type 'success', use that instead
-                    if (existingToast.type === 'success') {
-                        toast = existingToast;
-                    }
-                    this.pendingMessages.delete(toast.text);
-                } else {
-                    // If it's a new toast, store it temporarily
-                    this.pendingMessages.set(toast.text, toast);
-                    // Set a timeout to add the toast if no duplicate arrives
-                    setTimeout(() => {
-                        if (this.pendingMessages.has(toast.text)) {
-                            this.addToast(this.pendingMessages.get(toast.text));
-                            this.pendingMessages.delete(toast.text);
-                        }
-                    }, 50);
-                    return;
-                }
-                this.addToast(toast);
-            },
-            addToast(toast) {
                 toast.id = Date.now().toString() + this.id++;
                 this.toasts.push(toast);
                 this.fire(toast.id);

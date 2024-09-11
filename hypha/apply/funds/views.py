@@ -1105,9 +1105,7 @@ class ReminderCreateView(View):
             return HttpResponse(
                 status=204,
                 headers={
-                    "HX-Trigger": json.dumps(
-                        {"remindersUpdated": None, "showMessage": _("Reminder created")}
-                    ),
+                    "HX-Trigger": json.dumps({"remindersUpdated": None}),
                 },
             )
         return render(
