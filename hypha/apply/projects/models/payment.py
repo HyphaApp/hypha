@@ -182,8 +182,8 @@ class Invoice(models.Model):
         null=True,
         verbose_name=_("Invoice amount"),
     )
-    invoice_date = models.DateTimeField(null=True, verbose_name=_("Invoice date"))
-    paid_date = models.DateTimeField(null=True, verbose_name=_("Paid date"))
+    invoice_date = models.DateField(null=True, verbose_name=_("Invoice date"))
+    paid_date = models.DateField(null=True, verbose_name=_("Paid date"))
     status = FSMField(default=SUBMITTED, choices=INVOICE_STATUS_CHOICES)
     deliverables = ManyToManyField("InvoiceDeliverable", related_name="invoices")
     objects = InvoiceQueryset.as_manager()
