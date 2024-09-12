@@ -183,7 +183,9 @@ class ProjectSOWForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass):
 class ChangePAFStatusForm(forms.ModelForm):
     name_prefix = "change_paf_status_form"
     paf_status = forms.ChoiceField(
-        label=_("PAF status"), choices=PAF_STATUS_CHOICES, widget=forms.RadioSelect()
+        label=_("Project form status"),
+        choices=PAF_STATUS_CHOICES,
+        widget=forms.RadioSelect(),
     )
     comment = forms.CharField(required=False, widget=forms.Textarea)
 

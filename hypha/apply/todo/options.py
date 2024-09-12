@@ -26,11 +26,11 @@ TASKS_CODE_CHOICES = (
     (SUBMISSION_DRAFT, "Submission Draft"),
     (DETERMINATION_DRAFT, "Determination draft"),
     (REVIEW_DRAFT, "Review Draft"),
-    (PROJECT_WAITING_PAF, "Project waiting PAF"),
-    (PROJECT_SUBMIT_PAF, "Project submit PAF"),
-    (PAF_REQUIRED_CHANGES, "PAF required changes"),
-    (PAF_WAITING_ASSIGNEE, "PAF waiting assignee"),
-    (PAF_WAITING_APPROVAL, "PAF waiting approval"),
+    (PROJECT_WAITING_PAF, "Project waiting project form"),
+    (PROJECT_SUBMIT_PAF, "Project submit project form"),
+    (PAF_REQUIRED_CHANGES, "Project form required changes"),
+    (PAF_WAITING_ASSIGNEE, "Project form waiting assignee"),
+    (PAF_WAITING_APPROVAL, "Project form waiting approval"),
     (PROJECT_WAITING_CONTRACT, "Project waiting contract"),
     (PROJECT_WAITING_CONTRACT_DOCUMENT, "Project waiting contract document"),
     (PROJECT_WAITING_CONTRACT_REVIEW, "Project waiting contract review"),
@@ -73,7 +73,7 @@ template_map = {
     # draft state (staff action)
     PROJECT_WAITING_PAF: {
         "text": _(
-            'Project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting for PAF'
+            'Project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting for project form'
         ),
         "icon": "dashboard-paf",
         "url": "{link}",
@@ -81,7 +81,7 @@ template_map = {
     },
     PROJECT_SUBMIT_PAF: {
         "text": _(
-            'Project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting for PAF submission'
+            'Project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting for project form submission'
         ),
         "icon": "dashboard-paf",
         "url": "{link}",
@@ -89,7 +89,7 @@ template_map = {
     },
     PAF_REQUIRED_CHANGES: {
         "text": _(
-            'PAF for project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") required changes or more information'
+            'Project form for project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") required changes or more information'
         ),
         "icon": "dashboard-paf",
         "url": "{link}",
@@ -98,7 +98,7 @@ template_map = {
     # internal approval state (approvers/finance... action)
     PAF_WAITING_ASSIGNEE: {
         "text": _(
-            'PAF for project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting for assignee'
+            'Project form for project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting for assignee'
         ),
         "icon": "dashboard-paf",
         "url": "{link}",
@@ -106,7 +106,7 @@ template_map = {
     },
     PAF_WAITING_APPROVAL: {
         "text": _(
-            'PAF for project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting for your approval'
+            'Project form for project [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting for your approval'
         ),
         "icon": "dashboard-paf",
         "url": "{link}",
