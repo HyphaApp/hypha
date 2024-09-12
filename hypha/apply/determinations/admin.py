@@ -8,7 +8,7 @@ from hypha.apply.determinations.models import (
     DeterminationMessageSettings,
 )
 from hypha.apply.review.admin_helpers import ButtonsWithClone
-from hypha.apply.utils.admin import ListRelatedMixin
+from hypha.apply.utils.admin import AdminIcon, ListRelatedMixin
 from hypha.core.wagtail.admin.options import SettingModelAdmin
 
 from .admin_views import CreateDeterminationFormView, EditDeterminationFormView
@@ -22,7 +22,7 @@ class CloneView(CreateView, InstanceSpecificView):
 
 class DeterminationFormAdmin(ListRelatedMixin, ModelAdmin):
     model = DeterminationForm
-    menu_icon = "form"
+    menu_icon = str(AdminIcon.DETERMINATION_FORM)
     list_display = ("name", "used_by")
     button_helper_class = ButtonsWithClone
     clone_view_class = CloneView

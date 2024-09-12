@@ -3,7 +3,7 @@ from wagtail.contrib.modeladmin.options import ModelAdmin
 from wagtail.contrib.modeladmin.views import CreateView, InstanceSpecificView
 
 from hypha.apply.review.models import ReviewForm
-from hypha.apply.utils.admin import ListRelatedMixin
+from hypha.apply.utils.admin import AdminIcon, ListRelatedMixin
 
 from .admin_helpers import ButtonsWithClone
 from .admin_views import CreateReviewFormView, EditReviewFormView
@@ -17,7 +17,7 @@ class CloneView(CreateView, InstanceSpecificView):
 
 class ReviewFormAdmin(ListRelatedMixin, ModelAdmin):
     model = ReviewForm
-    menu_icon = "form"
+    menu_icon = str(AdminIcon.REVIEW_FORM)
     list_display = ("name", "used_by")
     button_helper_class = ButtonsWithClone
     clone_view_class = CloneView
