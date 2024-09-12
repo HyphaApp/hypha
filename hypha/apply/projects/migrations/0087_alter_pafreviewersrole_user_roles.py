@@ -7,7 +7,7 @@ import modelcluster.fields
 class Migration(migrations.Migration):
     dependencies = [
         ("auth", "0012_alter_user_first_name_max_length"),
-        ("application_projects", "0085_alter_projectsettings_paf_approval_sequential"),
+        ("application_projects", "0086_invoice_invoice_date_invoice_paid_date"),
     ]
 
     operations = [
