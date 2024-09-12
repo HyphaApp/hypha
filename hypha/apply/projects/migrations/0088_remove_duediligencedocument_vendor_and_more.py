@@ -5,7 +5,7 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("application_projects", "0085_alter_projectsettings_paf_approval_sequential"),
+        ("application_projects", "0087_alter_pafreviewersrole_user_roles"),
     ]
 
     operations = [
