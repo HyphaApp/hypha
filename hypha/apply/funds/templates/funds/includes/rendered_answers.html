@@ -1,5 +1,5 @@
-{% load i18n wagtailusers_tags workflow_tags heroicons %}
-{% if from_lang_name and to_lang_name %}
+{% load i18n wagtailusers_tags workflow_tags translate_tags heroicons %}
+{% if request.user|can_translate_submission and from_lang_name and to_lang_name %}
     <div class="w-full text-center my-2 py-5 border rounded-lg shadow-md">
         <span>
             {% heroicon_outline "language" aria_hidden="true" size=15 stroke_width=2 class="inline align-baseline me-1" %}
