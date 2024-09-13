@@ -27,12 +27,14 @@ from .views import (
     SubmissionResultView,
     SubmissionsByStatus,
     SubmissionSealedView,
+    TranslateSubmissionView,
     UpdateLeadView,
     UpdateMetaTermsView,
     UpdatePartnersView,
     UpdateReviewersView,
     htmx_archive_unarchive_submission,
     partial_screening_card,
+    partial_translate_answers,
     reminder_list,
     submission_success,
 )
@@ -199,6 +201,11 @@ submission_urls = (
                         name="partial-meta-terms-card",
                     ),
                     path(
+                        "partial/translate/answers",
+                        partial_translate_answers,
+                        name="partial-translate-answers",
+                    ),
+                    path(
                         "project/create/",
                         CreateProjectView.as_view(),
                         name="create_project",
@@ -212,6 +219,11 @@ submission_urls = (
                         "reminder/create/",
                         ReminderCreateView.as_view(),
                         name="create_reminder",
+                    ),
+                    path(
+                        "translate/",
+                        TranslateSubmissionView.as_view(),
+                        name="translate",
                     ),
                     path(
                         "progress/", ProgressSubmissionView.as_view(), name="progress"

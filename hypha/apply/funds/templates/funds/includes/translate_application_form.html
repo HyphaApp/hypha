@@ -1,0 +1,128 @@
+{% load i18n static heroicons translate_tags %}
+{% modal_title %}{% trans "Translate" %}{% endmodal_title %}
+<form
+    class="px-2 pb-4 form"
+    id="translate_form"
+    method="POST"
+    action="{{ request.path }}"
+    hx-post="{{ request.path }}"
+>
+    {% csrf_token %}
+    {{ form.media }}
+    {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+    {% endfor %}
+
+    <div>
+        {% if form.errors %}
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <div class="alert alert-danger">
+                        <strong>{{ error|escape }}</strong>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                <div class="alert alert-danger">
+                    <strong>{{ error|escape }}</strong>
+                </div>
+            {% endfor %}
+        {% endif %}
+        <div class="flex mt-3 justify-center space-x-2">
+            <fieldset class="w-2/5">
+                <div>
+                    {{ form.from_lang }}
+                </div>
+            </fieldset>
+            <div class="flex flex-col justify-center">
+                {% heroicon_outline "arrow-right" aria_hidden="true" size=15 stroke_width=2 class="inline align-baseline me-1" %}
+            </div>
+            <fieldset class="w-2/5">
+                <div>
+                    {{ form.to_lang }}
+                </div>
+            </fieldset>
+        </div>
+    </div>
+
+    <div class="mt-5 sm:gap-4 sm:mt-4 sm:flex sm:flex-row-reverse">
+
+        {# Button text inserted below to prevent redundant translations #}
+        <button id="translate-btn" class="w-full button button--primary sm:w-auto" type="submit"></button>
+
+        <button
+            type="button"
+            class="inline-flex items-center justify-center w-full px-3 py-2 mt-3 text-sm font-semibold text-gray-900 bg-white rounded-sm shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+            @click="show = false"
+        >{% trans "Cancel" %}</button>
+        <span class="inline-block" data-tooltip="{% trans "Translations are an experimental feature and may be inaccurate" %}">{% heroicon_outline "information-circle" aria_hidden="true" size=15 stroke_width=2 class="inline align-baseline me-1" %}</span>
+    </div>
+</form>
+
+<script type="module">
+    import Choices from "{% static 'js/esm/choices.js-10-2-0.js' %}";
+
+    {% get_language_choices_json as choices_json %}
+    const choices = JSON.parse('{{ choices_json }}')
+
+    {# Define translations for the button text #}
+    const CLEAR_TEXT = "{% trans "Clear" %}"
+    const TRANSLATE_TEXT = "{% trans "Translate" %}"
+
+    function getToLangChoices(from_lang) {
+        const selected = choices.find((choice) => choice.code === from_lang)
+        if (!selected) return []
+
+        const default_lang = selected.selectedTo ? selected.selectedTo : selected.to[0].code
+
+        return selected.to.map((choice) => {return {value: choice.code, label: choice.name, selected: default_lang}})
+    }
+
+    function checkForActiveTranslation(newFromLang, newToLang) {
+        const active = choices.find((choice) => choice.selected === true);
+
+        if (!active) return false
+
+        const activeFrom = active.code;
+        const activeTo = active.selectedTo;
+
+        return (newFromLang === activeFrom && newToLang == activeTo)
+    }
+
+    function showClearBtn(show) {
+        translateBtn.textContent = show ? CLEAR_TEXT : TRANSLATE_TEXT
+    }
+
+    const fromLangChoices = choices.map((choice) => {
+        return {value: choice.code, label: choice.name, selected: choice.selected}
+    })
+
+    const selectFromLang = new Choices(document.getElementById('id_from_lang'), { allowHTML: true }).setChoices(fromLangChoices);
+    const selectToLang = new Choices(document.getElementById('id_to_lang'), { allowHTML: true });
+    const translateBtn = document.getElementById('translate-btn');
+    const clearBtn = document.getElementById('clear-btn');
+
+    if(selectFromLang.getValue()?.value) {
+        selectToLang.setChoices(getToLangChoices(selectFromLang.getValue().value))
+        showClearBtn(true)
+    } else {
+        showClearBtn(false)
+        selectToLang.disable();
+    }
+
+    selectFromLang.passedElement.element.addEventListener('change', (event) => {
+        if (fromLangChoices.map((choice) => choice.value).includes(event.detail.value)) {
+            selectToLang.setChoices(getToLangChoices(event.detail.value), 'value', 'label', true)
+            selectToLang.enable();
+            showClearBtn(checkForActiveTranslation(event.detail.value, selectToLang.getValue().value));
+        } else {
+            selectToLang.disable();
+        }
+    });
+
+    selectToLang.passedElement.element.addEventListener('change', (event) => {
+        if (checkForActiveTranslation(selectFromLang.getValue().value, event.detail.value)) {
+            showClearBtn(true);
+        }
+    })
+</script>

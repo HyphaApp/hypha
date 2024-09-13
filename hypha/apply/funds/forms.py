@@ -377,6 +377,20 @@ class BatchUpdateReviewersForm(forms.Form):
         return False
 
 
+class TranslateSubmissionForm(forms.Form):
+    from_lang = forms.ChoiceField(choices=[])
+    to_lang = forms.ChoiceField(choices=[])
+
+    def is_valid(self) -> bool:
+        self.cleaned_data = self.data
+        # TODO: WA fix logic to actually validate the form
+        return True
+
+    def clean(self):
+        self.cleaned_data = self.data
+        return self.cleaned_data
+
+
 def make_role_reviewer_fields():
     role_fields = []
     staff_reviewers = User.objects.staff().only("full_name", "pk")

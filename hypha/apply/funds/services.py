@@ -1,3 +1,6 @@
+import re
+
+from bs4 import BeautifulSoup
 from django.apps import apps
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
@@ -20,6 +23,7 @@ from hypha.apply.activity.models import Activity, Event
 from hypha.apply.funds.models.assigned_reviewers import AssignedReviewers
 from hypha.apply.funds.workflow import INITIAL_STATE
 from hypha.apply.review.options import DISAGREE, MAYBE
+from hypha.apply.translate.translate import translate
 
 
 def bulk_archive_submissions(
@@ -260,3 +264,55 @@ def annotate_review_recommendation_and_count(submissions: QuerySet) -> QuerySet:
         ),
     )
     return submissions
+
+
+def translate_submission_form_data(
+    submission, from_code: str, to_code: str
+) -> dict | None:
+    """Translate the content of an application's `form_data`
+
+    Args:
+        submission: the submission to translate
+        from_code: the ISO 639 code of the original language
+        to_code: the ISO 639 code of the language to translate to
+
+    Returns:
+        The `form_data` with values translated if succcessful, otherwise `None`
+
+    Raises:
+        ValueError if an invalid `from_code` or `to_code` is requested
+
+    """
+
+    translated_form_data = {}
+
+    form_data = submission.live_revision.form_data
+
+    for key in form_data:
+        # Only translate content fields or the title - don't with name, email, etc.
+        if key == "title":
+            translated_form_data[key] = translate(form_data[key], from_code, to_code)
+        elif key == "title" or re.match(
+            r"([a-z]|\d){8}(-([a-z]|\d){4}){3}-([a-z]|\d){12}", key
+        ):
+            field_html = BeautifulSoup(form_data[key], "html.parser")
+            if field_html.find():
+                text_fields = [
+                    field
+                    for field in field_html.findAll(["span", "p", "strong", "td"])
+                    if field.find(string=True, recursive=False)
+                ]
+                for field in text_fields:
+                    if field.string:
+                        field["lang"] = to_code
+                        field.string = translate(field.string, from_code, to_code)
+
+                translated_form_data[key] = str(field_html)
+            else:
+                translated_form_data[key] = translate(
+                    form_data[key], from_code, to_code
+                )
+        else:
+            translated_form_data[key] = form_data[key]
+
+    return translated_form_data
