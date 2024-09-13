@@ -2,7 +2,7 @@
 {% load i18n static workflow_tags wagtailcore_tags statusbar_tags archive_tags submission_tags %}
 {% load heroicons %}
 
-{% block title %}#{{ object.public_id|default_if_none:object.id}}: {{ object.title }}{% endblock %}
+{% block title %}{{ object|doc_title }}{% endblock %}
 {% block body_class %}{% endblock %}
 
 {% block content %}
@@ -22,7 +22,9 @@
                     {% trans "Back to submissions" %}
                 </a>
             {% endif %}
-            <h1 class="mt-2 mb-0 font-medium">{{ object.title }}<span class="text-gray-400"> #{{ object.public_id|default:object.id }}</span></h1>
+            <h1 class="mt-2 mb-0 font-medium">
+                <span id="app-title">{{ object.title }}</span><span class="text-gray-400"> #{{ object.public_id|default:object.id }}</span>
+            </h1>
             <div class="mt-1 text-sm font-medium heading heading--meta">
                 <span>{{ object.stage }}</span>
                 <span>{{ object.page }}</span>
@@ -144,8 +146,9 @@
                                 {% endif %}
                             </div>
                         </header>
-
-                        {% include "funds/includes/rendered_answers.html" %}
+                        <div class="wrapper" hx-get="{% url 'funds:submissions:partial-translate-answers' object.id %}" hx-trigger="translateSubmission from:body" hx-indicator="#translate-card-loading" hx-vals='js:{fl: event.detail.from_lang, tl: event.detail.to_lang}'>
+                            {% include "funds/includes/rendered_answers.html" %}
+                        </div>
 
                     </article>
                 {% endif %}

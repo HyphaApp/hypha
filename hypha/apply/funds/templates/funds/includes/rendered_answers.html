@@ -1,4 +1,19 @@
-{% load i18n wagtailusers_tags workflow_tags %}
+{% load i18n wagtailusers_tags workflow_tags heroicons %}
+{% if from_lang_name and to_lang_name %}
+    <div class="w-full text-center my-2 py-5 border rounded-lg shadow-md">
+        <span>
+            {% heroicon_outline "language" aria_hidden="true" size=15 stroke_width=2 class="inline align-baseline me-1" %}
+            {% blocktrans %} This application is translated from {{from_lang_name}} to {{to_lang_name}}. {% endblocktrans %}
+            <a href="{% url 'funds:submissions:detail' object.id %}">
+                {% trans "See original" %}
+            </a>
+        </span>
+    </div>
+{% else %}
+    <div id="translate-card-loading" class="w-full text-center my-2 py-5 border rounded-lg shadow-md animate-pulse htmx-indicator">
+        <span class="w-full bg-gray-200 rounded-lg"></span>
+    </div>
+{% endif %}
 <h3 class="text-xl border-b pb-2 font-bold">{% trans "Proposal Information" %}</h3>
 <div class="hypha-grid hypha-grid--proposal-info">
     {% if object.get_value_display != "-" %}
@@ -43,3 +58,30 @@
 <div class="rich-text rich-text--answers">
     {{ object.output_answers }}
 </div>
+
+<style type="text/css">
+    #translate-card-loading span {
+        width: 490px;
+    }
+
+    #translate-card-loading.htmx-indicator{
+        height: 0;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        align-content: center;
+        border-width: 0px;
+    }
+    #translate-card-loading.htmx-request.htmx-indicator{
+        height: 64px;
+        transition: height 0.25s ease-in;
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+        border-width: 1px;
+    }
+
+    #translate-card-loading.htmx-request.htmx-indicator span {
+        display: inline-block;
+        height: 1rem;
+    }
+</style>
