@@ -90,3 +90,15 @@ def can_update_contracting_documents(project, user):
     if user == project.user and not user.is_apply_staff and not user.is_contracting:
         return True
     return False
+
+
+@register.simple_tag
+def can_access_category_document(project, user, category):
+    permission, _ = has_permission(
+        "view_contract_documents",
+        user,
+        object=project,
+        contract_category=category,
+        raise_exception=False,
+    )
+    return permission
