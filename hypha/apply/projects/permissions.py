@@ -364,6 +364,26 @@ def can_access_project(user, project):
     return False, "Forbidden Error"
 
 
+def can_view_contract_category_documents(user, project, **kwargs):
+    from hypha.apply.activity.adapters.utils import get_users_for_groups
+
+    contract_category = kwargs.get("contract_category")
+    if not contract_category:
+        return False, "Contract Category is required"
+    restricted_group_users = get_users_for_groups(
+        list(contract_category.restrict_document_access_view.all())
+    )
+    if restricted_group_users and user in restricted_group_users:
+        return False, "Forbidden Error"
+    if user.is_apply_staff or user.is_contracting:
+        return True, "Access allowed"
+
+    if user == project.user:
+        return True, "Access allowed"
+
+    return False, "Forbidden Error"
+
+
 def can_edit_paf(user, project):
     if no_pafreviewer_role() and project.status != COMPLETE:
         return True, "Paf is editable for active projects if no reviewer roles"
@@ -387,4 +407,5 @@ permissions_map = {
     "submit_contract_documents": can_submit_contract_documents,
     "project_access": can_access_project,
     "paf_edit": can_edit_paf,
+    "view_contract_documents": can_view_contract_category_documents,
 }

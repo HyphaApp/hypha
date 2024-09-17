@@ -1704,28 +1704,26 @@ class ContractPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
 
 
 @method_decorator(login_required, name="dispatch")
-class ContractDocumentPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
+class ContractDocumentPrivateMediaView(PrivateMediaView):
     raise_exception = True
 
     def dispatch(self, *args, **kwargs):
         project_pk = self.kwargs["pk"]
         self.project = get_object_or_404(Project, pk=project_pk)
+        self.document = ContractPacketFile.objects.get(pk=kwargs["file_pk"])
+        permission, _ = has_permission(
+            "view_contract_documents",
+            self.request.user,
+            object=self.project,
+            contract_category=self.document.category,
+            raise_exception=True,
+        )
         return super().dispatch(*args, **kwargs)
 
     def get_media(self, *args, **kwargs):
-        document = ContractPacketFile.objects.get(pk=kwargs["file_pk"])
-        if document.project != self.project:
+        if self.document.project != self.project:
             raise Http404
-        return document.document
-
-    def test_func(self):
-        if self.request.user.is_apply_staff or self.request.user.is_contracting:
-            return True
-
-        if self.request.user == self.project.user:
-            return True
-
-        return False
+        return self.document.document
 
 
 # PROJECT FORM VIEWS

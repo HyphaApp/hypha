@@ -727,6 +727,15 @@ class DocumentCategory(models.Model):
 class ContractDocumentCategory(models.Model):
     name = models.CharField(max_length=254)
     recommended_minimum = models.PositiveIntegerField(null=True, blank=True)
+    restrict_document_access_view = models.ManyToManyField(
+        Group,
+        verbose_name=_("Restrict document access for groups"),
+        help_text=_(
+            "Only selected group's users will be restricted from document access"
+        ),
+        related_name="contract_document_category",
+        blank=True,
+    )
     required = models.BooleanField(default=True)
     template = models.FileField(
         upload_to=contract_document_template_path,
@@ -745,6 +754,9 @@ class ContractDocumentCategory(models.Model):
     panels = [
         FieldPanel("name"),
         FieldPanel("required"),
+        FieldPanel(
+            "restrict_document_access_view", widget=forms.CheckboxSelectMultiple
+        ),
         FieldPanel("template"),
     ]
 
