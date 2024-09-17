@@ -1,3 +1,4 @@
+import argparse
 from datetime import timedelta
 
 from django.core.management.base import BaseCommand
@@ -8,16 +9,72 @@ from hypha.apply.funds.models.submissions import ApplicationSubmission
 from hypha.apply.funds.workflow import DRAFT_STATE
 
 
+def check_not_negative(value):
+    """Used to validate `older_than_days` argument
+
+    Needs to be a non-negative int
+    """
+    try:
+        ivalue = int(value)
+    except ValueError:
+        ivalue = -1
+
+    if ivalue < 0:
+        raise argparse.ArgumentTypeError(
+            f'"{value}" is an invalid non-negative integer value'
+        )
+    return ivalue
+
+
 class Command(BaseCommand):
     help = "Delete all drafts that are older than 2 years"
 
-    @transaction.atomic
-    def handle(self, *args, **options):
-        two_years_ago = timezone.now() - timedelta(days=730)
-
-        old_drafts = ApplicationSubmission.objects.filter(
-            status=DRAFT_STATE, submit_time__date__lte=two_years_ago
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "older_than_days",
+            action="store",
+            type=check_not_negative,
+            help="Clear all applications older than the days specified here",
+        )
+        parser.add_argument(
+            "--noinput",
+            "--no-input",
+            action="store_false",
+            dest="interactive",
+            help="Do not prompt the user for confirmation",
+            required=False,
         )
 
-        for draft in old_drafts:
-            draft.delete()
+    @transaction.atomic
+    def handle(self, *args, **options):
+        interactive = options["interactive"]
+        older_than = options["older_than_days"]
+
+        older_than_date = timezone.now() - timedelta(days=older_than)
+
+        old_drafts = ApplicationSubmission.objects.filter(
+            status=DRAFT_STATE, draft_revision__timestamp__date__lte=older_than_date
+        )
+
+        draft_count = old_drafts.count()
+
+        if not (draft_count := old_drafts.count()):
+            self.stdout.write(
+                f"No drafts older than {older_than} day{"s" if older_than > 1 else ""} exist."
+            )
+            return
+
+        if interactive:
+            confirm = input(
+                f"This action will permanently delete {draft_count} draft{"s" if draft_count != 1 else ""}.\nAre you sure you want to do this?\n\nType 'yes' to continue, or 'no' to cancel: "
+            )
+        else:
+            confirm = "yes"
+
+        if confirm == "yes":
+            old_drafts.delete()
+            self.stdout.write(
+                f"{draft_count} draft{"s" if draft_count != 1 else ""} deleted."
+            )
+        else:
+            self.stdout.write("Deletion cancelled.")
