@@ -32,7 +32,7 @@
                     {{ activity|display_activity_author:request.user }}
                 </strong>
                 <span class="text-fg-muted">
-                    {{ activity_text|striptags|lowerfirst }}
+                    {{ activity_text|lowerfirst|safe }}
                     <relative-time datetime="{{ activity.timestamp|date:'c' }}">
                         {{ activity.timestamp|date:'SHORT_DATETIME_FORMAT' }}
                     </relative-time>

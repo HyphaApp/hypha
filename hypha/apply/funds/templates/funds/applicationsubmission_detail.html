@@ -57,6 +57,8 @@
                     <a class="tab__item"
                        href="#communications"
                        data-tab="tab-2"
+                       x-data
+                       @click="$dispatch('fetchComments')"
                     >
                         {% trans "Conversations" %} ({{ comments_count }})
                     </a>
@@ -227,7 +229,7 @@
                     class="comments"
                     id="comment-feed"
                     hx-get="{% url 'activity:partial-comments' 'submission' object.id %}"
-                    hx-trigger="intersect once"
+                    hx-trigger="fetchComments from:body, intersect once"
                 >
                     <p>{% trans "Loading…" %}</p>
                 </div>
