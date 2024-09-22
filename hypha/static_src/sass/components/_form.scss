@@ -440,10 +440,6 @@
 
     .wmd-preview {
         width: 100%;
-
-        @include media-query(lg) {
-            max-width: 70%;
-        }
     }
 
     .wmd-input {
