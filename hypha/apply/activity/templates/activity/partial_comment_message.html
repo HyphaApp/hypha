@@ -10,10 +10,10 @@
 
 {% with activity.attachments.all as attachments %}
     {% if attachments %}
-        <div class="section-attachments flex gap-2 flex-col max-w-xl mt-4 pb-2">
+        <div class="section-attachments flex flex-wrap gap-2 min-w-40 max-w-xl mt-4 pb-2">
             {% for attachment in attachments %}
                 <a href="{{attachment.get_absolute_url }}"
-                   class="flex justify-between border rounded px-3 py-2 font-medium bg-slate-50 hover:bg-slate-200 transition-colors"
+                   class="inline-flex items-center border rounded px-3 py-2 font-medium bg-slate-50 hover:bg-slate-200 transition-colors"
                    target="_blank"
                    rel="noopener noreferrer"
                    title="{{ attachment.filename }}"
@@ -21,9 +21,6 @@
                     <span class="truncate text-sm">
                         {% heroicon_mini "paper-clip" class="inline align-text-bottom" aria_hidden=true %}
                         {{ attachment.filename|truncatechars_middle:45 }}
-                    </span>
-                    <span>
-                        {% heroicon_mini "arrow-small-down" class="inline align-text-bottom rounded" aria_hidden=true %}
                     </span>
                 </a>
             {% endfor %}

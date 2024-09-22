@@ -244,8 +244,8 @@ class ActivityAdapter(AdapterBase):
                 )
 
             applicant_message = base_message.format(
-                old_display=old_phase.public_name,
-                new_display=new_phase.public_name,
+                old_display=wrap_in_color_class(old_phase.public_name),
+                new_display=wrap_in_color_class(new_phase.public_name),
             )
 
             return json.dumps(
