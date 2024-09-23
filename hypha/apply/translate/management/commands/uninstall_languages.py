@@ -38,7 +38,7 @@ class Command(BaseCommand):
         parser.add_argument(
             "languages",
             action="store",
-            nargs="+",
+            nargs="*",
             type=self.__validate_language,
             help='Language packages to uninstall in the format of "<from language>_<to language>" in ISO 639 format',
         )
@@ -52,6 +52,13 @@ class Command(BaseCommand):
             required=False,
         )
 
+        parser.add_argument(
+            "--all",
+            action="store_true",
+            help="Uninstall all installed language packages",
+            required=False,
+        )
+
     def __print_package_list(self, packages: List[argostranslate.package.Package]):
         for package in packages:
             self.stdout.write(f"{package.from_name} ➜ {package.to_name}")
@@ -60,6 +67,13 @@ class Command(BaseCommand):
         interactive = options["interactive"]
         packages = options["languages"]
         verbosity = options["verbosity"]
+
+        # Require either languages or "--all" to be specified
+        if not bool(packages) ^ bool(all):
+            raise argparse.ArgumentTypeError("A language selection must be specified")
+
+        if all:
+            packages = self.installed_packages
 
         if verbosity > 1:
             self.stdout.write(

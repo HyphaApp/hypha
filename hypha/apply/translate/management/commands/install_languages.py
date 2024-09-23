@@ -41,7 +41,7 @@ class Command(BaseCommand):
         parser.add_argument(
             "languages",
             action="store",
-            nargs="+",
+            nargs="*",
             type=self.__validate_language,
             help='Language packages to install in the format of "<from language>_<to language>" in ISO 639 format',
         )
@@ -55,20 +55,35 @@ class Command(BaseCommand):
             required=False,
         )
 
+        parser.add_argument(
+            "--all",
+            action="store_true",
+            help="Install all available language packages",
+            required=False,
+        )
+
     def __print_package_list(self, packages: List[argostranslate.package.Package]):
         for package in packages:
             self.stdout.write(f"{package.from_name} ➜ {package.to_name}")
 
     def handle(self, *args, **options):
         interactive = options["interactive"]
-        languages = options["languages"]
+        packages = options["languages"]
         verbosity = options["verbosity"]
+        all = options["all"]
+
+        # Require either languages or "--all" to be specified
+        if not bool(packages) ^ bool(all):
+            raise argparse.ArgumentTypeError("A language selection must be specified")
+
+        if all:
+            packages = self.available_packages
 
         existing_packages = [
-            lang for lang in languages if lang in self.installed_packages
+            lang for lang in packages if lang in self.installed_packages
         ]
         pending_packages = [
-            lang for lang in languages if lang not in self.installed_packages
+            lang for lang in packages if lang not in self.installed_packages
         ]
 
         if existing_packages:
