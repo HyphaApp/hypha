@@ -26,8 +26,10 @@ from wagtail.models import Orderable
 from hypha.apply.funds.models.mixins import AccessFormData
 from hypha.apply.stream_forms.files import StreamFieldDataEncoder
 from hypha.apply.stream_forms.models import BaseStreamForm
+from hypha.apply.users.groups import GROUPS_ORG_FACULTY
 from hypha.apply.utils.storage import PrivateStorage
 
+from ..admin_forms import ContractDocumentCategoryAdminForm
 from ..blocks import ProjectFormCustomFormFieldsBlock
 
 logger = logging.getLogger(__name__)
@@ -727,12 +729,11 @@ class DocumentCategory(models.Model):
 class ContractDocumentCategory(models.Model):
     name = models.CharField(max_length=254)
     recommended_minimum = models.PositiveIntegerField(null=True, blank=True)
-    restrict_document_access_view = models.ManyToManyField(
+    document_access_view = models.ManyToManyField(
         Group,
-        verbose_name=_("Restrict document access for groups"),
-        help_text=_(
-            "Only selected group's users will be restricted from document access"
-        ),
+        limit_choices_to={"name__in": GROUPS_ORG_FACULTY},
+        verbose_name=_("Allow document access for groups"),
+        help_text=_("Only selected group's users can access the document"),
         related_name="contract_document_category",
         blank=True,
     )
@@ -754,11 +755,11 @@ class ContractDocumentCategory(models.Model):
     panels = [
         FieldPanel("name"),
         FieldPanel("required"),
-        FieldPanel(
-            "restrict_document_access_view", widget=forms.CheckboxSelectMultiple
-        ),
+        FieldPanel("document_access_view", widget=forms.CheckboxSelectMultiple),
         FieldPanel("template"),
     ]
+
+    base_form_class = ContractDocumentCategoryAdminForm
 
 
 class Deliverable(models.Model):

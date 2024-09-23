@@ -2,6 +2,7 @@ from django.conf import settings
 from django.core.exceptions import PermissionDenied
 
 from hypha.apply.activity.adapters.utils import get_users_for_groups
+from hypha.apply.users.models import User
 
 from .models.project import (
     CLOSING,
@@ -365,20 +366,13 @@ def can_access_project(user, project):
 
 
 def can_view_contract_category_documents(user, project, **kwargs):
-    from hypha.apply.activity.adapters.utils import get_users_for_groups
-
     contract_category = kwargs.get("contract_category")
     if not contract_category:
         return False, "Contract Category is required"
-    restricted_group_users = get_users_for_groups(
-        list(contract_category.restrict_document_access_view.all())
+    allowed_group_users = User.objects.filter(
+        groups__name__in=list(contract_category.document_access_view.all())
     )
-    if restricted_group_users and user in restricted_group_users:
-        return False, "Forbidden Error"
-    if user.is_apply_staff or user.is_contracting:
-        return True, "Access allowed"
-
-    if user == project.user:
+    if allowed_group_users and user in allowed_group_users:
         return True, "Access allowed"
 
     return False, "Forbidden Error"
