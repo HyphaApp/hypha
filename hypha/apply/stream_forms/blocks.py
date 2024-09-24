@@ -32,8 +32,8 @@ from .fields import MultiFileField, SingleFileField
 
 
 class FormFieldBlock(StructBlock):
-    field_label = CharBlock(label=_('Label'))
-    help_text = RichTextBlock(required=False, label=_('Help text'))
+    field_label = CharBlock(label=_("Label"))
+    help_text = RichTextBlock(required=False, label=_("Help text"))
 
     field_class = forms.CharField
     widget = None
@@ -418,8 +418,8 @@ class FileFieldBlock(UploadableMediaBlock):
 
     def get_field_kwargs(self, struct_value):
         kwargs = super().get_field_kwargs(struct_value)
-        kwargs['help_text'] = (
-            str(kwargs['help_text'])
+        kwargs["help_text"] = (
+            str(kwargs["help_text"])
             + f" Accepted file types are {settings.FILE_ACCEPT_ATTR_VALUE}"
         )
         return kwargs
@@ -435,8 +435,8 @@ class MultiFileFieldBlock(UploadableMediaBlock):
 
     def get_field_kwargs(self, struct_value):
         kwargs = super().get_field_kwargs(struct_value)
-        kwargs['help_text'] = (
-            str(kwargs['help_text'])
+        kwargs["help_text"] = (
+            str(kwargs["help_text"])
             + f" Accepted file types are {settings.FILE_ACCEPT_ATTR_VALUE}"
         )
         return kwargs
