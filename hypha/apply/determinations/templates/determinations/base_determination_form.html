@@ -9,11 +9,17 @@
     {% endadminbar %}
 
     {% block form %}
-        <section class="my-8 flex">
+        <section class="my-8 flex"
+                 x-data="{ submissionVisible: false }"
+        >
             {% include "forms/includes/form_errors.html" with form=form %}
             {% block determination_information %}
             {% endblock %}
-            <form class="form max-w-3xl" action="" method="post" x-data="{ isFormSubmitting: false }" x-on:submit="isFormSubmitting = true">
+            <form class="form max-w-3xl"
+                  action="" method="post"
+                  x-data="{ isFormSubmitting: false }"
+                  x-on:submit="isFormSubmitting = true"
+                  x-bind:style="submissionVisible ? 'flex-basis: 50%' : 'flex-basis: 100%'">
                 {{ form.media }}
                 {% csrf_token %}
                 {% for hidden in form.hidden_fields %}
@@ -48,17 +54,20 @@
                     {{ message }}
                 </div>
             {% endfor %}
-            <div class="determination-sidebar">
-                <div class="sidebar__inner">
-                    <h3>{% trans "Proposal Information" %}</h3>
-                    <div>
-                        {{ submission.output_named_blocks_answers }}
-                    </div>
-                    <div class="rich-text rich-text--answers">
-                        {{ submission.output_answers }}
-                    </div>
-                </div>
-            </div>
+            <aside id="submission-flyout"
+                   style="margin: 1rem"
+                   x-bind:style="submissionVisible ? 'flex-basis: 50%; margin: 1rem' : 'flex-basis: 2rem; margin: 0'">
+                <button class="button button--primary"
+                        hx-get="{% url 'funds:submissions:partial-answers' submission.id %}"
+                        hx-trigger="click once"
+                        hx-swap="innerHTML"
+                        hx-target="#submission-summary"
+                        @click="submissionVisible = ! submissionVisible">
+                    {% trans "View/Hide Submission" %}
+                </button>
+                <section id="submission-summary" x-bind:style="submissionVisible ? 'display: block' : 'display: none'">
+                </section>
+            </aside>
     {% endblock %}
     </section>
 {% endblock %}
