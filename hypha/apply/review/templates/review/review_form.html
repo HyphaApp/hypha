@@ -8,17 +8,16 @@
         {% slot sub_heading %}
             {% trans "For" %} <a class="text-blue-300 hover:underline" href="{% url "funds:submissions:detail" submission.id %}">{{ submission.title }}</a>
         {% endslot %}
-        <div class="tabs js-tabs">
-            <div class="tabs__container">
-                <button
-                    class="tab__item tab__item--right js-tabs-off"
-                    x-data
-                    @click="$dispatch('fetchSubmission'); showSubmission = !showSubmission"
-                >
-                    {% trans "Toggle submission" %}
-                </button>
-            </div>
-        </div>
+        {% slot buttons %}
+            <button
+                class="tab__item ms-auto block pb-4"
+                x-data
+                @click="$dispatch('fetchSubmission'); showSubmission = !showSubmission"
+            >
+                {% trans "Toggle submission" %}
+            </button>
+            </a>
+        {% endslot %}
     {% endadminbar %}
 
 

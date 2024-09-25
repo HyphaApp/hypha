@@ -6,21 +6,20 @@
     {% adminbar %}
         {% slot header %}{% if object %}{% trans "Update Determination draft" %}{% else %}{% trans "Create Determination" %}{% endif %}{% endslot %}
         {% slot sub_heading %}{% if submission %}{% trans "For" %} <a class="text-blue-300 hover:underline" href="{% url "funds:submissions:detail" submission.id %}">{{ submission.title_text_display }}</a>{% endif %}{% endslot %}
-        <div class="tabs js-tabs">
-            <div class="tabs__container">
-                <button
-                    class="tab__item tab__item--right js-tabs-off"
-                    x-data
-                    @click="$dispatch('fetchSubmission'); showSubmission = !showSubmission"
-                >
-                    {% trans "Toggle submission" %}
-                </button>
-            </div>
-        </div>
+        {% slot buttons %}
+            <button
+                class="tab__item ms-auto block pb-4"
+                x-data
+                @click="$dispatch('fetchSubmission'); showSubmission = !showSubmission"
+            >
+                {% trans "Toggle submission" %}
+            </button>
+            </a>
+        {% endslot %}
     {% endadminbar %}
 
     {% block form %}
-        <section class="my-8 flex justify-between">
+        <section class="my-8 flex justify-between" :class="showSubmission ? '' : 'flex-col'">
             {% include "forms/includes/form_errors.html" with form=form %}
             {% block determination_information %}
             {% endblock %}
@@ -62,22 +61,24 @@
                     {{ message }}
                 </div>
             {% endfor %}
-            <aside :class="showSubmission ? 'flex-1 ps-4' : ''">
-                <section
-                    class="p-4 overflow-y-auto bg-white shadow-xl max-h-screen"
-                    x-show="showSubmission"
-                    x-transition:enter="transition ease-out duration-250"
-                    x-transition:enter-start="transform opacity-0 translate-x-full"
-                    x-transition:enter-end="transform opacity-100 translate-x-0"
-                    x-transition:leave="transition ease-in duration-150"
-                    x-transition:leave-start="transform opacity-100 translate-x-0"
-                    x-transition:leave-end="transform opacity-0 translate-x-full"
-                    hx-get="{% url 'funds:submissions:partial-answers' submission.id %}"
-                    hx-trigger="fetchSubmission from:body, intersect once"
-                >
-                    <p>{% trans "Loading…" %}</p>
-                </section>
-            </aside>
+            {% block show_submission %}
+                <aside :class="showSubmission ? 'flex-1 ps-4' : ''">
+                    <section
+                        class="p-4 overflow-y-auto bg-white shadow-xl max-h-screen"
+                        x-show="showSubmission"
+                        x-transition:enter="transition ease-out duration-250"
+                        x-transition:enter-start="transform opacity-0 translate-x-full"
+                        x-transition:enter-end="transform opacity-100 translate-x-0"
+                        x-transition:leave="transition ease-in duration-150"
+                        x-transition:leave-start="transform opacity-100 translate-x-0"
+                        x-transition:leave-end="transform opacity-0 translate-x-full"
+                        hx-get="{% url 'funds:submissions:partial-answers' submission.id %}"
+                        hx-trigger="fetchSubmission from:body, intersect once"
+                    >
+                        <p>{% trans "Loading…" %}</p>
+                    </section>
+                </aside>
+            {% endblock %}
         </section>
     {% endblock %}
 {% endblock %}
