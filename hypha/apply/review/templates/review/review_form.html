@@ -12,7 +12,7 @@
             <button
                 class="tab__item ms-auto block pb-4"
                 x-data
-                @click="$dispatch('fetchSubmission'); showSubmission = !showSubmission"
+                @click="showSubmission = !showSubmission"
             >
                 {% trans "Toggle submission" %}
             </button>
@@ -65,7 +65,7 @@
                         x-transition:leave-start="transform opacity-100 translate-x-0"
                         x-transition:leave-end="transform opacity-0 translate-x-full"
                         hx-get="{% url 'funds:submissions:partial-answers' submission.id %}"
-                        hx-trigger="fetchSubmission from:body once"
+                        hx-trigger="intersect once"
                     >
                         <p>{% trans "Loading…" %}</p>
                     </section>
