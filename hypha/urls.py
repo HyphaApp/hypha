@@ -15,8 +15,10 @@ from hypha.apply.dashboard import urls as dashboard_urls
 from hypha.apply.users.urls import urlpatterns as user_urls
 from hypha.apply.users.views import become, oauth_complete
 from hypha.apply.utils.views import custom_wagtail_page_delete
+from hypha.home.views import home
 
 urlpatterns = [
+    path("", home, name="home"),
     path("apply/", include("hypha.apply.funds.urls", "apply")),
     path("activity/", include("hypha.apply.activity.urls", "activity")),
     path("todo/", include("hypha.apply.todo.urls", "todo")),
