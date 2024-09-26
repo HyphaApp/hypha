@@ -3,20 +3,22 @@
 {% block title %}{% if object %}{% trans "Edit a Determination" %} {% if object.is_draft %}{% trans "draft" %}{% endif %}{% else %}{% trans "Create a Determination" %}{% endif %}{% endblock %}
 {% block content %}
 
-    {% adminbar %}
-        {% slot header %}{% if object %}{% trans "Update Determination draft" %}{% else %}{% trans "Create Determination" %}{% endif %}{% endslot %}
-        {% slot sub_heading %}{% if submission %}{% trans "For" %} <a class="text-blue-300 hover:underline" href="{% url "funds:submissions:detail" submission.id %}">{{ submission.title_text_display }}</a>{% endif %}{% endslot %}
-        {% slot buttons %}
-            <button
-                class="tab__item ms-auto block pb-4"
-                x-data
-                @click="$dispatch('fetchSubmission'); showSubmission = !showSubmission"
-            >
-                {% trans "Toggle submission" %}
-            </button>
-            </a>
-        {% endslot %}
-    {% endadminbar %}
+    {% block adminbar %}
+        {% adminbar %}
+            {% slot header %}{% if object %}{% trans "Update Determination draft" %}{% else %}{% trans "Create Determination" %}{% endif %}{% endslot %}
+            {% slot sub_heading %}{% if submission %}{% trans "For" %} <a class="text-blue-300 hover:underline" href="{% url "funds:submissions:detail" submission.id %}">{{ submission.title_text_display }}</a>{% endif %}{% endslot %}
+            {% slot buttons %}
+                <button
+                    class="tab__item ms-auto block pb-4"
+                    x-data
+                    @click="$dispatch('fetchSubmission'); showSubmission = !showSubmission"
+                >
+                    {% trans "Toggle submission" %}
+                </button>
+                </a>
+            {% endslot %}
+        {% endadminbar %}
+    {% endblock %}
 
     {% block form %}
         <section class="my-8 flex justify-between" :class="showSubmission ? '' : 'flex-col'">
