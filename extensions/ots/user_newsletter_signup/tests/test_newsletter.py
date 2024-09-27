@@ -1,11 +1,7 @@
-from django.conf import settings
-from django.core import mail
 from django.test import TestCase
 from django.urls import reverse
 
-from hypha.apply.utils.testing.tests import BaseViewTestCase
-
-from hypha.apply.users.tests.factories import UserFactory, SuperUserFactory
+from hypha.apply.users.tests.factories import SuperUserFactory, UserFactory
 
 
 class TestProfileViewNewsletter(TestCase):

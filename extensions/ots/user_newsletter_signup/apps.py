@@ -21,7 +21,8 @@ class UserNewsletterSignupConfig(AppConfig):
         ProfileForm.Meta.fields.append("newsletter_signup")
         field = BooleanField(
             required=False,
-            label="Yes, I'd like to receive occasional emails from %s about their mission and programs." % settings.ORG_SHORT_NAME,
+            label="Yes, I'd like to receive occasional emails from %s about their mission and programs."
+            % settings.ORG_SHORT_NAME,
         )
         field.widget.attrs.update({"class": "profile_newsletter_signup"})
         ProfileForm.base_fields["newsletter_signup"] = field
