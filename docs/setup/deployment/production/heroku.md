@@ -51,12 +51,13 @@ python3 -c "from django.core.management.utils import get_random_secret_key; prin
 
     ```shell
     heroku run python3 manage.py migrate -a [name-of-app]
+    heroku run python3 manage.py sync_roles -a [name-of-app]
     heroku run python3 manage.py createcachetable -a [name-of-app]
     heroku run python3 manage.py createsuperuser -a [name-of-app]
     heroku run python3 manage.py wagtailsiteupdate [the-public-address] [the-apply-address] 443  -a [name-of-app]
     ```
 
-7. Now add the "release" step back to the "Procfile" and deploy again.
+7. Now add the "release" step back to the `Procfile` and deploy again.
 
 You should now have a running site.
 
