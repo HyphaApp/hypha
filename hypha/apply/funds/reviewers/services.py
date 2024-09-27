@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db.models import Q
 from django.db.models.query import QuerySet
 
-from hypha.apply.users.groups import STAFF_GROUP_NAME
+from hypha.apply.users.roles import STAFF_GROUP_NAME
 
 User = get_user_model()
 

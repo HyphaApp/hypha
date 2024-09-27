@@ -65,7 +65,7 @@ from hypha.apply.users.decorators import (
     staff_or_finance_or_contracting_required,
     staff_required,
 )
-from hypha.apply.users.groups import CONTRACTING_GROUP_NAME
+from hypha.apply.users.roles import CONTRACTING_GROUP_NAME
 from hypha.apply.utils.models import PDFPageSettings
 from hypha.apply.utils.storage import PrivateMediaView
 from hypha.apply.utils.views import DelegateableView, DelegatedViewMixin, ViewDispatcher

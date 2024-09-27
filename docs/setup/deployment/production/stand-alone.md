@@ -152,6 +152,7 @@ npm run build
 python manage.py collectstatic --noinput
 python manage.py createcachetable
 python manage.py migrate --noinput
+python manage.py sync_roles
 python manage.py clear_cache --cache=default
 python manage.py createsuperuser
 python manage.py wagtailsiteupdate apply.server.domain 80

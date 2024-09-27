@@ -5,9 +5,10 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.template.defaultfilters import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2Widget
+from rolepermissions import roles
 from wagtail.users.forms import UserCreationForm, UserEditForm
 
-from .models import AuthSettings, GroupDesc
+from .models import AuthSettings
 from .utils import strip_html_and_nerf_urls
 
 User = get_user_model()
@@ -125,7 +126,9 @@ class GroupsModelMultipleChoiceField(forms.ModelMultipleChoiceField):
         """
         Overwriting ModelMultipleChoiceField's label from instance to provide help_text (if it exists)
         """
-        help_text = GroupDesc.get_from_group(group_obj)
+        help_text = getattr(
+            roles.registered_roles.get(group_obj.name, {}), "help_text", ""
+        )
         if help_text:
             return mark_safe(
                 f'{group_obj.name}<p class="group-help-text">{help_text}</p>'

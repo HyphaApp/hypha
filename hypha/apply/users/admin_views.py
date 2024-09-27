@@ -4,14 +4,13 @@ from django.contrib.auth.models import Group
 from django.db.models import CharField, Q, Value
 from django.db.models.functions import Coalesce, Lower, NullIf
 from django.template.defaultfilters import mark_safe
+from rolepermissions import roles
 from wagtail.admin.filters import WagtailFilterSet
 from wagtail.compat import AUTH_USER_APP_LABEL, AUTH_USER_MODEL_NAME
 from wagtail.users.views.groups import GroupViewSet
 from wagtail.users.views.groups import IndexView as GroupIndexView
 from wagtail.users.views.users import Index as UserIndexView
 from wagtail.users.views.users import get_users_filter_query
-
-from .models import GroupDesc
 
 User = get_user_model()
 
@@ -147,14 +146,17 @@ class CustomGroupIndexView(GroupIndexView):
 
     def get_queryset(self):
         """
-        Overriding the normal queryset that would return all Group objects, this returnd an iterable of groups with custom names containing HTML help text.
+        Overriding the normal queryset that would return all Group objects, this returned an iterable of groups with custom names containing HTML help text.
         """
         group_qs = super().get_queryset()
 
         custom_groups = []
 
         for group in group_qs:
-            help_text = GroupDesc.get_from_group(group)
+            # Check if the group is a role
+            help_text = getattr(
+                roles.registered_roles.get(group.name, {}), "help_text", ""
+            )
             if help_text:
                 group.name = mark_safe(
                     f"{group.name}<p class=group-help-text>{help_text}</p>"

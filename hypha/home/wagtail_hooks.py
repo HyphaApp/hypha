@@ -1,6 +1,6 @@
 from wagtail import hooks
 
-from hypha.apply.users.groups import STAFF_GROUP_NAME
+from hypha.apply.users.roles import STAFF_GROUP_NAME
 
 from .models import ApplyHomePage
 
