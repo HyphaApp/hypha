@@ -8,7 +8,7 @@ from django_file_form.forms import FileFormMixin
 from hypha.apply.funds.models import ApplicationSubmission
 from hypha.apply.stream_forms.fields import SingleFileField
 from hypha.apply.stream_forms.forms import StreamBaseForm
-from hypha.apply.users.groups import STAFF_GROUP_NAME
+from hypha.apply.users.roles import STAFF_GROUP_NAME
 
 from ..models.project import (
     CLOSING,
