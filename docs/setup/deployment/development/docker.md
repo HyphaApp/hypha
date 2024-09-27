@@ -134,6 +134,7 @@ pg_restore --verbose --clean --if-exists --no-acl --no-owner --dbname=hypha --us
 After restoring the sandbox db run the migrate command inside the py container.
 
 ```shell
-docker-compose exec py bash
-python3 manage.py migrate
+docker-compose exec py python3 manage.py migrate
+docker-compose exec py python3 manage.py sync_roles
+
 ```

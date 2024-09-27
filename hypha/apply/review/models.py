@@ -8,7 +8,7 @@ from wagtail.fields import StreamField
 
 from hypha.apply.funds.models.mixins import AccessFormData
 from hypha.apply.stream_forms.models import BaseStreamForm
-from hypha.apply.users.groups import (
+from hypha.apply.users.roles import (
     PARTNER_GROUP_NAME,
     REVIEWER_GROUP_NAME,
     STAFF_GROUP_NAME,

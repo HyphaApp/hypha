@@ -3,7 +3,7 @@ from django.core.exceptions import PermissionDenied
 
 from hypha.apply.funds.models.submissions import DRAFT_STATE
 
-from ..users.groups import STAFF_GROUP_NAME, SUPERADMIN, TEAMADMIN_GROUP_NAME
+from ..users.roles import STAFF_GROUP_NAME, SUPERADMIN, TEAMADMIN_GROUP_NAME
 
 
 def has_permission(action, user, object=None, raise_exception=True):
