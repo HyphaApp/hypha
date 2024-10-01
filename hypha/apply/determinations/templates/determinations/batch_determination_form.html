@@ -6,9 +6,11 @@
     <link rel="stylesheet" href="{% static 'css/fancybox.css' %}">
 {% endblock %}
 
-{% adminbar %}
-    {% slot header %}{% trans "Add Batch Determination" %} - {{ action_name }}{% endslot %}
-{% endadminbar %}
+{% block adminbar %}
+    {% adminbar %}
+        {% slot header %}{% trans "Add Batch Determination" %} - {{ action_name }}{% endslot %}
+    {% endadminbar %}
+{% endblock %}
 
 {% block determination_information %}
     <div class="list-reveal list-reveal--determination">
@@ -31,6 +33,9 @@
     <button data-fancybox data-src="#batch-send-determination" class="button button--submit button--top-space button--primary js-batch-determine-send" type="button">{% trans "Send" %}</button>
     {% include "determinations/includes/batch_determination_confirmation.html" with count=submissions.count %}
     <input type="submit" value="Submit" name="submit" class="is-hidden" />
+{% endblock %}
+
+{% block show_submission %}
 {% endblock %}
 
 {% block extra_js %}
