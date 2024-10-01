@@ -1,0 +1,34 @@
+{% extends "base-apply.html" %}
+
+{% load render_table from django_tables2 %}
+{% load i18n static %}
+
+{% block title %}{% trans "Reporting" %}{% endblock %}
+
+{% block content %}
+
+    {% adminbar %}
+        {% slot header %}{% trans "Reporting" %} ({{ table.rows|length }}){% endslot %}
+        {% slot sub_heading %}{% trans "View, Search and filter reporting statuses" %}{% endslot %}
+    {% endadminbar %}
+
+    <div class="wrapper wrapper--large wrapper--inner-space-medium">
+        {% if table %}
+            {% include "funds/includes/table_filter_and_search.html" with filter_form=filter_form filter_action=filter_action use_batch_actions=True filter_classes="filters-open" %}
+            {% render_table table %}
+        {% else %}
+            <p>{% trans "No Projects Currently Reporting." %}</p>
+        {% endif %}
+    </div>
+
+{% endblock content %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/apply/fancybox.css' %}">
+    {{ filter.form.media.css }}
+{% endblock %}
+
+{% block extra_js %}
+    {{ filter.form.media.js }}
+    <script src="{% static 'js/apply/submission-filters.js' %}"></script>
+{% endblock %}

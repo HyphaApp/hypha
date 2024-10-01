@@ -15,11 +15,11 @@ from hypha.apply.utils.storage import PrivateMediaView
 from hypha.apply.utils.views import DelegatedViewMixin
 
 from ...stream_forms.models import BaseStreamForm
-from ..filters import ReportListFilter
+from ..filters import ReportingFilter, ReportListFilter
 from ..forms import ReportEditForm, ReportFrequencyForm
-from ..models import Report, ReportConfig, ReportPrivateFiles
+from ..models import Project, Report, ReportConfig, ReportPrivateFiles
 from ..permissions import has_permission
-from ..tables import ReportListTable
+from ..tables import ReportingTable, ReportListTable
 from ..utils import get_placeholder_file
 
 
@@ -311,3 +311,11 @@ class ReportListView(SingleTableMixin, FilterView):
     filterset_class = ReportListFilter
     table_class = ReportListTable
     template_name = "application_projects/report_list.html"
+
+
+@method_decorator(staff_or_finance_required, name="dispatch")
+class ReportingView(SingleTableMixin, FilterView):
+    queryset = Project.objects.for_reporting_table()
+    filterset_class = ReportingFilter
+    table_class = ReportingTable
+    template_name = "application_projects/reporting.html"
