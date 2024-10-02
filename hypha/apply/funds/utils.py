@@ -1,4 +1,6 @@
 import csv
+import re
+from datetime import datetime
 from functools import reduce
 from io import StringIO
 from itertools import chain
@@ -6,6 +8,7 @@ from operator import iconcat
 
 import django_filters as filters
 from django.utils.html import strip_tags
+from django.utils.translation import gettext as _
 
 from hypha.apply.utils.image import generate_image_tag
 
@@ -159,3 +162,32 @@ def is_filter_empty(filter: filters.FilterSet) -> bool:
 
     # Flatten the QueryDict values in filter.data to a single list, check for validity with any()
     return any(reduce(iconcat, [param[1] for param in query.lists()], []))
+
+
+def get_copied_form_name(original_form_name: str) -> str:
+    """Create the name of the form to be copied
+
+    By default, takes the orginal forms name and adds `(Copied on %Y-%m-%d %H:%M:%S.%f)`
+
+    If a timestamp exists on the original_form_name, it will be replaced.
+    This works even if the `Copied on` string is translated.
+
+    Args:
+        original_form_name: the name of the form being duplicated
+
+    Returns:
+        str: name of the copied form
+    """
+    copy_str = _("Copied on {copy_time}")
+    copy_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-4]
+    date_reg = r"(\d{2,4}-?){3} (\d{2}(:|.)?){4}"  # match the strftime pattern of %Y-%m-%d %H:%M:%S.%f
+
+    # Escape the `copy_str` to allow for translations to be matched & replace the
+    # `{copy_time}` var with the `date_reg` regex
+    name_reg = r" \({}\)$".format(
+        re.escape(copy_str).replace(r"\{copy_time\}", date_reg)
+    )
+
+    # If a copied timestamp already exists, remove it
+    new_name = re.sub(name_reg, "", original_form_name)
+    return f"{new_name} ({copy_str.format(copy_time=copy_time)})"
