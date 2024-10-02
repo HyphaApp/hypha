@@ -438,3 +438,17 @@ def get_applications_status_counts(request):
             "type": "Applications",
         },
     )
+
+
+@login_required
+@require_http_methods(["GET"])
+def partial_submission_answers(request, pk):
+    submission = get_object_or_404(ApplicationSubmission, pk=pk)
+    has_permission(
+        "submission_view", request.user, object=submission, raise_exception=True
+    )
+    return render(
+        request,
+        "submissions/partials/applicationsubmission.html",
+        {"submission": submission},
+    )
