@@ -1,7 +1,6 @@
 import json
 
 from django import forms
-from django.conf import settings
 from django.core.files.base import ContentFile
 from django.db import transaction
 from django.db.models.fields.files import FieldFile
@@ -12,10 +11,8 @@ from hypha.apply.stream_forms.fields import MultiFileField, SingleFileField
 
 from ..models.payment import (
     APPROVED_BY_FINANCE,
-    APPROVED_BY_FINANCE_2,
     APPROVED_BY_STAFF,
     CHANGES_REQUESTED_BY_FINANCE,
-    CHANGES_REQUESTED_BY_FINANCE_2,
     CHANGES_REQUESTED_BY_STAFF,
     DECLINED,
     INVOICE_STATUS_CHOICES,
@@ -61,23 +58,6 @@ def get_invoice_possible_transition_for_user(user, invoice):
         PAID: filter_request_choices([PAYMENT_FAILED], user_choices),
         PAYMENT_FAILED: filter_request_choices([PAID], user_choices),
     }
-    if settings.INVOICE_EXTENDED_WORKFLOW:
-        possible_status_transitions_lut.update(
-            {
-                CHANGES_REQUESTED_BY_FINANCE_2: filter_request_choices(
-                    [
-                        CHANGES_REQUESTED_BY_FINANCE,
-                        APPROVED_BY_FINANCE,
-                    ],
-                    user_choices,
-                ),
-                APPROVED_BY_FINANCE: filter_request_choices(
-                    [CHANGES_REQUESTED_BY_FINANCE_2, APPROVED_BY_FINANCE_2],
-                    user_choices,
-                ),
-                APPROVED_BY_FINANCE_2: filter_request_choices([PAID], user_choices),
-            }
-        )
     return possible_status_transitions_lut.get(invoice.status, [])
 
 

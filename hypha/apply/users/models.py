@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser, BaseUserManager, Group
 from django.core import exceptions
@@ -59,16 +58,6 @@ class UserQuerySet(models.QuerySet):
 
     def finances(self):
         return self.filter(groups__name=FINANCE_GROUP_NAME, is_active=True)
-
-    def finances_level_1(self):
-        return self.filter(groups__name=FINANCE_GROUP_NAME, is_active=True).exclude(
-            groups__name=APPROVER_GROUP_NAME
-        )
-
-    def finances_level_2(self):
-        return self.filter(groups__name=FINANCE_GROUP_NAME, is_active=True).filter(
-            groups__name=APPROVER_GROUP_NAME
-        )
 
     def contracting(self):
         return self.filter(groups__name=CONTRACTING_GROUP_NAME, is_active=True)
@@ -289,13 +278,6 @@ class User(AbstractUser):
         return self.groups.filter(name=FINANCE_GROUP_NAME).exists()
 
     @cached_property
-    def is_finance_level_1(self):
-        return (
-            self.groups.filter(name=FINANCE_GROUP_NAME).exists()
-            and not self.groups.filter(name=APPROVER_GROUP_NAME).exists()
-        )
-
-    @cached_property
     def is_org_faculty(self):
         return self.is_apply_staff or self.is_finance or self.is_contracting
 
@@ -309,16 +291,6 @@ class User(AbstractUser):
             or self.is_finance
             or self.is_contracting
             or self.is_applicant
-        )
-
-    @cached_property
-    def is_finance_level_2(self):
-        # disable finance2 user if invoice flow in not extended
-        if not settings.INVOICE_EXTENDED_WORKFLOW:
-            return False
-        return (
-            self.groups.filter(name=FINANCE_GROUP_NAME).exists()
-            & self.groups.filter(name=APPROVER_GROUP_NAME).exists()
         )
 
     @cached_property

@@ -12,7 +12,6 @@ from hypha.apply.activity.models import ALL, APPLICANT_PARTNERS, PARTNER
 from hypha.apply.projects.models.payment import CHANGES_REQUESTED_BY_STAFF, DECLINED
 from hypha.apply.projects.templatetags.project_tags import display_project_status
 from hypha.apply.users.groups import (
-    APPROVER_GROUP_NAME,
     CONTRACTING_GROUP_NAME,
     FINANCE_GROUP_NAME,
     STAFF_GROUP_NAME,
@@ -404,14 +403,6 @@ class EmailAdapter(AdapterBase):
         if message_type == MESSAGES.APPROVE_INVOICE:
             if user.is_apply_staff:
                 return get_compliance_email(target_user_gps=[FINANCE_GROUP_NAME])
-            if settings.INVOICE_EXTENDED_WORKFLOW and user.is_finance_level_1:
-                finance_2_users_email = (
-                    User.objects.active()
-                    .filter(groups__name=FINANCE_GROUP_NAME)
-                    .filter(groups__name=APPROVER_GROUP_NAME)
-                    .values_list("email", flat=True)
-                )
-                return finance_2_users_email
             return []
 
         if isinstance(source, get_user_model()):
