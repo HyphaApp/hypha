@@ -1,0 +1,26 @@
+{% extends "base-apply.html" %}
+{% load nh3_tags %}
+
+{% block title_prefix %}{{ settings.core.SystemSettings.home_title }} | {% endblock %}
+{% block title %}{{ ORG_SHORT_NAME }}{% endblock %}
+{% block meta_description %}{{ settings.core.SystemSettings.home_strapline|striptags|truncatechars:200 }}{% endblock %}
+
+{% block content %}
+    <div class="py-8 lg:py-16  max-w-3xl mx-auto">
+
+        <h1 class="font-bold text-5xl text-balance">
+            {{ settings.core.SystemSettings.home_title}}
+        </h1>
+
+        {% if settings.core.SystemSettings.home_strapline %}
+            <p class="mb-8 text-fg-muted text-pretty">{{ settings.core.SystemSettings.home_strapline|nh3|safe }}</p>
+        {% endif %}
+
+        <div class="divide-y">
+            {% for fund in funds %}
+                {% include "home/includes/fund-list-item.html" with page=fund %}
+            {% endfor %}
+        </div>
+
+    </div>
+{% endblock %}
