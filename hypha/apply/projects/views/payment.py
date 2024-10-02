@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
@@ -50,7 +49,6 @@ from ..forms import (
     EditInvoiceForm,
 )
 from ..models.payment import (
-    APPROVED_BY_FINANCE,
     APPROVED_BY_STAFF,
     CHANGES_REQUESTED_BY_FINANCE,
     CHANGES_REQUESTED_BY_STAFF,
@@ -113,13 +111,7 @@ class ChangeInvoiceStatusView(DelegatedViewMixin, InvoiceAccessMixin, UpdateView
                 related_object=self.object,
             )
 
-        if (
-            self.request.user.is_apply_staff and self.object.status == APPROVED_BY_STAFF
-        ) or (
-            settings.INVOICE_EXTENDED_WORKFLOW
-            and self.request.user.is_finance_level_1
-            and self.object.status == APPROVED_BY_FINANCE
-        ):
+        if self.request.user.is_apply_staff and self.object.status == APPROVED_BY_STAFF:
             self.object.save()
             messenger(
                 MESSAGES.APPROVE_INVOICE,

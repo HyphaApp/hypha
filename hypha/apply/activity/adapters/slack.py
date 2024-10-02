@@ -9,11 +9,8 @@ from hypha.apply.activity.adapters.base import AdapterBase
 from hypha.apply.activity.adapters.utils import link_to, reviewers_message
 from hypha.apply.activity.options import MESSAGES
 from hypha.apply.projects.models.payment import (
-    APPROVED_BY_FINANCE,
-    APPROVED_BY_FINANCE_2,
     APPROVED_BY_STAFF,
     CHANGES_REQUESTED_BY_FINANCE,
-    CHANGES_REQUESTED_BY_FINANCE_2,
     PAID,
     PAYMENT_FAILED,
     RESUBMITTED,
@@ -201,24 +198,16 @@ class SlackAdapter(AdapterBase):
                 SUBMITTED,
                 RESUBMITTED,
                 CHANGES_REQUESTED_BY_FINANCE,
-                APPROVED_BY_FINANCE_2,
                 PAID,
                 PAYMENT_FAILED,
             ]:
                 # Notify project lead/staff
                 return recipients
-            if related.status in [APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE_2]:
+            if related.status in [APPROVED_BY_STAFF]:
                 # Notify finance 1
                 return [
                     self.slack_id(user)
-                    for user in User.objects.finances_level_1()
-                    if self.slack_id(user)
-                ]
-            if related.status in [APPROVED_BY_FINANCE]:
-                # Notify finance 2
-                return [
-                    self.slack_id(user)
-                    for user in User.objects.finances_level_2()
+                    for user in User.objects.finances()
                     if self.slack_id(user)
                 ]
             return []
