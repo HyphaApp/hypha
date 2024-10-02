@@ -1,9 +1,5 @@
 from django.db import models
-from wagtail.admin.panels import FieldPanel
 from wagtail.models import Page
-from wagtail.search import index
-
-from hypha.apply.funds.models import ApplicationBase, LabBase
 
 
 class ApplyHomePage(Page):
@@ -12,17 +8,3 @@ class ApplyHomePage(Page):
     subpage_types = ["funds.FundType", "funds.LabType", "funds.RequestForPartners"]
 
     strapline = models.CharField(blank=True, max_length=255)
-
-    search_fields = Page.search_fields + [
-        index.SearchField("strapline"),
-    ]
-
-    content_panels = Page.content_panels + [
-        FieldPanel("strapline"),
-    ]
-
-    def get_context(self, *args, **kwargs):
-        context = super().get_context(*args, **kwargs)
-        context["open_funds"] = ApplicationBase.objects.order_by_end_date().specific()
-        context["open_labs"] = LabBase.objects.public().live().specific()
-        return context
