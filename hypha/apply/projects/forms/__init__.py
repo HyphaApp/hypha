@@ -27,14 +27,6 @@ from .project import (
     UploadDocumentForm,
 )
 from .report import ReportEditForm, ReportFrequencyForm
-from .vendor import (
-    CreateVendorFormStep1,
-    CreateVendorFormStep2,
-    CreateVendorFormStep3,
-    CreateVendorFormStep4,
-    CreateVendorFormStep5,
-    CreateVendorFormStep6,
-)
 
 __all__ = [
     "UpdateProjectTitleForm",
@@ -60,12 +52,6 @@ __all__ = [
     "UpdateProjectLeadForm",
     "ReportEditForm",
     "ReportFrequencyForm",
-    "CreateVendorFormStep1",
-    "CreateVendorFormStep2",
-    "CreateVendorFormStep3",
-    "CreateVendorFormStep4",
-    "CreateVendorFormStep5",
-    "CreateVendorFormStep6",
     "CreateInvoiceForm",
     "ChangeInvoiceStatusForm",
     "EditInvoiceForm",

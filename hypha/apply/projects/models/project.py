@@ -1,5 +1,4 @@
 import decimal
-import json
 import logging
 
 from django import forms
@@ -24,14 +23,12 @@ from wagtail.contrib.settings.models import BaseSiteSetting
 from wagtail.fields import StreamField
 from wagtail.models import Orderable
 
-from hypha.addressfield.fields import ADDRESS_FIELDS_ORDER
 from hypha.apply.funds.models.mixins import AccessFormData
 from hypha.apply.stream_forms.files import StreamFieldDataEncoder
 from hypha.apply.stream_forms.models import BaseStreamForm
 from hypha.apply.utils.storage import PrivateStorage
 
 from ..blocks import ProjectFormCustomFormFieldsBlock
-from .vendor import Vendor
 
 logger = logging.getLogger(__name__)
 
@@ -199,13 +196,6 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
     )
 
     title = models.TextField()
-    vendor = models.ForeignKey(
-        "application_projects.Vendor",
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="projects",
-    )
     value = models.DecimalField(
         default=0,
         max_digits=20,
@@ -265,16 +255,7 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         return self.get_status_display()
 
     def get_address_display(self):
-        try:
-            address = json.loads(self.vendor.address)
-        except (json.JSONDecodeError, AttributeError):
-            return ""
-        else:
-            return ", ".join(
-                address.get(field)
-                for field in ADDRESS_FIELDS_ORDER
-                if address.get(field)
-            )
+        return ""  # todo: need to figure out
 
     @classmethod
     def create_from_submission(cls, submission, lead=None):
@@ -296,19 +277,10 @@ class Project(BaseStreamForm, AccessFormData, models.Model):
         if hasattr(submission, "project"):
             return submission.project
 
-        # See if there is a form field named "legal name", if not use user name.
-        legal_name = (
-            submission.get_answer_from_label("legal name") or submission.user.full_name
-        )
-        vendor, _ = Vendor.objects.get_or_create(user=submission.user)
-        vendor.name = legal_name
-        vendor.address = submission.form_data.get("address", "")
-        vendor.save()
         return Project.objects.create(
             submission=submission,
             user=submission.user,
             title=submission.title,
-            vendor=vendor,
             lead=lead if lead else None,
             value=submission.form_data.get("value", 0),
         )
@@ -522,7 +494,6 @@ class ProjectSettings(BaseSiteSetting, ClusterableModel):
     )
     finance_gp_email = models.TextField("Finance Group Email", null=True, blank=True)
     staff_gp_email = models.TextField("Staff Group Email", null=True, blank=True)
-    vendor_setup_required = models.BooleanField(default=True)
     paf_approval_sequential = models.BooleanField(
         default=True, help_text="Uncheck it to approve project parallely"
     )
@@ -531,7 +502,6 @@ class ProjectSettings(BaseSiteSetting, ClusterableModel):
         FieldPanel("staff_gp_email"),
         FieldPanel("contracting_gp_email"),
         FieldPanel("finance_gp_email"),
-        FieldPanel("vendor_setup_required"),
         MultiFieldPanel(
             [
                 FieldPanel(

@@ -6,7 +6,6 @@ from .views import (
     ContractDocumentPrivateMediaView,
     ContractPrivateMediaView,
     CreateInvoiceView,
-    CreateVendorView,
     DeleteInvoiceView,
     EditInvoiceView,
     InvoiceListView,
@@ -25,8 +24,6 @@ from .views import (
     ReportPrivateMedia,
     ReportSkipView,
     ReportUpdateView,
-    VendorDetailView,
-    VendorPrivateMediaView,
     get_invoices_status_counts,
     get_project_status_counts,
     partial_project_activities,
@@ -91,17 +88,6 @@ urlpatterns = [
                     name="download-sow",
                 ),
                 path("invoice/", CreateInvoiceView.as_view(), name="invoice"),
-                path("vendor/", CreateVendorView.as_view(), name="vendor"),
-                path(
-                    "vendor/<int:vendor_pk>/",
-                    VendorDetailView.as_view(),
-                    name="vendor-detail",
-                ),
-                path(
-                    "vendor/<int:vendor_pk>/documents/<int:file_pk>/",
-                    VendorPrivateMediaView.as_view(),
-                    name="vendor-documents",
-                ),
                 path(
                     "invoices/<int:invoice_pk>/",
                     include(

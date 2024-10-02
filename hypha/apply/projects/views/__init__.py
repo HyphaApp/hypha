@@ -43,7 +43,6 @@ from .report import (
     ReportSkipView,
     ReportUpdateView,
 )
-from .vendor import CreateVendorView, VendorDetailView, VendorPrivateMediaView
 
 __all__ = [
     "partial_project_activities",
@@ -77,9 +76,6 @@ __all__ = [
     "ReportSkipView",
     "ReportFrequencyUpdate",
     "ReportListView",
-    "CreateVendorView",
-    "VendorDetailView",
-    "VendorPrivateMediaView",
     "CreateInvoiceView",
     "InvoiceListView",
     "InvoiceView",

@@ -14,7 +14,6 @@ from .project import (
     ProjectSOWForm,
 )
 from .report import Report, ReportConfig, ReportPrivateFiles, ReportVersion
-from .vendor import BankInformation, DueDiligenceDocument, Vendor, VendorFormSettings
 
 __all__ = [
     "Project",
@@ -32,10 +31,6 @@ __all__ = [
     "ReportVersion",
     "ReportPrivateFiles",
     "ReportConfig",
-    "Vendor",
-    "VendorFormSettings",
-    "BankInformation",
-    "DueDiligenceDocument",
     "Invoice",
     "SupportingDocument",
     "Deliverable",

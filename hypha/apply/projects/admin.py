@@ -18,7 +18,6 @@ from .models import (
     ProjectReportForm,
     ProjectSettings,
     ProjectSOWForm,
-    VendorFormSettings,
 )
 
 
@@ -95,10 +94,6 @@ class ProjectSettingsAdmin(SettingModelAdmin):
     model = ProjectSettings
 
 
-class VendorFormSettingsAdmin(SettingModelAdmin):
-    model = VendorFormSettings
-
-
 class ProjectAdminGroup(ModelAdminGroup):
     menu_label = "Projects"
     menu_icon = str(AdminIcon.PROJECT)
@@ -108,6 +103,5 @@ class ProjectAdminGroup(ModelAdminGroup):
         ProjectFormAdmin,
         ProjectReportFormAdmin,
         ProjectSOWFormAdmin,
-        VendorFormSettingsAdmin,
         ProjectSettingsAdmin,
     )
