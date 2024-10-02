@@ -24,9 +24,8 @@
                 {% if show_paid_date %}
                     <p class="card__text"><b>{% trans "Paid date" %}:</b> {{ invoice.paid_date }}</p>
                 {% endif %}
-                {% is_vendor_setup request as show_vendor_information %}
                 <p class="card__text"><b>{% trans "Vendor" %}:</b>
-                    {% if show_vendor_information %}{{ object.project.vendor.name }}{% else %}{{ object.project.user }}{% endif %}</p>
+                    {{ object.project.user }}</p>
                 {% if not HIDE_STAFF_IDENTITY or request.user.is_org_faculty %}
                     <p class="card__text"><b>{% trans "Lead" %}:</b> {{ object.project.lead }}</p>
                 {% endif %}
