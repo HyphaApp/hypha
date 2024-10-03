@@ -19,5 +19,5 @@ pytest-xdist[psutil]==3.5.0
 responses==0.25.0
 ruff==0.3.3
 time-machine==2.14.0
-wagtail-factories==2.1.0
+wagtail-factories==4.2.1
 Werkzeug==3.0.3
