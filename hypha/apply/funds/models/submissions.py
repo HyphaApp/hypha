@@ -48,7 +48,7 @@ from hypha.apply.stream_forms.files import StreamFieldDataEncoder
 from hypha.apply.stream_forms.models import BaseStreamForm
 from hypha.apply.todo.options import SUBMISSION_DRAFT
 from hypha.apply.todo.views import remove_tasks_for_user
-from hypha.apply.users.groups import APPLICANT_GROUP_NAME
+from hypha.apply.users.roles import APPLICANT_GROUP_NAME
 
 from ..blocks import NAMED_BLOCKS, ApplicationCustomFormFieldsBlock
 from ..workflow import (

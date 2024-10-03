@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
 from django.utils.text import slugify
 
-from ..groups import (
+from ..roles import (
     APPLICANT_GROUP_NAME,
     APPROVER_GROUP_NAME,
     COMMUNITY_REVIEWER_GROUP_NAME,

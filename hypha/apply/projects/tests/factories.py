@@ -11,7 +11,7 @@ from hypha.apply.stream_forms.testing.factories import (
     FormFieldsBlockFactory,
     NonFileFormFieldsBlockFactory,
 )
-from hypha.apply.users.groups import APPROVER_GROUP_NAME, STAFF_GROUP_NAME
+from hypha.apply.users.roles import APPROVER_GROUP_NAME, STAFF_GROUP_NAME
 from hypha.apply.users.tests.factories import GroupFactory, StaffFactory, UserFactory
 
 from ..models.payment import Invoice, InvoiceDeliverable, SupportingDocument
