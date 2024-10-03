@@ -6,7 +6,7 @@ import factory
 import wagtail_factories
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.serializers.json import DjangoJSONEncoder
-from wagtail.blocks import RichTextBlock
+from wagtail.blocks import RichTextBlock, StructValue
 from wagtail.rich_text import RichText
 
 from hypha.apply.stream_forms import blocks as stream_blocks
@@ -330,15 +330,19 @@ class StreamFieldUUIDFactory(wagtail_factories.StreamFieldFactory):
                 for _ in range(multiples.get(field, 1)):
                     form_fields[f"{field_count}__{field}__"] = ""
                     field_count += 1
-            for attr, value in extras[field].items():
-                form_fields[f"{field_count}__{field}__{attr}"] = value
+            if extras[field]:
+                for attr, value in extras[field].items():
+                    form_fields[f"{field_count}__{field}__{attr}"] = value
+                field_count += 1
 
         return form_fields
 
     def filtered_child_block_value(self, block, value):
-        filtered_value = {
-            key: val for key, val in value.items() if key in block.child_blocks
-        }
+        filtered_value = value
+        if isinstance(value, StructValue):
+            filtered_value = {
+                key: val for key, val in value.items() if key in block.child_blocks
+            }
         return filtered_value
 
     def form_response(self, fields, field_values=None):
