@@ -37,18 +37,29 @@ class AddFormFieldsMetaclass(factory.base.FactoryMetaClass):
         # Add the form field definitions to allow nested calls
         field_factory = attrs.pop("field_factory", None)
         if field_factory:
-            wrapped_factories = {
-                k: factory.SubFactory(AnswerFactory, sub_factory=v)
-                for k, v in field_factory.factories.items()
-                if issubclass(v, FormFieldBlockFactory)
-            }
-            attrs.update(wrapped_factories)
+            # Check if stream_block_factory is a class and use class attributes instead of `items()`
+            stream_block_factories = getattr(
+                field_factory, "stream_block_factory", None
+            )
+            if stream_block_factories:
+                # Access stream block factory attributes via __dict__ or similar mechanism
+                stream_blocks = {
+                    k: v.get_factory()
+                    for k, v in stream_block_factories.__dict__.items()
+                    if isinstance(v, factory.SubFactory)
+                }
+                wrapped_factories = {
+                    k: factory.SubFactory(AnswerFactory, sub_factory=v)
+                    for k, v in stream_blocks.items()
+                    if issubclass(v, FormFieldBlockFactory)
+                }
+                attrs.update(wrapped_factories)
         return super().__new__(mcs, class_name, bases, attrs)
 
 
 class FormDataFactory(factory.Factory, metaclass=AddFormFieldsMetaclass):
     @classmethod
-    def _create(self, *args, form_fields=None, for_factory=None, clean=False, **kwargs):
+    def _create(cls, *args, form_fields=None, for_factory=None, clean=False, **kwargs):
         if form_fields is None:
             form_fields = {}
 
@@ -264,14 +275,20 @@ class MultiFileFieldBlockFactory(UploadableMediaFactory):
 
 
 class StreamFieldUUIDFactory(wagtail_factories.StreamFieldFactory):
-    def generate(self, step, params):
-        params = self.build_form(params)
-        blocks = super().generate(step, params)
+    def evaluate(self, instance, step, extra):
+        params = self.build_form(extra)
+        blocks = super().evaluate(instance, step, params)
         ret_val = []
+        factories = {
+            k: v.get_factory()
+            for k, v in self.stream_block_factory.__dict__.items()
+            if isinstance(v, factory.SubFactory)
+        }
         # Convert to JSON so we can add id before create
         for block_name, value in blocks:
-            block = self.stream_block_factory[block_name]._meta.model()
-            value = block.get_prep_value(value)
+            block = factories[block_name]._meta.model()
+
+            value = block.get_prep_value(self.filtered_child_block_value(block, value))
             ret_val.append(
                 {"type": block_name, "value": value, "id": str(uuid.uuid4())}
             )
@@ -301,8 +318,13 @@ class StreamFieldUUIDFactory(wagtail_factories.StreamFieldFactory):
 
         form_fields = {}
         field_count = 0
-        for field in self.stream_block_factory:
-            if field == "text_markup" or field in exclusions:
+        stream_blocks = {
+            k: v.get_factory()
+            for k, v in self.stream_block_factory.__dict__.items()
+            if isinstance(v, factory.SubFactory)
+        }
+        for field in stream_blocks:
+            if field == "text_markup" or field in exclusions or not field:
                 pass
             else:
                 for _ in range(multiples.get(field, 1)):
@@ -313,15 +335,26 @@ class StreamFieldUUIDFactory(wagtail_factories.StreamFieldFactory):
 
         return form_fields
 
+    def filtered_child_block_value(self, block, value):
+        filtered_value = {
+            key: val for key, val in value.items() if key in block.child_blocks
+        }
+        return filtered_value
+
     def form_response(self, fields, field_values=None):
         if not field_values:
             field_values = {}
+        stream_blocks = {
+            k: v.get_factory()
+            for k, v in self.stream_block_factory.__dict__.items()
+            if isinstance(v, factory.SubFactory)
+        }
         data = {
-            field.id: self.stream_block_factory[field.block.name].make_form_answer(
+            field.id: stream_blocks[field.block.name].make_form_answer(
                 field_values.get(field.id, {})
             )
             for field in fields
-            if hasattr(self.stream_block_factory[field.block.name], "make_form_answer")
+            if hasattr(stream_blocks[field.block.name], "make_form_answer")
         }
         return flatten_for_form(data)
 

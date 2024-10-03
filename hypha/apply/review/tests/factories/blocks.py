@@ -84,12 +84,12 @@ class ScoreFieldBlockFactory(FormFieldBlockFactory):
 
 ReviewFormFieldsFactory = StreamFieldUUIDFactory(
     {
-        "char": CharFieldBlockFactory,
-        "text": RichTextFieldBlockFactory,
-        "score": ScoreFieldBlockFactory,
-        "score_without_text": ScoreFieldWithoutTextBlockFactory,
-        "recommendation": RecommendationBlockFactory,
-        "comments": RecommendationCommentsBlockFactory,
-        "visibility": VisibilityBlockFactory,
+        "char": factory.SubFactory(CharFieldBlockFactory),
+        "text": factory.SubFactory(RichTextFieldBlockFactory),
+        "score": factory.SubFactory(ScoreFieldBlockFactory),
+        "score_without_text": factory.SubFactory(ScoreFieldWithoutTextBlockFactory),
+        "recommendation": factory.SubFactory(RecommendationBlockFactory),
+        "comments": factory.SubFactory(RecommendationCommentsBlockFactory),
+        "visibility": factory.SubFactory(VisibilityBlockFactory),
     }
 )
