@@ -39,7 +39,7 @@
     {% endadminbar %}
 
 
-    <form method="GET" action="./" class="flex items-center justify-between gap-2 mt-3 md:gap-4">
+    <div class="flex items-center justify-between gap-2 mt-3 md:gap-4">
         {% for key, value in request.GET.items %}
             {% if key != 'archived' and key != 'drafts' %}<input type="hidden" class="js-filter-options" value="{{ value}}" name="{{ key }}">{% endif %}
         {% endfor %}
@@ -95,7 +95,7 @@
             </a>
         {% enddropdown_menu %}
 
-        <label class="relative flex-auto">
+        <label class="relative flex-auto inline-flex items-center">
             <span class="absolute inset-y-0 flex items-center pointer-events-none start-0 ps-3">
                 {% heroicon_mini "magnifying-glass" size=20 class="text-fg-muted" %}
             </span>
@@ -105,7 +105,8 @@
                 class="block w-full p-2 text-sm text-gray-900 border border-gray-300 rounded-sm ps-10 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="{% trans "Search…" %}"
                 name="query"
-                hx-trigger="search"
+                hx-trigger="search, keyup changed delay:500ms"
+                hx-sync="this:replace"
                 hx-push-url="true"
                 hx-get="./"
                 hx-include="input.js-filter-options:not([name=query])"
@@ -167,7 +168,7 @@
                 {% heroicon_mini "arrow-down-tray" %}
             </a>
         {% endif %}
-    </form>
+    </div>
 
     {% if is_filtered %}
         {% comment %} Display option to clear all the filters {% endcomment %}
