@@ -184,32 +184,36 @@
                         {% if other_submissions or object.previous or object.next %}
                             <div class="sidebar__inner related-sidebar">
                                 <h5>{% trans "Related submissions" %}</h5>
+
                                 {% if object.previous %}
-                                    <p><a class="link link--underlined link--bold" href="{% url 'funds:submissions:detail' object.previous.id %}">{% trans "View linked" %} {{ object.previous.stage }}</a></p>
+                                    <p class="mb-4"><a class="link link--underlined link--bold" href="{% url 'funds:submissions:detail' object.previous.id %}">{% trans "View linked" %} {{ object.previous.stage }}</a></p>
                                 {% endif %}
 
                                 {% if object.next %}
-                                    <p><a class="link link--underlined link--bold" href="{% url 'funds:submissions:detail' object.next.id %}">{% trans "View linked" %} {{ object.next.stage }}</a></p>
+                                    <p class="mb-4"><a class="link link--underlined link--bold" href="{% url 'funds:submissions:detail' object.next.id %}">{% trans "View linked" %} {{ object.next.stage }}</a></p>
                                 {% endif %}
 
-                                {% for submission in other_submissions %}
-                                    {% if forloop.first %}
-                                        <h6 class="heading heading--light-grey heading--uppercase">{% trans "Other Submissions" %}</h6>
-                                        <ul>
-                                    {% endif %}
-                                    <li>
-                                        <a class="hover:underline" href="{% url 'funds:submissions:detail' submission.id %}">
-                                            <span class="link link--bold">
+                                <section class="flex flex-col gap-2" data-js-collapse>
+                                    {% for submission in other_submissions %}
+                                        {% if forloop.first %}
+                                            <h6 class="text-fg-muted uppercase mb-0 pb-2 border-b font-semibold">
+                                                {% trans "Other Submissions" %}
+                                            </h6>
+                                        {% endif %}
+                                        <div>
+                                            <a class="link link--bold line-clamp-2 hover:underline" href="{% url 'funds:submissions:detail' submission.id %}">
                                                 {{ submission.title }}
-                                            </span>
-                                            <span class="text-sm font-semibold text-gray-400">#{{ submission.public_id|default:submission.id }}</span>
-                                        </a>
-
-                                    </li>
-                                    {% if forloop.last %}
-                                        </ul>
-                                    {% endif %}
-                                {% endfor %}
+                                            </a>
+                                            <div class="text-sm text-fg-muted">
+                                                <span>#{{ submission.public_id|default:submission.id }}</span>
+                                                <relative-time datetime='{{ submission.submit_time|date:"c" }}'>{{ submission.submit_time|date:"SHORT_DATETIME_FORMAT" }}</relative-time>
+                                                in {{ submission.round|default_if_none:submission.page }}
+                                                &middot;
+                                                <span>{{ submission.phase }}</span>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </section>
                             </div>
                         {% endif %}
                     {% endblock %}
