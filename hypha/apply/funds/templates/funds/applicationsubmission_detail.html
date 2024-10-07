@@ -4,6 +4,7 @@
 
 {% block title %}#{{ object.public_id|default_if_none:object.id}}: {{ object.title }}{% endblock %}
 {% block body_class %}{% endblock %}
+
 {% block content %}
     {% if object.round.specific.is_sealed %}
         <ul class="messages">
@@ -53,18 +54,18 @@
                         {% trans "Submission details" %}
                     </a>
 
-                    <a class="tab__item" href="#communications" data-tab="tab-2">
-                        {% trans "Communications" %} ({{ comments.count }})
+                    <a class="tab__item"
+                       href="#communications"
+                       data-tab="tab-2"
+                       x-data
+                       @click="$dispatch('fetchComments')"
+                    >
+                        {% trans "Conversations" %} ({{ comments_count }})
                     </a>
 
                     <a class="tab__item"
                        href="#activity-feed"
-                       hx-get="{% url 'funds:submissions:partial-activities' object.id %}"
-                       hx-target="#tab-3 .feed"
-                       hx-trigger="open-tab-3 once"
                        data-tab="tab-3"
-                       x-init="$nextTick(() => { location.hash === '#activity-feed' ? $dispatch('open-tab-3') : '' })"
-                       @hashchange.window="location.hash === '#activity-feed' ? $dispatch('open-tab-3') : ''"
                     >
                         {% trans "Activity feed" %}
                     </a>
@@ -216,23 +217,32 @@
             </div>
         </div>
 
-    {# Tab 2 #}
+        {# Tab 2 #}
         <div class="tabs__content" id="tab-2">
             <div class="feed">
                 {% if not object.is_archive %}
-                    <h4 class="m-0">{% trans "Add communication" %}</h4>
+                    <h4 class="m-0 sr-only">{% trans "Add communication" %}</h4>
                     {% include "activity/include/comment_form.html" %}
-                    {% include "activity/include/comment_list.html" with editable=True %}
-                {% else %}
-                    {% include "activity/include/comment_list.html" with editable=False %}
                 {% endif %}
+
+                <div
+                    class="comments"
+                    id="comment-feed"
+                    hx-get="{% url 'activity:partial-comments' 'submission' object.id %}"
+                    hx-trigger="fetchComments from:body, intersect once"
+                >
+                    <p>{% trans "Loading…" %}</p>
+                </div>
             </div>
         </div>
 
-    {# Tab 3 #}
+        {# Tab 3 #}
         <div class="tabs__content" id="tab-3">
-            <div class="feed">
-            {% comment %} Loaded using the htmx via alpine's custom event "open-tab-3"{% endcomment %}
+            <div
+                class="feed ms-3"
+                hx-get="{% url 'funds:submissions:partial-activities' object.id %}"
+                hx-trigger="intersect once"
+            >
                 <p>{% trans "Loading…" %}</p>
             </div>
         </div>
@@ -243,5 +253,18 @@
     {{ comment_form.media.js }}
     <script src="{% static 'js/tabs.js' %}"></script>
     <script src="{% static 'js/submission-text-cleanup.js' %}"></script>
-    <script src="{% static 'js/edit-comment.js' %}"></script>
+    <script>
+        // Scroll to hash after loading content
+        document.addEventListener('htmx:afterSettle', scrollToHash);
+        function scrollToHash() {
+            const hash = window.location.hash;
+            if (hash) {
+                const element = document.querySelector(hash);
+                if (element) {
+                    window.location.hash = '';
+                    window.location.hash = hash;
+                }
+            }
+        }
+    </script>
 {% endblock %}

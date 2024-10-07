@@ -38,6 +38,7 @@
     <div class="profile">
         <div class="profile__column">
             <h2 class="text-2xl">{% trans "Profile" %}</h2>
+
             <form action="" method="post" class="form">
                 {% csrf_token %}
                 {% for field in form %}

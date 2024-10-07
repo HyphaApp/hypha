@@ -213,7 +213,7 @@ class User(AbstractUser):
     wagtail_reference_index_ignore = True
 
     def __str__(self):
-        return self.get_full_name() if self.get_full_name() else self.get_short_name()
+        return self.get_display_name()
 
     def get_full_name(self):
         return self.full_name.strip()
@@ -225,19 +225,22 @@ class User(AbstractUser):
         """
         return self.email.split("@")[0]
 
-    def get_display_name_with_group(self) -> str:
-        """Gets the user's display name, along with their role in parenthesis
+    def get_display_name(self):
+        return self.full_name.strip() if self.full_name else self.get_short_name()
 
-        If the user has a full name set that will be used, otherwise pulls the email.
-        """
-        display_name = str(self)
-        is_apply_staff = f" ({STAFF_GROUP_NAME})" if self.is_apply_staff else ""
-        is_reviewer = f" ({REVIEWER_GROUP_NAME})" if self.is_reviewer else ""
-        is_partner = f" ({PARTNER_GROUP_NAME})" if self.is_partner else ""
-        is_applicant = f" ({APPLICANT_GROUP_NAME})" if self.is_applicant else ""
-        is_finance = f" ({FINANCE_GROUP_NAME})" if self.is_finance else ""
-        is_contracting = f" ({CONTRACTING_GROUP_NAME})" if self.is_contracting else ""
-        return f"{display_name}{is_apply_staff}{is_reviewer}{is_applicant}{is_partner}{is_finance}{is_contracting}"
+    def get_role_names(self):
+        roles = []
+        if self.is_apply_staff:
+            roles.append(STAFF_GROUP_NAME)
+        if self.is_reviewer:
+            roles.append(REVIEWER_GROUP_NAME)
+        if self.is_applicant:
+            roles.append(APPLICANT_GROUP_NAME)
+        if self.is_finance:
+            roles.append(FINANCE_GROUP_NAME)
+        if self.is_contracting:
+            roles.append(CONTRACTING_GROUP_NAME)
+        return roles
 
     @cached_property
     def roles(self):

@@ -3,7 +3,6 @@ from django.utils.translation import gettext_lazy as _
 from django_filters import rest_framework as filters
 from wagtail.models import Page
 
-from hypha.apply.activity.models import Activity
 from hypha.apply.categories.blocks import CategoryQuestionBlock
 from hypha.apply.categories.models import Option
 from hypha.apply.funds.models import ApplicationSubmission, FundType, LabType
@@ -132,18 +131,3 @@ class NewerThanFilter(filters.ModelChoiceFilter):
             return qs
 
         return qs.newer(value)
-
-
-class CommentFilter(filters.FilterSet):
-    since = filters.DateTimeFilter(field_name="timestamp", lookup_expr="gte")
-    before = filters.DateTimeFilter(field_name="timestamp", lookup_expr="lte")
-    newer = NewerThanFilter(queryset=Activity.comments.all())
-
-    class Meta:
-        model = Activity
-        fields = ["visibility", "since", "before", "newer"]
-
-
-class AllCommentFilter(CommentFilter):
-    class Meta(CommentFilter.Meta):
-        fields = CommentFilter.Meta.fields + ["source_object_id"]
