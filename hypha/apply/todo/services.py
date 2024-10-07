@@ -6,7 +6,7 @@ from hypha.apply.activity.adapters.utils import get_users_for_groups
 from .models import Task
 
 
-def validate_user_uniquness(code, user, related_obj):
+def validate_user_uniqueness(code, user, related_obj):
     """
     code + related_object + user should be unique together.
     """

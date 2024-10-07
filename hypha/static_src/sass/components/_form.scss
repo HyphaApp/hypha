@@ -440,50 +440,25 @@
 
     .wmd-preview {
         width: 100%;
+    }
 
-        @include media-query(lg) {
-            max-width: 70%;
-        }
+    .wmd-input {
+        field-sizing: content;
+        min-height: 14rem;
     }
 
     &__comments {
-        .fields--visible {
-            display: grid;
-            grid-template-areas: "message" "attachments" "visibility" "actions";
-            grid-template-rows: auto auto auto auto;
-            grid-template-columns: 1fr;
+        // stylelint-disable-next-line selector-class-pattern,selector-id-pattern,selector-max-id
+        ul#id_visibility {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
 
-            @include media-query(lg) {
-                grid-template-areas: "message attachments" "message visibility";
-                grid-template-rows: auto auto;
-                grid-template-columns: 2fr 1fr;
-                column-gap: 2rem;
-
-                .wmd-input,
-                .wmd-preview {
-                    max-width: 100%;
-                    margin-block-end: 0;
-                }
-            }
-
-            // stylelint-disable-next-line selector-class-pattern
-            .id_attachments {
-                grid-area: attachments;
-            }
-
-            // stylelint-disable-next-line selector-class-pattern
-            .id_message {
-                grid-area: message;
-
-                > label {
-                    @include hidden;
-                }
-            }
-
-            // stylelint-disable-next-line selector-class-pattern
-            .id_visibility_0 {
-                grid-area: visibility;
-            }
+        .wmd-input,
+        .wmd-preview {
+            max-width: 100%;
+            margin-block-end: 0;
         }
     }
 

@@ -240,6 +240,9 @@ class Activity(models.Model):
         ordering = ["-timestamp"]
         base_manager_name = "objects"
 
+    def get_absolute_url(self):
+        return f"{self.source.get_absolute_url()}#communications--{self.id}"
+
     @property
     def priviledged(self):
         # Not visible to applicant

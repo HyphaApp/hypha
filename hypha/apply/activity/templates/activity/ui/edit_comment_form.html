@@ -1,0 +1,41 @@
+{% load i18n %}
+
+<form
+    action="{{ request.path }}"
+    method="POST"
+    hx-post="{{ request.path }}"
+    hx-target="this"
+    hx-swap="outerHTML"
+    class="form"
+>
+    {% csrf_token %}
+    <div class="mb-4">
+        <div id="wmd-button-bar-edit-comment-{{ activity.id }}" class="wmd-button-bar not-prose"></div>
+
+        <textarea
+            id="wmd-input-edit-comment-{{ activity.id }}"
+            class="wmd-input w-full not-prose"
+            rows="10" name="message"
+        >{{ activity.message }}</textarea>
+
+        <div id="wmd-preview-edit-comment-{{ activity.id }}" class="w-full bg-gray-100 p-4 prose max-w-none shadow-sm"></div>
+    </div>
+
+    <div class="flex gap-2">
+        <button class="button button--primary" role="button" type="submit">{% trans "Submit" %}</button>
+        <button class="button" hx-get="{{ request.path}}?action=cancel">{% trans "Cancel" %}</button>
+    </div>
+
+    <script>
+        (function(){
+            const initEditor = (id) => {
+                const converterOne = window.Markdown.getSanitizingConverter();
+                const commentEditor = new window.Markdown.Editor(converterOne,id);
+                commentEditor.run();
+            };
+            initEditor("-edit-comment-{{ activity.id }}");
+        })();
+    </script>
+
+</form>
+

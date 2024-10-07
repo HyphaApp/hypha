@@ -6,6 +6,7 @@ from django.utils.translation import gettext as _
 
 from hypha.apply.activity.models import ALL, APPLICANT, TEAM
 from hypha.apply.activity.options import MESSAGES
+from hypha.apply.funds.workflow import PHASE_BG_COLORS
 from hypha.apply.projects.utils import (
     get_invoice_public_status,
     get_invoice_status_display_value,
@@ -26,12 +27,12 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.NEW_SUBMISSION: _(
             "Submitted {source.title_text_display} for {source.page.title}"
         ),
-        MESSAGES.EDIT_SUBMISSION: _("Edited"),
-        MESSAGES.APPLICANT_EDIT: _("Edited"),
-        MESSAGES.UPDATE_LEAD: _("Lead changed from {old_lead} to {source.lead}"),
-        MESSAGES.BATCH_UPDATE_LEAD: _("Batch Lead changed to {new_lead}"),
+        MESSAGES.EDIT_SUBMISSION: _("edited the submission"),
+        MESSAGES.APPLICANT_EDIT: _("edited the submission"),
+        MESSAGES.UPDATE_LEAD: _("updated Lead from {old_lead} to {source.lead}"),
+        MESSAGES.BATCH_UPDATE_LEAD: _("batch updated Lead to {new_lead}"),
         MESSAGES.DETERMINATION_OUTCOME: _(
-            "Sent a determination. Outcome: {determination.clean_outcome}"
+            "sent a determination. Outcome: {determination.clean_outcome}"
         ),
         MESSAGES.BATCH_DETERMINATION_OUTCOME: "batch_determination",
         MESSAGES.INVITED_TO_PROPOSAL: _("Invited to submit a proposal"),
@@ -42,24 +43,22 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.OPENED_SEALED: _("Opened the submission while still sealed"),
         MESSAGES.SCREENING: "handle_screening_statuses",
         MESSAGES.REVIEW_OPINION: _(
-            "{user} {opinion.opinion_display}s with {opinion.review.author}s review of {source}"
+            "{opinion.opinion_display}s with {opinion.review.author}s review of {source}"
         ),
         MESSAGES.DELETE_REVIEW_OPINION: _(
-            "{user} deleted the opinion for review: {review_opinion.review}"
+            "deleted the opinion for review: {review_opinion.review}"
         ),
         MESSAGES.CREATED_PROJECT: _("Created project"),
         MESSAGES.PROJECT_TRANSITION: "handle_project_transition",
         MESSAGES.UPDATE_PROJECT_TITLE: _(
-            "{user} has updated the project title from {old_title} to {source.title}"
+            "updated the project title from {old_title} to {source.title}"
         ),
-        MESSAGES.UPDATE_PROJECT_LEAD: _(
-            "Lead changed from {old_lead} to {source.lead}"
-        ),
+        MESSAGES.UPDATE_PROJECT_LEAD: _("update Lead from {old_lead} to {source.lead}"),
         MESSAGES.SEND_FOR_APPROVAL: _("Requested approval"),
         MESSAGES.APPROVE_PAF: "handle_paf_assignment",
         MESSAGES.APPROVE_PROJECT: _("Approved"),
         MESSAGES.REQUEST_PROJECT_CHANGE: _(
-            'Requested changes for acceptance: "{comment}"'
+            'requested changes for acceptance: "{comment}"'
         ),
         MESSAGES.SUBMIT_CONTRACT_DOCUMENTS: _("Submitted Contract Documents"),
         MESSAGES.UPLOAD_CONTRACT: _("Uploaded a {contract.state} contract"),
@@ -69,17 +68,13 @@ class ActivityAdapter(AdapterBase):
         MESSAGES.SUBMIT_REPORT: _("Submitted a report"),
         MESSAGES.SKIPPED_REPORT: "handle_skipped_report",
         MESSAGES.REPORT_FREQUENCY_CHANGED: "handle_report_frequency",
-        MESSAGES.DISABLED_REPORTING: _("Reporting disabled"),
+        MESSAGES.DISABLED_REPORTING: _("disabled reporting"),
         MESSAGES.BATCH_DELETE_SUBMISSION: "handle_batch_delete_submission",
         MESSAGES.BATCH_ARCHIVE_SUBMISSION: "handle_batch_archive_submission",
         MESSAGES.BATCH_UPDATE_INVOICE_STATUS: "handle_batch_update_invoice_status",
-        MESSAGES.ARCHIVE_SUBMISSION: _(
-            "{user} has archived the submission: {source.title_text_display}"
-        ),
-        MESSAGES.UNARCHIVE_SUBMISSION: _(
-            "{user} has unarchived the submission: {source.title_text_display}"
-        ),
-        MESSAGES.DELETE_INVOICE: _("Deleted an invoice"),
+        MESSAGES.ARCHIVE_SUBMISSION: _("archived this submission"),
+        MESSAGES.UNARCHIVE_SUBMISSION: _("un-archived this submission"),
+        MESSAGES.DELETE_INVOICE: _("deleted an invoice"),
         MESSAGES.REMOVE_TASK: "handle_task_removal",
     }
 
@@ -214,13 +209,12 @@ class ActivityAdapter(AdapterBase):
     def handle_task_removal(self, source, task, **kwargs):
         if task.user:
             return _(
-                "{user} has removed the task {task.code} for {source} from the task list".format(
-                    user=kwargs.get("user"), task=task, source=source
+                "removed the task {task.code} for {source} from the task list".format(
+                    task=task, source=source
                 )
             )
         return _(
-            "{user} has removed the task {task.code} for {source} from whole team's{user_groups} task list.".format(
-                user=kwargs.get("user"),
+            "removed the task {task.code} for {source} from whole team's{user_groups} task list.".format(
                 task=task,
                 source=source,
                 user_groups=list(task.user_group.all().values_list("name", flat=True)),
@@ -228,14 +222,18 @@ class ActivityAdapter(AdapterBase):
         )
 
     def handle_transition(self, old_phase, source, **kwargs):
+        def wrap_in_color_class(text):
+            color_class = PHASE_BG_COLORS.get(text, "")
+            return f'<span class="rounded-full inline-block px-2 py-0.5 font-medium text-gray-800 {color_class}">{text}</span>'
+
         submission = source
         base_message = _("Progressed from {old_display} to {new_display}")
 
         new_phase = submission.phase
 
         staff_message = base_message.format(
-            old_display=old_phase.display_name,
-            new_display=new_phase.display_name,
+            old_display=wrap_in_color_class(old_phase.display_name),
+            new_display=wrap_in_color_class(new_phase.display_name),
         )
 
         if new_phase.permissions.can_view(submission.user):
@@ -246,8 +244,8 @@ class ActivityAdapter(AdapterBase):
                 )
 
             applicant_message = base_message.format(
-                old_display=old_phase.public_name,
-                new_display=new_phase.public_name,
+                old_display=wrap_in_color_class(old_phase.public_name),
+                new_display=wrap_in_color_class(new_phase.public_name),
             )
 
             return json.dumps(
@@ -363,10 +361,10 @@ class ActivityAdapter(AdapterBase):
 
         if new_status and old_status != "-":
             return _(
-                'Updated screening decision from "{old_status}" to "{new_status}".'
+                'Updated screening decision from "{old_status}" to "{new_status}"'
             ).format(old_status=old_status, new_status=new_status)
         elif new_status:
-            return _('Added screening decision to "{new_status}".').format(
+            return _('Added screening decision to "{new_status}"').format(
                 new_status=new_status
             )
         elif old_status != "-":

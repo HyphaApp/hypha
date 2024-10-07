@@ -1,5 +1,8 @@
 from django import template
+from django.utils.safestring import SafeString
 from django_otp import devices_for_user
+
+from hypha.apply.users.identicon import get_identicon
 
 from ..utils import can_use_oauth_check
 
@@ -42,3 +45,8 @@ def tokens_text(token_set):
     for token in token_set:
         tokens_string += str(token.token) + " \n"
     return tokens_string
+
+
+@register.simple_tag()
+def user_image(identifier: str, size=20):
+    return SafeString(get_identicon(identifier, size=size))
