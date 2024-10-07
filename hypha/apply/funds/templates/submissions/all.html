@@ -40,6 +40,12 @@
 
 
     <div class="flex items-center justify-between gap-2 mt-3 md:gap-4">
+        {% comment %}
+        Always include a hidden "js-filter-options"
+        See more at reported issue https://github.com/bigskysoftware/htmx/issues/2556
+        {% endcomment %}
+        <input type="hidden" class="js-filter-options">
+
         {% for key, value in request.GET.items %}
             {% if key != 'archived' and key != 'drafts' %}<input type="hidden" class="js-filter-options" value="{{ value}}" name="{{ key }}">{% endif %}
         {% endfor %}
