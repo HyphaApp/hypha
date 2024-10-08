@@ -46,7 +46,7 @@
         {% else %}
             <p>{% trans "You have already posted a review for this submission" %}</p>
         {% endif %}
-        <div class="form--score-box">Score: 0</div>
+        <div class="form--score-box">{% trans "Score:" %} <span class="score-number">0</span></div>
     </div>
 {% endblock %}
 {% block extra_js %}

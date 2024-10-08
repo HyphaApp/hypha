@@ -25,7 +25,7 @@
         });
 
         // Update the text in .form--score-box with the current score
-        document.querySelector(".form--score-box").textContent =
-            "Score: " + score;
+        document.querySelector(".form--score-box .score-number").textContent =
+            score;
     }
 })();
