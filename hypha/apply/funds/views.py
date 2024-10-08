@@ -1715,12 +1715,15 @@ class SubmissionDeleteView(DeleteView):
 
     def form_valid(self, form):
         submission = self.get_object()
-        messenger(
-            MESSAGES.DELETE_SUBMISSION,
-            user=self.request.user,
-            request=self.request,
-            source=submission,
-        )
+
+        # Notify unless author delete own draft.
+        if submission.status != DRAFT_STATE and submission.user != self.request.user:
+            messenger(
+                MESSAGES.DELETE_SUBMISSION,
+                user=self.request.user,
+                request=self.request,
+                source=submission,
+            )
 
         # Delete NEW_SUBMISSION event for this particular submission
         Event.objects.filter(
