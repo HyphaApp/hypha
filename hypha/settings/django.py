@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     "hypha.apply.determinations",
     "hypha.apply.stream_forms",
     "hypha.apply.todo",
+    "hypha.apply.translate",
     "hypha.apply.utils.apps.UtilsConfig",
     "hypha.apply.projects.apps.ProjectsConfig",
     "hypha.public.funds",
@@ -88,6 +89,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "django.middleware.common.CommonMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "elevate.middleware.ElevateMiddleware",
