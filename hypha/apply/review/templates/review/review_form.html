@@ -46,9 +46,15 @@
         {% else %}
             <p>{% trans "You have already posted a review for this submission" %}</p>
         {% endif %}
-        <div class="form--score-box">{% trans "Score:" %} <span class="score-number">0</span> <button class="zeta button button--secondary" style="padding: 0.2rem; margin: 0.2rem">{% trans "Tot|Avg" %}<br /></button></div>
+
+        {% if show_running_total %}
+            <div class="form--score-box">{% trans "Score:" %} <span class="score-number">0</span> <button class="zeta button button--secondary" style="padding: 0.2rem; margin: 0.2rem">{% trans "Tot|Avg" %}<br /></button></div>
+        {% endif %}
     </div>
 {% endblock %}
-{% block extra_js %}
-    <script src="{% static 'js/review-form-score.js' %}"></script>
-{% endblock %}
+
+{% if show_running_total %}
+    {% block extra_js %}
+        <script src="{% static 'js/review-form-score.js' %}"></script>
+    {% endblock %}
+{% endif %}

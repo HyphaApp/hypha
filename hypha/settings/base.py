@@ -158,6 +158,9 @@ TRANSITION_AFTER_REVIEWS = env.bool("TRANSITION_AFTER_REVIEWS", False)
 # Default visibility for reviews.
 REVIEW_VISIBILITY_DEFAULT = env.str("REVIEW_VISIBILITY_DEFAULT", "private")
 
+# Whether to show a running total score on the add/edit review pages.
+REVIEW_SHOW_RUNNING_TOTAL = env.bool("REVIEW_SHOW_RUNNING_TOTAL", False)
+
 # Require an applicant to view their rendered application before submitting
 SUBMISSION_PREVIEW_REQUIRED = env.bool("SUBMISSION_PREVIEW_REQUIRED", True)
 
