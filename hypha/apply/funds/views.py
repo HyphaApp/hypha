@@ -69,7 +69,7 @@ from hypha.apply.review.models import Review
 from hypha.apply.stream_forms.blocks import GroupToggleBlock
 from hypha.apply.todo.options import PROJECT_WAITING_PAF
 from hypha.apply.todo.views import add_task_to_user
-from hypha.apply.translate.utils import get_lang_name_from_code, get_translation_params
+from hypha.apply.translate.utils import get_lang_name, get_translation_params
 from hypha.apply.users.decorators import (
     is_apply_staff,
     staff_or_finance_required,
@@ -134,6 +134,7 @@ from .tables import (
 from .utils import (
     export_submissions_to_csv,
     format_submission_sum_value,
+    get_language_choices_json,
     get_or_create_default_screening_statuses,
     is_filter_empty,
 )
@@ -1014,6 +1015,7 @@ class TranslateSubmissionView(View):
                 "form": translate_form,
                 "value": _("Update"),
                 "object": self.submission,
+                "json_choices": get_language_choices_json(self.request),
             },
         )
 
@@ -1044,7 +1046,12 @@ class TranslateSubmissionView(View):
         return render(
             self.request,
             self.template,
-            context={"form": form, "value": _("Update"), "object": self.submission},
+            context={
+                "form": form,
+                "value": _("Update"),
+                "object": self.submission,
+                "json_choices": get_language_choices_json(self.request),
+            },
             status=400,
         )
 
@@ -1171,8 +1178,8 @@ class AdminSubmissionDetailView(ActivityContextMixin, DelegateableView, DetailVi
                 )
                 extra_context.update(
                     {
-                        "from_lang_name": get_lang_name_from_code(from_lang),
-                        "to_lang_name": get_lang_name_from_code(to_lang),
+                        "from_lang_name": get_lang_name(from_lang),
+                        "to_lang_name": get_lang_name(to_lang),
                     }
                 )
             except ValueError:
@@ -1294,8 +1301,8 @@ def partial_translate_answers(request: HttpRequest, pk: int) -> HttpResponse:
                 updated_params["tl"] = to_lang
                 updated_url = f"{updated_url}?{updated_params.urlencode()}"
 
-            to_lang_name = get_lang_name_from_code(to_lang)
-            from_lang_name = get_lang_name_from_code(from_lang)
+            to_lang_name = get_lang_name(to_lang)
+            from_lang_name = get_lang_name(from_lang)
 
             message = _("Submission translated from {fl} to {tl}.").format(
                 fl=from_lang_name, tl=to_lang_name

@@ -51,8 +51,6 @@ def translate(string: str, from_code: str, to_code: str) -> str:
     ]:
         raise ValueError(f"Package {from_code} -> {to_code} is not installed")
 
-    print(f"\nAttempting to translate {from_code} -> {to_code}\n ")
-
     translated_text = argostranslate.translate.translate(string, from_code, to_code)
 
     return translated_text
