@@ -1,7 +1,7 @@
 from urllib.parse import parse_qs, urlparse
 
 from django.contrib.auth.decorators import login_required
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
 from django.utils.translation import gettext as _
@@ -14,7 +14,7 @@ from hypha.apply.funds.utils import get_statuses_as_params
 
 from ..constants import statuses_and_table_statuses_mapping
 from ..models.payment import Invoice
-from ..models.project import Project
+from ..models.project import DocumentCategory, Project
 from ..permissions import has_permission
 from ..utils import get_project_status_choices
 
@@ -26,6 +26,20 @@ def partial_project_activities(request, pk):
     has_permission("project_access", request.user, object=project, raise_exception=True)
     ctx = {"actions": get_related_actions_for_user(project, request.user)}
     return render(request, "activity/include/action_list.html", ctx)
+
+
+@login_required
+@require_GET
+def partial_supporting_documents(request, pk):
+    project = get_object_or_404(Project, pk=pk)
+    ctx = {"object": project}
+    ctx["all_document_categories"] = DocumentCategory.objects.all()
+    ctx["remaining_document_categories"] = DocumentCategory.objects.filter(
+        ~Q(packet_files__project=project)
+    )
+    return render(
+        request, "application_projects/partials/supporting_documents.html", ctx
+    )
 
 
 @login_required

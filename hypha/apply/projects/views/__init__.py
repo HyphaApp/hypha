@@ -34,6 +34,7 @@ from .project_partials import (
     get_invoices_status_counts,
     get_project_status_counts,
     partial_project_activities,
+    partial_supporting_documents,
 )
 from .report import (
     ReportDetailView,
@@ -46,6 +47,7 @@ from .report import (
 
 __all__ = [
     "partial_project_activities",
+    "partial_supporting_documents",
     "get_invoices_status_counts",
     "get_project_status_counts",
     "ChangeInvoiceStatusView",

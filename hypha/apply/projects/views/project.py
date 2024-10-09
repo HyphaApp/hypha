@@ -1,6 +1,7 @@
 import copy
 import datetime
 import io
+import json
 
 from django.conf import settings
 from django.contrib import messages
@@ -11,7 +12,7 @@ from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.db import transaction
 from django.db.models import Q
 from django.http import Http404, HttpResponse, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import get_template
 from django.urls import reverse
 from django.utils import timezone
@@ -78,7 +79,6 @@ from ..forms import (
     ProjectForm,
     ProjectSOWForm,
     RemoveContractDocumentForm,
-    RemoveDocumentForm,
     SelectDocumentForm,
     SetPendingForm,
     SkipPAFApprovalProcessForm,
@@ -241,53 +241,94 @@ class SendForApprovalView(DelegatedViewMixin, UpdateView):
 
 # PROJECT DOCUMENTS
 @method_decorator(staff_required, name="dispatch")
-class UploadDocumentView(DelegatedViewMixin, CreateView):
-    context_name = "document_form"
+class UploadDocumentView(CreateView):
     form_class = UploadDocumentForm
     model = Project
+    template_name = "application_projects/modals/supporting_documents_upload.html"
 
-    def form_valid(self, form):
-        project = self.kwargs["object"]
-        form.instance.project = project
-        response = super().form_valid(form)
-
-        messenger(
-            MESSAGES.UPLOAD_DOCUMENT,
-            request=self.request,
-            user=self.request.user,
-            source=project,
+    def dispatch(self, request, *args, **kwargs):
+        self.project = get_object_or_404(Project, id=kwargs.get("pk"))
+        self.category = get_object_or_404(
+            DocumentCategory, id=kwargs.get("category_pk")
         )
+        # permission check
+        return super().dispatch(request, *args, **kwargs)
 
-        messages.success(
+    def get(self, *args, **kwargs):
+        upload_document_form = self.form_class(
+            instance=self.project, initial={"category": self.category}
+        )
+        return render(
             self.request,
-            _("Document has been uploaded"),
-            extra_tags=PROJECT_ACTION_MESSAGE_TAG,
+            self.template_name,
+            context={
+                "form": upload_document_form,
+                "value": _("Submit"),
+                "category": self.category,
+                "object": self.project,
+            },
         )
 
-        return response
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(
+            self.request.POST,
+            request.FILES,
+            instance=self.project,
+            initial={"category": self.category},
+        )
+        if form.is_valid():
+            form.instance.project = self.project
+            form.save()
+            messenger(
+                MESSAGES.UPLOAD_DOCUMENT,
+                request=self.request,
+                user=self.request.user,
+                source=self.project,
+            )
+            return HttpResponse(
+                status=204,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {
+                            "supportingDocumentUpload": None,
+                            "showMessage": "Document has been uploaded",
+                        }
+                    ),
+                },
+            )
+        return render(
+            self.request,
+            self.template_name,
+            context={"form": form, "value": _("Submit"), "object": self.project},
+            status=400,
+        )
 
 
 @method_decorator(staff_required, name="dispatch")
-class RemoveDocumentView(DelegatedViewMixin, FormView):
-    context_name = "remove_document_form"
-    form_class = RemoveDocumentForm
+class RemoveDocumentView(View):
     model = Project
 
-    def form_valid(self, form):
-        document_id = form.cleaned_data["id"]
-        project = self.kwargs["object"]
-
-        try:
-            project.packet_files.get(pk=document_id).delete()
-        except PacketFile.DoesNotExist:
-            pass
+    def delete(self, *args, **kwargs):
+        self.project = get_object_or_404(Project, id=kwargs.get("pk"))
+        self.object = self.project.packet_files.get(pk=kwargs.get("document_pk"))
+        self.object.delete()
 
         messages.success(
             self.request,
             _("Document has been removed"),
             extra_tags=PROJECT_ACTION_MESSAGE_TAG,
         )
-        return redirect(project)
+        return HttpResponse(
+            status=204,
+            headers={
+                "HX-Trigger": json.dumps(
+                    {
+                        "supportingDocumentRemove": None,
+                        "showMessage": "Document has been removed",
+                    }
+                ),
+            },
+        )
 
 
 @method_decorator(login_required, name="dispatch")
@@ -1332,7 +1373,6 @@ class AdminProjectDetailView(
     form_views = [
         ApproveContractView,
         CommentFormView,
-        RemoveDocumentView,
         SelectDocumentView,
         SendForApprovalView,
         UpdatePAFApproversView,
@@ -1340,7 +1380,6 @@ class AdminProjectDetailView(
         UpdateLeadView,
         UpdateProjectTitleView,
         UploadContractView,
-        UploadDocumentView,
         UpdateAssignApproversView,
         ChangePAFStatusView,
         ChangeProjectstatusView,
@@ -1366,10 +1405,6 @@ class AdminProjectDetailView(
         project_settings = ProjectSettings.for_request(self.request)
         context["project_settings"] = project_settings
         context["paf_approvals"] = PAFApprovals.objects.filter(project=self.object)
-        context["all_document_categories"] = DocumentCategory.objects.all()
-        context["remaining_document_categories"] = DocumentCategory.objects.filter(
-            ~Q(packet_files__project=self.object)
-        )
         context["all_contract_document_categories"] = (
             ContractDocumentCategory.objects.all()
         )
@@ -1409,7 +1444,6 @@ class ApplicantProjectDetailView(
         CommentFormView,
         SelectDocumentView,
         UploadContractView,
-        UploadDocumentView,
         UploadContractDocumentView,
         RemoveContractDocumentView,
         SubmitContractDocumentsView,
