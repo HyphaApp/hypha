@@ -34,6 +34,22 @@
         }
     }
 
+    &--width {
+        flex-grow: 2;
+    }
+
+    &--score-box {
+        display: none;
+        background-color: #1d79a8;
+        color: #fff;
+        padding: 0.5rem 2rem;
+        font-weight: $weight--bold;
+        position: sticky;
+        top: 0;
+        margin-block-start: 0.5rem;
+        margin-block-end: 1.5rem;
+    }
+
     &__group {
         position: relative;
         margin-block-start: 0.5rem;
