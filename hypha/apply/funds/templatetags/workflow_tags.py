@@ -74,3 +74,10 @@ def display_submission_author(context: dict, revision_author: bool = False) -> s
         return settings.ORG_LONG_NAME  # Likely an edge case but covering bases
 
     return str(author)
+
+
+@register.filter
+def has_withdraw_perm(user, submission):
+    if settings.ENABLE_SUBMISSION_WITHDRAWAL:
+        return check_permission(user, "withdraw", submission)
+    return False
