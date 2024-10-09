@@ -11,8 +11,10 @@ from django.utils.translation import gettext_lazy as _
 from wagtail.signal_handlers import disable_reference_index_auto_update
 
 from hypha.apply.categories.models import MetaTerm
+from hypha.apply.translate.translate import get_available_translations
 from hypha.apply.users.models import User
 
+from .fields import LanguageChoiceField
 from .models import (
     ApplicationSubmission,
     AssignedReviewers,
@@ -378,17 +380,29 @@ class BatchUpdateReviewersForm(forms.Form):
 
 
 class TranslateSubmissionForm(forms.Form):
-    from_lang = forms.ChoiceField(choices=[])
-    to_lang = forms.ChoiceField(choices=[])
+    available_packages = get_available_translations()
 
-    def is_valid(self) -> bool:
-        self.cleaned_data = self.data
-        # TODO: WA fix logic to actually validate the form
-        return True
+    from_lang = LanguageChoiceField("from", available_packages)
+    to_lang = LanguageChoiceField("to", available_packages)
 
     def clean(self):
-        self.cleaned_data = self.data
-        return self.cleaned_data
+        form_data = self.cleaned_data
+        try:
+            from_code = form_data["from_lang"]
+            to_code = form_data["to_lang"]
+
+            to_packages = get_available_translations([from_code])
+
+            if to_code not in [package.to_code for package in to_packages]:
+                self.add_error(
+                    "to_lang",
+                    "The specified language is either invalid or not installed",
+                )
+
+            return form_data
+        except KeyError as err:
+            # If one of the fields could not be parsed, there is likely bad input being given
+            raise forms.ValidationError("Invalid input selected") from err
 
 
 def make_role_reviewer_fields():
