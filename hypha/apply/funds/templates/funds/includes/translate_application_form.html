@@ -62,66 +62,63 @@
 <script type="module">
     import Choices from "{% static 'js/esm/choices.js-10-2-0.js' %}";
 
-    {% get_language_choices_json as choices_json %}
-    const choices = JSON.parse('{{ choices_json }}')
+    const choices = JSON.parse('{{ json_choices|safe }}')
 
     {# Define translations for the button text #}
     const CLEAR_TEXT = "{% trans "Clear" %}"
     const TRANSLATE_TEXT = "{% trans "Translate" %}"
 
-    function getToLangChoices(from_lang) {
-        const selected = choices.find((choice) => choice.code === from_lang)
-        if (!selected) return []
-
-        const default_lang = selected.selectedTo ? selected.selectedTo : selected.to[0].code
-
-        return selected.to.map((choice) => {return {value: choice.code, label: choice.name, selected: default_lang}})
+    function getToChoices(from_lang) {
+        const selected = choices.find((choice) => choice.value === from_lang)
+        return selected ? selected.to : []
     }
 
-    function checkForActiveTranslation(newFromLang, newToLang) {
+    // Check if a given from/to lang combo is the active translation based on the JSON provided from the server
+    function isTranslationActive(newFromLang, newToLang) {
         const active = choices.find((choice) => choice.selected === true);
-
         if (!active) return false
 
-        const activeFrom = active.code;
-        const activeTo = active.selectedTo;
+        const activeFrom = active.value;
+        const activeTo = active.to.find((to) => to.selected === true);
 
         return (newFromLang === activeFrom && newToLang == activeTo)
     }
 
+    // Change the button text to indicate the ability to clear the translation
     function showClearBtn(show) {
         translateBtn.textContent = show ? CLEAR_TEXT : TRANSLATE_TEXT
     }
 
-    const fromLangChoices = choices.map((choice) => {
-        return {value: choice.code, label: choice.name, selected: choice.selected}
-    })
-
-    const selectFromLang = new Choices(document.getElementById('id_from_lang'), { allowHTML: true }).setChoices(fromLangChoices);
+    const selectFromLang = new Choices(document.getElementById('id_from_lang'), { allowHTML: true }).setChoices(choices);
     const selectToLang = new Choices(document.getElementById('id_to_lang'), { allowHTML: true });
     const translateBtn = document.getElementById('translate-btn');
-    const clearBtn = document.getElementById('clear-btn');
 
+    // Initial setting of "to language" choices/disabling of field depending on starting "from language" values
     if(selectFromLang.getValue()?.value) {
-        selectToLang.setChoices(getToLangChoices(selectFromLang.getValue().value))
+        selectToLang.setChoices(getToChoices(selectFromLang.getValue().value))
         showClearBtn(true)
     } else {
         showClearBtn(false)
         selectToLang.disable();
     }
 
+    // Event handler for when the "from language" selection is updated
     selectFromLang.passedElement.element.addEventListener('change', (event) => {
-        if (fromLangChoices.map((choice) => choice.value).includes(event.detail.value)) {
-            selectToLang.setChoices(getToLangChoices(event.detail.value), 'value', 'label', true)
+        const toLangChoices = getToChoices(event.detail.value)
+        if (toLangChoices.length > 0) {
+            selectToLang.setChoices(toLangChoices, 'value', 'label', true)
             selectToLang.enable();
-            showClearBtn(checkForActiveTranslation(event.detail.value, selectToLang.getValue().value));
+            showClearBtn(isTranslationActive(event.detail.value, selectToLang.getValue().value));
         } else {
             selectToLang.disable();
+            showClearBtn(false);
+            translateBtn.disabled = true;
         }
     });
 
+    // Event handler for when "to language" selection is updated
     selectToLang.passedElement.element.addEventListener('change', (event) => {
-        if (checkForActiveTranslation(selectFromLang.getValue().value, event.detail.value)) {
+        if (isTranslationActive(selectFromLang.getValue().value, event.detail.value)) {
             showClearBtn(true);
         }
     })

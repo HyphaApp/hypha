@@ -37,8 +37,8 @@ def get_translation_params(
     return None
 
 
-def get_lang_name_from_code(from_code: str) -> str | None:
+def get_lang_name(code: str) -> str | None:
     try:
-        return argostranslate.translate.get_language_from_code(from_code).name
+        return argostranslate.translate.get_language_from_code(code).name
     except AttributeError:
         return None
