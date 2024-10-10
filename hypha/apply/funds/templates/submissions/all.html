@@ -39,16 +39,14 @@
     {% endadminbar %}
 
 
-    <div class="flex items-center justify-between gap-2 mt-3 md:gap-4">
-        {% comment %}
-        Always include a hidden "js-filter-options"
-        See more at reported issue https://github.com/bigskysoftware/htmx/issues/2556
-        {% endcomment %}
-        <input type="hidden" class="js-filter-options">
-
-        {% for key, value in request.GET.items %}
-            {% if key != 'archived' and key != 'drafts' %}<input type="hidden" class="js-filter-options" value="{{ value}}" name="{{ key }}">{% endif %}
-        {% endfor %}
+    <form
+        class="flex items-center justify-between gap-2 mt-3 md:gap-4"
+        hx-trigger="change"
+        hx-get="./"
+        hx-target="#main"
+        hx-push-url="true"
+        hx-swap="outerHTML"
+    >
 
         {% dropdown_menu title="Filters" heading="Filter submissions" %}
             <a
@@ -101,27 +99,26 @@
             </a>
         {% enddropdown_menu %}
 
+        {% for key, value in request.GET.items %}
+            {% if key != 'page' and key != 'drafts' and key != 'query' and key != 'archived' %}
+                <input type="hidden" name="{{ key }}" value="{{ value }}">
+            {% endif %}
+        {% endfor %}
+
         <label class="relative flex-auto inline-flex items-center">
             <span class="absolute inset-y-0 flex items-center pointer-events-none start-0 ps-3">
                 {% heroicon_mini "magnifying-glass" size=20 class="text-fg-muted" aria_hidden=true %}
             </span>
             <input
-                type="search"
+                type="text"
                 id="search-navbar"
                 class="block w-full p-2 text-sm text-gray-900 border border-gray-300 rounded-sm ps-10 bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="{% trans "Search…" %}"
+                placeholder="{% trans 'Search…' %}"
                 name="query"
-                hx-trigger="search"
-                hx-push-url="true"
-                hx-get="./"
-                hx-include="input.js-filter-options:not([name=query])"
-                hx-target="#main"
-                hx-swap="outerHTML"
                 aria-label="{% trans 'Search submissions' %}"
                 value="{{ search_query|default_if_none:'' }}" {% if search_query %}autofocus{% endif %}
             >
         </label>
-
 
         {% if can_view_archive %}
             <span>
@@ -129,11 +126,6 @@
                     <input type="checkbox" {% if show_archived %}checked{% endif %}
                            class="sr-only peer"
                            name="archived"
-                           hx-push-url="true"
-                           hx-get="./"
-                           hx-swap="outerHTML"
-                           hx-include="input.js-filter-options:not([name=archived])"
-                           hx-target="#main"
                     >
                     <div
                         class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600">
@@ -149,11 +141,6 @@
                     <input type="checkbox" {% if show_drafts %}checked{% endif %}
                            class="sr-only peer"
                            name="drafts"
-                           hx-push-url="true"
-                           hx-get="./"
-                           hx-swap="outerHTML"
-                           hx-include="input.js-filter-options:not([name=drafts])"
-                           hx-target="#main"
                     >
                     <div
                         class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600">
@@ -173,7 +160,7 @@
                 {% heroicon_mini "arrow-down-tray" %}
             </a>
         {% endif %}
-    </div>
+    </form>
 
     {% if is_filtered %}
         {% comment %} Display option to clear all the filters {% endcomment %}
@@ -186,11 +173,10 @@
             <a
                 href="./"
                 hx-get="./"
-                title="Remove all Filters"
-                class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-400 bg-blue-100 rounded me-2 hover:bg-blue-200 hover:text-blue-900"
+                class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-800 bg-blue-100 rounded select-none me-2"
             >
                 {% heroicon_mini "x-mark" aria_hidden="true" fill="currentColor" %}
-                <span class="sr-only">{% trans "Remove all filters" %}</span>
+                {% trans "Clear current search query, filters and sorts" %}
             </a>
 
             {% if selected_statuses %}
