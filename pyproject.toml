@@ -10,7 +10,8 @@ python_files = [
     '*_tests.py',
 ]
 testpaths = [
-    "hypha"
+    "hypha",
+    "extensions/ots/message_configuration",
 ]
 filterwarnings = [
     'ignore::DeprecationWarning',

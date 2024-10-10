@@ -39,6 +39,7 @@ from ..models import (
     Message,
 )
 from ..options import MESSAGES
+from ..signals import message_hook
 from .factories import CommentFactory, EventFactory, MessageFactory
 
 
@@ -158,6 +159,121 @@ class TestBaseAdapter(AdapterMixin, TestCase):
         assert len(messages) == 1
         assert MESSAGES.UPDATE_LEAD.value in messages[0].message
         assert self.adapter.adapter_type in messages[0].message
+
+    def test_hook_overrides_sending(self):
+        message_type = MESSAGES.UPDATE_LEAD
+
+        def stop_sending(sender, message_type, **kwargs):
+            return {"should_send": False}
+
+        message_hook.connect(stop_sending)
+        self.adapter_process(message_type)
+        self.adapter.send_message.assert_not_called()
+
+        # Don't forget to disconnect signal so it doesn't affect other tests
+        message_hook.disconnect(stop_sending)
+
+    def test_multiple_hook_overrides_sending(self):
+        message_type = MESSAGES.UPDATE_LEAD
+
+        def continue_sending(sender, message_type, **kwargs):
+            return {"should_send": True}
+
+        def stop_sending(sender, message_type, **kwargs):
+            return {"should_send": False}
+
+        message_hook.connect(continue_sending)
+        message_hook.connect(stop_sending)
+        self.adapter_process(message_type)
+        self.adapter.send_message.assert_not_called()
+
+        # Don't forget to disconnect signal so it doesn't affect other tests
+        message_hook.disconnect(stop_sending)
+
+        self.adapter_process(message_type)
+        self.adapter.send_message.assert_called_once()
+
+        # Don't forget to disconnect signal so it doesn't affect other tests
+        message_hook.disconnect(continue_sending)
+
+    def test_hook_overrides_message(self):
+        message_type = MESSAGES.UPDATE_LEAD
+        hook_message = "This is a hook test message"
+
+        def message_override(sender, message_type, **kwargs):
+            return {"message": hook_message}
+
+        message_hook.connect(message_override)
+        self.adapter_process(message_type)
+        self.assertEqual(self.adapter.send_message.call_args[0], (hook_message,))
+
+        # Don't forget to disconnect signal so it doesn't affect other tests
+        message_hook.disconnect(message_override)
+
+    def test_hook_adds_kwargs(self):
+        message_type = MESSAGES.UPDATE_LEAD
+        extra_kwargs = {"hook_extra": "kwargs for hook"}
+
+        def kwargs_override(sender, message_type, **kwargs):
+            return {"extra_kwargs": extra_kwargs}
+
+        message_hook.connect(kwargs_override)
+        self.adapter_process(message_type)
+        self.assertTrue("hook_extra" in self.adapter.send_message.call_args[1])
+        self.assertEqual(
+            "kwargs for hook", self.adapter.send_message.call_args[1]["hook_extra"]
+        )
+
+        # Don't forget to disconnect signal so it doesn't affect other tests
+        message_hook.disconnect(kwargs_override)
+
+    def test_hook_priorities(self):
+        message_type = MESSAGES.UPDATE_LEAD
+
+        def override_no_priority(sender, message_type, **kwargs):
+            return {
+                "message": "no priority",
+                "extra_kwargs": {"extra": "extra no priority"},
+            }
+
+        def override_priority_one(sender, message_type, **kwargs):
+            return {
+                "message": "priority one",
+                "extra_kwargs": {"extra": "extra priority one"},
+                "priority": 1,
+            }
+
+        def override_priority_two(sender, message_type, **kwargs):
+            return {
+                "message": "priority two",
+                "priority": 2,
+            }
+
+        message_hook.connect(override_no_priority)
+        self.adapter_process(message_type)
+        self.assertEqual(self.adapter.send_message.call_args[0], ("no priority",))
+        self.assertTrue("extra" in self.adapter.send_message.call_args[1])
+        self.assertEqual(
+            "extra no priority", self.adapter.send_message.call_args[1]["extra"]
+        )
+
+        message_hook.connect(override_priority_one)
+        self.adapter_process(message_type)
+        self.assertEqual(self.adapter.send_message.call_args[0], ("priority one",))
+        self.assertTrue("extra" in self.adapter.send_message.call_args[1])
+        self.assertEqual(
+            "extra priority one", self.adapter.send_message.call_args[1]["extra"]
+        )
+
+        message_hook.connect(override_priority_two)
+        self.adapter_process(message_type)
+        self.assertEqual(self.adapter.send_message.call_args[0], ("priority two",))
+        self.assertTrue("extra" not in self.adapter.send_message.call_args[1])
+
+        # Don't forget to disconnect signal so it doesn't affect other tests
+        message_hook.disconnect(override_no_priority)
+        message_hook.disconnect(override_priority_one)
+        message_hook.disconnect(override_priority_two)
 
 
 class TestMessageBackendApplication(TestCase):

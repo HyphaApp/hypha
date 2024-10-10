@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib import messages
 
 from hypha.apply.activity.options import MESSAGES
+from hypha.apply.activity.signals import message_hook
 
 neat_related = {
     MESSAGES.DETERMINATION_OUTCOME: "determination",
@@ -173,21 +174,48 @@ class AdapterBase:
         kwargs.update(self.get_neat_related(message_type, related))
         kwargs.update(self.extra_kwargs(message_type, **kwargs))
 
+        received_hook_messages = message_hook.send(
+            self.__class__, message_type=message_type, **kwargs
+        )
+
+        hook_message = {"should_send": True}
+        for received_hook_message in [rch[1] for rch in received_hook_messages]:
+            # If any of the signal receivers say to not send, then don't send
+            if not received_hook_message.get("should_send", True):
+                hook_message["should_send"] = False
+
+            if not hook_message.get("priority") or (
+                received_hook_message.get("priority")
+                and received_hook_message["priority"] > hook_message["priority"]
+            ):
+                hook_message["extra_kwargs"] = received_hook_message.get(
+                    "extra_kwargs", {}
+                )
+                hook_message["message"] = received_hook_message.get("message")
+                hook_message["priority"] = received_hook_message.get("priority")
+
         for recipient in recipients:
             # Allow for customization of message based on recipient string (will vary based on adapter)
             message_kwargs = {**kwargs, "recipient": recipient}
             message = self.message(message_type, **message_kwargs)
+
+            if hook_message.get("message"):
+                message = hook_message["message"]
+            kwargs.update(hook_message.get("extra_kwargs", {}))
+
             if not message:
                 continue
 
             message_logs = self.create_logs(message, recipient, *events)
 
-            if settings.SEND_MESSAGES or self.always_send:
+            if not hook_message["should_send"]:
+                status = "Message not sent as an extension denied sending"
+            elif not settings.SEND_MESSAGES and not self.always_send:
+                status = "Message not sent as SEND_MESSAGES==FALSE"
+            else:
                 status = self.send_message(
                     message, recipient=recipient, logs=message_logs, **kwargs
                 )
-            else:
-                status = "Message not sent as SEND_MESSAGES==FALSE"
 
             message_logs.update_status(status)
 
