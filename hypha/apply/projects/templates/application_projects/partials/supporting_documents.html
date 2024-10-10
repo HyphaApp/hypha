@@ -38,8 +38,7 @@
                         </div>
                         {% if document_category in remaining_document_categories %}
                             <div class="docs-block__document-inner__actions">
-                                <a data-fancybox data-src="#upload-supporting-doc"
-                                   class="font-bold flex items-center me-0 hover:opacity-70 transition-opacity"
+                                <a class="font-bold flex items-center me-0 hover:opacity-70 transition-opacity"
                                    href="{% url 'apply:projects:supporting_doc_upload' object.id document_category.id %}"
                                    hx-get="{% url 'apply:projects:supporting_doc_upload' object.id document_category.id %}"
                                    hx-target="#htmx-modal"

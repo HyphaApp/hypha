@@ -25,6 +25,7 @@ from .views import (
     ReportPrivateMedia,
     ReportSkipView,
     ReportUpdateView,
+    SendForApprovalView,
     UploadDocumentView,
     get_invoices_status_counts,
     get_project_status_counts,
@@ -53,6 +54,11 @@ urlpatterns = [
                     name="partial-activities",
                 ),
                 path("edit/", ProjectFormEditView.as_view(), name="edit"),
+                path(
+                    "documents/submit/",
+                    SendForApprovalView.as_view(),
+                    name="submit_project_for_approval",
+                ),
                 path(
                     "document/<int:category_pk>/upload/",
                     UploadDocumentView.as_view(),
