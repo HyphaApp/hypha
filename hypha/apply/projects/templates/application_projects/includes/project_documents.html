@@ -19,10 +19,11 @@
         <div>
             {% user_can_send_for_approval object user as can_send_to_approve %}
             {% if can_send_to_approve %}
-                <a data-fancybox
-                   data-src="#send-for-approval"
-                   class="button button--project-action"
-                   href="#">
+                <a class="button button--project-action"
+                   href="{% url 'apply:projects:submit_project_for_approval' object.id %}"
+                   hx-get="{% url 'apply:projects:submit_project_for_approval' object.id %}"
+                   hx-target="#htmx-modal"
+                >
                     {% if object.paf_approvals.exists %}
                         {% trans "Resubmit for approval" %}
                     {% else %}
@@ -163,138 +164,23 @@
             </li>
 
             {% if supporting_documents_configured %}
-                <li class="docs-block__row">
-                    <div class="docs-block__row-inner">
-                        {% if remaining_document_categories %}
-                            {% heroicon_outline "check-circle" class="stroke-gray-400 me-1" aria_hidden=true %}
-                        {% else %}
-                            {% heroicon_outline "check-circle" class="stroke-light-blue me-1" aria_hidden=true %}
-                        {% endif %}
-                        <p class="docs-block__title">{% trans "Supporting documents" %}</p>
+                <div class=""
+                     hx-trigger="load, supportingDocumentUpload from:body, supportingDocumentRemove from:body"
+                     hx-get="{% url "apply:projects:supporting_documents" object.id %}"
+                     hx-target="this">
+                    {% heroicon_outline "check-circle" class="stroke-gray-400 me-1" aria_hidden=true %}
+                    <p class="docs-block__title">{% trans "Supporting documents" %}</p>
+
+                    <div class="animate-pulse min-h-30">
+                        <div class="w-full mb-3 bg-gray-200 h-9"></div>
+                        <div class="w-full h-6 mb-1 bg-gray-200"></div>
+                        <div class="w-full h-1 mb-3 bg-gray-200"></div>
+                        <div class="w-20 h-6 mb-3 bg-gray-200"></div>
                     </div>
-
-                    {% if all_document_categories %}
-
-                        <div class="w-full ps-9">
-                            <p></p>
-                            <ul>
-                                {% for document_category in all_document_categories %}
-                                    <li class="docs-block__document">
-                                        <div class="docs-block__document-inner">
-                                            <p class="docs-block__document-info">{{ document_category.name }}
-                                                {% if document_category.required %}<span class="text-red-700">*</span>{% endif %}
-                                                {% if document_category.template %}
-                                                    <a class="font-bold hover:opacity-70 transition-opacity"
-                                                       href="{% url 'apply:projects:category_template' pk=object.pk type='project_document' category_pk=document_category.pk %}"
-                                                       target="_blank"
-                                                    >
-                                                        <span class="border-b-2 border-dashed">
-                                                            {% trans "View template" %}
-                                                        </span>{% heroicon_mini "information-circle" class="fill-light-blue inline align-middle me-1" aria_hidden=true %}
-                                                    </a>
-                                                {% endif %}
-                                            </p>
-                                            {% if document_category not in remaining_document_categories %}
-                                                {% category_latest_file project document_category as latest_file %}
-                                                <p class="docs-block__document-info"><b>{{ latest_file.title }}</b> - {{ latest_file.created_at }}</p>
-                                            {% endif %}
-                                        </div>
-                                        {% if document_category in remaining_document_categories %}
-                                            <div class="docs-block__document-inner__actions">
-                                                <a data-fancybox data-src="#upload-supporting-doc"
-                                                   class="font-bold flex items-center me-0 hover:opacity-70 transition-opacity"
-                                                   onclick="handleCategory({{ document_category.id }})"
-                                                   href="#"
-                                                >
-                                                    {% heroicon_micro "arrow-up-tray" class="inline me-1 w-4 h-4" aria_hidden="true" %}
-                                                    {% trans "Upload" %}
-                                                </a>
-
-                                            </div>
-                                        {% else %}
-                                            {% category_latest_file project document_category as latest_file %}
-                                            {% if latest_file %}
-                                                <div class="docs-block__row-inner">
-                                                    <a class="docs-block__icon-link" href="{% url 'apply:projects:document' pk=object.pk file_pk=latest_file.pk %}" target="_blank">
-                                                        {% heroicon_micro "eye" class="inline me-1" aria_hidden=true %}
-                                                        {% trans "View" %}
-                                                    </a>
-                                                    {% user_can_remove_supporting_documents object user as can_remove_supporting_doc %}
-                                                    {% if can_remove_supporting_doc %}
-                                                        <form method="POST" id="{{ remove_document_form.name }}-{{ latest_file.pk }}" class="docs-block__icon-link">
-                                                            {% heroicon_micro "trash" class="inline me-1 fill-red-500" aria_hidden=true %}
-                                                            {% csrf_token %}
-                                                            {{ latest_file.get_remove_form }}
-                                                            <input
-                                                                class="button button--link button--remove"
-                                                                id="{{ remove_document_form.name }}-submit"
-                                                                name="{{ form_prefix }}{{ remove_document_form.name }}"
-                                                                type="submit"
-                                                                form="{{ remove_document_form.name }}-{{ latest_file.pk }}"
-                                                                value="{% trans 'Remove' %}" />
-                                                        </form>
-                                                    {% endif %}
-                                                </div>
-                                            {% endif %}
-                                        {% endif %}
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    {% endif %}
-
-                </li>
+                </div>
             {% endif %}
         </ul>
 </div>
-
-{% if user.is_apply_staff %}
-    <div class="modal" id="upload-supporting-doc">
-        <h4 class="modal__project-header-bar">{% trans "Upload supporting documents" %}</h4>
-        <p></p>
-        {% trans "Submit" as submit %}
-        {% include 'funds/includes/delegated_form_base.html' with form=document_form value=submit %}
-    </div>
-{% endif %}
-
-{% if can_send_to_approve %}
-    <div class="modal" id="send-for-approval">
-        <h4 class="modal__project-header-bar">{% trans "Submit for Approval" %}</h4>
-
-        {% if remaining_document_categories %}
-            <h5>{% trans "Are you sure you're ready to submit the project documents to be approved in" %}
-                {% if project_settings.paf_approval_sequential %}{% trans "sequential order?" %}{% else %}{% trans "parallel order?" %}{% endif %}</h5>
-
-            <p>{% trans "This project is missing the following documents" %}:</p>
-
-            <ul>
-                {% for missing_category in remaining_document_categories %}
-                    <li><strong>{{ missing_category.name }} </strong></li>
-                {% endfor %}
-            </ul>
-            {% trans "Submit anyway" as submit %}
-        {% else %}
-            <h5>{% trans "Are you ready to submit the project documents to be approved in" %}
-                {% if project_settings.paf_approval_sequential %}{% trans "sequential order?" %}{% else %}{% trans "parallel order?" %}{% endif %}</h5>
-            {% trans "Submit" as submit %}
-        {% endif %}
-        {% if project_settings.paf_reviewers_roles.all %}
-
-            <p>{% trans "By default all the members are notified when an approver is not selected. Optionally, you may select specific approvers to assign and notify them." %}</p>
-            <div class="flex items-center text-sm">
-                <p class="flex-shrink font-bold text-slate-500 pe-2 mb-0">{% trans "Optional" %}</p>
-                <p class="flex-grow h-px bg-mid-grey mb-0"></p>
-            </div>
-
-            <p>{% trans "Please note that in "%}{% if project_settings.paf_approval_sequential %}{%trans "sequential order, approvers will approve PAF one after the other."%}{% else %}{% trans "parallel order, approvers can approve PAF anytime." %}{% endif %}</p>
-            {% include 'funds/includes/delegated_form_base.html' with form=request_approval_form value=submit %}
-        {% else %}
-            <p>{% trans "No PAF Reviewer Roles created yet, please create these in " %}
-                <a href="{% project_settings_url project_settings %}" target="_blank">{% trans " project settings" %}</a>
-            </p>
-        {% endif %}
-    </div>
-{% endif %}
 
 {% if can_update_paf_approvers %}
     <div class="modal" id="update-paf-approvers">

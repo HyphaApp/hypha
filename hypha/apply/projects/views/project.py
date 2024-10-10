@@ -1,6 +1,7 @@
 import copy
 import datetime
 import io
+import json
 
 from django.conf import settings
 from django.contrib import messages
@@ -11,7 +12,7 @@ from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.db import transaction
 from django.db.models import Q
 from django.http import Http404, HttpResponse, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import get_template
 from django.urls import reverse
 from django.utils import timezone
@@ -29,6 +30,9 @@ from django.views.generic import (
 )
 from django.views.generic.detail import SingleObjectMixin
 from django_filters.views import FilterView
+from django_htmx.http import (
+    HttpResponseClientRefresh,
+)
 from django_tables2 import SingleTableMixin
 from docx import Document
 from htmldocx import HtmlToDocx
@@ -78,7 +82,6 @@ from ..forms import (
     ProjectForm,
     ProjectSOWForm,
     RemoveContractDocumentForm,
-    RemoveDocumentForm,
     SelectDocumentForm,
     SetPendingForm,
     SkipPAFApprovalProcessForm,
@@ -119,40 +122,98 @@ from .report import ReportFrequencyUpdate, ReportingMixin
 
 
 @method_decorator(staff_required, name="dispatch")
-class SendForApprovalView(DelegatedViewMixin, UpdateView):
-    context_name = "request_approval_form"
+class SendForApprovalView(View):
     form_class = SetPendingForm
     model = Project
+    template_name = "application_projects/modals/send_for_approval.html"
 
-    def form_valid(self, form):
-        project = self.kwargs["object"]
-        old_stage = project.status
+    def dispatch(self, request, *args, **kwargs):
+        self.object = get_object_or_404(Project, id=kwargs.get("pk"))
+        # permission check
+        return super().dispatch(request, *args, **kwargs)
 
-        response = super().form_valid(form)
-
-        # remove PAF submission task for staff group
-        remove_tasks_for_user(
-            code=PROJECT_SUBMIT_PAF,
-            user=self.object.lead,
-            related_obj=self.object,
-        )
-
-        # remove PAF rejection task for staff if exists
-        remove_tasks_for_user(
-            code=PAF_REQUIRED_CHANGES,
-            user=self.object.lead,
-            related_obj=self.object,
-        )
-
+    def get(self, *args, **kwargs):
+        form = self.form_class(instance=self.object)
         project_settings = ProjectSettings.for_request(self.request)
+        return render(
+            self.request,
+            self.template_name,
+            context={
+                "form": form,
+                "project_settings": project_settings,
+                "paf_approvals": PAFApprovals.objects.filter(project=self.object),
+                "remaining_document_categories": DocumentCategory.objects.filter(
+                    ~Q(packet_files__project=self.object)
+                ),
+                "object": self.object,
+            },
+        )
 
-        paf_approvals = self.object.paf_approvals.filter(approved=False)
+    def post(self, *args, **kwargs):
+        form = self.form_class(
+            self.request.POST, user=self.request.user, instance=self.object
+        )
+        project_settings = ProjectSettings.for_request(self.request)
+        if form.is_valid():
+            project = self.object
+            old_stage = project.status
+            form.save()
 
-        if project_settings.paf_approval_sequential:
-            if paf_approvals:
-                user = paf_approvals.first().user
-                if user:
-                    # notify only if first user/approver is updated
+            # remove PAF submission task for staff group
+            remove_tasks_for_user(
+                code=PROJECT_SUBMIT_PAF,
+                user=self.object.lead,
+                related_obj=self.object,
+            )
+
+            # remove PAF rejection task for staff if exists
+            remove_tasks_for_user(
+                code=PAF_REQUIRED_CHANGES,
+                user=self.object.lead,
+                related_obj=self.object,
+            )
+
+            paf_approvals = self.object.paf_approvals.filter(approved=False)
+
+            if project_settings.paf_approval_sequential:
+                if paf_approvals:
+                    user = paf_approvals.first().user
+                    if user:
+                        # notify only if first user/approver is updated
+                        messenger(
+                            MESSAGES.SEND_FOR_APPROVAL,
+                            request=self.request,
+                            user=self.request.user,
+                            source=self.object,
+                        )
+                        messenger(
+                            MESSAGES.APPROVE_PAF,
+                            request=self.request,
+                            user=self.request.user,
+                            source=self.object,
+                            related=[paf_approvals.first()],
+                        )
+                        # add PAF waiting approval task for paf_approval user
+                        add_task_to_user(
+                            code=PAF_WAITING_APPROVAL,
+                            user=user,
+                            related_obj=self.object,
+                        )
+                    else:
+                        messenger(
+                            MESSAGES.ASSIGN_PAF_APPROVER,
+                            request=self.request,
+                            user=self.request.user,
+                            source=self.object,
+                        )
+                        # add PAF waiting assignee task for paf_approval reviewer_roles
+                        add_task_to_user_group(
+                            code=PAF_WAITING_ASSIGNEE,
+                            user_group=paf_approvals.first().paf_reviewer_role.user_roles.all(),
+                            related_obj=self.object,
+                        )
+            else:
+                if paf_approvals.filter(user__isnull=False).exists():
                     messenger(
                         MESSAGES.SEND_FOR_APPROVAL,
                         request=self.request,
@@ -164,130 +225,152 @@ class SendForApprovalView(DelegatedViewMixin, UpdateView):
                         request=self.request,
                         user=self.request.user,
                         source=self.object,
-                        related=[paf_approvals.first()],
+                        related=paf_approvals.filter(user__isnull=False),
                     )
-                    # add PAF waiting approval task for paf_approval user
-                    add_task_to_user(
-                        code=PAF_WAITING_APPROVAL, user=user, related_obj=self.object
-                    )
-                else:
+                    # add PAF waiting approval task for paf_approvals users
+                    for paf_approval in paf_approvals.filter(user__isnull=False):
+                        add_task_to_user(
+                            code=PAF_WAITING_APPROVAL,
+                            user=paf_approval.user,
+                            related_obj=self.object,
+                        )
+                if paf_approvals.filter(user__isnull=True).exists():
                     messenger(
                         MESSAGES.ASSIGN_PAF_APPROVER,
                         request=self.request,
                         user=self.request.user,
                         source=self.object,
                     )
-                    # add PAF waiting assignee task for paf_approval reviewer_roles
-                    add_task_to_user_group(
-                        code=PAF_WAITING_ASSIGNEE,
-                        user_group=paf_approvals.first().paf_reviewer_role.user_roles.all(),
-                        related_obj=self.object,
-                    )
-        else:
-            if paf_approvals.filter(user__isnull=False).exists():
-                messenger(
-                    MESSAGES.SEND_FOR_APPROVAL,
-                    request=self.request,
-                    user=self.request.user,
-                    source=self.object,
-                )
-                messenger(
-                    MESSAGES.APPROVE_PAF,
-                    request=self.request,
-                    user=self.request.user,
-                    source=self.object,
-                    related=paf_approvals.filter(user__isnull=False),
-                )
-                # add PAF waiting approval task for paf_approvals users
-                for paf_approval in paf_approvals.filter(user__isnull=False):
-                    add_task_to_user(
-                        code=PAF_WAITING_APPROVAL,
-                        user=paf_approval.user,
-                        related_obj=self.object,
-                    )
-            if paf_approvals.filter(user__isnull=True).exists():
-                messenger(
-                    MESSAGES.ASSIGN_PAF_APPROVER,
-                    request=self.request,
-                    user=self.request.user,
-                    source=self.object,
-                )
-                # add PAF waiting assignee task for paf_approvals reviewer_roles
-                for paf_approval in paf_approvals.filter(user__isnull=True):
-                    add_task_to_user_group(
-                        code=PAF_WAITING_ASSIGNEE,
-                        user_group=paf_approval.paf_reviewer_role.user_roles.all(),
-                        related_obj=self.object,
-                    )
+                    # add PAF waiting assignee task for paf_approvals reviewer_roles
+                    for paf_approval in paf_approvals.filter(user__isnull=True):
+                        add_task_to_user_group(
+                            code=PAF_WAITING_ASSIGNEE,
+                            user_group=paf_approval.paf_reviewer_role.user_roles.all(),
+                            related_obj=self.object,
+                        )
 
-        project.status = INTERNAL_APPROVAL
-        project.save(update_fields=["status"])
+            project.status = INTERNAL_APPROVAL
+            project.save(update_fields=["status"])
 
-        messenger(
-            MESSAGES.PROJECT_TRANSITION,
-            request=self.request,
-            user=self.request.user,
-            source=project,
-            related=old_stage,
-        )
+            messenger(
+                MESSAGES.PROJECT_TRANSITION,
+                request=self.request,
+                user=self.request.user,
+                source=project,
+                related=old_stage,
+            )
 
-        messages.success(
+            messages.success(
+                self.request,
+                _("PAF has been submitted for approval"),
+                extra_tags=PROJECT_ACTION_MESSAGE_TAG,
+            )
+            return HttpResponseClientRefresh()
+        return render(
             self.request,
-            _("PAF has been submitted for approval"),
-            extra_tags=PROJECT_ACTION_MESSAGE_TAG,
+            self.template_name,
+            context={
+                "form": form,
+                "project_settings": project_settings,
+                "paf_approvals": PAFApprovals.objects.filter(project=self.object),
+                "remaining_document_categories": DocumentCategory.objects.filter(
+                    ~Q(packet_files__project=self.object)
+                ),
+                "object": self.object,
+            },
         )
-        return response
 
 
 # PROJECT DOCUMENTS
 @method_decorator(staff_required, name="dispatch")
-class UploadDocumentView(DelegatedViewMixin, CreateView):
-    context_name = "document_form"
+class UploadDocumentView(CreateView):
     form_class = UploadDocumentForm
     model = Project
+    template_name = "application_projects/modals/supporting_documents_upload.html"
 
-    def form_valid(self, form):
-        project = self.kwargs["object"]
-        form.instance.project = project
-        response = super().form_valid(form)
-
-        messenger(
-            MESSAGES.UPLOAD_DOCUMENT,
-            request=self.request,
-            user=self.request.user,
-            source=project,
+    def dispatch(self, request, *args, **kwargs):
+        self.project = get_object_or_404(Project, id=kwargs.get("pk"))
+        self.category = get_object_or_404(
+            DocumentCategory, id=kwargs.get("category_pk")
         )
+        # permission check
+        return super().dispatch(request, *args, **kwargs)
 
-        messages.success(
+    def get(self, *args, **kwargs):
+        upload_document_form = self.form_class(
+            instance=self.project, initial={"category": self.category}
+        )
+        return render(
             self.request,
-            _("Document has been uploaded"),
-            extra_tags=PROJECT_ACTION_MESSAGE_TAG,
+            self.template_name,
+            context={
+                "form": upload_document_form,
+                "value": _("Submit"),
+                "category": self.category,
+                "object": self.project,
+            },
         )
 
-        return response
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(
+            self.request.POST,
+            request.FILES,
+            instance=self.project,
+            initial={"category": self.category},
+        )
+        if form.is_valid():
+            form.instance.project = self.project
+            form.save()
+            messenger(
+                MESSAGES.UPLOAD_DOCUMENT,
+                request=self.request,
+                user=self.request.user,
+                source=self.project,
+            )
+            return HttpResponse(
+                status=204,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {
+                            "supportingDocumentUpload": None,
+                            "showMessage": "Document has been uploaded",
+                        }
+                    ),
+                },
+            )
+        return render(
+            self.request,
+            self.template_name,
+            context={"form": form, "value": _("Submit"), "object": self.project},
+            status=400,
+        )
 
 
 @method_decorator(staff_required, name="dispatch")
-class RemoveDocumentView(DelegatedViewMixin, FormView):
-    context_name = "remove_document_form"
-    form_class = RemoveDocumentForm
+class RemoveDocumentView(View):
     model = Project
 
-    def form_valid(self, form):
-        document_id = form.cleaned_data["id"]
-        project = self.kwargs["object"]
-
-        try:
-            project.packet_files.get(pk=document_id).delete()
-        except PacketFile.DoesNotExist:
-            pass
+    def delete(self, *args, **kwargs):
+        self.project = get_object_or_404(Project, id=kwargs.get("pk"))
+        self.object = self.project.packet_files.get(pk=kwargs.get("document_pk"))
+        self.object.delete()
 
         messages.success(
             self.request,
             _("Document has been removed"),
             extra_tags=PROJECT_ACTION_MESSAGE_TAG,
         )
-        return redirect(project)
+        return HttpResponse(
+            status=204,
+            headers={
+                "HX-Trigger": json.dumps(
+                    {
+                        "supportingDocumentRemove": None,
+                        "showMessage": "Document has been removed",
+                    }
+                ),
+            },
+        )
 
 
 @method_decorator(login_required, name="dispatch")
@@ -1332,15 +1415,12 @@ class AdminProjectDetailView(
     form_views = [
         ApproveContractView,
         CommentFormView,
-        RemoveDocumentView,
         SelectDocumentView,
-        SendForApprovalView,
         UpdatePAFApproversView,
         ReportFrequencyUpdate,
         UpdateLeadView,
         UpdateProjectTitleView,
         UploadContractView,
-        UploadDocumentView,
         UpdateAssignApproversView,
         ChangePAFStatusView,
         ChangeProjectstatusView,
@@ -1366,10 +1446,6 @@ class AdminProjectDetailView(
         project_settings = ProjectSettings.for_request(self.request)
         context["project_settings"] = project_settings
         context["paf_approvals"] = PAFApprovals.objects.filter(project=self.object)
-        context["all_document_categories"] = DocumentCategory.objects.all()
-        context["remaining_document_categories"] = DocumentCategory.objects.filter(
-            ~Q(packet_files__project=self.object)
-        )
         context["all_contract_document_categories"] = (
             ContractDocumentCategory.objects.all()
         )
@@ -1409,7 +1485,6 @@ class ApplicantProjectDetailView(
         CommentFormView,
         SelectDocumentView,
         UploadContractView,
-        UploadDocumentView,
         UploadContractDocumentView,
         RemoveContractDocumentView,
         SubmitContractDocumentsView,

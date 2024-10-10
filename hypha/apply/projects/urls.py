@@ -20,16 +20,20 @@ from .views import (
     ProjectPrivateMediaView,
     ProjectSOWDownloadView,
     ProjectSOWView,
+    RemoveDocumentView,
     ReportDetailView,
     ReportListView,
     ReportPrivateMedia,
     ReportSkipView,
     ReportUpdateView,
+    SendForApprovalView,
+    UploadDocumentView,
     VendorDetailView,
     VendorPrivateMediaView,
     get_invoices_status_counts,
     get_project_status_counts,
     partial_project_activities,
+    partial_supporting_documents,
 )
 
 app_name = "projects"
@@ -53,6 +57,26 @@ urlpatterns = [
                     name="partial-activities",
                 ),
                 path("edit/", ProjectFormEditView.as_view(), name="edit"),
+                path(
+                    "documents/submit/",
+                    SendForApprovalView.as_view(),
+                    name="submit_project_for_approval",
+                ),
+                path(
+                    "document/<int:category_pk>/upload/",
+                    UploadDocumentView.as_view(),
+                    name="supporting_doc_upload",
+                ),
+                path(
+                    "document/<int:document_pk>/remove/",
+                    RemoveDocumentView.as_view(),
+                    name="remove_supporting_document",
+                ),
+                path(
+                    "partial/documents/",
+                    partial_supporting_documents,
+                    name="supporting_documents",
+                ),
                 path(
                     "documents/<int:file_pk>",
                     ProjectPrivateMediaView.as_view(),

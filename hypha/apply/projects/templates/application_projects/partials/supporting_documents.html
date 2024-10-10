@@ -1,0 +1,82 @@
+{% load i18n approval_tools project_tags heroicons %}
+
+<li class="docs-block__row">
+    <div class="docs-block__row-inner">
+        {% if remaining_document_categories %}
+            {% heroicon_outline "check-circle" class="stroke-gray-400 me-1" aria_hidden=true %}
+        {% else %}
+            {% heroicon_outline "check-circle" class="stroke-light-blue me-1" aria_hidden=true %}
+        {% endif %}
+        <p class="docs-block__title">{% trans "Supporting documents" %}</p>
+    </div>
+
+    {% if all_document_categories %}
+
+        <div class="w-full ps-9">
+            <p></p>
+            <ul>
+                {% for document_category in all_document_categories %}
+                    <li class="docs-block__document">
+                        <div class="docs-block__document-inner">
+                            <p class="docs-block__document-info">{{ document_category.name }}
+                                {% if document_category.required %}<span class="text-red-700">*</span>{% endif %}
+                                {% if document_category.template %}
+                                    <a class="font-bold hover:opacity-70 transition-opacity"
+                                       href="{% url 'apply:projects:category_template' pk=object.pk type='project_document' category_pk=document_category.pk %}"
+                                       target="_blank"
+                                    >
+                                        <span class="border-b-2 border-dashed">
+                                            {% trans "View template" %}
+                                        </span>{% heroicon_mini "information-circle" class="fill-light-blue inline align-middle me-1" aria_hidden=true %}
+                                    </a>
+                                {% endif %}
+                            </p>
+                            {% if document_category not in remaining_document_categories %}
+                                {% category_latest_file object document_category as latest_file %}
+                                <p class="docs-block__document-info"><b>{{ latest_file.title }}</b> - {{ latest_file.created_at }}</p>
+                            {% endif %}
+                        </div>
+                        {% if document_category in remaining_document_categories %}
+                            <div class="docs-block__document-inner__actions">
+                                <a class="font-bold flex items-center me-0 hover:opacity-70 transition-opacity"
+                                   href="{% url 'apply:projects:supporting_doc_upload' object.id document_category.id %}"
+                                   hx-get="{% url 'apply:projects:supporting_doc_upload' object.id document_category.id %}"
+                                   hx-target="#htmx-modal"
+                                   aria-label="{% trans "Upload Supporting Documents" %}"
+                                >
+                                    {% heroicon_micro "arrow-up-tray" class="inline me-1 w-4 h-4" aria_hidden="true" %}
+                                    {% trans "Upload" %}
+                                </a>
+
+                            </div>
+                        {% else %}
+                            {% category_latest_file object document_category as latest_file %}
+                            {% if latest_file %}
+                                <div class="docs-block__row-inner">
+                                    <a class="docs-block__icon-link" href="{% url 'apply:projects:document' pk=object.pk file_pk=latest_file.pk %}" target="_blank">
+                                        {% heroicon_micro "eye" class="inline me-1" aria_hidden=true %}
+                                        {% trans "View" %}
+                                    </a>
+                                    {% user_can_remove_supporting_documents object user as can_remove_supporting_doc %}
+                                    {% if can_remove_supporting_doc %}
+                                        <button class="docs-block__icon-link button button--link button--remove"
+                                                hx-delete="{% url "apply:projects:remove_supporting_document" object.pk latest_file.pk %}"
+                                                hx-swap="none"
+                                                hx-confirm="Are you sure you want to remove this document?"
+                                        >
+                                            {% heroicon_micro "trash" class="inline me-1 fill-red-500" aria_hidden=true %}
+                                            {% csrf_token %}
+                                            {% trans "Remove" %}
+                                        </button>
+
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+</li>
