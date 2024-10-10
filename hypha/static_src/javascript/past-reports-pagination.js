@@ -1,6 +1,4 @@
 (function ($) {
-    "use strict";
-
     function pastReportsPagination() {
         $(".js-data-block-pagination").click((e) => {
             e.preventDefault();

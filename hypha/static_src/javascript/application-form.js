@@ -1,6 +1,4 @@
 (function () {
-    "use strict";
-
     const form = document.querySelector(".application-form");
     const button = form.querySelector("[type=submit]");
     const required = form.querySelectorAll("input[required]");

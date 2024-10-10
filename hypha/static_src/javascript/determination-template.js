@@ -1,5 +1,4 @@
 (function () {
-    "use strict";
     const field_blocks_ids = JSON.parse(
         document.getElementById("block-ids").textContent
     );

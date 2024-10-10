@@ -1,6 +1,4 @@
 (function ($) {
-    "use strict";
-
     const comment = ".js-comment";
     const pageDown = ".js-pagedown";
     const editBlock = ".js-edit-block";

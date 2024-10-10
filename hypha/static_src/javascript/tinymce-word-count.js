@@ -1,6 +1,4 @@
 (function ($) {
-    "use strict";
-
     var word_count_interval;
 
     const observer_options = {
@@ -11,7 +9,7 @@
         let word_count;
         try {
             word_count = parseInt(el.innerText.match(/\d+/)[0], 10);
-        } catch (e) {
+        } catch {
             word_count = 0;
         }
         const word_limit = parseInt(

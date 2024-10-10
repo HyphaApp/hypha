@@ -1,6 +1,4 @@
 (function ($) {
-    "use strict";
-
     $("#deliverables").on("change", function (e) {
         e.preventDefault();
         var $selected = $(this).find("option:selected");

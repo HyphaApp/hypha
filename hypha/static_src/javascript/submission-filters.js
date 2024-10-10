@@ -1,6 +1,4 @@
 (function ($) {
-    "use strict";
-
     // Variables
     const $toggleButton = $(".js-toggle-filters");
     const $closeButton = $(".js-close-filters");
@@ -148,7 +146,7 @@
         dropdowns.forEach((dropdown) => {
             $(dropdown).val(null).trigger("change");
             $(".select2-selection.is-active").removeClass(filterActiveClass);
-            mobileFilterPadding(dropdown); // eslint-disable-line no-undef
+            mobileFilterPadding(dropdown);
         });
     });
 

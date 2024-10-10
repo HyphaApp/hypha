@@ -1,6 +1,4 @@
 (function ($) {
-    "use strict";
-
     $("[data-fancybox]").fancybox({
         animationDuration: 350,
         animationEffect: "fade",

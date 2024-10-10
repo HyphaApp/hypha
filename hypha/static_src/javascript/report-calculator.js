@@ -1,5 +1,4 @@
 (function ($) {
-    "use strict";
     const reportDataEl = document.getElementById("reportData");
     if (!reportDataEl) {
         return;

@@ -1,6 +1,4 @@
 jQuery(function ($) {
-    "use strict";
-
     // Initialize django-file-form
     $("form")
         .get()
