@@ -127,13 +127,13 @@ class AddressFieldBlockFactory(FormFieldBlockFactory):
 CustomFormFieldsFactory = StreamFieldUUIDFactory(
     {
         **BLOCK_FACTORY_DEFINITION,
-        "duration": DurationBlockFactory,
-        "title": TitleBlockFactory,
-        "value": ValueFieldBlockFactory,
-        "email": EmailBlockFactory,
-        "address": AddressFieldBlockFactory,
-        "full_name": FullNameBlockFactory,
-        "text_markup": ParagraphBlockFactory,
-        "rich_text": RichTextFieldBlockFactory,
+        "duration": factory.SubFactory(DurationBlockFactory),
+        "title": factory.SubFactory(TitleBlockFactory),
+        "value": factory.SubFactory(ValueFieldBlockFactory),
+        "email": factory.SubFactory(EmailBlockFactory),
+        "address": factory.SubFactory(AddressFieldBlockFactory),
+        "full_name": factory.SubFactory(FullNameBlockFactory),
+        "text_markup": factory.SubFactory(ParagraphBlockFactory),
+        "rich_text": factory.SubFactory(RichTextFieldBlockFactory),
     }
 )

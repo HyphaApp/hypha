@@ -82,11 +82,11 @@ class SendNoticeBlockFactory(FormFieldBlockFactory):
 
 DeterminationFormFieldsFactory = StreamFieldUUIDFactory(
     {
-        "char": CharFieldBlockFactory,
-        "text": RichTextFieldBlockFactory,
-        "send_notice": SendNoticeBlockFactory,
-        "determination": DeterminationBlockFactory,
-        "message": DeterminationMessageBlockFactory,
+        "char": factory.SubFactory(CharFieldBlockFactory),
+        "text": factory.SubFactory(RichTextFieldBlockFactory),
+        "send_notice": factory.SubFactory(SendNoticeBlockFactory),
+        "determination": factory.SubFactory(DeterminationBlockFactory),
+        "message": factory.SubFactory(DeterminationMessageBlockFactory),
     }
 )
 
