@@ -35,7 +35,6 @@ django==4.2.16
 djangorestframework-api-key==3.0.0
 djangorestframework==3.15.2
 drf-nested-routers==0.93.5
-drf-yasg==1.21.7
 environs==11.0.0
 gunicorn==22.0.0
 heroicons==2.6.0
