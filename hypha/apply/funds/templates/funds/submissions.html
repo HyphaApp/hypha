@@ -10,12 +10,15 @@
         {% slot header %}
             {% trans "All Submissions" %}<span class="submissions-count"> ({{ table.rows|length }})</span>
         {% endslot %}
-        {% slot sub_heading %}{% trans "Search and filter all submissions" %}{% endslot %}
+        {% slot sub_heading %}
+            {% trans "Search and filter all submissions" %} •
+            <a href="{% url 'apply:submissions:list' %}?format=table" class="text-blue-300 hover:underline">Switch to new table view</a>
+        {% endslot %}
 
         {% slot buttons %}
             <a class="tab__item tab__item--right"
                hx-boost="true"
-               href="{% url 'apply:submissions:list-alt' %}"
+               href="{% url 'apply:submissions:list' %}"
             >
                 {% heroicon_mini "queue-list" aria_hidden="true" size=16 class="inline align-text-bottom" %}
                 {% trans "List view" %}

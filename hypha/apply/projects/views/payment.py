@@ -59,7 +59,7 @@ from ..models.payment import (
 )
 from ..models.project import PROJECT_ACTION_MESSAGE_TAG, Project
 from ..service_utils import batch_update_invoices_status, handle_tasks_on_invoice_update
-from ..tables import AdminInvoiceListTable
+from ..tables import AdminInvoiceListTable, FinanceInvoiceTable
 
 
 @method_decorator(login_required, name="dispatch")
@@ -508,3 +508,8 @@ class InvoiceListView(SingleTableMixin, FilterView, DelegateableListView):
     model = Invoice
     table_class = AdminInvoiceListTable
     template_name = "application_projects/invoice_list.html"
+
+    def get_table_class(self):
+        if self.request.user.is_finance:
+            return FinanceInvoiceTable
+        return super().get_table_class()

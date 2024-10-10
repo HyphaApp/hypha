@@ -10,7 +10,7 @@ from hypha.apply.utils.testing.tests import BaseViewTestCase
 
 class BaseBatchReviewerTestCase(BaseViewTestCase):
     url_name = "funds:submissions:{}"
-    base_view_name = "list"
+    base_view_name = "list-old"
     submissions = []
     staff = None
     reviewers = []

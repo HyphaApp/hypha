@@ -17,6 +17,7 @@
                 <thead>
                     <tr>
                         <th class="data-block__table-date">{% trans "Date submitted" %}</th>
+                        <th class="min-w-[180px] w-[15%]">{% trans "Invoice date" %}</th>
                         <th class="data-block__table-amount">{% trans "Invoice No." %}</th>
                         <th class="data-block__table-status">{% trans "Status" %}</th>
                         <th class="data-block__table-update"></th>
@@ -26,9 +27,10 @@
                     {% for invoice in object.invoices.not_rejected %}
                         {% display_invoice_status_for_user user invoice as invoice_status %}
                         <tr>
-                            <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Date submitted" %}: </span>{{ invoice.requested_at.date }}</td>
-                            <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Invoice number" %}: </span>{{ invoice.invoice_number }}</td>
-                            <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Status" %}: </span>{{ invoice_status }}</td>
+                            <td class="py-4 px-2"><span class="data-block__mobile-label">{% trans "Date submitted" %}: </span>{{ invoice.requested_at.date }}</td>
+                            <td class="py-4 px-2"><span class="data-block__mobile-label">{% trans "Invoice date" %}: </span>{% if invoice.invoice_date %}{{ invoice.invoice_date }}{% else %} {{ invoice.requested_at.date }} {% endif %}</td>
+                            <td class="py-4 px-2"><span class="data-block__mobile-label">{% trans "Invoice number" %}: </span>{{ invoice.invoice_number }}</td>
+                            <td class="py-4 px-2"><span class="data-block__mobile-label">{% trans "Status" %}: </span>{{ invoice_status }}</td>
                             <td class="flex flex-wrap justify-center py-4 px-0 gap-2 xl:flex-nowrap">
                                 <a class="data-block__action-icon-link" href="{{ invoice.get_absolute_url }}" >
                                     {% heroicon_micro "eye" aria_hidden=true class="me-1" %}
@@ -68,6 +70,39 @@
                                         {% trans "Update Status" as update %}
                                         {% include 'funds/includes/delegated_form_base.html' with form=invoice_form value=update action=invoice.get_absolute_url form_id=invoice_form_id %}
                                     </div>
+                                    <script>
+                                        document.addEventListener("DOMContentLoaded", function () {
+                                            const invoice_form = document.querySelector('[id^={{ invoice_form_id }}')
+                                            const invoice_status = invoice_form.querySelector('#id_status');
+                                            const paid_field = invoice_form.querySelector('.id_paid_date');
+                                            var paid_date = invoice_form.querySelector('#id_paid_date');
+
+                                            function updatePaidDate(){
+                                                if (invoice_status.value === 'paid') {
+                                                    paid_field.style.display = 'block';
+                                                    if (!paid_date.value) {
+                                                        // Get today's date
+                                                        const now = new Date();
+                                                        const year = now.getFullYear();
+                                                        const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+                                                        const day = String(now.getDate()).padStart(2, '0');
+
+                                                        // Format the date as YYYY-MM-DD
+                                                        const today = `${year}-${month}-${day}`;
+
+                                                        paid_date.value = today;
+                                                    }
+                                                } else {
+                                                    paid_field.style.display = 'none';
+                                                    paid_date.value = '';
+                                                }
+                                            }
+
+                                            updatePaidDate();
+
+                                            invoice_status.onchange = updatePaidDate;
+                                        });
+                                    </script>
                                 {% endif %}
                             </td>
                         </tr>
@@ -87,6 +122,7 @@
                 <thead>
                     <tr>
                         <th class="data-block__table-date">{% trans "Date submitted" %}</th>
+                        <th class="min-w-[180px] w-[15%]">{% trans "Invoice date" %}</th>
                         <th class="data-block__table-amount">{% trans "Invoice number" %}</th>
                         <th class="data-block__table-status">{% trans "Status" %}</th>
                         <th class="data-block__table-update"></th>
@@ -96,9 +132,10 @@
                     {% for invoice in object.invoices.rejected %}
                         {% display_invoice_status_for_user user invoice as invoice_status %}
                         <tr>
-                            <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Date submitted" %}: </span>{{ invoice.requested_at.date }}</td>
-                            <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Invoice number" %}: </span>{{ invoice.invoice_number }}</td>
-                            <td class="py-4 px-2.5"><span class="data-block__mobile-label">{% trans "Status" %}: </span>{{ invoice_status }}</td>
+                            <td class="py-4 px-2"><span class="data-block__mobile-label">{% trans "Date submitted" %}: </span>{{ invoice.requested_at.date }}</td>
+                            <td class="py-4 px-2"><span class="data-block__mobile-label">{% trans "Invoice date" %}: </span>{% if invoice.invoice_date %}{{ invoice.invoice_date }}{% else %} {{ invoice.requested_at.date }} {% endif %}</td>
+                            <td class="py-4 px-2"><span class="data-block__mobile-label">{% trans "Invoice number" %}: </span>{{ invoice.invoice_number }}</td>
+                            <td class="py-4 px-2"><span class="data-block__mobile-label">{% trans "Status" %}: </span>{{ invoice_status }}</td>
                             <td class="flex justify-end py-4 px-0">
                                 <a class="data-block__action-icon-link" href="{{ invoice.get_absolute_url }}" >
                                     {% heroicon_mini "eye" size=16 aria_hidden=true class="me-1" %}

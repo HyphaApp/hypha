@@ -11,6 +11,7 @@ from hypha.apply.projects.constants import (
     INVOICE_STATUS_BG_COLORS,
     INVOICE_STATUS_FG_COLORS,
 )
+from hypha.apply.projects.models.payment import PAID
 from hypha.apply.projects.models.project import (
     CLOSING,
     COMPLETE,
@@ -28,6 +29,13 @@ register = template.Library()
 @register.simple_tag
 def can_change_status(invoice, user):
     return invoice.can_user_change_status(user)
+
+
+@register.simple_tag
+def can_show_paid_date(invoice):
+    if invoice.status == PAID and invoice.paid_date:
+        return True
+    return False
 
 
 @register.simple_tag

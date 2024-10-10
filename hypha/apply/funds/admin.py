@@ -11,7 +11,7 @@ from hypha.apply.determinations.admin import (
 )
 from hypha.apply.funds.models import ReviewerRole, ReviewerSettings, ScreeningStatus
 from hypha.apply.review.admin import ReviewFormAdmin
-from hypha.apply.utils.admin import ListRelatedMixin, RelatedFormsMixin
+from hypha.apply.utils.admin import AdminIcon, ListRelatedMixin, RelatedFormsMixin
 from hypha.core.wagtail.admin.options import SettingModelAdmin
 
 from .admin_helpers import (
@@ -49,7 +49,7 @@ class BaseRoundAdmin(ModelAdmin):
 
 class RoundAdmin(BaseRoundAdmin, RelatedFormsMixin):
     model = Round
-    menu_icon = "repeat"
+    menu_icon = str(AdminIcon.ROUND)
     list_display = (
         "title",
         "fund",
@@ -85,7 +85,7 @@ class ScreeningStatusPermissionHelper(PermissionHelper):
 
 class ScreeningStatusAdmin(ModelAdmin):
     model = ScreeningStatus
-    menu_icon = "tag"
+    menu_icon = str(AdminIcon.SCREENING_STATUS)
     list_display = ("title", "yes", "default")
     permission_helper_class = ScreeningStatusPermissionHelper
     list_display = ("title", "yes", "default")
@@ -93,34 +93,34 @@ class ScreeningStatusAdmin(ModelAdmin):
 
 class SealedRoundAdmin(BaseRoundAdmin):
     model = SealedRound
-    menu_icon = "lock"
+    menu_icon = str(AdminIcon.SEALED_ROUND)
     menu_label = "Sealed Rounds"
     list_display = ("title", "fund", "start_date", "end_date")
 
 
 class FundAdmin(ModelAdmin, RelatedFormsMixin):
     model = FundType
-    menu_icon = "doc-empty"
+    menu_icon = str(AdminIcon.FUND)
     menu_label = "Funds"
     list_display = ("title", "application_forms", "review_forms", "determination_forms")
 
 
 class RFPAdmin(ModelAdmin):
     model = RequestForPartners
-    menu_icon = "group"
+    menu_icon = str(AdminIcon.REQUEST_FOR_PARTNERS)
     menu_label = "Request For Partners"
 
 
 class LabAdmin(ModelAdmin, RelatedFormsMixin):
     model = LabType
-    menu_icon = "doc-empty"
+    menu_icon = str(AdminIcon.LAB)
     menu_label = "Labs"
     list_display = ("title", "application_forms", "review_forms", "determination_forms")
 
 
 class ReviewerRoleAdmin(ModelAdmin):
     model = ReviewerRole
-    menu_icon = "group"
+    menu_icon = str(AdminIcon.REVIEWER_ROLE)
     menu_label = "Reviewer Roles"
 
 
@@ -139,7 +139,7 @@ class DeletePermission(PermissionHelper, ListRelatedMixin):
 
 class ApplicationFormAdmin(ListRelatedMixin, ModelAdmin):
     model = ApplicationForm
-    menu_icon = "form"
+    menu_icon = str(AdminIcon.APPLICATION_FORM)
     list_display = ("name", "used_by")
     list_filter = (FormsFundRoundListFilter,)
     permission_helper_class = DeletePermission
@@ -179,7 +179,7 @@ class ReviewerSettingAdmin(SettingModelAdmin):
 
 class ApplyAdminGroup(ModelAdminGroup):
     menu_label = "Apply"
-    menu_icon = "folder-inverse"
+    menu_icon = str(AdminIcon.APPLY)
     items = (
         RoundAdmin,
         SealedRoundAdmin,

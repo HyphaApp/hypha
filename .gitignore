@@ -13,6 +13,7 @@ __coverage__/
 node_modules/
 /npm-debug.log
 /.idea/
+.cache/
 
 # Distribution / packaging
 .Python

@@ -6,7 +6,9 @@
 </h2>
 
 {% if my_review.data %}
-    {% render_table my_review %}
+
+    {% include "submissions/partials/submissions-inline.html" with submissions=my_review.data row_layout="table" %}
+    {% comment %} {% render_table my_review %} {% endcomment %}
 
     {% if display_more %}
         <div class="all-submissions-table__more">

@@ -69,7 +69,7 @@
     });
     window.addEventListener("load", function (event) {
         const proposal_form_field = document.querySelector("#id_proposal_form");
-        if (!proposal_form_field.value) {
+        if (proposal_form_field && !proposal_form_field.value) {
             proposal_form_field.disabled = true;
         }
     });

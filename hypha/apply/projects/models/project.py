@@ -501,7 +501,7 @@ class PAFReviewersRole(Orderable, ClusterableModel):
         Group,
         verbose_name=_("user groups"),
         help_text=_(
-            "Only selected group's users will be listed for this PAFReviewerRole"
+            "Only selected group's users will be listed for this ProjectFormReviewerRole"
         ),
         related_name="paf_reviewers_roles",
     )
@@ -537,7 +537,9 @@ class ProjectSettings(BaseSiteSetting, ClusterableModel):
                 FieldPanel(
                     "paf_approval_sequential", heading="Approve Project Sequentially"
                 ),
-                InlinePanel("paf_reviewers_roles", label=_("Project Reviewers Roles")),
+                InlinePanel(
+                    "paf_reviewers_roles", label=_("Project Form Reviewers Roles")
+                ),
             ],
             heading=_("Project Reviewers Roles"),
             help_text=_(

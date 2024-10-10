@@ -16,6 +16,7 @@ How this works:
             visible: [],
             id: 0,
             timeouts: {}, // Object to keep track of timeouts
+
             add(toast) {
                 toast.id = Date.now().toString() + this.id++;
                 this.toasts.push(toast);

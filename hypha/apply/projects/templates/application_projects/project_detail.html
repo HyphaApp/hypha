@@ -37,17 +37,16 @@
 
                 <span>{{ object.submission.page }}</span>
 
-                {% if request.user.is_apply_staff and object.submission.round %}
-                    <span>
-                        <a
-                            class="link--transparent link--underlined hover:opacity-70 transition-opacity"
-                            href="{% url 'apply:rounds:detail' pk=object.submission.round.pk %}"
-                        >
-                            {{ object.submission.round }}
-                        </a>
-                    </span>
-                {% else %}
-                    <span>{{ object.submission.round }}</span>
+                {% if object.submission.round %}
+                    {% if request.user.is_apply_staff %}
+                        <span>
+                            <a class="link--transparent link--underlined"
+                               href="{% url 'apply:submissions:list' %}?round={{ object.submission.round.pk }}"
+                            >{{ object.round }}</a>
+                        </span>
+                    {% else %}
+                        {{ object.submission.round }}
+                    {% endif %}
                 {% endif %}
 
                 {% if not HIDE_STAFF_IDENTITY or request.user.is_apply_staff %}
