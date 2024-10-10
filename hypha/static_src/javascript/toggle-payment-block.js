@@ -1,6 +1,4 @@
 (function ($) {
-    "use strict";
-
     function togglePaymentBlock() {
         $(".js-payment-block-rejected-link").click(function (e) {
             e.preventDefault();

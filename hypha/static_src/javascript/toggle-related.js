@@ -1,6 +1,4 @@
 (function () {
-    "use strict";
-
     const related_sidebar = document.querySelector(".related-sidebar");
     if (related_sidebar) {
         const content_height = related_sidebar

@@ -1,6 +1,4 @@
 (function ($) {
-    "use strict";
-
     // Strip html tags from text.
     function strip(html) {
         var doc = new DOMParser().parseFromString(html, "text/html");

@@ -1,6 +1,4 @@
 (function () {
-    "use strict";
-
     const richtextanswers = document.querySelector(".rich-text--answers");
 
     // Remove p tags with only whitespace inside.

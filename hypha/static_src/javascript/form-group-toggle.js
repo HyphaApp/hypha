@@ -1,7 +1,5 @@
 /* eslint-disable no-loop-func */
 (function ($) {
-    "use strict";
-
     var i;
     for (i = 2; i < 20; i++) {
         var $field_group = $(".field-group-" + i);

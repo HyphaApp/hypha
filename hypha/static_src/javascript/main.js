@@ -1,6 +1,4 @@
 (function ($) {
-    "use strict";
-
     // reset mobile filters if they're open past the tablet breakpoint
     $(window)
         .resize(function resize() {

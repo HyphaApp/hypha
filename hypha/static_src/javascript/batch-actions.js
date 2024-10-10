@@ -1,6 +1,4 @@
 (function ($) {
-    "use strict";
-
     const $body = $("body");
     const $checkbox = $(".js-batch-select");
     const $allCheckboxInput = $(".js-batch-select-all");
