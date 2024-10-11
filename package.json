@@ -76,7 +76,7 @@
     "dev:build:images": "npm run build:images",
     "lint:prettier": "prettier . --check",
     "lint:sass": "stylelint \"hypha/static_src/sass/**/*.scss\"",
-    "lint:js": "eslint \"hypha/static_src/javascript/**/*.js\"",
+    "lint:js": "eslint \"hypha/static_src/javascript/**/*.js\" \"hypha/cookieconsent/static/js/**/*.js\"",
     "collectstatic": "python manage.py collectstatic --no-post-process --noinput --verbosity 0 --settings=hypha.settings.dev",
     "clean": "rm -rf ./static ./hypha/static_compiled"
   },

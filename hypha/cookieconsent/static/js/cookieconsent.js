@@ -1,6 +1,4 @@
 (function () {
-    "use strict";
-
     // Used when an analytics cookie notice is enabled
     const ACCEPT = "accept";
     const DECLINE = "decline";
@@ -19,7 +17,9 @@
     const CLASS_JS_LEARNMORE_EXPAND = `${CLASS_JS_LEARNMORE}-expand`;
 
     const cookieconsent = document.querySelector(`.${CLASS_COOKIECONSENT}`);
-    if (!cookieconsent) return;
+    if (!cookieconsent) {
+        return;
+    }
 
     const cookieButtons = cookieconsent.querySelectorAll(
         "button[data-consent]"
@@ -28,10 +28,20 @@
         ".button--learn-more"
     );
 
+    /**
+     * Pull the cookie consent value from localStorage
+     *
+     * @returns {(string|null)} A string if consent value exists, null if not
+     */
     function getConsentValue() {
         return localStorage.getItem(COOKIECONSENT_KEY);
     }
 
+    /**
+     * Set the cookie consent value in localStorage
+     *
+     * @param {("accept"|"decline"|"ack")} value - consent value to set
+     */
     function setConsentValue(value) {
         if ([ACCEPT, DECLINE, ACK].includes(value)) {
             localStorage.setItem(COOKIECONSENT_KEY, value);
@@ -41,10 +51,16 @@
         }
     }
 
+    /**
+     * Trigger the cookie consent prompt to open
+     */
     function openConsentPrompt() {
         cookieconsent.classList.add(CLASS_JS_CONSENT_OPEN);
     }
 
+    /**
+     * Trigger cookie consent prompt to close
+     */
     function closeConsentPrompt() {
         cookieconsent.classList.remove(CLASS_JS_CONSENT_OPEN);
     }
@@ -53,6 +69,11 @@
     window.openConsentPrompt = openConsentPrompt;
     window.closeConsentPrompt = closeConsentPrompt;
 
+    /**
+     * Trigger the "Learn More" prompt on the cookie banner to open/close
+     *
+     * @param {boolean} open - true to open learn more prompt, false to close
+     */
     function toggleLearnMore(open) {
         const content = cookieconsent.querySelector(`.${CLASS_COOKIECONTENT}`);
         if (open) {
@@ -66,7 +87,12 @@
         setInputTabIndex(`.${CLASS_COOKIEBRIEF}`, open ? -1 : 0);
     }
 
-    // Adds "tabability" to menu buttons/toggles
+    /**
+     * Adds "tabability" to menu buttons/toggles
+     *
+     * @param {string} wrapperClassSelector - wrapper class to set tabability of inputs on
+     * @param {number} tabValue - tab index value to set on all input items in the wrapper class
+     */
     function setInputTabIndex(wrapperClassSelector, tabValue) {
         const wrapper = cookieconsent.querySelector(wrapperClassSelector);
         const tabables = wrapper.querySelectorAll("button, input");
@@ -75,7 +101,7 @@
 
     // Open the prompt if consent value is undefined OR if analytics has been added since the user ack'd essential cookies
     if (
-        getConsentValue() == undefined ||
+        getConsentValue() == null ||
         (getConsentValue() === ACK && cookieButtons.length > 2)
     ) {
         openConsentPrompt();

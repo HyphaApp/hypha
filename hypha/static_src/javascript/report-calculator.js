@@ -24,6 +24,9 @@
         ".js-next-report-due-slot"
     );
 
+    /**
+     * Set initial values & setup event listeners
+     */
     function init() {
         // Set on page load
         setProjectEnd();
@@ -36,24 +39,33 @@
         addReportPeriodEvents();
     }
 
-    // Sets the project end date in the form info box
+    /**
+     * Sets the project end date in the form info box
+     */
     function setProjectEnd() {
         projectEndSlot.innerHTML = reportData.projectEndDate;
     }
 
-    // Set the reporting frequency
+    /**
+     * Set the reporting frequency
+     */
     function setFrequency() {
         frequencyPeriodSlot.innerHTML = `${frequencyPeriodSlot.value}`;
         frequencyNumberSlot.innerHTML = frequencyNumberInput.value;
         pluraliseTimePeriod(frequencyNumberInput.value);
     }
 
-    // Set the reporting period start date
+    /**
+     * Set the reporting period start date
+     */
     function setReportPeriodStart() {
         const startDate = new Date(reportData.startDate);
         periodStartSlot.innerHTML = startDate.toISOString().slice(0, 10);
     }
 
+    /**
+     * Set the reporting period
+     */
     function setReportPeriod() {
         // Update the reporting period end date (next report date)
         periodEndSlot.innerHTML = startDateInput.value;
@@ -75,13 +87,18 @@
             `;
     }
 
+    /**
+     * Set report period once start date recieves input
+     */
     function addReportPeriodEvents() {
         startDateInput.oninput = () => {
             setReportPeriod();
         };
     }
 
-    // Update reporting frequency as the options are changed
+    /**
+     * Update reporting frequency as the options are changed
+     */
     function addFrequencyEvents() {
         frequencyNumberInput.oninput = () => {
             setFrequency();
@@ -92,14 +109,26 @@
         };
     }
 
+    /**
+     * Adds an "s" to the frequencyPeriodSelect text if plural, removes "s" otherwise.
+     *
+     * @param {number} number - number to determine plural for
+     */
     function pluraliseTimePeriod(number) {
         frequencyPeriodSlot.innerHTML = `${frequencyPeriodSelect.value}${
             Number(number) === 1 ? "" : "s"
         }`;
     }
 
-    // Get the number of days between two dates
-    function dateDiffInDays(startDate, EndDate) {
+    /**
+     * Get the difference of days between two dates
+     *
+     * @param {Date} startDate - the subtrahend date
+     * @param {Date} endDate - the minuend date
+     *
+     * @returns {number} Difference of days betwen the given dates
+     */
+    function dateDiffInDays(startDate, endDate) {
         const msPerDay = 1000 * 60 * 60 * 24;
         const utc1 = Date.UTC(
             startDate.getFullYear(),
@@ -107,15 +136,21 @@
             startDate.getDate()
         );
         const utc2 = Date.UTC(
-            EndDate.getFullYear(),
-            EndDate.getMonth(),
-            EndDate.getDate()
+            endDate.getFullYear(),
+            endDate.getMonth(),
+            endDate.getDate()
         );
 
         return Math.floor((utc2 - utc1) / msPerDay);
     }
 
-    // Convert days into weeks and days
+    /**
+     * Convert days into weeks and days
+     *
+     * @param {number} days - number of days
+     *
+     * @returns {{weeks: number, days: number}} number of weeks & days
+     */
     function getWeeks(days) {
         return {
             weeks: Math.floor(days / 7),

@@ -149,6 +149,7 @@ export default [
             yoda: ["error", "never"],
             "max-nested-callbacks": ["warn", 3],
             "jsdoc/require-description": "warn",
+            "jsdoc/tag-lines": ["off", "never"],
         },
     },
 ];
