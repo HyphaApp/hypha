@@ -1,23 +1,23 @@
 -r requirements.txt
 
 coverage==7.4.4
-django-browser-reload==1.12.1
+django-browser-reload==1.16.0
 django-coverage-plugin==3.1.0
 django-debug-toolbar==4.3.0
 django-dynamic-fixture==4.0.1
-djhtml==3.0.6
+djhtml==3.0.5
 dslr==0.4.0
-freezegun==1.5.1
 factory_boy==3.3.1
 Faker==28.4.1
+freezegun==1.5.1
 model-bakery==1.17.0
-pre-commit==3.6.2
+pre-commit==4.0.1
 pytest-cov==4.1.0
-pytest-django==4.8.0
-pytest-split==0.8.2
-pytest-xdist[psutil]==3.5.0
+pytest-django==4.9.0
+pytest-split==0.10.0
+pytest-xdist[psutil]==3.6.1
 responses==0.25.0
-ruff==0.6.9
-time-machine==2.14.0
+ruff==0.7.0
+time-machine==2.16.0
 wagtail-factories==4.2.1
-Werkzeug==3.0.3
+Werkzeug==3.0.4

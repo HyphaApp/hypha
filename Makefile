@@ -4,6 +4,9 @@ DJANGO_SETTINGS_MODULE = hypha.settings.dev
 JS_VENDOR_DIR = ./hypha/static_src/javascript/vendor
 JS_ESM_DIR = ./hypha/static_src/javascript/esm
 
+# check if pip install present, else try to use uv pip
+PIP := $(shell command -v pip 2> /dev/null || echo 'uv pip')
+
 
 .PHONY: help
 help: ## Show this help
@@ -59,7 +62,7 @@ endif
 
 .PHONY: download-esm-modules
 download-esm-modules:  ## Download ESM modules
-	pip install download-esm
+	$(PIP) install download-esm
 	download-esm @github/relative-time-element $(JS_ESM_DIR)
 	download-esm @github/filter-input-element $(JS_ESM_DIR)
 	download-esm choices.js $(JS_ESM_DIR)
@@ -78,7 +81,7 @@ download-esm-modules:  ## Download ESM modules
 
 .cache/py-packages: requirements-dev.txt requirements-docs.txt  ## Install python packages
 	@mkdir -p $$(dirname $@)
-	pip install -r requirements-dev.txt -r requirements-docs.txt
+	$(PIP) install -r requirements-dev.txt -r requirements-docs.txt
 	@touch $@
 
 

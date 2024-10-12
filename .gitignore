@@ -55,7 +55,7 @@ __pycache__/
 !.vscode/*.code-snippets
 
 # Zed
-.zed
+.zed/
 
 # Local History for Visual Studio Code
 .history/
