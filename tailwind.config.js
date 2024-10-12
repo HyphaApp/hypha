@@ -2,6 +2,7 @@
 module.exports = {
     content: [
         "./hypha/templates/**/*.html",
+        "./hypha/templates_custom/**/*.html",
         "./hypha/**/templates/**/*.html",
         "./hypha/**/*.{py,js}",
     ],
