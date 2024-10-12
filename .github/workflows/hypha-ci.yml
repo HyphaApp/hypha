@@ -8,44 +8,13 @@ on:
     branches:
       - main
       - test
+      - enchancement/faster-tests
 
 concurrency:
   group: ${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
 jobs:
-  build-fe:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: ".nvmrc"
-          cache: "npm"
-      - name: install node dependencies
-        run: npm install --quiet
-      - name: builds static assets
-        run: npm run build
-
-  build-be:
-    runs-on: ubuntu-latest
-    env:
-      DJANGO_SETTINGS_MODULE: hypha.settings.test
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version-file: ".python-version"
-          cache: "pip"
-          cache-dependency-path: "**/requirements*.txt"
-      - name: install python dependencies
-        run: |
-          python3 -m venv venv
-          . venv/bin/activate
-          pip install --upgrade pip
-          pip install wheel
-          pip install -r requirements-dev.txt
-
   lint:
     runs-on: ubuntu-latest
     steps:
@@ -63,45 +32,58 @@ jobs:
       DATABASE_URL: postgresql://hypha:hypha@localhost/hypha?sslmode=disable
       DJANGO_SETTINGS_MODULE: hypha.settings.test
       SEND_MESSAGES: false
+      PYTHONDONTWRITEBYTECODE: 1
+
     services:
       postgres:
-        image: postgres:14-alpine
+        image: bitnami/postgresql:latest
         env:
-          POSTGRES_USER: hypha
-          POSTGRES_PASSWORD: hypha
-          POSTGRES_DB: hypha
+          POSTGRESQL_USERNAME: hypha
+          POSTGRESQL_PASSWORD: hypha
+          POSTGRESQL_DATABASE: hypha
+          POSTGRESQL_FSYNC: "off"
         ports:
           - 5432:5432
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+        options: >-
+          --health-cmd "pg_isready -d hypha -U hypha -p 5432"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     strategy:
       matrix:
         group: [1, 2, 3]
+
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
         with:
-          python-version-file: ".python-version"
-          cache: "pip"
-          cache-dependency-path: "**/requirements*.txt"
-      - uses: codecov/codecov-action@v4
-      - name: install python dependencies
+          enable-cache: true
+          cache-dependency-glob: "requirements**.txt"
+
+      - name: Install python dependencies
         run: |
-          python3 -m venv venv
-          source venv/bin/activate
-          mkdir hypha/static_compiled
-          pip install --upgrade pip wheel
-          pip install -r requirements-dev.txt
+          uv venv
+          uv pip install -r requirements-dev.txt
+
+      - name: Check Django migrations
+        if: matrix.group == 1
+        run: |
+          .venv/bin/python manage.py check
+          .venv/bin/python manage.py makemigrations --dry-run --verbosity=3
+          .venv/bin/python manage.py makemigrations --check
 
       - name: Run django checks
-        run: venv/bin/python manage.py check
-
-      - name: Check Django Migrations
+        if: matrix.group == 2
         run: |
-          venv/bin/python manage.py makemigrations --dry-run --verbosity=3
-          venv/bin/python manage.py makemigrations --check
+          .venv/bin/python manage.py collectstatic --noinput --no-post-process --verbosity=1
 
-      - name: Run collect static
-        run: venv/bin/python manage.py collectstatic --noinput --no-post-process --verbosity=1
+      - name: Check Django Setup
+        if: matrix.group == 3
+        run: |
+          .venv/bin/python manage.py check
 
       - name: Run pytest
-        run: venv/bin/pytest --cov --cov-report term:skip-covered --splits 3 --group ${{ matrix.group }}
+        run: .venv/bin/pytest --splits 3 --group ${{ matrix.group }}
