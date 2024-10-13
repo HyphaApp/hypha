@@ -12,7 +12,7 @@ from hypha.apply.funds.models.forms import (
     ApplicationBaseReviewForm,
 )
 from hypha.apply.review.models import ReviewForm
-from hypha.apply.users.groups import STAFF_GROUP_NAME
+from hypha.apply.users.roles import STAFF_GROUP_NAME
 from hypha.home.models import ApplyHomePage
 
 FS_ROUND_TITLE = "Fellowship (archive round)"

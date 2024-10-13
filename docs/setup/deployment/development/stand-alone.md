@@ -196,6 +196,7 @@ There are two ways to about it, you can either load demo data from  `/public/san
     
     ```shell
     python3 manage.py migrate
+    python3 manage.py sync_roles
     ```
 
 === "From Scratch"
@@ -209,6 +210,7 @@ There are two ways to about it, you can either load demo data from  `/public/san
 
     ```text
     python3 manage.py migrate
+    python3 manage.py sync_roles
     ```
 
 !!! tip "Tips"

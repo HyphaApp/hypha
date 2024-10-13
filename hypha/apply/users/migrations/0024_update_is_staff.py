@@ -3,12 +3,14 @@
 from django.db import migrations
 from django.contrib.auth.models import Group
 
-from hypha.apply.users.groups import TEAMADMIN_GROUP_NAME
+from hypha.apply.users.roles import TEAMADMIN_GROUP_NAME
 from hypha.apply.users.utils import update_is_staff
 
 
 def migrate_is_staff(apps, schema_editor):
-    group = Group.objects.get(name=TEAMADMIN_GROUP_NAME)
+    group = Group.objects.filter(name=TEAMADMIN_GROUP_NAME).first()
+    if group is None:
+        return
     users = group.user_set.all()
 
     [update_is_staff(None, user) for user in users]

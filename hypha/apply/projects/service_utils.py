@@ -12,7 +12,7 @@ from hypha.apply.todo.views import (
     remove_tasks_for_user,
     remove_tasks_for_user_group,
 )
-from hypha.apply.users.groups import (
+from hypha.apply.users.roles import (
     APPROVER_GROUP_NAME,
     FINANCE_GROUP_NAME,
 )

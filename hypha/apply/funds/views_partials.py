@@ -24,7 +24,7 @@ from hypha.apply.funds.permissions import has_permission
 from hypha.apply.funds.reviewers.services import get_all_reviewers
 from hypha.apply.funds.services import annotate_review_recommendation_and_count
 from hypha.apply.review.options import REVIEWER
-from hypha.apply.users.groups import REVIEWER_GROUP_NAME
+from hypha.apply.users.roles import REVIEWER_GROUP_NAME
 
 from . import services
 from .models import ApplicationSubmission, Round
