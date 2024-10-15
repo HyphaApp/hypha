@@ -31,12 +31,7 @@ fmt:  ## Run code formatters on all code
 .PHONY: lint
 lint:  ## Run all linters
 	@echo "Checking python code style with ruff"
-	ruff check .
-	ruff format --check .
-	@echo "Checking html file indendation."
-	djhtml hypha/ --check
-	@echo "Checking js and css code style."
-	npm run lint
+	@pre-commit run --all-files
 
 
 .PHONY: py-test
