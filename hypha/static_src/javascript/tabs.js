@@ -1,6 +1,4 @@
 (function ($) {
-    "use strict";
-
     let Tabs = class {
         static selector() {
             return ".js-tabs";

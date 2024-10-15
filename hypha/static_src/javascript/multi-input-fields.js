@@ -1,6 +1,4 @@
 (function ($) {
-    "use strict";
-
     // Visibility Index is set to 0 initially in the backend. But in case of edit application forms
     // with multiple values already set, we need to update it. The visibility index helps
     // to get the next field from the list of hidden inputs to be shown to an applicant on clicking the add button.

@@ -1,6 +1,4 @@
 (function ($) {
-    "use strict";
-
     // Allow click and drag scrolling within reviews table wrapper
     $(".js-reviews-table").attachDragger();
 

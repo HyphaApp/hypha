@@ -1,6 +1,4 @@
 (function () {
-    "use strict";
-
     let submission_arrow = document.createElement("span");
     submission_arrow.classList.add("arrow");
 
