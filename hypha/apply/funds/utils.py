@@ -1,7 +1,7 @@
 import csv
+import json
 import re
 from datetime import datetime
-import json
 from functools import reduce
 from io import StringIO
 from itertools import chain
@@ -196,6 +196,8 @@ def get_copied_form_name(original_form_name: str) -> str:
     # If a copied timestamp already exists, remove it
     new_name = re.sub(name_reg, "", original_form_name)
     return f"{new_name} ({copy_str.format(copy_time=copy_time)})"
+
+
 def get_language_choices_json(request: HttpRequest = None) -> str:
     """Generate a JSON output of available translation options
 
