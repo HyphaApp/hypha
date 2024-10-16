@@ -13,7 +13,8 @@
                     x-data
                     @click="showSubmission = !showSubmission"
                 >
-                    {% trans "Toggle application" %}
+                    <span x-show="!showSubmission">{% trans "Show application" %}</span>
+                    <span x-show="showSubmission">{% trans "Hide application" %}</span>
                 </button>
                 </a>
             {% endslot %}
