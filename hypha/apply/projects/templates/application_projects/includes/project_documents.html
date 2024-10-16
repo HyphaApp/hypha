@@ -41,19 +41,21 @@
                         {% trans "View/Update Approvers" %}
                     </a>
                 {% else %}
-                    <a data-fancybox
-                       data-src="#change-assigned-paf-approvers"
-                       class="button button--project-action button--project-action--white ms-2"
-                       href="#">
+                    <a class="button button--project-action button--project-action--white ms-2"
+                       href="{% url 'apply:projects:assign_pafapprovers' object.id %}"
+                       hx-get="{% url 'apply:projects:assign_pafapprovers' object.id %}"
+                       hx-target="#htmx-modal"
+                    >
                         {% trans "Change approver" %}
                     </a>
                 {% endif %}
             {% endif %}
             {% if can_assign_paf_approvers %}
-                <a data-fancybox
-                   data-src="#assign-paf-approvers"
-                   class="button button--project-action ms-2"
-                   href="#">
+                <a class="button button--project-action"
+                   href="{% url 'apply:projects:assign_pafapprovers' object.id %}"
+                   hx-get="{% url 'apply:projects:assign_pafapprovers' object.id %}"
+                   hx-target="#htmx-modal"
+                >
                     {% trans "Assign approver" %}
                 </a>
             {% endif %}
@@ -167,23 +169,8 @@
         {% endif %}
     </div>
 
-    <div class="modal" id="change-assigned-paf-approvers">
-        <h4 class="modal__project-header-bar">{% trans "Change Approver" %}</h4>
-        <p>{% trans "Selected approver will be notified. On unselecting, every listed member here will be notified." %} </p>
-        {% trans "Submit" as submit %}
-        {% include 'funds/includes/delegated_form_base.html' with form=assign_approvers_form value=submit %}
-    </div>
-
 {% endif %}
 
-{% if can_assign_paf_approvers %}
-    <div class="modal" id="assign-paf-approvers">
-        <h4 class="modal__project-header-bar">{% trans "Assign Approver" %}</h4>
-        <p>{% trans "Selected approver will be notified. On unselecting, every listed member here will be notified." %} </p>
-        {% trans "Submit" as submit %}
-        {% include 'funds/includes/delegated_form_base.html' with form=assign_approvers_form value=submit %}
-    </div>
-{% endif %}
 
 {% if can_update_paf_status %}
     <div class="modal" id="update-paf-status">

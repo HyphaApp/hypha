@@ -1153,10 +1153,10 @@ class ChangeProjectstatusView(DelegatedViewMixin, UpdateView):
 
 
 @method_decorator(login_required, name="dispatch")
-class UpdateAssignApproversView(DelegatedViewMixin, UpdateView):
-    context_name = "assign_approvers_form"
+class UpdateAssignApproversView(View):
     form_class = AssignApproversForm
     model = Project
+    template_name = "application_projects/modals/assign_pafapprovers.html"
 
     def dispatch(self, request, *args, **kwargs):
         self.project = get_object_or_404(Project, pk=self.kwargs["pk"])
@@ -1169,64 +1169,96 @@ class UpdateAssignApproversView(DelegatedViewMixin, UpdateView):
         )
         return super().dispatch(request, *args, **kwargs)
 
-    def form_valid(self, form):
+    def get(self, *args, **kwargs):
         from ..forms.project import get_latest_project_paf_approval_via_roles
 
-        project = self.kwargs["object"]
+        form = self.form_class(user=self.request.user, instance=self.project)
+        paf_approval = get_latest_project_paf_approval_via_roles(
+            project=self.project, roles=self.request.user.groups.all()
+        )
+        return render(
+            self.request,
+            self.template_name,
+            context={
+                "form": form,
+                "value": _("Submit"),
+                "pafapprover_exists": True if paf_approval.user else False,
+                "object": self.project,
+            },
+        )
+
+    def post(self, *args, **kwargs):
+        from ..forms.project import get_latest_project_paf_approval_via_roles
+
+        form = self.form_class(
+            self.request.POST, user=self.request.user, instance=self.project
+        )
 
         old_paf_approval = get_latest_project_paf_approval_via_roles(
-            project=project, roles=self.request.user.groups.all()
+            project=self.project, roles=self.request.user.groups.all()
         )
 
-        response = super().form_valid(form)
+        if form.is_valid():
+            form.save()
 
-        # remove current task of user/user_group related to latest paf_approval of project
-        if old_paf_approval.user:
-            remove_tasks_for_user(
-                code=PAF_WAITING_APPROVAL,
-                user=old_paf_approval.user,
-                related_obj=project,
-            )
-        else:
-            remove_tasks_for_user_group(
-                code=PAF_WAITING_ASSIGNEE,
-                user_group=old_paf_approval.paf_reviewer_role.user_roles.all(),
-                related_obj=project,
+            # remove current task of user/user_group related to latest paf_approval of project
+            if old_paf_approval.user:
+                remove_tasks_for_user(
+                    code=PAF_WAITING_APPROVAL,
+                    user=old_paf_approval.user,
+                    related_obj=self.project,
+                )
+            else:
+                remove_tasks_for_user_group(
+                    code=PAF_WAITING_ASSIGNEE,
+                    user_group=old_paf_approval.paf_reviewer_role.user_roles.all(),
+                    related_obj=self.project,
+                )
+
+            paf_approval = get_latest_project_paf_approval_via_roles(
+                project=self.project, roles=self.request.user.groups.all()
             )
 
-        paf_approval = get_latest_project_paf_approval_via_roles(
-            project=project, roles=self.request.user.groups.all()
+            if paf_approval.user:
+                messenger(
+                    MESSAGES.APPROVE_PAF,
+                    request=self.request,
+                    user=self.request.user,
+                    source=self.project,
+                    related=[paf_approval],
+                )
+                # add PAF waiting approval task to updated paf_approval user
+                add_task_to_user(
+                    code=PAF_WAITING_APPROVAL,
+                    user=paf_approval.user,
+                    related_obj=self.project,
+                )
+            else:
+                messenger(
+                    MESSAGES.ASSIGN_PAF_APPROVER,
+                    request=self.request,
+                    user=self.request.user,
+                    source=self.project,
+                )
+                # add paf waiting for assignee task
+                add_task_to_user_group(
+                    code=PAF_WAITING_ASSIGNEE,
+                    user_group=paf_approval.paf_reviewer_role.user_roles.all(),
+                    related_obj=self.project,
+                )
+
+            return HttpResponseClientRefresh()
+
+        return render(
+            self.request,
+            self.template_name,
+            context={
+                "form": form,
+                "value": _("Submit"),
+                "pafapprover_exists": True if old_paf_approval.user else False,
+                "object": self.project,
+            },
         )
-
-        if paf_approval.user:
-            messenger(
-                MESSAGES.APPROVE_PAF,
-                request=self.request,
-                user=self.request.user,
-                source=self.object,
-                related=[paf_approval],
-            )
-            # add PAF waiting approval task to updated paf_approval user
-            add_task_to_user(
-                code=PAF_WAITING_APPROVAL,
-                user=paf_approval.user,
-                related_obj=self.object,
-            )
-        else:
-            messenger(
-                MESSAGES.ASSIGN_PAF_APPROVER,
-                request=self.request,
-                user=self.request.user,
-                source=self.object,
-            )
-            # add paf waiting for assignee task
-            add_task_to_user_group(
-                code=PAF_WAITING_ASSIGNEE,
-                user_group=paf_approval.paf_reviewer_role.user_roles.all(),
-                related_obj=self.object,
-            )
-
-        return response
 
 
 class UpdatePAFApproversView(DelegatedViewMixin, UpdateView):
@@ -1421,7 +1453,6 @@ class AdminProjectDetailView(
         UpdateLeadView,
         UpdateProjectTitleView,
         UploadContractView,
-        UpdateAssignApproversView,
         ChangePAFStatusView,
         ChangeProjectstatusView,
         ChangeInvoiceStatusView,
@@ -1649,7 +1680,7 @@ class ContractDocumentPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
 
 @method_decorator(staff_or_finance_or_contracting_required, name="dispatch")
 class ProjectDetailApprovalView(DelegateableView, DetailView):
-    form_views = [ChangePAFStatusView, UpdateAssignApproversView]
+    form_views = [ChangePAFStatusView]
     model = Project
     template_name_suffix = "_approval_detail"
 

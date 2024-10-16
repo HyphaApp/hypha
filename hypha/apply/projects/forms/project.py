@@ -297,7 +297,7 @@ class AssignApproversForm(forms.ModelForm):
         model = Project
         widgets = {"id": forms.HiddenInput()}
 
-    def __init__(self, user=None, *args, **kwargs):
+    def __init__(self, *args, user=None, **kwargs):
         from hypha.apply.activity.adapters.utils import get_users_for_groups
 
         super().__init__(*args, **kwargs)
