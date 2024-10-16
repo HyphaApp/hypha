@@ -1,0 +1,15 @@
+{% load i18n project_tags %}
+{% modal_title %}{% trans "View/Update Approvers" %}{% endmodal_title %}
+
+<div class="p-4">
+    {% if project_settings.paf_reviewers_roles.all %}
+        <p> {% trans "Are you sure you want to update the approvers?" %} {% if project_settings.paf_approval_sequential %} {% trans "The uppermost active approver will be notified via email." %} {% else %}{% trans "All approvers will be notified via email." %}{% endif %}</p>
+        <br>
+        {% url 'apply:projects:update_pafapprovers' pk=object.id as url %}
+        {% include 'funds/includes/dialog_form_base.html' with form=form value=value url=url %}
+    {% else %}
+        <p>{% trans "No PAF Reviewer Roles created yet, please create these in " %}
+            <a href="{% project_settings_url project_settings %}" target="_blank">{% trans " project settings" %}</a>
+        </p>
+    {% endif %}
+</div>

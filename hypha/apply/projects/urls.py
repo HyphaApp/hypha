@@ -3,6 +3,7 @@ from django.views.generic import RedirectView
 
 from .views import (
     CategoryTemplatePrivateMediaView,
+    ChangePAFStatusView,
     ContractDocumentPrivateMediaView,
     ContractPrivateMediaView,
     CreateInvoiceView,
@@ -27,6 +28,7 @@ from .views import (
     ReportUpdateView,
     SendForApprovalView,
     UpdateAssignApproversView,
+    UpdatePAFApproversView,
     UploadDocumentView,
     get_invoices_status_counts,
     get_project_status_counts,
@@ -64,6 +66,16 @@ urlpatterns = [
                     "pafapprovers/assign/",
                     UpdateAssignApproversView.as_view(),
                     name="assign_pafapprovers",
+                ),
+                path(
+                    "pafapprovers/update/",
+                    UpdatePAFApproversView.as_view(),
+                    name="update_pafapprovers",
+                ),
+                path(
+                    "pafstatus/update/",
+                    ChangePAFStatusView.as_view(),
+                    name="update_pafstatus",
                 ),
                 path(
                     "document/<int:category_pk>/upload/",

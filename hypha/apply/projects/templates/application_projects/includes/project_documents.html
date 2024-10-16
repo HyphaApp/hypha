@@ -34,10 +34,11 @@
             {% user_can_assign_approvers_to_project object user request as can_assign_paf_approvers %}
             {% if can_update_paf_approvers %}
                 {% if user == project.lead %}
-                    <a data-fancybox
-                       data-src="#update-paf-approvers"
-                       class="button button--project-action button--project-action--white ms-2"
-                       href="#">
+                    <a class="button button--project-action button--project-action--white ms-2"
+                       href="{% url 'apply:projects:update_pafapprovers' object.id %}"
+                       hx-get="{% url 'apply:projects:update_pafapprovers' object.id %}"
+                       hx-target="#htmx-modal"
+                    >
                         {% trans "View/Update Approvers" %}
                     </a>
                 {% else %}
@@ -61,10 +62,11 @@
             {% endif %}
             {% user_can_update_paf_status object user request=request as can_update_paf_status %}
             {% if object.can_make_approval and can_update_paf_status %}
-                <a data-fancybox
-                   data-src="#update-paf-status"
-                   class="button button--project-action ms-2"
-                   href="#">
+                <a class="button button--project-action ms-2"
+                   href="{% url 'apply:projects:update_pafstatus' object.id %}"
+                   hx-get="{% url 'apply:projects:update_pafstatus' object.id %}"
+                   hx-target="#htmx-modal"
+                >
                     {% trans "Update Status" %}
                 </a>
             {% endif %}
@@ -153,29 +155,7 @@
         </ul>
 </div>
 
-{% if can_update_paf_approvers %}
-    <div class="modal" id="update-paf-approvers">
-        <h4 class="modal__project-header-bar">{% trans "View/Update Approvers" %}</h4>
-
-        {% trans "Submit" as submit %}
-        {% if project_settings.paf_reviewers_roles.all %}
-            <p> {% trans "Are you sure you want to update the approvers?" %} {% if project_settings.paf_approval_sequential %} {% trans "The uppermost active approver will be notified via email." %} {% else %}{% trans "All approvers will be notified via email." %}{% endif %}</p>
-            <br>
-            {% include 'funds/includes/delegated_form_base.html' with form=update_approvers_form value=submit %}
-        {% else %}
-            <p>{% trans "No PAF Reviewer Roles created yet, please create these in " %}
-                <a href="{% project_settings_url project_settings %}" target="_blank">{% trans " project settings" %}</a>
-            </p>
-        {% endif %}
-    </div>
-
-{% endif %}
-
 
 {% if can_update_paf_status %}
-    <div class="modal" id="update-paf-status">
-        <h4 class="modal__project-header-bar">{% trans "Update PAF Status" %}</h4>
-        {% trans "Update Status" as update %}
-        {% include 'funds/includes/delegated_form_base.html' with form=change_paf_status value=update %}
-    </div>
+
 {% endif %}

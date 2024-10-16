@@ -879,13 +879,13 @@ class UploadContractDocumentView(DelegatedViewMixin, CreateView):
 
 
 @method_decorator(login_required, name="dispatch")
-class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
+class ChangePAFStatusView(View):
     form_class = ChangePAFStatusForm
-    context_name = "change_paf_status"
     model = Project
+    template_name = "application_projects/modals/pafstatus_update.html"
 
     def dispatch(self, request, *args, **kwargs):
-        self.object = self.get_object()
+        self.object = get_object_or_404(Project, pk=self.kwargs["pk"])
         permission, _ = has_permission(
             "paf_status_update",
             self.request.user,
@@ -895,57 +895,132 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
         )
         return super().dispatch(request, *args, **kwargs)
 
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        project_settings = ProjectSettings.for_request(self.request)
-        paf_approval = self.request.user.paf_approvals.filter(
-            project=self.object, approved=False
-        ).first()
-        if not paf_approval:
-            # get paf project form for not-assigned case
-            if project_settings.paf_approval_sequential:
-                paf_approval = self.object.paf_approvals.filter(approved=False).first()
-            else:
-                for approval in self.object.paf_approvals.filter(approved=False):
-                    if self.request.user.id in [
-                        role_user.id
-                        for role_user in get_users_for_groups(
-                            list(approval.paf_reviewer_role.user_roles.all()),
-                            exact_match=True,
-                        )
-                    ]:
-                        paf_approval = approval
-                        break
+    def get(self, *args, **kwargs):
+        form = self.form_class(instance=self.object)
+        return render(
+            self.request,
+            self.template_name,
+            context={
+                "form": form,
+                "value": _("Update Status"),
+                "object": self.object,
+            },
+        )
+
+    def post(self, *args, **kwargs):
+        form = self.form_class(self.request.POST, instance=self.object)
+        if form.is_valid():
+            form.save()
+            project_settings = ProjectSettings.for_request(self.request)
+            paf_approval = self.request.user.paf_approvals.filter(
+                project=self.object, approved=False
+            ).first()
+            if not paf_approval:
+                # get paf project form for not-assigned case
+                if project_settings.paf_approval_sequential:
+                    paf_approval = self.object.paf_approvals.filter(
+                        approved=False
+                    ).first()
                 else:
-                    # should never be the case but still to avoid 500.
-                    raise PermissionDenied("User don't have PAF approver roles")
+                    for approval in self.object.paf_approvals.filter(approved=False):
+                        if self.request.user.id in [
+                            role_user.id
+                            for role_user in get_users_for_groups(
+                                list(approval.paf_reviewer_role.user_roles.all()),
+                                exact_match=True,
+                            )
+                        ]:
+                            paf_approval = approval
+                            break
+                    else:
+                        # should never be the case but still to avoid 500.
+                        raise PermissionDenied("User don't have PAF approver roles")
 
-        paf_status = form.cleaned_data.get("paf_status")
-        comment = form.cleaned_data.get("comment", "")
+            paf_status = form.cleaned_data.get("paf_status")
+            comment = form.cleaned_data.get("comment", "")
 
-        paf_status_update_message = _(
-            "<p>{role} has updated PAF status to {paf_status}.</p>"
-        ).format(
-            role=paf_approval.paf_reviewer_role.label,
-            paf_status=get_paf_status_display(paf_status).lower(),
-        )
-        Activity.objects.create(
-            user=self.request.user,
-            type=ACTION,
-            source=self.object,
-            timestamp=timezone.now(),
-            message=paf_status_update_message,
-            visibility=TEAM,
-        )
+            paf_status_update_message = _(
+                "<p>{role} has updated PAF status to {paf_status}.</p>"
+            ).format(
+                role=paf_approval.paf_reviewer_role.label,
+                paf_status=get_paf_status_display(paf_status).lower(),
+            )
+            Activity.objects.create(
+                user=self.request.user,
+                type=ACTION,
+                source=self.object,
+                timestamp=timezone.now(),
+                message=paf_status_update_message,
+                visibility=TEAM,
+            )
 
-        if paf_status == REQUEST_CHANGE:
-            old_stage = self.object.status
-            self.object.status = DRAFT
-            self.object.save(update_fields=["status"])
-            paf_approval.save()
+            if paf_status == REQUEST_CHANGE:
+                old_stage = self.object.status
+                self.object.status = DRAFT
+                self.object.save(update_fields=["status"])
+                paf_approval.save()
 
-            # remove PAF waiting assignee/approval task for paf approval user/reviewer roles.
-            if project_settings.paf_approval_sequential:
+                # remove PAF waiting assignee/approval task for paf approval user/reviewer roles.
+                if project_settings.paf_approval_sequential:
+                    if paf_approval.user:
+                        remove_tasks_for_user(
+                            code=PAF_WAITING_APPROVAL,
+                            user=paf_approval.user,
+                            related_obj=self.object,
+                        )
+                    else:
+                        remove_tasks_for_user_group(
+                            code=PAF_WAITING_ASSIGNEE,
+                            user_group=paf_approval.paf_reviewer_role.user_roles.all(),
+                            related_obj=self.object,
+                        )
+                else:
+                    for approval in self.object.paf_approvals.filter(approved=False):
+                        if approval.user:
+                            remove_tasks_for_user(
+                                code=PAF_WAITING_APPROVAL,
+                                user=approval.user,
+                                related_obj=self.object,
+                            )
+                        else:
+                            remove_tasks_for_user_group(
+                                code=PAF_WAITING_ASSIGNEE,
+                                user_group=approval.paf_reviewer_role.user_roles.all(),
+                                related_obj=self.object,
+                            )
+
+                if not paf_approval.user:
+                    paf_approval.user = self.request.user
+                    paf_approval.save(update_fields=["user"])
+
+                messenger(
+                    MESSAGES.REQUEST_PROJECT_CHANGE,
+                    request=self.request,
+                    user=self.request.user,
+                    source=self.object,
+                    comment=comment,
+                )
+                messenger(
+                    MESSAGES.PROJECT_TRANSITION,
+                    request=self.request,
+                    user=self.request.user,
+                    source=self.object,
+                    related=old_stage,
+                )
+                # add PAF required changes task to staff user group
+                add_task_to_user(
+                    code=PAF_REQUIRED_CHANGES,
+                    user=self.object.lead,
+                    related_obj=self.object,
+                )
+
+                messages.success(
+                    self.request,
+                    _("PAF status has been updated"),
+                    extra_tags=PROJECT_ACTION_MESSAGE_TAG,
+                )
+            elif paf_status == APPROVE:
+                # remove task for paf approval user/user_group related to this paf_approval of project
                 if paf_approval.user:
                     remove_tasks_for_user(
                         code=PAF_WAITING_APPROVAL,
@@ -958,149 +1033,99 @@ class ChangePAFStatusView(DelegatedViewMixin, UpdateView):
                         user_group=paf_approval.paf_reviewer_role.user_roles.all(),
                         related_obj=self.object,
                     )
-            else:
-                for approval in self.object.paf_approvals.filter(approved=False):
-                    if approval.user:
-                        remove_tasks_for_user(
-                            code=PAF_WAITING_APPROVAL,
-                            user=approval.user,
-                            related_obj=self.object,
-                        )
-                    else:
-                        remove_tasks_for_user_group(
-                            code=PAF_WAITING_ASSIGNEE,
-                            user_group=approval.paf_reviewer_role.user_roles.all(),
-                            related_obj=self.object,
-                        )
-
-            if not paf_approval.user:
+                paf_approval.approved = True
+                paf_approval.approved_at = timezone.now()
                 paf_approval.user = self.request.user
-                paf_approval.save(update_fields=["user"])
-
-            messenger(
-                MESSAGES.REQUEST_PROJECT_CHANGE,
-                request=self.request,
-                user=self.request.user,
-                source=self.object,
-                comment=comment,
-            )
-            messenger(
-                MESSAGES.PROJECT_TRANSITION,
-                request=self.request,
-                user=self.request.user,
-                source=self.object,
-                related=old_stage,
-            )
-            # add PAF required changes task to staff user group
-            add_task_to_user(
-                code=PAF_REQUIRED_CHANGES,
-                user=self.object.lead,
-                related_obj=self.object,
-            )
-
-            messages.success(
-                self.request,
-                _("PAF status has been updated"),
-                extra_tags=PROJECT_ACTION_MESSAGE_TAG,
-            )
-        elif paf_status == APPROVE:
-            # remove task for paf approval user/user_group related to this paf_approval of project
-            if paf_approval.user:
-                remove_tasks_for_user(
-                    code=PAF_WAITING_APPROVAL,
-                    user=paf_approval.user,
-                    related_obj=self.object,
+                paf_approval.save(update_fields=["approved", "approved_at", "user"])
+                if project_settings.paf_approval_sequential:
+                    # notify next approver
+                    if self.object.paf_approvals.filter(approved=False).exists():
+                        next_paf_approval = self.object.paf_approvals.filter(
+                            approved=False
+                        ).first()
+                        if next_paf_approval.user:
+                            messenger(
+                                MESSAGES.APPROVE_PAF,
+                                request=self.request,
+                                user=self.request.user,
+                                source=self.object,
+                                related=[next_paf_approval],
+                            )
+                            # add PAF waiting approval task for next paf approval user
+                            add_task_to_user(
+                                code=PAF_WAITING_APPROVAL,
+                                user=next_paf_approval.user,
+                                related_obj=self.object,
+                            )
+                        else:
+                            messenger(
+                                MESSAGES.ASSIGN_PAF_APPROVER,
+                                request=self.request,
+                                user=self.request.user,
+                                source=self.object,
+                            )
+                            # add PAF waiting assignee task for nex paf approval reviewer roles
+                            add_task_to_user_group(
+                                code=PAF_WAITING_ASSIGNEE,
+                                user_group=next_paf_approval.paf_reviewer_role.user_roles.all(),
+                                related_obj=self.object,
+                            )
+                messages.success(
+                    self.request,
+                    _("PAF has been approved"),
+                    extra_tags=PROJECT_ACTION_MESSAGE_TAG,
                 )
-            else:
-                remove_tasks_for_user_group(
-                    code=PAF_WAITING_ASSIGNEE,
-                    user_group=paf_approval.paf_reviewer_role.user_roles.all(),
-                    related_obj=self.object,
+
+            if form.cleaned_data["comment"]:
+                comment = f"<p>\"{form.cleaned_data['comment']}.\"</p>"
+
+                message = paf_status_update_message + comment
+
+                Activity.objects.create(
+                    user=self.request.user,
+                    type=COMMENT,
+                    source=self.object,
+                    timestamp=timezone.now(),
+                    message=message,
+                    visibility=TEAM,
                 )
-            paf_approval.approved = True
-            paf_approval.approved_at = timezone.now()
-            paf_approval.user = self.request.user
-            paf_approval.save(update_fields=["approved", "approved_at", "user"])
-            if project_settings.paf_approval_sequential:
-                # notify next approver
-                if self.object.paf_approvals.filter(approved=False).exists():
-                    next_paf_approval = self.object.paf_approvals.filter(
-                        approved=False
-                    ).first()
-                    if next_paf_approval.user:
-                        messenger(
-                            MESSAGES.APPROVE_PAF,
-                            request=self.request,
-                            user=self.request.user,
-                            source=self.object,
-                            related=[next_paf_approval],
-                        )
-                        # add PAF waiting approval task for next paf approval user
-                        add_task_to_user(
-                            code=PAF_WAITING_APPROVAL,
-                            user=next_paf_approval.user,
-                            related_obj=self.object,
-                        )
-                    else:
-                        messenger(
-                            MESSAGES.ASSIGN_PAF_APPROVER,
-                            request=self.request,
-                            user=self.request.user,
-                            source=self.object,
-                        )
-                        # add PAF waiting assignee task for nex paf approval reviewer roles
-                        add_task_to_user_group(
-                            code=PAF_WAITING_ASSIGNEE,
-                            user_group=next_paf_approval.paf_reviewer_role.user_roles.all(),
-                            related_obj=self.object,
-                        )
-            messages.success(
-                self.request,
-                _("PAF has been approved"),
-                extra_tags=PROJECT_ACTION_MESSAGE_TAG,
-            )
 
-        if form.cleaned_data["comment"]:
-            comment = f"<p>\"{form.cleaned_data['comment']}.\"</p>"
+            if self.object.is_approved_by_all_paf_reviewers:
+                old_stage = self.object.status
+                self.object.is_locked = True
+                self.object.status = CONTRACTING
+                self.object.save(update_fields=["is_locked", "status"])
 
-            message = paf_status_update_message + comment
-
-            Activity.objects.create(
-                user=self.request.user,
-                type=COMMENT,
-                source=self.object,
-                timestamp=timezone.now(),
-                message=message,
-                visibility=TEAM,
-            )
-
-        if self.object.is_approved_by_all_paf_reviewers:
-            old_stage = self.object.status
-            self.object.is_locked = True
-            self.object.status = CONTRACTING
-            self.object.save(update_fields=["is_locked", "status"])
-
-            messenger(
-                MESSAGES.PROJECT_TRANSITION,
-                request=self.request,
-                user=self.request.user,
-                source=self.object,
-                related=old_stage,
-            )
-            # add project waiting contract task to staff/contracting groups
-            if settings.STAFF_UPLOAD_CONTRACT:
-                add_task_to_user(
-                    code=PROJECT_WAITING_CONTRACT,
-                    user=self.object.lead,
-                    related_obj=self.object,
+                messenger(
+                    MESSAGES.PROJECT_TRANSITION,
+                    request=self.request,
+                    user=self.request.user,
+                    source=self.object,
+                    related=old_stage,
                 )
-            else:
-                add_task_to_user_group(
-                    code=PROJECT_WAITING_CONTRACT,
-                    user_group=Group.objects.filter(name=CONTRACTING_GROUP_NAME),
-                    related_obj=self.object,
-                )
-        return response
+                # add project waiting contract task to staff/contracting groups
+                if settings.STAFF_UPLOAD_CONTRACT:
+                    add_task_to_user(
+                        code=PROJECT_WAITING_CONTRACT,
+                        user=self.object.lead,
+                        related_obj=self.object,
+                    )
+                else:
+                    add_task_to_user_group(
+                        code=PROJECT_WAITING_CONTRACT,
+                        user_group=Group.objects.filter(name=CONTRACTING_GROUP_NAME),
+                        related_obj=self.object,
+                    )
+            return HttpResponseClientRefresh()
+        return render(
+            self.request,
+            self.template_name,
+            context={
+                "form": form,
+                "value": _("Update Status"),
+                "object": self.object,
+            },
+        )
 
 
 class ChangeProjectstatusView(DelegatedViewMixin, UpdateView):
@@ -1261,10 +1286,10 @@ class UpdateAssignApproversView(View):
         )
 
 
-class UpdatePAFApproversView(DelegatedViewMixin, UpdateView):
-    context_name = "update_approvers_form"
+class UpdatePAFApproversView(View):
     form_class = ApproversForm
     model = Project
+    template_name = "application_projects/modals/update_pafapprovers.html"
 
     def dispatch(self, request, *args, **kwargs):
         self.project = get_object_or_404(Project, pk=self.kwargs["pk"])
@@ -1277,88 +1302,136 @@ class UpdatePAFApproversView(DelegatedViewMixin, UpdateView):
         )
         return super().dispatch(request, *args, **kwargs)
 
-    def form_valid(self, form):
-        project = self.kwargs["object"]
+    def get(self, *args, **kwargs):
+        form = self.form_class(instance=self.project)
+        project_settings = ProjectSettings.for_request(self.request)
+        return render(
+            self.request,
+            self.template_name,
+            context={
+                "form": form,
+                "value": _("Submit"),
+                "project_settings": project_settings,
+                "object": self.project,
+            },
+        )
+
+    def post(self, *args, **kwargs):
+        form = self.form_class(self.request.POST, instance=self.project)
 
         project_settings = ProjectSettings.for_request(self.request)
-        old_approvers = None
-        if self.object.paf_approvals.exists():
-            old_approvers = list(
-                project.paf_approvals.filter(approved=False).values_list(
-                    "user__id", flat=True
+        if form.is_valid():
+            old_approvers = None
+            if self.project.paf_approvals.exists():
+                old_approvers = list(
+                    self.project.paf_approvals.filter(approved=False).values_list(
+                        "user__id", flat=True
+                    )
                 )
-            )
-        # remove PAF waiting assignee/approval task for paf approval user/reviewer roles.
-        if project_settings.paf_approval_sequential:
-            paf_approval = project.paf_approvals.filter(approved=False).first()
-            if paf_approval.user:
-                remove_tasks_for_user(
-                    code=PAF_WAITING_APPROVAL,
-                    user=paf_approval.user,
-                    related_obj=project,
-                )
-            else:
-                remove_tasks_for_user_group(
-                    code=PAF_WAITING_ASSIGNEE,
-                    user_group=paf_approval.paf_reviewer_role.user_roles.all(),
-                    related_obj=project,
-                )
-        else:
-            for approval in project.paf_approvals.filter(approved=False):
-                if approval.user:
+            # remove PAF waiting assignee/approval task for paf approval user/reviewer roles.
+            if project_settings.paf_approval_sequential:
+                paf_approval = self.project.paf_approvals.filter(approved=False).first()
+                if paf_approval.user:
                     remove_tasks_for_user(
                         code=PAF_WAITING_APPROVAL,
-                        user=approval.user,
-                        related_obj=project,
+                        user=paf_approval.user,
+                        related_obj=self.project,
                     )
                 else:
                     remove_tasks_for_user_group(
                         code=PAF_WAITING_ASSIGNEE,
-                        user_group=approval.paf_reviewer_role.user_roles.all(),
-                        related_obj=project,
-                    )
-
-        response = super().form_valid(form)
-
-        paf_approvals = self.object.paf_approvals.filter(approved=False)
-
-        if old_approvers and paf_approvals:
-            # if approvers exists already
-            if project_settings.paf_approval_sequential:
-                user = paf_approvals.first().user
-                if user and user.id != old_approvers[0]:
-                    # notify only if first user/approver is updated
-                    messenger(
-                        MESSAGES.APPROVE_PAF,
-                        request=self.request,
-                        user=self.request.user,
-                        source=self.object,
-                        related=[paf_approvals.first()],
-                    )
-                    # add PAF waiting approval task to paf_approval user
-                    add_task_to_user(
-                        code=PAF_WAITING_APPROVAL, user=user, related_obj=self.object
-                    )
-                elif not user:
-                    messenger(
-                        MESSAGES.ASSIGN_PAF_APPROVER,
-                        request=self.request,
-                        user=self.request.user,
-                        source=self.object,
-                    )
-                    # add PAF waiting assignee to paf_approvals reviewer roles
-                    add_task_to_user_group(
-                        code=PAF_WAITING_ASSIGNEE,
-                        user_group=paf_approvals.first().paf_reviewer_role.user_roles.all(),
-                        related_obj=self.object,
+                        user_group=paf_approval.paf_reviewer_role.user_roles.all(),
+                        related_obj=self.project,
                     )
             else:
+                for approval in self.project.paf_approvals.filter(approved=False):
+                    if approval.user:
+                        remove_tasks_for_user(
+                            code=PAF_WAITING_APPROVAL,
+                            user=approval.user,
+                            related_obj=self.project,
+                        )
+                    else:
+                        remove_tasks_for_user_group(
+                            code=PAF_WAITING_ASSIGNEE,
+                            user_group=approval.paf_reviewer_role.user_roles.all(),
+                            related_obj=self.project,
+                        )
+
+            form.save()
+
+            paf_approvals = self.project.paf_approvals.filter(approved=False)
+
+            if old_approvers and paf_approvals:
+                # if approvers exists already
+                if project_settings.paf_approval_sequential:
+                    user = paf_approvals.first().user
+                    if user and user.id != old_approvers[0]:
+                        # notify only if first user/approver is updated
+                        messenger(
+                            MESSAGES.APPROVE_PAF,
+                            request=self.request,
+                            user=self.request.user,
+                            source=self.project,
+                            related=[paf_approvals.first()],
+                        )
+                        # add PAF waiting approval task to paf_approval user
+                        add_task_to_user(
+                            code=PAF_WAITING_APPROVAL,
+                            user=user,
+                            related_obj=self.project,
+                        )
+                    elif not user:
+                        messenger(
+                            MESSAGES.ASSIGN_PAF_APPROVER,
+                            request=self.request,
+                            user=self.request.user,
+                            source=self.project,
+                        )
+                        # add PAF waiting assignee to paf_approvals reviewer roles
+                        add_task_to_user_group(
+                            code=PAF_WAITING_ASSIGNEE,
+                            user_group=paf_approvals.first().paf_reviewer_role.user_roles.all(),
+                            related_obj=self.project,
+                        )
+                else:
+                    if paf_approvals.filter(user__isnull=False).exists():
+                        messenger(
+                            MESSAGES.APPROVE_PAF,
+                            request=self.request,
+                            user=self.request.user,
+                            source=self.project,
+                            related=paf_approvals.filter(user__isnull=False),
+                        )
+                        # add PAF waiting approval task for paf_approvals users
+                        for paf_approval in paf_approvals.filter(user__isnull=False):
+                            add_task_to_user(
+                                code=PAF_WAITING_APPROVAL,
+                                user=paf_approval.user,
+                                related_obj=self.project,
+                            )
+                    if paf_approvals.filter(user__isnull=True).exists():
+                        messenger(
+                            MESSAGES.ASSIGN_PAF_APPROVER,
+                            request=self.request,
+                            user=self.request.user,
+                            source=self.project,
+                        )
+                        # add PAF waiting assignee task for paf_approvals reviewer_roles
+                        for paf_approval in paf_approvals.filter(user__isnull=True):
+                            add_task_to_user_group(
+                                code=PAF_WAITING_ASSIGNEE,
+                                user_group=paf_approval.paf_reviewer_role.user_roles.all(),
+                                related_obj=self.project,
+                            )
+            elif paf_approvals:
+                # :todo: check if this is covering any case(might be a duplicate of SendForApprovalView)
                 if paf_approvals.filter(user__isnull=False).exists():
                     messenger(
                         MESSAGES.APPROVE_PAF,
                         request=self.request,
                         user=self.request.user,
-                        source=self.object,
+                        source=self.project,
                         related=paf_approvals.filter(user__isnull=False),
                     )
                     # add PAF waiting approval task for paf_approvals users
@@ -1366,60 +1439,39 @@ class UpdatePAFApproversView(DelegatedViewMixin, UpdateView):
                         add_task_to_user(
                             code=PAF_WAITING_APPROVAL,
                             user=paf_approval.user,
-                            related_obj=self.object,
+                            related_obj=self.project,
                         )
                 if paf_approvals.filter(user__isnull=True).exists():
                     messenger(
                         MESSAGES.ASSIGN_PAF_APPROVER,
                         request=self.request,
                         user=self.request.user,
-                        source=self.object,
+                        source=self.project,
                     )
                     # add PAF waiting assignee task for paf_approvals reviewer_roles
                     for paf_approval in paf_approvals.filter(user__isnull=True):
                         add_task_to_user_group(
                             code=PAF_WAITING_ASSIGNEE,
                             user_group=paf_approval.paf_reviewer_role.user_roles.all(),
-                            related_obj=self.object,
+                            related_obj=self.project,
                         )
-        elif paf_approvals:
-            # :todo: check if this is covering any case(might be a duplicate of SendForApprovalView)
-            if paf_approvals.filter(user__isnull=False).exists():
-                messenger(
-                    MESSAGES.APPROVE_PAF,
-                    request=self.request,
-                    user=self.request.user,
-                    source=self.object,
-                    related=paf_approvals.filter(user__isnull=False),
-                )
-                # add PAF waiting approval task for paf_approvals users
-                for paf_approval in paf_approvals.filter(user__isnull=False):
-                    add_task_to_user(
-                        code=PAF_WAITING_APPROVAL,
-                        user=paf_approval.user,
-                        related_obj=self.object,
-                    )
-            if paf_approvals.filter(user__isnull=True).exists():
-                messenger(
-                    MESSAGES.ASSIGN_PAF_APPROVER,
-                    request=self.request,
-                    user=self.request.user,
-                    source=self.object,
-                )
-                # add PAF waiting assignee task for paf_approvals reviewer_roles
-                for paf_approval in paf_approvals.filter(user__isnull=True):
-                    add_task_to_user_group(
-                        code=PAF_WAITING_ASSIGNEE,
-                        user_group=paf_approval.paf_reviewer_role.user_roles.all(),
-                        related_obj=self.object,
-                    )
 
-        messages.success(
+            messages.success(
+                self.request,
+                _("PAF approvers have been updated"),
+                extra_tags=PROJECT_ACTION_MESSAGE_TAG,
+            )
+            return HttpResponseClientRefresh()
+        return render(
             self.request,
-            _("PAF approvers have been updated"),
-            extra_tags=PROJECT_ACTION_MESSAGE_TAG,
+            self.template_name,
+            context={
+                "form": form,
+                "value": _("Submit"),
+                "project_settings": project_settings,
+                "object": self.project,
+            },
         )
-        return response
 
 
 class BaseProjectDetailView(ReportingMixin, DetailView):
@@ -1448,12 +1500,10 @@ class AdminProjectDetailView(
         ApproveContractView,
         CommentFormView,
         SelectDocumentView,
-        UpdatePAFApproversView,
         ReportFrequencyUpdate,
         UpdateLeadView,
         UpdateProjectTitleView,
         UploadContractView,
-        ChangePAFStatusView,
         ChangeProjectstatusView,
         ChangeInvoiceStatusView,
         SkipPAFApprovalProcessView,
@@ -1680,7 +1730,6 @@ class ContractDocumentPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
 
 @method_decorator(staff_or_finance_or_contracting_required, name="dispatch")
 class ProjectDetailApprovalView(DelegateableView, DetailView):
-    form_views = [ChangePAFStatusView]
     model = Project
     template_name_suffix = "_approval_detail"
 
