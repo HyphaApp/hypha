@@ -27,6 +27,7 @@ from .views import (
     ReportSkipView,
     ReportUpdateView,
     SendForApprovalView,
+    UpdateAssignApproversView,
     UploadDocumentView,
     VendorDetailView,
     VendorPrivateMediaView,
@@ -61,6 +62,11 @@ urlpatterns = [
                     "documents/submit/",
                     SendForApprovalView.as_view(),
                     name="submit_project_for_approval",
+                ),
+                path(
+                    "pafapprovers/assign/",
+                    UpdateAssignApproversView.as_view(),
+                    name="assign_pafapprovers",
                 ),
                 path(
                     "document/<int:category_pk>/upload/",
