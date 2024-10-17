@@ -1729,7 +1729,7 @@ class ContractDocumentPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
 
 
 @method_decorator(staff_or_finance_or_contracting_required, name="dispatch")
-class ProjectDetailApprovalView(DelegateableView, DetailView):
+class ProjectDetailApprovalView(DetailView):
     model = Project
     template_name_suffix = "_approval_detail"
 
