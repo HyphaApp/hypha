@@ -1,7 +1,5 @@
 from django.core.exceptions import PermissionDenied as DjangoPermissionDenied
-from django.db import transaction
 from django.db.models import Prefetch
-from django.utils import timezone
 from django_filters import rest_framework as filters
 from rest_framework import mixins, permissions, viewsets
 from rest_framework.decorators import action
@@ -10,22 +8,17 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_api_key.permissions import HasAPIKey
 
-from hypha.apply.activity.messaging import MESSAGES, messenger
-from hypha.apply.activity.models import COMMENT, Activity
 from hypha.apply.determinations.views import DeterminationCreateOrUpdateView
 from hypha.apply.funds.models import ApplicationSubmission, RoundsAndLabs
 from hypha.apply.funds.reviewers.services import get_all_reviewers
 from hypha.apply.funds.workflow import STATUSES
 from hypha.apply.review.models import Review
 
-from .filters import CommentFilter, SubmissionsFilter
+from .filters import SubmissionsFilter
 from .mixin import SubmissionNestedMixin
 from .pagination import StandardResultsSetPagination
-from .permissions import IsApplyStaffUser, IsAuthor
+from .permissions import IsApplyStaffUser
 from .serializers import (
-    CommentCreateSerializer,
-    CommentEditSerializer,
-    CommentSerializer,
     OpenRoundLabSerializer,
     RoundLabDetailSerializer,
     RoundLabSerializer,
@@ -300,98 +293,6 @@ class RoundViewSet(
             return self.get_paginated_response(serializer.data)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
-
-
-class SubmissionCommentViewSet(
-    SubmissionNestedMixin,
-    mixins.ListModelMixin,
-    mixins.CreateModelMixin,
-    viewsets.GenericViewSet,
-):
-    """
-    List all the comments on a submission.
-    """
-
-    queryset = Activity.comments.all().select_related("user")
-    serializer_class = CommentCreateSerializer
-    permission_classes = (
-        permissions.IsAuthenticated,
-        IsApplyStaffUser,
-    )
-    filter_backends = (filters.DjangoFilterBackend,)
-    filter_class = CommentFilter
-    pagination_class = StandardResultsSetPagination
-
-    def get_queryset(self):
-        return (
-            super()
-            .get_queryset()
-            .filter(submission=self.get_submission_object())
-            .visible_to(self.request.user)
-        )
-
-    def perform_create(self, serializer):
-        """
-        Add a comment on a submission.
-        """
-        obj = serializer.save(
-            timestamp=timezone.now(),
-            type=COMMENT,
-            user=self.request.user,
-            source=self.get_submission_object(),
-        )
-        messenger(
-            MESSAGES.COMMENT,
-            request=self.request,
-            user=self.request.user,
-            source=obj.source,
-            related=obj,
-        )
-
-
-class CommentViewSet(viewsets.GenericViewSet):
-    """
-    Edit a comment.
-    """
-
-    queryset = Activity.comments.all().select_related("user")
-    serializer_class = CommentEditSerializer
-    permission_classes = (permissions.IsAuthenticated, IsAuthor)
-
-    def get_serializer_class(self):
-        if self.action == "list":
-            return CommentSerializer
-        return CommentEditSerializer
-
-    def get_queryset(self):
-        return super().get_queryset().visible_to(self.request.user)
-
-    @action(detail=True, methods=["post"])
-    def edit(self, request, *args, **kwargs):
-        return self.edit_comment(request, *args, **kwargs)
-
-    @transaction.atomic
-    def edit_comment(self, request, *args, **kwargs):
-        comment_to_edit = self.get_object()
-        comment_to_update = self.get_object()
-
-        comment_to_edit.previous = comment_to_update
-        comment_to_edit.pk = None
-        comment_to_edit.edited = timezone.now()
-
-        serializer = self.get_serializer(comment_to_edit, data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        if serializer.validated_data["message"] != comment_to_update.message:
-            self.perform_create(serializer)
-            comment_to_update.current = False
-            comment_to_update.save()
-            return Response(serializer.data)
-
-        return Response(self.get_serializer(comment_to_update).data)
-
-    def perform_create(self, serializer):
-        serializer.save()
 
 
 class CurrentUser(APIView):

@@ -8,13 +8,6 @@
 {% block body_class %}{% endblock %}
 
 {% block content %}
-    {% show_closing_banner object as show_banner %}
-    {% display_project_status object request.user as project_status %}
-    {% if show_banner %}
-        <div class="banner banner__close">
-            {% blocktrans with status=project_status %} This project is in {{ status }} state. {% endblocktrans %}
-        </div>
-    {% endif %}
     <div class="admin-bar">
         <div class="admin-bar__inner">
             <h1 class="mb-0 font-medium">{{ object.title }}
@@ -97,21 +90,17 @@
                         {% trans "Details" %}
                     </a>
 
-                    <a class="tab__item" href="#communications" data-tab="tab-2">
-                        {% trans "Communications" %}
+                    <a class="tab__item"
+                       href="#communications"
+                       data-tab="tab-2"
+                    >
+                        {% trans "Conversations" %} ({{ comments_count }})
                     </a>
 
                     <a
                         class="tab__item"
                         href="#activity-feed"
                         data-tab="tab-3"
-                        hx-get="{% url 'apply:projects:partial-activities' object.id %}"
-                        hx-target="#tab-3 .feed"
-                        hx-trigger="open-tab-3 once"
-                        data-tab="tab-3"
-                        x-data
-                        @hashchange.window="location.hash === '#activity-feed' ? $dispatch('open-tab-3') : ''"
-                        x-init="location.hash === '#activity-feed' ? $dispatch('open-tab-3') : ''"
                     >
                         {% trans "Activity Feed" %}
                     </a>
@@ -119,6 +108,14 @@
             </div>
         </div>
     </div>
+
+    {% show_closing_banner object as show_banner %}
+    {% display_project_status object request.user as project_status %}
+    {% if show_banner %}
+        <div class="bg-red-500 text-white font-semibold text-center p-2">
+            {% blocktrans with status=project_status %} This project is in {{ status }} state. {% endblocktrans %}
+        </div>
+    {% endif %}
 
     <div class="wrapper wrapper--large wrapper--tabs js-tabs-content">
         <div class="tabs__content" id="tab-1">
@@ -238,19 +235,33 @@
             </div>
         </div>
 
-    {# Tab 2 #}
+        {# Tab 2 #}
         <div class="tabs__content" id="tab-2">
             <div class="feed">
-                <h4 class="m-0">{% trans "Add communication" %}</h4>
-                {% include "activity/include/comment_form.html" %}
-                {% include "activity/include/comment_list.html" with editable=False %}
+                {% if not object.is_archive %}
+                    <h4 class="m-0 sr-only">{% trans "Add communication" %}</h4>
+                    {% include "activity/include/comment_form.html" %}
+                {% endif %}
+
+                <div
+                    class="comments"
+                    id="comment-feed"
+                    hx-get="{% url 'activity:partial-comments' 'project' object.id %}"
+                    hx-trigger="intersect once"
+                >
+                    <p>{% trans "Loading…" %}</p>
+                </div>
             </div>
         </div>
 
-    {# Tab 3 #}
+        {# Tab 3 #}
         <div class="tabs__content" id="tab-3">
-            <div class="feed">
-            {% comment %} Loaded using the htmx via alpine's custom event "open-tab-3"{% endcomment %}
+            <div
+                class="feed ms-3"
+                hx-get="{% url 'apply:projects:partial-activities' object.id %}"
+                hx-trigger="intersect once"
+            >
+                {% comment %} Loaded using the htmx via alpine's custom event "open-tab-3"{% endcomment %}
                 <p>{% trans "Loading…" %}</p>
             </div>
         </div>
@@ -263,10 +274,23 @@
 
 {% block extra_js %}
     <script src="{% static 'js/tabs.js' %}"></script>
-    <script src="{% static 'js/edit-comment.js' %}"></script>
     <script src="{% static 'js/document-category.js' %}"></script>
     <script src="{% static 'js/toggle-payment-block.js' %}"></script>
     <script src="{% static 'js/past-reports-pagination.js' %}"></script>
     <script src="{% static 'js/report-calculator.js' %}"></script>
     <script src="{% static 'js/jquery.fancybox.min.js' %}"></script>
+    <script>
+        // Scroll to hash after loading content
+        document.addEventListener('htmx:afterSettle', scrollToHash);
+        function scrollToHash() {
+            const hash = window.location.hash;
+            if (hash) {
+                const element = document.querySelector(hash);
+                if (element) {
+                    window.location.hash = '';
+                    window.location.hash = hash;
+                }
+            }
+        }
+    </script>
 {% endblock %}

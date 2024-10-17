@@ -1,0 +1,110 @@
+{% load i18n activity_tags nh3_tags markdown_tags submission_tags apply_tags heroicons users_tags %}
+
+<article class="timeline-item relative">
+    <div
+        class="flex py-3 -ms-8 md:-ms-20 before:block before:-z-10 before:absolute before:top-0 before:bottom-0 before:left-0 before:w-0.5 before:bg-slate-300"
+    >
+        {% with activity|display_activity_author:request.user as author_name %}
+            <div class="relative inline-flex justify-center me-4 items-start">
+                <div class="relative rounded-full inline-flex items-center justify-center border-white border-2 -ms-0.5 {% if activity.user.is_staff %}bg-slate-200 {% else %}bg-gray-100{% endif %}">
+                    <div class="md:block hidden p-2">
+                        {% user_image author_name size=25 %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="{% if activity.user == request.user %}border-cyan-300{% else %}border-gray-300{% endif %} flex-1 pb-2 bg-white border rounded target:ring-2 target:ring-cyan-500 scroll-m-2"
+                 id="communications--{{ activity.id }}">
+                <header class="{% if activity.user == request.user %}bg-fuchsia-100{% else %}bg-slate-100{% endif %} flex flex-wrap items-center justify-between gap-2 px-3 py-2 rounded-t">
+                    <div>
+                        <span>
+                            <strong class="font-semibold">{{ author_name }}</strong>
+
+                            {% if not request.user.is_applicant %}
+                                <span>
+                                    {% for role in activity.user.get_role_names  %}
+                                        <span
+                                            class="text-fg-muted font-semibold inline-block px-2 py-0.5 text-sm border border-gray-300 rounded-xl"
+                                            data-tippy-content="This user is a {{ role }}"
+                                        >
+                                            {{ role }}
+                                        </span>
+                                    {% endfor %}
+                                </span>
+                            {% endif %}
+
+                            <a href="#communications--{{activity.id}}" class="hover:underline">
+                                <span class="text-fg-muted">commented</span>
+                                <relative-time
+                                    class="text-fg-muted"
+                                    datetime="{{ activity.timestamp|date:"c" }}"
+                                >{{ activity.timestamp|date:"SHORT_DATETIME_FORMAT" }}</relative-time>
+                            </a>
+                        </span>
+
+
+                    </div>
+                    <div class="flex items-center gap-1">
+                        {% if not request.user.is_applicant %}
+
+                            {% if request.user.is_apply_staff and activity.assigned_to %}
+
+                                <span class="flex items-center gap-1 text-fg-muted text-xs border rounded-xl border-gray-300 py-0.5 px-1.5">
+                                    {% heroicon_outline "user-plus" size=14 class="inline" aria_hidden=true %}
+                                    {% if activity.assigned_to.id == request.user.id %}
+                                        {% trans "Assigned to you" %}
+                                    {% else %}
+                                        {% blocktrans with activity.assigned_to.full_name as assigned_to %}Assigned to {{ assigned_to }}{% endblocktrans %}
+                                    {% endif %}
+                                </span>
+                            {% endif %}
+
+                            {% with activity.visibility|visibility_display:request.user as visibility_text  %}
+                                <span class="text-fg-muted text-xs flex items-center gap-1 uppercase border rounded-xl border-gray-300 py-0.5 px-1.5"
+                                      data-tippy-content="This is visible to {{ visibility_text }}">
+                                    {% heroicon_outline "eye" size=14 class="inline" aria_hidden=true %}
+                                    {{ visibility_text }}
+                                </span>
+                            {% endwith %}
+
+                        {% endif %}
+
+                        {% if editable and activity.user == request.user %}
+                            <a
+                                hx-get="{% url 'activity:edit-comment' activity.id %}"
+                                hx-target="#text-comment-{{activity.id}}"
+                                title="Edit Comment"
+                                class="inline-flex items-center p-0.5 hover:bg-fuchsia-200 hover:opacity-100 opacity-80 transition-all rounded-md"
+                            >
+                                {% heroicon_micro "pencil-square" size=18 class="inline" aria_hidden=true %}
+                                <span class="sr-only">{% trans "Edit" %}</span>
+                            </a>
+                        {% endif %}
+                    </div>
+                </header>
+
+                <div class="">
+                    {% if submission_title %}
+                        {% trans "updated" %} <a href="{{ activity.source.get_absolute_url }}">{{ activity.source.title }}</a>
+                    {% endif %}
+
+                    <div class="px-3 pt-2" id="text-comment-{{activity.id}}">
+                        {% include 'activity/partial_comment_message.html' with activity=activity %}
+                    </div>
+
+                    {% if not submission_title and activity|user_can_see_related:request.user %}
+                        <div class="px-3">
+                            {% with url=activity.related_object.get_absolute_url %}
+                                {% if url %}
+                                    <a href="{{ url }}">
+                                        {% trans "View " %}{{ activity.related_object|model_verbose_name }} <svg class="icon inline"><use xlink:href="#arrow-head-pixels--solid"></use></svg>
+                                    </a>
+                                {% endif %}
+                            {% endwith %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endwith %}
+    </div>
+</article>

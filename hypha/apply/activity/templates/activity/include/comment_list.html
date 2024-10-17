@@ -1,9 +1,32 @@
 {% load i18n %}
 
-{% for comment in comments %}
-    {% include "activity/include/listing_base.html" with activity=comment %}
-{% endfor %}
+<div class="border-b-2 border-b-slate-300">
+    <section class="max-w-3xl ml-4 md:ml-20">
 
-{% if not comments %}
-    {% trans "No comments available" %}
-{% endif %}
+        <div class="timeline">
+            {% for activity in comments %}
+                {% if activity.type == "comment" %}
+                    {% include "activity/ui/activity-comment-item.html" with activity=activity %}
+                {% else %}
+                    {% include "activity/ui/activity-action-item.html" with activity=activity %}
+                {% endif %}
+            {% endfor %}
+
+            {% if page.has_next %}
+                <a
+                    href="{{ request.path }}?page={{ page.next_page_number }}"
+                    class="block text-sm text-slate-500 hover:text-slate-700 py-2"
+                    hx-get="{{ request.path }}?page={{ page.next_page_number }}"
+                    hx-trigger="intersect"
+                    hx-target="this"
+                    hx-swap="outerHTML"
+                    hx-select=".timeline"
+                >Show more...</a>
+            {% endif %}
+        </div>
+
+        {% if not comments %}
+            {% trans "No comments available" %}
+        {% endif %}
+    </section>
+</div>

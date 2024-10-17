@@ -1,6 +1,5 @@
 import copy
 
-from django.conf import settings
 from django.utils.translation import gettext as _
 
 from hypha.apply.activity.adapters.utils import link_to
@@ -21,8 +20,10 @@ INVOICE_REQUIRED_CHANGES = "invoice_required_changes"
 INVOICE_WAITING_APPROVAL = "invoice_waiting_approval"
 INVOICE_WAITING_PAID = "invoice_waiting_paid"
 REPORT_DUE = "report_due"
+COMMENT_TASK = "comment_task"
 
 TASKS_CODE_CHOICES = (
+    (COMMENT_TASK, "Comment Task"),
     (SUBMISSION_DRAFT, "Submission Draft"),
     (DETERMINATION_DRAFT, "Determination draft"),
     (REVIEW_DRAFT, "Review Draft"),
@@ -43,13 +44,20 @@ TASKS_CODE_CHOICES = (
 
 
 template_map = {
+    # ADD Manual Task
+    COMMENT_TASK: {
+        "text": _("{msg}"),
+        "icon": "comment",
+        "url": "{link}",
+        "type": _("Comment"),
+    },
     # SUBMISSIONS ACTIONS
-    # :todo: actions for mupltiple stages of submission
+    # :todo: actions for multiple stages of submission
     SUBMISSION_DRAFT: {
         "text": _(
             'A Submission draft [<span class="truncate inline-block max-w-32 align-bottom ">{related.title}</span>]({link} "{related.title}") is waiting to be submitted'
         ),
-        "icon": "edit-draft",
+        "icon": "comment",
         "url": "{link}",
         "type": _("Draft"),
     },
@@ -180,19 +188,10 @@ template_map = {
 
 
 def get_task_template(request, task, **kwargs):
-    from hypha.apply.projects.models import Invoice, Project
-
     related_obj = task.related_object
     code = task.code
     # if related_object is none/deleted and task remain there(edge case, avoiding 500)
     if not related_obj:
-        return None
-
-    # if project are not enabled
-    if not settings.PROJECTS_ENABLED and (
-        isinstance(task.related_object, Project)
-        or isinstance(task.related_object, Invoice)
-    ):
         return None
 
     templates = copy.deepcopy(template_map)
@@ -205,6 +204,8 @@ def get_task_template(request, task, **kwargs):
         "related": related_obj,
         "link": link_to(related_obj, request),
     }
+    if task.code == COMMENT_TASK:
+        template_kwargs["msg"] = related_obj.message
     template["text"] = template["text"].format(**template_kwargs)
     template["url"] = template["url"].format(**template_kwargs)
     # additional field

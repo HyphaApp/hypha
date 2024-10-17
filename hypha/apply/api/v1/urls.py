@@ -7,11 +7,9 @@ from hypha.apply.api.v1.reminder.views import SubmissionReminderViewSet
 from hypha.apply.api.v1.review.views import SubmissionReviewViewSet
 
 from .views import (
-    CommentViewSet,
     CurrentUser,
     RoundViewSet,
     SubmissionActionViewSet,
-    SubmissionCommentViewSet,
     SubmissionFilters,
     SubmissionViewSet,
 )
@@ -21,7 +19,6 @@ app_name = "v1"
 
 router = routers.SimpleRouter()
 router.register(r"submissions", SubmissionViewSet, basename="submissions")
-router.register(r"comments", CommentViewSet, basename="comments")
 router.register(r"rounds", RoundViewSet, basename="rounds")
 
 submission_router = routers.NestedSimpleRouter(
@@ -29,9 +26,6 @@ submission_router = routers.NestedSimpleRouter(
 )
 submission_router.register(
     r"actions", SubmissionActionViewSet, basename="submission-actions"
-)
-submission_router.register(
-    r"comments", SubmissionCommentViewSet, basename="submission-comments"
 )
 submission_router.register(r"reviews", SubmissionReviewViewSet, basename="reviews")
 submission_router.register(

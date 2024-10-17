@@ -59,7 +59,11 @@
         updateTabOnLoad() {
             // Find tab with matching hash and activate
             const url = document.location.toString();
-            const tabName = url.split("#")[1];
+            let tabName = url.split("#")[1];
+            // check if tabName contains "--"
+            if (tabName && tabName.includes("--")) {
+                tabName = tabName.split("--")[0];
+            }
             const match = this.findTab(tabName);
 
             return tabName

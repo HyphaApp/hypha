@@ -1,0 +1,43 @@
+{% load i18n activity_tags heroicons %}
+
+{% with activity|display_for:request.user as activity_text %}
+    <div class="timeline-item relative" id="communications#{{ activity.id }}">
+        <div
+            class="flex py-2 -ml-3  items-center before:block before:-z-10 before:absolute before:top-0 before:bottom-0 before:left-0 before:w-0.5 before:bg-slate-300"
+        >
+            <div class="relative inline-flex justify-center me-2 items-start">
+                <div class="relative rounded-full inline-flex items-center justify-center border-white border-2 -ms-0.5 {% if activity.user.is_staff %}bg-slate-200 {% else %}bg-gray-200{% endif %}">
+                    <div class="inline-flex items-center justify-center w-6 h-6 text-fg-muted">
+                        {% if 'edit' in activity_text.lower %}
+                            {% heroicon_micro "pencil-square" class="inline" aria_hidden=true size=14 %}
+                        {% elif 'progressed' in activity_text.lower %}
+                            {% heroicon_micro "arrow-trending-up" class="inline" aria_hidden=true size=14 %}
+                        {% elif 'sent a determination' in activity_text.lower %}
+                            {% heroicon_micro "rocket-launch" class="inline" aria_hidden=true size=14 %}
+                        {% elif 'submitted a review' in activity_text.lower %}
+                            {% heroicon_micro "chat-bubble-left-ellipsis" class="inline" aria_hidden=true size=14 %}
+                        {% elif 'un-archived' in activity_text.lower %}
+                            {% heroicon_micro "lock-open" class="inline" aria_hidden=true size=14 %}
+                        {% elif 'archived' in activity_text.lower %}
+                            {% heroicon_micro "lock-closed" class="inline" aria_hidden=true size=14 %}
+                        {% else %}
+                            {% heroicon_micro "eye" class="inline" aria_hidden=true size=15 %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-sm">
+                <strong class="font-medium">
+                    {{ activity|display_activity_author:request.user }}
+                </strong>
+                <span class="text-fg-muted">
+                    {{ activity_text|lowerfirst|safe }}
+                    <relative-time datetime="{{ activity.timestamp|date:'c' }}">
+                        {{ activity.timestamp|date:'SHORT_DATETIME_FORMAT' }}
+                    </relative-time>
+                </span>
+            </div>
+        </div>
+    </div>
+{% endwith %}

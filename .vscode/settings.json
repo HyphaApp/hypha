@@ -9,6 +9,7 @@
     "pytestmark",
     "ratelimit",
     "SIGNUP",
+    "svgwrite",
     "WAGTAILADMIN",
     "wagtailcore"
   ]

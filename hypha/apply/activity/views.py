@@ -1,20 +1,97 @@
 from django.conf import settings
-from django.shortcuts import get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
+from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 from django.utils.decorators import method_decorator
+from django.views.decorators.http import require_http_methods
 from django.views.generic import CreateView, ListView
 from django_ratelimit.decorators import ratelimit
 
 from hypha.apply.funds.models.submissions import ApplicationSubmission
+from hypha.apply.funds.permissions import has_permission as has_funds_permission
+from hypha.apply.projects.models.project import Project
+from hypha.apply.projects.permissions import has_permission as has_projects_permission
 from hypha.apply.users.decorators import staff_required
 from hypha.apply.utils.storage import PrivateMediaView
 from hypha.apply.utils.views import DelegatedViewMixin
 
+from . import services
 from .filters import NotificationFilter
 from .forms import CommentForm
 from .messaging import MESSAGES, messenger
 from .models import COMMENT, Activity, ActivityAttachment
-from .services import get_related_comments_for_user
+
+
+@login_required
+@require_http_methods(["GET"])
+def partial_comments(request, content_type: str, pk: int):
+    """
+    Render a partial view of comments for a given content type and primary key.
+
+    This view handles comments for both 'submission' and 'project' content types.
+    It checks the user's permissions and fetches the related comments for the user.
+    The comments are paginated and rendered in the 'comment_list' template.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+        content_type (str): The type of content ('submission' or 'project').
+        pk (int): The primary key of the content object.
+
+    Returns:
+        HttpResponse: The rendered 'comment_list' template with the context data.
+    """
+    if content_type == "submission":
+        obj = get_object_or_404(ApplicationSubmission, pk=pk)
+        has_funds_permission(
+            "submission_view", request.user, object=obj, raise_exception=True
+        )
+        editable = not obj.is_archive
+    elif content_type == "project":
+        obj = get_object_or_404(Project, pk=pk)
+        has_projects_permission(
+            "project_access", request.user, object=obj, raise_exception=True
+        )
+        editable = False if obj.status == "complete" else True
+    else:
+        return render(request, "activity/include/comment_list.html", {})
+
+    qs = services.get_related_comments_for_user(obj, request.user)
+    page = Paginator(qs, per_page=10, orphans=5).page(request.GET.get("page", 1))
+
+    ctx = {
+        "page": page,
+        "comments": page.object_list,
+        "editable": editable,
+    }
+    return render(request, "activity/include/comment_list.html", ctx)
+
+
+@login_required
+def edit_comment(request, pk):
+    """Edit a comment."""
+    activity = get_object_or_404(Activity, id=pk)
+
+    if activity.type != COMMENT or activity.user != request.user:
+        raise PermissionError("You can only edit your own comments")
+
+    if request.GET.get("action") == "cancel":
+        return render(
+            request,
+            "activity/partial_comment_message.html",
+            {"activity": activity},
+        )
+
+    if request.method == "POST":
+        activity = services.edit_comment(activity, request.POST.get("message"))
+
+        return render(
+            request,
+            "activity/partial_comment_message.html",
+            {"activity": activity, "success": True},
+        )
+
+    return render(request, "activity/ui/edit_comment_form.html", {"activity": activity})
 
 
 class ActivityContextMixin:
@@ -24,7 +101,12 @@ class ActivityContextMixin:
         extra = {
             # Do not prefetch on the related_object__author as the models
             # are not homogeneous and this will fail
-            "comments": get_related_comments_for_user(self.object, self.request.user)
+            "comments": services.get_related_comments_for_user(
+                self.object, self.request.user
+            ),
+            "comments_count": services.get_comment_count(
+                self.object, self.request.user
+            ),
         }
         return super().get_context_data(**extra, **kwargs)
 
@@ -60,7 +142,9 @@ class CommentFormView(DelegatedViewMixin, CreateView):
         """Get the kwargs for the [`CommentForm`][hypha.apply.activity.forms.CommentForm].
 
         Returns:
-            A dict of kwargs to be passed to [`CommentForm`][hypha.apply.activity.forms.CommentForm]. The submission instance is removed from this return, while a boolean of `has_partners` is added based off the submission.
+            A dict of kwargs to be passed to [`CommentForm`][hypha.apply.activity.forms.CommentForm].
+            The submission instance is removed from this return, while a boolean of `has_partners` is
+            added based off the submission.
         """
         kwargs = super().get_form_kwargs()
         instance = kwargs.pop("instance")
