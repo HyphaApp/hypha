@@ -16,7 +16,6 @@ from hypha.apply.projects.models.project import (
     CLOSING,
     COMPLETE,
     INVOICING_AND_REPORTING,
-    ProjectSettings,
 )
 from hypha.apply.projects.utils import (
     get_invoice_public_status,
@@ -83,12 +82,6 @@ def user_can_add_invoices(project, user):
     ):
         return True
     return False
-
-
-@register.simple_tag
-def is_vendor_setup(request):
-    project_settings = ProjectSettings.for_request(request)
-    return project_settings.vendor_setup_required
 
 
 @register.simple_tag

@@ -1743,9 +1743,7 @@ class ProjectDetailDownloadView(SingleObjectMixin, View):
         context["project_link"] = self.request.build_absolute_uri(
             reverse("apply:projects:detail", kwargs={"pk": self.object.id})
         )
-        context["contractor_name"] = (
-            self.object.vendor.contractor_name if self.object.vendor else None
-        )
+        context["contractor_name"] = self.object.user
 
         context["approvals"] = self.object.paf_approvals.all()
         context["paf_data"] = self.get_paf_data_with_field(self.object)

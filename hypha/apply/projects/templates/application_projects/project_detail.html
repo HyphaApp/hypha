@@ -130,13 +130,13 @@
                     <div class="hypha-grid hypha-grid--proposal-info">
                         <div>
                             <h5>{% trans "Contractor" %}</h5>
-                            <p>{{ object.vendor.name |default:"-" }}</p>
+                            <p>{{ object.user |default:"-" }}</p>
                         </div>
 
                         <div>
                             <h5>{% trans "E-mail" %}</h5>
-                            {% if object.vendor.user.email %}
-                                <a href="mailto:{{ object.vendor.user.email }}">{{ object.vendor.user.email }}</a>
+                            {% if object.user.email %}
+                                <a href="mailto:{{ object.user.email }}">{{ object.user.email }}</a>
                             {% else %}
                                 -
                             {% endif %}

@@ -46,7 +46,6 @@ The WagTail Admin is your "back office" for setting up form applications and pub
 
 - Cookie consent settings: Cookie consent settings allow us to store your settings and preferences
 - User settings: Users could add a consent checkbox on login form and include extra text on login form
-- Vendor form settings
 - Project settings: Creating forms in Projects
 - Determination messages: Pre-populated text
 - Determination settings: Creating determination forms

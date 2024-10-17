@@ -57,8 +57,7 @@ class EmailAdapter(AdapterBase):
         MESSAGES.PARTNERS_UPDATED_PARTNER: "partners_updated_partner",
         MESSAGES.UPLOAD_CONTRACT: "messages/email/contract_uploaded.html",
         MESSAGES.SUBMIT_CONTRACT_DOCUMENTS: "messages/email/submit_contract_documents.html",
-        MESSAGES.CREATED_PROJECT: "handle_project_created",
-        MESSAGES.UPDATED_VENDOR: "handle_vendor_updated",
+        MESSAGES.CREATED_PROJECT: "messages/email/project_created.html",
         MESSAGES.SENT_TO_COMPLIANCE: "messages/email/sent_to_compliance.html",
         MESSAGES.REQUEST_PROJECT_CHANGE: "messages/email/project_request_change.html",
         MESSAGES.ASSIGN_PAF_APPROVER: "messages/email/assign_paf_approvers.html",
@@ -205,23 +204,6 @@ class EmailAdapter(AdapterBase):
     def handle_invoice_updated(self, **kwargs):
         return self.render_message(
             "messages/email/invoice_updated.html",
-            **kwargs,
-        )
-
-    def handle_project_created(self, source, **kwargs):
-        from hypha.apply.projects.models import ProjectSettings
-
-        request = kwargs.get("request")
-        project_settings = ProjectSettings.for_request(request)
-        if project_settings.vendor_setup_required:
-            return self.render_message(
-                "messages/email/vendor_setup_needed.html", source=source, **kwargs
-            )
-
-    def handle_vendor_updated(self, source, **kwargs):
-        return self.render_message(
-            "messages/email/vendor_updated.html",
-            source=source,
             **kwargs,
         )
 
