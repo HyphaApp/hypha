@@ -33,42 +33,12 @@ export default [
         },
 
         rules: {
-            "array-bracket-spacing": ["error", "never"],
             "block-scoped-var": "error",
-            "comma-spacing": "error",
             "comma-style": ["error", "last"],
-            "computed-property-spacing": ["error", "never"],
-            curly: ["error", "all"],
-            "eol-last": "error",
-            eqeqeq: ["error", "smart"],
             "guard-for-in": "error",
-
-            "key-spacing": [
-                "error",
-                {
-                    beforeColon: false,
-                    afterColon: true,
-                },
-            ],
-
-            "keyword-spacing": [
-                "error",
-                {
-                    before: true,
-                    after: true,
-                },
-            ],
-
-            "linebreak-style": ["error", "unix"],
-
-            "lines-around-comment": [
-                "error",
-                {
-                    beforeBlockComment: true,
-                    afterBlockComment: false,
-                },
-            ],
-
+            "jsdoc/require-description": "warn",
+            "jsdoc/tag-lines": ["off", "never"],
+            "max-nested-callbacks": ["warn", 3],
             "new-parens": "error",
             "no-array-constructor": "error",
             "no-caller": "error",
@@ -83,7 +53,6 @@ export default [
             "no-labels": "error",
             "no-lone-blocks": "error",
             "no-loop-func": "error",
-            "no-multi-spaces": "error",
             "no-multi-str": "error",
             "no-native-reassign": "error",
             "no-nested-ternary": "error",
@@ -97,12 +66,9 @@ export default [
             "no-script-url": "error",
             "no-sequences": "error",
             "no-shadow-restricted-names": "error",
-            "no-spaced-func": "error",
-            "no-trailing-spaces": "error",
             "no-undef-init": "error",
             "no-undefined": "error",
             "no-unused-expressions": "error",
-
             "no-unused-vars": [
                 "error",
                 {
@@ -110,46 +76,13 @@ export default [
                     args: "none",
                 },
             ],
-
             "no-with": "error",
             "one-var": ["error", "never"],
+            curly: ["error", "all"],
+            eqeqeq: ["error", "smart"],
             semi: ["error", "always"],
-
-            "semi-spacing": [
-                "error",
-                {
-                    before: false,
-                    after: true,
-                },
-            ],
-
-            "space-before-blocks": ["error", "always"],
-
-            "space-before-function-paren": [
-                "error",
-                {
-                    anonymous: "always",
-                    named: "never",
-                },
-            ],
-
-            "space-in-parens": ["error", "never"],
-            "space-infix-ops": "error",
-
-            "space-unary-ops": [
-                "error",
-                {
-                    words: true,
-                    nonwords: false,
-                },
-            ],
-
-            "spaced-comment": ["error", "always"],
             strict: ["error", "function"],
             yoda: ["error", "never"],
-            "max-nested-callbacks": ["warn", 3],
-            "jsdoc/require-description": "warn",
-            "jsdoc/tag-lines": ["off", "never"],
         },
     },
 ];
