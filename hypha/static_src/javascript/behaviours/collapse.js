@@ -1,5 +1,4 @@
 (function () {
-    "use strict";
 
     /**
      * Adds collapsible functionality with a "Show" button to an element.
