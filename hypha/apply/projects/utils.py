@@ -15,10 +15,8 @@ from .constants import (
 from .models import Deliverable, Project
 from .models.payment import (
     APPROVED_BY_FINANCE,
-    APPROVED_BY_FINANCE_2,
     APPROVED_BY_STAFF,
     CHANGES_REQUESTED_BY_FINANCE,
-    CHANGES_REQUESTED_BY_FINANCE_2,
     CHANGES_REQUESTED_BY_STAFF,
     DECLINED,
     INVOICE_STATUS_CHOICES,
@@ -153,17 +151,14 @@ def get_paf_status_display(paf_status):
 
 # Invoices public statuses
 def get_invoice_public_status(invoice_status):
-    if (
-        invoice_status
-        in [SUBMITTED, RESUBMITTED, APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE]
-    ) or (
-        invoice_status in [APPROVED_BY_FINANCE, CHANGES_REQUESTED_BY_FINANCE_2]
-        and settings.INVOICE_EXTENDED_WORKFLOW
-    ):
+    if invoice_status in [
+        SUBMITTED,
+        RESUBMITTED,
+        APPROVED_BY_STAFF,
+        CHANGES_REQUESTED_BY_FINANCE,
+    ]:
         return _("Pending approval")
-    if (invoice_status == APPROVED_BY_FINANCE) or (
-        invoice_status == APPROVED_BY_FINANCE_2 and settings.INVOICE_EXTENDED_WORKFLOW
-    ):
+    if invoice_status == APPROVED_BY_FINANCE:
         return _("Approved")
     if invoice_status == CHANGES_REQUESTED_BY_STAFF:
         return _("Request for change or more information")
@@ -197,13 +192,6 @@ def get_invoice_table_status(invoice_status, is_applicant=False):
             return INT_REQUEST_FOR_CHANGE
         return INT_VENDOR_PENDING
     if invoice_status in [APPROVED_BY_STAFF, CHANGES_REQUESTED_BY_FINANCE]:
-        if is_applicant:
-            return INT_ORG_PENDING
-        return INT_FINANCE_PENDING
-    if settings.INVOICE_EXTENDED_WORKFLOW and invoice_status in [
-        APPROVED_BY_FINANCE,
-        CHANGES_REQUESTED_BY_FINANCE_2,
-    ]:
         if is_applicant:
             return INT_ORG_PENDING
         return INT_FINANCE_PENDING

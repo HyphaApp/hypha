@@ -246,10 +246,7 @@ class FinanceDashboardView(MyFlaggedMixin, TemplateView):
         }
 
     def active_invoices(self):
-        if self.request.user.is_finance_level_2:
-            invoices = Invoice.objects.for_finance_2()
-        else:
-            invoices = Invoice.objects.for_finance_1()
+        invoices = Invoice.objects.for_finance_1()
 
         return {
             "count": invoices.count(),
@@ -257,19 +254,11 @@ class FinanceDashboardView(MyFlaggedMixin, TemplateView):
         }
 
     def invoices_for_approval(self):
-        if self.request.user.is_finance_level_2:
-            invoices = Invoice.objects.approved_by_finance_1()
-        else:
-            invoices = Invoice.objects.approved_by_staff()
+        invoices = Invoice.objects.approved_by_staff()
 
         return {"count": invoices.count(), "table": InvoiceDashboardTable(invoices)}
 
     def invoices_to_convert(self):
-        if settings.INVOICE_EXTENDED_WORKFLOW and self.request.user.is_finance_level_1:
-            return {
-                "count": None,
-                "table": None,
-            }
         invoices = Invoice.objects.waiting_to_convert()
         return {
             "count": invoices.count(),

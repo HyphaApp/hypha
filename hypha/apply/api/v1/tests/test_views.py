@@ -1,4 +1,4 @@
-from django.test import TestCase, override_settings
+from django.test import TestCase
 from django.urls import reverse_lazy
 from rest_framework.exceptions import ErrorDetail
 
@@ -6,7 +6,6 @@ from hypha.apply.activity.models import ALL, APPLICANT, Activity
 from hypha.apply.activity.tests.factories import CommentFactory
 from hypha.apply.projects.models.payment import (
     APPROVED_BY_FINANCE,
-    APPROVED_BY_FINANCE_2,
     APPROVED_BY_STAFF,
     SUBMITTED,
 )
@@ -18,7 +17,6 @@ from hypha.apply.projects.tests.factories import (
 )
 from hypha.apply.users.tests.factories import (
     ApplicantFactory,
-    Finance2Factory,
     FinanceFactory,
     StaffFactory,
     UserFactory,
@@ -177,17 +175,6 @@ class TestInvoiceDeliverableViewset(TestCase):
         response = self.post_to_add(project.id, invoice.id, deliverable.id)
         self.assertEqual(response.status_code, 201)
 
-    @override_settings(INVOICE_EXTENDED_WORKFLOW=True)
-    def test_finance2_can_add_deliverables(self):
-        user = Finance2Factory()
-        project = ProjectFactory()
-        invoice = InvoiceFactory(project=project, status=APPROVED_BY_FINANCE)
-        deliverable = DeliverableFactory(project=project)
-        self.client.force_login(user)
-
-        response = self.post_to_add(project.id, invoice.id, deliverable.id)
-        self.assertEqual(response.status_code, 201)
-
     def test_applicant_cant_remove_deliverables(self):
         user = ApplicantFactory()
         project = ProjectFactory()
@@ -247,36 +234,6 @@ class TestInvoiceDeliverableViewset(TestCase):
 
         response = self.delete_to_remove(project.id, invoice.id, invoice_deliverable.id)
         self.assertEqual(response.status_code, 403)
-
-    @override_settings(INVOICE_EXTENDED_WORKFLOW=True)
-    def test_finance2_can_remove_deliverables(self):
-        user = Finance2Factory()
-        project = ProjectFactory()
-        invoice = InvoiceFactory(project=project, status=APPROVED_BY_FINANCE)
-        deliverable = DeliverableFactory(project=project)
-        invoice_deliverable = InvoiceDeliverableFactory(deliverable=deliverable)
-        invoice.deliverables.add(invoice_deliverable)
-        self.client.force_login(user)
-
-        response = self.delete_to_remove(project.id, invoice.id, invoice_deliverable.id)
-        self.assertEqual(response.status_code, 200)
-
-    def test_deliverables_cant_removed_after_finance2_approval(self):
-        project = ProjectFactory()
-        invoice = InvoiceFactory(project=project, status=APPROVED_BY_FINANCE_2)
-        deliverable = DeliverableFactory(project=project)
-        invoice_deliverable = InvoiceDeliverableFactory(deliverable=deliverable)
-        invoice.deliverables.add(invoice_deliverable)
-
-        finance1 = FinanceFactory()
-        finance2 = Finance2Factory()
-        staff = StaffFactory()
-        for user in [staff, finance1, finance2]:
-            self.client.force_login(user)
-            response = self.delete_to_remove(
-                project.id, invoice.id, invoice_deliverable.id
-            )
-            self.assertEqual(response.status_code, 403)
 
     def test_deliverable_dont_exists_in_project_deliverables(self):
         user = StaffFactory()

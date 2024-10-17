@@ -18,7 +18,6 @@ class Migration(migrations.Migration):
                     ("changes_requested", "Changes Requested"),
                     ("approved_by_staff", "Approved by staff"),
                     ("approved_by_finance1", "Approved By Finance 1"),
-                    ("approved_by_finance2", "Approved By Finance 2"),
                     ("resubmitted", "Resubmitted"),
                     ("paid", "Paid"),
                     ("declined", "Declined"),

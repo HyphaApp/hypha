@@ -12,7 +12,6 @@ from ..permissions import (
     HasDeliverableEditPermission,
     IsApplyStaffUser,
     IsFinance1User,
-    IsFinance2User,
 )
 from .serializers import (
     DeliverableSerializer,
@@ -30,7 +29,7 @@ class InvoiceDeliverableViewSet(
     permission_classes = (
         permissions.IsAuthenticated,
         HasDeliverableEditPermission,
-        IsApplyStaffUser | IsFinance1User | IsFinance2User,
+        IsApplyStaffUser | IsFinance1User,
     )
     serializer_class = InvoiceDeliverableListSerializer
     pagination_class = None
