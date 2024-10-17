@@ -13,6 +13,7 @@ from .project import (
     ApproveContractView,
     BaseProjectDetailView,
     CategoryTemplatePrivateMediaView,
+    ChangePAFStatusView,
     ContractDocumentPrivateMediaView,
     ContractPrivateMediaView,
     ProjectDetailApprovalView,
@@ -26,7 +27,9 @@ from .project import (
     RemoveDocumentView,
     SelectDocumentView,
     SendForApprovalView,
+    UpdateAssignApproversView,
     UpdateLeadView,
+    UpdatePAFApproversView,
     UploadContractView,
     UploadDocumentView,
 )
@@ -34,6 +37,7 @@ from .project_partials import (
     get_invoices_status_counts,
     get_project_status_counts,
     partial_project_activities,
+    partial_supporting_documents,
 )
 from .report import (
     ReportDetailView,
@@ -47,11 +51,15 @@ from .vendor import CreateVendorView, VendorDetailView, VendorPrivateMediaView
 
 __all__ = [
     "partial_project_activities",
+    "partial_supporting_documents",
     "get_invoices_status_counts",
     "get_project_status_counts",
     "ChangeInvoiceStatusView",
     "SendForApprovalView",
+    "UpdatePAFApproversView",
+    "ChangePAFStatusView",
     "UploadDocumentView",
+    "UpdateAssignApproversView",
     "RemoveDocumentView",
     "SelectDocumentView",
     "UpdateLeadView",
