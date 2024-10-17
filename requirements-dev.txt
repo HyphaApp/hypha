@@ -7,9 +7,9 @@ django-debug-toolbar==4.3.0
 django-dynamic-fixture==4.0.1
 djhtml==3.0.6
 dslr==0.4.0
-factory_boy==3.2.1
-Faker==19.13.0
 freezegun==1.5.1
+factory_boy==3.3.1
+Faker==28.4.1
 model-bakery==1.17.0
 pre-commit==3.6.2
 pytest-cov==4.1.0
@@ -19,5 +19,5 @@ pytest-xdist[psutil]==3.5.0
 responses==0.25.0
 ruff==0.3.3
 time-machine==2.14.0
-wagtail-factories==2.1.0
+wagtail-factories==4.2.1
 Werkzeug==3.0.3

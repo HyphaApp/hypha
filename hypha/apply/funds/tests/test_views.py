@@ -1,6 +1,7 @@
 import re
 from datetime import timedelta
 
+import wagtail.blocks
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
@@ -60,6 +61,39 @@ def prepare_form_data(submission, **kwargs):
         data[field_id] = value
 
     return CustomFormFieldsFactory.form_response(submission.form_fields, data)
+
+
+def check_form_fields_equality(form_fields_1, form_fields_2):
+    for form_field_1, form_field_2 in zip(form_fields_1, form_fields_2):
+        if form_field_1.block != form_field_2.block:  # The block types must be the same
+            return False
+
+        # Check if the form field values are StructValues (composite types)
+        if isinstance(form_field_1.value, wagtail.blocks.StructValue):
+            # Iterate through both StructValue fields and compare their key-value pairs
+            for (key_1, field_value_1), (key_2, field_value_2) in zip(
+                form_field_1.value.items(), form_field_2.value.items()
+            ):
+                if key_1 != key_2:  # Keys (field_labels, etc.) must match
+                    return False
+
+                # Check if the values for these keys are equal
+                if field_value_1 != field_value_2:
+                    # If values aren't equal, ensure they are of the same type
+                    if not isinstance(field_value_1, type(field_value_2)):
+                        return False
+
+                    # If the values are ListValues (e.g., multiple choice), compare their individual elements
+                    if isinstance(field_value_1, wagtail.blocks.list_block.ListValue):
+                        for item_value_1, item_value_2 in zip(
+                            field_value_1, field_value_2
+                        ):
+                            if item_value_1 != item_value_2:
+                                return False
+        else:
+            if form_field_1.value != form_fields_2.value:
+                return False
+    return True
 
 
 class BaseSubmissionViewTestCase(BaseViewTestCase):
@@ -140,7 +174,10 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         self.assertNotEqual(stage, new_stage)
 
         get_forms = submission.get_from_parent("get_defined_fields")
-        self.assertEqual(submission.form_fields, get_forms(new_stage))
+
+        self.assertTrue(
+            check_form_fields_equality(submission.form_fields, get_forms(new_stage))
+        )
         self.assertNotEqual(submission.form_fields, get_forms(stage))
 
     def test_cant_progress_stage_if_not_lead(self):

@@ -185,7 +185,7 @@ class TestRoundModelWorkflowAndForms(TestCase):
         del self.round.parent_page
         form = self.round.forms.first().form
         # Not ideal, would prefer better way to create the stream values
-        new_field = CustomFormFieldsFactory.generate(None, {})
+        new_field = CustomFormFieldsFactory.evaluate(self.round, None, {})
         form.form_fields = new_field
         form.save()
         for round_form, fund_form in itertools.zip_longest(
