@@ -425,4 +425,12 @@
             fill: $color--tomato;
         }
     }
+
+    // Review score toggle.
+    &--score {
+        @include button--small;
+        display: inline-block;
+        border: 1px solid $color--white;
+        font-weight: $weight--normal;
+    }
 }

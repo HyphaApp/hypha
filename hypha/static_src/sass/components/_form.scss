@@ -34,6 +34,12 @@
         }
     }
 
+    &--score-box {
+        background-color: $color--dark-grey;
+        color: $color--white;
+        font-weight: $weight--bold;
+    }
+
     &__group {
         position: relative;
         margin-block-start: 0.5rem;
