@@ -202,6 +202,9 @@ def submission_all_beta(
             selected_category_options,
             selected_screening_statuses,
             selected_sort,
+            search_query,
+            request.GET.get("archived"),
+            request.GET.get("drafts"),
         ]
     )
 
