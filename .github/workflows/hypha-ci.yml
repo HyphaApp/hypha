@@ -16,6 +16,7 @@ concurrency:
 jobs:
   build-fe:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -27,56 +28,24 @@ jobs:
       - name: builds static assets
         run: npm run build
 
-  build-be:
+  lint:
     runs-on: ubuntu-latest
-    env:
-      DJANGO_SETTINGS_MODULE: hypha.settings.test
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version-file: ".python-version"
-          cache: "pip"
-          cache-dependency-path: "**/requirements*.txt"
-      - name: install python dependencies
-        run: |
-          python3 -m venv venv
-          . venv/bin/activate
-          pip install --upgrade pip
-          pip install wheel
-          pip install -r requirements-dev.txt
 
-  lint-fe:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: ".nvmrc"
-          cache: "npm"
-      - name: install node dependencies
-        run: npm install --quiet
-      - name: run scss and js linting
-        run: npm run lint
+      # Fix for mirror-eslint pre-commit hook not able to find "globals" package
+      - run: npm install globals
 
-  lint-be:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version-file: ".python-version"
-      - name: Install python dependencies
-        run: pip install `grep -E "ruff|djhtml" requirements-dev.txt`
-      - name: Run linting
-        run: ruff check --output-format=github .
-      - name: Run formating check
-        run: ruff format --check .
-      - name: Run djhtml
-        run: djhtml hypha/ --check
+      - name: Run pre-commit
+        uses: pre-commit/action@v3.0.1
 
   test-be:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     env:
       DATABASE_URL: postgresql://hypha:hypha@localhost/hypha?sslmode=disable
       DJANGO_SETTINGS_MODULE: hypha.settings.test

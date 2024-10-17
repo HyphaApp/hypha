@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.3.3
+    rev: v0.6.9
     hooks:
       # Run the linter.
       - id: ruff
@@ -14,7 +14,31 @@ repos:
       - id: djhtml
         files: .*/templates/.*\.html$
 
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v9.12.0
+    hooks:
+      - id: eslint
+        files: .*/static_src/javascript/.*\.js$
+        additional_dependencies:
+          - eslint@9.12.0
+          - globals@15.11.0
+          - eslint-config-prettier@8.10.0
+          - eslint-plugin-template@0.7.0
+          - eslint-plugin-jsdoc@50.3.1
+          - "@eslint/js@9.12.0"
+          - "@eslint/eslintrc@3.1.0"
+
+  - repo: https://github.com/awebdeveloper/pre-commit-stylelint
+    rev: "0.0.2"
+    hooks:
+      - id: stylelint
+        files: .*/static_src/sass/.*\.scss$
+        additional_dependencies:
+          - stylelint@16.10.0
+          - stylelint-config-standard@36.0.1
+          - stylelint-config-standard-scss@13.1.0
+
   - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v3.1.0
+    rev: v4.0.0-alpha.8
     hooks:
       - id: prettier
