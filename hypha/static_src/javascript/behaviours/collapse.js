@@ -1,14 +1,13 @@
+/**
+ * Adds collapsible functionality with a "Show" button to an element.
+ * Triggers on DOM load, checks content height against max height,
+ * and adds button if content exceeds max height. Button click reveals full content.
+ * @example
+ * <div data-js-collapse data-js-collapse-height="320">
+ *   <!-- Content goes here -->
+ * </div>
+ */
 (function () {
-
-    /**
-     * Adds collapsible functionality with a "Show" button to an element.
-     * Triggers on DOM load, checks content height against max height,
-     * and adds button if content exceeds max height. Button click reveals full content.
-     * @example
-     * <div data-js-collapse data-js-collapse-height="320">
-     *   <!-- Content goes here -->
-     * </div>
-     */
     document.addEventListener("DOMContentLoaded", function () {
         // Select the element with the data-js-collapse attribute
         const el = document.querySelector("[data-js-collapse]");
