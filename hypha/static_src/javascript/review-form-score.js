@@ -1,6 +1,4 @@
 (function () {
-    "use strict";
-
     let use_average = false;
 
     // grab all the selectors
@@ -9,7 +7,7 @@
     );
 
     if (selectors.length > 1) {
-        document.querySelector(".form--score-box").style.display = "block";
+        document.querySelector(".form--score-box").hidden = false;
         calculate_score();
         selectors.forEach((selector) => {
             selector.addEventListener("change", calculate_score);
@@ -42,7 +40,7 @@
         }
 
         // Update the text in .form--score-box with the current score
-        document.querySelector(".form--score-box .score-number").textContent =
+        document.querySelector(".form--score-box > .score-number").textContent =
             formatter.format(score);
     }
 

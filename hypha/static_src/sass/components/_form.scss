@@ -34,20 +34,10 @@
         }
     }
 
-    &--width {
-        flex-grow: 2;
-    }
-
     &--score-box {
-        display: none;
-        background-color: #1d79a8;
-        color: #fff;
-        padding: 0.5rem 2rem;
+        background-color: $color--dark-grey;
+        color: $color--white;
         font-weight: $weight--bold;
-        position: sticky;
-        top: 0;
-        margin-block-start: 0.5rem;
-        margin-block-end: 1.5rem;
     }
 
     &__group {

@@ -22,9 +22,9 @@
     {% endadminbar %}
 
 
-    {% block form %}
+    <div class="flex items-start">
         {% if not has_submitted_review %}
-            <section class="my-8 flex justify-between">
+            <section class="my-8 flex flex-1 justify-between">
                 {% include "forms/includes/form_errors.html" with form=form %}
                 <form class="form form--with-p-tags form--scoreable max-w-3xl flex-1" action="" method="post">
                     {{ form.media }}
@@ -72,13 +72,15 @@
                     </section>
                 </aside>
             </section>
-            {% if show_running_total %}
-                <div class="form--score-box">{% trans "Score:" %} <span class="score-number">0</span> <button class="zeta button button--secondary" style="padding: 0.2rem; margin: 0.2rem">{% trans "Tot|Avg" %}<br /></button></div>
-            {% endif %}
         {% else %}
             <p>{% trans "You have already posted a review for this submission" %}</p>
         {% endif %}
-    {% endblock %}
+        {% if show_running_total %}
+            <div class="form--score-box inline-block px-4 py-2 mt-1 text-center sticky top-1" hidden x-show="!showSubmission">{% trans "Score:" %} <span class="score-number pe-1">0</span>
+                <button class="button button--score">{% trans "Tot|Avg" %}</button>
+            </div>
+        {% endif %}
+    </div>
 {% endblock %}
 
 {% block extra_js %}
