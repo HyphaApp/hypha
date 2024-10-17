@@ -1,0 +1,8 @@
+{% load i18n %}
+<h3>{% trans "Proposal Information" %}</h3>
+<div>
+    {{ submission.output_named_blocks_answers }}
+</div>
+<div class="rich-text rich-text--answers">
+    {{ submission.output_answers }}
+</div>

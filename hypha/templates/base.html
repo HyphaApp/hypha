@@ -90,7 +90,7 @@
         {% block header %}{% endblock header %}
 
         {% block content_wrapper %}
-            <main class="wrapper wrapper--large wrapper--main grow" id="main">
+            <main class="wrapper wrapper--large wrapper--main grow" id="main" x-data="{ showSubmission: false }">
                 {% block content %}{% endblock %}
             </main>
         {% endblock %}
