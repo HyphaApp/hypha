@@ -155,7 +155,7 @@
                 class="px-2 py-1.5 transition-colors border rounded hover:bg-gray-100 shadow-sm"
                 aria-label="Submissions: Download as CSV"
                 href="{% modify_query "page" format="csv" %}"
-                onclick="return confirm('Are you sure you want to download the submissions as a csv file? This file may contain sensitive information, so please handle it carefully.');"
+                onclick="return confirm('{% blocktrans %}Are you sure you want to download the submissions as a csv file? This file may contain sensitive information, so please handle it carefully.{% endblocktrans %}');"
                 data-tippy-content="Export as CSV"
             >
                 {% heroicon_mini "arrow-down-tray" %}

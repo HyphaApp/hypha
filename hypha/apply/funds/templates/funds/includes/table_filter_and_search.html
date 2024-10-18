@@ -78,7 +78,7 @@
                         class="px-2 py-1.5 flex items-center transition-colors border rounded hover:bg-gray-100 shadow-sm"
                         aria-label="Submissions: Download as CSV"
                         href="{{path}}{% if '?' in path %}&{%else%}?{% endif %}export=true"
-                        onclick="return confirm('Are you sure you want to download the submissions as a csv file? This file may contain sensitive information, so please handle it carefully.');"
+                        onclick="return confirm('{% blocktrans %}Are you sure you want to download the submissions as a csv file? This file may contain sensitive information, so please handle it carefully.{% endblocktrans %}');"
                         role="button"
                         data-tippy-content="Export as CSV"
                     >
