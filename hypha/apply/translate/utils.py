@@ -1,8 +1,28 @@
-from typing import Tuple
+from typing import List, Optional, Tuple
 from urllib.parse import parse_qs, urlparse
 
-import argostranslate.translate
+from argostranslate import package, translate
 from django.http import HttpRequest
+
+
+def get_available_translations(
+    from_codes: Optional[List[str]] = None,
+) -> List[package.Package]:
+    """Get languages available for translation
+
+    Args:
+        from_codes: optionally specify a list of languages to view available translations to
+
+    Returns:
+        A list of argostranslate package objects that are installed and available.
+    """
+
+    available_packages = package.get_installed_packages()
+
+    if not from_codes:
+        return available_packages
+
+    return list(filter(lambda x: x.from_code in from_codes, available_packages))
 
 
 def get_translation_params(
@@ -39,6 +59,6 @@ def get_translation_params(
 
 def get_lang_name(code: str) -> str | None:
     try:
-        return argostranslate.translate.get_language_from_code(code).name
+        return translate.get_language_from_code(code).name
     except AttributeError:
         return None

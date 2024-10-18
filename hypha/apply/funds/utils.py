@@ -13,8 +13,7 @@ from django.http import HttpRequest
 from django.utils.html import strip_tags
 from django.utils.translation import gettext as _
 
-from hypha.apply.translate.translate import get_available_translations
-from hypha.apply.translate.utils import get_lang_name, get_translation_params
+from hypha.apply.translate import utils as translate_utils
 from hypha.apply.utils.image import generate_image_tag
 
 from .models.screening import ScreeningStatus
@@ -198,7 +197,7 @@ def get_copied_form_name(original_form_name: str) -> str:
     return f"{new_name} ({copy_str.format(copy_time=copy_time)})"
 
 
-def get_language_choices_json(request: HttpRequest = None) -> str:
+def get_language_choices_json(request: HttpRequest) -> str:
     """Generate a JSON output of available translation options
 
     Utilized for populating the reactive form fields on the client side
@@ -227,15 +226,15 @@ def get_language_choices_json(request: HttpRequest = None) -> str:
         ]
         ```
     """
-    available_translations = get_available_translations()
+    available_translations = translate_utils.get_available_translations()
     from_langs = {package.from_code for package in available_translations}
-    default_to_lang = settings.LANGUAGE_CODE
+    default_to_lang = settings.LANGUAGE_CODE if settings.LANGUAGE_CODE else None
     default_from_lang = None
 
     # If there's existing lang params, use those as the default in the form
     # ie. the user has an active translation for ar -> en, those should be selected in the form
     if (current_url := request.headers.get("Hx-Current-Url")) and (
-        params := get_translation_params(current_url)
+        params := translate_utils.get_translation_params(current_url)
     ):
         default_from_lang, default_to_lang = params
 
@@ -249,12 +248,16 @@ def get_language_choices_json(request: HttpRequest = None) -> str:
 
         # Set the default selection to be the default_to_lang if it exists in the to_langs list,
         # otherwise use the first value in the list.
-        selected_to = default_to_lang if default_to_lang in to_langs else to_langs[0]
+        selected_to = (
+            default_to_lang
+            if default_to_lang and default_to_lang in to_langs
+            else to_langs[0]
+        )
 
         to_choices = [
             {
                 "value": to_lang,
-                "label": get_lang_name(to_lang),
+                "label": translate_utils.get_lang_name(to_lang),
                 "selected": to_lang == selected_to,
             }
             for to_lang in to_langs
@@ -263,7 +266,7 @@ def get_language_choices_json(request: HttpRequest = None) -> str:
         choices.append(
             {
                 "value": lang,
-                "label": get_lang_name(lang),
+                "label": translate_utils.get_lang_name(lang),
                 "to": to_choices,
                 "selected": lang == default_from_lang,
             }

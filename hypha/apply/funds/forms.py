@@ -11,7 +11,7 @@ from django.utils.translation import gettext_lazy as _
 from wagtail.signal_handlers import disable_reference_index_auto_update
 
 from hypha.apply.categories.models import MetaTerm
-from hypha.apply.translate.translate import get_available_translations
+from hypha.apply.translate.utils import get_available_translations
 from hypha.apply.users.models import User
 
 from .fields import LanguageChoiceField
