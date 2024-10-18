@@ -67,7 +67,10 @@ class ReviewEditView(UserPassesTestMixin, BaseStreamForm, UpdateView):
     def get_context_data(self, **kwargs):
         review = self.get_object()
         return super().get_context_data(
-            submission=review.submission, title=_("Edit Review"), **kwargs
+            submission=review.submission,
+            title=_("Edit Review"),
+            show_running_total=settings.REVIEW_SHOW_RUNNING_TOTAL,
+            **kwargs,
         )
 
     def get_defined_fields(self):
@@ -145,6 +148,7 @@ class ReviewCreateOrUpdateView(BaseStreamForm, CreateOrUpdateView):
             submission=self.submission,
             has_submitted_review=has_submitted_review,
             title=_("Update Review draft") if self.object else _("Create Review"),
+            show_running_total=settings.REVIEW_SHOW_RUNNING_TOTAL,
             **kwargs,
         )
 
