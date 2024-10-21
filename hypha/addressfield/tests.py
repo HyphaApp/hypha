@@ -1,48 +1,47 @@
+import pytest
 from django.core.exceptions import ValidationError
-from django.test import TestCase
 
 from .fields import AddressField
 
 
-class TestRequiredFields(TestCase):
-    def build_validation_data(self, fields=None, required=None):
-        if fields is None:
-            fields = []
-        if required is None:
-            required = []
-
-        return {
-            "COUNTRY": {
-                "fields": [
-                    {field: {"label": field}} for field in set(fields + required)
-                ],
-                "required": required,
-            }
+def build_validation_data(fields=None, required=None):
+    fields = fields or []
+    required = required or []
+    return {
+        "COUNTRY": {
+            "fields": [{field: {"label": field}} for field in set(fields + required)],
+            "required": required,
         }
+    }
 
-    def test_non_required(self):
-        field = AddressField()
-        field.data = self.build_validation_data(fields=["postalcode"])
-        field.clean({"country": "COUNTRY"})
 
-    def test_non_required_blank_data(self):
-        field = AddressField()
-        field.data = self.build_validation_data(fields=["postalcode"])
-        field.clean({"country": "COUNTRY", "postalcode": ""})
+@pytest.fixture
+def address_field():
+    return AddressField()
 
-    def test_one_field_required(self):
-        field = AddressField()
-        field.data = self.build_validation_data(required=["postalcode"])
-        with self.assertRaises(ValidationError):
-            field.clean({"country": "COUNTRY"})
 
-    def test_one_field_required_blank_data(self):
-        field = AddressField()
-        field.data = self.build_validation_data(required=["postalcode"])
-        with self.assertRaises(ValidationError):
-            field.clean({"country": "COUNTRY", "postalcode": ""})
+def test_non_required(address_field):
+    address_field.data = build_validation_data(fields=["postalcode"])
+    address_field.clean({"country": "COUNTRY"})
 
-    def test_one_field_required_supplied_data(self):
-        field = AddressField()
-        field.data = self.build_validation_data(required=["postalcode"])
-        field.clean({"country": "COUNTRY", "postalcode": "BS1 2AB"})
+
+def test_non_required_blank_data(address_field):
+    address_field.data = build_validation_data(fields=["postalcode"])
+    address_field.clean({"country": "COUNTRY", "postalcode": ""})
+
+
+def test_one_field_required(address_field):
+    address_field.data = build_validation_data(required=["postalcode"])
+    with pytest.raises(ValidationError):
+        address_field.clean({"country": "COUNTRY"})
+
+
+def test_one_field_required_blank_data(address_field):
+    address_field.data = build_validation_data(required=["postalcode"])
+    with pytest.raises(ValidationError):
+        address_field.clean({"country": "COUNTRY", "postalcode": ""})
+
+
+def test_one_field_required_supplied_data(address_field):
+    address_field.data = build_validation_data(required=["postalcode"])
+    address_field.clean({"country": "COUNTRY", "postalcode": "BS1 2AB"})

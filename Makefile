@@ -4,27 +4,30 @@ DJANGO_SETTINGS_MODULE = hypha.settings.dev
 JS_VENDOR_DIR = ./hypha/static_src/javascript/vendor
 JS_ESM_DIR = ./hypha/static_src/javascript/esm
 
+# Check if uv is installed then use it, else fallback to pip
+PIP := $(shell (command -v uv > /dev/null 2>&1 && echo "uv pip") || (command -v pip > /dev/null 2>&1 && echo "pip"))
+
 
 .PHONY: help
-help: ## Show this help
+help: ## Show this help menu with a list of available commands and their descriptions
 	@echo "\nSpecify a command. The choices are:\n"
 	@grep -E '^[0-9a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[0;36m%-12s\033[m %s\n", $$1, $$2}'
 	@echo ""
 
 
 .PHONY: serve
-serve: .cache/tandem .cache/py-packages .cache/dev-build-fe  ## Run Django and docs preview server, also watch and compile frontend changes
+serve: .cache/tandem .cache/py-packages .cache/dev-build-fe  ## Run Django server, docs preview, and watch frontend changes
 	@.cache/tandem \
 		'python manage.py runserver_plus $(DJANGO_ADDRESS):$(DJANGO_PORT) --settings=$(DJANGO_SETTINGS_MODULE)' \
 		'npm:watch:*' \
 		'mkdocs serve'
 
 .PHONY: test
-test: lint py-test cov-html  ## Run all tests and generate coverage report
+test: lint py-test cov-html  ## Run all tests (linting, Python tests) and generate coverage report
 
 
 .PHONY: fmt
-fmt: .cache/dev-build-fe  ## Run code formatters on all code
+fmt: .cache/dev-build-fe  ## Run code formatters on all code using pre-commit
 	@pre-commit run --all-files
 
 
@@ -35,7 +38,7 @@ lint: .cache/dev-build-fe  ## Run all linters
 
 
 .PHONY: py-test
-py-test: .cache/py-packages  ## Run python tests
+py-test: .cache/py-packages  ## Run Python tests with pytest, including coverage report
 	@echo "Running python tests"
 	pytest --reuse-db --cov --cov-report term:skip-covered
 
@@ -46,7 +49,7 @@ py-test: .cache/py-packages  ## Run python tests
 
 
 .PHONY: cov-html
-cov-html:  ## Generate html coverage report
+cov-html:  ## Generate HTML coverage report from previous test run
 ifneq ("$(wildcard .coverage)","")
 	@rm -rf htmlcov
 	@echo "Generate html coverage report…"
@@ -58,14 +61,14 @@ endif
 
 
 .PHONY: download-esm-modules
-download-esm-modules:  ## Download ESM modules
-	pip install download-esm
+download-esm-modules:  ## Download ECMAScript modules for the project
+	$(PIP) install download-esm
 	download-esm @github/relative-time-element $(JS_ESM_DIR)
 	download-esm @github/filter-input-element $(JS_ESM_DIR)
 	download-esm choices.js $(JS_ESM_DIR)
 
 
-.cache/tandem:  ## Install tandem, a tool to run multiple commands in parallel
+.cache/tandem:  ## Install tandem, a tool for running multiple commands in parallel
 	@mkdir -p $$(dirname $@)
 	@curl -fsSL https://raw.githubusercontent.com/rosszurowski/tandem/main/install.sh | bash -s -- --dest="$$(dirname $@)"
 
@@ -76,13 +79,13 @@ download-esm-modules:  ## Download ESM modules
 	@touch $@
 
 
-.cache/py-packages: requirements-dev.txt requirements-docs.txt  ## Install python packages
+.cache/py-packages: requirements-dev.txt requirements-docs.txt  ## Install Python packages for development and documentation
 	@mkdir -p $$(dirname $@)
-	pip install -r requirements-dev.txt -r requirements-docs.txt
+	$(PIP) install -r requirements-dev.txt -r requirements-docs.txt
 	@touch $@
 
 
-.cache/npm-packages: package.json  	## Install node packages and copy javascript files to vendor directory
+.cache/npm-packages: package.json  	## Install Node.js packages and copy JavaScript files to vendor directory
 	@mkdir -p $$(dirname $@)
 	NODE_ENV=development npm install
 	cp node_modules/htmx.org/dist/htmx.min.js $(JS_VENDOR_DIR)/htmx.min.js
