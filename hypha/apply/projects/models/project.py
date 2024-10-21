@@ -681,19 +681,6 @@ class ContractPacketFile(models.Model):
     def __str__(self):
         return _("Contract file: {title}").format(title=self.title)
 
-    def get_remove_form(self):
-        """
-        Get an instantiated RemoveContractDocumentForm with this class as `instance`.
-
-        This allows us to build instances of the RemoveContractDocumentForm for each
-        instance of ContractPacketFile in the contracting documents template.  The
-        standard Delegated View flow makes it difficult to create these forms
-        in the view or template.
-        """
-        from ..forms import RemoveContractDocumentForm
-
-        return RemoveContractDocumentForm(instance=self)
-
 
 @receiver(post_delete, sender=ContractPacketFile)
 def delete_contractpacketfile_file(sender, instance, **kwargs):

@@ -21,6 +21,7 @@ from .views import (
     ProjectPrivateMediaView,
     ProjectSOWDownloadView,
     ProjectSOWView,
+    RemoveContractDocumentView,
     RemoveDocumentView,
     ReportDetailView,
     ReportListView,
@@ -31,6 +32,7 @@ from .views import (
     SkipPAFApprovalProcessView,
     UpdateAssignApproversView,
     UpdatePAFApproversView,
+    UploadContractDocumentView,
     UploadContractView,
     UploadDocumentView,
     get_invoices_status_counts,
@@ -38,6 +40,7 @@ from .views import (
     partial_get_invoice_detail_actions,
     partial_get_invoice_status,
     partial_get_invoice_status_table,
+    partial_contracting_documents,
     partial_project_activities,
     partial_supporting_documents,
 )
@@ -115,6 +118,21 @@ urlpatterns = [
                     "contract/upload/",
                     UploadContractView.as_view(),
                     name="contract_upload",
+                ),
+                path(
+                    "partial/contract/documents/",
+                    partial_contracting_documents,
+                    name="contract_documents",
+                ),
+                path(
+                    "contract/documents/<int:category_pk>/upload/",
+                    UploadContractDocumentView.as_view(),
+                    name="contract_doc_upload",
+                ),
+                path(
+                    "contract/documents/<int:document_pk>/remove/",
+                    RemoveContractDocumentView.as_view(),
+                    name="remove_contracting_document",
                 ),
                 path(
                     "category/<str:type>/<int:category_pk>/template/",

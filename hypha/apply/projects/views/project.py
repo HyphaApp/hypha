@@ -25,7 +25,6 @@ from django.views import View
 from django.views.generic import (
     CreateView,
     DetailView,
-    FormView,
     UpdateView,
 )
 from django.views.generic.detail import SingleObjectMixin
@@ -81,7 +80,6 @@ from ..forms import (
     ChangeProjectStatusForm,
     ProjectForm,
     ProjectSOWForm,
-    RemoveContractDocumentForm,
     SelectDocumentForm,
     SetPendingForm,
     SkipPAFApprovalProcessForm,
@@ -374,24 +372,20 @@ class RemoveDocumentView(View):
 
 
 @method_decorator(login_required, name="dispatch")
-class RemoveContractDocumentView(DelegatedViewMixin, FormView):
-    context_name = "remove_contract_document_form"
-    form_class = RemoveContractDocumentForm
+class RemoveContractDocumentView(View):
     model = Project
 
     def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_applicant or request.user != self.get_object().user:
+        self.project = get_object_or_404(Project, id=kwargs.get("pk"))
+        if not request.user.is_applicant or request.user != self.project.user:
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
-    def form_valid(self, form):
-        document_id = form.cleaned_data["id"]
-        project = self.kwargs["object"]
-
-        try:
-            project.contract_packet_files.get(pk=document_id).delete()
-        except ContractPacketFile.DoesNotExist:
-            pass
+    def delete(self, *args, **kwargs):
+        self.object = self.project.contract_packet_files.get(
+            pk=kwargs.get("document_pk")
+        )
+        self.object.delete()
 
         messages.success(
             self.request,
@@ -399,7 +393,17 @@ class RemoveContractDocumentView(DelegatedViewMixin, FormView):
             extra_tags=PROJECT_ACTION_MESSAGE_TAG,
         )
 
-        return redirect(project)
+        return HttpResponse(
+            status=204,
+            headers={
+                "HX-Trigger": json.dumps(
+                    {
+                        "contractingDocumentRemove": None,
+                        "showMessage": "Contracting Document has been removed",
+                    }
+                ),
+            },
+        )
 
 
 @method_decorator(login_required, name="dispatch")
@@ -885,27 +889,68 @@ class SubmitContractDocumentsView(DelegatedViewMixin, UpdateView):
 
 
 @method_decorator(login_required, name="dispatch")
-class UploadContractDocumentView(DelegatedViewMixin, CreateView):
+class UploadContractDocumentView(View):
     form_class = UploadContractDocumentForm
     model = Project
     context_name = "contract_document_form"
+    template_name = "application_projects/modals/contracting_documents_upload.html"
 
     def dispatch(self, request, *args, **kwargs):
-        if request.user != self.get_object().user or not request.user.is_applicant:
+        self.project = get_object_or_404(Project, id=kwargs.get("pk"))
+        self.category = get_object_or_404(
+            ContractDocumentCategory, id=kwargs.get("category_pk")
+        )
+        if request.user != self.project.user or not request.user.is_applicant:
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
-    def form_valid(self, form):
-        project = self.kwargs["object"]
-        form.instance.project = project
-        response = super().form_valid(form)
-
-        messages.success(
-            self.request,
-            _("Contracting document has been uploaded"),
-            extra_tags=PROJECT_ACTION_MESSAGE_TAG,
+    def get(self, *args, **kwargs):
+        upload_contract_document_form = self.form_class(
+            instance=self.project, initial={"category": self.category}
         )
-        return response
+        return render(
+            self.request,
+            self.template_name,
+            context={
+                "form": upload_contract_document_form,
+                "value": _("Submit"),
+                "category": self.category,
+                "object": self.project,
+            },
+        )
+
+    def post(self, *args, **kwargs):
+        form = self.form_class(
+            self.request.POST,
+            self.request.FILES,
+            instance=self.project,
+            initial={"category": self.category},
+        )
+        if form.is_valid():
+            form.instance.project = self.project
+            form.save()
+
+            return HttpResponse(
+                status=204,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {
+                            "contractingDocumentUpload": None,
+                            "showMessage": "Contracting Document has been uploaded",
+                        }
+                    ),
+                },
+            )
+        return render(
+            self.request,
+            self.template_name,
+            context={
+                "form": form,
+                "value": _("Submit"),
+                "category": self.category,
+                "object": self.project,
+            },
+        )
 
 
 # PROJECT VIEW
@@ -1558,14 +1603,6 @@ class AdminProjectDetailView(
         project_settings = ProjectSettings.for_request(self.request)
         context["project_settings"] = project_settings
         context["paf_approvals"] = PAFApprovals.objects.filter(project=self.object)
-        context["all_contract_document_categories"] = (
-            ContractDocumentCategory.objects.all()
-        )
-        context["remaining_contract_document_categories"] = (
-            ContractDocumentCategory.objects.filter(
-                ~Q(contract_packet_files__project=self.object)
-            )
-        )
 
         if (
             self.object.is_in_progress
@@ -1596,8 +1633,6 @@ class ApplicantProjectDetailView(
     form_views = [
         CommentFormView,
         SelectDocumentView,
-        UploadContractDocumentView,
-        RemoveContractDocumentView,
         SubmitContractDocumentsView,
     ]
 
@@ -1617,9 +1652,6 @@ class ApplicantProjectDetailView(
         context["current_status_index"] = [
             status for status, _ in PROJECT_PUBLIC_STATUSES
         ].index(self.object.status)
-        context["all_contract_document_categories"] = (
-            ContractDocumentCategory.objects.all()
-        )
         context["remaining_contract_document_categories"] = (
             ContractDocumentCategory.objects.filter(
                 ~Q(contract_packet_files__project=self.object)

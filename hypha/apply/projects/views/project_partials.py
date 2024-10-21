@@ -17,7 +17,7 @@ from hypha.apply.funds.utils import get_statuses_as_params
 
 from ..constants import statuses_and_table_statuses_mapping
 from ..models.payment import Invoice
-from ..models.project import DocumentCategory, Project
+from ..models.project import ContractDocumentCategory, DocumentCategory, Project
 from ..permissions import has_permission
 from ..utils import get_project_status_choices
 
@@ -42,6 +42,31 @@ def partial_supporting_documents(request, pk):
     )
     return render(
         request, "application_projects/partials/supporting_documents.html", ctx
+    )
+
+
+@login_required
+@require_GET
+def partial_contracting_documents(request, pk):
+    project = get_object_or_404(Project, pk=pk)
+    ctx = {"object": project}
+    ctx["all_contract_document_categories"] = ContractDocumentCategory.objects.all()
+    ctx["remaining_contract_document_categories"] = (
+        ContractDocumentCategory.objects.filter(
+            ~Q(contract_packet_files__project=project)
+        )
+    )
+    # contracts
+    contracts = project.contracts.select_related(
+        "approver",
+    ).order_by("-created_at")
+
+    latest_contract = contracts.first()
+    ctx["contract"] = latest_contract
+    return render(
+        request,
+        "application_projects/partials/contracting_category_documents.html",
+        ctx,
     )
 
 
