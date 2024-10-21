@@ -217,17 +217,6 @@ class ChangeProjectStatusForm(forms.ModelForm):
         status_field.choices = possible_status_transitions.get(instance.status, [])
 
 
-class RemoveContractDocumentForm(forms.ModelForm):
-    id = forms.IntegerField(widget=forms.HiddenInput())
-
-    class Meta:
-        fields = ["id"]
-        model = ContractPacketFile
-
-    def __init__(self, user=None, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-
 class ApproversForm(forms.ModelForm):
     class Meta:
         fields = ["id"]
@@ -405,8 +394,9 @@ class UploadContractDocumentForm(FileFormMixin, forms.ModelForm):
     class Meta:
         fields = ["category", "document"]
         model = ContractPacketFile
+        widgets = {"category": forms.HiddenInput()}
 
-    def __init__(self, user=None, instance=None, *args, **kwargs):
+    def __init__(self, *args, user=None, instance=None, **kwargs):
         super().__init__(*args, **kwargs)
 
     def save(self, commit=True):
