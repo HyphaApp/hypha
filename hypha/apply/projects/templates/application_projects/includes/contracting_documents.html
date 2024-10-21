@@ -96,7 +96,11 @@
                             {% user_can_initiate_contract user as can_initiate_contract %}
                             {% if can_upload_contract and can_initiate_contract  %}
                                 <div class="docs-block__row-inner docs-block__row-inner__contract-upload-row">
-                                    <a data-fancybox class="font-bold flex items-center w-auto text-start bg-light-blue text-white me-0 p-2.5 border-none" href="#" data-src="#upload-contract">
+                                    <a class="font-bold flex items-center w-auto text-start bg-light-blue text-white me-0 p-2.5 border-none"
+                                       hx-get="{% url 'apply:projects:contract_upload' object.id %}"
+                                       href="{% url 'apply:projects:contract_upload' object.id %}"
+                                       hx-target="#htmx-modal"
+                                    >
                                         {% heroicon_micro "arrow-up-tray" size=18 class="inline me-1" aria_hidden="true" %}
                                         {% if not contract %}
                                             {% trans "Upload" %}
@@ -115,7 +119,11 @@
                             </div>
                             {% if can_upload_contract and user.is_applicant %}
                                 <div class="docs-block__row-inner docs-block__row-inner__contract-upload-row">
-                                    <a data-fancybox class="font-bold flex items-center w-auto text-start bg-light-blue text-white me-0 p-2.5 border-none" href="#" data-src="#upload-contract">
+                                    <a class="font-bold flex items-center w-auto text-start bg-light-blue text-white me-0 p-2.5 border-none"
+                                       hx-get="{% url 'apply:projects:contract_upload' object.id %}"
+                                       href="{% url 'apply:projects:contract_upload' object.id %}"
+                                       hx-target="#htmx-modal"
+                                    >
                                         {% heroicon_mini "arrow-up-tray" size=18 class="inline me-1" aria_hidden="true" %}
                                         {% if not contract.signed_by_applicant %}
                                             {% trans "Upload" %}
@@ -213,21 +221,6 @@
 </div>
 
 <!-- Modals -->
-
-{% if can_upload_contract %}
-    <div class="modal" id="upload-contract">
-        {% if user.is_applicant %}
-            <h4 class="modal__project-header-bar">{% trans "Upload Countersigned Contract" %}</h4>
-            {% trans "Upload" as upload %}
-        {% else %}
-            <h4 class="modal__project-header-bar">{% trans "Upload Signed Contract" %}</h4>
-            <p><i><b>{% trans "The signed contract will be sent to Applicant once you submit. But if you select Signed and approved then it will directly be approved and project will move to Invoicing and Reporting." %}</b></i></p>
-            <br>
-            {% trans "Submit" as upload %}
-        {% endif %}
-        {% include 'funds/includes/delegated_form_base.html' with form=contract_form value=upload %}
-    </div>
-{% endif %}
 
 {% if can_update_documents %}
     <div class="modal" id="upload-contracting-doc">

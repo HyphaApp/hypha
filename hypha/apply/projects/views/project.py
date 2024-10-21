@@ -620,16 +620,32 @@ class ApproveContractView(DelegatedViewMixin, UpdateView):
 
 
 @method_decorator(login_required, name="dispatch")
-class UploadContractView(DelegatedViewMixin, CreateView):
+class UploadContractView(View):
     context_name = "contract_form"
     model = Project
     form_class = UploadContractForm
+    template_name = "application_projects/modals/upload_contract.html"
 
     def dispatch(self, request, *args, **kwargs):
-        project = self.kwargs["object"]
-        permission, _ = has_permission("contract_upload", request.user, object=project)
+        self.project = get_object_or_404(Project, id=kwargs.get("pk"))
+        permission, _ = has_permission(
+            "contract_upload", request.user, object=self.project
+        )
         if permission:
             return super().dispatch(request, *args, **kwargs)
+
+    def get(self, *args, **kwargs):
+        form = self.get_form()
+        return render(
+            self.request,
+            self.template_name,
+            context={
+                "form": form,
+                "user": self.request.user,
+                "value": _("Upload") if self.request.user.is_applicant else _("Submit"),
+                "object": self.project,
+            },
+        )
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -638,112 +654,125 @@ class UploadContractView(DelegatedViewMixin, CreateView):
         return kwargs
 
     def get_form(self, *args, **kwargs):
-        form = super().get_form(*args, **kwargs)
+        form = self.form_class(*args, **kwargs)
         if self.request.user.is_applicant:
             form.fields.pop("signed_and_approved")
         return form
 
-    def form_valid(self, form):
-        project = self.kwargs["object"]
+    def post(self, *args, **kwargs):
+        form = self.get_form(self.request.POST)
 
-        if project.contracts.exists():
-            form.instance = project.contracts.order_by("created_at").first()
+        if form.is_valid():
+            if self.project.contracts.exists():
+                form.instance = self.project.contracts.order_by("created_at").first()
 
-        form.instance.project = project
+            form.instance.project = self.project
 
-        if self.request.user == project.user:
-            form.instance.signed_by_applicant = True
-            form.instance.uploaded_by_applicant_at = timezone.now()
-            messages.success(
-                self.request,
-                _("Countersigned contract uploaded"),
-                extra_tags=PROJECT_ACTION_MESSAGE_TAG,
-            )
-        elif self.request.user.is_contracting or self.request.user.is_apply_staff:
-            form.instance.uploaded_by_contractor_at = timezone.now()
-            messages.success(
-                self.request,
-                _("Signed contract uploaded"),
-                extra_tags=PROJECT_ACTION_MESSAGE_TAG,
-            )
-
-        response = super().form_valid(form)
-
-        contract_signed_and_approved = form.cleaned_data.get("signed_and_approved")
-        if contract_signed_and_approved:
-            form.instance.approver = self.request.user
-            form.instance.approved_at = timezone.now()
-            form.instance.signed_and_approved = contract_signed_and_approved
-            form.instance.signed_by_applicant = True
-            form.instance.save(
-                update_fields=[
-                    "approver",
-                    "approved_at",
-                    "signed_and_approved",
-                    "signed_by_applicant",
-                ]
-            )
-
-            project.status = INVOICING_AND_REPORTING
-            project.save(update_fields=["status"])
-            old_stage = CONTRACTING
-
-            messenger(
-                MESSAGES.PROJECT_TRANSITION,
-                request=self.request,
-                user=self.request.user,
-                source=project,
-                related=old_stage,
-            )
-            # remove Project waiting contract task for contracting/staff group
-            if settings.STAFF_UPLOAD_CONTRACT:
-                remove_tasks_for_user(
-                    code=PROJECT_WAITING_CONTRACT,
-                    user=project.lead,
-                    related_obj=project,
+            if self.request.user == self.project.user:
+                form.instance.signed_by_applicant = True
+                form.instance.uploaded_by_applicant_at = timezone.now()
+                messages.success(
+                    self.request,
+                    _("Countersigned contract uploaded"),
+                    extra_tags=PROJECT_ACTION_MESSAGE_TAG,
                 )
-            else:
-                remove_tasks_for_user_group(
-                    code=PROJECT_WAITING_CONTRACT,
-                    user_group=Group.objects.filter(name=CONTRACTING_GROUP_NAME),
-                    related_obj=project,
+            elif self.request.user.is_contracting or self.request.user.is_apply_staff:
+                form.instance.uploaded_by_contractor_at = timezone.now()
+                messages.success(
+                    self.request,
+                    _("Signed contract uploaded"),
+                    extra_tags=PROJECT_ACTION_MESSAGE_TAG,
                 )
-            # add Project waiting invoice task for applicant
-            add_task_to_user(
-                code=PROJECT_WAITING_INVOICE,
-                user=project.user,
-                related_obj=project,
-            )
-        else:
-            if self.request.user != project.user:
+
+            form.save()
+
+            contract_signed_and_approved = form.cleaned_data.get("signed_and_approved")
+            if contract_signed_and_approved:
+                form.instance.approver = self.request.user
+                form.instance.approved_at = timezone.now()
+                form.instance.signed_and_approved = contract_signed_and_approved
+                form.instance.signed_by_applicant = True
+                form.instance.save(
+                    update_fields=[
+                        "approver",
+                        "approved_at",
+                        "signed_and_approved",
+                        "signed_by_applicant",
+                    ]
+                )
+
+                self.project.status = INVOICING_AND_REPORTING
+                self.project.save(update_fields=["status"])
+                old_stage = CONTRACTING
+
                 messenger(
-                    MESSAGES.UPLOAD_CONTRACT,
+                    MESSAGES.PROJECT_TRANSITION,
                     request=self.request,
                     user=self.request.user,
-                    source=project,
-                    related=form.instance,
+                    source=self.project,
+                    related=old_stage,
                 )
                 # remove Project waiting contract task for contracting/staff group
                 if settings.STAFF_UPLOAD_CONTRACT:
                     remove_tasks_for_user(
                         code=PROJECT_WAITING_CONTRACT,
-                        user=project.lead,
-                        related_obj=project,
+                        user=self.project.lead,
+                        related_obj=self.project,
                     )
                 else:
                     remove_tasks_for_user_group(
                         code=PROJECT_WAITING_CONTRACT,
                         user_group=Group.objects.filter(name=CONTRACTING_GROUP_NAME),
-                        related_obj=project,
+                        related_obj=self.project,
                     )
-                # add Project waiting contract document task for applicant
+                # add Project waiting invoice task for applicant
                 add_task_to_user(
-                    code=PROJECT_WAITING_CONTRACT_DOCUMENT,
-                    user=project.user,
-                    related_obj=project,
+                    code=PROJECT_WAITING_INVOICE,
+                    user=self.project.user,
+                    related_obj=self.project,
                 )
+            else:
+                if self.request.user != self.project.user:
+                    messenger(
+                        MESSAGES.UPLOAD_CONTRACT,
+                        request=self.request,
+                        user=self.request.user,
+                        source=self.project,
+                        related=form.instance,
+                    )
+                    # remove Project waiting contract task for contracting/staff group
+                    if settings.STAFF_UPLOAD_CONTRACT:
+                        remove_tasks_for_user(
+                            code=PROJECT_WAITING_CONTRACT,
+                            user=self.project.lead,
+                            related_obj=self.project,
+                        )
+                    else:
+                        remove_tasks_for_user_group(
+                            code=PROJECT_WAITING_CONTRACT,
+                            user_group=Group.objects.filter(
+                                name=CONTRACTING_GROUP_NAME
+                            ),
+                            related_obj=self.project,
+                        )
+                    # add Project waiting contract document task for applicant
+                    add_task_to_user(
+                        code=PROJECT_WAITING_CONTRACT_DOCUMENT,
+                        user=self.project.user,
+                        related_obj=self.project,
+                    )
+            return HttpResponseClientRefresh()
 
-        return response
+        return render(
+            self.request,
+            self.template_name,
+            context={
+                "form": form,
+                "user": self.request.user,
+                "value": _("Upload") if self.request.user.is_applicant else _("Submit"),
+                "object": self.project,
+            },
+        )
 
 
 class SkipPAFApprovalProcessView(UpdateView):
@@ -1507,7 +1536,6 @@ class AdminProjectDetailView(
         ReportFrequencyUpdate,
         UpdateLeadView,
         UpdateProjectTitleView,
-        UploadContractView,
         ChangeProjectstatusView,
         ChangeInvoiceStatusView,
     ]
@@ -1568,7 +1596,6 @@ class ApplicantProjectDetailView(
     form_views = [
         CommentFormView,
         SelectDocumentView,
-        UploadContractView,
         UploadContractDocumentView,
         RemoveContractDocumentView,
         SubmitContractDocumentsView,

@@ -31,6 +31,7 @@ from .views import (
     SkipPAFApprovalProcessView,
     UpdateAssignApproversView,
     UpdatePAFApproversView,
+    UploadContractView,
     UploadDocumentView,
     get_invoices_status_counts,
     get_project_status_counts,
@@ -109,6 +110,11 @@ urlpatterns = [
                     "documents/<uuid:field_id>/<str:file_name>",
                     ProjectPrivateMediaView.as_view(),
                     name="document",
+                ),
+                path(
+                    "contract/upload/",
+                    UploadContractView.as_view(),
+                    name="contract_upload",
                 ),
                 path(
                     "category/<str:type>/<int:category_pk>/template/",
