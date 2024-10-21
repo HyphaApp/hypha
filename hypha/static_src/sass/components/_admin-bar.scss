@@ -9,6 +9,10 @@
     color: $color--white;
     background-color: $color--dark-grey;
 
+    @include media-query(xl) {
+        padding-inline: 0;
+    }
+
     &__inner {
         max-width: $site-width;
         margin: 0 auto;
