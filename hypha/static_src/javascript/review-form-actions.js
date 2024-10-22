@@ -1,5 +1,4 @@
 function formContents(f) {
-    "use strict";
     // Thanks to https://stackoverflow.com/a/44033425
     return Array.from(new FormData(f), function (e) {
         return e.map(encodeURIComponent).join("=");
@@ -7,7 +6,6 @@ function formContents(f) {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    "use strict";
     const form = document.getElementById("review-form-edit");
     const original = formContents(form);
 
