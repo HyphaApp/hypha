@@ -1,3 +1,5 @@
+@use "../abstracts/variables";
+
 .traffic-light {
     display: block;
     width: 1em;
@@ -6,19 +8,19 @@
 
     &--no,
     &--red {
-        background-color: $color--tomato;
+        background-color: variables.$color--tomato;
         clip-path: polygon(100% 0, 0 0, 50% 100%);
     }
 
     &--maybe,
     &--amber {
-        background-color: $color--mustard;
+        background-color: variables.$color--mustard;
         border-radius: 50%;
     }
 
     &--yes,
     &--green {
-        background-color: $color--green;
+        background-color: variables.$color--green;
         clip-path: polygon(50% 0, 0 100%, 100% 100%);
     }
 }

@@ -1,3 +1,8 @@
+@use "sass:map";
+@use "../abstracts/mixins";
+@use "../abstracts/variables";
+@use "../base/typography";
+
 .feed {
     &__item {
         position: relative;
@@ -26,40 +31,40 @@
 
     &__label {
         margin: 0;
-        color: $color--white;
+        color: variables.$color--white;
         text-align: center;
 
         &--note {
-            background-color: $color--error;
+            background-color: variables.$color--error;
         }
 
         &--determination {
-            background-color: $color--ocean;
+            background-color: variables.$color--ocean;
         }
 
         &--comment,
         &--message {
-            background-color: $color--grass;
+            background-color: variables.$color--grass;
         }
 
         &--activity,
         &--action {
-            background-color: $color--mint;
+            background-color: variables.$color--mint;
         }
 
         &--submission {
-            background-color: $color--green;
+            background-color: variables.$color--green;
         }
 
         &--project {
-            background-color: $color--mint;
+            background-color: variables.$color--mint;
         }
 
         &--mobile {
             display: block;
             margin-inline-end: 10px;
 
-            @include media-query(sm) {
+            @include mixins.media-query(sm) {
                 display: none;
             }
         }
@@ -74,12 +79,13 @@
     }
 
     &__meta {
-        @include responsive-font-sizes(12px, 16px);
         display: flex;
         align-items: center;
         flex-wrap: wrap;
 
-        @include media-query(sm) {
+        @include mixins.responsive-font-sizes(12px, 16px);
+
+        @include mixins.media-query(sm) {
             margin-block-end: 10px;
         }
     }
@@ -88,10 +94,10 @@
         margin: 0 10px 0 0;
 
         span {
-            font-weight: $weight--bold;
+            font-weight: variables.$weight--bold;
         }
 
-        @include media-query(sm) {
+        @include mixins.media-query(sm) {
             margin: 0 15px 0 0;
         }
 
@@ -101,10 +107,10 @@
 
         &--last-edited {
             margin-inline-end: 5px;
-            color: $color--mid-dark-grey;
+            color: variables.$color--mid-dark-grey;
 
             span {
-                font-weight: $weight--normal;
+                font-weight: variables.$weight--normal;
             }
         }
 
@@ -112,17 +118,17 @@
             margin-inline-start: auto;
 
             span {
-                font-weight: $weight--normal;
+                font-weight: variables.$weight--normal;
             }
         }
 
         &--progress {
             width: 100%;
             margin: 5px 0 0;
-            font-size: map-get($font-sizes, milli);
-            color: $color--black-50;
+            font-size: map.get(variables.$font-sizes, milli);
+            color: variables.$color--black-50;
 
-            @include media-query(sm) {
+            @include mixins.media-query(sm) {
                 width: auto;
                 margin: 0 20px 0 0;
             }
@@ -131,7 +137,11 @@
                 &:first-child {
                     // stylelint-disable-next-line max-nesting-depth
                     &::after {
-                        @include triangle(right, $color--black-50, 4px);
+                        @include mixins.triangle(
+                            right,
+                            variables.$color--black-50,
+                            4px
+                        );
                         display: inline-block;
                         margin: 0 5px 0 10px;
                     }
@@ -142,7 +152,7 @@
 
     &__comment {
         word-break: break-word;
-        max-width: $max-text-line-length;
+        max-width: variables.$max-text-line-length;
     }
 
     &__related-item {
@@ -153,14 +163,14 @@
             height: 14px;
             margin-inline-start: 10px;
             margin-block-start: 0.35em;
-            fill: $color--dark-blue;
+            fill: variables.$color--dark-blue;
         }
     }
 
     &__heading {
         margin-block-end: 0;
 
-        @include media-query(sm) {
+        @include mixins.media-query(sm) {
             width: 90%;
             font-size: 18px;
         }
@@ -168,12 +178,12 @@
 
     &__heading-status {
         padding: 3px 10px;
-        font-size: map-get($font-sizes, milli);
-        font-weight: $weight--bold;
-        color: $color--marine;
+        font-size: map.get(variables.$font-sizes, milli);
+        font-weight: variables.$weight--bold;
+        color: variables.$color--marine;
         text-align: center;
         text-transform: uppercase;
-        background-color: $color--sky-blue;
+        background-color: variables.$color--sky-blue;
     }
 
     &__company {
@@ -190,8 +200,8 @@
         padding: 3em 0 0.5em;
         background-image: linear-gradient(
             to bottom,
-            $color--white-10,
-            $color--white
+            variables.$color--white-10,
+            variables.$color--white
         );
     }
 }

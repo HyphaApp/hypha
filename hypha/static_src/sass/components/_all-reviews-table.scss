@@ -1,7 +1,10 @@
+@use "../abstracts/mixins";
+@use "../abstracts/variables";
+
 // stylelint-disable selector-max-compound-selectors
 
 .all-reviews-table {
-    @include table-ordering-styles;
+    @include mixins.table-ordering-styles;
 
     $root: &;
     font-size: 14px;
@@ -9,7 +12,7 @@
     thead {
         display: none;
 
-        @include media-query(lg) {
+        @include mixins.media-query(lg) {
             display: table-header-group;
         }
 
@@ -26,19 +29,19 @@
                 position: relative;
                 padding-block-start: 15px;
                 padding-inline-start: 10px;
-                font-weight: $weight--bold;
+                font-weight: variables.$weight--bold;
 
-                @include media-query(lg) {
+                @include mixins.media-query(lg) {
                     display: flex;
                     align-items: center;
                 }
 
-                @include media-query(xl) {
+                @include mixins.media-query(xl) {
                     display: table-cell;
                 }
 
                 a {
-                    color: $color--primary;
+                    color: variables.$color--primary;
                 }
             }
         }

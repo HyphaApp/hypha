@@ -1,7 +1,10 @@
-.profile {
-    margin-block-start: $mobile-gutter;
+@use "../abstracts/mixins";
+@use "../abstracts/variables";
 
-    @include media-query(md) {
+.profile {
+    margin-block-start: variables.$mobile-gutter;
+
+    @include mixins.media-query(md) {
         display: flex;
         margin-block-start: 2rem;
     }
@@ -9,13 +12,13 @@
     &__column {
         padding-block-end: 2rem;
         margin-block-end: 2rem;
-        border-block-end: 1px solid $color--light-mid-grey;
+        border-block-end: 1px solid variables.$color--light-mid-grey;
 
-        @include media-query(md) {
+        @include mixins.media-query(md) {
             width: 50%;
             padding-inline-end: 3rem;
             margin: 0 3rem 0 0;
-            border-inline-end: 1px solid $color--light-mid-grey;
+            border-inline-end: 1px solid variables.$color--light-mid-grey;
             border-block-end: 0;
 
             &:last-child {

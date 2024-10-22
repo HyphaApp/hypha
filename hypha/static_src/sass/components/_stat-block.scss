@@ -1,19 +1,23 @@
+@use "../base/typography";
+@use "../abstracts/mixins";
+@use "../abstracts/variables";
+
 .stat-block {
     $root: &;
 
-    @include media-query(md) {
+    @include mixins.media-query(md) {
         display: flex;
     }
 
     &__item {
         position: relative;
         padding: 1rem;
-        background-color: $color--white;
+        background-color: variables.$color--white;
         flex: 1;
         display: block;
         margin: 0 0 1rem;
 
-        @include media-query(md) {
+        @include mixins.media-query(md) {
             margin: 0 3rem 0 0;
             padding: 1.5rem;
         }
@@ -23,7 +27,7 @@
         }
 
         &:only-child {
-            @include media-query(md) {
+            @include mixins.media-query(md) {
                 max-width: calc(100% / 3);
             }
         }
@@ -33,7 +37,7 @@
         @extend %h3;
         line-height: 1;
         margin: 0;
-        color: $color--marine;
+        color: variables.$color--marine;
     }
 
     &__text {
@@ -41,17 +45,17 @@
         margin: 0.5rem 0;
         color: var(--color-fg-default);
 
-        @include media-query(sm) {
+        @include mixins.media-query(sm) {
             margin: 0.5rem 0;
         }
     }
 
     &__view {
         text-transform: uppercase;
-        font-weight: $weight--bold;
-        transition: opacity $quick-transition;
+        font-weight: variables.$weight--bold;
+        transition: opacity variables.$quick-transition;
 
-        @include media-query(md) {
+        @include mixins.media-query(md) {
             position: absolute;
             inset-block-start: 1rem;
             inset-inline-end: 1rem;

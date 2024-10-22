@@ -1,20 +1,23 @@
+@use "../abstracts/mixins";
+@use "../abstracts/variables";
+
 .admin-bar {
     position: relative;
     inset-inline-end: 50%;
     inset-inline-start: 50%;
     width: 100vw;
-    padding: $mobile-gutter;
+    padding: variables.$mobile-gutter;
     margin-inline-end: -50vw;
     margin-inline-start: -50vw;
-    color: $color--white;
-    background-color: $color--dark-grey;
+    color: variables.$color--white;
+    background-color: variables.$color--dark-grey;
 
     &__inner {
-        max-width: $site-width;
+        max-width: variables.$site-width;
         margin: 0 auto;
 
         &--with-button {
-            @include media-query(md) {
+            @include mixins.media-query(md) {
                 display: flex;
                 align-items: center;
                 flex-direction: row;
@@ -38,11 +41,11 @@
     &__back-link {
         display: inline-flex;
         align-items: center;
-        color: $color--lightest-blue;
-        font-weight: $weight--bold;
+        color: variables.$color--lightest-blue;
+        font-weight: variables.$weight--bold;
 
         &::before {
-            @include triangle(top, currentColor, 5px);
+            @include mixins.triangle(top, currentColor, 5px);
             margin-inline-end: 0.5rem;
             transform: rotate(-90deg);
         }

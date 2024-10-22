@@ -1,3 +1,7 @@
+@use "../abstracts/mixins";
+@use "../abstracts/variables";
+@use "../base/typography";
+
 .link {
     &:disabled,
     &.is-disabled {
@@ -10,11 +14,11 @@
     }
 
     &--transparent {
-        color: $color--white;
+        color: variables.$color--white;
     }
 
     &--bold {
-        font-weight: $weight--bold;
+        font-weight: variables.$weight--bold;
     }
 
     &--left-space {
@@ -27,13 +31,13 @@
         justify-content: space-between;
         padding: 15px 20px;
         margin-block-start: 5px;
-        color: $color--white;
-        background: $color--light-blue;
-        transition: background-color, $transition;
+        color: variables.$color--white;
+        background: variables.$color--light-blue;
+        transition: background-color, variables.$transition;
 
         &:focus,
         &:hover {
-            background-color: $color--dark-blue;
+            background-color: variables.$color--dark-blue;
         }
 
         > div {
@@ -44,20 +48,20 @@
         span {
             @extend %h5;
             margin-inline-start: 10px;
-            font-weight: $weight--bold;
+            font-weight: variables.$weight--bold;
         }
 
         svg {
             &:first-child {
                 width: 26px;
                 height: 32px;
-                stroke: $color--white;
+                stroke: variables.$color--white;
             }
 
             &:last-child {
                 width: 15px;
                 height: 18px;
-                stroke: $color--white;
+                stroke: variables.$color--white;
             }
         }
     }
@@ -67,10 +71,10 @@
         width: 100%;
         max-width: 250px;
         margin: 1rem auto 0;
-        font-weight: $weight--bold;
+        font-weight: variables.$weight--bold;
         text-align: center;
 
-        @include media-query(md) {
+        @include mixins.media-query(md) {
             display: none;
         }
     }
@@ -78,7 +82,7 @@
     &--edit-lead {
         display: flex;
         align-items: center;
-        font-weight: $weight--bold;
+        font-weight: variables.$weight--bold;
 
         &:hover {
             cursor: not-allowed;
@@ -95,15 +99,15 @@
     &--delete-submission {
         display: flex;
         align-items: center;
-        font-weight: $weight--bold;
-        color: $color--mid-grey;
+        font-weight: variables.$weight--bold;
+        color: variables.$color--mid-grey;
 
         &:hover {
             cursor: not-allowed;
         }
 
         &.is-active {
-            color: $color--light-blue;
+            color: variables.$color--light-blue;
 
             &:hover {
                 cursor: pointer;
@@ -114,7 +118,7 @@
     &--delete-submission {
         margin-inline-end: 1rem;
         padding-inline-end: 1rem;
-        border-inline-end: 2px solid $color--mid-grey;
+        border-inline-end: 2px solid variables.$color--mid-grey;
 
         &:only-child {
             border-inline-end: 0;
@@ -134,9 +138,9 @@
         margin: 0 0 1rem;
 
         &::before {
-            @include triangle(top, $color--dark-blue, 7px);
+            @include mixins.triangle(top, variables.$color--dark-blue, 7px);
             margin-inline-end: 0.7rem;
-            transition: transform $transition;
+            transition: transform variables.$transition;
             transform: rotate(180deg);
         }
 

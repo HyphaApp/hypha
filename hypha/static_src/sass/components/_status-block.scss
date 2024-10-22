@@ -1,22 +1,25 @@
+@use "../abstracts/mixins";
+@use "../abstracts/variables";
+
 .status-block {
     $root: &;
-    background-color: $color--white;
-    border: 1px solid $color--light-mid-grey;
+    background-color: variables.$color--white;
+    border: 1px solid variables.$color--light-mid-grey;
 
-    @include media-query(lg) {
+    @include mixins.media-query(lg) {
         display: flex;
     }
 
     &__item {
         display: block;
         padding: 10px 20px;
-        border-block-end: 1px solid $color--light-mid-grey;
-        background-color: $color--white;
-        transition: background-color $quick-transition;
+        border-block-end: 1px solid variables.$color--light-mid-grey;
+        background-color: variables.$color--white;
+        transition: background-color variables.$quick-transition;
 
-        @include media-query(lg) {
+        @include mixins.media-query(lg) {
             border-block-end: 0;
-            border-inline-end: 1px solid $color--light-mid-grey;
+            border-inline-end: 1px solid variables.$color--light-mid-grey;
             width: 100%;
             padding: 10px;
             display: flex;
@@ -24,7 +27,7 @@
             flex-direction: column;
         }
 
-        @include media-query(xl) {
+        @include mixins.media-query(xl) {
             padding: 20px 18px 30px;
         }
 
@@ -33,7 +36,7 @@
         }
 
         &:hover {
-            background-color: $color--light-grey;
+            background-color: variables.$color--light-grey;
         }
 
         &:last-child {
@@ -47,7 +50,7 @@
     }
 
     &__info {
-        @include media-query(lg) {
+        @include mixins.media-query(lg) {
             margin-block-start: auto;
         }
     }

@@ -14,8 +14,13 @@ repos:
       - id: djhtml
         files: .*/templates/.*\.html$
 
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v4.0.0-alpha.8
+    hooks:
+      - id: prettier
+
   - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v9.12.0
+    rev: v9.13.0
     hooks:
       - id: eslint
         files: .*/static_src/javascript/.*\.js$
@@ -37,8 +42,3 @@ repos:
           - stylelint@16.10.0
           - stylelint-config-standard@36.0.1
           - stylelint-config-standard-scss@13.1.0
-
-  - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v4.0.0-alpha.8
-    hooks:
-      - id: prettier

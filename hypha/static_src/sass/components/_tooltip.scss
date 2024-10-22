@@ -1,3 +1,5 @@
+@use "../abstracts/variables";
+
 [data-tooltip] {
     position: relative;
     z-index: 2;
@@ -11,13 +13,13 @@
     visibility: hidden;
     opacity: 0;
     pointer-events: none;
-    transition: opacity, bottom, $transition;
+    transition: opacity, bottom, variables.$transition;
     position: absolute;
     inset-block-end: 110%;
     margin-block-end: 5px;
     padding: 7px;
-    background-color: $color--dark-grey;
-    color: $color--white;
+    background-color: variables.$color--dark-grey;
+    color: variables.$color--white;
     content: attr(data-tooltip);
     text-align: center;
     font-size: 14px;

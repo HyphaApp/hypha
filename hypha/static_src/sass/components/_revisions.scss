@@ -1,3 +1,5 @@
+@use "../abstracts/variables";
+
 .revision-diff-table {
     td {
         vertical-align: top;
@@ -7,7 +9,7 @@
 
 .diff {
     &__deleted {
-        background-color: $color--light-pink;
+        background-color: variables.$color--light-pink;
 
         a {
             background-color: inherit;
@@ -15,7 +17,7 @@
     }
 
     &__added {
-        background-color: $color--light-green;
+        background-color: variables.$color--light-green;
 
         a {
             background-color: inherit;

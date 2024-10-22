@@ -1,3 +1,9 @@
+@use "sass:color";
+@use "sass:map";
+@use "../abstracts/mixins";
+@use "../abstracts/variables";
+@use "../base/typography";
+
 // class used for custom styling on the simplified submission and project pages
 .simplified {
     &__admin-bar {
@@ -5,20 +11,20 @@
         inset-inline-end: 50%;
         inset-inline-start: 50%;
         width: 100vw;
-        padding: $mobile-gutter;
+        padding: variables.$mobile-gutter;
         margin-inline-end: -50vw;
         margin-inline-start: -50vw;
-        color: $color--white;
-        background-color: $color--dark-grey;
+        color: variables.$color--white;
+        background-color: variables.$color--dark-grey;
     }
 
     &__admin-bar-inner {
-        max-width: $site-width;
+        max-width: variables.$site-width;
         margin: 0 auto;
     }
 
     &__admin-bar-inner-project {
-        max-width: $site-width;
+        max-width: variables.$site-width;
         margin: 0 auto;
         display: flex;
         align-items: center;
@@ -30,11 +36,11 @@
     &__projects-link {
         display: inline-flex;
         align-items: center;
-        color: $color--lightest-blue;
-        font-weight: $weight--bold;
+        color: variables.$color--lightest-blue;
+        font-weight: variables.$weight--bold;
 
         &::before {
-            @include triangle(top, currentColor, 5px);
+            @include mixins.triangle(top, currentColor, 5px);
             margin-inline-end: 0.5rem;
             transform: rotate(-90deg);
         }
@@ -43,20 +49,24 @@
     &__submissions-link {
         display: inline-flex;
         align-items: center;
-        color: $color--lightest-blue;
-        font-weight: $weight--bold;
+        color: variables.$color--lightest-blue;
+        font-weight: variables.$weight--bold;
 
         &::before {
-            @include triangle(top, currentColor, 5px);
+            @include mixins.triangle(top, currentColor, 5px);
             margin-inline-end: 0.5rem;
             transform: rotate(-90deg);
         }
     }
 
     &__heading {
-        @include responsive-font-sizes(30px, map-get($font-sizes, beta));
-        font-weight: $weight--bold;
+        font-weight: variables.$weight--bold;
         margin: 0;
+
+        @include mixins.responsive-font-sizes(
+            30px,
+            map.get(variables.$font-sizes, beta)
+        );
     }
 
     &__subheading {
@@ -64,7 +74,7 @@
         flex-wrap: wrap;
         margin: 0;
 
-        @include media-query(md) {
+        @include mixins.media-query(md) {
             margin-block-end: 1rem;
         }
 
@@ -84,23 +94,23 @@
     }
 
     &__wrapper {
-        padding: $mobile-gutter 0;
+        padding: variables.$mobile-gutter 0;
 
-        @include media-query(md) {
+        @include mixins.media-query(md) {
             padding: 1rem 0;
         }
     }
 
     &__meta {
-        @include heading-text;
-        @include font-size(zeta);
+        @include typography.heading-text;
+        @include mixins.font-size(zeta);
         display: flex;
         flex-direction: column;
-        margin-block-start: $mobile-gutter;
-        font-weight: $weight--normal;
-        color: transparentize($color--dark-grey, 0.5);
+        margin-block-start: variables.$mobile-gutter;
+        font-weight: variables.$weight--normal;
+        color: color.adjust(variables.$color--dark-grey, $alpha: -0.5);
 
-        @include media-query(lg) {
+        @include mixins.media-query(lg) {
             flex-direction: row;
             margin-block-start: 0;
         }
@@ -132,12 +142,12 @@
 
         h1 {
             font-size: 20px;
-            font-family: $font--primary;
+            font-family: variables.$font--primary;
         }
 
         h2 {
             font-size: 18px;
-            font-family: $font--primary;
+            font-family: variables.$font--primary;
         }
 
         h3,
@@ -145,7 +155,7 @@
         h5,
         h6 {
             font-size: 16px;
-            font-family: $font--primary;
+            font-family: variables.$font--primary;
         }
 
         .question {

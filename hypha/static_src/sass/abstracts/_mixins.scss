@@ -1,3 +1,8 @@
+@use "sass:list";
+@use "sass:map";
+@use "functions";
+@use "variables";
+
 // stylelint-disable
 
 @use "sass:math";
@@ -5,9 +10,9 @@
 // Media queries
 @mixin media-query($queries...) {
     @each $query in $queries {
-        @each $breakpoint in $breakpoints {
-            $name: nth($breakpoint, 1);
-            $declaration: nth($breakpoint, 2);
+        @each $breakpoint in variables.$breakpoints {
+            $name: list.nth($breakpoint, 1);
+            $declaration: list.nth($breakpoint, 2);
 
             @if $query == $name and $declaration {
                 @media only screen and #{$declaration} {
@@ -54,9 +59,12 @@
 
     @each $value in $values {
         @if $value == 0 or $value == auto or $value == inherit {
-            $rem: append($rem, $value);
+            $rem: list.append($rem, $value);
         } @else {
-            $rem: append($rem, rem(strip-unit($value)));
+            $rem: list.append(
+                $rem,
+                functions.rem(functions.strip-unit($value))
+            );
         }
     }
     #{$property}: $rem;
@@ -69,10 +77,10 @@
 
 // Font sizes
 @mixin font-size($keyword) {
-    $size: map-get($font-sizes, $keyword);
+    $size: map.get(variables.$font-sizes, $keyword);
 
     @if $size == null {
-        @warn 'Font size ‘#{$keyword}’ does not exist';
+        @warn 'Font size '#{$keyword}' does not exist';
     } @else {
         @include rem-font-size($size);
     }
@@ -81,12 +89,12 @@
 // Button mixin
 @mixin button($bg, $hover-bg) {
     padding: 0.5em 2rem;
-    font-weight: $weight--bold;
-    color: $color--white;
+    font-weight: variables.$weight--bold;
+    color: variables.$color--white;
     text-align: center;
     background: $bg;
-    border: 1px solid $color--white;
-    transition: color, background, border, $transition;
+    border: 1px solid variables.$color--white;
+    transition: color, background, border, variables.$transition;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -106,7 +114,9 @@
     vertical-align: middle;
 
     @include media-query(lg) {
-        padding: 0.25rem 0.75rem;
+        & {
+            padding: 0.25rem 0.75rem;
+        }
     }
 }
 
@@ -116,14 +126,18 @@
     font-size: 12px;
 
     @include media-query(lg) {
-        padding: 3px 5px;
+        & {
+            padding: 3px 5px;
+        }
     }
 }
 
 // Wide button mixin
 @mixin button--wide {
     @include media-query(lg) {
-        padding: 0.5em 80px;
+        & {
+            padding: 0.5em 80px;
+        }
     }
 }
 
@@ -136,11 +150,13 @@
         $responsive,
         ($responsive - $responsive + 1)
     );
-    $dimension: if(unit($responsive) == "vh", "height", "width");
+    $dimension: if(math.unit($responsive) == "vh", "height", "width");
     $min-breakpoint: math.div($min, $responsive-unitless) * 100;
 
     @media (max-#{$dimension}: #{$min-breakpoint}) {
-        font-size: $min;
+        & {
+            font-size: $min;
+        }
     }
 
     $max-breakpoint: math.div($max, $responsive-unitless) * 100;
@@ -148,8 +164,9 @@
     @media (min-#{$dimension}: #{$max-breakpoint}) {
         font-size: $max;
     }
-
-    font-size: $responsive;
+    & {
+        font-size: $responsive;
+    }
 }
 
 // Triangle mixin
@@ -157,14 +174,15 @@
 // @param {Color} $color [currentcolor] - Triangle color
 // @param {Length} $size [1em] - Triangle size
 @mixin triangle($direction, $color: currentcolor, $size: 1em) {
-    @if not index(top right bottom left, $direction) {
+    @if not list.index(top right bottom left, $direction) {
         @error 'Direction must be either `top`, `right`, `bottom` or `left`.';
     }
 
     width: 0;
     height: 0;
     content: "";
-    border-#{opposite-direction($direction)}: ($size * 1.5) solid $color;
+    border-#{functions.opposite-direction($direction)}: ($size * 1.5) solid
+        $color;
 
     $perpendicular-borders: $size solid transparent;
 
@@ -184,7 +202,7 @@
             &.desc,
             &.asc {
                 position: relative;
-                color: $color--dark-grey;
+                color: variables.$color--dark-grey;
 
                 &::after {
                     position: absolute;
@@ -199,13 +217,13 @@
 
             &.desc {
                 &::after {
-                    @include triangle(top, $color--default, 5px);
+                    @include triangle(top, variables.$color--default, 5px);
                 }
             }
 
             &.asc {
                 &::after {
-                    @include triangle(bottom, $color--default, 5px);
+                    @include triangle(bottom, variables.$color--default, 5px);
                 }
             }
         }

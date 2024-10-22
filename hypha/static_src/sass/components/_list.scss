@@ -1,3 +1,7 @@
+@use "../base/typography";
+@use "../abstracts/mixins";
+@use "../abstracts/variables";
+
 .list {
     $root: &;
     max-width: 290px;
@@ -9,8 +13,8 @@
     &--opinion {
         position: relative;
         font-size: 14px;
-        border-block-start: 1px solid $color--mid-grey;
-        border-block-end: 1px solid $color--mid-grey;
+        border-block-start: 1px solid variables.$color--mid-grey;
+        border-block-end: 1px solid variables.$color--mid-grey;
         margin: 10px 0;
         padding: 5px 0;
 
@@ -24,12 +28,16 @@
                 }
 
                 &::after {
-                    @include triangle(top, $color--mist, 6px);
+                    @include mixins.triangle(top, variables.$color--mist, 6px);
                     inset-block-start: -13px;
                 }
 
                 &::before {
-                    @include triangle(top, $color--mid-grey, 6px);
+                    @include mixins.triangle(
+                        top,
+                        variables.$color--mid-grey,
+                        6px
+                    );
                 }
             }
         }
@@ -44,7 +52,7 @@
         &--reviewer-name {
             max-width: 190px;
             overflow: hidden;
-            font-weight: $weight--bold;
+            font-weight: variables.$weight--bold;
             text-overflow: ellipsis;
             display: flex;
             align-items: center;
@@ -58,7 +66,7 @@
                 position: absolute;
                 max-width: initial;
                 overflow: visible;
-                background-color: $color--mist;
+                background-color: variables.$color--mist;
 
                 + #{$root}__item--reviewer-outcome {
                     width: 100%;
@@ -67,16 +75,16 @@
             }
 
             #{$root}__item--opinion & {
-                font-weight: $weight--normal;
+                font-weight: variables.$weight--normal;
             }
         }
 
         &--reviewer-outcome {
-            color: $color--tomato;
+            color: variables.$color--tomato;
             position: relative;
 
             &.agree {
-                color: $color--green;
+                color: variables.$color--green;
             }
         }
     }

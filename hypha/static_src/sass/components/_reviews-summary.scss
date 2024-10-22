@@ -1,8 +1,11 @@
+@use "../abstracts/mixins";
+@use "../abstracts/variables";
+
 .reviews-summary {
     display: none;
     background-color: transparent;
 
-    @include media-query(lg) {
+    @include mixins.media-query(lg) {
         display: table;
     }
 
@@ -23,5 +26,5 @@
 }
 
 .counts-separator {
-    color: $color--mid-grey;
+    color: variables.$color--mid-grey;
 }

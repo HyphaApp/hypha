@@ -1,11 +1,13 @@
+@use "../abstracts/variables";
+
 .reviewer-dash-box {
     display: flex;
     align-items: center;
     flex-direction: column;
     padding: 30px;
-    border: 1px solid $color--mid-grey;
+    border: 1px solid variables.$color--mid-grey;
 
     &__title {
-        color: $color--mid-dark-grey;
+        color: variables.$color--mid-dark-grey;
     }
 }

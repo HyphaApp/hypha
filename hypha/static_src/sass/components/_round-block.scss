@@ -1,3 +1,7 @@
+@use "sass:map";
+@use "../abstracts/mixins";
+@use "../abstracts/variables";
+
 .round-block {
     $root: &;
 
@@ -7,22 +11,22 @@
 
     &__item {
         align-items: center;
-        background-color: $color--white;
-        border: 1px solid $color--light-mid-grey;
+        background-color: variables.$color--white;
+        border: 1px solid variables.$color--light-mid-grey;
         border-block-end: 0;
         padding: 25px;
-        transition: background-color $quick-transition;
+        transition: background-color variables.$quick-transition;
         min-height: 80px;
 
         &:last-child {
-            border-block-end: 1px solid $color--light-mid-grey;
+            border-block-end: 1px solid variables.$color--light-mid-grey;
         }
 
-        @include media-query(lg) {
+        @include mixins.media-query(lg) {
             display: flex;
 
             &:hover {
-                background-color: $color--light-grey;
+                background-color: variables.$color--light-grey;
             }
 
             // item spacing
@@ -35,29 +39,29 @@
         &--more {
             padding: 20px 25px;
             justify-content: center;
-            border-block-end: 1px solid $color--light-mid-grey;
+            border-block-end: 1px solid variables.$color--light-mid-grey;
             min-height: auto;
 
             &:hover {
-                background-color: $color--white;
+                background-color: variables.$color--white;
             }
 
             // show more link
             a {
                 margin: 0;
                 flex-basis: auto;
-                font-weight: $weight--semibold;
+                font-weight: variables.$weight--semibold;
             }
         }
     }
 
     &__view {
         margin: 0 0 0 auto;
-        transition: color $quick-transition;
-        font-weight: $weight--bold;
+        transition: color variables.$quick-transition;
+        font-weight: variables.$weight--bold;
         text-transform: uppercase;
 
-        @include media-query(lg) {
+        @include mixins.media-query(lg) {
             color: transparent;
             flex-basis: auto;
             pointer-events: none;
@@ -65,25 +69,25 @@
 
         &:focus,
         #{$root}__item:hover & {
-            color: $color--primary;
+            color: variables.$color--primary;
             pointer-events: all;
         }
     }
 
     &__title {
-        color: $color--default;
-        font-size: map-get($font-sizes, epsilon);
-        font-weight: $weight--semibold;
+        color: variables.$color--default;
+        font-size: map.get(variables.$font-sizes, epsilon);
+        font-weight: variables.$weight--semibold;
     }
 
     &__not-found {
         margin: 0;
         padding: 20px;
-        background-color: $color--white;
-        border: 1px solid $color--light-mid-grey;
+        background-color: variables.$color--white;
+        border: 1px solid variables.$color--light-mid-grey;
     }
 
-    @include media-query(lg) {
+    @include mixins.media-query(lg) {
         &__title {
             flex-basis: 25em;
         }

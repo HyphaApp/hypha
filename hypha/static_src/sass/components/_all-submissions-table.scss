@@ -1,7 +1,11 @@
+@use "sass:color";
+@use "../abstracts/mixins";
+@use "../abstracts/variables";
+
 // stylelint-disable selector-class-pattern,selector-max-compound-selectors
 
 .all-submissions-table {
-    @include table-ordering-styles;
+    @include mixins.table-ordering-styles;
 
     $root: &;
     font-size: 14px;
@@ -9,13 +13,13 @@
     thead {
         display: none;
 
-        @include media-query(lg) {
+        @include mixins.media-query(lg) {
             display: table-header-group;
         }
 
         th {
             &.reviews_stats {
-                color: $color--black-60;
+                color: variables.$color--black-60;
 
                 div {
                     font-size: 0.75rem;
@@ -24,38 +28,38 @@
 
             // set column widths
             &.title {
-                @include media-query(lg) {
+                @include mixins.media-query(lg) {
                     width: 130px;
                 }
 
-                @include media-query(xl) {
+                @include mixins.media-query(xl) {
                     width: 260px;
                 }
             }
 
             &.phase {
-                @include media-query(lg) {
+                @include mixins.media-query(lg) {
                     width: 150px;
                 }
             }
 
             &.selected {
-                @include table-checkbox;
+                @include mixins.table-checkbox;
 
-                @include media-query(lg) {
+                @include mixins.media-query(lg) {
                     width: 50px;
                     padding-inline-end: 0;
                 }
             }
 
             &.comments {
-                @include media-query(lg) {
+                @include mixins.media-query(lg) {
                     width: 110px;
                 }
             }
 
             &.organization_name {
-                @include media-query(lg) {
+                @include mixins.media-query(lg) {
                     width: 110px;
                 }
             }
@@ -71,7 +75,7 @@
     tbody {
         tr {
             &[data-archived="True"] {
-                background-color: $color--light-mid-grey;
+                background-color: variables.$color--light-mid-grey;
             }
         }
 
@@ -80,14 +84,14 @@
             &.title {
                 position: relative;
                 padding-block-start: 15px;
-                font-weight: $weight--bold;
+                font-weight: variables.$weight--bold;
 
-                @include media-query(lg) {
+                @include mixins.media-query(lg) {
                     display: flex;
                     align-items: center;
                 }
 
-                @include media-query(xl) {
+                @include mixins.media-query(xl) {
                     display: table-cell;
                 }
             }
@@ -98,12 +102,12 @@
                     display: inline-block;
                     padding: 5px;
                     font-size: 13px;
-                    font-weight: $weight--bold;
-                    color: $color--marine;
+                    font-weight: variables.$weight--bold;
+                    color: variables.$color--marine;
                     text-align: center;
-                    background-color: $color--sky-blue;
+                    background-color: variables.$color--sky-blue;
 
-                    @include media-query(lg) {
+                    @include mixins.media-query(lg) {
                         width: 100%;
                     }
                 }
@@ -113,7 +117,7 @@
             &.comments {
                 display: none;
 
-                @include media-query(lg) {
+                @include mixins.media-query(lg) {
                     display: table-cell;
                     font-size: 13px;
                     text-align: center;
@@ -127,18 +131,18 @@
             &.reviews_stats {
                 display: none;
 
-                @include media-query(lg) {
+                @include mixins.media-query(lg) {
                     display: table-cell;
                 }
             }
 
             // batch action checkboxes
             &.selected {
-                @include table-checkbox;
+                @include mixins.table-checkbox;
                 display: none;
                 padding-inline-end: 0;
 
-                @include media-query(lg) {
+                @include mixins.media-query(lg) {
                     display: table-cell;
                 }
             }
@@ -150,19 +154,23 @@
             }
 
             &.organization_name {
-                @include media-query(lg) {
+                @include mixins.media-query(lg) {
                     padding-inline-start: 15px;
                 }
             }
 
             // arrow to toggle project info - added via js
-            @include media-query(lg) {
+            @include mixins.media-query(lg) {
                 .arrow {
-                    @include triangle(right, $color--primary, 6px);
+                    @include mixins.triangle(
+                        right,
+                        variables.$color--primary,
+                        6px
+                    );
                     position: relative;
                     display: inline-block;
                     transform: rotate(0);
-                    transition: transform $transition;
+                    transition: transform variables.$transition;
 
                     &:hover {
                         cursor: pointer;
@@ -180,7 +188,7 @@
                     display: none;
                 }
 
-                @include media-query(lg) {
+                @include mixins.media-query(lg) {
                     display: none;
                 }
             }
@@ -189,11 +197,11 @@
 
     &__parent {
         &.is-expanded {
-            background-color: $color--mist;
-            border-block-end: 1px solid $color--light-mid-grey;
+            background-color: variables.$color--mist;
+            border-block-end: 1px solid variables.$color--light-mid-grey;
 
             + #{$root}__child {
-                border-block-end: 1px solid $color--light-mid-grey;
+                border-block-end: 1px solid variables.$color--light-mid-grey;
             }
 
             + #{$root}__child,
@@ -202,7 +210,10 @@
             }
 
             .arrow {
-                border-right-color: darken($color--dark-blue, 10%);
+                border-right-color: color.adjust(
+                    variables.$color--dark-blue,
+                    $lightness: -10%
+                );
                 transform: rotate(90deg);
             }
         }
@@ -210,11 +221,11 @@
 
     &__child {
         display: none;
-        color: $color--mid-dark-grey;
+        color: variables.$color--mid-dark-grey;
         vertical-align: top;
-        background-color: $color--mist;
+        background-color: variables.$color--mist;
         border: 0;
-        border-block-end: 2px solid $color--light-grey;
+        border-block-end: 2px solid variables.$color--light-grey;
 
         &:hover {
             box-shadow: none;
@@ -226,8 +237,8 @@
 
         p {
             margin: 0;
-            font-weight: $weight--bold;
-            color: $color--default;
+            font-weight: variables.$weight--bold;
+            color: variables.$color--default;
         }
 
         .title {
@@ -257,17 +268,17 @@
     &__more {
         display: flex;
         justify-content: center;
-        background-color: $color--white;
+        background-color: variables.$color--white;
         padding: 20px 25px;
         min-height: auto;
-        border-block-end: 1px solid $color--light-mid-grey;
-        border-inline-start: 1px solid $color--light-mid-grey;
-        border-inline-end: 1px solid $color--light-mid-grey;
+        border-block-end: 1px solid variables.$color--light-mid-grey;
+        border-inline-start: 1px solid variables.$color--light-mid-grey;
+        border-inline-end: 1px solid variables.$color--light-mid-grey;
 
         a {
             margin: 0;
             flex-basis: auto;
-            font-weight: $weight--semibold;
+            font-weight: variables.$weight--semibold;
         }
     }
 }

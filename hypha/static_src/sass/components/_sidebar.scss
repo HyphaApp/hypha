@@ -1,19 +1,22 @@
+@use "../abstracts/mixins";
+@use "../abstracts/variables";
+
 .sidebar {
-    @include media-query(md) {
+    @include mixins.media-query(md) {
         width: 345px;
     }
 
     &__inner {
         padding: 20px;
         margin-block-end: 20px;
-        border: 1px solid $color--mid-grey;
+        border: 1px solid variables.$color--mid-grey;
 
         &--light-blue {
-            background-color: $color--light-blue-90;
+            background-color: variables.$color--light-blue-90;
         }
 
         &--actions {
-            @include media-query(md) {
+            @include mixins.media-query(md) {
                 &--instructions {
                     margin-block-start: 10px;
                     margin-inline-start: 10px;
@@ -41,11 +44,11 @@
 
     &__paf-approvals {
         &--pending {
-            color: $color--mid-grey;
+            color: variables.$color--mid-grey;
         }
 
         &--approved {
-            color: $color--black;
+            color: variables.$color--black;
         }
     }
 
@@ -57,7 +60,7 @@
 
     &__screening-option {
         margin: 0.3em;
-        border: 1px solid $color--black-20;
+        border: 1px solid variables.$color--black-20;
         border-radius: 16px;
         padding: 6px;
         padding-inline-end: 12px;
@@ -68,8 +71,8 @@
     &__separator {
         position: relative;
         font-size: 12px;
-        font-weight: $weight--bold;
-        color: $color--black-40;
+        font-weight: variables.$weight--bold;
+        color: variables.$color--black-40;
         text-transform: uppercase;
 
         &::after {
@@ -78,7 +81,7 @@
             inset-inline-end: 0;
             width: calc(100% - 60px);
             height: 1px;
-            background-color: $color--black-20;
+            background-color: variables.$color--black-20;
             content: "";
         }
 

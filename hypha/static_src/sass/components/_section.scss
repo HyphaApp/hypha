@@ -1,9 +1,12 @@
+@use "../abstracts/mixins";
+@use "../abstracts/variables";
+
 .section {
     &--has-sidebar {
         flex-grow: 1;
-        margin: $mobile-gutter 0;
+        margin: variables.$mobile-gutter 0;
 
-        @include media-query(md) {
+        @include mixins.media-query(md) {
             padding-inline-end: 20px;
             margin-block-end: 0;
         }
@@ -13,7 +16,7 @@
         display: flex;
         flex-direction: column;
 
-        @include media-query(sm) {
+        @include mixins.media-query(sm) {
             flex-direction: row;
             justify-content: space-between;
             align-items: center;

@@ -1,0 +1,29 @@
+@use "../abstracts/variables";
+
+.related-sidebar {
+    ul {
+        list-style-type: circle;
+        padding-inline-start: 20px;
+    }
+
+    &--collaps {
+        position: relative;
+        max-height: 300px;
+        overflow: hidden;
+    }
+
+    &__show-button {
+        position: absolute;
+        inset-block-end: 0;
+        inset-inline-start: 0;
+        width: 100%;
+        text-align: center;
+        margin: 0;
+        padding: 3em 0 0.5em;
+        background-image: linear-gradient(
+            to bottom,
+            variables.$color--white-10,
+            variables.$color--white
+        );
+    }
+}

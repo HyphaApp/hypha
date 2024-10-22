@@ -1,3 +1,8 @@
+@use "sass:list";
+@use "sass:map";
+@use "sass:string";
+@use "variables";
+
 // stylelint-disable scss/function-unquote-no-unquoted-strings-inside
 
 @use "sass:math";
@@ -8,7 +13,7 @@
 }
 
 // Return an em unit based on the pixel value and context
-@function rem($px, $context: $base-font-size) {
+@function rem($px, $context: variables.$base-font-size) {
     @return #{strip-unit(math.div($px, strip-unit($context)))}rem;
 }
 
@@ -28,12 +33,12 @@
     );
 
     @each $direction in $directions {
-        $direction: to-lower-case($direction);
+        $direction: string.to-lower-case($direction);
 
-        @if map-has-key($direction-map, $direction) {
-            $opposite-directions: append(
+        @if map.has-key($direction-map, $direction) {
+            $opposite-directions: list.append(
                 $opposite-directions,
-                unquote(map-get($direction-map, $direction))
+                string.unquote(map.get($direction-map, $direction))
             );
         } @else {
             @warn 'No opposite direction can be found for `#{$direction}`. Direction omitted.';

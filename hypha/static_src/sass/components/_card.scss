@@ -1,10 +1,13 @@
+@use "../abstracts/mixins";
+@use "../abstracts/variables";
+
 .card {
     padding: 20px;
     margin-block-end: 20px;
-    border: 1px solid $color--mid-grey;
+    border: 1px solid variables.$color--mid-grey;
 
     &--solid {
-        background-color: $color--white;
+        background-color: variables.$color--white;
     }
 
     &__text {
@@ -32,7 +35,7 @@
         align-items: center;
         margin-block-end: 1rem;
 
-        @include media-query(sm) {
+        @include mixins.media-query(sm) {
             margin-inline-start: 1rem;
         }
     }

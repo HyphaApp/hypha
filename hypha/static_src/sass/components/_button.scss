@@ -1,3 +1,7 @@
+@use "sass:map";
+@use "../abstracts/mixins";
+@use "../abstracts/variables";
+
 .btn,
 .button {
     padding: 0;
@@ -5,7 +9,7 @@
     background-image: none;
     border: 0;
     box-shadow: none;
-    border-radius: $rounded-sm;
+    border-radius: variables.$rounded-sm;
 
     &:hover {
         cursor: pointer;
@@ -18,9 +22,12 @@
     }
 
     &--primary {
-        @include button($color--light-blue, $color--dark-blue);
+        @include mixins.button(
+            variables.$color--light-blue,
+            variables.$color--dark-blue
+        );
         display: inline-block;
-        border: 1px solid $color--light-blue;
+        border: 1px solid variables.$color--light-blue;
 
         .form--filters & {
             width: 100%;
@@ -30,100 +37,115 @@
     }
 
     &--project-action {
-        @include button($color--light-blue, $color--dark-blue);
+        @include mixins.button(
+            variables.$color--light-blue,
+            variables.$color--dark-blue
+        );
         display: inline-block;
         padding: 0.5rem 1.2rem;
 
         &--white {
-            @include button($color--white, $color--light-blue);
+            @include mixins.button(
+                variables.$color--white,
+                variables.$color--light-blue
+            );
             display: inline-block;
-            color: $color--light-blue;
-            border: 1px solid $color--mid-grey;
+            color: variables.$color--light-blue;
+            border: 1px solid variables.$color--mid-grey;
             padding: 0.5rem 1.2rem;
 
             &:active,
             &:focus,
             &:hover {
-                color: $color--white;
+                color: variables.$color--white;
             }
         }
     }
 
     &--login {
         /* stylelint-disable-next-line media-query-no-invalid */
-        @media (min-width: $input-box-max-width) {
+        @media (min-width: variables.$input-box-max-width) {
             width: 20rem;
         }
     }
 
     &--transparent {
-        @include button(transparent, $color--black);
-        color: $color--black;
-        border: 1px solid $color--black;
+        @include mixins.button(transparent, variables.$color--black);
+        color: variables.$color--black;
+        border: 1px solid variables.$color--black;
 
         &:active,
         &:focus,
         &:hover {
-            color: $color--white;
+            color: variables.$color--white;
         }
     }
 
     &--mobile-standout {
-        color: $color--white;
-        border-color: $color--white;
+        color: variables.$color--white;
+        border-color: variables.$color--white;
         max-width: 250px;
         margin: 1rem auto 0;
 
-        @include media-query(md) {
+        @include mixins.media-query(md) {
             display: none;
         }
     }
 
     &--cookieconsent {
-        @include button(transparent, $color--white);
+        @include mixins.button(transparent, variables.$color--white);
         display: inline;
 
         &:focus,
         &:hover {
-            color: $color--dark-blue;
+            color: variables.$color--dark-blue;
         }
     }
 
     &--secondary,
     &--white {
-        @include button($color--white, $color--light-blue);
+        @include mixins.button(
+            variables.$color--white,
+            variables.$color--light-blue
+        );
         display: inline-block;
-        color: $color--light-blue;
-        border: 1px solid $color--mid-grey;
+        color: variables.$color--light-blue;
+        border: 1px solid variables.$color--mid-grey;
 
         &:active,
         &:focus,
         &:hover {
-            color: $color--white;
+            color: variables.$color--white;
         }
     }
 
     &--blue-white {
-        @include button($color--white, $color--light-blue);
+        @include mixins.button(
+            variables.$color--white,
+            variables.$color--light-blue
+        );
         display: inline-block;
-        color: $color--light-blue;
-        border: 1px solid $color--light-blue;
+        color: variables.$color--light-blue;
+        border: 1px solid variables.$color--light-blue;
 
         &:focus {
-            color: $color--light-blue;
+            color: variables.$color--light-blue;
         }
 
         &:hover {
-            color: $color--white;
+            color: variables.$color--white;
         }
     }
 
     &-danger,
     &--warning {
-        @include button($color--error, $color--error);
+        @include mixins.button(
+            variables.$color--error,
+            variables.$color--error
+        );
 
         &:focus {
-            background-color: $color--pastel-red;
+            background-color: variables.$color--pastel-red;
         }
     }
 
@@ -132,13 +154,13 @@
         justify-content: space-between;
         max-width: 300px;
         padding: 15px 20px;
-        font-weight: $weight--normal;
-        color: $color--default;
-        border: 1px solid $color--light-mid-grey;
+        font-weight: variables.$weight--normal;
+        color: variables.$color--default;
+        border: 1px solid variables.$color--light-mid-grey;
         transition: none;
         width: 100%;
 
-        @include media-query(lg) {
+        @include mixins.media-query(lg) {
             background: none;
             padding: 10px;
             border: 0;
@@ -157,7 +179,7 @@
         inset-inline-end: 10px;
 
         svg {
-            fill: $color--primary;
+            fill: variables.$color--primary;
             height: 24px;
         }
     }
@@ -167,11 +189,11 @@
     }
 
     &--narrow {
-        @include button--narrow;
+        @include mixins.button--narrow;
     }
 
     &--wide {
-        @include button--wide;
+        @include mixins.button--wide;
     }
 
     &--full-width {
@@ -200,10 +222,10 @@
     &--actions {
         position: relative;
         display: block;
-        background-color: $color--white;
+        background-color: variables.$color--white;
 
         &:active {
-            background: $color--light-blue-90;
+            background: variables.$color--light-blue-90;
         }
 
         &::after {
@@ -216,8 +238,8 @@
         }
 
         &.is-active {
-            color: $color--dark-blue;
-            background: $color--light-blue-90;
+            color: variables.$color--dark-blue;
+            background: variables.$color--light-blue-90;
 
             &::after {
                 inset-block-start: -12px;
@@ -225,7 +247,7 @@
             }
         }
 
-        @include media-query(md) {
+        @include mixins.media-query(md) {
             display: none;
         }
     }
@@ -245,21 +267,21 @@
         padding: 3px;
         margin-block-start: 10px;
         font-size: 12px;
-        font-weight: $weight--bold;
+        font-weight: variables.$weight--bold;
         text-align: center;
         text-transform: uppercase;
         border: 1px solid currentcolor;
-        transition: background-color, color, border, $quick-transition;
+        transition: background-color, color, border, variables.$quick-transition;
 
-        @include media-query(md) {
+        @include mixins.media-query(md) {
             margin-block-start: 0;
         }
 
         &:focus,
         &:hover {
-            color: $color--white;
-            background-color: $color--light-blue;
-            border: 1px solid $color--light-blue;
+            color: variables.$color--white;
+            background-color: variables.$color--light-blue;
+            border: 1px solid variables.$color--light-blue;
         }
     }
 
@@ -271,16 +293,16 @@
             width: 10px;
             height: 14px;
             margin-inline-start: 10px;
-            fill: $color--white;
+            fill: variables.$color--white;
         }
     }
 
     &--action {
         display: flex;
-        color: $color--default;
+        color: variables.$color--default;
         align-items: center;
-        transition: opacity $transition;
-        font-weight: $weight--semibold;
+        transition: opacity variables.$transition;
+        font-weight: variables.$weight--semibold;
         position: relative;
 
         &:hover {
@@ -288,7 +310,7 @@
         }
 
         &:disabled {
-            color: $color--mid-dark-grey;
+            color: variables.$color--mid-dark-grey;
             cursor: not-allowed;
             pointer-events: all; // to show the tooltip on hover
 
@@ -300,34 +322,38 @@
                 width: 200px;
                 padding: 12px;
                 font-size: 12px;
-                font-weight: $weight--normal;
+                font-weight: variables.$weight--normal;
                 white-space: normal;
-                background: $color--light-blue;
+                background: variables.$color--light-blue;
                 opacity: 0;
-                transition: opacity $transition;
+                transition: opacity variables.$transition;
                 inset-block-end: 45px;
                 inset-inline-start: 50%;
                 transform: translateX(-50%);
-                color: $color--white;
+                color: variables.$color--white;
                 text-align: left;
                 line-height: 1rem;
-                border: 1px solid $color--white;
-                border-radius: $rounded-sm;
+                border: 1px solid variables.$color--white;
+                border-radius: variables.$rounded-sm;
             }
 
             &::after {
-                @include triangle(bottom, $color--primary, 7px);
+                @include mixins.triangle(
+                    bottom,
+                    variables.$color--primary,
+                    7px
+                );
                 position: absolute;
                 inset-block-start: -22px;
                 inset-inline-start: 50%;
                 transform: translateX(-50%);
                 opacity: 0;
-                transition: opacity $transition;
+                transition: opacity variables.$transition;
                 z-index: 10;
             }
 
             svg {
-                fill: $color--mid-dark-grey;
+                fill: variables.$color--mid-dark-grey;
             }
 
             &:hover {
@@ -347,7 +373,7 @@
         }
 
         svg {
-            fill: $color--light-blue;
+            fill: variables.$color--light-blue;
             width: 1em;
             height: 1em;
             margin-inline-end: 0.5rem;
@@ -356,19 +382,19 @@
     }
 
     &--link {
-        color: $color--primary;
+        color: variables.$color--primary;
     }
 
     &--remove {
-        color: $color--tomato;
+        color: variables.$color--tomato;
     }
 
     &--tooltip-disabled {
-        background-color: $color--button-disabled;
+        background-color: variables.$color--button-disabled;
 
         &:hover {
             cursor: default;
-            background-color: $color--button-disabled;
+            background-color: variables.$color--button-disabled;
         }
     }
 
@@ -378,22 +404,29 @@
 
             &::after {
                 content: "\2691";
-                color: $color--tomato;
+                color: variables.$color--tomato;
                 position: absolute;
                 inset-block-start: 4px;
                 padding-inline-start: 5px;
-                font-size: map-get($font-sizes, delta);
+                font-size: map.get(variables.$font-sizes, delta);
                 line-height: 1;
             }
         }
     }
 
     &--unflag {
-        @include button($color--light-blue, $color--dark-blue);
-        @include button--small;
-        padding-inline-end: 18px;
+        @include mixins.button(
+            variables.$color--light-blue,
+            variables.$color--dark-blue
+        );
+        @include mixins.button--small;
 
-        @include media-query(lg) {
+        /* stylelint-disable-next-line no-duplicate-selectors */
+        & {
+            padding-inline-end: 18px;
+        }
+
+        @include mixins.media-query(lg) {
             padding-inline-end: 18px;
         }
 
@@ -401,7 +434,7 @@
             &::after {
                 inset-block-start: 2px;
                 padding-inline-start: 3px;
-                font-size: map-get($font-sizes, zeta);
+                font-size: map.get(variables.$font-sizes, zeta);
             }
         }
     }
@@ -409,20 +442,23 @@
     // Two-factor
     &-info,
     &-link {
-        @include button($color--light-blue, $color--dark-blue);
+        @include mixins.button(
+            variables.$color--light-blue,
+            variables.$color--dark-blue
+        );
         display: inline-block;
         line-height: 1.15;
     }
 
     &--like-active {
         svg {
-            fill: $color--dark-blue;
+            fill: variables.$color--dark-blue;
         }
     }
 
     &--dislike-active {
         svg {
-            fill: $color--tomato;
+            fill: variables.$color--tomato;
         }
     }
 }

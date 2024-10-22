@@ -1,22 +1,25 @@
+@use "../abstracts/mixins";
+@use "../abstracts/variables";
+
 // stylelint-disable selector-max-compound-selectors,max-nesting-depth
 
 .table-container {
     > table {
-        border: 1px solid $color--light-mid-grey;
+        border: 1px solid variables.$color--light-mid-grey;
     }
 
     // base table styles - specific ones in their own scss partial
     table:not(.reviews-summary) {
         width: 100%;
-        background-color: $color--white;
+        background-color: variables.$color--white;
         border-collapse: collapse;
         table-layout: fixed;
 
         tbody {
-            @include media-query(lg) {
+            @include mixins.media-query(lg) {
                 tr {
                     &:hover {
-                        background-color: $color--light-grey;
+                        background-color: variables.$color--light-grey;
                     }
                 }
             }
@@ -29,28 +32,28 @@
             text-align: left;
 
             a {
-                color: $color--black-60;
+                color: variables.$color--black-60;
                 transition: color 0.25s ease-out;
             }
         }
 
         // table rows
         tr {
-            border: 1px solid $color--light-mid-grey;
+            border: 1px solid variables.$color--light-mid-grey;
             transition: box-shadow 0.15s ease;
 
-            @include media-query(lg) {
+            @include mixins.media-query(lg) {
                 border-block-start: 0;
                 border-inline-end: 0;
-                border-block-end: 1px solid $color--light-mid-grey;
+                border-block-end: 1px solid variables.$color--light-mid-grey;
                 border-inline-start: 0;
 
                 &.is-expanded {
-                    border-block-end: 1px solid $color--light-grey;
+                    border-block-end: 1px solid variables.$color--light-grey;
 
                     .lead {
                         span {
-                            background-color: $color--mist;
+                            background-color: variables.$color--mist;
                         }
                     }
                 }
@@ -67,7 +70,7 @@
                 display: block;
                 width: 100%;
 
-                @include media-query(lg) {
+                @include mixins.media-query(lg) {
                     display: table-cell;
                     width: initial;
                 }
@@ -75,14 +78,14 @@
                 &.selected {
                     display: none;
 
-                    @include media-query(lg) {
+                    @include mixins.media-query(lg) {
                         display: table-cell;
                     }
                 }
 
                 &.lead {
                     span {
-                        @include media-query(lg) {
+                        @include mixins.media-query(lg) {
                             position: relative;
                             z-index: 1;
                             display: block;
@@ -100,7 +103,7 @@
 
                 &.title {
                     a {
-                        font-weight: $weight--bold;
+                        font-weight: variables.$weight--bold;
                         text-decoration: underline;
                     }
                 }
@@ -111,7 +114,7 @@
         th {
             padding: 5px 20px;
 
-            @include media-query(lg) {
+            @include mixins.media-query(lg) {
                 padding: 15px 10px;
             }
 
