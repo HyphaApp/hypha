@@ -1,3 +1,7 @@
+@use "sass:map";
+@use "../abstracts/mixins";
+@use "../abstracts/variables";
+
 .tabs {
     margin: 1.5rem 0 -20px;
 
@@ -18,30 +22,31 @@
     &__item {
         $root: &;
 
-        @include responsive-font-sizes(12px, 15px);
         position: relative;
         padding: 10px;
-        font-weight: $weight--bold;
+        font-weight: variables.$weight--bold;
         hyphens: auto;
-        color: $color--mid-grey;
+        color: variables.$color--mid-grey;
         text-transform: uppercase;
         transition:
             color,
             background-color,
             0.1s ease-out;
 
-        @include media-query(sm) {
+        @include mixins.responsive-font-sizes(12px, 15px);
+
+        @include mixins.media-query(sm) {
             width: 33%;
             padding: 15px;
         }
 
-        @include media-query(sm) {
+        @include mixins.media-query(sm) {
             width: auto;
             padding: 0.75rem 1rem;
         }
 
         &:hover {
-            color: $color--light-blue;
+            color: variables.$color--light-blue;
             background-color: rgba(
                 #fff,
                 0.8
@@ -49,32 +54,32 @@
         }
 
         &--alt {
-            font-size: map-get($font-sizes, zeta);
-            font-weight: $weight--semibold;
+            font-size: map.get(variables.$font-sizes, zeta);
+            font-weight: variables.$weight--semibold;
             padding: 0.5rem 1rem;
             text-transform: none;
             display: inline-block;
             border-block-end: 3px solid transparent;
-            color: $color--mid-dark-grey;
+            color: variables.$color--mid-dark-grey;
             width: auto;
 
             &:hover {
-                color: $color--default;
+                color: variables.$color--default;
             }
 
             &#{$root}--active {
                 background-color: transparent;
-                border-block-end: 3px solid $color--primary;
+                border-block-end: 3px solid variables.$color--primary;
 
                 &:hover {
-                    color: $color--default;
+                    color: variables.$color--default;
                     background-color: transparent;
                 }
             }
         }
 
         &--active {
-            color: $color--default;
+            color: variables.$color--default;
             cursor: default;
             background-color: var(--color-bg-default);
 
@@ -86,7 +91,7 @@
         &--right {
             display: none;
 
-            @include media-query(sm) {
+            @include mixins.media-query(sm) {
                 display: block;
                 margin-inline-start: auto;
             }

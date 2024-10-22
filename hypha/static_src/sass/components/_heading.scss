@@ -1,3 +1,7 @@
+@use "sass:color";
+@use "../abstracts/mixins";
+@use "../abstracts/variables";
+
 .heading {
     &--no-margin {
         margin: 0;
@@ -26,10 +30,10 @@
         display: flex;
         flex-direction: column;
         margin-block-start: 20px;
-        font-weight: $weight--normal;
-        color: transparentize($color--dark-grey, 0.5);
+        font-weight: variables.$weight--normal;
+        color: color.adjust(variables.$color--dark-grey, $alpha: -0.5);
 
-        @include media-query(lg) {
+        @include mixins.media-query(lg) {
             flex-direction: row;
             margin-block-start: 0;
         }
@@ -44,7 +48,7 @@
     }
 
     &--light-grey {
-        color: transparentize($color--dark-grey, 0.5);
+        color: color.adjust(variables.$color--dark-grey, $alpha: -0.5);
     }
 
     &--uppercase {
@@ -59,15 +63,16 @@
     }
 
     &--bold {
-        font-weight: $weight--bold;
+        font-weight: variables.$weight--bold;
     }
 
     &--activity-feed {
-        @include responsive-font-sizes(12px, 18px);
         line-height: 1.1;
         text-align: center;
 
-        @include media-query(md) {
+        @include mixins.responsive-font-sizes(12px, 18px);
+
+        @include mixins.media-query(md) {
             line-height: auto;
             text-align: left;
         }

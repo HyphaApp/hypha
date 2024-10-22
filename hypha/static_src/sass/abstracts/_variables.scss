@@ -1,3 +1,4 @@
+@use "sass:color";
 // stylelint-disable color-function-notation, color-no-hex, alpha-value-notation, value-keyword-case
 // Set via JS
 :root {
@@ -16,7 +17,7 @@ $color--dark-grey: #404041;
 // Brand
 $color--lightest-blue: #24aae1;
 $color--light-blue: #1d79a8;
-$color--light-blue-90: transparentize($color--light-blue, 0.9);
+$color--light-blue-90: color.adjust($color--light-blue, $alpha: -0.9);
 $color--lighter-blue: #7ab8d4;
 $color--dark-blue: #0c72a0;
 $color--darkest-blue: #3d6bdb;

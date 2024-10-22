@@ -1,15 +1,18 @@
+@use "../abstracts/mixins";
+@use "../abstracts/variables";
+
 .cookieconsent {
     position: fixed;
     inset-block-end: 0;
-    color: $color--white;
-    background-color: $color--dark-blue;
-    border-block-start: 4px solid $color--light-blue;
+    color: variables.$color--white;
+    background-color: variables.$color--dark-blue;
+    border-block-start: 4px solid variables.$color--light-blue;
     transform: translateY(100vh);
-    transition: all $transition;
+    transition: all variables.$transition;
     overflow: hidden;
     max-height: 37.5rem;
 
-    @include media-query(lg) {
+    @include mixins.media-query(lg) {
         max-height: 19rem;
     }
 
@@ -21,7 +24,7 @@
     &__content {
         width: 200%;
         margin-left: 0;
-        transition: all $transition;
+        transition: all variables.$transition;
     }
 
     &__content > div {
@@ -48,7 +51,7 @@
             width: 100%;
         }
 
-        @include media-query(lg) {
+        @include mixins.media-query(lg) {
             width: fit-content;
             display: block;
 
@@ -61,7 +64,7 @@
     &__statement {
         display: none;
 
-        @include media-query(lg) {
+        @include mixins.media-query(lg) {
             display: block;
         }
     }
@@ -70,7 +73,7 @@
         display: flex;
         flex-direction: column;
 
-        @include media-query(lg) {
+        @include mixins.media-query(lg) {
             flex-direction: row;
             margin-block-end: 1rem;
         }

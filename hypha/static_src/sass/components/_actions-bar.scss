@@ -1,7 +1,10 @@
+@use "../abstracts/mixins";
+@use "../abstracts/variables";
+
 .actions-bar {
     width: 100%;
 
-    @include media-query(lg) {
+    @include mixins.media-query(lg) {
         display: flex;
         justify-content: space-between;
     }
@@ -11,7 +14,7 @@
             margin-block-end: 20px;
         }
 
-        @include media-query(lg) {
+        @include mixins.media-query(lg) {
             display: flex;
             align-items: center;
 
@@ -37,11 +40,11 @@
         &--batch-actions {
             display: none;
 
-            @include media-query(lg) {
+            @include mixins.media-query(lg) {
                 display: flex;
                 opacity: 0;
                 pointer-events: none;
-                transition: opacity $quick-transition;
+                transition: opacity variables.$quick-transition;
 
                 .batch-actions-enabled & {
                     opacity: 1;
@@ -52,12 +55,12 @@
     }
 
     &__total {
-        background-color: $color--light-blue;
-        color: $color--white;
+        background-color: variables.$color--light-blue;
+        color: variables.$color--white;
         padding: 6px 16px;
         border-radius: 30px;
         min-width: 120px;
         text-align: center;
-        font-weight: $weight--semibold;
+        font-weight: variables.$weight--semibold;
     }
 }

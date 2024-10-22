@@ -1,10 +1,14 @@
+@use "sass:map";
+@use "../abstracts/mixins";
+@use "../abstracts/variables";
+
 .funding-block {
-    background-color: $color--light-blue;
-    color: $color--white;
+    background-color: variables.$color--light-blue;
+    color: variables.$color--white;
     padding: 1rem;
     margin-block-end: 1rem;
 
-    @include media-query(sm) {
+    @include mixins.media-query(sm) {
         padding: 2rem;
         display: flex;
         justify-content: space-between;
@@ -14,7 +18,7 @@
     &__item {
         margin: 0 0.5rem 1rem 0;
 
-        @include media-query(sm) {
+        @include mixins.media-query(sm) {
             margin: 0 0.5rem 0 0;
         }
 
@@ -29,10 +33,10 @@
 
     &__standout {
         margin: 0;
-        font-size: map-get($font-sizes, delta);
+        font-size: map.get(variables.$font-sizes, delta);
 
-        @include media-query(sm) {
-            font-size: map-get($font-sizes, beta);
+        @include mixins.media-query(sm) {
+            font-size: map.get(variables.$font-sizes, beta);
         }
     }
 

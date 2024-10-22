@@ -33,7 +33,7 @@ fmt: .cache/dev-build-fe  ## Run code formatters on all code using pre-commit
 
 .PHONY: lint
 lint: .cache/dev-build-fe  ## Run all linters
-	@echo "Checking python code style with ruff"
+	@echo "Running linters"
 	@pre-commit run --all-files
 
 

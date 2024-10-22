@@ -1,10 +1,12 @@
+@use "../abstracts/variables";
+
 /* stylelint-disable selector-max-id, length-zero-no-unit -- CSS from https://github.com/rstacruz/nprogress */
 #nprogress {
     /* Make clicks pass-through */
     pointer-events: none;
 
     .bar {
-        background: $color--dark-blue;
+        background: variables.$color--dark-blue;
 
         position: fixed;
         z-index: 1031;
@@ -23,8 +25,8 @@
         width: 100px;
         height: 100%;
         box-shadow:
-            0 0 10px $color--dark-blue,
-            0 0 5px $color--dark-blue;
+            0 0 10px variables.$color--dark-blue,
+            0 0 5px variables.$color--dark-blue;
         opacity: 1;
 
         transform: rotate(3deg) translate(0px, -4px);
@@ -45,8 +47,8 @@
         box-sizing: border-box;
 
         border: solid 2px transparent;
-        border-top-color: $color--dark-blue;
-        border-left-color: $color--dark-blue;
+        border-top-color: variables.$color--dark-blue;
+        border-left-color: variables.$color--dark-blue;
         border-radius: 50%;
 
         animation: nprogress-spinner 400ms linear infinite;

@@ -1,8 +1,11 @@
+@use "../abstracts/mixins";
+@use "../abstracts/variables";
+
 .revision {
     margin: 20px 0;
-    border: 1px solid $color--mid-grey;
+    border: 1px solid variables.$color--mid-grey;
 
-    @include media-query(md) {
+    @include mixins.media-query(md) {
         margin: 4rem 0;
     }
 
@@ -10,16 +13,16 @@
         display: flex;
         flex-direction: column;
         padding: 15px;
-        background: $color--white;
-        border-block-end: 1px dashed $color--mid-grey;
+        background: variables.$color--white;
+        border-block-end: 1px dashed variables.$color--mid-grey;
 
-        @include media-query(md) {
+        @include mixins.media-query(md) {
             flex-direction: row;
             justify-content: space-between;
         }
 
         &:first-child {
-            background-color: $color--sky-blue;
+            background-color: variables.$color--sky-blue;
         }
 
         &:last-child {
@@ -34,6 +37,6 @@
     &__date,
     &__current,
     &__draft {
-        font-weight: $weight--semibold;
+        font-weight: variables.$weight--semibold;
     }
 }

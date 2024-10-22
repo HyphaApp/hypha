@@ -1,3 +1,5 @@
+@use "../abstracts/variables";
+
 // stylelint-disable property-no-vendor-prefix
 body {
     overflow-x: hidden;
@@ -14,7 +16,7 @@ svg {
 }
 
 a {
-    color: $color--primary;
+    color: variables.$color--primary;
     text-decoration: none;
 
     &:hover {
@@ -35,14 +37,14 @@ details > summary {
 %is-invisible {
     z-index: -1;
     opacity: 0;
-    transition: opacity, z-index, $transition;
+    transition: opacity, z-index, variables.$transition;
 }
 
 .is-visible,
 %is-visible {
     z-index: 5;
     opacity: 1;
-    transition: opacity, z-index, $transition;
+    transition: opacity, z-index, variables.$transition;
 }
 
 .is-hidden,

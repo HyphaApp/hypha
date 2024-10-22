@@ -1,3 +1,5 @@
+@use "../abstracts/mixins";
+
 .hypha-grid {
     display: grid;
     margin-block-end: 1rem;
@@ -8,7 +10,7 @@
         grid-template-columns: 100%;
         gap: 0.25rem;
 
-        @include media-query(md) {
+        @include mixins.media-query(md) {
             grid-template-columns: 1fr 1fr;
         }
 
@@ -34,7 +36,7 @@
     &--narrow {
         text-align: center;
 
-        @include media-query(md) {
+        @include mixins.media-query(md) {
             text-align: left;
         }
     }
@@ -48,7 +50,7 @@
         gap: 10px;
         margin: 0 0 1rem;
 
-        @include media-query(sm) {
+        @include mixins.media-query(sm) {
             margin: 0 0 1.5rem;
             grid-template-columns: 1fr 1fr;
         }
@@ -61,14 +63,14 @@
     &--status-update {
         grid-template-columns: 100%;
 
-        @include media-query(sm) {
+        @include mixins.media-query(sm) {
             grid-template-columns: 100%;
         }
     }
 
     &__cell {
         &--span-two {
-            @include media-query(sm) {
+            @include mixins.media-query(sm) {
                 grid-column: auto / span 2;
             }
         }

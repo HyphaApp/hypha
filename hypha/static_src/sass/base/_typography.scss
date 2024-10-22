@@ -1,9 +1,11 @@
+@use "../abstracts/mixins";
+@use "../abstracts/variables";
 @use "sass:math";
 
 // $TYPOGRAPHY
 // Base font
 html {
-    color: $color--default;
+    color: variables.$color--default;
 }
 
 /* ============================================
@@ -14,11 +16,11 @@ html {
 @mixin heading-text {
     margin: 0 0 1rem;
     font-style: inherit;
-    font-weight: $weight--semibold;
+    font-weight: variables.$weight--semibold;
 }
 
 @mixin body-text {
-    font-family: $font--primary;
+    font-family: variables.$font--primary;
     font-style: inherit;
     font-weight: inherit;
     text-transform: inherit;
@@ -35,7 +37,10 @@ h6,
 }
 
 .body-text {
-    @include responsive-font-sizes($base-font-size, $base-font-size-large);
+    @include mixins.responsive-font-sizes(
+        variables.$base-font-size,
+        variables.$base-font-size-large
+    );
 }
 
 // Default sizes
@@ -80,7 +85,7 @@ h5,
 h6,
 %h6,
 .zeta {
-    @include font-size(zeta);
+    @include mixins.font-size(zeta);
 }
 
 small,

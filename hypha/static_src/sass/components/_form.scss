@@ -1,3 +1,8 @@
+@use "sass:color";
+@use "../base/base";
+@use "../abstracts/mixins";
+@use "../abstracts/variables";
+
 // stylelint-disable selector-max-compound-selectors
 
 @use "sass:math";
@@ -12,7 +17,7 @@
             label {
                 display: block;
                 margin-block-end: 0.5em;
-                font-weight: $weight--bold;
+                font-weight: variables.$weight--bold;
             }
         }
 
@@ -95,7 +100,7 @@
 
     &__question {
         display: block;
-        font-weight: $weight--semibold;
+        font-weight: variables.$weight--semibold;
         font-size: 1rem;
         line-height: 1.25rem;
 
@@ -104,17 +109,20 @@
         &--multi_file_field,
         &--single_file_field,
         &--file_field {
-            @include button($color--white, $color--light-blue);
+            @include mixins.button(
+                variables.$color--white,
+                variables.$color--light-blue
+            );
             display: inline-block;
-            color: $color--light-blue;
-            border: 1px solid $color--mid-grey;
+            color: variables.$color--light-blue;
+            border: 1px solid variables.$color--mid-grey;
 
             &:focus {
-                color: $color--light-blue;
+                color: variables.$color--light-blue;
             }
 
             &:hover {
-                color: $color--white;
+                color: variables.$color--white;
             }
 
             max-width: 15rem;
@@ -143,41 +151,44 @@
     }
 
     &__file-drop-zone {
-        color: $color--mid-grey;
+        color: variables.$color--mid-grey;
         padding: 25px;
         font-size: 17px;
-        font-weight: $weight--bold;
+        font-weight: variables.$weight--bold;
         text-align: center;
-        border: 2px dashed $color--mid-grey;
+        border: 2px dashed variables.$color--mid-grey;
         border-radius: 5px;
     }
 
     &__filters {
-        #{$filter-dropdown} {
+        #{variables.$filter-dropdown} {
             border: 0;
-            border-block-start: 1px solid $color--mid-grey;
+            border-block-start: 1px solid variables.$color--mid-grey;
 
             &.is-active {
-                font-weight: $weight--normal;
-                background-color: transparentize($color--primary, 0.9);
-                border-color: $color--mid-grey;
+                font-weight: variables.$weight--normal;
+                background-color: color.adjust(
+                    variables.$color--primary,
+                    $alpha: -0.9
+                );
+                border-color: variables.$color--mid-grey;
             }
 
-            @include media-query(lg) {
-                border: 1px solid $color--mid-grey;
+            @include mixins.media-query(lg) {
+                border: 1px solid variables.$color--mid-grey;
             }
         }
 
-        @include media-query(lg) {
+        @include mixins.media-query(lg) {
             display: flex;
             align-items: flex-start;
             padding: 10px 0 30px;
             opacity: 0;
-            transition: opacity $transition;
+            transition: opacity variables.$transition;
 
             .filters-open & {
                 opacity: 1;
-                transition-delay: $base-delay * 10;
+                transition-delay: variables.$base-delay * 10;
             }
 
             .filters--dates & {
@@ -197,7 +208,7 @@
 
         // so the form can be output in any tag
         > * {
-            @include media-query(lg) {
+            @include mixins.media-query(lg) {
                 flex-basis: 225px;
 
                 &:not(:last-child) {
@@ -220,7 +231,7 @@
         > li {
             padding: 0 1rem;
 
-            @include media-query(lg) {
+            @include mixins.media-query(lg) {
                 padding: 0;
             }
 
@@ -229,7 +240,7 @@
                 margin: 0 auto 1rem;
                 max-width: 320px;
 
-                @include media-query(sm) {
+                @include mixins.media-query(sm) {
                     display: flex;
                     max-width: 600px;
 
@@ -240,7 +251,7 @@
                     }
                 }
 
-                @include media-query(lg) {
+                @include mixins.media-query(lg) {
                     margin: 0 1rem 0 0;
                     max-width: initial;
                 }
@@ -278,7 +289,7 @@
     }
 
     &__required {
-        color: $color--purple;
+        color: variables.$color--purple;
     }
 
     &__help {
@@ -299,7 +310,7 @@
         a {
             &:hover {
                 cursor: pointer;
-                color: $color--darkest-blue;
+                color: variables.$color--darkest-blue;
             }
         }
     }
@@ -308,7 +319,7 @@
         display: inline;
         width: 20px;
         height: 20px;
-        fill: $color--dark-grey;
+        fill: variables.$color--dark-grey;
     }
 
     &__item {
@@ -332,7 +343,7 @@
                 max-width: 100%;
 
                 select {
-                    height: $dropdown-height;
+                    height: variables.$dropdown-height;
                 }
             }
         }
@@ -343,7 +354,7 @@
 
         select {
             option {
-                background-color: $color--white;
+                background-color: variables.$color--white;
             }
         }
 
@@ -365,7 +376,7 @@
         max-width: 385px;
 
         &.invalid {
-            border: 2px solid $color--error;
+            border: 2px solid variables.$color--error;
             outline: none;
         }
     }
@@ -381,7 +392,7 @@
         input[type="number"],
         input[type="password"],
         input[type="datetime-local"] {
-            border: 2px solid $color--error;
+            border: 2px solid variables.$color--error;
         }
     }
 
@@ -389,11 +400,11 @@
         max-width: 200px;
         padding: 5px;
         margin: 20px 0 0;
-        color: $color--white;
-        background: $color--error;
+        color: variables.$color--white;
+        background: variables.$color--error;
         z-index: 1;
 
-        @include media-query(lg) {
+        @include mixins.media-query(lg) {
             position: absolute;
             inset-block-start: 0;
             inset-inline-end: 0;
@@ -404,7 +415,8 @@
                 position: absolute;
                 inset-block-start: 12px;
                 inset-inline-start: -10px;
-                border-color: transparent $color--error transparent transparent;
+                border-color: transparent variables.$color--error transparent
+                    transparent;
                 border-style: solid;
                 border-width: 5px 10px 5px 0;
                 content: "";
@@ -434,8 +446,11 @@
         display: block;
         width: 100%;
         padding: 0.4em;
-        border: 1px solid $color--mid-grey;
-        line-height: math.div($base-line-height, $base-font-size);
+        border: 1px solid variables.$color--mid-grey;
+        line-height: math.div(
+            variables.$base-line-height,
+            variables.$base-font-size
+        );
     }
 
     .wmd-preview {
@@ -474,8 +489,8 @@
     .errorlist {
         padding: 5px;
         margin-block-end: 0.2em;
-        background: $color--light-pink;
-        border: 1px solid $color--tomato;
+        background: variables.$color--light-pink;
+        border: 1px solid variables.$color--tomato;
     }
 
     .address {
@@ -505,7 +520,7 @@
     }
 
     &__info-box {
-        background-color: $color--light-blue-90;
+        background-color: variables.$color--light-blue-90;
         padding: 1rem;
 
         p {
@@ -524,6 +539,6 @@
 
 @keyframes flash {
     50% {
-        background-color: $color--mustard;
+        background-color: variables.$color--mustard;
     }
 }

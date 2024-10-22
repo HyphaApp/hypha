@@ -1,9 +1,12 @@
+@use "../abstracts/mixins";
+@use "../abstracts/variables";
+
 .comment {
     padding-block-end: 20px;
     margin-block-end: 20px;
-    border-block-end: 1px solid $color--light-mid-grey;
+    border-block-end: 1px solid variables.$color--light-mid-grey;
 
-    @include media-query(md) {
+    @include mixins.media-query(md) {
         max-width: 60%;
     }
 
@@ -24,6 +27,6 @@
     }
 
     &__user {
-        font-weight: $weight--semibold;
+        font-weight: variables.$weight--semibold;
     }
 }

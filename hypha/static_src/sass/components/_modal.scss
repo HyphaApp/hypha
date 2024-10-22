@@ -1,17 +1,21 @@
+@use "sass:map";
+@use "../abstracts/mixins";
+@use "../abstracts/variables";
+
 .modal {
     $root: &;
     display: none;
     width: calc(100% - 40px);
     padding: 0;
 
-    @include media-query(sm) {
+    @include mixins.media-query(sm) {
         width: 580px;
         padding: 30px;
     }
 
     &__header-bar {
-        color: $color--white;
-        background-color: $color--dark-blue;
+        color: variables.$color--white;
+        background-color: variables.$color--dark-blue;
         margin: -24px -24px 20px;
         padding: 15px;
         text-align: center;
@@ -22,8 +26,8 @@
     }
 
     &__project-header-bar {
-        color: $color--white;
-        background-color: $color--dark-blue;
+        color: variables.$color--white;
+        background-color: variables.$color--dark-blue;
         margin: -24px -24px 20px;
         padding: 15px 24px;
         text-align: left;
@@ -38,9 +42,9 @@
         overflow: scroll;
         margin: 0 -24px 20px;
         padding: 0;
-        border-block-end: 2px solid $color--light-mid-grey;
-        box-shadow: inset 0 -10px 20px -10px $color--mid-grey;
-        transition: max-height $transition;
+        border-block-end: 2px solid variables.$color--light-mid-grey;
+        box-shadow: inset 0 -10px 20px -10px variables.$color--mid-grey;
+        transition: max-height variables.$transition;
 
         &.is-closed {
             max-height: 0;
@@ -50,15 +54,15 @@
 
     &__list-item {
         display: block;
-        font-size: map-get($font-sizes, zeta);
+        font-size: map.get(variables.$font-sizes, zeta);
         padding: 12px 28px;
-        border-block-end: 2px solid $color--light-mid-grey;
+        border-block-end: 2px solid variables.$color--light-mid-grey;
         margin: 0;
-        color: $color--default;
+        color: variables.$color--default;
 
         &--meta {
-            color: $color--dark-blue;
-            font-weight: $weight--semibold;
+            color: variables.$color--dark-blue;
+            font-weight: variables.$weight--semibold;
             display: flex;
             justify-content: space-between;
             margin: 0 -24px;
@@ -72,9 +76,9 @@
     &__open-link-icon {
         width: 20px;
         height: 20px;
-        fill: $color--dark-grey;
+        fill: variables.$color--dark-grey;
         opacity: 0;
-        transition: opacity $quick-transition;
+        transition: opacity variables.$quick-transition;
         pointer-events: none;
 
         #{$root}__list-item:hover & {

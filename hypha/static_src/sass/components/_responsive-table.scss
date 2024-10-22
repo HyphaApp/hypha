@@ -1,10 +1,12 @@
+@use "../abstracts/mixins";
+
 .responsive-table {
-    @include table-ordering-styles;
+    @include mixins.table-ordering-styles;
 
     thead {
         display: none;
 
-        @include media-query(lg) {
+        @include mixins.media-query(lg) {
             display: table-header-group;
         }
 

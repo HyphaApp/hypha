@@ -1,13 +1,17 @@
+@use "sass:map";
+@use "../abstracts/mixins";
+@use "../abstracts/variables";
+
 .data-block {
     $root: &;
     margin-block-end: 1rem;
-    border: 1px solid $color--light-blue;
+    border: 1px solid variables.$color--light-blue;
 
     &__header {
         padding: 1rem;
-        background-color: $color--light-blue-90;
+        background-color: variables.$color--light-blue-90;
 
-        @include media-query(sm) {
+        @include mixins.media-query(sm) {
             padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
@@ -18,30 +22,33 @@
     &__body {
         padding: 1rem;
 
-        @include media-query(sm) {
+        @include mixins.media-query(sm) {
             padding: 2rem;
         }
     }
 
     &__title {
-        font-size: $base-font-size-large;
-        font-weight: $weight--bold;
+        font-size: variables.$base-font-size-large;
+        font-weight: variables.$weight--bold;
         margin: 0 0 1rem;
 
-        @include media-query(sm) {
+        @include mixins.media-query(sm) {
             margin: 0;
         }
     }
 
     &__button {
-        @include button($color--light-blue, $color--dark-blue);
+        @include mixins.button(
+            variables.$color--light-blue,
+            variables.$color--dark-blue
+        );
         display: inline-block;
         padding: 0.5rem 1.2rem;
 
         #{$root}__header & {
             &:hover,
             &:focus {
-                background-color: $color--white;
+                background-color: variables.$color--white;
             }
         }
 
@@ -57,9 +64,9 @@
     &__status {
         margin: 0;
 
-        @include media-query(lg) {
+        @include mixins.media-query(lg) {
             display: block;
-            font-weight: $weight--bold;
+            font-weight: variables.$weight--bold;
         }
     }
 
@@ -70,15 +77,15 @@
 
     &__pagination-link,
     &__rejected-link {
-        font-weight: $weight--bold;
+        font-weight: variables.$weight--bold;
     }
 
     &__mobile-label {
         display: inline-block;
-        font-weight: $weight--bold;
+        font-weight: variables.$weight--bold;
         white-space: pre;
 
-        @include media-query(lg) {
+        @include mixins.media-query(lg) {
             display: none;
         }
     }
@@ -86,33 +93,33 @@
     &__table {
         thead {
             display: none;
-            border-block-start: 2px solid $color--light-mid-grey;
+            border-block-start: 2px solid variables.$color--light-mid-grey;
 
-            @include media-query(lg) {
+            @include mixins.media-query(lg) {
                 display: table-header-group;
             }
 
             th {
-                color: $color--mid-dark-grey;
+                color: variables.$color--mid-dark-grey;
                 padding: 10px;
 
-                @include media-query(lg) {
+                @include mixins.media-query(lg) {
                     text-align: left;
                 }
             }
 
             tr {
-                border-color: $color--light-mid-grey;
+                border-color: variables.$color--light-mid-grey;
             }
         }
 
         tbody {
-            font-size: map-get($font-sizes, zeta);
+            font-size: map.get(variables.$font-sizes, zeta);
         }
 
         tr {
             border: 0;
-            border-block-end: 2px solid $color--light-grey;
+            border-block-end: 2px solid variables.$color--light-grey;
 
             &:hover {
                 box-shadow: none;
@@ -143,18 +150,18 @@
         min-width: 160px;
         width: 25%;
 
-        @include media-query(xl) {
+        @include mixins.media-query(xl) {
             width: 30%;
         }
     }
 
     &__action-link {
-        font-size: map-get($font-sizes, zeta);
-        font-weight: $weight--bold;
+        font-size: map.get(variables.$font-sizes, zeta);
+        font-weight: variables.$weight--bold;
         display: inline-block;
         margin-inline-end: 1rem;
         text-decoration: underline;
-        color: $color--primary;
+        color: variables.$color--primary;
         word-break: normal;
         transition-property: opacity;
         transition-duration: 150ms;
@@ -169,8 +176,8 @@
     }
 
     &__action-icon-link {
-        font-size: map-get($font-sizes, zeta);
-        font-weight: $weight--bold;
+        font-size: map.get(variables.$font-sizes, zeta);
+        font-weight: variables.$weight--bold;
         display: flex;
         align-items: center;
         margin-inline-end: 1rem;
@@ -188,15 +195,15 @@
         }
 
         &--remove {
-            color: $color--tomato;
+            color: variables.$color--tomato;
         }
     }
 
     &__list-item {
-        border-block-end: 2px solid $color--light-grey;
+        border-block-end: 2px solid variables.$color--light-grey;
         padding: 1rem 0;
 
-        @include media-query(lg) {
+        @include mixins.media-query(lg) {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -218,7 +225,7 @@
     &__info {
         margin: 0 1rem 1rem 0;
 
-        @include media-query(lg) {
+        @include mixins.media-query(lg) {
             margin: 0 1rem 0 0;
             flex: 1;
         }
@@ -228,7 +235,7 @@
         display: flex;
         align-items: center;
 
-        @include media-query(lg) {
+        @include mixins.media-query(lg) {
             justify-content: flex-end;
         }
     }
@@ -244,11 +251,11 @@
             position: absolute;
             height: 2px;
             display: block;
-            background: $color--mid-grey;
+            background: variables.$color--mid-grey;
             inset-inline-start: -1rem;
             inset-block-end: 0;
 
-            @include media-query(sm) {
+            @include mixins.media-query(sm) {
                 width: calc(100% + 4rem);
                 inset-inline-start: -2rem;
             }
@@ -261,6 +268,6 @@
     }
 
     &__card-title {
-        font-weight: $weight--bold;
+        font-weight: variables.$weight--bold;
     }
 }

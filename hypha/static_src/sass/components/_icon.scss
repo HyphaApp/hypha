@@ -1,18 +1,20 @@
+@use "../abstracts/variables";
+
 .icon {
     width: 1em;
     height: 1em;
     display: inline-block;
-    transition: fill $transition;
-    fill: $color--dark-grey;
+    transition: fill variables.$transition;
+    fill: variables.$color--dark-grey;
 
     &--person {
         width: 15px;
         height: 15px;
         margin-inline-end: 5px;
-        transition: fill $transition;
+        transition: fill variables.$transition;
 
         .button:hover & {
-            fill: $color--white;
+            fill: variables.$color--white;
         }
     }
 
@@ -31,11 +33,11 @@
     &--status {
         width: 65px;
         height: 160px;
-        stroke: $color--mid-grey;
+        stroke: variables.$color--mid-grey;
         fill: transparent;
 
         .is-active & {
-            stroke: $color--correct;
+            stroke: variables.$color--correct;
         }
     }
 
@@ -45,7 +47,7 @@
     }
 
     &--speech-bubble {
-        fill: $color--white;
+        fill: variables.$color--white;
 
         // stylelint-disable-next-line selector-class-pattern
         .activity-feed__header & {
@@ -59,7 +61,7 @@
         align-self: center;
         width: 1em;
         height: 1em;
-        stroke: $color--black;
+        stroke: variables.$color--black;
     }
 
     &--dashboard-tasks {
@@ -70,7 +72,7 @@
     }
 
     &--action-cross {
-        stroke: $color--black;
+        stroke: variables.$color--black;
         fill: transparent;
         width: 16px;
         height: 16px;
@@ -82,10 +84,10 @@
         width: 1em;
         height: 1em;
         margin-inline-end: 2px;
-        stroke: $color--light-blue;
+        stroke: variables.$color--light-blue;
 
         .border:hover & {
-            stroke: $color--white;
+            stroke: variables.$color--white;
         }
     }
 
@@ -94,11 +96,11 @@
         align-self: center;
         height: 1.4em;
         margin-inline-end: 3px;
-        fill: $color--light-blue;
-        stroke: $color--light-blue;
+        fill: variables.$color--light-blue;
+        stroke: variables.$color--light-blue;
 
         &--contract-upload {
-            stroke: $color--white;
+            stroke: variables.$color--white;
         }
     }
 

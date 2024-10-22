@@ -1,3 +1,5 @@
+@use "../abstracts/variables";
+
 .banner {
     position: relative;
     height: 25px;
@@ -6,12 +8,12 @@
     text-align: center;
 
     &__archived {
-        color: $color--white;
-        background-color: $color--tomato;
+        color: variables.$color--white;
+        background-color: variables.$color--tomato;
     }
 
     &__close {
-        color: $color--white;
-        background-color: $color--tomato;
+        color: variables.$color--white;
+        background-color: variables.$color--tomato;
     }
 }

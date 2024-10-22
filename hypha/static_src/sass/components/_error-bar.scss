@@ -1,12 +1,14 @@
+@use "../abstracts/variables";
+
 .error-bar {
-    padding: $mobile-gutter;
+    padding: variables.$mobile-gutter;
     margin: 0 auto 2rem;
-    background: $color--tomato;
-    color: $color--white;
+    background: variables.$color--tomato;
+    color: variables.$color--white;
 
     &__copy {
         margin: 0 0 1rem;
-        font-weight: $weight--bold;
+        font-weight: variables.$weight--bold;
 
         &:last-child {
             margin: 0;

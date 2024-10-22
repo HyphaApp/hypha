@@ -1,3 +1,7 @@
+@use "sass:color";
+@use "../abstracts/mixins";
+@use "../abstracts/variables";
+
 .messages {
     position: fixed;
     inset-block-start: 2px;
@@ -11,46 +15,46 @@
         align-items: center;
         max-width: 450px;
         margin: 0 auto;
-        color: $color--black;
+        color: variables.$color--black;
         pointer-events: all;
         max-height: 1000px;
-        background: $color--cream;
+        background: variables.$color--cream;
     }
 
     &__text {
         position: relative;
         padding: 15px 20px;
-        color: $color--white;
+        color: variables.$color--white;
         font-size: 14px;
         opacity: 1;
-        transition: opacity, max-height, $transition;
+        transition: opacity, max-height, variables.$transition;
         pointer-events: all;
         max-height: 1000px;
-        background: $color--dark-blue;
+        background: variables.$color--dark-blue;
 
-        @include media-query(xl) {
+        @include mixins.media-query(xl) {
             padding: 15px 30px;
         }
 
         &--info,
         &--success {
-            background: $color--dark-blue;
+            background: variables.$color--dark-blue;
         }
 
         &--error,
         &--warning {
-            background: darken($color--error, 20%);
+            background: color.adjust(variables.$color--error, $lightness: -20%);
         }
 
         &--debug {
-            background: darken($color--pink, 30%);
+            background: color.adjust(variables.$color--pink, $lightness: -30%);
         }
     }
 
     &__inner {
         display: flex;
         align-items: center;
-        max-width: $site-width;
+        max-width: variables.$site-width;
         margin: 0 auto;
     }
 
@@ -63,10 +67,10 @@
 
     &__button {
         margin-inline-start: auto;
-        color: $color--dark-blue;
-        background-color: $color--white;
+        color: variables.$color--dark-blue;
+        background-color: variables.$color--white;
         display: inline-block;
-        font-weight: $weight--bold;
+        font-weight: variables.$weight--bold;
         padding: 2px 20px;
     }
 }

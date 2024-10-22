@@ -1,3 +1,7 @@
+@use "sass:color";
+@use "../abstracts/mixins";
+@use "../abstracts/variables";
+
 // stylelint-disable selector-max-compound-selectors, selector-class-pattern
 
 .select2 {
@@ -11,13 +15,13 @@
         width: 100% !important;
 
         .select2-selection--single {
-            height: $dropdown-height;
-            border: 1px solid $color--mid-grey;
+            height: variables.$dropdown-height;
+            border: 1px solid variables.$color--mid-grey;
             border-radius: 0;
 
             &.is-active {
-                font-weight: $weight--bold;
-                border-color: $color--primary;
+                font-weight: variables.$weight--bold;
+                border-color: variables.$color--primary;
             }
 
             .select2-selection__clear {
@@ -27,12 +31,12 @@
             .select2-selection__rendered {
                 padding-inline-start: 15px;
                 padding-inline-end: 30px;
-                line-height: $dropdown-height;
+                line-height: variables.$dropdown-height;
             }
 
             .select2-selection__arrow {
                 inset-inline-end: 15px;
-                height: $dropdown-height;
+                height: variables.$dropdown-height;
                 pointer-events: none;
                 background: url("./../images/dropdown.svg") transparent
                     no-repeat 95% center;
@@ -45,7 +49,7 @@
             }
 
             .select2-selection__placeholder {
-                color: $color--default;
+                color: variables.$color--default;
             }
         }
     }
@@ -56,19 +60,22 @@
     &--default {
         .select2-results__option--highlighted[aria-selected] {
             // stylelint-disable-next-line declaration-no-important
-            color: $color--default !important;
-            // stylelint-disable-next-line declaration-no-important, max-line-length
-            background-color: transparentize($color--primary, 0.9) !important;
+            color: variables.$color--default !important;
+            // stylelint-disable declaration-no-important, max-line-length
+            background-color: color.adjust(
+                variables.$color--primary,
+                $alpha: -0.9
+            ) !important;
         }
     }
 
     .select2-dropdown {
         border: 0;
-        border-block-end: 1px solid $color--mid-grey;
+        border-block-end: 1px solid variables.$color--mid-grey;
         border-radius: 0;
 
-        @include media-query(sm) {
-            border: 1px solid $color--mid-grey;
+        @include mixins.media-query(sm) {
+            border: 1px solid variables.$color--mid-grey;
         }
     }
 
@@ -81,17 +88,17 @@
             min-width: 20px;
             height: 20px;
             margin-inline-end: 10px;
-            background: $color--white;
-            border: 1px solid $color--mid-grey;
+            background: variables.$color--white;
+            border: 1px solid variables.$color--mid-grey;
             content: "";
         }
 
         &[aria-selected="true"] {
             &::before {
-                background: url("./../images/tick.svg") $color--dark-blue center
-                    no-repeat;
+                background: url("./../images/tick.svg")
+                    variables.$color--dark-blue center no-repeat;
                 background-size: 12px;
-                border: 1px solid $color--dark-blue;
+                border: 1px solid variables.$color--dark-blue;
                 content: "";
             }
         }
