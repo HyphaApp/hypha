@@ -2,6 +2,7 @@ from django.urls import include, path
 from django.views.generic import RedirectView
 
 from .views import (
+    ApproveContractView,
     CategoryTemplatePrivateMediaView,
     ChangeInvoiceStatusView,
     ChangePAFStatusView,
@@ -154,6 +155,11 @@ urlpatterns = [
                     "contract/documents/submit/",
                     SubmitContractDocumentsView.as_view(),
                     name="contract_documents_submit",
+                ),
+                path(
+                    "contract/approve/",
+                    ApproveContractView.as_view(),
+                    name="contract_approve",
                 ),
                 path(
                     "download/<str:export_type>/",

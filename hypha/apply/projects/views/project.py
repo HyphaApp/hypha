@@ -18,7 +18,6 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
-from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 from django.utils.translation import gettext as _
 from django.views import View
@@ -541,86 +540,100 @@ class ContractsMixin:
 
 
 @method_decorator(staff_required, name="dispatch")
-class ApproveContractView(DelegatedViewMixin, UpdateView):
+class ApproveContractView(View):
     form_class = ApproveContractForm
     model = Contract
-    context_name = "approve_contract_form"
+    template_name = "application_projects/modals/approve_contract.html"
 
     def get_object(self):
-        project = self.get_parent_object()
-        latest_contract = project.contracts.order_by("-created_at").first()
+        latest_contract = self.project.contracts.order_by("-created_at").first()
         if latest_contract and not latest_contract.approver:
             return latest_contract
 
+    def dispatch(self, request, *args, **kwargs):
+        self.project = get_object_or_404(Project, pk=self.kwargs["pk"])
+        self.object = self.get_object()
+        # permission
+        return super().dispatch(request, *args, **kwargs)
+
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs["instance"] = self.get_object()
+        kwargs["instance"] = self.object
         kwargs.pop("user")
         return kwargs
 
-    def dispatch(self, request, *args, **kwargs):
-        self.project = get_object_or_404(Project, pk=self.kwargs["pk"])
-        return super().dispatch(request, *args, **kwargs)
-
-    def form_invalid(self, form):
-        messages.error(
+    def get(self, *args, **kwargs):
+        form = self.form_class(instance=self.object)
+        return render(
             self.request,
-            mark_safe(_("Sorry something went wrong") + form.errors.as_ul()),
+            self.template_name,
+            context={
+                "form": form,
+                "value": _("Confirm"),
+                "object": self.project,
+            },
         )
-        return super().form_invalid(form)
 
-    def form_valid(self, form):
-        with transaction.atomic():
-            form.instance.approver = self.request.user
-            form.instance.approved_at = timezone.now()
-            form.instance.project = self.project
-            response = super().form_valid(form)
+    def post(self, *args, **kwargs):
+        form = self.form_class(self.request.POST, instance=self.object)
+        if form.is_valid():
+            with transaction.atomic():
+                form.instance.approver = self.request.user
+                form.instance.approved_at = timezone.now()
+                form.instance.project = self.project
+                form.save()
 
-            old_stage = self.project.status
+                old_stage = self.project.status
 
-            messenger(
-                MESSAGES.APPROVE_CONTRACT,
-                request=self.request,
-                user=self.request.user,
-                source=self.project,
-                related=self.object,
+                messenger(
+                    MESSAGES.APPROVE_CONTRACT,
+                    request=self.request,
+                    user=self.request.user,
+                    source=self.project,
+                    related=self.object,
+                )
+                # remove Project waiting contract review task for staff
+                remove_tasks_for_user(
+                    code=PROJECT_WAITING_CONTRACT_REVIEW,
+                    user=self.project.lead,
+                    related_obj=self.project,
+                )
+
+                self.project.status = INVOICING_AND_REPORTING
+                self.project.save(update_fields=["status"])
+
+                messenger(
+                    MESSAGES.PROJECT_TRANSITION,
+                    request=self.request,
+                    user=self.request.user,
+                    source=self.project,
+                    related=old_stage,
+                )
+                # add Project waiting invoice task for applicant
+                add_task_to_user(
+                    code=PROJECT_WAITING_INVOICE,
+                    user=self.project.user,
+                    related_obj=self.project,
+                )
+
+            messages.success(
+                self.request,
+                _(
+                    "Contractor documents have been approved."
+                    " You can receive invoices from vendor now."
+                ),
+                extra_tags=PROJECT_ACTION_MESSAGE_TAG,
             )
-            # remove Project waiting contract review task for staff
-            remove_tasks_for_user(
-                code=PROJECT_WAITING_CONTRACT_REVIEW,
-                user=self.project.lead,
-                related_obj=self.project,
-            )
-
-            self.project.status = INVOICING_AND_REPORTING
-            self.project.save(update_fields=["status"])
-
-            messenger(
-                MESSAGES.PROJECT_TRANSITION,
-                request=self.request,
-                user=self.request.user,
-                source=self.project,
-                related=old_stage,
-            )
-            # add Project waiting invoice task for applicant
-            add_task_to_user(
-                code=PROJECT_WAITING_INVOICE,
-                user=self.project.user,
-                related_obj=self.project,
-            )
-
-        messages.success(
+            return HttpResponseClientRefresh()
+        return render(
             self.request,
-            _(
-                "Contractor documents have been approved."
-                " You can receive invoices from vendor now."
-            ),
-            extra_tags=PROJECT_ACTION_MESSAGE_TAG,
+            self.template_name,
+            context={
+                "form": form,
+                "value": _("Confirm"),
+                "object": self.project,
+            },
         )
-        return response
-
-    def get_success_url(self):
-        return self.project.get_absolute_url()
 
 
 @method_decorator(login_required, name="dispatch")
@@ -1596,7 +1609,6 @@ class AdminProjectDetailView(
     BaseProjectDetailView,
 ):
     form_views = [
-        ApproveContractView,
         CommentFormView,
         SelectDocumentView,
         ReportFrequencyUpdate,
