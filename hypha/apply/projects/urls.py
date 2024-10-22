@@ -28,6 +28,7 @@ from .views import (
     ReportSkipView,
     ReportUpdateView,
     SendForApprovalView,
+    SubmitContractDocumentsView,
     UpdateAssignApproversView,
     UpdatePAFApproversView,
     UploadContractDocumentView,
@@ -140,6 +141,11 @@ urlpatterns = [
                     "contract/documents/<int:file_pk>/",
                     ContractDocumentPrivateMediaView.as_view(),
                     name="contract_document",
+                ),
+                path(
+                    "contract/documents/submit/",
+                    SubmitContractDocumentsView.as_view(),
+                    name="contract_documents_submit",
                 ),
                 path(
                     "download/<str:export_type>/",

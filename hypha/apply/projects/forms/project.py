@@ -335,7 +335,7 @@ class SubmitContractDocumentsForm(forms.ModelForm):
         model = Project
         widgets = {"id": forms.HiddenInput()}
 
-    def __init__(self, user=None, *args, **kwargs):
+    def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)
 
 
