@@ -1,0 +1,9 @@
+{% load i18n %}
+{% modal_title %}{% trans "Submit contracting documents" %}{% endmodal_title %}
+
+<div class="p-4">
+    <h5> {% trans "Are you sure you want to submit contracting documents?" %}</h5>
+    <p>{% trans "Make sure you have uploaded correct contract and all required contracting documents." %}</p>
+    {% url 'apply:projects:contract_doc_upload' pk=object.id as url %}
+    {% include 'funds/includes/dialog_form_base.html' with form=form value=value url=url %}
+</div>

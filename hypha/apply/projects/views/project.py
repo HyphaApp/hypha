@@ -625,7 +625,6 @@ class ApproveContractView(DelegatedViewMixin, UpdateView):
 
 @method_decorator(login_required, name="dispatch")
 class UploadContractView(View):
-    context_name = "contract_form"
     model = Project
     form_class = UploadContractForm
     template_name = "application_projects/modals/upload_contract.html"
@@ -833,59 +832,81 @@ class SkipPAFApprovalProcessView(UpdateView):
 
 
 @method_decorator(login_required, name="dispatch")
-class SubmitContractDocumentsView(DelegatedViewMixin, UpdateView):
-    context_name = "submit_contract_documents_form"
+class SubmitContractDocumentsView(View):
     model = Project
     form_class = SubmitContractDocumentsForm
+    template_name = "application_projects/modals/submit_contracting_documents.html"
 
     def dispatch(self, request, *args, **kwargs):
-        project = self.get_object()
+        self.project = get_object_or_404(Project, id=kwargs.get("pk"))
         if ContractDocumentCategory.objects.filter(
-            ~Q(contract_packet_files__project=project) & Q(required=True)
+            ~Q(contract_packet_files__project=self.project) & Q(required=True)
         ).exists():
             raise PermissionDenied
-        contract = project.contracts.order_by("-created_at").first()
+        contract = self.project.contracts.order_by("-created_at").first()
         permission, _ = has_permission(
             "submit_contract_documents",
             request.user,
-            object=project,
+            object=self.project,
             raise_exception=True,
             contract=contract,
         )
         return super().dispatch(request, *args, **kwargs)
 
-    def form_valid(self, form):
-        project = self.kwargs["object"]
-        response = super().form_valid(form)
-
-        project.submitted_contract_documents = True
-        project.save(update_fields=["submitted_contract_documents"])
-
-        messenger(
-            MESSAGES.SUBMIT_CONTRACT_DOCUMENTS,
-            request=self.request,
-            user=self.request.user,
-            source=project,
-        )
-        # remove project waiting contract documents task for applicant
-        remove_tasks_for_user(
-            code=PROJECT_WAITING_CONTRACT_DOCUMENT,
-            user=project.user,
-            related_obj=project,
-        )
-        # add project waiting contract review task for staff
-        add_task_to_user(
-            code=PROJECT_WAITING_CONTRACT_REVIEW,
-            user=project.lead,
-            related_obj=project,
-        )
-
-        messages.success(
+    def get(self, *args, **kwargs):
+        form = self.form_class()
+        return render(
             self.request,
-            _("Contract documents submitted"),
-            extra_tags=PROJECT_ACTION_MESSAGE_TAG,
+            self.template_name,
+            context={
+                "form": form,
+                "value": _("Submit"),
+                "object": self.project,
+            },
         )
-        return response
+
+    def post(self, *args, **kwargs):
+        form = self.form_class(self.request.POST, instance=self.project)
+        if form.is_valid():
+            form.save()
+
+            self.project.submitted_contract_documents = True
+            self.project.save(update_fields=["submitted_contract_documents"])
+
+            messenger(
+                MESSAGES.SUBMIT_CONTRACT_DOCUMENTS,
+                request=self.request,
+                user=self.request.user,
+                source=self.project,
+            )
+            # remove project waiting contract documents task for applicant
+            remove_tasks_for_user(
+                code=PROJECT_WAITING_CONTRACT_DOCUMENT,
+                user=self.project.user,
+                related_obj=self.project,
+            )
+            # add project waiting contract review task for staff
+            add_task_to_user(
+                code=PROJECT_WAITING_CONTRACT_REVIEW,
+                user=self.project.lead,
+                related_obj=self.project,
+            )
+
+            messages.success(
+                self.request,
+                _("Contract documents submitted"),
+                extra_tags=PROJECT_ACTION_MESSAGE_TAG,
+            )
+            return HttpResponseClientRefresh()
+        return render(
+            self.request,
+            self.template_name,
+            context={
+                "form": form,
+                "value": _("Submit"),
+                "object": self.project,
+            },
+        )
 
 
 @method_decorator(login_required, name="dispatch")
@@ -1633,7 +1654,6 @@ class ApplicantProjectDetailView(
     form_views = [
         CommentFormView,
         SelectDocumentView,
-        SubmitContractDocumentsView,
     ]
 
     model = Project
