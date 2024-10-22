@@ -47,7 +47,7 @@ def get_latest_project_paf_approval_via_roles(project, roles):
 class ApproveContractForm(forms.Form):
     id = forms.IntegerField(widget=forms.HiddenInput())
 
-    def __init__(self, instance, *args, **kwargs):
+    def __init__(self, *args, instance, **kwargs):
         super().__init__(*args, **kwargs)
         self.instance = instance
         if instance:

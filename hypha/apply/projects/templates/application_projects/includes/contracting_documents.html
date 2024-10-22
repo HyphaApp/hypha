@@ -31,10 +31,11 @@
         {% endif %}
         {% user_can_approve_contract request.user object as can_approve_contract %}
         {% if contract_to_approve and can_approve_contract %}
-            <a data-fancybox
-               data-src="#approve-contract"
-               class="button button--project-action"
-               href="#">
+            <a class="button button--project-action"
+               hx-get="{% url 'apply:projects:contract_approve' object.id %}"
+               href="{% url 'apply:projects:contract_approve' object.id %}"
+               hx-target="#htmx-modal"
+            >
                 {% trans "Approve contract documents" %}
             </a>
 
@@ -152,15 +153,3 @@
 
         </ul>
 </div>
-
-<!-- Modals -->
-
-{% if contract_to_approve %}
-    <div class="modal" id="approve-contract">
-        <h4 class="modal__project-header-bar">{% trans "Approve Contract" %}</h4>
-        <p>{% trans "You confirm that the uploaded contract is acceptable for commencing the project." %}</p>
-        <p>{% trans "This cannot be undone." %}</p>
-        {% trans "Confirm" as confirm %}
-        {% include 'funds/includes/delegated_form_base.html' with form=approve_contract_form value=confirm %}
-    </div>
-{% endif %}
