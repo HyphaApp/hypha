@@ -1,0 +1,95 @@
+{% load i18n contract_tools project_tags heroicons %}
+
+<li class="docs-block__row">
+    <div class="docs-block__row-inner">
+        {% if not remaining_contract_document_categories %}
+            {% heroicon_outline "check-circle" class="stroke-light-blue me-1" aria_hidden=true %}
+        {% else %}
+            {% heroicon_outline "check-circle" class="stroke-gray-400 me-1" aria_hidden=true %}
+        {% endif %}
+        <p class="docs-block__title">{% trans "Contracting documents" %}</p>
+    </div>
+    {% can_update_contracting_documents object user as can_update_documents %}
+
+    {% if all_contract_document_categories %}
+
+        <div class="w-full ps-9">
+            <p></p>
+            <ul>
+                {% for document_category in all_contract_document_categories %}
+                    <li class="docs-block__document">
+                        <div class="docs-block__document-inner">
+                            <p class="docs-block__document-info">
+                                {% if document_category in remaining_contract_document_categories %}
+                                    {% trans "Pending " %}
+                                    {{ document_category.name|lower }}
+                                {% else %}
+                                    {{ document_category.name }}
+                                {% endif %}
+                                {% if document_category.required %}<span class="text-red-700">*</span>{% endif %}
+                                {% if document_category.template %}
+                                    {% heroicon_mini "information-circle" class="fill-light-blue inline align-middle" aria_hidden=true %}
+                                    <a class="font-bold border-b-2 border-dashed" href="{% url 'apply:projects:category_template' pk=object.pk type='contract_document' category_pk=document_category.pk %}" target="_blank">{% trans "View template" %}</a>
+                                {% endif %}
+                            </p>
+                            {% if document_category not in remaining_contract_document_categories %}
+                                {% contract_category_latest_file object document_category as latest_file %}
+                                <p class="docs-block__document-info"><b>{{ latest_file.title }}</b> - {{ latest_file.created_at }}</p>
+                            {% endif %}
+                        </div>
+                        {% if document_category in remaining_contract_document_categories and can_update_documents %}
+                            <div class="docs-block__document-inner__actions">
+                                <a class="font-bold flex items-center me-0"
+                                   href="{% url 'apply:projects:contract_doc_upload' object.id document_category.id %}"
+                                   hx-get="{% url 'apply:projects:contract_doc_upload' object.id document_category.id %}"
+                                   hx-target="#htmx-modal"
+                                   aria-label="{% trans "Upload Contracting Documents" %}"
+                                >
+                                    {% heroicon_mini "arrow-up-tray" size=18 class="inline me-1" aria_hidden="true" %}
+                                    {% trans "Upload" %}
+                                </a>
+                            </div>
+                        {% else %}
+                            {% contract_category_latest_file object document_category as latest_file %}
+                            {% if latest_file %}
+                                <div class="docs-block__row-inner">
+                                    <a class="docs-block__icon-link" href="{% url 'apply:projects:contract_document' pk=object.pk file_pk=latest_file.pk %}" target="_blank">
+                                        {% heroicon_micro "eye" class="inline me-1 w-4 h-4" aria_hidden=true %}
+                                        {% trans "View" %}
+                                    </a>
+                                    {% if can_update_documents %}
+                                        <button class="docs-block__icon-link button button--link button--remove"
+                                                hx-delete="{% url "apply:projects:remove_contracting_document" object.pk latest_file.pk %}"
+                                                hx-swap="none"
+                                                hx-confirm="Are you sure you want to remove this document?"
+                                        >
+                                            {% heroicon_micro "trash" class="inline me-1 fill-red-500" aria_hidden=true %}
+                                            {% csrf_token %}
+                                            {% trans "Remove" %}
+                                        </button>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+</li>
+
+
+{% required_remaining_contracting_doc_categories remaining_contract_document_categories as required_remaining_contract_document_categories %}
+{% user_can_submit_contract object user contract as can_submit_contract %}
+{% if can_submit_contract %}
+    <a class="button button--project-action {% if required_remaining_contract_document_categories or not contract.signed_by_applicant %}is-disabled{% endif %}"
+       id="submit_contract_document"
+       hx-swap-oob="true"
+       hx-get="{% url 'apply:projects:contract_documents_submit' object.id %}"
+       href="{% url 'apply:projects:contract_documents_submit' object.id %}"
+       hx-target="#htmx-modal"
+    >
+        {% trans "Submit contract documents" %}
+    </a>
+{% endif %}
+

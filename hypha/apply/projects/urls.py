@@ -2,6 +2,7 @@ from django.urls import include, path
 from django.views.generic import RedirectView
 
 from .views import (
+    ApproveContractView,
     CategoryTemplatePrivateMediaView,
     ChangePAFStatusView,
     ContractDocumentPrivateMediaView,
@@ -20,6 +21,7 @@ from .views import (
     ProjectPrivateMediaView,
     ProjectSOWDownloadView,
     ProjectSOWView,
+    RemoveContractDocumentView,
     RemoveDocumentView,
     ReportDetailView,
     ReportListView,
@@ -27,11 +29,15 @@ from .views import (
     ReportSkipView,
     ReportUpdateView,
     SendForApprovalView,
+    SubmitContractDocumentsView,
     UpdateAssignApproversView,
     UpdatePAFApproversView,
+    UploadContractDocumentView,
+    UploadContractView,
     UploadDocumentView,
     get_invoices_status_counts,
     get_project_status_counts,
+    partial_contracting_documents,
     partial_project_activities,
     partial_supporting_documents,
 )
@@ -103,6 +109,26 @@ urlpatterns = [
                     name="document",
                 ),
                 path(
+                    "contract/upload/",
+                    UploadContractView.as_view(),
+                    name="contract_upload",
+                ),
+                path(
+                    "partial/contract/documents/",
+                    partial_contracting_documents,
+                    name="contract_documents",
+                ),
+                path(
+                    "contract/documents/<int:category_pk>/upload/",
+                    UploadContractDocumentView.as_view(),
+                    name="contract_doc_upload",
+                ),
+                path(
+                    "contract/documents/<int:document_pk>/remove/",
+                    RemoveContractDocumentView.as_view(),
+                    name="remove_contracting_document",
+                ),
+                path(
                     "category/<str:type>/<int:category_pk>/template/",
                     CategoryTemplatePrivateMediaView.as_view(),
                     name="category_template",
@@ -116,6 +142,16 @@ urlpatterns = [
                     "contract/documents/<int:file_pk>/",
                     ContractDocumentPrivateMediaView.as_view(),
                     name="contract_document",
+                ),
+                path(
+                    "contract/documents/submit/",
+                    SubmitContractDocumentsView.as_view(),
+                    name="contract_documents_submit",
+                ),
+                path(
+                    "contract/approve/",
+                    ApproveContractView.as_view(),
+                    name="contract_approve",
                 ),
                 path(
                     "download/<str:export_type>/",
