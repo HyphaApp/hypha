@@ -12,6 +12,10 @@
     color: variables.$color--white;
     background-color: variables.$color--dark-grey;
 
+    @include media-query(xl) {
+        padding-inline: 0;
+    }
+
     &__inner {
         max-width: variables.$site-width;
         margin: 0 auto;

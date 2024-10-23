@@ -3,7 +3,7 @@
 
 {% block header %}
     <header
-        class="max-w-[1280px] px-4 py-2 flex gap-4 items-center justify-between mx-auto w-full"
+        class="max-w-[1280px] px-4 xl:px-0 py-2 flex gap-4 items-center justify-between mx-auto w-full"
         x-data="{'showDesktopMenu': false, isDesktop: false, mm: null}"
         x-init="mm = window.matchMedia(`(min-width: 768px)`); isDesktop = mm.matches; mm.addListener((e) => { isDesktop = e.matches }); "
     >
