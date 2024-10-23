@@ -6,7 +6,7 @@ document.addEventListener("alpine:init", () => {
     Alpine.data("reviewScore", () => {
         return {
             /** @type {number} The calculated review score. */
-            score: 0,
+            totalScore: 0,
 
             /**
              * Initializes the component.
@@ -34,7 +34,7 @@ document.addEventListener("alpine:init", () => {
                     .map((selector) => parseInt(selector.value))
                     .filter((value) => !isNaN(value) && value !== 99);
 
-                this.score = validValues.reduce((sum, value) => sum + value, 0);
+                this.totalScore = validValues.reduce((sum, value) => sum + value, 0);
             },
 
             /**
@@ -43,14 +43,6 @@ document.addEventListener("alpine:init", () => {
              */
             get showScore() {
                 return this.selectors.length > 0;
-            },
-
-            /**
-             * Formats the score to one decimal place.
-             * @returns {string} The formatted score.
-             */
-            get formattedScore() {
-                return this.score.toFixed();
             },
         };
     });

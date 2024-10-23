@@ -36,7 +36,7 @@
                 x-clock
                 x-show="showScore"
             >
-                {% trans "Score:" %} <span x-text="formattedScore">-</span>
+                {% trans "Score:" %} <span x-text="totalScore">-</span>
             </div>
         </div>
         {% if not has_submitted_review %}
@@ -75,7 +75,7 @@
                         {% trans "Submit" %}
                     </button>
                     <div class="text-fg-muted" x-clock x-show="showScore">
-                        {% trans "Total Score:" %} <span x-text="formattedScore"></span>
+                        {% trans "Total Score:" %} <span x-text="totalScore"></span>
                     </div>
                 </div>
 
