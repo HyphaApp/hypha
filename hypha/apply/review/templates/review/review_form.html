@@ -21,59 +21,57 @@
         {% endslot %}
     {% endadminbar %}
 
+    {% include "forms/includes/form_errors.html" with form=form %}
 
-    {% block form %}
+    <section class="my-8 flex justify-between">
         {% if not has_submitted_review %}
-            <section class="my-8 flex justify-between">
-                {% include "forms/includes/form_errors.html" with form=form %}
-                <form class="form form--with-p-tags form--scoreable max-w-3xl flex-1" action="" method="post">
-                    {{ form.media }}
-                    {% csrf_token %}
+            <form class="form form--with-p-tags form--scoreable max-w-3xl flex-1" action="" method="post">
+                {{ form.media }}
+                {% csrf_token %}
 
-                    {% for hidden in form.hidden_fields %}
-                        {{ hidden }}
-                    {% endfor %}
+                {% for hidden in form.hidden_fields %}
+                    {{ hidden }}
+                {% endfor %}
 
-                    {% for field in form.visible_fields %}
-            {# to be replaced with better logic when we use stream form #}
-                        {% ifchanged field.field.group %}
-                            {% for key, value in form.titles.items %}
-                                {% if key == field.field.group %}
-                                    <h2>{{ value }}</h2>
-                                {% endif %}
-                            {% endfor %}
-                        {% endifchanged %}
+                {% for field in form.visible_fields %}
+                    {# to be replaced with better logic when we use stream form #}
+                    {% ifchanged field.field.group %}
+                        {% for key, value in form.titles.items %}
+                            {% if key == field.field.group %}
+                                <h2>{{ value }}</h2>
+                            {% endif %}
+                        {% endfor %}
+                    {% endifchanged %}
 
-                        {% if field.field %}
-                            {% include "forms/includes/field.html" %}
-                        {% else %}
-                            {{ field.block }}
-                        {% endif %}
-                    {% endfor %}
-                    {% if not object.id or object.is_draft %}
-                        <button class="button button--submit button--top-space button--white" type="submit" name="{{ form.draft_button_name }}" formnovalidate>{% trans "Save draft" %}</button>
+                    {% if field.field %}
+                        {% include "forms/includes/field.html" %}
+                    {% else %}
+                        {{ field.block }}
                     {% endif %}
-                    <button class="button button--submit button--top-space button--primary" type="submit" name="submit">{% trans "Submit" %}</button>
-                </form>
-                <aside :class="showSubmission ? 'flex-1 ps-4' : ''">
-                    <section
-                        class="p-4 overflow-y-auto bg-white shadow-xl max-h-screen"
-                        x-show="showSubmission"
-                        x-transition:enter="transition ease-out duration-250"
-                        x-transition:enter-start="transform opacity-0 translate-x-full"
-                        x-transition:enter-end="transform opacity-100 translate-x-0"
-                        x-transition:leave="transition ease-in duration-150"
-                        x-transition:leave-start="transform opacity-100 translate-x-0"
-                        x-transition:leave-end="transform opacity-0 translate-x-full"
-                        hx-get="{% url 'funds:submissions:partial-answers' submission.id %}"
-                        hx-trigger="intersect once"
-                    >
-                        <p>{% trans "Loading…" %}</p>
-                    </section>
-                </aside>
-            </section>
+                {% endfor %}
+                {% if not object.id or object.is_draft %}
+                    <button class="button button--submit button--top-space button--white" type="submit" name="{{ form.draft_button_name }}" formnovalidate>{% trans "Save draft" %}</button>
+                {% endif %}
+                <button class="button button--submit button--top-space button--primary" type="submit" name="submit">{% trans "Submit" %}</button>
+            </form>
+            <aside :class="showSubmission ? 'flex-1 ps-4' : ''">
+                <section
+                    class="p-4 overflow-y-auto bg-white shadow-xl max-h-screen"
+                    x-show="showSubmission"
+                    x-transition:enter="transition ease-out duration-250"
+                    x-transition:enter-start="transform opacity-0 translate-x-full"
+                    x-transition:enter-end="transform opacity-100 translate-x-0"
+                    x-transition:leave="transition ease-in duration-150"
+                    x-transition:leave-start="transform opacity-100 translate-x-0"
+                    x-transition:leave-end="transform opacity-0 translate-x-full"
+                    hx-get="{% url 'funds:submissions:partial-answers' submission.id %}"
+                    hx-trigger="intersect once"
+                >
+                    <p>{% trans "Loading…" %}</p>
+                </section>
+            </aside>
         {% else %}
             <p>{% trans "You have already posted a review for this submission" %}</p>
         {% endif %}
-    {% endblock %}
+    </section>
 {% endblock %}

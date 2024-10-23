@@ -402,7 +402,7 @@
         margin: 20px 0 0;
         color: variables.$color--white;
         background: variables.$color--error;
-        z-index: 1;
+        z-index: 2;
 
         @include mixins.media-query(lg) {
             position: absolute;
