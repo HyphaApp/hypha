@@ -139,7 +139,7 @@ class TestSendForApprovalView(BaseViewTestCase):
     def test_send_for_approval_happy_path(self):
         project = ProjectFactory(is_locked=False, status=DRAFT)
 
-        response = self.post_page(project, {"form-submitted-request_approval_form": ""})
+        response = self.post_page(project, {}, view_name="submit_project_for_approval")
         self.assertEqual(response.status_code, 200)
 
         project.refresh_from_db()
@@ -190,7 +190,7 @@ class TestChangePAFStatusView(BaseViewTestCase):
         )
 
         response = self.post_page(
-            project, {"form-submitted-change_paf_status": "", "paf_status": APPROVE}
+            project, {"paf_status": APPROVE}, view_name="update_pafstatus"
         )
         self.assertEqual(response.status_code, 403)
 
@@ -204,7 +204,7 @@ class TestChangePAFStatusView(BaseViewTestCase):
         )
 
         response = self.post_page(
-            project, {"form-submitted-change_paf_status": "", "paf_status": APPROVE}
+            project, {"paf_status": APPROVE}, view_name="update_pafstatus"
         )
         self.assertEqual(response.status_code, 403)
 
@@ -218,7 +218,9 @@ class TestChangePAFStatusView(BaseViewTestCase):
         )
 
         response = self.post_page(
-            project, {"form-submitted-change_paf_status": "", "paf_status": APPROVE}
+            project,
+            {"paf_status": APPROVE},
+            view_name="update_pafstatus",
         )
         self.assertEqual(response.status_code, 403)
 
@@ -231,7 +233,9 @@ class TestChangePAFStatusView(BaseViewTestCase):
         )
 
         response = self.post_page(
-            project, {"form-submitted-change_paf_status": "", "paf_status": APPROVE}
+            project,
+            {"paf_status": APPROVE},
+            view_name="update_pafstatus",
         )
 
         self.assertEqual(response.status_code, 200)
@@ -252,7 +256,8 @@ class TestChangePAFStatusView(BaseViewTestCase):
 
         response = self.post_page(
             project,
-            {"form-submitted-change_paf_status": "", "paf_status": REQUEST_CHANGE},
+            {"paf_status": REQUEST_CHANGE},
+            view_name="update_pafstatus",
         )
 
         self.assertEqual(response.status_code, 200)
@@ -519,26 +524,31 @@ class TestUploadDocumentView(BaseViewTestCase):
     url_name = "funds:projects:{}"
     user_factory = StaffFactory
 
+    def setUp(self):
+        super().setUp()
+        self.category = DocumentCategoryFactory()
+
     def get_kwargs(self, instance):
-        return {"pk": instance.id}
+        return {"pk": instance.id, "category_pk": self.category.id}
 
     def test_upload_document(self):
-        category = DocumentCategoryFactory()
         project = ProjectFactory()
 
         test_doc = BytesIO(b"somebinarydata")
         test_doc.name = "test_document.pdf"
 
+        self.assertEqual(project.packet_files.count(), 0)
+
         response = self.post_page(
             project,
             {
-                "form-submitted-document_form": "",
                 "title": "test document",
-                "category": category.id,
+                "category": self.category.id,
                 "document": test_doc,
             },
+            view_name="supporting_doc_upload",
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 204)
 
         project.refresh_from_db()
 

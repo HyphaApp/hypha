@@ -3,6 +3,7 @@ from django.views.generic import RedirectView
 
 from .views import (
     CategoryTemplatePrivateMediaView,
+    ChangePAFStatusView,
     ContractDocumentPrivateMediaView,
     ContractPrivateMediaView,
     CreateInvoiceView,
@@ -19,14 +20,20 @@ from .views import (
     ProjectPrivateMediaView,
     ProjectSOWDownloadView,
     ProjectSOWView,
+    RemoveDocumentView,
     ReportDetailView,
     ReportListView,
     ReportPrivateMedia,
     ReportSkipView,
     ReportUpdateView,
+    SendForApprovalView,
+    UpdateAssignApproversView,
+    UpdatePAFApproversView,
+    UploadDocumentView,
     get_invoices_status_counts,
     get_project_status_counts,
     partial_project_activities,
+    partial_supporting_documents,
 )
 
 app_name = "projects"
@@ -50,6 +57,41 @@ urlpatterns = [
                     name="partial-activities",
                 ),
                 path("edit/", ProjectFormEditView.as_view(), name="edit"),
+                path(
+                    "documents/submit/",
+                    SendForApprovalView.as_view(),
+                    name="submit_project_for_approval",
+                ),
+                path(
+                    "pafapprovers/assign/",
+                    UpdateAssignApproversView.as_view(),
+                    name="assign_pafapprovers",
+                ),
+                path(
+                    "pafapprovers/update/",
+                    UpdatePAFApproversView.as_view(),
+                    name="update_pafapprovers",
+                ),
+                path(
+                    "pafstatus/update/",
+                    ChangePAFStatusView.as_view(),
+                    name="update_pafstatus",
+                ),
+                path(
+                    "document/<int:category_pk>/upload/",
+                    UploadDocumentView.as_view(),
+                    name="supporting_doc_upload",
+                ),
+                path(
+                    "document/<int:document_pk>/remove/",
+                    RemoveDocumentView.as_view(),
+                    name="remove_supporting_document",
+                ),
+                path(
+                    "partial/documents/",
+                    partial_supporting_documents,
+                    name="supporting_documents",
+                ),
                 path(
                     "documents/<int:file_pk>",
                     ProjectPrivateMediaView.as_view(),
