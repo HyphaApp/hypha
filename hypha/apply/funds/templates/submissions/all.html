@@ -1,6 +1,6 @@
 {% extends base_template %}
 
-{% load i18n static %}
+{% load i18n static pagination_tags %}
 {% load querystrings heroicons %}
 {% load humanize %}
 
@@ -530,14 +530,14 @@
             <span class="flex items-center justify-center gap-2 step-links">
                 {% if page.has_previous %}
                     <a
-                        href="?page=1"
+                        href="{{ request|get_pagination_url:1 }}"
                         class="px-3 py-2 border hover:bg-slate-300"
                         aria-label="{% trans "First Page" %}"
                     >
                         &laquo; {% trans "First" %}
                     </a>
                     <a
-                        href="?page={{ page.previous_page_number }}"
+                        href="{{ request|get_pagination_url:page.previous_page_number }}"
                         class="px-3 py-2 border hover:bg-slate-300"
                         aria-label={% trans "Previous Page" %}
                     >
@@ -551,14 +551,14 @@
 
                 {% if page.has_next %}
                     <a
-                        href="?page={{ page.next_page_number }}"
+                        href="{{ request|get_pagination_url:page.next_page_number }}"
                         class="px-3 py-2 border hover:bg-slate-300"
                         aria-label="{% trans "Next Page" %}"
                     >
                         {% trans "Next" %}
                     </a>
                     <a
-                        href="?page={{ page.paginator.num_pages }}"
+                        href="{{ request|get_pagination_url:page.paginator.num_pages }}"
                         class="px-3 py-2 border hover:bg-slate-300"
                         aria-label="{% trans "Last Page" %}"
                     >
