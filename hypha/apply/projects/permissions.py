@@ -2,6 +2,7 @@ from django.conf import settings
 from django.core.exceptions import PermissionDenied
 
 from hypha.apply.activity.adapters.utils import get_users_for_groups
+from hypha.apply.users.models import User
 
 from .models.project import (
     CLOSING,
@@ -364,6 +365,19 @@ def can_access_project(user, project):
     return False, "Forbidden Error"
 
 
+def can_view_contract_category_documents(user, project, **kwargs):
+    contract_category = kwargs.get("contract_category")
+    if not contract_category:
+        return False, "Contract Category is required"
+    allowed_group_users = User.objects.filter(
+        groups__name__in=list(contract_category.document_access_view.all())
+    )
+    if allowed_group_users and user in allowed_group_users:
+        return True, "Access allowed"
+
+    return False, "Forbidden Error"
+
+
 def can_edit_paf(user, project):
     if no_pafreviewer_role() and project.status != COMPLETE:
         return True, "Paf is editable for active projects if no reviewer roles"
@@ -387,4 +401,5 @@ permissions_map = {
     "submit_contract_documents": can_submit_contract_documents,
     "project_access": can_access_project,
     "paf_edit": can_edit_paf,
+    "view_contract_documents": can_view_contract_category_documents,
 }
