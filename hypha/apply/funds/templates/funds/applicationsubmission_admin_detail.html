@@ -1,5 +1,5 @@
 {% extends "funds/applicationsubmission_detail.html" %}
-{% load i18n static workflow_tags review_tags determination_tags heroicons %}
+{% load i18n static workflow_tags review_tags determination_tags translate_tags heroicons %}
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'css/fancybox.css' %}">
@@ -98,4 +98,8 @@
     <script src="{% static 'js/jquery.fancybox.min.js' %}"></script>
     <script src="{% static 'js/fancybox-global.js' %}"></script>
     <script src="{% static 'js/behaviours/collapse.js' %}"></script>
+    <script src="{% static 'js/toggle-related.js' %}"></script>
+    {% if request.user|can_translate_submission %}
+        <script src="{% static 'js/translate-application.js' %}"></script>
+    {% endif %}
 {% endblock %}

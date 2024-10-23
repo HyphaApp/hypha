@@ -32,6 +32,12 @@ def submission_links(value):
     return mark_safe(value)
 
 
+@register.filter
+def doc_title(submission) -> str:
+    id = submission.public_id if submission.public_id else object.id
+    return f"#{id}: { submission.title }"
+
+
 @register.simple_tag
 def user_can_delete_submission(submission, user):
     permission, _ = has_permission(
