@@ -12,7 +12,7 @@
     color: variables.$color--white;
     background-color: variables.$color--dark-grey;
 
-    @include media-query(xl) {
+    @include mixins.media-query(xl) {
         padding-inline: 0;
     }
 
