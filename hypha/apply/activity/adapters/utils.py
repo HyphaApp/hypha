@@ -133,4 +133,4 @@ def get_users_for_groups(groups, user_queryset=None, exact_match=False):
             user_queryset = user_queryset.filter(groups__name=groups.pop().name)
         return get_users_for_groups(groups, user_queryset=user_queryset)
     else:
-        return user_queryset
+        return user_queryset if user_queryset is not None else set()
