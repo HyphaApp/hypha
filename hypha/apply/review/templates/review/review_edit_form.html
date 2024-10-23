@@ -22,7 +22,7 @@
             {% endfor %}
 
             {% for field in form.visible_fields %}
-        {# to be replaced with better logic when we use stream form #}
+                {# to be replaced with better logic when we use stream form #}
                 {% ifchanged field.field.group %}
                     {% for key, value in form.titles.items %}
                         {% if key == field.field.group %}
@@ -44,6 +44,7 @@
         </form>
     </div>
 {% endblock %}
+
 {% block extra_js %}
     <script src="{% static 'js/review-form-actions.js' %}"></script>
 {% endblock %}
