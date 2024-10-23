@@ -50,7 +50,7 @@ document.addEventListener("alpine:init", () => {
              * @returns {string} The formatted score.
              */
             get formattedScore() {
-                return this.score.toFixed(1);
+                return this.score.toFixed();
             },
         };
     });
