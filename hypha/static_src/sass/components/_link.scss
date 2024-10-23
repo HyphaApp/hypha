@@ -96,7 +96,8 @@
     }
 
     &--edit-submission,
-    &--delete-submission {
+    &--delete-submission,
+    &--withdraw-submission {
         display: flex;
         align-items: center;
         font-weight: variables.$weight--bold;
@@ -115,12 +116,13 @@
         }
     }
 
-    &--delete-submission {
+    &--delete-submission,
+    &--withdraw-submission {
         margin-inline-end: 1rem;
         padding-inline-end: 1rem;
         border-inline-end: 2px solid variables.$color--mid-grey;
 
-        &:only-child {
+        &:last-child {
             border-inline-end: 0;
             padding-inline-end: 0;
             margin-inline-end: 0;
