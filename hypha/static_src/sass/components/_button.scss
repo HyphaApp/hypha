@@ -391,8 +391,11 @@
 
     &--tooltip-disabled {
         background-color: variables.$color--button-disabled;
+        border: 1px solid variables.$color--button-disabled;
 
-        &:hover {
+        &:hover,
+        &:active,
+        &:focus {
             cursor: default;
             background-color: variables.$color--button-disabled;
         }
