@@ -1,0 +1,7 @@
+{% load i18n project_tags %}
+{% modal_title %}{% trans "Update Project Form Status" %}{% endmodal_title %}
+
+<div class="p-4">
+    {% url 'apply:projects:update_pafapprovers' pk=object.id as url %}
+    {% include 'funds/includes/dialog_form_base.html' with form=form value=value url=url %}
+</div>

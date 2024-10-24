@@ -1,0 +1,161 @@
+{% load i18n approval_tools project_tags heroicons %}
+{% allow_collapsible_header object header_type='project_documents' as collapsible_header %}
+
+<div class="docs-block wrapper--outer-space-large" {% if collapsible_header %} x-data="{ collapsed: true }" {% endif %}>
+    <div class="docs-block__header" id="project-documents-section" {% if collapsible_header %} x-on:click="collapsed = ! collapsed" role="button" aria-label="Toggle Project documents visibility" aria-controls="project-documents-elements" {% endif %}>
+        <div class="flex justify-between w-full" >
+            <h2 class="text-lg font-semibold m-0">
+                {% trans "Project documents" %}
+            </h2>
+
+            {% if collapsible_header %}
+                <button class="align-middle ms-1 transform transition-transform" x-bind:class="collapsed ? '': '-rotate-90' ">
+                    {% heroicon_outline 'chevron-left' size=20 stroke_width=2 aria_hidden=true %}
+                    <span class="sr-only" x-text="collapsed ? 'expand' : 'collapse'">{% trans "expand" %}</span>
+                </button>
+            {% endif %}
+        </div>
+        <div>
+            {% user_can_send_for_approval object user as can_send_to_approve %}
+            {% if can_send_to_approve %}
+                <a class="button button--project-action"
+                   href="{% url 'apply:projects:submit_project_for_approval' object.id %}"
+                   hx-get="{% url 'apply:projects:submit_project_for_approval' object.id %}"
+                   hx-target="#htmx-modal"
+                >
+                    {% if object.paf_approvals.exists %}
+                        {% trans "Resubmit for approval" %}
+                    {% else %}
+                        {% trans "Submit for approval" %}
+                    {% endif %}
+                </a>
+            {% endif %}
+            {% user_can_update_paf_approvers object user request as can_update_paf_approvers %}
+            {% user_can_assign_approvers_to_project object user request as can_assign_paf_approvers %}
+            {% if can_update_paf_approvers %}
+                {% if user == project.lead %}
+                    <a class="button button--project-action button--project-action--white ms-2"
+                       href="{% url 'apply:projects:update_pafapprovers' object.id %}"
+                       hx-get="{% url 'apply:projects:update_pafapprovers' object.id %}"
+                       hx-target="#htmx-modal"
+                    >
+                        {% trans "View/Update Approvers" %}
+                    </a>
+                {% else %}
+                    <a class="button button--project-action button--project-action--white ms-2"
+                       href="{% url 'apply:projects:assign_pafapprovers' object.id %}"
+                       hx-get="{% url 'apply:projects:assign_pafapprovers' object.id %}"
+                       hx-target="#htmx-modal"
+                    >
+                        {% trans "Change approver" %}
+                    </a>
+                {% endif %}
+            {% endif %}
+            {% if can_assign_paf_approvers %}
+                <a class="button button--project-action"
+                   href="{% url 'apply:projects:assign_pafapprovers' object.id %}"
+                   hx-get="{% url 'apply:projects:assign_pafapprovers' object.id %}"
+                   hx-target="#htmx-modal"
+                >
+                    {% trans "Assign approver" %}
+                </a>
+            {% endif %}
+            {% user_can_update_paf_status object user request=request as can_update_paf_status %}
+            {% if object.can_make_approval and can_update_paf_status %}
+                <a class="button button--project-action ms-2"
+                   href="{% url 'apply:projects:update_pafstatus' object.id %}"
+                   hx-get="{% url 'apply:projects:update_pafstatus' object.id %}"
+                   hx-target="#htmx-modal"
+                >
+                    {% trans "Update Status" %}
+                </a>
+            {% endif %}
+        </div>
+    </div>
+    <ul class="docs-block__inner" id="project-documents-elements" {% if collapsible_header %} x-show="!collapsed" role="region"
+            aria-labelledby="project-documents-section" {% endif %}>
+
+            <li class="docs-block__row">
+                <div class="docs-block__row-inner">
+                    {% heroicon_outline "check-circle" class="stroke-light-blue me-1" aria_hidden=true %}
+                    <p class="docs-block__title">{% trans "Proposal" %}</p>
+                </div>
+                <div class="docs-block__row-inner">
+                    <a class="docs-block__icon-link hover:opacity-70 transition-opacity"
+                       href="{% if user.is_applicant %}{{ project.submission.get_absolute_url }}{% else %}{% url 'apply:submissions:simplified' pk=project.submission.pk %}{% endif %}"
+                    >
+                        {% heroicon_micro "eye" class="inline me-1 w-4 h-4" aria_hidden=true %}
+                        {% trans "View" %}
+                    </a>
+                </div>
+            </li>
+
+            <li class="docs-block__row">
+                <div class="docs-block__row-inner">
+                    {% if object.user_has_updated_details %}
+                        {% heroicon_outline "check-circle" class="stroke-light-blue me-1" aria_hidden=true %}
+                    {% else %}
+                        {% heroicon_outline "check-circle" class="stroke-gray-400 me-1" aria_hidden=true %}
+                    {% endif %}
+                    <p class="docs-block__title">{% trans "Project Form" %}</p>
+                </div>
+                <div class="docs-block__row-inner">
+                    {% user_can_edit_paf object user as can_edit_paf %}
+                    {% if can_edit_paf %}
+                        <a class="{% if not object.user_has_updated_details %}button button--project-action{% else %}docs-block__icon-link{% endif %}" href="{% url 'apply:projects:edit' pk=object.pk %}">
+                            {% if object.user_has_updated_details %}
+                                {% heroicon_micro "pencil-square" class="inline me-1 w-4 h-4" aria_hidden=true %}
+                                {% trans "Edit" %}
+                            {% else %}
+                                {% trans "Fill in" %}
+                            {% endif %}
+                        </a>
+                    {% endif %}
+                    {% if object.user_has_updated_details and not user.is_applicant %}
+                        <a class="docs-block__icon-link" href="{% url 'apply:projects:approval' pk=project.pk %}">
+                            {% heroicon_micro "eye" class="inline me-1 w-4 h-4" aria_hidden=true %}
+                            {% trans "View" %}
+                        </a>
+                    {% endif %}
+                </div>
+                {% has_project_sow_form object as project_sow %}
+                {% if project_sow and object.user_has_updated_details and not user.is_applicant %}
+                    <ul class="mt-2 w-full ps-7">
+                        <li class="docs-block__document">
+                            <div class="docs-block__document-inner">
+                                <p class="docs-block__document-info">{% trans "Scope of work (SOW)" %}</p>
+                            </div>
+                            <div class="docs-block__document-inner__actions">
+                                <a class="docs-block__icon-link" href="{% url 'apply:projects:sow' pk=project.pk %}">
+                                    {% heroicon_micro "eye" class="inline me-1 w-4 h-4" aria_hidden=true %}
+                                    {% trans "View" %}
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                {% endif %}
+            </li>
+
+            {% if supporting_documents_configured %}
+                <div class=""
+                     hx-trigger="load, supportingDocumentUpload from:body, supportingDocumentRemove from:body"
+                     hx-get="{% url "apply:projects:supporting_documents" object.id %}"
+                     hx-target="this">
+                    {% heroicon_outline "check-circle" class="stroke-gray-400 me-1" aria_hidden=true %}
+                    <p class="docs-block__title">{% trans "Supporting documents" %}</p>
+
+                    <div class="animate-pulse min-h-30">
+                        <div class="w-full mb-3 bg-gray-200 h-9"></div>
+                        <div class="w-full h-6 mb-1 bg-gray-200"></div>
+                        <div class="w-full h-1 mb-3 bg-gray-200"></div>
+                        <div class="w-20 h-6 mb-3 bg-gray-200"></div>
+                    </div>
+                </div>
+            {% endif %}
+        </ul>
+</div>
+
+
+{% if can_update_paf_status %}
+
+{% endif %}

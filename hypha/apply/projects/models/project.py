@@ -623,19 +623,6 @@ class PacketFile(models.Model):
     class Meta:
         ordering = ("-created_at",)
 
-    def get_remove_form(self):
-        """
-        Get an instantiated RemoveDocumentForm with this class as `instance`.
-
-        This allows us to build instances of the RemoveDocumentForm for each
-        instance of PacketFile in the supporting documents template.  The
-        standard Delegated View flow makes it difficult to create these forms
-        in the view or template.
-        """
-        from ..forms import RemoveDocumentForm
-
-        return RemoveDocumentForm(instance=self)
-
 
 @receiver(post_delete, sender=PacketFile)
 def delete_packetfile_file(sender, instance, **kwargs):
