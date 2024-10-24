@@ -63,8 +63,10 @@
 
         <!-- alpine js start -->
         <style> [x-cloak] {display: none !important} </style>
+
         <!-- Alpine Plugins: installed with npm -->
         <script defer src="{% static 'js/vendor/alpine-focus.min.js' %}"></script>
+        {% block alpine_scripts %}{% endblock %}
 
         <!-- Alpine Core: installed with npm  -->
         <script defer src="{% static 'js/vendor/alpine.min.js' %}"></script>
@@ -73,6 +75,7 @@
         <!-- modules -->
         <script type="module" src="{% static 'js/esm/github-relative-time-element-4-3-0.js' %}"></script>
         <script type="module" src="{% static 'js/esm/github-filter-input-element-0-1-1.js' %}"></script>
+
         {% include "includes/head_end.html" %}
     </head>
 
