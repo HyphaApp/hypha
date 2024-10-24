@@ -143,30 +143,16 @@
 
 // Viewport sized typography mixin that takes a min and max pixel-based value
 @mixin responsive-font-sizes($min, $max) {
-    $vw-context: (1260 * 0.1) * 1px;
-    $responsive: math.div($max, $vw-context) * 10vw;
+    $minbreakpoint: 640;
+    $maxbreakpoint: 1280;
+    $minsize: functions.strip-unit($min);
+    $maxsize: functions.strip-unit($max);
+    $minrem: functions.rem($min);
+    $maxrem: functions.rem($max);
+    $slope: math.div($maxsize - $minsize, $maxbreakpoint - $minbreakpoint);
+    $intersection: functions.rem($minsize - $slope * $minbreakpoint);
 
-    $responsive-unitless: math.div(
-        $responsive,
-        ($responsive - $responsive + 1)
-    );
-    $dimension: if(math.unit($responsive) == "vh", "height", "width");
-    $min-breakpoint: math.div($min, $responsive-unitless) * 100;
-
-    @media (max-#{$dimension}: #{$min-breakpoint}) {
-        & {
-            font-size: $min;
-        }
-    }
-
-    $max-breakpoint: math.div($max, $responsive-unitless) * 100;
-
-    @media (min-#{$dimension}: #{$max-breakpoint}) {
-        font-size: $max;
-    }
-    & {
-        font-size: $responsive;
-    }
+    font-size: clamp($minrem, calc($intersection + $slope * 100vw), $maxrem);
 }
 
 // Triangle mixin
