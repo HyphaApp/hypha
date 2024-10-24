@@ -746,17 +746,21 @@ class UploadContractView(DelegatedViewMixin, CreateView):
         return response
 
 
-class SkipPAFApprovalProcessView(DelegatedViewMixin, UpdateView):
-    context_name = "skip_paf_approval_form"
+class SkipPAFApprovalProcessView(UpdateView):
     model = Project
     form_class = SkipPAFApprovalProcessForm
 
+    def dispatch(self, request, *args, **kwargs):
+        self.object = get_object_or_404(Project, id=kwargs.get("pk"))
+        # permissions
+        return super().dispatch(request, *args, **kwargs)
+
     def form_valid(self, form):
-        project = self.kwargs["object"]
+        project = self.object
         old_stage = project.status
         project.is_locked = True
         project.status = CONTRACTING
-        response = super().form_valid(form)
+        super().form_valid(form)
 
         # remove PAF submission task for staff group
         remove_tasks_for_user(
@@ -792,7 +796,7 @@ class SkipPAFApprovalProcessView(DelegatedViewMixin, UpdateView):
                 user_group=Group.objects.filter(name=CONTRACTING_GROUP_NAME),
                 related_obj=self.object,
             )
-        return response
+        return HttpResponseClientRefresh()
 
 
 @method_decorator(login_required, name="dispatch")
@@ -1506,7 +1510,6 @@ class AdminProjectDetailView(
         UploadContractView,
         ChangeProjectstatusView,
         ChangeInvoiceStatusView,
-        SkipPAFApprovalProcessView,
     ]
     model = Project
     template_name_suffix = "_admin_detail"

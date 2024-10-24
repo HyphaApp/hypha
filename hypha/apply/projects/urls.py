@@ -27,6 +27,7 @@ from .views import (
     ReportSkipView,
     ReportUpdateView,
     SendForApprovalView,
+    SkipPAFApprovalProcessView,
     UpdateAssignApproversView,
     UpdatePAFApproversView,
     UploadDocumentView,
@@ -57,6 +58,9 @@ urlpatterns = [
                     name="partial-activities",
                 ),
                 path("edit/", ProjectFormEditView.as_view(), name="edit"),
+                path(
+                    "paf/skip/", SkipPAFApprovalProcessView.as_view(), name="paf_skip"
+                ),
                 path(
                     "documents/submit/",
                     SendForApprovalView.as_view(),
