@@ -37,6 +37,15 @@
                         {{ activity.timestamp|date:'SHORT_DATETIME_FORMAT' }}
                     </relative-time>
                 </span>
+                {% if not submission_title and activity|user_can_see_related:request.user %}
+                    {% with url=activity.related_object.get_absolute_url %}
+                        {% if url %}
+                            <a href="{{ url }}" class="ms-2 hover:opacity-70 transition-opacity font-semibold">
+                                {% trans "View" %}
+                            </a>
+                        {% endif %}
+                    {% endwith %}
+                {% endif %}
             </div>
         </div>
     </div>
