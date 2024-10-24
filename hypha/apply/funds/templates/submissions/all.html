@@ -530,15 +530,15 @@
             <span class="flex items-center justify-center gap-2 step-links">
                 {% if page.has_previous %}
                     <a
-                        href="?page=1"
-                        class="px-3 py-2 border hover:bg-slate-300"
+                        href="{% modify_query page=1 %}"
+                        class="px-3 py-1.5 border hover:bg-slate-200 font-semibold"
                         aria-label="{% trans "First Page" %}"
                     >
                         &laquo; {% trans "First" %}
                     </a>
                     <a
-                        href="?page={{ page.previous_page_number }}"
-                        class="px-3 py-2 border hover:bg-slate-300"
+                        href="{% modify_query page=page.previous_page_number %}"
+                        class="px-3 py-1.5 border hover:bg-slate-200 font-semibold"
                         aria-label={% trans "Previous Page" %}
                     >
                         {% trans "Previous" %}
@@ -551,15 +551,15 @@
 
                 {% if page.has_next %}
                     <a
-                        href="?page={{ page.next_page_number }}"
-                        class="px-3 py-2 border hover:bg-slate-300"
+                        href="{% modify_query page=page.next_page_number %}"
+                        class="px-3 py-1.5 border hover:bg-slate-200 font-semibold"
                         aria-label="{% trans "Next Page" %}"
                     >
                         {% trans "Next" %}
                     </a>
                     <a
-                        href="?page={{ page.paginator.num_pages }}"
-                        class="px-3 py-2 border hover:bg-slate-300"
+                        href="{% modify_query page=page.paginator.num_pages %}"
+                        class="px-3 py-1.5 border hover:bg-slate-200 font-semibold"
                         aria-label="{% trans "Last Page" %}"
                     >
                         {% trans "Last" %} &raquo;
