@@ -713,9 +713,9 @@ class TestApproveContractView(BaseViewTestCase):
         response = self.post_page(
             project,
             {
-                "form-submitted-approve_contract_form": "",
                 "id": contract.id,
             },
+            view_name="contract_approve",
         )
         self.assertEqual(response.status_code, 200)
 
@@ -756,14 +756,11 @@ class TestApproveContractView(BaseViewTestCase):
         response = self.post_page(
             project,
             {
-                "form-submitted-approve_contract_form": "",
                 "id": contract.id,
             },
+            view_name="contract_approve",
         )
         self.assertEqual(response.status_code, 200)
-
-        messages = list(response.context["messages"])
-        self.assertEqual(len(messages), 1)
 
     def test_attempt_to_approve_non_latest(self):
         project = ProjectFactory()
@@ -777,14 +774,12 @@ class TestApproveContractView(BaseViewTestCase):
         response = self.post_page(
             project,
             {
-                "form-submitted-approve_contract_form": "",
                 "id": contract_attempt.id,
             },
+            view_name="contract_approve",
         )
         self.assertEqual(response.status_code, 200)
 
-        messages = list(response.context["messages"])
-        self.assertEqual(len(messages), 1)
         contract_attempt.refresh_from_db()
         contract_meant.refresh_from_db()
         self.assertIsNone(contract_attempt.approver)
