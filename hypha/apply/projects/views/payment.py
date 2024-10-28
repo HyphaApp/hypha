@@ -18,8 +18,12 @@ from django.views.generic import (
     DetailView,
     FormView,
     UpdateView,
+    View,
 )
 from django_filters.views import FilterView
+from django_htmx.http import (
+    HttpResponseClientRefresh,
+)
 from django_tables2 import SingleTableMixin
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
@@ -89,11 +93,11 @@ class InvoiceAccessMixin(UserPassesTestMixin):
 
 
 @method_decorator(staff_or_finance_required, name="dispatch")
-class ChangeInvoiceStatusView(DelegatedViewMixin, InvoiceAccessMixin, UpdateView):
+class ChangeInvoiceStatusView(InvoiceAccessMixin, View):
     form_class = ChangeInvoiceStatusForm
     context_name = "change_invoice_status"
     model = Invoice
-    template = "application_projects/includes/update_invoice_form.html"
+    template = "application_projects/modals/invoice_status_update.html"
 
     def dispatch(self, request, *args, **kwargs):
         self.object: Invoice = get_object_or_404(Invoice, id=kwargs.get("invoice_pk"))
@@ -226,7 +230,7 @@ class DeleteInvoiceView(DeleteView):
 
 
 class InvoiceAdminView(InvoiceAccessMixin, DelegateableView, DetailView):
-    form_views = [ChangeInvoiceStatusView]
+    form_views = []
     template_name_suffix = "_admin_detail"
 
     def get_context_data(self, **kwargs):

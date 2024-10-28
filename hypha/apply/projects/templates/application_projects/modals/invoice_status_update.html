@@ -1,0 +1,44 @@
+{% load i18n %}
+{% modal_title %}{% trans "Update Invoice status" %}{% endmodal_title %}
+
+<div class="p-4" id="change_invoice_status">
+    <p>{% trans "Current status" %}: {{ object.status_display }}</p>
+    {% url 'apply:projects:invoice_status_update' object.project.id object.id as url %}
+    {% include 'funds/includes/dialog_form_base.html' with form=form value=value url=url %}
+</div>
+
+<script>
+    document.addEventListener("htmx:afterRequest", function () {
+        const invoice_status = document.querySelector('[id^=change_invoice_status');
+        const paid_selection = invoice_status.querySelector('[value="paid"]');
+        const paid_field = document.querySelector('.id_paid_date');
+        var paid_date = document.querySelector('#id_paid_date');
+
+        function updatePaidDate(){
+            if (paid_selection && paid_selection.checked) {
+                paid_field.style.display = 'block';
+                if (!paid_date.value) {
+                    // Get today's date
+                    const now = new Date();
+                    const year = now.getFullYear();
+                    const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+                    const day = String(now.getDate()).padStart(2, '0');
+
+                    // Format the date as DD-MM-YYYY
+                    const today = `${year}-${month}-${day}`;
+
+                    paid_date.value = today;
+                }
+            } else {
+                paid_field.style.display = 'none';
+                paid_date.value = '';
+            }
+        }
+
+        updatePaidDate();
+
+        invoice_status.querySelectorAll('input[name="status"]').forEach(radio => {
+            radio.addEventListener('change', updatePaidDate);
+        });
+    });
+</script>

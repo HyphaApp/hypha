@@ -114,7 +114,6 @@ from ..utils import (
     get_placeholder_file,
     get_project_status_choices,
 )
-from ..views.payment import ChangeInvoiceStatusView
 from .report import ReportFrequencyUpdate, ReportingMixin
 
 
@@ -1615,7 +1614,6 @@ class AdminProjectDetailView(
         UpdateLeadView,
         UpdateProjectTitleView,
         ChangeProjectstatusView,
-        ChangeInvoiceStatusView,
     ]
     model = Project
     template_name_suffix = "_admin_detail"
