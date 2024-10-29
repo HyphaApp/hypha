@@ -1239,14 +1239,14 @@ class ChangePAFStatusView(View):
         )
 
 
-class ChangeProjectstatusView(DelegatedViewMixin, UpdateView):
+class ChangeProjectstatusView(View):
     """
     Project status can be updated manually only in 'IN PROGRESS, CLOSING and COMPLETE' state.
     """
 
     form_class = ChangeProjectStatusForm
-    context_name = "change_project_status"
     model = Project
+    template_name = "application_projects/modals/project_status_update.html"
 
     def dispatch(self, request, *args, **kwargs):
         self.project = get_object_or_404(Project, pk=self.kwargs["pk"])
@@ -1255,37 +1255,60 @@ class ChangeProjectstatusView(DelegatedViewMixin, UpdateView):
         )
         return super().dispatch(request, *args, **kwargs)
 
-    def form_valid(self, form):
+    def get(self, *args, **kwargs):
+        form = self.form_class(instance=self.project)
+        return render(
+            self.request,
+            self.template_name,
+            context={
+                "form": form,
+                "value": _("Update"),
+                "object": self.project,
+            },
+        )
+
+    def post(self, *args, **kwargs):
         old_stage = self.project.status
+        form = self.form_class(self.request.POST, instance=self.project)
 
-        response = super().form_valid(form)
+        if form.is_valid():
+            form.save()
 
-        comment = form.cleaned_data.get("comment", "")
+            comment = form.cleaned_data.get("comment", "")
 
-        if comment:
-            Activity.objects.create(
+            if comment:
+                Activity.objects.create(
+                    user=self.request.user,
+                    type=COMMENT,
+                    source=self.project,
+                    timestamp=timezone.now(),
+                    message=comment,
+                    visibility=ALL,
+                )
+
+            messenger(
+                MESSAGES.PROJECT_TRANSITION,
+                request=self.request,
                 user=self.request.user,
-                type=COMMENT,
-                source=self.object,
-                timestamp=timezone.now(),
-                message=comment,
-                visibility=ALL,
+                source=self.project,
+                related=old_stage,
             )
 
-        messenger(
-            MESSAGES.PROJECT_TRANSITION,
-            request=self.request,
-            user=self.request.user,
-            source=self.object,
-            related=old_stage,
-        )
-
-        messages.success(
+            messages.success(
+                self.request,
+                _("Project status has been updated"),
+                extra_tags=PROJECT_ACTION_MESSAGE_TAG,
+            )
+            return HttpResponseClientRefresh()
+        return render(
             self.request,
-            _("Project status has been updated"),
-            extra_tags=PROJECT_ACTION_MESSAGE_TAG,
+            self.template_name,
+            context={
+                "form": form,
+                "value": _("Update"),
+                "object": self.project,
+            },
         )
-        return response
 
 
 @method_decorator(login_required, name="dispatch")
@@ -1612,7 +1635,6 @@ class AdminProjectDetailView(
         SelectDocumentView,
         UpdateLeadView,
         UpdateProjectTitleView,
-        ChangeProjectstatusView,
     ]
     model = Project
     template_name_suffix = "_admin_detail"

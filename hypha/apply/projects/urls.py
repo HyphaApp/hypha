@@ -6,6 +6,7 @@ from .views import (
     CategoryTemplatePrivateMediaView,
     ChangeInvoiceStatusView,
     ChangePAFStatusView,
+    ChangeProjectstatusView,
     ContractDocumentPrivateMediaView,
     ContractPrivateMediaView,
     CreateInvoiceView,
@@ -71,6 +72,11 @@ urlpatterns = [
                     name="partial-activities",
                 ),
                 path("edit/", ProjectFormEditView.as_view(), name="edit"),
+                path(
+                    "status/update/",
+                    ChangeProjectstatusView.as_view(),
+                    name="project_status_update",
+                ),
                 path(
                     "paf/skip/", SkipPAFApprovalProcessView.as_view(), name="paf_skip"
                 ),

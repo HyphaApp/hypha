@@ -206,7 +206,7 @@ class ChangeProjectStatusForm(forms.ModelForm):
         fields = ["status", "comment"]
         model = Project
 
-    def __init__(self, instance, user, *args, **kwargs):
+    def __init__(self, *args, instance=None, user=None, **kwargs):
         super().__init__(*args, **kwargs, instance=instance)
         status_field = self.fields["status"]
         possible_status_transitions = {

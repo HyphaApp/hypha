@@ -23,13 +23,13 @@
                 <details>
                     <summary class="sidebar__separator sidebar__separator--medium">{% trans "More actions" %}</summary>
 
-                    <a data-fancybox data-src="#project-status" class="button button--white button--full-width button--bottom-space" href="#">{% trans "Update Project Status" %}</a>
-
-                    <div class="modal" id="project-status">
-                        <h4 class="modal__project-header-bar">{% trans "Update Project Status" %}</h4>
-                        {% trans "Update" as update %}
-                        {% include 'funds/includes/delegated_form_base.html' with form=change_project_status value=update %}
-                    </div>
+                    <a class="button button--white button--full-width button--bottom-space"
+                       href="{% url 'apply:projects:project_status_update' object.id %}"
+                       hx-get="{% url 'apply:projects:project_status_update' object.id %}"
+                       hx-target="#htmx-modal"
+                    >
+                        {% trans "Update Project Status" %}
+                    </a>
                 </details>
             {% endif %}
         </div>
