@@ -486,29 +486,56 @@ class UpdateLeadView(DelegatedViewMixin, UpdateView):
 class UpdateProjectTitleView(DelegatedViewMixin, UpdateView):
     model = Project
     form_class = UpdateProjectTitleForm
-    context_name = "title_form"
+    template_name = "application_projects/modals/project_title_update.html"
 
-    def form_valid(self, form):
-        # Fetch the old lead from the database
-        old_title = copy.copy(self.get_object().title)
+    def dispatch(self, request, *args, **kwargs):
+        self.project = get_object_or_404(Project, id=kwargs.get("pk"))
+        return super().dispatch(request, *args, **kwargs)
 
-        response = super().form_valid(form)
-        project = form.instance
-
-        messenger(
-            MESSAGES.UPDATE_PROJECT_TITLE,
-            request=self.request,
-            user=self.request.user,
-            source=project,
-            related=old_title,
-        )
-
-        messages.success(
+    def get(self, *args, **kwargs):
+        form = self.form_class(instance=self.project)
+        return render(
             self.request,
-            _("Title has been updated"),
-            extra_tags=PROJECT_ACTION_MESSAGE_TAG,
+            self.template_name,
+            context={
+                "form": form,
+                "value": _("Update"),
+                "object": self.project,
+            },
         )
-        return response
+
+    def post(self, *args, **kwargs):
+        # Fetch the old lead from the database
+        old_title = copy.copy(self.project.title)
+
+        form = self.form_class(self.request.POST, instance=self.project)
+
+        if form.is_valid():
+            form.save()
+
+            messenger(
+                MESSAGES.UPDATE_PROJECT_TITLE,
+                request=self.request,
+                user=self.request.user,
+                source=self.project,
+                related=old_title,
+            )
+
+            messages.success(
+                self.request,
+                _("Title has been updated"),
+                extra_tags=PROJECT_ACTION_MESSAGE_TAG,
+            )
+            return HttpResponseClientRefresh()
+        return render(
+            self.request,
+            self.template_name,
+            context={
+                "form": form,
+                "value": _("Update"),
+                "object": self.project,
+            },
+        )
 
 
 # CONTRACTS
@@ -1634,7 +1661,6 @@ class AdminProjectDetailView(
         CommentFormView,
         SelectDocumentView,
         UpdateLeadView,
-        UpdateProjectTitleView,
     ]
     model = Project
     template_name_suffix = "_admin_detail"

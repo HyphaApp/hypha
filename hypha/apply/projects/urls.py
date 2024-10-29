@@ -37,6 +37,7 @@ from .views import (
     SubmitContractDocumentsView,
     UpdateAssignApproversView,
     UpdatePAFApproversView,
+    UpdateProjectTitleView,
     UploadContractDocumentView,
     UploadContractView,
     UploadDocumentView,
@@ -76,6 +77,11 @@ urlpatterns = [
                     "status/update/",
                     ChangeProjectstatusView.as_view(),
                     name="project_status_update",
+                ),
+                path(
+                    "title/update/",
+                    UpdateProjectTitleView.as_view(),
+                    name="project_title_update",
                 ),
                 path(
                     "paf/skip/", SkipPAFApprovalProcessView.as_view(), name="paf_skip"
