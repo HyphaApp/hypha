@@ -36,6 +36,7 @@ from .views import (
     SkipPAFApprovalProcessView,
     SubmitContractDocumentsView,
     UpdateAssignApproversView,
+    UpdateLeadView,
     UpdatePAFApproversView,
     UpdateProjectTitleView,
     UploadContractDocumentView,
@@ -73,6 +74,7 @@ urlpatterns = [
                     name="partial-activities",
                 ),
                 path("edit/", ProjectFormEditView.as_view(), name="edit"),
+                path("lead/update/", UpdateLeadView.as_view(), name="lead_update"),
                 path(
                     "status/update/",
                     ChangeProjectstatusView.as_view(),

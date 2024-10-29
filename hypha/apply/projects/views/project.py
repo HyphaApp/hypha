@@ -452,34 +452,60 @@ class SelectDocumentView(DelegatedViewMixin, CreateView):
 
 
 @method_decorator(staff_required, name="dispatch")
-class UpdateLeadView(DelegatedViewMixin, UpdateView):
+class UpdateLeadView(View):
     model = Project
     form_class = UpdateProjectLeadForm
-    context_name = "lead_form"
+    template_name = "application_projects/modals/lead_update.html"
 
-    def form_valid(self, form):
-        # Fetch the old lead from the database
-        old_lead = copy.copy(self.get_object().lead)
-        tasks = get_project_lead_tasks(self.get_object().lead, self.get_object())
+    def dispatch(self, request, *args, **kwargs):
+        self.project = get_object_or_404(Project, id=kwargs.get("pk"))
+        return super().dispatch(request, *args, **kwargs)
 
-        response = super().form_valid(form)
-        project = form.instance
-        tasks.update(user=project.lead)
-
-        messenger(
-            MESSAGES.UPDATE_PROJECT_LEAD,
-            request=self.request,
-            user=self.request.user,
-            source=project,
-            related=old_lead or _("Unassigned"),
-        )
-
-        messages.success(
+    def get(self, *args, **kwargs):
+        form = self.form_class(instance=self.project)
+        return render(
             self.request,
-            _("Lead has been updated"),
-            extra_tags=PROJECT_ACTION_MESSAGE_TAG,
+            self.template_name,
+            context={
+                "form": form,
+                "value": _("Update"),
+                "object": self.project,
+            },
         )
-        return response
+
+    def post(self, *args, **kwargs):
+        # Fetch the old lead from the database
+        old_lead = copy.copy(self.project.lead)
+        form = self.form_class(self.request.POST, instance=self.project)
+        if form.is_valid():
+            tasks = get_project_lead_tasks(self.project.lead, self.project)
+
+            form.save()
+            tasks.update(user=self.project.lead)
+
+            messenger(
+                MESSAGES.UPDATE_PROJECT_LEAD,
+                request=self.request,
+                user=self.request.user,
+                source=self.project,
+                related=old_lead or _("Unassigned"),
+            )
+
+            messages.success(
+                self.request,
+                _("Lead has been updated"),
+                extra_tags=PROJECT_ACTION_MESSAGE_TAG,
+            )
+            return HttpResponseClientRefresh()
+        return render(
+            self.request,
+            self.template_name,
+            context={
+                "form": form,
+                "value": _("Update"),
+                "object": self.project,
+            },
+        )
 
 
 @method_decorator(staff_required, name="dispatch")
@@ -1660,7 +1686,6 @@ class AdminProjectDetailView(
     form_views = [
         CommentFormView,
         SelectDocumentView,
-        UpdateLeadView,
     ]
     model = Project
     template_name_suffix = "_admin_detail"

@@ -41,19 +41,14 @@
                 {% if not HIDE_STAFF_IDENTITY or request.user.is_apply_staff %}
                     <span>
                         {% if request.user.is_apply_staff %}
-                            <a data-fancybox
-                               data-src="#assign-lead"
-                               class="flex items-center is-active text-white underline hover:opacity-70 transition-opacity"
-                               href="#"
+                            <a class="link link--edit-lead is-active link--transparent hover:opacity-70 transition-opacity"
+                               href="{% url 'apply:projects:lead_update' object.id %}"
+                               hx-get="{% url 'apply:projects:lead_update' object.id %}"
+                               hx-target="#htmx-modal"
                             >
                                 {% trans "Lead" %}: {{ object.lead }}
                                 {% heroicon_micro "pencil-square" class="inline ms-1" aria_hidden=true %}
                             </a>
-                            <div class="modal" id="assign-lead">
-                                <h4 class="modal__project-header-bar">{% trans "Assign Lead" %}</h4>
-                                {% trans "Update" as update %}
-                                {% include 'funds/includes/delegated_form_base.html' with form=lead_form value=update %}
-                            </div>
                         {% else %}
                             <span>{% trans "Lead" %}: {{ object.lead }}</span>
                         {% endif %}
