@@ -26,6 +26,7 @@ from .views import (
     RemoveDocumentView,
     ReportDetailView,
     ReportingView,
+    ReportFrequencyUpdate,
     ReportListView,
     ReportPrivateMedia,
     ReportSkipView,
@@ -174,6 +175,11 @@ urlpatterns = [
                     "sow/download/<str:export_type>/",
                     ProjectSOWDownloadView.as_view(),
                     name="download-sow",
+                ),
+                path(
+                    "frequency/update/",
+                    ReportFrequencyUpdate.as_view(),
+                    name="report_frequency_update",
                 ),
                 path("invoice/", CreateInvoiceView.as_view(), name="invoice"),
                 path(

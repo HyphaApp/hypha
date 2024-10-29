@@ -1,18 +1,20 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.generic import DetailView, UpdateView
 from django.views.generic.detail import SingleObjectMixin
 from django_filters.views import FilterView
+from django_htmx.http import (
+    HttpResponseClientRefresh,
+)
 from django_tables2 import SingleTableMixin
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.users.decorators import staff_or_finance_required, staff_required
 from hypha.apply.utils.storage import PrivateMediaView
-from hypha.apply.utils.views import DelegatedViewMixin
 
 from ...stream_forms.models import BaseStreamForm
 from ..filters import ReportingFilter, ReportListFilter
@@ -237,72 +239,103 @@ class ReportSkipView(SingleObjectMixin, View):
 
 
 @method_decorator(staff_required, name="dispatch")
-class ReportFrequencyUpdate(DelegatedViewMixin, UpdateView):
+class ReportFrequencyUpdate(View):
     form_class = ReportFrequencyForm
-    context_name = "update_frequency_form"
     model = ReportConfig
+    template_name = "application_projects/modals/report_frequency_config.html"
 
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs.pop("user")
-        project = kwargs["instance"]
-        instance = project.report_config
-        kwargs["instance"] = instance
-        if not instance.disable_reporting:
+    def dispatch(self, request, *args, **kwargs):
+        self.project = get_object_or_404(Project, id=kwargs.get("pk"))
+        self.object = self.project.report_config
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_due_report_data(self):
+        report_data = {}
+        if not self.object.disable_reporting:
+            project_end_date = self.project.end_date
+            if self.object.current_due_report():
+                start_date = self.object.current_due_report().start_date
+            else:
+                start_date = self.object.last_report().start_date
+            report_data = {"startDate": start_date, "projectEndDate": project_end_date}
+        return report_data
+
+    def get(self, *args, **kwargs):
+        form = self.get_form()
+        report_data = self.get_due_report_data()
+
+        return render(
+            self.request,
+            self.template_name,
+            context={
+                "form": form,
+                "object": self.object,
+                "report_data": report_data,
+            },
+        )
+
+    def get_form_kwargs(self, **kwargs):
+        kwargs = kwargs or {}
+        kwargs["instance"] = self.object
+        if not self.object.disable_reporting:
             # Current due report can be none for ONE_TIME(does not repeat),
             # In case of ONE_TIME, either reporting is already completed(last_report exists)
             # or there should be a current_due_report.
-            if instance.current_due_report():
+            if self.object.current_due_report():
                 kwargs["initial"] = {
-                    "start": instance.current_due_report().end_date,
+                    "start": self.object.current_due_report().end_date,
                 }
             else:
                 kwargs["initial"] = {
-                    "start": instance.last_report().end_date,
+                    "start": self.object.last_report().end_date,
                 }
         else:
             kwargs["initial"] = {
-                "start": project.start_date,
+                "start": self.project.start_date,
             }
         return kwargs
 
-    def get_object(self):
-        project = self.get_parent_object()
-        return project.report_config
-
-    def get_form(self):
-        if self.get_parent_object().is_in_progress:
-            return super().get_form()
+    def get_form(self, *args, **kwargs):
+        if self.project.is_in_progress:
+            return self.form_class(*args, **(self.get_form_kwargs(**kwargs)))
         return None
 
-    def form_valid(self, form):
-        config = form.instance
-        # 'form-submitted-' is set as form_prefix in DelegateBase view
-        if "disable-reporting" in self.request.POST.get(
-            f"form-submitted-{self.context_name}"
-        ):
-            form.instance.disable_reporting = True
-            form.instance.schedule_start = None
-            response = super().form_valid(form)
-            messenger(
-                MESSAGES.DISABLED_REPORTING,
-                request=self.request,
-                user=self.request.user,
-                source=config.project,
-            )
-        else:
-            form.instance.disable_reporting = False
-            form.instance.schedule_start = form.cleaned_data["start"]
-            response = super().form_valid(form)
-            messenger(
-                MESSAGES.REPORT_FREQUENCY_CHANGED,
-                request=self.request,
-                user=self.request.user,
-                source=config.project,
-                related=config,
-            )
+    def post(self, *args, **kwargs):
+        form = self.get_form(self.request.POST)
+        if form.is_valid():
+            if "disable-reporting" in self.request.POST:
+                form.instance.disable_reporting = True
+                form.instance.schedule_start = None
+                form.save()
+                messenger(
+                    MESSAGES.DISABLED_REPORTING,
+                    request=self.request,
+                    user=self.request.user,
+                    source=self.project,
+                )
+            else:
+                form.instance.disable_reporting = False
+                form.instance.schedule_start = form.cleaned_data["start"]
+                form.save()
+                messenger(
+                    MESSAGES.REPORT_FREQUENCY_CHANGED,
+                    request=self.request,
+                    user=self.request.user,
+                    source=self.project,
+                    related=self.object,
+                )
+            return HttpResponseClientRefresh()
 
-        return response
+        report_data = self.get_due_report_data()
+        return render(
+            self.request,
+            self.template_name,
+            context={
+                "form": form,
+                "object": self.object,
+                "report_data": report_data,
+            },
+        )
 
 
 @method_decorator(staff_or_finance_required, name="dispatch")
