@@ -12,7 +12,7 @@ from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.db import transaction
 from django.db.models import Q
 from django.http import Http404, HttpResponse, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, render
 from django.template.loader import get_template
 from django.urls import reverse
 from django.utils import timezone
@@ -69,7 +69,6 @@ from hypha.apply.utils.storage import PrivateMediaView
 from hypha.apply.utils.views import DelegateableView, DelegatedViewMixin, ViewDispatcher
 
 from ...funds.files import generate_private_file_path
-from ..files import get_files
 from ..filters import ProjectListFilter
 from ..forms import (
     ApproveContractForm,
@@ -79,7 +78,6 @@ from ..forms import (
     ChangeProjectStatusForm,
     ProjectForm,
     ProjectSOWForm,
-    SelectDocumentForm,
     SetPendingForm,
     SkipPAFApprovalProcessForm,
     SubmitContractDocumentsForm,
@@ -402,50 +400,6 @@ class RemoveContractDocumentView(View):
                 ),
             },
         )
-
-
-@method_decorator(login_required, name="dispatch")
-class SelectDocumentView(DelegatedViewMixin, CreateView):
-    # todo: (no role issue) not getting used anywhere
-    form_class = SelectDocumentForm
-    context_name = "select_document_form"
-    model = PacketFile
-
-    @property
-    def should_show(self):
-        return bool(self.files)
-
-    def dispatch(self, request, *args, **kwargs):
-        self.project = get_object_or_404(Project, pk=self.kwargs["pk"])
-        return super().dispatch(request, *args, **kwargs)
-
-    def form_invalid(self, form):
-        for error in form.errors:
-            messages.error(self.request, error)
-
-        return redirect(self.project)
-
-    def form_valid(self, form):
-        form.instance.project = self.project
-        form.instance.name = form.instance.document.name
-
-        response = super().form_valid(form)
-
-        messenger(
-            MESSAGES.UPLOAD_DOCUMENT,
-            request=self.request,
-            user=self.request.user,
-            source=self.project,
-        )
-
-        return response
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs.pop("user")
-        kwargs.pop("instance")
-        kwargs["existing_files"] = get_files(self.get_parent_object())
-        return kwargs
 
 
 # GENERAL FORM VIEWS
@@ -1685,7 +1639,6 @@ class AdminProjectDetailView(
 ):
     form_views = [
         CommentFormView,
-        SelectDocumentView,
     ]
     model = Project
     template_name_suffix = "_admin_detail"
@@ -1717,7 +1670,6 @@ class ApplicantProjectDetailView(
 ):
     form_views = [
         CommentFormView,
-        SelectDocumentView,
     ]
 
     model = Project

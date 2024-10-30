@@ -26,7 +26,6 @@ from hypha.apply.utils.testing.tests import BaseViewTestCase
 from hypha.home.factories import ApplySiteFactory
 
 from ...funds.models.forms import ApplicationBaseProjectReportForm
-from ..files import get_files
 from ..forms import SetPendingForm
 from ..models.payment import CHANGES_REQUESTED_BY_STAFF, DECLINED, SUBMITTED
 from ..models.project import (
@@ -460,64 +459,6 @@ class TestApplicantUploadContractView(BaseViewTestCase):
 
         project.refresh_from_db()
         self.assertEqual(project.contracts.count(), contract_count)
-
-
-class TestStaffSelectDocumentView(BaseViewTestCase):
-    base_view_name = "detail"
-    url_name = "funds:projects:{}"
-    user_factory = StaffFactory
-
-    def get_kwargs(self, instance):
-        return {"pk": instance.id}
-
-    def test_can_choose(self):
-        category = DocumentCategoryFactory()
-        project = ProjectFactory()
-
-        files = get_files(project)
-
-        response = self.post_page(
-            project,
-            {
-                "form-submitted-select_document_form": "",
-                "category": category.id,
-                "document": files[0].url,
-            },
-        )
-        self.assertEqual(response.status_code, 200)
-
-        project.refresh_from_db()
-
-        self.assertEqual(project.packet_files.count(), 1)
-
-
-class TestApplicantSelectDocumentView(BaseViewTestCase):
-    base_view_name = "detail"
-    url_name = "funds:projects:{}"
-    user_factory = ApplicantFactory
-
-    def get_kwargs(self, instance):
-        return {"pk": instance.id}
-
-    def test_can_choose(self):
-        category = DocumentCategoryFactory()
-        project = ProjectFactory(user=self.user)
-
-        files = get_files(project)
-
-        response = self.post_page(
-            project,
-            {
-                "form-submitted-select_document_form": "",
-                "category": category.id,
-                "document": files[0].url,
-            },
-        )
-        self.assertEqual(response.status_code, 200)
-
-        project.refresh_from_db()
-
-        self.assertEqual(project.packet_files.count(), 1)
 
 
 class TestUploadDocumentView(BaseViewTestCase):
