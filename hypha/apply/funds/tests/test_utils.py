@@ -3,7 +3,7 @@ from unittest.mock import Mock, patch
 from urllib.parse import parse_qs, urlparse
 
 import pytest
-from django.test import TestCase, override_settings
+from django.test import RequestFactory, SimpleTestCase, override_settings
 from freezegun import freeze_time
 
 from hypha.apply.funds.utils import get_copied_form_name, get_language_choices_json
@@ -55,7 +55,7 @@ def equal_ignore_order(a: list, b: list) -> bool:
     return not unmatched
 
 
-class TestGetLanguageChoices(TestCase):
+class TestGetLanguageChoices(SimpleTestCase):
     @staticmethod
     def mocked_get_lang_name(code):
         # Added "!" to ensure the mock is being called rather than the actual get_lang
@@ -137,7 +137,7 @@ class TestGetLanguageChoices(TestCase):
                 "value": "fr",
             },
         ]
-        request = Mock(headers={})
+        request = RequestFactory().get("/test/")
 
         json_out = get_language_choices_json(request)
         self.assertTrue(equal_ignore_order(json.loads(json_out), expected_json))
@@ -173,7 +173,9 @@ class TestGetLanguageChoices(TestCase):
             },
         ]
         current_url = "https://hyphaiscool.org/apply/submissions/6/?fl=ar&tl=en"
-        request = Mock(headers={"Hx-Current-Url": current_url})
+        request = RequestFactory().get(
+            "/test/", headers={"Hx-Current-Url": current_url}
+        )
 
         json_out = get_language_choices_json(request)
         self.assertTrue(equal_ignore_order(json.loads(json_out), expected_json))
@@ -209,7 +211,7 @@ class TestGetLanguageChoices(TestCase):
                 "value": "fr",
             },
         ]
-        request = Mock(headers={})
+        request = RequestFactory().get("/test/")
 
         json_out = get_language_choices_json(request)
         self.assertTrue(equal_ignore_order(json.loads(json_out), expected_json))

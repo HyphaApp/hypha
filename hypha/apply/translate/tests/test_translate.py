@@ -1,11 +1,12 @@
 from typing import List
-from unittest import TestCase
 from unittest.mock import Mock, patch
+
+from django.test import SimpleTestCase
 
 from hypha.apply.translate.translate import translate
 
 
-class TestTranslate(TestCase):
+class TestTranslate(SimpleTestCase):
     @staticmethod
     def mocked_translate(string: str, from_code, to_code):
         """Use pig latin for all test translations - ie. 'hypha is cool' -> 'yphahay isway oolcay'

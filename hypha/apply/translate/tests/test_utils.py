@@ -1,8 +1,8 @@
 from typing import Optional
-from unittest import TestCase
 from unittest.mock import Mock, patch
 
 from django.http import QueryDict
+from django.test import RequestFactory, SimpleTestCase
 
 from hypha.apply.translate.utils import (
     get_available_translations,
@@ -11,7 +11,7 @@ from hypha.apply.translate.utils import (
 )
 
 
-class TesGetAvailableTranslations(TestCase):
+class TesGetAvailableTranslations(SimpleTestCase):
     @classmethod
     def setUpClass(cls):
         mock_packages = [
@@ -48,10 +48,12 @@ class TesGetAvailableTranslations(TestCase):
         self.assertEqual(codes, {("en", "ar"), ("zh", "en")})
 
 
-class TestGetTranslationParams(TestCase):
-    def get_test_request(self, extra_params: Optional[str] = None) -> Mock:
+class TestGetTranslationParams(SimpleTestCase):
+    def get_test_get_request(self, extra_params: Optional[str] = None) -> Mock:
         extra_params = f"{extra_params}&" if extra_params else ""
-        return Mock(GET=QueryDict(f"{extra_params}fl=ar&tl=en"))
+        return RequestFactory().get(
+            "/test/", data=QueryDict(f"{extra_params}fl=ar&tl=en")
+        )
 
     def get_test_url(self, extra_params: Optional[str] = None) -> str:
         extra_params = f"{extra_params}&" if extra_params else ""
@@ -59,11 +61,11 @@ class TestGetTranslationParams(TestCase):
 
     def test_get_translation_params_with_request(self):
         self.assertEqual(
-            get_translation_params(request=self.get_test_request()), ("ar", "en")
+            get_translation_params(request=self.get_test_get_request()), ("ar", "en")
         )
 
         # Ensure param extraction works even when unrelated params are present
-        mock_request = self.get_test_request(extra_params="ref=table-view")
+        mock_request = self.get_test_get_request(extra_params="ref=table-view")
         self.assertEqual(get_translation_params(request=mock_request), ("ar", "en"))
 
     def test_get_translation_params_with_url(self):
@@ -80,18 +82,18 @@ class TestGetTranslationParams(TestCase):
 
         # ...and with both args given
         with self.assertRaises(ValueError):
-            get_translation_params(self.get_test_url(), self.get_test_request())
+            get_translation_params(self.get_test_url(), self.get_test_get_request())
 
     def test_get_translation_params_with_invalid_params(self):
         # Testing using params that hypha can give but are unrelated to translations
-        mock_request = Mock(GET=QueryDict("ref=table-view"))
+        mock_request = RequestFactory().get("/test/", data=QueryDict("ref=table-view"))
         self.assertIsNone(get_translation_params(request=mock_request))
 
         url = "https://hyphaiscool.org/apply/submissions/6/?ref=table-view"
         self.assertIsNone(get_translation_params(url=url))
 
 
-class TestGetLangName(TestCase):
+class TestGetLangName(SimpleTestCase):
     def test_get_lang_name(self):
         # "!" added to ensure mock is working rather than actually calling argos
         language_mock = Mock()
