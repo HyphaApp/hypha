@@ -1,0 +1,13 @@
+{% load i18n %}
+{% if pafapprover_exists %}
+    {% modal_title %}{% trans "Assign Approver" %}{% endmodal_title %}
+{% else %}
+    {% modal_title %}{% trans "Change Approver" %}{% endmodal_title %}
+{% endif %}
+
+<div class="p-4">
+    <p>{% trans "Selected approver will be notified. On unselecting, every listed member here will be notified." %} </p>
+
+    {% url 'apply:projects:assign_pafapprovers' pk=object.id as url %}
+    {% include 'funds/includes/dialog_form_base.html' with form=form value=value url=url %}
+</div>

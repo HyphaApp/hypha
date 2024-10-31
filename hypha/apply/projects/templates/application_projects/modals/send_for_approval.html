@@ -1,0 +1,38 @@
+{% load i18n approval_tools project_tags heroicons %}
+{% modal_title %}{% trans "Submit for Approval" %}{% endmodal_title %}
+
+<div class="p-4">
+    {% if remaining_document_categories %}
+        <h5>{% trans "Are you sure you're ready to submit the project documents to be approved in" %}
+            {% if project_settings.paf_approval_sequential %}{% trans "sequential order?" %}{% else %}{% trans "parallel order?" %}{% endif %}</h5>
+
+        <p>{% trans "This project is missing the following documents" %}:</p>
+
+        <ul>
+            {% for missing_category in remaining_document_categories %}
+                <li><strong>{{ missing_category.name }} </strong></li>
+            {% endfor %}
+        </ul>
+        {% trans "Submit anyway" as submit %}
+    {% else %}
+        <h5>{% trans "Are you ready to submit the project documents to be approved in" %}
+            {% if project_settings.paf_approval_sequential %}{% trans "sequential order?" %}{% else %}{% trans "parallel order?" %}{% endif %}</h5>
+        {% trans "Submit" as submit %}
+    {% endif %}
+    {% if project_settings.paf_reviewers_roles.all %}
+
+        <p>{% trans "By default all the members are notified when an approver is not selected. Optionally, you may select specific approvers to assign and notify them." %}</p>
+        <div class="flex items-center text-sm">
+            <p class="flex-shrink font-bold text-slate-500 pe-2 mb-0">{% trans "Optional" %}</p>
+            <p class="flex-grow h-px bg-mid-grey mb-0"></p>
+        </div>
+
+        <p>{% trans "Please note that in "%}{% if project_settings.paf_approval_sequential %}{%trans "sequential order, approvers will approve PAF one after the other."%}{% else %}{% trans "parallel order, approvers can approve PAF anytime." %}{% endif %}</p>
+        {% url 'apply:projects:submit_project_for_approval' pk=object.id as document_submit_url %}
+        {% include 'funds/includes/dialog_form_base.html' with form=form value=submit url=document_submit_url %}
+    {% else %}
+        <p>{% trans "No PAF Reviewer Roles created yet, please create these in " %}
+            <a href="{% project_settings_url project_settings %}" target="_blank">{% trans " project settings" %}</a>
+        </p>
+    {% endif %}
+</div>
