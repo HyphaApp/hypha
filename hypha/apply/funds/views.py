@@ -1168,7 +1168,7 @@ class AdminSubmissionDetailView(ActivityContextMixin, DelegateableView, DetailVi
         if lang_params := get_translation_params(request=request):
             from_lang, to_lang = lang_params
             try:
-                self.object.form_data = services.translate_submission_form_data(
+                self.object.form_data = services.translate_application_form_data(
                     self.object, from_lang, to_lang
                 )
                 extra_context.update(

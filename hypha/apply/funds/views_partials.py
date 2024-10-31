@@ -548,7 +548,7 @@ def partial_translate_answers(request: HttpRequest, pk: int) -> HttpResponse:
     if params and not params[0] == params[1] and not params == prev_params:
         from_lang, to_lang = params
         try:
-            submission.form_data = services.translate_submission_form_data(
+            submission.form_data = services.translate_application_form_data(
                 submission, from_lang, to_lang
             )
 

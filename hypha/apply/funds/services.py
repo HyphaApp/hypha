@@ -266,7 +266,7 @@ def annotate_review_recommendation_and_count(submissions: QuerySet) -> QuerySet:
     return submissions
 
 
-def translate_submission_form_data(submission, from_code: str, to_code: str) -> dict:
+def translate_application_form_data(application, from_code: str, to_code: str) -> dict:
     """Translate the content of an application's live revision `form_data`.
     Will parse fields that contain both plaintext & HTML, extracting & replacing strings.
 
@@ -276,7 +276,7 @@ def translate_submission_form_data(submission, from_code: str, to_code: str) -> 
     replaced within formatting tags.
 
     Args:
-        submission: the submission to translate
+        application: the  application to translate
         from_code: the ISO 639 code of the original language
         to_code: the ISO 639 code of the language to translate to
 
@@ -286,7 +286,7 @@ def translate_submission_form_data(submission, from_code: str, to_code: str) -> 
     Raises:
         ValueError if an invalid `from_code` or `to_code` is requested
     """
-    form_data: dict = submission.live_revision.form_data
+    form_data: dict = application.live_revision.form_data
 
     translated_form_data = form_data.copy()
 
