@@ -19,7 +19,7 @@ from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from modelcluster.models import ClusterableModel
 from wagtail.admin.panels import FieldPanel, InlinePanel, MultiFieldPanel
-from wagtail.contrib.settings.models import BaseSiteSetting
+from wagtail.contrib.settings.models import BaseSiteSetting, register_setting
 from wagtail.fields import StreamField
 from wagtail.models import Orderable
 
@@ -488,6 +488,27 @@ class PAFReviewersRole(Orderable, ClusterableModel):
         return str(self.label)
 
 
+class ProjectReminderFrequency(Orderable, ClusterableModel):
+    reminder_days = models.IntegerField()
+    page = ParentalKey("ProjectSettings", related_name="reminder_frequencies")
+
+    class FrequencyRelation(models.TextChoices):
+        BEFORE = "BE", _("Before")
+        AFTER = "AF", _("After")
+
+    relation = models.CharField(
+        max_length=2,
+        choices=FrequencyRelation.choices,
+        default=FrequencyRelation.BEFORE,
+    )
+
+    panels = [
+        FieldPanel("reminder_days", heading=_("Number of days")),
+        FieldPanel("relation", heading=_("Relation to report due date")),
+    ]
+
+
+@register_setting
 class ProjectSettings(BaseSiteSetting, ClusterableModel):
     contracting_gp_email = models.TextField(
         "Contracting Group Email", null=True, blank=True
@@ -516,6 +537,14 @@ class ProjectSettings(BaseSiteSetting, ClusterableModel):
                 "Reviewer Roles are needed to move projects to 'Internal Approval' stage. "
                 "Delete all roles to skip internal approval process and "
                 "to move all internal approval projects back to the 'Draft' stage with all approvals removed."
+            ),
+        ),
+        InlinePanel(
+            "reminder_frequencies",
+            label=_("Report reminder frequency"),
+            heading=_("Report reminder frequency"),
+            help_text=_(
+                "Set up a cron job to run `notify_report_due.py`. The script will use these reminder settings."
             ),
         ),
     ]
