@@ -11,7 +11,7 @@ from django.contrib.auth.decorators import (
     login_required,
     user_passes_test,
 )
-from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count, Q
 from django.forms import BaseModelForm
@@ -48,6 +48,7 @@ from django_htmx.http import (
 )
 from django_tables2.paginators import LazyPaginator
 from django_tables2.views import SingleTableMixin
+from rolepermissions.checkers import has_object_permission
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.models import Event
@@ -1698,15 +1699,22 @@ class RoundListView(SingleTableMixin, FilterView):
         return RoundsAndLabs.objects.with_progress()
 
 
-class SubmissionDeleteView(DeleteView):
+class SubmissionDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    """
+    View for deleting submissions with confirmation modal.
+
+    After successful deletion:
+    - Redirects applicants to their dashboard
+    - Redirects staff to the submissions list
+    - Creates delete notification unless author deleting own draft
+    """
+
     model = ApplicationSubmission
 
-    def dispatch(self, request, *args, **kwargs):
-        submission = self.get_object()
-        permission, _ = has_permission(
-            "submission_delete", request.user, submission, raise_exception=True
+    def test_func(self):
+        return has_object_permission(
+            "delete_submission", self.request.user, obj=self.get_object()
         )
-        return super().dispatch(request, *args, **kwargs)
 
     def get_success_url(self):
         if self.request.user.is_applicant:
@@ -1725,7 +1733,8 @@ class SubmissionDeleteView(DeleteView):
                 source=submission,
             )
 
-        # Delete NEW_SUBMISSION event for this particular submission
+        # Delete NEW_SUBMISSION event for this particular submission, if any.
+        # Otherwise, the submission deletion will fail.
         Event.objects.filter(
             type=MESSAGES.NEW_SUBMISSION, object_id=submission.id
         ).delete()

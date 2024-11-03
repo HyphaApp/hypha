@@ -1,9 +1,10 @@
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
+from rolepermissions.permissions import register_object_checker
 
 from hypha.apply.funds.models.submissions import DRAFT_STATE
 
-from ..users.roles import STAFF_GROUP_NAME, SUPERADMIN, TEAMADMIN_GROUP_NAME
+from ..users.roles import STAFF_GROUP_NAME, SUPERADMIN, TEAMADMIN_GROUP_NAME, StaffAdmin
 
 
 def has_permission(action, user, object=None, raise_exception=True):
@@ -26,12 +27,27 @@ def can_edit_submission(user, submission):
     return True, ""
 
 
-def can_delete_submission(user, submission):
+@register_object_checker()
+def delete_submission(role, user, submission) -> bool:
+    """
+    Determines if a user has permission to delete a submission.
+
+    Permissions are granted if:
+    - User is a Superuser, or StaffAdmin
+    - User has explicit delete_applicationsubmission permission
+    - User is the applicant of the submission and it is in draft state
+    """
+    if role == StaffAdmin:
+        return True
+
     if user.has_perm("funds.delete_applicationsubmission"):
-        return True, "User can delete submission"
-    elif user == submission.user and submission.status == DRAFT_STATE:
-        return True, "Applicant can delete draft submissions"
-    return False, "Forbidden Error"
+        return True
+
+    # Allow the user to delete their own draft submissions
+    if user == submission.user and submission.status == DRAFT_STATE:
+        return True
+
+    return False
 
 
 def can_bulk_delete_submissions(user) -> bool:
@@ -174,7 +190,6 @@ def can_view_submission_screening(user, submission):
 permissions_map = {
     "submission_view": is_user_has_access_to_view_submission,
     "submission_edit": can_edit_submission,
-    "submission_delete": can_delete_submission,
     "can_view_submission_screening": can_view_submission_screening,
     "archive_alter": can_alter_archived_submissions,
 }

@@ -223,6 +223,7 @@ AUTHENTICATION_BACKENDS = (
 )
 
 # django-rolepermissions
+# https://django-role-permissions.readthedocs.io/en/stable/settings.html
 ROLEPERMISSIONS_MODULE = "hypha.apply.users.roles"
 
 # Default Auto field configuration
