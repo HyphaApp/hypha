@@ -1,0 +1,14 @@
+{% load i18n heroicons %}
+
+{% if request.user.is_apply_staff %}
+    <a class="link link--edit-lead is-active link--transparent hover:opacity-70 transition-opacity"
+       href="{% url 'apply:projects:lead_update' object.id %}"
+       hx-get="{% url 'apply:projects:lead_update' object.id %}"
+       hx-target="#htmx-modal"
+    >
+        <u>{% trans "Lead" %}: {{ object.lead }}</u>
+        {% heroicon_micro "pencil-square" class="inline ms-1" aria_hidden=true %}
+    </a>
+{% else %}
+    <span>{% trans "Lead" %}: {{ object.lead }}</span>
+{% endif %}

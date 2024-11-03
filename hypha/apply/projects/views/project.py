@@ -445,12 +445,14 @@ class UpdateLeadView(View):
                 related=old_lead or _("Unassigned"),
             )
 
-            messages.success(
-                self.request,
-                _("Lead has been updated"),
-                extra_tags=PROJECT_ACTION_MESSAGE_TAG,
+            return HttpResponse(
+                status=204,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {"leadUpdated": None, "showMessage": "Lead has been updated."}
+                    ),
+                },
             )
-            return HttpResponseClientRefresh()
         return render(
             self.request,
             self.template_name,

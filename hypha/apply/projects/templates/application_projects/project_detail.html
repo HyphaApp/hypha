@@ -39,19 +39,11 @@
                 {% endif %}
 
                 {% if not HIDE_STAFF_IDENTITY or request.user.is_apply_staff %}
-                    <span>
-                        {% if request.user.is_apply_staff %}
-                            <a class="link link--edit-lead is-active link--transparent hover:opacity-70 transition-opacity"
-                               href="{% url 'apply:projects:lead_update' object.id %}"
-                               hx-get="{% url 'apply:projects:lead_update' object.id %}"
-                               hx-target="#htmx-modal"
-                            >
-                                {% trans "Lead" %}: {{ object.lead }}
-                                {% heroicon_micro "pencil-square" class="inline ms-1" aria_hidden=true %}
-                            </a>
-                        {% else %}
-                            <span>{% trans "Lead" %}: {{ object.lead }}</span>
-                        {% endif %}
+                    <span
+                        hx-get="{% url "apply:projects:project_lead" object.id %}"
+                        hx-trigger="load, leadUpdated from:body"
+                    >
+                        <span class="inline-block w-24 bg-gray-600 rounded-md animate-pulse"></span>
                     </span>
                 {% endif %}
 

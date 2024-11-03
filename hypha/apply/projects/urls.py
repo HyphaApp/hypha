@@ -50,6 +50,7 @@ from .views import (
     partial_get_invoice_status_table,
     partial_contracting_documents,
     partial_project_activities,
+    partial_project_lead,
     partial_supporting_documents,
 )
 
@@ -73,6 +74,7 @@ urlpatterns = [
                     partial_project_activities,
                     name="partial-activities",
                 ),
+                path("partial/lead/", partial_project_lead, name="project_lead"),
                 path("edit/", ProjectFormEditView.as_view(), name="edit"),
                 path("lead/update/", UpdateLeadView.as_view(), name="lead_update"),
                 path(

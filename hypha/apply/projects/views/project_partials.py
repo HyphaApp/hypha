@@ -23,6 +23,14 @@ from ..utils import get_project_status_choices
 
 
 @login_required
+def partial_project_lead(request, pk):
+    project = get_object_or_404(Project, pk=pk)
+    return render(
+        request, "application_projects/partials/project-lead.html", {"object": project}
+    )
+
+
+@login_required
 @require_GET
 def partial_project_activities(request, pk):
     project = get_object_or_404(Project, pk=pk)
