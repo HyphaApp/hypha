@@ -835,7 +835,7 @@ class TestAnonPacketView(BasePacketFileViewTestCase):
         document = PacketFileFactory()
         response = self.get_page(document)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.redirect_chain), 2)
+        self.assertEqual(len(response.redirect_chain), 1)
         for path, _ in response.redirect_chain:
             self.assertIn(reverse(settings.LOGIN_URL), path)
 
@@ -1380,9 +1380,7 @@ class TestStaffSubmitReport(BaseViewTestCase):
             report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "11"}
         )
         report.refresh_from_db()
-        self.assertRedirects(
-            response, self.absolute_url(report.project.get_absolute_url())
-        )
+        self.assertRedirects(response, report.project.get_absolute_url())
         self.assertEqual(
             report.versions.first().form_data,
             {"012a4f29-0882-4b1c-b567-aede1b601d4a": "11"},
@@ -1495,9 +1493,7 @@ class TestStaffSubmitReport(BaseViewTestCase):
             report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "29", "save": " Save"}
         )
         report.refresh_from_db()
-        self.assertRedirects(
-            response, self.absolute_url(report.project.get_absolute_url())
-        )
+        self.assertRedirects(response, report.project.get_absolute_url())
         self.assertEqual(
             report.versions.last().form_data["012a4f29-0882-4b1c-b567-aede1b601d4a"],
             "29",
@@ -1526,9 +1522,7 @@ class TestStaffSubmitReport(BaseViewTestCase):
             report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "31"}
         )
         report.refresh_from_db()
-        self.assertRedirects(
-            response, self.absolute_url(report.project.get_absolute_url())
-        )
+        self.assertRedirects(response, report.project.get_absolute_url())
         self.assertEqual(
             report.versions.last().form_data,
             {"012a4f29-0882-4b1c-b567-aede1b601d4a": "31"},
@@ -1626,9 +1620,7 @@ class TestApplicantSubmitReport(BaseViewTestCase):
             report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "37"}
         )
         report.refresh_from_db()
-        self.assertRedirects(
-            response, self.absolute_url(report.project.get_absolute_url())
-        )
+        self.assertRedirects(response, report.project.get_absolute_url())
         self.assertEqual(
             report.versions.first().form_data,
             {"012a4f29-0882-4b1c-b567-aede1b601d4a": "37"},
@@ -1682,9 +1674,7 @@ class TestApplicantSubmitReport(BaseViewTestCase):
             report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "43", "save": "Save"}
         )
         report.refresh_from_db()
-        self.assertRedirects(
-            response, self.absolute_url(report.project.get_absolute_url())
-        )
+        self.assertRedirects(response, report.project.get_absolute_url())
         self.assertEqual(
             report.versions.first().form_data,
             {"012a4f29-0882-4b1c-b567-aede1b601d4a": "43"},
@@ -1707,9 +1697,7 @@ class TestApplicantSubmitReport(BaseViewTestCase):
             report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "47"}
         )
         report.refresh_from_db()
-        self.assertRedirects(
-            response, self.absolute_url(report.project.get_absolute_url())
-        )
+        self.assertRedirects(response, report.project.get_absolute_url())
         self.assertEqual(
             report.versions.last().form_data,
             {"012a4f29-0882-4b1c-b567-aede1b601d4a": "47"},
