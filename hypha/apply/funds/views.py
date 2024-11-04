@@ -60,12 +60,12 @@ from hypha.apply.determinations.views import (
     BatchDeterminationCreateView,
     DeterminationCreateOrUpdateView,
 )
-from hypha.apply.funds.models.screening import ScreeningStatus
 from hypha.apply.projects.forms import ProjectCreateForm
 from hypha.apply.review.models import Review
 from hypha.apply.stream_forms.blocks import GroupToggleBlock
 from hypha.apply.todo.options import PROJECT_WAITING_PAF
 from hypha.apply.todo.views import add_task_to_user
+from hypha.apply.translate.utils import get_lang_name, get_translation_params
 from hypha.apply.users.decorators import (
     is_apply_staff,
     staff_or_finance_required,
@@ -91,6 +91,7 @@ from .forms import (
     BatchUpdateSubmissionLeadForm,
     CreateReminderForm,
     ProgressSubmissionForm,
+    TranslateSubmissionForm,
     UpdateMetaTermsForm,
     UpdatePartnersForm,
     UpdateReviewersForm,
@@ -129,7 +130,7 @@ from .tables import (
 from .utils import (
     export_submissions_to_csv,
     format_submission_sum_value,
-    get_or_create_default_screening_statuses,
+    get_language_choices_json,
     is_filter_empty,
 )
 from .workflow import (
@@ -986,6 +987,70 @@ class UpdateMetaTermsView(View):
         )
 
 
+@method_decorator(staff_required, name="dispatch")
+class TranslateSubmissionView(View):
+    template = "funds/includes/translate_application_form.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        self.submission = get_object_or_404(ApplicationSubmission, id=kwargs.get("pk"))
+        if not request.user.is_org_faculty:
+            messages.warning(
+                self.request,
+                "User attempted to translate submission but is not org faculty",
+            )
+            return HttpResponseRedirect(self.submission.get_absolute_url())
+        return super(TranslateSubmissionView, self).dispatch(request, *args, **kwargs)
+
+    def get(self, *args, **kwargs):
+        translate_form = TranslateSubmissionForm()
+        return render(
+            self.request,
+            self.template,
+            context={
+                "form": translate_form,
+                "value": _("Update"),
+                "object": self.submission,
+                "json_choices": get_language_choices_json(self.request),
+            },
+        )
+
+    def post(self, request, *args, **kwargs):
+        form = TranslateSubmissionForm(self.request.POST)
+
+        if form.is_valid():
+            FROM_LANG_KEY = "from_lang"
+            TO_LANG_KEY = "to_lang"
+
+            from_lang = form.cleaned_data[FROM_LANG_KEY]
+            to_lang = form.cleaned_data[TO_LANG_KEY]
+
+            return HttpResponse(
+                status=204,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {
+                            "translateSubmission": {
+                                FROM_LANG_KEY: from_lang,
+                                TO_LANG_KEY: to_lang,
+                            }
+                        }
+                    ),
+                },
+            )
+
+        return render(
+            self.request,
+            self.template,
+            context={
+                "form": form,
+                "value": _("Update"),
+                "object": self.submission,
+                "json_choices": get_language_choices_json(self.request),
+            },
+            status=400,
+        )
+
+
 @login_required
 @user_passes_test(is_apply_staff)
 @require_http_methods(["GET"])
@@ -1094,6 +1159,31 @@ class AdminSubmissionDetailView(ActivityContextMixin, DelegateableView, DetailVi
         redirect = SubmissionSealedView.should_redirect(request, submission)
         return redirect or super().dispatch(request, *args, **kwargs)
 
+    def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
+        self.object = self.get_object()
+
+        extra_context = {}
+
+        # Check for language params - if they exist and are valid then update the context
+        if lang_params := get_translation_params(request=request):
+            from_lang, to_lang = lang_params
+            try:
+                self.object.form_data = services.translate_application_form_data(
+                    self.object, from_lang, to_lang
+                )
+                extra_context.update(
+                    {
+                        "from_lang_name": get_lang_name(from_lang),
+                        "to_lang_name": get_lang_name(to_lang),
+                    }
+                )
+            except ValueError:
+                # Language package isn't valid or installed, redirect to the submission w/o params
+                return redirect(self.object.get_absolute_url())
+
+        context = self.get_context_data(object=self.object, **extra_context)
+        return self.render_to_response(context)
+
     def get_context_data(self, **kwargs):
         other_submissions = (
             self.model.objects.filter(user=self.object.user)
@@ -1110,62 +1200,6 @@ class AdminSubmissionDetailView(ActivityContextMixin, DelegateableView, DetailVi
             can_archive=can_alter_archived_submissions(self.request.user),
             **kwargs,
         )
-
-
-@login_required
-def partial_screening_card(request, pk):
-    submission = get_object_or_404(ApplicationSubmission, pk=pk)
-
-    view_permission, _ = has_permission(
-        "can_view_submission_screening", request.user, submission, raise_exception=False
-    )
-    can_edit, _ = has_permission(
-        "submission_edit", request.user, submission, raise_exception=False
-    )
-
-    if not view_permission:
-        return HttpResponse(status=204)
-
-    if can_edit and request.method == "POST":
-        action = request.POST.get("action")
-        old_status_str = str(submission.get_current_screening_status() or "-")
-        if action and action.isdigit():
-            submission.screening_statuses.clear()
-            screening_status = ScreeningStatus.objects.get(id=action)
-            submission.screening_statuses.add(screening_status)
-        elif action == "clear":
-            submission.screening_statuses.clear()
-
-        # Record activity
-        messenger(
-            MESSAGES.SCREENING,
-            request=request,
-            user=request.user,
-            source=submission,
-            related=old_status_str,
-        )
-
-    yes_screening_statuses = ScreeningStatus.objects.filter(yes=True)
-    no_screening_statuses = ScreeningStatus.objects.filter(yes=False)
-
-    if not yes_screening_statuses or not no_screening_statuses:
-        return HttpResponse(status=204)
-
-    default_yes, default_no = get_or_create_default_screening_statuses(
-        yes_screening_statuses, no_screening_statuses
-    )
-
-    ctx = {
-        "default_yes": default_yes,
-        "default_no": default_no,
-        "object": submission,
-        "can_screen": can_edit,
-        "current_yes": submission.screening_statuses.filter(yes=True).first(),
-        "current_no": submission.screening_statuses.filter(yes=False).first(),
-        "yes_screening_options": yes_screening_statuses,
-        "no_screening_options": no_screening_statuses,
-    }
-    return render(request, "funds/includes/screening_status_block.html", ctx)
 
 
 class ReviewerSubmissionDetailView(ActivityContextMixin, DelegateableView, DetailView):

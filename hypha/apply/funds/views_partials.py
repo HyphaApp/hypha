@@ -1,35 +1,45 @@
 import functools
+import json
 from urllib.parse import parse_qs, urlparse
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, QueryDict
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
 from django.utils.text import slugify
+from django.utils.translation import gettext as _
 from django.views.decorators.http import require_GET, require_http_methods
 from django_htmx.http import (
     HttpResponseClientRefresh,
 )
 from wagtail.models import Page
 
+from hypha.apply.activity.messaging import MESSAGES, messenger
 from hypha.apply.activity.services import (
     get_related_actions_for_user,
 )
 from hypha.apply.categories.models import MetaTerm, Option
 from hypha.apply.funds.forms import BatchUpdateReviewersForm
 from hypha.apply.funds.models.reviewer_role import ReviewerRole
+from hypha.apply.funds.models.screening import ScreeningStatus
 from hypha.apply.funds.permissions import has_permission
 from hypha.apply.funds.reviewers.services import get_all_reviewers
 from hypha.apply.funds.services import annotate_review_recommendation_and_count
+from hypha.apply.funds.templatetags.submission_tags import doc_title
 from hypha.apply.review.options import REVIEWER
+from hypha.apply.translate.utils import get_lang_name, get_translation_params
 from hypha.apply.users.groups import REVIEWER_GROUP_NAME
 
 from . import services
 from .models import ApplicationSubmission, Round
 from .permissions import can_change_external_reviewers
-from .utils import get_statuses_as_params, status_and_phases_mapping
+from .utils import (
+    get_or_create_default_screening_statuses,
+    get_statuses_as_params,
+    status_and_phases_mapping,
+)
 from .workflow import PHASES_MAPPING
 
 User = get_user_model()
@@ -452,3 +462,146 @@ def partial_submission_answers(request, pk):
         "submissions/partials/applicationsubmission.html",
         {"submission": submission},
     )
+
+
+@login_required
+def partial_screening_card(request, pk):
+    submission = get_object_or_404(ApplicationSubmission, pk=pk)
+
+    view_permission, _ = has_permission(
+        "can_view_submission_screening", request.user, submission, raise_exception=False
+    )
+    can_edit, _ = has_permission(
+        "submission_edit", request.user, submission, raise_exception=False
+    )
+
+    if not view_permission:
+        return HttpResponse(status=204)
+
+    if can_edit and request.method == "POST":
+        action = request.POST.get("action")
+        old_status_str = str(submission.get_current_screening_status() or "-")
+        if action and action.isdigit():
+            submission.screening_statuses.clear()
+            screening_status = ScreeningStatus.objects.get(id=action)
+            submission.screening_statuses.add(screening_status)
+        elif action == "clear":
+            submission.screening_statuses.clear()
+
+        # Record activity
+        messenger(
+            MESSAGES.SCREENING,
+            request=request,
+            user=request.user,
+            source=submission,
+            related=old_status_str,
+        )
+
+    yes_screening_statuses = ScreeningStatus.objects.filter(yes=True)
+    no_screening_statuses = ScreeningStatus.objects.filter(yes=False)
+
+    if not yes_screening_statuses or not no_screening_statuses:
+        return HttpResponse(status=204)
+
+    default_yes, default_no = get_or_create_default_screening_statuses(
+        yes_screening_statuses, no_screening_statuses
+    )
+
+    ctx = {
+        "default_yes": default_yes,
+        "default_no": default_no,
+        "object": submission,
+        "can_screen": can_edit,
+        "current_yes": submission.screening_statuses.filter(yes=True).first(),
+        "current_no": submission.screening_statuses.filter(yes=False).first(),
+        "yes_screening_options": yes_screening_statuses,
+        "no_screening_options": no_screening_statuses,
+    }
+    return render(request, "funds/includes/screening_status_block.html", ctx)
+
+
+@login_required
+def partial_translate_answers(request: HttpRequest, pk: int) -> HttpResponse:
+    """Partial to translate submissions's answers
+
+    Args:
+        request: HttpRequest object
+        pk: pk of the submission to translate
+
+    """
+    submission = get_object_or_404(ApplicationSubmission, pk=pk)
+
+    if not request.user.is_org_faculty or request.method != "GET":
+        return HttpResponse(status=204)
+
+    ctx = {"object": submission}
+
+    # The existing params that were in the URL when the request was made
+    prev_params = get_translation_params(request.headers.get("Hx-Current-Url", ""))
+    # The requested params provided in the GET request
+    params = get_translation_params(request=request)
+
+    updated_url = submission.get_absolute_url()
+
+    message = None
+
+    if params and not params[0] == params[1] and not params == prev_params:
+        from_lang, to_lang = params
+        try:
+            submission.form_data = services.translate_application_form_data(
+                submission, from_lang, to_lang
+            )
+
+            if current_url := request.headers.get("Hx-Current-Url"):
+                updated_params = QueryDict(urlparse(current_url).query, mutable=True)
+                updated_params["fl"] = from_lang
+                updated_params["tl"] = to_lang
+                updated_url = f"{updated_url}?{updated_params.urlencode()}"
+
+            to_lang_name = get_lang_name(to_lang)
+            from_lang_name = get_lang_name(from_lang)
+
+            message = _("Submission translated from {fl} to {tl}.").format(
+                fl=from_lang_name, tl=to_lang_name
+            )
+
+            ctx.update(
+                {
+                    "object": submission,
+                    "from_lang_name": from_lang_name,
+                    "to_lang_name": to_lang_name,
+                }
+            )
+        except ValueError:
+            # TODO: WA Error/failed message type rather than success
+            message = _("Submission translation failed. Contact your Administrator.")
+            return HttpResponse(
+                status=400,
+                headers={"HX-Trigger": json.dumps({"showMessage": {message}})},
+            )
+
+    elif params == prev_params:
+        message = _("Translation cleared.")
+
+    response = render(request, "funds/includes/rendered_answers.html", ctx)
+
+    trigger_dict = {}
+    if title := submission.form_data.get("title"):
+        trigger_dict.update(
+            {
+                "translatedSubmission": {
+                    "appTitle": title,
+                    "docTitle": doc_title(submission),
+                }
+            }
+        )
+
+    if message:
+        trigger_dict.update({"showMessage": message})
+
+    if trigger_dict:
+        response["HX-Trigger"] = json.dumps(trigger_dict)
+
+    response["HX-Replace-Url"] = updated_url
+
+    return response
