@@ -34,7 +34,10 @@ document.addEventListener("alpine:init", () => {
                     .map((selector) => parseInt(selector.value))
                     .filter((value) => !isNaN(value) && value !== 99);
 
-                this.totalScore = validValues.reduce((sum, value) => sum + value, 0);
+                this.totalScore = validValues.reduce(
+                    (sum, value) => sum + value,
+                    0
+                );
             },
 
             /**
