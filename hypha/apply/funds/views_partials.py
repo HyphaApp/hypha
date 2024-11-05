@@ -27,7 +27,6 @@ from hypha.apply.funds.models.screening import ScreeningStatus
 from hypha.apply.funds.permissions import has_permission
 from hypha.apply.funds.reviewers.services import get_all_reviewers
 from hypha.apply.funds.services import annotate_review_recommendation_and_count
-from hypha.apply.funds.templatetags.submission_tags import doc_title
 from hypha.apply.review.options import REVIEWER
 from hypha.apply.translate.utils import get_lang_name, get_translation_params
 from hypha.apply.users.groups import REVIEWER_GROUP_NAME
@@ -591,7 +590,7 @@ def partial_translate_answers(request: HttpRequest, pk: int) -> HttpResponse:
             {
                 "translatedSubmission": {
                     "appTitle": title,
-                    "docTitle": doc_title(submission),
+                    "docTitle": submission.title_text_display,
                 }
             }
         )
