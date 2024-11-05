@@ -2,7 +2,7 @@
 {% load i18n static workflow_tags wagtailcore_tags statusbar_tags archive_tags submission_tags translate_tags %}
 {% load heroicons %}
 
-{% block title %}{{ object|doc_title }}{% endblock %}
+{% block title %}{{ object.title_text_display }}{% endblock %}
 {% block body_class %}{% endblock %}
 
 {% block content %}
