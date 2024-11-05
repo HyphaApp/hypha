@@ -87,7 +87,7 @@
             <div class="tabs js-tabs">
                 <div class="tabs__container">
                     <a class="tab__item" href="#details" data-tab="tab-1">
-                        {% trans "Details" %}
+                        {% trans "Project" %}
                     </a>
 
                     <a class="tab__item"
@@ -98,11 +98,10 @@
                     </a>
 
                     <a
-                        class="tab__item"
-                        href="#activity-feed"
-                        data-tab="tab-3"
+                        class="tab__item js-tabs-off"
+                        href="{{ project.submission.get_absolute_url }}"
                     >
-                        {% trans "Activity Feed" %}
+                        {% trans "Application" %}
                     </a>
                 </div>
             </div>
