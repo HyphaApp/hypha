@@ -5,7 +5,6 @@ import wagtail.blocks
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
-from django.core.exceptions import PermissionDenied
 from django.http import Http404
 from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
@@ -48,7 +47,7 @@ from ..models import (
     ReviewerSettings,
     ScreeningStatus,
 )
-from ..views import SubmissionDetailSimplifiedView, SubmissionDetailView
+from ..views import SubmissionDetailView
 from .factories import CustomFormFieldsFactory
 
 
@@ -1711,37 +1710,6 @@ class TestSuperUserSubmissionView(BaseSubmissionViewTestCase):
         ).first()
         assert activity
         self.assertEqual(activity.visibility, TEAM)
-
-
-class TestSubmissionDetailSimplifiedView(TestCase):
-    def test_staff_only(self):
-        factory = RequestFactory()
-        submission = ApplicationSubmissionFactory()
-        ProjectFactory(submission=submission)
-
-        request = factory.get(f"/submission/{submission.pk}")
-        request.user = StaffFactory()
-
-        response = SubmissionDetailSimplifiedView.as_view()(request, pk=submission.pk)
-        self.assertEqual(response.status_code, 200)
-
-        request.user = ApplicantFactory()
-        with self.assertRaises(PermissionDenied):
-            SubmissionDetailSimplifiedView.as_view()(request, pk=submission.pk)
-
-    def test_project_required(self):
-        factory = RequestFactory()
-        submission = ApplicationSubmissionFactory()
-
-        request = factory.get(f"/submission/{submission.pk}")
-        request.user = StaffFactory()
-
-        with self.assertRaises(Http404):
-            SubmissionDetailSimplifiedView.as_view()(request, pk=submission.pk)
-
-        ProjectFactory(submission=submission)
-        response = SubmissionDetailSimplifiedView.as_view()(request, pk=submission.pk)
-        self.assertEqual(response.status_code, 200)
 
 
 class BaseSubmissionFileViewTestCase(BaseViewTestCase):

@@ -18,7 +18,6 @@ from .views import (
     StaffAssignments,
     SubmissionDeleteView,
     SubmissionDetailPDFView,
-    SubmissionDetailSimplifiedView,
     SubmissionDetailView,
     SubmissionEditView,
     SubmissionListView,
@@ -249,11 +248,6 @@ submission_urls = (
                     ),
                     path("edit/", SubmissionEditView.as_view(), name="edit"),
                     path("sealed/", SubmissionSealedView.as_view(), name="sealed"),
-                    path(
-                        "simplified/",
-                        SubmissionDetailSimplifiedView.as_view(),
-                        name="simplified",
-                    ),
                     path(
                         "download/", SubmissionDetailPDFView.as_view(), name="download"
                     ),

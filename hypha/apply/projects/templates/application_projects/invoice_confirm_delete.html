@@ -7,7 +7,7 @@
 
     {% adminbar %}
         {% slot back_link %}
-            <a class="simplified__projects-link" href="{{ object.project.get_absolute_url }}">
+            <a class="link link--back" href="{{ object.project.get_absolute_url }}">
                 {% trans "View project page" %}
             </a>
         {% endslot %}

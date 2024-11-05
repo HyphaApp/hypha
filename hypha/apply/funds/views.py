@@ -1810,20 +1810,6 @@ class SubmissionPrivateMediaView(UserPassesTestMixin, PrivateMediaView):
 
 
 @method_decorator(staff_or_finance_required, name="dispatch")
-class SubmissionDetailSimplifiedView(DetailView):
-    model = ApplicationSubmission
-    template_name_suffix = "_simplified_detail"
-
-    def get_object(self, queryset=None):
-        obj = super().get_object(queryset)
-
-        if not hasattr(obj, "project"):
-            raise Http404
-
-        return obj
-
-
-@method_decorator(staff_or_finance_required, name="dispatch")
 class SubmissionDetailPDFView(SingleObjectMixin, View):
     model = ApplicationSubmission
 

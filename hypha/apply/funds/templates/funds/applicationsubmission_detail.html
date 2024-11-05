@@ -10,7 +10,7 @@
     <div class="admin-bar">
         <div class="admin-bar__inner">
             {% if request.GET.ref == 'all-alt' %}
-                <a class="simplified__submissions-link"
+                <a class="link link--back"
                    hx-boost="true"
                    href="{% url "funds:submissions:list" %}"
                 >
