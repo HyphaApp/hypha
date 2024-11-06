@@ -508,7 +508,14 @@ class UpdateProjectTitleView(DelegatedViewMixin, UpdateView):
                 _("Title has been updated"),
                 extra_tags=PROJECT_ACTION_MESSAGE_TAG,
             )
-            return HttpResponseClientRefresh()
+            return HttpResponse(
+                status=204,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {"titleUpdated": None, "showMessage": "Title has been updated."}
+                    ),
+                },
+            )
         return render(
             self.request,
             self.template_name,

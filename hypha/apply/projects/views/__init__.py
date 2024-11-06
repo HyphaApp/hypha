@@ -45,9 +45,9 @@ from .project_partials import (
     partial_get_invoice_detail_actions,
     partial_get_invoice_status,
     partial_get_invoice_status_table,
-    partial_contracting_documents,
     partial_project_activities,
     partial_project_lead,
+    partial_project_title,
     partial_supporting_documents,
 )
 from .report import (
@@ -63,6 +63,7 @@ from .report import (
 __all__ = [
     "partial_project_activities",
     "partial_project_lead",
+    "partial_project_title",
     "partial_supporting_documents",
     "partial_get_invoice_status_table",
     "partial_get_invoice_status",

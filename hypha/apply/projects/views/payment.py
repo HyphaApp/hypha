@@ -21,9 +21,6 @@ from django.views.generic import (
     View,
 )
 from django_filters.views import FilterView
-from django_htmx.http import (
-    HttpResponseClientRefresh,
-)
 from django_tables2 import SingleTableMixin
 
 from hypha.apply.activity.messaging import MESSAGES, messenger
@@ -121,49 +118,6 @@ class ChangeInvoiceStatusView(InvoiceAccessMixin, View):
 
         return {**kwargs, **extras}
 
-    def form_valid(self, form):
-        old_status = self.object.status
-        response = super().form_valid(form)
-        if form.cleaned_data["comment"]:
-            invoice_status_change = _(
-                "<p>Invoice status updated to: {status}.</p>"
-            ).format(status=self.object.get_status_display())
-            comment = f"<p>{self.object.comment}</p>"
-
-            message = invoice_status_change + comment
-
-            Activity.objects.create(
-                user=self.request.user,
-                type=COMMENT,
-                source=self.object.project,
-                timestamp=timezone.now(),
-                message=message,
-                visibility=APPLICANT,
-                related_object=self.object,
-            )
-
-        if self.request.user.is_apply_staff and self.object.status == APPROVED_BY_STAFF:
-            self.object.save()
-            messenger(
-                MESSAGES.APPROVE_INVOICE,
-                request=self.request,
-                user=self.request.user,
-                source=self.object.project,
-                related=self.object,
-            )
-
-        messenger(
-            MESSAGES.UPDATE_INVOICE_STATUS,
-            request=self.request,
-            user=self.request.user,
-            source=self.object.project,
-            related=self.object,
-        )
-
-        handle_tasks_on_invoice_update(old_status=old_status, invoice=self.object)
-
-        return response
-
     def get(self, *args, **kwargs):
         form_instance = self.form_class(instance=self.object, user=self.request.user)
         form_instance.name = self.context_name
@@ -172,6 +126,7 @@ class ChangeInvoiceStatusView(InvoiceAccessMixin, View):
 
     def post(self, *args, **kwargs):
         # Don't process the post request if the user can't change the status
+        old_status = self.object.status
         if not self.object.can_user_change_status(self.request.user):
             return render(
                 self.request, self.template, self.get_context_data(), status=403
@@ -181,7 +136,47 @@ class ChangeInvoiceStatusView(InvoiceAccessMixin, View):
             self.request.POST, instance=self.object, user=self.request.user
         )
         if form.is_valid():
-            self.form_valid(form)
+            form.save()
+            if form.cleaned_data["comment"]:
+                invoice_status_change = _(
+                    "<p>Invoice status updated to: {status}.</p>"
+                ).format(status=self.object.get_status_display())
+                comment = f"<p>{self.object.comment}</p>"
+
+                message = invoice_status_change + comment
+
+                Activity.objects.create(
+                    user=self.request.user,
+                    type=COMMENT,
+                    source=self.object.project,
+                    timestamp=timezone.now(),
+                    message=message,
+                    visibility=APPLICANT,
+                    related_object=self.object,
+                )
+
+            if (
+                self.request.user.is_apply_staff
+                and self.object.status == APPROVED_BY_STAFF
+            ):
+                self.object.save()
+                messenger(
+                    MESSAGES.APPROVE_INVOICE,
+                    request=self.request,
+                    user=self.request.user,
+                    source=self.object.project,
+                    related=self.object,
+                )
+
+            messenger(
+                MESSAGES.UPDATE_INVOICE_STATUS,
+                request=self.request,
+                user=self.request.user,
+                source=self.object.project,
+                related=self.object,
+            )
+
+            handle_tasks_on_invoice_update(old_status=old_status, invoice=self.object)
             htmx_headers = {"invoicesUpdated": None, "showMessage": "Invoice updated."}
             if self.object.status == DECLINED:
                 htmx_headers.update({"rejectedInvoicesUpdated": None})

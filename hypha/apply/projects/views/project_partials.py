@@ -31,6 +31,14 @@ def partial_project_lead(request, pk):
 
 
 @login_required
+def partial_project_title(request, pk):
+    project = get_object_or_404(Project, pk=pk)
+    return render(
+        request, "application_projects/partials/project_title.html", {"object": project}
+    )
+
+
+@login_required
 @require_GET
 def partial_project_activities(request, pk):
     project = get_object_or_404(Project, pk=pk)
