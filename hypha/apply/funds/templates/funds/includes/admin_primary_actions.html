@@ -1,5 +1,5 @@
 {% load i18n %}
-{% load heroicons primaryactions_tags translate_tags %}
+{% load heroicons primaryactions_tags %}
 
 <h5>{% trans "Actions to take" %}</h5>
 
@@ -83,13 +83,6 @@
     <details class="mt-4" x-data="{closeArchiveOutside(e){if (e.currentTarget == e.target){$refs.dialogArchive.close()}}, closeReminderOutside(e){if (e.currentTarget == e.target){$refs.dialogReminder.close()}}, closeMetaTermsOutside(e){if (e.currentTarget == e.target){$refs.dialogMetaTerms.close()}} }">
         <summary class="sidebar__separator sidebar__separator--medium">{% trans "More actions" %}</summary>
         <a class="button button--white button--full-width button--bottom-space" href="{% url 'funds:submissions:revisions:list' submission_pk=object.id %}">{% trans "Revisions" %}</a>
-
-        {% if request.user|can_translate_submission %}
-            <button class="button button--white button--full-width button--bottom-space" hx-get="{% url 'funds:submissions:translate' pk=object.pk %}" hx-target="#htmx-modal">
-                {% heroicon_outline "language" aria_hidden="true" size=15 stroke_width=2 class="inline align-baseline me-1" %}
-                {% trans "Translate" %}
-            </button>
-        {% endif %}
 
         <button
             class="button button--white button--full-width button--bottom-space"

@@ -673,40 +673,6 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
         response = SubmissionDetailView.as_view()(request, pk=submission.pk)
         self.assertEqual(response.status_code, 200)
 
-    @override_settings(SUBMISSION_TRANSLATIONS_ENABLED=True)
-    def test_staff_can_see_translate_primary_action(self):
-        def assert_view_translate_displayed(submission):
-            response = self.get_page(submission)
-            buttons = (
-                BeautifulSoup(response.content, "html5lib")
-                .find("div", attrs={"data-testid": "sidebar-primary-actions"})
-                .find_all("button")
-            )
-
-            self.assertEqual(
-                len([button.text for button in buttons if "Translate" in button.text]),
-                1,
-            )
-
-        assert_view_translate_displayed(self.submission)
-
-    @override_settings(SUBMISSION_TRANSLATIONS_ENABLED=False)
-    def test_staff_cant_see_translate_primary_action(self):
-        def assert_view_translate_displayed(submission):
-            response = self.get_page(submission)
-            buttons = (
-                BeautifulSoup(response.content, "html5lib")
-                .find("div", attrs={"data-testid": "sidebar-primary-actions"})
-                .find_all("button")
-            )
-
-            self.assertEqual(
-                len([button.text for button in buttons if "Translate" in button.text]),
-                0,
-            )
-
-        assert_view_translate_displayed(self.submission)
-
 
 class TestReviewersUpdateView(BaseSubmissionViewTestCase):
     user_factory = StaffFactory
