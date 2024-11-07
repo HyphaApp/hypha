@@ -26,7 +26,6 @@ class TestProfileView(BaseTestProfielView):
         self.assertRedirects(
             response,
             reverse(settings.LOGIN_URL) + "?next=" + self.url,
-            status_code=301,
         )
 
     def test_has_required_text_and_buttons(self):
@@ -68,7 +67,7 @@ class TestPasswordReset(BaseViewTestCase):
     url_name = "users:{}"
     base_view_name = "password_reset"
 
-    def test_recieves_email(self):
+    def test_receives_email(self):
         response = self.post_page(None, data={"email": self.user.email})
         self.assertRedirects(response, self.url(None, view_name="password_reset_done"))
         self.assertEqual(len(mail.outbox), 1)

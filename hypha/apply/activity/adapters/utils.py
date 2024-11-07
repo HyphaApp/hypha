@@ -14,12 +14,12 @@ from hypha.apply.projects.models.payment import (
     RESUBMITTED,
     SUBMITTED,
 )
-from hypha.apply.users.groups import (
+from hypha.apply.users.models import User
+from hypha.apply.users.roles import (
     CONTRACTING_GROUP_NAME,
     FINANCE_GROUP_NAME,
     STAFF_GROUP_NAME,
 )
-from hypha.apply.users.models import User
 
 
 def link_to(target, request):

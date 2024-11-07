@@ -11,12 +11,12 @@ from django.utils.translation import gettext as _
 from hypha.apply.activity.models import ALL, APPLICANT_PARTNERS, PARTNER
 from hypha.apply.projects.models.payment import CHANGES_REQUESTED_BY_STAFF, DECLINED
 from hypha.apply.projects.templatetags.project_tags import display_project_status
-from hypha.apply.users.groups import (
+from hypha.apply.users.models import User
+from hypha.apply.users.roles import (
     CONTRACTING_GROUP_NAME,
     FINANCE_GROUP_NAME,
     STAFF_GROUP_NAME,
 )
-from hypha.apply.users.models import User
 from hypha.core.mail import (
     language,
     remove_extra_empty_lines,

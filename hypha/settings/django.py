@@ -69,6 +69,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_api_key",
     "django_file_form",
+    "rolepermissions",
     "hijack",
     "elevate",  # https://django-elevate.readthedocs.io/
     "pagedown",
@@ -220,6 +221,10 @@ AUTHENTICATION_BACKENDS = (
     "social_core.backends.google.GoogleOAuth2",
     CUSTOM_AUTH_BACKEND,
 )
+
+# django-rolepermissions
+# https://django-role-permissions.readthedocs.io/en/stable/settings.html
+ROLEPERMISSIONS_MODULE = "hypha.apply.users.roles"
 
 # Default Auto field configuration
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"

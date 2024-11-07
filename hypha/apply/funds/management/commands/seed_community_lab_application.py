@@ -7,7 +7,7 @@ from django.db import transaction
 from hypha.apply.funds.models import ApplicationForm, LabType
 from hypha.apply.funds.models.forms import LabBaseForm, LabBaseReviewForm
 from hypha.apply.review.models import ReviewForm
-from hypha.apply.users.groups import STAFF_GROUP_NAME
+from hypha.apply.users.roles import STAFF_GROUP_NAME
 from hypha.home.models import ApplyHomePage
 
 CL_FUND_TITLE = "Community lab (archive fund)"
