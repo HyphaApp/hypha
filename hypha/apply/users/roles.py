@@ -12,6 +12,13 @@ APPROVER_GROUP_NAME = _("Approver")
 FINANCE_GROUP_NAME = _("Finance")
 CONTRACTING_GROUP_NAME = _("Contracting")
 
+ROLES_ORG_FACULTY = [
+    STAFF_GROUP_NAME,
+    TEAMADMIN_GROUP_NAME,
+    FINANCE_GROUP_NAME,
+    CONTRACTING_GROUP_NAME,
+]
+
 
 # roles for the application
 # https://django-role-permissions.readthedocs.io/en/stable/roles.html

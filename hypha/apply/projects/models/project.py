@@ -26,7 +26,7 @@ from wagtail.models import Orderable
 from hypha.apply.funds.models.mixins import AccessFormData
 from hypha.apply.stream_forms.files import StreamFieldDataEncoder
 from hypha.apply.stream_forms.models import BaseStreamForm
-from hypha.apply.users.groups import GROUPS_ORG_FACULTY
+from hypha.apply.users.roles import ROLES_ORG_FACULTY
 from hypha.apply.utils.storage import PrivateStorage
 
 from ..admin_forms import ContractDocumentCategoryAdminForm
@@ -731,7 +731,7 @@ class ContractDocumentCategory(models.Model):
     recommended_minimum = models.PositiveIntegerField(null=True, blank=True)
     document_access_view = models.ManyToManyField(
         Group,
-        limit_choices_to={"name__in": GROUPS_ORG_FACULTY},
+        limit_choices_to={"name__in": ROLES_ORG_FACULTY},
         verbose_name=_("Allow document access for groups"),
         help_text=_("Only selected group's users can access the document"),
         related_name="contract_document_category",
