@@ -185,9 +185,6 @@ CONN_HEALTH_CHECKS = env.bool("CONN_HEALTH_CHECKS", True)
 # The corrosponding locale dir is named: en, en_GB, en_US
 LANGUAGE_CODE = env.str("LANGUAGE_CODE", "en")
 
-# Translation settings
-SUBMISSION_TRANSLATIONS_ENABLED = env.bool("SUBMISSION_TRANSLATIONS_ENABLED", False)
-
 # Number of seconds that password reset and account activation links are valid (default 259200, 3 days).
 PASSWORD_RESET_TIMEOUT = env.int("PASSWORD_RESET_TIMEOUT", 259200)
 

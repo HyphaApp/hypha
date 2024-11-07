@@ -27,7 +27,6 @@ from .views import (
     SubmissionResultView,
     SubmissionsByStatus,
     SubmissionSealedView,
-    TranslateSubmissionView,
     UpdateLeadView,
     UpdateMetaTermsView,
     UpdatePartnersView,
@@ -51,7 +50,6 @@ from .views_partials import (
     partial_submission_activities,
     partial_submission_answers,
     partial_submission_lead,
-    partial_translate_answers,
     sub_menu_bulk_update_lead,
     sub_menu_bulk_update_reviewers,
     sub_menu_category_options,
@@ -201,11 +199,6 @@ submission_urls = (
                         name="partial-meta-terms-card",
                     ),
                     path(
-                        "partial/translate/answers",
-                        partial_translate_answers,
-                        name="partial-translate-answers",
-                    ),
-                    path(
                         "project/create/",
                         CreateProjectView.as_view(),
                         name="create_project",
@@ -219,11 +212,6 @@ submission_urls = (
                         "reminder/create/",
                         ReminderCreateView.as_view(),
                         name="create_reminder",
-                    ),
-                    path(
-                        "translate/",
-                        TranslateSubmissionView.as_view(),
-                        name="translate",
                     ),
                     path(
                         "progress/", ProgressSubmissionView.as_view(), name="progress"
