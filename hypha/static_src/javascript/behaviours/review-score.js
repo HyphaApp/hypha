@@ -1,6 +1,6 @@
 /**
  * Alpine.js data component for calculating review scores in the form.
- * @returns {Object} The review score component object.
+ * @returns {object} The review score component object.
  */
 document.addEventListener("alpine:init", () => {
     Alpine.data("reviewScore", () => {
