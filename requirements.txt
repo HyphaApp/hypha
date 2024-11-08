@@ -35,6 +35,7 @@ django-web-components==0.2.0
 django==4.2.16
 djangorestframework-api-key==3.0.0
 djangorestframework==3.15.2
+djp==0.3.1
 drf-nested-routers==0.93.5
 environs==11.0.0
 gunicorn==22.0.0
