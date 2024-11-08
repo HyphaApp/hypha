@@ -1,4 +1,7 @@
 (function ($) {
+    /**
+     * This script is used to paginate the past reports table.
+     */
     function pastReportsPagination() {
         $(".js-data-block-pagination").click((e) => {
             e.preventDefault();
@@ -6,6 +9,9 @@
         });
     }
 
+    /**
+     * Show next ten.
+     */
     function showNextTen() {
         const [...nextTen] = $(".js-past-reports-table tr.is-hidden").slice(
             0,
@@ -15,6 +21,9 @@
         checkRemaining();
     }
 
+    /**
+     * Check remaning.
+     */
     function checkRemaining() {
         const [...remaining] = $(".js-past-reports-table tr.is-hidden");
         if (remaining.length === 0) {

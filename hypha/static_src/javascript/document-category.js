@@ -1,3 +1,7 @@
+/**
+ * Handle the category selection.
+ * @param {object} category - The category selected.
+ */
 // eslint-disable-next-line no-unused-vars
 function handleCategory(category) {
     document.getElementById("id_category").value = category;

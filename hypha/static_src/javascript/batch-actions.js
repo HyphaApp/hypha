@@ -95,6 +95,9 @@
         $batchTitlesList.toggleClass(closedClass);
     });
 
+    /**
+     * Prepare the batch listing.
+     */
     function prepareBatchListing() {
         $batchTitlesList.html("");
         $batchTitleCount.html("");
@@ -125,6 +128,9 @@
         $hiddenInvoiceIDlist.val(selectedIDs.join(","));
     }
 
+    /**
+     * Update the invoice progress button.
+     */
     function updateInvoiceProgressButton() {
         var actions = $actionInvoiceOptions
             .map(function () {
@@ -159,6 +165,9 @@
         }
     }
 
+    /**
+     * Update the progress button.
+     */
     function updateProgressButton() {
         var actions = $actionOptions
             .map(function () {
@@ -192,6 +201,9 @@
         }
     }
 
+    /**
+     * Toggle the batch actions.
+     */
     function toggleBatchActions() {
         if ($(".js-batch-select:checked").length) {
             $body.addClass(activeClass);
@@ -200,10 +212,16 @@
         }
     }
 
+    /**
+     * Update the count of selected checkboxes.
+     */
     function updateCount() {
         $(".js-total-actions").html($(".js-batch-select:checked").length);
     }
 
+    /**
+     * Reset the check all input.
+     */
     function resetCheckAllInput() {
         $allCheckboxInput.prop("checked", false);
     }

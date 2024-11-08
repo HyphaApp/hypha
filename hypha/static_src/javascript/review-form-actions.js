@@ -1,4 +1,9 @@
 (function () {
+    /**
+     * Show dialog if user have changed the form and not saved.
+     * @param {object} f - form element
+     * @returns {object} - form contents
+     */
     function formContents(f) {
         // Thanks to https://stackoverflow.com/a/44033425
         return Array.from(new FormData(f), function (e) {

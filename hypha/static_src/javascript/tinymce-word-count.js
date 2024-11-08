@@ -5,6 +5,10 @@
         childList: true,
     };
 
+    /**
+     * Count the words in the element and set the warning classes.
+     * @param {object} el - The element to count the words in.
+     */
     function word_count(el) {
         let word_count;
         try {
@@ -49,6 +53,9 @@
         });
     });
 
+    /**
+     * Set the word count on the element and observe for changes.
+     */
     function word_count_alert() {
         const word_counts = document.querySelectorAll(
             ".tox-statusbar__wordcount"
