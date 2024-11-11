@@ -1,7 +1,7 @@
 {% load i18n markdown_tags nh3_tags heroicons %}
 
 <div class="group bg-white p-2 flex items-center">
-    <svg class="icon icon--dashboard-tasks"><use xlink:href="#{{ task.icon }}"></use></svg>
+    <svg class="w-6 h-6 ms-1 me-2"><use xlink:href="#{{ task.icon }}"></use></svg>
     <div class="flex flex-1 items-center">
         <span>{{ task.text|markdown|nh3 }}</span>
         {% if task.type == "Draft" %}

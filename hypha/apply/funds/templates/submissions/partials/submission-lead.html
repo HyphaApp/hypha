@@ -2,7 +2,7 @@
 {% if request.user.is_apply_staff %}
     <span>
         {% trans "Lead" %}:
-        <a class="link--transparent link--underlined"
+        <a class="text-white underline"
            href="{% url 'apply:submissions:list' %}?lead={{ submission.lead.id }}">
             {{ submission.lead }}
         </a>

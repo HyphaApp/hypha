@@ -31,43 +31,6 @@
         }
     }
 
-    &--blockquote {
-        padding: 1rem 0;
-        margin-block-start: 2rem;
-        margin-block-end: 2rem;
-        background: variables.$color--light-grey;
-
-        @include mixins.media-query(md) {
-            padding: 4rem 0;
-            margin-block-start: 4rem;
-            margin-block-end: 4rem;
-        }
-
-        svg {
-            position: absolute;
-            display: none;
-            width: 110px;
-            height: 110px;
-            fill: variables.$color--white;
-
-            @include mixins.media-query(md) {
-                display: block;
-            }
-
-            &:first-child {
-                inset-block-start: 0;
-                inset-inline-start: 0;
-                transform: rotate(90deg);
-            }
-
-            &:last-child {
-                inset-inline-end: 0;
-                inset-block-end: 0;
-                transform: rotate(-90deg);
-            }
-        }
-    }
-
     &--default-bg {
         background-color: var(--color-bg-default);
     }

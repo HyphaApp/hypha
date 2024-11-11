@@ -14,7 +14,7 @@
                 {% if request.user.is_apply_staff %}
                     <a data-fancybox
                        data-src="#update-title"
-                       class="link is-active link--transparent hover:opacity-70 transition-opacity"
+                       class="is-active text-white hover:opacity-70 transition-opacity"
                        href="#">
                         {% heroicon_solid "pencil-square" class="inline ms-1 mt-2" aria_hidden=true %}
                     </a>
@@ -33,9 +33,9 @@
                 {% if object.submission.round %}
                     {% if request.user.is_apply_staff %}
                         <span>
-                            <a class="link--transparent link--underlined"
+                            <a class="text-white underline"
                                href="{% url 'apply:submissions:list' %}?round={{ object.submission.round.pk }}"
-                            >{{ object.round }}</a>
+                            >{{ object.submission.round }}</a>
                         </span>
                     {% else %}
                         {{ object.submission.round }}
@@ -47,10 +47,10 @@
                         {% if request.user.is_apply_staff %}
                             <a data-fancybox
                                data-src="#assign-lead"
-                               class="link link--edit-lead is-active link--transparent hover:opacity-70 transition-opacity"
+                               class="flex items-center is-active text-white underline hover:opacity-70 transition-opacity"
                                href="#"
                             >
-                                <u>{% trans "Lead" %}: {{ object.lead }}</u>
+                                {% trans "Lead" %}: {{ object.lead }}
                                 {% heroicon_micro "pencil-square" class="inline ms-1" aria_hidden=true %}
                             </a>
                             <div class="modal" id="assign-lead">
@@ -66,7 +66,7 @@
 
             </div>
 
-            <div class="status-bar">
+            <div class="status-bar my-6">
                 {% for status, text in statuses %}
                     {% if forloop.counter0 == current_status_index %}
                         {% include "funds/includes/status_bar_item.html" with is_current=True is_complete=False label=text %}
@@ -190,13 +190,13 @@
                         {% endif %}
                         {% if object.paf_approvals.exists and not user.is_applicant %}
                             {% if mobile %}
-                                <a class="js-actions-toggle button button--white button--full-width button--actions">{% trans "PAF Approvals" %}</a>
+                                <a class="js-actions-toggle button button--white button--full-width button--actions">{% trans "Project form approvals" %}</a>
                             {% endif %}
 
 
                             <div class="js-actions-sidebar sidebar__inner sidebar__inner--actions {% if mobile %}sidebar__inner--mobile{% endif %}">
 
-                                <h5>{% trans "PAF Approvals" %}</h5>
+                                <h5>{% trans "Project form approvals" %}</h5>
                                 {% for paf_approval in object.paf_approvals.all %}
 
                                     {% if not paf_approval.approved %}
@@ -204,7 +204,7 @@
                                         {% if rejected %}
                                             <div class="flex">
                                                 <div>
-                                                    <svg class="icon icon--request-changes"><use xlink:href="#request-changes"></use></svg>
+                                                    <svg class="w-5 h-5 me-1 mt-1"><use xlink:href="#request-changes"></use></svg>
                                                 </div>
                                                 <div>
                                                     <p class="sidebar__paf-approvals--approved m-0">{% trans "Request changes or more information by " %}{{ paf_approval.user }}</p>

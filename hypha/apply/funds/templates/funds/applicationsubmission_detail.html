@@ -32,7 +32,7 @@
                 {% if object.round %}
                     {% if request.user.is_apply_staff %}
                         <span>
-                            <a class="link--transparent link--underlined"
+                            <a class="text-white underline"
                                href="{% url 'apply:submissions:list' %}?round={{ object.round.pk }}"
                             >{{ object.round }}</a>
                         </span>
@@ -185,15 +185,15 @@
 
                     {% block related %}
                         {% if other_submissions or object.previous or object.next %}
-                            <div class="sidebar__inner related-sidebar">
+                            <div class="sidebar__inner">
                                 <h5>{% trans "Related submissions" %}</h5>
 
                                 {% if object.previous %}
-                                    <p class="mb-4"><a class="link link--underlined link--bold" href="{% url 'funds:submissions:detail' object.previous.id %}">{% trans "View linked" %} {{ object.previous.stage }}</a></p>
+                                    <p class="mb-4"><a class="underline font-bold" href="{% url 'funds:submissions:detail' object.previous.id %}">{% trans "View linked" %} {{ object.previous.stage }}</a></p>
                                 {% endif %}
 
                                 {% if object.next %}
-                                    <p class="mb-4"><a class="link link--underlined link--bold" href="{% url 'funds:submissions:detail' object.next.id %}">{% trans "View linked" %} {{ object.next.stage }}</a></p>
+                                    <p class="mb-4"><a class="underline font-bold" href="{% url 'funds:submissions:detail' object.next.id %}">{% trans "View linked" %} {{ object.next.stage }}</a></p>
                                 {% endif %}
 
                                 <section class="flex flex-col gap-2" data-js-collapse>
@@ -204,7 +204,7 @@
                                             </h6>
                                         {% endif %}
                                         <div>
-                                            <a class="link link--bold line-clamp-2 hover:underline" href="{% url 'funds:submissions:detail' submission.id %}">
+                                            <a class="font-bold line-clamp-2 hover:underline" href="{% url 'funds:submissions:detail' submission.id %}">
                                                 {{ submission.title }}
                                             </a>
                                             <div class="text-sm text-fg-muted">
