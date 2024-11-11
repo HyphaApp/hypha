@@ -35,11 +35,11 @@ from .views import (
     reminder_list,
     submission_success,
 )
-from .views_beta import (
+from .views_all import (
     bulk_archive_submissions,
     bulk_delete_submissions,
     bulk_update_submissions_status,
-    submission_all_beta,
+    submissions_all,
 )
 from .views_partials import (
     get_applications_status_counts,
@@ -91,7 +91,7 @@ submission_urls = (
             name="overview",
         ),
         path("success/<int:pk>/", submission_success, name="success"),
-        path("all/", submission_all_beta, name="list"),
+        path("all/", submissions_all, name="list"),
         path("all/old/", SubmissionListView.as_view(), name="list-old"),
         path(
             "statuses/",
