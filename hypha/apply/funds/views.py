@@ -439,30 +439,6 @@ class BaseReviewerSubmissionsTable(BaseAdminSubmissionsTable):
         return super().get_queryset().reviewed_by(self.request.user)
 
 
-@method_decorator(login_required, name="dispatch")
-class AwaitingReviewSubmissionsListView(SingleTableMixin, ListView):
-    model = ApplicationSubmission
-    table_class = AdminSubmissionsTable
-    template_name = "funds/submissions_awaiting_review.html"
-    paginator_class = LazyPaginator
-    table_pagination = {"per_page": 25}
-
-    excluded_fields = settings.SUBMISSIONS_TABLE_EXCLUDED_FIELDS
-
-    @property
-    def excluded(self):
-        return {"exclude": self.excluded_fields}
-
-    def get_table_kwargs(self, **kwargs):
-        return {**self.excluded, **kwargs}
-
-    def get_queryset(self):
-        submissions = ApplicationSubmission.objects.in_review_for(
-            self.request.user
-        ).order_by("-submit_time")
-        return submissions.for_table(self.request.user)
-
-
 class SubmissionAdminListView(BaseAdminSubmissionsTable, DelegateableListView):
     template_name = "funds/submissions.html"
     form_views = [

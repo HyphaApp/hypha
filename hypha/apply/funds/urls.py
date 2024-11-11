@@ -5,7 +5,6 @@ from django.views.generic import RedirectView
 from hypha.apply.projects import urls as projects_urls
 
 from .views import (
-    AwaitingReviewSubmissionsListView,
     CreateProjectView,
     GroupingApplicationsListView,
     ProgressSubmissionView,
@@ -155,11 +154,6 @@ submission_urls = (
                     ),
                 ]
             ),
-        ),
-        path(
-            "awaiting_review/",
-            AwaitingReviewSubmissionsListView.as_view(),
-            name="awaiting_review",
         ),
         path(
             "assignments/",

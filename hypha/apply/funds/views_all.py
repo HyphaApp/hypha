@@ -119,8 +119,10 @@ def submissions_all(
         reviewer_settings = ReviewerSettings.for_request(request)
         if reviewer_settings.use_settings:
             qs = qs.for_reviewer_settings(request.user, reviewer_settings)
-        else:
+        elif request.GET.get("reviewedby", False):
             qs = qs.reviewed_by(request.user)
+        else:
+            qs = qs.in_review_for(request.user)
 
     if not can_access_drafts or not show_drafts:
         qs = qs.exclude_draft()
