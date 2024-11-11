@@ -1,4 +1,4 @@
-{% load i18n querystrings %}
+{% load i18n workflow_tags querystrings %}
 {% load heroicons %}
 
 <div class="relative flex-wrap w-full px-2 py-1 border-t last:border-b border-x md:flex md:flex-nowrap hover:bg-gray-100">
@@ -73,14 +73,14 @@
             <p class="m-0 text-xs">
                 #{{ s.public_id|default:s.id }}
                 submitted <relative-time datetime="{{ s.submit_time|date:"c" }}">{{ s.submit_time|date:"SHORT_DATE_FORMAT" }}</relative-time>
-                by <a
+                {% if s|show_applicant_identity:request.user %}by <a
                     href="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" applicants=s.user.id %}"
                     hx-get="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" applicants=s.user.id %}"
                     hx-target="#main"
                     hx-push-url="true"
                     hx-swap="outerHTML"
                     class="text-inherit hover:underline"
-                >{{ s.user }}</a> • {{ s.stage }} •
+                >{{ s.user }}</a>{% endif %} • {{ s.stage }} •
 
 
                 {% if 'round' not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS %}

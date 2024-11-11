@@ -1,4 +1,4 @@
-{% load i18n querystrings %}
+{% load i18n workflow_tags querystrings %}
 {% load heroicons %}
 
 <tr
@@ -64,18 +64,20 @@
     </td>
 
     <td class="p-2 text-sm align-top">
-        <a
-            href="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" applicants=s.user.id %}"
-            hx-get="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" applicants=s.user.id %}"
-            hx-target="#main"
-            hx-push-url="true"
-            hx-swap="outerHTML"
-            class="text-inherit hover:underline"
-        >
-            {{ s.user }}
-        </a>
-        {% if 'organization_name' not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS and s.form_data.organization_name %}
-            <span class="text-xs text-fg-muted"> / {{ s.form_data.organization_name }}</span>
+        {% if s|show_applicant_identity:request.user %}
+            <a
+                href="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" applicants=s.user.id %}"
+                hx-get="{% url "apply:submissions:list" %}{% modify_query "only_query_string" "page" applicants=s.user.id %}"
+                hx-target="#main"
+                hx-push-url="true"
+                hx-swap="outerHTML"
+                class="text-inherit hover:underline"
+            >
+                {{ s.user }}
+            </a>
+            {% if 'organization_name' not in SUBMISSIONS_TABLE_EXCLUDED_FIELDS and s.form_data.organization_name %}
+                <span class="text-xs text-fg-muted"> / {{ s.form_data.organization_name }}</span>
+            {% endif %}
         {% endif %}
     </td>
 
