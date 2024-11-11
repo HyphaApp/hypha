@@ -8,7 +8,7 @@
 
     {% adminbar %}
         {% slot back_link %}
-            <a class="link link--back" href="{% url 'apply:projects:detail' object.project.id %}">
+            <a class="admin-bar__back-link" href="{% url 'apply:projects:detail' object.project.id %}">
                 {% trans "View project page" %}
             </a>
         {% endslot %}
