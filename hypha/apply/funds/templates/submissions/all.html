@@ -50,6 +50,18 @@
 
         {% dropdown_menu title="Filters" heading="Filter submissions" %}
             <a
+                href="{% url "apply:submissions:list" %}?query=is:open"
+                hx-get="{% url "apply:submissions:list" %}?query=is:open"
+                hx-push-url="true"
+                hx-target="#main"
+                hx-swap="outerHTML"
+                class="flex {% if request.GET.query == "is:open" %}ps-2 font-medium bg-gray-100{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-gray-800 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
+                {% if request.GET.query == "is:open" %}
+                    {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
+                {% endif %}
+                {% trans "Open submissions" %} {{ request.GET.lead }}
+            </a>
+            <a
                 href="{% url "apply:submissions:list" %}?query=lead:@me"
                 hx-get="{% url "apply:submissions:list" %}?query=lead:@me"
                 hx-push-url="true"
@@ -59,7 +71,7 @@
                 {% if request.GET.query == "lead:@me" %}
                     {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
                 {% endif %}
-                {% trans "Your assigned submissions" %} {{ request.GET.lead }}
+                {% trans "Your assigned submissions (lead)" %} {{ request.GET.lead }}
             </a>
             <a
                 href="{% url "apply:submissions:list" %}?query=flagged:@me"
