@@ -160,6 +160,8 @@ def submissions_all(
     if "is" in search_filters:
         if "archived" in search_filters["is"]:
             qs = qs.filter(is_archive=True)
+        if "open" in search_filters["is"]:
+            qs = qs.active().current()
 
     if search_term:
         query = SearchQuery(search_term, search_type="websearch")
