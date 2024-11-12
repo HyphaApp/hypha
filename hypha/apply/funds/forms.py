@@ -311,7 +311,7 @@ class UpdateReviewersForm(ApplicationSubmissionModelForm):
 
 class BatchUpdateReviewersForm(forms.Form):
     submissions = forms.CharField(
-        widget=forms.HiddenInput(attrs={"class": "js-submissions-id"})
+        widget=forms.HiddenInput(attrs={"id": "js-submissions-id"})
     )
     external_reviewers = forms.ModelMultipleChoiceField(
         queryset=User.objects.reviewers().only("pk", "full_name"),

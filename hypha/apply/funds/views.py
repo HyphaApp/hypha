@@ -286,32 +286,44 @@ class BatchUpdateLeadView(FormView):
 
 
 @method_decorator(staff_required, name="dispatch")
-class BatchUpdateReviewersView(DelegatedViewMixin, FormView):
+class BatchUpdateReviewersView(FormView):
     form_class = BatchUpdateReviewersForm
     context_name = "batch_reviewer_form"
+    template_name = "funds/modals/batch_update_reviewer_form.html"
 
-    def form_valid(self, form):
-        submissions = form.cleaned_data["submissions"]
-        external_reviewers = form.cleaned_data["external_reviewers"]
-        assigned_roles = {
-            role: form.cleaned_data[field] for field, role in form.role_fields.items()
-        }
-        services.bulk_update_reviewers(
-            submissions=submissions,
-            external_reviewers=external_reviewers,
-            assigned_roles=assigned_roles,
-            user=self.request.user,
-            request=self.request,
+    def get(self, *args, **kwargs):
+        selected_ids = self.request.GET.getlist("selected_ids", "")
+        submissions = ApplicationSubmission.objects.filter(id__in=selected_ids)
+        form = self.form_class(user=self.request.user)
+        return render(
+            self.request,
+            self.template_name,
+            context={"form": form, "submissions": submissions},
         )
 
-        return super().form_valid(form)
+    def post(self, *args, **kwargs):
+        form = self.form_class(self.request.POST, user=self.request.user)
+        if form.is_valid():
+            submissions = form.cleaned_data["submissions"]
+            external_reviewers = form.cleaned_data["external_reviewers"]
+            assigned_roles = {
+                role: form.cleaned_data[field]
+                for field, role in form.role_fields.items()
+            }
+            services.bulk_update_reviewers(
+                submissions=submissions,
+                external_reviewers=external_reviewers,
+                assigned_roles=assigned_roles,
+                user=self.request.user,
+                request=self.request,
+            )
+            return HttpResponseClientRefresh()
 
-    def form_invalid(self, form):
         messages.error(
             self.request,
             mark_safe(_("Sorry something went wrong") + form.errors.as_ul()),
         )
-        return super().form_invalid(form)
+        return HttpResponseClientRefresh()
 
 
 @method_decorator(staff_required, name="dispatch")
@@ -481,7 +493,6 @@ class AwaitingReviewSubmissionsListView(SingleTableMixin, ListView):
 class SubmissionAdminListView(BaseAdminSubmissionsTable, DelegateableListView):
     template_name = "funds/submissions.html"
     form_views = [
-        BatchUpdateReviewersView,
         BatchProgressSubmissionView,
         BatchDeleteSubmissionView,
         BatchArchiveSubmissionView,
@@ -546,7 +557,6 @@ class SubmissionsByStatus(BaseAdminSubmissionsTable, DelegateableListView):
     template_name = "funds/submissions_by_status.html"
     status_mapping = PHASES_MAPPING
     form_views = [
-        BatchUpdateReviewersView,
         BatchProgressSubmissionView,
         BatchDeleteSubmissionView,
         BatchArchiveSubmissionView,

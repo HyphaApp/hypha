@@ -30,7 +30,7 @@
                             {% trans "Lead" %}
                         </button>
 
-                        <button data-fancybox data-src="#batch-update-reviewers" class="button button--action js-batch-button" type="button">
+                        <button class="button button--action js-batch-button" href="{% url 'apply:submissions:bulk_update_reviewer' %}" hx-target="#htmx-modal">
                             {% heroicon_micro "user-plus" class="inline" aria_hidden=true %}
                             {% trans "Reviewers" %}
                         </button>
@@ -142,7 +142,6 @@
 </div>
 
 {% if use_batch_actions %}
-    {% include "funds/includes/batch_update_reviewer_form.html" %}
     {% include "funds/includes/batch_progress_form.html" %}
     {% include "funds/includes/batch_delete_submission_form.html" %}
     {% include "funds/includes/batch_archive_submission_form.html" %}
