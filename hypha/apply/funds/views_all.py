@@ -115,14 +115,13 @@ def submissions_all(
     else:
         qs = ApplicationSubmission.objects.current().for_table(request.user)
 
+    # Reviewers also have access to this view but should only see a subset of submissions.
     if request.user.is_reviewer:
         reviewer_settings = ReviewerSettings.for_request(request)
         if reviewer_settings.use_settings:
             qs = qs.for_reviewer_settings(request.user, reviewer_settings)
-        elif request.GET.get("reviewedby", False):
-            qs = qs.reviewed_by(request.user)
         else:
-            qs = qs.in_review_for(request.user)
+            qs = qs.filter(reviewers=request.user)
 
     if not can_access_drafts or not show_drafts:
         qs = qs.exclude_draft()
@@ -145,11 +144,15 @@ def submissions_all(
 
     if "lead" in search_filters:
         if "@me" in search_filters["lead"]:
-            qs = qs.filter(lead=request.user)
+            qs = qs.filter(lead=request.user).active().current()
 
     if "reviewer" in search_filters:
         if "@me" in search_filters["reviewer"]:
-            qs = qs.filter(reviewers=request.user)
+            qs = qs.in_review_for(request.user)
+
+    if "reviewed-by" in search_filters:
+        if "@me" in search_filters["reviewed-by"]:
+            qs = qs.reviewed_by(request.user)
 
     if "id" in search_filters:
         qs = qs.filter(id__in=search_filters["id"])
@@ -297,6 +300,7 @@ def submissions_all(
         "can_bulk_archive": permissions.can_bulk_archive_submissions(request.user),
         "can_bulk_delete": permissions.can_bulk_delete_submissions(request.user),
         "can_export_submissions": permissions.can_export_submissions(request.user),
+        "enable_selection": permissions.can_bulk_update_submissions(request.user),
     } | screening_decision_context(selected_screening_statuses)
     return render(request, template_name, ctx)
 
