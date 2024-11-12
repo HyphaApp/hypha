@@ -249,27 +249,40 @@ class BaseAdminSubmissionsTable(SingleTableMixin, FilterView):
 
 
 @method_decorator(staff_required, name="dispatch")
-class BatchUpdateLeadView(DelegatedViewMixin, FormView):
+class BatchUpdateLeadView(FormView):
     form_class = BatchUpdateSubmissionLeadForm
     context_name = "batch_lead_form"
+    template_name = "funds/modals/batch_update_lead_form.html"
 
-    def form_valid(self, form):
-        new_lead = form.cleaned_data["lead"]
-        submissions = form.cleaned_data["submissions"]
-        services.bulk_update_lead(
-            submissions=submissions,
-            user=self.request.user,
-            lead=new_lead,
-            request=self.request,
+    def get(self, *args, **kwargs):
+        selected_ids = self.request.GET.getlist("selected_ids", "")
+        submissions = ApplicationSubmission.objects.filter(id__in=selected_ids)
+        form = self.form_class()
+        return render(
+            self.request,
+            self.template_name,
+            context={"form": form, "submissions": submissions},
         )
-        return super().form_valid(form)
 
-    def form_invalid(self, form):
+    def post(self, *args, **kwargs):
+        form = self.form_class(
+            self.request.POST,
+        )
+        if form.is_valid():
+            new_lead = form.cleaned_data["lead"]
+            submissions = form.cleaned_data["submissions"]
+            services.bulk_update_lead(
+                submissions=submissions,
+                user=self.request.user,
+                lead=new_lead,
+                request=self.request,
+            )
+            return HttpResponseClientRefresh()
         messages.error(
             self.request,
             mark_safe(_("Sorry something went wrong") + form.errors.as_ul()),
         )
-        return super().form_invalid(form)
+        return HttpResponseClientRefresh()
 
 
 @method_decorator(staff_required, name="dispatch")
@@ -468,7 +481,6 @@ class AwaitingReviewSubmissionsListView(SingleTableMixin, ListView):
 class SubmissionAdminListView(BaseAdminSubmissionsTable, DelegateableListView):
     template_name = "funds/submissions.html"
     form_views = [
-        BatchUpdateLeadView,
         BatchUpdateReviewersView,
         BatchProgressSubmissionView,
         BatchDeleteSubmissionView,
@@ -534,7 +546,6 @@ class SubmissionsByStatus(BaseAdminSubmissionsTable, DelegateableListView):
     template_name = "funds/submissions_by_status.html"
     status_mapping = PHASES_MAPPING
     form_views = [
-        BatchUpdateLeadView,
         BatchUpdateReviewersView,
         BatchProgressSubmissionView,
         BatchDeleteSubmissionView,

@@ -25,7 +25,7 @@
                             {% trans "Status" %}
                         </button>
 
-                        <button data-fancybox data-src="#batch-update-lead" class="button button--action js-batch-button" type="button">
+                        <button class="button button--action js-batch-button" href="{% url 'apply:submissions:bulk_update_lead' %}" hx-target="#htmx-modal">
                             {% heroicon_micro "user-plus" class="inline" aria_hidden=true %}
                             {% trans "Lead" %}
                         </button>
@@ -142,7 +142,6 @@
 </div>
 
 {% if use_batch_actions %}
-    {% include "funds/includes/batch_update_lead_form.html" %}
     {% include "funds/includes/batch_update_reviewer_form.html" %}
     {% include "funds/includes/batch_progress_form.html" %}
     {% include "funds/includes/batch_delete_submission_form.html" %}

@@ -6,6 +6,7 @@ from hypha.apply.projects import urls as projects_urls
 
 from .views import (
     AwaitingReviewSubmissionsListView,
+    BatchUpdateLeadView,
     CreateProjectView,
     GroupingApplicationsListView,
     ProgressSubmissionView,
@@ -95,6 +96,11 @@ submission_urls = (
         path("success/<int:pk>/", submission_success, name="success"),
         path("all/", submission_all_beta, name="list"),
         path("all/old/", SubmissionListView.as_view(), name="list-old"),
+        path(
+            "all/old/bulk_update_lead/",
+            BatchUpdateLeadView.as_view(),
+            name="bulk_update_lead",
+        ),
         path(
             "statuses/",
             get_applications_status_counts,

@@ -70,8 +70,25 @@
 
     // append selected project titles to batch update reviewer modal
     $batchButtons.each(function () {
-        $(this).click(function () {
-            prepareBatchListing();
+        $(this).click(function (e) {
+            let selectedIDs = [];
+            e.preventDefault();
+            selectedIDs = prepareBatchListing();
+
+            if (selectedIDs.length > 0) {
+                // Get the base URL from the href attribute
+                const baseUrl = $(this).attr("href");
+                const url = new URL(baseUrl, window.location.origin);
+                selectedIDs.forEach(id => {
+                    url.searchParams.append("selected_ids", id);
+                });
+                // Send the request using htmx.ajax
+                htmx.ajax('GET', url.toString(), {
+                    target: '#htmx-modal' // Optional: set the target element
+                });
+            } else {
+                alert("Please select at least one item.");
+            }
         });
     });
 
@@ -104,25 +121,14 @@
         let selectedIDs = [];
 
         $checkbox.filter(":checked").each(function () {
-            const link = $(this).parents("tr").find(".js-title").find("a");
-            const href = link.attr("href");
-            const title = link.text();
 
-            $batchTitlesList.append(`
-                <a href="${href}" class="list-reveal__item" target="_blank" rel="noopener noreferrer" title="${title}">
-                    ${title}
-                    <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="" width="16" height="16" class="inline align-text-bottom w-4 h-4">
-                        <path d="M6.22 8.72a.75.75 0 0 0 1.06 1.06l5.22-5.22v1.69a.75.75 0 0 0 1.5 0v-3.5a.75.75 0 0 0-.75-.75h-3.5a.75.75 0 0 0 0 1.5h1.69L6.22 8.72Z"></path>
-                        <path d="M3.5 6.75c0-.69.56-1.25 1.25-1.25H7A.75.75 0 0 0 7 4H4.75A2.75 2.75 0 0 0 2 6.75v4.5A2.75 2.75 0 0 0 4.75 14h4.5A2.75 2.75 0 0 0 12 11.25V9a.75.75 0 0 0-1.5 0v2.25c0 .69-.56 1.25-1.25 1.25h-4.5c-.69 0-1.25-.56-1.25-1.25v-4.5Z"></path>
-                    </svg>
-                </a>
-            `);
             selectedIDs.push($(this).parents("tr").data("record-id"));
         });
 
         $batchTitleCount.append(`${selectedIDs.length} submissions selected`);
         $hiddenIDlist.val(selectedIDs.join(","));
         $hiddenInvoiceIDlist.val(selectedIDs.join(","));
+        return selectedIDs;
     }
 
     function updateInvoiceProgressButton() {

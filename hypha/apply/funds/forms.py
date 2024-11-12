@@ -121,11 +121,10 @@ class UpdateSubmissionLeadForm(ApplicationSubmissionModelForm):
 class BatchUpdateSubmissionLeadForm(forms.Form):
     lead = forms.ChoiceField(label=_("Lead"))
     submissions = forms.CharField(
-        widget=forms.HiddenInput(attrs={"class": "js-submissions-id"})
+        widget=forms.HiddenInput(attrs={"id": "js-submissions-id"})
     )
 
-    def __init__(self, *args, round=None, **kwargs):
-        self.user = kwargs.pop("user")
+    def __init__(self, *args, user=None, round=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["lead"].choices = [
             (staff.id, staff) for staff in User.objects.staff()
