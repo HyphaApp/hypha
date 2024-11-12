@@ -46,6 +46,7 @@ jobs:
           POSTGRESQL_PASSWORD: hypha
           POSTGRESQL_DATABASE: hypha
           POSTGRESQL_FSYNC: "off"
+          POSTGRESQL_REPLICATION_USE_PASSFILE: "no"
         ports:
           - 5432:5432
         options: >-
