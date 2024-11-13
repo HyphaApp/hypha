@@ -88,7 +88,7 @@
                     </a>
                 {% endif %}
             {% endwith %}
-            {% if filter_classes != 'filters-open' %}
+            {% if 'filters-open' not in filter_classes %}
                 <button class="button js-toggle-filters">
                     {% heroicon_mini "adjustments-horizontal" class="inline align-text-bottom me-1 text-dark-blue" aria_hidden=true %}
                     {% trans "Filters" %}

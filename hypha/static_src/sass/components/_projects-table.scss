@@ -87,7 +87,7 @@
 }
 
 .reporting-table {
-    @include table-ordering-styles;
+    @include mixins.table-ordering-styles;
 
     tbody {
         td {
@@ -96,10 +96,10 @@
                     display: inline-block;
                     padding: 5px;
                     font-size: 13px;
-                    font-weight: $weight--bold;
-                    color: $color--white;
+                    font-weight: variables.$weight--bold;
+                    color: variables.$color--white;
                     text-align: center;
-                    background-color: $color--dark-blue;
+                    background-color: variables.$color--dark-blue;
                 }
             }
         }
