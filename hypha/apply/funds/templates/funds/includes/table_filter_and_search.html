@@ -36,7 +36,7 @@
                         </button>
 
                         {% if can_bulk_archive %}
-                            <button data-fancybox data-src="#batch-archive-submission" class="button button--action js-batch-button" type="button">
+                            <button class="button button--action js-batch-button" href="{% url 'apply:submissions:bulk_archive' %}" hx-target="#htmx-modal">
                                 {% heroicon_micro "archive-box-arrow-down" class="inline" aria_hidden=true %}
                                 {% trans "Archive" %}
                             </button>
@@ -137,7 +137,6 @@
 </div>
 
 {% if use_batch_actions %}
-    {% include "funds/includes/batch_archive_submission_form.html" %}
     {% if project_actions %}
         {% if invoice_actions %}
             {% include "application_projects/includes/batch_invoice_status_update.html" %}

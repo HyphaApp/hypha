@@ -6,6 +6,7 @@ from hypha.apply.projects import urls as projects_urls
 
 from .views import (
     AwaitingReviewSubmissionsListView,
+    BatchArchiveSubmissionView,
     BatchDeleteSubmissionView,
     BatchProgressSubmissionView,
     BatchUpdateLeadView,
@@ -118,6 +119,11 @@ submission_urls = (
             "all/old/bulk_delete/",
             BatchDeleteSubmissionView.as_view(),
             name="bulk_delete",
+        ),
+        path(
+            "all/old/bulk_archive",
+            BatchArchiveSubmissionView.as_view(),
+            name="bulk_archive",
         ),
         path(
             "statuses/",

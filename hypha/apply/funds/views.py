@@ -54,7 +54,6 @@ from hypha.apply.activity.models import Event
 from hypha.apply.activity.views import (
     ActivityContextMixin,
     CommentFormView,
-    DelegatedViewMixin,
 )
 from hypha.apply.determinations.views import (
     BatchDeterminationCreateView,
@@ -327,7 +326,7 @@ class BatchUpdateReviewersView(FormView):
 
 
 @method_decorator(staff_required, name="dispatch")
-class BatchDeleteSubmissionView(DelegatedViewMixin, FormView):
+class BatchDeleteSubmissionView(FormView):
     form_class = BatchDeleteSubmissionForm
     context_name = "batch_delete_submission_form"
     template_name = "funds/modals/batch_delete_submission_form.html"
@@ -361,29 +360,39 @@ class BatchDeleteSubmissionView(DelegatedViewMixin, FormView):
 
 
 @method_decorator(staff_required, name="dispatch")
-class BatchArchiveSubmissionView(DelegatedViewMixin, FormView):
+class BatchArchiveSubmissionView(FormView):
     form_class = BatchArchiveSubmissionForm
-    context_name = "batch_archive_submission_form"
+    template_name = "funds/modals/batch_archive_submission_form.html"
 
-    def form_valid(self, form):
-        # If a user without archive edit access is somehow able to access batch archive submissions
-        # (ie. they were looking at the submission list when permissions changed) "refresh" the page
-        if not can_alter_archived_submissions(self.request.user):
-            return HttpResponseRedirect(self.request.path)
-        submissions = form.cleaned_data["submissions"]
-        services.bulk_archive_submissions(
-            submissions=submissions,
-            user=self.request.user,
-            request=self.request,
+    def get(self, *args, **kwargs):
+        selected_ids = self.request.GET.getlist("selected_ids", "")
+        submissions = ApplicationSubmission.objects.filter(id__in=selected_ids)
+        form = self.form_class()
+        return render(
+            self.request,
+            self.template_name,
+            context={"form": form, "submissions": submissions},
         )
-        return super().form_valid(form)
 
-    def form_invalid(self, form):
+    def post(self, *args, **kwargs):
+        form = self.form_class(self.request.POST)
+        if form.is_valid():
+            # If a user without archive edit access is somehow able to access batch archive submissions
+            # (ie. they were looking at the submission list when permissions changed) "refresh" the page
+            if not can_alter_archived_submissions(self.request.user):
+                return HttpResponseRedirect(self.request.path)
+            submissions = form.cleaned_data["submissions"]
+            services.bulk_archive_submissions(
+                submissions=submissions,
+                user=self.request.user,
+                request=self.request,
+            )
+            return HttpResponseClientRefresh()
         messages.error(
             self.request,
             mark_safe(_("Sorry something went wrong") + form.errors.as_ul()),
         )
-        return super().form_invalid(form)
+        return HttpResponseClientRefresh()
 
 
 @method_decorator(staff_required, name="dispatch")
@@ -525,9 +534,7 @@ class AwaitingReviewSubmissionsListView(SingleTableMixin, ListView):
 
 class SubmissionAdminListView(BaseAdminSubmissionsTable, DelegateableListView):
     template_name = "funds/submissions.html"
-    form_views = [
-        BatchArchiveSubmissionView,
-    ]
+    form_views = []
 
     def get_filterset_kwargs(self, filterset_class, **kwargs):
         new_kwargs = super().get_filterset_kwargs(filterset_class)
@@ -587,9 +594,7 @@ class SubmissionListView(ViewDispatcher):
 class SubmissionsByStatus(BaseAdminSubmissionsTable, DelegateableListView):
     template_name = "funds/submissions_by_status.html"
     status_mapping = PHASES_MAPPING
-    form_views = [
-        BatchArchiveSubmissionView,
-    ]
+    form_views = []
 
     def dispatch(self, request, *args, **kwargs):
         self.status = kwargs.get("status")
