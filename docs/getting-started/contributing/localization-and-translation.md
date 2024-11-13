@@ -28,16 +28,16 @@ This is the example English .po file.
 
 To generate updated .po and .pot files for English (en) we use the following command:
 
-```bash
-m makemessages --locale en --ignore .venv --keep-pot
+```shell
+python manage.py makemessages --locale en --ignore .venv --keep-pot
 ```
 
 This is done fairly regular to keep the translations up to date.
 
 You can use this command to generate a translation template for any language. Even if you are using weblate or another service to create the .po files this is a good way to start since you get the directory structure.
 
-```bash
-m makemessages --locale sv-SE --ignore .venv
+```shell
+python manage.py makemessages --locale sv-SE --ignore .venv
 ```
 
 This will create `hypha/locale/sv_SE/LC_MESSAGES/django.po`
@@ -48,8 +48,8 @@ If you already have a translated version, replace that files with the generated 
 
 It is then nessesery to complile the .po files in to binary .mo files. This command takes care of that.
 
-```bash
-m compilemessages --ignore .venv
+```shell
+python manage.py compilemessages --ignore .venv
 ```
 
 If you update the .po files you will need to rerun the above command.
