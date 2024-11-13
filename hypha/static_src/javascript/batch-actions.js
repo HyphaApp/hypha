@@ -5,7 +5,6 @@
     const $batchButtons = $(".js-batch-button");
     const $batchProgress = $(".js-batch-progress");
     const $batchInvoiceProgress = $(".js-batch-invoice-progress");
-    const $actionInvoiceOptions = $("#id_invoice_action option");
     const $batchTitlesList = $(".js-batch-titles");
     const $batchTitleCount = $(".js-batch-title-count");
     const $hiddenIDlist = $(".js-submissions-id");
@@ -131,28 +130,22 @@
     }
 
     function updateInvoiceProgressButton() {
-        var actions = $actionInvoiceOptions
-            .map(function () {
-                return this.value;
-            })
-            .get();
+        var actions;
         $checkbox.filter(":checked").each(function () {
             let newActions = $(this)
                 .parents("tr")
                 .find(".js-actions")
                 .data("actions");
-            actions = actions.filter((action) => newActions.includes(action));
-        });
-
-        $actionInvoiceOptions.each(function () {
-            if (!actions.includes(this.value)) {
-                $(this).attr("disabled", "disabled");
+            // If actions is undefined (i.e., first iteration), initialize it with newActions
+            if (!actions) {
+                actions = newActions;
             } else {
-                $(this).removeAttr("disabled");
+                // Filter actions to keep only items also present in newActions
+                actions = actions.filter((action) => newActions.includes(action));
             }
         });
-        $actionInvoiceOptions.filter(":enabled:first").prop("selected", true);
-        if (actions.length === 0) {
+
+        if (!actions || actions.length === 0) {
             $batchInvoiceProgress.attr("disabled", "disabled");
             $batchInvoiceProgress.attr(
                 "data-tooltip",

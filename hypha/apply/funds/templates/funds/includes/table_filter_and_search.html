@@ -42,7 +42,7 @@
                             </button>
                         {% endif %}
                     {% elif invoice_actions %}
-                        <button data-fancybox data-src="#batch_update_invoice_status" class="button button--action js-batch-button js-batch-invoice-progress" type="button">
+                        <button class="button button--action js-batch-button js-batch-invoice-progress" href="{% url 'apply:projects:bulk_invoice_status_update' %}" hx-target="#htmx-modal">
                             {% heroicon_mini "arrows-right-left" class="inline" aria_hidden=true %}
                             {% trans "Status" %}
                         </button>
@@ -135,11 +135,3 @@
         </ul>
     </form>
 </div>
-
-{% if use_batch_actions %}
-    {% if project_actions %}
-        {% if invoice_actions %}
-            {% include "application_projects/includes/batch_invoice_status_update.html" %}
-        {% endif %}
-    {% endif %}
-{% endif %}
