@@ -7,12 +7,6 @@
 {% block body_class %}{% endblock %}
 
 {% block content %}
-    {% if object.round.specific.is_sealed %}
-        <ul class="messages">
-            {% trans "This submission is sealed" as warning_message %}
-            {% include "includes/message_item.html" with message=warning_message tag="warning" close=False %}
-        </ul>
-    {% endif %}
     <div class="admin-bar">
         <div class="admin-bar__inner">
             {% if request.GET.ref == 'all-alt' %}
@@ -87,6 +81,13 @@
         <div class="py-2 font-bold text-center text-white bg-red-600">
             {% heroicon_outline "lock-closed" aria_hidden="true" size=16 stroke_width=2 class="inline align-baseline me-1" %}
             {% trans "This submission has been archived. This is visible to the roles " %} {{ archive_access_groups|join_with_commas }}
+        </div>
+    {% endif %}
+
+    {% if object.round.specific.is_sealed %}
+        <div class="py-2 font-bold text-center text-white bg-red-600">
+            {% heroicon_outline "clock" aria_hidden="true" size=16 stroke_width=2 class="inline align-baseline me-1" %}
+            {% trans "This submission is sealed" %}
         </div>
     {% endif %}
 
