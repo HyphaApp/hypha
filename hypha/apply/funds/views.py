@@ -330,22 +330,34 @@ class BatchUpdateReviewersView(FormView):
 class BatchDeleteSubmissionView(DelegatedViewMixin, FormView):
     form_class = BatchDeleteSubmissionForm
     context_name = "batch_delete_submission_form"
+    template_name = "funds/modals/batch_delete_submission_form.html"
 
-    def form_valid(self, form):
-        submissions = form.cleaned_data["submissions"]
-        services.bulk_delete_submissions(
-            submissions=submissions,
-            user=self.request.user,
-            request=self.request,
+    def get(self, *args, **kwargs):
+        selected_ids = self.request.GET.getlist("selected_ids", "")
+        submissions = ApplicationSubmission.objects.filter(id__in=selected_ids)
+        form = self.form_class()
+        return render(
+            self.request,
+            self.template_name,
+            context={"form": form, "submissions": submissions},
         )
-        return super().form_valid(form)
 
-    def form_invalid(self, form):
+    def post(self, *args, **kwargs):
+        form = self.form_class(self.request.POST)
+        if form.is_valid():
+            submissions = form.cleaned_data["submissions"]
+            services.bulk_delete_submissions(
+                submissions=submissions,
+                user=self.request.user,
+                request=self.request,
+            )
+            return HttpResponseClientRefresh()
+
         messages.error(
             self.request,
             mark_safe(_("Sorry something went wrong") + form.errors.as_ul()),
         )
-        return super().form_invalid(form)
+        return HttpResponseClientRefresh()
 
 
 @method_decorator(staff_required, name="dispatch")
@@ -514,7 +526,6 @@ class AwaitingReviewSubmissionsListView(SingleTableMixin, ListView):
 class SubmissionAdminListView(BaseAdminSubmissionsTable, DelegateableListView):
     template_name = "funds/submissions.html"
     form_views = [
-        BatchDeleteSubmissionView,
         BatchArchiveSubmissionView,
     ]
 
@@ -577,7 +588,6 @@ class SubmissionsByStatus(BaseAdminSubmissionsTable, DelegateableListView):
     template_name = "funds/submissions_by_status.html"
     status_mapping = PHASES_MAPPING
     form_views = [
-        BatchDeleteSubmissionView,
         BatchArchiveSubmissionView,
     ]
 

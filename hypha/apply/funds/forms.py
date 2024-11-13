@@ -172,11 +172,10 @@ class BatchUpdateSubmissionLeadForm(forms.Form):
 
 class BatchDeleteSubmissionForm(forms.Form):
     submissions = forms.CharField(
-        widget=forms.HiddenInput(attrs={"class": "js-submissions-id"})
+        widget=forms.HiddenInput(attrs={"id": "js-submissions-id"})
     )
 
-    def __init__(self, *args, round=None, **kwargs):
-        self.user = kwargs.pop("user")
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
     def clean_submissions(self):
