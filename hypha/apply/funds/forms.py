@@ -7,6 +7,7 @@ import nh3
 from django import forms
 from django.db.models import Q
 from django.utils.safestring import mark_safe
+from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from wagtail.signal_handlers import disable_reference_index_auto_update
 
@@ -81,18 +82,47 @@ class ProgressSubmissionForm(ApplicationSubmissionModelForm):
 class BatchProgressSubmissionForm(forms.Form):
     action = forms.ChoiceField(label=_("Take action"))
     submissions = forms.CharField(
-        widget=forms.HiddenInput(attrs={"class": "js-submissions-id"})
+        widget=forms.HiddenInput(attrs={"id": "js-submissions-id"})
     )
 
-    def __init__(self, *args, round=None, **kwargs):
-        self.user = kwargs.pop("user")
+    def __init__(
+        self,
+        *args,
+        user=None,
+        round=None,
+        selected_submissions=None,
+        all_actions=False,
+        **kwargs,
+    ):
+        self.user = user
         super().__init__(*args, **kwargs)
-        workflow = round and round.workflow
-        self.action_mapping = get_action_mapping(workflow)
-        choices = [
-            (action, detail["display"])
-            for action, detail in self.action_mapping.items()
-        ]
+        if all_actions:
+            valid_actions = get_action_mapping(workflow=None)
+            choices = [
+                (action, detail["display"]) for action, detail in valid_actions.items()
+            ]
+        else:
+            # add same valid actions as configured in js part for progress button toggle
+            if selected_submissions:
+                valid_actions = [
+                    (slugify(label), label)
+                    for _, label in list(
+                        selected_submissions[0].get_actions_for_user(user)
+                    )
+                ]
+            else:
+                valid_actions = []
+            for submission in selected_submissions[1:]:
+                action_labels = [
+                    slugify(action)
+                    for _, action in list(submission.get_actions_for_user(user))
+                ]
+                valid_actions = [
+                    (slugify(label), label)
+                    for _, label in valid_actions
+                    if slugify(label) in action_labels
+                ]
+            choices = valid_actions
         self.fields["action"].choices = choices
 
     def clean_submissions(self):
@@ -102,7 +132,7 @@ class BatchProgressSubmissionForm(forms.Form):
 
     def clean_action(self):
         value = self.cleaned_data["action"]
-        action = self.action_mapping[value]["transitions"]
+        action = get_action_mapping(workflow=None)[value]["transitions"]
         return action
 
 

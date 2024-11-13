@@ -375,74 +375,95 @@ class BatchArchiveSubmissionView(DelegatedViewMixin, FormView):
 
 
 @method_decorator(staff_required, name="dispatch")
-class BatchProgressSubmissionView(DelegatedViewMixin, FormView):
+class BatchProgressSubmissionView(FormView):
     form_class = BatchProgressSubmissionForm
     context_name = "batch_progress_form"
+    template_name = "funds/modals/batch_progress_form.html"
 
-    def form_valid(self, form):
-        submissions = form.cleaned_data["submissions"]
-        transitions = form.cleaned_data.get("action")
+    def get(self, *args, **kwargs):
+        selected_ids = self.request.GET.getlist("selected_ids", "")
+        submissions = ApplicationSubmission.objects.filter(id__in=selected_ids)
+        form = self.form_class(user=self.request.user, selected_submissions=submissions)
+        return render(
+            self.request,
+            self.template_name,
+            context={"form": form, "submissions": submissions},
+        )
 
-        try:
-            redirect = BatchDeterminationCreateView.should_redirect(
-                self.request, submissions, transitions
-            )
-        except ValueError as e:
-            messages.warning(self.request, "Could not determine: " + str(e))
-            return self.form_invalid(form)
-        else:
-            if redirect:
-                return redirect
+    def post(self, *args, **kwargs):
+        form = self.form_class(
+            self.request.POST, user=self.request.user, all_actions=True
+        )
+        if form.is_valid():
+            submissions = form.cleaned_data["submissions"]
+            transitions = form.cleaned_data.get("action")
 
-        failed = []
-        phase_changes = {}
-        for submission in submissions:
-            valid_actions = {
-                action
-                for action, _ in submission.get_actions_for_user(self.request.user)
-            }
-            old_phase = submission.phase
             try:
-                transition = (valid_actions & set(transitions)).pop()
-                submission.perform_transition(
-                    transition,
-                    self.request.user,
-                    request=self.request,
-                    notify=False,
+                redirect = BatchDeterminationCreateView.should_redirect(
+                    self.request, submissions, transitions
                 )
-            except (PermissionDenied, KeyError):
-                failed.append(submission)
+            except ValueError as e:
+                messages.warning(self.request, "Could not determine: " + str(e))
+                return HttpResponseClientRefresh()
             else:
-                phase_changes[submission.id] = old_phase
+                if redirect:
+                    return HttpResponseClientRedirect(redirect.url)
 
-        if failed:
-            messages.warning(
-                self.request,
-                _("Failed to update: ")
-                + ", ".join(str(submission) for submission in failed),
+            failed = []
+            phase_changes = {}
+            for submission in submissions:
+                valid_actions = {
+                    action
+                    for action, _ in submission.get_actions_for_user(self.request.user)
+                }
+                old_phase = submission.phase
+                try:
+                    transition = (valid_actions & set(transitions)).pop()
+                    submission.perform_transition(
+                        transition,
+                        self.request.user,
+                        request=self.request,
+                        notify=False,
+                    )
+                except (PermissionDenied, KeyError):
+                    failed.append(submission)
+                else:
+                    phase_changes[submission.id] = old_phase
+
+            if failed:
+                messages.warning(
+                    self.request,
+                    _("Failed to update: ")
+                    + ", ".join(str(submission) for submission in failed),
+                )
+
+            succeeded_submissions = submissions.exclude(
+                id__in=[submission.id for submission in failed]
             )
-
-        succeeded_submissions = submissions.exclude(
-            id__in=[submission.id for submission in failed]
-        )
-        messenger(
-            MESSAGES.BATCH_TRANSITION,
-            user=self.request.user,
-            request=self.request,
-            sources=succeeded_submissions,
-            related=phase_changes,
-        )
-
-        ready_for_review = [phase for phase in transitions if phase in review_statuses]
-        if ready_for_review:
             messenger(
-                MESSAGES.BATCH_READY_FOR_REVIEW,
+                MESSAGES.BATCH_TRANSITION,
                 user=self.request.user,
                 request=self.request,
-                sources=succeeded_submissions.filter(status__in=ready_for_review),
+                sources=succeeded_submissions,
+                related=phase_changes,
             )
 
-        return super().form_valid(form)
+            ready_for_review = [
+                phase for phase in transitions if phase in review_statuses
+            ]
+            if ready_for_review:
+                messenger(
+                    MESSAGES.BATCH_READY_FOR_REVIEW,
+                    user=self.request.user,
+                    request=self.request,
+                    sources=succeeded_submissions.filter(status__in=ready_for_review),
+                )
+            return HttpResponseClientRefresh()
+        messages.error(
+            self.request,
+            mark_safe(_("Sorry something went wrong") + form.errors.as_ul()),
+        )
+        return HttpResponseClientRefresh()
 
 
 class BaseReviewerSubmissionsTable(BaseAdminSubmissionsTable):
@@ -493,7 +514,6 @@ class AwaitingReviewSubmissionsListView(SingleTableMixin, ListView):
 class SubmissionAdminListView(BaseAdminSubmissionsTable, DelegateableListView):
     template_name = "funds/submissions.html"
     form_views = [
-        BatchProgressSubmissionView,
         BatchDeleteSubmissionView,
         BatchArchiveSubmissionView,
     ]
@@ -557,7 +577,6 @@ class SubmissionsByStatus(BaseAdminSubmissionsTable, DelegateableListView):
     template_name = "funds/submissions_by_status.html"
     status_mapping = PHASES_MAPPING
     form_views = [
-        BatchProgressSubmissionView,
         BatchDeleteSubmissionView,
         BatchArchiveSubmissionView,
     ]

@@ -15,12 +15,7 @@
                     <p class="actions-bar__total"><span class="js-total-actions">0</span> {% trans "Selected" %}</p>
 
                     {% if not project_actions %}
-                        <button
-                            data-fancybox
-                            type="button"
-                            data-src="#batch-progress"
-                            class="button button--action js-batch-button js-batch-progress"
-                        >
+                        <button class="button button--action js-batch-button js-batch-progress" href="{% url 'apply:submissions:bulk_progress' %}" hx-target="#htmx-modal">
                             {% heroicon_mini "arrows-right-left" class="inline" aria_hidden=true %}
                             {% trans "Status" %}
                         </button>
@@ -142,7 +137,6 @@
 </div>
 
 {% if use_batch_actions %}
-    {% include "funds/includes/batch_progress_form.html" %}
     {% include "funds/includes/batch_delete_submission_form.html" %}
     {% include "funds/includes/batch_archive_submission_form.html" %}
     {% if project_actions %}
