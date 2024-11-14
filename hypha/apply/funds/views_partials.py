@@ -28,12 +28,15 @@ from hypha.apply.funds.models.screening import ScreeningStatus
 from hypha.apply.funds.permissions import has_permission
 from hypha.apply.funds.reviewers.services import get_all_reviewers
 from hypha.apply.funds.services import annotate_review_recommendation_and_count
-from hypha.apply.funds.templatetags.submission_tags import doc_title
 from hypha.apply.review.options import REVIEWER
 from hypha.apply.users.roles import REVIEWER_GROUP_NAME
 
 if settings.APPLICATION_TRANSLATIONS_ENABLED:
-    from hypha.apply.translate.utils import get_lang_name, get_translation_params
+    from hypha.apply.translate.utils import (
+        get_lang_name,
+        get_translation_params,
+        translate_application_form_data,
+    )
 
 from . import services
 from .models import ApplicationSubmission, Round
@@ -554,7 +557,7 @@ def partial_translate_answers(request: HttpRequest, pk: int) -> HttpResponse:
     if params and not params[0] == params[1] and not params == prev_params:
         from_lang, to_lang = params
         try:
-            submission.form_data = services.translate_submission_form_data(
+            submission.form_data = translate_application_form_data(
                 submission, from_lang, to_lang
             )
 
@@ -597,7 +600,7 @@ def partial_translate_answers(request: HttpRequest, pk: int) -> HttpResponse:
             {
                 "translatedSubmission": {
                     "appTitle": title,
-                    "docTitle": doc_title(submission),
+                    "docTitle": submission.title_text_display,
                 }
             }
         )
