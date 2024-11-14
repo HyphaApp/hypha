@@ -3,6 +3,8 @@ from django.views.generic import RedirectView
 
 from .views import (
     CategoryTemplatePrivateMediaView,
+    ChangeInvoiceStatusView,
+    ChangePAFStatusView,
     ContractDocumentPrivateMediaView,
     ContractPrivateMediaView,
     CreateInvoiceView,
@@ -19,14 +21,24 @@ from .views import (
     ProjectPrivateMediaView,
     ProjectSOWDownloadView,
     ProjectSOWView,
+    RemoveDocumentView,
     ReportDetailView,
     ReportListView,
     ReportPrivateMedia,
     ReportSkipView,
     ReportUpdateView,
+    SendForApprovalView,
+    SkipPAFApprovalProcessView,
+    UpdateAssignApproversView,
+    UpdatePAFApproversView,
+    UploadDocumentView,
     get_invoices_status_counts,
     get_project_status_counts,
+    partial_get_invoice_detail_actions,
+    partial_get_invoice_status,
+    partial_get_invoice_status_table,
     partial_project_activities,
+    partial_supporting_documents,
 )
 
 app_name = "projects"
@@ -50,6 +62,44 @@ urlpatterns = [
                     name="partial-activities",
                 ),
                 path("edit/", ProjectFormEditView.as_view(), name="edit"),
+                path(
+                    "paf/skip/", SkipPAFApprovalProcessView.as_view(), name="paf_skip"
+                ),
+                path(
+                    "documents/submit/",
+                    SendForApprovalView.as_view(),
+                    name="submit_project_for_approval",
+                ),
+                path(
+                    "pafapprovers/assign/",
+                    UpdateAssignApproversView.as_view(),
+                    name="assign_pafapprovers",
+                ),
+                path(
+                    "pafapprovers/update/",
+                    UpdatePAFApproversView.as_view(),
+                    name="update_pafapprovers",
+                ),
+                path(
+                    "pafstatus/update/",
+                    ChangePAFStatusView.as_view(),
+                    name="update_pafstatus",
+                ),
+                path(
+                    "document/<int:category_pk>/upload/",
+                    UploadDocumentView.as_view(),
+                    name="supporting_doc_upload",
+                ),
+                path(
+                    "document/<int:document_pk>/remove/",
+                    RemoveDocumentView.as_view(),
+                    name="remove_supporting_document",
+                ),
+                path(
+                    "partial/documents/",
+                    partial_supporting_documents,
+                    name="supporting_documents",
+                ),
                 path(
                     "documents/<int:file_pk>",
                     ProjectPrivateMediaView.as_view(),
@@ -89,6 +139,17 @@ urlpatterns = [
                 ),
                 path("invoice/", CreateInvoiceView.as_view(), name="invoice"),
                 path(
+                    "partial/invoice-status/",
+                    partial_get_invoice_status_table,
+                    name="partial-invoices-status",
+                ),
+                path(
+                    "partial/rejected-invoice-status/",
+                    partial_get_invoice_status_table,
+                    {"rejected": True},
+                    name="partial-rejected-invoices-status",
+                ),
+                path(
                     "invoices/<int:invoice_pk>/",
                     include(
                         [
@@ -97,9 +158,24 @@ urlpatterns = [
                                 "edit/", EditInvoiceView.as_view(), name="invoice-edit"
                             ),
                             path(
+                                "update/",
+                                ChangeInvoiceStatusView.as_view(),
+                                name="invoice-update",
+                            ),
+                            path(
                                 "delete/",
                                 DeleteInvoiceView.as_view(),
                                 name="invoice-delete",
+                            ),
+                            path(
+                                "partial/status/",
+                                partial_get_invoice_status,
+                                name="partial-invoice-status",
+                            ),
+                            path(
+                                "actions/",
+                                partial_get_invoice_detail_actions,
+                                name="partial-invoice-detail-actions",
                             ),
                             path(
                                 "documents/invoice/",

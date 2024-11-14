@@ -1,0 +1,43 @@
+{% load i18n invoice_tools heroicons %}
+
+<div class="flex-none">
+    <p><b>{% trans "Status" %}: </b></p>
+</div>
+<div class="ps-2">
+    {% extract_status latest_activity user as latest_activity_status %}
+    {% get_comment_for_invoice_action object latest_activity as latest_activity_comment %}
+    <p>{{ latest_activity_status }} {% if user.is_applicant and latest_activity.user != user %} ({{ ORG_SHORT_NAME }}){% else %}({{ latest_activity.user }}){% endif %}
+        <span class="text-gray-400">{{ latest_activity.timestamp }}</span>
+        {% if latest_activity_comment %}
+            <svg class="w-5 h-5 me-1 mt-1"><use xlink:href="#request-changes"></use></svg>
+            <a href="{% url 'apply:projects:detail' pk=object.project.id %}#communications#{{ latest_activity_comment.id }}" class="font-bold" target="_blank">{% trans "View comment" %}</a>
+        {% endif %}
+    </p>
+    {% for activity in activities %}
+        {% extract_status activity user as activity_status %}
+        {% get_comment_for_invoice_action object activity as activity_comment %}
+        <p x-show="!collapsed">{{ activity_status }} {% if user.is_applicant and activity.user != user %} ({{ ORG_SHORT_NAME }}){% else %}({{ activity.user }}){% endif %}
+            <span class="text-gray-400">{{ activity.timestamp }}</span>
+            {% if activity_comment %}
+                <svg class="w-5 h-5 me-1 mt-1"><use xlink:href="#request-changes"></use></svg>
+                <a href="{% url 'apply:projects:detail' pk=object.project.id %}#communications#{{ activity_comment.id }}" class="font-bold" target="_blank">{% trans "View comment" %}</a>
+            {% endif %}
+        </p>
+    {% endfor %}
+</div>
+{% if activities %}
+    <button
+        type="button"
+        class="flex-1 font-bold transition-opacity text-light-blue text-end hover:opacity-70"
+        x-on:click="collapsed = ! collapsed"
+    >
+        <span x-show="collapsed">
+            {% trans "Show" %}
+            {% heroicon_mini "arrow-down" class="inline align-text-bottom" aria_hidden=true %}
+        </span>
+        <span x-show="!collapsed">
+            {% trans "Hide" %}
+            {% heroicon_mini "arrow-up" class="inline align-text-bottom" aria_hidden=true %}
+        </span>
+    </button>
+{% endif %}

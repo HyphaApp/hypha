@@ -74,6 +74,7 @@ class ScoreFieldWithoutTextBlock(OptionalFormFieldBlock):
 
     name = "score without text"
     field_class = forms.ChoiceField
+    widget = forms.Select(attrs={"data-score-field": "true"})
 
     class Meta:
         icon = "order"

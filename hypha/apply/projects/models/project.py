@@ -19,15 +19,17 @@ from django.utils.translation import gettext_lazy as _
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from modelcluster.models import ClusterableModel
 from wagtail.admin.panels import FieldPanel, InlinePanel, MultiFieldPanel
-from wagtail.contrib.settings.models import BaseSiteSetting
+from wagtail.contrib.settings.models import BaseSiteSetting, register_setting
 from wagtail.fields import StreamField
 from wagtail.models import Orderable
 
 from hypha.apply.funds.models.mixins import AccessFormData
 from hypha.apply.stream_forms.files import StreamFieldDataEncoder
 from hypha.apply.stream_forms.models import BaseStreamForm
+from hypha.apply.users.roles import ROLES_ORG_FACULTY
 from hypha.apply.utils.storage import PrivateStorage
 
+from ..admin_forms import ContractDocumentCategoryAdminForm
 from ..blocks import ProjectFormCustomFormFieldsBlock
 
 logger = logging.getLogger(__name__)
@@ -488,6 +490,27 @@ class PAFReviewersRole(Orderable, ClusterableModel):
         return str(self.label)
 
 
+class ProjectReminderFrequency(Orderable, ClusterableModel):
+    reminder_days = models.IntegerField()
+    page = ParentalKey("ProjectSettings", related_name="reminder_frequencies")
+
+    class FrequencyRelation(models.TextChoices):
+        BEFORE = "BE", _("Before")
+        AFTER = "AF", _("After")
+
+    relation = models.CharField(
+        max_length=2,
+        choices=FrequencyRelation.choices,
+        default=FrequencyRelation.BEFORE,
+    )
+
+    panels = [
+        FieldPanel("reminder_days", heading=_("Number of days")),
+        FieldPanel("relation", heading=_("Relation to report due date")),
+    ]
+
+
+@register_setting
 class ProjectSettings(BaseSiteSetting, ClusterableModel):
     contracting_gp_email = models.TextField(
         "Contracting Group Email", null=True, blank=True
@@ -516,6 +539,14 @@ class ProjectSettings(BaseSiteSetting, ClusterableModel):
                 "Reviewer Roles are needed to move projects to 'Internal Approval' stage. "
                 "Delete all roles to skip internal approval process and "
                 "to move all internal approval projects back to the 'Draft' stage with all approvals removed."
+            ),
+        ),
+        InlinePanel(
+            "reminder_frequencies",
+            label=_("Report reminder frequency"),
+            heading=_("Report reminder frequency"),
+            help_text=_(
+                "Set up a cron job to run `notify_report_due.py`. The script will use these reminder settings."
             ),
         ),
     ]
@@ -623,19 +654,6 @@ class PacketFile(models.Model):
     class Meta:
         ordering = ("-created_at",)
 
-    def get_remove_form(self):
-        """
-        Get an instantiated RemoveDocumentForm with this class as `instance`.
-
-        This allows us to build instances of the RemoveDocumentForm for each
-        instance of PacketFile in the supporting documents template.  The
-        standard Delegated View flow makes it difficult to create these forms
-        in the view or template.
-        """
-        from ..forms import RemoveDocumentForm
-
-        return RemoveDocumentForm(instance=self)
-
 
 @receiver(post_delete, sender=PacketFile)
 def delete_packetfile_file(sender, instance, **kwargs):
@@ -711,6 +729,14 @@ class DocumentCategory(models.Model):
 class ContractDocumentCategory(models.Model):
     name = models.CharField(max_length=254)
     recommended_minimum = models.PositiveIntegerField(null=True, blank=True)
+    document_access_view = models.ManyToManyField(
+        Group,
+        limit_choices_to={"name__in": ROLES_ORG_FACULTY},
+        verbose_name=_("Allow document access for groups"),
+        help_text=_("Only selected group's users can access the document"),
+        related_name="contract_document_category",
+        blank=True,
+    )
     required = models.BooleanField(default=True)
     template = models.FileField(
         upload_to=contract_document_template_path,
@@ -729,8 +755,11 @@ class ContractDocumentCategory(models.Model):
     panels = [
         FieldPanel("name"),
         FieldPanel("required"),
+        FieldPanel("document_access_view", widget=forms.CheckboxSelectMultiple),
         FieldPanel("template"),
     ]
+
+    base_form_class = ContractDocumentCategoryAdminForm
 
 
 class Deliverable(models.Model):

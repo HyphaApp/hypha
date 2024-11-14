@@ -17,7 +17,7 @@ from hypha.apply.activity.options import MESSAGES
 from hypha.apply.stream_forms.models import AbstractStreamForm
 from hypha.apply.todo.options import SUBMISSION_DRAFT
 from hypha.apply.todo.views import add_task_to_user
-from hypha.apply.users.groups import (
+from hypha.apply.users.roles import (
     COMMUNITY_REVIEWER_GROUP_NAME,
     PARTNER_GROUP_NAME,
     REVIEWER_GROUP_NAME,

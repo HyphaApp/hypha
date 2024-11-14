@@ -75,7 +75,9 @@
         e.target.closest(".filters").classList.remove(filterOpenClass);
     });
 
-    // redirect to submissions home to clear filters
+    /**
+     * Redirect to submissions home to clear filters.
+     */
     function handleClearFilters() {
         const query = persistedParams.reduce(
             (query, param) =>
@@ -88,7 +90,11 @@
         window.location.href = window.location.href.split("?")[0] + query;
     }
 
-    // toggle filters button wording
+    /**
+     * Toggle filters button wording.
+     * @param {object} button - button element
+     * @param {string} filters - filters element
+     */
     function updateButtonText(button, filters) {
         if (filters.classList.contains(filterOpenClass)) {
             button.textContent = "Clear filters";
@@ -97,7 +103,10 @@
         }
     }
 
-    // corrects spacing of dropdowns when toggled on mobile
+    /**
+     * Corrects spacing of dropdowns when toggled on mobile.
+     * @param {object} element - element to adjust padding for
+     */
     function mobileFilterPadding(element) {
         const expanded = "expanded-filter-element";
         const dropdown = $(element).closest(".select2");

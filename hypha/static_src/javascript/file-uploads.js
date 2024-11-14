@@ -14,6 +14,10 @@ jQuery(function ($) {
             }
         });
 
+    /**
+     * Initialize django-file-form for a form.
+     * @param {object} form The form to initialize.
+     */
     function init(form) {
         if ($(".form__group--file").length) {
             window.initUploadFields(form);

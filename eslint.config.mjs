@@ -25,6 +25,7 @@ export default [
                 ...globals.browser,
                 ...globals.commonjs,
                 jQuery: true,
+                Alpine: true,
             },
         },
 

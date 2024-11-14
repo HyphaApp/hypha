@@ -1,6 +1,12 @@
 {% extends "base-apply.html" %}
-{% load i18n %}
+{% load i18n static %}
 {% block title %}{{ title }}{% endblock %}
+
+{% block alpine_scripts %}
+    {{ block.super }}
+    <script defer src="{% static 'js/behaviours/review-score.js' %}"></script>
+{% endblock %}
+
 {% block content %}
 
     {% adminbar %}
@@ -12,8 +18,19 @@
 
     {% include "forms/includes/form_errors.html" with form=form %}
 
-    <div class="wrapper wrapper--medium wrapper--inner-space-medium">
-        <form class="form form--with-p-tags form--scoreable" action="" method="post" novalidate>
+    <div class="my-8 relative" x-data="reviewScore">
+        <!-- Review score sticky display -->
+        <div class="absolute h-full right-0 top-0 hidden lg:block">
+            <div
+                class="bg-arsenic text-white font-semibold inline-block px-3 py-1.5 mt-1 text-center sticky top-1"
+                x-clock
+                x-show="showScore"
+            >
+                {% trans "Score:" %} <span x-text="totalScore">-</span>
+            </div>
+        </div>
+
+        <form id="review-form-edit" class="form form--scoreable max-w-3xl" action="" method="post" novalidate>
             {{ form.media }}
             {% csrf_token %}
 
@@ -22,7 +39,7 @@
             {% endfor %}
 
             {% for field in form.visible_fields %}
-        {# to be replaced with better logic when we use stream form #}
+                {# to be replaced with better logic when we use stream form #}
                 {% ifchanged field.field.group %}
                     {% for key, value in form.titles.items %}
                         {% if key == field.field.group %}
@@ -37,10 +54,33 @@
                     {{ field }}
                 {% endif %}
             {% endfor %}
-            {% if not object.id or object.is_draft %}
-                <button class="button button--submit button--top-space button--white" type="submit" name="{{ form.draft_button_name }}">{% trans "Save draft" %}</button>
-            {% endif %}
-            <button class="button button--submit button--top-space button--primary" type="submit" name="submit">{% trans "Submit" %}</button>
+            <div class="flex gap-4 items-center flex-wrap">
+
+                <button
+                    class="button button--primary min-w-48"
+                    type="submit"
+                    name="submit"
+                >
+                    {% trans "Submit" %}
+                </button>
+
+                {% if not object.id or object.is_draft %}
+                    <button class="button button--white"
+                            type="submit"
+                            name="{{ form.draft_button_name }}"
+                    >
+                        {% trans "Save draft" %}
+                    </button>
+                {% endif %}
+
+                <div class="text-fg-muted" x-clock x-show="showScore">
+                    {% trans "Total Score:" %} <span x-text="totalScore"></span>
+                </div>
+            </div>
         </form>
     </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/review-form-actions.js' %}"></script>
 {% endblock %}

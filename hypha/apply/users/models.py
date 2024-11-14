@@ -1,5 +1,5 @@
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth.models import AbstractUser, BaseUserManager, Group
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core import exceptions
 from django.db import IntegrityError, models
 from django.db.models.constants import LOOKUP_SEP
@@ -12,7 +12,7 @@ from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 from wagtail.contrib.settings.models import BaseGenericSetting, register_setting
 from wagtail.fields import RichTextField
 
-from .groups import (
+from .roles import (
     APPLICANT_GROUP_NAME,
     APPROVER_GROUP_NAME,
     COMMUNITY_REVIEWER_GROUP_NAME,
@@ -354,27 +354,6 @@ class AuthSettings(BaseGenericSetting):
             _("Login form customizations"),
         ),
     ]
-
-
-class GroupDesc(models.Model):
-    group = models.OneToOneField(Group, on_delete=models.CASCADE, primary_key=True)
-    help_text = models.CharField(verbose_name="Help Text", max_length=255)
-
-    @staticmethod
-    def get_from_group(group_obj: Group) -> str | None:
-        """
-        Get the group description/help text string from a Group object. Returns None if group doesn't have a help text entry.
-
-        Args:
-            group_obj (Group): The group to retrieve the description of.
-        """
-        try:
-            return GroupDesc.objects.get(group_id=group_obj.id).help_text
-        except (exceptions.ObjectDoesNotExist, exceptions.FieldError):
-            return None
-
-    def __str__(self):
-        return self.help_text
 
 
 class PendingSignup(models.Model):

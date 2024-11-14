@@ -1,17 +1,12 @@
 {% extends "base-apply.html" %}
 {% load i18n static workflow_tags wagtailcore_tags statusbar_tags archive_tags submission_tags translate_tags %}
 {% load heroicons %}
+{% load can from permission_tags %}
 
-{% block title %}{{ object|doc_title }}{% endblock %}
+{% block title %}{{ object.title_text_display }}{% endblock %}
 {% block body_class %}{% endblock %}
 
 {% block content %}
-    {% if object.round.specific.is_sealed %}
-        <ul class="messages">
-            {% trans "This submission is sealed" as warning_message %}
-            {% include "includes/message_item.html" with message=warning_message tag="warning" close=False %}
-        </ul>
-    {% endif %}
     <div class="admin-bar">
         <div class="admin-bar__inner">
             {% if request.GET.ref == 'all-alt' %}
@@ -31,7 +26,7 @@
                 {% if object.round %}
                     {% if request.user.is_apply_staff %}
                         <span>
-                            <a class="link--transparent link--underlined"
+                            <a class="text-white underline"
                                href="{% url 'apply:submissions:list' %}?round={{ object.round.pk }}"
                             >{{ object.round }}</a>
                         </span>
@@ -89,6 +84,13 @@
         </div>
     {% endif %}
 
+    {% if object.round.specific.is_sealed %}
+        <div class="py-2 font-bold text-center text-white bg-red-600">
+            {% heroicon_outline "clock" aria_hidden="true" size=16 stroke_width=2 class="inline align-baseline me-1" %}
+            {% trans "This submission is sealed" %}
+        </div>
+    {% endif %}
+
     <div class="wrapper wrapper--large wrapper--tabs js-tabs-content">
     {# Tab 1 #}
         <div class="tabs__content" id="tab-1">
@@ -122,7 +124,7 @@
                                 </strong>
                             </span>
                             <div class="flex gap-4 justify-end flex-1 items-center">
-                                {% user_can_delete_submission object request.user as can_delete_submission %}
+                                {% can "delete_submission" object as can_delete_submission %}
                                 {% if can_delete_submission %}
                                     <a
                                         class="flex items-center font-bold text-red-600 transition-opacity hover:opacity-70"
@@ -191,15 +193,15 @@
 
                     {% block related %}
                         {% if other_submissions or object.previous or object.next %}
-                            <div class="sidebar__inner related-sidebar">
+                            <div class="sidebar__inner">
                                 <h5>{% trans "Related submissions" %}</h5>
 
                                 {% if object.previous %}
-                                    <p class="mb-4"><a class="link link--underlined link--bold" href="{% url 'funds:submissions:detail' object.previous.id %}">{% trans "View linked" %} {{ object.previous.stage }}</a></p>
+                                    <p class="mb-4"><a class="underline font-bold" href="{% url 'funds:submissions:detail' object.previous.id %}">{% trans "View linked" %} {{ object.previous.stage }}</a></p>
                                 {% endif %}
 
                                 {% if object.next %}
-                                    <p class="mb-4"><a class="link link--underlined link--bold" href="{% url 'funds:submissions:detail' object.next.id %}">{% trans "View linked" %} {{ object.next.stage }}</a></p>
+                                    <p class="mb-4"><a class="underline font-bold" href="{% url 'funds:submissions:detail' object.next.id %}">{% trans "View linked" %} {{ object.next.stage }}</a></p>
                                 {% endif %}
 
                                 <section class="flex flex-col gap-2" data-js-collapse>
@@ -210,7 +212,7 @@
                                             </h6>
                                         {% endif %}
                                         <div>
-                                            <a class="link link--bold line-clamp-2 hover:underline" href="{% url 'funds:submissions:detail' submission.id %}">
+                                            <a class="font-bold line-clamp-2 hover:underline" href="{% url 'funds:submissions:detail' submission.id %}">
                                                 {{ submission.title }}
                                             </a>
                                             <div class="text-sm text-fg-muted">

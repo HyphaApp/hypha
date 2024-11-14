@@ -11,6 +11,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from hypha.apply.funds.tests.factories import LabSubmissionFactory
+from hypha.apply.projects.utils import get_invoice_status_display_value
 from hypha.apply.users.tests.factories import (
     ApplicantFactory,
     ApproverFactory,
@@ -27,7 +28,7 @@ from hypha.home.factories import ApplySiteFactory
 from ...funds.models.forms import ApplicationBaseProjectReportForm
 from ..files import get_files
 from ..forms import SetPendingForm
-from ..models.payment import CHANGES_REQUESTED_BY_STAFF, SUBMITTED
+from ..models.payment import CHANGES_REQUESTED_BY_STAFF, DECLINED, SUBMITTED
 from ..models.project import (
     APPROVE,
     CLOSING,
@@ -139,7 +140,7 @@ class TestSendForApprovalView(BaseViewTestCase):
     def test_send_for_approval_happy_path(self):
         project = ProjectFactory(is_locked=False, status=DRAFT)
 
-        response = self.post_page(project, {"form-submitted-request_approval_form": ""})
+        response = self.post_page(project, {}, view_name="submit_project_for_approval")
         self.assertEqual(response.status_code, 200)
 
         project.refresh_from_db()
@@ -190,7 +191,7 @@ class TestChangePAFStatusView(BaseViewTestCase):
         )
 
         response = self.post_page(
-            project, {"form-submitted-change_paf_status": "", "paf_status": APPROVE}
+            project, {"paf_status": APPROVE}, view_name="update_pafstatus"
         )
         self.assertEqual(response.status_code, 403)
 
@@ -204,7 +205,7 @@ class TestChangePAFStatusView(BaseViewTestCase):
         )
 
         response = self.post_page(
-            project, {"form-submitted-change_paf_status": "", "paf_status": APPROVE}
+            project, {"paf_status": APPROVE}, view_name="update_pafstatus"
         )
         self.assertEqual(response.status_code, 403)
 
@@ -218,7 +219,9 @@ class TestChangePAFStatusView(BaseViewTestCase):
         )
 
         response = self.post_page(
-            project, {"form-submitted-change_paf_status": "", "paf_status": APPROVE}
+            project,
+            {"paf_status": APPROVE},
+            view_name="update_pafstatus",
         )
         self.assertEqual(response.status_code, 403)
 
@@ -231,7 +234,9 @@ class TestChangePAFStatusView(BaseViewTestCase):
         )
 
         response = self.post_page(
-            project, {"form-submitted-change_paf_status": "", "paf_status": APPROVE}
+            project,
+            {"paf_status": APPROVE},
+            view_name="update_pafstatus",
         )
 
         self.assertEqual(response.status_code, 200)
@@ -252,7 +257,8 @@ class TestChangePAFStatusView(BaseViewTestCase):
 
         response = self.post_page(
             project,
-            {"form-submitted-change_paf_status": "", "paf_status": REQUEST_CHANGE},
+            {"paf_status": REQUEST_CHANGE},
+            view_name="update_pafstatus",
         )
 
         self.assertEqual(response.status_code, 200)
@@ -519,26 +525,31 @@ class TestUploadDocumentView(BaseViewTestCase):
     url_name = "funds:projects:{}"
     user_factory = StaffFactory
 
+    def setUp(self):
+        super().setUp()
+        self.category = DocumentCategoryFactory()
+
     def get_kwargs(self, instance):
-        return {"pk": instance.id}
+        return {"pk": instance.id, "category_pk": self.category.id}
 
     def test_upload_document(self):
-        category = DocumentCategoryFactory()
         project = ProjectFactory()
 
         test_doc = BytesIO(b"somebinarydata")
         test_doc.name = "test_document.pdf"
 
+        self.assertEqual(project.packet_files.count(), 0)
+
         response = self.post_page(
             project,
             {
-                "form-submitted-document_form": "",
                 "title": "test document",
-                "category": category.id,
+                "category": self.category.id,
                 "document": test_doc,
             },
+            view_name="supporting_doc_upload",
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 204)
 
         project.refresh_from_db()
 
@@ -824,7 +835,7 @@ class TestAnonPacketView(BasePacketFileViewTestCase):
         document = PacketFileFactory()
         response = self.get_page(document)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.redirect_chain), 2)
+        self.assertEqual(len(response.redirect_chain), 1)
         for path, _ in response.redirect_chain:
             self.assertIn(reverse(settings.LOGIN_URL), path)
 
@@ -1072,12 +1083,112 @@ class TestStaffChangeInvoiceStatus(BaseViewTestCase):
                 "comment": "this is a comment",
             },
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 204)
+        self.assertTrue("invoicesUpdated" in response.headers.get("HX-Trigger", ""))
         invoice.refresh_from_db()
         self.assertEqual(invoice.status, CHANGES_REQUESTED_BY_STAFF)
 
+    def test_can_view_updated_invoice_table(self):
+        project = ProjectFactory()
+        invoice = InvoiceFactory(project=project)
+        response = self.post_page(
+            invoice,
+            {
+                "form-submitted-change_invoice_status": "",
+                "status": CHANGES_REQUESTED_BY_STAFF,
+                "comment": "this is a comment",
+            },
+        )
+        self.assertEqual(response.status_code, 204)
+        self.assertTrue("invoicesUpdated" in response.headers.get("HX-Trigger", ""))
+        response = self.client.get(
+            reverse(
+                "apply:projects:partial-invoices-status", kwargs={"pk": project.pk}
+            ),
+            secure=True,
+            follow=True,
+        )
+        self.assertContains(
+            response, get_invoice_status_display_value(CHANGES_REQUESTED_BY_STAFF)
+        )
 
-class TestApplicantChangeInoviceStatus(BaseViewTestCase):
+    def test_can_view_updated_rejected_invoice_table(self):
+        project = ProjectFactory()
+        invoice = InvoiceFactory(project=project)
+        response = self.post_page(
+            invoice,
+            {
+                "form-submitted-change_invoice_status": "",
+                "status": DECLINED,
+                "comment": "this is a comment",
+            },
+        )
+        self.assertEqual(response.status_code, 204)
+        self.assertTrue("invoicesUpdated" in response.headers.get("HX-Trigger", ""))
+        self.assertTrue(
+            "rejectedInvoicesUpdated" in response.headers.get("HX-Trigger", "")
+        )
+        response = self.client.get(
+            reverse(
+                "apply:projects:partial-invoices-status", kwargs={"pk": project.pk}
+            ),
+            secure=True,
+            follow=True,
+        )
+        self.assertNotContains(response, get_invoice_status_display_value(DECLINED))
+
+        rejected_response = self.client.get(
+            reverse(
+                "apply:projects:partial-rejected-invoices-status",
+                kwargs={"pk": project.pk},
+            ),
+            secure=True,
+            follow=True,
+        )
+        self.assertContains(
+            rejected_response, get_invoice_status_display_value(DECLINED)
+        )
+
+    def test_can_view_updated_invoice_status(self):
+        project = ProjectFactory()
+        invoice = InvoiceFactory(project=project)
+
+        response = self.client.get(
+            reverse(
+                "apply:projects:partial-invoice-status",
+                kwargs={"pk": project.pk, "invoice_pk": invoice.pk},
+            ),
+            secure=True,
+            follow=True,
+        )
+        self.assertNotContains(
+            response, get_invoice_status_display_value(CHANGES_REQUESTED_BY_STAFF)
+        )
+
+        response = self.post_page(
+            invoice,
+            {
+                "form-submitted-change_invoice_status": "",
+                "status": CHANGES_REQUESTED_BY_STAFF,
+                "comment": "this is a comment",
+            },
+        )
+        self.assertEqual(response.status_code, 204)
+        self.assertTrue("invoicesUpdated" in response.headers.get("HX-Trigger", ""))
+        response = self.client.get(
+            reverse(
+                "apply:projects:partial-invoice-status",
+                kwargs={"pk": project.pk, "invoice_pk": invoice.pk},
+            ),
+            secure=True,
+            follow=True,
+        )
+        self.assertContains(
+            response, get_invoice_status_display_value(CHANGES_REQUESTED_BY_STAFF)
+        )
+
+
+class TestApplicantChangeInvoiceStatus(BaseViewTestCase):
     base_view_name = "invoice-detail"
     url_name = "funds:projects:{}"
     user_factory = ApplicantFactory
@@ -1112,7 +1223,7 @@ class TestApplicantChangeInoviceStatus(BaseViewTestCase):
         self.assertEqual(invoice.status, SUBMITTED)
 
 
-class TestStaffInoviceDocumentPrivateMedia(BaseViewTestCase):
+class TestStaffInvoiceDocumentPrivateMedia(BaseViewTestCase):
     base_view_name = "invoice-document"
     url_name = "funds:projects:{}"
     user_factory = StaffFactory
@@ -1269,9 +1380,7 @@ class TestStaffSubmitReport(BaseViewTestCase):
             report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "11"}
         )
         report.refresh_from_db()
-        self.assertRedirects(
-            response, self.absolute_url(report.project.get_absolute_url())
-        )
+        self.assertRedirects(response, report.project.get_absolute_url())
         self.assertEqual(
             report.versions.first().form_data,
             {"012a4f29-0882-4b1c-b567-aede1b601d4a": "11"},
@@ -1384,9 +1493,7 @@ class TestStaffSubmitReport(BaseViewTestCase):
             report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "29", "save": " Save"}
         )
         report.refresh_from_db()
-        self.assertRedirects(
-            response, self.absolute_url(report.project.get_absolute_url())
-        )
+        self.assertRedirects(response, report.project.get_absolute_url())
         self.assertEqual(
             report.versions.last().form_data["012a4f29-0882-4b1c-b567-aede1b601d4a"],
             "29",
@@ -1415,9 +1522,7 @@ class TestStaffSubmitReport(BaseViewTestCase):
             report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "31"}
         )
         report.refresh_from_db()
-        self.assertRedirects(
-            response, self.absolute_url(report.project.get_absolute_url())
-        )
+        self.assertRedirects(response, report.project.get_absolute_url())
         self.assertEqual(
             report.versions.last().form_data,
             {"012a4f29-0882-4b1c-b567-aede1b601d4a": "31"},
@@ -1515,9 +1620,7 @@ class TestApplicantSubmitReport(BaseViewTestCase):
             report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "37"}
         )
         report.refresh_from_db()
-        self.assertRedirects(
-            response, self.absolute_url(report.project.get_absolute_url())
-        )
+        self.assertRedirects(response, report.project.get_absolute_url())
         self.assertEqual(
             report.versions.first().form_data,
             {"012a4f29-0882-4b1c-b567-aede1b601d4a": "37"},
@@ -1571,9 +1674,7 @@ class TestApplicantSubmitReport(BaseViewTestCase):
             report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "43", "save": "Save"}
         )
         report.refresh_from_db()
-        self.assertRedirects(
-            response, self.absolute_url(report.project.get_absolute_url())
-        )
+        self.assertRedirects(response, report.project.get_absolute_url())
         self.assertEqual(
             report.versions.first().form_data,
             {"012a4f29-0882-4b1c-b567-aede1b601d4a": "43"},
@@ -1596,9 +1697,7 @@ class TestApplicantSubmitReport(BaseViewTestCase):
             report, {"012a4f29-0882-4b1c-b567-aede1b601d4a": "47"}
         )
         report.refresh_from_db()
-        self.assertRedirects(
-            response, self.absolute_url(report.project.get_absolute_url())
-        )
+        self.assertRedirects(response, report.project.get_absolute_url())
         self.assertEqual(
             report.versions.last().form_data,
             {"012a4f29-0882-4b1c-b567-aede1b601d4a": "47"},

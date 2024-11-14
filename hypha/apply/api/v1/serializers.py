@@ -14,7 +14,7 @@ from hypha.apply.funds.models import (
 )
 from hypha.apply.review.models import Review, ReviewOpinion
 from hypha.apply.review.options import RECOMMENDATION_CHOICES
-from hypha.apply.users.groups import PARTNER_GROUP_NAME, STAFF_GROUP_NAME
+from hypha.apply.users.roles import PARTNER_GROUP_NAME, STAFF_GROUP_NAME
 
 User = get_user_model()
 

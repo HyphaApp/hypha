@@ -1,3 +1,4 @@
+from bs4 import element
 from django.apps import apps
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
@@ -260,3 +261,32 @@ def annotate_review_recommendation_and_count(submissions: QuerySet) -> QuerySet:
         ),
     )
     return submissions
+
+
+def has_valid_str(tag: element.Tag) -> bool:
+    """Checks that an Tag contains a valid text element and/or string.
+
+    Args:
+        tag: a `bs4.element.Tag`
+    Returns:
+        bool: True if has a valid string that isn't whitespace or `-`
+    """
+    text_elem = tag.name in ["span", "p", "strong", "em", "td", "a"]
+
+    try:
+        # try block logic handles elements that have text directly in them
+        # ie. `<p>test</p>` or `<em>yeet!</em>` would return true as string values would be contained in tag.string
+        ret = bool(
+            text_elem
+            and tag.find(string=True, recursive=False)
+            and tag.string.strip(" -\n")
+        )
+        return ret
+    except AttributeError:
+        # except block logic handles embedded tag strings where tag.string == None but the specified tag DOES contain a string
+        # ie. `<p>Hypha is <strong>cool</strong></p>` contains the string "Hypha is" but due to the strong tag being mixed in will
+        # have None for the tag.string value.
+        # tags like `<p> <em>Hypha rocks</em> </p>` will return false as the <p> tag contains no valid strings, it's child does.
+        tag_contents = "".join(tag.find_all(string=True, recursive=False))
+        ret = bool(tag.text and tag.text.strip() and tag_contents.strip())
+        return ret

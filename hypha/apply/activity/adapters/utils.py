@@ -14,12 +14,12 @@ from hypha.apply.projects.models.payment import (
     RESUBMITTED,
     SUBMITTED,
 )
-from hypha.apply.users.groups import (
+from hypha.apply.users.models import User
+from hypha.apply.users.roles import (
     CONTRACTING_GROUP_NAME,
     FINANCE_GROUP_NAME,
     STAFF_GROUP_NAME,
 )
-from hypha.apply.users.models import User
 
 
 def link_to(target, request):
@@ -133,4 +133,4 @@ def get_users_for_groups(groups, user_queryset=None, exact_match=False):
             user_queryset = user_queryset.filter(groups__name=groups.pop().name)
         return get_users_for_groups(groups, user_queryset=user_queryset)
     else:
-        return user_queryset
+        return user_queryset if user_queryset is not None else set()

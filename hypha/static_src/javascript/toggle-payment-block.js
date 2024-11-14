@@ -1,4 +1,7 @@
 (function ($) {
+    /**
+     * Toggle payment block
+     */
     function togglePaymentBlock() {
         $(".js-payment-block-rejected-link").click(function (e) {
             e.preventDefault();

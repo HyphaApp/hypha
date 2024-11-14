@@ -1,11 +1,18 @@
 (function ($) {
-    // Strip html tags from text.
+    /**
+     * Strip html tags from text.
+     * @param {string} html - The html
+     * @returns {string} The text without html tags.
+     */
     function strip(html) {
         var doc = new DOMParser().parseFromString(html, "text/html");
         return doc.body.textContent.trim() || "";
     }
 
-    // Get all questions on the page/form.
+    /**
+     * Get all questions on the page/form.
+     * @returns {string} The questions and user input.
+     */
     function get_questions() {
         var questions_text = [];
         var i = 1;

@@ -22,7 +22,6 @@ class TestOAuthAccess(TestCase):
         self.assertRedirects(
             response,
             reverse(settings.LOGIN_URL) + "?next=" + reverse("users:oauth"),
-            status_code=301,
             target_status_code=200,
         )
 

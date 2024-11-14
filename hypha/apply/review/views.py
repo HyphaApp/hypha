@@ -67,7 +67,9 @@ class ReviewEditView(UserPassesTestMixin, BaseStreamForm, UpdateView):
     def get_context_data(self, **kwargs):
         review = self.get_object()
         return super().get_context_data(
-            submission=review.submission, title=_("Edit Review"), **kwargs
+            submission=review.submission,
+            title=_("Edit Review"),
+            **kwargs,
         )
 
     def get_defined_fields(self):

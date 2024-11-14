@@ -154,9 +154,7 @@ class TestStaffSubmissionView(BaseSubmissionViewTestCase):
             "funds:submissions:determinations:form",
             kwargs={"submission_pk": submission.id},
         )
-        self.assertEqual(
-            self.absolute_url(response.url), f"{url}?action=invited_to_proposal"
-        )
+        assert response.url == f"{url}?action=invited_to_proposal"
 
     def test_new_form_after_progress(self):
         submission = ApplicationSubmissionFactory(
@@ -1794,7 +1792,7 @@ class TestAnonSubmissionFileView(BaseSubmissionFileViewTestCase):
         submission = ApplicationSubmissionFactory()
         response = self.get_page(submission)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.redirect_chain), 2)
+        self.assertEqual(len(response.redirect_chain), 1)
         for path, _ in response.redirect_chain:
             self.assertIn(reverse(settings.LOGIN_URL), path)
 

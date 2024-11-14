@@ -1,0 +1,46 @@
+{% load i18n invoice_tools %}
+
+<h5>{% trans "Actions to take" %}</h5>
+{% can_edit object user as user_can_edit_request %}
+{% if user.is_apply_staff or user.is_applicant %}
+    <a
+        {% if not user_can_edit_request %}
+            data-tooltip="{% trans "Only editable when 'Submitted' or you have been requested to make changes" %}"
+        {% endif %}
+        class="button button--bottom-space button--primary button--full-width{% if not user_can_edit_request %} button--tooltip-disabled{% endif %}"
+        href={% if user_can_edit_request %}
+             "{% url "apply:projects:invoice-edit" pk=object.project.pk invoice_pk=object.pk %}"
+        {% else %}
+             "#"
+        {% endif %}
+    >
+        {% trans "Edit Invoice" %}
+    </a>
+{% endif %}
+{% can_delete object user as user_can_delete_request %}
+{% if user_can_delete_request %}
+    <a
+        class="button button--bottom-space button--primary button--full-width"
+        href="{% url 'apply:projects:invoice-delete' pk=object.project.pk invoice_pk=object.pk %}">
+        {% trans "Delete Invoice" %}
+    </a>
+{% endif %}
+
+{% if user.is_org_faculty %}
+    {% can_change_status object user as user_can_change_status %}
+    {% if user_can_change_status %}
+        <button class="button button--bottom-space button--primary button--full-width" hx-get="{% url 'apply:projects:invoice-update' pk=object.project.pk invoice_pk=object.pk %}" hx-target="#htmx-modal">
+            {% trans "Update Status" %}
+        </button>
+        <div class="modal" id="change-status">
+            <h4 class="modal__project-header-bar">{% trans "Update Invoice status" %}</h4>
+            <p>{% trans "Current status" %}: {{ object.status_display }}</p>
+            {% trans "Update Status" as update %}
+            {% include 'funds/includes/delegated_form_base.html' with form=change_invoice_status value=update %}
+        </div>
+    {% else %}
+        <button class="button button--bottom-space button--primary button--full-width" disabled>
+            {% trans "Update Status" %}
+        </button>
+    {% endif %}
+{% endif %}

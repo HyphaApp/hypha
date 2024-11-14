@@ -69,7 +69,7 @@ class DeterminationFormTestCase(BaseViewTestCase):
     def test_cant_access_wrong_status(self):
         submission = ApplicationSubmissionFactory(status="rejected")
         response = self.get_page(submission, "form")
-        self.assertRedirects(response, self.absolute_url(submission.get_absolute_url()))
+        self.assertRedirects(response, submission.get_absolute_url())
 
     def test_cant_resubmit_determination(self):
         submission = ApplicationSubmissionFactory(
@@ -81,7 +81,7 @@ class DeterminationFormTestCase(BaseViewTestCase):
         response = self.post_page(
             submission, {"data": "value", "outcome": determination.outcome}, "form"
         )
-        self.assertRedirects(response, self.absolute_url(submission.get_absolute_url()))
+        self.assertRedirects(response, submission.get_absolute_url())
 
     def test_can_edit_draft_determination(self):
         submission = ApplicationSubmissionFactory(
@@ -119,7 +119,7 @@ class DeterminationFormTestCase(BaseViewTestCase):
             submission, {"data": "value", "outcome": determination.outcome}, "form"
         )
         self.assertContains(response, "Approved")
-        self.assertRedirects(response, self.absolute_url(submission.get_absolute_url()))
+        self.assertRedirects(response, submission.get_absolute_url())
 
     def test_can_edit_draft_determination_if_not_lead_with_projects(self):
         submission = ApplicationSubmissionFactory(status="in_discussion")
@@ -130,7 +130,7 @@ class DeterminationFormTestCase(BaseViewTestCase):
             submission, {"data": "value", "outcome": determination.outcome}, "form"
         )
         self.assertContains(response, "Approved")
-        self.assertRedirects(response, self.absolute_url(submission.get_absolute_url()))
+        self.assertRedirects(response, submission.get_absolute_url())
 
     def test_sends_message_if_requires_more_info(self):
         submission = ApplicationSubmissionFactory(
@@ -172,7 +172,7 @@ class DeterminationFormTestCase(BaseViewTestCase):
         # Cannot use self.url() as that uses a different base.
         url = submission_next.get_absolute_url()
         self.assertRedirects(
-            response, self.factory.get(url, secure=True).build_absolute_uri(url)
+            response, self.factory.get(url, secure=False).get_full_path()
         )
         self.assertEqual(submission_original.status, "invited_to_proposal")
         self.assertEqual(submission_next.status, "draft_proposal")

@@ -177,7 +177,8 @@
                                             </div>
                                         {% else %}
                                             {% contract_category_latest_file project document_category as latest_file %}
-                                            {% if latest_file %}
+                                            {% can_access_category_document project user document_category as have_view_access %}
+                                            {% if latest_file and have_view_access %}
                                                 <div class="docs-block__row-inner">
                                                     <a class="docs-block__icon-link" href="{% url 'apply:projects:contract_document' pk=object.pk file_pk=latest_file.pk %}" target="_blank">
                                                         {% heroicon_micro "eye" class="inline me-1 w-4 h-4" aria_hidden=true %}
