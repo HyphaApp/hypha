@@ -65,7 +65,6 @@ from hypha.apply.review.models import Review
 from hypha.apply.stream_forms.blocks import GroupToggleBlock
 from hypha.apply.todo.options import PROJECT_WAITING_PAF
 from hypha.apply.todo.views import add_task_to_user
-from hypha.apply.translate.utils import get_lang_name, get_translation_params
 from hypha.apply.users.decorators import (
     is_apply_staff,
     staff_or_finance_required,
@@ -91,7 +90,6 @@ from .forms import (
     BatchUpdateSubmissionLeadForm,
     CreateReminderForm,
     ProgressSubmissionForm,
-    TranslateSubmissionForm,
     UpdateMetaTermsForm,
     UpdatePartnersForm,
     UpdateReviewersForm,
@@ -130,7 +128,6 @@ from .tables import (
 from .utils import (
     export_submissions_to_csv,
     format_submission_sum_value,
-    get_language_choices_json,
     is_filter_empty,
 )
 from .workflow import (
@@ -140,6 +137,15 @@ from .workflow import (
     active_statuses,
     review_statuses,
 )
+
+if settings.APPLICATION_TRANSLATIONS_ENABLED:
+    from hypha.apply.translate.forms import TranslateSubmissionForm
+    from hypha.apply.translate.utils import (
+        get_lang_name,
+        get_language_choices_json,
+        get_translation_params,
+        translate_application_form_data,
+    )
 
 User = get_user_model()
 
@@ -991,64 +997,77 @@ class UpdateMetaTermsView(View):
 class TranslateSubmissionView(View):
     template = "funds/includes/translate_application_form.html"
 
-    def dispatch(self, request, *args, **kwargs):
-        self.submission = get_object_or_404(ApplicationSubmission, id=kwargs.get("pk"))
-        if not request.user.is_org_faculty:
-            messages.warning(
-                self.request,
-                "User attempted to translate submission but is not org faculty",
+    if settings.APPLICATION_TRANSLATIONS_ENABLED:
+
+        def dispatch(self, request, *args, **kwargs):
+            self.submission = get_object_or_404(
+                ApplicationSubmission, id=kwargs.get("pk")
             )
-            return HttpResponseRedirect(self.submission.get_absolute_url())
-        return super(TranslateSubmissionView, self).dispatch(request, *args, **kwargs)
+            if not request.user.is_org_faculty:
+                messages.warning(
+                    self.request,
+                    "User attempted to translate submission but is not org faculty",
+                )
+                return HttpResponseRedirect(self.submission.get_absolute_url())
+            return super(TranslateSubmissionView, self).dispatch(
+                request, *args, **kwargs
+            )
 
-    def get(self, *args, **kwargs):
-        translate_form = TranslateSubmissionForm()
-        return render(
-            self.request,
-            self.template,
-            context={
-                "form": translate_form,
-                "value": _("Update"),
-                "object": self.submission,
-                "json_choices": get_language_choices_json(self.request),
-            },
-        )
-
-    def post(self, request, *args, **kwargs):
-        form = TranslateSubmissionForm(self.request.POST)
-
-        if form.is_valid():
-            FROM_LANG_KEY = "from_lang"
-            TO_LANG_KEY = "to_lang"
-
-            from_lang = form.cleaned_data[FROM_LANG_KEY]
-            to_lang = form.cleaned_data[TO_LANG_KEY]
-
-            return HttpResponse(
-                status=204,
-                headers={
-                    "HX-Trigger": json.dumps(
-                        {
-                            "translateSubmission": {
-                                FROM_LANG_KEY: from_lang,
-                                TO_LANG_KEY: to_lang,
-                            }
-                        }
-                    ),
+        def get(self, *args, **kwargs):
+            translate_form = TranslateSubmissionForm()
+            return render(
+                self.request,
+                self.template,
+                context={
+                    "form": translate_form,
+                    "value": _("Update"),
+                    "object": self.submission,
+                    "json_choices": get_language_choices_json(self.request),
                 },
             )
 
-        return render(
-            self.request,
-            self.template,
-            context={
-                "form": form,
-                "value": _("Update"),
-                "object": self.submission,
-                "json_choices": get_language_choices_json(self.request),
-            },
-            status=400,
-        )
+        def post(self, request, *args, **kwargs):
+            form = TranslateSubmissionForm(self.request.POST)
+
+            if form.is_valid():
+                FROM_LANG_KEY = "from_lang"
+                TO_LANG_KEY = "to_lang"
+
+                from_lang = form.cleaned_data[FROM_LANG_KEY]
+                to_lang = form.cleaned_data[TO_LANG_KEY]
+
+                return HttpResponse(
+                    status=204,
+                    headers={
+                        "HX-Trigger": json.dumps(
+                            {
+                                "translateSubmission": {
+                                    FROM_LANG_KEY: from_lang,
+                                    TO_LANG_KEY: to_lang,
+                                }
+                            }
+                        ),
+                    },
+                )
+
+            return render(
+                self.request,
+                self.template,
+                context={
+                    "form": form,
+                    "value": _("Update"),
+                    "object": self.submission,
+                    "json_choices": get_language_choices_json(self.request),
+                },
+                status=400,
+            )
+    else:
+
+        def get(self, *args, **kwargs):
+            raise Http404
+
+        def post(self, *args, **kwargs):
+            raise Http404
 
 
 @login_required
@@ -1159,30 +1178,32 @@ class AdminSubmissionDetailView(ActivityContextMixin, DelegateableView, DetailVi
         redirect = SubmissionSealedView.should_redirect(request, submission)
         return redirect or super().dispatch(request, *args, **kwargs)
 
-    def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
-        self.object = self.get_object()
+    if settings.APPLICATION_TRANSLATIONS_ENABLED:
 
-        extra_context = {}
+        def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
+            self.object = self.get_object()
 
-        # Check for language params - if they exist and are valid then update the context
-        if lang_params := get_translation_params(request=request):
-            from_lang, to_lang = lang_params
-            try:
-                self.object.form_data = services.translate_application_form_data(
-                    self.object, from_lang, to_lang
-                )
-                extra_context.update(
-                    {
-                        "from_lang_name": get_lang_name(from_lang),
-                        "to_lang_name": get_lang_name(to_lang),
-                    }
-                )
-            except ValueError:
-                # Language package isn't valid or installed, redirect to the submission w/o params
-                return redirect(self.object.get_absolute_url())
+            extra_context = {}
 
-        context = self.get_context_data(object=self.object, **extra_context)
-        return self.render_to_response(context)
+            # Check for language params - if they exist and are valid then update the context
+            if lang_params := get_translation_params(request=request):
+                from_lang, to_lang = lang_params
+                try:
+                    self.object.form_data = translate_application_form_data(
+                        self.object, from_lang, to_lang
+                    )
+                    extra_context.update(
+                        {
+                            "from_lang_name": get_lang_name(from_lang),
+                            "to_lang_name": get_lang_name(to_lang),
+                        }
+                    )
+                except ValueError:
+                    # Language package isn't valid or installed, redirect to the submission w/o params
+                    return redirect(self.object.get_absolute_url())
+
+            context = self.get_context_data(object=self.object, **extra_context)
+            return self.render_to_response(context)
 
     def get_context_data(self, **kwargs):
         other_submissions = (

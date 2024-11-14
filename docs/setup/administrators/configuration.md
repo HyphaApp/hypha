@@ -245,6 +245,16 @@ Set this to enable Djangos settings for secure cookies.
 
     COOKIE_SECURE = env.bool('COOKIE_SECURE', False)
 
+----
+
+Machine translation settings for applications
+
+See [here](machine-translations.md) for more information on setting up machine translations
+
+    APPLICATION_TRANSLATIONS_ENABLED = env.bool("APPLICATION_TRANSLATIONS_ENABLED", False)
+
+----
+
 ## Slack settings
 
     SLACK_TOKEN = env.str('SLACK_TOKEN', None)

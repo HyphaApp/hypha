@@ -2,10 +2,11 @@ import functools
 import json
 from urllib.parse import parse_qs, urlparse
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
-from django.http import HttpRequest, HttpResponse, QueryDict
+from django.http import Http404, HttpRequest, HttpResponse, QueryDict
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
 from django.utils.text import slugify
@@ -29,8 +30,14 @@ from hypha.apply.funds.reviewers.services import get_all_reviewers
 from hypha.apply.funds.services import annotate_review_recommendation_and_count
 from hypha.apply.funds.templatetags.submission_tags import doc_title
 from hypha.apply.review.options import REVIEWER
-from hypha.apply.translate.utils import get_lang_name, get_translation_params
 from hypha.apply.users.groups import REVIEWER_GROUP_NAME
+
+if settings.APPLICATION_TRANSLATIONS_ENABLED:
+    from hypha.apply.translate.utils import (
+        get_lang_name,
+        get_translation_params,
+        translate_application_form_data,
+    )
 
 from . import services
 from .models import ApplicationSubmission, Round
@@ -529,6 +536,9 @@ def partial_translate_answers(request: HttpRequest, pk: int) -> HttpResponse:
         pk: pk of the submission to translate
 
     """
+    if not settings.APPLICATION_TRANSLATIONS_ENABLED:
+        raise Http404
+
     submission = get_object_or_404(ApplicationSubmission, pk=pk)
 
     if not request.user.is_org_faculty or request.method != "GET":
@@ -548,7 +558,7 @@ def partial_translate_answers(request: HttpRequest, pk: int) -> HttpResponse:
     if params and not params[0] == params[1] and not params == prev_params:
         from_lang, to_lang = params
         try:
-            submission.form_data = services.translate_application_form_data(
+            submission.form_data = translate_application_form_data(
                 submission, from_lang, to_lang
             )
 

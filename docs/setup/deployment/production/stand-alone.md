@@ -105,6 +105,12 @@ Next, install the required packages using:
 python3 -m pip install -r requirements.txt
 ```
 
+If utilizing application machine translations, install the required dependencies:
+
+```shell
+python3 -m pip install -r requirements-translate.txt
+```
+
 ### Install Node packages
 
 All the needed Node packages are listed in `package.json`. Install them with this command.

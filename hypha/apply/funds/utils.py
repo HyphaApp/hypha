@@ -1,5 +1,4 @@
 import csv
-import json
 import re
 from datetime import datetime
 from functools import reduce
@@ -8,12 +7,9 @@ from itertools import chain
 from operator import iconcat
 
 import django_filters as filters
-from django.conf import settings
-from django.http import HttpRequest
 from django.utils.html import strip_tags
 from django.utils.translation import gettext as _
 
-from hypha.apply.translate import utils as translate_utils
 from hypha.apply.utils.image import generate_image_tag
 
 from .models.screening import ScreeningStatus
@@ -195,81 +191,3 @@ def get_copied_form_name(original_form_name: str) -> str:
     # If a copied timestamp already exists, remove it
     new_name = re.sub(name_reg, "", original_form_name)
     return f"{new_name} ({copy_str.format(copy_time=copy_time)})"
-
-
-def get_language_choices_json(request: HttpRequest) -> str:
-    """Generate a JSON output of available translation options
-
-    Utilized for populating the reactive form fields on the client side
-
-    Args:
-        request: an `HttpRequest` containing an "Hx-Current-Url" header to extract current translation params from
-
-    Returns:
-        A JSON string in the format of:
-
-        ```
-        [
-            {
-                "value": "<from language code>",
-                "label": "<from language name>",
-                "to": [
-                    {
-                        "value": "<to language code>",
-                        "label": "<from language name>"
-                        "selected": <bool if selected by default>
-                    }
-                ],
-                "selected": <bool if selected by default>
-            },
-            ...
-        ]
-        ```
-    """
-    available_translations = translate_utils.get_available_translations()
-    from_langs = {package.from_code for package in available_translations}
-    default_to_lang = settings.LANGUAGE_CODE if settings.LANGUAGE_CODE else None
-    default_from_lang = None
-
-    # If there's existing lang params, use those as the default in the form
-    # ie. the user has an active translation for ar -> en, those should be selected in the form
-    if (current_url := request.headers.get("Hx-Current-Url")) and (
-        params := translate_utils.get_translation_params(current_url)
-    ):
-        default_from_lang, default_to_lang = params
-
-    choices = []
-    for lang in from_langs:
-        to_langs = [
-            package.to_code
-            for package in available_translations
-            if package.from_code == lang
-        ]
-
-        # Set the default selection to be the default_to_lang if it exists in the to_langs list,
-        # otherwise use the first value in the list.
-        selected_to = (
-            default_to_lang
-            if default_to_lang and default_to_lang in to_langs
-            else to_langs[0]
-        )
-
-        to_choices = [
-            {
-                "value": to_lang,
-                "label": translate_utils.get_lang_name(to_lang),
-                "selected": to_lang == selected_to,
-            }
-            for to_lang in to_langs
-        ]
-
-        choices.append(
-            {
-                "value": lang,
-                "label": translate_utils.get_lang_name(lang),
-                "to": to_choices,
-                "selected": lang == default_from_lang,
-            }
-        )
-
-    return json.dumps(choices)

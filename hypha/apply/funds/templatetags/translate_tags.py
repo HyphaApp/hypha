@@ -15,4 +15,4 @@ def can_translate_submission(user) -> bool:
         bool: true if submission can be translated, false if not.
 
     """
-    return bool(settings.SUBMISSION_TRANSLATIONS_ENABLED and user.is_org_faculty)
+    return bool(settings.APPLICATION_TRANSLATIONS_ENABLED and user.is_org_faculty)
