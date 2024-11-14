@@ -52,22 +52,6 @@
         }
     }
 
-    &__screening-selected-options {
-        display: flex;
-        flex-wrap: wrap;
-        margin-block-end: 1em;
-    }
-
-    &__screening-option {
-        margin: 0.3em;
-        border: 1px solid variables.$color--black-20;
-        border-radius: 16px;
-        padding: 6px;
-        padding-inline-end: 12px;
-        padding-inline-start: 12px;
-        font-size: 0.8125rem;
-    }
-
     &__separator {
         position: relative;
         font-size: 12px;

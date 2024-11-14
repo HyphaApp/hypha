@@ -27,8 +27,6 @@
 @use "components/filters";
 @use "components/hypha-grid";
 @use "components/heading";
-@use "components/icon";
-@use "components/link";
 @use "components/list";
 @use "components/list-reveal";
 @use "components/modal";
@@ -43,7 +41,6 @@
 @use "components/profile";
 @use "components/projects-table";
 @use "components/responsive-table";
-@use "components/reviewer-dash-box";
 @use "components/reviews-list";
 @use "components/reviews-summary";
 @use "components/reviews-sidebar";
@@ -68,7 +65,6 @@
 @use "components/determination";
 @use "components/activity-notifications";
 @use "components/dropdown";
-@use "components/banner";
 @use "components/dashboard-table";
 
 // Layout
