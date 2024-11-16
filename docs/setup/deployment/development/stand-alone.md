@@ -275,13 +275,13 @@ Activate your virtual environment and install dependencies:
 
 ```shell
 source venv/bin/activate
-python3 -m pip install -r requirements-dev.txt
+python3 -m pip install -r requirements/dev.txt
 ```
 
 If utilizing application machine translations, install the required dependencies:
 
 ```shell
-python3 -m pip install -r requirements-translate.txt
+python3 -m pip install -r requirements/translate.txt
 ```
 
 Run:

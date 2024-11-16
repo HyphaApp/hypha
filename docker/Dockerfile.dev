@@ -14,8 +14,8 @@ ENV PYTHONUNBUFFERED 1
 RUN sudo chown -R circleci:circleci /usr/local
 
 # Install python dependencies.
-COPY requirements.txt requirements-dev.txt /usr/local/hypha/
-RUN pip3 install --quiet -r requirements-dev.txt
+COPY requirements.txt requirements/dev.txt /usr/local/hypha/
+RUN pip3 install --quiet -r requirements/dev.txt
 
 # Run entrypoint.sh.
 ENTRYPOINT ["/usr/local/hypha/docker/entrypoint.dev.sh"]

@@ -108,7 +108,7 @@ python3 -m pip install -r requirements.txt
 If utilizing application machine translations, install the required dependencies:
 
 ```shell
-python3 -m pip install -r requirements-translate.txt
+python3 -m pip install -r requirements/translate.txt
 ```
 
 ### Install Node packages
@@ -277,4 +277,3 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_KEY:                 [KEY]
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET:              [KEY]
 SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS: example.org
 ```
-

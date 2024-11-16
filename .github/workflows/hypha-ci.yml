@@ -75,8 +75,8 @@ jobs:
       - name: Install python dependencies
         run: |
           uv venv
-          uv pip install -r requirements-dev.txt
-          uv pip install -r requirements-translate.txt
+          uv pip install -r requirements/dev.txt
+          uv pip install -r requirements/translate.txt
 
       - name: Check Django migrations
         if: matrix.group == 1
