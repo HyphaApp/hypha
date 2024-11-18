@@ -39,10 +39,10 @@ from .views import (
     UploadDocumentView,
     get_invoices_status_counts,
     get_project_status_counts,
+    partial_contracting_documents,
     partial_get_invoice_detail_actions,
     partial_get_invoice_status,
     partial_get_invoice_status_table,
-    partial_contracting_documents,
     partial_project_activities,
     partial_supporting_documents,
 )
