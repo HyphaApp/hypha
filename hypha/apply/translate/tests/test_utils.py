@@ -1,22 +1,30 @@
 import json
 from typing import Optional
+from unittest import skipUnless
 from unittest.mock import Mock, patch
 from urllib.parse import parse_qs, urlparse
 
+from django.conf import settings
 from django.http import QueryDict
 from django.test import RequestFactory, SimpleTestCase, TestCase, override_settings
 
 from hypha.apply.funds.tests.factories import ApplicationSubmissionFactory
-from hypha.apply.translate.utils import (
-    get_available_translations,
-    get_lang_name,
-    get_language_choices_json,
-    get_translation_params,
-    translate_application_form_data,
-)
 from hypha.apply.users.tests.factories import ApplicantFactory
 
+if settings.APPLICATION_TRANSLATIONS_ENABLED:
+    from hypha.apply.translate.utils import (
+        get_available_translations,
+        get_lang_name,
+        get_language_choices_json,
+        get_translation_params,
+        translate_application_form_data,
+    )
 
+
+@skipUnless(
+    settings.APPLICATION_TRANSLATIONS_ENABLED,
+    "Attempts to import translate dependencies",
+)
 class TesGetAvailableTranslations(SimpleTestCase):
     @classmethod
     def setUpClass(cls):
@@ -54,6 +62,10 @@ class TesGetAvailableTranslations(SimpleTestCase):
         self.assertEqual(codes, {("en", "ar"), ("zh", "en")})
 
 
+@skipUnless(
+    settings.APPLICATION_TRANSLATIONS_ENABLED,
+    "Attempts to import translate dependencies",
+)
 class TestGetTranslationParams(SimpleTestCase):
     def get_test_get_request(self, extra_params: Optional[str] = None) -> Mock:
         extra_params = f"{extra_params}&" if extra_params else ""
@@ -99,6 +111,10 @@ class TestGetTranslationParams(SimpleTestCase):
         self.assertIsNone(get_translation_params(url=url))
 
 
+@skipUnless(
+    settings.APPLICATION_TRANSLATIONS_ENABLED,
+    "Attempts to import translate dependencies",
+)
 class TestGetLangName(SimpleTestCase):
     def test_get_lang_name(self):
         # "!" added to ensure mock is working rather than actually calling argos
@@ -122,6 +138,10 @@ class TestGetLangName(SimpleTestCase):
             from_code_mock.assert_called_once_with("nope")
 
 
+@skipUnless(
+    settings.APPLICATION_TRANSLATIONS_ENABLED,
+    "Attempts to import translate dependencies",
+)
 class TestTranslateSubmissionFormData(TestCase):
     @staticmethod
     def mocked_translate(string: str, from_code, to_code):
@@ -262,6 +282,10 @@ def equal_ignore_order(a: list, b: list) -> bool:
     return not unmatched
 
 
+@skipUnless(
+    settings.APPLICATION_TRANSLATIONS_ENABLED,
+    "Attempts to import translate dependencies",
+)
 class TestGetLanguageChoices(SimpleTestCase):
     @staticmethod
     def mocked_get_lang_name(code):

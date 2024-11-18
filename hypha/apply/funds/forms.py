@@ -5,7 +5,6 @@ from operator import methodcaller
 
 import nh3
 from django import forms
-from django.conf import settings
 from django.db.models import Q
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
@@ -24,9 +23,6 @@ from .permissions import can_change_external_reviewers
 from .utils import model_form_initial, render_icon
 from .widgets import MetaTermSelect2Widget, Select2MultiCheckboxesWidget
 from .workflow import get_action_mapping
-
-if settings.APPLICATION_TRANSLATIONS_ENABLED:
-    pass
 
 
 class ApplicationSubmissionModelForm(forms.ModelForm):

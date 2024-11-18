@@ -1,11 +1,18 @@
 from typing import List
+from unittest import skipUnless
 from unittest.mock import Mock, patch
 
+from django.conf import settings
 from django.test import SimpleTestCase
 
-from hypha.apply.translate.translate import translate
+if settings.APPLICATION_TRANSLATIONS_ENABLED:
+    from hypha.apply.translate.translate import translate
 
 
+@skipUnless(
+    settings.APPLICATION_TRANSLATIONS_ENABLED,
+    "Attempts to import translate dependencies",
+)
 class TestTranslate(SimpleTestCase):
     @staticmethod
     def mocked_translate(string: str, from_code, to_code):
