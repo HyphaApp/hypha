@@ -232,7 +232,7 @@ staff_edit_permissions = make_permissions(edit=[staff_can])
 
 Request = Stage("Request", False)
 
-RequestSame = Stage("RequestRev", True)
+RequestSame = Stage("RequestSame", True)
 
 RequestExt = Stage("RequestExt", True)
 
