@@ -12,7 +12,7 @@
 
     {% if display_more %}
         <div class="all-submissions-table__more">
-            <a href="{% url 'apply:submissions:awaiting_review' %}">{% trans "Show all" %}</a>
+            <a href="{{ awaiting_reviews.url }}?query=reviewer:@me">{% trans "Show all" %}</a>
         </div>
     {% endif %}
 

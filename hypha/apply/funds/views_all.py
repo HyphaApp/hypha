@@ -23,11 +23,15 @@ from hypha.apply.funds.utils import export_submissions_to_csv
 from hypha.apply.funds.workflow import PHASES, get_action_mapping, review_statuses
 from hypha.apply.search.filters import apply_date_filter
 from hypha.apply.search.query_parser import parse_search_query
-from hypha.apply.users.decorators import is_apply_staff
+from hypha.apply.users.decorators import (
+    is_apply_staff,
+    is_apply_staff_or_reviewer_required,
+)
 
 from . import permissions, services
 from .models import (
     ApplicationSubmission,
+    ReviewerSettings,
     Round,
 )
 from .tables import (
@@ -67,8 +71,8 @@ def screening_decision_context(selected_screening_statuses: list) -> dict:
 
 
 @login_required
-@user_passes_test(is_apply_staff)
-def submission_all_beta(
+@user_passes_test(is_apply_staff_or_reviewer_required)
+def submissions_all(
     request: HttpRequest, template_name="submissions/all.html"
 ) -> HttpResponse:
     search_query = request.GET.get("query") or ""
@@ -111,6 +115,14 @@ def submission_all_beta(
     else:
         qs = ApplicationSubmission.objects.current().for_table(request.user)
 
+    # Reviewers also have access to this view but should only see a subset of submissions.
+    if request.user.is_reviewer:
+        reviewer_settings = ReviewerSettings.for_request(request)
+        if reviewer_settings.use_settings:
+            qs = qs.for_reviewer_settings(request.user, reviewer_settings)
+        else:
+            qs = qs.filter(reviewers=request.user)
+
     if not can_access_drafts or not show_drafts:
         qs = qs.exclude_draft()
 
@@ -132,11 +144,15 @@ def submission_all_beta(
 
     if "lead" in search_filters:
         if "@me" in search_filters["lead"]:
-            qs = qs.filter(lead=request.user)
+            qs = qs.filter(lead=request.user).active().current()
 
     if "reviewer" in search_filters:
         if "@me" in search_filters["reviewer"]:
-            qs = qs.filter(reviewers=request.user)
+            qs = qs.in_review_for(request.user)
+
+    if "reviewed-by" in search_filters:
+        if "@me" in search_filters["reviewed-by"]:
+            qs = qs.reviewed_by(request.user)
 
     if "id" in search_filters:
         qs = qs.filter(id__in=search_filters["id"])
@@ -144,6 +160,8 @@ def submission_all_beta(
     if "is" in search_filters:
         if "archived" in search_filters["is"]:
             qs = qs.filter(is_archive=True)
+        if "open" in search_filters["is"]:
+            qs = qs.active().current()
 
     if search_term:
         query = SearchQuery(search_term, search_type="websearch")
@@ -284,6 +302,7 @@ def submission_all_beta(
         "can_bulk_archive": permissions.can_bulk_archive_submissions(request.user),
         "can_bulk_delete": permissions.can_bulk_delete_submissions(request.user),
         "can_export_submissions": permissions.can_export_submissions(request.user),
+        "enable_selection": permissions.can_bulk_update_submissions(request.user),
     } | screening_decision_context(selected_screening_statuses)
     return render(request, template_name, ctx)
 

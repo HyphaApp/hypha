@@ -1,14 +1,18 @@
-# Filtering and searching application submissions (beta)
+# Filtering and searching application submissions
 
 ## Using search to filter application submissions
 
 You can use advanced filters to search for application submissions that meet specific criteria.
 
+- Filter open submission: `is:open`. Shows only current and active submission.
 - Filter archived applications submission: `is:archived`. You must have access to archived submissions and have show archived submissions turned on.
 - Filter when applications were submitted: `submitted:2023-09-01`, `submitted:>2023-01`, `submitted:<=2023`
 - Filter when applications was last updated: `updated:2023-09-01`, `updated:>2023-01`, `updated:<=2023`
+- Filter current submission that you are lead of: `lead:@me`.
 - Filter your flagged submissions: `flagged:@me`
 - Filter staff flagged submissions: `flagged:@staff`
+- Filter submissions awaiting review by you: `reviewer:@me`
+- Filter submissions reviewed by you: `reviewed-by:@me`
 
 
 ## Sharing Filters

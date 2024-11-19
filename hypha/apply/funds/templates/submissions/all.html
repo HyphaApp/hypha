@@ -50,6 +50,18 @@
 
         {% dropdown_menu title="Filters" heading="Filter submissions" %}
             <a
+                href="{% url "apply:submissions:list" %}?query=is:open"
+                hx-get="{% url "apply:submissions:list" %}?query=is:open"
+                hx-push-url="true"
+                hx-target="#main"
+                hx-swap="outerHTML"
+                class="flex {% if request.GET.query == "is:open" %}ps-2 font-medium bg-gray-100{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-gray-800 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
+                {% if request.GET.query == "is:open" %}
+                    {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
+                {% endif %}
+                {% trans "Open submissions" %} {{ request.GET.lead }}
+            </a>
+            <a
                 href="{% url "apply:submissions:list" %}?query=lead:@me"
                 hx-get="{% url "apply:submissions:list" %}?query=lead:@me"
                 hx-push-url="true"
@@ -59,7 +71,7 @@
                 {% if request.GET.query == "lead:@me" %}
                     {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
                 {% endif %}
-                {% trans "Your assigned submissions" %} {{ request.GET.lead }}
+                {% trans "Your assigned submissions (lead)" %} {{ request.GET.lead }}
             </a>
             <a
                 href="{% url "apply:submissions:list" %}?query=flagged:@me"
@@ -87,7 +99,7 @@
             </a>
             <a
                 href="{% url "apply:submissions:list" %}?query=reviewer:@me"
-                href="{% url "apply:submissions:list" %}?query=reviewer:@me"
+                hx-get="{% url "apply:submissions:list" %}?query=reviewer:@me"
                 hx-push-url="true"
                 hx-target="#main"
                 hx-swap="outerHTML"
@@ -96,6 +108,18 @@
                     {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
                 {% endif %}
                 {% trans "Awaiting your review" %}
+            </a>
+            <a
+                href="{% url "apply:submissions:list" %}?query=reviewed-by:@me"
+                hx-get="{% url "apply:submissions:list" %}?query=reviewed-by:@me"
+                hx-push-url="true"
+                hx-target="#main"
+                hx-swap="outerHTML"
+                class="flex {% if request.GET.query == "reviewed-by:@me" %}ps-2 font-medium bg-gray-100{% else %}ps-8 font-normal{% endif %} pe-3 py-2 text-gray-800 border-b items-center hover:bg-gray-100 focus:bg-gray-100">
+                {% if request.GET.query == "reviewed-by:@me" %}
+                    {% heroicon_mini "check" aria_hidden="true" size=16 class="stroke-2 me-1" %}
+                {% endif %}
+                {% trans "Reviewed by you" %}
             </a>
         {% enddropdown_menu %}
 
@@ -321,19 +345,21 @@
             class="sticky top-0 z-[5] mt-3 px-3 py-2 flex flex-wrap items-center justify-between border-x border-t md:gap-5 bg-gray-50 md:text-sm md:font-medium border-gray-200"
         >
             <span class="items-center hidden py-1 md:inline-flex">
-                <input
-                    id="id_select_all"
-                    type="checkbox"
-                    x-ref="checkboxSelectAll"
-                    aria-label="Select all submissions"
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
-                    @click="toggleAllCheckboxes()"
-                >
-                <label
-                    for="id_select_all"
-                    x-show="!showSelectedSubmissions"
-                    class="ms-2">{% trans "Select all" %}</label>
-                <span x-cloak class="ms-2" x-show="showSelectedSubmissions"> <span x-text="selectedSubmissionCount"></span> selected</span>
+                {% if enable_selection %}
+                    <input
+                        id="id_select_all"
+                        type="checkbox"
+                        x-ref="checkboxSelectAll"
+                        aria-label="Select all submissions"
+                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                        @click="toggleAllCheckboxes()"
+                    >
+                    <label
+                        for="id_select_all"
+                        x-show="!showSelectedSubmissions"
+                        class="ms-2">{% trans "Select all" %}</label>
+                    <span x-cloak class="ms-2" x-show="showSelectedSubmissions"> <span x-text="selectedSubmissionCount"></span> selected</span>
+                {% endif %}
             </span>
 
             <nav x-show="!showSelectedSubmissions"
@@ -438,10 +464,11 @@
                     {% enddropdown_menu %}
                 {% endif %}
 
-                {% dropdown_menu title="Reviewers" heading="Filter by Reviewer" enable_search=True position="right" %}
-                    {% slot "url" %}{% url "apply:submissions:submenu-reviewers" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
-                {% enddropdown_menu %}
-
+                {% if not request.user.is_reviewer %}
+                    {% dropdown_menu title="Reviewers" heading="Filter by Reviewer" enable_search=True position="right" %}
+                        {% slot "url" %}{% url "apply:submissions:submenu-reviewers" %}{% remove_from_query "only_query_string" "page" %}{% endslot %}
+                    {% enddropdown_menu %}
+                {% endif %}
 
                 {% dropdown_menu title="Sort" heading="Sort by" position="right" icon="arrows-up-down" %}
                     {% for sort_option in sort_options %}
@@ -517,7 +544,7 @@
             class="w-full bg-white"
         >
             {% if submissions %}
-                {% include "submissions/partials/submissions-inline.html" with submissions=submissions row_layout=request.GET.format enable_selection=True %}
+                {% include "submissions/partials/submissions-inline.html" with submissions=submissions row_layout=request.GET.format enable_selection=enable_selection %}
             {% else %}
                 <div class="flex flex-col items-center justify-center px-4 py-20 border-t">
                     <h2 class='text-2xl'>{% trans "No results matched your search" %}</h2>

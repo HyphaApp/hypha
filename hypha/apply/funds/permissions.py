@@ -56,6 +56,12 @@ def can_bulk_delete_submissions(user) -> bool:
     return False
 
 
+def can_bulk_update_submissions(user) -> bool:
+    if user.is_apply_staff:
+        return True
+    return False
+
+
 def get_archive_view_groups() -> list:
     """
     Returns a list of groups that can view archived submissions

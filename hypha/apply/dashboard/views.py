@@ -324,6 +324,7 @@ class ReviewerDashboardView(MyFlaggedMixin, MySubmissionContextMixin, TemplateVi
             "count": count,
             "display_more": count > limit,
             "table": ReviewerSubmissionsTable(submissions[:limit], prefix="my-review-"),
+            "url": reverse("funds:submissions:list"),
         }
 
     def my_reviewed(self, submissions):

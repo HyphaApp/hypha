@@ -43,7 +43,7 @@
                 {% include "submissions/partials/submissions-inline.html" with submissions=my_reviewed.table.data row_layout="table" %}
 
                 <div class="border-x border-b flex items-center justify-center py-3 font-semibold">
-                    <a href="{{ my_reviewed.url }}?reviewers={{ request.user.pk }}">{% trans "Show all" %}</a>
+                    <a href="{{ my_reviewed.url }}?query=reviewed-by:@me">{% trans "Show all" %}</a>
                 </div>
             </div>
         {% endif %}
