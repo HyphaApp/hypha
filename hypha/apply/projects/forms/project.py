@@ -47,7 +47,7 @@ def get_latest_project_paf_approval_via_roles(project, roles):
 class ApproveContractForm(forms.Form):
     id = forms.IntegerField(widget=forms.HiddenInput())
 
-    def __init__(self, instance, *args, **kwargs):
+    def __init__(self, *args, instance, **kwargs):
         super().__init__(*args, **kwargs)
         self.instance = instance
         if instance:
@@ -217,17 +217,6 @@ class ChangeProjectStatusForm(forms.ModelForm):
         status_field.choices = possible_status_transitions.get(instance.status, [])
 
 
-class RemoveContractDocumentForm(forms.ModelForm):
-    id = forms.IntegerField(widget=forms.HiddenInput())
-
-    class Meta:
-        fields = ["id"]
-        model = ContractPacketFile
-
-    def __init__(self, user=None, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-
 class ApproversForm(forms.ModelForm):
     class Meta:
         fields = ["id"]
@@ -346,7 +335,7 @@ class SubmitContractDocumentsForm(forms.ModelForm):
         model = Project
         widgets = {"id": forms.HiddenInput()}
 
-    def __init__(self, user=None, *args, **kwargs):
+    def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)
 
 
@@ -405,8 +394,9 @@ class UploadContractDocumentForm(FileFormMixin, forms.ModelForm):
     class Meta:
         fields = ["category", "document"]
         model = ContractPacketFile
+        widgets = {"category": forms.HiddenInput()}
 
-    def __init__(self, user=None, instance=None, *args, **kwargs):
+    def __init__(self, *args, user=None, instance=None, **kwargs):
         super().__init__(*args, **kwargs)
 
     def save(self, commit=True):

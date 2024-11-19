@@ -1,0 +1,15 @@
+{% load i18n project_tags %}
+{% if user.is_applicant %}
+    {% modal_title %}{% trans "Upload Countersigned Contract" %}{% endmodal_title %}
+{% else %}
+    {% modal_title %}{% trans "Upload Signed Contract" %}{% endmodal_title %}
+{% endif %}
+
+<div class="p-4">
+    {% if not user.is_applicant %}
+        <p><i><b>{% trans "The signed contract will be sent to Applicant once you submit. But if you select Signed and approved then it will directly be approved and project will move to Invoicing and Reporting." %}</b></i></p>
+        <br>
+    {% endif %}
+    {% url 'apply:projects:contract_upload' pk=object.id as url %}
+    {% include 'funds/includes/dialog_form_base.html' with form=form value=value url=url %}
+</div>

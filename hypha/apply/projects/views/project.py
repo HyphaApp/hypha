@@ -18,14 +18,12 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
-from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 from django.utils.translation import gettext as _
 from django.views import View
 from django.views.generic import (
     CreateView,
     DetailView,
-    FormView,
     UpdateView,
 )
 from django.views.generic.detail import SingleObjectMixin
@@ -81,7 +79,6 @@ from ..forms import (
     ChangeProjectStatusForm,
     ProjectForm,
     ProjectSOWForm,
-    RemoveContractDocumentForm,
     SelectDocumentForm,
     SetPendingForm,
     SkipPAFApprovalProcessForm,
@@ -374,24 +371,20 @@ class RemoveDocumentView(View):
 
 
 @method_decorator(login_required, name="dispatch")
-class RemoveContractDocumentView(DelegatedViewMixin, FormView):
-    context_name = "remove_contract_document_form"
-    form_class = RemoveContractDocumentForm
+class RemoveContractDocumentView(View):
     model = Project
 
     def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_applicant or request.user != self.get_object().user:
+        self.project = get_object_or_404(Project, id=kwargs.get("pk"))
+        if not request.user.is_applicant or request.user != self.project.user:
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
-    def form_valid(self, form):
-        document_id = form.cleaned_data["id"]
-        project = self.kwargs["object"]
-
-        try:
-            project.contract_packet_files.get(pk=document_id).delete()
-        except ContractPacketFile.DoesNotExist:
-            pass
+    def delete(self, *args, **kwargs):
+        self.object = self.project.contract_packet_files.get(
+            pk=kwargs.get("document_pk")
+        )
+        self.object.delete()
 
         messages.success(
             self.request,
@@ -399,7 +392,17 @@ class RemoveContractDocumentView(DelegatedViewMixin, FormView):
             extra_tags=PROJECT_ACTION_MESSAGE_TAG,
         )
 
-        return redirect(project)
+        return HttpResponse(
+            status=204,
+            headers={
+                "HX-Trigger": json.dumps(
+                    {
+                        "contractingDocumentRemove": None,
+                        "showMessage": "Contracting Document has been removed",
+                    }
+                ),
+            },
+        )
 
 
 @method_decorator(login_required, name="dispatch")
@@ -537,99 +540,128 @@ class ContractsMixin:
 
 
 @method_decorator(staff_required, name="dispatch")
-class ApproveContractView(DelegatedViewMixin, UpdateView):
+class ApproveContractView(View):
     form_class = ApproveContractForm
     model = Contract
-    context_name = "approve_contract_form"
+    template_name = "application_projects/modals/approve_contract.html"
 
     def get_object(self):
-        project = self.get_parent_object()
-        latest_contract = project.contracts.order_by("-created_at").first()
+        latest_contract = self.project.contracts.order_by("-created_at").first()
         if latest_contract and not latest_contract.approver:
             return latest_contract
 
+    def dispatch(self, request, *args, **kwargs):
+        self.project = get_object_or_404(Project, pk=self.kwargs["pk"])
+        self.object = self.get_object()
+        # permission
+        return super().dispatch(request, *args, **kwargs)
+
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs["instance"] = self.get_object()
+        kwargs["instance"] = self.object
         kwargs.pop("user")
         return kwargs
 
-    def dispatch(self, request, *args, **kwargs):
-        self.project = get_object_or_404(Project, pk=self.kwargs["pk"])
-        return super().dispatch(request, *args, **kwargs)
-
-    def form_invalid(self, form):
-        messages.error(
+    def get(self, *args, **kwargs):
+        form = self.form_class(instance=self.object)
+        return render(
             self.request,
-            mark_safe(_("Sorry something went wrong") + form.errors.as_ul()),
+            self.template_name,
+            context={
+                "form": form,
+                "value": _("Confirm"),
+                "object": self.project,
+            },
         )
-        return super().form_invalid(form)
 
-    def form_valid(self, form):
-        with transaction.atomic():
-            form.instance.approver = self.request.user
-            form.instance.approved_at = timezone.now()
-            form.instance.project = self.project
-            response = super().form_valid(form)
+    def post(self, *args, **kwargs):
+        form = self.form_class(self.request.POST, instance=self.object)
+        if form.is_valid():
+            with transaction.atomic():
+                form.instance.approver = self.request.user
+                form.instance.approved_at = timezone.now()
+                form.instance.project = self.project
+                form.save()
 
-            old_stage = self.project.status
+                old_stage = self.project.status
 
-            messenger(
-                MESSAGES.APPROVE_CONTRACT,
-                request=self.request,
-                user=self.request.user,
-                source=self.project,
-                related=self.object,
+                messenger(
+                    MESSAGES.APPROVE_CONTRACT,
+                    request=self.request,
+                    user=self.request.user,
+                    source=self.project,
+                    related=self.object,
+                )
+                # remove Project waiting contract review task for staff
+                remove_tasks_for_user(
+                    code=PROJECT_WAITING_CONTRACT_REVIEW,
+                    user=self.project.lead,
+                    related_obj=self.project,
+                )
+
+                self.project.status = INVOICING_AND_REPORTING
+                self.project.save(update_fields=["status"])
+
+                messenger(
+                    MESSAGES.PROJECT_TRANSITION,
+                    request=self.request,
+                    user=self.request.user,
+                    source=self.project,
+                    related=old_stage,
+                )
+                # add Project waiting invoice task for applicant
+                add_task_to_user(
+                    code=PROJECT_WAITING_INVOICE,
+                    user=self.project.user,
+                    related_obj=self.project,
+                )
+
+            messages.success(
+                self.request,
+                _(
+                    "Contractor documents have been approved."
+                    " You can receive invoices from vendor now."
+                ),
+                extra_tags=PROJECT_ACTION_MESSAGE_TAG,
             )
-            # remove Project waiting contract review task for staff
-            remove_tasks_for_user(
-                code=PROJECT_WAITING_CONTRACT_REVIEW,
-                user=self.project.lead,
-                related_obj=self.project,
-            )
-
-            self.project.status = INVOICING_AND_REPORTING
-            self.project.save(update_fields=["status"])
-
-            messenger(
-                MESSAGES.PROJECT_TRANSITION,
-                request=self.request,
-                user=self.request.user,
-                source=self.project,
-                related=old_stage,
-            )
-            # add Project waiting invoice task for applicant
-            add_task_to_user(
-                code=PROJECT_WAITING_INVOICE,
-                user=self.project.user,
-                related_obj=self.project,
-            )
-
-        messages.success(
+            return HttpResponseClientRefresh()
+        return render(
             self.request,
-            _(
-                "Contractor documents have been approved."
-                " You can receive invoices from vendor now."
-            ),
-            extra_tags=PROJECT_ACTION_MESSAGE_TAG,
+            self.template_name,
+            context={
+                "form": form,
+                "value": _("Confirm"),
+                "object": self.project,
+            },
         )
-        return response
-
-    def get_success_url(self):
-        return self.project.get_absolute_url()
 
 
 @method_decorator(login_required, name="dispatch")
-class UploadContractView(DelegatedViewMixin, CreateView):
-    context_name = "contract_form"
+class UploadContractView(View):
     model = Project
     form_class = UploadContractForm
+    template_name = "application_projects/modals/upload_contract.html"
 
     def dispatch(self, request, *args, **kwargs):
-        project = self.kwargs["object"]
-        permission, _ = has_permission("contract_upload", request.user, object=project)
+        self.project = get_object_or_404(Project, id=kwargs.get("pk"))
+        permission, _ = has_permission(
+            "contract_upload", request.user, object=self.project
+        )
         if permission:
             return super().dispatch(request, *args, **kwargs)
+
+    def get(self, *args, **kwargs):
+        form = self.get_form()
+        return render(
+            self.request,
+            self.template_name,
+            context={
+                "form": form,
+                "user": self.request.user,
+                "value": _("Upload") if self.request.user.is_applicant else _("Submit"),
+                "object": self.project,
+            },
+        )
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -638,112 +670,125 @@ class UploadContractView(DelegatedViewMixin, CreateView):
         return kwargs
 
     def get_form(self, *args, **kwargs):
-        form = super().get_form(*args, **kwargs)
+        form = self.form_class(*args, **kwargs)
         if self.request.user.is_applicant:
             form.fields.pop("signed_and_approved")
         return form
 
-    def form_valid(self, form):
-        project = self.kwargs["object"]
+    def post(self, *args, **kwargs):
+        form = self.get_form(self.request.POST)
 
-        if project.contracts.exists():
-            form.instance = project.contracts.order_by("created_at").first()
+        if form.is_valid():
+            if self.project.contracts.exists():
+                form.instance = self.project.contracts.order_by("created_at").first()
 
-        form.instance.project = project
+            form.instance.project = self.project
 
-        if self.request.user == project.user:
-            form.instance.signed_by_applicant = True
-            form.instance.uploaded_by_applicant_at = timezone.now()
-            messages.success(
-                self.request,
-                _("Countersigned contract uploaded"),
-                extra_tags=PROJECT_ACTION_MESSAGE_TAG,
-            )
-        elif self.request.user.is_contracting or self.request.user.is_apply_staff:
-            form.instance.uploaded_by_contractor_at = timezone.now()
-            messages.success(
-                self.request,
-                _("Signed contract uploaded"),
-                extra_tags=PROJECT_ACTION_MESSAGE_TAG,
-            )
-
-        response = super().form_valid(form)
-
-        contract_signed_and_approved = form.cleaned_data.get("signed_and_approved")
-        if contract_signed_and_approved:
-            form.instance.approver = self.request.user
-            form.instance.approved_at = timezone.now()
-            form.instance.signed_and_approved = contract_signed_and_approved
-            form.instance.signed_by_applicant = True
-            form.instance.save(
-                update_fields=[
-                    "approver",
-                    "approved_at",
-                    "signed_and_approved",
-                    "signed_by_applicant",
-                ]
-            )
-
-            project.status = INVOICING_AND_REPORTING
-            project.save(update_fields=["status"])
-            old_stage = CONTRACTING
-
-            messenger(
-                MESSAGES.PROJECT_TRANSITION,
-                request=self.request,
-                user=self.request.user,
-                source=project,
-                related=old_stage,
-            )
-            # remove Project waiting contract task for contracting/staff group
-            if settings.STAFF_UPLOAD_CONTRACT:
-                remove_tasks_for_user(
-                    code=PROJECT_WAITING_CONTRACT,
-                    user=project.lead,
-                    related_obj=project,
+            if self.request.user == self.project.user:
+                form.instance.signed_by_applicant = True
+                form.instance.uploaded_by_applicant_at = timezone.now()
+                messages.success(
+                    self.request,
+                    _("Countersigned contract uploaded"),
+                    extra_tags=PROJECT_ACTION_MESSAGE_TAG,
                 )
-            else:
-                remove_tasks_for_user_group(
-                    code=PROJECT_WAITING_CONTRACT,
-                    user_group=Group.objects.filter(name=CONTRACTING_GROUP_NAME),
-                    related_obj=project,
+            elif self.request.user.is_contracting or self.request.user.is_apply_staff:
+                form.instance.uploaded_by_contractor_at = timezone.now()
+                messages.success(
+                    self.request,
+                    _("Signed contract uploaded"),
+                    extra_tags=PROJECT_ACTION_MESSAGE_TAG,
                 )
-            # add Project waiting invoice task for applicant
-            add_task_to_user(
-                code=PROJECT_WAITING_INVOICE,
-                user=project.user,
-                related_obj=project,
-            )
-        else:
-            if self.request.user != project.user:
+
+            form.save()
+
+            contract_signed_and_approved = form.cleaned_data.get("signed_and_approved")
+            if contract_signed_and_approved:
+                form.instance.approver = self.request.user
+                form.instance.approved_at = timezone.now()
+                form.instance.signed_and_approved = contract_signed_and_approved
+                form.instance.signed_by_applicant = True
+                form.instance.save(
+                    update_fields=[
+                        "approver",
+                        "approved_at",
+                        "signed_and_approved",
+                        "signed_by_applicant",
+                    ]
+                )
+
+                self.project.status = INVOICING_AND_REPORTING
+                self.project.save(update_fields=["status"])
+                old_stage = CONTRACTING
+
                 messenger(
-                    MESSAGES.UPLOAD_CONTRACT,
+                    MESSAGES.PROJECT_TRANSITION,
                     request=self.request,
                     user=self.request.user,
-                    source=project,
-                    related=form.instance,
+                    source=self.project,
+                    related=old_stage,
                 )
                 # remove Project waiting contract task for contracting/staff group
                 if settings.STAFF_UPLOAD_CONTRACT:
                     remove_tasks_for_user(
                         code=PROJECT_WAITING_CONTRACT,
-                        user=project.lead,
-                        related_obj=project,
+                        user=self.project.lead,
+                        related_obj=self.project,
                     )
                 else:
                     remove_tasks_for_user_group(
                         code=PROJECT_WAITING_CONTRACT,
                         user_group=Group.objects.filter(name=CONTRACTING_GROUP_NAME),
-                        related_obj=project,
+                        related_obj=self.project,
                     )
-                # add Project waiting contract document task for applicant
+                # add Project waiting invoice task for applicant
                 add_task_to_user(
-                    code=PROJECT_WAITING_CONTRACT_DOCUMENT,
-                    user=project.user,
-                    related_obj=project,
+                    code=PROJECT_WAITING_INVOICE,
+                    user=self.project.user,
+                    related_obj=self.project,
                 )
+            else:
+                if self.request.user != self.project.user:
+                    messenger(
+                        MESSAGES.UPLOAD_CONTRACT,
+                        request=self.request,
+                        user=self.request.user,
+                        source=self.project,
+                        related=form.instance,
+                    )
+                    # remove Project waiting contract task for contracting/staff group
+                    if settings.STAFF_UPLOAD_CONTRACT:
+                        remove_tasks_for_user(
+                            code=PROJECT_WAITING_CONTRACT,
+                            user=self.project.lead,
+                            related_obj=self.project,
+                        )
+                    else:
+                        remove_tasks_for_user_group(
+                            code=PROJECT_WAITING_CONTRACT,
+                            user_group=Group.objects.filter(
+                                name=CONTRACTING_GROUP_NAME
+                            ),
+                            related_obj=self.project,
+                        )
+                    # add Project waiting contract document task for applicant
+                    add_task_to_user(
+                        code=PROJECT_WAITING_CONTRACT_DOCUMENT,
+                        user=self.project.user,
+                        related_obj=self.project,
+                    )
+            return HttpResponseClientRefresh()
 
-        return response
+        return render(
+            self.request,
+            self.template_name,
+            context={
+                "form": form,
+                "user": self.request.user,
+                "value": _("Upload") if self.request.user.is_applicant else _("Submit"),
+                "object": self.project,
+            },
+        )
 
 
 class SkipPAFApprovalProcessView(UpdateView):
@@ -800,83 +845,146 @@ class SkipPAFApprovalProcessView(UpdateView):
 
 
 @method_decorator(login_required, name="dispatch")
-class SubmitContractDocumentsView(DelegatedViewMixin, UpdateView):
-    context_name = "submit_contract_documents_form"
+class SubmitContractDocumentsView(View):
     model = Project
     form_class = SubmitContractDocumentsForm
+    template_name = "application_projects/modals/submit_contracting_documents.html"
 
     def dispatch(self, request, *args, **kwargs):
-        project = self.get_object()
+        self.project = get_object_or_404(Project, id=kwargs.get("pk"))
         if ContractDocumentCategory.objects.filter(
-            ~Q(contract_packet_files__project=project) & Q(required=True)
+            ~Q(contract_packet_files__project=self.project) & Q(required=True)
         ).exists():
             raise PermissionDenied
-        contract = project.contracts.order_by("-created_at").first()
+        contract = self.project.contracts.order_by("-created_at").first()
         permission, _ = has_permission(
             "submit_contract_documents",
             request.user,
-            object=project,
+            object=self.project,
             raise_exception=True,
             contract=contract,
         )
         return super().dispatch(request, *args, **kwargs)
 
-    def form_valid(self, form):
-        project = self.kwargs["object"]
-        response = super().form_valid(form)
-
-        project.submitted_contract_documents = True
-        project.save(update_fields=["submitted_contract_documents"])
-
-        messenger(
-            MESSAGES.SUBMIT_CONTRACT_DOCUMENTS,
-            request=self.request,
-            user=self.request.user,
-            source=project,
-        )
-        # remove project waiting contract documents task for applicant
-        remove_tasks_for_user(
-            code=PROJECT_WAITING_CONTRACT_DOCUMENT,
-            user=project.user,
-            related_obj=project,
-        )
-        # add project waiting contract review task for staff
-        add_task_to_user(
-            code=PROJECT_WAITING_CONTRACT_REVIEW,
-            user=project.lead,
-            related_obj=project,
-        )
-
-        messages.success(
+    def get(self, *args, **kwargs):
+        form = self.form_class()
+        return render(
             self.request,
-            _("Contract documents submitted"),
-            extra_tags=PROJECT_ACTION_MESSAGE_TAG,
+            self.template_name,
+            context={
+                "form": form,
+                "value": _("Submit"),
+                "object": self.project,
+            },
         )
-        return response
+
+    def post(self, *args, **kwargs):
+        form = self.form_class(self.request.POST, instance=self.project)
+        if form.is_valid():
+            form.save()
+
+            self.project.submitted_contract_documents = True
+            self.project.save(update_fields=["submitted_contract_documents"])
+
+            messenger(
+                MESSAGES.SUBMIT_CONTRACT_DOCUMENTS,
+                request=self.request,
+                user=self.request.user,
+                source=self.project,
+            )
+            # remove project waiting contract documents task for applicant
+            remove_tasks_for_user(
+                code=PROJECT_WAITING_CONTRACT_DOCUMENT,
+                user=self.project.user,
+                related_obj=self.project,
+            )
+            # add project waiting contract review task for staff
+            add_task_to_user(
+                code=PROJECT_WAITING_CONTRACT_REVIEW,
+                user=self.project.lead,
+                related_obj=self.project,
+            )
+
+            messages.success(
+                self.request,
+                _("Contract documents submitted"),
+                extra_tags=PROJECT_ACTION_MESSAGE_TAG,
+            )
+            return HttpResponseClientRefresh()
+        return render(
+            self.request,
+            self.template_name,
+            context={
+                "form": form,
+                "value": _("Submit"),
+                "object": self.project,
+            },
+        )
 
 
 @method_decorator(login_required, name="dispatch")
-class UploadContractDocumentView(DelegatedViewMixin, CreateView):
+class UploadContractDocumentView(View):
     form_class = UploadContractDocumentForm
     model = Project
     context_name = "contract_document_form"
+    template_name = "application_projects/modals/contracting_documents_upload.html"
 
     def dispatch(self, request, *args, **kwargs):
-        if request.user != self.get_object().user or not request.user.is_applicant:
+        self.project = get_object_or_404(Project, id=kwargs.get("pk"))
+        self.category = get_object_or_404(
+            ContractDocumentCategory, id=kwargs.get("category_pk")
+        )
+        if request.user != self.project.user or not request.user.is_applicant:
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
-    def form_valid(self, form):
-        project = self.kwargs["object"]
-        form.instance.project = project
-        response = super().form_valid(form)
-
-        messages.success(
-            self.request,
-            _("Contracting document has been uploaded"),
-            extra_tags=PROJECT_ACTION_MESSAGE_TAG,
+    def get(self, *args, **kwargs):
+        upload_contract_document_form = self.form_class(
+            instance=self.project, initial={"category": self.category}
         )
-        return response
+        return render(
+            self.request,
+            self.template_name,
+            context={
+                "form": upload_contract_document_form,
+                "value": _("Submit"),
+                "category": self.category,
+                "object": self.project,
+            },
+        )
+
+    def post(self, *args, **kwargs):
+        form = self.form_class(
+            self.request.POST,
+            self.request.FILES,
+            instance=self.project,
+            initial={"category": self.category},
+        )
+        if form.is_valid():
+            form.instance.project = self.project
+            form.save()
+
+            return HttpResponse(
+                status=204,
+                headers={
+                    "HX-Trigger": json.dumps(
+                        {
+                            "contractingDocumentUpload": None,
+                            "showMessage": "Contracting Document has been uploaded",
+                        }
+                    ),
+                },
+            )
+        return render(
+            self.request,
+            self.template_name,
+            context={
+                "form": form,
+                "value": _("Submit"),
+                "category": self.category,
+                "object": self.project,
+            },
+        )
 
 
 # PROJECT VIEW
@@ -1501,13 +1609,11 @@ class AdminProjectDetailView(
     BaseProjectDetailView,
 ):
     form_views = [
-        ApproveContractView,
         CommentFormView,
         SelectDocumentView,
         ReportFrequencyUpdate,
         UpdateLeadView,
         UpdateProjectTitleView,
-        UploadContractView,
         ChangeProjectstatusView,
         ChangeInvoiceStatusView,
     ]
@@ -1530,14 +1636,6 @@ class AdminProjectDetailView(
         project_settings = ProjectSettings.for_request(self.request)
         context["project_settings"] = project_settings
         context["paf_approvals"] = PAFApprovals.objects.filter(project=self.object)
-        context["all_contract_document_categories"] = (
-            ContractDocumentCategory.objects.all()
-        )
-        context["remaining_contract_document_categories"] = (
-            ContractDocumentCategory.objects.filter(
-                ~Q(contract_packet_files__project=self.object)
-            )
-        )
 
         if (
             self.object.is_in_progress
@@ -1568,10 +1666,6 @@ class ApplicantProjectDetailView(
     form_views = [
         CommentFormView,
         SelectDocumentView,
-        UploadContractView,
-        UploadContractDocumentView,
-        RemoveContractDocumentView,
-        SubmitContractDocumentsView,
     ]
 
     model = Project
@@ -1590,9 +1684,6 @@ class ApplicantProjectDetailView(
         context["current_status_index"] = [
             status for status, _ in PROJECT_PUBLIC_STATUSES
         ].index(self.object.status)
-        context["all_contract_document_categories"] = (
-            ContractDocumentCategory.objects.all()
-        )
         context["remaining_contract_document_categories"] = (
             ContractDocumentCategory.objects.filter(
                 ~Q(contract_packet_files__project=self.object)
