@@ -9,7 +9,18 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.db.models import Count, F, Max, OuterRef, Q, Subquery, Sum, Value
+from django.db.models import (
+    Case,
+    Count,
+    F,
+    Max,
+    OuterRef,
+    Q,
+    Subquery,
+    Sum,
+    Value,
+    When,
+)
 from django.db.models.functions import Cast, Coalesce
 from django.db.models.signals import post_delete
 from django.dispatch.dispatcher import receiver
@@ -102,6 +113,9 @@ class ProjectQuerySet(models.QuerySet):
             )
         )
 
+    def invoicing_and_reporting(self):
+        return self.filter(status=INVOICING_AND_REPORTING)
+
     def complete(self):
         return self.filter(status=COMPLETE)
 
@@ -177,6 +191,49 @@ class ProjectQuerySet(models.QuerySet):
                 "submission__page",
                 "lead",
             )
+        )
+
+    def for_reporting_table(self):
+        today = timezone.now().date()
+        Report = apps.get_model("application_projects", "Report")
+        return self.invoicing_and_reporting().annotate(
+            current_report_submitted_date=Subquery(
+                Report.objects.filter(
+                    project=OuterRef("pk"), end_date__gt=today, current__isnull=False
+                )
+                .order_by("end_date")
+                .values("submitted")[:1],
+                output_field=models.DateField(),
+            ),
+            current_report_status=Coalesce(
+                Subquery(
+                    Report.objects.filter(
+                        project=OuterRef("pk"),
+                    )
+                    .filter(
+                        Q(
+                            Q(end_date__gt=today),
+                            Q(current__isnull=False) | Q(draft__isnull=False),
+                        )
+                        | Q(
+                            end_date__lt=today,
+                            current__isnull=True,
+                            draft__isnull=False,
+                        )
+                    )
+                    .order_by("end_date")
+                    .annotate(
+                        report_status=Case(
+                            When(draft__isnull=False, then=Value("In progress")),
+                            When(current__isnull=False, then=Value("Submitted")),
+                            default=Value("Not started"),
+                        )
+                    )
+                    .values("report_status")[:1],
+                    output_field=models.CharField(),
+                ),
+                Value("Not started"),
+            ),
         )
 
 

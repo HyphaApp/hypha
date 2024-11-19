@@ -23,6 +23,7 @@ from .views import (
     ProjectSOWView,
     RemoveDocumentView,
     ReportDetailView,
+    ReportingView,
     ReportListView,
     ReportPrivateMedia,
     ReportSkipView,
@@ -219,4 +220,5 @@ urlpatterns = [
             )
         ),
     ),
+    path("reporting/", ReportingView.as_view(), name="reporting"),
 ]
