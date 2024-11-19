@@ -42,9 +42,11 @@
 
                 {% include "submissions/partials/submissions-inline.html" with submissions=my_reviewed.table.data row_layout="table" %}
 
-                <div class="border-x border-b flex items-center justify-center py-3 font-semibold">
-                    <a href="{{ my_reviewed.url }}?query=reviewed-by:@me">{% trans "Show all" %}</a>
-                </div>
+                {% if my_reviewed.display_more %}
+                    <div class="border-x border-b flex items-center justify-center py-3 font-semibold">
+                        <a href="{{ my_reviewed.url }}?query=reviewed-by:@me">{% trans "Show all" %}</a>
+                    </div>
+                {% endif %}
             </div>
         {% endif %}
 
