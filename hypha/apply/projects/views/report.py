@@ -111,7 +111,7 @@ class ReportUpdateView(BaseStreamForm, UpdateView):
         return context_data
 
     def get_form(self, form_class=None):
-        if self.object.current is None or self.object.current.form_fields is None:
+        if self.object.current is None or self.object.form_fields is None:
             # Here is where we get the form_fields, the ProjectReportForm associated with the Fund:
             report_form = (
                 self.object.project.submission.page.specific.report_forms.first()
@@ -121,7 +121,7 @@ class ReportUpdateView(BaseStreamForm, UpdateView):
             else:
                 self.form_fields = {}
         else:
-            self.form_fields = self.object.current.form_fields
+            self.form_fields = self.object.form_fields
 
         if form_class is None:
             form_class = self.get_form_class()

@@ -82,12 +82,19 @@ class ReportQueryset(models.QuerySet):
         )
 
 
-class Report(models.Model):
+class Report(BaseStreamForm, AccessFormData, models.Model):
     skipped = models.BooleanField(default=False)
     end_date = models.DateField()
     project = models.ForeignKey(
         "Project", on_delete=models.CASCADE, related_name="reports"
     )
+    form_fields = StreamField(
+        # Re-use the Project Custom Form class. The original fields (used at the time of response) should be required.
+        ProjectFormCustomFormFieldsBlock(),
+        use_json_field=True,
+        null=True,
+    )
+    form_data = models.JSONField(encoder=StreamFieldDataEncoder, default=dict)
     submitted = models.DateTimeField(null=True)
     notified = models.DateTimeField(null=True)
     current = models.OneToOneField(
@@ -176,11 +183,6 @@ class ReportVersion(BaseStreamForm, AccessFormData, models.Model):
         "Report", on_delete=models.CASCADE, related_name="versions"
     )
     submitted = models.DateTimeField()
-    form_fields = StreamField(
-        # Re-use the Project Custom Form class. The original fields (used at the time of response) should be required.
-        ProjectFormCustomFormFieldsBlock(),
-        use_json_field=True,
-    )
     form_data = models.JSONField(encoder=StreamFieldDataEncoder, default=dict)
     draft = models.BooleanField()
     author = models.ForeignKey(
@@ -191,6 +193,10 @@ class ReportVersion(BaseStreamForm, AccessFormData, models.Model):
     )
 
     wagtail_reference_index_ignore = True
+
+    @property
+    def form_fields(self):
+        return self.report.form_fields
 
 
 class ReportPrivateFiles(models.Model):
