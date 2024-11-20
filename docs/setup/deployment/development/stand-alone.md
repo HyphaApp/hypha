@@ -278,6 +278,12 @@ source venv/bin/activate
 python3 -m pip install -r requirements-dev.txt
 ```
 
+If utilizing application machine translations, install the required dependencies:
+
+```shell
+python3 -m pip install -r requirements-translate.txt
+```
+
 Run:
 ```shell
 make serve-docs

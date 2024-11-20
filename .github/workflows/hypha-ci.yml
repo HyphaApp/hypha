@@ -37,6 +37,7 @@ jobs:
       DJANGO_SETTINGS_MODULE: hypha.settings.test
       SEND_MESSAGES: false
       PYTHONDONTWRITEBYTECODE: 1
+      APPLICATION_TRANSLATIONS_ENABLED: 1 # Run tests for machine translation logic
 
     services:
       postgres:
@@ -75,6 +76,7 @@ jobs:
         run: |
           uv venv
           uv pip install -r requirements-dev.txt
+          uv pip install -r requirements-translate.txt
 
       - name: Check Django migrations
         if: matrix.group == 1

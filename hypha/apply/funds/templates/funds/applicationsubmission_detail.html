@@ -1,5 +1,5 @@
 {% extends "base-apply.html" %}
-{% load i18n static workflow_tags wagtailcore_tags statusbar_tags archive_tags submission_tags %}
+{% load i18n static workflow_tags wagtailcore_tags statusbar_tags archive_tags submission_tags translate_tags %}
 {% load heroicons %}
 {% load can from permission_tags %}
 
@@ -148,8 +148,15 @@
                                 {% endif %}
                             </div>
                         </header>
-
-                        {% include "funds/includes/rendered_answers.html" %}
+                        {% if request.user|can_translate_submission %}
+                            <div class="wrapper" hx-get="{% url 'funds:submissions:partial-translate-answers' object.id %}" hx-trigger="translateSubmission from:body" hx-indicator="#translate-card-loading" hx-vals='js:{fl: event.detail.from_lang, tl: event.detail.to_lang}'>
+                                {% include "funds/includes/rendered_answers.html" %}
+                            </div>
+                        {% else %}
+                            <div class="wrapper">
+                                {% include "funds/includes/rendered_answers.html" %}
+                            </div>
+                        {% endif %}
 
                     </article>
                 {% endif %}
