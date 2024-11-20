@@ -60,13 +60,15 @@ class ReportEditForm(StreamBaseForm, forms.ModelForm, metaclass=MixedMetaClass):
 
         is_draft = "save" in self.data
         version = ReportVersion.objects.create(
-            report=self.instance,
+            report=instance,
             # Save a ReportVersion first then edit/update the form_data below.
             form_data=instance.form_data,
             submitted=timezone.now(),
             draft=is_draft,
             author=self.user,
         )
+        version.process_file_data(self.cleaned_data["form_data"])
+        version.save()
 
         if is_draft:
             instance.draft = version
