@@ -623,12 +623,12 @@ class ReviewerLeaderboardFilter(filters.FilterSet):
         queryset=get_all_reviewers,
     )
     funds = Select2ModelMultipleChoiceFilter(
-        field_name="submission__page",
+        field_name="applicationsubmission__page",
         label=_("Funds"),
         queryset=get_used_funds,
     )
     rounds = Select2ModelMultipleChoiceFilter(
-        field_name="submission__round",
+        field_name="applicationsubmission__round",
         label=_("Rounds"),
         queryset=get_used_rounds,
     )
